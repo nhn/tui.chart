@@ -1,11 +1,11 @@
 /*!
  * tui-chart-all
  * @fileoverview tui-chart
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
- * @version 3.6.1
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @version 3.6.2
  * @license MIT
  * @link https://github.com/nhnent/tui.chart
- * bundle created at "Tue Mar 05 2019 16:08:39 GMT+0900 (Korean Standard Time)"
+ * bundle created at "Mon Apr 01 2019 12:58:50 GMT+0900 (대한민국 표준시)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8954,7 +8954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	_chart2['default'].colorutil = _colorutil2['default'];
 	
 	/**
-	 * NHN Entertainment Toast UI Chart.
+	 * NHN. Toast UI Chart.
 	 * @namespace tui.chart
 	 */
 	module.exports = _chart2['default'];
@@ -9060,8 +9060,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    axis: _raphaelAxisComponent2['default']
 	}; /**
 	    * @fileoverview Raphael render plugin.
-	    * @author NHN Ent.
-	    *         FE Development Lab <dl_javascript@nhnent.com>
+	    * @author NHN.
+	    *         FE Development Lab <dl_javascript@nhn.com>
 	    */
 	
 	var callback = exports.callback = function callback(container, dimension) {
@@ -9221,8 +9221,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Raphael bar chart renderer.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -9929,8 +9929,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var LINE_HEIGHT_FOR_CALCULATE = 1.11; /**
 	                                       * @fileoverview Util for raphael rendering.
-	                                       * @author NHN Ent.
-	                                       *         FE Development Lab <dl_javascript@nhnent.com>
+	                                       * @author NHN.
+	                                       *         FE Development Lab <dl_javascript@nhn.com>
 	                                       */
 	
 	var storeForGetTextDimension = {
@@ -14710,8 +14710,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
 	                                                                                                                                                                                                     * @fileoverview Util for rendering.
-	                                                                                                                                                                                                     * @author NHN Ent.
-	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                     * @author NHN.
+	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                     */
 	
 	var browser = _tuiCodeSnippet2['default'].browser;
@@ -15570,8 +15570,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	/**
 	 * @fileoverview Chart const
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	/**
@@ -16051,8 +16051,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
 	                                                                                                                                                                                                     * @fileoverview DOM Handler.
-	                                                                                                                                                                                                     * @author NHN Ent.
-	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                     * @author NHN.
+	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                     */
 	
 	/**
@@ -16222,8 +16222,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
 	                                                                                                                                                                                                     * @fileoverview Util for array.
-	                                                                                                                                                                                                     * @author NHN Ent.
-	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                     * @author NHN.
+	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                     */
 	
 	
@@ -16401,13 +16401,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return result;
 	}
 	
+	/**
+	 * find index from date type array
+	 * @memberOf module:arrayUtil
+	 * @param {Array} dateArray date type value array
+	 * @param {Date} date target date
+	 * @returns {number} index
+	 */
+	function findIndexFromDateTypeArray(dateArray, date) {
+	    var dateValue = Number(date);
+	    var foundIndex = -1;
+	
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	        for (var _iterator = dateArray.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var _step$value = _slicedToArray(_step.value, 2),
+	                idx = _step$value[0],
+	                value = _step$value[1];
+	
+	            if (Number(value) === dateValue) {
+	                foundIndex = idx;
+	                break;
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	                _iterator['return']();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    return foundIndex;
+	}
+	
 	exports['default'] = {
 	    min: min,
 	    max: max,
 	    any: any,
 	    all: all,
 	    unique: unique,
-	    pivot: pivot
+	    pivot: pivot,
+	    findIndexFromDateTypeArray: findIndexFromDateTypeArray
 	};
 
 /***/ }),
@@ -16444,8 +16489,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Raphael boxplot chart renderer.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var ANIMATION_DURATION = 700;
@@ -17182,8 +17227,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Raphael bullet chart renderer.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var browser = _tuiCodeSnippet2['default'].browser;
@@ -17750,8 +17795,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Raphael line chart renderer.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var EMPHASIS_OPACITY = 1;
@@ -18162,8 +18207,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview RaphaelLineTypeBase is base class for line type renderer.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -19346,8 +19391,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @private */
 	/**
 	 * @fileoverview Predicate.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	var predicate = {
@@ -19973,8 +20018,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Raphael area chart renderer.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var GUIDE_AREACHART_AREAOPACITY_TYPE = _const2['default'].GUIDE_AREACHART_AREAOPACITY_TYPE,
@@ -20571,8 +20616,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	/**
 	 * @fileoverview util for console
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	exports['default'] = {
@@ -20616,8 +20661,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview RaphaelPieCharts is graph renderer for pie chart.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var DEGREE_180 = 180;
@@ -21322,8 +21367,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Raphael radial line series renderer.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var EMPHASIS_OPACITY = 1;
@@ -21571,8 +21616,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Raphael bubble chart renderer.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var ANIMATION_DURATION = 700;
@@ -22106,8 +22151,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview RaphaelBoxTypeChart is graph renderer for box type chart(heatmap chart, treemap chart).
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var ANIMATION_DURATION = 100;
@@ -22662,8 +22707,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview RaphaelPieCharts is graph renderer for map chart.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var browser = _tuiCodeSnippet2['default'].browser;
@@ -23065,8 +23110,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Raphael title renderer.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
@@ -23653,8 +23698,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/**
 	 * @fileoverview calculator.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	var PERCENT_DIVISOR = 100;
@@ -23998,8 +24043,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview RaphaelMapLegend is graph renderer for map chart legend.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var DEGREE_HORIZONTAL_BAR = 360;
@@ -24450,8 +24495,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview RaphaelCircleLegend is graph renderer for circleLegend.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	/**
@@ -24527,8 +24572,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Raphael title renderer.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var RaphaelTitleComponent = function () {
@@ -24653,8 +24698,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Raphael title renderer.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -25224,8 +25269,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview RaphaelRadialPlot is graph renderer for radial plot.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var STEP_TOP_ADJUSTMENT = 8;
@@ -25742,8 +25787,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview chart.js is entry point of Toast UI Chart.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	function barChart(container, rawData, options) {
@@ -27180,8 +27225,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var charts = {}; /**
 	                  * @fileoverview  Chart factory play role register chart.
 	                  *                Also, you can get chart from this factory.
-	                  * @author NHN Ent.
-	                  *         FE Development Lab <dl_javascript@nhnent.com>
+	                  * @author NHN.
+	                  *         FE Development Lab <dl_javascript@nhn.com>
 	                  */
 	
 	exports['default'] = {
@@ -27254,8 +27299,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @fileoverview Raw data handler.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
 	
@@ -27600,8 +27645,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var plugins = {}; /**
 	                   * @fileoverview  Plugin factory play role register rendering plugin.
 	                   *                Also, you can get plugin from this factory.
-	                   * @author NHN Ent.
-	                   *         FE Development Lab <dl_javascript@nhnent.com>
+	                   * @author NHN.
+	                   *         FE Development Lab <dl_javascript@nhn.com>
 	                   */
 	exports['default'] = {
 	    /**
@@ -27647,8 +27692,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @Fileoverview  Theme manager.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
 	var _const = __webpack_require__(335);
@@ -28102,8 +28147,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	/**
 	 * @fileoverview  Map Manager.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	var maps = {};
 	
@@ -28144,8 +28189,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @fileoverview util for object
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
 	
@@ -28225,8 +28270,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileOverview Series data importer
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	function getChartDataFrom2DArray(table2DArray) {
@@ -28658,8 +28703,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Bar chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -28858,8 +28903,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview ChartBase
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var GA_TRACKING_ID = 'UA-129983528-1';
@@ -30008,8 +30053,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview ComponentManager manages components of chart.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	// legends
@@ -30208,11 +30253,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Preset before rerender
+	     * This method is eliminating zoom buttons and tooltips, so only works with zoom supported charts.
 	     */
 	
 	
 	    ComponentManager.prototype.presetBeforeRerender = function presetBeforeRerender() {
-	        this.componentMap.mouseEventDetector.presetBeforeRerender();
+	        if (this.componentMap.mouseEventDetector.zoomable) {
+	            this.componentMap.mouseEventDetector.presetBeforeRerender();
+	        }
 	    };
 	
 	    /**
@@ -30507,8 +30555,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                          
 	                                                                                                                                                           * @fileoverview  Axis component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var AXIS_EDGE_RATIO = _const2['default'].AXIS_EDGE_RATIO,
@@ -31356,8 +31404,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Plot component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var Plot = function () {
@@ -31752,6 +31800,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    Plot.prototype._createOptionalLinePositionMap = function _createOptionalLinePositionMap(optionalLineData, xAxisData, width) {
 	        var categories = this.dataProcessor.getCategories();
+	        var categoriesLen = categories.length;
+	        var xAxisValues = this.dataProcessor.valuesMap.linex;
+	
 	        var range = this._createOptionalLineValueRange(optionalLineData);
 	        var startPosition = void 0,
 	            endPosition = void 0;
@@ -31765,11 +31816,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        if (_tuiCodeSnippet2['default'].isNull(startPosition)) {
-	            startPosition = this._isBeforeVisibleCategories(range[0], categories[0]) ? 0 : -1;
+	            var startValue = categoriesLen ? categories[0] : xAxisValues[0];
+	            startPosition = this._isBeforeVisibleValue(range[0], startValue) ? 0 : -1;
 	        }
 	
-	        if (_tuiCodeSnippet2['default'].isNull(endPosition)) {
-	            endPosition = this._isAfterVisibleCatgories(range[1], categories[categories.length - 1]) ? width : -1;
+	        if (_tuiCodeSnippet2['default'].isNull(endPosition) || endPosition > width) {
+	            var endValue = categoriesLen ? categories[categoriesLen - 1] : xAxisValues[xAxisValues.length - 1];
+	            endPosition = this._isAfterVisibleValue(range[1], endValue) ? width : -1;
 	        }
 	
 	        return {
@@ -31780,13 +31833,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * @param {string} value - value of starting point
-	     * @param {string} firstCategory - first visible category data
-	     * @returns {boolean} - whether starting point value is at before first visible category data or not
+	     * @param {string} firstValue - first visible value data
+	     * @returns {boolean} - whether starting point value is at before first visible data or not
 	     * @private
 	     */
 	
 	
-	    Plot.prototype._isBeforeVisibleCategories = function _isBeforeVisibleCategories(value, firstCategory) {
+	    Plot.prototype._isBeforeVisibleValue = function _isBeforeVisibleValue(value, firstValue) {
 	        var dataProcessor = this.dataProcessor;
 	
 	
@@ -31795,24 +31848,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        if (_predicate2['default'].isDatetimeType(this.xAxisTypeOption)) {
-	            return value < firstCategory;
+	            return value < firstValue;
 	        }
 	
 	        var valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
-	        var firstCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(firstCategory);
+	        var firstValueIndex = dataProcessor.findAbsoluteCategoryIndex(firstValue);
 	
-	        return valueIndex >= 0 && valueIndex < firstCategoryIndex;
+	        return valueIndex >= 0 && valueIndex < firstValueIndex;
 	    };
 	
 	    /**
 	     * @param {string} value - value of end point
-	     * @param {string} lastCategory - last visible category data
-	     * @returns {boolean} - whether end point value is at after last visible category data or not
+	     * @param {string} lastValue - last visible value data
+	     * @returns {boolean} - whether end point value is at after last visible value data or not
 	     * @private
 	     */
 	
 	
-	    Plot.prototype._isAfterVisibleCatgories = function _isAfterVisibleCatgories(value, lastCategory) {
+	    Plot.prototype._isAfterVisibleValue = function _isAfterVisibleValue(value, lastValue) {
 	        var dataProcessor = this.dataProcessor;
 	
 	
@@ -31821,13 +31874,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        if (_predicate2['default'].isDatetimeType(this.xAxisTypeOption)) {
-	            return value > lastCategory;
+	            return value > lastValue;
 	        }
 	
 	        var valueIndex = dataProcessor.findAbsoluteCategoryIndex(value);
-	        var lastCategoryIndex = dataProcessor.findAbsoluteCategoryIndex(lastCategory);
+	        var lastValueIndex = dataProcessor.findAbsoluteCategoryIndex(lastValue);
 	
-	        return valueIndex >= 0 && valueIndex > lastCategoryIndex;
+	        return valueIndex >= 0 && valueIndex > lastValueIndex;
 	    };
 	
 	    /**
@@ -32331,8 +32384,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview  Title component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -32529,8 +32582,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Radial plot component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
@@ -32918,8 +32971,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview module for geometric operation
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	function calculateAdjacent(degree, hypotenuse) {
@@ -33012,8 +33065,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview chartExportMenu component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var CHART_EXPORT_MENU_ITEMS = ['xls', 'csv', 'png', 'jpeg'];
@@ -33456,8 +33509,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/**
 	 * @fileOverview Chart exporter
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	var browser = _tuiCodeSnippet2['default'].browser,
@@ -33573,8 +33626,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
 	                                                                                                                                                                                                     * @fileOverview Chart data exporter
-	                                                                                                                                                                                                     * @author NHN Ent.
-	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                     * @author NHN.
+	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                     */
 	
 	var DATA_URI_HEADERS = {
@@ -33938,8 +33991,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileOverview File downloader for client-side download
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	function getDownloadMethod() {
@@ -34079,8 +34132,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
 	                                                                                                                                                                                                     * @fileOverview Chart image exporter
-	                                                                                                                                                                                                     * @author NHN Ent.
-	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                     * @author NHN.
+	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                     */
 	
 	var browser = _tuiCodeSnippet2['default'].browser;
@@ -34224,8 +34277,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @private */
 	/**
 	 * @fileoverview Event listener.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	var eventListener = {
 	    /**
@@ -34432,8 +34485,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview  Legend component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var LEGEND_ICON_HEIGHT = _const2['default'].LEGEND_ICON_HEIGHT,
@@ -34921,8 +34974,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview LegendModel is a model for legend area(checkbox, icon, label text)
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -35351,8 +35404,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview  Spectrum Legend component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
@@ -35754,8 +35807,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview  Circle legend component render a legend in the form of overlapping circles
 	                                                                                                                                                           *                  by representative radius values.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var CircleLegend = function () {
@@ -36034,8 +36087,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview NormalTooltip component.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	function tooltipFactory(params) {
@@ -36118,8 +36171,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview NormalTooltip component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -36506,8 +36559,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview TooltipBase is base class of tooltip components.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var TooltipBase = function () {
@@ -37716,8 +37769,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	}; /**
 	    * @fileoverview singleTooltipMixer is single tooltip mixer of map chart.
-	    * @author NHN Ent.
-	    *         FE Development Lab <dl_javascript@nhnent.com>
+	    * @author NHN.
+	    *         FE Development Lab <dl_javascript@nhn.com>
 	    */
 
 /***/ }),
@@ -37755,8 +37808,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    HTML_BULLET_TEMPLATE: '<div class="tui-chart-default-tooltip">' + '<div class="tui-chart-tooltip-body {{ categoryVisible }}">' + '<span class="tui-chart-legend-rect {{ chartType }}" style="{{ cssText }}"></span>' + '<span>{{ category }}</span>' + '<span class="tui-chart-tooltip-value">{{ label }} {{ suffix }}</span>' + '</div>' + '</div>'
 	}; /**
 	    * @fileoverview This is templates of tooltip.
-	    * @author NHN Ent.
-	    *         FE Development Lab <dl_javascript@nhnent.com>
+	    * @author NHN.
+	    *         FE Development Lab <dl_javascript@nhn.com>
 	    */
 	
 	exports['default'] = {
@@ -37786,8 +37839,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/**
 	 * @fileoverview This is template maker.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	exports['default'] = {
@@ -37873,8 +37926,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Group tooltip component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION = _const2['default'].TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION,
@@ -38469,8 +38522,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview GroupTooltipPositionModel is position model for group tooltip..
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -39016,8 +39069,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Tooltip component for map chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/**
@@ -39179,8 +39232,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview MapChartEventDetector is mouse event detector for map chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var MapChartEventDetector = function (_MouseEventDetectorBa) {
@@ -39435,8 +39488,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview MouseEventDetectorBase is base class for mouse event detector components.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var MouseEventDetectorBase = function () {
@@ -39987,8 +40040,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview TickBaseDataModel is tick base data model.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var TickBaseDataModel = function () {
@@ -40213,8 +40266,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview BoundsBaseCoordinateModel is data model for mouse event detector of bounds type.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	/**
@@ -40649,8 +40702,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @ignore
 	 */
 	/**
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	function mouseEventDetectorFactory(params) {
@@ -40719,8 +40772,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview AreaTypeEventDetector is mouse event detector for line type chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -41000,6 +41053,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.__esModule = true;
 	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @fileoverview  Mixer for zoom event of area type mouse event detector.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhn.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
+	
+	
 	var _mouseEventDetectorBase = __webpack_require__(397);
 	
 	var _mouseEventDetectorBase2 = _interopRequireDefault(_mouseEventDetectorBase);
@@ -41011,6 +41071,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _domHandler = __webpack_require__(336);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
+	
+	var _predicate = __webpack_require__(342);
+	
+	var _predicate2 = _interopRequireDefault(_predicate);
+	
+	var _arrayUtil = __webpack_require__(337);
+	
+	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
 	var _renderUtil = __webpack_require__(334);
 	
@@ -41030,11 +41098,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Mixer for zoom event of area type mouse event detector.
 	 * @mixin
 	 * @private */
-	/**
-	 * @fileoverview  Mixer for zoom event of area type mouse event detector.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
-	 */
 	exports['default'] = {
 	    /**
 	     * Initialize for zoom.
@@ -41343,6 +41406,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * Adjust index range for ensure three indexes.
+	     * @param {Array.<{startIndex: number, endIndex: number}>} indexRange - index range
+	     * @returns {object} startIndex, endIndex
+	     * @private
+	     */
+	    _changeIndexToHaveMinimumIndexes: function _changeIndexToHaveMinimumIndexes(_ref) {
+	        var _ref2 = _slicedToArray(_ref, 2),
+	            startIndex = _ref2[0],
+	            endIndex = _ref2[1];
+	
+	        var distanceOfRange = endIndex - startIndex;
+	
+	        if (distanceOfRange === 0) {
+	            if (startIndex === 0) {
+	                endIndex += 2;
+	            } else {
+	                startIndex -= 1;
+	                endIndex += 1;
+	            }
+	        } else if (distanceOfRange === 1) {
+	            if (startIndex === 0) {
+	                endIndex += 1;
+	            } else {
+	                startIndex -= 1;
+	            }
+	        }
+	
+	        return {
+	            startIndex: startIndex,
+	            endIndex: endIndex
+	        };
+	    },
+	
+	
+	    /**
+	     * Adjust index range for ensure three indexes.
 	     * @param {number} startIndex - start index
 	     * @param {number} endIndex - end index
 	     * @returns {Array.<number>}
@@ -41352,37 +41450,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var indexRange = [startIndex, endIndex].sort(function (a, b) {
 	            return a - b;
 	        });
-	        var distanceOfRange = indexRange[1] - indexRange[0];
 	
-	        if (distanceOfRange === 0) {
-	            if (indexRange[0] === 0) {
-	                indexRange[1] += 2;
-	            } else {
-	                indexRange[0] -= 1;
-	                indexRange[1] += 1;
-	            }
-	        } else if (distanceOfRange === 1) {
-	            if (indexRange[0] === 0) {
-	                indexRange[1] += 1;
-	            } else {
-	                indexRange[0] -= 1;
-	            }
-	        }
-	
-	        return indexRange;
+	        return this._changeIndexToHaveMinimumIndexes(indexRange);
 	    },
 	
 	
 	    /**
 	     * Fire zoom mouse event detector.
+	     * @private
+	     */
+	    _fireZoom: function _fireZoom() {
+	        if (this.dataProcessor.isLineCoordinateType()) {
+	            this._fireZoomUsingValue(this.dragStartIndexes, this.dragEndIndexes);
+	        } else {
+	            this._fireZoomUsingIndex(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
+	        }
+	    },
+	
+	
+	    /**
+	     * Fire zoom mouse event detector using Index.
 	     * @param {number} startIndex - start index
 	     * @param {number} endIndex - end index
 	     * @private
 	     */
-	    _fireZoom: function _fireZoom(startIndex, endIndex) {
+	    _fireZoomUsingIndex: function _fireZoomUsingIndex(startIndex, endIndex) {
 	        var reverseMove = startIndex > endIndex;
-	        var indexRange = this._adjustIndexRange(startIndex, endIndex);
-	        var distanceOfRange = indexRange[1] - indexRange[0];
+	
+	        var _adjustIndexRange2 = this._adjustIndexRange(startIndex, endIndex),
+	            adjustedStartIndex = _adjustIndexRange2.startIndex,
+	            adjustedEndIndex = _adjustIndexRange2.endIndex;
+	
+	        var distanceOfRange = adjustedEndIndex - adjustedStartIndex;
 	
 	        if (this.prevDistanceOfRange === distanceOfRange) {
 	            return;
@@ -41390,7 +41489,69 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        this.prevDistanceOfRange = distanceOfRange;
 	        this.reverseMove = reverseMove;
-	        this.eventBus.fire('zoom', indexRange);
+	        this.eventBus.fire('zoom', [adjustedStartIndex, adjustedEndIndex]);
+	    },
+	
+	
+	    /**
+	     * Adjust value range for ensure three indexes.
+	     * @param {number} startValue - start index
+	     * @param {number} endValue - end index
+	     * @returns {Array.<number>}
+	     * @private
+	     */
+	    _adjustValueRange: function _adjustValueRange(startValue, endValue) {
+	        var startValueIndex = void 0,
+	            endValueIndex = void 0;
+	        var _dataProcessor = this.dataProcessor,
+	            integratedXAxisData = _dataProcessor.integratedXAxisData,
+	            xAxisOptions = _dataProcessor.options.xAxis;
+	
+	        var isDatetime = _predicate2['default'].isDatetimeType(xAxisOptions.type);
+	
+	        if (isDatetime) {
+	            startValueIndex = _arrayUtil2['default'].findIndexFromDateTypeArray(integratedXAxisData, new Date(startValue));
+	            endValueIndex = _arrayUtil2['default'].findIndexFromDateTypeArray(integratedXAxisData, new Date(endValue));
+	        } else {
+	            startValueIndex = integratedXAxisData.indexOf(startValue);
+	            endValueIndex = integratedXAxisData.indexOf(endValue);
+	        }
+	
+	        var indexRange = [startValueIndex, endValueIndex].sort(function (a, b) {
+	            return a - b;
+	        });
+	
+	        var _changeIndexToHaveMin = this._changeIndexToHaveMinimumIndexes(indexRange),
+	            startIndex = _changeIndexToHaveMin.startIndex,
+	            endIndex = _changeIndexToHaveMin.endIndex;
+	
+	        return [integratedXAxisData[startIndex], integratedXAxisData[endIndex]];
+	    },
+	
+	
+	    /**
+	     * Fire zoom mouse event detector for coordinateChart.
+	     * @param {object} startIndexes - start index
+	     * @param {object} endIndexes - end index
+	     * @private
+	     */
+	    _fireZoomUsingValue: function _fireZoomUsingValue(startIndexes, endIndexes) {
+	        var startIndex = startIndexes.index,
+	            startGroupIndex = startIndexes.groupIndex;
+	        var endIndex = endIndexes.index,
+	            endGroupIndex = endIndexes.groupIndex;
+	
+	        var seriesData = this.dataProcessor.rawData.series.line;
+	
+	        var _seriesData$startInde = _slicedToArray(seriesData[startIndex].data[startGroupIndex], 1),
+	            startValue = _seriesData$startInde[0];
+	
+	        var _seriesData$endIndex$ = _slicedToArray(seriesData[endIndex].data[endGroupIndex], 1),
+	            endValue = _seriesData$endIndex$[0];
+	
+	        var valueRange = this._adjustValueRange(startValue, endValue);
+	
+	        this.eventBus.fire('zoom', valueRange);
 	    },
 	
 	
@@ -41435,7 +41596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.dragEndIndexes = foundedDragEndData.indexes;
 	            this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
 	            this._hideDragSelection();
-	            this._fireZoom(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
+	            this._fireZoom();
 	        } else {
 	            this._setIsShowTooltipAfterZoomFlag(e.clientX, e.clientY);
 	            this._hideDragSelection();
@@ -41505,8 +41666,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview AreaTypeDataModel is data model for mouse event detector of area type.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -41796,8 +41957,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview SimpleEventDetector is event handle layer for simply sending clientX, clientY.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var SimpleEventDetector = function (_MouseEventDetectorBa) {
@@ -41938,8 +42099,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview GroupTypeEventDetector is mouse event detector for grouped tooltip.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -42220,8 +42381,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview BoundsTypeEventDetector is mouse event detector for bounds type charts
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *                                                                              like bar, column, heatmap, treemap.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var BoundsTypeEventDetector = function (_EventDetectorBase) {
@@ -42536,8 +42697,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Bar chart series component.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -42802,8 +42963,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Series base component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var LABEL_FADE_IN_DURATION = 600;
@@ -43754,8 +43915,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview BarTypeSeriesBase is base class for bar type series.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var CHART_PADDING = _const2['default'].CHART_PADDING,
@@ -44174,8 +44335,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/**
 	 * @fileoverview  renderingLabelHelper is helper for rendering of series label.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	var MAX_HEIGHT_WORD = _const2['default'].MAX_HEIGHT_WORD,
@@ -44425,8 +44586,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Column chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var ColumnChartSeries = function (_Series) {
@@ -44648,8 +44809,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Line chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var LineChartSeries = function (_Series) {
@@ -44785,8 +44946,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview LineTypeSeriesBase is base class for line type series.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var SERIES_EXPAND_SIZE = _const2['default'].SERIES_EXPAND_SIZE,
@@ -45254,8 +45415,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Radial chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
@@ -45454,8 +45615,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Area chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var AreaChartSeries = function (_Series) {
@@ -45660,8 +45821,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Bubble chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var BubbleChartSeries = function (_Series) {
@@ -45850,8 +46011,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview CoordinateTypeSeriesBase is base class for coordinate type series.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -46017,8 +46178,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Scatter chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var ScatterChartSeries = function (_Series) {
@@ -46140,8 +46301,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Map chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var browser = _tuiCodeSnippet2['default'].browser;
@@ -46737,8 +46898,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Pie chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
@@ -47670,8 +47831,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Series component for rendering graph of heatmap chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var HeatmapChartSeries = function (_Series) {
@@ -47912,8 +48073,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Series component for rendering graph of treemap chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -48589,8 +48750,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	}; /**
 	    * @fileoverview squarifier create squarified bounds for rendering graph of treemap chart.
-	    * @author NHN Ent.
-	    *         FE Development Lab <dl_javascript@nhnent.com>
+	    * @author NHN.
+	    *         FE Development Lab <dl_javascript@nhn.com>
 	    */
 
 /***/ }),
@@ -48630,8 +48791,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Boxplot chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var SERIES_EXPAND_SIZE = _const2['default'].SERIES_EXPAND_SIZE,
@@ -48869,8 +49030,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Bullet chart series component.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var BULLET_TYPE_ACTUAL = _const2['default'].BULLET_TYPE_ACTUAL,
@@ -49333,8 +49494,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Zoom component.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var COMPONENT_TYPE_DOM = _const2['default'].COMPONENT_TYPE_DOM,
@@ -49582,8 +49743,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    HTML_SERIES_BLOCK: '<div class="tui-chart-series-block" style="{{ cssText }}">{{ label }}</div>'
 	}; /**
 	    * @fileoverview This is templates of series.
-	    * @author NHN Ent.
-	    *         FE Development Lab <dl_javascript@nhnent.com>
+	    * @author NHN.
+	    *         FE Development Lab <dl_javascript@nhn.com>
 	    */
 	exports['default'] = {
 	    tplSeriesLabel: _templateMaker2['default'].template(htmls.HTML_SERIES_LABEL),
@@ -49667,8 +49828,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview DataProcessor process rawData.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * rawData.categories --> categories
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * rawData.series --> SeriesDataModel, legendLabels, legendData
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var isUndefined = _tuiCodeSnippet2['default'].isUndefined;
@@ -49766,8 +49927,51 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this.initData(rawData);
 	        _this.initZoomedRawData();
 	        _this.baseInit();
+	
+	        if (_this.isLineCoordinateType()) {
+	            _this.integratedXAxisData = _this._integrateXAxisData();
+	        }
 	        return _this;
 	    }
+	
+	    /**
+	     * make integrated X Axis Data for coordinate chart
+	     * @returns {array} integratedXAxisData
+	     */
+	
+	
+	    DataProcessor.prototype._integrateXAxisData = function _integrateXAxisData() {
+	        var seriesData = this.rawData.series.line;
+	        var options = this.options.xAxis || {};
+	        var integratedXAxisData = [];
+	        var isDateTime = false;
+	
+	        if (_tuiCodeSnippet2['default'].isArray(options)) {
+	            isDateTime = options.filter(function (option) {
+	                return option.type && _predicate2['default'].isDatetimeType(option.type);
+	            });
+	        } else {
+	            isDateTime = options.type && _predicate2['default'].isDatetimeType(options.type);
+	        }
+	
+	        seriesData.forEach(function (seriesDatum) {
+	            seriesDatum.data.forEach(function (data) {
+	                integratedXAxisData.push(data[0]);
+	            });
+	        });
+	
+	        integratedXAxisData = [].concat(_toConsumableArray(new Set(integratedXAxisData)));
+	
+	        if (isDateTime) {
+	            integratedXAxisData = integratedXAxisData.map(function (data) {
+	                return new Date(data);
+	            });
+	        }
+	
+	        return integratedXAxisData.sort(function (a, b) {
+	            return a - b;
+	        });
+	    };
 	
 	    /**
 	     * Get original raw data.
@@ -49809,11 +50013,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._filterSeriesDataByIndexRange = function _filterSeriesDataByIndexRange(seriesData, startIndex, endIndex) {
-	        seriesData.forEach(function (seriesDatum) {
+	        var series = [].concat(_toConsumableArray(seriesData));
+	
+	        series.forEach(function (seriesDatum) {
 	            seriesDatum.data = seriesDatum.data.slice(startIndex, endIndex + 1);
 	        });
 	
-	        return seriesData;
+	        return series;
 	    };
 	
 	    /**
@@ -49832,33 +50038,92 @@ return /******/ (function(modules) { // webpackBootstrap
 	            startIndex = _indexRange[0],
 	            endIndex = _indexRange[1];
 	
-	        Object.entries(rawData.series).forEach(function (_ref) {
+	        var data = Object.assign({}, rawData);
+	
+	        Object.entries(data.series).forEach(function (_ref) {
 	            var _ref2 = _slicedToArray(_ref, 2),
 	                seriesType = _ref2[0],
 	                seriesDataSet = _ref2[1];
 	
-	            rawData.series[seriesType] = _this2._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
+	            data.series[seriesType] = _this2._filterSeriesDataByIndexRange(seriesDataSet, startIndex, endIndex);
 	        });
 	
-	        if (rawData.categories) {
-	            rawData.categories = rawData.categories.slice(startIndex, endIndex + 1);
+	        if (data.categories) {
+	            data.categories = data.categories.slice(startIndex, endIndex + 1);
 	        }
 	
-	        return rawData;
+	        return data;
+	    };
+	
+	    /**
+	     * Filter seriesData by value.
+	     * @param {Array.<{data: Array}>} seriesData - series data
+	     * @param {number} minValue - minimum value
+	     * @param {number} maxValue - maximum value
+	     * @returns {Array.<Array.<object>>}
+	     * @private
+	     */
+	
+	
+	    DataProcessor.prototype._filterSeriesDataByValue = function _filterSeriesDataByValue(seriesData, minValue, maxValue) {
+	        var isDatetime = _predicate2['default'].isDatetimeType(this.options.xAxis.type);
+	        var series = [].concat(_toConsumableArray(seriesData));
+	
+	        series.forEach(function (seriesDatum) {
+	            seriesDatum.data = seriesDatum.data.filter(function (data) {
+	                var xAxisValue = isDatetime ? new Date(data[0]) : data[0];
+	
+	                return xAxisValue >= minValue && xAxisValue <= maxValue;
+	            });
+	        });
+	
+	        return series;
+	    };
+	
+	    /**
+	     * Filter raw data by value.
+	     * @param {{series: Array.<object>, categories: Array.<string>}} rawData - raw data
+	     * @param {Array.<number>} valueRange - value range for zoom
+	     * @returns {*}
+	     * @private
+	     */
+	
+	
+	    DataProcessor.prototype._filterRawDataByValue = function _filterRawDataByValue(rawData, valueRange) {
+	        var _this3 = this;
+	
+	        var _valueRange = _slicedToArray(valueRange, 2),
+	            minValue = _valueRange[0],
+	            maxValue = _valueRange[1];
+	
+	        var data = Object.assign({}, rawData);
+	
+	        Object.entries(data.series).forEach(function (_ref3) {
+	            var _ref4 = _slicedToArray(_ref3, 2),
+	                seriesType = _ref4[0],
+	                seriesDataSet = _ref4[1];
+	
+	            data.series[seriesType] = _this3._filterSeriesDataByValue(seriesDataSet, minValue, maxValue);
+	        });
+	
+	        return data;
 	    };
 	
 	    /**
 	     * Update raw data for zoom
-	     * @param {Array.<number>} indexRange - index range for zoom
+	     * @param {Array.<number>} range - index or value range for zoom
 	     */
 	
 	
-	    DataProcessor.prototype.updateRawDataForZoom = function updateRawDataForZoom(indexRange) {
+	    DataProcessor.prototype.updateRawDataForZoom = function updateRawDataForZoom(range) {
 	        var currentData = this.getCurrentData();
 	        var rawData = this.getRawData();
 	
-	        this.zoomedRawData = this._filterRawDataByIndexRange(currentData, indexRange);
-	        rawData = this._filterRawDataByIndexRange(rawData, indexRange);
+	        var getZoomedRawData = this.isLineCoordinateType() ? this._filterRawDataByValue.bind(this) : this._filterRawDataByIndexRange.bind(this);
+	
+	        this.zoomedRawData = getZoomedRawData(currentData, range);
+	        rawData = getZoomedRawData(rawData, range);
+	
 	        this.initData(rawData);
 	    };
 	
@@ -49963,6 +50228,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {null|boolean}
 	         */
 	        this.coordinateType = null;
+	
+	        /**
+	         * whether line chart with coordinate data or not
+	         * @type {null|boolean}
+	         */
+	        this.lineCoordinateType = null;
 	    };
 	
 	    /**
@@ -50010,7 +50281,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._mapCategories = function _mapCategories(categories, axisName) {
-	        var _this3 = this;
+	        var _this4 = this;
 	
 	        var axisType = axisName + 'Axis';
 	        var options = this.options[axisType] || {};
@@ -50025,7 +50296,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (isDateTime) {
 	            categories = categories.map(function (value) {
-	                return _this3.chageDatetypeToTimestamp(value);
+	                return _this4.chageDatetypeToTimestamp(value);
 	            });
 	        } else {
 	            categories = this._escapeCategories(categories);
@@ -50202,7 +50473,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype.findCategoryIndex = function findCategoryIndex(value) {
-	        var _this4 = this;
+	        var _this5 = this;
 	
 	        var categories = this.getCategories();
 	        var isDateType = this.getCategorieDateType();
@@ -50210,7 +50481,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        categories.forEach(function (category, index) {
 	            if (isDateType) {
-	                value = _this4.chageDatetypeToTimestamp(value);
+	                value = _this5.chageDatetypeToTimestamp(value);
 	            }
 	
 	            if (category === value) {
@@ -50329,6 +50600,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    DataProcessor.prototype.findStackIndex = function findStackIndex(stack) {
 	        return _tuiCodeSnippet2['default'].inArray(stack, this.getStacks());
+	    };
+	
+	    /**
+	     * Whether line chart with coordinate data or not.
+	     * @returns {boolean}
+	     */
+	
+	
+	    DataProcessor.prototype.isLineCoordinateType = function isLineCoordinateType() {
+	        var lineCoordinateType = this.lineCoordinateType;
+	
+	
+	        if (!_tuiCodeSnippet2['default'].isExisty(lineCoordinateType)) {
+	            var chartType = this.chartType;
+	
+	            lineCoordinateType = _predicate2['default'].isLineTypeChart(chartType) && !this.hasCategories();
+	            this.lineCoordinateType = lineCoordinateType;
+	        }
+	
+	        return lineCoordinateType;
 	    };
 	
 	    /**
@@ -50486,10 +50777,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._pushValues = function _pushValues(seriesData, values, seriesType) {
-	        var _this5 = this;
+	        var _this6 = this;
 	
 	        seriesData.forEach(function (seriesDatum, index) {
-	            _this5._pushValue(seriesDatum, values[index], seriesType);
+	            _this6._pushValue(seriesDatum, values[index], seriesType);
 	        });
 	    };
 	
@@ -50501,7 +50792,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._pushSeriesData = function _pushSeriesData(values) {
-	        var _this6 = this;
+	        var _this7 = this;
 	
 	        if (this.chartType !== 'combo' && _tuiCodeSnippet2['default'].isArray(values)) {
 	            var temp = values;
@@ -50509,12 +50800,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            values[this.chartType] = temp;
 	        }
 	
-	        Object.entries(this.originalRawData.series).forEach(function (_ref3) {
-	            var _ref4 = _slicedToArray(_ref3, 2),
-	                seriesType = _ref4[0],
-	                seriesData = _ref4[1];
+	        Object.entries(this.originalRawData.series).forEach(function (_ref5) {
+	            var _ref6 = _slicedToArray(_ref5, 2),
+	                seriesType = _ref6[0],
+	                seriesData = _ref6[1];
 	
-	            _this6._pushValues(seriesData, values[seriesType], seriesType);
+	            _this7._pushValues(seriesData, values[seriesType], seriesType);
 	        });
 	    };
 	
@@ -50527,10 +50818,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._shiftValues = function _shiftValues(seriesData, seriesType) {
-	        var _this7 = this;
+	        var _this8 = this;
 	
 	        seriesData.forEach(function (seriesDatum) {
-	            var rawSeriesDatum = _this7._findRawSeriesDatumByName(seriesDatum.name, seriesType);
+	            var rawSeriesDatum = _this8._findRawSeriesDatumByName(seriesDatum.name, seriesType);
 	
 	            seriesDatum.data.shift();
 	            if (rawSeriesDatum) {
@@ -50546,14 +50837,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._shiftSeriesData = function _shiftSeriesData() {
-	        var _this8 = this;
+	        var _this9 = this;
 	
-	        Object.entries(this.originalRawData.series).forEach(function (_ref5) {
-	            var _ref6 = _slicedToArray(_ref5, 2),
-	                seriesType = _ref6[0],
-	                seriesData = _ref6[1];
+	        Object.entries(this.originalRawData.series).forEach(function (_ref7) {
+	            var _ref8 = _slicedToArray(_ref7, 2),
+	                seriesType = _ref8[0],
+	                seriesData = _ref8[1];
 	
-	            _this8._shiftValues(seriesData, seriesType);
+	            _this9._shiftValues(seriesData, seriesType);
 	        });
 	    };
 	
@@ -50591,10 +50882,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._pushDynamicDataForCoordinateType = function _pushDynamicDataForCoordinateType(data) {
-	        var _this9 = this;
+	        var _this10 = this;
 	
 	        Object.values(this.originalRawData.series).forEach(function (seriesDatum) {
-	            _this9._pushValue(seriesDatum, data[seriesDatum.name]);
+	            _this10._pushValue(seriesDatum, data[seriesDatum.name]);
 	        });
 	    };
 	
@@ -50639,18 +50930,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype.addDataFromRemainDynamicData = function addDataFromRemainDynamicData(shiftingOption) {
-	        var _this10 = this;
+	        var _this11 = this;
 	
 	        var dynamicData = this.dynamicData;
 	
 	        this.dynamicData = [];
 	
 	        dynamicData.forEach(function (datum) {
-	            _this10._pushCategory(datum.category);
-	            _this10._pushSeriesData(datum.values);
+	            _this11._pushCategory(datum.category);
+	            _this11._pushSeriesData(datum.values);
 	            if (shiftingOption) {
-	                _this10._shiftCategory();
-	                _this10._shiftSeriesData();
+	                _this11._shiftCategory();
+	                _this11._shiftSeriesData();
 	            }
 	        });
 	
@@ -50665,12 +50956,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._eachByAllSeriesDataModel = function _eachByAllSeriesDataModel(iteratee) {
-	        var _this11 = this;
+	        var _this12 = this;
 	
 	        var seriesTypes = this.seriesTypes || [this.chartType];
 	
 	        seriesTypes.forEach(function (chartType) {
-	            return iteratee(_this11.getSeriesDataModel(chartType), chartType);
+	            return iteratee(_this12.getSeriesDataModel(chartType), chartType);
 	        });
 	    };
 	
@@ -50961,10 +51252,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        if (pickerMethod) {
-	            Object.entries(seriesData).forEach(function (_ref7) {
-	                var _ref8 = _slicedToArray(_ref7, 2),
-	                    seriesType = _ref8[0],
-	                    seriesDatum = _ref8[1];
+	            Object.entries(seriesData).forEach(function (_ref9) {
+	                var _ref10 = _slicedToArray(_ref9, 2),
+	                    seriesType = _ref10[0],
+	                    seriesDatum = _ref10[1];
 	
 	                result[seriesType] = seriesDatum.map(pickerMethod);
 	            });
@@ -51013,7 +51304,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    DataProcessor.prototype._makeLegendData = function _makeLegendData() {
-	        var _ref9;
+	        var _ref11;
 	
 	        var legendLabels = this.getLegendLabels(this.chartType);
 	        var legendVisibilities = this.getLegendVisibility();
@@ -51040,7 +51331,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        });
 	
-	        return (_ref9 = []).concat.apply(_ref9, _toConsumableArray(legendData));
+	        return (_ref11 = []).concat.apply(_ref11, _toConsumableArray(legendData));
 	    };
 	
 	    /**
@@ -51308,8 +51599,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview data processor base.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	/**
@@ -51622,8 +51913,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @fileoverview SeriesDataModel is base model for drawing graph of chart series area,
 	                                                                                                                                                           *                  and create from rawSeriesData by user,
 	                                                                                                                                                           * SeriesDataModel.groups has SeriesGroups.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	/*
@@ -52379,8 +52670,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview SeriesGroup is a element of SeriesDataModel.groups.
 	                                                                                                                                                           * SeriesGroup.items has SeriesItem.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var SeriesGroup = function () {
@@ -52728,8 +53019,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview SeriesItem is a element of SeriesGroup.items.
 	                                                                                                                                                           * SeriesItem has processed terminal data like value, ratio, etc.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var SeriesItem = function () {
@@ -53070,8 +53361,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview SeriesItemForCoordinateType is a element of SeriesGroup.items.
 	                                                                                                                                                           * SeriesItemForCoordinateType has processed terminal data like x, y, r, xRatio, yRatio, rRatio.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var SeriesItemForCoordinateType = function () {
@@ -53289,8 +53580,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview SeriesDataModelForBoxplot is boxplot series model for drawing graph of chart series area,
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *                  and create from rawSeriesData by user,
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * SeriesDataModel.groups has SeriesGroups.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/*
@@ -53474,8 +53765,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview SeriesItem is a element of SeriesGroup.items.
 	                                                                                                                                                           * SeriesItem has processed terminal data like value, ratio, etc.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var SeriesItem = function () {
@@ -53845,8 +54136,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview SeriesDataModel for Bullet Chart
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -53988,8 +54279,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview SeriesDataModelForTreemap is base model for drawing graph of treemap chart series area.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * SeriesDataModel.groups has SeriesGroups.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	var SeriesDataModelForTreeMap = function (_SeriesDataModel) {
@@ -54370,8 +54661,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview SeriesItem for treemap.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var SeriesItemForTreemap = function () {
@@ -54523,8 +54814,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview Bounds and scale data builder.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	exports['default'] = {
@@ -54813,8 +55104,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview Bounds model.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -55821,8 +56112,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview Calculator for circle legend.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	exports['default'] = {
@@ -56019,8 +56310,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	}; /**
 	    * @fileoverview Calculator for dimension of axis.
-	    * @author NHN Ent.
-	    *         FE Development Lab <dl_javascript@nhnent.com>
+	    * @author NHN.
+	    *         FE Development Lab <dl_javascript@nhn.com>
 	    */
 
 /***/ }),
@@ -56066,8 +56357,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @private */
 	/**
 	 * @fileoverview Calculator for dimension of legend.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	exports['default'] = {
@@ -56353,8 +56644,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @private */
 	/**
 	 * @fileoverview Calculator for series.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	exports['default'] = {
@@ -56459,8 +56750,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview Calculator for spectrum legend.
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	exports['default'] = {
@@ -57027,8 +57318,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @fileoverview scaleMaker calculates the limit and step into values of processed data and returns it.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @auth NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *       FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @auth NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *       FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
 	var _const = __webpack_require__(335);
@@ -57681,8 +57972,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview scaleMaker calculates the limit and step into values of processed data and returns it.
-	 * @auth NHN Ent.
-	 *       FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *       FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	var scaleLabelFormatter = {
@@ -57776,8 +58067,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @fileoverview Axis Data Maker
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
 	var _const = __webpack_require__(335);
@@ -58440,8 +58731,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Column chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -58593,8 +58884,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Line chart
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -59207,8 +59498,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Area chart
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -59500,8 +59791,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Column and Line Combo chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -59770,8 +60061,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview Implements valid type maker on yAxisOptions
-	 * @author NHN Ent.
-	 *         FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	function makeChartTypesMap(rawSeriesData, yAxisOption) {
@@ -59854,8 +60145,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Line and Scatter Combo chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -59993,8 +60284,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Line and Area Combo chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -60367,8 +60658,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Pie and Donut Combo chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -60482,8 +60773,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Pie chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -60582,8 +60873,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Bubble chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -60735,8 +61026,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Scatter chart is a type of plot or mathematical diagram using Cartesian coordinates
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *                  to display values for typically two variables for a set of data.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	
@@ -60863,8 +61154,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Heatmap chart is a graphical representation of data where the individual values contained
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *                      in a matrix are represented as colors.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -61013,8 +61304,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview ColorSpectrum create a color spectrum and provide color value.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	
@@ -61090,7 +61381,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	/**
 	 * @fileoverview Utility methods to manipulate colors
-	 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
 	var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
@@ -61356,8 +61648,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Treemap chart is graphical representation of hierarchical data by using rectangles.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -61496,8 +61788,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Map chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -61634,8 +61926,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
 	                                                                                                                                                           * @fileoverview MapChartMapModel is map model of map chart.
-	                                                                                                                                                           * @author NHN Ent.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                           * @author NHN.
+	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
 	var MapChartMapModel = function () {
@@ -62141,8 +62433,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Data processor for map chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/**
@@ -62341,8 +62633,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Radial chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -62458,8 +62750,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Boxplot chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
@@ -62595,8 +62887,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Bullet chart.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
 	/** Class representing a point. */
