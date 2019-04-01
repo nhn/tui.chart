@@ -351,7 +351,7 @@ export default {
      * @private
      */
     _fireZoom() {
-        if (this.dataProcessor.isCoordinateType()) {
+        if (this.dataProcessor.isLineCoordinateType()) {
             this._fireZoomUsingValue(this.dragStartIndexes, this.dragEndIndexes);
         } else {
             this._fireZoomUsingIndex(this.dragStartIndexes.groupIndex, this.dragEndIndexes.groupIndex);
