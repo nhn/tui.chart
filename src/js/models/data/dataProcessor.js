@@ -112,7 +112,7 @@ class DataProcessor extends DataProcessorBase {
         this.initZoomedRawData();
         this.baseInit();
 
-        if (this.isLineChartWithCoordinateData()) {
+        if (this.isLineCoordinateType()) {
             this.integratedXAxisData = this._integrateXAxisData();
         }
     }
@@ -261,7 +261,7 @@ class DataProcessor extends DataProcessorBase {
         const currentData = this.getCurrentData();
         let rawData = this.getRawData();
 
-        const getZoomedRawData = this.isLineChartWithCoordinateData() ?
+        const getZoomedRawData = this.isLineCoordinateType() ?
             this._filterRawDataByValue.bind(this) : this._filterRawDataByIndexRange.bind(this);
 
         this.zoomedRawData = getZoomedRawData(currentData, range);
@@ -370,7 +370,7 @@ class DataProcessor extends DataProcessorBase {
          * whether line chart with coordinate data or not
          * @type {null|boolean}
          */
-        this.lineChartWithCoordinateData = null;
+        this.lineCoordinateType = null;
     }
 
     /**
@@ -691,16 +691,16 @@ class DataProcessor extends DataProcessorBase {
      * Whether line chart with coordinate data or not.
      * @returns {boolean}
      */
-    isLineChartWithCoordinateData() {
-        let {lineChartWithCoordinateData} = this;
+    isLineCoordinateType() {
+        let {lineCoordinateType} = this;
 
-        if (!snippet.isExisty(lineChartWithCoordinateData)) {
+        if (!snippet.isExisty(lineCoordinateType)) {
             const {chartType} = this;
-            lineChartWithCoordinateData = predicate.isLineTypeChart(chartType) && !this.hasCategories();
-            this.lineChartWithCoordinateData = lineChartWithCoordinateData;
+            lineCoordinateType = predicate.isLineTypeChart(chartType) && !this.hasCategories();
+            this.lineCoordinateType = lineCoordinateType;
         }
 
-        return lineChartWithCoordinateData;
+        return lineCoordinateType;
     }
 
     /**
