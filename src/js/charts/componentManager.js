@@ -219,9 +219,12 @@ class ComponentManager {
 
     /**
      * Preset before rerender
+     * This method is eliminating zoom buttons and tooltips, so only works with zoom supported charts.
      */
     presetBeforeRerender() {
-        this.componentMap.mouseEventDetector.presetBeforeRerender();
+        if (this.componentMap.mouseEventDetector.zoomable) {
+            this.componentMap.mouseEventDetector.presetBeforeRerender();
+        }
     }
 
     /**
