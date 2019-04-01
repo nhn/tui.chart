@@ -1,8 +1,8 @@
 /**
  * @fileoverview SeriesItem is a element of SeriesGroup.items.
  * SeriesItem has processed terminal data like value, ratio, etc.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import chartConst from '../../const';

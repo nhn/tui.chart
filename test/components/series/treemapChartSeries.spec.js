@@ -1,7 +1,7 @@
 /**
  * @fileoverview test for TreemapChartSeries
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import treemapSeriesFactory from '../../../src/js/components/series/treemapChartSeries.js';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModelForTreemap';

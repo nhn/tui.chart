@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for circleLegendCalculator.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import circleLegendCalculator from '../../../src/js/models/bounds/circleLegendCalculator';
 import chartConst from '../../../src/js/const';

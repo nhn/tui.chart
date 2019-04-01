@@ -1,7 +1,7 @@
 /**
  * @fileoverview This is templates or axis view.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import templateMaker from '../../helpers/templateMaker';
 const htmls = {
@@ -17,3 +17,4 @@ export default {
     tplAxisTick: templateMaker.template(htmls.HTML_AXIS_TICK),
     tplAxisLabel: templateMaker.template(htmls.HTML_AXIS_LABEL)
 };
+

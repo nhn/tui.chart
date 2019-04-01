@@ -1,7 +1,7 @@
 /**
  * @fileoverview test scatter chart series
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import scatterSeriesFactory from '../../../src/js/components/series/scatterChartSeries';

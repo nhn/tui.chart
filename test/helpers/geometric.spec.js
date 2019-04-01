@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for geometric.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import geometric from '../../src/js/helpers/geometric.js';
 

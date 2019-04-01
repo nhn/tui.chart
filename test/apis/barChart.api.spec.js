@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test public APIs for bar chart.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import dom from '../../src/js/helpers/domHandler';
 import chart from '../../src/js/index';

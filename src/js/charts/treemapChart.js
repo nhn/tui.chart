@@ -1,7 +1,7 @@
 /**
  * @fileoverview Treemap chart is graphical representation of hierarchical data by using rectangles.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import ChartBase from './chartBase';

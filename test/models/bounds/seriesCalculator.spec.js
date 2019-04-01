@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for seriesCalculator.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import seriesCalculator from '../../../src/js/models/bounds/seriesCalculator';
 import chartConst from '../../../src/js/const';

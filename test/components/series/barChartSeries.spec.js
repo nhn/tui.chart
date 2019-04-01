@@ -1,7 +1,7 @@
 /**
  * @fileoverview test bar chart series
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import barSeriesFactory from '../../../src/js/components/series/barChartSeries';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';

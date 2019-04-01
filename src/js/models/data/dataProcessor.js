@@ -2,8 +2,8 @@
  * @fileoverview DataProcessor process rawData.
  * rawData.categories --> categories
  * rawData.series --> SeriesDataModel, legendLabels, legendData
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import chartConst from '../../const';

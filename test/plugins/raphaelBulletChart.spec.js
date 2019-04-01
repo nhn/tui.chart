@@ -1,6 +1,7 @@
 /**
  * @fileoverview Test for RaphaelBulletChart.
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import RaphaelBulletChart from '../../src/js/plugins/raphaelBulletChart';
 import raphael from 'raphael';

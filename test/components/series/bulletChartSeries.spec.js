@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for bullet chart series
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import barSeriesFactory from '../../../src/js/components/series/bulletChartSeries';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';

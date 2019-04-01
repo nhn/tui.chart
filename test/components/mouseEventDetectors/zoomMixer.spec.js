@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for zoomMixer.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import zoomMixer from '../../../src/js/components/mouseEventDetectors/zoomMixer';
 import MouseEventDetectorBase from '../../../src/js/components/mouseEventDetectors/mouseEventDetectorBase';

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for SeriesDataModelForTreemap.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModelForTreemap';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';

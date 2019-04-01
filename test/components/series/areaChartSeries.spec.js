@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for area chart series
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import snippet from 'tui-code-snippet';
 import areaSeriesFactory from '../../../src/js/components/series/areaChartSeries';

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for ScaleDataMaker.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import scaleDataMaker from '../../../src/js/models/scaleData/scaleDataMaker.js';
 import chartConst from '../../../src/js/const';

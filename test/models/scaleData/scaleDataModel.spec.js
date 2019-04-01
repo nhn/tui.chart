@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for AxisScaleMaker.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import ScaleDataModel from '../../../src/js/models/scaleData/scaleDataModel.js';
 import axisDataMaker from '../../../src/js/models/scaleData/axisDataMaker';

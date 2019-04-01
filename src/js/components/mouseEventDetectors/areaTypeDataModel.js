@@ -1,7 +1,7 @@
 /**
  * @fileoverview AreaTypeDataModel is data model for mouse event detector of area type.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';

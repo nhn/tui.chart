@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for scaleLabelFormatter.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import scaleLabelFormatter from '../../../src/js/models/scaleData/scaleLabelFormatter.js';
 import chartConst from '../../../src/js/const';

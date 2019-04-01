@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for BoundsModel.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import BoundsModel from '../../../src/js/models/bounds/boundsModel';
 import chartConst from '../../../src/js/const';

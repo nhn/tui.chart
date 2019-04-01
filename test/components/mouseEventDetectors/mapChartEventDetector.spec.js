@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for MapChartEventDetector.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import snippet from 'tui-code-snippet';
 import MapChartEventDetector from '../../../src/js/components/mouseEventDetectors/mapChartEventDetector';

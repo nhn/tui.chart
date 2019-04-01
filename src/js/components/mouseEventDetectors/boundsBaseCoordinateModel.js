@@ -1,7 +1,7 @@
 /**
  * @fileoverview BoundsBaseCoordinateModel is data model for mouse event detector of bounds type.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 /**

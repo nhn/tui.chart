@@ -1,7 +1,7 @@
 /**
  * @fileoverview Util for raphael rendering.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import snippet from 'tui-code-snippet';

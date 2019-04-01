@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for LineTypeSeriesBase.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import RaphaelLineTypeBase from '../../src/js/plugins/raphaelLineTypeBase';
 import raphael from 'raphael';

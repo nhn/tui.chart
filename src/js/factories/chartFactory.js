@@ -1,8 +1,8 @@
 /**
  * @fileoverview  Chart factory play role register chart.
  *                Also, you can get chart from this factory.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import chartConst from '../const';

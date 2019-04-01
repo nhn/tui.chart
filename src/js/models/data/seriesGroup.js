@@ -1,8 +1,8 @@
 /**
  * @fileoverview SeriesGroup is a element of SeriesDataModel.groups.
  * SeriesGroup.items has SeriesItem.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import calculator from '../../helpers/calculator';

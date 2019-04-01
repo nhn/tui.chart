@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for addingDynamicDataMixer.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import DynamicDataHelper from '../../src/js/charts/dynamicDataHelper';
 import chartConst from '../../src/js/const';

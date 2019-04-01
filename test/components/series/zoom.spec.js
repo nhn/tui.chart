@@ -1,7 +1,7 @@
 /**
  * @fileoverview test zoom
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import Zoom from '../../../src/js/components/series/zoom';
 import snippet from 'tui-code-snippet';

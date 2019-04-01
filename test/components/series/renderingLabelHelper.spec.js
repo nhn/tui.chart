@@ -1,7 +1,7 @@
 /**
  * @fileoverview Test for renderingLabelHelper.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 import labelHelper from '../../../src/js/components/series/renderingLabelHelper';
 import renderUtil from '../../../src/js/helpers/renderUtil';

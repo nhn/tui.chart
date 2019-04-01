@@ -1,8 +1,8 @@
 /**
  * @fileoverview Heatmap chart is a graphical representation of data where the individual values contained
  *                      in a matrix are represented as colors.
- * @author NHN Ent.
- *         FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
 
 import ChartBase from './chartBase';
