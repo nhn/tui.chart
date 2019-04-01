@@ -4,7 +4,7 @@
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 const webdriverConfig = {
-    hostname: 'fe.nhn.com',
+    hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
 };
