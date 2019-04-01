@@ -2,11 +2,11 @@
 
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library
 
-[![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-chart) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
+[![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-chart) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/blob/production/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
 
 ## Wrappers
-- [toast-ui.vue-chart](https://github.com/nhnent/toast-ui.vue-chart): Vue wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
-- [toast-ui.react-chart](https://github.com/nhnent/toast-ui.react-chart): React wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
+- [toast-ui.vue-chart](https://github.com/nhnent/toast-ui.vue-chart): Vue wrapper component is powered by [NHN](https://github.com/nhnent).
+- [toast-ui.react-chart](https://github.com/nhnent/toast-ui.react-chart): React wrapper component is powered by [NHN](https://github.com/nhnent).
 
 ![chart_animation](https://user-images.githubusercontent.com/35218826/37018282-2a792584-2157-11e8-835f-fac1275d31e0.gif)
 ![all](https://user-images.githubusercontent.com/35218826/37026890-1e2bcfe0-2173-11e8-9b06-3db329d5f477.png)
@@ -45,8 +45,8 @@ TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of
 
 ```js
 var options = {
-    ...
-    usageStatistics: false
+  ...
+  usageStatistics: false
 }
 
 tui.chart.barChart(container, data, options);
@@ -55,7 +55,7 @@ tui.chart.barChart(container, data, options);
 Or, include tui-code-snippet(**v1.5.0 or later**) and then immediately write the options as follows:
 
 ```js
-    tui.usageStatistics = false;
+tui.usageStatistics = false;
 ```
 
 ## 🌏 Browser Support
@@ -120,9 +120,9 @@ Visualize the data in different styles by customizing the details of the charts.
   
 ### And More From Examples
 
-* [Load Data from a table](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/import-chart-data-from-existing-table-element.md)
+* [Load Data from a table](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/import-chart-data-from-existing-table-element.md)
 * [Add data dynamically](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically)
-* [Apply themes](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/theme.md)
+* [Apply themes](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/theme.md)
 * [Map Data Attribution](https://www.amcharts.com/svg-maps/)
 
 Check out [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic) and [wiki](https://github.com/nhnent/tui.chart/tree/production/docs/wiki#tutorial) to discover more.
@@ -187,7 +187,7 @@ tui.chart/
 ```
 
 ### Download Source Files
-* [Download bundle files](https://github.com/nhnent/tui.chart/tree/production/dist)
+* [Download bundle files](https://github.com/nhnent/tui.chart/tree/master/dist)
 * [Download all sources for each version](https://github.com/nhnent/tui.chart/releases)
 
 
@@ -203,7 +203,7 @@ Add the container element where TOAST UI Chart will be created.
 
 ### JavaScript
 #### Load
-The TOAST UI Chart can be used by creating an instance with the constructor function. To get the constructor function, import the module using one of the following three ways depending on your environment.
+The TOAST UI Chart can be used by creating an instance with the constructor function. To access the constructor function, import the module using one of the three following methods depending on your environment.
 
 ```javascript
 var chart = tui.chart; /* namespace */
@@ -217,9 +217,9 @@ import chart from 'tui-chart'; /* ES6 in Node.js */
 
 Factory function needs three parameters: container, data, options
 
-* Container: Wrapper HTMLElements that will contain charts as a child
-* data: numeric data need to make charts
-* options: functional options like legend aligment or tooltip visiblities
+* container: Wrapper HTML element that will contain the chart as a child
+* data: Numerical data the chart will be based on
+* options: functional options including legend, alignment, and tooltip visibilities
 
 ``` javascript
 var container = document.getElementById('chart-area');
@@ -233,7 +233,7 @@ var options = {
 chart.barChart(container, data, options);
 ```
 
-See [details](https://nhnent.github.io/tui.chart/latest) for additional informations.
+Refer to [details](https://nhnent.github.io/tui.chart/latest) for additional informations.
 
 ## 🔧 Development
 
@@ -287,8 +287,8 @@ $ npm run test
 ```
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/getting-started.md)
-* [Tutorials](https://github.com/nhnent/tui.chart/blob/production/docs/wiki/README.md)
+* [Getting Started](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/getting-started.md)
+* [Tutorials](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/README.md)
 * [APIs](https://nhnent.github.io/tui.chart/latest/)
 
 See the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
@@ -296,12 +296,14 @@ See the older versions of API page on the [releases page](https://github.com/nhn
 ## 💬 Contributing
 * [Code of Conduct](CODE_OF_CONDUCT.md)
 * [Contributing guideline](CONTRIBUTING.md)
-* [Issue guideline](https://github.com/nhnent/tui.editor/blob/production/docs/ISSUE_TEMPLATE.md)
-* [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Issue guideline](https://github.com/nhnent/tui.chart/blob/master/docs/ISSUE_TEMPLATE.md)
+* [Commit convention](https://github.com/nhnent/tui.chart/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family
 * [TOAST UI Editor](https://github.com/nhnent/tui.editor)
 * [TOAST UI Grid](https://github.com/nhnent/tui.grid)
+* [TOAST UI Calendar](https://github.com/nhnent/tui.calendar)
+* [TOAST UI Image-Editor](https://github.com/nhnent/tui.image-editor)
 * [TOAST UI Components](https://github.com/nhnent)
 
 ## 🚀 Used By
@@ -309,6 +311,6 @@ See the older versions of API page on the [releases page](https://github.com/nhn
 
 
 ## 📜 License
-This software is licensed under the [MIT](https://github.com/nhnent/tui.chart/blob/production/LICENSE) © [NHN Entertainment](https://github.com/nhnent).
+This software is licensed under the [MIT](https://github.com/nhnent/tui.chart/blob/production/LICENSE) © [NHN](https://github.com/nhnent).
 
 
