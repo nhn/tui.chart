@@ -2,12 +2,12 @@
 
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library
 
-[![GitHub release](https://img.shields.io/github/release/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-chart) [![GitHub license](https://img.shields.io/github/license/nhnent/tui.chart.svg)](https://github.com/nhnent/tui.chart/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.chart/pulls) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.chart.svg)](https://github.com/nhn/tui.chart/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-chart) [![GitHub license](https://img.shields.io/github/license/nhn/tui.chart.svg)](https://github.com/nhn/tui.chart/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.chart/pulls) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## Wrappers
-- [toast-ui.vue-chart](https://github.com/nhnent/toast-ui.vue-chart): Vue wrapper component is powered by [NHN](https://github.com/nhnent).
-- [toast-ui.react-chart](https://github.com/nhnent/toast-ui.react-chart): React wrapper component is powered by [NHN](https://github.com/nhnent).
-D
+- [toast-ui.vue-chart](https://github.com/nhn/toast-ui.vue-chart): Vue wrapper component is powered by [NHN](https://github.com/nhn).
+- [toast-ui.react-chart](https://github.com/nhn/toast-ui.react-chart): React wrapper component is powered by [NHN](https://github.com/nhn).
+
 ![chart_animation](https://user-images.githubusercontent.com/35218826/37018282-2a792584-2157-11e8-835f-fac1275d31e0.gif)
 ![all](https://user-images.githubusercontent.com/35218826/37026890-1e2bcfe0-2173-11e8-9b06-3db329d5f477.png)
 
@@ -91,11 +91,11 @@ With over 50 releases since June 2015 under MIT License, the TOAST UI Chart is t
 
 The TOAST UI Chart provides many types of charts to visualize the various forms of data.
 
-| [Bar](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic)<br>[Column](https://nhnent.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic) | [Line](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic)<br>[Area](https://nhnent.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic)<br>[Radial](https://nhnent.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic) | [Bubble](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic)<br>[Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic) | [Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic)(General)<br>[Pie](https://nhnent.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut)(Donut) |
+| [Bar](https://nhn.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic)<br>[Column](https://nhn.github.io/tui.chart/latest/tutorial-example02-01-column-chart-basic) | [Line](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic)<br>[Area](https://nhn.github.io/tui.chart/latest/tutorial-example04-01-area-chart-basic)<br>[Radial](https://nhn.github.io/tui.chart/latest/tutorial-example13-01-radial-chart-basic) | [Bubble](https://nhn.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic)<br>[Scatter](https://nhn.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic) | [Pie](https://nhn.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic)(General)<br>[Pie](https://nhn.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut)(Donut) |
 | --- | --- | --- | --- |
 | ![2018-03-13 10 33 49](https://user-images.githubusercontent.com/35218826/37317756-151ad090-26aa-11e8-9fa0-74f9d1029bd9.png) | ![2018-03-13 10 44 51](https://user-images.githubusercontent.com/35218826/37318036-9770729c-26ab-11e8-9329-f30bb149e8e7.png) | ![2018-03-13 10 46 31](https://user-images.githubusercontent.com/35218826/37318092-d5c9737c-26ab-11e8-8975-dc6fb56fe99d.png) | ![2018-03-13 10 43 07](https://user-images.githubusercontent.com/35218826/37317996-60189a4a-26ab-11e8-9d5f-bcf5984ee971.png) |
 
-| [Heatmap](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic)<br>[Treemap](https://nhnent.github.io/tui.chart/latest/tutorial-example11-01-treemap-chart-basic)  |  [Map](https://nhnent.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map) | [Boxplot](https://nhnent.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic) | [Bullet](https://nhnent.github.io/tui.chart/latest/tutorial-example15-01-bullet-chart-basic) |
+| [Heatmap](https://nhn.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic)<br>[Treemap](https://nhn.github.io/tui.chart/latest/tutorial-example11-01-treemap-chart-basic)  |  [Map](https://nhn.github.io/tui.chart/latest/tutorial-example09-01-map-chart-world-map) | [Boxplot](https://nhn.github.io/tui.chart/latest/tutorial-example14-01-boxplot-chart-basic) | [Bullet](https://nhn.github.io/tui.chart/latest/tutorial-example15-01-bullet-chart-basic) |
 | --- | --- | --- | --- |
 | ![2018-03-13 10 47 56](https://user-images.githubusercontent.com/35218826/37318126-07ba5158-26ac-11e8-8a71-3737d2050412.png) | ![2018-03-13 10 51 01](https://user-images.githubusercontent.com/35218826/37318186-76c13c56-26ac-11e8-9e41-5c4ba1bce610.png) | ![2018-03-13 10 59 27](https://user-images.githubusercontent.com/35218826/37318409-a5b03426-26ad-11e8-958f-b497fad5492b.png) | ![2018-03-13 11 01 46](https://user-images.githubusercontent.com/35218826/37318459-f4c7b35e-26ad-11e8-942b-6de4f7f2bb4c.png) |
 
@@ -105,7 +105,7 @@ The TOAST UI Chart provides many types of charts to visualize the various forms 
 
 The TOAST UI Chart covers complex data visualization.
 
-| [Column-Line](https://nhnent.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line) | [Pie-Donut](https://nhnent.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut) | [Line-Area](https://nhnent.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area) | [Line-Scatter](https://nhnent.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter) |
+| [Column-Line](https://nhn.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line) | [Pie-Donut](https://nhn.github.io/tui.chart/latest/tutorial-example08-02-combo-chart-pie-and-donut) | [Line-Area](https://nhn.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area) | [Line-Scatter](https://nhn.github.io/tui.chart/latest/tutorial-example08-04-combo-chart-line-and-scatter) |
 | --- | --- | --- | --- |
 | ![2018-03-13 11 04 48](https://user-images.githubusercontent.com/35218826/37318532-63adea7c-26ae-11e8-9033-d24f7379a0be.png) | ![2018-03-13 11 06 16](https://user-images.githubusercontent.com/35218826/37318577-980a1a3e-26ae-11e8-87d4-ff6d015839b7.png) | ![2018-03-13 11 07 44](https://user-images.githubusercontent.com/35218826/37318606-cbbf59d4-26ae-11e8-8ec8-9766279346cc.png) | ![2018-03-13 11 19 42](https://user-images.githubusercontent.com/35218826/37318993-80728378-26b0-11e8-929e-389995fd9694.png) |
 
@@ -120,12 +120,12 @@ Visualize the data in different styles by customizing the details of the charts.
   
 ### And More From Examples
 
-* [Load Data from a table](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/import-chart-data-from-existing-table-element.md)
-* [Add data dynamically](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically)
-* [Apply themes](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/theme.md)
+* [Load Data from a table](https://github.com/nhn/tui.chart/blob/master/docs/wiki/import-chart-data-from-existing-table-element.md)
+* [Add data dynamically](https://nhn.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically)
+* [Apply themes](https://github.com/nhn/tui.chart/blob/master/docs/wiki/theme.md)
 * [Map Data Attribution](https://www.amcharts.com/svg-maps/)
 
-Check out [Example](https://nhnent.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic) and [wiki](https://github.com/nhnent/tui.chart/tree/master/docs/wiki#tutorial) to discover more.
+Check out [Example](https://nhn.github.io/tui.chart/latest/tutorial-example01-01-bar-chart-basic) and [wiki](https://github.com/nhn/tui.chart/tree/master/docs/wiki#tutorial) to discover more.
 
 ## 💾 Install
 
@@ -187,8 +187,8 @@ tui.chart/
 ```
 
 ### Download Source Files
-* [Download bundle files](https://github.com/nhnent/tui.chart/tree/master/dist)
-* [Download all sources for each version](https://github.com/nhnent/tui.chart/releases)
+* [Download bundle files](https://github.com/nhn/tui.chart/tree/master/dist)
+* [Download all sources for each version](https://github.com/nhn/tui.chart/releases)
 
 
 ## 🔨 Usage
@@ -233,7 +233,7 @@ var options = {
 chart.barChart(container, data, options);
 ```
 
-Refer to [details](https://nhnent.github.io/tui.chart/latest) for additional informations.
+Refer to [details](https://nhn.github.io/tui.chart/latest) for additional informations.
 
 ## 🔧 Development
 
@@ -287,30 +287,30 @@ $ npm run test
 ```
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/getting-started.md)
-* [Tutorials](https://github.com/nhnent/tui.chart/blob/master/docs/wiki/README.md)
-* [APIs](https://nhnent.github.io/tui.chart/latest/)
+* [Getting Started](https://github.com/nhn/tui.chart/blob/master/docs/wiki/getting-started.md)
+* [Tutorials](https://github.com/nhn/tui.chart/blob/master/docs/wiki/README.md)
+* [APIs](https://nhn.github.io/tui.chart/latest/)
 
-See the older versions of API page on the [releases page](https://github.com/nhnent/tui.chart/releases).
+See the older versions of API page on the [releases page](https://github.com/nhn/tui.chart/releases).
 
 ## 💬 Contributing
 * [Code of Conduct](CODE_OF_CONDUCT.md)
 * [Contributing guideline](CONTRIBUTING.md)
-* [Issue guideline](https://github.com/nhnent/tui.chart/blob/master/docs/ISSUE_TEMPLATE.md)
-* [Commit convention](https://github.com/nhnent/tui.chart/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Issue guideline](https://github.com/nhn/tui.chart/blob/master/docs/ISSUE_TEMPLATE.md)
+* [Commit convention](https://github.com/nhn/tui.chart/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family
-* [TOAST UI Editor](https://github.com/nhnent/tui.editor)
-* [TOAST UI Grid](https://github.com/nhnent/tui.grid)
-* [TOAST UI Calendar](https://github.com/nhnent/tui.calendar)
-* [TOAST UI Image-Editor](https://github.com/nhnent/tui.image-editor)
-* [TOAST UI Components](https://github.com/nhnent)
+* [TOAST UI Editor](https://github.com/nhn/tui.editor)
+* [TOAST UI Grid](https://github.com/nhn/tui.grid)
+* [TOAST UI Calendar](https://github.com/nhn/tui.calendar)
+* [TOAST UI Image-Editor](https://github.com/nhn/tui.image-editor)
+* [TOAST UI Components](https://github.com/nhn)
 
 ## 🚀 Used By
 * [TOAST Cloud - Total Cloud Service](https://www.toast.com/service/)
 
 
 ## 📜 License
-This software is licensed under the [MIT](https://github.com/nhnent/tui.chart/blob/master/LICENSE) © [NHN](https://github.com/nhnent).
+This software is licensed under the [MIT](https://github.com/nhn/tui.chart/blob/master/LICENSE) © [NHN](https://github.com/nhn).
 
 
