@@ -4,8 +4,8 @@
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @version 3.6.2
  * @license MIT
- * @link https://github.com/nhnent/tui.chart
- * bundle created at "Mon Apr 01 2019 12:59:41 GMT+0900 (대한민국 표준시)"
+ * @link https://github.com/nhn/tui.chart
+ * bundle created at "Wed Apr 10 2019 16:57:43 GMT+0900 (대한민국 표준시)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -45219,7 +45219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // if (startIndex < 0) {
 	        //     startIndex += interval;
 	        // }
-	        // Fixed to 0 due to issues. (https://github.com/nhnent/tui.chart/issues/56)
+	        // Fixed to 0 due to issues. (https://github.com/nhn/tui.chart/issues/56)
 	
 	        axisData.eventTickCount = axisData.tickCount;
 	
