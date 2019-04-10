@@ -5,17 +5,17 @@
     },
     "title" : {
       "text" : "repo",
-      "linkUrl" : "https://github.com/nhnent/tui.chart"
+      "linkUrl" : "https://github.com/nhn/tui.chart"
     }
   },
   "footer" : [
     {
       "title" : "NHN",
-      "linkUrl" : "https://github.com/nhnent"
+      "linkUrl" : "https://github.com/nhn"
     },
     {
       "title" : "FE Development Lab",
-      "linkUrl" : "https://github.com/nhnent/fe.javascript"
+      "linkUrl" : "https://github.com/nhn/fe.javascript"
     }
   ],
   "main" : {

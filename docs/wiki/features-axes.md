@@ -174,7 +174,7 @@ c. `dateFormat='YYYY.MM`
 
 ![image](https://user-images.githubusercontent.com/35218826/36886041-a3783d44-1e2d-11e8-9995-91ad8097dcdb.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
 ***
 
 ### How to define distance between the axis and the label?

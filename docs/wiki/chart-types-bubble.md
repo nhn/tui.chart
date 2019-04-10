@@ -61,4 +61,4 @@ tui.chart.bubbleChart(container, rawData);
 ![Bubble chart](https://user-images.githubusercontent.com/35218826/36881706-dc51af6c-1e12-11e8-974d-aa1922fa5882.png)
 
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example05-01-bubble-chart-basic.html)_

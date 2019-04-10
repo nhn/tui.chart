@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nhnent/tui.chart"
+    "url": "https://github.com/nhn/tui.chart"
   },
   "keywords": [
     "nhnent",
@@ -60,7 +60,7 @@
     "karma-mocha-reporter": "^2.2.5",
     "karma-narrow-reporter": "^2.0.1",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webdriver-launcher": "git+https://github.com/nhnent/karma-webdriver-launcher.git#v1.1.0",
+    "karma-webdriver-launcher": "git+https://github.com/nhn/karma-webdriver-launcher.git#v1.1.0",
     "karma-webpack": "^1.8.1",
     "less": "^2.7.3",
     "less-loader": "^2.2.3",
@@ -74,7 +74,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "raphael": "https://github.com/nhnent/raphael.git#2.2.0-c",
+    "raphael": "https://github.com/nhn/raphael.git#2.2.0-c",
     "tui-code-snippet": "^1.5.0"
   }
 }
