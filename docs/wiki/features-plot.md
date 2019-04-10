@@ -70,7 +70,7 @@ var options = {
 
 ![image](https://user-images.githubusercontent.com/35218826/36886584-8a6df2e6-1e30-11e8-9028-0084bebb7a72.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-03-line-chart-coordinate-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-03-line-chart-coordinate-data.html)_
 
 #### Using options - Assign the same color and opacity to multiple ranges
 Put range informations into an array.

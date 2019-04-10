@@ -110,7 +110,7 @@ tui.chart.lineChart(container, rawData, options);
 ```
 ![Spline Line Chart](https://user-images.githubusercontent.com/35218826/36793813-b9b5a1c0-1ce1-11e8-920b-f73602077433.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-02-line-chart-spline.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-02-line-chart-spline.html)_
 
 ***
 
@@ -134,7 +134,7 @@ tui.chart.areaChart(container, rawData, options);
 ![Stacked Area Chart](https://user-images.githubusercontent.com/35218826/36793845-dce7e31a-1ce1-11e8-9b25-d69c3c7717e5.png)
 
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack.html)_
 
 ***
 
@@ -158,7 +158,7 @@ tui.chart.areaChart(container, rawData);
 
 ![Range area chart](https://user-images.githubusercontent.com/35218826/36793913-1ec6a2c6-1ce2-11e8-91f9-d95320563c3b.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-03-area-chart-range-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-03-area-chart-range-data.html)_
 
 ***
 
@@ -192,7 +192,7 @@ var rawData = {
 ```
 ![coordinate data type line chart](https://github.nhnent.com/storage/user/429/files/95bfd7e6-6b66-11e6-96a6-fe642b96b39a)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example03-03-line-chart-coordinate-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-03-line-chart-coordinate-data.html)_
 
 ***
 
@@ -211,7 +211,7 @@ tui.chart.areaChart(container, rawData, options);
 
 ![zoomable](https://user-images.githubusercontent.com/35218826/36794307-55e872ba-1ce3-11e8-9ac0-600cd97c9aba.gif)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example04-04-area-chart-auto-tick-zoomable.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-04-area-chart-auto-tick-zoomable.html)_
 
 ***
 
@@ -316,7 +316,7 @@ chart.on('load', function() {
 ```
 ![shifting](https://user-images.githubusercontent.com/35218826/36879927-65094f04-1e09-11e8-8dfb-0c50b64e743a.gif)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example12-01-dynamic-chart-append-and-shift-data-dynamically.html)_
 
 ### Set an opacity of series area
 

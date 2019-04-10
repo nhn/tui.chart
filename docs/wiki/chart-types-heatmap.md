@@ -36,4 +36,4 @@ tui.chart.heatmapChart(container, rawData);
 
 ![Heatmap chart](https://user-images.githubusercontent.com/35218826/36883668-5668e0d4-1e1f-11e8-865e-20bef4598801.png)
 
-* _[Sample](https://nhnent.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example10-01-heatmap-chart-basic.html)_

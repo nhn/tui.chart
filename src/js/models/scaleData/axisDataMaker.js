@@ -308,7 +308,7 @@ const axisDataMaker = {
         // if (startIndex < 0) {
         //     startIndex += interval;
         // }
-        // Fixed to 0 due to issues. (https://github.com/nhnent/tui.chart/issues/56)
+        // Fixed to 0 due to issues. (https://github.com/nhn/tui.chart/issues/56)
 
         axisData.eventTickCount = axisData.tickCount;
 
