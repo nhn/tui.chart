@@ -121,6 +121,24 @@ class ChartBase {
     }
 
     /**
+     * get on select series function
+     * @param {{groupIndex: number, index: number}} indexes - selected indexes
+     * @param {?boolean} shouldSelect - whether should select or not
+     * @returns {object}
+     * @api
+     * @example
+     * chart.selectSeriesByIndexes({groupIndex: 0, index: 0}, true);
+     */
+    selectSeriesByIndexes(indexes, shouldSelect = true) {
+        const seriesName = `${this.componentManager.seriesTypes[0]}Series`;
+
+        return this.componentManager.componentMap[seriesName].onSelectSeries({
+            chartType: this.chartType,
+            indexes
+        }, shouldSelect);
+    }
+
+    /**
      * Attach to event bus.
      * @private
      */
