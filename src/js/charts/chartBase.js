@@ -124,28 +124,17 @@ class ChartBase {
      * get on select series function
      * @param {{legendIndex: number, index: number}} indexInfo - selected indexes
      * @param {?boolean} shouldSelect - whether should select or not
-     * @returns {object}
      * @api
      * @example
      * chart.selectSeries({legendIndex: 0, index: 0}, true);
      */
     selectSeries({legendIndex: index, index: groupIndex}, shouldSelect = true) {
-        const seriesName = `${this.componentManager.seriesTypes[0]}Series`;
-        const componentMap = this.componentManager.componentMap[seriesName];
-        const {selectedData} = this.componentManager.get('mouseEventDetector');
-        const seriesData = {
+        this.componentManager.get('mouseEventDetector').selectSeries({
             chartType: this.chartType,
             indexes: {
                 groupIndex,
                 index
-            }
-        };
-        if (selectedData) {
-            this.componentManager.get('mouseEventDetector').unselectSelectedData();
-        }
-        this.componentManager.get('mouseEventDetector').selectedData = seriesData;
-
-        return componentMap.onSelectSeries(seriesData, shouldSelect);
+            }}, shouldSelect);
     }
 
     /**

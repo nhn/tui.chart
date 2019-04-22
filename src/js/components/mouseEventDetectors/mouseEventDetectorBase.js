@@ -384,7 +384,7 @@ class MouseEventDetectorBase {
      * Unselect selected data.
      * @ignore
      */
-    unselectSelectedData() {
+    _unselectSelectedData() {
         this.eventBus.fire('unselectSeries', this.selectedData);
         this.selectedData = null;
     }
@@ -397,16 +397,26 @@ class MouseEventDetectorBase {
      */
     _onClick(e) {
         const foundData = this._findData(e.clientX, e.clientY);
-        if (!this._isChangedSelectData(this.selectedData, foundData)) {
-            this.unselectSelectedData();
-        } else if (foundData) {
+        this.selectSeries(foundData);
+    }
+
+    /**
+     * To call selectSeries callback of public event.
+     * @TODO: Need to change the selectedData location (Not used for mouse events only)
+     * @param {object} seriesData - series data
+     * @param {?boolean} shouldSelect - whether should select or not
+     */
+    selectSeries(seriesData, shouldSelect = true) {
+        if (!this._isChangedSelectData(this.selectedData, seriesData)) {
+            this._unselectSelectedData();
+        } else if (seriesData) {
             if (this.selectedData) {
-                this.unselectSelectedData();
+                this._unselectSelectedData();
             }
 
-            this.eventBus.fire('selectSeries', foundData);
+            this.eventBus.fire('selectSeries', seriesData, shouldSelect);
             if (this.allowSelect) {
-                this.selectedData = foundData;
+                this.selectedData = seriesData;
             }
         }
     }
