@@ -382,9 +382,9 @@ class MouseEventDetectorBase {
 
     /**
      * Unselect selected data.
-     * @private
+     * @ignore
      */
-    _unselectSelectedData() {
+    unselectSelectedData() {
         this.eventBus.fire('unselectSeries', this.selectedData);
         this.selectedData = null;
     }
@@ -397,12 +397,11 @@ class MouseEventDetectorBase {
      */
     _onClick(e) {
         const foundData = this._findData(e.clientX, e.clientY);
-
         if (!this._isChangedSelectData(this.selectedData, foundData)) {
-            this._unselectSelectedData();
+            this.unselectSelectedData();
         } else if (foundData) {
             if (this.selectedData) {
-                this._unselectSelectedData();
+                this.unselectSelectedData();
             }
 
             this.eventBus.fire('selectSeries', foundData);
