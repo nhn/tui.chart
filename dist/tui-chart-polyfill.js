@@ -2,10 +2,10 @@
  * tui-chart-polyfill
  * @fileoverview tui-chart
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @version 3.6.2
+ * @version 3.7.0
  * @license MIT
- * @link https://github.com/nhnent/tui.chart
- * bundle created at "Mon Apr 01 2019 12:59:16 GMT+0900 (대한민국 표준시)"
+ * @link https://github.com/nhn/tui.chart
+ * bundle created at "Tue Apr 23 2019 10:58:25 GMT+0900 (대한민국 표준시)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -24667,6 +24667,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
+	     * get on select series function
+	     * @param {{legendIndex: number, index: number}} indexInfo - selected indexes
+	     * @param {?boolean} shouldSelect - whether should select or not
+	     * @api
+	     * @example
+	     * chart.selectSeries({legendIndex: 0, index: 0}, true);
+	     */
+	
+	
+	    ChartBase.prototype.selectSeries = function selectSeries(_ref) {
+	        var index = _ref.legendIndex,
+	            groupIndex = _ref.index;
+	        var shouldSelect = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+	
+	        this.componentManager.get('mouseEventDetector').selectSeries({
+	            chartType: this.chartType,
+	            indexes: {
+	                groupIndex: groupIndex,
+	                index: index
+	            } }, shouldSelect);
+	    };
+	
+	    /**
+	     * get on deselect series function
+	     * @api
+	     * @example
+	     * chart.unselectSeries();
+	     */
+	
+	
+	    ChartBase.prototype.unselectSeries = function unselectSeries() {
+	        this.componentManager.get('mouseEventDetector').unselectSeries();
+	    };
+	
+	    /**
 	     * Attach to event bus.
 	     * @private
 	     */
@@ -25136,7 +25171,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    ChartBase.prototype.on = function on(eventName, func) {
 	        /**
-	         * Selecte legend event
+	         * Select legend event
 	         * @event ChartBase#selectLegend
 	         * @param {object} info selected legend info
 	         *   @param {string} legend legend name
@@ -25150,7 +25185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	
 	        /**
-	         * Selecte series event
+	         * Select series event
 	         * @event ChartBase#selectSeries
 	         * @param {object} info selected series info
 	         *   @param {string} legend legend name
@@ -25160,6 +25195,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @api
 	         * @example
 	         * chart.on('selectSeries', function(info) {
+	         *     console.log(info);
+	         * });
+	         */
+	
+	        /**
+	         * unselect series event
+	         * @event ChartBase#unselectSeries
+	         * @param {object} info unselected series info
+	         *   @param {string} legend legend name
+	         *   @param {string} chartType chart type
+	         *   @param {number} legendIndex selected legend index
+	         *   @param {number} index selected category index
+	         * @api
+	         * @example
+	         * chart.on('unselectSeries', function(info) {
 	         *     console.log(info);
 	         * });
 	         */
@@ -35547,14 +35597,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
-	     * Unselect selected data.
-	     * @private
+	     * deselect selected data.
+	     * @ignore
 	     */
 	
 	
-	    MouseEventDetectorBase.prototype._unselectSelectedData = function _unselectSelectedData() {
-	        this.eventBus.fire('unselectSeries', this.selectedData);
-	        this.selectedData = null;
+	    MouseEventDetectorBase.prototype.unselectSeries = function unselectSeries() {
+	        if (this.selectedData) {
+	            this.eventBus.fire('unselectSeries', this.selectedData);
+	            this.selectedData = null;
+	        }
 	    };
 	
 	    /**
@@ -35567,17 +35619,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    MouseEventDetectorBase.prototype._onClick = function _onClick(e) {
 	        var foundData = this._findData(e.clientX, e.clientY);
+	        this.selectSeries(foundData);
+	    };
 	
-	        if (!this._isChangedSelectData(this.selectedData, foundData)) {
-	            this._unselectSelectedData();
-	        } else if (foundData) {
+	    /**
+	     * To call selectSeries callback of public event.
+	     * @TODO: Need to change the selectedData location (Not used for mouse events only)
+	     * @param {object} seriesData - series data
+	     * @param {?boolean} shouldSelect - whether should select or not
+	     */
+	
+	
+	    MouseEventDetectorBase.prototype.selectSeries = function selectSeries(seriesData) {
+	        var shouldSelect = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+	
+	        if (!this._isChangedSelectData(this.selectedData, seriesData)) {
+	            this.unselectSeries();
+	        } else if (seriesData) {
 	            if (this.selectedData) {
-	                this._unselectSelectedData();
+	                this.unselectSeries();
 	            }
 	
-	            this.eventBus.fire('selectSeries', foundData);
+	            this.eventBus.fire('selectSeries', seriesData, shouldSelect);
 	            if (this.allowSelect) {
-	                this.selectedData = foundData;
+	                this.selectedData = seriesData;
 	            }
 	        }
 	    };
@@ -54071,7 +54136,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // if (startIndex < 0) {
 	        //     startIndex += interval;
 	        // }
-	        // Fixed to 0 due to issues. (https://github.com/nhnent/tui.chart/issues/56)
+	        // Fixed to 0 due to issues. (https://github.com/nhn/tui.chart/issues/56)
 	
 	        axisData.eventTickCount = axisData.tickCount;
 	
