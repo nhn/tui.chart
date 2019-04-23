@@ -560,7 +560,7 @@ class ChartBase {
      */
     on(eventName, func) {
         /**
-         * Selecte legend event
+         * Select legend event
          * @event ChartBase#selectLegend
          * @param {object} info selected legend info
          *   @param {string} legend legend name
@@ -574,7 +574,7 @@ class ChartBase {
          */
 
         /**
-         * Selecte series event
+         * Select series event
          * @event ChartBase#selectSeries
          * @param {object} info selected series info
          *   @param {string} legend legend name
@@ -584,6 +584,21 @@ class ChartBase {
          * @api
          * @example
          * chart.on('selectSeries', function(info) {
+         *     console.log(info);
+         * });
+         */
+
+        /**
+         * unselect series event
+         * @event ChartBase#unselectSeries
+         * @param {object} info unselected series info
+         *   @param {string} legend legend name
+         *   @param {string} chartType chart type
+         *   @param {number} legendIndex selected legend index
+         *   @param {number} index selected category index
+         * @api
+         * @example
+         * chart.on('unselectSeries', function(info) {
          *     console.log(info);
          * });
          */
