@@ -121,6 +121,33 @@ class ChartBase {
     }
 
     /**
+     * get on select series function
+     * @param {{legendIndex: number, index: number}} indexInfo - selected indexes
+     * @param {?boolean} shouldSelect - whether should select or not
+     * @api
+     * @example
+     * chart.selectSeries({legendIndex: 0, index: 0}, true);
+     */
+    selectSeries({legendIndex: index, index: groupIndex}, shouldSelect = true) {
+        this.componentManager.get('mouseEventDetector').selectSeries({
+            chartType: this.chartType,
+            indexes: {
+                groupIndex,
+                index
+            }}, shouldSelect);
+    }
+
+    /**
+     * get on deselect series function
+     * @api
+     * @example
+     * chart.unselectSeries();
+     */
+    unselectSeries() {
+        this.componentManager.get('mouseEventDetector').unselectSeries();
+    }
+
+    /**
      * Attach to event bus.
      * @private
      */
@@ -533,7 +560,7 @@ class ChartBase {
      */
     on(eventName, func) {
         /**
-         * Selecte legend event
+         * Select legend event
          * @event ChartBase#selectLegend
          * @param {object} info selected legend info
          *   @param {string} legend legend name
@@ -547,7 +574,7 @@ class ChartBase {
          */
 
         /**
-         * Selecte series event
+         * Select series event
          * @event ChartBase#selectSeries
          * @param {object} info selected series info
          *   @param {string} legend legend name
@@ -557,6 +584,21 @@ class ChartBase {
          * @api
          * @example
          * chart.on('selectSeries', function(info) {
+         *     console.log(info);
+         * });
+         */
+
+        /**
+         * unselect series event
+         * @event ChartBase#unselectSeries
+         * @param {object} info unselected series info
+         *   @param {string} legend legend name
+         *   @param {string} chartType chart type
+         *   @param {number} legendIndex selected legend index
+         *   @param {number} index selected category index
+         * @api
+         * @example
+         * chart.on('unselectSeries', function(info) {
          *     console.log(info);
          * });
          */
