@@ -138,6 +138,16 @@ class ChartBase {
     }
 
     /**
+     * get on unselect series function
+     * @api
+     * @example
+     * chart.deselectSeries();
+     */
+    deselectSeries() {
+        this.componentManager.get('mouseEventDetector').unselectSelectedData();
+    }
+
+    /**
      * Attach to event bus.
      * @private
      */
