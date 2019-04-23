@@ -384,7 +384,7 @@ class MouseEventDetectorBase {
      * deselect selected data.
      * @ignore
      */
-    deselectSelectedData() {
+    unselectSelectedData() {
         if (this.selectedData) {
             this.eventBus.fire('unselectSeries', this.selectedData);
             this.selectedData = null;
@@ -410,10 +410,10 @@ class MouseEventDetectorBase {
      */
     selectSeries(seriesData, shouldSelect = true) {
         if (!this._isChangedSelectData(this.selectedData, seriesData)) {
-            this.deselectSelectedData();
+            this.unselectSelectedData();
         } else if (seriesData) {
             if (this.selectedData) {
-                this.deselectSelectedData();
+                this.unselectSelectedData();
             }
 
             this.eventBus.fire('selectSeries', seriesData, shouldSelect);
