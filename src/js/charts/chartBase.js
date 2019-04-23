@@ -144,7 +144,7 @@ class ChartBase {
      * chart.unselectSeries();
      */
     unselectSeries() {
-        this.componentManager.get('mouseEventDetector').unselectSelectedData();
+        this.componentManager.get('mouseEventDetector').unselectSeries();
     }
 
     /**
