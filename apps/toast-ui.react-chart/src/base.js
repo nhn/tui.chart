@@ -31,11 +31,14 @@ export default function(chartType) {
       return this.chartInst;
     }
 
-    bindEventHandlers() {
-      Object.keys(this.props)
+    bindEventHandlers(props, prevProps) {
+      Object.keys(props)
         .filter((key) => /on[A-Z][a-zA-Z]+/.test(key))
         .forEach((key) => {
           const eventName = key[2].toLowerCase() + key.slice(3);
+          if(prevProps && prevProps[key] === props[key]) {
+            this.chartInst.off(eventName);
+          }
           this.chartInst.on(eventName, this.props[key]);
         });
     }
@@ -44,7 +47,7 @@ export default function(chartType) {
       const {data, options} = this.props;
       this.chartInst = new creator[chartType](this.rootEl.current, data, options);
 
-      this.bindEventHandlers();
+      this.bindEventHandlers(this.props);
     }
 
     shouldComponentUpdate(nextProps) {

@@ -1,12 +1,12 @@
 # TOAST UI Chart for React
 
-> This is a React component wrapping [TOAST UI Chart](https://github.com/nhnent/tui.chart).
+> This is a React component wrapping [TOAST UI Chart](https://github.com/nhn/tui.chart).
 
-[![github version](https://img.shields.io/github/release/nhnent/toast-ui.react-chart.svg)](https://github.com/nhnent/toast-ui.react-chart/releases/latest)
+[![github version](https://img.shields.io/github/release/nhn/toast-ui.react-chart.svg)](https://github.com/nhn/toast-ui.react-chart/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-chart.svg)](https://www.npmjs.com/package/@toast-ui/react-chart)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-chart.svg)](https://github.com/nhnent/toast-ui.react-chart/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.react-chart/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.vue-chart.svg)](https://github.com/nhn/toast-ui.react-chart/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.react-chart/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
@@ -81,7 +81,7 @@ You can use Toast UI Chart for React as a ECMAScript module or a CommonJS module
 
 ### Components
 
-You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.chart#-features). React Components for each chart types are:
+You can use [all kinds of charts in tui.chart](https://github.com/nhn/tui.chart#-features). React Components for each chart types are:
 
 * `BarChart`
 * `ColumnChart`
@@ -100,7 +100,7 @@ You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.cha
 
 ### Props
 
-[All the options of the TOAST UI Chart](http://nhnent.github.io/tui.chart/latest/) are supported in the form of props. Note that data and columns props are required and other props are optional.
+[All the options of the TOAST UI Chart](http://nhn.github.io/tui.chart/latest/) are supported in the form of props. Note that data and columns props are required and other props are optional.
 
 ```js
 const data = {
@@ -153,7 +153,7 @@ const MyComponent = () => (
 
 ### Instance Methods
 
-For using [instance methods of TOAST UI Chart](https://nhnent.github.io/tui.date-picker/latest/DatePicker.html#.createCalendar), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Chart directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
+For using [instance methods of TOAST UI Chart](https://nhn.github.io/tui.date-picker/latest/DatePicker.html#.createCalendar), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Chart directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
 
 ```js
 class MyComponent extends React.Component {
@@ -207,7 +207,7 @@ class MyComponent extends React.Component {
 
 ### Static Methods
 
-The wrapper component does not provide a way to call [static methods of TOAST UI Chart](http://nhnent.github.io/tui.chart/latest/tui.chart.html). If you want to use static methods such as `registerMap`, `registerPlugin` or `registerTheme` you should use it via importing `tui-chart` directly.
+The wrapper component does not provide a way to call [static methods of TOAST UI Chart](http://nhn.github.io/tui.chart/latest/tui.chart.html). If you want to use static methods such as `registerMap`, `registerPlugin` or `registerTheme` you should use it via importing `tui-chart` directly.
 
 ```js
 import TuiChart from 'tui-chart';
@@ -217,7 +217,7 @@ TuiChart.registerTheme('myTheme', myTheme);
 
 ### Event
 
-[All the events of TOAST UI Chart](https://github.com/nhnent/toast-ui.react-chart/blob/master/docs/getting-started.md#event) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `click` event you can use `onClick` prop like the example below.
+[All the events of TOAST UI Chart](https://github.com/nhn/toast-ui.react-chart/blob/master/docs/getting-started.md#event) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `click` event you can use `onClick` prop like the example below.
 
 ```js
 class MyComponent extends React.Component {
@@ -266,12 +266,12 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/toast-ui.react-chart/blob/master/docs/getting-started.md)
+* [Getting Started](https://github.com/nhn/toast-ui.react-chart/blob/master/docs/getting-started.md)
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/toast-ui.react-chart/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/toast-ui.react-chart/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/toast-ui.react-chart/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/toast-ui.react-chart/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/toast-ui.react-chart/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhn/toast-ui.react-chart/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhnent)
+This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)
