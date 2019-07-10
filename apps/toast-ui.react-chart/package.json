@@ -1,7 +1,7 @@
 {
   "name": "@toast-ui/react-chart",
-  "version": "1.0.1",
-  "description": "Toat UI Chart for React",
+  "version": "1.0.2",
+  "description": "TOAST UI Chart for React",
   "main": "dist/toastui-react-chart.js",
   "scripts": {
     "lint": "eslint src/**",

@@ -36,7 +36,7 @@ export default function(chartType) {
         .filter((key) => /on[A-Z][a-zA-Z]+/.test(key))
         .forEach((key) => {
           const eventName = key[2].toLowerCase() + key.slice(3);
-          if(prevProps && prevProps[key] === props[key]) {
+          if(prevProps && prevProps[key] !== props[key]) {
             this.chartInst.off(eventName);
           }
           this.chartInst.on(eventName, this.props[key]);
@@ -57,6 +57,8 @@ export default function(chartType) {
       if (currentData !== nextData) {
         this.getInstance().setData(nextData);
       }
+
+      this.bindEventHandlers(nextProps, this.props);
 
       return false;
     }
