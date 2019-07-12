@@ -308,6 +308,11 @@ See the older versions of API page on the [releases page](https://github.com/nhn
 
 ## 🚀 Used By
 * [TOAST Cloud - Total Cloud Service](https://www.toast.com/service/)
+* [NHN - ToastCam](https://cam.toast.com/ko/#/)
+* [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com)
+* [NHN - Smart Downloader](https://docs.toast.com/ko/Game/Smart%20Downloader/ko/console-guide/)
+* [NHN - Gamebase](https://docs.toast.com/ko/Game/Gamebase/ko/oper-analytics/)
+* [NHN Edu - iamTeacher](https://teacher.iamservice.net)
 
 
 ## 📜 License
