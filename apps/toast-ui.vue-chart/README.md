@@ -1,13 +1,13 @@
 # TOAST UI Chart for Vue
 
-> This is Vue component wrapping [TOAST UI Chart](https://github.com/nhnent/tui.chart).
+> This is Vue component wrapping [TOAST UI Chart](https://github.com/nhn/tui.chart).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
-[![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-chart.svg)](https://github.com/nhnent/toast-ui.vue-chart/releases/latest)
+[![github version](https://img.shields.io/github/release/nhn/toast-ui.vue-chart.svg)](https://github.com/nhn/toast-ui.vue-chart/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-chart.svg)](https://www.npmjs.com/package/@toast-ui/vue-chart)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-chart.svg)](https://github.com/nhnent/toast-ui.vue-chart/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.vue-chart/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.vue-chart.svg)](https://github.com/nhn/toast-ui.vue-chart/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.vue-chart/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
@@ -88,7 +88,7 @@ You can use Toast UI Chart for Vue as moudule format or namespace. When using mo
 
 ### Components
 
-You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.chart#-features). Vue Components for each chart types are:
+You can use [all kinds of charts in tui.chart](https://github.com/nhn/tui.chart#-features). Vue Components for each chart types are:
 
 * `barChart`
 * `columnChart`
@@ -180,7 +180,7 @@ You can use `data`, `options`, `theme` props for initailize tui.chart.
 
 If you want to use other maps, you should use `map` prop.
 
-**For more detail with example, see [Getting-Started](https://github.com/nhnent/toast-ui.vue-chart/blob/master/docs/getting-started.md#props)**
+**For more detail with example, see [Getting-Started](https://github.com/nhn/toast-ui.vue-chart/blob/master/docs/getting-started.md#props)**
 
 | Name | Type | Required | Description |
 | --- | --- | --- | --- | 
@@ -191,7 +191,7 @@ If you want to use other maps, you should use `map` prop.
 
 ### Event
 
-**For more detail with example, see [Getting-Started](https://github.com/nhnent/toast-ui.vue-chart/blob/master/docs/getting-started.md#event)**
+**For more detail with example, see [Getting-Started](https://github.com/nhn/toast-ui.vue-chart/blob/master/docs/getting-started.md#event)**
 
 | Name | Description |
 | --- | --- |
@@ -223,7 +223,7 @@ this.$refs.tuiBarChart.invoke('resize', {
 const checkedLegend = this.$refs.tuiBarChart.invoke('getCheckedLegend');
 ```
 
-In the [api document](https://nhnent.github.io/tui.chart/latest/index.html), check the **methods** for each chart type.
+In the [api document](https://nhn.github.io/tui.chart/latest/), check the **methods** for each chart type.
 
 ## 🔧 Pull Request Steps
 
@@ -254,12 +254,12 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/toast-ui.vue-chart/blob/master/docs/getting-started.md)
+* [Getting Started](https://github.com/nhn/toast-ui.vue-chart/blob/master/docs/getting-started.md)
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/toast-ui.vue-chart/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/toast-ui.vue-chart/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/toast-ui.vue-chart/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/toast-ui.vue-chart/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/toast-ui.vue-chart/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhn/toast-ui.vue-chart/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhnent)
+This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)

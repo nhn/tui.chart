@@ -55,7 +55,7 @@ You can use Toast UI Chart for Vue as moudule format or namespace. When using mo
 
 ### Components
 
-You can use [all kinds of charts in tui.chart](https://github.com/nhnent/tui.chart#-features). Vue Components for each chart types are:
+You can use [all kinds of charts in tui.chart](https://github.com/nhn/tui.chart#-features). Vue Components for each chart types are:
 
 * `barChart`
 * `columnChart`
@@ -153,7 +153,7 @@ If you use map chart, you should use `map` prop.
 
 This prop is for data of the chart. When you change data, chart is rendering for changing data.
 
-For more information, see `rawData` of each types chart in [tui.chart document](https://nhnent.github.io/tui.chart/latest/tui.chart.html).
+For more information, see `rawData` of each types chart in [tui.chart document](https://nhn.github.io/tui.chart/latest/).
 
 * Example:
 
@@ -209,7 +209,7 @@ For more information, see `rawData` of each types chart in [tui.chart document](
 | --- | --- |
 | Object | X |
 
-This prop is for [options of tui.chart](http://nhnent.github.io/tui.chart/latest/tui.chart.html) and used for initailize tui.chart.
+This prop is for [options of tui.chart](https://nhn.github.io/tui.chart/latest/) and used for initailize tui.chart.
 
 * Example:
 
@@ -266,7 +266,7 @@ This prop is for [options of tui.chart](http://nhnent.github.io/tui.chart/latest
 
 This prop can change theme of the chart.
 
-For more information see [registerTheme of tui.chart](http://nhnent.github.io/tui.chart/latest/tui.chart.html#.registerTheme)
+For more information see [registerTheme of tui.chart](https://nhn.github.io/tui.chart/latest/tui.chart#registerTheme)
 
 * Example:
 
@@ -319,7 +319,7 @@ We suppoert maps of `world`, `south-korea`, `china`, `usa`, `japan`, `singapore`
 
 If you want to use other maps, you set `Object` that is required `name` and `value`. 
 
-For more information see [registerMap of tui.chart](http://nhnent.github.io/tui.chart/latest/tui.chart.html#.registerMap)
+For more information see [registerMap of tui.chart](https://nhn.github.io/tui.chart/latest/tui.chart#registerMap)
 
 * Example using `String`:
 
@@ -490,4 +490,4 @@ this.$refs.tuiChart.invoke('resize', {
 this.$refs.tuiChart.invoke('animateChart');
 ```
 
-For more information of method, see [method of tui.chart](http://nhnent.github.io/tui.chart/api/latest/).
+For more information of method, see [method of tui.chart](https://nhn.github.io/tui.chart/latest/).
