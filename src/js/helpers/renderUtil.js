@@ -222,14 +222,15 @@ const renderUtil = {
      * @memberof module:renderUtil
      * @param {string[]} labels labels
      * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+     * @param {number} [maxWidth] - max width
      * @returns {number} max width
      * @private
      */
-    getRenderedLabelsMaxWidth(labels, theme) {
+    getRenderedLabelsMaxWidth(labels, theme, maxWidth) {
         const iteratee = snippet.bind(this.getRenderedLabelWidth, this);
-        const maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+        const labelMaxSize = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 
-        return maxWidth;
+        return maxWidth ? Math.min(maxWidth, labelMaxSize) : labelMaxSize;
     },
 
     /**
@@ -241,9 +242,8 @@ const renderUtil = {
      */
     getRenderedLabelsMaxHeight(labels, theme) {
         const iteratee = snippet.bind(this.getRenderedLabelHeight, this);
-        const maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 
-        return maxHeight;
+        return this._getRenderedLabelsMaxSize(labels, theme, iteratee);
     },
 
     /**

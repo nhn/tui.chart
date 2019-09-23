@@ -48,7 +48,7 @@ export default {
      * @returns {number}
      */
     calculateYAxisWidth(labels, options, theme, yAxisLabels, isDiverging) {
-        const {labelMargin, prefix, suffix, isCenter, type, dateFormat, showLabel, title} = options;
+        const {labelMargin, prefix, suffix, isCenter, type, dateFormat, showLabel, title, maxWidth} = options;
         let titleWidth = 0;
         let maxLabelWidth = 0;
         let width = 0;
@@ -70,7 +70,7 @@ export default {
         }
         labels = yAxisLabels.length ? yAxisLabels : labels;
         if (showLabel !== false) {
-            maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label);
+            maxLabelWidth = renderUtil.getRenderedLabelsMaxWidth(labels, theme.label, maxWidth);
         }
         if (title) {
             titleWidth = renderUtil.getRenderedLabelWidth(title.text, theme.title);
