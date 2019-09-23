@@ -78,5 +78,13 @@ describe('Test for axisCalculator', () => {
 
             expect(actual).toEqual(['label3', 'label4']);
         });
+
+        it('has maxWidth when the width of label is longer than maxWidth option value.', () => {
+            const actual = axisCalculator.calculateYAxisWidth(['tooooooooLongLabel', 'label'], {
+                maxWidth: 10
+            }, {}, []);
+
+            expect(actual).toBe(27);
+        });
     });
 });

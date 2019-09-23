@@ -11,6 +11,7 @@ import calculator from '../../helpers/calculator';
 import pluginFactory from '../../factories/pluginFactory';
 import renderUtil from '../../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
+import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 
 const {AXIS_EDGE_RATIO, X_AXIS_LABEL_PADDING, COMPONENT_TYPE_RAPHAEL} = chartConst;
 
@@ -517,7 +518,7 @@ class Axis {
         const {isYAxis, isLabelAxis: isCategoryLabel, dataProcessor, layout} = this;
         const {isPositionRight} = this.data;
         const theme = this.theme.label;
-        const {labelMargin = 0, pointOnColumn, isCenter} = this.options;
+        const {labelMargin = 0, pointOnColumn, isCenter, maxWidth} = this.options;
         const isLineTypeChart = predicate.isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
         const isPointOnColumn = isLineTypeChart && pointOnColumn;
         const isAutoTickInterval = predicate.isAutoTickInterval(this.options.tickInterval);
@@ -557,12 +558,17 @@ class Axis {
             positionTopAndLeft.top = Math.round(positionTopAndLeft.top);
             positionTopAndLeft.left = Math.round(positionTopAndLeft.left);
 
+            let labelText = categories[index];
+            if (maxWidth) {
+                labelText = raphaelRenderUtil.getEllipsisText(categories[index], maxWidth, theme);
+            }
+
             renderer.renderLabel({
                 isPositionRight,
                 isVertical: isYAxis,
                 isCenter,
                 labelSize,
-                labelText: categories[index],
+                labelText,
                 paper: this.paper,
                 positionTopAndLeft,
                 set: this.axisSet,

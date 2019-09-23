@@ -10,7 +10,7 @@ declare namespace tuiChart {
     export function boxplotChart(container: Element,
                                  data: IBoxPlotChartRowData,
                                  options: IBoxPlotOptions): BoxplotChart;
-    export function bubbleChart(container: Element, data: IBubbleChartRowData, options: IBubbleOptons): BubbleChart;
+    export function bubbleChart(container: Element, data: IBubbleChartRowData, options: IBubbleOptions): BubbleChart;
     export function bulletChart(container: Element, data: IBulletChartRowData, options: IBarOptions): BulletChart;
     export function columnChart(container: Element, data: IColumnChartRowData, options: IBarOptions): ColumnChart;
     export function comboChart(container: Element, data: IComboRowData, options: IComboOptions): ComboChart;
@@ -314,6 +314,7 @@ declare namespace tuiChart {
         suffix?: string;
         prefix?: string;
         chartType?: string;
+        maxWidth?: number;
     }
 
     interface IXAxisConfig {
@@ -329,6 +330,7 @@ declare namespace tuiChart {
         prefix?: string;
         tickInterval?: string;
         pointOnColumn?: boolean;
+        maxWidth?: number;
     }
 
     interface IBaseSeriesConfig {
@@ -508,7 +510,7 @@ declare namespace tuiChart {
         series?: IAreaSeriesConfig;
     }
 
-    interface IBubbleOptons extends IBaseOptions {
+    interface IBubbleOptions extends IBaseOptions {
         series?: IBaseSeriesConfig;
         circleLegend?: {visible?: boolean};
     }
