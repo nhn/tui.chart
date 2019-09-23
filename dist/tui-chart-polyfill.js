@@ -2,10 +2,10 @@
  * tui-chart-polyfill
  * @fileoverview tui-chart
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @version 3.7.0
+ * @version 3.8.0
  * @license MIT
  * @link https://github.com/nhn/tui.chart
- * bundle created at "Tue Apr 23 2019 10:58:25 GMT+0900 (대한민국 표준시)"
+ * bundle created at "Mon Sep 23 2019 15:57:49 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -9999,12 +9999,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * text ellipsis for fixed width
 	     * @param {string} text - target text
-	     * @param {number} fixedWidth - width for elipsis
-	     * @param {object} theme - lable theme
+	     * @param {number} fixedWidth - width for ellipsis
+	     * @param {object} theme - label theme
 	     * @returns {string}
 	     */
 	    getEllipsisText: function getEllipsisText(text, fixedWidth, theme) {
-	        var textArray = text.split('');
+	        var textArray = String(text).split('');
 	        var textLength = textArray.length;
 	        var dotWidth = this.getRenderedTextSize('.', theme.fontSize, theme.fontFamily).width;
 	        var newString = '';
@@ -10615,14 +10615,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @memberof module:renderUtil
 	     * @param {string[]} labels labels
 	     * @param {{fontSize: number, fontFamily: string, color: string}} theme label theme
+	     * @param {number} [maxWidth] - max width
 	     * @returns {number} max width
 	     * @private
 	     */
-	    getRenderedLabelsMaxWidth: function getRenderedLabelsMaxWidth(labels, theme) {
+	    getRenderedLabelsMaxWidth: function getRenderedLabelsMaxWidth(labels, theme, maxWidth) {
 	        var iteratee = _tuiCodeSnippet2['default'].bind(this.getRenderedLabelWidth, this);
-	        var maxWidth = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
+	        var labelMaxSize = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 	
-	        return maxWidth;
+	        return maxWidth ? Math.min(maxWidth, labelMaxSize) : labelMaxSize;
 	    },
 	
 	
@@ -10635,9 +10636,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    getRenderedLabelsMaxHeight: function getRenderedLabelsMaxHeight(labels, theme) {
 	        var iteratee = _tuiCodeSnippet2['default'].bind(this.getRenderedLabelHeight, this);
-	        var maxHeight = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 	
-	        return maxHeight;
+	        return this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 	    },
 	
 	
@@ -21363,6 +21363,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.yAxis.dateFormat - date format
 	 *          @param {string} options.yAxis.prefix - prefix for yAxis
 	 *          @param {string} options.yAxis.suffix - suffix for yAxis
+	 *          @param {number} options.yAxis.maxWidth - max Width for yAxis
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -21374,6 +21375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.xAxis.pointOnColumn - Place the label between the ticks.
 	 *          @param {string} options.xAxis.prefix - prefix for xAxis
 	 *          @param {string} options.xAxis.suffix - suffix for xAxis
+	 *          @param {number} options.xAxis.maxWidth - max Width for xAxis
 	 *      @param {object} options.series - options for series component
 	 *          @param {string} options.series.stackType - type of stack
 	 *          @param {boolean} options.series.showLabel - whether show label or not
@@ -21475,6 +21477,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.max - maximum value for y axis
 	 *          @param {string} options.yAxis.prefix - prefix for yAxis
 	 *          @param {string} options.yAxis.suffix - suffix for yAxis
+	 *          @param {number} options.yAxis.maxWidth - max Width for yAxis
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -21487,6 +21490,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.xAxis.dateFormat - date format
 	 *          @param {string} options.xAxis.prefix - prefix for xAxis
 	 *          @param {string} options.xAxis.suffix - suffix for xAxis
+	 *          @param {number} options.xAxis.maxWidth - max Width for xAxis
 	 *      @param {object} options.series - options for series component
 	 *          @param {string} options.series.stackType - type of stack
 	 *          @param {boolean} options.series.showLabel - whether show label or not
@@ -21585,6 +21589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.max - maximum value for y axis
 	 *          @param {string} options.yAxis.prefix - prefix for yAxis
 	 *          @param {string} options.yAxis.suffix - suffix for yAxis
+	 *          @param {number} options.yAxis.maxWidth - max Width for yAxis
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -21598,6 +21603,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.xAxis.dateFormat - date format
 	 *          @param {string} options.xAxis.prefix - prefix for xAxis
 	 *          @param {string} options.xAxis.suffix - suffix for xAxis
+	 *          @param {number} options.xAxis.maxWidth - max Width for xAxis
 	 *      @param {object} options.series - options for series component
 	 *          @param {boolean} options.series.showDot - whether show dot or not
 	 *          @param {boolean} options.series.showLabel - whether show label or not
@@ -21710,6 +21716,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.max - maximum value for y axis
 	 *          @param {string} options.yAxis.prefix - prefix for yAxis
 	 *          @param {string} options.yAxis.suffix - suffix for yAxis
+	 *          @param {number} options.yAxis.maxWidth - max Width for yAxis
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -21724,6 +21731,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.xAxis.pointOnColumn - Place the label between the ticks.
 	 *          @param {string} options.xAxis.prefix - prefix for xAxis
 	 *          @param {string} options.xAxis.suffix - suffix for xAxis
+	 *          @param {number} options.xAxis.maxWidth - max Width for xAxis
 	 *      @param {object} options.series - options for series component
 	 *          @param {boolean} options.series.showDot - whether show dot or not
 	 *          @param {boolean} options.series.showLabel - whether show label or not
@@ -21843,6 +21851,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.xAxis.max - maximum value for y axis
 	 *          @param {string} options.xAxis.prefix - prefix for xAxis
 	 *          @param {string} options.xAxis.suffix - suffix for xAxis
+	 *          @param {number} options.xAxis.maxWidth - max Width for xAxis
 	 *      @param {object} options.series - options for series component
 	 *          @param {boolean} options.series.showLabel - whether show label or not
 	 *          @param {boolean} options.series.allowSelect - whether allow select or not
@@ -21947,14 +21956,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {number} options.yAxis.min - minimum value for y axis
 	 *          @param {number} options.yAxis.max - maximum value for y axis
+	 *          @param {number} options.yAxis.maxWidth - max Width for y axis
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
-	 *          @param {number} options.xAxis.min - minimum value for y axis
-	 *          @param {number} options.xAxis.max - maximum value for y axis
+	 *          @param {number} options.xAxis.min - minimum value for x axis
+	 *          @param {number} options.xAxis.max - maximum value for x axis
+	 *          @param {number} options.xAxis.maxWidth - max Width for x axis
 	 *      @param {object} options.series - options for series component
 	 *          @param {boolean} options.series.showLabel - whether show label or not
 	 *          @param {boolean} options.series.allowSelect - whether allow select or not
@@ -22049,6 +22060,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.yAxis.labelMargin - label margin for y axis
 	 *          @param {string} options.yAxis.prefix - prefix for yAxis
 	 *          @param {string} options.yAxis.suffix - suffix for yAxis
+	 *          @param {number} options.yAxis.maxWidth - max Width for yAxis
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -22057,6 +22069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {string} options.xAxis.prefix - prefix for xAxis
 	 *          @param {string} options.xAxis.suffix - suffix for xAxis
+	 *          @param {number} options.xAxis.maxWidth - max Width for xAxis
 	 *      @param {object} options.series - options for series component
 	 *          @param {boolean} options.series.showLabel - whether show label or not
 	 *      @param {object} options.tooltip - options for tooltip component
@@ -22224,6 +22237,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {string} options.yAxis.prefix - prefix for yAxis
 	 *          @param {string} options.yAxis.suffix - suffix for yAxis
 	 *          @param {string} options.yAxis.chartType - chart type for combo chart
+	 *          @param {number} options.yAxis.maxWidth - max Width for yAxis
 	 *      @param {object} options.xAxis - options for x axis component
 	 *          @param {string | object} options.xAxis.title - title text or title object
 	 *              @param {string} options.xAxis.title.text - title text
@@ -22234,6 +22248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
 	 *          @param {string} options.xAxis.prefix - prefix for xAxis
 	 *          @param {string} options.xAxis.suffix - suffix for xAxis
+	 *          @param {number} options.xAxis.maxWidth - max Width for xAxis
 	 *      @param {object} options.series - options for series component
 	 *          @param {?object} options.series.column - options for column series component
 	 *              @param {string} options.series.column.stackType - type of stack
@@ -26252,6 +26267,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
+	var _raphaelRenderUtil = __webpack_require__(332);
+	
+	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
@@ -26846,7 +26865,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            _options2$labelMargin = _options2.labelMargin,
 	            labelMargin = _options2$labelMargin === undefined ? 0 : _options2$labelMargin,
 	            pointOnColumn = _options2.pointOnColumn,
-	            isCenter = _options2.isCenter;
+	            isCenter = _options2.isCenter,
+	            maxWidth = _options2.maxWidth;
 	
 	        var isLineTypeChart = _predicate2['default'].isLineTypeChart(dataProcessor.chartType, dataProcessor.seriesTypes);
 	        var isPointOnColumn = isLineTypeChart && pointOnColumn;
@@ -26887,12 +26907,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            positionTopAndLeft.top = Math.round(positionTopAndLeft.top);
 	            positionTopAndLeft.left = Math.round(positionTopAndLeft.left);
 	
+	            var labelText = categories[index];
+	            if (maxWidth) {
+	                labelText = _raphaelRenderUtil2['default'].getEllipsisText(categories[index], maxWidth, theme);
+	            }
+	
 	            renderer.renderLabel({
 	                isPositionRight: isPositionRight,
 	                isVertical: isYAxis,
 	                isCenter: isCenter,
 	                labelSize: labelSize,
-	                labelText: categories[index],
+	                labelText: labelText,
 	                paper: _this2.paper,
 	                positionTopAndLeft: positionTopAndLeft,
 	                set: _this2.axisSet,
@@ -51992,7 +52017,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            type = options.type,
 	            dateFormat = options.dateFormat,
 	            showLabel = options.showLabel,
-	            title = options.title;
+	            title = options.title,
+	            maxWidth = options.maxWidth;
 	
 	        var titleWidth = 0;
 	        var maxLabelWidth = 0;
@@ -52015,7 +52041,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        labels = yAxisLabels.length ? yAxisLabels : labels;
 	        if (showLabel !== false) {
-	            maxLabelWidth = _renderUtil2['default'].getRenderedLabelsMaxWidth(labels, theme.label);
+	            maxLabelWidth = _renderUtil2['default'].getRenderedLabelsMaxWidth(labels, theme.label, maxWidth);
 	        }
 	        if (title) {
 	            titleWidth = _renderUtil2['default'].getRenderedLabelWidth(title.text, theme.title);

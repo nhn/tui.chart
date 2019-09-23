@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Chart v3.7.0
+// Type definitions for TOAST UI Chart v3.8.0
 // TypeScript Version: 3.2.2
 
 declare namespace tuiChart {
