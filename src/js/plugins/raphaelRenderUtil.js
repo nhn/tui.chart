@@ -73,12 +73,12 @@ export default {
     /**
      * text ellipsis for fixed width
      * @param {string} text - target text
-     * @param {number} fixedWidth - width for elipsis
-     * @param {object} theme - lable theme
+     * @param {number} fixedWidth - width for ellipsis
+     * @param {object} theme - label theme
      * @returns {string}
      */
     getEllipsisText(text, fixedWidth, theme) {
-        const textArray = text.split('');
+        const textArray = String(text).split('');
         const textLength = textArray.length;
         const dotWidth = this.getRenderedTextSize('.', theme.fontSize, theme.fontFamily).width;
         let newString = '';
