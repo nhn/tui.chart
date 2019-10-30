@@ -59,22 +59,24 @@ var options = {
         tickInterval: 'auto', // automatically adjusting count of tick
         rotateLabel: false, // whether rotate label or not,
         type: 'datetime', // axis type
-        dateFormat: 'YYYY.MM' // format string for formatting datetime type label
+        dateFormat: 'YYYY.MM', // format string for formatting datetime type label
+        suffix: '%', // text to be appended at the end of the labels
+        prefix: 'EUR' // text to be appended at the beginning of the labels
     }
 };
 ```
 
-|Chart Type|title|min|max|labelInterval|labelMargin|tickInterval|rotateLabel|type|dateFormat|  
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-|Bar|O|O|O|X|O|X|O|X|X|
-|Column|O|X|X|O|O|X|O|O|O|
-|Line|O|X|X|O|O|O|O|O|O|
-|Area|O|X|X|O|O|O|O|O|O|
-|Bubble|O|O|O|O|O|X|O|X|X|
-|Scatter|O|O|O|O|O|X|O|X|X|
-|Column&Line Combo|O|X|X|O|O|X|O|O|O|
-|Line&Area Combo|O|X|X|O|O|O|O|O|O|
-|Heatmap|O|X|X|O|O|X|O|O|O|
+|Chart Type|title|min|max|labelInterval|labelMargin|tickInterval|rotateLabel|type|dateFormat|suffix|prefix|  
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|Bar|O|O|O|X|O|X|O|X|X|X|X|
+|Column|O|X|X|O|O|X|O|O|O|X|X|
+|Line|O|X|X|O|O|O|O|O|O|X|X|
+|Area|O|X|X|O|O|O|O|O|O|X|X|
+|Bubble|O|O|O|O|O|X|O|X|X|X|X|
+|Scatter|O|O|O|O|O|X|O|X|X|X|X|
+|Column&Line Combo|O|X|X|O|O|X|O|O|O|X|X|
+|Line&Area Combo|O|X|X|O|O|O|O|O|O|X|X|
+|Heatmap|O|X|X|O|O|X|O|O|O|X|X|
 
 
 ***
@@ -88,25 +90,26 @@ var options = {
         align: 'center', // yAxis align
         min: 0, // minimal tick value
         max: 100, // maximum tick value
-        rotateTitle: false // whether rotate title or not,
         type: 'datetime', // axis type
         dateFormat: 'YYYY.MM', // format string for formatting datetime type label
-        labelMargin: 10 // margin between yAxis and label
+        labelMargin: 10, // margin between yAxis and label
+        suffix: '%', // text to be appended at the end of the labels
+        prefix: 'EUR' // text to be appended at the beginning of the labels
     }
 };
 ```
 
-|Chart Type|title|align|min|max|rotateTitle|type|dateFormat|labelMargin|
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-|Bar|O|X|X|X|O|O|O|O|
-|Column|O|O|O|O|O|X|X|O|
-|Line|O|X|O|O|O|X|X|O|
-|Area|O|X|O|O|O|X|X|O|
-|Bubble|O|X|O|O|O|X|X|O|
-|Scatter|O|X|O|O|O|X|X|O|
-|Column&Line Combo|O|X|O|O|O|X|X|O|
-|Line&Area Combo|O|X|O|O|O|X|X|O|
-|Heatmap|O|X|X|X|O|O|O|O|
+|Chart Type|title|align|min|max|rotateTitle|type|dateFormat|labelMargin|suffix|prefix|
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|Bar|O|X|X|X|O|O|O|X|X|
+|Column|O|O|O|O|X|X|O|X|X|
+|Line|O|X|O|O|X|X|O|X|X|
+|Area|O|X|O|O|X|X|O|X|X|
+|Bubble|O|X|O|O|X|X|O|X|X|
+|Scatter|O|X|O|O|X|X|O|X|X|
+|Column&Line Combo|O|X|O|O|X|X|O|X|X|
+|Line&Area Combo|O|X|O|O|X|X|O|X|X|
+|Heatmap|O|X|X|X|O|O|O|X|X|
 ***
 
 ### `series` options for all charts
@@ -187,15 +190,16 @@ var options = {
     series: {
         radiusRange: ['50%', '90%'], // range of radius
         startAngle: 0, // start angle
-        endAngle: 90 // end angle
+        endAngle: 90, // end angle
+        showLegend: true // whether to show the legend or not
     }
 };
 ```
 
-|Chart Type|radiusRange|startAngle|endAngle|
-|---|:---:|:---:|:---:|
-|Pie|O|O|O||
-|Pie&Donut Combo|O|O|O|
+|Chart Type|radiusRange|startAngle|endAngle|showLegend|
+|---|:---:|:---:|:---:|:---|
+|Pie|O|O|O|X|
+|Pie&Donut Combo|O|O|O|X|
 
 ***
 
