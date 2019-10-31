@@ -225,26 +225,35 @@ var options = {
         align: 'top', // tooltip align
         offsetX: 10, // for moving a tooltip to left or right
         offsetY: -20, // for moving a tooltip to top or bottom
-        position: {left: 10, top: -20} // (deprecated) moving position
+        position: {left: 10, top: -20}, // (deprecated) moving position
+        suffix: '%', // text added to the end of the value in the tooltip
+        template: (category, items, categoryValue, groupIndex) => { // function that returns the template of the tooltip
+        return `<div class="tui-chart-default-tooltip">
+                    <div class="tui-chart-tooltip-head show">${items.category}</div>
+                    <div class="tui-chart-tooltip-body">
+                      <span class="tui-chart-tooltip-value">${items.label}${items.suffix}</span>
+                    </div>
+                  </div>`;
+        }                
     }
 };
 ```
 
-|Chart Type|grouped|align|offsetX|offsetY|(deprecated)position|
-|---|:---:|:---:|:---:|:---:|:---:|
-|Bar|O|O|O|O|O|
-|Column|O|O|O|O|O|
-|Line|O|O|O|O|O|
-|Area|O|O|O|O|O|
-|Bubble|X|O|O|O|O|
-|Scatter|X|O|O|O|O|
-|Pie|X|O|O|O|O|
-|Column&Line Combo|O|O|O|O|O|
-|Pie&Donut Combo|X|O|O|O|O|
-|Line&Area Combo|O|O|O|O|O|
-|Map|X|O|O|O|O|
-|Heatmap|X|O|O|O|O|
-|Treemap|X|X|O|O|O|
+|Chart Type|grouped|align|offsetX|offsetY|(deprecated)position|suffix|template|
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---|
+|Bar|O|O|O|O|O|X|X|
+|Column|O|O|O|O|O|X|X|
+|Line|O|O|O|O|O|X|X|
+|Area|O|O|O|O|O|X|X|
+|Bubble|X|O|O|O|O|O|X|
+|Scatter|X|O|O|O|O|O|X|
+|Pie|X|O|O|O|O|X|X|
+|Column&Line Combo|O|O|O|O|O|X|X|
+|Pie&Donut Combo|X|O|O|O|O|X|X|
+|Line&Area Combo|O|O|O|O|O|X|X|
+|Map|X|O|O|O|O|X|X|
+|Heatmap|X|O|O|O|O|X|X|
+|Treemap|X|X|O|O|O|X|X|
 
 ***
 
