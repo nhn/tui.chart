@@ -326,6 +326,7 @@ class Axis {
             this.graphRenderer.renderTitle(this.paper, {
                 text: title.text,
                 offset: title.offset,
+                align: title.align,
                 theme: this.theme.title,
                 rotationInfo: {
                     isVertical: this.isYAxis,
