@@ -75,9 +75,10 @@ class RaphaelAxisComponent {
      */
     getRenderTitleAnchor(rotationInfo) {
         let textAnchor = 'middle';
-        if (rotationInfo.isPositionRight) {
+        if (rotationInfo.isPositionRight || (!rotationInfo.isVertical && !rotationInfo.isXAxisTitleLeft)) {
             textAnchor = 'end';
-        } else if (rotationInfo.isVertical && !rotationInfo.isCenter) {
+        } else if ((rotationInfo.isVertical && !rotationInfo.isCenter)
+            || (!rotationInfo.isVertical && rotationInfo.isXAxisTitleLeft)) {
             textAnchor = 'start';
         }
 
@@ -392,8 +393,7 @@ class RaphaelAxisComponent {
      * @returns {object} position - top, left
      */
     calculatePosition(paper, data) {
-        const TICK_WIDTH = 5;
-        const {rotationInfo, text, theme, additionalWidth, otherSideDimension, areaSize, layout, align} = data;
+        const {rotationInfo, text, theme, additionalWidth, otherSideDimension, areaSize, layout} = data;
         const textHeight = getTextHeight(text, theme);
         const textWidth = getTextWidth(text, theme);
         const axisHeight = layout.dimension.height;
@@ -418,10 +418,10 @@ class RaphaelAxisComponent {
                 position.left = left + (areaSize / 2);
             } else if (rotationInfo.isDiverging && !rotationInfo.isYAxisCenter) {
                 position.left = left + (axisWidth / 2);
-            } else if (align === 'left') {
-                position.left += layout.position.left - otherSideDimension.width + TICK_WIDTH;
+            } else if (rotationInfo.isXAxisTitleLeft) {
+                position.left = layout.position.left;
             } else {
-                position.left = otherSideDimension.width + axisWidth - (textWidth / 2) + Y_AXIS_TITLE_PADDING;
+                position.left = layout.position.left + axisWidth;
             }
         }
 
