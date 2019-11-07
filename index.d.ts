@@ -80,7 +80,7 @@ declare namespace tuiChart {
     interface IThemeConfig {
         chart?: {
             fontFamily?: string;
-            background?: string;
+            background?: IThemeRange;
         };
         title?: {
             fontSize?: number;
