@@ -44,7 +44,7 @@
     "css-loader": "^0.25.0",
     "es3ify-webpack-plugin": "0.0.1",
     "es5-shim": "^4.5.10",
-    "eslint": "4.16.0",
+    "eslint": "4.18.2",
     "eslint-config-tui": "^1.0.3",
     "eslint-loader": "^1.9.0",
     "extract-text-webpack-plugin": "^1.0.1",
