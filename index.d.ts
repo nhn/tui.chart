@@ -34,7 +34,7 @@ declare namespace tuiChart {
     type DateType = string | number | Date;
     type DataType = number[] | number[][];
     type LineSeriesDataType = number[] | Array<Array<number | string>> | IPos[];
-    type ThemeRangeType = IThemeRange | null;
+    type ThemeRangeType = IThemeBackgroundConfig | null;
     type AxisLabelType = DateType;
     type TemplateFunc = (
         category: string,
@@ -72,7 +72,7 @@ declare namespace tuiChart {
         hover?: IDotOptions;
     }
 
-    interface IThemeRange {
+    interface IThemeBackgroundConfig {
         color?: string;
         opacity?: number;
     }
@@ -80,7 +80,7 @@ declare namespace tuiChart {
     interface IThemeConfig {
         chart?: {
             fontFamily?: string;
-            background?: IThemeRange;
+            background?: IThemeBackgroundConfig;
         };
         title?: {
             fontSize?: number;
