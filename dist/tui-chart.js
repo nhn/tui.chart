@@ -2,10 +2,10 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @version 3.8.0
+ * @version 3.9.0
  * @license MIT
  * @link https://github.com/nhn/tui.chart
- * bundle created at "Mon Sep 23 2019 15:58:12 GMT+0900 (Korean Standard Time)"
+ * bundle created at "Thu Nov 07 2019 14:58:56 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11591,9 +11591,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    RaphaelAxisComponent.prototype.getRenderTitleAnchor = function getRenderTitleAnchor(rotationInfo) {
 	        var textAnchor = 'middle';
-	        if (rotationInfo.isPositionRight) {
+	        if (rotationInfo.isPositionRight || !rotationInfo.isVertical && !rotationInfo.isXAxisTitleLeft) {
 	            textAnchor = 'end';
-	        } else if (rotationInfo.isVertical && !rotationInfo.isCenter) {
+	        } else if (rotationInfo.isVertical && !rotationInfo.isCenter || !rotationInfo.isVertical && rotationInfo.isXAxisTitleLeft) {
 	            textAnchor = 'start';
 	        }
 	
@@ -11933,9 +11933,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    /**
-	     * Calculate axis title position, and transforma
+	     * Calculate axis title position, and transform
 	     * @param {Raphael.paper} paper - paper
-	     * @param {object} data - options for calcultating title position
+	     * @param {object} data - options for calculating title position
 	     *  @param {object} data.rotationInfo - isCenter, isVertical, isPositionRight
 	     *  @param {object} data.text - text
 	     *  @param {object} data.theme - theme
@@ -11951,20 +11951,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            additionalWidth = data.additionalWidth,
 	            otherSideDimension = data.otherSideDimension,
 	            areaSize = data.areaSize,
-	            tickCount = data.tickCount,
 	            layout = data.layout;
 	
 	        var textHeight = getTextHeight(text, theme);
 	        var textWidth = getTextWidth(text, theme);
 	        var axisHeight = layout.dimension.height;
 	        var axisWidth = layout.dimension.width;
-	        var top = layout.position.top;
+	        var _layout$position = layout.position,
+	            top = _layout$position.top,
+	            left = _layout$position.left;
 	
-	        var left = layout.position.left + additionalWidth;
-	        var adjustLeftPosition = textWidth / 2 - otherSideDimension.width;
+	        var leftPosition = left + additionalWidth;
+	        var adjustLeftPosition = textWidth - otherSideDimension.width;
 	        var position = {
 	            top: top + axisHeight - textHeight / 2,
-	            left: left + (adjustLeftPosition < 0 ? 0 : adjustLeftPosition)
+	            left: leftPosition + (adjustLeftPosition < 0 ? 0 : adjustLeftPosition)
 	        };
 	
 	        if (rotationInfo.isVertical) {
@@ -11979,8 +11980,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                position.left = left + areaSize / 2;
 	            } else if (rotationInfo.isDiverging && !rotationInfo.isYAxisCenter) {
 	                position.left = left + axisWidth / 2;
-	            } else if (rotationInfo.isColumnType) {
-	                position.left = left + axisWidth / (tickCount - 1) / 2;
+	            } else if (rotationInfo.isXAxisTitleLeft) {
+	                position.left = layout.position.left;
+	            } else {
+	                position.left = layout.position.left + axisWidth;
 	            }
 	        }
 	
@@ -12517,6 +12520,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
+	 *              @param {number} options.xAxis.title.align - title align (left|right) (default: right)
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {number} options.xAxis.min - minimum value for x axis
 	 *          @param {number} options.xAxis.max - maximum value for x axis
@@ -12631,6 +12635,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
+	 *              @param {number} options.xAxis.title.align - title align (left|right) (default: right)
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {number} options.xAxis.labelInterval - label interval for x axis
 	 *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
@@ -12743,6 +12748,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
+	 *              @param {number} options.xAxis.title.align - title align (left|right) (default: right)
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {number} options.xAxis.labelInterval - label interval for x axis
 	 *          @param {string} options.xAxis.tickInterval - tick interval for x axis
@@ -12870,6 +12876,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
+	 *              @param {number} options.xAxis.title.align - title align (left|right) (default: right)
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {number} options.xAxis.labelInterval - label interval for x axis
 	 *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
@@ -12992,6 +12999,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
+	 *              @param {number} options.xAxis.title.align - title align (left|right) (default: right)
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {number} options.xAxis.labelInterval - label interval for x axis
 	 *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
@@ -13110,6 +13118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
+	 *              @param {number} options.xAxis.title.align - title align (left|right) (default: right)
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {number} options.xAxis.min - minimum value for x axis
 	 *          @param {number} options.xAxis.max - maximum value for x axis
@@ -13214,6 +13223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
+	 *              @param {number} options.xAxis.title.align - title align (left|right) (default: right)
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {string} options.xAxis.prefix - prefix for xAxis
 	 *          @param {string} options.xAxis.suffix - suffix for xAxis
@@ -13391,6 +13401,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *              @param {string} options.xAxis.title.text - title text
 	 *              @param {number} options.xAxis.title.offsetX - title offset x
 	 *              @param {number} options.xAxis.title.offsetY - title offset y
+	 *              @param {number} options.xAxis.title.align - title align (left|right) (default: right)
 	 *          @param {number} options.xAxis.labelMargin - label margin for x axis
 	 *          @param {number} options.xAxis.labelInterval - label interval for x axis
 	 *          @param {boolean} options.xAxis.rotateLabel - whether rotate label or not (default: true)
@@ -17784,6 +17795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _options$title = this.options.title,
 	            title = _options$title === undefined ? {} : _options$title;
 	
+	        var xAxisOption = this.dataProcessor.getOption('xAxis');
 	        var yAxisOption = this.dataProcessor.getOption('yAxis');
 	        var seriesOption = this.dataProcessor.getOption('series') || {};
 	
@@ -17798,7 +17810,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    isCenter: this.options.isCenter,
 	                    isColumnType: _predicate2['default'].isColumnTypeChart(this.dataProcessor.chartType, this.dataProcessor.seriesTypes),
 	                    isDiverging: seriesOption.diverging,
-	                    isYAxisCenter: yAxisOption && yAxisOption.align === 'center'
+	                    isYAxisCenter: yAxisOption && yAxisOption.align === 'center',
+	                    isXAxisTitleLeft: xAxisOption && xAxisOption.title && xAxisOption.title.align === 'left'
 	                },
 	                layout: this.layout,
 	                areaSize: size,
