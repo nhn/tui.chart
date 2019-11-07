@@ -115,8 +115,8 @@ module.exports = function(config) {
         defaultConfig.browsers = [
             'IE9',
             'IE10',
-            'IE11',
-            'Edge',
+            // 'IE11',
+            // 'Edge',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
             // 'Safari-WebDriver'

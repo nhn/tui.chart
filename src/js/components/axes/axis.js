@@ -319,6 +319,7 @@ class Axis {
      */
     _renderTitleArea(size, additionalWidth) {
         const {title = {}} = this.options;
+        const xAxisOption = this.dataProcessor.getOption('xAxis');
         const yAxisOption = this.dataProcessor.getOption('yAxis');
         const seriesOption = this.dataProcessor.getOption('series') || {};
 
@@ -335,7 +336,8 @@ class Axis {
                         this.dataProcessor.chartType, this.dataProcessor.seriesTypes
                     ),
                     isDiverging: seriesOption.diverging,
-                    isYAxisCenter: yAxisOption && yAxisOption.align === 'center'
+                    isYAxisCenter: yAxisOption && yAxisOption.align === 'center',
+                    isXAxisTitleLeft: xAxisOption && xAxisOption.title && xAxisOption.title.align === 'left'
                 },
                 layout: this.layout,
                 areaSize: size,

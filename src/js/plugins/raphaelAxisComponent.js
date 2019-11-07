@@ -75,9 +75,10 @@ class RaphaelAxisComponent {
      */
     getRenderTitleAnchor(rotationInfo) {
         let textAnchor = 'middle';
-        if (rotationInfo.isPositionRight) {
+        if (rotationInfo.isPositionRight || (!rotationInfo.isVertical && !rotationInfo.isXAxisTitleLeft)) {
             textAnchor = 'end';
-        } else if (rotationInfo.isVertical && !rotationInfo.isCenter) {
+        } else if ((rotationInfo.isVertical && !rotationInfo.isCenter)
+            || (!rotationInfo.isVertical && rotationInfo.isXAxisTitleLeft)) {
             textAnchor = 'start';
         }
 
@@ -382,9 +383,9 @@ class RaphaelAxisComponent {
     }
 
     /**
-     * Calculate axis title position, and transforma
+     * Calculate axis title position, and transform
      * @param {Raphael.paper} paper - paper
-     * @param {object} data - options for calcultating title position
+     * @param {object} data - options for calculating title position
      *  @param {object} data.rotationInfo - isCenter, isVertical, isPositionRight
      *  @param {object} data.text - text
      *  @param {object} data.theme - theme
@@ -392,17 +393,17 @@ class RaphaelAxisComponent {
      * @returns {object} position - top, left
      */
     calculatePosition(paper, data) {
-        const {rotationInfo, text, theme, additionalWidth, otherSideDimension, areaSize, tickCount, layout} = data;
+        const {rotationInfo, text, theme, additionalWidth, otherSideDimension, areaSize, layout} = data;
         const textHeight = getTextHeight(text, theme);
         const textWidth = getTextWidth(text, theme);
         const axisHeight = layout.dimension.height;
         const axisWidth = layout.dimension.width;
-        const {top} = layout.position;
-        const left = layout.position.left + additionalWidth;
-        const adjustLeftPosition = (textWidth / 2) - otherSideDimension.width;
+        const {top, left} = layout.position;
+        const leftPosition = left + additionalWidth;
+        const adjustLeftPosition = textWidth - otherSideDimension.width;
         const position = {
             top: top + axisHeight - (textHeight / 2),
-            left: left + ((adjustLeftPosition < 0) ? 0 : adjustLeftPosition)
+            left: leftPosition + ((adjustLeftPosition < 0) ? 0 : adjustLeftPosition)
         };
 
         if (rotationInfo.isVertical) {
@@ -417,8 +418,10 @@ class RaphaelAxisComponent {
                 position.left = left + (areaSize / 2);
             } else if (rotationInfo.isDiverging && !rotationInfo.isYAxisCenter) {
                 position.left = left + (axisWidth / 2);
-            } else if (rotationInfo.isColumnType) {
-                position.left = left + (axisWidth / (tickCount - 1) / 2);
+            } else if (rotationInfo.isXAxisTitleLeft) {
+                position.left = layout.position.left;
+            } else {
+                position.left = layout.position.left + axisWidth;
             }
         }
 
