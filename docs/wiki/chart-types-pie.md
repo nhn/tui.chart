@@ -57,7 +57,7 @@ tui.chart.pieChart(container, rawData);
 ```
 ![Pie Chart](https://user-images.githubusercontent.com/35218826/36881907-21f7af84-1e14-11e8-8d50-755e5f4674d2.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-01-pie-chart-basic)_
 
 ***
 
@@ -82,7 +82,7 @@ tui.chart.pieChart(container, rawData, options);
 ```
 ![Center Legend Pie Chart](https://user-images.githubusercontent.com/35218826/36882119-5ccf1182-1e15-11e8-9bcf-c1d30e1a8ca0.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-02-pie-chart-center-legend.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-02-pie-chart-center-legend)_
 
 ***
 
@@ -106,7 +106,7 @@ tui.chart.pieChart(container, rawData, options);
 ```
 ![Outer Legend Pie Chart](https://user-images.githubusercontent.com/35218826/36882140-81a3815a-1e15-11e8-890a-ff89c8b70dcb.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-03-pie-chart-outer-legend.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-03-pie-chart-outer-legend)_
 
 ***
 
@@ -130,7 +130,7 @@ tui.chart.pieChart(container, rawData, options);
 ![Donut Chart](https://user-images.githubusercontent.com/35218826/36882216-cc4f9a2c-1e15-11e8-9e25-04f351daef4e.png)
 
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-04-pie-chart-donut)_
 
 ***
 
@@ -185,4 +185,4 @@ tui.chart.pieChart(container, rawData, options);
 
 ![Semi Circle Donut Chart](https://user-images.githubusercontent.com/35218826/36882331-82acfd1e-1e16-11e8-8bb6-351a91487d4e.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-05-pie-chart-semi-circle-donut.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example07-05-pie-chart-semi-circle-donut)_

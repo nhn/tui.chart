@@ -55,4 +55,4 @@ tui.chart.scatterChart(container, rawData);
 
 ![Scatter chart](https://user-images.githubusercontent.com/35218826/36881748-22f279c4-1e13-11e8-8272-a73437e16e14.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example06-01-scatter-chart-basic)_

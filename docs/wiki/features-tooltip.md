@@ -59,7 +59,7 @@ tui.chart.lineChart(container, data, options);
 
 ![Group Tooltip](https://user-images.githubusercontent.com/35218826/36886301-0d477126-1e2f-11e8-96f5-290966a22530.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example04-02-area-chart-normal-stack)_
 
 ***
 

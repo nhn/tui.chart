@@ -73,6 +73,6 @@ chart.addData('newCate', {line:[10], area:[9]});
 ```
 ![Line & Area Combo Chart](https://user-images.githubusercontent.com/35218826/36882761-1de3c072-1e19-11e8-933e-87656e0de011.gif)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example08-03-combo-chart-line-and-area)_
 
 ***

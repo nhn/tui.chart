@@ -72,7 +72,7 @@ tui.chart.comboChart(container, rawData);
 ```
 ![Combo Chart](https://user-images.githubusercontent.com/35218826/36882465-6ed86e80-1e17-11e8-936e-709e677a6345.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line)_
 
 ***
 
@@ -99,6 +99,6 @@ tui.chart.comboChart(container, rawData, options);
 ```
 ![Combo Chart](https://user-images.githubusercontent.com/35218826/36882588-1757ab34-1e18-11e8-8562-3eb535e23956.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example08-01-combo-chart-column-and-line)_
 
 ***

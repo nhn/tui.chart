@@ -22,7 +22,7 @@ tui.chart.barChart(container, data, options);
 
 ![Chart label](https://user-images.githubusercontent.com/35218826/36885318-96340ff4-1e29-11e8-9fee-ddebfb2f281d.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example01-02-bar-chart-negative-data.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example01-02-bar-chart-negative-data)_
 
 ***
 
@@ -68,7 +68,7 @@ tui.chart.lineChart(container, data, options);
 
 ![Line Chart](https://user-images.githubusercontent.com/35218826/36885376-e3699870-1e29-11e8-8418-43001d491ff9.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic)_
 
 ***
 
@@ -114,7 +114,7 @@ tui.chart.lineChart(container, data, options);
 
 ![Line Chart](https://user-images.githubusercontent.com/35218826/36885376-e3699870-1e29-11e8-8418-43001d491ff9.png)
 
-* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic.html)_
+* _[Sample](https://nhn.github.io/tui.chart/latest/tutorial-example03-01-line-chart-basic)_
 
 ***
 
