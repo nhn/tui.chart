@@ -7,7 +7,6 @@ import raphaelRenderUtil from './raphaelRenderUtil';
 import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 
-const ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const DEFAULT_LUMINANC = 0.2;
@@ -33,12 +32,16 @@ class RaphaelBarChart {
         if (!groupBounds) {
             return null;
         }
-
         this.paper = paper;
-
         this.theme = theme;
         this.seriesDataModel = seriesDataModel;
         this.chartType = chartType;
+
+        /**
+         * series rendering animation duration
+         * @type {number}
+         */
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(options.animation);
 
         this.paper.setStart();
 
@@ -332,7 +335,7 @@ class RaphaelBarChart {
             width: bound.width ? bound.width : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
             height: bound.height ? bound.height : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
             opacity: (bound.height && bound.width) ? 1 : SERIES_EXTRA_VISUAL_OPACITY_FOR_ZERO
-        }, ANIMATION_DURATION, '>');
+        }, this.animationDuration, '>');
     }
 
     /**
@@ -349,7 +352,7 @@ class RaphaelBarChart {
         snippet.forEach(lines, (line, name) => {
             line.animate({
                 path: paths[name]
-            }, ANIMATION_DURATION, '>');
+            }, this.animationDuration, '>');
         });
     }
 
@@ -375,7 +378,7 @@ class RaphaelBarChart {
             this.callbackTimeout = setTimeout(() => {
                 onFinish();
                 delete this.callbackTimeout;
-            }, ANIMATION_DURATION);
+            }, this.animationDuration);
         }
     }
 

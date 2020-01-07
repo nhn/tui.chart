@@ -52,6 +52,10 @@ declare namespace tuiChart {
         IHeatmapChartRowData | ILineChartRowData | IMapRowData | IPieChartRowData |
         IRadialChartRowData | IScatterChartRowData | IComboRowData | null;
 
+    interface IAnimationConfig {
+        duration: number;
+    }
+
     interface ITextStyleConfig {
         fontSize?: number;
         fontFamily?: string;
@@ -345,6 +349,12 @@ declare namespace tuiChart {
         shifting?: boolean;
         areaOpacity?: number;
         stackType?: string;
+        animation?: boolean | IAnimationConfig;
+    }
+
+    interface IBubbleSeriesConfig extends IBaseSeriesConfig {
+        circleLegend?: {visible?: boolean};
+        animation?: boolean | IAnimationConfig;
     }
 
     interface IBarSeriesConfig extends IBaseSeriesConfig {
@@ -352,6 +362,7 @@ declare namespace tuiChart {
         barWidth?: number;
         diverging?: boolean;
         colorByPoint?: boolean;
+        animation?: boolean | IAnimationConfig;
     }
 
     interface IComboSeriesConfig {
@@ -374,6 +385,7 @@ declare namespace tuiChart {
         zoomable?: boolean;
         shifting?: boolean;
         pointWidth?: number;
+        animation?: boolean | IAnimationConfig;
     }
 
     interface IPieSeriesConfig extends IBaseSeriesConfig {
@@ -383,6 +395,7 @@ declare namespace tuiChart {
         labelAlign?: string;
         radiusRange?: string[];
         showLegend?: boolean;
+        animation?: boolean | IAnimationConfig;
     }
 
     interface IRadialSeriesConfig {
@@ -511,8 +524,7 @@ declare namespace tuiChart {
     }
 
     interface IBubbleOptions extends IBaseOptions {
-        series?: IBaseSeriesConfig;
-        circleLegend?: {visible?: boolean};
+        series?: IBubbleSeriesConfig;
     }
 
     interface IComboOptions extends IBaseOptions {

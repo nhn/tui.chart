@@ -11,8 +11,6 @@ import renderUtil from '../helpers/renderUtil';
 
 const {browser} = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
-const ANIMATION_DURATION = 700;
-const ANIMATION_DELAY = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const EVENT_DETECTOR_PADDING = 20;
@@ -30,7 +28,7 @@ class RaphaelBulletChart {
      * @returns {Array.<object>} seriesSet
      */
     render(paper, data) {
-        const {groupBounds, seriesDataModel} = data;
+        const {groupBounds, seriesDataModel, options} = data;
 
         if (!groupBounds || !groupBounds.length) {
             return null;
@@ -43,6 +41,12 @@ class RaphaelBulletChart {
         this.options = data.options;
         this.chartType = data.chartType;
         this.isVertical = data.isVertical;
+
+        /**
+         * series rendering animation duration
+         * @type {number}
+         */
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(options.animation);
 
         this.seriesDataModel = seriesDataModel;
         this.maxRangeCount = seriesDataModel.maxRangeCount;
@@ -265,14 +269,14 @@ class RaphaelBulletChart {
                 }
             });
 
-            clipRect.animate(animateAttr, ANIMATION_DURATION, '>', onFinish);
+            clipRect.animate(animateAttr, this.animationDuration, '>', onFinish);
         }
 
         if (onFinish) {
             this.callbackTimeout = setTimeout(() => {
                 onFinish();
                 delete this.callbackTimeout;
-            }, ANIMATION_DELAY);
+            }, this.animationDuration);
         }
     }
 

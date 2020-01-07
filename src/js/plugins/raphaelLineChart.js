@@ -68,6 +68,12 @@ class RaphaelLineChart extends RaphaelLineBase {
         this.dimension = dimension;
         this.position = position;
 
+        /**
+         * series rendering animation duration
+         * @type {number}
+         */
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(options.animation);
+
         paper.setStart();
 
         this.groupLines = this._renderLines(paper, groupPaths, colors, lineWidth);

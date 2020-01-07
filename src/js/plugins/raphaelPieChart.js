@@ -12,7 +12,6 @@ const DEGREE_180 = 180;
 const DEGREE_360 = 360;
 const MIN_DEGREE = 0.01;
 const RAD = Math.PI / DEGREE_180;
-const LOADING_ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const DEFAULT_LUMINANT_VALUE = 0.2;
@@ -39,6 +38,7 @@ class RaphaelPieChart {
      * @returns {object} paper raphael paper
      */
     render(paper, data, callbacks) {
+        const {theme, options} = data;
         const pieSeriesSet = paper.set();
 
         /**
@@ -52,7 +52,7 @@ class RaphaelPieChart {
          * @type {number}
          */
         // this.holeRatio = data.options.radiusRange[0];
-        ([this.holeRatio] = data.options.radiusRange);
+        ([this.holeRatio] = options.radiusRange);
 
         /**
          * base background
@@ -76,7 +76,7 @@ class RaphaelPieChart {
          * color for selection
          * @type {string}
          */
-        this.selectionColor = data.theme.selectionColor;
+        this.selectionColor = theme.selectionColor;
 
         /**
          * bound for circle
@@ -92,7 +92,7 @@ class RaphaelPieChart {
 
         this._setSectorAttr();
 
-        this.sectorInfos = this._renderPie(data.sectorData, data.theme.colors, data.additionalIndex, pieSeriesSet);
+        this.sectorInfos = this._renderPie(data.sectorData, theme.colors, data.additionalIndex, pieSeriesSet);
 
         this.overlay = this._renderOverlay();
 
@@ -100,6 +100,12 @@ class RaphaelPieChart {
             value: [],
             legend: []
         };
+
+        /**
+         * series rendering animation duration
+         * @type {number}
+         */
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(data.options.animation);
 
         /**
          * previous mouse position
@@ -388,7 +394,7 @@ class RaphaelPieChart {
             const attrMap = {
                 fill: sectorInfo.color
             };
-            const animationTime = LOADING_ANIMATION_DURATION * sectorInfo.ratio;
+            const animationTime = this.animationDuration * sectorInfo.ratio;
 
             if ((angles.startAngle === 0) && (angles.endAngle === DEGREE_360)) {
                 angles.endAngle = DEGREE_360 - MIN_DEGREE;

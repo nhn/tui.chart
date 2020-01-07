@@ -239,8 +239,9 @@ class ChartBase {
      */
     _initializeOptions(options) {
         const originalOptions = objectUtil.deepCopy(options);
+
         const defaultOption = {
-            chartTypes: this.charTypes,
+            chartTypes: this.chartTypes,
             xAxis: {},
             series: {},
             tooltip: {},

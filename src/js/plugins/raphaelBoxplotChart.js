@@ -9,7 +9,6 @@ import renderUtil from '../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 
-const ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const DEFAULT_LUMINANC = 0.2;
@@ -30,7 +29,7 @@ class RaphaelBoxplotChart {
      * @returns {Array.<object>} seriesSet
      */
     render(paper, data) {
-        const {groupBounds} = data;
+        const {groupBounds, options} = data;
 
         if (!groupBounds) {
             return null;
@@ -42,6 +41,12 @@ class RaphaelBoxplotChart {
         this.options = data.options;
         this.seriesDataModel = data.seriesDataModel;
         this.chartType = data.chartType;
+
+        /**
+         * series rendering animation duration
+         * @type {number}
+         */
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(options.animation);
 
         this.paper.setStart();
         this.groupWhiskers = [];
@@ -367,7 +372,7 @@ class RaphaelBoxplotChart {
             y: bound.top,
             width: bound.width,
             height: bound.height
-        }, ANIMATION_DURATION, '>');
+        }, this.animationDuration, '>');
     }
 
     /**
@@ -377,7 +382,7 @@ class RaphaelBoxplotChart {
     animate(onFinish) {
         const animation = raphael.animation({
             opacity: 1
-        }, ANIMATION_DURATION);
+        }, this.animationDuration);
 
         raphaelRenderUtil.forEach2dArray(this.groupBoxes, box => {
             if (!box) {
@@ -387,16 +392,16 @@ class RaphaelBoxplotChart {
         });
 
         raphaelRenderUtil.forEach2dArray(this.groupWhiskers, whisker => {
-            whisker.animate(animation.delay(ANIMATION_DURATION));
+            whisker.animate(animation.delay(this.animationDuration));
         });
 
         raphaelRenderUtil.forEach2dArray(this.groupMedians, median => {
-            median.animate(animation.delay(ANIMATION_DURATION));
+            median.animate(animation.delay(this.animationDuration));
         });
 
         raphaelRenderUtil.forEach2dArray(this.groupOutliers, outliers => {
             outliers.forEach(outlier => {
-                outlier.animate(animation.delay(ANIMATION_DURATION));
+                outlier.animate(animation.delay(this.animationDuration));
             });
         });
 
@@ -404,7 +409,7 @@ class RaphaelBoxplotChart {
             this.callbackTimeout = setTimeout(() => {
                 onFinish();
                 delete this.callbackTimeout;
-            }, ANIMATION_DURATION);
+            }, this.animationDuration);
         }
     }
 

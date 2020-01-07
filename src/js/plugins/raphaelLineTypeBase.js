@@ -12,7 +12,6 @@ import snippet from 'tui-code-snippet';
 
 const {browser} = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
-const ANIMATION_DURATION = 700;
 const DEFAULT_DOT_RADIUS = 6;
 const SELECTION_DOT_RADIUS = 7;
 const DE_EMPHASIS_OPACITY = 0.3;
@@ -809,7 +808,7 @@ class RaphaelLineTypeBase {
 
             clipRect.animate({
                 width: dimension.width
-            }, ANIMATION_DURATION, '>', onFinish);
+            }, this.animationDuration, '>', onFinish);
         }
     }
 

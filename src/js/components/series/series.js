@@ -6,7 +6,6 @@
 
 import snippet from 'tui-code-snippet';
 
-const LABEL_FADE_IN_DURATION = 600;
 const {browser} = snippet;
 const IS_IE7 = browser.msie && browser.version === 7;
 
@@ -180,6 +179,8 @@ class Series {
          * @type {boolean}
          */
         this.supportSeriesLable = true;
+
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(this.options.animation);
 
         this._attachToEventBus();
     }
@@ -473,7 +474,7 @@ class Series {
                 clearInterval(this.labelShowEffector.timerId);
             }
 
-            // if rerender have excuted in the middle of animate,
+            // if rerender have executed in the middle of animate,
             // we should rerun animate
             if (checkedLegends || !this.isInitRenderCompleted) {
                 this.animateComponent(true);
@@ -674,7 +675,7 @@ class Series {
                 opacity: 1
             });
         } else if (this.labelSet && this.labelSet.length) {
-            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, LABEL_FADE_IN_DURATION);
+            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, this.animationDuration);
         }
     }
 
