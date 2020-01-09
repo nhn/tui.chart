@@ -121,6 +121,21 @@ class ChartBase {
     }
 
     /**
+     * Destroys the instance.
+     * @api
+     * @example
+     * chart.destroy();
+     */
+    destroy() {
+        this.eventBus.off();
+        this.chartContainer.outerHTML = '';
+        this.chartType = this.hasAxes = this.isVertical
+        = this.prevXAxisData = this.hasRightYAxis
+        = this.dataProcessor = this.eventBus = this.theme = this.componentManager
+        = this.originalOptions = this.options = this.chartContainer = this.paper = null;
+    }
+
+    /**
      * get on select series function
      * @param {{legendIndex: number, index: number}} indexInfo - selected indexes
      * @param {?boolean} shouldSelect - whether should select or not
