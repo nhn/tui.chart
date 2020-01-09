@@ -390,7 +390,7 @@ const axisDataMaker = {
      * @private
      */
     _createMultilineLabel(label, limitWidth, theme) {
-        const words = String(label).split(/\s+/);
+        const words = String(label).split(' ');
         const lines = [];
         let [lineWords] = words;
 
@@ -409,7 +409,7 @@ const axisDataMaker = {
             lines.push(lineWords);
         }
 
-        return lines.join('<br>');
+        return lines.join('\n');
     },
 
     /**
@@ -452,14 +452,14 @@ const axisDataMaker = {
     makeAdditionalDataForMultilineLabels(labels, validLabelCount, labelTheme, isLabelAxis, dimensionMap) {
         const seriesWidth = dimensionMap.series.width;
         const labelAreaWidth = this._calculateXAxisLabelAreaWidth(isLabelAxis, seriesWidth, validLabelCount);
-        const multilineLabels = this._createMultilineLabels(labels, labelTheme, seriesWidth);
+        const multilineLabels = this._createMultilineLabels(labels, labelTheme, labelAreaWidth);
         const multilineHeight = this._calculateMultilineHeight(multilineLabels, labelTheme, labelAreaWidth);
         const labelHeight = renderUtil.getRenderedLabelsMaxHeight(labels, labelTheme);
 
         return {
             multilineLabels,
             overflowHeight: multilineHeight - labelHeight,
-            overflowLeft: (labelAreaWidth / 2) - dimensionMap.yAxis.width
+            overflowLeft: 0
         };
     },
 

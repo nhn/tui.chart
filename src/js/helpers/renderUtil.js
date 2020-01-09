@@ -140,8 +140,7 @@ const renderUtil = {
         if (!labelSize) {
             const div = this._createSizeCheckEl();
             const span = div.firstChild;
-
-            span.innerHTML = label;
+            span.innerText = label;
 
             this._addCssStyle(div, theme);
 

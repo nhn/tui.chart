@@ -21,7 +21,6 @@ class ScaleDataModel {
         this.theme = params.theme;
         this.hasRightYAxis = !!params.hasRightYAxis;
         this.prevValidLabelCount = null;
-
         this.initScaleData(params.addedDataCount);
         this.initForAutoTickInterval();
     }
