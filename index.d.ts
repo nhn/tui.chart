@@ -563,6 +563,7 @@ declare namespace tuiChart {
         public setTooltipAlign(align: string): void;
         public setTooltipOffset(offset: IOffsetConfig): void;
         public setTooltipPosition(position: IPositionConfig): void;
+        public destroy(): void;
     }
 
     class AreaChart extends ChartBase {
