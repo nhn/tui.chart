@@ -129,10 +129,9 @@ class ChartBase {
     destroy() {
         this.eventBus.off();
         this.chartContainer.outerHTML = '';
-        this.chartType = this.hasAxes = this.isVertical
-        = this.prevXAxisData = this.hasRightYAxis
-        = this.dataProcessor = this.eventBus = this.theme = this.componentManager
-        = this.originalOptions = this.options = this.chartContainer = this.paper = null;
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
     }
 
     /**
