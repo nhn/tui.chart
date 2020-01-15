@@ -230,12 +230,10 @@ class ComponentManager {
     /**
      * Preset components for setData
      * @param {object} theme theme object
-     * @param {boolean | object} [animation] whether animate or not, duration
      * @ignore
      */
-    presetForChangeData(theme, animation) {
+    presetForChangeData(theme) {
         this.theme = theme;
-        this.options.series.animation = animation;
         this.components.forEach(component => {
             if (component.presetForChangeData) {
                 const {componentType, componentName} = component;
@@ -244,6 +242,15 @@ class ComponentManager {
                 component.presetForChangeData(this._makeTheme(optionKey, componentName));
             }
         });
+    }
+
+    /**
+     * apply animation config before setData
+     * @param {boolean | object} animation whether animate or not, duration
+     * @ignore
+     */
+    presetAnimationConfig(animation) {
+        this.options.series.animation = animation;
     }
 
     /**
