@@ -51,6 +51,7 @@ class RaphaelBubbleChart {
         const circleSet = paper.set();
 
         this.paper = paper;
+        this.animationDuration = data.options.animation;
 
         /**
          * theme
@@ -148,6 +149,7 @@ class RaphaelBubbleChart {
      */
     _renderCircles(circleSet) {
         const {colors} = this.theme;
+        const animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, this.animationDuration);
 
         return this.groupBounds.map((bounds, groupIndex) => (
             bounds.map((bound, index) => {
@@ -155,11 +157,15 @@ class RaphaelBubbleChart {
 
                 if (bound) {
                     const color = colors[index];
-                    const circle = raphaelRenderUtil.renderCircle(this.paper, bound, 0, {
-                        fill: color,
-                        opacity: 0,
-                        stroke: 'none'
-                    });
+                    const circle = raphaelRenderUtil.renderCircle(
+                        this.paper,
+                        bound,
+                        animationDuration ? 0 : bound.radius,
+                        {
+                            fill: color,
+                            opacity: animationDuration ? 0 : 1,
+                            stroke: 'none'
+                        });
 
                     circleSet.push(circle);
 
@@ -182,25 +188,32 @@ class RaphaelBubbleChart {
      * Animate circle
      * @param {object} circle - raphael object
      * @param {number} radius - radius of circle
+     * @param {number} animationDuration - animation duration
      * @private
      */
-    _animateCircle(circle, radius) {
+    _animateCircle(circle, radius, animationDuration) {
         circle.animate({
             r: radius,
             opacity: CIRCLE_OPACITY
-        }, ANIMATION_DURATION, '>');
+        }, animationDuration, '>');
     }
 
     /**
      * Animate.
      */
     animate() {
+        const animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, this.animationDuration);
+
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, circleInfo => {
             if (!circleInfo) {
                 return;
             }
-            this._animateCircle(circleInfo.circle, circleInfo.bound.radius);
+            if (animationDuration) {
+                this._animateCircle(circleInfo.circle, circleInfo.bound.radius, animationDuration);
+            }
         });
+
+        delete this.animationDuration;
     }
 
     /**

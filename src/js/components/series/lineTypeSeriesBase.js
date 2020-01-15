@@ -264,7 +264,6 @@ class LineTypeSeriesBase {
         this._clearSeriesContainer(data.paper);
         this._setDataForRendering(data);
         this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
-        this.animateComponent(true);
 
         if (!snippet.isNull(this.selectedLegendIndex)) {
             this.graphRenderer.selectLegend(this.selectedLegendIndex);

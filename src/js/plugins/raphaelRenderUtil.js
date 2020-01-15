@@ -350,6 +350,25 @@ export default {
         });
 
         element.animate(animation);
+    },
+
+    /**
+     * get default animation duration
+     * @param {number} defaultDuration - default duration time
+     * @param {object | boolean} [animation] - animation options
+     * @returns {number} duration - series rendering animation duration
+     * @private
+     */
+    getAnimationDuration(defaultDuration, animation) {
+        if (snippet.isBoolean(animation) && !animation) {
+            return 0;
+        }
+
+        if (snippet.isObject(animation)) {
+            return animation.duration;
+        }
+
+        return defaultDuration;
     }
 };
 

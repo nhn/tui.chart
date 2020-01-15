@@ -66,6 +66,7 @@ class RaphaelAreaChart extends RaphaelLineBase {
         this.position = position;
         this.zeroTop = zeroTop;
         this.hasRangeData = hasRangeData;
+        this.animationDuration = data.options.animation;
 
         paper.setStart();
 
@@ -92,6 +93,8 @@ class RaphaelAreaChart extends RaphaelLineBase {
         const seriesSet = paper.setFinish();
         this._moveSeriesToFrontAll();
         this.tooltipLine.toFront();
+
+        delete data.options.animation;
 
         return seriesSet;
     }

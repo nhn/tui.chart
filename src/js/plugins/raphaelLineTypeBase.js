@@ -784,19 +784,21 @@ class RaphaelLineTypeBase {
      * @param {Array.<object>} seriesSet series set
      */
     animate(onFinish, seriesSet) {
-        const {paper, dimension, position} = this;
+        const {paper, dimension, position, animationDuration} = this;
+        const duration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, animationDuration);
         const clipRectId = this._getClipRectId();
         const remakePosition = this._makeClipRectPosition(position);
         let {clipRect} = this;
 
         if (!IS_LTE_IE8 && dimension) {
             if (!clipRect) {
-                clipRect = createClipPathRectWithLayout(paper, remakePosition, dimension, clipRectId);
+                clipRect =
+                    createClipPathRectWithLayout(paper, remakePosition, dimension, clipRectId, !!duration);
                 this.clipRect = clipRect;
             } else {
                 this._makeClipRectPosition(position);
                 clipRect.attr({
-                    width: 0,
+                    width: !duration ? dimension.width : 0,
                     height: dimension.height,
                     x: remakePosition.left,
                     y: remakePosition.top
@@ -807,9 +809,11 @@ class RaphaelLineTypeBase {
                 seriesElement.node.setAttribute('clip-path', `url(#${clipRectId})`);
             });
 
-            clipRect.animate({
-                width: dimension.width
-            }, ANIMATION_DURATION, '>', onFinish);
+            if (duration) {
+                clipRect.animate({
+                    width: dimension.width
+                }, duration, '>', onFinish);
+            }
         }
     }
 
@@ -1019,12 +1023,13 @@ class RaphaelLineTypeBase {
  * @param {object} position position
  * @param {object} dimension dimension
  * @param {string} id ID string
+ * @param {boolean} isAnimated animation
  * @returns {object}
  * @ignore
  */
-function createClipPathRectWithLayout(paper, position, dimension, id) {
+function createClipPathRectWithLayout(paper, position, dimension, id, isAnimated) {
     const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-    const rect = paper.rect(position.left, position.top, 0, dimension.height);
+    const rect = paper.rect(position.left, position.top, isAnimated ? 0 : dimension.width, dimension.height);
 
     rect.id = `${id}_rect`;
     clipPath.id = id;

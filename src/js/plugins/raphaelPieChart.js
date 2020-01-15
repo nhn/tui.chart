@@ -40,6 +40,11 @@ class RaphaelPieChart {
      */
     render(paper, data, callbacks) {
         const pieSeriesSet = paper.set();
+        /**
+         * series rendering animation duration
+         * @type {number | object}
+         */
+        this.animationDuration = data.options.animation;
 
         /**
          * raphael object
@@ -113,6 +118,8 @@ class RaphaelPieChart {
          */
         this.prevHoverSector = null;
 
+        delete data.options.animation;
+
         return pieSeriesSet;
     }
 
@@ -137,7 +144,7 @@ class RaphaelPieChart {
         const startRadian = startAngle * RAD;
         const endRadian = endAngle * RAD;
         const x1 = cx + (r * Math.sin(startRadian)); // x point of start radian
-        const y1 = cy - (r * Math.cos(startRadian)); // y posint of start radian
+        const y1 = cy - (r * Math.cos(startRadian)); // y point of start radian
         const x2 = cx + (r * Math.sin(endRadian)); // x point of end radian
         const y2 = cy - (r * Math.cos(endRadian)); // y point of end radian
         const largeArcFlag = endAngle - startAngle > DEGREE_180 ? 1 : 0;
@@ -273,18 +280,19 @@ class RaphaelPieChart {
      * @private
      */
     _renderPie(sectorData, colors, additionalIndex, pieSeriesSet) {
-        const {circleBound, chartBackground} = this;
+        const {circleBound, chartBackground, animationDuration} = this;
+        const isAnimated = !!raphaelRenderUtil.getAnimationDuration(LOADING_ANIMATION_DURATION, animationDuration);
         const sectorInfos = [];
 
         sectorData.forEach((sectorDatum, index) => {
-            const {ratio} = sectorDatum;
+            const {ratio, angles} = sectorDatum;
             const color = colors[index];
             const sector = this._renderSector({
                 paper: this.paper,
                 circleBound,
-                angles: sectorDatum.angles.start,
+                angles: isAnimated ? angles.start : angles.end,
                 attrs: {
-                    fill: chartBackground.color,
+                    fill: isAnimated ? chartBackground.color : color,
                     stroke: chartBackground.color,
                     'stroke-width': 0
                 }
@@ -299,7 +307,7 @@ class RaphaelPieChart {
             sectorInfos.push({
                 sector,
                 color,
-                angles: sectorDatum.angles.end,
+                angles: angles.end,
                 ratio
             });
 
@@ -379,8 +387,9 @@ class RaphaelPieChart {
      * @param {function} callback callback
      */
     animate(callback) {
-        const {sectorName, circleBound} = this;
+        const {sectorName, circleBound, animationDuration} = this;
         const sectorArgs = [circleBound.cx, circleBound.cy, circleBound.r];
+        const duration = raphaelRenderUtil.getAnimationDuration(LOADING_ANIMATION_DURATION, animationDuration);
         let delayTime = 0;
 
         this.sectorInfos.forEach(sectorInfo => {
@@ -388,16 +397,17 @@ class RaphaelPieChart {
             const attrMap = {
                 fill: sectorInfo.color
             };
-            const animationTime = LOADING_ANIMATION_DURATION * sectorInfo.ratio;
+            if (duration) {
+                const animationTime = duration * sectorInfo.ratio;
 
-            if ((angles.startAngle === 0) && (angles.endAngle === DEGREE_360)) {
-                angles.endAngle = DEGREE_360 - MIN_DEGREE;
+                if ((angles.startAngle === 0) && (angles.endAngle === DEGREE_360)) {
+                    angles.endAngle = DEGREE_360 - MIN_DEGREE;
+                }
+                attrMap[sectorName] = sectorArgs.concat([angles.startAngle, angles.endAngle]);
+                const anim = raphael.animation(attrMap, animationTime, '>');
+                sectorInfo.sector.animate(anim.delay(delayTime));
+                delayTime += animationTime;
             }
-            attrMap[sectorName] = sectorArgs.concat([angles.startAngle, angles.endAngle]);
-
-            const anim = raphael.animation(attrMap, animationTime, '>');
-            sectorInfo.sector.animate(anim.delay(delayTime));
-            delayTime += animationTime;
         });
 
         if (callback) {

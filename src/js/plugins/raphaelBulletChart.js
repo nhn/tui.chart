@@ -12,7 +12,6 @@ import renderUtil from '../helpers/renderUtil';
 const {browser} = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const ANIMATION_DURATION = 700;
-const ANIMATION_DELAY = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const EVENT_DETECTOR_PADDING = 20;
@@ -43,6 +42,7 @@ class RaphaelBulletChart {
         this.options = data.options;
         this.chartType = data.chartType;
         this.isVertical = data.isVertical;
+        this.animationDuration = data.options.animation;
 
         this.seriesDataModel = seriesDataModel;
         this.maxRangeCount = seriesDataModel.maxRangeCount;
@@ -55,6 +55,8 @@ class RaphaelBulletChart {
         this.paper.setStart();
 
         this._renderBounds(groupBounds);
+
+        delete data.options.animation;
 
         return this.paper.setFinish();
     }
@@ -222,7 +224,8 @@ class RaphaelBulletChart {
      * @param {Array.<object>} seriesSet series set
      */
     animate(onFinish, seriesSet) {
-        const {paper, dimension, position} = this;
+        const {paper, dimension, position, animationDuration} = this;
+        const duration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, animationDuration);
         const clipRectId = this._getClipRectId();
         const clipRectWidth = dimension.width - EVENT_DETECTOR_PADDING;
         const clipRectHeight = dimension.height - EVENT_DETECTOR_PADDING;
@@ -232,10 +235,10 @@ class RaphaelBulletChart {
 
         if (this.isVertical) {
             startDimension.width = clipRectWidth;
-            startDimension.height = 0;
+            startDimension.height = duration ? 0 : clipRectHeight;
             animateAttr.height = clipRectHeight;
         } else {
-            startDimension.width = 0;
+            startDimension.width = duration ? 0 : clipRectWidth;
             startDimension.height = clipRectHeight;
             animateAttr.width = clipRectWidth;
         }
@@ -265,14 +268,16 @@ class RaphaelBulletChart {
                 }
             });
 
-            clipRect.animate(animateAttr, ANIMATION_DURATION, '>', onFinish);
+            if (duration) {
+                clipRect.animate(animateAttr, duration, '>', onFinish);
+            }
         }
 
         if (onFinish) {
             this.callbackTimeout = setTimeout(() => {
                 onFinish();
                 delete this.callbackTimeout;
-            }, ANIMATION_DELAY);
+            }, duration);
         }
     }
 
@@ -311,19 +316,6 @@ class RaphaelBulletChart {
                 height
             });
         }
-    }
-
-    /**
-     * set clip rect position
-     * @param {object} position series position
-     */
-    setClipRectPosition(position) {
-        const clipRect = this.paper.getById(`${this._getClipRectId()}_rect`);
-
-        clipRect.attr({
-            x: position.left,
-            y: position.top
-        });
     }
 
     /**
