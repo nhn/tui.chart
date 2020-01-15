@@ -493,9 +493,10 @@ class ChartBase {
     /**
      * setData
      * @param {object} rawData rawData
+     * @param {boolean | object} animation whether animate or not, duration
      * @api
      */
-    setData(rawData = null) {
+    setData(rawData = null, animation = true) {
         const data = this._initializeRawData(rawData);
         const {dataProcessor} = this;
         const {chartType, theme: themeOptions} = this.options;
@@ -506,7 +507,7 @@ class ChartBase {
 
         this.theme = theme;
         this.componentManager.presetBeforeRerender();
-        this.componentManager.presetForChangeData(theme);
+        this.componentManager.presetForChangeData(theme, animation);
         this.protectedRerender(dataProcessor.getLegendVisibility());
     }
 
