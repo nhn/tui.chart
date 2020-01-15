@@ -114,7 +114,7 @@ class RaphaelBoxplotChart {
 
                 const item = this.seriesDataModel.getSeriesItem(groupIndex, index);
                 const color = colorByPoint ? colors[groupIndex] : colors[index];
-                const boundStart = !this.animationDuration ? bound.end : bound.start;
+                const boundStart = this.animationDuration ? bound.start : bound.end;
                 let rect;
 
                 if (boundStart) {
@@ -166,10 +166,10 @@ class RaphaelBoxplotChart {
         const whiskers = [];
 
         edge.attr({
-            opacity: !animationDuration ? 1 : 0
+            opacity: animationDuration ? 0 : 1
         });
         whisker.attr({
-            opacity: !animationDuration ? 1 : 0
+            opacity: animationDuration ? 0 : 1
         });
 
         whiskers.push(edge);
@@ -209,7 +209,7 @@ class RaphaelBoxplotChart {
         const median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, '#ffffff', MEDIAN_LINE_WIDTH);
 
         median.attr({
-            opacity: !this.animationDuration ? 1 : 0
+            opacity: this.animationDuration ? 0 : 1
         });
 
         return median;
@@ -244,7 +244,7 @@ class RaphaelBoxplotChart {
         });
 
         outlier.attr({
-            opacity: !this.animationDuration ? 1 : 0
+            opacity: this.animationDuration ? 0 : 1
         });
 
         return outlier;
