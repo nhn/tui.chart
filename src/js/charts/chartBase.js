@@ -121,6 +121,20 @@ class ChartBase {
     }
 
     /**
+     * Destroys the instance.
+     * @api
+     * @example
+     * chart.destroy();
+     */
+    destroy() {
+        this.eventBus.off();
+        this.chartContainer.outerHTML = '';
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
+    /**
      * get on select series function
      * @param {{legendIndex: number, index: number}} indexInfo - selected indexes
      * @param {?boolean} shouldSelect - whether should select or not
