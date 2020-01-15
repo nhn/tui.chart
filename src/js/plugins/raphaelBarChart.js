@@ -50,8 +50,6 @@ class RaphaelBarChart {
         this.overlay = this._renderOverlay();
         this.groupBounds = groupBounds;
 
-        delete this.options.animation;
-
         return this.paper.setFinish();
     }
 

@@ -163,7 +163,7 @@ class RaphaelBubbleChart {
                         animationDuration ? 0 : bound.radius,
                         {
                             fill: color,
-                            opacity: animationDuration ? 0 : 1,
+                            opacity: animationDuration ? 0 : CIRCLE_OPACITY,
                             stroke: 'none'
                         });
 
@@ -171,7 +171,6 @@ class RaphaelBubbleChart {
 
                     circle.data('groupIndex', groupIndex);
                     circle.data('index', index);
-
                     circleInfo = {
                         circle,
                         color,
@@ -212,8 +211,6 @@ class RaphaelBubbleChart {
                 this._animateCircle(circleInfo.circle, circleInfo.bound.radius, animationDuration);
             }
         });
-
-        delete this.animationDuration;
     }
 
     /**

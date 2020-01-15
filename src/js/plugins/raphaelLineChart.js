@@ -86,9 +86,7 @@ class RaphaelLineChart extends RaphaelLineBase {
         this.dotOpacity = opacity;
         this.animationDuration = data.options.animation;
 
-        delete data.options.animation;
         delete this.pivotGroupDots;
-
 
         if (paper.raphael.svg) {
             this.appendShadowFilterToDefs();

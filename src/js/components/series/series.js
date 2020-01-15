@@ -644,6 +644,11 @@ class Series {
         } else {
             this.animateSeriesLabelArea(isRerendering);
         }
+
+        setTimeout(() => {
+            // need to remove animation options after onFinish callback function
+            delete this.options.animation;
+        });
     }
 
     /**
@@ -668,13 +673,15 @@ class Series {
             return;
         }
 
+        const duration = raphaelRenderUtil.getAnimationDuration(LABEL_FADE_IN_DURATION, this.options.animation);
+
         if (IS_IE7) {
             this._fireLoadEvent(isRerendering);
             this.labelSet.attr({
                 opacity: 1
             });
         } else if (this.labelSet && this.labelSet.length) {
-            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, LABEL_FADE_IN_DURATION);
+            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, duration);
         }
     }
 

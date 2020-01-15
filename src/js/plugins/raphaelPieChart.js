@@ -118,8 +118,6 @@ class RaphaelPieChart {
          */
         this.prevHoverSector = null;
 
-        delete data.options.animation;
-
         return pieSeriesSet;
     }
 

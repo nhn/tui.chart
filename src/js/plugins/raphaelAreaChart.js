@@ -94,8 +94,6 @@ class RaphaelAreaChart extends RaphaelLineBase {
         this._moveSeriesToFrontAll();
         this.tooltipLine.toFront();
 
-        delete data.options.animation;
-
         return seriesSet;
     }
 

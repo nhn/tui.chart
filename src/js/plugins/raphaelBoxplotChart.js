@@ -412,8 +412,6 @@ class RaphaelBoxplotChart {
                 }, duration);
             }
         }
-
-        delete this.options.animation;
     }
 
     /**

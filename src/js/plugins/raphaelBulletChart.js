@@ -56,8 +56,6 @@ class RaphaelBulletChart {
 
         this._renderBounds(groupBounds);
 
-        delete data.options.animation;
-
         return this.paper.setFinish();
     }
 
