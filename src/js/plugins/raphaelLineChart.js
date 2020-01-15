@@ -10,6 +10,7 @@ import snippet from 'tui-code-snippet';
 
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
+const ANIMATION_DURATION = 700;
 
 class RaphaelLineChart extends RaphaelLineBase {
     /**
@@ -84,7 +85,7 @@ class RaphaelLineChart extends RaphaelLineBase {
         this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
         this.dotOpacity = opacity;
-        this.animationDuration = data.options.animation;
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
 
         delete this.pivotGroupDots;
 

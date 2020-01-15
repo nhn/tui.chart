@@ -42,7 +42,7 @@ class RaphaelBulletChart {
         this.options = data.options;
         this.chartType = data.chartType;
         this.isVertical = data.isVertical;
-        this.animationDuration = data.options.animation;
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
 
         this.seriesDataModel = seriesDataModel;
         this.maxRangeCount = seriesDataModel.maxRangeCount;
@@ -223,7 +223,6 @@ class RaphaelBulletChart {
      */
     animate(onFinish, seriesSet) {
         const {paper, dimension, position, animationDuration} = this;
-        const duration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, animationDuration);
         const clipRectId = this._getClipRectId();
         const clipRectWidth = dimension.width - EVENT_DETECTOR_PADDING;
         const clipRectHeight = dimension.height - EVENT_DETECTOR_PADDING;
@@ -233,10 +232,10 @@ class RaphaelBulletChart {
 
         if (this.isVertical) {
             startDimension.width = clipRectWidth;
-            startDimension.height = duration ? 0 : clipRectHeight;
+            startDimension.height = animationDuration ? 0 : clipRectHeight;
             animateAttr.height = clipRectHeight;
         } else {
-            startDimension.width = duration ? 0 : clipRectWidth;
+            startDimension.width = animationDuration ? 0 : clipRectWidth;
             startDimension.height = clipRectHeight;
             animateAttr.width = clipRectWidth;
         }
@@ -266,8 +265,8 @@ class RaphaelBulletChart {
                 }
             });
 
-            if (duration) {
-                clipRect.animate(animateAttr, duration, '>', onFinish);
+            if (animationDuration) {
+                clipRect.animate(animateAttr, animationDuration, '>', onFinish);
             }
         }
 
@@ -275,7 +274,7 @@ class RaphaelBulletChart {
             this.callbackTimeout = setTimeout(() => {
                 onFinish();
                 delete this.callbackTimeout;
-            }, duration);
+            }, animationDuration);
         }
     }
 

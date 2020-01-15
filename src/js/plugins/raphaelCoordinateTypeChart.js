@@ -51,7 +51,7 @@ class RaphaelBubbleChart {
         const circleSet = paper.set();
 
         this.paper = paper;
-        this.animationDuration = data.options.animation;
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
 
         /**
          * theme
@@ -149,7 +149,6 @@ class RaphaelBubbleChart {
      */
     _renderCircles(circleSet) {
         const {colors} = this.theme;
-        const animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, this.animationDuration);
 
         return this.groupBounds.map((bounds, groupIndex) => (
             bounds.map((bound, index) => {
@@ -160,10 +159,10 @@ class RaphaelBubbleChart {
                     const circle = raphaelRenderUtil.renderCircle(
                         this.paper,
                         bound,
-                        animationDuration ? 0 : bound.radius,
+                        this.animationDuration ? 0 : bound.radius,
                         {
                             fill: color,
-                            opacity: animationDuration ? 0 : CIRCLE_OPACITY,
+                            opacity: this.animationDuration ? 0 : CIRCLE_OPACITY,
                             stroke: 'none'
                         });
 
@@ -201,14 +200,12 @@ class RaphaelBubbleChart {
      * Animate.
      */
     animate() {
-        const animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, this.animationDuration);
-
         raphaelRenderUtil.forEach2dArray(this.groupCircleInfos, circleInfo => {
             if (!circleInfo) {
                 return;
             }
-            if (animationDuration) {
-                this._animateCircle(circleInfo.circle, circleInfo.bound.radius, animationDuration);
+            if (this.animationDuration) {
+                this._animateCircle(circleInfo.circle, circleInfo.bound.radius, this.animationDuration);
             }
         });
     }

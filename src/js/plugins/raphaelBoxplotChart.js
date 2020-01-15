@@ -42,7 +42,7 @@ class RaphaelBoxplotChart {
         this.options = data.options;
         this.seriesDataModel = data.seriesDataModel;
         this.chartType = data.chartType;
-        this.isAnimated = !!raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
 
         this.paper.setStart();
         this.groupWhiskers = [];
@@ -114,7 +114,7 @@ class RaphaelBoxplotChart {
 
                 const item = this.seriesDataModel.getSeriesItem(groupIndex, index);
                 const color = colorByPoint ? colors[groupIndex] : colors[index];
-                const boundStart = this.isAnimated ? bound.start : bound.end;
+                const boundStart = !this.animationDuration ? bound.end : bound.start;
                 let rect;
 
                 if (boundStart) {
@@ -150,7 +150,7 @@ class RaphaelBoxplotChart {
     }
 
     _renderWhisker(end, start, color) {
-        const {paper, isAnimated} = this;
+        const {paper, animationDuration} = this;
         const topDistance = start.top - end.top;
         const whiskerDirection = topDistance > 0 ? 1 : -1;
         const {left, width} = end;
@@ -166,10 +166,10 @@ class RaphaelBoxplotChart {
         const whiskers = [];
 
         edge.attr({
-            opacity: isAnimated ? 0 : 1
+            opacity: !animationDuration ? 1 : 0
         });
         whisker.attr({
-            opacity: isAnimated ? 0 : 1
+            opacity: !animationDuration ? 1 : 0
         });
 
         whiskers.push(edge);
@@ -209,7 +209,7 @@ class RaphaelBoxplotChart {
         const median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, '#ffffff', MEDIAN_LINE_WIDTH);
 
         median.attr({
-            opacity: this.isAnimated ? 0 : 1
+            opacity: !this.animationDuration ? 1 : 0
         });
 
         return median;
@@ -244,7 +244,7 @@ class RaphaelBoxplotChart {
         });
 
         outlier.attr({
-            opacity: this.isAnimated ? 0 : 1
+            opacity: !this.animationDuration ? 1 : 0
         });
 
         return outlier;
@@ -378,30 +378,29 @@ class RaphaelBoxplotChart {
      * @param {function} onFinish finish callback function
      */
     animate(onFinish) {
-        const duration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, this.options.animation);
-        if (duration) {
+        if (this.animationDuration) {
             const animation = raphael.animation({
                 opacity: 1
-            }, duration);
+            }, this.animationDuration);
 
             raphaelRenderUtil.forEach2dArray(this.groupBoxes, box => {
                 if (!box) {
                     return;
                 }
-                this._animateRect(box.rect, box.bound, duration);
+                this._animateRect(box.rect, box.bound, this.animationDuration);
             });
 
             raphaelRenderUtil.forEach2dArray(this.groupWhiskers, whisker => {
-                whisker.animate(animation.delay(duration));
+                whisker.animate(animation.delay(this.animationDuration));
             });
 
             raphaelRenderUtil.forEach2dArray(this.groupMedians, median => {
-                median.animate(animation.delay(duration));
+                median.animate(animation.delay(this.animationDuration));
             });
 
             raphaelRenderUtil.forEach2dArray(this.groupOutliers, outliers => {
                 outliers.forEach(outlier => {
-                    outlier.animate(animation.delay(duration));
+                    outlier.animate(animation.delay(this.animationDuration));
                 });
             });
 
@@ -409,7 +408,7 @@ class RaphaelBoxplotChart {
                 this.callbackTimeout = setTimeout(() => {
                     onFinish();
                     delete this.callbackTimeout;
-                }, duration);
+                }, this.animationDuration);
             }
         }
     }

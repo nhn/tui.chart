@@ -44,7 +44,10 @@ class RaphaelPieChart {
          * series rendering animation duration
          * @type {number | object}
          */
-        this.animationDuration = data.options.animation;
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(
+            LOADING_ANIMATION_DURATION,
+            data.options.animation
+        );
 
         /**
          * raphael object
@@ -279,7 +282,6 @@ class RaphaelPieChart {
      */
     _renderPie(sectorData, colors, additionalIndex, pieSeriesSet) {
         const {circleBound, chartBackground, animationDuration} = this;
-        const isAnimated = !!raphaelRenderUtil.getAnimationDuration(LOADING_ANIMATION_DURATION, animationDuration);
         const sectorInfos = [];
 
         sectorData.forEach((sectorDatum, index) => {
@@ -288,9 +290,9 @@ class RaphaelPieChart {
             const sector = this._renderSector({
                 paper: this.paper,
                 circleBound,
-                angles: isAnimated ? angles.start : angles.end,
+                angles: animationDuration ? angles.start : angles.end,
                 attrs: {
-                    fill: isAnimated ? chartBackground.color : color,
+                    fill: animationDuration ? chartBackground.color : color,
                     stroke: chartBackground.color,
                     'stroke-width': 0
                 }
@@ -387,7 +389,6 @@ class RaphaelPieChart {
     animate(callback) {
         const {sectorName, circleBound, animationDuration} = this;
         const sectorArgs = [circleBound.cx, circleBound.cy, circleBound.r];
-        const duration = raphaelRenderUtil.getAnimationDuration(LOADING_ANIMATION_DURATION, animationDuration);
         let delayTime = 0;
 
         this.sectorInfos.forEach(sectorInfo => {
@@ -395,8 +396,8 @@ class RaphaelPieChart {
             const attrMap = {
                 fill: sectorInfo.color
             };
-            if (duration) {
-                const animationTime = duration * sectorInfo.ratio;
+            if (animationDuration) {
+                const animationTime = animationDuration * sectorInfo.ratio;
 
                 if ((angles.startAngle === 0) && (angles.endAngle === DEGREE_360)) {
                     angles.endAngle = DEGREE_360 - MIN_DEGREE;
@@ -575,13 +576,13 @@ class RaphaelPieChart {
     /**
      * Render labels and return label set
      * @param {object} options label render options
-     *      @param {dataType} dataType dataType (legend or value)
-     *      @param {object} paper Raphael paper
-     *      @param {Array.<object>} labelSet lableset
-     *      @param {object} positions position left, top
-     *      @param {Array.<string>} labels series labels
-     *      @param {object} theme label theme
-     *      @param {Array} colors series theme colors
+     *      @param {dataType} options.dataType dataType (legend or value)
+     *      @param {object} options.paper Raphael paper
+     *      @param {Array.<object>} options.labelSet lableset
+     *      @param {object} options.positions position left, top
+     *      @param {Array.<string>} options.labels series labels
+     *      @param {object} options.theme label theme
+     *      @param {Array} options.colors series theme colors
      */
     renderLabels(options) {
         const {theme, labelFilter, dataType, ratioValues, seriesNames} = options;

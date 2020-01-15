@@ -12,6 +12,7 @@ import consoleUtil from '../helpers/consoleUtil';
 const {GUIDE_AREACHART_AREAOPACITY_TYPE, CLASS_NAME_SVG_AUTOSHAPE} = chartConst;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
+const ANIMATION_DURATION = 700;
 
 class RaphaelAreaChart extends RaphaelLineBase {
     /**
@@ -66,7 +67,7 @@ class RaphaelAreaChart extends RaphaelLineBase {
         this.position = position;
         this.zeroTop = zeroTop;
         this.hasRangeData = hasRangeData;
-        this.animationDuration = data.options.animation;
+        this.animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
 
         paper.setStart();
 

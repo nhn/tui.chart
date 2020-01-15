@@ -507,7 +507,7 @@ class ChartBase {
 
         this.theme = theme;
         this.componentManager.presetBeforeRerender();
-        this.componentManager.presetForChangeData(theme, animation);
+        this.componentManager.presetForChangeData(theme);
         this.componentManager.presetAnimationConfig(animation);
         this.protectedRerender(dataProcessor.getLegendVisibility());
     }
