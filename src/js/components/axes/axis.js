@@ -587,11 +587,8 @@ class Axis {
      */
     _isOverLapXAxisLabel(labelText, position, nextPosition) {
         const labelWidth = renderUtil.getRenderedLabelWidth(labelText);
-        if (!snippet.isUndefined(nextPosition) && (nextPosition - position < labelWidth)) {
-            return true;
-        }
 
-        return false;
+        return !snippet.isUndefined(nextPosition) && (nextPosition - position < labelWidth);
     }
 
     /**

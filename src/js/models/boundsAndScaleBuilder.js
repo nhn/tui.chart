@@ -190,8 +190,8 @@ export default {
             scaleDataModel.updateXAxisDataForLabel(addingDataMode);
         }
 
-        // 10. regiser dimension of rest components
-        //     register positon of all components
+        // 10. register dimension of rest components
+        //     register position of all components
         boundsModel.registerBoundsData(scaleDataModel.axisDataMap.xAxis);
     },
 

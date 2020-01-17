@@ -298,7 +298,7 @@ describe('Test for axisDataMaker', () => {
                 fontFamily: 'Verdana'
             });
 
-            expect(actual).toBe('ABCDE<br>FGHIJK<br>HIJKLMN');
+            expect(actual).toBe('ABCDE\nFGHIJK\nHIJKLMN');
         });
 
         it('create multiline labels, when has not empty char)', () => {
@@ -321,14 +321,14 @@ describe('Test for axisDataMaker', () => {
             const labelWidth = 50;
             const actual = maker._createMultilineLabels(labels, labelTheme, labelWidth);
 
-            expect(actual).toEqual(['ABCDEF<br>GHIJ', 'AAAAA', 'BBBBBBBBBBBB']);
+            expect(actual).toEqual(['ABCDEF\nGHIJ', 'AAAAA', 'BBBBBBBBBBBB']);
         });
     });
 
     describe('_calculateMultilineHeight()', () => {
         beforeAll(() => {
             spyOn(renderUtil, 'getRenderedLabelHeight').and.callFake(value => {
-                if (value.indexOf('</br>') > -1) {
+                if (value.indexOf('\n') > -1) {
                     return 40;
                 }
 
@@ -337,7 +337,7 @@ describe('Test for axisDataMaker', () => {
         });
         it('calculate multiple line height', () => {
             const multilineLables = [
-                'AAAA</br>BBBB'
+                'AAAA\nBBBB'
             ];
             const labelAraeWidth = 50;
 
