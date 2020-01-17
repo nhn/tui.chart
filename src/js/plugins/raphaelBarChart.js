@@ -110,9 +110,7 @@ class RaphaelBarChart {
      */
     _renderBars(groupBounds) {
         const {colors} = this.theme;
-        const {colorByPoint, animation} = this.options;
-        const animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, animation);
-
+        const {colorByPoint, animationDuration} = this.options;
         const groupBars = groupBounds.map((bounds, groupIndex) => (
             bounds.map((bound, index) => {
                 if (!bound) {
@@ -362,7 +360,7 @@ class RaphaelBarChart {
      */
     animate(onFinish) {
         const groupBorders = this.groupBorders || [];
-        const animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, this.options.animation);
+        const {animationDuration} = this.options;
 
         raphaelRenderUtil.forEach2dArray(this.groupBars, (bar, groupIndex, index) => {
             const lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];

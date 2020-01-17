@@ -6,7 +6,6 @@
 
 import snippet from 'tui-code-snippet';
 
-const LABEL_FADE_IN_DURATION = 600;
 const {browser} = snippet;
 const IS_IE7 = browser.msie && browser.version === 7;
 
@@ -647,7 +646,7 @@ class Series {
 
         setTimeout(() => {
             // need to remove animation options after onFinish callback function
-            delete this.options.animation;
+            this.options.animationDuration = raphaelRenderUtil.getDefaultAnimationDuration(this.chartType);
         });
     }
 
@@ -673,15 +672,13 @@ class Series {
             return;
         }
 
-        const duration = raphaelRenderUtil.getAnimationDuration(LABEL_FADE_IN_DURATION, this.options.animation);
-
         if (IS_IE7) {
             this._fireLoadEvent(isRerendering);
             this.labelSet.attr({
                 opacity: 1
             });
         } else if (this.labelSet && this.labelSet.length) {
-            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, duration);
+            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, this.options.animationDuration);
         }
     }
 

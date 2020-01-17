@@ -8,7 +8,6 @@ import raphaelRenderUtil from './raphaelRenderUtil';
 import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 
-const ANIMATION_DURATION = 700;
 const CIRCLE_OPACITY = 0.8;
 const STROKE_OPACITY = 1;
 const EMPHASIS_OPACITY = 0.8;
@@ -51,7 +50,7 @@ class RaphaelBubbleChart {
         const circleSet = paper.set();
 
         this.paper = paper;
-        this.animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
+        this.animationDuration = data.options.animationDuration;
 
         /**
          * theme

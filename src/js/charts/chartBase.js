@@ -115,6 +115,8 @@ class ChartBase {
 
         this._attachToEventBus();
 
+        this.componentManager.presetAnimationConfig(this.options.series.animation);
+
         if (this.options.usageStatistics) {
             snippet.sendHostname('chart', GA_TRACKING_ID);
         }
@@ -254,7 +256,7 @@ class ChartBase {
     _initializeOptions(options) {
         const originalOptions = objectUtil.deepCopy(options);
         const defaultOption = {
-            chartTypes: this.charTypes,
+            chartTypes: this.chartTypes,
             xAxis: {},
             series: {},
             tooltip: {},
@@ -275,7 +277,6 @@ class ChartBase {
         this._initializeTitleOptions(options.xAxis);
         this._initializeTitleOptions(options.yAxis);
         this._initializeTooltipOptions(options.tooltip);
-
         this.options = options;
     }
 

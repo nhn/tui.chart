@@ -11,7 +11,6 @@ import renderUtil from '../helpers/renderUtil';
 
 const {browser} = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
-const ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const EVENT_DETECTOR_PADDING = 20;
@@ -42,7 +41,7 @@ class RaphaelBulletChart {
         this.options = data.options;
         this.chartType = data.chartType;
         this.isVertical = data.isVertical;
-        this.animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
+        this.animationDuration = data.options.animationDuration;
 
         this.seriesDataModel = seriesDataModel;
         this.maxRangeCount = seriesDataModel.maxRangeCount;

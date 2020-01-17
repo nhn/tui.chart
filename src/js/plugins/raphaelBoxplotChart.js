@@ -9,7 +9,6 @@ import renderUtil from '../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 
-const ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const DEFAULT_LUMINANC = 0.2;
@@ -42,7 +41,7 @@ class RaphaelBoxplotChart {
         this.options = data.options;
         this.seriesDataModel = data.seriesDataModel;
         this.chartType = data.chartType;
-        this.animationDuration = raphaelRenderUtil.getAnimationDuration(ANIMATION_DURATION, data.options.animation);
+        this.animationDuration = data.options.animationDuration;
 
         this.paper.setStart();
         this.groupWhiskers = [];

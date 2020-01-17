@@ -351,24 +351,30 @@ export default {
 
         element.animate(animation);
     },
-
     /**
      * get default animation duration
-     * @param {number} defaultDuration - default duration time
-     * @param {object | boolean} [animation] - animation options
-     * @returns {number} duration - series rendering animation duration
+     * @param {string} chartType - chart type
+     * @returns {number} duration - default duration
      * @private
      */
-    getAnimationDuration(defaultDuration, animation) {
-        if (snippet.isBoolean(animation) && !animation) {
-            return 0;
+    getDefaultAnimationDuration(chartType) {
+        switch (chartType) {
+            case 'boxplot':
+            case 'combo':
+            case 'pie':
+            case 'scatter':
+            case 'bubble':
+            case 'area':
+            case 'line':
+            case 'column':
+            case 'bar':
+                return 700;
+            case 'heatmap':
+            case 'treemap':
+                return 600;
+            default:
+                return 0;
         }
-
-        if (snippet.isObject(animation)) {
-            return animation.duration;
-        }
-
-        return defaultDuration;
     }
 };
 

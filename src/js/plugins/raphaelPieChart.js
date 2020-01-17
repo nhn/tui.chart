@@ -12,7 +12,6 @@ const DEGREE_180 = 180;
 const DEGREE_360 = 360;
 const MIN_DEGREE = 0.01;
 const RAD = Math.PI / DEGREE_180;
-const LOADING_ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const DEFAULT_LUMINANT_VALUE = 0.2;
@@ -44,10 +43,7 @@ class RaphaelPieChart {
          * series rendering animation duration
          * @type {number | object}
          */
-        this.animationDuration = raphaelRenderUtil.getAnimationDuration(
-            LOADING_ANIMATION_DURATION,
-            data.options.animation
-        );
+        this.animationDuration = data.options.animationDuration;
 
         /**
          * raphael object

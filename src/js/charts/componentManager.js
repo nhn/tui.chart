@@ -43,6 +43,7 @@ import BoxplotSeries from '../components/series/boxPlotChartSeries';
 import BulletSeries from '../components/series/bulletChartSeries';
 import Zoom from '../components/series/zoom';
 import snippet from 'tui-code-snippet';
+import raphaelRenderUtil from '../plugins/raphaelRenderUtil';
 
 const COMPONENT_FACTORY_MAP = {
     axis: Axis,
@@ -250,7 +251,32 @@ class ComponentManager {
      * @ignore
      */
     presetAnimationConfig(animation) {
-        this.options.series.animation = animation;
+        this.seriesTypes.forEach(seriesType => {
+            if (snippet.isObject(this.options.series[seriesType])) {
+                // For combo chart, options are set for each chart
+                this.options.series[seriesType].animationDuration = this._getAnimationDuration(animation);
+            } else {
+                this.options.series.animationDuration = this._getAnimationDuration(animation);
+            }
+        });
+    }
+
+    /**
+     * get default animation duration
+     * @param {object | boolean} [animation] - animation options
+     * @returns {number} duration - series rendering animation duration
+     * @private
+     */
+    _getAnimationDuration(animation) {
+        if (snippet.isBoolean(animation) && !animation) {
+            return 0;
+        }
+
+        if (snippet.isObject(animation) && snippet.isNumber(animation.duration)) {
+            return animation.duration;
+        }
+
+        return raphaelRenderUtil.getDefaultAnimationDuration(this.options.chartType);
     }
 
     /**
