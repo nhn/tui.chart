@@ -110,7 +110,7 @@ class RaphaelBarChart {
      */
     _renderBars(groupBounds) {
         const {colors} = this.theme;
-        const {colorByPoint} = this.options;
+        const {colorByPoint, animationDuration} = this.options;
         const groupBars = groupBounds.map((bounds, groupIndex) => (
             bounds.map((bound, index) => {
                 if (!bound) {
@@ -119,7 +119,7 @@ class RaphaelBarChart {
 
                 const item = this.seriesDataModel.getSeriesItem(groupIndex, index);
                 const color = colorByPoint ? colors[groupIndex] : colors[index];
-                const rect = this._renderBar(bound.start, color);
+                const rect = this._renderBar(animationDuration ? bound.start : bound.end, color);
 
                 return {
                     rect,
@@ -323,16 +323,17 @@ class RaphaelBarChart {
      * Animate rect.
      * @param {object} rect raphael object
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
+     * @param {number} animationDuration animation duration
      * @private
      */
-    _animateRect(rect, bound) {
+    _animateRect(rect, bound, animationDuration) {
         rect.animate({
             x: bound.width ? bound.left : bound.left - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
             y: bound.height ? bound.top : bound.top - (SERIES_EXTRA_VISUAL_AREA_FOR_ZERO / 2),
             width: bound.width ? bound.width : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
             height: bound.height ? bound.height : SERIES_EXTRA_VISUAL_AREA_FOR_ZERO,
             opacity: (bound.height && bound.width) ? 1 : SERIES_EXTRA_VISUAL_OPACITY_FOR_ZERO
-        }, ANIMATION_DURATION, '>');
+        }, animationDuration, '>');
     }
 
     /**
@@ -359,13 +360,18 @@ class RaphaelBarChart {
      */
     animate(onFinish) {
         const groupBorders = this.groupBorders || [];
+        const {animationDuration} = this.options;
 
         raphaelRenderUtil.forEach2dArray(this.groupBars, (bar, groupIndex, index) => {
             const lines = groupBorders[groupIndex] && groupBorders[groupIndex][index];
             if (!bar) {
                 return;
             }
-            this._animateRect(bar.rect, bar.bound);
+
+            if (animationDuration) {
+                this._animateRect(bar.rect, bar.bound, animationDuration);
+            }
+
             if (lines) {
                 this._animateBorders(lines, bar.bound, this.chartType, bar.item);
             }
@@ -375,7 +381,7 @@ class RaphaelBarChart {
             this.callbackTimeout = setTimeout(() => {
                 onFinish();
                 delete this.callbackTimeout;
-            }, ANIMATION_DURATION);
+            }, animationDuration);
         }
     }
 

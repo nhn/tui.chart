@@ -11,7 +11,8 @@ describe('Test for lineChart', () => {
 
     beforeEach(() => {
         spyOn(LineChart.prototype, '_createComponentManager').and.returnValue({
-            register: jasmine.createSpy('register')
+            register: jasmine.createSpy('register'),
+            presetAnimationConfig: jasmine.createSpy('presetAnimationConfig')
         });
 
         lineInstance = new LineChart({

@@ -66,6 +66,7 @@ class RaphaelAreaChart extends RaphaelLineBase {
         this.position = position;
         this.zeroTop = zeroTop;
         this.hasRangeData = hasRangeData;
+        this.animationDuration = data.options.animationDuration;
 
         paper.setStart();
 

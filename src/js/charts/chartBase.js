@@ -115,6 +115,8 @@ class ChartBase {
 
         this._attachToEventBus();
 
+        this.componentManager.presetAnimationConfig(this.options.series.animation);
+
         if (this.options.usageStatistics) {
             snippet.sendHostname('chart', GA_TRACKING_ID);
         }
@@ -254,7 +256,7 @@ class ChartBase {
     _initializeOptions(options) {
         const originalOptions = objectUtil.deepCopy(options);
         const defaultOption = {
-            chartTypes: this.charTypes,
+            chartTypes: this.chartTypes,
             xAxis: {},
             series: {},
             tooltip: {},
@@ -275,7 +277,6 @@ class ChartBase {
         this._initializeTitleOptions(options.xAxis);
         this._initializeTitleOptions(options.yAxis);
         this._initializeTooltipOptions(options.tooltip);
-
         this.options = options;
     }
 
@@ -493,9 +494,10 @@ class ChartBase {
     /**
      * setData
      * @param {object} rawData rawData
+     * @param {boolean | object} animation whether animate or not, duration
      * @api
      */
-    setData(rawData = null) {
+    setData(rawData = null, animation = true) {
         const data = this._initializeRawData(rawData);
         const {dataProcessor} = this;
         const {chartType, theme: themeOptions} = this.options;
@@ -507,6 +509,7 @@ class ChartBase {
         this.theme = theme;
         this.componentManager.presetBeforeRerender();
         this.componentManager.presetForChangeData(theme);
+        this.componentManager.presetAnimationConfig(animation);
         this.protectedRerender(dataProcessor.getLegendVisibility());
     }
 

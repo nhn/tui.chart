@@ -6,7 +6,6 @@
 
 import snippet from 'tui-code-snippet';
 
-const LABEL_FADE_IN_DURATION = 600;
 const {browser} = snippet;
 const IS_IE7 = browser.msie && browser.version === 7;
 
@@ -644,6 +643,11 @@ class Series {
         } else {
             this.animateSeriesLabelArea(isRerendering);
         }
+
+        setTimeout(() => {
+            // need to set default duration after onFinish callback function
+            this.options.animationDuration = raphaelRenderUtil.getDefaultAnimationDuration(this.chartType);
+        });
     }
 
     /**
@@ -674,7 +678,7 @@ class Series {
                 opacity: 1
             });
         } else if (this.labelSet && this.labelSet.length) {
-            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, LABEL_FADE_IN_DURATION);
+            raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, this.options.animationDuration);
         }
     }
 

@@ -8,7 +8,6 @@ import raphaelRenderUtil from './raphaelRenderUtil';
 import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 
-const ANIMATION_DURATION = 700;
 const CIRCLE_OPACITY = 0.8;
 const STROKE_OPACITY = 1;
 const EMPHASIS_OPACITY = 0.8;
@@ -51,6 +50,7 @@ class RaphaelBubbleChart {
         const circleSet = paper.set();
 
         this.paper = paper;
+        this.animationDuration = data.options.animationDuration;
 
         /**
          * theme
@@ -155,17 +155,20 @@ class RaphaelBubbleChart {
 
                 if (bound) {
                     const color = colors[index];
-                    const circle = raphaelRenderUtil.renderCircle(this.paper, bound, 0, {
-                        fill: color,
-                        opacity: 0,
-                        stroke: 'none'
-                    });
+                    const circle = raphaelRenderUtil.renderCircle(
+                        this.paper,
+                        bound,
+                        this.animationDuration ? 0 : bound.radius,
+                        {
+                            fill: color,
+                            opacity: this.animationDuration ? 0 : CIRCLE_OPACITY,
+                            stroke: 'none'
+                        });
 
                     circleSet.push(circle);
 
                     circle.data('groupIndex', groupIndex);
                     circle.data('index', index);
-
                     circleInfo = {
                         circle,
                         color,
@@ -182,13 +185,14 @@ class RaphaelBubbleChart {
      * Animate circle
      * @param {object} circle - raphael object
      * @param {number} radius - radius of circle
+     * @param {number} animationDuration - animation duration
      * @private
      */
-    _animateCircle(circle, radius) {
+    _animateCircle(circle, radius, animationDuration) {
         circle.animate({
             r: radius,
             opacity: CIRCLE_OPACITY
-        }, ANIMATION_DURATION, '>');
+        }, animationDuration, '>');
     }
 
     /**
@@ -199,7 +203,9 @@ class RaphaelBubbleChart {
             if (!circleInfo) {
                 return;
             }
-            this._animateCircle(circleInfo.circle, circleInfo.bound.radius);
+            if (this.animationDuration) {
+                this._animateCircle(circleInfo.circle, circleInfo.bound.radius, this.animationDuration);
+            }
         });
     }
 

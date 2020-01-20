@@ -12,7 +12,6 @@ import snippet from 'tui-code-snippet';
 
 const {browser} = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
-const ANIMATION_DURATION = 700;
 const DEFAULT_DOT_RADIUS = 6;
 const SELECTION_DOT_RADIUS = 7;
 const DE_EMPHASIS_OPACITY = 0.3;
@@ -784,19 +783,20 @@ class RaphaelLineTypeBase {
      * @param {Array.<object>} seriesSet series set
      */
     animate(onFinish, seriesSet) {
-        const {paper, dimension, position} = this;
+        const {paper, dimension, position, animationDuration} = this;
         const clipRectId = this._getClipRectId();
         const remakePosition = this._makeClipRectPosition(position);
         let {clipRect} = this;
 
         if (!IS_LTE_IE8 && dimension) {
             if (!clipRect) {
-                clipRect = createClipPathRectWithLayout(paper, remakePosition, dimension, clipRectId);
+                clipRect =
+                    createClipPathRectWithLayout(paper, remakePosition, dimension, clipRectId, !!animationDuration);
                 this.clipRect = clipRect;
             } else {
                 this._makeClipRectPosition(position);
                 clipRect.attr({
-                    width: 0,
+                    width: animationDuration ? 0 : dimension.width,
                     height: dimension.height,
                     x: remakePosition.left,
                     y: remakePosition.top
@@ -807,9 +807,11 @@ class RaphaelLineTypeBase {
                 seriesElement.node.setAttribute('clip-path', `url(#${clipRectId})`);
             });
 
-            clipRect.animate({
-                width: dimension.width
-            }, ANIMATION_DURATION, '>', onFinish);
+            if (animationDuration) {
+                clipRect.animate({
+                    width: dimension.width
+                }, animationDuration, '>', onFinish);
+            }
         }
     }
 
@@ -1019,12 +1021,13 @@ class RaphaelLineTypeBase {
  * @param {object} position position
  * @param {object} dimension dimension
  * @param {string} id ID string
+ * @param {boolean} isAnimated animation
  * @returns {object}
  * @ignore
  */
-function createClipPathRectWithLayout(paper, position, dimension, id) {
+function createClipPathRectWithLayout(paper, position, dimension, id, isAnimated) {
     const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-    const rect = paper.rect(position.left, position.top, 0, dimension.height);
+    const rect = paper.rect(position.left, position.top, isAnimated ? 0 : dimension.width, dimension.height);
 
     rect.id = `${id}_rect`;
     clipPath.id = id;

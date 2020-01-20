@@ -350,6 +350,31 @@ export default {
         });
 
         element.animate(animation);
+    },
+    /**
+     * get default animation duration
+     * @param {string} chartType - chart type
+     * @returns {number} duration - default duration
+     * @private
+     */
+    getDefaultAnimationDuration(chartType) {
+        switch (chartType) {
+            case 'boxplot':
+            case 'combo':
+            case 'pie':
+            case 'scatter':
+            case 'bubble':
+            case 'area':
+            case 'line':
+            case 'column':
+            case 'bar':
+                return 700;
+            case 'heatmap':
+            case 'treemap':
+                return 600;
+            default:
+                return 0;
+        }
     }
 };
 

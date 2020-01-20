@@ -9,7 +9,6 @@ import renderUtil from '../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 
-const ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
 const DEFAULT_LUMINANC = 0.2;
@@ -42,6 +41,7 @@ class RaphaelBoxplotChart {
         this.options = data.options;
         this.seriesDataModel = data.seriesDataModel;
         this.chartType = data.chartType;
+        this.animationDuration = data.options.animationDuration;
 
         this.paper.setStart();
         this.groupWhiskers = [];
@@ -113,10 +113,11 @@ class RaphaelBoxplotChart {
 
                 const item = this.seriesDataModel.getSeriesItem(groupIndex, index);
                 const color = colorByPoint ? colors[groupIndex] : colors[index];
+                const boundStart = this.animationDuration ? bound.start : bound.end;
                 let rect;
 
-                if (bound.start) {
-                    rect = this._renderBox(bound.start, color);
+                if (boundStart) {
+                    rect = this._renderBox(boundStart, color);
                 }
 
                 return {
@@ -148,7 +149,7 @@ class RaphaelBoxplotChart {
     }
 
     _renderWhisker(end, start, color) {
-        const {paper} = this;
+        const {paper, animationDuration} = this;
         const topDistance = start.top - end.top;
         const whiskerDirection = topDistance > 0 ? 1 : -1;
         const {left, width} = end;
@@ -164,10 +165,10 @@ class RaphaelBoxplotChart {
         const whiskers = [];
 
         edge.attr({
-            opacity: 0
+            opacity: animationDuration ? 0 : 1
         });
         whisker.attr({
-            opacity: 0
+            opacity: animationDuration ? 0 : 1
         });
 
         whiskers.push(edge);
@@ -207,7 +208,7 @@ class RaphaelBoxplotChart {
         const median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, '#ffffff', MEDIAN_LINE_WIDTH);
 
         median.attr({
-            opacity: 0
+            opacity: this.animationDuration ? 0 : 1
         });
 
         return median;
@@ -242,7 +243,7 @@ class RaphaelBoxplotChart {
         });
 
         outlier.attr({
-            opacity: 0
+            opacity: this.animationDuration ? 0 : 1
         });
 
         return outlier;
@@ -359,15 +360,16 @@ class RaphaelBoxplotChart {
      * Animate rect.
      * @param {object} rect raphael object
      * @param {{left: number, top:number, width: number, height: number}} bound rect bound
+     * @param {number} duration animation duration
      * @private
      */
-    _animateRect(rect, bound) {
+    _animateRect(rect, bound, duration) {
         rect.animate({
             x: bound.left,
             y: bound.top,
             width: bound.width,
             height: bound.height
-        }, ANIMATION_DURATION, '>');
+        }, duration, '>');
     }
 
     /**
@@ -375,36 +377,38 @@ class RaphaelBoxplotChart {
      * @param {function} onFinish finish callback function
      */
     animate(onFinish) {
-        const animation = raphael.animation({
-            opacity: 1
-        }, ANIMATION_DURATION);
+        if (this.animationDuration) {
+            const animation = raphael.animation({
+                opacity: 1
+            }, this.animationDuration);
 
-        raphaelRenderUtil.forEach2dArray(this.groupBoxes, box => {
-            if (!box) {
-                return;
-            }
-            this._animateRect(box.rect, box.bound);
-        });
-
-        raphaelRenderUtil.forEach2dArray(this.groupWhiskers, whisker => {
-            whisker.animate(animation.delay(ANIMATION_DURATION));
-        });
-
-        raphaelRenderUtil.forEach2dArray(this.groupMedians, median => {
-            median.animate(animation.delay(ANIMATION_DURATION));
-        });
-
-        raphaelRenderUtil.forEach2dArray(this.groupOutliers, outliers => {
-            outliers.forEach(outlier => {
-                outlier.animate(animation.delay(ANIMATION_DURATION));
+            raphaelRenderUtil.forEach2dArray(this.groupBoxes, box => {
+                if (!box) {
+                    return;
+                }
+                this._animateRect(box.rect, box.bound, this.animationDuration);
             });
-        });
 
-        if (onFinish) {
-            this.callbackTimeout = setTimeout(() => {
-                onFinish();
-                delete this.callbackTimeout;
-            }, ANIMATION_DURATION);
+            raphaelRenderUtil.forEach2dArray(this.groupWhiskers, whisker => {
+                whisker.animate(animation.delay(this.animationDuration));
+            });
+
+            raphaelRenderUtil.forEach2dArray(this.groupMedians, median => {
+                median.animate(animation.delay(this.animationDuration));
+            });
+
+            raphaelRenderUtil.forEach2dArray(this.groupOutliers, outliers => {
+                outliers.forEach(outlier => {
+                    outlier.animate(animation.delay(this.animationDuration));
+                });
+            });
+
+            if (onFinish) {
+                this.callbackTimeout = setTimeout(() => {
+                    onFinish();
+                    delete this.callbackTimeout;
+                }, this.animationDuration);
+            }
         }
     }
 

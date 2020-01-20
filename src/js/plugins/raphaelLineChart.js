@@ -84,6 +84,8 @@ class RaphaelLineChart extends RaphaelLineBase {
         this.groupPositions = groupPositions;
         this.groupPaths = groupPaths;
         this.dotOpacity = opacity;
+        this.animationDuration = options.animationDuration;
+
         delete this.pivotGroupDots;
 
         if (paper.raphael.svg) {
