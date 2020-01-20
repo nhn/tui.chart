@@ -645,7 +645,7 @@ class Series {
         }
 
         setTimeout(() => {
-            // need to remove animation options after onFinish callback function
+            // need to set default duration after onFinish callback function
             this.options.animationDuration = raphaelRenderUtil.getDefaultAnimationDuration(this.chartType);
         });
     }
