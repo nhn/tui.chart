@@ -12,26 +12,26 @@ import snippet from 'tui-code-snippet';
  * @returns {*}
  */
 const deepCopy = function(origin) {
-    let clone;
+  let clone;
 
-    if (snippet.isArray(origin)) {
-        clone = [];
-        origin.forEach((value, index) => {
-            clone[index] = deepCopy(value);
-        });
-    } else if (snippet.isFunction(origin) || snippet.isDate(origin)) {
-        clone = origin;
-    } else if (snippet.isObject(origin)) {
-        clone = {};
+  if (snippet.isArray(origin)) {
+    clone = [];
+    origin.forEach((value, index) => {
+      clone[index] = deepCopy(value);
+    });
+  } else if (snippet.isFunction(origin) || snippet.isDate(origin)) {
+    clone = origin;
+  } else if (snippet.isObject(origin)) {
+    clone = {};
 
-        Object.entries(origin).forEach(([key, value]) => {
-            clone[key] = deepCopy(value);
-        });
-    } else {
-        clone = origin;
-    }
+    Object.entries(origin).forEach(([key, value]) => {
+      clone[key] = deepCopy(value);
+    });
+  } else {
+    clone = origin;
+  }
 
-    return clone;
+  return clone;
 };
 
 /**
@@ -39,5 +39,5 @@ const deepCopy = function(origin) {
  * @module objectUtil
  * @private */
 export default {
-    deepCopy
+  deepCopy
 };

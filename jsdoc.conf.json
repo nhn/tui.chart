@@ -1,26 +1,26 @@
 {
-    "source": {
-        "include": ["src/js", "README.md"],
-        "exclude": [],
-        "includePattern": ".+\\.js(doc)?$",
-        "excludePattern": "(^|\\/|\\\\)_"
-    },
-    "plugins": ["plugins/markdown"],
-    "templates": {
-        "name": "Chart",
-        "logo": {
-            "url": "https://user-images.githubusercontent.com/35218826/37320160-c4d6dec4-26b5-11e8-9a91-79bb2b882410.png",
-            "width": "150px",
-            "height": "13px",
-            "link": "https://github.com/nhn/tui.jsdoc-template"
-        }
-    },
-    "opts": {
-        "private": false,
-        "recurse": true,
-        "destination": "doc",
-        "tutorials": "examples",
-        "template": "./node_modules/tui-jsdoc-template",
-        "package": "package.json"
+  "source": {
+    "include": ["src/js", "README.md"],
+    "exclude": [],
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "name": "Chart",
+    "logo": {
+      "url": "https://user-images.githubusercontent.com/35218826/37320160-c4d6dec4-26b5-11e8-9a91-79bb2b882410.png",
+      "width": "150px",
+      "height": "13px",
+      "link": "https://github.com/nhn/tui.jsdoc-template"
     }
+  },
+  "opts": {
+    "private": false,
+    "recurse": true,
+    "destination": "doc",
+    "tutorials": "examples",
+    "template": "./node_modules/tui-jsdoc-template",
+    "package": "package.json"
+  }
 }

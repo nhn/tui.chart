@@ -14,25 +14,25 @@ import snippet from 'tui-code-snippet';
  * @returns {*} minimum value
  */
 function min(arr, condition, context) {
-    let result;
+  let result;
 
-    if (!condition) {
-        result = Math.min(...arr);
-    } else {
-        ([result] = arr);
-        const rest = arr.slice(1);
-        let minValue = condition.call(context, result, 0);
+  if (!condition) {
+    result = Math.min(...arr);
+  } else {
+    [result] = arr;
+    const rest = arr.slice(1);
+    let minValue = condition.call(context, result, 0);
 
-        rest.forEach((item, index) => {
-            const compareValue = condition.call(context, item, index + 1);
-            if (compareValue < minValue) {
-                minValue = compareValue;
-                result = item;
-            }
-        });
-    }
+    rest.forEach((item, index) => {
+      const compareValue = condition.call(context, item, index + 1);
+      if (compareValue < minValue) {
+        minValue = compareValue;
+        result = item;
+      }
+    });
+  }
 
-    return result;
+  return result;
 }
 
 /**
@@ -44,24 +44,24 @@ function min(arr, condition, context) {
  * @returns {*} maximum value
  */
 function max(arr, condition, context) {
-    let result;
+  let result;
 
-    if (!condition) {
-        result = Math.max(...arr);
-    } else {
-        ([result] = arr);
-        const rest = arr.slice(1);
-        let maxValue = condition.call(context, result, 0);
-        snippet.forEachArray(rest, (item, index) => {
-            const compareValue = condition.call(context, item, index + 1);
-            if (compareValue > maxValue) {
-                maxValue = compareValue;
-                result = item;
-            }
-        });
-    }
+  if (!condition) {
+    result = Math.max(...arr);
+  } else {
+    [result] = arr;
+    const rest = arr.slice(1);
+    let maxValue = condition.call(context, result, 0);
+    snippet.forEachArray(rest, (item, index) => {
+      const compareValue = condition.call(context, item, index + 1);
+      if (compareValue > maxValue) {
+        maxValue = compareValue;
+        result = item;
+      }
+    });
+  }
 
-    return result;
+  return result;
 }
 
 /**
@@ -73,16 +73,16 @@ function max(arr, condition, context) {
  * @returns {boolean} result boolean
  */
 function any(collection, condition, context) {
-    let result = false;
-    snippet.forEach(collection, (item, key) => {
-        if (condition.call(context, item, key, collection)) {
-            result = true;
-        }
+  let result = false;
+  snippet.forEach(collection, (item, key) => {
+    if (condition.call(context, item, key, collection)) {
+      result = true;
+    }
 
-        return !result;
-    });
+    return !result;
+  });
 
-    return result;
+  return result;
 }
 
 /**
@@ -94,16 +94,16 @@ function any(collection, condition, context) {
  * @returns {boolean} result boolean
  */
 function all(collection, condition, context) {
-    let result = !!(collection || []).length;
-    snippet.forEach(collection, (item, key) => {
-        if (!condition.call(context, item, key, collection)) {
-            result = false;
-        }
+  let result = !!(collection || []).length;
+  snippet.forEach(collection, (item, key) => {
+    if (!condition.call(context, item, key, collection)) {
+      result = false;
+    }
 
-        return result !== false;
-    });
+    return result !== false;
+  });
 
-    return result;
+  return result;
 }
 
 /**
@@ -116,37 +116,39 @@ function all(collection, condition, context) {
  * @returns {Array} unique values
  */
 function unique(arr, sorted, iteratee, context) {
-    const result = [];
+  const result = [];
 
-    if (!snippet.isBoolean(sorted)) {
-        context = iteratee;
-        iteratee = sorted;
-        sorted = false;
-    }
+  if (!snippet.isBoolean(sorted)) {
+    context = iteratee;
+    iteratee = sorted;
+    sorted = false;
+  }
 
-    iteratee = iteratee || function(value) {
-        return value;
+  iteratee =
+    iteratee ||
+    function(value) {
+      return value;
     };
 
-    if (sorted) {
-        let prevValue;
-        snippet.forEachArray(arr, (value, index) => {
-            value = iteratee.call(context, value, index, arr);
-            if (!index || prevValue !== value) {
-                result.push(value);
-            }
-            prevValue = value;
-        });
-    } else {
-        snippet.forEachArray(arr, (value, index) => {
-            value = iteratee.call(context, value, index, arr);
-            if (snippet.inArray(value, result) === -1) {
-                result.push(value);
-            }
-        });
-    }
+  if (sorted) {
+    let prevValue;
+    snippet.forEachArray(arr, (value, index) => {
+      value = iteratee.call(context, value, index, arr);
+      if (!index || prevValue !== value) {
+        result.push(value);
+      }
+      prevValue = value;
+    });
+  } else {
+    snippet.forEachArray(arr, (value, index) => {
+      value = iteratee.call(context, value, index, arr);
+      if (snippet.inArray(value, result) === -1) {
+        result.push(value);
+      }
+    });
+  }
 
-    return result;
+  return result;
 }
 
 /**
@@ -156,19 +158,19 @@ function unique(arr, sorted, iteratee, context) {
  * @returns {Array.<Array>} pivoted 2d array
  */
 function pivot(arr2d) {
-    const result = [];
-    const len = max(arr2d.map(arr => arr.length));
+  const result = [];
+  const len = max(arr2d.map(arr => arr.length));
 
-    arr2d.forEach(arr => {
-        for (let index = 0; index < len; index += 1) {
-            if (!result[index]) {
-                result[index] = [];
-            }
-            result[index].push(arr[index]);
-        }
-    });
+  arr2d.forEach(arr => {
+    for (let index = 0; index < len; index += 1) {
+      if (!result[index]) {
+        result[index] = [];
+      }
+      result[index].push(arr[index]);
+    }
+  });
 
-    return result;
+  return result;
 }
 
 /**
@@ -179,25 +181,25 @@ function pivot(arr2d) {
  * @returns {number} index
  */
 function findIndexFromDateTypeArray(dateArray, date) {
-    const dateValue = Number(date);
-    let foundIndex = -1;
+  const dateValue = Number(date);
+  let foundIndex = -1;
 
-    for (const [idx, value] of dateArray.entries()) {
-        if (Number(value) === dateValue) {
-            foundIndex = idx;
-            break;
-        }
+  for (const [idx, value] of dateArray.entries()) {
+    if (Number(value) === dateValue) {
+      foundIndex = idx;
+      break;
     }
+  }
 
-    return foundIndex;
+  return foundIndex;
 }
 
 export default {
-    min,
-    max,
-    any,
-    all,
-    unique,
-    pivot,
-    findIndexFromDateTypeArray
+  min,
+  max,
+  any,
+  all,
+  unique,
+  pivot,
+  findIndexFromDateTypeArray
 };

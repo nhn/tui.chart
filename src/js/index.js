@@ -1,4 +1,4 @@
-import {pluginRaphael, callback} from './plugins/pluginRaphael';
+import { pluginRaphael, callback } from './plugins/pluginRaphael';
 import chart from './chart';
 import renderUtil from './helpers/renderUtil';
 import arrayUtil from './helpers/arrayUtil';

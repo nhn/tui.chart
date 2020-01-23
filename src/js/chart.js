@@ -78,34 +78,34 @@ import './themes/defaultThemesRegistration';
  * @ignore
  */
 function _createChart(container, rawData = {}, options, chartType) {
-    if (rawData.table) {
-        rawData = seriesDataImporter.makeDataWithTable(rawData.table);
-    }
+  if (rawData.table) {
+    rawData = seriesDataImporter.makeDataWithTable(rawData.table);
+  }
 
-    if (!rawData.series) {
-        rawData.series = [];
-    }
+  if (!rawData.series) {
+    rawData.series = [];
+  }
 
-    rawData = objectUtil.deepCopy(rawData);
+  rawData = objectUtil.deepCopy(rawData);
 
-    if (chartType !== 'combo') {
-        const temp = rawData.series;
-        rawData.series = {};
-        rawData.series[chartType] = temp;
-    }
+  if (chartType !== 'combo') {
+    const temp = rawData.series;
+    rawData.series = {};
+    rawData.series[chartType] = temp;
+  }
 
-    options = options ? objectUtil.deepCopy(options) : {};
-    options.chartType = chartType;
-    options.theme = options.theme || chartConst.DEFAULT_THEME_NAME;
+  options = options ? objectUtil.deepCopy(options) : {};
+  options.chartType = chartType;
+  options.theme = options.theme || chartConst.DEFAULT_THEME_NAME;
 
-    const isColorByPoint = options.series && options.series.colorByPoint;
-    const theme = themeManager.get(options.theme, chartType, rawData.series, isColorByPoint);
-    const chart = chartFactory.get(options.chartType, rawData, theme, options);
+  const isColorByPoint = options.series && options.series.colorByPoint;
+  const theme = themeManager.get(options.theme, chartType, rawData.series, isColorByPoint);
+  const chart = chartFactory.get(options.chartType, rawData, theme, options);
 
-    chart.render(container);
-    chart.animateChart();
+  chart.render(container);
+  chart.animateChart();
 
-    return chart;
+  return chart;
 }
 
 /**
@@ -215,7 +215,7 @@ function _createChart(container, rawData = {}, options, chartType) {
  * chart.barChart(container, rawData, options);
  */
 function barChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BAR);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_BAR);
 }
 
 /**
@@ -328,7 +328,7 @@ function barChart(container, rawData, options) {
  * chart.columnChart(container, rawData, options);
  */
 function columnChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_COLUMN);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_COLUMN);
 }
 
 /**
@@ -456,7 +456,7 @@ function columnChart(container, rawData, options) {
  * chart.lineChart(container, rawData, options);
  */
 function lineChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_LINE);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_LINE);
 }
 
 /**
@@ -580,7 +580,7 @@ function lineChart(container, rawData, options) {
  * chart.areaChart(container, rawData, options);
  */
 function areaChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_AREA);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_AREA);
 }
 
 /**
@@ -700,7 +700,7 @@ function areaChart(container, rawData, options) {
  * chart.bubbleChart(container, rawData, options);
  */
 function bubbleChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BUBBLE);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_BUBBLE);
 }
 
 /**
@@ -805,7 +805,7 @@ function bubbleChart(container, rawData, options) {
  * chart.scatterChart(container, rawData, options);
  */
 function scatterChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_SCATTER);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_SCATTER);
 }
 
 /**
@@ -896,7 +896,7 @@ function scatterChart(container, rawData, options) {
  * chart.heatmapChart(container, rawData, options);
  */
 function heatmapChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_HEATMAP);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_HEATMAP);
 }
 
 /**
@@ -980,7 +980,7 @@ function heatmapChart(container, rawData, options) {
  * chart.treemapChart(container, rawData, options);
  */
 function treemapChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_TREEMAP);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_TREEMAP);
 }
 
 /**
@@ -1136,7 +1136,7 @@ function treemapChart(container, rawData, options) {
  * chart.comboChart(container, rawData, options);
  */
 function comboChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_COMBO);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_COMBO);
 }
 
 /**
@@ -1216,7 +1216,7 @@ function comboChart(container, rawData, options) {
  * chart.pieChart(container, rawData, options);
  */
 function pieChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_PIE);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_PIE);
 }
 
 /**
@@ -1284,7 +1284,7 @@ function pieChart(container, rawData, options) {
  * chart.mapChart(container, rawData, options);
  */
 function mapChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_MAP);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_MAP);
 }
 
 /**
@@ -1376,7 +1376,7 @@ function mapChart(container, rawData, options) {
  *
  */
 function radialChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_RADIAL);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_RADIAL);
 }
 
 /**
@@ -1433,7 +1433,7 @@ function radialChart(container, rawData, options) {
  * chart.boxplotChart(container, rawData, options);
  */
 function boxplotChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BOXPLOT);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_BOXPLOT);
 }
 
 /**
@@ -1476,7 +1476,7 @@ function boxplotChart(container, rawData, options) {
  * chart.bulletChart(container, data, options);
  */
 function bulletChart(container, rawData, options) {
-    return _createChart(container, rawData, options, chartConst.CHART_TYPE_BULLET);
+  return _createChart(container, rawData, options, chartConst.CHART_TYPE_BULLET);
 }
 
 /**
@@ -1576,7 +1576,7 @@ function bulletChart(container, rawData, options) {
  * chart.registerTheme('newTheme', theme);
  */
 function registerTheme(themeName, theme) {
-    themeManager.register(themeName, theme);
+  themeManager.register(themeName, theme);
 }
 
 /**
@@ -1602,7 +1602,7 @@ function registerTheme(themeName, theme) {
  * chart.registerMap('newMap', data);
  */
 function registerMap(mapName, data) {
-    mapManager.register(mapName, data);
+  mapManager.register(mapName, data);
 }
 
 /**
@@ -1619,26 +1619,26 @@ function registerMap(mapName, data) {
  * tui.chart.registerPlugin('raphael', pluginRaphael);
  */
 function registerPlugin(libType, plugin, getPaperCallback) {
-    pluginFactory.register(libType, plugin);
-    drawingToolPicker.addRendererType(libType, getPaperCallback);
+  pluginFactory.register(libType, plugin);
+  drawingToolPicker.addRendererType(libType, getPaperCallback);
 }
 
 module.exports = {
-    barChart,
-    columnChart,
-    lineChart,
-    areaChart,
-    bubbleChart,
-    scatterChart,
-    heatmapChart,
-    treemapChart,
-    comboChart,
-    pieChart,
-    mapChart,
-    radialChart,
-    boxplotChart,
-    bulletChart,
-    registerTheme,
-    registerMap,
-    registerPlugin
+  barChart,
+  columnChart,
+  lineChart,
+  areaChart,
+  bubbleChart,
+  scatterChart,
+  heatmapChart,
+  treemapChart,
+  comboChart,
+  pieChart,
+  mapChart,
+  radialChart,
+  boxplotChart,
+  bulletChart,
+  registerTheme,
+  registerMap,
+  registerPlugin
 };

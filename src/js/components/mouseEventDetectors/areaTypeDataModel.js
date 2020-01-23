@@ -8,223 +8,235 @@ import arrayUtil from '../../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
 
 class AreaTypeDataModel {
-    /**
-     * AreaTypeDataModel is data mode for mouse event detector of area type.
-     * @constructs AreaTypeDataModel
-     * @private
-     * @param {Array} seriesItemBoundsData - series item bounds data
-     */
-    constructor(seriesItemBoundsData) {
-        this.data = this._makeData(seriesItemBoundsData);
+  /**
+   * AreaTypeDataModel is data mode for mouse event detector of area type.
+   * @constructs AreaTypeDataModel
+   * @private
+   * @param {Array} seriesItemBoundsData - series item bounds data
+   */
+  constructor(seriesItemBoundsData) {
+    this.data = this._makeData(seriesItemBoundsData);
 
-        /**
-         * last group index
-         * @type {number}
-         */
-        this.lastGroupIndex = 0;
+    /**
+     * last group index
+     * @type {number}
+     */
+    this.lastGroupIndex = 0;
+  }
+
+  /**
+   * Make data for detecting mouse event.
+   * @param {Array} seriesItemBoundsData - series item bounds data
+   * @returns {Array}
+   * @private
+   */
+  _makeData(seriesItemBoundsData) {
+    const seriesItemBoundsLength = seriesItemBoundsData.length;
+    let lastGroupIndex = 0;
+    let data = seriesItemBoundsData.map((seriesDatum, seriesIndex) => {
+      const { chartType, data: dotumData } = seriesDatum;
+      let groupPositions = dotumData.groupPositions || dotumData.groupBounds;
+
+      if (predicate.isLineTypeChart(chartType) || predicate.isRadialChart(chartType)) {
+        groupPositions = arrayUtil.pivot(groupPositions);
+      }
+
+      lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
+
+      const hasGroupPositon =
+        groupPositions.length > 1 && groupPositions[1][0] && groupPositions[0][0];
+      this.leftStepLength = hasGroupPositon
+        ? groupPositions[1][0].left - groupPositions[0][0].left
+        : 0;
+
+      return groupPositions.map((positions, groupIndex) =>
+        positions.map((position, index) => {
+          let datum = null;
+
+          if (position) {
+            datum = {
+              chartType,
+              indexes: {
+                groupIndex,
+                index
+              },
+              bound: position
+            };
+          }
+
+          // Add legendIndex to datum on making multi series chart data, especially for LineScatterComboChart.
+          if (seriesItemBoundsLength > 1) {
+            datum.indexes.legendIndex = seriesIndex;
+          }
+
+          return datum;
+        })
+      );
+    });
+
+    data = [].concat(...data);
+    this.lastGroupIndex = lastGroupIndex;
+
+    return [].concat(...data).filter(datum => !!datum);
+  }
+
+  /**
+   * Find Data by layer position.
+   * @param {{x: number, y: number}} layerPosition - layer position
+   * @param {number} [selectLegendIndex] select legend sereis index
+   * @param {object} [searchInfo] distance limitation to find data
+   *   @param {number} searchInfo.distanceLimit distance limitation to find data
+   *   @param {boolean} searchInfo.isCoordinateTypeChart whether coordinate type chart or not
+   * @returns {object}
+   */
+  findData(layerPosition, selectLegendIndex, { distanceLimit, isCoordinateTypeChart } = {}) {
+    const isLooseDistancePosition = distanceLimit && distanceLimit < this.leftStepLength;
+    const useCoordinateDistanceSearch = isCoordinateTypeChart || isLooseDistancePosition;
+
+    if (useCoordinateDistanceSearch) {
+      return this._findDataForCoordinateDistance(layerPosition, distanceLimit, selectLegendIndex);
     }
 
-    /**
-     * Make data for detecting mouse event.
-     * @param {Array} seriesItemBoundsData - series item bounds data
-     * @returns {Array}
-     * @private
-     */
-    _makeData(seriesItemBoundsData) {
-        const seriesItemBoundsLength = seriesItemBoundsData.length;
-        let lastGroupIndex = 0;
-        let data = seriesItemBoundsData.map((seriesDatum, seriesIndex) => {
-            const {chartType, data: dotumData} = seriesDatum;
-            let groupPositions = dotumData.groupPositions || dotumData.groupBounds;
+    return this._findDataForFirstXPosition(layerPosition, selectLegendIndex);
+  }
 
-            if (predicate.isLineTypeChart(chartType) || predicate.isRadialChart(chartType)) {
-                groupPositions = arrayUtil.pivot(groupPositions);
-            }
-
-            lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
-
-            const hasGroupPositon = groupPositions.length > 1 && groupPositions[1][0] && groupPositions[0][0];
-            this.leftStepLength = hasGroupPositon ? groupPositions[1][0].left - groupPositions[0][0].left : 0;
-
-            return groupPositions.map((positions, groupIndex) => (
-                positions.map((position, index) => {
-                    let datum = null;
-
-                    if (position) {
-                        datum = {
-                            chartType,
-                            indexes: {
-                                groupIndex,
-                                index
-                            },
-                            bound: position
-                        };
-                    }
-
-                    // Add legendIndex to datum on making multi series chart data, especially for LineScatterComboChart.
-                    if (seriesItemBoundsLength > 1) {
-                        datum.indexes.legendIndex = seriesIndex;
-                    }
-
-                    return datum;
-                })
-            ));
-        });
-
-        data = [].concat(...data);
-        this.lastGroupIndex = lastGroupIndex;
-
-        return [].concat(...data).filter(datum => !!datum);
-    }
-
-    /**
-     * Find Data by layer position.
-     * @param {{x: number, y: number}} layerPosition - layer position
-     * @param {number} [selectLegendIndex] select legend sereis index
-     * @param {object} [searchInfo] distance limitation to find data
-     *   @param {number} searchInfo.distanceLimit distance limitation to find data
-     *   @param {boolean} searchInfo.isCoordinateTypeChart whether coordinate type chart or not
-     * @returns {object}
-     */
-    findData(layerPosition, selectLegendIndex, {distanceLimit, isCoordinateTypeChart} = {}) {
-        const isLooseDistancePosition = distanceLimit && distanceLimit < this.leftStepLength;
-        const useCoordinateDistanceSearch = isCoordinateTypeChart || isLooseDistancePosition;
-
-        if (useCoordinateDistanceSearch) {
-            return this._findDataForCoordinateDistance(layerPosition, distanceLimit, selectLegendIndex);
+  /**
+   * Find Data by layer position at dense area.
+   * @param {{x: number, y: number}} layerPosition - layer position
+   * @param {number} selectLegendIndex select legend sereis index
+   * @returns {object}
+   * @private
+   */
+  _findDataForFirstXPosition(layerPosition, selectLegendIndex) {
+    const { xMinValue } = this.data.reduce(
+      (findMinObj, datum) => {
+        const xDiff = Math.abs(layerPosition.x - datum.bound.left);
+        if (xDiff <= findMinObj.xMin) {
+          findMinObj.xMin = xDiff;
+          findMinObj.xMinValue = datum.bound.left;
         }
 
-        return this._findDataForFirstXPosition(layerPosition, selectLegendIndex);
-    }
+        return findMinObj;
+      },
+      {
+        xMin: Number.MAX_VALUE,
+        xMinValue: 0
+      }
+    );
 
-    /**
-     * Find Data by layer position at dense area.
-     * @param {{x: number, y: number}} layerPosition - layer position
-     * @param {number} selectLegendIndex select legend sereis index
-     * @returns {object}
-     * @private
-     */
-    _findDataForFirstXPosition(layerPosition, selectLegendIndex) {
-        const {xMinValue} = this.data.reduce((findMinObj, datum) => {
-            const xDiff = Math.abs(layerPosition.x - datum.bound.left);
-            if (xDiff <= findMinObj.xMin) {
-                findMinObj.xMin = xDiff;
-                findMinObj.xMinValue = datum.bound.left;
-            }
+    const { findFound } = this.data.reduce(
+      (findResultObj, datum) => {
+        const yDiff = Math.abs(layerPosition.y - datum.bound.top);
+        let remakeFindObj = {};
 
-            return findMinObj;
-        }, {
-            xMin: Number.MAX_VALUE,
-            xMinValue: 0
-        });
+        if (datum.bound.left !== xMinValue) {
+          remakeFindObj = findResultObj;
+        } else if (
+          !snippet.isNull(selectLegendIndex) &&
+          selectLegendIndex === datum.indexes.index
+        ) {
+          remakeFindObj.yMin = Number.MIN_VALUE;
+          remakeFindObj.findFound = datum;
+        } else if (yDiff <= findResultObj.yMin) {
+          remakeFindObj.yMin = yDiff;
+          remakeFindObj.findFound = datum;
+        } else {
+          remakeFindObj = findResultObj;
+        }
 
-        const {findFound} = this.data.reduce((findResultObj, datum) => {
-            const yDiff = Math.abs(layerPosition.y - datum.bound.top);
-            let remakeFindObj = {};
+        return remakeFindObj;
+      },
+      {
+        yMin: Number.MAX_VALUE,
+        findFound: null
+      }
+    );
 
-            if (datum.bound.left !== xMinValue) {
-                remakeFindObj = findResultObj;
-            } else if (!snippet.isNull(selectLegendIndex) && selectLegendIndex === datum.indexes.index) {
-                remakeFindObj.yMin = Number.MIN_VALUE;
-                remakeFindObj.findFound = datum;
-            } else if (yDiff <= findResultObj.yMin) {
-                remakeFindObj.yMin = yDiff;
-                remakeFindObj.findFound = datum;
-            } else {
-                remakeFindObj = findResultObj;
-            }
+    return findFound;
+  }
 
-            return remakeFindObj;
-        }, {
-            yMin: Number.MAX_VALUE,
-            findFound: null
-        });
+  /**
+   * Find Data by layer position at loose area.
+   * @param {{x: number, y: number}} layerPosition - layer position
+   * @param {number} [distanceLimit] distance limitation to find data
+   * @param {number} selectLegendIndex select legend sereis index
+   * @returns {object}
+   * @private
+   */
+  _findDataForCoordinateDistance(layerPosition, distanceLimit, selectLegendIndex) {
+    let min = 100000;
+    let findFound;
 
-        return findFound;
-    }
+    distanceLimit = distanceLimit || Number.MAX_VALUE;
 
-    /**
-     * Find Data by layer position at loose area.
-     * @param {{x: number, y: number}} layerPosition - layer position
-     * @param {number} [distanceLimit] distance limitation to find data
-     * @param {number} selectLegendIndex select legend sereis index
-     * @returns {object}
-     * @private
-     */
-    _findDataForCoordinateDistance(layerPosition, distanceLimit, selectLegendIndex) {
-        let min = 100000;
-        let findFound;
+    this.data.forEach(datum => {
+      const xDiff = layerPosition.x - datum.bound.left;
+      const yDiff = layerPosition.y - datum.bound.top;
+      const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
-        distanceLimit = distanceLimit || Number.MAX_VALUE;
+      if (distance > distanceLimit) {
+        return;
+      }
 
-        this.data.forEach(datum => {
-            const xDiff = layerPosition.x - datum.bound.left;
-            const yDiff = layerPosition.y - datum.bound.top;
-            const distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+      if (!snippet.isNull(selectLegendIndex) && selectLegendIndex !== datum.indexes.index) {
+        return;
+      }
 
-            if (distance > distanceLimit) {
-                return;
-            }
+      if (distance <= min) {
+        min = distance;
+        findFound = datum;
+      }
+    });
 
-            if (!snippet.isNull(selectLegendIndex) && selectLegendIndex !== datum.indexes.index) {
-                return;
-            }
+    return findFound;
+  }
 
-            if (distance <= min) {
-                min = distance;
-                findFound = datum;
-            }
-        });
+  /**
+   * Find data by indexes.
+   * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
+   * @returns {object}
+   */
+  findDataByIndexes({ index, seriesIndex }) {
+    let foundData = null;
 
-        return findFound;
-    }
+    this.data.forEach(datum => {
+      if (datum.indexes.groupIndex === index && datum.indexes.index === seriesIndex) {
+        foundData = datum;
+      }
 
-    /**
-     * Find data by indexes.
-     * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
-     * @returns {object}
-     */
-    findDataByIndexes({index, seriesIndex}) {
-        let foundData = null;
+      return !foundData;
+    });
 
-        this.data.forEach(datum => {
-            if (datum.indexes.groupIndex === index && datum.indexes.index === seriesIndex) {
-                foundData = datum;
-            }
+    return foundData;
+  }
 
-            return !foundData;
-        });
+  /**
+   * Get first data.
+   * @param {number} index - index
+   * @returns {object}
+   */
+  getFirstData(index) {
+    const indexes = {
+      index: 0,
+      seriesIndex: index
+    };
 
-        return foundData;
-    }
+    return this.findDataByIndexes(indexes);
+  }
 
-    /**
-     * Get first data.
-     * @param {number} index - index
-     * @returns {object}
-     */
-    getFirstData(index) {
-        const indexes = {
-            index: 0,
-            seriesIndex: index
-        };
+  /**
+   * Get last data.
+   * @param {number} index - index
+   * @returns {object}
+   */
+  getLastData(index) {
+    const indexes = {
+      index: this.lastGroupIndex,
+      seriesIndex: index
+    };
 
-        return this.findDataByIndexes(indexes);
-    }
-
-    /**
-     * Get last data.
-     * @param {number} index - index
-     * @returns {object}
-     */
-    getLastData(index) {
-        const indexes = {
-            index: this.lastGroupIndex,
-            seriesIndex: index
-        };
-
-        return this.findDataByIndexes(indexes);
-    }
+    return this.findDataByIndexes(indexes);
+  }
 }
 
 export default AreaTypeDataModel;

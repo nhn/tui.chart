@@ -10,62 +10,62 @@ import renderUtil from '../helpers/renderUtil';
 import snippet from 'tui-code-snippet';
 
 const DATA_URI_HEADERS = {
-    xls: 'data:application/vnd.ms-excel;base64,',
-    csv: 'data:text/csv;charset=utf-8,%EF%BB%BF' /* BOM for utf-8 */
+  xls: 'data:application/vnd.ms-excel;base64,',
+  csv: 'data:text/csv;charset=utf-8,%EF%BB%BF' /* BOM for utf-8 */
 };
 const DATA_URI_BODY_MAKERS = {
-    xls: _makeXlsBodyWithRawData,
-    csv: _makeCsvBodyWithRawData
+  xls: _makeXlsBodyWithRawData,
+  csv: _makeCsvBodyWithRawData
 };
 const dataExtensions = [...chartConst.DATA_EXTENSIONS];
 
 const dataExporter = {
-    /**
-     * Download chart data
-     * @param {string} fileName file name
-     * @param {string} extension file extension
-     * @param {object} rawData raw data of chart
-     * @param {object} [downloadOption] download option
-     */
-    downloadData(fileName, extension, rawData, downloadOption) {
-        const chartData2DArray = _get2DArrayFromRawData(rawData);
-        const contentType = DATA_URI_HEADERS[extension].replace(/(data:|;base64,|,%EF%BB%BF)/g, '');
-        let content = DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
+  /**
+   * Download chart data
+   * @param {string} fileName file name
+   * @param {string} extension file extension
+   * @param {object} rawData raw data of chart
+   * @param {object} [downloadOption] download option
+   */
+  downloadData(fileName, extension, rawData, downloadOption) {
+    const chartData2DArray = _get2DArrayFromRawData(rawData);
+    const contentType = DATA_URI_HEADERS[extension].replace(/(data:|;base64,|,%EF%BB%BF)/g, '');
+    let content = DATA_URI_BODY_MAKERS[extension](chartData2DArray, downloadOption);
 
-        if (this._isNeedDataEncodeing()) {
-            if (extension !== 'csv') {
-                // base64 encoding for data URI scheme.
-                content = window.btoa(unescape(encodeURIComponent(content)));
-            }
-            content = DATA_URI_HEADERS[extension] + content;
-        }
-
-        downloader.execDownload(fileName, extension, content, contentType);
-    },
-
-    /**
-     * Whether need encode type or not
-     * @returns {boolean}
-     * @private
-     */
-    _isNeedDataEncodeing() {
-        const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
-        const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
-
-        if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
-            return true;
-        }
-
-        return false;
-    },
-
-    /**
-     * Returns data extensions
-     * @returns {Array.<string>}
-     */
-    getExtensions() {
-        return dataExtensions;
+    if (this._isNeedDataEncodeing()) {
+      if (extension !== 'csv') {
+        // base64 encoding for data URI scheme.
+        content = window.btoa(unescape(encodeURIComponent(content)));
+      }
+      content = DATA_URI_HEADERS[extension] + content;
     }
+
+    downloader.execDownload(fileName, extension, content, contentType);
+  },
+
+  /**
+   * Whether need encode type or not
+   * @returns {boolean}
+   * @private
+   */
+  _isNeedDataEncodeing() {
+    const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
+    const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+
+    if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
+      return true;
+    }
+
+    return false;
+  },
+
+  /**
+   * Returns data extensions
+   * @returns {Array.<string>}
+   */
+  getExtensions() {
+    return dataExtensions;
+  }
 };
 
 /**
@@ -75,37 +75,37 @@ const dataExporter = {
  * @private
  */
 function _get2DArrayFromRawData(rawData) {
-    const resultArray = [];
-    const isHeatMap = (rawData.categories && snippet.isExisty(rawData.categories.x));
-    const isBullet = (rawData.series && snippet.isExisty(rawData.series.bullet));
-    let return2DArrayData = false;
+  const resultArray = [];
+  const isHeatMap = rawData.categories && snippet.isExisty(rawData.categories.x);
+  const isBullet = rawData.series && snippet.isExisty(rawData.series.bullet);
+  let return2DArrayData = false;
 
-    if (rawData) {
-        let categories;
+  if (rawData) {
+    let categories;
 
-        if (isHeatMap) {
-            return2DArrayData = _get2DArrayFromHeatmapRawData(rawData);
-        } else if (isBullet) {
-            return2DArrayData = _get2DArrayFromBulletRawData(rawData);
-        } else if (rawData.categories) {
-            ({categories} = rawData);
-        }
-        if (return2DArrayData) {
-            return return2DArrayData;
-        }
-
-        resultArray.push([''].concat(categories));
-
-        Object.values((rawData.series || {})).forEach(seriesDatum => {
-            seriesDatum.forEach(seriesItem => {
-                const data = (snippet.isArray(seriesItem.data)) ? seriesItem.data : [seriesItem.data];
-
-                resultArray.push([seriesItem.name, ...data]);
-            });
-        });
+    if (isHeatMap) {
+      return2DArrayData = _get2DArrayFromHeatmapRawData(rawData);
+    } else if (isBullet) {
+      return2DArrayData = _get2DArrayFromBulletRawData(rawData);
+    } else if (rawData.categories) {
+      ({ categories } = rawData);
+    }
+    if (return2DArrayData) {
+      return return2DArrayData;
     }
 
-    return resultArray;
+    resultArray.push([''].concat(categories));
+
+    Object.values(rawData.series || {}).forEach(seriesDatum => {
+      seriesDatum.forEach(seriesItem => {
+        const data = snippet.isArray(seriesItem.data) ? seriesItem.data : [seriesItem.data];
+
+        resultArray.push([seriesItem.name, ...data]);
+      });
+    });
+  }
+
+  return resultArray;
 }
 
 /**
@@ -116,17 +116,17 @@ function _get2DArrayFromRawData(rawData) {
  * @private
  */
 function _makeTHeadForBullet(maxRangeCount, maxMarkerCount) {
-    const tableHead = ['', chartConst.BULLET_TYPE_ACTUAL];
+  const tableHead = ['', chartConst.BULLET_TYPE_ACTUAL];
 
-    for (let i = 0; i < maxRangeCount; i += 1) {
-        tableHead.push(chartConst.BULLET_TYPE_RANGE + i);
-    }
+  for (let i = 0; i < maxRangeCount; i += 1) {
+    tableHead.push(chartConst.BULLET_TYPE_RANGE + i);
+  }
 
-    for (let i = 0; i < maxMarkerCount; i += 1) {
-        tableHead.push(chartConst.BULLET_TYPE_MARKER + i);
-    }
+  for (let i = 0; i < maxMarkerCount; i += 1) {
+    tableHead.push(chartConst.BULLET_TYPE_MARKER + i);
+  }
 
-    return tableHead;
+  return tableHead;
 }
 
 /**
@@ -137,21 +137,21 @@ function _makeTHeadForBullet(maxRangeCount, maxMarkerCount) {
  * @private
  */
 function _makeTCellsFromBulletRanges(ranges, maxRangeCount) {
-    const cells = [];
+  const cells = [];
 
-    for (let i = 0; i < maxRangeCount; i += 1) {
-        let dataText = '';
+  for (let i = 0; i < maxRangeCount; i += 1) {
+    let dataText = '';
 
-        if (ranges && ranges[i]) {
-            const rangeStart = (ranges[i].length > 0) ? ranges[i][0] : '';
-            const rangeEnd = (ranges[i].length > 1) ? ranges[i][1] : '';
+    if (ranges && ranges[i]) {
+      const rangeStart = ranges[i].length > 0 ? ranges[i][0] : '';
+      const rangeEnd = ranges[i].length > 1 ? ranges[i][1] : '';
 
-            dataText = `${rangeStart}~${rangeEnd}`;
-        }
-        cells.push(dataText);
+      dataText = `${rangeStart}~${rangeEnd}`;
     }
+    cells.push(dataText);
+  }
 
-    return cells;
+  return cells;
 }
 
 /**
@@ -162,14 +162,14 @@ function _makeTCellsFromBulletRanges(ranges, maxRangeCount) {
  * @private
  */
 function _makeTCellsFromBulletMarkers(markers, maxMarkerCount) {
-    const cells = [];
+  const cells = [];
 
-    for (let i = 0; i < maxMarkerCount; i += 1) {
-        const dataText = markers && markers[i] ? markers[i] : '';
-        cells.push(dataText);
-    }
+  for (let i = 0; i < maxMarkerCount; i += 1) {
+    const dataText = markers && markers[i] ? markers[i] : '';
+    cells.push(dataText);
+  }
 
-    return cells;
+  return cells;
 }
 
 /**
@@ -180,20 +180,20 @@ function _makeTCellsFromBulletMarkers(markers, maxMarkerCount) {
  * @private
  */
 function _get2DArrayFromBulletRawData(rawData) {
-    const resultArray = [];
-    const maxCounts = _calculateMaxCounts(rawData.series.bullet);
-    const {maxRangeCount, maxMarkerCount} = maxCounts;
+  const resultArray = [];
+  const maxCounts = _calculateMaxCounts(rawData.series.bullet);
+  const { maxRangeCount, maxMarkerCount } = maxCounts;
 
-    resultArray.push(_makeTHeadForBullet(maxRangeCount, maxMarkerCount));
+  resultArray.push(_makeTHeadForBullet(maxRangeCount, maxMarkerCount));
 
-    snippet.forEach(rawData.series.bullet, seriesItem => {
-        const rangeArray = _makeTCellsFromBulletRanges(seriesItem.ranges, maxRangeCount);
-        const markerArray = _makeTCellsFromBulletMarkers(seriesItem.markers, maxMarkerCount);
-        const row = [seriesItem.name, seriesItem.data, ...rangeArray, ...markerArray];
-        resultArray.push(row);
-    });
+  snippet.forEach(rawData.series.bullet, seriesItem => {
+    const rangeArray = _makeTCellsFromBulletRanges(seriesItem.ranges, maxRangeCount);
+    const markerArray = _makeTCellsFromBulletMarkers(seriesItem.markers, maxMarkerCount);
+    const row = [seriesItem.name, seriesItem.data, ...rangeArray, ...markerArray];
+    resultArray.push(row);
+  });
 
-    return resultArray;
+  return resultArray;
 }
 
 /**
@@ -203,18 +203,18 @@ function _get2DArrayFromBulletRawData(rawData) {
  * @private
  */
 function _calculateMaxCounts(bulletSeries) {
-    let maxRangeCount = 0;
-    let maxMarkerCount = 0;
+  let maxRangeCount = 0;
+  let maxMarkerCount = 0;
 
-    snippet.forEach(bulletSeries, series => {
-        maxRangeCount = Math.max(maxRangeCount, series.ranges.length);
-        maxMarkerCount = Math.max(maxMarkerCount, series.markers.length);
-    });
+  snippet.forEach(bulletSeries, series => {
+    maxRangeCount = Math.max(maxRangeCount, series.ranges.length);
+    maxMarkerCount = Math.max(maxMarkerCount, series.markers.length);
+  });
 
-    return {
-        maxRangeCount,
-        maxMarkerCount
-    };
+  return {
+    maxRangeCount,
+    maxMarkerCount
+  };
 }
 
 /**
@@ -224,18 +224,18 @@ function _calculateMaxCounts(bulletSeries) {
  * @private
  */
 function _get2DArrayFromHeatmapRawData(rawData) {
-    const resultArray = [];
+  const resultArray = [];
 
-    resultArray.push(['', ...rawData.categories.x]);
+  resultArray.push(['', ...rawData.categories.x]);
 
-    snippet.forEach(rawData.series, seriesDatum => {
-        snippet.forEach(seriesDatum, (seriesItem, index) => {
-            const row = [rawData.categories.y[index], ...seriesItem];
-            resultArray.push(row);
-        });
+  snippet.forEach(rawData.series, seriesDatum => {
+    snippet.forEach(seriesDatum, (seriesItem, index) => {
+      const row = [rawData.categories.y[index], ...seriesItem];
+      resultArray.push(row);
     });
+  });
 
-    return resultArray;
+  return resultArray;
 }
 
 /**
@@ -245,25 +245,25 @@ function _get2DArrayFromHeatmapRawData(rawData) {
  * @private
  */
 function _getTableElementStringForXls(chartData2DArray) {
-    let tableElementString = '<table>';
-    snippet.forEach(chartData2DArray, (row, rowIndex) => {
-        const cellTagName = rowIndex === 0 ? 'th' : 'td';
+  let tableElementString = '<table>';
+  snippet.forEach(chartData2DArray, (row, rowIndex) => {
+    const cellTagName = rowIndex === 0 ? 'th' : 'td';
 
-        tableElementString += '<tr>';
+    tableElementString += '<tr>';
 
-        snippet.forEach(row, (cell, cellIndex) => {
-            const cellNumberClass = (rowIndex !== 0 || cellIndex === 0) ? ' class="number"' : '';
-            const cellString = `<${cellTagName}${cellNumberClass}>${cell}</${cellTagName}>`;
+    snippet.forEach(row, (cell, cellIndex) => {
+      const cellNumberClass = rowIndex !== 0 || cellIndex === 0 ? ' class="number"' : '';
+      const cellString = `<${cellTagName}${cellNumberClass}>${cell}</${cellTagName}>`;
 
-            tableElementString += cellString;
-        });
-
-        tableElementString += '</tr>';
+      tableElementString += cellString;
     });
 
-    tableElementString += '</table>';
+    tableElementString += '</tr>';
+  });
 
-    return tableElementString;
+  tableElementString += '</table>';
+
+  return tableElementString;
 }
 
 /**
@@ -273,7 +273,7 @@ function _getTableElementStringForXls(chartData2DArray) {
  * @private
  */
 function _makeXlsBodyWithRawData(chartData2DArray) {
-    const xlsString = renderUtil.oneLineTrim`<html xmlns:o="urn:schemas-microsoft-com:office:office" 
+  const xlsString = renderUtil.oneLineTrim`<html xmlns:o="urn:schemas-microsoft-com:office:office" 
         xmlns:x="urn:schemas-microsoft-com:office:excel" 
         xmlns="http://www.w3.org/TR/REC-html40">
         <head>
@@ -299,7 +299,7 @@ function _makeXlsBodyWithRawData(chartData2DArray) {
         </body>
         </html>`;
 
-    return xlsString;
+  return xlsString;
 }
 
 /**
@@ -312,41 +312,41 @@ function _makeXlsBodyWithRawData(chartData2DArray) {
  * @private
  */
 function _makeCsvBodyWithRawData(chartData2DArray, option = {}) {
-    const {lineDelimiter = '\u000a', itemDelimiter = ','} = option;
-    const lastRowIndex = chartData2DArray.length - 1;
-    let csvText = '';
+  const { lineDelimiter = '\u000a', itemDelimiter = ',' } = option;
+  const lastRowIndex = chartData2DArray.length - 1;
+  let csvText = '';
 
-    snippet.forEachArray(chartData2DArray, (row, rowIndex) => {
-        const lastCellIndex = row.length - 1;
+  snippet.forEachArray(chartData2DArray, (row, rowIndex) => {
+    const lastCellIndex = row.length - 1;
 
-        snippet.forEachArray(row, (cell, cellIndex) => {
-            const cellContent = (snippet.isNumber(cell) ? cell : `"${cell}"`);
+    snippet.forEachArray(row, (cell, cellIndex) => {
+      const cellContent = snippet.isNumber(cell) ? cell : `"${cell}"`;
 
-            csvText += cellContent;
+      csvText += cellContent;
 
-            if (cellIndex < lastCellIndex) {
-                csvText += itemDelimiter;
-            }
-        });
-
-        if (rowIndex < lastRowIndex) {
-            csvText += lineDelimiter;
-        }
+      if (cellIndex < lastCellIndex) {
+        csvText += itemDelimiter;
+      }
     });
 
-    return csvText;
+    if (rowIndex < lastRowIndex) {
+      csvText += lineDelimiter;
+    }
+  });
+
+  return csvText;
 }
 
 // export private methods for Test
 Object.assign(dataExporter, {
-    _makeCsvBodyWithRawData,
-    _makeXlsBodyWithRawData,
-    _get2DArrayFromRawData,
-    _get2DArrayFromBulletRawData,
-    _get2DArrayFromHeatmapRawData,
-    _makeTCellsFromBulletRanges,
-    _makeTCellsFromBulletMarkers,
-    _makeTHeadForBullet
+  _makeCsvBodyWithRawData,
+  _makeXlsBodyWithRawData,
+  _get2DArrayFromRawData,
+  _get2DArrayFromBulletRawData,
+  _get2DArrayFromHeatmapRawData,
+  _makeTCellsFromBulletRanges,
+  _makeTCellsFromBulletMarkers,
+  _makeTHeadForBullet
 });
 
 export default dataExporter;

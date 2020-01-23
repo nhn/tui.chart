@@ -9,87 +9,86 @@ import MouseEventDetectorBase from './mouseEventDetectorBase';
 import renderUtil from '../../helpers/renderUtil';
 
 class SimpleEventDetector extends MouseEventDetectorBase {
+  /**
+   * SimpleEventDetector is event handle layer for simply sending clientX, clientY.
+   * @constructs SimpleEventDetector
+   * @private
+   * @param {object} params parameters
+   *      @param {string} params.chartType - chart type
+   * @extends MouseEventDetectorBase
+   */
+  constructor(params) {
+    super();
     /**
-     * SimpleEventDetector is event handle layer for simply sending clientX, clientY.
-     * @constructs SimpleEventDetector
-     * @private
-     * @param {object} params parameters
-     *      @param {string} params.chartType - chart type
-     * @extends MouseEventDetectorBase
+     * chart type
+     * @type {string}
      */
-    constructor(params) {
-        super();
-        /**
-         * chart type
-         * @type {string}
-         */
-        this.chartType = params.chartType;
+    this.chartType = params.chartType;
 
-        this.drawingType = chartConst.COMPONENT_TYPE_DOM;
-
-        /**
-         * event bus for transmitting message
-         * @type {object}
-         */
-        this.eventBus = params.eventBus;
-    }
+    this.drawingType = chartConst.COMPONENT_TYPE_DOM;
 
     /**
-     * Render mouse event detector area
-     * @param {HTMLElement} mouseEventDetectorContainer - container element for mouse event detector
-     * @private
+     * event bus for transmitting message
+     * @type {object}
      */
-    _renderMouseEventDetectorArea(mouseEventDetectorContainer) {
-        renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
-        renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
-    }
+    this.eventBus = params.eventBus;
+  }
 
-    /**
-     * Initialize data of mouse event detector
-     * @override
-     */
-    onReceiveSeriesData() {}
+  /**
+   * Render mouse event detector area
+   * @param {HTMLElement} mouseEventDetectorContainer - container element for mouse event detector
+   * @private
+   */
+  _renderMouseEventDetectorArea(mouseEventDetectorContainer) {
+    renderUtil.renderDimension(mouseEventDetectorContainer, this.layout.dimension);
+    renderUtil.renderPosition(mouseEventDetectorContainer, this.layout.position);
+  }
 
-    /**
-     * On click.
-     * @param {MouseEvent} e - mouse event
-     * @private
-     * @override
-     */
-    _onClick(e) {
-        this._onMouseEvent('click', e);
-    }
+  /**
+   * Initialize data of mouse event detector
+   * @override
+   */
+  onReceiveSeriesData() {}
 
-    /**
-     * On mouse move.
-     * @param {MouseEvent} e - mouse event
-     * @private
-     * @override
-     */
-    _onMousemove(e) {
-        this._onMouseEvent('move', e);
-    }
+  /**
+   * On click.
+   * @param {MouseEvent} e - mouse event
+   * @private
+   * @override
+   */
+  _onClick(e) {
+    this._onMouseEvent('click', e);
+  }
 
-    /**
-     * On mouse out.
-     * @param {MouseEvent} e - mouse event
-     * @private
-     * @override
-     */
-    _onMouseout(e) {
-        this._onMouseEvent('move', e);
-    }
+  /**
+   * On mouse move.
+   * @param {MouseEvent} e - mouse event
+   * @private
+   * @override
+   */
+  _onMousemove(e) {
+    this._onMouseEvent('move', e);
+  }
+
+  /**
+   * On mouse out.
+   * @param {MouseEvent} e - mouse event
+   * @private
+   * @override
+   */
+  _onMouseout(e) {
+    this._onMouseEvent('move', e);
+  }
 }
 
 /**
  * simpleTypeEventDetectorFactory
  * @param {object} params chart options
- * @returns {object} simple type event detector instanse
+ * @returns {object} simple type event detector instance
  * @ignore
  */
 export default function simpleTypeEventDetectorFactory(params) {
-    return new SimpleEventDetector(params);
+  return new SimpleEventDetector(params);
 }
 
 simpleTypeEventDetectorFactory.componentType = 'mouseEventDetector';
-

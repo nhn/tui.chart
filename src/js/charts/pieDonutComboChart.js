@@ -10,72 +10,72 @@ import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class PieDonutComboChart extends ChartBase {
-    /**
-     * Pie and Donut Combo chart.
-     * @constructs PieDonutComboChart
-     * @extends ChartBase
-     * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     */
-    constructor(rawData, theme, options) {
-        super({
-            rawData,
-            theme,
-            options,
-            seriesTypes: snippet.keys(rawData.series).sort(),
-            chartTypes: ['pie', 'pie'],
-            isVertical: true
-        });
-
-        /**
-         * className
-         * @type {string}
-         */
-        this.className = 'tui-combo-chart';
-    }
+  /**
+   * Pie and Donut Combo chart.
+   * @constructs PieDonutComboChart
+   * @extends ChartBase
+   * @param {Array.<Array>} rawData raw data
+   * @param {object} theme chart theme
+   * @param {object} options chart options
+   */
+  constructor(rawData, theme, options) {
+    super({
+      rawData,
+      theme,
+      options,
+      seriesTypes: snippet.keys(rawData.series).sort(),
+      chartTypes: ['pie', 'pie'],
+      isVertical: true
+    });
 
     /**
-     * Add components
-     * @override
+     * className
+     * @type {string}
      */
-    addComponents() {
-        this.componentManager.register('title', 'title');
-        this.componentManager.register('legend', 'legend');
+    this.className = 'tui-combo-chart';
+  }
 
-        this.componentManager.register('pie1Series', 'pieSeries');
-        this.componentManager.register('pie2Series', 'pieSeries');
+  /**
+   * Add components
+   * @override
+   */
+  addComponents() {
+    this.componentManager.register('title', 'title');
+    this.componentManager.register('legend', 'legend');
 
-        this.componentManager.register('chartExportMenu', 'chartExportMenu');
-        this.componentManager.register('tooltip', 'tooltip');
-        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-    }
+    this.componentManager.register('pie1Series', 'pieSeries');
+    this.componentManager.register('pie2Series', 'pieSeries');
 
-    /**
-     * Add data ratios.
-     * @override
-     */
-    addDataRatios() {
-        const seriesTypes = this.seriesTypes || [this.chartType];
+    this.componentManager.register('chartExportMenu', 'chartExportMenu');
+    this.componentManager.register('tooltip', 'tooltip');
+    this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+  }
 
-        seriesTypes.forEach(chartType => {
-            this.dataProcessor.addDataRatiosOfPieChart(chartType);
-        });
-    }
+  /**
+   * Add data ratios.
+   * @override
+   */
+  addDataRatios() {
+    const seriesTypes = this.seriesTypes || [this.chartType];
 
-    /**
-     * On change selected legend.
-     * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
-     * @override
-     */
-    onChangeCheckedLegends(checkedLegends) {
-        const originalRawData = this.dataProcessor.getOriginalRawData();
-        const rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
+    seriesTypes.forEach(chartType => {
+      this.dataProcessor.addDataRatiosOfPieChart(chartType);
+    });
+  }
 
-        ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
-            seriesTypes: this.seriesTypes
-        });
-    }
+  /**
+   * On change selected legend.
+   * @param {Array.<?boolean> | {line: ?Array.<boolean>, column: ?Array.<boolean>}} checkedLegends checked legends
+   * @override
+   */
+  onChangeCheckedLegends(checkedLegends) {
+    const originalRawData = this.dataProcessor.getOriginalRawData();
+    const rawData = rawDataHandler.filterCheckedRawData(originalRawData, checkedLegends);
+
+    ChartBase.prototype.onChangeCheckedLegends.call(this, checkedLegends, rawData, {
+      seriesTypes: this.seriesTypes
+    });
+  }
 }
 
 export default PieDonutComboChart;

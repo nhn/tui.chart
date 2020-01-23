@@ -12,93 +12,93 @@ import ColorSpectrum from './colorSpectrum';
 
 /** Class representing a point. */
 class MapChart extends ChartBase {
-    /**
-     * Map chart.
-     * @constructs MapChart
-     * @extends ChartBase
-     * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     */
-    constructor(rawData, theme, options) {
-        options.map = mapManager.get(options.map);
-        options.tooltip = options.tooltip || {};
-        options.legend = options.legend || {};
+  /**
+   * Map chart.
+   * @constructs MapChart
+   * @extends ChartBase
+   * @param {Array.<Array>} rawData raw data
+   * @param {object} theme chart theme
+   * @param {object} options chart options
+   */
+  constructor(rawData, theme, options) {
+    options.map = mapManager.get(options.map);
+    options.tooltip = options.tooltip || {};
+    options.legend = options.legend || {};
 
-        super({
-            rawData,
-            theme,
-            options,
-            DataProcessor: MapChartDataProcessor
-        });
-
-        /**
-         * class name
-         * @type {string}
-         */
-        this.className = 'tui-map-chart';
-    }
+    super({
+      rawData,
+      theme,
+      options,
+      DataProcessor: MapChartDataProcessor
+    });
 
     /**
-     * Add components.
-     * @override
-     * @private
+     * class name
+     * @type {string}
      */
-    addComponents() {
-        const seriesTheme = this.theme.series[this.chartType];
-        const colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
-        this.mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
+    this.className = 'tui-map-chart';
+  }
 
-        this.componentManager.register('mapSeries', 'mapSeries', {
-            mapModel: this.mapModel,
-            colorSpectrum
-        });
+  /**
+   * Add components.
+   * @override
+   * @private
+   */
+  addComponents() {
+    const seriesTheme = this.theme.series[this.chartType];
+    const colorSpectrum = new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor);
+    this.mapModel = new MapChartMapModel(this.dataProcessor, this.options.map);
 
-        this.componentManager.register('title', 'title');
+    this.componentManager.register('mapSeries', 'mapSeries', {
+      mapModel: this.mapModel,
+      colorSpectrum
+    });
 
-        this.componentManager.register('legend', 'spectrumLegend', {
-            colorSpectrum
-        });
+    this.componentManager.register('title', 'title');
 
-        this.componentManager.register('tooltip', 'tooltip', {
-            mapModel: this.mapModel,
-            colorSpectrum
-        });
+    this.componentManager.register('legend', 'spectrumLegend', {
+      colorSpectrum
+    });
 
-        this.componentManager.register('zoom', 'zoom');
-        this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
-    }
+    this.componentManager.register('tooltip', 'tooltip', {
+      mapModel: this.mapModel,
+      colorSpectrum
+    });
 
-    /**
-     * setData
-     * need to clearMapData before setData. To re-generate map data.
-     * @param {object} rawData rawData
-     * @api
-     * @override
-     */
-    setData(rawData = null) {
-        this.mapModel.clearMapData();
-        super.setData(rawData);
-    }
+    this.componentManager.register('zoom', 'zoom');
+    this.componentManager.register('mouseEventDetector', 'mapChartEventDetector');
+  }
 
-    /**
-     * Get scale option.
-     * @returns {{legend: boolean}}
-     * @override
-     */
-    getScaleOption() {
-        return {
-            legend: true
-        };
-    }
+  /**
+   * setData
+   * need to clearMapData before setData. To re-generate map data.
+   * @param {object} rawData rawData
+   * @api
+   * @override
+   */
+  setData(rawData = null) {
+    this.mapModel.clearMapData();
+    super.setData(rawData);
+  }
 
-    /**
-     * Add data ratios.
-     * @override
-     */
-    addDataRatios(limitMap) {
-        this.dataProcessor.addDataRatios(limitMap.legend);
-    }
+  /**
+   * Get scale option.
+   * @returns {{legend: boolean}}
+   * @override
+   */
+  getScaleOption() {
+    return {
+      legend: true
+    };
+  }
+
+  /**
+   * Add data ratios.
+   * @override
+   */
+  addDataRatios(limitMap) {
+    this.dataProcessor.addDataRatios(limitMap.legend);
+  }
 }
 
 export default MapChart;
