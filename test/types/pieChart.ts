@@ -36,7 +36,7 @@ const pieOptions = {
     width: 700,
     height: 400,
     title: 'Usage share of web browsers',
-    format: function(value, chartType, areaType, valuetype, legendName) {
+    format: (value, chartType, areaType, valuetype, legendName) => {
       if (areaType === 'makingSeriesLabel') {
         // formatting at series area
         value = value + '%';

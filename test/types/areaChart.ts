@@ -20,7 +20,7 @@ const theme1 = {
 tuiChart.registerTheme('theme1', theme1);
 
 const pluginRaphael = {
-  bar: function() {} // Render class
+  bar: () => {} // Render class
 };
 
 tuiChart.registerPlugin('raphael', pluginRaphael, callback => {

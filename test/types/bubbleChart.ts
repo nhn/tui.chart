@@ -116,7 +116,7 @@ const bubbleOptions = {
     width: 1160,
     height: 540,
     title: 'Life Expectancy per GDP',
-    format: function(value, chartType, areaType, valueType) {
+    format: (value, chartType, areaType, valueType) => {
       if (valueType === 'r' || valueType === 'x') {
         value = tuiChart.renderUtil.formatToComma(value);
         if (valueType === 'x') {
@@ -133,7 +133,7 @@ const bubbleOptions = {
     title: 'GDP'
   },
   tooltip: {
-    template: function(category, items) {
+    template: (category, items) => {
       return (
         '<div class="tui-chart-default-tooltip">' +
         '<div class="tui-chart-tooltip-head">' +

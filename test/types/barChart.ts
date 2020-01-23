@@ -47,7 +47,8 @@ const barOptions = {
     stackType: 'normal',
     barWidth: 20,
     diverging: false,
-    colorByPoint: false
+    colorByPoint: false,
+    animation: false
   },
   tooltip: {
     suffix: 'won',

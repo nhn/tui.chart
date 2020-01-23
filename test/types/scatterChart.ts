@@ -534,7 +534,7 @@ const scatterOptions = {
     title: 'Height (cm)'
   },
   tooltip: {
-    template: function(category, items) {
+    template: (category, items) => {
       return (
         '<div class="tui-chart-default-tooltip">' +
         '<div class="tui-chart-tooltip-head">' +

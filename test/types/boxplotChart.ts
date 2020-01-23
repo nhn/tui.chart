@@ -50,7 +50,10 @@ const boxPlotOptions = {
   },
   series: {
     showDot: true,
-    showArea: true
+    showArea: true,
+    animation: {
+      duration: 100
+    }
   },
   plot: {
     type: 'circle'
