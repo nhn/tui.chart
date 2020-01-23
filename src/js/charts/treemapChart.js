@@ -10,84 +10,90 @@ import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class TreemapChart extends ChartBase {
-    /**
-     * Treemap chart is graphical representation of hierarchical data by using rectangles.
-     * @constructs TreemapChart
-     * @extends ChartBase
-     * @param {Array.<Array>} rawData raw data
-     * @param {object} theme chart theme
-     * @param {object} options chart options
-     */
-    constructor(rawData, theme, options) {
-        // options.series = options.series || {};
-        options.tooltip = options.tooltip || {};
-        options.tooltip.grouped = false;
+  /**
+   * Treemap chart is graphical representation of hierarchical data by using rectangles.
+   * @constructs TreemapChart
+   * @extends ChartBase
+   * @param {Array.<Array>} rawData raw data
+   * @param {object} theme chart theme
+   * @param {object} options chart options
+   */
+  constructor(rawData, theme, options) {
+    // options.series = options.series || {};
+    options.tooltip = options.tooltip || {};
+    options.tooltip.grouped = false;
 
-        super({
-            rawData,
-            theme,
-            options,
-            hasAxes: false,
-            isVertical: true
-        });
-
-        /**
-         * className
-         * @type {string}
-         */
-        this.className = 'tui-treemap-chart';
-    }
+    super({
+      rawData,
+      theme,
+      options,
+      hasAxes: false,
+      isVertical: true
+    });
 
     /**
-     * Add components.
-     * @override
+     * className
+     * @type {string}
      */
-    addComponents() {
-        const seriesTheme = this.theme.series[this.chartType];
-        const {useColorValue} = this.options.series;
-        const colorSpectrum = useColorValue ? (new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)) : null;
-        this.componentManager.register('title', 'title');
-        this.componentManager.register('treemapSeries', 'treemapSeries', {colorSpectrum});
+    this.className = 'tui-treemap-chart';
+  }
 
-        if (useColorValue && this.options.legend.visible) {
-            this.componentManager.register('legend', 'spectrumLegend', {colorSpectrum});
-        }
+  /**
+   * Add components.
+   * @override
+   */
+  addComponents() {
+    const seriesTheme = this.theme.series[this.chartType];
+    const { useColorValue } = this.options.series;
+    const colorSpectrum = useColorValue
+      ? new ColorSpectrum(seriesTheme.startColor, seriesTheme.endColor)
+      : null;
+    this.componentManager.register('title', 'title');
+    this.componentManager.register('treemapSeries', 'treemapSeries', { colorSpectrum });
 
-        this.componentManager.register('tooltip', 'tooltip', Object.assign({
-            labelTheme: snippet.pick(this.theme, 'series', 'label'),
-            colorSpectrum
-        }));
-
-        this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
-        this.componentManager.register('chartExportMenu', 'chartExportMenu');
+    if (useColorValue && this.options.legend.visible) {
+      this.componentManager.register('legend', 'spectrumLegend', { colorSpectrum });
     }
 
-    /**
-     * Get scale option.
-     * @returns {{legend: boolean}}
-     * @override
-     */
-    getScaleOption() {
-        return {
-            legend: true
-        };
-    }
+    this.componentManager.register(
+      'tooltip',
+      'tooltip',
+      Object.assign({
+        labelTheme: snippet.pick(this.theme, 'series', 'label'),
+        colorSpectrum
+      })
+    );
 
-    /**
-     * Add data ratios to dataProcessor for rendering graph.
-     * @override
-     */
-    addDataRatios(limitMap) {
-        this.dataProcessor.addDataRatiosForTreemapChart(limitMap.legend, this.chartType);
-    }
+    this.componentManager.register('mouseEventDetector', 'mouseEventDetector');
+    this.componentManager.register('chartExportMenu', 'chartExportMenu');
+  }
 
-    /**
-     * On zoom.
-     * @param {number} index - index of target seriesItem
-     */
-    onZoom(index) {
-        this.componentManager.render('zoom', null, {index});
-    }
+  /**
+   * Get scale option.
+   * @returns {{legend: boolean}}
+   * @override
+   */
+  getScaleOption() {
+    return {
+      legend: true
+    };
+  }
+
+  /**
+   * Add data ratios to dataProcessor for rendering graph.
+   * @override
+   */
+  addDataRatios(limitMap) {
+    this.dataProcessor.addDataRatiosForTreemapChart(limitMap.legend, this.chartType);
+  }
+
+  /**
+   * On zoom.
+   * @param {number} index - index of target seriesItem
+   */
+  onZoom(index) {
+    this.componentManager.render('zoom', null, { index });
+  }
 }
 
 export default TreemapChart;

@@ -28,9 +28,9 @@ const DEFAULT_PIXELS_PER_STEP = 88;
  * this.getDigits(2145) == 1000
  */
 function getDigits(number) {
-    const logNumberDividedLN10 = number === 0 ? 1 : (Math.log(Math.abs(number)) / Math.LN10);
+  const logNumberDividedLN10 = number === 0 ? 1 : Math.log(Math.abs(number)) / Math.LN10;
 
-    return Math.pow(10, Math.floor(logNumberDividedLN10));
+  return Math.pow(10, Math.floor(logNumberDividedLN10));
 }
 
 /**
@@ -40,18 +40,18 @@ function getDigits(number) {
  * @returns {number}
  */
 function getSnappedNumber(number) {
-    let snapNumber;
+  let snapNumber;
 
-    for (let i = 0, t = SNAP_VALUES.length; i < t; i += 1) {
-        snapNumber = SNAP_VALUES[i];
-        const guideValue = (snapNumber + (SNAP_VALUES[i + 1] || snapNumber)) / 2;
+  for (let i = 0, t = SNAP_VALUES.length; i < t; i += 1) {
+    snapNumber = SNAP_VALUES[i];
+    const guideValue = (snapNumber + (SNAP_VALUES[i + 1] || snapNumber)) / 2;
 
-        if (number <= guideValue) {
-            break;
-        }
+    if (number <= guideValue) {
+      break;
     }
+  }
 
-    return snapNumber;
+  return snapNumber;
 }
 
 /**
@@ -61,10 +61,10 @@ function getSnappedNumber(number) {
  * @returns {number}
  */
 function getNormalizedStep(step) {
-    const placeNumber = getDigits(step);
-    const simplifiedStepValue = step / placeNumber;
+  const placeNumber = getDigits(step);
+  const simplifiedStepValue = step / placeNumber;
 
-    return getSnappedNumber(simplifiedStepValue) * placeNumber;
+  return getSnappedNumber(simplifiedStepValue) * placeNumber;
 }
 
 /**
@@ -81,34 +81,34 @@ function getNormalizedStep(step) {
  * max = 155 and step = 10 ---> max = 160
  */
 function getNormalizedLimit(min, max, step, showLabel) {
-    const minNumber = Math.min(getDigits(max), getDigits(step));
-    const placeNumber = minNumber > 1 ? 1 : (1 / minNumber);
-    const fixedStep = (step * placeNumber);
-    const noExtraMax = max;
-    let isNotEnoughSize = false;
+  const minNumber = Math.min(getDigits(max), getDigits(step));
+  const placeNumber = minNumber > 1 ? 1 : 1 / minNumber;
+  const fixedStep = step * placeNumber;
+  const noExtraMax = max;
+  let isNotEnoughSize = false;
 
-    // ceil max value step digits
-    max = Math.ceil((max * placeNumber) / fixedStep) * fixedStep / placeNumber;
-    isNotEnoughSize = fixedStep / 2 > max - noExtraMax;
+  // ceil max value step digits
+  max = (Math.ceil((max * placeNumber) / fixedStep) * fixedStep) / placeNumber;
+  isNotEnoughSize = fixedStep / 2 > max - noExtraMax;
 
-    if (showLabel && isNotEnoughSize) {
-        max += fixedStep;
-    }
+  if (showLabel && isNotEnoughSize) {
+    max += fixedStep;
+  }
 
-    if (min > step) {
-        // floor min value to multiples of step
-        min = Math.floor((min * placeNumber) / fixedStep) * fixedStep / placeNumber;
-    } else if (min < 0) {
-        min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
-    } else {
-        // 0 when min value is positive and smaller than step
-        min = 0;
-    }
+  if (min > step) {
+    // floor min value to multiples of step
+    min = (Math.floor((min * placeNumber) / fixedStep) * fixedStep) / placeNumber;
+  } else if (min < 0) {
+    min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
+  } else {
+    // 0 when min value is positive and smaller than step
+    min = 0;
+  }
 
-    return {
-        min,
-        max
-    };
+  return {
+    min,
+    max
+  };
 }
 
 /**
@@ -119,9 +119,9 @@ function getNormalizedLimit(min, max, step, showLabel) {
  * @ignore
  */
 function getNormalizedStepCount(limitSize, step) {
-    const multiplier = 1 / Math.min(getDigits(limitSize), getDigits(step));
+  const multiplier = 1 / Math.min(getDigits(limitSize), getDigits(step));
 
-    return Math.ceil((limitSize * multiplier) / (step * multiplier));
+  return Math.ceil((limitSize * multiplier) / (step * multiplier));
 }
 
 /**
@@ -133,19 +133,19 @@ function getNormalizedStepCount(limitSize, step) {
  * @ignore
  */
 function getNormalizedScale(scale, showLabel) {
-    const step = getNormalizedStep(scale.step);
-    const edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step, showLabel);
-    const limitSize = Math.abs(edge.max - edge.min);
-    const stepCount = getNormalizedStepCount(limitSize, step);
+  const step = getNormalizedStep(scale.step);
+  const edge = getNormalizedLimit(scale.limit.min, scale.limit.max, step, showLabel);
+  const limitSize = Math.abs(edge.max - edge.min);
+  const stepCount = getNormalizedStepCount(limitSize, step);
 
-    return {
-        limit: {
-            min: edge.min,
-            max: edge.max
-        },
-        step,
-        stepCount
-    };
+  return {
+    limit: {
+      min: edge.min,
+      max: edge.max
+    },
+    step,
+    stepCount
+  };
 }
 
 /**
@@ -159,29 +159,29 @@ function getNormalizedScale(scale, showLabel) {
  * @returns {object} scale data
  */
 function getRoughScale(min, max, offsetSize, stepCount, minimumStepSize) {
-    const limitSize = Math.abs(max - min);
-    const valuePerPixel = limitSize / offsetSize;
+  const limitSize = Math.abs(max - min);
+  const valuePerPixel = limitSize / offsetSize;
 
-    if (!stepCount) {
-        stepCount = Math.ceil(offsetSize / DEFAULT_PIXELS_PER_STEP);
-    }
+  if (!stepCount) {
+    stepCount = Math.ceil(offsetSize / DEFAULT_PIXELS_PER_STEP);
+  }
 
-    const pixelsPerStep = offsetSize / stepCount;
-    let step = valuePerPixel * pixelsPerStep;
+  const pixelsPerStep = offsetSize / stepCount;
+  let step = valuePerPixel * pixelsPerStep;
 
-    if (snippet.isNumber(minimumStepSize) && step < minimumStepSize) {
-        step = minimumStepSize;
-        stepCount = limitSize / step;
-    }
+  if (snippet.isNumber(minimumStepSize) && step < minimumStepSize) {
+    step = minimumStepSize;
+    stepCount = limitSize / step;
+  }
 
-    return {
-        limit: {
-            min,
-            max
-        },
-        step,
-        stepCount
-    };
+  return {
+    limit: {
+      min,
+      max
+    },
+    step,
+    stepCount
+  };
 }
 
 /**
@@ -196,12 +196,12 @@ function getRoughScale(min, max, offsetSize, stepCount, minimumStepSize) {
  * @ignore
  */
 function coordinateScaleCalculator(options) {
-    const {min, max, offsetSize, stepCount, minimumStepSize, showLabel} = options;
-    let scale = getRoughScale(min, max, offsetSize, stepCount, minimumStepSize);
+  const { min, max, offsetSize, stepCount, minimumStepSize, showLabel } = options;
+  let scale = getRoughScale(min, max, offsetSize, stepCount, minimumStepSize);
 
-    scale = getNormalizedScale(scale, showLabel);
+  scale = getNormalizedScale(scale, showLabel);
 
-    return scale;
+  return scale;
 }
 
 export default coordinateScaleCalculator;

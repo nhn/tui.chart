@@ -5,212 +5,211 @@
  */
 import dom from '../../src/js/helpers/domHandler';
 import chart from '../../src/js/index';
-const {barChart: barChartFactory} = chart;
+const { barChart: barChartFactory } = chart;
 
 describe('Test public APIs for bar chart', () => {
-    const rawData = {
-        categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
-        series: [
-            {
-                name: 'Budget',
-                data: [5000, 3000, 5000, 7000, 6000, 4000]
-            },
-            {
-                name: 'Income',
-                data: [8000, 1000, 7000, 2000, 5000, 3000]
+  const rawData = {
+    categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+    series: [
+      {
+        name: 'Budget',
+        data: [5000, 3000, 5000, 7000, 6000, 4000]
+      },
+      {
+        name: 'Income',
+        data: [8000, 1000, 7000, 2000, 5000, 3000]
+      },
+      {
+        name: 'Expenses',
+        data: [4000, 4000, 6000, 3000, 4000, 5000]
+      },
+      {
+        name: 'Debt',
+        data: [6000, 3000, 3000, 1000, 2000, 4000]
+      }
+    ]
+  };
+  let barChart;
 
-            },
-            {
-                name: 'Expenses',
-                data: [4000, 4000, 6000, 3000, 4000, 5000]
-            },
-            {
-                name: 'Debt',
-                data: [6000, 3000, 3000, 1000, 2000, 4000]
-            }
-        ]
-    };
-    let barChart;
+  beforeEach(() => {
+    const container = dom.create('DIV');
 
-    beforeEach(() => {
-        const container = dom.create('DIV');
+    barChart = barChartFactory(container, rawData, {});
+  });
 
-        barChart = barChartFactory(container, rawData, {});
+  describe('resize()', () => {
+    it('resize width', () => {
+      expect(barChart.chartContainer.style.width).toBe('500px');
+
+      barChart.resize({
+        width: 800
+      });
+
+      expect(barChart.chartContainer.style.width).toBe('800px');
     });
 
-    describe('resize()', () => {
-        it('resize width', () => {
-            expect(barChart.chartContainer.style.width).toBe('500px');
+    it('resize width, when width is minus value', () => {
+      expect(barChart.chartContainer.style.width).toBe('500px');
 
-            barChart.resize({
-                width: 800
-            });
+      barChart.resize({
+        width: -800
+      });
 
-            expect(barChart.chartContainer.style.width).toBe('800px');
-        });
-
-        it('resize width, when width is minus value', () => {
-            expect(barChart.chartContainer.style.width).toBe('500px');
-
-            barChart.resize({
-                width: -800
-            });
-
-            expect(barChart.chartContainer.style.width).toBe('500px');
-        });
-
-        it('resize height', () => {
-            expect(barChart.chartContainer.style.height).toBe('400px');
-
-            barChart.resize({
-                height: 700
-            });
-
-            expect(barChart.chartContainer.style.height).toBe('700px');
-        });
-
-        it('resize height, when height is minus value', () => {
-            expect(barChart.chartContainer.style.height).toBe('400px');
-
-            barChart.resize({
-                height: -700
-            });
-
-            expect(barChart.chartContainer.style.height).toBe('400px');
-        });
-
-        it('resize width and height', () => {
-            barChart.resize({
-                width: 400,
-                height: 300
-            });
-
-            expect(barChart.chartContainer.style.width).toBe('400px');
-            expect(barChart.chartContainer.style.height).toBe('300px');
-        });
+      expect(barChart.chartContainer.style.width).toBe('500px');
     });
 
-    describe('setTooltipAlign()', () => {
-        it('set align option for tooltip', () => {
-            expect(barChart.options.tooltip.align).toBe('right middle');
+    it('resize height', () => {
+      expect(barChart.chartContainer.style.height).toBe('400px');
 
-            barChart.setTooltipAlign('center top');
+      barChart.resize({
+        height: 700
+      });
 
-            expect(barChart.options.tooltip.align).toBe('center top');
-        });
+      expect(barChart.chartContainer.style.height).toBe('700px');
     });
 
-    describe('setTooltipOffset()', () => {
-        it('set offset option for tooltip', () => {
-            expect(barChart.options.tooltip.offset).toBeUndefined();
+    it('resize height, when height is minus value', () => {
+      expect(barChart.chartContainer.style.height).toBe('400px');
 
-            barChart.setTooltipOffset({
-                x: 10,
-                y: 20
-            });
+      barChart.resize({
+        height: -700
+      });
 
-            expect(barChart.options.tooltip.offset.x).toBe(10);
-            expect(barChart.options.tooltip.offset.y).toBe(20);
-        });
-
-        it('set offset option for tooltip, when parameters have only x value', () => {
-            expect(barChart.options.tooltip.offset).toBeUndefined();
-
-            barChart.setTooltipOffset({
-                x: 10
-            });
-
-            expect(barChart.options.tooltip.offset.x).toBe(10);
-            expect(barChart.options.tooltip.offset.y).toBeUndefined();
-        });
-
-        it('set offset option for tooltip, when parameters have only y value', () => {
-            expect(barChart.options.tooltip.offset).toBeUndefined();
-
-            barChart.setTooltipOffset({
-                y: 10
-            });
-
-            expect(barChart.options.tooltip.offset.x).toBeUndefined();
-            expect(barChart.options.tooltip.offset.y).toBe(10);
-        });
+      expect(barChart.chartContainer.style.height).toBe('400px');
     });
 
-    describe('resetTooltipAlign()', () => {
-        it('reset align option for tooltip', () => {
-            const container = dom.create('DIV');
+    it('resize width and height', () => {
+      barChart.resize({
+        width: 400,
+        height: 300
+      });
 
-            barChart = barChartFactory(container, rawData, {
-                tooltip: {
-                    align: 'left bottom'
-                }
-            });
+      expect(barChart.chartContainer.style.width).toBe('400px');
+      expect(barChart.chartContainer.style.height).toBe('300px');
+    });
+  });
 
-            expect(barChart.options.tooltip.align).toBe('left bottom');
+  describe('setTooltipAlign()', () => {
+    it('set align option for tooltip', () => {
+      expect(barChart.options.tooltip.align).toBe('right middle');
 
-            barChart.setTooltipAlign('center top');
+      barChart.setTooltipAlign('center top');
 
-            expect(barChart.options.tooltip.align).toBe('center top');
+      expect(barChart.options.tooltip.align).toBe('center top');
+    });
+  });
 
-            barChart.resetTooltipAlign();
+  describe('setTooltipOffset()', () => {
+    it('set offset option for tooltip', () => {
+      expect(barChart.options.tooltip.offset).toBeUndefined();
 
-            expect(barChart.options.tooltip.align).toBe('left bottom');
-        });
+      barChart.setTooltipOffset({
+        x: 10,
+        y: 20
+      });
+
+      expect(barChart.options.tooltip.offset.x).toBe(10);
+      expect(barChart.options.tooltip.offset.y).toBe(20);
     });
 
-    describe('resetTooltipOffset()', () => {
-        it('reset offset option for tooltip', () => {
-            const container = dom.create('DIV');
+    it('set offset option for tooltip, when parameters have only x value', () => {
+      expect(barChart.options.tooltip.offset).toBeUndefined();
 
-            barChart = barChartFactory(container, rawData, {
-                tooltip: {
-                    offsetX: 10,
-                    offsetY: 20
-                }
-            });
+      barChart.setTooltipOffset({
+        x: 10
+      });
 
-            expect(barChart.options.tooltip.offset.x).toBe(10);
-            expect(barChart.options.tooltip.offset.y).toBe(20);
-
-            barChart.setTooltipOffset({
-                x: 30,
-                y: 40
-            });
-
-            expect(barChart.options.tooltip.offset.x).toBe(30);
-            expect(barChart.options.tooltip.offset.y).toBe(40);
-
-            barChart.resetTooltipOffset();
-
-            expect(barChart.options.tooltip.offset.x).toBe(10);
-            expect(barChart.options.tooltip.offset.y).toBe(20);
-        });
+      expect(barChart.options.tooltip.offset.x).toBe(10);
+      expect(barChart.options.tooltip.offset.y).toBeUndefined();
     });
 
-    describe('showSeriesLabel()', () => {
-        it('show series label', () => {
-            const series = barChart.componentManager.get('barSeries');
+    it('set offset option for tooltip, when parameters have only y value', () => {
+      expect(barChart.options.tooltip.offset).toBeUndefined();
 
-            expect(barChart.options.series.showLabel).toBeUndefined();
-            expect(series.seriesLabelContainer).toBeNull();
+      barChart.setTooltipOffset({
+        y: 10
+      });
 
-            barChart.showSeriesLabel();
-
-            expect(barChart.options.series.showLabel).toBe(true);
-        });
+      expect(barChart.options.tooltip.offset.x).toBeUndefined();
+      expect(barChart.options.tooltip.offset.y).toBe(10);
     });
+  });
 
-    describe('hideSeriesLabel()', () => {
-        it('hide series label', () => {
-            expect(barChart.options.series.showLabel).toBeUndefined();
+  describe('resetTooltipAlign()', () => {
+    it('reset align option for tooltip', () => {
+      const container = dom.create('DIV');
 
-            barChart.showSeriesLabel();
+      barChart = barChartFactory(container, rawData, {
+        tooltip: {
+          align: 'left bottom'
+        }
+      });
 
-            expect(barChart.options.series.showLabel).toBe(true);
+      expect(barChart.options.tooltip.align).toBe('left bottom');
 
-            barChart.hideSeriesLabel();
+      barChart.setTooltipAlign('center top');
 
-            expect(barChart.options.series.showLabel).toBe(false);
-        });
+      expect(barChart.options.tooltip.align).toBe('center top');
+
+      barChart.resetTooltipAlign();
+
+      expect(barChart.options.tooltip.align).toBe('left bottom');
     });
+  });
+
+  describe('resetTooltipOffset()', () => {
+    it('reset offset option for tooltip', () => {
+      const container = dom.create('DIV');
+
+      barChart = barChartFactory(container, rawData, {
+        tooltip: {
+          offsetX: 10,
+          offsetY: 20
+        }
+      });
+
+      expect(barChart.options.tooltip.offset.x).toBe(10);
+      expect(barChart.options.tooltip.offset.y).toBe(20);
+
+      barChart.setTooltipOffset({
+        x: 30,
+        y: 40
+      });
+
+      expect(barChart.options.tooltip.offset.x).toBe(30);
+      expect(barChart.options.tooltip.offset.y).toBe(40);
+
+      barChart.resetTooltipOffset();
+
+      expect(barChart.options.tooltip.offset.x).toBe(10);
+      expect(barChart.options.tooltip.offset.y).toBe(20);
+    });
+  });
+
+  describe('showSeriesLabel()', () => {
+    it('show series label', () => {
+      const series = barChart.componentManager.get('barSeries');
+
+      expect(barChart.options.series.showLabel).toBeUndefined();
+      expect(series.seriesLabelContainer).toBeNull();
+
+      barChart.showSeriesLabel();
+
+      expect(barChart.options.series.showLabel).toBe(true);
+    });
+  });
+
+  describe('hideSeriesLabel()', () => {
+    it('hide series label', () => {
+      expect(barChart.options.series.showLabel).toBeUndefined();
+
+      barChart.showSeriesLabel();
+
+      expect(barChart.options.series.showLabel).toBe(true);
+
+      barChart.hideSeriesLabel();
+
+      expect(barChart.options.series.showLabel).toBe(false);
+    });
+  });
 });

@@ -9,11 +9,11 @@ import dataExporter from './dataExporter';
 import imageExporter from './imageExporter';
 import snippet from 'tui-code-snippet';
 
-const {browser, isExisty, isString} = snippet;
+const { browser, isExisty, isString } = snippet;
 
 const isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
-const isImageDownloadAvailable = !isIE10OrIE11
-    || (isIE10OrIE11 && document.createElement('canvas').getContext('2d').drawSvg);
+const isImageDownloadAvailable =
+  !isIE10OrIE11 || (isIE10OrIE11 && document.createElement('canvas').getContext('2d').drawSvg);
 const isDownloadAttributeSupported = isExisty(document.createElement('a').download);
 const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
 
@@ -24,7 +24,10 @@ const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpen
  * @ignore
  */
 function isImageExtension(extension) {
-    return arrayUtil.any(imageExporter.getExtensions(), imageExtension => extension === imageExtension);
+  return arrayUtil.any(
+    imageExporter.getExtensions(),
+    imageExtension => extension === imageExtension
+  );
 }
 /**
  * Return given extension type is data format
@@ -33,7 +36,7 @@ function isImageExtension(extension) {
  * @ignore
  */
 function isDataExtension(extension) {
-    return arrayUtil.any(dataExporter.getExtensions(), dataExtension => extension === dataExtension);
+  return arrayUtil.any(dataExporter.getExtensions(), dataExtension => extension === dataExtension);
 }
 
 /**
@@ -46,40 +49,41 @@ function isDataExtension(extension) {
  * @ignore
  */
 function exportChart(fileName, extension, rawData, svgElement, downloadOptions) {
-    const downloadOption = (downloadOptions && downloadOptions[extension] ? downloadOptions[extension] : {});
+  const downloadOption =
+    downloadOptions && downloadOptions[extension] ? downloadOptions[extension] : {};
 
-    if (isImageExtension(extension)) {
-        imageExporter.downloadImage(fileName, extension, svgElement);
-    } else if (isDataExtension(extension)) {
-        dataExporter.downloadData(fileName, extension, rawData, downloadOption);
-    }
+  if (isImageExtension(extension)) {
+    imageExporter.downloadImage(fileName, extension, svgElement);
+  } else if (isDataExtension(extension)) {
+    dataExporter.downloadData(fileName, extension, rawData, downloadOption);
+  }
 }
 
 export default {
-    exportChart,
-    isDownloadSupported: isDownloadAttributeSupported || isMsSaveOrOpenBlobSupported,
-    isImageDownloadAvailable,
-    isImageExtension,
+  exportChart,
+  isDownloadSupported: isDownloadAttributeSupported || isMsSaveOrOpenBlobSupported,
+  isImageDownloadAvailable,
+  isImageExtension,
 
-    /**
-     * Add file extension to dataExtension
-     * @param {string} type file extension type
-     * @param {string} extension file extension
-     */
-    addExtension(type, extension) {
-        const isValidExtension = extension && isString(extension);
-        let exporter;
-        let extensions;
+  /**
+   * Add file extension to dataExtension
+   * @param {string} type file extension type
+   * @param {string} extension file extension
+   */
+  addExtension(type, extension) {
+    const isValidExtension = extension && isString(extension);
+    let exporter;
+    let extensions;
 
-        if (type === 'data') {
-            exporter = dataExporter;
-        } else if (type === 'image') {
-            exporter = imageExporter;
-        }
-
-        if (exporter && isValidExtension) {
-            extensions = exporter.getExtensions();
-            extensions.push(extension);
-        }
+    if (type === 'data') {
+      exporter = dataExporter;
+    } else if (type === 'image') {
+      exporter = imageExporter;
     }
+
+    if (exporter && isValidExtension) {
+      extensions = exporter.getExtensions();
+      extensions.push(extension);
+    }
+  }
 };

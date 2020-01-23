@@ -7,255 +7,262 @@ import DynamicDataHelper from '../../src/js/charts/dynamicDataHelper';
 import chartConst from '../../src/js/const';
 
 describe('Test for DynamicDataHelper', () => {
-    let dataProcessor, componentManager, ddh;
+  let dataProcessor, componentManager, ddh;
 
+  beforeEach(() => {
+    dataProcessor = jasmine.createSpyObj('dataProcessor', [
+      'getCategoryCount',
+      'shiftData',
+      'addDataFromDynamicData',
+      'addDataFromRemainDynamicData',
+      'getValues',
+      'isCoordinateType'
+    ]);
+
+    componentManager = jasmine.createSpyObj('componentManager', ['render']);
+
+    ddh = new DynamicDataHelper({
+      dataProcessor,
+      componentManager,
+      options: {
+        series: {},
+        xAxis: {}
+      },
+      on: () => {},
+      readyForRender: jasmine.createSpy('readyForRender'),
+      _renderComponents: jasmine.createSpy('_renderComponents)')
+    });
+  });
+
+  describe('_calculateAnimateTickSize()', () => {
+    it('calculate animate tick size, when is coordinateType chart', () => {
+      const xAxisWidth = 300;
+
+      dataProcessor.isCoordinateType.and.returnValue(true);
+      dataProcessor.getValues.and.returnValue([10, 20, 30, 40]);
+      ddh.chart.chartType = chartConst.CHART_TYPE_LINE;
+
+      const actual = ddh._calculateAnimateTickSize(xAxisWidth);
+
+      expect(dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_LINE, 'x');
+      expect(actual).toBe(100);
+    });
+
+    it('if not coordinateType data, get tickCount from dataProcessor.getCategoryCount function', () => {
+      const xAxisWidth = 300;
+
+      dataProcessor.isCoordinateType.and.returnValue(false);
+      dataProcessor.getCategoryCount.and.returnValue(4);
+
+      const actual = ddh._calculateAnimateTickSize(xAxisWidth);
+
+      expect(dataProcessor.getCategoryCount).toHaveBeenCalledWith(false);
+      expect(actual).toBe(100);
+    });
+  });
+
+  describe('_animateForAddingData()', () => {
     beforeEach(() => {
-        dataProcessor = jasmine.createSpyObj('dataProcessor',
-            ['getCategoryCount', 'shiftData', 'addDataFromDynamicData',
-                'addDataFromRemainDynamicData', 'getValues', 'isCoordinateType']);
+      dataProcessor.getCategoryCount.and.returnValue(5);
+      dataProcessor.isCoordinateType.and.returnValue(false);
 
-        componentManager = jasmine.createSpyObj('componentManager', ['render']);
+      ddh.axisDataMap = {
+        xAxis: {}
+      };
+      ddh.dimensionMap = {
+        xAxis: {
+          width: 200
+        }
+      };
 
-        ddh = new DynamicDataHelper({
-            dataProcessor,
-            componentManager,
-            options: {
-                series: {},
-                xAxis: {}
-            },
-            on: () => {},
-            readyForRender: jasmine.createSpy('readyForRender'),
-            _renderComponents: jasmine.createSpy('_renderComponents)')
-        });
+      ddh.chart.readyForRender.and.returnValue({
+        dimensionMap: ddh.dimensionMap
+      });
     });
 
-    describe('_calculateAnimateTickSize()', () => {
-        it('calculate animate tick size, when is coordinateType chart', () => {
-            const xAxisWidth = 300;
+    it('should increase addesDataCount', () => {
+      expect(ddh.addedDataCount).toBe(0);
 
-            dataProcessor.isCoordinateType.and.returnValue(true);
-            dataProcessor.getValues.and.returnValue([10, 20, 30, 40]);
-            ddh.chart.chartType = chartConst.CHART_TYPE_LINE;
+      ddh._animateForAddingData();
 
-            const actual = ddh._calculateAnimateTickSize(xAxisWidth);
-
-            expect(dataProcessor.getValues).toHaveBeenCalledWith(chartConst.CHART_TYPE_LINE, 'x');
-            expect(actual).toBe(100);
-        });
-
-        it('if not coordinateType data, get tickCount from dataProcessor.getCategoryCount function', () => {
-            const xAxisWidth = 300;
-
-            dataProcessor.isCoordinateType.and.returnValue(false);
-            dataProcessor.getCategoryCount.and.returnValue(4);
-
-            const actual = ddh._calculateAnimateTickSize(xAxisWidth);
-
-            expect(dataProcessor.getCategoryCount).toHaveBeenCalledWith(false);
-            expect(actual).toBe(100);
-        });
+      expect(ddh.addedDataCount).toBe(1);
     });
 
-    describe('_animateForAddingData()', () => {
-        beforeEach(() => {
-            dataProcessor.getCategoryCount.and.returnValue(5);
-            dataProcessor.isCoordinateType.and.returnValue(false);
+    it('should call readyForRender()', () => {
+      ddh._animateForAddingData();
 
-            ddh.axisDataMap = {
-                xAxis: {}
-            };
-            ddh.dimensionMap = {
-                xAxis: {
-                    width: 200
-                }
-            };
-
-            ddh.chart.readyForRender.and.returnValue({
-                dimensionMap: ddh.dimensionMap
-            });
-        });
-
-        it('should increase addesDataCount', () => {
-            expect(ddh.addedDataCount).toBe(0);
-
-            ddh._animateForAddingData();
-
-            expect(ddh.addedDataCount).toBe(1);
-        });
-
-        it('should call readyForRender()', () => {
-            ddh._animateForAddingData();
-
-            expect(ddh.chart.readyForRender).toHaveBeenCalled();
-        });
-
-        it('should call animateForAddingData() with tickSize and shifting option for each component', () => {
-            const boundsAndScale = {
-                dimensionMap: {
-                    xAxis: {
-                        width: 200
-                    }
-                }
-            };
-
-            ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
-
-            ddh._animateForAddingData();
-
-            expect(componentManager.render).toHaveBeenCalledWith('animateForAddingData', boundsAndScale, {
-                tickSize: 50,
-                shifting: false
-            });
-        });
-
-        it('should call dataProcessor.shiftData(), when there is shifting option', () => {
-            ddh.chart.options.series.shifting = true;
-            ddh._animateForAddingData();
-
-            expect(dataProcessor.shiftData).toHaveBeenCalled();
-        });
+      expect(ddh.chart.readyForRender).toHaveBeenCalled();
     });
 
-    describe('_rerenderForAddingData()', () => {
-        it('should call readyForRender()', () => {
-            ddh._rerenderForAddingData();
+    it('should call animateForAddingData() with tickSize and shifting option for each component', () => {
+      const boundsAndScale = {
+        dimensionMap: {
+          xAxis: {
+            width: 200
+          }
+        }
+      };
 
-            expect(ddh.chart.readyForRender).toHaveBeenCalled();
-        });
+      ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
 
-        it('should call rerender() with animatable of false value', () => {
-            const boundsAndScale = {dimensionMap: {
-                xAxis: {
-                    width: 200
-                }
-            }};
+      ddh._animateForAddingData();
 
-            ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
-
-            ddh._rerenderForAddingData();
-
-            expect(componentManager.render).toHaveBeenCalledWith('rerender', boundsAndScale);
-        });
+      expect(componentManager.render).toHaveBeenCalledWith('animateForAddingData', boundsAndScale, {
+        tickSize: 50,
+        shifting: false
+      });
     });
 
-    describe('_checkForAddedData()', () => {
-        beforeEach(() => {
-            const boundsAndScale = {
-                dimensionMap: {
-                    xAxis: {
-                        width: 200
-                    }
-                }
-            };
+    it('should call dataProcessor.shiftData(), when there is shifting option', () => {
+      ddh.chart.options.series.shifting = true;
+      ddh._animateForAddingData();
 
-            ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
-        });
-        it('should append dynamic data when some dynamic data added, and then call _animateForAddingData()', () => {
-            dataProcessor.addDataFromDynamicData.and.returnValue(true);
-            spyOn(ddh, '_animateForAddingData');
+      expect(dataProcessor.shiftData).toHaveBeenCalled();
+    });
+  });
 
-            ddh.isInitRenderCompleted = true;
-            ddh._checkForAddedData();
+  describe('_rerenderForAddingData()', () => {
+    it('should call readyForRender()', () => {
+      ddh._rerenderForAddingData();
 
-            expect(ddh._animateForAddingData).toHaveBeenCalled();
-        });
-
-        it('we should not animate for added data if initial render have not completed', () => {
-            dataProcessor.addDataFromDynamicData.and.returnValue(true);
-            spyOn(ddh, '_animateForAddingData');
-
-            ddh.isInitRenderCompleted = false;
-            ddh._checkForAddedData();
-
-            expect(ddh._animateForAddingData).toHaveBeenCalled();
-        });
-
-        it('should call _rerenderForAddingData, _checkForAddedData 0.4 sec after dynamic data detection', done => {
-            dataProcessor.addDataFromDynamicData.and.returnValue(true);
-            spyOn(ddh, '_rerenderForAddingData');
-
-            ddh._checkForAddedData();
-            setTimeout(() => {
-                expect(ddh._rerenderForAddingData).toHaveBeenCalled();
-                done();
-            }, 1000);
-        });
-
-        it('should quit lookupping and appending data, when there is no dynamic data', () => {
-            dataProcessor.addDataFromDynamicData.and.returnValue(false);
-            spyOn(ddh, '_animateForAddingData');
-
-            ddh._checkForAddedData();
-
-            expect(ddh.lookupping).toBe(false);
-            expect(ddh._animateForAddingData).not.toHaveBeenCalled();
-        });
-
-        it('should not append data even thought it has dynamic data, when paused is true', () => {
-            dataProcessor.addDataFromDynamicData.and.returnValue(false);
-            spyOn(ddh, '_animateForAddingData');
-            ddh.paused = true;
-
-            ddh._checkForAddedData();
-
-            expect(ddh._animateForAddingData).not.toHaveBeenCalled();
-        });
+      expect(ddh.chart.readyForRender).toHaveBeenCalled();
     });
 
-    describe('pauseAnimation()', () => {
-        it('should set paused true', () => {
-            ddh._initForAutoTickInterval = jasmine.createSpy('_initForAutoTickInterval');
+    it('should call rerender() with animatable of false value', () => {
+      const boundsAndScale = {
+        dimensionMap: {
+          xAxis: {
+            width: 200
+          }
+        }
+      };
 
-            ddh.paused = false;
-            ddh.pauseAnimation();
+      ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
 
-            expect(ddh.paused).toBe(true);
-        });
+      ddh._rerenderForAddingData();
 
-        it('should stop timer, when there is this.rerenderingDelayTimerId value.', () => {
-            spyOn(window, 'clearTimeout');
+      expect(componentManager.render).toHaveBeenCalledWith('rerender', boundsAndScale);
+    });
+  });
 
-            ddh.rerenderingDelayTimerId = 1;
-            ddh.pauseAnimation();
+  describe('_checkForAddedData()', () => {
+    beforeEach(() => {
+      const boundsAndScale = {
+        dimensionMap: {
+          xAxis: {
+            width: 200
+          }
+        }
+      };
 
-            expect(ddh.rerenderingDelayTimerId).toBeNull();
-            expect(window.clearTimeout).toHaveBeenCalled();
-        });
+      ddh.chart.readyForRender.and.callFake(() => boundsAndScale);
+    });
+    it('should append dynamic data when some dynamic data added, and then call _animateForAddingData()', () => {
+      dataProcessor.addDataFromDynamicData.and.returnValue(true);
+      spyOn(ddh, '_animateForAddingData');
 
-        it('should shift data, when shifting option is true and rerendering is on', () => {
-            spyOn(window, 'clearTimeout');
+      ddh.isInitRenderCompleted = true;
+      ddh._checkForAddedData();
 
-            ddh.chart.options.series.shifting = true;
-
-            ddh.rerenderingDelayTimerId = 1;
-            ddh.pauseAnimation();
-
-            expect(dataProcessor.shiftData).toHaveBeenCalled();
-        });
+      expect(ddh._animateForAddingData).toHaveBeenCalled();
     });
 
-    describe('_changeCheckedLegends()', () => {
-        beforeEach(() => {
-            ddh.pauseAnimation = jasmine.createSpy('pauseAnimation');
-            ddh.chart._rerender = jasmine.createSpy('_rerender');
-            ddh.restartAnimation = jasmine.createSpy('restartAnimation');
-            ddh.chart.protectedRerender = jasmine.createSpy('protectedRerender');
-        });
+    it('we should not animate for added data if initial render have not completed', () => {
+      dataProcessor.addDataFromDynamicData.and.returnValue(true);
+      spyOn(ddh, '_animateForAddingData');
 
-        it('should stop adding data animation and rerender graph, if it is not paused', () => {
-            ddh.changeCheckedLegends();
+      ddh.isInitRenderCompleted = false;
+      ddh._checkForAddedData();
 
-            expect(ddh.pauseAnimation).toHaveBeenCalled();
-            expect(ddh.chart.protectedRerender).toHaveBeenCalled();
-        });
-
-        it('should restart andding data animation after 0.7s, if it is not paused', done => {
-            ddh.changeCheckedLegends();
-
-            setTimeout(() => {
-                expect(ddh.restartAnimation).toHaveBeenCalled();
-                done();
-            }, 700);
-        });
+      expect(ddh._animateForAddingData).toHaveBeenCalled();
     });
+
+    it('should call _rerenderForAddingData, _checkForAddedData 0.4 sec after dynamic data detection', done => {
+      dataProcessor.addDataFromDynamicData.and.returnValue(true);
+      spyOn(ddh, '_rerenderForAddingData');
+
+      ddh._checkForAddedData();
+      setTimeout(() => {
+        expect(ddh._rerenderForAddingData).toHaveBeenCalled();
+        done();
+      }, 1000);
+    });
+
+    it('should quit lookupping and appending data, when there is no dynamic data', () => {
+      dataProcessor.addDataFromDynamicData.and.returnValue(false);
+      spyOn(ddh, '_animateForAddingData');
+
+      ddh._checkForAddedData();
+
+      expect(ddh.lookupping).toBe(false);
+      expect(ddh._animateForAddingData).not.toHaveBeenCalled();
+    });
+
+    it('should not append data even thought it has dynamic data, when paused is true', () => {
+      dataProcessor.addDataFromDynamicData.and.returnValue(false);
+      spyOn(ddh, '_animateForAddingData');
+      ddh.paused = true;
+
+      ddh._checkForAddedData();
+
+      expect(ddh._animateForAddingData).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('pauseAnimation()', () => {
+    it('should set paused true', () => {
+      ddh._initForAutoTickInterval = jasmine.createSpy('_initForAutoTickInterval');
+
+      ddh.paused = false;
+      ddh.pauseAnimation();
+
+      expect(ddh.paused).toBe(true);
+    });
+
+    it('should stop timer, when there is this.rerenderingDelayTimerId value.', () => {
+      spyOn(window, 'clearTimeout');
+
+      ddh.rerenderingDelayTimerId = 1;
+      ddh.pauseAnimation();
+
+      expect(ddh.rerenderingDelayTimerId).toBeNull();
+      expect(window.clearTimeout).toHaveBeenCalled();
+    });
+
+    it('should shift data, when shifting option is true and rerendering is on', () => {
+      spyOn(window, 'clearTimeout');
+
+      ddh.chart.options.series.shifting = true;
+
+      ddh.rerenderingDelayTimerId = 1;
+      ddh.pauseAnimation();
+
+      expect(dataProcessor.shiftData).toHaveBeenCalled();
+    });
+  });
+
+  describe('_changeCheckedLegends()', () => {
+    beforeEach(() => {
+      ddh.pauseAnimation = jasmine.createSpy('pauseAnimation');
+      ddh.chart._rerender = jasmine.createSpy('_rerender');
+      ddh.restartAnimation = jasmine.createSpy('restartAnimation');
+      ddh.chart.protectedRerender = jasmine.createSpy('protectedRerender');
+    });
+
+    it('should stop adding data animation and rerender graph, if it is not paused', () => {
+      ddh.changeCheckedLegends();
+
+      expect(ddh.pauseAnimation).toHaveBeenCalled();
+      expect(ddh.chart.protectedRerender).toHaveBeenCalled();
+    });
+
+    it('should restart andding data animation after 0.7s, if it is not paused', done => {
+      ddh.changeCheckedLegends();
+
+      setTimeout(() => {
+        expect(ddh.restartAnimation).toHaveBeenCalled();
+        done();
+      }, 700);
+    });
+  });
 });

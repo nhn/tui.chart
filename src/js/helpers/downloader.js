@@ -9,8 +9,8 @@ import arrayUtil from '../helpers/arrayUtil';
 import chartConst from '../const';
 
 const DOWNLOAD_HANDLERS = {
-    downloadAttribute: downloadWithAnchorElementDownloadAttribute,
-    msSaveOrOpenBlob: downloadWithMsSaveOrOpenBlob
+  downloadAttribute: downloadWithAnchorElementDownloadAttribute,
+  msSaveOrOpenBlob: downloadWithMsSaveOrOpenBlob
 };
 
 /**
@@ -19,17 +19,17 @@ const DOWNLOAD_HANDLERS = {
  * @ignore
  */
 function getDownloadMethod() {
-    const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
-    const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
-    let method;
+  const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
+  const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
+  let method;
 
-    if (isMsSaveOrOpenBlobSupported) {
-        method = 'msSaveOrOpenBlob';
-    } else if (isDownloadAttributeSupported) {
-        method = 'downloadAttribute';
-    }
+  if (isMsSaveOrOpenBlobSupported) {
+    method = 'msSaveOrOpenBlob';
+  } else if (isDownloadAttributeSupported) {
+    method = 'downloadAttribute';
+  }
 
-    return method;
+  return method;
 }
 
 /**
@@ -41,27 +41,29 @@ function getDownloadMethod() {
  * @ignore
  */
 function base64toBlob(base64String) {
-    const contentType = base64String.substr(0, base64String.indexOf(';base64,')).substr(base64String.indexOf(':') + 1);
-    const sliceSize = 1024;
-    const byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
-    const byteArrays = [];
+  const contentType = base64String
+    .substr(0, base64String.indexOf(';base64,'))
+    .substr(base64String.indexOf(':') + 1);
+  const sliceSize = 1024;
+  const byteCharacters = atob(base64String.substr(base64String.indexOf(',') + 1));
+  const byteArrays = [];
 
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        const byteNumbers = new Array(slice.length);
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+    const byteNumbers = new Array(slice.length);
 
-        for (let i = 0; i < slice.length; i += 1) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
-
-        const byteArray = new window.Uint8Array(byteNumbers);
-
-        byteArrays.push(byteArray);
+    for (let i = 0; i < slice.length; i += 1) {
+      byteNumbers[i] = slice.charCodeAt(i);
     }
 
-    const resultBlob = new Blob(byteArrays, {type: contentType});
+    const byteArray = new window.Uint8Array(byteNumbers);
 
-    return resultBlob;
+    byteArrays.push(byteArray);
+  }
+
+  const resultBlob = new Blob(byteArrays, { type: contentType });
+
+  return resultBlob;
 }
 
 /**
@@ -71,7 +73,7 @@ function base64toBlob(base64String) {
  * @ignore
  */
 function isImageExtension(extension) {
-    return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, imageExtension => extension === imageExtension);
+  return arrayUtil.any(chartConst.IMAGE_EXTENSIONS, imageExtension => extension === imageExtension);
 }
 
 /**
@@ -83,8 +85,10 @@ function isImageExtension(extension) {
  * @ignore
  */
 function downloadWithMsSaveOrOpenBlob(fileName, extension, content, contentType) {
-    const blobObject = isImageExtension(extension) ? base64toBlob(content) : new Blob([content], {type: contentType});
-    window.navigator.msSaveOrOpenBlob(blobObject, `${fileName}.${extension}`);
+  const blobObject = isImageExtension(extension)
+    ? base64toBlob(content)
+    : new Blob([content], { type: contentType });
+  window.navigator.msSaveOrOpenBlob(blobObject, `${fileName}.${extension}`);
 }
 
 /**
@@ -95,18 +99,18 @@ function downloadWithMsSaveOrOpenBlob(fileName, extension, content, contentType)
  * @ignore
  */
 function downloadWithAnchorElementDownloadAttribute(fileName, extension, content) {
-    if (content) {
-        const anchorElement = document.createElement('a');
+  if (content) {
+    const anchorElement = document.createElement('a');
 
-        anchorElement.href = content;
-        anchorElement.target = '_blank';
-        anchorElement.download = `${fileName}.${extension}`;
+    anchorElement.href = content;
+    anchorElement.target = '_blank';
+    anchorElement.download = `${fileName}.${extension}`;
 
-        document.body.appendChild(anchorElement);
+    document.body.appendChild(anchorElement);
 
-        anchorElement.click();
-        anchorElement.remove();
-    }
+    anchorElement.click();
+    anchorElement.remove();
+  }
 }
 
 /**
@@ -118,13 +122,13 @@ function downloadWithAnchorElementDownloadAttribute(fileName, extension, content
  * @ignore
  */
 function execDownload(fileName, extension, content, contentType) {
-    const downloadMethod = getDownloadMethod();
+  const downloadMethod = getDownloadMethod();
 
-    if (downloadMethod && snippet.isString(content)) {
-        DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content, contentType);
-    }
+  if (downloadMethod && snippet.isString(content)) {
+    DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content, contentType);
+  }
 }
 
 export default {
-    execDownload
+  execDownload
 };

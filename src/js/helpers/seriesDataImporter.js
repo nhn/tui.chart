@@ -17,24 +17,24 @@ import snippet from 'tui-code-snippet';
  * @private
  */
 function getChartDataFrom2DArray(table2DArray) {
-    let chartData;
+  let chartData;
 
-    if (table2DArray.length > 0) {
-        chartData = {};
-        chartData.categories = [];
-        chartData.series = [];
-        chartData.categories = table2DArray.shift().slice(1);
+  if (table2DArray.length > 0) {
+    chartData = {};
+    chartData.categories = [];
+    chartData.series = [];
+    chartData.categories = table2DArray.shift().slice(1);
 
-        table2DArray.forEach(tr => {
-            const seriesDatum = {
-                name: tr[0],
-                data: tr.slice(1)
-            };
-            chartData.series.push(seriesDatum);
-        });
-    }
+    table2DArray.forEach(tr => {
+      const seriesDatum = {
+        name: tr[0],
+        data: tr.slice(1)
+      };
+      chartData.series.push(seriesDatum);
+    });
+  }
 
-    return chartData;
+  return chartData;
 }
 
 /**
@@ -44,28 +44,28 @@ function getChartDataFrom2DArray(table2DArray) {
  * @private
  */
 function get2DArray(tableElement) {
-    let resultArray = [];
+  let resultArray = [];
 
-    if (tableElement) {
-        const secondDimensionArray = [];
-        const trs = snippet.toArray(tableElement.getElementsByTagName('TR'));
+  if (tableElement) {
+    const secondDimensionArray = [];
+    const trs = snippet.toArray(tableElement.getElementsByTagName('TR'));
 
-        snippet.forEach(trs, (tr, index) => {
-            const tagName = index === 0 ? 'TH' : 'TD';
-            const cells = snippet.toArray(tr.getElementsByTagName(tagName));
-            const rows = snippet.pluck(cells, 'innerText');
+    snippet.forEach(trs, (tr, index) => {
+      const tagName = index === 0 ? 'TH' : 'TD';
+      const cells = snippet.toArray(tr.getElementsByTagName(tagName));
+      const rows = snippet.pluck(cells, 'innerText');
 
-            secondDimensionArray.push(rows);
-        });
+      secondDimensionArray.push(rows);
+    });
 
-        if (secondDimensionArray[0].length < secondDimensionArray[1].length) {
-            secondDimensionArray[0].unshift('');
-        }
-
-        resultArray = arrayUtil.pivot(secondDimensionArray);
+    if (secondDimensionArray[0].length < secondDimensionArray[1].length) {
+      secondDimensionArray[0].unshift('');
     }
 
-    return resultArray;
+    resultArray = arrayUtil.pivot(secondDimensionArray);
+  }
+
+  return resultArray;
 }
 
 /**
@@ -80,19 +80,19 @@ function get2DArray(tableElement) {
  * @api
  */
 function makeDataWithTable(table) {
-    let element;
+  let element;
 
-    if (table.element && table.element.tagName === 'TABLE') {
-        ({element} = table);
-    } else if (table.elementId) {
-        element = document.getElementById(table.elementId);
-    }
+  if (table.element && table.element.tagName === 'TABLE') {
+    ({ element } = table);
+  } else if (table.elementId) {
+    element = document.getElementById(table.elementId);
+  }
 
-    const chartData = getChartDataFrom2DArray(get2DArray(element));
+  const chartData = getChartDataFrom2DArray(get2DArray(element));
 
-    return chartData;
+  return chartData;
 }
 
 export default {
-    makeDataWithTable
+  makeDataWithTable
 };

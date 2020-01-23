@@ -17,17 +17,17 @@ import chartConst from '../const';
  * @ignore
  */
 function rotatePointAroundOrigin(centerX, centerY, pointX, pointY, angle) {
-    const rad = angle * (Math.PI / 180);
-    let newX = ((pointX - centerX) * Math.cos(rad)) - ((pointY - centerY) * Math.sin(rad));
-    let newY = ((pointX - centerX) * Math.sin(rad)) + ((pointY - centerY) * Math.cos(rad));
+  const rad = angle * (Math.PI / 180);
+  let newX = (pointX - centerX) * Math.cos(rad) - (pointY - centerY) * Math.sin(rad);
+  let newY = (pointX - centerX) * Math.sin(rad) + (pointY - centerY) * Math.cos(rad);
 
-    newX += centerX;
-    newY += centerY;
+  newX += centerX;
+  newY += centerY;
 
-    return {
-        x: newX,
-        y: newY
-    };
+  return {
+    x: newX,
+    y: newY
+  };
 }
 /**
  * Calculate adjacent.
@@ -50,7 +50,7 @@ function rotatePointAroundOrigin(centerX, centerY, pointX, pointY, angle) {
  *       A
  */
 function calculateAdjacent(degree, hypotenuse) {
-    return Math.cos(degree * chartConst.RAD) * hypotenuse;
+  return Math.cos(degree * chartConst.RAD) * hypotenuse;
 }
 
 /**
@@ -61,7 +61,7 @@ function calculateAdjacent(degree, hypotenuse) {
  * @ignore
  */
 function calculateOpposite(degree, hypotenuse) {
-    return Math.sin(degree * chartConst.RAD) * hypotenuse;
+  return Math.sin(degree * chartConst.RAD) * hypotenuse;
 }
 
 /**
@@ -73,10 +73,10 @@ function calculateOpposite(degree, hypotenuse) {
  * @ignore
  */
 function calculateRotatedWidth(degree, width, height) {
-    const centerHalf = calculateAdjacent(degree, width / 2);
-    const sideHalf = calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
+  const centerHalf = calculateAdjacent(degree, width / 2);
+  const sideHalf = calculateAdjacent(chartConst.ANGLE_90 - degree, height / 2);
 
-    return (centerHalf + sideHalf) * 2;
+  return (centerHalf + sideHalf) * 2;
 }
 
 /**
@@ -88,16 +88,16 @@ function calculateRotatedWidth(degree, width, height) {
  * @ignore
  */
 function calculateRotatedHeight(degree, width, height) {
-    const centerHalf = calculateOpposite(degree, width / 2);
-    const sideHalf = calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
+  const centerHalf = calculateOpposite(degree, width / 2);
+  const sideHalf = calculateOpposite(chartConst.ANGLE_90 - degree, height / 2);
 
-    return (centerHalf + sideHalf) * 2;
+  return (centerHalf + sideHalf) * 2;
 }
 
 export default {
-    rotatePointAroundOrigin,
-    calculateAdjacent,
-    calculateRotatedHeight,
-    calculateRotatedWidth,
-    calculateOpposite
+  rotatePointAroundOrigin,
+  calculateAdjacent,
+  calculateRotatedHeight,
+  calculateRotatedWidth,
+  calculateOpposite
 };
