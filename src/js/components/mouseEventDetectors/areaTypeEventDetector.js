@@ -167,16 +167,16 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
    * @override
    */
   _onMousemove(e) {
-    let dragMoseupResult;
+    let dragMouseupResult;
 
     this._setPrevClientPosition(e);
     const foundData = this._findData(e.clientX, e.clientY);
 
     if (this.zoomable) {
-      dragMoseupResult = this._isAfterDragMouseup();
+      dragMouseupResult = this._isAfterDragMouseup();
     }
 
-    if (dragMoseupResult || !this._isChangedSelectData(this.prevFoundData, foundData)) {
+    if (dragMouseupResult || !this._isChangedSelectData(this.prevFoundData, foundData)) {
       return;
     }
 
@@ -205,7 +205,7 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
 
   /**
    * find data by indexes
-   * @param {{index: {number}, seriesIndex: {number}}} indexes - indexe of series item displaying a tooltip
+   * @param {{index: {number}, seriesIndex: {number}}} indexes - index of series item displaying a tooltip
    * @returns {object} - series item data
    */
   findDataByIndexes(indexes) {
@@ -232,7 +232,7 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
 /**
  * areaTypeEventDetectorFactory
  * @param {object} params chart options
- * @returns {object} areatype event detector instance
+ * @returns {object} area type event detector instance
  * @ignore
  */
 export default function areaTypeEventDetectorFactory(params) {

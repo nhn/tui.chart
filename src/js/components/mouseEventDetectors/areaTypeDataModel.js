@@ -43,9 +43,9 @@ class AreaTypeDataModel {
 
       lastGroupIndex = Math.max(groupPositions.length - 1, lastGroupIndex);
 
-      const hasGroupPositon =
+      const hasGroupPosition =
         groupPositions.length > 1 && groupPositions[1][0] && groupPositions[0][0];
-      this.leftStepLength = hasGroupPositon
+      this.leftStepLength = hasGroupPosition
         ? groupPositions[1][0].left - groupPositions[0][0].left
         : 0;
 
