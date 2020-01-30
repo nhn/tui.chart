@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Create a question about grid
+about: Create a question about chart
 title: ''
 labels: Question
 assignees: ''
@@ -11,10 +11,10 @@ assignees: ''
   To make it easier for us to help you, please include as much useful information as possible.
 
   Useful Links:
-  - tutorial: https://github.com/nhn/tui.grid/tree/master/docs
-  - API/Example: https://nhn.github.io/tui.grid/latest
+  - tutorial: https://github.com/nhn/tui.chart/tree/master/docs
+  - API/Example: https://nhn.github.io/tui.chart/latest
 
-  Before opening a new issue, please search existing issues https://github.com/nhn/tui.grid/issues
+  Before opening a new issue, please search existing issues https://github.com/nhn/tui.chart/issues
 -->
 
 **Summary**
@@ -24,7 +24,7 @@ A clear and concise description of what the question is.
 If applicable, add screenshots to help explain your question.
 
 **Version**
-Write the version of the grid you are currently using.
+Write the version of the chart you are currently using.
 
 **Additional context**
 Add any other context about the problem here.
