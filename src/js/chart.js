@@ -147,7 +147,7 @@ function _createChart(container, rawData = {}, options, chartType) {
  *          @param {number} options.xAxis.labelMargin - label margin for x axis
  *          @param {number} options.xAxis.min - minimum value for x axis
  *          @param {number} options.xAxis.max - maximum value for x axis
- *          @param {number} options.xAxis.pointOnColumn - Place the label between the ticks.
+ *          @param {boolean} options.xAxis.pointOnColumn - Place the label between the ticks.
  *          @param {string} options.xAxis.prefix - prefix for xAxis
  *          @param {string} options.xAxis.suffix - suffix for xAxis
  *          @param {number} options.xAxis.maxWidth - max Width for xAxis
@@ -500,7 +500,7 @@ function lineChart(container, rawData, options) {
  *          @param {string} options.xAxis.tickInterval - tick interval for x axis
  *          @param {string} options.xAxis.type - type of axis
  *          @param {string} options.xAxis.dateFormat - date format
- *          @param {number} options.xAxis.pointOnColumn - Place the label between the ticks.
+ *          @param {boolean} options.xAxis.pointOnColumn - Place the label between the ticks.
  *          @param {string} options.xAxis.prefix - prefix for xAxis
  *          @param {string} options.xAxis.suffix - suffix for xAxis
  *          @param {number} options.xAxis.maxWidth - max Width for xAxis
@@ -1025,6 +1025,7 @@ function treemapChart(container, rawData, options) {
  *          @param {string} options.xAxis.prefix - prefix for xAxis
  *          @param {string} options.xAxis.suffix - suffix for xAxis
  *          @param {number} options.xAxis.maxWidth - max Width for xAxis
+ *          @param {boolean} options.xAxis.pointOnColumn - Place the label between the ticks.
  *      @param {object} options.series - options for series component
  *          @param {?object} options.series.column - options for column series component
  *              @param {string} options.series.column.stackType - type of stack
