@@ -242,7 +242,7 @@ export default {
   /** tooltip z-index **/
   TOOLTIP_ZINDEX: 500,
   /** tooltip animation time */
-  TOOLTIP_ANIMATION_TIME: 100,
+  TOOLTIP_ANIMATION_TIME: 10,
   /** tooltip animation time for pie chart */
   TOOLTIP_PIE_ANIMATION_TIME: 50,
   /** minimum pixel type step size */

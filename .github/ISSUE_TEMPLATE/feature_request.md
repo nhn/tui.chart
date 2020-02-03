@@ -19,7 +19,7 @@ And you can write template's contents in Korean also.
 <!-- TEMPLATE -->
 
 ## Version
-<!-- Write the version of the grid you are currently using. -->
+<!-- Write the version of the chart you are currently using. -->
 
 ## Development Environment
 <!-- Write the browser type, OS and so on -->
