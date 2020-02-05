@@ -1,4 +1,3 @@
-/* eslint no-process-env: 0 */
 /**
  * Config file for testing
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
@@ -10,62 +9,8 @@ const webdriverConfig = {
 };
 const es3ifyPlugin = require('es3ify-webpack-plugin');
 
-module.exports = function(config) {
-  const defaultConfig = {
-    basePath: './',
-    frameworks: ['jasmine'],
-    files: ['test/index.js'],
-    preprocessors: {
-      'test/index.js': ['webpack', 'sourcemap']
-    },
-    webpack: {
-      devtool: '#inline-source-map',
-      module: {
-        preLoaders: [
-          {
-            test: /\.js$/,
-            exclude: /(bower_components|node_modules)/,
-            loader: 'istanbul-instrumenter',
-            query: {
-              esModules: true
-            }
-          },
-          {
-            test: /\.js$/,
-            exclude: /(bower_components|node_modules)/,
-            loader: 'eslint-loader'
-          }
-        ],
-        loaders: [
-          {
-            test: /\.less$/,
-            loader: 'style-loader!css-loader!less-loader?paths=src/less/'
-          },
-          {
-            test: /\.js$/,
-            exclude: /(node_modules|bower_components)/,
-            loader: 'babel-loader?cacheDirectory'
-          }
-        ]
-      },
-      plugins: [new es3ifyPlugin()]
-    },
-    port: 9876,
-    colors: true,
-    logLevel: config.LOG_INFO,
-    autoWatchBatchDelay: 100,
-    browserDisconnectTimeout: 60000,
-    browserNoActivityTimeout: 60000,
-    captureTimeout: 100000,
-    webpackMiddleware: {
-      noInfo: true,
-      stats: {
-        colors: true
-      }
-    }
-  };
-
-  if (process.env.KARMA_SERVER === 'ne') {
+function setConfig(defaultConfig, type) {
+  if (type === 'ne') {
     defaultConfig.customLaunchers = {
       IE9: {
         base: 'WebDriver',
@@ -107,19 +52,17 @@ module.exports = function(config) {
         browserName: 'safari'
       }
     };
-
     defaultConfig.browsers = [
-      'IE9',
+      // 'IE9',
       'IE10',
-      // 'IE11',
-      // 'Edge',
+      'IE11',
+      'Edge',
       'Chrome-WebDriver',
       'Firefox-WebDriver'
       // 'Safari-WebDriver'
     ];
-
-    defaultConfig.reporters = ['dots', 'coverage', 'junit'];
-
+    defaultConfig.reporters.push('coverage');
+    defaultConfig.reporters.push('junit');
     defaultConfig.coverageReporter = {
       dir: 'report/coverage/',
       reporters: [
@@ -138,15 +81,14 @@ module.exports = function(config) {
         }
       ]
     };
-
     defaultConfig.junitReporter = {
       outputDir: 'report/junit',
       suite: ''
     };
-
-    defaultConfig.singleRun = true;
-    defaultConfig.autoWatch = false;
   } else {
+    defaultConfig.browsers = ['ChromeHeadless'];
+
+    // @TODO: 흠?
     defaultConfig.plugins = [
       'karma-jasmine',
       'karma-webpack',
@@ -155,11 +97,63 @@ module.exports = function(config) {
       'karma-firefox-launcher',
       'karma-narrow-reporter'
     ];
-    defaultConfig.browsers = ['ChromeHeadless'];
     defaultConfig.reporters = ['narrow'];
-    defaultConfig.singleRun = false;
-    defaultConfig.autoWatch = true;
   }
+}
 
+module.exports = function(config) {
+  const defaultConfig = {
+    basePath: './',
+    frameworks: ['jasmine'],
+    files: ['test/index.js'],
+    preprocessors: {
+      'test/index.js': ['webpack', 'sourcemap']
+    },
+    reporters: ['dots'],
+    webpack: {
+      mode: 'development',
+      devtool: '#inline-source-map',
+      module: {
+        rules: [
+          {
+            test: /\.js$/,
+            exclude: /(bower_components|node_modules)/,
+            loader: 'istanbul-instrumenter-loader',
+            query: {
+              esModules: true
+            },
+            enforce: 'pre'
+          },
+          {
+            test: /\.js$/,
+            exclude: /(bower_components|node_modules)/,
+            loader: 'eslint-loader',
+            enforce: 'pre'
+          },
+          {
+            test: /\.less$/,
+            loader: 'style-loader!css-loader!less-loader?paths=src/less/'
+          },
+          {
+            test: /\.js$/,
+            exclude: /(node_modules|bower_components)/,
+            loader: 'babel-loader?cacheDirectory'
+          }
+        ]
+      },
+      plugins: [new es3ifyPlugin()]
+    },
+    port: 9876,
+    logLevel: config.LOG_INFO,
+    autoWatchBatchDelay: 100,
+    browserDisconnectTimeout: 60000,
+    browserNoActivityTimeout: 60000,
+    captureTimeout: 100000,
+    colors: true,
+    autoWatch: true,
+    singleRun: true
+  };
+
+  setConfig(defaultConfig, process.env.KARMA_SERVER);
   config.set(defaultConfig);
 };
