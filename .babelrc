@@ -1,9 +1,9 @@
 {
-    "presets": ["es2015"],
-    "plugins": [
-        ["transform-es2015-classes", {"loose": true}],
-        ["transform-es2015-modules-commonjs", {"loose": true}],
-        "transform-es3-property-literals",
-        "transform-es3-member-expression-literals"
-    ]
+  "presets": ["@babel/preset-env"],
+  "plugins": [
+    ["@babel/transform-classes", { "loose": true }],
+    ["@babel/transform-modules-commonjs", { "loose": true }],
+    "@babel/transform-property-literals",
+    "@babel/transform-member-expression-literals"
+  ]
 }

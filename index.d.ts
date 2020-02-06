@@ -474,7 +474,7 @@ declare namespace tuiChart {
     legend: string;
     suffix: string;
     type: string;
-    vlaue: string;
+    value: string;
   }
 
   interface IToolTipTemplateConfig {

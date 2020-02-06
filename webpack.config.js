@@ -5,7 +5,6 @@
 var webpack = require('webpack');
 var path = require('path');
 var pkg = require('./package.json');
-var SafeUmdPlugin = require('safe-umd-webpack-plugin');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
 var TerserPlugin = require('terser-webpack-plugin');
 var es3ifyPlugin = require('es3ify-webpack-plugin');
@@ -100,7 +99,6 @@ module.exports = function(env, argv) {
       ]
     },
     plugins: [
-      new SafeUmdPlugin(),
       new webpack.BannerPlugin({ banner:BANNER, entryOnly: true }),
       new MiniCssExtractPlugin({ filename: FILENAME_CSS + '.css' }),
       new es3ifyPlugin()
@@ -131,12 +129,12 @@ module.exports = function(env, argv) {
     });
   } else if (isAllDepth) {
     Object.assign(config, {
-      entry: ['babel-polyfill', './src/js/index.js'],
+      entry: ['@babel/polyfill', './src/js/index.js'],
       externals: {}
     });
   } else if (isBabelPolyfill) {
     Object.assign(config, {
-      entry: ['babel-polyfill', './src/js/index.js']
+      entry: ['@babel/polyfill', './src/js/index.js']
     });
   }
 
