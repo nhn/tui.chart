@@ -154,8 +154,12 @@ class GroupTypeEventDetector extends EventDetectorBase {
      * At this time, the index may be larger than the data size.
      */
     if (this.tickBaseCoordinateModel.data.length > index) {
-      const [{ max, min }] = this.tickBaseCoordinateModel.data;
-      const tickInterval = this.pointOnColumn ? max - min : 0;
+      let tickInterval = 0;
+
+      if (this.pointOnColumn && this.boundsBaseCoordinateModel.data.length) {
+        const [{ min, max }] = this.tickBaseCoordinateModel.data;
+        tickInterval = max - min;
+      }
 
       this.eventBus.fire('showTooltip', {
         index,
