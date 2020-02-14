@@ -36,6 +36,7 @@ class GroupTooltip extends TooltipBase {
     super(params);
     this.prevIndex = null;
     this.isBullet = predicate.isBulletChart(params.chartType);
+    this.tickInterval = params.tickInterval;
   }
 
   /**
@@ -333,7 +334,7 @@ class GroupTooltip extends TooltipBase {
         height
       },
       position: {
-        left: range.start,
+        left: range.start + this.tickInterval / 2,
         top: SERIES_EXPAND_SIZE
       }
     };
