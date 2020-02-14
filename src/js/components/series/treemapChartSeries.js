@@ -3,12 +3,14 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import snippet from 'tui-code-snippet';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import Series from './series';
 import squarifier from './squarifier';
 import labelHelper from './renderingLabelHelper';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
-import snippet from 'tui-code-snippet';
 
 class TreemapChartSeries extends Series {
   /**
@@ -64,11 +66,11 @@ class TreemapChartSeries extends Series {
   _initOptions() {
     this.options.useColorValue = !!this.options.useColorValue;
 
-    if (snippet.isUndefined(this.options.zoomable)) {
+    if (isUndefined(this.options.zoomable)) {
       this.options.zoomable = !this.options.useColorValue;
     }
 
-    if (snippet.isUndefined(this.options.useLeafLabel)) {
+    if (isUndefined(this.options.useLeafLabel)) {
       this.options.useLeafLabel = !this.options.zoomable;
     }
   }

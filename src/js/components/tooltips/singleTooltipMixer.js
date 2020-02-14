@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-
+import isNull from 'tui-code-snippet/type/isNull';
 import snippet from 'tui-code-snippet';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
@@ -37,7 +37,7 @@ export default {
     const index = elTooltip.getAttribute('data-index');
     let indexes = null;
 
-    if (!snippet.isNull(groupIndex) && !snippet.isNull(index)) {
+    if (!isNull(groupIndex) && !isNull(index)) {
       indexes = {
         groupIndex: parseInt(groupIndex, 10),
         index: parseInt(index, 10)

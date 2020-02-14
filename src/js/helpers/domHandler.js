@@ -5,6 +5,8 @@
  */
 
 import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isString from 'tui-code-snippet/type/isString';
 
 /**
  * DOM Handler.
@@ -43,7 +45,7 @@ export default {
       classNames = [...el.classList];
     } else {
       className = el.className || '';
-      classNames = className && snippet.isString(className) ? className.split(' ') : [];
+      classNames = className && isString(className) ? className.split(' ') : [];
     }
 
     return classNames;
@@ -138,7 +140,7 @@ export default {
     if (!container || !children) {
       return;
     }
-    children = snippet.isArray(children) ? children : [children];
+    children = isArray(children) ? children : [children];
 
     snippet.forEachArray(children, child => {
       if (!child) {

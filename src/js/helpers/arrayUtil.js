@@ -4,6 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import snippet from 'tui-code-snippet';
+import isBoolean from 'tui-code-snippet/type/isBoolean';
 
 /**
  * Pick minimum value from value array.
@@ -118,7 +119,7 @@ function all(collection, condition, context) {
 function unique(arr, sorted, iteratee, context) {
   const result = [];
 
-  if (!snippet.isBoolean(sorted)) {
+  if (!isBoolean(sorted)) {
     context = iteratee;
     iteratee = sorted;
     sorted = false;

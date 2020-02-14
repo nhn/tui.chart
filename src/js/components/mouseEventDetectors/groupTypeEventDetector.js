@@ -3,6 +3,8 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
+
 import chartConst from '../../const';
 import EventDetectorBase from './mouseEventDetectorBase';
 import zoomMixer from './zoomMixer';
@@ -214,7 +216,7 @@ class GroupTypeEventDetector extends EventDetectorBase {
   _onMouseout(e) {
     const { x, y } = this._calculateLayerPosition(e.clientX, e.clientY, false);
 
-    if (this._isOuterPosition(x, y) && !snippet.isNull(this.prevIndex)) {
+    if (this._isOuterPosition(x, y) && !isNull(this.prevIndex)) {
       this._hideTooltip();
     }
   }

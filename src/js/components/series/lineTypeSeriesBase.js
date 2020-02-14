@@ -4,12 +4,16 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
+
 import arrayUtil from '../../helpers/arrayUtil';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
 import renderUtil from '../../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
+
 const {
   SERIES_EXPAND_SIZE,
   SERIES_LABEL_PADDING,
@@ -53,13 +57,13 @@ class LineTypeSeriesBase {
         seriesGroup.map((seriesItem, index) => {
           let position;
 
-          if (!snippet.isNull(seriesItem.end)) {
+          if (!isNull(seriesItem.end)) {
             position = {
               left: baseLeft + step * index,
               top: baseTop + height - seriesItem.ratio * height
             };
 
-            if (snippet.isExisty(seriesItem.startRatio)) {
+            if (isExisty(seriesItem.startRatio)) {
               position.startTop = baseTop + height - seriesItem.startRatio * height;
             }
           }
@@ -96,13 +100,13 @@ class LineTypeSeriesBase {
         seriesGroup.map(seriesItem => {
           let position;
 
-          if (!snippet.isNull(seriesItem.end)) {
+          if (!isNull(seriesItem.end)) {
             position = {
               left: baseLeft + seriesItem.ratioMap.x * width + additionalLeft,
               top: baseTop + height - seriesItem.ratioMap.y * height
             };
 
-            if (snippet.isExisty(seriesItem.ratioMap.start)) {
+            if (isExisty(seriesItem.ratioMap.start)) {
               position.startTop =
                 height - seriesItem.ratioMap.start * height + chartConst.SERIES_EXPAND_SIZE;
             }
@@ -278,7 +282,7 @@ class LineTypeSeriesBase {
     this._setDataForRendering(data);
     this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
 
-    if (!snippet.isNull(this.selectedLegendIndex)) {
+    if (!isNull(this.selectedLegendIndex)) {
       this.graphRenderer.selectLegend(this.selectedLegendIndex);
     }
   }

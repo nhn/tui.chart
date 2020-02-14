@@ -4,13 +4,14 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import snippet from 'tui-code-snippet';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
 import pluginFactory from '../../factories/pluginFactory';
 import renderUtil from '../../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 
 const { AXIS_EDGE_RATIO, X_AXIS_LABEL_PADDING, COMPONENT_TYPE_RAPHAEL } = chartConst;
@@ -610,7 +611,7 @@ class Axis {
   _isOverLapXAxisLabel(labelText, position, nextPosition) {
     const labelWidth = renderUtil.getRenderedLabelWidth(labelText);
 
-    return !snippet.isUndefined(nextPosition) && nextPosition - position < labelWidth;
+    return !isUndefined(nextPosition) && nextPosition - position < labelWidth;
   }
 
   /**

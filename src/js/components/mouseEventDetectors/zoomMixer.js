@@ -3,6 +3,8 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
+
 import MouseEventDetectorBase from './mouseEventDetectorBase';
 import chartConst from '../../const';
 import dom from '../../helpers/domHandler';
@@ -10,7 +12,6 @@ import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
 import renderUtil from '../../helpers/renderUtil';
 import eventListener from '../../helpers/eventListener';
-import snippet from 'tui-code-snippet';
 
 /**
  * Mixer for zoom event of area type mouse event detector.
@@ -294,7 +295,7 @@ export default {
       const dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
 
       if (!dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
-        if (snippet.isNull(this.dragStartIndexes)) {
+        if (isNull(this.dragStartIndexes)) {
           this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
         } else {
           this._showDragSelection(e.clientX);
@@ -457,7 +458,7 @@ export default {
 
     this._unbindDragEvent();
 
-    if (snippet.isNull(this.dragStartIndexes)) {
+    if (isNull(this.dragStartIndexes)) {
       const target = e.target || e.srcElement;
       if (dom.hasClass(target, chartConst.CLASS_NAME_RESET_ZOOM_BTN)) {
         this._hideTooltip();

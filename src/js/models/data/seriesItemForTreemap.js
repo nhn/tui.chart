@@ -6,7 +6,7 @@
 
 import calculator from '../../helpers/calculator';
 import renderUtil from '../../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 class SeriesItemForTreemap {
   /**
@@ -72,7 +72,7 @@ class SeriesItemForTreemap {
       tooltipColorIndex: this.indexes[0]
     };
 
-    if (snippet.isExisty(colorValue)) {
+    if (isExisty(colorValue)) {
       valueMap.colorValue = renderUtil.formatValue({
         value: colorValue,
         formatFunctions,
@@ -96,7 +96,7 @@ class SeriesItemForTreemap {
       label: this.label
     };
 
-    if (snippet.isExisty(this.colorValue)) {
+    if (isExisty(this.colorValue)) {
       templateData.colorValue = this.colorValue;
       templateData.colorValueRatio = this.ratio;
     }

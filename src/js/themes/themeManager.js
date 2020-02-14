@@ -4,10 +4,14 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isObject from 'tui-code-snippet/type/isObject';
+
 import chartConst from '../const';
 import predicate from '../helpers/predicate';
 import defaultTheme from './defaultTheme';
-import snippet from 'tui-code-snippet';
 
 const themes = {};
 
@@ -55,9 +59,9 @@ export default {
         return;
       }
 
-      if (snippet.isArray(fromItem)) {
+      if (isArray(fromItem)) {
         toTheme[key] = fromItem.slice();
-      } else if (snippet.isObject(fromItem)) {
+      } else if (isObject(fromItem)) {
         this._overwriteTheme(fromItem, item);
       } else {
         toTheme[key] = fromItem;
@@ -76,7 +80,7 @@ export default {
     const validTheme = {};
 
     chartConst.THEME_PROPS_MAP[componentType].forEach(propName => {
-      if (snippet.isExisty(theme[propName])) {
+      if (isExisty(theme[propName])) {
         validTheme[propName] = theme[propName];
       }
     });

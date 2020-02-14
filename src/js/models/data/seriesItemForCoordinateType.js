@@ -4,10 +4,13 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isArray from 'tui-code-snippet/type/isArray';
+import isDate from 'tui-code-snippet/type/isDate';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNumber from 'tui-code-snippet/type/isNumber';
 
 import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 class SeriesItemForCoordinateType {
   /**
@@ -64,7 +67,7 @@ class SeriesItemForCoordinateType {
   _initData(rawSeriesDatum, index) {
     let date;
 
-    if (snippet.isArray(rawSeriesDatum)) {
+    if (isArray(rawSeriesDatum)) {
       this.x = rawSeriesDatum[0] || 0;
       this.y = rawSeriesDatum[1] || 0;
       if (predicate.isBubbleChart(this.chartType)) {
@@ -80,7 +83,7 @@ class SeriesItemForCoordinateType {
     }
 
     if (predicate.isDatetimeType(this.xAxisType)) {
-      date = snippet.isDate(this.x) ? this.x : new Date(this.x);
+      date = isDate(this.x) ? this.x : new Date(this.x);
       this.x = date.getTime() || 0;
     }
 
@@ -125,7 +128,7 @@ class SeriesItemForCoordinateType {
    * @param {?number} subNumber - number for subtraction
    */
   addRatio(valueType, divNumber, subNumber) {
-    if (!snippet.isExisty(this.ratioMap[valueType]) && divNumber) {
+    if (!isExisty(this.ratioMap[valueType]) && divNumber) {
       this.ratioMap[valueType] = (this[valueType] - subNumber) / divNumber;
     }
   }
@@ -147,7 +150,7 @@ class SeriesItemForCoordinateType {
       valueType
     });
 
-    return snippet.isNumber(ratio) ? formattedValue : value;
+    return isNumber(ratio) ? formattedValue : value;
   }
 
   /**
@@ -162,7 +165,7 @@ class SeriesItemForCoordinateType {
       yRatio: this.ratioMap.y
     };
 
-    if (snippet.isExisty(this.r)) {
+    if (isExisty(this.r)) {
       valueMap.r = this._getFormattedValueForTooltip('r');
       valueMap.rRatio = this.ratioMap.r;
     }

@@ -4,7 +4,9 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isString from 'tui-code-snippet/type/isString';
+
 import arrayUtil from '../helpers/arrayUtil';
 import chartConst from '../const';
 
@@ -19,7 +21,7 @@ const DOWNLOAD_HANDLERS = {
  * @ignore
  */
 function getDownloadMethod() {
-  const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
+  const isDownloadAttributeSupported = isExisty(document.createElement('a').download);
   const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
   let method;
 
@@ -124,7 +126,7 @@ function downloadWithAnchorElementDownloadAttribute(fileName, extension, content
 function execDownload(fileName, extension, content, contentType) {
   const downloadMethod = getDownloadMethod();
 
-  if (downloadMethod && snippet.isString(content)) {
+  if (downloadMethod && isString(content)) {
     DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content, contentType);
   }
 }

@@ -4,9 +4,11 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import snippet from 'tui-code-snippet';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import chartConst from '../const';
 import arrayUtil from '../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
 
 class MapChartMapModel {
   /**
@@ -257,8 +259,8 @@ class MapChartMapModel {
    * @private
    */
   _findBoundFromCoordinates(coordinates) {
-    const xs = snippet.pluck(coordinates, 'x').filter(x => !snippet.isUndefined(x));
-    const ys = snippet.pluck(coordinates, 'y').filter(y => !snippet.isUndefined(y));
+    const xs = snippet.pluck(coordinates, 'x').filter(x => !isUndefined(x));
+    const ys = snippet.pluck(coordinates, 'y').filter(y => !isUndefined(y));
     const maxLeft = arrayUtil.max(xs);
     const minLeft = arrayUtil.min(xs);
     const maxTop = arrayUtil.max(ys);

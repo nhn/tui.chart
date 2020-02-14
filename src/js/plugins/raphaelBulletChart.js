@@ -3,6 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import chartConst from '../const';
@@ -356,7 +357,7 @@ class RaphaelBulletChart {
    * @param {?number} legendIndex legend index
    */
   selectLegend(legendIndex) {
-    const allEmphasized = snippet.isNull(legendIndex);
+    const allEmphasized = isNull(legendIndex);
 
     this.groupBars.forEach((bars, groupIndex) => {
       const opacity =

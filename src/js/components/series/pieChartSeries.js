@@ -3,6 +3,9 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isString from 'tui-code-snippet/type/isString';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import Series from './series';
 import chartConst from '../../const';
@@ -114,7 +117,7 @@ class PieChartSeries extends Series {
    * @private
    */
   _makeValidAngle(angle, defaultAngle) {
-    if (snippet.isUndefined(angle)) {
+    if (isUndefined(angle)) {
       angle = defaultAngle;
     } else if (angle < 0) {
       angle = ANGLE_360 - (Math.abs(angle) % ANGLE_360);
@@ -740,7 +743,7 @@ class PieChartSeries extends Series {
   _isDetectedLabel(position) {
     const labelElement = document.elementFromPoint(position.left, position.top);
 
-    return snippet.isString(labelElement.className);
+    return isString(labelElement.className);
   }
 
   /**
@@ -752,11 +755,7 @@ class PieChartSeries extends Series {
     const prevIndex = this.prevClickedIndex;
     const { allowSelect } = this.options;
 
-    if (
-      (sectorInfo || this._isDetectedLabel(position)) &&
-      snippet.isExisty(prevIndex) &&
-      allowSelect
-    ) {
+    if ((sectorInfo || this._isDetectedLabel(position)) && isExisty(prevIndex) && allowSelect) {
       this.onUnselectSeries({
         indexes: {
           index: prevIndex

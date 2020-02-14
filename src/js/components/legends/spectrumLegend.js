@@ -3,11 +3,12 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import snippet from 'tui-code-snippet';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import pluginFactory from '../../factories/pluginFactory';
-import snippet from 'tui-code-snippet';
 
 const {
   COMPONENT_TYPE_RAPHAEL,
@@ -332,9 +333,7 @@ class SpectrumLegend {
  * @ignore
  */
 export default function spectrumLegendFactory(params) {
-  const isLegendVisible = snippet.isUndefined(params.options.visible)
-    ? true
-    : params.options.visible;
+  const isLegendVisible = isUndefined(params.options.visible) ? true : params.options.visible;
   const { chartType } = params.chartOptions;
   let spectrumLegend = null;
 

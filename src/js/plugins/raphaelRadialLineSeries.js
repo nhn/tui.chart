@@ -3,10 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
 
 import RaphaelLineTypeBase from './raphaelLineTypeBase';
 import raphaelRenderUtil from './raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
 
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
@@ -179,7 +179,7 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
    * @param {?number} legendIndex legend index
    */
   selectLegend(legendIndex) {
-    const noneSelected = snippet.isNull(legendIndex);
+    const noneSelected = isNull(legendIndex);
 
     this.selectedLegendIndex = legendIndex;
 

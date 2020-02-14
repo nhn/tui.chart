@@ -7,7 +7,7 @@
 import chartConst from '../../const';
 import Series from './series';
 import CoordinateTypeSeriesBase from './coordinateTypeSeriesBase';
-import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 class BubbleChartSeries extends Series {
   /**
@@ -72,8 +72,8 @@ class BubbleChartSeries extends Series {
       dimension: { width, height },
       position
     } = this.layout;
-    const left = snippet.isExisty(ratioMap.x) ? ratioMap.x * width : positionByStep;
-    const top = snippet.isExisty(ratioMap.y) ? ratioMap.y * height : positionByStep;
+    const left = isExisty(ratioMap.x) ? ratioMap.x * width : positionByStep;
+    const top = isExisty(ratioMap.y) ? ratioMap.y * height : positionByStep;
 
     return {
       left: position.left + left,

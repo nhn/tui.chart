@@ -4,6 +4,8 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isExisty from 'tui-code-snippet/type/isExisty';
+
 import ChartBase from './chartBase';
 import predicate from '../helpers/predicate';
 import DynamicDataHelper from './dynamicDataHelper';
@@ -141,7 +143,7 @@ class LineChart extends ChartBase {
 
     if (this.dataProcessor.isCoordinateType()) {
       isDateTimeTypeXAxis = xAxisOption && xAxisOption.type === 'datetime';
-      hasDateFormat = isDateTimeTypeXAxis && snippet.isExisty(xAxisOption.dateFormat);
+      hasDateFormat = isDateTimeTypeXAxis && isExisty(xAxisOption.dateFormat);
 
       scaleOption.xAxis = {
         valueType: 'x'

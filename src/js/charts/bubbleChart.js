@@ -3,9 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import ChartBase from './chartBase';
 import chartConst from '../const';
-import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class BubbleChart extends ChartBase {
@@ -88,7 +89,7 @@ class BubbleChart extends ChartBase {
     ChartBase.prototype._setDefaultOptions.call(this, options);
     this.options.circleLegend = this.options.circleLegend || {};
 
-    if (snippet.isUndefined(this.options.circleLegend.visible)) {
+    if (isUndefined(this.options.circleLegend.visible)) {
       this.options.circleLegend.visible = true;
     }
   }

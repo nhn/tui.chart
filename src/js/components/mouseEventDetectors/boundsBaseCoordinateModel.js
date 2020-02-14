@@ -43,11 +43,11 @@
  *}} seriesInfo
  * @private
  */
+import isNumber from 'tui-code-snippet/type/isNumber';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
 
 class BoundsBaseCoordinateModel {
   /**
@@ -335,7 +335,7 @@ class BoundsBaseCoordinateModel {
   findDataByIndexes(indexes) {
     const foundData = this.data[indexes.index][indexes.seriesIndex].sendData;
 
-    if (snippet.isNumber(indexes.outlierIndex)) {
+    if (isNumber(indexes.outlierIndex)) {
       return this._findOutlierDataByIndexes(indexes);
     }
 

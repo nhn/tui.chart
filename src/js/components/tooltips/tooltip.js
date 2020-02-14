@@ -8,7 +8,7 @@ import normalTooltipFactory from './normalTooltip';
 import groupTooltipFactory from './groupTooltip';
 import mapChartTooltipFactory from './mapChartTooltip';
 import predicate from '../../helpers/predicate';
-import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
 
 /**
  * Label formatter function for pie chart
@@ -47,9 +47,7 @@ export default function tooltipFactory(params) {
   let colors = [];
   let factory;
 
-  const legendTheme = Object.values(params.chartTheme.legend).filter(item =>
-    snippet.isArray(item.colors)
-  );
+  const legendTheme = Object.values(params.chartTheme.legend).filter(item => isArray(item.colors));
 
   legendTheme.forEach(series => {
     colors = colors.concat(series.colors);

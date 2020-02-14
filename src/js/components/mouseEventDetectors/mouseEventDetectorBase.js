@@ -3,6 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import TickBaseCoordinateModel from './tickBaseCoordinateModel';
 import BoundsBaseCoordinateModel from './boundsBaseCoordinateModel';
@@ -234,7 +235,7 @@ class MouseEventDetectorBase {
     const { expandSize } = this;
     const layerPosition = {};
 
-    checkLimit = snippet.isUndefined(checkLimit) ? true : checkLimit;
+    checkLimit = isUndefined(checkLimit) ? true : checkLimit;
 
     if (checkLimit) {
       const maxLeft = right - expandSize;
@@ -244,7 +245,7 @@ class MouseEventDetectorBase {
 
     layerPosition.x = clientX - left + seriesPosition.left - chartConst.CHART_PADDING;
 
-    if (!snippet.isUndefined(clientY)) {
+    if (!isUndefined(clientY)) {
       layerPosition.y = clientY - top + seriesPosition.top - chartConst.CHART_PADDING;
     }
 

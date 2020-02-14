@@ -3,9 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import raphaelRenderUtil from './raphaelRenderUtil';
 import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
+import isNull from 'tui-code-snippet/type/isNull';
+
+import raphaelRenderUtil from './raphaelRenderUtil';
 
 const ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
@@ -574,7 +576,7 @@ class RaphaelBarChart {
    */
   selectLegend(legendIndex) {
     const groupBorders = this.groupBorders || [];
-    const noneSelected = snippet.isNull(legendIndex);
+    const noneSelected = isNull(legendIndex);
 
     raphaelRenderUtil.forEach2dArray(this.groupBars, (bar, groupIndex, index) => {
       if (!bar) {

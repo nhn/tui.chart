@@ -5,6 +5,8 @@
  */
 
 import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
+
 import raphael from 'raphael';
 import objectUtil from '../../helpers/objectUtil';
 import chartConst from '../../const';
@@ -481,11 +483,11 @@ class TooltipBase {
   setOffset(offset) {
     const offsetOption = Object.assign({}, this.options.offset);
 
-    if (snippet.isExisty(offset.x)) {
+    if (isExisty(offset.x)) {
       offsetOption.x = offset.x;
     }
 
-    if (snippet.isExisty(offset.y)) {
+    if (isExisty(offset.y)) {
       offsetOption.y = offset.y;
     }
 
@@ -500,11 +502,11 @@ class TooltipBase {
   setPosition(position) {
     const offsetOption = Object.assign({}, this.options.offset);
 
-    if (snippet.isExisty(position.left)) {
+    if (isExisty(position.left)) {
       offsetOption.x = position.left;
     }
 
-    if (snippet.isExisty(position.top)) {
+    if (isExisty(position.top)) {
       offsetOption.y = position.y;
     }
 

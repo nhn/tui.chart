@@ -4,10 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import snippet from 'tui-code-snippet';
+import isFunction from 'tui-code-snippet/type/isFunction';
+import isString from 'tui-code-snippet/type/isString';
+
 import arrayUtil from '../../helpers/arrayUtil';
 import renderUtil from '../../helpers/renderUtil';
 import calculator from '../../helpers/calculator';
-import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc data processor base.
@@ -213,9 +216,9 @@ class DataProcessorBase {
     const format = snippet.pick(this.options, 'chart', 'format');
     let funcs = [];
 
-    if (snippet.isFunction(format)) {
+    if (isFunction(format)) {
       funcs = [format];
-    } else if (snippet.isString(format)) {
+    } else if (isString(format)) {
       funcs = this._findSimpleTypeFormatFunctions(format);
     }
 

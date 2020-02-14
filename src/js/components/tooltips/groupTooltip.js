@@ -3,6 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
 
 import TooltipBase from './tooltipBase';
 import GroupTooltipPositionModel from './groupTooltipPositionModel';
@@ -433,7 +434,7 @@ class GroupTooltip extends TooltipBase {
    * @private
    */
   _showTooltip(elTooltip, params, prevPosition) {
-    if (!snippet.isNull(this.prevIndex)) {
+    if (!isNull(this.prevIndex)) {
       this.eventBus.fire('hideGroupAnimation', this.prevIndex);
     }
 

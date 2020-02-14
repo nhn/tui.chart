@@ -4,8 +4,8 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isExisty from 'tui-code-snippet/type/isExisty';
 import raphaelRenderUtil from './raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
 import predicate from '../helpers/predicate';
 
 const ANIMATION_DURATION = 100;
@@ -348,7 +348,7 @@ class RaphaelBoxTypeChart {
    */
   _animateChangingColor(rect, color, opacity, strokeColor, strokeWidth) {
     const properties = {
-      'fill-opacity': snippet.isExisty(opacity) ? opacity : 1,
+      'fill-opacity': isExisty(opacity) ? opacity : 1,
       stroke: strokeColor,
       'stroke-width': strokeWidth
     };

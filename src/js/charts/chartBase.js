@@ -4,6 +4,11 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isString from 'tui-code-snippet/type/isString';
+
 import chartConst from '../const';
 import ComponentManager from './componentManager';
 import DefaultDataProcessor from '../models/data/dataProcessor';
@@ -14,7 +19,6 @@ import objectUtil from '../helpers/objectUtil';
 import boundsAndScaleBuilder from '../models/boundsAndScaleBuilder.js';
 import themeManager from '../themes/themeManager';
 import predicate from '../helpers/predicate';
-import snippet from 'tui-code-snippet';
 
 const GA_TRACKING_ID = 'UA-129983528-1';
 
@@ -109,7 +113,7 @@ class ChartBase {
      * @type {boolean}
      * @ignore
      */
-    this.hasRightYAxis = snippet.isArray(this.options.yAxis) && this.options.yAxis.length > 1;
+    this.hasRightYAxis = isArray(this.options.yAxis) && this.options.yAxis.length > 1;
 
     this.addComponents();
 
@@ -193,7 +197,7 @@ class ChartBase {
    * @private
    */
   _setOffsetProperty(options, fromProperty, toProperty) {
-    if (!snippet.isExisty(options[fromProperty])) {
+    if (!isExisty(options[fromProperty])) {
       return;
     }
 
@@ -229,11 +233,11 @@ class ChartBase {
       return;
     }
 
-    const optionsSet = snippet.isArray(targetOptions) ? targetOptions : [targetOptions];
+    const optionsSet = isArray(targetOptions) ? targetOptions : [targetOptions];
     optionsSet.forEach(options => {
       const { title } = options;
 
-      if (snippet.isString(title)) {
+      if (isString(title)) {
         options.title = {
           text: title
         };
@@ -565,7 +569,7 @@ class ChartBase {
     const data = objectUtil.deepCopy(rawData);
     const { chartType, series: seriesOption } = this.originalOptions;
 
-    if (chartType !== 'combo' && snippet.isArray(data.series)) {
+    if (chartType !== 'combo' && isArray(data.series)) {
       const clonedSeries = data.series;
       data.series = {};
       data.series[chartType] = clonedSeries;

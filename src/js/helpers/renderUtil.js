@@ -3,11 +3,17 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isDate from 'tui-code-snippet/type/isDate';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNumber from 'tui-code-snippet/type/isNumber';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import chartConst from './../const';
 import dom from './domHandler';
 import arrayUtil from './arrayUtil';
-import snippet from 'tui-code-snippet';
+
 const { browser } = snippet;
 const isOldBrowser = browser.msie && browser.version <= 8;
 const hasComputedStyle = window.getComputedStyle || false;
@@ -264,14 +270,14 @@ const renderUtil = {
    * @param {{top: number, left: number, right: number}} position position
    */
   renderPosition(el, position) {
-    if (snippet.isUndefined(position)) {
+    if (isUndefined(position)) {
       return;
     }
 
     snippet.forEachArray(['top', 'bottom', 'left', 'right'], key => {
       const value = position[key];
 
-      if (snippet.isNumber(value)) {
+      if (isNumber(value)) {
         el.style[key] = `${value}px`;
       }
     });
@@ -432,7 +438,7 @@ const renderUtil = {
    * @memberof module:renderUtil
    */
   formatDate(value, format = chartConst.DEFAULT_DATE_FORMAT) {
-    const date = snippet.isDate(value) ? value : new Date(value);
+    const date = isDate(value) ? value : new Date(value);
 
     return snippet.formatDate(format, date) || value;
   },
@@ -689,7 +695,7 @@ const renderUtil = {
  * @ignore
  */
 function setOpacity(elements, iteratee) {
-  elements = snippet.isArray(elements) ? elements : [elements];
+  elements = isArray(elements) ? elements : [elements];
   snippet.forEachArray(elements, iteratee);
 }
 
@@ -712,7 +718,7 @@ if (isOldBrowser) {
   renderUtil.makeOpacityCssText = function(opacity) {
     let cssText = '';
 
-    if (snippet.isExisty(opacity)) {
+    if (isExisty(opacity)) {
       const cssOpacityString = makeCssFilterOpacityString(opacity);
       cssText = `;filter:${cssOpacityString}`;
     }
@@ -740,7 +746,7 @@ if (isOldBrowser) {
   renderUtil.makeOpacityCssText = function(opacity) {
     let cssText = '';
 
-    if (snippet.isExisty(opacity)) {
+    if (isExisty(opacity)) {
       cssText = `;opacity:${opacity}`;
     }
 

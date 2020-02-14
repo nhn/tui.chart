@@ -5,7 +5,7 @@
  */
 import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
+import isNull from 'tui-code-snippet/type/isNull';
 
 class AreaTypeDataModel {
   /**
@@ -131,10 +131,7 @@ class AreaTypeDataModel {
 
         if (datum.bound.left !== xMinValue) {
           remakeFindObj = findResultObj;
-        } else if (
-          !snippet.isNull(selectLegendIndex) &&
-          selectLegendIndex === datum.indexes.index
-        ) {
+        } else if (!isNull(selectLegendIndex) && selectLegendIndex === datum.indexes.index) {
           remakeFindObj.yMin = Number.MIN_VALUE;
           remakeFindObj.findFound = datum;
         } else if (yDiff <= findResultObj.yMin) {
@@ -178,7 +175,7 @@ class AreaTypeDataModel {
         return;
       }
 
-      if (!snippet.isNull(selectLegendIndex) && selectLegendIndex !== datum.indexes.index) {
+      if (!isNull(selectLegendIndex) && selectLegendIndex !== datum.indexes.index) {
         return;
       }
 

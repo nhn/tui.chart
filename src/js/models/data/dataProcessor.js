@@ -5,6 +5,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
 
 import chartConst from '../../const';
 import DataProcessorBase from './dataProcessorBase';
@@ -19,7 +23,6 @@ import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
 import calculator from '../../helpers/calculator';
 import objectUtil from '../../helpers/objectUtil';
-import snippet from 'tui-code-snippet';
 
 const { isUndefined } = snippet;
 
@@ -127,7 +130,7 @@ class DataProcessor extends DataProcessorBase {
     let integratedXAxisData = [];
     let isDateTime = false;
 
-    if (snippet.isArray(options)) {
+    if (isArray(options)) {
       isDateTime = options.filter(option => option.type && predicate.isDatetimeType(option.type));
     } else {
       isDateTime = options.type && predicate.isDatetimeType(options.type);
@@ -417,7 +420,7 @@ class DataProcessor extends DataProcessorBase {
     const options = this.options[axisType] || {};
     let isDateTime = false;
 
-    if (snippet.isArray(options)) {
+    if (isArray(options)) {
       isDateTime = options.filter(option => option.type && predicate.isDatetimeType(option.type));
     } else {
       isDateTime = options.type && predicate.isDatetimeType(options.type);
@@ -442,7 +445,7 @@ class DataProcessor extends DataProcessorBase {
     const rawCategories = this.rawData.categories;
     const categoriesMap = {};
 
-    if (snippet.isArray(rawCategories)) {
+    if (isArray(rawCategories)) {
       categoriesMap[type] = this._mapCategories(rawCategories, type);
     } else if (rawCategories) {
       if (rawCategories.x) {
@@ -470,7 +473,7 @@ class DataProcessor extends DataProcessorBase {
       this.categoriesMap = this._processCategories(type);
     }
 
-    if (snippet.isExisty(isVertical)) {
+    if (isExisty(isVertical)) {
       foundCategories = this.categoriesMap[type] || [];
     } else {
       Object.values(this.categoriesMap).every(categories => {
@@ -590,7 +593,7 @@ class DataProcessor extends DataProcessorBase {
         foundIndex = index;
       }
 
-      return snippet.isNull(foundIndex);
+      return isNull(foundIndex);
     });
 
     return foundIndex;
@@ -699,7 +702,7 @@ class DataProcessor extends DataProcessorBase {
   isLineCoordinateType() {
     let { lineCoordinateType } = this;
 
-    if (!snippet.isExisty(lineCoordinateType)) {
+    if (!isExisty(lineCoordinateType)) {
       const { chartType } = this;
       lineCoordinateType = predicate.isLineTypeChart(chartType) && !this.hasCategories();
       this.lineCoordinateType = lineCoordinateType;
@@ -715,7 +718,7 @@ class DataProcessor extends DataProcessorBase {
   isCoordinateType() {
     let { coordinateType } = this;
 
-    if (!snippet.isExisty(coordinateType)) {
+    if (!isExisty(coordinateType)) {
       const { chartType } = this;
 
       coordinateType = predicate.isCoordinateTypeChart(chartType);
@@ -862,7 +865,7 @@ class DataProcessor extends DataProcessorBase {
    * @private
    */
   _pushSeriesData(values) {
-    if (this.chartType !== 'combo' && snippet.isArray(values)) {
+    if (this.chartType !== 'combo' && isArray(values)) {
       const temp = values;
       values = {};
       values[this.chartType] = temp;
@@ -1227,7 +1230,7 @@ class DataProcessor extends DataProcessorBase {
    */
   _isVisibleLegend(item) {
     let visibility = true;
-    if (snippet.isExisty(item.visible) && item.visible === false) {
+    if (isExisty(item.visible) && item.visible === false) {
       visibility = false;
     }
 
@@ -1256,7 +1259,7 @@ class DataProcessor extends DataProcessorBase {
         result[seriesType] = seriesDatum.map(pickerMethod);
       });
 
-      result = snippet.filter(result, snippet.isExisty);
+      result = snippet.filter(result, isExisty);
     }
 
     return result;
@@ -1299,7 +1302,7 @@ class DataProcessor extends DataProcessorBase {
     let seriesTypes = this.seriesTypes || [this.chartType];
     let legendLabelsMap;
 
-    if (snippet.isArray(legendLabels)) {
+    if (isArray(legendLabels)) {
       legendLabelsMap = [this.chartType];
       legendLabelsMap[this.chartType] = legendLabels;
     } else {
@@ -1309,7 +1312,7 @@ class DataProcessor extends DataProcessorBase {
 
     const legendData = seriesTypes.map(chartType =>
       legendLabelsMap[chartType].map((label, index) => {
-        const is2DArray = snippet.isArray(legendVisibilities[chartType]);
+        const is2DArray = isArray(legendVisibilities[chartType]);
 
         return {
           chartType,

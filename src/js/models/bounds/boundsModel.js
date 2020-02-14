@@ -13,6 +13,8 @@ import legendCalculator from './legendCalculator';
 import seriesCalculator from './seriesCalculator';
 import spectrumLegendCalculator from './spectrumLegendCalculator';
 import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 const { browser } = snippet;
 const { LEGEND_AREA_H_PADDING } = chartConst;
@@ -214,7 +216,7 @@ class BoundsModel {
    */
   _registerTitleDimension() {
     const chartOptions = this.options.chart || {};
-    const hasTitleOption = snippet.isExisty(chartOptions.title);
+    const hasTitleOption = isExisty(chartOptions.title);
     const titleTheme = this.theme.title;
     const titleHeight = hasTitleOption
       ? raphaelRenderUtil.getRenderedTextSize(
@@ -340,7 +342,7 @@ class BoundsModel {
       return;
     }
 
-    if (snippet.isArray(options)) {
+    if (isArray(options)) {
       yAxisOptions = componentName === 'yAxis' ? options[0] : options[1];
     } else {
       yAxisOptions = options;

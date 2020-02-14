@@ -3,6 +3,8 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isObject from 'tui-code-snippet/type/isObject';
+
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
@@ -95,7 +97,7 @@ export default {
   getChartTypeMap(rawData) {
     const chartTypeMap = {};
 
-    if (snippet.isObject(rawData.series)) {
+    if (isObject(rawData.series)) {
       snippet.forEach(rawData.series, (data, seriesType) => {
         chartTypeMap[this.findChartType(rawData.seriesAlias, seriesType)] = true;
       });

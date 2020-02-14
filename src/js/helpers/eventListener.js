@@ -4,6 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import snippet from 'tui-code-snippet';
+import isString from 'tui-code-snippet/type/isString';
 
 const bindHandlerMap = {};
 
@@ -89,7 +90,7 @@ const eventListener = {
    */
   on(target, types, handler, context) {
     let handlerMap = {};
-    if (snippet.isString(types)) {
+    if (isString(types)) {
       handlerMap[types] = handler;
     } else {
       handlerMap = types;
@@ -158,7 +159,7 @@ const eventListener = {
    */
   off(target, types, handler) {
     let handlerMap = {};
-    if (snippet.isString(types)) {
+    if (isString(types)) {
       handlerMap[types] = handler;
     } else {
       handlerMap = types;

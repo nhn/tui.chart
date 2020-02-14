@@ -11,7 +11,7 @@ import calculator from '../../helpers/calculator';
 
 import renderUtil from '../../helpers/renderUtil';
 import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 const { CHART_PADDING, LEGEND_LABEL_LEFT_PADDING } = chartConst;
 const DEFAULT_BAR_SIZE_RATIO_BY_POINT_INTERVAL = 0.85;
@@ -161,7 +161,7 @@ class BarTypeSeriesBase {
           end: this.decorateLabel(endLabel)
         };
 
-        if (snippet.isExisty(start)) {
+        if (isExisty(start)) {
           label.start = this.decorateLabel(startLabel);
         }
 

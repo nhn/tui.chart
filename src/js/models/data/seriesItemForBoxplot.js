@@ -4,10 +4,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
 
 import renderUtil from '../../helpers/renderUtil';
 import calculator from '../../helpers/calculator';
-import snippet from 'tui-code-snippet';
 
 class SeriesItem {
   /**
@@ -214,9 +215,7 @@ class SeriesItem {
    * @private
    */
   _createValues(value) {
-    return []
-      .concat(value)
-      .map(newValue => (snippet.isNull(newValue) ? null : parseFloat(newValue)));
+    return [].concat(value).map(newValue => (isNull(newValue) ? null : parseFloat(newValue)));
   }
 
   /**
@@ -225,7 +224,7 @@ class SeriesItem {
    * @private
    */
   addStart(value) {
-    if (!snippet.isNull(this.min)) {
+    if (!isNull(this.min)) {
       return;
     }
 
@@ -296,7 +295,7 @@ class SeriesItem {
       ratio: this.ratio
     };
 
-    if (snippet.isExisty(this.min)) {
+    if (isExisty(this.min)) {
       valueMap.min = this._getFormattedValueForTooltip('min');
       valueMap.max = this._getFormattedValueForTooltip('max');
       valueMap.minRatio = this.minRatio;

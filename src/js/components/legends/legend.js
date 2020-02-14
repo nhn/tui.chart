@@ -3,13 +3,15 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import snippet from 'tui-code-snippet';
 
 import chartConst from '../../const';
 import LegendModel from './legendModel';
 import pluginFactory from '../../factories/pluginFactory';
 import predicate from '../../helpers/predicate';
 import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
 
 const {
   LEGEND_ICON_HEIGHT,
@@ -287,7 +289,7 @@ class Legend {
    */
   _fireSelectLegendEvent(data) {
     const index = this.legendModel.getSelectedIndex();
-    const legendIndex = !snippet.isNull(index) ? data.seriesIndex : index;
+    const legendIndex = !isNull(index) ? data.seriesIndex : index;
 
     this.eventBus.fire('selectLegend', data.chartType, legendIndex);
   }
@@ -316,7 +318,7 @@ class Legend {
     this.legendModel.toggleSelectedIndex(index);
 
     if (
-      !snippet.isNull(this.legendModel.getSelectedIndex()) &&
+      !isNull(this.legendModel.getSelectedIndex()) &&
       !this.legendModel.isCheckedSelectedIndex()
     ) {
       this.legendModel.checkSelectedIndex();
@@ -426,7 +428,7 @@ export default function legendFactory(params) {
     dataProcessor: { seriesTypes },
     chartOptions: { chartType }
   } = params;
-  const isLegendVisible = snippet.isUndefined(options.visible) ? true : options.visible;
+  const isLegendVisible = isUndefined(options.visible) ? true : options.visible;
   let legend = null;
 
   if (isLegendVisible) {

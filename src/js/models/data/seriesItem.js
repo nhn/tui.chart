@@ -4,12 +4,13 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
 
 import chartConst from '../../const';
 import renderUtil from '../../helpers/renderUtil';
 import calculator from '../../helpers/calculator';
 import predicate from '../../helpers/predicate';
-import snippet from 'tui-code-snippet';
 
 class SeriesItem {
   /**
@@ -156,7 +157,7 @@ class SeriesItem {
       value = Math.abs(value);
     }
 
-    if (snippet.isNull(value)) {
+    if (isNull(value)) {
       this._setLabel('');
     } else {
       ['label', 'tooltipLabel'].forEach(labelType => {
@@ -196,9 +197,7 @@ class SeriesItem {
    * @private
    */
   _createValues(value) {
-    let values = []
-      .concat(value)
-      .map(newValue => (snippet.isNull(newValue) ? null : parseFloat(newValue)));
+    let values = [].concat(value).map(newValue => (isNull(newValue) ? null : parseFloat(newValue)));
 
     values = values.sort((a, b) => {
       if (a < 0 && b < 0) {
@@ -217,7 +216,7 @@ class SeriesItem {
    * @ignore
    */
   addStart(value) {
-    if (!snippet.isNull(this.start)) {
+    if (!isNull(this.start)) {
       return;
     }
 
@@ -253,7 +252,7 @@ class SeriesItem {
       baseRatio
     );
 
-    if (snippet.isExisty(this.start)) {
+    if (isExisty(this.start)) {
       this.startRatio = calculator.calculateRatio(this.start, divNumber, subNumber, baseRatio);
       this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
     }
@@ -286,7 +285,7 @@ class SeriesItem {
       ratio: this.ratio
     };
 
-    if (snippet.isExisty(this.start)) {
+    if (isExisty(this.start)) {
       valueMap.start = this._getFormattedValueForTooltip('start');
       valueMap.end = this._getFormattedValueForTooltip('end');
       valueMap.startRatio = this.startRatio;

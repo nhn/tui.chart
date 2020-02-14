@@ -3,11 +3,13 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import snippet from 'tui-code-snippet';
+import raphael from 'raphael';
+import isNull from 'tui-code-snippet/type/isNull';
+import isNumber from 'tui-code-snippet/type/isNumber';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import renderUtil from '../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
-import raphael from 'raphael';
 
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
@@ -449,7 +451,7 @@ class RaphaelBoxplotChart {
    * @param {{groupIndex: number, index:number}} data show info
    */
   showAnimation(data) {
-    if (snippet.isNumber(data.outlierIndex)) {
+    if (isNumber(data.outlierIndex)) {
       this.showOutlierAnimation(data);
     } else {
       this.showRectAnimation(data);
@@ -617,7 +619,7 @@ class RaphaelBoxplotChart {
    * @param {?number} legendIndex legend index
    */
   selectLegend(legendIndex) {
-    const noneSelected = snippet.isNull(legendIndex);
+    const noneSelected = isNull(legendIndex);
 
     raphaelRenderUtil.forEach2dArray(this.groupBoxes, (box, groupIndex, index) => {
       if (!box) {

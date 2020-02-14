@@ -38,6 +38,8 @@ import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
 import arrayUtil from '../../helpers/arrayUtil';
 import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 const { concat } = Array.prototype;
 
@@ -132,11 +134,11 @@ class SeriesDataModel {
     }
 
     Object.values(this.rawSeriesData).forEach(rawItem => {
-      if (!snippet.isArray(rawItem.data)) {
+      if (!isArray(rawItem.data)) {
         return;
       }
       rawItem.data.forEach((value, index) => {
-        if (snippet.isExisty(value)) {
+        if (isExisty(value)) {
           [rawItem.data[index]] = concat.apply(value);
         }
       });
@@ -170,7 +172,7 @@ class SeriesDataModel {
     return this.rawSeriesData.map(rawDatum => {
       let stack, data, legendName;
 
-      data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+      data = isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
 
       if (!hasRawDatumAsArray) {
         ({ stack } = rawDatum);
@@ -180,7 +182,7 @@ class SeriesDataModel {
       }
 
       if (isCoordinateType || isPieChart) {
-        data = snippet.filter(data, snippet.isExisty);
+        data = snippet.filter(data, isExisty);
       }
 
       const items = data.map(
@@ -586,7 +588,7 @@ class SeriesDataModel {
         item.addRatio('y', yDistance, ySubValue);
         item.addRatio('r', maxRadius, 0);
 
-        if (snippet.isExisty(item.start)) {
+        if (isExisty(item.start)) {
           item.addRatio('start', yDistance, ySubValue);
         }
       });

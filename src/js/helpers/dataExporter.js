@@ -3,11 +3,14 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNumber from 'tui-code-snippet/type/isNumber';
 
 import downloader from './downloader';
 import chartConst from '../const';
 import renderUtil from '../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 const DATA_URI_HEADERS = {
   xls: 'data:application/vnd.ms-excel;base64,',
@@ -49,7 +52,7 @@ const dataExporter = {
    * @private
    */
   _isNeedDataEncodeing() {
-    const isDownloadAttributeSupported = snippet.isExisty(document.createElement('a').download);
+    const isDownloadAttributeSupported = isExisty(document.createElement('a').download);
     const isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
 
     if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
@@ -76,8 +79,8 @@ const dataExporter = {
  */
 function _get2DArrayFromRawData(rawData) {
   const resultArray = [];
-  const isHeatMap = rawData.categories && snippet.isExisty(rawData.categories.x);
-  const isBullet = rawData.series && snippet.isExisty(rawData.series.bullet);
+  const isHeatMap = rawData.categories && isExisty(rawData.categories.x);
+  const isBullet = rawData.series && isExisty(rawData.series.bullet);
   let return2DArrayData = false;
 
   if (rawData) {
@@ -98,7 +101,7 @@ function _get2DArrayFromRawData(rawData) {
 
     Object.values(rawData.series || {}).forEach(seriesDatum => {
       seriesDatum.forEach(seriesItem => {
-        const data = snippet.isArray(seriesItem.data) ? seriesItem.data : [seriesItem.data];
+        const data = isArray(seriesItem.data) ? seriesItem.data : [seriesItem.data];
 
         resultArray.push([seriesItem.name, ...data]);
       });
@@ -320,7 +323,7 @@ function _makeCsvBodyWithRawData(chartData2DArray, option = {}) {
     const lastCellIndex = row.length - 1;
 
     snippet.forEachArray(row, (cell, cellIndex) => {
-      const cellContent = snippet.isNumber(cell) ? cell : `"${cell}"`;
+      const cellContent = isNumber(cell) ? cell : `"${cell}"`;
 
       csvText += cellContent;
 

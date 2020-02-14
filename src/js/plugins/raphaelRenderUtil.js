@@ -5,8 +5,11 @@
  */
 
 import snippet from 'tui-code-snippet';
-import renderUtil from '../helpers/renderUtil';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 import raphael from 'raphael';
+
+import renderUtil from '../helpers/renderUtil';
 
 const LINE_HEIGHT_FOR_CALCULATE = 1.11;
 const storeForGetTextDimension = {
@@ -56,7 +59,7 @@ export default {
     const line = paper.path([path]);
     const strokeStyle = {
       stroke: color,
-      'stroke-width': snippet.isUndefined(strokeWidth) ? 2 : strokeWidth,
+      'stroke-width': isUndefined(strokeWidth) ? 2 : strokeWidth,
       'stroke-linecap': 'butt'
     };
     if (color === 'transparent') {
@@ -392,7 +395,7 @@ export default {
  * @returns {boolean}
  */
 function isNumber(numberSuspect) {
-  return snippet.isExisty(numberSuspect) && typeof numberSuspect === 'number';
+  return isExisty(numberSuspect) && typeof numberSuspect === 'number';
 }
 
 /**

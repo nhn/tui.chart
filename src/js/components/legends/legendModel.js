@@ -3,7 +3,9 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+
+import isNull from 'tui-code-snippet/type/isNull';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 class LegendModel {
   /**
@@ -115,7 +117,7 @@ class LegendModel {
       datum.theme = itemTheme;
       datum.index = index;
 
-      if (!checkedIndexes || !snippet.isUndefined(checkedIndexes[index])) {
+      if (!checkedIndexes || !isUndefined(checkedIndexes[index])) {
         datum.seriesIndex = seriesIndex;
         seriesIndex += 1;
       } else {
@@ -235,7 +237,7 @@ class LegendModel {
    * @returns {boolean} true if selected
    */
   isUnselectedIndex(index) {
-    return !snippet.isNull(this.selectedIndex) && this.selectedIndex !== index;
+    return !isNull(this.selectedIndex) && this.selectedIndex !== index;
   }
 
   /**
