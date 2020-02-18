@@ -8,6 +8,7 @@ import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isObject from 'tui-code-snippet/type/isObject';
+import forEach from 'tui-code-snippet/collection/forEach';
 
 import chartConst from '../const';
 import predicate from '../helpers/predicate';
@@ -256,11 +257,11 @@ export default {
       theme.plot.label
     ];
 
-    snippet.forEach(theme.yAxis, _theme => {
+    forEach(theme.yAxis, _theme => {
       items.push(_theme.title, _theme.label);
     });
 
-    snippet.forEach(theme.series, _theme => {
+    forEach(theme.series, _theme => {
       items.push(_theme.label);
     });
 
@@ -305,7 +306,7 @@ export default {
    * @ignore
    */
   _copySeriesColorThemeToOther(theme) {
-    snippet.forEach(theme.series, (seriesTheme, seriesType) => {
+    forEach(theme.series, (seriesTheme, seriesType) => {
       this._copySeriesColorTheme(seriesTheme, theme.legend, seriesType);
       this._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesType);
     });

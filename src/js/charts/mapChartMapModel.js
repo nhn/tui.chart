@@ -7,6 +7,7 @@
 import snippet from 'tui-code-snippet';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import extend from 'tui-code-snippet/object/extend';
+import pluck from 'tui-code-snippet/collection/pluck';
 
 import chartConst from '../const';
 import arrayUtil from '../helpers/arrayUtil';
@@ -260,8 +261,8 @@ class MapChartMapModel {
    * @private
    */
   _findBoundFromCoordinates(coordinates) {
-    const xs = snippet.pluck(coordinates, 'x').filter(x => !isUndefined(x));
-    const ys = snippet.pluck(coordinates, 'y').filter(y => !isUndefined(y));
+    const xs = pluck(coordinates, 'x').filter(x => !isUndefined(x));
+    const ys = pluck(coordinates, 'y').filter(y => !isUndefined(y));
     const maxLeft = arrayUtil.max(xs);
     const minLeft = arrayUtil.min(xs);
     const maxTop = arrayUtil.max(ys);

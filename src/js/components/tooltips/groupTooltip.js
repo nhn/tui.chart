@@ -5,6 +5,7 @@
  */
 import isNull from 'tui-code-snippet/type/isNull';
 import extend from 'tui-code-snippet/object/extend';
+import pluck from 'tui-code-snippet/collection/pluck';
 
 import TooltipBase from './tooltipBase';
 import GroupTooltipPositionModel from './groupTooltipPositionModel';
@@ -13,7 +14,6 @@ import dom from '../../helpers/domHandler';
 import renderUtil from '../../helpers/renderUtil';
 import defaultTheme from '../../themes/defaultTheme';
 import tooltipTemplate from './tooltipTemplate';
-import snippet from 'tui-code-snippet';
 import predicate from '../../helpers/predicate';
 const {
   TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION,
@@ -227,7 +227,7 @@ class GroupTooltip extends TooltipBase {
 
     const defaultColors = defaultTheme.series.colors.slice(0, legendLabels.length);
 
-    return snippet.pluck(legendLabels, 'chartType').map(chartType => {
+    return pluck(legendLabels, 'chartType').map(chartType => {
       if (prevChartType !== chartType) {
         colors = theme[chartType] ? theme[chartType].colors : defaultColors;
         colorIndex = 0;

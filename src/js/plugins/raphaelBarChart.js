@@ -7,6 +7,7 @@ import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 import isNull from 'tui-code-snippet/type/isNull';
 import extend from 'tui-code-snippet/object/extend';
+import forEach from 'tui-code-snippet/collection/forEach';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 
@@ -359,7 +360,7 @@ class RaphaelBarChart {
   _animateBorders(lines, bound, chartType, item) {
     const paths = this._makeBorderLinesPaths(bound, chartType, item);
 
-    snippet.forEach(lines, (line, name) => {
+    forEach(lines, (line, name) => {
       line.animate(
         {
           path: paths[name]
@@ -512,7 +513,7 @@ class RaphaelBarChart {
    * @private
    */
   _changeBordersColor(lines, borderColor) {
-    snippet.forEach(lines, line => {
+    forEach(lines, line => {
       line.attr({ stroke: borderColor });
     });
   }
@@ -590,7 +591,7 @@ class RaphaelBarChart {
 
       bar.rect.attr({ 'fill-opacity': opacity });
       if (lines) {
-        snippet.forEach(lines, line => {
+        forEach(lines, line => {
           line.attr({ 'stroke-opacity': opacity });
         });
       }

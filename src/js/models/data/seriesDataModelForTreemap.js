@@ -5,7 +5,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import pluck from 'tui-code-snippet/collection/pluck';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
@@ -137,7 +137,7 @@ class SeriesDataModelForTreeMap extends SeriesDataModel {
       const children = descendants.filter(descendant => descendant.depth === childDepth);
 
       if (children.length) {
-        datum.value = calculator.sum(snippet.pluck(children, 'value'));
+        datum.value = calculator.sum(pluck(children, 'value'));
         datum.hasChild = true;
       } else {
         datum.hasChild = false;
@@ -162,7 +162,7 @@ class SeriesDataModelForTreeMap extends SeriesDataModel {
   _setRatio(flatSeriesData, parent) {
     const parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
     const [filtered, rejected] = parted;
-    const total = calculator.sum(snippet.pluck(filtered, 'value'));
+    const total = calculator.sum(pluck(filtered, 'value'));
 
     filtered.forEach(datum => {
       const value = isNull(datum.value) ? 0 : datum.value;

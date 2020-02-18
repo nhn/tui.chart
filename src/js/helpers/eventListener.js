@@ -5,6 +5,7 @@
  */
 import snippet from 'tui-code-snippet';
 import isString from 'tui-code-snippet/type/isString';
+import forEach from 'tui-code-snippet/collection/forEach';
 
 const bindHandlerMap = {};
 
@@ -97,7 +98,7 @@ const eventListener = {
       context = handler;
     }
 
-    snippet.forEach(handlerMap, (_handler, type) => {
+    forEach(handlerMap, (_handler, type) => {
       eventListener._bindEvent(target, type, _handler, context);
     });
   },
@@ -165,7 +166,7 @@ const eventListener = {
       handlerMap = types;
     }
 
-    snippet.forEach(handlerMap, (_handler, type) => {
+    forEach(handlerMap, (_handler, type) => {
       eventListener._unbindEvent(target, type, _handler);
     });
   }

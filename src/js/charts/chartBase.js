@@ -8,6 +8,7 @@ import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isString from 'tui-code-snippet/type/isString';
+import forEach from 'tui-code-snippet/collection/forEach';
 import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 
 import chartConst from '../const';
@@ -136,7 +137,7 @@ class ChartBase {
   destroy() {
     this.eventBus.off();
     this.chartContainer.outerHTML = '';
-    snippet.forEach(this, (value, key) => {
+    forEach(this, (value, key) => {
       this[key] = null;
     });
   }

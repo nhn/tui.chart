@@ -3,10 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import pluck from 'tui-code-snippet/collection/pluck';
 
 import DataProcessorBase from './dataProcessorBase';
 import renderUtil from '../../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 /**
  * Raw series data.
@@ -110,7 +110,7 @@ class MapChartDataProcessor extends DataProcessorBase {
    * @returns {Array.<number>} picked values.
    */
   getValues() {
-    return snippet.pluck(this.getValueMap(), 'value');
+    return pluck(this.getValueMap(), 'value');
   }
 
   /**

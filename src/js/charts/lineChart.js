@@ -4,6 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import pick from 'tui-code-snippet/object/pick';
 import ChartBase from './chartBase';
@@ -11,7 +12,6 @@ import predicate from '../helpers/predicate';
 import DynamicDataHelper from './dynamicDataHelper';
 import Series from '../components/series/lineChartSeries';
 import rawDataHandler from '../models/data/rawDataHandler';
-import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class LineChart extends ChartBase {
@@ -100,7 +100,7 @@ class LineChart extends ChartBase {
       };
     }
 
-    snippet.forEachArray(chartTypes, addDataRatio);
+    forEachArray(chartTypes, addDataRatio);
   }
 
   /**

@@ -3,10 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import forEach from 'tui-code-snippet/collection/forEach';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 import downloader from './downloader';
 import chartConst from '../const';
@@ -189,7 +190,7 @@ function _get2DArrayFromBulletRawData(rawData) {
 
   resultArray.push(_makeTHeadForBullet(maxRangeCount, maxMarkerCount));
 
-  snippet.forEach(rawData.series.bullet, seriesItem => {
+  forEach(rawData.series.bullet, seriesItem => {
     const rangeArray = _makeTCellsFromBulletRanges(seriesItem.ranges, maxRangeCount);
     const markerArray = _makeTCellsFromBulletMarkers(seriesItem.markers, maxMarkerCount);
     const row = [seriesItem.name, seriesItem.data, ...rangeArray, ...markerArray];
@@ -209,7 +210,7 @@ function _calculateMaxCounts(bulletSeries) {
   let maxRangeCount = 0;
   let maxMarkerCount = 0;
 
-  snippet.forEach(bulletSeries, series => {
+  forEach(bulletSeries, series => {
     maxRangeCount = Math.max(maxRangeCount, series.ranges.length);
     maxMarkerCount = Math.max(maxMarkerCount, series.markers.length);
   });
@@ -231,8 +232,8 @@ function _get2DArrayFromHeatmapRawData(rawData) {
 
   resultArray.push(['', ...rawData.categories.x]);
 
-  snippet.forEach(rawData.series, seriesDatum => {
-    snippet.forEach(seriesDatum, (seriesItem, index) => {
+  forEach(rawData.series, seriesDatum => {
+    forEach(seriesDatum, (seriesItem, index) => {
       const row = [rawData.categories.y[index], ...seriesItem];
       resultArray.push(row);
     });
@@ -249,12 +250,12 @@ function _get2DArrayFromHeatmapRawData(rawData) {
  */
 function _getTableElementStringForXls(chartData2DArray) {
   let tableElementString = '<table>';
-  snippet.forEach(chartData2DArray, (row, rowIndex) => {
+  forEach(chartData2DArray, (row, rowIndex) => {
     const cellTagName = rowIndex === 0 ? 'th' : 'td';
 
     tableElementString += '<tr>';
 
-    snippet.forEach(row, (cell, cellIndex) => {
+    forEach(row, (cell, cellIndex) => {
       const cellNumberClass = rowIndex !== 0 || cellIndex === 0 ? ' class="number"' : '';
       const cellString = `<${cellTagName}${cellNumberClass}>${cell}</${cellTagName}>`;
 
@@ -319,10 +320,10 @@ function _makeCsvBodyWithRawData(chartData2DArray, option = {}) {
   const lastRowIndex = chartData2DArray.length - 1;
   let csvText = '';
 
-  snippet.forEachArray(chartData2DArray, (row, rowIndex) => {
+  forEachArray(chartData2DArray, (row, rowIndex) => {
     const lastCellIndex = row.length - 1;
 
-    snippet.forEachArray(row, (cell, cellIndex) => {
+    forEachArray(row, (cell, cellIndex) => {
       const cellContent = isNumber(cell) ? cell : `"${cell}"`;
 
       csvText += cellContent;

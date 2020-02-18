@@ -4,8 +4,10 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import forEach from 'tui-code-snippet/collection/forEach';
+import pluck from 'tui-code-snippet/collection/pluck';
+import toArray from 'tui-code-snippet/collection/toArray';
 import arrayUtil from './arrayUtil';
-import snippet from 'tui-code-snippet';
 
 /**
  * Get series data from 2D array
@@ -48,12 +50,12 @@ function get2DArray(tableElement) {
 
   if (tableElement) {
     const secondDimensionArray = [];
-    const trs = snippet.toArray(tableElement.getElementsByTagName('TR'));
+    const trs = toArray(tableElement.getElementsByTagName('TR'));
 
-    snippet.forEach(trs, (tr, index) => {
+    forEach(trs, (tr, index) => {
       const tagName = index === 0 ? 'TH' : 'TD';
-      const cells = snippet.toArray(tr.getElementsByTagName(tagName));
-      const rows = snippet.pluck(cells, 'innerText');
+      const cells = toArray(tr.getElementsByTagName(tagName));
+      const rows = pluck(cells, 'innerText');
 
       secondDimensionArray.push(rows);
     });

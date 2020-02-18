@@ -9,6 +9,8 @@ import isDate from 'tui-code-snippet/type/isDate';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import forEach from 'tui-code-snippet/collection/forEach';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 import chartConst from './../const';
 import dom from './domHandler';
@@ -87,7 +89,7 @@ const renderUtil = {
   _makeCachingKey(label, theme, offsetType) {
     const keys = [label, offsetType];
 
-    snippet.forEach(theme, (key, value) => {
+    forEach(theme, (key, value) => {
       keys.push(key + value);
     });
 
@@ -274,7 +276,7 @@ const renderUtil = {
       return;
     }
 
-    snippet.forEachArray(['top', 'bottom', 'left', 'right'], key => {
+    forEachArray(['top', 'bottom', 'left', 'right'], key => {
       const value = position[key];
 
       if (isNumber(value)) {
@@ -696,7 +698,7 @@ const renderUtil = {
  */
 function setOpacity(elements, iteratee) {
   elements = isArray(elements) ? elements : [elements];
-  snippet.forEachArray(elements, iteratee);
+  forEachArray(elements, iteratee);
 }
 
 /**

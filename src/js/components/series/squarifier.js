@@ -4,6 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import extend from 'tui-code-snippet/object/extend';
+import pluck from 'tui-code-snippet/collection/pluck';
 
 import calculator from '../../helpers/calculator';
 import arrayUtil from '../../helpers/arrayUtil';
@@ -48,7 +49,7 @@ export default {
    * @private
    */
   _makeBaseData(seriesItems, width, height) {
-    const scale = this._calculateScale(snippet.pluck(seriesItems, 'value'), width, height);
+    const scale = this._calculateScale(pluck(seriesItems, 'value'), width, height);
     const data = seriesItems
       .map(seriesItem => ({
         id: seriesItem.id,
@@ -129,7 +130,7 @@ export default {
    */
   _calculateFixedSize(baseSize, sum, row) {
     if (!sum) {
-      const weights = snippet.pluck(row, 'weight');
+      const weights = pluck(row, 'weight');
       sum = calculator.sum(weights);
     }
 
@@ -239,7 +240,7 @@ export default {
     this.boundMap = {};
 
     baseData.forEach(datum => {
-      const weights = snippet.pluck(row, 'weight');
+      const weights = pluck(row, 'weight');
       const sum = calculator.sum(weights);
 
       if (row.length && this._changedStackDirection(sum, weights, baseSize, datum.weight)) {

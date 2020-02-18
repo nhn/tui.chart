@@ -4,10 +4,10 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isString from 'tui-code-snippet/type/isString';
 import inArray from 'tui-code-snippet/array/inArray';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 /**
  * DOM Handler.
@@ -143,7 +143,7 @@ export default {
     }
     children = isArray(children) ? children : [children];
 
-    snippet.forEachArray(children, child => {
+    forEachArray(children, child => {
       if (!child) {
         return;
       }

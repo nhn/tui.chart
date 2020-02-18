@@ -3,9 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import isBoolean from 'tui-code-snippet/type/isBoolean';
 import inArray from 'tui-code-snippet/array/inArray';
+import forEach from 'tui-code-snippet/collection/forEach';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 /**
  * Pick minimum value from value array.
@@ -54,7 +55,7 @@ function max(arr, condition, context) {
     [result] = arr;
     const rest = arr.slice(1);
     let maxValue = condition.call(context, result, 0);
-    snippet.forEachArray(rest, (item, index) => {
+    forEachArray(rest, (item, index) => {
       const compareValue = condition.call(context, item, index + 1);
       if (compareValue > maxValue) {
         maxValue = compareValue;
@@ -76,7 +77,7 @@ function max(arr, condition, context) {
  */
 function any(collection, condition, context) {
   let result = false;
-  snippet.forEach(collection, (item, key) => {
+  forEach(collection, (item, key) => {
     if (condition.call(context, item, key, collection)) {
       result = true;
     }
@@ -97,7 +98,7 @@ function any(collection, condition, context) {
  */
 function all(collection, condition, context) {
   let result = !!(collection || []).length;
-  snippet.forEach(collection, (item, key) => {
+  forEach(collection, (item, key) => {
     if (!condition.call(context, item, key, collection)) {
       result = false;
     }
@@ -134,7 +135,7 @@ function unique(arr, sorted, iteratee, context) {
 
   if (sorted) {
     let prevValue;
-    snippet.forEachArray(arr, (value, index) => {
+    forEachArray(arr, (value, index) => {
       value = iteratee.call(context, value, index, arr);
       if (!index || prevValue !== value) {
         result.push(value);
@@ -142,7 +143,7 @@ function unique(arr, sorted, iteratee, context) {
       prevValue = value;
     });
   } else {
-    snippet.forEachArray(arr, (value, index) => {
+    forEachArray(arr, (value, index) => {
       value = iteratee.call(context, value, index, arr);
       if (inArray(value, result) === -1) {
         result.push(value);

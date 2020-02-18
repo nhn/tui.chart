@@ -5,9 +5,9 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import calculator from '../../helpers/calculator';
-import snippet from 'tui-code-snippet';
 import isExisty from 'tui-code-snippet/type/isExisty';
+import pluckUtil from 'tui-code-snippet/collection/pluck';
+import calculator from '../../helpers/calculator';
 
 class SeriesGroup {
   /**
@@ -239,7 +239,7 @@ class SeriesGroup {
   pluck(key) {
     const items = this.items.filter(isExisty);
 
-    return snippet.pluck(items, key);
+    return pluckUtil(items, key);
   }
 
   /**

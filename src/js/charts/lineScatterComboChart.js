@@ -4,8 +4,8 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import ChartBase from './chartBase';
-import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class LineScatterComboChart extends ChartBase {
@@ -60,7 +60,7 @@ class LineScatterComboChart extends ChartBase {
       this.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
     };
 
-    snippet.forEachArray(chartTypes, addDataRatio);
+    forEachArray(chartTypes, addDataRatio);
   }
 
   /**
