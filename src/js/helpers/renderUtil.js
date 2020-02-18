@@ -234,7 +234,7 @@ const renderUtil = {
    * @private
    */
   getRenderedLabelsMaxWidth(labels, theme, maxWidth) {
-    const iteratee = snippet.bind(this.getRenderedLabelWidth, this);
+    const iteratee = this.getRenderedLabelWidth.bind(this);
     const labelMaxSize = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 
     return maxWidth ? Math.min(maxWidth, labelMaxSize) : labelMaxSize;
@@ -248,7 +248,7 @@ const renderUtil = {
    * @returns {number} max height
    */
   getRenderedLabelsMaxHeight(labels, theme) {
-    const iteratee = snippet.bind(this.getRenderedLabelHeight, this);
+    const iteratee = this.getRenderedLabelHeight.bind(this);
 
     return this._getRenderedLabelsMaxSize(labels, theme, iteratee);
   },

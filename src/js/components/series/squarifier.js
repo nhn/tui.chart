@@ -8,7 +8,6 @@ import pluck from 'tui-code-snippet/collection/pluck';
 
 import calculator from '../../helpers/calculator';
 import arrayUtil from '../../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
 
 export default {
   /**
@@ -219,7 +218,7 @@ export default {
    */
   _getAddingBoundsFunction(baseBound) {
     if (this._isVerticalStack(baseBound)) {
-      return snippet.bind(this._addBoundsForVerticalStack, this);
+      return this._addBoundsForVerticalStack.bind(this);
     }
 
     return this._addBoundsForHorizontalStack.bind(this);

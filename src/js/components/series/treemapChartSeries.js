@@ -3,7 +3,6 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import extend from 'tui-code-snippet/object/extend';
 
@@ -258,7 +257,7 @@ class TreemapChartSeries extends Series {
     this.rootId = rootId;
     this.startDepth = startDepth;
     this.selectedGroup = group;
-    this._renderSeriesArea(this.paper, snippet.bind(this._renderGraph, this));
+    this._renderSeriesArea(this.paper, this._renderGraph.bind(this));
     this.animateComponent(true);
   }
 

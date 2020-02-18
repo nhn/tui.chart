@@ -30,7 +30,6 @@ function getIconWidth() {
   return chartConst.LEGEND_ICON_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING;
 }
 
-// const RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
 class RaphaelLegendComponent {
   /** @lends RaphaelLegendComponent.prototype */
   constructor() {

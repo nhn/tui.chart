@@ -424,7 +424,7 @@ class Series {
       }
     }
 
-    this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
+    this._renderSeriesArea(data.paper, this._renderGraph.bind(this));
 
     if (this.paper.pushDownBackgroundToBottom) {
       this.paper.pushDownBackgroundToBottom();
@@ -485,7 +485,7 @@ class Series {
 
       this._setDataForRendering(data);
       this._clearSeriesContainer();
-      this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
+      this._renderSeriesArea(data.paper, this._renderGraph.bind(this));
 
       if (this.labelShowEffector) {
         clearInterval(this.labelShowEffector.timerId);
@@ -542,7 +542,7 @@ class Series {
   resize(data) {
     this._clearSeriesContainer();
     this._setDataForRendering(data);
-    this._renderSeriesArea(data.paper, snippet.bind(this._resizeGraph, this));
+    this._renderSeriesArea(data.paper, this._resizeGraph.bind(this));
     this.rerender(data);
   }
 
@@ -664,7 +664,7 @@ class Series {
   animateComponent(isRerendering) {
     if (this.graphRenderer.animate && this.seriesSet) {
       this.graphRenderer.animate(
-        snippet.bind(this.animateSeriesLabelArea, this, isRerendering),
+        this.animateSeriesLabelArea.bind(this, isRerendering),
         this.seriesSet
       );
     } else {

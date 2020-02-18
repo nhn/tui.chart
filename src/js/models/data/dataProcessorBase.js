@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import isString from 'tui-code-snippet/type/isString';
 import pick from 'tui-code-snippet/object/pick';
@@ -193,10 +192,10 @@ class DataProcessorBase {
 
     if (this._isDecimal(format)) {
       len = this._pickMaxLenUnderPoint([format]);
-      funcs = [snippet.bind(this._formatToDecimal, this, len)];
+      funcs = [this._formatToDecimal.bind(this, len)];
     } else if (this._isZeroFill(format)) {
       len = format.length;
-      funcs = [snippet.bind(this._formatToZeroFill, this, len)];
+      funcs = [this._formatToZeroFill.bind(this, len)];
 
       return funcs;
     }

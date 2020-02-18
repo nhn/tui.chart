@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import snippet from 'tui-code-snippet';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
@@ -113,14 +112,8 @@ class SpectrumLegend {
       },
       this
     );
-    this.eventBus.on(
-      'beforeImageDownload',
-      snippet.bind(this._removeLocationURLFromFillAttribute, this)
-    );
-    this.eventBus.on(
-      'afterImageDownload',
-      snippet.bind(this._restoreLocationURLToFillAttribute, this)
-    );
+    this.eventBus.on('beforeImageDownload', this._removeLocationURLFromFillAttribute.bind(this));
+    this.eventBus.on('afterImageDownload', this._restoreLocationURLToFillAttribute.bind(this));
   }
 
   /**

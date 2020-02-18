@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
 import extend from 'tui-code-snippet/object/extend';
@@ -281,7 +280,7 @@ class LineTypeSeriesBase {
     this._cancelMovingAnimation();
     this._clearSeriesContainer(data.paper);
     this._setDataForRendering(data);
-    this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
+    this._renderSeriesArea(data.paper, this._renderGraph.bind(this));
 
     if (!isNull(this.selectedLegendIndex)) {
       this.graphRenderer.selectLegend(this.selectedLegendIndex);

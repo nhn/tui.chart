@@ -3,7 +3,6 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import isString from 'tui-code-snippet/type/isString';
 import forEach from 'tui-code-snippet/collection/forEach';
 
@@ -49,7 +48,7 @@ const eventListener = {
     let bindHandler;
 
     if (context) {
-      bindHandler = snippet.bind(handler, context);
+      bindHandler = handler.bind(context);
     } else {
       bindHandler = handler;
     }

@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import extend from 'tui-code-snippet/object/extend';
 import pluck from 'tui-code-snippet/collection/pluck';
@@ -31,14 +30,14 @@ class MapChartMapModel {
      * }}
      */
     this.commandFuncMap = {
-      M: snippet.bind(this._makeCoordinate, this),
-      m: snippet.bind(this._makeCoordinateFromRelativeCoordinate, this),
-      L: snippet.bind(this._makeCoordinate, this),
-      l: snippet.bind(this._makeCoordinateFromRelativeCoordinate, this),
-      H: snippet.bind(this._makeXCoordinate, this),
-      h: snippet.bind(this._makeXCoordinateFroRelativeCoordinate, this),
-      V: snippet.bind(this._makeYCoordinate, this),
-      v: snippet.bind(this._makeYCoordinateFromRelativeCoordinate, this)
+      M: this._makeCoordinate.bind(this),
+      m: this._makeCoordinateFromRelativeCoordinate.bind(this),
+      L: this._makeCoordinate.bind(this),
+      l: this._makeCoordinateFromRelativeCoordinate.bind(this),
+      H: this._makeXCoordinate.bind(this),
+      h: this._makeXCoordinateFroRelativeCoordinate.bind(this),
+      V: this._makeYCoordinate.bind(this),
+      v: this._makeYCoordinateFromRelativeCoordinate.bind(this)
     };
 
     /**
