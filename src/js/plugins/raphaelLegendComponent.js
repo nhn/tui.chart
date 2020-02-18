@@ -3,7 +3,6 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
 import isNumber from 'tui-code-snippet/type/isNumber';
@@ -342,7 +341,7 @@ class RaphaelLegendComponent {
    * @returns {Array.<number>} label widths
    */
   makeLabelWidths(legendData, theme, maxWidth) {
-    return snippet.map(legendData, item => {
+    return legendData.map(item => {
       let labelWidth = raphaelRenderUtil.getRenderedTextSize(
         item.label,
         theme.fontSize,

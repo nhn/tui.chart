@@ -217,7 +217,7 @@ const renderUtil = {
     let maxSize = 0;
 
     if (labels && labels.length) {
-      const sizes = snippet.map(labels, label => iteratee(label, theme));
+      const sizes = labels.map(label => iteratee(label, theme));
       maxSize = arrayUtil.max(sizes);
     }
 
@@ -422,7 +422,7 @@ const renderUtil = {
       return values;
     }
 
-    return snippet.map(values, value =>
+    return values.map(value =>
       renderUtil.formatValue({
         value,
         formatFunctions,
@@ -454,7 +454,7 @@ const renderUtil = {
    * @memberof module:renderUtil
    */
   formatDates(values, format = chartConst.DEFAULT_DATE_FORMAT) {
-    return snippet.map(values, value => this.formatDate(value, format));
+    return values.map(value => this.formatDate(value, format));
   },
 
   /**
@@ -588,7 +588,7 @@ const renderUtil = {
     } else {
       values = value.split('').reverse();
       lastIndex = values.length - 1;
-      values = snippet.map(values, (char, index) => {
+      values = values.map((char, index) => {
         const result = [char];
         if (index < lastIndex && (index + 1) % betweenLen === 0) {
           result.push(comma);
@@ -615,7 +615,7 @@ const renderUtil = {
    * @memberof module:renderUtil
    */
   makeCssTextFromMap(cssMap) {
-    return snippet.map(cssMap, (value, name) => renderUtil.concatStr(name, ':', value)).join(';');
+    return cssMap.map((value, name) => renderUtil.concatStr(name, ':', value)).join(';');
   },
 
   /**
@@ -640,7 +640,7 @@ const renderUtil = {
     suffix = this._perseString(suffix);
 
     if (!(prefix === '' && suffix === '')) {
-      return snippet.map(labels, label => this.addPrefixSuffixItem(label, prefix, suffix));
+      return labels.map(label => this.addPrefixSuffixItem(label, prefix, suffix));
     }
 
     return labels;

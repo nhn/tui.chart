@@ -3,7 +3,6 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 import isNull from 'tui-code-snippet/type/isNull';
 import extend from 'tui-code-snippet/object/extend';
@@ -313,8 +312,8 @@ class RaphaelBarChart {
       return null;
     }
 
-    const groupBorders = snippet.map(groupBounds, (bounds, groupIndex) =>
-      snippet.map(bounds, (bound, index) => {
+    const groupBorders = groupBounds.map((bounds, groupIndex) =>
+      bounds.map((bound, index) => {
         if (!bound) {
           return null;
         }
