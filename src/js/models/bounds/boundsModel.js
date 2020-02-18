@@ -3,6 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import extend from 'tui-code-snippet/object/extend';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
@@ -133,7 +134,7 @@ class BoundsModel {
    * @private
    */
   _registerDimension(name, dimension) {
-    this.dimensionMap[name] = snippet.extend(this.dimensionMap[name] || {}, dimension);
+    this.dimensionMap[name] = extend(this.dimensionMap[name] || {}, dimension);
   }
 
   /**

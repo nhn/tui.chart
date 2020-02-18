@@ -9,6 +9,7 @@ import isArray from 'tui-code-snippet/type/isArray';
 import isEmpty from 'tui-code-snippet/type/isEmpty';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
+import extend from 'tui-code-snippet/object/extend';
 
 const { browser } = snippet;
 const IS_IE7 = browser.msie && browser.version === 7;
@@ -522,7 +523,7 @@ class Series {
    */
   _resizeGraph(dimension, seriesData) {
     this.graphRenderer.resize(
-      snippet.extend(
+      extend(
         {
           dimension: this.dimensionMap.chart
         },

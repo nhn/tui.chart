@@ -7,6 +7,7 @@
 import snippet from 'tui-code-snippet';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
+import extend from 'tui-code-snippet/object/extend';
 
 import arrayUtil from '../../helpers/arrayUtil';
 import chartConst from '../../const';
@@ -400,7 +401,7 @@ class LineTypeSeriesBase {
 }
 
 LineTypeSeriesBase.mixin = function(func) {
-  snippet.extend(func.prototype, LineTypeSeriesBase.prototype);
+  extend(func.prototype, LineTypeSeriesBase.prototype);
 };
 
 export default LineTypeSeriesBase;

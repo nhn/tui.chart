@@ -5,6 +5,7 @@
  */
 import snippet from 'tui-code-snippet';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import extend from 'tui-code-snippet/object/extend';
 
 import Series from './series';
 import squarifier from './squarifier';
@@ -111,11 +112,11 @@ class TreemapChartSeries extends Series {
    */
   _makeBoundMap(parent, boundMap, layout) {
     const seriesDataModel = this._getSeriesDataModel();
-    const defaultLayout = snippet.extend({}, this.layout.dimension, this.layout.position);
+    const defaultLayout = extend({}, this.layout.dimension, this.layout.position);
     const seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
 
     layout = layout || defaultLayout;
-    boundMap = snippet.extend(boundMap || {}, squarifier.squarify(layout, seriesItems));
+    boundMap = extend(boundMap || {}, squarifier.squarify(layout, seriesItems));
 
     seriesItems.forEach(seriesItem => {
       boundMap = this._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
@@ -301,7 +302,7 @@ class TreemapChartSeries extends Series {
       true
     );
 
-    return snippet.extend({
+    return extend({
       chartType: this.chartType,
       indexes: seriesItem.indexes
     });

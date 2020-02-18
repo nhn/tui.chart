@@ -3,10 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
 import isNull from 'tui-code-snippet/type/isNull';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import extend from 'tui-code-snippet/object/extend';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import renderUtil from '../helpers/renderUtil';
@@ -75,7 +75,7 @@ class RaphaelBoxplotChart {
       this.paper,
       position,
       0,
-      snippet.extend(
+      extend(
         {
           'stroke-width': 0
         },
@@ -100,7 +100,7 @@ class RaphaelBoxplotChart {
     const rect = raphaelRenderUtil.renderRect(
       this.paper,
       bound,
-      snippet.extend(
+      extend(
         {
           fill: color,
           stroke: 'none'

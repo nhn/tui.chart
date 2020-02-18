@@ -4,11 +4,11 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import extend from 'tui-code-snippet/object/extend';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
@@ -182,7 +182,7 @@ class Plot {
    * @private
    */
   _makeVerticalLineTemplateParams(additionalParams) {
-    return snippet.extend(
+    return extend(
       {
         className: 'vertical',
         positionType: 'left',
@@ -199,7 +199,7 @@ class Plot {
    * @private
    */
   _makeHorizontalLineTemplateParams(additionalParams) {
-    return snippet.extend(
+    return extend(
       {
         className: 'horizontal',
         positionType: 'bottom',

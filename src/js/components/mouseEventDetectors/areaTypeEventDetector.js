@@ -3,10 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import extend from 'tui-code-snippet/object/extend';
 import MouseEventDetectorBase from './mouseEventDetectorBase';
 import zoomMixer from './zoomMixer';
 import AreaTypeDataModel from './areaTypeDataModel';
-import snippet from 'tui-code-snippet';
 
 class AreaTypeEventDetector extends MouseEventDetectorBase {
   /**
@@ -38,7 +38,7 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
     this.zoomable = params.zoomable;
 
     if (this.zoomable) {
-      snippet.extend(this, zoomMixer);
+      extend(this, zoomMixer);
       this._initForZoom(params.zoomable);
     }
   }

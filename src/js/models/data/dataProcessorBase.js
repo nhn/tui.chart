@@ -7,6 +7,7 @@
 import snippet from 'tui-code-snippet';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import isString from 'tui-code-snippet/type/isString';
+import pick from 'tui-code-snippet/object/pick';
 
 import arrayUtil from '../../helpers/arrayUtil';
 import renderUtil from '../../helpers/renderUtil';
@@ -213,7 +214,7 @@ class DataProcessorBase {
    * @private
    */
   _findFormatFunctions() {
-    const format = snippet.pick(this.options, 'chart', 'format');
+    const format = pick(this.options, 'chart', 'format');
     let funcs = [];
 
     if (isFunction(format)) {

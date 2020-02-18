@@ -1,6 +1,7 @@
 import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isNull from 'tui-code-snippet/type/isNull';
+import extend from 'tui-code-snippet/object/extend';
 
 import scaleDataMaker from './scaleDataMaker';
 import scaleLabelFormatter from './scaleLabelFormatter';
@@ -170,7 +171,7 @@ class ScaleDataModel {
       additionalOptions
     );
 
-    return snippet.extend(baseScaleData, {
+    return extend(baseScaleData, {
       labels: this._createScaleLabels(baseScaleData, typeMap, baseOptions, axisOptions.dateFormat),
       axisOptions
     });
@@ -220,7 +221,7 @@ class ScaleDataModel {
         step,
         tickCount
       );
-      snippet.extend(axisData, additional);
+      extend(axisData, additional);
     }
 
     return axisData;
@@ -437,7 +438,7 @@ class ScaleDataModel {
 
     this.prevValidLabelCount = validLabelCount;
 
-    snippet.extend(axisData, additionalData);
+    extend(axisData, additionalData);
   }
 
   /**

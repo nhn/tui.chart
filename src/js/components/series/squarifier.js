@@ -3,6 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import extend from 'tui-code-snippet/object/extend';
 
 import calculator from '../../helpers/calculator';
 import arrayUtil from '../../helpers/arrayUtil';
@@ -23,7 +24,7 @@ export default {
      * @private
      */
   _makeBaseBound(layout) {
-    return snippet.extend({}, layout);
+    return extend({}, layout);
   },
 
   /**

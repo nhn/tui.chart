@@ -6,6 +6,7 @@
 
 import snippet from 'tui-code-snippet';
 import isExisty from 'tui-code-snippet/type/isExisty';
+import extend from 'tui-code-snippet/object/extend';
 
 import raphael from 'raphael';
 import objectUtil from '../../helpers/objectUtil';
@@ -26,7 +27,7 @@ class TooltipBase {
    *      @param {object} params.options - tooltip options
    *      @param {object} params.theme - tooltip theme
    *      @param {boolean} params.isVertical - whether vertical or not
-   *      @param {object} params.eventBus - snippet.CustomEvents instance
+   *      @param {object} params.eventBus - CustomEvents instance
    *      @param {object} params.labelTheme - theme for label
    *      @param {string} params.xAxisType - xAxis type
    *      @param {string} params.dateFormat - date format
@@ -130,7 +131,7 @@ class TooltipBase {
      * Tooltip template function.
      * @type {function}
      */
-    this.templateFunc = this.options.template || snippet.bind(this._makeTooltipHtml, this);
+    this.templateFunc = this.options.template || this._makeTooltipHtml.bind(this);
 
     /**
      * Tooltip animation time.
@@ -491,7 +492,7 @@ class TooltipBase {
       offsetOption.y = offset.y;
     }
 
-    this._updateOffsetOption(snippet.extend({}, this.options.offset, offsetOption));
+    this._updateOffsetOption(extend({}, this.options.offset, offsetOption));
   }
 
   /**

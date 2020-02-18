@@ -7,6 +7,7 @@ import isArray from 'tui-code-snippet/type/isArray';
 import isBoolean from 'tui-code-snippet/type/isBoolean';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import isObject from 'tui-code-snippet/type/isObject';
+import pick from 'tui-code-snippet/object/pick';
 
 import chartConst from '../const';
 import dom from '../helpers/domHandler';
@@ -46,7 +47,6 @@ import TreemapSeries from '../components/series/treemapChartSeries';
 import BoxplotSeries from '../components/series/boxPlotChartSeries';
 import BulletSeries from '../components/series/bulletChartSeries';
 import Zoom from '../components/series/zoom';
-import snippet from 'tui-code-snippet';
 import raphaelRenderUtil from '../plugins/raphaelRenderUtil';
 
 const COMPONENT_FACTORY_MAP = {
@@ -92,8 +92,8 @@ class ComponentManager {
    */
   constructor(params) {
     const chartOption = params.options.chart;
-    const width = snippet.pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
-    const height = snippet.pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
+    const width = pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
+    const height = pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
 
     /**
      * Components

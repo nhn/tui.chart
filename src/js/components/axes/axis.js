@@ -5,7 +5,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import snippet from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
@@ -53,7 +53,7 @@ class Axis {
      * Use chart background theme object for render yAxis background on dynamicDataShifting chart
      * @type {object}
      */
-    this.theme = snippet.extend({}, params.theme, {
+    this.theme = extend({}, params.theme, {
       background: params.chartTheme.chart.background
     });
 

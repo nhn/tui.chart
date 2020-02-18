@@ -4,6 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isNull from 'tui-code-snippet/type/isNull';
+import extend from 'tui-code-snippet/object/extend';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import chartConst from '../const';
@@ -183,7 +184,7 @@ class RaphaelBulletChart {
     return raphaelRenderUtil.renderRect(
       this.paper,
       bound,
-      snippet.extend(
+      extend(
         {
           fill: color,
           stroke: 'none'

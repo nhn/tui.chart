@@ -31,15 +31,16 @@
  * SeriesItem has processed terminal data like value, ratio, etc.
  */
 
+import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import pick from 'tui-code-snippet/object/pick';
 import SeriesGroup from './seriesGroup';
 import SeriesItem from './seriesItem';
 import SeriesItemForCoordinateType from './seriesItemForCoordinateType';
 import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
 import arrayUtil from '../../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
-import isArray from 'tui-code-snippet/type/isArray';
-import isExisty from 'tui-code-snippet/type/isExisty';
 
 const { concat } = Array.prototype;
 
@@ -123,7 +124,7 @@ class SeriesDataModel {
    * @private
    */
   _removeRangeValue() {
-    const seriesOption = snippet.pick(this.options, 'series') || {};
+    const seriesOption = pick(this.options, 'series') || {};
     const allowRange =
       predicate.isAllowRangeData(this.chartType) &&
       !predicate.isValidStackOption(seriesOption.stackType) &&

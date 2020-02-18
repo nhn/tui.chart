@@ -3,6 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import extend from 'tui-code-snippet/object/extend';
 import range from 'tui-code-snippet/array/range';
 
 import chartConst from '../../const';
@@ -11,7 +12,7 @@ import geomatric from '../../helpers/geometric';
 import calculator from '../../helpers/calculator';
 import renderUtil from '../../helpers/renderUtil';
 import arrayUtil from '../../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
+
 const AUTO_INTERVAL_MIN_WIDTH = 90;
 const AUTO_INTERVAL_MAX_WIDTH = 121;
 const AUTO_INTERVAL_RANGE_STEP = 5;
@@ -330,7 +331,7 @@ const axisDataMaker = {
       axisData.labels.push(lastLabelValue);
     }
 
-    snippet.extend(axisData, {
+    extend(axisData, {
       startIndex,
       tickCount,
       interval,
@@ -362,7 +363,7 @@ const axisDataMaker = {
     newBlockCount = axisData.labels.length - 1;
     const beforeRemainBlockCount = beforeBlockCount - interval * newBlockCount;
 
-    snippet.extend(axisData, {
+    extend(axisData, {
       startIndex,
       interval,
       eventTickCount: axisData.tickCount,

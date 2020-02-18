@@ -5,7 +5,7 @@
  */
 
 import isExisty from 'tui-code-snippet/type/isExisty';
-
+import pick from 'tui-code-snippet/object/pick';
 import ChartBase from './chartBase';
 import predicate from '../helpers/predicate';
 import DynamicDataHelper from './dynamicDataHelper';
@@ -258,7 +258,7 @@ class LineChart extends ChartBase {
 
     this.dataProcessor.initData(rawData);
     this.dataProcessor.initZoomedRawData();
-    this.dataProcessor.addDataFromRemainDynamicData(snippet.pick(this.options.series, 'shifting'));
+    this.dataProcessor.addDataFromRemainDynamicData(pick(this.options.series, 'shifting'));
     this._renderForZoom(true);
     this._dynamicDataHelper.restartAnimation();
   }

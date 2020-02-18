@@ -3,10 +3,9 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-
+import pick from 'tui-code-snippet/object/pick';
 import ChartBase from './chartBase';
 import ColorSpectrum from './colorSpectrum';
-import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class TreemapChart extends ChartBase {
@@ -59,7 +58,7 @@ class TreemapChart extends ChartBase {
       'tooltip',
       'tooltip',
       Object.assign({
-        labelTheme: snippet.pick(this.theme, 'series', 'label'),
+        labelTheme: pick(this.theme, 'series', 'label'),
         colorSpectrum
       })
     );

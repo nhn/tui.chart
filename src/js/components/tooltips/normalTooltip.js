@@ -3,9 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import extend from 'tui-code-snippet/object/extend';
+import pick from 'tui-code-snippet/object/pick';
 
 import TooltipBase from './tooltipBase';
 import singleTooltipMixer from './singleTooltipMixer';
@@ -47,7 +48,7 @@ class NormalTooltip extends TooltipBase {
     const template = this._getTooltipTemplate(item);
 
     return template(
-      snippet.extend(
+      extend(
         {
           categoryVisible: category ? 'show' : 'hide',
           category
@@ -169,7 +170,7 @@ class NormalTooltip extends TooltipBase {
       selectIndex = 0;
     }
 
-    return Object.assign({}, snippet.pick(chartData, selectIndex, indexes.index));
+    return Object.assign({}, pick(chartData, selectIndex, indexes.index));
   }
 
   /**
@@ -230,7 +231,7 @@ class NormalTooltip extends TooltipBase {
     }
 
     const { chartType, label } = legendData;
-    const params = snippet.extend(
+    const params = extend(
       {
         chartType,
         legend: label,
@@ -270,7 +271,7 @@ class NormalTooltip extends TooltipBase {
 
     tooltipDatum.category = category;
 
-    return snippet.extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
+    return extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
   }
 
   /**

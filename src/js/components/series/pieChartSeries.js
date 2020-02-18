@@ -6,11 +6,11 @@
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isString from 'tui-code-snippet/type/isString';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import extend from 'tui-code-snippet/object/extend';
 
 import Series from './series';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
-import snippet from 'tui-code-snippet';
 import raphaelRenderUtil from '../../plugins/raphaelRenderUtil';
 
 const {
@@ -227,7 +227,7 @@ class PieChartSeries extends Series {
         ratio,
         angles,
         centerPosition: this._getArcPosition(
-          snippet.extend(
+          extend(
             {
               r: centerR
             },
@@ -235,7 +235,7 @@ class PieChartSeries extends Series {
           )
         ),
         outerPosition: this._getArcPosition(
-          snippet.extend(
+          extend(
             {
               r: r + this.legendLongestWidth / 2 + PIE_GRAPH_LEGEND_LABEL_INTERVAL
             },
@@ -524,7 +524,7 @@ class PieChartSeries extends Series {
   showTooltip(params, bound, groupIndex, index, mousePosition) {
     this.eventBus.fire(
       'showTooltip',
-      snippet.extend(
+      extend(
         {
           indexes: {
             groupIndex,
@@ -628,7 +628,7 @@ class PieChartSeries extends Series {
         return;
       }
 
-      const end = snippet.extend({}, position.middle);
+      const end = extend({}, position.middle);
       if (end.left < centerLeft) {
         end.left -= SERIES_OUTER_LABEL_PADDING;
       } else {

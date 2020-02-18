@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isNull from 'tui-code-snippet/type/isNull';
-import snippet from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import dom from '../../helpers/domHandler';
@@ -168,7 +168,7 @@ export default {
   _makeTooltipPositionToMousePosition(params) {
     if (!params.bound) {
       params.bound = params.bound || {};
-      snippet.extend(params.bound, params.mousePosition);
+      extend(params.bound, params.mousePosition);
     }
 
     return this._makeTooltipPositionForNotBarChart(params);
@@ -426,7 +426,7 @@ export default {
     positionOption.top = offset.y || 0;
 
     const position = this._makeTooltipPosition(
-      snippet.extend(
+      extend(
         {
           dimension: this.getTooltipDimension(elTooltip),
           positionOption,
@@ -561,6 +561,6 @@ export default {
    * @ignore
    */
   mixin(func) {
-    snippet.extend(func.prototype, this);
+    extend(func.prototype, this);
   }
 };
