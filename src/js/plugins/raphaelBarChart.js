@@ -276,7 +276,13 @@ class RaphaelBarChart {
       left: this._makeLeftLinePath(points, chartType, item)
     };
 
-    return paths.filter(path => path);
+    Object.keys(paths).forEach(type => {
+      if (!paths[type]) {
+        delete paths[type];
+      }
+    });
+
+    return paths;
   }
 
   /**

@@ -404,7 +404,7 @@ class ScaleDataModel {
       this.options.xAxis.suffix
     );
 
-    const validLabels = labels.filter(label => !!label);
+    const validLabels = labels.filter(label => label);
 
     if (!isNull(this.prevValidLabelCount)) {
       validLabelCount = this.prevValidLabelCount;

@@ -1245,7 +1245,7 @@ class DataProcessor extends DataProcessorBase {
    */
   _pickLegendData(dataType) {
     const seriesData = this.rawData.series;
-    let result = {};
+    const result = {};
     let pickerMethod;
 
     if (dataType === 'visibility') {
@@ -1256,10 +1256,11 @@ class DataProcessor extends DataProcessorBase {
 
     if (pickerMethod) {
       Object.entries(seriesData).forEach(([seriesType, seriesDatum]) => {
-        result[seriesType] = seriesDatum.map(pickerMethod);
+        const data = seriesDatum.map(pickerMethod);
+        if (isExisty(data)) {
+          result[seriesType] = data;
+        }
       });
-
-      result = result.filter(value => isExisty(value));
     }
 
     return result;

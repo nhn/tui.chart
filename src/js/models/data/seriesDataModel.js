@@ -183,7 +183,7 @@ class SeriesDataModel {
       }
 
       if (isCoordinateType || isPieChart) {
-        data = data.filter(value => isExisty(value));
+        data = data.filter(isExisty);
       }
 
       const items = data.map(
