@@ -5,7 +5,6 @@
 
  */
 
-import snippet from 'tui-code-snippet';
 import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import groupTooltipFactory from '../../../src/js/components/tooltips/groupTooltip';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
@@ -261,9 +260,7 @@ describe('GroupTooltip', () => {
     it('should make defualt group tooltip HTML from data.', () => {
       tooltip.templateFunc = (category, items) => {
         const head = `<div>${category}</div>`;
-        const body = snippet
-          .map(items, item => `<div>${item.legend}: ${item.value}</div>`)
-          .join('');
+        const body = items.map(item => `<div>${item.legend}: ${item.value}</div>`).join('');
 
         return head + body;
       };
