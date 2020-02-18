@@ -4,11 +4,11 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isString from 'tui-code-snippet/type/isString';
 import forEach from 'tui-code-snippet/collection/forEach';
+import sendHostname from 'tui-code-snippet/request/sendHostname';
 import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 
 import chartConst from '../const';
@@ -124,7 +124,7 @@ class ChartBase {
     this.componentManager.presetAnimationConfig(this.options.series.animation);
 
     if (this.options.usageStatistics) {
-      snippet.sendHostname('chart', GA_TRACKING_ID);
+      sendHostname('chart', GA_TRACKING_ID);
     }
   }
 
