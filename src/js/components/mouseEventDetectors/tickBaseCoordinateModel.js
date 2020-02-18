@@ -4,9 +4,9 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import range from 'tui-code-snippet/array/range';
 import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
 
 class TickBaseDataModel {
   /**
@@ -49,7 +49,7 @@ class TickBaseDataModel {
     let prev = firstPosition;
     const halfInterval = tickInterval / 2;
 
-    return snippet.range(0, tickCount).map(() => {
+    return range(0, tickCount).map(() => {
       const limit = {
         min: prev - halfInterval,
         max: prev + halfInterval
@@ -91,7 +91,7 @@ class TickBaseDataModel {
     const tickInterval = size / len;
     let prev = firstPosition || 0;
 
-    return snippet.range(0, len).map(() => {
+    return range(0, len).map(() => {
       const max = arrayUtil.min([size + prev, tickInterval + prev]);
       const limit = {
         min: prev,

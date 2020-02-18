@@ -5,6 +5,7 @@
  */
 import snippet from 'tui-code-snippet';
 import isBoolean from 'tui-code-snippet/type/isBoolean';
+import inArray from 'tui-code-snippet/array/inArray';
 
 /**
  * Pick minimum value from value array.
@@ -143,7 +144,7 @@ function unique(arr, sorted, iteratee, context) {
   } else {
     snippet.forEachArray(arr, (value, index) => {
       value = iteratee.call(context, value, index, arr);
-      if (snippet.inArray(value, result) === -1) {
+      if (inArray(value, result) === -1) {
         result.push(value);
       }
     });

@@ -9,6 +9,7 @@ import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
+import inArray from 'tui-code-snippet/array/inArray';
 import encodeHTMLEntity from 'tui-code-snippet/string/encodeHTMLEntity';
 
 import chartConst from '../../const';
@@ -693,7 +694,7 @@ class DataProcessor extends DataProcessorBase {
    * @returns {number}
    */
   findStackIndex(stack) {
-    return snippet.inArray(stack, this.getStacks());
+    return inArray(stack, this.getStacks());
   }
 
   /**

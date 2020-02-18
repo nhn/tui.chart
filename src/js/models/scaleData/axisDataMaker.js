@@ -3,6 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import range from 'tui-code-snippet/array/range';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
@@ -243,7 +244,7 @@ const axisDataMaker = {
     });
 
     if (candidates.length === 0) {
-      const blockSizeRange = snippet.range(
+      const blockSizeRange = range(
         AUTO_INTERVAL_MIN_WIDTH,
         AUTO_INTERVAL_MAX_WIDTH,
         AUTO_INTERVAL_RANGE_STEP
