@@ -9,6 +9,7 @@ import isDate from 'tui-code-snippet/type/isDate';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import formatDateUtil from 'tui-code-snippet/formatDate/formatDate';
 import forEach from 'tui-code-snippet/collection/forEach';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
@@ -442,7 +443,7 @@ const renderUtil = {
   formatDate(value, format = chartConst.DEFAULT_DATE_FORMAT) {
     const date = isDate(value) ? value : new Date(value);
 
-    return snippet.formatDate(format, date) || value;
+    return formatDateUtil(format, date) || value;
   },
 
   /**
