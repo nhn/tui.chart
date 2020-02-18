@@ -4,6 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 
 import TickBaseCoordinateModel from './tickBaseCoordinateModel';
 import BoundsBaseCoordinateModel from './boundsBaseCoordinateModel';
@@ -12,8 +13,6 @@ import eventListener from '../../helpers/eventListener';
 import predicate from '../../helpers/predicate';
 import dom from '../../helpers/domHandler';
 import renderUtil from '../../helpers/renderUtil';
-
-import snippet from 'tui-code-snippet';
 
 class MouseEventDetectorBase {
   /**
@@ -496,6 +495,6 @@ class MouseEventDetectorBase {
   }
 }
 
-snippet.CustomEvents.mixin(MouseEventDetectorBase);
+CustomEvents.mixin(MouseEventDetectorBase);
 
 export default MouseEventDetectorBase;

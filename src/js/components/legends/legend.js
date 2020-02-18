@@ -5,7 +5,7 @@
  */
 import isNull from 'tui-code-snippet/type/isNull';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 
 import chartConst from '../../const';
 import LegendModel from './legendModel';
@@ -414,7 +414,7 @@ class Legend {
   }
 }
 
-snippet.CustomEvents.mixin(Legend);
+CustomEvents.mixin(Legend);
 
 /**
  * Factory for Legend

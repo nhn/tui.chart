@@ -8,6 +8,7 @@ import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isString from 'tui-code-snippet/type/isString';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 
 import chartConst from '../const';
 import ComponentManager from './componentManager';
@@ -92,7 +93,7 @@ class ChartBase {
      * @type {object}
      * @ignore
      */
-    this.eventBus = new snippet.CustomEvents();
+    this.eventBus = new CustomEvents();
 
     /**
      * previous xAxis data
