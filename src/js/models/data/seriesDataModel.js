@@ -31,10 +31,10 @@
  * SeriesItem has processed terminal data like value, ratio, etc.
  */
 
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import pick from 'tui-code-snippet/object/pick';
+
 import SeriesGroup from './seriesGroup';
 import SeriesItem from './seriesItem';
 import SeriesItemForCoordinateType from './seriesItemForCoordinateType';
@@ -183,7 +183,7 @@ class SeriesDataModel {
       }
 
       if (isCoordinateType || isPieChart) {
-        data = snippet.filter(data, isExisty);
+        data = data.filter(value => isExisty(value));
       }
 
       const items = data.map(

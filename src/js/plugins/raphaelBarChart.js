@@ -277,7 +277,7 @@ class RaphaelBarChart {
       left: this._makeLeftLinePath(points, chartType, item)
     };
 
-    return snippet.filter(paths, path => path);
+    return paths.filter(path => path);
   }
 
   /**

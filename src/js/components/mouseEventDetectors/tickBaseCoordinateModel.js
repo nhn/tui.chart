@@ -168,22 +168,21 @@ class TickBaseDataModel {
    */
   makeRange(index, positionValue) {
     const limit = this.data[index];
-    let range, center;
+    let center;
 
     if (this.isLineType) {
       center = parseInt(limit.max - (limit.max - limit.min) / 2, 10);
-      range = {
+
+      return {
         start: center,
         end: center
       };
-    } else {
-      range = {
-        start: limit.min - (positionValue || 0),
-        end: limit.max - (positionValue || 0)
-      };
     }
 
-    return range;
+    return {
+      start: limit.min - (positionValue || 0),
+      end: limit.max - (positionValue || 0)
+    };
   }
 }
 

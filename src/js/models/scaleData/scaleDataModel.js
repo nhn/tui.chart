@@ -1,4 +1,3 @@
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isNull from 'tui-code-snippet/type/isNull';
 import extend from 'tui-code-snippet/object/extend';
@@ -405,7 +404,7 @@ class ScaleDataModel {
       this.options.xAxis.suffix
     );
 
-    const validLabels = snippet.filter(labels, label => !!label);
+    const validLabels = labels.filter(label => !!label);
 
     if (!isNull(this.prevValidLabelCount)) {
       validLabelCount = this.prevValidLabelCount;

@@ -1261,7 +1261,7 @@ class DataProcessor extends DataProcessorBase {
         result[seriesType] = seriesDatum.map(pickerMethod);
       });
 
-      result = snippet.filter(result, isExisty);
+      result = result.filter(value => isExisty(value));
     }
 
     return result;

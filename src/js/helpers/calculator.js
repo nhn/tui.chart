@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import range from 'tui-code-snippet/array/range';
 import arrayUtil from './arrayUtil';
 const PERCENT_DIVISOR = 100;
@@ -109,7 +108,7 @@ const calculator = {
    * @returns {number} sum
    */
   sumPlusValues(values) {
-    const plusValues = snippet.filter(values, value => value > 0);
+    const plusValues = values.filter(value => value > 0);
 
     return calculator.sum(plusValues);
   },
@@ -120,7 +119,7 @@ const calculator = {
    * @returns {number} sum
    */
   sumMinusValues(values) {
-    const minusValues = snippet.filter(values, value => value < 0);
+    const minusValues = values.filter(value => value < 0);
 
     return calculator.sum(minusValues);
   },
