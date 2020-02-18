@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import ChartBase from '../../src/js/charts/chartBase';
 import DataProcessor from '../../src/js/models/data/dataProcessor';
 import themeManager from '../../src/js/themes/themeManager';
@@ -375,21 +374,6 @@ describe('Test for ChartBase', () => {
       const actual = chartBase._findSeriesIndexByLabel('chartType', 'legend2');
 
       expect(actual).toBe(-1);
-    });
-  });
-
-  describe('_sendHostName()', () => {
-    it('without usageStatistics option, sendHostName should occur.', () => {
-      spyOn(snippet, 'sendHostname');
-      chartBase = new ChartBase(chartBaseOption);
-      expect(snippet.sendHostname).toHaveBeenCalled();
-    });
-
-    it('usageStatistics is false, then sendHostName should not occur.', () => {
-      spyOn(snippet, 'sendHostname');
-      chartBaseOption.options.usageStatistics = false;
-      chartBase = new ChartBase(chartBaseOption);
-      expect(snippet.sendHostname).not.toHaveBeenCalled();
     });
   });
 });
