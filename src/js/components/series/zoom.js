@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 import seriesTemplate from './seriesTemplate';
 import chartConst from '../../const';
 import dom from '../../helpers/domHandler';
@@ -20,7 +20,7 @@ const {
   CHART_PADDING
 } = chartConst;
 
-const IS_MSIE_VERSION_LTE_THAN_8 = snippet.browser.msie && snippet.browser.version <= 8;
+const IS_MSIE_VERSION_LTE_THAN_8 = browser.msie && browser.version <= 8;
 
 class Zoom {
   /**
