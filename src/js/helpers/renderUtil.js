@@ -400,9 +400,7 @@ const renderUtil = {
     const { value, formatFunctions, valueType = 'value', areaType, legendName, chartType } = params;
     const fns = [String(value), ...(formatFunctions || [])];
 
-    return snippet.reduce(fns, (stored, fn) =>
-      fn(stored, chartType, areaType, valueType, legendName)
-    );
+    return fns.reduce((stored, fn) => fn(stored, chartType, areaType, valueType, legendName));
   },
   /**
    * Format values.
