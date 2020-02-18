@@ -6,7 +6,6 @@
 
 import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
-import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class PieDonutComboChart extends ChartBase {
@@ -23,7 +22,7 @@ class PieDonutComboChart extends ChartBase {
       rawData,
       theme,
       options,
-      seriesTypes: snippet.keys(rawData.series).sort(),
+      seriesTypes: Object.keys(rawData.series).sort(),
       chartTypes: ['pie', 'pie'],
       isVertical: true
     });

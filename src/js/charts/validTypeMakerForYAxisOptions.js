@@ -4,8 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
-
 /**
  * Make valid types on yAxisOptions
  * @param {object} params parameters
@@ -38,7 +36,7 @@ export default function validTypeMakerForYAxisOptions(params) {
  * @private
  */
 function makeChartTypesMap(rawSeriesData, yAxisOption) {
-  const seriesTypes = snippet.keys(rawSeriesData).sort();
+  const seriesTypes = Object.keys(rawSeriesData).sort();
   const optionChartTypes = getYAxisOptionChartTypes(seriesTypes, yAxisOption);
   const chartTypes = optionChartTypes.length ? optionChartTypes : seriesTypes;
   const validChartTypes = optionChartTypes.filter(_chartType => rawSeriesData[_chartType].length);

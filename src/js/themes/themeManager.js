@@ -1,10 +1,9 @@
 /**
- * @Fileoverview  Theme manager.
+ * @fileoverview  Theme manager.
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isObject from 'tui-code-snippet/type/isObject';
@@ -106,7 +105,7 @@ export default {
     seriesTypes.forEach(seriesType => {
       const theme = fromTheme[seriesType] || this._pickValidTheme(fromTheme, componentType);
 
-      if (snippet.keys(theme).length) {
+      if (Object.keys(theme).length) {
         newTheme[seriesType] = JSON.parse(JSON.stringify(defaultTheme[componentType]));
         this._overwriteTheme(theme, newTheme[seriesType]);
       } else {
