@@ -6,6 +6,7 @@
  */
 
 import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import groupTooltipFactory from '../../../src/js/components/tooltips/groupTooltip';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
 import defaultTheme from '../../../src/js/themes/defaultTheme';
@@ -28,7 +29,7 @@ describe('GroupTooltip', () => {
   beforeEach(() => {
     tooltip = new groupTooltipFactory.GroupTooltip({
       dataProcessor,
-      eventBus: new snippet.CustomEvents(),
+      eventBus: new CustomEvents(),
       options: {}
     });
   });

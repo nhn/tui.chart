@@ -5,7 +5,7 @@
  */
 
 import raphael from 'raphael';
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import pieSeriesFactory from '../../../src/js/components/series/pieChartSeries.js';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
@@ -43,7 +43,7 @@ describe('PieChartSeries', () => {
       },
       options: {},
       dataProcessor,
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     series.layout = {
       position: {

@@ -3,14 +3,14 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import GroupTypeEventDetector from '../../../src/js/components/mouseEventDetectors/groupTypeEventDetector';
 
 describe('Test for GroupTypeEventDetector', () => {
   let groupTypeEventDetector, eventBus, tickBaseCoordinateModel;
 
   beforeEach(() => {
-    eventBus = new snippet.CustomEvents();
+    eventBus = new CustomEvents();
     tickBaseCoordinateModel = jasmine.createSpyObj('tickBaseCoordinateModel', ['makeRange']);
     tickBaseCoordinateModel.data = [{}, {}, {}];
     groupTypeEventDetector = new GroupTypeEventDetector({

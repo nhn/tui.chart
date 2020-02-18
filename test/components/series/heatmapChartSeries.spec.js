@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import heatmapSeriesFactory from '../../../src/js/components/series/heatmapChartSeries.js';
 
 describe('HeatmapChartSeries', () => {
@@ -13,7 +13,7 @@ describe('HeatmapChartSeries', () => {
     series = new heatmapSeriesFactory.HeatmapChartSeries({
       chartType: 'heatmap',
       theme: {},
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
   });
 

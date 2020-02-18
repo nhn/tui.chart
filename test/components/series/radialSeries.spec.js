@@ -3,9 +3,8 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import radialSeriesFactory from '../../../src/js/components/series/radialSeries';
-import snippet from 'tui-code-snippet';
 
 describe('Test for RadialSeries', () => {
   let series;
@@ -23,7 +22,7 @@ describe('Test for RadialSeries', () => {
           colors: ['blue']
         }
       },
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
   });
 

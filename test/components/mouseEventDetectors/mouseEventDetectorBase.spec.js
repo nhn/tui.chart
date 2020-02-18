@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import MouseEventDetectorBase from '../../../src/js/components/mouseEventDetectors/mouseEventDetectorBase';
 import chartConst from '../../../src/js/const';
 
@@ -12,7 +12,7 @@ describe('Test for MouseEventDetectorBase', () => {
 
   beforeEach(() => {
     mouseEventDetectorBase = new MouseEventDetectorBase({
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     mouseEventDetectorBase.positionMap = {
       series: {

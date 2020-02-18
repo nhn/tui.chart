@@ -3,11 +3,12 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
+
 import treemapSeriesFactory from '../../../src/js/components/series/treemapChartSeries.js';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModelForTreemap';
 import chartConst from '../../../src/js/const';
 import renderUtil from '../../../src/js/helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 describe('TreemapChartSeries', () => {
   const rootId = chartConst.TREEMAP_ROOT_ID;
@@ -28,7 +29,7 @@ describe('TreemapChartSeries', () => {
           fontWeight: 'normal'
         }
       },
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     series.layout = {
       position: {
