@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import range from 'tui-code-snippet/array/range';
 import maker from '../../../src/js/models/scaleData/axisDataMaker';
 import chartConst from '../../../src/js/const';
 import renderUtil from '../../../src/js/helpers/renderUtil';
@@ -287,7 +287,7 @@ describe('Test for axisDataMaker', () => {
     it('should make auto tick interval', () => {
       const axisData = {
         tickCount: 20,
-        labels: snippet.range(10, 201, 10)
+        labels: range(10, 201, 10)
       };
       maker.updateLabelAxisDataForAutoTickInterval(axisData, 400, 0);
 
@@ -303,7 +303,7 @@ describe('Test for axisDataMaker', () => {
     it('should update tick intervals using previous data and new axis data', () => {
       const axisData = {
         tickCount: 21,
-        labels: snippet.range(10, 211, 10)
+        labels: range(10, 211, 10)
       };
       const prevUpdatedData = {
         interval: 6,
