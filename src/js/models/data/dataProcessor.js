@@ -9,6 +9,7 @@ import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
+import encodeHTMLEntity from 'tui-code-snippet/string/encodeHTMLEntity';
 
 import chartConst from '../../const';
 import DataProcessorBase from './dataProcessorBase';
@@ -405,7 +406,7 @@ class DataProcessor extends DataProcessorBase {
    * @private
    */
   _escapeCategories(categories) {
-    return categories.map(category => snippet.encodeHTMLEntity(String(category)));
+    return categories.map(category => encodeHTMLEntity(String(category)));
   }
 
   /**
@@ -1219,7 +1220,7 @@ class DataProcessor extends DataProcessorBase {
    * @private
    */
   _pickLegendLabel(item) {
-    return item.name ? snippet.encodeHTMLEntity(item.name) : null;
+    return item.name ? encodeHTMLEntity(item.name) : null;
   }
 
   /**

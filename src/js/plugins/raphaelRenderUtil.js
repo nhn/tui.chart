@@ -7,6 +7,7 @@
 import snippet from 'tui-code-snippet';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import decodeHTMLEntity from 'tui-code-snippet/string/decodeHTMLEntity';
 import raphael from 'raphael';
 
 import renderUtil from '../helpers/renderUtil';
@@ -107,7 +108,7 @@ export default {
    * @returns {object}
    */
   renderText(paper, pos, text, attributes) {
-    const textObj = paper.text(pos.left, pos.top, snippet.decodeHTMLEntity(String(text)));
+    const textObj = paper.text(pos.left, pos.top, decodeHTMLEntity(String(text)));
 
     if (attributes) {
       if (attributes['dominant-baseline']) {
