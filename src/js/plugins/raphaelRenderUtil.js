@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import range from 'tui-code-snippet/array/range';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import decodeHTMLEntity from 'tui-code-snippet/string/decodeHTMLEntity';
@@ -222,8 +222,7 @@ export default {
     hex = hex.replace('#', '');
     lum = lum || 0;
 
-    const changedHex = snippet
-      .range(3)
+    const changedHex = range(3)
       .map(index => {
         const hd = parseInt(hex.substr(index * 2, 2), 16);
         let newHd = hd + hd * lum;

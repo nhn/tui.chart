@@ -3,7 +3,6 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
 import isArray from 'tui-code-snippet/type/isArray';
 import isDate from 'tui-code-snippet/type/isDate';
 import isExisty from 'tui-code-snippet/type/isExisty';
@@ -12,12 +11,12 @@ import isUndefined from 'tui-code-snippet/type/isUndefined';
 import formatDateUtil from 'tui-code-snippet/formatDate/formatDate';
 import forEach from 'tui-code-snippet/collection/forEach';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import browser from 'tui-code-snippet/browser/browser';
 
 import chartConst from './../const';
 import dom from './domHandler';
 import arrayUtil from './arrayUtil';
 
-const { browser } = snippet;
 const isOldBrowser = browser.msie && browser.version <= 8;
 const hasComputedStyle = window.getComputedStyle || false;
 const CLIP_RECT_ID = 'clipRectForAnimation';

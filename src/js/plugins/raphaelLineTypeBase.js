@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
 import isNumber from 'tui-code-snippet/type/isNumber';
@@ -16,7 +16,6 @@ import predicate from '../helpers/predicate';
 import arrayUtil from '../helpers/arrayUtil';
 import chartConst from '../const';
 
-const { browser } = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const DEFAULT_DOT_RADIUS = 6;
 const SELECTION_DOT_RADIUS = 7;

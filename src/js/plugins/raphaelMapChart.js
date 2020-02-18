@@ -4,14 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import browser from 'tui-code-snippet/browser/browser';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import dom from '../helpers/domHandler';
 import renderUtil from '../helpers/renderUtil';
 
-const { browser } = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const STROKE_COLOR = 'gray';
 const ANIMATION_DURATION = 100;

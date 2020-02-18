@@ -5,7 +5,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
@@ -25,8 +25,6 @@ import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
 import calculator from '../../helpers/calculator';
 import objectUtil from '../../helpers/objectUtil';
-
-const { isUndefined } = snippet;
 
 /*
  * Raw series datum.

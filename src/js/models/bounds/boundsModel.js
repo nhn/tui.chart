@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import extend from 'tui-code-snippet/object/extend';
@@ -19,7 +19,6 @@ import legendCalculator from './legendCalculator';
 import seriesCalculator from './seriesCalculator';
 import spectrumLegendCalculator from './spectrumLegendCalculator';
 
-const { browser } = snippet;
 const { LEGEND_AREA_H_PADDING } = chartConst;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 

@@ -4,14 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 import isArray from 'tui-code-snippet/type/isArray';
 import isEmpty from 'tui-code-snippet/type/isEmpty';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
 import extend from 'tui-code-snippet/object/extend';
 
-const { browser } = snippet;
 const IS_IE7 = browser.msie && browser.version === 7;
 
 import chartConst from '../../const';

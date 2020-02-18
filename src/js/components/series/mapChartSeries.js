@@ -4,14 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
 import isNull from 'tui-code-snippet/type/isNull';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import browser from 'tui-code-snippet/browser/browser';
 
 import Series from './series';
 import chartConst from '../../const';
 
-const { browser } = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const { TOOLTIP_GAP, PUBLIC_EVENT_PREFIX } = chartConst;
 

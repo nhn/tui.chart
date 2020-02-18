@@ -5,13 +5,12 @@
  */
 import isNull from 'tui-code-snippet/type/isNull';
 import extend from 'tui-code-snippet/object/extend';
+import browser from 'tui-code-snippet/browser/browser';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import chartConst from '../const';
-import snippet from 'tui-code-snippet';
 import renderUtil from '../helpers/renderUtil';
 
-const { browser } = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
