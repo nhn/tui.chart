@@ -20,7 +20,8 @@ export default function mouseEventDetectorFactory(params) {
   const { chartOptions, seriesTypes } = params;
   const {
     chartType,
-    series: { zoomable, allowSelect: seriesAllowSelect }
+    series: { zoomable, allowSelect: seriesAllowSelect },
+    xAxis: { pointOnColumn }
   } = chartOptions;
   let factory;
 
@@ -51,6 +52,7 @@ export default function mouseEventDetectorFactory(params) {
   params.chartTypes = seriesTypes;
   params.zoomable = zoomable;
   params.allowSelect = seriesAllowSelect;
+  params.pointOnColumn = !!pointOnColumn;
 
   return factory(params);
 }

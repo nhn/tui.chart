@@ -37,6 +37,12 @@ class GroupTypeEventDetector extends EventDetectorBase {
      */
     this.sizeType = this.isVertical ? 'height' : 'width';
 
+    /**
+     * Place the label between the ticks.
+     * @type {boolean}
+     */
+    this.pointOnColumn = params.pointOnColumn;
+
     if (this.zoomable) {
       snippet.extend(this, zoomMixer);
       this._initForZoom(params.zoomable);
@@ -142,19 +148,28 @@ class GroupTypeEventDetector extends EventDetectorBase {
     const positionValue =
       (this.isVertical ? this.layout.position.left : this.layout.position.top) -
       chartConst.CHART_PADDING;
+    const tickCoordinateModel = this.tickBaseCoordinateModel.data;
 
     /**
      * Can be called with showTooltip function
      * At this time, the index may be larger than the data size.
      */
-    if (this.tickBaseCoordinateModel.data.length > index) {
+    if (tickCoordinateModel.length > index) {
+      let tickInterval = 0;
+
+      if (this.pointOnColumn) {
+        const [{ min, max }] = tickCoordinateModel;
+        tickInterval = max - min;
+      }
+
       this.eventBus.fire('showTooltip', {
         index,
         range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
         size: this.dimension[this.sizeType],
         isVertical: this.isVertical,
         isMoving,
-        silent: foundData.silent
+        silent: foundData.silent,
+        tickInterval
       });
       this.prevIndex = index;
     }
