@@ -3,10 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
+import isNumber from 'tui-code-snippet/type/isNumber';
 
 import RaphaelLineBase from './raphaelLineTypeBase';
 import raphaelRenderUtil from './raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
 
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
@@ -51,7 +52,7 @@ class RaphaelLineChart extends RaphaelLineBase {
     const { colors } = theme;
     const opacity = options.showDot ? 1 : 0;
     const isSpline = options.spline;
-    const lineWidth = (this.lineWidth = snippet.isNumber(options.pointWidth)
+    const lineWidth = (this.lineWidth = isNumber(options.pointWidth)
       ? options.pointWidth
       : this.lineWidth);
     const borderStyle = this.makeBorderStyle(theme.dot.strokeColor, opacity, theme.dot.strokeWidth);
@@ -199,7 +200,7 @@ class RaphaelLineChart extends RaphaelLineBase {
    * @param {?number} legendIndex legend index
    */
   selectLegend(legendIndex) {
-    const noneSelected = snippet.isNull(legendIndex);
+    const noneSelected = isNull(legendIndex);
 
     if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
       this.resetSeriesOrder(this.selectedLegendIndex);

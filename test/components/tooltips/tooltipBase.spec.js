@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import TooltipBase from '../../../src/js/components/tooltips/tooltipBase';
 import dom from '../../../src/js/helpers/domHandler';
 
@@ -12,7 +12,7 @@ describe('TooltipBase', () => {
 
   beforeEach(() => {
     tooltip = new TooltipBase({
-      eventBus: new snippet.CustomEvents(),
+      eventBus: new CustomEvents(),
       options: {}
     });
   });

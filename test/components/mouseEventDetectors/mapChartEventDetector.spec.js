@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import MapChartEventDetector from '../../../src/js/components/mouseEventDetectors/mapChartEventDetector';
 import dom from '../../../src/js/helpers/domHandler';
 
@@ -12,7 +12,7 @@ describe('Test for MapChartEventDetector', () => {
 
   beforeEach(() => {
     mouseEventDetector = new MapChartEventDetector({
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     spyOn(mouseEventDetector.eventBus, 'fire');
     spyOn(mouseEventDetector, '_onMouseEvent');

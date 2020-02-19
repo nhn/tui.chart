@@ -3,10 +3,12 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isObject from 'tui-code-snippet/type/isObject';
+import forEach from 'tui-code-snippet/collection/forEach';
+
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import arrayUtil from '../../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
 
 /**
  * Raw data Handler.
@@ -95,8 +97,8 @@ export default {
   getChartTypeMap(rawData) {
     const chartTypeMap = {};
 
-    if (snippet.isObject(rawData.series)) {
-      snippet.forEach(rawData.series, (data, seriesType) => {
+    if (isObject(rawData.series)) {
+      forEach(rawData.series, (data, seriesType) => {
         chartTypeMap[this.findChartType(rawData.seriesAlias, seriesType)] = true;
       });
     }

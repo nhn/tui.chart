@@ -3,13 +3,17 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
+import isNumber from 'tui-code-snippet/type/isNumber';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import chartConst from '../const';
 import raphaelRenderUtil from '../plugins/raphaelRenderUtil';
 import arrayUtil from '../helpers/arrayUtil';
 import renderUtil from '../helpers/renderUtil';
 import calculator from '../helpers/calculator';
-import snippet from 'tui-code-snippet';
+
 const UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
 const PAGINATION_POSITION_HEIGHT = 8;
 const PAGINATION_POSITION_WIDTH = 10;
@@ -25,7 +29,6 @@ function getIconWidth() {
   return chartConst.LEGEND_ICON_WIDTH + chartConst.LEGEND_LABEL_LEFT_PADDING;
 }
 
-// const RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
 class RaphaelLegendComponent {
   /** @lends RaphaelLegendComponent.prototype */
   constructor() {
@@ -171,7 +174,7 @@ class RaphaelLegendComponent {
     this.originalLegendData = data.legendData;
 
     if (this.originalLegendData.length) {
-      this._showCheckbox = snippet.isExisty(data.legendData[0].checkbox);
+      this._showCheckbox = isExisty(data.legendData[0].checkbox);
       this._setComponentDimensionsBaseOnLabelHeight(data.legendData[0].labelHeight);
 
       const legendData = this._getLegendData(data.legendData, this._currentPageCount);
@@ -338,7 +341,7 @@ class RaphaelLegendComponent {
    * @returns {Array.<number>} label widths
    */
   makeLabelWidths(legendData, theme, maxWidth) {
-    return snippet.map(legendData, item => {
+    return legendData.map(item => {
       let labelWidth = raphaelRenderUtil.getRenderedTextSize(
         item.label,
         theme.fontSize,
@@ -509,10 +512,10 @@ class RaphaelLegendComponent {
       const indexData = element.data('index');
       const attributeName = element.data('icon') === 'line' ? 'stroke-opacity' : 'opacity';
 
-      if (snippet.isNull(indexData) || snippet.isUndefined(indexData)) {
+      if (isNull(indexData) || isUndefined(indexData)) {
         element.attr(attributeName, 1);
-      } else if (!snippet.isUndefined(indexData)) {
-        if (snippet.isNumber(index) && indexData !== index) {
+      } else if (!isUndefined(indexData)) {
+        if (isNumber(index) && indexData !== index) {
           element.attr(attributeName, UNSELECTED_LEGEND_LABEL_OPACITY);
         } else {
           element.attr(attributeName, 1);

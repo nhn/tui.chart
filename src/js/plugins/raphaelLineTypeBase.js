@@ -3,14 +3,18 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import browser from 'tui-code-snippet/browser/browser';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
+import isNumber from 'tui-code-snippet/type/isNumber';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import raphaelRenderUtil from './raphaelRenderUtil';
 import renderUtil from '../helpers/renderUtil';
 import predicate from '../helpers/predicate';
 import arrayUtil from '../helpers/arrayUtil';
 import chartConst from '../const';
-import snippet from 'tui-code-snippet';
 
-const { browser } = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const DEFAULT_DOT_RADIUS = 6;
 const SELECTION_DOT_RADIUS = 7;
@@ -289,7 +293,7 @@ class RaphaelLineTypeBase {
     };
 
     if (borderStyle) {
-      snippet.extend(outDotStyle, borderStyle);
+      Object.assign(outDotStyle, borderStyle);
     }
 
     return outDotStyle;
@@ -311,13 +315,13 @@ class RaphaelLineTypeBase {
       const dot = paper.circle(
         position.left,
         position.top,
-        !snippet.isUndefined(dotTheme.radius) ? dotTheme.radius : DEFAULT_DOT_RADIUS
+        !isUndefined(dotTheme.radius) ? dotTheme.radius : DEFAULT_DOT_RADIUS
       );
       const dotStyle = {
         fill: dotTheme.fillColor || color,
-        'fill-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.fillOpacity,
+        'fill-opacity': isNumber(opacity) ? opacity : dotTheme.fillOpacity,
         stroke: dotTheme.strokeColor || color,
-        'stroke-opacity': snippet.isNumber(opacity) ? opacity : dotTheme.strokeOpacity,
+        'stroke-opacity': isNumber(opacity) ? opacity : dotTheme.strokeOpacity,
         'stroke-width': dotTheme.strokeWidth
       };
 
@@ -366,7 +370,7 @@ class RaphaelLineTypeBase {
         };
 
         if (this.hasRangeData) {
-          const startPosition = snippet.extend({}, position);
+          const startPosition = Object.assign({}, position);
           startPosition.top = startPosition.startTop;
           dotMap.startDot = this.renderDot(paper, startPosition, color, opacity);
         }
@@ -450,7 +454,7 @@ class RaphaelLineTypeBase {
    */
   _updateLineStrokeOpacity(changeType, line) {
     let opacity = 1;
-    const isSelectedLegend = !snippet.isNull(this.selectedLegendIndex);
+    const isSelectedLegend = !isNull(this.selectedLegendIndex);
     if (this.groupLines) {
       if (changeType === CHART_HOVER_STATUS_OVER || isSelectedLegend) {
         opacity = this.chartType === 'radial' && this.showArea ? 0 : DE_EMPHASIS_OPACITY;
@@ -653,15 +657,15 @@ class RaphaelLineTypeBase {
 
     // if prev data exists, use prev.r
     // there is dot disappearing issue, when hideDot
-    if (prev && !snippet.isUndefined(opacity)) {
-      outDotStyle = snippet.extend({
+    if (prev && !isUndefined(opacity)) {
+      outDotStyle = {
         r: prev.r,
         stroke: prev.stroke,
         fill: prev.fill,
         'stroke-opacity': prev['stroke-opacity'],
         'stroke-width': prev['stroke-width'],
         'fill-opacity': prev['fill-opacity']
-      });
+      };
     }
 
     dot.attr(outDotStyle);
@@ -699,11 +703,7 @@ class RaphaelLineTypeBase {
       strokeWidth = this.lineWidth;
     }
 
-    if (
-      opacity &&
-      !snippet.isNull(this.selectedLegendIndex) &&
-      this.selectedLegendIndex !== groupIndex
-    ) {
+    if (opacity && !isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
       opacity = DE_EMPHASIS_OPACITY;
     }
 
@@ -729,7 +729,7 @@ class RaphaelLineTypeBase {
    * @private
    */
   _hideGroupDots(index) {
-    const hasSelectedIndex = !snippet.isNull(this.selectedLegendIndex);
+    const hasSelectedIndex = !isNull(this.selectedLegendIndex);
     const baseOpacity = this.dotOpacity;
     const groupDots = this._getPivotGroupDots();
 
@@ -784,7 +784,7 @@ class RaphaelLineTypeBase {
     };
 
     if (this.dotOpacity) {
-      dotAttrs = snippet.extend({ 'fill-opacity': this.dotOpacity }, dotAttrs, this.borderStyle);
+      dotAttrs = Object.assign({ 'fill-opacity': this.dotOpacity }, dotAttrs, this.borderStyle);
     }
 
     dot.attr(dotAttrs);
@@ -946,7 +946,7 @@ class RaphaelLineTypeBase {
       cy: position.top
     };
 
-    if (snippet.isExisty(tickSize)) {
+    if (isExisty(tickSize)) {
       attr.transform = `t-${tickSize},0`;
     }
 
@@ -965,7 +965,7 @@ class RaphaelLineTypeBase {
       path: paths.join(' ')
     };
 
-    if (snippet.isExisty(tickSize)) {
+    if (isExisty(tickSize)) {
       attr.transform = `t-${tickSize},0`;
     }
 

@@ -3,6 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import browser from 'tui-code-snippet/browser/browser';
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import pluck from 'tui-code-snippet/collection/pluck';
+
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
@@ -12,9 +17,7 @@ import axisCalculator from './axisCalculator';
 import legendCalculator from './legendCalculator';
 import seriesCalculator from './seriesCalculator';
 import spectrumLegendCalculator from './spectrumLegendCalculator';
-import snippet from 'tui-code-snippet';
 
-const { browser } = snippet;
 const { LEGEND_AREA_H_PADDING } = chartConst;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 
@@ -131,7 +134,7 @@ class BoundsModel {
    * @private
    */
   _registerDimension(name, dimension) {
-    this.dimensionMap[name] = snippet.extend(this.dimensionMap[name] || {}, dimension);
+    this.dimensionMap[name] = Object.assign(this.dimensionMap[name] || {}, dimension);
   }
 
   /**
@@ -214,7 +217,7 @@ class BoundsModel {
    */
   _registerTitleDimension() {
     const chartOptions = this.options.chart || {};
-    const hasTitleOption = snippet.isExisty(chartOptions.title);
+    const hasTitleOption = isExisty(chartOptions.title);
     const titleTheme = this.theme.title;
     const titleHeight = hasTitleOption
       ? raphaelRenderUtil.getRenderedTextSize(
@@ -266,7 +269,7 @@ class BoundsModel {
    * Register dimension for legend component.
    */
   registerLegendDimension() {
-    const legendLabels = snippet.pluck(this.dataProcessor.getOriginalLegendData(), 'label');
+    const legendLabels = pluck(this.dataProcessor.getOriginalLegendData(), 'label');
     const legendOptions = this.options.legend;
     const labelTheme = this.theme.legend.label;
     const chartWidth = this.getDimension('chart').width;
@@ -340,7 +343,7 @@ class BoundsModel {
       return;
     }
 
-    if (snippet.isArray(options)) {
+    if (isArray(options)) {
       yAxisOptions = componentName === 'yAxis' ? options[0] : options[1];
     } else {
       yAxisOptions = options;

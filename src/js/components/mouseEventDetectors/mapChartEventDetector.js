@@ -9,7 +9,7 @@ import chartConst from '../../const';
 import eventListener from '../../helpers/eventListener';
 import dom from '../../helpers/domHandler';
 import renderUtil from '../../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 
 class MapChartEventDetector extends MouseEventDetectorBase {
   /**
@@ -172,7 +172,7 @@ class MapChartEventDetector extends MouseEventDetectorBase {
   attachEvent(target) {
     MouseEventDetectorBase.prototype.attachEvent.call(this, target);
 
-    if (snippet.browser.firefox) {
+    if (browser.firefox) {
       eventListener.on(target, 'DOMMouseScroll', this._onMousewheel, this);
     } else {
       eventListener.on(target, 'mousewheel', this._onMousewheel, this);

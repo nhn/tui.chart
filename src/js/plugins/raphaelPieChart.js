@@ -3,10 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
+import raphael from 'raphael';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
-import raphael from 'raphael';
 
 const DEGREE_180 = 180;
 const DEGREE_360 = 360;
@@ -436,8 +437,8 @@ class RaphaelPieChart {
 
     if (sector) {
       info = {
-        legendIndex: snippet.isExisty(sector.data('legendIndex')) ? sector.data('legendIndex') : -1,
-        index: snippet.isExisty(sector.data('index')) ? sector.data('index') : -1,
+        legendIndex: isExisty(sector.data('legendIndex')) ? sector.data('legendIndex') : -1,
+        index: isExisty(sector.data('index')) ? sector.data('index') : -1,
         chartType: sector.data('chartType')
       };
     }
@@ -537,7 +538,7 @@ class RaphaelPieChart {
   }
 
   /**
-   * Unelect series.
+   * Unselect series.
    * @param {{index: number}} indexes - index map
    */
   unselectSeries(indexes) {
@@ -557,9 +558,10 @@ class RaphaelPieChart {
    * @param {?number} legendIndex legend index
    */
   selectLegend(legendIndex) {
-    const isNull = snippet.isNull(legendIndex);
+    const isLegendIndexNull = isNull(legendIndex);
     this.sectorInfos.forEach((sectorInfo, index) => {
-      const opacity = isNull || legendIndex === index ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+      const opacity =
+        isLegendIndexNull || legendIndex === index ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 
       sectorInfo.sector.attr({
         'fill-opacity': opacity

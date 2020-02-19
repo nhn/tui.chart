@@ -4,12 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import browser from 'tui-code-snippet/browser/browser';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isString from 'tui-code-snippet/type/isString';
+
 import arrayUtil from '../helpers/arrayUtil';
 import dataExporter from './dataExporter';
 import imageExporter from './imageExporter';
-import snippet from 'tui-code-snippet';
-
-const { browser, isExisty, isString } = snippet;
 
 const isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
 const isImageDownloadAvailable =

@@ -4,9 +4,11 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import pluck from 'tui-code-snippet/collection/pluck';
+
 import chartConst from '../const';
 import arrayUtil from '../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
 
 class MapChartMapModel {
   /**
@@ -27,14 +29,14 @@ class MapChartMapModel {
      * }}
      */
     this.commandFuncMap = {
-      M: snippet.bind(this._makeCoordinate, this),
-      m: snippet.bind(this._makeCoordinateFromRelativeCoordinate, this),
-      L: snippet.bind(this._makeCoordinate, this),
-      l: snippet.bind(this._makeCoordinateFromRelativeCoordinate, this),
-      H: snippet.bind(this._makeXCoordinate, this),
-      h: snippet.bind(this._makeXCoordinateFroRelativeCoordinate, this),
-      V: snippet.bind(this._makeYCoordinate, this),
-      v: snippet.bind(this._makeYCoordinateFromRelativeCoordinate, this)
+      M: this._makeCoordinate.bind(this),
+      m: this._makeCoordinateFromRelativeCoordinate.bind(this),
+      L: this._makeCoordinate.bind(this),
+      l: this._makeCoordinateFromRelativeCoordinate.bind(this),
+      H: this._makeXCoordinate.bind(this),
+      h: this._makeXCoordinateFroRelativeCoordinate.bind(this),
+      V: this._makeYCoordinate.bind(this),
+      v: this._makeYCoordinateFromRelativeCoordinate.bind(this)
     };
 
     /**
@@ -244,7 +246,7 @@ class MapChartMapModel {
       const commandFunc = this.commandFuncMap[datum.type];
       const coordinate = commandFunc(datum.coordinate, prevCoordinate);
 
-      snippet.extend(prevCoordinate, coordinate);
+      Object.assign(prevCoordinate, coordinate);
 
       return coordinate;
     });
@@ -257,8 +259,8 @@ class MapChartMapModel {
    * @private
    */
   _findBoundFromCoordinates(coordinates) {
-    const xs = snippet.pluck(coordinates, 'x').filter(x => !snippet.isUndefined(x));
-    const ys = snippet.pluck(coordinates, 'y').filter(y => !snippet.isUndefined(y));
+    const xs = pluck(coordinates, 'x').filter(x => !isUndefined(x));
+    const ys = pluck(coordinates, 'y').filter(y => !isUndefined(y));
     const maxLeft = arrayUtil.max(xs);
     const minLeft = arrayUtil.min(xs);
     const maxTop = arrayUtil.max(ys);

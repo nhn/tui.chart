@@ -9,7 +9,7 @@ import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
 import arrayUtil from '../../helpers/arrayUtil';
 import coordinateScaleCalculator from './coordinateScaleCalculator.js';
-import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 /**
  * scaleMaker calculates limit and step into values of processed data and returns it.
@@ -101,7 +101,7 @@ const scaleDataMaker = {
           foundType = millisecondTypes[foundIndex];
         }
 
-        return !snippet.isExisty(foundIndex);
+        return !isExisty(foundIndex);
       });
     } else {
       foundType = chartConst.DATE_TYPE_SECOND;
@@ -262,8 +262,8 @@ const scaleDataMaker = {
       chartType
     } = makeScaleInfos;
     const limit = this._getLimitSafely(makeScaleInfos.baseValues);
-    const hasMinOption = snippet.isExisty(limitOption.min);
-    const hasMaxOption = snippet.isExisty(limitOption.max);
+    const hasMinOption = isExisty(limitOption.min);
+    const hasMaxOption = isExisty(limitOption.max);
     let { min, max } = limit;
     let isOverflowed;
     let { stepCount } = makeScaleInfos.options;

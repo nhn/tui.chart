@@ -1,9 +1,11 @@
+import isArray from 'tui-code-snippet/type/isArray';
+import isNull from 'tui-code-snippet/type/isNull';
+
 import scaleDataMaker from './scaleDataMaker';
 import scaleLabelFormatter from './scaleLabelFormatter';
 import axisDataMaker from './axisDataMaker';
 import predicate from '../../helpers/predicate';
 import renderUtil from '../../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 class ScaleDataModel {
   /**
@@ -167,7 +169,7 @@ class ScaleDataModel {
       additionalOptions
     );
 
-    return snippet.extend(baseScaleData, {
+    return Object.assign(baseScaleData, {
       labels: this._createScaleLabels(baseScaleData, typeMap, baseOptions, axisOptions.dateFormat),
       axisOptions
     });
@@ -217,7 +219,7 @@ class ScaleDataModel {
         step,
         tickCount
       );
-      snippet.extend(axisData, additional);
+      Object.assign(axisData, additional);
     }
 
     return axisData;
@@ -299,7 +301,7 @@ class ScaleDataModel {
    */
   _createAxesData() {
     const { scaleDataMap, options, theme } = this;
-    const yAxisOptions = snippet.isArray(options.yAxis) ? options.yAxis : [options.yAxis];
+    const yAxisOptions = isArray(options.yAxis) ? options.yAxis : [options.yAxis];
     const dataMap = {};
 
     dataMap.xAxis = this._createAxisData(scaleDataMap.xAxis, options.xAxis, theme.xAxis.label);
@@ -401,9 +403,9 @@ class ScaleDataModel {
       this.options.xAxis.suffix
     );
 
-    const validLabels = snippet.filter(labels, label => !!label);
+    const validLabels = labels.filter(label => label);
 
-    if (!snippet.isNull(this.prevValidLabelCount)) {
+    if (!isNull(this.prevValidLabelCount)) {
       validLabelCount = this.prevValidLabelCount;
     } else {
       validLabelCount = validLabels.length;
@@ -434,7 +436,7 @@ class ScaleDataModel {
 
     this.prevValidLabelCount = validLabelCount;
 
-    snippet.extend(axisData, additionalData);
+    Object.assign(axisData, additionalData);
   }
 
   /**

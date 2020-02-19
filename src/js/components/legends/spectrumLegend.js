@@ -3,11 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import pluginFactory from '../../factories/pluginFactory';
-import snippet from 'tui-code-snippet';
 
 const {
   COMPONENT_TYPE_RAPHAEL,
@@ -112,14 +112,8 @@ class SpectrumLegend {
       },
       this
     );
-    this.eventBus.on(
-      'beforeImageDownload',
-      snippet.bind(this._removeLocationURLFromFillAttribute, this)
-    );
-    this.eventBus.on(
-      'afterImageDownload',
-      snippet.bind(this._restoreLocationURLToFillAttribute, this)
-    );
+    this.eventBus.on('beforeImageDownload', this._removeLocationURLFromFillAttribute.bind(this));
+    this.eventBus.on('afterImageDownload', this._restoreLocationURLToFillAttribute.bind(this));
   }
 
   /**
@@ -332,9 +326,7 @@ class SpectrumLegend {
  * @ignore
  */
 export default function spectrumLegendFactory(params) {
-  const isLegendVisible = snippet.isUndefined(params.options.visible)
-    ? true
-    : params.options.visible;
+  const isLegendVisible = isUndefined(params.options.visible) ? true : params.options.visible;
   const { chartType } = params.chartOptions;
   let spectrumLegend = null;
 

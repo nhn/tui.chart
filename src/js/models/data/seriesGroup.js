@@ -5,8 +5,9 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isExisty from 'tui-code-snippet/type/isExisty';
+import pluckUtil from 'tui-code-snippet/collection/pluck';
 import calculator from '../../helpers/calculator';
-import snippet from 'tui-code-snippet';
 
 class SeriesGroup {
   /**
@@ -71,10 +72,10 @@ class SeriesGroup {
         return;
       }
 
-      if (snippet.isExisty(item[valueType])) {
+      if (isExisty(item[valueType])) {
         values.push(item[valueType]);
       }
-      if (snippet.isExisty(item.start)) {
+      if (isExisty(item.start)) {
         values.push(item.start);
       }
     });
@@ -236,9 +237,9 @@ class SeriesGroup {
    * @returns {Array}
    */
   pluck(key) {
-    const items = this.items.filter(snippet.isExisty);
+    const items = this.items.filter(isExisty);
 
-    return snippet.pluck(items, key);
+    return pluckUtil(items, key);
   }
 
   /**

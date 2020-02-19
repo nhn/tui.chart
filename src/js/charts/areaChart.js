@@ -3,11 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import pick from 'tui-code-snippet/object/pick';
 import ChartBase from './chartBase';
 import DynamicDataHelper from './dynamicDataHelper';
 import rawDataHandler from '../models/data/rawDataHandler';
 import Series from '../components/series/areaChartSeries';
-import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class AreaChart extends ChartBase {
@@ -223,7 +223,7 @@ class AreaChart extends ChartBase {
 
     this.dataProcessor.initData(rawData);
     this.dataProcessor.initZoomedRawData();
-    this.dataProcessor.addDataFromRemainDynamicData(snippet.pick(this.options.series, 'shifting'));
+    this.dataProcessor.addDataFromRemainDynamicData(pick(this.options.series, 'shifting'));
     this._renderForZoom(true);
     this._dynamicDataHelper.restartAnimation();
   }

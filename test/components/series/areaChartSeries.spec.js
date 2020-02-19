@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import areaSeriesFactory from '../../../src/js/components/series/areaChartSeries';
 import chartConst from '../../../src/js/const';
 
@@ -15,7 +15,7 @@ describe('AreaChartSeries', () => {
       chartType: 'area',
       theme: {},
       options: {},
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     series.layout = {
       position: {

@@ -5,11 +5,15 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import pluck from 'tui-code-snippet/collection/pluck';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import SeriesDataModel from './seriesDataModel';
 import SeriesItem from './seriesItemForTreemap';
 import chartConst from '../../const';
 import calculator from '../../helpers/calculator';
-import snippet from 'tui-code-snippet';
 
 class SeriesDataModelForTreeMap extends SeriesDataModel {
   /**
@@ -61,7 +65,7 @@ class SeriesDataModelForTreeMap extends SeriesDataModel {
 
       datum.indexes = indexes;
 
-      if (!snippet.isNull(datum.value)) {
+      if (!isNull(datum.value)) {
         flatData.push(datum);
       }
 
@@ -121,7 +125,7 @@ class SeriesDataModelForTreeMap extends SeriesDataModel {
 
     filtered.forEach((datum, index) => {
       datum.depth = depth;
-      datum.group = snippet.isUndefined(group) ? index : group;
+      datum.group = isUndefined(group) ? index : group;
 
       const descendants = this._setTreeProperties(
         rejected,
@@ -133,7 +137,7 @@ class SeriesDataModelForTreeMap extends SeriesDataModel {
       const children = descendants.filter(descendant => descendant.depth === childDepth);
 
       if (children.length) {
-        datum.value = calculator.sum(snippet.pluck(children, 'value'));
+        datum.value = calculator.sum(pluck(children, 'value'));
         datum.hasChild = true;
       } else {
         datum.hasChild = false;
@@ -158,10 +162,10 @@ class SeriesDataModelForTreeMap extends SeriesDataModel {
   _setRatio(flatSeriesData, parent) {
     const parted = this._partitionRawSeriesDataByParent(flatSeriesData, parent);
     const [filtered, rejected] = parted;
-    const total = calculator.sum(snippet.pluck(filtered, 'value'));
+    const total = calculator.sum(pluck(filtered, 'value'));
 
     filtered.forEach(datum => {
-      const value = snippet.isNull(datum.value) ? 0 : datum.value;
+      const value = isNull(datum.value) ? 0 : datum.value;
 
       datum.ratio = value / total;
 
@@ -235,7 +239,7 @@ class SeriesDataModelForTreeMap extends SeriesDataModel {
    * @private
    */
   _isValidGroup(group, comparingGroup) {
-    return !snippet.isExisty(comparingGroup) || group === comparingGroup;
+    return !isExisty(comparingGroup) || group === comparingGroup;
   }
 
   /**

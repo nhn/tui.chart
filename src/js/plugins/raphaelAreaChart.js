@@ -4,9 +4,12 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isNull from 'tui-code-snippet/type/isNull';
+import isNumber from 'tui-code-snippet/type/isNumber';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import RaphaelLineBase from './raphaelLineTypeBase';
 import raphaelRenderUtil from './raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
 import chartConst from '../const';
 import consoleUtil from '../helpers/consoleUtil';
 const { GUIDE_AREACHART_AREAOPACITY_TYPE, CLASS_NAME_SVG_AUTOSHAPE } = chartConst;
@@ -76,7 +79,7 @@ class RaphaelAreaChart extends RaphaelLineBase {
       dotTheme.strokeWidth
     );
     const outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
-    const lineWidth = (this.lineWidth = snippet.isNumber(pointWidth) ? pointWidth : this.lineWidth);
+    const lineWidth = (this.lineWidth = isNumber(pointWidth) ? pointWidth : this.lineWidth);
 
     this.paper = paper;
     this.theme = theme;
@@ -366,7 +369,7 @@ class RaphaelAreaChart extends RaphaelLineBase {
    * @param {?number} legendIndex legend index
    */
   selectLegend(legendIndex) {
-    const noneSelected = snippet.isNull(legendIndex);
+    const noneSelected = isNull(legendIndex);
 
     if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
       this.resetSeriesOrder(this.selectedLegendIndex);
@@ -542,17 +545,17 @@ class RaphaelAreaChart extends RaphaelLineBase {
    * @private
    */
   _isAreaOpacityNumber(areaOpacity) {
-    const isNumber = snippet.isNumber(areaOpacity);
+    const isAreaOpacityNumber = isNumber(areaOpacity);
 
-    if (isNumber) {
+    if (isAreaOpacityNumber) {
       if (areaOpacity < 0 || areaOpacity > 1) {
         consoleUtil.print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'warn');
       }
-    } else if (!snippet.isUndefined(areaOpacity)) {
+    } else if (!isUndefined(areaOpacity)) {
       consoleUtil.print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'error');
     }
 
-    return isNumber;
+    return isAreaOpacityNumber;
   }
 }
 

@@ -5,7 +5,6 @@
  */
 import labelHelper from '../../../src/js/components/series/renderingLabelHelper';
 import renderUtil from '../../../src/js/helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 describe('Test for renderingLabelHelper', () => {
   beforeAll(() => {
@@ -63,7 +62,7 @@ describe('Test for renderingLabelHelper', () => {
         width: 40,
         height: 50
       };
-      const makePosition = snippet.bind(labelHelper._makePositionForBoundType, labelHelper);
+      const makePosition = labelHelper._makePositionForBoundType.bind(labelHelper);
       const actual = labelHelper._makePositionMap(seriesItem, bound, 20, {}, makePosition);
 
       expect(actual.end).toEqual({
@@ -84,7 +83,7 @@ describe('Test for renderingLabelHelper', () => {
         width: 40,
         height: 50
       };
-      const makePosition = snippet.bind(labelHelper._makePositionForBarChart, labelHelper);
+      const makePosition = labelHelper._makePositionForBarChart.bind(labelHelper);
       const actual = labelHelper._makePositionMap(seriesItem, bound, 20, {}, makePosition);
 
       expect(actual.end).toEqual({

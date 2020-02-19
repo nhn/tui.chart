@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import mapSeriesFactory from '../../../src/js/components/series/mapChartSeries.js';
 
 describe('MapChartSeries', () => {
@@ -22,7 +22,7 @@ describe('MapChartSeries', () => {
       theme: {
         heatmap: {}
       },
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     series.mapModel = mapModel;
     series.mapDimension = {

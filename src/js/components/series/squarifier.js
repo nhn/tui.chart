@@ -3,10 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import pluck from 'tui-code-snippet/collection/pluck';
 
 import calculator from '../../helpers/calculator';
 import arrayUtil from '../../helpers/arrayUtil';
-import snippet from 'tui-code-snippet';
 
 export default {
   /**
@@ -23,7 +23,7 @@ export default {
      * @private
      */
   _makeBaseBound(layout) {
-    return snippet.extend({}, layout);
+    return Object.assign({}, layout);
   },
 
   /**
@@ -47,7 +47,7 @@ export default {
    * @private
    */
   _makeBaseData(seriesItems, width, height) {
-    const scale = this._calculateScale(snippet.pluck(seriesItems, 'value'), width, height);
+    const scale = this._calculateScale(pluck(seriesItems, 'value'), width, height);
     const data = seriesItems
       .map(seriesItem => ({
         id: seriesItem.id,
@@ -128,7 +128,7 @@ export default {
    */
   _calculateFixedSize(baseSize, sum, row) {
     if (!sum) {
-      const weights = snippet.pluck(row, 'weight');
+      const weights = pluck(row, 'weight');
       sum = calculator.sum(weights);
     }
 
@@ -217,7 +217,7 @@ export default {
    */
   _getAddingBoundsFunction(baseBound) {
     if (this._isVerticalStack(baseBound)) {
-      return snippet.bind(this._addBoundsForVerticalStack, this);
+      return this._addBoundsForVerticalStack.bind(this);
     }
 
     return this._addBoundsForHorizontalStack.bind(this);
@@ -238,7 +238,7 @@ export default {
     this.boundMap = {};
 
     baseData.forEach(datum => {
-      const weights = snippet.pluck(row, 'weight');
+      const weights = pluck(row, 'weight');
       const sum = calculator.sum(weights);
 
       if (row.length && this._changedStackDirection(sum, weights, baseSize, datum.weight)) {

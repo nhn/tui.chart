@@ -3,13 +3,13 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
+import browser from 'tui-code-snippet/browser/browser';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import chartConst from '../const';
-import snippet from 'tui-code-snippet';
 import renderUtil from '../helpers/renderUtil';
 
-const { browser } = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const EMPHASIS_OPACITY = 1;
 const DE_EMPHASIS_OPACITY = 0.3;
@@ -182,7 +182,7 @@ class RaphaelBulletChart {
     return raphaelRenderUtil.renderRect(
       this.paper,
       bound,
-      snippet.extend(
+      Object.assign(
         {
           fill: color,
           stroke: 'none'
@@ -356,7 +356,7 @@ class RaphaelBulletChart {
    * @param {?number} legendIndex legend index
    */
   selectLegend(legendIndex) {
-    const allEmphasized = snippet.isNull(legendIndex);
+    const allEmphasized = isNull(legendIndex);
 
     this.groupBars.forEach((bars, groupIndex) => {
       const opacity =

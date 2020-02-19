@@ -1,5 +1,5 @@
 import dom from '../helpers/domHandler';
-import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
 
 /**
  * Get raphael paper
@@ -43,7 +43,7 @@ class DrawingToolPicker {
   getPaper(container, rendererType) {
     let paper = this[`${rendererType}Paper`];
     const isNeedCreateNewPaper =
-      snippet.isExisty(container) &&
+      isExisty(container) &&
       paper &&
       dom.findParentByClass(paper.canvas, 'tui-chart') !== container;
 

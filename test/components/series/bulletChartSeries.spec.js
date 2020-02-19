@@ -3,12 +3,12 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import barSeriesFactory from '../../../src/js/components/series/bulletChartSeries';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
 import SeriesItem from '../../../src/js/models/data/seriesDataModelForBullet';
 import chartConst from '../../../src/js/const';
-import snippet from 'tui-code-snippet';
 
 describe('BulletChartSeries', () => {
   let series, seriesDataModel, dataProcessor;
@@ -18,7 +18,7 @@ describe('BulletChartSeries', () => {
       chartType: 'bullet',
       theme: {},
       options: {},
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     series.layout = {
       dimension: {

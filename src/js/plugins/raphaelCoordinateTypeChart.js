@@ -3,10 +3,12 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import raphael from 'raphael';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
-import raphael from 'raphael';
 
 const CIRCLE_OPACITY = 0.8;
 const STROKE_OPACITY = 1;
@@ -352,7 +354,7 @@ class RaphaelBubbleChart {
       opacity: 0
     });
 
-    if (snippet.isNull(this.selectedLegend) || indexes.index === this.selectedLegend) {
+    if (isNull(this.selectedLegend) || indexes.index === this.selectedLegend) {
       changeOpacity = EMPHASIS_OPACITY;
     }
 
@@ -372,7 +374,7 @@ class RaphaelBubbleChart {
     const { paper } = this;
     let foundCircle;
 
-    while (snippet.isUndefined(foundCircle)) {
+    while (isUndefined(foundCircle)) {
       const circle = paper.getElementByPoint(position.left, position.top);
 
       if (circle) {
@@ -405,7 +407,7 @@ class RaphaelBubbleChart {
   moveMouseOnSeries(position) {
     const circle = this._findCircle(position);
 
-    if (circle && snippet.isExisty(circle.data('groupIndex'))) {
+    if (circle && isExisty(circle.data('groupIndex'))) {
       const groupIndex = circle.data('groupIndex');
       const index = circle.data('index');
       const args = [
@@ -464,7 +466,7 @@ class RaphaelBubbleChart {
    * @param {?number} legendIndex - index of legend
    */
   selectLegend(legendIndex) {
-    const noneSelected = snippet.isNull(legendIndex);
+    const noneSelected = isNull(legendIndex);
 
     this.selectedLegend = legendIndex;
 

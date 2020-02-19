@@ -3,12 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-
 import geom from '../../helpers/geometric';
 import calculator from '../../helpers/calculator';
 import chartConst from '../../const';
 import pluginFactory from '../../factories/pluginFactory';
-import snippet from 'tui-code-snippet';
+
 const {
   COMPONENT_TYPE_RAPHAEL,
   RADIAL_PLOT_PADDING,
@@ -37,7 +36,7 @@ class RadialPlot {
      * Options
      * @type {object}
      */
-    this.options = snippet.extend(
+    this.options = Object.assign(
       {
         type: 'spiderweb'
       },

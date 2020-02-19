@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import columnSeriesFactory from '../../../src/js/components/series/columnChartSeries.js';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
@@ -39,7 +39,7 @@ describe('ColumnChartSeries', () => {
       },
       options: {},
       dataProcessor,
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
   });
 

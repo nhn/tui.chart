@@ -4,9 +4,12 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
+import isArray from 'tui-code-snippet/type/isArray';
+import isEmpty from 'tui-code-snippet/type/isEmpty';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
 
-const { browser } = snippet;
 const IS_IE7 = browser.msie && browser.version === 7;
 
 import chartConst from '../../const';
@@ -191,10 +194,9 @@ class Series {
   decorateLabel(targetLabel) {
     const { labelPrefix = '', labelSuffix = '' } = this.options;
     const { addPrefixSuffix, addPrefixSuffixItem } = renderUtil;
-    const decorateFunc = (snippet.isArray(targetLabel)
-      ? addPrefixSuffix
-      : addPrefixSuffixItem
-    ).bind(renderUtil);
+    const decorateFunc = (isArray(targetLabel) ? addPrefixSuffix : addPrefixSuffixItem).bind(
+      renderUtil
+    );
 
     return decorateFunc(targetLabel, labelPrefix, labelSuffix);
   }
@@ -420,7 +422,7 @@ class Series {
       }
     }
 
-    this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
+    this._renderSeriesArea(data.paper, this._renderGraph.bind(this));
 
     if (this.paper.pushDownBackgroundToBottom) {
       this.paper.pushDownBackgroundToBottom();
@@ -481,7 +483,7 @@ class Series {
 
       this._setDataForRendering(data);
       this._clearSeriesContainer();
-      this._renderSeriesArea(data.paper, snippet.bind(this._renderGraph, this));
+      this._renderSeriesArea(data.paper, this._renderGraph.bind(this));
 
       if (this.labelShowEffector) {
         clearInterval(this.labelShowEffector.timerId);
@@ -493,7 +495,7 @@ class Series {
         this.animateComponent(true);
       }
 
-      if (!snippet.isNull(this.selectedLegendIndex)) {
+      if (!isNull(this.selectedLegendIndex)) {
         this.graphRenderer.selectLegend(this.selectedLegendIndex);
       }
     } else {
@@ -519,7 +521,7 @@ class Series {
    */
   _resizeGraph(dimension, seriesData) {
     this.graphRenderer.resize(
-      snippet.extend(
+      Object.assign(
         {
           dimension: this.dimensionMap.chart
         },
@@ -538,7 +540,7 @@ class Series {
   resize(data) {
     this._clearSeriesContainer();
     this._setDataForRendering(data);
-    this._renderSeriesArea(data.paper, snippet.bind(this._resizeGraph, this));
+    this._renderSeriesArea(data.paper, this._resizeGraph.bind(this));
     this.rerender(data);
   }
 
@@ -660,7 +662,7 @@ class Series {
   animateComponent(isRerendering) {
     if (this.graphRenderer.animate && this.seriesSet) {
       this.graphRenderer.animate(
-        snippet.bind(this.animateSeriesLabelArea, this, isRerendering),
+        this.animateSeriesLabelArea.bind(this, isRerendering),
         this.seriesSet
       );
     } else {
@@ -715,13 +717,13 @@ class Series {
    */
   _makeExportationSeriesData(seriesData) {
     const { indexes } = seriesData;
-    const legendIndex = snippet.isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
+    const legendIndex = isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
     const legendData = this.dataProcessor.getLegendItem(legendIndex);
-    const index = snippet.isExisty(indexes.groupIndex) ? indexes.groupIndex : 0;
+    const index = isExisty(indexes.groupIndex) ? indexes.groupIndex : 0;
     const seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
     let result;
 
-    if (snippet.isExisty(seriesItem)) {
+    if (isExisty(seriesItem)) {
       result = {
         chartType: legendData.chartType,
         legend: legendData.label,
@@ -773,7 +775,7 @@ class Series {
     const eventName = `${PUBLIC_EVENT_PREFIX}selectSeries`;
 
     this.eventBus.fire(eventName, this._makeExportationSeriesData(seriesData));
-    shouldSelect = snippet.isEmpty(shouldSelect) ? true : shouldSelect;
+    shouldSelect = isEmpty(shouldSelect) ? true : shouldSelect;
 
     if (this.options.allowSelect && this.graphRenderer.selectSeries && shouldSelect) {
       this.graphRenderer.selectSeries(seriesData.indexes);
@@ -803,7 +805,7 @@ class Series {
    * @param {?number} legendIndex - legend index
    */
   onSelectLegend(seriesType, legendIndex) {
-    if (this.seriesType !== seriesType && !snippet.isNull(legendIndex)) {
+    if (this.seriesType !== seriesType && !isNull(legendIndex)) {
       legendIndex = -1;
     }
 

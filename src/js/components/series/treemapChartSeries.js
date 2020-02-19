@@ -3,12 +3,13 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import Series from './series';
 import squarifier from './squarifier';
 import labelHelper from './renderingLabelHelper';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
-import snippet from 'tui-code-snippet';
 
 class TreemapChartSeries extends Series {
   /**
@@ -64,11 +65,11 @@ class TreemapChartSeries extends Series {
   _initOptions() {
     this.options.useColorValue = !!this.options.useColorValue;
 
-    if (snippet.isUndefined(this.options.zoomable)) {
+    if (isUndefined(this.options.zoomable)) {
       this.options.zoomable = !this.options.useColorValue;
     }
 
-    if (snippet.isUndefined(this.options.useLeafLabel)) {
+    if (isUndefined(this.options.useLeafLabel)) {
       this.options.useLeafLabel = !this.options.zoomable;
     }
   }
@@ -109,11 +110,11 @@ class TreemapChartSeries extends Series {
    */
   _makeBoundMap(parent, boundMap, layout) {
     const seriesDataModel = this._getSeriesDataModel();
-    const defaultLayout = snippet.extend({}, this.layout.dimension, this.layout.position);
+    const defaultLayout = Object.assign({}, this.layout.dimension, this.layout.position);
     const seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
 
     layout = layout || defaultLayout;
-    boundMap = snippet.extend(boundMap || {}, squarifier.squarify(layout, seriesItems));
+    boundMap = Object.assign(boundMap || {}, squarifier.squarify(layout, seriesItems));
 
     seriesItems.forEach(seriesItem => {
       boundMap = this._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
@@ -255,7 +256,7 @@ class TreemapChartSeries extends Series {
     this.rootId = rootId;
     this.startDepth = startDepth;
     this.selectedGroup = group;
-    this._renderSeriesArea(this.paper, snippet.bind(this._renderGraph, this));
+    this._renderSeriesArea(this.paper, this._renderGraph.bind(this));
     this.animateComponent(true);
   }
 
@@ -299,7 +300,7 @@ class TreemapChartSeries extends Series {
       true
     );
 
-    return snippet.extend({
+    return Object.assign({
       chartType: this.chartType,
       indexes: seriesItem.indexes
     });

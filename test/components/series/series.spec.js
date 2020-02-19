@@ -3,11 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import Series from '../../../src/js/components/series/series';
 import chartConst from '../../../src/js/const';
 import dom from '../../../src/js/helpers/domHandler';
 import renderUtil from '../../../src/js/helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 describe('Series', () => {
   let series;
@@ -25,7 +25,7 @@ describe('Series', () => {
         colors: ['blue']
       },
       options: {},
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
   });
 

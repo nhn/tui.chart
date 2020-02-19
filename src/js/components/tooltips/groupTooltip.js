@@ -3,6 +3,8 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
+import pluck from 'tui-code-snippet/collection/pluck';
 
 import TooltipBase from './tooltipBase';
 import GroupTooltipPositionModel from './groupTooltipPositionModel';
@@ -11,7 +13,6 @@ import dom from '../../helpers/domHandler';
 import renderUtil from '../../helpers/renderUtil';
 import defaultTheme from '../../themes/defaultTheme';
 import tooltipTemplate from './tooltipTemplate';
-import snippet from 'tui-code-snippet';
 import predicate from '../../helpers/predicate';
 const {
   TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION,
@@ -76,7 +77,7 @@ class GroupTooltip extends TooltipBase {
         }
 
         itemHtml += template(
-          snippet.extend(
+          Object.assign(
             {
               cssText: cssTextTemplate({ color: colorByPoint ? '#aaa' : colors[index] })
             },
@@ -225,7 +226,7 @@ class GroupTooltip extends TooltipBase {
 
     const defaultColors = defaultTheme.series.colors.slice(0, legendLabels.length);
 
-    return snippet.pluck(legendLabels, 'chartType').map(chartType => {
+    return pluck(legendLabels, 'chartType').map(chartType => {
       if (prevChartType !== chartType) {
         colors = theme[chartType] ? theme[chartType].colors : defaultColors;
         colorIndex = 0;
@@ -433,7 +434,7 @@ class GroupTooltip extends TooltipBase {
    * @private
    */
   _showTooltip(elTooltip, params, prevPosition) {
-    if (!snippet.isNull(this.prevIndex)) {
+    if (!isNull(this.prevIndex)) {
       this.eventBus.fire('hideGroupAnimation', this.prevIndex);
     }
 

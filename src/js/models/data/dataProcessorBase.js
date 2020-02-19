@@ -4,10 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isFunction from 'tui-code-snippet/type/isFunction';
+import isString from 'tui-code-snippet/type/isString';
+import pick from 'tui-code-snippet/object/pick';
+
 import arrayUtil from '../../helpers/arrayUtil';
 import renderUtil from '../../helpers/renderUtil';
 import calculator from '../../helpers/calculator';
-import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc data processor base.
@@ -189,10 +192,10 @@ class DataProcessorBase {
 
     if (this._isDecimal(format)) {
       len = this._pickMaxLenUnderPoint([format]);
-      funcs = [snippet.bind(this._formatToDecimal, this, len)];
+      funcs = [this._formatToDecimal.bind(this, len)];
     } else if (this._isZeroFill(format)) {
       len = format.length;
-      funcs = [snippet.bind(this._formatToZeroFill, this, len)];
+      funcs = [this._formatToZeroFill.bind(this, len)];
 
       return funcs;
     }
@@ -210,12 +213,12 @@ class DataProcessorBase {
    * @private
    */
   _findFormatFunctions() {
-    const format = snippet.pick(this.options, 'chart', 'format');
+    const format = pick(this.options, 'chart', 'format');
     let funcs = [];
 
-    if (snippet.isFunction(format)) {
+    if (isFunction(format)) {
       funcs = [format];
-    } else if (snippet.isString(format)) {
+    } else if (isString(format)) {
       funcs = this._findSimpleTypeFormatFunctions(format);
     }
 

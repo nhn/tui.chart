@@ -1,9 +1,9 @@
 /**
  * @fileoverview Implement function that calculate coordinate scale data
- * @author Sungho Kim
+ * @author NHN.
+ *         FE Development Lab <dl_javascript@nhn.com>
  */
-
-import snippet from 'tui-code-snippet';
+import isNumber from 'tui-code-snippet/type/isNumber';
 
 /**
  * The reference values to normailze value
@@ -169,7 +169,7 @@ function getRoughScale(min, max, offsetSize, stepCount, minimumStepSize) {
   const pixelsPerStep = offsetSize / stepCount;
   let step = valuePerPixel * pixelsPerStep;
 
-  if (snippet.isNumber(minimumStepSize) && step < minimumStepSize) {
+  if (isNumber(minimumStepSize) && step < minimumStepSize) {
     step = minimumStepSize;
     stepCount = limitSize / step;
   }

@@ -3,11 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import barSeriesFactory from '../../../src/js/components/series/barChartSeries';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
 import SeriesGroup from '../../../src/js/models/data/seriesGroup';
 import renderUtil from '../../../src/js/helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 describe('BarChartSeries', () => {
   let series, dataProcessor;
@@ -39,7 +39,7 @@ describe('BarChartSeries', () => {
       },
       options: {},
       dataProcessor,
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     series.layout = {
       position: {

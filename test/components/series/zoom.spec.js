@@ -3,15 +3,15 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import Zoom from '../../../src/js/components/series/zoom';
-import snippet from 'tui-code-snippet';
 
 describe('Zoom', () => {
   let zoom;
 
   beforeEach(() => {
     zoom = new Zoom({
-      eventBus: new snippet.CustomEvents(),
+      eventBus: new CustomEvents(),
       dataProcessor: {
         options: {
           legend: {}

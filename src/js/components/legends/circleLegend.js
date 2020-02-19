@@ -4,12 +4,13 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import pick from 'tui-code-snippet/object/pick';
 
 import chartConst from '../../const';
 import calculator from '../../helpers/calculator';
 import renderUtil from '../../helpers/renderUtil';
 import pluginFactory from '../../factories/pluginFactory';
-import snippet from 'tui-code-snippet';
 
 class CircleLegend {
   /**
@@ -181,11 +182,11 @@ export default function circleLegendFactory(params) {
     chartTheme,
     chartOptions: { chartType }
   } = params;
-  const visibleOption = snippet.pick(params.chartOptions, 'circleLegend', 'visible');
+  const visibleOption = pick(params.chartOptions, 'circleLegend', 'visible');
   let circleLegend = null;
   let isLegendVisible;
 
-  if (snippet.isUndefined(visibleOption)) {
+  if (isUndefined(visibleOption)) {
     isLegendVisible = true;
   } else {
     isLegendVisible = visibleOption;

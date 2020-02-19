@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import normalTooltipFactory from '../../../src/js/components/tooltips/normalTooltip';
 import DataProcessor from '../../../src/js/models/data/dataProcessor';
 import SeriesDataModel from '../../../src/js/models/data/seriesDataModel';
@@ -21,7 +21,7 @@ describe('NormalTooltip', () => {
     tooltip = new normalTooltipFactory.NormalTooltip({
       chartType: 'column',
       dataProcessor,
-      eventBus: new snippet.CustomEvents(),
+      eventBus: new CustomEvents(),
       options: {}
     });
   });
@@ -36,7 +36,7 @@ describe('NormalTooltip', () => {
       tooltip = new normalTooltipFactory.NormalTooltip({
         chartType: 'pie',
         dataProcessor,
-        eventBus: new snippet.CustomEvents(),
+        eventBus: new CustomEvents(),
         options: {},
         labelFormatter: (seriesDatum, tooltipDatum) => {
           tooltipDatum.label = seriesDatum.label;

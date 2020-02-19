@@ -33,7 +33,7 @@
 
 import SeriesItemForBoxplot from './seriesItemForBoxplot';
 import SeriesDataModel from './seriesDataModel';
-import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
 
 const { concat } = Array.prototype;
 
@@ -108,7 +108,7 @@ class SeriesDataModelForBoxplot extends SeriesDataModel {
     const { chartType, formatFunctions } = this;
 
     return this.rawSeriesData.map(rawDatum => {
-      const data = snippet.isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+      const data = isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
       const items = data.map(
         (datum, index) =>
           new SeriesItemForBoxplot({

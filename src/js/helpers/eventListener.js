@@ -3,7 +3,8 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import isString from 'tui-code-snippet/type/isString';
+import forEach from 'tui-code-snippet/collection/forEach';
 
 const bindHandlerMap = {};
 
@@ -47,7 +48,7 @@ const eventListener = {
     let bindHandler;
 
     if (context) {
-      bindHandler = snippet.bind(handler, context);
+      bindHandler = handler.bind(context);
     } else {
       bindHandler = handler;
     }
@@ -89,14 +90,14 @@ const eventListener = {
    */
   on(target, types, handler, context) {
     let handlerMap = {};
-    if (snippet.isString(types)) {
+    if (isString(types)) {
       handlerMap[types] = handler;
     } else {
       handlerMap = types;
       context = handler;
     }
 
-    snippet.forEach(handlerMap, (_handler, type) => {
+    forEach(handlerMap, (_handler, type) => {
       eventListener._bindEvent(target, type, _handler, context);
     });
   },
@@ -158,13 +159,13 @@ const eventListener = {
    */
   off(target, types, handler) {
     let handlerMap = {};
-    if (snippet.isString(types)) {
+    if (isString(types)) {
       handlerMap[types] = handler;
     } else {
       handlerMap = types;
     }
 
-    snippet.forEach(handlerMap, (_handler, type) => {
+    forEach(handlerMap, (_handler, type) => {
       eventListener._unbindEvent(target, type, _handler);
     });
   }

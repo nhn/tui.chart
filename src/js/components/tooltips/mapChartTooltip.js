@@ -3,12 +3,10 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-
 import chartConst from '../../const';
 import TooltipBase from './tooltipBase';
 import singleTooltipMixer from './singleTooltipMixer';
 import tooltipTemplate from './tooltipTemplate';
-import snippet from 'tui-code-snippet';
 
 /**
  * @classdesc MapChartTooltip component.
@@ -75,7 +73,7 @@ class MapChartTooltip extends TooltipBase {
    */
   _makeShowTooltipParams(indexes, additionParams) {
     const datum = this.mapModel.getDatum(indexes.index);
-    const params = snippet.extend(
+    const params = Object.assign(
       {
         chartType: this.chartType,
         code: datum.code,

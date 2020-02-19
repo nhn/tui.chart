@@ -4,10 +4,14 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNull from 'tui-code-snippet/type/isNull';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
-import snippet from 'tui-code-snippet';
 
 class Plot {
   /**
@@ -38,9 +42,7 @@ class Plot {
      * @type {object}
      */
     this.options = params.options || {};
-    this.options.showLine = snippet.isUndefined(this.options.showLine)
-      ? true
-      : this.options.showLine;
+    this.options.showLine = isUndefined(this.options.showLine) ? true : this.options.showLine;
     this.options.lines = this.options.lines || [];
     this.options.bands = this.options.bands || [];
 
@@ -179,7 +181,7 @@ class Plot {
    * @private
    */
   _makeVerticalLineTemplateParams(additionalParams) {
-    return snippet.extend(
+    return Object.assign(
       {
         className: 'vertical',
         positionType: 'left',
@@ -196,7 +198,7 @@ class Plot {
    * @private
    */
   _makeHorizontalLineTemplateParams(additionalParams) {
-    return snippet.extend(
+    return Object.assign(
       {
         className: 'horizontal',
         positionType: 'bottom',
@@ -340,7 +342,7 @@ class Plot {
     let position = null;
     let ratio;
 
-    if (!snippet.isNull(index)) {
+    if (!isNull(index)) {
       const categoryCount = dataProcessor.getCategoryCount();
       const divCount = isPointOnColumn ? categoryCount : categoryCount - 1;
 
@@ -382,12 +384,12 @@ class Plot {
       endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
     }
 
-    if (snippet.isNull(startPosition)) {
+    if (isNull(startPosition)) {
       const startValue = categoriesLen ? categories[0] : xAxisValues[0];
       startPosition = this._isBeforeVisibleValue(range[0], startValue) ? 0 : -1;
     }
 
-    if (snippet.isNull(endPosition) || endPosition > width) {
+    if (isNull(endPosition) || endPosition > width) {
       const endValue = categoriesLen
         ? categories[categoriesLen - 1]
         : xAxisValues[xAxisValues.length - 1];
@@ -409,7 +411,7 @@ class Plot {
   _isBeforeVisibleValue(value, firstValue) {
     const { dataProcessor } = this;
 
-    if (!snippet.isExisty(value)) {
+    if (!isExisty(value)) {
       return false;
     }
 
@@ -432,7 +434,7 @@ class Plot {
   _isAfterVisibleValue(value, lastValue) {
     const { dataProcessor } = this;
 
-    if (!snippet.isExisty(value)) {
+    if (!isExisty(value)) {
       return false;
     }
 
@@ -809,7 +811,7 @@ class Plot {
   _makeRangeTo2DArray(optionalLineData) {
     const { range } = optionalLineData;
     const isOneDimensionArray =
-      range && snippet.isArray(range) && (range.length === 0 || !snippet.isArray(range[0]));
+      range && isArray(range) && (range.length === 0 || !isArray(range[0]));
 
     if (isOneDimensionArray) {
       optionalLineData.range = [range];
@@ -848,7 +850,7 @@ class Plot {
 
 /**
  * Compare positionMap by it's start value
- * @param {{start: number, end: number}} previous - previouse plot band positionMap
+ * @param {{start: number, end: number}} previous - previous plot band positionMap
  * @param {{start: number, end: number}} current - current plot band positionMap
  * @returns {number} - comparison of whether a is greater than b
  * @ignore

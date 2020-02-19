@@ -4,12 +4,14 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import pick from 'tui-code-snippet/object/pick';
 import ChartBase from './chartBase';
 import predicate from '../helpers/predicate';
 import DynamicDataHelper from './dynamicDataHelper';
 import Series from '../components/series/lineChartSeries';
 import rawDataHandler from '../models/data/rawDataHandler';
-import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class LineChart extends ChartBase {
@@ -98,7 +100,7 @@ class LineChart extends ChartBase {
       };
     }
 
-    snippet.forEachArray(chartTypes, addDataRatio);
+    forEachArray(chartTypes, addDataRatio);
   }
 
   /**
@@ -141,7 +143,7 @@ class LineChart extends ChartBase {
 
     if (this.dataProcessor.isCoordinateType()) {
       isDateTimeTypeXAxis = xAxisOption && xAxisOption.type === 'datetime';
-      hasDateFormat = isDateTimeTypeXAxis && snippet.isExisty(xAxisOption.dateFormat);
+      hasDateFormat = isDateTimeTypeXAxis && isExisty(xAxisOption.dateFormat);
 
       scaleOption.xAxis = {
         valueType: 'x'
@@ -256,7 +258,7 @@ class LineChart extends ChartBase {
 
     this.dataProcessor.initData(rawData);
     this.dataProcessor.initZoomedRawData();
-    this.dataProcessor.addDataFromRemainDynamicData(snippet.pick(this.options.series, 'shifting'));
+    this.dataProcessor.addDataFromRemainDynamicData(pick(this.options.series, 'shifting'));
     this._renderForZoom(true);
     this._dynamicDataHelper.restartAnimation();
   }

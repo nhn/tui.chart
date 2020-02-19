@@ -3,6 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isArray from 'tui-code-snippet/type/isArray';
+import isBoolean from 'tui-code-snippet/type/isBoolean';
+import isNumber from 'tui-code-snippet/type/isNumber';
+import isObject from 'tui-code-snippet/type/isObject';
+import pick from 'tui-code-snippet/object/pick';
 
 import chartConst from '../const';
 import dom from '../helpers/domHandler';
@@ -42,7 +47,6 @@ import TreemapSeries from '../components/series/treemapChartSeries';
 import BoxplotSeries from '../components/series/boxPlotChartSeries';
 import BulletSeries from '../components/series/bulletChartSeries';
 import Zoom from '../components/series/zoom';
-import snippet from 'tui-code-snippet';
 import raphaelRenderUtil from '../plugins/raphaelRenderUtil';
 
 const COMPONENT_FACTORY_MAP = {
@@ -88,8 +92,8 @@ class ComponentManager {
    */
   constructor(params) {
     const chartOption = params.options.chart;
-    const width = snippet.pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
-    const height = snippet.pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
+    const width = pick(chartOption, 'width') || chartConst.CHART_DEFAULT_WIDTH;
+    const height = pick(chartOption, 'height') || chartConst.CHART_DEFAULT_HEIGHT;
 
     /**
      * Components
@@ -168,7 +172,7 @@ class ComponentManager {
    */
   _makeComponentOptions(options, optionKey, componentName, index) {
     options = options || this.options[optionKey];
-    options = snippet.isArray(options) ? options[index] : options || {};
+    options = isArray(options) ? options[index] : options || {};
 
     return options;
   }
@@ -252,7 +256,7 @@ class ComponentManager {
    */
   presetAnimationConfig(animation) {
     this.seriesTypes.forEach(seriesType => {
-      if (snippet.isObject(this.options.series[seriesType])) {
+      if (isObject(this.options.series[seriesType])) {
         // For combo chart, options are set for each chart
         this.options.series[seriesType].animationDuration = this._getAnimationDuration(animation);
       } else {
@@ -268,11 +272,11 @@ class ComponentManager {
    * @private
    */
   _getAnimationDuration(animation) {
-    if (snippet.isBoolean(animation) && !animation) {
+    if (isBoolean(animation) && !animation) {
       return 0;
     }
 
-    if (snippet.isObject(animation) && snippet.isNumber(animation.duration)) {
+    if (isObject(animation) && isNumber(animation.duration)) {
       return animation.duration;
     }
 
@@ -299,7 +303,7 @@ class ComponentManager {
         if (name.indexOf(seriesType) === 0) {
           options = options[seriesType] || options; // For combo chart, options are set for each chart
 
-          if (snippet.isArray(options)) {
+          if (isArray(options)) {
             options = options[index] || {};
           }
 

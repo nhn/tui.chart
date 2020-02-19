@@ -4,9 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
-import renderUtil from '../helpers/renderUtil';
+import range from 'tui-code-snippet/array/range';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import decodeHTMLEntity from 'tui-code-snippet/string/decodeHTMLEntity';
 import raphael from 'raphael';
+
+import renderUtil from '../helpers/renderUtil';
 
 const LINE_HEIGHT_FOR_CALCULATE = 1.11;
 const storeForGetTextDimension = {
@@ -56,7 +60,7 @@ export default {
     const line = paper.path([path]);
     const strokeStyle = {
       stroke: color,
-      'stroke-width': snippet.isUndefined(strokeWidth) ? 2 : strokeWidth,
+      'stroke-width': isUndefined(strokeWidth) ? 2 : strokeWidth,
       'stroke-linecap': 'butt'
     };
     if (color === 'transparent') {
@@ -104,7 +108,7 @@ export default {
    * @returns {object}
    */
   renderText(paper, pos, text, attributes) {
-    const textObj = paper.text(pos.left, pos.top, snippet.decodeHTMLEntity(String(text)));
+    const textObj = paper.text(pos.left, pos.top, decodeHTMLEntity(String(text)));
 
     if (attributes) {
       if (attributes['dominant-baseline']) {
@@ -218,8 +222,7 @@ export default {
     hex = hex.replace('#', '');
     lum = lum || 0;
 
-    const changedHex = snippet
-      .range(3)
+    const changedHex = range(3)
       .map(index => {
         const hd = parseInt(hex.substr(index * 2, 2), 16);
         let newHd = hd + hd * lum;
@@ -392,7 +395,7 @@ export default {
  * @returns {boolean}
  */
 function isNumber(numberSuspect) {
-  return snippet.isExisty(numberSuspect) && typeof numberSuspect === 'number';
+  return isExisty(numberSuspect) && typeof numberSuspect === 'number';
 }
 
 /**

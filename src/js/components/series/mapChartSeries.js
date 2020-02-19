@@ -4,11 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isNull from 'tui-code-snippet/type/isNull';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import browser from 'tui-code-snippet/browser/browser';
+
 import Series from './series';
 import chartConst from '../../const';
-import snippet from 'tui-code-snippet';
 
-const { browser } = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const { TOOLTIP_GAP, PUBLIC_EVENT_PREFIX } = chartConst;
 
@@ -305,7 +307,7 @@ class MapChartSeries extends Series {
   onClickSeries(position) {
     const foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 
-    if (!snippet.isNull(foundIndex)) {
+    if (!isNull(foundIndex)) {
       this.eventBus.fire('selectSeries', {
         chartType: this.chartType,
         index: foundIndex,
@@ -335,7 +337,7 @@ class MapChartSeries extends Series {
   _showWedge(index) {
     const { ratio, label } = this.mapModel.getDatum(index);
 
-    if (!snippet.isUndefined(ratio)) {
+    if (!isUndefined(ratio)) {
       this.eventBus.fire('showWedge', ratio, label);
     }
   }
@@ -366,9 +368,9 @@ class MapChartSeries extends Series {
   onMoveSeries(position) {
     const foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 
-    if (!snippet.isNull(foundIndex)) {
+    if (!isNull(foundIndex)) {
       if (this.prevMovedIndex !== foundIndex) {
-        if (!snippet.isNull(this.prevMovedIndex)) {
+        if (!isNull(this.prevMovedIndex)) {
           this.graphRenderer.restoreColor(this.prevMovedIndex);
           this.eventBus.fire('hideTooltip');
         }
@@ -385,7 +387,7 @@ class MapChartSeries extends Series {
       }
 
       this._showWedge(foundIndex);
-    } else if (!snippet.isNull(this.prevMovedIndex)) {
+    } else if (!isNull(this.prevMovedIndex)) {
       this.graphRenderer.restoreColor(this.prevMovedIndex);
       this.eventBus.fire('hideTooltip');
       this.prevMovedIndex = null;

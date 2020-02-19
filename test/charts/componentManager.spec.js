@@ -4,7 +4,8 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import ComponentManager from '../../src/js/charts/componentManager';
-import snippet from 'tui-code-snippet';
+import inArray from 'tui-code-snippet/array/inArray';
+import pluck from 'tui-code-snippet/collection/pluck';
 
 describe('Test for ComponentManager', () => {
   let componentManager;
@@ -30,9 +31,7 @@ describe('Test for ComponentManager', () => {
       const { plot } = componentManager.componentMap;
       expect(plot).toBeTruthy();
       expect(plot.componentType).toEqual('plot');
-      expect(
-        snippet.inArray('plot', snippet.pluck(componentManager.components, 'componentName'))
-      ).toBe(0);
+      expect(inArray('plot', pluck(componentManager.components, 'componentName'))).toBe(0);
     });
 
     it('should not have plot component, before register plot', () => {

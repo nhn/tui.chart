@@ -118,3 +118,152 @@ if (!Array.isArray) {
     };
   }
 })();
+
+// https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function(oThis) {
+    if (typeof this !== 'function') {
+      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+    }
+
+    var aArgs = Array.prototype.slice.call(arguments, 1),
+      fToBind = this,
+      fNOP = function() {},
+      fBound = function() {
+        return fToBind.apply(
+          this instanceof fNOP ? this : oThis,
+          aArgs.concat(Array.prototype.slice.call(arguments))
+        );
+      };
+
+    if (this.prototype) {
+      fNOP.prototype = this.prototype;
+    }
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+}
+
+// https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+if (!Array.prototype.filter) {
+  Array.prototype.filter = function(func, thisArg) {
+    'use strict';
+    if (!((typeof func === 'Function' || typeof func === 'function') && this))
+      throw new TypeError();
+
+    var len = this.length >>> 0,
+      res = new Array(len), // preallocate array
+      t = this,
+      c = 0,
+      i = -1;
+    if (thisArg === undefined) {
+      while (++i !== len) {
+        // checks to see if the key was set
+        if (i in this) {
+          if (func(t[i], i, t)) {
+            res[c++] = t[i];
+          }
+        }
+      }
+    } else {
+      while (++i !== len) {
+        // checks to see if the key was set
+        if (i in this) {
+          if (func.call(thisArg, t[i], i, t)) {
+            res[c++] = t[i];
+          }
+        }
+      }
+    }
+
+    res.length = c; // shrink down array to proper size
+    return res;
+  };
+}
+
+// Production steps of ECMA-262, Edition 5, 15.4.4.19
+// Reference: http://es5.github.io/#x15.4.4.19
+if (!Array.prototype.map) {
+  Array.prototype.map = function(callback, thisArg) {
+    var T, A, k;
+    if (this == null) {
+      throw new TypeError(' this is null or not defined');
+    }
+
+    var O = Object(this);
+    var len = O.length >>> 0;
+
+    // See: http://es5.github.com/#x9.11
+    if (typeof callback !== 'function') {
+      throw new TypeError(callback + ' is not a function');
+    }
+
+    if (arguments.length > 1) {
+      T = thisArg;
+    }
+
+    A = new Array(len);
+    k = 0;
+
+    while (k < len) {
+      var kValue, mappedValue;
+
+      if (k in O) {
+        kValue = O[k];
+        mappedValue = callback.call(T, kValue, k, O);
+
+        A[k] = mappedValue;
+      }
+      k++;
+    }
+
+    return A;
+  };
+}
+
+// ECMA-262의 진행 단계, 5판(Edition), 15.4.4.21
+// 참조: http://es5.github.io/#x15.4.4.21
+// https://tc39.github.io/ecma262/#sec-array.prototype.reduce
+if (!Array.prototype.reduce) {
+  Object.defineProperty(Array.prototype, 'reduce', {
+    value: function(callback /*, initialValue*/) {
+      if (this === null) {
+        throw new TypeError('Array.prototype.reduce ' + 'called on null or undefined');
+      }
+      if (typeof callback !== 'function') {
+        throw new TypeError(callback + ' is not a function');
+      }
+
+      var o = Object(this);
+
+      var len = o.length >>> 0;
+
+      var k = 0;
+      var value;
+
+      if (arguments.length >= 2) {
+        value = arguments[1];
+      } else {
+        while (k < len && !(k in o)) {
+          k++;
+        }
+
+        if (k >= len) {
+          throw new TypeError('Reduce of empty array ' + 'with no initial value');
+        }
+        value = o[k++];
+      }
+
+      while (k < len) {
+        if (k in o) {
+          value = callback(value, o[k], k, o);
+        }
+
+        k++;
+      }
+
+      return value;
+    }
+  });
+}

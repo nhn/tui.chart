@@ -3,13 +3,14 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import pick from 'tui-code-snippet/object/pick';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 import ChartBase from './chartBase';
 import rawDataHandler from '../models/data/rawDataHandler';
 import predicate from '../helpers/predicate';
 import validTypeMakerForYAxisOptions from './validTypeMakerForYAxisOptions';
 import DynamicDataHelper from './dynamicDataHelper';
-import snippet from 'tui-code-snippet';
 
 /** Class representing a point. */
 class LineAreaComboChart extends ChartBase {
@@ -217,7 +218,7 @@ class LineAreaComboChart extends ChartBase {
       };
     }
 
-    snippet.forEachArray(chartTypes, addDataRatio);
+    forEachArray(chartTypes, addDataRatio);
   }
 
   /**
@@ -301,7 +302,7 @@ class LineAreaComboChart extends ChartBase {
 
     this.dataProcessor.initData(rawData);
     this.dataProcessor.initZoomedRawData();
-    this.dataProcessor.addDataFromRemainDynamicData(snippet.pick(this.options.series, 'shifting'));
+    this.dataProcessor.addDataFromRemainDynamicData(pick(this.options.series, 'shifting'));
     this._renderForZoom(true);
     this._dynamicDataHelper.restartAnimation();
   }

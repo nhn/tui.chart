@@ -3,12 +3,13 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isNull from 'tui-code-snippet/type/isNull';
 
 import Series from './series';
 import chartConst from '../../const';
 import calculator from '../../helpers/calculator';
 import geom from '../../helpers/geometric';
-import snippet from 'tui-code-snippet';
+
 const { COMPONENT_TYPE_RAPHAEL, RADIAL_PLOT_PADDING, RADIAL_MARGIN_FOR_CATEGORY } = chartConst;
 
 class RadialChartSeries extends Series {
@@ -77,7 +78,7 @@ class RadialChartSeries extends Series {
       const positions = seriesGroup.map((seriesItem, index) => {
         let position;
 
-        if (!snippet.isNull(seriesItem.end)) {
+        if (!isNull(seriesItem.end)) {
           const valueSize = seriesItem.ratio * radius;
 
           // center y + real vaule size

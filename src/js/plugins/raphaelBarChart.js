@@ -3,9 +3,11 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import raphaelRenderUtil from './raphaelRenderUtil';
-import snippet from 'tui-code-snippet';
 import raphael from 'raphael';
+import isNull from 'tui-code-snippet/type/isNull';
+import forEach from 'tui-code-snippet/collection/forEach';
+
+import raphaelRenderUtil from './raphaelRenderUtil';
 
 const ANIMATION_DURATION = 700;
 const EMPHASIS_OPACITY = 1;
@@ -188,7 +190,7 @@ class RaphaelBarChart {
     let linePath = null;
 
     if (chartType === 'bar' || value >= 0 || item.isRange) {
-      const cloneLeftTop = snippet.extend({}, points.leftTop);
+      const cloneLeftTop = Object.assign({}, points.leftTop);
       cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
       linePath = raphaelRenderUtil.makeLinePath(cloneLeftTop, points.rightTop).join(' ');
     }
@@ -273,7 +275,13 @@ class RaphaelBarChart {
       left: this._makeLeftLinePath(points, chartType, item)
     };
 
-    return snippet.filter(paths, path => path);
+    Object.keys(paths).forEach(type => {
+      if (!paths[type]) {
+        delete paths[type];
+      }
+    });
+
+    return paths;
   }
 
   /**
@@ -309,8 +317,8 @@ class RaphaelBarChart {
       return null;
     }
 
-    const groupBorders = snippet.map(groupBounds, (bounds, groupIndex) =>
-      snippet.map(bounds, (bound, index) => {
+    const groupBorders = groupBounds.map((bounds, groupIndex) =>
+      bounds.map((bound, index) => {
         if (!bound) {
           return null;
         }
@@ -356,7 +364,7 @@ class RaphaelBarChart {
   _animateBorders(lines, bound, chartType, item) {
     const paths = this._makeBorderLinesPaths(bound, chartType, item);
 
-    snippet.forEach(lines, (line, name) => {
+    forEach(lines, (line, name) => {
       line.animate(
         {
           path: paths[name]
@@ -509,7 +517,7 @@ class RaphaelBarChart {
    * @private
    */
   _changeBordersColor(lines, borderColor) {
-    snippet.forEach(lines, line => {
+    forEach(lines, line => {
       line.attr({ stroke: borderColor });
     });
   }
@@ -574,7 +582,7 @@ class RaphaelBarChart {
    */
   selectLegend(legendIndex) {
     const groupBorders = this.groupBorders || [];
-    const noneSelected = snippet.isNull(legendIndex);
+    const noneSelected = isNull(legendIndex);
 
     raphaelRenderUtil.forEach2dArray(this.groupBars, (bar, groupIndex, index) => {
       if (!bar) {
@@ -587,7 +595,7 @@ class RaphaelBarChart {
 
       bar.rect.attr({ 'fill-opacity': opacity });
       if (lines) {
-        snippet.forEach(lines, line => {
+        forEach(lines, line => {
           line.attr({ 'stroke-opacity': opacity });
         });
       }

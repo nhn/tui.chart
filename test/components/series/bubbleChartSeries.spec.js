@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import bubbleSeriesFactory from '../../../src/js/components/series/bubbleChartSeries';
 
 describe('BubbleChartSeries', () => {
@@ -30,7 +30,7 @@ describe('BubbleChartSeries', () => {
       },
       options: {},
       dataProcessor,
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
     series.layout = {
       position: {

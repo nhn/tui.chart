@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import range from 'tui-code-snippet/array/range';
 import arrayUtil from './arrayUtil';
 const PERCENT_DIVISOR = 100;
 
@@ -59,7 +59,7 @@ const calculator = {
     additionalPosition = additionalPosition || 0;
 
     if (count > 0) {
-      positions = snippet.range(0, count).map(index => {
+      positions = range(0, count).map(index => {
         const ratio = index === 0 ? 0 : index / (count - 1);
 
         return ratio * size + additionalPosition;
@@ -86,7 +86,7 @@ const calculator = {
     const multipleNum = calculator.findMultipleNum(step);
     const min = Math.round(limit.min * multipleNum);
     const max = Math.round(limit.max * multipleNum);
-    const labels = snippet.range(min, max + 1, step * multipleNum);
+    const labels = range(min, max + 1, step * multipleNum);
 
     return labels.map(label => label / multipleNum);
   },
@@ -108,7 +108,7 @@ const calculator = {
    * @returns {number} sum
    */
   sumPlusValues(values) {
-    const plusValues = snippet.filter(values, value => value > 0);
+    const plusValues = values.filter(value => value > 0);
 
     return calculator.sum(plusValues);
   },
@@ -119,7 +119,7 @@ const calculator = {
    * @returns {number} sum
    */
   sumMinusValues(values) {
-    const minusValues = snippet.filter(values, value => value < 0);
+    const minusValues = values.filter(value => value < 0);
 
     return calculator.sum(minusValues);
   },

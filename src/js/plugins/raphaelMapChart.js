@@ -4,12 +4,13 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import browser from 'tui-code-snippet/browser/browser';
+
 import raphaelRenderUtil from './raphaelRenderUtil';
 import dom from '../helpers/domHandler';
 import renderUtil from '../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
-const { browser } = snippet;
 const IS_LTE_IE8 = browser.msie && browser.version <= 8;
 const STROKE_COLOR = 'gray';
 const ANIMATION_DURATION = 100;
@@ -108,9 +109,9 @@ class RaphaelMapChart {
   findSectorIndex(position) {
     const sector = this.paper.getElementByPoint(position.left, position.top);
     const foundIndex = sector && sector.data('index');
-    const data = !snippet.isUndefined(foundIndex) && this.sectors[foundIndex];
+    const data = !isUndefined(foundIndex) && this.sectors[foundIndex];
 
-    return data && !snippet.isUndefined(data.ratio) ? foundIndex : null;
+    return data && !isUndefined(data.ratio) ? foundIndex : null;
   }
 
   /**

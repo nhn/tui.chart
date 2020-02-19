@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import raphael from 'raphael';
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import legendFactory from '../../../src/js/components/legends/legend';
 import chartConst from '../../../src/js/const';
 import renderUtil from '../../../src/js/helpers/renderUtil';
@@ -43,7 +43,7 @@ describe('Test for Legend', () => {
         }
       },
       chartType: 'column',
-      eventBus: new snippet.CustomEvents(),
+      eventBus: new CustomEvents(),
       options: {}
     });
     spyOn(legend.eventBus, 'fire');

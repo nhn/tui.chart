@@ -4,7 +4,10 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import isArray from 'tui-code-snippet/type/isArray';
+import isString from 'tui-code-snippet/type/isString';
+import inArray from 'tui-code-snippet/array/inArray';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 
 /**
  * DOM Handler.
@@ -43,7 +46,7 @@ export default {
       classNames = [...el.classList];
     } else {
       className = el.className || '';
-      classNames = className && snippet.isString(className) ? className.split(' ') : [];
+      classNames = className && isString(className) ? className.split(' ') : [];
     }
 
     return classNames;
@@ -61,7 +64,7 @@ export default {
     }
 
     const classNames = this._getClassNames(el);
-    const index = snippet.inArray(newClass, classNames);
+    const index = inArray(newClass, classNames);
 
     if (index > -1) {
       return;
@@ -79,7 +82,7 @@ export default {
    */
   removeClass(el, rmClass) {
     const classNames = this._getClassNames(el);
-    const index = snippet.inArray(rmClass, classNames);
+    const index = inArray(rmClass, classNames);
 
     if (index === -1) {
       return;
@@ -98,7 +101,7 @@ export default {
    */
   hasClass(el, findClass) {
     const classNames = this._getClassNames(el);
-    const index = snippet.inArray(findClass, classNames);
+    const index = inArray(findClass, classNames);
 
     return index > -1;
   },
@@ -138,9 +141,9 @@ export default {
     if (!container || !children) {
       return;
     }
-    children = snippet.isArray(children) ? children : [children];
+    children = isArray(children) ? children : [children];
 
-    snippet.forEachArray(children, child => {
+    forEachArray(children, child => {
       if (!child) {
         return;
       }

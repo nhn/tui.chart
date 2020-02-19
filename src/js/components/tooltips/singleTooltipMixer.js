@@ -3,8 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-
-import snippet from 'tui-code-snippet';
+import isNull from 'tui-code-snippet/type/isNull';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import dom from '../../helpers/domHandler';
@@ -37,7 +36,7 @@ export default {
     const index = elTooltip.getAttribute('data-index');
     let indexes = null;
 
-    if (!snippet.isNull(groupIndex) && !snippet.isNull(index)) {
+    if (!isNull(groupIndex) && !isNull(index)) {
       indexes = {
         groupIndex: parseInt(groupIndex, 10),
         index: parseInt(index, 10)
@@ -168,7 +167,7 @@ export default {
   _makeTooltipPositionToMousePosition(params) {
     if (!params.bound) {
       params.bound = params.bound || {};
-      snippet.extend(params.bound, params.mousePosition);
+      Object.assign(params.bound, params.mousePosition);
     }
 
     return this._makeTooltipPositionForNotBarChart(params);
@@ -426,7 +425,7 @@ export default {
     positionOption.top = offset.y || 0;
 
     const position = this._makeTooltipPosition(
-      snippet.extend(
+      Object.assign(
         {
           dimension: this.getTooltipDimension(elTooltip),
           positionOption,
@@ -561,6 +560,6 @@ export default {
    * @ignore
    */
   mixin(func) {
-    snippet.extend(func.prototype, this);
+    Object.assign(func.prototype, this);
   }
 };

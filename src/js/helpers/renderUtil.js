@@ -3,12 +3,20 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isArray from 'tui-code-snippet/type/isArray';
+import isDate from 'tui-code-snippet/type/isDate';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isNumber from 'tui-code-snippet/type/isNumber';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import formatDateUtil from 'tui-code-snippet/formatDate/formatDate';
+import forEach from 'tui-code-snippet/collection/forEach';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import browser from 'tui-code-snippet/browser/browser';
 
 import chartConst from './../const';
 import dom from './domHandler';
 import arrayUtil from './arrayUtil';
-import snippet from 'tui-code-snippet';
-const { browser } = snippet;
+
 const isOldBrowser = browser.msie && browser.version <= 8;
 const hasComputedStyle = window.getComputedStyle || false;
 const CLIP_RECT_ID = 'clipRectForAnimation';
@@ -81,7 +89,7 @@ const renderUtil = {
   _makeCachingKey(label, theme, offsetType) {
     const keys = [label, offsetType];
 
-    snippet.forEach(theme, (key, value) => {
+    forEach(theme, (key, value) => {
       keys.push(key + value);
     });
 
@@ -208,7 +216,7 @@ const renderUtil = {
     let maxSize = 0;
 
     if (labels && labels.length) {
-      const sizes = snippet.map(labels, label => iteratee(label, theme));
+      const sizes = labels.map(label => iteratee(label, theme));
       maxSize = arrayUtil.max(sizes);
     }
 
@@ -225,7 +233,7 @@ const renderUtil = {
    * @private
    */
   getRenderedLabelsMaxWidth(labels, theme, maxWidth) {
-    const iteratee = snippet.bind(this.getRenderedLabelWidth, this);
+    const iteratee = this.getRenderedLabelWidth.bind(this);
     const labelMaxSize = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 
     return maxWidth ? Math.min(maxWidth, labelMaxSize) : labelMaxSize;
@@ -239,7 +247,7 @@ const renderUtil = {
    * @returns {number} max height
    */
   getRenderedLabelsMaxHeight(labels, theme) {
-    const iteratee = snippet.bind(this.getRenderedLabelHeight, this);
+    const iteratee = this.getRenderedLabelHeight.bind(this);
 
     return this._getRenderedLabelsMaxSize(labels, theme, iteratee);
   },
@@ -264,14 +272,14 @@ const renderUtil = {
    * @param {{top: number, left: number, right: number}} position position
    */
   renderPosition(el, position) {
-    if (snippet.isUndefined(position)) {
+    if (isUndefined(position)) {
       return;
     }
 
-    snippet.forEachArray(['top', 'bottom', 'left', 'right'], key => {
+    forEachArray(['top', 'bottom', 'left', 'right'], key => {
       const value = position[key];
 
-      if (snippet.isNumber(value)) {
+      if (isNumber(value)) {
         el.style[key] = `${value}px`;
       }
     });
@@ -391,9 +399,7 @@ const renderUtil = {
     const { value, formatFunctions, valueType = 'value', areaType, legendName, chartType } = params;
     const fns = [String(value), ...(formatFunctions || [])];
 
-    return snippet.reduce(fns, (stored, fn) =>
-      fn(stored, chartType, areaType, valueType, legendName)
-    );
+    return fns.reduce((stored, fn) => fn(stored, chartType, areaType, valueType, legendName));
   },
   /**
    * Format values.
@@ -413,7 +419,7 @@ const renderUtil = {
       return values;
     }
 
-    return snippet.map(values, value =>
+    return values.map(value =>
       renderUtil.formatValue({
         value,
         formatFunctions,
@@ -432,9 +438,9 @@ const renderUtil = {
    * @memberof module:renderUtil
    */
   formatDate(value, format = chartConst.DEFAULT_DATE_FORMAT) {
-    const date = snippet.isDate(value) ? value : new Date(value);
+    const date = isDate(value) ? value : new Date(value);
 
-    return snippet.formatDate(format, date) || value;
+    return formatDateUtil(format, date) || value;
   },
 
   /**
@@ -445,7 +451,7 @@ const renderUtil = {
    * @memberof module:renderUtil
    */
   formatDates(values, format = chartConst.DEFAULT_DATE_FORMAT) {
-    return snippet.map(values, value => this.formatDate(value, format));
+    return values.map(value => this.formatDate(value, format));
   },
 
   /**
@@ -579,7 +585,7 @@ const renderUtil = {
     } else {
       values = value.split('').reverse();
       lastIndex = values.length - 1;
-      values = snippet.map(values, (char, index) => {
+      values = values.map((char, index) => {
         const result = [char];
         if (index < lastIndex && (index + 1) % betweenLen === 0) {
           result.push(comma);
@@ -606,7 +612,7 @@ const renderUtil = {
    * @memberof module:renderUtil
    */
   makeCssTextFromMap(cssMap) {
-    return snippet.map(cssMap, (value, name) => renderUtil.concatStr(name, ':', value)).join(';');
+    return cssMap.map((value, name) => renderUtil.concatStr(name, ':', value)).join(';');
   },
 
   /**
@@ -631,7 +637,7 @@ const renderUtil = {
     suffix = this._perseString(suffix);
 
     if (!(prefix === '' && suffix === '')) {
-      return snippet.map(labels, label => this.addPrefixSuffixItem(label, prefix, suffix));
+      return labels.map(label => this.addPrefixSuffixItem(label, prefix, suffix));
     }
 
     return labels;
@@ -689,8 +695,8 @@ const renderUtil = {
  * @ignore
  */
 function setOpacity(elements, iteratee) {
-  elements = snippet.isArray(elements) ? elements : [elements];
-  snippet.forEachArray(elements, iteratee);
+  elements = isArray(elements) ? elements : [elements];
+  forEachArray(elements, iteratee);
 }
 
 /**
@@ -712,7 +718,7 @@ if (isOldBrowser) {
   renderUtil.makeOpacityCssText = function(opacity) {
     let cssText = '';
 
-    if (snippet.isExisty(opacity)) {
+    if (isExisty(opacity)) {
       const cssOpacityString = makeCssFilterOpacityString(opacity);
       cssText = `;filter:${cssOpacityString}`;
     }
@@ -740,7 +746,7 @@ if (isOldBrowser) {
   renderUtil.makeOpacityCssText = function(opacity) {
     let cssText = '';
 
-    if (snippet.isExisty(opacity)) {
+    if (isExisty(opacity)) {
       cssText = `;opacity:${opacity}`;
     }
 

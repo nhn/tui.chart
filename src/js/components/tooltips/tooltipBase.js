@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import snippet from 'tui-code-snippet';
+import isExisty from 'tui-code-snippet/type/isExisty';
 import raphael from 'raphael';
 import objectUtil from '../../helpers/objectUtil';
 import chartConst from '../../const';
@@ -24,7 +24,7 @@ class TooltipBase {
    *      @param {object} params.options - tooltip options
    *      @param {object} params.theme - tooltip theme
    *      @param {boolean} params.isVertical - whether vertical or not
-   *      @param {object} params.eventBus - snippet.CustomEvents instance
+   *      @param {object} params.eventBus - CustomEvents instance
    *      @param {object} params.labelTheme - theme for label
    *      @param {string} params.xAxisType - xAxis type
    *      @param {string} params.dateFormat - date format
@@ -128,7 +128,7 @@ class TooltipBase {
      * Tooltip template function.
      * @type {function}
      */
-    this.templateFunc = this.options.template || snippet.bind(this._makeTooltipHtml, this);
+    this.templateFunc = this.options.template || this._makeTooltipHtml.bind(this);
 
     /**
      * Tooltip animation time.
@@ -481,15 +481,15 @@ class TooltipBase {
   setOffset(offset) {
     const offsetOption = Object.assign({}, this.options.offset);
 
-    if (snippet.isExisty(offset.x)) {
+    if (isExisty(offset.x)) {
       offsetOption.x = offset.x;
     }
 
-    if (snippet.isExisty(offset.y)) {
+    if (isExisty(offset.y)) {
       offsetOption.y = offset.y;
     }
 
-    this._updateOffsetOption(snippet.extend({}, this.options.offset, offsetOption));
+    this._updateOffsetOption(Object.assign({}, this.options.offset, offsetOption));
   }
 
   /**
@@ -500,11 +500,11 @@ class TooltipBase {
   setPosition(position) {
     const offsetOption = Object.assign({}, this.options.offset);
 
-    if (snippet.isExisty(position.left)) {
+    if (isExisty(position.left)) {
       offsetOption.x = position.left;
     }
 
-    if (snippet.isExisty(position.top)) {
+    if (isExisty(position.top)) {
       offsetOption.y = position.y;
     }
 

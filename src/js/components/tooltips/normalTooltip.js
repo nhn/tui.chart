@@ -3,12 +3,16 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isArray from 'tui-code-snippet/type/isArray';
+import isNumber from 'tui-code-snippet/type/isNumber';
+import pick from 'tui-code-snippet/object/pick';
+
 import TooltipBase from './tooltipBase';
 import singleTooltipMixer from './singleTooltipMixer';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import tooltipTemplate from './tooltipTemplate';
-import snippet from 'tui-code-snippet';
+
 const DEFAULT_TOOLTIP_COLOR = '#aaa';
 
 /**
@@ -43,7 +47,7 @@ class NormalTooltip extends TooltipBase {
     const template = this._getTooltipTemplate(item);
 
     return template(
-      snippet.extend(
+      Object.assign(
         {
           categoryVisible: category ? 'show' : 'hide',
           category
@@ -91,7 +95,7 @@ class NormalTooltip extends TooltipBase {
   _getBoxplotTooltipTemplate(item) {
     let template = tooltipTemplate.tplBoxplotChartDefault;
 
-    if (snippet.isNumber(item.outlierIndex)) {
+    if (isNumber(item.outlierIndex)) {
       template = tooltipTemplate.tplBoxplotChartOutlier;
       item.label = item.outliers[item.outlierIndex].label;
     }
@@ -130,7 +134,7 @@ class NormalTooltip extends TooltipBase {
     let data = this._findTooltipData(chartType, indexes);
     let color = this._findTooltipColor(chartType, indexes, data);
 
-    if (predicate.isBoxplotChart(this.chartType) && snippet.isNumber(indexes.outlierIndex)) {
+    if (predicate.isBoxplotChart(this.chartType) && isNumber(indexes.outlierIndex)) {
       data.outlierIndex = indexes.outlierIndex;
     }
     if (this.colorSpectrum) {
@@ -165,7 +169,7 @@ class NormalTooltip extends TooltipBase {
       selectIndex = 0;
     }
 
-    return Object.assign({}, snippet.pick(chartData, selectIndex, indexes.index));
+    return Object.assign({}, pick(chartData, selectIndex, indexes.index));
   }
 
   /**
@@ -226,7 +230,7 @@ class NormalTooltip extends TooltipBase {
     }
 
     const { chartType, label } = legendData;
-    const params = snippet.extend(
+    const params = Object.assign(
       {
         chartType,
         legend: label,
@@ -236,7 +240,7 @@ class NormalTooltip extends TooltipBase {
       additionParams
     );
 
-    if (predicate.isBoxplotChart(chartType) && snippet.isNumber(indexes.outlierIndex)) {
+    if (predicate.isBoxplotChart(chartType) && isNumber(indexes.outlierIndex)) {
       params.outlierIndex = indexes.outlierIndex;
     }
 
@@ -266,7 +270,7 @@ class NormalTooltip extends TooltipBase {
 
     tooltipDatum.category = category;
 
-    return snippet.extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
+    return Object.assign(tooltipDatum, seriesItem.pickValueMapForTooltip());
   }
 
   /**
@@ -280,7 +284,7 @@ class NormalTooltip extends TooltipBase {
     let legendLabels = {};
     const tooltipData = {};
 
-    if (snippet.isArray(orgLegendLabels)) {
+    if (isArray(orgLegendLabels)) {
       legendLabels[this.chartType] = orgLegendLabels;
     } else {
       legendLabels = orgLegendLabels;

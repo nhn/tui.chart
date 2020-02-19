@@ -7,7 +7,6 @@
 import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
 import renderUtil from '../../helpers/renderUtil';
-import snippet from 'tui-code-snippet';
 
 /**
  * Format scale data labels
@@ -46,9 +45,7 @@ const scaleLabelFormatter = {
   _createScaleValues(scale, chartType, diverging) {
     const values = calculator.makeLabelsFromLimit(scale.limit, scale.step);
 
-    return predicate.isDivergingChart(chartType, diverging)
-      ? snippet.map(values, Math.abs)
-      : values;
+    return predicate.isDivergingChart(chartType, diverging) ? values.map(Math.abs) : values;
   },
 
   /**

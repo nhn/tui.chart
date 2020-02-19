@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import boxPlotChartSeriesFactory from '../../../src/js/components/series/boxPlotChartSeries.js';
 
 describe('BoxPlotChartSeries', () => {
@@ -14,7 +14,7 @@ describe('BoxPlotChartSeries', () => {
         options: {
           showLabel: true
         },
-        eventBus: new snippet.CustomEvents()
+        eventBus: new CustomEvents()
       });
 
       expect(series.supportSeriesLable).toBe(false);

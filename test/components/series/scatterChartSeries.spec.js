@@ -3,10 +3,9 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import scatterSeriesFactory from '../../../src/js/components/series/scatterChartSeries';
 import chartConst from '../../../src/js/const';
-import snippet from 'tui-code-snippet';
 
 describe('ScatterChartSeries', () => {
   let series;
@@ -21,7 +20,7 @@ describe('ScatterChartSeries', () => {
         }
       },
       options: {},
-      eventBus: new snippet.CustomEvents()
+      eventBus: new CustomEvents()
     });
 
     series.layout = {

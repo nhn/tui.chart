@@ -4,7 +4,7 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import raphael from 'raphael';
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import spectrumLegendFactory from '../../../src/js/components/legends/spectrumLegend';
 import renderUtil from '../../../src/js/helpers/renderUtil';
 
@@ -13,7 +13,7 @@ describe('Test for SpectrumLegend', () => {
 
   beforeEach(() => {
     legend = new spectrumLegendFactory.SpectrumLegend({
-      eventBus: new snippet.CustomEvents(),
+      eventBus: new CustomEvents(),
       theme: {
         label: {
           fontSize: 11,

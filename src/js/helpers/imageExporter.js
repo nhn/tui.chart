@@ -6,9 +6,8 @@
 
 import downloader from './downloader';
 import chartConst from '../const';
-import snippet from 'tui-code-snippet';
+import browser from 'tui-code-snippet/browser/browser';
 
-const { browser } = snippet;
 const isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
 const DOMURL = window.URL || window.webkitURL || window;
 const imageExtensions = [...chartConst.IMAGE_EXTENSIONS];

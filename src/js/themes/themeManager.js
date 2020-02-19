@@ -1,13 +1,17 @@
 /**
- * @Fileoverview  Theme manager.
+ * @fileoverview  Theme manager.
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isArray from 'tui-code-snippet/type/isArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import isObject from 'tui-code-snippet/type/isObject';
+import forEach from 'tui-code-snippet/collection/forEach';
+
 import chartConst from '../const';
 import predicate from '../helpers/predicate';
 import defaultTheme from './defaultTheme';
-import snippet from 'tui-code-snippet';
 
 const themes = {};
 
@@ -55,9 +59,9 @@ export default {
         return;
       }
 
-      if (snippet.isArray(fromItem)) {
+      if (isArray(fromItem)) {
         toTheme[key] = fromItem.slice();
-      } else if (snippet.isObject(fromItem)) {
+      } else if (isObject(fromItem)) {
         this._overwriteTheme(fromItem, item);
       } else {
         toTheme[key] = fromItem;
@@ -76,7 +80,7 @@ export default {
     const validTheme = {};
 
     chartConst.THEME_PROPS_MAP[componentType].forEach(propName => {
-      if (snippet.isExisty(theme[propName])) {
+      if (isExisty(theme[propName])) {
         validTheme[propName] = theme[propName];
       }
     });
@@ -101,7 +105,7 @@ export default {
     seriesTypes.forEach(seriesType => {
       const theme = fromTheme[seriesType] || this._pickValidTheme(fromTheme, componentType);
 
-      if (snippet.keys(theme).length) {
+      if (Object.keys(theme).length) {
         newTheme[seriesType] = JSON.parse(JSON.stringify(defaultTheme[componentType]));
         this._overwriteTheme(theme, newTheme[seriesType]);
       } else {
@@ -252,11 +256,11 @@ export default {
       theme.plot.label
     ];
 
-    snippet.forEach(theme.yAxis, _theme => {
+    forEach(theme.yAxis, _theme => {
       items.push(_theme.title, _theme.label);
     });
 
-    snippet.forEach(theme.series, _theme => {
+    forEach(theme.series, _theme => {
       items.push(_theme.label);
     });
 
@@ -301,7 +305,7 @@ export default {
    * @ignore
    */
   _copySeriesColorThemeToOther(theme) {
-    snippet.forEach(theme.series, (seriesTheme, seriesType) => {
+    forEach(theme.series, (seriesTheme, seriesType) => {
       this._copySeriesColorTheme(seriesTheme, theme.legend, seriesType);
       this._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesType);
     });
