@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isNull from 'tui-code-snippet/type/isNull';
-import extend from 'tui-code-snippet/object/extend';
 
 import chartConst from '../../const';
 import EventDetectorBase from './mouseEventDetectorBase';
@@ -46,7 +45,7 @@ class GroupTypeEventDetector extends EventDetectorBase {
     this.pointOnColumn = params.pointOnColumn;
 
     if (this.zoomable) {
-      extend(this, zoomMixer);
+      Object.assign(this, zoomMixer);
       this._initForZoom(params.zoomable);
     }
   }

@@ -3,7 +3,6 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import extend from 'tui-code-snippet/object/extend';
 import pluck from 'tui-code-snippet/collection/pluck';
 
 import calculator from '../../helpers/calculator';
@@ -24,7 +23,7 @@ export default {
      * @private
      */
   _makeBaseBound(layout) {
-    return extend({}, layout);
+    return Object.assign({}, layout);
   },
 
   /**

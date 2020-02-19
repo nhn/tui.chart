@@ -3,8 +3,6 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import extend from 'tui-code-snippet/object/extend';
-
 class CoordinateTypeSeriesBase {
   /**
    * Make series data.
@@ -36,7 +34,7 @@ class CoordinateTypeSeriesBase {
   showTooltip(params, bound, groupIndex, index, mousePosition) {
     this.eventBus.fire(
       'showTooltip',
-      extend(
+      Object.assign(
         {
           indexes: {
             groupIndex,

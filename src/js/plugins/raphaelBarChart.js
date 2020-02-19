@@ -5,7 +5,6 @@
  */
 import raphael from 'raphael';
 import isNull from 'tui-code-snippet/type/isNull';
-import extend from 'tui-code-snippet/object/extend';
 import forEach from 'tui-code-snippet/collection/forEach';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
@@ -191,7 +190,7 @@ class RaphaelBarChart {
     let linePath = null;
 
     if (chartType === 'bar' || value >= 0 || item.isRange) {
-      const cloneLeftTop = extend({}, points.leftTop);
+      const cloneLeftTop = Object.assign({}, points.leftTop);
       cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
       linePath = raphaelRenderUtil.makeLinePath(cloneLeftTop, points.rightTop).join(' ');
     }

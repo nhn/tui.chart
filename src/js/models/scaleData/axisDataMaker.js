@@ -3,7 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import extend from 'tui-code-snippet/object/extend';
+
 import range from 'tui-code-snippet/array/range';
 
 import chartConst from '../../const';
@@ -331,7 +331,7 @@ const axisDataMaker = {
       axisData.labels.push(lastLabelValue);
     }
 
-    extend(axisData, {
+    Object.assign(axisData, {
       startIndex,
       tickCount,
       interval,
@@ -363,7 +363,7 @@ const axisDataMaker = {
     newBlockCount = axisData.labels.length - 1;
     const beforeRemainBlockCount = beforeBlockCount - interval * newBlockCount;
 
-    extend(axisData, {
+    Object.assign(axisData, {
       startIndex,
       interval,
       eventTickCount: axisData.tickCount,

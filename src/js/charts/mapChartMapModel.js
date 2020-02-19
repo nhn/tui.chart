@@ -5,7 +5,6 @@
  */
 
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import extend from 'tui-code-snippet/object/extend';
 import pluck from 'tui-code-snippet/collection/pluck';
 
 import chartConst from '../const';
@@ -247,7 +246,7 @@ class MapChartMapModel {
       const commandFunc = this.commandFuncMap[datum.type];
       const coordinate = commandFunc(datum.coordinate, prevCoordinate);
 
-      extend(prevCoordinate, coordinate);
+      Object.assign(prevCoordinate, coordinate);
 
       return coordinate;
     });

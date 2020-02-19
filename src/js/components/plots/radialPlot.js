@@ -3,7 +3,6 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
-import extend from 'tui-code-snippet/object/extend';
 import geom from '../../helpers/geometric';
 import calculator from '../../helpers/calculator';
 import chartConst from '../../const';
@@ -37,7 +36,7 @@ class RadialPlot {
      * Options
      * @type {object}
      */
-    this.options = extend(
+    this.options = Object.assign(
       {
         type: 'spiderweb'
       },

@@ -8,7 +8,6 @@ import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import extend from 'tui-code-snippet/object/extend';
 
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
@@ -182,7 +181,7 @@ class Plot {
    * @private
    */
   _makeVerticalLineTemplateParams(additionalParams) {
-    return extend(
+    return Object.assign(
       {
         className: 'vertical',
         positionType: 'left',
@@ -199,7 +198,7 @@ class Plot {
    * @private
    */
   _makeHorizontalLineTemplateParams(additionalParams) {
-    return extend(
+    return Object.assign(
       {
         className: 'horizontal',
         positionType: 'bottom',

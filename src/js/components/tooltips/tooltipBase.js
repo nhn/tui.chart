@@ -5,8 +5,6 @@
  */
 
 import isExisty from 'tui-code-snippet/type/isExisty';
-import extend from 'tui-code-snippet/object/extend';
-
 import raphael from 'raphael';
 import objectUtil from '../../helpers/objectUtil';
 import chartConst from '../../const';
@@ -491,7 +489,7 @@ class TooltipBase {
       offsetOption.y = offset.y;
     }
 
-    this._updateOffsetOption(extend({}, this.options.offset, offsetOption));
+    this._updateOffsetOption(Object.assign({}, this.options.offset, offsetOption));
   }
 
   /**

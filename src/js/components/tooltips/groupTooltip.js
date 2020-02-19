@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isNull from 'tui-code-snippet/type/isNull';
-import extend from 'tui-code-snippet/object/extend';
 import pluck from 'tui-code-snippet/collection/pluck';
 
 import TooltipBase from './tooltipBase';
@@ -78,7 +77,7 @@ class GroupTooltip extends TooltipBase {
         }
 
         itemHtml += template(
-          extend(
+          Object.assign(
             {
               cssText: cssTextTemplate({ color: colorByPoint ? '#aaa' : colors[index] })
             },

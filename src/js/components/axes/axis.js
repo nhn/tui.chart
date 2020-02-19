@@ -5,8 +5,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import extend from 'tui-code-snippet/object/extend';
-
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import calculator from '../../helpers/calculator';
@@ -30,6 +28,8 @@ class Axis {
    *      @param {boolean} params.isYAxis boolean value for axis is vertical or not
    */
   constructor(params) {
+    const { dataProcessor, options, chartTheme, theme, name, isYAxis, shifting } = params;
+
     /**
      * Axis view className
      * @type {string}
@@ -40,22 +40,20 @@ class Axis {
      * Data processor
      * @type {DataProcessor}
      */
-    this.dataProcessor = params.dataProcessor;
+    this.dataProcessor = dataProcessor;
 
     /**
      * Options
      * @type {object}
      */
-    this.options = params.options || {};
+    this.options = options || {};
 
     /**
      * Axis Theme
      * Use chart background theme object for render yAxis background on dynamicDataShifting chart
      * @type {object}
      */
-    this.theme = extend({}, params.theme, {
-      background: params.chartTheme.chart.background
-    });
+    this.theme = Object.assign({}, theme, { background: chartTheme.chart.background });
 
     /**
      * Whether label type axis or not.
@@ -67,13 +65,13 @@ class Axis {
      * Whether vertical type or not.
      * @type {boolean}
      */
-    this.isYAxis = params.isYAxis;
+    this.isYAxis = isYAxis;
 
     /**
      * Whether data dynamic shifting or not.
      * @type {boolean}
      */
-    this.shifting = params.shifting;
+    this.shifting = shifting;
 
     /**
      * cached axis data
@@ -129,7 +127,7 @@ class Axis {
      */
     this._elBg = null;
 
-    this.isRightYAxis = params.name === 'rightYAxis';
+    this.isRightYAxis = name === 'rightYAxis';
   }
 
   /**

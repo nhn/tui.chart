@@ -6,7 +6,6 @@
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isString from 'tui-code-snippet/type/isString';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import extend from 'tui-code-snippet/object/extend';
 
 import Series from './series';
 import chartConst from '../../const';
@@ -227,7 +226,7 @@ class PieChartSeries extends Series {
         ratio,
         angles,
         centerPosition: this._getArcPosition(
-          extend(
+          Object.assign(
             {
               r: centerR
             },
@@ -235,7 +234,7 @@ class PieChartSeries extends Series {
           )
         ),
         outerPosition: this._getArcPosition(
-          extend(
+          Object.assign(
             {
               r: r + this.legendLongestWidth / 2 + PIE_GRAPH_LEGEND_LABEL_INTERVAL
             },
@@ -524,7 +523,7 @@ class PieChartSeries extends Series {
   showTooltip(params, bound, groupIndex, index, mousePosition) {
     this.eventBus.fire(
       'showTooltip',
-      extend(
+      Object.assign(
         {
           indexes: {
             groupIndex,
@@ -628,7 +627,7 @@ class PieChartSeries extends Series {
         return;
       }
 
-      const end = extend({}, position.middle);
+      const end = Object.assign({}, position.middle);
       if (end.left < centerLeft) {
         end.left -= SERIES_OUTER_LABEL_PADDING;
       } else {

@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isNull from 'tui-code-snippet/type/isNull';
-import extend from 'tui-code-snippet/object/extend';
 import browser from 'tui-code-snippet/browser/browser';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
@@ -183,7 +182,7 @@ class RaphaelBulletChart {
     return raphaelRenderUtil.renderRect(
       this.paper,
       bound,
-      extend(
+      Object.assign(
         {
           fill: color,
           stroke: 'none'

@@ -6,7 +6,6 @@
 import browser from 'tui-code-snippet/browser/browser';
 import isArray from 'tui-code-snippet/type/isArray';
 import isExisty from 'tui-code-snippet/type/isExisty';
-import extend from 'tui-code-snippet/object/extend';
 import pluck from 'tui-code-snippet/collection/pluck';
 
 import chartConst from '../../const';
@@ -135,7 +134,7 @@ class BoundsModel {
    * @private
    */
   _registerDimension(name, dimension) {
-    this.dimensionMap[name] = extend(this.dimensionMap[name] || {}, dimension);
+    this.dimensionMap[name] = Object.assign(this.dimensionMap[name] || {}, dimension);
   }
 
   /**

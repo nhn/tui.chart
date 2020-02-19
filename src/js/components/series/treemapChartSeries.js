@@ -4,7 +4,6 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import extend from 'tui-code-snippet/object/extend';
 
 import Series from './series';
 import squarifier from './squarifier';
@@ -111,11 +110,11 @@ class TreemapChartSeries extends Series {
    */
   _makeBoundMap(parent, boundMap, layout) {
     const seriesDataModel = this._getSeriesDataModel();
-    const defaultLayout = extend({}, this.layout.dimension, this.layout.position);
+    const defaultLayout = Object.assign({}, this.layout.dimension, this.layout.position);
     const seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
 
     layout = layout || defaultLayout;
-    boundMap = extend(boundMap || {}, squarifier.squarify(layout, seriesItems));
+    boundMap = Object.assign(boundMap || {}, squarifier.squarify(layout, seriesItems));
 
     seriesItems.forEach(seriesItem => {
       boundMap = this._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
@@ -301,7 +300,7 @@ class TreemapChartSeries extends Series {
       true
     );
 
-    return extend({
+    return Object.assign({
       chartType: this.chartType,
       indexes: seriesItem.indexes
     });

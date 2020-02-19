@@ -8,7 +8,6 @@ import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-import extend from 'tui-code-snippet/object/extend';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
 import renderUtil from '../helpers/renderUtil';
@@ -294,7 +293,7 @@ class RaphaelLineTypeBase {
     };
 
     if (borderStyle) {
-      extend(outDotStyle, borderStyle);
+      Object.assign(outDotStyle, borderStyle);
     }
 
     return outDotStyle;
@@ -371,7 +370,7 @@ class RaphaelLineTypeBase {
         };
 
         if (this.hasRangeData) {
-          const startPosition = extend({}, position);
+          const startPosition = Object.assign({}, position);
           startPosition.top = startPosition.startTop;
           dotMap.startDot = this.renderDot(paper, startPosition, color, opacity);
         }
@@ -659,14 +658,14 @@ class RaphaelLineTypeBase {
     // if prev data exists, use prev.r
     // there is dot disappearing issue, when hideDot
     if (prev && !isUndefined(opacity)) {
-      outDotStyle = extend({
+      outDotStyle = {
         r: prev.r,
         stroke: prev.stroke,
         fill: prev.fill,
         'stroke-opacity': prev['stroke-opacity'],
         'stroke-width': prev['stroke-width'],
         'fill-opacity': prev['fill-opacity']
-      });
+      };
     }
 
     dot.attr(outDotStyle);
@@ -785,7 +784,7 @@ class RaphaelLineTypeBase {
     };
 
     if (this.dotOpacity) {
-      dotAttrs = extend({ 'fill-opacity': this.dotOpacity }, dotAttrs, this.borderStyle);
+      dotAttrs = Object.assign({ 'fill-opacity': this.dotOpacity }, dotAttrs, this.borderStyle);
     }
 
     dot.attr(dotAttrs);

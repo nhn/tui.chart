@@ -5,7 +5,6 @@
  */
 import isArray from 'tui-code-snippet/type/isArray';
 import isNumber from 'tui-code-snippet/type/isNumber';
-import extend from 'tui-code-snippet/object/extend';
 import pick from 'tui-code-snippet/object/pick';
 
 import TooltipBase from './tooltipBase';
@@ -48,7 +47,7 @@ class NormalTooltip extends TooltipBase {
     const template = this._getTooltipTemplate(item);
 
     return template(
-      extend(
+      Object.assign(
         {
           categoryVisible: category ? 'show' : 'hide',
           category
@@ -231,7 +230,7 @@ class NormalTooltip extends TooltipBase {
     }
 
     const { chartType, label } = legendData;
-    const params = extend(
+    const params = Object.assign(
       {
         chartType,
         legend: label,
@@ -271,7 +270,7 @@ class NormalTooltip extends TooltipBase {
 
     tooltipDatum.category = category;
 
-    return extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
+    return Object.assign(tooltipDatum, seriesItem.pickValueMapForTooltip());
   }
 
   /**
