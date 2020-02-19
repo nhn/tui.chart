@@ -74,10 +74,31 @@ function makeDivisionTime(time) {
     return share;
 }
 
+
+function range(start, stop, step) {
+    var arr = [];
+    var flag;
+
+    if (typeof stop === 'undefined') {
+        stop = start || 0;
+        start = 0;
+    }
+
+    step = step || 1;
+    flag = step < 0 ? -1 : 1;
+    stop *= flag;
+
+    for (; start * flag < stop; start += step) {
+        arr.push(start);
+    }
+
+    return arr;
+}
+
 var legends = ['SiteA'];
-var seriesData = tui.util.map(tui.util.range(1), function (value, index) {
+var seriesData = range(1).map(function (value, index) {
     var name = legends[index];
-    var data = tui.util.map(tui.util.range(100), function () {
+    var data = range(100).map(function () {
         return getRandom(150, 200);
     });
     return {
@@ -87,7 +108,7 @@ var seriesData = tui.util.map(tui.util.range(1), function (value, index) {
 });
 var baseNow = new Date();
 var startSecond = baseNow.getSeconds() - seriesData[0].data.length - 1;
-var categories = tui.util.map(seriesData[0].data, function (value, index) {
+var categories = seriesData[0].data.map(function (value, index) {
     var hour = baseNow.getHours();
     var minute = baseNow.getMinutes();
     var second = startSecond + index;
