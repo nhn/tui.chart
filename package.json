@@ -8,10 +8,10 @@
   "scripts": {
     "serve": "webpack-dev-server --inline --hot -d",
     "serve:ie8": "webpack-dev-server -d",
-    "deploy": "npm run deploy:all && npm run deploy:babelpolyfill && npm run deploy:nodepth && cp -R ./maps ./dist && node tsBannerGenerator.js",
+    "deploy": "npm run deploy:all && npm run deploy:polyfill && npm run deploy:nodepth && cp -R ./maps ./dist && node tsBannerGenerator.js",
     "deploy:nodepth": "webpack --production --nodepth && webpack --production --nodepth --minify",
     "deploy:all": "webpack --production --alldepth && webpack --production --alldepth --minify",
-    "deploy:babelpolyfill": "webpack --production --babelpolyfill && webpack --production --babelpolyfill --minify",
+    "deploy:polyfill": "webpack --production --polyfill && webpack --production --polyfill --minify",
     "test": "karma start",
     "test:ne": "KARMA_SERVER=ne karma start",
     "test:types": "tsc --project test/types",
@@ -81,7 +81,7 @@
     "eslint-plugin-prettier": "^2.7.0"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
+    "core-js": "^3.6.4",
     "raphael": "https://github.com/nhn/raphael.git#2.2.0-c",
     "tui-code-snippet": "^2.3.1"
   }

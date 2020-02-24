@@ -12,17 +12,15 @@ var BUNDLE_PATH = path.join(__dirname, 'dist/');
 var isProduction = process.argv.indexOf('--production') >= 0;
 var isMinified = process.argv.indexOf('--minify') >= 0;
 
-var isBabelpolyfill = process.argv.indexOf('--babelpolyfill') >= 0;
+var isPolyfill = process.argv.indexOf('--polyfill') >= 0;
 var isAlldepth = process.argv.indexOf('--alldepth') >= 0;
 var isNodepth = process.argv.indexOf('--nodepth') >= 0;
-
-var babelPolyfill = require('babel-polyfill');
 var es3ifyPlugin = require('es3ify-webpack-plugin');
 
 var FILENAME =
   pkg.name +
   (isAlldepth ? '-all' : '') +
-  (isBabelpolyfill ? '-polyfill' : '') +
+  (isPolyfill ? '-polyfill' : '') +
   (isProduction && isMinified ? '.min' : '');
 
 var FILENAME_CSS = pkg.name + (isProduction && isMinified ? '.min' : '');
@@ -113,12 +111,12 @@ module.exports = (function() {
     });
   } else if (isAlldepth) {
     Object.assign(config, {
-      entry: ['babel-polyfill', './src/js/index.js'],
+      entry: ['./src/js/indexPolyfill.js'],
       externals: {}
     });
-  } else if (isBabelpolyfill) {
+  } else if (isPolyfill) {
     Object.assign(config, {
-      entry: ['babel-polyfill', './src/js/index.js']
+      entry: ['./src/js/indexPolyfill.js']
     });
   }
 
