@@ -1,0 +1,51 @@
+{
+  "name": "tui-chart",
+  "version": "4.0.0",
+  "description": "TOAST UI Application: Chart",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watch",
+    "build:clean": "rm -rf ./dist",
+    "build": "webpack --mode production",
+    "serve": "webpack-dev-server --mode development",
+    "storybook": "start-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shiren/chart4.git"
+  },
+  "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shiren/chart4/issues"
+  },
+  "homepage": "https://github.com/shiren/chart4#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.7.4",
+    "@babel/polyfill": "^7.7.0",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/preset-typescript": "^7.7.4",
+    "@storybook/html": "^5.2.8",
+    "@types/jest": "^24.0.23",
+    "@typescript-eslint/eslint-plugin": "^2.10.0",
+    "@typescript-eslint/parser": "^2.10.0",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-tui": "^3.0.0",
+    "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-prettier": "^3.1.1",
+    "html-webpack-plugin": "^4.0.0-beta.8",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.2.0",
+    "typescript": "^3.7.3",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  }
+}

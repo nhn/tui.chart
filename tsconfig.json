@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "ES5",
+    "module": "commonJS",
+    "strict": true,
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["jest", "node"],
+    "paths": {
+      "@src/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.js", "src/**/*.ts", "stories/**/*.ts", "stories/**/*.js", "tests/**/*.ts"],
+  "exclude": ["node_modules", "types"]
+}

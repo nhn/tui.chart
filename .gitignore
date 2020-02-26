@@ -1,0 +1,67 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Compiled files
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directory
+node_modules
+
+# Bower Components
+bower_components
+lib
+
+#JSDOC
+doc
+
+# IDEA
+.idea
+*.iml
+
+# Window
+Thumbs.db
+Desktop.ini
+
+# MAC
+.DS_Store
+
+# SVN
+.svn
+
+# eclipse
+.project
+.metadata
+
+# build
+build
+
+#report / screenshots
+report
+screenshots
+
+# Atom
+tags
+.ctags
+.tern-project
+
+# etc
+.agignore
+*.swp
+etc
+temp
+api
+.tern-port
+*.vim
+.\#*
+.vscode
