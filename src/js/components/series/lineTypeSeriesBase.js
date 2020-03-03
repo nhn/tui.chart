@@ -211,7 +211,7 @@ class LineTypeSeriesBase {
 
   /**
    * Get label texts
-   * @param {object} seriesDataModel sereis data model
+   * @param {object} seriesDataModel series data model
    * @returns {Array.<string>}
    * @private
    */

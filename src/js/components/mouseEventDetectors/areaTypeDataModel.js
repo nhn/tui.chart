@@ -83,7 +83,7 @@ class AreaTypeDataModel {
   /**
    * Find Data by layer position.
    * @param {{x: number, y: number}} layerPosition - layer position
-   * @param {number} [selectLegendIndex] select legend sereis index
+   * @param {number} [selectLegendIndex] select legend series index
    * @param {object} [searchInfo] distance limitation to find data
    *   @param {number} searchInfo.distanceLimit distance limitation to find data
    *   @param {boolean} searchInfo.isCoordinateTypeChart whether coordinate type chart or not
@@ -103,7 +103,7 @@ class AreaTypeDataModel {
   /**
    * Find Data by layer position at dense area.
    * @param {{x: number, y: number}} layerPosition - layer position
-   * @param {number} selectLegendIndex select legend sereis index
+   * @param {number} selectLegendIndex select legend series index
    * @returns {object}
    * @private
    */
@@ -156,7 +156,7 @@ class AreaTypeDataModel {
    * Find Data by layer position at loose area.
    * @param {{x: number, y: number}} layerPosition - layer position
    * @param {number} [distanceLimit] distance limitation to find data
-   * @param {number} selectLegendIndex select legend sereis index
+   * @param {number} selectLegendIndex select legend series index
    * @returns {object}
    * @private
    */

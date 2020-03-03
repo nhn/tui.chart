@@ -68,16 +68,15 @@ class AreaTypeEventDetector extends MouseEventDetectorBase {
    */
   onReceiveSeriesData(seriesItemBoundsDatum) {
     const { seriesCount } = this;
-    let { seriesItemBoundsData } = this;
 
-    if (seriesItemBoundsData.length === seriesCount) {
-      seriesItemBoundsData = [];
+    if (this.seriesItemBoundsData.length === seriesCount) {
+      this.seriesItemBoundsData = [];
     }
 
-    seriesItemBoundsData.push(seriesItemBoundsDatum);
+    this.seriesItemBoundsData.push(seriesItemBoundsDatum);
 
-    if (seriesItemBoundsData.length === seriesCount) {
-      this.dataModel = new AreaTypeDataModel(seriesItemBoundsData);
+    if (this.seriesItemBoundsData.length === seriesCount) {
+      this.dataModel = new AreaTypeDataModel(this.seriesItemBoundsData);
     }
 
     if (this.zoomable) {
