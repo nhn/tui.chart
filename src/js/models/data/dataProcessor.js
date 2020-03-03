@@ -833,7 +833,7 @@ class DataProcessor extends DataProcessorBase {
    * Push value to data property of series.
    * @param {{name: string, data: Array}} seriesDatum - series datum
    * @param {Array.<number>|{x: number, y: number, r: number}|number} value - value
-   * @param {string} seriesType - sereis name
+   * @param {string} seriesType - series name
    * @private
    */
   _pushValue(seriesDatum, value, seriesType) {
