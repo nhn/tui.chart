@@ -2,21 +2,21 @@
  * tui-chart
  * @fileoverview tui-chart
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @version 3.10.0
+ * @version 3.10.1
  * @license MIT
  * @link https://github.com/nhn/tui.chart
- * bundle created at "Mon Feb 03 2020 11:09:18 GMT+0900 (Korean Standard Time)"
+ * bundle created at "Wed Mar 04 2020 10:26:20 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("raphael"), require("tui-code-snippet"));
+		module.exports = factory(require("raphael"));
 	else if(typeof define === 'function' && define.amd)
-		define(["raphael", "tui-code-snippet"], factory);
+		define(["raphael"], factory);
 	else if(typeof exports === 'object')
-		exports["chart"] = factory(require("raphael"), require("tui-code-snippet"));
+		exports["chart"] = factory(require("raphael"));
 	else
-		root["tui"] = root["tui"] || {}, root["tui"]["chart"] = factory(root["Raphael"], (root["tui"] && root["tui"]["util"]));
-})(this, function(__WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_7__) {
+		root["tui"] = root["tui"] || {}, root["tui"]["chart"] = factory(root["Raphael"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_4__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -75,23 +75,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _pluginRaphael = __webpack_require__(3);
 	
-	var _chart = __webpack_require__(31);
+	var _chart = __webpack_require__(47);
 	
 	var _chart2 = _interopRequireDefault(_chart);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _colorutil = __webpack_require__(139);
+	var _colorutil = __webpack_require__(166);
 	
 	var _colorutil2 = _interopRequireDefault(_colorutil);
 	
-	__webpack_require__(148);
+	__webpack_require__(175);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -124,63 +124,63 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _raphaelBarChart2 = _interopRequireDefault(_raphaelBarChart);
 	
-	var _raphaelBoxplotChart = __webpack_require__(12);
+	var _raphaelBoxplotChart = __webpack_require__(28);
 	
 	var _raphaelBoxplotChart2 = _interopRequireDefault(_raphaelBoxplotChart);
 	
-	var _raphaelBulletChart = __webpack_require__(13);
+	var _raphaelBulletChart = __webpack_require__(29);
 	
 	var _raphaelBulletChart2 = _interopRequireDefault(_raphaelBulletChart);
 	
-	var _raphaelLineChart = __webpack_require__(14);
+	var _raphaelLineChart = __webpack_require__(30);
 	
 	var _raphaelLineChart2 = _interopRequireDefault(_raphaelLineChart);
 	
-	var _raphaelAreaChart = __webpack_require__(17);
+	var _raphaelAreaChart = __webpack_require__(33);
 	
 	var _raphaelAreaChart2 = _interopRequireDefault(_raphaelAreaChart);
 	
-	var _raphaelPieChart = __webpack_require__(19);
+	var _raphaelPieChart = __webpack_require__(35);
 	
 	var _raphaelPieChart2 = _interopRequireDefault(_raphaelPieChart);
 	
-	var _raphaelRadialLineSeries = __webpack_require__(20);
+	var _raphaelRadialLineSeries = __webpack_require__(36);
 	
 	var _raphaelRadialLineSeries2 = _interopRequireDefault(_raphaelRadialLineSeries);
 	
-	var _raphaelCoordinateTypeChart = __webpack_require__(21);
+	var _raphaelCoordinateTypeChart = __webpack_require__(37);
 	
 	var _raphaelCoordinateTypeChart2 = _interopRequireDefault(_raphaelCoordinateTypeChart);
 	
-	var _raphaelBoxTypeChart = __webpack_require__(22);
+	var _raphaelBoxTypeChart = __webpack_require__(38);
 	
 	var _raphaelBoxTypeChart2 = _interopRequireDefault(_raphaelBoxTypeChart);
 	
-	var _raphaelMapChart = __webpack_require__(23);
+	var _raphaelMapChart = __webpack_require__(39);
 	
 	var _raphaelMapChart2 = _interopRequireDefault(_raphaelMapChart);
 	
-	var _raphaelLegendComponent = __webpack_require__(24);
+	var _raphaelLegendComponent = __webpack_require__(40);
 	
 	var _raphaelLegendComponent2 = _interopRequireDefault(_raphaelLegendComponent);
 	
-	var _raphaelMapLegend = __webpack_require__(26);
+	var _raphaelMapLegend = __webpack_require__(42);
 	
 	var _raphaelMapLegend2 = _interopRequireDefault(_raphaelMapLegend);
 	
-	var _raphaelCircleLegend = __webpack_require__(27);
+	var _raphaelCircleLegend = __webpack_require__(43);
 	
 	var _raphaelCircleLegend2 = _interopRequireDefault(_raphaelCircleLegend);
 	
-	var _raphaelTitleComponent = __webpack_require__(28);
+	var _raphaelTitleComponent = __webpack_require__(44);
 	
 	var _raphaelTitleComponent2 = _interopRequireDefault(_raphaelTitleComponent);
 	
-	var _raphaelAxisComponent = __webpack_require__(29);
+	var _raphaelAxisComponent = __webpack_require__(45);
 	
 	var _raphaelAxisComponent2 = _interopRequireDefault(_raphaelAxisComponent);
 	
-	var _raphaelRadialPlot = __webpack_require__(30);
+	var _raphaelRadialPlot = __webpack_require__(46);
 	
 	var _raphaelRadialPlot2 = _interopRequireDefault(_raphaelRadialPlot);
 	
@@ -351,17 +351,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
-	
-	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
 	var _raphael = __webpack_require__(4);
 	
 	var _raphael2 = _interopRequireDefault(_raphael);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
+	var _raphaelRenderUtil = __webpack_require__(11);
+	
+	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -570,7 +574,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var linePath = null;
 	
 	    if (chartType === 'bar' || value >= 0 || item.isRange) {
-	      var cloneLeftTop = _tuiCodeSnippet2['default'].extend({}, points.leftTop);
+	      var cloneLeftTop = Object.assign({}, points.leftTop);
 	      cloneLeftTop.left -= chartType === 'column' || value < 0 ? 1 : 0;
 	      linePath = _raphaelRenderUtil2['default'].makeLinePath(cloneLeftTop, points.rightTop).join(' ');
 	    }
@@ -663,9 +667,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      left: this._makeLeftLinePath(points, chartType, item)
 	    };
 	
-	    return _tuiCodeSnippet2['default'].filter(paths, function (path) {
-	      return path;
+	    Object.keys(paths).forEach(function (type) {
+	      if (!paths[type]) {
+	        delete paths[type];
+	      }
 	    });
+	
+	    return paths;
 	  };
 	
 	  /**
@@ -712,8 +720,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return null;
 	    }
 	
-	    var groupBorders = _tuiCodeSnippet2['default'].map(groupBounds, function (bounds, groupIndex) {
-	      return _tuiCodeSnippet2['default'].map(bounds, function (bound, index) {
+	    var groupBorders = groupBounds.map(function (bounds, groupIndex) {
+	      return bounds.map(function (bound, index) {
 	        if (!bound) {
 	          return null;
 	        }
@@ -759,7 +767,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  RaphaelBarChart.prototype._animateBorders = function _animateBorders(lines, bound, chartType, item) {
 	    var paths = this._makeBorderLinesPaths(bound, chartType, item);
 	
-	    _tuiCodeSnippet2['default'].forEach(lines, function (line, name) {
+	    (0, _forEach2['default'])(lines, function (line, name) {
 	      line.animate({
 	        path: paths[name]
 	      }, ANIMATION_DURATION, '>');
@@ -930,7 +938,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  RaphaelBarChart.prototype._changeBordersColor = function _changeBordersColor(lines, borderColor) {
-	    _tuiCodeSnippet2['default'].forEach(lines, function (line) {
+	    (0, _forEach2['default'])(lines, function (line) {
 	      line.attr({ stroke: borderColor });
 	    });
 	  };
@@ -1000,7 +1008,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  RaphaelBarChart.prototype.selectLegend = function selectLegend(legendIndex) {
 	    var groupBorders = this.groupBorders || [];
-	    var noneSelected = _tuiCodeSnippet2['default'].isNull(legendIndex);
+	    var noneSelected = (0, _isNull2['default'])(legendIndex);
 	
 	    _raphaelRenderUtil2['default'].forEach2dArray(this.groupBars, function (bar, groupIndex, index) {
 	      if (!bar) {
@@ -1012,7 +1020,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      bar.rect.attr({ 'fill-opacity': opacity });
 	      if (lines) {
-	        _tuiCodeSnippet2['default'].forEach(lines, function (line) {
+	        (0, _forEach2['default'])(lines, function (line) {
 	          line.attr({ 'stroke-opacity': opacity });
 	        });
 	      }
@@ -1062,32 +1070,251 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is null or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is null or not.
+	 * If the given variable(arguments[0]) is null, returns true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is null?
+	 * @memberof module:type
+	 */
+	function isNull(obj) {
+	  return obj === null;
+	}
+	
+	module.exports = isNull;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Execute the provided callback once for each property of object(or element of array) which actually exist.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var isArray = __webpack_require__(8);
+	var forEachArray = __webpack_require__(9);
+	var forEachOwnProperties = __webpack_require__(10);
+	
+	/**
+	 * @module collection
+	 */
+	
+	/**
+	 * Execute the provided callback once for each property of object(or element of array) which actually exist.
+	 * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of example).
+	 * If the callback function returns false, the loop will be stopped.
+	 * Callback function(iteratee) is invoked with three arguments:
+	 *  1) The value of the property(or The value of the element)
+	 *  2) The name of the property(or The index of the element)
+	 *  3) The object being traversed
+	 * @param {Object} obj The object that will be traversed
+	 * @param {function} iteratee Callback function
+	 * @param {Object} [context] Context(this) of callback function
+	 * @memberof module:collection
+	 * @example
+	 * var forEach = require('tui-code-snippet/collection/forEach'); // node, commonjs
+	 *
+	 * var sum = 0;
+	 *
+	 * forEach([1,2,3], function(value){
+	 *     sum += value;
+	 * });
+	 * alert(sum); // 6
+	 *
+	 * // In case of Array-like object
+	 * var array = Array.prototype.slice.call(arrayLike); // change to array
+	 * forEach(array, function(value){
+	 *     sum += value;
+	 * });
+	 */
+	function forEach(obj, iteratee, context) {
+	  if (isArray(obj)) {
+	    forEachArray(obj, iteratee, context);
+	  } else {
+	    forEachOwnProperties(obj, iteratee, context);
+	  }
+	}
+	
+	module.exports = forEach;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is an instance of Array or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is an instance of Array or not.
+	 * If the given variable is an instance of Array, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is array instance?
+	 * @memberof module:type
+	 */
+	function isArray(obj) {
+	  return obj instanceof Array;
+	}
+	
+	module.exports = isArray;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Execute the provided callback once for each element present in the array(or Array-like object) in ascending order.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Execute the provided callback once for each element present
+	 * in the array(or Array-like object) in ascending order.
+	 * If the callback function returns false, the loop will be stopped.
+	 * Callback function(iteratee) is invoked with three arguments:
+	 *  1) The value of the element
+	 *  2) The index of the element
+	 *  3) The array(or Array-like object) being traversed
+	 * @param {Array|Arguments|NodeList} arr The array(or Array-like object) that will be traversed
+	 * @param {function} iteratee Callback function
+	 * @param {Object} [context] Context(this) of callback function
+	 * @memberof module:collection
+	 * @example
+	 * var forEachArray = require('tui-code-snippet/collection/forEachArray'); // node, commonjs
+	 *
+	 * var sum = 0;
+	 *
+	 * forEachArray([1,2,3], function(value){
+	 *     sum += value;
+	 * });
+	 * alert(sum); // 6
+	 */
+	function forEachArray(arr, iteratee, context) {
+	  var index = 0;
+	  var len = arr.length;
+	
+	  context = context || null;
+	
+	  for (; index < len; index += 1) {
+	    if (iteratee.call(context, arr[index], index, arr) === false) {
+	      break;
+	    }
+	  }
+	}
+	
+	module.exports = forEachArray;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Execute the provided callback once for each property of object which actually exist.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Execute the provided callback once for each property of object which actually exist.
+	 * If the callback function returns false, the loop will be stopped.
+	 * Callback function(iteratee) is invoked with three arguments:
+	 *  1) The value of the property
+	 *  2) The name of the property
+	 *  3) The object being traversed
+	 * @param {Object} obj The object that will be traversed
+	 * @param {function} iteratee  Callback function
+	 * @param {Object} [context] Context(this) of callback function
+	 * @memberof module:collection
+	 * @example
+	 * var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties'); // node, commonjs
+	 *
+	 * var sum = 0;
+	 *
+	 * forEachOwnProperties({a:1,b:2,c:3}, function(value){
+	 *     sum += value;
+	 * });
+	 * alert(sum); // 6
+	 */
+	function forEachOwnProperties(obj, iteratee, context) {
+	  var key;
+	
+	  context = context || null;
+	
+	  for (key in obj) {
+	    if (obj.hasOwnProperty(key)) {
+	      if (iteratee.call(context, obj[key], key, obj) === false) {
+	        break;
+	      }
+	    }
+	  }
+	}
+	
+	module.exports = forEachOwnProperties;
+
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _range = __webpack_require__(12);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _range2 = _interopRequireDefault(_range);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _isExisty = __webpack_require__(14);
 	
-	var _renderUtil2 = _interopRequireDefault(_renderUtil);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _decodeHTMLEntity = __webpack_require__(15);
+	
+	var _decodeHTMLEntity2 = _interopRequireDefault(_decodeHTMLEntity);
 	
 	var _raphael = __webpack_require__(4);
 	
 	var _raphael2 = _interopRequireDefault(_raphael);
 	
+	var _renderUtil = __webpack_require__(16);
+	
+	var _renderUtil2 = _interopRequireDefault(_renderUtil);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var LINE_HEIGHT_FOR_CALCULATE = 1.11; /**
-	                                       * @fileoverview Util for raphael rendering.
-	                                       * @author NHN.
-	                                       *         FE Development Lab <dl_javascript@nhn.com>
-	                                       */
+	/**
+	 * @fileoverview Util for raphael rendering.
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
+	 */
 	
+	var LINE_HEIGHT_FOR_CALCULATE = 1.11;
 	var storeForGetTextDimension = {
 	  cacheFontInfo: '',
 	  elementForTextSize: null,
@@ -1138,7 +1365,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var line = paper.path([path]);
 	    var strokeStyle = {
 	      stroke: color,
-	      'stroke-width': _tuiCodeSnippet2['default'].isUndefined(strokeWidth) ? 2 : strokeWidth,
+	      'stroke-width': (0, _isUndefined2['default'])(strokeWidth) ? 2 : strokeWidth,
 	      'stroke-linecap': 'butt'
 	    };
 	    if (color === 'transparent') {
@@ -1188,7 +1415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {object}
 	   */
 	  renderText: function renderText(paper, pos, text, attributes) {
-	    var textObj = paper.text(pos.left, pos.top, _tuiCodeSnippet2['default'].decodeHTMLEntity(String(text)));
+	    var textObj = paper.text(pos.left, pos.top, (0, _decodeHTMLEntity2['default'])(String(text)));
 	
 	    if (attributes) {
 	      if (attributes['dominant-baseline']) {
@@ -1305,7 +1532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    hex = hex.replace('#', '');
 	    lum = lum || 0;
 	
-	    var changedHex = _tuiCodeSnippet2['default'].range(3).map(function (index) {
+	    var changedHex = (0, _range2['default'])(3).map(function (index) {
 	      var hd = parseInt(hex.substr(index * 2, 2), 16);
 	      var newHd = hd + hd * lum;
 	
@@ -1486,7 +1713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	
 	function isNumber(numberSuspect) {
-	  return _tuiCodeSnippet2['default'].isExisty(numberSuspect) && typeof numberSuspect === 'number';
+	  return (0, _isExisty2['default'])(numberSuspect) && typeof numberSuspect === 'number';
 	}
 	
 	/**
@@ -1511,34 +1738,217 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports) {
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
+	/**
+	 * @fileoverview Generate an integer Array containing an arithmetic progression.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var isUndefined = __webpack_require__(13);
+	
+	/**
+	 * Generate an integer Array containing an arithmetic progression.
+	 * @param {number} start - start index
+	 * @param {number} stop - stop index
+	 * @param {number} step - next visit index = current index + step
+	 * @returns {Array}
+	 * @memberof module:array
+	 * @example
+	 * var range = require('tui-code-snippet/array/range'); // node, commonjs
+	 *
+	 * range(5); // [0, 1, 2, 3, 4]
+	 * range(1, 5); // [1,2,3,4]
+	 * range(2, 10, 2); // [2,4,6,8]
+	 * range(10, 2, -2); // [10,8,6,4]
+	 */
+	function range(start, stop, step) {
+	  var arr = [];
+	  var flag;
+	
+	  if (isUndefined(stop)) {
+	    stop = start || 0;
+	    start = 0;
+	  }
+	
+	  step = step || 1;
+	  flag = step < 0 ? -1 : 1;
+	  stop *= flag;
+	
+	  for (; start * flag < stop; start += step) {
+	    arr.push(start);
+	  }
+	
+	  return arr;
+	}
+	
+	module.exports = range;
+
 
 /***/ }),
-/* 8 */
+/* 13 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is undefined or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is undefined or not.
+	 * If the given variable is undefined, returns true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is undefined?
+	 * @memberof module:type
+	 */
+	function isUndefined(obj) {
+	  return obj === undefined; // eslint-disable-line no-undefined
+	}
+	
+	module.exports = isUndefined;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Check whether the given variable is existing or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var isUndefined = __webpack_require__(13);
+	var isNull = __webpack_require__(6);
+	
+	/**
+	 * Check whether the given variable is existing or not.
+	 * If the given variable is not null and not undefined, returns true.
+	 * @param {*} param - Target for checking
+	 * @returns {boolean} Is existy?
+	 * @memberof module:type
+	 * @example
+	 * var isExisty = require('tui-code-snippet/type/isExisty'); // node, commonjs
+	 *
+	 * isExisty(''); //true
+	 * isExisty(0); //true
+	 * isExisty([]); //true
+	 * isExisty({}); //true
+	 * isExisty(null); //false
+	 * isExisty(undefined); //false
+	*/
+	function isExisty(param) {
+	  return !isUndefined(param) && !isNull(param);
+	}
+	
+	module.exports = isExisty;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Transform the given HTML Entity string into plain string.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * @module string
+	 */
+	
+	/**
+	 * Transform the given HTML Entity string into plain string.
+	 * @param {String} htmlEntity - HTML Entity type string
+	 * @returns {String} Plain string
+	 * @memberof module:string
+	 * @example
+	 * var decodeHTMLEntity = require('tui-code-snippet/string/decodeHTMLEntity'); // node, commonjs
+	 *
+	 * var htmlEntityString = "A &#39;quote&#39; is &lt;b&gt;bold&lt;/b&gt;"
+	 * var result = decodeHTMLEntity(htmlEntityString); //"A 'quote' is <b>bold</b>"
+	 */
+	function decodeHTMLEntity(htmlEntity) {
+	  var entities = {
+	    '&quot;': '"',
+	    '&amp;': '&',
+	    '&lt;': '<',
+	    '&gt;': '>',
+	    '&#39;': '\'',
+	    '&nbsp;': ' '
+	  };
+	
+	  return htmlEntity.replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&nbsp;/g, function(m0) {
+	    return entities[m0] ? entities[m0] : m0;
+	  });
+	}
+	
+	module.exports = decodeHTMLEntity;
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isDate = __webpack_require__(17);
+	
+	var _isDate2 = _interopRequireDefault(_isDate);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _formatDate = __webpack_require__(19);
+	
+	var _formatDate2 = _interopRequireDefault(_formatDate);
+	
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
+	var _forEachArray = __webpack_require__(9);
+	
+	var _forEachArray2 = _interopRequireDefault(_forEachArray);
+	
+	var _browser = __webpack_require__(21);
+	
+	var _browser2 = _interopRequireDefault(_browser);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -1548,9 +1958,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                     */
 	
-	var browser = _tuiCodeSnippet2['default'].browser;
 	
-	var _isOldBrowser = browser.msie && browser.version <= 8;
+	var _isOldBrowser = _browser2['default'].msie && _browser2['default'].version <= 8;
 	var hasComputedStyle = window.getComputedStyle || false;
 	var CLIP_RECT_ID = 'clipRectForAnimation';
 	var lineBaseChartCount = 0;
@@ -1638,7 +2047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _makeCachingKey: function _makeCachingKey(label, theme, offsetType) {
 	    var keys = [label, offsetType];
 	
-	    _tuiCodeSnippet2['default'].forEach(theme, function (key, value) {
+	    (0, _forEach2['default'])(theme, function (key, value) {
 	      keys.push(key + value);
 	    });
 	
@@ -1781,7 +2190,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var maxSize = 0;
 	
 	    if (labels && labels.length) {
-	      var sizes = _tuiCodeSnippet2['default'].map(labels, function (label) {
+	      var sizes = labels.map(function (label) {
 	        return iteratee(label, theme);
 	      });
 	      maxSize = _arrayUtil2['default'].max(sizes);
@@ -1801,7 +2210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @private
 	   */
 	  getRenderedLabelsMaxWidth: function getRenderedLabelsMaxWidth(labels, theme, maxWidth) {
-	    var iteratee = _tuiCodeSnippet2['default'].bind(this.getRenderedLabelWidth, this);
+	    var iteratee = this.getRenderedLabelWidth.bind(this);
 	    var labelMaxSize = this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 	
 	    return maxWidth ? Math.min(maxWidth, labelMaxSize) : labelMaxSize;
@@ -1816,7 +2225,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {number} max height
 	   */
 	  getRenderedLabelsMaxHeight: function getRenderedLabelsMaxHeight(labels, theme) {
-	    var iteratee = _tuiCodeSnippet2['default'].bind(this.getRenderedLabelHeight, this);
+	    var iteratee = this.getRenderedLabelHeight.bind(this);
 	
 	    return this._getRenderedLabelsMaxSize(labels, theme, iteratee);
 	  },
@@ -1845,14 +2254,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {{top: number, left: number, right: number}} position position
 	   */
 	  renderPosition: function renderPosition(el, position) {
-	    if (_tuiCodeSnippet2['default'].isUndefined(position)) {
+	    if ((0, _isUndefined2['default'])(position)) {
 	      return;
 	    }
 	
-	    _tuiCodeSnippet2['default'].forEachArray(['top', 'bottom', 'left', 'right'], function (key) {
+	    (0, _forEachArray2['default'])(['top', 'bottom', 'left', 'right'], function (key) {
 	      var value = position[key];
 	
-	      if (_tuiCodeSnippet2['default'].isNumber(value)) {
+	      if ((0, _isNumber2['default'])(value)) {
 	        el.style[key] = value + 'px';
 	      }
 	    });
@@ -1989,7 +2398,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var fns = [String(value)].concat(_toConsumableArray(formatFunctions || []));
 	
-	    return _tuiCodeSnippet2['default'].reduce(fns, function (stored, fn) {
+	    return fns.reduce(function (stored, fn) {
 	      return fn(stored, chartType, areaType, valueType, legendName);
 	    });
 	  },
@@ -2016,7 +2425,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return values;
 	    }
 	
-	    return _tuiCodeSnippet2['default'].map(values, function (value) {
+	    return values.map(function (value) {
 	      return renderUtil.formatValue({
 	        value: value,
 	        formatFunctions: formatFunctions,
@@ -2038,9 +2447,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  formatDate: function formatDate(value) {
 	    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _const2['default'].DEFAULT_DATE_FORMAT;
 	
-	    var date = _tuiCodeSnippet2['default'].isDate(value) ? value : new Date(value);
+	    var date = (0, _isDate2['default'])(value) ? value : new Date(value);
 	
-	    return _tuiCodeSnippet2['default'].formatDate(format, date) || value;
+	    return (0, _formatDate2['default'])(format, date) || value;
 	  },
 	
 	
@@ -2056,7 +2465,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _const2['default'].DEFAULT_DATE_FORMAT;
 	
-	    return _tuiCodeSnippet2['default'].map(values, function (value) {
+	    return values.map(function (value) {
 	      return _this.formatDate(value, format);
 	    });
 	  },
@@ -2200,7 +2609,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      values = value.split('').reverse();
 	      lastIndex = values.length - 1;
-	      values = _tuiCodeSnippet2['default'].map(values, function (char, index) {
+	      values = values.map(function (char, index) {
 	        var result = [char];
 	        if (index < lastIndex && (index + 1) % betweenLen === 0) {
 	          result.push(comma);
@@ -2222,7 +2631,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @memberof module:renderUtil
 	   */
 	  makeCssTextFromMap: function makeCssTextFromMap(cssMap) {
-	    return _tuiCodeSnippet2['default'].map(cssMap, function (value, name) {
+	    return cssMap.map(function (value, name) {
 	      return renderUtil.concatStr(name, ':', value);
 	    }).join(';');
 	  },
@@ -2256,7 +2665,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    suffix = this._perseString(suffix);
 	
 	    if (!(prefix === '' && suffix === '')) {
-	      return _tuiCodeSnippet2['default'].map(labels, function (label) {
+	      return labels.map(function (label) {
 	        return _this2.addPrefixSuffixItem(label, prefix, suffix);
 	      });
 	    }
@@ -2322,8 +2731,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @ignore
 	 */
 	function setOpacity(elements, iteratee) {
-	  elements = _tuiCodeSnippet2['default'].isArray(elements) ? elements : [elements];
-	  _tuiCodeSnippet2['default'].forEachArray(elements, iteratee);
+	  elements = (0, _isArray2['default'])(elements) ? elements : [elements];
+	  (0, _forEachArray2['default'])(elements, iteratee);
 	}
 	
 	/**
@@ -2345,7 +2754,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  renderUtil.makeOpacityCssText = function (opacity) {
 	    var cssText = '';
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(opacity)) {
+	    if ((0, _isExisty2['default'])(opacity)) {
 	      var cssOpacityString = makeCssFilterOpacityString(opacity);
 	      cssText = ';filter:' + cssOpacityString;
 	    }
@@ -2373,7 +2782,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  renderUtil.makeOpacityCssText = function (opacity) {
 	    var cssText = '';
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(opacity)) {
+	    if ((0, _isExisty2['default'])(opacity)) {
 	      cssText = ';opacity:' + opacity;
 	    }
 	
@@ -2395,7 +2804,474 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = renderUtil;
 
 /***/ }),
-/* 9 */
+/* 17 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is an instance of Date or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is an instance of Date or not.
+	 * If the given variables is an instance of Date, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is an instance of Date?
+	 * @memberof module:type
+	 */
+	function isDate(obj) {
+	  return obj instanceof Date;
+	}
+	
+	module.exports = isDate;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is a number or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is a number or not.
+	 * If the given variable is a number, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is number?
+	 * @memberof module:type
+	 */
+	function isNumber(obj) {
+	  return typeof obj === 'number' || obj instanceof Number;
+	}
+	
+	module.exports = isNumber;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview This module has a function for date format.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var pick = __webpack_require__(20);
+	var isDate = __webpack_require__(17);
+	
+	var tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*A/gi;
+	var MONTH_STR = [
+	  'Invalid month', 'January', 'February', 'March', 'April', 'May',
+	  'June', 'July', 'August', 'September', 'October', 'November', 'December'
+	];
+	var MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+	var replaceMap = {
+	  M: function(date) {
+	    return Number(date.month);
+	  },
+	  MM: function(date) {
+	    var month = date.month;
+	
+	    return (Number(month) < 10) ? '0' + month : month;
+	  },
+	  MMM: function(date) {
+	    return MONTH_STR[Number(date.month)].substr(0, 3);
+	  },
+	  MMMM: function(date) {
+	    return MONTH_STR[Number(date.month)];
+	  },
+	  D: function(date) {
+	    return Number(date.date);
+	  },
+	  d: function(date) {
+	    return replaceMap.D(date); // eslint-disable-line new-cap
+	  },
+	  DD: function(date) {
+	    var dayInMonth = date.date;
+	
+	    return (Number(dayInMonth) < 10) ? '0' + dayInMonth : dayInMonth;
+	  },
+	  dd: function(date) {
+	    return replaceMap.DD(date); // eslint-disable-line new-cap
+	  },
+	  YY: function(date) {
+	    return Number(date.year) % 100;
+	  },
+	  yy: function(date) {
+	    return replaceMap.YY(date); // eslint-disable-line new-cap
+	  },
+	  YYYY: function(date) {
+	    var prefix = '20',
+	      year = date.year;
+	    if (year > 69 && year < 100) {
+	      prefix = '19';
+	    }
+	
+	    return (Number(year) < 100) ? prefix + String(year) : year;
+	  },
+	  yyyy: function(date) {
+	    return replaceMap.YYYY(date); // eslint-disable-line new-cap
+	  },
+	  A: function(date) {
+	    return date.meridiem;
+	  },
+	  a: function(date) {
+	    return date.meridiem;
+	  },
+	  hh: function(date) {
+	    var hour = date.hour;
+	
+	    return (Number(hour) < 10) ? '0' + hour : hour;
+	  },
+	  HH: function(date) {
+	    return replaceMap.hh(date);
+	  },
+	  h: function(date) {
+	    return String(Number(date.hour));
+	  },
+	  H: function(date) {
+	    return replaceMap.h(date);
+	  },
+	  m: function(date) {
+	    return String(Number(date.minute));
+	  },
+	  mm: function(date) {
+	    var minute = date.minute;
+	
+	    return (Number(minute) < 10) ? '0' + minute : minute;
+	  }
+	};
+	
+	/**
+	 * Check whether the given variables are valid date or not.
+	 * @param {number} year - Year
+	 * @param {number} month - Month
+	 * @param {number} date - Day in month.
+	 * @returns {boolean} Is valid?
+	 * @private
+	 */
+	function isValidDate(year, month, date) { // eslint-disable-line complexity
+	  var isValidYear, isValidMonth, isValid, lastDayInMonth;
+	
+	  year = Number(year);
+	  month = Number(month);
+	  date = Number(date);
+	
+	  isValidYear = (year > -1 && year < 100) || ((year > 1969) && (year < 2070));
+	  isValidMonth = (month > 0) && (month < 13);
+	
+	  if (!isValidYear || !isValidMonth) {
+	    return false;
+	  }
+	
+	  lastDayInMonth = MONTH_DAYS[month];
+	  if (month === 2 && year % 4 === 0) {
+	    if (year % 100 !== 0 || year % 400 === 0) {
+	      lastDayInMonth = 29;
+	    }
+	  }
+	
+	  isValid = (date > 0) && (date <= lastDayInMonth);
+	
+	  return isValid;
+	}
+	
+	/**
+	 * @module formatDate
+	 */
+	
+	/**
+	 * Return a string that transformed from the given form and date.
+	 * @param {string} form - Date form
+	 * @param {Date|Object} date - Date object
+	 * @param {{meridiemSet: {AM: string, PM: string}}} option - Option
+	 * @returns {boolean|string} A transformed string or false.
+	 * @memberof module:formatDate
+	 * @example
+	 *  // key             | Shorthand
+	 *  // --------------- |-----------------------
+	 *  // years           | YY / YYYY / yy / yyyy
+	 *  // months(n)       | M / MM
+	 *  // months(str)     | MMM / MMMM
+	 *  // days            | D / DD / d / dd
+	 *  // hours           | H / HH / h / hh
+	 *  // minutes         | m / mm
+	 *  // meridiem(AM,PM) | A / a
+	 *
+	 * var formatDate = require('tui-code-snippet/formatDate/formatDate'); // node, commonjs
+	 *
+	 * var dateStr1 = formatDate('yyyy-MM-dd', {
+	 *     year: 2014,
+	 *     month: 12,
+	 *     date: 12
+	 * });
+	 * alert(dateStr1); // '2014-12-12'
+	 *
+	 * var dateStr2 = formatDate('MMM DD YYYY HH:mm', {
+	 *     year: 1999,
+	 *     month: 9,
+	 *     date: 9,
+	 *     hour: 0,
+	 *     minute: 2
+	 * });
+	 * alert(dateStr2); // 'Sep 09 1999 00:02'
+	 *
+	 * var dt = new Date(2010, 2, 13),
+	 *     dateStr3 = formatDate('yyyy년 M월 dd일', dt);
+	 * alert(dateStr3); // '2010년 3월 13일'
+	 *
+	 * var option4 = {
+	 *     meridiemSet: {
+	 *         AM: '오전',
+	 *         PM: '오후'
+	 *     }
+	 * };
+	 * var date4 = {year: 1999, month: 9, date: 9, hour: 13, minute: 2};
+	 * var dateStr4 = formatDate('yyyy-MM-dd A hh:mm', date4, option4));
+	 * alert(dateStr4); // '1999-09-09 오후 01:02'
+	 */
+	function formatDate(form, date, option) { // eslint-disable-line complexity
+	  var am = pick(option, 'meridiemSet', 'AM') || 'AM';
+	  var pm = pick(option, 'meridiemSet', 'PM') || 'PM';
+	  var meridiem, nDate, resultStr;
+	
+	  if (isDate(date)) {
+	    nDate = {
+	      year: date.getFullYear(),
+	      month: date.getMonth() + 1,
+	      date: date.getDate(),
+	      hour: date.getHours(),
+	      minute: date.getMinutes()
+	    };
+	  } else {
+	    nDate = {
+	      year: date.year,
+	      month: date.month,
+	      date: date.date,
+	      hour: date.hour,
+	      minute: date.minute
+	    };
+	  }
+	
+	  if (!isValidDate(nDate.year, nDate.month, nDate.date)) {
+	    return false;
+	  }
+	
+	  nDate.meridiem = '';
+	  if (/([^\\]|^)[aA]\b/.test(form)) {
+	    meridiem = (nDate.hour > 11) ? pm : am;
+	    if (nDate.hour > 12) { // See the clock system: https://en.wikipedia.org/wiki/12-hour_clock
+	      nDate.hour %= 12;
+	    }
+	    if (nDate.hour === 0) {
+	      nDate.hour = 12;
+	    }
+	    nDate.meridiem = meridiem;
+	  }
+	
+	  resultStr = form.replace(tokens, function(key) {
+	    if (key.indexOf('\\') > -1) { // escape character
+	      return key.replace(/\\/, '');
+	    }
+	
+	    return replaceMap[key](nDate) || '';
+	  });
+	
+	  return resultStr;
+	}
+	
+	module.exports = formatDate;
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Retrieve a nested item from the given object/array.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var isUndefined = __webpack_require__(13);
+	var isNull = __webpack_require__(6);
+	
+	/**
+	 * Retrieve a nested item from the given object/array.
+	 * @param {object|Array} obj - Object for retrieving
+	 * @param {...string|number} paths - Paths of property
+	 * @returns {*} Value
+	 * @memberof module:object
+	 * @example
+	 * var pick = require('tui-code-snippet/object/pick'); // node, commonjs
+	 *
+	 * var obj = {
+	 *     'key1': 1,
+	 *     'nested' : {
+	 *         'key1': 11,
+	 *         'nested': {
+	 *             'key1': 21
+	 *         }
+	 *     }
+	 * };
+	 * pick(obj, 'nested', 'nested', 'key1'); // 21
+	 * pick(obj, 'nested', 'nested', 'key2'); // undefined
+	 *
+	 * var arr = ['a', 'b', 'c'];
+	 * pick(arr, 1); // 'b'
+	 */
+	function pick(obj, paths) { // eslint-disable-line no-unused-vars
+	  var args = arguments;
+	  var target = args[0];
+	  var i = 1;
+	  var length = args.length;
+	
+	  for (; i < length; i += 1) {
+	    if (isUndefined(target) ||
+	            isNull(target)) {
+	      return;
+	    }
+	
+	    target = target[args[i]];
+	  }
+	
+	  return target; // eslint-disable-line consistent-return
+	}
+	
+	module.exports = pick;
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview This module detects the kind of well-known browser and version.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Browser module
+	 * @module browser
+	 */
+	
+	/**
+	 * This object has an information that indicate the kind of browser.
+	 * The list below is a detectable browser list.
+	 *  - ie8 ~ ie11
+	 *  - chrome
+	 *  - firefox
+	 *  - safari
+	 *  - edge
+	 * @memberof module:browser
+	 * @example
+	 * var browser = require('tui-code-snippet/browser/browser'); // node, commonjs
+	 *
+	 * browser.chrome === true; // chrome
+	 * browser.firefox === true; // firefox
+	 * browser.safari === true; // safari
+	 * browser.msie === true; // IE
+	 * browser.edge === true; // edge
+	 * browser.others === true; // other browser
+	 * browser.version; // browser version
+	 */
+	var browser = {
+	  chrome: false,
+	  firefox: false,
+	  safari: false,
+	  msie: false,
+	  edge: false,
+	  others: false,
+	  version: 0
+	};
+	
+	if (window && window.navigator) {
+	  detectBrowser();
+	}
+	
+	/**
+	 * Detect the browser.
+	 * @private
+	 */
+	function detectBrowser() {
+	  var nav = window.navigator;
+	  var appName = nav.appName.replace(/\s/g, '_');
+	  var userAgent = nav.userAgent;
+	
+	  var rIE = /MSIE\s([0-9]+[.0-9]*)/;
+	  var rIE11 = /Trident.*rv:11\./;
+	  var rEdge = /Edge\/(\d+)\./;
+	  var versionRegex = {
+	    firefox: /Firefox\/(\d+)\./,
+	    chrome: /Chrome\/(\d+)\./,
+	    safari: /Version\/([\d.]+).*Safari\/(\d+)/
+	  };
+	
+	  var key, tmp;
+	
+	  var detector = {
+	    Microsoft_Internet_Explorer: function() { // eslint-disable-line camelcase
+	      var detectedVersion = userAgent.match(rIE);
+	
+	      if (detectedVersion) { // ie8 ~ ie10
+	        browser.msie = true;
+	        browser.version = parseFloat(detectedVersion[1]);
+	      } else { // no version information
+	        browser.others = true;
+	      }
+	    },
+	    Netscape: function() { // eslint-disable-line complexity
+	      var detected = false;
+	
+	      if (rIE11.exec(userAgent)) {
+	        browser.msie = true;
+	        browser.version = 11;
+	        detected = true;
+	      } else if (rEdge.exec(userAgent)) {
+	        browser.edge = true;
+	        browser.version = userAgent.match(rEdge)[1];
+	        detected = true;
+	      } else {
+	        for (key in versionRegex) {
+	          if (versionRegex.hasOwnProperty(key)) {
+	            tmp = userAgent.match(versionRegex[key]);
+	            if (tmp && tmp.length > 1) { // eslint-disable-line max-depth
+	              browser[key] = detected = true;
+	              browser.version = parseFloat(tmp[1] || 0);
+	              break;
+	            }
+	          }
+	        }
+	      }
+	      if (!detected) {
+	        browser.others = true;
+	      }
+	    }
+	  };
+	
+	  var fn = detector[appName];
+	
+	  if (fn) {
+	    detector[appName]();
+	  }
+	}
+	
+	module.exports = browser;
+
+
+/***/ }),
+/* 22 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2869,16 +3745,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 10 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isArray = __webpack_require__(8);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isString = __webpack_require__(24);
+	
+	var _isString2 = _interopRequireDefault(_isString);
+	
+	var _inArray = __webpack_require__(25);
+	
+	var _inArray2 = _interopRequireDefault(_inArray);
+	
+	var _forEachArray = __webpack_require__(9);
+	
+	var _forEachArray2 = _interopRequireDefault(_forEachArray);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -2926,7 +3814,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      classNames = [].concat(_toConsumableArray(el.classList));
 	    } else {
 	      className = el.className || '';
-	      classNames = className && _tuiCodeSnippet2['default'].isString(className) ? className.split(' ') : [];
+	      classNames = className && (0, _isString2['default'])(className) ? className.split(' ') : [];
 	    }
 	
 	    return classNames;
@@ -2945,7 +3833,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    var classNames = this._getClassNames(el);
-	    var index = _tuiCodeSnippet2['default'].inArray(newClass, classNames);
+	    var index = (0, _inArray2['default'])(newClass, classNames);
 	
 	    if (index > -1) {
 	      return;
@@ -2964,7 +3852,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  removeClass: function removeClass(el, rmClass) {
 	    var classNames = this._getClassNames(el);
-	    var index = _tuiCodeSnippet2['default'].inArray(rmClass, classNames);
+	    var index = (0, _inArray2['default'])(rmClass, classNames);
 	
 	    if (index === -1) {
 	      return;
@@ -2984,7 +3872,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  hasClass: function hasClass(el, findClass) {
 	    var classNames = this._getClassNames(el);
-	    var index = _tuiCodeSnippet2['default'].inArray(findClass, classNames);
+	    var index = (0, _inArray2['default'])(findClass, classNames);
 	
 	    return index > -1;
 	  },
@@ -3026,9 +3914,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!container || !children) {
 	      return;
 	    }
-	    children = _tuiCodeSnippet2['default'].isArray(children) ? children : [children];
+	    children = (0, _isArray2['default'])(children) ? children : [children];
 	
-	    _tuiCodeSnippet2['default'].forEachArray(children, function (child) {
+	    (0, _forEachArray2['default'])(children, function (child) {
 	      if (!child) {
 	        return;
 	      }
@@ -3038,7 +3926,93 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 11 */
+/* 24 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is a string or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is a string or not.
+	 * If the given variable is a string, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is string?
+	 * @memberof module:type
+	 */
+	function isString(obj) {
+	  return typeof obj === 'string' || obj instanceof String;
+	}
+	
+	module.exports = isString;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* eslint-disable complexity */
+	/**
+	 * @fileoverview Returns the first index at which a given element can be found in the array.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var isArray = __webpack_require__(8);
+	
+	/**
+	 * @module array
+	 */
+	
+	/**
+	 * Returns the first index at which a given element can be found in the array
+	 * from start index(default 0), or -1 if it is not present.
+	 * It compares searchElement to elements of the Array using strict equality
+	 * (the same method used by the ===, or triple-equals, operator).
+	 * @param {*} searchElement Element to locate in the array
+	 * @param {Array} array Array that will be traversed.
+	 * @param {number} startIndex Start index in array for searching (default 0)
+	 * @returns {number} the First index at which a given element, or -1 if it is not present
+	 * @memberof module:array
+	 * @example
+	 * var inArray = require('tui-code-snippet/array/inArray'); // node, commonjs
+	 *
+	 * var arr = ['one', 'two', 'three', 'four'];
+	 * var idx1 = inArray('one', arr, 3); // -1
+	 * var idx2 = inArray('one', arr); // 0
+	 */
+	function inArray(searchElement, array, startIndex) {
+	  var i;
+	  var length;
+	  startIndex = startIndex || 0;
+	
+	  if (!isArray(array)) {
+	    return -1;
+	  }
+	
+	  if (Array.prototype.indexOf) {
+	    return Array.prototype.indexOf.call(array, searchElement, startIndex);
+	  }
+	
+	  length = array.length;
+	  for (i = startIndex; startIndex >= 0 && i < length; i += 1) {
+	    if (array[i] === searchElement) {
+	      return i;
+	    }
+	  }
+	
+	  return -1;
+	}
+	
+	module.exports = inArray;
+
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3047,9 +4021,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isBoolean = __webpack_require__(27);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isBoolean2 = _interopRequireDefault(_isBoolean);
+	
+	var _inArray = __webpack_require__(25);
+	
+	var _inArray2 = _interopRequireDefault(_inArray);
+	
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
+	var _forEachArray = __webpack_require__(9);
+	
+	var _forEachArray2 = _interopRequireDefault(_forEachArray);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -3113,7 +4099,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var rest = arr.slice(1);
 	    var maxValue = condition.call(context, result, 0);
-	    _tuiCodeSnippet2['default'].forEachArray(rest, function (item, index) {
+	    (0, _forEachArray2['default'])(rest, function (item, index) {
 	      var compareValue = condition.call(context, item, index + 1);
 	      if (compareValue > maxValue) {
 	        maxValue = compareValue;
@@ -3135,7 +4121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function any(collection, condition, context) {
 	  var result = false;
-	  _tuiCodeSnippet2['default'].forEach(collection, function (item, key) {
+	  (0, _forEach2['default'])(collection, function (item, key) {
 	    if (condition.call(context, item, key, collection)) {
 	      result = true;
 	    }
@@ -3156,7 +4142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function all(collection, condition, context) {
 	  var result = !!(collection || []).length;
-	  _tuiCodeSnippet2['default'].forEach(collection, function (item, key) {
+	  (0, _forEach2['default'])(collection, function (item, key) {
 	    if (!condition.call(context, item, key, collection)) {
 	      result = false;
 	    }
@@ -3179,7 +4165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function unique(arr, sorted, iteratee, context) {
 	  var result = [];
 	
-	  if (!_tuiCodeSnippet2['default'].isBoolean(sorted)) {
+	  if (!(0, _isBoolean2['default'])(sorted)) {
 	    context = iteratee;
 	    iteratee = sorted;
 	    sorted = false;
@@ -3191,7 +4177,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  if (sorted) {
 	    var prevValue = void 0;
-	    _tuiCodeSnippet2['default'].forEachArray(arr, function (value, index) {
+	    (0, _forEachArray2['default'])(arr, function (value, index) {
 	      value = iteratee.call(context, value, index, arr);
 	      if (!index || prevValue !== value) {
 	        result.push(value);
@@ -3199,9 +4185,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      prevValue = value;
 	    });
 	  } else {
-	    _tuiCodeSnippet2['default'].forEachArray(arr, function (value, index) {
+	    (0, _forEachArray2['default'])(arr, function (value, index) {
 	      value = iteratee.call(context, value, index, arr);
-	      if (_tuiCodeSnippet2['default'].inArray(value, result) === -1) {
+	      if ((0, _inArray2['default'])(value, result) === -1) {
 	        result.push(value);
 	      }
 	    });
@@ -3289,7 +4275,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 12 */
+/* 27 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is a string or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is a boolean or not.
+	 *  If the given variable is a boolean, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is boolean?
+	 * @memberof module:type
+	 */
+	function isBoolean(obj) {
+	  return typeof obj === 'boolean' || obj instanceof Boolean;
+	}
+	
+	module.exports = isBoolean;
+
+
+/***/ }),
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3300,21 +4311,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _templateObject = _taggedTemplateLiteral(['\n            M', ',', '\n            V', '\n        '], ['\n            M', ',', '\n            V', '\n        ']);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
-	
-	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
-	
-	var _renderUtil = __webpack_require__(8);
-	
-	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
 	var _raphael = __webpack_require__(4);
 	
 	var _raphael2 = _interopRequireDefault(_raphael);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _raphaelRenderUtil = __webpack_require__(11);
+	
+	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
+	
+	var _renderUtil = __webpack_require__(16);
+	
+	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -3325,6 +4340,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -3394,7 +4410,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      'fill-opacity': 0
 	    };
 	
-	    return _raphaelRenderUtil2['default'].renderCircle(this.paper, position, 0, _tuiCodeSnippet2['default'].extend({
+	    return _raphaelRenderUtil2['default'].renderCircle(this.paper, position, 0, Object.assign({
 	      'stroke-width': 0
 	    }, attributes));
 	  };
@@ -3414,7 +4430,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return null;
 	    }
 	
-	    var rect = _raphaelRenderUtil2['default'].renderRect(this.paper, bound, _tuiCodeSnippet2['default'].extend({
+	    var rect = _raphaelRenderUtil2['default'].renderRect(this.paper, bound, Object.assign({
 	      fill: color,
 	      stroke: 'none'
 	    }, attributes));
@@ -3784,7 +4800,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  RaphaelBoxplotChart.prototype.showAnimation = function showAnimation(data) {
-	    if (_tuiCodeSnippet2['default'].isNumber(data.outlierIndex)) {
+	    if ((0, _isNumber2['default'])(data.outlierIndex)) {
 	      this.showOutlierAnimation(data);
 	    } else {
 	      this.showRectAnimation(data);
@@ -3973,7 +4989,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  RaphaelBoxplotChart.prototype.selectLegend = function selectLegend(legendIndex) {
-	    var noneSelected = _tuiCodeSnippet2['default'].isNull(legendIndex);
+	    var noneSelected = (0, _isNull2['default'])(legendIndex);
 	
 	    _raphaelRenderUtil2['default'].forEach2dArray(this.groupBoxes, function (box, groupIndex, index) {
 	      if (!box) {
@@ -4038,26 +5054,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelBoxplotChart;
 
 /***/ }),
-/* 13 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _browser = __webpack_require__(21);
+	
+	var _browser2 = _interopRequireDefault(_browser);
+	
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -4069,9 +5089,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
-	var browser = _tuiCodeSnippet2['default'].browser;
 	
-	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+	var IS_LTE_IE8 = _browser2['default'].msie && _browser2['default'].version <= 8;
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
 	var EVENT_DETECTOR_PADDING = 20;
@@ -4264,7 +5283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return null;
 	    }
 	
-	    return _raphaelRenderUtil2['default'].renderRect(this.paper, bound, _tuiCodeSnippet2['default'].extend({
+	    return _raphaelRenderUtil2['default'].renderRect(this.paper, bound, Object.assign({
 	      fill: color,
 	      stroke: 'none'
 	    }, attributes));
@@ -4460,7 +5479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  RaphaelBulletChart.prototype.selectLegend = function selectLegend(legendIndex) {
 	    var _this3 = this;
 	
-	    var allEmphasized = _tuiCodeSnippet2['default'].isNull(legendIndex);
+	    var allEmphasized = (0, _isNull2['default'])(legendIndex);
 	
 	    this.groupBars.forEach(function (bars, groupIndex) {
 	      var opacity = allEmphasized || legendIndex === groupIndex ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
@@ -4593,24 +5612,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelBulletChart;
 
 /***/ }),
-/* 14 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _raphaelLineTypeBase = __webpack_require__(15);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _raphaelLineTypeBase = __webpack_require__(31);
 	
 	var _raphaelLineTypeBase2 = _interopRequireDefault(_raphaelLineTypeBase);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -4623,6 +5646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -4680,7 +5704,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var opacity = options.showDot ? 1 : 0;
 	    var isSpline = options.spline;
-	    var lineWidth = this.lineWidth = _tuiCodeSnippet2['default'].isNumber(options.pointWidth) ? options.pointWidth : this.lineWidth;
+	    var lineWidth = this.lineWidth = (0, _isNumber2['default'])(options.pointWidth) ? options.pointWidth : this.lineWidth;
 	    var borderStyle = this.makeBorderStyle(theme.dot.strokeColor, opacity, theme.dot.strokeWidth);
 	    var outDotStyle = this.makeOutDotStyle(opacity, borderStyle);
 	    var groupPaths = void 0;
@@ -4848,7 +5872,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  RaphaelLineChart.prototype.selectLegend = function selectLegend(legendIndex) {
 	    var _this5 = this;
 	
-	    var noneSelected = _tuiCodeSnippet2['default'].isNull(legendIndex);
+	    var noneSelected = (0, _isNull2['default'])(legendIndex);
 	
 	    if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
 	      this.resetSeriesOrder(this.selectedLegendIndex);
@@ -4995,7 +6019,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelLineChart;
 
 /***/ }),
-/* 15 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5004,29 +6028,45 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _browser = __webpack_require__(21);
+	
+	var _browser2 = _interopRequireDefault(_browser);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -5039,9 +6079,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           */
 	
 	
-	var browser = _tuiCodeSnippet2['default'].browser;
-	
-	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+	var IS_LTE_IE8 = _browser2['default'].msie && _browser2['default'].version <= 8;
 	var DEFAULT_DOT_RADIUS = 6;
 	var SELECTION_DOT_RADIUS = 7;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -5345,7 +6383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    if (borderStyle) {
-	      _tuiCodeSnippet2['default'].extend(outDotStyle, borderStyle);
+	      Object.assign(outDotStyle, borderStyle);
 	    }
 	
 	    return outDotStyle;
@@ -5366,12 +6404,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var raphaelDot = void 0;
 	
 	    if (position) {
-	      var dot = paper.circle(position.left, position.top, !_tuiCodeSnippet2['default'].isUndefined(dotTheme.radius) ? dotTheme.radius : DEFAULT_DOT_RADIUS);
+	      var dot = paper.circle(position.left, position.top, !(0, _isUndefined2['default'])(dotTheme.radius) ? dotTheme.radius : DEFAULT_DOT_RADIUS);
 	      var dotStyle = {
 	        fill: dotTheme.fillColor || color,
-	        'fill-opacity': _tuiCodeSnippet2['default'].isNumber(opacity) ? opacity : dotTheme.fillOpacity,
+	        'fill-opacity': (0, _isNumber2['default'])(opacity) ? opacity : dotTheme.fillOpacity,
 	        stroke: dotTheme.strokeColor || color,
-	        'stroke-opacity': _tuiCodeSnippet2['default'].isNumber(opacity) ? opacity : dotTheme.strokeOpacity,
+	        'stroke-opacity': (0, _isNumber2['default'])(opacity) ? opacity : dotTheme.strokeOpacity,
 	        'stroke-width': dotTheme.strokeWidth
 	      };
 	
@@ -5426,7 +6464,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	
 	        if (_this2.hasRangeData) {
-	          var startPosition = _tuiCodeSnippet2['default'].extend({}, position);
+	          var startPosition = Object.assign({}, position);
 	          startPosition.top = startPosition.startTop;
 	          dotMap.startDot = _this2.renderDot(paper, startPosition, color, opacity);
 	        }
@@ -5518,7 +6556,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  RaphaelLineTypeBase.prototype._updateLineStrokeOpacity = function _updateLineStrokeOpacity(changeType, line) {
 	    var opacity = 1;
-	    var isSelectedLegend = !_tuiCodeSnippet2['default'].isNull(this.selectedLegendIndex);
+	    var isSelectedLegend = !(0, _isNull2['default'])(this.selectedLegendIndex);
 	    if (this.groupLines) {
 	      if (changeType === CHART_HOVER_STATUS_OVER || isSelectedLegend) {
 	        opacity = this.chartType === 'radial' && this.showArea ? 0 : DE_EMPHASIS_OPACITY;
@@ -5748,15 +6786,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // if prev data exists, use prev.r
 	    // there is dot disappearing issue, when hideDot
 	
-	    if (prev && !_tuiCodeSnippet2['default'].isUndefined(opacity)) {
-	      outDotStyle = _tuiCodeSnippet2['default'].extend({
+	    if (prev && !(0, _isUndefined2['default'])(opacity)) {
+	      outDotStyle = {
 	        r: prev.r,
 	        stroke: prev.stroke,
 	        fill: prev.fill,
 	        'stroke-opacity': prev['stroke-opacity'],
 	        'stroke-width': prev['stroke-width'],
 	        'fill-opacity': prev['fill-opacity']
-	      });
+	      };
 	    }
 	
 	    dot.attr(outDotStyle);
@@ -5801,7 +6839,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      strokeWidth = this.lineWidth;
 	    }
 	
-	    if (opacity && !_tuiCodeSnippet2['default'].isNull(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
+	    if (opacity && !(0, _isNull2['default'])(this.selectedLegendIndex) && this.selectedLegendIndex !== groupIndex) {
 	      opacity = DE_EMPHASIS_OPACITY;
 	    }
 	
@@ -5831,7 +6869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  RaphaelLineTypeBase.prototype._hideGroupDots = function _hideGroupDots(index) {
 	    var _this4 = this;
 	
-	    var hasSelectedIndex = !_tuiCodeSnippet2['default'].isNull(this.selectedLegendIndex);
+	    var hasSelectedIndex = !(0, _isNull2['default'])(this.selectedLegendIndex);
 	    var baseOpacity = this.dotOpacity;
 	    var groupDots = this._getPivotGroupDots();
 	
@@ -5892,7 +6930,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	
 	    if (this.dotOpacity) {
-	      dotAttrs = _tuiCodeSnippet2['default'].extend({ 'fill-opacity': this.dotOpacity }, dotAttrs, this.borderStyle);
+	      dotAttrs = Object.assign({ 'fill-opacity': this.dotOpacity }, dotAttrs, this.borderStyle);
 	    }
 	
 	    dot.attr(dotAttrs);
@@ -6062,7 +7100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      cy: position.top
 	    };
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(tickSize)) {
+	    if ((0, _isExisty2['default'])(tickSize)) {
 	      attr.transform = 't-' + tickSize + ',0';
 	    }
 	
@@ -6083,7 +7121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      path: paths.join(' ')
 	    };
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(tickSize)) {
+	    if ((0, _isExisty2['default'])(tickSize)) {
 	      attr.transform = 't-' + tickSize + ',0';
 	    }
 	
@@ -6198,18 +7236,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelLineTypeBase;
 
 /***/ }),
-/* 16 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
@@ -6809,7 +7847,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = predicate;
 
 /***/ }),
-/* 17 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6818,23 +7856,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _raphaelLineTypeBase = __webpack_require__(15);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _raphaelLineTypeBase = __webpack_require__(31);
 	
 	var _raphaelLineTypeBase2 = _interopRequireDefault(_raphaelLineTypeBase);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _consoleUtil = __webpack_require__(18);
+	var _consoleUtil = __webpack_require__(34);
 	
 	var _consoleUtil2 = _interopRequireDefault(_consoleUtil);
 	
@@ -6924,7 +7970,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var dotOpacity = showDot ? 1 : 0;
 	    var borderStyle = this.makeBorderStyle(dotTheme.strokeColor, dotOpacity, dotTheme.strokeWidth);
 	    var outDotStyle = this.makeOutDotStyle(dotOpacity, borderStyle);
-	    var lineWidth = this.lineWidth = _tuiCodeSnippet2['default'].isNumber(pointWidth) ? pointWidth : this.lineWidth;
+	    var lineWidth = this.lineWidth = (0, _isNumber2['default'])(pointWidth) ? pointWidth : this.lineWidth;
 	
 	    this.paper = paper;
 	    this.theme = theme;
@@ -7244,7 +8290,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  RaphaelAreaChart.prototype.selectLegend = function selectLegend(legendIndex) {
 	    var _this5 = this;
 	
-	    var noneSelected = _tuiCodeSnippet2['default'].isNull(legendIndex);
+	    var noneSelected = (0, _isNull2['default'])(legendIndex);
 	
 	    if (this.selectedLegendIndex && this.selectedLegendIndex !== -1) {
 	      this.resetSeriesOrder(this.selectedLegendIndex);
@@ -7420,17 +8466,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  RaphaelAreaChart.prototype._isAreaOpacityNumber = function _isAreaOpacityNumber(areaOpacity) {
-	    var isNumber = _tuiCodeSnippet2['default'].isNumber(areaOpacity);
+	    var isAreaOpacityNumber = (0, _isNumber2['default'])(areaOpacity);
 	
-	    if (isNumber) {
+	    if (isAreaOpacityNumber) {
 	      if (areaOpacity < 0 || areaOpacity > 1) {
 	        _consoleUtil2['default'].print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'warn');
 	      }
-	    } else if (!_tuiCodeSnippet2['default'].isUndefined(areaOpacity)) {
+	    } else if (!(0, _isUndefined2['default'])(areaOpacity)) {
 	      _consoleUtil2['default'].print(GUIDE_AREACHART_AREAOPACITY_TYPE, 'error');
 	    }
 	
-	    return isNumber;
+	    return isAreaOpacityNumber;
 	  };
 	
 	  return RaphaelAreaChart;
@@ -7439,7 +8485,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelAreaChart;
 
 /***/ }),
-/* 18 */
+/* 34 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -7467,7 +8513,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 19 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7476,17 +8522,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _isExisty = __webpack_require__(14);
 	
-	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isNull = __webpack_require__(6);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isNull2 = _interopRequireDefault(_isNull);
 	
 	var _raphael = __webpack_require__(4);
 	
 	var _raphael2 = _interopRequireDefault(_raphael);
+	
+	var _raphaelRenderUtil = __webpack_require__(11);
+	
+	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -7495,6 +8545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var DEGREE_180 = 180;
 	var DEGREE_360 = 360;
@@ -7951,8 +9002,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    if (sector) {
 	      info = {
-	        legendIndex: _tuiCodeSnippet2['default'].isExisty(sector.data('legendIndex')) ? sector.data('legendIndex') : -1,
-	        index: _tuiCodeSnippet2['default'].isExisty(sector.data('index')) ? sector.data('index') : -1,
+	        legendIndex: (0, _isExisty2['default'])(sector.data('legendIndex')) ? sector.data('legendIndex') : -1,
+	        index: (0, _isExisty2['default'])(sector.data('index')) ? sector.data('index') : -1,
 	        chartType: sector.data('chartType')
 	      };
 	    }
@@ -8052,7 +9103,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	
 	  /**
-	   * Unelect series.
+	   * Unselect series.
 	   * @param {{index: number}} indexes - index map
 	   */
 	
@@ -8076,9 +9127,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  RaphaelPieChart.prototype.selectLegend = function selectLegend(legendIndex) {
-	    var isNull = _tuiCodeSnippet2['default'].isNull(legendIndex);
+	    var isLegendIndexNull = (0, _isNull2['default'])(legendIndex);
 	    this.sectorInfos.forEach(function (sectorInfo, index) {
-	      var opacity = isNull || legendIndex === index ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
+	      var opacity = isLegendIndexNull || legendIndex === index ? EMPHASIS_OPACITY : DE_EMPHASIS_OPACITY;
 	
 	      sectorInfo.sector.attr({
 	        'fill-opacity': opacity
@@ -8181,24 +9232,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelPieChart;
 
 /***/ }),
-/* 20 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _raphaelLineTypeBase = __webpack_require__(15);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _raphaelLineTypeBase = __webpack_require__(31);
 	
 	var _raphaelLineTypeBase2 = _interopRequireDefault(_raphaelLineTypeBase);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -8211,6 +9262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	var EMPHASIS_OPACITY = 1;
 	var DE_EMPHASIS_OPACITY = 0.3;
@@ -8417,7 +9469,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  RaphaelRadialLineSeries.prototype.selectLegend = function selectLegend(legendIndex) {
-	    var noneSelected = _tuiCodeSnippet2['default'].isNull(legendIndex);
+	    var noneSelected = (0, _isNull2['default'])(legendIndex);
 	
 	    this.selectedLegendIndex = legendIndex;
 	
@@ -8434,24 +9486,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelRadialLineSeries;
 
 /***/ }),
-/* 21 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
-	
-	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
 	var _raphael = __webpack_require__(4);
 	
 	var _raphael2 = _interopRequireDefault(_raphael);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _raphaelRenderUtil = __webpack_require__(11);
+	
+	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -8460,6 +9520,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var CIRCLE_OPACITY = 0.8;
 	var STROKE_OPACITY = 1;
@@ -8829,7 +9890,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      opacity: 0
 	    });
 	
-	    if (_tuiCodeSnippet2['default'].isNull(this.selectedLegend) || indexes.index === this.selectedLegend) {
+	    if ((0, _isNull2['default'])(this.selectedLegend) || indexes.index === this.selectedLegend) {
 	      changeOpacity = EMPHASIS_OPACITY;
 	    }
 	
@@ -8852,7 +9913,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var foundCircle = void 0;
 	
-	    while (_tuiCodeSnippet2['default'].isUndefined(foundCircle)) {
+	    while ((0, _isUndefined2['default'])(foundCircle)) {
 	      var circle = paper.getElementByPoint(position.left, position.top);
 	
 	      if (circle) {
@@ -8887,7 +9948,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  RaphaelBubbleChart.prototype.moveMouseOnSeries = function moveMouseOnSeries(position) {
 	    var circle = this._findCircle(position);
 	
-	    if (circle && _tuiCodeSnippet2['default'].isExisty(circle.data('groupIndex'))) {
+	    if (circle && (0, _isExisty2['default'])(circle.data('groupIndex'))) {
 	      var groupIndex = circle.data('groupIndex');
 	      var index = circle.data('index');
 	      var args = [{}, groupIndex, index, {
@@ -8950,7 +10011,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  RaphaelBubbleChart.prototype.selectLegend = function selectLegend(legendIndex) {
-	    var noneSelected = _tuiCodeSnippet2['default'].isNull(legendIndex);
+	    var noneSelected = (0, _isNull2['default'])(legendIndex);
 	
 	    this.selectedLegend = legendIndex;
 	
@@ -8971,22 +10032,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelBubbleChart;
 
 /***/ }),
-/* 22 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -9353,7 +10414,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  RaphaelBoxTypeChart.prototype._animateChangingColor = function _animateChangingColor(rect, color, opacity, strokeColor, strokeWidth) {
 	    var properties = {
-	      'fill-opacity': _tuiCodeSnippet2['default'].isExisty(opacity) ? opacity : 1,
+	      'fill-opacity': (0, _isExisty2['default'])(opacity) ? opacity : 1,
 	      stroke: strokeColor,
 	      'stroke-width': strokeWidth
 	    };
@@ -9518,7 +10579,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelBoxTypeChart;
 
 /***/ }),
-/* 23 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9528,21 +10589,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _templateObject = _taggedTemplateLiteral(['\n                  s', ',', ',0,0\n                  t', ',', '\n                '], ['\n                  s', ',', ',0,0\n                  t', ',', '\n                ']),
 	    _templateObject2 = _taggedTemplateLiteral(['\n                s', ',', ',0,0\n                t', ',', '\n            '], ['\n                s', ',', ',0,0\n                t', ',', '\n            ']);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _browser = __webpack_require__(21);
+	
+	var _browser2 = _interopRequireDefault(_browser);
+	
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -9554,9 +10619,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
-	var browser = _tuiCodeSnippet2['default'].browser;
-	
-	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+	var IS_LTE_IE8 = _browser2['default'].msie && _browser2['default'].version <= 8;
 	var STROKE_COLOR = 'gray';
 	var ANIMATION_DURATION = 100;
 	var G_ID = 'tui-chart-series-group';
@@ -9666,9 +10729,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  RaphaelMapChart.prototype.findSectorIndex = function findSectorIndex(position) {
 	    var sector = this.paper.getElementByPoint(position.left, position.top);
 	    var foundIndex = sector && sector.data('index');
-	    var data = !_tuiCodeSnippet2['default'].isUndefined(foundIndex) && this.sectors[foundIndex];
+	    var data = !(0, _isUndefined2['default'])(foundIndex) && this.sectors[foundIndex];
 	
-	    return data && !_tuiCodeSnippet2['default'].isUndefined(data.ratio) ? foundIndex : null;
+	    return data && !(0, _isUndefined2['default'])(data.ratio) ? foundIndex : null;
 	  };
 	
 	  /**
@@ -9914,7 +10977,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelMapChart;
 
 /***/ }),
-/* 24 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9923,29 +10986,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _templateObject = _taggedTemplateLiteral(['\n            M', '\n            ,', '\n            l', '\n            ,', '\n            l', '\n            ,-', '\n        '], ['\n            M', '\n            ,', '\n            l', '\n            ,', '\n            l', '\n            ,-', '\n        ']);
 	
-	var _const = __webpack_require__(9);
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -9956,6 +11031,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var UNSELECTED_LEGEND_LABEL_OPACITY = 0.5;
 	var PAGINATION_POSITION_HEIGHT = 8;
@@ -9971,8 +11047,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	function getIconWidth() {
 	  return _const2['default'].LEGEND_ICON_WIDTH + _const2['default'].LEGEND_LABEL_LEFT_PADDING;
 	}
-	
-	// const RaphaelLegendComponent = snippet.defineClass(/** @lends RaphaelLegendComponent.prototype */ {
 	
 	var RaphaelLegendComponent = function () {
 	  /** @lends RaphaelLegendComponent.prototype */
@@ -10124,7 +11198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.originalLegendData = data.legendData;
 	
 	    if (this.originalLegendData.length) {
-	      this._showCheckbox = _tuiCodeSnippet2['default'].isExisty(data.legendData[0].checkbox);
+	      this._showCheckbox = (0, _isExisty2['default'])(data.legendData[0].checkbox);
 	      this._setComponentDimensionsBaseOnLabelHeight(data.legendData[0].labelHeight);
 	
 	      var legendData = this._getLegendData(data.legendData, this._currentPageCount);
@@ -10270,7 +11344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  RaphaelLegendComponent.prototype.makeLabelWidths = function makeLabelWidths(legendData, theme, maxWidth) {
-	    return _tuiCodeSnippet2['default'].map(legendData, function (item) {
+	    return legendData.map(function (item) {
 	      var labelWidth = _raphaelRenderUtil2['default'].getRenderedTextSize(item.label, theme.fontSize, theme.fontFamily).width;
 	      if (maxWidth && labelWidth > maxWidth) {
 	        labelWidth = maxWidth;
@@ -10438,10 +11512,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var indexData = element.data('index');
 	      var attributeName = element.data('icon') === 'line' ? 'stroke-opacity' : 'opacity';
 	
-	      if (_tuiCodeSnippet2['default'].isNull(indexData) || _tuiCodeSnippet2['default'].isUndefined(indexData)) {
+	      if ((0, _isNull2['default'])(indexData) || (0, _isUndefined2['default'])(indexData)) {
 	        element.attr(attributeName, 1);
-	      } else if (!_tuiCodeSnippet2['default'].isUndefined(indexData)) {
-	        if (_tuiCodeSnippet2['default'].isNumber(index) && indexData !== index) {
+	      } else if (!(0, _isUndefined2['default'])(indexData)) {
+	        if ((0, _isNumber2['default'])(index) && indexData !== index) {
 	          element.attr(attributeName, UNSELECTED_LEGEND_LABEL_OPACITY);
 	        } else {
 	          element.attr(attributeName, 1);
@@ -10522,18 +11596,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelLegendComponent;
 
 /***/ }),
-/* 25 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _range = __webpack_require__(12);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _range2 = _interopRequireDefault(_range);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
@@ -10599,7 +11673,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    additionalPosition = additionalPosition || 0;
 	
 	    if (count > 0) {
-	      positions = _tuiCodeSnippet2['default'].range(0, count).map(function (index) {
+	      positions = (0, _range2['default'])(0, count).map(function (index) {
 	        var ratio = index === 0 ? 0 : index / (count - 1);
 	
 	        return ratio * size + additionalPosition;
@@ -10627,7 +11701,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var multipleNum = calculator.findMultipleNum(step);
 	    var min = Math.round(limit.min * multipleNum);
 	    var max = Math.round(limit.max * multipleNum);
-	    var labels = _tuiCodeSnippet2['default'].range(min, max + 1, step * multipleNum);
+	    var labels = (0, _range2['default'])(min, max + 1, step * multipleNum);
 	
 	    return labels.map(function (label) {
 	      return label / multipleNum;
@@ -10653,7 +11727,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {number} sum
 	   */
 	  sumPlusValues: function sumPlusValues(values) {
-	    var plusValues = _tuiCodeSnippet2['default'].filter(values, function (value) {
+	    var plusValues = values.filter(function (value) {
 	      return value > 0;
 	    });
 	
@@ -10667,7 +11741,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {number} sum
 	   */
 	  sumMinusValues: function sumMinusValues(values) {
-	    var minusValues = _tuiCodeSnippet2['default'].filter(values, function (value) {
+	    var minusValues = values.filter(function (value) {
 	      return value < 0;
 	    });
 	
@@ -10853,7 +11927,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = calculator;
 
 /***/ }),
-/* 26 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10862,23 +11936,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
@@ -11328,14 +12402,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelMapLegend;
 
 /***/ }),
-/* 27 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
@@ -11401,18 +12475,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelCircleLegend;
 
 /***/ }),
-/* 28 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -11527,18 +12601,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelTitleComponent;
 
 /***/ }),
-/* 29 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -12099,7 +13173,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelAxisComponent;
 
 /***/ }),
-/* 30 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12108,11 +13182,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
@@ -12393,48 +13467,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RaphaelRadialPlot;
 
 /***/ }),
-/* 31 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _chartFactory = __webpack_require__(32);
+	var _chartFactory = __webpack_require__(48);
 	
 	var _chartFactory2 = _interopRequireDefault(_chartFactory);
 	
-	var _pluginFactory = __webpack_require__(34);
+	var _pluginFactory = __webpack_require__(51);
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
 	
-	var _themeManager = __webpack_require__(35);
+	var _themeManager = __webpack_require__(52);
 	
 	var _themeManager2 = _interopRequireDefault(_themeManager);
 	
-	var _mapManager = __webpack_require__(37);
+	var _mapManager = __webpack_require__(54);
 	
 	var _mapManager2 = _interopRequireDefault(_mapManager);
 	
-	var _objectUtil = __webpack_require__(38);
+	var _objectUtil = __webpack_require__(55);
 	
 	var _objectUtil2 = _interopRequireDefault(_objectUtil);
 	
-	var _seriesDataImporter = __webpack_require__(39);
+	var _seriesDataImporter = __webpack_require__(57);
 	
 	var _seriesDataImporter2 = _interopRequireDefault(_seriesDataImporter);
 	
-	var _drawingToolPicker = __webpack_require__(40);
+	var _drawingToolPicker = __webpack_require__(60);
 	
 	var _drawingToolPicker2 = _interopRequireDefault(_drawingToolPicker);
 	
-	__webpack_require__(41);
+	__webpack_require__(61);
 	
-	__webpack_require__(42);
+	__webpack_require__(62);
 	
-	__webpack_require__(147);
+	__webpack_require__(174);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -14076,22 +15150,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 32 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -14165,7 +15239,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 33 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14179,21 +15253,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
 	
-	var _const = __webpack_require__(9);
+	var _isObject = __webpack_require__(50);
+	
+	var _isObject2 = _interopRequireDefault(_isObject);
+	
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -14294,8 +15372,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var chartTypeMap = {};
 	
-	    if (_tuiCodeSnippet2['default'].isObject(rawData.series)) {
-	      _tuiCodeSnippet2['default'].forEach(rawData.series, function (data, seriesType) {
+	    if ((0, _isObject2['default'])(rawData.series)) {
+	      (0, _forEach2['default'])(rawData.series, function (data, seriesType) {
 	        chartTypeMap[_this.findChartType(rawData.seriesAlias, seriesType)] = true;
 	      });
 	    }
@@ -14504,14 +15582,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 34 */
+/* 50 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is an object or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is an object or not.
+	 * If the given variable is an object, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is object?
+	 * @memberof module:type
+	 */
+	function isObject(obj) {
+	  return obj === Object(obj);
+	}
+	
+	module.exports = isObject;
+
+
+/***/ }),
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -14558,7 +15661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 35 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14566,26 +15669,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @Fileoverview  Theme manager.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @fileoverview  Theme manager.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
-	var _const = __webpack_require__(9);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isObject = __webpack_require__(50);
+	
+	var _isObject2 = _interopRequireDefault(_isObject);
+	
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _defaultTheme = __webpack_require__(36);
+	var _defaultTheme = __webpack_require__(53);
 	
 	var _defaultTheme2 = _interopRequireDefault(_defaultTheme);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -14643,9 +15758,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	      }
 	
-	      if (_tuiCodeSnippet2['default'].isArray(fromItem)) {
+	      if ((0, _isArray2['default'])(fromItem)) {
 	        toTheme[key] = fromItem.slice();
-	      } else if (_tuiCodeSnippet2['default'].isObject(fromItem)) {
+	      } else if ((0, _isObject2['default'])(fromItem)) {
 	        _this._overwriteTheme(fromItem, item);
 	      } else {
 	        toTheme[key] = fromItem;
@@ -14665,7 +15780,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var validTheme = {};
 	
 	    _const2['default'].THEME_PROPS_MAP[componentType].forEach(function (propName) {
-	      if (_tuiCodeSnippet2['default'].isExisty(theme[propName])) {
+	      if ((0, _isExisty2['default'])(theme[propName])) {
 	        validTheme[propName] = theme[propName];
 	      }
 	    });
@@ -14693,7 +15808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    seriesTypes.forEach(function (seriesType) {
 	      var theme = fromTheme[seriesType] || _this2._pickValidTheme(fromTheme, componentType);
 	
-	      if (_tuiCodeSnippet2['default'].keys(theme).length) {
+	      if (Object.keys(theme).length) {
 	        newTheme[seriesType] = JSON.parse(JSON.stringify(_defaultTheme2['default'][componentType]));
 	        _this2._overwriteTheme(theme, newTheme[seriesType]);
 	      } else {
@@ -14824,11 +15939,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _createTargetThemesForFontInherit: function _createTargetThemesForFontInherit(theme) {
 	    var items = [theme.title, theme.xAxis.title, theme.xAxis.label, theme.legend.label, theme.plot.label];
 	
-	    _tuiCodeSnippet2['default'].forEach(theme.yAxis, function (_theme) {
+	    (0, _forEach2['default'])(theme.yAxis, function (_theme) {
 	      items.push(_theme.title, _theme.label);
 	    });
 	
-	    _tuiCodeSnippet2['default'].forEach(theme.series, function (_theme) {
+	    (0, _forEach2['default'])(theme.series, function (_theme) {
 	      items.push(_theme.label);
 	    });
 	
@@ -14878,7 +15993,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _copySeriesColorThemeToOther: function _copySeriesColorThemeToOther(theme) {
 	    var _this4 = this;
 	
-	    _tuiCodeSnippet2['default'].forEach(theme.series, function (seriesTheme, seriesType) {
+	    (0, _forEach2['default'])(theme.series, function (seriesTheme, seriesType) {
 	      _this4._copySeriesColorTheme(seriesTheme, theme.legend, seriesType);
 	      _this4._copySeriesColorTheme(seriesTheme, theme.tooltip, seriesType);
 	    });
@@ -14912,7 +16027,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 36 */
+/* 53 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -15014,7 +16129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 37 */
+/* 54 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -15055,7 +16170,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 38 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15069,9 +16184,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isArray = __webpack_require__(8);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isDate = __webpack_require__(17);
+	
+	var _isDate2 = _interopRequireDefault(_isDate);
+	
+	var _isFunction = __webpack_require__(56);
+	
+	var _isFunction2 = _interopRequireDefault(_isFunction);
+	
+	var _isObject = __webpack_require__(50);
+	
+	var _isObject2 = _interopRequireDefault(_isObject);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -15084,14 +16211,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	var deepCopy = function deepCopy(origin) {
 	  var clone = void 0;
 	
-	  if (_tuiCodeSnippet2['default'].isArray(origin)) {
+	  if ((0, _isArray2['default'])(origin)) {
 	    clone = [];
 	    origin.forEach(function (value, index) {
 	      clone[index] = deepCopy(value);
 	    });
-	  } else if (_tuiCodeSnippet2['default'].isFunction(origin) || _tuiCodeSnippet2['default'].isDate(origin)) {
+	  } else if ((0, _isFunction2['default'])(origin) || (0, _isDate2['default'])(origin)) {
 	    clone = origin;
-	  } else if (_tuiCodeSnippet2['default'].isObject(origin)) {
+	  } else if ((0, _isObject2['default'])(origin)) {
 	    clone = {};
 	
 	    Object.entries(origin).forEach(function (_ref) {
@@ -15117,20 +16244,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 39 */
+/* 56 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Check whether the given variable is a function or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Check whether the given variable is a function or not.
+	 * If the given variable is a function, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is function?
+	 * @memberof module:type
+	 */
+	function isFunction(obj) {
+	  return obj instanceof Function;
+	}
+	
+	module.exports = isFunction;
+
+
+/***/ }),
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
+	var _pluck = __webpack_require__(58);
+	
+	var _pluck2 = _interopRequireDefault(_pluck);
+	
+	var _toArray = __webpack_require__(59);
+	
+	var _toArray2 = _interopRequireDefault(_toArray);
+	
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -15181,12 +16341,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  if (tableElement) {
 	    var secondDimensionArray = [];
-	    var trs = _tuiCodeSnippet2['default'].toArray(tableElement.getElementsByTagName('TR'));
+	    var trs = (0, _toArray2['default'])(tableElement.getElementsByTagName('TR'));
 	
-	    _tuiCodeSnippet2['default'].forEach(trs, function (tr, index) {
+	    (0, _forEach2['default'])(trs, function (tr, index) {
 	      var tagName = index === 0 ? 'TH' : 'TD';
-	      var cells = _tuiCodeSnippet2['default'].toArray(tr.getElementsByTagName(tagName));
-	      var rows = _tuiCodeSnippet2['default'].pluck(cells, 'innerText');
+	      var cells = (0, _toArray2['default'])(tr.getElementsByTagName(tagName));
+	      var rows = (0, _pluck2['default'])(cells, 'innerText');
 	
 	      secondDimensionArray.push(rows);
 	    });
@@ -15231,20 +16391,119 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 40 */
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Fetch a property
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var forEach = __webpack_require__(7);
+	
+	/**
+	 * fetching a property
+	 * @param {Array} arr target collection
+	 * @param {String|Number} property property name
+	 * @returns {Array}
+	 * @memberof module:collection
+	 * @example
+	 * var pluck = require('tui-code-snippe/collection/pluck'); // node, commonjs
+	 *
+	 * var objArr = [
+	 *     {'abc': 1, 'def': 2, 'ghi': 3},
+	 *     {'abc': 4, 'def': 5, 'ghi': 6},
+	 *     {'abc': 7, 'def': 8, 'ghi': 9}
+	 * ];
+	 * var arr2d = [
+	 *     [1, 2, 3],
+	 *     [4, 5, 6],
+	 *     [7, 8, 9]
+	 * ];
+	 * pluck(objArr, 'abc'); // [1, 4, 7]
+	 * pluck(arr2d, 2); // [3, 6, 9]
+	 */
+	function pluck(arr, property) {
+	  var resultArray = [];
+	
+	  forEach(arr, function(item) {
+	    resultArray.push(item[property]);
+	  });
+	
+	  return resultArray;
+	}
+	
+	module.exports = pluck;
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Transform the Array-like object to Array.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var forEachArray = __webpack_require__(9);
+	
+	/**
+	 * Transform the Array-like object to Array.
+	 * In low IE (below 8), Array.prototype.slice.call is not perfect. So, try-catch statement is used.
+	 * @param {*} arrayLike Array-like object
+	 * @returns {Array} Array
+	 * @memberof module:collection
+	 * @example
+	 * var toArray = require('tui-code-snippet/collection/toArray'); // node, commonjs
+	 *
+	 * var arrayLike = {
+	 *     0: 'one',
+	 *     1: 'two',
+	 *     2: 'three',
+	 *     3: 'four',
+	 *     length: 4
+	 * };
+	 * var result = toArray(arrayLike);
+	 *
+	 * alert(result instanceof Array); // true
+	 * alert(result); // one,two,three,four
+	 */
+	function toArray(arrayLike) {
+	  var arr;
+	  try {
+	    arr = Array.prototype.slice.call(arrayLike);
+	  } catch (e) {
+	    arr = [];
+	    forEachArray(arrayLike, function(value) {
+	      arr.push(value);
+	    });
+	  }
+	
+	  return arr;
+	}
+	
+	module.exports = toArray;
+
+
+/***/ }),
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isExisty = __webpack_require__(14);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -15297,7 +16556,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  DrawingToolPicker.prototype.getPaper = function getPaper(container, rendererType) {
 	    var paper = this[rendererType + 'Paper'];
-	    var isNeedCreateNewPaper = _tuiCodeSnippet2['default'].isExisty(container) && paper && _domHandler2['default'].findParentByClass(paper.canvas, 'tui-chart') !== container;
+	    var isNeedCreateNewPaper = (0, _isExisty2['default'])(container) && paper && _domHandler2['default'].findParentByClass(paper.canvas, 'tui-chart') !== container;
 	
 	    if (!paper || isNeedCreateNewPaper) {
 	      paper = renderers[rendererType].call(this, container, this.dimension);
@@ -15327,99 +16586,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = DrawingToolPicker;
 
 /***/ }),
-/* 41 */
+/* 61 */
 /***/ (function(module, exports) {
 
 	'use strict';
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
-	// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
-	if (!window.JSON) {
-	  window.JSON = {
-	    parse: function parse(sJSON) {
-	      return eval('(' + sJSON + ')');
-	    },
-	    stringify: function () {
-	      var toString = Object.prototype.toString;
-	      var isArray = Array.isArray || function (a) {
-	        return toString.call(a) === '[object Array]';
-	      };
-	      var escMap = {
-	        '"': '\\"',
-	        '\\': '\\\\',
-	        '\b': '\\b',
-	        '\f': '\\f',
-	        '\n': '\\n',
-	        '\r': '\\r',
-	        '\t': '\\t'
-	      };
-	      var escFunc = function escFunc(m) {
-	        return escMap[m] || '\\u' + (m.charCodeAt(0) + 0x10000).toString(16).substr(1);
-	      };
-	      var escRE = /[\\"\u0000-\u001F\u2028\u2029]/g;
-	      return function stringify(value) {
-	        if (value == null) {
-	          return 'null';
-	        } else if (typeof value === 'number') {
-	          return isFinite(value) ? value.toString() : 'null';
-	        } else if (typeof value === 'boolean') {
-	          return value.toString();
-	        } else if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object') {
-	          if (typeof value.toJSON === 'function') {
-	            return stringify(value.toJSON());
-	          } else if (isArray(value)) {
-	            var res = '[';
-	            for (var i = 0; i < value.length; i++) {
-	              res += (i ? ', ' : '') + stringify(value[i]);
-	            }return res + ']';
-	          } else if (toString.call(value) === '[object Object]') {
-	            var tmp = [];
-	            for (var k in value) {
-	              if (value.hasOwnProperty(k)) tmp.push(stringify(k) + ': ' + stringify(value[k]));
-	            }
-	            return '{' + tmp.join(', ') + '}';
-	          }
-	        }
-	        return '"' + value.toString().replace(escRE, escFunc) + '"';
-	      };
-	    }()
-	  };
-	}
-	
-	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create
-	// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
-	if (typeof Object.create != 'function') {
-	  Object.create = function (undefined) {
-	    var Temp = function Temp() {};
-	    return function (prototype, propertiesObject) {
-	      if (prototype !== Object(prototype) && prototype !== null) {
-	        throw TypeError('Argument must be an object, or null');
-	      }
-	      Temp.prototype = prototype || {};
-	      if (propertiesObject !== undefined) {
-	        Object.defineProperties(Temp.prototype, propertiesObject);
-	      }
-	      var result = new Temp();
-	      Temp.prototype = null;
-	      // to imitate the case of Object.create(null)
-	      if (prototype === null) {
-	        result.__proto__ = null;
-	      }
-	      return result;
-	    };
-	  }();
-	}
-	
-	// https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
-	// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/
-	if (!Array.isArray) {
-	  Array.isArray = function (arg) {
-	    return Object.prototype.toString.call(arg) === '[object Array]';
-	  };
-	}
-	
+	// FOR IE8, IE9
 	// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 	// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 	// requestAnimationFrame polyfill by Erik Möller. fixes from Paul Irish and Tino Zijdel
@@ -15453,84 +16625,84 @@ return /******/ (function(modules) { // webpackBootstrap
 	})();
 
 /***/ }),
-/* 42 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _chartFactory = __webpack_require__(32);
+	var _chartFactory = __webpack_require__(48);
 	
 	var _chartFactory2 = _interopRequireDefault(_chartFactory);
 	
-	var _barChart = __webpack_require__(43);
+	var _barChart = __webpack_require__(63);
 	
 	var _barChart2 = _interopRequireDefault(_barChart);
 	
-	var _columnChart = __webpack_require__(125);
+	var _columnChart = __webpack_require__(152);
 	
 	var _columnChart2 = _interopRequireDefault(_columnChart);
 	
-	var _lineChart = __webpack_require__(126);
+	var _lineChart = __webpack_require__(153);
 	
 	var _lineChart2 = _interopRequireDefault(_lineChart);
 	
-	var _areaChart = __webpack_require__(128);
+	var _areaChart = __webpack_require__(155);
 	
 	var _areaChart2 = _interopRequireDefault(_areaChart);
 	
-	var _columnLineComboChart = __webpack_require__(129);
+	var _columnLineComboChart = __webpack_require__(156);
 	
 	var _columnLineComboChart2 = _interopRequireDefault(_columnLineComboChart);
 	
-	var _lineScatterComboChart = __webpack_require__(131);
+	var _lineScatterComboChart = __webpack_require__(158);
 	
 	var _lineScatterComboChart2 = _interopRequireDefault(_lineScatterComboChart);
 	
-	var _lineAreaComboChart = __webpack_require__(132);
+	var _lineAreaComboChart = __webpack_require__(159);
 	
 	var _lineAreaComboChart2 = _interopRequireDefault(_lineAreaComboChart);
 	
-	var _pieDonutComboChart = __webpack_require__(133);
+	var _pieDonutComboChart = __webpack_require__(160);
 	
 	var _pieDonutComboChart2 = _interopRequireDefault(_pieDonutComboChart);
 	
-	var _pieChart = __webpack_require__(134);
+	var _pieChart = __webpack_require__(161);
 	
 	var _pieChart2 = _interopRequireDefault(_pieChart);
 	
-	var _bubbleChart = __webpack_require__(135);
+	var _bubbleChart = __webpack_require__(162);
 	
 	var _bubbleChart2 = _interopRequireDefault(_bubbleChart);
 	
-	var _scatterChart = __webpack_require__(136);
+	var _scatterChart = __webpack_require__(163);
 	
 	var _scatterChart2 = _interopRequireDefault(_scatterChart);
 	
-	var _heatmapChart = __webpack_require__(137);
+	var _heatmapChart = __webpack_require__(164);
 	
 	var _heatmapChart2 = _interopRequireDefault(_heatmapChart);
 	
-	var _treemapChart = __webpack_require__(140);
+	var _treemapChart = __webpack_require__(167);
 	
 	var _treemapChart2 = _interopRequireDefault(_treemapChart);
 	
-	var _mapChart = __webpack_require__(141);
+	var _mapChart = __webpack_require__(168);
 	
 	var _mapChart2 = _interopRequireDefault(_mapChart);
 	
-	var _radialChart = __webpack_require__(144);
+	var _radialChart = __webpack_require__(171);
 	
 	var _radialChart2 = _interopRequireDefault(_radialChart);
 	
-	var _boxplotChart = __webpack_require__(145);
+	var _boxplotChart = __webpack_require__(172);
 	
 	var _boxplotChart2 = _interopRequireDefault(_boxplotChart);
 	
-	var _bulletChart = __webpack_require__(146);
+	var _bulletChart = __webpack_require__(173);
 	
 	var _bulletChart2 = _interopRequireDefault(_bulletChart);
 	
@@ -15555,26 +16727,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	_chartFactory2['default'].register(_const2['default'].CHART_TYPE_BULLET, _bulletChart2['default']);
 
 /***/ }),
-/* 43 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -15731,56 +16903,76 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = BarChart;
 
 /***/ }),
-/* 44 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isString = __webpack_require__(24);
+	
+	var _isString2 = _interopRequireDefault(_isString);
+	
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
+	var _sendHostname = __webpack_require__(65);
+	
+	var _sendHostname2 = _interopRequireDefault(_sendHostname);
+	
+	var _customEvents = __webpack_require__(67);
+	
+	var _customEvents2 = _interopRequireDefault(_customEvents);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _componentManager = __webpack_require__(45);
+	var _componentManager = __webpack_require__(69);
 	
 	var _componentManager2 = _interopRequireDefault(_componentManager);
 	
-	var _dataProcessor = __webpack_require__(102);
+	var _dataProcessor = __webpack_require__(128);
 	
 	var _dataProcessor2 = _interopRequireDefault(_dataProcessor);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _objectUtil = __webpack_require__(38);
+	var _objectUtil = __webpack_require__(55);
 	
 	var _objectUtil2 = _interopRequireDefault(_objectUtil);
 	
-	var _boundsAndScaleBuilder = __webpack_require__(113);
+	var _boundsAndScaleBuilder = __webpack_require__(140);
 	
 	var _boundsAndScaleBuilder2 = _interopRequireDefault(_boundsAndScaleBuilder);
 	
-	var _themeManager = __webpack_require__(35);
+	var _themeManager = __webpack_require__(52);
 	
 	var _themeManager2 = _interopRequireDefault(_themeManager);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -15865,7 +17057,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @type {object}
 	     * @ignore
 	     */
-	    this.eventBus = new _tuiCodeSnippet2['default'].CustomEvents();
+	    this.eventBus = new _customEvents2['default']();
 	
 	    /**
 	     * previous xAxis data
@@ -15886,7 +17078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @type {boolean}
 	     * @ignore
 	     */
-	    this.hasRightYAxis = _tuiCodeSnippet2['default'].isArray(this.options.yAxis) && this.options.yAxis.length > 1;
+	    this.hasRightYAxis = (0, _isArray2['default'])(this.options.yAxis) && this.options.yAxis.length > 1;
 	
 	    this.addComponents();
 	
@@ -15895,7 +17087,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.componentManager.presetAnimationConfig(this.options.series.animation);
 	
 	    if (this.options.usageStatistics) {
-	      _tuiCodeSnippet2['default'].sendHostname('chart', GA_TRACKING_ID);
+	      (0, _sendHostname2['default'])('chart', GA_TRACKING_ID);
 	    }
 	  }
 	
@@ -15912,7 +17104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.eventBus.off();
 	    this.chartContainer.outerHTML = '';
-	    _tuiCodeSnippet2['default'].forEach(this, function (value, key) {
+	    (0, _forEach2['default'])(this, function (value, key) {
 	      _this[key] = null;
 	    });
 	  };
@@ -15980,7 +17172,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  ChartBase.prototype._setOffsetProperty = function _setOffsetProperty(options, fromProperty, toProperty) {
-	    if (!_tuiCodeSnippet2['default'].isExisty(options[fromProperty])) {
+	    if (!(0, _isExisty2['default'])(options[fromProperty])) {
 	      return;
 	    }
 	
@@ -16022,12 +17214,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return;
 	    }
 	
-	    var optionsSet = _tuiCodeSnippet2['default'].isArray(targetOptions) ? targetOptions : [targetOptions];
+	    var optionsSet = (0, _isArray2['default'])(targetOptions) ? targetOptions : [targetOptions];
 	    optionsSet.forEach(function (options) {
 	      var title = options.title;
 	
 	
-	      if (_tuiCodeSnippet2['default'].isString(title)) {
+	      if ((0, _isString2['default'])(title)) {
 	        options.title = {
 	          text: title
 	        };
@@ -16377,7 +17569,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        seriesOption = _originalOptions.series;
 	
 	
-	    if (chartType !== 'combo' && _tuiCodeSnippet2['default'].isArray(data.series)) {
+	    if (chartType !== 'combo' && (0, _isArray2['default'])(data.series)) {
 	      var clonedSeries = data.series;
 	      data.series = {};
 	      data.series[chartType] = clonedSeries;
@@ -16872,7 +18064,752 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = ChartBase;
 
 /***/ }),
-/* 45 */
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Send hostname on DOMContentLoaded.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var isUndefined = __webpack_require__(13);
+	var imagePing = __webpack_require__(66);
+	
+	var ms7days = 7 * 24 * 60 * 60 * 1000;
+	
+	/**
+	 * Check if the date has passed 7 days
+	 * @param {number} date - milliseconds
+	 * @returns {boolean}
+	 * @private
+	 */
+	function isExpired(date) {
+	  var now = new Date().getTime();
+	
+	  return now - date > ms7days;
+	}
+	
+	/**
+	 * Send hostname on DOMContentLoaded.
+	 * To prevent hostname set tui.usageStatistics to false.
+	 * @param {string} appName - application name
+	 * @param {string} trackingId - GA tracking ID
+	 * @ignore
+	 */
+	function sendHostname(appName, trackingId) {
+	  var url = 'https://www.google-analytics.com/collect';
+	  var hostname = location.hostname;
+	  var hitType = 'event';
+	  var eventCategory = 'use';
+	  var applicationKeyForStorage = 'TOAST UI ' + appName + ' for ' + hostname + ': Statistics';
+	  var date = window.localStorage.getItem(applicationKeyForStorage);
+	
+	  // skip if the flag is defined and is set to false explicitly
+	  if (!isUndefined(window.tui) && window.tui.usageStatistics === false) {
+	    return;
+	  }
+	
+	  // skip if not pass seven days old
+	  if (date && !isExpired(date)) {
+	    return;
+	  }
+	
+	  window.localStorage.setItem(applicationKeyForStorage, new Date().getTime());
+	
+	  setTimeout(function() {
+	    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+	      imagePing(url, {
+	        v: 1,
+	        t: hitType,
+	        tid: trackingId,
+	        cid: hostname,
+	        dp: hostname,
+	        dh: appName,
+	        el: appName,
+	        ec: eventCategory
+	      });
+	    }
+	  }, 1000);
+	}
+	
+	module.exports = sendHostname;
+
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Request image ping.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var forEachOwnProperties = __webpack_require__(10);
+	
+	/**
+	 * @module request
+	 */
+	
+	/**
+	 * Request image ping.
+	 * @param {String} url url for ping request
+	 * @param {Object} trackingInfo infos for make query string
+	 * @returns {HTMLElement}
+	 * @memberof module:request
+	 * @example
+	 * var imagePing = require('tui-code-snippet/request/imagePing'); // node, commonjs
+	 *
+	 * imagePing('https://www.google-analytics.com/collect', {
+	 *     v: 1,
+	 *     t: 'event',
+	 *     tid: 'trackingid',
+	 *     cid: 'cid',
+	 *     dp: 'dp',
+	 *     dh: 'dh'
+	 * });
+	 */
+	function imagePing(url, trackingInfo) {
+	  var trackingElement = document.createElement('img');
+	  var queryString = '';
+	  forEachOwnProperties(trackingInfo, function(value, key) {
+	    queryString += '&' + key + '=' + value;
+	  });
+	  queryString = queryString.substring(1);
+	
+	  trackingElement.src = url + '?' + queryString;
+	
+	  trackingElement.style.display = 'none';
+	  document.body.appendChild(trackingElement);
+	  document.body.removeChild(trackingElement);
+	
+	  return trackingElement;
+	}
+	
+	module.exports = imagePing;
+
+
+/***/ }),
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview This module provides some functions for custom events. And it is implemented in the observer design pattern.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var extend = __webpack_require__(68);
+	var isExisty = __webpack_require__(14);
+	var isString = __webpack_require__(24);
+	var isObject = __webpack_require__(50);
+	var isArray = __webpack_require__(8);
+	var isFunction = __webpack_require__(56);
+	var forEach = __webpack_require__(7);
+	
+	var R_EVENTNAME_SPLIT = /\s+/g;
+	
+	/**
+	 * @class
+	 * @example
+	 * // node, commonjs
+	 * var CustomEvents = require('tui-code-snippet/customEvents/customEvents');
+	 */
+	function CustomEvents() {
+	  /**
+	     * @type {HandlerItem[]}
+	     */
+	  this.events = null;
+	
+	  /**
+	     * only for checking specific context event was binded
+	     * @type {object[]}
+	     */
+	  this.contexts = null;
+	}
+	
+	/**
+	 * Mixin custom events feature to specific constructor
+	 * @param {function} func - constructor
+	 * @example
+	 * var CustomEvents = require('tui-code-snippet/customEvents/customEvents'); // node, commonjs
+	 *
+	 * var model;
+	 * function Model() {
+	 *     this.name = '';
+	 * }
+	 * CustomEvents.mixin(Model);
+	 *
+	 * model = new Model();
+	 * model.on('change', function() { this.name = 'model'; }, this);
+	 * model.fire('change');
+	 * alert(model.name); // 'model';
+	 */
+	CustomEvents.mixin = function(func) {
+	  extend(func.prototype, CustomEvents.prototype);
+	};
+	
+	/**
+	 * Get HandlerItem object
+	 * @param {function} handler - handler function
+	 * @param {object} [context] - context for handler
+	 * @returns {HandlerItem} HandlerItem object
+	 * @private
+	 */
+	CustomEvents.prototype._getHandlerItem = function(handler, context) {
+	  var item = {handler: handler};
+	
+	  if (context) {
+	    item.context = context;
+	  }
+	
+	  return item;
+	};
+	
+	/**
+	 * Get event object safely
+	 * @param {string} [eventName] - create sub event map if not exist.
+	 * @returns {(object|array)} event object. if you supplied `eventName`
+	 *  parameter then make new array and return it
+	 * @private
+	 */
+	CustomEvents.prototype._safeEvent = function(eventName) {
+	  var events = this.events;
+	  var byName;
+	
+	  if (!events) {
+	    events = this.events = {};
+	  }
+	
+	  if (eventName) {
+	    byName = events[eventName];
+	
+	    if (!byName) {
+	      byName = [];
+	      events[eventName] = byName;
+	    }
+	
+	    events = byName;
+	  }
+	
+	  return events;
+	};
+	
+	/**
+	 * Get context array safely
+	 * @returns {array} context array
+	 * @private
+	 */
+	CustomEvents.prototype._safeContext = function() {
+	  var context = this.contexts;
+	
+	  if (!context) {
+	    context = this.contexts = [];
+	  }
+	
+	  return context;
+	};
+	
+	/**
+	 * Get index of context
+	 * @param {object} ctx - context that used for bind custom event
+	 * @returns {number} index of context
+	 * @private
+	 */
+	CustomEvents.prototype._indexOfContext = function(ctx) {
+	  var context = this._safeContext();
+	  var index = 0;
+	
+	  while (context[index]) {
+	    if (ctx === context[index][0]) {
+	      return index;
+	    }
+	
+	    index += 1;
+	  }
+	
+	  return -1;
+	};
+	
+	/**
+	 * Memorize supplied context for recognize supplied object is context or
+	 *  name: handler pair object when off()
+	 * @param {object} ctx - context object to memorize
+	 * @private
+	 */
+	CustomEvents.prototype._memorizeContext = function(ctx) {
+	  var context, index;
+	
+	  if (!isExisty(ctx)) {
+	    return;
+	  }
+	
+	  context = this._safeContext();
+	  index = this._indexOfContext(ctx);
+	
+	  if (index > -1) {
+	    context[index][1] += 1;
+	  } else {
+	    context.push([ctx, 1]);
+	  }
+	};
+	
+	/**
+	 * Forget supplied context object
+	 * @param {object} ctx - context object to forget
+	 * @private
+	 */
+	CustomEvents.prototype._forgetContext = function(ctx) {
+	  var context, contextIndex;
+	
+	  if (!isExisty(ctx)) {
+	    return;
+	  }
+	
+	  context = this._safeContext();
+	  contextIndex = this._indexOfContext(ctx);
+	
+	  if (contextIndex > -1) {
+	    context[contextIndex][1] -= 1;
+	
+	    if (context[contextIndex][1] <= 0) {
+	      context.splice(contextIndex, 1);
+	    }
+	  }
+	};
+	
+	/**
+	 * Bind event handler
+	 * @param {(string|{name:string, handler:function})} eventName - custom
+	 *  event name or an object {eventName: handler}
+	 * @param {(function|object)} [handler] - handler function or context
+	 * @param {object} [context] - context for binding
+	 * @private
+	 */
+	CustomEvents.prototype._bindEvent = function(eventName, handler, context) {
+	  var events = this._safeEvent(eventName);
+	  this._memorizeContext(context);
+	  events.push(this._getHandlerItem(handler, context));
+	};
+	
+	/**
+	 * Bind event handlers
+	 * @param {(string|{name:string, handler:function})} eventName - custom
+	 *  event name or an object {eventName: handler}
+	 * @param {(function|object)} [handler] - handler function or context
+	 * @param {object} [context] - context for binding
+	 * //-- #1. Get Module --//
+	 * var CustomEvents = require('tui-code-snippet/customEvents/customEvents'); // node, commonjs
+	 *
+	 * //-- #2. Use method --//
+	 * // # 2.1 Basic Usage
+	 * CustomEvents.on('onload', handler);
+	 *
+	 * // # 2.2 With context
+	 * CustomEvents.on('onload', handler, myObj);
+	 *
+	 * // # 2.3 Bind by object that name, handler pairs
+	 * CustomEvents.on({
+	 *     'play': handler,
+	 *     'pause': handler2
+	 * });
+	 *
+	 * // # 2.4 Bind by object that name, handler pairs with context object
+	 * CustomEvents.on({
+	 *     'play': handler
+	 * }, myObj);
+	 */
+	CustomEvents.prototype.on = function(eventName, handler, context) {
+	  var self = this;
+	
+	  if (isString(eventName)) {
+	    // [syntax 1, 2]
+	    eventName = eventName.split(R_EVENTNAME_SPLIT);
+	    forEach(eventName, function(name) {
+	      self._bindEvent(name, handler, context);
+	    });
+	  } else if (isObject(eventName)) {
+	    // [syntax 3, 4]
+	    context = handler;
+	    forEach(eventName, function(func, name) {
+	      self.on(name, func, context);
+	    });
+	  }
+	};
+	
+	/**
+	 * Bind one-shot event handlers
+	 * @param {(string|{name:string,handler:function})} eventName - custom
+	 *  event name or an object {eventName: handler}
+	 * @param {function|object} [handler] - handler function or context
+	 * @param {object} [context] - context for binding
+	 */
+	CustomEvents.prototype.once = function(eventName, handler, context) {
+	  var self = this;
+	
+	  if (isObject(eventName)) {
+	    context = handler;
+	    forEach(eventName, function(func, name) {
+	      self.once(name, func, context);
+	    });
+	
+	    return;
+	  }
+	
+	  function onceHandler() { // eslint-disable-line require-jsdoc
+	    handler.apply(context, arguments);
+	    self.off(eventName, onceHandler, context);
+	  }
+	
+	  this.on(eventName, onceHandler, context);
+	};
+	
+	/**
+	 * Splice supplied array by callback result
+	 * @param {array} arr - array to splice
+	 * @param {function} predicate - function return boolean
+	 * @private
+	 */
+	CustomEvents.prototype._spliceMatches = function(arr, predicate) {
+	  var i = 0;
+	  var len;
+	
+	  if (!isArray(arr)) {
+	    return;
+	  }
+	
+	  for (len = arr.length; i < len; i += 1) {
+	    if (predicate(arr[i]) === true) {
+	      arr.splice(i, 1);
+	      len -= 1;
+	      i -= 1;
+	    }
+	  }
+	};
+	
+	/**
+	 * Get matcher for unbind specific handler events
+	 * @param {function} handler - handler function
+	 * @returns {function} handler matcher
+	 * @private
+	 */
+	CustomEvents.prototype._matchHandler = function(handler) {
+	  var self = this;
+	
+	  return function(item) {
+	    var needRemove = handler === item.handler;
+	
+	    if (needRemove) {
+	      self._forgetContext(item.context);
+	    }
+	
+	    return needRemove;
+	  };
+	};
+	
+	/**
+	 * Get matcher for unbind specific context events
+	 * @param {object} context - context
+	 * @returns {function} object matcher
+	 * @private
+	 */
+	CustomEvents.prototype._matchContext = function(context) {
+	  var self = this;
+	
+	  return function(item) {
+	    var needRemove = context === item.context;
+	
+	    if (needRemove) {
+	      self._forgetContext(item.context);
+	    }
+	
+	    return needRemove;
+	  };
+	};
+	
+	/**
+	 * Get matcher for unbind specific hander, context pair events
+	 * @param {function} handler - handler function
+	 * @param {object} context - context
+	 * @returns {function} handler, context matcher
+	 * @private
+	 */
+	CustomEvents.prototype._matchHandlerAndContext = function(handler, context) {
+	  var self = this;
+	
+	  return function(item) {
+	    var matchHandler = (handler === item.handler);
+	    var matchContext = (context === item.context);
+	    var needRemove = (matchHandler && matchContext);
+	
+	    if (needRemove) {
+	      self._forgetContext(item.context);
+	    }
+	
+	    return needRemove;
+	  };
+	};
+	
+	/**
+	 * Unbind event by event name
+	 * @param {string} eventName - custom event name to unbind
+	 * @param {function} [handler] - handler function
+	 * @private
+	 */
+	CustomEvents.prototype._offByEventName = function(eventName, handler) {
+	  var self = this;
+	  var andByHandler = isFunction(handler);
+	  var matchHandler = self._matchHandler(handler);
+	
+	  eventName = eventName.split(R_EVENTNAME_SPLIT);
+	
+	  forEach(eventName, function(name) {
+	    var handlerItems = self._safeEvent(name);
+	
+	    if (andByHandler) {
+	      self._spliceMatches(handlerItems, matchHandler);
+	    } else {
+	      forEach(handlerItems, function(item) {
+	        self._forgetContext(item.context);
+	      });
+	
+	      self.events[name] = [];
+	    }
+	  });
+	};
+	
+	/**
+	 * Unbind event by handler function
+	 * @param {function} handler - handler function
+	 * @private
+	 */
+	CustomEvents.prototype._offByHandler = function(handler) {
+	  var self = this;
+	  var matchHandler = this._matchHandler(handler);
+	
+	  forEach(this._safeEvent(), function(handlerItems) {
+	    self._spliceMatches(handlerItems, matchHandler);
+	  });
+	};
+	
+	/**
+	 * Unbind event by object(name: handler pair object or context object)
+	 * @param {object} obj - context or {name: handler} pair object
+	 * @param {function} handler - handler function
+	 * @private
+	 */
+	CustomEvents.prototype._offByObject = function(obj, handler) {
+	  var self = this;
+	  var matchFunc;
+	
+	  if (this._indexOfContext(obj) < 0) {
+	    forEach(obj, function(func, name) {
+	      self.off(name, func);
+	    });
+	  } else if (isString(handler)) {
+	    matchFunc = this._matchContext(obj);
+	
+	    self._spliceMatches(this._safeEvent(handler), matchFunc);
+	  } else if (isFunction(handler)) {
+	    matchFunc = this._matchHandlerAndContext(handler, obj);
+	
+	    forEach(this._safeEvent(), function(handlerItems) {
+	      self._spliceMatches(handlerItems, matchFunc);
+	    });
+	  } else {
+	    matchFunc = this._matchContext(obj);
+	
+	    forEach(this._safeEvent(), function(handlerItems) {
+	      self._spliceMatches(handlerItems, matchFunc);
+	    });
+	  }
+	};
+	
+	/**
+	 * Unbind custom events
+	 * @param {(string|object|function)} eventName - event name or context or
+	 *  {name: handler} pair object or handler function
+	 * @param {(function)} handler - handler function
+	 * @example
+	 * //-- #1. Get Module --//
+	 * var CustomEvents = require('tui-code-snippet/customEvents/customEvents'); // node, commonjs
+	 *
+	 * //-- #2. Use method --//
+	 * // # 2.1 off by event name
+	 * CustomEvents.off('onload');
+	 *
+	 * // # 2.2 off by event name and handler
+	 * CustomEvents.off('play', handler);
+	 *
+	 * // # 2.3 off by handler
+	 * CustomEvents.off(handler);
+	 *
+	 * // # 2.4 off by context
+	 * CustomEvents.off(myObj);
+	 *
+	 * // # 2.5 off by context and handler
+	 * CustomEvents.off(myObj, handler);
+	 *
+	 * // # 2.6 off by context and event name
+	 * CustomEvents.off(myObj, 'onload');
+	 *
+	 * // # 2.7 off by an Object.<string, function> that is {eventName: handler}
+	 * CustomEvents.off({
+	 *   'play': handler,
+	 *   'pause': handler2
+	 * });
+	 *
+	 * // # 2.8 off the all events
+	 * CustomEvents.off();
+	 */
+	CustomEvents.prototype.off = function(eventName, handler) {
+	  if (isString(eventName)) {
+	    // [syntax 1, 2]
+	    this._offByEventName(eventName, handler);
+	  } else if (!arguments.length) {
+	    // [syntax 8]
+	    this.events = {};
+	    this.contexts = [];
+	  } else if (isFunction(eventName)) {
+	    // [syntax 3]
+	    this._offByHandler(eventName);
+	  } else if (isObject(eventName)) {
+	    // [syntax 4, 5, 6]
+	    this._offByObject(eventName, handler);
+	  }
+	};
+	
+	/**
+	 * Fire custom event
+	 * @param {string} eventName - name of custom event
+	 */
+	CustomEvents.prototype.fire = function(eventName) {  // eslint-disable-line
+	  this.invoke.apply(this, arguments);
+	};
+	
+	/**
+	 * Fire a event and returns the result of operation 'boolean AND' with all
+	 *  listener's results.
+	 *
+	 * So, It is different from {@link CustomEvents#fire}.
+	 *
+	 * In service code, use this as a before event in component level usually
+	 *  for notifying that the event is cancelable.
+	 * @param {string} eventName - Custom event name
+	 * @param {...*} data - Data for event
+	 * @returns {boolean} The result of operation 'boolean AND'
+	 * @example
+	 * var map = new Map();
+	 * map.on({
+	 *     'beforeZoom': function() {
+	 *         // It should cancel the 'zoom' event by some conditions.
+	 *         if (that.disabled && this.getState()) {
+	 *             return false;
+	 *         }
+	 *         return true;
+	 *     }
+	 * });
+	 *
+	 * if (this.invoke('beforeZoom')) {    // check the result of 'beforeZoom'
+	 *     // if true,
+	 *     // doSomething
+	 * }
+	 */
+	CustomEvents.prototype.invoke = function(eventName) {
+	  var events, args, index, item;
+	
+	  if (!this.hasListener(eventName)) {
+	    return true;
+	  }
+	
+	  events = this._safeEvent(eventName);
+	  args = Array.prototype.slice.call(arguments, 1);
+	  index = 0;
+	
+	  while (events[index]) {
+	    item = events[index];
+	
+	    if (item.handler.apply(item.context, args) === false) {
+	      return false;
+	    }
+	
+	    index += 1;
+	  }
+	
+	  return true;
+	};
+	
+	/**
+	 * Return whether at least one of the handlers is registered in the given
+	 *  event name.
+	 * @param {string} eventName - Custom event name
+	 * @returns {boolean} Is there at least one handler in event name?
+	 */
+	CustomEvents.prototype.hasListener = function(eventName) {
+	  return this.getListenerLength(eventName) > 0;
+	};
+	
+	/**
+	 * Return a count of events registered.
+	 * @param {string} eventName - Custom event name
+	 * @returns {number} number of event
+	 */
+	CustomEvents.prototype.getListenerLength = function(eventName) {
+	  var events = this._safeEvent(eventName);
+	
+	  return events.length;
+	};
+	
+	module.exports = CustomEvents;
+
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Extend the target object from other objects.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * @module object
+	 */
+	
+	/**
+	 * Extend the target object from other objects.
+	 * @param {object} target - Object that will be extended
+	 * @param {...object} objects - Objects as sources
+	 * @returns {object} Extended object
+	 * @memberof module:object
+	 */
+	function extend(target, objects) { // eslint-disable-line no-unused-vars
+	  var hasOwnProp = Object.prototype.hasOwnProperty;
+	  var source, prop, i, len;
+	
+	  for (i = 1, len = arguments.length; i < len; i += 1) {
+	    source = arguments[i];
+	    for (prop in source) {
+	      if (hasOwnProp.call(source, prop)) {
+	        target[prop] = source[prop];
+	      }
+	    }
+	  }
+	
+	  return target;
+	}
+	
+	module.exports = extend;
+
+
+/***/ }),
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16881,131 +18818,147 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _const = __webpack_require__(9);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isBoolean = __webpack_require__(27);
+	
+	var _isBoolean2 = _interopRequireDefault(_isBoolean);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _isObject = __webpack_require__(50);
+	
+	var _isObject2 = _interopRequireDefault(_isObject);
+	
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _axis = __webpack_require__(46);
+	var _axis = __webpack_require__(70);
 	
 	var _axis2 = _interopRequireDefault(_axis);
 	
-	var _plot = __webpack_require__(47);
+	var _plot = __webpack_require__(71);
 	
 	var _plot2 = _interopRequireDefault(_plot);
 	
-	var _title = __webpack_require__(48);
+	var _title = __webpack_require__(72);
 	
 	var _title2 = _interopRequireDefault(_title);
 	
-	var _radialPlot = __webpack_require__(49);
+	var _radialPlot = __webpack_require__(73);
 	
 	var _radialPlot2 = _interopRequireDefault(_radialPlot);
 	
-	var _chartExportMenu = __webpack_require__(51);
+	var _chartExportMenu = __webpack_require__(75);
 	
 	var _chartExportMenu2 = _interopRequireDefault(_chartExportMenu);
 	
-	var _drawingToolPicker = __webpack_require__(40);
+	var _drawingToolPicker = __webpack_require__(60);
 	
 	var _drawingToolPicker2 = _interopRequireDefault(_drawingToolPicker);
 	
-	var _legend = __webpack_require__(57);
+	var _legend = __webpack_require__(81);
 	
 	var _legend2 = _interopRequireDefault(_legend);
 	
-	var _spectrumLegend = __webpack_require__(59);
+	var _spectrumLegend = __webpack_require__(83);
 	
 	var _spectrumLegend2 = _interopRequireDefault(_spectrumLegend);
 	
-	var _circleLegend = __webpack_require__(60);
+	var _circleLegend = __webpack_require__(84);
 	
 	var _circleLegend2 = _interopRequireDefault(_circleLegend);
 	
-	var _tooltip = __webpack_require__(61);
+	var _tooltip = __webpack_require__(85);
 	
 	var _tooltip2 = _interopRequireDefault(_tooltip);
 	
-	var _groupTooltip = __webpack_require__(67);
+	var _groupTooltip = __webpack_require__(91);
 	
 	var _groupTooltip2 = _interopRequireDefault(_groupTooltip);
 	
-	var _mapChartTooltip = __webpack_require__(69);
+	var _mapChartTooltip = __webpack_require__(93);
 	
 	var _mapChartTooltip2 = _interopRequireDefault(_mapChartTooltip);
 	
-	var _mapChartEventDetector = __webpack_require__(70);
+	var _mapChartEventDetector = __webpack_require__(94);
 	
 	var _mapChartEventDetector2 = _interopRequireDefault(_mapChartEventDetector);
 	
-	var _mouseEventDetector = __webpack_require__(74);
+	var _mouseEventDetector = __webpack_require__(98);
 	
 	var _mouseEventDetector2 = _interopRequireDefault(_mouseEventDetector);
 	
-	var _barChartSeries = __webpack_require__(81);
+	var _barChartSeries = __webpack_require__(105);
 	
 	var _barChartSeries2 = _interopRequireDefault(_barChartSeries);
 	
-	var _columnChartSeries = __webpack_require__(85);
+	var _columnChartSeries = __webpack_require__(111);
 	
 	var _columnChartSeries2 = _interopRequireDefault(_columnChartSeries);
 	
-	var _lineChartSeries = __webpack_require__(86);
+	var _lineChartSeries = __webpack_require__(112);
 	
 	var _lineChartSeries2 = _interopRequireDefault(_lineChartSeries);
 	
-	var _radialSeries = __webpack_require__(88);
+	var _radialSeries = __webpack_require__(114);
 	
 	var _radialSeries2 = _interopRequireDefault(_radialSeries);
 	
-	var _areaChartSeries = __webpack_require__(89);
+	var _areaChartSeries = __webpack_require__(115);
 	
 	var _areaChartSeries2 = _interopRequireDefault(_areaChartSeries);
 	
-	var _bubbleChartSeries = __webpack_require__(90);
+	var _bubbleChartSeries = __webpack_require__(116);
 	
 	var _bubbleChartSeries2 = _interopRequireDefault(_bubbleChartSeries);
 	
-	var _scatterChartSeries = __webpack_require__(92);
+	var _scatterChartSeries = __webpack_require__(118);
 	
 	var _scatterChartSeries2 = _interopRequireDefault(_scatterChartSeries);
 	
-	var _mapChartSeries = __webpack_require__(93);
+	var _mapChartSeries = __webpack_require__(119);
 	
 	var _mapChartSeries2 = _interopRequireDefault(_mapChartSeries);
 	
-	var _pieChartSeries = __webpack_require__(94);
+	var _pieChartSeries = __webpack_require__(120);
 	
 	var _pieChartSeries2 = _interopRequireDefault(_pieChartSeries);
 	
-	var _heatmapChartSeries = __webpack_require__(95);
+	var _heatmapChartSeries = __webpack_require__(121);
 	
 	var _heatmapChartSeries2 = _interopRequireDefault(_heatmapChartSeries);
 	
-	var _treemapChartSeries = __webpack_require__(96);
+	var _treemapChartSeries = __webpack_require__(122);
 	
 	var _treemapChartSeries2 = _interopRequireDefault(_treemapChartSeries);
 	
-	var _boxPlotChartSeries = __webpack_require__(98);
+	var _boxPlotChartSeries = __webpack_require__(124);
 	
 	var _boxPlotChartSeries2 = _interopRequireDefault(_boxPlotChartSeries);
 	
-	var _bulletChartSeries = __webpack_require__(99);
+	var _bulletChartSeries = __webpack_require__(125);
 	
 	var _bulletChartSeries2 = _interopRequireDefault(_bulletChartSeries);
 	
-	var _zoom = __webpack_require__(100);
+	var _zoom = __webpack_require__(126);
 	
 	var _zoom2 = _interopRequireDefault(_zoom);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
@@ -17016,6 +18969,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	// legends
 	
@@ -17074,8 +19028,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _classCallCheck(this, ComponentManager);
 	
 	    var chartOption = params.options.chart;
-	    var width = _tuiCodeSnippet2['default'].pick(chartOption, 'width') || _const2['default'].CHART_DEFAULT_WIDTH;
-	    var height = _tuiCodeSnippet2['default'].pick(chartOption, 'height') || _const2['default'].CHART_DEFAULT_HEIGHT;
+	    var width = (0, _pick2['default'])(chartOption, 'width') || _const2['default'].CHART_DEFAULT_WIDTH;
+	    var height = (0, _pick2['default'])(chartOption, 'height') || _const2['default'].CHART_DEFAULT_HEIGHT;
 	
 	    /**
 	     * Components
@@ -17156,7 +19110,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  ComponentManager.prototype._makeComponentOptions = function _makeComponentOptions(options, optionKey, componentName, index) {
 	    options = options || this.options[optionKey];
-	    options = _tuiCodeSnippet2['default'].isArray(options) ? options[index] : options || {};
+	    options = (0, _isArray2['default'])(options) ? options[index] : options || {};
 	
 	    return options;
 	  };
@@ -17257,7 +19211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this2 = this;
 	
 	    this.seriesTypes.forEach(function (seriesType) {
-	      if (_tuiCodeSnippet2['default'].isObject(_this2.options.series[seriesType])) {
+	      if ((0, _isObject2['default'])(_this2.options.series[seriesType])) {
 	        // For combo chart, options are set for each chart
 	        _this2.options.series[seriesType].animationDuration = _this2._getAnimationDuration(animation);
 	      } else {
@@ -17275,11 +19229,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  ComponentManager.prototype._getAnimationDuration = function _getAnimationDuration(animation) {
-	    if (_tuiCodeSnippet2['default'].isBoolean(animation) && !animation) {
+	    if ((0, _isBoolean2['default'])(animation) && !animation) {
 	      return 0;
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isObject(animation) && _tuiCodeSnippet2['default'].isNumber(animation.duration)) {
+	    if ((0, _isObject2['default'])(animation) && (0, _isNumber2['default'])(animation.duration)) {
 	      return animation.duration;
 	    }
 	
@@ -17308,7 +19262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (name.indexOf(seriesType) === 0) {
 	          options = options[seriesType] || options; // For combo chart, options are set for each chart
 	
-	          if (_tuiCodeSnippet2['default'].isArray(options)) {
+	          if ((0, _isArray2['default'])(options)) {
 	            options = options[index] || {};
 	          }
 	
@@ -17518,7 +19472,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = ComponentManager;
 
 /***/ }),
-/* 46 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17526,31 +19480,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = axisFactory;
 	
-	var _const = __webpack_require__(9);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _pluginFactory = __webpack_require__(34);
+	var _pluginFactory = __webpack_require__(51);
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
@@ -17562,6 +19516,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var AXIS_EDGE_RATIO = _const2['default'].AXIS_EDGE_RATIO,
 	    X_AXIS_LABEL_PADDING = _const2['default'].X_AXIS_LABEL_PADDING,
@@ -17583,32 +19538,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function Axis(params) {
 	    _classCallCheck(this, Axis);
 	
+	    var dataProcessor = params.dataProcessor,
+	        options = params.options,
+	        chartTheme = params.chartTheme,
+	        theme = params.theme,
+	        name = params.name,
+	        isYAxis = params.isYAxis,
+	        shifting = params.shifting;
+	
 	    /**
 	     * Axis view className
 	     * @type {string}
 	     */
+	
 	    this.className = 'tui-chart-axis-area';
 	
 	    /**
 	     * Data processor
 	     * @type {DataProcessor}
 	     */
-	    this.dataProcessor = params.dataProcessor;
+	    this.dataProcessor = dataProcessor;
 	
 	    /**
 	     * Options
 	     * @type {object}
 	     */
-	    this.options = params.options || {};
+	    this.options = options || {};
 	
 	    /**
 	     * Axis Theme
 	     * Use chart background theme object for render yAxis background on dynamicDataShifting chart
 	     * @type {object}
 	     */
-	    this.theme = _tuiCodeSnippet2['default'].extend({}, params.theme, {
-	      background: params.chartTheme.chart.background
-	    });
+	    this.theme = Object.assign({}, theme, { background: chartTheme.chart.background });
 	
 	    /**
 	     * Whether label type axis or not.
@@ -17620,13 +19582,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Whether vertical type or not.
 	     * @type {boolean}
 	     */
-	    this.isYAxis = params.isYAxis;
+	    this.isYAxis = isYAxis;
 	
 	    /**
 	     * Whether data dynamic shifting or not.
 	     * @type {boolean}
 	     */
-	    this.shifting = params.shifting;
+	    this.shifting = shifting;
 	
 	    /**
 	     * cached axis data
@@ -17682,7 +19644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this._elBg = null;
 	
-	    this.isRightYAxis = params.name === 'rightYAxis';
+	    this.isRightYAxis = name === 'rightYAxis';
 	  }
 	
 	  /**
@@ -18222,7 +20184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Axis.prototype._isOverLapXAxisLabel = function _isOverLapXAxisLabel(labelText, position, nextPosition) {
 	    var labelWidth = _renderUtil2['default'].getRenderedLabelWidth(labelText);
 	
-	    return !_tuiCodeSnippet2['default'].isUndefined(nextPosition) && nextPosition - position < labelWidth;
+	    return !(0, _isUndefined2['default'])(nextPosition) && nextPosition - position < labelWidth;
 	  };
 	
 	  /**
@@ -18382,7 +20344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	axisFactory.Axis = Axis;
 
 /***/ }),
-/* 47 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18393,21 +20355,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports['default'] = plotFactory;
 	
-	var _const = __webpack_require__(9);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -18448,7 +20422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @type {object}
 	     */
 	    this.options = params.options || {};
-	    this.options.showLine = _tuiCodeSnippet2['default'].isUndefined(this.options.showLine) ? true : this.options.showLine;
+	    this.options.showLine = (0, _isUndefined2['default'])(this.options.showLine) ? true : this.options.showLine;
 	    this.options.lines = this.options.lines || [];
 	    this.options.bands = this.options.bands || [];
 	
@@ -18606,7 +20580,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  Plot.prototype._makeVerticalLineTemplateParams = function _makeVerticalLineTemplateParams(additionalParams) {
-	    return _tuiCodeSnippet2['default'].extend({
+	    return Object.assign({
 	      className: 'vertical',
 	      positionType: 'left',
 	      width: '1px'
@@ -18622,7 +20596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  Plot.prototype._makeHorizontalLineTemplateParams = function _makeHorizontalLineTemplateParams(additionalParams) {
-	    return _tuiCodeSnippet2['default'].extend({
+	    return Object.assign({
 	      className: 'horizontal',
 	      positionType: 'bottom',
 	      height: '1px'
@@ -18778,7 +20752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var position = null;
 	    var ratio = void 0;
 	
-	    if (!_tuiCodeSnippet2['default'].isNull(index)) {
+	    if (!(0, _isNull2['default'])(index)) {
 	      var categoryCount = dataProcessor.getCategoryCount();
 	      var divCount = isPointOnColumn ? categoryCount : categoryCount - 1;
 	
@@ -18824,12 +20798,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      endPosition = range[1] && this._createOptionalLinePosition(xAxisData, width, range[1]);
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isNull(startPosition)) {
+	    if ((0, _isNull2['default'])(startPosition)) {
 	      var startValue = categoriesLen ? categories[0] : xAxisValues[0];
 	      startPosition = this._isBeforeVisibleValue(range[0], startValue) ? 0 : -1;
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isNull(endPosition) || endPosition > width) {
+	    if ((0, _isNull2['default'])(endPosition) || endPosition > width) {
 	      var endValue = categoriesLen ? categories[categoriesLen - 1] : xAxisValues[xAxisValues.length - 1];
 	      endPosition = this._isAfterVisibleValue(range[1], endValue) ? width : -1;
 	    }
@@ -18852,7 +20826,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var dataProcessor = this.dataProcessor;
 	
 	
-	    if (!_tuiCodeSnippet2['default'].isExisty(value)) {
+	    if (!(0, _isExisty2['default'])(value)) {
 	      return false;
 	    }
 	
@@ -18878,7 +20852,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var dataProcessor = this.dataProcessor;
 	
 	
-	    if (!_tuiCodeSnippet2['default'].isExisty(value)) {
+	    if (!(0, _isExisty2['default'])(value)) {
 	      return false;
 	    }
 	
@@ -19289,7 +21263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Plot.prototype._makeRangeTo2DArray = function _makeRangeTo2DArray(optionalLineData) {
 	    var range = optionalLineData.range;
 	
-	    var isOneDimensionArray = range && _tuiCodeSnippet2['default'].isArray(range) && (range.length === 0 || !_tuiCodeSnippet2['default'].isArray(range[0]));
+	    var isOneDimensionArray = range && (0, _isArray2['default'])(range) && (range.length === 0 || !(0, _isArray2['default'])(range[0]));
 	
 	    if (isOneDimensionArray) {
 	      optionalLineData.range = [range];
@@ -19337,7 +21311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	/**
 	 * Compare positionMap by it's start value
-	 * @param {{start: number, end: number}} previous - previouse plot band positionMap
+	 * @param {{start: number, end: number}} previous - previous plot band positionMap
 	 * @param {{start: number, end: number}} current - current plot band positionMap
 	 * @returns {number} - comparison of whether a is greater than b
 	 * @ignore
@@ -19373,7 +21347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	plotFactory.Plot = Plot;
 
 /***/ }),
-/* 48 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19381,11 +21355,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = titleFactory;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _pluginFactory = __webpack_require__(34);
+	var _pluginFactory = __webpack_require__(51);
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
 	
@@ -19559,7 +21533,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	titleFactory.Title = Title;
 
 /***/ }),
-/* 49 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19567,25 +21541,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = RadialPlotFactory;
 	
-	var _geometric = __webpack_require__(50);
+	var _geometric = __webpack_require__(74);
 	
 	var _geometric2 = _interopRequireDefault(_geometric);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _pluginFactory = __webpack_require__(34);
+	var _pluginFactory = __webpack_require__(51);
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -19594,6 +21564,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
 	    RADIAL_PLOT_PADDING = _const2['default'].RADIAL_PLOT_PADDING,
@@ -19623,7 +21594,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Options
 	     * @type {object}
 	     */
-	    this.options = _tuiCodeSnippet2['default'].extend({
+	    this.options = Object.assign({
 	      type: 'spiderweb'
 	    }, params.options);
 	
@@ -19922,14 +21893,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	RadialPlotFactory.RadialPlot = RadialPlot;
 
 /***/ }),
-/* 50 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -20038,7 +22009,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 51 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20046,27 +22017,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = chartExportMenuFactory;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _chartExporter = __webpack_require__(52);
+	var _chartExporter = __webpack_require__(76);
 	
 	var _chartExporter2 = _interopRequireDefault(_chartExporter);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _eventListener = __webpack_require__(56);
+	var _eventListener = __webpack_require__(80);
 	
 	var _eventListener2 = _interopRequireDefault(_eventListener);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -20491,28 +22462,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	chartExportMenuFactory.componentType = 'chartExportMenu';
 
 /***/ }),
-/* 52 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _browser = __webpack_require__(21);
+	
+	var _browser2 = _interopRequireDefault(_browser);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isString = __webpack_require__(24);
+	
+	var _isString2 = _interopRequireDefault(_isString);
+	
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _dataExporter = __webpack_require__(53);
+	var _dataExporter = __webpack_require__(77);
 	
 	var _dataExporter2 = _interopRequireDefault(_dataExporter);
 	
-	var _imageExporter = __webpack_require__(55);
+	var _imageExporter = __webpack_require__(79);
 	
 	var _imageExporter2 = _interopRequireDefault(_imageExporter);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -20522,14 +22501,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
 	
-	var browser = _tuiCodeSnippet2['default'].browser,
-	    isExisty = _tuiCodeSnippet2['default'].isExisty,
-	    isString = _tuiCodeSnippet2['default'].isString;
-	
-	
-	var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
+	var isIE10OrIE11 = _browser2['default'].msie && (_browser2['default'].version === 10 || _browser2['default'].version === 11);
 	var isImageDownloadAvailable = !isIE10OrIE11 || isIE10OrIE11 && document.createElement('canvas').getContext('2d').drawSvg;
-	var isDownloadAttributeSupported = isExisty(document.createElement('a').download);
+	var isDownloadAttributeSupported = (0, _isExisty2['default'])(document.createElement('a').download);
 	var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
 	
 	/**
@@ -20586,7 +22560,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param {string} extension file extension
 	   */
 	  addExtension: function addExtension(type, extension) {
-	    var isValidExtension = extension && isString(extension);
+	    var isValidExtension = extension && (0, _isString2['default'])(extension);
 	    var exporter = void 0;
 	    var extensions = void 0;
 	
@@ -20604,7 +22578,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 53 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20613,21 +22587,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _templateObject = _taggedTemplateLiteral(['<html xmlns:o="urn:schemas-microsoft-com:office:office" \n        xmlns:x="urn:schemas-microsoft-com:office:excel" \n        xmlns="http://www.w3.org/TR/REC-html40">\n        <head>\n            <!--[if gte mso 9]>\n                <xml>\n                    <x:ExcelWorkbook>\n                        <x:ExcelWorksheets>\n                            <x:ExcelWorksheet>\n                                <x:Name>Ark1</x:Name>\n                                <x:WorksheetOptions>\n                                    <x:DisplayGridlines/>\n                                </x:WorksheetOptions>\n                            </x:ExcelWorksheet>\n                        </x:ExcelWorksheets>\n                        </x:ExcelWorkbook>\n                </xml>\n            <![endif]-->\n            <meta name=ProgId content=Excel.Sheet>\n            <meta charset=UTF-8>\n        </head>\n        <body>\n            ', '\n        </body>\n        </html>'], ['<html xmlns:o="urn:schemas-microsoft-com:office:office" \n        xmlns:x="urn:schemas-microsoft-com:office:excel" \n        xmlns="http://www.w3.org/TR/REC-html40">\n        <head>\n            <!--[if gte mso 9]>\n                <xml>\n                    <x:ExcelWorkbook>\n                        <x:ExcelWorksheets>\n                            <x:ExcelWorksheet>\n                                <x:Name>Ark1</x:Name>\n                                <x:WorksheetOptions>\n                                    <x:DisplayGridlines/>\n                                </x:WorksheetOptions>\n                            </x:ExcelWorksheet>\n                        </x:ExcelWorksheets>\n                        </x:ExcelWorkbook>\n                </xml>\n            <![endif]-->\n            <meta name=ProgId content=Excel.Sheet>\n            <meta charset=UTF-8>\n        </head>\n        <body>\n            ', '\n        </body>\n        </html>']);
 	
-	var _downloader = __webpack_require__(54);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
+	var _forEachArray = __webpack_require__(9);
+	
+	var _forEachArray2 = _interopRequireDefault(_forEachArray);
+	
+	var _downloader = __webpack_require__(78);
 	
 	var _downloader2 = _interopRequireDefault(_downloader);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -20638,6 +22628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                     * @author NHN.
 	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                     */
+	
 	
 	var DATA_URI_HEADERS = {
 	  xls: 'data:application/vnd.ms-excel;base64,',
@@ -20680,7 +22671,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @private
 	   */
 	  _isNeedDataEncodeing: function _isNeedDataEncodeing() {
-	    var isDownloadAttributeSupported = _tuiCodeSnippet2['default'].isExisty(document.createElement('a').download);
+	    var isDownloadAttributeSupported = (0, _isExisty2['default'])(document.createElement('a').download);
 	    var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
 	
 	    if (!isMsSaveOrOpenBlobSupported && isDownloadAttributeSupported) {
@@ -20708,8 +22699,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function _get2DArrayFromRawData(rawData) {
 	  var resultArray = [];
-	  var isHeatMap = rawData.categories && _tuiCodeSnippet2['default'].isExisty(rawData.categories.x);
-	  var isBullet = rawData.series && _tuiCodeSnippet2['default'].isExisty(rawData.series.bullet);
+	  var isHeatMap = rawData.categories && (0, _isExisty2['default'])(rawData.categories.x);
+	  var isBullet = rawData.series && (0, _isExisty2['default'])(rawData.series.bullet);
 	  var return2DArrayData = false;
 	
 	  if (rawData) {
@@ -20730,7 +22721,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    Object.values(rawData.series || {}).forEach(function (seriesDatum) {
 	      seriesDatum.forEach(function (seriesItem) {
-	        var data = _tuiCodeSnippet2['default'].isArray(seriesItem.data) ? seriesItem.data : [seriesItem.data];
+	        var data = (0, _isArray2['default'])(seriesItem.data) ? seriesItem.data : [seriesItem.data];
 	
 	        resultArray.push([seriesItem.name].concat(_toConsumableArray(data)));
 	      });
@@ -20820,7 +22811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  resultArray.push(_makeTHeadForBullet(maxRangeCount, maxMarkerCount));
 	
-	  _tuiCodeSnippet2['default'].forEach(rawData.series.bullet, function (seriesItem) {
+	  (0, _forEach2['default'])(rawData.series.bullet, function (seriesItem) {
 	    var rangeArray = _makeTCellsFromBulletRanges(seriesItem.ranges, maxRangeCount);
 	    var markerArray = _makeTCellsFromBulletMarkers(seriesItem.markers, maxMarkerCount);
 	    var row = [seriesItem.name, seriesItem.data].concat(_toConsumableArray(rangeArray), _toConsumableArray(markerArray));
@@ -20840,7 +22831,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var maxRangeCount = 0;
 	  var maxMarkerCount = 0;
 	
-	  _tuiCodeSnippet2['default'].forEach(bulletSeries, function (series) {
+	  (0, _forEach2['default'])(bulletSeries, function (series) {
 	    maxRangeCount = Math.max(maxRangeCount, series.ranges.length);
 	    maxMarkerCount = Math.max(maxMarkerCount, series.markers.length);
 	  });
@@ -20862,8 +22853,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  resultArray.push([''].concat(_toConsumableArray(rawData.categories.x)));
 	
-	  _tuiCodeSnippet2['default'].forEach(rawData.series, function (seriesDatum) {
-	    _tuiCodeSnippet2['default'].forEach(seriesDatum, function (seriesItem, index) {
+	  (0, _forEach2['default'])(rawData.series, function (seriesDatum) {
+	    (0, _forEach2['default'])(seriesDatum, function (seriesItem, index) {
 	      var row = [rawData.categories.y[index]].concat(_toConsumableArray(seriesItem));
 	      resultArray.push(row);
 	    });
@@ -20880,12 +22871,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function _getTableElementStringForXls(chartData2DArray) {
 	  var tableElementString = '<table>';
-	  _tuiCodeSnippet2['default'].forEach(chartData2DArray, function (row, rowIndex) {
+	  (0, _forEach2['default'])(chartData2DArray, function (row, rowIndex) {
 	    var cellTagName = rowIndex === 0 ? 'th' : 'td';
 	
 	    tableElementString += '<tr>';
 	
-	    _tuiCodeSnippet2['default'].forEach(row, function (cell, cellIndex) {
+	    (0, _forEach2['default'])(row, function (cell, cellIndex) {
 	      var cellNumberClass = rowIndex !== 0 || cellIndex === 0 ? ' class="number"' : '';
 	      var cellString = '<' + cellTagName + cellNumberClass + '>' + cell + '</' + cellTagName + '>';
 	
@@ -20931,11 +22922,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var lastRowIndex = chartData2DArray.length - 1;
 	  var csvText = '';
 	
-	  _tuiCodeSnippet2['default'].forEachArray(chartData2DArray, function (row, rowIndex) {
+	  (0, _forEachArray2['default'])(chartData2DArray, function (row, rowIndex) {
 	    var lastCellIndex = row.length - 1;
 	
-	    _tuiCodeSnippet2['default'].forEachArray(row, function (cell, cellIndex) {
-	      var cellContent = _tuiCodeSnippet2['default'].isNumber(cell) ? cell : '"' + cell + '"';
+	    (0, _forEachArray2['default'])(row, function (cell, cellIndex) {
+	      var cellContent = (0, _isNumber2['default'])(cell) ? cell : '"' + cell + '"';
 	
 	      csvText += cellContent;
 	
@@ -20967,26 +22958,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = dataExporter;
 
 /***/ }),
-/* 54 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isExisty = __webpack_require__(14);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _isString = __webpack_require__(24);
+	
+	var _isString2 = _interopRequireDefault(_isString);
+	
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	/**
+	 * @fileOverview File downloader for client-side download
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
+	 */
 	
 	var DOWNLOAD_HANDLERS = {
 	  downloadAttribute: downloadWithAnchorElementDownloadAttribute,
@@ -20998,14 +22999,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {string}
 	 * @ignore
 	 */
-	/**
-	 * @fileOverview File downloader for client-side download
-	 * @author NHN.
-	 *         FE Development Lab <dl_javascript@nhn.com>
-	 */
-	
 	function getDownloadMethod() {
-	  var isDownloadAttributeSupported = _tuiCodeSnippet2['default'].isExisty(document.createElement('a').download);
+	  var isDownloadAttributeSupported = (0, _isExisty2['default'])(document.createElement('a').download);
 	  var isMsSaveOrOpenBlobSupported = window.Blob && window.navigator.msSaveOrOpenBlob;
 	  var method = void 0;
 	
@@ -21108,7 +23103,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function execDownload(fileName, extension, content, contentType) {
 	  var downloadMethod = getDownloadMethod();
 	
-	  if (downloadMethod && _tuiCodeSnippet2['default'].isString(content)) {
+	  if (downloadMethod && (0, _isString2['default'])(content)) {
 	    DOWNLOAD_HANDLERS[downloadMethod](fileName, extension, content, contentType);
 	  }
 	}
@@ -21118,24 +23113,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 55 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _downloader = __webpack_require__(54);
+	var _downloader = __webpack_require__(78);
 	
 	var _downloader2 = _interopRequireDefault(_downloader);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _browser = __webpack_require__(21);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _browser2 = _interopRequireDefault(_browser);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -21145,9 +23140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                     *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                     */
 	
-	var browser = _tuiCodeSnippet2['default'].browser;
-	
-	var isIE10OrIE11 = browser.msie && (browser.version === 10 || browser.version === 11);
+	var isIE10OrIE11 = _browser2['default'].msie && (_browser2['default'].version === 10 || _browser2['default'].version === 11);
 	var DOMURL = window.URL || window.webkitURL || window;
 	var imageExtensions = [].concat(_toConsumableArray(_const2['default'].IMAGE_EXTENSIONS));
 	
@@ -21265,30 +23258,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 56 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isString = __webpack_require__(24);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isString2 = _interopRequireDefault(_isString);
+	
+	var _forEach = __webpack_require__(7);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
+	/**
+	 * @fileoverview Event listener.
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
+	 */
 	var bindHandlerMap = {};
 	
 	/**
 	 * Event listener.
 	 * @module eventListener
 	 * @private */
-	/**
-	 * @fileoverview Event listener.
-	 * @author NHN.
-	 *         FE Development Lab <dl_javascript@nhn.com>
-	 */
 	var eventListener = {
 	  /**
 	   * Add event listener for IE.
@@ -21326,7 +23323,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var bindHandler = void 0;
 	
 	    if (context) {
-	      bindHandler = _tuiCodeSnippet2['default'].bind(handler, context);
+	      bindHandler = handler.bind(context);
 	    } else {
 	      bindHandler = handler;
 	    }
@@ -21370,14 +23367,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  on: function on(target, types, handler, context) {
 	    var handlerMap = {};
-	    if (_tuiCodeSnippet2['default'].isString(types)) {
+	    if ((0, _isString2['default'])(types)) {
 	      handlerMap[types] = handler;
 	    } else {
 	      handlerMap = types;
 	      context = handler;
 	    }
 	
-	    _tuiCodeSnippet2['default'].forEach(handlerMap, function (_handler, type) {
+	    (0, _forEach2['default'])(handlerMap, function (_handler, type) {
 	      eventListener._bindEvent(target, type, _handler, context);
 	    });
 	  },
@@ -21443,13 +23440,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  off: function off(target, types, handler) {
 	    var handlerMap = {};
-	    if (_tuiCodeSnippet2['default'].isString(types)) {
+	    if ((0, _isString2['default'])(types)) {
 	      handlerMap[types] = handler;
 	    } else {
 	      handlerMap = types;
 	    }
 	
-	    _tuiCodeSnippet2['default'].forEach(handlerMap, function (_handler, type) {
+	    (0, _forEach2['default'])(handlerMap, function (_handler, type) {
 	      eventListener._unbindEvent(target, type, _handler);
 	    });
 	  }
@@ -21458,7 +23455,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = eventListener;
 
 /***/ }),
-/* 57 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21466,29 +23463,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = legendFactory;
 	
-	var _const = __webpack_require__(9);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _customEvents = __webpack_require__(67);
+	
+	var _customEvents2 = _interopRequireDefault(_customEvents);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _legendModel = __webpack_require__(58);
+	var _legendModel = __webpack_require__(82);
 	
 	var _legendModel2 = _interopRequireDefault(_legendModel);
 	
-	var _pluginFactory = __webpack_require__(34);
+	var _pluginFactory = __webpack_require__(51);
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -21497,6 +23502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var LEGEND_ICON_HEIGHT = _const2['default'].LEGEND_ICON_HEIGHT,
 	    LINE_MARGIN_TOP = _const2['default'].LINE_MARGIN_TOP,
@@ -21791,7 +23797,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  Legend.prototype._fireSelectLegendEvent = function _fireSelectLegendEvent(data) {
 	    var index = this.legendModel.getSelectedIndex();
-	    var legendIndex = !_tuiCodeSnippet2['default'].isNull(index) ? data.seriesIndex : index;
+	    var legendIndex = !(0, _isNull2['default'])(index) ? data.seriesIndex : index;
 	
 	    this.eventBus.fire('selectLegend', data.chartType, legendIndex);
 	  };
@@ -21827,7 +23833,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.legendModel.toggleSelectedIndex(index);
 	
-	    if (!_tuiCodeSnippet2['default'].isNull(this.legendModel.getSelectedIndex()) && !this.legendModel.isCheckedSelectedIndex()) {
+	    if (!(0, _isNull2['default'])(this.legendModel.getSelectedIndex()) && !this.legendModel.isCheckedSelectedIndex()) {
 	      this.legendModel.checkSelectedIndex();
 	      this._fireChangeCheckedLegendsEvent();
 	    }
@@ -21935,7 +23941,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Legend;
 	}();
 	
-	_tuiCodeSnippet2['default'].CustomEvents.mixin(Legend);
+	_customEvents2['default'].mixin(Legend);
 	
 	/**
 	 * Factory for Legend
@@ -21948,7 +23954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      seriesTypes = params.dataProcessor.seriesTypes,
 	      chartType = params.chartOptions.chartType;
 	
-	  var isLegendVisible = _tuiCodeSnippet2['default'].isUndefined(options.visible) ? true : options.visible;
+	  var isLegendVisible = (0, _isUndefined2['default'])(options.visible) ? true : options.visible;
 	  var legend = null;
 	
 	  if (isLegendVisible) {
@@ -21966,16 +23972,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	legendFactory.Legend = Legend;
 
 /***/ }),
-/* 58 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isNull = __webpack_require__(6);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -21986,7 +23996,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
-	
 	
 	var LegendModel = function () {
 	  /**
@@ -22111,7 +24120,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      datum.theme = itemTheme;
 	      datum.index = index;
 	
-	      if (!checkedIndexes || !_tuiCodeSnippet2['default'].isUndefined(checkedIndexes[index])) {
+	      if (!checkedIndexes || !(0, _isUndefined2['default'])(checkedIndexes[index])) {
 	        datum.seriesIndex = seriesIndex;
 	        seriesIndex += 1;
 	      } else {
@@ -22258,7 +24267,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  LegendModel.prototype.isUnselectedIndex = function isUnselectedIndex(index) {
-	    return !_tuiCodeSnippet2['default'].isNull(this.selectedIndex) && this.selectedIndex !== index;
+	    return !(0, _isNull2['default'])(this.selectedIndex) && this.selectedIndex !== index;
 	  };
 	
 	  /**
@@ -22385,7 +24394,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = LegendModel;
 
 /***/ }),
-/* 59 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22393,21 +24402,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = spectrumLegendFactory;
 	
-	var _const = __webpack_require__(9);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _pluginFactory = __webpack_require__(34);
+	var _pluginFactory = __webpack_require__(51);
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -22416,6 +24425,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
 	    MAP_LEGEND_LABEL_PADDING = _const2['default'].MAP_LEGEND_LABEL_PADDING,
@@ -22519,8 +24529,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      showWedge: this.onShowWedge,
 	      hideTooltip: this.onHideWedge
 	    }, this);
-	    this.eventBus.on('beforeImageDownload', _tuiCodeSnippet2['default'].bind(this._removeLocationURLFromFillAttribute, this));
-	    this.eventBus.on('afterImageDownload', _tuiCodeSnippet2['default'].bind(this._restoreLocationURLToFillAttribute, this));
+	    this.eventBus.on('beforeImageDownload', this._removeLocationURLFromFillAttribute.bind(this));
+	    this.eventBus.on('afterImageDownload', this._restoreLocationURLToFillAttribute.bind(this));
 	  };
 	
 	  /**
@@ -22765,7 +24775,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	function spectrumLegendFactory(params) {
-	  var isLegendVisible = _tuiCodeSnippet2['default'].isUndefined(params.options.visible) ? true : params.options.visible;
+	  var isLegendVisible = (0, _isUndefined2['default'])(params.options.visible) ? true : params.options.visible;
 	  var chartType = params.chartOptions.chartType;
 	
 	  var spectrumLegend = null;
@@ -22783,7 +24793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	spectrumLegendFactory.SpectrumLegend = SpectrumLegend;
 
 /***/ }),
-/* 60 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22791,25 +24801,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = circleLegendFactory;
 	
-	var _const = __webpack_require__(9);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _pluginFactory = __webpack_require__(34);
+	var _pluginFactory = __webpack_require__(51);
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -22819,6 +24833,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var CircleLegend = function () {
 	  /**
@@ -23012,11 +25027,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var chartTheme = params.chartTheme,
 	      chartType = params.chartOptions.chartType;
 	
-	  var visibleOption = _tuiCodeSnippet2['default'].pick(params.chartOptions, 'circleLegend', 'visible');
+	  var visibleOption = (0, _pick2['default'])(params.chartOptions, 'circleLegend', 'visible');
 	  var circleLegend = null;
 	  var isLegendVisible = void 0;
 	
-	  if (_tuiCodeSnippet2['default'].isUndefined(visibleOption)) {
+	  if ((0, _isUndefined2['default'])(visibleOption)) {
 	    isLegendVisible = true;
 	  } else {
 	    isLegendVisible = visibleOption;
@@ -23036,7 +25051,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	circleLegendFactory.CircleLegend = CircleLegend;
 
 /***/ }),
-/* 61 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23044,25 +25059,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = tooltipFactory;
 	
-	var _normalTooltip = __webpack_require__(62);
+	var _normalTooltip = __webpack_require__(86);
 	
 	var _normalTooltip2 = _interopRequireDefault(_normalTooltip);
 	
-	var _groupTooltip = __webpack_require__(67);
+	var _groupTooltip = __webpack_require__(91);
 	
 	var _groupTooltip2 = _interopRequireDefault(_groupTooltip);
 	
-	var _mapChartTooltip = __webpack_require__(69);
+	var _mapChartTooltip = __webpack_require__(93);
 	
 	var _mapChartTooltip2 = _interopRequireDefault(_mapChartTooltip);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isArray = __webpack_require__(8);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isArray2 = _interopRequireDefault(_isArray);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -23109,7 +25124,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var factory = void 0;
 	
 	  var legendTheme = Object.values(params.chartTheme.legend).filter(function (item) {
-	    return _tuiCodeSnippet2['default'].isArray(item.colors);
+	    return (0, _isArray2['default'])(item.colors);
 	  });
 	
 	  legendTheme.forEach(function (series) {
@@ -23140,7 +25155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	tooltipFactory.componentType = 'tooltip';
 
 /***/ }),
-/* 62 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23148,29 +25163,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = normalTooltipFactory;
 	
-	var _tooltipBase = __webpack_require__(63);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _tooltipBase = __webpack_require__(87);
 	
 	var _tooltipBase2 = _interopRequireDefault(_tooltipBase);
 	
-	var _singleTooltipMixer = __webpack_require__(64);
+	var _singleTooltipMixer = __webpack_require__(88);
 	
 	var _singleTooltipMixer2 = _interopRequireDefault(_singleTooltipMixer);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _tooltipTemplate = __webpack_require__(65);
+	var _tooltipTemplate = __webpack_require__(89);
 	
 	var _tooltipTemplate2 = _interopRequireDefault(_tooltipTemplate);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -23227,7 +25250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  NormalTooltip.prototype._makeTooltipHtml = function _makeTooltipHtml(category, item) {
 	    var template = this._getTooltipTemplate(item);
 	
-	    return template(_tuiCodeSnippet2['default'].extend({
+	    return template(Object.assign({
 	      categoryVisible: category ? 'show' : 'hide',
 	      category: category
 	    }, item));
@@ -23272,7 +25295,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  NormalTooltip.prototype._getBoxplotTooltipTemplate = function _getBoxplotTooltipTemplate(item) {
 	    var template = _tooltipTemplate2['default'].tplBoxplotChartDefault;
 	
-	    if (_tuiCodeSnippet2['default'].isNumber(item.outlierIndex)) {
+	    if ((0, _isNumber2['default'])(item.outlierIndex)) {
 	      template = _tooltipTemplate2['default'].tplBoxplotChartOutlier;
 	      item.label = item.outliers[item.outlierIndex].label;
 	    }
@@ -23314,7 +25337,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var data = this._findTooltipData(chartType, indexes);
 	    var color = this._findTooltipColor(chartType, indexes, data);
 	
-	    if (_predicate2['default'].isBoxplotChart(this.chartType) && _tuiCodeSnippet2['default'].isNumber(indexes.outlierIndex)) {
+	    if (_predicate2['default'].isBoxplotChart(this.chartType) && (0, _isNumber2['default'])(indexes.outlierIndex)) {
 	      data.outlierIndex = indexes.outlierIndex;
 	    }
 	    if (this.colorSpectrum) {
@@ -23348,7 +25371,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      selectIndex = 0;
 	    }
 	
-	    return Object.assign({}, _tuiCodeSnippet2['default'].pick(chartData, selectIndex, indexes.index));
+	    return Object.assign({}, (0, _pick2['default'])(chartData, selectIndex, indexes.index));
 	  };
 	
 	  /**
@@ -23418,14 +25441,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var chartType = legendData.chartType,
 	        label = legendData.label;
 	
-	    var params = _tuiCodeSnippet2['default'].extend({
+	    var params = Object.assign({
 	      chartType: chartType,
 	      legend: label,
 	      legendIndex: legendIndex,
 	      index: indexes.groupIndex
 	    }, additionParams);
 	
-	    if (_predicate2['default'].isBoxplotChart(chartType) && _tuiCodeSnippet2['default'].isNumber(indexes.outlierIndex)) {
+	    if (_predicate2['default'].isBoxplotChart(chartType) && (0, _isNumber2['default'])(indexes.outlierIndex)) {
 	      params.outlierIndex = indexes.outlierIndex;
 	    }
 	
@@ -23461,7 +25484,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    tooltipDatum.category = category;
 	
-	    return _tuiCodeSnippet2['default'].extend(tooltipDatum, seriesItem.pickValueMapForTooltip());
+	    return Object.assign(tooltipDatum, seriesItem.pickValueMapForTooltip());
 	  };
 	
 	  /**
@@ -23479,7 +25502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var legendLabels = {};
 	    var tooltipData = {};
 	
-	    if (_tuiCodeSnippet2['default'].isArray(orgLegendLabels)) {
+	    if ((0, _isArray2['default'])(orgLegendLabels)) {
 	      legendLabels[this.chartType] = orgLegendLabels;
 	    } else {
 	      legendLabels = orgLegendLabels;
@@ -23529,38 +25552,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	normalTooltipFactory.NormalTooltip = NormalTooltip;
 
 /***/ }),
-/* 63 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isExisty = __webpack_require__(14);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
 	
 	var _raphael = __webpack_require__(4);
 	
 	var _raphael2 = _interopRequireDefault(_raphael);
 	
-	var _objectUtil = __webpack_require__(38);
+	var _objectUtil = __webpack_require__(55);
 	
 	var _objectUtil2 = _interopRequireDefault(_objectUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -23584,7 +25607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   *      @param {object} params.options - tooltip options
 	   *      @param {object} params.theme - tooltip theme
 	   *      @param {boolean} params.isVertical - whether vertical or not
-	   *      @param {object} params.eventBus - snippet.CustomEvents instance
+	   *      @param {object} params.eventBus - CustomEvents instance
 	   *      @param {object} params.labelTheme - theme for label
 	   *      @param {string} params.xAxisType - xAxis type
 	   *      @param {string} params.dateFormat - date format
@@ -23690,7 +25713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Tooltip template function.
 	     * @type {function}
 	     */
-	    this.templateFunc = this.options.template || _tuiCodeSnippet2['default'].bind(this._makeTooltipHtml, this);
+	    this.templateFunc = this.options.template || this._makeTooltipHtml.bind(this);
 	
 	    /**
 	     * Tooltip animation time.
@@ -24082,15 +26105,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  TooltipBase.prototype.setOffset = function setOffset(offset) {
 	    var offsetOption = Object.assign({}, this.options.offset);
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(offset.x)) {
+	    if ((0, _isExisty2['default'])(offset.x)) {
 	      offsetOption.x = offset.x;
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(offset.y)) {
+	    if ((0, _isExisty2['default'])(offset.y)) {
 	      offsetOption.y = offset.y;
 	    }
 	
-	    this._updateOffsetOption(_tuiCodeSnippet2['default'].extend({}, this.options.offset, offsetOption));
+	    this._updateOffsetOption(Object.assign({}, this.options.offset, offsetOption));
 	  };
 	
 	  /**
@@ -24103,11 +26126,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  TooltipBase.prototype.setPosition = function setPosition(position) {
 	    var offsetOption = Object.assign({}, this.options.offset);
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(position.left)) {
+	    if ((0, _isExisty2['default'])(position.left)) {
 	      offsetOption.x = position.left;
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(position.top)) {
+	    if ((0, _isExisty2['default'])(position.top)) {
 	      offsetOption.y = position.y;
 	    }
 	
@@ -24170,30 +26193,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = TooltipBase;
 
 /***/ }),
-/* 64 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isNull = __webpack_require__(6);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isNull2 = _interopRequireDefault(_isNull);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -24227,7 +26250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var index = elTooltip.getAttribute('data-index');
 	    var indexes = null;
 	
-	    if (!_tuiCodeSnippet2['default'].isNull(groupIndex) && !_tuiCodeSnippet2['default'].isNull(index)) {
+	    if (!(0, _isNull2['default'])(groupIndex) && !(0, _isNull2['default'])(index)) {
 	      indexes = {
 	        groupIndex: parseInt(groupIndex, 10),
 	        index: parseInt(index, 10)
@@ -24371,7 +26394,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _makeTooltipPositionToMousePosition: function _makeTooltipPositionToMousePosition(params) {
 	    if (!params.bound) {
 	      params.bound = params.bound || {};
-	      _tuiCodeSnippet2['default'].extend(params.bound, params.mousePosition);
+	      Object.assign(params.bound, params.mousePosition);
 	    }
 	
 	    return this._makeTooltipPositionForNotBarChart(params);
@@ -24637,7 +26660,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    positionOption.left = offset.x || 0;
 	    positionOption.top = offset.y || 0;
 	
-	    var position = this._makeTooltipPosition(_tuiCodeSnippet2['default'].extend({
+	    var position = this._makeTooltipPosition(Object.assign({
 	      dimension: this.getTooltipDimension(elTooltip),
 	      positionOption: positionOption,
 	      alignOption: this.options.align || ''
@@ -24774,7 +26797,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @ignore
 	   */
 	  mixin: function mixin(func) {
-	    _tuiCodeSnippet2['default'].extend(func.prototype, this);
+	    Object.assign(func.prototype, this);
 	  }
 	}; /**
 	    * @fileoverview singleTooltipMixer is single tooltip mixer of map chart.
@@ -24783,14 +26806,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    */
 
 /***/ }),
-/* 65 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _templateMaker = __webpack_require__(66);
+	var _templateMaker = __webpack_require__(90);
 	
 	var _templateMaker2 = _interopRequireDefault(_templateMaker);
 	
@@ -24837,7 +26860,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 66 */
+/* 90 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -24883,7 +26906,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 67 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24891,39 +26914,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = groupTooltipFactory;
 	
-	var _tooltipBase = __webpack_require__(63);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _pluck = __webpack_require__(58);
+	
+	var _pluck2 = _interopRequireDefault(_pluck);
+	
+	var _tooltipBase = __webpack_require__(87);
 	
 	var _tooltipBase2 = _interopRequireDefault(_tooltipBase);
 	
-	var _groupTooltipPositionModel = __webpack_require__(68);
+	var _groupTooltipPositionModel = __webpack_require__(92);
 	
 	var _groupTooltipPositionModel2 = _interopRequireDefault(_groupTooltipPositionModel);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _defaultTheme = __webpack_require__(36);
+	var _defaultTheme = __webpack_require__(53);
 	
 	var _defaultTheme2 = _interopRequireDefault(_defaultTheme);
 	
-	var _tooltipTemplate = __webpack_require__(65);
+	var _tooltipTemplate = __webpack_require__(89);
 	
 	var _tooltipTemplate2 = _interopRequireDefault(_tooltipTemplate);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -24938,6 +26965,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	var TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION = _const2['default'].TOOLTIP_DEFAULT_GROUP_ALIGN_OPTION,
 	    TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION = _const2['default'].TOOLTIP_DEFAULT_GROUP_HORIZONTAL_ALIGN_OPTION,
@@ -24966,6 +26994,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    _this.prevIndex = null;
 	    _this.isBullet = _predicate2['default'].isBulletChart(params.chartType);
+	    _this.tickInterval = params.tickInterval || 0;
 	    return _this;
 	  }
 	
@@ -25007,7 +27036,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	      }
 	
-	      itemHtml += template(_tuiCodeSnippet2['default'].extend({
+	      itemHtml += template(Object.assign({
 	        cssText: cssTextTemplate({ color: colorByPoint ? '#aaa' : colors[index] })
 	      }, item));
 	
@@ -25167,7 +27196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var defaultColors = _defaultTheme2['default'].series.colors.slice(0, legendLabels.length);
 	
-	    return _tuiCodeSnippet2['default'].pluck(legendLabels, 'chartType').map(function (chartType) {
+	    return (0, _pluck2['default'])(legendLabels, 'chartType').map(function (chartType) {
 	      if (prevChartType !== chartType) {
 	        colors = theme[chartType] ? theme[chartType].colors : defaultColors;
 	        colorIndex = 0;
@@ -25280,7 +27309,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        height: height
 	      },
 	      position: {
-	        left: range.start,
+	        left: range.start + this.tickInterval / 2,
 	        top: SERIES_EXPAND_SIZE
 	      }
 	    };
@@ -25389,7 +27418,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  GroupTooltip.prototype._showTooltip = function _showTooltip(elTooltip, params, prevPosition) {
-	    if (!_tuiCodeSnippet2['default'].isNull(this.prevIndex)) {
+	    if (!(0, _isNull2['default'])(this.prevIndex)) {
 	      this.eventBus.fire('hideGroupAnimation', this.prevIndex);
 	    }
 	
@@ -25516,14 +27545,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	groupTooltipFactory.GroupTooltip = GroupTooltip;
 
 /***/ }),
-/* 68 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -26042,7 +28071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = GroupTooltipPositionModel;
 
 /***/ }),
-/* 69 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26050,25 +28079,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = mapChartTooltipFactory;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _tooltipBase = __webpack_require__(63);
+	var _tooltipBase = __webpack_require__(87);
 	
 	var _tooltipBase2 = _interopRequireDefault(_tooltipBase);
 	
-	var _singleTooltipMixer = __webpack_require__(64);
+	var _singleTooltipMixer = __webpack_require__(88);
 	
 	var _singleTooltipMixer2 = _interopRequireDefault(_singleTooltipMixer);
 	
-	var _tooltipTemplate = __webpack_require__(65);
+	var _tooltipTemplate = __webpack_require__(89);
 	
 	var _tooltipTemplate2 = _interopRequireDefault(_tooltipTemplate);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -26081,6 +28106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	/**
 	 * @classdesc MapChartTooltip component.
@@ -26159,7 +28185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  MapChartTooltip.prototype._makeShowTooltipParams = function _makeShowTooltipParams(indexes, additionParams) {
 	    var datum = this.mapModel.getDatum(indexes.index);
-	    var params = _tuiCodeSnippet2['default'].extend({
+	    var params = Object.assign({
 	      chartType: this.chartType,
 	      code: datum.code,
 	      name: datum.name,
@@ -26201,7 +28227,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	mapChartTooltipFactory.componentType = 'tooltip';
 
 /***/ }),
-/* 70 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26209,29 +28235,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = mapChartEventDetectorFactory;
 	
-	var _mouseEventDetectorBase = __webpack_require__(71);
+	var _mouseEventDetectorBase = __webpack_require__(95);
 	
 	var _mouseEventDetectorBase2 = _interopRequireDefault(_mouseEventDetectorBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _eventListener = __webpack_require__(56);
+	var _eventListener = __webpack_require__(80);
 	
 	var _eventListener2 = _interopRequireDefault(_eventListener);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _browser = __webpack_require__(21);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _browser2 = _interopRequireDefault(_browser);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -26429,7 +28455,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  MapChartEventDetector.prototype.attachEvent = function attachEvent(target) {
 	    _mouseEventDetectorBase2['default'].prototype.attachEvent.call(this, target);
 	
-	    if (_tuiCodeSnippet2['default'].browser.firefox) {
+	    if (_browser2['default'].firefox) {
 	      _eventListener2['default'].on(target, 'DOMMouseScroll', this._onMousewheel, this);
 	    } else {
 	      _eventListener2['default'].on(target, 'mousewheel', this._onMousewheel, this);
@@ -26454,44 +28480,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	mapChartEventDetectorFactory.componentType = 'mouseEventDetector';
 
 /***/ }),
-/* 71 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tickBaseCoordinateModel = __webpack_require__(72);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _customEvents = __webpack_require__(67);
+	
+	var _customEvents2 = _interopRequireDefault(_customEvents);
+	
+	var _tickBaseCoordinateModel = __webpack_require__(96);
 	
 	var _tickBaseCoordinateModel2 = _interopRequireDefault(_tickBaseCoordinateModel);
 	
-	var _boundsBaseCoordinateModel = __webpack_require__(73);
+	var _boundsBaseCoordinateModel = __webpack_require__(97);
 	
 	var _boundsBaseCoordinateModel2 = _interopRequireDefault(_boundsBaseCoordinateModel);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _eventListener = __webpack_require__(56);
+	var _eventListener = __webpack_require__(80);
 	
 	var _eventListener2 = _interopRequireDefault(_eventListener);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -26500,6 +28530,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var MouseEventDetectorBase = function () {
 	  /**
@@ -26744,7 +28775,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var layerPosition = {};
 	
-	    checkLimit = _tuiCodeSnippet2['default'].isUndefined(checkLimit) ? true : checkLimit;
+	    checkLimit = (0, _isUndefined2['default'])(checkLimit) ? true : checkLimit;
 	
 	    if (checkLimit) {
 	      var maxLeft = right - expandSize;
@@ -26754,7 +28785,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    layerPosition.x = clientX - left + seriesPosition.left - _const2['default'].CHART_PADDING;
 	
-	    if (!_tuiCodeSnippet2['default'].isUndefined(clientY)) {
+	    if (!(0, _isUndefined2['default'])(clientY)) {
 	      layerPosition.y = clientY - top + seriesPosition.top - _const2['default'].CHART_PADDING;
 	    }
 	
@@ -27036,29 +29067,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return MouseEventDetectorBase;
 	}();
 	
-	_tuiCodeSnippet2['default'].CustomEvents.mixin(MouseEventDetectorBase);
+	_customEvents2['default'].mixin(MouseEventDetectorBase);
 	
 	exports['default'] = MouseEventDetectorBase;
 
 /***/ }),
-/* 72 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _predicate = __webpack_require__(16);
+	var _range = __webpack_require__(12);
+	
+	var _range2 = _interopRequireDefault(_range);
+	
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -27113,7 +29144,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var prev = firstPosition;
 	    var halfInterval = tickInterval / 2;
 	
-	    return _tuiCodeSnippet2['default'].range(0, tickCount).map(function () {
+	    return (0, _range2['default'])(0, tickCount).map(function () {
 	      var limit = {
 	        min: prev - halfInterval,
 	        max: prev + halfInterval
@@ -27159,7 +29190,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var tickInterval = size / len;
 	    var prev = firstPosition || 0;
 	
-	    return _tuiCodeSnippet2['default'].range(0, len).map(function () {
+	    return (0, _range2['default'])(0, len).map(function () {
 	      var max = _arrayUtil2['default'].min([size + prev, tickInterval + prev]);
 	      var limit = {
 	        min: prev,
@@ -27236,23 +29267,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  TickBaseDataModel.prototype.makeRange = function makeRange(index, positionValue) {
 	    var limit = this.data[index];
-	    var range = void 0,
-	        center = void 0;
+	    var center = void 0;
 	
 	    if (this.isLineType) {
 	      center = parseInt(limit.max - (limit.max - limit.min) / 2, 10);
-	      range = {
+	
+	      return {
 	        start: center,
 	        end: center
 	      };
-	    } else {
-	      range = {
-	        start: limit.min - (positionValue || 0),
-	        end: limit.max - (positionValue || 0)
-	      };
 	    }
 	
-	    return range;
+	    return {
+	      start: limit.min - (positionValue || 0),
+	      end: limit.max - (positionValue || 0)
+	    };
 	  };
 	
 	  return TickBaseDataModel;
@@ -27261,28 +29290,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = TickBaseDataModel;
 
 /***/ }),
-/* 73 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -27333,6 +29362,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *}} seriesInfo
 	 * @private
 	 */
+	
 	
 	var BoundsBaseCoordinateModel = function () {
 	  /**
@@ -27643,7 +29673,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  BoundsBaseCoordinateModel.prototype.findDataByIndexes = function findDataByIndexes(indexes) {
 	    var foundData = this.data[indexes.index][indexes.seriesIndex].sendData;
 	
-	    if (_tuiCodeSnippet2['default'].isNumber(indexes.outlierIndex)) {
+	    if ((0, _isNumber2['default'])(indexes.outlierIndex)) {
 	      return this._findOutlierDataByIndexes(indexes);
 	    }
 	
@@ -27685,7 +29715,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = BoundsBaseCoordinateModel;
 
 /***/ }),
-/* 74 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27693,27 +29723,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = mouseEventDetectorFactory;
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _areaTypeEventDetector = __webpack_require__(75);
+	var _areaTypeEventDetector = __webpack_require__(99);
 	
 	var _areaTypeEventDetector2 = _interopRequireDefault(_areaTypeEventDetector);
 	
-	var _simpleEventDetector = __webpack_require__(78);
+	var _simpleEventDetector = __webpack_require__(102);
 	
 	var _simpleEventDetector2 = _interopRequireDefault(_simpleEventDetector);
 	
-	var _groupTypeEventDetector = __webpack_require__(79);
+	var _groupTypeEventDetector = __webpack_require__(103);
 	
 	var _groupTypeEventDetector2 = _interopRequireDefault(_groupTypeEventDetector);
 	
-	var _boundsTypeEventDetector = __webpack_require__(80);
+	var _boundsTypeEventDetector = __webpack_require__(104);
 	
 	var _boundsTypeEventDetector2 = _interopRequireDefault(_boundsTypeEventDetector);
 	
-	var _mapChartEventDetector = __webpack_require__(70);
+	var _mapChartEventDetector = __webpack_require__(94);
 	
 	var _mapChartEventDetector2 = _interopRequireDefault(_mapChartEventDetector);
 	
@@ -27736,7 +29766,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var chartType = chartOptions.chartType,
 	      _chartOptions$series = chartOptions.series,
 	      zoomable = _chartOptions$series.zoomable,
-	      seriesAllowSelect = _chartOptions$series.allowSelect;
+	      seriesAllowSelect = _chartOptions$series.allowSelect,
+	      pointOnColumn = chartOptions.xAxis.pointOnColumn;
 	
 	  var factory = void 0;
 	
@@ -27757,6 +29788,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  params.chartTypes = seriesTypes;
 	  params.zoomable = zoomable;
 	  params.allowSelect = seriesAllowSelect;
+	  params.pointOnColumn = !!pointOnColumn;
 	
 	  return factory(params);
 	}
@@ -27764,7 +29796,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	mouseEventDetectorFactory.componentType = 'mouseEventDetector';
 
 /***/ }),
-/* 75 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27772,21 +29804,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = areaTypeEventDetectorFactory;
 	
-	var _mouseEventDetectorBase = __webpack_require__(71);
+	var _mouseEventDetectorBase = __webpack_require__(95);
 	
 	var _mouseEventDetectorBase2 = _interopRequireDefault(_mouseEventDetectorBase);
 	
-	var _zoomMixer = __webpack_require__(76);
+	var _zoomMixer = __webpack_require__(100);
 	
 	var _zoomMixer2 = _interopRequireDefault(_zoomMixer);
 	
-	var _areaTypeDataModel = __webpack_require__(77);
+	var _areaTypeDataModel = __webpack_require__(101);
 	
 	var _areaTypeDataModel2 = _interopRequireDefault(_areaTypeDataModel);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -27835,7 +29863,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _this.zoomable = params.zoomable;
 	
 	    if (_this.zoomable) {
-	      _tuiCodeSnippet2['default'].extend(_this, _zoomMixer2['default']);
+	      Object.assign(_this, _zoomMixer2['default']);
 	      _this._initForZoom(params.zoomable);
 	    }
 	    return _this;
@@ -27871,17 +29899,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  AreaTypeEventDetector.prototype.onReceiveSeriesData = function onReceiveSeriesData(seriesItemBoundsDatum) {
 	    var seriesCount = this.seriesCount;
-	    var seriesItemBoundsData = this.seriesItemBoundsData;
 	
 	
-	    if (seriesItemBoundsData.length === seriesCount) {
-	      seriesItemBoundsData = [];
+	    if (this.seriesItemBoundsData.length === seriesCount) {
+	      this.seriesItemBoundsData = [];
 	    }
 	
-	    seriesItemBoundsData.push(seriesItemBoundsDatum);
+	    this.seriesItemBoundsData.push(seriesItemBoundsDatum);
 	
-	    if (seriesItemBoundsData.length === seriesCount) {
-	      this.dataModel = new _areaTypeDataModel2['default'](seriesItemBoundsData);
+	    if (this.seriesItemBoundsData.length === seriesCount) {
+	      this.dataModel = new _areaTypeDataModel2['default'](this.seriesItemBoundsData);
 	    }
 	
 	    if (this.zoomable) {
@@ -28068,7 +30095,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	areaTypeEventDetectorFactory.componentType = 'mouseEventDetector';
 
 /***/ }),
-/* 76 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28082,37 +30109,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
 	
-	var _mouseEventDetectorBase = __webpack_require__(71);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _mouseEventDetectorBase = __webpack_require__(95);
 	
 	var _mouseEventDetectorBase2 = _interopRequireDefault(_mouseEventDetectorBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _eventListener = __webpack_require__(56);
+	var _eventListener = __webpack_require__(80);
 	
 	var _eventListener2 = _interopRequireDefault(_eventListener);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -28416,7 +30443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var dataForZoomable = this._findDataForZoomable(clientPos.x, clientPos.y);
 	
 	      if (!_domHandler2['default'].hasClass(target, _const2['default'].CLASS_NAME_RESET_ZOOM_BTN)) {
-	        if (_tuiCodeSnippet2['default'].isNull(this.dragStartIndexes)) {
+	        if ((0, _isNull2['default'])(this.dragStartIndexes)) {
 	          this.dragStartIndexes = dataForZoomable ? dataForZoomable.indexes : {};
 	        } else {
 	          this._showDragSelection(e.clientX);
@@ -28605,7 +30632,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this._unbindDragEvent();
 	
-	    if (_tuiCodeSnippet2['default'].isNull(this.dragStartIndexes)) {
+	    if ((0, _isNull2['default'])(this.dragStartIndexes)) {
 	      var target = e.target || e.srcElement;
 	      if (_domHandler2['default'].hasClass(target, _const2['default'].CLASS_NAME_RESET_ZOOM_BTN)) {
 	        this._hideTooltip();
@@ -28663,24 +30690,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 77 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isNull = __webpack_require__(6);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isNull2 = _interopRequireDefault(_isNull);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -28778,7 +30805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * Find Data by layer position.
 	   * @param {{x: number, y: number}} layerPosition - layer position
-	   * @param {number} [selectLegendIndex] select legend sereis index
+	   * @param {number} [selectLegendIndex] select legend series index
 	   * @param {object} [searchInfo] distance limitation to find data
 	   *   @param {number} searchInfo.distanceLimit distance limitation to find data
 	   *   @param {boolean} searchInfo.isCoordinateTypeChart whether coordinate type chart or not
@@ -28804,7 +30831,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * Find Data by layer position at dense area.
 	   * @param {{x: number, y: number}} layerPosition - layer position
-	   * @param {number} selectLegendIndex select legend sereis index
+	   * @param {number} selectLegendIndex select legend series index
 	   * @returns {object}
 	   * @private
 	   */
@@ -28831,7 +30858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      if (datum.bound.left !== xMinValue) {
 	        remakeFindObj = findResultObj;
-	      } else if (!_tuiCodeSnippet2['default'].isNull(selectLegendIndex) && selectLegendIndex === datum.indexes.index) {
+	      } else if (!(0, _isNull2['default'])(selectLegendIndex) && selectLegendIndex === datum.indexes.index) {
 	        remakeFindObj.yMin = Number.MIN_VALUE;
 	        remakeFindObj.findFound = datum;
 	      } else if (yDiff <= findResultObj.yMin) {
@@ -28855,7 +30882,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * Find Data by layer position at loose area.
 	   * @param {{x: number, y: number}} layerPosition - layer position
 	   * @param {number} [distanceLimit] distance limitation to find data
-	   * @param {number} selectLegendIndex select legend sereis index
+	   * @param {number} selectLegendIndex select legend series index
 	   * @returns {object}
 	   * @private
 	   */
@@ -28876,7 +30903,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	      }
 	
-	      if (!_tuiCodeSnippet2['default'].isNull(selectLegendIndex) && selectLegendIndex !== datum.indexes.index) {
+	      if (!(0, _isNull2['default'])(selectLegendIndex) && selectLegendIndex !== datum.indexes.index) {
 	        return;
 	      }
 	
@@ -28951,7 +30978,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = AreaTypeDataModel;
 
 /***/ }),
-/* 78 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28959,15 +30986,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = simpleTypeEventDetectorFactory;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _mouseEventDetectorBase = __webpack_require__(71);
+	var _mouseEventDetectorBase = __webpack_require__(95);
 	
 	var _mouseEventDetectorBase2 = _interopRequireDefault(_mouseEventDetectorBase);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -29089,29 +31116,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	simpleTypeEventDetectorFactory.componentType = 'mouseEventDetector';
 
 /***/ }),
-/* 79 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
 	exports['default'] = groupTypeEventDetectorFactory;
 	
-	var _const = __webpack_require__(9);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _mouseEventDetectorBase = __webpack_require__(71);
+	var _mouseEventDetectorBase = __webpack_require__(95);
 	
 	var _mouseEventDetectorBase2 = _interopRequireDefault(_mouseEventDetectorBase);
 	
-	var _zoomMixer = __webpack_require__(76);
+	var _zoomMixer = __webpack_require__(100);
 	
 	var _zoomMixer2 = _interopRequireDefault(_zoomMixer);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -29159,8 +31189,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _this.sizeType = _this.isVertical ? 'height' : 'width';
 	
+	    /**
+	     * Place the label between the ticks.
+	     * @type {boolean}
+	     */
+	    _this.pointOnColumn = params.pointOnColumn;
+	
 	    if (_this.zoomable) {
-	      _tuiCodeSnippet2['default'].extend(_this, _zoomMixer2['default']);
+	      Object.assign(_this, _zoomMixer2['default']);
 	      _this._initForZoom(params.zoomable);
 	    }
 	    return _this;
@@ -29282,19 +31318,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	  GroupTypeEventDetector.prototype._showTooltip = function _showTooltip(foundData, isMoving) {
 	    var index = foundData.indexes.groupIndex;
 	    var positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top) - _const2['default'].CHART_PADDING;
+	    var tickCoordinateModel = this.tickBaseCoordinateModel.data;
 	
 	    /**
 	     * Can be called with showTooltip function
 	     * At this time, the index may be larger than the data size.
 	     */
-	    if (this.tickBaseCoordinateModel.data.length > index) {
+	    if (tickCoordinateModel.length > index) {
+	      var tickInterval = 0;
+	
+	      if (this.pointOnColumn) {
+	        var _tickCoordinateModel = _slicedToArray(tickCoordinateModel, 1),
+	            _tickCoordinateModel$ = _tickCoordinateModel[0],
+	            min = _tickCoordinateModel$.min,
+	            max = _tickCoordinateModel$.max;
+	
+	        tickInterval = max - min;
+	      }
+	
 	      this.eventBus.fire('showTooltip', {
 	        index: index,
 	        range: this.tickBaseCoordinateModel.makeRange(index, positionValue),
 	        size: this.dimension[this.sizeType],
 	        isVertical: this.isVertical,
 	        isMoving: isMoving,
-	        silent: foundData.silent
+	        silent: foundData.silent,
+	        tickInterval: tickInterval
 	      });
 	      this.prevIndex = index;
 	    }
@@ -29347,7 +31396,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        x = _calculateLayerPositi.x,
 	        y = _calculateLayerPositi.y;
 	
-	    if (this._isOuterPosition(x, y) && !_tuiCodeSnippet2['default'].isNull(this.prevIndex)) {
+	    if (this._isOuterPosition(x, y) && !(0, _isNull2['default'])(this.prevIndex)) {
 	      this._hideTooltip();
 	    }
 	  };
@@ -29370,7 +31419,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	groupTypeEventDetectorFactory.componentType = 'mouseEventDetector';
 
 /***/ }),
-/* 80 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29378,19 +31427,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = boundsTypeEventDetectorFactory;
 	
-	var _mouseEventDetectorBase = __webpack_require__(71);
+	var _mouseEventDetectorBase = __webpack_require__(95);
 	
 	var _mouseEventDetectorBase2 = _interopRequireDefault(_mouseEventDetectorBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
@@ -29686,7 +31735,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	boundsTypeEventDetectorFactory.componentType = 'mouseEventDetector';
 
 /***/ }),
-/* 81 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29694,19 +31743,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = barSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _barTypeSeriesBase = __webpack_require__(83);
+	var _barTypeSeriesBase = __webpack_require__(109);
 	
 	var _barTypeSeriesBase2 = _interopRequireDefault(_barTypeSeriesBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -29946,38 +31995,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	barSeriesFactory.BarChartSeries = BarChartSeries;
 
 /***/ }),
-/* 82 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _browser = __webpack_require__(21);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _browser2 = _interopRequireDefault(_browser);
 	
-	var _const = __webpack_require__(9);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isEmpty = __webpack_require__(107);
+	
+	var _isEmpty2 = _interopRequireDefault(_isEmpty);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _pluginFactory = __webpack_require__(34);
+	var _pluginFactory = __webpack_require__(51);
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
@@ -29989,9 +32054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
 	
-	var browser = _tuiCodeSnippet2['default'].browser;
-	
-	var IS_IE7 = browser.msie && browser.version === 7;
+	var IS_IE7 = _browser2['default'].msie && _browser2['default'].version === 7;
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
 	    PUBLIC_EVENT_PREFIX = _const2['default'].PUBLIC_EVENT_PREFIX,
@@ -30181,7 +32244,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var addPrefixSuffix = _renderUtil2['default'].addPrefixSuffix,
 	        addPrefixSuffixItem = _renderUtil2['default'].addPrefixSuffixItem;
 	
-	    var decorateFunc = (_tuiCodeSnippet2['default'].isArray(targetLabel) ? addPrefixSuffix : addPrefixSuffixItem).bind(_renderUtil2['default']);
+	    var decorateFunc = ((0, _isArray2['default'])(targetLabel) ? addPrefixSuffix : addPrefixSuffixItem).bind(_renderUtil2['default']);
 	
 	    return decorateFunc(targetLabel, labelPrefix, labelSuffix);
 	  };
@@ -30423,7 +32486,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 	
-	    this._renderSeriesArea(data.paper, _tuiCodeSnippet2['default'].bind(this._renderGraph, this));
+	    this._renderSeriesArea(data.paper, this._renderGraph.bind(this));
 	
 	    if (this.paper.pushDownBackgroundToBottom) {
 	      this.paper.pushDownBackgroundToBottom();
@@ -30492,7 +32555,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      this._setDataForRendering(data);
 	      this._clearSeriesContainer();
-	      this._renderSeriesArea(data.paper, _tuiCodeSnippet2['default'].bind(this._renderGraph, this));
+	      this._renderSeriesArea(data.paper, this._renderGraph.bind(this));
 	
 	      if (this.labelShowEffector) {
 	        clearInterval(this.labelShowEffector.timerId);
@@ -30504,7 +32567,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.animateComponent(true);
 	      }
 	
-	      if (!_tuiCodeSnippet2['default'].isNull(this.selectedLegendIndex)) {
+	      if (!(0, _isNull2['default'])(this.selectedLegendIndex)) {
 	        this.graphRenderer.selectLegend(this.selectedLegendIndex);
 	      }
 	    } else {
@@ -30533,7 +32596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  Series.prototype._resizeGraph = function _resizeGraph(dimension, seriesData) {
-	    this.graphRenderer.resize(_tuiCodeSnippet2['default'].extend({
+	    this.graphRenderer.resize(Object.assign({
 	      dimension: this.dimensionMap.chart
 	    }, seriesData));
 	
@@ -30550,7 +32613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Series.prototype.resize = function resize(data) {
 	    this._clearSeriesContainer();
 	    this._setDataForRendering(data);
-	    this._renderSeriesArea(data.paper, _tuiCodeSnippet2['default'].bind(this._resizeGraph, this));
+	    this._renderSeriesArea(data.paper, this._resizeGraph.bind(this));
 	    this.rerender(data);
 	  };
 	
@@ -30691,7 +32754,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this = this;
 	
 	    if (this.graphRenderer.animate && this.seriesSet) {
-	      this.graphRenderer.animate(_tuiCodeSnippet2['default'].bind(this.animateSeriesLabelArea, this, isRerendering), this.seriesSet);
+	      this.graphRenderer.animate(this.animateSeriesLabelArea.bind(this, isRerendering), this.seriesSet);
 	    } else {
 	      this.animateSeriesLabelArea(isRerendering);
 	    }
@@ -30749,13 +32812,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  Series.prototype._makeExportationSeriesData = function _makeExportationSeriesData(seriesData) {
 	    var indexes = seriesData.indexes;
 	
-	    var legendIndex = _tuiCodeSnippet2['default'].isExisty(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
+	    var legendIndex = (0, _isExisty2['default'])(indexes.legendIndex) ? indexes.legendIndex : indexes.index;
 	    var legendData = this.dataProcessor.getLegendItem(legendIndex);
-	    var index = _tuiCodeSnippet2['default'].isExisty(indexes.groupIndex) ? indexes.groupIndex : 0;
+	    var index = (0, _isExisty2['default'])(indexes.groupIndex) ? indexes.groupIndex : 0;
 	    var seriesItem = this._getSeriesDataModel().getSeriesItem(index, indexes.index);
 	    var result = void 0;
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(seriesItem)) {
+	    if ((0, _isExisty2['default'])(seriesItem)) {
 	      result = {
 	        chartType: legendData.chartType,
 	        legend: legendData.label,
@@ -30811,7 +32874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var eventName = PUBLIC_EVENT_PREFIX + 'selectSeries';
 	
 	    this.eventBus.fire(eventName, this._makeExportationSeriesData(seriesData));
-	    shouldSelect = _tuiCodeSnippet2['default'].isEmpty(shouldSelect) ? true : shouldSelect;
+	    shouldSelect = (0, _isEmpty2['default'])(shouldSelect) ? true : shouldSelect;
 	
 	    if (this.options.allowSelect && this.graphRenderer.selectSeries && shouldSelect) {
 	      this.graphRenderer.selectSeries(seriesData.indexes);
@@ -30845,7 +32908,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  Series.prototype.onSelectLegend = function onSelectLegend(seriesType, legendIndex) {
-	    if (this.seriesType !== seriesType && !_tuiCodeSnippet2['default'].isNull(legendIndex)) {
+	    if (this.seriesType !== seriesType && !(0, _isNull2['default'])(legendIndex)) {
 	      legendIndex = -1;
 	    }
 	
@@ -30904,40 +32967,146 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = Series;
 
 /***/ }),
-/* 83 */
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* eslint-disable complexity */
+	/**
+	 * @fileoverview Check whether the given variable is empty(null, undefined, or empty array, empty object) or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var isString = __webpack_require__(24);
+	var isExisty = __webpack_require__(14);
+	var isArray = __webpack_require__(8);
+	var isArguments = __webpack_require__(108);
+	var isObject = __webpack_require__(50);
+	var isFunction = __webpack_require__(56);
+	
+	/**
+	 * Check whether given argument is empty string
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} whether given argument is empty string
+	 * @private
+	 */
+	function _isEmptyString(obj) {
+	  return isString(obj) && obj === '';
+	}
+	
+	/**
+	 * Check whether given argument has own property
+	 * @param {Object} obj - Target for checking
+	 * @returns {boolean} - whether given argument has own property
+	 * @private
+	 */
+	function _hasOwnProperty(obj) {
+	  var key;
+	  for (key in obj) {
+	    if (obj.hasOwnProperty(key)) {
+	      return true;
+	    }
+	  }
+	
+	  return false;
+	}
+	
+	/**
+	 * Check whether the given variable is empty(null, undefined, or empty array, empty object) or not.
+	 *  If the given variables is empty, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is empty?
+	 * @memberof module:type
+	 */
+	function isEmpty(obj) {
+	  if (!isExisty(obj) || _isEmptyString(obj)) {
+	    return true;
+	  }
+	
+	  if (isArray(obj) || isArguments(obj)) {
+	    return obj.length === 0;
+	  }
+	
+	  if (isObject(obj) && !isFunction(obj)) {
+	    return !_hasOwnProperty(obj);
+	  }
+	
+	  return true;
+	}
+	
+	module.exports = isEmpty;
+
+
+/***/ }),
+/* 108 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Check whether the given variable is an arguments object or not.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	var isExisty = __webpack_require__(14);
+	
+	/**
+	 * @module type
+	 */
+	
+	/**
+	 * Check whether the given variable is an arguments object or not.
+	 * If the given variable is an arguments object, return true.
+	 * @param {*} obj - Target for checking
+	 * @returns {boolean} Is arguments?
+	 * @memberof module:type
+	 */
+	function isArguments(obj) {
+	  var result = isExisty(obj) &&
+	        ((Object.prototype.toString.call(obj) === '[object Arguments]') || !!obj.callee);
+	
+	  return result;
+	}
+	
+	module.exports = isArguments;
+
+
+/***/ }),
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _renderingLabelHelper = __webpack_require__(84);
+	var _renderingLabelHelper = __webpack_require__(110);
 	
 	var _renderingLabelHelper2 = _interopRequireDefault(_renderingLabelHelper);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isExisty = __webpack_require__(14);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -31119,7 +33288,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          end: _this.decorateLabel(endLabel)
 	        };
 	
-	        if (_tuiCodeSnippet2['default'].isExisty(start)) {
+	        if ((0, _isExisty2['default'])(start)) {
 	          label.start = _this.decorateLabel(startLabel);
 	        }
 	
@@ -31344,18 +33513,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = BarTypeSeriesBase;
 
 /***/ }),
-/* 84 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -31578,7 +33747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 85 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31586,23 +33755,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = columnSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _barTypeSeriesBase = __webpack_require__(83);
+	var _barTypeSeriesBase = __webpack_require__(109);
 	
 	var _barTypeSeriesBase2 = _interopRequireDefault(_barTypeSeriesBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -31813,7 +33982,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	columnSeriesFactory.ColumnChartSeries = ColumnChartSeries;
 
 /***/ }),
-/* 86 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31821,11 +33990,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = lineSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _lineTypeSeriesBase = __webpack_require__(87);
+	var _lineTypeSeriesBase = __webpack_require__(113);
 	
 	var _lineTypeSeriesBase2 = _interopRequireDefault(_lineTypeSeriesBase);
 	
@@ -31939,36 +34108,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	lineSeriesFactory.componentType = 'series';
 
 /***/ }),
-/* 87 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -32024,13 +34197,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return seriesGroup.map(function (seriesItem, index) {
 	        var position = void 0;
 	
-	        if (!_tuiCodeSnippet2['default'].isNull(seriesItem.end)) {
+	        if (!(0, _isNull2['default'])(seriesItem.end)) {
 	          position = {
 	            left: baseLeft + step * index,
 	            top: baseTop + height - seriesItem.ratio * height
 	          };
 	
-	          if (_tuiCodeSnippet2['default'].isExisty(seriesItem.startRatio)) {
+	          if ((0, _isExisty2['default'])(seriesItem.startRatio)) {
 	            position.startTop = baseTop + height - seriesItem.startRatio * height;
 	          }
 	        }
@@ -32069,13 +34242,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return seriesGroup.map(function (seriesItem) {
 	        var position = void 0;
 	
-	        if (!_tuiCodeSnippet2['default'].isNull(seriesItem.end)) {
+	        if (!(0, _isNull2['default'])(seriesItem.end)) {
 	          position = {
 	            left: baseLeft + seriesItem.ratioMap.x * width + additionalLeft,
 	            top: baseTop + height - seriesItem.ratioMap.y * height
 	          };
 	
-	          if (_tuiCodeSnippet2['default'].isExisty(seriesItem.ratioMap.start)) {
+	          if ((0, _isExisty2['default'])(seriesItem.ratioMap.start)) {
 	            position.startTop = height - seriesItem.ratioMap.start * height + _const2['default'].SERIES_EXPAND_SIZE;
 	          }
 	        }
@@ -32179,7 +34352,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  /**
 	   * Get label texts
-	   * @param {object} seriesDataModel sereis data model
+	   * @param {object} seriesDataModel series data model
 	   * @returns {Array.<string>}
 	   * @private
 	   */
@@ -32263,9 +34436,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._cancelMovingAnimation();
 	    this._clearSeriesContainer(data.paper);
 	    this._setDataForRendering(data);
-	    this._renderSeriesArea(data.paper, _tuiCodeSnippet2['default'].bind(this._renderGraph, this));
+	    this._renderSeriesArea(data.paper, this._renderGraph.bind(this));
 	
-	    if (!_tuiCodeSnippet2['default'].isNull(this.selectedLegendIndex)) {
+	    if (!(0, _isNull2['default'])(this.selectedLegendIndex)) {
 	      this.graphRenderer.selectLegend(this.selectedLegendIndex);
 	    }
 	  };
@@ -32399,13 +34572,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	}();
 	
 	LineTypeSeriesBase.mixin = function (func) {
-	  _tuiCodeSnippet2['default'].extend(func.prototype, LineTypeSeriesBase.prototype);
+	  Object.assign(func.prototype, LineTypeSeriesBase.prototype);
 	};
 	
 	exports['default'] = LineTypeSeriesBase;
 
 /***/ }),
-/* 88 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32413,25 +34586,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = radialSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _geometric = __webpack_require__(50);
+	var _geometric = __webpack_require__(74);
 	
 	var _geometric2 = _interopRequireDefault(_geometric);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -32444,6 +34617,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
 	    RADIAL_PLOT_PADDING = _const2['default'].RADIAL_PLOT_PADDING,
@@ -32515,7 +34689,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var positions = seriesGroup.map(function (seriesItem, index) {
 	        var position = void 0;
 	
-	        if (!_tuiCodeSnippet2['default'].isNull(seriesItem.end)) {
+	        if (!(0, _isNull2['default'])(seriesItem.end)) {
 	          var valueSize = seriesItem.ratio * radius;
 	
 	          // center y + real vaule size
@@ -32613,7 +34787,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	radialSeriesFactory.RadialChartSeries = RadialChartSeries;
 
 /***/ }),
-/* 89 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32621,15 +34795,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = areaSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _lineTypeSeriesBase = __webpack_require__(87);
+	var _lineTypeSeriesBase = __webpack_require__(113);
 	
 	var _lineTypeSeriesBase2 = _interopRequireDefault(_lineTypeSeriesBase);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -32815,7 +34989,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	areaSeriesFactory.AreaChartSeries = AreaChartSeries;
 
 /***/ }),
-/* 90 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32823,21 +34997,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = bubbleSeriesFactory;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _coordinateTypeSeriesBase = __webpack_require__(91);
+	var _coordinateTypeSeriesBase = __webpack_require__(117);
 	
 	var _coordinateTypeSeriesBase2 = _interopRequireDefault(_coordinateTypeSeriesBase);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isExisty = __webpack_require__(14);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -32931,8 +35105,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        height = _layout$dimension.height,
 	        position = _layout.position;
 	
-	    var left = _tuiCodeSnippet2['default'].isExisty(ratioMap.x) ? ratioMap.x * width : positionByStep;
-	    var top = _tuiCodeSnippet2['default'].isExisty(ratioMap.y) ? ratioMap.y * height : positionByStep;
+	    var left = (0, _isExisty2['default'])(ratioMap.x) ? ratioMap.x * width : positionByStep;
+	    var top = (0, _isExisty2['default'])(ratioMap.y) ? ratioMap.y * height : positionByStep;
 	
 	    return {
 	      left: position.left + left,
@@ -33022,26 +35196,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	bubbleSeriesFactory.BubbleChartSeries = BubbleChartSeries;
 
 /***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 117 */
+/***/ (function(module, exports) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
-	                                                                                                                                                           * @fileoverview CoordinateTypeSeriesBase is base class for coordinate type series.
-	                                                                                                                                                           * @author NHN.
-	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
-	                                                                                                                                                           */
-	
-	
+	/**
+	 * @fileoverview CoordinateTypeSeriesBase is base class for coordinate type series.
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
+	 */
 	var CoordinateTypeSeriesBase = function () {
 	  function CoordinateTypeSeriesBase() {
 	    _classCallCheck(this, CoordinateTypeSeriesBase);
@@ -33079,7 +35247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  CoordinateTypeSeriesBase.prototype.showTooltip = function showTooltip(params, bound, groupIndex, index, mousePosition) {
-	    this.eventBus.fire('showTooltip', _tuiCodeSnippet2['default'].extend({
+	    this.eventBus.fire('showTooltip', Object.assign({
 	      indexes: {
 	        groupIndex: groupIndex,
 	        index: index
@@ -33176,7 +35344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = CoordinateTypeSeriesBase;
 
 /***/ }),
-/* 92 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33184,15 +35352,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = scatterSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _coordinateTypeSeriesBase = __webpack_require__(91);
+	var _coordinateTypeSeriesBase = __webpack_require__(117);
 	
 	var _coordinateTypeSeriesBase2 = _interopRequireDefault(_coordinateTypeSeriesBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -33299,7 +35467,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	scatterSeriesFactory.ScatterChartSeries = ScatterChartSeries;
 
 /***/ }),
-/* 93 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33307,17 +35475,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = mapSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _browser = __webpack_require__(21);
+	
+	var _browser2 = _interopRequireDefault(_browser);
+	
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -33331,9 +35507,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
-	var browser = _tuiCodeSnippet2['default'].browser;
-	
-	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+	var IS_LTE_IE8 = _browser2['default'].msie && _browser2['default'].version <= 8;
 	var TOOLTIP_GAP = _const2['default'].TOOLTIP_GAP,
 	    PUBLIC_EVENT_PREFIX = _const2['default'].PUBLIC_EVENT_PREFIX;
 	
@@ -33660,7 +35834,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  MapChartSeries.prototype.onClickSeries = function onClickSeries(position) {
 	    var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 	
-	    if (!_tuiCodeSnippet2['default'].isNull(foundIndex)) {
+	    if (!(0, _isNull2['default'])(foundIndex)) {
 	      this.eventBus.fire('selectSeries', {
 	        chartType: this.chartType,
 	        index: foundIndex,
@@ -33694,7 +35868,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ratio = _mapModel$getDatum.ratio,
 	        label = _mapModel$getDatum.label;
 	
-	    if (!_tuiCodeSnippet2['default'].isUndefined(ratio)) {
+	    if (!(0, _isUndefined2['default'])(ratio)) {
 	      this.eventBus.fire('showWedge', ratio, label);
 	    }
 	  };
@@ -33732,9 +35906,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  MapChartSeries.prototype.onMoveSeries = function onMoveSeries(position) {
 	    var foundIndex = this._executeGraphRenderer(position, 'findSectorIndex');
 	
-	    if (!_tuiCodeSnippet2['default'].isNull(foundIndex)) {
+	    if (!(0, _isNull2['default'])(foundIndex)) {
 	      if (this.prevMovedIndex !== foundIndex) {
-	        if (!_tuiCodeSnippet2['default'].isNull(this.prevMovedIndex)) {
+	        if (!(0, _isNull2['default'])(this.prevMovedIndex)) {
 	          this.graphRenderer.restoreColor(this.prevMovedIndex);
 	          this.eventBus.fire('hideTooltip');
 	        }
@@ -33751,7 +35925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	
 	      this._showWedge(foundIndex);
-	    } else if (!_tuiCodeSnippet2['default'].isNull(this.prevMovedIndex)) {
+	    } else if (!(0, _isNull2['default'])(this.prevMovedIndex)) {
 	      this.graphRenderer.restoreColor(this.prevMovedIndex);
 	      this.eventBus.fire('hideTooltip');
 	      this.prevMovedIndex = null;
@@ -33885,7 +36059,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	mapSeriesFactory.MapChartSeries = MapChartSeries;
 
 /***/ }),
-/* 94 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33896,23 +36070,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports['default'] = pieSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isString = __webpack_require__(24);
+	
+	var _isString2 = _interopRequireDefault(_isString);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
@@ -33927,6 +36109,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	var COMPONENT_TYPE_RAPHAEL = _const2['default'].COMPONENT_TYPE_RAPHAEL,
 	    ANGLE_360 = _const2['default'].ANGLE_360,
@@ -34042,7 +36225,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  PieChartSeries.prototype._makeValidAngle = function _makeValidAngle(angle, defaultAngle) {
-	    if (_tuiCodeSnippet2['default'].isUndefined(angle)) {
+	    if ((0, _isUndefined2['default'])(angle)) {
 	      angle = defaultAngle;
 	    } else if (angle < 0) {
 	      angle = ANGLE_360 - Math.abs(angle) % ANGLE_360;
@@ -34172,10 +36355,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return {
 	        ratio: ratio,
 	        angles: angles,
-	        centerPosition: _this3._getArcPosition(_tuiCodeSnippet2['default'].extend({
+	        centerPosition: _this3._getArcPosition(Object.assign({
 	          r: centerR
 	        }, positionData)),
-	        outerPosition: _this3._getArcPosition(_tuiCodeSnippet2['default'].extend({
+	        outerPosition: _this3._getArcPosition(Object.assign({
 	          r: r + _this3.legendLongestWidth / 2 + PIE_GRAPH_LEGEND_LABEL_INTERVAL
 	        }, positionData))
 	      };
@@ -34495,7 +36678,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  PieChartSeries.prototype.showTooltip = function showTooltip(params, bound, groupIndex, index, mousePosition) {
-	    this.eventBus.fire('showTooltip', _tuiCodeSnippet2['default'].extend({
+	    this.eventBus.fire('showTooltip', Object.assign({
 	      indexes: {
 	        groupIndex: groupIndex,
 	        index: index
@@ -34601,7 +36784,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	      }
 	
-	      var end = _tuiCodeSnippet2['default'].extend({}, position.middle);
+	      var end = Object.assign({}, position.middle);
 	      if (end.left < centerLeft) {
 	        end.left -= SERIES_OUTER_LABEL_PADDING;
 	      } else {
@@ -34726,7 +36909,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  PieChartSeries.prototype._isDetectedLabel = function _isDetectedLabel(position) {
 	    var labelElement = document.elementFromPoint(position.left, position.top);
 	
-	    return _tuiCodeSnippet2['default'].isString(labelElement.className);
+	    return (0, _isString2['default'])(labelElement.className);
 	  };
 	
 	  /**
@@ -34741,7 +36924,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var allowSelect = this.options.allowSelect;
 	
 	
-	    if ((sectorInfo || this._isDetectedLabel(position)) && _tuiCodeSnippet2['default'].isExisty(prevIndex) && allowSelect) {
+	    if ((sectorInfo || this._isDetectedLabel(position)) && (0, _isExisty2['default'])(prevIndex) && allowSelect) {
 	      this.onUnselectSeries({
 	        indexes: {
 	          index: prevIndex
@@ -34833,7 +37016,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	pieSeriesFactory.PieChartSeries = PieChartSeries;
 
 /***/ }),
-/* 95 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34841,11 +37024,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = heatmapChartSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _renderingLabelHelper = __webpack_require__(84);
+	var _renderingLabelHelper = __webpack_require__(110);
 	
 	var _renderingLabelHelper2 = _interopRequireDefault(_renderingLabelHelper);
 	
@@ -35059,7 +37242,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	heatmapChartSeriesFactory.HeatmapChartSeries = HeatmapChartSeries;
 
 /***/ }),
-/* 96 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35067,29 +37250,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = treemapChartSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _squarifier = __webpack_require__(97);
+	var _squarifier = __webpack_require__(123);
 	
 	var _squarifier2 = _interopRequireDefault(_squarifier);
 	
-	var _renderingLabelHelper = __webpack_require__(84);
+	var _renderingLabelHelper = __webpack_require__(110);
 	
 	var _renderingLabelHelper2 = _interopRequireDefault(_renderingLabelHelper);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -35165,11 +37348,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  TreemapChartSeries.prototype._initOptions = function _initOptions() {
 	    this.options.useColorValue = !!this.options.useColorValue;
 	
-	    if (_tuiCodeSnippet2['default'].isUndefined(this.options.zoomable)) {
+	    if ((0, _isUndefined2['default'])(this.options.zoomable)) {
 	      this.options.zoomable = !this.options.useColorValue;
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isUndefined(this.options.useLeafLabel)) {
+	    if ((0, _isUndefined2['default'])(this.options.useLeafLabel)) {
 	      this.options.useLeafLabel = !this.options.zoomable;
 	    }
 	  };
@@ -35218,11 +37401,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this2 = this;
 	
 	    var seriesDataModel = this._getSeriesDataModel();
-	    var defaultLayout = _tuiCodeSnippet2['default'].extend({}, this.layout.dimension, this.layout.position);
+	    var defaultLayout = Object.assign({}, this.layout.dimension, this.layout.position);
 	    var seriesItems = seriesDataModel.findSeriesItemsByParent(parent);
 	
 	    layout = layout || defaultLayout;
-	    boundMap = _tuiCodeSnippet2['default'].extend(boundMap || {}, _squarifier2['default'].squarify(layout, seriesItems));
+	    boundMap = Object.assign(boundMap || {}, _squarifier2['default'].squarify(layout, seriesItems));
 	
 	    seriesItems.forEach(function (seriesItem) {
 	      boundMap = _this2._makeBoundMap(seriesItem.id, boundMap, boundMap[seriesItem.id]);
@@ -35376,7 +37559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.rootId = rootId;
 	    this.startDepth = startDepth;
 	    this.selectedGroup = group;
-	    this._renderSeriesArea(this.paper, _tuiCodeSnippet2['default'].bind(this._renderGraph, this));
+	    this._renderSeriesArea(this.paper, this._renderGraph.bind(this));
 	    this.animateComponent(true);
 	  };
 	
@@ -35421,7 +37604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var seriesItem = this._getSeriesDataModel().getSeriesItem(indexes.groupIndex, indexes.index, true);
 	
-	    return _tuiCodeSnippet2['default'].extend({
+	    return Object.assign({
 	      chartType: this.chartType,
 	      indexes: seriesItem.indexes
 	    });
@@ -35485,24 +37668,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	treemapChartSeriesFactory.TreemapChartSeries = TreemapChartSeries;
 
 /***/ }),
-/* 97 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _calculator = __webpack_require__(25);
+	var _pluck = __webpack_require__(58);
+	
+	var _pluck2 = _interopRequireDefault(_pluck);
+	
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -35520,7 +37703,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	  _makeBaseBound: function _makeBaseBound(layout) {
-	    return _tuiCodeSnippet2['default'].extend({}, layout);
+	    return Object.assign({}, layout);
 	  },
 	
 	
@@ -35546,7 +37729,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @private
 	   */
 	  _makeBaseData: function _makeBaseData(seriesItems, width, height) {
-	    var scale = this._calculateScale(_tuiCodeSnippet2['default'].pluck(seriesItems, 'value'), width, height);
+	    var scale = this._calculateScale((0, _pluck2['default'])(seriesItems, 'value'), width, height);
 	    var data = seriesItems.map(function (seriesItem) {
 	      return {
 	        id: seriesItem.id,
@@ -35629,7 +37812,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  _calculateFixedSize: function _calculateFixedSize(baseSize, sum, row) {
 	    if (!sum) {
-	      var weights = _tuiCodeSnippet2['default'].pluck(row, 'weight');
+	      var weights = (0, _pluck2['default'])(row, 'weight');
 	      sum = _calculator2['default'].sum(weights);
 	    }
 	
@@ -35727,7 +37910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  _getAddingBoundsFunction: function _getAddingBoundsFunction(baseBound) {
 	    if (this._isVerticalStack(baseBound)) {
-	      return _tuiCodeSnippet2['default'].bind(this._addBoundsForVerticalStack, this);
+	      return this._addBoundsForVerticalStack.bind(this);
 	    }
 	
 	    return this._addBoundsForHorizontalStack.bind(this);
@@ -35752,7 +37935,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.boundMap = {};
 	
 	    baseData.forEach(function (datum) {
-	      var weights = _tuiCodeSnippet2['default'].pluck(row, 'weight');
+	      var weights = (0, _pluck2['default'])(row, 'weight');
 	      var sum = _calculator2['default'].sum(weights);
 	
 	      if (row.length && _this3._changedStackDirection(sum, weights, baseSize, datum.weight)) {
@@ -35781,7 +37964,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    */
 
 /***/ }),
-/* 98 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35789,23 +37972,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = boxplotSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _barTypeSeriesBase = __webpack_require__(83);
+	var _barTypeSeriesBase = __webpack_require__(109);
 	
 	var _barTypeSeriesBase2 = _interopRequireDefault(_barTypeSeriesBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -36028,7 +38211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	boxplotSeriesFactory.BoxplotChartSeries = BoxplotChartSeries;
 
 /***/ }),
-/* 99 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36036,15 +38219,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = bulletSeriesFactory;
 	
-	var _series = __webpack_require__(82);
+	var _series = __webpack_require__(106);
 	
 	var _series2 = _interopRequireDefault(_series);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -36476,7 +38659,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	bulletSeriesFactory.BulletChartSeries = BulletChartSeries;
 
 /***/ }),
-/* 100 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36484,35 +38667,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.__esModule = true;
 	exports['default'] = zoomFactory;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _browser = __webpack_require__(21);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _browser2 = _interopRequireDefault(_browser);
 	
-	var _seriesTemplate = __webpack_require__(101);
+	var _seriesTemplate = __webpack_require__(127);
 	
 	var _seriesTemplate2 = _interopRequireDefault(_seriesTemplate);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _domHandler = __webpack_require__(10);
+	var _domHandler = __webpack_require__(23);
 	
 	var _domHandler2 = _interopRequireDefault(_domHandler);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _eventListener = __webpack_require__(56);
+	var _eventListener = __webpack_require__(80);
 	
 	var _eventListener2 = _interopRequireDefault(_eventListener);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -36530,7 +38713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CHART_PADDING = _const2['default'].CHART_PADDING;
 	
 	
-	var IS_MSIE_VERSION_LTE_THAN_8 = _tuiCodeSnippet2['default'].browser.msie && _tuiCodeSnippet2['default'].browser.version <= 8;
+	var IS_MSIE_VERSION_LTE_THAN_8 = _browser2['default'].msie && _browser2['default'].version <= 8;
 	
 	var Zoom = function () {
 	  /**
@@ -36748,14 +38931,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	zoomFactory.componentType = 'zoom';
 
 /***/ }),
-/* 101 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _templateMaker = __webpack_require__(66);
+	var _templateMaker = __webpack_require__(90);
 	
 	var _templateMaker2 = _interopRequireDefault(_templateMaker);
 	
@@ -36781,7 +38964,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 102 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36790,57 +38973,77 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _const = __webpack_require__(9);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _inArray = __webpack_require__(25);
+	
+	var _inArray2 = _interopRequireDefault(_inArray);
+	
+	var _encodeHTMLEntity = __webpack_require__(129);
+	
+	var _encodeHTMLEntity2 = _interopRequireDefault(_encodeHTMLEntity);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _dataProcessorBase = __webpack_require__(103);
+	var _dataProcessorBase = __webpack_require__(130);
 	
 	var _dataProcessorBase2 = _interopRequireDefault(_dataProcessorBase);
 	
-	var _seriesDataModel = __webpack_require__(104);
+	var _seriesDataModel = __webpack_require__(131);
 	
 	var _seriesDataModel2 = _interopRequireDefault(_seriesDataModel);
 	
-	var _seriesDataModelForBoxplot = __webpack_require__(108);
+	var _seriesDataModelForBoxplot = __webpack_require__(135);
 	
 	var _seriesDataModelForBoxplot2 = _interopRequireDefault(_seriesDataModelForBoxplot);
 	
-	var _seriesDataModelForBullet = __webpack_require__(110);
+	var _seriesDataModelForBullet = __webpack_require__(137);
 	
 	var _seriesDataModelForBullet2 = _interopRequireDefault(_seriesDataModelForBullet);
 	
-	var _seriesDataModelForTreemap = __webpack_require__(111);
+	var _seriesDataModelForTreemap = __webpack_require__(138);
 	
 	var _seriesDataModelForTreemap2 = _interopRequireDefault(_seriesDataModelForTreemap);
 	
-	var _seriesGroup = __webpack_require__(105);
+	var _seriesGroup = __webpack_require__(132);
 	
 	var _seriesGroup2 = _interopRequireDefault(_seriesGroup);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _objectUtil = __webpack_require__(38);
+	var _objectUtil = __webpack_require__(55);
 	
 	var _objectUtil2 = _interopRequireDefault(_objectUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -36858,7 +39061,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 	
-	var isUndefined = _tuiCodeSnippet2['default'].isUndefined;
 	
 	/*
 	 * Raw series datum.
@@ -36972,7 +39174,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var integratedXAxisData = [];
 	    var isDateTime = false;
 	
-	    if (_tuiCodeSnippet2['default'].isArray(options)) {
+	    if ((0, _isArray2['default'])(options)) {
 	      isDateTime = options.filter(function (option) {
 	        return option.type && _predicate2['default'].isDatetimeType(option.type);
 	      });
@@ -37293,7 +39495,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  DataProcessor.prototype._escapeCategories = function _escapeCategories(categories) {
 	    return categories.map(function (category) {
-	      return _tuiCodeSnippet2['default'].encodeHTMLEntity(String(category));
+	      return (0, _encodeHTMLEntity2['default'])(String(category));
 	    });
 	  };
 	
@@ -37313,7 +39515,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var options = this.options[axisType] || {};
 	    var isDateTime = false;
 	
-	    if (_tuiCodeSnippet2['default'].isArray(options)) {
+	    if ((0, _isArray2['default'])(options)) {
 	      isDateTime = options.filter(function (option) {
 	        return option.type && _predicate2['default'].isDatetimeType(option.type);
 	      });
@@ -37344,7 +39546,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var rawCategories = this.rawData.categories;
 	    var categoriesMap = {};
 	
-	    if (_tuiCodeSnippet2['default'].isArray(rawCategories)) {
+	    if ((0, _isArray2['default'])(rawCategories)) {
 	      categoriesMap[type] = this._mapCategories(rawCategories, type);
 	    } else if (rawCategories) {
 	      if (rawCategories.x) {
@@ -37374,7 +39576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.categoriesMap = this._processCategories(type);
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(isVertical)) {
+	    if ((0, _isExisty2['default'])(isVertical)) {
 	      foundCategories = this.categoriesMap[type] || [];
 	    } else {
 	      Object.values(this.categoriesMap).every(function (categories) {
@@ -37514,7 +39716,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        foundIndex = index;
 	      }
 	
-	      return _tuiCodeSnippet2['default'].isNull(foundIndex);
+	      return (0, _isNull2['default'])(foundIndex);
 	    });
 	
 	    return foundIndex;
@@ -37625,7 +39827,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  DataProcessor.prototype.findStackIndex = function findStackIndex(stack) {
-	    return _tuiCodeSnippet2['default'].inArray(stack, this.getStacks());
+	    return (0, _inArray2['default'])(stack, this.getStacks());
 	  };
 	
 	  /**
@@ -37638,7 +39840,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var lineCoordinateType = this.lineCoordinateType;
 	
 	
-	    if (!_tuiCodeSnippet2['default'].isExisty(lineCoordinateType)) {
+	    if (!(0, _isExisty2['default'])(lineCoordinateType)) {
 	      var chartType = this.chartType;
 	
 	      lineCoordinateType = _predicate2['default'].isLineTypeChart(chartType) && !this.hasCategories();
@@ -37658,7 +39860,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var coordinateType = this.coordinateType;
 	
 	
-	    if (!_tuiCodeSnippet2['default'].isExisty(coordinateType)) {
+	    if (!(0, _isExisty2['default'])(coordinateType)) {
 	      var chartType = this.chartType;
 	
 	
@@ -37778,7 +39980,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * Push value to data property of series.
 	   * @param {{name: string, data: Array}} seriesDatum - series datum
 	   * @param {Array.<number>|{x: number, y: number, r: number}|number} value - value
-	   * @param {string} seriesType - sereis name
+	   * @param {string} seriesType - series name
 	   * @private
 	   */
 	
@@ -37820,7 +40022,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  DataProcessor.prototype._pushSeriesData = function _pushSeriesData(values) {
 	    var _this7 = this;
 	
-	    if (this.chartType !== 'combo' && _tuiCodeSnippet2['default'].isArray(values)) {
+	    if (this.chartType !== 'combo' && (0, _isArray2['default'])(values)) {
 	      var temp = values;
 	      values = {};
 	      values[this.chartType] = temp;
@@ -38098,7 +40300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  DataProcessor.prototype.isLimitOptionsEmpty = function isLimitOptionsEmpty(axisType) {
 	    var axisOption = this.options[axisType] || {};
 	
-	    return isUndefined(axisOption.min) && isUndefined(axisOption.max);
+	    return (0, _isUndefined2['default'])(axisOption.min) && (0, _isUndefined2['default'])(axisOption.max);
 	  };
 	
 	  /**
@@ -38111,7 +40313,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  DataProcessor.prototype.isLimitOptionsInsufficient = function isLimitOptionsInsufficient(axisType) {
 	    var axisOption = this.options[axisType] || {};
 	
-	    return isUndefined(axisOption.min) || isUndefined(axisOption.max);
+	    return (0, _isUndefined2['default'])(axisOption.min) || (0, _isUndefined2['default'])(axisOption.max);
 	  };
 	
 	  /**
@@ -38238,7 +40440,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  DataProcessor.prototype._pickLegendLabel = function _pickLegendLabel(item) {
-	    return item.name ? _tuiCodeSnippet2['default'].encodeHTMLEntity(item.name) : null;
+	    return item.name ? (0, _encodeHTMLEntity2['default'])(item.name) : null;
 	  };
 	
 	  /**
@@ -38251,7 +40453,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  DataProcessor.prototype._isVisibleLegend = function _isVisibleLegend(item) {
 	    var visibility = true;
-	    if (_tuiCodeSnippet2['default'].isExisty(item.visible) && item.visible === false) {
+	    if ((0, _isExisty2['default'])(item.visible) && item.visible === false) {
 	      visibility = false;
 	    }
 	
@@ -38283,10 +40485,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            seriesType = _ref10[0],
 	            seriesDatum = _ref10[1];
 	
-	        result[seriesType] = seriesDatum.map(pickerMethod);
+	        var data = seriesDatum.map(pickerMethod);
+	        if ((0, _isExisty2['default'])(data)) {
+	          result[seriesType] = data;
+	        }
 	      });
-	
-	      result = _tuiCodeSnippet2['default'].filter(result, _tuiCodeSnippet2['default'].isExisty);
 	    }
 	
 	    return result;
@@ -38337,7 +40540,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var seriesTypes = this.seriesTypes || [this.chartType];
 	    var legendLabelsMap = void 0;
 	
-	    if (_tuiCodeSnippet2['default'].isArray(legendLabels)) {
+	    if ((0, _isArray2['default'])(legendLabels)) {
 	      legendLabelsMap = [this.chartType];
 	      legendLabelsMap[this.chartType] = legendLabels;
 	    } else {
@@ -38347,7 +40550,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var legendData = seriesTypes.map(function (chartType) {
 	      return legendLabelsMap[chartType].map(function (label, index) {
-	        var is2DArray = _tuiCodeSnippet2['default'].isArray(legendVisibilities[chartType]);
+	        var is2DArray = (0, _isArray2['default'])(legendVisibilities[chartType]);
 	
 	        return {
 	          chartType: chartType,
@@ -38598,28 +40801,75 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = DataProcessor;
 
 /***/ }),
-/* 103 */
+/* 129 */
+/***/ (function(module, exports) {
+
+	/**
+	 * @fileoverview Transform the given string into HTML Entity string.
+	 * @author NHN FE Development Lab <dl_javascript@nhn.com>
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Transform the given string into HTML Entity string.
+	 * @param {String} html - String for encoding
+	 * @returns {String} HTML Entity
+	 * @memberof module:string
+	 * @example
+	 * var encodeHTMLEntity = require('tui-code-snippet/string/encodeHTMLEntity'); // node, commonjs
+	 *
+	 * var htmlEntityString = "<script> alert('test');</script><a href='test'>";
+	 * var result = encodeHTMLEntity(htmlEntityString);
+	 */
+	function encodeHTMLEntity(html) {
+	  var entities = {
+	    '"': 'quot',
+	    '&': 'amp',
+	    '<': 'lt',
+	    '>': 'gt',
+	    '\'': '#39'
+	  };
+	
+	  return html.replace(/[<>&"']/g, function(m0) {
+	    return entities[m0] ? '&' + entities[m0] + ';' : m0;
+	  });
+	}
+	
+	module.exports = encodeHTMLEntity;
+
+
+/***/ }),
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _isFunction = __webpack_require__(56);
+	
+	var _isFunction2 = _interopRequireDefault(_isFunction);
+	
+	var _isString = __webpack_require__(24);
+	
+	var _isString2 = _interopRequireDefault(_isString);
+	
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -38839,10 +41089,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    if (this._isDecimal(format)) {
 	      len = this._pickMaxLenUnderPoint([format]);
-	      funcs = [_tuiCodeSnippet2['default'].bind(this._formatToDecimal, this, len)];
+	      funcs = [this._formatToDecimal.bind(this, len)];
 	    } else if (this._isZeroFill(format)) {
 	      len = format.length;
-	      funcs = [_tuiCodeSnippet2['default'].bind(this._formatToZeroFill, this, len)];
+	      funcs = [this._formatToZeroFill.bind(this, len)];
 	
 	      return funcs;
 	    }
@@ -38862,12 +41112,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  DataProcessorBase.prototype._findFormatFunctions = function _findFormatFunctions() {
-	    var format = _tuiCodeSnippet2['default'].pick(this.options, 'chart', 'format');
+	    var format = (0, _pick2['default'])(this.options, 'chart', 'format');
 	    var funcs = [];
 	
-	    if (_tuiCodeSnippet2['default'].isFunction(format)) {
+	    if ((0, _isFunction2['default'])(format)) {
 	      funcs = [format];
-	    } else if (_tuiCodeSnippet2['default'].isString(format)) {
+	    } else if ((0, _isString2['default'])(format)) {
 	      funcs = this._findSimpleTypeFormatFunctions(format);
 	    }
 	
@@ -38894,7 +41144,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = DataProcessorBase;
 
 /***/ }),
-/* 104 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38903,33 +41153,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _seriesGroup = __webpack_require__(105);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _seriesGroup = __webpack_require__(132);
 	
 	var _seriesGroup2 = _interopRequireDefault(_seriesGroup);
 	
-	var _seriesItem = __webpack_require__(106);
+	var _seriesItem = __webpack_require__(133);
 	
 	var _seriesItem2 = _interopRequireDefault(_seriesItem);
 	
-	var _seriesItemForCoordinateType = __webpack_require__(107);
+	var _seriesItemForCoordinateType = __webpack_require__(134);
 	
 	var _seriesItemForCoordinateType2 = _interopRequireDefault(_seriesItemForCoordinateType);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -39054,7 +41312,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  SeriesDataModel.prototype._removeRangeValue = function _removeRangeValue() {
-	    var seriesOption = _tuiCodeSnippet2['default'].pick(this.options, 'series') || {};
+	    var seriesOption = (0, _pick2['default'])(this.options, 'series') || {};
 	    var allowRange = _predicate2['default'].isAllowRangeData(this.chartType) && !_predicate2['default'].isValidStackOption(seriesOption.stackType) && !seriesOption.spline;
 	
 	    if (allowRange || this.isCoordinateType) {
@@ -39062,11 +41320,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    Object.values(this.rawSeriesData).forEach(function (rawItem) {
-	      if (!_tuiCodeSnippet2['default'].isArray(rawItem.data)) {
+	      if (!(0, _isArray2['default'])(rawItem.data)) {
 	        return;
 	      }
 	      rawItem.data.forEach(function (value, index) {
-	        if (_tuiCodeSnippet2['default'].isExisty(value)) {
+	        if ((0, _isExisty2['default'])(value)) {
 	          var _concat$apply = concat.apply(value);
 	
 	          var _concat$apply2 = _slicedToArray(_concat$apply, 1);
@@ -39114,7 +41372,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          data = void 0,
 	          legendName = void 0;
 	
-	      data = _tuiCodeSnippet2['default'].isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+	      data = (0, _isArray2['default'])(rawDatum) ? rawDatum : [].concat(rawDatum.data);
 	
 	      if (!hasRawDatumAsArray) {
 	        stack = rawDatum.stack;
@@ -39124,7 +41382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	
 	      if (isCoordinateType || isPieChart) {
-	        data = _tuiCodeSnippet2['default'].filter(data, _tuiCodeSnippet2['default'].isExisty);
+	        data = data.filter(_isExisty2['default']);
 	      }
 	
 	      var items = data.map(function (datum, index) {
@@ -39598,7 +41856,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        item.addRatio('y', yDistance, ySubValue);
 	        item.addRatio('r', maxRadius, 0);
 	
-	        if (_tuiCodeSnippet2['default'].isExisty(item.start)) {
+	        if ((0, _isExisty2['default'])(item.start)) {
 	          item.addRatio('start', yDistance, ySubValue);
 	        }
 	      });
@@ -39674,7 +41932,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesDataModel;
 
 /***/ }),
-/* 105 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39683,13 +41941,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _calculator = __webpack_require__(25);
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _pluck = __webpack_require__(58);
+	
+	var _pluck2 = _interopRequireDefault(_pluck);
+	
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -39773,10 +42035,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	      }
 	
-	      if (_tuiCodeSnippet2['default'].isExisty(item[valueType])) {
+	      if ((0, _isExisty2['default'])(item[valueType])) {
 	        values.push(item[valueType]);
 	      }
-	      if (_tuiCodeSnippet2['default'].isExisty(item.start)) {
+	      if ((0, _isExisty2['default'])(item.start)) {
 	        values.push(item.start);
 	      }
 	    });
@@ -39968,9 +42230,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  SeriesGroup.prototype.pluck = function pluck(key) {
-	    var items = this.items.filter(_tuiCodeSnippet2['default'].isExisty);
+	    var items = this.items.filter(_isExisty2['default']);
 	
-	    return _tuiCodeSnippet2['default'].pluck(items, key);
+	    return (0, _pluck2['default'])(items, key);
 	  };
 	
 	  /**
@@ -40011,7 +42273,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesGroup;
 
 /***/ }),
-/* 106 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40020,25 +42282,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _const = __webpack_require__(9);
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -40048,6 +42314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var SeriesItem = function () {
 	  /**
@@ -40202,7 +42469,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      value = Math.abs(value);
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isNull(value)) {
+	    if ((0, _isNull2['default'])(value)) {
 	      this._setLabel('');
 	    } else {
 	      ['label', 'tooltipLabel'].forEach(function (labelType) {
@@ -40247,7 +42514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  SeriesItem.prototype._createValues = function _createValues(value) {
 	    var values = [].concat(value).map(function (newValue) {
-	      return _tuiCodeSnippet2['default'].isNull(newValue) ? null : parseFloat(newValue);
+	      return (0, _isNull2['default'])(newValue) ? null : parseFloat(newValue);
 	    });
 	
 	    values = values.sort(function (a, b) {
@@ -40269,7 +42536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  SeriesItem.prototype.addStart = function addStart(value) {
-	    if (!_tuiCodeSnippet2['default'].isNull(this.start)) {
+	    if (!(0, _isNull2['default'])(this.start)) {
 	      return;
 	    }
 	
@@ -40308,7 +42575,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.ratio = this.endRatio = _calculator2['default'].calculateRatio(this.value, divNumber, subNumber, baseRatio);
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(this.start)) {
+	    if ((0, _isExisty2['default'])(this.start)) {
 	      this.startRatio = _calculator2['default'].calculateRatio(this.start, divNumber, subNumber, baseRatio);
 	      this.ratioDistance = Math.abs(this.endRatio - this.startRatio);
 	    }
@@ -40345,7 +42612,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      ratio: this.ratio
 	    };
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(this.start)) {
+	    if ((0, _isExisty2['default'])(this.start)) {
 	      valueMap.start = this._getFormattedValueForTooltip('start');
 	      valueMap.end = this._getFormattedValueForTooltip('end');
 	      valueMap.startRatio = this.startRatio;
@@ -40361,7 +42628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesItem;
 
 /***/ }),
-/* 107 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40370,17 +42637,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _predicate = __webpack_require__(16);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isDate = __webpack_require__(17);
+	
+	var _isDate2 = _interopRequireDefault(_isDate);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNumber = __webpack_require__(18);
+	
+	var _isNumber2 = _interopRequireDefault(_isNumber);
+	
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -40390,6 +42669,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var SeriesItemForCoordinateType = function () {
 	  /**
@@ -40450,7 +42730,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  SeriesItemForCoordinateType.prototype._initData = function _initData(rawSeriesDatum, index) {
 	    var date = void 0;
 	
-	    if (_tuiCodeSnippet2['default'].isArray(rawSeriesDatum)) {
+	    if ((0, _isArray2['default'])(rawSeriesDatum)) {
 	      this.x = rawSeriesDatum[0] || 0;
 	      this.y = rawSeriesDatum[1] || 0;
 	      if (_predicate2['default'].isBubbleChart(this.chartType)) {
@@ -40473,7 +42753,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    if (_predicate2['default'].isDatetimeType(this.xAxisType)) {
-	      date = _tuiCodeSnippet2['default'].isDate(this.x) ? this.x : new Date(this.x);
+	      date = (0, _isDate2['default'])(this.x) ? this.x : new Date(this.x);
 	      this.x = date.getTime() || 0;
 	    }
 	
@@ -40522,7 +42802,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  SeriesItemForCoordinateType.prototype.addRatio = function addRatio(valueType, divNumber, subNumber) {
-	    if (!_tuiCodeSnippet2['default'].isExisty(this.ratioMap[valueType]) && divNumber) {
+	    if (!(0, _isExisty2['default'])(this.ratioMap[valueType]) && divNumber) {
 	      this.ratioMap[valueType] = (this[valueType] - subNumber) / divNumber;
 	    }
 	  };
@@ -40546,7 +42826,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      valueType: valueType
 	    });
 	
-	    return _tuiCodeSnippet2['default'].isNumber(ratio) ? formattedValue : value;
+	    return (0, _isNumber2['default'])(ratio) ? formattedValue : value;
 	  };
 	
 	  /**
@@ -40563,7 +42843,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      yRatio: this.ratioMap.y
 	    };
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(this.r)) {
+	    if ((0, _isExisty2['default'])(this.r)) {
 	      valueMap.r = this._getFormattedValueForTooltip('r');
 	      valueMap.rRatio = this.ratioMap.r;
 	    }
@@ -40577,24 +42857,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesItemForCoordinateType;
 
 /***/ }),
-/* 108 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _seriesItemForBoxplot = __webpack_require__(109);
+	var _seriesItemForBoxplot = __webpack_require__(136);
 	
 	var _seriesItemForBoxplot2 = _interopRequireDefault(_seriesItemForBoxplot);
 	
-	var _seriesDataModel = __webpack_require__(104);
+	var _seriesDataModel = __webpack_require__(131);
 	
 	var _seriesDataModel2 = _interopRequireDefault(_seriesDataModel);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isArray = __webpack_require__(8);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isArray2 = _interopRequireDefault(_isArray);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -40717,7 +42997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    return this.rawSeriesData.map(function (rawDatum) {
-	      var data = _tuiCodeSnippet2['default'].isArray(rawDatum) ? rawDatum : [].concat(rawDatum.data);
+	      var data = (0, _isArray2['default'])(rawDatum) ? rawDatum : [].concat(rawDatum.data);
 	      var items = data.map(function (datum, index) {
 	        return new _seriesItemForBoxplot2['default']({
 	          datum: datum,
@@ -40765,7 +43045,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesDataModelForBoxplot;
 
 /***/ }),
-/* 109 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40774,17 +43054,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _renderUtil = __webpack_require__(8);
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -40794,6 +43078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           * @author NHN.
 	                                                                                                                                                           *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                           */
+	
 	
 	var SeriesItem = function () {
 	  /**
@@ -41018,7 +43303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  SeriesItem.prototype._createValues = function _createValues(value) {
 	    return [].concat(value).map(function (newValue) {
-	      return _tuiCodeSnippet2['default'].isNull(newValue) ? null : parseFloat(newValue);
+	      return (0, _isNull2['default'])(newValue) ? null : parseFloat(newValue);
 	    });
 	  };
 	
@@ -41030,7 +43315,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  SeriesItem.prototype.addStart = function addStart(value) {
-	    if (!_tuiCodeSnippet2['default'].isNull(this.min)) {
+	    if (!(0, _isNull2['default'])(this.min)) {
 	      return;
 	    }
 	
@@ -41113,7 +43398,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      ratio: this.ratio
 	    };
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(this.min)) {
+	    if ((0, _isExisty2['default'])(this.min)) {
 	      valueMap.min = this._getFormattedValueForTooltip('min');
 	      valueMap.max = this._getFormattedValueForTooltip('max');
 	      valueMap.minRatio = this.minRatio;
@@ -41135,22 +43420,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesItem;
 
 /***/ }),
-/* 110 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _seriesItem = __webpack_require__(106);
+	var _seriesItem = __webpack_require__(133);
 	
 	var _seriesItem2 = _interopRequireDefault(_seriesItem);
 	
-	var _seriesDataModel = __webpack_require__(104);
+	var _seriesDataModel = __webpack_require__(131);
 	
 	var _seriesDataModel2 = _interopRequireDefault(_seriesDataModel);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -41267,7 +43552,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesDataModelForBullet;
 
 /***/ }),
-/* 111 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41276,25 +43561,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _seriesDataModel = __webpack_require__(104);
+	var _pluck = __webpack_require__(58);
+	
+	var _pluck2 = _interopRequireDefault(_pluck);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _seriesDataModel = __webpack_require__(131);
 	
 	var _seriesDataModel2 = _interopRequireDefault(_seriesDataModel);
 	
-	var _seriesItemForTreemap = __webpack_require__(112);
+	var _seriesItemForTreemap = __webpack_require__(139);
 	
 	var _seriesItemForTreemap2 = _interopRequireDefault(_seriesItemForTreemap);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -41373,7 +43670,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      datum.indexes = indexes;
 	
-	      if (!_tuiCodeSnippet2['default'].isNull(datum.value)) {
+	      if (!(0, _isNull2['default'])(datum.value)) {
 	        flatData.push(datum);
 	      }
 	
@@ -41444,7 +43741,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    filtered.forEach(function (datum, index) {
 	      datum.depth = depth;
-	      datum.group = _tuiCodeSnippet2['default'].isUndefined(group) ? index : group;
+	      datum.group = (0, _isUndefined2['default'])(group) ? index : group;
 	
 	      var descendants = _this3._setTreeProperties(rejected, childDepth, datum.id, datum.group, datum.fillOpacity);
 	      var children = descendants.filter(function (descendant) {
@@ -41452,7 +43749,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	
 	      if (children.length) {
-	        datum.value = _calculator2['default'].sum(_tuiCodeSnippet2['default'].pluck(children, 'value'));
+	        datum.value = _calculator2['default'].sum((0, _pluck2['default'])(children, 'value'));
 	        datum.hasChild = true;
 	      } else {
 	        datum.hasChild = false;
@@ -41487,10 +43784,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        filtered = _parted3[0],
 	        rejected = _parted3[1];
 	
-	    var total = _calculator2['default'].sum(_tuiCodeSnippet2['default'].pluck(filtered, 'value'));
+	    var total = _calculator2['default'].sum((0, _pluck2['default'])(filtered, 'value'));
 	
 	    filtered.forEach(function (datum) {
-	      var value = _tuiCodeSnippet2['default'].isNull(datum.value) ? 0 : datum.value;
+	      var value = (0, _isNull2['default'])(datum.value) ? 0 : datum.value;
 	
 	      datum.ratio = value / total;
 	
@@ -41578,7 +43875,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  SeriesDataModelForTreeMap.prototype._isValidGroup = function _isValidGroup(group, comparingGroup) {
-	    return !_tuiCodeSnippet2['default'].isExisty(comparingGroup) || group === comparingGroup;
+	    return !(0, _isExisty2['default'])(comparingGroup) || group === comparingGroup;
 	  };
 	
 	  /**
@@ -41664,24 +43961,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesDataModelForTreeMap;
 
 /***/ }),
-/* 112 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isExisty = __webpack_require__(14);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -41767,7 +44064,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      tooltipColorIndex: this.indexes[0]
 	    };
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(colorValue)) {
+	    if ((0, _isExisty2['default'])(colorValue)) {
 	      valueMap.colorValue = _renderUtil2['default'].formatValue({
 	        value: colorValue,
 	        formatFunctions: formatFunctions,
@@ -41793,7 +44090,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      label: this.label
 	    };
 	
-	    if (_tuiCodeSnippet2['default'].isExisty(this.colorValue)) {
+	    if ((0, _isExisty2['default'])(this.colorValue)) {
 	      templateData.colorValue = this.colorValue;
 	      templateData.colorValueRatio = this.ratio;
 	    }
@@ -41807,26 +44104,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = SeriesItemForTreemap;
 
 /***/ }),
-/* 113 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _boundsModel = __webpack_require__(114);
+	var _boundsModel = __webpack_require__(141);
 	
 	var _boundsModel2 = _interopRequireDefault(_boundsModel);
 	
-	var _scaleDataModel = __webpack_require__(120);
+	var _scaleDataModel = __webpack_require__(147);
 	
 	var _scaleDataModel2 = _interopRequireDefault(_scaleDataModel);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -42078,52 +44375,64 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 114 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _browser = __webpack_require__(21);
+	
+	var _browser2 = _interopRequireDefault(_browser);
+	
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _pluck = __webpack_require__(58);
+	
+	var _pluck2 = _interopRequireDefault(_pluck);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _raphaelRenderUtil = __webpack_require__(6);
+	var _raphaelRenderUtil = __webpack_require__(11);
 	
 	var _raphaelRenderUtil2 = _interopRequireDefault(_raphaelRenderUtil);
 	
-	var _circleLegendCalculator = __webpack_require__(115);
+	var _circleLegendCalculator = __webpack_require__(142);
 	
 	var _circleLegendCalculator2 = _interopRequireDefault(_circleLegendCalculator);
 	
-	var _axisCalculator = __webpack_require__(116);
+	var _axisCalculator = __webpack_require__(143);
 	
 	var _axisCalculator2 = _interopRequireDefault(_axisCalculator);
 	
-	var _legendCalculator = __webpack_require__(117);
+	var _legendCalculator = __webpack_require__(144);
 	
 	var _legendCalculator2 = _interopRequireDefault(_legendCalculator);
 	
-	var _seriesCalculator = __webpack_require__(118);
+	var _seriesCalculator = __webpack_require__(145);
 	
 	var _seriesCalculator2 = _interopRequireDefault(_seriesCalculator);
 	
-	var _spectrumLegendCalculator = __webpack_require__(119);
+	var _spectrumLegendCalculator = __webpack_require__(146);
 	
 	var _spectrumLegendCalculator2 = _interopRequireDefault(_spectrumLegendCalculator);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -42134,10 +44443,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                           */
 	
 	
-	var browser = _tuiCodeSnippet2['default'].browser;
 	var LEGEND_AREA_H_PADDING = _const2['default'].LEGEND_AREA_H_PADDING;
 	
-	var IS_LTE_IE8 = browser.msie && browser.version <= 8;
+	var IS_LTE_IE8 = _browser2['default'].msie && _browser2['default'].version <= 8;
 	
 	/**
 	 * Dimension.
@@ -42258,7 +44566,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  BoundsModel.prototype._registerDimension = function _registerDimension(name, dimension) {
-	    this.dimensionMap[name] = _tuiCodeSnippet2['default'].extend(this.dimensionMap[name] || {}, dimension);
+	    this.dimensionMap[name] = Object.assign(this.dimensionMap[name] || {}, dimension);
 	  };
 	
 	  /**
@@ -42357,7 +44665,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  BoundsModel.prototype._registerTitleDimension = function _registerTitleDimension() {
 	    var chartOptions = this.options.chart || {};
-	    var hasTitleOption = _tuiCodeSnippet2['default'].isExisty(chartOptions.title);
+	    var hasTitleOption = (0, _isExisty2['default'])(chartOptions.title);
 	    var titleTheme = this.theme.title;
 	    var titleHeight = hasTitleOption ? _raphaelRenderUtil2['default'].getRenderedTextSize(chartOptions.title.text, titleTheme.fontSize, titleTheme.fontFamily).height : 0;
 	    var height = titleHeight || 0;
@@ -42409,7 +44717,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  BoundsModel.prototype.registerLegendDimension = function registerLegendDimension() {
-	    var legendLabels = _tuiCodeSnippet2['default'].pluck(this.dataProcessor.getOriginalLegendData(), 'label');
+	    var legendLabels = (0, _pluck2['default'])(this.dataProcessor.getOriginalLegendData(), 'label');
 	    var legendOptions = this.options.legend;
 	    var labelTheme = this.theme.legend.label;
 	    var chartWidth = this.getDimension('chart').width;
@@ -42476,7 +44784,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return;
 	    }
 	
-	    if (_tuiCodeSnippet2['default'].isArray(options)) {
+	    if ((0, _isArray2['default'])(options)) {
 	      yAxisOptions = componentName === 'yAxis' ? options[0] : options[1];
 	    } else {
 	      yAxisOptions = options;
@@ -43113,18 +45421,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = BoundsModel;
 
 /***/ }),
-/* 115 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -43230,22 +45538,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 116 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
@@ -43341,30 +45649,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    */
 
 /***/ }),
-/* 117 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
@@ -43647,18 +45955,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 118 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -43737,22 +46045,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 119 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
@@ -43825,36 +46133,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 120 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _scaleDataMaker = __webpack_require__(121);
+	var _isArray = __webpack_require__(8);
+	
+	var _isArray2 = _interopRequireDefault(_isArray);
+	
+	var _isNull = __webpack_require__(6);
+	
+	var _isNull2 = _interopRequireDefault(_isNull);
+	
+	var _scaleDataMaker = __webpack_require__(148);
 	
 	var _scaleDataMaker2 = _interopRequireDefault(_scaleDataMaker);
 	
-	var _scaleLabelFormatter = __webpack_require__(123);
+	var _scaleLabelFormatter = __webpack_require__(150);
 	
 	var _scaleLabelFormatter2 = _interopRequireDefault(_scaleLabelFormatter);
 	
-	var _axisDataMaker = __webpack_require__(124);
+	var _axisDataMaker = __webpack_require__(151);
 	
 	var _axisDataMaker2 = _interopRequireDefault(_axisDataMaker);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -44017,7 +46329,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    var baseScaleData = this._createBaseScaleData(typeMap, baseOptions, axisOptions, additionalOptions);
 	
-	    return _tuiCodeSnippet2['default'].extend(baseScaleData, {
+	    return Object.assign(baseScaleData, {
 	      labels: this._createScaleLabels(baseScaleData, typeMap, baseOptions, axisOptions.dateFormat),
 	      axisOptions: axisOptions
 	    });
@@ -44066,7 +46378,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (isCoordinateLineType) {
 	      var values = this.dataProcessor.getValues(this.chartType, 'x');
 	      var additional = _axisDataMaker2['default'].makeAdditionalDataForCoordinateLineType(labels, values, limit, step, tickCount);
-	      _tuiCodeSnippet2['default'].extend(axisData, additional);
+	      Object.assign(axisData, additional);
 	    }
 	
 	    return axisData;
@@ -44144,7 +46456,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        options = this.options,
 	        theme = this.theme;
 	
-	    var yAxisOptions = _tuiCodeSnippet2['default'].isArray(options.yAxis) ? options.yAxis : [options.yAxis];
+	    var yAxisOptions = (0, _isArray2['default'])(options.yAxis) ? options.yAxis : [options.yAxis];
 	    var dataMap = {};
 	
 	    dataMap.xAxis = this._createAxisData(scaleDataMap.xAxis, options.xAxis, theme.xAxis.label);
@@ -44236,11 +46548,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    labels = _renderUtil2['default'].addPrefixSuffix(labels, this.options.xAxis.prefix, this.options.xAxis.suffix);
 	
-	    var validLabels = _tuiCodeSnippet2['default'].filter(labels, function (label) {
-	      return !!label;
+	    var validLabels = labels.filter(function (label) {
+	      return label;
 	    });
 	
-	    if (!_tuiCodeSnippet2['default'].isNull(this.prevValidLabelCount)) {
+	    if (!(0, _isNull2['default'])(this.prevValidLabelCount)) {
 	      validLabelCount = this.prevValidLabelCount;
 	    } else {
 	      validLabelCount = validLabels.length;
@@ -44259,7 +46571,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.prevValidLabelCount = validLabelCount;
 	
-	    _tuiCodeSnippet2['default'].extend(axisData, additionalData);
+	    Object.assign(axisData, additionalData);
 	  };
 	
 	  /**
@@ -44335,7 +46647,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = ScaleDataModel;
 
 /***/ }),
-/* 121 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44348,29 +46660,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *       FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
 	
-	var _coordinateScaleCalculator = __webpack_require__(122);
+	var _coordinateScaleCalculator = __webpack_require__(149);
 	
 	var _coordinateScaleCalculator2 = _interopRequireDefault(_coordinateScaleCalculator);
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isExisty = __webpack_require__(14);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isExisty2 = _interopRequireDefault(_isExisty);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -44469,7 +46781,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          foundType = millisecondTypes[foundIndex];
 	        }
 	
-	        return !_tuiCodeSnippet2['default'].isExisty(foundIndex);
+	        return !(0, _isExisty2['default'])(foundIndex);
 	      });
 	    } else {
 	      foundType = _const2['default'].DATE_TYPE_SECOND;
@@ -44633,8 +46945,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        chartType = makeScaleInfos.chartType;
 	
 	    var limit = this._getLimitSafely(makeScaleInfos.baseValues);
-	    var hasMinOption = _tuiCodeSnippet2['default'].isExisty(limitOption.min);
-	    var hasMaxOption = _tuiCodeSnippet2['default'].isExisty(limitOption.max);
+	    var hasMinOption = (0, _isExisty2['default'])(limitOption.min);
+	    var hasMaxOption = (0, _isExisty2['default'])(limitOption.max);
 	    var min = limit.min,
 	        max = limit.max;
 	
@@ -44740,16 +47052,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = scaleDataMaker;
 
 /***/ }),
-/* 122 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _tuiCodeSnippet = __webpack_require__(7);
+	var _isNumber = __webpack_require__(18);
 	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+	var _isNumber2 = _interopRequireDefault(_isNumber);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -44767,9 +47079,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	/**
 	 * @fileoverview Implement function that calculate coordinate scale data
-	 * @author Sungho Kim
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
 	 */
-	
 	var DEFAULT_PIXELS_PER_STEP = 88;
 	
 	/**
@@ -44922,7 +47234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var pixelsPerStep = offsetSize / stepCount;
 	  var step = valuePerPixel * pixelsPerStep;
 	
-	  if (_tuiCodeSnippet2['default'].isNumber(minimumStepSize) && step < minimumStepSize) {
+	  if ((0, _isNumber2['default'])(minimumStepSize) && step < minimumStepSize) {
 	    step = minimumStepSize;
 	    stepCount = limitSize / step;
 	  }
@@ -44966,28 +47278,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = coordinateScaleCalculator;
 
 /***/ }),
-/* 123 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -44996,12 +47304,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @module scaleLabelFormatter
 	 * @private
 	 */
-	/**
-	 * @fileoverview scaleMaker calculates the limit and step into values of processed data and returns it.
-	 * @author NHN.
-	 *       FE Development Lab <dl_javascript@nhn.com>
-	 */
-	
 	var scaleLabelFormatter = {
 	  /**
 	   * Get functions for formatting value.
@@ -45033,7 +47335,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _createScaleValues: function _createScaleValues(scale, chartType, diverging) {
 	    var values = _calculator2['default'].makeLabelsFromLimit(scale.limit, scale.step);
 	
-	    return _predicate2['default'].isDivergingChart(chartType, diverging) ? _tuiCodeSnippet2['default'].map(values, Math.abs) : values;
+	    return _predicate2['default'].isDivergingChart(chartType, diverging) ? values.map(Math.abs) : values;
 	  },
 	
 	
@@ -45079,12 +47381,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    return formattedValues;
 	  }
-	};
+	}; /**
+	    * @fileoverview scaleMaker calculates the limit and step into values of processed data and returns it.
+	    * @author NHN.
+	    *       FE Development Lab <dl_javascript@nhn.com>
+	    */
 	
 	exports['default'] = scaleLabelFormatter;
 
 /***/ }),
-/* 124 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45097,33 +47403,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
 	
-	var _const = __webpack_require__(9);
+	var _range = __webpack_require__(12);
+	
+	var _range2 = _interopRequireDefault(_range);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _geometric = __webpack_require__(50);
+	var _geometric = __webpack_require__(74);
 	
 	var _geometric2 = _interopRequireDefault(_geometric);
 	
-	var _calculator = __webpack_require__(25);
+	var _calculator = __webpack_require__(41);
 	
 	var _calculator2 = _interopRequireDefault(_calculator);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -45369,7 +47675,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	
 	    if (candidates.length === 0) {
-	      var blockSizeRange = _tuiCodeSnippet2['default'].range(AUTO_INTERVAL_MIN_WIDTH, AUTO_INTERVAL_MAX_WIDTH, AUTO_INTERVAL_RANGE_STEP);
+	      var blockSizeRange = (0, _range2['default'])(AUTO_INTERVAL_MIN_WIDTH, AUTO_INTERVAL_MAX_WIDTH, AUTO_INTERVAL_RANGE_STEP);
 	      candidates = blockSizeRange.map(function (blockSize) {
 	        return _this._makeAdjustingIntervalInfo(beforeBlockCount, seriesWidth, blockSize);
 	      });
@@ -45462,7 +47768,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      axisData.labels.push(lastLabelValue);
 	    }
 	
-	    _tuiCodeSnippet2['default'].extend(axisData, {
+	    Object.assign(axisData, {
 	      startIndex: startIndex,
 	      tickCount: tickCount,
 	      interval: interval,
@@ -45496,7 +47802,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    newBlockCount = axisData.labels.length - 1;
 	    var beforeRemainBlockCount = beforeBlockCount - interval * newBlockCount;
 	
-	    _tuiCodeSnippet2['default'].extend(axisData, {
+	    Object.assign(axisData, {
 	      startIndex: startIndex,
 	      interval: interval,
 	      eventTickCount: axisData.tickCount,
@@ -45730,22 +48036,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = axisDataMaker;
 
 /***/ }),
-/* 125 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
@@ -45871,36 +48177,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = ColumnChart;
 
 /***/ }),
-/* 126 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _forEachArray = __webpack_require__(9);
+	
+	var _forEachArray2 = _interopRequireDefault(_forEachArray);
+	
+	var _isExisty = __webpack_require__(14);
+	
+	var _isExisty2 = _interopRequireDefault(_isExisty);
+	
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _dynamicDataHelper = __webpack_require__(127);
+	var _dynamicDataHelper = __webpack_require__(154);
 	
 	var _dynamicDataHelper2 = _interopRequireDefault(_dynamicDataHelper);
 	
-	var _lineChartSeries = __webpack_require__(86);
+	var _lineChartSeries = __webpack_require__(112);
 	
 	var _lineChartSeries2 = _interopRequireDefault(_lineChartSeries);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -46015,7 +48329,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 	    }
 	
-	    _tuiCodeSnippet2['default'].forEachArray(chartTypes, addDataRatio);
+	    (0, _forEachArray2['default'])(chartTypes, addDataRatio);
 	  };
 	
 	  /**
@@ -46063,7 +48377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    if (this.dataProcessor.isCoordinateType()) {
 	      isDateTimeTypeXAxis = xAxisOption && xAxisOption.type === 'datetime';
-	      hasDateFormat = isDateTimeTypeXAxis && _tuiCodeSnippet2['default'].isExisty(xAxisOption.dateFormat);
+	      hasDateFormat = isDateTimeTypeXAxis && (0, _isExisty2['default'])(xAxisOption.dateFormat);
 	
 	      scaleOption.xAxis = {
 	        valueType: 'x'
@@ -46189,7 +48503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.dataProcessor.initData(rawData);
 	    this.dataProcessor.initZoomedRawData();
-	    this.dataProcessor.addDataFromRemainDynamicData(_tuiCodeSnippet2['default'].pick(this.options.series, 'shifting'));
+	    this.dataProcessor.addDataFromRemainDynamicData((0, _pick2['default'])(this.options.series, 'shifting'));
 	    this._renderForZoom(true);
 	    this._dynamicDataHelper.restartAnimation();
 	  };
@@ -46200,18 +48514,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = LineChart;
 
 /***/ }),
-/* 127 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
@@ -46489,32 +48803,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = DynamicDataHelper;
 
 /***/ }),
-/* 128 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _dynamicDataHelper = __webpack_require__(127);
+	var _dynamicDataHelper = __webpack_require__(154);
 	
 	var _dynamicDataHelper2 = _interopRequireDefault(_dynamicDataHelper);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _areaChartSeries = __webpack_require__(89);
+	var _areaChartSeries = __webpack_require__(115);
 	
 	var _areaChartSeries2 = _interopRequireDefault(_areaChartSeries);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -46773,7 +49087,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.dataProcessor.initData(rawData);
 	    this.dataProcessor.initZoomedRawData();
-	    this.dataProcessor.addDataFromRemainDynamicData(_tuiCodeSnippet2['default'].pick(this.options.series, 'shifting'));
+	    this.dataProcessor.addDataFromRemainDynamicData((0, _pick2['default'])(this.options.series, 'shifting'));
 	    this._renderForZoom(true);
 	    this._dynamicDataHelper.restartAnimation();
 	  };
@@ -46784,7 +49098,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = AreaChart;
 
 /***/ }),
-/* 129 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46793,19 +49107,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _validTypeMakerForYAxisOptions = __webpack_require__(130);
+	var _validTypeMakerForYAxisOptions = __webpack_require__(157);
 	
 	var _validTypeMakerForYAxisOptions2 = _interopRequireDefault(_validTypeMakerForYAxisOptions);
 	
@@ -47038,19 +49352,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = ColumnLineComboChart;
 
 /***/ }),
-/* 130 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 157 */
+/***/ (function(module, exports) {
 
-	'use strict';
+	"use strict";
 	
 	exports.__esModule = true;
-	exports['default'] = validTypeMakerForYAxisOptions;
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	exports["default"] = validTypeMakerForYAxisOptions;
+	/**
+	 * @fileoverview Implements valid type maker on yAxisOptions
+	 * @author NHN.
+	 *         FE Development Lab <dl_javascript@nhn.com>
+	 */
 	
 	/**
 	 * Make valid types on yAxisOptions
@@ -47085,14 +49398,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {object} chart types map
 	 * @private
 	 */
-	/**
-	 * @fileoverview Implements valid type maker on yAxisOptions
-	 * @author NHN.
-	 *         FE Development Lab <dl_javascript@nhn.com>
-	 */
-	
 	function makeChartTypesMap(rawSeriesData, yAxisOption) {
-	  var seriesTypes = _tuiCodeSnippet2['default'].keys(rawSeriesData).sort();
+	  var seriesTypes = Object.keys(rawSeriesData).sort();
 	  var optionChartTypes = getYAxisOptionChartTypes(seriesTypes, yAxisOption);
 	  var chartTypes = optionChartTypes.length ? optionChartTypes : seriesTypes;
 	  var validChartTypes = optionChartTypes.filter(function (_chartType) {
@@ -47148,20 +49455,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ }),
-/* 131 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _forEachArray = __webpack_require__(9);
+	
+	var _forEachArray2 = _interopRequireDefault(_forEachArray);
+	
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -47238,7 +49545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      _this2.dataProcessor.addDataRatiosForCoordinateType(chartType, limitMap, false);
 	    };
 	
-	    _tuiCodeSnippet2['default'].forEachArray(chartTypes, addDataRatio);
+	    (0, _forEachArray2['default'])(chartTypes, addDataRatio);
 	  };
 	
 	  /**
@@ -47269,7 +49576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = LineScatterComboChart;
 
 /***/ }),
-/* 132 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47278,29 +49585,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 	
-	var _chartBase = __webpack_require__(44);
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _forEachArray = __webpack_require__(9);
+	
+	var _forEachArray2 = _interopRequireDefault(_forEachArray);
+	
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
-	var _predicate = __webpack_require__(16);
+	var _predicate = __webpack_require__(32);
 	
 	var _predicate2 = _interopRequireDefault(_predicate);
 	
-	var _validTypeMakerForYAxisOptions = __webpack_require__(130);
+	var _validTypeMakerForYAxisOptions = __webpack_require__(157);
 	
 	var _validTypeMakerForYAxisOptions2 = _interopRequireDefault(_validTypeMakerForYAxisOptions);
 	
-	var _dynamicDataHelper = __webpack_require__(127);
+	var _dynamicDataHelper = __webpack_require__(154);
 	
 	var _dynamicDataHelper2 = _interopRequireDefault(_dynamicDataHelper);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -47313,6 +49624,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	/** Class representing a point. */
 	var LineAreaComboChart = function (_ChartBase) {
@@ -47551,7 +49863,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      };
 	    }
 	
-	    _tuiCodeSnippet2['default'].forEachArray(chartTypes, addDataRatio);
+	    (0, _forEachArray2['default'])(chartTypes, addDataRatio);
 	  };
 	
 	  /**
@@ -47646,7 +49958,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    this.dataProcessor.initData(rawData);
 	    this.dataProcessor.initZoomedRawData();
-	    this.dataProcessor.addDataFromRemainDynamicData(_tuiCodeSnippet2['default'].pick(this.options.series, 'shifting'));
+	    this.dataProcessor.addDataFromRemainDynamicData((0, _pick2['default'])(this.options.series, 'shifting'));
 	    this._renderForZoom(true);
 	    this._dynamicDataHelper.restartAnimation();
 	  };
@@ -47657,24 +49969,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = LineAreaComboChart;
 
 /***/ }),
-/* 133 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -47711,7 +50019,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      rawData: rawData,
 	      theme: theme,
 	      options: options,
-	      seriesTypes: _tuiCodeSnippet2['default'].keys(rawData.series).sort(),
+	      seriesTypes: Object.keys(rawData.series).sort(),
 	      chartTypes: ['pie', 'pie'],
 	      isVertical: true
 	    }));
@@ -47776,18 +50084,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = PieDonutComboChart;
 
 /***/ }),
-/* 134 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -47872,24 +50180,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = PieChart;
 
 /***/ }),
-/* 135 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -47985,7 +50293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _chartBase2['default'].prototype._setDefaultOptions.call(this, options);
 	    this.options.circleLegend = this.options.circleLegend || {};
 	
-	    if (_tuiCodeSnippet2['default'].isUndefined(this.options.circleLegend.visible)) {
+	    if ((0, _isUndefined2['default'])(this.options.circleLegend.visible)) {
 	      this.options.circleLegend.visible = true;
 	    }
 	  };
@@ -48028,18 +50336,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = BubbleChart;
 
 /***/ }),
-/* 136 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -48152,22 +50460,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = ScatterChart;
 
 /***/ }),
-/* 137 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _colorSpectrum = __webpack_require__(138);
+	var _colorSpectrum = __webpack_require__(165);
 	
 	var _colorSpectrum2 = _interopRequireDefault(_colorSpectrum);
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
@@ -48313,14 +50621,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = HeatmapChart;
 
 /***/ }),
-/* 138 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _colorutil = __webpack_require__(139);
+	var _colorutil = __webpack_require__(166);
 	
 	var _colorutil2 = _interopRequireDefault(_colorutil);
 	
@@ -48399,7 +50707,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = ColorSpectrum;
 
 /***/ }),
-/* 139 */
+/* 166 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -48647,24 +50955,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 140 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _pick = __webpack_require__(20);
+	
+	var _pick2 = _interopRequireDefault(_pick);
+	
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _colorSpectrum = __webpack_require__(138);
+	var _colorSpectrum = __webpack_require__(165);
 	
 	var _colorSpectrum2 = _interopRequireDefault(_colorSpectrum);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -48677,6 +50985,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	/** Class representing a point. */
 	var TreemapChart = function (_ChartBase) {
@@ -48732,7 +51041,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    this.componentManager.register('tooltip', 'tooltip', Object.assign({
-	      labelTheme: _tuiCodeSnippet2['default'].pick(this.theme, 'series', 'label'),
+	      labelTheme: (0, _pick2['default'])(this.theme, 'series', 'label'),
 	      colorSpectrum: colorSpectrum
 	    }));
 	
@@ -48779,30 +51088,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = TreemapChart;
 
 /***/ }),
-/* 141 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _mapManager = __webpack_require__(37);
+	var _mapManager = __webpack_require__(54);
 	
 	var _mapManager2 = _interopRequireDefault(_mapManager);
 	
-	var _mapChartMapModel = __webpack_require__(142);
+	var _mapChartMapModel = __webpack_require__(169);
 	
 	var _mapChartMapModel2 = _interopRequireDefault(_mapChartMapModel);
 	
-	var _mapChartDataProcessor = __webpack_require__(143);
+	var _mapChartDataProcessor = __webpack_require__(170);
 	
 	var _mapChartDataProcessor2 = _interopRequireDefault(_mapChartDataProcessor);
 	
-	var _colorSpectrum = __webpack_require__(138);
+	var _colorSpectrum = __webpack_require__(165);
 	
 	var _colorSpectrum2 = _interopRequireDefault(_colorSpectrum);
 	
@@ -48929,24 +51238,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = MapChart;
 
 /***/ }),
-/* 142 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _const = __webpack_require__(9);
+	var _isUndefined = __webpack_require__(13);
+	
+	var _isUndefined2 = _interopRequireDefault(_isUndefined);
+	
+	var _pluck = __webpack_require__(58);
+	
+	var _pluck2 = _interopRequireDefault(_pluck);
+	
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _arrayUtil = __webpack_require__(11);
+	var _arrayUtil = __webpack_require__(26);
 	
 	var _arrayUtil2 = _interopRequireDefault(_arrayUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -48977,14 +51290,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * }}
 	     */
 	    this.commandFuncMap = {
-	      M: _tuiCodeSnippet2['default'].bind(this._makeCoordinate, this),
-	      m: _tuiCodeSnippet2['default'].bind(this._makeCoordinateFromRelativeCoordinate, this),
-	      L: _tuiCodeSnippet2['default'].bind(this._makeCoordinate, this),
-	      l: _tuiCodeSnippet2['default'].bind(this._makeCoordinateFromRelativeCoordinate, this),
-	      H: _tuiCodeSnippet2['default'].bind(this._makeXCoordinate, this),
-	      h: _tuiCodeSnippet2['default'].bind(this._makeXCoordinateFroRelativeCoordinate, this),
-	      V: _tuiCodeSnippet2['default'].bind(this._makeYCoordinate, this),
-	      v: _tuiCodeSnippet2['default'].bind(this._makeYCoordinateFromRelativeCoordinate, this)
+	      M: this._makeCoordinate.bind(this),
+	      m: this._makeCoordinateFromRelativeCoordinate.bind(this),
+	      L: this._makeCoordinate.bind(this),
+	      l: this._makeCoordinateFromRelativeCoordinate.bind(this),
+	      H: this._makeXCoordinate.bind(this),
+	      h: this._makeXCoordinateFroRelativeCoordinate.bind(this),
+	      V: this._makeYCoordinate.bind(this),
+	      v: this._makeYCoordinateFromRelativeCoordinate.bind(this)
 	    };
 	
 	    /**
@@ -49220,7 +51533,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var commandFunc = _this.commandFuncMap[datum.type];
 	      var coordinate = commandFunc(datum.coordinate, prevCoordinate);
 	
-	      _tuiCodeSnippet2['default'].extend(prevCoordinate, coordinate);
+	      Object.assign(prevCoordinate, coordinate);
 	
 	      return coordinate;
 	    });
@@ -49235,11 +51548,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  MapChartMapModel.prototype._findBoundFromCoordinates = function _findBoundFromCoordinates(coordinates) {
-	    var xs = _tuiCodeSnippet2['default'].pluck(coordinates, 'x').filter(function (x) {
-	      return !_tuiCodeSnippet2['default'].isUndefined(x);
+	    var xs = (0, _pluck2['default'])(coordinates, 'x').filter(function (x) {
+	      return !(0, _isUndefined2['default'])(x);
 	    });
-	    var ys = _tuiCodeSnippet2['default'].pluck(coordinates, 'y').filter(function (y) {
-	      return !_tuiCodeSnippet2['default'].isUndefined(y);
+	    var ys = (0, _pluck2['default'])(coordinates, 'y').filter(function (y) {
+	      return !(0, _isUndefined2['default'])(y);
 	    });
 	    var maxLeft = _arrayUtil2['default'].max(xs);
 	    var minLeft = _arrayUtil2['default'].min(xs);
@@ -49432,24 +51745,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = MapChartMapModel;
 
 /***/ }),
-/* 143 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _dataProcessorBase = __webpack_require__(103);
+	var _pluck = __webpack_require__(58);
+	
+	var _pluck2 = _interopRequireDefault(_pluck);
+	
+	var _dataProcessorBase = __webpack_require__(130);
 	
 	var _dataProcessorBase2 = _interopRequireDefault(_dataProcessorBase);
 	
-	var _renderUtil = __webpack_require__(8);
+	var _renderUtil = __webpack_require__(16);
 	
 	var _renderUtil2 = _interopRequireDefault(_renderUtil);
-	
-	var _tuiCodeSnippet = __webpack_require__(7);
-	
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -49462,6 +51775,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *         FE Development Lab <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+	
 	
 	/**
 	 * Raw series data.
@@ -49579,7 +51893,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  MapChartDataProcessor.prototype.getValues = function getValues() {
-	    return _tuiCodeSnippet2['default'].pluck(this.getValueMap(), 'value');
+	    return (0, _pluck2['default'])(this.getValueMap(), 'value');
 	  };
 	
 	  /**
@@ -49636,18 +51950,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = MapChartDataProcessor;
 
 /***/ }),
-/* 144 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _lineChartSeries = __webpack_require__(86);
+	var _lineChartSeries = __webpack_require__(112);
 	
 	var _lineChartSeries2 = _interopRequireDefault(_lineChartSeries);
 	
@@ -49748,18 +52062,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = RadialChart;
 
 /***/ }),
-/* 145 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
@@ -49885,18 +52199,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = BoxplotChart;
 
 /***/ }),
-/* 146 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _chartBase = __webpack_require__(44);
+	var _chartBase = __webpack_require__(64);
 	
 	var _chartBase2 = _interopRequireDefault(_chartBase);
 	
-	var _rawDataHandler = __webpack_require__(33);
+	var _rawDataHandler = __webpack_require__(49);
 	
 	var _rawDataHandler2 = _interopRequireDefault(_rawDataHandler);
 	
@@ -50003,20 +52317,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports['default'] = BulletChart;
 
 /***/ }),
-/* 147 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _const = __webpack_require__(9);
+	var _const = __webpack_require__(22);
 	
 	var _const2 = _interopRequireDefault(_const);
 	
-	var _themeManager = __webpack_require__(35);
+	var _themeManager = __webpack_require__(52);
 	
 	var _themeManager2 = _interopRequireDefault(_themeManager);
 	
-	var _defaultTheme = __webpack_require__(36);
+	var _defaultTheme = __webpack_require__(53);
 	
 	var _defaultTheme2 = _interopRequireDefault(_defaultTheme);
 	
@@ -50025,7 +52339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	_themeManager2['default'].register(_const2['default'].DEFAULT_THEME_NAME, _defaultTheme2['default']);
 
 /***/ }),
-/* 148 */
+/* 175 */
 /***/ (function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
