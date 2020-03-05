@@ -10,15 +10,14 @@ module.exports = {
     sourceType: 'module',
     ecmaFeatures: {
       impliedStrict: true
-    },
-    project: './tsconfig.json'
+    }
   },
   plugins: ['jest', 'prettier', '@typescript-eslint'],
   extends: [
     'tui',
-    'prettier',
     'prettier/@typescript-eslint',
     'plugin:jest/recommended',
+    'plugin:prettier/recommended',
     'plugin:@typescript-eslint/recommended'
   ],
   rules: {

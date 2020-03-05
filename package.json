@@ -1,25 +1,30 @@
 {
-  "name": "tui-chart",
+  "name": "@toast-ui/chart",
   "version": "4.0.0",
   "description": "TOAST UI Application: Chart",
-  "main": "index.js",
+  "main": "dist/tui-chart.js",
   "scripts": {
+    "lint": "eslint .",
     "test": "jest --watch",
     "build:clean": "rm -rf ./dist",
-    "build": "webpack --mode production",
-    "serve": "webpack-dev-server --mode development",
+    "build": "npm run lint && webpack --mode=production",
+    "serve": "webpack-dev-server --mode=development",
     "storybook": "start-storybook"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shiren/chart4.git"
+    "url": "git+https://github.com/nhn/tui.chart.git"
   },
   "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shiren/chart4/issues"
+    "url": "https://github.com/nhn/tui.chart/issues"
   },
-  "homepage": "https://github.com/shiren/chart4#readme",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "homepage": "https://ui.toast.com",
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.7.4",

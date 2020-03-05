@@ -1,5 +1,5 @@
+/* eslint-disable */
 const path = require('path');
-
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -50,7 +50,8 @@ module.exports = (env, argv) => {
         clientLogLevel: 'debug',
         stats: {
           color: true
-        }
+        },
+        contentBase: __dirname
       },
       devtool: 'cheap-module-eval-source-map',
       optimization: {
