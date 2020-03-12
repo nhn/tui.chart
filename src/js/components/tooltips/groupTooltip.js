@@ -36,8 +36,8 @@ class GroupTooltip extends TooltipBase {
   constructor(params) {
     super(params);
     this.prevIndex = null;
+    this.tickInterval = null;
     this.isBullet = predicate.isBulletChart(params.chartType);
-    this.tickInterval = params.tickInterval || 0;
   }
 
   /**
@@ -155,6 +155,7 @@ class GroupTooltip extends TooltipBase {
    */
   zoom() {
     this.prevIndex = null;
+    this.tickInterval = null;
     TooltipBase.prototype.zoom.call(this);
   }
 
@@ -436,6 +437,10 @@ class GroupTooltip extends TooltipBase {
   _showTooltip(elTooltip, params, prevPosition) {
     if (!isNull(this.prevIndex)) {
       this.eventBus.fire('hideGroupAnimation', this.prevIndex);
+    }
+
+    if (isNull(this.tickInterval)) {
+      this.tickInterval = params.tickInterval;
     }
 
     elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
