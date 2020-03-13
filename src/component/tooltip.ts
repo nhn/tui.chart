@@ -47,7 +47,6 @@ export default class Tooltip extends Component {
   render({ layout }: ChartState) {
     this.rect = layout.plot;
     this.models = [];
-    console.log('render', layout);
   }
 
   renderTooltip() {

@@ -1,9 +1,7 @@
 import Component from './component';
-import { ChartState, ValueEdge, Series } from '@src/store/store';
-
 import { CircleModel } from '@src/brushes/lineSeries';
-
 import { Point, ClipRectAreaModel, LinePointsModel } from '@src/brushes/basic';
+import { ChartState, Series, ValueEdge } from '../../types/store/store';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -25,7 +23,8 @@ export default class LineSeries extends Component {
     }
   }
 
-  render({ layout, series, scale, theme, options }: ChartState) {
+  render(chartState: ChartState) {
+    const { layout, series, scale, theme, options } = chartState;
     this.rect = layout.plot;
 
     const { yAxis } = scale;
@@ -81,33 +80,19 @@ export default class LineSeries extends Component {
       const points: Point[] = data.map((v, dataIndex) => {
         const valueRatio = (v - limit.min) / (limit.max - limit.min);
 
-        const y = (1 - valueRatio) * this.rect!.height;
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
+        const y = (1 - valueRatio) * this.rect!.height;
 
-        return {
-          x,
-          y
-        };
+        return { x, y };
       });
 
-      return {
-        type: 'linePoints',
-        lineWidth: 5,
-        color: colors[seriesIndex],
-        points
-      };
+      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points };
     });
   }
 
   renderCircle(lineSeriesModel: LinePointsModel[]): CircleModel[] {
     return lineSeriesModel.flatMap(({ points, color }) => {
-      return points.map(({ x, y }) => ({
-        type: 'circle',
-        color,
-        x,
-        y,
-        radius: 4
-      }));
+      return points.map(({ x, y }) => ({ type: 'circle', color, x, y, radius: 4 }));
     });
   }
 

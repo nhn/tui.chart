@@ -44,6 +44,8 @@ const responderDetectors: {
 export default class Chart {
   store: Store;
 
+  ___animId___ = null;
+
   readonly el: HTMLElement;
 
   ctx!: CanvasRenderingContext2D;

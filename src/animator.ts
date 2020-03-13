@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart from './charts/chart';
 
 type Anim = {
   chart: Chart;
@@ -22,7 +22,7 @@ class Animator {
     chart,
     duration,
     requestor,
-    onCompleted = () => {}, // eslint-disable-line
+    onCompleted = () => {},
     onFrame = delta => {
       chart.update(delta);
     }
@@ -31,7 +31,7 @@ class Animator {
     duration: number;
     requestor: any;
     onCompleted: Function;
-    onFrame: (delta: number) => void;
+    onFrame?: (delta: number) => void;
   }) {
     const prevIndex = this.anims.findIndex(anim => anim.requestor === requestor);
 

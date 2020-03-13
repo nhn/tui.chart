@@ -37,6 +37,8 @@ export function tick(ctx: CanvasRenderingContext2D, { x, y, isYAxis }: TickModel
 }
 
 export function label(ctx: CanvasRenderingContext2D, { x, y, text, align = 'left' }: LabelModel) {
+  ctx.font = 'normal 11px Arial';
+  ctx.fillStyle = '#333';
   ctx.textAlign = align;
   ctx.textBaseline = 'middle';
   ctx.fillText(text, x, y + 1);

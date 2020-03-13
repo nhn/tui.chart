@@ -10,107 +10,17 @@ import {
   invisibleWork,
   isObservable
 } from '../../src/store/reactive';
+import {
+  ChartState,
+  ActionFunc,
+  StoreOptions,
+  ComputedFunc,
+  WatchFunc,
+  StoreModule,
+  ObserveFunc
+} from '../../types/store/store';
 
 import { isUndefined, forEach, pickWithMakeup } from '@src/helpers/utils';
-
-export interface StoreOption {
-  state?: Partial<ChartState> | StateFunc;
-  watch?: Record<string, WatchFunc>;
-  computed?: Record<string, ComputedFunc>;
-  action?: Record<string, ActionFunc> & ThisType<Store>;
-  observe?: Record<string, ObserveFunc> & ThisType<Store>;
-}
-
-export interface StoreModule extends StoreOption {
-  name: string;
-}
-
-export interface Rect {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-}
-
-export type Theme = {
-  series: {
-    colors: string[];
-  };
-};
-
-export interface ChartState {
-  chart: {
-    width: number;
-    height: number;
-  };
-
-  layout: {
-    [key: string]: Rect;
-  };
-
-  scale: {
-    [key: string]: ScaleData;
-  };
-
-  disabledSeries: string[];
-
-  series: {
-    [key: string]: SeriesData;
-  };
-
-  // 기존의 limitMap
-  dataRange: {
-    [key: string]: ValueEdge;
-  };
-
-  axes: {
-    [key: string]: AxisData;
-  };
-
-  theme: Theme;
-
-  [key: string]: any;
-}
-
-export interface AxisData {
-  labels: string[];
-  tickCount: number;
-  validTickCount: number;
-  isLabelAxis: boolean;
-}
-
-export interface ValueEdge {
-  max: number;
-  min: number;
-}
-
-export interface SeriesData {
-  seriesCount: number;
-  seriesGroupCount: number;
-  data: Series[];
-}
-
-export interface SeriesGroup {
-  seriesCount: number;
-  seriesGroupCount: number;
-}
-
-export interface ScaleData {
-  limit: ValueEdge;
-  step: number;
-  stepCount: number;
-}
-
-export interface Series {
-  name: string;
-  data: number[];
-}
-
-type StateFunc = () => Partial<ChartState>;
-type ActionFunc = (store: Store, ...args: any[]) => void;
-type ComputedFunc = (state: ChartState, computed: Record<string, any>) => any;
-export type ObserveFunc = (state: ChartState, computed: Record<string, any>) => void;
-type WatchFunc = (value: any) => void;
 
 export default class Store {
   state: ChartState = {
@@ -124,15 +34,15 @@ export default class Store {
     theme: {
       series: {
         colors: [
-          '#83b14e',
-          '#458a3f',
-          '#295ba0',
-          '#2a4175',
-          '#289399',
-          '#289399',
-          '#617178',
-          '#8a9a9a',
+          '#00a9ff',
+          '#ffb840',
+          '#ff5a46',
+          '#00bd9f',
+          '#785fff',
+          '#f28b8c',
+          '#989486',
           '#516f7d',
+          '#29dbe3',
           '#dddddd'
         ]
       }
@@ -144,7 +54,7 @@ export default class Store {
 
   actions: Record<string, ActionFunc> = {};
 
-  constructor(options?: StoreOption) {
+  constructor(options?: StoreOptions) {
     this.setRootState(this.state);
 
     if (options) {
@@ -175,7 +85,7 @@ export default class Store {
                 }
               }
             }
-          } as StoreOption,
+          } as StoreOptions,
           options
         )
       );
@@ -236,7 +146,7 @@ export default class Store {
     notify(target, key);
   }
 
-  setModule(name: string | StoreModule, options?: StoreOption | StoreModule) {
+  setModule(name: string | StoreModule, options?: StoreOptions | StoreModule) {
     if (!options) {
       options = name as StoreModule;
       name = (options as StoreModule).name;

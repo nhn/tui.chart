@@ -1,7 +1,7 @@
 import Component from './component';
 import Painter from '@src/painter';
 
-import { ChartState } from '@src/store/store';
+import { ChartState } from '../../types/store/store';
 
 import { LabelModel, TickModel, LineModel } from '@src/brushes/axis';
 
@@ -68,27 +68,25 @@ export default class Axis extends Component {
 
     this.models.axisLine = [this.renderAxisLineModel()];
 
-    if (!this.drawModels) {
-      this.drawModels = {};
-
-      ['tick', 'label'].forEach(type => {
-        this.drawModels[type] = this.models[type].map(m => {
-          const drawModel = {
-            ...m
-          };
-
-          if (isYAxis(this.name)) {
-            drawModel.y = 0;
-          } else {
-            drawModel.x = 0;
-          }
-
-          return drawModel;
-        });
-      });
-
-      this.drawModels.axisLine = this.models.axisLine;
-    }
+    // if (!this.drawModels) {
+    //   this.drawModels = {};
+    //
+    //   ['tick', 'label'].forEach(type => {
+    //     this.drawModels[type] = this.models[type].map(m => {
+    //       const drawModel = { ...m };
+    //
+    //       if (isYAxis(this.name)) {
+    //         drawModel.y = 0;
+    //       } else {
+    //         drawModel.x = 0;
+    //       }
+    //
+    //       return drawModel;
+    //     });
+    //   });
+    //
+    //   this.drawModels.axisLine = this.models.axisLine;
+    // }
   }
 
   renderAxisLineModel() {
@@ -158,9 +156,11 @@ export default class Axis extends Component {
     const labelAlign: CanvasTextAlign = labelAdjustment ? 'center' : 'left';
 
     const labelModels = relativePositions.map((position, index) => {
+      const textIndex = isYAxis(this.name) ? labels.length - 1 - index : index;
+
       const newLabel: any = {
         type: 'label',
-        text: labels[labels.length - 1 - index],
+        text: labels[textIndex],
         align: labelAlign
       };
 
@@ -190,7 +190,7 @@ export default class Axis extends Component {
   }
 
   beforeDraw(painter: Painter) {
-    painter.ctx.strokeStyle = 'black';
+    painter.ctx.strokeStyle = 'rgba(0,0,0,0.5)';
     painter.ctx.lineWidth = 1;
   }
 }

@@ -111,7 +111,8 @@ export function observable(
 
         if (
           !doingInvisibleWork &&
-          currentCollectorObserver && !obs.includes(currentCollectorObserver)
+          currentCollectorObserver &&
+          !obs.includes(currentCollectorObserver)
         ) {
           // console.log('collect observer', key);
           obs.push(currentCollectorObserver);
