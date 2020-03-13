@@ -4,7 +4,7 @@ import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
 
-type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip';
+type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip' | 'plot';
 
 export default abstract class Component {
   name = 'Component';
