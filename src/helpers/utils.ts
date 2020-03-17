@@ -119,7 +119,7 @@ export function debounce(fn: Function, delay = 0) {
   return debounced;
 }
 
-export function merge<T extends object>(target: T, ...args: T[]) {
+export function merge(target: Record<string, any>, ...args: Record<string, any>[]) {
   target = target || {};
 
   args.forEach(obj => {
