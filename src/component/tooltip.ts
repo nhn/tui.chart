@@ -45,7 +45,7 @@ export default class Tooltip extends Component {
       )
     ];
 
-    this.models[0].height = Math.max(tooltipInfos.length * 30 + 10, 40); // @TODO: 높이 계산
+    this.models[0].height = Math.max(tooltipInfos.length * 30 + 10, 50); // @TODO: 높이 계산
 
     if (!this.drawModels) {
       this.drawModels = [{ ...this.models[0] }];

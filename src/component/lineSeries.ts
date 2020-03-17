@@ -80,7 +80,7 @@ export default class LineSeries extends Component {
         const valueRatio = (v - limit.min) / (limit.max - limit.min);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
-        const y = (1 - valueRatio) * this.rect!.height;
+        const y = (1 - valueRatio) * this.rect.height;
 
         return { x, y };
       });

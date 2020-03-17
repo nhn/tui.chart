@@ -3,6 +3,8 @@ import { BaseChartOptions, LineChartOptions, LineSeriesType, Rect } from '../opt
 
 type SeriesType = LineSeriesType;
 
+export type AxisType = 'xAxis' | 'yAxis' | 'yCenterAxis';
+
 export type Series = {
   line?: LineSeriesType[];
 };

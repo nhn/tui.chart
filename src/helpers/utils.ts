@@ -21,10 +21,13 @@ export function isString(value: unknown): value is string {
   return typeof value === 'string';
 }
 
-export function forEach(obj: Record<string, any>, cb: (item: any, key: string) => void) {
-  for (const k in obj) {
-    if (obj.hasOwnProperty(k)) {
-      cb(obj[k], k);
+export function forEach<T extends object, K extends Extract<keyof T, string>, V extends T[K]>(
+  obj: T,
+  cb: (item: V, key: K) => void
+) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      cb(obj[key as K] as V, key as K);
     }
   }
 }
@@ -86,10 +89,7 @@ export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: 
   return resultMap;
 }
 
-export function pickWithMakeup(
-  target: Record<string, any>,
-  args: Array<string>
-): Record<string, any> {
+export function pickWithMakeup(target: Record<string, any>, args: string[]) {
   let i = 0;
   const { length } = args;
 
@@ -119,7 +119,7 @@ export function debounce(fn: Function, delay = 0) {
   return debounced;
 }
 
-export function merge(target: Record<string, any>, ...args: Record<string, any>[]) {
+export function merge<T extends object>(target: T, ...args: T[]) {
   target = target || {};
 
   args.forEach(obj => {
@@ -153,8 +153,6 @@ export function throttle(fn: Function, interval = 0) {
   const debounced = debounce(tick, interval);
 
   function throttled(...args) {
-    // eslint-disable-line require-jsdoc
-
     if (isLeading) {
       tick(...args);
       isLeading = false;
