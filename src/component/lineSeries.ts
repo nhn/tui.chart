@@ -5,7 +5,7 @@ import { ClipRectAreaModel, LinePointsModel } from '../../types/components/serie
 import { ChartState, ValueEdge } from '../../types/store/store';
 import { LineSeriesType } from '../../types/options';
 
-export type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
+type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
 export default class LineSeries extends Component {
   models!: DrawModels[];

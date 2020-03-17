@@ -3,13 +3,8 @@ import { Rect } from '../../types/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
-import { AxisModels } from '@src/component/axis';
-import { PlotModel } from '../../types/components/plot';
-import { TooltipModel } from '../../types/components/tooltip';
-import { DrawModels } from '@src/component/lineSeries';
 
 type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip' | 'plot';
-type Models = AxisModels | Record<string, PlotModel[]> | TooltipModel[] | DrawModels[];
 
 export default abstract class Component {
   name = 'Component';
@@ -29,11 +24,11 @@ export default abstract class Component {
 
   eventBus: EventEmitter;
 
-  models!: Models;
+  models!: any; // @TODO: 정의
 
-  drawModels!: any;
+  drawModels!: any; // @TODO: 정의
 
-  responders!: any[];
+  responders!: any[]; // @TODO: 정의
 
   constructor({ store, eventBus }: { store: Store; eventBus: EventEmitter }) {
     this.store = store;

@@ -36,7 +36,7 @@ export default class Tooltip extends Component {
 
           maxLength = Math.max(maxLength, data.label.length + data.value.toString().length);
 
-          acc.width = Math.max(maxLength * 15 + 10, 200); // 너비 계산도 다시
+          acc.width = Math.max(maxLength * 15 + 10, 200); // @TODO: 너비 계산
           acc.data.push(data);
 
           return acc;
@@ -45,7 +45,7 @@ export default class Tooltip extends Component {
       )
     ];
 
-    this.models[0].height = Math.max(tooltipInfos.length * 30 + 10, 40); // 높이 계산도 다시
+    this.models[0].height = Math.max(tooltipInfos.length * 30 + 10, 40); // @TODO: 높이 계산
 
     if (!this.drawModels) {
       this.drawModels = [{ ...this.models[0] }];

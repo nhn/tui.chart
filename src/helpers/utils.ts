@@ -65,8 +65,6 @@ export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
 }
 
 export function pick<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
-  console.log(obj, propNames);
-
   const resultMap = {} as Pick<T, K>;
   Object.keys(obj).forEach(key => {
     if (includes(propNames, key as K)) {

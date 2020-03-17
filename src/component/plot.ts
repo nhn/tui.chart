@@ -27,12 +27,10 @@ export default class Plot extends Component {
   }
 
   getTickPixelPositions(vertical: boolean, axes: Record<string, any>) {
-    // divide 도 나중에 고려 필요
     const size = vertical ? this.rect.width : this.rect.height;
     const { tickCount } = vertical ? axes.xAxis : axes.yAxis;
 
     return makeTickPixelPositions(size, tickCount);
-    // const tickCount = vertical ?
   }
 
   render({ layout, axes }: ChartState) {

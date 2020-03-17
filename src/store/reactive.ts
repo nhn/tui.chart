@@ -187,9 +187,11 @@ export function invisibleWork(fn: Function) {
 export function notifyByPath<T extends Record<string, any>>(holder: T, namePath: string) {
   const splited = namePath.split('.');
   const key = splited.splice(splited.length - 1, 1)[0];
-  const target = pick(holder, splited);
+  const target = pick(holder, ...splited);
 
-  notify(target, key);
+  if (target) {
+    notify(target, key);
+  }
 }
 
 function invokeObs(obs: Array<Function>) {
@@ -243,7 +245,7 @@ export function watch(holder: Record<string, any>, path: string, fn: Function): 
 
   const splited = path.split('.');
   const key = splited.splice(splited.length - 1, 1)[0];
-  const target = pick(holder, splited);
+  const target = pick(holder, ...splited);
 
   if (!target) {
     return null;
