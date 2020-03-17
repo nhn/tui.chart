@@ -1,4 +1,4 @@
-import Chart from '@src/charts/lineChart';
+import LineChart from '@src/charts/lineChart';
 
 export default {
   title: 'Line'
@@ -88,7 +88,7 @@ function createChart(customOptions?: Record<string, any>) {
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
 
-  const chart = new Chart({
+  const chart = new LineChart({
     el,
     data: {
       categories,

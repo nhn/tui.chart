@@ -1,9 +1,11 @@
 import Component from './component';
-import { CircleModel } from '@src/brushes/lineSeries';
-import { Point, ClipRectAreaModel, LinePointsModel } from '@src/brushes/basic';
-import { ChartState, Series, ValueEdge } from '../../types/store/store';
+import { CircleModel } from '../../types/components/series';
+import { Point } from '../../types/options';
+import { ClipRectAreaModel, LinePointsModel } from '../../types/components/series';
+import { ChartState, ValueEdge } from '../../types/store/store';
+import { LineSeriesType } from '../../types/options';
 
-type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
+export type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
 export default class LineSeries extends Component {
   models!: DrawModels[];
@@ -29,7 +31,7 @@ export default class LineSeries extends Component {
 
     const { yAxis } = scale;
 
-    const { pointOnColumn } = options.xAxis;
+    const pointOnColumn = options.xAxis?.pointOnColumn || true;
 
     const tickDistance = this.rect.width / series.line.seriesGroupCount;
 
@@ -53,10 +55,7 @@ export default class LineSeries extends Component {
 
     this.models = [this.renderClipRectAreaModel(), ...lineSeriesModel];
 
-    this.responders = seriesCircleModel.map((m, index) => ({
-      ...m,
-      data: tooltipData[index]
-    }));
+    this.responders = seriesCircleModel.map((m, index) => ({ ...m, data: tooltipData[index] }));
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -70,7 +69,7 @@ export default class LineSeries extends Component {
   }
 
   renderLinePointsModel(
-    seriesRawData: Series[],
+    seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
     pointOnColumn: boolean,

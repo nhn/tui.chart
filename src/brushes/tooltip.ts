@@ -1,27 +1,8 @@
 import { pathRect } from '@src/brushes/basic';
+import { TooltipModel } from '../../types/components/tooltip';
 
-export type TooltipData = {
-  data: {
-    label: string;
-    color: string;
-    value: string | number;
-  };
-  [key: string]: any;
-};
-
-export type TooltipModel = {
-  type: 'tooltip';
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  data: TooltipData['data'][];
-};
-
-export function tooltip(
-  ctx: CanvasRenderingContext2D,
-  { x, y, width, height, data }: TooltipModel
-) {
+export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipModel) {
+  const { x, y, width, height, data } = tooltipModel;
   const xPadding = 15;
   const yPadding = 18;
 
@@ -48,6 +29,6 @@ export function tooltip(
     ctx.textAlign = 'left';
     ctx.fillText(label, x + xPadding + 20, cy);
     ctx.textAlign = 'right';
-    ctx.fillText(value, x + width - xPadding, cy);
+    ctx.fillText(String(value), x + width - xPadding, cy);
   });
 }

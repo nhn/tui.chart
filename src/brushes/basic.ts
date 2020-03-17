@@ -1,47 +1,16 @@
-export type Point = {
-  x: number;
-  y: number;
-};
+import { ClipRectAreaModel, LinePointsModel, PathRectModel } from '../../types/components/series';
 
-export type ClipRectAreaModel = {
-  type: 'clipRectArea';
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
+  const { x, y, width, height } = clipRectAreaModel;
 
-export type LinePointsModel = {
-  type: 'linePoints';
-  color: string;
-  lineWidth: number;
-  points: Point[];
-};
-
-export type PathRectModel = {
-  type: 'pathRect';
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  radius?: number;
-  fill?: string;
-  stroke?: string;
-};
-
-export function clipRectArea(
-  ctx: CanvasRenderingContext2D,
-  { x, y, width, height }: ClipRectAreaModel
-) {
   ctx.beginPath();
   ctx.rect(x, y, width, height);
   ctx.clip();
 }
 
-export function linePoints(
-  ctx: CanvasRenderingContext2D,
-  { color, points, lineWidth }: LinePointsModel
-) {
+export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LinePointsModel) {
+  const { color, points, lineWidth } = linePointsModel;
+
   ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';
   ctx.strokeStyle = color;
@@ -59,10 +28,9 @@ export function linePoints(
   ctx.closePath();
 }
 
-export function pathRect(
-  ctx: CanvasRenderingContext2D,
-  { x, y, width, height, radius = 0, stroke = 'black', fill = '' }: PathRectModel
-) {
+export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectModel) {
+  const { x, y, width, height, radius = 0, stroke = 'black', fill = '' } = pathRectModel;
+
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
   ctx.lineTo(x + width - radius, y);

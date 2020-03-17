@@ -1,52 +1,20 @@
-import Store, { ChartState } from '@src/store/store';
-
-import layout from '@src/layout';
-import dataRange from '@src/dataRange';
-
+import Store from '@src/store/store';
+import layout from '@src/store/layout';
+import dataRange from '@src/store/dataRange';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
-
 import animator from '@src/animator';
-
 import { debounce } from '@src/helpers/utils';
-
-export type ChartSetting = {
-  el: HTMLElement;
-  chart?: ChartState['chart'];
-  data: Record<string, any>;
-  options: Record<string, any>;
-};
-
-// 추후 별도 모듈로 분리
-const responderDetectors: {
-  [key: string]: Function;
-} = {
-  circle: (mousePosition: any, { x, y, radius }: any, componentRect: any) => {
-    const radiusAdjustment = 10;
-
-    return (
-      Math.pow(mousePosition.x - (x + componentRect.x), 2) +
-        Math.pow(mousePosition.y - (y + componentRect.y), 2) <
-      Math.pow(radius + radiusAdjustment, 2)
-    );
-  },
-  rect: (mousePosition: any, { x, y, width, height }: any) => {
-    return (
-      mousePosition.x >= x &&
-      mousePosition.x <= x + width &&
-      mousePosition.y >= y &&
-      mousePosition.y <= y + height
-    );
-  }
-};
+import { ChartProps } from '../../types/options';
+import { responderDetectors } from '@src/responderDetectors';
 
 export default class Chart {
   store: Store;
 
   ___animId___ = null;
 
-  readonly el: HTMLElement;
+  readonly el: Element;
 
   ctx!: CanvasRenderingContext2D;
 
@@ -56,15 +24,16 @@ export default class Chart {
 
   readonly componentManager: ComponentManager;
 
-  constructor(settings: ChartSetting) {
-    const { el } = settings;
+  constructor(props: ChartProps) {
+    const { el, options, data } = props;
+
     this.el = el;
 
     this.store = new Store({
       state: {
-        chart: settings.options.chart,
-        data: settings.data,
-        options: settings.options
+        chart: options.chart,
+        data,
+        options
       }
     });
 
@@ -88,13 +57,13 @@ export default class Chart {
           },
           chart: this,
           duration: 1000,
-          requestor: this
+          requester: this
         });
       }, 10)
     );
 
-    this.eventBus.on('needSubLoop', options => {
-      animator.add({ ...options, chart: this });
+    this.eventBus.on('needSubLoop', opts => {
+      animator.add({ ...opts, chart: this });
     });
 
     this.eventBus.on(
@@ -120,7 +89,7 @@ export default class Chart {
     };
 
     this.componentManager.forEach(component => {
-      if (!(component as any)[delegationMethod]) {
+      if (!component[delegationMethod]) {
         return;
       }
 
@@ -128,11 +97,11 @@ export default class Chart {
         return;
       }
 
-      const detected = (component.responders || []).filter((m: any) => {
+      const detected = (component.responders || []).filter(m => {
         return responderDetectors[m.type](mousePosition, m, component.rect);
       });
 
-      (component as any)[delegationMethod]({ mousePosition, responders: detected }, event);
+      component[delegationMethod]({ mousePosition, responders: detected }, event);
     });
   }
 

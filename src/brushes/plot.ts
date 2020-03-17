@@ -1,10 +1,4 @@
-export type PlotModel = {
-  type: 'plot';
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+import { PlotModel } from '../../types/components/plot';
 
 export function plot(ctx: CanvasRenderingContext2D, plotModel: PlotModel) {
   const { x, y, width, height } = plotModel;

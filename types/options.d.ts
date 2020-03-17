@@ -1,24 +1,28 @@
-interface Position {
+import { Series } from './store/store';
+
+// type LineSeriesDataType = number[] | Array<Array<number | string>> | Point[];
+type LineSeriesDataType = number[];
+
+export interface Point {
   x: number;
   y: number;
 }
 
-type LineSeriesDataType = number[] | Array<Array<number | string>> | Position[];
+export interface Size {
+  width: number;
+  height: number;
+}
 
-export interface LineSeries {
+export type Rect = Point & Size;
+
+export interface LineSeriesType {
   name: string;
   data: LineSeriesDataType;
 }
 
 export interface LineSeriesData {
   categories?: string[];
-  series: LineSeries[];
-}
-
-export interface LineChart {
-  container: Element;
-  data: LineSeriesData;
-  options: LineChartOptions;
+  series: LineSeriesType[];
 }
 
 interface TitleOptions {
@@ -28,18 +32,16 @@ interface TitleOptions {
   align?: string;
 }
 
-interface BaseChartOptions {
-  width?: number;
-  height?: number;
+type BaseChartOptions = {
   title?: string | TitleOptions;
   // format?:
-}
+} & Size;
 
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
   xAxis?: {
-    // pointOnColumn: boolean;
+    pointOnColumn: boolean;
   };
   yAxis?: {
     // title?: string | TitleConfig;
@@ -65,13 +67,13 @@ interface BaseOptions {
   // usageStatistics?: boolean
 }
 
-interface AnimationOptions {
-  // duration: number;
-}
+// interface AnimationOptions {
+// duration: number;
+// }
 
 interface BaseSeriesOptions {
-  // showLabel?: boolean;
-  // allowSelect?: boolean;
+  showLabel?: boolean;
+  allowSelect?: boolean;
 }
 
 interface LineSeriesOptions extends BaseSeriesOptions {
@@ -88,3 +90,13 @@ export interface LineChartOptions extends BaseOptions {
 }
 
 // ⬇️ 차트 내부에서 사용, 정리 필요
+type Options = LineChartOptions;
+
+export interface ChartProps {
+  el: Element;
+  data: {
+    series: Series;
+    categories?: string[];
+  };
+  options: Options;
+}

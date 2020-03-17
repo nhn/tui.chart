@@ -111,7 +111,7 @@ describe('Store', () => {
       const watchFunc = jest.fn();
 
       store.setModule({
-        name: 'test',
+        name: 'layout',
         state: {
           myModule: {
             data: 1

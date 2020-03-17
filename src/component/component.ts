@@ -1,10 +1,15 @@
-import { Rect, ChartState } from '@src/store/store';
-
+import { ChartState } from '../../types/store/store';
+import { Rect } from '../../types/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
+import { AxisModels } from '@src/component/axis';
+import { PlotModel } from '../../types/components/plot';
+import { TooltipModel } from '../../types/components/tooltip';
+import { DrawModels } from '@src/component/lineSeries';
 
 type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip' | 'plot';
+type Models = AxisModels | Record<string, PlotModel[]> | TooltipModel[] | DrawModels[];
 
 export default abstract class Component {
   name = 'Component';
@@ -24,7 +29,7 @@ export default abstract class Component {
 
   eventBus: EventEmitter;
 
-  models!: any;
+  models!: Models;
 
   drawModels!: any;
 

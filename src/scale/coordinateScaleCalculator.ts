@@ -1,4 +1,4 @@
-import { ValueEdge, ScaleData } from '@src/store/store';
+import { ValueEdge, ScaleData } from '../../types/store/store';
 
 const SNAP_VALUES = [1, 2, 5, 10];
 

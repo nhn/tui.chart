@@ -1,4 +1,4 @@
-import { StoreModule } from '@src/store/store';
+import { StoreModule } from '../../types/store/store';
 
 // seriesDataModel 이 했던것 일부 여기로
 const seriesData: StoreModule = {

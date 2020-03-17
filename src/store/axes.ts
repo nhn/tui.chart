@@ -1,4 +1,4 @@
-import { StoreModule } from '@src/store/store';
+import { StoreModule } from '../../types/store/store';
 
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
 
@@ -10,7 +10,8 @@ const axes: StoreModule = {
   action: {
     setAxesData({ state }) {
       const { data, scale, options } = state;
-      const { categories } = data;
+      // @TODO: categories 없으면 만들어줘야 함
+      const categories = data.categories ? data.categories : [];
 
       const labelAxisData = {
         labels: categories,
@@ -19,7 +20,7 @@ const axes: StoreModule = {
         isLabelAxis: true
       };
 
-      if (options.xAxis.pointOnColumn) {
+      if (options.xAxis && options.xAxis.pointOnColumn) {
         labelAxisData.tickCount += 1;
       }
 

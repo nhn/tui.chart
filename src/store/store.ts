@@ -47,6 +47,10 @@ export default class Store {
         ]
       }
     },
+    options: {},
+    data: {
+      series: {}
+    },
     d: Date.now()
   };
 

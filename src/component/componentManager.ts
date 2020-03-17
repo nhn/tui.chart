@@ -1,4 +1,4 @@
-import { FunctionPropertyNames } from '@src/types';
+import { FunctionPropertyNames } from '../../types/store/store';
 
 import Store from '../store/store';
 import EventEmitter from '../eventEmitter';
@@ -52,7 +52,7 @@ export default class ComponentManager {
 
   invoke(method: FunctionPropertyNames<Component>, params: any) {
     this.components.forEach(component => {
-      const fn: Function = (component as any)[method];
+      const fn: Function = component[method!];
       if (fn) {
         fn.call(component, params);
       }

@@ -176,7 +176,7 @@ export function isValidRGB(str: string): boolean {
 // @license RGB <-> HSV conversion utilities based off of http://www.cs.rit.edu/~ncs/color/t_convert.html
 
 export function hexToRGB(hexStr: string): number[] | boolean {
-  if (!this.isValidRGB(hexStr)) {
+  if (!isValidRGB(hexStr)) {
     return false;
   }
 
@@ -193,11 +193,11 @@ export function rgbToHEX(r: number, g: number, b: number): string | boolean {
   const hexPreFix = '#';
   const hexStr =
     hexPreFix +
-    this.leadingZero(r.toString(16), 2) +
-    this.leadingZero(g.toString(16), 2) +
-    this.leadingZero(b.toString(16), 2);
+    leadingZero(r.toString(16), 2) +
+    leadingZero(g.toString(16), 2) +
+    leadingZero(b.toString(16), 2);
 
-  if (this.isValidRGB(hexStr)) {
+  if (isValidRGB(hexStr)) {
     return hexStr;
   }
 

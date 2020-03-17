@@ -1,12 +1,8 @@
-export type CircleModel = {
-  type: 'circle';
-  color: string;
-  x: number;
-  y: number;
-  radius: number;
-};
+import { CircleModel } from '../../types/components/series';
 
-export function circle(ctx: CanvasRenderingContext2D, { x, y, radius, color }: CircleModel) {
+export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
+  const { x, y, radius, color } = circleModel;
+
   ctx.beginPath();
   ctx.strokeStyle = color;
   ctx.arc(x, y, radius, 0, Math.PI * 2, true);

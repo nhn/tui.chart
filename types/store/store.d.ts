@@ -1,4 +1,12 @@
 import Store from '@src/store/store';
+import { BaseChartOptions, LineChartOptions, LineSeriesType, Rect } from '../options';
+
+type SeriesType = LineSeriesType;
+
+export type Series = {
+  line?: LineSeriesType[];
+};
+export type Options = LineChartOptions;
 
 export interface StoreOptions {
   state?: Partial<ChartState> | StateFunc;
@@ -9,14 +17,7 @@ export interface StoreOptions {
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'plot' | 'axes' | 'scale' | 'layout';
-}
-
-export interface Rect {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
+  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange';
 }
 
 export type Theme = {
@@ -26,10 +27,7 @@ export type Theme = {
 };
 
 export interface ChartState {
-  chart: {
-    width: number;
-    height: number;
-  };
+  chart: BaseChartOptions;
   layout: {
     [key: string]: Rect;
   };
@@ -48,7 +46,12 @@ export interface ChartState {
     [key: string]: AxisData;
   };
   theme: Theme;
-  // [key: string]: any;
+  options: Options;
+  data: {
+    series: Series;
+    categories?: string[];
+  };
+  d: number; // @TODO: check where to use
 }
 
 export interface AxisData {
@@ -67,7 +70,7 @@ export interface ValueEdge {
 export interface SeriesData {
   seriesCount: number;
   seriesGroupCount: number;
-  data: Series[];
+  data: SeriesType[];
 }
 
 export interface SeriesGroup {
@@ -81,13 +84,12 @@ export interface ScaleData {
   stepCount: number;
 }
 
-export interface Series {
-  name: string;
-  data: number[];
-}
-
 type StateFunc = () => Partial<ChartState>;
 type ActionFunc = (store: Store, ...args: any[]) => void;
 type ComputedFunc = (state: ChartState, computed: Record<string, any>) => any;
 export type ObserveFunc = (state: ChartState, computed: Record<string, any>) => void;
 type WatchFunc = (value: any) => void;
+
+export type FunctionPropertyNames<T> = {
+  [K in keyof T]: T[K] extends Function ? K : never;
+}[keyof T];

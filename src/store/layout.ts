@@ -1,4 +1,4 @@
-import { ChartState, StoreModule } from '../types/store/store';
+import { StoreModule } from '../../types/store/store';
 
 const layout: StoreModule = {
   name: 'layout',
@@ -7,18 +7,20 @@ const layout: StoreModule = {
   }),
   action: {
     setLayout({ state }) {
-      const { chart } = state;
+      const {
+        chart: { height, width }
+      } = state;
       const padding = 10;
 
       const yAxis = {
         width: 50,
-        height: chart.height - padding * 2 - 34,
+        height: height - padding * 2 - 34,
         x: 0 + padding,
         y: 0 + padding
       };
 
       const xAxis = {
-        width: chart.width - (yAxis.x + yAxis.width + padding * 2),
+        width: width - (yAxis.x + yAxis.width + padding * 2),
         height: 20,
         x: yAxis.x + yAxis.width,
         y: yAxis.y + yAxis.height

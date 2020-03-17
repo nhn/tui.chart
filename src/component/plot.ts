@@ -1,6 +1,6 @@
 import Component from './component';
 import { ChartState } from '../../types/store/store';
-import { PlotModel } from '@src/brushes/plot';
+import { PlotModel } from '../../types/components/plot';
 import { crispPixel, makeTickPixelPositions } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 

@@ -1,8 +1,8 @@
-import Chart, { ChartSetting } from './chart';
+import Chart from './chart';
 
-import seriesData from '@src/seriesData';
-import scale from '@src/scale';
-import axes from '@src/axes';
+import seriesData from '@src/store/seriesData';
+import scale from '@src/store/scale';
+import axes from '@src/store/axes';
 import Tooltip from '@src/component/tooltip';
 import Plot from '@src/component/plot';
 import LineSeries from '@src/component/lineSeries';
@@ -13,19 +13,27 @@ import * as lineBrushes from '@src/brushes/lineSeries';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as plotBrushes from '@src/brushes/plot';
+import { LineChartOptions, LineSeriesData } from '../../types/options';
 
 // 생성자를 따로 두기보다는 팩토리로 구현하는게 나을것 같다.
+interface LineChartProps {
+  el: Element;
+  options: LineChartOptions;
+  data: LineSeriesData;
+}
 
 export default class LineChart extends Chart {
-  constructor(settings: ChartSetting) {
-    const lineSeries = settings.data.series;
-
-    delete settings.data.series;
-    settings.data.series = {
-      line: lineSeries
-    };
-
-    super(settings);
+  constructor(props: LineChartProps) {
+    super({
+      el: props.el,
+      options: props.options,
+      data: {
+        series: {
+          line: props.data.series
+        },
+        categories: props.data.categories
+      }
+    });
   }
 
   initialize() {

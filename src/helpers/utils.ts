@@ -1,5 +1,24 @@
-export function isUndefined(obj: any) {
-  return obj === undefined; // eslint-disable-line no-undefined
+type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
+type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
+
+export function isUndefined(value: unknown): value is undefined {
+  return typeof value === 'undefined';
+}
+
+export function isNull(value: unknown): value is null {
+  return value === null;
+}
+
+export function isBoolean(value: unknown): value is boolean {
+  return typeof value === 'boolean';
+}
+
+export function isNumber(value: unknown): value is number {
+  return typeof value === 'number';
+}
+
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
 }
 
 export function forEach(obj: Record<string, any>, cb: (item: any, key: string) => void) {
@@ -32,21 +51,41 @@ export function range(start: number, stop?: number, step?: number) {
   return arr;
 }
 
-export function pick(target: Record<string, any>, args: Array<string>): Record<string, any> | null {
-  let i = 0;
-  const length = args.length;
-
-  if (length) {
-    for (; i < length; i += 1) {
-      if (typeof target === 'undefined' || target === null) {
-        return null;
-      }
-
-      target = target[args[i]];
+export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
+  if (typeof searchIndex === 'number' && arr[searchIndex] !== searchItem) {
+    return false;
+  }
+  for (const item of arr) {
+    if (item === searchItem) {
+      return true;
     }
   }
 
-  return target; // eslint-disable-line consistent-return
+  return false;
+}
+
+export function pick<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
+  console.log(obj, propNames);
+
+  const resultMap = {} as Pick<T, K>;
+  Object.keys(obj).forEach(key => {
+    if (includes(propNames, key as K)) {
+      resultMap[key as PickedKey<T, K>] = obj[key as PickedKey<T, K>];
+    }
+  });
+
+  return resultMap;
+}
+
+export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
+  const resultMap = {} as Omit<T, K>;
+  Object.keys(obj).forEach(key => {
+    if (!includes(propNames, key as K)) {
+      resultMap[key as OmittedKey<T, K>] = obj[key as OmittedKey<T, K>];
+    }
+  });
+
+  return resultMap;
 }
 
 export function pickWithMakeup(
@@ -54,7 +93,7 @@ export function pickWithMakeup(
   args: Array<string>
 ): Record<string, any> {
   let i = 0;
-  const length = args.length;
+  const { length } = args;
 
   if (length) {
     for (; i < length; i += 1) {
@@ -66,7 +105,7 @@ export function pickWithMakeup(
     }
   }
 
-  return target; // eslint-disable-line consistent-return
+  return target;
 }
 
 export function debounce(fn: Function, delay = 0) {
