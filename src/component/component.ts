@@ -1,5 +1,5 @@
-import { ChartState } from '../../types/store/store';
-import { Rect } from '../../types/options';
+import { ChartState } from '@t/store/store';
+import { Rect } from '@t/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';

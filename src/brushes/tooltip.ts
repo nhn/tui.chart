@@ -1,5 +1,5 @@
 import { pathRect } from '@src/brushes/basic';
-import { TooltipModel } from '../../types/components/tooltip';
+import { TooltipModel } from '@t/components/tooltip';
 
 export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipModel) {
   const { x, y, width, height, data } = tooltipModel;

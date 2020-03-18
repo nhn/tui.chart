@@ -1,7 +1,7 @@
 import Component from './component';
-import { ChartState } from '../../types/store/store';
+import { ChartState } from '@t/store/store';
 import { throttle } from '@src/helpers/utils';
-import { TooltipInfo, TooltipModel } from '../../types/components/tooltip';
+import { TooltipInfo, TooltipModel } from '@t/components/tooltip';
 
 export default class Tooltip extends Component {
   models!: TooltipModel[];

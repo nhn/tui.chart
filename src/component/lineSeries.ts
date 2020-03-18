@@ -1,9 +1,9 @@
 import Component from './component';
-import { CircleModel } from '../../types/components/series';
-import { Point } from '../../types/options';
-import { ClipRectAreaModel, LinePointsModel } from '../../types/components/series';
-import { ChartState, ValueEdge } from '../../types/store/store';
-import { LineSeriesType } from '../../types/options';
+import { CircleModel } from '@t/components/series';
+import { Point } from '@t/options';
+import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
+import { ChartState, ValueEdge } from '@t/store/store';
+import { LineSeriesType } from '@t/options';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 

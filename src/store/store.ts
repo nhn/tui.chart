@@ -18,7 +18,7 @@ import {
   WatchFunc,
   StoreModule,
   ObserveFunc
-} from '../../types/store/store';
+} from '@t/store/store';
 
 import { isUndefined, forEach, pickWithMakeup } from '@src/helpers/utils';
 

@@ -6,7 +6,7 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import animator from '@src/animator';
 import { debounce } from '@src/helpers/utils';
-import { ChartProps } from '../../types/options';
+import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 
 export default class Chart {

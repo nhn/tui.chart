@@ -1,4 +1,4 @@
-import { ClipRectAreaModel, LinePointsModel, PathRectModel } from '../../types/components/series';
+import { ClipRectAreaModel, LinePointsModel, PathRectModel } from '@t/components/series';
 
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;

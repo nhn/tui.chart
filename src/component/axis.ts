@@ -1,9 +1,12 @@
 import Component from './component';
 import Painter from '@src/painter';
-import { AxisType, ChartState } from '../../types/store/store';
+import { AxisType, ChartState } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
-import { isYAxis } from '@src/helpers/axis';
-import { LabelModel, TickModel, LineModel } from '../../types/components/axis';
+import { LabelModel, TickModel, LineModel } from '@t/components/axis';
+
+function isYAxis(name: 'yAxis' | 'xAxis' | 'yCenterAxis') {
+  return name === 'yAxis' || name === 'yCenterAxis';
+}
 
 type DrawModels = LabelModel | TickModel | LineModel;
 type AxisModels = Record<string, DrawModels[]>;
@@ -54,13 +57,9 @@ export default class Axis extends Component {
       offsetKey,
       anchorKey,
       pointOnColumn
-    ) as LabelModel[];
+    );
 
-    this.models.tick = this.renderTickModels(
-      relativePositions,
-      offsetKey,
-      anchorKey
-    ) as TickModel[];
+    this.models.tick = this.renderTickModels(relativePositions, offsetKey, anchorKey);
 
     this.models.axisLine = [this.renderAxisLineModel()];
 
@@ -119,7 +118,7 @@ export default class Axis extends Component {
       isYAxis: isYAxis(this.name),
       [offsetKey]: crispPixel(position),
       [anchorKey]: tickAnchorPoint
-    }));
+    })) as TickModel[];
   }
 
   renderLabelModels(
@@ -150,7 +149,7 @@ export default class Axis extends Component {
       labelModels.pop();
     }
 
-    return labelModels;
+    return labelModels as LabelModel[];
   }
 
   tickDistance(labelsCount: number) {

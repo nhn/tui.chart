@@ -1,4 +1,4 @@
-import { PlotModel } from '../../types/components/plot';
+import { PlotModel } from '@t/components/plot';
 
 export function plot(ctx: CanvasRenderingContext2D, plotModel: PlotModel) {
   const { x, y, width, height } = plotModel;

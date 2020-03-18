@@ -1,4 +1,4 @@
-import { CircleModel } from '../../types/components/series';
+import { CircleModel } from '@t/components/series';
 
 export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
   const { x, y, radius, color } = circleModel;

@@ -1,5 +1,5 @@
-import { Point, Rect } from '../types/options';
-import { PathRectModel, CircleModel } from '../types/components/series';
+import { Point, Rect } from '@t/options';
+import { PathRectModel, CircleModel } from '@t/components/series';
 
 type DetectorType = 'circle' | 'rect';
 

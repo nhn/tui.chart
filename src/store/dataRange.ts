@@ -1,4 +1,4 @@
-import { ValueEdge, StoreModule } from '../../types/store/store';
+import { ValueEdge, StoreModule } from '@t/store/store';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {

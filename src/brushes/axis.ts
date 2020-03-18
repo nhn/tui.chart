@@ -1,4 +1,4 @@
-import { TickModel, LabelModel, LineModel } from '../../types/components/axis';
+import { TickModel, LabelModel, LineModel } from '@t/components/axis';
 
 export function tick(ctx: CanvasRenderingContext2D, tickModel: TickModel) {
   const { x, y, isYAxis } = tickModel;

@@ -1,4 +1,4 @@
-import { FunctionPropertyNames } from '../../types/store/store';
+import { FunctionPropertyNames } from '@t/store/store';
 
 import Store from '../store/store';
 import EventEmitter from '../eventEmitter';

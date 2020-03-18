@@ -4,9 +4,9 @@ import {
   ClipRectAreaModel,
   LinePointsModel,
   PathRectModel
-} from '../types/components/series';
-import { PlotModel } from '../types/components/plot';
-import { TooltipModel } from '../types/components/tooltip';
+} from '@t/components/series';
+import { PlotModel } from '@t/components/plot';
+import { TooltipModel } from '@t/components/tooltip';
 
 type BrushModel =
   | ClipRectAreaModel

@@ -1,4 +1,4 @@
-import { StoreModule, ScaleData } from '../../types/store/store';
+import { StoreModule, ScaleData } from '@t/store/store';
 
 import coordinateScaleCalculator from '@src/scale/coordinateScaleCalculator';
 

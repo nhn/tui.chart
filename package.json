@@ -11,7 +11,7 @@
     "build:clean": "rm -rf ./dist",
     "build": "npm run lint && webpack --mode=production",
     "serve": "npm run validate && webpack-dev-server --mode=development",
-    "storybook": "start-storybook"
+    "storybook": "start-storybook -p 6006"
   },
   "repository": {
     "type": "git",

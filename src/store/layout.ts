@@ -1,4 +1,4 @@
-import { StoreModule } from '../../types/store/store';
+import { StoreModule } from '@t/store/store';
 
 const layout: StoreModule = {
   name: 'layout',
