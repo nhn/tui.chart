@@ -111,7 +111,8 @@ export function observable(
 
         if (
           !doingInvisibleWork &&
-          currentCollectorObserver && !obs.includes(currentCollectorObserver)
+          currentCollectorObserver &&
+          !obs.includes(currentCollectorObserver)
         ) {
           // console.log('collect observer', key);
           obs.push(currentCollectorObserver);
@@ -186,9 +187,11 @@ export function invisibleWork(fn: Function) {
 export function notifyByPath<T extends Record<string, any>>(holder: T, namePath: string) {
   const splited = namePath.split('.');
   const key = splited.splice(splited.length - 1, 1)[0];
-  const target: any = pick(holder, splited);
+  const target = pick(holder, ...splited);
 
-  notify(target, key);
+  if (target) {
+    notify(target, key);
+  }
 }
 
 function invokeObs(obs: Array<Function>) {
@@ -238,9 +241,11 @@ export function computed(target: Record<string, any>, key: string, fn: Function)
 }
 
 export function watch(holder: Record<string, any>, path: string, fn: Function): Function | null {
+  console.log(holder);
+
   const splited = path.split('.');
   const key = splited.splice(splited.length - 1, 1)[0];
-  const target = pick(holder, splited);
+  const target = pick(holder, ...splited);
 
   if (!target) {
     return null;

@@ -1,11 +1,33 @@
-export function isUndefined(obj: any) {
-  return obj === undefined; // eslint-disable-line no-undefined
+type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
+type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
+
+export function isUndefined(value: unknown): value is undefined {
+  return typeof value === 'undefined';
 }
 
-export function forEach(obj: Record<string, any>, cb: (item: any, key: string) => void) {
-  for (const k in obj) {
-    if (obj.hasOwnProperty(k)) {
-      cb(obj[k], k);
+export function isNull(value: unknown): value is null {
+  return value === null;
+}
+
+export function isBoolean(value: unknown): value is boolean {
+  return typeof value === 'boolean';
+}
+
+export function isNumber(value: unknown): value is number {
+  return typeof value === 'number';
+}
+
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+export function forEach<T extends object, K extends Extract<keyof T, string>, V extends T[K]>(
+  obj: T,
+  cb: (item: V, key: K) => void
+) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      cb(obj[key as K] as V, key as K);
     }
   }
 }
@@ -32,29 +54,44 @@ export function range(start: number, stop?: number, step?: number) {
   return arr;
 }
 
-export function pick(target: Record<string, any>, args: Array<string>): Record<string, any> | null {
-  let i = 0;
-  const length = args.length;
-
-  if (length) {
-    for (; i < length; i += 1) {
-      if (typeof target === 'undefined' || target === null) {
-        return null;
-      }
-
-      target = target[args[i]];
+export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
+  if (typeof searchIndex === 'number' && arr[searchIndex] !== searchItem) {
+    return false;
+  }
+  for (const item of arr) {
+    if (item === searchItem) {
+      return true;
     }
   }
 
-  return target; // eslint-disable-line consistent-return
+  return false;
 }
 
-export function pickWithMakeup(
-  target: Record<string, any>,
-  args: Array<string>
-): Record<string, any> {
+export function pick<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
+  const resultMap = {} as Pick<T, K>;
+  Object.keys(obj).forEach(key => {
+    if (includes(propNames, key as K)) {
+      resultMap[key as PickedKey<T, K>] = obj[key as PickedKey<T, K>];
+    }
+  });
+
+  return resultMap;
+}
+
+export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
+  const resultMap = {} as Omit<T, K>;
+  Object.keys(obj).forEach(key => {
+    if (!includes(propNames, key as K)) {
+      resultMap[key as OmittedKey<T, K>] = obj[key as OmittedKey<T, K>];
+    }
+  });
+
+  return resultMap;
+}
+
+export function pickWithMakeup(target: Record<string, any>, args: string[]) {
   let i = 0;
-  const length = args.length;
+  const { length } = args;
 
   if (length) {
     for (; i < length; i += 1) {
@@ -66,7 +103,7 @@ export function pickWithMakeup(
     }
   }
 
-  return target; // eslint-disable-line consistent-return
+  return target;
 }
 
 export function debounce(fn: Function, delay = 0) {
@@ -116,8 +153,6 @@ export function throttle(fn: Function, interval = 0) {
   const debounced = debounce(tick, interval);
 
   function throttled(...args) {
-    // eslint-disable-line require-jsdoc
-
     if (isLeading) {
       tick(...args);
       isLeading = false;

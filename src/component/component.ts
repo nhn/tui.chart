@@ -1,10 +1,10 @@
-import { Rect, ChartState } from '@src/store/store';
-
+import { ChartState } from '@t/store/store';
+import { Rect } from '@t/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
 
-type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip';
+type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip' | 'plot';
 
 export default abstract class Component {
   name = 'Component';
@@ -24,11 +24,11 @@ export default abstract class Component {
 
   eventBus: EventEmitter;
 
-  models!: any;
+  models!: any; // @TODO: 정의
 
-  drawModels!: any;
+  drawModels!: any; // @TODO: 정의
 
-  responders!: any[];
+  responders!: any[]; // @TODO: 정의
 
   constructor({ store, eventBus }: { store: Store; eventBus: EventEmitter }) {
     this.store = store;

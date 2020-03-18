@@ -1,6 +1,21 @@
 import Chart from '@src/charts/chart';
+import {
+  CircleModel,
+  ClipRectAreaModel,
+  LinePointsModel,
+  PathRectModel
+} from '@t/components/series';
+import { PlotModel } from '@t/components/plot';
+import { TooltipModel } from '@t/components/tooltip';
 
-export type Brush = (ctx: CanvasRenderingContext2D, brushModel: any) => void;
+type BrushModel =
+  | ClipRectAreaModel
+  | LinePointsModel
+  | PathRectModel
+  | CircleModel
+  | PlotModel
+  | TooltipModel;
+type Brush = (ctx: CanvasRenderingContext2D, brushModel: BrushModel) => void;
 
 export default class Painter {
   width = 0;
@@ -34,8 +49,8 @@ export default class Painter {
       }
     }
 
-    this.ctx.canvas.height = this.height = height;
-    this.ctx.canvas.width = this.width = width;
+    this.ctx.canvas.height = this.height = height || 0;
+    this.ctx.canvas.width = this.width = width || 0;
   }
 
   add(name: string, brush: Brush) {

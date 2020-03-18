@@ -1,4 +1,4 @@
-import { ValueEdge } from '@src/store/store';
+import { ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range } from '@src/helpers/utils';
 

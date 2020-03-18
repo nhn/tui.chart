@@ -16,7 +16,8 @@
     "lib": ["esnext", "dom", "dom.iterable"],
     "types": ["jest", "node"],
     "paths": {
-      "@src/*": ["src/*"]
+      "@src/*": ["src/*"],
+      "@t/*": ["types/*"]
     }
   },
   "include": ["src/**/*.js", "src/**/*.ts", "stories/**/*.ts", "stories/**/*.js", "tests/**/*.ts", "types/**/*"],

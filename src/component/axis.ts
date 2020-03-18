@@ -1,26 +1,25 @@
 import Component from './component';
 import Painter from '@src/painter';
-
-import { ChartState } from '@src/store/store';
-
-import { LabelModel, TickModel, LineModel } from '@src/brushes/axis';
-
+import { AxisType, ChartState } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
+import { LabelModel, TickModel, LineModel } from '@t/components/axis';
 
-type axisType = 'xAxis' | 'yAxis' | 'yCenterAxis';
+function isYAxis(name: 'yAxis' | 'xAxis' | 'yCenterAxis') {
+  return name === 'yAxis' || name === 'yCenterAxis';
+}
 
 type DrawModels = LabelModel | TickModel | LineModel;
-
-const isYAxis = (name: string) => name === 'yAxis' || name === 'yCenterAxis';
+type AxisModels = Record<string, DrawModels[]>;
+type CoordinateKey = 'x' | 'y';
 
 export default class Axis extends Component {
-  name!: axisType;
+  name!: AxisType;
 
-  models: Record<string, DrawModels[]> = {};
+  models: AxisModels = {};
 
-  drawModels!: Record<string, DrawModels[]>;
+  drawModels!: AxisModels;
 
-  initialize({ name }: { name: axisType }) {
+  initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
     this.name = name;
   }
@@ -52,19 +51,15 @@ export default class Axis extends Component {
     //   this.renderAxisLineModel()
     // ];
 
-    this.models.label = this.renderLabelModels({
+    this.models.label = this.renderLabelModels(
       relativePositions,
       labels,
       offsetKey,
       anchorKey,
       pointOnColumn
-    });
+    );
 
-    this.models.tick = this.renderTickModels({
-      relativePositions,
-      offsetKey,
-      anchorKey
-    });
+    this.models.tick = this.renderTickModels(relativePositions, offsetKey, anchorKey);
 
     this.models.axisLine = [this.renderAxisLineModel()];
 
@@ -73,9 +68,7 @@ export default class Axis extends Component {
 
       ['tick', 'label'].forEach(type => {
         this.drawModels[type] = this.models[type].map(m => {
-          const drawModel = {
-            ...m
-          };
+          const drawModel = { ...m };
 
           if (isYAxis(this.name)) {
             drawModel.y = 0;
@@ -91,92 +84,72 @@ export default class Axis extends Component {
     }
   }
 
-  renderAxisLineModel() {
-    const axisLine: any = {
-      type: 'line'
-    };
+  renderAxisLineModel(): LineModel {
+    const zeroPixel = crispPixel(0);
 
     if (isYAxis(this.name)) {
-      axisLine.x = crispPixel(this.rect.width);
-      axisLine.y = crispPixel(0);
-      axisLine.x2 = crispPixel(this.rect.width);
-      axisLine.y2 = crispPixel(this.rect.height);
-    } else {
-      axisLine.x = crispPixel(0);
-      axisLine.y = crispPixel(0);
-      axisLine.x2 = crispPixel(this.rect.width);
-      axisLine.y2 = crispPixel(0);
+      return {
+        type: 'line',
+        x: crispPixel(this.rect.width),
+        y: zeroPixel,
+        x2: crispPixel(this.rect.width),
+        y2: crispPixel(this.rect.height)
+      };
     }
 
-    return axisLine;
+    return {
+      type: 'line',
+      x: zeroPixel,
+      y: zeroPixel,
+      x2: crispPixel(this.rect.width),
+      y2: zeroPixel
+    };
   }
 
-  renderTickModels({
-    relativePositions,
-    offsetKey,
-    anchorKey
-  }: {
-    relativePositions: number[];
-    offsetKey: 'x' | 'y';
-    anchorKey: 'x' | 'y';
-  }) {
+  renderTickModels(
+    relativePositions: number[],
+    offsetKey: CoordinateKey,
+    anchorKey: CoordinateKey
+  ) {
     const tickAnchorPoint = isYAxis(this.name) ? crispPixel(this.rect.width) : crispPixel(0);
 
-    const tickModels = relativePositions.map(position => {
-      const newTick: any = {
-        type: 'tick',
-        isYAxis: isYAxis(this.name)
-      };
-
-      const offset = crispPixel(position);
-
-      newTick[offsetKey] = offset;
-      newTick[anchorKey] = tickAnchorPoint;
-
-      return newTick;
-    });
-
-    return tickModels;
+    return relativePositions.map(position => ({
+      type: 'tick',
+      isYAxis: isYAxis(this.name),
+      [offsetKey]: crispPixel(position),
+      [anchorKey]: tickAnchorPoint
+    })) as TickModel[];
   }
 
-  renderLabelModels({
-    relativePositions,
-    labels,
-    offsetKey,
-    anchorKey,
-    pointOnColumn
-  }: {
-    relativePositions: number[];
-    labels: string[];
-    offsetKey: 'x' | 'y';
-    anchorKey: 'x' | 'y';
-    pointOnColumn: boolean;
-  }) {
+  renderLabelModels(
+    relativePositions: number[],
+    labels: string[],
+    offsetKey: CoordinateKey,
+    anchorKey: CoordinateKey,
+    pointOnColumn: boolean
+  ) {
     const labelAnchorPoint = isYAxis(this.name) ? crispPixel(0) : crispPixel(this.rect.height);
 
     const labelAdjustment = pointOnColumn ? this.tickDistance(labels.length) / 2 : 0;
     const labelAlign: CanvasTextAlign = labelAdjustment ? 'center' : 'left';
 
     const labelModels = relativePositions.map((position, index) => {
-      const newLabel: any = {
+      const textIndex = isYAxis(this.name) ? labels.length - 1 - index : index;
+
+      return {
         type: 'label',
-        text: labels[labels.length - 1 - index],
-        align: labelAlign
+        text: labels[textIndex],
+        align: labelAlign,
+        [offsetKey]: crispPixel(position) + labelAdjustment,
+        [anchorKey]: labelAnchorPoint
       };
-
-      const offset = crispPixel(position);
-
-      newLabel[offsetKey] = offset + labelAdjustment;
-      newLabel[anchorKey] = labelAnchorPoint;
-
-      return newLabel;
     });
 
     if (labelAlign === 'center') {
       labelModels.pop();
     }
 
-    return labelModels;
+    return labelModels as LabelModel[];
   }
 
   tickDistance(labelsCount: number) {
@@ -190,7 +163,7 @@ export default class Axis extends Component {
   }
 
   beforeDraw(painter: Painter) {
-    painter.ctx.strokeStyle = 'black';
+    painter.ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
     painter.ctx.lineWidth = 1;
   }
 }

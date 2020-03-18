@@ -1,9 +1,9 @@
-import Chart from './chart';
+import Chart from './charts/chart';
 
 type Anim = {
   chart: Chart;
   duration: number;
-  requestor: any;
+  requester: Chart;
   onCompleted: Function;
   onFrame: (delta) => void;
   start: number | null;
@@ -21,19 +21,19 @@ class Animator {
   add({
     chart,
     duration,
-    requestor,
-    onCompleted = () => {}, // eslint-disable-line
+    requester,
+    onCompleted = () => {},
     onFrame = delta => {
       chart.update(delta);
     }
   }: {
     chart: Chart;
     duration: number;
-    requestor: any;
+    requester: Chart;
     onCompleted: Function;
-    onFrame: (delta: number) => void;
+    onFrame?: (delta: number) => void;
   }) {
-    const prevIndex = this.anims.findIndex(anim => anim.requestor === requestor);
+    const prevIndex = this.anims.findIndex(anim => anim.requester === requester);
 
     if (~prevIndex) {
       this.anims.splice(prevIndex, 1);
@@ -41,7 +41,7 @@ class Animator {
 
     this.anims.push({
       chart,
-      requestor,
+      requester,
       duration,
       onFrame,
       onCompleted,
@@ -110,7 +110,7 @@ class Animator {
 
       if (anim.completed) {
         anim.onCompleted();
-        anim.chart.eventBus.emit('animationCompleted', anim.requestor);
+        anim.chart.eventBus.emit('animationCompleted', anim.requester);
       }
     });
 

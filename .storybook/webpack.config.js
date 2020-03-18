@@ -9,7 +9,8 @@ module.exports = ({ config, mode }) => {
 
   config.resolve.alias = {
     ...config.resolve.alias,
-    '@src': path.resolve(__dirname, '../src/')
+    '@src': path.resolve(__dirname, '../src/'),
+    '@t': path.resolve(__dirname, '../types/'),
   };
 
   return config;

@@ -4,12 +4,14 @@
   "description": "TOAST UI Application: Chart",
   "main": "dist/tui-chart.js",
   "scripts": {
+    "check-types": "tsc --project ./tsconfig.json",
+    "validate": "npm run check-types && npm run lint",
     "lint": "eslint .",
     "test": "jest --watch",
     "build:clean": "rm -rf ./dist",
     "build": "npm run lint && webpack --mode=production",
-    "serve": "webpack-dev-server --mode=development",
-    "storybook": "start-storybook"
+    "serve": "npm run validate && webpack-dev-server --mode=development",
+    "storybook": "start-storybook -p 6006"
   },
   "repository": {
     "type": "git",
