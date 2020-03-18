@@ -7,7 +7,7 @@ import {
   setValue,
   extend,
   invisibleWork
-} from '../../src/store/reactive';
+} from '@src/store/reactive';
 
 describe('observable/observe', () => {
   it('should invoke observer when dependency changed', () => {

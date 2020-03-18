@@ -38,7 +38,7 @@ export interface ChartState {
   };
   disabledSeries: string[];
   series: {
-    [key: string]: SeriesData;
+    [key: string]: SeriesData; // @TODO: data series 와 통합 필요. 중복되는 느낌
   };
   // 기존의 limitMap
   dataRange: {

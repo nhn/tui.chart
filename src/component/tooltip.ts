@@ -34,18 +34,22 @@ export default class Tooltip extends Component {
             acc.y = (acc.y + item.y) / 2;
           }
 
+          acc.x += 15;
+          acc.y -= 10;
+
           maxLength = Math.max(maxLength, data.label.length + data.value.toString().length);
 
-          acc.width = Math.max(maxLength * 15 + 10, 200); // @TODO: 너비 계산
           acc.data.push(data);
+
+          if (!acc.category && data.category) {
+            acc.category = data.category;
+          }
 
           return acc;
         },
-        { type: 'tooltip', x: 0, y: 0, width: 0, height: 0, data: [] }
+        { type: 'tooltip', x: 0, y: 0, data: [] }
       )
     ];
-
-    this.models[0].height = Math.max(tooltipInfos.length * 30 + 10, 50); // @TODO: 높이 계산
 
     if (!this.drawModels) {
       this.drawModels = [{ ...this.models[0] }];

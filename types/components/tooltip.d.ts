@@ -1,9 +1,10 @@
-import { Point, Rect } from '../options';
+import { Point } from '../options';
 
 interface TooltipData {
   label: string;
   color: string;
   value: string | number;
+  category?: string;
 }
 
 export type TooltipInfo = {
@@ -13,4 +14,5 @@ export type TooltipInfo = {
 export type TooltipModel = {
   type: 'tooltip';
   data: TooltipData[];
-} & Rect;
+  category?: string;
+} & Point;

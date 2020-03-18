@@ -1,4 +1,4 @@
-import { Series } from './store/store';
+import { Series } from '@t/store/store';
 
 // type LineSeriesDataType = number[] | Array<Array<number | string>> | Point[];
 type LineSeriesDataType = number[]; // @TODO: use ⬆️ type (coordinate)
