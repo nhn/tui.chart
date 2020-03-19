@@ -155,7 +155,11 @@ class GroupTypeEventDetector extends EventDetectorBase {
      * Can be called with showTooltip function
      * At this time, the index may be larger than the data size.
      */
-    if (tickCoordinateModel.length > index) {
+    const isValidShowTooltip = this.pointOnColumn
+      ? tickCoordinateModel.length - 1 > index
+      : tickCoordinateModel.length > index;
+
+    if (isValidShowTooltip) {
       let tickInterval = 0;
 
       if (this.pointOnColumn) {
