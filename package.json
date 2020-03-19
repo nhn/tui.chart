@@ -8,6 +8,7 @@
     "validate": "npm run check-types && npm run lint",
     "lint": "eslint .",
     "test": "jest --watch",
+    "test:ci": "npm run validate && jest",
     "build:clean": "rm -rf ./dist",
     "build": "npm run lint && webpack --mode=production",
     "serve": "npm run validate && webpack-dev-server --mode=development",
