@@ -90,13 +90,11 @@ export interface LineChartOptions extends BaseOptions {
 }
 
 // ⬇️ 차트 내부에서 사용, 정리 필요
-type Options = LineChartOptions;
+export type Options = LineChartOptions;
 
 export interface ChartProps {
   el: Element;
-  data: {
-    series: Series;
-    categories?: string[];
-  };
+  series: Series;
+  categories?: string[];
   options: Options;
 }

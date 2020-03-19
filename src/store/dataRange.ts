@@ -33,7 +33,7 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const series = state.data.series;
+      const series = state.series;
       const disabledSeries = state.disabledSeries;
 
       const newDataRange: Record<string, ValueEdge> = {};

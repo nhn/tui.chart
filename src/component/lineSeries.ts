@@ -27,6 +27,10 @@ export default class LineSeries extends Component {
 
   render(chartState: ChartState) {
     const { layout, series, scale, theme, options } = chartState;
+    if (!series.line) {
+      throw new Error("There's no line data!");
+    }
+
     this.rect = layout.plot;
 
     const { yAxis } = scale;
@@ -50,7 +54,7 @@ export default class LineSeries extends Component {
         label: name,
         color: theme.series.colors[index],
         value,
-        category: chartState.data.categories?.[dataIdx]
+        category: chartState.categories?.[dataIdx]
       }));
     });
 

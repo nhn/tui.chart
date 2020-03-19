@@ -9,9 +9,10 @@ const axes: StoreModule = {
   }),
   action: {
     setAxesData({ state }) {
-      const { data, scale, options } = state;
+      const { scale, options } = state;
+
       // @TODO: categories 없으면 만들어줘야 함
-      const categories = data.categories ? data.categories : [];
+      const categories = state.categories ? state.categories : [];
 
       const labelAxisData = {
         labels: categories,

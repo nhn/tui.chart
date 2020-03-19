@@ -25,16 +25,15 @@ export default class Chart {
   readonly componentManager: ComponentManager;
 
   constructor(props: ChartProps) {
-    const { el, options, data } = props;
+    const { el, options, categories, series } = props;
 
     this.el = el;
 
     this.store = new Store({
-      state: {
-        chart: options.chart,
-        data,
-        options
-      }
+      chart: options.chart,
+      series,
+      categories,
+      options
     });
 
     this.componentManager = new ComponentManager({
