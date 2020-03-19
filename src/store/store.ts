@@ -21,7 +21,7 @@ import {
   Series
 } from '@t/store/store';
 
-import { isUndefined, forEach, pickWithMakeup } from '@src/helpers/utils';
+import { isUndefined, forEach, pickPropertyWithMakeup } from '@src/helpers/utils';
 import { BaseChartOptions, Options } from '@t/options';
 
 interface InitStoreState {
@@ -110,7 +110,7 @@ export default class Store {
   setComputed(namePath: string, fn: ComputedFunc, holder: any = this.computed) {
     const splited = namePath.split('.');
     const key = splited.splice(splited.length - 1, 1)[0];
-    const target = pickWithMakeup(holder, splited);
+    const target = pickPropertyWithMakeup(holder, splited);
 
     computed(target, key, fn.bind(null, this.state, this.computed));
   }

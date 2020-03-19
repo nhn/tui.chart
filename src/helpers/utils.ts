@@ -89,12 +89,26 @@ export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: 
   return resultMap;
 }
 
-export function pickWithMakeup(target: Record<string, any>, args: string[]) {
-  let i = 0;
+export function pickProperty(target: Record<string, any>, keys: string[]) {
+  const { length } = keys;
+
+  if (length) {
+    for (let i = 0; i < length; i += 1) {
+      if (isUndefined(target) || isNull(target)) {
+        return null;
+      }
+      target = target[keys[i]];
+    }
+  }
+
+  return target;
+}
+
+export function pickPropertyWithMakeup(target: Record<string, any>, args: string[]) {
   const { length } = args;
 
   if (length) {
-    for (; i < length; i += 1) {
+    for (let i = 0; i < length; i += 1) {
       if (isUndefined(target[args[i]])) {
         target[args[i]] = {};
       }
