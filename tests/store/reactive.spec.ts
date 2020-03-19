@@ -246,7 +246,6 @@ describe('setValue', () => {
       sum += target.data.rData;
     });
 
-    console.log('setValue');
     setValue(target.data, 'rData2', 0);
 
     expect(sum).toEqual(2);

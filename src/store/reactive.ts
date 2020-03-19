@@ -241,8 +241,6 @@ export function computed(target: Record<string, any>, key: string, fn: Function)
 }
 
 export function watch(holder: Record<string, any>, path: string, fn: Function): Function | null {
-  console.log(holder);
-
   const splited = path.split('.');
   const key = splited.splice(splited.length - 1, 1)[0];
   const target = pick(holder, ...splited);
