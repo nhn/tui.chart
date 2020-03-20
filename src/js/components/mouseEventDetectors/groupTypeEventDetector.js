@@ -150,14 +150,15 @@ class GroupTypeEventDetector extends EventDetectorBase {
       (this.isVertical ? this.layout.position.left : this.layout.position.top) -
       chartConst.CHART_PADDING;
     const tickCoordinateModel = this.tickBaseCoordinateModel.data;
+    const tickCoordsModelSize = tickCoordinateModel.length;
 
     /**
      * Can be called with showTooltip function
      * At this time, the index may be larger than the data size.
      */
     const isValidShowTooltip = this.pointOnColumn
-      ? tickCoordinateModel.length - 1 > index
-      : tickCoordinateModel.length > index;
+      ? tickCoordsModelSize - 1 > index
+      : tickCoordsModelSize > index;
 
     if (isValidShowTooltip) {
       let tickInterval = 0;
