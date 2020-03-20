@@ -2,10 +2,10 @@
  * tui-chart-polyfill
  * @fileoverview tui-chart
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @version 3.10.1
+ * @version 3.10.2
  * @license MIT
  * @link https://github.com/nhn/tui.chart
- * bundle created at "Wed Mar 04 2020 10:25:47 GMT+0900 (Korean Standard Time)"
+ * bundle created at "Fri Mar 20 2020 11:47:14 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -29630,8 +29630,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this = _possibleConstructorReturn(this, _TooltipBase.call(this, params));
 	
 	    _this.prevIndex = null;
+	    _this.tickInterval = null;
 	    _this.isBullet = _predicate2['default'].isBulletChart(params.chartType);
-	    _this.tickInterval = params.tickInterval || 0;
 	    return _this;
 	  }
 	
@@ -29749,6 +29749,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  GroupTooltip.prototype.zoom = function zoom() {
 	    this.prevIndex = null;
+	    this.tickInterval = null;
 	    _tooltipBase2['default'].prototype.zoom.call(this);
 	  };
 	
@@ -30057,6 +30058,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  GroupTooltip.prototype._showTooltip = function _showTooltip(elTooltip, params, prevPosition) {
 	    if (!(0, _isNull2['default'])(this.prevIndex)) {
 	      this.eventBus.fire('hideGroupAnimation', this.prevIndex);
+	    }
+	
+	    if ((0, _isNull2['default'])(this.tickInterval)) {
+	      this.tickInterval = params.tickInterval;
 	    }
 	
 	    elTooltip.innerHTML = this._makeGroupTooltipHtml(params.index);
@@ -33956,12 +33961,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var index = foundData.indexes.groupIndex;
 	    var positionValue = (this.isVertical ? this.layout.position.left : this.layout.position.top) - _const2['default'].CHART_PADDING;
 	    var tickCoordinateModel = this.tickBaseCoordinateModel.data;
+	    var tickCoordsModelSize = tickCoordinateModel.length;
 	
 	    /**
 	     * Can be called with showTooltip function
 	     * At this time, the index may be larger than the data size.
 	     */
-	    if (tickCoordinateModel.length > index) {
+	    var isValidShowTooltip = this.pointOnColumn ? tickCoordsModelSize - 1 > index : tickCoordsModelSize > index;
+	
+	    if (isValidShowTooltip) {
 	      var tickInterval = 0;
 	
 	      if (this.pointOnColumn) {
