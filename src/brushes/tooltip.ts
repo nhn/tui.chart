@@ -27,6 +27,7 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
   });
 
   if (category) {
+    // @TODO: default 스타일, theme store로 관리, 분리 필요
     ctx.textBaseline = 'top';
     ctx.fillStyle = 'white';
     ctx.font = 'bold 13px Arial';
