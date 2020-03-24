@@ -69,7 +69,6 @@ export default class Painter {
     if (this.brushes[name]) {
       this.brushes[name](this.ctx, brushModel);
     } else {
-      console.log(this.brushes);
       throw new Error(`Brush don't exist in painter: ${name}`);
     }
   }

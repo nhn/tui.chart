@@ -27,6 +27,10 @@ export default class LineSeries extends Component {
 
   render(chartState: ChartState) {
     const { layout, series, scale, theme, options } = chartState;
+    if (!series.line) {
+      throw new Error("There's no line data!");
+    }
+
     this.rect = layout.plot;
 
     const { yAxis } = scale;
@@ -46,10 +50,11 @@ export default class LineSeries extends Component {
     const seriesCircleModel = this.renderCircle(lineSeriesModel);
 
     const tooltipData = series.line.data.flatMap(({ name, data }, index) => {
-      return data.map(value => ({
+      return data.map((value, dataIdx) => ({
         label: name,
         color: theme.series.colors[index],
-        value
+        value,
+        category: chartState.categories?.[dataIdx]
       }));
     });
 
@@ -91,7 +96,7 @@ export default class LineSeries extends Component {
 
   renderCircle(lineSeriesModel: LinePointsModel[]): CircleModel[] {
     return lineSeriesModel.flatMap(({ points, color }) => {
-      return points.map(({ x, y }) => ({ type: 'circle', color, x, y, radius: 4 }));
+      return points.map(({ x, y }) => ({ type: 'circle', color, x, y, radius: 7 }));
     });
   }
 

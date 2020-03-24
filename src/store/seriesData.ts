@@ -8,10 +8,10 @@ const seriesData: StoreModule = {
   }),
   action: {
     setSeriesData({ state }) {
-      const seriesRaw = state.data.series;
+      const seriesRaw = state.series;
       const disabledSeries = state.disabledSeries;
 
-      const newSeriesData: typeof state.series = {};
+      const newSeriesData = {};
 
       Object.keys(seriesRaw).forEach(seriesName => {
         newSeriesData[seriesName] = {

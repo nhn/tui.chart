@@ -27,12 +27,10 @@ export default class LineChart extends Chart {
     super({
       el: props.el,
       options: props.options,
-      data: {
-        series: {
-          line: props.data.series
-        },
-        categories: props.data.categories
-      }
+      series: {
+        line: props.data.series
+      },
+      categories: props.data.categories
     });
   }
 

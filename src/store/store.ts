@@ -17,10 +17,19 @@ import {
   ComputedFunc,
   WatchFunc,
   StoreModule,
-  ObserveFunc
+  ObserveFunc,
+  Series
 } from '@t/store/store';
 
-import { isUndefined, forEach, pickWithMakeup } from '@src/helpers/utils';
+import { isUndefined, forEach, pickPropertyWithMakeup } from '@src/helpers/utils';
+import { BaseChartOptions, Options } from '@t/options';
+
+interface InitStoreState {
+  categories?: string[];
+  chart?: BaseChartOptions;
+  series?: Series;
+  options?: Options;
+}
 
 export default class Store {
   state: ChartState = {
@@ -48,9 +57,7 @@ export default class Store {
       }
     },
     options: {},
-    data: {
-      series: {}
-    },
+    categories: [],
     d: Date.now()
   };
 
@@ -58,7 +65,7 @@ export default class Store {
 
   actions: Record<string, ActionFunc> = {};
 
-  constructor(options?: StoreOptions) {
+  constructor(options?: InitStoreState) {
     this.setRootState(this.state);
 
     if (options) {
@@ -90,7 +97,7 @@ export default class Store {
               }
             }
           } as StoreOptions,
-          options
+          { state: options }
         )
       );
     }
@@ -103,7 +110,7 @@ export default class Store {
   setComputed(namePath: string, fn: ComputedFunc, holder: any = this.computed) {
     const splited = namePath.split('.');
     const key = splited.splice(splited.length - 1, 1)[0];
-    const target = pickWithMakeup(holder, splited);
+    const target = pickPropertyWithMakeup(holder, splited);
 
     computed(target, key, fn.bind(null, this.state, this.computed));
   }

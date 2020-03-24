@@ -1,6 +1,7 @@
-import Store from '@src/store/store';
 import { BaseChartOptions, LineChartOptions, LineSeriesType, Rect } from '../options';
+import Store from '@src/store/store';
 
+type ChartType = 'line';
 type SeriesType = LineSeriesType;
 
 export type AxisType = 'xAxis' | 'yAxis' | 'yCenterAxis';
@@ -8,6 +9,7 @@ export type AxisType = 'xAxis' | 'yAxis' | 'yCenterAxis';
 export type Series = {
   line?: LineSeriesType[];
 };
+
 export type Options = LineChartOptions;
 
 export interface StoreOptions {
@@ -28,6 +30,10 @@ export type Theme = {
   };
 };
 
+type SeriesState = {
+  [key in ChartType]?: SeriesData; // @TODO: Series 와 통합 필요. 중복되는 느낌
+};
+
 export interface ChartState {
   chart: BaseChartOptions;
   layout: {
@@ -37,9 +43,7 @@ export interface ChartState {
     [key: string]: ScaleData;
   };
   disabledSeries: string[];
-  series: {
-    [key: string]: SeriesData;
-  };
+  series: SeriesState;
   // 기존의 limitMap
   dataRange: {
     [key: string]: ValueEdge;
@@ -49,10 +53,7 @@ export interface ChartState {
   };
   theme: Theme;
   options: Options;
-  data: {
-    series: Series;
-    categories?: string[];
-  };
+  categories?: string[];
   d: number; // @TODO: check where to use
 }
 
@@ -69,11 +70,9 @@ export interface ValueEdge {
   min: number;
 }
 
-export interface SeriesData {
-  seriesCount: number;
-  seriesGroupCount: number;
+export type SeriesData = {
   data: SeriesType[];
-}
+} & SeriesGroup;
 
 export interface SeriesGroup {
   seriesCount: number;

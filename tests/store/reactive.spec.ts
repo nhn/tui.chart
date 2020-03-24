@@ -7,7 +7,7 @@ import {
   setValue,
   extend,
   invisibleWork
-} from '../../src/store/reactive';
+} from '@src/store/reactive';
 
 describe('observable/observe', () => {
   it('should invoke observer when dependency changed', () => {
@@ -246,7 +246,6 @@ describe('setValue', () => {
       sum += target.data.rData;
     });
 
-    console.log('setValue');
     setValue(target.data, 'rData2', 0);
 
     expect(sum).toEqual(2);

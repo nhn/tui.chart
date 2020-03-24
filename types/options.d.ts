@@ -1,4 +1,4 @@
-import { Series } from './store/store';
+import { Series } from '@t/store/store';
 
 // type LineSeriesDataType = number[] | Array<Array<number | string>> | Point[];
 type LineSeriesDataType = number[]; // @TODO: use ⬆️ type (coordinate)
@@ -90,13 +90,11 @@ export interface LineChartOptions extends BaseOptions {
 }
 
 // ⬇️ 차트 내부에서 사용, 정리 필요
-type Options = LineChartOptions;
+export type Options = LineChartOptions;
 
 export interface ChartProps {
   el: Element;
-  data: {
-    series: Series;
-    categories?: string[];
-  };
+  series: Series;
+  categories?: string[];
   options: Options;
 }
