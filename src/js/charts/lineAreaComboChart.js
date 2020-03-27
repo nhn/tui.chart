@@ -193,7 +193,7 @@ class LineAreaComboChart extends ChartBase {
       }
 
       additionalOptions.chartType = chartType;
-      additionalOptions.stackType = seriesOption.stackType;
+      additionalOptions.stack = seriesOption.stack;
     });
   }
 
@@ -212,9 +212,9 @@ class LineAreaComboChart extends ChartBase {
       };
     } else {
       addDataRatio = chartType => {
-        const { stackType } = seriesOption[chartType] || seriesOption;
+        const { stack } = seriesOption[chartType] || seriesOption;
 
-        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+        this.dataProcessor.addDataRatios(limitMap[chartType], stack, chartType);
       };
     }
 

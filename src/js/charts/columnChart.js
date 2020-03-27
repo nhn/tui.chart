@@ -48,7 +48,7 @@ class ColumnChart extends ChartBase {
     options.series = options.series || {};
 
     if (options.series.diverging) {
-      options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
+      options.series.stack = options.series.stack || { type: chartConst.NORMAL_STACK_TYPE };
     }
   }
 
@@ -90,9 +90,9 @@ class ColumnChart extends ChartBase {
   addDataRatios(limitMap) {
     const { series: seriesOption = {} } = this.options;
     const { chartType } = this;
-    const { stackType } = seriesOption[chartType] || seriesOption;
+    const { stack } = seriesOption[chartType] || seriesOption;
 
-    this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+    this.dataProcessor.addDataRatios(limitMap[chartType], stack, chartType);
   }
 }
 

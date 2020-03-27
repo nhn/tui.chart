@@ -89,7 +89,7 @@ class BarTypeSeriesBase {
    * @private
    */
   _makeBaseDataForMakingBound(baseGroupSize, baseBarSize) {
-    const isStackType = predicate.isValidStackOption(this.options.stackType);
+    const isStackType = predicate.isValidStackOption(this.options.stack);
     const seriesDataModel = this._getSeriesDataModel();
     const groupSize = baseGroupSize / seriesDataModel.getGroupCount();
     const columnTopOffset = -this.layout.position.top + CHART_PADDING;
@@ -249,7 +249,7 @@ class BarTypeSeriesBase {
   }
 
   getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues) {
-    const isNormalStack = predicate.isNormalStack(this.options.stackType);
+    const isNormalStack = predicate.isNormalStack(this.options.stack);
 
     return seriesDataModel.map(seriesGroup => {
       const labels = seriesGroup.map(seriesDatum => ({
@@ -293,7 +293,7 @@ class BarTypeSeriesBase {
     const groupPositions = this.getGroupPositions(seriesDataModel, groupBounds);
     const groupLabels = this.getGroupLabels(seriesDataModel, sumPlusValues, sumMinusValues);
     const isStacked = true;
-    const isNormalStack = predicate.isNormalStack(this.options.stackType);
+    const isNormalStack = predicate.isNormalStack(this.options.stack);
     const isBarChart = predicate.isBarChart(this.chartType);
     const dimensionType = isBarChart ? 'width' : 'height';
     const positionType = isBarChart ? 'left' : 'top';
@@ -371,7 +371,7 @@ class BarTypeSeriesBase {
    * @private
    */
   _renderSeriesLabel(paper) {
-    if (this.options.stackType) {
+    if (this.options.stack) {
       return this._renderStackedSeriesLabel(paper);
     }
 

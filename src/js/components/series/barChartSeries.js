@@ -140,7 +140,7 @@ class BarChartSeries extends Series {
    */
   _makeBounds() {
     const seriesDataModel = this._getSeriesDataModel();
-    const isStacked = predicate.isValidStackOption(this.options.stackType);
+    const isStacked = predicate.isValidStackOption(this.options.stack);
     const {
       dimension: { width, height },
       position: { top }

@@ -1410,14 +1410,14 @@ class DataProcessor extends DataProcessorBase {
   /**
    * Register percent values.
    * @param {{min: number, max: number}} limit axis limit
-   * @param {string} stackType stackType option
+   * @param {object} stack stack option
    * @param {string} chartType chart type
    */
-  addDataRatios(limit, stackType, chartType) {
+  addDataRatios(limit, stack, chartType) {
     const seriesDataModel = this.getSeriesDataModel(chartType);
 
     this._addStartValueToAllSeriesItem(limit, chartType);
-    seriesDataModel.addDataRatios(limit, stackType);
+    seriesDataModel.addDataRatios(limit, stack);
   }
 
   /**
@@ -1456,22 +1456,22 @@ class DataProcessor extends DataProcessorBase {
    * Create base values for calculating limit
    * @param {string} chartType - chart type
    * @param {boolean} isSingleYAxis = whether single y axis or not
-   * @param {string} stackType - stack type
+   * @param {object} stack - stack options
    * @param {string} valueType - value type
    * @param {string} axisType - value type
    * @returns {Array.<number>}
    */
-  createBaseValuesForLimit(chartType, isSingleYAxis, stackType, valueType, axisType) {
+  createBaseValuesForLimit(chartType, isSingleYAxis, stack, valueType, axisType) {
     let baseValues;
 
     if (predicate.isComboChart(this.chartType) && isSingleYAxis) {
       baseValues = this.getValues(this.chartType, valueType);
-      if (predicate.isNormalStackChart(chartType, stackType)) {
+      if (predicate.isNormalStackChart(chartType, stack)) {
         baseValues = baseValues.concat(this._createBaseValuesForNormalStackedChart(chartType));
       }
     } else if (predicate.isTreemapChart(chartType)) {
       baseValues = this.getValues(chartType, 'colorValue');
-    } else if (predicate.isNormalStackChart(chartType, stackType)) {
+    } else if (predicate.isNormalStackChart(chartType, stack)) {
       baseValues = this._createBaseValuesForNormalStackedChart(chartType);
     } else {
       baseValues = this.getValues(chartType, valueType, axisType);

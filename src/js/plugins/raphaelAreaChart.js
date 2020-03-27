@@ -151,12 +151,12 @@ class RaphaelAreaChart extends RaphaelLineBase {
    * @param {object} paper paper
    * @param {Array.<object>} groupPaths group paths
    * @param {Array.<string>} colors colors
-   * @param {number} lineWidth line width
+   * @param {number} strokeWidth line width
    * @param {number} opacity opacity
    * @returns {Array} raphael objects
    * @private
    */
-  _renderAreas(paper, groupPaths, colors, lineWidth, opacity) {
+  _renderAreas(paper, groupPaths, colors, strokeWidth, opacity) {
     colors = colors.slice(0, groupPaths.length);
     colors.reverse();
     groupPaths.reverse();
@@ -164,13 +164,16 @@ class RaphaelAreaChart extends RaphaelLineBase {
     const groupAreas = groupPaths.map((path, groupIndex) => {
       const polygons = {};
       const areaColor = colors[groupIndex] || 'transparent';
-      const lineColor = areaColor;
+      const color = areaColor;
       const area = raphaelRenderUtil.renderArea(paper, path.area.join(' '), {
         fill: areaColor,
         opacity,
         stroke: areaColor
       });
-      const line = raphaelRenderUtil.renderLine(paper, path.line.join(' '), lineColor, lineWidth);
+      const line = raphaelRenderUtil.renderLine(paper, path.line.join(' '), {
+        color,
+        strokeWidth
+      });
 
       area.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
       line.node.setAttribute('class', CLASS_NAME_SVG_AUTOSHAPE);
@@ -179,12 +182,10 @@ class RaphaelAreaChart extends RaphaelLineBase {
       polygons.line = line;
 
       if (path.startLine) {
-        polygons.startLine = raphaelRenderUtil.renderLine(
-          paper,
-          path.startLine.join(' '),
-          lineColor,
-          0
-        );
+        polygons.startLine = raphaelRenderUtil.renderLine(paper, path.startLine.join(' '), {
+          color,
+          strokeWidth: 0
+        });
       }
 
       return polygons;

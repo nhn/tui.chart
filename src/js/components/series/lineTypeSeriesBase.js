@@ -144,7 +144,7 @@ class LineTypeSeriesBase {
     const baseTop = basePosition.top;
     let top;
 
-    if (predicate.isValidStackOption(this.options.stackType)) {
+    if (predicate.isValidStackOption(this.options.stack)) {
       top = (basePosition.startTop + baseTop - labelHeight) / 2 + 1;
     } else if ((value >= 0 && !isStart) || (value < 0 && isStart)) {
       top = baseTop - labelHeight - SERIES_LABEL_PADDING;

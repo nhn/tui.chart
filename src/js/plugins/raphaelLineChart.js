@@ -159,7 +159,7 @@ class RaphaelLineChart extends RaphaelLineBase {
   _renderLines(paper, groupPaths, colors, strokeWidth) {
     return groupPaths.map((path, groupIndex) => {
       const color = colors[groupIndex] || 'transparent';
-      const line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+      const line = raphaelRenderUtil.renderLine(paper, path.join(' '), { color, strokeWidth });
       line.node.setAttribute('class', 'auto-shape-rendering');
 
       return line;

@@ -298,7 +298,10 @@ class RaphaelBarChart {
     const lines = {};
 
     Object.entries(borderLinePaths).forEach(([name, path]) => {
-      lines[name] = raphaelRenderUtil.renderLine(self.paper, path, borderColor, 1);
+      lines[name] = raphaelRenderUtil.renderLine(self.paper, path, {
+        color: borderColor,
+        strokeWidth: 1
+      });
     });
 
     return lines;

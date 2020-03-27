@@ -194,7 +194,7 @@ export default {
    * @param {{stackType: ?string, diverging: ?boolean}} seriesOptions - series options
    */
   updateRawSeriesDataByOptions(rawData, seriesOptions = {}) {
-    if (predicate.isValidStackOption(seriesOptions.stackType)) {
+    if (predicate.isValidStackOption(seriesOptions.stack)) {
       Object.keys(rawData.series).forEach(seriesType => {
         rawData.series[seriesType] = this._sortSeriesData(rawData.series[seriesType]);
       });
@@ -204,7 +204,7 @@ export default {
       Object.entries(rawData.series).forEach(([seriesType, seriesDatum]) => {
         rawData.series[seriesType] = this._makeRawSeriesDataForDiverging(
           seriesDatum,
-          seriesOptions.stackType
+          seriesOptions.stack
         );
       });
     }

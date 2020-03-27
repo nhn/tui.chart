@@ -94,9 +94,9 @@ class LineChart extends ChartBase {
       };
     } else {
       addDataRatio = chartType => {
-        const { stackType } = seriesOption[chartType] || seriesOption;
+        const { stack } = seriesOption[chartType] || seriesOption;
 
-        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+        this.dataProcessor.addDataRatios(limitMap[chartType], stack, chartType);
       };
     }
 

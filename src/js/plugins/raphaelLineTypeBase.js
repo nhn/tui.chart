@@ -229,7 +229,7 @@ class RaphaelLineTypeBase {
       }
     );
 
-    return raphaelRenderUtil.renderLine(paper, linePath, 'transparent', 1);
+    return raphaelRenderUtil.renderLine(paper, linePath, { color: 'transparent', strokeWidth: 1 });
   }
 
   appendShadowFilterToDefs() {

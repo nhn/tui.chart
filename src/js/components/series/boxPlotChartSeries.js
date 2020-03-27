@@ -127,7 +127,7 @@ class BoxplotChartSeries extends Series {
    */
   _makeBounds() {
     const seriesDataModel = this._getSeriesDataModel();
-    const isStackType = predicate.isValidStackOption(this.options.stackType);
+    const isStackType = predicate.isValidStackOption(this.options.stack);
     const { width, height } = this.layout.dimension;
     const baseData = this._makeBaseDataForMakingBound(width, height);
 
