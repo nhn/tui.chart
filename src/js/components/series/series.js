@@ -296,6 +296,13 @@ class Series {
   _renderSeriesLabel() {}
 
   /**
+   * Render stack bar type chart connector.
+   * @private
+   * @abstract
+   */
+  _renderConnector() {}
+
+  /**
    * Render series label area
    * @param {object} paper series label area element
    * @returns {Array.<object>}
@@ -336,6 +343,14 @@ class Series {
 
       if (predicate.isShowLabel(this.options) && this.supportSeriesLable) {
         this.labelSet = this._renderSeriesLabelArea(paper);
+      }
+
+      if (
+        predicate.isBarTypeChart(this.chartType) &&
+        predicate.isValidStackOption(this.options.stack) &&
+        this.options.stack.connector
+      ) {
+        this.connectorSet = this._renderConnector(paper, seriesData, this.options.stack);
       }
     }
   }
@@ -463,6 +478,12 @@ class Series {
         label.remove();
       }, this);
       this.labelSet.remove();
+    }
+    if (this.connectorSet && this.connectorSet.remove) {
+      this.connectorSet.forEach(label => {
+        label.remove();
+      }, this);
+      this.connectorSet.remove();
     }
 
     this.seriesData = {};
@@ -665,8 +686,14 @@ class Series {
         this.animateSeriesLabelArea.bind(this, isRerendering),
         this.seriesSet
       );
+
+      this.graphRenderer.animate(
+        this.animateSeriesConnector.bind(this, isRerendering),
+        this.connectorSet
+      );
     } else {
       this.animateSeriesLabelArea(isRerendering);
+      this.animateSeriesConnector();
     }
 
     setTimeout(() => {
@@ -706,6 +733,18 @@ class Series {
       });
     } else if (this.labelSet && this.labelSet.length) {
       raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, this.options.animationDuration);
+    }
+  }
+
+  animateSeriesConnector() {
+    // @TODO: rerender 테스트
+
+    if (IS_IE7) {
+      this.connectorSet.attr({
+        opacity: 1
+      });
+    } else if (this.connectorSet && this.connectorSet.length) {
+      raphaelRenderUtil.animateOpacity(this.connectorSet, 0, 1, this.options.animationDuration);
     }
   }
 

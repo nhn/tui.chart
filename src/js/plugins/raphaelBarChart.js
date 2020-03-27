@@ -645,6 +645,64 @@ class RaphaelBarChart {
 
     return labelSet;
   }
+
+  _makeConnectorModel(seriesData) {
+    const { groupBounds, seriesDataModel } = seriesData;
+    const { groups, chartType } = seriesDataModel;
+    const barChart = chartType === 'bar';
+    const connectorModel = [];
+
+    for (let boundIdx = 0; boundIdx < groupBounds.length - 1; boundIdx += 1) {
+      const startBound = groupBounds[boundIdx];
+      const endBound = groupBounds[boundIdx + 1];
+      const startGroups = groups[boundIdx];
+      const endGroups = groups[boundIdx + 1];
+
+      for (let seriesIdx = 0; seriesIdx < startBound.length; seriesIdx += 1) {
+        const isStartValueNegative = startGroups.items[seriesIdx].value < 0;
+        const isEndValueNegative = endGroups.items[seriesIdx].value < 0;
+
+        const { top, left, width, height } = startBound[seriesIdx].end;
+        const { top: endTop, left: endLeft, height: endHeight, width: endWidth } = endBound[
+          seriesIdx
+        ].end;
+
+        connectorModel.push([
+          {
+            top: top + (!barChart && isStartValueNegative ? height : 0) + (barChart ? height : 0),
+            left: left + (barChart && isStartValueNegative ? 0 : width)
+          },
+          {
+            top: endTop + (!barChart && isEndValueNegative ? endHeight : 0),
+            left:
+              endLeft + (barChart ? endWidth : 0) + (barChart && isEndValueNegative ? -endWidth : 0)
+          }
+        ]);
+      }
+    }
+
+    return connectorModel;
+  }
+
+  renderConnector(paper, seriesData, stack) {
+    const connectorModels = this._makeConnectorModel(seriesData);
+    const connectorSet = (this.connectorSet = paper.set());
+
+    connectorModels.forEach(model => {
+      const [from, to] = model;
+
+      connectorSet.push(
+        raphaelRenderUtil.renderLine(paper, raphaelRenderUtil.makeLinePath(from, to).join(' '), {
+          color: stack.color || '#aaa',
+          strokeWidth: stack.strokeWidth || 1,
+          dotted: stack.dotted || false,
+          connector: true
+        })
+      );
+    });
+
+    return connectorSet;
+  }
 }
 
 export default RaphaelBarChart;

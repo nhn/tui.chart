@@ -219,12 +219,10 @@ class RaphaelBulletChart {
     const endPosition = this.isVertical ? `L${left + length},${top}` : `L${left},${top + length}`;
     const path = `M${left},${top + endPosition}`;
 
-    return raphaelRenderUtil.renderLine(
-      this.paper,
-      path,
+    return raphaelRenderUtil.renderLine(this.paper, path, {
       color,
-      chartConst.BULLET_MARKER_STROKE_TICK
-    );
+      strokeWidth: chartConst.BULLET_MARKER_STROKE_TICK
+    });
   }
 
   /**

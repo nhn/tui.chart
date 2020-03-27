@@ -52,23 +52,33 @@ export default {
    * @memberOf module:raphaelRenderUtil
    * @param {object} paper raphael paper
    * @param {string} path line path
-   * @param {string} color line color
-   * @param {number} strokeWidth stroke width
+   * @param {object} options line options
+   * @param {string} options.color line color
+   * @param {number} [options.strokeWidth] stroke width
+   * @param {boolean} [options.dotted] dotted line
+   * @param {boolean} [options.connector] whether connector line
    * @returns {object} raphael line
    */
-  renderLine(paper, path, color, strokeWidth) {
+  renderLine(paper, path, options) {
+    const { color, strokeWidth, dotted, connector } = options;
     const line = paper.path([path]);
     const strokeStyle = {
       stroke: color,
       'stroke-width': isUndefined(strokeWidth) ? 2 : strokeWidth,
-      'stroke-linecap': 'butt'
+      'stroke-linecap': 'butt',
+      opacity: connector ? 0 : 1
     };
+
     if (color === 'transparent') {
       strokeStyle.stroke = '#fff';
       strokeStyle['stroke-opacity'] = 0;
     }
 
     line.attr(strokeStyle).node.setAttribute('class', 'auto-shape-rendering');
+
+    if (dotted) {
+      line.attr(strokeStyle).node.setAttribute('class', 'stroke-dasharray');
+    }
 
     return line;
   },

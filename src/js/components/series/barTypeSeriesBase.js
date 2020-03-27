@@ -146,6 +146,18 @@ class BarTypeSeriesBase {
   /**
    * Render normal series label.
    * @param {object} paper paper
+   * @param {object} seriesData series data
+   * @param {object} stack stack options
+   * @returns {Array.<object>}
+   * @private
+   */
+  _renderConnector(paper, seriesData, stack) {
+    return this.graphRenderer.renderConnector(paper, seriesData, stack);
+  }
+
+  /**
+   * Render normal series label.
+   * @param {object} paper paper
    * @returns {Array.<object>}
    * @private
    */

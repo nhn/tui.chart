@@ -375,7 +375,7 @@ class RaphaelBoxplotChart {
       return null;
     }
 
-    const groupBorders = groupBounds.map((bounds, groupIndex) =>
+    return groupBounds.map((bounds, groupIndex) =>
       bounds.map((bound, index) => {
         if (!bound) {
           return null;
@@ -385,8 +385,6 @@ class RaphaelBoxplotChart {
         return this._renderBorderLines(bound.start, borderColor, this.chartType, seriesItem);
       })
     );
-
-    return groupBorders;
   }
 
   /**
