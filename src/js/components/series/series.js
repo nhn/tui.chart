@@ -681,16 +681,19 @@ class Series {
    * @param {boolean} [isRerendering] - whether re-rendering or not
    */
   animateComponent(isRerendering) {
-    if (this.graphRenderer.animate && this.seriesSet) {
-      this.graphRenderer.animate(
-        this.animateSeriesLabelArea.bind(this, isRerendering),
-        this.seriesSet
-      );
-
-      this.graphRenderer.animate(
-        this.animateSeriesConnector.bind(this, isRerendering),
-        this.connectorSet
-      );
+    if (this.graphRenderer.animate) {
+      if (this.seriesSet) {
+        this.graphRenderer.animate(
+          this.animateSeriesLabelArea.bind(this, isRerendering),
+          this.seriesSet
+        );
+      }
+      if (this.connectorSet) {
+        this.graphRenderer.animate(
+          this.animateSeriesConnector.bind(this, isRerendering),
+          this.connectorSet
+        );
+      }
     } else {
       this.animateSeriesLabelArea(isRerendering);
       this.animateSeriesConnector();

@@ -543,7 +543,7 @@ describe('Test for SeriesDataModel', () => {
     it('should add ratio data by calling _addRatiosWhenNormalStacked(), when normal stack chart', () => {
       spyOn(seriesDataModel, '_addRatiosWhenNormalStacked');
       seriesDataModel.chartType = 'bar';
-      seriesDataModel.addDataRatios({ min: 0, max: 160 }, 'normal');
+      seriesDataModel.addDataRatios({ min: 0, max: 160 }, { type: 'normal' });
 
       expect(seriesDataModel._addRatiosWhenNormalStacked).toHaveBeenCalled();
     });
@@ -551,7 +551,7 @@ describe('Test for SeriesDataModel', () => {
     it('should call _addRatios() when there is `invalid` stack type option.', () => {
       spyOn(seriesDataModel, '_addRatios');
       seriesDataModel.chartType = 'line';
-      seriesDataModel.addDataRatios({ min: 0, max: 160 }, 'normal');
+      seriesDataModel.addDataRatios({ min: 0, max: 160 }, { type: 'normal' });
 
       expect(seriesDataModel._addRatios).toHaveBeenCalled();
     });
@@ -560,7 +560,7 @@ describe('Test for SeriesDataModel', () => {
       spyOn(seriesDataModel, '_addRatiosWhenDivergingStacked');
       seriesDataModel.isDivergingChart = true;
       seriesDataModel.chartType = 'bar';
-      seriesDataModel.addDataRatios({ min: 0, max: 160 }, 'percent');
+      seriesDataModel.addDataRatios({ min: 0, max: 160 }, { type: 'percent' });
 
       expect(seriesDataModel._addRatiosWhenDivergingStacked).toHaveBeenCalled();
     });
@@ -568,7 +568,7 @@ describe('Test for SeriesDataModel', () => {
     it('should call _addRatiosWhenPercentStacked(), when percent stack type', () => {
       spyOn(seriesDataModel, '_addRatiosWhenPercentStacked');
       seriesDataModel.chartType = 'bar';
-      seriesDataModel.addDataRatios({ min: 0, max: 160 }, 'percent');
+      seriesDataModel.addDataRatios({ min: 0, max: 160 }, { type: 'percent' });
 
       expect(seriesDataModel._addRatiosWhenPercentStacked).toHaveBeenCalled();
     });
@@ -576,7 +576,7 @@ describe('Test for SeriesDataModel', () => {
     it('should call _addRatios() when there is percent stack type with in valid stackType option', () => {
       spyOn(seriesDataModel, '_addRatios');
       seriesDataModel.chartType = 'line';
-      seriesDataModel.addDataRatios({ min: 0, max: 160 }, 'percent');
+      seriesDataModel.addDataRatios({ min: 0, max: 160 }, { type: 'percent' });
 
       expect(seriesDataModel._addRatios).toHaveBeenCalled();
     });
