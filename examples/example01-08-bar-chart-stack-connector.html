@@ -3,12 +3,12 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>4.2 [Area Chart] normal stack</title>
+    <title>1.8 [Bar Chart] stack bar chart with connector</title>
     <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
     <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css'/>
     <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css'/>
     <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css'/>
-    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
 </head>
 <body>
 <div class='wrap'>
@@ -36,49 +36,38 @@
 <script class='code-js' id='code-js'>
 var container = document.getElementById('chart-area');
 var data = {
-    categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
     series: [
         {
             name: 'Budget',
-            data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+            data: [5000, 3000, 5000, 7000, 6000, 4000]
         },
         {
             name: 'Income',
-            data: [8000, 4000, 7000, 2000, 6000, 3000, 5000]
-        },
-        {
-            name: 'Expenses',
-            data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
-        },
-        {
-            name: 'Debt',
-            data: [3000, 4000, 3000, 1000, 2000, 4000, 3000]
+            data: [8000, 1000, 7000, 2000, 5000, 3000]
         }
     ]
 };
 var options = {
     chart: {
         width: 1160,
-        height: 540,
+        height: 650,
         title: 'Monthly Revenue',
         format: '1,000'
     },
     yAxis: {
-        title: 'Amount',
-        max: 24000,
-        pointOnColumn: true
-    },
-    xAxis: {
         title: 'Month'
     },
-    series: {
-        stack: 'normal',
-        showDot: false,
-        areaOpacity: 1
+    xAxis: {
+        title: 'Amount',
+        suffix: '$'
     },
-    tooltip: {
-        grouped: true
-    }
+     series: {
+         stack: {
+             type: 'normal',
+             connector: true
+         }
+     }
 };
 var theme = {
     series: {
@@ -94,8 +83,9 @@ var theme = {
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
 
-tui.chart.areaChart(container, data, options);
+tui.chart.barChart(container, data, options);
 </script>
+
 <!--For tutorial page-->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.js'></script>
 <script src='//ajax.aspnetcdn.com/ajax/jshint/r07/jshint.js'></script>
@@ -105,6 +95,5 @@ tui.chart.areaChart(container, data, options);
 <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/javascript-lint.js'></script>
 <script src='./js/example.js'></script>
-
 </body>
 </html>
