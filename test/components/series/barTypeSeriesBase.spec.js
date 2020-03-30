@@ -256,7 +256,7 @@ describe('BarTypeSeriesBase', () => {
 
     it('should call _renderStackedSeriesLabel() if there is stack option.', () => {
       spyOn(series, '_renderStackedSeriesLabel');
-      series.options.stackType = 'normal';
+      series.options.stack = { type: 'normal' };
 
       series._renderSeriesLabel(paper);
 

@@ -191,7 +191,7 @@ export default {
   /**
    * Update raw series data by options.
    * @param {object} rawData - raw data
-   * @param {{stackType: ?string, diverging: ?boolean}} seriesOptions - series options
+   * @param {{stackType: ?object, diverging: ?boolean}} seriesOptions - series options
    */
   updateRawSeriesDataByOptions(rawData, seriesOptions = {}) {
     if (predicate.isValidStackOption(seriesOptions.stack)) {

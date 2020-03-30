@@ -5,6 +5,7 @@
  */
 import raphael from 'raphael';
 import isNull from 'tui-code-snippet/type/isNull';
+import isObject from 'tui-code-snippet/type/isObject';
 import forEach from 'tui-code-snippet/collection/forEach';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
@@ -686,16 +687,21 @@ class RaphaelBarChart {
   renderConnector(paper, seriesData, stack) {
     const connectorModels = this._makeConnectorModel(seriesData);
     const connectorSet = (this.connectorSet = paper.set());
+    const { connector } = stack;
+    const hasConnectorStyle = isObject(connector);
+    const strokeWidth = (hasConnectorStyle && connector.width) || 1;
+    const color = (hasConnectorStyle && connector.color) || '#aaa';
+    const dotted = (hasConnectorStyle && connector.type === 'dotted') || false;
 
     connectorModels.forEach(model => {
       const [from, to] = model;
 
       connectorSet.push(
         raphaelRenderUtil.renderLine(paper, raphaelRenderUtil.makeLinePath(from, to).join(' '), {
-          color: stack.color || '#aaa',
-          strokeWidth: stack.strokeWidth || 1,
-          dotted: stack.dotted || false,
-          connector: stack.connector || false
+          color,
+          strokeWidth,
+          dotted,
+          connector: true
         })
       );
     });

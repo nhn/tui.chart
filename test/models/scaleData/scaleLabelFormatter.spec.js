@@ -10,11 +10,11 @@ describe('Test for scaleLabelFormatter', () => {
   describe('_getFormatFunctions()', () => {
     it('get format functions, when is percent stacked chart', () => {
       const chartType = 'bar';
-      const stackType = 'percent';
+      const stack = { type: 'percent' };
 
       scaleLabelFormatter.chartType = chartConst.CHART_TYPE_BAR;
-      scaleLabelFormatter.stackType = chartConst.PERCENT_STACK_TYPE;
-      const actual = scaleLabelFormatter._getFormatFunctions(chartType, stackType);
+      scaleLabelFormatter.stack = chartConst.PERCENT_STACK_TYPE;
+      const actual = scaleLabelFormatter._getFormatFunctions(chartType, stack);
       const expected = '10%';
 
       expect(actual[0](10)).toBe(expected);
@@ -22,10 +22,10 @@ describe('Test for scaleLabelFormatter', () => {
 
     it('get format functions, when is not percent stacked chart', () => {
       const chartType = chartConst.CHART_TYPE_LINE;
-      const stackType = '';
+      const stack = { type: 'normal' };
       const formatFunctions = 'formatFunctions';
 
-      const actual = scaleLabelFormatter._getFormatFunctions(chartType, stackType, formatFunctions);
+      const actual = scaleLabelFormatter._getFormatFunctions(chartType, stack, formatFunctions);
 
       expect(actual).toBe('formatFunctions');
     });

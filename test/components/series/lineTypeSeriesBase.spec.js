@@ -359,7 +359,7 @@ describe('LineTypeSeriesBase', () => {
   describe('_calculateLabelPositionTop()', () => {
     it('should calculate label top position if stack type chart.', () => {
       series.options = {
-        stackType: 'normal'
+        stack: { type: 'normal' }
       };
 
       const actual = series._calculateLabelPositionTop(

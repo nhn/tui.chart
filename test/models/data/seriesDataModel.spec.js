@@ -88,7 +88,7 @@ describe('Test for SeriesDataModel', () => {
 
       seriesDataModel.chartType = 'pie';
       seriesDataModel.options = {
-        stackType: 'normal'
+        stack: { type: 'normal' }
       };
       seriesDataModel._removeRangeValue();
 

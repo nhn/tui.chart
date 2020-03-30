@@ -76,7 +76,7 @@ const areaOptions = {
     zoomable: false,
     shifting: true,
     areaOpacity: 0.5,
-    stackType: 'normal'
+    stack: { type: 'normal' }
   },
   tooltip: {
     suffix: 'won',

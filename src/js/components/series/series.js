@@ -348,7 +348,7 @@ class Series {
       if (
         predicate.isBarTypeChart(this.chartType) &&
         predicate.isValidStackOption(this.options.stack) &&
-        this.options.stack.connector
+        predicate.isRenderConnector(this.options.stack.connector)
       ) {
         this.connectorSet = this._renderConnector(paper, seriesData, this.options.stack);
       }

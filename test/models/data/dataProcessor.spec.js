@@ -1492,7 +1492,7 @@ describe('Test for DataProcessor', () => {
 
     it('Make base values, when single yAxis and has stackType option in comboChart.', () => {
       const isSingleYAxis = true;
-      const stackType = chartConst.NORMAL_STACK_TYPE;
+      const stack = { type: chartConst.NORMAL_STACK_TYPE };
 
       dataProcessor.seriesDataModelMap = {
         column: new SeriesDataModel(),
@@ -1516,7 +1516,7 @@ describe('Test for DataProcessor', () => {
       const actual = dataProcessor.createBaseValuesForLimit(
         chartConst.CHART_TYPE_COLUMN,
         isSingleYAxis,
-        stackType
+        stack
       );
       const expected = [70, 10, 20, 20, 80, 30, 1, 2, 3, 230, 0];
 
@@ -1526,7 +1526,7 @@ describe('Test for DataProcessor', () => {
     it('Make base values, when stackType is normal.', () => {
       const chartType = chartConst.CHART_TYPE_COLUMN;
       const isSingleYAxis = false;
-      const stackType = chartConst.NORMAL_STACK_TYPE;
+      const stack = { type: chartConst.NORMAL_STACK_TYPE };
 
       spyOn(dataProcessor, '_createBaseValuesForNormalStackedChart').and.returnValue([
         80,
@@ -1537,7 +1537,7 @@ describe('Test for DataProcessor', () => {
         -40
       ]);
 
-      const actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis, stackType);
+      const actual = dataProcessor.createBaseValuesForLimit(chartType, isSingleYAxis, stack);
       const expected = [80, -10, 20, -30, 80, -40];
 
       expect(actual).toEqual(expected);

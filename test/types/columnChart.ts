@@ -1,4 +1,5 @@
 import tuiChart from 'tui-chart';
+import IStack = tuiChart.IStack;
 const data = {
   categories: [
     'June, 2015',
@@ -45,6 +46,16 @@ const options = {
   },
   legend: {
     align: 'top'
+  },
+  series: {
+    stack: {
+      type: 'normal',
+      connector: {
+        type: 'dotted',
+        color: 'blue',
+        width: 1
+      }
+    } as IStack
   }
 };
 const elColumn = document.querySelector('.section[data-section="chart"] .column');

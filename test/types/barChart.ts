@@ -1,4 +1,5 @@
 import tuiChart from 'tui-chart';
+import IStack = tuiChart.IStack;
 
 const data = {
   categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -44,7 +45,14 @@ const barOptions = {
   series: {
     showLabel: true,
     allowSelect: true,
-    stackType: 'normal',
+    stack: {
+      type: 'normal',
+      connector: {
+        type: 'dotted',
+        width: 1,
+        color: 'red'
+      }
+    } as IStack,
     barWidth: 20,
     diverging: false,
     colorByPoint: false,

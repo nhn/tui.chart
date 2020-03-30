@@ -4,6 +4,9 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isBoolean from 'tui-code-snippet/type/isBoolean';
+import isObject from 'tui-code-snippet/type/isObject';
+
 import chartConst from '../const';
 import arrayUtil from './arrayUtil';
 
@@ -581,6 +584,19 @@ const predicate = {
       this.isLineChart(chartType) ||
       this.isAreaChart(chartType) ||
       this.isBoxplotChart(chartType)
+    );
+  },
+
+  /**
+   * Whether valid stackType option or not.
+   * @memberOf module:predicate
+   * @param {object | boolean} [connector] - connector option
+   * @returns {boolean}
+   */
+  isRenderConnector(connector) {
+    return (
+      (isBoolean(connector) && connector) ||
+      (isObject(connector) && (connector.type === 'solid' || connector.type === 'dotted'))
     );
   }
 };
