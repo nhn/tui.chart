@@ -674,8 +674,7 @@ class RaphaelBarChart {
           },
           {
             top: endTop + (!barChart && isEndValueNegative ? endHeight : 0),
-            left:
-              endLeft + (barChart ? endWidth : 0) + (barChart && isEndValueNegative ? -endWidth : 0)
+            left: endLeft + (barChart && !isEndValueNegative ? endWidth : 0)
           }
         ]);
       }
@@ -696,7 +695,7 @@ class RaphaelBarChart {
           color: stack.color || '#aaa',
           strokeWidth: stack.strokeWidth || 1,
           dotted: stack.dotted || false,
-          connector: true
+          connector: stack.connector || false
         })
       );
     });
