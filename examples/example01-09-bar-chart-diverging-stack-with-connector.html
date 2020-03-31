@@ -3,12 +3,12 @@
 <head lang="kr">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>2.5 [Column Chart] diverging and stacked</title>
+    <title>1.9 [Bar Chart] stacked and diverging bar chart with connector</title>
     <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
     <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css'/>
     <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css'/>
     <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css'/>
-    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
 </head>
 <body>
 <div class='wrap'>
@@ -63,22 +63,23 @@ var data = {
 var options = {
     chart: {
         width: 1160,
-        height: 540,
+        height: 650,
         title: 'Population Distribution',
         format: '1,000'
     },
-    xAxis: {
-        title: 'Age Group'
-    },
+    yAxis: [{
+        title: 'Age Group',
+        labelMargin: 15
+    }, {
+        title: 'Age Group',
+        labelMargin: 15
+    }],
     series: {
-        stack: 'normal',
-        diverging: true
-    },
-    legend: {
-        align: 'top'
-    },
-    tooltip: {
-        grouped: true
+        diverging: true,
+        stack: {
+            type: 'normal',
+            connector: true
+        }
     }
 };
 var theme = {
@@ -95,7 +96,7 @@ var theme = {
 // tui.chart.registerTheme('myTheme', theme);
 // options.theme = 'myTheme';
 
-tui.chart.columnChart(container, data, options);
+tui.chart.barChart(container, data, options);
 </script>
 <!--For tutorial page-->
 <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.js'></script>

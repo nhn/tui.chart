@@ -90,7 +90,7 @@ class AreaChartSeries extends Series {
   _makePositions(seriesWidth) {
     let groupPositions = this._makeBasicPositions(seriesWidth);
 
-    if (predicate.isValidStackOption(this.options.stackType)) {
+    if (predicate.isValidStackOption(this.options.stack)) {
       groupPositions = this._makeStackedPositions(groupPositions);
     }
 

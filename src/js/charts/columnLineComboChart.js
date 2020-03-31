@@ -185,9 +185,9 @@ class ColumnLineComboChart extends ChartBase {
     const chartTypes = this.chartTypes || [this.chartType];
     const seriesOption = this.options.series || {};
     const addDataRatio = chartType => {
-      const { stackType } = seriesOption[chartType] || seriesOption;
+      const { stack } = seriesOption[chartType] || seriesOption;
 
-      this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+      this.dataProcessor.addDataRatios(limitMap[chartType], stack, chartType);
     };
 
     chartTypes.forEach(addDataRatio);

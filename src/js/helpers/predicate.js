@@ -4,6 +4,9 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
+import isBoolean from 'tui-code-snippet/type/isBoolean';
+import isObject from 'tui-code-snippet/type/isObject';
+
 import chartConst from '../const';
 import arrayUtil from './arrayUtil';
 
@@ -102,13 +105,13 @@ const predicate = {
   /**
    * Whether normal stack chart or not.
    * @param {string} chartType - type of chart
-   * @param {string} stackType - type of stack
+   * @param {object} stack - stack options
    * @returns {boolean}
    * @private
    */
-  isNormalStackChart(chartType, stackType) {
+  isNormalStackChart(chartType, stack) {
     const isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-    const isNormalStack = predicate.isNormalStack(stackType);
+    const isNormalStack = predicate.isNormalStack(stack);
 
     return isAllowedStackOption && isNormalStack;
   },
@@ -116,13 +119,13 @@ const predicate = {
   /**
    * Whether percent stack chart or not.
    * @param {string} chartType - type of chart
-   * @param {string} stackType - type of stack
+   * @param {object} stack - type of stack
    * @returns {boolean}
    * @private
    */
-  isPercentStackChart(chartType, stackType) {
+  isPercentStackChart(chartType, stack) {
     const isAllowedStackOption = predicate.isAllowedStackOption(chartType);
-    const isPercentStack = predicate.isPercentStack(stackType);
+    const isPercentStack = predicate.isPercentStack(stack);
 
     return isAllowedStackOption && isPercentStack;
   },
@@ -467,31 +470,34 @@ const predicate = {
   /**
    * Whether normal stack type or not.
    * @memberOf module:predicate
-   * @param {boolean} stackType - stackType option
+   * @param {object} stack - stack option
+   * @param {string} stack.type - stack type
    * @returns {boolean}
    */
-  isNormalStack(stackType) {
-    return stackType === chartConst.NORMAL_STACK_TYPE;
+  isNormalStack(stack) {
+    return !!stack && stack.type === chartConst.NORMAL_STACK_TYPE;
   },
 
   /**
    * Whether percent stack type or not.
    * @memberOf module:predicate
-   * @param {boolean} stackType - stackType option
+   * @param {object} stack - stack option
+   * @param {string} stack.type - stack type
    * @returns {boolean}
    */
-  isPercentStack(stackType) {
-    return stackType === chartConst.PERCENT_STACK_TYPE;
+  isPercentStack(stack) {
+    return !!stack && stack.type === chartConst.PERCENT_STACK_TYPE;
   },
 
   /**
    * Whether valid stackType option or not.
    * @memberOf module:predicate
-   * @param {boolean} stackType - stackType option
+   * @param {object} stack - stack option
+   * @param {string} stack.type - stack option
    * @returns {boolean}
    */
-  isValidStackOption(stackType) {
-    return stackType && (predicate.isNormalStack(stackType) || predicate.isPercentStack(stackType));
+  isValidStackOption(stack) {
+    return predicate.isNormalStack(stack) || predicate.isPercentStack(stack);
   },
 
   /**
@@ -578,6 +584,19 @@ const predicate = {
       this.isLineChart(chartType) ||
       this.isAreaChart(chartType) ||
       this.isBoxplotChart(chartType)
+    );
+  },
+
+  /**
+   * Whether valid stackType option or not.
+   * @memberOf module:predicate
+   * @param {object | boolean} [connector] - connector option
+   * @returns {boolean}
+   */
+  isRenderConnector(connector) {
+    return (
+      (isBoolean(connector) && connector) ||
+      (isObject(connector) && (connector.type === 'solid' || connector.type === 'dotted'))
     );
   }
 };

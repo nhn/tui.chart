@@ -5,6 +5,7 @@
  */
 import raphael from 'raphael';
 import isNull from 'tui-code-snippet/type/isNull';
+import isObject from 'tui-code-snippet/type/isObject';
 import forEach from 'tui-code-snippet/collection/forEach';
 
 import raphaelRenderUtil from './raphaelRenderUtil';
@@ -298,7 +299,10 @@ class RaphaelBarChart {
     const lines = {};
 
     Object.entries(borderLinePaths).forEach(([name, path]) => {
-      lines[name] = raphaelRenderUtil.renderLine(self.paper, path, borderColor, 1);
+      lines[name] = raphaelRenderUtil.renderLine(self.paper, path, {
+        color: borderColor,
+        strokeWidth: 1
+      });
     });
 
     return lines;
@@ -641,6 +645,77 @@ class RaphaelBarChart {
     });
 
     return labelSet;
+  }
+
+  _calculateConnectorPosition(bound, group) {
+    const connectorModel = [];
+    const barChart = this.chartType === 'bar';
+    const [startBound, endBound] = bound;
+    const [startGroups, endGroups] = group;
+
+    for (let seriesIdx = 0; seriesIdx < startBound.length; seriesIdx += 1) {
+      const isStartValueNegative = startGroups.items[seriesIdx].value < 0;
+      const isEndValueNegative = endGroups.items[seriesIdx].value < 0;
+
+      const { top, left, width, height } = startBound[seriesIdx].end;
+      const { top: endTop, left: endLeft, height: endHeight, width: endWidth } = endBound[
+        seriesIdx
+      ].end;
+
+      connectorModel.push([
+        {
+          top: top + (!barChart && isStartValueNegative ? height : 0) + (barChart ? height : 0),
+          left: left + (barChart && isStartValueNegative ? 0 : width)
+        },
+        {
+          top: endTop + (!barChart && isEndValueNegative ? endHeight : 0),
+          left: endLeft + (barChart && !isEndValueNegative ? endWidth : 0)
+        }
+      ]);
+    }
+
+    return connectorModel;
+  }
+
+  _makeConnectorModel(seriesData) {
+    const { groupBounds, seriesDataModel } = seriesData;
+    const { groups } = seriesDataModel;
+
+    const connectorModel = [];
+
+    for (let boundIdx = 0; boundIdx < groupBounds.length - 1; boundIdx += 1) {
+      const bound = [groupBounds[boundIdx], groupBounds[boundIdx + 1]];
+      const group = [groups[boundIdx], groups[boundIdx + 1]];
+
+      connectorModel.push(...this._calculateConnectorPosition(bound, group));
+    }
+
+    return connectorModel;
+  }
+
+  renderConnector(paper, seriesData, stack) {
+    const connectorModels = this._makeConnectorModel(seriesData);
+    const connectorSet = (this.connectorSet = paper.set());
+    const { connector } = stack;
+    const hasConnectorStyle = isObject(connector);
+    const strokeWidth = (hasConnectorStyle && connector.width) || 1;
+    const color = (hasConnectorStyle && connector.color) || '#ddd';
+    const dotted = (hasConnectorStyle && connector.type === 'dotted') || false;
+
+    connectorModels.forEach(model => {
+      const [from, to] = model;
+
+      connectorSet.push(
+        raphaelRenderUtil.renderLine(paper, raphaelRenderUtil.makeLinePath(from, to).join(' '), {
+          color,
+          strokeWidth,
+          dotted,
+          connector: true
+        })
+      );
+    });
+
+    return connectorSet;
   }
 }
 

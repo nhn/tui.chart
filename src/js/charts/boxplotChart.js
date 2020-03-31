@@ -92,9 +92,9 @@ class BoxplotChart extends ChartBase {
       options: { series: seriesOption = {} },
       chartType
     } = this;
-    const { stackType } = seriesOption[chartType] || seriesOption;
+    const { stack } = seriesOption[chartType] || seriesOption;
 
-    this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+    this.dataProcessor.addDataRatios(limitMap[chartType], stack, chartType);
   }
 }
 

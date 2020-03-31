@@ -5,6 +5,7 @@
  */
 import isNull from 'tui-code-snippet/type/isNull';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isNotEmpty from 'tui-code-snippet/type/isNotEmpty';
 import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 
 import chartConst from '../../const';
@@ -185,12 +186,11 @@ class Legend {
    * @private
    */
   _getLegendRenderingData(legendData, labelHeight, labelWidths) {
-    const { maxWidth } = this.options;
     const colorByPoint =
       (predicate.isBarTypeChart(this.chartType) || predicate.isBoxplotChart(this.chartType)) &&
       this.dataProcessor.options.series.colorByPoint;
 
-    return legendData.map((legendDatum, index) => {
+    const data = legendData.map((legendDatum, index) => {
       const checkbox =
         this.options.showCheckbox === false
           ? null
@@ -199,8 +199,12 @@ class Legend {
             };
       let legendLabel = legendDatum.label;
 
-      if (maxWidth) {
-        legendLabel = raphaelRenderUtil.getEllipsisText(legendLabel, maxWidth, this.theme.label);
+      if (this.options.maxWidth) {
+        legendLabel = raphaelRenderUtil.getEllipsisText(
+          legendLabel,
+          this.options.maxWidth,
+          this.theme.label
+        );
       }
 
       return {
@@ -215,6 +219,17 @@ class Legend {
         isUnselected: this.legendModel.isUnselectedIndex(index)
       };
     });
+
+    if (
+      (predicate.isAreaChart(this.chartType) || predicate.isColumnChart(this.chartType)) &&
+      isNotEmpty(this.dataProcessor.options.series.stack) &&
+      this.options.align !== 'top' &&
+      this.options.align !== 'bottom'
+    ) {
+      data.reverse();
+    }
+
+    return data;
   }
 
   /**

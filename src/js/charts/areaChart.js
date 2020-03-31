@@ -88,8 +88,8 @@ class AreaChart extends ChartBase {
       };
     } else {
       addDataRatio = chartType => {
-        const { stackType } = seriesOption[chartType] || seriesOption;
-        this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+        const { stack } = seriesOption[chartType] || seriesOption;
+        this.dataProcessor.addDataRatios(limitMap[chartType], stack, chartType);
       };
     }
 

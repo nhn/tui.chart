@@ -52,7 +52,7 @@ class BarChart extends ChartBase {
       options.xAxis = options.xAxis || {};
       options.plot = options.plot || {};
 
-      options.series.stackType = options.series.stackType || chartConst.NORMAL_STACK_TYPE;
+      options.series.stack = options.series.stack || { type: chartConst.NORMAL_STACK_TYPE };
 
       const isCenter = predicate.isYAxisAlignCenter(this.hasRightYAxis, options.yAxis.align);
 
@@ -123,9 +123,9 @@ class BarChart extends ChartBase {
       options: { series: seriesOption = {} },
       chartType
     } = this;
-    const { stackType } = seriesOption[chartType] || seriesOption;
+    const { stack } = seriesOption[chartType] || seriesOption;
 
-    this.dataProcessor.addDataRatios(limitMap[chartType], stackType, chartType);
+    this.dataProcessor.addDataRatios(limitMap[chartType], stack, chartType);
   }
 }
 

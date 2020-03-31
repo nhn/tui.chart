@@ -176,8 +176,14 @@ class RaphaelBoxplotChart {
             V${end.top + Math.abs(topDistance) * whiskerDirection}
         `;
 
-    const edge = raphaelRenderUtil.renderLine(paper, edgePath, color, EDGE_LINE_WIDTH);
-    const whisker = raphaelRenderUtil.renderLine(paper, whiskerPath, color, WHISKER_LINE_WIDTH);
+    const edge = raphaelRenderUtil.renderLine(paper, edgePath, {
+      color,
+      strokeWidth: EDGE_LINE_WIDTH
+    });
+    const whisker = raphaelRenderUtil.renderLine(paper, whiskerPath, {
+      color,
+      strokeWidth: WHISKER_LINE_WIDTH
+    });
     const whiskers = [];
 
     edge.attr({
@@ -221,12 +227,10 @@ class RaphaelBoxplotChart {
   _renderMedianLine(bound) {
     const { width } = bound;
     const medianLinePath = `M${bound.left},${bound.top},H${bound.left + width}`;
-    const median = raphaelRenderUtil.renderLine(
-      this.paper,
-      medianLinePath,
-      '#ffffff',
-      MEDIAN_LINE_WIDTH
-    );
+    const median = raphaelRenderUtil.renderLine(this.paper, medianLinePath, {
+      color: '#fff',
+      strokeWidth: MEDIAN_LINE_WIDTH
+    });
 
     median.attr({
       opacity: this.animationDuration ? 0 : 1
@@ -349,7 +353,10 @@ class RaphaelBoxplotChart {
     const lines = {};
 
     Object.entries(borderLinePaths).forEach(([name, path]) => {
-      lines[name] = raphaelRenderUtil.renderLine(this.paper, path, borderColor, 1);
+      lines[name] = raphaelRenderUtil.renderLine(this.paper, path, {
+        color: borderColor,
+        strokeWidth: 1
+      });
     });
 
     return lines;
@@ -368,7 +375,7 @@ class RaphaelBoxplotChart {
       return null;
     }
 
-    const groupBorders = groupBounds.map((bounds, groupIndex) =>
+    return groupBounds.map((bounds, groupIndex) =>
       bounds.map((bound, index) => {
         if (!bound) {
           return null;
@@ -378,8 +385,6 @@ class RaphaelBoxplotChart {
         return this._renderBorderLines(bound.start, borderColor, this.chartType, seriesItem);
       })
     );
-
-    return groupBorders;
   }
 
   /**

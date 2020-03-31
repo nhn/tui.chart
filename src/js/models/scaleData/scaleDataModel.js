@@ -69,7 +69,7 @@ class ScaleDataModel {
    * }} typeMap - type map
    * @param {{
    *      type: string,
-   *      stackType: string,
+   *      stack: object,
    *      diverging: boolean
    * }} baseOptions - base options
    * @param {object} axisOptions - axis options
@@ -83,7 +83,7 @@ class ScaleDataModel {
     const baseValues = this.dataProcessor.createBaseValuesForLimit(
       chartType,
       additionalOptions.isSingleYAxis,
-      baseOptions.stackType,
+      baseOptions.stack,
       typeMap.valueType,
       typeMap.areaType
     );
@@ -121,7 +121,7 @@ class ScaleDataModel {
    * }} typeMap - type map
    * @param {{
    *      type: string,
-   *      stackType: string,
+   *      stack: string,
    *      diverging: boolean
    * }} baseOptions - base options
    * @param {string} dateFormat - date format
@@ -158,7 +158,7 @@ class ScaleDataModel {
     seriesOptions = seriesOptions[chartType] || seriesOptions;
 
     const baseOptions = {
-      stackType: additionalOptions.stackType || seriesOptions.stackType,
+      stack: additionalOptions.stack || seriesOptions.stack,
       diverging: seriesOptions.diverging,
       type: axisOptions.type
     };

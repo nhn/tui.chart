@@ -127,7 +127,7 @@ class SeriesDataModel {
     const seriesOption = pick(this.options, 'series') || {};
     const allowRange =
       predicate.isAllowRangeData(this.chartType) &&
-      !predicate.isValidStackOption(seriesOption.stackType) &&
+      !predicate.isValidStackOption(seriesOption.stack) &&
       !seriesOption.spline;
 
     if (allowRange || this.isCoordinateType) {
@@ -528,15 +528,15 @@ class SeriesDataModel {
   /**
    * Add data ratios.
    * @param {{min: number, max: number}} limit - axis limit
-   * @param {string} stackType - stackType option
+   * @param {object} stack - stack option
    * @private
    */
-  addDataRatios(limit, stackType) {
+  addDataRatios(limit, stack) {
     const isAllowedStackOption = predicate.isAllowedStackOption(this.chartType);
 
-    if (isAllowedStackOption && predicate.isNormalStack(stackType)) {
+    if (isAllowedStackOption && predicate.isNormalStack(stack)) {
       this._addRatiosWhenNormalStacked(limit);
-    } else if (isAllowedStackOption && predicate.isPercentStack(stackType)) {
+    } else if (isAllowedStackOption && predicate.isPercentStack(stack)) {
       if (this.isDivergingChart) {
         this._addRatiosWhenDivergingStacked();
       } else {

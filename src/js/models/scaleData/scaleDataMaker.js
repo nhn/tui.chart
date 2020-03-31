@@ -328,7 +328,7 @@ const scaleDataMaker = {
    * @param {string} chartType - chart type
    * @param {{
    *      type: string,
-   *      stackType: string,
+   *      stack: string,
    *      diverging: boolean,
    *      isVertical: boolean,
    *      limitOption: ?{min: ?number, max: ?number},
@@ -341,7 +341,7 @@ const scaleDataMaker = {
     const isDiverging = predicate.isDivergingChart(chartType, options.diverging);
     const { overflowItem } = options;
 
-    if (predicate.isPercentStackChart(chartType, options.stackType)) {
+    if (predicate.isPercentStackChart(chartType, options.stack)) {
       scaleData = this._calculatePercentStackedScale(baseValues, isDiverging);
     } else if (predicate.isDatetimeType(options.type)) {
       scaleData = this._calculateDatetimeScale(baseValues, baseSize, isDiverging);

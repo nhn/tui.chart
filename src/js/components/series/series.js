@@ -4,13 +4,10 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import browser from 'tui-code-snippet/browser/browser';
 import isArray from 'tui-code-snippet/type/isArray';
 import isEmpty from 'tui-code-snippet/type/isEmpty';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
-
-const IS_IE7 = browser.msie && browser.version === 7;
 
 import chartConst from '../../const';
 import dom from '../../helpers/domHandler';
@@ -296,6 +293,13 @@ class Series {
   _renderSeriesLabel() {}
 
   /**
+   * Render stack bar type chart connector.
+   * @private
+   * @abstract
+   */
+  _renderConnector() {}
+
+  /**
    * Render series label area
    * @param {object} paper series label area element
    * @returns {Array.<object>}
@@ -336,6 +340,14 @@ class Series {
 
       if (predicate.isShowLabel(this.options) && this.supportSeriesLable) {
         this.labelSet = this._renderSeriesLabelArea(paper);
+      }
+
+      if (
+        predicate.isBarTypeChart(this.chartType) &&
+        predicate.isValidStackOption(this.options.stack) &&
+        predicate.isRenderConnector(this.options.stack.connector)
+      ) {
+        this.connectorSet = this._renderConnector(paper, seriesData, this.options.stack);
       }
     }
   }
@@ -463,6 +475,12 @@ class Series {
         label.remove();
       }, this);
       this.labelSet.remove();
+    }
+    if (this.connectorSet && this.connectorSet.remove) {
+      this.connectorSet.forEach(label => {
+        label.remove();
+      }, this);
+      this.connectorSet.remove();
     }
 
     this.seriesData = {};
@@ -660,13 +678,22 @@ class Series {
    * @param {boolean} [isRerendering] - whether re-rendering or not
    */
   animateComponent(isRerendering) {
-    if (this.graphRenderer.animate && this.seriesSet) {
-      this.graphRenderer.animate(
-        this.animateSeriesLabelArea.bind(this, isRerendering),
-        this.seriesSet
-      );
+    if (this.graphRenderer.animate) {
+      if (this.seriesSet) {
+        this.graphRenderer.animate(
+          this.animateSeriesLabelArea.bind(this, isRerendering),
+          this.seriesSet
+        );
+      }
+      if (this.connectorSet) {
+        this.graphRenderer.animate(
+          this.animateSeriesConnector.bind(this, isRerendering),
+          this.connectorSet
+        );
+      }
     } else {
       this.animateSeriesLabelArea(isRerendering);
+      this.animateSeriesConnector();
     }
 
     setTimeout(() => {
@@ -699,13 +726,14 @@ class Series {
       return;
     }
 
-    if (IS_IE7) {
-      this._fireLoadEvent(isRerendering);
-      this.labelSet.attr({
-        opacity: 1
-      });
-    } else if (this.labelSet && this.labelSet.length) {
+    if (this.labelSet && this.labelSet.length) {
       raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, this.options.animationDuration);
+    }
+  }
+
+  animateSeriesConnector() {
+    if (this.connectorSet && this.connectorSet.length) {
+      raphaelRenderUtil.animateOpacity(this.connectorSet, 0, 1, this.options.animationDuration);
     }
   }
 

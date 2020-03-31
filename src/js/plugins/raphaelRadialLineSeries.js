@@ -114,7 +114,7 @@ class RaphaelRadialLineSeries extends RaphaelLineTypeBase {
   _renderLines(paper, groupPaths, colors, strokeWidth, radialSeriesSet) {
     return groupPaths.map((path, groupIndex) => {
       const color = colors[groupIndex] || 'transparent';
-      const line = raphaelRenderUtil.renderLine(paper, path.join(' '), color, strokeWidth);
+      const line = raphaelRenderUtil.renderLine(paper, path.join(' '), { color, strokeWidth });
 
       radialSeriesSet.push(line);
 

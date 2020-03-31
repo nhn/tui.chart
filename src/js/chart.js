@@ -3,6 +3,7 @@
  * @author NHN.
  *         FE Development Lab <dl_javascript@nhn.com>
  */
+import isString from 'tui-code-snippet/type/isString';
 
 import chartConst from './const';
 import chartFactory from './factories/chartFactory';
@@ -98,6 +99,21 @@ function _createChart(container, rawData = {}, options, chartType) {
   options.chartType = chartType;
   options.theme = options.theme || chartConst.DEFAULT_THEME_NAME;
 
+  // for deprecated options(stackType)
+  if (options.series && options.series.stackType) {
+    options.series.stack = {
+      type: options.series.stackType
+    };
+
+    delete options.series.stackType;
+  }
+
+  if (options.series && isString(options.series.stack)) {
+    options.series.stack = {
+      type: options.series.stack
+    };
+  }
+
   const isColorByPoint = options.series && options.series.colorByPoint;
   const theme = themeManager.get(options.theme, chartType, rawData.series, isColorByPoint);
   const chart = chartFactory.get(options.chartType, rawData, theme, options);
@@ -152,7 +168,7 @@ function _createChart(container, rawData = {}, options, chartType) {
  *          @param {string} options.xAxis.suffix - suffix for xAxis
  *          @param {number} options.xAxis.maxWidth - max Width for xAxis
  *      @param {object} options.series - options for series component
- *          @param {string} options.series.stackType - type of stack
+ *          @param {string} options.series.stackType - deprecated: type of stack
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {number} options.series.barWidth - bar width
  *          @param {boolean} options.series.allowSelect - whether allow select or not
@@ -262,7 +278,7 @@ function barChart(container, rawData, options) {
  *          @param {string} options.xAxis.suffix - suffix for xAxis
  *          @param {number} options.xAxis.maxWidth - max Width for xAxis
  *      @param {object} options.series - options for series component
- *          @param {string} options.series.stackType - type of stack
+ *          @param {string} options.series.stackType - deprecated: type of stack
  *          @param {boolean} options.series.showLabel - whether show label or not
  *          @param {number} options.series.barWidth - bar width
  *          @param {boolean} options.series.allowSelect - whether allow select or not
@@ -1028,7 +1044,7 @@ function treemapChart(container, rawData, options) {
  *          @param {boolean} options.xAxis.pointOnColumn - Place the label between the ticks.
  *      @param {object} options.series - options for series component
  *          @param {?object} options.series.column - options for column series component
- *              @param {string} options.series.column.stackType - type of stack
+ *              @param {string} options.series.column.stackType - deprecated: type of stack
  *              @param {boolean} options.series.column.showLabel - whether show label or not
  *              @param {number} options.series.column.barWidth - bar width
  *          @param {?object} options.series.line - options for line series component

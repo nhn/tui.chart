@@ -277,13 +277,17 @@ class RaphaelLegendComponent {
       top: controllerPositionTop,
       left: leftButtonPositionLeft
     });
-    const prevArrow = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, '#555', 2);
+    const lineStyle = {
+      color: '#555',
+      strokeWidth: 2
+    };
+    const prevArrow = raphaelRenderUtil.renderLine(this.paper, upperArrowPath, lineStyle);
 
     const nextRect = this._renderPaginationRect({
       top: controllerPositionTop,
       left: rightButtonPositionLeft
     });
-    const nextArrow = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, '#555', 2);
+    const nextArrow = raphaelRenderUtil.renderLine(this.paper, lowerArrowPath, lineStyle);
     const prevButtonSet = this.paper.set();
     const nextButtonSet = this.paper.set();
 

@@ -408,13 +408,29 @@ declare namespace tuiChart {
     allowSelect?: boolean;
   }
 
+  type StackType = 'normal' | 'percent';
+
+  export interface IStack {
+    type: StackType;
+    connector?:
+      | boolean
+      | {
+          width?: number;
+          type: 'solid' | 'dotted';
+          color?: string;
+        };
+  }
+
+  type StackOptions = IStack | StackType;
+
   interface IAreaSeriesConfig extends IBaseSeriesConfig {
     showDot?: boolean;
     spline?: boolean;
     zoomable?: boolean;
     shifting?: boolean;
     areaOpacity?: number;
-    stackType?: string;
+    stackType?: StackType; // deprecated
+    stack?: StackOptions;
     animation?: boolean | IAnimationConfig;
   }
 
@@ -424,7 +440,8 @@ declare namespace tuiChart {
   }
 
   interface IBarSeriesConfig extends IBaseSeriesConfig {
-    stackType?: string;
+    stackType?: string; // deprecated
+    stack?: StackOptions;
     barWidth?: number;
     diverging?: boolean;
     colorByPoint?: boolean;

@@ -186,7 +186,10 @@ class RaphaelRadialPlot {
     const { paper } = this;
 
     return groupPaths.map(path => {
-      const line = raphaelRenderUtil.renderLine(paper, path.join(' '), lineColor, 1);
+      const line = raphaelRenderUtil.renderLine(paper, path.join(' '), {
+        color: lineColor,
+        strokeWidth: 1
+      });
       line.node.setAttribute('stroke-opacity', 0.05);
 
       plotSet.push(line);

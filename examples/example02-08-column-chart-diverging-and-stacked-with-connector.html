@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html>
-<head lang="kr">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <title>2.5 [Column Chart] diverging and stacked</title>
+  <head lang="kr">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>2.8 [Column Chart] diverging and stacked column chart with connector</title>
     <link rel="stylesheet" type="text/css" href="../dist/tui-chart.css" />
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css'/>
-    <link rel='stylesheet' type='text/css' href='./css/example.css'/>
-</head>
-<body>
-<div class='wrap'>
-    <div class='code-html' id='code-html'>
-        <div id='chart-area'></div>
-    </div>
-    <div class='custom-area'>
-        <div id='error-dim'>
-            <span id='error-text'></span>
-            <div id='error-stack'></div>
-            <span id='go-to-dev-tool'>For more detail, open browser's developer tool and check it out.</span>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
         </div>
         <div class="try-it-area">
-            <h3>try it</h3>
-            <textarea id="code"></textarea>
-            <div class="apply-btn-area">
-                <button class="btn" onclick='evaluationCode(chartCM, codeString);'>Run it!</button>
-            </div>
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 <script type='text/javascript' src='https://uicdn.toast.com/tui.chart/latest/raphael.js'></script>
 <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/core-js/2.5.7/core.js'></script>
 <script src='../dist/tui-chart.js'></script>
@@ -71,7 +85,10 @@ var options = {
         title: 'Age Group'
     },
     series: {
-        stack: 'normal',
+        stack: {
+          type: 'normal',
+          connector: true
+        },
         diverging: true
     },
     legend: {

@@ -1,4 +1,5 @@
 import tuiChart from 'tui-chart';
+import IStack = tuiChart.IStack;
 
 const theme1 = {
   series: {
@@ -76,7 +77,7 @@ const areaOptions = {
     zoomable: false,
     shifting: true,
     areaOpacity: 0.5,
-    stackType: 'normal'
+    stack: { type: 'normal' } as IStack
   },
   tooltip: {
     suffix: 'won',
