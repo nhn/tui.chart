@@ -4,13 +4,10 @@
  *         FE Development Lab <dl_javascript@nhn.com>
  */
 
-import browser from 'tui-code-snippet/browser/browser';
 import isArray from 'tui-code-snippet/type/isArray';
 import isEmpty from 'tui-code-snippet/type/isEmpty';
 import isExisty from 'tui-code-snippet/type/isExisty';
 import isNull from 'tui-code-snippet/type/isNull';
-
-const IS_IE7 = browser.msie && browser.version === 7;
 
 import chartConst from '../../const';
 import dom from '../../helpers/domHandler';
@@ -729,24 +726,13 @@ class Series {
       return;
     }
 
-    if (IS_IE7) {
-      this._fireLoadEvent(isRerendering);
-      this.labelSet.attr({
-        opacity: 1
-      });
-    } else if (this.labelSet && this.labelSet.length) {
+    if (this.labelSet && this.labelSet.length) {
       raphaelRenderUtil.animateOpacity(this.labelSet, 0, 1, this.options.animationDuration);
     }
   }
 
   animateSeriesConnector() {
-    // @TODO: rerender 테스트
-
-    if (IS_IE7) {
-      this.connectorSet.attr({
-        opacity: 1
-      });
-    } else if (this.connectorSet && this.connectorSet.length) {
+    if (this.connectorSet && this.connectorSet.length) {
       raphaelRenderUtil.animateOpacity(this.connectorSet, 0, 1, this.options.animationDuration);
     }
   }

@@ -428,20 +428,6 @@ export default {
   ZOOM_POSITION_TOP_EXIST_TITLE: 5,
   ZOOM_POSITION_TOP_NONE_TITLE: 1,
   FF_WHEELDELTA_ADJUSTING_VALUE: -40,
-  IE7_ROTATION_FILTER_STYLE_MAP: {
-    25:
-      " style=\"filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand'," +
-      ' M11=0.9063077870366499, M12=0.42261826174069944, M21=-0.42261826174069944, M22=0.9063077870366499)"',
-    45:
-      " style=\"filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand'," +
-      ' M11=0.7071067811865476, M12=0.7071067811865475, M21=-0.7071067811865475, M22=0.7071067811865476)"',
-    65:
-      " style=\"filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand'," +
-      ' M11=0.42261826174069944, M12=0.9063077870366499, M21=-0.9063077870366499, M22=0.42261826174069944)"',
-    85:
-      " style=\"filter: progid:DXImageTransform.Microsoft.Matrix(SizingMethod='auto expand'," +
-      ' M11=0.08715574274765814, M12=0.9961946980917455, M21=-0.9961946980917455, M22=0.08715574274765814)"'
-  },
   /** prefix for public event
    * @type {string}
    */
