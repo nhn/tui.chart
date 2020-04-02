@@ -21,6 +21,10 @@ export function isString(value: unknown): value is string {
   return typeof value === 'string';
 }
 
+export function isInteger(value: unknown): value is number {
+  return isNumber(value) && isFinite(value) && Math.floor(value) === value;
+}
+
 export function forEach<T extends object, K extends Extract<keyof T, string>, V extends T[K]>(
   obj: T,
   cb: (item: V, key: K) => void

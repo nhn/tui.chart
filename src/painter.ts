@@ -41,26 +41,30 @@ export default class Painter {
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
 
-      const dpr = window.devicePixelRatio;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-
       this.chart.el.appendChild(canvas);
 
       canvas.addEventListener('click', this.chart);
       canvas.addEventListener('mousemove', this.chart);
 
       const ctx = canvas.getContext('2d');
-
       if (ctx) {
-        ctx.scale(dpr, dpr);
-
         this.ctx = ctx;
       }
     }
 
     this.width = width || 0;
     this.height = height || 0;
+
+    this.updateDPR(this.ctx, width, height);
+  }
+
+  updateDPR(ctx, width, height) {
+    const dpr = window.devicePixelRatio;
+
+    ctx.canvas.width = width * dpr;
+    ctx.canvas.height = height * dpr;
+
+    ctx.scale(dpr, dpr);
   }
 
   add(name: string, brush: Brush) {

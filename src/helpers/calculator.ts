@@ -1,6 +1,6 @@
 import { ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
-import { range } from '@src/helpers/utils';
+import { range, isInteger } from '@src/helpers/utils';
 
 // calculator.js
 
@@ -56,15 +56,8 @@ export function makeTickPixelPositions(
 
 export function crispPixel(pixel: number, thickness = 1) {
   const halfThickness = thickness / 2;
-  const isInteger = Math.floor(pixel) === pixel;
 
-  if (thickness % 2 === 1) {
-    if (isInteger) {
-      return pixel + halfThickness;
-    }
-
-    return Math.round(pixel - halfThickness) + halfThickness;
-  }
-
-  return Math.round(pixel);
+  return thickness % 2
+    ? (isInteger(pixel) ? pixel : Math.round(pixel - halfThickness)) + halfThickness
+    : Math.round(pixel);
 }
