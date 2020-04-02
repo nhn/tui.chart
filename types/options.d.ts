@@ -78,7 +78,7 @@ interface BaseSeriesOptions {
 
 interface LineSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
-  // spline?: boolean;
+  spline?: boolean;
   // zoomable?: boolean;
   // shifting?: boolean;
   // pointWidth?: number;

@@ -39,12 +39,15 @@ export default class LineSeries extends Component {
 
     const tickDistance = this.rect.width / series.line.seriesGroupCount;
 
+    // @TODO; spline model 그려주기
+
     const lineSeriesModel = this.renderLinePointsModel(
       series.line.data,
       yAxis.limit,
       tickDistance,
       pointOnColumn,
-      theme.series.colors
+      theme.series.colors,
+      options?.series?.spline
     );
 
     const seriesCircleModel = this.renderCircle(lineSeriesModel);
@@ -73,12 +76,15 @@ export default class LineSeries extends Component {
     };
   }
 
+  // @TODO; 지워야함
+  // eslint-disable-next-line max-params
   renderLinePointsModel(
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
     pointOnColumn: boolean,
-    colors: string[]
+    colors: string[],
+    spline?: boolean
   ): LinePointsModel[] {
     return seriesRawData.map(({ data }, seriesIndex) => {
       const points: Point[] = data.map((v, dataIndex) => {
@@ -90,7 +96,7 @@ export default class LineSeries extends Component {
         return { x, y };
       });
 
-      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points };
+      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points, spline };
     });
   }
 

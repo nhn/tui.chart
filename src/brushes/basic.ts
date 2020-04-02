@@ -1,4 +1,5 @@
 import { ClipRectAreaModel, LinePointsModel, PathRectModel } from '@t/components/series';
+import { updateSplineCurve } from '@src/helpers/calculator';
 
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
@@ -9,21 +10,33 @@ export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: C
 }
 
 export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LinePointsModel) {
-  const { color, points, lineWidth } = linePointsModel;
+  const { color, lineWidth, spline } = linePointsModel;
+  const { points } = linePointsModel;
 
   ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';
   ctx.strokeStyle = color;
   ctx.beginPath();
 
+  // @TODO: spline일 때 points 모델 재 생성
+  if (spline) {
+    updateSplineCurve(points);
+  }
+
   points.forEach((point, index) => {
     if (index === 0) {
       ctx.moveTo(point.x, point.y);
     } else {
-      ctx.lineTo(point.x, point.y);
+      if (spline) {
+        const prev = points[index - 1];
+        const { cppx, cppy, x, y } = point;
+
+        ctx.bezierCurveTo(prev.cpnx, prev.cpny, cppx, cppy, x, y);
+      } else {
+        ctx.lineTo(point.x, point.y);
+      }
     }
   });
-
   ctx.stroke();
   ctx.closePath();
 }

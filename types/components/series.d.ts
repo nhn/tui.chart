@@ -15,6 +15,7 @@ export type LinePointsModel = {
   color: string;
   lineWidth: number;
   points: Point[];
+  spline?: boolean;
 };
 
 export type PathRectModel = {
