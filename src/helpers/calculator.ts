@@ -54,9 +54,17 @@ export function makeTickPixelPositions(
   return positions;
 }
 
-export function crispPixel(pixel: number, width = 1) {
-  const devicePixelRatio = window.devicePixelRatio;
-  const halfWidth = width / 2;
+export function crispPixel(pixel: number, thickness = 1) {
+  const halfThickness = thickness / 2;
+  const isInteger = Math.floor(pixel) === pixel;
 
-  return Math.round((pixel - halfWidth) * devicePixelRatio) / devicePixelRatio + halfWidth;
+  if (thickness % 2 === 1) {
+    if (isInteger) {
+      return pixel + halfThickness;
+    }
+
+    return Math.round(pixel - halfThickness) + halfThickness;
+  }
+
+  return Math.round(pixel);
 }
