@@ -37,6 +37,14 @@ export default class Painter {
 
     if (!this.ctx) {
       const canvas = document.createElement('canvas');
+
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      const dpr = window.devicePixelRatio;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+
       this.chart.el.appendChild(canvas);
 
       canvas.addEventListener('click', this.chart);
@@ -45,12 +53,14 @@ export default class Painter {
       const ctx = canvas.getContext('2d');
 
       if (ctx) {
+        ctx.scale(dpr, dpr);
+
         this.ctx = ctx;
       }
     }
 
-    this.ctx.canvas.height = this.height = height || 0;
-    this.ctx.canvas.width = this.width = width || 0;
+    this.width = width || 0;
+    this.height = height || 0;
   }
 
   add(name: string, brush: Brush) {
