@@ -55,16 +55,16 @@ export default class Painter {
     this.width = width || 0;
     this.height = height || 0;
 
-    this.updateDPR(this.ctx, width, height);
+    this.scaleCavasRatio();
   }
 
-  updateDPR(ctx, width, height) {
-    const dpr = window.devicePixelRatio;
+  scaleCavasRatio() {
+    const ratio = window.devicePixelRatio;
 
-    ctx.canvas.width = width * dpr;
-    ctx.canvas.height = height * dpr;
+    this.ctx.canvas.width = this.width * ratio;
+    this.ctx.canvas.height = this.height * ratio;
 
-    ctx.scale(dpr, dpr);
+    this.ctx.scale(ratio, ratio);
   }
 
   add(name: string, brush: Brush) {
