@@ -21,7 +21,8 @@ describe('GroupTooltip', () => {
       'getLegendData',
       'getLegendItem',
       'getCategoryCount',
-      'makeTooltipCategory'
+      'makeTooltipCategory',
+      'options'
     ]);
   });
 
