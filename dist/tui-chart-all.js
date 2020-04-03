@@ -2,10 +2,10 @@
  * tui-chart-all
  * @fileoverview tui-chart
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @version 3.11.0
+ * @version 3.11.1
  * @license MIT
  * @link https://github.com/nhn/tui.chart
- * bundle created at "Tue Mar 31 2020 16:05:28 GMT+0900 (Korean Standard Time)"
+ * bundle created at "Fri Apr 03 2020 10:02:48 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -29960,9 +29960,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  GroupTooltip.prototype._makeTooltipHtml = function _makeTooltipHtml(category, items, rawCategory, groupIndex) {
 	    var template = _tooltipTemplate2['default'].tplGroupItem;
 	    var cssTextTemplate = _tooltipTemplate2['default'].tplGroupCssText;
-	    var isBar = _predicate2['default'].isBarTypeChart(this.chartType);
+	    var isBar = _predicate2['default'].isBarChart(this.chartType);
+	    var isBarType = _predicate2['default'].isBarTypeChart(this.chartType);
 	    var isBoxplot = _predicate2['default'].isBoxplotChart(this.chartType);
-	    var colorByPoint = (isBar || isBoxplot) && this.dataProcessor.options.series.colorByPoint;
+	    var seriesOptions = this.dataProcessor.options.series;
+	    var colorByPoint = (isBarType || isBoxplot) && seriesOptions && seriesOptions.colorByPoint;
+	    var needReverse = !isBar && seriesOptions && seriesOptions.stack;
 	    var colors = this._makeColors(this.theme, groupIndex);
 	    var prevType = void 0;
 	
@@ -29989,11 +29992,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }, item));
 	
 	      return itemHtml;
-	    }).join('');
+	    });
+	
+	    if (needReverse) {
+	      itemsHtml.reverse();
+	    }
 	
 	    return _tooltipTemplate2['default'].tplGroup({
 	      category: category,
-	      items: itemsHtml
+	      items: itemsHtml.join('')
 	    });
 	  };
 	
