@@ -52,46 +52,51 @@ class GroupTooltip extends TooltipBase {
   _makeTooltipHtml(category, items, rawCategory, groupIndex) {
     const template = tooltipTemplate.tplGroupItem;
     const cssTextTemplate = tooltipTemplate.tplGroupCssText;
-    const isBar = predicate.isBarTypeChart(this.chartType);
+    const isBar = predicate.isBarChart(this.chartType);
+    const isBarType = predicate.isBarTypeChart(this.chartType);
     const isBoxplot = predicate.isBoxplotChart(this.chartType);
-    const colorByPoint = (isBar || isBoxplot) && this.dataProcessor.options.series.colorByPoint;
+    const seriesOptions = this.dataProcessor.options.series;
+    const colorByPoint = (isBarType || isBoxplot) && seriesOptions && seriesOptions.colorByPoint;
+    const needReverse = !isBar && seriesOptions && seriesOptions.stack;
     const colors = this._makeColors(this.theme, groupIndex);
     let prevType;
 
-    const itemsHtml = items
-      .map((item, index) => {
-        const { type } = item;
-        const typeVisible = type !== 'data' && prevType !== type;
-        let itemHtml = '';
+    const itemsHtml = items.map((item, index) => {
+      const { type } = item;
+      const typeVisible = type !== 'data' && prevType !== type;
+      let itemHtml = '';
 
-        prevType = type;
+      prevType = type;
 
-        if (!item.value) {
-          return null;
-        }
+      if (!item.value) {
+        return null;
+      }
 
-        if (typeVisible) {
-          itemHtml = tooltipTemplate.tplGroupType({
-            type
-          });
-        }
+      if (typeVisible) {
+        itemHtml = tooltipTemplate.tplGroupType({
+          type
+        });
+      }
 
-        itemHtml += template(
-          Object.assign(
-            {
-              cssText: cssTextTemplate({ color: colorByPoint ? '#aaa' : colors[index] })
-            },
-            item
-          )
-        );
+      itemHtml += template(
+        Object.assign(
+          {
+            cssText: cssTextTemplate({ color: colorByPoint ? '#aaa' : colors[index] })
+          },
+          item
+        )
+      );
 
-        return itemHtml;
-      })
-      .join('');
+      return itemHtml;
+    });
+
+    if (needReverse) {
+      itemsHtml.reverse();
+    }
 
     return tooltipTemplate.tplGroup({
       category,
-      items: itemsHtml
+      items: itemsHtml.join('')
     });
   }
 
