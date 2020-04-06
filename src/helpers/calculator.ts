@@ -70,8 +70,9 @@ function getControlPoints(prev: SplinePoint, cur: SplinePoint, next: SplinePoint
 
   const d12 = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   const d01 = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
-  const fa = (TENSION * d01) / (d01 + d12); // scaling factor for triangle Ta
-  const fb = (TENSION * d12) / (d01 + d12); // ditto for Tb, simplifies to fb=t-fa
+
+  const fa = (TENSION * d01) / (d01 + d12) || 0; // scaling factor for triangle Ta
+  const fb = (TENSION * d12) / (d01 + d12) || 0; // ditto for Tb, simplifies to fb=t-fa
 
   return {
     prev: {
