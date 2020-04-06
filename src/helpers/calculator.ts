@@ -1,6 +1,7 @@
 import { ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger } from '@src/helpers/utils';
+import { SplinePoint } from '@t/options';
 
 export const getDecimalLength = (value: string | number) => {
   const valueArr = String(value).split('.');
@@ -60,9 +61,12 @@ export function crispPixel(pixel: number, thickness = 1) {
     : Math.round(pixel);
 }
 
-function getControlPoints({ x: x0, y: y0 }, { x: x1, y: y1 }, { x: x2, y: y2 }) {
+function getControlPoints(prev: SplinePoint, cur: SplinePoint, next: SplinePoint) {
   // http://scaledinnovation.com/analytics/splines/aboutSplines.html
   const TENSION = 0.333;
+  const { x: x0, y: y0 } = prev;
+  const { x: x1, y: y1 } = cur;
+  const { x: x2, y: y2 } = next;
 
   const d12 = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   const d01 = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
@@ -78,10 +82,8 @@ function getControlPoints({ x: x0, y: y0 }, { x: x1, y: y1 }, { x: x2, y: y2 }) 
   };
 }
 
-export function updateSplineCurve(points) {
-  let prev = points[0];
-
-  for (let i = 0, pointsSize = points.length; i < pointsSize; i += 1) {
+export function updateSplineCurve(points: SplinePoint[]) {
+  for (let i = 0, pointsSize = points.length, prev = points[0]; i < pointsSize; i += 1) {
     const point = points[i];
 
     point.controlPoint = getControlPoints(
