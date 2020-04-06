@@ -1,3 +1,6 @@
+interface Obj {
+  [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
 type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
 type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
 
@@ -23,6 +26,10 @@ export function isString(value: unknown): value is string {
 
 export function isInteger(value: unknown): value is number {
   return isNumber(value) && isFinite(value) && Math.floor(value) === value;
+}
+
+export function isObject(obj: unknown): obj is object {
+  return typeof obj === 'object' && obj !== null;
 }
 
 export function forEach<T extends object, K extends Extract<keyof T, string>, V extends T[K]>(
@@ -198,4 +205,52 @@ export function throttle(fn: Function, interval = 0) {
   throttled.reset = reset;
 
   return throttled;
+}
+
+export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
+  const resultObj = { ...targetObj } as T1 & T2;
+
+  Object.keys(obj).forEach((prop: keyof T2) => {
+    if (isObject(resultObj[prop])) {
+      if (Array.isArray(obj[prop])) {
+        resultObj[prop as keyof T1 & T2] = deepCopyArray(obj[prop]);
+      } else if (resultObj.hasOwnProperty(prop)) {
+        resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
+      } else {
+        resultObj[prop as keyof T1 & T2] = deepCopy(obj[prop]);
+      }
+    } else {
+      resultObj[prop as keyof T1 & T2] = obj[prop];
+    }
+  });
+
+  return resultObj;
+}
+
+export function deepCopyArray<T extends Array<any>>(items: T): T {
+  return items.map((item: T[number]) => {
+    if (isObject(item)) {
+      return Array.isArray(item) ? deepCopyArray(item) : deepCopy(item);
+    }
+    return item;
+  }) as T;
+}
+
+export function deepCopy<T extends Obj>(obj: T) {
+  const resultObj = {} as T;
+  const keys = Object.keys(obj);
+
+  if (!keys.length) {
+    return obj;
+  }
+
+  keys.forEach((prop: keyof T) => {
+    if (isObject(obj[prop])) {
+      resultObj[prop] = Array.isArray(obj[prop]) ? deepCopyArray(obj[prop]) : deepCopy(obj[prop]);
+    } else {
+      resultObj[prop] = obj[prop];
+    }
+  });
+
+  return resultObj as T;
 }
