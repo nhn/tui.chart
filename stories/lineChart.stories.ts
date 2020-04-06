@@ -72,24 +72,12 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
     {
       chart: {
         width,
-        height,
-        title: '24-hr Average Temperature'
+        height
       },
-      yAxis: {
-        title: 'Temperature (Celsius)'
-      },
-      xAxis: {
-        title: 'Month',
-        dateFormat: 'MMM',
-        tickInterval: 'auto'
-      },
-      series: {
-        showDot: false,
-        zoomable: true
-      },
-      tooltip: {
-        suffix: '°C'
-      },
+      yAxis: {},
+      xAxis: {},
+      series: {},
+      tooltip: {},
       plot: {
         bands: [
           {
@@ -119,24 +107,12 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
 }
 
 export const basic = () => {
-  const { el } = createChart(basicData);
-
-  return el;
-};
-
-export const basicPointOnColumn = () => {
   const { el } = createChart(basicData, { xAxis: { pointOnColumn: true } });
 
   return el;
 };
 
 export const spline = () => {
-  const { el } = createChart(splineData, { series: { spline: true } });
-
-  return el;
-};
-
-export const splinePointOnColumn = () => {
   const { el } = createChart(splineData, {
     series: { spline: true },
     xAxis: { pointOnColumn: true }

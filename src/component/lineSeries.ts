@@ -96,7 +96,7 @@ export default class LineSeries extends Component {
       const points: Point[] = data.map((v, dataIndex) => {
         const valueRatio = (v - limit.min) / (limit.max - limit.min);
 
-        const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0); // 잘못 그려지는 것 같다..
+        const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
 
         return { x, y };

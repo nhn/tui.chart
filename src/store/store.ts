@@ -27,7 +27,7 @@ import { BaseChartOptions, Options } from '@t/options';
 interface InitStoreState {
   categories: string[];
   chart?: BaseChartOptions;
-  series?: Series; // @TODO: 옵셔널인지 확인
+  series: Series;
   options?: Options;
 }
 
