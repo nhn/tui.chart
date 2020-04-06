@@ -18,25 +18,26 @@ export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LineP
   ctx.strokeStyle = color;
   ctx.beginPath();
 
-  // @TODO: spline일 때 points 모델 재 생성
   if (spline) {
     updateSplineCurve(points);
   }
 
-  points.forEach((point, index) => {
-    if (index === 0) {
+  points.forEach((point, idx) => {
+    if (idx === 0) {
       ctx.moveTo(point.x, point.y);
-    } else {
-      if (spline) {
-        const prev = points[index - 1];
-        const { cppx, cppy, x, y } = point;
+      return;
+    }
 
-        ctx.bezierCurveTo(prev.cpnx, prev.cpny, cppx, cppy, x, y);
-      } else {
-        ctx.lineTo(point.x, point.y);
-      }
+    if (spline) {
+      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
+      const { controlPoint, x, y } = point;
+
+      ctx.bezierCurveTo(prevX, prevY, controlPoint!.prev.x, controlPoint!.prev.y, x, y);
+    } else {
+      ctx.lineTo(point.x, point.y);
     }
   });
+
   ctx.stroke();
   ctx.closePath();
 }

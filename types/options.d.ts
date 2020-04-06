@@ -8,6 +8,13 @@ export interface Point {
   y: number;
 }
 
+export type SplinePoint = {
+  controlPoint?: {
+    next: Point;
+    prev: Point;
+  };
+} & Point;
+
 export interface Size {
   width: number;
   height: number;
@@ -21,7 +28,7 @@ export interface LineSeriesType {
 }
 
 export interface LineSeriesData {
-  categories?: string[];
+  categories: string[];
   series: LineSeriesType[];
 }
 
@@ -41,7 +48,7 @@ interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
   xAxis?: {
-    pointOnColumn: boolean;
+    pointOnColumn?: boolean;
   };
   yAxis?: {
     // title?: string | TitleConfig;
@@ -95,6 +102,6 @@ export type Options = LineChartOptions;
 export interface ChartProps {
   el: Element;
   series: Series;
-  categories?: string[];
+  categories: string[];
   options: Options;
 }

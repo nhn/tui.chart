@@ -25,9 +25,9 @@ import { isUndefined, forEach, pickPropertyWithMakeup } from '@src/helpers/utils
 import { BaseChartOptions, Options } from '@t/options';
 
 interface InitStoreState {
-  categories?: string[];
+  categories: string[];
   chart?: BaseChartOptions;
-  series?: Series;
+  series?: Series; // @TODO: 옵셔널인지 확인
   options?: Options;
 }
 
