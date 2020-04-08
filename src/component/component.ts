@@ -1,4 +1,4 @@
-import { ChartState } from '@t/store/store';
+import { ChartState, Options } from '@t/store/store';
 import { Rect } from '@t/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
@@ -20,7 +20,7 @@ export default abstract class Component {
 
   isShow = true;
 
-  store: Store;
+  store: Store<Options>;
 
   eventBus: EventEmitter;
 
@@ -30,14 +30,14 @@ export default abstract class Component {
 
   responders!: any[]; // @TODO: 정의
 
-  constructor({ store, eventBus }: { store: Store; eventBus: EventEmitter }) {
+  constructor({ store, eventBus }: { store: Store<Options>; eventBus: EventEmitter }) {
     this.store = store;
     this.eventBus = eventBus;
   }
 
   abstract initialize(args: any): void;
 
-  abstract render(state: ChartState, computed: Record<string, any>): void;
+  abstract render(state: ChartState<Options>, computed: Record<string, any>): void;
 
   update(delta: number) {
     if (!this.drawModels) {

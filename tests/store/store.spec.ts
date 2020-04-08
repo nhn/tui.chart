@@ -1,7 +1,8 @@
-import Store from '../../src/store/store';
+import Store from '@src/store/store';
+import { BaseOptions } from '@t/options';
 
 describe('Store', () => {
-  let store: Store;
+  let store: Store<BaseOptions>;
 
   describe('Computed', () => {
     beforeEach(() => {

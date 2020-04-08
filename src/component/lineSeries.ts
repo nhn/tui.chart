@@ -1,6 +1,6 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { Point } from '@t/options';
+import { Point, LineChartOptions } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
@@ -25,7 +25,7 @@ export default class LineSeries extends Component {
     }
   }
 
-  render(chartState: ChartState) {
+  render(chartState: ChartState<LineChartOptions>) {
     const { layout, series, scale, theme, options } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
@@ -34,13 +34,12 @@ export default class LineSeries extends Component {
     this.rect = layout.plot;
 
     const { yAxis } = scale;
-
     const pointOnColumn = options.xAxis?.pointOnColumn || true;
 
     const tickDistance = this.rect.width / series.line.seriesGroupCount;
 
     const lineSeriesModel = this.renderLinePointsModel(
-      series.line.data,
+      series.line.data!,
       yAxis.limit,
       tickDistance,
       pointOnColumn,
@@ -49,7 +48,7 @@ export default class LineSeries extends Component {
 
     const seriesCircleModel = this.renderCircle(lineSeriesModel);
 
-    const tooltipData = series.line.data.flatMap(({ name, data }, index) => {
+    const tooltipData = series.line.data!.flatMap(({ name, data }, index) => {
       return data.map((value, dataIdx) => ({
         label: name,
         color: theme.series.colors[index],

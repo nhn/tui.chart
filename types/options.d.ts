@@ -37,23 +37,26 @@ type BaseChartOptions = {
   // format?:
 } & Size;
 
+type BaseAxisOptions = {
+  title?: string | TitleOptions;
+};
+
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
-  xAxis?: {
-    pointOnColumn: boolean;
-  };
-  yAxis?: {
-    // title?: string | TitleConfig;
-    // labelMargin?: number;
-    // min?: number;
-    // max?: number;
-    // align?: string;
-    // suffix?: string;
-    // prefix?: string;
-    // chartType?: string;
-    // maxWidth?: number;
-  };
+  xAxis?: BaseAxisOptions;
+  yAxis?: BaseAxisOptions;
+  // {
+  // title?: string | TitleConfig;
+  // labelMargin?: number;
+  // min?: number;
+  // max?: number;
+  // align?: string;
+  // suffix?: string;
+  // prefix?: string;
+  // chartType?: string;
+  // maxWidth?: number;
+  // };
   // yAxis?: ;
   // tooltip?: ;
   // legend?: ;
@@ -76,6 +79,10 @@ interface BaseSeriesOptions {
   allowSelect?: boolean;
 }
 
+interface LineXaxisOptions extends BaseAxisOptions {
+  pointOnColumn?: boolean;
+}
+
 interface LineSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   // spline?: boolean;
@@ -87,14 +94,36 @@ interface LineSeriesOptions extends BaseSeriesOptions {
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineSeriesOptions;
+  xAxis?: LineXaxisOptions;
+}
+interface BoxSeriesOptions extends BaseSeriesOptions {
+  barWidth?: number;
+  diverging?: boolean;
+  colorByPoint?: boolean;
 }
 
-// ⬇️ 차트 내부에서 사용, 정리 필요
-export type Options = LineChartOptions;
+export interface BarChartOptions extends BaseOptions {
+  series?: BoxSeriesOptions;
+}
 
-export interface ChartProps {
+export interface ColumnChartOptions extends BaseOptions {
+  series?: BoxSeriesOptions;
+}
+
+export interface BoxSeriesType {
+  name: string;
+  data: number[] | Array<[number, number]>;
+  stack?: string;
+}
+
+export interface BoxSeriesData {
+  categories: string[];
+  series: BoxSeriesType[];
+}
+
+export interface ChartProps<T> {
   el: Element;
   series: Series;
   categories?: string[];
-  options: Options;
+  options: T;
 }

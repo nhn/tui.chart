@@ -6,20 +6,26 @@ import EventEmitter from '../eventEmitter';
 import Component from '@src/component/component';
 import { debounce } from '@src/helpers/utils';
 
-export default class ComponentManager {
+export default class ComponentManager<T> {
   components: Component[] = [];
 
-  store: Store;
+  store: Store<T>;
 
   eventBus: EventEmitter;
 
-  constructor({ store, eventBus }: { store: Store; eventBus: EventEmitter }) {
+  constructor({ store, eventBus }: { store: Store<T>; eventBus: EventEmitter }) {
     this.store = store;
     this.eventBus = eventBus;
   }
 
   add(
-    ComponentCtor: new ({ store, eventBus }: { store: Store; eventBus: EventEmitter }) => Component,
+    ComponentCtor: new ({
+      store,
+      eventBus
+    }: {
+      store: Store<T>;
+      eventBus: EventEmitter;
+    }) => Component,
     initialParam?: any
   ) {
     const component = new ComponentCtor({

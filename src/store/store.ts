@@ -9,7 +9,7 @@ import {
   extend,
   invisibleWork,
   isObservable
-} from '../../src/store/reactive';
+} from '@src/store/reactive';
 import {
   ChartState,
   ActionFunc,
@@ -18,21 +18,22 @@ import {
   WatchFunc,
   StoreModule,
   ObserveFunc,
-  Series
+  Series,
+  Options
 } from '@t/store/store';
 
 import { isUndefined, forEach, pickPropertyWithMakeup } from '@src/helpers/utils';
-import { BaseChartOptions, Options } from '@t/options';
+import { BaseChartOptions } from '@t/options';
 
-interface InitStoreState {
+interface InitStoreState<T> {
   categories?: string[];
   chart?: BaseChartOptions;
   series?: Series;
-  options?: Options;
+  options?: T;
 }
 
-export default class Store {
-  state: ChartState = {
+export default class Store<T extends Options> {
+  state: ChartState<T> = {
     chart: { width: 0, height: 0 },
     layout: {},
     scale: {},
@@ -56,7 +57,7 @@ export default class Store {
         ]
       }
     },
-    options: {},
+    options: {} as T,
     categories: [],
     d: Date.now()
   };
@@ -65,7 +66,7 @@ export default class Store {
 
   actions: Record<string, ActionFunc> = {};
 
-  constructor(options?: InitStoreState) {
+  constructor(options?: InitStoreState<T>) {
     this.setRootState(this.state);
 
     if (options) {
@@ -103,7 +104,7 @@ export default class Store {
     }
   }
 
-  setRootState(state: Partial<ChartState>) {
+  setRootState(state: Partial<ChartState<T>>) {
     observable(state);
   }
 

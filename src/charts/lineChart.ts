@@ -22,7 +22,7 @@ interface LineChartProps {
   data: LineSeriesData;
 }
 
-export default class LineChart extends Chart {
+export default class LineChart extends Chart<LineChartOptions> {
   constructor(props: LineChartProps) {
     super({
       el: props.el,

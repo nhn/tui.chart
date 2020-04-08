@@ -7,6 +7,7 @@ import {
 } from '@t/components/series';
 import { PlotModel } from '@t/components/plot';
 import { TooltipModel } from '@t/components/tooltip';
+import { Options } from '@t/store/store';
 
 type BrushModel =
   | ClipRectAreaModel
@@ -24,11 +25,11 @@ export default class Painter {
 
   brushes: Record<string, Brush> = {};
 
-  chart: Chart;
+  chart: Chart<Options>;
 
   ctx!: CanvasRenderingContext2D;
 
-  constructor(chart: Chart) {
+  constructor(chart: Chart<Options>) {
     this.chart = chart;
   }
 

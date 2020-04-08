@@ -1,9 +1,10 @@
 import Chart from './charts/chart';
+import { Options } from '@t/store/store';
 
 type Anim = {
-  chart: Chart;
+  chart: Chart<Options>;
   duration: number;
-  requester: Chart;
+  requester: Chart<Options>;
   onCompleted: Function;
   onFrame: (delta) => void;
   start: number | null;
@@ -27,9 +28,9 @@ class Animator {
       chart.update(delta);
     }
   }: {
-    chart: Chart;
+    chart: Chart<Options>;
     duration: number;
-    requester: Chart;
+    requester: Chart<Options>;
     onCompleted: Function;
     onFrame?: (delta: number) => void;
   }) {
