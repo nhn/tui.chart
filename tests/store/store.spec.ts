@@ -10,7 +10,9 @@ describe('Store', () => {
         chart: {
           width: 1,
           height: 2
-        }
+        },
+        categories: [],
+        series: {}
       });
     });
     it('should computed property correctly', () => {
@@ -28,7 +30,9 @@ describe('Store', () => {
         chart: {
           width: 1,
           height: 2
-        }
+        },
+        categories: [],
+        series: {}
       });
     });
     it('should observe observable correctly', () => {
@@ -63,7 +67,9 @@ describe('Store', () => {
         chart: {
           width: 1,
           height: 2
-        }
+        },
+        categories: [],
+        series: {}
       });
     });
     it('should watcher property correctly', () => {
@@ -148,7 +154,9 @@ describe('Store', () => {
         chart: {
           width: 1,
           height: 2
-        }
+        },
+        categories: [],
+        series: {}
       });
     });
 
@@ -168,7 +176,9 @@ describe('Store', () => {
       chart: {
         width: 1,
         height: 1
-      }
+      },
+      categories: [],
+      series: {}
     });
 
     expect(store.state.chart.width).toEqual(1);
@@ -180,7 +190,9 @@ describe('Store', () => {
       chart: {
         width: 1,
         height: 1
-      }
+      },
+      categories: [],
+      series: {}
     });
 
     let makeMyData = 0;
@@ -199,7 +211,9 @@ describe('Store', () => {
       chart: {
         width: 1,
         height: 1
-      }
+      },
+      categories: [],
+      series: {}
     });
 
     let makeMyData = 0;

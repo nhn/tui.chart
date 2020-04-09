@@ -9,16 +9,25 @@ export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: C
 }
 
 export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LinePointsModel) {
-  const { color, points, lineWidth } = linePointsModel;
+  const { color, lineWidth, points } = linePointsModel;
 
   ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';
   ctx.strokeStyle = color;
   ctx.beginPath();
 
-  points.forEach((point, index) => {
-    if (index === 0) {
+  points.forEach((point, idx) => {
+    if (idx === 0) {
       ctx.moveTo(point.x, point.y);
+
+      return;
+    }
+
+    if (point.controlPoint) {
+      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
+      const { controlPoint, x, y } = point;
+
+      ctx.bezierCurveTo(prevX, prevY, controlPoint.prev.x, controlPoint.prev.y, x, y);
     } else {
       ctx.lineTo(point.x, point.y);
     }

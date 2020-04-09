@@ -9,6 +9,13 @@ export interface Point {
   y: number;
 }
 
+export type BezierPoint = {
+  controlPoint?: {
+    next: Point;
+    prev: Point;
+  };
+} & Point;
+
 export interface Size {
   width: number;
   height: number;
@@ -22,7 +29,7 @@ export interface LineSeriesType {
 }
 
 export interface LineSeriesData {
-  categories?: string[];
+  categories: string[];
   series: LineSeriesType[];
 }
 
@@ -60,6 +67,7 @@ interface LineXaxisOptions extends BaseAxisOptions {
 
 interface LineSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
+  spline?: boolean;
 }
 
 export interface LineChartOptions extends BaseOptions {

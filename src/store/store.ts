@@ -28,7 +28,7 @@ import { BaseChartOptions } from '@t/options';
 interface InitStoreState<T> {
   categories?: string[];
   chart?: BaseChartOptions;
-  series?: Series;
+  series: Series;
   options?: T;
 }
 
