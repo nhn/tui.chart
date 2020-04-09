@@ -1,4 +1,4 @@
-import { Point, Rect } from '../options';
+import { Point, Rect, BezierPoint } from '../options';
 
 export type CircleModel = {
   type: 'circle';
@@ -14,7 +14,7 @@ export type LinePointsModel = {
   type: 'linePoints';
   color: string;
   lineWidth: number;
-  points: Point[];
+  points: BezierPoint[];
 };
 
 export type PathRectModel = {

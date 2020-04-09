@@ -1,11 +1,18 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { Point } from '@t/options';
+import { LineSeriesOptions } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, ValueEdge } from '@t/store/store';
+import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
+import { setSplineControlPoint } from '@src/helpers/calculator';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
+
+interface RenderLineOptions {
+  pointOnColumn: boolean;
+  theme: SeriesTheme;
+  options: LineSeriesOptions;
+}
 
 export default class LineSeries extends Component {
   models!: DrawModels[];
@@ -35,16 +42,19 @@ export default class LineSeries extends Component {
 
     const { yAxis } = scale;
 
-    const pointOnColumn = options.xAxis?.pointOnColumn || true;
-
     const tickDistance = this.rect.width / series.line.seriesGroupCount;
+
+    const renderLineOptions: RenderLineOptions = {
+      pointOnColumn: options.xAxis?.pointOnColumn || false,
+      options: options.series || {},
+      theme: theme.series
+    };
 
     const lineSeriesModel = this.renderLinePointsModel(
       series.line.data,
       yAxis.limit,
       tickDistance,
-      pointOnColumn,
-      theme.series.colors
+      renderLineOptions
     );
 
     const seriesCircleModel = this.renderCircle(lineSeriesModel);
@@ -54,7 +64,7 @@ export default class LineSeries extends Component {
         label: name,
         color: theme.series.colors[index],
         value,
-        category: chartState.categories?.[dataIdx]
+        category: chartState.categories[dataIdx]
       }));
     });
 
@@ -77,11 +87,14 @@ export default class LineSeries extends Component {
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
-    pointOnColumn: boolean,
-    colors: string[]
+    renderOptions: RenderLineOptions
   ): LinePointsModel[] {
+    const { pointOnColumn, theme, options } = renderOptions;
+    const { colors } = theme;
+    const { spline } = options;
+
     return seriesRawData.map(({ data }, seriesIndex) => {
-      const points: Point[] = data.map((v, dataIndex) => {
+      const points = data.map((v, dataIndex) => {
         const valueRatio = (v - limit.min) / (limit.max - limit.min);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
@@ -89,6 +102,10 @@ export default class LineSeries extends Component {
 
         return { x, y };
       });
+
+      if (spline) {
+        setSplineControlPoint(points);
+      }
 
       return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points };
     });

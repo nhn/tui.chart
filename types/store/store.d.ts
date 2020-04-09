@@ -24,10 +24,12 @@ export interface StoreModule extends StoreOptions {
   name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange';
 }
 
+export interface SeriesTheme {
+  colors: string[];
+}
+
 export type Theme = {
-  series: {
-    colors: string[];
-  };
+  series: SeriesTheme;
 };
 
 type SeriesState = {
@@ -53,7 +55,7 @@ export interface ChartState {
   };
   theme: Theme;
   options: Options;
-  categories?: string[];
+  categories: string[];
   d: number; // @TODO: check where to use
 }
 
