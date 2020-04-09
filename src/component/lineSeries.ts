@@ -1,9 +1,10 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { LineSeriesOptions, Point, SplinePoint } from '@t/options';
+import { LineSeriesOptions } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
+import { setSplineControlPoint } from '@src/helpers/calculator';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -102,7 +103,11 @@ export default class LineSeries extends Component {
         return { x, y };
       });
 
-      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points, spline };
+      if (spline) {
+        setSplineControlPoint(points);
+      }
+
+      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points };
     });
   }
 

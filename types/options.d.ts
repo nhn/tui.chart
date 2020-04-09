@@ -8,8 +8,8 @@ export interface Point {
   y: number;
 }
 
-export type SplinePoint = {
-  controlPoint: {
+export type BezierPoint = {
+  controlPoint?: {
     next: Point;
     prev: Point;
   };

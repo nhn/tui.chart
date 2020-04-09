@@ -1,4 +1,4 @@
-import { Point, Rect, SplinePoint } from '../options';
+import { Point, Rect, BezierPoint } from '../options';
 
 export type CircleModel = {
   type: 'circle';
@@ -14,8 +14,7 @@ export type LinePointsModel = {
   type: 'linePoints';
   color: string;
   lineWidth: number;
-  points: SplinePoint[];
-  spline?: boolean;
+  points: BezierPoint[];
 };
 
 export type PathRectModel = {

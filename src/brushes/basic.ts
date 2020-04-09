@@ -1,5 +1,4 @@
 import { ClipRectAreaModel, LinePointsModel, PathRectModel } from '@t/components/series';
-import { setSplineControlPoint } from '@src/helpers/calculator';
 
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
@@ -10,16 +9,12 @@ export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: C
 }
 
 export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LinePointsModel) {
-  const { color, lineWidth, spline, points } = linePointsModel;
+  const { color, lineWidth, points } = linePointsModel;
 
   ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';
   ctx.strokeStyle = color;
   ctx.beginPath();
-
-  if (spline) {
-    setSplineControlPoint(points);
-  }
 
   points.forEach((point, idx) => {
     if (idx === 0) {
@@ -28,8 +23,8 @@ export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LineP
       return;
     }
 
-    if (spline) {
-      const { x: prevX, y: prevY } = points[idx - 1].controlPoint.next;
+    if (point.controlPoint) {
+      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
       const { controlPoint, x, y } = point;
 
       ctx.bezierCurveTo(prevX, prevY, controlPoint.prev.x, controlPoint.prev.y, x, y);

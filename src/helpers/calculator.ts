@@ -1,7 +1,7 @@
 import { ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger } from '@src/helpers/utils';
-import { SplinePoint } from '@t/options';
+import { BezierPoint } from '@t/options';
 
 export const getDecimalLength = (value: string | number) => {
   const valueArr = String(value).split('.');
@@ -61,7 +61,7 @@ export function crispPixel(pixel: number, thickness = 1) {
     : Math.round(pixel);
 }
 
-function getControlPoints(prev: SplinePoint, cur: SplinePoint, next: SplinePoint) {
+function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint) {
   // http://scaledinnovation.com/analytics/splines/aboutSplines.html
   const TENSION = 0.333;
   const { x: x0, y: y0 } = prev;
@@ -83,7 +83,7 @@ function getControlPoints(prev: SplinePoint, cur: SplinePoint, next: SplinePoint
   };
 }
 
-export function setSplineControlPoint(points: SplinePoint[]) {
+export function setSplineControlPoint(points: BezierPoint[]) {
   for (let i = 0, pointsSize = points.length, prev = points[0]; i < pointsSize; i += 1) {
     const point = points[i];
 

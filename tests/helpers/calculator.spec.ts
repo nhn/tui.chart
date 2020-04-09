@@ -1,5 +1,5 @@
-import { updateSplineCurve } from '@src/helpers/calculator';
-import { SplinePoint } from '@t/options';
+import { setSplineControlPoint } from '@src/helpers/calculator';
+import { BezierPoint } from '@t/options';
 
 describe('spline chart', () => {
   describe('updateSplineCurve', () => {
@@ -10,9 +10,9 @@ describe('spline chart', () => {
         { x: 5, y: 4 }
       ];
 
-      updateSplineCurve(points);
+      setSplineControlPoint(points);
 
-      points.forEach((point: SplinePoint) => {
+      points.forEach((point: BezierPoint) => {
         expect(point.controlPoint).toBeDefined();
       });
     });
@@ -20,7 +20,7 @@ describe('spline chart', () => {
     it('should calculate properly for a single point', () => {
       const points = [{ x: 1, y: 2 }];
 
-      updateSplineCurve(points);
+      setSplineControlPoint(points);
 
       expect(points[0]).toEqual({
         x: 1,
