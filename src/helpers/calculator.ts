@@ -83,7 +83,7 @@ function getControlPoints(prev: SplinePoint, cur: SplinePoint, next: SplinePoint
   };
 }
 
-export function updateSplineCurve(points: SplinePoint[]) {
+export function setSplineControlPoint(points: SplinePoint[]) {
   for (let i = 0, pointsSize = points.length, prev = points[0]; i < pointsSize; i += 1) {
     const point = points[i];
 

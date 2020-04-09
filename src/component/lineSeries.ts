@@ -1,6 +1,6 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { LineSeriesOptions, Point } from '@t/options';
+import { LineSeriesOptions, Point, SplinePoint } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
@@ -93,7 +93,7 @@ export default class LineSeries extends Component {
     const { spline } = options;
 
     return seriesRawData.map(({ data }, seriesIndex) => {
-      const points: Point[] = data.map((v, dataIndex) => {
+      const points = data.map((v, dataIndex) => {
         const valueRatio = (v - limit.min) / (limit.max - limit.min);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);

@@ -9,7 +9,7 @@ export interface Point {
 }
 
 export type SplinePoint = {
-  controlPoint?: {
+  controlPoint: {
     next: Point;
     prev: Point;
   };

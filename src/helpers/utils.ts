@@ -1,6 +1,3 @@
-interface Obj {
-  [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
 type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
 type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
 
@@ -207,7 +204,10 @@ export function throttle(fn: Function, interval = 0) {
   return throttled;
 }
 
-export function deepMergedCopy<T1 extends Obj, T2 extends Obj>(targetObj: T1, obj: T2) {
+export function deepMergedCopy<T1 extends Record<string, any>, T2 extends Record<string, any>>(
+  targetObj: T1,
+  obj: T2
+) {
   const resultObj = { ...targetObj } as T1 & T2;
 
   Object.keys(obj).forEach((prop: keyof T2) => {
@@ -232,19 +232,20 @@ export function deepCopyArray<T extends Array<any>>(items: T): T {
     if (isObject(item)) {
       return Array.isArray(item) ? deepCopyArray(item) : deepCopy(item);
     }
+
     return item;
   }) as T;
 }
 
-export function deepCopy<T extends Obj>(obj: T) {
+export function deepCopy<T extends Record<string, any>>(obj: T) {
   const resultObj = {} as T;
-  const keys = Object.keys(obj);
+  const keys: Array<keyof T> = Object.keys(obj);
 
   if (!keys.length) {
     return obj;
   }
 
-  keys.forEach((prop: keyof T) => {
+  keys.forEach(prop => {
     if (isObject(obj[prop])) {
       resultObj[prop] = Array.isArray(obj[prop]) ? deepCopyArray(obj[prop]) : deepCopy(obj[prop]);
     } else {
