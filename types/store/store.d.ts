@@ -5,14 +5,15 @@ import {
   Rect,
   BoxSeriesType,
   BarChartOptions,
-  ColumnChartOptions
+  ColumnChartOptions,
+  BoxSeriesDataType
 } from '@t/options';
 import Store from '@src/store/store';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
-  bar: BoxSeriesType[];
-  column: BoxSeriesType[];
+  bar: BoxSeriesType<BoxSeriesDataType>[];
+  column: BoxSeriesType<BoxSeriesDataType>[];
 };
 
 type ChartType = keyof ChartSeriesMap;

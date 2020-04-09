@@ -24,14 +24,14 @@ interface BarChartProps {
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
-  constructor(props: BarChartProps) {
+  constructor({ el, options, data }: BarChartProps) {
     super({
-      el: props.el,
-      options: props.options,
+      el,
+      options,
       series: {
-        bar: props.data.series
+        bar: data.series
       },
-      categories: props.data.categories
+      categories: data.categories
     });
   }
 

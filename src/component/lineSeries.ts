@@ -39,7 +39,7 @@ export default class LineSeries extends Component {
     const tickDistance = this.rect.width / series.line.seriesGroupCount;
 
     const lineSeriesModel = this.renderLinePointsModel(
-      series.line.data!,
+      series.line.data,
       yAxis.limit,
       tickDistance,
       pointOnColumn,
@@ -48,7 +48,7 @@ export default class LineSeries extends Component {
 
     const seriesCircleModel = this.renderCircle(lineSeriesModel);
 
-    const tooltipData = series.line.data!.flatMap(({ name, data }, index) => {
+    const tooltipData = series.line.data.flatMap(({ name, data }, index) => {
       return data.map((value, dataIdx) => ({
         label: name,
         color: theme.series.colors[index],

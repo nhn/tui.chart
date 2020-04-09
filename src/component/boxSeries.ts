@@ -1,7 +1,14 @@
 import Component from './component';
 import { RectModel, BoxSeriesModel, ClipRectAreaModel } from '@t/components/series';
 import { ChartState } from '@t/store/store';
-import { BoxSeriesType, BarChartOptions, ColumnChartOptions } from '@t/options';
+import {
+  BoxSeriesType,
+  BoxSeriesDataType,
+  BarChartOptions,
+  ColumnChartOptions,
+  Point
+} from '@t/options';
+import { isNumber } from '@src/helpers/utils';
 
 type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
 
@@ -12,9 +19,10 @@ enum SeriesType {
   COLUMN = 'column'
 }
 
-function isBar(name) {
-  return name === SeriesType.BAR;
-}
+const PADDING = {
+  TOP_BOTTOM: 15,
+  LEFT_RIGHT: 24
+};
 
 export default class BoxSeries extends Component {
   models!: DrawModels[];
@@ -23,7 +31,7 @@ export default class BoxSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  padding = 15;
+  padding = PADDING.TOP_BOTTOM;
 
   isBar = true;
 
@@ -32,8 +40,8 @@ export default class BoxSeries extends Component {
   initialize({ name }: { name: SeriesType }) {
     this.type = 'series';
     this.name = name;
-    this.isBar = isBar(name);
-    this.padding = this.isBar ? 15 : 24;
+    this.isBar = name === SeriesType.BAR;
+    this.padding = this.isBar ? PADDING.TOP_BOTTOM : PADDING.LEFT_RIGHT;
   }
 
   update(delta: number) {
@@ -52,7 +60,7 @@ export default class BoxSeries extends Component {
 
     this.rect = layout.plot;
 
-    const seriesRawData = series[this.name]!.data!;
+    const seriesRawData = series[this.name]!.data;
     const colors = theme.series.colors;
 
     const valueAxis = this.isBar ? 'xAxis' : 'yAxis';
@@ -63,18 +71,18 @@ export default class BoxSeries extends Component {
     const maxValue = Number(axes[valueAxis].labels[axes[valueAxis].labels.length - 1]);
     const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
 
-    const seriesModels = this.renderBoxSeriesModel({
+    const seriesModels = this.renderBoxSeriesModel(
       seriesRawData,
       colors,
       maxValue,
       tickDistance,
       offsetSizeKey
-    });
+    );
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModels];
 
     const tooltipData = seriesRawData.flatMap(({ name, data }, index) => {
-      return (data as (number | [number, number])[]).map((value, dataIdx) => ({
+      return data.map((value, dataIdx) => ({
         label: name,
         color: theme.series.colors[index],
         value,
@@ -89,41 +97,37 @@ export default class BoxSeries extends Component {
     }));
   }
 
-  renderBoxSeriesModel({
-    seriesRawData,
-    colors,
-    maxValue,
-    tickDistance,
-    offsetSizeKey
-  }: {
-    seriesRawData: BoxSeriesType[];
-    colors: string[];
-    maxValue: number;
-    tickDistance: number;
-    offsetSizeKey: SizeKey;
-  }): BoxSeriesModel[] {
+  renderBoxSeriesModel(
+    seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
+    colors: string[],
+    maxValue: number,
+    tickDistance: number,
+    offsetSizeKey: SizeKey
+  ): BoxSeriesModel[] {
     const columnWidth = (tickDistance - this.padding * 2) / seriesRawData.length;
-    const seriesModels: BoxSeriesModel[] = [];
 
-    seriesRawData.forEach(({ data }, seriesIndex) => {
+    return seriesRawData.flatMap(({ data }, seriesIndex) => {
       const startPos = seriesIndex * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
-      data.forEach((value, index) => {
+      return data.map((value, index) => {
+        if (!isNumber(value)) {
+          const [start, end] = value;
+          value = end - start;
+        }
+
         const barLength = (value * this.rect[offsetSizeKey]) / maxValue;
 
-        seriesModels.push({
+        return {
           type: 'box',
           color,
           width: this.isBar ? barLength : columnWidth,
           height: this.isBar ? columnWidth : barLength,
           x: this.isBar ? 0 : startPos + index * tickDistance,
           y: this.isBar ? startPos + index * tickDistance : this.rect.height - barLength
-        });
+        };
       });
     });
-
-    return seriesModels;
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -138,11 +142,11 @@ export default class BoxSeries extends Component {
 
   renderRect(seriesModel): RectModel[] {
     return seriesModel.map(data => {
-      const { x, y, width, height } = data;
+      const { x, y, width, height, color } = data;
 
       return {
         type: 'rect',
-        color: data.color,
+        color,
         x,
         y,
         width,
@@ -158,9 +162,7 @@ export default class BoxSeries extends Component {
       this.models.splice(index, 1);
     });
 
-    responders.forEach(responder => {
-      this.models.push(responder);
-    });
+    this.models = [...this.models, ...responders];
 
     this.activatedResponders = responders;
 

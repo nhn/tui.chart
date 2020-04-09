@@ -1,11 +1,13 @@
-export function box(ctx: CanvasRenderingContext2D, boxModel: any) {
+import { BoxSeriesModel, RectModel } from '@t/components/series';
+
+export function box(ctx: CanvasRenderingContext2D, boxModel: BoxSeriesModel) {
   const { x, y, width, height } = boxModel;
 
   ctx.fillStyle = boxModel.color;
   ctx.fillRect(x, y, width, height);
 }
 
-export function rect(ctx: CanvasRenderingContext2D, model: any) {
+export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   const thickness = 4;
   const { x, y, width, height, offsetKey = 'y' } = model;
 

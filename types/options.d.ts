@@ -2,6 +2,7 @@ import { Series } from '@t/store/store';
 
 // type LineSeriesDataType = number[] | Array<Array<number | string>> | Point[];
 type LineSeriesDataType = number[]; // @TODO: use ⬆️ type (coordinate)
+export type BoxSeriesDataType = number | [number, number];
 
 export interface Point {
   x: number;
@@ -46,33 +47,7 @@ interface BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseAxisOptions;
   yAxis?: BaseAxisOptions;
-  // {
-  // title?: string | TitleConfig;
-  // labelMargin?: number;
-  // min?: number;
-  // max?: number;
-  // align?: string;
-  // suffix?: string;
-  // prefix?: string;
-  // chartType?: string;
-  // maxWidth?: number;
-  // };
-  // yAxis?: ;
-  // tooltip?: ;
-  // legend?: ;
-  // plot?: ;
-  // theme?: ;
-  // libType?: ;
-  // chartExportMenu?: {
-  //   filename?: string;
-  //   visible?: boolean;
-  // };
-  // usageStatistics?: boolean
 }
-
-// interface AnimationOptions {
-// duration: number;
-// }
 
 interface BaseSeriesOptions {
   showLabel?: boolean;
@@ -85,11 +60,6 @@ interface LineXaxisOptions extends BaseAxisOptions {
 
 interface LineSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
-  // spline?: boolean;
-  // zoomable?: boolean;
-  // shifting?: boolean;
-  // pointWidth?: number;
-  // animation?: boolean | AnimationOptions;
 }
 
 export interface LineChartOptions extends BaseOptions {
@@ -110,15 +80,15 @@ export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
 }
 
-export interface BoxSeriesType {
+export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
-  data: number[] | Array<[number, number]>;
+  data: T[];
   stack?: string;
 }
 
 export interface BoxSeriesData {
   categories: string[];
-  series: BoxSeriesType[];
+  series: BoxSeriesType<BoxSeriesDataType>[];
 }
 
 export interface ChartProps<T> {

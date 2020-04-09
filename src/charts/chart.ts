@@ -55,7 +55,7 @@ export default class Chart<T extends Options> {
           onCompleted: () => {
             this.eventBus.emit('loopComplete');
           },
-          chart: this as Chart<T>,
+          chart: this,
           duration: 1000,
           requester: this
         });
@@ -90,6 +90,10 @@ export default class Chart<T extends Options> {
 
     this.componentManager.forEach(component => {
       if (!component[delegationMethod]) {
+        return;
+      }
+
+      if (!responderDetectors.rect(mousePosition, component.rect)) {
         return;
       }
 
