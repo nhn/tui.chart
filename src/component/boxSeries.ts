@@ -1,13 +1,7 @@
 import Component from './component';
 import { RectModel, BoxSeriesModel, ClipRectAreaModel } from '@t/components/series';
 import { ChartState } from '@t/store/store';
-import {
-  BoxSeriesType,
-  BoxSeriesDataType,
-  BarChartOptions,
-  ColumnChartOptions,
-  Point
-} from '@t/options';
+import { BoxSeriesType, BoxSeriesDataType, BarChartOptions, ColumnChartOptions } from '@t/options';
 import { isNumber } from '@src/helpers/utils';
 
 type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
@@ -20,8 +14,8 @@ enum SeriesType {
 }
 
 const PADDING = {
-  TOP_BOTTOM: 15,
-  LEFT_RIGHT: 24
+  TB: 15, // top & bottom
+  LR: 24 // left & right
 };
 
 export default class BoxSeries extends Component {
@@ -31,7 +25,7 @@ export default class BoxSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  padding = PADDING.TOP_BOTTOM;
+  padding = PADDING.TB;
 
   isBar = true;
 
@@ -41,7 +35,7 @@ export default class BoxSeries extends Component {
     this.type = 'series';
     this.name = name;
     this.isBar = name === SeriesType.BAR;
-    this.padding = this.isBar ? PADDING.TOP_BOTTOM : PADDING.LEFT_RIGHT;
+    this.padding = this.isBar ? PADDING.TB : PADDING.LR;
   }
 
   update(delta: number) {
