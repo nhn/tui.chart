@@ -2,6 +2,7 @@ import { Series } from '@t/store/store';
 
 // type LineSeriesDataType = number[] | Array<Array<number | string>> | Point[];
 type LineSeriesDataType = number[]; // @TODO: use ⬆️ type (coordinate)
+export type BoxSeriesDataType = number | [number, number];
 
 export interface Point {
   x: number;
@@ -44,64 +45,63 @@ type BaseChartOptions = {
   // format?:
 } & Size;
 
+type BaseAxisOptions = {
+  title?: string | TitleOptions;
+};
+
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
-  xAxis?: {
-    pointOnColumn?: boolean;
-  };
-  yAxis?: {
-    // title?: string | TitleConfig;
-    // labelMargin?: number;
-    // min?: number;
-    // max?: number;
-    // align?: string;
-    // suffix?: string;
-    // prefix?: string;
-    // chartType?: string;
-    // maxWidth?: number;
-  };
-  // yAxis?: ;
-  // tooltip?: ;
-  // legend?: ;
-  // plot?: ;
-  // theme?: ;
-  // libType?: ;
-  // chartExportMenu?: {
-  //   filename?: string;
-  //   visible?: boolean;
-  // };
-  // usageStatistics?: boolean
+  xAxis?: BaseAxisOptions;
+  yAxis?: BaseAxisOptions;
 }
-
-// interface AnimationOptions {
-// duration: number;
-// }
 
 interface BaseSeriesOptions {
   showLabel?: boolean;
   allowSelect?: boolean;
 }
 
+interface LineXaxisOptions extends BaseAxisOptions {
+  pointOnColumn?: boolean;
+}
+
 interface LineSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
-  // zoomable?: boolean;
-  // shifting?: boolean;
-  // pointWidth?: number;
-  // animation?: boolean | AnimationOptions;
 }
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineSeriesOptions;
+  xAxis?: LineXaxisOptions;
+}
+interface BoxSeriesOptions extends BaseSeriesOptions {
+  barWidth?: number;
+  diverging?: boolean;
+  colorByPoint?: boolean;
 }
 
-// ⬇️ 차트 내부에서 사용, 정리 필요
-export type Options = LineChartOptions;
+export interface BarChartOptions extends BaseOptions {
+  series?: BoxSeriesOptions;
+}
 
-export interface ChartProps {
+export interface ColumnChartOptions extends BaseOptions {
+  series?: BoxSeriesOptions;
+}
+
+export interface BoxSeriesType<T extends BoxSeriesDataType> {
+  name: string;
+  data: T[];
+  stack?: string;
+}
+
+export interface BoxSeriesData {
+  categories: string[];
+  series: BoxSeriesType<BoxSeriesDataType>[];
+}
+
+export interface ChartProps<T> {
   el: Element;
   series: Series;
-  categories: string[];
-  options: Options;
+  categories?: string[];
+  options: T;
 }

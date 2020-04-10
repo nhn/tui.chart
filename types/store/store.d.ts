@@ -1,23 +1,41 @@
-import { BaseChartOptions, LineChartOptions, LineSeriesType, Rect } from '../options';
+import {
+  BaseChartOptions,
+  LineChartOptions,
+  LineSeriesType,
+  Rect,
+  BoxSeriesType,
+  BarChartOptions,
+  ColumnChartOptions,
+  BoxSeriesDataType
+} from '@t/options';
 import Store from '@src/store/store';
 
-type ChartType = 'line';
-type SeriesType = LineSeriesType;
-
-export type AxisType = 'xAxis' | 'yAxis' | 'yCenterAxis';
-
-export type Series = {
-  line?: LineSeriesType[];
+type ChartSeriesMap = {
+  line: LineSeriesType[];
+  bar: BoxSeriesType<BoxSeriesDataType>[];
+  column: BoxSeriesType<BoxSeriesDataType>[];
 };
 
-export type Options = LineChartOptions;
+type ChartType = keyof ChartSeriesMap;
+
+type Series = Partial<ChartSeriesMap>;
+
+type ValueOf<T> = T[keyof T];
+
+type ChartOptionsMap = {
+  line: LineChartOptions;
+  bar: BarChartOptions;
+  column: ColumnChartOptions;
+};
+
+export type Options = ValueOf<ChartOptionsMap>;
 
 export interface StoreOptions {
-  state?: Partial<ChartState> | StateFunc;
+  state?: Partial<ChartState<Options>> | StateFunc;
   watch?: Record<string, WatchFunc>;
   computed?: Record<string, ComputedFunc>;
-  action?: Record<string, ActionFunc> & ThisType<Store>;
-  observe?: Record<string, ObserveFunc> & ThisType<Store>;
+  action?: Record<string, ActionFunc> & ThisType<Store<Options>>;
+  observe?: Record<string, ObserveFunc> & ThisType<Store<Options>>;
 }
 
 export interface StoreModule extends StoreOptions {
@@ -33,10 +51,10 @@ export type Theme = {
 };
 
 type SeriesState = {
-  [key in ChartType]?: SeriesData; // @TODO: Series 와 통합 필요. 중복되는 느낌
+  [key in ChartType]?: SeriesData<key>; // @TODO: Series 와 통합 필요. 중복되는 느낌
 };
 
-export interface ChartState {
+export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: {
     [key: string]: Rect;
@@ -54,8 +72,8 @@ export interface ChartState {
     [key: string]: AxisData;
   };
   theme: Theme;
-  options: Options;
-  categories: string[];
+  options: T;
+  categories?: string[];
   d: number; // @TODO: check where to use
 }
 
@@ -65,6 +83,7 @@ export interface AxisData {
   validTickCount: number;
   isLabelAxis: boolean;
   relativePositions: number[];
+  isCategoryType: boolean;
 }
 
 export interface ValueEdge {
@@ -72,8 +91,8 @@ export interface ValueEdge {
   min: number;
 }
 
-export type SeriesData = {
-  data: SeriesType[];
+export type SeriesData<K extends ChartType> = {
+  data: ChartSeriesMap[K];
 } & SeriesGroup;
 
 export interface SeriesGroup {
@@ -87,10 +106,10 @@ export interface ScaleData {
   stepCount: number;
 }
 
-type StateFunc = () => Partial<ChartState>;
-type ActionFunc = (store: Store, ...args: any[]) => void;
-type ComputedFunc = (state: ChartState, computed: Record<string, any>) => any;
-export type ObserveFunc = (state: ChartState, computed: Record<string, any>) => void;
+type StateFunc = () => Partial<ChartState<Options>>;
+type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
+type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
+export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
 type WatchFunc = (value: any) => void;
 
 export type FunctionPropertyNames<T> = {

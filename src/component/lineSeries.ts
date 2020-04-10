@@ -1,6 +1,6 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { LineSeriesOptions } from '@t/options';
+import { LineChartOptions, LineSeriesOptions } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
@@ -32,8 +32,8 @@ export default class LineSeries extends Component {
     }
   }
 
-  render(chartState: ChartState) {
-    const { layout, series, scale, theme, options } = chartState;
+  render(chartState: ChartState<LineChartOptions>) {
+    const { layout, series, scale, theme, options, categories = [] } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -64,7 +64,7 @@ export default class LineSeries extends Component {
         label: name,
         color: theme.series.colors[index],
         value,
-        category: chartState.categories[dataIdx]
+        category: categories[dataIdx]
       }));
     });
 

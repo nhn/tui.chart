@@ -1,6 +1,6 @@
 import { StoreModule } from '@t/store/store';
-
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
+import { AxisType } from '@src/component/axis';
 
 const axes: StoreModule = {
   name: 'axes',
@@ -9,20 +9,23 @@ const axes: StoreModule = {
   }),
   action: {
     setAxesData({ state }) {
-      const { scale, options, categories } = state;
+      const { scale, options, series, categories = [] } = state;
 
       const labelAxisData = {
         labels: categories,
         tickCount: categories.length,
         validTickCount: categories.length,
-        isLabelAxis: true
+        isLabelAxis: true,
+        isCategoryType: false
       };
 
-      if (options.xAxis && options.xAxis.pointOnColumn) {
+      if (isCategoryType({ series, options })) {
         labelAxisData.tickCount += 1;
+        labelAxisData.isCategoryType = true;
       }
 
-      const valueLabels = makeLabelsFromLimit(scale.yAxis.limit, scale.yAxis.step);
+      const axisName = getValueAxisName(series);
+      const valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].step);
 
       const valueAxisData = {
         labels: valueLabels,
@@ -30,48 +33,35 @@ const axes: StoreModule = {
         validTickCount: valueLabels.length
       };
 
-      this.extend(state.axes, {
-        xAxis: labelAxisData,
-        yAxis: valueAxisData
-      });
+      if (series.bar) {
+        this.extend(state.axes, {
+          xAxis: valueAxisData,
+          yAxis: labelAxisData
+        });
+      } else {
+        this.extend(state.axes, {
+          xAxis: labelAxisData,
+          yAxis: valueAxisData
+        });
+      }
     }
   },
-  computed: {
-    // reaction 방식과 computed 방식 비교
-    // 'axes.xAxis': ({categories}) => {
-    //   return {
-    //     labels: categories,
-    //     tickCount: categories.length,
-    //     validTickCount: categories.length,
-    //     isLabelAxis: true
-    //   };
-    // },
-    // 'axes.yAxis': ({scale}) => {
-    //   return {
-    //     labels: makeLabelsFromLimit(scale.yAxis.limit, scale.yAxis.step)
-    //   };
-    // }
-  },
+  computed: {},
   observe: {
     updateAxes() {
       this.dispatch('setAxesData');
     }
-    // updateAxes({categories, scale}) {
-    //   const labelAxisData = {
-    //     labels: categories,
-    //     tickCount: categories.length,
-    //     validTickCount: categories.length,
-    //     isLabelAxis: true
-    //   };
-    //   const valueAxisData = {
-    //     labels: makeLabelsFromLimit(scale.yAxis.limit, scale.yAxis.step)
-    //   };
-    //   this.dispatch('setAxesData', {
-    //     xAxis: labelAxisData,
-    //     yAxis: valueAxisData
-    //   });
-    // }
   }
 };
+
+function getValueAxisName(series) {
+  return series.bar ? AxisType.X : AxisType.Y;
+}
+
+function isCategoryType({ series, options }) {
+  return (
+    (series.line && options.xAxis && options.xAxis.pointOnColumn) || series.column || series.bar
+  );
+}
 
 export default axes;

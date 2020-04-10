@@ -1,5 +1,5 @@
 import { Point, Rect } from '@t/options';
-import { PathRectModel, CircleModel } from '@t/components/series';
+import { PathRectModel, CircleModel, RectModel } from '@t/components/series';
 
 type DetectorType = 'circle' | 'rect';
 
@@ -19,14 +19,20 @@ export const responderDetectors: ResponderDetectors = {
       Math.pow(radius + radiusAdjustment, 2)
     );
   },
-  rect: (mousePosition: Point, model: PathRectModel) => {
-    const { x, y, width, height } = model;
+  rect: (
+    mousePosition: Point,
+    model: PathRectModel | RectModel,
+    componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
+  ) => {
+    const { x, y } = mousePosition;
+    const { x: modelX, y: modelY, width, height } = model;
+    const { x: compX, y: compY } = componentRect;
 
     return (
-      mousePosition.x >= x &&
-      mousePosition.x <= x + width &&
-      mousePosition.y >= y &&
-      mousePosition.y <= y + height
+      x >= modelX + compX &&
+      x <= modelX + compX + width &&
+      y >= modelY + compY &&
+      y <= modelY + compY + height
     );
   }
 };

@@ -11,11 +11,13 @@ const scale: StoreModule = {
     setScale({ state }) {
       const { series, dataRange, layout } = state;
       const scaleData: Record<string, ScaleData> = {};
+      const valueAxis = series.bar ? 'xAxis' : 'yAxis';
+      const offsetSizeProp = series.bar ? 'width' : 'height';
 
       Object.keys(series).forEach(seriesName => {
-        scaleData.yAxis = coordinateScaleCalculator({
+        scaleData[valueAxis] = coordinateScaleCalculator({
           range: dataRange[seriesName],
-          offsetSize: layout.plot.height
+          offsetSize: layout.plot[offsetSizeProp]
         });
       });
 

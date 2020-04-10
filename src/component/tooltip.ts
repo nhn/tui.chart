@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState } from '@t/store/store';
+import { ChartState, Options } from '@t/store/store';
 import { throttle } from '@src/helpers/utils';
 import { TooltipInfo, TooltipModel } from '@t/components/tooltip';
 
@@ -76,7 +76,7 @@ export default class Tooltip extends Component {
     }, 100);
   }
 
-  render({ layout }: ChartState) {
+  render({ layout }: ChartState<Options>) {
     this.rect = layout.plot;
     this.models = [];
   }

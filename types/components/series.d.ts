@@ -23,3 +23,14 @@ export type PathRectModel = {
   fill?: string;
   stroke?: string;
 } & Rect;
+
+export type BoxSeriesModel = {
+  type: 'box';
+  color: string;
+} & Rect;
+
+export type RectModel = {
+  type: 'rect';
+  color: string;
+  offsetKey: 'x' | 'y';
+} & Rect;

@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState } from '@t/store/store';
+import { ChartState, Options } from '@t/store/store';
 import { PlotModel } from '@t/components/plot';
 import { crispPixel, makeTickPixelPositions } from '@src/helpers/calculator';
 import Painter from '@src/painter';
@@ -33,7 +33,7 @@ export default class Plot extends Component {
     return makeTickPixelPositions(size, tickCount);
   }
 
-  render({ layout, axes }: ChartState) {
+  render({ layout, axes }: ChartState<Options>) {
     this.rect = layout.plot;
 
     this.models.plot = [

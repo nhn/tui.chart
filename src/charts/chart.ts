@@ -8,9 +8,10 @@ import animator from '@src/animator';
 import { debounce } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
+import { Options } from '@t/store/store';
 
-export default class Chart {
-  store: Store;
+export default class Chart<T extends Options> {
+  store: Store<T>;
 
   ___animId___ = null;
 
@@ -22,9 +23,9 @@ export default class Chart {
 
   readonly eventBus: EventEmitter = new EventEmitter();
 
-  readonly componentManager: ComponentManager;
+  readonly componentManager: ComponentManager<T>;
 
-  constructor(props: ChartProps) {
+  constructor(props: ChartProps<T>) {
     const { el, options, categories, series } = props;
 
     this.el = el;
