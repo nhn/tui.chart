@@ -22,8 +22,8 @@ import {
   Options
 } from '@t/store/store';
 
-import { isUndefined, forEach, pickPropertyWithMakeup } from '@src/helpers/utils';
-import { BaseChartOptions } from '@t/options';
+import { isUndefined, forEach, pickPropertyWithMakeup, deepMergedCopy } from '@src/helpers/utils';
+import { BaseChartOptions, Size } from '@t/options';
 
 interface InitStoreState<T> {
   categories?: string[];
@@ -66,42 +66,41 @@ export default class Store<T extends Options> {
 
   actions: Record<string, ActionFunc> = {};
 
-  constructor(options?: InitStoreState<T>) {
-    this.setRootState(this.state);
+  constructor({ categories, chart, options, series }: InitStoreState<T>) {
+    // 여기서 coordinate 값이면 setting 필요
 
-    if (options) {
-      this.setModule(
-        'root',
-        Object.assign(
-          {
-            action: {
-              setChartSize({ state }, size: { width: number; height: number }) {
-                state.chart.width = size.width;
-                state.chart.height = size.height;
-              },
-              initChartSize({ state }, containerEl: HTMLElement) {
-                if (state.chart.width === 0 || state.chart.height === 0) {
-                  if (containerEl.parentNode) {
+    this.setRootState(this.state);
+    this.setModule(
+      'root',
+      deepMergedCopy(
+        {
+          action: {
+            setChartSize({ state }, size: Size) {
+              state.chart.width = size.width;
+              state.chart.height = size.height;
+            },
+            initChartSize({ state }, containerEl: HTMLElement) {
+              if (state.chart.width === 0 || state.chart.height === 0) {
+                if (containerEl.parentNode) {
+                  this.dispatch('setChartSize', {
+                    width: containerEl.offsetWidth,
+                    height: containerEl.offsetHeight
+                  });
+                } else {
+                  setTimeout(() => {
                     this.dispatch('setChartSize', {
                       width: containerEl.offsetWidth,
                       height: containerEl.offsetHeight
                     });
-                  } else {
-                    setTimeout(() => {
-                      this.dispatch('setChartSize', {
-                        width: containerEl.offsetWidth,
-                        height: containerEl.offsetHeight
-                      });
-                    }, 0);
-                  }
+                  }, 0);
                 }
               }
             }
-          } as StoreOptions,
-          { state: options }
-        )
-      );
-    }
+          }
+        } as StoreOptions,
+        { state: { series, categories, options, chart } }
+      )
+    );
   }
 
   setRootState(state: Partial<ChartState<T>>) {

@@ -8,7 +8,7 @@ import animator from '@src/animator';
 import { debounce } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
-import { Options } from '@t/store/store';
+import { Options, Series } from '@t/store/store';
 
 export default class Chart<T extends Options> {
   store: Store<T>;
@@ -25,10 +25,24 @@ export default class Chart<T extends Options> {
 
   readonly componentManager: ComponentManager<T>;
 
+  makeCategory(series: Series) {
+    const categories: Set<string> = new Set();
+    // is Coordinate data
+    Object.keys(series).forEach(key => {
+      series[key].data.forEach(d => {
+        categories.add(d);
+      });
+    });
+
+    return Array.from(categories);
+  }
+
   constructor(props: ChartProps<T>) {
-    const { el, options, categories, series } = props;
+    const { el, options, series } = props;
 
     this.el = el;
+
+    const categories: string[] = props.categories ? props.categories : this.makeCategory(series);
 
     this.store = new Store({
       chart: options.chart,

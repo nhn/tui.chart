@@ -30,7 +30,7 @@ export default class LineChart extends Chart<LineChartOptions> {
       series: {
         line: props.data.series
       },
-      categories: props.data.categories
+      categories: props.data?.categories
     });
   }
 

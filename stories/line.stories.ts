@@ -1,7 +1,13 @@
 import LineChart from '@src/charts/lineChart';
 import { LineSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { budgetData, temperatureData } from './data';
+import {
+  budgetData,
+  tupleCoordinateData,
+  datetimeCoordinateData,
+  temperatureData,
+  coordinateData
+} from './data';
 
 export default {
   title: 'Line'
@@ -44,6 +50,30 @@ export const spline = () => {
   const { el } = createChart(budgetData, {
     series: { spline: true },
     xAxis: { pointOnColumn: true }
+  });
+
+  return el;
+};
+
+export const coordinate = () => {
+  const { el } = createChart(coordinateData, {
+    xAxis: { pointOnColumn: true }
+  });
+
+  return el;
+};
+
+export const tupleCoordinate = () => {
+  const { el } = createChart(tupleCoordinateData, {
+    xAxis: { pointOnColumn: true }
+  });
+
+  return el;
+};
+
+export const coordinateDatetime = () => {
+  const { el } = createChart(datetimeCoordinateData, {
+    xAxis: { pointOnColumn: true, type: 'datetime' }
   });
 
   return el;
