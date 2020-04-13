@@ -5,8 +5,8 @@ import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { setSplineControlPoint } from '@src/helpers/calculator';
-import { isNumber } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
+import { isNumber } from '@src/helpers/utils';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 

@@ -19,6 +19,7 @@ import {
   Series,
   Options
 } from '@t/store/store';
+
 import {
   isUndefined,
   forEach,
@@ -38,7 +39,7 @@ interface InitStoreState<T> {
 }
 
 function makeCategories(series: Series) {
-  const categories: Set<string | number> = new Set();
+  const categories: Set<string> = new Set();
 
   Object.keys(series).forEach(key => {
     series[key].forEach(({ data }) => {
