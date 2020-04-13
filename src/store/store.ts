@@ -22,7 +22,13 @@ import {
   Options
 } from '@t/store/store';
 
-import { isUndefined, forEach, pickPropertyWithMakeup, deepMergedCopy } from '@src/helpers/utils';
+import {
+  isUndefined,
+  forEach,
+  pickPropertyWithMakeup,
+  deepMergedCopy,
+  sortCategory
+} from '@src/helpers/utils';
 import { BaseChartOptions, Size } from '@t/options';
 
 interface InitStoreState<T> {
@@ -30,6 +36,20 @@ interface InitStoreState<T> {
   chart?: BaseChartOptions;
   series: Series;
   options?: T;
+}
+
+function makeCategory(series: Series) {
+  const categories: Set<string> = new Set();
+
+  Object.keys(series).forEach(key => {
+    series[key].forEach(({ data }) => {
+      data.forEach(datum => {
+        categories.add(Array.isArray(datum) ? datum[0] : datum.x);
+      });
+    });
+  });
+
+  return Array.from(categories).sort(sortCategory);
 }
 
 export default class Store<T extends Options> {
@@ -66,8 +86,11 @@ export default class Store<T extends Options> {
 
   actions: Record<string, ActionFunc> = {};
 
-  constructor({ categories, chart, options, series }: InitStoreState<T>) {
+  constructor(initStoreState: InitStoreState<T>) {
     // 여기서 coordinate 값이면 setting 필요
+    const { chart, options, series } = initStoreState;
+
+    const categories = initStoreState.categories ? initStoreState.categories : makeCategory(series);
 
     this.setRootState(this.state);
     this.setModule(

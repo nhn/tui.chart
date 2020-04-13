@@ -3,12 +3,7 @@ import { Series } from '@t/store/store';
 export type BoxSeriesDataType = number | [number, number];
 type LineSeriesDataType = number[] | CoordinateDataType;
 
-type CoordinateDataType =
-  | Point[]
-  | [number, number][]
-  | [number, string][]
-  | [string, string][]
-  | [string, number][];
+type CoordinateDataType = Point[] | [number, number][] | [string, number][];
 
 export interface Point {
   x: number;

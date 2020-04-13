@@ -1,10 +1,11 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { LineChartOptions, LineSeriesOptions } from '@t/options';
+import { LineChartOptions, LineSeriesDataType, LineSeriesOptions, Point } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { setSplineControlPoint } from '@src/helpers/calculator';
+import { isNumber, isObject } from '@src/helpers/utils';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -32,6 +33,28 @@ export default class LineSeries extends Component {
     }
   }
 
+  getValue(datum: Point | number | [number, number] | [string, number]) {
+    if (isNumber(datum)) {
+      return datum;
+    }
+
+    return Array.isArray(datum) ? datum[1] : datum.y;
+  }
+
+  getDataIndex(
+    datum: Point | number | [number, number] | [string, number],
+    categories: string[],
+    dataIndex: number
+  ) {
+    if (isNumber(datum)) {
+      return dataIndex;
+    }
+
+    const value = Array.isArray(datum) ? datum[0] : datum.x;
+
+    return categories.findIndex(category => category === value);
+  }
+
   render(chartState: ChartState<LineChartOptions>) {
     const { layout, series, scale, theme, options, categories = [] } = chartState;
     if (!series.line) {
@@ -42,7 +65,7 @@ export default class LineSeries extends Component {
 
     const { yAxis } = scale;
 
-    const tickDistance = this.rect.width / series.line.seriesGroupCount;
+    const tickDistance = this.rect.width / categories.length; // 보여지는 카테고리의 길이 만큼이 되어야 함
 
     const renderLineOptions: RenderLineOptions = {
       pointOnColumn: options.xAxis?.pointOnColumn || false,
@@ -54,17 +77,18 @@ export default class LineSeries extends Component {
       series.line.data,
       yAxis.limit,
       tickDistance,
-      renderLineOptions
+      renderLineOptions,
+      categories
     );
 
     const seriesCircleModel = this.renderCircle(lineSeriesModel);
 
     const tooltipData = series.line.data.flatMap(({ name, data }, index) => {
-      return data.map((value, dataIdx) => ({
+      return data.map((datum, dataIdx) => ({
         label: name,
         color: theme.series.colors[index],
-        value,
-        category: categories[dataIdx]
+        value: this.getValue(datum),
+        category: categories[this.getDataIndex(datum, categories, dataIdx)]
       }));
     });
 
@@ -87,15 +111,19 @@ export default class LineSeries extends Component {
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
-    renderOptions: RenderLineOptions
+    renderOptions: RenderLineOptions,
+    categories: string[]
   ): LinePointsModel[] {
     const { pointOnColumn, theme, options } = renderOptions;
     const { colors } = theme;
     const { spline } = options;
 
     return seriesRawData.map(({ data }, seriesIndex) => {
-      const points = data.map((v, dataIndex) => {
-        const valueRatio = (v - limit.min) / (limit.max - limit.min);
+      const points = data.map((datum, idx) => {
+        const value = this.getValue(datum);
+        const dataIndex = this.getDataIndex(datum, categories, idx);
+
+        const valueRatio = (value - limit.min) / (limit.max - limit.min);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;

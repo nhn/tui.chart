@@ -255,3 +255,11 @@ export function deepCopy<T extends Record<string, any>>(obj: T) {
 
   return resultObj as T;
 }
+
+export function sortCategory(x: string, y: string) {
+  if (isInteger(x)) {
+    return Number(x) - Number(y);
+  }
+
+  return new Date(x).getTime() - new Date(y).getTime();
+}
