@@ -45,7 +45,7 @@ export default class LineSeries extends Component {
       return datum[1];
     }
 
-    return datum.y;
+    return (datum as Point).y;
   }
 
   getDataIndex(datum: DatumType, categories: string[], dataIndex: number) {
@@ -53,9 +53,9 @@ export default class LineSeries extends Component {
       return dataIndex;
     }
 
-    const value = Array.isArray(datum) ? datum[0] : datum.x;
+    const value = Array.isArray(datum) ? datum[0] : (datum as Point).x;
 
-    return categories.findIndex(category => category === value);
+    return categories.findIndex(category => category === String(value));
   }
 
   render(chartState: ChartState<LineChartOptions>) {
@@ -89,7 +89,7 @@ export default class LineSeries extends Component {
     const tooltipDataArr = series.line.data.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
 
-      data.forEach((datum: CoordinateDataType | number, dataIdx) => {
+      data.forEach((datum: DatumType, dataIdx) => {
         tooltipData.push({
           label: name,
           color: theme.series.colors[index],

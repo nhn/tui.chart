@@ -19,7 +19,6 @@ import {
   Series,
   Options
 } from '@t/store/store';
-
 import {
   isUndefined,
   forEach,

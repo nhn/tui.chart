@@ -2,7 +2,6 @@ import { Series } from '@t/store/store';
 
 export type BoxRangeDataType = [number, number];
 export type BoxSeriesDataType = number | BoxRangeDataType;
-
 type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
 export type CoordinateDataType = Point | [number, number] | [string, number];
 

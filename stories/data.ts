@@ -1,3 +1,5 @@
+import { LineSeriesType } from '@t/options';
+
 export const temperatureData = {
   categories: [
     '01/01/2020',
