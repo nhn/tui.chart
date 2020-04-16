@@ -5,10 +5,8 @@ import {
   notifyByPath,
   computed,
   watch,
-  setValue,
   extend,
-  invisibleWork,
-  isObservable
+  invisibleWork
 } from '@src/store/reactive';
 import {
   ChartState,
@@ -27,7 +25,8 @@ import {
   forEach,
   pickPropertyWithMakeup,
   deepMergedCopy,
-  sortCategory
+  sortSeries,
+  sortCategories
 } from '@src/helpers/utils';
 import { BaseChartOptions, Size } from '@t/options';
 
@@ -38,8 +37,8 @@ interface InitStoreState<T> {
   options?: T;
 }
 
-function makeCategory(series: Series) {
-  const categories: Set<string> = new Set();
+function makeCategories(series: Series) {
+  const categories: Set<string | number> = new Set();
 
   Object.keys(series).forEach(key => {
     series[key].forEach(({ data }) => {
@@ -49,7 +48,20 @@ function makeCategory(series: Series) {
     });
   });
 
-  return Array.from(categories).sort(sortCategory);
+  return Array.from(categories).sort(sortCategories);
+}
+
+function getSortedSeries(series: Series) {
+  const result: Series = {};
+
+  Object.keys(series).forEach(key => {
+    result[key] = series[key].map(({ name, data }) => ({
+      name,
+      data: data.sort(sortSeries)
+    }));
+  });
+
+  return result;
 }
 
 export default class Store<T extends Options> {
@@ -87,10 +99,12 @@ export default class Store<T extends Options> {
   actions: Record<string, ActionFunc> = {};
 
   constructor(initStoreState: InitStoreState<T>) {
-    // 여기서 coordinate 값이면 setting 필요
-    const { chart, options, series } = initStoreState;
+    const { chart, options } = initStoreState;
 
-    const categories = initStoreState.categories ? initStoreState.categories : makeCategory(series);
+    const series = getSortedSeries(initStoreState.series);
+    const categories = initStoreState.categories
+      ? initStoreState.categories
+      : makeCategories(series);
 
     this.setRootState(this.state);
     this.setModule(

@@ -64,7 +64,7 @@ export const coordinate = () => {
 };
 
 export const tupleCoordinate = () => {
-  const { el } = createChart(tupleCoordinateData, {
+  const { el } = createChart(tupleCoordinateData as LineSeriesData, {
     xAxis: { pointOnColumn: true }
   });
 
@@ -72,7 +72,7 @@ export const tupleCoordinate = () => {
 };
 
 export const coordinateDatetime = () => {
-  const { el } = createChart(datetimeCoordinateData, {
+  const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
     xAxis: { pointOnColumn: true, type: 'datetime' }
   });
 

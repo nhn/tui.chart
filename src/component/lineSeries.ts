@@ -1,11 +1,12 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { LineChartOptions, LineSeriesDataType, LineSeriesOptions, Point } from '@t/options';
+import { LineChartOptions, LineSeriesOptions, Point, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { setSplineControlPoint } from '@src/helpers/calculator';
-import { isNumber, isObject } from '@src/helpers/utils';
+import { isNumber } from '@src/helpers/utils';
+import { TooltipData } from '@t/components/tooltip';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -41,11 +42,7 @@ export default class LineSeries extends Component {
     return Array.isArray(datum) ? datum[1] : datum.y;
   }
 
-  getDataIndex(
-    datum: Point | number | [number, number] | [string, number],
-    categories: string[],
-    dataIndex: number
-  ) {
+  getDataIndex(datum: CoordinateDataType | number, categories: string[], dataIndex: number) {
     if (isNumber(datum)) {
       return dataIndex;
     }
@@ -83,18 +80,24 @@ export default class LineSeries extends Component {
 
     const seriesCircleModel = this.renderCircle(lineSeriesModel);
 
-    const tooltipData = series.line.data.flatMap(({ name, data }, index) => {
-      return data.map((datum, dataIdx) => ({
-        label: name,
-        color: theme.series.colors[index],
-        value: this.getValue(datum),
-        category: categories[this.getDataIndex(datum, categories, dataIdx)]
-      }));
+    const tooltipDataArr = series.line.data.flatMap(({ data, name }, index) => {
+      const tooltipData: TooltipData[] = [];
+
+      data.forEach((datum: CoordinateDataType | number, dataIdx) => {
+        tooltipData.push({
+          label: name,
+          color: theme.series.colors[index],
+          value: this.getValue(datum),
+          category: categories[this.getDataIndex(datum, categories, dataIdx)]
+        });
+      });
+
+      return tooltipData;
     });
 
     this.models = [this.renderClipRectAreaModel(), ...lineSeriesModel];
 
-    this.responders = seriesCircleModel.map((m, index) => ({ ...m, data: tooltipData[index] }));
+    this.responders = seriesCircleModel.map((m, index) => ({ ...m, data: tooltipDataArr[index] }));
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -119,7 +122,9 @@ export default class LineSeries extends Component {
     const { spline } = options;
 
     return seriesRawData.map(({ data }, seriesIndex) => {
-      const points = data.map((datum, idx) => {
+      const points: Point[] = [];
+
+      data.forEach((datum, idx) => {
         const value = this.getValue(datum);
         const dataIndex = this.getDataIndex(datum, categories, idx);
 
@@ -128,7 +133,7 @@ export default class LineSeries extends Component {
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
 
-        return { x, y };
+        points.push({ x, y });
       });
 
       if (spline) {

@@ -1,3 +1,5 @@
+import { CoordinateDataType } from '@t/options';
+
 type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
 type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
 
@@ -256,7 +258,14 @@ export function deepCopy<T extends Record<string, any>>(obj: T) {
   return resultObj as T;
 }
 
-export function sortCategory(x: string, y: string) {
+export function sortSeries(obj1: CoordinateDataType, obj2: CoordinateDataType) {
+  const x = Array.isArray(obj1) ? obj1[0] : obj1.x;
+  const y = Array.isArray(obj2) ? obj2[0] : obj2.x;
+
+  return sortCategories(x, y);
+}
+
+export function sortCategories(x: number | string, y: number | string) {
   if (isInteger(x)) {
     return Number(x) - Number(y);
   }

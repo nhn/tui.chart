@@ -1,9 +1,9 @@
 import { Series } from '@t/store/store';
 
 export type BoxSeriesDataType = number | [number, number];
-type LineSeriesDataType = number[] | CoordinateDataType;
 
-type CoordinateDataType = Point[] | [number, number][] | [string, number][];
+type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
+export type CoordinateDataType = Point | [number, number] | [string, number];
 
 export interface Point {
   x: number;

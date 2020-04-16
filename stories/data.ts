@@ -1,5 +1,3 @@
-import { LineSeriesType } from '@t/options';
-
 export const temperatureData = {
   categories: [
     '01/01/2020',
@@ -89,7 +87,7 @@ export const tupleCoordinateData = {
         [13, 20]
       ]
     }
-  ] as LineSeriesType[]
+  ]
 };
 
 export const coordinateData = {
@@ -105,7 +103,6 @@ export const coordinateData = {
         { x: 6, y: 420 },
         { x: 7, y: 300 },
         { x: 8, y: 213 },
-        { x: 8, y: 240 },
         { x: 9, y: 230 },
         { x: 10, y: 220 },
         { x: 11, y: 234 },
@@ -133,9 +130,9 @@ export const datetimeCoordinateData = {
     {
       name: 'SiteA',
       data: [
-        ['08/22/2020 11:10:00', 222],
         ['08/22/2020 10:00:00', 202],
         ['08/22/2020 10:05:00', 212],
+        ['08/22/2020 10:10:00', 222],
         ['08/22/2020 10:15:00', 351],
         ['08/22/2020 10:20:00', 412],
         ['08/22/2020 10:25:00', 420],
@@ -160,5 +157,5 @@ export const datetimeCoordinateData = {
         ['08/22/2020 11:00:00', 20]
       ]
     }
-  ] as LineSeriesType[]
+  ]
 };
