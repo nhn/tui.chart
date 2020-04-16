@@ -226,5 +226,48 @@ describe('Store', () => {
 
     expect(makeMyData).toEqual(2);
   });
-  it('should make store using initial options', () => {});
+
+  it('should make categories with coordinate data', () => {
+    store = new Store({
+      chart: {
+        width: 1,
+        height: 1
+      },
+      series: {
+        line: [
+          {
+            name: 'test',
+            data: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 }
+            ]
+          }
+        ]
+      }
+    });
+
+    expect(store.state.categories).toEqual([1, 3, 10]);
+
+    store = new Store({
+      chart: {
+        width: 1,
+        height: 1
+      },
+      series: {
+        line: [
+          {
+            name: 'test',
+            data: [
+              [10, 5],
+              [1, 2],
+              [3, 5]
+            ]
+          }
+        ]
+      }
+    });
+
+    expect(store.state.categories).toEqual([1, 3, 10]);
+  });
 });
