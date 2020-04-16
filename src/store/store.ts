@@ -64,6 +64,13 @@ function getSortedSeries(series: Series) {
   return result;
 }
 
+function initData(series: Series, categories?: string[]) {
+  return {
+    series: getSortedSeries(series),
+    categories: categories ? categories : makeCategories(series)
+  };
+}
+
 export default class Store<T extends Options> {
   state: ChartState<T> = {
     chart: { width: 0, height: 0 },
@@ -100,11 +107,7 @@ export default class Store<T extends Options> {
 
   constructor(initStoreState: InitStoreState<T>) {
     const { chart, options } = initStoreState;
-
-    const series = getSortedSeries(initStoreState.series);
-    const categories = initStoreState.categories
-      ? initStoreState.categories
-      : makeCategories(series);
+    const { series, categories } = initData(initStoreState.series, initStoreState.categories);
 
     this.setRootState(this.state);
     this.setModule(

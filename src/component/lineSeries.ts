@@ -34,7 +34,7 @@ export default class LineSeries extends Component {
     }
   }
 
-  getValue(datum: Point | number | [number, number] | [string, number]) {
+  getValue(datum: number | CoordinateDataType) {
     if (isNumber(datum)) {
       return datum;
     }

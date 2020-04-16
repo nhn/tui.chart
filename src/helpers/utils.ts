@@ -266,9 +266,5 @@ export function sortSeries(obj1: CoordinateDataType, obj2: CoordinateDataType) {
 }
 
 export function sortCategories(x: number | string, y: number | string) {
-  if (isInteger(x)) {
-    return Number(x) - Number(y);
-  }
-
-  return new Date(x).getTime() - new Date(y).getTime();
+  return isInteger(x) ? Number(x) - Number(y) : new Date(x).getTime() - new Date(y).getTime();
 }

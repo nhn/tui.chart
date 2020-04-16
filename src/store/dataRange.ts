@@ -43,7 +43,7 @@ const dataRange: StoreModule = {
           continue;
         }
 
-        let values = series[seriesName].flatMap(({ data, name }: any) => {
+        let values = series[seriesName].flatMap(({ data, name }) => {
           return disabledSeries.includes(name) ? [] : data;
         });
 
