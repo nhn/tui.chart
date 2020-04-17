@@ -5,12 +5,6 @@ import {
   CircleModel
 } from '@t/components/series';
 
-export const hoverStyle = {
-  shadowColor: 'rgba(0, 0, 0, 0.5)',
-  shadowBlur: 6,
-  shadowOffsetY: 2
-};
-
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
 

@@ -6,8 +6,7 @@ import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { isNumber } from '@src/helpers/utils';
-import { hoverStyle } from '@src/brushes/basic';
+import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -35,28 +34,6 @@ export default class LineSeries extends Component {
     if (this.models[0].type === 'clipRectArea') {
       this.models[0].width = this.rect.width * delta;
     }
-  }
-
-  getValue(datum: DatumType) {
-    if (isNumber(datum)) {
-      return datum;
-    }
-
-    if (Array.isArray(datum)) {
-      return datum[1];
-    }
-
-    return (datum as Point).y;
-  }
-
-  getDataIndex(datum: DatumType, categories: string[], dataIndex: number) {
-    if (isNumber(datum)) {
-      return dataIndex;
-    }
-
-    const value = Array.isArray(datum) ? datum[0] : (datum as Point).x;
-
-    return categories.findIndex(category => category === String(value));
   }
 
   render(chartState: ChartState<LineChartOptions>) {
@@ -94,8 +71,8 @@ export default class LineSeries extends Component {
         tooltipData.push({
           label: name,
           color: theme.series.colors[index],
-          value: this.getValue(datum),
-          category: categories[this.getDataIndex(datum, categories, dataIdx)]
+          value: getCoordinateValue(datum),
+          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
         });
       });
 
@@ -132,8 +109,8 @@ export default class LineSeries extends Component {
       const points: Point[] = [];
 
       data.forEach((datum, idx) => {
-        const value = this.getValue(datum);
-        const dataIndex = this.getDataIndex(datum, categories, idx);
+        const value = getCoordinateValue(datum);
+        const dataIndex = getCoordinateDataIndex(datum, categories, idx);
 
         const valueRatio = (value - limit.min) / (limit.max - limit.min);
 
@@ -158,11 +135,13 @@ export default class LineSeries extends Component {
         x,
         y,
         style: {
-          radius: 7,
           color,
+          radius: 7,
           strokeStyle: '#fff',
           lineWidth: 2,
-          ...hoverStyle
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+          shadowBlur: 6,
+          shadowOffsetY: 2
         }
       }));
     });
