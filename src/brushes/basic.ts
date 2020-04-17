@@ -1,4 +1,15 @@
-import { ClipRectAreaModel, LinePointsModel, PathRectModel } from '@t/components/series';
+import {
+  ClipRectAreaModel,
+  LinePointsModel,
+  PathRectModel,
+  CircleModel
+} from '@t/components/series';
+
+export const hoverStyle = {
+  shadowColor: 'rgba(0, 0, 0, 0.5)',
+  shadowBlur: 6,
+  shadowOffsetY: 2
+};
 
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
@@ -59,4 +70,21 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
     ctx.strokeStyle = stroke;
     ctx.stroke();
   }
+}
+
+export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
+  const { x, y, style } = circleModel;
+  const { radius, color } = style;
+
+  ctx.beginPath();
+  ctx.fillStyle = color;
+
+  Object.keys(style).forEach(key => {
+    ctx[key] = style[key];
+  });
+
+  ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+  ctx.fill();
+  ctx.stroke();
+  ctx.closePath();
 }

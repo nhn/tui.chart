@@ -44,7 +44,7 @@ function makeCategories(series: Series) {
   Object.keys(series).forEach(key => {
     series[key].forEach(({ data }) => {
       data.forEach(datum => {
-        categories.add(Array.isArray(datum) ? datum[0] : datum.x);
+        categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
       });
     });
   });

@@ -2,8 +2,16 @@ import { Point, Rect, BezierPoint } from '../options';
 
 export type CircleModel = {
   type: 'circle';
-  color: string;
-  radius: number;
+  style: {
+    color: string;
+    radius: number;
+    globalAlpha?: number;
+    strokeStyle?: string;
+    lineWidth?: number;
+    shadowColor?: string;
+    shadowBlur?: number;
+    shadowOffsetY?: number;
+  };
 } & Point;
 
 export type ClipRectAreaModel = {

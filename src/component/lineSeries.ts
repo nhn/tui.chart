@@ -7,6 +7,7 @@ import { LineSeriesType } from '@t/options';
 import { setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { isNumber } from '@src/helpers/utils';
+import { hoverStyle } from '@src/brushes/basic';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -152,7 +153,18 @@ export default class LineSeries extends Component {
 
   renderCircle(lineSeriesModel: LinePointsModel[]): CircleModel[] {
     return lineSeriesModel.flatMap(({ points, color }) => {
-      return points.map(({ x, y }) => ({ type: 'circle', color, x, y, radius: 7 }));
+      return points.map(({ x, y }) => ({
+        type: 'circle',
+        x,
+        y,
+        style: {
+          radius: 7,
+          color,
+          strokeStyle: '#fff',
+          lineWidth: 2,
+          ...hoverStyle
+        }
+      }));
     });
   }
 

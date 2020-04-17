@@ -3,6 +3,7 @@ import { Series } from '@t/store/store';
 export type BoxRangeDataType = [number, number];
 export type BoxSeriesDataType = number | BoxRangeDataType;
 type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
+type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
 export type CoordinateDataType = Point | [number, number] | [string, number];
 
 export interface Point {
@@ -32,6 +33,16 @@ export interface LineSeriesType {
 export interface LineSeriesData {
   categories?: string[];
   series: LineSeriesType[];
+}
+
+export interface ScatterSeriesType {
+  name: string;
+  data: CoordinateSeriesDataType;
+}
+
+export interface ScatterSeriesData {
+  categories?: string[];
+  series: ScatterSeriesType[];
 }
 
 interface TitleOptions {
@@ -75,6 +86,12 @@ export interface LineChartOptions extends BaseOptions {
   series?: LineSeriesOptions;
   xAxis?: LineXaxisOptions;
 }
+
+export interface ScatterChartOptions extends BaseOptions {
+  series?: LineSeriesOptions;
+  xAxis?: LineXaxisOptions;
+}
+
 interface BoxSeriesOptions extends BaseSeriesOptions {
   barWidth?: number;
   diverging?: boolean;
