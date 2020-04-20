@@ -16,6 +16,8 @@ interface RenderLineOptions {
   options: LineSeriesOptions;
 }
 
+type DatumType = CoordinateDataType | number;
+
 export default class LineSeries extends Component {
   models!: DrawModels[];
 
@@ -34,15 +36,19 @@ export default class LineSeries extends Component {
     }
   }
 
-  getValue(datum: number | CoordinateDataType) {
+  getValue(datum: DatumType) {
     if (isNumber(datum)) {
       return datum;
     }
 
-    return Array.isArray(datum) ? datum[1] : datum.y;
+    if (Array.isArray(datum)) {
+      return datum[1];
+    }
+
+    return datum.y;
   }
 
-  getDataIndex(datum: CoordinateDataType | number, categories: string[], dataIndex: number) {
+  getDataIndex(datum: DatumType, categories: string[], dataIndex: number) {
     if (isNumber(datum)) {
       return dataIndex;
     }
@@ -62,7 +68,7 @@ export default class LineSeries extends Component {
 
     const { yAxis } = scale;
 
-    const tickDistance = this.rect.width / categories.length; // 보여지는 카테고리의 길이 만큼이 되어야 함
+    const tickDistance = this.rect.width / categories.length;
 
     const renderLineOptions: RenderLineOptions = {
       pointOnColumn: options.xAxis?.pointOnColumn || false,

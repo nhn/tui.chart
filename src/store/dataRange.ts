@@ -47,9 +47,12 @@ const dataRange: StoreModule = {
           return disabledSeries.includes(name) ? [] : data;
         });
 
-        if (Array.isArray(values[0])) {
+        const tupleCoord = Array.isArray(values[0]);
+        const objectCoord = isObject(values[0]);
+
+        if (tupleCoord) {
           values = values.map(value => value[1]);
-        } else if (isObject(values[0])) {
+        } else if (objectCoord) {
           values = values.map(value => value.y);
         }
 
