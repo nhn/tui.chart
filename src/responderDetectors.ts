@@ -1,7 +1,7 @@
 import { Point, Rect } from '@t/options';
 import { PathRectModel, CircleModel, RectModel } from '@t/components/series';
 
-type DetectorType = 'circle' | 'rect';
+type DetectorType = 'circle' | 'rect' | 'point';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
@@ -35,5 +35,14 @@ export const responderDetectors: ResponderDetectors = {
       y >= modelY + compY &&
       y <= modelY + compY + height
     );
+  },
+  point: (mousePosition: Point, model: CircleModel, componentRect: Rect) => {
+    const { x, y } = mousePosition;
+    const { x: modelX, y: modelY } = model;
+    const { x: compX, y: compY } = componentRect;
+
+    // console.log(x, y, modelX, modelY, compY, compX);
+
+    return x === modelX && y === modelY;
   }
 };

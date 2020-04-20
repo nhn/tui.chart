@@ -74,6 +74,7 @@ export default class ScatterSeries extends Component {
     this.models = [this.renderClipRectAreaModel(), ...seriesModel];
     this.responders = seriesModel.map((m, index) => ({
       ...m,
+      type: 'point',
       style: { ...m.style, shadowColor: 'rgba(0, 0, 0, 0.5)', shadowBlur: 6, shadowOffsetY: 2 },
       data: tooltipDataArr[index]
     }));
