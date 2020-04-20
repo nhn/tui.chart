@@ -1,8 +1,14 @@
 import Component from './component';
 import { RectModel, BoxSeriesModel, ClipRectAreaModel } from '@t/components/series';
 import { ChartState } from '@t/store/store';
-import { BoxSeriesType, BoxSeriesDataType, BarChartOptions, ColumnChartOptions } from '@t/options';
-import { isNumber } from '@src/helpers/utils';
+import {
+  BoxSeriesType,
+  BoxSeriesDataType,
+  BoxRangeDataType,
+  BarChartOptions,
+  ColumnChartOptions
+} from '@t/options';
+import { first, last } from '@src/helpers/utils';
 
 type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
 
@@ -17,6 +23,10 @@ const PADDING = {
   TB: 15, // top & bottom
   LR: 24 // left & right
 };
+
+function isRangeData(value): value is BoxRangeDataType {
+  return Array.isArray(value);
+}
 
 export default class BoxSeries extends Component {
   models!: DrawModels[];
@@ -61,14 +71,12 @@ export default class BoxSeries extends Component {
     const labelAxis = this.isBar ? 'yAxis' : 'xAxis';
     const anchorSizeKey = this.isBar ? 'height' : 'width';
     const offsetSizeKey = this.isBar ? 'width' : 'height';
-
-    const maxValue = Number(axes[valueAxis].labels[axes[valueAxis].labels.length - 1]);
     const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
 
     const seriesModels = this.renderBoxSeriesModel(
       seriesRawData,
       colors,
-      maxValue,
+      axes[valueAxis].labels,
       tickDistance,
       offsetSizeKey
     );
@@ -79,7 +87,7 @@ export default class BoxSeries extends Component {
       return data.map((value, dataIdx) => ({
         label: name,
         color: theme.series.colors[index],
-        value,
+        value: this.tooltipValue(value),
         category: categories?.[dataIdx]
       }));
     });
@@ -94,31 +102,39 @@ export default class BoxSeries extends Component {
   renderBoxSeriesModel(
     seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
     colors: string[],
-    maxValue: number,
+    valueLabels: string[],
     tickDistance: number,
     offsetSizeKey: SizeKey
   ): BoxSeriesModel[] {
+    const minValue = Number(first(valueLabels));
+    const offsetAxisLength = this.rect[offsetSizeKey];
+    const axisValueRatio = offsetAxisLength / (Number(last(valueLabels)) - minValue);
     const columnWidth = (tickDistance - this.padding * 2) / seriesRawData.length;
 
     return seriesRawData.flatMap(({ data }, seriesIndex) => {
-      const startPos = seriesIndex * columnWidth + this.padding;
+      const seriesPos = seriesIndex * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
       return data.map((value, index) => {
-        if (!isNumber(value)) {
+        const dataStart = seriesPos + index * tickDistance;
+        let startPosition = 0;
+
+        if (isRangeData(value)) {
           const [start, end] = value;
           value = end - start;
+
+          startPosition = (start - minValue) * axisValueRatio;
         }
 
-        const barLength = (value * this.rect[offsetSizeKey]) / maxValue;
+        const barLength = value * axisValueRatio;
 
         return {
           type: 'box',
           color,
           width: this.isBar ? barLength : columnWidth,
           height: this.isBar ? columnWidth : barLength,
-          x: this.isBar ? 0 : startPos + index * tickDistance,
-          y: this.isBar ? startPos + index * tickDistance : this.rect.height - barLength
+          x: this.isBar ? startPosition : dataStart,
+          y: this.isBar ? dataStart : offsetAxisLength - barLength - startPosition
         };
       });
     });
@@ -163,5 +179,9 @@ export default class BoxSeries extends Component {
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
 
     this.eventBus.emit('needDraw');
+  }
+
+  tooltipValue(value) {
+    return isRangeData(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 }

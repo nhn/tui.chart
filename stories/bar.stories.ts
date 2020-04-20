@@ -1,11 +1,11 @@
 import BarChart from '@src/charts/barChart';
-import { budgetData } from './data';
+import { budgetData, temperatureRangeData } from './data';
 
 export default {
   title: 'Bar'
 };
 
-function createChart() {
+function createChart(data) {
   const el = document.createElement('div');
   const width = 800;
   const height = 500;
@@ -36,7 +36,7 @@ function createChart() {
 
   const chart = new BarChart({
     el,
-    data: budgetData,
+    data,
     options
   });
 
@@ -44,7 +44,13 @@ function createChart() {
 }
 
 export const basic = () => {
-  const { el } = createChart();
+  const { el } = createChart(budgetData);
+
+  return el;
+};
+
+export const range = () => {
+  const { el } = createChart(temperatureRangeData);
 
   return el;
 };

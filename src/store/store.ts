@@ -29,6 +29,7 @@ import {
   sortCategories
 } from '@src/helpers/utils';
 import { BaseChartOptions, Size } from '@t/options';
+import seriesData from './seriesData';
 
 interface InitStoreState<T> {
   categories?: string[];
@@ -66,7 +67,7 @@ function getSortedSeries(series: Series) {
 
 function initData(series: Series, categories?: string[]) {
   return {
-    series: getSortedSeries(series),
+    series: series.line ? getSortedSeries(series) : series, // TODO: 초기 데이터의 정렬 유무를 옵션으로 받아 처리
     categories: categories ? categories : makeCategories(series)
   };
 }
