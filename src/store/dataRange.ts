@@ -1,4 +1,5 @@
 import { ValueEdge, StoreModule } from '@t/store/store';
+import { isObject } from '@src/helpers/utils';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -33,8 +34,7 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const series = state.series;
-      const disabledSeries = state.disabledSeries;
+      const { series, disabledSeries } = state;
 
       const newDataRange: Record<string, ValueEdge> = {};
 
@@ -43,9 +43,18 @@ const dataRange: StoreModule = {
           continue;
         }
 
-        const values = series[seriesName].flatMap(({ data, name }: any) => {
+        let values = series[seriesName].flatMap(({ data, name }) => {
           return disabledSeries.includes(name) ? [] : data;
         });
+
+        const tupleCoord = Array.isArray(values[0]);
+        const objectCoord = isObject(values[0]);
+
+        if (tupleCoord) {
+          values = values.map(value => value[1]);
+        } else if (objectCoord) {
+          values = values.map(value => value.y);
+        }
 
         newDataRange[seriesName] = getLimitSafely(values);
       }

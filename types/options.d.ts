@@ -1,8 +1,9 @@
 import { Series } from '@t/store/store';
 
-// type LineSeriesDataType = number[] | Array<Array<number | string>> | Point[];
-type LineSeriesDataType = number[]; // @TODO: use ⬆️ type (coordinate)
 export type BoxSeriesDataType = number | [number, number];
+
+type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
+export type CoordinateDataType = Point | [number, number] | [string, number];
 
 export interface Point {
   x: number;
@@ -29,7 +30,7 @@ export interface LineSeriesType {
 }
 
 export interface LineSeriesData {
-  categories: string[];
+  categories?: string[];
   series: LineSeriesType[];
 }
 

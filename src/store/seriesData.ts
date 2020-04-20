@@ -12,7 +12,6 @@ const seriesData: StoreModule = {
       const disabledSeries = state.disabledSeries;
 
       const newSeriesData = {};
-
       Object.keys(seriesRaw).forEach(seriesName => {
         newSeriesData[seriesName] = {
           seriesCount: seriesRaw[seriesName].length,

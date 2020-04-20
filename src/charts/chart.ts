@@ -26,16 +26,11 @@ export default class Chart<T extends Options> {
   readonly componentManager: ComponentManager<T>;
 
   constructor(props: ChartProps<T>) {
-    const { el, options, categories, series } = props;
+    const { el, options, series, categories } = props;
 
     this.el = el;
 
-    this.store = new Store({
-      chart: options.chart,
-      series,
-      categories,
-      options
-    });
+    this.store = new Store({ chart: options.chart, series, categories, options });
 
     this.componentManager = new ComponentManager({
       store: this.store,

@@ -1,10 +1,12 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { LineChartOptions, LineSeriesOptions } from '@t/options';
+import { LineChartOptions, LineSeriesOptions, Point, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { setSplineControlPoint } from '@src/helpers/calculator';
+import { isNumber } from '@src/helpers/utils';
+import { TooltipData } from '@t/components/tooltip';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -13,6 +15,8 @@ interface RenderLineOptions {
   theme: SeriesTheme;
   options: LineSeriesOptions;
 }
+
+type DatumType = CoordinateDataType | number;
 
 export default class LineSeries extends Component {
   models!: DrawModels[];
@@ -32,6 +36,28 @@ export default class LineSeries extends Component {
     }
   }
 
+  getValue(datum: DatumType) {
+    if (isNumber(datum)) {
+      return datum;
+    }
+
+    if (Array.isArray(datum)) {
+      return datum[1];
+    }
+
+    return datum.y;
+  }
+
+  getDataIndex(datum: DatumType, categories: string[], dataIndex: number) {
+    if (isNumber(datum)) {
+      return dataIndex;
+    }
+
+    const value = Array.isArray(datum) ? datum[0] : datum.x;
+
+    return categories.findIndex(category => category === value);
+  }
+
   render(chartState: ChartState<LineChartOptions>) {
     const { layout, series, scale, theme, options, categories = [] } = chartState;
     if (!series.line) {
@@ -42,7 +68,7 @@ export default class LineSeries extends Component {
 
     const { yAxis } = scale;
 
-    const tickDistance = this.rect.width / series.line.seriesGroupCount;
+    const tickDistance = this.rect.width / categories.length;
 
     const renderLineOptions: RenderLineOptions = {
       pointOnColumn: options.xAxis?.pointOnColumn || false,
@@ -54,23 +80,30 @@ export default class LineSeries extends Component {
       series.line.data,
       yAxis.limit,
       tickDistance,
-      renderLineOptions
+      renderLineOptions,
+      categories
     );
 
     const seriesCircleModel = this.renderCircle(lineSeriesModel);
 
-    const tooltipData = series.line.data.flatMap(({ name, data }, index) => {
-      return data.map((value, dataIdx) => ({
-        label: name,
-        color: theme.series.colors[index],
-        value,
-        category: categories[dataIdx]
-      }));
+    const tooltipDataArr = series.line.data.flatMap(({ data, name }, index) => {
+      const tooltipData: TooltipData[] = [];
+
+      data.forEach((datum: CoordinateDataType | number, dataIdx) => {
+        tooltipData.push({
+          label: name,
+          color: theme.series.colors[index],
+          value: this.getValue(datum),
+          category: categories[this.getDataIndex(datum, categories, dataIdx)]
+        });
+      });
+
+      return tooltipData;
     });
 
     this.models = [this.renderClipRectAreaModel(), ...lineSeriesModel];
 
-    this.responders = seriesCircleModel.map((m, index) => ({ ...m, data: tooltipData[index] }));
+    this.responders = seriesCircleModel.map((m, index) => ({ ...m, data: tooltipDataArr[index] }));
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -87,20 +120,26 @@ export default class LineSeries extends Component {
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
-    renderOptions: RenderLineOptions
+    renderOptions: RenderLineOptions,
+    categories: string[]
   ): LinePointsModel[] {
     const { pointOnColumn, theme, options } = renderOptions;
     const { colors } = theme;
     const { spline } = options;
 
     return seriesRawData.map(({ data }, seriesIndex) => {
-      const points = data.map((v, dataIndex) => {
-        const valueRatio = (v - limit.min) / (limit.max - limit.min);
+      const points: Point[] = [];
+
+      data.forEach((datum, idx) => {
+        const value = this.getValue(datum);
+        const dataIndex = this.getDataIndex(datum, categories, idx);
+
+        const valueRatio = (value - limit.min) / (limit.max - limit.min);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
 
-        return { x, y };
+        points.push({ x, y });
       });
 
       if (spline) {

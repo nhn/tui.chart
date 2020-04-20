@@ -5,10 +5,8 @@ import {
   notifyByPath,
   computed,
   watch,
-  setValue,
   extend,
-  invisibleWork,
-  isObservable
+  invisibleWork
 } from '@src/store/reactive';
 import {
   ChartState,
@@ -22,14 +20,55 @@ import {
   Options
 } from '@t/store/store';
 
-import { isUndefined, forEach, pickPropertyWithMakeup } from '@src/helpers/utils';
-import { BaseChartOptions } from '@t/options';
+import {
+  isUndefined,
+  forEach,
+  pickPropertyWithMakeup,
+  deepMergedCopy,
+  sortSeries,
+  sortCategories
+} from '@src/helpers/utils';
+import { BaseChartOptions, Size } from '@t/options';
 
 interface InitStoreState<T> {
   categories?: string[];
   chart?: BaseChartOptions;
   series: Series;
   options?: T;
+}
+
+function makeCategories(series: Series) {
+  const categories: Set<string | number> = new Set();
+
+  Object.keys(series).forEach(key => {
+    series[key].forEach(({ data }) => {
+      data.forEach(datum => {
+        categories.add(Array.isArray(datum) ? datum[0] : datum.x);
+      });
+    });
+  });
+
+  return Array.from(categories).sort(sortCategories);
+}
+
+function getSortedSeries(series: Series) {
+  const result: Series = {};
+
+  Object.keys(series).forEach(key => {
+    result[key] = series[key].map(({ name, data }) => ({
+      name,
+      data: data.sort(sortSeries)
+    }));
+  });
+
+  return result;
+}
+
+function initData(series: Series, categories?: string[]) {
+  return {
+    series: getSortedSeries(series),
+    categories: categories ? categories : makeCategories(series)
+  };
 }
 
 export default class Store<T extends Options> {
@@ -66,42 +105,42 @@ export default class Store<T extends Options> {
 
   actions: Record<string, ActionFunc> = {};
 
-  constructor(options?: InitStoreState<T>) {
-    this.setRootState(this.state);
+  constructor(initStoreState: InitStoreState<T>) {
+    const { chart, options } = initStoreState;
+    const { series, categories } = initData(initStoreState.series, initStoreState.categories);
 
-    if (options) {
-      this.setModule(
-        'root',
-        Object.assign(
-          {
-            action: {
-              setChartSize({ state }, size: { width: number; height: number }) {
-                state.chart.width = size.width;
-                state.chart.height = size.height;
-              },
-              initChartSize({ state }, containerEl: HTMLElement) {
-                if (state.chart.width === 0 || state.chart.height === 0) {
-                  if (containerEl.parentNode) {
+    this.setRootState(this.state);
+    this.setModule(
+      'root',
+      deepMergedCopy(
+        {
+          action: {
+            setChartSize({ state }, size: Size) {
+              state.chart.width = size.width;
+              state.chart.height = size.height;
+            },
+            initChartSize({ state }, containerEl: HTMLElement) {
+              if (state.chart.width === 0 || state.chart.height === 0) {
+                if (containerEl.parentNode) {
+                  this.dispatch('setChartSize', {
+                    width: containerEl.offsetWidth,
+                    height: containerEl.offsetHeight
+                  });
+                } else {
+                  setTimeout(() => {
                     this.dispatch('setChartSize', {
                       width: containerEl.offsetWidth,
                       height: containerEl.offsetHeight
                     });
-                  } else {
-                    setTimeout(() => {
-                      this.dispatch('setChartSize', {
-                        width: containerEl.offsetWidth,
-                        height: containerEl.offsetHeight
-                      });
-                    }, 0);
-                  }
+                  }, 0);
                 }
               }
             }
-          } as StoreOptions,
-          { state: options }
-        )
-      );
-    }
+          }
+        } as StoreOptions,
+        { state: { series, categories, options, chart } }
+      )
+    );
   }
 
   setRootState(state: Partial<ChartState<T>>) {
