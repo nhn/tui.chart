@@ -9,7 +9,10 @@ import {
   pickProperty,
   pickPropertyWithMakeup,
   sortSeries,
-  sortCategories
+  sortCategories,
+  isInteger,
+  first,
+  last
 } from '@src/helpers/utils';
 import { Point } from '@t/options';
 
@@ -123,5 +126,23 @@ describe('utils', () => {
       '02/20/2020 10:10:00',
       '02/23/2020 09:00:00'
     ]);
+  });
+
+  it('isInteger', () => {
+    expect(isInteger(0)).toBe(true);
+    expect(isInteger(-1)).toBe(true);
+    expect(isInteger(1.3)).toBe(false);
+  });
+
+  it('first', () => {
+    const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    expect(first(arr)).toBe(0);
+  });
+
+  it('last', () => {
+    const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    expect(last(arr)).toBe(0);
   });
 });
