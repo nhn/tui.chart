@@ -58,9 +58,7 @@ const dataRange: StoreModule = {
         if (tupleCoord) {
           if (isBoxSeries(series)) {
             values = values
-              .reduce((arr, value) => {
-                return Array.isArray(value) ? arr.concat(...value) : value;
-              }, [])
+              .reduce((arr, value) => (Array.isArray(value) ? arr.concat(...value) : value), [])
               .filter((value, index, arr) => arr.indexOf(value) === index);
           } else {
             values = values.map(value => value[1]);

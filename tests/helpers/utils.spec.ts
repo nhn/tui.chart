@@ -136,13 +136,17 @@ describe('utils', () => {
 
   it('first', () => {
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const emptyArr = [];
 
     expect(first(arr)).toBe(0);
+    expect(first(emptyArr)).toBeUndefined();
   });
 
   it('last', () => {
     const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const emptyArr = [];
 
     expect(last(arr)).toBe(10);
+    expect(first(emptyArr)).toBeUndefined();
   });
 });
