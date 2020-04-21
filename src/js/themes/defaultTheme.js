@@ -2,6 +2,7 @@ const DEFAULT_COLOR = '#000000';
 const DEFAULT_BACKGROUND = '#ffffff';
 const DEFAULT_FONTWEIGHT = 'lighter';
 const DEFAULT_FONTFAMILY = 'Arial';
+export const DEFAULT_LEGEND_LABEL_FONTCOLOR = '#333';
 const EMPTY = '';
 const DEFAULT_AXIS = {
   tickColor: DEFAULT_COLOR,
@@ -91,7 +92,7 @@ export default {
     label: {
       fontSize: 11,
       fontFamily: DEFAULT_FONTFAMILY,
-      color: '#333',
+      color: DEFAULT_LEGEND_LABEL_FONTCOLOR,
       fontWeight: DEFAULT_FONTWEIGHT
     }
   },

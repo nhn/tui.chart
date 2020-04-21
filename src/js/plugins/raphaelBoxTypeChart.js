@@ -279,7 +279,9 @@ class RaphaelBoxTypeChart {
       return seriesGroup.map((seriesItem, index) => {
         let result = null;
         const { depth } = seriesItem;
-        const strokeWidth = this.colorSpectrum ? 0 : this._getStrokeWidth(depth === startDepth);
+        const strokeWidth = this.colorSpectrum
+          ? this.borderWidth
+          : this._getStrokeWidth(depth === startDepth);
         const fillOpacity = this.colorSpectrum ? 1 : seriesItem.fillOpacity;
 
         seriesItem.groupIndex = groupIndex;
