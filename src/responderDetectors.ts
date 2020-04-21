@@ -1,5 +1,6 @@
 import { Point, Rect } from '@t/options';
 import { PathRectModel, CircleModel, RectModel } from '@t/components/series';
+import { isUndefined } from '@src/helpers/utils';
 
 type DetectorType = 'circle' | 'rect' | 'point';
 
@@ -9,14 +10,15 @@ type ResponderDetectors = {
 
 export const responderDetectors: ResponderDetectors = {
   circle: (mousePosition: Point, model: CircleModel, componentRect: Rect) => {
-    const { x, y, style } = model;
+    const { x, y } = mousePosition;
+    const { x: modelX, y: modelY, style, detectionRadius } = model;
+    const { x: compX, y: compY } = componentRect;
     const { radius } = style;
 
-    const radiusAdjustment = 10;
+    const radiusAdjustment = isUndefined(detectionRadius) ? 10 : detectionRadius;
 
     return (
-      Math.pow(mousePosition.x - (x + componentRect.x), 2) +
-        Math.pow(mousePosition.y - (y + componentRect.y), 2) <
+      Math.pow(x - (modelX + compX), 2) + Math.pow(y - (modelY + compY), 2) <
       Math.pow(radius + radiusAdjustment, 2)
     );
   },
@@ -38,11 +40,12 @@ export const responderDetectors: ResponderDetectors = {
   },
   point: (mousePosition: Point, model: CircleModel, componentRect: Rect) => {
     const { x, y } = mousePosition;
-    const { x: modelX, y: modelY } = model;
+    const { x: modelX, y: modelY, style } = model;
     const { x: compX, y: compY } = componentRect;
+    const { radius } = style;
 
-    // console.log(x, y, modelX, modelY, compY, compX);
-
-    return x === modelX && y === modelY;
+    return (
+      Math.pow(x - (modelX + compX), 2) + Math.pow(y - (modelY + compY), 2) < Math.pow(radius, 2)
+    );
   }
 };

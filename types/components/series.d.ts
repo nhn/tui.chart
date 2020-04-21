@@ -14,6 +14,7 @@ export interface CircleStyle {
 export type CircleModel = {
   type: 'circle';
   style: CircleStyle;
+  detectionRadius?: number;
 } & Point;
 
 export type ClipRectAreaModel = {
