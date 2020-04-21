@@ -268,3 +268,13 @@ export function sortSeries(obj1: CoordinateDataType, obj2: CoordinateDataType) {
 export function sortCategories(x: number | string, y: number | string) {
   return isInteger(x) ? Number(x) - Number(y) : new Date(x).getTime() - new Date(y).getTime();
 }
+
+export function first<T extends Array<any>>(items: T): T[keyof T] {
+  // eslint-disable-next-line no-undefined
+  return items.length ? items[0] : undefined;
+}
+
+export function last<T extends Array<any>>(items: T): T[keyof T] {
+  // eslint-disable-next-line no-undefined
+  return items.length ? items[items.length - 1] : undefined;
+}

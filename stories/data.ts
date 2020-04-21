@@ -159,3 +159,39 @@ export const datetimeCoordinateData = {
     }
   ]
 };
+
+export const temperatureRangeData = {
+  categories: [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'June',
+    'July',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ],
+  series: [
+    {
+      name: 'Seoul',
+      data: [
+        [-8.3, 0.3],
+        [-5.8, 3.1],
+        [-0.6, 9.1],
+        [5.8, 16.9],
+        [11.5, 22.6],
+        [16.6, 26.6],
+        [21.2, 28.8],
+        [21.8, 30.0],
+        [15.8, 25.6],
+        [8.3, 19.6],
+        [1.4, 11.1],
+        [-5.2, 3.2]
+      ]
+    }
+  ]
+};

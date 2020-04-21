@@ -1,5 +1,6 @@
 import { ValueEdge, StoreModule } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
+import seriesData from './seriesData';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -27,6 +28,10 @@ function getLimitSafely(baseValues: number[]): ValueEdge {
   return limit;
 }
 
+function isBoxSeries(series) {
+  return series.bar || series.column;
+}
+
 const dataRange: StoreModule = {
   name: 'dataRange',
   state: () => ({
@@ -51,7 +56,13 @@ const dataRange: StoreModule = {
         const objectCoord = isObject(values[0]);
 
         if (tupleCoord) {
-          values = values.map(value => value[1]);
+          if (isBoxSeries(series)) {
+            values = values
+              .reduce((arr, value) => (Array.isArray(value) ? arr.concat(...value) : value), [])
+              .filter((value, index, arr) => arr.indexOf(value) === index);
+          } else {
+            values = values.map(value => value[1]);
+          }
         } else if (objectCoord) {
           values = values.map(value => value.y);
         }
