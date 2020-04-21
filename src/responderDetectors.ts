@@ -2,7 +2,7 @@ import { Point, Rect } from '@t/options';
 import { PathRectModel, CircleModel, RectModel } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
 
-type DetectorType = 'circle' | 'rect' | 'point';
+type DetectorType = 'circle' | 'rect';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
@@ -36,16 +36,6 @@ export const responderDetectors: ResponderDetectors = {
       x <= modelX + compX + width &&
       y >= modelY + compY &&
       y <= modelY + compY + height
-    );
-  },
-  point: (mousePosition: Point, model: CircleModel, componentRect: Rect) => {
-    const { x, y } = mousePosition;
-    const { x: modelX, y: modelY, style } = model;
-    const { x: compX, y: compY } = componentRect;
-    const { radius } = style;
-
-    return (
-      Math.pow(x - (modelX + compX), 2) + Math.pow(y - (modelY + compY), 2) < Math.pow(radius, 2)
     );
   }
 };

@@ -88,8 +88,8 @@ export interface LineChartOptions extends BaseOptions {
 }
 
 export interface ScatterChartOptions extends BaseOptions {
-  series?: LineSeriesOptions;
-  xAxis?: LineXaxisOptions;
+  series?: BaseSeriesOptions;
+  xAxis?: BaseAxisOptions;
 }
 
 interface BoxSeriesOptions extends BaseSeriesOptions {
