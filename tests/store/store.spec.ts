@@ -247,7 +247,7 @@ describe('Store', () => {
       }
     });
 
-    expect(store.state.categories).toEqual([1, 3, 10]);
+    expect(store.state.categories).toEqual(['1', '3', '10']);
 
     store = new Store({
       chart: {
@@ -268,6 +268,6 @@ describe('Store', () => {
       }
     });
 
-    expect(store.state.categories).toEqual([1, 3, 10]);
+    expect(store.state.categories).toEqual(['1', '3', '10']);
   });
 });
