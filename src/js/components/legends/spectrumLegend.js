@@ -8,6 +8,7 @@ import isUndefined from 'tui-code-snippet/type/isUndefined';
 import chartConst from '../../const';
 import predicate from '../../helpers/predicate';
 import pluginFactory from '../../factories/pluginFactory';
+import { DEFAULT_LEGEND_LABEL_FONTCOLOR } from '../../themes/defaultTheme';
 
 const {
   COMPONENT_TYPE_RAPHAEL,
@@ -17,6 +18,16 @@ const {
 } = chartConst;
 
 class SpectrumLegend {
+  /**
+   * is default legend label style
+   * @param {string} color label color
+   * @returns {boolean} whether label color style is default
+   * @private
+   */
+  _isDefaultLegendLabelColor(color) {
+    return color === DEFAULT_LEGEND_LABEL_FONTCOLOR;
+  }
+
   /**
    * Spectrum Legend component.
    * @constructs SpectrumLegend
@@ -49,7 +60,7 @@ class SpectrumLegend {
      */
     this.theme = theme;
 
-    if (!predicate.isTreemapChart(this.chartType)) {
+    if (this._isDefaultLegendLabelColor(this.theme.label.color)) {
       this.theme.label.color = '#fff';
     }
 
