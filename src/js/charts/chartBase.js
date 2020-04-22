@@ -568,6 +568,8 @@ class ChartBase {
    * @private
    */
   _initializeRawData(rawData) {
+    this.prevXAxisData = null;
+
     const data = objectUtil.deepCopy(rawData);
     const { chartType, series: seriesOption } = this.originalOptions;
 
