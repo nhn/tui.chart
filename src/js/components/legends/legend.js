@@ -147,7 +147,9 @@ class Legend {
    */
   _render(data) {
     this._setDataForRendering(data);
-    this.legendSet = this._renderLegendArea(data.paper);
+    const { legendSet, paginationElem } = this._renderLegendArea(data.paper);
+    this.legendSet = legendSet;
+    this.paginationArea = paginationElem;
   }
 
   /**
@@ -165,6 +167,7 @@ class Legend {
    */
   rerender(data) {
     this.legendSet.remove();
+    this.paginationArea.forEach(elem => elem.remove());
 
     this._render(data);
   }
@@ -179,8 +182,8 @@ class Legend {
 
   /**
    * Get legend rendering data
-   * @param {Array} legendData legned data
-   * @param {number} labelHeight lebel height
+   * @param {Array} legendData legend data
+   * @param {number} labelHeight label height
    * @param {Array.<number>} labelWidths label widths
    * @returns {Array.<object>}
    * @private
