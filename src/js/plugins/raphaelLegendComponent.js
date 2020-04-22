@@ -172,6 +172,7 @@ class RaphaelLegendComponent {
     this.basePosition = data.position;
     this.isHorizontal = data.isHorizontal;
     this.originalLegendData = data.legendData;
+    let paginationElem = [];
 
     if (this.originalLegendData.length) {
       this._showCheckbox = isExisty(data.legendData[0].checkbox);
@@ -186,14 +187,17 @@ class RaphaelLegendComponent {
 
         this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
 
-        this._renderPaginationArea(this.basePosition, {
+        paginationElem = this._renderPaginationArea(this.basePosition, {
           width: data.dimension.width,
           height: legendHeight
         });
       }
     }
 
-    return this.legendSet;
+    return {
+      legendSet: this.legendSet,
+      paginationElem
+    };
   }
 
   /**
@@ -227,6 +231,7 @@ class RaphaelLegendComponent {
   /**
    * @param {{top: number, left: number}} position legend area position
    * @param {{height: number, width: number}} dimension legend area dimension
+   * @returns {object[]} button set paper
    * @private
    */
   _renderPaginationArea(position, dimension) {
@@ -312,6 +317,8 @@ class RaphaelLegendComponent {
         this._currentPageCount += 1;
       }
     });
+
+    return [prevButtonSet, nextButtonSet];
   }
 
   /**

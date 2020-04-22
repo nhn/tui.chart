@@ -51,7 +51,10 @@ describe('Test for Legend', () => {
 
   describe('render()', () => {
     it('should call _renderLegendArea()', () => {
-      spyOn(legend, '_renderLegendArea');
+      spyOn(legend, '_renderLegendArea').and.returnValue({
+        legendSet: [],
+        paginationElem: []
+      });
       spyOn(legend, '_listenEvents');
       legend.layout = {
         position: {
