@@ -2,10 +2,10 @@
  * tui-chart-all
  * @fileoverview tui-chart
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @version 3.11.1
+ * @version 3.11.2
  * @license MIT
  * @link https://github.com/nhn/tui.chart
- * bundle created at "Fri Apr 03 2020 10:02:48 GMT+0900 (Korean Standard Time)"
+ * bundle created at "Wed Apr 22 2020 16:38:45 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13147,7 +13147,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var result = null;
 	        var depth = seriesItem.depth;
 	
-	        var strokeWidth = _this.colorSpectrum ? 0 : _this._getStrokeWidth(depth === startDepth);
+	        var strokeWidth = _this.colorSpectrum ? _this.borderWidth : _this._getStrokeWidth(depth === startDepth);
 	        var fillOpacity = _this.colorSpectrum ? 1 : seriesItem.fillOpacity;
 	
 	        seriesItem.groupIndex = groupIndex;
@@ -14002,6 +14002,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.basePosition = data.position;
 	    this.isHorizontal = data.isHorizontal;
 	    this.originalLegendData = data.legendData;
+	    var paginationElem = [];
 	
 	    if (this.originalLegendData.length) {
 	      this._showCheckbox = (0, _isExisty2['default'])(data.legendData[0].checkbox);
@@ -14016,14 +14017,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        this.availablePageCount = Math.ceil(data.dimension.height / legendHeight);
 	
-	        this._renderPaginationArea(this.basePosition, {
+	        paginationElem = this._renderPaginationArea(this.basePosition, {
 	          width: data.dimension.width,
 	          height: legendHeight
 	        });
 	      }
 	    }
 	
-	    return this.legendSet;
+	    return {
+	      legendSet: this.legendSet,
+	      paginationElem: paginationElem
+	    };
 	  };
 	
 	  /**
@@ -14059,6 +14063,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * @param {{top: number, left: number}} position legend area position
 	   * @param {{height: number, width: number}} dimension legend area dimension
+	   * @returns {object[]} button set paper
 	   * @private
 	   */
 	
@@ -14117,6 +14122,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this2._currentPageCount += 1;
 	      }
 	    });
+	
+	    return [prevButtonSet, nextButtonSet];
 	  };
 	
 	  /**
@@ -18843,6 +18850,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var DEFAULT_BACKGROUND = '#ffffff';
 	var DEFAULT_FONTWEIGHT = 'lighter';
 	var DEFAULT_FONTFAMILY = 'Arial';
+	var DEFAULT_LEGEND_LABEL_FONTCOLOR = exports.DEFAULT_LEGEND_LABEL_FONTCOLOR = '#333';
 	var EMPTY = '';
 	var DEFAULT_AXIS = {
 	  tickColor: DEFAULT_COLOR,
@@ -18921,7 +18929,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    label: {
 	      fontSize: 11,
 	      fontFamily: DEFAULT_FONTFAMILY,
-	      color: '#333',
+	      color: DEFAULT_LEGEND_LABEL_FONTCOLOR,
 	      fontWeight: DEFAULT_FONTWEIGHT
 	    }
 	  },
@@ -20369,6 +20377,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  ChartBase.prototype._initializeRawData = function _initializeRawData(rawData) {
+	    this.prevXAxisData = null;
+	
 	    var data = _objectUtil2['default'].deepCopy(rawData);
 	    var _originalOptions = this.originalOptions,
 	        chartType = _originalOptions.chartType,
@@ -26455,7 +26465,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  Legend.prototype._render = function _render(data) {
 	    this._setDataForRendering(data);
-	    this.legendSet = this._renderLegendArea(data.paper);
+	
+	    var _renderLegendArea2 = this._renderLegendArea(data.paper),
+	        legendSet = _renderLegendArea2.legendSet,
+	        paginationElem = _renderLegendArea2.paginationElem;
+	
+	    this.legendSet = legendSet;
+	    this.paginationArea = paginationElem;
 	  };
 	
 	  /**
@@ -26477,6 +26493,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  Legend.prototype.rerender = function rerender(data) {
 	    this.legendSet.remove();
+	    this.paginationArea.forEach(function (elem) {
+	      return elem.remove();
+	    });
 	
 	    this._render(data);
 	  };
@@ -26493,8 +26512,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  /**
 	   * Get legend rendering data
-	   * @param {Array} legendData legned data
-	   * @param {number} labelHeight lebel height
+	   * @param {Array} legendData legend data
+	   * @param {number} labelHeight label height
 	   * @param {Array.<number>} labelWidths label widths
 	   * @returns {Array.<object>}
 	   * @private
@@ -27366,6 +27385,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _pluginFactory2 = _interopRequireDefault(_pluginFactory);
 	
+	var _defaultTheme = __webpack_require__(184);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /**
@@ -27382,6 +27403,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var SpectrumLegend = function () {
 	  /**
+	   * is default legend label style
+	   * @param {string} color label color
+	   * @returns {boolean} whether label color style is default
+	   * @private
+	   */
+	  SpectrumLegend.prototype._isDefaultLegendLabelColor = function _isDefaultLegendLabelColor(color) {
+	    return color === _defaultTheme.DEFAULT_LEGEND_LABEL_FONTCOLOR;
+	  };
+	
+	  /**
 	   * Spectrum Legend component.
 	   * @constructs SpectrumLegend
 	   * @private
@@ -27390,6 +27421,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   *      @param {?Array.<string>} params.options legend options
 	   *      @param {MapChartDataProcessor} params.dataProcessor data processor
 	   */
+	
+	
 	  function SpectrumLegend(params) {
 	    _classCallCheck(this, SpectrumLegend);
 	
@@ -27415,7 +27448,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    this.theme = theme;
 	
-	    if (!_predicate2['default'].isTreemapChart(this.chartType)) {
+	    if (this._isDefaultLegendLabelColor(this.theme.label.color)) {
 	      this.theme.label.color = '#fff';
 	    }
 	
