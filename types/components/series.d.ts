@@ -1,8 +1,10 @@
 import { Point, Rect, BezierPoint } from '../options';
+import { CircleStyleName } from '@src/brushes/basic';
+
+export type StyleProp<T> = (T | CircleStyleName)[];
 
 export interface CircleStyle {
   color: string;
-  radius: number;
   globalAlpha?: number;
   strokeStyle?: string;
   lineWidth?: number;
@@ -13,7 +15,8 @@ export interface CircleStyle {
 
 export type CircleModel = {
   type: 'circle';
-  style: CircleStyle;
+  radius: number;
+  style: StyleProp<CircleStyle>;
   detectionRadius?: number;
 } & Point;
 

@@ -5,6 +5,8 @@
  */
 
 const hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
+const rgbRX = /rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)/;
+const rgbaRX = /rgba\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3}), ?(1|0?\.\d+)\)/;
 
 /**
  * Color map.
@@ -206,4 +208,26 @@ export function rgbToHEX(r: number, g: number, b: number): string | boolean {
 
 export function colorNameToHex(colorName: string): string {
   return colorMap[colorName.toLowerCase()] || colorName;
+}
+
+export function getRGBA(str: string, opacity: number) {
+  if (isValidRGB(str)) {
+    const [r, g, b] = hexToRGB(str) as number[];
+
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  if (rgbRX.test(str)) {
+    const match = rgbRX.exec(str) as RegExpMatchArray;
+
+    return `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${opacity})`;
+  }
+
+  if (rgbaRX.test(str)) {
+    const match = rgbaRX.exec(str) as RegExpMatchArray;
+
+    return `rgba(${match[1]}, ${match[2]}, ${match[3]}, ${opacity})`;
+  }
+
+  return str;
 }

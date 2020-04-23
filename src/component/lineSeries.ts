@@ -134,15 +134,8 @@ export default class LineSeries extends Component {
         type: 'circle',
         x,
         y,
-        style: {
-          color,
-          radius: 7,
-          strokeStyle: '#fff',
-          lineWidth: 2,
-          shadowColor: 'rgba(0, 0, 0, 0.5)',
-          shadowBlur: 6,
-          shadowOffsetY: 2
-        }
+        radius: 7,
+        style: ['default', 'hover', { color }]
       }));
     });
   }

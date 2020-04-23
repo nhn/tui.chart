@@ -1,10 +1,12 @@
 import Component from './component';
-import { CircleModel } from '@t/components/series';
+import { CircleModel, CircleStyle, StyleProp } from '@t/components/series';
 import { CoordinateDataType, ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
+import { getRGBA } from '@src/helpers/color';
+import { isString } from '@src/helpers/utils';
 
 type DrawModels = ClipRectAreaModel | CircleModel;
 
@@ -28,6 +30,18 @@ export default class ScatterSeries extends Component {
     if (this.models[0].type === 'clipRectArea') {
       this.models[0].width = this.rect.width * delta;
     }
+  }
+
+  getColorFromStyleObj(styleObj: StyleProp<CircleStyle>) {
+    let color;
+
+    styleObj.forEach(style => {
+      if (!isString(style)) {
+        color = style.color;
+      }
+    });
+
+    return color;
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
@@ -56,13 +70,33 @@ export default class ScatterSeries extends Component {
       categories
     );
 
-    const tooltipDataArr = scatterData.flatMap(({ data, name }, index) => {
+    const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
+
+    this.models = [this.renderClipRectAreaModel(), ...seriesModel];
+    this.responders = seriesModel.map((m, index) => ({
+      ...m,
+      type: 'circle',
+      detectionRadius: 0,
+      radius: 7,
+      style: ['default', 'hover', { color: getRGBA(this.getColorFromStyleObj(m.style), 1) }],
+      data: tooltipModel[index]
+    }));
+  }
+
+  makeTooltipModel(
+    scatterData: ScatterSeriesType[],
+    categories: string[],
+    renderOptions: RenderOptions
+  ) {
+    const { theme } = renderOptions;
+
+    return scatterData.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum: CoordinateDataType, dataIdx) => {
         tooltipData.push({
           label: name,
-          color: theme.series.colors[index],
+          color: theme.colors[index],
           value: getCoordinateValue(datum),
           category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
         });
@@ -70,15 +104,6 @@ export default class ScatterSeries extends Component {
 
       return tooltipData;
     });
-
-    this.models = [this.renderClipRectAreaModel(), ...seriesModel];
-    this.responders = seriesModel.map((m, index) => ({
-      ...m,
-      type: 'circle',
-      detectionRadius: 0,
-      style: { ...m.style, shadowColor: 'rgba(0, 0, 0, 0.5)', shadowBlur: 6, shadowOffsetY: 2 },
-      data: tooltipDataArr[index]
-    }));
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -103,12 +128,10 @@ export default class ScatterSeries extends Component {
 
     return seriesRawData.flatMap(({ data }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
-      const style = {
-        color: colors[seriesIndex],
-        radius: 7,
-        strokeStyle: '#fff',
-        globalAlpha: 0.8
-      };
+      const style: StyleProp<CircleStyle> = [
+        'default',
+        { color: getRGBA(colors[seriesIndex], 0.9) }
+      ];
 
       data.forEach((datum, idx) => {
         const value = getCoordinateValue(datum);
@@ -119,7 +142,7 @@ export default class ScatterSeries extends Component {
         const x = tickDistance * dataIndex;
         const y = (1 - valueRatio) * this.rect.height;
 
-        circleModels.push({ x, y, type: 'circle', style });
+        circleModels.push({ x, y, type: 'circle', radius: 7, style });
       });
 
       return circleModels;

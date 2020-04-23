@@ -11,9 +11,8 @@ type ResponderDetectors = {
 export const responderDetectors: ResponderDetectors = {
   circle: (mousePosition: Point, model: CircleModel, componentRect: Rect) => {
     const { x, y } = mousePosition;
-    const { x: modelX, y: modelY, style, detectionRadius } = model;
+    const { x: modelX, y: modelY, radius, detectionRadius } = model;
     const { x: compX, y: compY } = componentRect;
-    const { radius } = style;
 
     const radiusAdjustment = isUndefined(detectionRadius) ? 10 : detectionRadius;
 
