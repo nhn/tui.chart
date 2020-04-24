@@ -73,7 +73,7 @@ interface BaseSeriesOptions {
   allowSelect?: boolean;
 }
 
-interface LineXaxisOptions extends BaseAxisOptions {
+interface LineXAxisOptions extends BaseAxisOptions {
   pointOnColumn?: boolean;
 }
 
@@ -84,7 +84,7 @@ interface LineSeriesOptions extends BaseSeriesOptions {
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineSeriesOptions;
-  xAxis?: LineXaxisOptions;
+  xAxis?: LineXAxisOptions;
 }
 
 export interface ScatterChartOptions extends BaseOptions {

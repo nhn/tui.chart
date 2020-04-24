@@ -1,12 +1,11 @@
 import Component from './component';
-import { CircleModel, CircleStyle, StyleProp } from '@t/components/series';
+import { CircleModel } from '@t/components/series';
 import { CoordinateDataType, ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { isString } from '@src/helpers/utils';
 
 type DrawModels = ClipRectAreaModel | CircleModel;
 
@@ -30,18 +29,6 @@ export default class ScatterSeries extends Component {
     if (this.models[0].type === 'clipRectArea') {
       this.models[0].width = this.rect.width * delta;
     }
-  }
-
-  getColorFromStyleObj(styleObj: StyleProp<CircleStyle>) {
-    let color;
-
-    styleObj.forEach(style => {
-      if (!isString(style)) {
-        color = style.color;
-      }
-    });
-
-    return color;
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
@@ -78,7 +65,8 @@ export default class ScatterSeries extends Component {
       type: 'circle',
       detectionRadius: 0,
       radius: 7,
-      style: ['default', 'hover', { color: getRGBA(this.getColorFromStyleObj(m.style), 1) }],
+      color: getRGBA(m.color, 1),
+      style: ['default', 'hover'],
       data: tooltipModel[index]
     }));
   }
@@ -128,10 +116,6 @@ export default class ScatterSeries extends Component {
 
     return seriesRawData.flatMap(({ data }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
-      const style: StyleProp<CircleStyle> = [
-        'default',
-        { color: getRGBA(colors[seriesIndex], 0.9) }
-      ];
 
       data.forEach((datum, idx) => {
         const value = getCoordinateValue(datum);
@@ -142,7 +126,14 @@ export default class ScatterSeries extends Component {
         const x = tickDistance * dataIndex;
         const y = (1 - valueRatio) * this.rect.height;
 
-        circleModels.push({ x, y, type: 'circle', radius: 7, style });
+        circleModels.push({
+          x,
+          y,
+          type: 'circle',
+          radius: 7,
+          style: ['default'],
+          color: getRGBA(colors[seriesIndex], 0.9)
+        });
       });
 
       return circleModels;

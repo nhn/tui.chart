@@ -135,7 +135,8 @@ export default class LineSeries extends Component {
         x,
         y,
         radius: 7,
-        style: ['default', 'hover', { color }]
+        color,
+        style: ['default', 'hover']
       }));
     });
   }

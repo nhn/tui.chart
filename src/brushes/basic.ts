@@ -84,15 +84,18 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
 }
 
 export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
-  const { x, y, style, radius } = circleModel;
-  const styleObj = makeStyleObj<CircleStyle>(style, circleStyle);
+  const { x, y, style, radius, color } = circleModel;
 
   ctx.beginPath();
-  ctx.fillStyle = styleObj.color;
+  ctx.fillStyle = color;
 
-  Object.keys(styleObj).forEach(key => {
-    ctx[key] = styleObj[key];
-  });
+  if (style) {
+    const styleObj = makeStyleObj<CircleStyle>(style, circleStyle);
+
+    Object.keys(styleObj).forEach(key => {
+      ctx[key] = styleObj[key];
+    });
+  }
 
   ctx.arc(x, y, radius, 0, Math.PI * 2, true);
   ctx.fill();
