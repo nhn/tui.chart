@@ -6,12 +6,14 @@ import {
   BoxSeriesType,
   BarChartOptions,
   ColumnChartOptions,
-  BoxSeriesDataType
+  BoxSeriesDataType,
+  ScatterSeriesType
 } from '@t/options';
 import Store from '@src/store/store';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
+  scatter: ScatterSeriesType[];
   bar: BoxSeriesType<BoxSeriesDataType>[];
   column: BoxSeriesType<BoxSeriesDataType>[];
 };

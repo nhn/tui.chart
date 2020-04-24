@@ -1,9 +1,23 @@
 import { Point, Rect, BezierPoint } from '../options';
+import { CircleStyleName } from '@src/brushes/basic';
+
+export type StyleProp<T> = (T | CircleStyleName)[];
+
+export interface CircleStyle {
+  globalAlpha?: number;
+  strokeStyle?: string;
+  lineWidth?: number;
+  shadowColor?: string;
+  shadowBlur?: number;
+  shadowOffsetY?: number;
+}
 
 export type CircleModel = {
   type: 'circle';
-  color: string;
   radius: number;
+  color: string;
+  style?: StyleProp<CircleStyle>;
+  detectionRadius?: number;
 } & Point;
 
 export type ClipRectAreaModel = {
