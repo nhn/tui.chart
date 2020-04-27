@@ -76,10 +76,28 @@ export interface LineChartOptions extends BaseOptions {
   series?: LineSeriesOptions;
   xAxis?: LineXaxisOptions;
 }
+
+type StackType = 'normal' | 'percent';
+type ConnectorLineType = 'dashed' | 'dotted' | 'solid' | 'double';
+
+interface ConnectorInfo {
+  type: ConnectorLineType;
+  color?: string; // default: rgba(51, 85, 139, 0.7)
+  width?: number; // default: 2
+}
+
+interface StackInfo {
+  type: StackType;
+  connector?: boolean | ConnectorInfo;
+}
+
+type StackOptionType = boolean | StackInfo;
+
 interface BoxSeriesOptions extends BaseSeriesOptions {
   barWidth?: number;
   diverging?: boolean;
   colorByPoint?: boolean;
+  stack?: StackOptionType;
 }
 
 export interface BarChartOptions extends BaseOptions {
@@ -93,7 +111,7 @@ export interface ColumnChartOptions extends BaseOptions {
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
   data: T[];
-  stack?: string;
+  stackGroup?: string;
 }
 
 export interface BoxSeriesData {
