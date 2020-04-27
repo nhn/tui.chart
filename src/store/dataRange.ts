@@ -72,7 +72,7 @@ const dataRange: StoreModule = {
           values = [0, ...stackData.map(({ sum }) => sum)];
         }
 
-        newDataRange[seriesName] = getLimitSafely(values);
+        newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);
       }
 
       this.extend(state.dataRange, newDataRange);
