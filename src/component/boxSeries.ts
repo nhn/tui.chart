@@ -6,9 +6,10 @@ import {
   BoxSeriesDataType,
   BoxRangeDataType,
   BarChartOptions,
-  ColumnChartOptions
+  ColumnChartOptions,
+  StackOptionType
 } from '@t/options';
-import { first, last } from '@src/helpers/utils';
+import { first, last, pickProperty } from '@src/helpers/utils';
 
 type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
 
@@ -17,6 +18,23 @@ type SizeKey = 'width' | 'height';
 enum SeriesType {
   BAR = 'bar',
   COLUMN = 'column'
+}
+
+export type StackDataType = Array<{ values: number[]; sum: number }>;
+
+export enum StackType {
+  NORMAL = 'normal',
+  PERCENT = 'percent'
+}
+
+export function stackOption(ops): StackOptionType {
+  const result = pickProperty(ops, ['stack']);
+
+  if (!result) {
+    return false;
+  }
+
+  return result as StackOptionType;
 }
 
 const PADDING = {
@@ -41,6 +59,8 @@ export default class BoxSeries extends Component {
 
   name = SeriesType.BAR;
 
+  stack: StackOptionType = false;
+
   initialize({ name }: { name: SeriesType }) {
     this.type = 'series';
     this.name = name;
@@ -60,11 +80,26 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, theme, axes, categories } = chartState;
+    const { layout, series, theme, axes, categories, ops } = chartState;
 
     this.rect = layout.plot;
+    this.stack = stackOption(ops);
 
-    const seriesRawData = series[this.name]!.data;
+    const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series, theme, axes);
+
+    const tooltipData = this.createTooltipData(series, theme, categories);
+
+    const rectModel = this.renderRect(seriesModels);
+
+    this.models = [this.renderClipRectAreaModel(), ...seriesModels];
+
+    this.responders = rectModel.map((m, index) => ({
+      ...m,
+      data: tooltipData[index]
+    }));
+  }
+
+  createSeriesModel(series, theme, axes) {
     const colors = theme.series.colors;
 
     const valueAxis = this.isBar ? 'xAxis' : 'yAxis';
@@ -73,30 +108,23 @@ export default class BoxSeries extends Component {
     const offsetSizeKey = this.isBar ? 'width' : 'height';
     const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
 
-    const seriesModels = this.renderBoxSeriesModel(
-      seriesRawData,
+    if (this.stack) {
+      return this.renderStackSeriesModel(
+        series[this.name]!.stackData,
+        colors,
+        axes[valueAxis].labels,
+        tickDistance,
+        offsetSizeKey
+      );
+    }
+
+    return this.renderBoxSeriesModel(
+      series[this.name]!.data,
       colors,
       axes[valueAxis].labels,
       tickDistance,
       offsetSizeKey
     );
-
-    this.models = [this.renderClipRectAreaModel(), ...seriesModels];
-
-    const tooltipData = seriesRawData.flatMap(({ name, data }, index) => {
-      return data.map((value, dataIdx) => ({
-        label: name,
-        color: theme.series.colors[index],
-        value: this.tooltipValue(value),
-        category: categories?.[dataIdx]
-      }));
-    });
-
-    const rectModel = this.renderRect(seriesModels);
-    this.responders = rectModel.map((m, index) => ({
-      ...m,
-      data: tooltipData[index]
-    }));
   }
 
   renderBoxSeriesModel(
@@ -140,6 +168,54 @@ export default class BoxSeries extends Component {
     });
   }
 
+  renderStackSeriesModel(
+    rawData: StackDataType,
+    colors: string[],
+    valueLabels: string[],
+    tickDistance: number,
+    offsetSizeKey: SizeKey
+  ): BoxSeriesModel[] {
+    const seriesModels: BoxSeriesModel[] = [];
+
+    const minValue = Number(first(valueLabels));
+    const offsetAxisLength = this.rect[offsetSizeKey];
+    const axisValueRatio = offsetAxisLength / (Number(last(valueLabels)) - minValue);
+    const stackGroupCount = 1;
+
+    const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+
+    rawData.forEach(({ values }, index) => {
+      const seriesPos = index * tickDistance + this.padding;
+
+      values.forEach((value, seriesIndex) => {
+        const barLength = value * axisValueRatio;
+        const color = colors[seriesIndex];
+        const beforeValueSum = values.reduce((a, b, idx) => {
+          const hasBefore = this.isBar ? idx < seriesIndex : idx <= seriesIndex;
+
+          if (hasBefore) {
+            return a + b;
+          }
+
+          return a;
+        }, 0);
+
+        const startPosition = beforeValueSum * axisValueRatio;
+
+        seriesModels.push({
+          type: 'box',
+          color,
+          width: this.isBar ? barLength : columnWidth,
+          height: this.isBar ? columnWidth : barLength,
+          x: this.isBar ? startPosition : seriesPos,
+          y: this.isBar ? seriesPos : offsetAxisLength - startPosition
+        });
+      });
+    });
+
+    return seriesModels;
+  }
+
   renderClipRectAreaModel(): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
@@ -179,6 +255,34 @@ export default class BoxSeries extends Component {
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
 
     this.eventBus.emit('needDraw');
+  }
+
+  createTooltipData(series, theme, categories) {
+    const stackRawData = series[this.name].stackData;
+    const seriesRawData = series[this.name].data;
+    const colors = theme.series.colors;
+
+    if (this.stack) {
+      return stackRawData.flatMap(({ values }, index) => {
+        return values.map((value, seriesIndex) => {
+          return {
+            label: seriesRawData[seriesIndex].name,
+            color: colors[seriesIndex],
+            value,
+            category: categories[index]
+          };
+        });
+      });
+    }
+
+    return seriesRawData.flatMap(({ name, data }, index) => {
+      return data.map((value, dataIdx) => ({
+        label: name,
+        color: colors[index],
+        value: this.tooltipValue(value),
+        category: categories?.[dataIdx]
+      }));
+    });
   }
 
   tooltipValue(value) {

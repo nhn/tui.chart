@@ -1,6 +1,6 @@
 import { ValueEdge, StoreModule } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
-import seriesData from './seriesData';
+import { stackOption } from '@src/component/boxSeries';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -39,9 +39,9 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const { series, disabledSeries } = state;
-
+      const { series, disabledSeries, ops } = state;
       const newDataRange: Record<string, ValueEdge> = {};
+      const stack = stackOption(ops);
 
       for (const seriesName in series) {
         if (!series.hasOwnProperty(seriesName)) {
@@ -57,14 +57,19 @@ const dataRange: StoreModule = {
 
         if (tupleCoord) {
           if (isBoxSeries(series)) {
-            values = values
-              .reduce((arr, value) => (Array.isArray(value) ? arr.concat(...value) : value), [])
-              .filter((value, index, arr) => arr.indexOf(value) === index);
+            values = values.reduce(
+              (arr, value) => (Array.isArray(value) ? arr.concat(...value) : value),
+              []
+            );
           } else {
             values = values.map(value => value[1]);
           }
         } else if (objectCoord) {
           values = values.map(value => value.y);
+        } else if (stack) {
+          const { stackData } = series[seriesName];
+
+          values = [0, ...stackData.map(({ sum }) => sum)];
         }
 
         newDataRange[seriesName] = getLimitSafely(values);

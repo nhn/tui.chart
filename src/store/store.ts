@@ -26,16 +26,21 @@ import {
   pickPropertyWithMakeup,
   deepMergedCopy,
   sortSeries,
-  sortCategories
+  sortCategories,
+  pickProperty,
+  isBoolean
 } from '@src/helpers/utils';
-import { BaseChartOptions, Size } from '@t/options';
-import seriesData from './seriesData';
+import { BaseChartOptions, Size, StackOptionType } from '@t/options';
 
 interface InitStoreState<T> {
   categories?: string[];
   chart?: BaseChartOptions;
   series: Series;
   options?: T;
+}
+
+export interface InitStoreOption {
+  stack?: StackOptionType;
 }
 
 function makeCategories(series: Series) {
@@ -72,6 +77,19 @@ function initData(series: Series, categories?: string[]) {
   };
 }
 
+function initOptions(userOptions) {
+  const ops: InitStoreOption = {};
+  const stack = pickProperty(userOptions, ['series', 'stack']) || false;
+
+  if (isBoolean(stack) && stack) {
+    ops.stack = {
+      type: 'normal'
+    };
+  }
+
+  return { ops };
+}
+
 export default class Store<T extends Options> {
   state: ChartState<T> = {
     chart: { width: 0, height: 0 },
@@ -99,7 +117,8 @@ export default class Store<T extends Options> {
     },
     options: {} as T,
     categories: [],
-    d: Date.now()
+    d: Date.now(),
+    ops: {} as InitStoreOption
   };
 
   computed: Record<string, any> = {};
@@ -109,6 +128,7 @@ export default class Store<T extends Options> {
   constructor(initStoreState: InitStoreState<T>) {
     const { chart, options } = initStoreState;
     const { series, categories } = initData(initStoreState.series, initStoreState.categories);
+    const { ops } = initOptions(options);
 
     this.setRootState(this.state);
     this.setModule(
@@ -139,7 +159,7 @@ export default class Store<T extends Options> {
             }
           }
         } as StoreOptions,
-        { state: { series, categories, options, chart } }
+        { state: { series, categories, chart, options, ops } }
       )
     );
   }

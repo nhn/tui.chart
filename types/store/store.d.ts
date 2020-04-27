@@ -8,7 +8,7 @@ import {
   ColumnChartOptions,
   BoxSeriesDataType
 } from '@t/options';
-import Store from '@src/store/store';
+import Store, { InitStoreOption } from '@src/store/store';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -75,6 +75,7 @@ export interface ChartState<T extends Options> {
   options: T;
   categories?: string[];
   d: number; // @TODO: check where to use
+  ops: InitStoreOption;
 }
 
 export interface AxisData {
