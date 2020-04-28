@@ -2,8 +2,8 @@ import { Series } from '@t/store/store';
 
 export type BoxRangeDataType = [number, number];
 export type BoxSeriesDataType = number | BoxRangeDataType;
-
 type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
+type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
 export type CoordinateDataType = Point | [number, number] | [string, number];
 
 export interface Point {
@@ -35,6 +35,16 @@ export interface LineSeriesData {
   series: LineSeriesType[];
 }
 
+export interface ScatterSeriesType {
+  name: string;
+  data: CoordinateSeriesDataType;
+}
+
+export interface ScatterSeriesData {
+  categories?: string[];
+  series: ScatterSeriesType[];
+}
+
 interface TitleOptions {
   text?: string;
   offsetX?: number;
@@ -63,7 +73,7 @@ interface BaseSeriesOptions {
   allowSelect?: boolean;
 }
 
-interface LineXaxisOptions extends BaseAxisOptions {
+interface LineXAxisOptions extends BaseAxisOptions {
   pointOnColumn?: boolean;
 }
 
@@ -74,7 +84,12 @@ interface LineSeriesOptions extends BaseSeriesOptions {
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineSeriesOptions;
-  xAxis?: LineXaxisOptions;
+  xAxis?: LineXAxisOptions;
+}
+
+export interface ScatterChartOptions extends BaseOptions {
+  series?: BaseSeriesOptions;
+  xAxis?: BaseAxisOptions;
 }
 
 type StackType = 'normal' | 'percent';

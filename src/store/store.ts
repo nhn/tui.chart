@@ -44,12 +44,12 @@ export interface InitStoreOption {
 }
 
 function makeCategories(series: Series) {
-  const categories: Set<string | number> = new Set();
+  const categories: Set<string> = new Set();
 
   Object.keys(series).forEach(key => {
     series[key].forEach(({ data }) => {
       data.forEach(datum => {
-        categories.add(Array.isArray(datum) ? datum[0] : datum.x);
+        categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
       });
     });
   });
