@@ -27,16 +27,6 @@ export enum StackType {
   PERCENT = 'percent'
 }
 
-export function stackOption(ops): StackOptionType {
-  const result = pickProperty(ops, ['stack']);
-
-  if (!result) {
-    return false;
-  }
-
-  return result as StackOptionType;
-}
-
 const PADDING = {
   TB: 15, // top & bottom
   LR: 24 // left & right
@@ -83,7 +73,7 @@ export default class BoxSeries extends Component {
     const { layout, series, theme, axes, categories, ops } = chartState;
 
     this.rect = layout.plot;
-    this.stack = stackOption(ops);
+    this.stack = ops.stack;
 
     const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series, theme, axes);
 

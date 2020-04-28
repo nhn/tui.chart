@@ -1,6 +1,5 @@
 import { StoreModule } from '@t/store/store';
-import { StackType, StackDataType, stackOption } from '@src/component/boxSeries';
-import { isObject } from '@src/helpers/utils';
+import { getStackData } from '@src/helpers/series';
 
 // seriesDataModel 이 했던것 일부 여기로
 const seriesData: StoreModule = {
@@ -11,47 +10,22 @@ const seriesData: StoreModule = {
   action: {
     setSeriesData({ state }) {
       const { series: seriesRaw, disabledSeries, ops } = state;
-      const stack = stackOption(ops);
       const newSeriesData = {};
 
       Object.keys(seriesRaw).forEach(seriesName => {
         const seriesRawData = seriesRaw[seriesName];
         const seriesCount = seriesRawData.length;
-        let seriesGroupCount = seriesRawData[0].data.length;
+        const seriesGroupCount = seriesRawData[0].data.length;
         const data = seriesRawData.filter(({ name }: any) => !disabledSeries.includes(name));
 
-        if (stack && isObject(stack) && stack.type === StackType.NORMAL) {
-          const groupCountLengths = seriesRawData.map(
-            ({ data: seriesDatas }) => seriesDatas.length
-          );
-          seriesGroupCount = Math.max(...groupCountLengths);
-          const stackData: StackDataType = [];
+        newSeriesData[seriesName] = {
+          seriesCount,
+          seriesGroupCount,
+          data
+        };
 
-          for (let i = 0; i < seriesGroupCount; i += 1) {
-            const stackValues: number[] = [];
-
-            for (let j = 0; j < seriesCount; j += 1) {
-              stackValues.push(seriesRaw[seriesName][j].data[i] || 0);
-            }
-
-            stackData[i] = {
-              values: stackValues,
-              sum: stackValues.reduce((a, b) => a + b, 0)
-            };
-          }
-
-          newSeriesData[seriesName] = {
-            seriesCount,
-            seriesGroupCount,
-            data,
-            stackData
-          };
-        } else {
-          newSeriesData[seriesName] = {
-            seriesCount,
-            seriesGroupCount,
-            data
-          };
+        if (ops.stack) {
+          newSeriesData[seriesName].stackData = getStackData(seriesRawData);
         }
       });
 

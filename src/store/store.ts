@@ -30,7 +30,7 @@ import {
   pickProperty,
   isBoolean
 } from '@src/helpers/utils';
-import { BaseChartOptions, Size, StackOptionType } from '@t/options';
+import { BaseChartOptions, Size, StackOptionType, StackInfo } from '@t/options';
 
 interface InitStoreState<T> {
   categories?: string[];
@@ -40,7 +40,7 @@ interface InitStoreState<T> {
 }
 
 export interface InitStoreOption {
-  stack?: StackOptionType;
+  stack: StackOptionType;
 }
 
 function makeCategories(series: Series) {
@@ -77,17 +77,37 @@ function initData(series: Series, categories?: string[]) {
   };
 }
 
-function initOptions(userOptions) {
-  const ops: InitStoreOption = {};
-  const stack = pickProperty(userOptions, ['series', 'stack']) || false;
+function initStackOption(userOptions): StackOptionType {
+  let stack = pickProperty(userOptions, ['series', 'stack']) as StackOptionType;
 
-  if (isBoolean(stack) && stack) {
-    ops.stack = {
-      type: 'normal'
-    };
+  if (!stack) {
+    return false;
   }
 
-  return { ops };
+  if (isBoolean(stack)) {
+    stack = {
+      type: 'normal',
+      connector: false
+    };
+  } else {
+    stack = Object.assign(
+      {},
+      {
+        type: 'normal',
+        connector: false
+      },
+      stack
+    ) as StackInfo;
+  }
+
+  return stack;
+}
+
+function initOptions(userOptions) {
+  return {
+    stack: initStackOption(userOptions)
+    // ...
+  };
 }
 
 export default class Store<T extends Options> {
@@ -128,7 +148,7 @@ export default class Store<T extends Options> {
   constructor(initStoreState: InitStoreState<T>) {
     const { chart, options } = initStoreState;
     const { series, categories } = initData(initStoreState.series, initStoreState.categories);
-    const { ops } = initOptions(options);
+    const ops = initOptions(options);
 
     this.setRootState(this.state);
     this.setModule(
