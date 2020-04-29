@@ -56,17 +56,8 @@ export const budgetData = {
 };
 
 export const budgetDataForStack = {
-  categories: ['June', 'July'], // 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
-    {
-      name: 'test1',
-      data: [1000, 2000]
-    },
-    {
-      name: 'test2',
-      data: [2000, 4000]
-    }
-    /*
     {
       name: 'Budget',
       data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
@@ -83,7 +74,6 @@ export const budgetDataForStack = {
       name: 'Debt',
       data: [6000, 3000, 3000, 1000, 2000, 4000, 3000]
     }
-    */
   ]
 };
 
