@@ -39,10 +39,11 @@ export interface StoreOptions {
   computed?: Record<string, ComputedFunc>;
   action?: Record<string, ActionFunc> & ThisType<Store<Options>>;
   observe?: Record<string, ObserveFunc> & ThisType<Store<Options>>;
+  initialize?: InitializeFunc;
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange' | 'stack';
+  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange' | 'initialize';
 }
 
 export interface SeriesTheme {
@@ -55,7 +56,8 @@ export type Theme = {
 
 type SeriesState = {
   [key in ChartType]?: SeriesData<key>; // @TODO: Series 와 통합 필요. 중복되는 느낌
-};
+} &
+  Stack;
 
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
@@ -78,12 +80,10 @@ export interface ChartState<T extends Options> {
   options: T;
   categories?: string[];
   d: number; // @TODO: check where to use
-  stack: Stack;
 }
 
 export interface Stack {
-  use: boolean;
-  option: Partial<StackInfo>;
+  stack?: StackInfo;
 }
 
 export interface AxisData {
@@ -102,7 +102,8 @@ export interface ValueEdge {
 
 export type SeriesData<K extends ChartType> = {
   data: ChartSeriesMap[K];
-} & SeriesGroup;
+} & SeriesGroup &
+  Stack;
 
 export interface SeriesGroup {
   seriesCount: number;
@@ -120,6 +121,7 @@ type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
 type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
 export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
 type WatchFunc = (value: any) => void;
+type InitializeFunc = (options: Options, state: ChartState<Options>) => void;
 
 export type FunctionPropertyNames<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;

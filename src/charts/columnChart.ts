@@ -39,7 +39,6 @@ export default class BarChart extends Chart<ColumnChartOptions> {
   }
 
   initialize() {
-    this.store.setModule(stack);
     this.store.setModule(layout);
 
     this.store.setModule(seriesData);

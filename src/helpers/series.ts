@@ -1,6 +1,6 @@
 import { StackDataType } from '@src/component/boxSeries';
 
-export function getStackData(seriesRawData) {
+export function getStackData(seriesRawData): StackDataType {
   const seriesCount = seriesRawData.length;
   let seriesGroupCount = seriesRawData[0].data.length;
 

@@ -17,8 +17,7 @@ import {
   StoreModule,
   ObserveFunc,
   Series,
-  Options,
-  Stack
+  Options
 } from '@t/store/store';
 
 import {
@@ -103,17 +102,19 @@ export default class Store<T extends Options> {
     },
     options: {} as T,
     categories: [],
-    d: Date.now(),
-    stack: {} as Stack
+    d: Date.now()
   };
 
   computed: Record<string, any> = {};
 
   actions: Record<string, ActionFunc> = {};
 
+  options = {} as T;
+
   constructor(initStoreState: InitStoreState<T>) {
     const { chart, options } = initStoreState;
     const { series, categories } = initData(initStoreState.series, initStoreState.categories);
+    this.options = options as T;
 
     this.setRootState(this.state);
     this.setModule(
@@ -203,39 +204,44 @@ export default class Store<T extends Options> {
     notify(target, key);
   }
 
-  setModule(name: string | StoreModule, options?: StoreOptions | StoreModule) {
-    if (!options) {
-      options = name as StoreModule;
-      name = (options as StoreModule).name;
+  // eslint-disable-next-line complexity
+  setModule(name: string | StoreModule, param?: StoreOptions | StoreModule) {
+    if (!param) {
+      param = name as StoreModule;
+      name = (param as StoreModule).name;
     }
 
-    if (options.state) {
-      const moduleState = typeof options.state === 'function' ? options.state() : options.state;
+    if (param.initialize) {
+      param.initialize(this.options, this.state);
+    }
+
+    if (param.state) {
+      const moduleState = typeof param.state === 'function' ? param.state() : param.state;
       this.extend(this.state, moduleState);
 
       //      this.extend(this.state, moduleState);
     }
 
-    if (options.computed) {
-      forEach(options.computed, (item, key) => {
+    if (param.computed) {
+      forEach(param.computed, (item, key) => {
         this.setComputed(key, item);
       });
     }
 
-    if (options.watch) {
-      forEach(options.watch, (item, key) => {
+    if (param.watch) {
+      forEach(param.watch, (item, key) => {
         this.setWatch(key, item);
       });
     }
 
-    if (options.action) {
-      forEach(options.action, (item, key) => {
+    if (param.action) {
+      forEach(param.action, (item, key) => {
         this.setAction(key, item);
       });
     }
 
-    if (options.observe) {
-      forEach(options.observe, (item, key) => {
+    if (param.observe) {
+      forEach(param.observe, (item, key) => {
         this.observe(item);
         // console.log(key, ' observer collect start', this.state.__ob__.d);
         // this.observe((...args) => {

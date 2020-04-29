@@ -28,6 +28,14 @@ function getLimitSafely(baseValues: number[]): ValueEdge {
   return limit;
 }
 
+function getStackDataValues(stackData, stackType) {
+  if (stackType === STACK_TYPES.PERCENT) {
+    return [0, 100];
+  }
+
+  return [0, ...stackData.map(({ sum }) => sum)];
+}
+
 function isBoxSeries(series) {
   return series.bar || series.column;
 }
@@ -39,7 +47,7 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const { series, disabledSeries, stack } = state;
+      const { series, disabledSeries } = state;
       const newDataRange: Record<string, ValueEdge> = {};
 
       for (const seriesName in series) {
@@ -65,14 +73,10 @@ const dataRange: StoreModule = {
           }
         } else if (objectCoord) {
           values = values.map(value => value.y);
-        } else if (stack.use) {
+        } else if (series[seriesName].stack) {
           const { stackData } = series[seriesName];
 
-          if (stack.option.type === STACK_TYPES.PERCENT) {
-            values = [0, 100];
-          } else {
-            values = [0, ...stackData.map(({ sum }) => sum)];
-          }
+          values = getStackDataValues(stackData, series[seriesName].stack.type);
         }
 
         newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);

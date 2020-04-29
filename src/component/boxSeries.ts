@@ -1,19 +1,29 @@
 import Component from './component';
 import { RectModel, BoxSeriesModel, ClipRectAreaModel } from '@t/components/series';
-import { ChartState, Stack } from '@t/store/store';
+import { ChartState } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
   BoxRangeDataType,
   BarChartOptions,
   ColumnChartOptions,
-  StackType
+  StackType,
+  StackInfo
 } from '@t/options';
 import { first, last } from '@src/helpers/utils';
 
 type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
 
 type SizeKey = 'width' | 'height';
+
+interface StackSeriesModelParamType {
+  rawData: StackDataType;
+  colors: string[];
+  valueLabels: string[];
+  tickDistance: number;
+  offsetSizeKey: SizeKey;
+  stackGroup?: { count: number; index: number };
+}
 
 enum SeriesType {
   BAR = 'bar',
@@ -49,7 +59,7 @@ export default class BoxSeries extends Component {
 
   name = SeriesType.BAR;
 
-  stack!: Stack;
+  stack!: StackInfo;
 
   initialize({ name }: { name: SeriesType }) {
     this.type = 'series';
@@ -70,10 +80,10 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, theme, axes, categories, stack } = chartState;
+    const { layout, series, theme, axes, categories } = chartState;
 
     this.rect = layout.plot;
-    this.stack = stack;
+    this.stack = series[this.name]!.stack!;
 
     const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series, theme, axes);
 
@@ -98,9 +108,9 @@ export default class BoxSeries extends Component {
     const offsetSizeKey = this.isBar ? 'width' : 'height';
     const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
 
-    if (this.stack.use) {
+    if (this.stack) {
       return this.renderStackSeriesModel(
-        series[this.name]!.stackData,
+        series[this.name]!,
         colors,
         axes[valueAxis].labels,
         tickDistance,
@@ -159,49 +169,15 @@ export default class BoxSeries extends Component {
   }
 
   renderStackSeriesModel(
-    rawData: StackDataType,
+    series,
     colors: string[],
     valueLabels: string[],
     tickDistance: number,
     offsetSizeKey: SizeKey
   ): BoxSeriesModel[] {
-    const seriesModels: BoxSeriesModel[] = [];
-    const offsetAxisLength = this.rect[offsetSizeKey];
-    const stackGroupCount = 1;
-    const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
-    const stackType: StackType = this.stack.option.type!;
+    const rawData = series.stackData;
 
-    rawData.forEach(({ values, sum }, index) => {
-      const seriesPos = index * tickDistance + this.padding;
-
-      values.forEach((value, seriesIndex) => {
-        const color = colors[seriesIndex];
-        const beforeValueSum = this.getTotalOfPrevValues(values, seriesIndex, !this.isBar);
-        let barLength, startPosition;
-
-        if (stackType === STACK_TYPES.PERCENT) {
-          barLength = (value / sum) * offsetAxisLength;
-          startPosition = (beforeValueSum / sum) * offsetAxisLength;
-        } else {
-          const offsetValue = Number(last(valueLabels)) - Number(first(valueLabels));
-          const axisValueRatio = offsetAxisLength / offsetValue;
-
-          barLength = value * axisValueRatio;
-          startPosition = beforeValueSum * axisValueRatio;
-        }
-
-        seriesModels.push({
-          type: 'box',
-          color,
-          width: this.isBar ? barLength : columnWidth,
-          height: this.isBar ? columnWidth : barLength,
-          x: this.isBar ? startPosition : seriesPos,
-          y: this.isBar ? seriesPos : offsetAxisLength - startPosition
-        });
-      });
-    });
-
-    return seriesModels;
+    return this.getStackSeriesModel({ rawData, colors, valueLabels, tickDistance, offsetSizeKey });
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -250,7 +226,7 @@ export default class BoxSeries extends Component {
     const seriesRawData = series[this.name].data;
     const colors = theme.series.colors;
 
-    if (this.stack.use) {
+    if (this.stack) {
       return stackRawData.flatMap(({ values }, index) => {
         return values.map((value, seriesIndex) => {
           return {
@@ -287,5 +263,54 @@ export default class BoxSeries extends Component {
 
       return a;
     }, 0);
+  }
+
+  getStackSeriesModel({
+    rawData,
+    colors,
+    valueLabels,
+    tickDistance,
+    offsetSizeKey,
+    stackGroup = {
+      count: 1,
+      index: 0
+    }
+  }: StackSeriesModelParamType) {
+    const seriesModels: BoxSeriesModel[] = [];
+    const offsetAxisLength = this.rect[offsetSizeKey];
+    const columnWidth = (tickDistance - this.padding * 2) / stackGroup.count;
+    const stackType: StackType = this.stack.type;
+
+    rawData.forEach(({ values, sum }, index) => {
+      const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroup.index;
+
+      values.forEach((value, seriesIndex) => {
+        const color = colors[seriesIndex];
+        const beforeValueSum = this.getTotalOfPrevValues(values, seriesIndex, !this.isBar);
+        let barLength, startPosition;
+
+        if (stackType === STACK_TYPES.PERCENT) {
+          barLength = (value / sum) * offsetAxisLength;
+          startPosition = (beforeValueSum / sum) * offsetAxisLength;
+        } else {
+          const offsetValue = Number(last(valueLabels)) - Number(first(valueLabels));
+          const axisValueRatio = offsetAxisLength / offsetValue;
+
+          barLength = value * axisValueRatio;
+          startPosition = beforeValueSum * axisValueRatio;
+        }
+
+        seriesModels.push({
+          type: 'box',
+          color,
+          width: this.isBar ? barLength : columnWidth,
+          height: this.isBar ? columnWidth : barLength,
+          x: this.isBar ? startPosition : seriesPos,
+          y: this.isBar ? seriesPos : offsetAxisLength - startPosition
+        });
+      });
+    });
+
+    return seriesModels;
   }
 }

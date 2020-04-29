@@ -1,5 +1,7 @@
 import { StoreModule } from '@t/store/store';
+import { pickProperty, isObject } from '@src/helpers/utils';
 import { getStackData } from '@src/helpers/series';
+import { StackInfo } from '@t/options';
 
 // seriesDataModel 이 했던것 일부 여기로
 const seriesData: StoreModule = {
@@ -7,13 +9,31 @@ const seriesData: StoreModule = {
   state: () => ({
     series: {}
   }),
+  initialize(options, state) {
+    const { series } = state;
+
+    Object.keys(state.series).forEach(seriesName => {
+      const stackOption = pickProperty(options, ['series', 'stack']);
+      const defaultStackOption = {
+        type: 'normal',
+        connector: false
+      } as StackInfo;
+      const isBox = ['column', 'bar'].indexOf(seriesName) > -1;
+
+      if (stackOption && isBox) {
+        series[seriesName].stack = isObject(stackOption)
+          ? Object.assign({}, defaultStackOption, stackOption)
+          : defaultStackOption;
+      }
+    });
+  },
   action: {
     setSeriesData({ state }) {
-      const { series: seriesRaw, disabledSeries, stack } = state;
+      const { series, disabledSeries } = state;
       const newSeriesData = {};
 
-      Object.keys(seriesRaw).forEach(seriesName => {
-        const seriesRawData = seriesRaw[seriesName];
+      Object.keys(series).forEach(seriesName => {
+        const seriesRawData = series[seriesName];
         const seriesCount = seriesRawData.length;
         const seriesGroupCount = seriesRawData[0].data.length;
         const data = seriesRawData.filter(({ name }: any) => !disabledSeries.includes(name));
@@ -24,7 +44,7 @@ const seriesData: StoreModule = {
           data
         };
 
-        if (stack.use) {
+        if (series[seriesName].stack) {
           newSeriesData[seriesName].stackData = getStackData(seriesRawData);
         }
       });
