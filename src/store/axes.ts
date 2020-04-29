@@ -1,4 +1,4 @@
-import { StoreModule } from '@t/store/store';
+import { Options, SeriesState, StoreModule } from '@t/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import { AxisType } from '@src/component/axis';
 
@@ -11,18 +11,15 @@ const axes: StoreModule = {
     setAxesData({ state }) {
       const { scale, options, series, categories = [] } = state;
 
+      const pointOnColumn = isPointOnColumn(series, options);
+
       const labelAxisData = {
         labels: categories,
-        tickCount: categories.length,
+        tickCount: categories.length + (pointOnColumn ? 1 : 0),
         validTickCount: categories.length,
         isLabelAxis: true,
-        isCategoryType: false
+        pointOnColumn
       };
-
-      if (isCategoryType({ series, options })) {
-        labelAxisData.tickCount += 1;
-        labelAxisData.isCategoryType = true;
-      }
 
       const axisName = getValueAxisName(series);
       const valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].step);
@@ -58,10 +55,12 @@ function getValueAxisName(series) {
   return series.bar ? AxisType.X : AxisType.Y;
 }
 
-function isCategoryType({ series, options }) {
-  return (
-    (series.line && options.xAxis && options.xAxis.pointOnColumn) || series.column || series.bar
-  );
+function isPointOnColumn(series: SeriesState, options: Options) {
+  if (series.column || series.bar) {
+    return true;
+  }
+
+  return options.xAxis && options.xAxis.pointOnColumn;
 }
 
 export default axes;

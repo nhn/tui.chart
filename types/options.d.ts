@@ -61,10 +61,14 @@ type BaseAxisOptions = {
   title?: string | TitleOptions;
 };
 
+interface BaseXAxisOptions extends BaseAxisOptions {
+  pointOnColumn?: boolean;
+}
+
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
-  xAxis?: BaseAxisOptions;
+  xAxis?: BaseXAxisOptions;
   yAxis?: BaseAxisOptions;
 }
 
@@ -73,23 +77,24 @@ interface BaseSeriesOptions {
   allowSelect?: boolean;
 }
 
-interface LineXAxisOptions extends BaseAxisOptions {
-  pointOnColumn?: boolean;
-}
-
-interface LineSeriesOptions extends BaseSeriesOptions {
+interface LineTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
 }
 
+export interface AreaChartOptions extends BaseOptions {
+  series?: LineTypeSeriesOptions;
+  xAxis?: BaseXAxisOptions;
+}
+
 export interface LineChartOptions extends BaseOptions {
-  series?: LineSeriesOptions;
-  xAxis?: LineXAxisOptions;
+  series?: LineTypeSeriesOptions;
+  xAxis?: BaseXAxisOptions;
 }
 
 export interface ScatterChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
-  xAxis?: BaseAxisOptions;
+  xAxis?: BaseXAxisOptions;
 }
 
 type ConnectorLineType = 'dashed' | 'solid';

@@ -91,7 +91,7 @@ export interface AxisData {
   validTickCount: number;
   isLabelAxis: boolean;
   relativePositions: number[];
-  isCategoryType: boolean;
+  pointOnColumn: boolean;
 }
 
 export interface ValueEdge {
