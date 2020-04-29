@@ -1,15 +1,14 @@
 import Component from './component';
 import { RectModel, BoxSeriesModel, ClipRectAreaModel } from '@t/components/series';
-import { ChartState } from '@t/store/store';
+import { ChartState, Stack } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
   BoxRangeDataType,
   BarChartOptions,
-  ColumnChartOptions,
-  StackOptionType
+  ColumnChartOptions
 } from '@t/options';
-import { first, last, pickProperty } from '@src/helpers/utils';
+import { first, last } from '@src/helpers/utils';
 
 type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
 
@@ -49,7 +48,7 @@ export default class BoxSeries extends Component {
 
   name = SeriesType.BAR;
 
-  stack: StackOptionType = false;
+  stack: Stack = false;
 
   initialize({ name }: { name: SeriesType }) {
     this.type = 'series';
@@ -70,10 +69,10 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, theme, axes, categories, ops } = chartState;
-
+    const { layout, series, theme, axes, categories, stack } = chartState;
+    console.log(stack);
     this.rect = layout.plot;
-    this.stack = ops.stack;
+    this.stack = stack;
 
     const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series, theme, axes);
 
@@ -98,7 +97,7 @@ export default class BoxSeries extends Component {
     const offsetSizeKey = this.isBar ? 'width' : 'height';
     const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
 
-    if (this.stack) {
+    if (this.stack.use) {
       return this.renderStackSeriesModel(
         series[this.name]!.stackData,
         colors,
@@ -252,7 +251,7 @@ export default class BoxSeries extends Component {
     const seriesRawData = series[this.name].data;
     const colors = theme.series.colors;
 
-    if (this.stack) {
+    if (this.stack.use) {
       return stackRawData.flatMap(({ values }, index) => {
         return values.map((value, seriesIndex) => {
           return {

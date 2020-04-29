@@ -9,7 +9,7 @@ const seriesData: StoreModule = {
   }),
   action: {
     setSeriesData({ state }) {
-      const { series: seriesRaw, disabledSeries, ops } = state;
+      const { series: seriesRaw, disabledSeries, stack } = state;
       const newSeriesData = {};
 
       Object.keys(seriesRaw).forEach(seriesName => {
@@ -24,7 +24,7 @@ const seriesData: StoreModule = {
           data
         };
 
-        if (ops.stack) {
+        if (stack.use) {
           newSeriesData[seriesName].stackData = getStackData(seriesRawData);
         }
       });

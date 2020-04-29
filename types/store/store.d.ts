@@ -7,9 +7,10 @@ import {
   BarChartOptions,
   ColumnChartOptions,
   BoxSeriesDataType,
-  ScatterSeriesType
+  ScatterSeriesType,
+  StackInfo
 } from '@t/options';
-import Store, { InitStoreOption } from '@src/store/store';
+import Store from '@src/store/store';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -41,7 +42,7 @@ export interface StoreOptions {
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange';
+  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange' | 'stack';
 }
 
 export interface SeriesTheme {
@@ -77,7 +78,12 @@ export interface ChartState<T extends Options> {
   options: T;
   categories?: string[];
   d: number; // @TODO: check where to use
-  ops: InitStoreOption;
+  stack: Stack;
+}
+
+export interface Stack {
+  use: boolean;
+  option: Partial<StackInfo>;
 }
 
 export interface AxisData {

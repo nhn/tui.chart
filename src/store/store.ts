@@ -17,7 +17,8 @@ import {
   StoreModule,
   ObserveFunc,
   Series,
-  Options
+  Options,
+  Stack
 } from '@t/store/store';
 
 import {
@@ -26,11 +27,9 @@ import {
   pickPropertyWithMakeup,
   deepMergedCopy,
   sortSeries,
-  sortCategories,
-  pickProperty,
-  isBoolean
+  sortCategories
 } from '@src/helpers/utils';
-import { BaseChartOptions, Size, StackOptionType, StackInfo } from '@t/options';
+import { BaseChartOptions, Size, StackOptionType } from '@t/options';
 
 interface InitStoreState<T> {
   categories?: string[];
@@ -77,39 +76,6 @@ function initData(series: Series, categories?: string[]) {
   };
 }
 
-function initStackOption(userOptions): StackOptionType {
-  let stack = pickProperty(userOptions, ['series', 'stack']) as StackOptionType;
-
-  if (!stack) {
-    return false;
-  }
-
-  if (isBoolean(stack)) {
-    stack = {
-      type: 'normal',
-      connector: false
-    };
-  } else {
-    stack = Object.assign(
-      {},
-      {
-        type: 'normal',
-        connector: false
-      },
-      stack
-    ) as StackInfo;
-  }
-
-  return stack;
-}
-
-function initOptions(userOptions) {
-  return {
-    stack: initStackOption(userOptions)
-    // ...
-  };
-}
-
 export default class Store<T extends Options> {
   state: ChartState<T> = {
     chart: { width: 0, height: 0 },
@@ -138,7 +104,7 @@ export default class Store<T extends Options> {
     options: {} as T,
     categories: [],
     d: Date.now(),
-    ops: {} as InitStoreOption
+    stack: {} as Stack
   };
 
   computed: Record<string, any> = {};
@@ -148,7 +114,6 @@ export default class Store<T extends Options> {
   constructor(initStoreState: InitStoreState<T>) {
     const { chart, options } = initStoreState;
     const { series, categories } = initData(initStoreState.series, initStoreState.categories);
-    const ops = initOptions(options);
 
     this.setRootState(this.state);
     this.setModule(
@@ -179,7 +144,7 @@ export default class Store<T extends Options> {
             }
           }
         } as StoreOptions,
-        { state: { series, categories, chart, options, ops } }
+        { state: { series, categories, chart, options } }
       )
     );
   }

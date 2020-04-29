@@ -38,7 +38,7 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const { series, disabledSeries, ops } = state;
+      const { series, disabledSeries, stack } = state;
       const newDataRange: Record<string, ValueEdge> = {};
 
       for (const seriesName in series) {
@@ -64,7 +64,7 @@ const dataRange: StoreModule = {
           }
         } else if (objectCoord) {
           values = values.map(value => value.y);
-        } else if (ops.stack) {
+        } else if (stack.use) {
           const { stackData } = series[seriesName];
 
           values = [0, ...stackData.map(({ sum }) => sum)];
