@@ -1,5 +1,6 @@
 import { ValueEdge, StoreModule } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
+import { STACK_TYPES } from '@src/component/boxSeries';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -67,7 +68,11 @@ const dataRange: StoreModule = {
         } else if (stack.use) {
           const { stackData } = series[seriesName];
 
-          values = [0, ...stackData.map(({ sum }) => sum)];
+          if (stack.option.type === STACK_TYPES.PERCENT) {
+            values = [0, 100];
+          } else {
+            values = [0, ...stackData.map(({ sum }) => sum)];
+          }
         }
 
         newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);

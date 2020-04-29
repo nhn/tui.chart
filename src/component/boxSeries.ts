@@ -6,7 +6,8 @@ import {
   BoxSeriesDataType,
   BoxRangeDataType,
   BarChartOptions,
-  ColumnChartOptions
+  ColumnChartOptions,
+  StackType
 } from '@t/options';
 import { first, last } from '@src/helpers/utils';
 
@@ -21,10 +22,10 @@ enum SeriesType {
 
 export type StackDataType = Array<{ values: number[]; sum: number }>;
 
-export enum StackType {
-  NORMAL = 'normal',
-  PERCENT = 'percent'
-}
+export const STACK_TYPES = {
+  NORMAL: 'normal',
+  PERCENT: 'percent'
+};
 
 const PADDING = {
   TB: 15, // top & bottom
@@ -165,31 +166,29 @@ export default class BoxSeries extends Component {
     offsetSizeKey: SizeKey
   ): BoxSeriesModel[] {
     const seriesModels: BoxSeriesModel[] = [];
-
-    const minValue = Number(first(valueLabels));
     const offsetAxisLength = this.rect[offsetSizeKey];
-    const axisValueRatio = offsetAxisLength / (Number(last(valueLabels)) - minValue);
     const stackGroupCount = 1;
-
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+    const stackType: StackType = this.stack.option.type!;
 
-    rawData.forEach(({ values }, index) => {
+    rawData.forEach(({ values, sum }, index) => {
       const seriesPos = index * tickDistance + this.padding;
 
       values.forEach((value, seriesIndex) => {
-        const barLength = value * axisValueRatio;
         const color = colors[seriesIndex];
-        const beforeValueSum = values.reduce((a, b, idx) => {
-          const hasBefore = this.isBar ? idx < seriesIndex : idx <= seriesIndex;
+        const beforeValueSum = this.getTotalOfPrevValues(values, seriesIndex, !this.isBar);
+        let barLength, startPosition;
 
-          if (hasBefore) {
-            return a + b;
-          }
+        if (stackType === STACK_TYPES.PERCENT) {
+          barLength = (value / sum) * offsetAxisLength;
+          startPosition = (beforeValueSum / sum) * offsetAxisLength;
+        } else {
+          const offsetValue = Number(last(valueLabels)) - Number(first(valueLabels));
+          const axisValueRatio = offsetAxisLength / offsetValue;
 
-          return a;
-        }, 0);
-
-        const startPosition = beforeValueSum * axisValueRatio;
+          barLength = value * axisValueRatio;
+          startPosition = beforeValueSum * axisValueRatio;
+        }
 
         seriesModels.push({
           type: 'box',
@@ -276,5 +275,17 @@ export default class BoxSeries extends Component {
 
   tooltipValue(value) {
     return isRangeData(value) ? `${value[0]} ~ ${value[1]}` : value;
+  }
+
+  getTotalOfPrevValues(values, currentIndex, included = false) {
+    return values.reduce((a, b, idx) => {
+      const isPrev = included ? idx <= currentIndex : idx < currentIndex;
+
+      if (isPrev) {
+        return a + b;
+      }
+
+      return a;
+    }, 0);
   }
 }

@@ -64,3 +64,16 @@ export const normalStack = () => {
 
   return el;
 };
+
+export const percentStack = () => {
+  const { el } = createChart(budgetDataForStack, {
+    ...defaultOptions,
+    series: {
+      stack: {
+        type: 'percent'
+      }
+    }
+  });
+
+  return el;
+};
