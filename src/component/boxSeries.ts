@@ -75,7 +75,7 @@ export default class BoxSeries extends Component {
     this.stack = stack;
 
     const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series, theme, axes);
-    console.log(series, theme, axes, seriesModels);
+
     const tooltipData = this.createTooltipData(series, theme, categories);
 
     const rectModel = this.renderRect(seriesModels);
@@ -96,7 +96,7 @@ export default class BoxSeries extends Component {
     const anchorSizeKey = this.isBar ? 'height' : 'width';
     const offsetSizeKey = this.isBar ? 'width' : 'height';
     const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
-    console.log(axes[valueAxis].labels, tickDistance, offsetSizeKey);
+
     if (this.stack.use) {
       return this.renderStackSeriesModel(
         series[this.name]!.stackData,
