@@ -1,5 +1,5 @@
 import Store from '@src/store/store';
-import { BaseOptions, ColumnChartOptions } from '@t/options';
+import { BaseOptions } from '@t/options';
 
 describe('Store', () => {
   let store: Store<BaseOptions>;
