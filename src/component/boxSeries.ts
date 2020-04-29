@@ -48,7 +48,7 @@ export default class BoxSeries extends Component {
 
   name = SeriesType.BAR;
 
-  stack: Stack = false;
+  stack!: Stack;
 
   initialize({ name }: { name: SeriesType }) {
     this.type = 'series';
@@ -70,12 +70,12 @@ export default class BoxSeries extends Component {
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, series, theme, axes, categories, stack } = chartState;
-    console.log(stack);
+
     this.rect = layout.plot;
     this.stack = stack;
 
     const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series, theme, axes);
-
+    console.log(series, theme, axes, seriesModels);
     const tooltipData = this.createTooltipData(series, theme, categories);
 
     const rectModel = this.renderRect(seriesModels);
@@ -96,7 +96,7 @@ export default class BoxSeries extends Component {
     const anchorSizeKey = this.isBar ? 'height' : 'width';
     const offsetSizeKey = this.isBar ? 'width' : 'height';
     const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
-
+    console.log(axes[valueAxis].labels, tickDistance, offsetSizeKey);
     if (this.stack.use) {
       return this.renderStackSeriesModel(
         series[this.name]!.stackData,

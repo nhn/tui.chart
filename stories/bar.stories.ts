@@ -6,7 +6,7 @@ export default {
   title: 'Bar'
 };
 
-const width = 800;
+const width = 500;
 const height = 500;
 const defaultOptions = {
   chart: {
