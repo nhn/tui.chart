@@ -5,7 +5,6 @@ import dataRange from '@src/store/dataRange';
 import seriesData from '@src/store/seriesData';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
-import stack from '@src/store/stack';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
