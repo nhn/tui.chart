@@ -92,19 +92,19 @@ export interface ScatterChartOptions extends BaseOptions {
   xAxis?: BaseAxisOptions;
 }
 
-type ConnectorLineType = 'dashed' | 'dotted' | 'solid' | 'double';
+type ConnectorLineType = 'dashed' | 'solid';
 
-interface ConnectorInfo {
+interface Connector {
   type: ConnectorLineType;
-  color?: string; // default: rgba(51, 85, 139, 0.7)
-  width?: number; // default: 2
+  color?: string;
+  width?: number;
 }
 
 export type StackType = 'normal' | 'percent';
 
 interface StackInfo {
   type: StackType;
-  connector?: boolean | ConnectorInfo;
+  connector?: boolean | Connector;
 }
 
 type StackOptionType = boolean | StackInfo;

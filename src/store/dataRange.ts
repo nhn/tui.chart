@@ -65,7 +65,7 @@ const dataRange: StoreModule = {
         if (tupleCoord) {
           if (isBoxSeries(series)) {
             values = values.reduce(
-              (arr, value) => (Array.isArray(value) ? arr.concat(...value) : value),
+              (arr, value) => (Array.isArray(value) ? [...arr, ...value] : value),
               []
             );
           } else {

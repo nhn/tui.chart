@@ -204,7 +204,6 @@ export default class Store<T extends Options> {
     notify(target, key);
   }
 
-  // eslint-disable-next-line complexity
   setModule(name: string | StoreModule, param?: StoreOptions | StoreModule) {
     if (!param) {
       param = name as StoreModule;

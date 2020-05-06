@@ -22,7 +22,7 @@ const seriesData: StoreModule = {
 
       if (stackOption && isBox) {
         series[seriesName].stack = isObject(stackOption)
-          ? Object.assign({}, defaultStackOption, stackOption)
+          ? { ...defaultStackOption, ...stackOption }
           : defaultStackOption;
       }
     });
