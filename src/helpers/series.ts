@@ -2,10 +2,8 @@ import { StackDataType } from '@src/component/boxSeries';
 
 export function getStackData(seriesRawData): StackDataType {
   const seriesCount = seriesRawData.length;
-  let seriesGroupCount = seriesRawData[0].data.length;
-
   const groupCountLengths = seriesRawData.map(({ data: seriesDatas }) => seriesDatas.length);
-  seriesGroupCount = Math.max(...groupCountLengths);
+  const seriesGroupCount = Math.max(...groupCountLengths);
   const stackData: StackDataType = [];
 
   for (let i = 0; i < seriesGroupCount; i += 1) {
