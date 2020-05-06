@@ -1,7 +1,5 @@
 import Chart from './chart';
 
-import seriesData from '@src/store/seriesData';
-import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 
 import Axis from '@src/component/axis';
@@ -38,8 +36,6 @@ export default class BarChart extends Chart<BarChartOptions> {
   initialize() {
     super.initialize();
 
-    this.store.setModule(seriesData);
-    this.store.setModule(scale);
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);

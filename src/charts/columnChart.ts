@@ -1,7 +1,5 @@
 import Chart from './chart';
 
-import seriesData from '@src/store/seriesData';
-import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 
 import Axis from '@src/component/axis';
@@ -17,14 +15,14 @@ import * as tooltipBrushes from '@src/brushes/tooltip';
 
 import { ColumnChartOptions, BoxSeriesData } from '@t/options';
 
-interface BarChartProps {
+interface ColumnChartProps {
   el: HTMLElement;
   options: ColumnChartOptions;
   data: BoxSeriesData;
 }
 
 export default class BarChart extends Chart<ColumnChartOptions> {
-  constructor({ el, options, data }: BarChartProps) {
+  constructor({ el, options, data }: ColumnChartProps) {
     super({
       el,
       options,
@@ -38,8 +36,6 @@ export default class BarChart extends Chart<ColumnChartOptions> {
   initialize() {
     super.initialize();
 
-    this.store.setModule(seriesData);
-    this.store.setModule(scale);
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);

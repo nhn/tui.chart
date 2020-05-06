@@ -1,34 +1,33 @@
 import BarChart from '@src/charts/barChart';
-import { budgetData, temperatureRangeData } from './data';
+import { budgetData, temperatureRangeData, budgetDataForStack } from './data';
+import { BarChartOptions } from '@t/options';
 
 export default {
   title: 'Bar'
 };
 
-function createChart(data) {
+const width = 800;
+const height = 500;
+const defaultOptions = {
+  chart: {
+    width,
+    height,
+    title: 'Monthly Revenue',
+    format: '1,000'
+  },
+  yAxis: {
+    title: 'Amount',
+    min: 0,
+    max: 9000,
+    suffix: '$'
+  },
+  xAxis: {
+    title: 'Month'
+  }
+};
+
+function createChart(data, options: BarChartOptions = defaultOptions) {
   const el = document.createElement('div');
-  const width = 800;
-  const height = 500;
-  const options = {
-    chart: {
-      width,
-      height,
-      title: 'Monthly Revenue',
-      format: '1,000'
-    },
-    yAxis: {
-      title: 'Month'
-    },
-    xAxis: {
-      title: 'Amount',
-      min: 0,
-      max: 5000,
-      suffix: '$'
-    },
-    series: {
-      showLabel: true
-    }
-  };
 
   el.style.outline = '1px solid red';
   el.style.width = `${width}px`;
@@ -51,6 +50,30 @@ export const basic = () => {
 
 export const range = () => {
   const { el } = createChart(temperatureRangeData);
+
+  return el;
+};
+
+export const normalStack = () => {
+  const { el } = createChart(budgetDataForStack, {
+    ...defaultOptions,
+    series: {
+      stack: true
+    }
+  });
+
+  return el;
+};
+
+export const percentStack = () => {
+  const { el } = createChart(budgetDataForStack, {
+    ...defaultOptions,
+    series: {
+      stack: {
+        type: 'percent'
+      }
+    }
+  });
 
   return el;
 };

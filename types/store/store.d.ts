@@ -7,9 +7,11 @@ import {
   BarChartOptions,
   ColumnChartOptions,
   BoxSeriesDataType,
-  ScatterSeriesType
+  ScatterSeriesType,
+  StackInfo
 } from '@t/options';
 import Store from '@src/store/store';
+import { StackDataType } from '@src/component/boxSeries';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -18,7 +20,7 @@ type ChartSeriesMap = {
   column: BoxSeriesType<BoxSeriesDataType>[];
 };
 
-type ChartType = keyof ChartSeriesMap;
+export type ChartType = keyof ChartSeriesMap;
 
 type Series = Partial<ChartSeriesMap>;
 
@@ -38,10 +40,11 @@ export interface StoreOptions {
   computed?: Record<string, ComputedFunc>;
   action?: Record<string, ActionFunc> & ThisType<Store<Options>>;
   observe?: Record<string, ObserveFunc> & ThisType<Store<Options>>;
+  initialize?: InitializeFunc;
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange';
+  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange' | 'initialize';
 }
 
 export interface SeriesTheme {
@@ -79,6 +82,10 @@ export interface ChartState<T extends Options> {
   d: number; // @TODO: check where to use
 }
 
+export interface Stack {
+  stack?: StackInfo;
+}
+
 export interface AxisData {
   labels: string[];
   tickCount: number;
@@ -95,7 +102,12 @@ export interface ValueEdge {
 
 export type SeriesData<K extends ChartType> = {
   data: ChartSeriesMap[K];
-} & SeriesGroup;
+} & SeriesGroup &
+  StackSeries;
+
+type StackSeries = Stack & {
+  stackData?: StackDataType;
+};
 
 export interface SeriesGroup {
   seriesCount: number;
@@ -113,6 +125,7 @@ type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
 type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
 export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
 type WatchFunc = (value: any) => void;
+type InitializeFunc = (state: ChartState<Options>, options: Options) => void;
 
 export type FunctionPropertyNames<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;

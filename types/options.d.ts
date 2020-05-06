@@ -92,10 +92,28 @@ export interface ScatterChartOptions extends BaseOptions {
   xAxis?: BaseAxisOptions;
 }
 
+type ConnectorLineType = 'dashed' | 'solid';
+
+interface Connector {
+  type: ConnectorLineType;
+  color?: string;
+  width?: number;
+}
+
+export type StackType = 'normal' | 'percent';
+
+interface StackInfo {
+  type: StackType;
+  connector?: boolean | Connector;
+}
+
+type StackOptionType = boolean | StackInfo;
+
 interface BoxSeriesOptions extends BaseSeriesOptions {
   barWidth?: number;
   diverging?: boolean;
   colorByPoint?: boolean;
+  stack?: StackOptionType;
 }
 
 export interface BarChartOptions extends BaseOptions {
@@ -109,7 +127,7 @@ export interface ColumnChartOptions extends BaseOptions {
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
   data: T[];
-  stack?: string;
+  stackGroup?: string;
 }
 
 export interface BoxSeriesData {

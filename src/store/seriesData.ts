@@ -1,4 +1,8 @@
-import { StoreModule } from '@t/store/store';
+import { StoreModule, ChartType } from '@t/store/store';
+import { pickProperty, isObject } from '@src/helpers/utils';
+import { getStackData } from '@src/helpers/series';
+import { StackInfo } from '@t/options';
+import { isBoxSeries, BoxSeriesTypes } from '@src/component/boxSeries';
 
 // seriesDataModel 이 했던것 일부 여기로
 const seriesData: StoreModule = {
@@ -6,18 +10,43 @@ const seriesData: StoreModule = {
   state: () => ({
     series: {}
   }),
+  initialize(state, options) {
+    const { series } = state;
+
+    Object.keys(state.series).forEach(seriesName => {
+      const stackOption = pickProperty(options, ['series', 'stack']);
+      const defaultStackOption = {
+        type: 'normal',
+        connector: false
+      } as StackInfo;
+
+      if (stackOption && isBoxSeries(seriesName as ChartType)) {
+        series[seriesName as BoxSeriesTypes]!.stack = isObject(stackOption)
+          ? { ...defaultStackOption, ...stackOption }
+          : defaultStackOption;
+      }
+    });
+  },
   action: {
     setSeriesData({ state }) {
-      const seriesRaw = state.series;
-      const disabledSeries = state.disabledSeries;
-
+      const { series, disabledSeries } = state;
       const newSeriesData = {};
-      Object.keys(seriesRaw).forEach(seriesName => {
+
+      Object.keys(series).forEach(seriesName => {
+        const seriesRawData = series[seriesName];
+        const seriesCount = seriesRawData.length;
+        const seriesGroupCount = seriesRawData[0].data.length;
+        const data = seriesRawData.filter(({ name }: any) => !disabledSeries.includes(name));
+
         newSeriesData[seriesName] = {
-          seriesCount: seriesRaw[seriesName].length,
-          seriesGroupCount: seriesRaw[seriesName][0].data.length,
-          data: seriesRaw[seriesName].filter(({ name }: any) => !disabledSeries.includes(name))
+          seriesCount,
+          seriesGroupCount,
+          data
         };
+
+        if (series[seriesName].stack) {
+          newSeriesData[seriesName].stackData = getStackData(seriesRawData);
+        }
       });
 
       this.extend(state.series, newSeriesData);

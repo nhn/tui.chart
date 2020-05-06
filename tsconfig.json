@@ -18,7 +18,8 @@
     "paths": {
       "@src/*": ["src/*"],
       "@t/*": ["types/*"]
-    }
+    },
+    "downlevelIteration": true
   },
   "include": ["src/**/*.js", "src/**/*.ts", "stories/**/*.ts", "stories/**/*.js", "tests/**/*.ts", "types/**/*"],
   "exclude": ["node_modules"]

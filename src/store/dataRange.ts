@@ -1,6 +1,7 @@
-import { ValueEdge, StoreModule } from '@t/store/store';
+import { ValueEdge, StoreModule, ChartType, SeriesData } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
-import seriesData from './seriesData';
+import { STACK_TYPES, isBoxSeries, BoxSeriesTypes, StackDataType } from '@src/component/boxSeries';
+import { StackType } from '@t/options';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -28,8 +29,12 @@ function getLimitSafely(baseValues: number[]): ValueEdge {
   return limit;
 }
 
-function isBoxSeries(series) {
-  return series.bar || series.column;
+function getStackDataValues(stackData: StackDataType, stackType: StackType) {
+  if (stackType === STACK_TYPES.PERCENT) {
+    return [0, 100];
+  }
+
+  return [0, ...stackData.map(({ sum }) => sum)];
 }
 
 const dataRange: StoreModule = {
@@ -40,7 +45,6 @@ const dataRange: StoreModule = {
   action: {
     setDataRange({ state }) {
       const { series, disabledSeries } = state;
-
       const newDataRange: Record<string, ValueEdge> = {};
 
       for (const seriesName in series) {
@@ -56,18 +60,25 @@ const dataRange: StoreModule = {
         const objectCoord = isObject(values[0]);
 
         if (tupleCoord) {
-          if (isBoxSeries(series)) {
-            values = values
-              .reduce((arr, value) => (Array.isArray(value) ? arr.concat(...value) : value), [])
-              .filter((value, index, arr) => arr.indexOf(value) === index);
+          if (isBoxSeries(seriesName as ChartType)) {
+            values = values.reduce(
+              (arr, value) => (Array.isArray(value) ? [...arr, ...value] : value),
+              []
+            );
           } else {
             values = values.map(value => value[1]);
           }
         } else if (objectCoord) {
           values = values.map(value => value.y);
+        } else if (series[seriesName].stack) {
+          const { stackData, stack } = series[seriesName as BoxSeriesTypes] as SeriesData<
+            BoxSeriesTypes
+          >;
+
+          values = getStackDataValues(stackData!, stack!.type);
         }
 
-        newDataRange[seriesName] = getLimitSafely(values);
+        newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);
       }
 
       this.extend(state.dataRange, newDataRange);
