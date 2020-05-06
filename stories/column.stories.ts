@@ -1,5 +1,10 @@
 import ColumnChart from '@src/charts/columnChart';
-import { budgetData, temperatureRangeData, budgetDataForStack } from './data';
+import {
+  budgetData,
+  temperatureRangeData,
+  budgetDataForStack,
+  budgetDataForGroupStack
+} from './data';
 import { ColumnChartOptions } from '@t/options';
 
 export default {
@@ -75,6 +80,17 @@ export const percentStack = () => {
       stack: {
         type: 'percent'
       }
+    }
+  });
+
+  return el;
+};
+
+export const groupStack = () => {
+  const { el } = createChart(budgetDataForGroupStack, {
+    ...defaultOptions,
+    series: {
+      stack: true
     }
   });
 

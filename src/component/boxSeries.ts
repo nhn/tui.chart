@@ -1,6 +1,14 @@
 import Component from './component';
 import { RectModel, BoxSeriesModel, ClipRectAreaModel } from '@t/components/series';
-import { ChartState, ChartType } from '@t/store/store';
+import {
+  ChartState,
+  ChartType,
+  StackData,
+  SeriesData,
+  StackGroupData,
+  StackDataType,
+  AxisData
+} from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -11,13 +19,18 @@ import {
   StackInfo
 } from '@t/options';
 import { first, last } from '@src/helpers/utils';
+import { TooltipData } from '@t/components/tooltip';
 
 type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
 
 type SizeKey = 'width' | 'height';
 
+type SeriesRaw = SeriesData<BoxType>;
+
+type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
+
 interface StackSeriesModelParamType {
-  rawData: StackDataType;
+  stackData: StackData;
   colors: string[];
   valueLabels: string[];
   tickDistance: number;
@@ -25,12 +38,10 @@ interface StackSeriesModelParamType {
   stackGroup?: { count: number; index: number };
 }
 
-export enum BoxSeriesTypes {
+export enum BoxType {
   BAR = 'bar',
   COLUMN = 'column'
 }
-
-export type StackDataType = Array<{ values: number[]; sum: number }>;
 
 export const STACK_TYPES = {
   NORMAL: 'normal',
@@ -46,8 +57,12 @@ function isRangeData(value): value is BoxRangeDataType {
   return Array.isArray(value);
 }
 
-export function isBoxSeries(seriesName: ChartType): seriesName is BoxSeriesTypes {
-  return Object.values(BoxSeriesTypes).indexOf(seriesName as BoxSeriesTypes) > -1;
+function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
+  return !Array.isArray(rawData);
+}
+
+export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
+  return Object.values(BoxType).indexOf(seriesName as BoxType) > -1;
 }
 
 export default class BoxSeries extends Component {
@@ -61,14 +76,14 @@ export default class BoxSeries extends Component {
 
   isBar = true;
 
-  name = BoxSeriesTypes.BAR;
+  name = BoxType.BAR;
 
   stack!: StackInfo;
 
-  initialize({ name }: { name: BoxSeriesTypes }) {
+  initialize({ name }: { name: BoxType }) {
     this.type = 'series';
     this.name = name;
-    this.isBar = name === BoxSeriesTypes.BAR;
+    this.isBar = name === BoxType.BAR;
     this.padding = this.isBar ? PADDING.TB : PADDING.LR;
   }
 
@@ -88,10 +103,14 @@ export default class BoxSeries extends Component {
 
     this.rect = layout.plot;
     this.stack = series[this.name]!.stack!;
+    const colors = theme.series.colors;
+    const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series[this.name]!, colors, axes);
 
-    const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series, theme, axes);
-
-    const tooltipData = this.createTooltipData(series, theme, categories);
+    const tooltipData: TooltipData[] = this.createTooltipData(
+      series[this.name]!,
+      colors,
+      categories
+    );
 
     const rectModel = this.renderRect(seriesModels);
 
@@ -103,9 +122,7 @@ export default class BoxSeries extends Component {
     }));
   }
 
-  createSeriesModel(series, theme, axes) {
-    const colors = theme.series.colors;
-
+  createSeriesModel(seriesRaw: SeriesRaw, colors: string[], axes: Record<string, AxisData>) {
     const valueAxis = this.isBar ? 'xAxis' : 'yAxis';
     const labelAxis = this.isBar ? 'yAxis' : 'xAxis';
     const anchorSizeKey = this.isBar ? 'height' : 'width';
@@ -114,7 +131,7 @@ export default class BoxSeries extends Component {
 
     if (this.stack) {
       return this.renderStackSeriesModel(
-        series[this.name]!,
+        seriesRaw,
         colors,
         axes[valueAxis].labels,
         tickDistance,
@@ -123,7 +140,7 @@ export default class BoxSeries extends Component {
     }
 
     return this.renderBoxSeriesModel(
-      series[this.name]!.data,
+      seriesRaw.data,
       colors,
       axes[valueAxis].labels,
       tickDistance,
@@ -132,7 +149,7 @@ export default class BoxSeries extends Component {
   }
 
   renderBoxSeriesModel(
-    seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
+    seriesRawData: SeriesRawData,
     colors: string[],
     valueLabels: string[],
     tickDistance: number,
@@ -173,15 +190,23 @@ export default class BoxSeries extends Component {
   }
 
   renderStackSeriesModel(
-    series,
+    seriesRaw: SeriesRaw,
     colors: string[],
     valueLabels: string[],
     tickDistance: number,
     offsetSizeKey: SizeKey
   ): BoxSeriesModel[] {
-    const rawData = series.stackData;
+    const stackData = seriesRaw.stackData!;
 
-    return this.getStackSeriesModel({ rawData, colors, valueLabels, tickDistance, offsetSizeKey });
+    return isGroupStack(stackData)
+      ? this.getStackGroupSeriesModel(
+          seriesRaw,
+          [...colors],
+          valueLabels,
+          tickDistance,
+          offsetSizeKey
+        )
+      : this.getStackSeriesModel({ stackData, colors, valueLabels, tickDistance, offsetSizeKey });
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -225,20 +250,11 @@ export default class BoxSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  createTooltipData(series, theme, categories) {
-    const stackRawData = series[this.name].stackData;
-    const seriesRawData = series[this.name].data;
-    const colors = theme.series.colors;
+  createTooltipData(seriesRaw: SeriesRaw, colors: string[], categories?: string[]): TooltipData[] {
+    const seriesRawData = seriesRaw.data;
 
     if (this.stack) {
-      return stackRawData.flatMap(({ values }, index) =>
-        values.map((value, seriesIndex) => ({
-          label: seriesRawData[seriesIndex].name,
-          color: colors[seriesIndex],
-          value,
-          category: categories[index]
-        }))
-      );
+      return this.getStackTooltip(seriesRaw, colors, categories);
     }
 
     return seriesRawData.flatMap(({ name, data }, index) =>
@@ -247,6 +263,45 @@ export default class BoxSeries extends Component {
         color: colors[index],
         value: this.tooltipValue(value),
         category: categories?.[dataIdx]
+      }))
+    );
+  }
+
+  getStackTooltip(seriesRaw: SeriesRaw, colors: string[], categories?: string[]): TooltipData[] {
+    const seriesRawData = seriesRaw.data;
+    const stackData = seriesRaw.stackData!;
+
+    return isGroupStack(stackData)
+      ? this.getGroupStackTooltipData(seriesRawData, stackData, colors, categories)
+      : this.getStackTooltipData(seriesRawData, stackData, colors, categories);
+  }
+
+  getGroupStackTooltipData(
+    seriesRawData: SeriesRawData,
+    stackData: StackGroupData,
+    colors: string[],
+    categories?: string[]
+  ) {
+    return Object.keys(stackData).flatMap((groupId, groupIdx) => {
+      const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
+      const groupColors = colors.splice(groupIdx, filtered.length);
+
+      return this.getStackTooltipData(seriesRawData, stackData[groupId], groupColors, categories);
+    });
+  }
+
+  getStackTooltipData(
+    seriesRawData: SeriesRawData,
+    stackData: StackData,
+    colors: string[],
+    categories?: string[]
+  ) {
+    return stackData.flatMap(({ values }, index) =>
+      values.map((value, seriesIndex) => ({
+        label: seriesRawData[seriesIndex].name,
+        color: colors[seriesIndex],
+        value,
+        category: categories?.[index]
       }))
     );
   }
@@ -268,7 +323,7 @@ export default class BoxSeries extends Component {
   }
 
   getStackSeriesModel({
-    rawData,
+    stackData,
     colors,
     valueLabels,
     tickDistance,
@@ -283,7 +338,7 @@ export default class BoxSeries extends Component {
     const columnWidth = (tickDistance - this.padding * 2) / stackGroup.count;
     const stackType: StackType = this.stack.type;
 
-    rawData.forEach(({ values, sum }, index) => {
+    stackData.forEach(({ values, sum }, index) => {
       const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroup.index;
 
       values.forEach((value, seriesIndex) => {
@@ -311,6 +366,40 @@ export default class BoxSeries extends Component {
           y: this.isBar ? seriesPos : offsetAxisLength - startPosition
         });
       });
+    });
+
+    return seriesModels;
+  }
+
+  getStackGroupSeriesModel(
+    seriesRaw: SeriesRaw,
+    colors: string[],
+    valueLabels: string[],
+    tickDistance: number,
+    offsetSizeKey: SizeKey
+  ) {
+    const stackGroupData = seriesRaw.stackData as StackGroupData;
+    const seriesRawData = seriesRaw.data;
+    const stackGroupIds = Object.keys(stackGroupData);
+    let seriesModels: BoxSeriesModel[] = [];
+
+    stackGroupIds.forEach((groupId, index) => {
+      const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
+
+      seriesModels = [
+        ...seriesModels,
+        ...this.getStackSeriesModel({
+          stackData: stackGroupData[groupId],
+          colors: colors.splice(index, filtered.length),
+          valueLabels,
+          tickDistance,
+          offsetSizeKey,
+          stackGroup: {
+            count: stackGroupIds.length,
+            index
+          }
+        })
+      ];
     });
 
     return seriesModels;

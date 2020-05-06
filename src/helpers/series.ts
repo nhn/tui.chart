@@ -1,10 +1,10 @@
-import { StackDataType } from '@src/component/boxSeries';
+import { StackData, StackGroupData } from '@t/store/store';
 
-export function getStackData(seriesRawData): StackDataType {
+export function getStackData(seriesRawData): StackData {
   const seriesCount = seriesRawData.length;
   const groupCountLengths = seriesRawData.map(({ data }) => data.length);
   const seriesGroupCount = Math.max(...groupCountLengths);
-  const stackData: StackDataType = [];
+  const stackData: StackData = [];
 
   for (let i = 0; i < seriesGroupCount; i += 1) {
     const stackValues: number[] = [];
@@ -18,6 +18,23 @@ export function getStackData(seriesRawData): StackDataType {
       sum: stackValues.reduce((a, b) => a + b, 0)
     };
   }
+
+  return stackData;
+}
+
+export function hasStackGrouped(seriesRawData) {
+  return seriesRawData.some(rawData => rawData.hasOwnProperty('stackGroup'));
+}
+
+export function getStackGroupData(seriesRawData): StackGroupData {
+  const stackData = {};
+  const stackGroupIds = [...new Set(seriesRawData.map(({ stackGroup }) => stackGroup))];
+
+  stackGroupIds.forEach(groupId => {
+    const filtered = seriesRawData.filter(({ stackGroup }) => groupId === stackGroup);
+
+    stackData[groupId as string] = getStackData(filtered);
+  });
 
   return stackData;
 }
