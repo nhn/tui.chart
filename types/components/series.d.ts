@@ -31,6 +31,17 @@ export type LinePointsModel = {
   points: BezierPoint[];
 };
 
+// @TODO: 합치자
+export type AreaPointsModel = {
+  color: string;
+  lineWidth: number;
+  points: BezierPoint[];
+  BottomYPoint: number;
+  type: 'areaPoints';
+  fillColor: string;
+  seriesIndex: number;
+};
+
 export type PathRectModel = {
   type: 'pathRect';
   radius?: number;

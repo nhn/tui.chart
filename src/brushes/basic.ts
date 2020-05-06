@@ -3,7 +3,8 @@ import {
   LinePointsModel,
   PathRectModel,
   CircleModel,
-  CircleStyle
+  CircleStyle,
+  AreaPointsModel
 } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
 
@@ -54,6 +55,45 @@ export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LineP
       ctx.lineTo(point.x, point.y);
     }
   });
+
+  ctx.stroke();
+  ctx.closePath();
+}
+
+export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaPointsModel) {
+  const { color, lineWidth, points, BottomYPoint, fillColor } = areaPointsModel;
+
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+
+  const startPoint = points[0];
+  const endPoint = points[points.length - 1];
+
+  points.forEach((point, idx) => {
+    if (idx === 0) {
+      ctx.moveTo(point.x, point.y);
+
+      return;
+    }
+
+    if (point.controlPoint) {
+      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
+      const { controlPoint, x, y } = point;
+
+      ctx.bezierCurveTo(prevX, prevY, controlPoint.prev.x, controlPoint.prev.y, x, y);
+    } else {
+      ctx.lineTo(point.x, point.y);
+    }
+  });
+
+  ctx.lineTo(endPoint.x, BottomYPoint);
+  ctx.lineTo(startPoint.x, BottomYPoint); // @TODO: x축의 y 위치 가져오기
+  ctx.lineTo(startPoint.x, startPoint.y);
+
+  ctx.fillStyle = fillColor;
+  ctx.fill();
 
   ctx.stroke();
   ctx.closePath();

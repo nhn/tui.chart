@@ -8,7 +8,9 @@ import {
   ColumnChartOptions,
   BoxSeriesDataType,
   ScatterSeriesType,
-  StackInfo
+  StackInfo,
+  AreaSeriesType,
+  AreaChartOptions
 } from '@t/options';
 import Store from '@src/store/store';
 import { StackDataType } from '@src/component/boxSeries';
@@ -18,6 +20,7 @@ type ChartSeriesMap = {
   scatter: ScatterSeriesType[];
   bar: BoxSeriesType<BoxSeriesDataType>[];
   column: BoxSeriesType<BoxSeriesDataType>[];
+  area: AreaSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -30,6 +33,7 @@ type ChartOptionsMap = {
   line: LineChartOptions;
   bar: BarChartOptions;
   column: ColumnChartOptions;
+  area: AreaChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;

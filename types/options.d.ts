@@ -1,10 +1,11 @@
 import { Series } from '@t/store/store';
 
-export type BoxRangeDataType = [number, number];
-export type BoxSeriesDataType = number | BoxRangeDataType;
+export type RangeDataType = [number, number];
+export type BoxSeriesDataType = number | RangeDataType;
 type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
 type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
 export type CoordinateDataType = Point | [number, number] | [string, number];
+export type AreaSeriesDataType = number[] | RangeDataType[];
 
 export interface Point {
   x: number;
@@ -24,6 +25,17 @@ export interface Size {
 }
 
 export type Rect = Point & Size;
+
+// @TODO: area box 타입과 겹치는 부분 통일하기
+export interface AreaSeriesType {
+  name: string;
+  data: AreaSeriesDataType;
+}
+
+export interface AreaSeriesData {
+  categories: string[];
+  series: AreaSeriesType[];
+}
 
 export interface LineSeriesType {
   name: string;
