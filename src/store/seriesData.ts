@@ -1,7 +1,8 @@
-import { StoreModule } from '@t/store/store';
+import { StoreModule, ChartType } from '@t/store/store';
 import { pickProperty, isObject } from '@src/helpers/utils';
 import { getStackData } from '@src/helpers/series';
 import { StackInfo } from '@t/options';
+import { isBoxSeries, BoxSeriesTypes } from '@src/component/boxSeries';
 
 // seriesDataModel 이 했던것 일부 여기로
 const seriesData: StoreModule = {
@@ -18,10 +19,9 @@ const seriesData: StoreModule = {
         type: 'normal',
         connector: false
       } as StackInfo;
-      const isBox = ['column', 'bar'].indexOf(seriesName) > -1;
 
-      if (stackOption && isBox) {
-        series[seriesName].stack = isObject(stackOption)
+      if (stackOption && isBoxSeries(seriesName as ChartType)) {
+        series[seriesName as BoxSeriesTypes]!.stack = isObject(stackOption)
           ? { ...defaultStackOption, ...stackOption }
           : defaultStackOption;
       }

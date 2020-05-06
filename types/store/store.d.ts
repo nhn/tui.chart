@@ -11,6 +11,7 @@ import {
   StackInfo
 } from '@t/options';
 import Store from '@src/store/store';
+import { StackDataType } from '@src/component/boxSeries';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -19,7 +20,7 @@ type ChartSeriesMap = {
   column: BoxSeriesType<BoxSeriesDataType>[];
 };
 
-type ChartType = keyof ChartSeriesMap;
+export type ChartType = keyof ChartSeriesMap;
 
 type Series = Partial<ChartSeriesMap>;
 
@@ -56,8 +57,7 @@ export type Theme = {
 
 type SeriesState = {
   [key in ChartType]?: SeriesData<key>; // @TODO: Series 와 통합 필요. 중복되는 느낌
-} &
-  Stack;
+};
 
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
@@ -103,7 +103,11 @@ export interface ValueEdge {
 export type SeriesData<K extends ChartType> = {
   data: ChartSeriesMap[K];
 } & SeriesGroup &
-  Stack;
+  StackSeries;
+
+type StackSeries = Stack & {
+  stackData?: StackDataType;
+};
 
 export interface SeriesGroup {
   seriesCount: number;

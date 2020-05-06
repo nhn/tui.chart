@@ -1,6 +1,6 @@
 import Component from './component';
 import { RectModel, BoxSeriesModel, ClipRectAreaModel } from '@t/components/series';
-import { ChartState } from '@t/store/store';
+import { ChartState, ChartType } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -25,7 +25,7 @@ interface StackSeriesModelParamType {
   stackGroup?: { count: number; index: number };
 }
 
-enum SeriesType {
+export enum BoxSeriesTypes {
   BAR = 'bar',
   COLUMN = 'column'
 }
@@ -46,6 +46,10 @@ function isRangeData(value): value is BoxRangeDataType {
   return Array.isArray(value);
 }
 
+export function isBoxSeries(seriesName: ChartType): seriesName is BoxSeriesTypes {
+  return Object.values(BoxSeriesTypes).indexOf(seriesName as BoxSeriesTypes) > -1;
+}
+
 export default class BoxSeries extends Component {
   models!: DrawModels[];
 
@@ -57,14 +61,14 @@ export default class BoxSeries extends Component {
 
   isBar = true;
 
-  name = SeriesType.BAR;
+  name = BoxSeriesTypes.BAR;
 
   stack!: StackInfo;
 
-  initialize({ name }: { name: SeriesType }) {
+  initialize({ name }: { name: BoxSeriesTypes }) {
     this.type = 'series';
     this.name = name;
-    this.isBar = name === SeriesType.BAR;
+    this.isBar = name === BoxSeriesTypes.BAR;
     this.padding = this.isBar ? PADDING.TB : PADDING.LR;
   }
 
@@ -227,26 +231,24 @@ export default class BoxSeries extends Component {
     const colors = theme.series.colors;
 
     if (this.stack) {
-      return stackRawData.flatMap(({ values }, index) => {
-        return values.map((value, seriesIndex) => {
-          return {
-            label: seriesRawData[seriesIndex].name,
-            color: colors[seriesIndex],
-            value,
-            category: categories[index]
-          };
-        });
-      });
+      return stackRawData.flatMap(({ values }, index) =>
+        values.map((value, seriesIndex) => ({
+          label: seriesRawData[seriesIndex].name,
+          color: colors[seriesIndex],
+          value,
+          category: categories[index]
+        }))
+      );
     }
 
-    return seriesRawData.flatMap(({ name, data }, index) => {
-      return data.map((value, dataIdx) => ({
+    return seriesRawData.flatMap(({ name, data }, index) =>
+      data.map((value, dataIdx) => ({
         label: name,
         color: colors[index],
         value: this.tooltipValue(value),
         category: categories?.[dataIdx]
-      }));
-    });
+      }))
+    );
   }
 
   tooltipValue(value) {

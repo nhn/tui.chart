@@ -1,6 +1,6 @@
-import { ValueEdge, StoreModule } from '@t/store/store';
+import { ValueEdge, StoreModule, ChartType, SeriesData } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
-import { STACK_TYPES } from '@src/component/boxSeries';
+import { STACK_TYPES, isBoxSeries, BoxSeriesTypes } from '@src/component/boxSeries';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -36,10 +36,6 @@ function getStackDataValues(stackData, stackType) {
   return [0, ...stackData.map(({ sum }) => sum)];
 }
 
-function isBoxSeries(series) {
-  return series.bar || series.column;
-}
-
 const dataRange: StoreModule = {
   name: 'dataRange',
   state: () => ({
@@ -63,7 +59,7 @@ const dataRange: StoreModule = {
         const objectCoord = isObject(values[0]);
 
         if (tupleCoord) {
-          if (isBoxSeries(series)) {
+          if (isBoxSeries(seriesName as ChartType)) {
             values = values.reduce(
               (arr, value) => (Array.isArray(value) ? [...arr, ...value] : value),
               []
@@ -74,7 +70,7 @@ const dataRange: StoreModule = {
         } else if (objectCoord) {
           values = values.map(value => value.y);
         } else if (series[seriesName].stack) {
-          const { stackData } = series[seriesName];
+          const { stackData } = series[seriesName as BoxSeriesTypes] as SeriesData<BoxSeriesTypes>;
 
           values = getStackDataValues(stackData, series[seriesName].stack.type);
         }
