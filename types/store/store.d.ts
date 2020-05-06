@@ -125,7 +125,7 @@ type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
 type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
 export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
 type WatchFunc = (value: any) => void;
-type InitializeFunc = (options: Options, state: ChartState<Options>) => void;
+type InitializeFunc = (state: ChartState<Options>, options: Options) => void;
 
 export type FunctionPropertyNames<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;

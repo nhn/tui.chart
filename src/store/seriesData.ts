@@ -10,7 +10,7 @@ const seriesData: StoreModule = {
   state: () => ({
     series: {}
   }),
-  initialize(options, state) {
+  initialize(state, options) {
     const { series } = state;
 
     Object.keys(state.series).forEach(seriesName => {

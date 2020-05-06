@@ -211,7 +211,7 @@ export default class Store<T extends Options> {
     }
 
     if (param.initialize) {
-      param.initialize(this.options, this.state);
+      param.initialize(this.state, this.options);
     }
 
     if (param.state) {
