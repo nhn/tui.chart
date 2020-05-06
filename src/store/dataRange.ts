@@ -1,6 +1,7 @@
 import { ValueEdge, StoreModule, ChartType, SeriesData } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
-import { STACK_TYPES, isBoxSeries, BoxSeriesTypes } from '@src/component/boxSeries';
+import { STACK_TYPES, isBoxSeries, BoxSeriesTypes, StackDataType } from '@src/component/boxSeries';
+import { StackType } from '@t/options';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -28,7 +29,7 @@ function getLimitSafely(baseValues: number[]): ValueEdge {
   return limit;
 }
 
-function getStackDataValues(stackData, stackType) {
+function getStackDataValues(stackData: StackDataType, stackType: StackType) {
   if (stackType === STACK_TYPES.PERCENT) {
     return [0, 100];
   }
@@ -70,9 +71,11 @@ const dataRange: StoreModule = {
         } else if (objectCoord) {
           values = values.map(value => value.y);
         } else if (series[seriesName].stack) {
-          const { stackData } = series[seriesName as BoxSeriesTypes] as SeriesData<BoxSeriesTypes>;
+          const { stackData, stack } = series[seriesName as BoxSeriesTypes] as SeriesData<
+            BoxSeriesTypes
+          >;
 
-          values = getStackDataValues(stackData, series[seriesName].stack.type);
+          values = getStackDataValues(stackData!, stack!.type);
         }
 
         newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);
