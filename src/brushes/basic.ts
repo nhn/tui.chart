@@ -9,6 +9,7 @@ import {
 import { makeStyleObj } from '@src/helpers/style';
 
 export type CircleStyleName = 'default' | 'hover';
+type PointsModel = LinePointsModel | AreaPointsModel;
 
 const circleStyle = {
   default: {
@@ -23,6 +24,37 @@ const circleStyle = {
   }
 };
 
+export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel, close = true) {
+  const { color, lineWidth, points } = pointsModel;
+
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = color;
+  ctx.beginPath();
+
+  points.forEach((point, idx) => {
+    if (idx === 0) {
+      ctx.moveTo(point.x, point.y);
+
+      return;
+    }
+
+    if (point.controlPoint) {
+      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
+      const { controlPoint, x, y } = point;
+
+      ctx.bezierCurveTo(prevX, prevY, controlPoint.prev.x, controlPoint.prev.y, x, y);
+    } else {
+      ctx.lineTo(point.x, point.y);
+    }
+  });
+
+  ctx.stroke();
+  if (close) {
+    ctx.closePath();
+  }
+}
+
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
 
@@ -31,71 +63,23 @@ export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: C
   ctx.clip();
 }
 
-export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LinePointsModel) {
-  const { color, lineWidth, points } = linePointsModel;
-
-  ctx.lineWidth = lineWidth;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = color;
-  ctx.beginPath();
-
-  points.forEach((point, idx) => {
-    if (idx === 0) {
-      ctx.moveTo(point.x, point.y);
-
-      return;
-    }
-
-    if (point.controlPoint) {
-      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
-      const { controlPoint, x, y } = point;
-
-      ctx.bezierCurveTo(prevX, prevY, controlPoint.prev.x, controlPoint.prev.y, x, y);
-    } else {
-      ctx.lineTo(point.x, point.y);
-    }
-  });
-
-  ctx.stroke();
-  ctx.closePath();
-}
-
 export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaPointsModel) {
-  const { color, lineWidth, points, BottomYPoint, fillColor } = areaPointsModel;
+  const { points, bottomYPoint, fillColor } = areaPointsModel;
 
-  ctx.lineWidth = lineWidth;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = color;
   ctx.beginPath();
 
   const startPoint = points[0];
   const endPoint = points[points.length - 1];
 
-  points.forEach((point, idx) => {
-    if (idx === 0) {
-      ctx.moveTo(point.x, point.y);
+  linePoints(ctx, areaPointsModel, false);
 
-      return;
-    }
-
-    if (point.controlPoint) {
-      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
-      const { controlPoint, x, y } = point;
-
-      ctx.bezierCurveTo(prevX, prevY, controlPoint.prev.x, controlPoint.prev.y, x, y);
-    } else {
-      ctx.lineTo(point.x, point.y);
-    }
-  });
-
-  ctx.lineTo(endPoint.x, BottomYPoint);
-  ctx.lineTo(startPoint.x, BottomYPoint); // @TODO: x축의 y 위치 가져오기
+  ctx.lineTo(endPoint.x, bottomYPoint);
+  ctx.lineTo(startPoint.x, bottomYPoint);
   ctx.lineTo(startPoint.x, startPoint.y);
 
   ctx.fillStyle = fillColor;
   ctx.fill();
 
-  ctx.stroke();
   ctx.closePath();
 }
 

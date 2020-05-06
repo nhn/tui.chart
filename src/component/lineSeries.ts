@@ -54,7 +54,7 @@ export default class LineSeries extends Component {
       theme: theme.series
     };
 
-    const lineSeriesModel = this.renderLinePointsModel(
+    const lineSeriesModel = this.makeLinePointsModel(
       series.line.data,
       yAxis.limit,
       tickDistance,
@@ -62,7 +62,7 @@ export default class LineSeries extends Component {
       categories
     );
 
-    const seriesCircleModel = this.renderCircle(lineSeriesModel);
+    const seriesCircleModel = this.makeCircleModel(lineSeriesModel);
 
     const tooltipDataArr = series.line.data.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
@@ -94,7 +94,7 @@ export default class LineSeries extends Component {
     };
   }
 
-  renderLinePointsModel(
+  makeLinePointsModel(
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
@@ -124,21 +124,22 @@ export default class LineSeries extends Component {
         setSplineControlPoint(points);
       }
 
-      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points };
+      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points, seriesIndex };
     });
   }
 
-  renderCircle(lineSeriesModel: LinePointsModel[]): CircleModel[] {
-    return lineSeriesModel.flatMap(({ points, color }) => {
-      return points.map(({ x, y }) => ({
+  makeCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
+    return lineSeriesModel.flatMap(({ points, color }, seriesIndex) =>
+      points.map(({ x, y }) => ({
         type: 'circle',
         x,
         y,
         radius: 7,
         color,
-        style: ['default', 'hover']
-      }));
-    });
+        style: ['default', 'hover'],
+        seriesIndex
+      }))
+    );
   }
 
   onMousemove({ responders }: { responders: CircleModel[] }) {

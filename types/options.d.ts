@@ -26,7 +26,6 @@ export interface Size {
 
 export type Rect = Point & Size;
 
-// @TODO: area box 타입과 겹치는 부분 통일하기
 export interface AreaSeriesType {
   name: string;
   data: AreaSeriesDataType;
