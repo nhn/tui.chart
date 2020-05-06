@@ -36,7 +36,7 @@ export default class AreaSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'lineSeries';
+    this.name = 'areaSeries';
   }
 
   update(delta: number) {
@@ -169,12 +169,14 @@ export default class AreaSeries extends Component {
     );
   }
 
+  isAreaPointsModel(model: DrawModels): model is AreaPointsModel {
+    return model.type === 'areaPoints';
+  }
+
   applyAreaOpacity(opacity: number) {
-    this.models.forEach(model => {
-      if (model.type === 'areaPoints') {
-        model.fillColor = getRGBA(model.fillColor, opacity);
-        model.color = getRGBA(model.color, opacity);
-      }
+    this.models.filter(this.isAreaPointsModel).forEach(model => {
+      model.fillColor = getRGBA(model.fillColor, opacity);
+      model.color = getRGBA(model.color, opacity);
     });
   }
 
@@ -197,11 +199,7 @@ export default class AreaSeries extends Component {
     if (responders.length) {
       this.applyAreaOpacity(0.5);
       responders.forEach(responder => {
-        const seriesModel = this.linePointsModel.find(
-          model => model.seriesIndex === responder.seriesIndex
-        )!;
-
-        this.models.push(seriesModel);
+        this.models.push(this.linePointsModel[responder.seriesIndex]);
         this.models.push(responder);
       });
     }
