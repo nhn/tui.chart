@@ -1,6 +1,8 @@
 import Store from '@src/store/store';
 import layout from '@src/store/layout';
 import dataRange from '@src/store/dataRange';
+import seriesData from '@src/store/seriesData';
+import scale from '@src/store/scale';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
@@ -102,7 +104,9 @@ export default class Chart<T extends Options> {
 
   initialize() {
     this.store.setModule(layout);
+    this.store.setModule(seriesData);
     this.store.setModule(dataRange);
+    this.store.setModule(scale);
   }
 
   draw() {

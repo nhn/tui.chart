@@ -1,9 +1,5 @@
 import Chart from './chart';
 
-import layout from '@src/store/layout';
-import dataRange from '@src/store/dataRange';
-import seriesData from '@src/store/seriesData';
-import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 
 import Axis from '@src/component/axis';
@@ -38,12 +34,8 @@ export default class BarChart extends Chart<ColumnChartOptions> {
   }
 
   initialize() {
-    this.store.setModule(layout);
+    super.initialize();
 
-    this.store.setModule(seriesData);
-    this.store.setModule(dataRange);
-
-    this.store.setModule(scale);
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);
