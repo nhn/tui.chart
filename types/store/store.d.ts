@@ -79,7 +79,6 @@ export interface ChartState<T extends Options> {
   theme: Theme;
   options: T;
   categories?: string[];
-  d: number; // @TODO: check where to use
 }
 
 export interface Stack {
