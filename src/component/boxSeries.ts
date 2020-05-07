@@ -25,8 +25,6 @@ type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
 
 type SizeKey = 'width' | 'height';
 
-type SeriesRaw = SeriesData<BoxType>;
-
 type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
 interface StackSeriesModelParamType {
@@ -105,11 +103,11 @@ export default class BoxSeries extends Component {
     this.stack = series[this.name]!.stack!;
 
     const { colors } = theme.series;
-    const seriesRaw = series[this.name]!;
+    const seriesData = series[this.name]!;
 
-    const seriesModels: BoxSeriesModel[] = this.renderSeriesModel(seriesRaw, colors, axes);
+    const seriesModels: BoxSeriesModel[] = this.renderSeriesModel(seriesData, colors, axes);
 
-    const tooltipData: TooltipData[] = this.makeTooltipData(seriesRaw, colors, categories);
+    const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
 
     const rectModel = this.renderRect(seriesModels);
 
@@ -122,7 +120,7 @@ export default class BoxSeries extends Component {
   }
 
   private renderSeriesModel(
-    seriesRaw: SeriesRaw,
+    seriesData: SeriesData<BoxType>,
     colors: string[],
     axes: Record<string, AxisData>
   ) {
@@ -134,7 +132,7 @@ export default class BoxSeries extends Component {
 
     if (this.stack) {
       return this.renderStackSeriesModel(
-        seriesRaw,
+        seriesData,
         colors,
         axes[valueAxis].labels,
         tickDistance,
@@ -143,7 +141,7 @@ export default class BoxSeries extends Component {
     }
 
     return this.renderBoxSeriesModel(
-      seriesRaw.data,
+      seriesData.data,
       colors,
       axes[valueAxis].labels,
       tickDistance,
@@ -193,17 +191,17 @@ export default class BoxSeries extends Component {
   }
 
   private renderStackSeriesModel(
-    seriesRaw: SeriesRaw,
+    seriesData: SeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
     tickDistance: number,
     offsetSizeKey: SizeKey
   ): BoxSeriesModel[] {
-    const stackData = seriesRaw.stackData!;
+    const stackData = seriesData.stackData!;
 
     return isGroupStack(stackData)
       ? this.makeStackGroupSeriesModel(
-          seriesRaw,
+          seriesData,
           [...colors],
           valueLabels,
           tickDistance,
@@ -254,14 +252,14 @@ export default class BoxSeries extends Component {
   }
 
   private makeTooltipData(
-    seriesRaw: SeriesRaw,
+    seriesData: SeriesData<BoxType>,
     colors: string[],
     categories?: string[]
   ): TooltipData[] {
-    const seriesRawData = seriesRaw.data;
+    const seriesRawData = seriesData.data;
 
     if (this.stack) {
-      return this.getStackTooltip(seriesRaw, colors, categories);
+      return this.getStackTooltip(seriesData, colors, categories);
     }
 
     return seriesRawData.flatMap(({ name, data }, index) =>
@@ -275,7 +273,7 @@ export default class BoxSeries extends Component {
   }
 
   private getStackTooltip(
-    seriesRaw: SeriesRaw,
+    seriesRaw: SeriesData<BoxType>,
     colors: string[],
     categories?: string[]
   ): TooltipData[] {
@@ -383,7 +381,7 @@ export default class BoxSeries extends Component {
   }
 
   makeStackGroupSeriesModel(
-    seriesRaw: SeriesRaw,
+    seriesRaw: SeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
     tickDistance: number,
