@@ -54,7 +54,7 @@ export default class LineSeries extends Component {
       theme: theme.series
     };
 
-    const lineSeriesModel = this.makeLinePointsModel(
+    const lineSeriesModel = this.renderLinePointsModel(
       series.line.data,
       yAxis.limit,
       tickDistance,
@@ -62,7 +62,7 @@ export default class LineSeries extends Component {
       categories
     );
 
-    const seriesCircleModel = this.makeCircleModel(lineSeriesModel);
+    const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
 
     const tooltipDataArr = series.line.data.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
@@ -94,7 +94,7 @@ export default class LineSeries extends Component {
     };
   }
 
-  makeLinePointsModel(
+  renderLinePointsModel(
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
@@ -128,7 +128,7 @@ export default class LineSeries extends Component {
     });
   }
 
-  makeCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
+  renderCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
     return lineSeriesModel.flatMap(({ points, color }, seriesIndex) =>
       points.map(({ x, y }) => ({
         type: 'circle',

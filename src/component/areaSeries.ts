@@ -66,7 +66,7 @@ export default class AreaSeries extends Component {
 
     const areaData = series.area.data;
 
-    this.linePointsModel = this.makeLinePointsModel(
+    this.linePointsModel = this.renderLinePointsModel(
       areaData,
       yAxis.limit,
       tickDistance,
@@ -74,9 +74,9 @@ export default class AreaSeries extends Component {
       categories
     );
 
-    const areaSeriesModel = this.makeAreaPointsModel(this.linePointsModel, bottomYPoint);
-    const seriesCircleModel = this.makeCircleModel(this.linePointsModel);
-    const tooltipDataArr = this.makeTooltipData(areaData, renderOptions, categories);
+    const areaSeriesModel = this.renderAreaPointsModel(this.linePointsModel, bottomYPoint);
+    const seriesCircleModel = this.renderCircleModel(this.linePointsModel);
+    const tooltipDataArr = this.renderTooltipData(areaData, renderOptions, categories);
 
     this.models = [this.renderClipRectAreaModel(), ...areaSeriesModel];
 
@@ -96,7 +96,7 @@ export default class AreaSeries extends Component {
     };
   }
 
-  makeTooltipData(areaData: AreaSeriesType[], { theme }: RenderOptions, categories: string[]) {
+  renderTooltipData(areaData: AreaSeriesType[], { theme }: RenderOptions, categories: string[]) {
     return areaData.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
 
@@ -113,7 +113,7 @@ export default class AreaSeries extends Component {
     });
   }
 
-  makeLinePointsModel(
+  renderLinePointsModel(
     seriesRawData: AreaSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
@@ -151,7 +151,7 @@ export default class AreaSeries extends Component {
     });
   }
 
-  makeAreaPointsModel(linePointsModel: LinePointsModel[], bottomYPoint: number): AreaPointsModel[] {
+  renderAreaPointsModel(linePointsModel: LinePointsModel[], bottomYPoint: number): AreaPointsModel[] {
     return linePointsModel.map(m => ({
       ...m,
       type: 'areaPoints',
@@ -162,7 +162,7 @@ export default class AreaSeries extends Component {
     }));
   }
 
-  makeCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
+  renderCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
     return lineSeriesModel.flatMap(({ points, color, seriesIndex }) =>
       points.map(({ x, y }) => ({
         type: 'circle',

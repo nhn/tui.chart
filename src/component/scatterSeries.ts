@@ -57,7 +57,7 @@ export default class ScatterSeries extends Component {
       categories
     );
 
-    const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
+    const tooltipModel = this.renderTooltipModel(scatterData, categories, renderOptions);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModel];
     this.responders = seriesModel.map((m, index) => ({
@@ -71,7 +71,7 @@ export default class ScatterSeries extends Component {
     }));
   }
 
-  makeTooltipModel(
+  renderTooltipModel(
     scatterData: ScatterSeriesType[],
     categories: string[],
     renderOptions: RenderOptions
