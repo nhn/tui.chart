@@ -3,11 +3,13 @@ import {
   LinePointsModel,
   PathRectModel,
   CircleModel,
-  CircleStyle
+  CircleStyle,
+  AreaPointsModel
 } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
 
 export type CircleStyleName = 'default' | 'hover';
+type PointsModel = LinePointsModel | AreaPointsModel;
 
 const circleStyle = {
   default: {
@@ -22,16 +24,8 @@ const circleStyle = {
   }
 };
 
-export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
-  const { x, y, width, height } = clipRectAreaModel;
-
-  ctx.beginPath();
-  ctx.rect(x, y, width, height);
-  ctx.clip();
-}
-
-export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LinePointsModel) {
-  const { color, lineWidth, points } = linePointsModel;
+export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel, close = true) {
+  const { color, lineWidth, points } = pointsModel;
 
   ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';
@@ -56,6 +50,36 @@ export function linePoints(ctx: CanvasRenderingContext2D, linePointsModel: LineP
   });
 
   ctx.stroke();
+  if (close) {
+    ctx.closePath();
+  }
+}
+
+export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
+  const { x, y, width, height } = clipRectAreaModel;
+
+  ctx.beginPath();
+  ctx.rect(x, y, width, height);
+  ctx.clip();
+}
+
+export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaPointsModel) {
+  const { points, bottomYPoint, fillColor } = areaPointsModel;
+
+  ctx.beginPath();
+
+  const startPoint = points[0];
+  const endPoint = points[points.length - 1];
+
+  linePoints(ctx, areaPointsModel, false);
+
+  ctx.lineTo(endPoint.x, bottomYPoint);
+  ctx.lineTo(startPoint.x, bottomYPoint);
+  ctx.lineTo(startPoint.x, startPoint.y);
+
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+
   ctx.closePath();
 }
 

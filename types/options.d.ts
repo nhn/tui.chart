@@ -1,10 +1,11 @@
 import { Series } from '@t/store/store';
 
-export type BoxRangeDataType = [number, number];
-export type BoxSeriesDataType = number | BoxRangeDataType;
+export type RangeDataType = [number, number];
+export type BoxSeriesDataType = number | RangeDataType;
 type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
 type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
 export type CoordinateDataType = Point | [number, number] | [string, number];
+export type AreaSeriesDataType = number[] | RangeDataType[];
 
 export interface Point {
   x: number;
@@ -24,6 +25,16 @@ export interface Size {
 }
 
 export type Rect = Point & Size;
+
+export interface AreaSeriesType {
+  name: string;
+  data: AreaSeriesDataType;
+}
+
+export interface AreaSeriesData {
+  categories: string[];
+  series: AreaSeriesType[];
+}
 
 export interface LineSeriesType {
   name: string;
@@ -61,10 +72,14 @@ type BaseAxisOptions = {
   title?: string | TitleOptions;
 };
 
+interface BaseXAxisOptions extends BaseAxisOptions {
+  pointOnColumn?: boolean;
+}
+
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
-  xAxis?: BaseAxisOptions;
+  xAxis?: BaseXAxisOptions;
   yAxis?: BaseAxisOptions;
 }
 
@@ -73,23 +88,24 @@ interface BaseSeriesOptions {
   allowSelect?: boolean;
 }
 
-interface LineXAxisOptions extends BaseAxisOptions {
-  pointOnColumn?: boolean;
-}
-
-interface LineSeriesOptions extends BaseSeriesOptions {
+interface LineTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
 }
 
+export interface AreaChartOptions extends BaseOptions {
+  series?: LineTypeSeriesOptions;
+  xAxis?: BaseXAxisOptions;
+}
+
 export interface LineChartOptions extends BaseOptions {
-  series?: LineSeriesOptions;
-  xAxis?: LineXAxisOptions;
+  series?: LineTypeSeriesOptions;
+  xAxis?: BaseXAxisOptions;
 }
 
 export interface ScatterChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
-  xAxis?: BaseAxisOptions;
+  xAxis?: BaseXAxisOptions;
 }
 
 type ConnectorLineType = 'dashed' | 'solid';

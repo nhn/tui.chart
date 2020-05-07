@@ -25,7 +25,7 @@ export default class Axis extends Component {
 
   drawModels!: AxisModels;
 
-  isCategoryType = false;
+  pointOnColumn = false;
 
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
@@ -35,14 +35,14 @@ export default class Axis extends Component {
   render({ layout, axes }: ChartState<Options>) {
     this.rect = layout[this.name];
 
-    const { labels, tickCount, isCategoryType, isLabelAxis } = axes[this.name];
-
-    this.isCategoryType = isCategoryType;
+    const { labels, tickCount, pointOnColumn, isLabelAxis } = axes[this.name];
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
 
     const offsetKey = isYAxis(this.name) ? 'y' : 'x';
     const anchorKey = isYAxis(this.name) ? 'x' : 'y';
+
+    this.pointOnColumn = pointOnColumn;
 
     this.models.label = this.renderLabelModels(
       relativePositions,
@@ -121,7 +121,7 @@ export default class Axis extends Component {
   ): LabelModel[] {
     const labelAnchorPoint = isYAxis(this.name) ? crispPixel(0) : crispPixel(this.rect.height);
 
-    const labelAdjustment = this.isCategoryType ? this.tickDistance(labels.length) / 2 : 0;
+    const labelAdjustment = this.pointOnColumn ? this.tickDistance(labels.length) / 2 : 0;
 
     return labels.map((text, index) => {
       return {

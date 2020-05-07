@@ -18,6 +18,7 @@ export type CircleModel = {
   color: string;
   style?: StyleProp<CircleStyle>;
   detectionRadius?: number;
+  seriesIndex: number;
 } & Point;
 
 export type ClipRectAreaModel = {
@@ -29,6 +30,13 @@ export type LinePointsModel = {
   color: string;
   lineWidth: number;
   points: BezierPoint[];
+  seriesIndex: number;
+};
+
+export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
+  type: 'areaPoints';
+  bottomYPoint: number;
+  fillColor: string;
 };
 
 export type PathRectModel = {

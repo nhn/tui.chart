@@ -132,7 +132,8 @@ export default class ScatterSeries extends Component {
           type: 'circle',
           radius: 7,
           style: ['default'],
-          color: getRGBA(colors[seriesIndex], 0.9)
+          color: getRGBA(colors[seriesIndex], 0.9),
+          seriesIndex
         });
       });
 

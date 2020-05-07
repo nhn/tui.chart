@@ -12,7 +12,7 @@ import {
 import {
   BoxSeriesType,
   BoxSeriesDataType,
-  BoxRangeDataType,
+  RangeDataType,
   BarChartOptions,
   ColumnChartOptions,
   StackType,
@@ -51,7 +51,7 @@ const PADDING = {
   LR: 24 // left & right
 };
 
-function isRangeData(value): value is BoxRangeDataType {
+function isRangeData(value): value is RangeDataType {
   return Array.isArray(value);
 }
 

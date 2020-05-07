@@ -1,6 +1,6 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { LineChartOptions, LineSeriesOptions, Point, CoordinateDataType } from '@t/options';
+import { LineChartOptions, LineTypeSeriesOptions, Point, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
@@ -13,7 +13,7 @@ type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 interface RenderLineOptions {
   pointOnColumn: boolean;
   theme: SeriesTheme;
-  options: LineSeriesOptions;
+  options: LineTypeSeriesOptions;
 }
 
 type DatumType = CoordinateDataType | number;
@@ -62,7 +62,7 @@ export default class LineSeries extends Component {
       categories
     );
 
-    const seriesCircleModel = this.renderCircle(lineSeriesModel);
+    const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
 
     const tooltipDataArr = series.line.data.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
@@ -124,21 +124,22 @@ export default class LineSeries extends Component {
         setSplineControlPoint(points);
       }
 
-      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points };
+      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points, seriesIndex };
     });
   }
 
-  renderCircle(lineSeriesModel: LinePointsModel[]): CircleModel[] {
-    return lineSeriesModel.flatMap(({ points, color }) => {
-      return points.map(({ x, y }) => ({
+  renderCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
+    return lineSeriesModel.flatMap(({ points, color }, seriesIndex) =>
+      points.map(({ x, y }) => ({
         type: 'circle',
         x,
         y,
         radius: 7,
         color,
-        style: ['default', 'hover']
-      }));
-    });
+        style: ['default', 'hover'],
+        seriesIndex
+      }))
+    );
   }
 
   onMousemove({ responders }: { responders: CircleModel[] }) {
