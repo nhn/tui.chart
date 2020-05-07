@@ -26,7 +26,8 @@ import {
   pickPropertyWithMakeup,
   deepMergedCopy,
   sortSeries,
-  sortCategories
+  sortCategories,
+  deepCopy
 } from '@src/helpers/utils';
 import { BaseChartOptions, Size, StackOptionType } from '@t/options';
 
@@ -101,8 +102,7 @@ export default class Store<T extends Options> {
       }
     },
     options: {} as T,
-    categories: [],
-    d: Date.now()
+    categories: []
   };
 
   computed: Record<string, any> = {};
@@ -112,8 +112,10 @@ export default class Store<T extends Options> {
   options = {} as T;
 
   constructor(initStoreState: InitStoreState<T>) {
-    const { chart, options } = initStoreState;
-    const { series, categories } = initData(initStoreState.series, initStoreState.categories);
+    const storeState = deepCopy(initStoreState);
+    const { chart, options } = storeState;
+    const { series, categories } = initData(storeState.series, storeState.categories);
+
     this.options = options as T;
 
     this.setRootState(this.state);

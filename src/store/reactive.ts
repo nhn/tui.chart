@@ -81,10 +81,7 @@ export function observable(
 
   if (!isObservable(target)) {
     Object.defineProperty(target, '__ob__', {
-      enumerable: false,
-      value: {
-        d: Date.now()
-      }
+      enumerable: false
     });
   }
 
