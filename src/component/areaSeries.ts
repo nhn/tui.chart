@@ -44,7 +44,7 @@ export default class AreaSeries extends Component {
     }
   }
 
-  render(chartState: ChartState<AreaChartOptions>) {
+  public render(chartState: ChartState<AreaChartOptions>) {
     const { layout, series, scale, theme, options, axes, categories = [] } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
@@ -76,7 +76,7 @@ export default class AreaSeries extends Component {
 
     const areaSeriesModel = this.renderAreaPointsModel(this.linePointsModel, bottomYPoint);
     const seriesCircleModel = this.renderCircleModel(this.linePointsModel);
-    const tooltipDataArr = this.renderTooltipData(areaData, renderOptions, categories);
+    const tooltipDataArr = this.makeTooltipData(areaData, renderOptions, categories);
 
     this.models = [this.renderClipRectAreaModel(), ...areaSeriesModel];
 
@@ -86,7 +86,7 @@ export default class AreaSeries extends Component {
     }));
   }
 
-  renderClipRectAreaModel(): ClipRectAreaModel {
+  private renderClipRectAreaModel(): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
       x: 0,
@@ -96,7 +96,7 @@ export default class AreaSeries extends Component {
     };
   }
 
-  renderTooltipData(areaData: AreaSeriesType[], { theme }: RenderOptions, categories: string[]) {
+  makeTooltipData(areaData: AreaSeriesType[], { theme }: RenderOptions, categories: string[]) {
     return areaData.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
 
@@ -151,7 +151,10 @@ export default class AreaSeries extends Component {
     });
   }
 
-  renderAreaPointsModel(linePointsModel: LinePointsModel[], bottomYPoint: number): AreaPointsModel[] {
+  renderAreaPointsModel(
+    linePointsModel: LinePointsModel[],
+    bottomYPoint: number
+  ): AreaPointsModel[] {
     return linePointsModel.map(m => ({
       ...m,
       type: 'areaPoints',
