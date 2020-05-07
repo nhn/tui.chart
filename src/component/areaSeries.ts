@@ -3,7 +3,6 @@ import { AreaPointsModel, CircleModel, LinePointsModel } from '@t/components/ser
 import {
   AreaChartOptions,
   AreaSeriesType,
-  LineSeriesType,
   LineTypeSeriesOptions,
   Point,
   RangeDataType
@@ -87,6 +86,16 @@ export default class AreaSeries extends Component {
     }));
   }
 
+  renderClipRectAreaModel(): ClipRectAreaModel {
+    return {
+      type: 'clipRectArea',
+      x: 0,
+      y: 0,
+      width: 0,
+      height: this.rect.height
+    };
+  }
+
   makeTooltipData(areaData: AreaSeriesType[], { theme }: RenderOptions, categories: string[]) {
     return areaData.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
@@ -104,23 +113,15 @@ export default class AreaSeries extends Component {
     });
   }
 
-  renderClipRectAreaModel(): ClipRectAreaModel {
-    return {
-      type: 'clipRectArea',
-      x: 0,
-      y: 0,
-      width: 0,
-      height: this.rect.height
-    };
-  }
-
   makeLinePointsModel(
-    seriesRawData: LineSeriesType[],
+    seriesRawData: AreaSeriesType[],
     limit: ValueEdge,
     tickDistance: number,
-    { pointOnColumn, theme: { colors }, options: { spline } }: RenderOptions,
+    renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
+    const { pointOnColumn, theme, options } = renderOptions;
+
     return seriesRawData.map(({ data }, seriesIndex) => {
       const points: Point[] = [];
 
@@ -136,11 +137,17 @@ export default class AreaSeries extends Component {
         points.push({ x, y });
       });
 
-      if (spline) {
+      if (options?.spline) {
         setSplineControlPoint(points);
       }
 
-      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points, seriesIndex };
+      return {
+        type: 'linePoints',
+        lineWidth: 6,
+        color: theme.colors[seriesIndex],
+        points,
+        seriesIndex
+      };
     });
   }
 
