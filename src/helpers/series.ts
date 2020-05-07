@@ -28,12 +28,12 @@ export function hasStackGrouped(seriesRawData) {
 
 export function getStackGroupData(seriesRawData): StackGroupData {
   const stackData = {};
-  const stackGroupIds = [...new Set(seriesRawData.map(({ stackGroup }) => stackGroup))];
+  const stackGroupIds = [...new Set(seriesRawData.map(({ stackGroup }) => stackGroup))] as string[];
 
   stackGroupIds.forEach(groupId => {
     const filtered = seriesRawData.filter(({ stackGroup }) => groupId === stackGroup);
 
-    stackData[groupId as string] = getStackData(filtered);
+    stackData[groupId] = getStackData(filtered);
   });
 
   return stackData;

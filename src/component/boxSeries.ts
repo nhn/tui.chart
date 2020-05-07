@@ -18,7 +18,7 @@ import {
   StackType,
   StackInfo
 } from '@t/options';
-import { first, last } from '@src/helpers/utils';
+import { first, last, includes } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 
 type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
@@ -62,7 +62,7 @@ function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
 }
 
 export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
-  return Object.values(BoxType).indexOf(seriesName as BoxType) > -1;
+  return includes(Object.values(BoxType), seriesName);
 }
 
 export default class BoxSeries extends Component {
@@ -103,14 +103,13 @@ export default class BoxSeries extends Component {
 
     this.rect = layout.plot;
     this.stack = series[this.name]!.stack!;
-    const colors = theme.series.colors;
-    const seriesModels: BoxSeriesModel[] = this.createSeriesModel(series[this.name]!, colors, axes);
 
-    const tooltipData: TooltipData[] = this.createTooltipData(
-      series[this.name]!,
-      colors,
-      categories
-    );
+    const { colors } = theme.series;
+    const seriesRaw = series[this.name]!;
+
+    const seriesModels: BoxSeriesModel[] = this.renderSeriesModel(seriesRaw, colors, axes);
+
+    const tooltipData: TooltipData[] = this.makeTooltipData(seriesRaw, colors, categories);
 
     const rectModel = this.renderRect(seriesModels);
 
@@ -122,7 +121,11 @@ export default class BoxSeries extends Component {
     }));
   }
 
-  createSeriesModel(seriesRaw: SeriesRaw, colors: string[], axes: Record<string, AxisData>) {
+  private renderSeriesModel(
+    seriesRaw: SeriesRaw,
+    colors: string[],
+    axes: Record<string, AxisData>
+  ) {
     const valueAxis = this.isBar ? 'xAxis' : 'yAxis';
     const labelAxis = this.isBar ? 'yAxis' : 'xAxis';
     const anchorSizeKey = this.isBar ? 'height' : 'width';
@@ -189,7 +192,7 @@ export default class BoxSeries extends Component {
     });
   }
 
-  renderStackSeriesModel(
+  private renderStackSeriesModel(
     seriesRaw: SeriesRaw,
     colors: string[],
     valueLabels: string[],
@@ -199,17 +202,17 @@ export default class BoxSeries extends Component {
     const stackData = seriesRaw.stackData!;
 
     return isGroupStack(stackData)
-      ? this.getStackGroupSeriesModel(
+      ? this.makeStackGroupSeriesModel(
           seriesRaw,
           [...colors],
           valueLabels,
           tickDistance,
           offsetSizeKey
         )
-      : this.getStackSeriesModel({ stackData, colors, valueLabels, tickDistance, offsetSizeKey });
+      : this.makeStackSeriesModel({ stackData, colors, valueLabels, tickDistance, offsetSizeKey });
   }
 
-  renderClipRectAreaModel(): ClipRectAreaModel {
+  private renderClipRectAreaModel(): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
       x: 0,
@@ -219,7 +222,7 @@ export default class BoxSeries extends Component {
     };
   }
 
-  renderRect(seriesModel): RectModel[] {
+  private renderRect(seriesModel): RectModel[] {
     return seriesModel.map(data => {
       const { x, y, width, height, color } = data;
 
@@ -250,7 +253,11 @@ export default class BoxSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  createTooltipData(seriesRaw: SeriesRaw, colors: string[], categories?: string[]): TooltipData[] {
+  private makeTooltipData(
+    seriesRaw: SeriesRaw,
+    colors: string[],
+    categories?: string[]
+  ): TooltipData[] {
     const seriesRawData = seriesRaw.data;
 
     if (this.stack) {
@@ -261,22 +268,26 @@ export default class BoxSeries extends Component {
       data.map((value, dataIdx) => ({
         label: name,
         color: colors[index],
-        value: this.tooltipValue(value),
+        value: this.getTooltipValue(value),
         category: categories?.[dataIdx]
       }))
     );
   }
 
-  getStackTooltip(seriesRaw: SeriesRaw, colors: string[], categories?: string[]): TooltipData[] {
+  private getStackTooltip(
+    seriesRaw: SeriesRaw,
+    colors: string[],
+    categories?: string[]
+  ): TooltipData[] {
     const seriesRawData = seriesRaw.data;
     const stackData = seriesRaw.stackData!;
 
     return isGroupStack(stackData)
-      ? this.getGroupStackTooltipData(seriesRawData, stackData, colors, categories)
-      : this.getStackTooltipData(seriesRawData, stackData, colors, categories);
+      ? this.makeGroupStackTooltipData(seriesRawData, stackData, colors, categories)
+      : this.makeStackTooltipData(seriesRawData, stackData, colors, categories);
   }
 
-  getGroupStackTooltipData(
+  private makeGroupStackTooltipData(
     seriesRawData: SeriesRawData,
     stackData: StackGroupData,
     colors: string[],
@@ -286,11 +297,11 @@ export default class BoxSeries extends Component {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
       const groupColors = colors.splice(groupIdx, filtered.length);
 
-      return this.getStackTooltipData(seriesRawData, stackData[groupId], groupColors, categories);
+      return this.makeStackTooltipData(seriesRawData, stackData[groupId], groupColors, categories);
     });
   }
 
-  getStackTooltipData(
+  private makeStackTooltipData(
     seriesRawData: SeriesRawData,
     stackData: StackData,
     colors: string[],
@@ -306,11 +317,11 @@ export default class BoxSeries extends Component {
     );
   }
 
-  tooltipValue(value) {
+  private getTooltipValue(value) {
     return isRangeData(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
-  getTotalOfPrevValues(values, currentIndex, included = false) {
+  private getTotalOfPrevValues(values, currentIndex, included = false) {
     return values.reduce((a, b, idx) => {
       const isPrev = included ? idx <= currentIndex : idx < currentIndex;
 
@@ -322,7 +333,7 @@ export default class BoxSeries extends Component {
     }, 0);
   }
 
-  getStackSeriesModel({
+  makeStackSeriesModel({
     stackData,
     colors,
     valueLabels,
@@ -371,7 +382,7 @@ export default class BoxSeries extends Component {
     return seriesModels;
   }
 
-  getStackGroupSeriesModel(
+  makeStackGroupSeriesModel(
     seriesRaw: SeriesRaw,
     colors: string[],
     valueLabels: string[],
@@ -388,7 +399,7 @@ export default class BoxSeries extends Component {
 
       seriesModels = [
         ...seriesModels,
-        ...this.getStackSeriesModel({
+        ...this.makeStackSeriesModel({
           stackData: stackGroupData[groupId],
           colors: colors.splice(index, filtered.length),
           valueLabels,
