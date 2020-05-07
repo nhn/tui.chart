@@ -11,7 +11,6 @@ import {
   StackInfo
 } from '@t/options';
 import Store from '@src/store/store';
-import { StackDataType } from '@src/component/boxSeries';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -84,6 +83,10 @@ export interface ChartState<T extends Options> {
 export interface Stack {
   stack?: StackInfo;
 }
+
+export type StackData = Array<{ values: number[]; sum: number }>;
+export type StackGroupData = Record<string, StackData>;
+export type StackDataType = StackData | StackGroupData;
 
 export interface AxisData {
   labels: string[];

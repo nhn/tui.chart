@@ -1,5 +1,10 @@
 import BarChart from '@src/charts/barChart';
-import { budgetData, temperatureRangeData, budgetDataForStack } from './data';
+import {
+  budgetData,
+  temperatureRangeData,
+  budgetDataForStack,
+  budgetDataForGroupStack
+} from './data';
 import { BarChartOptions } from '@t/options';
 
 export default {
@@ -72,6 +77,17 @@ export const percentStack = () => {
       stack: {
         type: 'percent'
       }
+    }
+  });
+
+  return el;
+};
+
+export const groupStack = () => {
+  const { el } = createChart(budgetDataForGroupStack, {
+    ...defaultOptions,
+    series: {
+      stack: true
     }
   });
 
