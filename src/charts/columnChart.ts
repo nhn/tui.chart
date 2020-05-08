@@ -4,6 +4,7 @@ import axes from '@src/store/axes';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
+import BoxStackSeries from '@src/component/boxStackSeries';
 import Plot from '@src/component/plot';
 import Tooltip from '@src/component/tooltip';
 
@@ -14,6 +15,7 @@ import * as plotBrushes from '@src/brushes/plot';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 
 import { ColumnChartOptions, BoxSeriesData } from '@t/options';
+import { pickStackOption } from '@src/helpers/series';
 
 interface ColumnChartProps {
   el: HTMLElement;
@@ -39,7 +41,13 @@ export default class BarChart extends Chart<ColumnChartOptions> {
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);
-    this.componentManager.add(BoxSeries, { name: 'column' });
+
+    if (pickStackOption(this.store.options)) {
+      this.componentManager.add(BoxStackSeries, { name: 'column' });
+    } else {
+      this.componentManager.add(BoxSeries, { name: 'column' });
+    }
+
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
