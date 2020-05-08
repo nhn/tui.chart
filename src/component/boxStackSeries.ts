@@ -10,7 +10,6 @@ interface StackSeriesModelParamType {
   colors: string[];
   valueLabels: string[];
   tickDistance: number;
-  offsetSizeKey: SizeKey;
   stackGroup?: { count: number; index: number };
 }
 
@@ -23,7 +22,6 @@ export const STACK_TYPES = {
   PERCENT: 'percent'
 };
 
-// TODO: extends Component or BoxSeries 컴포넌트?
 export default class BoxStackSeries extends BoxSeries {
   stack!: StackInfo;
 
@@ -36,18 +34,14 @@ export default class BoxStackSeries extends BoxSeries {
     const { colors } = theme.series;
     const seriesData = series[this.name]!;
 
-    const valueAxis = this.isBar ? 'xAxis' : 'yAxis';
-    const labelAxis = this.isBar ? 'yAxis' : 'xAxis';
-    const anchorSizeKey = this.isBar ? 'height' : 'width';
-    const offsetSizeKey = this.isBar ? 'width' : 'height';
-    const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
+    const valueLabels = axes[this.valueAxis].labels;
+    const tickDistance = this.getTickDistance(axes[this.labelAxis].validTickCount);
 
     const seriesModels: BoxSeriesModel[] = this.renderSeriesModel(
       seriesData,
       colors,
-      axes[valueAxis].labels,
-      tickDistance,
-      offsetSizeKey
+      valueLabels,
+      tickDistance
     );
 
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
@@ -66,20 +60,13 @@ export default class BoxStackSeries extends BoxSeries {
     seriesData: SeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
-    tickDistance: number,
-    offsetSizeKey: SizeKey
+    tickDistance: number
   ) {
     const stackData = seriesData.stackData!;
 
     return isGroupStack(stackData)
-      ? this.makeStackGroupSeriesModel(
-          seriesData,
-          [...colors],
-          valueLabels,
-          tickDistance,
-          offsetSizeKey
-        )
-      : this.makeStackSeriesModel({ stackData, colors, valueLabels, tickDistance, offsetSizeKey });
+      ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueLabels, tickDistance)
+      : this.makeStackSeriesModel({ stackData, colors, valueLabels, tickDistance });
   }
 
   makeStackSeriesModel({
@@ -87,14 +74,13 @@ export default class BoxStackSeries extends BoxSeries {
     colors,
     valueLabels,
     tickDistance,
-    offsetSizeKey,
     stackGroup = {
       count: 1,
       index: 0
     }
   }: StackSeriesModelParamType): BoxSeriesModel[] {
     const seriesModels: BoxSeriesModel[] = [];
-    const offsetAxisLength = this.rect[offsetSizeKey];
+    const offsetAxisLength = this.rect[this.offsetSizeKey];
     const columnWidth = (tickDistance - this.padding * 2) / stackGroup.count;
     const stackType: StackType = this.stack.type;
 
@@ -135,8 +121,7 @@ export default class BoxStackSeries extends BoxSeries {
     seriesRaw: SeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
-    tickDistance: number,
-    offsetSizeKey: SizeKey
+    tickDistance: number
   ): BoxSeriesModel[] {
     const stackGroupData = seriesRaw.stackData as StackGroupData;
     const seriesRawData = seriesRaw.data;
@@ -153,7 +138,6 @@ export default class BoxStackSeries extends BoxSeries {
           colors: colors.splice(index, filtered.length),
           valueLabels,
           tickDistance,
-          offsetSizeKey,
           stackGroup: {
             count: stackGroupIds.length,
             index

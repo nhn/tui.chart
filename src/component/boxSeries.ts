@@ -48,11 +48,23 @@ export default class BoxSeries extends Component {
 
   name = BoxType.BAR;
 
+  valueAxis = 'xAxis';
+
+  labelAxis = 'yAxis';
+
+  anchorSizeKey = 'height';
+
+  offsetSizeKey = 'width';
+
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
     this.name = name;
     this.isBar = name === BoxType.BAR;
     this.padding = this.isBar ? PADDING.TB : PADDING.LR;
+    this.valueAxis = this.isBar ? 'xAxis' : 'yAxis';
+    this.labelAxis = this.isBar ? 'yAxis' : 'xAxis';
+    this.anchorSizeKey = this.isBar ? 'height' : 'width';
+    this.offsetSizeKey = this.isBar ? 'width' : 'height';
   }
 
   update(delta: number) {
@@ -72,18 +84,14 @@ export default class BoxSeries extends Component {
     this.rect = layout.plot;
     const { colors } = theme.series;
     const seriesData = series[this.name]!;
+    const valueLabels = axes[this.valueAxis].labels;
+    const tickDistance = this.getTickDistance(axes[this.labelAxis].validTickCount);
 
-    const valueAxis = this.isBar ? 'xAxis' : 'yAxis';
-    const labelAxis = this.isBar ? 'yAxis' : 'xAxis';
-    const anchorSizeKey = this.isBar ? 'height' : 'width';
-    const offsetSizeKey = this.isBar ? 'width' : 'height';
-    const tickDistance = this.rect[anchorSizeKey] / axes[labelAxis].validTickCount;
     const seriesModels: BoxSeriesModel[] = this.renderSeriesModel(
       seriesData,
       colors,
-      axes[valueAxis].labels,
-      tickDistance,
-      offsetSizeKey
+      valueLabels,
+      tickDistance
     );
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
@@ -102,12 +110,11 @@ export default class BoxSeries extends Component {
     seriesData: SeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
-    tickDistance: number,
-    offsetSizeKey: SizeKey
+    tickDistance: number
   ): BoxSeriesModel[] {
     const seriesRawData = seriesData.data;
     const minValue = Number(first(valueLabels));
-    const offsetAxisLength = this.rect[offsetSizeKey];
+    const offsetAxisLength = this.rect[this.offsetSizeKey];
     const axisValueRatio = offsetAxisLength / (Number(last(valueLabels)) - minValue);
     const columnWidth = (tickDistance - this.padding * 2) / seriesRawData.length;
 
@@ -212,5 +219,9 @@ export default class BoxSeries extends Component {
 
       return a;
     }, 0);
+  }
+
+  protected getTickDistance(tickCount: number) {
+    return this.rect[this.anchorSizeKey] / tickCount;
   }
 }
