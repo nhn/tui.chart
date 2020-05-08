@@ -1,6 +1,7 @@
 import { ValueEdge, StoreModule, ChartType, SeriesData, StackDataType } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
-import { STACK_TYPES, isBoxSeries, BoxType } from '@src/component/boxSeries';
+import { isBoxSeries, BoxType } from '@src/component/boxSeries';
+import { STACK_TYPES } from '@src/component/boxStackSeries';
 import { StackType } from '@t/options';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {

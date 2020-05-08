@@ -1,7 +1,11 @@
 import { StoreModule, ChartType } from '@t/store/store';
-import { pickProperty, isObject } from '@src/helpers/utils';
-import { hasStackGrouped, getStackData, getStackGroupData } from '@src/helpers/series';
-import { StackInfo } from '@t/options';
+import {
+  hasStackGrouped,
+  makeStackData,
+  makeStackGroupData,
+  pickStackOption,
+  initializeStack
+} from '@src/helpers/series';
 import { isBoxSeries, BoxType } from '@src/component/boxSeries';
 
 // seriesDataModel 이 했던것 일부 여기로
@@ -14,16 +18,10 @@ const seriesData: StoreModule = {
     const { series } = state;
 
     Object.keys(state.series).forEach(seriesName => {
-      const stackOption = pickProperty(options, ['series', 'stack']);
-      const defaultStackOption = {
-        type: 'normal',
-        connector: false
-      } as StackInfo;
+      const stackOption = pickStackOption(options);
 
       if (stackOption && isBoxSeries(seriesName as ChartType)) {
-        series[seriesName as BoxType]!.stack = isObject(stackOption)
-          ? { ...defaultStackOption, ...stackOption }
-          : defaultStackOption;
+        series[seriesName as BoxType]!.stack = initializeStack(stackOption);
       }
     });
   },
@@ -33,10 +31,10 @@ const seriesData: StoreModule = {
       const newSeriesData = {};
 
       Object.keys(series).forEach(seriesName => {
-        const seriesRawData = series[seriesName];
-        const seriesCount = seriesRawData.length;
-        const seriesGroupCount = seriesRawData[0].data.length;
-        const data = seriesRawData.filter(({ name }: any) => !disabledSeries.includes(name));
+        const originSeriesData = series[seriesName];
+        const seriesCount = originSeriesData.length;
+        const seriesGroupCount = originSeriesData[0].data.length;
+        const data = originSeriesData.filter(({ name }: any) => !disabledSeries.includes(name));
 
         newSeriesData[seriesName] = {
           seriesCount,
@@ -45,9 +43,9 @@ const seriesData: StoreModule = {
         };
 
         if (series[seriesName].stack) {
-          newSeriesData[seriesName].stackData = hasStackGrouped(seriesRawData)
-            ? getStackGroupData(seriesRawData)
-            : getStackData(seriesRawData);
+          newSeriesData[seriesName].stackData = hasStackGrouped(data)
+            ? makeStackGroupData(data)
+            : makeStackData(data);
         }
       });
 

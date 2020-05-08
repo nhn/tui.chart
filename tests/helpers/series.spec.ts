@@ -1,4 +1,5 @@
-import { getStackData, getStackGroupData } from '@src/helpers/series';
+import { makeStackData, makeStackGroupData, initializeStack } from '@src/helpers/series';
+import { StackInfo } from '@t/options';
 
 it('getStackData', () => {
   const rawData = [
@@ -27,10 +28,10 @@ it('getStackData', () => {
     }
   ];
 
-  expect(getStackData(rawData)).toEqual(result);
+  expect(makeStackData(rawData)).toEqual(result);
 });
 
-it('getStackGroupData', () => {
+it('makeStackGroupData', () => {
   const rawData = [
     {
       name: 'test1',
@@ -67,5 +68,70 @@ it('getStackGroupData', () => {
     ]
   };
 
-  expect(getStackGroupData(rawData)).toEqual(result);
+  expect(makeStackGroupData(rawData)).toEqual(result);
+});
+
+it('initializeStack', () => {
+  const booleanOnly = true;
+
+  const result1 = {
+    type: 'normal',
+    connector: false
+  };
+
+  expect(initializeStack(booleanOnly)).toEqual(result1);
+
+  const connectorBooleanOnly = {
+    type: 'normal',
+    connector: true
+  } as StackInfo;
+
+  const result2 = {
+    type: 'normal',
+    connector: {
+      type: 'solid',
+      color: 'rgba(51, 85, 139, 0.3)',
+      width: 1
+    }
+  };
+
+  expect(initializeStack(connectorBooleanOnly)).toEqual(result2);
+
+  const definedConnectorTypeOnly = {
+    type: 'percent',
+    connector: {
+      type: 'dashed'
+    }
+  } as StackInfo;
+
+  const result3 = {
+    type: 'percent',
+    connector: {
+      type: 'dashed',
+      color: 'rgba(51, 85, 139, 0.3)',
+      width: 1
+    }
+  };
+
+  expect(initializeStack(definedConnectorTypeOnly)).toEqual(result3);
+
+  const definedConnectorObject = {
+    type: 'normal',
+    connector: {
+      type: 'dashed',
+      color: '#ff0000',
+      width: 1
+    }
+  } as StackInfo;
+
+  const result4 = {
+    type: 'normal',
+    connector: {
+      type: 'dashed',
+      color: '#ff0000',
+      width: 1
+    }
+  };
+
+  expect(initializeStack(definedConnectorObject)).toEqual(result4);
 });
