@@ -41,6 +41,7 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Axis, { name: 'yAxis' });
 
     if (pickStackOption(this.store.options)) {
       this.componentManager.add(BoxStackSeries, { name: 'bar' });
@@ -48,7 +49,6 @@ export default class BarChart extends Chart<BarChartOptions> {
       this.componentManager.add(BoxSeries, { name: 'bar' });
     }
 
-    this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 

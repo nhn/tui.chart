@@ -56,3 +56,7 @@ export type RectModel = {
   color: string;
   offsetKey: 'x' | 'y';
 } & Rect;
+
+export type HoverBoxSeriesModel = {
+  thickness: number;
+} & RectModel;

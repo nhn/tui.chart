@@ -28,7 +28,9 @@ export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, series, theme, axes, categories } = chartState;
 
-    this.rect = layout.plot;
+    this.plot = layout.plot;
+    this.rect = this.makeSeriesRect(layout.plot);
+
     this.stack = series[this.name]!.stack!;
 
     const { colors } = theme.series;
@@ -80,7 +82,7 @@ export default class BoxStackSeries extends BoxSeries {
     }
   }: StackSeriesModelParamType): BoxSeriesModel[] {
     const seriesModels: BoxSeriesModel[] = [];
-    const offsetAxisLength = this.rect[this.offsetSizeKey];
+    const offsetAxisLength = this.plot[this.offsetSizeKey];
     const columnWidth = (tickDistance - this.padding * 2) / stackGroup.count;
     const stackType: StackType = this.stack.type;
 
@@ -108,8 +110,8 @@ export default class BoxStackSeries extends BoxSeries {
           color,
           width: this.isBar ? barLength : columnWidth,
           height: this.isBar ? columnWidth : barLength,
-          x: this.isBar ? startPosition : seriesPos,
-          y: this.isBar ? seriesPos : offsetAxisLength - startPosition
+          x: this.isBar ? startPosition + this.hoverThickness + this.axisThickness : seriesPos,
+          y: this.isBar ? seriesPos : offsetAxisLength - startPosition + this.hoverThickness
         });
       });
     });

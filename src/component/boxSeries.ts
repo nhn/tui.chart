@@ -1,17 +1,23 @@
 import Component from './component';
-import { RectModel, BoxSeriesModel, ClipRectAreaModel } from '@t/components/series';
+import {
+  RectModel,
+  BoxSeriesModel,
+  ClipRectAreaModel,
+  HoverBoxSeriesModel
+} from '@t/components/series';
 import { ChartState, ChartType, SeriesData } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
   RangeDataType,
   BarChartOptions,
-  ColumnChartOptions
+  ColumnChartOptions,
+  Rect
 } from '@t/options';
 import { first, last, includes } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 
-type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel;
+type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel | HoverBoxSeriesModel;
 
 export type SizeKey = 'width' | 'height';
 
@@ -56,6 +62,12 @@ export default class BoxSeries extends Component {
 
   offsetSizeKey = 'width';
 
+  hoverThickness = 4;
+
+  axisThickness = 1;
+
+  plot!: Rect;
+
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
     this.name = name;
@@ -80,8 +92,9 @@ export default class BoxSeries extends Component {
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, series, theme, axes, categories } = chartState;
+    this.plot = layout.plot;
+    this.rect = this.makeSeriesRect(layout.plot);
 
-    this.rect = layout.plot;
     const { colors } = theme.series;
     const seriesData = series[this.name]!;
     const valueLabels = axes[this.valueAxis].labels;
@@ -106,6 +119,17 @@ export default class BoxSeries extends Component {
     }));
   }
 
+  protected makeSeriesRect(layout: Rect) {
+    const { x, y, width, height } = layout;
+
+    return {
+      x: x - this.hoverThickness,
+      y: y - this.hoverThickness,
+      width: width + (this.hoverThickness + this.axisThickness) * 2,
+      height: height + (this.hoverThickness + this.axisThickness) * 2
+    };
+  }
+
   renderSeriesModel(
     seriesData: SeriesData<BoxType>,
     colors: string[],
@@ -114,7 +138,7 @@ export default class BoxSeries extends Component {
   ): BoxSeriesModel[] {
     const seriesRawData = seriesData.data;
     const minValue = Number(first(valueLabels));
-    const offsetAxisLength = this.rect[this.offsetSizeKey];
+    const offsetAxisLength = this.plot[this.offsetSizeKey];
     const axisValueRatio = offsetAxisLength / (Number(last(valueLabels)) - minValue);
     const columnWidth = (tickDistance - this.padding * 2) / seriesRawData.length;
 
@@ -123,7 +147,7 @@ export default class BoxSeries extends Component {
       const color = colors[seriesIndex];
 
       return data.map((value, index) => {
-        const dataStart = seriesPos + index * tickDistance;
+        const dataStart = seriesPos + index * tickDistance + this.hoverThickness;
         let startPosition = 0;
 
         if (isRangeData(value)) {
@@ -138,10 +162,12 @@ export default class BoxSeries extends Component {
         return {
           type: 'box',
           color,
-          width: this.isBar ? barLength : columnWidth,
+          width: this.isBar ? barLength - this.axisThickness : columnWidth,
           height: this.isBar ? columnWidth : barLength,
-          x: this.isBar ? startPosition : dataStart,
-          y: this.isBar ? dataStart : offsetAxisLength - barLength - startPosition
+          x: this.isBar ? startPosition + this.hoverThickness + this.axisThickness : dataStart,
+          y: this.isBar
+            ? dataStart
+            : offsetAxisLength - barLength - startPosition + this.hoverThickness
         };
       });
     });
@@ -157,7 +183,7 @@ export default class BoxSeries extends Component {
     };
   }
 
-  protected renderRect(seriesModel): RectModel[] {
+  protected renderRect(seriesModel): HoverBoxSeriesModel[] {
     return seriesModel.map(data => {
       const { x, y, width, height, color } = data;
 
@@ -168,7 +194,8 @@ export default class BoxSeries extends Component {
         y,
         width,
         height,
-        offsetKey: this.isBar ? 'y' : 'x'
+        offsetKey: this.isBar ? 'y' : 'x',
+        thickness: this.hoverThickness
       };
     });
   }
@@ -222,6 +249,6 @@ export default class BoxSeries extends Component {
   }
 
   protected getTickDistance(tickCount: number) {
-    return this.rect[this.anchorSizeKey] / tickCount;
+    return this.plot[this.anchorSizeKey] / tickCount;
   }
 }

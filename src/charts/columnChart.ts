@@ -41,6 +41,7 @@ export default class BarChart extends Chart<ColumnChartOptions> {
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Axis, { name: 'xAxis' });
 
     if (pickStackOption(this.store.options)) {
       this.componentManager.add(BoxStackSeries, { name: 'column' });
@@ -49,7 +50,6 @@ export default class BarChart extends Chart<ColumnChartOptions> {
     }
 
     this.componentManager.add(Axis, { name: 'yAxis' });
-    this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([basicBrushes, plotBrushes, axisBrushes, boxBrushes, tooltipBrushes]);
