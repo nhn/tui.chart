@@ -1,9 +1,9 @@
-import BoxSeries from '@src/component/boxSeries';
+import BoxStackSeries from '@src/component/boxStackSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import { BarChartOptions } from '@t/options';
 
-let boxSeries;
+let stackSeries;
 const seriesData = [
   { name: 'han', data: [1, 2] },
   { name: 'cho', data: [4, 5] }
@@ -20,14 +20,22 @@ const chartState = {
     bar: {
       data: seriesData,
       seriesCount: seriesData.length,
-      seriesGroupCount: seriesData[0].data.length
+      seriesGroupCount: seriesData[0].data.length,
+      stack: {
+        type: 'normal',
+        connector: false
+      },
+      stackData: [
+        { values: [1, 4], sum: 5 },
+        { values: [2, 5], sum: 7 }
+      ]
     }
   },
   axes: {
     xAxis: {
-      labels: [0, 5],
-      tickCount: 2,
-      validTickCount: 2
+      labels: [0, 2, 4, 6, 8],
+      tickCount: 4,
+      validTickCount: 4
     },
     yAxis: {
       pointOnColumn: true,
@@ -47,34 +55,34 @@ const result = [
   {
     type: 'box',
     color: '#aaaaaa',
-    width: 15,
-    height: 5,
+    width: 10,
+    height: 10,
     x: 5,
     y: 19
   },
   {
     type: 'box',
+    color: '#bbbbbb',
+    width: 40,
+    height: 10,
+    x: 15,
+    y: 19
+  },
+  {
+    type: 'box',
     color: '#aaaaaa',
-    width: 31,
-    height: 5,
+    width: 20,
+    height: 10,
     x: 5,
     y: 59
   },
   {
     type: 'box',
     color: '#bbbbbb',
-    width: 63,
-    height: 5,
-    x: 5,
-    y: 24
-  },
-  {
-    type: 'box',
-    color: '#bbbbbb',
-    width: 79,
-    height: 5,
-    x: 5,
-    y: 64
+    width: 50,
+    height: 10,
+    x: 25,
+    y: 59
   }
 ];
 
@@ -84,19 +92,30 @@ const respondersResult = [
     color: '#aaaaaa',
     x: 5,
     y: 19,
-    width: 15,
-    height: 5,
+    width: 10,
+    height: 10,
     offsetKey: 'y',
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' }
   },
   {
     type: 'rect',
+    color: '#bbbbbb',
+    x: 15,
+    y: 19,
+    width: 40,
+    height: 10,
+    offsetKey: 'y',
+    thickness: 4,
+    data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' }
+  },
+  {
+    type: 'rect',
     color: '#aaaaaa',
     x: 5,
     y: 59,
-    width: 31,
-    height: 5,
+    width: 20,
+    height: 10,
     offsetKey: 'y',
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' }
@@ -104,21 +123,10 @@ const respondersResult = [
   {
     type: 'rect',
     color: '#bbbbbb',
-    x: 5,
-    y: 24,
-    width: 63,
-    height: 5,
-    offsetKey: 'y',
-    thickness: 4,
-    data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' }
-  },
-  {
-    type: 'rect',
-    color: '#bbbbbb',
-    x: 5,
-    y: 64,
-    width: 79,
-    height: 5,
+    x: 25,
+    y: 59,
+    width: 50,
+    height: 10,
     offsetKey: 'y',
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' }
@@ -126,15 +134,15 @@ const respondersResult = [
 ];
 
 beforeEach(() => {
-  boxSeries = new BoxSeries({
+  stackSeries = new BoxStackSeries({
     store: {} as Store<BarChartOptions>,
     eventBus: new EventEmitter()
   });
 });
 
-it('should be set the drawing models for series rendering', () => {
-  boxSeries.render(chartState);
-  const { models, responders } = boxSeries;
+it('should be set the drawing models for stack series rendering', () => {
+  stackSeries.render(chartState);
+  const { models, responders } = stackSeries;
 
   expect(models).toEqual(result);
   expect(responders).toEqual(respondersResult);

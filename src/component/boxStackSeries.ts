@@ -87,7 +87,8 @@ export default class BoxStackSeries extends BoxSeries {
     const stackType: StackType = this.stack.type;
 
     stackData.forEach(({ values, sum }, index) => {
-      const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroup.index;
+      const seriesPos =
+        index * tickDistance + this.padding + columnWidth * stackGroup.index + this.hoverThickness;
 
       values.forEach((value, seriesIndex) => {
         const color = colors[seriesIndex];
