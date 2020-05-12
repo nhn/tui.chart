@@ -1,6 +1,13 @@
-import BoxSeries, { BoxType, SizeKey, SeriesRawData } from './boxSeries';
-import { StackInfo, ColumnChartOptions, BarChartOptions, StackType } from '@t/options';
-import { ChartState, SeriesData, StackGroupData, StackDataType, StackData } from '@t/store/store';
+import BoxSeries, { SeriesRawData } from './boxSeries';
+import { StackInfo, ColumnChartOptions, BarChartOptions } from '@t/options';
+import {
+  ChartState,
+  StackSeriesData,
+  StackGroupData,
+  StackDataType,
+  StackData,
+  BoxType
+} from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { BoxSeriesModel } from '@t/components/series';
 import { first, last } from '@src/helpers/utils';
@@ -10,31 +17,26 @@ interface StackSeriesModelParamType {
   colors: string[];
   valueLabels: string[];
   tickDistance: number;
-  stackGroup?: { count: number; index: number };
+  stackGroupCount?: number;
+  stackGroupIndex?: number;
 }
 
 function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
   return !Array.isArray(rawData);
 }
 
-export const STACK_TYPES = {
-  NORMAL: 'normal',
-  PERCENT: 'percent'
-};
-
 export default class BoxStackSeries extends BoxSeries {
   stack!: StackInfo;
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, theme, axes, categories } = chartState;
+    const { layout, theme, axes, categories, stackSeries } = chartState;
 
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
-
-    this.stack = series[this.name]!.stack!;
+    this.stack = stackSeries[this.name]!.stack!;
 
     const { colors } = theme.series;
-    const seriesData = series[this.name]!;
+    const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
 
     const valueLabels = axes[this.valueAxis].labels;
     const tickDistance = this.getTickDistance(axes[this.labelAxis].validTickCount);
@@ -59,12 +61,12 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   renderSeriesModel(
-    seriesData: SeriesData<BoxType>,
+    seriesData: StackSeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
     tickDistance: number
   ) {
-    const stackData = seriesData.stackData!;
+    const stackData = seriesData.stackData;
 
     return isGroupStack(stackData)
       ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueLabels, tickDistance)
@@ -76,26 +78,24 @@ export default class BoxStackSeries extends BoxSeries {
     colors,
     valueLabels,
     tickDistance,
-    stackGroup = {
-      count: 1,
-      index: 0
-    }
+    stackGroupCount = 1,
+    stackGroupIndex = 0
   }: StackSeriesModelParamType): BoxSeriesModel[] {
     const seriesModels: BoxSeriesModel[] = [];
     const offsetAxisLength = this.plot[this.offsetSizeKey];
-    const columnWidth = (tickDistance - this.padding * 2) / stackGroup.count;
-    const stackType: StackType = this.stack.type;
+    const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+    const stackType = this.stack.type;
 
     stackData.forEach(({ values, sum }, index) => {
       const seriesPos =
-        index * tickDistance + this.padding + columnWidth * stackGroup.index + this.hoverThickness;
+        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
 
       values.forEach((value, seriesIndex) => {
         const color = colors[seriesIndex];
         const beforeValueSum = super.getTotalOfPrevValues(values, seriesIndex, !this.isBar);
         let barLength, startPosition;
 
-        if (stackType === STACK_TYPES.PERCENT) {
+        if (stackType === 'percent') {
           barLength = (value / sum) * offsetAxisLength;
           startPosition = (beforeValueSum / sum) * offsetAxisLength;
         } else {
@@ -121,7 +121,7 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   makeStackGroupSeriesModel(
-    seriesRaw: SeriesData<BoxType>,
+    seriesRaw: StackSeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
     tickDistance: number
@@ -131,20 +131,18 @@ export default class BoxStackSeries extends BoxSeries {
     const stackGroupIds = Object.keys(stackGroupData);
     let seriesModels: BoxSeriesModel[] = [];
 
-    stackGroupIds.forEach((groupId, index) => {
+    stackGroupIds.forEach((groupId, groupIndex) => {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
 
       seriesModels = [
         ...seriesModels,
         ...this.makeStackSeriesModel({
           stackData: stackGroupData[groupId],
-          colors: colors.splice(index, filtered.length),
+          colors: colors.splice(groupIndex, filtered.length),
           valueLabels,
           tickDistance,
-          stackGroup: {
-            count: stackGroupIds.length,
-            index
-          }
+          stackGroupCount: stackGroupIds.length,
+          stackGroupIndex: groupIndex
         })
       ];
     });
@@ -152,7 +150,11 @@ export default class BoxStackSeries extends BoxSeries {
     return seriesModels;
   }
 
-  private getTooltipData(seriesData: SeriesData<BoxType>, colors: string[], categories?: string[]) {
+  private getTooltipData(
+    seriesData: StackSeriesData<BoxType>,
+    colors: string[],
+    categories?: string[]
+  ) {
     const seriesRawData = seriesData.data;
     const stackData = seriesData.stackData!;
 
