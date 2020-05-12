@@ -1,5 +1,10 @@
 import Chart from './chart';
 
+import layout from '@src/store/layout';
+import dataRange from '@src/store/dataRange';
+import seriesData from '@src/store/seriesData';
+import stackSeriesData, { pickStackOption } from '@src/store/stackSeriesData';
+import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 
 import Axis from '@src/component/axis';
@@ -15,7 +20,6 @@ import * as plotBrushes from '@src/brushes/plot';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 
 import { BarChartOptions, BoxSeriesData } from '@t/options';
-import { pickStackOption } from '@src/helpers/series';
 
 interface BarChartProps {
   el: HTMLElement;
@@ -36,14 +40,23 @@ export default class BarChart extends Chart<BarChartOptions> {
   }
 
   initialize() {
-    super.initialize();
+    const stackOption = pickStackOption(this.store.options);
 
+    this.store.setModule(layout);
+    this.store.setModule(seriesData);
+
+    if (stackOption) {
+      this.store.setModule(stackSeriesData);
+    }
+
+    this.store.setModule(dataRange);
+    this.store.setModule(scale);
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);
     this.componentManager.add(Axis, { name: 'yAxis' });
 
-    if (pickStackOption(this.store.options)) {
+    if (stackOption) {
       this.componentManager.add(BoxStackSeries, { name: 'bar' });
     } else {
       this.componentManager.add(BoxSeries, { name: 'bar' });

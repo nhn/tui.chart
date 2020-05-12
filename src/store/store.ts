@@ -102,7 +102,8 @@ export default class Store<T extends Options> {
       }
     },
     options: {} as T,
-    categories: []
+    categories: [],
+    stackSeries: {}
   };
 
   computed: Record<string, any> = {};

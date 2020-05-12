@@ -5,7 +5,7 @@ import {
   ClipRectAreaModel,
   HoverBoxSeriesModel
 } from '@t/components/series';
-import { ChartState, ChartType, SeriesData } from '@t/store/store';
+import { ChartState, ChartType, SeriesData, BoxType } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -23,10 +23,10 @@ export type SizeKey = 'width' | 'height';
 
 export type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
-export enum BoxType {
-  BAR = 'bar',
-  COLUMN = 'column'
-}
+const BOX = {
+  BAR: 'bar',
+  COLUMN: 'column'
+};
 
 const PADDING = {
   TB: 15, // top & bottom
@@ -38,7 +38,7 @@ function isRangeData(value): value is RangeDataType {
 }
 
 export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
-  return includes(Object.values(BoxType), seriesName);
+  return includes(Object.values(BOX), seriesName);
 }
 
 export default class BoxSeries extends Component {
@@ -52,7 +52,7 @@ export default class BoxSeries extends Component {
 
   isBar = true;
 
-  name = BoxType.BAR;
+  name = BOX.BAR;
 
   valueAxis = 'xAxis';
 
@@ -71,7 +71,7 @@ export default class BoxSeries extends Component {
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
     this.name = name;
-    this.isBar = name === BoxType.BAR;
+    this.isBar = name === BOX.BAR;
     this.padding = this.isBar ? PADDING.TB : PADDING.LR;
     this.valueAxis = this.isBar ? 'xAxis' : 'yAxis';
     this.labelAxis = this.isBar ? 'yAxis' : 'xAxis';
