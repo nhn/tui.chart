@@ -2,6 +2,7 @@ import { circle, line, label, CircleStyleName } from '@src/brushes/basic';
 import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
 import { box, rect } from '@src/brushes/boxSeries';
+import { tooltip } from '@src/brushes/tooltip';
 
 import {
   AreaPointsModel,
@@ -20,6 +21,7 @@ import {
 } from '@storybook/addon-knobs';
 import { setSplineControlPoint } from '@src/helpers/calculator';
 import { LabelModel, LineModel, TickModel } from '@t/components/axis';
+import { Point } from '@t/options';
 
 export default {
   title: 'brushes',
@@ -53,6 +55,7 @@ const linePointsModel = (lineWidth: number, color: string, bezier: BezierOptions
   } as LinePointsModel);
 
 const circleModel = (
+  point: Point,
   radius: number,
   color: string,
   style: StyleProp<CircleStyle, CircleStyleName>
@@ -63,8 +66,7 @@ const circleModel = (
     style,
     seriesIndex: 0,
     type: 'circle',
-    x: 100,
-    y: 100
+    ...point
   } as CircleModel);
 
 const areaPointsModel = (fillColor: string, bottomYPoint: number, bezier: BezierOptions) =>
@@ -130,12 +132,12 @@ export const labelBrush = () => {
     'middle'
   );
   const textAlign = radios('align', { center: 'center', left: 'left', right: 'right' }, 'center');
-  const font = text('font', 'normal 11px Arial');
+  const font = text('font', 'normal 20px Arial');
   const labelModel: LabelModel = {
     type: 'label',
     x: 100,
     y: 100,
-    text: 'hey',
+    text: 'HAYag',
     style: ['default', { textAlign, textBaseline, font }]
   };
 
@@ -180,7 +182,9 @@ export const circleBrush = () => {
     }
   ] as StyleProp<CircleStyle, CircleStyleName>;
 
-  circle(ctx, circleModel(radius, color, styleObj));
+  circle(ctx, circleModel({ x: 100, y: 100 }, 50, '#a79aff', ['default']));
+  circle(ctx, circleModel({ x: 300, y: 100 }, 50, '#a79aff', ['default', 'hover']));
+  circle(ctx, circleModel({ x: 100, y: 300 }, radius, color, styleObj));
 
   return el;
 };
@@ -210,8 +214,34 @@ export const rectBrush = () => {
   const { ctx, el } = setup();
 
   const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
-  const offsetKey = radios('offsetKey', { x: 'x', y: 'y' }, 'x');
-  rect(ctx, { type: 'rect', x: 100, y: 100, height: 200, width: 100, offsetKey, color });
+
+  rect(ctx, { type: 'rect', x: 100, y: 100, height: 200, width: 100, offsetKey: 'x', color });
+  rect(ctx, { type: 'rect', x: 300, y: 100, height: 200, width: 100, offsetKey: 'y', color });
+
+  return el;
+};
+
+export const tooltipBrush = () => {
+  const { ctx, el } = setup();
+
+  tooltip(ctx, {
+    type: 'tooltip',
+    x: 100,
+    y: 100,
+    data: [{ label: 'A', color: '#ddd', value: 100 }]
+  });
+
+  tooltip(ctx, {
+    type: 'tooltip',
+    x: 300,
+    y: 100,
+    data: [
+      { label: 'A', color: 'blue', value: 100 },
+      { label: 'B', color: 'red', value: 5030 },
+      { label: 'C', color: 'green', value: 200 }
+    ],
+    category: 'category name'
+  });
 
   return el;
 };
