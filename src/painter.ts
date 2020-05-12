@@ -5,7 +5,6 @@ import {
   LinePointsModel,
   PathRectModel
 } from '@t/components/series';
-import { PlotModel } from '@t/components/plot';
 import { TooltipModel } from '@t/components/tooltip';
 import { Options } from '@t/store/store';
 
@@ -14,7 +13,6 @@ type BrushModel =
   | LinePointsModel
   | PathRectModel
   | CircleModel
-  | PlotModel
   | TooltipModel;
 type Brush = (ctx: CanvasRenderingContext2D, brushModel: BrushModel) => void;
 
