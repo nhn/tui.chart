@@ -1,13 +1,15 @@
 import { RectModel, RectStyle } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
 
+export type RectStyleName = 'default';
+
 export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   const { x, y, width, height, style, thickness = 0 } = model;
 
   ctx.beginPath();
 
   if (style) {
-    const styleObj = makeStyleObj<RectStyle>(style, {});
+    const styleObj = makeStyleObj<RectStyle, RectStyleName>(style, {});
 
     Object.keys(styleObj).forEach(key => {
       ctx[key] = styleObj[key];

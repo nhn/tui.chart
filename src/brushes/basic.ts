@@ -1,15 +1,9 @@
-import {
-  ClipRectAreaModel,
-  LinePointsModel,
-  PathRectModel,
-  CircleModel,
-  CircleStyle,
-  AreaPointsModel
-} from '@t/components/series';
+import { ClipRectAreaModel, PathRectModel, CircleModel, CircleStyle } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
+import { LabelModel, LabelStyle, LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover';
-type PointsModel = LinePointsModel | AreaPointsModel;
+export type LabelStyleName = 'default';
 
 const circleStyle = {
   default: {
@@ -24,8 +18,14 @@ const circleStyle = {
   }
 };
 
+const labelStyle = {
+  default: {
+    font: 'normal 11px Arial',
+    fillStyle: '#333',
+    textAlign: 'left',
+    textBaseline: 'middle'
   }
-}
+};
 
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
@@ -66,7 +66,7 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   ctx.fillStyle = color;
 
   if (style) {
-    const styleObj = makeStyleObj<CircleStyle>(style, circleStyle);
+    const styleObj = makeStyleObj<CircleStyle, CircleStyleName>(style, circleStyle);
 
     Object.keys(styleObj).forEach(key => {
       ctx[key] = styleObj[key];
@@ -77,4 +77,28 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   ctx.fill();
   ctx.stroke();
   ctx.closePath();
+}
+
+export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
+  const { x, y, x2, y2 } = lineModel;
+
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.closePath();
+}
+
+export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
+  const { x, y, text, style } = labelModel;
+
+  if (style) {
+    const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
+
+    Object.keys(styleObj).forEach(key => {
+      ctx[key] = styleObj[key];
+    });
+  }
+
+  ctx.fillText(text, x, y + 1);
 }
