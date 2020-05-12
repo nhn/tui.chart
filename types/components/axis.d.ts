@@ -4,7 +4,7 @@ import { LabelStyleName } from '@src/brushes/basic';
 
 interface LabelStyle {
   font?: string;
-  fillStyle?: 'string';
+  fillStyle?: string;
   textAlign?: 'left' | 'right' | 'center';
   textBaseline?: 'middle' | 'bottom' | 'top' | 'alphabetic' | 'hanging';
 }
@@ -24,4 +24,5 @@ export type LineModel = {
   type: 'line';
   x2: number;
   y2: number;
+  strokeStyle?: string;
 } & Point;

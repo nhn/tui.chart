@@ -80,7 +80,10 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 }
 
 export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
-  const { x, y, x2, y2 } = lineModel;
+  const { x, y, x2, y2, strokeStyle } = lineModel;
+  if (strokeStyle) {
+    ctx.strokeStyle = strokeStyle;
+  }
 
   ctx.beginPath();
   ctx.moveTo(x, y);
