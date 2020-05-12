@@ -14,7 +14,6 @@ import Tooltip from '@src/component/tooltip';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as boxBrushes from '@src/brushes/boxSeries';
-import * as plotBrushes from '@src/brushes/plot';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 
 import { BarChartOptions, BoxSeriesData } from '@t/options';
@@ -52,6 +51,6 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, plotBrushes, axisBrushes, boxBrushes, tooltipBrushes]);
+    this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes]);
   }
 }

@@ -12,7 +12,6 @@ import Axis from '@src/component/axis';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
-import * as plotBrushes from '@src/brushes/plot';
 import { AreaChartOptions, AreaSeriesData } from '@t/options';
 
 interface AreaChartProps {
@@ -46,6 +45,6 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, plotBrushes]);
+    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes]);
   }
 }

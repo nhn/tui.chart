@@ -11,7 +11,6 @@ import Axis from '@src/component/axis';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
-import * as plotBrushes from '@src/brushes/plot';
 import { LineChartOptions, LineSeriesData } from '@t/options';
 
 // 생성자를 따로 두기보다는 팩토리로 구현하는게 나을것 같다.
@@ -46,6 +45,6 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(Tooltip);
     this.componentManager.add(Plot);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, plotBrushes]);
+    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes]);
   }
 }

@@ -1,11 +1,11 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { PlotModel } from '@t/components/plot';
 import { crispPixel, makeTickPixelPositions } from '@src/helpers/calculator';
 import Painter from '@src/painter';
+import { LineModel } from '@t/components/axis';
 
 export default class Plot extends Component {
-  models: Record<string, PlotModel[]> = {};
+  models: Record<string, LineModel[]> = {};
 
   initialize() {
     this.type = 'plot';
@@ -15,14 +15,14 @@ export default class Plot extends Component {
 
   renderLines() {}
 
-  renderModels(relativePositions: number[], vertical: boolean): PlotModel[] {
+  renderModels(relativePositions: number[], vertical: boolean): LineModel[] {
     return relativePositions.map(position => {
       const x = vertical ? crispPixel(position) : crispPixel(0);
       const y = vertical ? crispPixel(0) : crispPixel(position);
       const width = vertical ? 0 : this.rect.width;
       const height = vertical ? this.rect.height : 0;
 
-      return { type: 'plot', x, y, width, height };
+      return { type: 'line', x, y, x2: x + width, y2: y + height };
     });
   }
 
