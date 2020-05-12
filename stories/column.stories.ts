@@ -8,7 +8,7 @@ import {
 import { ColumnChartOptions } from '@t/options';
 
 export default {
-  title: 'Column'
+  title: 'chart|Column'
 };
 
 const width = 800;

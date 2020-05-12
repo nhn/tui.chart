@@ -4,7 +4,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData } from './data';
 
 export default {
-  title: 'Area'
+  title: 'chart|Area'
 };
 
 const width = 1000;
