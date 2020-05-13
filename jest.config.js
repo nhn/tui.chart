@@ -9,5 +9,5 @@ module.exports = {
       babelConfig: true
     }
   },
-  watchPathIgnorePatterns: ['<rootDir>/.storybook', '<rootDir>/.stories']
+  watchPathIgnorePatterns: ['<rootDir>/.storybook', '<rootDir>/.stories', '/node_modules/']
 };

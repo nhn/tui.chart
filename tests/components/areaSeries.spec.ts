@@ -33,7 +33,8 @@ const chartState = {
   },
   axes: {
     xAxis: {
-      pointOnColumn: true
+      pointOnColumn: true,
+      tickDistance: 40
     }
   },
   options: {

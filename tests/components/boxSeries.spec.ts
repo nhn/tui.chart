@@ -27,11 +27,11 @@ const chartState = {
     xAxis: {
       labels: [0, 5],
       tickCount: 2,
-      validTickCount: 2
+      labelCount: 2
     },
     yAxis: {
       pointOnColumn: true,
-      validTickCount: 2
+      labelCount: 2
     }
   },
   theme: {
