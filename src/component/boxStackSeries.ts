@@ -27,8 +27,6 @@ function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
 }
 
 export default class BoxStackSeries extends BoxSeries {
-  stack!: StackInfo;
-
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, theme, axes, categories, stackSeries } = chartState;
 
