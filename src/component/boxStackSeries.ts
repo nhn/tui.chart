@@ -9,7 +9,7 @@ import {
   BoxType
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { BoxSeriesModel } from '@t/components/series';
+import { RectModel } from '@t/components/series';
 import { first, last } from '@src/helpers/utils';
 
 interface StackSeriesModelParamType {
@@ -31,6 +31,10 @@ export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, theme, axes, categories, stackSeries } = chartState;
 
+    if (!stackSeries[this.name]) {
+      return;
+    }
+
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
     this.stack = stackSeries[this.name]!.stack!;
@@ -41,7 +45,7 @@ export default class BoxStackSeries extends BoxSeries {
     const valueLabels = axes[this.valueAxis].labels;
     const tickDistance = this.getTickDistance(axes[this.labelAxis].validTickCount);
 
-    const seriesModels: BoxSeriesModel[] = this.renderSeriesModel(
+    const seriesModels: RectModel[] = this.renderSeriesModel(
       seriesData,
       colors,
       valueLabels,
@@ -80,8 +84,8 @@ export default class BoxStackSeries extends BoxSeries {
     tickDistance,
     stackGroupCount = 1,
     stackGroupIndex = 0
-  }: StackSeriesModelParamType): BoxSeriesModel[] {
-    const seriesModels: BoxSeriesModel[] = [];
+  }: StackSeriesModelParamType): RectModel[] {
+    const seriesModels: RectModel[] = [];
     const offsetAxisLength = this.plot[this.offsetSizeKey];
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
     const stackType = this.stack.type;
@@ -107,7 +111,7 @@ export default class BoxStackSeries extends BoxSeries {
         }
 
         seriesModels.push({
-          type: 'box',
+          type: 'rect',
           color,
           width: this.isBar ? barLength : columnWidth,
           height: this.isBar ? columnWidth : barLength,
@@ -125,11 +129,11 @@ export default class BoxStackSeries extends BoxSeries {
     colors: string[],
     valueLabels: string[],
     tickDistance: number
-  ): BoxSeriesModel[] {
+  ): RectModel[] {
     const stackGroupData = seriesRaw.stackData as StackGroupData;
     const seriesRawData = seriesRaw.data;
     const stackGroupIds = Object.keys(stackGroupData);
-    let seriesModels: BoxSeriesModel[] = [];
+    let seriesModels: RectModel[] = [];
 
     stackGroupIds.forEach((groupId, groupIndex) => {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);

@@ -1,10 +1,5 @@
 import Component from './component';
-import {
-  RectModel,
-  BoxSeriesModel,
-  ClipRectAreaModel,
-  HoverBoxSeriesModel
-} from '@t/components/series';
+import { RectModel, ClipRectAreaModel } from '@t/components/series';
 import { ChartState, ChartType, SeriesData, BoxType } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -17,7 +12,7 @@ import {
 import { first, last, includes } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 
-type DrawModels = BoxSeriesModel | ClipRectAreaModel | RectModel | HoverBoxSeriesModel;
+type DrawModels = ClipRectAreaModel | RectModel;
 
 export type SizeKey = 'width' | 'height';
 
@@ -91,7 +86,12 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, theme, axes, categories } = chartState;
+    const { layout, series, theme, axes, categories, stackSeries } = chartState;
+
+    if (stackSeries[this.name]) {
+      return;
+    }
+
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
 
@@ -100,7 +100,7 @@ export default class BoxSeries extends Component {
     const valueLabels = axes[this.valueAxis].labels;
     const tickDistance = this.getTickDistance(axes[this.labelAxis].validTickCount);
 
-    const seriesModels: BoxSeriesModel[] = this.renderSeriesModel(
+    const seriesModels: RectModel[] = this.renderSeriesModel(
       seriesData,
       colors,
       valueLabels,
@@ -135,7 +135,7 @@ export default class BoxSeries extends Component {
     colors: string[],
     valueLabels: string[],
     tickDistance: number
-  ): BoxSeriesModel[] {
+  ): RectModel[] {
     const seriesRawData = seriesData.data;
     const minValue = Number(first(valueLabels));
     const offsetAxisLength = this.plot[this.offsetSizeKey];
@@ -160,7 +160,7 @@ export default class BoxSeries extends Component {
         const barLength = value * axisValueRatio;
 
         return {
-          type: 'box',
+          type: 'rect',
           color,
           width: this.isBar ? barLength - this.axisThickness : columnWidth,
           height: this.isBar ? columnWidth : barLength,
@@ -168,7 +168,7 @@ export default class BoxSeries extends Component {
           y: this.isBar
             ? dataStart
             : offsetAxisLength - barLength - startPosition + this.hoverThickness
-        };
+        } as RectModel;
       });
     });
   }
@@ -183,9 +183,18 @@ export default class BoxSeries extends Component {
     };
   }
 
-  protected renderRect(seriesModel): HoverBoxSeriesModel[] {
+  protected renderRect(seriesModel): RectModel[] {
     return seriesModel.map(data => {
       const { x, y, width, height, color } = data;
+      const shadowOffset = this.hoverThickness / 2;
+      const style = [
+        {
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: shadowOffset,
+          shadowOffsetY: this.isBar ? shadowOffset : -1 * shadowOffset,
+          shadowBlur: this.hoverThickness + shadowOffset
+        }
+      ];
 
       return {
         type: 'rect',
@@ -194,7 +203,7 @@ export default class BoxSeries extends Component {
         y,
         width,
         height,
-        offsetKey: this.isBar ? 'y' : 'x',
+        style,
         thickness: this.hoverThickness
       };
     });

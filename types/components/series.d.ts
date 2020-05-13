@@ -1,7 +1,7 @@
 import { Point, Rect, BezierPoint } from '../options';
 import { CircleStyleName } from '@src/brushes/basic';
 
-export type StyleProp<T> = (T | CircleStyleName)[];
+export type StyleProp<T> = (T | CircleStyleName | RectStyle)[];
 
 export interface CircleStyle {
   globalAlpha?: number;
@@ -46,17 +46,16 @@ export type PathRectModel = {
   stroke?: string;
 } & Rect;
 
-export type BoxSeriesModel = {
-  type: 'box';
-  color: string;
-} & Rect;
+export interface RectStyle {
+  shadowColor?: string;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
+  shadowBlur?: number;
+}
 
 export type RectModel = {
   type: 'rect';
   color: string;
-  offsetKey: 'x' | 'y';
+  style?: StyleProp<RectStyle>;
+  thickness?: number;
 } & Rect;
-
-export type HoverBoxSeriesModel = {
-  thickness: number;
-} & RectModel;

@@ -150,7 +150,7 @@ const stackSeriesData: StoreModule = {
       Object.keys(series).forEach(seriesName => {
         const seriesData = series[seriesName];
         const { data, seriesCount, seriesGroupCount } = seriesData;
-        const { stack } = stackSeries[seriesName];
+        const { stack } = stackSeries[seriesName] || {};
 
         if (stack) {
           const stackData = hasStackGrouped(data) ? makeStackGroupData(data) : makeStackData(data);

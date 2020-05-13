@@ -104,7 +104,7 @@ export default abstract class Component {
 
     if (Array.isArray(models)) {
       painter.paintForEach(models);
-    } else {
+    } else if (models) {
       Object.keys(models).forEach(item => {
         painter.paintForEach(models[item]);
       });
