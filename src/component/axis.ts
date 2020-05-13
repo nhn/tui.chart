@@ -127,7 +127,7 @@ export default class Axis extends Component {
       return {
         type: 'label',
         text,
-        align: isYAxis(this.name) ? 'left' : 'center',
+        style: ['default', { textAlign: isYAxis(this.name) ? 'left' : 'center' }],
         [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
         [anchorKey]: labelAnchorPoint
       };

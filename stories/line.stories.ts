@@ -10,7 +10,7 @@ import {
 } from './data';
 
 export default {
-  title: 'Line'
+  title: 'chart|Line'
 };
 
 const width = 1000;

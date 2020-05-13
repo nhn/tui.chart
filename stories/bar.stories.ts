@@ -8,7 +8,7 @@ import {
 import { BarChartOptions } from '@t/options';
 
 export default {
-  title: 'Bar'
+  title: 'chart|Bar'
 };
 
 const width = 800;

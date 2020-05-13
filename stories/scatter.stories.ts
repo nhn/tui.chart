@@ -4,7 +4,7 @@ import { genderHeightWeightData } from './data';
 import ScatterChart from '@src/charts/scatterChart';
 
 export default {
-  title: 'Scatter'
+  title: 'chart|Scatter'
 };
 
 const width = 1000;

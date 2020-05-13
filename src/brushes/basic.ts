@@ -1,15 +1,9 @@
-import {
-  ClipRectAreaModel,
-  LinePointsModel,
-  PathRectModel,
-  CircleModel,
-  CircleStyle,
-  AreaPointsModel
-} from '@t/components/series';
+import { ClipRectAreaModel, PathRectModel, CircleModel, CircleStyle } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
+import { LabelModel, LabelStyle, LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover';
-type PointsModel = LinePointsModel | AreaPointsModel;
+export type LabelStyleName = 'default';
 
 const circleStyle = {
   default: {
@@ -24,36 +18,14 @@ const circleStyle = {
   }
 };
 
-export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel, close = true) {
-  const { color, lineWidth, points } = pointsModel;
-
-  ctx.lineWidth = lineWidth;
-  ctx.lineCap = 'round';
-  ctx.strokeStyle = color;
-  ctx.beginPath();
-
-  points.forEach((point, idx) => {
-    if (idx === 0) {
-      ctx.moveTo(point.x, point.y);
-
-      return;
-    }
-
-    if (point.controlPoint) {
-      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
-      const { controlPoint, x, y } = point;
-
-      ctx.bezierCurveTo(prevX, prevY, controlPoint.prev.x, controlPoint.prev.y, x, y);
-    } else {
-      ctx.lineTo(point.x, point.y);
-    }
-  });
-
-  ctx.stroke();
-  if (close) {
-    ctx.closePath();
+const labelStyle = {
+  default: {
+    font: 'normal 11px Arial',
+    fillStyle: '#333',
+    textAlign: 'left',
+    textBaseline: 'middle'
   }
-}
+};
 
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
@@ -61,26 +33,6 @@ export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: C
   ctx.beginPath();
   ctx.rect(x, y, width, height);
   ctx.clip();
-}
-
-export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaPointsModel) {
-  const { points, bottomYPoint, fillColor } = areaPointsModel;
-
-  ctx.beginPath();
-
-  const startPoint = points[0];
-  const endPoint = points[points.length - 1];
-
-  linePoints(ctx, areaPointsModel, false);
-
-  ctx.lineTo(endPoint.x, bottomYPoint);
-  ctx.lineTo(startPoint.x, bottomYPoint);
-  ctx.lineTo(startPoint.x, startPoint.y);
-
-  ctx.fillStyle = fillColor;
-  ctx.fill();
-
-  ctx.closePath();
 }
 
 export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectModel) {
@@ -114,7 +66,7 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   ctx.fillStyle = color;
 
   if (style) {
-    const styleObj = makeStyleObj<CircleStyle>(style, circleStyle);
+    const styleObj = makeStyleObj<CircleStyle, CircleStyleName>(style, circleStyle);
 
     Object.keys(styleObj).forEach(key => {
       ctx[key] = styleObj[key];
@@ -125,4 +77,31 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   ctx.fill();
   ctx.stroke();
   ctx.closePath();
+}
+
+export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
+  const { x, y, x2, y2, strokeStyle } = lineModel;
+  if (strokeStyle) {
+    ctx.strokeStyle = strokeStyle;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.closePath();
+}
+
+export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
+  const { x, y, text, style } = labelModel;
+
+  if (style) {
+    const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
+
+    Object.keys(styleObj).forEach(key => {
+      ctx[key] = styleObj[key];
+    });
+  }
+
+  ctx.fillText(text, x, y + 1);
 }
