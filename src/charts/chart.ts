@@ -105,8 +105,6 @@ export default class Chart<T extends Options> {
   initialize() {
     this.store.setModule(layout);
     this.store.setModule(seriesData);
-    this.store.setModule(dataRange);
-    this.store.setModule(scale);
   }
 
   draw() {

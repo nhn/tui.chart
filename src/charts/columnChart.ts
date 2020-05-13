@@ -1,9 +1,7 @@
 import Chart from './chart';
 
-import layout from '@src/store/layout';
 import dataRange from '@src/store/dataRange';
-import seriesData from '@src/store/seriesData';
-import stackSeriesData, { pickStackOption } from '@src/store/stackSeriesData';
+import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 
@@ -40,28 +38,17 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
   }
 
   initialize() {
-    const stackOption = pickStackOption(this.store.options);
+    super.initialize();
 
-    this.store.setModule(layout);
-    this.store.setModule(seriesData);
-
-    if (stackOption) {
-      this.store.setModule(stackSeriesData);
-    }
-
+    this.store.setModule(stackSeriesData);
     this.store.setModule(dataRange);
     this.store.setModule(scale);
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);
     this.componentManager.add(Axis, { name: 'xAxis' });
-
-    if (stackOption) {
-      this.componentManager.add(BoxStackSeries, { name: 'column' });
-    } else {
-      this.componentManager.add(BoxSeries, { name: 'column' });
-    }
-
+    this.componentManager.add(BoxStackSeries, { name: 'column' });
+    this.componentManager.add(BoxSeries, { name: 'column' });
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
 
