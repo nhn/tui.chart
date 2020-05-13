@@ -72,8 +72,13 @@ type BaseAxisOptions = {
   title?: string | TitleOptions;
 };
 
-interface BaseXAxisOptions extends BaseAxisOptions {
+interface LineTypeXAxisOptions extends BaseXAxisOptions {
   pointOnColumn?: boolean;
+}
+
+interface BaseXAxisOptions extends BaseAxisOptions {
+  // @TODO: 추가 필요
+  rotateLabel?: boolean;
 }
 
 interface BaseOptions {
@@ -95,12 +100,12 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
 
 export interface AreaChartOptions extends BaseOptions {
   series?: LineTypeSeriesOptions;
-  xAxis?: BaseXAxisOptions;
+  xAxis?: LineTypeXAxisOptions;
 }
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineTypeSeriesOptions;
-  xAxis?: BaseXAxisOptions;
+  xAxis?: LineTypeXAxisOptions;
 }
 
 export interface ScatterChartOptions extends BaseOptions {

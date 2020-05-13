@@ -37,22 +37,21 @@ export default class LineSeries extends Component {
   }
 
   render(chartState: ChartState<LineChartOptions>) {
-    const { layout, series, scale, theme, options, categories = [] } = chartState;
+    const { layout, series, scale, theme, options, axes, categories = [] } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
 
-    this.rect = layout.plot;
-
     const { yAxis } = scale;
-
-    const tickDistance = this.rect.width / categories.length;
+    const { tickDistance, pointOnColumn } = axes.xAxis;
 
     const renderLineOptions: RenderLineOptions = {
-      pointOnColumn: options.xAxis?.pointOnColumn || false,
+      pointOnColumn,
       options: options.series || {},
       theme: theme.series
     };
+
+    this.rect = layout.plot;
 
     const lineSeriesModel = this.renderLinePointsModel(
       series.line.data,

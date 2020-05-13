@@ -1,6 +1,7 @@
 import { Options, SeriesState, StoreModule } from '@t/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import { AxisType } from '@src/component/axis';
+import { LineTypeXAxisOptions } from '@t/options';
 
 const axes: StoreModule = {
   name: 'axes',
@@ -9,16 +10,18 @@ const axes: StoreModule = {
   }),
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, categories = [] } = state;
+      const { scale, options, series, layout, categories = [] } = state;
 
+      const { plot } = layout;
       const pointOnColumn = isPointOnColumn(series, options);
 
       const labelAxisData = {
         labels: categories,
         tickCount: categories.length + (pointOnColumn ? 1 : 0),
-        validTickCount: categories.length,
+        labelCount: categories.length,
         isLabelAxis: true,
-        pointOnColumn
+        pointOnColumn,
+        tickDistance: plot.width / (categories.length - (pointOnColumn ? 0 : 1))
       };
 
       const axisName = getValueAxisName(series);
@@ -27,7 +30,7 @@ const axes: StoreModule = {
       const valueAxisData = {
         labels: valueLabels,
         tickCount: valueLabels.length,
-        validTickCount: valueLabels.length
+        labelCount: valueLabels.length
       };
 
       if (series.bar) {
@@ -60,7 +63,11 @@ function isPointOnColumn(series: SeriesState, options: Options) {
     return true;
   }
 
-  return options.xAxis && options.xAxis.pointOnColumn;
+  if (series.line || series.area) {
+    return (options.xAxis as LineTypeXAxisOptions)?.pointOnColumn;
+  }
+
+  return false;
 }
 
 export default axes;
