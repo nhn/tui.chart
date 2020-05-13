@@ -53,7 +53,7 @@ const chartState = {
 const result = [
   { type: 'clipRectArea', x: 0, y: 0, width: 90, height: 90 },
   {
-    type: 'box',
+    type: 'rect',
     color: '#aaaaaa',
     width: 10,
     height: 10,
@@ -61,7 +61,7 @@ const result = [
     y: 19
   },
   {
-    type: 'box',
+    type: 'rect',
     color: '#bbbbbb',
     width: 40,
     height: 10,
@@ -69,7 +69,7 @@ const result = [
     y: 19
   },
   {
-    type: 'box',
+    type: 'rect',
     color: '#aaaaaa',
     width: 20,
     height: 10,
@@ -77,7 +77,7 @@ const result = [
     y: 59
   },
   {
-    type: 'box',
+    type: 'rect',
     color: '#bbbbbb',
     width: 50,
     height: 10,
@@ -94,7 +94,14 @@ const respondersResult = [
     y: 19,
     width: 10,
     height: 10,
-    offsetKey: 'y',
+    style: [
+      {
+        shadowBlur: 6,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
+      }
+    ],
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' }
   },
@@ -105,7 +112,14 @@ const respondersResult = [
     y: 19,
     width: 40,
     height: 10,
-    offsetKey: 'y',
+    style: [
+      {
+        shadowBlur: 6,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
+      }
+    ],
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' }
   },
@@ -116,7 +130,14 @@ const respondersResult = [
     y: 59,
     width: 20,
     height: 10,
-    offsetKey: 'y',
+    style: [
+      {
+        shadowBlur: 6,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
+      }
+    ],
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' }
   },
@@ -127,7 +148,14 @@ const respondersResult = [
     y: 59,
     width: 50,
     height: 10,
-    offsetKey: 'y',
+    style: [
+      {
+        shadowBlur: 6,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
+      }
+    ],
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' }
   }

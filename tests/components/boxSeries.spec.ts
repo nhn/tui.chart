@@ -45,7 +45,7 @@ const chartState = {
 const result = [
   { type: 'clipRectArea', x: 0, y: 0, width: 90, height: 90 },
   {
-    type: 'box',
+    type: 'rect',
     color: '#aaaaaa',
     width: 15,
     height: 5,
@@ -53,7 +53,7 @@ const result = [
     y: 19
   },
   {
-    type: 'box',
+    type: 'rect',
     color: '#aaaaaa',
     width: 31,
     height: 5,
@@ -61,7 +61,7 @@ const result = [
     y: 59
   },
   {
-    type: 'box',
+    type: 'rect',
     color: '#bbbbbb',
     width: 63,
     height: 5,
@@ -69,7 +69,7 @@ const result = [
     y: 24
   },
   {
-    type: 'box',
+    type: 'rect',
     color: '#bbbbbb',
     width: 79,
     height: 5,
@@ -86,7 +86,14 @@ const respondersResult = [
     y: 19,
     width: 15,
     height: 5,
-    offsetKey: 'y',
+    style: [
+      {
+        shadowBlur: 6,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
+      }
+    ],
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' }
   },
@@ -97,7 +104,14 @@ const respondersResult = [
     y: 59,
     width: 31,
     height: 5,
-    offsetKey: 'y',
+    style: [
+      {
+        shadowBlur: 6,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
+      }
+    ],
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' }
   },
@@ -108,7 +122,14 @@ const respondersResult = [
     y: 24,
     width: 63,
     height: 5,
-    offsetKey: 'y',
+    style: [
+      {
+        shadowBlur: 6,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
+      }
+    ],
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' }
   },
@@ -119,7 +140,14 @@ const respondersResult = [
     y: 64,
     width: 79,
     height: 5,
-    offsetKey: 'y',
+    style: [
+      {
+        shadowBlur: 6,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2
+      }
+    ],
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' }
   }
@@ -130,6 +158,8 @@ beforeEach(() => {
     store: {} as Store<BarChartOptions>,
     eventBus: new EventEmitter()
   });
+
+  boxSeries.name = 'bar';
 });
 
 it('should be set the drawing models for series rendering', () => {

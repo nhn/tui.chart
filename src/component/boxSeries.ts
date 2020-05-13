@@ -88,7 +88,7 @@ export default class BoxSeries extends Component {
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, series, theme, axes, categories, stackSeries } = chartState;
 
-    if (stackSeries[this.name]) {
+    if (stackSeries && stackSeries[this.name]) {
       return;
     }
 
