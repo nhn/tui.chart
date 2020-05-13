@@ -14,12 +14,12 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
     Object.keys(styleObj).forEach(key => {
       ctx[key] = styleObj[key];
     });
+  }
 
-    if (style) {
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(x - thickness, y - thickness, width + thickness * 2, height + thickness * 2);
-      ctx.shadowColor = 'transparent';
-    }
+  if (thickness) {
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(x - thickness, y - thickness, width + thickness * 2, height + thickness * 2);
+    ctx.shadowColor = 'transparent';
   }
 
   ctx.fillStyle = model.color;

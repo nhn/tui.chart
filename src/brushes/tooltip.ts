@@ -1,6 +1,6 @@
 import { pathRect, label as labelBrush, line } from '@src/brushes/basic';
 import { TooltipModel } from '@t/components/tooltip';
-import { box } from '@src/brushes/boxSeries';
+import { rect } from '@src/brushes/boxSeries';
 import { LabelModel, LabelStyle } from '@t/components/axis';
 import { Point } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
@@ -60,7 +60,7 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
   data.forEach(({ label, color, value }, index) => {
     const cy = yStartPoint + categoryHeight + 15 * index;
 
-    box(ctx, { type: 'box', x: xStartPoint, y: cy, width: 13, height: dataHeight, color });
+    rect(ctx, { type: 'rect', x: xStartPoint, y: cy, width: 13, height: dataHeight, color });
 
     const labelStyle = {
       textBaseline: 'top',

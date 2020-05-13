@@ -1,7 +1,7 @@
 import { circle, line, label, CircleStyleName } from '@src/brushes/basic';
 import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
-import { box, rect } from '@src/brushes/boxSeries';
+import { rect } from '@src/brushes/boxSeries';
 import { tooltip } from '@src/brushes/tooltip';
 
 import {
@@ -201,22 +201,29 @@ export const areaPointsBrush = () => {
   return el;
 };
 
-export const boxBrush = () => {
-  const { ctx, el } = setup();
-
-  const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
-  box(ctx, { type: 'box', x: 100, y: 100, height: 200, width: 100, color });
-
-  return el;
-};
-
 export const rectBrush = () => {
   const { ctx, el } = setup();
 
   const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
 
-  rect(ctx, { type: 'rect', x: 100, y: 100, height: 200, width: 100, offsetKey: 'x', color });
-  rect(ctx, { type: 'rect', x: 300, y: 100, height: 200, width: 100, offsetKey: 'y', color });
+  rect(ctx, { type: 'rect', x: 300, y: 100, height: 200, width: 100, color });
+  rect(ctx, {
+    type: 'rect',
+    x: 100,
+    y: 100,
+    height: 200,
+    width: 100,
+    color,
+    thickness: 10,
+    style: [
+      {
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: 1,
+        shadowOffsetY: -1,
+        shadowBlur: 10
+      }
+    ]
+  });
 
   return el;
 };
