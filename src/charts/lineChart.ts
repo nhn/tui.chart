@@ -1,5 +1,7 @@
 import Chart from './chart';
 
+import dataRange from '@src/store/dataRange';
+import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import Tooltip from '@src/component/tooltip';
 import Plot from '@src/component/plot';
@@ -34,6 +36,8 @@ export default class LineChart extends Chart<LineChartOptions> {
   initialize() {
     super.initialize();
 
+    this.store.setModule(dataRange);
+    this.store.setModule(scale);
     this.store.setModule(axes);
 
     this.componentManager.add(LineSeries);

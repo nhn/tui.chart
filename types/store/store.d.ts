@@ -24,6 +24,8 @@ type ChartSeriesMap = {
 
 export type ChartType = keyof ChartSeriesMap;
 
+export type BoxType = 'bar' | 'column';
+
 type Series = Partial<ChartSeriesMap>;
 
 type ValueOf<T> = T[keyof T];
@@ -37,6 +39,12 @@ type ChartOptionsMap = {
 
 export type Options = ValueOf<ChartOptionsMap>;
 
+type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType>
+  ? ElementType
+  : never;
+
+export type SeriesTypes = ElementType<ValueOf<ChartSeriesMap>>;
+
 export interface StoreOptions {
   state?: Partial<ChartState<Options>> | StateFunc;
   watch?: Record<string, WatchFunc>;
@@ -47,7 +55,7 @@ export interface StoreOptions {
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange' | 'initialize';
+  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange' | 'stackSeriesData';
 }
 
 export interface SeriesTheme {
@@ -82,6 +90,9 @@ export interface ChartState<T extends Options> {
   theme: Theme;
   options: T;
   categories?: string[];
+  stackSeries: {
+    [key in BoxType]?: StackSeriesData<key>;
+  };
 }
 
 export interface Stack {
@@ -108,12 +119,14 @@ export interface ValueEdge {
 
 export type SeriesData<K extends ChartType> = {
   data: ChartSeriesMap[K];
-} & SeriesGroup &
-  StackSeries;
+} & SeriesGroup;
 
-type StackSeries = Stack & {
-  stackData?: StackDataType;
-};
+export type StackSeriesData<K extends BoxType> = {
+  data: ChartSeriesMap[K];
+  stackData: StackDataType;
+  dataValues: number[];
+} & Required<Stack> &
+  SeriesGroup;
 
 export interface SeriesGroup {
   seriesCount: number;

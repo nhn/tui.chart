@@ -1,6 +1,9 @@
 import Chart from './chart';
 
+import dataRange from '@src/store/dataRange';
+import scale from '@src/store/scale';
 import axes from '@src/store/axes';
+
 import Tooltip from '@src/component/tooltip';
 import Plot from '@src/component/plot';
 import ScatterSeries from '@src/component/scatterSeries';
@@ -33,6 +36,8 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
   initialize() {
     super.initialize();
 
+    this.store.setModule(dataRange);
+    this.store.setModule(scale);
     this.store.setModule(axes);
 
     this.componentManager.add(ScatterSeries);

@@ -1,9 +1,13 @@
 import Chart from './chart';
 
+import dataRange from '@src/store/dataRange';
+import stackSeriesData from '@src/store/stackSeriesData';
+import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
+import BoxStackSeries from '@src/component/boxStackSeries';
 import Plot from '@src/component/plot';
 import Tooltip from '@src/component/tooltip';
 
@@ -36,11 +40,15 @@ export default class BarChart extends Chart<BarChartOptions> {
   initialize() {
     super.initialize();
 
+    this.store.setModule(stackSeriesData);
+    this.store.setModule(dataRange);
+    this.store.setModule(scale);
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);
-    this.componentManager.add(BoxSeries, { name: 'bar' });
     this.componentManager.add(Axis, { name: 'yAxis' });
+    this.componentManager.add(BoxSeries, { name: 'bar' });
+    this.componentManager.add(BoxStackSeries, { name: 'bar' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 

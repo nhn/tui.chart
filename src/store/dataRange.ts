@@ -1,7 +1,6 @@
-import { ValueEdge, StoreModule, ChartType, SeriesData, StackDataType } from '@t/store/store';
+import { ValueEdge, StoreModule, ChartType } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
-import { STACK_TYPES, isBoxSeries, BoxType } from '@src/component/boxSeries';
-import { StackType } from '@t/options';
+import { isBoxSeries } from '@src/component/boxSeries';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -29,27 +28,6 @@ function getLimitSafely(baseValues: number[]): ValueEdge {
   return limit;
 }
 
-function getStackDataValues(stackData: StackDataType, stackType: StackType) {
-  if (stackType === STACK_TYPES.PERCENT) {
-    return [0, 100];
-  }
-
-  let values: number[] = [];
-
-  if (Array.isArray(stackData)) {
-    values = [0, ...stackData.map(({ sum }) => sum)];
-  } else {
-    for (const groupId in stackData) {
-      if (Object.prototype.hasOwnProperty.call(stackData, groupId)) {
-        const sums = stackData[groupId].map(({ sum }) => sum);
-        values = [0, ...values, ...sums];
-      }
-    }
-  }
-
-  return values;
-}
-
 const dataRange: StoreModule = {
   name: 'dataRange',
   state: () => ({
@@ -57,7 +35,7 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const { series, disabledSeries } = state;
+      const { series, disabledSeries, stackSeries } = state;
       const newDataRange: Record<string, ValueEdge> = {};
 
       for (const seriesName in series) {
@@ -83,10 +61,8 @@ const dataRange: StoreModule = {
           }
         } else if (objectCoord) {
           values = values.map(value => value.y);
-        } else if (series[seriesName].stack) {
-          const { stackData, stack } = series[seriesName as BoxType] as SeriesData<BoxType>;
-
-          values = getStackDataValues(stackData!, stack!.type);
+        } else if (stackSeries[seriesName]?.stack) {
+          values = stackSeries[seriesName].dataValues;
         }
 
         newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);
