@@ -1,5 +1,9 @@
 import BoxSeries, { SeriesRawData } from './boxSeries';
+<<<<<<< HEAD
 import { ColumnChartOptions, BarChartOptions, Point, Connector } from '@t/options';
+=======
+import { ColumnChartOptions, BarChartOptions, StackType } from '@t/options';
+>>>>>>> feat: pointOnColumn options (#305)
 import {
   ChartState,
   StackSeriesData,
