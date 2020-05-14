@@ -32,22 +32,19 @@ export default class ScatterSeries extends Component {
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
-    const { layout, series, scale, theme, categories = [] } = chartState;
+    const { axes, layout, series, scale, theme, categories = [] } = chartState;
     if (!series.scatter) {
       throw new Error("There's no scatter data!");
     }
 
     const scatterData = series.scatter.data;
-
-    this.rect = layout.plot;
-
     const { yAxis } = scale;
-
-    const tickDistance = this.rect.width / categories.length;
-
+    const { tickDistance } = axes.xAxis;
     const renderOptions: RenderOptions = {
       theme: theme.series
     };
+
+    this.rect = layout.plot;
 
     const seriesModel = this.renderScatterPointsModel(
       scatterData,

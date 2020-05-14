@@ -8,9 +8,11 @@ import {
   temperatureData,
   coordinateData
 } from './data';
+import { boolean, withKnobs } from '@storybook/addon-knobs';
 
 export default {
-  title: 'chart|Line'
+  title: 'chart|Line',
+  decorators: [withKnobs]
 };
 
 const width = 1000;
@@ -41,15 +43,16 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
 }
 
 export const basic = () => {
-  const { el } = createChart(temperatureData, { xAxis: { pointOnColumn: true } });
+  const { el } = createChart(temperatureData, {
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false) }
+  });
 
   return el;
 };
 
 export const spline = () => {
   const { el } = createChart(budgetData, {
-    series: { spline: true },
-    xAxis: { pointOnColumn: true }
+    series: { spline: boolean('spline', true) }
   });
 
   return el;

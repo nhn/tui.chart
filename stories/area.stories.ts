@@ -2,9 +2,11 @@ import AreaChart from '@src/charts/areaChart';
 import { AreaSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData } from './data';
+import { withKnobs, boolean } from '@storybook/addon-knobs';
 
 export default {
-  title: 'chart|Area'
+  title: 'chart|Area',
+  decorators: [withKnobs]
 };
 
 const width = 1000;
@@ -36,16 +38,8 @@ function createChart(data: AreaSeriesData, customOptions?: Record<string, any>) 
 
 export const basic = () => {
   const { el } = createChart(avgTemperatureData, {
-    xAxis: { pointOnColumn: true }
-  });
-
-  return el;
-};
-
-export const spline = () => {
-  const { el } = createChart(avgTemperatureData, {
-    xAxis: { pointOnColumn: true },
-    series: { spline: true }
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+    series: { spline: boolean('spline', false) }
   });
 
   return el;

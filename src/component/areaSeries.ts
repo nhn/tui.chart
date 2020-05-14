@@ -50,21 +50,18 @@ export default class AreaSeries extends Component {
       throw new Error("There's no area data!");
     }
 
-    this.rect = layout.plot;
-
     const { yAxis } = scale;
-
-    const tickDistance = this.rect.width / categories.length;
-
+    const { tickDistance, pointOnColumn } = axes.xAxis;
+    const areaData = series.area.data;
     const bottomYPoint = layout.xAxis.y - layout.xAxis.height + 10; // padding
 
     const renderOptions: RenderOptions = {
-      pointOnColumn: axes.xAxis.pointOnColumn,
+      pointOnColumn,
       options: options.series || {},
       theme: theme.series
     };
 
-    const areaData = series.area.data;
+    this.rect = layout.plot;
 
     this.linePointsModel = this.renderLinePointsModel(
       areaData,

@@ -106,10 +106,11 @@ export type StackDataType = StackData | StackGroupData;
 export interface AxisData {
   labels: string[];
   tickCount: number;
-  validTickCount: number;
+  labelCount: number;
   isLabelAxis: boolean;
   relativePositions: number[];
   pointOnColumn: boolean;
+  tickDistance: number;
 }
 
 export interface ValueEdge {

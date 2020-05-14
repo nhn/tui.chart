@@ -1,5 +1,5 @@
 import BoxSeries, { SeriesRawData } from './boxSeries';
-import { StackInfo, ColumnChartOptions, BarChartOptions, StackType } from '@t/options';
+import { ColumnChartOptions, BarChartOptions, StackType } from '@t/options';
 import {
   ChartState,
   StackSeriesData,
@@ -41,7 +41,7 @@ export default class BoxStackSeries extends BoxSeries {
     const stackType = seriesData.stack.type;
     const { colors } = theme.series;
     const valueLabels = axes[this.valueAxis].labels;
-    const tickDistance = this.getTickDistance(axes[this.labelAxis].validTickCount);
+    const { tickDistance } = axes[this.labelAxis];
 
     const seriesModels: RectModel[] = this.renderStackSeriesModel(
       stackType,
