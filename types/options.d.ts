@@ -65,11 +65,9 @@ interface TitleOptions {
 
 type BaseChartOptions = {
   title?: string | TitleOptions;
-  // format?:
 } & Size;
 
 type BaseAxisOptions = {
-  title?: string | TitleOptions;
 };
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {

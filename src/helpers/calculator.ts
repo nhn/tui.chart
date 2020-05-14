@@ -1,4 +1,4 @@
-import { ValueEdge } from '@t/store/store';
+import { SeriesState, ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger } from '@src/helpers/utils';
 import { BezierPoint } from '@t/options';
@@ -16,6 +16,9 @@ export const findMultipleNum = (...args: number[]) => {
   return Math.pow(10, underPointLen);
 };
 
+export function isLabelAxisOnYAxis(series: SeriesState) {
+  return !!series.bar;
+}
 export function makeLabelsFromLimit(limit: ValueEdge, step: number) {
   const multipleNum = findMultipleNum(step);
   const min = Math.round(limit.min * multipleNum);
@@ -41,9 +44,6 @@ export function makeTickPixelPositions(
 
       return ratio * size + additionalPosition;
     });
-
-    // 왜하는지 모르겠음
-    // positions[positions.length - 1] -= 1;
   }
 
   if (remainLastBlockIntervalPosition) {

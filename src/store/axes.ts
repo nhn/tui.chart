@@ -1,5 +1,5 @@
 import { Options, SeriesState, StoreModule } from '@t/store/store';
-import { makeLabelsFromLimit } from '@src/helpers/calculator';
+import { isLabelAxisOnYAxis, makeLabelsFromLimit } from '@src/helpers/calculator';
 import { AxisType } from '@src/component/axis';
 import { LineTypeXAxisOptions } from '@t/options';
 
@@ -52,10 +52,6 @@ const axes: StoreModule = {
     }
   }
 };
-
-function isLabelAxisOnYAxis(series: SeriesState) {
-  return !!series.bar;
-}
 
 function getValueAxisName(series) {
   return series.bar ? AxisType.X : AxisType.Y;
