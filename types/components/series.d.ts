@@ -1,6 +1,7 @@
-import { Point, Rect, BezierPoint } from '../options';
+import { Point, Rect, BezierPoint, ConnectorLineType } from '../options';
 import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
+import { LineModel } from './axis';
 
 export type StyleProp<T, K> = (T | K)[];
 
@@ -59,3 +60,13 @@ export type RectModel = {
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
 } & Rect;
+
+export type ConnectorModel = {
+  type: 'connector';
+  lineWidth: number;
+  color: string;
+  x2: number;
+  y2: number;
+  strokeStyle?: string;
+  lineType: ConnectorLineType;
+} & Point;

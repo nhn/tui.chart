@@ -1,5 +1,6 @@
-import { RectModel, RectStyle } from '@t/components/series';
+import { RectModel, RectStyle, ConnectorModel } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
+import { line } from './basic';
 
 export type RectStyleName = 'default';
 
@@ -25,4 +26,20 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   ctx.fillStyle = model.color;
   ctx.rect(x, y, width, height);
   ctx.fill();
+}
+
+export function connector(ctx: CanvasRenderingContext2D, model: ConnectorModel) {
+  const { x, y, x2, y2, color, lineWidth, lineType = 'solid' } = model;
+
+  ctx.lineWidth = lineWidth;
+
+  line(ctx, {
+    type: 'line',
+    x,
+    y,
+    x2,
+    y2,
+    strokeStyle: color,
+    dashedPattern: lineType === 'dashed' ? [10, 10] : []
+  });
 }

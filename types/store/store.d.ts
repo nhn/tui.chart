@@ -8,9 +8,10 @@ import {
   ColumnChartOptions,
   BoxSeriesDataType,
   ScatterSeriesType,
-  StackInfo,
   AreaSeriesType,
-  AreaChartOptions
+  AreaChartOptions,
+  Connector,
+  StackType
 } from '@t/options';
 import Store from '@src/store/store';
 
@@ -95,10 +96,6 @@ export interface ChartState<T extends Options> {
   };
 }
 
-export interface Stack {
-  stack?: StackInfo;
-}
-
 export type StackData = Array<{ values: number[]; sum: number }>;
 export type StackGroupData = Record<string, StackData>;
 export type StackDataType = StackData | StackGroupData;
@@ -122,12 +119,17 @@ export type SeriesData<K extends ChartType> = {
   data: ChartSeriesMap[K];
 } & SeriesGroup;
 
+export type Stack = {
+  type: StackType;
+  connector: boolean | Required<Connector>;
+};
+
 export type StackSeriesData<K extends BoxType> = {
   data: ChartSeriesMap[K];
   stackData: StackDataType;
   dataValues: number[];
-} & Required<Stack> &
-  SeriesGroup;
+  stack: Stack;
+} & SeriesGroup;
 
 export interface SeriesGroup {
   seriesCount: number;

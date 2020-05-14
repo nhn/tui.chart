@@ -80,12 +80,17 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 }
 
 export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
-  const { x, y, x2, y2, strokeStyle } = lineModel;
+  const { x, y, x2, y2, strokeStyle, dashedPattern } = lineModel;
   if (strokeStyle) {
     ctx.strokeStyle = strokeStyle;
   }
 
   ctx.beginPath();
+
+  if (dashedPattern) {
+    ctx.setLineDash(dashedPattern);
+  }
+
   ctx.moveTo(x, y);
   ctx.lineTo(x2, y2);
   ctx.stroke();

@@ -93,3 +93,21 @@ export const groupStack = () => {
 
   return el;
 };
+
+export const connectorStack = () => {
+  const { el } = createChart(budgetDataForStack, {
+    ...defaultOptions,
+    series: {
+      stack: {
+        type: 'percent',
+        connector: {
+          type: 'dashed',
+          color: '#031475',
+          width: 2
+        }
+      }
+    }
+  });
+
+  return el;
+};

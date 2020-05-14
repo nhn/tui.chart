@@ -1,5 +1,5 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel } from '@t/components/series';
+import { RectModel, ClipRectAreaModel, ConnectorModel } from '@t/components/series';
 import { ChartState, ChartType, SeriesData, BoxType } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -12,7 +12,7 @@ import {
 import { first, last, includes } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 
-type DrawModels = ClipRectAreaModel | RectModel;
+type DrawModels = ClipRectAreaModel | RectModel | ConnectorModel;
 
 export type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
@@ -107,7 +107,7 @@ export default class BoxSeries extends Component {
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
 
-    const rectModel = this.renderRect(seriesModels);
+    const rectModel = this.renderHilightSeriesModel(seriesModels);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModels];
 
@@ -181,7 +181,7 @@ export default class BoxSeries extends Component {
     };
   }
 
-  protected renderRect(seriesModel): RectModel[] {
+  protected renderHilightSeriesModel(seriesModel): RectModel[] {
     return seriesModel.map(data => {
       const { x, y, width, height, color } = data;
       const shadowOffset = this.hoverThickness / 2;
@@ -243,15 +243,7 @@ export default class BoxSeries extends Component {
     return isRangeData(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
-  protected getTotalOfPrevValues(values, currentIndex, included = false) {
-    return values.reduce((a, b, idx) => {
-      const isPrev = included ? idx <= currentIndex : idx < currentIndex;
-
-      if (isPrev) {
-        return a + b;
-      }
-
-      return a;
-    }, 0);
+  protected getTickDistance(tickCount: number) {
+    return this.plot[this.anchorSizeKey] / tickCount;
   }
 }

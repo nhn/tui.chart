@@ -25,4 +25,5 @@ export type LineModel = {
   x2: number;
   y2: number;
   strokeStyle?: string;
+  dashedPattern?: number[];
 } & Point;
