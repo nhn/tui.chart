@@ -19,7 +19,6 @@ const axes: StoreModule = {
       const labelAxisData = {
         labels: categories,
         tickCount: categories.length + (pointOnColumn ? 1 : 0),
-        labelCount: categories.length,
         isLabelAxis: true,
         pointOnColumn,
         tickDistance: labelAxisSize / (categories.length - (pointOnColumn ? 0 : 1))
@@ -31,7 +30,6 @@ const axes: StoreModule = {
       const valueAxisData = {
         labels: valueLabels,
         tickCount: valueLabels.length,
-        labelCount: valueLabels.length
       };
 
       if (series.bar) {

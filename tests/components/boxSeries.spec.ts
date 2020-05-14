@@ -31,7 +31,6 @@ const chartState = {
     },
     yAxis: {
       pointOnColumn: true,
-      labelCount: 2,
       tickDistance: 40
     }
   },

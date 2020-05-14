@@ -106,7 +106,6 @@ export type StackDataType = StackData | StackGroupData;
 export interface AxisData {
   labels: string[];
   tickCount: number;
-  labelCount: number;
   isLabelAxis: boolean;
   relativePositions: number[];
   pointOnColumn: boolean;
