@@ -40,13 +40,15 @@ export default class BoxStackSeries extends BoxSeries {
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const stackType = seriesData.stack.type;
     const { colors } = theme.series;
+    const valueLabels = axes[this.valueAxis].labels;
+    const tickDistance = this.getTickDistance(axes[this.labelAxis].labelCount);
 
     const seriesModels: RectModel[] = this.renderStackSeriesModel(
       stackType,
       seriesData,
       colors,
-      axes[this.valueAxis].labels,
-      axes[this.labelAxis].tickDistance
+      valueLabels,
+      tickDistance
     );
 
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
