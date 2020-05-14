@@ -96,7 +96,7 @@ export default class BoxSeries extends Component {
     const { colors } = theme.series;
     const seriesData = series[this.name]!;
     const valueLabels = axes[this.valueAxis].labels;
-    const tickDistance = this.getTickDistance(axes[this.labelAxis].labelCount);
+    const { tickDistance } = axes[this.labelAxis];
 
     const seriesModels: RectModel[] = this.renderSeriesModel(
       seriesData,
@@ -253,9 +253,5 @@ export default class BoxSeries extends Component {
 
       return a;
     }, 0);
-  }
-
-  protected getTickDistance(tickCount: number) {
-    return this.plot[this.anchorSizeKey] / tickCount;
   }
 }

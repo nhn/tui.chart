@@ -41,7 +41,7 @@ export default class BoxStackSeries extends BoxSeries {
     const stackType = seriesData.stack.type;
     const { colors } = theme.series;
     const valueLabels = axes[this.valueAxis].labels;
-    const tickDistance = this.getTickDistance(axes[this.labelAxis].labelCount);
+    const { tickDistance } = axes[this.labelAxis];
 
     const seriesModels: RectModel[] = this.renderStackSeriesModel(
       stackType,

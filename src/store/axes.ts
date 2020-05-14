@@ -14,6 +14,7 @@ const axes: StoreModule = {
 
       const { plot } = layout;
       const pointOnColumn = isPointOnColumn(series, options);
+      const labelAxisSize = isLabelAxisOnYAxis(series) ? plot.height : plot.width;
 
       const labelAxisData = {
         labels: categories,
@@ -21,7 +22,7 @@ const axes: StoreModule = {
         labelCount: categories.length,
         isLabelAxis: true,
         pointOnColumn,
-        tickDistance: plot.width / (categories.length - (pointOnColumn ? 0 : 1))
+        tickDistance: labelAxisSize / (categories.length - (pointOnColumn ? 0 : 1))
       };
 
       const axisName = getValueAxisName(series);
@@ -53,6 +54,10 @@ const axes: StoreModule = {
     }
   }
 };
+
+function isLabelAxisOnYAxis(series: SeriesState) {
+  return !!series.bar;
+}
 
 function getValueAxisName(series) {
   return series.bar ? AxisType.X : AxisType.Y;
