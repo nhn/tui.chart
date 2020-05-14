@@ -34,12 +34,11 @@ const chartState = {
   axes: {
     xAxis: {
       labels: [0, 2, 4, 6, 8],
-      tickCount: 4,
-      labelCount: 4
+      tickCount: 4
     },
     yAxis: {
       pointOnColumn: true,
-      labelCount: 2
+      tickDistance: 40
     }
   },
   theme: {
