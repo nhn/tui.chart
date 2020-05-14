@@ -1,3 +1,19 @@
+export const randomData = (count: number) => {
+  const categories = [...Array(count).keys()].map(numb => String(numb));
+  const series = [
+    {
+      name: 'A',
+      data: categories.map(() => parseInt(String(Math.random() * 100), 10))
+    },
+    {
+      name: 'B',
+      data: categories.map(() => parseInt(String(Math.random() * 100), 10))
+    }
+  ];
+
+  return { categories, series };
+};
+
 export const temperatureData = {
   categories: [
     '01/01/2020',

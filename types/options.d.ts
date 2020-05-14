@@ -68,6 +68,15 @@ type BaseChartOptions = {
 } & Size;
 
 type BaseAxisOptions = {
+  tick?: {
+    interval?: number;
+  };
+  label?: {
+    interval?: number;
+  };
+  scale?: {
+    stepSize?: 'auto' | number;
+  };
 };
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {

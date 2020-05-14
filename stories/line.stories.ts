@@ -6,9 +6,10 @@ import {
   tupleCoordinateData,
   datetimeCoordinateData,
   temperatureData,
-  coordinateData
+  coordinateData,
+  randomData
 } from './data';
-import { boolean, withKnobs } from '@storybook/addon-knobs';
+import { boolean, number, select, withKnobs } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Line',
@@ -78,6 +79,25 @@ export const coordinateDatetime = () => {
   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
     xAxis: { pointOnColumn: true, type: 'datetime' }
   });
+
+  return el;
+};
+
+export const chartWithOptions = () => {
+  const xAxisOptions = {
+    pointOnColumn: boolean('pointOnColumn', false),
+    tick: {
+      interval: number('tickInterval', 1, { range: true, min: 1, max: 20, step: 1 })
+    },
+    label: {
+      interval: number('labelInterval', 1, { range: true, min: 1, max: 20, step: 1 })
+    },
+    scale: {
+      stepSize: select('stepSize', { auto: 'auto', one: 1, two: 2, tree: 3 }, 'auto')
+    }
+  };
+
+  const { el } = createChart(randomData(100), { xAxis: xAxisOptions });
 
   return el;
 };
