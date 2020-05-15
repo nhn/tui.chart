@@ -25,7 +25,7 @@ export function makeLabelsFromLimit(limit: ValueEdge, step: number) {
   const max = Math.round(limit.max * multipleNum);
   const labels = range(min, max + 1, step * multipleNum);
 
-  return labels.map(label => label / multipleNum);
+  return labels.map(label => String(label / multipleNum));
 }
 
 export function makeTickPixelPositions(

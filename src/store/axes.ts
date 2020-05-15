@@ -1,4 +1,4 @@
-import { Options, SeriesState, StoreModule } from '@t/store/store';
+import { AxisData, Options, SeriesState, StoreModule } from '@t/store/store';
 import { isLabelAxisOnYAxis, makeLabelsFromLimit } from '@src/helpers/calculator';
 import { AxisType } from '@src/component/axis';
 import { LineTypeXAxisOptions } from '@t/options';
@@ -32,20 +32,21 @@ const axes: StoreModule = {
       const valueAxisData = {
         labels: valueLabels,
         tickCount: valueLabels.length,
+        isLabelAxis: false,
+        pointOnColumn: false,
         tickDistance: valueAxisSize / valueLabels.length
       };
 
-      if (labelAxisOnYAxis) {
-        this.extend(state.axes, {
-          xAxis: valueAxisData,
-          yAxis: labelAxisData
-        });
-      } else {
-        this.extend(state.axes, {
-          xAxis: labelAxisData,
-          yAxis: valueAxisData
-        });
-      }
+      const xAxis: AxisData = {
+        ...(labelAxisOnYAxis ? valueAxisData : labelAxisData),
+        tickInterval: options.xAxis?.tick?.interval || 1
+      };
+      const yAxis: AxisData = {
+        ...(labelAxisOnYAxis ? labelAxisData : valueAxisData),
+        tickInterval: options.yAxis?.tick?.interval || 1
+      };
+
+      this.extend(state.axes, { xAxis, yAxis });
     }
   },
   computed: {},
@@ -66,7 +67,7 @@ function isPointOnColumn(series: SeriesState, options: Options) {
   }
 
   if (series.line || series.area) {
-    return (options.xAxis as LineTypeXAxisOptions)?.pointOnColumn;
+    return Boolean((options.xAxis as LineTypeXAxisOptions)?.pointOnColumn);
   }
 
   return false;

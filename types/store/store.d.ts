@@ -13,6 +13,7 @@ import {
   AreaChartOptions
 } from '@t/options';
 import Store from '@src/store/store';
+import { AxisType } from '@src/component/axis';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -85,7 +86,7 @@ export interface ChartState<T extends Options> {
     [key: string]: ValueEdge;
   };
   axes: {
-    [key: string]: AxisData;
+    [key in AxisType]?: AxisData;
   };
   theme: Theme;
   options: T;
@@ -107,9 +108,9 @@ export interface AxisData {
   labels: string[];
   tickCount: number;
   isLabelAxis: boolean;
-  relativePositions: number[];
   pointOnColumn: boolean;
   tickDistance: number;
+  tickInterval: number;
 }
 
 export interface ValueEdge {

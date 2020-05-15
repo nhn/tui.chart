@@ -21,6 +21,7 @@ type CoordinateKey = 'x' | 'y';
 interface RenderOptions {
   pointOnColumn: boolean;
   tickDistance: number;
+  tickInterval: number;
 }
 
 export default class Axis extends Component {
@@ -38,16 +39,18 @@ export default class Axis extends Component {
   render({ layout, axes }: ChartState<Options>) {
     this.rect = layout[this.name];
 
-    const { labels, tickCount, pointOnColumn, isLabelAxis, tickDistance } = axes[this.name];
+    const { labels, tickCount, pointOnColumn, isLabelAxis, tickDistance, tickInterval } = axes[
+      this.name
+    ]!;
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
-
     const offsetKey = isYAxis(this.name) ? 'y' : 'x';
     const anchorKey = isYAxis(this.name) ? 'x' : 'y';
 
     const renderOptions: RenderOptions = {
       pointOnColumn,
-      tickDistance
+      tickDistance,
+      tickInterval
     };
 
     this.models.label = this.renderLabelModels(
@@ -58,7 +61,12 @@ export default class Axis extends Component {
       renderOptions
     );
 
-    this.models.tick = this.renderTickModels(relativePositions, offsetKey, anchorKey);
+    this.models.tick = this.renderTickModels(
+      relativePositions,
+      offsetKey,
+      anchorKey,
+      renderOptions
+    );
 
     this.models.axisLine = [this.renderAxisLineModel()];
 
@@ -108,16 +116,25 @@ export default class Axis extends Component {
   renderTickModels(
     relativePositions: number[],
     offsetKey: CoordinateKey,
-    anchorKey: CoordinateKey
+    anchorKey: CoordinateKey,
+    renderOptions: RenderOptions
   ): TickModel[] {
     const tickAnchorPoint = isYAxis(this.name) ? crispPixel(this.rect.width) : crispPixel(0);
+    const { tickInterval } = renderOptions;
 
-    return relativePositions.map(position => ({
-      type: 'tick',
-      isYAxis: isYAxis(this.name),
-      [offsetKey]: crispPixel(position),
-      [anchorKey]: tickAnchorPoint
-    })) as TickModel[];
+    return relativePositions.reduce((positions, position, index) => {
+      return index % tickInterval
+        ? positions
+        : [
+            ...positions,
+            {
+              type: 'tick',
+              isYAxis: isYAxis(this.name),
+              [offsetKey]: crispPixel(position),
+              [anchorKey]: tickAnchorPoint
+            } as TickModel
+          ];
+    }, [] as TickModel[]);
   }
 
   renderLabelModels(
