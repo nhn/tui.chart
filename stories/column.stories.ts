@@ -65,21 +65,11 @@ export const range = () => {
 };
 
 export const stack = () => {
-  const data = select(
-    'data type',
-    {
-      default: budgetDataForStack,
-      stackGroup: budgetDataForGroupStack
-    },
-    budgetDataForStack
-  );
-
-  const stackType = radios('type', { normal: 'normal', percent: 'percent' }, 'normal');
-  const { el } = createChart(data, {
+  const { el } = createChart(budgetDataForStack, {
     ...defaultOptions,
     series: {
       stack: {
-        type: stackType
+        type: 'normal'
       }
     }
   });
@@ -87,27 +77,54 @@ export const stack = () => {
   return el;
 };
 
-export const connectorStack = () => {
-  const data = select(
-    'data type',
-    {
-      default: budgetDataForStack,
-      stackGroup: budgetDataForGroupStack
-    },
-    budgetDataForStack
-  );
-  const lineType = radios('connector.type', { solid: 'solid', dashed: 'dashed' }, 'solid');
-  const lineColor = color('connector.color', 'rgba(51, 85, 139, 0.3)');
-  const lineWidth = number('connector.width', 1, { range: true, min: 1, max: 5, step: 1 });
-  const { el } = createChart(data, {
+export const percentStack = () => {
+  const { el } = createChart(budgetDataForStack, {
+    ...defaultOptions,
+    series: {
+      stack: {
+        type: 'percent'
+      }
+    }
+  });
+
+  return el;
+};
+
+export const groupStack = () => {
+  const { el } = createChart(budgetDataForGroupStack, {
+    ...defaultOptions,
+    series: {
+      stack: true
+    }
+  });
+
+  return el;
+};
+
+export const defaultConnector = () => {
+  const { el } = createChart(budgetDataForStack, {
+    ...defaultOptions,
+    series: {
+      stack: {
+        type: 'normal',
+        connector: true
+      }
+    }
+  });
+
+  return el;
+};
+
+export const styledConnector = () => {
+  const { el } = createChart(budgetDataForStack, {
     ...defaultOptions,
     series: {
       stack: {
         type: 'normal',
         connector: {
-          type: lineType,
-          color: lineColor,
-          width: lineWidth
+          type: 'dashed',
+          color: '#031f4b',
+          width: 2
         }
       }
     }
