@@ -10,8 +10,9 @@ import {
   Stack
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { RectModel, ConnectorModel } from '@t/components/series';
+import { RectModel } from '@t/components/series';
 import { first, last } from '@src/helpers/utils';
+import { LineModel } from '@t/components/axis';
 
 interface StackSeriesModelParamType {
   stack: Stack;
@@ -27,15 +28,15 @@ function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
   return !Array.isArray(rawData);
 }
 
-function totalOfPrevValues(values, currentIndex, included = false) {
-  return values.reduce((a, b, idx) => {
+function totalOfPrevValues(values: number[], currentIndex: number, included = false) {
+  return values.reduce((total, value, idx) => {
     const isPrev = included ? idx <= currentIndex : idx < currentIndex;
 
     if (isPrev) {
-      return a + b;
+      return total + value;
     }
 
-    return a;
+    return total;
   }, 0);
 }
 
@@ -152,12 +153,12 @@ export default class BoxStackSeries extends BoxSeries {
     const seriesRawData = stackSeries.data;
     const stackGroupIds = Object.keys(stackGroupData);
 
-    let rModels: RectModel[] = [];
-    let cModels: ConnectorModel[] = [];
+    let rectModels: RectModel[] = [];
+    let connectorModels: LineModel[] = [];
 
     stackGroupIds.forEach((groupId, groupIndex) => {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
-      const { seriesModels, connectorModels } = this.makeStackSeriesModel({
+      const stackModels = this.makeStackSeriesModel({
         stack,
         stackData: stackGroupData[groupId],
         colors: colors.splice(groupIndex, filtered.length),
@@ -167,16 +168,16 @@ export default class BoxStackSeries extends BoxSeries {
         stackGroupIndex: groupIndex
       });
 
-      rModels = [...rModels, ...seriesModels];
+      rectModels = [...rectModels, ...stackModels.seriesModels];
 
       if (stack.connector) {
-        cModels = [...cModels, ...connectorModels];
+        connectorModels = [...connectorModels, ...stackModels.connectorModels];
       }
     });
 
     return {
-      seriesModels: rModels,
-      connectorModels: cModels
+      seriesModels: rectModels,
+      connectorModels: connectorModels
     };
   }
 
@@ -186,7 +187,7 @@ export default class BoxStackSeries extends BoxSeries {
     categories?: string[]
   ) {
     const seriesRawData = seriesData.data;
-    const stackData = seriesData.stackData;
+    const { stackData } = seriesData;
 
     return isGroupStack(stackData)
       ? this.makeGroupStackTooltipData(seriesRawData, stackData, colors, categories)
@@ -232,8 +233,10 @@ export default class BoxStackSeries extends BoxSeries {
       return [];
     }
 
-    const { width: lineWidth, type: lineType, color } = connector as Required<Connector>;
-    const connectorModels: ConnectorModel[] = [];
+    const { type: lineType, color: strokeStyle, width: lineWidth } = connector as Required<
+      Connector
+    >;
+    const connectorModels: LineModel[] = [];
     const seriesDataCount = pointsForConnector.length;
     const seriesCount = pointsForConnector[0].length;
 
@@ -251,14 +254,14 @@ export default class BoxStackSeries extends BoxSeries {
           const { x: nextX, y: nextY } = points[index + 1];
 
           connectorModels.push({
-            type: 'connector',
+            type: 'line',
             x: this.isBar ? x : x + columnWidth,
             y: this.isBar ? y + columnWidth : y,
             x2: nextX,
             y2: nextY,
-            lineType,
-            lineWidth,
-            color
+            dashedPattern: lineType === 'dashed' ? [5, 5] : [],
+            strokeStyle,
+            lineWidth
           });
         }
       });

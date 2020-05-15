@@ -80,9 +80,14 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 }
 
 export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
-  const { x, y, x2, y2, strokeStyle, dashedPattern } = lineModel;
+  const { x, y, x2, y2, strokeStyle, lineWidth, dashedPattern } = lineModel;
+
   if (strokeStyle) {
     ctx.strokeStyle = strokeStyle;
+  }
+
+  if (lineWidth) {
+    ctx.lineWidth = lineWidth;
   }
 
   ctx.beginPath();

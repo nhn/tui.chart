@@ -101,8 +101,18 @@ function setup() {
 
 export const lineBrush = () => {
   const { ctx, el } = setup();
+  const lineWidth = number('lineWidth', 1, { range: true, min: 1, max: 10, step: 1 });
+  const isDashed = boolean('dashed', false);
 
-  const lineModel: LineModel = { type: 'line', x: 100, y: 100, x2: 200, y2: 200 };
+  const lineModel: LineModel = {
+    type: 'line',
+    x: 100,
+    y: 100,
+    x2: 200,
+    y2: 200,
+    lineWidth,
+    dashedPattern: isDashed ? [5, 5] : []
+  };
   line(ctx, lineModel);
 
   return el;

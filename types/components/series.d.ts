@@ -60,13 +60,3 @@ export type RectModel = {
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
 } & Rect;
-
-export type ConnectorModel = {
-  type: 'connector';
-  lineWidth: number;
-  color: string;
-  x2: number;
-  y2: number;
-  strokeStyle?: string;
-  lineType: ConnectorLineType;
-} & Point;

@@ -1,5 +1,5 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel, ConnectorModel } from '@t/components/series';
+import { RectModel, ClipRectAreaModel } from '@t/components/series';
 import { ChartState, ChartType, SeriesData, BoxType } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -11,8 +11,9 @@ import {
 } from '@t/options';
 import { first, last, includes } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
+import { LineModel } from '@t/components/axis';
 
-type DrawModels = ClipRectAreaModel | RectModel | ConnectorModel;
+type DrawModels = ClipRectAreaModel | RectModel | LineModel;
 
 export type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
