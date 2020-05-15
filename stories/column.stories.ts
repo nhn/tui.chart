@@ -6,11 +6,9 @@ import {
   budgetDataForGroupStack
 } from './data';
 import { ColumnChartOptions } from '@t/options';
-import { withKnobs, radios, number, color, select } from '@storybook/addon-knobs';
 
 export default {
-  title: 'chart|Column',
-  decorators: [withKnobs]
+  title: 'chart|Column'
 };
 
 const width = 800;
@@ -64,7 +62,7 @@ export const range = () => {
   return el;
 };
 
-export const stack = () => {
+export const normalStack = () => {
   const { el } = createChart(budgetDataForStack, {
     ...defaultOptions,
     series: {
