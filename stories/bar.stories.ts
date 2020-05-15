@@ -63,7 +63,9 @@ export const normalStack = () => {
   const { el } = createChart(budgetDataForStack, {
     ...defaultOptions,
     series: {
-      stack: true
+      stack: {
+        type: 'normal'
+      }
     }
   });
 
@@ -88,6 +90,38 @@ export const groupStack = () => {
     ...defaultOptions,
     series: {
       stack: true
+    }
+  });
+
+  return el;
+};
+
+export const defaultConnector = () => {
+  const { el } = createChart(budgetDataForStack, {
+    ...defaultOptions,
+    series: {
+      stack: {
+        type: 'normal',
+        connector: true
+      }
+    }
+  });
+
+  return el;
+};
+
+export const styledConnector = () => {
+  const { el } = createChart(budgetDataForStack, {
+    ...defaultOptions,
+    series: {
+      stack: {
+        type: 'normal',
+        connector: {
+          type: 'dashed',
+          color: '#031f4b',
+          width: 2
+        }
+      }
     }
   });
 

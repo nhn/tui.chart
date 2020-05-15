@@ -1,21 +1,23 @@
 import BoxSeries, { SeriesRawData } from './boxSeries';
-import { ColumnChartOptions, BarChartOptions, StackType } from '@t/options';
+import { ColumnChartOptions, BarChartOptions, Point, Connector } from '@t/options';
 import {
   ChartState,
   StackSeriesData,
   StackGroupData,
   StackDataType,
   StackData,
-  BoxType
+  BoxType,
+  Stack
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
 import { first, last } from '@src/helpers/utils';
+import { LineModel } from '@t/components/axis';
 
 interface StackSeriesModelParamType {
-  stackType: string;
+  stack: Stack;
   stackData: StackData;
-  colors: string[];
+  colors?: string[];
   valueLabels: string[];
   tickDistance: number;
   stackGroupCount?: number;
@@ -24,6 +26,18 @@ interface StackSeriesModelParamType {
 
 function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
   return !Array.isArray(rawData);
+}
+
+function totalOfPrevValues(values: number[], currentIndex: number, included = false) {
+  return values.reduce((total, value, idx) => {
+    const isPrev = included ? idx <= currentIndex : idx < currentIndex;
+
+    if (isPrev) {
+      return total + value;
+    }
+
+    return total;
+  }, 0);
 }
 
 export default class BoxStackSeries extends BoxSeries {
@@ -38,13 +52,11 @@ export default class BoxStackSeries extends BoxSeries {
     this.rect = this.makeSeriesRect(layout.plot);
 
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
-    const stackType = seriesData.stack.type;
     const { colors } = theme.series;
     const valueLabels = axes[this.valueAxis].labels;
     const { tickDistance } = axes[this.labelAxis];
 
-    const seriesModels: RectModel[] = this.renderStackSeriesModel(
-      stackType,
+    const { seriesModels, connectorModels } = this.renderStackSeriesModel(
       seriesData,
       colors,
       valueLabels,
@@ -53,9 +65,9 @@ export default class BoxStackSeries extends BoxSeries {
 
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
 
-    const rectModel = super.renderRect(seriesModels);
+    const rectModel = super.renderHilightSeriesModel(seriesModels);
 
-    this.models = [super.renderClipRectAreaModel(), ...seriesModels];
+    this.models = [super.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
 
     this.responders = rectModel.map((m, index) => ({
       ...m,
@@ -64,36 +76,28 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   renderStackSeriesModel(
-    stackType: StackType,
     seriesData: StackSeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
     tickDistance: number
   ) {
-    const stackData = seriesData.stackData;
+    const { stack, stackData } = seriesData;
 
     return isGroupStack(stackData)
-      ? this.makeStackGroupSeriesModel(
-          stackType,
-          seriesData,
-          [...colors],
-          valueLabels,
-          tickDistance
-        )
-      : this.makeStackSeriesModel({ stackType, stackData, colors, valueLabels, tickDistance });
+      ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueLabels, tickDistance)
+      : this.makeStackSeriesModel({ stack, stackData, colors, valueLabels, tickDistance });
   }
 
   makeStackSeriesModel({
-    stackType,
+    stack,
     stackData,
     colors,
     valueLabels,
     tickDistance,
     stackGroupCount = 1,
     stackGroupIndex = 0
-  }: StackSeriesModelParamType): RectModel[] {
+  }: StackSeriesModelParamType) {
     const seriesModels: RectModel[] = [];
-    const offsetAxisLength = this.plot[this.offsetSizeKey];
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
 
     stackData.forEach(({ values, sum }, index) => {
@@ -101,65 +105,117 @@ export default class BoxStackSeries extends BoxSeries {
         index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
 
       values.forEach((value, seriesIndex) => {
-        const color = colors[seriesIndex];
-        const beforeValueSum = super.getTotalOfPrevValues(values, seriesIndex, !this.isBar);
-        let barLength, startPosition;
+        const beforeValueSum = totalOfPrevValues(values, seriesIndex, !this.isBar);
+        const divisor =
+          stack.type === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
+        const offsetAxisLength = this.plot[this.offsetSizeKey];
+        const barLength = (value * offsetAxisLength) / divisor;
+        const startPosition = (beforeValueSum * offsetAxisLength) / divisor;
 
-        if (stackType === 'percent') {
-          barLength = (value / sum) * offsetAxisLength;
-          startPosition = (beforeValueSum / sum) * offsetAxisLength;
-        } else {
-          const offsetValue = Number(last(valueLabels)) - Number(first(valueLabels));
-          const axisValueRatio = offsetAxisLength / offsetValue;
-
-          barLength = value * axisValueRatio;
-          startPosition = beforeValueSum * axisValueRatio;
-        }
+        const x = this.isBar ? startPosition + this.hoverThickness + this.axisThickness : seriesPos;
+        const y = this.isBar ? seriesPos : offsetAxisLength - startPosition + this.hoverThickness;
 
         seriesModels.push({
           type: 'rect',
-          color,
+          color: colors![seriesIndex],
+          x,
+          y,
           width: this.isBar ? barLength : columnWidth,
-          height: this.isBar ? columnWidth : barLength,
-          x: this.isBar ? startPosition + this.hoverThickness + this.axisThickness : seriesPos,
-          y: this.isBar ? seriesPos : offsetAxisLength - startPosition + this.hoverThickness
+          height: this.isBar ? columnWidth : barLength
         });
       });
     });
 
-    return seriesModels;
+    return {
+      seriesModels,
+      connectorModels: this.makeConnectorSeriesModel({
+        stack,
+        stackData,
+        valueLabels,
+        tickDistance,
+        stackGroupCount,
+        stackGroupIndex
+      })
+    };
   }
 
   makeStackGroupSeriesModel(
-    stackType: StackType,
-    seriesRaw: StackSeriesData<BoxType>,
+    stackSeries: StackSeriesData<BoxType>,
     colors: string[],
     valueLabels: string[],
     tickDistance: number
-  ): RectModel[] {
-    const stackGroupData = seriesRaw.stackData as StackGroupData;
-    const seriesRawData = seriesRaw.data;
+  ) {
+    const stack = stackSeries.stack;
+    const stackGroupData = stackSeries.stackData as StackGroupData;
+    const seriesRawData = stackSeries.data;
     const stackGroupIds = Object.keys(stackGroupData);
-    let seriesModels: RectModel[] = [];
+
+    let rectModels: RectModel[] = [];
+    let connectorModels: LineModel[] = [];
 
     stackGroupIds.forEach((groupId, groupIndex) => {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
+      const stackModels = this.makeStackSeriesModel({
+        stack,
+        stackData: stackGroupData[groupId],
+        colors: colors.splice(groupIndex, filtered.length),
+        valueLabels,
+        tickDistance,
+        stackGroupCount: stackGroupIds.length,
+        stackGroupIndex: groupIndex
+      });
 
-      seriesModels = [
-        ...seriesModels,
-        ...this.makeStackSeriesModel({
-          stackType,
-          stackData: stackGroupData[groupId],
-          colors: colors.splice(groupIndex, filtered.length),
-          valueLabels,
-          tickDistance,
-          stackGroupCount: stackGroupIds.length,
-          stackGroupIndex: groupIndex
-        })
-      ];
+      rectModels = [...rectModels, ...stackModels.seriesModels];
+
+      if (stack.connector) {
+        connectorModels = [...connectorModels, ...stackModels.connectorModels];
+      }
     });
 
-    return seriesModels;
+    return {
+      seriesModels: rectModels,
+      connectorModels: connectorModels
+    };
+  }
+
+  makeConnectorSeriesModel({
+    stack,
+    stackData,
+    valueLabels,
+    tickDistance,
+    stackGroupCount = 1,
+    stackGroupIndex = 0
+  }: StackSeriesModelParamType) {
+    if (!stack.connector) {
+      return [];
+    }
+
+    const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+    const connectorPoints: Array<Point[]> = [];
+
+    stackData.forEach(({ values, sum }, index) => {
+      const seriesPos =
+        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
+      const points: Point[] = [];
+
+      values.forEach((value, seriesIndex) => {
+        const beforeValueSum = totalOfPrevValues(values, seriesIndex, !this.isBar);
+        const divisor =
+          stack.type === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
+        const offsetAxisLength = this.plot[this.offsetSizeKey];
+        const barLength = (value * offsetAxisLength) / divisor;
+        const startPosition = (beforeValueSum * offsetAxisLength) / divisor;
+
+        const x = this.isBar ? startPosition + this.hoverThickness + this.axisThickness : seriesPos;
+        const y = this.isBar ? seriesPos : offsetAxisLength - startPosition + this.hoverThickness;
+
+        points.push({ x: this.isBar ? x + barLength : x, y });
+      });
+
+      connectorPoints.push(points);
+    });
+
+    return this.makeConnectorModel(connectorPoints, stack.connector, columnWidth);
   }
 
   private getTooltipData(
@@ -168,7 +224,7 @@ export default class BoxStackSeries extends BoxSeries {
     categories?: string[]
   ) {
     const seriesRawData = seriesData.data;
-    const stackData = seriesData.stackData!;
+    const { stackData } = seriesData;
 
     return isGroupStack(stackData)
       ? this.makeGroupStackTooltipData(seriesRawData, stackData, colors, categories)
@@ -203,5 +259,51 @@ export default class BoxStackSeries extends BoxSeries {
         category: categories?.[index]
       }))
     );
+  }
+
+  private makeConnectorModel(
+    pointsForConnector: Array<Point[]>,
+    connector: boolean | Required<Connector>,
+    columnWidth: number
+  ) {
+    if (!connector || !pointsForConnector.length) {
+      return [];
+    }
+
+    const { type: lineType, color: strokeStyle, width: lineWidth } = connector as Required<
+      Connector
+    >;
+    const connectorModels: LineModel[] = [];
+    const seriesDataCount = pointsForConnector.length;
+    const seriesCount = pointsForConnector[0].length;
+
+    for (let seriesIndex = 0; seriesIndex < seriesCount; seriesIndex += 1) {
+      const points: Point[] = [];
+
+      for (let dataIndex = 0; dataIndex < seriesDataCount; dataIndex += 1) {
+        points.push(pointsForConnector[dataIndex][seriesIndex]);
+      }
+
+      points.forEach((point, index) => {
+        const { x, y } = point;
+
+        if (index < points.length - 1) {
+          const { x: nextX, y: nextY } = points[index + 1];
+
+          connectorModels.push({
+            type: 'line',
+            x: this.isBar ? x : x + columnWidth,
+            y: this.isBar ? y + columnWidth : y,
+            x2: nextX,
+            y2: nextY,
+            dashedPattern: lineType === 'dashed' ? [5, 5] : [],
+            strokeStyle,
+            lineWidth
+          });
+        }
+      });
+    }
+
+    return connectorModels;
   }
 }
