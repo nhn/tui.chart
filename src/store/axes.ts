@@ -14,7 +14,8 @@ const axes: StoreModule = {
 
       const { plot } = layout;
       const pointOnColumn = isPointOnColumn(series, options);
-      const labelAxisSize = isLabelAxisOnYAxis(series) ? plot.height : plot.width;
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
+      const labelAxisSize = labelAxisOnYAxis ? plot.height : plot.width;
 
       const labelAxisData = {
         labels: categories,
@@ -26,13 +27,15 @@ const axes: StoreModule = {
 
       const axisName = getValueAxisName(series);
       const valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].step);
+      const valueAxisSize = labelAxisOnYAxis ? plot.width : plot.height;
 
       const valueAxisData = {
         labels: valueLabels,
         tickCount: valueLabels.length,
+        tickDistance: valueAxisSize / valueLabels.length
       };
 
-      if (series.bar) {
+      if (labelAxisOnYAxis) {
         this.extend(state.axes, {
           xAxis: valueAxisData,
           yAxis: labelAxisData

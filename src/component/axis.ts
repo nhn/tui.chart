@@ -18,14 +18,17 @@ type DrawModels = LabelModel | TickModel | LineModel;
 type AxisModels = Record<string, DrawModels[]>;
 type CoordinateKey = 'x' | 'y';
 
+interface RenderOptions {
+  pointOnColumn: boolean;
+  tickDistance: number;
+}
+
 export default class Axis extends Component {
   name!: AxisType;
 
   models: AxisModels = {};
 
   drawModels!: AxisModels;
-
-  pointOnColumn = false;
 
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
@@ -35,20 +38,24 @@ export default class Axis extends Component {
   render({ layout, axes }: ChartState<Options>) {
     this.rect = layout[this.name];
 
-    const { labels, tickCount, pointOnColumn, isLabelAxis } = axes[this.name];
+    const { labels, tickCount, pointOnColumn, isLabelAxis, tickDistance } = axes[this.name];
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
 
     const offsetKey = isYAxis(this.name) ? 'y' : 'x';
     const anchorKey = isYAxis(this.name) ? 'x' : 'y';
 
-    this.pointOnColumn = pointOnColumn;
+    const renderOptions: RenderOptions = {
+      pointOnColumn,
+      tickDistance
+    };
 
     this.models.label = this.renderLabelModels(
       relativePositions,
       !isLabelAxis && isYAxis(this.name) ? labels.reverse() : labels,
       offsetKey,
-      anchorKey
+      anchorKey,
+      renderOptions
     );
 
     this.models.tick = this.renderTickModels(relativePositions, offsetKey, anchorKey);
@@ -117,11 +124,12 @@ export default class Axis extends Component {
     relativePositions: number[],
     labels: string[],
     offsetKey: CoordinateKey,
-    anchorKey: CoordinateKey
+    anchorKey: CoordinateKey,
+    renderOptions: RenderOptions
   ): LabelModel[] {
+    const { tickDistance, pointOnColumn } = renderOptions;
     const labelAnchorPoint = isYAxis(this.name) ? crispPixel(0) : crispPixel(this.rect.height);
-
-    const labelAdjustment = this.pointOnColumn ? this.tickDistance(labels.length) / 2 : 0;
+    const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
 
     return labels.map((text, index) => {
       return {
@@ -132,12 +140,6 @@ export default class Axis extends Component {
         [anchorKey]: labelAnchorPoint
       };
     }) as LabelModel[];
-  }
-
-  tickDistance(labelsCount: number) {
-    const offsetSizeKey = isYAxis(this.name) ? 'height' : 'width';
-
-    return this.rect[offsetSizeKey] / labelsCount;
   }
 
   axisSize() {
