@@ -87,10 +87,10 @@ export const chartWithOptions = () => {
   const xAxisOptions = {
     pointOnColumn: boolean('pointOnColumn', false),
     tick: {
-      interval: number('tickInterval', 1, { range: true, min: 1, max: 20, step: 1 })
+      interval: number('tickInterval', 2, { range: true, min: 1, max: 20, step: 1 })
     },
     label: {
-      interval: number('labelInterval', 1, { range: true, min: 1, max: 20, step: 1 })
+      interval: number('labelInterval', 2, { range: true, min: 1, max: 20, step: 1 })
     },
     scale: {
       stepSize: select('stepSize', { auto: 'auto', one: 1, two: 2, tree: 3 }, 'auto')

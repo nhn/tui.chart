@@ -39,7 +39,7 @@ export default class ScatterSeries extends Component {
 
     const scatterData = series.scatter.data;
     const { yAxis } = scale;
-    const { tickDistance } = axes.xAxis;
+    const { tickDistance } = axes.xAxis!;
     const renderOptions: RenderOptions = {
       theme: theme.series
     };

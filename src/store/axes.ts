@@ -8,11 +8,23 @@ const axes: StoreModule = {
   state: () => ({
     axes: {}
   }),
+  initialize(state, options) {
+    state.axes = {
+      xAxis: {
+        tickInterval: options.xAxis?.tick?.interval || 1,
+        labelInterval: options.xAxis?.label?.interval || 1
+      } as AxisData,
+      yAxis: {
+        tickInterval: options.yAxis?.tick?.interval || 1,
+        labelInterval: options.yAxis?.label?.interval || 1
+      } as AxisData
+    };
+  },
   action: {
     setAxesData({ state }) {
       const { scale, options, series, layout, categories = [] } = state;
-
       const { plot } = layout;
+
       const pointOnColumn = isPointOnColumn(series, options);
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const labelAxisSize = labelAxisOnYAxis ? plot.height : plot.width;
@@ -37,16 +49,10 @@ const axes: StoreModule = {
         tickDistance: valueAxisSize / valueLabels.length
       };
 
-      const xAxis: AxisData = {
-        ...(labelAxisOnYAxis ? valueAxisData : labelAxisData),
-        tickInterval: options.xAxis?.tick?.interval || 1
-      };
-      const yAxis: AxisData = {
-        ...(labelAxisOnYAxis ? labelAxisData : valueAxisData),
-        tickInterval: options.yAxis?.tick?.interval || 1
-      };
-
-      this.extend(state.axes, { xAxis, yAxis });
+      this.extend(state.axes, {
+        xAxis: labelAxisOnYAxis ? valueAxisData : labelAxisData,
+        yAxis: labelAxisOnYAxis ? labelAxisData : valueAxisData
+      });
     }
   },
   computed: {},

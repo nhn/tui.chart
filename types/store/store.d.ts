@@ -111,6 +111,7 @@ export interface AxisData {
   pointOnColumn: boolean;
   tickDistance: number;
   tickInterval: number;
+  labelInterval: number;
 }
 
 export interface ValueEdge {

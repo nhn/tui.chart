@@ -22,6 +22,7 @@ interface RenderOptions {
   pointOnColumn: boolean;
   tickDistance: number;
   tickInterval: number;
+  labelInterval: number;
 }
 
 export default class Axis extends Component {
@@ -39,9 +40,15 @@ export default class Axis extends Component {
   render({ layout, axes }: ChartState<Options>) {
     this.rect = layout[this.name];
 
-    const { labels, tickCount, pointOnColumn, isLabelAxis, tickDistance, tickInterval } = axes[
-      this.name
-    ]!;
+    const {
+      labels,
+      tickCount,
+      pointOnColumn,
+      isLabelAxis,
+      tickDistance,
+      tickInterval,
+      labelInterval
+    } = axes[this.name]!;
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
     const offsetKey = isYAxis(this.name) ? 'y' : 'x';
@@ -50,7 +57,8 @@ export default class Axis extends Component {
     const renderOptions: RenderOptions = {
       pointOnColumn,
       tickDistance,
-      tickInterval
+      tickInterval,
+      labelInterval
     };
 
     this.models.label = this.renderLabelModels(
@@ -144,19 +152,24 @@ export default class Axis extends Component {
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): LabelModel[] {
-    const { tickDistance, pointOnColumn } = renderOptions;
+    const { tickDistance, pointOnColumn, labelInterval } = renderOptions;
     const labelAnchorPoint = isYAxis(this.name) ? crispPixel(0) : crispPixel(this.rect.height);
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
 
-    return labels.map((text, index) => {
-      return {
-        type: 'label',
-        text,
-        style: ['default', { textAlign: isYAxis(this.name) ? 'left' : 'center' }],
-        [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
-        [anchorKey]: labelAnchorPoint
-      };
-    }) as LabelModel[];
+    return labels.reduce((positions, text, index) => {
+      return index % labelInterval
+        ? positions
+        : [
+            ...positions,
+            {
+              type: 'label',
+              text,
+              style: ['default', { textAlign: isYAxis(this.name) ? 'left' : 'center' }],
+              [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
+              [anchorKey]: labelAnchorPoint
+            } as LabelModel
+          ];
+    }, [] as LabelModel[]);
   }
 
   axisSize() {
