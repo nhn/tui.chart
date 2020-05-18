@@ -1,5 +1,5 @@
 import AreaChart from '@src/charts/areaChart';
-import { AreaSeriesData } from '@t/options';
+import { AreaChartOptions, AreaSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData } from './data';
 import { withKnobs, boolean } from '@storybook/addon-knobs';
@@ -23,7 +23,7 @@ const defaultOptions = {
   plot: {}
 };
 
-function createChart(data: AreaSeriesData, customOptions?: Record<string, any>) {
+function createChart(data: AreaSeriesData, customOptions?: AreaChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 

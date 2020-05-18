@@ -9,7 +9,7 @@ import {
   coordinateData,
   randomData
 } from './data';
-import { boolean, number, select, withKnobs } from '@storybook/addon-knobs';
+import { boolean, number, withKnobs } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Line',
@@ -83,21 +83,26 @@ export const coordinateDatetime = () => {
   return el;
 };
 
-export const chartWithOptions = () => {
+export const tickInterval = () => {
   const xAxisOptions = {
-    pointOnColumn: boolean('pointOnColumn', false),
     tick: {
       interval: number('tickInterval', 2, { range: true, min: 1, max: 20, step: 1 })
-    },
-    label: {
-      interval: number('labelInterval', 2, { range: true, min: 1, max: 20, step: 1 })
-    },
-    scale: {
-      stepSize: select('stepSize', { auto: 'auto', one: 1, two: 2, tree: 3 }, 'auto')
     }
   };
 
-  const { el } = createChart(randomData(100), { xAxis: xAxisOptions });
+  const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
+
+  return el;
+};
+
+export const labelInterval = () => {
+  const xAxisOptions = {
+    label: {
+      interval: number('labelInterval', 2, { range: true, min: 1, max: 20, step: 1 })
+    }
+  };
+
+  const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
 
   return el;
 };
