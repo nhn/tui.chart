@@ -131,3 +131,17 @@ export const diverging = () => {
 
   return el;
 };
+
+export const minMax = () => {
+  const { el } = createChart(budgetData, {
+    ...defaultOptions,
+    xAxis: {
+      scale: {
+        min: -1000,
+        max: 15000
+      }
+    }
+  });
+
+  return el;
+};

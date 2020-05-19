@@ -75,6 +75,8 @@ type BaseAxisOptions = {
     interval?: number;
   };
   scale?: {
+    min?: number;
+    max?: number;
     stepSize?: 'auto' | number;
   };
 };
