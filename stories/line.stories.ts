@@ -84,25 +84,25 @@ export const coordinateDatetime = () => {
 };
 
 export const tickInterval = () => {
-  const xAxisOptions = {
+  const yAxisOptions = {
     tick: {
       interval: number('tickInterval', 2, { range: true, min: 1, max: 20, step: 1 })
     }
   };
 
-  const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
+  const { el } = createChart(randomData(50), { yAxis: yAxisOptions });
 
   return el;
 };
 
 export const labelInterval = () => {
-  const xAxisOptions = {
+  const yAxisOptions = {
     label: {
       interval: number('labelInterval', 2, { range: true, min: 1, max: 20, step: 1 })
     }
   };
 
-  const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
+  const { el } = createChart(randomData(50), { yAxis: yAxisOptions });
 
   return el;
 };

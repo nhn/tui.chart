@@ -1,7 +1,7 @@
 import { StoreModule, ScaleData } from '@t/store/store';
 
 import coordinateScaleCalculator from '@src/scale/coordinateScaleCalculator';
-import { isLabelAxisOnYAxis } from '@src/helpers/calculator';
+import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 
 const scale: StoreModule = {
   name: 'scale',

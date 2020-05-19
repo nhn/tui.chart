@@ -10,10 +10,6 @@ export enum AxisType {
   CENTER_Y = 'yCenterAxis'
 }
 
-function isYAxis(name: AxisType) {
-  return name === AxisType.Y || name === AxisType.CENTER_Y;
-}
-
 type DrawModels = LabelModel | TickModel | LineModel;
 type AxisModels = Record<string, DrawModels[]>;
 type CoordinateKey = 'x' | 'y';
@@ -32,9 +28,12 @@ export default class Axis extends Component {
 
   drawModels!: AxisModels;
 
+  yAxisComponent!: boolean;
+
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
     this.name = name;
+    this.yAxisComponent = name === AxisType.Y || name === AxisType.CENTER_Y;
   }
 
   render({ layout, axes }: ChartState<Options>) {
@@ -51,8 +50,8 @@ export default class Axis extends Component {
     } = axes[this.name]!;
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
-    const offsetKey = isYAxis(this.name) ? 'y' : 'x';
-    const anchorKey = isYAxis(this.name) ? 'x' : 'y';
+    const offsetKey = this.yAxisComponent ? 'y' : 'x';
+    const anchorKey = this.yAxisComponent ? 'x' : 'y';
 
     const renderOptions: RenderOptions = {
       pointOnColumn,
@@ -63,7 +62,7 @@ export default class Axis extends Component {
 
     this.models.label = this.renderLabelModels(
       relativePositions,
-      !isLabelAxis && isYAxis(this.name) ? labels.reverse() : labels,
+      !isLabelAxis && this.yAxisComponent ? labels.reverse() : labels,
       offsetKey,
       anchorKey,
       renderOptions
@@ -85,7 +84,7 @@ export default class Axis extends Component {
         this.drawModels[type] = this.models[type].map(m => {
           const drawModel = { ...m };
 
-          if (isYAxis(this.name)) {
+          if (this.yAxisComponent) {
             drawModel.y = 0;
           } else {
             drawModel.x = 0;
@@ -102,7 +101,7 @@ export default class Axis extends Component {
   renderAxisLineModel(): LineModel {
     const zeroPixel = crispPixel(0);
 
-    if (isYAxis(this.name)) {
+    if (this.yAxisComponent) {
       return {
         type: 'line',
         x: crispPixel(this.rect.width),
@@ -127,7 +126,7 @@ export default class Axis extends Component {
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): TickModel[] {
-    const tickAnchorPoint = isYAxis(this.name) ? crispPixel(this.rect.width) : crispPixel(0);
+    const tickAnchorPoint = this.yAxisComponent ? crispPixel(this.rect.width) : crispPixel(0);
     const { tickInterval } = renderOptions;
 
     return relativePositions.reduce((positions, position, index) => {
@@ -137,7 +136,7 @@ export default class Axis extends Component {
             ...positions,
             {
               type: 'tick',
-              isYAxis: isYAxis(this.name),
+              isYAxis: this.yAxisComponent,
               [offsetKey]: crispPixel(position),
               [anchorKey]: tickAnchorPoint
             } as TickModel
@@ -153,7 +152,7 @@ export default class Axis extends Component {
     renderOptions: RenderOptions
   ): LabelModel[] {
     const { tickDistance, pointOnColumn, labelInterval } = renderOptions;
-    const labelAnchorPoint = isYAxis(this.name) ? crispPixel(0) : crispPixel(this.rect.height);
+    const labelAnchorPoint = this.yAxisComponent ? crispPixel(0) : crispPixel(this.rect.height);
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
 
     return labels.reduce((positions, text, index) => {
@@ -164,7 +163,7 @@ export default class Axis extends Component {
             {
               type: 'label',
               text,
-              style: ['default', { textAlign: isYAxis(this.name) ? 'left' : 'center' }],
+              style: ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }],
               [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
               [anchorKey]: labelAnchorPoint
             } as LabelModel
@@ -173,7 +172,7 @@ export default class Axis extends Component {
   }
 
   axisSize() {
-    return isYAxis(this.name) ? this.rect.height : this.rect.width;
+    return this.yAxisComponent ? this.rect.height : this.rect.width;
   }
 
   beforeDraw(painter: Painter) {

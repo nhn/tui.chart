@@ -1,5 +1,6 @@
 import { AxisData, Options, SeriesState, StoreModule } from '@t/store/store';
-import { isLabelAxisOnYAxis, makeLabelsFromLimit } from '@src/helpers/calculator';
+import { makeLabelsFromLimit } from '@src/helpers/calculator';
+import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { AxisType } from '@src/component/axis';
 import { LineTypeXAxisOptions } from '@t/options';
 

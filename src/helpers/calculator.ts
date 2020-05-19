@@ -16,9 +16,6 @@ export const findMultipleNum = (...args: number[]) => {
   return Math.pow(10, underPointLen);
 };
 
-export function isLabelAxisOnYAxis(series: SeriesState) {
-  return !!series.bar;
-}
 export function makeLabelsFromLimit(limit: ValueEdge, step: number) {
   const multipleNum = findMultipleNum(step);
   const min = Math.round(limit.min * multipleNum);
