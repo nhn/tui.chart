@@ -1,4 +1,5 @@
 import { StoreModule } from '@t/store/store';
+import { extend } from '@src/store/store';
 
 const layout: StoreModule = {
   name: 'layout',
@@ -33,11 +34,7 @@ const layout: StoreModule = {
         y: 0 + padding
       };
 
-      this.extend(state.layout, {
-        yAxis,
-        xAxis,
-        plot
-      });
+      extend(state.layout, { yAxis, xAxis, plot });
     }
   },
   observe: {

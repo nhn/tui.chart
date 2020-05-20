@@ -1,6 +1,7 @@
 import { ValueEdge, StoreModule, ChartType } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
+import { extend } from '@src/store/store';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -68,7 +69,7 @@ const dataRange: StoreModule = {
         newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);
       }
 
-      this.extend(state.dataRange, newDataRange);
+      extend(state.dataRange, newDataRange);
     }
   },
   observe: {

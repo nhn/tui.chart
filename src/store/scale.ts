@@ -2,6 +2,7 @@ import { StoreModule, ScaleData } from '@t/store/store';
 
 import coordinateScaleCalculator from '@src/scale/coordinateScaleCalculator';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { extend } from '@src/store/store';
 
 const scale: StoreModule = {
   name: 'scale',
@@ -24,7 +25,7 @@ const scale: StoreModule = {
         });
       });
 
-      this.extend(state.scale, scaleData);
+      extend(state.scale, scaleData);
     }
   },
   observe: {

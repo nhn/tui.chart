@@ -5,7 +5,7 @@ import {
   notifyByPath,
   computed,
   watch,
-  extend,
+  extend as reactiveExtend,
   invisibleWork
 } from '@src/store/reactive';
 import {
@@ -173,7 +173,7 @@ export default class Store<T extends Options> {
     // observe.setlayout 안에서 setLayout 액션이 실행되니까 여기서 state.layout getter가 실행되고
     // state.layout의 옵져버로 observe.setLayout이 등록된다. 여기서 무한루프
     // 즉 observe하고 안에서 특정 대상을 쓸때
-    // this.extend(state.layout, layouts); 이런식으로 하게되면 layout의 getter실행되어
+    // extend(state.layout, layouts); 이런식으로 하게되면 layout의 getter실행되어
     // layout을 업데이트하려고 만든 observe를 옵저버로 등록해서 무한루프
 
     if (isInvisible) {
@@ -215,7 +215,7 @@ export default class Store<T extends Options> {
 
     if (param.state) {
       const moduleState = typeof param.state === 'function' ? param.state() : param.state;
-      this.extend(this.state, moduleState);
+      extend(this.state, moduleState);
 
       //      this.extend(this.state, moduleState);
     }
@@ -253,32 +253,32 @@ export default class Store<T extends Options> {
   }
 
   setValue(target: Record<string, any>, key: string, source: Record<string, any>) {
-    this.extend(target, {
+    extend(target, {
       [key]: source
     });
   }
+}
 
-  extend(target: Record<string, any>, source: Record<string, any>) {
-    const newItems: Record<string, any> = {};
+export function extend(target: Record<string, any>, source: Record<string, any>) {
+  const newItems: Record<string, any> = {};
 
-    for (const k in source) {
-      if (!source.hasOwnProperty(k)) {
-        continue;
-      }
+  for (const k in source) {
+    if (!source.hasOwnProperty(k)) {
+      continue;
+    }
 
-      if (!isUndefined(target[k])) {
-        if (typeof source[k] === 'object' && !Array.isArray(source[k])) {
-          this.extend(target[k], source[k]);
-        } else {
-          target[k] = source[k];
-        }
+    if (!isUndefined(target[k])) {
+      if (typeof source[k] === 'object' && !Array.isArray(source[k])) {
+        extend(target[k], source[k]);
       } else {
-        newItems[k] = source[k];
+        target[k] = source[k];
       }
+    } else {
+      newItems[k] = source[k];
     }
+  }
 
-    if (Object.keys(newItems).length) {
-      extend(target, newItems);
-    }
+  if (Object.keys(newItems).length) {
+    reactiveExtend(target, newItems);
   }
 }

@@ -3,6 +3,7 @@ import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { AxisType } from '@src/component/axis';
 import { LineTypeXAxisOptions } from '@t/options';
+import { extend } from '@src/store/store';
 
 const axes: StoreModule = {
   name: 'axes',
@@ -50,7 +51,7 @@ const axes: StoreModule = {
         tickDistance: valueAxisSize / valueLabels.length
       };
 
-      this.extend(state.axes, {
+      extend(state.axes, {
         xAxis: labelAxisOnYAxis ? valueAxisData : labelAxisData,
         yAxis: labelAxisOnYAxis ? labelAxisData : valueAxisData
       });
