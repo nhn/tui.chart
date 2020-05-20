@@ -18,6 +18,10 @@ type DrawModels = ClipRectAreaModel | RectModel | LineModel;
 
 export type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
+type RenderOptions = {
+  diverging: boolean;
+};
+
 const BOX = {
   BAR: 'bar',
   COLUMN: 'column'
@@ -90,7 +94,7 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, theme, axes, categories, stackSeries } = chartState;
+    const { layout, series, theme, axes, categories, stackSeries, options } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -102,11 +106,15 @@ export default class BoxSeries extends Component {
     const { colors } = theme.series;
     const seriesData = series[this.name]!;
     const { tickDistance } = axes[this.labelAxis];
+    const renderOptions: RenderOptions = {
+      diverging: options.series?.diverging || false
+    };
     const seriesModels: RectModel[] = this.renderSeriesModel(
       seriesData,
       colors,
       axes[this.valueAxis],
-      tickDistance
+      tickDistance,
+      renderOptions
     );
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
@@ -136,21 +144,23 @@ export default class BoxSeries extends Component {
     seriesData: SeriesData<BoxType>,
     colors: string[],
     valueAxis: AxisData,
-    tickDistance: number
+    tickDistance: number,
+    renderOptions: RenderOptions
   ): RectModel[] {
     const seriesRawData = seriesData.data;
-    const labels = valueAxis.labels as number[];
-    const columnWidth = (tickDistance - this.padding * 2) / seriesRawData.length;
-    const basePosition = this.getBasePosition(valueAxis);
+    const labels = valueAxis.labels;
+    const { diverging } = renderOptions;
+    const validDiverging = diverging && seriesRawData.length === 2;
+    const columnWidth = this.getColumnWidth(tickDistance, seriesRawData.length, validDiverging);
 
     return seriesRawData.flatMap(({ data }, seriesIndex) => {
-      const seriesPos = seriesIndex * columnWidth + this.padding;
+      const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
       return data.map((value, index) => {
         const dataStart = seriesPos + index * tickDistance;
-        const barLength = this.getBarLength(value, labels);
-        const startPosition = this.getStartPosition(value, labels, basePosition);
+        const barLength = this.getBarLength(value, labels, diverging);
+        const startPosition = this.getStartPosition(value, valueAxis, seriesIndex, diverging);
 
         return {
           type: 'rect',
@@ -246,12 +256,15 @@ export default class BoxSeries extends Component {
     return this.plot[this.offsetSizeKey];
   }
 
-  getValueRatio(valueLabels: number[]) {
-    return this.getOffsetSize() / (Number(last(valueLabels)) - Number(first(valueLabels)));
+  getValueRatio(valueLabels: string[], diverging = false) {
+    const values = valueLabels.map(value => Number(value));
+    const multiple = diverging ? 2 : 1;
+
+    return this.getOffsetSize() / ((Math.max(...values) - Math.min(...values)) * multiple);
   }
 
-  getBarLength(value: BoxSeriesDataType, labels: number[]) {
-    const ratio = this.getValueRatio(labels);
+  getBarLength(value: BoxSeriesDataType, labels: string[], diverging = false) {
+    const ratio = this.getValueRatio(labels, diverging);
     const rangeData = isRangeData(value);
 
     if (typeof value === 'number' && hasNegative(labels)) {
@@ -273,19 +286,29 @@ export default class BoxSeries extends Component {
     return (value as number) * ratio;
   }
 
-  getStartPosition(value: BoxSeriesDataType, labels: number[], basePosition: number) {
-    const barLength = this.getBarLength(value, labels);
+  getStartPosition(
+    value: BoxSeriesDataType,
+    valueAxis: AxisData,
+    seriesIndex: number,
+    diverging = false
+  ) {
+    const { labels } = valueAxis;
+    const basePosition = this.getBasePosition(valueAxis);
+    const barLength = this.getBarLength(value, labels, diverging);
 
     if (isRangeData(value)) {
       const [start] = value;
       const min = first(labels) as number;
-      const ratio = this.getValueRatio(labels);
+      const ratio = this.getValueRatio(labels, diverging);
       const startPosition = (start - min) * ratio;
 
       return this.isBar ? startPosition : this.getOffsetSize() - startPosition - barLength;
     }
 
-    if (hasNegative(labels) && value < 0) {
+    const divergingSeries = diverging && seriesIndex % 2;
+    const negativeValue = hasNegative(labels) && value < 0;
+
+    if (divergingSeries || negativeValue) {
       return this.isBar ? basePosition - barLength : basePosition;
     }
 
@@ -311,5 +334,11 @@ export default class BoxSeries extends Component {
       width: this.isBar ? barLength : columnWidth,
       height: this.isBar ? columnWidth : barLength
     };
+  }
+
+  getColumnWidth(tickDistance: number, seriesLength: number, validDiverging = false) {
+    seriesLength = validDiverging ? 1 : seriesLength;
+
+    return (tickDistance - this.padding * 2) / seriesLength;
   }
 }

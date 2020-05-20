@@ -4,7 +4,8 @@ import {
   temperatureRangeData,
   budgetDataForStack,
   budgetDataForGroupStack,
-  negativeBudgetData
+  negativeBudgetData,
+  budgetDataForDiverging
 } from './data';
 import { ColumnChartOptions } from '@t/options';
 
@@ -130,8 +131,11 @@ export const negative = () => {
 };
 
 export const diverging = () => {
-  const { el } = createChart(negativeBudgetData, {
-    ...defaultOptions
+  const { el } = createChart(budgetDataForDiverging, {
+    ...defaultOptions,
+    series: {
+      diverging: true
+    }
   });
 
   return el;

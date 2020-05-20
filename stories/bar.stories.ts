@@ -4,7 +4,8 @@ import {
   temperatureRangeData,
   budgetDataForStack,
   budgetDataForGroupStack,
-  negativeBudgetData
+  negativeBudgetData,
+  budgetDataForDiverging
 } from './data';
 import { BarChartOptions } from '@t/options';
 
@@ -121,22 +122,14 @@ export const styledConnector = () => {
 
 export const negative = () => {
   const { el } = createChart(negativeBudgetData, {
-    ...defaultOptions,
-    plot: {
-      lines: [
-        {
-          value: -5000,
-          color: '#ff0000'
-        }
-      ]
-    }
+    ...defaultOptions
   });
 
   return el;
 };
 
 export const diverging = () => {
-  const { el } = createChart(negativeBudgetData, {
+  const { el } = createChart(budgetDataForDiverging, {
     ...defaultOptions,
     series: {
       diverging: true

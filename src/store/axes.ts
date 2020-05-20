@@ -2,7 +2,7 @@ import { AxisData, Options, SeriesState, StoreModule } from '@t/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { AxisType } from '@src/component/axis';
-import { LineTypeXAxisOptions } from '@t/options';
+import { LineTypeXAxisOptions, BoxSeriesOptions } from '@t/options';
 import { extend } from '@src/store/store';
 
 const axes: StoreModule = {
@@ -40,8 +40,15 @@ const axes: StoreModule = {
       };
 
       const axisName = getValueAxisName(series);
-      const valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].step);
+      let valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].step);
       const valueAxisSize = labelAxisOnYAxis ? plot.width : plot.height;
+
+      if (hasBoxSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
+        valueLabels = valueLabels
+          .slice(1)
+          .reverse()
+          .concat(valueLabels);
+      }
 
       const valueAxisData = {
         labels: valueLabels,
