@@ -31,7 +31,7 @@ import {
   sortCategories,
   deepCopy
 } from '@src/helpers/utils';
-import { BaseChartOptions, Rect, Size } from '@t/options';
+import { BaseChartOptions, Size } from '@t/options';
 
 interface InitStoreState<T> {
   categories?: string[];
