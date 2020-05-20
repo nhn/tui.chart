@@ -11,7 +11,7 @@ const axes: StoreModule = {
     axes: {}
   }),
   initialize(state, options) {
-    state.axes = {
+    extend(state.axes, {
       xAxis: {
         tickInterval: options.xAxis?.tick?.interval || 1,
         labelInterval: options.xAxis?.label?.interval || 1
@@ -20,7 +20,7 @@ const axes: StoreModule = {
         tickInterval: options.yAxis?.tick?.interval || 1,
         labelInterval: options.yAxis?.label?.interval || 1
       } as AxisData
-    };
+    });
   },
   action: {
     setAxesData({ state }) {

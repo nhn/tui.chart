@@ -72,14 +72,21 @@ type SeriesState = {
   [key in ChartType]?: SeriesData<key>; // @TODO: Series 와 통합 필요. 중복되는 느낌
 };
 
+export interface Layout {
+  xAxis: Rect;
+  yAxis: Rect;
+  plot: Rect;
+}
+
+export interface Scale {
+  xAxis: ScaleData;
+  yAxis: ScaleData;
+}
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
-  layout: {
-    [key: string]: Rect;
-  };
-  scale: {
-    [key: string]: ScaleData;
-  };
+  layout: Layout;
+  scale: Scale;
   disabledSeries: string[];
   series: SeriesState;
   // 기존의 limitMap

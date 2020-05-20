@@ -17,7 +17,9 @@ import {
   StoreModule,
   ObserveFunc,
   Series,
-  Options
+  Options,
+  Layout,
+  Scale
 } from '@t/store/store';
 
 import {
@@ -29,7 +31,7 @@ import {
   sortCategories,
   deepCopy
 } from '@src/helpers/utils';
-import { BaseChartOptions, Size } from '@t/options';
+import { BaseChartOptions, Rect, Size } from '@t/options';
 
 interface InitStoreState<T> {
   categories?: string[];
@@ -75,8 +77,8 @@ function initData(series: Series, categories?: string[]) {
 export default class Store<T extends Options> {
   state: ChartState<T> = {
     chart: { width: 0, height: 0 },
-    layout: {},
-    scale: {},
+    layout: {} as Layout,
+    scale: {} as Scale,
     disabledSeries: [],
     series: {},
     dataRange: {},
