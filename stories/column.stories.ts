@@ -3,7 +3,8 @@ import {
   budgetData,
   temperatureRangeData,
   budgetDataForStack,
-  budgetDataForGroupStack
+  budgetDataForGroupStack,
+  negativeBudgetData
 } from './data';
 import { ColumnChartOptions } from '@t/options';
 
@@ -115,6 +116,22 @@ export const styledConnector = () => {
         }
       }
     }
+  });
+
+  return el;
+};
+
+export const negative = () => {
+  const { el } = createChart(negativeBudgetData, {
+    ...defaultOptions
+  });
+
+  return el;
+};
+
+export const diverging = () => {
+  const { el } = createChart(negativeBudgetData, {
+    ...defaultOptions
   });
 
   return el;

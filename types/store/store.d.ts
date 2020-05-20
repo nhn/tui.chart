@@ -83,6 +83,12 @@ export interface Scale {
   yAxis: ScaleData;
 }
 
+type PlotLine = {
+  value: number | string;
+  color: string;
+  vertical: boolean;
+};
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -101,6 +107,9 @@ export interface ChartState<T extends Options> {
   categories?: string[];
   stackSeries: {
     [key in BoxType]?: StackSeriesData<key>;
+  };
+  plot: {
+    lines?: PlotLine[];
   };
 }
 

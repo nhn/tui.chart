@@ -102,6 +102,20 @@ export const budgetData = {
   ]
 };
 
+export const negativeBudgetData = {
+  categories: ['July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Budget',
+      data: [-3000, 0, -1000, -5500, -2000, -6000]
+    },
+    {
+      name: 'Expenses',
+      data: [-5000, -4000, -4000, -6000, 4000, -8000]
+    }
+  ]
+};
+
 export const budgetDataForStack = {
   categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
