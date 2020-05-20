@@ -29,17 +29,13 @@ import {
   sortCategories,
   deepCopy
 } from '@src/helpers/utils';
-import { BaseChartOptions, Size, StackOptionType } from '@t/options';
+import { BaseChartOptions, Size } from '@t/options';
 
 interface InitStoreState<T> {
   categories?: string[];
   chart?: BaseChartOptions;
   series: Series;
   options?: T;
-}
-
-export interface InitStoreOption {
-  stack: StackOptionType;
 }
 
 function makeCategories(series: Series) {

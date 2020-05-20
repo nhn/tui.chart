@@ -1,6 +1,7 @@
 import { StoreModule, ScaleData } from '@t/store/store';
 
 import coordinateScaleCalculator from '@src/scale/coordinateScaleCalculator';
+import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 
 const scale: StoreModule = {
   name: 'scale',
@@ -11,8 +12,10 @@ const scale: StoreModule = {
     setScale({ state }) {
       const { series, dataRange, layout } = state;
       const scaleData: Record<string, ScaleData> = {};
-      const valueAxis = series.bar ? 'xAxis' : 'yAxis';
-      const offsetSizeProp = series.bar ? 'width' : 'height';
+
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
+      const valueAxis = labelAxisOnYAxis ? 'xAxis' : 'yAxis';
+      const offsetSizeProp = labelAxisOnYAxis ? 'width' : 'height';
 
       Object.keys(series).forEach(seriesName => {
         scaleData[valueAxis] = coordinateScaleCalculator({

@@ -1,4 +1,4 @@
-import { ScatterSeriesData } from '@t/options';
+import { ScatterChartOptions, ScatterSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { genderHeightWeightData } from './data';
 import ScatterChart from '@src/charts/scatterChart';
@@ -21,7 +21,7 @@ const defaultOptions = {
   plot: {}
 };
 
-function createChart(data: ScatterSeriesData, customOptions?: Record<string, any>) {
+function createChart(data: ScatterSeriesData, customOptions?: ScatterChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 

@@ -51,7 +51,7 @@ export default class AreaSeries extends Component {
     }
 
     const { yAxis } = scale;
-    const { tickDistance, pointOnColumn } = axes.xAxis;
+    const { tickDistance, pointOnColumn } = axes.xAxis!;
     const areaData = series.area.data;
     const bottomYPoint = layout.xAxis.y - layout.xAxis.height + 10; // padding
 

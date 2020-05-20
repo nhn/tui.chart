@@ -33,7 +33,7 @@ function getNormalizedStep(step: number) {
 }
 
 /**
- * Get normailzed limit values
+ * Get normalized limit values
  * max = 155 and step = 10 ---> max = 160
  */
 function getNormalizedLimit(
@@ -149,11 +149,9 @@ function coordinateScaleCalculator(options: {
   showLabel?: boolean;
 }): ScaleData {
   const { range, offsetSize, stepCount, minimumStepSize, showLabel } = options;
-  let scale = getRoughScale(range.min, range.max, offsetSize, stepCount, minimumStepSize);
+  const roughScale = getRoughScale(range.min, range.max, offsetSize, stepCount, minimumStepSize);
 
-  scale = getNormalizedScale(scale, showLabel);
-
-  return scale;
+  return getNormalizedScale(roughScale, showLabel);
 }
 
 export default coordinateScaleCalculator;

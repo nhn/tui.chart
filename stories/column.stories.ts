@@ -13,21 +13,10 @@ export default {
 
 const width = 800;
 const height = 500;
-const defaultOptions = {
+const defaultOptions: ColumnChartOptions = {
   chart: {
     width,
-    height,
-    title: 'Monthly Revenue',
-    format: '1,000'
-  },
-  yAxis: {
-    title: 'Amount',
-    min: 0,
-    max: 9000,
-    suffix: '$'
-  },
-  xAxis: {
-    title: 'Month'
+    height
   },
   series: {
     showLabel: true

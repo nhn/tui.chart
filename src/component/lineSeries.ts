@@ -43,7 +43,7 @@ export default class LineSeries extends Component {
     }
 
     const { yAxis } = scale;
-    const { tickDistance, pointOnColumn } = axes.xAxis;
+    const { tickDistance, pointOnColumn } = axes.xAxis!;
 
     const renderLineOptions: RenderLineOptions = {
       pointOnColumn,
