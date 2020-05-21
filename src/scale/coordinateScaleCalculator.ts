@@ -125,12 +125,12 @@ function getNormalizedScale(scale: ScaleData, showLabel?: boolean): ScaleData {
 }
 
 function getRoughScale(
-  min: number,
-  max: number,
+  range: ValueEdge,
   offsetSize: number,
   stepCount?: number,
   minimumStepSize?: number
 ): ScaleData {
+  const { min, max } = range;
   const limitSize = Math.abs(max - min);
   const valuePerPixel = limitSize / offsetSize;
 
@@ -158,7 +158,7 @@ export function coordinateScaleCalculator(options: {
 }): ScaleData {
   const { range, offsetSize, stepCount, minimumStepSize, showLabel } = options;
 
-  const roughScale = getRoughScale(range.min, range.max, offsetSize, stepCount, minimumStepSize);
+  const roughScale = getRoughScale(range, offsetSize, stepCount, minimumStepSize);
   const normalizedScale = getNormalizedScale(roughScale, showLabel);
   const overflowed = isSeriesOverflowed(normalizedScale, range);
 

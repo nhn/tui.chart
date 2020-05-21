@@ -106,3 +106,12 @@ export const labelInterval = () => {
 
   return el;
 };
+
+export const minMax = () => {
+  const { el } = createChart(budgetData, {
+    yAxis: { scale: { min: 0, max: 13000 } },
+    series: { spline: true }
+  });
+
+  return el;
+};
