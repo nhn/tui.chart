@@ -1,4 +1,5 @@
 import { StoreModule, SeriesTypes } from '@t/store/store';
+import { extend } from '@src/store/store';
 
 // seriesDataModel 이 했던것 일부 여기로
 const seriesData: StoreModule = {
@@ -26,7 +27,7 @@ const seriesData: StoreModule = {
         };
       });
 
-      this.extend(state.series, newSeriesData);
+      extend(state.series, newSeriesData);
     },
     disableSeries({ state }, name: string) {
       state.disabledSeries.push(name);

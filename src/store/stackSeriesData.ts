@@ -18,6 +18,7 @@ import {
   BoxSeriesDataType
 } from '@t/options';
 import { pickProperty, isObject } from '@src/helpers/utils';
+import { extend } from '@src/store/store';
 
 type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
@@ -165,7 +166,7 @@ const stackSeriesData: StoreModule = {
           } as StackSeriesData<BoxType>;
         }
 
-        this.extend(state.stackSeries, newStackSeries);
+        extend(state.stackSeries, newStackSeries);
       });
     }
   },

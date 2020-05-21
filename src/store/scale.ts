@@ -1,17 +1,17 @@
-import { StoreModule, ScaleData } from '@t/store/store';
-
+import { StoreModule, Scale } from '@t/store/store';
 import coordinateScaleCalculator from '@src/scale/coordinateScaleCalculator';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { extend } from '@src/store/store';
 
 const scale: StoreModule = {
   name: 'scale',
   state: () => ({
-    scale: {}
+    scale: {} as Scale
   }),
   action: {
     setScale({ state }) {
       const { series, dataRange, layout } = state;
-      const scaleData: Record<string, ScaleData> = {};
+      const scaleData = {};
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const valueAxis = labelAxisOnYAxis ? 'xAxis' : 'yAxis';
@@ -24,7 +24,7 @@ const scale: StoreModule = {
         });
       });
 
-      this.extend(state.scale, scaleData);
+      extend(state.scale, scaleData);
     }
   },
   observe: {

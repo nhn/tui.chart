@@ -1,8 +1,9 @@
-import seriesData from '@src/store/seriesData';
+// import seriesData from '@src/store/seriesData';
 import stackSeriesData from '@src/store/stackSeriesData';
 
-import Store from '@src/store/store';
 import { BarChartOptions } from '@t/options';
+import { ChartState } from '@t/store/store';
+import Store from '@src/store/store';
 
 const data = [
   { name: 'han', data: [1, 2, 3] },
@@ -10,107 +11,74 @@ const data = [
 ];
 
 describe('StackSeriesData Store', () => {
-  let store: Store<BarChartOptions>;
+  it('should be initialized with default values, if the stack option is true only', () => {
+    const state = {
+      series: { bar: { data } },
+      stackSeries: {}
+    } as ChartState<BarChartOptions>;
 
-  describe('Initialize', () => {
-    it('should be initialized with default values, if the stack option is true only', () => {
-      store = new Store({
-        options: {
-          series: {
-            stack: true
-          }
-        },
-        series: {
-          bar: data
-        }
-      });
+    stackSeriesData.initialize!(state, { series: { stack: true } });
 
-      store.setModule(seriesData);
-      store.setModule(stackSeriesData);
+    expect(state.stackSeries.bar!.stack).toEqual({ type: 'normal', connector: false });
+  });
 
-      expect(store.state.stackSeries.bar!.stack).toEqual({
-        type: 'normal',
-        connector: false
-      });
+  it('should reset the connector to default value, if the connector is true only', () => {
+    const state = { series: { bar: { data } }, stackSeries: {} } as ChartState<BarChartOptions>;
+
+    stackSeriesData.initialize!(state, { series: { stack: { type: 'normal', connector: true } } });
+
+    expect(state.stackSeries.bar!.stack).toEqual({
+      type: 'normal',
+      connector: {
+        type: 'solid',
+        color: 'rgba(51, 85, 139, 0.3)',
+        width: 1
+      }
+    });
+  });
+
+  it('should be extended from the connector default, if the connector type is object', () => {
+    const state = {
+      series: { bar: { data } },
+      stackSeries: {},
+      options: {
+        series: {}
+      }
+    } as ChartState<BarChartOptions>;
+
+    stackSeriesData.initialize!(state, {
+      series: { stack: { type: 'percent', connector: { type: 'dashed', color: '#ff0000' } } }
     });
 
-    it('should reset the connector to default value, if the connector is true only', () => {
-      store = new Store({
-        options: {
-          series: {
-            stack: {
-              type: 'normal',
-              connector: true
-            }
-          }
-        },
-        series: {
-          bar: data
-        }
-      });
-
-      store.setModule(seriesData);
-      store.setModule(stackSeriesData);
-
-      expect(store.state.stackSeries.bar!.stack).toEqual({
-        type: 'normal',
-        connector: {
-          type: 'solid',
-          color: 'rgba(51, 85, 139, 0.3)',
-          width: 1
-        }
-      });
-    });
-
-    it('should be extended from the connector default, if the connector type is object', () => {
-      store = new Store({
-        options: {
-          series: {
-            stack: {
-              type: 'percent',
-              connector: {
-                type: 'dashed',
-                color: '#ff0000'
-              }
-            }
-          }
-        },
-        series: {
-          bar: data
-        }
-      });
-
-      store.setModule(seriesData);
-      store.setModule(stackSeriesData);
-
-      expect(store.state.stackSeries.bar!.stack).toEqual({
-        type: 'percent',
-        connector: {
-          type: 'dashed',
-          color: '#ff0000',
-          width: 1
-        }
-      });
+    expect(state.stackSeries.bar!.stack).toEqual({
+      type: 'percent',
+      connector: { type: 'dashed', color: '#ff0000', width: 1 }
     });
   });
 
   describe('StackData', () => {
     it('makeStackData', () => {
-      store = new Store({
+      const state = {
+        series: { bar: { data } },
+        stackSeries: {
+          bar: {
+            stack: {
+              type: 'normal',
+              connector: { type: 'solid', color: 'rgba(51, 85, 139, 0,3)', width: 1 }
+            }
+          }
+        },
         options: {
           series: {
             stack: true
           }
-        },
-        series: {
-          bar: data
         }
-      });
+      } as ChartState<BarChartOptions>;
 
-      store.setModule(seriesData);
-      store.setModule(stackSeriesData);
+      const store = { state } as Store<BarChartOptions>;
+      stackSeriesData.action!.setStackSeriesData(store);
 
-      expect(store.state.stackSeries.bar!.stackData).toEqual([
+      expect(state.stackSeries.bar!.stackData).toEqual([
         {
           values: [1, 4],
           sum: 5
@@ -127,44 +95,52 @@ describe('StackSeriesData Store', () => {
     });
 
     it('makeStackGroupData', () => {
-      store = new Store({
-        options: {
-          series: {
+      const state = {
+        series: {
+          bar: {
+            data: [
+              {
+                name: 'test1',
+                data: [1, 2, 3],
+                stackGroup: 'A'
+              },
+              {
+                name: 'test2',
+                data: [2, 4, 6],
+                stackGroup: 'B'
+              },
+              {
+                name: 'test3',
+                data: [3, 4, 5],
+                stackGroup: 'A'
+              },
+              {
+                name: 'test4',
+                data: [4, 1, 1],
+                stackGroup: 'B'
+              }
+            ]
+          }
+        },
+        stackSeries: {
+          bar: {
             stack: {
-              type: 'normal'
+              type: 'normal',
+              connector: { type: 'solid', color: 'rgba(51, 85, 139, 0,3)', width: 1 }
             }
           }
         },
-        series: {
-          bar: [
-            {
-              name: 'test1',
-              data: [1, 2, 3],
-              stackGroup: 'A'
-            },
-            {
-              name: 'test2',
-              data: [2, 4, 6],
-              stackGroup: 'B'
-            },
-            {
-              name: 'test3',
-              data: [3, 4, 5],
-              stackGroup: 'A'
-            },
-            {
-              name: 'test4',
-              data: [4, 1, 1],
-              stackGroup: 'B'
-            }
-          ]
+        options: {
+          series: {
+            stack: true
+          }
         }
-      });
+      } as ChartState<BarChartOptions>;
 
-      store.setModule(seriesData);
-      store.setModule(stackSeriesData);
+      const store = { state } as Store<BarChartOptions>;
+      stackSeriesData.action!.setStackSeriesData(store);
 
-      expect(store.state.stackSeries.bar!.stackData).toEqual({
+      expect(state.stackSeries.bar!.stackData).toEqual({
         A: [
           { values: [1, 3], sum: 4 },
           { values: [2, 4], sum: 6 },
