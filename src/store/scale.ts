@@ -36,7 +36,10 @@ const scale: StoreModule = {
           scaleData[valueAxis] = getStackScaleData('percentStack');
         } else {
           scaleData[valueAxis] = coordinateScaleCalculator({
-            range: makeScaleOptions(dataRange[seriesName], scaleOptions[valueAxis]),
+            range: {
+              scale: makeScaleOptions(dataRange[seriesName], scaleOptions[valueAxis]),
+              data: dataRange[seriesName]
+            },
             offsetSize: layout.plot[offsetSizeProp]
           });
         }

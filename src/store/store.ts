@@ -19,7 +19,8 @@ import {
   Series,
   Options,
   Layout,
-  Scale
+  Scale,
+  DataRange
 } from '@t/store/store';
 
 import {
@@ -81,7 +82,7 @@ export default class Store<T extends Options> {
     scale: {} as Scale,
     disabledSeries: [],
     series: {},
-    dataRange: {},
+    dataRange: {} as DataRange,
     axes: {},
     theme: {
       series: {

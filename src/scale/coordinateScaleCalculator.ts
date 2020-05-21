@@ -24,10 +24,12 @@ function adjustLimitForOverflow(limit: ValueEdge, step: number, overflowed: Over
   };
 }
 
-function isSeriesOverflowed(scaleData: ScaleData, limit: ValueEdge) {
+function isSeriesOverflowed(scaleData: ScaleData, range: ValueEdge) {
+  const { min, max } = range;
   const scaleDataLimit = scaleData.limit;
-  const isOverflowedMin = scaleDataLimit.min === limit.min && scaleDataLimit.min !== 0;
-  const isOverflowedMax = scaleDataLimit.max === limit.max && scaleDataLimit.max !== 0;
+
+  const isOverflowedMin = scaleDataLimit.min === min && scaleDataLimit.min !== 0;
+  const isOverflowedMax = scaleDataLimit.max === max && scaleDataLimit.max !== 0;
 
   if (!isOverflowedMin && !isOverflowedMax) {
     return null;
@@ -150,7 +152,10 @@ function getRoughScale(
 }
 
 export function coordinateScaleCalculator(options: {
-  range: ValueEdge;
+  range: {
+    scale: ValueEdge;
+    data: ValueEdge;
+  };
   offsetSize: number;
   stepCount?: number;
   minimumStepSize?: number;
@@ -158,9 +163,9 @@ export function coordinateScaleCalculator(options: {
 }): ScaleData {
   const { range, offsetSize, stepCount, minimumStepSize, showLabel } = options;
 
-  const roughScale = getRoughScale(range, offsetSize, stepCount, minimumStepSize);
+  const roughScale = getRoughScale(range.scale, offsetSize, stepCount, minimumStepSize);
   const normalizedScale = getNormalizedScale(roughScale, showLabel);
-  const overflowed = isSeriesOverflowed(normalizedScale, range);
+  const overflowed = isSeriesOverflowed(normalizedScale, range.data);
 
   if (overflowed) {
     const { step, limit } = normalizedScale;
