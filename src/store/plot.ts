@@ -1,7 +1,7 @@
 import { StoreModule, PlotLine } from '@t/store/store';
 import { isLabelAxisOnYAxis, isBoxTypeChart } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
-import { BoxSeriesOptions } from '@t/options';
+import { hasNegative } from '@src/helpers/utils';
 
 const plot: StoreModule = {
   name: 'plot',
@@ -10,7 +10,7 @@ const plot: StoreModule = {
   }),
   action: {
     setPlot({ state }) {
-      const { options, series } = state;
+      const { options, series, axes } = state;
       const plotLines = options.plot?.lines || [];
       const lines: PlotLine[] = plotLines.map(({ color, value }) => ({
         value,
@@ -18,7 +18,7 @@ const plot: StoreModule = {
         vertical: true
       }));
 
-      if (isBoxTypeChart(series) && !(options.series as BoxSeriesOptions)?.diverging) {
+      if (needZeroLine(series, axes)) {
         lines.push({ value: 0, color: 'rgba(0, 0, 0, 0.5)', vertical: isLabelAxisOnYAxis(series) });
       }
 
@@ -31,5 +31,15 @@ const plot: StoreModule = {
     }
   }
 };
+
+function needZeroLine(series, axes) {
+  if (!isBoxTypeChart(series)) {
+    return false;
+  }
+
+  const valueAxisName = isLabelAxisOnYAxis(series) ? 'xAxis' : 'yAxis';
+
+  return hasNegative(axes[valueAxisName]?.labels);
+}
 
 export default plot;

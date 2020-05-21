@@ -278,3 +278,7 @@ export function last<T extends Array<any>>(items: T): T[keyof T] {
   // eslint-disable-next-line no-undefined
   return items.length ? items[items.length - 1] : undefined;
 }
+
+export function hasNegative(values: (number | string)[] = []) {
+  return values.some(value => Number(value) < 0);
+}

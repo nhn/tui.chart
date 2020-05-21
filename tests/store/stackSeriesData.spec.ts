@@ -1,4 +1,3 @@
-// import seriesData from '@src/store/seriesData';
 import stackSeriesData from '@src/store/stackSeriesData';
 
 import { BarChartOptions } from '@t/options';
@@ -11,53 +10,57 @@ const data = [
 ];
 
 describe('StackSeriesData Store', () => {
-  it('should be initialized with default values, if the stack option is true only', () => {
-    const state = {
-      series: { bar: { data } },
-      stackSeries: {}
-    } as ChartState<BarChartOptions>;
+  describe('initialize', () => {
+    it('should be initialized with default values, if the stack option is true only', () => {
+      const state = {
+        series: { bar: { data } },
+        stackSeries: {}
+      } as ChartState<BarChartOptions>;
 
-    stackSeriesData.initialize!(state, { series: { stack: true } });
+      stackSeriesData.initialize!(state, { series: { stack: true } });
 
-    expect(state.stackSeries.bar!.stack).toEqual({ type: 'normal', connector: false });
-  });
+      expect(state.stackSeries.bar!.stack).toEqual({ type: 'normal', connector: false });
+    });
 
-  it('should reset the connector to default value, if the connector is true only', () => {
-    const state = { series: { bar: { data } }, stackSeries: {} } as ChartState<BarChartOptions>;
+    it('should reset the connector to default value, if the connector is true only', () => {
+      const state = { series: { bar: { data } }, stackSeries: {} } as ChartState<BarChartOptions>;
 
-    stackSeriesData.initialize!(state, { series: { stack: { type: 'normal', connector: true } } });
+      stackSeriesData.initialize!(state, {
+        series: { stack: { type: 'normal', connector: true } }
+      });
 
-    expect(state.stackSeries.bar!.stack).toEqual({
-      type: 'normal',
-      connector: {
-        type: 'solid',
-        color: 'rgba(51, 85, 139, 0.3)',
-        width: 1
-      }
+      expect(state.stackSeries.bar!.stack).toEqual({
+        type: 'normal',
+        connector: {
+          type: 'solid',
+          color: 'rgba(51, 85, 139, 0.3)',
+          width: 1
+        }
+      });
+    });
+
+    it('should be extended from the connector default, if the connector type is object', () => {
+      const state = {
+        series: { bar: { data } },
+        stackSeries: {},
+        options: {
+          series: {}
+        }
+      } as ChartState<BarChartOptions>;
+
+      stackSeriesData.initialize!(state, {
+        series: { stack: { type: 'percent', connector: { type: 'dashed', color: '#ff0000' } } }
+      });
+
+      expect(state.stackSeries.bar!.stack).toEqual({
+        type: 'percent',
+        connector: { type: 'dashed', color: '#ff0000', width: 1 }
+      });
     });
   });
 
-  it('should be extended from the connector default, if the connector type is object', () => {
-    const state = {
-      series: { bar: { data } },
-      stackSeries: {},
-      options: {
-        series: {}
-      }
-    } as ChartState<BarChartOptions>;
-
-    stackSeriesData.initialize!(state, {
-      series: { stack: { type: 'percent', connector: { type: 'dashed', color: '#ff0000' } } }
-    });
-
-    expect(state.stackSeries.bar!.stack).toEqual({
-      type: 'percent',
-      connector: { type: 'dashed', color: '#ff0000', width: 1 }
-    });
-  });
-
-  describe('StackData', () => {
-    it('makeStackData', () => {
+  describe('setStackSeriesData', () => {
+    it('should be made data for the stack', () => {
       const state = {
         series: { bar: { data } },
         stackSeries: {
@@ -94,7 +97,7 @@ describe('StackSeriesData Store', () => {
       ]);
     });
 
-    it('makeStackGroupData', () => {
+    it('shoule be make data for the stack group data, when data using the stack group is entered', () => {
       const state = {
         series: {
           bar: {

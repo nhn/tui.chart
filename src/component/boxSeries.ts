@@ -9,7 +9,7 @@ import {
   ColumnChartOptions,
   Rect
 } from '@t/options';
-import { first, includes } from '@src/helpers/utils';
+import { first, includes, hasNegative } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
@@ -38,10 +38,6 @@ function isRangeData(value: BoxSeriesDataType): value is RangeDataType {
 
 function isLeftBottomSide(seriesIndex: number) {
   return !!(seriesIndex % 2);
-}
-
-export function hasNegative(values: (number | string)[]) {
-  return values.some(value => Number(value) < 0);
 }
 
 export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
