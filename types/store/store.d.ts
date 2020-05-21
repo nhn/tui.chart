@@ -89,6 +89,8 @@ type PlotLine = {
   vertical: boolean;
 };
 
+export type Axes = Partial<Record<AxisType, AxisData>>;
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -99,9 +101,7 @@ export interface ChartState<T extends Options> {
   dataRange: {
     [key: string]: ValueEdge;
   };
-  axes: {
-    [key in AxisType]?: AxisData;
-  };
+  axes: Axes;
   theme: Theme;
   options: T;
   categories?: string[];

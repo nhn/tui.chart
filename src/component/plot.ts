@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Options } from '@t/store/store';
+import { ChartState, Options, PlotLine, Axes, AxisData } from '@t/store/store';
 import { crispPixel, makeTickPixelPositions } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
@@ -13,9 +13,9 @@ export default class Plot extends Component {
 
   renderBands() {}
 
-  renderLines(lines, axes) {
+  renderLines(lines: PlotLine[], axes: Axes): LineModel[] {
     return lines.map(({ value, color, vertical }) => {
-      const { labels, tickCount } = vertical ? axes.xAxis : axes.yAxis;
+      const { labels, tickCount } = vertical ? (axes.xAxis as AxisData) : (axes.yAxis as AxisData);
       const size = vertical ? this.rect.width : this.rect.height;
       const positions = makeTickPixelPositions(size, tickCount);
       const index = labels.findIndex(label => Number(label) === value);
@@ -31,9 +31,9 @@ export default class Plot extends Component {
     });
   }
 
-  getTickPixelPositions(vertical: boolean, axes: Record<string, any>) {
+  getTickPixelPositions(vertical: boolean, axes: Axes) {
     const size = vertical ? this.rect.width : this.rect.height;
-    const { tickCount } = vertical ? axes.xAxis : axes.yAxis;
+    const { tickCount } = vertical ? axes.xAxis! : axes.yAxis!;
 
     return makeTickPixelPositions(size, tickCount);
   }
@@ -46,7 +46,7 @@ export default class Plot extends Component {
       ...this.renderModels(this.getTickPixelPositions(true, axes), true)
     ];
 
-    this.models.lines = [...this.renderLines(plot.lines, axes)];
+    this.models.lines = [...this.renderLines(plot.lines!, axes)];
   }
 
   makeLineModel(vertical: boolean, position: number, color: string): LineModel {
