@@ -1,6 +1,6 @@
 import { AxisData, Options, SeriesState, StoreModule } from '@t/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { isLabelAxisOnYAxis, isBoxTypeChart } from '@src/helpers/axes';
 import { AxisType } from '@src/component/axis';
 import { LineTypeXAxisOptions, BoxSeriesOptions } from '@t/options';
 import { extend } from '@src/store/store';
@@ -43,7 +43,7 @@ const axes: StoreModule = {
       let valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].step);
       const valueAxisSize = labelAxisOnYAxis ? plot.width : plot.height;
 
-      if (hasBoxSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
+      if (isBoxTypeChart(series) && (options.series as BoxSeriesOptions)?.diverging) {
         valueLabels = valueLabels
           .slice(1)
           .reverse()
@@ -72,16 +72,12 @@ const axes: StoreModule = {
   }
 };
 
-export function hasBoxSeries(series: SeriesState) {
-  return series.column || series.bar;
-}
-
 function getValueAxisName(series) {
   return series.bar ? AxisType.X : AxisType.Y;
 }
 
 function isPointOnColumn(series: SeriesState, options: Options) {
-  if (hasBoxSeries(series)) {
+  if (isBoxTypeChart(series)) {
     return true;
   }
 

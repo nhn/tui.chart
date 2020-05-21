@@ -1,7 +1,7 @@
 import { StoreModule, PlotLine } from '@t/store/store';
-import { hasBoxSeries } from './axes';
-import { isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { isLabelAxisOnYAxis, isBoxTypeChart } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
+import { BoxSeriesOptions } from '@t/options';
 
 const plot: StoreModule = {
   name: 'plot',
@@ -18,7 +18,7 @@ const plot: StoreModule = {
         vertical: true
       }));
 
-      if (hasBoxSeries(series)) {
+      if (isBoxTypeChart(series) && !(options.series as BoxSeriesOptions)?.diverging) {
         lines.push({ value: 0, color: 'rgba(0, 0, 0, 0.5)', vertical: isLabelAxisOnYAxis(series) });
       }
 

@@ -9,7 +9,7 @@ import {
   ColumnChartOptions,
   Rect
 } from '@t/options';
-import { first, last, includes } from '@src/helpers/utils';
+import { first, includes } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
@@ -34,6 +34,10 @@ const PADDING = {
 
 function isRangeData(value: BoxSeriesDataType): value is RangeDataType {
   return Array.isArray(value);
+}
+
+function isLeftBottomSide(seriesIndex: number) {
+  return !!(seriesIndex % 2);
 }
 
 export function hasNegative(values: (number | string)[]) {
@@ -107,7 +111,7 @@ export default class BoxSeries extends Component {
     const seriesData = series[this.name]!;
     const { tickDistance } = axes[this.labelAxis];
     const renderOptions: RenderOptions = {
-      diverging: options.series?.diverging || false
+      diverging: !!options.series?.diverging
     };
     const seriesModels: RectModel[] = this.renderSeriesModel(
       seriesData,
@@ -148,7 +152,7 @@ export default class BoxSeries extends Component {
     renderOptions: RenderOptions
   ): RectModel[] {
     const seriesRawData = seriesData.data;
-    const labels = valueAxis.labels;
+    const { labels } = valueAxis;
     const { diverging } = renderOptions;
     const validDiverging = diverging && seriesRawData.length === 2;
     const columnWidth = this.getColumnWidth(tickDistance, seriesRawData.length, validDiverging);
@@ -270,11 +274,7 @@ export default class BoxSeries extends Component {
     if (typeof value === 'number' && hasNegative(labels)) {
       if (value < 0) {
         value = Math.abs(value);
-
-        return this.isBar ? value * ratio + this.axisThickness : value * ratio;
       }
-
-      return this.isBar ? value * ratio : value * ratio - this.axisThickness;
     }
 
     if (rangeData) {
@@ -305,14 +305,18 @@ export default class BoxSeries extends Component {
       return this.isBar ? startPosition : this.getOffsetSize() - startPosition - barLength;
     }
 
-    const divergingSeries = diverging && seriesIndex % 2;
+    const divergingSeries = diverging && isLeftBottomSide(seriesIndex);
     const negativeValue = hasNegative(labels) && value < 0;
 
-    if (divergingSeries || negativeValue) {
+    if (negativeValue) {
       return this.isBar ? basePosition - barLength : basePosition;
     }
 
-    return this.isBar ? basePosition : basePosition - barLength;
+    if (divergingSeries) {
+      return this.isBar ? basePosition - barLength + this.axisThickness : basePosition;
+    }
+
+    return this.isBar ? basePosition + this.axisThickness : basePosition - barLength;
   }
 
   getAdjustedRect(
@@ -321,16 +325,14 @@ export default class BoxSeries extends Component {
     barLength: number,
     columnWidth: number
   ): Rect {
-    startPosition = this.isBar
-      ? startPosition + this.hoverThickness + this.axisThickness
-      : startPosition - this.axisThickness;
-    barLength = this.isBar ? barLength - this.axisThickness : barLength;
+    const dataPosition = startPosition + Number(this.hoverThickness);
+    const seriesPosition = dataStart + this.hoverThickness;
 
-    dataStart += this.hoverThickness;
+    barLength = Math.max(barLength, 1);
 
     return {
-      x: this.isBar ? startPosition : dataStart,
-      y: this.isBar ? dataStart : startPosition + this.hoverThickness + this.axisThickness,
+      x: this.isBar ? dataPosition : seriesPosition,
+      y: this.isBar ? seriesPosition : dataPosition,
       width: this.isBar ? barLength : columnWidth,
       height: this.isBar ? columnWidth : barLength
     };

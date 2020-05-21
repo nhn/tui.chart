@@ -8,6 +8,7 @@ import {
   budgetDataForDiverging
 } from './data';
 import { ColumnChartOptions } from '@t/options';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 export default {
   title: 'chart|Column'
@@ -25,8 +26,9 @@ const defaultOptions: ColumnChartOptions = {
   }
 };
 
-function createChart(data, options: ColumnChartOptions = defaultOptions) {
+function createChart(data, customOptions?: ColumnChartOptions) {
   const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions || {});
 
   el.style.outline = '1px solid red';
   el.style.width = `${width}px`;
@@ -55,7 +57,6 @@ export const range = () => {
 
 export const normalStack = () => {
   const { el } = createChart(budgetDataForStack, {
-    ...defaultOptions,
     series: {
       stack: {
         type: 'normal'
@@ -68,7 +69,6 @@ export const normalStack = () => {
 
 export const percentStack = () => {
   const { el } = createChart(budgetDataForStack, {
-    ...defaultOptions,
     series: {
       stack: {
         type: 'percent'
@@ -81,7 +81,6 @@ export const percentStack = () => {
 
 export const groupStack = () => {
   const { el } = createChart(budgetDataForGroupStack, {
-    ...defaultOptions,
     series: {
       stack: true
     }
@@ -92,7 +91,6 @@ export const groupStack = () => {
 
 export const defaultConnector = () => {
   const { el } = createChart(budgetDataForStack, {
-    ...defaultOptions,
     series: {
       stack: {
         type: 'normal',
@@ -106,7 +104,6 @@ export const defaultConnector = () => {
 
 export const styledConnector = () => {
   const { el } = createChart(budgetDataForStack, {
-    ...defaultOptions,
     series: {
       stack: {
         type: 'normal',
@@ -123,16 +120,13 @@ export const styledConnector = () => {
 };
 
 export const negative = () => {
-  const { el } = createChart(negativeBudgetData, {
-    ...defaultOptions
-  });
+  const { el } = createChart(negativeBudgetData);
 
   return el;
 };
 
 export const diverging = () => {
   const { el } = createChart(budgetDataForDiverging, {
-    ...defaultOptions,
     series: {
       diverging: true
     }

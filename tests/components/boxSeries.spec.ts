@@ -48,7 +48,7 @@ const result = [
   {
     type: 'rect',
     color: '#aaaaaa',
-    width: 15,
+    width: 16,
     height: 5,
     x: 5,
     y: 19
@@ -56,7 +56,7 @@ const result = [
   {
     type: 'rect',
     color: '#aaaaaa',
-    width: 31,
+    width: 32,
     height: 5,
     x: 5,
     y: 59
@@ -64,7 +64,7 @@ const result = [
   {
     type: 'rect',
     color: '#bbbbbb',
-    width: 63,
+    width: 64,
     height: 5,
     x: 5,
     y: 24
@@ -72,7 +72,7 @@ const result = [
   {
     type: 'rect',
     color: '#bbbbbb',
-    width: 79,
+    width: 80,
     height: 5,
     x: 5,
     y: 64
@@ -85,7 +85,7 @@ const respondersResult = [
     color: '#aaaaaa',
     x: 5,
     y: 19,
-    width: 15,
+    width: 16,
     height: 5,
     style: [
       {
@@ -103,7 +103,7 @@ const respondersResult = [
     color: '#aaaaaa',
     x: 5,
     y: 59,
-    width: 31,
+    width: 32,
     height: 5,
     style: [
       {
@@ -121,7 +121,7 @@ const respondersResult = [
     color: '#bbbbbb',
     x: 5,
     y: 24,
-    width: 63,
+    width: 64,
     height: 5,
     style: [
       {
@@ -139,7 +139,7 @@ const respondersResult = [
     color: '#bbbbbb',
     x: 5,
     y: 64,
-    width: 79,
+    width: 80,
     height: 5,
     style: [
       {

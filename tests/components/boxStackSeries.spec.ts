@@ -57,7 +57,7 @@ const result = [
     color: '#aaaaaa',
     width: 10,
     height: 10,
-    x: 4,
+    x: 5,
     y: 19
   },
   {
@@ -65,7 +65,7 @@ const result = [
     color: '#bbbbbb',
     width: 40,
     height: 10,
-    x: 14,
+    x: 15,
     y: 19
   },
   {
@@ -73,7 +73,7 @@ const result = [
     color: '#aaaaaa',
     width: 20,
     height: 10,
-    x: 4,
+    x: 5,
     y: 59
   },
   {
@@ -81,7 +81,7 @@ const result = [
     color: '#bbbbbb',
     width: 50,
     height: 10,
-    x: 24,
+    x: 25,
     y: 59
   }
 ];
@@ -90,7 +90,7 @@ const respondersResult = [
   {
     type: 'rect',
     color: '#aaaaaa',
-    x: 4,
+    x: 5,
     y: 19,
     width: 10,
     height: 10,
@@ -108,7 +108,7 @@ const respondersResult = [
   {
     type: 'rect',
     color: '#bbbbbb',
-    x: 14,
+    x: 15,
     y: 19,
     width: 40,
     height: 10,
@@ -126,7 +126,7 @@ const respondersResult = [
   {
     type: 'rect',
     color: '#aaaaaa',
-    x: 4,
+    x: 5,
     y: 59,
     width: 20,
     height: 10,
@@ -144,7 +144,7 @@ const respondersResult = [
   {
     type: 'rect',
     color: '#bbbbbb',
-    x: 24,
+    x: 25,
     y: 59,
     width: 50,
     height: 10,

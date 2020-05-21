@@ -8,6 +8,7 @@ import {
   budgetDataForDiverging
 } from './data';
 import { BarChartOptions } from '@t/options';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 export default {
   title: 'chart|Bar'
@@ -18,13 +19,13 @@ const height = 500;
 const defaultOptions: BarChartOptions = {
   chart: {
     width,
-    height,
-    title: 'Monthly Revenue'
+    height
   }
 };
 
-function createChart(data, options: BarChartOptions = defaultOptions) {
+function createChart(data, customOptions?: BarChartOptions) {
   const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions || {});
 
   el.style.outline = '1px solid red';
   el.style.width = `${width}px`;
@@ -53,7 +54,6 @@ export const range = () => {
 
 export const normalStack = () => {
   const { el } = createChart(budgetDataForStack, {
-    ...defaultOptions,
     series: {
       stack: {
         type: 'normal'
@@ -66,7 +66,6 @@ export const normalStack = () => {
 
 export const percentStack = () => {
   const { el } = createChart(budgetDataForStack, {
-    ...defaultOptions,
     series: {
       stack: {
         type: 'percent'
@@ -79,7 +78,6 @@ export const percentStack = () => {
 
 export const groupStack = () => {
   const { el } = createChart(budgetDataForGroupStack, {
-    ...defaultOptions,
     series: {
       stack: true
     }
@@ -90,7 +88,6 @@ export const groupStack = () => {
 
 export const defaultConnector = () => {
   const { el } = createChart(budgetDataForStack, {
-    ...defaultOptions,
     series: {
       stack: {
         type: 'normal',
@@ -104,7 +101,6 @@ export const defaultConnector = () => {
 
 export const styledConnector = () => {
   const { el } = createChart(budgetDataForStack, {
-    ...defaultOptions,
     series: {
       stack: {
         type: 'normal',
@@ -121,16 +117,13 @@ export const styledConnector = () => {
 };
 
 export const negative = () => {
-  const { el } = createChart(negativeBudgetData, {
-    ...defaultOptions
-  });
+  const { el } = createChart(negativeBudgetData);
 
   return el;
 };
 
 export const diverging = () => {
   const { el } = createChart(budgetDataForDiverging, {
-    ...defaultOptions,
     series: {
       diverging: true
     }

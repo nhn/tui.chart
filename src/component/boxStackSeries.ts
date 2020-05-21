@@ -309,17 +309,22 @@ export default class BoxStackSeries extends BoxSeries {
     const beforeValueSum = totalOfPrevValues(values, currentIndex, !this.isBar);
 
     return this.isBar
-      ? beforeValueSum * ratio + basePosition
+      ? beforeValueSum * ratio + basePosition + Number(this.axisThickness)
       : basePosition - beforeValueSum * ratio;
   }
 
-  getAdjustedRect(seriesPos, startPosition, barLength, columnWidth): Rect {
-    startPosition += this.hoverThickness;
-    seriesPos += this.hoverThickness;
+  getAdjustedRect(
+    seriesPos: number,
+    startPosition: number,
+    barLength: number,
+    columnWidth: number
+  ): Rect {
+    const dataPosition = startPosition + this.hoverThickness;
+    const seriesPosition = seriesPos + this.hoverThickness;
 
     return {
-      x: this.isBar ? startPosition : seriesPos,
-      y: this.isBar ? seriesPos : startPosition,
+      x: this.isBar ? dataPosition : seriesPosition,
+      y: this.isBar ? seriesPosition : dataPosition,
       width: this.isBar ? barLength : columnWidth,
       height: this.isBar ? columnWidth : barLength
     };
