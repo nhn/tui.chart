@@ -1,6 +1,7 @@
 import { StoreModule, PlotLine } from '@t/store/store';
 import { hasBoxSeries } from './axes';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { extend } from '@src/store/store';
 
 const plot: StoreModule = {
   name: 'plot',
@@ -21,7 +22,7 @@ const plot: StoreModule = {
         lines.push({ value: 0, color: 'rgba(0, 0, 0, 0.5)', vertical: isLabelAxisOnYAxis(series) });
       }
 
-      this.extend(state.plot, { lines });
+      extend(state.plot, { lines });
     }
   },
   observe: {
