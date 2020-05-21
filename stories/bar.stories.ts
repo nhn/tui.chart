@@ -14,7 +14,7 @@ export default {
   title: 'chart|Bar'
 };
 
-const width = 800;
+const width = 1000;
 const height = 500;
 const defaultOptions: BarChartOptions = {
   chart: {
@@ -42,6 +42,12 @@ function createChart(data, customOptions?: BarChartOptions) {
 
 export const basic = () => {
   const { el } = createChart(budgetData);
+
+  return el;
+};
+
+export const negative = () => {
+  const { el } = createChart(negativeBudgetData);
 
   return el;
 };
@@ -112,12 +118,6 @@ export const styledConnector = () => {
       }
     }
   });
-
-  return el;
-};
-
-export const negative = () => {
-  const { el } = createChart(negativeBudgetData);
 
   return el;
 };

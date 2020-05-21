@@ -14,7 +14,7 @@ export default {
   title: 'chart|Column'
 };
 
-const width = 800;
+const width = 1000;
 const height = 500;
 const defaultOptions: ColumnChartOptions = {
   chart: {
@@ -45,6 +45,12 @@ function createChart(data, customOptions?: ColumnChartOptions) {
 
 export const basic = () => {
   const { el } = createChart(budgetData);
+
+  return el;
+};
+
+export const negative = () => {
+  const { el } = createChart(negativeBudgetData);
 
   return el;
 };
@@ -115,12 +121,6 @@ export const styledConnector = () => {
       }
     }
   });
-
-  return el;
-};
-
-export const negative = () => {
-  const { el } = createChart(negativeBudgetData);
 
   return el;
 };

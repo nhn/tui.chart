@@ -103,15 +103,23 @@ export const budgetData = {
 };
 
 export const negativeBudgetData = {
-  categories: ['July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  categories: ['May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
   series: [
     {
       name: 'Budget',
-      data: [-3000, 0, -1000, -5500, -2000, -6000]
+      data: [4000, 5000, 3000, 5000, 7000, 6000]
+    },
+    {
+      name: 'Income',
+      data: [7000, 8000, 1000, 7000, 2000, 7000]
     },
     {
       name: 'Expenses',
-      data: [-5000, -4000, -4000, -6000, 4000, -8000]
+      data: [-5000, -4000, -4000, -6000, -3000, -4000]
+    },
+    {
+      name: 'Debt',
+      data: [-3000, -6000, -3000, -3000, -1000, -2000]
     }
   ]
 };
