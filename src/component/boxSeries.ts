@@ -119,7 +119,7 @@ export default class BoxSeries extends Component {
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
 
-    const rectModel = this.renderHilightSeriesModel(seriesModels);
+    const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModels];
 
@@ -181,7 +181,7 @@ export default class BoxSeries extends Component {
     };
   }
 
-  protected renderHilightSeriesModel(seriesModel): RectModel[] {
+  protected renderHighlightSeriesModel(seriesModel): RectModel[] {
     return seriesModel.map(data => {
       const { x, y, width, height, color } = data;
       const shadowOffset = this.hoverThickness / 2;

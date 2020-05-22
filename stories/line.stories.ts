@@ -84,25 +84,39 @@ export const coordinateDatetime = () => {
 };
 
 export const tickInterval = () => {
-  const yAxisOptions = {
+  const xAxisOptions = {
     tick: {
       interval: number('tickInterval', 2, { range: true, min: 1, max: 20, step: 1 })
     }
   };
 
-  const { el } = createChart(randomData(50), { yAxis: yAxisOptions });
+  const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
 
   return el;
 };
 
 export const labelInterval = () => {
-  const yAxisOptions = {
+  const xAxisOptions = {
     label: {
       interval: number('labelInterval', 2, { range: true, min: 1, max: 20, step: 1 })
     }
   };
 
-  const { el } = createChart(randomData(50), { yAxis: yAxisOptions });
+  const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
+
+  return el;
+};
+
+export const minMax = () => {
+  const { el } = createChart(budgetData, {
+    yAxis: {
+      scale: {
+        min: number('min', -1000, { range: true, min: -5000, max: 14000, step: 1000 }),
+        max: number('max', 10000, { range: true, min: -5000, max: 14000, step: 1000 })
+      }
+    },
+    series: { spline: true }
+  });
 
   return el;
 };

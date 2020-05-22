@@ -64,7 +64,7 @@ export default class BoxStackSeries extends BoxSeries {
 
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
 
-    const rectModel = super.renderHilightSeriesModel(seriesModels);
+    const rectModel = super.renderHighlightSeriesModel(seriesModels);
 
     this.models = [super.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
 

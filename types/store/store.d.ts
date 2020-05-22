@@ -91,6 +91,10 @@ type PlotLine = {
 
 export type Axes = Partial<Record<AxisType, AxisData>>;
 
+export type DataRange = {
+  [key in keyof ChartSeriesMap]: ValueEdge;
+};
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -98,10 +102,8 @@ export interface ChartState<T extends Options> {
   disabledSeries: string[];
   series: SeriesState;
   // 기존의 limitMap
-  dataRange: {
-    [key: string]: ValueEdge;
-  };
   axes: Axes;
+  dataRange: DataRange;
   theme: Theme;
   options: T;
   categories?: string[];
