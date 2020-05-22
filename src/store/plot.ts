@@ -1,5 +1,5 @@
 import { StoreModule, PlotLine } from '@t/store/store';
-import { isLabelAxisOnYAxis, isBoxTypeChart } from '@src/helpers/axes';
+import { isLabelAxisOnYAxis, hasBoxTypeSeries } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
 import { hasNegative } from '@src/helpers/utils';
 
@@ -33,7 +33,7 @@ const plot: StoreModule = {
 };
 
 function needZeroLine(series, axes) {
-  if (!isBoxTypeChart(series)) {
+  if (!hasBoxTypeSeries(series)) {
     return false;
   }
 

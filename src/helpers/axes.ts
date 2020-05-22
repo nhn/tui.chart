@@ -4,6 +4,6 @@ export function isLabelAxisOnYAxis(series: SeriesState) {
   return !!series.bar;
 }
 
-export function isBoxTypeChart(series: SeriesState) {
+export function hasBoxTypeSeries(series: SeriesState) {
   return series.column || series.bar;
 }
