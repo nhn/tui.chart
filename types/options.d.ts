@@ -67,6 +67,12 @@ type BaseChartOptions = {
   title?: string | TitleOptions;
 } & Size;
 
+export interface Scale {
+  min?: number;
+  max?: number;
+  stepSize?: 'auto' | number;
+}
+
 type BaseAxisOptions = {
   tick?: {
     interval?: number;
@@ -74,11 +80,7 @@ type BaseAxisOptions = {
   label?: {
     interval?: number;
   };
-  scale?: {
-    min?: number;
-    max?: number;
-    stepSize?: 'auto' | number;
-  };
+  scale?: Scale;
 };
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {

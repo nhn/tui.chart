@@ -1,4 +1,6 @@
 import { ValueEdge, ScaleData } from '@t/store/store';
+import { Scale } from '@t/options';
+import { isNumber } from '@src/helpers/utils';
 
 const SNAP_VALUES = [1, 2, 5, 10];
 
@@ -24,12 +26,14 @@ function adjustLimitForOverflow(limit: ValueEdge, step: number, overflowed: Over
   };
 }
 
-function isSeriesOverflowed(scaleData: ScaleData, range: ValueEdge) {
+function isSeriesOverflowed(scaleData: ScaleData, range: ValueEdge, scaleOption?: Scale) {
   const { min, max } = range;
   const scaleDataLimit = scaleData.limit;
+  const hasMinOption = scaleOption && isNumber(scaleOption.min);
+  const hasMaxOption = scaleOption && isNumber(scaleOption.max);
 
-  const isOverflowedMin = scaleDataLimit.min === min && scaleDataLimit.min !== 0;
-  const isOverflowedMax = scaleDataLimit.max === max && scaleDataLimit.max !== 0;
+  const isOverflowedMin = !hasMinOption && scaleDataLimit.min === min && scaleDataLimit.min !== 0;
+  const isOverflowedMax = !hasMaxOption && scaleDataLimit.max === max && scaleDataLimit.max !== 0;
 
   if (!isOverflowedMin && !isOverflowedMax) {
     return null;
@@ -151,21 +155,28 @@ function getRoughScale(
   return { limit: { min, max }, step, stepCount };
 }
 
-export function coordinateScaleCalculator(options: {
-  range: {
-    scale: ValueEdge;
-    data: ValueEdge;
+function makeScaleOptions(dataRange: ValueEdge, scaleOptions?: Partial<ValueEdge>): ValueEdge {
+  return {
+    max: isNumber(scaleOptions?.max) ? scaleOptions!.max : dataRange.max,
+    min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min
   };
+}
+
+export function coordinateScaleCalculator(options: {
+  dataRange: ValueEdge;
+  scaleOption?: Scale;
   offsetSize: number;
   stepCount?: number;
   minimumStepSize?: number;
   showLabel?: boolean;
 }): ScaleData {
-  const { range, offsetSize, stepCount, minimumStepSize, showLabel } = options;
+  const { dataRange, scaleOption, offsetSize, stepCount, minimumStepSize, showLabel } = options;
 
-  const roughScale = getRoughScale(range.scale, offsetSize, stepCount, minimumStepSize);
+  const scaleRange = makeScaleOptions(dataRange, scaleOption);
+  const roughScale = getRoughScale(scaleRange, offsetSize, stepCount, minimumStepSize);
   const normalizedScale = getNormalizedScale(roughScale, showLabel);
-  const overflowed = isSeriesOverflowed(normalizedScale, range.data);
+  const overflowed = isSeriesOverflowed(normalizedScale, scaleRange, scaleOption);
+
 
   if (overflowed) {
     const { step, limit } = normalizedScale;
@@ -176,9 +187,6 @@ export function coordinateScaleCalculator(options: {
 }
 
 export function getStackScaleData(type: stackScaleType): ScaleData {
-  if (type === 'percentStack') {
-    return { limit: { min: 0, max: 100 }, step: 25, stepCount: 5 };
-  }
   if (type === 'minusPercentStack') {
     return { limit: { min: -100, max: 0 }, step: 25, stepCount: 5 };
   }
@@ -189,5 +197,5 @@ export function getStackScaleData(type: stackScaleType): ScaleData {
     return { limit: { min: -100, max: 100 }, step: 25, stepCount: 9 };
   }
 
-  return {} as ScaleData;
+  return { limit: { min: 0, max: 100 }, step: 25, stepCount: 5 };
 }

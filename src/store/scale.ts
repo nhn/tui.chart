@@ -1,18 +1,10 @@
 import { extend } from '@src/store/store';
-import { StoreModule, Stack, Scale, ValueEdge } from '@t/store/store';
+import { StoreModule, Stack, Scale } from '@t/store/store';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { coordinateScaleCalculator, getStackScaleData } from '@src/scale/coordinateScaleCalculator';
-import { isNumber } from '@src/helpers/utils';
 
 function isPercentStack(stack?: Stack) {
   return stack && stack.type === 'percent';
-}
-
-function makeScaleOptions(dataRange: ValueEdge, scaleOptions?: Partial<ValueEdge>): ValueEdge {
-  return {
-    max: isNumber(scaleOptions?.max) ? scaleOptions!.max : dataRange.max,
-    min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min
-  };
 }
 
 const scale: StoreModule = {
@@ -32,15 +24,12 @@ const scale: StoreModule = {
 
       Object.keys(series).forEach(seriesName => {
         if (isPercentStack(stackSeries.column?.stack) || isPercentStack(stackSeries.bar?.stack)) {
-          // @TODO: 스택 percent에 따른 scale data 처리 필요
           scaleData[valueAxis] = getStackScaleData('percentStack');
         } else {
           scaleData[valueAxis] = coordinateScaleCalculator({
-            range: {
-              scale: makeScaleOptions(dataRange[seriesName], scaleOptions[valueAxis]),
-              data: dataRange[seriesName]
-            },
-            offsetSize: layout.plot[offsetSizeProp]
+            dataRange: dataRange[seriesName],
+            offsetSize: layout.plot[offsetSizeProp],
+            scaleOption: scaleOptions[valueAxis]
           });
         }
       });
