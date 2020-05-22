@@ -4,6 +4,7 @@ import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
+import plot from '@src/store/plot';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
@@ -43,6 +44,7 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.store.setModule(dataRange);
     this.store.setModule(scale);
     this.store.setModule(axes);
+    this.store.setModule(plot);
 
     this.componentManager.add(Plot);
     this.componentManager.add(Axis, { name: 'yAxis' });

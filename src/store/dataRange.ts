@@ -51,19 +51,21 @@ const dataRange: StoreModule = {
         const tupleCoord = Array.isArray(values[0]);
         const objectCoord = isObject(values[0]);
 
-        if (tupleCoord) {
-          if (isBoxSeries(seriesName as ChartType)) {
+        if (isBoxSeries(seriesName as ChartType)) {
+          if (tupleCoord) {
             values = values.reduce(
               (arr, value) => (Array.isArray(value) ? [...arr, ...value] : value),
               []
             );
+          } else if (stackSeries[seriesName]?.stack) {
+            values = stackSeries[seriesName].dataValues;
           } else {
-            values = values.map(value => value[1]);
+            values.push(0);
           }
+        } else if (tupleCoord) {
+          values = values.map(value => value[1]);
         } else if (objectCoord) {
           values = values.map(value => value.y);
-        } else if (stackSeries[seriesName]?.stack) {
-          values = stackSeries[seriesName].dataValues;
         }
 
         newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);

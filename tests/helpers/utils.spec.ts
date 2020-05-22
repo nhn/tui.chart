@@ -12,7 +12,8 @@ import {
   sortCategories,
   isInteger,
   first,
-  last
+  last,
+  hasNegative
 } from '@src/helpers/utils';
 import { Point } from '@t/options';
 
@@ -148,5 +149,10 @@ describe('utils', () => {
 
     expect(last(arr)).toBe(10);
     expect(first(emptyArr)).toBeUndefined();
+  });
+
+  it('hasNegative', () => {
+    expect(hasNegative([1, 2, 3, 0, -4])).toBe(true);
+    expect(hasNegative([1, 2])).toBe(false);
   });
 });

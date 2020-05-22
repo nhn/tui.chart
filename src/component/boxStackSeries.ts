@@ -1,5 +1,5 @@
 import BoxSeries, { SeriesRawData } from './boxSeries';
-import { ColumnChartOptions, BarChartOptions, Point, Connector } from '@t/options';
+import { ColumnChartOptions, BarChartOptions, Point, Connector, Rect, StackType } from '@t/options';
 import {
   ChartState,
   StackSeriesData,
@@ -7,7 +7,8 @@ import {
   StackDataType,
   StackData,
   BoxType,
-  Stack
+  Stack,
+  AxisData
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
@@ -18,7 +19,7 @@ interface StackSeriesModelParamType {
   stack: Stack;
   stackData: StackData;
   colors?: string[];
-  valueLabels: string[];
+  valueAxis: AxisData;
   tickDistance: number;
   stackGroupCount?: number;
   stackGroupIndex?: number;
@@ -53,13 +54,11 @@ export default class BoxStackSeries extends BoxSeries {
 
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { colors } = theme.series;
-    const valueLabels = axes[this.valueAxis].labels;
     const { tickDistance } = axes[this.labelAxis];
-
     const { seriesModels, connectorModels } = this.renderStackSeriesModel(
       seriesData,
       colors,
-      valueLabels,
+      axes[this.valueAxis],
       tickDistance
     );
 
@@ -78,50 +77,42 @@ export default class BoxStackSeries extends BoxSeries {
   renderStackSeriesModel(
     seriesData: StackSeriesData<BoxType>,
     colors: string[],
-    valueLabels: string[],
+    valueAxis: AxisData,
     tickDistance: number
   ) {
     const { stack, stackData } = seriesData;
 
     return isGroupStack(stackData)
-      ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueLabels, tickDistance)
-      : this.makeStackSeriesModel({ stack, stackData, colors, valueLabels, tickDistance });
+      ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueAxis, tickDistance)
+      : this.makeStackSeriesModel({ stack, stackData, colors, valueAxis, tickDistance });
   }
 
   makeStackSeriesModel({
     stack,
     stackData,
     colors,
-    valueLabels,
+    valueAxis,
     tickDistance,
     stackGroupCount = 1,
     stackGroupIndex = 0
   }: StackSeriesModelParamType) {
     const seriesModels: RectModel[] = [];
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+    const { labels: valueLabels } = valueAxis;
+    const basePosition = this.getBasePosition(valueAxis);
 
     stackData.forEach(({ values, sum }, index) => {
-      const seriesPos =
-        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
+      const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroupIndex;
+      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
 
       values.forEach((value, seriesIndex) => {
-        const beforeValueSum = totalOfPrevValues(values, seriesIndex, !this.isBar);
-        const divisor =
-          stack.type === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
-        const offsetAxisLength = this.plot[this.offsetSizeKey];
-        const barLength = (value * offsetAxisLength) / divisor;
-        const startPosition = (beforeValueSum * offsetAxisLength) / divisor;
-
-        const x = this.isBar ? startPosition + this.hoverThickness + this.axisThickness : seriesPos;
-        const y = this.isBar ? seriesPos : offsetAxisLength - startPosition + this.hoverThickness;
+        const barLength = value * ratio;
+        const startPosition = this.getStackStartPosition(values, seriesIndex, ratio, basePosition);
 
         seriesModels.push({
           type: 'rect',
           color: colors![seriesIndex],
-          x,
-          y,
-          width: this.isBar ? barLength : columnWidth,
-          height: this.isBar ? columnWidth : barLength
+          ...this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth)
         });
       });
     });
@@ -131,7 +122,7 @@ export default class BoxStackSeries extends BoxSeries {
       connectorModels: this.makeConnectorSeriesModel({
         stack,
         stackData,
-        valueLabels,
+        valueAxis,
         tickDistance,
         stackGroupCount,
         stackGroupIndex
@@ -142,7 +133,7 @@ export default class BoxStackSeries extends BoxSeries {
   makeStackGroupSeriesModel(
     stackSeries: StackSeriesData<BoxType>,
     colors: string[],
-    valueLabels: string[],
+    valueAxis: AxisData,
     tickDistance: number
   ) {
     const stack = stackSeries.stack;
@@ -159,7 +150,7 @@ export default class BoxStackSeries extends BoxSeries {
         stack,
         stackData: stackGroupData[groupId],
         colors: colors.splice(groupIndex, filtered.length),
-        valueLabels,
+        valueAxis,
         tickDistance,
         stackGroupCount: stackGroupIds.length,
         stackGroupIndex: groupIndex
@@ -181,7 +172,7 @@ export default class BoxStackSeries extends BoxSeries {
   makeConnectorSeriesModel({
     stack,
     stackData,
-    valueLabels,
+    valueAxis,
     tickDistance,
     stackGroupCount = 1,
     stackGroupIndex = 0
@@ -189,25 +180,20 @@ export default class BoxStackSeries extends BoxSeries {
     if (!stack.connector) {
       return [];
     }
-
+    const { labels: valueLabels } = valueAxis;
+    const basePosition = this.getBasePosition(valueAxis);
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
     const connectorPoints: Array<Point[]> = [];
 
     stackData.forEach(({ values, sum }, index) => {
-      const seriesPos =
-        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
+      const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroupIndex;
       const points: Point[] = [];
+      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
 
       values.forEach((value, seriesIndex) => {
-        const beforeValueSum = totalOfPrevValues(values, seriesIndex, !this.isBar);
-        const divisor =
-          stack.type === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
-        const offsetAxisLength = this.plot[this.offsetSizeKey];
-        const barLength = (value * offsetAxisLength) / divisor;
-        const startPosition = (beforeValueSum * offsetAxisLength) / divisor;
-
-        const x = this.isBar ? startPosition + this.hoverThickness + this.axisThickness : seriesPos;
-        const y = this.isBar ? seriesPos : offsetAxisLength - startPosition + this.hoverThickness;
+        const barLength = value * ratio;
+        const startPosition = this.getStackStartPosition(values, seriesIndex, ratio, basePosition);
+        const { x, y } = this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
 
         points.push({ x: this.isBar ? x + barLength : x, y });
       });
@@ -305,5 +291,42 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     return connectorModels;
+  }
+
+  getStackValueRatio(valueLabels: string[], sum: number, stackType: StackType) {
+    const divisor =
+      stackType === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
+
+    return this.getOffsetSize() / divisor;
+  }
+
+  getStackStartPosition(
+    values: number[],
+    currentIndex: number,
+    ratio: number,
+    basePosition: number
+  ) {
+    const beforeValueSum = totalOfPrevValues(values, currentIndex, !this.isBar);
+
+    return this.isBar
+      ? beforeValueSum * ratio + basePosition + Number(this.axisThickness)
+      : basePosition - beforeValueSum * ratio;
+  }
+
+  getAdjustedRect(
+    seriesPos: number,
+    startPosition: number,
+    barLength: number,
+    columnWidth: number
+  ): Rect {
+    const dataPosition = startPosition + this.hoverThickness;
+    const seriesPosition = seriesPos + this.hoverThickness;
+
+    return {
+      x: this.isBar ? dataPosition : seriesPosition,
+      y: this.isBar ? seriesPosition : dataPosition,
+      width: this.isBar ? barLength : columnWidth,
+      height: this.isBar ? columnWidth : barLength
+    };
   }
 }

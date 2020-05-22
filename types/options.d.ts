@@ -88,11 +88,19 @@ interface BaseXAxisOptions extends BaseAxisOptions {
   rotateLabel?: boolean;
 }
 
+type PlotLineValue = string | number;
+
+interface BasePlotOptions {
+  lines?: { value: PlotLineValue; color: string }[];
+  bands?: { range: [PlotLineValue, PlotLineValue]; value: PlotLineValue; color: string }[];
+}
+
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
   yAxis?: BaseAxisOptions;
+  plot?: BasePlotOptions;
 }
 
 interface BaseSeriesOptions {
