@@ -40,7 +40,7 @@ const axes: StoreModule = {
       };
 
       const axisName = getValueAxisName(series);
-      let valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].step);
+      let valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].stepSize);
       const valueAxisSize = labelAxisOnYAxis ? plot.width : plot.height;
 
       if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {

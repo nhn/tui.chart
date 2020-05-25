@@ -9,7 +9,7 @@ describe('Plot Store', () => {
     const state = {
       chart: { width: 120, height: 120 },
       layout: { plot: { width: 100, height: 150, x: 30, y: 10 } } as Layout,
-      scale: { xAxis: { limit: { min: 0, max: 5 }, step: 1, stepCount: 1 } } as Scale,
+      scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
       series: {
         bar: {
           data: [
@@ -44,7 +44,7 @@ describe('Plot Store', () => {
     const state = {
       chart: { width: 120, height: 120 },
       layout: { plot: { width: 100, height: 150, x: 30, y: 10 } } as Layout,
-      scale: { xAxis: { limit: { min: 0, max: 5 }, step: 1, stepCount: 1 } } as Scale,
+      scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
       series: {
         line: {
           data: [

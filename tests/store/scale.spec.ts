@@ -22,7 +22,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 6, min: 1 }, step: 0.5, stepCount: 10 }
+      xAxis: { limit: { max: 6, min: 1 }, stepSize: 0.5, stepCount: 10 }
     });
   });
 
@@ -46,7 +46,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 100, min: 0 }, step: 25, stepCount: 5 }
+      xAxis: { limit: { max: 100, min: 0 }, stepSize: 25, stepCount: 5 }
     });
   });
 
@@ -64,7 +64,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 6, min: -5 }, step: 1, stepCount: 11 }
+      xAxis: { limit: { max: 6, min: -5 }, stepSize: 1, stepCount: 11 }
     });
   });
 
@@ -82,7 +82,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 10, min: 0 }, step: 1, stepCount: 10 }
+      xAxis: { limit: { max: 10, min: 0 }, stepSize: 1, stepCount: 10 }
     });
   });
 
@@ -100,7 +100,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 10, min: 0 }, step: 5, stepCount: 2 }
+      xAxis: { limit: { max: 10, min: 0 }, stepSize: 5, stepCount: 2 }
     });
   });
 });

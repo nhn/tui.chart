@@ -1,4 +1,4 @@
-import { SeriesState, ValueEdge } from '@t/store/store';
+import { ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger } from '@src/helpers/utils';
 import { BezierPoint } from '@t/options';
@@ -16,11 +16,11 @@ export const findMultipleNum = (...args: number[]) => {
   return Math.pow(10, underPointLen);
 };
 
-export function makeLabelsFromLimit(limit: ValueEdge, step: number) {
-  const multipleNum = findMultipleNum(step);
+export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number) {
+  const multipleNum = findMultipleNum(stepSize);
   const min = Math.round(limit.min * multipleNum);
   const max = Math.round(limit.max * multipleNum);
-  const labels = range(min, max + 1, step * multipleNum);
+  const labels = range(min, max + 1, stepSize * multipleNum);
 
   return labels.map(label => String(label / multipleNum));
 }
