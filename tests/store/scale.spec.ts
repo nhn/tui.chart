@@ -68,7 +68,7 @@ describe('Scale Store', () => {
     });
   });
 
-  it('"options.scale.max" Options are properly applied to scale state.', () => {
+  it('"options.scale.max" Options are properly applied to scale state', () => {
     const state = {
       layout: { plot: { width: 800, height: 500 } } as Layout,
       series: { bar: { data } },
@@ -83,6 +83,24 @@ describe('Scale Store', () => {
 
     expect(state.scale).toEqual({
       xAxis: { limit: { max: 10, min: 0 }, step: 1, stepCount: 10 }
+    });
+  });
+
+  it('"options.scale.stepSize" Options are properly applied to scale state', () => {
+    const state = {
+      layout: { plot: { width: 800, height: 500 } } as Layout,
+      series: { bar: { data } },
+      stackSeries: {},
+      scale: {},
+      dataRange: { bar: { min: 1, max: 6 } } as DataRange,
+      options: { xAxis: { scale: { stepSize: 5 } } }
+    } as ChartState<BarChartOptions>;
+
+    const store = { state } as Store<BarChartOptions>;
+    scale.action!.setScale(store);
+
+    expect(state.scale).toEqual({
+      xAxis: { limit: { max: 10, min: 0 }, step: 5, stepCount: 2 }
     });
   });
 });

@@ -107,12 +107,13 @@ export const labelInterval = () => {
   return el;
 };
 
-export const minMax = () => {
+export const scale = () => {
   const { el } = createChart(budgetData, {
     yAxis: {
       scale: {
         min: number('min', -1000, { range: true, min: -5000, max: 14000, step: 1000 }),
-        max: number('max', 10000, { range: true, min: -5000, max: 14000, step: 1000 })
+        max: number('max', 10000, { range: true, min: -5000, max: 14000, step: 1000 }),
+        stepSize: number('scale', 1500, { range: true, min: 100, max: 14000, step: 100 })
       }
     },
     series: { spline: true }

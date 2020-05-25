@@ -26,11 +26,11 @@ function adjustLimitForOverflow(limit: ValueEdge, step: number, overflowed: Over
   };
 }
 
-function isSeriesOverflowed(scaleData: ScaleData, range: ValueEdge, scaleOption?: Scale) {
-  const { min, max } = range;
+function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>) {
+  const { min, max } = scale;
   const scaleDataLimit = scaleData.limit;
-  const hasMinOption = scaleOption && isNumber(scaleOption.min);
-  const hasMaxOption = scaleOption && isNumber(scaleOption.max);
+  const hasMinOption = isNumber(min);
+  const hasMaxOption = isNumber(max);
 
   const isOverflowedMin = !hasMinOption && scaleDataLimit.min === min && scaleDataLimit.min !== 0;
   const isOverflowedMax = !hasMaxOption && scaleDataLimit.max === max && scaleDataLimit.max !== 0;
@@ -114,9 +114,13 @@ function getNormalizedStepCount(limitSize: number, step: number) {
   return Math.ceil((limitSize * multiplier) / (step * multiplier));
 }
 
-function getNormalizedScale(scale: ScaleData, showLabel?: boolean): ScaleData {
-  const step = getNormalizedStep(scale.step);
-  const edge = getNormalizedLimit(scale.limit, step, showLabel);
+function getNormalizedScale(
+  scaleData: ScaleData,
+  scale: Required<Scale>,
+  showLabel?: boolean
+): ScaleData {
+  const step = scale.stepSize !== 'auto' ? scaleData.step : getNormalizedStep(scaleData.step);
+  const edge = getNormalizedLimit(scaleData.limit, step, showLabel);
   const limitSize = Math.abs(edge.max - edge.min);
   const stepCount = getNormalizedStepCount(limitSize, step);
 
@@ -130,53 +134,43 @@ function getNormalizedScale(scale: ScaleData, showLabel?: boolean): ScaleData {
   };
 }
 
-function getRoughScale(
-  range: ValueEdge,
-  offsetSize: number,
-  stepCount?: number,
-  minimumStepSize?: number
-): ScaleData {
-  const { min, max } = range;
+function getRoughScale(scale: Required<Scale>, offsetSize: number): ScaleData {
+  const { min, max, stepSize } = scale;
   const limitSize = Math.abs(max - min);
   const valuePerPixel = limitSize / offsetSize;
 
-  if (!stepCount) {
-    stepCount = Math.ceil(offsetSize / DEFAULT_PIXELS_PER_STEP);
-  }
+  let stepCount = Math.ceil(offsetSize / DEFAULT_PIXELS_PER_STEP);
 
   const pixelsPerStep = offsetSize / stepCount;
   let step = valuePerPixel * pixelsPerStep;
 
-  if (minimumStepSize) {
-    step = minimumStepSize;
+  if (isNumber(stepSize)) {
+    step = stepSize;
     stepCount = limitSize / step;
   }
 
   return { limit: { min, max }, step, stepCount };
 }
 
-function makeScaleOptions(dataRange: ValueEdge, scaleOptions?: Partial<ValueEdge>): ValueEdge {
+function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Required<Scale> {
   return {
     max: isNumber(scaleOptions?.max) ? scaleOptions!.max : dataRange.max,
-    min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min
+    min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min,
+    stepSize: isNumber(scaleOptions?.stepSize) ? scaleOptions!.stepSize : 'auto'
   };
 }
 
 export function coordinateScaleCalculator(options: {
   dataRange: ValueEdge;
-  scaleOption?: Scale;
   offsetSize: number;
-  stepCount?: number;
-  minimumStepSize?: number;
+  scaleOption?: Scale;
   showLabel?: boolean;
 }): ScaleData {
-  const { dataRange, scaleOption, offsetSize, stepCount, minimumStepSize, showLabel } = options;
-
-  const scaleRange = makeScaleOptions(dataRange, scaleOption);
-  const roughScale = getRoughScale(scaleRange, offsetSize, stepCount, minimumStepSize);
-  const normalizedScale = getNormalizedScale(roughScale, showLabel);
-  const overflowed = isSeriesOverflowed(normalizedScale, scaleRange, scaleOption);
-
+  const { dataRange, scaleOption, offsetSize, showLabel } = options;
+  const scale = makeScaleOption(dataRange, scaleOption);
+  const roughScale = getRoughScale(scale, offsetSize);
+  const normalizedScale = getNormalizedScale(roughScale, scale, showLabel);
+  const overflowed = isSeriesOverflowed(normalizedScale, scale);
 
   if (overflowed) {
     const { step, limit } = normalizedScale;
