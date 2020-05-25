@@ -157,7 +157,7 @@ export interface SeriesGroup {
 
 export interface ScaleData {
   limit: ValueEdge;
-  step: number;
+  stepSize: number;
   stepCount: number;
 }
 

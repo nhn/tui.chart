@@ -22,7 +22,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 6.5, min: 0.5 }, step: 0.5, stepCount: 10 }
+      xAxis: { limit: { max: 6, min: 1 }, stepSize: 0.5, stepCount: 10 }
     });
   });
 
@@ -46,7 +46,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 100, min: 0 }, step: 25, stepCount: 5 }
+      xAxis: { limit: { max: 100, min: 0 }, stepSize: 25, stepCount: 5 }
     });
   });
 
@@ -64,11 +64,11 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 7, min: -5 }, step: 1, stepCount: 11 }
+      xAxis: { limit: { max: 6, min: -5 }, stepSize: 1, stepCount: 11 }
     });
   });
 
-  it('"options.scale.max" Options are properly applied to scale state.', () => {
+  it('"options.scale.max" Options are properly applied to scale state', () => {
     const state = {
       layout: { plot: { width: 800, height: 500 } } as Layout,
       series: { bar: { data } },
@@ -82,7 +82,25 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 10, min: 0 }, step: 1, stepCount: 10 }
+      xAxis: { limit: { max: 10, min: 0 }, stepSize: 1, stepCount: 10 }
+    });
+  });
+
+  it('"options.scale.stepSize" Options are properly applied to scale state', () => {
+    const state = {
+      layout: { plot: { width: 800, height: 500 } } as Layout,
+      series: { bar: { data } },
+      stackSeries: {},
+      scale: {},
+      dataRange: { bar: { min: 1, max: 6 } } as DataRange,
+      options: { xAxis: { scale: { stepSize: 5 } } }
+    } as ChartState<BarChartOptions>;
+
+    const store = { state } as Store<BarChartOptions>;
+    scale.action!.setScale(store);
+
+    expect(state.scale).toEqual({
+      xAxis: { limit: { max: 10, min: 0 }, stepSize: 5, stepCount: 2 }
     });
   });
 });

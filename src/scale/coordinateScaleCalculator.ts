@@ -17,20 +17,20 @@ type stackScaleType =
   | 'dualPercentStack'
   | 'divergingPercentStack';
 
-function adjustLimitForOverflow(limit: ValueEdge, step: number, overflowed: Overflowed) {
+function adjustLimitForOverflow(limit: ValueEdge, stepSize: number, overflowed: Overflowed) {
   const { min, max } = limit;
 
   return {
-    min: overflowed.min ? min - step : min,
-    max: overflowed.max ? max + step : max
+    min: overflowed.min ? min - stepSize : min,
+    max: overflowed.max ? max + stepSize : max
   };
 }
 
-function isSeriesOverflowed(scaleData: ScaleData, range: ValueEdge, scaleOption?: Scale) {
-  const { min, max } = range;
+function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>) {
+  const { min, max } = scale;
   const scaleDataLimit = scaleData.limit;
-  const hasMinOption = scaleOption && isNumber(scaleOption.min);
-  const hasMaxOption = scaleOption && isNumber(scaleOption.max);
+  const hasMinOption = isNumber(min);
+  const hasMaxOption = isNumber(max);
 
   const isOverflowedMin = !hasMinOption && scaleDataLimit.min === min && scaleDataLimit.min !== 0;
   const isOverflowedMax = !hasMaxOption && scaleDataLimit.max === max && scaleDataLimit.max !== 0;
@@ -66,9 +66,9 @@ function getSnappedNumber(num: number): number {
   return snapNumber;
 }
 
-function getNormalizedStep(step: number) {
-  const placeNumber = getDigits(step);
-  const simplifiedStepValue = step / placeNumber;
+function getNormalizedStep(stepSize: number) {
+  const placeNumber = getDigits(stepSize);
+  const simplifiedStepValue = stepSize / placeNumber;
 
   return getSnappedNumber(simplifiedStepValue) * placeNumber;
 }
@@ -77,11 +77,11 @@ function getNormalizedStep(step: number) {
  * Get normalized limit values
  * max = 155 and step = 10 ---> max = 160
  */
-function getNormalizedLimit(limit: ValueEdge, step: number, showLabel?: boolean): ValueEdge {
+function getNormalizedLimit(limit: ValueEdge, stepSize: number, showLabel?: boolean): ValueEdge {
   let { min, max } = limit;
-  const minNumber = Math.min(getDigits(max), getDigits(step));
+  const minNumber = Math.min(getDigits(max), getDigits(stepSize));
   const placeNumber = minNumber > 1 ? 1 : 1 / minNumber;
-  const fixedStep = step * placeNumber;
+  const fixedStep = stepSize * placeNumber;
   const noExtraMax = max;
 
   // ceil max value step digits
@@ -92,7 +92,7 @@ function getNormalizedLimit(limit: ValueEdge, step: number, showLabel?: boolean)
     max += fixedStep;
   }
 
-  if (min > step) {
+  if (min > stepSize) {
     // floor min value to multiples of step
     min = (Math.floor((min * placeNumber) / fixedStep) * fixedStep) / placeNumber;
   } else if (min < 0) {
@@ -108,79 +108,79 @@ function getNormalizedLimit(limit: ValueEdge, step: number, showLabel?: boolean)
   };
 }
 
-function getNormalizedStepCount(limitSize: number, step: number) {
-  const multiplier = 1 / Math.min(getDigits(limitSize), getDigits(step));
+function getNormalizedStepCount(limitSize: number, stepSize: number) {
+  const multiplier = 1 / Math.min(getDigits(limitSize), getDigits(stepSize));
 
-  return Math.ceil((limitSize * multiplier) / (step * multiplier));
+  return Math.ceil((limitSize * multiplier) / (stepSize * multiplier));
 }
 
-function getNormalizedScale(scale: ScaleData, showLabel?: boolean): ScaleData {
-  const step = getNormalizedStep(scale.step);
-  const edge = getNormalizedLimit(scale.limit, step, showLabel);
+function hasStepSize(stepSize: number | 'auto'): stepSize is number {
+  return isNumber(stepSize);
+}
+
+function getNormalizedScale(
+  scaleData: ScaleData,
+  scale: Required<Scale>,
+  showLabel?: boolean
+): ScaleData {
+  const stepSize = hasStepSize(scale.stepSize)
+    ? scaleData.stepSize
+    : getNormalizedStep(scaleData.stepSize);
+  const edge = getNormalizedLimit(scaleData.limit, stepSize, showLabel);
   const limitSize = Math.abs(edge.max - edge.min);
-  const stepCount = getNormalizedStepCount(limitSize, step);
+  const stepCount = getNormalizedStepCount(limitSize, stepSize);
 
   return {
     limit: {
       min: edge.min,
       max: edge.max
     },
-    step,
+    stepSize,
     stepCount
   };
 }
 
-function getRoughScale(
-  range: ValueEdge,
-  offsetSize: number,
-  stepCount?: number,
-  minimumStepSize?: number
-): ScaleData {
-  const { min, max } = range;
+function getRoughScale(scale: Required<Scale>, offsetSize: number): ScaleData {
+  const { min, max } = scale;
   const limitSize = Math.abs(max - min);
   const valuePerPixel = limitSize / offsetSize;
 
-  if (!stepCount) {
-    stepCount = Math.ceil(offsetSize / DEFAULT_PIXELS_PER_STEP);
-  }
+  let stepCount = Math.ceil(offsetSize / DEFAULT_PIXELS_PER_STEP);
 
   const pixelsPerStep = offsetSize / stepCount;
-  let step = valuePerPixel * pixelsPerStep;
+  let stepSize = valuePerPixel * pixelsPerStep;
 
-  if (minimumStepSize) {
-    step = minimumStepSize;
-    stepCount = limitSize / step;
+  if (hasStepSize(scale.stepSize)) {
+    stepSize = scale.stepSize;
+    stepCount = limitSize / stepSize;
   }
 
-  return { limit: { min, max }, step, stepCount };
+  return { limit: { min, max }, stepSize, stepCount };
 }
 
-function makeScaleOptions(dataRange: ValueEdge, scaleOptions?: Partial<ValueEdge>): ValueEdge {
+function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Required<Scale> {
   return {
     max: isNumber(scaleOptions?.max) ? scaleOptions!.max : dataRange.max,
-    min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min
+    min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min,
+    stepSize: isNumber(scaleOptions?.stepSize) ? scaleOptions!.stepSize : 'auto'
   };
 }
 
 export function coordinateScaleCalculator(options: {
   dataRange: ValueEdge;
-  scaleOption?: Scale;
   offsetSize: number;
-  stepCount?: number;
-  minimumStepSize?: number;
+  scaleOption?: Scale;
   showLabel?: boolean;
 }): ScaleData {
-  const { dataRange, scaleOption, offsetSize, stepCount, minimumStepSize, showLabel } = options;
-
-  const scaleRange = makeScaleOptions(dataRange, scaleOption);
-  const roughScale = getRoughScale(scaleRange, offsetSize, stepCount, minimumStepSize);
-  const normalizedScale = getNormalizedScale(roughScale, showLabel);
-  const overflowed = isSeriesOverflowed(normalizedScale, scaleRange, scaleOption);
-
+  const { dataRange, scaleOption, offsetSize, showLabel } = options;
+  const scale = makeScaleOption(dataRange, scaleOption);
+  const roughScale = getRoughScale(scale, offsetSize);
+  const normalizedScale = getNormalizedScale(roughScale, scale, showLabel);
+  const overflowed = isSeriesOverflowed(normalizedScale, scale);
 
   if (overflowed) {
-    const { step, limit } = normalizedScale;
-    normalizedScale.limit = adjustLimitForOverflow(limit, step, overflowed);
+    const { stepSize, limit } = normalizedScale;
+    normalizedScale.limit = adjustLimitForOverflow(limit, stepSize, overflowed);
   }
 
   return normalizedScale;
@@ -188,14 +188,14 @@ export function coordinateScaleCalculator(options: {
 
 export function getStackScaleData(type: stackScaleType): ScaleData {
   if (type === 'minusPercentStack') {
-    return { limit: { min: -100, max: 0 }, step: 25, stepCount: 5 };
+    return { limit: { min: -100, max: 0 }, stepSize: 25, stepCount: 5 };
   }
   if (type === 'dualPercentStack') {
-    return { limit: { min: -100, max: 100 }, step: 25, stepCount: 9 };
+    return { limit: { min: -100, max: 100 }, stepSize: 25, stepCount: 9 };
   }
   if (type === 'divergingPercentStack') {
-    return { limit: { min: -100, max: 100 }, step: 25, stepCount: 9 };
+    return { limit: { min: -100, max: 100 }, stepSize: 25, stepCount: 9 };
   }
 
-  return { limit: { min: 0, max: 100 }, step: 25, stepCount: 5 };
+  return { limit: { min: 0, max: 100 }, stepSize: 25, stepCount: 5 };
 }
