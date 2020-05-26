@@ -1,5 +1,5 @@
 import BoxSeries, { SeriesRawData } from './boxSeries';
-import { ColumnChartOptions, BarChartOptions, Point, Connector, Rect, StackType } from '@t/options';
+import { ColumnChartOptions, BarChartOptions, Point, Connector, StackType } from '@t/options';
 import {
   ChartState,
   StackSeriesData,
@@ -11,9 +11,10 @@ import {
   AxisData
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { RectModel } from '@t/components/series';
-import { first, last } from '@src/helpers/utils';
+import { RectModel, ClipRectAreaModel } from '@t/components/series';
+import { first, last, deepCopyArray } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
+import { getRGBA, getAlpha } from '@src/helpers/color';
 
 interface StackSeriesModelParamType {
   stack: Stack;
@@ -42,6 +43,27 @@ function totalOfPrevValues(values: number[], currentIndex: number, included = fa
 }
 
 export default class BoxStackSeries extends BoxSeries {
+  update(delta: number) {
+    if (!this.models) {
+      return;
+    }
+
+    this.models.forEach((model, index) => {
+      if (model.type === 'clipRectArea') {
+        model[this.offsetSizeKey] = this.rect[this.offsetSizeKey] * delta;
+
+        if (!this.isBar) {
+          model.y = this.rect[this.offsetSizeKey] * (1 - delta);
+        }
+      }
+      if (model.type === 'line' && delta) {
+        const alpha = getAlpha((this.animationModels[index] as LineModel).strokeStyle!) * delta;
+
+        model.strokeStyle = getRGBA(model.strokeStyle!, alpha);
+      }
+    });
+  }
+
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, theme, axes, categories, stackSeries } = chartState;
 
@@ -66,8 +88,8 @@ export default class BoxStackSeries extends BoxSeries {
 
     const rectModel = super.renderHighlightSeriesModel(seriesModels);
 
-    this.models = [super.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
-
+    this.models = [this.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
+    this.animationModels = deepCopyArray(this.models);
     this.responders = rectModel.map((m, index) => ({
       ...m,
       data: tooltipData[index]
@@ -102,7 +124,8 @@ export default class BoxStackSeries extends BoxSeries {
     const basePosition = this.getBasePosition(valueAxis);
 
     stackData.forEach(({ values, sum }, index) => {
-      const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroupIndex;
+      const seriesPos =
+        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
       const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
 
       values.forEach((value, seriesIndex) => {
@@ -112,7 +135,7 @@ export default class BoxStackSeries extends BoxSeries {
         seriesModels.push({
           type: 'rect',
           color: colors![seriesIndex],
-          ...this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth)
+          ...super.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth)
         });
       });
     });
@@ -186,14 +209,15 @@ export default class BoxStackSeries extends BoxSeries {
     const connectorPoints: Array<Point[]> = [];
 
     stackData.forEach(({ values, sum }, index) => {
-      const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroupIndex;
+      const seriesPos =
+        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
       const points: Point[] = [];
       const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
 
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
         const startPosition = this.getStackStartPosition(values, seriesIndex, ratio, basePosition);
-        const { x, y } = this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
+        const { x, y } = super.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
 
         points.push({ x: this.isBar ? x + barLength : x, y });
       });
@@ -313,20 +337,13 @@ export default class BoxStackSeries extends BoxSeries {
       : basePosition - beforeValueSum * ratio;
   }
 
-  getAdjustedRect(
-    seriesPos: number,
-    startPosition: number,
-    barLength: number,
-    columnWidth: number
-  ): Rect {
-    const dataPosition = startPosition + this.hoverThickness;
-    const seriesPosition = seriesPos + this.hoverThickness;
-
+  renderClipRectAreaModel(): ClipRectAreaModel {
     return {
-      x: this.isBar ? dataPosition : seriesPosition,
-      y: this.isBar ? seriesPosition : dataPosition,
-      width: this.isBar ? barLength : columnWidth,
-      height: this.isBar ? columnWidth : barLength
+      type: 'clipRectArea',
+      x: 0,
+      y: 0,
+      width: this.rect.width,
+      height: this.rect.height
     };
   }
 }

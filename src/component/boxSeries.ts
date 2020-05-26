@@ -9,7 +9,7 @@ import {
   ColumnChartOptions,
   Rect
 } from '@t/options';
-import { first, includes, hasNegative } from '@src/helpers/utils';
+import { first, includes, hasNegative, deepCopyArray } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
@@ -71,6 +71,12 @@ export default class BoxSeries extends Component {
 
   plot!: Rect;
 
+  animationModels!: DrawModels[];
+
+  basePosition = this.hoverThickness;
+
+  isRangeData = false;
+
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
     this.name = name;
@@ -80,17 +86,28 @@ export default class BoxSeries extends Component {
     this.labelAxis = this.isBar ? 'yAxis' : 'xAxis';
     this.anchorSizeKey = this.isBar ? 'height' : 'width';
     this.offsetSizeKey = this.isBar ? 'width' : 'height';
+    this.animationModels = [];
   }
 
   update(delta: number) {
-    if (this.models && this.models[0].type === 'clipRectArea') {
-      if (this.isBar) {
-        this.models[0].width = this.rect.width * delta;
-      } else {
-        this.models[0].y = this.rect.height - this.rect.height * delta;
-        this.models[0].height = this.rect.height * delta;
-      }
+    if (!this.models) {
+      return;
     }
+    const offsetKey = this.isBar ? 'x' : 'y';
+
+    this.animationModels.forEach((model, index) => {
+      const offsetSize = model[this.offsetSizeKey] * delta;
+      this.models[index][this.offsetSizeKey] = offsetSize;
+
+      if (this.isRangeData) {
+        if (!this.isBar) {
+          this.models[index][offsetKey] =
+            model[offsetKey] + model[this.offsetSizeKey] - offsetSize + this.hoverThickness;
+        }
+      } else if (this.basePosition > model[offsetKey]) {
+        this.models[index][offsetKey] = this.basePosition - offsetSize;
+      }
+    });
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
@@ -109,19 +126,23 @@ export default class BoxSeries extends Component {
     const renderOptions: RenderOptions = {
       diverging: !!options.series?.diverging
     };
+    const valueAxis = axes[this.valueAxis];
     const seriesModels: RectModel[] = this.renderSeriesModel(
       seriesData,
       colors,
-      axes[this.valueAxis],
+      valueAxis,
       tickDistance,
       renderOptions
     );
+
+    this.basePosition = this.getBasePosition(valueAxis);
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
 
     const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
-    this.models = [this.renderClipRectAreaModel(), ...seriesModels];
+    this.models = [...seriesModels];
+    this.animationModels = deepCopyArray(seriesModels);
 
     this.responders = rectModel.map((m, index) => ({
       ...m,
@@ -157,8 +178,10 @@ export default class BoxSeries extends Component {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
+      this.isRangeData = !!data.length && isRangeData(data[0]);
+
       return data.map((value, index) => {
-        const dataStart = seriesPos + index * tickDistance;
+        const dataStart = seriesPos + index * tickDistance + this.hoverThickness;
         const barLength = this.getBarLength(value, labels, diverging);
         const startPosition = this.getStartPosition(value, valueAxis, seriesIndex, diverging);
 
@@ -169,16 +192,6 @@ export default class BoxSeries extends Component {
         };
       });
     });
-  }
-
-  protected renderClipRectAreaModel(): ClipRectAreaModel {
-    return {
-      type: 'clipRectArea',
-      x: 0,
-      y: 0,
-      width: this.rect.width,
-      height: this.rect.height
-    };
   }
 
   protected renderHighlightSeriesModel(seriesModel): RectModel[] {
@@ -249,7 +262,7 @@ export default class BoxSeries extends Component {
     const zeroValueIndex = labels.findIndex(label => Number(label) === 0);
     const tickPositions = makeTickPixelPositions(this.getOffsetSize(), tickCount);
 
-    return tickPositions[zeroValueIndex];
+    return tickPositions[zeroValueIndex] + this.hoverThickness;
   }
 
   protected getOffsetSize(): number {
@@ -315,15 +328,12 @@ export default class BoxSeries extends Component {
     return this.isBar ? basePosition + this.axisThickness : basePosition - barLength;
   }
 
-  getAdjustedRect(
-    dataStart: number,
-    startPosition: number,
+  protected getAdjustedRect(
+    seriesPosition: number,
+    dataPosition: number,
     barLength: number,
     columnWidth: number
   ): Rect {
-    const dataPosition = startPosition + Number(this.hoverThickness);
-    const seriesPosition = dataStart + this.hoverThickness;
-
     barLength = Math.max(barLength, 1);
 
     return {
