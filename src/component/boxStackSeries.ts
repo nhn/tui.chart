@@ -86,7 +86,7 @@ export default class BoxStackSeries extends BoxSeries {
 
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
 
-    const rectModel = super.renderHighlightSeriesModel(seriesModels);
+    const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
     this.animationModels = deepCopyArray(this.models);
@@ -135,7 +135,7 @@ export default class BoxStackSeries extends BoxSeries {
         seriesModels.push({
           type: 'rect',
           color: colors![seriesIndex],
-          ...super.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth)
+          ...this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth)
         });
       });
     });
@@ -217,7 +217,7 @@ export default class BoxStackSeries extends BoxSeries {
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
         const startPosition = this.getStackStartPosition(values, seriesIndex, ratio, basePosition);
-        const { x, y } = super.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
+        const { x, y } = this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
 
         points.push({ x: this.isBar ? x + barLength : x, y });
       });

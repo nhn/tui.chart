@@ -101,8 +101,8 @@ export default class BoxSeries extends Component {
 
       if (this.isRangeData) {
         if (!this.isBar) {
-          this.models[index][offsetKey] =
-            model[offsetKey] + model[this.offsetSizeKey] - offsetSize + this.hoverThickness;
+          this.models[index].y =
+            model.y + model[this.offsetSizeKey] - offsetSize + this.hoverThickness;
         }
       } else if (this.basePosition > model[offsetKey]) {
         this.models[index][offsetKey] = this.basePosition - offsetSize;
@@ -141,7 +141,7 @@ export default class BoxSeries extends Component {
 
     const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
-    this.models = [...seriesModels];
+    this.models = seriesModels;
     this.animationModels = deepCopyArray(seriesModels);
 
     this.responders = rectModel.map((m, index) => ({
