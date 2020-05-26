@@ -1,8 +1,14 @@
 import { AxisData, Options, ScaleData, SeriesState, StoreModule } from '@t/store/store';
-import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { isLabelAxisOnYAxis, hasBoxTypeSeries, getAxisName } from '@src/helpers/axes';
-import { LineTypeXAxisOptions, BoxSeriesOptions } from '@t/options';
+import {
+  isLabelAxisOnYAxis,
+  getAxisName,
+  getSizeKey,
+  hasBoxTypeSeries,
+  isPointOnColumn
+} from '@src/helpers/axes';
 import { extend } from '@src/store/store';
+import { makeLabelsFromLimit } from '@src/helpers/calculator';
+import { BoxSeriesOptions } from '@t/options';
 
 interface StateProp {
   scale: ScaleData;
@@ -13,7 +19,7 @@ interface StateProp {
 
 type ValueStateProp = StateProp & { categories: string[] };
 
-function getLabelAxisData(stateProp: ValueStateProp) {
+export function getLabelAxisData(stateProp: ValueStateProp) {
   const { scale, axisSize, categories, series, options } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels = scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
@@ -27,7 +33,7 @@ function getLabelAxisData(stateProp: ValueStateProp) {
   };
 }
 
-function getValueAxisData(stateProp: StateProp) {
+export function getValueAxisData(stateProp: StateProp) {
   const { scale, axisSize, series, options } = stateProp;
   let valueLabels = makeLabelsFromLimit(scale.limit, scale.stepSize);
 
@@ -70,9 +76,10 @@ const axes: StoreModule = {
       const { plot } = layout;
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
-      const { valueAxisName, labelAxisName } = getAxisName(series);
-      const valueAxisSize = labelAxisOnYAxis ? plot.width : plot.height;
-      const labelAxisSize = labelAxisOnYAxis ? plot.height : plot.width;
+      const { valueAxisName, labelAxisName } = getAxisName(labelAxisOnYAxis);
+      const { valueSizeKey, labelSizeKey } = getSizeKey(labelAxisOnYAxis);
+      const valueAxisSize = plot[valueSizeKey];
+      const labelAxisSize = plot[labelSizeKey];
 
       const valueAxisData = getValueAxisData({
         scale: scale[valueAxisName],
@@ -101,17 +108,5 @@ const axes: StoreModule = {
     }
   }
 };
-
-function isPointOnColumn(series: SeriesState, options: Options) {
-  if (hasBoxTypeSeries(series)) {
-    return true;
-  }
-
-  if (series.line || series.area) {
-    return Boolean((options.xAxis as LineTypeXAxisOptions)?.pointOnColumn);
-  }
-
-  return false;
-}
 
 export default axes;

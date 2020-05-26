@@ -36,25 +36,19 @@ export default class ScatterSeries extends Component {
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
-    const { axes, layout, series, scale, theme, categories = [] } = chartState;
+    const { layout, series, scale, theme, categories = [] } = chartState;
     if (!series.scatter) {
       throw new Error("There's no scatter data!");
     }
 
     const scatterData = series.scatter.data;
-    const { tickDistance } = axes.xAxis!;
     const renderOptions: RenderOptions = {
       theme: theme.series
     };
 
     this.rect = layout.plot;
 
-    const seriesModel = this.renderScatterPointsModel(
-      scatterData,
-      scale,
-      tickDistance,
-      renderOptions
-    );
+    const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions);
 
     const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
 
@@ -106,7 +100,6 @@ export default class ScatterSeries extends Component {
   renderScatterPointsModel(
     seriesRawData: ScatterSeriesType[],
     scale: Scale,
-    tickDistance: number,
     renderOptions: RenderOptions
   ): CircleModel[] {
     const { theme } = renderOptions;

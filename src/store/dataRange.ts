@@ -2,7 +2,7 @@ import { ValueEdge, StoreModule, ChartType, DataRange } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
-import { getAxisName } from '@src/helpers/axes';
+import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { isCoordinateChart } from '@src/helpers/coordinate';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
@@ -40,7 +40,8 @@ const dataRange: StoreModule = {
     setDataRange({ state }) {
       const { series, disabledSeries, stackSeries } = state;
       const newDataRange = {} as DataRange;
-      const { labelAxisName, valueAxisName } = getAxisName(series);
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
+      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
 
       for (const seriesName in series) {
         if (!series.hasOwnProperty(seriesName)) {
