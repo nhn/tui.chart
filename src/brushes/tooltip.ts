@@ -6,18 +6,30 @@ import { Point } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
 export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipModel) {
-  const { x, y, data, category } = tooltipModel;
+  const { x, y, data } = tooltipModel;
   const xPadding = 15;
-  const yPadding = 11;
   const xStartPoint = x + xPadding;
-  const yStartPoint = y + yPadding;
-
+  const yStartPoint = y;
   const bgColor = 'rgba(85, 85, 85, 0.95)';
-  const categoryHeight = category ? 30 : 0;
+  const categories = Object.keys(data);
 
   const dataHeight = 13;
   const width = 156;
-  const height = yPadding * 2 + categoryHeight + dataHeight * data.length;
+
+  let dataSize = 0;
+
+  categories.forEach(category => {
+    dataSize += data[category].length;
+  });
+
+  const categorySize = categories.length;
+  const padding = 10;
+  const dataPadding = 4;
+  const fontSize = 13;
+  const categoryHeight = fontSize + padding * 2;
+  const dataAreaHeight = padding * 2 * categorySize + (dataHeight + 2) * dataSize;
+
+  const height = categoryHeight * categorySize + dataAreaHeight - (categorySize > 1 ? padding : 0);
 
   pathRect(ctx, {
     type: 'pathRect',
@@ -30,11 +42,22 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
     stroke: bgColor
   });
 
-  if (category) {
+  let totalIdx = 0;
+
+  categories.forEach((category, dataIdx) => {
+    const models = data[category];
+
+    // render category
+    const labelYStartPoint =
+      yStartPoint +
+      padding * (dataIdx + 1) +
+      (dataHeight + 2) * totalIdx +
+      categoryHeight * dataIdx;
+
     labelBrush(ctx, {
       type: 'label',
       x: xStartPoint,
-      y: yStartPoint,
+      y: labelYStartPoint,
       text: category,
       style: [
         'default',
@@ -47,40 +70,54 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
       ]
     });
 
+    const lineYStartPoint = labelYStartPoint + fontSize + padding;
+
     line(ctx, {
       type: 'line',
       x,
-      y: y + categoryHeight,
+      y: lineYStartPoint,
       x2: x + width,
-      y2: y + categoryHeight,
+      y2: lineYStartPoint,
       strokeStyle: 'rgba(0, 0, 0, 0.1)'
     });
-  }
 
-  data.forEach(({ label, color, value }, index) => {
-    const cy = yStartPoint + categoryHeight + 15 * index;
+    models.forEach(({ label, color, value }, modelIdx) => {
+      const dataPoint = lineYStartPoint + padding + (dataHeight + dataPadding) * modelIdx;
+      totalIdx += 1;
 
-    rect(ctx, { type: 'rect', x: xStartPoint, y: cy, width: 13, height: dataHeight, color });
+      rect(ctx, {
+        type: 'rect',
+        x: xStartPoint,
+        y: dataPoint,
+        width: dataHeight,
+        height: dataHeight,
+        color
+      });
 
-    const labelStyle = {
-      textBaseline: 'top',
-      fillStyle: '#fff',
-      font: 'normal 12px Arial',
-      textAlign: 'left'
-    } as LabelStyle;
+      const labelStyle = {
+        textBaseline: 'top',
+        fillStyle: '#fff',
+        font: 'normal 12px Arial',
+        textAlign: 'left'
+      } as LabelStyle;
 
-    const labelModel = (text: string, point: Point, styleObj?: LabelStyle) =>
-      ({
-        ...point,
-        type: 'label',
-        text,
-        style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle]
-      } as LabelModel);
+      const labelModel = (text: string, point: Point, styleObj?: LabelStyle) =>
+        ({
+          ...point,
+          type: 'label',
+          text,
+          style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle]
+        } as LabelModel);
 
-    labelBrush(ctx, labelModel(label, { x: xStartPoint + 20, y: cy }));
-    labelBrush(
-      ctx,
-      labelModel(String(value), { x: x + width - xPadding, y: cy }, { textAlign: 'right' })
-    );
+      labelBrush(ctx, labelModel(label, { x: xStartPoint + 20, y: dataPoint }));
+      labelBrush(
+        ctx,
+        labelModel(String(value), { x: x + width - xPadding, y: dataPoint }, { textAlign: 'right' })
+      );
+    });
   });
 }
+
+function renderCategoryArea(ctx: CanvasRenderingContext2D) {}
+
+function renderDataArea(ctx: CanvasRenderingContext2D) {}

@@ -4,7 +4,7 @@ interface TooltipData {
   label: string;
   color: string;
   value: string | number;
-  category?: string;
+  category: string;
 }
 
 export type TooltipInfo = {
@@ -13,6 +13,5 @@ export type TooltipInfo = {
 
 export type TooltipModel = {
   type: 'tooltip';
-  data: TooltipData[];
-  category?: string;
+  data: { [key: string]: TooltipData[] };
 } & Point;

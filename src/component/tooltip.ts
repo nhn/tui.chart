@@ -12,42 +12,33 @@ export default class Tooltip extends Component {
 
   onSeriesPointHovered = (tooltipInfos: TooltipInfo[]) => {
     this.isShow = !!tooltipInfos.length;
-
     if (tooltipInfos.length) {
       this.renderTooltip(tooltipInfos);
     }
   };
 
   renderTooltip(tooltipInfos: TooltipInfo[]) {
-    let maxLength = 0;
-
     this.models = [
-      tooltipInfos.reduce<TooltipModel>(
+      tooltipInfos.reduce(
         (acc, item) => {
-          const { data } = item;
+          const { data, x, y } = item;
+          // @TODO: category 없을 때 처리 필요
+          const { category } = data;
 
-          if (!acc.x && !acc.y) {
-            acc.x = item.x;
-            acc.y = item.y;
+          const existPrevPosition = acc.x || acc.y;
+
+          acc.x = (existPrevPosition ? (acc.x + x) / 2 : x) + 15;
+          acc.y = (existPrevPosition ? (acc.y + y) / 2 : y) - 10;
+
+          if (acc.data[category]) {
+            acc.data[category].push(data);
           } else {
-            acc.x = (acc.x + item.x) / 2;
-            acc.y = (acc.y + item.y) / 2;
-          }
-
-          acc.x += 15;
-          acc.y -= 10;
-
-          maxLength = Math.max(maxLength, data.label.length + data.value.toString().length);
-
-          acc.data.push(data);
-
-          if (!acc.category && data.category) {
-            acc.category = data.category;
+            acc.data[category] = [data];
           }
 
           return acc;
         },
-        { type: 'tooltip', x: 0, y: 0, data: [] }
+        { type: 'tooltip', x: 0, y: 0, data: {} }
       )
     ];
 
