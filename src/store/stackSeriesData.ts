@@ -19,6 +19,7 @@ import {
 } from '@t/options';
 import { pickProperty, isObject } from '@src/helpers/utils';
 import { extend } from '@src/store/store';
+import { uniq } from '@src/helpers/arrayUtil';
 
 type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
@@ -50,7 +51,7 @@ function makeStackData(seriesData: SeriesRawData): StackData {
 
 function makeStackGroupData(seriesData: SeriesRawData): StackGroupData {
   const stackData: StackGroupData = {};
-  const stackGroupIds = [...new Set(seriesData.map(({ stackGroup }) => stackGroup))] as string[];
+  const stackGroupIds = uniq(seriesData.map(({ stackGroup }) => stackGroup)) as string[];
 
   stackGroupIds.forEach(groupId => {
     const filtered = seriesData.filter(({ stackGroup }) => groupId === stackGroup);

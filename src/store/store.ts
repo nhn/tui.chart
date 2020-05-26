@@ -33,6 +33,7 @@ import {
   deepCopy
 } from '@src/helpers/utils';
 import { BaseChartOptions, Size } from '@t/options';
+import { uniq } from '@src/helpers/arrayUtil';
 
 interface InitStoreState<T> {
   categories?: string[];
@@ -42,17 +43,17 @@ interface InitStoreState<T> {
 }
 
 function makeCategories(series: Series) {
-  const categories: Set<string> = new Set();
+  const categories: string[] = [];
 
   Object.keys(series).forEach(key => {
     series[key].forEach(({ data }) => {
       data.forEach(datum => {
-        categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
+        categories.push(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
       });
     });
   });
 
-  return Array.from(categories).sort(sortCategories);
+  return uniq(categories).sort(sortCategories);
 }
 
 function getSortedSeries(series: Series) {

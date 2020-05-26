@@ -41,3 +41,7 @@ export function pivot(arr2d: any[][]) {
 
   return result;
 }
+
+export function uniq<T>(array: T[]) {
+  return [...new Set(array)];
+}
