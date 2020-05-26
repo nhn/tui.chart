@@ -14,6 +14,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
 import { first, last, deepCopyArray } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
+import { getRGBA, getAlpha } from '@src/helpers/color';
 
 interface StackSeriesModelParamType {
   stack: Stack;
@@ -42,6 +43,27 @@ function totalOfPrevValues(values: number[], currentIndex: number, included = fa
 }
 
 export default class BoxStackSeries extends BoxSeries {
+  update(delta: number) {
+    if (!this.models) {
+      return;
+    }
+
+    this.models.forEach((model, index) => {
+      if (model.type === 'clipRectArea') {
+        model[this.offsetSizeKey] = this.rect[this.offsetSizeKey] * delta;
+
+        if (!this.isBar) {
+          model.y = this.rect[this.offsetSizeKey] * (1 - delta);
+        }
+      }
+      if (model.type === 'line' && delta) {
+        const alpha = getAlpha((this.drawModels[index] as LineModel).strokeStyle!) * delta;
+
+        model.strokeStyle = getRGBA(model.strokeStyle!, alpha);
+      }
+    });
+  }
+
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, theme, axes, categories, stackSeries } = chartState;
 
@@ -66,7 +88,6 @@ export default class BoxStackSeries extends BoxSeries {
     this.basePosition = this.getBasePosition(valueAxis);
 
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
-
     const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
@@ -204,7 +225,7 @@ export default class BoxStackSeries extends BoxSeries {
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
         const startPosition = this.getStackStartPosition(values, seriesIndex, ratio, basePosition);
-        const { x, y } = this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
+        const { x, y } = super.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
 
         points.push({ x: this.isBar ? x + barLength : x, y });
       });
