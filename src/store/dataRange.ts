@@ -2,6 +2,8 @@ import { ValueEdge, StoreModule, ChartType, DataRange } from '@t/store/store';
 import { isObject } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
+import { getAxisName } from '@src/helpers/axes';
+import { isCoordinateChart } from '@src/helpers/coordinate';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -37,12 +39,14 @@ const dataRange: StoreModule = {
   action: {
     setDataRange({ state }) {
       const { series, disabledSeries, stackSeries } = state;
-      const newDataRange: Record<string, ValueEdge> = {};
+      const newDataRange = {} as DataRange;
+      const { labelAxisName, valueAxisName } = getAxisName(series);
 
       for (const seriesName in series) {
         if (!series.hasOwnProperty(seriesName)) {
           continue;
         }
+        newDataRange[seriesName] = {};
 
         let values = series[seriesName].flatMap(({ data, name }) => {
           return disabledSeries.includes(name) ? [] : data;
@@ -62,15 +66,23 @@ const dataRange: StoreModule = {
           } else {
             values.push(0);
           }
-        } else if (tupleCoord) {
-          values = values.map(value => value[1]);
-        } else if (objectCoord) {
-          values = values.map(value => value.y);
+        } else if (isCoordinateChart(series)) {
+          let labels;
+          if (tupleCoord) {
+            labels = values.map(value => value[0]);
+            values = values.map(value => value[1]);
+          } else if (objectCoord) {
+            labels = values.map(value => value.x);
+            values = values.map(value => value.y);
+          }
+
+          newDataRange[seriesName][labelAxisName] = getLimitSafely([
+            ...new Set(labels)
+          ] as number[]);
         }
 
-        newDataRange[seriesName] = getLimitSafely([...new Set(values)] as number[]);
+        newDataRange[seriesName][valueAxisName] = getLimitSafely([...new Set(values)] as number[]);
       }
-
       extend(state.dataRange, newDataRange);
     }
   },

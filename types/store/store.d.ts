@@ -92,7 +92,10 @@ type PlotLine = {
 export type Axes = Partial<Record<AxisType, AxisData>>;
 
 export type DataRange = {
-  [key in keyof ChartSeriesMap]: ValueEdge;
+  [key in keyof ChartSeriesMap]: {
+    xAxis: ValueEdge;
+    yAxis: ValueEdge;
+  };
 };
 
 export interface ChartState<T extends Options> {

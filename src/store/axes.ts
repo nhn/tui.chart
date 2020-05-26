@@ -1,9 +1,51 @@
-import { AxisData, Options, SeriesState, StoreModule } from '@t/store/store';
+import { AxisData, Options, ScaleData, SeriesState, StoreModule } from '@t/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { isLabelAxisOnYAxis, hasBoxTypeSeries } from '@src/helpers/axes';
-import { AxisType } from '@src/component/axis';
+import { isLabelAxisOnYAxis, hasBoxTypeSeries, getAxisName } from '@src/helpers/axes';
 import { LineTypeXAxisOptions, BoxSeriesOptions } from '@t/options';
 import { extend } from '@src/store/store';
+
+interface StateProp {
+  scale: ScaleData;
+  axisSize: number;
+  options: Options;
+  series: SeriesState;
+}
+
+type ValueStateProp = StateProp & { categories: string[] };
+
+function getLabelAxisData(stateProp: ValueStateProp) {
+  const { scale, axisSize, categories, series, options } = stateProp;
+  const pointOnColumn = isPointOnColumn(series, options);
+  const labels = scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
+
+  return {
+    labels,
+    pointOnColumn,
+    isLabelAxis: true,
+    tickCount: labels.length + (pointOnColumn ? 1 : 0),
+    tickDistance: axisSize / (categories.length - (pointOnColumn ? 0 : 1))
+  };
+}
+
+function getValueAxisData(stateProp: StateProp) {
+  const { scale, axisSize, series, options } = stateProp;
+  let valueLabels = makeLabelsFromLimit(scale.limit, scale.stepSize);
+
+  if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
+    valueLabels = valueLabels
+      .slice(1)
+      .reverse()
+      .concat(valueLabels);
+  }
+
+  return {
+    labels: valueLabels,
+    pointOnColumn: false,
+    isLabelAxis: false,
+    tickCount: valueLabels.length,
+    tickDistance: axisSize / valueLabels.length
+  };
+}
 
 const axes: StoreModule = {
   name: 'axes',
@@ -27,36 +69,24 @@ const axes: StoreModule = {
       const { scale, options, series, layout, categories = [] } = state;
       const { plot } = layout;
 
-      const pointOnColumn = isPointOnColumn(series, options);
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
+      const { valueAxisName, labelAxisName } = getAxisName(series);
+      const valueAxisSize = labelAxisOnYAxis ? plot.width : plot.height;
       const labelAxisSize = labelAxisOnYAxis ? plot.height : plot.width;
 
-      const labelAxisData = {
-        labels: categories,
-        tickCount: categories.length + (pointOnColumn ? 1 : 0),
-        isLabelAxis: true,
-        pointOnColumn,
-        tickDistance: labelAxisSize / (categories.length - (pointOnColumn ? 0 : 1))
-      };
-
-      const axisName = getValueAxisName(series);
-      let valueLabels = makeLabelsFromLimit(scale[axisName].limit, scale[axisName].stepSize);
-      const valueAxisSize = labelAxisOnYAxis ? plot.width : plot.height;
-
-      if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
-        valueLabels = valueLabels
-          .slice(1)
-          .reverse()
-          .concat(valueLabels);
-      }
-
-      const valueAxisData = {
-        labels: valueLabels,
-        tickCount: valueLabels.length,
-        isLabelAxis: false,
-        pointOnColumn: false,
-        tickDistance: valueAxisSize / valueLabels.length
-      };
+      const valueAxisData = getValueAxisData({
+        scale: scale[valueAxisName],
+        axisSize: valueAxisSize,
+        options,
+        series
+      });
+      const labelAxisData = getLabelAxisData({
+        scale: scale[labelAxisName],
+        axisSize: labelAxisSize,
+        categories,
+        options,
+        series
+      });
 
       extend(state.axes, {
         xAxis: labelAxisOnYAxis ? valueAxisData : labelAxisData,
@@ -71,10 +101,6 @@ const axes: StoreModule = {
     }
   }
 };
-
-function getValueAxisName(series) {
-  return series.bar ? AxisType.X : AxisType.Y;
-}
 
 function isPointOnColumn(series: SeriesState, options: Options) {
   if (hasBoxTypeSeries(series)) {

@@ -2,9 +2,13 @@ import Component from './component';
 import { CircleModel } from '@t/components/series';
 import { CoordinateDataType, ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
-import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
+import { ChartState, Scale, SeriesTheme } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
+import {
+  getCoordinateLabel,
+  getCoordinateDataIndex,
+  getCoordinateValue
+} from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 
 type DrawModels = ClipRectAreaModel | CircleModel;
@@ -38,7 +42,6 @@ export default class ScatterSeries extends Component {
     }
 
     const scatterData = series.scatter.data;
-    const { yAxis } = scale;
     const { tickDistance } = axes.xAxis!;
     const renderOptions: RenderOptions = {
       theme: theme.series
@@ -48,10 +51,9 @@ export default class ScatterSeries extends Component {
 
     const seriesModel = this.renderScatterPointsModel(
       scatterData,
-      yAxis.limit,
+      scale,
       tickDistance,
-      renderOptions,
-      categories
+      renderOptions
     );
 
     const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
@@ -103,25 +105,29 @@ export default class ScatterSeries extends Component {
 
   renderScatterPointsModel(
     seriesRawData: ScatterSeriesType[],
-    limit: ValueEdge,
+    scale: Scale,
     tickDistance: number,
-    renderOptions: RenderOptions,
-    categories: string[]
+    renderOptions: RenderOptions
   ): CircleModel[] {
     const { theme } = renderOptions;
     const { colors } = theme;
+    const {
+      xAxis: { limit: xAxisLimit },
+      yAxis: { limit: yAxisLimit }
+    } = scale;
 
     return seriesRawData.flatMap(({ data }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
 
-      data.forEach((datum, idx) => {
+      data.forEach(datum => {
         const value = getCoordinateValue(datum);
-        const dataIndex = getCoordinateDataIndex(datum, categories, idx);
+        const label = getCoordinateLabel(datum);
 
-        const valueRatio = (value - limit.min) / (limit.max - limit.min);
+        const xValueRatio = (label - xAxisLimit.min) / (xAxisLimit.max - xAxisLimit.min);
+        const yValueRatio = (value - yAxisLimit.min) / (yAxisLimit.max - yAxisLimit.min);
 
-        const x = tickDistance * dataIndex;
-        const y = (1 - valueRatio) * this.rect.height;
+        const x = xValueRatio * this.rect.width;
+        const y = (1 - yValueRatio) * this.rect.height;
 
         circleModels.push({
           x,
