@@ -44,7 +44,6 @@ const chartState = {
 };
 
 const result = [
-  { type: 'clipRectArea', x: 0, y: 0, width: 88, height: 88 },
   {
     type: 'rect',
     color: '#aaaaaa',
