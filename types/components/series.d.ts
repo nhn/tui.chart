@@ -1,7 +1,6 @@
-import { Point, Rect, BezierPoint, ConnectorLineType } from '../options';
+import { Point, Rect, BezierPoint } from '../options';
 import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
-import { LineModel } from './axis';
 
 export type StyleProp<T, K> = (T | K)[];
 

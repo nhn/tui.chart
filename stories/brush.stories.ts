@@ -241,12 +241,15 @@ export const rectBrush = () => {
 export const tooltipBrush = () => {
   const { ctx, el } = setup();
 
-  // tooltip(ctx, {
-  //   type: 'tooltip',
-  //   x: 100,
-  //   y: 100,
-  //   data: [{ label: 'A', color: '#ddd', value: 100 }]
-  // });
+  tooltip(ctx, {
+    type: 'tooltip',
+    x: 100,
+    y: 100,
+    data: [
+      { label: 'A', color: 'blue', value: 100 },
+      { label: 'B', color: 'red', value: 1000 }
+    ]
+  });
 
   tooltip(ctx, {
     type: 'tooltip',
