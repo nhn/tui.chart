@@ -39,5 +39,5 @@ function isLineCoordinateSeries(series: SeriesState) {
 }
 
 export function isCoordinateSeries(series: SeriesState) {
-  return isLineCoordinateSeries(series) || series.scatter;
+  return isLineCoordinateSeries(series) || series.scatter || series.bubble;
 }

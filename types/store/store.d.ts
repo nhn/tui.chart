@@ -11,7 +11,8 @@ import {
   AreaSeriesType,
   AreaChartOptions,
   Connector,
-  StackType
+  StackType,
+  BubbleSeriesType
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
@@ -22,6 +23,7 @@ type ChartSeriesMap = {
   bar: BoxSeriesType<BoxSeriesDataType>[];
   column: BoxSeriesType<BoxSeriesDataType>[];
   area: AreaSeriesType[];
+  bubble: BubbleSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
