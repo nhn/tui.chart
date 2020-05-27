@@ -14,7 +14,6 @@ import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
 import { first, last, deepCopyArray } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
-import { getRGBA, getAlpha } from '@src/helpers/color';
 
 interface StackSeriesModelParamType {
   stack: Stack;
@@ -43,27 +42,6 @@ function totalOfPrevValues(values: number[], currentIndex: number, included = fa
 }
 
 export default class BoxStackSeries extends BoxSeries {
-  update(delta: number) {
-    if (!this.models) {
-      return;
-    }
-
-    this.models.forEach((model, index) => {
-      if (model.type === 'clipRectArea') {
-        model[this.offsetSizeKey] = this.rect[this.offsetSizeKey] * delta;
-
-        if (!this.isBar) {
-          model.y = this.rect[this.offsetSizeKey] * (1 - delta);
-        }
-      }
-      if (model.type === 'line' && delta) {
-        const alpha = getAlpha((this.drawModels[index] as LineModel).strokeStyle!) * delta;
-
-        model.strokeStyle = getRGBA(model.strokeStyle!, alpha);
-      }
-    });
-  }
-
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, theme, axes, categories, stackSeries } = chartState;
 

@@ -116,7 +116,6 @@ export default class BoxSeries extends Component {
       this.drawModels[0][this.offsetSizeKey] = this.rect[this.offsetSizeKey] * delta;
       this.drawModels[0][offsetKey] = this.basePosition * (1 - delta);
     }
-
     this.drawModels.forEach((drawModel, index) => {
       if (drawModel.type === 'line' && delta) {
         const alpha = getAlpha((this.models[index] as LineModel).strokeStyle!) * delta;
