@@ -119,10 +119,18 @@ export interface ChartState<T extends Options> {
     lines?: PlotLine[];
   };
 }
+export interface StackData {
+  values: number[];
+  sum: number;
+  total: {
+    positive: number;
+    negative: number;
+  };
+}
 
-export type StackData = Array<{ values: number[]; sum: number }>;
-export type StackGroupData = Record<string, StackData>;
-export type StackDataType = StackData | StackGroupData;
+export type StackDataValues = StackData[];
+export type StackGroupData = Record<string, StackDataValues>;
+export type StackDataType = StackDataValues | StackGroupData;
 
 export interface AxisData {
   labels: string[];

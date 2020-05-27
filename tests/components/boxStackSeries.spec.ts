@@ -26,8 +26,8 @@ const chartState = {
         connector: false,
       },
       stackData: [
-        { values: [1, 4], sum: 5 },
-        { values: [2, 5], sum: 7 },
+        { values: [1, 4], sum: 5, total: { negative: 0, positive: 5 } },
+        { values: [2, 5], sum: 7, total: { negative: 0, positive: 7 } },
       ],
     },
   },

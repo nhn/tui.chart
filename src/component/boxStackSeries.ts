@@ -5,10 +5,10 @@ import {
   StackSeriesData,
   StackGroupData,
   StackDataType,
-  StackData,
   BoxType,
   Stack,
   AxisData,
+  StackDataValues,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
@@ -17,7 +17,7 @@ import { LineModel } from '@t/components/axis';
 
 interface StackSeriesModelParamType {
   stack: Stack;
-  stackData: StackData;
+  stackData: StackDataValues;
   colors?: string[];
   valueAxis: AxisData;
   tickDistance: number;
@@ -30,10 +30,13 @@ function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
 }
 
 function totalOfPrevValues(values: number[], currentIndex: number, included = false) {
+  const curValue = values[currentIndex];
+
   return values.reduce((total, value, idx) => {
     const isPrev = included ? idx <= currentIndex : idx < currentIndex;
+    const isSameSign = value * curValue >= 0;
 
-    if (isPrev) {
+    if (isPrev && isSameSign) {
       return total + value;
     }
 
@@ -109,13 +112,13 @@ export default class BoxStackSeries extends BoxSeries {
     const { labels: valueLabels } = valueAxis;
     const basePosition = this.getBasePosition(valueAxis);
 
-    stackData.forEach(({ values, sum }, index) => {
+    stackData.forEach(({ values, total }, index) => {
       const seriesPos =
         index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
-      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
+      const ratio = this.getStackValueRatio(valueLabels, total, stack.type);
 
       values.forEach((value, seriesIndex) => {
-        const barLength = value * ratio;
+        const barLength = this.getStackBarLength(value, ratio);
         const startPosition = this.getStackStartPosition(values, seriesIndex, ratio, basePosition);
 
         seriesModels.push({
@@ -194,11 +197,11 @@ export default class BoxStackSeries extends BoxSeries {
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
     const connectorPoints: Array<Point[]> = [];
 
-    stackData.forEach(({ values, sum }, index) => {
+    stackData.forEach(({ values, total }, index) => {
       const seriesPos =
         index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
       const points: Point[] = [];
-      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
+      const ratio = this.getStackValueRatio(valueLabels, total, stack.type);
 
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
@@ -243,7 +246,7 @@ export default class BoxStackSeries extends BoxSeries {
 
   private makeStackTooltipData(
     seriesRawData: SeriesRawData,
-    stackData: StackData,
+    stackData: StackDataValues,
     colors: string[],
     categories?: string[]
   ) {
@@ -303,9 +306,9 @@ export default class BoxStackSeries extends BoxSeries {
     return connectorModels;
   }
 
-  getStackValueRatio(valueLabels: string[], sum: number, stackType: StackType) {
+  getStackValueRatio(valueLabels: string[], total: number, stackType: StackType) {
     const divisor =
-      stackType === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
+      stackType === 'percent' ? total : Number(last(valueLabels)) - Number(first(valueLabels));
 
     return this.getOffsetSize() / divisor;
   }
@@ -316,10 +319,19 @@ export default class BoxStackSeries extends BoxSeries {
     ratio: number,
     basePosition: number
   ) {
-    const beforeValueSum = totalOfPrevValues(values, currentIndex, !this.isBar);
+    const beforeValueSum = totalOfPrevValues(
+      values,
+      currentIndex,
+      !this.isBar ? values[currentIndex] > 0 : values[currentIndex] < 0
+    );
+    console.log(values[currentIndex], beforeValueSum, beforeValueSum * ratio);
 
     return this.isBar
       ? beforeValueSum * ratio + basePosition + Number(this.axisThickness)
       : basePosition - beforeValueSum * ratio;
+  }
+
+  getStackBarLength(value: number, ratio: number) {
+    return value < 0 ? Math.abs(value) * ratio : value * ratio;
   }
 }

@@ -100,14 +100,26 @@ describe('StackSeriesData Store', () => {
         {
           values: [1, 4],
           sum: 5,
+          total: {
+            positive: 5,
+            negative: 0,
+          },
         },
         {
           values: [2, 5],
           sum: 7,
+          total: {
+            positive: 7,
+            negative: 0,
+          },
         },
         {
           values: [3, 6],
           sum: 9,
+          total: {
+            positive: 9,
+            negative: 0,
+          },
         },
       ]);
     });

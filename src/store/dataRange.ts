@@ -64,6 +64,7 @@ const dataRange: StoreModule = {
             );
           } else if (stackSeries[seriesName]?.stack) {
             values = stackSeries[seriesName].dataValues;
+            console.log(values);
           } else {
             values.push(0);
           }

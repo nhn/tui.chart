@@ -7,6 +7,7 @@ import {
   StackGroupData,
   Options,
   BoxType,
+  StackDataValues,
 } from '@t/store/store';
 import { isBoxSeries } from '@src/component/boxSeries';
 import {
@@ -26,11 +27,11 @@ export function pickStackOption(options: Options): StackOptionType {
   return pickProperty(options, ['series', 'stack']) as StackOptionType;
 }
 
-function makeStackData(seriesData: SeriesRawData): StackData {
+function makeStackData(seriesData: SeriesRawData): StackDataValues {
   const seriesCount = seriesData.length;
   const groupCountLengths = seriesData.map(({ data }) => data.length);
   const seriesGroupCount = Math.max(...groupCountLengths);
-  const stackData: StackData = [];
+  const stackData: StackDataValues = [];
 
   for (let i = 0; i < seriesGroupCount; i += 1) {
     const stackValues: number[] = [];
@@ -42,7 +43,11 @@ function makeStackData(seriesData: SeriesRawData): StackData {
     stackData[i] = {
       values: stackValues,
       sum: stackValues.reduce((a, b) => a + b, 0),
-    };
+      total: {
+        positive: stackValues.filter((value) => value >= 0).reduce((a, b) => a + b, 0),
+        negative: stackValues.filter((value) => value < 0).reduce((a, b) => a + b, 0),
+      },
+    } as StackData;
   }
 
   return stackData;
@@ -110,17 +115,23 @@ function getStackDataValues(stackData: StackDataType, stackType: StackType) {
   let values: number[] = [];
 
   if (Array.isArray(stackData)) {
-    values = [0, ...stackData.map(({ sum }) => sum)];
+    values = [0, ...getSumValues(stackData)];
   } else {
     for (const groupId in stackData) {
       if (Object.prototype.hasOwnProperty.call(stackData, groupId)) {
-        const sums = stackData[groupId].map(({ sum }) => sum);
-        values = [0, ...values, ...sums];
+        values = [0, ...values, ...getSumValues(stackData[groupId])];
       }
     }
   }
 
   return values;
+}
+
+function getSumValues(stackData: StackDataValues) {
+  const positiveSum = stackData.map(({ total }) => total.positive);
+  const negativeSum = stackData.map(({ total }) => total.negative);
+
+  return [...negativeSum, ...positiveSum];
 }
 
 const stackSeriesData: StoreModule = {
@@ -156,7 +167,7 @@ const stackSeriesData: StoreModule = {
         if (stack) {
           const stackData = hasStackGrouped(data) ? makeStackGroupData(data) : makeStackData(data);
           const stackType = stack.type;
-
+          console.log(stackData, getStackDataValues(stackData, stackType));
           newStackSeries[seriesName] = {
             data,
             seriesCount,
