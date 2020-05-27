@@ -3,7 +3,7 @@ import { isObject } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
 import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
-import { isCoordinateChart } from '@src/helpers/coordinate';
+import { isCoordinateSeries } from '@src/helpers/coordinate';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -67,18 +67,18 @@ const dataRange: StoreModule = {
           } else {
             values.push(0);
           }
-        } else if (isCoordinateChart(series)) {
-          let labels;
+        } else if (isCoordinateSeries(series)) {
+          let xAxisValues;
           if (tupleCoord) {
-            labels = values.map(value => value[0]);
+            xAxisValues = values.map(value => value[0]);
             values = values.map(value => value[1]);
           } else if (objectCoord) {
-            labels = values.map(value => value.x);
+            xAxisValues = values.map(value => value.x);
             values = values.map(value => value.y);
           }
 
           newDataRange[seriesName][labelAxisName] = getLimitSafely([
-            ...new Set(labels)
+            ...new Set(xAxisValues)
           ] as number[]);
         }
 

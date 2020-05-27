@@ -29,7 +29,7 @@ export function getCoordinateDataIndex(
   return categories.findIndex(category => category === String(value));
 }
 
-function isLineCoordinateChart(series: SeriesState) {
+function isLineCoordinateSeries(series: SeriesState) {
   if (!series.line) {
     return false;
   }
@@ -38,6 +38,6 @@ function isLineCoordinateChart(series: SeriesState) {
   return firstData && (Array.isArray(firstData) || isObject(firstData));
 }
 
-export function isCoordinateChart(series: SeriesState) {
-  return isLineCoordinateChart(series) || series.scatter;
+export function isCoordinateSeries(series: SeriesState) {
+  return isLineCoordinateSeries(series) || series.scatter;
 }
