@@ -4,7 +4,6 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import {
   budgetData,
   tupleCoordinateData,
-  datetimeCoordinateData,
   temperatureData,
   coordinateData,
   randomData
@@ -75,13 +74,14 @@ export const tupleCoordinate = () => {
   return el;
 };
 
-export const coordinateDatetime = () => {
-  const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
-    xAxis: { pointOnColumn: true, type: 'datetime' }
-  });
-
-  return el;
-};
+// @TODO: date 데이터 처리 이후 활성 필요
+// export const coordinateDatetime = () => {
+//   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
+//     xAxis: { pointOnColumn: true, type: 'datetime' }
+//   });
+//
+//   return el;
+// };
 
 export const tickInterval = () => {
   const xAxisOptions = {

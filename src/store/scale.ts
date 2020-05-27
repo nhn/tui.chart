@@ -1,7 +1,8 @@
 import { extend } from '@src/store/store';
 import { StoreModule, Stack, Scale } from '@t/store/store';
-import { isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { getAxisName, getSizeKey, isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { coordinateScaleCalculator, getStackScaleData } from '@src/scale/coordinateScaleCalculator';
+import { isCoordinateSeries } from '@src/helpers/coordinate';
 
 function isPercentStack(stack?: Stack) {
   return stack && stack.type === 'percent';
@@ -18,18 +19,33 @@ const scale: StoreModule = {
       const scaleData = {};
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
-      const valueAxis = labelAxisOnYAxis ? 'xAxis' : 'yAxis';
-      const offsetSizeProp = labelAxisOnYAxis ? 'width' : 'height';
+      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
+      const { labelSizeKey, valueSizeKey } = getSizeKey(labelAxisOnYAxis);
+
       const scaleOptions = { xAxis: options?.xAxis?.scale, yAxis: options?.yAxis?.scale };
 
       Object.keys(series).forEach(seriesName => {
         if (isPercentStack(stackSeries.column?.stack) || isPercentStack(stackSeries.bar?.stack)) {
-          scaleData[valueAxis] = getStackScaleData('percentStack');
+          scaleData[valueAxisName] = getStackScaleData('percentStack');
+        } else if (isCoordinateSeries(series)) {
+          const range = dataRange[seriesName];
+
+          scaleData[valueAxisName] = coordinateScaleCalculator({
+            dataRange: range[valueAxisName],
+            offsetSize: layout.plot[valueSizeKey],
+            scaleOption: scaleOptions[valueAxisName]
+          });
+
+          scaleData[labelAxisName] = coordinateScaleCalculator({
+            dataRange: range[labelAxisName],
+            offsetSize: layout.plot[labelSizeKey],
+            scaleOption: scaleOptions[labelAxisName]
+          });
         } else {
-          scaleData[valueAxis] = coordinateScaleCalculator({
-            dataRange: dataRange[seriesName],
-            offsetSize: layout.plot[offsetSizeProp],
-            scaleOption: scaleOptions[valueAxis]
+          scaleData[valueAxisName] = coordinateScaleCalculator({
+            dataRange: dataRange[seriesName][valueAxisName],
+            offsetSize: layout.plot[valueSizeKey],
+            scaleOption: scaleOptions[valueAxisName]
           });
         }
       });

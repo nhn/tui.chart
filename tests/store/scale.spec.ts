@@ -15,7 +15,7 @@ describe('Scale Store', () => {
       series: { bar: { data } },
       stackSeries: {},
       scale: {},
-      dataRange: { bar: { min: 1, max: 6 } } as DataRange
+      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
@@ -39,7 +39,7 @@ describe('Scale Store', () => {
         }
       },
       scale: {},
-      dataRange: { bar: { min: 1, max: 6 } } as DataRange
+      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
@@ -56,7 +56,7 @@ describe('Scale Store', () => {
       series: { bar: { data } },
       stackSeries: {},
       scale: {},
-      dataRange: { bar: { min: 1, max: 6 } } as DataRange,
+      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange,
       options: { xAxis: { scale: { min: -5 } } }
     } as ChartState<BarChartOptions>;
 
@@ -74,7 +74,7 @@ describe('Scale Store', () => {
       series: { bar: { data } },
       stackSeries: {},
       scale: {},
-      dataRange: { bar: { min: 1, max: 6 } } as DataRange,
+      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange,
       options: { xAxis: { scale: { max: 10 } } }
     } as ChartState<BarChartOptions>;
 
@@ -92,7 +92,7 @@ describe('Scale Store', () => {
       series: { bar: { data } },
       stackSeries: {},
       scale: {},
-      dataRange: { bar: { min: 1, max: 6 } } as DataRange,
+      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange,
       options: { xAxis: { scale: { stepSize: 5 } } }
     } as ChartState<BarChartOptions>;
 
