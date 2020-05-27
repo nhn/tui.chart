@@ -22,18 +22,22 @@ export default class Tooltip extends Component {
       tooltipInfos.reduce(
         (acc, item) => {
           const { data, x, y } = item;
-          // @TODO: category 없을 때 처리 필요
           const { category } = data;
 
           const existPrevPosition = acc.x || acc.y;
-
           acc.x = (existPrevPosition ? (acc.x + x) / 2 : x) + 15;
           acc.y = (existPrevPosition ? (acc.y + y) / 2 : y) - 10;
 
-          if (acc.data[category]) {
-            acc.data[category].push(data);
+          if (category) {
+            if (acc.data[category]) {
+              acc.data[category].push(data);
+            } else {
+              acc.data[category] = [data];
+            }
+          } else if (Array.isArray(acc.data)) {
+            acc.data.push(data);
           } else {
-            acc.data[category] = [data];
+            acc.data = [data];
           }
 
           return acc;
