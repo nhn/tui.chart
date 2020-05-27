@@ -166,7 +166,7 @@ export default class BoxSeries extends Component {
     }));
   }
 
-  renderClipRectAreaModel(): ClipRectAreaModel {
+  protected renderClipRectAreaModel(): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
       x: 0,
