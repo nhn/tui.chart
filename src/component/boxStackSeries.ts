@@ -11,10 +11,9 @@ import {
   AxisData
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { RectModel, ClipRectAreaModel } from '@t/components/series';
+import { RectModel } from '@t/components/series';
 import { first, last, deepCopyArray } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
-import { getRGBA, getAlpha } from '@src/helpers/color';
 
 interface StackSeriesModelParamType {
   stack: Stack;
@@ -43,27 +42,6 @@ function totalOfPrevValues(values: number[], currentIndex: number, included = fa
 }
 
 export default class BoxStackSeries extends BoxSeries {
-  update(delta: number) {
-    if (!this.models) {
-      return;
-    }
-
-    this.models.forEach((model, index) => {
-      if (model.type === 'clipRectArea') {
-        model[this.offsetSizeKey] = this.rect[this.offsetSizeKey] * delta;
-
-        if (!this.isBar) {
-          model.y = this.rect[this.offsetSizeKey] * (1 - delta);
-        }
-      }
-      if (model.type === 'line' && delta) {
-        const alpha = getAlpha((this.animationModels[index] as LineModel).strokeStyle!) * delta;
-
-        model.strokeStyle = getRGBA(model.strokeStyle!, alpha);
-      }
-    });
-  }
-
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, theme, axes, categories, stackSeries } = chartState;
 
@@ -77,19 +55,22 @@ export default class BoxStackSeries extends BoxSeries {
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { colors } = theme.series;
     const { tickDistance } = axes[this.labelAxis];
+    const valueAxis = axes[this.valueAxis];
     const { seriesModels, connectorModels } = this.renderStackSeriesModel(
       seriesData,
       colors,
-      axes[this.valueAxis],
+      valueAxis,
       tickDistance
     );
+
+    this.basePosition = this.getBasePosition(valueAxis);
 
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
 
     const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
-    this.animationModels = deepCopyArray(this.models);
+    this.drawModels = deepCopyArray(this.models);
     this.responders = rectModel.map((m, index) => ({
       ...m,
       data: tooltipData[index]
@@ -335,15 +316,5 @@ export default class BoxStackSeries extends BoxSeries {
     return this.isBar
       ? beforeValueSum * ratio + basePosition + Number(this.axisThickness)
       : basePosition - beforeValueSum * ratio;
-  }
-
-  renderClipRectAreaModel(): ClipRectAreaModel {
-    return {
-      type: 'clipRectArea',
-      x: 0,
-      y: 0,
-      width: this.rect.width,
-      height: this.rect.height
-    };
   }
 }

@@ -45,6 +45,13 @@ const chartState = {
 
 const result = [
   {
+    type: 'clipRectArea',
+    height: 88,
+    width: 88,
+    x: 0,
+    y: 0
+  },
+  {
     type: 'rect',
     color: '#aaaaaa',
     width: 16,

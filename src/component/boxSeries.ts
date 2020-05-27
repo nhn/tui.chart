@@ -13,6 +13,7 @@ import { first, includes, hasNegative, deepCopyArray } from '@src/helpers/utils'
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
+import { getRGBA, getAlpha } from '@src/helpers/color';
 
 type DrawModels = ClipRectAreaModel | RectModel | LineModel;
 
@@ -47,6 +48,8 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 export default class BoxSeries extends Component {
   models!: DrawModels[];
 
+  drawModels!: DrawModels[];
+
   responders!: RectModel[];
 
   activatedResponders: this['responders'] = [];
@@ -71,8 +74,6 @@ export default class BoxSeries extends Component {
 
   plot!: Rect;
 
-  animationModels!: DrawModels[];
-
   basePosition = this.hoverThickness;
 
   isRangeData = false;
@@ -86,26 +87,45 @@ export default class BoxSeries extends Component {
     this.labelAxis = this.isBar ? 'yAxis' : 'xAxis';
     this.anchorSizeKey = this.isBar ? 'height' : 'width';
     this.offsetSizeKey = this.isBar ? 'width' : 'height';
-    this.animationModels = [];
   }
 
   update(delta: number) {
     if (!this.models) {
       return;
     }
+
     const offsetKey = this.isBar ? 'x' : 'y';
 
-    this.animationModels.forEach((model, index) => {
-      const offsetSize = model[this.offsetSizeKey] * delta;
-      this.models[index][this.offsetSizeKey] = offsetSize;
+    if (this.isRangeData) {
+      this.drawModels.forEach((drawModel, index) => {
+        if (drawModel.type === 'rect') {
+          const offsetSize = this.models[index][this.offsetSizeKey] * delta;
 
-      if (this.isRangeData) {
-        if (!this.isBar) {
-          this.models[index].y =
-            model.y + model[this.offsetSizeKey] - offsetSize + this.hoverThickness;
+          drawModel[this.offsetSizeKey] = offsetSize;
+
+          if (!this.isBar) {
+            drawModel[offsetKey] =
+              this.models[index][offsetKey] +
+              this.models[index][this.offsetSizeKey] -
+              offsetSize +
+              this.hoverThickness;
+          }
         }
-      } else if (this.basePosition > model[offsetKey]) {
-        this.models[index][offsetKey] = this.basePosition - offsetSize;
+      });
+
+      return;
+    }
+
+    this.drawModels.forEach((drawModel, index) => {
+      if (drawModel.type === 'clipRectArea') {
+        drawModel[this.offsetSizeKey] = this.rect[this.offsetSizeKey] * delta;
+        drawModel[offsetKey] = this.basePosition * (1 - delta);
+      }
+
+      if (drawModel.type === 'line' && delta) {
+        const alpha = getAlpha((this.models[index] as LineModel).strokeStyle!) * delta;
+
+        drawModel.strokeStyle = getRGBA(drawModel.strokeStyle!, alpha);
       }
     });
   }
@@ -141,13 +161,23 @@ export default class BoxSeries extends Component {
 
     const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
-    this.models = seriesModels;
-    this.animationModels = deepCopyArray(seriesModels);
+    this.models = [this.renderClipRectAreaModel(), ...seriesModels];
+    this.drawModels = deepCopyArray(this.models);
 
     this.responders = rectModel.map((m, index) => ({
       ...m,
       data: tooltipData[index]
     }));
+  }
+
+  renderClipRectAreaModel(): ClipRectAreaModel {
+    return {
+      type: 'clipRectArea',
+      x: 0,
+      y: 0,
+      width: this.rect.width,
+      height: this.rect.height
+    };
   }
 
   protected makeSeriesRect(layout: Rect) {

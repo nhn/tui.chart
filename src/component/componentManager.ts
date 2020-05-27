@@ -39,7 +39,7 @@ export default class ComponentManager<T> {
 
     let proc = (...args: any[]) => {
       component.render(args[0], args[1]); // rest쓰면 에러남
-      component.syncModels();
+      component.sync();
       this.eventBus.emit('needLoop');
     };
 
