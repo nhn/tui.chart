@@ -6,17 +6,17 @@ import { Point } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
 interface CategorySizeInfo {
-  xStartPoint: number;
-  x: number;
-  text: string;
+  labelXStartPoint: number;
+  lineXStartPoint: number;
   labelYStartPoint: number;
   lineYStartPoint: number;
+  text: string;
 }
 
 type DataItemSizeInfo = {
   xStartPoint: number;
-  dataPoint: number;
   x: number;
+  y: number;
 } & Pick<TooltipData, 'label' | 'value' | 'color'>;
 
 const BG_COLOR = 'rgba(85, 85, 85, 0.95)';
@@ -43,12 +43,28 @@ function getTotalDataSize(data: TooltipModelData, categories: string[]) {
   return dataSize;
 }
 
+function renderLabelModel(text: string, point: Point, styleObj?: LabelStyle) {
+  const labelStyle = {
+    textBaseline: 'top',
+    fillStyle: '#fff',
+    font: 'normal 12px Arial',
+    textAlign: 'left'
+  } as LabelStyle;
+
+  return {
+    ...point,
+    type: 'label',
+    text,
+    style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle]
+  } as LabelModel;
+}
+
 function renderCategoryArea(ctx: CanvasRenderingContext2D, sizeInfo: CategorySizeInfo) {
-  const { xStartPoint, text, x, labelYStartPoint, lineYStartPoint } = sizeInfo;
+  const { labelXStartPoint, labelYStartPoint, text, lineXStartPoint, lineYStartPoint } = sizeInfo;
 
   labelBrush(ctx, {
     type: 'label',
-    x: xStartPoint,
+    x: labelXStartPoint,
     y: labelYStartPoint,
     text,
     style: [
@@ -64,45 +80,30 @@ function renderCategoryArea(ctx: CanvasRenderingContext2D, sizeInfo: CategorySiz
 
   line(ctx, {
     type: 'line',
-    x,
+    x: lineXStartPoint,
     y: lineYStartPoint,
-    x2: x + WIDTH,
+    x2: lineXStartPoint + WIDTH,
     y2: lineYStartPoint,
     strokeStyle: 'rgba(0, 0, 0, 0.1)'
   });
 }
 
 function renderDataItem(ctx: CanvasRenderingContext2D, sizeInfo: DataItemSizeInfo) {
-  const { xStartPoint, dataPoint, x, label, color, value } = sizeInfo;
+  const { xStartPoint, x, y, label, color, value } = sizeInfo;
 
   rect(ctx, {
     type: 'rect',
     x: xStartPoint,
-    y: dataPoint,
+    y,
     width: DATA_TEXT_HEIGHT,
     height: DATA_TEXT_HEIGHT,
     color
   });
 
-  const labelStyle = {
-    textBaseline: 'top',
-    fillStyle: '#fff',
-    font: 'normal 12px Arial',
-    textAlign: 'left'
-  } as LabelStyle;
-
-  const labelModel = (text: string, point: Point, styleObj?: LabelStyle) =>
-    ({
-      ...point,
-      type: 'label',
-      text,
-      style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle]
-    } as LabelModel);
-
-  labelBrush(ctx, labelModel(label, { x: xStartPoint + 20, y: dataPoint }));
+  labelBrush(ctx, renderLabelModel(label, { x: xStartPoint + 20, y }));
   labelBrush(
     ctx,
-    labelModel(String(value), { x: x + WIDTH - padding.X, y: dataPoint }, { textAlign: 'right' })
+    renderLabelModel(String(value), { x: x + WIDTH - padding.X, y }, { textAlign: 'right' })
   );
 }
 
@@ -111,16 +112,15 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
 
   const xStartPoint = x + padding.X;
   const yStartPoint = y;
-  const noCategory = hasNoCategory(data);
 
+  const noCategory = hasNoCategory(data);
   const categories = noCategory ? [] : Object.keys(data);
+  const categorySize = categories.length;
+  const categoryHeight = CATEGORY_TEXT_HEIGHT + padding.Y * 2;
+  const defaultPadding = noCategory ? 10 * 2 : 0;
 
   const totalDataSize = getTotalDataSize(data, categories);
-  const categorySize = categories.length;
-
-  const categoryHeight = CATEGORY_TEXT_HEIGHT + padding.Y * 2;
   const dataAreaHeight = padding.Y * 2 * categorySize + (DATA_TEXT_HEIGHT + 2) * totalDataSize;
-  const defaultPadding = noCategory ? 10 * 2 : 0;
 
   const height =
     defaultPadding +
@@ -141,28 +141,26 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
 
   if (hasNoCategory(data)) {
     data.forEach(({ label, color, value }, modelIdx) => {
-      const dataPoint = yStartPoint + padding.Y + (DATA_TEXT_HEIGHT + padding.DATA_Y) * modelIdx;
+      const prevDataItemHeight = (DATA_TEXT_HEIGHT + padding.DATA_Y) * modelIdx;
+      const dataPoint = yStartPoint + padding.Y + prevDataItemHeight;
 
-      renderDataItem(ctx, { xStartPoint, dataPoint, label, color, value, x });
+      renderDataItem(ctx, { xStartPoint, y: dataPoint, label, color, value, x });
     });
   } else {
     let totalItemIdx = 0;
 
     categories.forEach((category, dataIdx) => {
       const models = data[category];
+      const prevCategoryHeight = padding.Y * (dataIdx + 1) + categoryHeight * dataIdx;
+      const prevDataHeight = (DATA_TEXT_HEIGHT + 2) * totalItemIdx;
 
-      const labelYStartPoint =
-        yStartPoint +
-        padding.Y * (dataIdx + 1) +
-        (DATA_TEXT_HEIGHT + 2) * totalItemIdx +
-        categoryHeight * dataIdx;
-
+      const labelYStartPoint = yStartPoint + prevCategoryHeight + prevDataHeight;
       const lineYStartPoint = labelYStartPoint + CATEGORY_TEXT_HEIGHT + padding.Y;
 
       renderCategoryArea(ctx, {
-        xStartPoint,
-        x,
+        labelXStartPoint: xStartPoint,
         labelYStartPoint,
+        lineXStartPoint: x,
         lineYStartPoint,
         text: category
       });
@@ -172,7 +170,7 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
           lineYStartPoint + padding.Y + (DATA_TEXT_HEIGHT + padding.DATA_Y) * modelIdx;
         totalItemIdx += 1;
 
-        renderDataItem(ctx, { xStartPoint, dataPoint, label, color, value, x });
+        renderDataItem(ctx, { xStartPoint, x, y: dataPoint, label, color, value });
       });
     });
   }
