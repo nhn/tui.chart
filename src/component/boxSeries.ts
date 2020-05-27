@@ -4,7 +4,6 @@ import { ChartState, ChartType, SeriesData, BoxType, AxisData } from '@t/store/s
 import {
   BoxSeriesType,
   BoxSeriesDataType,
-  RangeDataType,
   BarChartOptions,
   ColumnChartOptions,
   Rect
@@ -14,6 +13,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
+import { isRangeData, isRangeValue } from '@src/helpers/range';
 
 type DrawModels = ClipRectAreaModel | RectModel | LineModel;
 
@@ -32,10 +32,6 @@ const PADDING = {
   TB: 15, // top & bottom
   LR: 24 // left & right
 };
-
-function isRangeData(value: BoxSeriesDataType): value is RangeDataType {
-  return Array.isArray(value);
-}
 
 function isLeftBottomSide(seriesIndex: number) {
   return !!(seriesIndex % 2);
@@ -208,7 +204,7 @@ export default class BoxSeries extends Component {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
-      this.isRangeData = !!data.length && isRangeData(data[0]);
+      this.isRangeData = isRangeData(data);
 
       return data.map((value, index) => {
         const dataStart = seriesPos + index * tickDistance + this.hoverThickness;
@@ -283,7 +279,7 @@ export default class BoxSeries extends Component {
   }
 
   private getTooltipValue(value) {
-    return isRangeData(value) ? `${value[0]} ~ ${value[1]}` : value;
+    return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
   protected getBasePosition(valueAxis: AxisData): number {
@@ -308,7 +304,7 @@ export default class BoxSeries extends Component {
 
   getBarLength(value: BoxSeriesDataType, labels: string[], diverging = false) {
     const ratio = this.getValueRatio(labels, diverging);
-    const rangeData = isRangeData(value);
+    const rangeData = isRangeValue(value);
 
     if (typeof value === 'number' && hasNegative(labels)) {
       if (value < 0) {
@@ -335,7 +331,7 @@ export default class BoxSeries extends Component {
     const basePosition = this.getBasePosition(valueAxis);
     const barLength = this.getBarLength(value, labels, diverging);
 
-    if (isRangeData(value)) {
+    if (isRangeValue(value)) {
       const [start] = value;
       const min = first(labels) as number;
       const ratio = this.getValueRatio(labels, diverging);
