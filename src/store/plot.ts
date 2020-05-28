@@ -19,7 +19,11 @@ const plot: StoreModule = {
       }));
 
       if (needZeroLine(series, axes)) {
-        lines.push({ value: 0, color: 'rgba(0, 0, 0, 0.5)', vertical: isLabelAxisOnYAxis(series) });
+        lines.push({
+          value: 0,
+          color: 'rgba(0, 0, 0, 0.5)',
+          vertical: isLabelAxisOnYAxis(series)
+        });
       }
 
       extend(state.plot, { lines });

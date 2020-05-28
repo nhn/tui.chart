@@ -2,7 +2,6 @@ import {
   BaseChartOptions,
   LineChartOptions,
   LineSeriesType,
-  Rect,
   BoxSeriesType,
   BarChartOptions,
   ColumnChartOptions,
@@ -72,12 +71,6 @@ type SeriesState = {
   [key in ChartType]?: SeriesData<key>; // @TODO: Series 와 통합 필요. 중복되는 느낌
 };
 
-export interface Layout {
-  xAxis: Rect;
-  yAxis: Rect;
-  plot: Rect;
-}
-
 export interface Scale {
   xAxis: ScaleData;
   yAxis: ScaleData;
@@ -98,9 +91,12 @@ export type DataRange = {
   };
 };
 
-export interface ChartState<T extends Options> {
+// Module 티입 확장용 인터페이스
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ModuleStates {}
+
+export type ChartState<T extends Options> = {
   chart: BaseChartOptions;
-  layout: Layout;
   scale: Scale;
   disabledSeries: string[];
   series: SeriesState;
@@ -116,7 +112,7 @@ export interface ChartState<T extends Options> {
   plot: {
     lines?: PlotLine[];
   };
-}
+} & ModuleStates;
 
 export type StackData = Array<{ values: number[]; sum: number }>;
 export type StackGroupData = Record<string, StackData>;
@@ -164,7 +160,7 @@ export interface ScaleData {
   stepCount: number;
 }
 
-type StateFunc = () => Partial<ChartState<Options>>;
+type StateFunc = (options: Options) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
 type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
 export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;

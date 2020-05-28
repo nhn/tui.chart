@@ -17,10 +17,7 @@ import {
   StoreModule,
   ObserveFunc,
   Series,
-  Options,
-  Layout,
-  Scale,
-  DataRange
+  Options
 } from '@t/store/store';
 
 import {
@@ -70,43 +67,13 @@ function getSortedSeries(series: Series) {
 
 function initData(series: Series, categories?: string[]) {
   return {
-    series: series.line ? getSortedSeries(series) : series, // TODO: 초기 데이터의 정렬 유무를 옵션으로 받아 처리
+    series: series.line ? getSortedSeries(series) : series,
     categories: categories ? categories : makeCategories(series)
   };
 }
 
 export default class Store<T extends Options> {
-  state: ChartState<T> = {
-    chart: { width: 0, height: 0 },
-    layout: {} as Layout,
-    scale: {} as Scale,
-    disabledSeries: [],
-    series: {},
-    dataRange: {} as DataRange,
-    axes: {},
-    theme: {
-      series: {
-        colors: [
-          '#00a9ff',
-          '#ffb840',
-          '#ff5a46',
-          '#00bd9f',
-          '#785fff',
-          '#f28b8c',
-          '#989486',
-          '#516f7d',
-          '#29dbe3',
-          '#dddddd'
-        ]
-      }
-    },
-    options: {} as T,
-    categories: [],
-    stackSeries: {},
-    plot: {
-      lines: []
-    }
-  };
+  state!: ChartState<T>;
 
   computed: Record<string, any> = {};
 
@@ -121,11 +88,32 @@ export default class Store<T extends Options> {
 
     this.options = options as T;
 
-    this.setRootState(this.state);
+    this.setRootState({});
+
     this.setModule(
       'root',
       deepMergedCopy(
         {
+          state: {
+            chart: { width: 0, height: 0 },
+            disabledSeries: [],
+            theme: {
+              series: {
+                colors: [
+                  '#00a9ff',
+                  '#ffb840',
+                  '#ff5a46',
+                  '#00bd9f',
+                  '#785fff',
+                  '#f28b8c',
+                  '#989486',
+                  '#516f7d',
+                  '#29dbe3',
+                  '#dddddd'
+                ]
+              }
+            }
+          },
           action: {
             setChartSize({ state }, size: Size) {
               state.chart.width = size.width;
@@ -157,6 +145,7 @@ export default class Store<T extends Options> {
 
   setRootState(state: Partial<ChartState<T>>) {
     observable(state);
+    this.state = state as ChartState<T>;
   }
 
   setComputed(namePath: string, fn: ComputedFunc, holder: any = this.computed) {
@@ -215,15 +204,14 @@ export default class Store<T extends Options> {
       name = (param as StoreModule).name;
     }
 
-    if (param.initialize) {
-      param.initialize(this.state, this.options);
+    if (param.state) {
+      const moduleState =
+        typeof param.state === 'function' ? param.state(this.options) : param.state;
+      extend(this.state, moduleState);
     }
 
-    if (param.state) {
-      const moduleState = typeof param.state === 'function' ? param.state() : param.state;
-      extend(this.state, moduleState);
-
-      //      this.extend(this.state, moduleState);
+    if (param.initialize) {
+      param.initialize(this.state, this.options);
     }
 
     if (param.computed) {
@@ -245,7 +233,7 @@ export default class Store<T extends Options> {
     }
 
     if (param.observe) {
-      forEach(param.observe, (item, key) => {
+      forEach(param.observe, item => {
         this.observe(item);
         // console.log(key, ' observer collect start', this.state.__ob__.d);
         // this.observe((...args) => {
@@ -265,7 +253,7 @@ export default class Store<T extends Options> {
   }
 }
 
-export function extend(target: Record<string, any>, source: Record<string, any>) {
+export function extend<T extends Record<string, any>>(target: T, source: Partial<T>) {
   const newItems: Record<string, any> = {};
 
   for (const k in source) {
@@ -275,9 +263,9 @@ export function extend(target: Record<string, any>, source: Record<string, any>)
 
     if (!isUndefined(target[k])) {
       if (typeof source[k] === 'object' && !Array.isArray(source[k])) {
-        extend(target[k], source[k]);
+        extend(target[k], source[k]!);
       } else {
-        target[k] = source[k];
+        target[k] = source[k]!;
       }
     } else {
       newItems[k] = source[k];

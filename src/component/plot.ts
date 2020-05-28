@@ -11,8 +11,6 @@ export default class Plot extends Component {
     this.type = 'plot';
   }
 
-  renderBands() {}
-
   renderLines(lines: PlotLine[], axes: Axes): LineModel[] {
     return lines.map(({ value, color, vertical }) => {
       const { labels, tickCount } = vertical ? (axes.xAxis as AxisData) : (axes.yAxis as AxisData);
@@ -46,7 +44,9 @@ export default class Plot extends Component {
       ...this.renderModels(this.getTickPixelPositions(true, axes), true)
     ];
 
-    this.models.lines = [...this.renderLines(plot.lines!, axes)];
+    if (plot) {
+      this.models.lines = [...this.renderLines(plot.lines!, axes)];
+    }
   }
 
   makeLineModel(vertical: boolean, position: number, color: string): LineModel {
