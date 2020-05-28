@@ -35,9 +35,7 @@ function createChart(data: ScatterSeriesData, customOptions?: ScatterChartOption
 }
 
 export const scatter = () => {
-  const { el } = createChart(genderHeightWeightData, {
-    xAxis: { tick: { interval: 5 }, label: { interval: 5 } }
-  });
+  const { el } = createChart(genderHeightWeightData);
 
   return el;
 };

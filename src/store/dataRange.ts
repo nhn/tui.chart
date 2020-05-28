@@ -3,6 +3,8 @@ import { isObject } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
 import { uniq } from '@src/helpers/arrayUtil';
+import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { isCoordinateSeries } from '@src/helpers/coordinate';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -38,12 +40,15 @@ const dataRange: StoreModule = {
   action: {
     setDataRange({ state }) {
       const { series, disabledSeries, stackSeries } = state;
-      const newDataRange: Record<string, ValueEdge> = {};
+      const newDataRange = {} as DataRange;
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
+      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
 
       for (const seriesName in series) {
         if (!series.hasOwnProperty(seriesName)) {
           continue;
         }
+        newDataRange[seriesName] = {};
 
         let values = series[seriesName].flatMap(({ data, name }) => {
           return disabledSeries.includes(name) ? [] : data;
@@ -63,15 +68,23 @@ const dataRange: StoreModule = {
           } else {
             values.push(0);
           }
-        } else if (tupleCoord) {
-          values = values.map(value => value[1]);
-        } else if (objectCoord) {
-          values = values.map(value => value.y);
+        } else if (isCoordinateSeries(series)) {
+          let xAxisValues;
+          if (tupleCoord) {
+            xAxisValues = values.map(value => value[0]);
+            values = values.map(value => value[1]);
+          } else if (objectCoord) {
+            xAxisValues = values.map(value => value.x);
+            values = values.map(value => value.y);
+          }
+
+          newDataRange[seriesName][labelAxisName] = getLimitSafely([
+            ...new Set(xAxisValues)
+          ] as number[]);
         }
 
-        newDataRange[seriesName] = getLimitSafely(uniq(values));
+        newDataRange[seriesName][valueAxisName] = getLimitSafely(uniq(values));
       }
-
       extend(state.dataRange, newDataRange);
     }
   },
