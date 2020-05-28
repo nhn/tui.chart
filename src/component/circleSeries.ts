@@ -4,7 +4,7 @@ import { ClipRectAreaModel } from '@t/components/series';
 import { SeriesTheme } from '@t/store/store';
 import { BubbleSeriesType, CoordinateDataType, ScatterSeriesType } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
+import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 
 type DrawModels = ClipRectAreaModel | CircleModel;
 
@@ -72,7 +72,7 @@ export default abstract class CircleSeries extends Component {
         tooltipData.push({
           label: name,
           color: theme.colors[index],
-          value: getCoordinateValue(datum),
+          value: getCoordinateYValue(datum),
           category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
         });
       });

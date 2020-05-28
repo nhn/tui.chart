@@ -1,7 +1,7 @@
 import { CircleModel } from '@t/components/series';
 import { BaseOptions, BubbleSeriesType } from '@t/options';
 import { ChartState, Scale, SeriesTheme } from '@t/store/store';
-import { getCoordinateLabel, getCoordinateValue } from '@src/helpers/coordinate';
+import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 
@@ -78,11 +78,11 @@ export default class BubbleSeries extends CircleSeries {
       const circleModels: CircleModel[] = [];
 
       data.forEach(datum => {
-        const value = getCoordinateValue(datum);
-        const label = getCoordinateLabel(datum);
+        const xValue = getCoordinateXValue(datum);
+        const yValue = getCoordinateYValue(datum);
 
-        const xValueRatio = (label - xAxisLimit.min) / (xAxisLimit.max - xAxisLimit.min);
-        const yValueRatio = (value - yAxisLimit.min) / (yAxisLimit.max - yAxisLimit.min);
+        const xValueRatio = (xValue - xAxisLimit.min) / (xAxisLimit.max - xAxisLimit.min);
+        const yValueRatio = (yValue - yAxisLimit.min) / (yAxisLimit.max - yAxisLimit.min);
 
         const x = xValueRatio * this.rect.width;
         const y = (1 - yValueRatio) * this.rect.height;

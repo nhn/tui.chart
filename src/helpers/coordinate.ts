@@ -2,7 +2,7 @@ import { CoordinateDataType } from '@t/options';
 import { first, isNumber, isObject } from '@src/helpers/utils';
 import { SeriesState } from '@t/store/store';
 
-export function getCoordinateValue(datum: number | CoordinateDataType) {
+export function getCoordinateYValue(datum: number | CoordinateDataType) {
   if (isNumber(datum)) {
     return datum;
   }
@@ -10,7 +10,7 @@ export function getCoordinateValue(datum: number | CoordinateDataType) {
   return Array.isArray(datum) ? datum[1] : datum.y;
 }
 
-export function getCoordinateLabel(datum: CoordinateDataType) {
+export function getCoordinateXValue(datum: CoordinateDataType) {
   // @TODO: string일 경우 처리 필요(date)
   return Array.isArray(datum) ? Number(datum[0]) : datum.x;
 }
