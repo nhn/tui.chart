@@ -1,38 +1,18 @@
-import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { CoordinateDataType, ScatterChartOptions, ScatterSeriesType } from '@t/options';
-import { ClipRectAreaModel } from '@t/components/series';
+import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ChartState, Scale, SeriesTheme } from '@t/store/store';
-import { TooltipData } from '@t/components/tooltip';
-import {
-  getCoordinateLabel,
-  getCoordinateDataIndex,
-  getCoordinateValue
-} from '@src/helpers/coordinate';
+import { getCoordinateLabel, getCoordinateValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-
-type DrawModels = ClipRectAreaModel | CircleModel;
+import CircleSeries from '@src/component/circleSeries';
 
 interface RenderOptions {
   theme: SeriesTheme;
 }
 
-export default class ScatterSeries extends Component {
-  models!: DrawModels[];
-
-  responders!: CircleModel[];
-
-  activatedResponders: this['responders'] = [];
-
+export default class ScatterSeries extends CircleSeries {
   initialize() {
-    this.type = 'series';
+    super.initialize();
     this.name = 'scatterSeries';
-  }
-
-  update(delta: number) {
-    if (this.models[0].type === 'clipRectArea') {
-      this.models[0].width = this.rect.width * delta;
-    }
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
@@ -49,7 +29,6 @@ export default class ScatterSeries extends Component {
     this.rect = layout.plot;
 
     const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions);
-
     const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModel];
@@ -62,39 +41,6 @@ export default class ScatterSeries extends Component {
       style: ['default', 'hover'],
       data: tooltipModel[index]
     }));
-  }
-
-  makeTooltipModel(
-    scatterData: ScatterSeriesType[],
-    categories: string[],
-    renderOptions: RenderOptions
-  ) {
-    const { theme } = renderOptions;
-
-    return scatterData.flatMap(({ data, name }, index) => {
-      const tooltipData: TooltipData[] = [];
-
-      data.forEach((datum: CoordinateDataType, dataIdx) => {
-        tooltipData.push({
-          label: name,
-          color: theme.colors[index],
-          value: getCoordinateValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
-        });
-      });
-
-      return tooltipData;
-    });
-  }
-
-  renderClipRectAreaModel(): ClipRectAreaModel {
-    return {
-      type: 'clipRectArea',
-      x: 0,
-      y: 0,
-      width: 0,
-      height: this.rect.height
-    };
   }
 
   renderScatterPointsModel(
@@ -135,22 +81,5 @@ export default class ScatterSeries extends Component {
 
       return circleModels;
     });
-  }
-
-  onMousemove({ responders }) {
-    this.activatedResponders.forEach(responder => {
-      const index = this.models.findIndex(model => model === responder);
-      this.models.splice(index, 1);
-    });
-
-    responders.forEach(responder => {
-      this.models.push(responder);
-    });
-
-    this.activatedResponders = responders;
-
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
-
-    this.eventBus.emit('needDraw');
   }
 }
