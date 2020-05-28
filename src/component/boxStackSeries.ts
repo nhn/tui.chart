@@ -112,10 +112,10 @@ export default class BoxStackSeries extends BoxSeries {
     const { labels: valueLabels } = valueAxis;
     const basePosition = this.getBasePosition(valueAxis);
 
-    stackData.forEach(({ values, total }, index) => {
+    stackData.forEach(({ values, sum }, index) => {
       const seriesPos =
         index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
-      const ratio = this.getStackValueRatio(valueLabels, total, stack.type);
+      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
 
       values.forEach((value, seriesIndex) => {
         const barLength = this.getStackBarLength(value, ratio);
@@ -197,11 +197,11 @@ export default class BoxStackSeries extends BoxSeries {
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
     const connectorPoints: Array<Point[]> = [];
 
-    stackData.forEach(({ values, total }, index) => {
+    stackData.forEach(({ values, sum }, index) => {
       const seriesPos =
         index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
       const points: Point[] = [];
-      const ratio = this.getStackValueRatio(valueLabels, total, stack.type);
+      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
 
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
@@ -306,9 +306,9 @@ export default class BoxStackSeries extends BoxSeries {
     return connectorModels;
   }
 
-  getStackValueRatio(valueLabels: string[], total: number, stackType: StackType) {
+  getStackValueRatio(valueLabels: string[], sum: number, stackType: StackType) {
     const divisor =
-      stackType === 'percent' ? total : Number(last(valueLabels)) - Number(first(valueLabels));
+      stackType === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
 
     return this.getOffsetSize() / divisor;
   }
@@ -324,7 +324,6 @@ export default class BoxStackSeries extends BoxSeries {
       currentIndex,
       !this.isBar ? values[currentIndex] > 0 : values[currentIndex] < 0
     );
-    console.log(values[currentIndex], beforeValueSum, beforeValueSum * ratio);
 
     return this.isBar
       ? beforeValueSum * ratio + basePosition + Number(this.axisThickness)

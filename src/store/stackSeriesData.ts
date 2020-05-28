@@ -167,7 +167,7 @@ const stackSeriesData: StoreModule = {
         if (stack) {
           const stackData = hasStackGrouped(data) ? makeStackGroupData(data) : makeStackData(data);
           const stackType = stack.type;
-          console.log(stackData, getStackDataValues(stackData, stackType));
+
           newStackSeries[seriesName] = {
             data,
             seriesCount,
