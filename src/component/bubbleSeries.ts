@@ -80,8 +80,8 @@ export default class BubbleSeries extends Component {
       type: 'circle',
       detectionRadius: 0,
       radius: m.radius + MINIMUM_DETECTING_AREA_RADIUS,
-      color: getRGBA(m.color, 0.8),
-      style: ['default', 'hover'],
+      color: getRGBA(m.color, 0.85),
+      style: ['default', 'hover', { lineWidth: 2 }],
       data: tooltipModel[index]
     }));
   }
@@ -167,9 +167,11 @@ export default class BubbleSeries extends Component {
       this.models.splice(index, 1);
     });
 
-    responders.forEach(responder => {
-      this.models.push(responder);
-    });
+    responders
+      .sort((a: CircleModel, b: CircleModel) => b.radius - a.radius)
+      .forEach(responder => {
+        this.models.push(responder);
+      });
 
     this.activatedResponders = responders;
 

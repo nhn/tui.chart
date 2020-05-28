@@ -147,7 +147,6 @@ export default class LineSeries extends Component {
       this.models.splice(index, 1);
     });
 
-    // @TODO: 툴팁 그려줄 때 마지막에 들어간거 무조건 제일 마지막에 그려주게 해야함
     responders.forEach(responder => {
       this.models.push(responder);
     });

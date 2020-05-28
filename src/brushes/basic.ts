@@ -14,7 +14,7 @@ const circleStyle = {
     shadowColor: 'rgba(0, 0, 0, 0.3)',
     shadowBlur: 4,
     shadowOffsetY: 4,
-    lineWidth: 4
+    lineWidth: 3
   }
 };
 
