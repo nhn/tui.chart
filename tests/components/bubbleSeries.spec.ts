@@ -2,7 +2,6 @@ import { AreaChartOptions } from '@t/options';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import BubbleSeries from '@src/component/bubbleSeries';
-import { isNumber } from '@src/helpers/utils';
 
 let areaSeries;
 const seriesData = [
