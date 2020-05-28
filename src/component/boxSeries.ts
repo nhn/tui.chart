@@ -4,15 +4,16 @@ import { ChartState, ChartType, SeriesData, BoxType, AxisData } from '@t/store/s
 import {
   BoxSeriesType,
   BoxSeriesDataType,
-  RangeDataType,
   BarChartOptions,
   ColumnChartOptions,
   Rect
 } from '@t/options';
-import { first, includes, hasNegative } from '@src/helpers/utils';
+import { first, includes, hasNegative, deepCopyArray } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
+import { getRGBA, getAlpha } from '@src/helpers/color';
+import { isRangeData, isRangeValue } from '@src/helpers/range';
 
 type DrawModels = ClipRectAreaModel | RectModel | LineModel;
 
@@ -32,10 +33,6 @@ const PADDING = {
   LR: 24 // left & right
 };
 
-function isRangeData(value: BoxSeriesDataType): value is RangeDataType {
-  return Array.isArray(value);
-}
-
 function isLeftBottomSide(seriesIndex: number) {
   return !!(seriesIndex % 2);
 }
@@ -46,6 +43,8 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 
 export default class BoxSeries extends Component {
   models!: DrawModels[];
+
+  drawModels!: DrawModels[];
 
   responders!: RectModel[];
 
@@ -71,6 +70,10 @@ export default class BoxSeries extends Component {
 
   plot!: Rect;
 
+  basePosition = this.hoverThickness;
+
+  isRangeData = false;
+
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
     this.name = name;
@@ -83,14 +86,44 @@ export default class BoxSeries extends Component {
   }
 
   update(delta: number) {
-    if (this.models && this.models[0].type === 'clipRectArea') {
-      if (this.isBar) {
-        this.models[0].width = this.rect.width * delta;
-      } else {
-        this.models[0].y = this.rect.height - this.rect.height * delta;
-        this.models[0].height = this.rect.height * delta;
-      }
+    if (!this.models) {
+      return;
     }
+
+    const offsetKey = this.isBar ? 'x' : 'y';
+
+    if (this.isRangeData) {
+      this.drawModels.forEach((drawModel, index) => {
+        if (drawModel.type === 'rect') {
+          const offsetSize = this.models[index][this.offsetSizeKey] * delta;
+
+          drawModel[this.offsetSizeKey] = offsetSize;
+
+          if (!this.isBar) {
+            drawModel[offsetKey] =
+              this.models[index][offsetKey] +
+              this.models[index][this.offsetSizeKey] -
+              offsetSize +
+              this.hoverThickness;
+          }
+        }
+      });
+
+      return;
+    }
+
+    if (this.drawModels[0].type === 'clipRectArea') {
+      this.drawModels[0][this.offsetSizeKey] = this.rect[this.offsetSizeKey] * delta;
+      this.drawModels[0][offsetKey] = this.basePosition * (1 - delta);
+    }
+
+    this.drawModels.forEach((drawModel, index) => {
+      if (drawModel.type === 'line' && delta) {
+        const alpha = getAlpha((this.models[index] as LineModel).strokeStyle!) * delta;
+
+        drawModel.strokeStyle = getRGBA(drawModel.strokeStyle!, alpha);
+      }
+    });
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
@@ -109,24 +142,38 @@ export default class BoxSeries extends Component {
     const renderOptions: RenderOptions = {
       diverging: !!options.series?.diverging
     };
+    const valueAxis = axes[this.valueAxis];
     const seriesModels: RectModel[] = this.renderSeriesModel(
       seriesData,
       colors,
-      axes[this.valueAxis],
+      valueAxis,
       tickDistance,
       renderOptions
     );
+
+    this.basePosition = this.getBasePosition(valueAxis);
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
 
     const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModels];
+    this.drawModels = deepCopyArray(this.models);
 
     this.responders = rectModel.map((m, index) => ({
       ...m,
       data: tooltipData[index]
     }));
+  }
+
+  protected renderClipRectAreaModel(): ClipRectAreaModel {
+    return {
+      type: 'clipRectArea',
+      x: 0,
+      y: 0,
+      width: this.rect.width,
+      height: this.rect.height
+    };
   }
 
   protected makeSeriesRect(layout: Rect) {
@@ -157,8 +204,10 @@ export default class BoxSeries extends Component {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
+      this.isRangeData = isRangeData(data);
+
       return data.map((value, index) => {
-        const dataStart = seriesPos + index * tickDistance;
+        const dataStart = seriesPos + index * tickDistance + this.hoverThickness;
         const barLength = this.getBarLength(value, labels, diverging);
         const startPosition = this.getStartPosition(value, valueAxis, seriesIndex, diverging);
 
@@ -169,16 +218,6 @@ export default class BoxSeries extends Component {
         };
       });
     });
-  }
-
-  protected renderClipRectAreaModel(): ClipRectAreaModel {
-    return {
-      type: 'clipRectArea',
-      x: 0,
-      y: 0,
-      width: this.rect.width,
-      height: this.rect.height
-    };
   }
 
   protected renderHighlightSeriesModel(seriesModel): RectModel[] {
@@ -240,7 +279,7 @@ export default class BoxSeries extends Component {
   }
 
   private getTooltipValue(value) {
-    return isRangeData(value) ? `${value[0]} ~ ${value[1]}` : value;
+    return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
   protected getBasePosition(valueAxis: AxisData): number {
@@ -249,7 +288,7 @@ export default class BoxSeries extends Component {
     const zeroValueIndex = labels.findIndex(label => Number(label) === 0);
     const tickPositions = makeTickPixelPositions(this.getOffsetSize(), tickCount);
 
-    return tickPositions[zeroValueIndex];
+    return tickPositions[zeroValueIndex] + this.hoverThickness;
   }
 
   protected getOffsetSize(): number {
@@ -265,7 +304,7 @@ export default class BoxSeries extends Component {
 
   getBarLength(value: BoxSeriesDataType, labels: string[], diverging = false) {
     const ratio = this.getValueRatio(labels, diverging);
-    const rangeData = isRangeData(value);
+    const rangeData = isRangeValue(value);
 
     if (typeof value === 'number' && hasNegative(labels)) {
       if (value < 0) {
@@ -292,7 +331,7 @@ export default class BoxSeries extends Component {
     const basePosition = this.getBasePosition(valueAxis);
     const barLength = this.getBarLength(value, labels, diverging);
 
-    if (isRangeData(value)) {
+    if (isRangeValue(value)) {
       const [start] = value;
       const min = first(labels) as number;
       const ratio = this.getValueRatio(labels, diverging);
@@ -315,15 +354,12 @@ export default class BoxSeries extends Component {
     return this.isBar ? basePosition + this.axisThickness : basePosition - barLength;
   }
 
-  getAdjustedRect(
-    dataStart: number,
-    startPosition: number,
+  protected getAdjustedRect(
+    seriesPosition: number,
+    dataPosition: number,
     barLength: number,
     columnWidth: number
   ): Rect {
-    const dataPosition = startPosition + Number(this.hoverThickness);
-    const seriesPosition = dataStart + this.hoverThickness;
-
     barLength = Math.max(barLength, 1);
 
     return {

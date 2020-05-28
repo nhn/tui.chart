@@ -6,7 +6,7 @@
 
 const hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 const rgbRX = /rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)/;
-const rgbaRX = /rgba\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3}), ?(1|0?\.\d+)\)/;
+const rgbaRX = /rgba\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3}), ?(1|0?\.?\d+)\)/;
 
 /**
  * Color map.
@@ -230,4 +230,14 @@ export function getRGBA(str: string, opacity: number) {
   }
 
   return str;
+}
+
+export function getAlpha(str: string) {
+  if (rgbaRX.test(str)) {
+    const match = rgbaRX.exec(str) as RegExpMatchArray;
+
+    return Number(match[4]);
+  }
+
+  return 1;
 }

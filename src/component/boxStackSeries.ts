@@ -1,5 +1,5 @@
 import BoxSeries, { SeriesRawData } from './boxSeries';
-import { ColumnChartOptions, BarChartOptions, Point, Connector, Rect, StackType } from '@t/options';
+import { ColumnChartOptions, BarChartOptions, Point, Connector, StackType } from '@t/options';
 import {
   ChartState,
   StackSeriesData,
@@ -12,7 +12,7 @@ import {
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
-import { first, last } from '@src/helpers/utils';
+import { first, last, deepCopyArray } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
 
 interface StackSeriesModelParamType {
@@ -55,19 +55,22 @@ export default class BoxStackSeries extends BoxSeries {
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { colors } = theme.series;
     const { tickDistance } = axes[this.labelAxis];
+    const valueAxis = axes[this.valueAxis];
     const { seriesModels, connectorModels } = this.renderStackSeriesModel(
       seriesData,
       colors,
-      axes[this.valueAxis],
+      valueAxis,
       tickDistance
     );
 
+    this.basePosition = this.getBasePosition(valueAxis);
+
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
 
-    const rectModel = super.renderHighlightSeriesModel(seriesModels);
+    const rectModel = this.renderHighlightSeriesModel(seriesModels);
 
-    this.models = [super.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
-
+    this.models = [this.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
+    this.drawModels = deepCopyArray(this.models);
     this.responders = rectModel.map((m, index) => ({
       ...m,
       data: tooltipData[index]
@@ -102,7 +105,8 @@ export default class BoxStackSeries extends BoxSeries {
     const basePosition = this.getBasePosition(valueAxis);
 
     stackData.forEach(({ values, sum }, index) => {
-      const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroupIndex;
+      const seriesPos =
+        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
       const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
 
       values.forEach((value, seriesIndex) => {
@@ -186,7 +190,8 @@ export default class BoxStackSeries extends BoxSeries {
     const connectorPoints: Array<Point[]> = [];
 
     stackData.forEach(({ values, sum }, index) => {
-      const seriesPos = index * tickDistance + this.padding + columnWidth * stackGroupIndex;
+      const seriesPos =
+        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
       const points: Point[] = [];
       const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
 
@@ -311,22 +316,5 @@ export default class BoxStackSeries extends BoxSeries {
     return this.isBar
       ? beforeValueSum * ratio + basePosition + Number(this.axisThickness)
       : basePosition - beforeValueSum * ratio;
-  }
-
-  getAdjustedRect(
-    seriesPos: number,
-    startPosition: number,
-    barLength: number,
-    columnWidth: number
-  ): Rect {
-    const dataPosition = startPosition + this.hoverThickness;
-    const seriesPosition = seriesPos + this.hoverThickness;
-
-    return {
-      x: this.isBar ? dataPosition : seriesPosition,
-      y: this.isBar ? seriesPosition : dataPosition,
-      width: this.isBar ? barLength : columnWidth,
-      height: this.isBar ? columnWidth : barLength
-    };
   }
 }
