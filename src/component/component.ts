@@ -92,22 +92,14 @@ export default abstract class Component {
   }
 
   syncModels(currentModels, targetModels, type?: string) {
-    if (type) {
-      if (currentModels.length < targetModels.length) {
-        this.drawModels[type] = currentModels.concat(
-          targetModels.slice(currentModels.length, targetModels.length)
-        );
-      } else if (currentModels.length > targetModels.length) {
-        this.drawModels[type].splice(targetModels.length, currentModels.length);
-      }
-    }
+    let drawModels = type ? this.drawModels[type] : this.drawModels;
 
     if (currentModels.length < targetModels.length) {
-      this.drawModels = currentModels.concat(
+      drawModels = currentModels.concat(
         targetModels.slice(currentModels.length, targetModels.length)
       );
     } else if (currentModels.length > targetModels.length) {
-      this.drawModels.splice(targetModels.length, currentModels.length);
+      drawModels.splice(targetModels.length, currentModels.length);
     }
   }
 
