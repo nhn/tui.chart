@@ -1,5 +1,5 @@
 import { CircleModel } from '@t/components/series';
-import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
+import { BaseOptions, BubbleSeriesType } from '@t/options';
 import { ChartState, Scale, SeriesTheme } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
@@ -10,44 +10,63 @@ interface RenderOptions {
   theme: SeriesTheme;
 }
 
-export default class ScatterSeries extends CircleSeries {
+const MINIMUM_DETECTING_AREA_RADIUS = 1;
+
+export default class BubbleSeries extends CircleSeries {
+  maxRadius = -1;
+
+  maxValue = -1;
+
   initialize() {
     this.type = 'series';
-    this.name = 'scatterSeries';
+    this.name = 'bubbleSeries';
   }
 
-  render(chartState: ChartState<ScatterChartOptions>) {
-    const { layout, series, scale, theme, categories = [] } = chartState;
-    if (!series.scatter) {
-      throw new Error("There's no scatter data!");
+  setMaxValue(bubbleData: BubbleSeriesType[]) {
+    bubbleData.forEach(({ data }) => {
+      this.maxValue = Math.max(this.maxValue, ...data.map(({ r }) => r));
+    });
+  }
+
+  render(chartState: ChartState<BaseOptions>) {
+    const { layout, series, scale, theme, categories = [], axes } = chartState;
+    if (!series.bubble) {
+      throw new Error("There's no bubble data!");
     }
 
-    const scatterData = series.scatter.data;
+    const { xAxis, yAxis } = axes;
+    const bubbleData = series.bubble.data;
     const renderOptions: RenderOptions = {
       theme: theme.series
     };
 
     this.rect = layout.plot;
 
-    const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions);
-    const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
+    const xAxisTickSize = this.rect.width / xAxis!.tickCount;
+    const yAxisTickSize = this.rect.height / yAxis!.tickCount;
+
+    this.maxRadius = Math.min(xAxisTickSize, yAxisTickSize);
+    this.setMaxValue(bubbleData);
+
+    const seriesModel = this.renderBubblePointsModel(bubbleData, renderOptions, scale);
+    const tooltipModel = this.makeTooltipModel(bubbleData, categories, renderOptions);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModel];
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',
       detectionRadius: 0,
-      radius: 7,
-      color: getRGBA(m.color, 1),
-      style: ['default', 'hover'],
+      radius: m.radius + MINIMUM_DETECTING_AREA_RADIUS,
+      color: getRGBA(m.color, 0.85),
+      style: ['default', 'hover', { lineWidth: 2 }],
       data: tooltipModel[index]
     }));
   }
 
-  renderScatterPointsModel(
-    seriesRawData: ScatterSeriesType[],
-    scale: Scale,
-    renderOptions: RenderOptions
+  renderBubblePointsModel(
+    seriesRawData: BubbleSeriesType[],
+    renderOptions: RenderOptions,
+    scale: Scale
   ): CircleModel[] {
     const { theme } = renderOptions;
     const { colors } = theme;
@@ -68,14 +87,16 @@ export default class ScatterSeries extends CircleSeries {
 
         const x = xValueRatio * this.rect.width;
         const y = (1 - yValueRatio) * this.rect.height;
+        const radius = (datum.r / this.maxValue) * this.maxRadius;
+        const color = getRGBA(colors[seriesIndex], 0.7);
 
         circleModels.push({
           x,
           y,
           type: 'circle',
-          radius: 7,
-          style: ['default'],
-          color: getRGBA(colors[seriesIndex], 0.9),
+          radius,
+          color,
+          style: ['default', { strokeStyle: getRGBA(color, 0.3) }],
           seriesIndex
         });
       });

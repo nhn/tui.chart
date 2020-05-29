@@ -4,9 +4,9 @@ import { LineChartOptions, LineTypeSeriesOptions, Point, CoordinateDataType } fr
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
-import { setSplineControlPoint } from '@src/helpers/calculator';
+import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
+import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -70,7 +70,7 @@ export default class LineSeries extends Component {
         tooltipData.push({
           label: name,
           color: theme.series.colors[index],
-          value: getCoordinateValue(datum),
+          value: getCoordinateYValue(datum),
           category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
         });
       });
@@ -108,10 +108,10 @@ export default class LineSeries extends Component {
       const points: Point[] = [];
 
       data.forEach((datum, idx) => {
-        const value = getCoordinateValue(datum);
+        const value = getCoordinateYValue(datum);
         const dataIndex = getCoordinateDataIndex(datum, categories, idx);
 
-        const valueRatio = (value - limit.min) / (limit.max - limit.min);
+        const valueRatio = getValueRatio(value, limit);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;

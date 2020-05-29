@@ -9,9 +9,9 @@ import {
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
-import { setSplineControlPoint } from '@src/helpers/calculator';
+import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
+import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 
 type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
@@ -101,7 +101,7 @@ export default class AreaSeries extends Component {
         tooltipData.push({
           label: name,
           color: theme.colors[index],
-          value: getCoordinateValue(datum),
+          value: getCoordinateYValue(datum),
           category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
         });
       });
@@ -123,10 +123,9 @@ export default class AreaSeries extends Component {
       const points: Point[] = [];
 
       data.forEach((datum, idx) => {
-        const value = getCoordinateValue(datum);
+        const value = getCoordinateYValue(datum);
         const dataIndex = getCoordinateDataIndex(datum, categories, idx);
-
-        const valueRatio = (value - limit.min) / (limit.max - limit.min);
+        const valueRatio = getValueRatio(value, limit);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
