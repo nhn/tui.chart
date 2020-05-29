@@ -93,3 +93,7 @@ export function setSplineControlPoint(points: BezierPoint[]) {
     prev = point;
   }
 }
+
+export function getValueRatio(value: number, { min, max }: ValueEdge) {
+  return (value - min) / (max - min);
+}

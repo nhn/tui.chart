@@ -4,6 +4,7 @@ import { ChartState, Scale, SeriesTheme } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
+import { getValueRatio } from '@src/helpers/calculator';
 
 interface RenderOptions {
   theme: SeriesTheme;
@@ -11,7 +12,7 @@ interface RenderOptions {
 
 export default class ScatterSeries extends CircleSeries {
   initialize() {
-    super.initialize();
+    this.type = 'series';
     this.name = 'scatterSeries';
   }
 
@@ -62,8 +63,8 @@ export default class ScatterSeries extends CircleSeries {
         const xValue = getCoordinateXValue(datum);
         const yValue = getCoordinateYValue(datum);
 
-        const xValueRatio = (xValue - xAxisLimit.min) / (xAxisLimit.max - xAxisLimit.min);
-        const yValueRatio = (yValue - yAxisLimit.min) / (yAxisLimit.max - yAxisLimit.min);
+        const xValueRatio = getValueRatio(xValue, xAxisLimit);
+        const yValueRatio = getValueRatio(yValue, yAxisLimit);
 
         const x = xValueRatio * this.rect.width;
         const y = (1 - yValueRatio) * this.rect.height;

@@ -9,7 +9,7 @@ import {
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
-import { setSplineControlPoint } from '@src/helpers/calculator';
+import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
@@ -125,8 +125,7 @@ export default class AreaSeries extends Component {
       data.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
         const dataIndex = getCoordinateDataIndex(datum, categories, idx);
-
-        const valueRatio = (value - limit.min) / (limit.max - limit.min);
+        const valueRatio = getValueRatio(value, limit);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;

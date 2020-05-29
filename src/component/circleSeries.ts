@@ -19,10 +19,6 @@ export default abstract class CircleSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  initialize() {
-    this.type = 'series';
-  }
-
   update(delta: number) {
     if (this.models[0].type === 'clipRectArea') {
       this.models[0].width = this.rect.width * delta;
