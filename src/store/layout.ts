@@ -1,19 +1,5 @@
-import { StoreModule } from '@t/store/store';
+import { StoreModule, Layout } from '@t/store/store';
 import { extend } from '@src/store/store';
-
-import { Rect } from '@t/options';
-
-export interface Layout {
-  xAxis: Rect;
-  yAxis: Rect;
-  plot: Rect;
-}
-
-declare module '@t/store/store' {
-  interface ModuleStates {
-    layout: Layout;
-  }
-}
 
 const layout: StoreModule = {
   name: 'layout',
