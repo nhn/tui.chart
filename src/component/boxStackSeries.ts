@@ -12,8 +12,9 @@ import {
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
-import { first, last, deepCopyArray } from '@src/helpers/utils';
+import { first, last, deepCopyArray, includes } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
+import scale from '@src/store/scale';
 
 interface StackSeriesModelParamType {
   stack: Stack;
@@ -23,6 +24,7 @@ interface StackSeriesModelParamType {
   tickDistance: number;
   stackGroupCount?: number;
   stackGroupIndex?: number;
+  scaleType: string;
 }
 
 function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
@@ -85,16 +87,18 @@ export default class BoxStackSeries extends BoxSeries {
     valueAxis: AxisData,
     tickDistance: number
   ) {
-    const { stack, stackData } = seriesData;
+    console.log(seriesData);
+    const { stack, stackData, scaleType } = seriesData;
 
     return isGroupStack(stackData)
-      ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueAxis, tickDistance)
+      ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueAxis, tickDistance, scaleType)
       : this.makeStackSeriesModel({
           stack,
           stackData,
           colors,
           valueAxis,
           tickDistance,
+          scaleType,
         });
   }
 
@@ -106,16 +110,17 @@ export default class BoxStackSeries extends BoxSeries {
     tickDistance,
     stackGroupCount = 1,
     stackGroupIndex = 0,
+    scaleType,
   }: StackSeriesModelParamType) {
     const seriesModels: RectModel[] = [];
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
     const { labels: valueLabels } = valueAxis;
     const basePosition = this.getBasePosition(valueAxis);
 
-    stackData.forEach(({ values, sum }, index) => {
+    stackData.forEach(({ values, total }, index) => {
       const seriesPos =
         index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
-      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
+      const ratio = this.getStackValueRatio(valueLabels, total, stack.type, scaleType);
 
       values.forEach((value, seriesIndex) => {
         const barLength = this.getStackBarLength(value, ratio);
@@ -138,6 +143,7 @@ export default class BoxStackSeries extends BoxSeries {
         tickDistance,
         stackGroupCount,
         stackGroupIndex,
+        scaleType,
       }),
     };
   }
@@ -146,7 +152,8 @@ export default class BoxStackSeries extends BoxSeries {
     stackSeries: StackSeriesData<BoxType>,
     colors: string[],
     valueAxis: AxisData,
-    tickDistance: number
+    tickDistance: number,
+    scaleType: string
   ) {
     const stack = stackSeries.stack;
     const stackGroupData = stackSeries.stackData as StackGroupData;
@@ -166,6 +173,7 @@ export default class BoxStackSeries extends BoxSeries {
         tickDistance,
         stackGroupCount: stackGroupIds.length,
         stackGroupIndex: groupIndex,
+        scaleType,
       });
 
       rectModels = [...rectModels, ...stackModels.seriesModels];
@@ -197,11 +205,11 @@ export default class BoxStackSeries extends BoxSeries {
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
     const connectorPoints: Array<Point[]> = [];
 
-    stackData.forEach(({ values, sum }, index) => {
+    stackData.forEach(({ values, total }, index) => {
       const seriesPos =
         index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
       const points: Point[] = [];
-      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
+      const ratio = this.getStackValueRatio(valueLabels, total, stack.type);
 
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
@@ -306,9 +314,21 @@ export default class BoxStackSeries extends BoxSeries {
     return connectorModels;
   }
 
-  getStackValueRatio(valueLabels: string[], sum: number, stackType: StackType) {
-    const divisor =
-      stackType === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
+  getStackValueRatio(
+    valueLabels: string[],
+    total: { positive: number; negative: number },
+    stackType: StackType,
+    scaleType: string
+  ) {
+    let divisor = Number(last(valueLabels)) - Number(first(valueLabels));
+
+    if (stackType === 'percent') {
+      if (includes(['dualPercentStack', 'divergingPercentStack'], scaleType)) {
+        divisor = (total.positive + Math.abs(total.negative)) * 2;
+      } else {
+        divisor = total.positive + Math.abs(total.negative);
+      }
+    }
 
     return this.getOffsetSize() / divisor;
   }

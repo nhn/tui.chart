@@ -161,6 +161,7 @@ export type StackSeriesData<K extends BoxType> = {
   stackData: StackDataType;
   dataValues: number[];
   stack: Stack;
+  scaleType: 'percentStack' | 'minusPercentStack' | 'dualPercentStack' | 'divergingPercentStack';
 } & SeriesGroup;
 
 export interface SeriesGroup {

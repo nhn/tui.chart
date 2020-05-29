@@ -85,8 +85,20 @@ export const percentStack = () => {
 export const negativeStack = () => {
   const { el } = createChart(negativeBudgetData, {
     series: {
-      stack: true
-    }
+      stack: true,
+    },
+  });
+
+  return el;
+};
+
+export const negativePercentStack = () => {
+  const { el } = createChart(negativeBudgetData, {
+    series: {
+      stack: {
+        type: 'percent',
+      },
+    },
   });
 
   return el;
