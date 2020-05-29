@@ -34,7 +34,11 @@ describe('Scale Store', () => {
         bar: {
           stack: {
             type: 'percent',
-            connector: { type: 'solid', color: 'rgba(51, 85, 139, 0,3)', width: 1 }
+            connector: {
+              type: 'solid',
+              color: 'rgba(51, 85, 139, 0,3)',
+              width: 1
+            }
           }
         }
       },

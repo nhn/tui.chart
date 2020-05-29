@@ -1,7 +1,10 @@
 import { extend } from '@src/store/store';
 import { StoreModule, Stack, Scale } from '@t/store/store';
 import { getAxisName, getSizeKey, isLabelAxisOnYAxis } from '@src/helpers/axes';
-import { coordinateScaleCalculator, getStackScaleData } from '@src/scale/coordinateScaleCalculator';
+import {
+  coordinateScaleCalculator,
+  getStackScaleData
+} from '@src/scale/coordinateScaleCalculator';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
 
 function isPercentStack(stack?: Stack) {
@@ -22,10 +25,16 @@ const scale: StoreModule = {
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
       const { labelSizeKey, valueSizeKey } = getSizeKey(labelAxisOnYAxis);
 
-      const scaleOptions = { xAxis: options?.xAxis?.scale, yAxis: options?.yAxis?.scale };
+      const scaleOptions = {
+        xAxis: options?.xAxis?.scale,
+        yAxis: options?.yAxis?.scale
+      };
 
       Object.keys(series).forEach(seriesName => {
-        if (isPercentStack(stackSeries.column?.stack) || isPercentStack(stackSeries.bar?.stack)) {
+        if (
+          isPercentStack(stackSeries.column?.stack) ||
+          isPercentStack(stackSeries.bar?.stack)
+        ) {
           scaleData[valueAxisName] = getStackScaleData('percentStack');
         } else if (isCoordinateSeries(series)) {
           const range = dataRange[seriesName];

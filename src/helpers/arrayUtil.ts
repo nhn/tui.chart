@@ -1,4 +1,8 @@
-export function max(arr: number[], condition?: Function, context?: any): number {
+export function max(
+  arr: number[],
+  condition?: Function,
+  context?: any
+): number {
   let result: number;
 
   if (!condition) {

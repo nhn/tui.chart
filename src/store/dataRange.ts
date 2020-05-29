@@ -59,7 +59,8 @@ const dataRange: StoreModule = {
         if (isBoxSeries(seriesName as ChartType)) {
           if (tupleCoord) {
             values = values.reduce(
-              (arr, value) => (Array.isArray(value) ? [...arr, ...value] : value),
+              (arr, value) =>
+                Array.isArray(value) ? [...arr, ...value] : value,
               []
             );
           } else if (stackSeries[seriesName]?.stack) {
@@ -82,7 +83,9 @@ const dataRange: StoreModule = {
           ] as number[]);
         }
 
-        newDataRange[seriesName][valueAxisName] = getLimitSafely([...new Set(values)] as number[]);
+        newDataRange[seriesName][valueAxisName] = getLimitSafely([
+          ...new Set(values)
+        ] as number[]);
       }
       extend(state.dataRange, newDataRange);
     }

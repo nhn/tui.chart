@@ -2,8 +2,15 @@ import { Series } from '@t/store/store';
 
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
-type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
-type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
+type LineSeriesDataType =
+  | number[]
+  | Point[]
+  | [number, number][]
+  | [string, number][];
+type CoordinateSeriesDataType =
+  | Point[]
+  | [number, number][]
+  | [string, number][];
 export type CoordinateDataType = Point | [number, number] | [string, number];
 export type AreaSeriesDataType = number[] | RangeDataType[];
 export type BubbleSeriesDataType = ({ label: string; r: number } & Point)[];
@@ -106,7 +113,11 @@ type PlotLineValue = string | number;
 
 interface BasePlotOptions {
   lines?: { value: PlotLineValue; color: string }[];
-  bands?: { range: [PlotLineValue, PlotLineValue]; value: PlotLineValue; color: string }[];
+  bands?: {
+    range: [PlotLineValue, PlotLineValue];
+    value: PlotLineValue;
+    color: string;
+  }[];
 }
 
 interface BaseOptions {

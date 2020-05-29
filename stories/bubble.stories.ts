@@ -21,7 +21,10 @@ const defaultOptions = {
   plot: {}
 };
 
-function createChart(data: BubbleSeriesData, customOptions?: BubbleChartOptions) {
+function createChart(
+  data: BubbleSeriesData,
+  customOptions?: BubbleChartOptions
+) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 

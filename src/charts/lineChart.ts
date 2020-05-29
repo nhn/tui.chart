@@ -45,6 +45,11 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, lineSeriesBrushes]);
+    this.painter.addGroups([
+      basicBrushes,
+      axisBrushes,
+      tooltipBrushes,
+      lineSeriesBrushes
+    ]);
   }
 }

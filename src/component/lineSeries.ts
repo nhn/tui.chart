@@ -1,12 +1,20 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
-import { LineChartOptions, LineTypeSeriesOptions, Point, CoordinateDataType } from '@t/options';
+import {
+  LineChartOptions,
+  LineTypeSeriesOptions,
+  Point,
+  CoordinateDataType
+} from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
+import {
+  getCoordinateDataIndex,
+  getCoordinateYValue
+} from '@src/helpers/coordinate';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -37,7 +45,15 @@ export default class LineSeries extends Component {
   }
 
   render(chartState: ChartState<LineChartOptions>) {
-    const { layout, series, scale, theme, options, axes, categories = [] } = chartState;
+    const {
+      layout,
+      series,
+      scale,
+      theme,
+      options,
+      axes,
+      categories = []
+    } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -71,7 +87,8 @@ export default class LineSeries extends Component {
           label: name,
           color: theme.series.colors[index],
           value: getCoordinateYValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
+          category:
+            categories[getCoordinateDataIndex(datum, categories, dataIdx)]
         });
       });
 
@@ -80,7 +97,10 @@ export default class LineSeries extends Component {
 
     this.models = [this.renderClipRectAreaModel(), ...lineSeriesModel];
 
-    this.responders = seriesCircleModel.map((m, index) => ({ ...m, data: tooltipDataArr[index] }));
+    this.responders = seriesCircleModel.map((m, index) => ({
+      ...m,
+      data: tooltipDataArr[index]
+    }));
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -113,7 +133,8 @@ export default class LineSeries extends Component {
 
         const valueRatio = getValueRatio(value, limit);
 
-        const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
+        const x =
+          tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
 
         points.push({ x, y });
@@ -123,7 +144,13 @@ export default class LineSeries extends Component {
         setSplineControlPoint(points);
       }
 
-      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points, seriesIndex };
+      return {
+        type: 'linePoints',
+        lineWidth: 6,
+        color: colors[seriesIndex],
+        points,
+        seriesIndex
+      };
     });
   }
 

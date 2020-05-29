@@ -14,11 +14,13 @@ export const responderDetectors: ResponderDetectors = {
     const { x: modelX, y: modelY, radius, detectionRadius } = model;
     const { x: compX, y: compY } = componentRect;
 
-    const radiusAdjustment = isUndefined(detectionRadius) ? 10 : detectionRadius;
+    const radiusAdjustment = isUndefined(detectionRadius)
+      ? 10
+      : detectionRadius;
 
     return (
-      Math.pow(x - (modelX + compX), 2) + Math.pow(y - (modelY + compY), 2) <
-      Math.pow(radius + radiusAdjustment, 2)
+      (x - (modelX + compX)) ** 2 + (y - (modelY + compY)) ** 2 <
+      (radius + radiusAdjustment) ** 2
     );
   },
   rect: (

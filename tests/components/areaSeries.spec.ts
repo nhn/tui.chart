@@ -169,11 +169,13 @@ it('add line points model and circle model when hover above line point', () => {
 
   expect(applyAreaOpacity).toHaveBeenCalledWith(0.5);
 
-  expect(areaSeries.models.filter(model => model.type === 'linePoints')).toEqual([
-    result.linePointsModel[0]
-  ]);
+  expect(
+    areaSeries.models.filter(model => model.type === 'linePoints')
+  ).toEqual([result.linePointsModel[0]]);
 
-  expect(areaSeries.models.filter(model => model.type === 'circle')).toEqual([responder]);
+  expect(areaSeries.models.filter(model => model.type === 'circle')).toEqual([
+    responder
+  ]);
 });
 
 it('remove line points model and circle model when mousemove after hover above line point', () => {

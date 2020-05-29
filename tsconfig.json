@@ -21,6 +21,13 @@
     },
     "downlevelIteration": true
   },
-  "include": ["src/**/*.js", "src/**/*.ts", "stories/**/*.ts", "stories/**/*.js", "tests/**/*.ts", "types/**/*"],
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "stories/**/*.ts",
+    "stories/**/*.js",
+    "tests/**/*.ts",
+    "types/**/*"
+  ],
   "exclude": ["node_modules"]
 }

@@ -13,7 +13,13 @@ export default class ComponentManager<T> {
 
   eventBus: EventEmitter;
 
-  constructor({ store, eventBus }: { store: Store<T>; eventBus: EventEmitter }) {
+  constructor({
+    store,
+    eventBus
+  }: {
+    store: Store<T>;
+    eventBus: EventEmitter;
+  }) {
     this.store = store;
     this.eventBus = eventBus;
   }

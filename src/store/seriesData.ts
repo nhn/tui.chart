@@ -34,7 +34,9 @@ const seriesData: StoreModule = {
       this.notify(state, 'disabledSeries');
     },
     enableSeries({ state }, name: string) {
-      const index = state.disabledSeries.findIndex(disabled => disabled === name);
+      const index = state.disabledSeries.findIndex(
+        disabled => disabled === name
+      );
       state.disabledSeries.splice(index, 1);
       this.notify(state, 'disabledSeries');
     }

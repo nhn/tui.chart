@@ -49,7 +49,10 @@ export default class Axis extends Component {
       labelInterval
     } = axes[this.name]!;
 
-    const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
+    const relativePositions = makeTickPixelPositions(
+      this.axisSize(),
+      tickCount
+    );
     const offsetKey = this.yAxisComponent ? 'y' : 'x';
     const anchorKey = this.yAxisComponent ? 'x' : 'y';
 
@@ -126,7 +129,9 @@ export default class Axis extends Component {
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): TickModel[] {
-    const tickAnchorPoint = this.yAxisComponent ? crispPixel(this.rect.width) : crispPixel(0);
+    const tickAnchorPoint = this.yAxisComponent
+      ? crispPixel(this.rect.width)
+      : crispPixel(0);
     const { tickInterval } = renderOptions;
 
     return relativePositions.reduce((positions, position, index) => {
@@ -152,7 +157,9 @@ export default class Axis extends Component {
     renderOptions: RenderOptions
   ): LabelModel[] {
     const { tickDistance, pointOnColumn, labelInterval } = renderOptions;
-    const labelAnchorPoint = this.yAxisComponent ? crispPixel(0) : crispPixel(this.rect.height);
+    const labelAnchorPoint = this.yAxisComponent
+      ? crispPixel(0)
+      : crispPixel(this.rect.height);
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
 
     return labels.reduce((positions, text, index) => {
@@ -163,8 +170,13 @@ export default class Axis extends Component {
             {
               type: 'label',
               text,
-              style: ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }],
-              [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
+              style: [
+                'default',
+                { textAlign: this.yAxisComponent ? 'left' : 'center' }
+              ],
+              [offsetKey]: crispPixel(
+                relativePositions[index] + labelAdjustment
+              ),
               [anchorKey]: labelAnchorPoint
             } as LabelModel
           ];

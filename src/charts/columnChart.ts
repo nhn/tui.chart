@@ -53,6 +53,11 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes]);
+    this.painter.addGroups([
+      basicBrushes,
+      axisBrushes,
+      boxBrushes,
+      tooltipBrushes
+    ]);
   }
 }

@@ -53,6 +53,11 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes]);
+    this.painter.addGroups([
+      basicBrushes,
+      axisBrushes,
+      boxBrushes,
+      tooltipBrushes
+    ]);
   }
 }
