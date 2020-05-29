@@ -4,16 +4,16 @@ describe('style', () => {
   it('makeStyleObj', () => {
     const styleSet = {
       a: {
-        b: 'test'
+        b: 'test',
       },
       c: {
-        d: 'test2'
-      }
+        d: 'test2',
+      },
     };
 
     expect(makeStyleObj(['a', 'c', { d: 'test3' }], styleSet)).toEqual({
       b: 'test',
-      d: 'test3'
+      d: 'test3',
     });
   });
 });

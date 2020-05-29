@@ -1,8 +1,4 @@
-export function max(
-  arr: number[],
-  condition?: Function,
-  context?: any
-): number {
+export function max(arr: number[], condition?: Function, context?: any): number {
   let result: number;
 
   if (!condition) {
@@ -32,9 +28,9 @@ export function max(
  */
 export function pivot(arr2d: any[][]) {
   const result: any[][] = [];
-  const len = max(arr2d.map(arr => arr.length));
+  const len = max(arr2d.map((arr) => arr.length));
 
-  arr2d.forEach(arr => {
+  arr2d.forEach((arr) => {
     for (let index = 0; index < len; index += 1) {
       if (!result[index]) {
         result[index] = [];

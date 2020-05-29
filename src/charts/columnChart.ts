@@ -31,9 +31,9 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
       el,
       options,
       series: {
-        column: data.series
+        column: data.series,
       },
-      categories: data.categories
+      categories: data.categories,
     });
   }
 
@@ -53,11 +53,6 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([
-      basicBrushes,
-      axisBrushes,
-      boxBrushes,
-      tooltipBrushes
-    ]);
+    this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes]);
   }
 }

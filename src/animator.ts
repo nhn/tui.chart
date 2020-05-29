@@ -24,9 +24,9 @@ class Animator {
     duration,
     requester,
     onCompleted = () => {},
-    onFrame = delta => {
+    onFrame = (delta) => {
       chart.update(delta);
-    }
+    },
   }: {
     chart: Chart<Options>;
     duration: number;
@@ -34,9 +34,7 @@ class Animator {
     onCompleted: Function;
     onFrame?: (delta: number) => void;
   }) {
-    const prevIndex = this.anims.findIndex(
-      anim => anim.requester === requester
-    );
+    const prevIndex = this.anims.findIndex((anim) => anim.requester === requester);
 
     if (~prevIndex) {
       this.anims.splice(prevIndex, 1);
@@ -50,7 +48,7 @@ class Animator {
       onCompleted,
       start: null,
       current: null,
-      completed: false
+      completed: false,
     });
 
     if (this.state === 'IDLE') {
@@ -67,7 +65,7 @@ class Animator {
   }
 
   runFrame() {
-    this.requestId = window.requestAnimationFrame(timestamp => {
+    this.requestId = window.requestAnimationFrame((timestamp) => {
       this.runAnims(timestamp);
     });
   }
@@ -84,7 +82,7 @@ class Animator {
   }
 
   next(timestamp: number) {
-    this.anims.forEach(anim => {
+    this.anims.forEach((anim) => {
       if (anim.start === null) {
         anim.start = timestamp;
       }
@@ -93,7 +91,7 @@ class Animator {
         value: timestamp,
         enumerable: false,
         writable: false,
-        configurable: true
+        configurable: true,
       });
 
       anim.current = Math.min((timestamp - anim.start) / anim.duration, 1);
@@ -105,7 +103,7 @@ class Animator {
       }
     });
 
-    this.anims.forEach(anim => {
+    this.anims.forEach((anim) => {
       if (anim.chart.___animId___ === timestamp) {
         anim.chart.draw();
         delete anim.chart.___animId___;
@@ -117,7 +115,7 @@ class Animator {
       }
     });
 
-    this.anims = this.anims.filter(anim => !anim.completed);
+    this.anims = this.anims.filter((anim) => !anim.completed);
   }
 }
 

@@ -13,13 +13,7 @@ export default class ComponentManager<T> {
 
   eventBus: EventEmitter;
 
-  constructor({
-    store,
-    eventBus
-  }: {
-    store: Store<T>;
-    eventBus: EventEmitter;
-  }) {
+  constructor({ store, eventBus }: { store: Store<T>; eventBus: EventEmitter }) {
     this.store = store;
     this.eventBus = eventBus;
   }
@@ -27,7 +21,7 @@ export default class ComponentManager<T> {
   add(
     ComponentCtor: new ({
       store,
-      eventBus
+      eventBus,
     }: {
       store: Store<T>;
       eventBus: EventEmitter;
@@ -36,7 +30,7 @@ export default class ComponentManager<T> {
   ) {
     const component = new ComponentCtor({
       store: this.store,
-      eventBus: this.eventBus
+      eventBus: this.eventBus,
     });
 
     if (component.initialize) {
@@ -63,7 +57,7 @@ export default class ComponentManager<T> {
   }
 
   invoke(method: FunctionPropertyNames<Component>, params: any) {
-    this.components.forEach(component => {
+    this.components.forEach((component) => {
       const fn: Function = component[method!];
       if (fn) {
         fn.call(component, params);

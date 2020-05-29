@@ -9,10 +9,10 @@ describe('Store', () => {
       store = new Store({
         chart: {
           width: 1,
-          height: 2
+          height: 2,
         },
         categories: [],
-        series: {}
+        series: {},
       });
     });
     it('should computed property correctly', () => {
@@ -29,10 +29,10 @@ describe('Store', () => {
       store = new Store({
         chart: {
           width: 1,
-          height: 2
+          height: 2,
         },
         categories: [],
-        series: {}
+        series: {},
       });
     });
     it('should observe observable correctly', () => {
@@ -66,16 +66,16 @@ describe('Store', () => {
       store = new Store({
         chart: {
           width: 1,
-          height: 2
+          height: 2,
         },
         categories: [],
-        series: {}
+        series: {},
       });
     });
     it('should watcher property correctly', () => {
       let count = 0;
 
-      store.setWatch('state.chart.width', width => {
+      store.setWatch('state.chart.width', (width) => {
         count += width;
       });
 
@@ -88,7 +88,7 @@ describe('Store', () => {
     it('could unwatch correctly', () => {
       let count = 0;
 
-      const unwatch = store.setWatch('state.chart.width', width => {
+      const unwatch = store.setWatch('state.chart.width', (width) => {
         count += width;
       });
 
@@ -153,10 +153,10 @@ describe('Store', () => {
       store = new Store({
         chart: {
           width: 1,
-          height: 2
+          height: 2,
         },
         categories: [],
-        series: {}
+        series: {},
       });
     });
 
@@ -175,10 +175,10 @@ describe('Store', () => {
     store = new Store({
       chart: {
         width: 1,
-        height: 1
+        height: 1,
       },
       categories: [],
-      series: {}
+      series: {},
     });
 
     expect(store.state.chart.width).toEqual(1);
@@ -189,10 +189,10 @@ describe('Store', () => {
     store = new Store({
       chart: {
         width: 1,
-        height: 1
+        height: 1,
       },
       categories: [],
-      series: {}
+      series: {},
     });
 
     let makeMyData = 0;
@@ -210,10 +210,10 @@ describe('Store', () => {
     store = new Store({
       chart: {
         width: 1,
-        height: 1
+        height: 1,
       },
       categories: [],
-      series: {}
+      series: {},
     });
 
     let makeMyData = 0;
@@ -231,7 +231,7 @@ describe('Store', () => {
     store = new Store({
       chart: {
         width: 1,
-        height: 1
+        height: 1,
       },
       series: {
         line: [
@@ -240,11 +240,11 @@ describe('Store', () => {
             data: [
               { x: 10, y: 5 },
               { x: 1, y: 2 },
-              { x: 3, y: 5 }
-            ]
-          }
-        ]
-      }
+              { x: 3, y: 5 },
+            ],
+          },
+        ],
+      },
     });
 
     expect(store.state.categories).toEqual(['1', '3', '10']);
@@ -252,7 +252,7 @@ describe('Store', () => {
     store = new Store({
       chart: {
         width: 1,
-        height: 1
+        height: 1,
       },
       series: {
         line: [
@@ -261,11 +261,11 @@ describe('Store', () => {
             data: [
               [10, 5],
               [1, 2],
-              [3, 5]
-            ]
-          }
-        ]
-      }
+              [3, 5],
+            ],
+          },
+        ],
+      },
     });
 
     expect(store.state.categories).toEqual(['1', '3', '10']);

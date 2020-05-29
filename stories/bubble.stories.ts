@@ -4,7 +4,7 @@ import { lifeExpectancyPerGDPData } from './data';
 import BubbleChart from '@src/charts/bubbleChart';
 
 export default {
-  title: 'chart|Bubble'
+  title: 'chart|Bubble',
 };
 
 const width = 1000;
@@ -12,19 +12,16 @@ const height = 500;
 const defaultOptions = {
   chart: {
     width,
-    height
+    height,
   },
   yAxis: {},
   xAxis: {},
   series: {},
   tooltip: {},
-  plot: {}
+  plot: {},
 };
 
-function createChart(
-  data: BubbleSeriesData,
-  customOptions?: BubbleChartOptions
-) {
+function createChart(data: BubbleSeriesData, customOptions?: BubbleChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 

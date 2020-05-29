@@ -31,11 +31,10 @@ export function isObject(obj: unknown): obj is object {
   return typeof obj === 'object' && obj !== null;
 }
 
-export function forEach<
-  T extends object,
-  K extends Extract<keyof T, string>,
-  V extends T[K]
->(obj: T, cb: (item: V, key: K) => void) {
+export function forEach<T extends object, K extends Extract<keyof T, string>, V extends T[K]>(
+  obj: T,
+  cb: (item: V, key: K) => void
+) {
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
       cb(obj[key as K] as V, key as K);
@@ -78,12 +77,9 @@ export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
   return false;
 }
 
-export function pick<T extends object, K extends keyof T>(
-  obj: T,
-  ...propNames: K[]
-) {
+export function pick<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
   const resultMap = {} as Pick<T, K>;
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (includes(propNames, key as K)) {
       resultMap[key as PickedKey<T, K>] = obj[key as PickedKey<T, K>];
     }
@@ -92,12 +88,9 @@ export function pick<T extends object, K extends keyof T>(
   return resultMap;
 }
 
-export function omit<T extends object, K extends keyof T>(
-  obj: T,
-  ...propNames: K[]
-) {
+export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
   const resultMap = {} as Omit<T, K>;
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (!includes(propNames, key as K)) {
       resultMap[key as OmittedKey<T, K>] = obj[key as OmittedKey<T, K>];
     }
@@ -121,10 +114,7 @@ export function pickProperty(target: Record<string, any>, keys: string[]) {
   return target;
 }
 
-export function pickPropertyWithMakeup(
-  target: Record<string, any>,
-  args: string[]
-) {
+export function pickPropertyWithMakeup(target: Record<string, any>, args: string[]) {
   const { length } = args;
 
   if (length) {
@@ -145,7 +135,7 @@ export function debounce(fn: Function, delay = 0) {
 
   function debounced(...args: any[]) {
     window.clearTimeout(timer);
-    timer = window.setTimeout(function() {
+    timer = window.setTimeout(function () {
       fn(...args);
     }, delay);
   }
@@ -153,13 +143,10 @@ export function debounce(fn: Function, delay = 0) {
   return debounced;
 }
 
-export function merge(
-  target: Record<string, any>,
-  ...args: Record<string, any>[]
-) {
+export function merge(target: Record<string, any>, ...args: Record<string, any>[]) {
   target = target || {};
 
-  args.forEach(obj => {
+  args.forEach((obj) => {
     if (!obj) {
       return;
     }
@@ -180,7 +167,7 @@ export function throttle(fn: Function, interval = 0) {
   let base: number | null = null;
   let isLeading = true;
 
-  const tick = function(...args) {
+  const tick = function (...args) {
     fn(...args);
     base = null;
   };
@@ -219,10 +206,10 @@ export function throttle(fn: Function, interval = 0) {
   return throttled;
 }
 
-export function deepMergedCopy<
-  T1 extends Record<string, any>,
-  T2 extends Record<string, any>
->(targetObj: T1, obj: T2) {
+export function deepMergedCopy<T1 extends Record<string, any>, T2 extends Record<string, any>>(
+  targetObj: T1,
+  obj: T2
+) {
   const resultObj = { ...targetObj } as T1 & T2;
 
   Object.keys(obj).forEach((prop: keyof T2) => {
@@ -260,11 +247,9 @@ export function deepCopy<T extends Record<string, any>>(obj: T) {
     return obj;
   }
 
-  keys.forEach(prop => {
+  keys.forEach((prop) => {
     if (isObject(obj[prop])) {
-      resultObj[prop] = Array.isArray(obj[prop])
-        ? deepCopyArray(obj[prop])
-        : deepCopy(obj[prop]);
+      resultObj[prop] = Array.isArray(obj[prop]) ? deepCopyArray(obj[prop]) : deepCopy(obj[prop]);
     } else {
       resultObj[prop] = obj[prop];
     }
@@ -281,9 +266,7 @@ export function sortSeries(obj1: CoordinateDataType, obj2: CoordinateDataType) {
 }
 
 export function sortCategories(x: number | string, y: number | string) {
-  return isInteger(x)
-    ? Number(x) - Number(y)
-    : new Date(x).getTime() - new Date(y).getTime();
+  return isInteger(x) ? Number(x) - Number(y) : new Date(x).getTime() - new Date(y).getTime();
 }
 
 export function first<T extends Array<any>>(items: T): T[keyof T] {
@@ -297,5 +280,5 @@ export function last<T extends Array<any>>(items: T): T[keyof T] {
 }
 
 export function hasNegative(values: (number | string)[] = []) {
-  return values.some(value => Number(value) < 0);
+  return values.some((value) => Number(value) < 0);
 }

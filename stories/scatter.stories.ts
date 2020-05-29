@@ -4,7 +4,7 @@ import { genderHeightWeightData } from './data';
 import ScatterChart from '@src/charts/scatterChart';
 
 export default {
-  title: 'chart|Scatter'
+  title: 'chart|Scatter',
 };
 
 const width = 1000;
@@ -12,19 +12,16 @@ const height = 500;
 const defaultOptions = {
   chart: {
     width,
-    height
+    height,
   },
   yAxis: {},
   xAxis: {},
   series: {},
   tooltip: {},
-  plot: {}
+  plot: {},
 };
 
-function createChart(
-  data: ScatterSeriesData,
-  customOptions?: ScatterChartOptions
-) {
+function createChart(data: ScatterSeriesData, customOptions?: ScatterChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 

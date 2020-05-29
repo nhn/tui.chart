@@ -26,9 +26,9 @@ export default class LineChart extends Chart<LineChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        line: props.data.series
+        line: props.data.series,
       },
-      categories: props.data?.categories
+      categories: props.data?.categories,
     });
   }
 
@@ -45,11 +45,6 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([
-      basicBrushes,
-      axisBrushes,
-      tooltipBrushes,
-      lineSeriesBrushes
-    ]);
+    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, lineSeriesBrushes]);
   }
 }

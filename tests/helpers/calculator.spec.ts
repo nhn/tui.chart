@@ -7,7 +7,7 @@ describe('spline chart', () => {
       const points = [
         { x: 1, y: 2 },
         { x: 3, y: 5 },
-        { x: 5, y: 4 }
+        { x: 5, y: 4 },
       ];
 
       setSplineControlPoint(points);
@@ -25,7 +25,7 @@ describe('spline chart', () => {
       expect(points[0]).toEqual({
         x: 1,
         y: 2,
-        controlPoint: { prev: { x: 1, y: 2 }, next: { x: 1, y: 2 } }
+        controlPoint: { prev: { x: 1, y: 2 }, next: { x: 1, y: 2 } },
       });
     });
   });

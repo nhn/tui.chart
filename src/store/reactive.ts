@@ -49,8 +49,8 @@ export function observe(fn: Function): Function {
   currentCollectorObserver = null;
 
   return () => {
-    observer.deps.forEach(dep => {
-      const index = dep.findIndex(ob => ob === observer);
+    observer.deps.forEach((dep) => {
+      const index = dep.findIndex((ob) => ob === observer);
       dep.splice(index, 1);
     });
 
@@ -81,7 +81,7 @@ export function observable(
 
   if (!isObservable(target)) {
     Object.defineProperty(target, '__ob__', {
-      enumerable: false
+      enumerable: false,
     });
   }
 
@@ -101,7 +101,7 @@ export function observable(
     Object.defineProperty(target, key, {
       configurable: true,
       enumerable: true,
-      get: function() {
+      get: function () {
         if (currentCollectorObserver === observableInfo) {
           return { target, key, value, obs };
         }
@@ -118,7 +118,7 @@ export function observable(
 
         return value;
       },
-      set: function(v) {
+      set: function (v) {
         const prevValue = value;
 
         if (preSetter) {
@@ -132,7 +132,7 @@ export function observable(
           // console.log('run observe', key, obs);
           invokeObs(obs);
         }
-      }
+      },
     });
 
     if (typeof target[key] === 'object' && !Array.isArray(target[key])) {
@@ -151,7 +151,7 @@ export function setValue(
   source: any
 ): Record<string, any> {
   return observable(target, {
-    [key]: source
+    [key]: source,
   });
 }
 
@@ -192,7 +192,7 @@ export function notifyByPath<T extends Record<string, any>>(holder: T, namePath:
 }
 
 function invokeObs(obs: Array<Function>) {
-  obs.forEach(ob => ob());
+  obs.forEach((ob) => ob());
 }
 
 function observableInfo<T extends Record<string, any>, K extends keyof T>(
@@ -222,7 +222,7 @@ export function computed(target: Record<string, any>, key: string, fn: Function)
   Object.defineProperty(computedBox, key, {
     configurable: true,
     enumerable: true,
-    get: () => cachedValue
+    get: () => cachedValue,
   });
 
   extend(target, computedBox);
@@ -259,7 +259,7 @@ export function watch(holder: Record<string, any>, path: string, fn: Function): 
   obInfo.obs.push(watcher);
 
   return () => {
-    const index = obInfo.obs.findIndex(ob => ob === watcher);
+    const index = obInfo.obs.findIndex((ob) => ob === watcher);
     if (index > -1) {
       obInfo.obs.splice(index, 1);
     }

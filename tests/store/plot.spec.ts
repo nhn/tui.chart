@@ -14,19 +14,19 @@ describe('Plot Store', () => {
         bar: {
           data: [
             { name: 'han', data: [-1, -2, 0] },
-            { name: 'cho', data: [1, 2, -3] }
-          ]
-        }
+            { name: 'cho', data: [1, 2, -3] },
+          ],
+        },
       },
       axes: {
         xAxis: {
-          labels: ['-3', '-2', '-1', '0', '1', '2', '3']
+          labels: ['-3', '-2', '-1', '0', '1', '2', '3'],
         },
-        yAxis: {}
+        yAxis: {},
       },
       categories: ['A', 'B'],
       options: {},
-      plot: {}
+      plot: {},
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
@@ -35,7 +35,7 @@ describe('Plot Store', () => {
     const zeroLine: PlotLine = {
       color: 'rgba(0, 0, 0, 0.5)',
       value: 0,
-      vertical: true
+      vertical: true,
     };
     expect(store.state.plot.lines).toMatchObject([zeroLine]);
   });
@@ -49,19 +49,19 @@ describe('Plot Store', () => {
         line: {
           data: [
             { name: 'han', data: [-1, -2, 0] },
-            { name: 'cho', data: [1, 2, -3] }
-          ]
-        }
+            { name: 'cho', data: [1, 2, -3] },
+          ],
+        },
       },
       axes: {
         xAxis: {},
         yAxis: {
-          labels: ['-3', '-2', '-1', '0', '1', '2', '3']
-        }
+          labels: ['-3', '-2', '-1', '0', '1', '2', '3'],
+        },
       },
       categories: ['A', 'B'],
       options: {},
-      plot: {}
+      plot: {},
     } as ChartState<LineChartOptions>;
 
     const store = { state } as Store<LineChartOptions>;

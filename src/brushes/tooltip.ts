@@ -5,10 +5,7 @@ import { LabelModel, LabelStyle } from '@t/components/axis';
 import { Point } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
-export function tooltip(
-  ctx: CanvasRenderingContext2D,
-  tooltipModel: TooltipModel
-) {
+export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipModel) {
   const { x, y, data, category } = tooltipModel;
   const xPadding = 15;
   const yPadding = 11;
@@ -30,7 +27,7 @@ export function tooltip(
     height,
     radius: 5,
     fill: bgColor,
-    stroke: bgColor
+    stroke: bgColor,
   });
 
   if (category) {
@@ -45,9 +42,9 @@ export function tooltip(
           textBaseline: 'top',
           fillStyle: '#fff',
           font: 'bold 13px Arial',
-          textAlign: 'left'
-        }
-      ]
+          textAlign: 'left',
+        },
+      ],
     });
 
     line(ctx, {
@@ -56,7 +53,7 @@ export function tooltip(
       y: y + categoryHeight,
       x2: x + width,
       y2: y + categoryHeight,
-      strokeStyle: 'rgba(0, 0, 0, 0.1)'
+      strokeStyle: 'rgba(0, 0, 0, 0.1)',
     });
   }
 
@@ -69,14 +66,14 @@ export function tooltip(
       y: cy,
       width: 13,
       height: dataHeight,
-      color
+      color,
     });
 
     const labelStyle = {
       textBaseline: 'top',
       fillStyle: '#fff',
       font: 'normal 12px Arial',
-      textAlign: 'left'
+      textAlign: 'left',
     } as LabelStyle;
 
     const labelModel = (text: string, point: Point, styleObj?: LabelStyle) =>
@@ -84,20 +81,13 @@ export function tooltip(
         ...point,
         type: 'label',
         text,
-        style: [
-          'default',
-          styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle
-        ]
+        style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle],
       } as LabelModel);
 
     labelBrush(ctx, labelModel(label, { x: xStartPoint + 20, y: cy }));
     labelBrush(
       ctx,
-      labelModel(
-        String(value),
-        { x: x + width - xPadding, y: cy },
-        { textAlign: 'right' }
-      )
+      labelModel(String(value), { x: x + width - xPadding, y: cy }, { textAlign: 'right' })
     );
   });
 }

@@ -8,7 +8,7 @@ import { isCoordinateSeries } from '@src/helpers/coordinate';
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
     min: Math.min(...baseValues),
-    max: Math.max(...baseValues)
+    max: Math.max(...baseValues),
   };
 
   if (baseValues.length === 1) {
@@ -34,7 +34,7 @@ function getLimitSafely(baseValues: number[]): ValueEdge {
 const dataRange: StoreModule = {
   name: 'dataRange',
   state: () => ({
-    dataRange: {} as DataRange
+    dataRange: {} as DataRange,
   }),
   action: {
     setDataRange({ state }) {
@@ -59,8 +59,7 @@ const dataRange: StoreModule = {
         if (isBoxSeries(seriesName as ChartType)) {
           if (tupleCoord) {
             values = values.reduce(
-              (arr, value) =>
-                Array.isArray(value) ? [...arr, ...value] : value,
+              (arr, value) => (Array.isArray(value) ? [...arr, ...value] : value),
               []
             );
           } else if (stackSeries[seriesName]?.stack) {
@@ -71,30 +70,28 @@ const dataRange: StoreModule = {
         } else if (isCoordinateSeries(series)) {
           let xAxisValues;
           if (tupleCoord) {
-            xAxisValues = values.map(value => value[0]);
-            values = values.map(value => value[1]);
+            xAxisValues = values.map((value) => value[0]);
+            values = values.map((value) => value[1]);
           } else if (objectCoord) {
-            xAxisValues = values.map(value => value.x);
-            values = values.map(value => value.y);
+            xAxisValues = values.map((value) => value.x);
+            values = values.map((value) => value.y);
           }
 
           newDataRange[seriesName][labelAxisName] = getLimitSafely([
-            ...new Set(xAxisValues)
+            ...new Set(xAxisValues),
           ] as number[]);
         }
 
-        newDataRange[seriesName][valueAxisName] = getLimitSafely([
-          ...new Set(values)
-        ] as number[]);
+        newDataRange[seriesName][valueAxisName] = getLimitSafely([...new Set(values)] as number[]);
       }
       extend(state.dataRange, newDataRange);
-    }
+    },
   },
   observe: {
     updateDataRange() {
       this.dispatch('setDataRange');
-    }
-  }
+    },
+  },
 };
 
 export default dataRange;

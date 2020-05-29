@@ -1,9 +1,4 @@
-import {
-  ClipRectAreaModel,
-  PathRectModel,
-  CircleModel,
-  CircleStyle
-} from '@t/components/series';
+import { ClipRectAreaModel, PathRectModel, CircleModel, CircleStyle } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
 import { LabelModel, LabelStyle, LineModel } from '@t/components/axis';
 
@@ -13,14 +8,14 @@ export type LabelStyleName = 'default';
 const circleStyle = {
   default: {
     strokeStyle: '#fff',
-    lineWidth: 2
+    lineWidth: 2,
   },
   hover: {
     shadowColor: 'rgba(0, 0, 0, 0.3)',
     shadowBlur: 4,
     shadowOffsetY: 4,
-    lineWidth: 3
-  }
+    lineWidth: 3,
+  },
 };
 
 const labelStyle = {
@@ -28,14 +23,11 @@ const labelStyle = {
     font: 'normal 11px Arial',
     fillStyle: '#333',
     textAlign: 'left',
-    textBaseline: 'middle'
-  }
+    textBaseline: 'middle',
+  },
 };
 
-export function clipRectArea(
-  ctx: CanvasRenderingContext2D,
-  clipRectAreaModel: ClipRectAreaModel
-) {
+export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
 
   ctx.beginPath();
@@ -43,19 +35,8 @@ export function clipRectArea(
   ctx.clip();
 }
 
-export function pathRect(
-  ctx: CanvasRenderingContext2D,
-  pathRectModel: PathRectModel
-) {
-  const {
-    x,
-    y,
-    width,
-    height,
-    radius = 0,
-    stroke = 'black',
-    fill = ''
-  } = pathRectModel;
+export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectModel) {
+  const { x, y, width, height, radius = 0, stroke = 'black', fill = '' } = pathRectModel;
 
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -78,22 +59,16 @@ export function pathRect(
   }
 }
 
-export function circle(
-  ctx: CanvasRenderingContext2D,
-  circleModel: CircleModel
-) {
+export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
   const { x, y, style, radius, color } = circleModel;
 
   ctx.beginPath();
   ctx.fillStyle = color;
 
   if (style) {
-    const styleObj = makeStyleObj<CircleStyle, CircleStyleName>(
-      style,
-      circleStyle
-    );
+    const styleObj = makeStyleObj<CircleStyle, CircleStyleName>(style, circleStyle);
 
-    Object.keys(styleObj).forEach(key => {
+    Object.keys(styleObj).forEach((key) => {
       ctx[key] = styleObj[key];
     });
   }
@@ -131,12 +106,9 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   const { x, y, text, style } = labelModel;
 
   if (style) {
-    const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(
-      style,
-      labelStyle
-    );
+    const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
 
-    Object.keys(styleObj).forEach(key => {
+    Object.keys(styleObj).forEach((key) => {
       ctx[key] = styleObj[key];
     });
   }

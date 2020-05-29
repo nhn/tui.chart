@@ -1,10 +1,7 @@
 import { CircleModel } from '@t/components/series';
 import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ChartState, Scale, SeriesTheme } from '@t/store/store';
-import {
-  getCoordinateXValue,
-  getCoordinateYValue
-} from '@src/helpers/coordinate';
+import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
@@ -27,21 +24,13 @@ export default class ScatterSeries extends CircleSeries {
 
     const scatterData = series.scatter.data;
     const renderOptions: RenderOptions = {
-      theme: theme.series
+      theme: theme.series,
     };
 
     this.rect = layout.plot;
 
-    const seriesModel = this.renderScatterPointsModel(
-      scatterData,
-      scale,
-      renderOptions
-    );
-    const tooltipModel = this.makeTooltipModel(
-      scatterData,
-      categories,
-      renderOptions
-    );
+    const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions);
+    const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModel];
     this.responders = seriesModel.map((m, index) => ({
@@ -51,7 +40,7 @@ export default class ScatterSeries extends CircleSeries {
       radius: 7,
       color: getRGBA(m.color, 1),
       style: ['default', 'hover'],
-      data: tooltipModel[index]
+      data: tooltipModel[index],
     }));
   }
 
@@ -64,13 +53,13 @@ export default class ScatterSeries extends CircleSeries {
     const { colors } = theme;
     const {
       xAxis: { limit: xAxisLimit },
-      yAxis: { limit: yAxisLimit }
+      yAxis: { limit: yAxisLimit },
     } = scale;
 
     return seriesRawData.flatMap(({ data }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
 
-      data.forEach(datum => {
+      data.forEach((datum) => {
         const xValue = getCoordinateXValue(datum);
         const yValue = getCoordinateYValue(datum);
 
@@ -87,7 +76,7 @@ export default class ScatterSeries extends CircleSeries {
           radius: 7,
           style: ['default'],
           color: getRGBA(colors[seriesIndex], 0.9),
-          seriesIndex
+          seriesIndex,
         });
       });
 

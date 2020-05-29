@@ -26,9 +26,9 @@ export default class AreaChart extends Chart<AreaChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        area: props.data.series
+        area: props.data.series,
       },
-      categories: props.data.categories
+      categories: props.data.categories,
     });
   }
 
@@ -45,11 +45,6 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(AreaSeries);
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([
-      basicBrushes,
-      axisBrushes,
-      tooltipBrushes,
-      lineSeriesBrushes
-    ]);
+    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, lineSeriesBrushes]);
   }
 }

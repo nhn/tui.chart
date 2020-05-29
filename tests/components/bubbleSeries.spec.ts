@@ -9,13 +9,13 @@ const seriesData = [
     name: 'nameA',
     data: [
       { x: 10, y: 20, r: 100, label: 'A' },
-      { x: 15, y: 20, r: 200, label: 'B' }
-    ]
+      { x: 15, y: 20, r: 200, label: 'B' },
+    ],
   },
   {
     name: 'nameB',
-    data: [{ x: 20, y: 10, r: 30, label: 'C' }]
-  }
+    data: [{ x: 20, y: 10, r: 30, label: 'C' }],
+  },
 ];
 
 const chartState = {
@@ -23,53 +23,53 @@ const chartState = {
   layout: {
     xAxis: { x: 10, y: 280, width: 280, height: 10 },
     yAxis: { x: 10, y: 10, width: 10, height: 280 },
-    plot: { width: 280, height: 280, x: 10, y: 80 }
+    plot: { width: 280, height: 280, x: 10, y: 80 },
   },
   series: {
     bubble: {
       data: seriesData,
       seriesCount: seriesData.length,
-      seriesGroupCount: seriesData[0].data.length
-    }
+      seriesGroupCount: seriesData[0].data.length,
+    },
   },
   scale: {
     xAxis: {
       limit: {
         min: 10,
-        max: 20
-      }
+        max: 20,
+      },
     },
     yAxis: {
       limit: {
         min: 10,
-        max: 20
-      }
-    }
+        max: 20,
+      },
+    },
   },
   axes: {
     xAxis: {
       tickDistance: 56,
-      tickCount: 5
+      tickCount: 5,
     },
     yAxis: {
       tickDistance: 56,
-      tickCount: 5
-    }
+      tickCount: 5,
+    },
   },
   options: {
-    series: {}
+    series: {},
   },
   theme: {
     series: {
-      colors: ['#aaaaaa', '#bbbbbb']
-    }
-  }
+      colors: ['#aaaaaa', '#bbbbbb'],
+    },
+  },
 };
 
 beforeEach(() => {
   areaSeries = new BubbleSeries({
     store: {} as Store<AreaChartOptions>,
-    eventBus: new EventEmitter()
+    eventBus: new EventEmitter(),
   });
 
   areaSeries.render(chartState);
@@ -80,7 +80,7 @@ const result = {
     height: 280,
     width: 280,
     x: 10,
-    y: 80
+    y: 80,
   },
   responders: [
     {
@@ -96,8 +96,8 @@ const result = {
         category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
         label: 'nameA',
-        value: 20
-      }
+        value: 20,
+      },
     },
     {
       color: 'rgba(170, 170, 170, 0.85)',
@@ -112,8 +112,8 @@ const result = {
         category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
         label: 'nameA',
-        value: 20
-      }
+        value: 20,
+      },
     },
     {
       color: 'rgba(187, 187, 187, 0.85)',
@@ -128,9 +128,9 @@ const result = {
         category: undefined, // eslint-disable-line no-undefined
         color: '#bbbbbb',
         label: 'nameB',
-        value: 10
-      }
-    }
+        value: 10,
+      },
+    },
   ],
   models: [
     { height: 280, type: 'clipRectArea', width: 0, x: 0, y: 0 },
@@ -141,7 +141,7 @@ const result = {
       style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
       type: 'circle',
       x: 0,
-      y: 0
+      y: 0,
     },
     {
       color: 'rgba(170, 170, 170, 0.7)',
@@ -150,7 +150,7 @@ const result = {
       style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
       type: 'circle',
       x: 140,
-      y: 0
+      y: 0,
     },
     {
       color: 'rgba(187, 187, 187, 0.7)',
@@ -159,12 +159,12 @@ const result = {
       style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.3)' }],
       type: 'circle',
       x: 280,
-      y: 280
-    }
-  ]
+      y: 280,
+    },
+  ],
 };
 
-['rect', 'responders', 'models'].forEach(modelName => {
+['rect', 'responders', 'models'].forEach((modelName) => {
   it(`should make ${modelName} properly when calling render`, () => {
     expect(areaSeries[modelName]).toEqual(result[modelName]);
   });
@@ -178,7 +178,5 @@ it('responder is added in reverse radius', () => {
   areaSeries.onMousemove({ responders: [responder] });
   const { responders } = areaSeries;
 
-  expect(responders.slice(responders.length - 2, responders.length)).toEqual(
-    responder.reverse()
-  );
+  expect(responders.slice(responders.length - 2, responders.length)).toEqual(responder.reverse());
 });

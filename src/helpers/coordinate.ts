@@ -26,7 +26,7 @@ export function getCoordinateDataIndex(
 
   const value = Array.isArray(datum) ? datum[0] : datum.x;
 
-  return categories.findIndex(category => category === String(value));
+  return categories.findIndex((category) => category === String(value));
 }
 
 function isLineCoordinateSeries(series: SeriesState) {
