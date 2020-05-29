@@ -38,7 +38,10 @@ export function getValueAxisData(stateProp: StateProp) {
   let valueLabels = makeLabelsFromLimit(scale.limit, scale.stepSize);
 
   if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
-    valueLabels = valueLabels.slice(1).reverse().concat(valueLabels);
+    valueLabels = valueLabels
+      .slice(1)
+      .reverse()
+      .concat(valueLabels);
   }
 
   return {
