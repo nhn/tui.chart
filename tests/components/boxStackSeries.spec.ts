@@ -6,7 +6,7 @@ import { BarChartOptions } from '@t/options';
 let stackSeries;
 const seriesData = [
   { name: 'han', data: [1, 2] },
-  { name: 'cho', data: [4, 5] }
+  { name: 'cho', data: [4, 5] },
 ];
 
 const chartState = {
@@ -14,7 +14,7 @@ const chartState = {
   layout: {
     xAxis: { x: 30, y: 90, width: 80, height: 20 },
     yAxis: { x: 10, y: 10, width: 20, height: 80 },
-    plot: { width: 80, height: 80, x: 30, y: 10 }
+    plot: { width: 80, height: 80, x: 30, y: 10 },
   },
   stackSeries: {
     bar: {
@@ -23,31 +23,31 @@ const chartState = {
       seriesGroupCount: seriesData[0].data.length,
       stack: {
         type: 'normal',
-        connector: false
+        connector: false,
       },
       stackData: [
         { values: [1, 4], sum: 5 },
-        { values: [2, 5], sum: 7 }
-      ]
-    }
+        { values: [2, 5], sum: 7 },
+      ],
+    },
   },
   axes: {
     xAxis: {
       labels: [0, 2, 4, 6, 8],
       tickCount: 4,
-      tickDistance: 40
+      tickDistance: 40,
     },
     yAxis: {
       pointOnColumn: true,
-      tickDistance: 40
-    }
+      tickDistance: 40,
+    },
   },
   theme: {
     series: {
-      colors: ['#aaaaaa', '#bbbbbb']
-    }
+      colors: ['#aaaaaa', '#bbbbbb'],
+    },
   },
-  categories: ['A', 'B']
+  categories: ['A', 'B'],
 };
 
 const result = [
@@ -58,7 +58,7 @@ const result = [
     width: 10,
     height: 10,
     x: 5,
-    y: 19
+    y: 19,
   },
   {
     type: 'rect',
@@ -66,7 +66,7 @@ const result = [
     width: 40,
     height: 10,
     x: 15,
-    y: 19
+    y: 19,
   },
   {
     type: 'rect',
@@ -74,7 +74,7 @@ const result = [
     width: 20,
     height: 10,
     x: 5,
-    y: 59
+    y: 59,
   },
   {
     type: 'rect',
@@ -82,8 +82,8 @@ const result = [
     width: 50,
     height: 10,
     x: 25,
-    y: 59
-  }
+    y: 59,
+  },
 ];
 
 const respondersResult = [
@@ -99,11 +99,11 @@ const respondersResult = [
         shadowBlur: 6,
         shadowColor: 'rgba(0, 0, 0, 0.3)',
         shadowOffsetX: 2,
-        shadowOffsetY: 2
-      }
+        shadowOffsetY: 2,
+      },
     ],
     thickness: 4,
-    data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' }
+    data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
   },
   {
     type: 'rect',
@@ -117,11 +117,11 @@ const respondersResult = [
         shadowBlur: 6,
         shadowColor: 'rgba(0, 0, 0, 0.3)',
         shadowOffsetX: 2,
-        shadowOffsetY: 2
-      }
+        shadowOffsetY: 2,
+      },
     ],
     thickness: 4,
-    data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' }
+    data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' },
   },
   {
     type: 'rect',
@@ -135,11 +135,11 @@ const respondersResult = [
         shadowBlur: 6,
         shadowColor: 'rgba(0, 0, 0, 0.3)',
         shadowOffsetX: 2,
-        shadowOffsetY: 2
-      }
+        shadowOffsetY: 2,
+      },
     ],
     thickness: 4,
-    data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' }
+    data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
   },
   {
     type: 'rect',
@@ -153,18 +153,18 @@ const respondersResult = [
         shadowBlur: 6,
         shadowColor: 'rgba(0, 0, 0, 0.3)',
         shadowOffsetX: 2,
-        shadowOffsetY: 2
-      }
+        shadowOffsetY: 2,
+      },
     ],
     thickness: 4,
-    data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' }
-  }
+    data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' },
+  },
 ];
 
 beforeEach(() => {
   stackSeries = new BoxStackSeries({
     store: {} as Store<BarChartOptions>,
-    eventBus: new EventEmitter()
+    eventBus: new EventEmitter(),
   });
 });
 

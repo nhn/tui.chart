@@ -3,17 +3,12 @@ import {
   CircleModel,
   ClipRectAreaModel,
   LinePointsModel,
-  PathRectModel
+  PathRectModel,
 } from '@t/components/series';
 import { TooltipModel } from '@t/components/tooltip';
 import { Options } from '@t/store/store';
 
-type BrushModel =
-  | ClipRectAreaModel
-  | LinePointsModel
-  | PathRectModel
-  | CircleModel
-  | TooltipModel;
+type BrushModel = ClipRectAreaModel | LinePointsModel | PathRectModel | CircleModel | TooltipModel;
 type Brush = (ctx: CanvasRenderingContext2D, brushModel: BrushModel) => void;
 
 export default class Painter {
@@ -71,8 +66,8 @@ export default class Painter {
   }
 
   addGroups(groups: any[]) {
-    groups.forEach(group => {
-      Object.keys(group).forEach(key => {
+    groups.forEach((group) => {
+      Object.keys(group).forEach((key) => {
         this.add(key, group[key]);
       });
     });
@@ -87,7 +82,7 @@ export default class Painter {
   }
 
   paintForEach(brushModels: any[]) {
-    brushModels.forEach(m => this.paint(m.type, m));
+    brushModels.forEach((m) => this.paint(m.type, m));
   }
 
   beforeFrame() {

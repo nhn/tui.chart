@@ -1,31 +1,20 @@
 import Component from './component';
-import {
-  AreaPointsModel,
-  CircleModel,
-  LinePointsModel
-} from '@t/components/series';
+import { AreaPointsModel, CircleModel, LinePointsModel } from '@t/components/series';
 import {
   AreaChartOptions,
   AreaSeriesType,
   LineTypeSeriesOptions,
   Point,
-  RangeDataType
+  RangeDataType,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import {
-  getCoordinateDataIndex,
-  getCoordinateYValue
-} from '@src/helpers/coordinate';
+import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 
-type DrawModels =
-  | LinePointsModel
-  | AreaPointsModel
-  | ClipRectAreaModel
-  | CircleModel;
+type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -56,15 +45,7 @@ export default class AreaSeries extends Component {
   }
 
   public render(chartState: ChartState<AreaChartOptions>) {
-    const {
-      layout,
-      series,
-      scale,
-      theme,
-      options,
-      axes,
-      categories = []
-    } = chartState;
+    const { layout, series, scale, theme, options, axes, categories = [] } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
     }
@@ -77,7 +58,7 @@ export default class AreaSeries extends Component {
     const renderOptions: RenderOptions = {
       pointOnColumn,
       options: options.series || {},
-      theme: theme.series
+      theme: theme.series,
     };
 
     this.rect = layout.plot;
@@ -90,22 +71,15 @@ export default class AreaSeries extends Component {
       categories
     );
 
-    const areaSeriesModel = this.renderAreaPointsModel(
-      this.linePointsModel,
-      bottomYPoint
-    );
+    const areaSeriesModel = this.renderAreaPointsModel(this.linePointsModel, bottomYPoint);
     const seriesCircleModel = this.renderCircleModel(this.linePointsModel);
-    const tooltipDataArr = this.makeTooltipData(
-      areaData,
-      renderOptions,
-      categories
-    );
+    const tooltipDataArr = this.makeTooltipData(areaData, renderOptions, categories);
 
     this.models = [this.renderClipRectAreaModel(), ...areaSeriesModel];
 
     this.responders = seriesCircleModel.map((m, dataIndex) => ({
       ...m,
-      data: tooltipDataArr[dataIndex]
+      data: tooltipDataArr[dataIndex],
     }));
   }
 
@@ -115,15 +89,11 @@ export default class AreaSeries extends Component {
       x: 0,
       y: 0,
       width: 0,
-      height: this.rect.height
+      height: this.rect.height,
     };
   }
 
-  makeTooltipData(
-    areaData: AreaSeriesType[],
-    { theme }: RenderOptions,
-    categories: string[]
-  ) {
+  makeTooltipData(areaData: AreaSeriesType[], { theme }: RenderOptions, categories: string[]) {
     return areaData.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
 
@@ -132,8 +102,7 @@ export default class AreaSeries extends Component {
           label: name,
           color: theme.colors[index],
           value: getCoordinateYValue(datum),
-          category:
-            categories[getCoordinateDataIndex(datum, categories, dataIdx)]
+          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
         });
       });
 
@@ -158,8 +127,7 @@ export default class AreaSeries extends Component {
         const dataIndex = getCoordinateDataIndex(datum, categories, idx);
         const valueRatio = getValueRatio(value, limit);
 
-        const x =
-          tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
+        const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
 
         points.push({ x, y });
@@ -174,7 +142,7 @@ export default class AreaSeries extends Component {
         lineWidth: 6,
         color: theme.colors[seriesIndex],
         points,
-        seriesIndex
+        seriesIndex,
       };
     });
   }
@@ -183,13 +151,13 @@ export default class AreaSeries extends Component {
     linePointsModel: LinePointsModel[],
     bottomYPoint: number
   ): AreaPointsModel[] {
-    return linePointsModel.map(m => ({
+    return linePointsModel.map((m) => ({
       ...m,
       type: 'areaPoints',
       lineWidth: 0,
       color: 'rgba(0, 0, 0, 0)', // make area border transparent
       bottomYPoint,
-      fillColor: m.color
+      fillColor: m.color,
     }));
   }
 
@@ -202,7 +170,7 @@ export default class AreaSeries extends Component {
         radius: 7,
         color,
         style: ['default', 'hover'],
-        seriesIndex
+        seriesIndex,
       }))
     );
   }
@@ -212,14 +180,14 @@ export default class AreaSeries extends Component {
   }
 
   applyAreaOpacity(opacity: number) {
-    this.models.filter(this.isAreaPointsModel).forEach(model => {
+    this.models.filter(this.isAreaPointsModel).forEach((model) => {
       model.fillColor = getRGBA(model.fillColor, opacity);
       model.color = getRGBA(model.color, opacity);
     });
   }
 
   clearLinePointsModel() {
-    this.models = this.models.filter(model => model.type !== 'linePoints');
+    this.models = this.models.filter((model) => model.type !== 'linePoints');
   }
 
   onMousemove({ responders }: { responders: CircleModel[] }) {
@@ -228,7 +196,7 @@ export default class AreaSeries extends Component {
       this.applyAreaOpacity(1);
 
       this.activatedResponders.forEach((responder: CircleModel) => {
-        const index = this.models.findIndex(model => model === responder);
+        const index = this.models.findIndex((model) => model === responder);
 
         this.models.splice(index, 1);
       });
@@ -236,7 +204,7 @@ export default class AreaSeries extends Component {
 
     if (responders.length) {
       this.applyAreaOpacity(0.5);
-      responders.forEach(responder => {
+      responders.forEach((responder) => {
         this.models.push(this.linePointsModel[responder.seriesIndex]);
         this.models.push(responder);
       });

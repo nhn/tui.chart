@@ -6,14 +6,14 @@ import {
   watch,
   setValue,
   extend,
-  invisibleWork
+  invisibleWork,
 } from '@src/store/reactive';
 
 describe('observable/observe', () => {
   it('should invoke observer when dependency changed', () => {
     const target = observable({
       data1: 'da',
-      data2: 'ta'
+      data2: 'ta',
     });
 
     let total = '';
@@ -30,7 +30,7 @@ describe('observable/observe', () => {
   it('should invoke nested observer after current invoking', () => {
     const target = observable({
       data1: 0,
-      data2: 0
+      data2: 0,
     });
 
     observe(() => {
@@ -50,7 +50,7 @@ describe('observable/observe', () => {
 
   it('should not invoke observer if data value have not changed', () => {
     const target = observable({
-      data: 1
+      data: 1,
     });
 
     observe(() => {
@@ -65,7 +65,7 @@ describe('observable/observe', () => {
   it('should manage data dependency separately', () => {
     const target = observable({
       data1: 0,
-      data2: 0
+      data2: 0,
     });
 
     let data1Count = 0;
@@ -88,7 +88,7 @@ describe('observable/observe', () => {
 
   it('should not collect observe dependency redundantly', () => {
     const target = observable({
-      data: 0
+      data: 0,
     });
 
     let referenceCount = 0;
@@ -111,7 +111,7 @@ describe('observable/observe', () => {
       },
       get data() {
         return this._data + 1;
-      }
+      },
     });
 
     let obData = 0;
@@ -128,11 +128,11 @@ describe('observable/observe', () => {
 
   it('could remove useless observer', () => {
     const target = observable({
-      data: 0
+      data: 0,
     });
 
     const target2 = observable({
-      data: 1
+      data: 1,
     });
 
     let referenceCount = 0;
@@ -155,8 +155,8 @@ describe('observable/observe', () => {
   it('should make observable for object recursively', () => {
     const target = observable({
       data: {
-        rData: 1
-      }
+        rData: 1,
+      },
     });
 
     let sum = 0;
@@ -172,7 +172,7 @@ describe('observable/observe', () => {
 
   it('should not make observable for array recursively', () => {
     const target = observable({
-      data: [{ rData: 1 }]
+      data: [{ rData: 1 }],
     });
 
     let sum = 0;
@@ -191,8 +191,8 @@ describe('setValue', () => {
   it('should setValue observable object to existing observable object', () => {
     const target = observable({
       data: {
-        rData: 0
-      }
+        rData: 0,
+      },
     });
 
     setValue(target, 'data2', { rData: 0 });
@@ -213,8 +213,8 @@ describe('setValue', () => {
   it('should setValue observable data to existing observable object', () => {
     const target = observable({
       data: {
-        rData: 0
-      }
+        rData: 0,
+      },
     });
 
     setValue(target.data, 'rData2', 0);
@@ -236,8 +236,8 @@ describe('setValue', () => {
   it.skip('should notify observer when new observable property has been added', () => {
     const target: Record<string, any> = observable({
       data: {
-        rData: 1
-      }
+        rData: 1,
+      },
     });
 
     let sum = 0;
@@ -256,14 +256,14 @@ describe('extend', () => {
   it('should extend observable object with new object', () => {
     const target: Record<string, any> = observable({
       data: {
-        rData: 0
-      }
+        rData: 0,
+      },
     });
 
     extend(target, {
       data2: {
-        rData: 0
-      }
+        rData: 0,
+      },
     });
 
     let sum = 0;
@@ -283,7 +283,7 @@ describe('extend', () => {
 describe('notify', () => {
   it('should invoke observers', () => {
     const target = observable({
-      data: 5
+      data: 5,
     });
 
     observe(() => {
@@ -302,7 +302,7 @@ describe('computed', () => {
     const target: Record<string, any> = {};
 
     const dep = observable({
-      data: 5
+      data: 5,
     });
 
     computed(target, 'myComputed', () => {
@@ -318,7 +318,7 @@ describe('computed', () => {
     const target: Record<string, any> = {};
 
     const dep = observable({
-      data: 1
+      data: 1,
     });
 
     computed(target, 'myComputed', () => {
@@ -338,7 +338,7 @@ describe('computed', () => {
   describe('watch', () => {
     it('should invoke function when watch data changed', () => {
       const dep = observable({
-        data: 5
+        data: 5,
       });
 
       const watcherFn = jest.fn();
@@ -352,7 +352,7 @@ describe('computed', () => {
 
     it('could unwatch', () => {
       const dep = observable({
-        data: 1
+        data: 1,
       });
 
       const watcherFn = jest.fn();
@@ -375,7 +375,7 @@ describe('computed', () => {
     it('should invoke function avoid collect depecdency even in observe', () => {
       const target = observable({
         data1: 'da',
-        data2: 'ta'
+        data2: 'ta',
       });
 
       let total = '';
@@ -394,7 +394,7 @@ describe('computed', () => {
     it('should invoke nested observer after invisible work', () => {
       const target = observable({
         data1: 1,
-        data2: 2
+        data2: 2,
       });
 
       const v: number[] = [];

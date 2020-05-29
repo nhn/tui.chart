@@ -25,8 +25,8 @@ export default class BubbleChart extends Chart<BaseOptions> {
       el: props.el,
       options: props.options,
       series: {
-        bubble: props.data.series
-      }
+        bubble: props.data.series,
+      },
     });
   }
 

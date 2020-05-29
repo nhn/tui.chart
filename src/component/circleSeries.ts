@@ -2,16 +2,9 @@ import Component from './component';
 import { CircleModel } from '@t/components/series';
 import { ClipRectAreaModel } from '@t/components/series';
 import { SeriesTheme } from '@t/store/store';
-import {
-  BubbleSeriesType,
-  CoordinateDataType,
-  ScatterSeriesType
-} from '@t/options';
+import { BubbleSeriesType, CoordinateDataType, ScatterSeriesType } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
-import {
-  getCoordinateDataIndex,
-  getCoordinateYValue
-} from '@src/helpers/coordinate';
+import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 
 type DrawModels = ClipRectAreaModel | CircleModel;
 
@@ -38,19 +31,19 @@ export default abstract class CircleSeries extends Component {
       x: 0,
       y: 0,
       width: 0,
-      height: this.rect.height
+      height: this.rect.height,
     };
   }
 
   onMousemove({ responders }) {
-    this.activatedResponders.forEach(responder => {
-      const index = this.models.findIndex(model => model === responder);
+    this.activatedResponders.forEach((responder) => {
+      const index = this.models.findIndex((model) => model === responder);
       this.models.splice(index, 1);
     });
 
     responders
       .sort((a: CircleModel, b: CircleModel) => b.radius - a.radius)
-      .forEach(responder => {
+      .forEach((responder) => {
         this.models.push(responder);
       });
 
@@ -76,8 +69,7 @@ export default abstract class CircleSeries extends Component {
           label: name,
           color: theme.colors[index],
           value: getCoordinateYValue(datum),
-          category:
-            categories[getCoordinateDataIndex(datum, categories, dataIdx)]
+          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
         });
       });
 

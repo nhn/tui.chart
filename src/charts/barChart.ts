@@ -31,9 +31,9 @@ export default class BarChart extends Chart<BarChartOptions> {
       el,
       options,
       series: {
-        bar: data.series
+        bar: data.series,
       },
-      categories: data.categories
+      categories: data.categories,
     });
   }
 
@@ -53,11 +53,6 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([
-      basicBrushes,
-      axisBrushes,
-      boxBrushes,
-      tooltipBrushes
-    ]);
+    this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes]);
   }
 }

@@ -8,7 +8,7 @@ module.exports = (env, argv) => {
     entry: ['@babel/polyfill', './src/index.ts'],
     output: {
       filename: 'main.js',
-      path: path.resolve(__dirname, 'dist')
+      path: path.resolve(__dirname, 'dist'),
     },
     module: {
       rules: [
@@ -16,18 +16,18 @@ module.exports = (env, argv) => {
           test: /\.(ts|js)$/,
           exclude: /node_modules/,
           use: {
-            loader: 'babel-loader'
-          }
-        }
-      ]
+            loader: 'babel-loader',
+          },
+        },
+      ],
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
       alias: {
         '@src': path.resolve(__dirname, 'src/'),
-        '@t': path.resolve(__dirname, 'types/')
-      }
-    }
+        '@t': path.resolve(__dirname, 'types/'),
+      },
+    },
   };
 
   if (argv.mode === 'development') {
@@ -38,21 +38,21 @@ module.exports = (env, argv) => {
         new HtmlWebpackPlugin({
           title: 'Development',
           showErrors: true,
-          template: 'index.html'
-        })
+          template: 'index.html',
+        }),
       ],
       devServer: {
         hot: true,
         open: 'Google Chrome',
         overlay: {
           warnings: true,
-          errors: true
+          errors: true,
         },
         clientLogLevel: 'debug',
         stats: {
-          color: true
+          color: true,
         },
-        contentBase: __dirname
+        contentBase: __dirname,
       },
       devtool: 'cheap-module-eval-source-map',
       optimization: {
@@ -61,11 +61,11 @@ module.exports = (env, argv) => {
             commons: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
-              chunks: 'all'
-            }
-          }
-        }
-      }
+              chunks: 'all',
+            },
+          },
+        },
+      },
     };
   }
 

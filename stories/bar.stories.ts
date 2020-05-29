@@ -5,13 +5,13 @@ import {
   budgetDataForStack,
   budgetDataForGroupStack,
   negativeBudgetData,
-  budgetDataForDiverging
+  budgetDataForDiverging,
 } from './data';
 import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
 export default {
-  title: 'chart|Bar'
+  title: 'chart|Bar',
 };
 
 const width = 1000;
@@ -19,8 +19,8 @@ const height = 500;
 const defaultOptions: BarChartOptions = {
   chart: {
     width,
-    height
-  }
+    height,
+  },
 };
 
 function createChart(data, customOptions?: BarChartOptions) {
@@ -34,7 +34,7 @@ function createChart(data, customOptions?: BarChartOptions) {
   const chart = new BarChart({
     el,
     data,
-    options
+    options,
   });
 
   return { el, chart };
@@ -62,9 +62,9 @@ export const normalStack = () => {
   const { el } = createChart(budgetDataForStack, {
     series: {
       stack: {
-        type: 'normal'
-      }
-    }
+        type: 'normal',
+      },
+    },
   });
 
   return el;
@@ -74,9 +74,9 @@ export const percentStack = () => {
   const { el } = createChart(budgetDataForStack, {
     series: {
       stack: {
-        type: 'percent'
-      }
-    }
+        type: 'percent',
+      },
+    },
   });
 
   return el;
@@ -85,8 +85,8 @@ export const percentStack = () => {
 export const groupStack = () => {
   const { el } = createChart(budgetDataForGroupStack, {
     series: {
-      stack: true
-    }
+      stack: true,
+    },
   });
 
   return el;
@@ -97,9 +97,9 @@ export const defaultConnector = () => {
     series: {
       stack: {
         type: 'normal',
-        connector: true
-      }
-    }
+        connector: true,
+      },
+    },
   });
 
   return el;
@@ -113,10 +113,10 @@ export const styledConnector = () => {
         connector: {
           type: 'dashed',
           color: '#031f4b',
-          width: 2
-        }
-      }
-    }
+          width: 2,
+        },
+      },
+    },
   });
 
   return el;
@@ -125,8 +125,8 @@ export const styledConnector = () => {
 export const diverging = () => {
   const { el } = createChart(budgetDataForDiverging, {
     series: {
-      diverging: true
-    }
+      diverging: true,
+    },
   });
 
   return el;
@@ -138,9 +138,9 @@ export const minMax = () => {
     xAxis: {
       scale: {
         min: -1000,
-        max: 15000
-      }
-    }
+        max: 15000,
+      },
+    },
   });
 
   return el;

@@ -13,7 +13,7 @@ import {
   isInteger,
   first,
   last,
-  hasNegative
+  hasNegative,
 } from '@src/helpers/utils';
 import { Point } from '@t/options';
 
@@ -42,7 +42,7 @@ describe('utils', () => {
 
     expect(deepMergedCopy(obj1, obj2)).toEqual({
       a: { b: { d: 2, e: { f: 1 } } },
-      c: 2
+      c: 2,
     });
   });
 
@@ -87,52 +87,48 @@ describe('utils', () => {
       [10, 2],
       [1, 2],
       [3, 5],
-      [2, 4]
+      [2, 4],
     ];
     const dateArr: [string, number][] = [
       ['02/20/2020 10:00:00', 1],
       ['02/23/2020 09:00:00', 3],
-      ['02/20/2020 10:10:00', 1]
+      ['02/20/2020 10:10:00', 1],
     ];
     const point: Point[] = [
       { x: 10, y: 3 },
       { x: 3, y: 5 },
-      { x: 5, y: 10 }
+      { x: 5, y: 10 },
     ];
 
     expect(arr.sort(sortSeries)).toEqual([
       [1, 2],
       [2, 4],
       [3, 5],
-      [10, 2]
+      [10, 2],
     ]);
 
     expect(dateArr.sort(sortSeries)).toEqual([
       ['02/20/2020 10:00:00', 1],
       ['02/20/2020 10:10:00', 1],
-      ['02/23/2020 09:00:00', 3]
+      ['02/23/2020 09:00:00', 3],
     ]);
 
     expect(point.sort(sortSeries)).toEqual([
       { x: 3, y: 5 },
       { x: 5, y: 10 },
-      { x: 10, y: 3 }
+      { x: 10, y: 3 },
     ]);
   });
 
   it('sortCategories', () => {
     const arr = [10, 2, 4];
-    const dateArr = [
-      '02/23/2020 09:00:00',
-      '02/20/2020 10:00:00',
-      '02/20/2020 10:10:00'
-    ];
+    const dateArr = ['02/23/2020 09:00:00', '02/20/2020 10:00:00', '02/20/2020 10:10:00'];
 
     expect(arr.sort(sortCategories)).toEqual([2, 4, 10]);
     expect(dateArr.sort(sortCategories)).toEqual([
       '02/20/2020 10:00:00',
       '02/20/2020 10:10:00',
-      '02/23/2020 09:00:00'
+      '02/23/2020 09:00:00',
     ]);
   });
 

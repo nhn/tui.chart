@@ -12,7 +12,7 @@ import {
   AreaChartOptions,
   Connector,
   StackType,
-  BubbleSeriesType
+  BubbleSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
@@ -43,9 +43,7 @@ type ChartOptionsMap = {
 
 export type Options = ValueOf<ChartOptionsMap>;
 
-type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<
-  infer ElementType
->
+type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType>
   ? ElementType
   : never;
 
@@ -61,14 +59,7 @@ export interface StoreOptions {
 }
 
 export interface StoreModule extends StoreOptions {
-  name:
-    | 'plot'
-    | 'axes'
-    | 'scale'
-    | 'layout'
-    | 'seriesData'
-    | 'dataRange'
-    | 'stackSeriesData';
+  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange' | 'stackSeriesData';
 }
 
 export interface SeriesTheme {
@@ -177,14 +168,8 @@ export interface ScaleData {
 
 type StateFunc = () => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
-type ComputedFunc = (
-  state: ChartState<Options>,
-  computed: Record<string, any>
-) => any;
-export type ObserveFunc = (
-  state: ChartState<Options>,
-  computed: Record<string, any>
-) => void;
+type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
+export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
 type WatchFunc = (value: any) => void;
 type InitializeFunc = (state: ChartState<Options>, options: Options) => void;
 

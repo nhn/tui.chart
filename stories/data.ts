@@ -1,14 +1,14 @@
 export const randomData = (count: number) => {
-  const categories = [...Array(count).keys()].map(numb => String(numb));
+  const categories = [...Array(count).keys()].map((numb) => String(numb));
   const series = [
     {
       name: 'A',
-      data: categories.map(() => parseInt(String(Math.random() * 100), 10))
+      data: categories.map(() => parseInt(String(Math.random() * 100), 10)),
     },
     {
       name: 'B',
-      data: categories.map(() => parseInt(String(Math.random() * 100), 10))
-    }
+      data: categories.map(() => parseInt(String(Math.random() * 100), 10)),
+    },
   ];
 
   return { categories, series };
@@ -27,82 +27,30 @@ export const temperatureData = {
     '09/01/2020',
     '10/01/2020',
     '11/01/2020',
-    '12/01/2020'
+    '12/01/2020',
   ],
   series: [
     {
       name: 'Seoul',
-      data: [
-        -3.5,
-        -1.1,
-        4.0,
-        11.3,
-        17.5,
-        21.5,
-        24.9,
-        25.2,
-        20.4,
-        13.9,
-        6.6,
-        -0.6
-      ]
+      data: [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6],
     },
     {
       name: 'Seattle',
-      data: [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5, 17.8, 15.0, 10.6, 6.4, 3.7]
+      data: [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5, 17.8, 15.0, 10.6, 6.4, 3.7],
     },
     {
       name: 'Sydney',
-      data: [
-        22.1,
-        22.0,
-        20.9,
-        18.3,
-        15.2,
-        12.8,
-        11.8,
-        13.0,
-        15.2,
-        17.6,
-        19.4,
-        21.2
-      ]
+      data: [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2],
     },
     {
       name: 'Moskva',
-      data: [
-        -10.3,
-        -9.1,
-        -4.1,
-        4.4,
-        12.2,
-        16.3,
-        18.5,
-        16.7,
-        10.9,
-        4.2,
-        -2.0,
-        -7.5
-      ]
+      data: [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
     },
     {
       name: 'Jungfrau',
-      data: [
-        -13.2,
-        -13.7,
-        -13.1,
-        -10.3,
-        -6.1,
-        -3.2,
-        0.0,
-        -0.1,
-        -1.8,
-        -4.5,
-        -9.0,
-        -10.9
-      ]
-    }
-  ]
+      data: [-13.2, -13.7, -13.1, -10.3, -6.1, -3.2, 0.0, -0.1, -1.8, -4.5, -9.0, -10.9],
+    },
+  ],
 };
 
 export const avgTemperatureData = {
@@ -118,22 +66,22 @@ export const avgTemperatureData = {
     'Sep',
     'Oct',
     'Nov',
-    'Dec'
+    'Dec',
   ],
   series: [
     {
       name: 'Seoul',
-      data: [20, 40, 25, 50, 15, 45, 33, 34, 20, 30, 22, 13]
+      data: [20, 40, 25, 50, 15, 45, 33, 34, 20, 30, 22, 13],
     },
     {
       name: 'Sydney',
-      data: [5, 30, 21, 18, 59, 50, 28, 33, 7, 20, 10, 30]
+      data: [5, 30, 21, 18, 59, 50, 28, 33, 7, 20, 10, 30],
     },
     {
       name: 'Moskva',
-      data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5]
-    }
-  ]
+      data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5],
+    },
+  ],
 };
 
 export const budgetData = {
@@ -141,17 +89,17 @@ export const budgetData = {
   series: [
     {
       name: 'Budget',
-      data: [5000, 3000, 6000, 3000, 6000, 4000]
+      data: [5000, 3000, 6000, 3000, 6000, 4000],
     },
     {
       name: 'Income',
-      data: [8000, 1000, 7000, 2000, 5000, 3000]
+      data: [8000, 1000, 7000, 2000, 5000, 3000],
     },
     {
       name: 'Outgo',
-      data: [900, 6000, 1000, 9000, 3000, 1000]
-    }
-  ]
+      data: [900, 6000, 1000, 9000, 3000, 1000],
+    },
+  ],
 };
 
 export const negativeBudgetData = {
@@ -159,21 +107,21 @@ export const negativeBudgetData = {
   series: [
     {
       name: 'Budget',
-      data: [4000, 5000, 3000, 5000, 7000, 6000]
+      data: [4000, 5000, 3000, 5000, 7000, 6000],
     },
     {
       name: 'Income',
-      data: [7000, 8000, 1000, 7000, 2000, 7000]
+      data: [7000, 8000, 1000, 7000, 2000, 7000],
     },
     {
       name: 'Expenses',
-      data: [-5000, -4000, -4000, -6000, -3000, -4000]
+      data: [-5000, -4000, -4000, -6000, -3000, -4000],
     },
     {
       name: 'Debt',
-      data: [-3000, -6000, -3000, -3000, -1000, -2000]
-    }
-  ]
+      data: [-3000, -6000, -3000, -3000, -1000, -2000],
+    },
+  ],
 };
 
 export const budgetDataForStack = {
@@ -181,21 +129,21 @@ export const budgetDataForStack = {
   series: [
     {
       name: 'Budget',
-      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
     },
     {
       name: 'Income',
-      data: [8000, 1000, 7000, 2000, 6000, 3000, 5000]
+      data: [8000, 1000, 7000, 2000, 6000, 3000, 5000],
     },
     {
       name: 'Expenses',
-      data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+      data: [4000, 4000, 6000, 3000, 4000, 5000, 7000],
     },
     {
       name: 'Debt',
-      data: [6000, 3000, 3000, 1000, 2000, 4000, 3000]
-    }
-  ]
+      data: [6000, 3000, 3000, 1000, 2000, 4000, 3000],
+    },
+  ],
 };
 
 export const budgetDataForGroupStack = {
@@ -204,24 +152,24 @@ export const budgetDataForGroupStack = {
     {
       name: 'Budget',
       data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
-      stackGroup: 'A'
+      stackGroup: 'A',
     },
     {
       name: 'Income',
       data: [8000, 1000, 7000, 2000, 6000, 3000, 5000],
-      stackGroup: 'B'
+      stackGroup: 'B',
     },
     {
       name: 'Expenses',
       data: [4000, 4000, 6000, 3000, 4000, 5000, 7000],
-      stackGroup: 'A'
+      stackGroup: 'A',
     },
     {
       name: 'Debt',
       data: [6000, 3000, 3000, 1000, 2000, 4000, 3000],
-      stackGroup: 'B'
-    }
-  ]
+      stackGroup: 'B',
+    },
+  ],
 };
 
 export const budgetDataForDiverging = {
@@ -229,13 +177,13 @@ export const budgetDataForDiverging = {
   series: [
     {
       name: 'Budget',
-      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000]
+      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
     },
     {
       name: 'Income',
-      data: [8000, 1000, 7000, 2000, 6000, 3000, 5000]
-    }
-  ]
+      data: [8000, 1000, 7000, 2000, 6000, 3000, 5000],
+    },
+  ],
 };
 
 export const tupleCoordinateData = {
@@ -255,8 +203,8 @@ export const tupleCoordinateData = {
         [10, 220],
         [11, 234],
         [12, 210],
-        [13, 220]
-      ]
+        [13, 220],
+      ],
     },
     {
       name: 'SiteB',
@@ -267,10 +215,10 @@ export const tupleCoordinateData = {
         [7, 300],
         [9, 320],
         [11, 30],
-        [13, 20]
-      ]
-    }
-  ]
+        [13, 20],
+      ],
+    },
+  ],
 };
 
 export const coordinateData = {
@@ -290,8 +238,8 @@ export const coordinateData = {
         { x: 10, y: 220 },
         { x: 11, y: 234 },
         { x: 12, y: 210 },
-        { x: 13, y: 220 }
-      ]
+        { x: 13, y: 220 },
+      ],
     },
     {
       name: 'SiteB',
@@ -302,10 +250,10 @@ export const coordinateData = {
         { x: 7, y: 300 },
         { x: 9, y: 320 },
         { x: 11, y: 30 },
-        { x: 13, y: 20 }
-      ]
-    }
-  ]
+        { x: 13, y: 20 },
+      ],
+    },
+  ],
 };
 
 export const datetimeCoordinateData = {
@@ -325,8 +273,8 @@ export const datetimeCoordinateData = {
         ['08/22/2020 10:45:00', 220],
         ['08/22/2020 10:50:00', 234],
         ['08/22/2020 10:55:00', 210],
-        ['08/22/2020 11:00:00', 220]
-      ]
+        ['08/22/2020 11:00:00', 220],
+      ],
     },
     {
       name: 'SiteB',
@@ -337,10 +285,10 @@ export const datetimeCoordinateData = {
         ['08/22/2020 10:30:00', 300],
         ['08/22/2020 10:40:00', 320],
         ['08/22/2020 10:50:00', 30],
-        ['08/22/2020 11:00:00', 20]
-      ]
-    }
-  ]
+        ['08/22/2020 11:00:00', 20],
+      ],
+    },
+  ],
 };
 
 export const temperatureRangeData = {
@@ -356,7 +304,7 @@ export const temperatureRangeData = {
     'Sep',
     'Oct',
     'Nov',
-    'Dec'
+    'Dec',
   ],
   series: [
     {
@@ -373,10 +321,10 @@ export const temperatureRangeData = {
         [15.8, 25.6],
         [8.3, 19.6],
         [1.4, 11.1],
-        [-5.2, 3.2]
-      ]
-    }
-  ]
+        [-5.2, 3.2],
+      ],
+    },
+  ],
 };
 
 export const genderHeightWeightData = {
@@ -630,8 +578,8 @@ export const genderHeightWeightData = {
         { x: 190.5, y: 98.2 },
         { x: 177.8, y: 84.1 },
         { x: 180.3, y: 83.2 },
-        { x: 180.3, y: 83.2 }
-      ]
+        { x: 180.3, y: 83.2 },
+      ],
     },
     {
       name: 'female',
@@ -895,10 +843,10 @@ export const genderHeightWeightData = {
         { x: 164.4, y: 55.5 },
         { x: 160.7, y: 48.6 },
         { x: 174, y: 66.4 },
-        { x: 163.8, y: 67.3 }
-      ]
-    }
-  ]
+        { x: 163.8, y: 67.3 },
+      ],
+    },
+  ],
 };
 
 export const lifeExpectancyPerGDPData = {
@@ -914,8 +862,8 @@ export const lifeExpectancyPerGDPData = {
         { x: 7100, y: 74.66, r: 9974722, label: 'Tunisia' },
         { x: 10500, y: 69.28, r: 1096585, label: 'Trinidad and Tobago' },
         { x: 12800, y: 72.09, r: 1220481, label: 'Mauritius' },
-        { x: 18200, y: 78.68, r: 396851, label: 'Malta' }
-      ]
+        { x: 18200, y: 78.68, r: 396851, label: 'Malta' },
+      ],
     },
     {
       name: 'America',
@@ -937,8 +885,8 @@ export const lifeExpectancyPerGDPData = {
         { x: 17700, y: 65.63, r: 299697, label: 'Bahamas, The' },
         { x: 17700, y: 77.49, r: 3897960, label: 'Puerto Rico' },
         { x: 31500, y: 79.96, r: 32507874, label: 'Canada' },
-        { x: 32100, y: 77.43, r: 89302754, label: 'United States' }
-      ]
+        { x: 32100, y: 77.43, r: 89302754, label: 'United States' },
+      ],
     },
     {
       name: 'Asia',
@@ -960,8 +908,8 @@ export const lifeExpectancyPerGDPData = {
         { x: 25300, y: 77.06, r: 22749838, label: 'Taiwan' },
         { x: 27800, y: 81.53, r: 4353893, label: 'Singapore' },
         { x: 29400, y: 81.04, r: 52733300, label: 'Japan' },
-        { x: 34200, y: 81.39, r: 6855125, label: 'Hong Kong' }
-      ]
+        { x: 34200, y: 81.39, r: 6855125, label: 'Hong Kong' },
+      ],
     },
     {
       name: 'Europe',
@@ -994,8 +942,8 @@ export const lifeExpectancyPerGDPData = {
         { x: 31900, y: 77.36, r: 3969558, label: 'Ireland' },
         { x: 31900, y: 80.18, r: 293966, label: 'Iceland' },
         { x: 32200, y: 77.44, r: 5413392, label: 'Denmark' },
-        { x: 33800, y: 80.31, r: 7450867, label: 'Switzerland' }
-      ]
+        { x: 33800, y: 80.31, r: 7450867, label: 'Switzerland' },
+      ],
     },
     {
       name: 'Oceania',
@@ -1005,8 +953,8 @@ export const lifeExpectancyPerGDPData = {
         { x: 5900, y: 69.2, r: 880874, label: 'Fiji' },
         { x: 14500, y: 78.75, r: 108775, label: 'Virgin Islands' },
         { x: 23200, y: 78.49, r: 1993817, label: 'New Zealand' },
-        { x: 30700, y: 80.26, r: 5991314, label: 'Australia' }
-      ]
-    }
-  ]
+        { x: 30700, y: 80.26, r: 5991314, label: 'Australia' },
+      ],
+    },
+  ],
 };
