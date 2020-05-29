@@ -45,6 +45,11 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(AreaSeries);
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, lineSeriesBrushes]);
+    this.painter.addGroups([
+      basicBrushes,
+      axisBrushes,
+      tooltipBrushes,
+      lineSeriesBrushes
+    ]);
   }
 }

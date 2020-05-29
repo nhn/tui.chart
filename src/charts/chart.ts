@@ -30,7 +30,12 @@ export default class Chart<T extends Options> {
 
     this.el = el;
 
-    this.store = new Store({ chart: options.chart, series, categories, options });
+    this.store = new Store({
+      chart: options.chart,
+      series,
+      categories,
+      options
+    });
 
     this.componentManager = new ComponentManager({
       store: this.store,
@@ -72,7 +77,8 @@ export default class Chart<T extends Options> {
   }
 
   handleEvent(event: MouseEvent) {
-    const delegationMethod = `on${event.type[0].toUpperCase() + event.type.substring(1)}`;
+    const delegationMethod = `on${event.type[0].toUpperCase() +
+      event.type.substring(1)}`;
 
     const { clientX, clientY } = event;
 
@@ -96,7 +102,10 @@ export default class Chart<T extends Options> {
         return responderDetectors[m.type](mousePosition, m, component.rect);
       });
 
-      component[delegationMethod]({ mousePosition, responders: detected }, event);
+      component[delegationMethod](
+        { mousePosition, responders: detected },
+        event
+      );
     });
   }
 

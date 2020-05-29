@@ -1,7 +1,10 @@
 import { CircleModel } from '@t/components/series';
 import { BaseOptions, BubbleSeriesType } from '@t/options';
 import { ChartState, Scale, SeriesTheme } from '@t/store/store';
-import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
+import {
+  getCoordinateXValue,
+  getCoordinateYValue
+} from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
@@ -48,8 +51,16 @@ export default class BubbleSeries extends CircleSeries {
     this.maxRadius = Math.min(xAxisTickSize, yAxisTickSize);
     this.setMaxValue(bubbleData);
 
-    const seriesModel = this.renderBubblePointsModel(bubbleData, renderOptions, scale);
-    const tooltipModel = this.makeTooltipModel(bubbleData, categories, renderOptions);
+    const seriesModel = this.renderBubblePointsModel(
+      bubbleData,
+      renderOptions,
+      scale
+    );
+    const tooltipModel = this.makeTooltipModel(
+      bubbleData,
+      categories,
+      renderOptions
+    );
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModel];
     this.responders = seriesModel.map((m, index) => ({

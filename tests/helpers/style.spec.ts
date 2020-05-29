@@ -11,6 +11,9 @@ describe('style', () => {
       }
     };
 
-    expect(makeStyleObj(['a', 'c', { d: 'test3' }], styleSet)).toEqual({ b: 'test', d: 'test3' });
+    expect(makeStyleObj(['a', 'c', { d: 'test3' }], styleSet)).toEqual({
+      b: 'test',
+      d: 'test3'
+    });
   });
 });

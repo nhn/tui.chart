@@ -19,11 +19,17 @@ describe('StackSeriesData Store', () => {
 
       stackSeriesData.initialize!(state, { series: { stack: true } });
 
-      expect(state.stackSeries.bar!.stack).toEqual({ type: 'normal', connector: false });
+      expect(state.stackSeries.bar!.stack).toEqual({
+        type: 'normal',
+        connector: false
+      });
     });
 
     it('should reset the connector to default value, if the connector is true only', () => {
-      const state = { series: { bar: { data } }, stackSeries: {} } as ChartState<BarChartOptions>;
+      const state = {
+        series: { bar: { data } },
+        stackSeries: {}
+      } as ChartState<BarChartOptions>;
 
       stackSeriesData.initialize!(state, {
         series: { stack: { type: 'normal', connector: true } }
@@ -49,7 +55,12 @@ describe('StackSeriesData Store', () => {
       } as ChartState<BarChartOptions>;
 
       stackSeriesData.initialize!(state, {
-        series: { stack: { type: 'percent', connector: { type: 'dashed', color: '#ff0000' } } }
+        series: {
+          stack: {
+            type: 'percent',
+            connector: { type: 'dashed', color: '#ff0000' }
+          }
+        }
       });
 
       expect(state.stackSeries.bar!.stack).toEqual({
@@ -67,7 +78,11 @@ describe('StackSeriesData Store', () => {
           bar: {
             stack: {
               type: 'normal',
-              connector: { type: 'solid', color: 'rgba(51, 85, 139, 0,3)', width: 1 }
+              connector: {
+                type: 'solid',
+                color: 'rgba(51, 85, 139, 0,3)',
+                width: 1
+              }
             }
           }
         },
@@ -129,7 +144,11 @@ describe('StackSeriesData Store', () => {
           bar: {
             stack: {
               type: 'normal',
-              connector: { type: 'solid', color: 'rgba(51, 85, 139, 0,3)', width: 1 }
+              connector: {
+                type: 'solid',
+                color: 'rgba(51, 85, 139, 0,3)',
+                width: 1
+              }
             }
           }
         },

@@ -21,7 +21,10 @@ const defaultOptions = {
   plot: {}
 };
 
-function createChart(data: ScatterSeriesData, customOptions?: ScatterChartOptions) {
+function createChart(
+  data: ScatterSeriesData,
+  customOptions?: ScatterChartOptions
+) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 

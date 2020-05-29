@@ -37,7 +37,10 @@ export default class Tooltip extends Component {
           acc.x += 15;
           acc.y -= 10;
 
-          maxLength = Math.max(maxLength, data.label.length + data.value.toString().length);
+          maxLength = Math.max(
+            maxLength,
+            data.label.length + data.value.toString().length
+          );
 
           acc.data.push(data);
 

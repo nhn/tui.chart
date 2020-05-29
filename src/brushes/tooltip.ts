@@ -5,7 +5,10 @@ import { LabelModel, LabelStyle } from '@t/components/axis';
 import { Point } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
-export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipModel) {
+export function tooltip(
+  ctx: CanvasRenderingContext2D,
+  tooltipModel: TooltipModel
+) {
   const { x, y, data, category } = tooltipModel;
   const xPadding = 15;
   const yPadding = 11;
@@ -60,7 +63,14 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
   data.forEach(({ label, color, value }, index) => {
     const cy = yStartPoint + categoryHeight + 15 * index;
 
-    rect(ctx, { type: 'rect', x: xStartPoint, y: cy, width: 13, height: dataHeight, color });
+    rect(ctx, {
+      type: 'rect',
+      x: xStartPoint,
+      y: cy,
+      width: 13,
+      height: dataHeight,
+      color
+    });
 
     const labelStyle = {
       textBaseline: 'top',
@@ -74,13 +84,20 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
         ...point,
         type: 'label',
         text,
-        style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle]
+        style: [
+          'default',
+          styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle
+        ]
       } as LabelModel);
 
     labelBrush(ctx, labelModel(label, { x: xStartPoint + 20, y: cy }));
     labelBrush(
       ctx,
-      labelModel(String(value), { x: x + width - xPadding, y: cy }, { textAlign: 'right' })
+      labelModel(
+        String(value),
+        { x: x + width - xPadding, y: cy },
+        { textAlign: 'right' }
+      )
     );
   });
 }

@@ -50,10 +50,14 @@ function makeStackData(seriesData: SeriesRawData): StackData {
 
 function makeStackGroupData(seriesData: SeriesRawData): StackGroupData {
   const stackData: StackGroupData = {};
-  const stackGroupIds = [...new Set(seriesData.map(({ stackGroup }) => stackGroup))] as string[];
+  const stackGroupIds = [
+    ...new Set(seriesData.map(({ stackGroup }) => stackGroup))
+  ] as string[];
 
   stackGroupIds.forEach(groupId => {
-    const filtered = seriesData.filter(({ stackGroup }) => groupId === stackGroup);
+    const filtered = seriesData.filter(
+      ({ stackGroup }) => groupId === stackGroup
+    );
 
     stackData[groupId] = makeStackData(filtered);
   });
@@ -61,7 +65,9 @@ function makeStackGroupData(seriesData: SeriesRawData): StackGroupData {
   return stackData;
 }
 
-function initializeStack(stackOption: StackOptionType): Required<StackInfo> | undefined {
+function initializeStack(
+  stackOption: StackOptionType
+): Required<StackInfo> | undefined {
   if (!stackOption) {
     return;
   }
@@ -94,7 +100,9 @@ function isStackObject(stackOption: StackOptionType): stackOption is StackInfo {
   return isObject(stackOption);
 }
 
-function isConnectorObject(connector: boolean | Connector): connector is Connector {
+function isConnectorObject(
+  connector: boolean | Connector
+): connector is Connector {
   return isObject(connector);
 }
 
@@ -154,7 +162,9 @@ const stackSeriesData: StoreModule = {
         const { stack } = stackSeries[seriesName] || {};
 
         if (stack) {
-          const stackData = hasStackGrouped(data) ? makeStackGroupData(data) : makeStackData(data);
+          const stackData = hasStackGrouped(data)
+            ? makeStackGroupData(data)
+            : makeStackData(data);
           const stackType = stack.type;
 
           newStackSeries[seriesName] = {

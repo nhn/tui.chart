@@ -34,7 +34,9 @@ class Animator {
     onCompleted: Function;
     onFrame?: (delta: number) => void;
   }) {
-    const prevIndex = this.anims.findIndex(anim => anim.requester === requester);
+    const prevIndex = this.anims.findIndex(
+      anim => anim.requester === requester
+    );
 
     if (~prevIndex) {
       this.anims.splice(prevIndex, 1);

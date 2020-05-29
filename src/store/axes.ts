@@ -1,4 +1,10 @@
-import { AxisData, Options, ScaleData, SeriesState, StoreModule } from '@t/store/store';
+import {
+  AxisData,
+  Options,
+  ScaleData,
+  SeriesState,
+  StoreModule
+} from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
   getAxisName,
@@ -22,7 +28,9 @@ type ValueStateProp = StateProp & { categories: string[] };
 export function getLabelAxisData(stateProp: ValueStateProp) {
   const { scale, axisSize, categories, series, options } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
-  const labels = scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
+  const labels = scale
+    ? makeLabelsFromLimit(scale.limit, scale.stepSize)
+    : categories;
 
   return {
     labels,
@@ -37,7 +45,10 @@ export function getValueAxisData(stateProp: StateProp) {
   const { scale, axisSize, series, options } = stateProp;
   let valueLabels = makeLabelsFromLimit(scale.limit, scale.stepSize);
 
-  if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
+  if (
+    hasBoxTypeSeries(series) &&
+    (options.series as BoxSeriesOptions)?.diverging
+  ) {
     valueLabels = valueLabels
       .slice(1)
       .reverse()

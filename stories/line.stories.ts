@@ -29,7 +29,10 @@ const defaultOptions = {
   plot: {}
 };
 
-function createChart(data: LineSeriesData, customOptions?: Record<string, any>) {
+function createChart(
+  data: LineSeriesData,
+  customOptions?: Record<string, any>
+) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
@@ -86,7 +89,12 @@ export const tupleCoordinate = () => {
 export const tickInterval = () => {
   const xAxisOptions = {
     tick: {
-      interval: number('tickInterval', 2, { range: true, min: 1, max: 20, step: 1 })
+      interval: number('tickInterval', 2, {
+        range: true,
+        min: 1,
+        max: 20,
+        step: 1
+      })
     }
   };
 
@@ -98,7 +106,12 @@ export const tickInterval = () => {
 export const labelInterval = () => {
   const xAxisOptions = {
     label: {
-      interval: number('labelInterval', 2, { range: true, min: 1, max: 20, step: 1 })
+      interval: number('labelInterval', 2, {
+        range: true,
+        min: 1,
+        max: 20,
+        step: 1
+      })
     }
   };
 
@@ -111,9 +124,24 @@ export const scale = () => {
   const { el } = createChart(budgetData, {
     yAxis: {
       scale: {
-        min: number('min', -1000, { range: true, min: -5000, max: 14000, step: 1000 }),
-        max: number('max', 10000, { range: true, min: -5000, max: 14000, step: 1000 }),
-        stepSize: number('scale', 1500, { range: true, min: 100, max: 14000, step: 100 })
+        min: number('min', -1000, {
+          range: true,
+          min: -5000,
+          max: 14000,
+          step: 1000
+        }),
+        max: number('max', 10000, {
+          range: true,
+          min: -5000,
+          max: 14000,
+          step: 1000
+        }),
+        stepSize: number('scale', 1500, {
+          range: true,
+          min: 100,
+          max: 14000,
+          step: 100
+        })
       }
     },
     series: { spline: true }

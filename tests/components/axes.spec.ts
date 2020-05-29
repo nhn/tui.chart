@@ -7,7 +7,10 @@ let axis;
 
 describe('yAxis', () => {
   beforeEach(() => {
-    axis = new Axis({ store: {} as Store<LineChartOptions>, eventBus: new EventEmitter() });
+    axis = new Axis({
+      store: {} as Store<LineChartOptions>,
+      eventBus: new EventEmitter()
+    });
 
     axis.initialize({ name: 'yAxis' });
   });
@@ -38,13 +41,27 @@ describe('yAxis', () => {
 
     it('label model', () => {
       expect(axis.models.label).toEqual([
-        { style: ['default', { textAlign: 'left' }], text: '2', type: 'label', x: 0.5, y: 20.5 },
-        { style: ['default', { textAlign: 'left' }], text: '1', type: 'label', x: 0.5, y: 100.5 }
+        {
+          style: ['default', { textAlign: 'left' }],
+          text: '2',
+          type: 'label',
+          x: 0.5,
+          y: 20.5
+        },
+        {
+          style: ['default', { textAlign: 'left' }],
+          text: '1',
+          type: 'label',
+          x: 0.5,
+          y: 100.5
+        }
       ]);
     });
 
     it('axisLine', () => {
-      expect(axis.models.axisLine).toEqual([{ type: 'line', x: 10.5, x2: 10.5, y: 0.5, y2: 80.5 }]);
+      expect(axis.models.axisLine).toEqual([
+        { type: 'line', x: 10.5, x2: 10.5, y: 0.5, y2: 80.5 }
+      ]);
     });
   });
 
@@ -77,7 +94,10 @@ describe('yAxis', () => {
 
 describe('xAxis', () => {
   beforeEach(() => {
-    axis = new Axis({ store: {} as Store<LineChartOptions>, eventBus: new EventEmitter() });
+    axis = new Axis({
+      store: {} as Store<LineChartOptions>,
+      eventBus: new EventEmitter()
+    });
     axis.initialize({ name: 'xAxis' });
   });
 
@@ -107,13 +127,27 @@ describe('xAxis', () => {
 
     it('label model', () => {
       expect(axis.models.label).toEqual([
-        { style: ['default', { textAlign: 'center' }], text: '1', type: 'label', x: 20.5, y: 10.5 },
-        { style: ['default', { textAlign: 'center' }], text: '2', type: 'label', x: 100.5, y: 10.5 }
-    ]);
+        {
+          style: ['default', { textAlign: 'center' }],
+          text: '1',
+          type: 'label',
+          x: 20.5,
+          y: 10.5
+        },
+        {
+          style: ['default', { textAlign: 'center' }],
+          text: '2',
+          type: 'label',
+          x: 100.5,
+          y: 10.5
+        }
+      ]);
     });
 
     it('axisLine', () => {
-      expect(axis.models.axisLine).toEqual([{ type: 'line', x: 0.5, x2: 80.5, y: 0.5, y2: 0.5 }]);
+      expect(axis.models.axisLine).toEqual([
+        { type: 'line', x: 0.5, x2: 80.5, y: 0.5, y2: 0.5 }
+      ]);
     });
   });
 

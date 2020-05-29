@@ -30,7 +30,10 @@ module.exports = {
     'default-case': ['off'],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false }],
+    '@typescript-eslint/no-use-before-define': [
+      'error',
+      { functions: false, classes: false }
+    ],
     '@typescript-eslint/no-empty-function': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'off'
   }

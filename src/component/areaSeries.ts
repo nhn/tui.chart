@@ -1,5 +1,9 @@
 import Component from './component';
-import { AreaPointsModel, CircleModel, LinePointsModel } from '@t/components/series';
+import {
+  AreaPointsModel,
+  CircleModel,
+  LinePointsModel
+} from '@t/components/series';
 import {
   AreaChartOptions,
   AreaSeriesType,
@@ -11,10 +15,17 @@ import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
+import {
+  getCoordinateDataIndex,
+  getCoordinateYValue
+} from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 
-type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
+type DrawModels =
+  | LinePointsModel
+  | AreaPointsModel
+  | ClipRectAreaModel
+  | CircleModel;
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -45,7 +56,15 @@ export default class AreaSeries extends Component {
   }
 
   public render(chartState: ChartState<AreaChartOptions>) {
-    const { layout, series, scale, theme, options, axes, categories = [] } = chartState;
+    const {
+      layout,
+      series,
+      scale,
+      theme,
+      options,
+      axes,
+      categories = []
+    } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
     }
@@ -71,9 +90,16 @@ export default class AreaSeries extends Component {
       categories
     );
 
-    const areaSeriesModel = this.renderAreaPointsModel(this.linePointsModel, bottomYPoint);
+    const areaSeriesModel = this.renderAreaPointsModel(
+      this.linePointsModel,
+      bottomYPoint
+    );
     const seriesCircleModel = this.renderCircleModel(this.linePointsModel);
-    const tooltipDataArr = this.makeTooltipData(areaData, renderOptions, categories);
+    const tooltipDataArr = this.makeTooltipData(
+      areaData,
+      renderOptions,
+      categories
+    );
 
     this.models = [this.renderClipRectAreaModel(), ...areaSeriesModel];
 
@@ -93,7 +119,11 @@ export default class AreaSeries extends Component {
     };
   }
 
-  makeTooltipData(areaData: AreaSeriesType[], { theme }: RenderOptions, categories: string[]) {
+  makeTooltipData(
+    areaData: AreaSeriesType[],
+    { theme }: RenderOptions,
+    categories: string[]
+  ) {
     return areaData.flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
 
@@ -102,7 +132,8 @@ export default class AreaSeries extends Component {
           label: name,
           color: theme.colors[index],
           value: getCoordinateYValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
+          category:
+            categories[getCoordinateDataIndex(datum, categories, dataIdx)]
         });
       });
 
@@ -127,7 +158,8 @@ export default class AreaSeries extends Component {
         const dataIndex = getCoordinateDataIndex(datum, categories, idx);
         const valueRatio = getValueRatio(value, limit);
 
-        const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
+        const x =
+          tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
 
         points.push({ x, y });

@@ -178,5 +178,7 @@ it('responder is added in reverse radius', () => {
   areaSeries.onMousemove({ responders: [responder] });
   const { responders } = areaSeries;
 
-  expect(responders.slice(responders.length - 2, responders.length)).toEqual(responder.reverse());
+  expect(responders.slice(responders.length - 2, responders.length)).toEqual(
+    responder.reverse()
+  );
 });

@@ -13,7 +13,7 @@ export const findMultipleNum = (...args: number[]) => {
   const underPointLens = args.map(value => getDecimalLength(value));
   const underPointLen = arrayUtil.max(underPointLens);
 
-  return Math.pow(10, underPointLen);
+  return 10 ** underPointLen;
 };
 
 export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number) {
@@ -54,19 +54,24 @@ export function crispPixel(pixel: number, thickness = 1) {
   const halfThickness = thickness / 2;
 
   return thickness % 2
-    ? (isInteger(pixel) ? pixel : Math.round(pixel - halfThickness)) + halfThickness
+    ? (isInteger(pixel) ? pixel : Math.round(pixel - halfThickness)) +
+        halfThickness
     : Math.round(pixel);
 }
 
-function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint) {
+function getControlPoints(
+  prev: BezierPoint,
+  cur: BezierPoint,
+  next: BezierPoint
+) {
   // http://scaledinnovation.com/analytics/splines/aboutSplines.html
   const TENSION = 0.333;
   const { x: x0, y: y0 } = prev;
   const { x: x1, y: y1 } = cur;
   const { x: x2, y: y2 } = next;
 
-  const d12 = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-  const d01 = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
+  const d12 = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+  const d01 = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2);
 
   const fa = (TENSION * d01) / (d01 + d12) || 0; // scaling factor for triangle Ta
   const fb = (TENSION * d12) / (d01 + d12) || 0; // ditto for Tb, simplifies to fb=t-fa
@@ -81,7 +86,11 @@ function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint
 }
 
 export function setSplineControlPoint(points: BezierPoint[]) {
-  for (let i = 0, pointsSize = points.length, prev = points[0]; i < pointsSize; i += 1) {
+  for (
+    let i = 0, pointsSize = points.length, prev = points[0];
+    i < pointsSize;
+    i += 1
+  ) {
     const point = points[i];
 
     point.controlPoint = getControlPoints(

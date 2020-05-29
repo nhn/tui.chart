@@ -1,7 +1,10 @@
 import { CircleModel } from '@t/components/series';
 import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ChartState, Scale, SeriesTheme } from '@t/store/store';
-import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
+import {
+  getCoordinateXValue,
+  getCoordinateYValue
+} from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
@@ -29,8 +32,16 @@ export default class ScatterSeries extends CircleSeries {
 
     this.rect = layout.plot;
 
-    const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions);
-    const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
+    const seriesModel = this.renderScatterPointsModel(
+      scatterData,
+      scale,
+      renderOptions
+    );
+    const tooltipModel = this.makeTooltipModel(
+      scatterData,
+      categories,
+      renderOptions
+    );
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModel];
     this.responders = seriesModel.map((m, index) => ({

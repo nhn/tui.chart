@@ -17,7 +17,11 @@ type stackScaleType =
   | 'dualPercentStack'
   | 'divergingPercentStack';
 
-function adjustLimitForOverflow(limit: ValueEdge, stepSize: number, overflowed: Overflowed) {
+function adjustLimitForOverflow(
+  limit: ValueEdge,
+  stepSize: number,
+  overflowed: Overflowed
+) {
   const { min, max } = limit;
 
   return {
@@ -32,8 +36,10 @@ function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>) {
   const hasMinOption = isNumber(min);
   const hasMaxOption = isNumber(max);
 
-  const isOverflowedMin = !hasMinOption && scaleDataLimit.min === min && scaleDataLimit.min !== 0;
-  const isOverflowedMax = !hasMaxOption && scaleDataLimit.max === max && scaleDataLimit.max !== 0;
+  const isOverflowedMin =
+    !hasMinOption && scaleDataLimit.min === min && scaleDataLimit.min !== 0;
+  const isOverflowedMax =
+    !hasMaxOption && scaleDataLimit.max === max && scaleDataLimit.max !== 0;
 
   if (!isOverflowedMin && !isOverflowedMax) {
     return null;
@@ -46,7 +52,8 @@ function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>) {
 }
 
 function getDigits(num: number): number {
-  const logNumberDividedLN10 = num === 0 ? 1 : Math.log(Math.abs(num)) / Math.LN10;
+  const logNumberDividedLN10 =
+    num === 0 ? 1 : Math.log(Math.abs(num)) / Math.LN10;
 
   return Math.pow(10, Math.floor(logNumberDividedLN10));
 }
@@ -77,7 +84,11 @@ function getNormalizedStep(stepSize: number) {
  * Get normalized limit values
  * max = 155 and step = 10 ---> max = 160
  */
-function getNormalizedLimit(limit: ValueEdge, stepSize: number, showLabel?: boolean): ValueEdge {
+function getNormalizedLimit(
+  limit: ValueEdge,
+  stepSize: number,
+  showLabel?: boolean
+): ValueEdge {
   let { min, max } = limit;
   const minNumber = Math.min(getDigits(max), getDigits(stepSize));
   const placeNumber = minNumber > 1 ? 1 : 1 / minNumber;
@@ -94,9 +105,12 @@ function getNormalizedLimit(limit: ValueEdge, stepSize: number, showLabel?: bool
 
   if (min > stepSize) {
     // floor min value to multiples of step
-    min = (Math.floor((min * placeNumber) / fixedStep) * fixedStep) / placeNumber;
+    min =
+      (Math.floor((min * placeNumber) / fixedStep) * fixedStep) / placeNumber;
   } else if (min < 0) {
-    min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
+    min =
+      -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) /
+      placeNumber;
   } else {
     // 0 when min value is positive and smaller than step
     min = 0;
@@ -158,7 +172,10 @@ function getRoughScale(scale: Required<Scale>, offsetSize: number): ScaleData {
   return { limit: { min, max }, stepSize, stepCount };
 }
 
-function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Required<Scale> {
+function makeScaleOption(
+  dataRange: ValueEdge,
+  scaleOptions?: Scale
+): Required<Scale> {
   return {
     max: isNumber(scaleOptions?.max) ? scaleOptions!.max : dataRange.max,
     min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min,

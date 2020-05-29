@@ -40,7 +40,10 @@ describe('utils', () => {
     const obj1 = { a: { b: { d: 2 } }, c: 1 };
     const obj2 = { a: { b: { e: { f: 1 } } }, c: 2 };
 
-    expect(deepMergedCopy(obj1, obj2)).toEqual({ a: { b: { d: 2, e: { f: 1 } } }, c: 2 });
+    expect(deepMergedCopy(obj1, obj2)).toEqual({
+      a: { b: { d: 2, e: { f: 1 } } },
+      c: 2
+    });
   });
 
   it('range', () => {
@@ -119,7 +122,11 @@ describe('utils', () => {
 
   it('sortCategories', () => {
     const arr = [10, 2, 4];
-    const dateArr = ['02/23/2020 09:00:00', '02/20/2020 10:00:00', '02/20/2020 10:10:00'];
+    const dateArr = [
+      '02/23/2020 09:00:00',
+      '02/20/2020 10:00:00',
+      '02/20/2020 10:10:00'
+    ];
 
     expect(arr.sort(sortCategories)).toEqual([2, 4, 10]);
     expect(dateArr.sort(sortCategories)).toEqual([

@@ -4,7 +4,13 @@ import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
 
-type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip' | 'plot';
+type ComponentType =
+  | 'component'
+  | 'series'
+  | 'legend'
+  | 'axis'
+  | 'tooltip'
+  | 'plot';
 
 export default abstract class Component {
   name = 'Component';
@@ -30,14 +36,23 @@ export default abstract class Component {
 
   responders!: any[]; // @TODO: 정의
 
-  constructor({ store, eventBus }: { store: Store<Options>; eventBus: EventEmitter }) {
+  constructor({
+    store,
+    eventBus
+  }: {
+    store: Store<Options>;
+    eventBus: EventEmitter;
+  }) {
     this.store = store;
     this.eventBus = eventBus;
   }
 
   abstract initialize(args: any): void;
 
-  abstract render(state: ChartState<Options>, computed: Record<string, any>): void;
+  abstract render(
+    state: ChartState<Options>,
+    computed: Record<string, any>
+  ): void;
 
   update(delta: number) {
     if (!this.drawModels) {

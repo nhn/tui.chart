@@ -15,13 +15,19 @@ export default class Plot extends Component {
 
   renderLines(lines: PlotLine[], axes: Axes): LineModel[] {
     return lines.map(({ value, color, vertical }) => {
-      const { labels, tickCount } = vertical ? (axes.xAxis as AxisData) : (axes.yAxis as AxisData);
+      const { labels, tickCount } = vertical
+        ? (axes.xAxis as AxisData)
+        : (axes.yAxis as AxisData);
       const size = vertical ? this.rect.width : this.rect.height;
       const positions = makeTickPixelPositions(size, tickCount);
       const index = labels.findIndex(label => Number(label) === value);
       const position = positions[index];
 
-      return this.makeLineModel(vertical, vertical ? position : size - position, color);
+      return this.makeLineModel(
+        vertical,
+        vertical ? position : size - position,
+        color
+      );
     });
   }
 
@@ -55,7 +61,14 @@ export default class Plot extends Component {
     const width = vertical ? 0 : this.rect.width;
     const height = vertical ? this.rect.height : 0;
 
-    return { type: 'line', x, y, x2: x + width, y2: y + height, strokeStyle: color };
+    return {
+      type: 'line',
+      x,
+      y,
+      x2: x + width,
+      y2: y + height,
+      strokeStyle: color
+    };
   }
 
   beforeDraw(painter: Painter) {

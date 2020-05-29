@@ -45,7 +45,11 @@ function getLinePointsModel(bezier: BezierOptions) {
   return model;
 }
 
-const linePointsModel = (lineWidth: number, color: string, bezier: BezierOptions) =>
+const linePointsModel = (
+  lineWidth: number,
+  color: string,
+  bezier: BezierOptions
+) =>
   ({
     color,
     lineWidth,
@@ -69,7 +73,11 @@ const circleModel = (
     ...point
   } as CircleModel);
 
-const areaPointsModel = (fillColor: string, bottomYPoint: number, bezier: BezierOptions) =>
+const areaPointsModel = (
+  fillColor: string,
+  bottomYPoint: number,
+  bezier: BezierOptions
+) =>
   ({
     fillColor,
     bottomYPoint,
@@ -101,7 +109,12 @@ function setup() {
 
 export const lineBrush = () => {
   const { ctx, el } = setup();
-  const lineWidth = number('lineWidth', 1, { range: true, min: 1, max: 10, step: 1 });
+  const lineWidth = number('lineWidth', 1, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1
+  });
   const isDashed = boolean('dashed', false);
 
   const lineModel: LineModel = {
@@ -121,7 +134,12 @@ export const lineBrush = () => {
 export const tickBrush = () => {
   const { ctx, el } = setup();
 
-  const tickModel: TickModel = { type: 'tick', x: 100, y: 100, isYAxis: boolean('isYAxis', false) };
+  const tickModel: TickModel = {
+    type: 'tick',
+    x: 100,
+    y: 100,
+    isYAxis: boolean('isYAxis', false)
+  };
   tick(ctx, tickModel);
 
   return el;
@@ -141,7 +159,11 @@ export const labelBrush = () => {
     },
     'middle'
   );
-  const textAlign = radios('align', { center: 'center', left: 'left', right: 'right' }, 'center');
+  const textAlign = radios(
+    'align',
+    { center: 'center', left: 'left', right: 'right' },
+    'center'
+  );
   const font = text('font', 'normal 20px Arial');
   const labelModel: LabelModel = {
     type: 'label',
@@ -158,9 +180,22 @@ export const labelBrush = () => {
 
 export const linePointsBrush = () => {
   const { ctx, el } = setup();
-  const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
-  const lineWidth = number('line width', 3, { range: true, min: 1, max: 10, step: 1 });
-  const bezier = radios('bezier', { basic: 'basic', bezier: 'bezier' }, 'basic');
+  const color = radios(
+    'color',
+    { green: 'green', blue: 'blue', red: 'red' },
+    'green'
+  );
+  const lineWidth = number('line width', 3, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1
+  });
+  const bezier = radios(
+    'bezier',
+    { basic: 'basic', bezier: 'bezier' },
+    'basic'
+  );
 
   linePoints(ctx, linePointsModel(lineWidth, color, bezier));
 
@@ -169,17 +204,54 @@ export const linePointsBrush = () => {
 
 export const circleBrush = () => {
   const { ctx, el } = setup();
-  const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
-  const radius = number('radius', 15, { range: true, min: 15, max: 40, step: 5 });
-  const styleName = options('style name', { default: 'default', hover: 'hover' }, 'default', {
-    display: 'multi-select'
+  const color = radios(
+    'color',
+    { green: 'green', blue: 'blue', red: 'red' },
+    'green'
+  );
+  const radius = number('radius', 15, {
+    range: true,
+    min: 15,
+    max: 40,
+    step: 5
   });
+  const styleName = options(
+    'style name',
+    { default: 'default', hover: 'hover' },
+    'default',
+    {
+      display: 'multi-select'
+    }
+  );
 
-  const strokeStyle = radios('strokeStyle', { black: 'black', red: 'red' }, 'black');
-  const lineWidth = number('lineWidth', 1, { range: true, min: 1, max: 10, step: 1 });
-  const shadowOffsetY = number('shadowOffsetY', 1, { range: true, min: 1, max: 10, step: 1 });
-  const shadowBlur = number('shadowBlur', 1, { range: true, min: 1, max: 10, step: 1 });
-  const shadowColor = radios('shadowColor', { black: 'black', red: 'red' }, 'black');
+  const strokeStyle = radios(
+    'strokeStyle',
+    { black: 'black', red: 'red' },
+    'black'
+  );
+  const lineWidth = number('lineWidth', 1, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1
+  });
+  const shadowOffsetY = number('shadowOffsetY', 1, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1
+  });
+  const shadowBlur = number('shadowBlur', 1, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1
+  });
+  const shadowColor = radios(
+    'shadowColor',
+    { black: 'black', red: 'red' },
+    'black'
+  );
 
   const styleObj = [
     ...styleName,
@@ -193,7 +265,10 @@ export const circleBrush = () => {
   ] as StyleProp<CircleStyle, CircleStyleName>;
 
   circle(ctx, circleModel({ x: 100, y: 100 }, 50, '#a79aff', ['default']));
-  circle(ctx, circleModel({ x: 300, y: 100 }, 50, '#a79aff', ['default', 'hover']));
+  circle(
+    ctx,
+    circleModel({ x: 300, y: 100 }, 50, '#a79aff', ['default', 'hover'])
+  );
   circle(ctx, circleModel({ x: 100, y: 300 }, radius, color, styleObj));
 
   return el;
@@ -202,9 +277,22 @@ export const circleBrush = () => {
 export const areaPointsBrush = () => {
   const { ctx, el } = setup();
 
-  const fillColor = radios('fillColor', { green: 'green', blue: 'blue', red: 'red' }, 'green');
-  const bezier = radios('bezier', { basic: 'basic', bezier: 'bezier' }, 'basic');
-  const bottomYPoint = number('bottomYPoint', 300, { range: true, min: 300, max: 800, step: 50 });
+  const fillColor = radios(
+    'fillColor',
+    { green: 'green', blue: 'blue', red: 'red' },
+    'green'
+  );
+  const bezier = radios(
+    'bezier',
+    { basic: 'basic', bezier: 'bezier' },
+    'basic'
+  );
+  const bottomYPoint = number('bottomYPoint', 300, {
+    range: true,
+    min: 300,
+    max: 800,
+    step: 50
+  });
 
   areaPoints(ctx, areaPointsModel(fillColor, bottomYPoint, bezier));
 
@@ -214,7 +302,11 @@ export const areaPointsBrush = () => {
 export const rectBrush = () => {
   const { ctx, el } = setup();
 
-  const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
+  const color = radios(
+    'color',
+    { green: 'green', blue: 'blue', red: 'red' },
+    'green'
+  );
 
   rect(ctx, { type: 'rect', x: 300, y: 100, height: 200, width: 100, color });
   rect(ctx, {
