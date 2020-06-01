@@ -1,15 +1,10 @@
 import Component from './component';
 import { CircleModel } from '@t/components/series';
 import { ClipRectAreaModel } from '@t/components/series';
-import { SeriesTheme } from '@t/store/store';
 import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
 
 type DrawModels = ClipRectAreaModel | CircleModel;
-
-interface RenderOptions {
-  theme: SeriesTheme;
-}
 
 export default abstract class CircleSeries extends Component {
   models!: DrawModels[];
