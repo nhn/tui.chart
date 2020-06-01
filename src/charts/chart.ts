@@ -30,11 +30,16 @@ export default class Chart<T extends Options> {
 
     this.el = el;
 
-    this.store = new Store({ chart: options.chart, series, categories, options });
+    this.store = new Store({
+      chart: options.chart,
+      series,
+      categories,
+      options,
+    });
 
     this.componentManager = new ComponentManager({
       store: this.store,
-      eventBus: this.eventBus
+      eventBus: this.eventBus,
     });
 
     this.store.observe(() => {
@@ -52,12 +57,12 @@ export default class Chart<T extends Options> {
           },
           chart: this,
           duration: 1000,
-          requester: this
+          requester: this,
         });
       }, 10)
     );
 
-    this.eventBus.on('needSubLoop', opts => {
+    this.eventBus.on('needSubLoop', (opts) => {
       animator.add({ ...opts, chart: this });
     });
 
@@ -80,10 +85,10 @@ export default class Chart<T extends Options> {
 
     const mousePosition = {
       x: clientX - canvasRect.left,
-      y: clientY - canvasRect.top
+      y: clientY - canvasRect.top,
     };
 
-    this.componentManager.forEach(component => {
+    this.componentManager.forEach((component) => {
       if (!component[delegationMethod]) {
         return;
       }
@@ -92,7 +97,7 @@ export default class Chart<T extends Options> {
         return;
       }
 
-      const detected = (component.responders || []).filter(m => {
+      const detected = (component.responders || []).filter((m) => {
         return responderDetectors[m.type](mousePosition, m, component.rect);
       });
 
@@ -108,7 +113,7 @@ export default class Chart<T extends Options> {
   draw() {
     this.painter.beforeFrame();
 
-    this.componentManager.forEach(component => {
+    this.componentManager.forEach((component) => {
       if (!component.isShow) {
         return;
       }

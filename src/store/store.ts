@@ -6,7 +6,7 @@ import {
   computed,
   watch,
   extend as reactiveExtend,
-  invisibleWork
+  invisibleWork,
 } from '@src/store/reactive';
 import {
   ChartState,
@@ -17,7 +17,7 @@ import {
   StoreModule,
   ObserveFunc,
   Series,
-  Options
+  Options,
 } from '@t/store/store';
 
 import {
@@ -27,7 +27,7 @@ import {
   deepMergedCopy,
   sortSeries,
   sortCategories,
-  deepCopy
+  deepCopy,
 } from '@src/helpers/utils';
 import { BaseChartOptions, Size } from '@t/options';
 
@@ -41,9 +41,9 @@ interface InitStoreState<T> {
 function makeCategories(series: Series) {
   const categories: Set<string> = new Set();
 
-  Object.keys(series).forEach(key => {
+  Object.keys(series).forEach((key) => {
     series[key].forEach(({ data }) => {
-      data.forEach(datum => {
+      data.forEach((datum) => {
         categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
       });
     });
@@ -55,10 +55,10 @@ function makeCategories(series: Series) {
 function getSortedSeries(series: Series) {
   const result: Series = {};
 
-  Object.keys(series).forEach(key => {
+  Object.keys(series).forEach((key) => {
     result[key] = series[key].map(({ name, data }) => ({
       name,
-      data: data.sort(sortSeries)
+      data: data.sort(sortSeries),
     }));
   });
 
@@ -68,7 +68,7 @@ function getSortedSeries(series: Series) {
 function initData(series: Series, categories?: string[]) {
   return {
     series: series.line ? getSortedSeries(series) : series, // TODO: 초기 데이터의 정렬 유무를 옵션으로 받아 처리
-    categories: categories ? categories : makeCategories(series)
+    categories: categories ? categories : makeCategories(series),
   };
 }
 
@@ -124,19 +124,19 @@ export default class Store<T extends Options> {
                 if (containerEl.parentNode) {
                   this.dispatch('setChartSize', {
                     width: containerEl.offsetWidth,
-                    height: containerEl.offsetHeight
+                    height: containerEl.offsetHeight,
                   });
                 } else {
                   setTimeout(() => {
                     this.dispatch('setChartSize', {
                       width: containerEl.offsetWidth,
-                      height: containerEl.offsetHeight
+                      height: containerEl.offsetHeight,
                     });
                   }, 0);
                 }
               }
-            }
-          }
+            },
+          },
         } as StoreOptions,
         { state: { series, categories, chart, options } }
       )
@@ -248,7 +248,7 @@ export default class Store<T extends Options> {
 
   setValue(target: Record<string, any>, key: string, source: Record<string, any>) {
     extend(target, {
-      [key]: source
+      [key]: source,
     });
   }
 }

@@ -6,6 +6,7 @@ type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, num
 type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
 export type CoordinateDataType = Point | [number, number] | [string, number];
 export type AreaSeriesDataType = number[] | RangeDataType[];
+export type BubbleSeriesDataType = ({ label: string; r: number } & Point)[];
 
 export interface Point {
   x: number;
@@ -51,9 +52,18 @@ export interface ScatterSeriesType {
   data: CoordinateSeriesDataType;
 }
 
+export interface BubbleSeriesType {
+  name: string;
+  data: BubbleSeriesDataType;
+}
+
 export interface ScatterSeriesData {
   categories?: string[];
   series: ScatterSeriesType[];
+}
+
+export interface BubbleSeriesData {
+  series: BubbleSeriesType[];
 }
 
 interface TitleOptions {
@@ -96,7 +106,11 @@ type PlotLineValue = string | number;
 
 interface BasePlotOptions {
   lines?: { value: PlotLineValue; color: string }[];
-  bands?: { range: [PlotLineValue, PlotLineValue]; value: PlotLineValue; color: string }[];
+  bands?: {
+    range: [PlotLineValue, PlotLineValue];
+    value: PlotLineValue;
+    color: string;
+  }[];
 }
 
 interface BaseOptions {
@@ -128,6 +142,11 @@ export interface LineChartOptions extends BaseOptions {
 }
 
 export interface ScatterChartOptions extends BaseOptions {
+  series?: BaseSeriesOptions;
+  xAxis?: BaseXAxisOptions;
+}
+
+export interface BubbleChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
 }

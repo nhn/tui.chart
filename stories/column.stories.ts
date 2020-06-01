@@ -5,13 +5,13 @@ import {
   budgetDataForStack,
   budgetDataForGroupStack,
   negativeBudgetData,
-  budgetDataForDiverging
+  budgetDataForDiverging,
 } from './data';
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
 export default {
-  title: 'chart|Column'
+  title: 'chart|Column',
 };
 
 const width = 1000;
@@ -19,11 +19,11 @@ const height = 500;
 const defaultOptions: ColumnChartOptions = {
   chart: {
     width,
-    height
+    height,
   },
   series: {
-    showLabel: true
-  }
+    showLabel: true,
+  },
 };
 
 function createChart(data, customOptions?: ColumnChartOptions) {
@@ -37,7 +37,7 @@ function createChart(data, customOptions?: ColumnChartOptions) {
   const chart = new ColumnChart({
     el,
     data,
-    options
+    options,
   });
 
   return { el, chart };
@@ -65,9 +65,9 @@ export const normalStack = () => {
   const { el } = createChart(budgetDataForStack, {
     series: {
       stack: {
-        type: 'normal'
-      }
-    }
+        type: 'normal',
+      },
+    },
   });
 
   return el;
@@ -77,9 +77,9 @@ export const percentStack = () => {
   const { el } = createChart(budgetDataForStack, {
     series: {
       stack: {
-        type: 'percent'
-      }
-    }
+        type: 'percent',
+      },
+    },
   });
 
   return el;
@@ -88,8 +88,8 @@ export const percentStack = () => {
 export const groupStack = () => {
   const { el } = createChart(budgetDataForGroupStack, {
     series: {
-      stack: true
-    }
+      stack: true,
+    },
   });
 
   return el;
@@ -100,9 +100,9 @@ export const defaultConnector = () => {
     series: {
       stack: {
         type: 'normal',
-        connector: true
-      }
-    }
+        connector: true,
+      },
+    },
   });
 
   return el;
@@ -116,10 +116,10 @@ export const styledConnector = () => {
         connector: {
           type: 'dashed',
           color: '#031f4b',
-          width: 2
-        }
-      }
-    }
+          width: 2,
+        },
+      },
+    },
   });
 
   return el;
@@ -128,8 +128,8 @@ export const styledConnector = () => {
 export const diverging = () => {
   const { el } = createChart(budgetDataForDiverging, {
     series: {
-      diverging: true
-    }
+      diverging: true,
+    },
   });
 
   return el;

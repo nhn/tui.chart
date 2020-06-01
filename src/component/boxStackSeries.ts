@@ -8,7 +8,7 @@ import {
   StackData,
   BoxType,
   Stack,
-  AxisData
+  AxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
@@ -73,7 +73,7 @@ export default class BoxStackSeries extends BoxSeries {
     this.drawModels = deepCopyArray(this.models);
     this.responders = rectModel.map((m, index) => ({
       ...m,
-      data: tooltipData[index]
+      data: tooltipData[index],
     }));
   }
 
@@ -87,7 +87,13 @@ export default class BoxStackSeries extends BoxSeries {
 
     return isGroupStack(stackData)
       ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueAxis, tickDistance)
-      : this.makeStackSeriesModel({ stack, stackData, colors, valueAxis, tickDistance });
+      : this.makeStackSeriesModel({
+          stack,
+          stackData,
+          colors,
+          valueAxis,
+          tickDistance,
+        });
   }
 
   makeStackSeriesModel({
@@ -97,7 +103,7 @@ export default class BoxStackSeries extends BoxSeries {
     valueAxis,
     tickDistance,
     stackGroupCount = 1,
-    stackGroupIndex = 0
+    stackGroupIndex = 0,
   }: StackSeriesModelParamType) {
     const seriesModels: RectModel[] = [];
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
@@ -116,7 +122,7 @@ export default class BoxStackSeries extends BoxSeries {
         seriesModels.push({
           type: 'rect',
           color: colors![seriesIndex],
-          ...this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth)
+          ...this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth),
         });
       });
     });
@@ -129,8 +135,8 @@ export default class BoxStackSeries extends BoxSeries {
         valueAxis,
         tickDistance,
         stackGroupCount,
-        stackGroupIndex
-      })
+        stackGroupIndex,
+      }),
     };
   }
 
@@ -157,7 +163,7 @@ export default class BoxStackSeries extends BoxSeries {
         valueAxis,
         tickDistance,
         stackGroupCount: stackGroupIds.length,
-        stackGroupIndex: groupIndex
+        stackGroupIndex: groupIndex,
       });
 
       rectModels = [...rectModels, ...stackModels.seriesModels];
@@ -169,7 +175,7 @@ export default class BoxStackSeries extends BoxSeries {
 
     return {
       seriesModels: rectModels,
-      connectorModels: connectorModels
+      connectorModels: connectorModels,
     };
   }
 
@@ -179,7 +185,7 @@ export default class BoxStackSeries extends BoxSeries {
     valueAxis,
     tickDistance,
     stackGroupCount = 1,
-    stackGroupIndex = 0
+    stackGroupIndex = 0,
   }: StackSeriesModelParamType) {
     if (!stack.connector) {
       return [];
@@ -247,7 +253,7 @@ export default class BoxStackSeries extends BoxSeries {
         label: seriesRawData[seriesIndex].name,
         color: colors[seriesIndex],
         value,
-        category: categories?.[index]
+        category: categories?.[index],
       }))
     );
   }
@@ -289,7 +295,7 @@ export default class BoxStackSeries extends BoxSeries {
             y2: nextY,
             dashedPattern: lineType === 'dashed' ? [5, 5] : [],
             strokeStyle,
-            lineWidth
+            lineWidth,
           });
         }
       });

@@ -11,7 +11,7 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   if (style) {
     const styleObj = makeStyleObj<RectStyle, RectStyleName>(style, {});
 
-    Object.keys(styleObj).forEach(key => {
+    Object.keys(styleObj).forEach((key) => {
       ctx[key] = styleObj[key];
     });
   }

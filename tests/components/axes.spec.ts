@@ -7,7 +7,10 @@ let axis;
 
 describe('yAxis', () => {
   beforeEach(() => {
-    axis = new Axis({ store: {} as Store<LineChartOptions>, eventBus: new EventEmitter() });
+    axis = new Axis({
+      store: {} as Store<LineChartOptions>,
+      eventBus: new EventEmitter(),
+    });
 
     axis.initialize({ name: 'yAxis' });
   });
@@ -23,23 +26,35 @@ describe('yAxis', () => {
             tickInterval: 1,
             labelInterval: 1,
             labels: ['1', '2'],
-            tickCount: 2
-          }
-        }
+            tickCount: 2,
+          },
+        },
       });
     });
 
     it('tick model', () => {
       expect(axis.models.tick).toEqual([
         { isYAxis: true, type: 'tick', x: 10.5, y: 0.5 },
-        { isYAxis: true, type: 'tick', x: 10.5, y: 80.5 }
+        { isYAxis: true, type: 'tick', x: 10.5, y: 80.5 },
       ]);
     });
 
     it('label model', () => {
       expect(axis.models.label).toEqual([
-        { style: ['default', { textAlign: 'left' }], text: '2', type: 'label', x: 0.5, y: 20.5 },
-        { style: ['default', { textAlign: 'left' }], text: '1', type: 'label', x: 0.5, y: 100.5 }
+        {
+          style: ['default', { textAlign: 'left' }],
+          text: '2',
+          type: 'label',
+          x: 0.5,
+          y: 20.5,
+        },
+        {
+          style: ['default', { textAlign: 'left' }],
+          text: '1',
+          type: 'label',
+          x: 0.5,
+          y: 100.5,
+        },
       ]);
     });
 
@@ -59,9 +74,9 @@ describe('yAxis', () => {
             tickInterval: 2,
             labelInterval: 2,
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-            tickCount: 10
-          }
-        }
+            tickCount: 10,
+          },
+        },
       });
     });
 
@@ -77,7 +92,10 @@ describe('yAxis', () => {
 
 describe('xAxis', () => {
   beforeEach(() => {
-    axis = new Axis({ store: {} as Store<LineChartOptions>, eventBus: new EventEmitter() });
+    axis = new Axis({
+      store: {} as Store<LineChartOptions>,
+      eventBus: new EventEmitter(),
+    });
     axis.initialize({ name: 'xAxis' });
   });
 
@@ -92,24 +110,36 @@ describe('xAxis', () => {
             tickInterval: 1,
             labelInterval: 1,
             labels: ['1', '2'],
-            tickCount: 2
-          }
-        }
+            tickCount: 2,
+          },
+        },
       });
     });
 
     it('tick model', () => {
       expect(axis.models.tick).toEqual([
         { isYAxis: false, type: 'tick', x: 0.5, y: 0.5 },
-        { isYAxis: false, type: 'tick', x: 80.5, y: 0.5 }
+        { isYAxis: false, type: 'tick', x: 80.5, y: 0.5 },
       ]);
     });
 
     it('label model', () => {
       expect(axis.models.label).toEqual([
-        { style: ['default', { textAlign: 'center' }], text: '1', type: 'label', x: 20.5, y: 10.5 },
-        { style: ['default', { textAlign: 'center' }], text: '2', type: 'label', x: 100.5, y: 10.5 }
-    ]);
+        {
+          style: ['default', { textAlign: 'center' }],
+          text: '1',
+          type: 'label',
+          x: 20.5,
+          y: 10.5,
+        },
+        {
+          style: ['default', { textAlign: 'center' }],
+          text: '2',
+          type: 'label',
+          x: 100.5,
+          y: 10.5,
+        },
+      ]);
     });
 
     it('axisLine', () => {
@@ -128,9 +158,9 @@ describe('xAxis', () => {
             tickInterval: 2,
             labelInterval: 2,
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-            tickCount: 10
-          }
-        }
+            tickCount: 10,
+          },
+        },
       });
     });
 

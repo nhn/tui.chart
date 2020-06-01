@@ -15,7 +15,7 @@ export default abstract class Component {
     x: 0,
     y: 0,
     height: 0,
-    width: 0
+    width: 0,
   };
 
   isShow = true;
@@ -47,7 +47,7 @@ export default abstract class Component {
     if (Array.isArray(this.models)) {
       this.updateModels(this.drawModels, this.models, delta);
     } else {
-      Object.keys(this.models).forEach(type => {
+      Object.keys(this.models).forEach((type) => {
         const currentModels = this.drawModels[type];
         const targetModels = this.models[type];
 
@@ -60,7 +60,7 @@ export default abstract class Component {
     currentModels.forEach((current: Record<string, any>, index: number) => {
       const target = targetModels[index];
 
-      Object.keys(current).forEach(key => {
+      Object.keys(current).forEach((key) => {
         if (key[0] !== '_' && key !== 'text') {
           if (typeof current[key] === 'number') {
             current[key] = current[key] + (target[key] - current[key]) * delta;
@@ -82,7 +82,7 @@ export default abstract class Component {
     if (Array.isArray(this.models)) {
       this.syncModels(this.drawModels, this.models);
     } else {
-      Object.keys(this.models).forEach(type => {
+      Object.keys(this.models).forEach((type) => {
         const currentModels = this.drawModels[type];
         const targetModels = this.models[type];
 
@@ -115,7 +115,7 @@ export default abstract class Component {
     if (Array.isArray(models)) {
       painter.paintForEach(models);
     } else if (models) {
-      Object.keys(models).forEach(item => {
+      Object.keys(models).forEach((item) => {
         painter.paintForEach(models[item]);
       });
     }

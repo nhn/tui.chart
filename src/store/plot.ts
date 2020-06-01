@@ -6,7 +6,7 @@ import { hasNegative } from '@src/helpers/utils';
 const plot: StoreModule = {
   name: 'plot',
   state: () => ({
-    plot: {}
+    plot: {},
   }),
   action: {
     setPlot({ state }) {
@@ -15,25 +15,25 @@ const plot: StoreModule = {
       const lines: PlotLine[] = plotLines.map(({ color, value }) => ({
         value,
         color,
-        vertical: true
+        vertical: true,
       }));
 
       if (needZeroLine(series, axes)) {
         lines.push({
           value: 0,
           color: 'rgba(0, 0, 0, 0.5)',
-          vertical: isLabelAxisOnYAxis(series)
+          vertical: isLabelAxisOnYAxis(series),
         });
       }
 
       extend(state.plot, { lines });
-    }
+    },
   },
   observe: {
     updatePlot() {
       this.dispatch('setPlot');
-    }
-  }
+    },
+  },
 };
 
 function needZeroLine(series, axes) {

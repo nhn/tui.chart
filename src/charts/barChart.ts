@@ -31,9 +31,9 @@ export default class BarChart extends Chart<BarChartOptions> {
       el,
       options,
       series: {
-        bar: data.series
+        bar: data.series,
       },
-      categories: data.categories
+      categories: data.categories,
     });
   }
 

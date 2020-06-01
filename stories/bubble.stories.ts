@@ -1,10 +1,10 @@
-import { ScatterChartOptions, ScatterSeriesData } from '@t/options';
+import { BubbleChartOptions, BubbleSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { genderHeightWeightData } from './data';
-import ScatterChart from '@src/charts/scatterChart';
+import { lifeExpectancyPerGDPData } from './data';
+import BubbleChart from '@src/charts/bubbleChart';
 
 export default {
-  title: 'chart|Scatter',
+  title: 'chart|Bubble',
 };
 
 const width = 1000;
@@ -21,7 +21,7 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(data: ScatterSeriesData, customOptions?: ScatterChartOptions) {
+function createChart(data: BubbleSeriesData, customOptions?: BubbleChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
@@ -29,13 +29,13 @@ function createChart(data: ScatterSeriesData, customOptions?: ScatterChartOption
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
 
-  const chart = new ScatterChart({ el, data, options });
+  const chart = new BubbleChart({ el, data, options });
 
   return { el, chart };
 }
 
-export const scatter = () => {
-  const { el } = createChart(genderHeightWeightData);
+export const basic = () => {
+  const { el } = createChart(lifeExpectancyPerGDPData);
 
   return el;
 };

@@ -5,7 +5,7 @@ import { ChartState, DataRange } from '@t/store/store';
 
 const data = [
   { name: 'han', data: [1, 2, 3] },
-  { name: 'cho', data: [4, 5, 6] }
+  { name: 'cho', data: [4, 5, 6] },
 ];
 
 describe('Scale Store', () => {
@@ -15,14 +15,14 @@ describe('Scale Store', () => {
       series: { bar: { data } },
       stackSeries: {},
       scale: {},
-      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange
+      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange,
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 6, min: 1 }, stepSize: 0.5, stepCount: 10 }
+      xAxis: { limit: { max: 6, min: 1 }, stepSize: 0.5, stepCount: 10 },
     });
   });
 
@@ -34,19 +34,23 @@ describe('Scale Store', () => {
         bar: {
           stack: {
             type: 'percent',
-            connector: { type: 'solid', color: 'rgba(51, 85, 139, 0,3)', width: 1 }
-          }
-        }
+            connector: {
+              type: 'solid',
+              color: 'rgba(51, 85, 139, 0,3)',
+              width: 1,
+            },
+          },
+        },
       },
       scale: {},
-      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange
+      dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange,
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 100, min: 0 }, stepSize: 25, stepCount: 5 }
+      xAxis: { limit: { max: 100, min: 0 }, stepSize: 25, stepCount: 5 },
     });
   });
 
@@ -57,14 +61,14 @@ describe('Scale Store', () => {
       stackSeries: {},
       scale: {},
       dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange,
-      options: { xAxis: { scale: { min: -5 } } }
+      options: { xAxis: { scale: { min: -5 } } },
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 6, min: -5 }, stepSize: 1, stepCount: 11 }
+      xAxis: { limit: { max: 6, min: -5 }, stepSize: 1, stepCount: 11 },
     });
   });
 
@@ -75,14 +79,14 @@ describe('Scale Store', () => {
       stackSeries: {},
       scale: {},
       dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange,
-      options: { xAxis: { scale: { max: 10 } } }
+      options: { xAxis: { scale: { max: 10 } } },
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 10, min: 0 }, stepSize: 1, stepCount: 10 }
+      xAxis: { limit: { max: 10, min: 0 }, stepSize: 1, stepCount: 10 },
     });
   });
 
@@ -93,14 +97,14 @@ describe('Scale Store', () => {
       stackSeries: {},
       scale: {},
       dataRange: { bar: { xAxis: { min: 1, max: 6 } } } as DataRange,
-      options: { xAxis: { scale: { stepSize: 5 } } }
+      options: { xAxis: { scale: { stepSize: 5 } } },
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 10, min: 0 }, stepSize: 5, stepCount: 2 }
+      xAxis: { limit: { max: 10, min: 0 }, stepSize: 5, stepCount: 2 },
     });
   });
 });

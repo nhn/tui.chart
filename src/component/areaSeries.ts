@@ -5,13 +5,13 @@ import {
   AreaSeriesType,
   LineTypeSeriesOptions,
   Point,
-  RangeDataType
+  RangeDataType,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
-import { setSplineControlPoint } from '@src/helpers/calculator';
+import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
+import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 
 type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
@@ -58,7 +58,7 @@ export default class AreaSeries extends Component {
     const renderOptions: RenderOptions = {
       pointOnColumn,
       options: options.series || {},
-      theme: theme.series
+      theme: theme.series,
     };
 
     this.rect = layout.plot;
@@ -79,7 +79,7 @@ export default class AreaSeries extends Component {
 
     this.responders = seriesCircleModel.map((m, dataIndex) => ({
       ...m,
-      data: tooltipDataArr[dataIndex]
+      data: tooltipDataArr[dataIndex],
     }));
   }
 
@@ -89,7 +89,7 @@ export default class AreaSeries extends Component {
       x: 0,
       y: 0,
       width: 0,
-      height: this.rect.height
+      height: this.rect.height,
     };
   }
 
@@ -101,8 +101,8 @@ export default class AreaSeries extends Component {
         tooltipData.push({
           label: name,
           color: theme.colors[index],
-          value: getCoordinateValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
+          value: getCoordinateYValue(datum),
+          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
         });
       });
 
@@ -123,10 +123,9 @@ export default class AreaSeries extends Component {
       const points: Point[] = [];
 
       data.forEach((datum, idx) => {
-        const value = getCoordinateValue(datum);
+        const value = getCoordinateYValue(datum);
         const dataIndex = getCoordinateDataIndex(datum, categories, idx);
-
-        const valueRatio = (value - limit.min) / (limit.max - limit.min);
+        const valueRatio = getValueRatio(value, limit);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
@@ -143,7 +142,7 @@ export default class AreaSeries extends Component {
         lineWidth: 6,
         color: theme.colors[seriesIndex],
         points,
-        seriesIndex
+        seriesIndex,
       };
     });
   }
@@ -152,13 +151,13 @@ export default class AreaSeries extends Component {
     linePointsModel: LinePointsModel[],
     bottomYPoint: number
   ): AreaPointsModel[] {
-    return linePointsModel.map(m => ({
+    return linePointsModel.map((m) => ({
       ...m,
       type: 'areaPoints',
       lineWidth: 0,
       color: 'rgba(0, 0, 0, 0)', // make area border transparent
       bottomYPoint,
-      fillColor: m.color
+      fillColor: m.color,
     }));
   }
 
@@ -171,7 +170,7 @@ export default class AreaSeries extends Component {
         radius: 7,
         color,
         style: ['default', 'hover'],
-        seriesIndex
+        seriesIndex,
       }))
     );
   }
@@ -181,14 +180,14 @@ export default class AreaSeries extends Component {
   }
 
   applyAreaOpacity(opacity: number) {
-    this.models.filter(this.isAreaPointsModel).forEach(model => {
+    this.models.filter(this.isAreaPointsModel).forEach((model) => {
       model.fillColor = getRGBA(model.fillColor, opacity);
       model.color = getRGBA(model.color, opacity);
     });
   }
 
   clearLinePointsModel() {
-    this.models = this.models.filter(model => model.type !== 'linePoints');
+    this.models = this.models.filter((model) => model.type !== 'linePoints');
   }
 
   onMousemove({ responders }: { responders: CircleModel[] }) {
@@ -197,7 +196,7 @@ export default class AreaSeries extends Component {
       this.applyAreaOpacity(1);
 
       this.activatedResponders.forEach((responder: CircleModel) => {
-        const index = this.models.findIndex(model => model === responder);
+        const index = this.models.findIndex((model) => model === responder);
 
         this.models.splice(index, 1);
       });
@@ -205,7 +204,7 @@ export default class AreaSeries extends Component {
 
     if (responders.length) {
       this.applyAreaOpacity(0.5);
-      responders.forEach(responder => {
+      responders.forEach((responder) => {
         this.models.push(this.linePointsModel[responder.seriesIndex]);
         this.models.push(responder);
       });

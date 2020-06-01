@@ -4,9 +4,9 @@ import { LineChartOptions, LineTypeSeriesOptions, Point, CoordinateDataType } fr
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
-import { setSplineControlPoint } from '@src/helpers/calculator';
+import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateValue } from '@src/helpers/coordinate';
+import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -48,7 +48,7 @@ export default class LineSeries extends Component {
     const renderLineOptions: RenderLineOptions = {
       pointOnColumn,
       options: options.series || {},
-      theme: theme.series
+      theme: theme.series,
     };
 
     this.rect = layout.plot;
@@ -70,8 +70,8 @@ export default class LineSeries extends Component {
         tooltipData.push({
           label: name,
           color: theme.series.colors[index],
-          value: getCoordinateValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)]
+          value: getCoordinateYValue(datum),
+          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
         });
       });
 
@@ -80,7 +80,10 @@ export default class LineSeries extends Component {
 
     this.models = [this.renderClipRectAreaModel(), ...lineSeriesModel];
 
-    this.responders = seriesCircleModel.map((m, index) => ({ ...m, data: tooltipDataArr[index] }));
+    this.responders = seriesCircleModel.map((m, index) => ({
+      ...m,
+      data: tooltipDataArr[index],
+    }));
   }
 
   renderClipRectAreaModel(): ClipRectAreaModel {
@@ -89,7 +92,7 @@ export default class LineSeries extends Component {
       x: 0,
       y: 0,
       width: 0,
-      height: this.rect.height
+      height: this.rect.height,
     };
   }
 
@@ -108,10 +111,10 @@ export default class LineSeries extends Component {
       const points: Point[] = [];
 
       data.forEach((datum, idx) => {
-        const value = getCoordinateValue(datum);
+        const value = getCoordinateYValue(datum);
         const dataIndex = getCoordinateDataIndex(datum, categories, idx);
 
-        const valueRatio = (value - limit.min) / (limit.max - limit.min);
+        const valueRatio = getValueRatio(value, limit);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
@@ -123,7 +126,13 @@ export default class LineSeries extends Component {
         setSplineControlPoint(points);
       }
 
-      return { type: 'linePoints', lineWidth: 6, color: colors[seriesIndex], points, seriesIndex };
+      return {
+        type: 'linePoints',
+        lineWidth: 6,
+        color: colors[seriesIndex],
+        points,
+        seriesIndex,
+      };
     });
   }
 
@@ -136,18 +145,18 @@ export default class LineSeries extends Component {
         radius: 7,
         color,
         style: ['default', 'hover'],
-        seriesIndex
+        seriesIndex,
       }))
     );
   }
 
   onMousemove({ responders }: { responders: CircleModel[] }) {
     this.activatedResponders.forEach((responder: CircleModel) => {
-      const index = this.models.findIndex(model => model === responder);
+      const index = this.models.findIndex((model) => model === responder);
       this.models.splice(index, 1);
     });
 
-    responders.forEach(responder => {
+    responders.forEach((responder) => {
       this.models.push(responder);
     });
 

@@ -11,7 +11,7 @@ function isPercentStack(stack?: Stack) {
 const scale: StoreModule = {
   name: 'scale',
   state: () => ({
-    scale: {} as Scale
+    scale: {} as Scale,
   }),
   action: {
     setScale({ state }) {
@@ -22,9 +22,12 @@ const scale: StoreModule = {
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
       const { labelSizeKey, valueSizeKey } = getSizeKey(labelAxisOnYAxis);
 
-      const scaleOptions = { xAxis: options?.xAxis?.scale, yAxis: options?.yAxis?.scale };
+      const scaleOptions = {
+        xAxis: options?.xAxis?.scale,
+        yAxis: options?.yAxis?.scale,
+      };
 
-      Object.keys(series).forEach(seriesName => {
+      Object.keys(series).forEach((seriesName) => {
         if (isPercentStack(stackSeries?.column?.stack) || isPercentStack(stackSeries?.bar?.stack)) {
           scaleData[valueAxisName] = getStackScaleData('percentStack');
         } else if (isCoordinateSeries(series)) {
@@ -33,31 +36,31 @@ const scale: StoreModule = {
           scaleData[valueAxisName] = coordinateScaleCalculator({
             dataRange: range[valueAxisName],
             offsetSize: layout.plot[valueSizeKey],
-            scaleOption: scaleOptions[valueAxisName]
+            scaleOption: scaleOptions[valueAxisName],
           });
 
           scaleData[labelAxisName] = coordinateScaleCalculator({
             dataRange: range[labelAxisName],
             offsetSize: layout.plot[labelSizeKey],
-            scaleOption: scaleOptions[labelAxisName]
+            scaleOption: scaleOptions[labelAxisName],
           });
         } else {
           scaleData[valueAxisName] = coordinateScaleCalculator({
             dataRange: dataRange[seriesName][valueAxisName],
             offsetSize: layout.plot[valueSizeKey],
-            scaleOption: scaleOptions[valueAxisName]
+            scaleOption: scaleOptions[valueAxisName],
           });
         }
       });
 
       extend(state.scale, scaleData);
-    }
+    },
   },
   observe: {
     updateScale() {
       this.dispatch('setScale');
-    }
-  }
+    },
+  },
 };
 
 export default scale;

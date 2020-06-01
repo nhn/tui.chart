@@ -27,7 +27,7 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
     height,
     radius: 5,
     fill: bgColor,
-    stroke: bgColor
+    stroke: bgColor,
   });
 
   if (category) {
@@ -42,9 +42,9 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
           textBaseline: 'top',
           fillStyle: '#fff',
           font: 'bold 13px Arial',
-          textAlign: 'left'
-        }
-      ]
+          textAlign: 'left',
+        },
+      ],
     });
 
     line(ctx, {
@@ -53,20 +53,27 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
       y: y + categoryHeight,
       x2: x + width,
       y2: y + categoryHeight,
-      strokeStyle: 'rgba(0, 0, 0, 0.1)'
+      strokeStyle: 'rgba(0, 0, 0, 0.1)',
     });
   }
 
   data.forEach(({ label, color, value }, index) => {
     const cy = yStartPoint + categoryHeight + 15 * index;
 
-    rect(ctx, { type: 'rect', x: xStartPoint, y: cy, width: 13, height: dataHeight, color });
+    rect(ctx, {
+      type: 'rect',
+      x: xStartPoint,
+      y: cy,
+      width: 13,
+      height: dataHeight,
+      color,
+    });
 
     const labelStyle = {
       textBaseline: 'top',
       fillStyle: '#fff',
       font: 'normal 12px Arial',
-      textAlign: 'left'
+      textAlign: 'left',
     } as LabelStyle;
 
     const labelModel = (text: string, point: Point, styleObj?: LabelStyle) =>
@@ -74,7 +81,7 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
         ...point,
         type: 'label',
         text,
-        style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle]
+        style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle],
       } as LabelModel);
 
     labelBrush(ctx, labelModel(label, { x: xStartPoint + 20, y: cy }));

@@ -26,9 +26,9 @@ export default class LineChart extends Chart<LineChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        line: props.data.series
+        line: props.data.series,
       },
-      categories: props.data?.categories
+      categories: props.data?.categories,
     });
   }
 

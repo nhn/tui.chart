@@ -10,10 +10,10 @@ export const getDecimalLength = (value: string | number) => {
 };
 
 export const findMultipleNum = (...args: number[]) => {
-  const underPointLens = args.map(value => getDecimalLength(value));
+  const underPointLens = args.map((value) => getDecimalLength(value));
   const underPointLen = arrayUtil.max(underPointLens);
 
-  return Math.pow(10, underPointLen);
+  return 10 ** underPointLen;
 };
 
 export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number) {
@@ -22,7 +22,7 @@ export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number) {
   const max = Math.round(limit.max * multipleNum);
   const labels = range(min, max + 1, stepSize * multipleNum);
 
-  return labels.map(label => String(label / multipleNum));
+  return labels.map((label) => String(label / multipleNum));
 }
 
 export function makeTickPixelPositions(
@@ -36,7 +36,7 @@ export function makeTickPixelPositions(
   additionalPosition = additionalPosition || 0;
 
   if (count > 0) {
-    positions = range(0, count).map(index => {
+    positions = range(0, count).map((index) => {
       const ratio = index === 0 ? 0 : index / (count - 1);
 
       return ratio * size + additionalPosition;
@@ -65,8 +65,8 @@ function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint
   const { x: x1, y: y1 } = cur;
   const { x: x2, y: y2 } = next;
 
-  const d12 = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-  const d01 = Math.sqrt(Math.pow(x1 - x0, 2) + Math.pow(y1 - y0, 2));
+  const d12 = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+  const d01 = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2);
 
   const fa = (TENSION * d01) / (d01 + d12) || 0; // scaling factor for triangle Ta
   const fb = (TENSION * d12) / (d01 + d12) || 0; // ditto for Tb, simplifies to fb=t-fa
@@ -74,9 +74,9 @@ function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint
   return {
     prev: {
       x: x1 - fa * (x2 - x0), // x2-x0 is the width of triangle T
-      y: y1 - fa * (y2 - y0) // y2-y0 is the height of T
+      y: y1 - fa * (y2 - y0), // y2-y0 is the height of T
     },
-    next: { x: x1 + fb * (x2 - x0), y: y1 + fb * (y2 - y0) }
+    next: { x: x1 + fb * (x2 - x0), y: y1 + fb * (y2 - y0) },
   };
 }
 
@@ -92,4 +92,8 @@ export function setSplineControlPoint(points: BezierPoint[]) {
 
     prev = point;
   }
+}
+
+export function getValueRatio(value: number, { min, max }: ValueEdge) {
+  return (value - min) / (max - min);
 }

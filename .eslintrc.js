@@ -3,14 +3,14 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es6: true
+    es6: true,
   },
   parserOptions: {
     ecmaVersion: 6,
     sourceType: 'module',
     ecmaFeatures: {
-      impliedStrict: true
-    }
+      impliedStrict: true,
+    },
   },
   plugins: ['jest', 'prettier', '@typescript-eslint'],
   extends: [
@@ -18,7 +18,7 @@ module.exports = {
     'prettier/@typescript-eslint',
     'plugin:jest/recommended',
     'plugin:prettier/recommended',
-    'plugin:@typescript-eslint/recommended'
+    'plugin:@typescript-eslint/recommended',
   ],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
@@ -32,6 +32,6 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false }],
     '@typescript-eslint/no-empty-function': 'warn',
-    '@typescript-eslint/no-non-null-assertion': 'off'
-  }
+    '@typescript-eslint/no-non-null-assertion': 'off',
+  },
 };

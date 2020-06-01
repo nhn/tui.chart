@@ -48,7 +48,7 @@ export default class Tooltip extends Component {
           return acc;
         },
         { type: 'tooltip', x: 0, y: 0, data: [] }
-      )
+      ),
     ];
 
     if (!this.drawModels) {
@@ -66,11 +66,11 @@ export default class Tooltip extends Component {
     this.needLoop = throttle(() => {
       if (this.isShow) {
         this.eventBus.emit('needSubLoop', {
-          onFrame: delta => {
+          onFrame: (delta) => {
             this.update(delta);
           },
           duration: 200,
-          requester: this
+          requester: this,
         });
       }
     }, 100);

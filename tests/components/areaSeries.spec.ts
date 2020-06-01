@@ -6,7 +6,7 @@ import EventEmitter from '@src/eventEmitter';
 let areaSeries;
 const seriesData = [
   { name: 'han', data: [1, 2] },
-  { name: 'cho', data: [4, 5] }
+  { name: 'cho', data: [4, 5] },
 ];
 
 const chartState = {
@@ -14,44 +14,44 @@ const chartState = {
   layout: {
     xAxis: { x: 10, y: 80, width: 80, height: 10 },
     yAxis: { x: 10, y: 10, width: 10, height: 80 },
-    plot: { width: 80, height: 80, x: 10, y: 80 }
+    plot: { width: 80, height: 80, x: 10, y: 80 },
   },
   series: {
     area: {
       data: seriesData,
       seriesCount: seriesData.length,
-      seriesGroupCount: seriesData[0].data.length
-    }
+      seriesGroupCount: seriesData[0].data.length,
+    },
   },
   scale: {
     yAxis: {
       limit: {
         min: 1,
-        max: 5
-      }
-    }
+        max: 5,
+      },
+    },
   },
   axes: {
     xAxis: {
       pointOnColumn: true,
-      tickDistance: 40
-    }
+      tickDistance: 40,
+    },
   },
   options: {
-    series: {}
+    series: {},
   },
   theme: {
     series: {
-      colors: ['#aaaaaa', '#bbbbbb']
-    }
+      colors: ['#aaaaaa', '#bbbbbb'],
+    },
   },
-  categories: ['A', 'B']
+  categories: ['A', 'B'],
 };
 
 beforeEach(() => {
   areaSeries = new AreaSeries({
     store: {} as Store<AreaChartOptions>,
-    eventBus: new EventEmitter()
+    eventBus: new EventEmitter(),
   });
 
   areaSeries.render(chartState);
@@ -65,21 +65,21 @@ const result = {
       lineWidth: 6,
       points: [
         { x: 20, y: 80 },
-        { x: 60, y: 60 }
+        { x: 60, y: 60 },
       ],
       seriesIndex: 0,
-      type: 'linePoints'
+      type: 'linePoints',
     },
     {
       color: '#bbbbbb',
       lineWidth: 6,
       points: [
         { x: 20, y: 20 },
-        { x: 60, y: 0 }
+        { x: 60, y: 0 },
       ],
       seriesIndex: 1,
-      type: 'linePoints'
-    }
+      type: 'linePoints',
+    },
   ],
   responders: [
     {
@@ -90,7 +90,7 @@ const result = {
       style: ['default', 'hover'],
       type: 'circle',
       x: 20,
-      y: 80
+      y: 80,
     },
     {
       color: '#aaaaaa',
@@ -100,7 +100,7 @@ const result = {
       style: ['default', 'hover'],
       type: 'circle',
       x: 60,
-      y: 60
+      y: 60,
     },
     {
       color: '#bbbbbb',
@@ -110,7 +110,7 @@ const result = {
       style: ['default', 'hover'],
       type: 'circle',
       x: 20,
-      y: 20
+      y: 20,
     },
     {
       color: '#bbbbbb',
@@ -120,8 +120,8 @@ const result = {
       style: ['default', 'hover'],
       type: 'circle',
       x: 60,
-      y: 0
-    }
+      y: 0,
+    },
   ],
   models: [
     { height: 80, type: 'clipRectArea', width: 0, x: 0, y: 0 },
@@ -132,10 +132,10 @@ const result = {
       lineWidth: 0,
       points: [
         { x: 20, y: 80 },
-        { x: 60, y: 60 }
+        { x: 60, y: 60 },
       ],
       seriesIndex: 0,
-      type: 'areaPoints'
+      type: 'areaPoints',
     },
     {
       bottomYPoint: 80,
@@ -144,15 +144,15 @@ const result = {
       lineWidth: 0,
       points: [
         { x: 20, y: 20 },
-        { x: 60, y: 0 }
+        { x: 60, y: 0 },
       ],
       seriesIndex: 1,
-      type: 'areaPoints'
-    }
-  ]
+      type: 'areaPoints',
+    },
+  ],
 };
 
-['rect', 'linePoints', 'responders', 'models'].forEach(modelName => {
+['rect', 'linePoints', 'responders', 'models'].forEach((modelName) => {
   it(`should make ${modelName} properly when calling render`, () => {
     expect(areaSeries[modelName]).toEqual(result[modelName]);
   });
@@ -169,11 +169,11 @@ it('add line points model and circle model when hover above line point', () => {
 
   expect(applyAreaOpacity).toHaveBeenCalledWith(0.5);
 
-  expect(areaSeries.models.filter(model => model.type === 'linePoints')).toEqual([
-    result.linePointsModel[0]
+  expect(areaSeries.models.filter((model) => model.type === 'linePoints')).toEqual([
+    result.linePointsModel[0],
   ]);
 
-  expect(areaSeries.models.filter(model => model.type === 'circle')).toEqual([responder]);
+  expect(areaSeries.models.filter((model) => model.type === 'circle')).toEqual([responder]);
 });
 
 it('remove line points model and circle model when mousemove after hover above line point', () => {

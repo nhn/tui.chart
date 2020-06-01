@@ -24,13 +24,13 @@ export function isPointOnColumn(series: SeriesState, options: Options) {
 export function getAxisName(labelAxisOnYAxis: boolean) {
   return {
     valueAxisName: labelAxisOnYAxis ? 'xAxis' : 'yAxis',
-    labelAxisName: labelAxisOnYAxis ? 'yAxis' : 'xAxis'
+    labelAxisName: labelAxisOnYAxis ? 'yAxis' : 'xAxis',
   };
 }
 
 export function getSizeKey(labelAxisOnYAxis: boolean) {
   return {
     valueSizeKey: labelAxisOnYAxis ? 'width' : 'height',
-    labelSizeKey: labelAxisOnYAxis ? 'height' : 'width'
+    labelSizeKey: labelAxisOnYAxis ? 'height' : 'width',
   };
 }

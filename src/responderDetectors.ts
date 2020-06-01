@@ -17,8 +17,7 @@ export const responderDetectors: ResponderDetectors = {
     const radiusAdjustment = isUndefined(detectionRadius) ? 10 : detectionRadius;
 
     return (
-      Math.pow(x - (modelX + compX), 2) + Math.pow(y - (modelY + compY), 2) <
-      Math.pow(radius + radiusAdjustment, 2)
+      (x - (modelX + compX)) ** 2 + (y - (modelY + compY)) ** 2 < (radius + radiusAdjustment) ** 2
     );
   },
   rect: (
@@ -36,5 +35,5 @@ export const responderDetectors: ResponderDetectors = {
       y >= modelY + compY &&
       y <= modelY + compY + height
     );
-  }
+  },
 };

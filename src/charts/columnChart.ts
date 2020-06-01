@@ -31,9 +31,9 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
       el,
       options,
       series: {
-        column: data.series
+        column: data.series,
       },
-      categories: data.categories
+      categories: data.categories,
     });
   }
 

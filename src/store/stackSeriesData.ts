@@ -6,7 +6,7 @@ import {
   StackData,
   StackGroupData,
   Options,
-  BoxType
+  BoxType,
 } from '@t/store/store';
 import { isBoxSeries } from '@src/component/boxSeries';
 import {
@@ -15,7 +15,7 @@ import {
   StackInfo,
   Connector,
   BoxSeriesType,
-  BoxSeriesDataType
+  BoxSeriesDataType,
 } from '@t/options';
 import { pickProperty, isObject } from '@src/helpers/utils';
 import { extend } from '@src/store/store';
@@ -41,7 +41,7 @@ function makeStackData(seriesData: SeriesRawData): StackData {
 
     stackData[i] = {
       values: stackValues,
-      sum: stackValues.reduce((a, b) => a + b, 0)
+      sum: stackValues.reduce((a, b) => a + b, 0),
     };
   }
 
@@ -52,7 +52,7 @@ function makeStackGroupData(seriesData: SeriesRawData): StackGroupData {
   const stackData: StackGroupData = {};
   const stackGroupIds = [...new Set(seriesData.map(({ stackGroup }) => stackGroup))] as string[];
 
-  stackGroupIds.forEach(groupId => {
+  stackGroupIds.forEach((groupId) => {
     const filtered = seriesData.filter(({ stackGroup }) => groupId === stackGroup);
 
     stackData[groupId] = makeStackData(filtered);
@@ -69,12 +69,12 @@ function initializeStack(stackOption: StackOptionType): Required<StackInfo> | un
   const defaultConnector = {
     type: 'solid',
     color: 'rgba(51, 85, 139, 0.3)',
-    width: 1
+    width: 1,
   } as Connector;
 
   const defaultStackOption = {
     type: 'normal',
-    connector: false
+    connector: false,
   } as StackInfo;
 
   if (isStackObject(stackOption)) {
@@ -99,7 +99,7 @@ function isConnectorObject(connector: boolean | Connector): connector is Connect
 }
 
 function hasStackGrouped(seriesRawData: SeriesRawData): boolean {
-  return seriesRawData.some(rawData => rawData.hasOwnProperty('stackGroup'));
+  return seriesRawData.some((rawData) => rawData.hasOwnProperty('stackGroup'));
 }
 
 function getStackDataValues(stackData: StackDataType, stackType: StackType) {
@@ -126,12 +126,12 @@ function getStackDataValues(stackData: StackDataType, stackType: StackType) {
 const stackSeriesData: StoreModule = {
   name: 'stackSeriesData',
   state: () => ({
-    stackSeries: {}
+    stackSeries: {},
   }),
   initialize(state, options) {
     const { series, stackSeries } = state;
 
-    Object.keys(series).forEach(seriesName => {
+    Object.keys(series).forEach((seriesName) => {
       const stackOption = pickStackOption(options);
 
       if (stackOption && isBoxSeries(seriesName as ChartType)) {
@@ -148,7 +148,7 @@ const stackSeriesData: StoreModule = {
       const { series, stackSeries } = state;
       const newStackSeries = {};
 
-      Object.keys(series).forEach(seriesName => {
+      Object.keys(series).forEach((seriesName) => {
         const seriesData = series[seriesName];
         const { data, seriesCount, seriesGroupCount } = seriesData;
         const { stack } = stackSeries[seriesName] || {};
@@ -162,19 +162,19 @@ const stackSeriesData: StoreModule = {
             seriesCount,
             seriesGroupCount,
             stackData,
-            dataValues: getStackDataValues(stackData, stackType)
+            dataValues: getStackDataValues(stackData, stackType),
           } as StackSeriesData<BoxType>;
         }
 
         extend(state.stackSeries, newStackSeries);
       });
-    }
+    },
   },
   observe: {
     updateStackSeriesData() {
       this.dispatch('setStackSeriesData');
-    }
-  }
+    },
+  },
 };
 
 export default stackSeriesData;

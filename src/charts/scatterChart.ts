@@ -26,9 +26,9 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        scatter: props.data.series
+        scatter: props.data.series,
       },
-      categories: props.data?.categories
+      categories: props.data?.categories,
     });
   }
 

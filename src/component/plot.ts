@@ -16,7 +16,7 @@ export default class Plot extends Component {
       const { labels, tickCount } = vertical ? (axes.xAxis as AxisData) : (axes.yAxis as AxisData);
       const size = vertical ? this.rect.width : this.rect.height;
       const positions = makeTickPixelPositions(size, tickCount);
-      const index = labels.findIndex(label => Number(label) === value);
+      const index = labels.findIndex((label) => Number(label) === value);
       const position = positions[index];
 
       return this.makeLineModel(vertical, vertical ? position : size - position, color);
@@ -24,7 +24,7 @@ export default class Plot extends Component {
   }
 
   renderModels(relativePositions: number[], vertical: boolean): LineModel[] {
-    return relativePositions.map(position => {
+    return relativePositions.map((position) => {
       return this.makeLineModel(vertical, position, 'rgba(0, 0, 0, 0.05)');
     });
   }
@@ -41,7 +41,7 @@ export default class Plot extends Component {
 
     this.models.plot = [
       ...this.renderModels(this.getTickPixelPositions(false, axes), false),
-      ...this.renderModels(this.getTickPixelPositions(true, axes), true)
+      ...this.renderModels(this.getTickPixelPositions(true, axes), true),
     ];
 
     if (plot) {
@@ -55,7 +55,14 @@ export default class Plot extends Component {
     const width = vertical ? 0 : this.rect.width;
     const height = vertical ? this.rect.height : 0;
 
-    return { type: 'line', x, y, x2: x + width, y2: y + height, strokeStyle: color };
+    return {
+      type: 'line',
+      x,
+      y,
+      x2: x + width,
+      y2: y + height,
+      strokeStyle: color,
+    };
   }
 
   beforeDraw(painter: Painter) {

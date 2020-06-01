@@ -9,7 +9,7 @@ import {
   CircleModel,
   CircleStyle,
   LinePointsModel,
-  StyleProp
+  StyleProp,
 } from '@t/components/series';
 import {
   withKnobs,
@@ -17,7 +17,7 @@ import {
   radios,
   optionsKnob as options,
   boolean,
-  text
+  text,
 } from '@storybook/addon-knobs';
 import { setSplineControlPoint } from '@src/helpers/calculator';
 import { LabelModel, LineModel, TickModel } from '@t/components/axis';
@@ -25,7 +25,7 @@ import { Point } from '@t/options';
 
 export default {
   title: 'brushes',
-  decorators: [withKnobs]
+  decorators: [withKnobs],
 };
 
 type BezierOptions = 'basic' | 'bezier';
@@ -35,7 +35,7 @@ function getLinePointsModel(bezier: BezierOptions) {
     { x: 50, y: 100 },
     { x: 200, y: 50 },
     { x: 350, y: 200 },
-    { x: 500, y: 150 }
+    { x: 500, y: 150 },
   ];
 
   if (bezier === 'bezier') {
@@ -51,7 +51,7 @@ const linePointsModel = (lineWidth: number, color: string, bezier: BezierOptions
     lineWidth,
     points: getLinePointsModel(bezier),
     seriesIndex: 0,
-    type: 'linePoints'
+    type: 'linePoints',
   } as LinePointsModel);
 
 const circleModel = (
@@ -66,7 +66,7 @@ const circleModel = (
     style,
     seriesIndex: 0,
     type: 'circle',
-    ...point
+    ...point,
   } as CircleModel);
 
 const areaPointsModel = (fillColor: string, bottomYPoint: number, bezier: BezierOptions) =>
@@ -75,7 +75,7 @@ const areaPointsModel = (fillColor: string, bottomYPoint: number, bezier: Bezier
     bottomYPoint,
     points: getLinePointsModel(bezier),
     seriesIndex: 0,
-    type: 'areaPoints'
+    type: 'areaPoints',
   } as AreaPointsModel);
 
 function setup() {
@@ -101,7 +101,12 @@ function setup() {
 
 export const lineBrush = () => {
   const { ctx, el } = setup();
-  const lineWidth = number('lineWidth', 1, { range: true, min: 1, max: 10, step: 1 });
+  const lineWidth = number('lineWidth', 1, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1,
+  });
   const isDashed = boolean('dashed', false);
 
   const lineModel: LineModel = {
@@ -111,7 +116,7 @@ export const lineBrush = () => {
     x2: 200,
     y2: 200,
     lineWidth,
-    dashedPattern: isDashed ? [5, 5] : []
+    dashedPattern: isDashed ? [5, 5] : [],
   };
   line(ctx, lineModel);
 
@@ -121,7 +126,12 @@ export const lineBrush = () => {
 export const tickBrush = () => {
   const { ctx, el } = setup();
 
-  const tickModel: TickModel = { type: 'tick', x: 100, y: 100, isYAxis: boolean('isYAxis', false) };
+  const tickModel: TickModel = {
+    type: 'tick',
+    x: 100,
+    y: 100,
+    isYAxis: boolean('isYAxis', false),
+  };
   tick(ctx, tickModel);
 
   return el;
@@ -137,7 +147,7 @@ export const labelBrush = () => {
       bottom: 'bottom',
       top: 'top',
       alphabetic: 'alphabetic',
-      hanging: 'hanging'
+      hanging: 'hanging',
     },
     'middle'
   );
@@ -148,7 +158,7 @@ export const labelBrush = () => {
     x: 100,
     y: 100,
     text: 'HAYag',
-    style: ['default', { textAlign, textBaseline, font }]
+    style: ['default', { textAlign, textBaseline, font }],
   };
 
   label(ctx, labelModel);
@@ -159,7 +169,12 @@ export const labelBrush = () => {
 export const linePointsBrush = () => {
   const { ctx, el } = setup();
   const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
-  const lineWidth = number('line width', 3, { range: true, min: 1, max: 10, step: 1 });
+  const lineWidth = number('line width', 3, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1,
+  });
   const bezier = radios('bezier', { basic: 'basic', bezier: 'bezier' }, 'basic');
 
   linePoints(ctx, linePointsModel(lineWidth, color, bezier));
@@ -170,15 +185,35 @@ export const linePointsBrush = () => {
 export const circleBrush = () => {
   const { ctx, el } = setup();
   const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
-  const radius = number('radius', 15, { range: true, min: 15, max: 40, step: 5 });
+  const radius = number('radius', 15, {
+    range: true,
+    min: 15,
+    max: 40,
+    step: 5,
+  });
   const styleName = options('style name', { default: 'default', hover: 'hover' }, 'default', {
-    display: 'multi-select'
+    display: 'multi-select',
   });
 
   const strokeStyle = radios('strokeStyle', { black: 'black', red: 'red' }, 'black');
-  const lineWidth = number('lineWidth', 1, { range: true, min: 1, max: 10, step: 1 });
-  const shadowOffsetY = number('shadowOffsetY', 1, { range: true, min: 1, max: 10, step: 1 });
-  const shadowBlur = number('shadowBlur', 1, { range: true, min: 1, max: 10, step: 1 });
+  const lineWidth = number('lineWidth', 1, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1,
+  });
+  const shadowOffsetY = number('shadowOffsetY', 1, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1,
+  });
+  const shadowBlur = number('shadowBlur', 1, {
+    range: true,
+    min: 1,
+    max: 10,
+    step: 1,
+  });
   const shadowColor = radios('shadowColor', { black: 'black', red: 'red' }, 'black');
 
   const styleObj = [
@@ -188,8 +223,8 @@ export const circleBrush = () => {
       lineWidth,
       shadowColor,
       shadowBlur,
-      shadowOffsetY
-    }
+      shadowOffsetY,
+    },
   ] as StyleProp<CircleStyle, CircleStyleName>;
 
   circle(ctx, circleModel({ x: 100, y: 100 }, 50, '#a79aff', ['default']));
@@ -204,7 +239,12 @@ export const areaPointsBrush = () => {
 
   const fillColor = radios('fillColor', { green: 'green', blue: 'blue', red: 'red' }, 'green');
   const bezier = radios('bezier', { basic: 'basic', bezier: 'bezier' }, 'basic');
-  const bottomYPoint = number('bottomYPoint', 300, { range: true, min: 300, max: 800, step: 50 });
+  const bottomYPoint = number('bottomYPoint', 300, {
+    range: true,
+    min: 300,
+    max: 800,
+    step: 50,
+  });
 
   areaPoints(ctx, areaPointsModel(fillColor, bottomYPoint, bezier));
 
@@ -230,9 +270,9 @@ export const rectBrush = () => {
         shadowColor: 'rgba(0, 0, 0, 0.3)',
         shadowOffsetX: 1,
         shadowOffsetY: -1,
-        shadowBlur: 10
-      }
-    ]
+        shadowBlur: 10,
+      },
+    ],
   });
 
   return el;
@@ -245,7 +285,7 @@ export const tooltipBrush = () => {
     type: 'tooltip',
     x: 100,
     y: 100,
-    data: [{ label: 'A', color: '#ddd', value: 100 }]
+    data: [{ label: 'A', color: '#ddd', value: 100 }],
   });
 
   tooltip(ctx, {
@@ -255,9 +295,9 @@ export const tooltipBrush = () => {
     data: [
       { label: 'A', color: 'blue', value: 100 },
       { label: 'B', color: 'red', value: 5030 },
-      { label: 'C', color: 'green', value: 200 }
+      { label: 'C', color: 'green', value: 200 },
     ],
-    category: 'category name'
+    category: 'category name',
   });
 
   return el;

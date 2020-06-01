@@ -6,7 +6,7 @@ import { withKnobs, boolean } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Area',
-  decorators: [withKnobs]
+  decorators: [withKnobs],
 };
 
 const width = 1000;
@@ -14,13 +14,13 @@ const height = 500;
 const defaultOptions = {
   chart: {
     width,
-    height
+    height,
   },
   yAxis: {},
   xAxis: {},
   series: {},
   tooltip: {},
-  plot: {}
+  plot: {},
 };
 
 function createChart(data: AreaSeriesData, customOptions?: AreaChartOptions) {
@@ -39,7 +39,7 @@ function createChart(data: AreaSeriesData, customOptions?: AreaChartOptions) {
 export const basic = () => {
   const { el } = createChart(avgTemperatureData, {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
-    series: { spline: boolean('spline', false) }
+    series: { spline: boolean('spline', false) },
   });
 
   return el;

@@ -7,7 +7,7 @@ import { LabelModel, TickModel, LineModel } from '@t/components/axis';
 export enum AxisType {
   Y = 'yAxis',
   X = 'xAxis',
-  CENTER_Y = 'yCenterAxis'
+  CENTER_Y = 'yCenterAxis',
 }
 
 type DrawModels = LabelModel | TickModel | LineModel;
@@ -46,7 +46,7 @@ export default class Axis extends Component {
       isLabelAxis,
       tickDistance,
       tickInterval,
-      labelInterval
+      labelInterval,
     } = axes[this.name]!;
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
@@ -57,7 +57,7 @@ export default class Axis extends Component {
       pointOnColumn,
       tickDistance,
       tickInterval,
-      labelInterval
+      labelInterval,
     };
 
     this.models.label = this.renderLabelModels(
@@ -80,8 +80,8 @@ export default class Axis extends Component {
     if (!this.drawModels) {
       this.drawModels = {};
 
-      ['tick', 'label'].forEach(type => {
-        this.drawModels[type] = this.models[type].map(m => {
+      ['tick', 'label'].forEach((type) => {
+        this.drawModels[type] = this.models[type].map((m) => {
           const drawModel = { ...m };
 
           if (this.yAxisComponent) {
@@ -107,7 +107,7 @@ export default class Axis extends Component {
         x: crispPixel(this.rect.width),
         y: zeroPixel,
         x2: crispPixel(this.rect.width),
-        y2: crispPixel(this.rect.height)
+        y2: crispPixel(this.rect.height),
       };
     }
 
@@ -116,7 +116,7 @@ export default class Axis extends Component {
       x: zeroPixel,
       y: zeroPixel,
       x2: crispPixel(this.rect.width),
-      y2: zeroPixel
+      y2: zeroPixel,
     };
   }
 
@@ -138,8 +138,8 @@ export default class Axis extends Component {
               type: 'tick',
               isYAxis: this.yAxisComponent,
               [offsetKey]: crispPixel(position),
-              [anchorKey]: tickAnchorPoint
-            } as TickModel
+              [anchorKey]: tickAnchorPoint,
+            } as TickModel,
           ];
     }, [] as TickModel[]);
   }
@@ -165,8 +165,8 @@ export default class Axis extends Component {
               text,
               style: ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }],
               [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
-              [anchorKey]: labelAnchorPoint
-            } as LabelModel
+              [anchorKey]: labelAnchorPoint,
+            } as LabelModel,
           ];
     }, [] as LabelModel[]);
   }

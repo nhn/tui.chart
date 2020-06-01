@@ -8,14 +8,14 @@ export type LabelStyleName = 'default';
 const circleStyle = {
   default: {
     strokeStyle: '#fff',
-    lineWidth: 2
+    lineWidth: 2,
   },
   hover: {
     shadowColor: 'rgba(0, 0, 0, 0.3)',
     shadowBlur: 4,
     shadowOffsetY: 4,
-    lineWidth: 4
-  }
+    lineWidth: 3,
+  },
 };
 
 const labelStyle = {
@@ -23,8 +23,8 @@ const labelStyle = {
     font: 'normal 11px Arial',
     fillStyle: '#333',
     textAlign: 'left',
-    textBaseline: 'middle'
-  }
+    textBaseline: 'middle',
+  },
 };
 
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
@@ -68,7 +68,7 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   if (style) {
     const styleObj = makeStyleObj<CircleStyle, CircleStyleName>(style, circleStyle);
 
-    Object.keys(styleObj).forEach(key => {
+    Object.keys(styleObj).forEach((key) => {
       ctx[key] = styleObj[key];
     });
   }
@@ -108,7 +108,7 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   if (style) {
     const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
 
-    Object.keys(styleObj).forEach(key => {
+    Object.keys(styleObj).forEach((key) => {
       ctx[key] = styleObj[key];
     });
   }

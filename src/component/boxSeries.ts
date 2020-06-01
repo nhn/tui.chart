@@ -6,7 +6,7 @@ import {
   BoxSeriesDataType,
   BarChartOptions,
   ColumnChartOptions,
-  Rect
+  Rect,
 } from '@t/options';
 import { first, includes, hasNegative, deepCopyArray } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
@@ -25,12 +25,12 @@ type RenderOptions = {
 
 const BOX = {
   BAR: 'bar',
-  COLUMN: 'column'
+  COLUMN: 'column',
 };
 
 const PADDING = {
   TB: 15, // top & bottom
-  LR: 24 // left & right
+  LR: 24, // left & right
 };
 
 function isLeftBottomSide(seriesIndex: number) {
@@ -140,7 +140,7 @@ export default class BoxSeries extends Component {
     const seriesData = series[this.name]!;
     const { tickDistance } = axes[this.labelAxis];
     const renderOptions: RenderOptions = {
-      diverging: !!options.series?.diverging
+      diverging: !!options.series?.diverging,
     };
     const valueAxis = axes[this.valueAxis];
     const seriesModels: RectModel[] = this.renderSeriesModel(
@@ -162,7 +162,7 @@ export default class BoxSeries extends Component {
 
     this.responders = rectModel.map((m, index) => ({
       ...m,
-      data: tooltipData[index]
+      data: tooltipData[index],
     }));
   }
 
@@ -172,7 +172,7 @@ export default class BoxSeries extends Component {
       x: 0,
       y: 0,
       width: this.rect.width,
-      height: this.rect.height
+      height: this.rect.height,
     };
   }
 
@@ -183,7 +183,7 @@ export default class BoxSeries extends Component {
       x: x - this.hoverThickness,
       y: y - this.hoverThickness,
       width: width + this.hoverThickness * 2,
-      height: height + this.hoverThickness * 2
+      height: height + this.hoverThickness * 2,
     };
   }
 
@@ -214,14 +214,14 @@ export default class BoxSeries extends Component {
         return {
           type: 'rect',
           color,
-          ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth)
+          ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
         };
       });
     });
   }
 
   protected renderHighlightSeriesModel(seriesModel): RectModel[] {
-    return seriesModel.map(data => {
+    return seriesModel.map((data) => {
       const { x, y, width, height, color } = data;
       const shadowOffset = this.hoverThickness / 2;
       const style = [
@@ -229,8 +229,8 @@ export default class BoxSeries extends Component {
           shadowColor: 'rgba(0, 0, 0, 0.3)',
           shadowOffsetX: shadowOffset,
           shadowOffsetY: this.isBar ? shadowOffset : -1 * shadowOffset,
-          shadowBlur: this.hoverThickness + shadowOffset
-        }
+          shadowBlur: this.hoverThickness + shadowOffset,
+        },
       ];
 
       return {
@@ -241,14 +241,14 @@ export default class BoxSeries extends Component {
         width,
         height,
         style,
-        thickness: this.hoverThickness
+        thickness: this.hoverThickness,
       };
     });
   }
 
   onMousemove({ responders }: { responders: RectModel[] }) {
     this.activatedResponders.forEach((responder: RectModel) => {
-      const index = this.models.findIndex(model => model === responder);
+      const index = this.models.findIndex((model) => model === responder);
       this.models.splice(index, 1);
     });
 
@@ -273,7 +273,7 @@ export default class BoxSeries extends Component {
         label: name,
         color: colors[index],
         value: this.getTooltipValue(value),
-        category: categories?.[dataIdx]
+        category: categories?.[dataIdx],
       }))
     );
   }
@@ -285,7 +285,7 @@ export default class BoxSeries extends Component {
   protected getBasePosition(valueAxis: AxisData): number {
     const labels = this.isBar ? valueAxis.labels : [...valueAxis.labels].reverse();
     const { tickCount } = valueAxis;
-    const zeroValueIndex = labels.findIndex(label => Number(label) === 0);
+    const zeroValueIndex = labels.findIndex((label) => Number(label) === 0);
     const tickPositions = makeTickPixelPositions(this.getOffsetSize(), tickCount);
 
     return tickPositions[zeroValueIndex] + this.hoverThickness;
@@ -296,7 +296,7 @@ export default class BoxSeries extends Component {
   }
 
   getValueRatio(valueLabels: string[], diverging = false) {
-    const values = valueLabels.map(value => Number(value));
+    const values = valueLabels.map((value) => Number(value));
     const multiple = diverging ? 2 : 1;
 
     return this.getOffsetSize() / ((Math.max(...values) - Math.min(...values)) * multiple);
@@ -366,7 +366,7 @@ export default class BoxSeries extends Component {
       x: this.isBar ? dataPosition : seriesPosition,
       y: this.isBar ? seriesPosition : dataPosition,
       width: this.isBar ? barLength : columnWidth,
-      height: this.isBar ? columnWidth : barLength
+      height: this.isBar ? columnWidth : barLength,
     };
   }
 

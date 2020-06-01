@@ -79,7 +79,7 @@ export function includes<T>(arr: T[], searchItem: T, searchIndex?: number) {
 
 export function pick<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
   const resultMap = {} as Pick<T, K>;
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (includes(propNames, key as K)) {
       resultMap[key as PickedKey<T, K>] = obj[key as PickedKey<T, K>];
     }
@@ -90,7 +90,7 @@ export function pick<T extends object, K extends keyof T>(obj: T, ...propNames: 
 
 export function omit<T extends object, K extends keyof T>(obj: T, ...propNames: K[]) {
   const resultMap = {} as Omit<T, K>;
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (!includes(propNames, key as K)) {
       resultMap[key as OmittedKey<T, K>] = obj[key as OmittedKey<T, K>];
     }
@@ -135,7 +135,7 @@ export function debounce(fn: Function, delay = 0) {
 
   function debounced(...args: any[]) {
     window.clearTimeout(timer);
-    timer = window.setTimeout(function() {
+    timer = window.setTimeout(function () {
       fn(...args);
     }, delay);
   }
@@ -146,7 +146,7 @@ export function debounce(fn: Function, delay = 0) {
 export function merge(target: Record<string, any>, ...args: Record<string, any>[]) {
   target = target || {};
 
-  args.forEach(obj => {
+  args.forEach((obj) => {
     if (!obj) {
       return;
     }
@@ -167,7 +167,7 @@ export function throttle(fn: Function, interval = 0) {
   let base: number | null = null;
   let isLeading = true;
 
-  const tick = function(...args) {
+  const tick = function (...args) {
     fn(...args);
     base = null;
   };
@@ -247,7 +247,7 @@ export function deepCopy<T extends Record<string, any>>(obj: T) {
     return obj;
   }
 
-  keys.forEach(prop => {
+  keys.forEach((prop) => {
     if (isObject(obj[prop])) {
       resultObj[prop] = Array.isArray(obj[prop]) ? deepCopyArray(obj[prop]) : deepCopy(obj[prop]);
     } else {
@@ -280,5 +280,5 @@ export function last<T extends Array<any>>(items: T): T[keyof T] {
 }
 
 export function hasNegative(values: (number | string)[] = []) {
-  return values.some(value => Number(value) < 0);
+  return values.some((value) => Number(value) < 0);
 }

@@ -6,13 +6,13 @@ import {
   tupleCoordinateData,
   temperatureData,
   coordinateData,
-  randomData
+  randomData,
 } from './data';
 import { boolean, number, withKnobs } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Line',
-  decorators: [withKnobs]
+  decorators: [withKnobs],
 };
 
 const width = 1000;
@@ -20,13 +20,13 @@ const height = 500;
 const defaultOptions = {
   chart: {
     width,
-    height
+    height,
   },
   yAxis: {},
   xAxis: {},
   series: {},
   tooltip: {},
-  plot: {}
+  plot: {},
 };
 
 function createChart(data: LineSeriesData, customOptions?: Record<string, any>) {
@@ -44,7 +44,7 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
 
 export const basic = () => {
   const { el } = createChart(temperatureData, {
-    xAxis: { pointOnColumn: boolean('pointOnColumn', false) }
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
   });
 
   return el;
@@ -52,7 +52,7 @@ export const basic = () => {
 
 export const spline = () => {
   const { el } = createChart(budgetData, {
-    series: { spline: boolean('spline', true) }
+    series: { spline: boolean('spline', true) },
   });
 
   return el;
@@ -60,7 +60,7 @@ export const spline = () => {
 
 export const coordinate = () => {
   const { el } = createChart(coordinateData, {
-    xAxis: { pointOnColumn: true }
+    xAxis: { pointOnColumn: true },
   });
 
   return el;
@@ -68,7 +68,7 @@ export const coordinate = () => {
 
 export const tupleCoordinate = () => {
   const { el } = createChart(tupleCoordinateData as LineSeriesData, {
-    xAxis: { pointOnColumn: true }
+    xAxis: { pointOnColumn: true },
   });
 
   return el;
@@ -86,8 +86,13 @@ export const tupleCoordinate = () => {
 export const tickInterval = () => {
   const xAxisOptions = {
     tick: {
-      interval: number('tickInterval', 2, { range: true, min: 1, max: 20, step: 1 })
-    }
+      interval: number('tickInterval', 2, {
+        range: true,
+        min: 1,
+        max: 20,
+        step: 1,
+      }),
+    },
   };
 
   const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
@@ -98,8 +103,13 @@ export const tickInterval = () => {
 export const labelInterval = () => {
   const xAxisOptions = {
     label: {
-      interval: number('labelInterval', 2, { range: true, min: 1, max: 20, step: 1 })
-    }
+      interval: number('labelInterval', 2, {
+        range: true,
+        min: 1,
+        max: 20,
+        step: 1,
+      }),
+    },
   };
 
   const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
@@ -111,12 +121,27 @@ export const scale = () => {
   const { el } = createChart(budgetData, {
     yAxis: {
       scale: {
-        min: number('min', -1000, { range: true, min: -5000, max: 14000, step: 1000 }),
-        max: number('max', 10000, { range: true, min: -5000, max: 14000, step: 1000 }),
-        stepSize: number('scale', 1500, { range: true, min: 100, max: 14000, step: 100 })
-      }
+        min: number('min', -1000, {
+          range: true,
+          min: -5000,
+          max: 14000,
+          step: 1000,
+        }),
+        max: number('max', 10000, {
+          range: true,
+          min: -5000,
+          max: 14000,
+          step: 1000,
+        }),
+        stepSize: number('scale', 1500, {
+          range: true,
+          min: 100,
+          max: 14000,
+          step: 100,
+        }),
+      },
     },
-    series: { spline: true }
+    series: { spline: true },
   });
 
   return el;
