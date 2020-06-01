@@ -176,14 +176,14 @@ describe('StackSeriesData Store', () => {
 
       expect(state.stackSeries.bar!.stackData).toEqual({
         A: [
-          { values: [1, 3], sum: 4 },
-          { values: [2, 4], sum: 6 },
-          { values: [3, 5], sum: 8 },
+          { values: [1, 3], sum: 4, total: { negative: 0, positive: 4 } },
+          { values: [2, 4], sum: 6, total: { negative: 0, positive: 6 } },
+          { values: [3, 5], sum: 8, total: { negative: 0, positive: 8 } },
         ],
         B: [
-          { values: [2, 4], sum: 6 },
-          { values: [4, 1], sum: 5 },
-          { values: [6, 1], sum: 7 },
+          { values: [2, 4], sum: 6, total: { negative: 0, positive: 6 } },
+          { values: [4, 1], sum: 5, total: { negative: 0, positive: 5 } },
+          { values: [6, 1], sum: 7, total: { negative: 0, positive: 7 } },
         ],
       });
     });

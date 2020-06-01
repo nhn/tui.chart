@@ -181,8 +181,8 @@ export default class BoxSeries extends Component {
     return {
       x: x - this.hoverThickness,
       y: y - this.hoverThickness,
-      width: width + this.hoverThickness * 2 + this.axisThickness * 2,
-      height: height + this.hoverThickness * 2 + this.axisThickness * 2,
+      width: width + (this.hoverThickness + this.axisThickness) * 2,
+      height: height + (this.hoverThickness + this.axisThickness) * 2,
     };
   }
 
