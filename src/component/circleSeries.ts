@@ -72,26 +72,4 @@ export default abstract class CircleSeries extends Component {
 
     this.eventBus.emit('needDraw');
   }
-
-  makeTooltipModel(
-    circleData: BubbleSeriesType[] | ScatterSeriesType[],
-    categories: string[],
-    renderOptions: RenderOptions
-  ) {
-    const { theme } = renderOptions;
-
-    return [...circleData].flatMap(({ data, name }, index) => {
-      const tooltipData: TooltipData[] = [];
-
-      data.forEach((datum: CoordinateDataType) => {
-        tooltipData.push({
-          label: name,
-          color: theme.colors[index],
-          value: [getCoordinateXValue(datum), getCoordinateYValue(datum)],
-        });
-      });
-
-      return tooltipData;
-    });
-  }
 }

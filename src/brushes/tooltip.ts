@@ -1,9 +1,9 @@
 import { pathRect, label as labelBrush, line } from '@src/brushes/basic';
-import { TooltipData, TooltipModel } from '@t/components/tooltip';
+import { TooltipData, TooltipDataValue, TooltipModel } from '@t/components/tooltip';
 import { rect } from '@src/brushes/boxSeries';
 import { LabelModel, LabelStyle } from '@t/components/axis';
-import { Point } from '@t/options';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { BubblePoint, Point } from '@t/options';
+import { deepMergedCopy, isObject } from '@src/helpers/utils';
 import { getTextWidth } from '@src/helpers/calculator';
 
 const MINIMUM_TOOLTIP_TEXT_WIDTH = 100;
@@ -27,9 +27,17 @@ type DataItemAreaInfo = {
   y: number;
 } & Pick<TooltipData, 'label' | 'value' | 'color'>;
 
-function getValueString(value: string | number | [number, number]) {
-  if (Array.isArray(value)) {
-    return `(${value[0]}, ${value[1]})`;
+function isBubblePointType(value: Point | BubblePoint): value is BubblePoint {
+  return Object.keys(value).length === 3;
+}
+
+function getValueString(value: TooltipDataValue) {
+  if (isObject(value)) {
+    if (isBubblePointType(value)) {
+      return `(${value.x}, ${value.y}), r: ${value.r}`;
+    }
+
+    return `(${value.x}, ${value.y})`;
   }
 
   return String(value);
