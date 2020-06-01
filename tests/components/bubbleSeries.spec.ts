@@ -3,7 +3,7 @@ import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import BubbleSeries from '@src/component/bubbleSeries';
 
-let areaSeries;
+let bubbleSeries;
 const seriesData = [
   {
     name: 'nameA',
@@ -67,12 +67,12 @@ const chartState = {
 };
 
 beforeEach(() => {
-  areaSeries = new BubbleSeries({
+  bubbleSeries = new BubbleSeries({
     store: {} as Store<AreaChartOptions>,
     eventBus: new EventEmitter(),
   });
 
-  areaSeries.render(chartState);
+  bubbleSeries.render(chartState);
 });
 
 const result = {
@@ -166,17 +166,15 @@ const result = {
 
 ['rect', 'responders', 'models'].forEach((modelName) => {
   it(`should make ${modelName} properly when calling render`, () => {
-    expect(areaSeries[modelName]).toEqual(result[modelName]);
+    expect(bubbleSeries[modelName]).toEqual(result[modelName]);
   });
 });
 
-it('responder is added in reverse radius', () => {
-  const largeRadiusResponder = result.responders[1];
-  const smallRadiusResponder = result.responders[2];
+it('should register closest responder to the mouse', () => {
+  const closestResponder = result.responders[0];
+  const distantResponder = result.responders[1];
 
-  const responder = [smallRadiusResponder, largeRadiusResponder];
-  areaSeries.onMousemove({ responders: [responder] });
-  const { responders } = areaSeries;
-
-  expect(responders.slice(responders.length - 2, responders.length)).toEqual(responder.reverse());
+  const responders = [closestResponder, distantResponder];
+  bubbleSeries.onMousemove({ responders, mousePosition: { x: 10, y: 80 } });
+  expect(bubbleSeries.activatedResponders).toEqual([closestResponder]);
 });
