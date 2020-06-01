@@ -11,7 +11,7 @@ const CATEGORY_FONT_STYLE = 'bold 13px Arial';
 const LABEL_FONT_STYLE = 'normal 12px Arial';
 const COLOR_RECT_SIZE = 13;
 const CATEGORY_TEXT_HEIGHT = 13;
-const padding = { X: 15, Y: 10, DATA_Y: 4 };
+const padding = { X: 15, Y: 10 };
 
 type CategoryAreaInfo = {
   xStartPoint: number;

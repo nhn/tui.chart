@@ -304,11 +304,14 @@ export const tooltipBrush = () => {
     type: 'tooltip',
     x: 100,
     y: 300,
-    data: [
-      { label: 'A', color: 'blue', value: [100, 300] },
-      { label: 'B', color: 'red', value: [5030, 400] },
-      { label: 'C', color: 'green', value: [566, 333] },
-    ],
+    data: [{ label: 'A', color: 'blue', value: { x: 100, y: 300 } }],
+  });
+
+  tooltip(ctx, {
+    type: 'tooltip',
+    x: 300,
+    y: 300,
+    data: [{ label: 'A', color: 'blue', value: { x: 100, y: 300, r: 123456789 } }],
   });
 
   return el;
