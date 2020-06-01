@@ -2,36 +2,33 @@ import axes from '@src/store/axes';
 
 import Store from '@src/store/store';
 import { LineChartOptions } from '@t/options';
-import { ChartState, Scale } from '@t/store/store';
+import { ChartState, Scale, StateFunc } from '@t/store/store';
 
-describe('LineChart Axes Store', () => {
-  it('initialize', () => {
-    const state = {
-      axes: { xAxis: {}, yAxis: {} },
-    } as ChartState<LineChartOptions>;
+describe('Axes Store module', () => {
+  describe('state', () => {
+    const axesStateFunc = axes.state as StateFunc;
 
-    axes.initialize!(state, {});
-
-    expect(state.axes).toEqual({
-      xAxis: { labelInterval: 1, tickInterval: 1 },
-      yAxis: { labelInterval: 1, tickInterval: 1 },
+    it('should make intervals', () => {
+      expect(axesStateFunc({})).toEqual({
+        axes: {
+          xAxis: { labelInterval: 1, tickInterval: 1 },
+          yAxis: { labelInterval: 1, tickInterval: 1 },
+        },
+      });
     });
-  });
 
-  it('initialize with options', () => {
-    const state = {
-      axes: { xAxis: {}, yAxis: {} },
-    } as ChartState<LineChartOptions>;
-    const options = {
-      xAxis: { tick: { interval: 2 }, label: { interval: 3 } },
-      yAxis: { tick: { interval: 4 }, label: { interval: 5 } },
-    } as LineChartOptions;
+    it('could use with options', () => {
+      const options = {
+        xAxis: { tick: { interval: 2 }, label: { interval: 3 } },
+        yAxis: { tick: { interval: 4 }, label: { interval: 5 } },
+      } as LineChartOptions;
 
-    axes.initialize!(state, options);
-
-    expect(state.axes).toEqual({
-      xAxis: { tickInterval: 2, labelInterval: 3 },
-      yAxis: { tickInterval: 4, labelInterval: 5 },
+      expect(axesStateFunc(options)).toEqual({
+        axes: {
+          xAxis: { tickInterval: 2, labelInterval: 3 },
+          yAxis: { tickInterval: 4, labelInterval: 5 },
+        },
+      });
     });
   });
 

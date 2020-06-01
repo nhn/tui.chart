@@ -52,11 +52,8 @@ export function getValueAxisData(stateProp: StateProp) {
 
 const axes: StoreModule = {
   name: 'axes',
-  state: () => ({
-    axes: {},
-  }),
-  initialize(state, options) {
-    extend(state.axes, {
+  state: (options) => ({
+    axes: {
       xAxis: {
         tickInterval: options.xAxis?.tick?.interval || 1,
         labelInterval: options.xAxis?.label?.interval || 1,
@@ -65,8 +62,8 @@ const axes: StoreModule = {
         tickInterval: options.yAxis?.tick?.interval || 1,
         labelInterval: options.yAxis?.label?.interval || 1,
       } as AxisData,
-    });
-  },
+    },
+  }),
   action: {
     setAxesData({ state }) {
       const { scale, options, series, layout, categories = [] } = state;
@@ -93,8 +90,8 @@ const axes: StoreModule = {
       });
 
       extend(state.axes, {
-        xAxis: labelAxisOnYAxis ? valueAxisData : labelAxisData,
-        yAxis: labelAxisOnYAxis ? labelAxisData : valueAxisData,
+        xAxis: (labelAxisOnYAxis ? valueAxisData : labelAxisData) as AxisData,
+        yAxis: (labelAxisOnYAxis ? labelAxisData : valueAxisData) as AxisData,
       });
     },
   },
