@@ -94,7 +94,7 @@ export default class BoxSeries extends Component {
 
     if (this.isRangeData) {
       this.drawModels.forEach((drawModel, index) => {
-        if (drawModel.type === 'rect') {
+        if (drawModel.type === 'rect' && !drawModel.thickness) {
           const offsetSize = this.models[index][this.offsetSizeKey] * delta;
 
           drawModel[this.offsetSizeKey] = offsetSize;
@@ -159,7 +159,6 @@ export default class BoxSeries extends Component {
 
     this.models = [this.renderClipRectAreaModel(), ...seriesModels];
     this.drawModels = deepCopyArray(this.models);
-
     this.responders = rectModel.map((m, index) => ({
       ...m,
       data: tooltipData[index],
@@ -182,8 +181,8 @@ export default class BoxSeries extends Component {
     return {
       x: x - this.hoverThickness,
       y: y - this.hoverThickness,
-      width: width + this.hoverThickness * 2,
-      height: height + this.hoverThickness * 2,
+      width: width + this.hoverThickness * 2 + this.axisThickness * 2,
+      height: height + this.hoverThickness * 2 + this.axisThickness * 2,
     };
   }
 
@@ -248,11 +247,11 @@ export default class BoxSeries extends Component {
 
   onMousemove({ responders }: { responders: RectModel[] }) {
     this.activatedResponders.forEach((responder: RectModel) => {
-      const index = this.models.findIndex((model) => model === responder);
-      this.models.splice(index, 1);
+      const index = this.drawModels.findIndex((model) => model === responder);
+      this.drawModels.splice(index, 1);
     });
 
-    this.models = [...this.models, ...responders];
+    this.drawModels = [...this.drawModels, ...responders];
 
     this.activatedResponders = responders;
 

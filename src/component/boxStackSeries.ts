@@ -195,6 +195,7 @@ export default class BoxStackSeries extends BoxSeries {
     tickDistance,
     stackGroupCount = 1,
     stackGroupIndex = 0,
+    scaleType,
   }: StackSeriesModelParamType) {
     if (!stack.connector) {
       return [];
@@ -208,7 +209,7 @@ export default class BoxStackSeries extends BoxSeries {
       const seriesPos =
         index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
       const points: Point[] = [];
-      const ratio = this.getStackValueRatio(valueLabels, total, stack.type);
+      const ratio = this.getStackValueRatio(valueLabels, total, stack.type, scaleType);
 
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;

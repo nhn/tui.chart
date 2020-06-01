@@ -156,7 +156,22 @@ function getSumValues(stackData: StackDataValues) {
   return [...negativeSum, ...positiveSum];
 }
 
-function getScaleType(stackData: StackDataType, stackType: StackType, diverging: boolean) {
+function getScaleType(
+  grouped: boolean,
+  stackData: StackDataType,
+  stackType: StackType,
+  diverging: boolean
+) {
+  if (grouped) {
+    let stackDataValues: StackDataValues = [];
+
+    Object.keys(stackData as StackGroupData).forEach((groupId) => {
+      stackDataValues = [...stackDataValues, ...stackData[groupId]];
+    });
+
+    stackData = stackDataValues;
+  }
+
   const hasNegativeValue = (stackData as StackDataValues)
     .map(({ total }) => total.negative)
     .some((total) => total < 0);
@@ -215,7 +230,8 @@ const stackSeriesData: StoreModule = {
         const diverging = !!(options.series as BoxSeriesOptions)?.diverging;
 
         if (stack) {
-          const stackData = hasStackGrouped(data) ? makeStackGroupData(data) : makeStackData(data);
+          const grouped = hasStackGrouped(data);
+          const stackData = grouped ? makeStackGroupData(data) : makeStackData(data);
           const stackType = stack.type;
           const dataValues = getStackDataValues(stackData);
 
@@ -225,7 +241,7 @@ const stackSeriesData: StoreModule = {
             seriesGroupCount,
             stackData,
             dataValues,
-            scaleType: getScaleType(stackData, stackType, diverging),
+            scaleType: getScaleType(grouped, stackData, stackType, diverging),
           } as StackSeriesData<BoxType>;
         }
 
