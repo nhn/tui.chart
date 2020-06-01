@@ -109,10 +109,10 @@ export default class Store<T extends Options> {
                   '#989486',
                   '#516f7d',
                   '#29dbe3',
-                  '#dddddd'
-                ]
-              }
-            }
+                  '#dddddd',
+                ],
+              },
+            },
           },
           action: {
             setChartSize({ state }, size: Size) {
@@ -233,7 +233,7 @@ export default class Store<T extends Options> {
     }
 
     if (param.observe) {
-      forEach(param.observe, item => {
+      forEach(param.observe, (item) => {
         this.observe(item);
         // console.log(key, ' observer collect start', this.state.__ob__.d);
         // this.observe((...args) => {
