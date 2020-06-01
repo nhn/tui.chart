@@ -156,12 +156,18 @@ export type Stack = {
   connector: boolean | Required<Connector>;
 };
 
+export type PercentScaleType =
+  | 'percentStack'
+  | 'minusPercentStack'
+  | 'dualPercentStack'
+  | 'divergingPercentStack';
+
 export type StackSeriesData<K extends BoxType> = {
   data: ChartSeriesMap[K];
   stackData: StackDataType;
   dataValues: number[];
   stack: Stack;
-  scaleType: 'percentStack' | 'minusPercentStack' | 'dualPercentStack' | 'divergingPercentStack';
+  scaleType: PercentScaleType;
 } & SeriesGroup;
 
 export interface SeriesGroup {

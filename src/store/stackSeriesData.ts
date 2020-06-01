@@ -128,12 +128,6 @@ function hasStackGrouped(seriesRawData: SeriesRawData): boolean {
 }
 
 function getStackDataValues(stackData: StackDataType) {
-  /*
-  if (stackType === 'percent') {
-    return [0, 100];
-  }
-  */
-
   let values: number[] = [];
 
   if (Array.isArray(stackData)) {
