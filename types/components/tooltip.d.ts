@@ -3,7 +3,7 @@ import { Point } from '../options';
 interface TooltipData {
   label: string;
   color: string;
-  value: string | number;
+  value: string | number | [number, number];
   category?: string;
 }
 

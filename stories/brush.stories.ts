@@ -300,5 +300,16 @@ export const tooltipBrush = () => {
     category: 'category name',
   });
 
+  tooltip(ctx, {
+    type: 'tooltip',
+    x: 100,
+    y: 300,
+    data: [
+      { label: 'A', color: 'blue', value: [100, 300] },
+      { label: 'B', color: 'red', value: [5030, 400] },
+      { label: 'C', color: 'green', value: [566, 333] },
+    ],
+  });
+
   return el;
 };

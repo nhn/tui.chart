@@ -101,3 +101,10 @@ export function getValueRatio(value: number, { min, max }: ValueEdge) {
 export function getDistance(point1: Point, point2: Point) {
   return Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
 }
+
+export function getTextWidth(text: string, font: string) {
+  const ctx = document.createElement('canvas').getContext('2d')!;
+  ctx.font = font;
+
+  return ctx.measureText(text).width;
+}

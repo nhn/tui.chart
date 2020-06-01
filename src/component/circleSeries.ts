@@ -4,7 +4,7 @@ import { ClipRectAreaModel } from '@t/components/series';
 import { SeriesTheme } from '@t/store/store';
 import { BubbleSeriesType, CoordinateDataType, Point, Rect, ScatterSeriesType } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
+import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getDistance } from '@src/helpers/calculator';
 
 type DrawModels = ClipRectAreaModel | CircleModel;
@@ -83,12 +83,11 @@ export default abstract class CircleSeries extends Component {
     return [...circleData].flatMap(({ data, name }, index) => {
       const tooltipData: TooltipData[] = [];
 
-      data.forEach((datum: CoordinateDataType, dataIdx) => {
+      data.forEach((datum: CoordinateDataType) => {
         tooltipData.push({
           label: name,
           color: theme.colors[index],
-          value: getCoordinateYValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
+          value: [getCoordinateXValue(datum), getCoordinateYValue(datum)],
         });
       });
 
