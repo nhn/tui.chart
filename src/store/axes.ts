@@ -80,14 +80,14 @@ const axes: StoreModule = {
         axisSize: valueAxisSize,
         options,
         series,
-      }) as AxisData;
+      });
       const labelAxisData = getLabelAxisData({
         scale: scale[labelAxisName],
         axisSize: labelAxisSize,
         categories,
         options,
         series,
-      }) as AxisData;
+      });
 
       extend(state.axes, {
         xAxis: (labelAxisOnYAxis ? valueAxisData : labelAxisData) as AxisData,
