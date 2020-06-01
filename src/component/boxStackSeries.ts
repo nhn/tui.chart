@@ -87,7 +87,6 @@ export default class BoxStackSeries extends BoxSeries {
     valueAxis: AxisData,
     tickDistance: number
   ) {
-    console.log(seriesData);
     const { stack, stackData, scaleType } = seriesData;
 
     return isGroupStack(stackData)
