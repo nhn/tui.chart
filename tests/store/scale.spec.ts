@@ -1,7 +1,7 @@
 import scale from '@src/store/scale';
 import Store from '@src/store/store';
 import { BarChartOptions } from '@t/options';
-import { ChartState, DataRange, Layout } from '@t/store/store';
+import { ChartState, DataRange } from '@t/store/store';
 
 const data = [
   { name: 'han', data: [1, 2, 3] },
@@ -11,7 +11,7 @@ const data = [
 describe('Scale Store', () => {
   it('should properly calculated according to the data', () => {
     const state = {
-      layout: { plot: { width: 800, height: 500 } } as Layout,
+      layout: { plot: { width: 800, height: 500 } },
       series: { bar: { data } },
       stackSeries: {},
       scale: {},
@@ -28,7 +28,7 @@ describe('Scale Store', () => {
 
   it('When using percent stack, the scale is calculated as a percent value', () => {
     const state = {
-      layout: { plot: { width: 800, height: 500 } } as Layout,
+      layout: { plot: { width: 800, height: 500 } },
       series: { bar: { data } },
       stackSeries: {
         bar: {
@@ -56,7 +56,7 @@ describe('Scale Store', () => {
 
   it('"options.scale.min" Options are properly applied to scale state', () => {
     const state = {
-      layout: { plot: { width: 800, height: 500 } } as Layout,
+      layout: { plot: { width: 800, height: 500 } },
       series: { bar: { data } },
       stackSeries: {},
       scale: {},
@@ -74,7 +74,7 @@ describe('Scale Store', () => {
 
   it('"options.scale.max" Options are properly applied to scale state', () => {
     const state = {
-      layout: { plot: { width: 800, height: 500 } } as Layout,
+      layout: { plot: { width: 800, height: 500 } },
       series: { bar: { data } },
       stackSeries: {},
       scale: {},
@@ -92,7 +92,7 @@ describe('Scale Store', () => {
 
   it('"options.scale.stepSize" Options are properly applied to scale state', () => {
     const state = {
-      layout: { plot: { width: 800, height: 500 } } as Layout,
+      layout: { plot: { width: 800, height: 500 } },
       series: { bar: { data } },
       stackSeries: {},
       scale: {},

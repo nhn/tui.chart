@@ -2,13 +2,13 @@ import plot from '@src/store/plot';
 
 import Store from '@src/store/store';
 import { BarChartOptions, LineChartOptions } from '@t/options';
-import { ChartState, Layout, Scale, PlotLine } from '@t/store/store';
+import { ChartState, Scale, PlotLine } from '@t/store/store';
 
 describe('Plot Store', () => {
   it('should add a zero line, if it is a box type chart and has a negative value', () => {
     const state = {
       chart: { width: 120, height: 120 },
-      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } } as Layout,
+      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
       scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
       series: {
         bar: {
@@ -43,7 +43,7 @@ describe('Plot Store', () => {
   it('should not be added zero line, if it is not a box type chart', () => {
     const state = {
       chart: { width: 120, height: 120 },
-      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } } as Layout,
+      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
       scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
       series: {
         line: {

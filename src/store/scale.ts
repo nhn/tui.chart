@@ -28,7 +28,7 @@ const scale: StoreModule = {
       };
 
       Object.keys(series).forEach((seriesName) => {
-        if (isPercentStack(stackSeries.column?.stack) || isPercentStack(stackSeries.bar?.stack)) {
+        if (isPercentStack(stackSeries?.column?.stack) || isPercentStack(stackSeries?.bar?.stack)) {
           scaleData[valueAxisName] = getStackScaleData('percentStack');
         } else if (isCoordinateSeries(series)) {
           const range = dataRange[seriesName];

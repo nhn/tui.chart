@@ -166,7 +166,7 @@ export interface ScaleData {
   stepCount: number;
 }
 
-type StateFunc = () => Partial<ChartState<Options>>;
+type StateFunc = (options: Options) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
 type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
 export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;

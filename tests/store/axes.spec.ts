@@ -2,7 +2,7 @@ import axes from '@src/store/axes';
 
 import Store from '@src/store/store';
 import { LineChartOptions } from '@t/options';
-import { ChartState, Layout, Scale } from '@t/store/store';
+import { ChartState, Scale } from '@t/store/store';
 
 describe('LineChart Axes Store', () => {
   it('initialize', () => {
@@ -38,10 +38,8 @@ describe('LineChart Axes Store', () => {
   it('should be setAxesData with state values', () => {
     const state = {
       chart: { width: 120, height: 120 },
-      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } } as Layout,
-      scale: {
-        yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 },
-      } as Scale,
+      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
+      scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
       series: {
         line: {
           data: [
@@ -84,10 +82,8 @@ describe('pointOnColumn state is properly created', () => {
   it('[bar chart] xAxis.pointOnColumn: false, yAxis.pointOnColumn: true', () => {
     const state = {
       chart: { width: 120, height: 120 },
-      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } } as Layout,
-      scale: {
-        xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 },
-      } as Scale,
+      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
+      scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
       series: {
         bar: {
           data: [
@@ -116,10 +112,9 @@ describe('pointOnColumn state is properly created', () => {
   it('[column chart] xAxis.pointOnColumn: true, yAxis.pointOnColumn: false', () => {
     const state = {
       chart: { width: 120, height: 120 },
-      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } } as Layout,
-      scale: {
-        yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 },
-      } as Scale,
+      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
+      scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
+
       series: {
         column: {
           data: [

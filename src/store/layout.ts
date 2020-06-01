@@ -1,4 +1,4 @@
-import { Layout, StoreModule } from '@t/store/store';
+import { StoreModule, Layout } from '@t/store/store';
 import { extend } from '@src/store/store';
 
 const layout: StoreModule = {
