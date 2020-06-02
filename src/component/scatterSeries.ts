@@ -6,7 +6,7 @@ import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { deepCopyArray } from '@src/helpers/utils';
+import { deepCopy } from '@src/helpers/utils';
 
 interface RenderOptions {
   theme: SeriesTheme;
@@ -34,8 +34,8 @@ export default class ScatterSeries extends CircleSeries {
     const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions);
     const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
 
-    this.models = [...seriesModel];
-    this.drawModels = deepCopyArray(this.models);
+    this.models.series = seriesModel;
+    this.drawModels = deepCopy(this.models);
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',

@@ -1,6 +1,7 @@
 import { Point, Rect, BezierPoint } from '../options';
 import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
+import { TooltipData } from '@t/components/tooltip';
 
 export type StyleProp<T, K> = (T | K)[];
 
@@ -17,9 +18,13 @@ export type CircleModel = {
   radius: number;
   color: string;
   style?: StyleProp<CircleStyle, CircleStyleName>;
-  detectionRadius?: number;
   seriesIndex: number;
 } & Point;
+
+export type CircleResponderModel = {
+  detectionRadius?: number;
+  data: TooltipData;
+} & CircleModel;
 
 export type ClipRectAreaModel = {
   type: 'clipRectArea';

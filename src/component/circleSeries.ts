@@ -1,36 +1,33 @@
 import Component from './component';
-import { CircleModel } from '@t/components/series';
-import { ClipRectAreaModel } from '@t/components/series';
+import { CircleModel, CircleResponderModel } from '@t/components/series';
 import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
 
-type DrawModels = ClipRectAreaModel | CircleModel;
+type CircleSeriesModels = {
+  series: CircleModel[];
+  hoveredSeries: CircleModel[];
+};
 
 export default abstract class CircleSeries extends Component {
-  models!: DrawModels[];
+  models: CircleSeriesModels = { series: [], hoveredSeries: [] };
 
-  drawModels!: DrawModels[];
+  drawModels!: CircleSeriesModels;
 
-  responders!: CircleModel[];
+  responders!: CircleResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: CircleResponderModel[] = [];
 
   rect!: Rect;
 
   update(delta: number) {
-    this.drawModels.forEach((model, index) => {
-      if (
-        model.type === 'circle' &&
-        (model.name === 'scatterSeries' || model.name === 'bubbleSeries')
-      ) {
-        model.radius = (this.models[index] as CircleModel).radius * delta;
-      }
+    this.drawModels.series.forEach((model, index) => {
+      model.radius = (this.models.series[index] as CircleModel).radius * delta;
     });
   }
 
-  getClosestResponder(responders: CircleModel[], mousePosition: Point) {
+  getClosestResponder(responders: CircleResponderModel[], mousePosition: Point) {
     let minDistance = Infinity;
-    let result: CircleModel[] = [];
+    let result: CircleResponderModel[] = [];
     responders.forEach((responder) => {
       const { x, y } = responder;
       const responderPoint = { x: x + this.rect.x, y: y + this.rect.y };
@@ -48,16 +45,12 @@ export default abstract class CircleSeries extends Component {
   }
 
   onMousemove({ responders, mousePosition }) {
-    this.activatedResponders.forEach((responder) => {
-      const index = this.drawModels.findIndex((model) => model === responder);
-      this.drawModels.splice(index, 1);
-    });
-
+    this.drawModels.hoveredSeries = [];
     const closestResponder = this.getClosestResponder(responders, mousePosition);
-    this.drawModels.push(...closestResponder);
+    this.drawModels.hoveredSeries = closestResponder;
     this.activatedResponders = closestResponder;
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
 
+    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
     this.eventBus.emit('needDraw');
   }
 }
