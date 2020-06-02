@@ -2,9 +2,7 @@ import Component from './component';
 import { CircleModel } from '@t/components/series';
 import { ClipRectAreaModel } from '@t/components/series';
 import { SeriesTheme } from '@t/store/store';
-import { BubbleSeriesType, CoordinateDataType, Point, Rect, ScatterSeriesType } from '@t/options';
-import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
+import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
 
 type DrawModels = ClipRectAreaModel | CircleModel;
@@ -49,10 +47,8 @@ export default abstract class CircleSeries extends Component {
       if (minDistance > distance) {
         minDistance = distance;
         result = [responder];
-      } else if (minDistance === distance && result.length) {
-        if (result[0].radius > responder.radius) {
-          result = [responder];
-        }
+      } else if (minDistance === distance && result.length && result[0].radius > responder.radius) {
+        result = [responder];
       }
     });
 

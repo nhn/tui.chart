@@ -12,6 +12,7 @@ const LABEL_FONT_STYLE = 'normal 12px Arial';
 const COLOR_RECT_SIZE = 13;
 const CATEGORY_TEXT_HEIGHT = 13;
 const padding = { X: 15, Y: 10 };
+const MINIMUM_LABEL_MARGIN_RIGHT = 15;
 
 type CategoryAreaInfo = {
   xStartPoint: number;
@@ -28,16 +29,12 @@ type DataItemAreaInfo = {
 } & Pick<TooltipData, 'label' | 'value' | 'color'>;
 
 function isBubblePointType(value: Point | BubblePoint): value is BubblePoint {
-  return Object.keys(value).length === 3;
+  return value.hasOwnProperty('r');
 }
 
 function getValueString(value: TooltipDataValue) {
   if (isObject(value)) {
-    if (isBubblePointType(value)) {
-      return `(${value.x}, ${value.y}), r: ${value.r}`;
-    }
-
-    return `(${value.x}, ${value.y})`;
+    return `(${value.x}, ${value.y})` + (isBubblePointType(value) ? `, r: ${value.r}` : '');
   }
 
   return String(value);
@@ -113,7 +110,7 @@ function renderDataItem(ctx: CanvasRenderingContext2D, dataItemAreaInfo: DataIte
     color,
   });
 
-  labelBrush(ctx, renderLabelModel(label, { x: xStartPoint + 20, y }));
+  labelBrush(ctx, renderLabelModel(label, { x: xStartPoint + COLOR_RECT_SIZE + 5, y }));
   labelBrush(
     ctx,
     renderLabelModel(getValueString(value), { x: x + width - padding.X, y }, { textAlign: 'right' })
@@ -129,7 +126,8 @@ export function tooltip(ctx: CanvasRenderingContext2D, tooltipModel: TooltipMode
   const categoryHeight = category ? 30 : 0;
 
   const dataHeight = 13;
-  const width = getMaximumTooltipTextWidth(tooltipModel) + padding.X * 2 + 15;
+  const width =
+    getMaximumTooltipTextWidth(tooltipModel) + padding.X * 2 + MINIMUM_LABEL_MARGIN_RIGHT;
   const height = padding.Y * 2 + categoryHeight + dataHeight * data.length;
 
   pathRect(ctx, {
