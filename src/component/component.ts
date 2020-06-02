@@ -6,7 +6,14 @@ import EventEmitter from '../eventEmitter';
 import { isNumber } from '@src/helpers/utils';
 import { setSplineControlPoint } from '@src/helpers/calculator';
 
-type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip' | 'plot';
+type ComponentType =
+  | 'component'
+  | 'series'
+  | 'legend'
+  | 'axis'
+  | 'tooltip'
+  | 'plot'
+  | 'circleLegend';
 
 export default abstract class Component {
   name = 'Component';

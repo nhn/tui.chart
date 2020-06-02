@@ -3,6 +3,7 @@ import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
 import { rect } from '@src/brushes/boxSeries';
 import { tooltip } from '@src/brushes/tooltip';
+import { circleLegend } from '@src/brushes/circleLegend';
 
 import {
   AreaPointsModel,
@@ -312,6 +313,28 @@ export const tooltipBrush = () => {
     x: 300,
     y: 300,
     data: [{ label: 'A', color: 'blue', value: { x: 100, y: 300, r: 123456789 } }],
+  });
+
+  return el;
+};
+
+export const circleLegendBrush = () => {
+  const { ctx, el } = setup();
+
+  circleLegend(ctx, {
+    type: 'circleLegend',
+    x: 150,
+    y: 150,
+    radius: 50,
+    value: 19222220304,
+  });
+
+  circleLegend(ctx, {
+    type: 'circleLegend',
+    x: 350,
+    y: 150,
+    radius: 100,
+    value: 10,
   });
 
   return el;
