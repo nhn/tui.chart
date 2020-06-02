@@ -80,7 +80,6 @@ export default class AreaSeries extends Component {
     this.responders = seriesCircleModel.map((m, dataIndex) => ({
       ...m,
       data: tooltipDataArr[dataIndex],
-      name: 'hoveredDot',
     }));
   }
 
@@ -166,7 +165,6 @@ export default class AreaSeries extends Component {
     return lineSeriesModel.flatMap(({ points, color, seriesIndex }) =>
       points.map(({ x, y }) => ({
         type: 'circle',
-        name: 'dot',
         x,
         y,
         radius: 7,
