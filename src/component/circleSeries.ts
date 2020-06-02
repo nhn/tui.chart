@@ -19,7 +19,10 @@ export default abstract class CircleSeries extends Component {
 
   update(delta: number) {
     this.drawModels.forEach((model, index) => {
-      if (model.type === 'circle' && delta) {
+      if (
+        model.type === 'circle' &&
+        (model.name === 'scatterSeries' || model.name === 'bubbleSeries')
+      ) {
         model.radius = (this.models[index] as CircleModel).radius * delta;
       }
     });

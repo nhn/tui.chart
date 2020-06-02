@@ -14,6 +14,13 @@ export interface CircleStyle {
 
 export type CircleModel = {
   type: 'circle';
+  name:
+    | 'dot'
+    | 'hoveredDot'
+    | 'bubbleSeries'
+    | 'hoveredBubbleSeries'
+    | 'scatterSeries'
+    | 'hoveredScatterSeries';
   radius: number;
   color: string;
   style?: StyleProp<CircleStyle, CircleStyleName>;
