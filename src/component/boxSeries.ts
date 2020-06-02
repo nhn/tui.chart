@@ -248,11 +248,11 @@ export default class BoxSeries extends Component {
 
   onMousemove({ responders }: { responders: RectModel[] }) {
     this.activatedResponders.forEach((responder: RectModel) => {
-      const index = this.models.findIndex((model) => model === responder);
-      this.models.splice(index, 1);
+      const index = this.drawModels.findIndex((model) => model === responder);
+      this.drawModels.splice(index, 1);
     });
 
-    this.models = [...this.models, ...responders];
+    this.drawModels = [...this.drawModels, ...responders];
 
     this.activatedResponders = responders;
 

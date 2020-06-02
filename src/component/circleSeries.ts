@@ -9,6 +9,8 @@ type DrawModels = ClipRectAreaModel | CircleModel;
 export default abstract class CircleSeries extends Component {
   models!: DrawModels[];
 
+  drawModels!: DrawModels[];
+
   responders!: CircleModel[];
 
   activatedResponders: this['responders'] = [];
@@ -16,19 +18,11 @@ export default abstract class CircleSeries extends Component {
   rect!: Rect;
 
   update(delta: number) {
-    if (this.models[0].type === 'clipRectArea') {
-      this.models[0].width = this.rect.width * delta;
-    }
-  }
-
-  renderClipRectAreaModel(): ClipRectAreaModel {
-    return {
-      type: 'clipRectArea',
-      x: 0,
-      y: 0,
-      width: 0,
-      height: this.rect.height,
-    };
+    this.drawModels.forEach((model, index) => {
+      if (model.type === 'circle' && delta) {
+        model.radius = (this.models[index] as CircleModel).radius * delta;
+      }
+    });
   }
 
   getClosestResponder(responders: CircleModel[], mousePosition: Point) {
@@ -52,12 +46,12 @@ export default abstract class CircleSeries extends Component {
 
   onMousemove({ responders, mousePosition }) {
     this.activatedResponders.forEach((responder) => {
-      const index = this.models.findIndex((model) => model === responder);
-      this.models.splice(index, 1);
+      const index = this.drawModels.findIndex((model) => model === responder);
+      this.drawModels.splice(index, 1);
     });
 
     const closestResponder = this.getClosestResponder(responders, mousePosition);
-    this.models.push(...closestResponder);
+    this.drawModels.push(...closestResponder);
     this.activatedResponders = closestResponder;
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
 

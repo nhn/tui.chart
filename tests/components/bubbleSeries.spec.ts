@@ -133,7 +133,6 @@ const result = {
     },
   ],
   models: [
-    { height: 280, type: 'clipRectArea', width: 0, x: 0, y: 0 },
     {
       color: 'rgba(170, 170, 170, 0.7)',
       radius: 28,
