@@ -1,7 +1,7 @@
 import { ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger } from '@src/helpers/utils';
-import { BezierPoint } from '@t/options';
+import { BezierPoint, Point } from '@t/options';
 
 export const getDecimalLength = (value: string | number) => {
   const valueArr = String(value).split('.');
@@ -65,8 +65,8 @@ function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint
   const { x: x1, y: y1 } = cur;
   const { x: x2, y: y2 } = next;
 
-  const d12 = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-  const d01 = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2);
+  const d12 = getDistance(next, cur);
+  const d01 = getDistance(cur, prev);
 
   const fa = (TENSION * d01) / (d01 + d12) || 0; // scaling factor for triangle Ta
   const fb = (TENSION * d12) / (d01 + d12) || 0; // ditto for Tb, simplifies to fb=t-fa
@@ -96,4 +96,15 @@ export function setSplineControlPoint(points: BezierPoint[]) {
 
 export function getValueRatio(value: number, { min, max }: ValueEdge) {
   return (value - min) / (max - min);
+}
+
+export function getDistance(point1: Point, point2: Point) {
+  return Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
+}
+
+export function getTextWidth(text: string, font: string) {
+  const ctx = document.createElement('canvas').getContext('2d')!;
+  ctx.font = font;
+
+  return ctx.measureText(text).width;
 }

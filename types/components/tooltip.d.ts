@@ -1,9 +1,11 @@
 import { Point } from '../options';
 
+export type TooltipDataValue = string | number | Point | ({ r: number } & Point);
+
 interface TooltipData {
   label: string;
   color: string;
-  value: string | number;
+  value: TooltipDataValue;
   category?: string;
 }
 

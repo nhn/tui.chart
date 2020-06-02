@@ -1,20 +1,20 @@
-import { BubbleChartOptions } from '@t/options';
+import { ScatterChartOptions } from '@t/options';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
-import BubbleSeries from '@src/component/bubbleSeries';
+import ScatterSeries from '@src/component/scatterSeries';
 
-let bubbleSeries;
+let scatterSeries;
 const seriesData = [
   {
     name: 'nameA',
     data: [
-      { x: 10, y: 20, r: 100, label: 'A' },
-      { x: 15, y: 20, r: 200, label: 'B' },
+      { x: 10, y: 20 },
+      { x: 15, y: 20 },
     ],
   },
   {
     name: 'nameB',
-    data: [{ x: 20, y: 10, r: 30, label: 'C' }],
+    data: [{ x: 20, y: 10 }],
   },
 ];
 
@@ -26,7 +26,7 @@ const chartState = {
     plot: { width: 280, height: 280, x: 10, y: 80 },
   },
   series: {
-    bubble: {
+    scatter: {
       data: seriesData,
       seriesCount: seriesData.length,
       seriesGroupCount: seriesData[0].data.length,
@@ -67,12 +67,12 @@ const chartState = {
 };
 
 beforeEach(() => {
-  bubbleSeries = new BubbleSeries({
-    store: {} as Store<BubbleChartOptions>,
+  scatterSeries = new ScatterSeries({
+    store: {} as Store<ScatterChartOptions>,
     eventBus: new EventEmitter(),
   });
 
-  bubbleSeries.render(chartState);
+  scatterSeries.render(chartState);
 });
 
 const result = {
@@ -84,79 +84,76 @@ const result = {
   },
   responders: [
     {
-      color: 'rgba(170, 170, 170, 0.85)',
-      radius: 29,
+      color: 'rgba(170, 170, 170, 1)',
+      radius: 7,
       seriesIndex: 0,
-      style: ['default', 'hover', { lineWidth: 2 }],
+      style: ['default', 'hover'],
       type: 'circle',
       x: 0,
       y: 0,
       detectionRadius: 0,
       data: {
-        category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
         label: 'nameA',
-        value: { x: 10, y: 20, r: 100 },
+        value: { x: 10, y: 20 },
       },
     },
     {
-      color: 'rgba(170, 170, 170, 0.85)',
-      radius: 57,
+      color: 'rgba(170, 170, 170, 1)',
+      radius: 7,
       seriesIndex: 0,
-      style: ['default', 'hover', { lineWidth: 2 }],
+      style: ['default', 'hover'],
       type: 'circle',
       x: 140,
       y: 0,
       detectionRadius: 0,
       data: {
-        category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
         label: 'nameA',
-        value: { x: 15, y: 20, r: 200 },
+        value: { x: 15, y: 20 },
       },
     },
     {
-      color: 'rgba(187, 187, 187, 0.85)',
-      radius: 9.4,
+      color: 'rgba(187, 187, 187, 1)',
+      radius: 7,
       seriesIndex: 1,
-      style: ['default', 'hover', { lineWidth: 2 }],
+      style: ['default', 'hover'],
       type: 'circle',
       x: 280,
       y: 280,
       detectionRadius: 0,
       data: {
-        category: undefined, // eslint-disable-line no-undefined
         color: '#bbbbbb',
         label: 'nameB',
-        value: { x: 20, y: 10, r: 30 },
+        value: { x: 20, y: 10 },
       },
     },
   ],
   models: [
     { height: 280, type: 'clipRectArea', width: 0, x: 0, y: 0 },
     {
-      color: 'rgba(170, 170, 170, 0.7)',
-      radius: 28,
+      color: 'rgba(170, 170, 170, 0.9)',
+      radius: 7,
       seriesIndex: 0,
-      style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
+      style: ['default'],
       type: 'circle',
       x: 0,
       y: 0,
     },
     {
-      color: 'rgba(170, 170, 170, 0.7)',
-      radius: 56,
+      color: 'rgba(170, 170, 170, 0.9)',
+      radius: 7,
       seriesIndex: 0,
-      style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
+      style: ['default'],
       type: 'circle',
       x: 140,
       y: 0,
     },
     {
-      color: 'rgba(187, 187, 187, 0.7)',
-      radius: 8.4,
+      color: 'rgba(187, 187, 187, 0.9)',
+      radius: 7,
       seriesIndex: 1,
-      style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.3)' }],
+      style: ['default'],
       type: 'circle',
       x: 280,
       y: 280,
@@ -166,7 +163,7 @@ const result = {
 
 ['rect', 'responders', 'models'].forEach((modelName) => {
   it(`should make ${modelName} properly when calling render`, () => {
-    expect(bubbleSeries[modelName]).toEqual(result[modelName]);
+    expect(scatterSeries[modelName]).toEqual(result[modelName]);
   });
 });
 
@@ -175,6 +172,6 @@ it('should register closest responder to the mouse', () => {
   const distantResponder = result.responders[1];
 
   const responders = [closestResponder, distantResponder];
-  bubbleSeries.onMousemove({ responders, mousePosition: { x: 10, y: 80 } });
-  expect(bubbleSeries.activatedResponders).toEqual([closestResponder]);
+  scatterSeries.onMousemove({ responders, mousePosition: { x: 10, y: 80 } });
+  expect(scatterSeries.activatedResponders).toEqual([closestResponder]);
 });
