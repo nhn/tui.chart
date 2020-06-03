@@ -1,9 +1,9 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { CircleModel } from '@t/components/series';
+import { CircleLegendModel } from '@t/components/circleLegend';
 
 export default class CircleLegend extends Component {
-  models: CircleModel[] = [];
+  model!: { circleLegend: CircleLegendModel };
 
   initialize() {
     this.type = 'circleLegend';
