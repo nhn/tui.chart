@@ -334,7 +334,7 @@ export default class BoxStackSeries extends BoxSeries {
     const beforeValueSum = totalOfPrevValues(
       values,
       currentIndex,
-      !this.isBar ? values[currentIndex] > 0 : values[currentIndex] < 0
+      this.isBar ? values[currentIndex] < 0 : values[currentIndex] > 0
     );
 
     return this.isBar
