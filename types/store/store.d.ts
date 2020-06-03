@@ -100,6 +100,10 @@ export type DataRange = {
   };
 };
 
+export type StackSeries = {
+  [key in BoxType]?: StackSeriesData<key>;
+};
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -119,13 +123,16 @@ export interface ChartState<T extends Options> {
     lines?: PlotLine[];
   };
 }
+
+export type StackTotal = {
+  positive: number;
+  negative: number;
+};
+
 export interface StackData {
   values: number[];
   sum: number;
-  total: {
-    positive: number;
-    negative: number;
-  };
+  total: StackTotal;
 }
 
 export type StackDataValues = StackData[];
@@ -165,7 +172,7 @@ export type PercentScaleType =
 export type StackSeriesData<K extends BoxType> = {
   data: ChartSeriesMap[K];
   stackData: StackDataType;
-  dataValues: number[];
+  dataRangeValues: number[];
   stack: Stack;
   scaleType: PercentScaleType;
 } & SeriesGroup;

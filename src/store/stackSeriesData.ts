@@ -2,35 +2,35 @@ import {
   StoreModule,
   ChartType,
   StackSeriesData,
+  BoxType,
   StackDataType,
-  StackData,
   StackGroupData,
   Options,
-  BoxType,
   StackDataValues,
   Stack,
+  StackSeries,
 } from '@t/store/store';
 import { isBoxSeries } from '@src/component/boxSeries';
 import {
+  BoxSeriesOptions,
   StackType,
   StackOptionType,
   StackInfo,
   Connector,
-  BoxSeriesType,
   BoxSeriesDataType,
-  BoxSeriesOptions,
+  BoxSeriesType,
 } from '@t/options';
-import { pickProperty, isObject } from '@src/helpers/utils';
 import { extend } from '@src/store/store';
+import { pickProperty, isObject, sum } from '@src/helpers/utils';
 
 type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
-export type StackSeries = {
-  [key in BoxType]?: StackSeriesData<key>;
-};
-
 function isPercentStack(stack?: Stack) {
   return stack && stack.type === 'percent';
+}
+
+export function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
+  return !Array.isArray(rawData);
 }
 
 export function hasPercentStackSeries(stackSeries: StackSeries) {
@@ -39,7 +39,7 @@ export function hasPercentStackSeries(stackSeries: StackSeries) {
   }
 
   return Object.keys(stackSeries).some((seriesName) =>
-    isPercentStack(stackSeries[seriesName as BoxType]?.stack)
+    isPercentStack(stackSeries[seriesName].stack)
   );
 }
 
@@ -62,12 +62,12 @@ function makeStackData(seriesData: SeriesRawData): StackDataValues {
 
     stackData[i] = {
       values: stackValues,
-      sum: stackValues.reduce((a, b) => a + b, 0),
+      sum: sum(stackValues),
       total: {
-        positive: stackValues.filter((value) => value >= 0).reduce((a, b) => a + b, 0),
-        negative: stackValues.filter((value) => value < 0).reduce((a, b) => a + b, 0),
+        positive: sum(stackValues.filter((value) => value >= 0)),
+        negative: sum(stackValues.filter((value) => value < 0)),
       },
-    } as StackData;
+    };
   }
 
   return stackData;
@@ -127,7 +127,7 @@ function hasStackGrouped(seriesRawData: SeriesRawData): boolean {
   return seriesRawData.some((rawData) => rawData.hasOwnProperty('stackGroup'));
 }
 
-function getStackDataValues(stackData: StackDataType) {
+function getStackDataRangeValues(stackData: StackDataType) {
   let values: number[] = [];
 
   if (Array.isArray(stackData)) {
@@ -150,43 +150,46 @@ function getSumValues(stackData: StackDataValues) {
   return [...negativeSum, ...positiveSum];
 }
 
-function getScaleType(
-  grouped: boolean,
-  stackData: StackDataType,
-  stackType: StackType,
-  diverging: boolean
-) {
-  if (grouped) {
-    let stackDataValues: StackDataValues = [];
-
-    Object.keys(stackData as StackGroupData).forEach((groupId) => {
-      stackDataValues = [...stackDataValues, ...stackData[groupId]];
-    });
-
-    stackData = stackDataValues;
+function getStackDataValues(stackData: StackDataType): StackDataValues {
+  if (!isGroupStack(stackData)) {
+    return stackData;
   }
 
-  const hasNegativeValue = (stackData as StackDataValues)
-    .map(({ total }) => total.negative)
-    .some((total) => total < 0);
-  const hasPositiveValue = (stackData as StackDataValues)
-    .map(({ total }) => total.positive)
-    .some((total) => total >= 0);
+  let stackDataValues: StackDataValues = [];
+
+  if (isGroupStack(stackData)) {
+    Object.keys(stackData).forEach((groupId) => {
+      stackDataValues = [...stackDataValues, ...stackData[groupId]];
+    });
+  }
+
+  return stackDataValues;
+}
+
+function checkIfNegativeAndPositiveValues(stackData: StackDataValues) {
+  return {
+    hasNegative: stackData.map(({ total }) => total.negative).some((total) => total < 0),
+    hasPositive: stackData.map(({ total }) => total.positive).some((total) => total >= 0),
+  };
+}
+
+function getScaleType(stackData: StackDataValues, stackType: StackType, diverging: boolean) {
+  const { hasPositive, hasNegative } = checkIfNegativeAndPositiveValues(stackData);
 
   if (stackType === 'percent') {
     if (diverging) {
       return 'divergingPercentStack';
     }
 
-    if (hasNegativeValue && hasPositiveValue) {
+    if (hasNegative && hasPositive) {
       return 'dualPercentStack';
     }
 
-    if (!hasNegativeValue && hasPositiveValue) {
+    if (!hasNegative && hasPositive) {
       return 'percentStack';
     }
 
-    if (hasNegativeValue && !hasPositiveValue) {
+    if (hasNegative && !hasPositive) {
       return 'minusPercentStack';
     }
   }
@@ -224,18 +227,17 @@ const stackSeriesData: StoreModule = {
         const diverging = !!(options.series as BoxSeriesOptions)?.diverging;
 
         if (stack) {
-          const grouped = hasStackGrouped(data);
-          const stackData = grouped ? makeStackGroupData(data) : makeStackData(data);
+          const stackData = hasStackGrouped(data) ? makeStackGroupData(data) : makeStackData(data);
           const stackType = stack.type;
-          const dataValues = getStackDataValues(stackData);
+          const dataRangeValues = getStackDataRangeValues(stackData);
 
           newStackSeries[seriesName] = {
             data,
             seriesCount,
             seriesGroupCount,
             stackData,
-            dataValues,
-            scaleType: getScaleType(grouped, stackData, stackType, diverging),
+            dataRangeValues,
+            scaleType: getScaleType(getStackDataValues(stackData), stackType, diverging),
           } as StackSeriesData<BoxType>;
         }
 
