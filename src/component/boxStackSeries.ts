@@ -338,7 +338,7 @@ export default class BoxStackSeries extends BoxSeries {
     );
 
     return this.isBar
-      ? beforeValueSum * ratio + basePosition + Number(this.axisThickness)
+      ? beforeValueSum * ratio + basePosition + this.axisThickness
       : basePosition - beforeValueSum * ratio;
   }
 

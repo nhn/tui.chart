@@ -238,7 +238,7 @@ const stackSeriesData: StoreModule = {
             stackData,
             dataRangeValues,
             scaleType: getScaleType(getStackDataValues(stackData), stackType, diverging),
-          } as StackSeriesData<BoxType>;
+          };
         }
 
         extend(state.stackSeries, newStackSeries);
