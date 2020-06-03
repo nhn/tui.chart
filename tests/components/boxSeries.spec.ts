@@ -43,41 +43,113 @@ const chartState = {
   options: {},
 };
 
-const result = [
-  { type: 'clipRectArea', x: 0, y: 0, width: 90, height: 90 },
-  {
-    type: 'rect',
-    color: '#aaaaaa',
-    width: 16,
-    height: 5,
-    x: 5,
-    y: 19,
-  },
-  {
-    type: 'rect',
-    color: '#aaaaaa',
-    width: 32,
-    height: 5,
-    x: 5,
-    y: 59,
-  },
-  {
-    type: 'rect',
-    color: '#bbbbbb',
-    width: 64,
-    height: 5,
-    x: 5,
-    y: 24,
-  },
-  {
-    type: 'rect',
-    color: '#bbbbbb',
-    width: 80,
-    height: 5,
-    x: 5,
-    y: 64,
-  },
-];
+const result = {
+  clipRect: [{ type: 'clipRectArea', x: 0, y: 0, width: 90, height: 90 }],
+  series: [
+    {
+      type: 'rect',
+      color: '#aaaaaa',
+      width: 16,
+      height: 5,
+      x: 5,
+      y: 19,
+    },
+    {
+      type: 'rect',
+      color: '#aaaaaa',
+      width: 32,
+      height: 5,
+      x: 5,
+      y: 59,
+    },
+    {
+      type: 'rect',
+      color: '#bbbbbb',
+      width: 64,
+      height: 5,
+      x: 5,
+      y: 24,
+    },
+    {
+      type: 'rect',
+      color: '#bbbbbb',
+      width: 80,
+      height: 5,
+      x: 5,
+      y: 64,
+    },
+  ],
+  hoveredSeries: [
+    {
+      color: '#aaaaaa',
+      height: 5,
+      style: [
+        {
+          shadowBlur: 6,
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+        },
+      ],
+      thickness: 4,
+      type: 'rect',
+      width: 16,
+      x: 5,
+      y: 19,
+    },
+    {
+      color: '#aaaaaa',
+      height: 5,
+      style: [
+        {
+          shadowBlur: 6,
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+        },
+      ],
+      thickness: 4,
+      type: 'rect',
+      width: 32,
+      x: 5,
+      y: 59,
+    },
+    {
+      color: '#bbbbbb',
+      height: 5,
+      style: [
+        {
+          shadowBlur: 6,
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+        },
+      ],
+      thickness: 4,
+      type: 'rect',
+      width: 64,
+      x: 5,
+      y: 24,
+    },
+    {
+      color: '#bbbbbb',
+      height: 5,
+      style: [
+        {
+          shadowBlur: 6,
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+        },
+      ],
+      thickness: 4,
+      type: 'rect',
+      width: 80,
+      x: 5,
+      y: 64,
+    },
+  ],
+};
 
 const respondersResult = [
   {

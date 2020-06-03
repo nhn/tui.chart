@@ -137,7 +137,6 @@ export default class BoxStackSeries extends BoxSeries {
 
         seriesModels.push({
           type: 'rect',
-          name: 'boxSeries',
           color: colors![seriesIndex],
           ...this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth),
         });
