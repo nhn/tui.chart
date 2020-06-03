@@ -42,7 +42,7 @@ const PADDING = {
   LR: 24, // left & right
 };
 
-function isLeftBottomSide(seriesIndex: number) {
+export function isLeftBottomSide(seriesIndex: number) {
   return !!(seriesIndex % 2);
 }
 

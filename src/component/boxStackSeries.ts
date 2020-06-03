@@ -1,4 +1,4 @@
-import BoxSeries, { SeriesRawData } from './boxSeries';
+import BoxSeries, { SeriesRawData, isLeftBottomSide } from './boxSeries';
 import { ColumnChartOptions, BarChartOptions, Point, Connector } from '@t/options';
 import {
   ChartState,
@@ -23,6 +23,7 @@ type RenderOptions = {
   tickDistance: number;
   min: number;
   max: number;
+  diverging: boolean;
 };
 
 function totalOfPrevValues(values: number[], currentIndex: number, included = false) {
@@ -75,6 +76,7 @@ export default class BoxStackSeries extends BoxSeries {
       tickDistance,
       min,
       max,
+      diverging,
     };
 
     this.basePosition = this.getBasePosition(labels, tickCount);
@@ -123,17 +125,26 @@ export default class BoxStackSeries extends BoxSeries {
     stackGroupIndex = 0
   ) {
     const seriesModels: RectModel[] = [];
-    const { tickDistance } = renderOptions;
+    const { tickDistance, diverging } = renderOptions;
     const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+    const divergingSeries = diverging && isLeftBottomSide(stackGroupIndex);
 
     stackData.forEach(({ values, total }, index) => {
       const seriesPos =
-        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
+        index * tickDistance +
+        this.padding +
+        columnWidth * (diverging ? 0 : stackGroupIndex) +
+        this.hoverThickness;
       const ratio = this.getStackValueRatio(total, renderOptions);
 
       values.forEach((value, seriesIndex) => {
         const barLength = this.getStackBarLength(value, ratio);
-        const startPosition = this.getStackStartPosition(values, seriesIndex, ratio);
+        const startPosition = this.getStackStartPosition(
+          values,
+          seriesIndex,
+          ratio,
+          divergingSeries
+        );
 
         seriesModels.push({
           type: 'rect',
@@ -159,7 +170,7 @@ export default class BoxStackSeries extends BoxSeries {
     colors: string[],
     renderOptions: RenderOptions
   ) {
-    const { stack } = renderOptions;
+    const { stack, diverging } = renderOptions;
     const stackGroupData = stackSeries.stackData as StackGroupData;
     const seriesRawData = stackSeries.data;
     const stackGroupIds = Object.keys(stackGroupData);
@@ -173,7 +184,7 @@ export default class BoxStackSeries extends BoxSeries {
         stackGroupData[groupId],
         renderOptions,
         colors.splice(groupIndex, filtered.length),
-        stackGroupIds.length,
+        diverging ? 1 : stackGroupIds.length,
         groupIndex
       );
 
@@ -198,6 +209,7 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const {
       tickDistance,
+      diverging,
       stack: { connector },
     } = renderOptions;
 
@@ -210,16 +222,28 @@ export default class BoxStackSeries extends BoxSeries {
 
     stackData.forEach(({ values, total }, index) => {
       const seriesPos =
-        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
+        index * tickDistance +
+        this.padding +
+        columnWidth * (diverging ? 0 : stackGroupIndex) +
+        Number(this.hoverThickness);
       const points: Point[] = [];
       const ratio = this.getStackValueRatio(total, renderOptions);
+      const divergingSeries = diverging && isLeftBottomSide(stackGroupIndex);
 
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
-        const startPosition = this.getStackStartPosition(values, seriesIndex, ratio);
+        const startPosition = this.getStackStartPosition(
+          values,
+          seriesIndex,
+          ratio,
+          divergingSeries
+        );
         const { x, y } = this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
 
-        points.push({ x: this.isBar ? x + barLength : x, y });
+        const xPos = !divergingSeries && this.isBar ? x + barLength : x;
+        const yPos = divergingSeries && !this.isBar ? y + barLength : y;
+
+        points.push({ x: xPos, y: yPos });
       });
 
       connectorPoints.push(points);
@@ -323,18 +347,36 @@ export default class BoxStackSeries extends BoxSeries {
       scaleType,
       min,
       max,
+      diverging,
     } = renderOptions;
-    const divisor = stackType === 'percent' ? getDivisorForPercent(total, scaleType) : max - min;
 
-    return this.getOffsetSize() / divisor;
+    if (stackType === 'percent') {
+      return this.getOffsetSize() / getDivisorForPercent(total, scaleType);
+    }
+
+    return this.getValueRatio(min, max, diverging);
   }
 
-  getStackStartPosition(values: number[], currentIndex: number, ratio: number) {
+  getStackStartPosition(
+    values: number[],
+    currentIndex: number,
+    ratio: number,
+    divergingSeries: boolean
+  ) {
     const basePosition = this.basePosition;
+
+    if (divergingSeries) {
+      const beforeValueSum = totalOfPrevValues(values, currentIndex, this.isBar);
+
+      return this.isBar
+        ? basePosition - beforeValueSum * ratio + this.axisThickness
+        : basePosition + beforeValueSum * ratio;
+    }
+
     const beforeValueSum = totalOfPrevValues(
       values,
       currentIndex,
-      !this.isBar ? values[currentIndex] > 0 : values[currentIndex] < 0
+      this.included(values[currentIndex])
     );
 
     return this.isBar
@@ -344,5 +386,9 @@ export default class BoxStackSeries extends BoxSeries {
 
   getStackBarLength(value: number, ratio: number) {
     return value < 0 ? Math.abs(value) * ratio : value * ratio;
+  }
+
+  included(value: number) {
+    return this.isBar ? value < 0 : value > 0;
   }
 }

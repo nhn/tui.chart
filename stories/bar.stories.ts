@@ -167,3 +167,17 @@ export const minMax = () => {
 
   return el;
 };
+
+export const divergingGroupStack = () => {
+  const { el } = createChart(budgetDataForGroupStack, {
+    series: {
+      diverging: true,
+      stack: {
+        type: 'normal',
+        connector: true,
+      },
+    },
+  });
+
+  return el;
+};
