@@ -132,35 +132,38 @@ const result = {
       },
     },
   ],
-  models: [
-    {
-      color: 'rgba(170, 170, 170, 0.7)',
-      radius: 28,
-      seriesIndex: 0,
-      style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
-      type: 'circle',
-      x: 0,
-      y: 0,
-    },
-    {
-      color: 'rgba(170, 170, 170, 0.7)',
-      radius: 56,
-      seriesIndex: 0,
-      style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
-      type: 'circle',
-      x: 140,
-      y: 0,
-    },
-    {
-      color: 'rgba(187, 187, 187, 0.7)',
-      radius: 8.4,
-      seriesIndex: 1,
-      style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.3)' }],
-      type: 'circle',
-      x: 280,
-      y: 280,
-    },
-  ],
+  models: {
+    series: [
+      {
+        color: 'rgba(170, 170, 170, 0.7)',
+        radius: 28,
+        seriesIndex: 0,
+        style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
+        type: 'circle',
+        x: 0,
+        y: 0,
+      },
+      {
+        color: 'rgba(170, 170, 170, 0.7)',
+        radius: 56,
+        seriesIndex: 0,
+        style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
+        type: 'circle',
+        x: 140,
+        y: 0,
+      },
+      {
+        color: 'rgba(187, 187, 187, 0.7)',
+        radius: 8.4,
+        seriesIndex: 1,
+        style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.3)' }],
+        type: 'circle',
+        x: 280,
+        y: 280,
+      },
+    ],
+    hoveredSeries: [],
+  },
 };
 
 ['rect', 'responders', 'models'].forEach((modelName) => {

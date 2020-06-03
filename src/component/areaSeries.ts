@@ -1,5 +1,10 @@
 import Component from './component';
-import { AreaPointsModel, CircleModel, LinePointsModel } from '@t/components/series';
+import {
+  AreaPointsModel,
+  CircleModel,
+  CircleResponderModel,
+  LinePointsModel,
+} from '@t/components/series';
 import {
   AreaChartOptions,
   AreaSeriesType,
@@ -27,7 +32,7 @@ type DatumType = number | RangeDataType;
 export default class AreaSeries extends Component {
   models!: DrawModels[];
 
-  responders!: CircleModel[];
+  responders!: CircleResponderModel[];
 
   activatedResponders: this['responders'] = [];
 
@@ -190,12 +195,12 @@ export default class AreaSeries extends Component {
     this.models = this.models.filter((model) => model.type !== 'linePoints');
   }
 
-  onMousemove({ responders }: { responders: CircleModel[] }) {
+  onMousemove({ responders }: { responders: CircleResponderModel[] }) {
     if (this.activatedResponders.length) {
       this.clearLinePointsModel();
       this.applyAreaOpacity(1);
 
-      this.activatedResponders.forEach((responder: CircleModel) => {
+      this.activatedResponders.forEach((responder) => {
         const index = this.models.findIndex((model) => model === responder);
 
         this.models.splice(index, 1);
