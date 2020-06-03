@@ -125,16 +125,12 @@ export default class BoxStackSeries extends BoxSeries {
     stackGroupIndex = 0
   ) {
     const seriesModels: RectModel[] = [];
-    const { tickDistance, diverging } = renderOptions;
-    const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+    const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
+    const { diverging } = renderOptions;
     const divergingSeries = diverging && isLeftBottomSide(stackGroupIndex);
 
     stackData.forEach(({ values, total }, index) => {
-      const seriesPos =
-        index * tickDistance +
-        this.padding +
-        columnWidth * (diverging ? 0 : stackGroupIndex) +
-        this.hoverThickness;
+      const seriesPos = this.getSeriesPosition(renderOptions, columnWidth, index, stackGroupIndex);
       const ratio = this.getStackValueRatio(total, renderOptions);
 
       values.forEach((value, seriesIndex) => {
@@ -170,7 +166,7 @@ export default class BoxStackSeries extends BoxSeries {
     colors: string[],
     renderOptions: RenderOptions
   ) {
-    const { stack, diverging } = renderOptions;
+    const { stack } = renderOptions;
     const stackGroupData = stackSeries.stackData as StackGroupData;
     const seriesRawData = stackSeries.data;
     const stackGroupIds = Object.keys(stackGroupData);
@@ -184,7 +180,7 @@ export default class BoxStackSeries extends BoxSeries {
         stackGroupData[groupId],
         renderOptions,
         colors.splice(groupIndex, filtered.length),
-        diverging ? 1 : stackGroupIds.length,
+        stackGroupIds.length,
         groupIndex
       );
 
@@ -208,7 +204,6 @@ export default class BoxStackSeries extends BoxSeries {
     stackGroupIndex = 0
   ) {
     const {
-      tickDistance,
       diverging,
       stack: { connector },
     } = renderOptions;
@@ -217,18 +212,14 @@ export default class BoxStackSeries extends BoxSeries {
       return [];
     }
 
-    const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+    const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
+    const divergingSeries = diverging && isLeftBottomSide(stackGroupIndex);
     const connectorPoints: Array<Point[]> = [];
 
     stackData.forEach(({ values, total }, index) => {
-      const seriesPos =
-        index * tickDistance +
-        this.padding +
-        columnWidth * (diverging ? 0 : stackGroupIndex) +
-        Number(this.hoverThickness);
+      const seriesPos = this.getSeriesPosition(renderOptions, columnWidth, index, stackGroupIndex);
       const points: Point[] = [];
       const ratio = this.getStackValueRatio(total, renderOptions);
-      const divergingSeries = diverging && isLeftBottomSide(stackGroupIndex);
 
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
@@ -341,7 +332,7 @@ export default class BoxStackSeries extends BoxSeries {
     return connectorModels;
   }
 
-  getStackValueRatio(total: StackTotal, renderOptions: RenderOptions) {
+  private getStackValueRatio(total: StackTotal, renderOptions: RenderOptions) {
     const {
       stack: { type: stackType },
       scaleType,
@@ -357,7 +348,7 @@ export default class BoxStackSeries extends BoxSeries {
     return this.getValueRatio(min, max, diverging);
   }
 
-  getStackStartPosition(
+  private getStackStartPosition(
     values: number[],
     currentIndex: number,
     ratio: number,
@@ -384,7 +375,26 @@ export default class BoxStackSeries extends BoxSeries {
       : basePosition - beforeValueSum * ratio;
   }
 
-  getStackBarLength(value: number, ratio: number) {
+  private getStackBarLength(value: number, ratio: number) {
     return value < 0 ? Math.abs(value) * ratio : value * ratio;
+  }
+
+  private getStackColumnWidth(renderOptions: RenderOptions, stackGroupCount: number) {
+    const { tickDistance, diverging } = renderOptions;
+    const divisor = diverging ? 1 : stackGroupCount;
+
+    return (tickDistance - this.padding * 2) / divisor;
+  }
+
+  private getSeriesPosition(
+    renderOptions: RenderOptions,
+    columnWidth: number,
+    index: number,
+    stackGroupIndex: number
+  ) {
+    const { tickDistance, diverging } = renderOptions;
+    const groupIndex = diverging ? 0 : stackGroupIndex;
+
+    return index * tickDistance + this.padding + columnWidth * groupIndex + this.hoverThickness;
   }
 }
