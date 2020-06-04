@@ -92,11 +92,13 @@ export default abstract class Component {
   }
 
   syncModels(currentModels, targetModels, type?: string) {
-    let drawModels = type ? this.drawModels[type] : this.drawModels;
+    const drawModels = type ? this.drawModels[type] : this.drawModels;
 
     if (currentModels.length < targetModels.length) {
-      drawModels = currentModels.concat(
-        targetModels.slice(currentModels.length, targetModels.length)
+      drawModels.splice(
+        currentModels.length,
+        0,
+        ...targetModels.slice(currentModels.length, targetModels.length)
       );
     } else if (currentModels.length > targetModels.length) {
       drawModels.splice(targetModels.length, currentModels.length);
