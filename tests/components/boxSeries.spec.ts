@@ -43,41 +43,43 @@ const chartState = {
   options: {},
 };
 
-const result = [
-  { type: 'clipRectArea', x: 0, y: 0, width: 88, height: 88 },
-  {
-    type: 'rect',
-    color: '#aaaaaa',
-    width: 16,
-    height: 5,
-    x: 5,
-    y: 19,
-  },
-  {
-    type: 'rect',
-    color: '#aaaaaa',
-    width: 32,
-    height: 5,
-    x: 5,
-    y: 59,
-  },
-  {
-    type: 'rect',
-    color: '#bbbbbb',
-    width: 64,
-    height: 5,
-    x: 5,
-    y: 24,
-  },
-  {
-    type: 'rect',
-    color: '#bbbbbb',
-    width: 80,
-    height: 5,
-    x: 5,
-    y: 64,
-  },
-];
+const result = {
+  clipRect: [{ type: 'clipRectArea', x: 0, y: 0, width: 90, height: 90 }],
+  series: [
+    {
+      type: 'rect',
+      color: '#aaaaaa',
+      width: 16,
+      height: 5,
+      x: 5,
+      y: 19,
+    },
+    {
+      type: 'rect',
+      color: '#aaaaaa',
+      width: 32,
+      height: 5,
+      x: 5,
+      y: 59,
+    },
+    {
+      type: 'rect',
+      color: '#bbbbbb',
+      width: 64,
+      height: 5,
+      x: 5,
+      y: 24,
+    },
+    {
+      type: 'rect',
+      color: '#bbbbbb',
+      width: 80,
+      height: 5,
+      x: 5,
+      y: 64,
+    },
+  ],
+};
 
 const respondersResult = [
   {
