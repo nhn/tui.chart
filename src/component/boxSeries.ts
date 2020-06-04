@@ -202,15 +202,15 @@ export default class BoxSeries extends Component {
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
     const hoveredSeries = this.renderHighlightSeriesModel(seriesModels);
 
-    this.models.clipRect = [this.renderClipRectAreaModel()];
-    this.models.series = seriesModels;
-    this.models.hoveredSeries = hoveredSeries;
+    this.models = {
+      clipRect: [this.renderClipRectAreaModel()],
+      series: seriesModels,
+    };
 
     if (!this.drawModels) {
       this.drawModels = {
         clipRect: this.models.clipRect,
         series: deepCopyArray(seriesModels),
-        hoveredSeries: [],
       };
     }
 
