@@ -85,9 +85,11 @@ export default class BoxStackSeries extends BoxSeries {
     const hoveredSeries = this.renderHighlightSeriesModel(series);
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
 
-    this.models.clipRect = [this.renderClipRectAreaModel()];
-    this.models.series = series;
-    this.models.connector = connector;
+    this.models = {
+      clipRect: [this.renderClipRectAreaModel()],
+      series,
+      connector,
+    };
 
     if (!this.drawModels) {
       this.drawModels = {
