@@ -204,13 +204,11 @@ export default class BoxSeries extends Component {
 
     this.models.clipRect = [this.renderClipRectAreaModel()];
     this.models.series = seriesModels;
-    this.models.hoveredSeries = hoveredSeries;
 
     if (!this.drawModels) {
       this.drawModels = {
         clipRect: this.models.clipRect,
         series: deepCopyArray(seriesModels),
-        hoveredSeries: [],
       };
     }
 

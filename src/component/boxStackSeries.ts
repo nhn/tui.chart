@@ -88,14 +88,12 @@ export default class BoxStackSeries extends BoxSeries {
     this.models.clipRect = [this.renderClipRectAreaModel()];
     this.models.series = series;
     this.models.connector = connector;
-    this.models.hoveredSeries = hoveredSeries;
 
     if (!this.drawModels) {
       this.drawModels = {
         clipRect: this.models.clipRect,
         series: deepCopyArray(series),
         connector: deepCopyArray(connector),
-        hoveredSeries: [],
       };
     }
 
