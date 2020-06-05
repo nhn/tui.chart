@@ -24,9 +24,9 @@ export default abstract class Component {
 
   eventBus: EventEmitter;
 
-  models!: any; // @TODO: 정의
+  animationTargetModels!: any; // @TODO: 정의
 
-  drawModels!: any; // @TODO: 정의
+  models!: any; // @TODO: 정의
 
   responders!: any[]; // @TODO: 정의
 
@@ -40,16 +40,16 @@ export default abstract class Component {
   abstract render(state: ChartState<Options>, computed: Record<string, any>): void;
 
   update(delta: number) {
-    if (!this.drawModels) {
+    if (!this.animationTargetModels) {
       return;
     }
 
-    if (Array.isArray(this.models)) {
-      this.updateModels(this.drawModels, this.models, delta);
+    if (Array.isArray(this.animationTargetModels)) {
+      this.updateModels(this.models, this.animationTargetModels, delta);
     } else {
-      Object.keys(this.models).forEach((type) => {
-        const currentModels = this.drawModels[type];
-        const targetModels = this.models[type];
+      Object.keys(this.animationTargetModels).forEach((type) => {
+        const currentModels = this.models[type];
+        const targetModels = this.animationTargetModels[type];
 
         this.updateModels(currentModels, targetModels, delta);
       });
@@ -75,16 +75,16 @@ export default abstract class Component {
   }
 
   sync() {
-    if (!this.drawModels) {
+    if (!this.animationTargetModels) {
       return;
     }
 
-    if (Array.isArray(this.models)) {
-      this.syncModels(this.drawModels, this.models);
+    if (Array.isArray(this.animationTargetModels)) {
+      this.syncModels(this.models, this.animationTargetModels);
     } else {
-      Object.keys(this.models).forEach((type) => {
-        const currentModels = this.drawModels[type];
-        const targetModels = this.models[type];
+      Object.keys(this.animationTargetModels).forEach((type) => {
+        const currentModels = this.models[type];
+        const targetModels = this.animationTargetModels[type];
 
         this.syncModels(currentModels, targetModels, type);
       });
@@ -92,7 +92,7 @@ export default abstract class Component {
   }
 
   syncModels(currentModels, targetModels, type?: string) {
-    const drawModels = type ? this.drawModels[type] : this.drawModels;
+    const drawModels = type ? this.models[type] : this.models;
 
     if (currentModels.length < targetModels.length) {
       drawModels.splice(
@@ -112,7 +112,7 @@ export default abstract class Component {
   onMousemove?(responseData: any): void;
 
   draw(painter: Painter) {
-    const models = this.drawModels ? this.drawModels : this.models;
+    const models = this.models ? this.models : this.animationTargetModels;
 
     if (Array.isArray(models)) {
       painter.paintForEach(models);

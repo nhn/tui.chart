@@ -9,9 +9,9 @@ type CircleSeriesModels = {
 };
 
 export default abstract class CircleSeries extends Component {
-  models: CircleSeriesModels = { series: [], hoveredSeries: [] };
+  animationTargetModels: CircleSeriesModels = { series: [], hoveredSeries: [] };
 
-  drawModels!: CircleSeriesModels;
+  models!: CircleSeriesModels;
 
   responders!: CircleResponderModel[];
 
@@ -20,8 +20,8 @@ export default abstract class CircleSeries extends Component {
   rect!: Rect;
 
   update(delta: number) {
-    this.drawModels.series.forEach((model, index) => {
-      model.radius = (this.models.series[index] as CircleModel).radius * delta;
+    this.models.series.forEach((model, index) => {
+      model.radius = (this.animationTargetModels.series[index] as CircleModel).radius * delta;
     });
   }
 
@@ -46,7 +46,7 @@ export default abstract class CircleSeries extends Component {
 
   onMousemove({ responders, mousePosition }) {
     const closestResponder = this.getClosestResponder(responders, mousePosition);
-    this.drawModels.hoveredSeries = closestResponder;
+    this.models.hoveredSeries = closestResponder;
     this.activatedResponders = closestResponder;
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);

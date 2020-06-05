@@ -34,9 +34,9 @@ export default class ScatterSeries extends CircleSeries {
     const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions);
     const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
 
-    this.models.series = seriesModel;
-    if (!this.drawModels) {
-      this.drawModels = deepCopy(this.models);
+    this.animationTargetModels.series = seriesModel;
+    if (!this.models) {
+      this.models = deepCopy(this.animationTargetModels);
     }
     this.responders = seriesModel.map((m, index) => ({
       ...m,
