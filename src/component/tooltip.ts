@@ -21,7 +21,7 @@ export default class Tooltip extends Component {
   renderTooltip(tooltipInfos: TooltipInfo[]) {
     let maxLength = 0;
 
-    this.models = [
+    this.animationTargetModels = [
       tooltipInfos.reduce<TooltipModel>(
         (acc, item) => {
           const { data } = item;
@@ -51,8 +51,8 @@ export default class Tooltip extends Component {
       ),
     ];
 
-    if (!this.drawModels) {
-      this.drawModels = [{ ...this.models[0] }];
+    if (!this.models) {
+      this.models = [{ ...this.animationTargetModels[0] }];
     } else {
       this.needLoop();
     }
@@ -78,6 +78,6 @@ export default class Tooltip extends Component {
 
   render({ layout }: ChartState<Options>) {
     this.rect = layout.plot;
-    this.models = [];
+    this.animationTargetModels = [];
   }
 }

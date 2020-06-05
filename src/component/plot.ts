@@ -5,7 +5,7 @@ import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
 
 export default class Plot extends Component {
-  models: Record<string, LineModel[]> = {};
+  animationTargetModels: Record<string, LineModel[]> = {};
 
   initialize() {
     this.type = 'plot';
@@ -39,13 +39,13 @@ export default class Plot extends Component {
   render({ layout, axes, plot }: ChartState<Options>) {
     this.rect = layout.plot;
 
-    this.models.plot = [
+    this.animationTargetModels.plot = [
       ...this.renderModels(this.getTickPixelPositions(false, axes), false),
       ...this.renderModels(this.getTickPixelPositions(true, axes), true),
     ];
 
     if (plot) {
-      this.models.lines = [...this.renderLines(plot.lines!, axes)];
+      this.animationTargetModels.lines = [...this.renderLines(plot.lines!, axes)];
     }
   }
 

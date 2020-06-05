@@ -40,7 +40,7 @@ export default abstract class Component {
   abstract render(state: ChartState<Options>, computed: Record<string, any>): void;
 
   update(delta: number) {
-    if (!this.animationTargetModels) {
+    if (!this.models) {
       return;
     }
 
@@ -75,7 +75,7 @@ export default abstract class Component {
   }
 
   sync() {
-    if (!this.animationTargetModels) {
+    if (!this.models) {
       return;
     }
 

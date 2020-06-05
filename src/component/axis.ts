@@ -24,9 +24,9 @@ interface RenderOptions {
 export default class Axis extends Component {
   name!: AxisType;
 
-  models: AxisModels = {};
+  animationTargetModels: AxisModels = {};
 
-  drawModels!: AxisModels;
+  models!: AxisModels;
 
   yAxisComponent!: boolean;
 
@@ -60,7 +60,7 @@ export default class Axis extends Component {
       labelInterval,
     };
 
-    this.models.label = this.renderLabelModels(
+    this.animationTargetModels.label = this.renderLabelModels(
       relativePositions,
       !isLabelAxis && this.yAxisComponent ? labels.reverse() : labels,
       offsetKey,
@@ -68,20 +68,20 @@ export default class Axis extends Component {
       renderOptions
     );
 
-    this.models.tick = this.renderTickModels(
+    this.animationTargetModels.tick = this.renderTickModels(
       relativePositions,
       offsetKey,
       anchorKey,
       renderOptions
     );
 
-    this.models.axisLine = [this.renderAxisLineModel()];
+    this.animationTargetModels.axisLine = [this.renderAxisLineModel()];
 
-    if (!this.drawModels) {
-      this.drawModels = {};
+    if (!this.models) {
+      this.models = {};
 
       ['tick', 'label'].forEach((type) => {
-        this.drawModels[type] = this.models[type].map((m) => {
+        this.models[type] = this.animationTargetModels[type].map((m) => {
           const drawModel = { ...m };
 
           if (this.yAxisComponent) {
@@ -94,7 +94,7 @@ export default class Axis extends Component {
         });
       });
 
-      this.drawModels.axisLine = this.models.axisLine;
+      this.models.axisLine = this.animationTargetModels.axisLine;
     }
   }
 
