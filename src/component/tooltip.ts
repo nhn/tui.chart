@@ -6,6 +6,8 @@ import { TooltipInfo, TooltipModel } from '@t/components/tooltip';
 export default class Tooltip extends Component {
   models!: TooltipModel[];
 
+  animationTargetModels!: TooltipModel[];
+
   isShow = false;
 
   needLoop!: () => void;

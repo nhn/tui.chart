@@ -9,9 +9,9 @@ type CircleSeriesModels = {
 };
 
 export default abstract class CircleSeries extends Component {
-  animationTargetModels: CircleSeriesModels = { series: [], hoveredSeries: [] };
+  models: CircleSeriesModels = { series: [], hoveredSeries: [] };
 
-  models!: CircleSeriesModels;
+  animationTargetModels!: CircleSeriesModels;
 
   responders!: CircleResponderModel[];
 

@@ -40,7 +40,11 @@ export default abstract class Component {
   abstract render(state: ChartState<Options>, computed: Record<string, any>): void;
 
   update(delta: number) {
-    if (!this.models) {
+    // if (!this.models) {
+    //   return;
+    // }
+
+    if (!this.animationTargetModels || !this.models) {
       return;
     }
 
@@ -75,7 +79,7 @@ export default abstract class Component {
   }
 
   sync() {
-    if (!this.models) {
+    if (!this.animationTargetModels || !this.models) {
       return;
     }
 
@@ -112,7 +116,7 @@ export default abstract class Component {
   onMousemove?(responseData: any): void;
 
   draw(painter: Painter) {
-    const models = this.models ? this.models : this.animationTargetModels;
+    const models = this.models;
 
     if (Array.isArray(models)) {
       painter.paintForEach(models);
