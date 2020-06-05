@@ -49,17 +49,36 @@ type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<inf
 
 export type SeriesTypes = ElementType<ValueOf<ChartSeriesMap>>;
 
+type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
+type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
+type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
+export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
+type WatchFunc = (value: any) => void;
+
 export interface StoreOptions {
   state?: Partial<ChartState<Options>> | StateFunc;
   watch?: Record<string, WatchFunc>;
   computed?: Record<string, ComputedFunc>;
   action?: Record<string, ActionFunc> & ThisType<Store<Options>>;
   observe?: Record<string, ObserveFunc> & ThisType<Store<Options>>;
-  initialize?: InitializeFunc;
+}
+
+interface InitStoreState<T extends Options = Options> {
+  categories?: string[];
+  series: Series;
+  options: T;
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'plot' | 'axes' | 'scale' | 'layout' | 'seriesData' | 'dataRange' | 'stackSeriesData';
+  name:
+    | 'root'
+    | 'plot'
+    | 'axes'
+    | 'scale'
+    | 'layout'
+    | 'seriesData'
+    | 'dataRange'
+    | 'stackSeriesData';
 }
 
 export interface SeriesTheme {
@@ -68,10 +87,6 @@ export interface SeriesTheme {
 
 export type Theme = {
   series: SeriesTheme;
-};
-
-type SeriesState = {
-  [key in ChartType]?: SeriesData<key>; // @TODO: Series 와 통합 필요. 중복되는 느낌
 };
 
 export interface Layout {
@@ -105,7 +120,7 @@ export interface ChartState<T extends Options> {
   layout: Layout;
   scale: Scale;
   disabledSeries: string[];
-  series: SeriesState;
+  series: Series;
   // 기존의 limitMap
   axes: Axes;
   dataRange: DataRange;
@@ -165,13 +180,6 @@ export interface ScaleData {
   stepSize: number;
   stepCount: number;
 }
-
-type StateFunc = (options: Options) => Partial<ChartState<Options>>;
-type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
-type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
-export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
-type WatchFunc = (value: any) => void;
-type InitializeFunc = (state: ChartState<Options>, options: Options) => void;
 
 export type FunctionPropertyNames<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;

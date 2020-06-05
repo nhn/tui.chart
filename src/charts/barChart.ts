@@ -26,6 +26,7 @@ interface BarChartProps {
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
+  // data를 그대로 전달해주자. 굳이 분리할 필요가 없다.
   constructor({ el, options, data }: BarChartProps) {
     super({
       el,

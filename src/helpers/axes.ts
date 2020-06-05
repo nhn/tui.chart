@@ -1,15 +1,15 @@
-import { Options, SeriesState } from '@t/store/store';
+import { Options, Series } from '@t/store/store';
 import { LineTypeXAxisOptions } from '@t/options';
 
-export function isLabelAxisOnYAxis(series: SeriesState) {
+export function isLabelAxisOnYAxis(series: Series) {
   return !!series.bar;
 }
 
-export function hasBoxTypeSeries(series: SeriesState) {
+export function hasBoxTypeSeries(series: Series) {
   return series.column || series.bar;
 }
 
-export function isPointOnColumn(series: SeriesState, options: Options) {
+export function isPointOnColumn(series: Series, options: Options) {
   if (hasBoxTypeSeries(series)) {
     return true;
   }

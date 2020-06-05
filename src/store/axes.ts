@@ -1,4 +1,4 @@
-import { AxisData, Options, ScaleData, SeriesState, StoreModule } from '@t/store/store';
+import { AxisData, Options, ScaleData, Series, StoreModule } from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
   getAxisName,
@@ -14,7 +14,7 @@ interface StateProp {
   scale: ScaleData;
   axisSize: number;
   options: Options;
-  series: SeriesState;
+  series: Series;
 }
 
 type ValueStateProp = StateProp & { categories: string[] };
@@ -52,7 +52,7 @@ export function getValueAxisData(stateProp: StateProp) {
 
 const axes: StoreModule = {
   name: 'axes',
-  state: (options) => ({
+  state: ({ options }) => ({
     axes: {
       xAxis: {
         tickInterval: options.xAxis?.tick?.interval || 1,

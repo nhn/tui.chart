@@ -7,9 +7,11 @@ describe('Store', () => {
   describe('Computed', () => {
     beforeEach(() => {
       store = new Store({
-        chart: {
-          width: 1,
-          height: 2,
+        options: {
+          chart: {
+            width: 1,
+            height: 2,
+          },
         },
         categories: [],
         series: {},
@@ -27,9 +29,11 @@ describe('Store', () => {
   describe('Observe', () => {
     beforeEach(() => {
       store = new Store({
-        chart: {
-          width: 1,
-          height: 2,
+        options: {
+          chart: {
+            width: 1,
+            height: 2,
+          },
         },
         categories: [],
         series: {},
@@ -64,9 +68,11 @@ describe('Store', () => {
   describe('watcher', () => {
     beforeEach(() => {
       store = new Store({
-        chart: {
-          width: 1,
-          height: 2,
+        options: {
+          chart: {
+            width: 1,
+            height: 2,
+          },
         },
         categories: [],
         series: {},
@@ -104,56 +110,86 @@ describe('Store', () => {
     });
   });
 
-  // @TODO: name, state 타입에 맞춰 재작성 필요
-  // describe('Module', () => {
-  //   it('should set a module', () => {
-  //     store = new Store();
-  //
-  //     let obData = 0;
-  //     const watchFunc = jest.fn();
-  //
-  //     store.setModule({
-  //       name: 'layout',
-  //       state: {
-  //         myModule: {
-  //           data: 1
-  //         }
-  //       },
-  //       action: {
-  //         myAction: ({ state }, num) => {
-  //           state.myModule.data = num;
-  //         }
-  //       },
-  //       observe: {
-  //         myObserve: ({ myModule }) => {
-  //           obData = myModule.data;
-  //         }
-  //       },
-  //       watch: {
-  //         'state.data': watchFunc
-  //       },
-  //       computed: {
-  //         dataCount: ({ myModule }) => {
-  //           return myModule.data + 10;
-  //         }
-  //       }
-  //     });
-  //
-  //     expect(obData).toEqual(1);
-  //     store.dispatch('myAction', 5);
-  //     store.dispatch('myAction', 2);
-  //     expect(obData).toEqual(2);
-  //     expect(store.computed.dataCount).toEqual(12);
-  //     expect(watchFunc.call.length).toEqual(1);
-  //   });
-  // });
+  describe('Module', () => {
+    it('should set state', () => {
+      store = new Store({ series: {}, options: {} });
+
+      store.setModule({
+        name: 'layout',
+        state: {
+          chart: {
+            width: 1,
+            height: 2,
+          },
+        },
+      });
+
+      expect(store.state.chart.width).toEqual(1);
+    });
+
+    it('should set state with state function', () => {
+      store = new Store({ series: {}, options: { chart: { width: 10, height: 15 } } });
+
+      store.setModule({
+        name: 'layout',
+        state: ({ options }) => ({
+          chart: options.chart,
+        }),
+      });
+
+      expect(store.state.chart.width).toEqual(10);
+    });
+
+    it('should set a action, observe, watch, computed', () => {
+      store = new Store({ series: {}, options: {} });
+
+      let obData = 0;
+      const watchFunc = jest.fn();
+
+      store.setModule({
+        name: 'layout',
+        state: {
+          chart: {
+            width: 1,
+          },
+        } as any,
+        action: {
+          myAction: ({ state }, num) => {
+            state.chart.width = num;
+          },
+        },
+        observe: {
+          myObserve: ({ chart }) => {
+            obData = chart.width;
+          },
+        },
+        watch: {
+          'state.data': watchFunc,
+        },
+        computed: {
+          dataCount: ({ chart }) => {
+            return chart.width + 10;
+          },
+        },
+      });
+
+      expect(obData).toEqual(1);
+      store.dispatch('myAction', 5);
+      store.dispatch('myAction', 2);
+      expect(obData).toEqual(2);
+      expect(store.computed.dataCount).toEqual(12);
+      expect(watchFunc.call.length).toEqual(1);
+    });
+  });
 
   describe('Action', () => {
     beforeEach(() => {
       store = new Store({
-        chart: {
-          width: 1,
-          height: 2,
+        options: {
+          chart: {
+            width: 1,
+            height: 2,
+          },
         },
         categories: [],
         series: {},
@@ -173,9 +209,11 @@ describe('Store', () => {
 
   it('should make state correctly', () => {
     store = new Store({
-      chart: {
-        width: 1,
-        height: 1,
+      options: {
+        chart: {
+          width: 1,
+          height: 2,
+        },
       },
       categories: [],
       series: {},
@@ -183,13 +221,14 @@ describe('Store', () => {
 
     expect(store.state.chart.width).toEqual(1);
   });
-  it('should make state observable to 2nd depth', () => {});
 
   it('should notify observable dependencies by name path', () => {
     store = new Store({
-      chart: {
-        width: 1,
-        height: 1,
+      options: {
+        chart: {
+          width: 1,
+          height: 2,
+        },
       },
       categories: [],
       series: {},
@@ -208,9 +247,11 @@ describe('Store', () => {
 
   it('should notify observable dependencies', () => {
     store = new Store({
-      chart: {
-        width: 1,
-        height: 1,
+      options: {
+        chart: {
+          width: 1,
+          height: 2,
+        },
       },
       categories: [],
       series: {},
@@ -229,9 +270,11 @@ describe('Store', () => {
 
   it('should make categories with coordinate data', () => {
     store = new Store({
-      chart: {
-        width: 1,
-        height: 1,
+      options: {
+        chart: {
+          width: 1,
+          height: 2,
+        },
       },
       series: {
         line: [
@@ -250,9 +293,11 @@ describe('Store', () => {
     expect(store.state.categories).toEqual(['1', '3', '10']);
 
     store = new Store({
-      chart: {
-        width: 1,
-        height: 1,
+      options: {
+        chart: {
+          width: 1,
+          height: 2,
+        },
       },
       series: {
         line: [
