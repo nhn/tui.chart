@@ -26,7 +26,7 @@ type RenderOptions = {
   diverging: boolean;
 };
 
-function totalOfPrevValues(values: number[], currentIndex: number, included = false) {
+function sumOfPrevValues(values: number[], currentIndex: number, included = false) {
   const curValue = values[currentIndex];
 
   return values.reduce((total, value, idx) => {
@@ -357,22 +357,22 @@ export default class BoxStackSeries extends BoxSeries {
     const basePosition = this.basePosition;
 
     if (divergingSeries) {
-      const beforeValueSum = totalOfPrevValues(values, currentIndex, this.isBar);
+      const totalPrevValues = sumOfPrevValues(values, currentIndex, this.isBar);
 
       return this.isBar
-        ? basePosition - beforeValueSum * ratio + this.axisThickness
-        : basePosition + beforeValueSum * ratio;
+        ? basePosition - totalPrevValues * ratio + this.axisThickness
+        : basePosition + totalPrevValues * ratio;
     }
 
-    const beforeValueSum = totalOfPrevValues(
+    const totalPrevValues = sumOfPrevValues(
       values,
       currentIndex,
       this.isBar ? values[currentIndex] < 0 : values[currentIndex] > 0
     );
 
     return this.isBar
-      ? beforeValueSum * ratio + basePosition + this.axisThickness
-      : basePosition - beforeValueSum * ratio;
+      ? totalPrevValues * ratio + basePosition + this.axisThickness
+      : basePosition - totalPrevValues * ratio;
   }
 
   private getStackBarLength(value: number, ratio: number) {
