@@ -45,7 +45,6 @@ export default abstract class CircleSeries extends Component {
   }
 
   onMousemove({ responders, mousePosition }) {
-    this.drawModels.hoveredSeries = [];
     const closestResponder = this.getClosestResponder(responders, mousePosition);
     this.drawModels.hoveredSeries = closestResponder;
     this.activatedResponders = closestResponder;

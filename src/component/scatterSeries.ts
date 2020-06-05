@@ -35,7 +35,9 @@ export default class ScatterSeries extends CircleSeries {
     const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
 
     this.models.series = seriesModel;
-    this.drawModels = deepCopy(this.models);
+    if (!this.drawModels) {
+      this.drawModels = deepCopy(this.models);
+    }
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',
