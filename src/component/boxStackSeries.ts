@@ -129,8 +129,13 @@ export default class BoxStackSeries extends BoxSeries {
     const { diverging } = renderOptions;
     const divergingSeries = diverging && isLeftBottomSide(stackGroupIndex);
 
-    stackData.forEach(({ values, total }, index) => {
-      const seriesPos = this.getSeriesPosition(renderOptions, columnWidth, index, stackGroupIndex);
+    stackData.forEach(({ values, total }, dataIndex) => {
+      const seriesPos = this.getSeriesPosition(
+        renderOptions,
+        columnWidth,
+        dataIndex,
+        stackGroupIndex
+      );
       const ratio = this.getStackValueRatio(total, renderOptions);
 
       values.forEach((value, seriesIndex) => {
@@ -389,12 +394,12 @@ export default class BoxStackSeries extends BoxSeries {
   private getSeriesPosition(
     renderOptions: RenderOptions,
     columnWidth: number,
-    index: number,
+    dataIndex: number,
     stackGroupIndex: number
   ) {
     const { tickDistance, diverging } = renderOptions;
     const groupIndex = diverging ? 0 : stackGroupIndex;
 
-    return index * tickDistance + this.padding + columnWidth * groupIndex + this.hoverThickness;
+    return dataIndex * tickDistance + this.padding + columnWidth * groupIndex + this.hoverThickness;
   }
 }
