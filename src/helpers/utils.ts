@@ -269,16 +269,20 @@ export function sortCategories(x: number | string, y: number | string) {
   return isInteger(x) ? Number(x) - Number(y) : new Date(x).getTime() - new Date(y).getTime();
 }
 
-export function first<T extends Array<any>>(items: T): T[keyof T] {
+export function first<T>(items: T[]): T | undefined {
   // eslint-disable-next-line no-undefined
   return items.length ? items[0] : undefined;
 }
 
-export function last<T extends Array<any>>(items: T): T[keyof T] {
+export function last<T>(items: T[]): T | undefined {
   // eslint-disable-next-line no-undefined
   return items.length ? items[items.length - 1] : undefined;
 }
 
 export function hasNegative(values: (number | string)[] = []) {
   return values.some((value) => Number(value) < 0);
+}
+
+export function sum(items: number[]): number {
+  return items.reduce((a, b) => a + b, 0);
 }

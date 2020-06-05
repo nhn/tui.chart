@@ -1,5 +1,6 @@
 import { Options, SeriesState } from '@t/store/store';
 import { LineTypeXAxisOptions } from '@t/options';
+import { first, last } from './utils';
 
 export function isLabelAxisOnYAxis(series: SeriesState) {
   return !!series.bar;
@@ -32,5 +33,14 @@ export function getSizeKey(labelAxisOnYAxis: boolean) {
   return {
     valueSizeKey: labelAxisOnYAxis ? 'width' : 'height',
     labelSizeKey: labelAxisOnYAxis ? 'height' : 'width',
+  };
+}
+
+export function getLimitOnAxis(labels: string[], diverging: boolean) {
+  const values = labels.map((label) => Number(label));
+
+  return {
+    min: diverging ? Math.min(...values) : first(values)!,
+    max: diverging ? Math.max(...values) : last(values)!,
   };
 }
