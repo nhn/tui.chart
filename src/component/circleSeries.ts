@@ -1,44 +1,33 @@
 import Component from './component';
-import { CircleModel } from '@t/components/series';
-import { ClipRectAreaModel } from '@t/components/series';
-import { SeriesTheme } from '@t/store/store';
+import { CircleModel, CircleResponderModel } from '@t/components/series';
 import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
 
-type DrawModels = ClipRectAreaModel | CircleModel;
-
-interface RenderOptions {
-  theme: SeriesTheme;
-}
+type CircleSeriesModels = {
+  series: CircleModel[];
+  hoveredSeries: CircleModel[];
+};
 
 export default abstract class CircleSeries extends Component {
-  models!: DrawModels[];
+  models: CircleSeriesModels = { series: [], hoveredSeries: [] };
 
-  responders!: CircleModel[];
+  drawModels!: CircleSeriesModels;
 
-  activatedResponders: this['responders'] = [];
+  responders!: CircleResponderModel[];
+
+  activatedResponders: CircleResponderModel[] = [];
 
   rect!: Rect;
 
   update(delta: number) {
-    if (this.models[0].type === 'clipRectArea') {
-      this.models[0].width = this.rect.width * delta;
-    }
+    this.drawModels.series.forEach((model, index) => {
+      model.radius = (this.models.series[index] as CircleModel).radius * delta;
+    });
   }
 
-  renderClipRectAreaModel(): ClipRectAreaModel {
-    return {
-      type: 'clipRectArea',
-      x: 0,
-      y: 0,
-      width: 0,
-      height: this.rect.height,
-    };
-  }
-
-  getClosestResponder(responders: CircleModel[], mousePosition: Point) {
+  getClosestResponder(responders: CircleResponderModel[], mousePosition: Point) {
     let minDistance = Infinity;
-    let result: CircleModel[] = [];
+    let result: CircleResponderModel[] = [];
     responders.forEach((responder) => {
       const { x, y } = responder;
       const responderPoint = { x: x + this.rect.x, y: y + this.rect.y };
@@ -56,16 +45,11 @@ export default abstract class CircleSeries extends Component {
   }
 
   onMousemove({ responders, mousePosition }) {
-    this.activatedResponders.forEach((responder) => {
-      const index = this.models.findIndex((model) => model === responder);
-      this.models.splice(index, 1);
-    });
-
     const closestResponder = this.getClosestResponder(responders, mousePosition);
-    this.models.push(...closestResponder);
+    this.drawModels.hoveredSeries = closestResponder;
     this.activatedResponders = closestResponder;
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
 
+    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
     this.eventBus.emit('needDraw');
   }
 }
