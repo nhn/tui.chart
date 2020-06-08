@@ -39,7 +39,7 @@ export default class ComponentManager<T> {
 
     let proc = (...args: any[]) => {
       component.render(args[0], args[1]); // rest쓰면 에러남
-      component.sync();
+      // component.sync(); // render 에서 animationTargetModels 와 models 를 조작하기 떄문에 목적이 불분명
       this.eventBus.emit('needLoop');
     };
 
