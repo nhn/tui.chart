@@ -10,8 +10,8 @@ export enum AxisType {
   CENTER_Y = 'yCenterAxis',
 }
 
-type DrawModels = LabelModel | TickModel | LineModel;
-type AxisModels = Record<string, DrawModels[]>;
+type Models = LabelModel | TickModel | LineModel;
+type AxisModels = Record<string, Models[]>;
 type CoordinateKey = 'x' | 'y';
 
 interface RenderOptions {
@@ -82,15 +82,15 @@ export default class Axis extends Component {
 
       ['tick', 'label'].forEach((type) => {
         this.models[type] = this.animationTargetModels[type].map((m) => {
-          const drawModel = { ...m };
+          const model = { ...m };
 
           if (this.yAxisComponent) {
-            drawModel.y = 0;
+            model.y = 0;
           } else {
-            drawModel.x = 0;
+            model.x = 0;
           }
 
-          return drawModel;
+          return model;
         });
       });
 

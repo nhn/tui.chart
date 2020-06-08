@@ -16,7 +16,7 @@ import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 
-type DrawModels = {
+type Models = {
   clipRect?: ClipRectAreaModel[];
   series: RectModel[];
   hoveredSeries?: RectModel[];
@@ -81,9 +81,9 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 }
 
 export default class BoxSeries extends Component {
-  animationTargetModels: DrawModels = { series: [] };
+  animationTargetModels: Models = { series: [] };
 
-  models!: DrawModels;
+  models!: Models;
 
   responders!: RectModel[];
 

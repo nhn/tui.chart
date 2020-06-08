@@ -8,7 +8,7 @@ import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 
-type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
+type Models = LinePointsModel | ClipRectAreaModel | CircleModel;
 
 interface RenderLineOptions {
   pointOnColumn: boolean;
@@ -19,7 +19,7 @@ interface RenderLineOptions {
 type DatumType = CoordinateDataType | number;
 
 export default class LineSeries extends Component {
-  models!: DrawModels[];
+  models!: Models[];
 
   responders!: CircleResponderModel[];
 

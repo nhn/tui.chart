@@ -92,16 +92,16 @@ export default abstract class Component {
   }
 
   syncModels(currentModels, targetModels, type?: string) {
-    const drawModels = type ? this.models[type] : this.models;
+    const models = type ? this.models[type] : this.models;
 
     if (currentModels.length < targetModels.length) {
-      drawModels.splice(
+      models.splice(
         currentModels.length,
         0,
         ...targetModels.slice(currentModels.length, targetModels.length)
       );
     } else if (currentModels.length > targetModels.length) {
-      drawModels.splice(targetModels.length, currentModels.length);
+      models.splice(targetModels.length, currentModels.length);
     }
   }
 
@@ -112,7 +112,7 @@ export default abstract class Component {
   onMousemove?(responseData: any): void;
 
   draw(painter: Painter) {
-    const models = this.models;
+    const { models } = this;
 
     if (Array.isArray(models)) {
       painter.paintForEach(models);

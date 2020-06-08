@@ -19,7 +19,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 
-type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
+type Models = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -30,7 +30,7 @@ interface RenderOptions {
 type DatumType = number | RangeDataType;
 
 export default class AreaSeries extends Component {
-  models!: DrawModels[];
+  models!: Models[];
 
   responders!: CircleResponderModel[];
 
@@ -180,7 +180,7 @@ export default class AreaSeries extends Component {
     );
   }
 
-  isAreaPointsModel(model: DrawModels): model is AreaPointsModel {
+  isAreaPointsModel(model: Models): model is AreaPointsModel {
     return model.type === 'areaPoints';
   }
 
