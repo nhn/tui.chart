@@ -1,4 +1,4 @@
-import BoxSeries from './boxSeries';
+import BoxSeries, { isLeftBottomSide } from './boxSeries';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -6,42 +6,41 @@ import {
   BarChartOptions,
   Point,
   Connector,
-  StackType,
 } from '@t/options';
 import {
   ChartState,
   StackSeriesData,
   StackGroupData,
-  StackDataType,
-  StackData,
   BoxType,
   Stack,
-  AxisData,
+  StackDataValues,
+  PercentScaleType,
+  StackTotal,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
-import { first, last, deepCopyArray } from '@src/helpers/utils';
+import { deepCopyArray, includes } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
+import { getLimitOnAxis } from '@src/helpers/axes';
+import { isGroupStack } from '@src/store/stackSeriesData';
 
-interface StackSeriesModelParamType {
+type RenderOptions = {
   stack: Stack;
-  stackData: StackData;
-  colors?: string[];
-  valueAxis: AxisData;
+  scaleType: PercentScaleType;
   tickDistance: number;
-  stackGroupCount?: number;
-  stackGroupIndex?: number;
-}
+  min: number;
+  max: number;
+  diverging: boolean;
+};
 
-function isGroupStack(rawData: StackDataType): rawData is StackGroupData {
-  return !Array.isArray(rawData);
-}
+function sumOfPrevValues(values: number[], currentIndex: number, included = false) {
+  const curValue = values[currentIndex];
 
-function totalOfPrevValues(values: number[], currentIndex: number, included = false) {
   return values.reduce((total, value, idx) => {
     const isPrev = included ? idx <= currentIndex : idx < currentIndex;
+    const isSameSign = value * curValue >= 0;
 
-    if (isPrev) {
+    if (isPrev && isSameSign) {
       return total + value;
     }
 
@@ -49,9 +48,20 @@ function totalOfPrevValues(values: number[], currentIndex: number, included = fa
   }, 0);
 }
 
+function getDivisorForPercent(total: StackTotal, scaleType: PercentScaleType) {
+  const { positive, negative } = total;
+  let divisor = positive + Math.abs(negative);
+
+  if (includes(['dualPercentStack', 'divergingPercentStack'], scaleType)) {
+    divisor *= 2;
+  }
+
+  return divisor;
+}
+
 export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, theme, axes, categories, stackSeries } = chartState;
+    const { layout, theme, axes, categories, stackSeries, options } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
@@ -61,25 +71,42 @@ export default class BoxStackSeries extends BoxSeries {
     this.rect = this.makeSeriesRect(layout.plot);
 
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
+    const { stack, scaleType } = seriesData;
     const { colors } = theme.series;
     const { tickDistance } = axes[this.labelAxis];
-    const valueAxis = axes[this.valueAxis];
-    const { seriesModels, connectorModels } = this.renderStackSeriesModel(
-      seriesData,
-      colors,
-      valueAxis,
-      tickDistance
-    );
+    const { labels, tickCount } = axes[this.valueAxis];
+    const diverging = !!options.series?.diverging;
+    const { min, max } = getLimitOnAxis(labels, diverging);
+    const renderOptions: RenderOptions = {
+      stack,
+      scaleType,
+      tickDistance,
+      min,
+      max,
+      diverging,
+    };
 
-    this.basePosition = this.getBasePosition(valueAxis);
+    this.basePosition = this.getBasePosition(labels, tickCount);
 
+    const { series, connector } = this.renderStackSeriesModel(seriesData, colors, renderOptions);
+    const hoveredSeries = this.renderHighlightSeriesModel(series);
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
 
-    const rectModel = this.renderHighlightSeriesModel(seriesModels);
+    this.models = {
+      clipRect: [this.renderClipRectAreaModel()],
+      series,
+      connector,
+    };
 
-    this.models = [this.renderClipRectAreaModel(), ...seriesModels, ...connectorModels];
-    this.drawModels = deepCopyArray(this.models);
-    this.responders = rectModel.map((m, index) => ({
+    if (!this.drawModels) {
+      this.drawModels = {
+        clipRect: this.models.clipRect,
+        series: deepCopyArray(series),
+        connector: deepCopyArray(connector),
+      };
+    }
+
+    this.responders = hoveredSeries.map((m, index) => ({
       ...m,
       data: tooltipData[index],
     }));
@@ -88,44 +115,44 @@ export default class BoxStackSeries extends BoxSeries {
   renderStackSeriesModel(
     seriesData: StackSeriesData<BoxType>,
     colors: string[],
-    valueAxis: AxisData,
-    tickDistance: number
+    renderOptions: RenderOptions
   ) {
-    const { stack, stackData } = seriesData;
+    const { stackData } = seriesData;
 
     return isGroupStack(stackData)
-      ? this.makeStackGroupSeriesModel(seriesData, [...colors], valueAxis, tickDistance)
-      : this.makeStackSeriesModel({
-          stack,
-          stackData,
-          colors,
-          valueAxis,
-          tickDistance,
-        });
+      ? this.makeStackGroupSeriesModel(seriesData, [...colors], renderOptions)
+      : this.makeStackSeriesModel(stackData, renderOptions, colors);
   }
 
-  makeStackSeriesModel({
-    stack,
-    stackData,
-    colors,
-    valueAxis,
-    tickDistance,
+  makeStackSeriesModel(
+    stackData: StackDataValues,
+    renderOptions: RenderOptions,
+    colors?: string[],
     stackGroupCount = 1,
-    stackGroupIndex = 0,
-  }: StackSeriesModelParamType) {
+    stackGroupIndex = 0
+  ) {
     const seriesModels: RectModel[] = [];
-    const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
-    const { labels: valueLabels } = valueAxis;
-    const basePosition = this.getBasePosition(valueAxis);
+    const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
+    const { diverging } = renderOptions;
+    const divergingSeries = diverging && isLeftBottomSide(stackGroupIndex);
 
-    stackData.forEach(({ values, sum }, index) => {
-      const seriesPos =
-        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
-      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
+    stackData.forEach(({ values, total }, dataIndex) => {
+      const seriesPos = this.getSeriesPosition(
+        renderOptions,
+        columnWidth,
+        dataIndex,
+        stackGroupIndex
+      );
+      const ratio = this.getStackValueRatio(total, renderOptions);
 
       values.forEach((value, seriesIndex) => {
-        const barLength = value * ratio;
-        const startPosition = this.getStackStartPosition(values, seriesIndex, ratio, basePosition);
+        const barLength = this.getStackBarLength(value, ratio);
+        const startPosition = this.getStackStartPosition(
+          values,
+          seriesIndex,
+          ratio,
+          divergingSeries
+        );
 
         seriesModels.push({
           type: 'rect',
@@ -136,91 +163,96 @@ export default class BoxStackSeries extends BoxSeries {
     });
 
     return {
-      seriesModels,
-      connectorModels: this.makeConnectorSeriesModel({
-        stack,
+      series: seriesModels,
+      connector: this.makeConnectorSeriesModel(
         stackData,
-        valueAxis,
-        tickDistance,
+        renderOptions,
         stackGroupCount,
-        stackGroupIndex,
-      }),
+        stackGroupIndex
+      ),
     };
   }
 
   makeStackGroupSeriesModel(
     stackSeries: StackSeriesData<BoxType>,
     colors: string[],
-    valueAxis: AxisData,
-    tickDistance: number
+    renderOptions: RenderOptions
   ) {
-    const stack = stackSeries.stack;
+    const { stack } = renderOptions;
     const stackGroupData = stackSeries.stackData as StackGroupData;
     const seriesRawData = stackSeries.data;
     const stackGroupIds = Object.keys(stackGroupData);
 
-    let rectModels: RectModel[] = [];
+    let seriesModels: RectModel[] = [];
     let connectorModels: LineModel[] = [];
 
     stackGroupIds.forEach((groupId, groupIndex) => {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
-      const stackModels = this.makeStackSeriesModel({
-        stack,
-        stackData: stackGroupData[groupId],
-        colors: colors.splice(groupIndex, filtered.length),
-        valueAxis,
-        tickDistance,
-        stackGroupCount: stackGroupIds.length,
-        stackGroupIndex: groupIndex,
-      });
+      const { series, connector } = this.makeStackSeriesModel(
+        stackGroupData[groupId],
+        renderOptions,
+        colors.splice(groupIndex, filtered.length),
+        stackGroupIds.length,
+        groupIndex
+      );
 
-      rectModels = [...rectModels, ...stackModels.seriesModels];
+      seriesModels = [...seriesModels, ...series];
 
       if (stack.connector) {
-        connectorModels = [...connectorModels, ...stackModels.connectorModels];
+        connectorModels = [...connectorModels, ...connector];
       }
     });
 
     return {
-      seriesModels: rectModels,
-      connectorModels: connectorModels,
+      series: seriesModels,
+      connector: connectorModels,
     };
   }
 
-  makeConnectorSeriesModel({
-    stack,
-    stackData,
-    valueAxis,
-    tickDistance,
+  makeConnectorSeriesModel(
+    stackData: StackDataValues,
+    renderOptions: RenderOptions,
     stackGroupCount = 1,
-    stackGroupIndex = 0,
-  }: StackSeriesModelParamType) {
-    if (!stack.connector) {
+    stackGroupIndex = 0
+  ) {
+    const {
+      diverging,
+      stack: { connector },
+    } = renderOptions;
+
+    if (!connector) {
       return [];
     }
-    const { labels: valueLabels } = valueAxis;
-    const basePosition = this.getBasePosition(valueAxis);
-    const columnWidth = (tickDistance - this.padding * 2) / stackGroupCount;
+
+    const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
+    const divergingSeries = diverging && isLeftBottomSide(stackGroupIndex);
     const connectorPoints: Array<Point[]> = [];
 
-    stackData.forEach(({ values, sum }, index) => {
-      const seriesPos =
-        index * tickDistance + this.padding + columnWidth * stackGroupIndex + this.hoverThickness;
+    stackData.forEach(({ values, total }, index) => {
+      const seriesPos = this.getSeriesPosition(renderOptions, columnWidth, index, stackGroupIndex);
       const points: Point[] = [];
-      const ratio = this.getStackValueRatio(valueLabels, sum, stack.type);
+      const ratio = this.getStackValueRatio(total, renderOptions);
 
       values.forEach((value, seriesIndex) => {
         const barLength = value * ratio;
-        const startPosition = this.getStackStartPosition(values, seriesIndex, ratio, basePosition);
+        const startPosition = this.getStackStartPosition(
+          values,
+          seriesIndex,
+          ratio,
+          divergingSeries
+        );
         const { x, y } = this.getAdjustedRect(seriesPos, startPosition, barLength, columnWidth);
 
-        points.push({ x: this.isBar ? x + barLength : x, y });
+        const xPos = !divergingSeries && this.isBar ? x + barLength : x;
+        const yPos = divergingSeries && !this.isBar ? y + barLength : y;
+
+        points.push({ x: xPos, y: yPos });
       });
 
       connectorPoints.push(points);
     });
 
-    return this.makeConnectorModel(connectorPoints, stack.connector, columnWidth);
+    return this.makeConnectorModel(connectorPoints, connector, columnWidth);
   }
 
   private getTooltipData(
@@ -252,7 +284,7 @@ export default class BoxStackSeries extends BoxSeries {
 
   private makeStackTooltipData(
     seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
-    stackData: StackData,
+    stackData: StackDataValues,
     colors: string[],
     categories?: string[]
   ) {
@@ -312,23 +344,69 @@ export default class BoxStackSeries extends BoxSeries {
     return connectorModels;
   }
 
-  getStackValueRatio(valueLabels: string[], sum: number, stackType: StackType) {
-    const divisor =
-      stackType === 'percent' ? sum : Number(last(valueLabels)) - Number(first(valueLabels));
+  private getStackValueRatio(total: StackTotal, renderOptions: RenderOptions) {
+    const {
+      stack: { type: stackType },
+      scaleType,
+      min,
+      max,
+      diverging,
+    } = renderOptions;
 
-    return this.getOffsetSize() / divisor;
+    if (stackType === 'percent') {
+      return this.getOffsetSize() / getDivisorForPercent(total, scaleType);
+    }
+
+    return this.getValueRatio(min, max, diverging);
   }
 
-  getStackStartPosition(
+  private getStackStartPosition(
     values: number[],
     currentIndex: number,
     ratio: number,
-    basePosition: number
+    divergingSeries: boolean
   ) {
-    const beforeValueSum = totalOfPrevValues(values, currentIndex, !this.isBar);
+    const basePosition = this.basePosition;
+
+    if (divergingSeries) {
+      const totalPrevValues = sumOfPrevValues(values, currentIndex, this.isBar);
+
+      return this.isBar
+        ? basePosition - totalPrevValues * ratio + this.axisThickness
+        : basePosition + totalPrevValues * ratio;
+    }
+
+    const totalPrevValues = sumOfPrevValues(
+      values,
+      currentIndex,
+      this.isBar ? values[currentIndex] < 0 : values[currentIndex] > 0
+    );
 
     return this.isBar
-      ? beforeValueSum * ratio + basePosition + Number(this.axisThickness)
-      : basePosition - beforeValueSum * ratio;
+      ? totalPrevValues * ratio + basePosition + this.axisThickness
+      : basePosition - totalPrevValues * ratio;
+  }
+
+  private getStackBarLength(value: number, ratio: number) {
+    return value < 0 ? Math.abs(value) * ratio : value * ratio;
+  }
+
+  private getStackColumnWidth(renderOptions: RenderOptions, stackGroupCount: number) {
+    const { tickDistance, diverging } = renderOptions;
+    const divisor = diverging ? 1 : stackGroupCount;
+
+    return (tickDistance - this.padding * 2) / divisor;
+  }
+
+  private getSeriesPosition(
+    renderOptions: RenderOptions,
+    columnWidth: number,
+    dataIndex: number,
+    stackGroupIndex: number
+  ) {
+    const { tickDistance, diverging } = renderOptions;
+    const groupIndex = diverging ? 0 : stackGroupIndex;
+
+    return dataIndex * tickDistance + this.padding + columnWidth * groupIndex + this.hoverThickness;
   }
 }

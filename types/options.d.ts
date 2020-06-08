@@ -6,7 +6,8 @@ type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, num
 type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
 export type CoordinateDataType = Point | [number, number] | [string, number];
 export type AreaSeriesDataType = number[] | RangeDataType[];
-export type BubbleSeriesDataType = ({ label: string; r: number } & Point)[];
+export type BubbleSeriesDataType = ({ label: string } & BubblePoint)[];
+export type BubblePoint = Point & { r: number };
 
 export interface Point {
   x: number;

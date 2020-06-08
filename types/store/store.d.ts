@@ -126,6 +126,10 @@ export type DataRange = {
   };
 };
 
+export type StackSeries = {
+  [key in BoxType]?: StackSeriesData<key>;
+};
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -147,9 +151,20 @@ export interface ChartState<T extends Options> {
   };
 }
 
-export type StackData = Array<{ values: number[]; sum: number }>;
-export type StackGroupData = Record<string, StackData>;
-export type StackDataType = StackData | StackGroupData;
+export type StackTotal = {
+  positive: number;
+  negative: number;
+};
+
+export interface StackData {
+  values: number[];
+  sum: number;
+  total: StackTotal;
+}
+
+export type StackDataValues = StackData[];
+export type StackGroupData = Record<string, StackDataValues>;
+export type StackDataType = StackDataValues | StackGroupData;
 
 export interface AxisData {
   labels: string[];
@@ -171,11 +186,18 @@ export type Stack = {
   connector: boolean | Required<Connector>;
 };
 
+export type PercentScaleType =
+  | 'percentStack'
+  | 'minusPercentStack'
+  | 'dualPercentStack'
+  | 'divergingPercentStack';
+
 export type StackSeriesData<K extends BoxType> = {
   data: ChartSeriesMap[K];
   stackData: StackDataType;
-  dataValues: number[];
+  dataRangeValues: number[];
   stack: Stack;
+  scaleType: PercentScaleType;
 } & SeriesGroup;
 
 export interface ScaleData {

@@ -1,5 +1,5 @@
 import Component from './component';
-import { CircleModel } from '@t/components/series';
+import { CircleModel, CircleResponderModel } from '@t/components/series';
 import { LineChartOptions, LineTypeSeriesOptions, Point, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
@@ -21,7 +21,7 @@ type DatumType = CoordinateDataType | number;
 export default class LineSeries extends Component {
   models!: DrawModels[];
 
-  responders!: CircleModel[];
+  responders!: CircleResponderModel[];
 
   activatedResponders: this['responders'] = [];
 
@@ -150,8 +150,8 @@ export default class LineSeries extends Component {
     );
   }
 
-  onMousemove({ responders }: { responders: CircleModel[] }) {
-    this.activatedResponders.forEach((responder: CircleModel) => {
+  onMousemove({ responders }: { responders: CircleResponderModel[] }) {
+    this.activatedResponders.forEach((responder) => {
       const index = this.models.findIndex((model) => model === responder);
       this.models.splice(index, 1);
     });

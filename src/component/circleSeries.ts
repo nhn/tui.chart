@@ -1,79 +1,55 @@
 import Component from './component';
-import { CircleModel } from '@t/components/series';
-import { ClipRectAreaModel } from '@t/components/series';
-import { SeriesTheme } from '@t/store/store';
-import { BubbleSeriesType, CoordinateDataType, ScatterSeriesType } from '@t/options';
-import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
+import { CircleModel, CircleResponderModel } from '@t/components/series';
+import { Point, Rect } from '@t/options';
+import { getDistance } from '@src/helpers/calculator';
 
-type DrawModels = ClipRectAreaModel | CircleModel;
-
-interface RenderOptions {
-  theme: SeriesTheme;
-}
+type CircleSeriesModels = {
+  series: CircleModel[];
+  hoveredSeries: CircleModel[];
+};
 
 export default abstract class CircleSeries extends Component {
-  models!: DrawModels[];
+  models: CircleSeriesModels = { series: [], hoveredSeries: [] };
 
-  responders!: CircleModel[];
+  drawModels!: CircleSeriesModels;
 
-  activatedResponders: this['responders'] = [];
+  responders!: CircleResponderModel[];
+
+  activatedResponders: CircleResponderModel[] = [];
+
+  rect!: Rect;
 
   update(delta: number) {
-    if (this.models[0].type === 'clipRectArea') {
-      this.models[0].width = this.rect.width * delta;
-    }
+    this.drawModels.series.forEach((model, index) => {
+      model.radius = (this.models.series[index] as CircleModel).radius * delta;
+    });
   }
 
-  renderClipRectAreaModel(): ClipRectAreaModel {
-    return {
-      type: 'clipRectArea',
-      x: 0,
-      y: 0,
-      width: 0,
-      height: this.rect.height,
-    };
-  }
+  getClosestResponder(responders: CircleResponderModel[], mousePosition: Point) {
+    let minDistance = Infinity;
+    let result: CircleResponderModel[] = [];
+    responders.forEach((responder) => {
+      const { x, y } = responder;
+      const responderPoint = { x: x + this.rect.x, y: y + this.rect.y };
+      const distance = getDistance(responderPoint, mousePosition);
 
-  onMousemove({ responders }) {
-    this.activatedResponders.forEach((responder) => {
-      const index = this.models.findIndex((model) => model === responder);
-      this.models.splice(index, 1);
+      if (minDistance > distance) {
+        minDistance = distance;
+        result = [responder];
+      } else if (minDistance === distance && result.length && result[0].radius > responder.radius) {
+        result = [responder];
+      }
     });
 
-    responders
-      .sort((a: CircleModel, b: CircleModel) => b.radius - a.radius)
-      .forEach((responder) => {
-        this.models.push(responder);
-      });
+    return result;
+  }
 
-    this.activatedResponders = responders;
+  onMousemove({ responders, mousePosition }) {
+    const closestResponder = this.getClosestResponder(responders, mousePosition);
+    this.drawModels.hoveredSeries = closestResponder;
+    this.activatedResponders = closestResponder;
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
-
     this.eventBus.emit('needDraw');
-  }
-
-  makeTooltipModel(
-    circleData: BubbleSeriesType[] | ScatterSeriesType[],
-    categories: string[],
-    renderOptions: RenderOptions
-  ) {
-    const { theme } = renderOptions;
-
-    return [...circleData].flatMap(({ data, name }, index) => {
-      const tooltipData: TooltipData[] = [];
-
-      data.forEach((datum: CoordinateDataType, dataIdx) => {
-        tooltipData.push({
-          label: name,
-          color: theme.colors[index],
-          value: getCoordinateYValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
-        });
-      });
-
-      return tooltipData;
-    });
   }
 }

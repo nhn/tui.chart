@@ -5,6 +5,8 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
+import { TooltipData } from '@t/components/tooltip';
+import { deepCopy } from '@src/helpers/utils';
 
 interface RenderOptions {
   theme: SeriesTheme;
@@ -51,7 +53,10 @@ export default class BubbleSeries extends CircleSeries {
     const seriesModel = this.renderBubblePointsModel(bubbleData, renderOptions, scale);
     const tooltipModel = this.makeTooltipModel(bubbleData, categories, renderOptions);
 
-    this.models = [this.renderClipRectAreaModel(), ...seriesModel];
+    this.models.series = seriesModel;
+    if (!this.drawModels) {
+      this.drawModels = deepCopy(this.models);
+    }
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',
@@ -102,6 +107,29 @@ export default class BubbleSeries extends CircleSeries {
       });
 
       return circleModels;
+    });
+  }
+
+  makeTooltipModel(
+    circleData: BubbleSeriesType[],
+    categories: string[],
+    renderOptions: RenderOptions
+  ) {
+    const { theme } = renderOptions;
+
+    return [...circleData].flatMap(({ data, name }, index) => {
+      const tooltipData: TooltipData[] = [];
+
+      data.forEach((datum) => {
+        const { r } = datum;
+        tooltipData.push({
+          label: name,
+          color: theme.colors[index],
+          value: { x: getCoordinateXValue(datum), y: getCoordinateYValue(datum), r },
+        });
+      });
+
+      return tooltipData;
     });
   }
 }

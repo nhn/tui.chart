@@ -85,6 +85,28 @@ export const percentStack = () => {
   return el;
 };
 
+export const negativeStack = () => {
+  const { el } = createChart(negativeBudgetData, {
+    series: {
+      stack: true,
+    },
+  });
+
+  return el;
+};
+
+export const negativePercentStack = () => {
+  const { el } = createChart(negativeBudgetData, {
+    series: {
+      stack: {
+        type: 'percent',
+      },
+    },
+  });
+
+  return el;
+};
+
 export const groupStack = () => {
   const { el } = createChart(budgetDataForGroupStack, {
     series: {
@@ -129,6 +151,20 @@ export const diverging = () => {
   const { el } = createChart(budgetDataForDiverging, {
     series: {
       diverging: true,
+    },
+  });
+
+  return el;
+};
+
+export const divergingGroupStack = () => {
+  const { el } = createChart(budgetDataForGroupStack, {
+    series: {
+      diverging: true,
+      stack: {
+        type: 'normal',
+        connector: true,
+      },
     },
   });
 

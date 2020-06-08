@@ -26,8 +26,8 @@ const chartState = {
         connector: false,
       },
       stackData: [
-        { values: [1, 4], sum: 5 },
-        { values: [2, 5], sum: 7 },
+        { values: [1, 4], sum: 5, total: { negative: 0, positive: 5 } },
+        { values: [2, 5], sum: 7, total: { negative: 0, positive: 7 } },
       ],
     },
   },
@@ -48,43 +48,47 @@ const chartState = {
     },
   },
   categories: ['A', 'B'],
+  options: {},
 };
 
-const result = [
-  { type: 'clipRectArea', x: 0, y: 0, width: 88, height: 88 },
-  {
-    type: 'rect',
-    color: '#aaaaaa',
-    width: 10,
-    height: 10,
-    x: 5,
-    y: 19,
-  },
-  {
-    type: 'rect',
-    color: '#bbbbbb',
-    width: 40,
-    height: 10,
-    x: 15,
-    y: 19,
-  },
-  {
-    type: 'rect',
-    color: '#aaaaaa',
-    width: 20,
-    height: 10,
-    x: 5,
-    y: 59,
-  },
-  {
-    type: 'rect',
-    color: '#bbbbbb',
-    width: 50,
-    height: 10,
-    x: 25,
-    y: 59,
-  },
-];
+const result = {
+  clipRect: [{ type: 'clipRectArea', x: 0, y: 0, width: 90, height: 90 }],
+  series: [
+    {
+      type: 'rect',
+      color: '#aaaaaa',
+      width: 10,
+      height: 10,
+      x: 5,
+      y: 19,
+    },
+    {
+      type: 'rect',
+      color: '#bbbbbb',
+      width: 40,
+      height: 10,
+      x: 15,
+      y: 19,
+    },
+    {
+      type: 'rect',
+      color: '#aaaaaa',
+      width: 20,
+      height: 10,
+      x: 5,
+      y: 59,
+    },
+    {
+      type: 'rect',
+      color: '#bbbbbb',
+      width: 50,
+      height: 10,
+      x: 25,
+      y: 59,
+    },
+  ],
+  connector: [],
+};
 
 const respondersResult = [
   {
