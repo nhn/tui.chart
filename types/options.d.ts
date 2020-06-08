@@ -120,6 +120,19 @@ interface BaseOptions {
   xAxis?: BaseXAxisOptions;
   yAxis?: BaseAxisOptions;
   plot?: BasePlotOptions;
+  legend?: BaseLegendOptions;
+}
+
+interface BaseLegendOptions {
+  align?: 'left' | 'right' | 'top' | 'bottom';
+  showCheckbox?: boolean;
+  visible?: boolean;
+  maxWidth?: number;
+  width?: number;
+}
+
+interface CircleLegendOptions {
+  visible?: boolean;
 }
 
 interface BaseSeriesOptions {
@@ -150,6 +163,7 @@ export interface ScatterChartOptions extends BaseOptions {
 export interface BubbleChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
+  circleLegend?: CircleLegendOptions;
 }
 
 type ConnectorLineType = 'dashed' | 'solid';
