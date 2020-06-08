@@ -268,7 +268,7 @@ describe('Store', () => {
     expect(makeMyData).toEqual(2);
   });
 
-  it('should make categories with coordinate data', () => {
+  it.skip('should make categories with coordinate data', () => {
     store = new Store({
       options: {
         chart: {
