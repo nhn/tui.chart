@@ -17,7 +17,7 @@ describe('StackSeriesData Store', () => {
         options: { series: { stack: true } },
       });
 
-      expect(state?.stackSeries?.bar?.stack).toEqual({
+      expect(state.stackSeries?.bar?.stack).toEqual({
         type: 'normal',
         connector: false,
       });
@@ -29,7 +29,7 @@ describe('StackSeriesData Store', () => {
         options: { series: { stack: { type: 'normal', connector: true } } },
       });
 
-      expect(state?.stackSeries?.bar?.stack).toEqual({
+      expect(state.stackSeries?.bar?.stack).toEqual({
         type: 'normal',
         connector: {
           type: 'solid',
@@ -52,7 +52,7 @@ describe('StackSeriesData Store', () => {
         },
       });
 
-      expect(state?.stackSeries?.bar?.stack).toEqual({
+      expect(state.stackSeries?.bar?.stack).toEqual({
         type: 'percent',
         connector: { type: 'dashed', color: '#ff0000', width: 1 },
       });
