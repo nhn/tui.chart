@@ -33,14 +33,14 @@ describe('yAxis', () => {
     });
 
     it('tick model', () => {
-      expect(axis.models.tick).toEqual([
+      expect(axis.animationTargetModels.tick).toEqual([
         { isYAxis: true, type: 'tick', x: 10.5, y: 0.5 },
         { isYAxis: true, type: 'tick', x: 10.5, y: 80.5 },
       ]);
     });
 
     it('label model', () => {
-      expect(axis.models.label).toEqual([
+      expect(axis.animationTargetModels.label).toEqual([
         {
           style: ['default', { textAlign: 'left' }],
           text: '2',
@@ -59,7 +59,9 @@ describe('yAxis', () => {
     });
 
     it('axisLine', () => {
-      expect(axis.models.axisLine).toEqual([{ type: 'line', x: 10.5, x2: 10.5, y: 0.5, y2: 80.5 }]);
+      expect(axis.animationTargetModels.axisLine).toEqual([
+        { type: 'line', x: 10.5, x2: 10.5, y: 0.5, y2: 80.5 },
+      ]);
     });
   });
 
@@ -117,14 +119,14 @@ describe('xAxis', () => {
     });
 
     it('tick model', () => {
-      expect(axis.models.tick).toEqual([
+      expect(axis.animationTargetModels.tick).toEqual([
         { isYAxis: false, type: 'tick', x: 0.5, y: 0.5 },
         { isYAxis: false, type: 'tick', x: 80.5, y: 0.5 },
       ]);
     });
 
     it('label model', () => {
-      expect(axis.models.label).toEqual([
+      expect(axis.animationTargetModels.label).toEqual([
         {
           style: ['default', { textAlign: 'center' }],
           text: '1',
@@ -143,7 +145,9 @@ describe('xAxis', () => {
     });
 
     it('axisLine', () => {
-      expect(axis.models.axisLine).toEqual([{ type: 'line', x: 0.5, x2: 80.5, y: 0.5, y2: 0.5 }]);
+      expect(axis.animationTargetModels.axisLine).toEqual([
+        { type: 'line', x: 0.5, x2: 80.5, y: 0.5, y2: 0.5 },
+      ]);
     });
   });
 
@@ -165,11 +169,11 @@ describe('xAxis', () => {
     });
 
     it('tick interval option apply the number of tick model', () => {
-      expect(axis.models.tick).toHaveLength(5);
+      expect(axis.animationTargetModels.tick).toHaveLength(5);
     });
 
     it('label interval option apply the number of label model', () => {
-      expect(axis.models.label).toHaveLength(5);
+      expect(axis.animationTargetModels.label).toHaveLength(5);
     });
   });
 });

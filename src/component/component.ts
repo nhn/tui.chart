@@ -40,10 +40,6 @@ export default abstract class Component {
   abstract render(state: ChartState<Options>, computed: Record<string, any>): void;
 
   update(delta: number) {
-    // if (!this.models) {
-    //   return;
-    // }
-
     if (!this.animationTargetModels || !this.models) {
       return;
     }

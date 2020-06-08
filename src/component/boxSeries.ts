@@ -125,7 +125,7 @@ export default class BoxSeries extends Component {
   }
 
   update(delta: number) {
-    if (!this.models) {
+    if (!this.models || !this.animationTargetModels) {
       return;
     }
 
