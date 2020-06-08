@@ -54,8 +54,8 @@ export default class BubbleSeries extends CircleSeries {
     const tooltipModel = this.makeTooltipModel(bubbleData, categories, renderOptions);
 
     this.models.series = seriesModel;
-    if (!this.drawModels) {
-      this.drawModels = deepCopy(this.models);
+    if (!this.animationTargetModels) {
+      this.animationTargetModels = deepCopy(this.models);
     }
     this.responders = seriesModel.map((m, index) => ({
       ...m,

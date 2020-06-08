@@ -81,9 +81,9 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 }
 
 export default class BoxSeries extends Component {
-  models: DrawModels = { series: [] };
+  animationTargetModels: DrawModels = { series: [] };
 
-  drawModels!: DrawModels;
+  models!: DrawModels;
 
   responders!: RectModel[];
 
@@ -125,15 +125,15 @@ export default class BoxSeries extends Component {
   }
 
   update(delta: number) {
-    if (!this.drawModels) {
+    if (!this.models) {
       return;
     }
 
     const offsetKey = this.isBar ? 'x' : 'y';
-    const { clipRect, series, connector } = this.drawModels;
+    const { clipRect, series, connector } = this.models;
 
     if (this.isRangeData) {
-      const modelSeries = this.models.series;
+      const modelSeries = this.animationTargetModels.series;
 
       series.forEach((drawModel, index) => {
         const targetModel = modelSeries[index];
@@ -156,7 +156,7 @@ export default class BoxSeries extends Component {
     }
 
     if (connector) {
-      const modelConnector = this.models.connector!;
+      const modelConnector = this.animationTargetModels.connector!;
 
       connector.forEach((drawModel, index) => {
         const alpha = getAlpha(modelConnector[index].strokeStyle!) * delta;
@@ -202,12 +202,12 @@ export default class BoxSeries extends Component {
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
     const hoveredSeries = this.renderHighlightSeriesModel(seriesModels);
 
-    this.models.clipRect = [this.renderClipRectAreaModel()];
-    this.models.series = seriesModels;
+    this.animationTargetModels.clipRect = [this.renderClipRectAreaModel()];
+    this.animationTargetModels.series = seriesModels;
 
-    if (!this.drawModels) {
-      this.drawModels = {
-        clipRect: this.models.clipRect,
+    if (!this.models) {
+      this.models = {
+        clipRect: this.animationTargetModels.clipRect,
         series: deepCopyArray(seriesModels),
       };
     }
@@ -304,7 +304,7 @@ export default class BoxSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: RectModel[] }) {
-    this.drawModels.hoveredSeries = responders;
+    this.models.hoveredSeries = responders;
     this.activatedResponders = responders;
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
