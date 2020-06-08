@@ -1,42 +1,11 @@
-import { StoreModule, Series } from '@t/store/store';
+import { StoreModule } from '@t/store/store';
 import { Size } from '@t/options';
-
-import { sortSeries, sortCategories } from '@src/helpers/utils';
-
-function makeCategories(series: Series) {
-  const categories: Set<string> = new Set();
-
-  Object.keys(series).forEach((key) => {
-    series[key].forEach(({ data }) => {
-      data.forEach((datum) => {
-        categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
-      });
-    });
-  });
-
-  return Array.from(categories).sort(sortCategories);
-}
-
-function getSortedSeries(series: Series) {
-  const result: Series = {};
-
-  Object.keys(series).forEach((key) => {
-    result[key] = series[key].map(({ name, data }) => ({
-      name,
-      data: data.sort(sortSeries),
-    }));
-  });
-
-  return result;
-}
 
 const root: StoreModule = {
   name: 'root',
   // 파라메터로 data 초기 데이터도 받아야 한다.
-  state: ({ series, categories, options }) => ({
+  state: ({ options }) => ({
     chart: options.chart ?? { width: 0, height: 0 },
-    series: series.line ? getSortedSeries(series) : series,
-    categories: categories ? categories : makeCategories(series),
     options,
     disabledSeries: [],
     theme: {

@@ -1,6 +1,6 @@
 import Component from './component';
 import { RectModel, ClipRectAreaModel } from '@t/components/series';
-import { ChartState, ChartType, SeriesData, BoxType, AxisData } from '@t/store/store';
+import { ChartState, ChartType, BoxType, AxisData } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -16,8 +16,6 @@ import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 
 type DrawModels = ClipRectAreaModel | RectModel | LineModel;
-
-export type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
 type RenderOptions = {
   diverging: boolean;
@@ -137,7 +135,7 @@ export default class BoxSeries extends Component {
     this.rect = this.makeSeriesRect(layout.plot);
 
     const { colors } = theme.series;
-    const seriesData = series[this.name]!;
+    const seriesData = series[this.name].data;
     const { tickDistance } = axes[this.labelAxis];
     const renderOptions: RenderOptions = {
       diverging: !!options.series?.diverging,
@@ -188,19 +186,18 @@ export default class BoxSeries extends Component {
   }
 
   renderSeriesModel(
-    seriesData: SeriesData<BoxType>,
+    seriesData: BoxSeriesType<BoxSeriesDataType>[],
     colors: string[],
     valueAxis: AxisData,
     tickDistance: number,
     renderOptions: RenderOptions
   ): RectModel[] {
-    const seriesRawData = seriesData.data;
     const { labels } = valueAxis;
     const { diverging } = renderOptions;
-    const validDiverging = diverging && seriesRawData.length === 2;
-    const columnWidth = this.getColumnWidth(tickDistance, seriesRawData.length, validDiverging);
+    const validDiverging = diverging && seriesData.length === 2;
+    const columnWidth = this.getColumnWidth(tickDistance, seriesData.length, validDiverging);
 
-    return seriesRawData.flatMap(({ data }, seriesIndex) => {
+    return seriesData.flatMap(({ data }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
@@ -262,13 +259,11 @@ export default class BoxSeries extends Component {
   }
 
   private makeTooltipData(
-    seriesData: SeriesData<BoxType>,
+    seriesData: BoxSeriesType<BoxSeriesDataType>[],
     colors: string[],
     categories?: string[]
   ): TooltipData[] {
-    const seriesRawData = seriesData.data;
-
-    return seriesRawData.flatMap(({ name, data }, index) =>
+    return seriesData.flatMap(({ name, data }, index) =>
       data.map((value, dataIdx) => ({
         label: name,
         color: colors[index],

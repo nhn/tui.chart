@@ -31,7 +31,6 @@ export default class Chart<T extends Options> {
     this.el = el;
 
     this.store = new Store({
-      chart: options.chart,
       series,
       categories,
       options,

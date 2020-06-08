@@ -30,7 +30,18 @@ export type ChartType = keyof ChartSeriesMap;
 
 export type BoxType = 'bar' | 'column';
 
-type Series = Partial<ChartSeriesMap>;
+type SeriesRaw = Partial<ChartSeriesMap>;
+
+export interface SeriesGroup {
+  seriesCount: number;
+  seriesGroupCount: number;
+}
+
+type Series = {
+  [key in ChartType]?: {
+    data: ChartSeriesMap[key];
+  } & SeriesGroup;
+};
 
 type ValueOf<T> = T[keyof T];
 
@@ -65,7 +76,7 @@ export interface StoreOptions {
 
 interface InitStoreState<T extends Options = Options> {
   categories?: string[];
-  series: Series;
+  series: SeriesRaw;
   options: T;
 }
 
@@ -121,6 +132,7 @@ export interface ChartState<T extends Options> {
   scale: Scale;
   disabledSeries: string[];
   series: Series;
+  seriesRaw: SeriesRaw;
   // 기존의 limitMap
   axes: Axes;
   dataRange: DataRange;
@@ -154,10 +166,6 @@ export interface ValueEdge {
   min: number;
 }
 
-export type SeriesData<K extends ChartType> = {
-  data: ChartSeriesMap[K];
-} & SeriesGroup;
-
 export type Stack = {
   type: StackType;
   connector: boolean | Required<Connector>;
@@ -169,11 +177,6 @@ export type StackSeriesData<K extends BoxType> = {
   dataValues: number[];
   stack: Stack;
 } & SeriesGroup;
-
-export interface SeriesGroup {
-  seriesCount: number;
-  seriesGroupCount: number;
-}
 
 export interface ScaleData {
   limit: ValueEdge;

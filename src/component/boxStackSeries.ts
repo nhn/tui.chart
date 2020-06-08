@@ -1,5 +1,13 @@
-import BoxSeries, { SeriesRawData } from './boxSeries';
-import { ColumnChartOptions, BarChartOptions, Point, Connector, StackType } from '@t/options';
+import BoxSeries from './boxSeries';
+import {
+  BoxSeriesType,
+  BoxSeriesDataType,
+  ColumnChartOptions,
+  BarChartOptions,
+  Point,
+  Connector,
+  StackType,
+} from '@t/options';
 import {
   ChartState,
   StackSeriesData,
@@ -229,7 +237,7 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   private makeGroupStackTooltipData(
-    seriesRawData: SeriesRawData,
+    seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
     stackData: StackGroupData,
     colors: string[],
     categories?: string[]
@@ -243,7 +251,7 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   private makeStackTooltipData(
-    seriesRawData: SeriesRawData,
+    seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
     stackData: StackData,
     colors: string[],
     categories?: string[]

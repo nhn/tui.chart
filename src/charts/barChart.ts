@@ -17,12 +17,15 @@ import * as axisBrushes from '@src/brushes/axis';
 import * as boxBrushes from '@src/brushes/boxSeries';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 
-import { BarChartOptions, BoxSeriesData } from '@t/options';
+import { BoxSeriesType, BoxSeriesDataType, BarChartOptions } from '@t/options';
 
 interface BarChartProps {
   el: HTMLElement;
   options: BarChartOptions;
-  data: BoxSeriesData;
+  data: {
+    categories: string[];
+    series: BoxSeriesType<BoxSeriesDataType>[];
+  };
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
