@@ -244,7 +244,6 @@ export default class BoxSeries extends Component {
     tickDistance: number,
     renderOptions: RenderOptions
   ): RectModel[] {
-    const { labels } = valueAxis;
     const { diverging, min, max, ratio } = renderOptions;
     const validDiverging = diverging && seriesData.length === 2;
     const columnWidth = this.getColumnWidth(tickDistance, seriesData.length, validDiverging);

@@ -1,7 +1,7 @@
 import { StoreModule, SeriesTypes, SeriesRaw, Series } from '@t/store/store';
 import { extend } from '@src/store/store';
 
-import { sortSeries, sortCategories } from '@src/helpers/utils';
+import { sortSeries, sortCategories, includes } from '@src/helpers/utils';
 
 function makeCategories(series: SeriesRaw) {
   const categories: Set<string> = new Set();
@@ -21,10 +21,18 @@ function makeInitSeries(series: SeriesRaw) {
   const result: Series = {};
 
   Object.keys(series).forEach((key) => {
-    result[key] = series[key].map(({ name, data }) => ({
-      name,
-      data: key === 'line' ? data.sort(sortSeries) : data,
-    }));
+    result[key] = series[key].map(({ name, data, stackGroup }) => {
+      const seriesData: any = {
+        name,
+        data: key === 'line' ? data.sort(sortSeries) : data,
+      };
+
+      if (includes(['bar', 'column'], key) && stackGroup) {
+        seriesData.stackGroup = stackGroup;
+      }
+
+      return seriesData;
+    });
   });
 
   return result;
