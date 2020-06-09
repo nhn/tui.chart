@@ -101,7 +101,7 @@ export function observable(
     Object.defineProperty(target, key, {
       configurable: true,
       enumerable: true,
-      get: function () {
+      get: function() {
         if (currentCollectorObserver === observableInfo) {
           return { target, key, value, obs };
         }
@@ -118,7 +118,7 @@ export function observable(
 
         return value;
       },
-      set: function (v) {
+      set: function(v) {
         const prevValue = value;
 
         if (preSetter) {

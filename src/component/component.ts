@@ -3,6 +3,7 @@ import { Rect } from '@t/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
+import { isNumber } from '@src/helpers/utils';
 
 type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip' | 'plot';
 
@@ -56,16 +57,30 @@ export default abstract class Component {
     }
   }
 
+  initUpdate(delta: number) {
+    this.update(delta);
+  }
+
   updateModels(currentModels, targetModels, delta) {
     currentModels.forEach((current: Record<string, any>, index: number) => {
       const target = targetModels[index];
 
       Object.keys(current).forEach((key) => {
-        if (key[0] !== '_' && key !== 'text') {
-          if (typeof current[key] === 'number') {
+        if (key[0] !== '_') {
+          if (isNumber(current[key])) {
             current[key] = current[key] + (target[key] - current[key]) * delta;
           } else if (key === 'opacity') {
             // 투명도도 서서히 증가 시키면 좋을듯
+          } else if (key === 'points') {
+            this.changeCurrentModelToMatchTargetModel(current[key], current[key], target[key]);
+
+            current[key].forEach((curPoint, idx) => {
+              const { x, y } = curPoint;
+              const { x: nextX, y: nextY } = target[key][idx];
+
+              curPoint.x = x + (nextX - x) * delta;
+              curPoint.y = y + (nextY - y) * delta;
+            });
           } else {
             current[key] = target[key];
           }
@@ -91,18 +106,22 @@ export default abstract class Component {
     }
   }
 
-  syncModels(currentModels, targetModels, type?: string) {
-    const drawModels = type ? this.drawModels[type] : this.drawModels;
-
+  changeCurrentModelToMatchTargetModel(models, currentModels, targetModels) {
     if (currentModels.length < targetModels.length) {
-      drawModels.splice(
+      models.splice(
         currentModels.length,
         0,
         ...targetModels.slice(currentModels.length, targetModels.length)
       );
     } else if (currentModels.length > targetModels.length) {
-      drawModels.splice(targetModels.length, currentModels.length);
+      models.splice(targetModels.length, currentModels.length);
     }
+  }
+
+  syncModels(currentModels, targetModels, type?: string) {
+    const drawModels = type ? this.drawModels[type] : this.drawModels;
+
+    this.changeCurrentModelToMatchTargetModel(drawModels, currentModels, targetModels);
   }
 
   beforeDraw?(painter: Painter): void;

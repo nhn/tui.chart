@@ -19,13 +19,24 @@ class Animator {
 
   requestId: number | null = null;
 
+  firstRendering = true;
+
   add({
     chart,
     duration,
     requester,
     onCompleted = () => {},
     onFrame = (delta) => {
-      chart.update(delta);
+      if (!this.firstRendering) {
+        chart.update(delta);
+      }
+
+      if (this.firstRendering) {
+        chart.initUpdate(delta);
+        if (delta === 1) {
+          this.firstRendering = false;
+        }
+      }
     },
   }: {
     chart: Chart<Options>;

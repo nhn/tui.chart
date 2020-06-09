@@ -129,4 +129,8 @@ export default class Chart<T extends Options> {
   update(delta: number) {
     this.componentManager.invoke('update', delta);
   }
+
+  initUpdate(delta: number) {
+    this.componentManager.invoke('initUpdate', delta);
+  }
 }
