@@ -4,6 +4,7 @@ import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
 import { isNumber } from '@src/helpers/utils';
+import { setSplineControlPoint } from '@src/helpers/calculator';
 
 type ComponentType = 'component' | 'series' | 'legend' | 'axis' | 'tooltip' | 'plot';
 
@@ -66,6 +67,10 @@ export default abstract class Component {
       const target = targetModels[index];
 
       Object.keys(current).forEach((key) => {
+        if (!current || !target) {
+          return;
+        }
+
         if (key[0] !== '_') {
           if (isNumber(current[key])) {
             current[key] = current[key] + (target[key] - current[key]) * delta;
@@ -81,6 +86,10 @@ export default abstract class Component {
               curPoint.x = x + (nextX - x) * delta;
               curPoint.y = y + (nextY - y) * delta;
             });
+
+            if (current[key][0].controlPoint) {
+              setSplineControlPoint(current[key]);
+            }
           } else {
             current[key] = target[key];
           }

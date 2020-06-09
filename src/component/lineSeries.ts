@@ -7,7 +7,7 @@ import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
-import { deepCopy, deepCopyArray } from '@src/helpers/utils';
+import { deepCopyArray } from '@src/helpers/utils';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
