@@ -123,33 +123,66 @@ const result = {
       y: 0,
     },
   ],
-  models: [
-    { height: 80, type: 'clipRectArea', width: 0, x: 0, y: 0 },
-    {
-      bottomYPoint: 80,
-      color: 'rgba(0, 0, 0, 0)',
-      fillColor: '#aaaaaa',
-      lineWidth: 0,
-      points: [
-        { x: 20, y: 80 },
-        { x: 60, y: 60 },
-      ],
-      seriesIndex: 0,
-      type: 'areaPoints',
-    },
-    {
-      bottomYPoint: 80,
-      color: 'rgba(0, 0, 0, 0)',
-      fillColor: '#bbbbbb',
-      lineWidth: 0,
-      points: [
-        { x: 20, y: 20 },
-        { x: 60, y: 0 },
-      ],
-      seriesIndex: 1,
-      type: 'areaPoints',
-    },
-  ],
+  models: {
+    rect: [{ height: 80, type: 'clipRectArea', width: 80, x: 0, y: 0 }],
+    series: [
+      {
+        bottomYPoint: 80,
+        color: 'rgba(0, 0, 0, 0)',
+        fillColor: '#aaaaaa',
+        lineWidth: 0,
+        points: [
+          { x: 20, y: 80 },
+          { x: 60, y: 60 },
+        ],
+        seriesIndex: 0,
+        type: 'areaPoints',
+      },
+      {
+        bottomYPoint: 80,
+        color: 'rgba(0, 0, 0, 0)',
+        fillColor: '#bbbbbb',
+        lineWidth: 0,
+        points: [
+          { x: 20, y: 20 },
+          { x: 60, y: 0 },
+        ],
+        seriesIndex: 1,
+        type: 'areaPoints',
+      },
+    ],
+    hoveredSeries: [],
+  },
+  drawModels: {
+    rect: [{ height: 80, type: 'clipRectArea', width: 0, x: 0, y: 0 }],
+    series: [
+      {
+        bottomYPoint: 80,
+        color: 'rgba(0, 0, 0, 0)',
+        fillColor: 'rgba(170, 170, 170, 1)',
+        lineWidth: 0,
+        points: [
+          { x: 20, y: 80 },
+          { x: 60, y: 60 },
+        ],
+        seriesIndex: 0,
+        type: 'areaPoints',
+      },
+      {
+        bottomYPoint: 80,
+        color: 'rgba(0, 0, 0, 0)',
+        fillColor: 'rgba(187, 187, 187, 1)',
+        lineWidth: 0,
+        points: [
+          { x: 20, y: 20 },
+          { x: 60, y: 0 },
+        ],
+        seriesIndex: 1,
+        type: 'areaPoints',
+      },
+    ],
+    hoveredSeries: [],
+  },
 };
 
 ['rect', 'linePoints', 'responders', 'models'].forEach((modelName) => {
@@ -159,30 +192,21 @@ const result = {
 });
 
 it('add line points model and circle model when hover above line point', () => {
-  const clearLinePointsModel = jest.spyOn(areaSeries, 'clearLinePointsModel');
   const applyAreaOpacity = jest.spyOn(areaSeries, 'applyAreaOpacity');
   const responder = result.responders[1];
 
   areaSeries.onMousemove({ responders: [responder] });
 
-  expect(clearLinePointsModel).not.toHaveBeenCalled();
-
   expect(applyAreaOpacity).toHaveBeenCalledWith(0.5);
 
-  expect(areaSeries.models.filter((model) => model.type === 'linePoints')).toEqual([
-    result.linePointsModel[0],
-  ]);
-
-  expect(areaSeries.models.filter((model) => model.type === 'circle')).toEqual([responder]);
+  expect(areaSeries.drawModels.hoveredSeries).toEqual([result.linePointsModel[0], responder]);
 });
 
 it('remove line points model and circle model when mousemove after hover above line point', () => {
-  const clearLinePointsModel = jest.spyOn(areaSeries, 'clearLinePointsModel');
   const responder = result.responders[1];
   areaSeries.onMousemove({ responders: [responder] });
 
   areaSeries.onMousemove({ responders: [] });
-  expect(clearLinePointsModel).toHaveBeenCalled();
 
-  expect(areaSeries.models.length).toEqual(result.models.length);
+  expect(areaSeries.drawModels).toEqual(result.drawModels);
 });
