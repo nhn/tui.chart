@@ -12,7 +12,7 @@ type Anim = {
   current: number | null;
 };
 
-class Animator {
+export default class Animator {
   anims: Anim[] = [];
 
   state = 'IDLE';
@@ -129,5 +129,3 @@ class Animator {
     this.anims = this.anims.filter((anim) => !anim.completed);
   }
 }
-
-export default new Animator();

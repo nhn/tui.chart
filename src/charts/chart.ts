@@ -4,7 +4,7 @@ import seriesData from '@src/store/seriesData';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
-import animator from '@src/animator';
+import Animator from '@src/animator';
 import { debounce } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
@@ -14,6 +14,8 @@ export default class Chart<T extends Options> {
   store: Store<T>;
 
   ___animId___ = null;
+
+  animator: Animator;
 
   readonly el: Element;
 
@@ -29,6 +31,8 @@ export default class Chart<T extends Options> {
     const { el, options, series, categories } = props;
 
     this.el = el;
+
+    this.animator = new Animator();
 
     this.store = new Store({
       series,
@@ -50,7 +54,7 @@ export default class Chart<T extends Options> {
       debounce(() => {
         this.eventBus.emit('loopStart');
 
-        animator.add({
+        this.animator.add({
           onCompleted: () => {
             this.eventBus.emit('loopComplete');
           },
@@ -62,7 +66,7 @@ export default class Chart<T extends Options> {
     );
 
     this.eventBus.on('needSubLoop', (opts) => {
-      animator.add({ ...opts, chart: this });
+      this.animator.add({ ...opts, chart: this });
     });
 
     this.eventBus.on(
