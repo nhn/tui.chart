@@ -1,6 +1,6 @@
 import { CoordinateDataType } from '@t/options';
 import { first, isNumber, isObject } from '@src/helpers/utils';
-import { SeriesState } from '@t/store/store';
+import { Series } from '@t/store/store';
 
 export function getCoordinateYValue(datum: number | CoordinateDataType) {
   if (isNumber(datum)) {
@@ -29,7 +29,7 @@ export function getCoordinateDataIndex(
   return categories.findIndex((category) => category === String(value));
 }
 
-function isLineCoordinateSeries(series: SeriesState) {
+function isLineCoordinateSeries(series: Series) {
   if (!series.line) {
     return false;
   }
@@ -38,6 +38,6 @@ function isLineCoordinateSeries(series: SeriesState) {
   return firstData && (Array.isArray(firstData) || isObject(firstData));
 }
 
-export function isCoordinateSeries(series: SeriesState) {
+export function isCoordinateSeries(series: Series) {
   return isLineCoordinateSeries(series) || series.scatter || series.bubble;
 }

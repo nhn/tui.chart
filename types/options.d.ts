@@ -1,4 +1,4 @@
-import { Series } from '@t/store/store';
+import { SeriesRaw } from '@t/store/store';
 
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
@@ -197,7 +197,7 @@ export interface BoxSeriesData {
 
 export interface ChartProps<T> {
   el: Element;
-  series: Series;
+  series: SeriesRaw;
   categories?: string[];
   options: T;
 }

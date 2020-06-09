@@ -197,11 +197,8 @@ function getScaleType(stackData: StackDataValues, stackType: StackType, divergin
 
 const stackSeriesData: StoreModule = {
   name: 'stackSeriesData',
-  state: () => ({
-    stackSeries: {},
-  }),
-  initialize(state, options) {
-    const { series, stackSeries } = state;
+  state: ({ series, options }) => {
+    const stackSeries = {};
 
     Object.keys(series).forEach((seriesName) => {
       const stackOption = pickStackOption(options);
@@ -214,6 +211,10 @@ const stackSeriesData: StoreModule = {
         stackSeries[seriesName].stack = initializeStack(stackOption);
       }
     });
+
+    return {
+      stackSeries,
+    };
   },
   action: {
     setStackSeriesData({ state }) {

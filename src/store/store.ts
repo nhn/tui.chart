@@ -10,137 +10,34 @@ import {
 } from '@src/store/reactive';
 import {
   ChartState,
+  InitStoreState,
   ActionFunc,
   StoreOptions,
   ComputedFunc,
   WatchFunc,
   StoreModule,
   ObserveFunc,
-  Series,
   Options,
 } from '@t/store/store';
 
-import {
-  isUndefined,
-  forEach,
-  pickPropertyWithMakeup,
-  deepMergedCopy,
-  sortSeries,
-  sortCategories,
-  deepCopy,
-} from '@src/helpers/utils';
-import { BaseChartOptions, Size } from '@t/options';
+import { isUndefined, forEach, pickPropertyWithMakeup, deepCopy } from '@src/helpers/utils';
 
-interface InitStoreState<T> {
-  categories?: string[];
-  chart?: BaseChartOptions;
-  series: Series;
-  options?: T;
-}
-
-function makeCategories(series: Series) {
-  const categories: Set<string> = new Set();
-
-  Object.keys(series).forEach((key) => {
-    series[key].forEach(({ data }) => {
-      data.forEach((datum) => {
-        categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
-      });
-    });
-  });
-
-  return Array.from(categories).sort(sortCategories);
-}
-
-function getSortedSeries(series: Series) {
-  const result: Series = {};
-
-  Object.keys(series).forEach((key) => {
-    result[key] = series[key].map(({ name, data }) => ({
-      name,
-      data: data.sort(sortSeries),
-    }));
-  });
-
-  return result;
-}
-
-function initData(series: Series, categories?: string[]) {
-  return {
-    series: series.line ? getSortedSeries(series) : series, // TODO: 초기 데이터의 정렬 유무를 옵션으로 받아 처리
-    categories: categories ? categories : makeCategories(series),
-  };
-}
+import root from '@src/store/root';
 
 export default class Store<T extends Options> {
   state!: ChartState<T>;
+
+  initStoreState!: InitStoreState<T>;
 
   computed: Record<string, any> = {};
 
   actions: Record<string, ActionFunc> = {};
 
-  options = {} as T;
-
   constructor(initStoreState: InitStoreState<T>) {
-    const storeState = deepCopy(initStoreState);
-    const { chart, options } = storeState;
-    const { series, categories } = initData(storeState.series, storeState.categories);
-
-    this.options = options as T;
+    this.initStoreState = deepCopy(initStoreState);
 
     this.setRootState({});
-
-    this.setModule(
-      'root',
-      deepMergedCopy(
-        {
-          state: {
-            chart: { width: 0, height: 0 },
-            disabledSeries: [],
-            theme: {
-              series: {
-                colors: [
-                  '#00a9ff',
-                  '#ffb840',
-                  '#ff5a46',
-                  '#00bd9f',
-                  '#785fff',
-                  '#f28b8c',
-                  '#989486',
-                  '#516f7d',
-                  '#29dbe3',
-                  '#dddddd',
-                ],
-              },
-            },
-          },
-          action: {
-            setChartSize({ state }, size: Size) {
-              state.chart.width = size.width;
-              state.chart.height = size.height;
-            },
-            initChartSize({ state }, containerEl: HTMLElement) {
-              if (state.chart.width === 0 || state.chart.height === 0) {
-                if (containerEl.parentNode) {
-                  this.dispatch('setChartSize', {
-                    width: containerEl.offsetWidth,
-                    height: containerEl.offsetHeight,
-                  });
-                } else {
-                  setTimeout(() => {
-                    this.dispatch('setChartSize', {
-                      width: containerEl.offsetWidth,
-                      height: containerEl.offsetHeight,
-                    });
-                  }, 0);
-                }
-              }
-            },
-          },
-        } as StoreOptions,
-        { state: { series, categories, chart, options } }
-      )
-    );
+    this.setModule(root);
   }
 
   setRootState(state: Partial<ChartState<T>>) {
@@ -206,12 +103,8 @@ export default class Store<T extends Options> {
 
     if (param.state) {
       const moduleState =
-        typeof param.state === 'function' ? param.state(this.options) : param.state;
+        typeof param.state === 'function' ? param.state(this.initStoreState) : param.state;
       extend(this.state, moduleState);
-    }
-
-    if (param.initialize) {
-      param.initialize(this.state, this.options);
     }
 
     if (param.computed) {

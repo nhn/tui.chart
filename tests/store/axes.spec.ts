@@ -9,7 +9,7 @@ describe('Axes Store module', () => {
     const axesStateFunc = axes.state as StateFunc;
 
     it('should make intervals', () => {
-      expect(axesStateFunc({})).toEqual({
+      expect(axesStateFunc({ series: {}, options: {} })).toEqual({
         axes: {
           xAxis: { labelInterval: 1, tickInterval: 1 },
           yAxis: { labelInterval: 1, tickInterval: 1 },
@@ -23,7 +23,7 @@ describe('Axes Store module', () => {
         yAxis: { tick: { interval: 4 }, label: { interval: 5 } },
       } as LineChartOptions;
 
-      expect(axesStateFunc(options)).toEqual({
+      expect(axesStateFunc({ series: {}, options })).toEqual({
         axes: {
           xAxis: { tickInterval: 2, labelInterval: 3 },
           yAxis: { tickInterval: 4, labelInterval: 5 },
