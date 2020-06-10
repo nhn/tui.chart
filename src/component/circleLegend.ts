@@ -1,7 +1,7 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import { CircleLegendModel } from '@t/components/circleLegend';
-import { BubbleSeriesType } from '@t/options';
+import { BubbleChartOptions, BubbleSeriesType } from '@t/options';
 
 export default class CircleLegend extends Component {
   models: { circleLegend: CircleLegendModel[] } = { circleLegend: [] };
@@ -16,9 +16,13 @@ export default class CircleLegend extends Component {
     }, -1);
   }
 
-  render({ layout, series, axes }: ChartState<Options>) {
+  render({ layout, series, axes, options }: ChartState<Options>) {
     if (!series.bubble) {
       throw new Error('circleLegend only available in bubble chart');
+    }
+
+    if (!(options as BubbleChartOptions).circleLegend?.visible) {
+      return;
     }
 
     const bubbleData = series.bubble.data;
