@@ -13,6 +13,7 @@ import {
   Connector,
   StackType,
   BubbleSeriesType,
+  BubbleChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
@@ -50,6 +51,7 @@ type ChartOptionsMap = {
   bar: BarChartOptions;
   column: ColumnChartOptions;
   area: AreaChartOptions;
+  bubble: BubbleChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -105,6 +107,7 @@ export interface Layout {
   xAxis: Rect;
   yAxis: Rect;
   plot: Rect;
+  legend: Rect;
 }
 
 export interface Scale {

@@ -1,5 +1,18 @@
-import { StoreModule, Layout } from '@t/store/store';
+import { StoreModule, Layout, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
+import { BubbleChartOptions } from '@t/options';
+
+function showLegend(isBubbleChart: boolean, options: Options) {
+  return (
+    (isBubbleChart && (options as BubbleChartOptions)?.circleLegend?.visible) ||
+    options.legend?.visible
+  );
+}
+
+function calculateLegendWidth() {
+  // @TODO: circleLegendWidth
+  return 130;
+}
 
 const layout: StoreModule = {
   name: 'layout',
@@ -10,9 +23,11 @@ const layout: StoreModule = {
     setLayout({ state }) {
       const {
         chart: { height, width },
+        series,
+        options,
       } = state;
-      const padding = 10;
 
+      const padding = 10;
       const yAxis = {
         width: 50,
         height: height - padding * 2 - 34,
@@ -20,11 +35,20 @@ const layout: StoreModule = {
         y: 0 + padding,
       };
 
+      const legendWidth = showLegend(!!series.bubble, options) ? calculateLegendWidth() : 0;
+
       const xAxis = {
-        width: width - (yAxis.x + yAxis.width + padding * 2),
+        width: width - (yAxis.x + yAxis.width + legendWidth + padding * 2),
         height: 20,
         x: yAxis.x + yAxis.width,
         y: yAxis.y + yAxis.height,
+      };
+
+      const legend = {
+        width: legendWidth,
+        height: yAxis.height,
+        x: xAxis.x + xAxis.width + padding,
+        y: yAxis.y,
       };
 
       const plot = {
@@ -34,7 +58,7 @@ const layout: StoreModule = {
         y: 0 + padding,
       };
 
-      extend(state.layout, { yAxis, xAxis, plot });
+      extend(state.layout, { yAxis, xAxis, plot, legend });
     },
   },
   observe: {
