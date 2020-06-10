@@ -29,6 +29,8 @@ interface BarChartProps {
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
+  modules = [stackSeriesData, dataRange, scale, axes, plot];
+
   constructor({ el, options, data }: BarChartProps) {
     super({
       el,
@@ -42,12 +44,6 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   initialize() {
     super.initialize();
-
-    this.store.setModule(stackSeriesData);
-    this.store.setModule(dataRange);
-    this.store.setModule(scale);
-    this.store.setModule(axes);
-    this.store.setModule(plot);
 
     this.componentManager.add(Plot);
     this.componentManager.add(Axis, { name: 'yAxis' });

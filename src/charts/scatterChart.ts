@@ -21,6 +21,8 @@ interface ScatterChartProps {
 }
 
 export default class ScatterChart extends Chart<ScatterChartOptions> {
+  modules = [dataRange, scale, axes];
+
   constructor(props: ScatterChartProps) {
     super({
       el: props.el,
@@ -34,10 +36,6 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
 
   initialize() {
     super.initialize();
-
-    this.store.setModule(dataRange);
-    this.store.setModule(scale);
-    this.store.setModule(axes);
 
     this.componentManager.add(Plot);
     this.componentManager.add(ScatterSeries);

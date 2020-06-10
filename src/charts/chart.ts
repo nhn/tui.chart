@@ -10,8 +10,7 @@ import animator from '@src/animator';
 import { debounce } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
-import { Options } from '@t/store/store';
-import Tooltip from '@src/component/tooltip';
+import { Options, StoreModule } from '@t/store/store';
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -28,6 +27,8 @@ export default abstract class Chart<T extends Options> {
 
   readonly componentManager: ComponentManager<T>;
 
+  modules?: StoreModule[];
+
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories } = props;
 
@@ -39,15 +40,9 @@ export default abstract class Chart<T extends Options> {
       options,
     });
 
-    this.initStore();
-
     this.componentManager = new ComponentManager({
       store: this.store,
       eventBus: this.eventBus,
-    });
-
-    this.store.observe(() => {
-      this.painter.setup();
     });
 
     this.eventBus.on(
@@ -77,7 +72,14 @@ export default abstract class Chart<T extends Options> {
       }, 10)
     );
 
-    this.initialize();
+    // for using class field "modules"
+    setTimeout(() => {
+      this.initialize();
+
+      this.store.observe(() => {
+        this.painter.setup();
+      });
+    }, 0);
   }
 
   handleEvent(event: MouseEvent) {
@@ -109,15 +111,12 @@ export default abstract class Chart<T extends Options> {
     });
   }
 
-  initStore() {
-    this.store.setModule(root);
-    this.store.setModule(layout);
-    this.store.setModule(seriesData);
-    this.store.setModule(category);
+  protected initStore(defalutModules: StoreModule[]) {
+    [...defalutModules, ...(this.modules ?? [])].forEach((module) => this.store.setModule(module));
   }
 
-  initialize() {
-    this.componentManager.add(Tooltip);
+  protected initialize() {
+    this.initStore([root, layout, seriesData, category]);
   }
 
   draw() {
@@ -138,7 +137,6 @@ export default abstract class Chart<T extends Options> {
   }
 
   update(delta: number) {
-    console.log('update');
     this.componentManager.invoke('update', delta);
   }
 }

@@ -21,6 +21,8 @@ interface LineChartProps {
 }
 
 export default class LineChart extends Chart<LineChartOptions> {
+  modules = [dataRange, scale, axes];
+
   constructor(props: LineChartProps) {
     super({
       el: props.el,
@@ -34,10 +36,6 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   initialize() {
     super.initialize();
-
-    this.store.setModule(dataRange);
-    this.store.setModule(scale);
-    this.store.setModule(axes);
 
     this.componentManager.add(Plot);
     this.componentManager.add(LineSeries);
