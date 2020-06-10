@@ -2,6 +2,7 @@ import Store from '@src/store/store';
 import root from '@src/store/root';
 import layout from '@src/store/layout';
 import seriesData from '@src/store/seriesData';
+import category from '@src/store/category';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
@@ -42,6 +43,8 @@ export default class Chart<T extends Options> {
       eventBus: this.eventBus,
     });
 
+    this.initialize();
+
     this.store.observe(() => {
       this.painter.setup();
     });
@@ -72,8 +75,6 @@ export default class Chart<T extends Options> {
         this.draw();
       }, 10)
     );
-
-    this.initialize();
   }
 
   handleEvent(event: MouseEvent) {
@@ -109,6 +110,7 @@ export default class Chart<T extends Options> {
     this.store.setModule(root);
     this.store.setModule(layout);
     this.store.setModule(seriesData);
+    this.store.setModule(category);
   }
 
   draw() {
