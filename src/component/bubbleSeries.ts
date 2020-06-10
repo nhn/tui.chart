@@ -14,6 +14,12 @@ interface RenderOptions {
 
 const MINIMUM_DETECTING_AREA_RADIUS = 1;
 
+export function getMaxRadius(bubbleData: BubbleSeriesType[]) {
+  return bubbleData.reduce((acc, cur) => {
+    return Math.max(acc, ...cur.data.map(({ r }) => r));
+  }, -1);
+}
+
 export default class BubbleSeries extends CircleSeries {
   maxRadius = -1;
 
@@ -22,12 +28,6 @@ export default class BubbleSeries extends CircleSeries {
   initialize() {
     this.type = 'series';
     this.name = 'bubbleSeries';
-  }
-
-  setMaxValue(bubbleData: BubbleSeriesType[]) {
-    bubbleData.forEach(({ data }) => {
-      this.maxValue = Math.max(this.maxValue, ...data.map(({ r }) => r));
-    });
   }
 
   render(chartState: ChartState<BaseOptions>) {
@@ -48,7 +48,7 @@ export default class BubbleSeries extends CircleSeries {
     const yAxisTickSize = this.rect.height / yAxis!.tickCount;
 
     this.maxRadius = Math.min(xAxisTickSize, yAxisTickSize);
-    this.setMaxValue(bubbleData);
+    this.maxValue = getMaxRadius(bubbleData);
 
     const seriesModel = this.renderBubblePointsModel(bubbleData, renderOptions, scale);
     const tooltipModel = this.makeTooltipModel(bubbleData, categories, renderOptions);

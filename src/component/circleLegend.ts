@@ -2,18 +2,13 @@ import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import { CircleLegendModel } from '@t/components/circleLegend';
 import { BubbleChartOptions, BubbleSeriesType } from '@t/options';
+import { getMaxRadius } from '@src/component/bubbleSeries';
 
 export default class CircleLegend extends Component {
   models: { circleLegend: CircleLegendModel[] } = { circleLegend: [] };
 
   initialize() {
     this.type = 'circleLegend';
-  }
-
-  getMaxValue(bubbleData: BubbleSeriesType[]) {
-    return bubbleData.reduce((acc, cur) => {
-      return Math.max(acc, ...cur.data.map(({ r }) => r));
-    }, -1);
   }
 
   render({ layout, series, axes, options }: ChartState<Options>) {
@@ -37,7 +32,7 @@ export default class CircleLegend extends Component {
   }
 
   renderCircleLegend(bubbleData: BubbleSeriesType[], radius: number) {
-    const value = this.getMaxValue(bubbleData);
+    const value = getMaxRadius(bubbleData);
 
     this.models.circleLegend = [
       {
