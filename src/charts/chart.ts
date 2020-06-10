@@ -11,8 +11,9 @@ import { debounce } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options } from '@t/store/store';
+import Tooltip from '@src/component/tooltip';
 
-export default class Chart<T extends Options> {
+export default abstract class Chart<T extends Options> {
   store: Store<T>;
 
   ___animId___ = null;
@@ -38,12 +39,12 @@ export default class Chart<T extends Options> {
       options,
     });
 
+    this.initStore();
+
     this.componentManager = new ComponentManager({
       store: this.store,
       eventBus: this.eventBus,
     });
-
-    this.initialize();
 
     this.store.observe(() => {
       this.painter.setup();
@@ -75,6 +76,8 @@ export default class Chart<T extends Options> {
         this.draw();
       }, 10)
     );
+
+    this.initialize();
   }
 
   handleEvent(event: MouseEvent) {
@@ -106,11 +109,15 @@ export default class Chart<T extends Options> {
     });
   }
 
-  initialize() {
+  initStore() {
     this.store.setModule(root);
     this.store.setModule(layout);
     this.store.setModule(seriesData);
     this.store.setModule(category);
+  }
+
+  initialize() {
+    this.componentManager.add(Tooltip);
   }
 
   draw() {
@@ -131,6 +138,7 @@ export default class Chart<T extends Options> {
   }
 
   update(delta: number) {
+    console.log('update');
     this.componentManager.invoke('update', delta);
   }
 }
