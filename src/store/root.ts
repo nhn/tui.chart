@@ -7,7 +7,6 @@ const root: StoreModule = {
   state: ({ options }) => ({
     chart: options.chart ?? { width: 0, height: 0 },
     options,
-    disabledSeries: [],
     theme: {
       series: {
         colors: [

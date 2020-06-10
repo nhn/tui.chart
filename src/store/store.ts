@@ -22,8 +22,6 @@ import {
 
 import { isUndefined, forEach, pickPropertyWithMakeup, deepCopy } from '@src/helpers/utils';
 
-import root from '@src/store/root';
-
 export default class Store<T extends Options> {
   state!: ChartState<T>;
 
@@ -37,7 +35,6 @@ export default class Store<T extends Options> {
     this.initStoreState = deepCopy(initStoreState);
 
     this.setRootState({});
-    this.setModule(root);
   }
 
   setRootState(state: Partial<ChartState<T>>) {

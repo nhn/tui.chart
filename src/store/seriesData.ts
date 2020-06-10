@@ -1,22 +1,7 @@
 import { StoreModule, SeriesTypes, SeriesRaw, Series } from '@t/store/store';
 import { extend } from '@src/store/store';
 
-import { sortSeries, sortCategories, includes } from '@src/helpers/utils';
-import { line } from '@src/brushes/basic';
-
-function makeCategories(series: SeriesRaw) {
-  const categories: Set<string> = new Set();
-
-  Object.keys(series).forEach((key) => {
-    series[key].forEach(({ data }) => {
-      data.forEach((datum) => {
-        categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
-      });
-    });
-  });
-
-  return Array.from(categories).sort(sortCategories);
-}
+import { sortSeries } from '@src/helpers/utils';
 
 function makeInitSeries(series: SeriesRaw) {
   const result: Series = {};
@@ -36,12 +21,11 @@ function makeInitSeries(series: SeriesRaw) {
   return result;
 }
 
-// seriesDataModel 이 했던것 일부 여기로
 const seriesData: StoreModule = {
   name: 'seriesData',
-  state: ({ series, categories }) => ({
+  state: ({ series }) => ({
     series: makeInitSeries(series),
-    categories: categories ? categories : makeCategories(series),
+    disabledSeries: [],
   }),
   action: {
     setSeriesData({ state }) {

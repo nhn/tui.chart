@@ -1,4 +1,5 @@
 import Store from '@src/store/store';
+import root from '@src/store/root';
 import layout from '@src/store/layout';
 import seriesData from '@src/store/seriesData';
 import EventEmitter from '@src/eventEmitter';
@@ -105,6 +106,7 @@ export default class Chart<T extends Options> {
   }
 
   initialize() {
+    this.store.setModule(root);
     this.store.setModule(layout);
     this.store.setModule(seriesData);
   }

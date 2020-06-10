@@ -6,15 +6,10 @@ describe('Store', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      store = new Store({
-        options: {
-          chart: {
-            width: 1,
-            height: 2,
-          },
-        },
-        categories: [],
-        series: {},
+      store = new Store({} as any);
+
+      store.setRootState({
+        chart: { width: 1, height: 2 },
       });
     });
     it('should computed property correctly', () => {
@@ -28,15 +23,10 @@ describe('Store', () => {
 
   describe('Observe', () => {
     beforeEach(() => {
-      store = new Store({
-        options: {
-          chart: {
-            width: 1,
-            height: 2,
-          },
-        },
-        categories: [],
-        series: {},
+      store = new Store({} as any);
+
+      store.setRootState({
+        chart: { width: 1, height: 2 },
       });
     });
     it('should observe observable correctly', () => {
@@ -67,15 +57,10 @@ describe('Store', () => {
 
   describe('watcher', () => {
     beforeEach(() => {
-      store = new Store({
-        options: {
-          chart: {
-            width: 1,
-            height: 2,
-          },
-        },
-        categories: [],
-        series: {},
+      store = new Store({} as any);
+
+      store.setRootState({
+        chart: { width: 1, height: 2 },
       });
     });
     it('should watcher property correctly', () => {
@@ -184,15 +169,10 @@ describe('Store', () => {
 
   describe('Action', () => {
     beforeEach(() => {
-      store = new Store({
-        options: {
-          chart: {
-            width: 1,
-            height: 2,
-          },
-        },
-        categories: [],
-        series: {},
+      store = new Store({} as any);
+
+      store.setRootState({
+        chart: { width: 1, height: 2 },
       });
     });
 
@@ -207,31 +187,21 @@ describe('Store', () => {
     });
   });
 
-  it('should make state correctly', () => {
-    store = new Store({
-      options: {
-        chart: {
-          width: 1,
-          height: 2,
-        },
-      },
-      categories: [],
-      series: {},
+  it('should make state correctly with setRootState()', () => {
+    store = new Store({} as any);
+
+    store.setRootState({
+      chart: { width: 1, height: 2 },
     });
 
-    expect(store.state.chart.width).toEqual(1);
+    expect(store.state).toEqual({ chart: { width: 1, height: 2 } });
   });
 
   it('should notify observable dependencies by name path', () => {
-    store = new Store({
-      options: {
-        chart: {
-          width: 1,
-          height: 2,
-        },
-      },
-      categories: [],
-      series: {},
+    store = new Store({} as any);
+
+    store.setRootState({
+      chart: { width: 1, height: 2 },
     });
 
     let makeMyData = 0;
@@ -246,15 +216,10 @@ describe('Store', () => {
   });
 
   it('should notify observable dependencies', () => {
-    store = new Store({
-      options: {
-        chart: {
-          width: 1,
-          height: 2,
-        },
-      },
-      categories: [],
-      series: {},
+    store = new Store({} as any);
+
+    store.setRootState({
+      chart: { width: 1, height: 2 },
     });
 
     let makeMyData = 0;
@@ -266,53 +231,5 @@ describe('Store', () => {
     store.notify(store.state.chart, 'width');
 
     expect(makeMyData).toEqual(2);
-  });
-
-  it.skip('should make categories with coordinate data', () => {
-    store = new Store({
-      options: {
-        chart: {
-          width: 1,
-          height: 2,
-        },
-      },
-      series: {
-        line: [
-          {
-            name: 'test',
-            data: [
-              { x: 10, y: 5 },
-              { x: 1, y: 2 },
-              { x: 3, y: 5 },
-            ],
-          },
-        ],
-      },
-    });
-
-    expect(store.state.categories).toEqual(['1', '3', '10']);
-
-    store = new Store({
-      options: {
-        chart: {
-          width: 1,
-          height: 2,
-        },
-      },
-      series: {
-        line: [
-          {
-            name: 'test',
-            data: [
-              [10, 5],
-              [1, 2],
-              [3, 5],
-            ],
-          },
-        ],
-      },
-    });
-
-    expect(store.state.categories).toEqual(['1', '3', '10']);
   });
 });
