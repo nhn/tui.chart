@@ -7,8 +7,15 @@ import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
+import { deepCopyArray } from '@src/helpers/utils';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
+
+interface LineSeriesDrawModels {
+  rect: ClipRectAreaModel[];
+  series: LinePointsModel[];
+  hoveredSeries: CircleModel[];
+}
 
 interface RenderLineOptions {
   pointOnColumn: boolean;
@@ -19,7 +26,9 @@ interface RenderLineOptions {
 type DatumType = CoordinateDataType | number;
 
 export default class LineSeries extends Component {
-  models!: DrawModels[];
+  models: LineSeriesDrawModels = { rect: [], series: [], hoveredSeries: [] };
+
+  drawModels!: LineSeriesDrawModels;
 
   responders!: CircleResponderModel[];
 
@@ -30,10 +39,8 @@ export default class LineSeries extends Component {
     this.name = 'lineSeries';
   }
 
-  update(delta: number) {
-    if (this.models[0].type === 'clipRectArea') {
-      this.models[0].width = this.rect.width * delta;
-    }
+  initUpdate(delta: number) {
+    this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
   render(chartState: ChartState<LineChartOptions>) {
@@ -78,7 +85,19 @@ export default class LineSeries extends Component {
       return tooltipData;
     });
 
-    this.models = [this.renderClipRectAreaModel(), ...lineSeriesModel];
+    this.models = {
+      rect: [this.renderClipRectAreaModel()],
+      series: lineSeriesModel,
+      hoveredSeries: [],
+    };
+
+    if (!this.drawModels) {
+      this.drawModels = {
+        rect: [this.renderClipRectAreaModel(true)],
+        series: deepCopyArray(lineSeriesModel),
+        hoveredSeries: [],
+      };
+    }
 
     this.responders = seriesCircleModel.map((m, index) => ({
       ...m,
@@ -86,12 +105,12 @@ export default class LineSeries extends Component {
     }));
   }
 
-  renderClipRectAreaModel(): ClipRectAreaModel {
+  renderClipRectAreaModel(isDrawModel?: boolean): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
       x: 0,
       y: 0,
-      width: 0,
+      width: isDrawModel ? 0 : this.rect.width,
       height: this.rect.height,
     };
   }
@@ -151,14 +170,7 @@ export default class LineSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] }) {
-    this.activatedResponders.forEach((responder) => {
-      const index = this.models.findIndex((model) => model === responder);
-      this.models.splice(index, 1);
-    });
-
-    responders.forEach((responder) => {
-      this.models.push(responder);
-    });
+    this.drawModels.hoveredSeries = [...responders];
 
     this.activatedResponders = responders;
 

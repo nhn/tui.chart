@@ -40,9 +40,9 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.store.setModule(axes);
 
     this.componentManager.add(Plot);
+    this.componentManager.add(AreaSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
-    this.componentManager.add(AreaSeries);
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, lineSeriesBrushes]);

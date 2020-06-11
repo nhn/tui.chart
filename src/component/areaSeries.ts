@@ -18,8 +18,15 @@ import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
+import { deepCopyArray } from '@src/helpers/utils';
 
 type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
+
+interface AreaSeriesDrawModels {
+  rect: ClipRectAreaModel[];
+  series: AreaPointsModel[];
+  hoveredSeries: (CircleModel | LinePointsModel)[];
+}
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -30,7 +37,9 @@ interface RenderOptions {
 type DatumType = number | RangeDataType;
 
 export default class AreaSeries extends Component {
-  models!: DrawModels[];
+  models: AreaSeriesDrawModels = { rect: [], hoveredSeries: [], series: [] };
+
+  drawModels!: AreaSeriesDrawModels;
 
   responders!: CircleResponderModel[];
 
@@ -43,10 +52,8 @@ export default class AreaSeries extends Component {
     this.name = 'areaSeries';
   }
 
-  update(delta: number) {
-    if (this.models[0].type === 'clipRectArea') {
-      this.models[0].width = this.rect.width * delta;
-    }
+  initUpdate(delta: number) {
+    this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
   public render(chartState: ChartState<AreaChartOptions>) {
@@ -80,7 +87,21 @@ export default class AreaSeries extends Component {
     const seriesCircleModel = this.renderCircleModel(this.linePointsModel);
     const tooltipDataArr = this.makeTooltipData(areaData, renderOptions, categories);
 
-    this.models = [this.renderClipRectAreaModel(), ...areaSeriesModel];
+    this.models = {
+      rect: [this.renderClipRectAreaModel()],
+      series: areaSeriesModel,
+      hoveredSeries: [],
+      // linePoints: [],
+    };
+
+    if (!this.drawModels) {
+      this.drawModels = {
+        rect: [this.renderClipRectAreaModel(true)],
+        series: deepCopyArray(areaSeriesModel),
+        hoveredSeries: [],
+        // linePoints: [],
+      };
+    }
 
     this.responders = seriesCircleModel.map((m, dataIndex) => ({
       ...m,
@@ -88,12 +109,12 @@ export default class AreaSeries extends Component {
     }));
   }
 
-  private renderClipRectAreaModel(): ClipRectAreaModel {
+  renderClipRectAreaModel(isDrawModel?: boolean): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
       x: 0,
       y: 0,
-      width: 0,
+      width: isDrawModel ? 0 : this.rect.width,
       height: this.rect.height,
     };
   }
@@ -185,36 +206,22 @@ export default class AreaSeries extends Component {
   }
 
   applyAreaOpacity(opacity: number) {
-    this.models.filter(this.isAreaPointsModel).forEach((model) => {
+    this.drawModels.series.filter(this.isAreaPointsModel).forEach((model) => {
       model.fillColor = getRGBA(model.fillColor, opacity);
-      model.color = getRGBA(model.color, opacity);
     });
-  }
-
-  clearLinePointsModel() {
-    this.models = this.models.filter((model) => model.type !== 'linePoints');
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] }) {
     if (this.activatedResponders.length) {
-      this.clearLinePointsModel();
       this.applyAreaOpacity(1);
-
-      this.activatedResponders.forEach((responder) => {
-        const index = this.models.findIndex((model) => model === responder);
-
-        this.models.splice(index, 1);
-      });
     }
 
     if (responders.length) {
       this.applyAreaOpacity(0.5);
-      responders.forEach((responder) => {
-        this.models.push(this.linePointsModel[responder.seriesIndex]);
-        this.models.push(responder);
-      });
     }
 
+    const linePoints = responders.map(({ seriesIndex }) => this.linePointsModel[seriesIndex]);
+    this.drawModels.hoveredSeries = [...linePoints, ...responders];
     this.activatedResponders = responders;
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);

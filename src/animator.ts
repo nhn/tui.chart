@@ -12,12 +12,14 @@ type Anim = {
   current: number | null;
 };
 
-class Animator {
+export default class Animator {
   anims: Anim[] = [];
 
   state = 'IDLE';
 
   requestId: number | null = null;
+
+  firstRendering = true;
 
   add({
     chart,
@@ -25,7 +27,16 @@ class Animator {
     requester,
     onCompleted = () => {},
     onFrame = (delta) => {
-      chart.update(delta);
+      if (!this.firstRendering) {
+        chart.update(delta);
+      }
+
+      if (this.firstRendering) {
+        chart.initUpdate(delta);
+        if (delta === 1) {
+          this.firstRendering = false;
+        }
+      }
     },
   }: {
     chart: Chart<Options>;
@@ -118,5 +129,3 @@ class Animator {
     this.anims = this.anims.filter((anim) => !anim.completed);
   }
 }
-
-export default new Animator();

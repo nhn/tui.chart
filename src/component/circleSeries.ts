@@ -19,7 +19,7 @@ export default abstract class CircleSeries extends Component {
 
   rect!: Rect;
 
-  update(delta: number) {
+  initUpdate(delta: number) {
     this.drawModels.series.forEach((model, index) => {
       model.radius = (this.models.series[index] as CircleModel).radius * delta;
     });
