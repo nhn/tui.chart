@@ -21,18 +21,13 @@ export default class CircleLegend extends Component {
     }
 
     const bubbleData = series.bubble.data;
-
     this.rect = layout.legend;
-    const { xAxis, yAxis } = axes;
-    const xAxisTickSize = layout.plot.width / xAxis!.tickCount;
-    const yAxisTickSize = layout.plot.height / yAxis!.tickCount;
-    const radius = Math.min(xAxisTickSize, yAxisTickSize);
-
-    this.renderCircleLegend(bubbleData, radius);
+    this.renderCircleLegend(bubbleData);
   }
 
-  renderCircleLegend(bubbleData: BubbleSeriesType[], radius: number) {
+  renderCircleLegend(bubbleData: BubbleSeriesType[]) {
     const value = getMaxRadius(bubbleData);
+    const radius = this.rect.width / 2;
 
     this.models.circleLegend = [
       {

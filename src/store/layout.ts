@@ -9,9 +9,9 @@ function showLegend(isBubbleChart: boolean, options: Options) {
   );
 }
 
-function calculateLegendWidth() {
-  // @TODO: circleLegendWidth
-  return 130;
+function calculateLegendWidth(width: number) {
+  // @TODO: 라벨 길이 비교 필요
+  return width / 10;
 }
 
 const layout: StoreModule = {
@@ -35,7 +35,7 @@ const layout: StoreModule = {
         y: 0 + padding,
       };
 
-      const legendWidth = showLegend(!!series.bubble, options) ? calculateLegendWidth() : 0;
+      const legendWidth = showLegend(!!series.bubble, options) ? calculateLegendWidth(width) : 0;
 
       const xAxis = {
         width: width - (yAxis.x + yAxis.width + legendWidth + padding * 2),

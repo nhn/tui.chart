@@ -32,6 +32,8 @@ export default class BubbleSeries extends CircleSeries {
 
   render(chartState: ChartState<BaseOptions>) {
     const { layout, series, scale, theme, categories = [], axes } = chartState;
+    const { legend, plot } = layout;
+
     if (!series.bubble) {
       throw new Error("There's no bubble data!");
     }
@@ -42,12 +44,11 @@ export default class BubbleSeries extends CircleSeries {
       theme: theme.series,
     };
 
-    this.rect = layout.plot;
-
+    this.rect = plot;
     const xAxisTickSize = this.rect.width / xAxis!.tickCount;
     const yAxisTickSize = this.rect.height / yAxis!.tickCount;
 
-    this.maxRadius = Math.min(xAxisTickSize, yAxisTickSize);
+    this.maxRadius = legend.width ? legend.width / 2 : Math.min(xAxisTickSize, yAxisTickSize);
     this.maxValue = getMaxRadius(bubbleData);
 
     const seriesModel = this.renderBubblePointsModel(bubbleData, renderOptions, scale);
