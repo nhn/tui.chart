@@ -13,7 +13,7 @@ export default class CircleLegend extends Component {
 
   render({ layout, series, axes, options }: ChartState<Options>) {
     if (!series.bubble) {
-      throw new Error('circleLegend only available in bubble chart');
+      throw new Error('circleLegend is only possible when bubble series is present');
     }
 
     if (!(options as BubbleChartOptions).circleLegend?.visible) {
