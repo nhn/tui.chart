@@ -17,7 +17,7 @@ const MINIMUM_DETECTING_AREA_RADIUS = 1;
 export function getMaxRadius(bubbleData: BubbleSeriesType[]) {
   return bubbleData.reduce((acc, cur) => {
     return Math.max(acc, ...cur.data.map(({ r }) => r));
-  }, -1);
+  }, 0);
 }
 
 export default class BubbleSeries extends CircleSeries {

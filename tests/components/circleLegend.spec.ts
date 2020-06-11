@@ -69,16 +69,3 @@ it('should make models properly when calling render', () => {
 
   expect(circleLegend.models).toEqual(models);
 });
-
-it('should not make models when circleLegend.visible is false', () => {
-  chartState.options.circleLegend.visible = false;
-
-  circleLegend = new CircleLegend({
-    store: {} as Store<BubbleChartOptions>,
-    eventBus: new EventEmitter(),
-  });
-
-  circleLegend.render(chartState);
-
-  expect(circleLegend.models).toEqual({ circleLegend: [] });
-});

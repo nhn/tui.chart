@@ -2,11 +2,12 @@ import { StoreModule, Layout, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { BubbleChartOptions } from '@t/options';
 
-function showLegend(isBubbleChart: boolean, options: Options) {
-  return (
-    (isBubbleChart && (options as BubbleChartOptions)?.circleLegend?.visible) ||
-    options.legend?.visible
-  );
+export function showCircleLegend(options: BubbleChartOptions, isBubbleChart = false) {
+  return isBubbleChart && options?.circleLegend?.visible;
+}
+
+function showLegend(options: Options, isBubbleChart = false) {
+  return showCircleLegend(options, isBubbleChart) || options.legend?.visible;
 }
 
 function calculateLegendWidth(width: number) {
@@ -35,7 +36,7 @@ const layout: StoreModule = {
         y: 0 + padding,
       };
 
-      const legendWidth = showLegend(!!series.bubble, options) ? calculateLegendWidth(width) : 0;
+      const legendWidth = showLegend(options, !!series.bubble) ? calculateLegendWidth(width) : 0;
 
       const xAxis = {
         width: width - (yAxis.x + yAxis.width + legendWidth + padding * 2),
