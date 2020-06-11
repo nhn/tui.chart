@@ -137,7 +137,7 @@ const result = {
     series: [
       {
         color: 'rgba(170, 170, 170, 0.7)',
-        radius: 28,
+        radius: 7.5,
         seriesIndex: 0,
         style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
         type: 'circle',
@@ -146,7 +146,7 @@ const result = {
       },
       {
         color: 'rgba(170, 170, 170, 0.7)',
-        radius: 56,
+        radius: 15,
         seriesIndex: 0,
         style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
         type: 'circle',
@@ -155,7 +155,7 @@ const result = {
       },
       {
         color: 'rgba(187, 187, 187, 0.7)',
-        radius: 8.4,
+        radius: 2.25,
         seriesIndex: 1,
         style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.3)' }],
         type: 'circle',
