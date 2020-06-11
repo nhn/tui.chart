@@ -86,7 +86,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 10, min: 0 }, stepSize: 1, stepCount: 10 },
+      xAxis: { limit: { max: 10, min: 1 }, stepSize: 1, stepCount: 9 },
     });
   });
 
@@ -104,7 +104,7 @@ describe('Scale Store', () => {
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
-      xAxis: { limit: { max: 10, min: 0 }, stepSize: 5, stepCount: 2 },
+      xAxis: { limit: { max: 10, min: 1 }, stepSize: 5, stepCount: 2 },
     });
   });
 });

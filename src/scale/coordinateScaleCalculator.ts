@@ -97,9 +97,6 @@ function getNormalizedLimit(limit: ValueEdge, stepSize: number, showLabel?: bool
     min = (Math.floor((min * placeNumber) / fixedStep) * fixedStep) / placeNumber;
   } else if (min < 0) {
     min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
-  } else {
-    // 0 when min value is positive and smaller than step
-    min = 0;
   }
 
   return {

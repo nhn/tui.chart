@@ -25,7 +25,7 @@ import { pickProperty, isObject, sum } from '@src/helpers/utils';
 
 type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
 
-function isPercentStack(stack?: Stack): boolean {
+export function isPercentStack(stack?: Stack): boolean {
   return !!(stack?.type === 'percent');
 }
 
