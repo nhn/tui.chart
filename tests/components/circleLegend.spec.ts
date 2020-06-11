@@ -22,7 +22,7 @@ const chartState = {
   chart: { width: 350, height: 350 },
   layout: {
     plot: { width: 280, height: 280, x: 10, y: 80 },
-    legend: { width: 130, height: 280, x: 300, y: 280 },
+    legend: { width: 35, height: 280, x: 300, y: 280 },
   },
   series: {
     bubble: {
@@ -56,7 +56,7 @@ const chartState = {
 };
 
 const models = {
-  circleLegend: [{ radius: 56, type: 'circleLegend', value: 200, x: 56, y: 224 }],
+  circleLegend: [{ radius: 17.5, type: 'circleLegend', value: 200, x: 17.5, y: 262.5 }],
 };
 
 it('should make models properly when calling render', () => {
