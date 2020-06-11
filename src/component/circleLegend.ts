@@ -17,7 +17,7 @@ export default class CircleLegend extends Component {
       throw new Error('circleLegend is only possible when bubble series is present');
     }
 
-    if (!showCircleLegend(this.store.state.options, !!series.bubble)) {
+    if (!showCircleLegend(options, !!series.bubble)) {
       return;
     }
 

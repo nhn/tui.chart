@@ -7,7 +7,7 @@ export function circleLegend(ctx: CanvasRenderingContext2D, circleLegendModel: C
 
   ratioArray.forEach((ratio, idx) => {
     const circleRadius = ratio * radius;
-    const circleY = y + (idx !== 0 ? (1 - ratio) * radius : 0);
+    const circleY = y + (idx ? (1 - ratio) * radius : 0);
     circle(ctx, {
       type: 'circle',
       x,
