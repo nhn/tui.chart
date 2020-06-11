@@ -20,6 +20,8 @@ interface BubbleChartProps {
 }
 
 export default class BubbleChart extends Chart<BaseOptions> {
+  modules = [dataRange, scale, axes];
+
   constructor(props: BubbleChartProps) {
     super({
       el: props.el,
@@ -32,10 +34,6 @@ export default class BubbleChart extends Chart<BaseOptions> {
 
   initialize() {
     super.initialize();
-
-    this.store.setModule(dataRange);
-    this.store.setModule(scale);
-    this.store.setModule(axes);
 
     this.componentManager.add(BubbleSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });

@@ -87,6 +87,7 @@ export interface StoreModule extends StoreOptions {
     | 'axes'
     | 'scale'
     | 'layout'
+    | 'category'
     | 'seriesData'
     | 'dataRange'
     | 'stackSeriesData';

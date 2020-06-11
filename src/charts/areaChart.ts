@@ -21,6 +21,8 @@ interface AreaChartProps {
 }
 
 export default class AreaChart extends Chart<AreaChartOptions> {
+  modules = [dataRange, scale, axes];
+
   constructor(props: AreaChartProps) {
     super({
       el: props.el,
@@ -34,10 +36,6 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   initialize() {
     super.initialize();
-
-    this.store.setModule(dataRange);
-    this.store.setModule(scale);
-    this.store.setModule(axes);
 
     this.componentManager.add(Plot);
     this.componentManager.add(AreaSeries);

@@ -1,6 +1,8 @@
 import Store from '@src/store/store';
+import root from '@src/store/root';
 import layout from '@src/store/layout';
 import seriesData from '@src/store/seriesData';
+import category from '@src/store/category';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
@@ -8,9 +10,9 @@ import Animator from '@src/animator';
 import { debounce } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
-import { Options } from '@t/store/store';
+import { Options, StoreModule } from '@t/store/store';
 
-export default class Chart<T extends Options> {
+export default abstract class Chart<T extends Options> {
   store: Store<T>;
 
   ___animId___ = null;
@@ -26,6 +28,8 @@ export default class Chart<T extends Options> {
   readonly eventBus: EventEmitter = new EventEmitter();
 
   readonly componentManager: ComponentManager<T>;
+
+  modules?: StoreModule[];
 
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories } = props;
@@ -43,10 +47,6 @@ export default class Chart<T extends Options> {
     this.componentManager = new ComponentManager({
       store: this.store,
       eventBus: this.eventBus,
-    });
-
-    this.store.observe(() => {
-      this.painter.setup();
     });
 
     this.eventBus.on(
@@ -76,7 +76,14 @@ export default class Chart<T extends Options> {
       }, 10)
     );
 
-    this.initialize();
+    // for using class field "modules"
+    setTimeout(() => {
+      this.initialize();
+
+      this.store.observe(() => {
+        this.painter.setup();
+      });
+    }, 0);
   }
 
   handleEvent(event: MouseEvent) {
@@ -108,9 +115,12 @@ export default class Chart<T extends Options> {
     });
   }
 
-  initialize() {
-    this.store.setModule(layout);
-    this.store.setModule(seriesData);
+  protected initStore(defalutModules: StoreModule[]) {
+    [...defalutModules, ...(this.modules ?? [])].forEach((module) => this.store.setModule(module));
+  }
+
+  protected initialize() {
+    this.initStore([root, layout, seriesData, category]);
   }
 
   draw() {
