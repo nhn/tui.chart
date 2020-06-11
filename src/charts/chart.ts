@@ -120,7 +120,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   protected initialize() {
-    this.initStore([root, layout, seriesData, category]);
+    this.initStore([root, seriesData, layout, category]);
   }
 
   draw() {

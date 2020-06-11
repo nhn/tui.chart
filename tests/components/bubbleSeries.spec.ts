@@ -24,6 +24,7 @@ const chartState = {
     xAxis: { x: 10, y: 280, width: 280, height: 10 },
     yAxis: { x: 10, y: 10, width: 10, height: 280 },
     plot: { width: 280, height: 280, x: 10, y: 80 },
+    legend: { width: 30, height: 280, x: 290, y: 10 },
   },
   series: {
     bubble: {
@@ -85,7 +86,7 @@ const result = {
   responders: [
     {
       color: 'rgba(170, 170, 170, 0.85)',
-      radius: 29,
+      radius: 8.5,
       seriesIndex: 0,
       style: ['default', 'hover', { lineWidth: 2 }],
       type: 'circle',
@@ -101,7 +102,7 @@ const result = {
     },
     {
       color: 'rgba(170, 170, 170, 0.85)',
-      radius: 57,
+      radius: 16,
       seriesIndex: 0,
       style: ['default', 'hover', { lineWidth: 2 }],
       type: 'circle',
@@ -117,7 +118,7 @@ const result = {
     },
     {
       color: 'rgba(187, 187, 187, 0.85)',
-      radius: 9.4,
+      radius: 3.25,
       seriesIndex: 1,
       style: ['default', 'hover', { lineWidth: 2 }],
       type: 'circle',
@@ -136,7 +137,7 @@ const result = {
     series: [
       {
         color: 'rgba(170, 170, 170, 0.7)',
-        radius: 28,
+        radius: 7.5,
         seriesIndex: 0,
         style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
         type: 'circle',
@@ -145,7 +146,7 @@ const result = {
       },
       {
         color: 'rgba(170, 170, 170, 0.7)',
-        radius: 56,
+        radius: 15,
         seriesIndex: 0,
         style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
         type: 'circle',
@@ -154,7 +155,7 @@ const result = {
       },
       {
         color: 'rgba(187, 187, 187, 0.7)',
-        radius: 8.4,
+        radius: 2.25,
         seriesIndex: 1,
         style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.3)' }],
         type: 'circle',

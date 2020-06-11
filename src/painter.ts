@@ -49,10 +49,10 @@ export default class Painter {
     this.width = width || 0;
     this.height = height || 0;
 
-    this.scaleCavasRatio();
+    this.scaleCanvasRatio();
   }
 
-  scaleCavasRatio() {
+  scaleCanvasRatio() {
     const ratio = window.devicePixelRatio;
 
     this.ctx.canvas.width = this.width * ratio;
