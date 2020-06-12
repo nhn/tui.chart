@@ -31,7 +31,10 @@ import { LineModel } from '@t/components/axis';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
 import { AxisType } from './axis';
-import { calibrateBoxStackDrawingValue, sumOfPrevValues } from '@src/helpers/calculator';
+import {
+  calibrateBoxStackDrawingValue,
+  sumValuesBeforeIndex,
+} from '@src/helpers/boxSeriesCalculator';
 
 type RenderOptions = {
   stack: Stack;
@@ -388,9 +391,9 @@ export default class BoxStackSeries extends BoxSeries {
     ratio: number,
     renderOptions: RenderOptions
   ) {
-    const drawingValue = calibrateDrawingValue(values, seriesIndex, renderOptions);
+    const calculatedValue = calibrateDrawingValue(values, seriesIndex, renderOptions);
 
-    return drawingValue ? this.barLength(drawingValue, ratio) : drawingValue;
+    return calculatedValue ? this.getBarLength(calculatedValue, ratio) : calculatedValue;
   }
 
   private getStackColumnWidth(renderOptions: RenderOptions, stackGroupCount: number) {
@@ -450,8 +453,8 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const basePosition = this.basePosition;
     const { min, max } = renderOptions;
-    const totalOfPrevValues = sumOfPrevValues(values, currentIndex, false);
-    const totalOfValues = sumOfPrevValues(values, currentIndex, true);
+    const totalOfPrevValues = sumValuesBeforeIndex(values, currentIndex, false);
+    const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
     const collideEdge = totalOfValues < min;
     const usingValue = this.isBar ? totalOfValues : totalOfPrevValues;
     const result = max < 0 ? Math.min(usingValue - max, 0) : usingValue;
@@ -473,8 +476,8 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const basePosition = this.basePosition;
     const { min, max } = renderOptions;
-    const totalOfPrevValues = sumOfPrevValues(values, currentIndex, false);
-    const totalOfValues = sumOfPrevValues(values, currentIndex, true);
+    const totalOfPrevValues = sumValuesBeforeIndex(values, currentIndex, false);
+    const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
     const collideEdge = totalOfValues > max;
     const usingValue = this.isBar ? totalOfPrevValues : totalOfValues;
     const result = min > 0 ? Math.max(usingValue - min, 0) : usingValue;
@@ -505,7 +508,7 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const basePosition = this.basePosition;
     const { min } = renderOptions;
-    const totalPrevValues = sumOfPrevValues(
+    const totalPrevValues = sumValuesBeforeIndex(
       values,
       currentIndex,
       this.isBar ? values[currentIndex] < 0 : values[currentIndex] > 0
