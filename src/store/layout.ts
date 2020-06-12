@@ -1,6 +1,12 @@
-import { StoreModule, Layout, Options } from '@t/store/store';
+import { StoreModule, Layout, Options, Series } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { BubbleChartOptions } from '@t/options';
+import { Align, BubbleChartOptions } from '@t/options';
+import { getTextWidth } from '@src/helpers/calculator';
+
+const LEGEND_LABEL_FONT = 'normal 11px Arial';
+const margin = { X: 10 };
+const CHECKBOX_SIZE = 14;
+const ICON_SIZE = 14;
 
 export function showCircleLegend(options: BubbleChartOptions, isBubbleChart = false) {
   return isBubbleChart && options?.circleLegend?.visible;
@@ -10,9 +16,36 @@ function showLegend(options: Options, isBubbleChart = false) {
   return showCircleLegend(options, isBubbleChart) || options.legend?.visible;
 }
 
-function calculateLegendWidth(width: number) {
-  // @TODO: 라벨 길이 비교 필요
-  return width / 10;
+function isVerticalAlign(align?: Align) {
+  return align === 'top' || align === 'bottom';
+}
+
+function getLongestNameWidth(series: Series) {
+  const name = Object.keys(series).reduce((longestName, type) => {
+    const seriesName = series[type].reduce((seriesLongestName, datum) => {
+      return datum.name.length >= seriesLongestName.length ? datum.name : seriesLongestName;
+    }, '');
+
+    return longestName.length > seriesName.length ? longestName : seriesName;
+  }, '');
+
+  return getTextWidth(name, LEGEND_LABEL_FONT);
+}
+
+function calculateLegendWidth(width: number, series: Series, options: Options) {
+  const legendOptions = options?.legend;
+  let legendWidth = width / 10;
+
+  if (legendOptions?.width) {
+    return legendOptions.width;
+  }
+
+  if (!isVerticalAlign(legendOptions?.align)) {
+    const labelAreaWidth = getLongestNameWidth(series) + CHECKBOX_SIZE + ICON_SIZE + margin.X * 2;
+    legendWidth = Math.max(labelAreaWidth, legendWidth);
+  }
+
+  return legendWidth;
 }
 
 const layout: StoreModule = {
@@ -36,7 +69,9 @@ const layout: StoreModule = {
         y: 0 + padding,
       };
 
-      const legendWidth = showLegend(options, !!series.bubble) ? calculateLegendWidth(width) : 0;
+      const legendWidth = showLegend(options, !!series.bubble)
+        ? calculateLegendWidth(width, series, options)
+        : 0;
 
       const xAxis = {
         width: width - (yAxis.x + yAxis.width + legendWidth + padding * 2),

@@ -8,6 +8,7 @@ export type CoordinateDataType = Point | [number, number] | [string, number];
 export type AreaSeriesDataType = number[] | RangeDataType[];
 export type BubbleSeriesDataType = ({ label: string } & BubblePoint)[];
 export type BubblePoint = Point & { r: number };
+export type Align = 'top' | 'bottom' | 'right' | 'left';
 
 export interface Point {
   x: number;
@@ -124,7 +125,7 @@ interface BaseOptions {
 }
 
 interface BaseLegendOptions {
-  align?: 'left' | 'right' | 'top' | 'bottom';
+  align?: Align;
   showCheckbox?: boolean;
   visible?: boolean;
   maxWidth?: number;
