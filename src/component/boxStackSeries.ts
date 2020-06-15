@@ -1,4 +1,4 @@
-import BoxSeries, { isLeftBottomSide } from './boxSeries';
+import BoxSeries, { isLeftBottomSide, SeriesDirection, BarLength, DataPosition } from './boxSeries';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -20,13 +20,7 @@ import {
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel } from '@t/components/series';
-import {
-  deepCopyArray,
-  includes,
-  isUndefined,
-  hasNegativeOnly,
-  hasPositiveOnly,
-} from '@src/helpers/utils';
+import { deepCopyArray, includes, isNumber } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
@@ -43,8 +37,7 @@ type RenderOptions = {
   min: number;
   max: number;
   diverging: boolean;
-  positiveOnly: boolean;
-  negativeOnly: boolean;
+  seriesDirection: SeriesDirection;
 };
 
 function calibrateDrawingValue(
@@ -88,8 +81,7 @@ export default class BoxStackSeries extends BoxSeries {
       min,
       max,
       diverging,
-      positiveOnly: hasPositiveOnly(labels),
-      negativeOnly: hasNegativeOnly(labels),
+      seriesDirection: this.getSeriesDirection(labels),
     };
   }
 
@@ -107,11 +99,7 @@ export default class BoxStackSeries extends BoxSeries {
     const { colors } = theme.series;
     const renderOptions = this.makeStackRenderOptions(axes, options, seriesData);
 
-    this.basePosition = this.getBasePosition(
-      axes[this.valueAxis],
-      renderOptions.positiveOnly,
-      renderOptions.negativeOnly
-    );
+    this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     const { series, connector } = this.renderStackSeriesModel(seriesData, colors, renderOptions);
     const hoveredSeries = this.renderHighlightSeriesModel(series);
@@ -171,7 +159,7 @@ export default class BoxStackSeries extends BoxSeries {
       const ratio = this.getStackValueRatio(total, renderOptions);
 
       values.forEach((value, seriesIndex) => {
-        const { barLength, startPosition } = this.getStackRectInfo(
+        const { barLength, dataPosition } = this.getStackRectInfo(
           values,
           seriesIndex,
           ratio,
@@ -182,7 +170,7 @@ export default class BoxStackSeries extends BoxSeries {
         seriesModels.push({
           type: 'rect',
           color: colors![seriesIndex],
-          ...this.getAdjustedRect(seriesPos, startPosition!, barLength!, columnWidth),
+          ...this.getAdjustedRect(seriesPos, dataPosition, barLength!, columnWidth),
         });
       });
     });
@@ -259,14 +247,14 @@ export default class BoxStackSeries extends BoxSeries {
       const ratio = this.getStackValueRatio(total, renderOptions);
 
       values.forEach((value, seriesIndex) => {
-        const { barLength, startPosition } = this.getStackRectInfo(
+        const { barLength, dataPosition } = this.getStackRectInfo(
           values,
           seriesIndex,
           ratio,
           renderOptions,
           isLBSideWithDiverging
         );
-        const { x, y } = this.getAdjustedRect(seriesPos, startPosition!, barLength!, columnWidth);
+        const { x, y } = this.getAdjustedRect(seriesPos, dataPosition, barLength!, columnWidth);
 
         const xPos = !isLBSideWithDiverging && this.isBar ? x + barLength! : x;
         const yPos = isLBSideWithDiverging && !this.isBar ? y + barLength! : y;
@@ -390,10 +378,10 @@ export default class BoxStackSeries extends BoxSeries {
     seriesIndex: number,
     ratio: number,
     renderOptions: RenderOptions
-  ) {
-    const calculatedValue = calibrateDrawingValue(values, seriesIndex, renderOptions);
+  ): BarLength {
+    const value = calibrateDrawingValue(values, seriesIndex, renderOptions);
 
-    return calculatedValue ? this.getBarLength(calculatedValue, ratio) : calculatedValue;
+    return isNumber(value) ? this.getBarLength(value, ratio) : null;
   }
 
   private getStackColumnWidth(renderOptions: RenderOptions, stackGroupCount: number) {
@@ -421,28 +409,26 @@ export default class BoxStackSeries extends BoxSeries {
     ratio: number,
     renderOptions: RenderOptions,
     isLBSideWithDiverging: boolean
-  ) {
-    const { stack, diverging, positiveOnly, negativeOnly } = renderOptions;
+  ): DataPosition {
+    const { stack, diverging, seriesDirection } = renderOptions;
+
+    let startPos: DataPosition;
 
     if (diverging) {
-      return isLBSideWithDiverging
+      startPos = isLBSideWithDiverging
         ? this.calcStartPosOnLeftBottomSide(values, currentIndex, renderOptions, ratio)
         : this.calcStartPosOnRightTopSide(values, currentIndex, renderOptions, ratio);
+    } else if (isPercentStack(stack)) {
+      startPos = this.calcStartPositionWithPercent(values, currentIndex, renderOptions, ratio);
+    } else if (seriesDirection === SeriesDirection.POSITIVE) {
+      startPos = this.calcStartPosOnRightTopSide(values, currentIndex, renderOptions, ratio);
+    } else if (seriesDirection === SeriesDirection.NEGATIVE) {
+      startPos = this.calcStartPosOnLeftBottomSide(values, currentIndex, renderOptions, ratio);
+    } else {
+      startPos = this.calcStartPositionWithStack(values, currentIndex, renderOptions, ratio);
     }
 
-    if (isPercentStack(stack)) {
-      return this.calcStartPositionWithPercent(values, currentIndex, renderOptions, ratio);
-    }
-
-    if (positiveOnly) {
-      return this.calcStartPosOnRightTopSide(values, currentIndex, renderOptions, ratio);
-    }
-
-    if (negativeOnly) {
-      return this.calcStartPosOnLeftBottomSide(values, currentIndex, renderOptions, ratio);
-    }
-
-    return this.calcStartPositionWithStack(values, currentIndex, renderOptions, ratio);
+    return startPos;
   }
 
   private calcStartPosOnLeftBottomSide(
@@ -453,10 +439,10 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const basePosition = this.basePosition;
     const { min, max } = renderOptions;
-    const totalOfPrevValues = sumValuesBeforeIndex(values, currentIndex, false);
+    const totalOfBeforeValues = sumValuesBeforeIndex(values, currentIndex, false);
     const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
     const collideEdge = totalOfValues < min;
-    const usingValue = this.isBar ? totalOfValues : totalOfPrevValues;
+    const usingValue = this.isBar ? totalOfValues : totalOfBeforeValues;
     const result = max < 0 ? Math.min(usingValue - max, 0) : usingValue;
 
     if (this.isBar) {
@@ -476,10 +462,10 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const basePosition = this.basePosition;
     const { min, max } = renderOptions;
-    const totalOfPrevValues = sumValuesBeforeIndex(values, currentIndex, false);
+    const totalOfBeforeValues = sumValuesBeforeIndex(values, currentIndex, false);
     const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
     const collideEdge = totalOfValues > max;
-    const usingValue = this.isBar ? totalOfPrevValues : totalOfValues;
+    const usingValue = this.isBar ? totalOfBeforeValues : totalOfValues;
     const result = min > 0 ? Math.max(usingValue - min, 0) : usingValue;
 
     if (this.isBar) {
@@ -517,7 +503,7 @@ export default class BoxStackSeries extends BoxSeries {
     const value = values[currentIndex];
 
     if (currentIndex === 0 && min > value) {
-      return;
+      return null;
     }
 
     return this.isBar
@@ -533,19 +519,13 @@ export default class BoxStackSeries extends BoxSeries {
     isLBSideWithDiverging: boolean
   ) {
     const barLength = this.getStackBarLength(values, seriesIndex, ratio, renderOptions);
-    const startPosition = isUndefined(barLength)
-      ? barLength
-      : this.getStackStartPosition(
-          values,
-          seriesIndex,
-          ratio,
-          renderOptions,
-          isLBSideWithDiverging
-        );
+    const dataPosition: DataPosition = isNumber(barLength)
+      ? this.getStackStartPosition(values, seriesIndex, ratio, renderOptions, isLBSideWithDiverging)
+      : null;
 
     return {
       barLength,
-      startPosition,
+      dataPosition,
     };
   }
 }

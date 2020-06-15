@@ -42,10 +42,10 @@ export function sumValuesBeforeIndex(
   const curValue = values[currentIndex];
 
   return values.reduce((total, value, idx) => {
-    const isPrev = includedCurrentIndex ? idx <= currentIndex : idx < currentIndex;
+    const isBefore = includedCurrentIndex ? idx <= currentIndex : idx < currentIndex;
     const isSameSign = value * curValue >= 0;
 
-    if (isPrev && isSameSign) {
+    if (isBefore && isSameSign) {
       return total + value;
     }
 
@@ -53,15 +53,15 @@ export function sumValuesBeforeIndex(
   }, 0);
 }
 
-export function isExceededEdge(values: number[], currentIndex: number, min: number, max: number) {
+export function outsideRange(values: number[], currentIndex: number, min: number, max: number) {
   const value = values[currentIndex];
-  const totalOfPrevValues = sumValuesBeforeIndex(values, currentIndex, false);
+  const totalOfBeforeValues = sumValuesBeforeIndex(values, currentIndex, false);
   const positive = value >= 0;
   const negative = value < 0;
 
   return (
-    (positive && totalOfPrevValues >= max) ||
-    (negative && totalOfPrevValues <= min) ||
+    (positive && totalOfBeforeValues >= max) ||
+    (negative && totalOfBeforeValues <= min) ||
     (currentIndex === 0 && positive && value < min) ||
     (currentIndex === 0 && negative && value > max)
   );
@@ -73,32 +73,32 @@ export function calibrateBoxStackDrawingValue(
   min: number,
   max: number
 ) {
-  const totalOfPrevValues = sumValuesBeforeIndex(values, currentIndex, false);
+  const totalOfBeforeValues = sumValuesBeforeIndex(values, currentIndex, false);
   const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
 
-  if (isExceededEdge(values, currentIndex, min, max)) {
-    return;
+  if (outsideRange(values, currentIndex, min, max)) {
+    return null;
   }
 
   if (currentIndex === 0) {
     return calibrateDrawingValue(values[currentIndex], min, max);
   }
 
+  if (totalOfBeforeValues < min && totalOfValues > max) {
+    return max - min;
+  }
+
+  let result = values[currentIndex];
+
   if (totalOfValues > max) {
-    return max - totalOfPrevValues;
+    result = max - totalOfBeforeValues;
+  } else if (totalOfValues < min) {
+    result = min - totalOfBeforeValues;
+  } else if (totalOfBeforeValues < min) {
+    result = totalOfValues - min;
+  } else if (totalOfBeforeValues > max) {
+    result = totalOfValues - max;
   }
 
-  if (totalOfValues < min) {
-    return min - totalOfPrevValues;
-  }
-
-  if (totalOfPrevValues < min) {
-    return totalOfValues - min;
-  }
-
-  if (totalOfPrevValues > max) {
-    return totalOfValues - max;
-  }
-
-  return values[currentIndex];
+  return result;
 }

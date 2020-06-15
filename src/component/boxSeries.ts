@@ -17,6 +17,7 @@ import {
   last,
   hasNegativeOnly,
   hasPositiveOnly,
+  isNull,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
@@ -27,6 +28,14 @@ import { getLimitOnAxis } from '@src/helpers/axes';
 import { AxisType } from './axis';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 
+export enum SeriesDirection {
+  POSITIVE,
+  NEGATIVE,
+  BOTH,
+}
+
+export type BarLength = number | null;
+export type DataPosition = number | null;
 type DrawModels = {
   clipRect?: ClipRectAreaModel[];
   series: RectModel[];
@@ -40,8 +49,6 @@ type RenderOptions = {
   max: number;
   diverging: boolean;
   ratio: number;
-  positiveOnly: boolean;
-  negativeOnly: boolean;
   hasNegativeValue: boolean;
 };
 
@@ -182,8 +189,6 @@ export default class BoxSeries extends Component {
       tickDistance,
       diverging,
       ratio: this.getValueRatio(min, max, diverging),
-      positiveOnly: hasPositiveOnly(labels),
-      negativeOnly: hasNegativeOnly(labels),
       hasNegativeValue: hasNegative(labels),
     };
   }
@@ -201,11 +206,7 @@ export default class BoxSeries extends Component {
     const { colors } = theme.series;
     const seriesData = series[this.name].data;
     const renderOptions = this.makeRenderOptions(axes, options);
-    this.basePosition = this.getBasePosition(
-      axes[this.valueAxis],
-      renderOptions.positiveOnly,
-      renderOptions.negativeOnly
-    );
+    this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, colors, renderOptions);
 
@@ -331,21 +332,17 @@ export default class BoxSeries extends Component {
     return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
-  protected getBasePosition(
-    { labels, tickCount }: AxisData,
-    positiveOnly: boolean,
-    negativeOnly: boolean
-  ): number {
+  protected getBasePosition({ labels, tickCount }: AxisData): number {
     const valueLabels = this.isBar ? labels : [...labels].reverse();
     const zeroValueIndex = valueLabels.findIndex((label) => Number(label) === 0);
     const tickPositions = makeTickPixelPositions(this.getOffsetSize(), tickCount);
     const hasZeroOnAxis = zeroValueIndex > -1;
+    const seriesDirection = this.getSeriesDirection(valueLabels);
 
     return (
       (hasZeroOnAxis
         ? tickPositions[zeroValueIndex]
-        : this.getTickPositionIfNotZero(tickPositions, positiveOnly, negativeOnly)) +
-      this.hoverThickness
+        : this.getTickPositionIfNotZero(tickPositions, seriesDirection)) + this.hoverThickness
     );
   }
 
@@ -360,10 +357,14 @@ export default class BoxSeries extends Component {
   }
 
   private makeBarLength(value: BoxSeriesDataType, renderOptions: RenderOptions) {
+    if (isNull(value)) {
+      return null;
+    }
+
     const { min, max, ratio } = renderOptions;
     const calculatedValue = calculateBarLength(value, min, max);
 
-    return this.getBarLength(calculatedValue, ratio);
+    return Math.max(this.getBarLength(calculatedValue, ratio), 2);
   }
 
   protected getBarLength(value: number, ratio: number) {
@@ -389,11 +390,15 @@ export default class BoxSeries extends Component {
   }
 
   getStartPosition(
-    barLength: number,
+    barLength: BarLength,
     value: BoxSeriesDataType,
     seriesIndex: number,
     renderOptions: RenderOptions
-  ) {
+  ): DataPosition {
+    if (isNull(barLength)) {
+      return null;
+    }
+
     const basePosition = this.basePosition;
     const { diverging, hasNegativeValue } = renderOptions;
 
@@ -417,18 +422,16 @@ export default class BoxSeries extends Component {
 
   protected getAdjustedRect(
     seriesPosition: number,
-    dataPosition: number,
-    barLength: number,
+    dataPosition: DataPosition,
+    barLength: BarLength,
     columnWidth: number
-  ): Rect {
-    barLength = Math.max(barLength, 2);
-
+  ) {
     return {
       x: this.isBar ? dataPosition : seriesPosition,
       y: this.isBar ? seriesPosition : dataPosition,
       width: this.isBar ? barLength : columnWidth,
       height: this.isBar ? columnWidth : barLength,
-    };
+    } as Rect;
   }
 
   getColumnWidth(tickDistance: number, seriesLength: number, validDiverging = false) {
@@ -437,21 +440,29 @@ export default class BoxSeries extends Component {
     return (tickDistance - this.padding * 2) / seriesLength;
   }
 
-  protected getTickPositionIfNotZero(
-    tickPositions: number[],
-    positiveOnly: boolean,
-    negativeOnly: boolean
-  ) {
+  protected getSeriesDirection(labels: string[]) {
+    let result = SeriesDirection.BOTH;
+
+    if (hasPositiveOnly(labels)) {
+      result = SeriesDirection.POSITIVE;
+    } else if (hasNegativeOnly(labels)) {
+      result = SeriesDirection.NEGATIVE;
+    }
+
+    return result;
+  }
+
+  protected getTickPositionIfNotZero(tickPositions: number[], direction: SeriesDirection) {
     const firstTickPosition = Number(first(tickPositions));
     const lastTickPosition = Number(last(tickPositions));
+    let tickPos = 0;
 
-    if (positiveOnly) {
-      return this.isBar ? firstTickPosition : lastTickPosition;
-    }
-    if (negativeOnly) {
-      return this.isBar ? lastTickPosition : firstTickPosition;
+    if (direction === SeriesDirection.POSITIVE) {
+      tickPos = this.isBar ? firstTickPosition : lastTickPosition;
+    } else if (direction === SeriesDirection.NEGATIVE) {
+      tickPos = this.isBar ? lastTickPosition : firstTickPosition;
     }
 
-    return 0;
+    return tickPos;
   }
 }
