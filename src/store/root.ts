@@ -1,18 +1,12 @@
 import { StoreModule } from '@t/store/store';
 import { Size } from '@t/options';
-import { deepMergedCopy } from '@src/helpers/utils';
 
 const root: StoreModule = {
   name: 'root',
   // 파라메터로 data 초기 데이터도 받아야 한다.
   state: ({ options }) => ({
     chart: options.chart ?? { width: 0, height: 0 },
-    options: deepMergedCopy(
-      {
-        legend: { visible: true },
-      },
-      options
-    ),
+    options,
     theme: {
       series: {
         colors: [

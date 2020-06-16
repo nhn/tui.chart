@@ -4,6 +4,7 @@ import { tick } from '@src/brushes/axis';
 import { rect } from '@src/brushes/boxSeries';
 import { tooltip } from '@src/brushes/tooltip';
 import { circleLegend } from '@src/brushes/circleLegend';
+import { legend } from '@src/brushes/legend';
 
 import {
   AreaPointsModel,
@@ -336,6 +337,14 @@ export const circleLegendBrush = () => {
     radius: 100,
     value: 10,
   });
+
+  return el;
+};
+
+export const legendBrush = () => {
+  const { ctx, el } = setup();
+
+  legend(ctx);
 
   return el;
 };

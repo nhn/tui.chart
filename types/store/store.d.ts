@@ -92,7 +92,8 @@ export interface StoreModule extends StoreOptions {
     | 'category'
     | 'seriesData'
     | 'dataRange'
-    | 'stackSeriesData';
+    | 'stackSeriesData'
+    | 'legend';
 }
 
 export interface SeriesTheme {
@@ -134,6 +135,14 @@ export type StackSeries = {
   [key in BoxType]?: StackSeriesData<key>;
 };
 
+export type LegendIconType = 'rect' | 'circle' | 'spectrum' | 'line';
+
+export interface Legend {
+  visible: boolean;
+  names: string[];
+  iconType: LegendIconType;
+}
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -153,6 +162,7 @@ export interface ChartState<T extends Options> {
   plot: {
     lines?: PlotLine[];
   };
+  legend: Legend;
 }
 
 export type StackTotal = {
