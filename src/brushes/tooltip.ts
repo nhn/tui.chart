@@ -83,6 +83,7 @@ function renderCategoryArea(ctx: CanvasRenderingContext2D, categoryAreaInfo: Cat
 }
 
 function renderLabelModel(text: string, point: Point, styleObj?: LabelStyle) {
+  const { x, y } = point;
   const labelStyle = {
     textBaseline: 'top',
     fillStyle: '#fff',
@@ -91,7 +92,8 @@ function renderLabelModel(text: string, point: Point, styleObj?: LabelStyle) {
   } as LabelStyle;
 
   return {
-    ...point,
+    x,
+    y: y + 1,
     type: 'label',
     text,
     style: ['default', styleObj ? deepMergedCopy(labelStyle, styleObj) : labelStyle],

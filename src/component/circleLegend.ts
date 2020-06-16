@@ -3,7 +3,7 @@ import { ChartState, Options } from '@t/store/store';
 import { CircleLegendModel } from '@t/components/circleLegend';
 import { BubbleSeriesType } from '@t/options';
 import { getMaxRadius } from '@src/component/bubbleSeries';
-import { showCircleLegend } from '@src/store/layout';
+import { showCircleLegend } from '@src/store/legend';
 
 export default class CircleLegend extends Component {
   models: { circleLegend: CircleLegendModel[] } = { circleLegend: [] };

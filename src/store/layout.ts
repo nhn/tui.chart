@@ -1,38 +1,22 @@
-import { StoreModule, Layout, Options, Series } from '@t/store/store';
+import { StoreModule, Layout, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { Align, BubbleChartOptions } from '@t/options';
+import { Align } from '@t/options';
 import { getTextWidth } from '@src/helpers/calculator';
-
-const LEGEND_LABEL_FONT = 'normal 11px Arial';
-const margin = { X: 10 };
-const CHECKBOX_SIZE = 14;
-const ICON_SIZE = 14;
-
-export function showCircleLegend(options: BubbleChartOptions, isBubbleChart = false) {
-  return isBubbleChart && options?.circleLegend?.visible;
-}
-
-function showLegend(options: Options, isBubbleChart = false) {
-  return showCircleLegend(options, isBubbleChart) || options.legend?.visible;
-}
+import { LEGEND_LABEL_FONT, CHECKBOX_SIZE, ICON_SIZE, margin } from '@src/brushes/legend';
 
 function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
 }
 
-function getLongestNameWidth(series: Series) {
-  const name = Object.keys(series).reduce((longestName, type) => {
-    const seriesName = series[type].reduce((seriesLongestName, datum) => {
-      return datum.name.length >= seriesLongestName.length ? datum.name : seriesLongestName;
-    }, '');
-
-    return longestName.length > seriesName.length ? longestName : seriesName;
+function getLongestNameWidth(names: string[]) {
+  const longestName = names.reduce((acc, cur) => {
+    return acc.length > cur.length ? acc : cur;
   }, '');
 
-  return getTextWidth(name, LEGEND_LABEL_FONT);
+  return getTextWidth(longestName, LEGEND_LABEL_FONT);
 }
 
-function calculateLegendWidth(width: number, series: Series, options: Options) {
+function calculateLegendWidth(width: number, names: string[], options: Options) {
   const legendOptions = options?.legend;
   let legendWidth = width / 10;
 
@@ -41,7 +25,7 @@ function calculateLegendWidth(width: number, series: Series, options: Options) {
   }
 
   if (!isVerticalAlign(legendOptions?.align)) {
-    const labelAreaWidth = getLongestNameWidth(series) + CHECKBOX_SIZE + ICON_SIZE + margin.X * 2;
+    const labelAreaWidth = getLongestNameWidth(names) + CHECKBOX_SIZE + ICON_SIZE + margin.X * 2;
     legendWidth = Math.max(labelAreaWidth, legendWidth);
   }
 
@@ -57,8 +41,8 @@ const layout: StoreModule = {
     setLayout({ state }) {
       const {
         chart: { height, width },
-        series,
         options,
+        legend: { visible, names },
       } = state;
 
       const padding = 10;
@@ -69,9 +53,7 @@ const layout: StoreModule = {
         y: 0 + padding,
       };
 
-      const legendWidth = showLegend(options, !!series.bubble)
-        ? calculateLegendWidth(width, series, options)
-        : 0;
+      const legendWidth = visible ? calculateLegendWidth(width, names, options) : 0;
 
       const xAxis = {
         width: width - (yAxis.x + yAxis.width + legendWidth + padding * 2),

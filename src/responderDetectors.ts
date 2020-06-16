@@ -1,14 +1,28 @@
 import { Point, Rect } from '@t/options';
 import { PathRectModel, RectModel, CircleResponderModel } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
+import { LegendResponderModel } from '@t/components/legend';
+import { CHECKBOX_SIZE } from '@src/brushes/legend';
 
-type DetectorType = 'circle' | 'rect';
+type DetectorType = 'circle' | 'rect' | 'legendCheckbox' | 'legendLabel';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
 };
 
 export const responderDetectors: ResponderDetectors = {
+  legendLabel: (mousePosition: Point, model: LegendResponderModel) => {
+    const { x, y } = mousePosition;
+    const { x: modelX, y: modelY, width: modelWidth } = model;
+
+    return x >= modelX && x <= modelX + modelWidth! && y >= modelY && y <= modelY + CHECKBOX_SIZE;
+  },
+  legendCheckbox: (mousePosition: Point, model: LegendResponderModel) => {
+    const { x, y } = mousePosition;
+    const { x: modelX, y: modelY } = model;
+
+    return x >= modelX && x <= modelX + CHECKBOX_SIZE && y >= modelY && y <= modelY + CHECKBOX_SIZE;
+  },
   circle: (mousePosition: Point, model: CircleResponderModel, componentRect: Rect) => {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, radius, detectionRadius } = model;

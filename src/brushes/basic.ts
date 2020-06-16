@@ -113,5 +113,5 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
     });
   }
 
-  ctx.fillText(text, x, y + 1);
+  ctx.fillText(text, x, y);
 }

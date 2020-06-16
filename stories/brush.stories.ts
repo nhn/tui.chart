@@ -344,7 +344,85 @@ export const circleLegendBrush = () => {
 export const legendBrush = () => {
   const { ctx, el } = setup();
 
-  legend(ctx);
+  legend(ctx, {
+    type: 'legend',
+    iconType: 'circle',
+    align: 'right',
+    data: [
+      {
+        label: 'circle-checked-active',
+        color: '#ff4250',
+        checked: true,
+        active: true,
+        x: 100,
+        y: 100,
+      },
+      {
+        label: 'circle-checked-inactive',
+        color: '#ff4250',
+        checked: true,
+        active: false,
+        x: 100,
+        y: 120,
+      },
+      {
+        label: 'circle-unchecked-active',
+        color: '#ff4250',
+        checked: false,
+        active: true,
+        x: 100,
+        y: 140,
+      },
+    ],
+  });
+
+  legend(ctx, {
+    type: 'legend',
+    iconType: 'line',
+    align: 'right',
+    data: [
+      {
+        label: 'line-checked-active',
+        color: '#f9d423',
+        checked: true,
+        active: true,
+        x: 100,
+        y: 160,
+      },
+      {
+        label: 'line-checked-inactive',
+        color: '#f9d423',
+        checked: true,
+        active: false,
+        x: 100,
+        y: 180,
+      },
+    ],
+  });
+
+  legend(ctx, {
+    type: 'legend',
+    iconType: 'rect',
+    align: 'right',
+    data: [
+      {
+        label: 'rect-checked-active',
+        color: '#83af9b',
+        checked: true,
+        active: true,
+        x: 100,
+        y: 200,
+      },
+      {
+        label: 'rect-checked-inactive',
+        color: '#83af9b',
+        checked: true,
+        active: false,
+        x: 100,
+        y: 220,
+      },
+    ],
+  });
 
   return el;
 };
