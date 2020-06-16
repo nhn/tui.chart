@@ -1,4 +1,4 @@
-import BoxSeries, { isLeftBottomSide, SeriesDirection, BarLength, DataPosition } from './boxSeries';
+import BoxSeries, { isLeftBottomSide, SeriesDirection } from './boxSeries';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -19,7 +19,7 @@ import {
   AxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { RectModel } from '@t/components/series';
+import { RectModel, NullableNumber } from '@t/components/series';
 import { deepCopyArray, includes, isNumber } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
 import { getLimitOnAxis } from '@src/helpers/axes';
@@ -255,11 +255,18 @@ export default class BoxStackSeries extends BoxSeries {
           isLBSideWithDiverging
         );
         const { x, y } = this.getAdjustedRect(seriesPos, dataPosition, barLength!, columnWidth);
+        let xPos: NullableNumber = null;
+        let yPos: NullableNumber = null;
 
-        const xPos = !isLBSideWithDiverging && this.isBar ? x + barLength! : x;
-        const yPos = isLBSideWithDiverging && !this.isBar ? y + barLength! : y;
+        if (x) {
+          xPos = !isLBSideWithDiverging && this.isBar ? x + barLength! : x;
+        }
 
-        points.push({ x: xPos, y: yPos });
+        if (y) {
+          yPos = isLBSideWithDiverging && !this.isBar ? y + barLength! : y;
+        }
+
+        points.push({ x: xPos!, y: yPos! });
       });
 
       connectorPoints.push(points);
@@ -378,7 +385,7 @@ export default class BoxStackSeries extends BoxSeries {
     seriesIndex: number,
     ratio: number,
     renderOptions: RenderOptions
-  ): BarLength {
+  ): NullableNumber {
     const value = calibrateDrawingValue(values, seriesIndex, renderOptions);
 
     return isNumber(value) ? this.getBarLength(value, ratio) : null;
@@ -409,10 +416,10 @@ export default class BoxStackSeries extends BoxSeries {
     ratio: number,
     renderOptions: RenderOptions,
     isLBSideWithDiverging: boolean
-  ): DataPosition {
+  ): NullableNumber {
     const { stack, diverging, seriesDirection } = renderOptions;
 
-    let startPos: DataPosition;
+    let startPos: NullableNumber;
 
     if (diverging) {
       startPos = isLBSideWithDiverging
@@ -439,10 +446,10 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const basePosition = this.basePosition;
     const { min, max } = renderOptions;
-    const totalOfBeforeValues = sumValuesBeforeIndex(values, currentIndex, false);
+    const totalOfIndexBefore = sumValuesBeforeIndex(values, currentIndex, false);
     const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
     const collideEdge = totalOfValues < min;
-    const usingValue = this.isBar ? totalOfValues : totalOfBeforeValues;
+    const usingValue = this.isBar ? totalOfValues : totalOfIndexBefore;
     const result = max < 0 ? Math.min(usingValue - max, 0) : usingValue;
 
     if (this.isBar) {
@@ -462,10 +469,10 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const basePosition = this.basePosition;
     const { min, max } = renderOptions;
-    const totalOfBeforeValues = sumValuesBeforeIndex(values, currentIndex, false);
+    const totalOfIndexBefore = sumValuesBeforeIndex(values, currentIndex, false);
     const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
     const collideEdge = totalOfValues > max;
-    const usingValue = this.isBar ? totalOfBeforeValues : totalOfValues;
+    const usingValue = this.isBar ? totalOfIndexBefore : totalOfValues;
     const result = min > 0 ? Math.max(usingValue - min, 0) : usingValue;
 
     if (this.isBar) {
@@ -519,7 +526,7 @@ export default class BoxStackSeries extends BoxSeries {
     isLBSideWithDiverging: boolean
   ) {
     const barLength = this.getStackBarLength(values, seriesIndex, ratio, renderOptions);
-    const dataPosition: DataPosition = isNumber(barLength)
+    const dataPosition: NullableNumber = isNumber(barLength)
       ? this.getStackStartPosition(values, seriesIndex, ratio, renderOptions, isLBSideWithDiverging)
       : null;
 

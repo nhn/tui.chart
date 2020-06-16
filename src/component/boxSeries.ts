@@ -1,5 +1,5 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel } from '@t/components/series';
+import { RectModel, ClipRectAreaModel, SeriesRect, NullableNumber } from '@t/components/series';
 import { ChartState, ChartType, BoxType, AxisData } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -34,8 +34,6 @@ export enum SeriesDirection {
   BOTH,
 }
 
-export type BarLength = number | null;
-export type DataPosition = number | null;
 type DrawModels = {
   clipRect?: ClipRectAreaModel[];
   series: RectModel[];
@@ -213,8 +211,10 @@ export default class BoxSeries extends Component {
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
     const hoveredSeries = this.renderHighlightSeriesModel(seriesModels);
 
-    this.models.clipRect = [this.renderClipRectAreaModel()];
-    this.models.series = seriesModels;
+    this.models = {
+      clipRect: [this.renderClipRectAreaModel()],
+      series: seriesModels,
+    };
 
     if (!this.drawModels) {
       this.drawModels = {
@@ -390,11 +390,11 @@ export default class BoxSeries extends Component {
   }
 
   getStartPosition(
-    barLength: BarLength,
+    barLength: NullableNumber,
     value: BoxSeriesDataType,
     seriesIndex: number,
     renderOptions: RenderOptions
-  ): DataPosition {
+  ): NullableNumber {
     if (isNull(barLength)) {
       return null;
     }
@@ -422,16 +422,16 @@ export default class BoxSeries extends Component {
 
   protected getAdjustedRect(
     seriesPosition: number,
-    dataPosition: DataPosition,
-    barLength: BarLength,
+    dataPosition: NullableNumber,
+    barLength: NullableNumber,
     columnWidth: number
-  ) {
+  ): SeriesRect {
     return {
       x: this.isBar ? dataPosition : seriesPosition,
       y: this.isBar ? seriesPosition : dataPosition,
       width: this.isBar ? barLength : columnWidth,
       height: this.isBar ? columnWidth : barLength,
-    } as Rect;
+    };
   }
 
   getColumnWidth(tickDistance: number, seriesLength: number, validDiverging = false) {

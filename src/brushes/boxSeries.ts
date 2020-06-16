@@ -1,10 +1,15 @@
 import { RectModel, RectStyle } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
+import { isNull } from '@src/helpers/utils';
 
 export type RectStyleName = 'default';
 
 export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   const { x, y, width, height, style, thickness = 0 } = model;
+
+  if (isNull(x) || isNull(y) || isNull(width) || isNull(height)) {
+    return;
+  }
 
   ctx.beginPath();
 
