@@ -8,12 +8,12 @@ function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
 }
 
-function getLongestNameWidth(names: string[]) {
-  const longestName = names.reduce((acc, cur) => {
+function getLongestLabelWidth(names: string[]) {
+  const longestLabel = names.reduce((acc, cur) => {
     return acc.length > cur.length ? acc : cur;
   }, '');
 
-  return getTextWidth(longestName, LEGEND_LABEL_FONT);
+  return getTextWidth(longestLabel, LEGEND_LABEL_FONT);
 }
 
 function calculateLegendWidth(width: number, names: string[], options: Options) {
@@ -25,7 +25,7 @@ function calculateLegendWidth(width: number, names: string[], options: Options) 
   }
 
   if (!isVerticalAlign(legendOptions?.align)) {
-    const labelAreaWidth = getLongestNameWidth(names) + CHECKBOX_SIZE + ICON_SIZE + margin.X * 2;
+    const labelAreaWidth = getLongestLabelWidth(names) + CHECKBOX_SIZE + ICON_SIZE + margin.X * 2;
     legendWidth = Math.max(labelAreaWidth, legendWidth);
   }
 
@@ -42,7 +42,7 @@ const layout: StoreModule = {
       const {
         chart: { height, width },
         options,
-        legend: { visible, names },
+        legend: { visible, data },
       } = state;
 
       const padding = 10;
@@ -53,7 +53,8 @@ const layout: StoreModule = {
         y: 0 + padding,
       };
 
-      const legendWidth = visible ? calculateLegendWidth(width, names, options) : 0;
+      const legendLabels = data.map(({ label }) => label);
+      const legendWidth = visible ? calculateLegendWidth(width, legendLabels, options) : 0;
 
       const xAxis = {
         width: width - (yAxis.x + yAxis.width + legendWidth + padding * 2),

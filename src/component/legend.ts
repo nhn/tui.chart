@@ -28,21 +28,16 @@ export default class Legend extends Component {
     }
   }
 
-  setModelDataActive(condition: Function) {
-    this.models[0].data.forEach((datum, idx) => {
-      datum.active = condition(idx);
-    });
-  }
-
   onClickCheckbox = (responders) => {
-    this.setModelDataActive(() => true);
-    const model = this.models[0].data.find((m) => m.label === responders[0].label)!;
-    model.checked = !model.checked;
+    const { label, checked } = responders[0];
 
-    if (model.checked) {
-      this.store.dispatch('enableSeries', model.label);
+    this.store.dispatch('setAllLegendActiveState', true);
+    this.store.dispatch('setLegendCheckedState', { name: label, checked: !checked });
+
+    if (checked) {
+      this.store.dispatch('disableSeries', label);
     } else {
-      this.store.dispatch('disableSeries', model.label);
+      this.store.dispatch('enableSeries', label);
     }
 
     this.eventBus.emit('needDraw');
@@ -50,14 +45,13 @@ export default class Legend extends Component {
 
   onClickLabel = (responders) => {
     const { label } = responders[0];
-    const { data } = this.models[0];
-    const modelIdx = data.findIndex((m) => m.label === label)!;
 
     if (this.activatedResponders.length && this.activatedResponders[0].label === label) {
-      this.setModelDataActive(() => true);
+      this.store.dispatch('setAllLegendActiveState', true);
       this.activatedResponders = [];
     } else {
-      this.setModelDataActive((idx) => idx === modelIdx);
+      this.store.dispatch('setAllLegendActiveState', false);
+      this.store.dispatch('setLegendActiveState', { name: label, active: true });
       this.activatedResponders = responders;
     }
 
@@ -74,7 +68,7 @@ export default class Legend extends Component {
   renderLegendModel(legend: LegendType, theme: Theme): LegendModel[] {
     const defaultX = this.rect.width / 10;
     const defaultY = 20;
-    const { iconType, names } = legend;
+    const { iconType, data } = legend;
     const { colors } = theme.series;
 
     return [
@@ -82,13 +76,11 @@ export default class Legend extends Component {
         type: 'legend',
         iconType,
         align: 'right',
-        data: names.map((name, idx) => ({
-          label: name,
+        data: data.map((datum, idx) => ({
+          ...datum,
           color: colors[idx],
           x: defaultX,
           y: defaultY + LEGEND_ITEM_HEIGHT * idx,
-          checked: true,
-          active: true,
         })),
       },
     ];

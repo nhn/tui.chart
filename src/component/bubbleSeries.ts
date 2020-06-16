@@ -1,6 +1,6 @@
 import { CircleModel } from '@t/components/series';
 import { BaseOptions, BubbleSeriesType } from '@t/options';
-import { ChartState, Scale, SeriesTheme } from '@t/store/store';
+import { ChartState, Legend, Scale, SeriesTheme } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
@@ -51,7 +51,12 @@ export default class BubbleSeries extends CircleSeries {
     this.maxRadius = legend.width ? legend.width / 2 : Math.min(xAxisTickSize, yAxisTickSize);
     this.maxValue = getMaxRadius(bubbleData);
 
-    const seriesModel = this.renderBubblePointsModel(bubbleData, renderOptions, scale);
+    const seriesModel = this.renderBubblePointsModel(
+      bubbleData,
+      renderOptions,
+      scale,
+      chartState.legend
+    );
     const tooltipModel = this.makeTooltipModel(bubbleData, categories, renderOptions);
 
     this.models.series = seriesModel;
@@ -72,7 +77,8 @@ export default class BubbleSeries extends CircleSeries {
   renderBubblePointsModel(
     seriesRawData: BubbleSeriesType[],
     renderOptions: RenderOptions,
-    scale: Scale
+    scale: Scale,
+    legend: Legend
   ): CircleModel[] {
     const { theme } = renderOptions;
     const { colors } = theme;
@@ -81,8 +87,11 @@ export default class BubbleSeries extends CircleSeries {
       yAxis: { limit: yAxisLimit },
     } = scale;
 
-    return seriesRawData.flatMap(({ data }, seriesIndex) => {
+    return seriesRawData.flatMap(({ data, name }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
+      // @TODO: active는 시리즈에 포함되는게 맞을듯?
+      const { active } = legend.data.find(({ label }) => label === name)!;
+      const color = getRGBA(colors[seriesIndex], active ? 0.8 : 0.3);
 
       data.forEach((datum) => {
         const xValue = getCoordinateXValue(datum);
@@ -94,7 +103,6 @@ export default class BubbleSeries extends CircleSeries {
         const x = xValueRatio * this.rect.width;
         const y = (1 - yValueRatio) * this.rect.height;
         const radius = (datum.r / this.maxValue) * this.maxRadius;
-        const color = getRGBA(colors[seriesIndex], 0.7);
 
         circleModels.push({
           x,

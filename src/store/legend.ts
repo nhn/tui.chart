@@ -12,7 +12,7 @@ function showLegend(options: Options, isBubbleChart = false) {
   return showCircleLegend(options, isBubbleChart) || visible;
 }
 
-function getLegendNames(series: SeriesRaw) {
+function getLegendLabels(series: SeriesRaw) {
   return Object.keys(series).reduce((acc, type) => {
     const seriesName = series[type].map(({ name }) => name);
 
@@ -43,10 +43,29 @@ const legend: StoreModule = {
   state: ({ options, series }) => ({
     legend: {
       visible: showLegend(options, !!series.bubble),
-      names: getLegendNames(series),
       iconType: getIconType(series),
+      data: getLegendLabels(series).map((label) => ({ label, active: true, checked: true })),
     },
   }),
+  action: {
+    setLegendActiveState({ state }, { name, active }) {
+      const { data } = state.legend;
+      const model = data.find(({ label }) => label === name)!;
+      model.active = active;
+      this.notify(state, 'legend');
+    },
+    setAllLegendActiveState({ state }, active: boolean) {
+      state.legend.data.forEach((datum) => {
+        datum.active = active;
+      });
+      this.notify(state, 'legend');
+    },
+    setLegendCheckedState({ state }, { name, checked }) {
+      const model = state.legend.data.find(({ label }) => label === name)!;
+      model.checked = checked;
+      this.notify(state, 'legend');
+    },
+  },
 };
 
 export default legend;

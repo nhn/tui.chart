@@ -139,8 +139,12 @@ export type LegendIconType = 'rect' | 'circle' | 'spectrum' | 'line';
 
 export interface Legend {
   visible: boolean;
-  names: string[];
   iconType: LegendIconType;
+  data: {
+    label: string;
+    active: boolean;
+    checked: boolean;
+  }[];
 }
 
 export interface ChartState<T extends Options> {

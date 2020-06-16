@@ -4,20 +4,20 @@ import { isUndefined } from '@src/helpers/utils';
 import { LegendResponderModel } from '@t/components/legend';
 import { CHECKBOX_SIZE } from '@src/brushes/legend';
 
-type DetectorType = 'circle' | 'rect' | 'legendCheckbox' | 'legendLabel';
+type DetectorType = 'circle' | 'rect' | 'label' | 'checkbox';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
 };
 
 export const responderDetectors: ResponderDetectors = {
-  legendLabel: (mousePosition: Point, model: LegendResponderModel) => {
+  label: (mousePosition: Point, model: LegendResponderModel) => {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, width: modelWidth } = model;
 
     return x >= modelX && x <= modelX + modelWidth! && y >= modelY && y <= modelY + CHECKBOX_SIZE;
   },
-  legendCheckbox: (mousePosition: Point, model: LegendResponderModel) => {
+  checkbox: (mousePosition: Point, model: LegendResponderModel) => {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY } = model;
 
