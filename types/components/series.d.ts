@@ -62,6 +62,7 @@ export interface RectStyle {
 export type RectModel = {
   type: 'rect';
   color: string;
+  borderColor?: string;
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
 } & Rect;
