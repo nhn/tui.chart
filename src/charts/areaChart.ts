@@ -12,7 +12,9 @@ import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
+import * as legendBrush from '@src/brushes/legend';
 import { AreaChartOptions, AreaSeriesData } from '@t/options';
+import Legend from '@src/component/legend';
 
 interface AreaChartProps {
   el: Element;
@@ -42,7 +44,14 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
+    this.componentManager.add(Legend);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, lineSeriesBrushes]);
+    this.painter.addGroups([
+      basicBrushes,
+      axisBrushes,
+      tooltipBrushes,
+      lineSeriesBrushes,
+      legendBrush,
+    ]);
   }
 }
