@@ -1,10 +1,5 @@
 import ColumnChart from '@src/charts/columnChart';
-import {
-  budgetData,
-  temperatureRangeData,
-  negativeBudgetData,
-  budgetDataNegativeOnly,
-} from './data';
+import { budgetData, temperatureRangeData, negativeBudgetData, lossData } from './data';
 import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
@@ -53,7 +48,7 @@ export const positiveOnly = () => {
 };
 
 export const negativeOnly = () => {
-  const { el } = createChart(budgetDataNegativeOnly, {
+  const { el } = createChart(lossData, {
     ...defaultOptions,
     yAxis: {
       scale: {
