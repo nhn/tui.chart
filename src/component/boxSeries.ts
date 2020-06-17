@@ -145,16 +145,12 @@ export default class BoxSeries extends Component {
       series.forEach((drawModel, index) => {
         const targetModel = modelSeries[index];
 
-        if (!targetModel) {
-          return;
-        }
-
         const offsetSize = targetModel[this.offsetSizeKey] * delta;
 
-        drawModel![this.offsetSizeKey] = offsetSize;
+        drawModel[this.offsetSizeKey] = offsetSize;
 
         if (!this.isBar) {
-          drawModel![offsetKey] =
+          drawModel[offsetKey] =
             targetModel[offsetKey] + targetModel[this.offsetSizeKey] - offsetSize;
         }
       });
@@ -235,7 +231,7 @@ export default class BoxSeries extends Component {
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
-      ...m!,
+      ...m,
       data: tooltipData[index],
     }));
   }
@@ -298,7 +294,7 @@ export default class BoxSeries extends Component {
 
   protected renderHoveredSeriesModel(seriesModel: RectModel[]): RectModel[] {
     return seriesModel.map((data) => {
-      return isNull(data) ? null : this.makeHoveredSeriesModel(data);
+      return this.makeHoveredSeriesModel(data);
     });
   }
 
@@ -340,14 +336,24 @@ export default class BoxSeries extends Component {
     renderOptions: RenderOptions,
     categories?: string[]
   ): TooltipData[] {
-    return seriesData.flatMap(({ data }, seriesIndex) =>
-      data.map((value, dataIdx) => ({
-        label: name,
-        color: colors[seriesIndex],
-        value: this.getTooltipValue(value),
-        category: categories?.[dataIdx],
-      }))
-    );
+    const tooltipData: TooltipData[] = [];
+
+    seriesData.forEach(({ data, name }, seriesIndex) => {
+      data.forEach((value, dataIndex) => {
+        const barLength = this.makeBarLength(value, renderOptions);
+
+        if (isNumber(barLength)) {
+          tooltipData.push({
+            label: name,
+            color: colors[seriesIndex],
+            value: this.getTooltipValue(value),
+            category: categories?.[dataIndex],
+          });
+        }
+      });
+    });
+
+    return tooltipData;
   }
 
   private getTooltipValue(value) {

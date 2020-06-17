@@ -1,6 +1,6 @@
 import { Point, Rect } from '@t/options';
 import { PathRectModel, RectModel, CircleResponderModel } from '@t/components/series';
-import { isUndefined, isNull } from '@src/helpers/utils';
+import { isUndefined } from '@src/helpers/utils';
 
 type DetectorType = 'circle' | 'rect';
 
@@ -25,10 +25,6 @@ export const responderDetectors: ResponderDetectors = {
     model: PathRectModel | RectModel,
     componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
   ) => {
-    if (isNull(model)) {
-      return false;
-    }
-
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, width, height } = model;
     const { x: compX, y: compY } = componentRect;

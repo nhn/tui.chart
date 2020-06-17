@@ -108,7 +108,7 @@ export default abstract class Chart<T extends Options> {
       }
 
       const detected = (component.responders || []).filter((m) => {
-        return m.type && responderDetectors[m.type](mousePosition, m, component.rect);
+        return responderDetectors[m.type](mousePosition, m, component.rect);
       });
 
       component[delegationMethod]({ mousePosition, responders: detected }, event);

@@ -20,7 +20,7 @@ import {
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel, Nullable } from '@t/components/series';
-import { deepCopyArray, includes, isNumber, isNull } from '@src/helpers/utils';
+import { deepCopyArray, includes, isNumber } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
@@ -103,7 +103,12 @@ export default class BoxStackSeries extends BoxSeries {
 
     const { series, connector } = this.renderStackSeriesModel(seriesData, colors, renderOptions);
     const hoveredSeries = this.renderHoveredSeriesModel(series);
-    const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
+    const tooltipData: TooltipData[] = this.getTooltipData(
+      seriesData,
+      colors,
+      renderOptions,
+      categories
+    );
 
     this.models = {
       clipRect: [this.renderClipRectAreaModel()],
@@ -120,7 +125,7 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
-      ...m!,
+      ...m,
       data: tooltipData[index],
     }));
   }
@@ -167,15 +172,13 @@ export default class BoxStackSeries extends BoxSeries {
           isLBSideWithDiverging
         );
 
-        const model: RectModel = isNull(barLength)
-          ? null
-          : {
-              type: 'rect',
-              color: colors![seriesIndex],
-              ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
-            };
-
-        seriesModels.push(model);
+        if (isNumber(barLength)) {
+          seriesModels.push({
+            type: 'rect',
+            color: colors![seriesIndex],
+            ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
+          });
+        }
       });
     });
 
@@ -258,19 +261,14 @@ export default class BoxStackSeries extends BoxSeries {
           renderOptions,
           isLBSideWithDiverging
         );
-        const { x, y } = this.getAdjustedRect(seriesPos, dataPosition, barLength!, columnWidth);
-        let xPos: Nullable<number> = null;
-        let yPos: Nullable<number> = null;
 
-        if (x) {
-          xPos = !isLBSideWithDiverging && this.isBar ? x + barLength! : x;
+        if (isNumber(barLength)) {
+          const { x, y } = this.getAdjustedRect(seriesPos, dataPosition, barLength!, columnWidth);
+          const xPos = !isLBSideWithDiverging && this.isBar ? x + barLength! : x;
+          const yPos = isLBSideWithDiverging && !this.isBar ? y + barLength! : y;
+
+          points.push({ x: xPos!, y: yPos! });
         }
-
-        if (y) {
-          yPos = isLBSideWithDiverging && !this.isBar ? y + barLength! : y;
-        }
-
-        points.push({ x: xPos!, y: yPos! });
       });
 
       connectorPoints.push(points);
@@ -282,27 +280,35 @@ export default class BoxStackSeries extends BoxSeries {
   private getTooltipData(
     seriesData: StackSeriesData<BoxType>,
     colors: string[],
+    renderOptions: RenderOptions,
     categories?: string[]
-  ) {
+  ): TooltipData[] {
     const seriesRawData = seriesData.data;
     const { stackData } = seriesData;
 
     return isGroupStack(stackData)
-      ? this.makeGroupStackTooltipData(seriesRawData, stackData, colors, categories)
-      : this.makeStackTooltipData(seriesRawData, stackData, colors, categories);
+      ? this.makeGroupStackTooltipData(seriesRawData, stackData, colors, renderOptions, categories)
+      : this.makeStackTooltipData(seriesRawData, stackData, colors, renderOptions, categories);
   }
 
   private makeGroupStackTooltipData(
     seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
     stackData: StackGroupData,
     colors: string[],
+    renderOptions: RenderOptions,
     categories?: string[]
   ) {
     return Object.keys(stackData).flatMap((groupId, groupIdx) => {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
       const groupColors = colors.splice(groupIdx, filtered.length);
 
-      return this.makeStackTooltipData(seriesRawData, stackData[groupId], groupColors, categories);
+      return this.makeStackTooltipData(
+        seriesRawData,
+        stackData[groupId],
+        groupColors,
+        renderOptions,
+        categories
+      );
     });
   }
 
@@ -310,16 +316,34 @@ export default class BoxStackSeries extends BoxSeries {
     seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
     stackData: StackDataValues,
     colors: string[],
+    renderOptions: RenderOptions,
     categories?: string[]
-  ) {
-    return stackData.flatMap(({ values }, index) =>
-      values.map((value, seriesIndex) => ({
-        label: seriesRawData[seriesIndex].name,
-        color: colors[seriesIndex],
-        value,
-        category: categories?.[index],
-      }))
-    );
+  ): TooltipData[] {
+    const tooltipData: TooltipData[] = [];
+
+    stackData.forEach(({ values, total }, dataIndex) => {
+      const ratio = this.getStackValueRatio(total, renderOptions);
+
+      values.forEach((value, seriesIndex) => {
+        const barLength: Nullable<number> = this.getStackBarLength(
+          values,
+          seriesIndex,
+          ratio,
+          renderOptions
+        );
+
+        if (isNumber(barLength)) {
+          tooltipData.push({
+            label: seriesRawData[seriesIndex].name,
+            color: colors[seriesIndex],
+            value,
+            category: categories?.[dataIndex],
+          });
+        }
+      });
+    });
+
+    return tooltipData;
   }
 
   private makeConnectorModel(
