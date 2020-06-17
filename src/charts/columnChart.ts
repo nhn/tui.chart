@@ -45,12 +45,12 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     super.initialize();
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Legend);
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(BoxStackSeries, { name: 'column' });
     this.componentManager.add(BoxSeries, { name: 'column' });
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
-    this.componentManager.add(Legend);
 
     this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes, legendBrush]);
   }

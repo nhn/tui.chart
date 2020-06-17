@@ -48,12 +48,12 @@ export default class BarChart extends Chart<BarChartOptions> {
     super.initialize();
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Legend);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(BoxSeries, { name: 'bar' });
     this.componentManager.add(BoxStackSeries, { name: 'bar' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
-    this.componentManager.add(Legend);
 
     this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes, legendBrush]);
   }

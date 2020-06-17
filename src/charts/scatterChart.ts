@@ -41,11 +41,11 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
     super.initialize();
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Legend);
     this.componentManager.add(ScatterSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
-    this.componentManager.add(Legend);
 
     this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, legendBrush]);
   }

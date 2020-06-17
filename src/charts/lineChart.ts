@@ -40,11 +40,11 @@ export default class LineChart extends Chart<LineChartOptions> {
     super.initialize();
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Legend);
     this.componentManager.add(LineSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
-    this.componentManager.add(Legend);
 
     this.painter.addGroups([
       basicBrushes,

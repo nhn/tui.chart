@@ -16,7 +16,7 @@ import * as tooltipBrush from '@src/brushes/tooltip';
 import * as circleLegendBrush from '@src/brushes/circleLegend';
 import * as boxSeriesBrush from '@src/brushes/boxSeries';
 import * as legendBrush from '@src/brushes/legend';
-import { BubbleSeriesData, BaseOptions, BubbleChartOptions } from '@t/options';
+import { BubbleSeriesData, BaseOptions, BubbleSeriesType } from '@t/options';
 
 interface BubbleChartProps {
   el: Element;
@@ -40,12 +40,12 @@ export default class BubbleChart extends Chart<BaseOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Plot);
+    this.componentManager.add(Legend);
     this.componentManager.add(BubbleSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
-    this.componentManager.add(Plot);
-    this.componentManager.add(Legend);
     this.componentManager.add(CircleLegend);
 
     this.painter.addGroups([

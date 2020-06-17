@@ -40,11 +40,11 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     super.initialize();
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Legend);
     this.componentManager.add(AreaSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
-    this.componentManager.add(Legend);
 
     this.painter.addGroups([
       basicBrushes,
