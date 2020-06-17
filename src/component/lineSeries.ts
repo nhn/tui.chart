@@ -2,12 +2,13 @@ import Component from './component';
 import { CircleModel, CircleResponderModel } from '@t/components/series';
 import { LineChartOptions, LineTypeSeriesOptions, Point, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
+import { ChartState, Legend, SeriesTheme, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { deepCopyArray } from '@src/helpers/utils';
+import { getRGBA } from '@src/helpers/color';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
@@ -21,6 +22,7 @@ interface RenderLineOptions {
   pointOnColumn: boolean;
   theme: SeriesTheme;
   options: LineTypeSeriesOptions;
+  tickDistance: number;
 }
 
 type DatumType = CoordinateDataType | number;
@@ -44,7 +46,7 @@ export default class LineSeries extends Component {
   }
 
   render(chartState: ChartState<LineChartOptions>) {
-    const { layout, series, scale, theme, options, axes, categories = [] } = chartState;
+    const { layout, series, scale, theme, options, axes, categories = [], legend } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -56,6 +58,7 @@ export default class LineSeries extends Component {
       pointOnColumn,
       options: options.series || {},
       theme: theme.series,
+      tickDistance,
     };
 
     this.rect = layout.plot;
@@ -63,9 +66,9 @@ export default class LineSeries extends Component {
     const lineSeriesModel = this.renderLinePointsModel(
       series.line.data,
       yAxis.limit,
-      tickDistance,
       renderLineOptions,
-      categories
+      categories,
+      legend
     );
 
     const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
@@ -118,16 +121,18 @@ export default class LineSeries extends Component {
   renderLinePointsModel(
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
-    tickDistance: number,
     renderOptions: RenderLineOptions,
-    categories: string[]
+    categories: string[],
+    legend: Legend
   ): LinePointsModel[] {
-    const { pointOnColumn, theme, options } = renderOptions;
+    const { pointOnColumn, theme, options, tickDistance } = renderOptions;
     const { colors } = theme;
     const { spline } = options;
 
-    return seriesRawData.map(({ data }, seriesIndex) => {
+    return seriesRawData.map(({ data, name }, seriesIndex) => {
       const points: Point[] = [];
+      const { active } = legend.data.find(({ label }) => label === name)!;
+      const color = getRGBA(colors[seriesIndex], active ? 1 : 0.3);
 
       data.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
@@ -148,7 +153,7 @@ export default class LineSeries extends Component {
       return {
         type: 'linePoints',
         lineWidth: 6,
-        color: colors[seriesIndex],
+        color,
         points,
         seriesIndex,
       };

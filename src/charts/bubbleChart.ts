@@ -45,14 +45,8 @@ export default class BubbleChart extends Chart<BaseOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
     this.componentManager.add(Plot);
-
-    if (this.store.state.options.legend?.visible) {
-      this.componentManager.add(Legend);
-    }
-
-    if ((this.store.state.options as BubbleChartOptions).circleLegend?.visible) {
-      this.componentManager.add(CircleLegend);
-    }
+    this.componentManager.add(Legend);
+    this.componentManager.add(CircleLegend);
 
     this.painter.addGroups([
       basicBrushes,

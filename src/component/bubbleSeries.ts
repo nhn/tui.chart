@@ -90,7 +90,7 @@ export default class BubbleSeries extends CircleSeries {
     return seriesRawData.flatMap(({ data, name }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
       const { active } = legend.data.find(({ label }) => label === name)!;
-      const color = getRGBA(colors[seriesIndex], active ? 0.8 : 0.3);
+      const color = getRGBA(colors[seriesIndex], active ? 0.8 : 0.1);
 
       data.forEach((datum) => {
         const xValue = getCoordinateXValue(datum);

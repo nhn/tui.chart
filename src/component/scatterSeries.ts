@@ -1,6 +1,6 @@
 import { CircleModel } from '@t/components/series';
 import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
-import { ChartState, Scale, SeriesTheme } from '@t/store/store';
+import { ChartState, Legend, Scale, SeriesTheme } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
@@ -19,7 +19,7 @@ export default class ScatterSeries extends CircleSeries {
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
-    const { layout, series, scale, theme, categories = [] } = chartState;
+    const { layout, series, scale, theme, categories = [], legend } = chartState;
     if (!series.scatter) {
       throw new Error("There's no scatter data!");
     }
@@ -31,7 +31,7 @@ export default class ScatterSeries extends CircleSeries {
 
     this.rect = layout.plot;
 
-    const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions);
+    const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions, legend);
     const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
 
     this.models.series = seriesModel;
@@ -52,7 +52,8 @@ export default class ScatterSeries extends CircleSeries {
   renderScatterPointsModel(
     seriesRawData: ScatterSeriesType[],
     scale: Scale,
-    renderOptions: RenderOptions
+    renderOptions: RenderOptions,
+    legend: Legend
   ): CircleModel[] {
     const { theme } = renderOptions;
     const { colors } = theme;
@@ -61,8 +62,10 @@ export default class ScatterSeries extends CircleSeries {
       yAxis: { limit: yAxisLimit },
     } = scale;
 
-    return seriesRawData.flatMap(({ data }, seriesIndex) => {
+    return seriesRawData.flatMap(({ data, name }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
+      const { active } = legend.data.find(({ label }) => label === name)!;
+      const color = getRGBA(colors[seriesIndex], active ? 0.9 : 0.3);
 
       data.forEach((datum) => {
         const xValue = getCoordinateXValue(datum);
@@ -80,7 +83,7 @@ export default class ScatterSeries extends CircleSeries {
           type: 'circle',
           radius: 7,
           style: ['default'],
-          color: getRGBA(colors[seriesIndex], 0.9),
+          color,
           seriesIndex,
         });
       });

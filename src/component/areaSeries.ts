@@ -13,7 +13,7 @@ import {
   RangeDataType,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
-import { ChartState, SeriesTheme, ValueEdge } from '@t/store/store';
+import { ChartState, Legend, SeriesTheme, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
@@ -32,6 +32,7 @@ interface RenderOptions {
   pointOnColumn: boolean;
   theme: SeriesTheme;
   options: LineTypeSeriesOptions;
+  tickDistance: number;
 }
 
 type DatumType = number | RangeDataType;
@@ -57,7 +58,7 @@ export default class AreaSeries extends Component {
   }
 
   public render(chartState: ChartState<AreaChartOptions>) {
-    const { layout, series, scale, theme, options, axes, categories = [] } = chartState;
+    const { layout, series, scale, theme, options, axes, categories = [], legend } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
     }
@@ -71,6 +72,7 @@ export default class AreaSeries extends Component {
       pointOnColumn,
       options: options.series || {},
       theme: theme.series,
+      tickDistance,
     };
 
     this.rect = layout.plot;
@@ -78,9 +80,9 @@ export default class AreaSeries extends Component {
     this.linePointsModel = this.renderLinePointsModel(
       areaData,
       yAxis.limit,
-      tickDistance,
       renderOptions,
-      categories
+      categories,
+      legend
     );
 
     const areaSeriesModel = this.renderAreaPointsModel(this.linePointsModel, bottomYPoint);
@@ -139,14 +141,16 @@ export default class AreaSeries extends Component {
   renderLinePointsModel(
     seriesRawData: AreaSeriesType[],
     limit: ValueEdge,
-    tickDistance: number,
     renderOptions: RenderOptions,
-    categories: string[]
+    categories: string[],
+    legend: Legend
   ): LinePointsModel[] {
-    const { pointOnColumn, theme, options } = renderOptions;
+    const { pointOnColumn, theme, options, tickDistance } = renderOptions;
 
-    return seriesRawData.map(({ data }, seriesIndex) => {
+    return seriesRawData.map(({ data, name }, seriesIndex) => {
       const points: Point[] = [];
+      const { active } = legend.data.find(({ label }) => label === name)!;
+      const color = getRGBA(theme.colors[seriesIndex], active ? 1 : 0.1);
 
       data.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
@@ -166,7 +170,7 @@ export default class AreaSeries extends Component {
       return {
         type: 'linePoints',
         lineWidth: 6,
-        color: theme.colors[seriesIndex],
+        color,
         points,
         seriesIndex,
       };

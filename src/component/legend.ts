@@ -87,6 +87,10 @@ export default class Legend extends Component {
   }
 
   render({ layout, legend, theme }: ChartState<Options>) {
+    if (!legend.visible) {
+      return;
+    }
+
     this.rect = layout.legend;
     this.models = this.renderLegendModel(legend, theme);
     const { data } = this.models[0];
