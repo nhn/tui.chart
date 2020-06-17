@@ -82,7 +82,7 @@ export default class Painter {
   }
 
   paintForEach(brushModels: any[]) {
-    brushModels.forEach((m) => this.paint(m.type, m));
+    brushModels.forEach((m) => m && this.paint(m.type, m));
   }
 
   beforeFrame() {

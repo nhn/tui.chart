@@ -5,11 +5,11 @@ import { isNull } from '@src/helpers/utils';
 export type RectStyleName = 'default';
 
 export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
-  const { x, y, width, height, style, thickness = 0 } = model;
-
-  if (isNull(x) || isNull(y) || isNull(width) || isNull(height)) {
+  if (isNull(model)) {
     return;
   }
+
+  const { x, y, width, height, style, thickness = 0 } = model;
 
   ctx.beginPath();
 

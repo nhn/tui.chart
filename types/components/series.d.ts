@@ -59,16 +59,11 @@ export interface RectStyle {
   shadowBlur?: number;
 }
 
-export type SeriesRect = {
-  x: Nullable<number>;
-  y: Nullable<number>;
-  width: Nullable<number>;
-  height: Nullable<number>;
-};
-
-export type RectModel = {
-  type: 'rect';
-  color: string;
-  style?: StyleProp<RectStyle, RectStyleName>;
-  thickness?: number;
-} & SeriesRect;
+export type RectModel =
+  | ({
+      type: 'rect';
+      color: string;
+      style?: StyleProp<RectStyle, RectStyleName>;
+      thickness?: number;
+    } & Rect)
+  | null;

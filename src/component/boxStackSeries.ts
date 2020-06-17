@@ -20,7 +20,7 @@ import {
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel, Nullable } from '@t/components/series';
-import { deepCopyArray, includes, isNumber } from '@src/helpers/utils';
+import { deepCopyArray, includes, isNumber, isNull } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
@@ -102,7 +102,7 @@ export default class BoxStackSeries extends BoxSeries {
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     const { series, connector } = this.renderStackSeriesModel(seriesData, colors, renderOptions);
-    const hoveredSeries = this.renderHighlightSeriesModel(series);
+    const hoveredSeries = this.renderHoveredSeriesModel(series);
     const tooltipData: TooltipData[] = this.getTooltipData(seriesData, colors, categories);
 
     this.models = {
@@ -120,7 +120,7 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
-      ...m,
+      ...m!,
       data: tooltipData[index],
     }));
   }
@@ -167,11 +167,15 @@ export default class BoxStackSeries extends BoxSeries {
           isLBSideWithDiverging
         );
 
-        seriesModels.push({
-          type: 'rect',
-          color: colors![seriesIndex],
-          ...this.getAdjustedRect(seriesPos, dataPosition, barLength!, columnWidth),
-        });
+        const model: RectModel = isNull(barLength)
+          ? null
+          : {
+              type: 'rect',
+              color: colors![seriesIndex],
+              ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
+            };
+
+        seriesModels.push(model);
       });
     });
 
@@ -416,10 +420,10 @@ export default class BoxStackSeries extends BoxSeries {
     ratio: number,
     renderOptions: RenderOptions,
     isLBSideWithDiverging: boolean
-  ): Nullable<number> {
+  ): number {
     const { stack, diverging, seriesDirection } = renderOptions;
 
-    let startPos: Nullable<number>;
+    let startPos: number;
 
     if (diverging) {
       startPos = isLBSideWithDiverging
@@ -498,20 +502,13 @@ export default class BoxStackSeries extends BoxSeries {
     currentIndex: number,
     renderOptions: RenderOptions,
     ratio: number
-  ) {
+  ): number {
     const basePosition = this.basePosition;
-    const { min } = renderOptions;
     const totalPrevValues = sumValuesBeforeIndex(
       values,
       currentIndex,
       this.isBar ? values[currentIndex] < 0 : values[currentIndex] > 0
     );
-
-    const value = values[currentIndex];
-
-    if (currentIndex === 0 && min > value) {
-      return null;
-    }
 
     return this.isBar
       ? totalPrevValues * ratio + basePosition + this.axisThickness
@@ -525,10 +522,19 @@ export default class BoxStackSeries extends BoxSeries {
     renderOptions: RenderOptions,
     isLBSideWithDiverging: boolean
   ) {
-    const barLength = this.getStackBarLength(values, seriesIndex, ratio, renderOptions);
-    const dataPosition: Nullable<number> = isNumber(barLength)
-      ? this.getStackStartPosition(values, seriesIndex, ratio, renderOptions, isLBSideWithDiverging)
-      : null;
+    const barLength: Nullable<number> = this.getStackBarLength(
+      values,
+      seriesIndex,
+      ratio,
+      renderOptions
+    );
+    const dataPosition: number = this.getStackStartPosition(
+      values,
+      seriesIndex,
+      ratio,
+      renderOptions,
+      isLBSideWithDiverging
+    );
 
     return {
       barLength,

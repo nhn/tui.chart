@@ -1,5 +1,5 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel, SeriesRect, Nullable } from '@t/components/series';
+import { RectModel, ClipRectAreaModel } from '@t/components/series';
 import { ChartState, ChartType, BoxType, AxisData } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -18,6 +18,7 @@ import {
   hasNegativeOnly,
   hasPositiveOnly,
   isNull,
+  isNumber,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
@@ -143,12 +144,17 @@ export default class BoxSeries extends Component {
 
       series.forEach((drawModel, index) => {
         const targetModel = modelSeries[index];
+
+        if (!targetModel) {
+          return;
+        }
+
         const offsetSize = targetModel[this.offsetSizeKey] * delta;
 
-        drawModel[this.offsetSizeKey] = offsetSize;
+        drawModel![this.offsetSizeKey] = offsetSize;
 
         if (!this.isBar) {
-          drawModel[offsetKey] =
+          drawModel![offsetKey] =
             targetModel[offsetKey] + targetModel[this.offsetSizeKey] - offsetSize;
         }
       });
@@ -208,8 +214,13 @@ export default class BoxSeries extends Component {
 
     const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, colors, renderOptions);
 
-    const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
-    const hoveredSeries = this.renderHighlightSeriesModel(seriesModels);
+    const tooltipData: TooltipData[] = this.makeTooltipData(
+      seriesData,
+      colors,
+      renderOptions,
+      categories
+    );
+    const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
 
     this.models = {
       clipRect: [this.renderClipRectAreaModel()],
@@ -224,7 +235,7 @@ export default class BoxSeries extends Component {
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
-      ...m,
+      ...m!,
       data: tooltipData[index],
     }));
   }
@@ -258,51 +269,61 @@ export default class BoxSeries extends Component {
     const { diverging, tickDistance } = renderOptions;
     const validDiverging = diverging && seriesData.length === 2;
     const columnWidth = this.getColumnWidth(tickDistance, seriesData.length, validDiverging);
+    const seriesModels: RectModel[] = [];
 
-    return seriesData.flatMap(({ data }, seriesIndex) => {
+    seriesData.forEach(({ data }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
       this.isRangeData = isRangeData(data);
 
-      return data.map((value, index) => {
+      data.forEach((value, index) => {
         const dataStart = seriesPos + index * tickDistance + this.hoverThickness;
         const barLength = this.makeBarLength(value, renderOptions);
-        const startPosition = this.getStartPosition(barLength, value, seriesIndex, renderOptions);
 
-        return {
-          type: 'rect',
-          color,
-          ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
-        };
+        if (isNumber(barLength)) {
+          const startPosition = this.getStartPosition(barLength, value, seriesIndex, renderOptions);
+
+          seriesModels.push({
+            type: 'rect',
+            color,
+            ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
+          });
+        }
       });
+    });
+
+    return seriesModels;
+  }
+
+  protected renderHoveredSeriesModel(seriesModel: RectModel[]): RectModel[] {
+    return seriesModel.map((data) => {
+      return isNull(data) ? null : this.makeHoveredSeriesModel(data);
     });
   }
 
-  protected renderHighlightSeriesModel(seriesModel): RectModel[] {
-    return seriesModel.map((data) => {
-      const { x, y, width, height, color } = data;
-      const shadowOffset = this.hoverThickness / 2;
-      const style = [
-        {
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowOffsetX: shadowOffset,
-          shadowOffsetY: this.isBar ? shadowOffset : -1 * shadowOffset,
-          shadowBlur: this.hoverThickness + shadowOffset,
-        },
-      ];
+  makeHoveredSeriesModel(data: RectModel): RectModel {
+    const { x, y, width, height, color } = data!;
+    const shadowOffset = this.hoverThickness / 2;
+    const style = [
+      {
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: shadowOffset,
+        shadowOffsetY: this.isBar ? shadowOffset : -1 * shadowOffset,
+        shadowBlur: this.hoverThickness + shadowOffset,
+      },
+    ];
 
-      return {
-        type: 'rect',
-        color,
-        x,
-        y,
-        width,
-        height,
-        style,
-        thickness: this.hoverThickness,
-      };
-    });
+    return {
+      type: 'rect',
+      color,
+      x,
+      y,
+      width,
+      height,
+      style,
+      thickness: this.hoverThickness,
+    };
   }
 
   onMousemove({ responders }: { responders: RectModel[] }) {
@@ -316,12 +337,13 @@ export default class BoxSeries extends Component {
   private makeTooltipData(
     seriesData: BoxSeriesType<BoxSeriesDataType>[],
     colors: string[],
+    renderOptions: RenderOptions,
     categories?: string[]
   ): TooltipData[] {
-    return seriesData.flatMap(({ name, data }, index) =>
+    return seriesData.flatMap(({ data }, seriesIndex) =>
       data.map((value, dataIdx) => ({
         label: name,
-        color: colors[index],
+        color: colors[seriesIndex],
         value: this.getTooltipValue(value),
         category: categories?.[dataIdx],
       }))
@@ -390,15 +412,11 @@ export default class BoxSeries extends Component {
   }
 
   getStartPosition(
-    barLength: Nullable<number>,
+    barLength: number,
     value: BoxSeriesDataType,
     seriesIndex: number,
     renderOptions: RenderOptions
-  ): Nullable<number> {
-    if (isNull(barLength)) {
-      return null;
-    }
-
+  ): number {
     const basePosition = this.basePosition;
     const { diverging, hasNegativeValue } = renderOptions;
 
@@ -422,10 +440,10 @@ export default class BoxSeries extends Component {
 
   protected getAdjustedRect(
     seriesPosition: number,
-    dataPosition: Nullable<number>,
-    barLength: Nullable<number>,
+    dataPosition: number,
+    barLength: number,
     columnWidth: number
-  ): SeriesRect {
+  ): Rect {
     return {
       x: this.isBar ? dataPosition : seriesPosition,
       y: this.isBar ? seriesPosition : dataPosition,
