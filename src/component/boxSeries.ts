@@ -7,14 +7,33 @@ import {
   BarChartOptions,
   ColumnChartOptions,
   Rect,
+  RangeDataType,
 } from '@t/options';
-import { first, includes, hasNegative, deepCopyArray, last } from '@src/helpers/utils';
+import {
+  first,
+  includes,
+  hasNegative,
+  deepCopyArray,
+  last,
+  hasNegativeOnly,
+  hasPositiveOnly,
+  isNull,
+  isNumber,
+} from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
+import { AxisType } from './axis';
+import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
+
+export enum SeriesDirection {
+  POSITIVE,
+  NEGATIVE,
+  BOTH,
+}
 
 type DrawModels = {
   clipRect?: ClipRectAreaModel[];
@@ -24,10 +43,12 @@ type DrawModels = {
 };
 
 type RenderOptions = {
+  tickDistance: number;
   min: number;
   max: number;
   diverging: boolean;
   ratio: number;
+  hasNegativeValue: boolean;
 };
 
 const BOX = {
@@ -44,34 +65,22 @@ export function isLeftBottomSide(seriesIndex: number) {
   return !!(seriesIndex % 2);
 }
 
-function calibrateDrawingValue(value: BoxSeriesDataType, min: number, max: number): number {
+function calculateBarLength(value: BoxSeriesDataType, min: number, max: number) {
   if (isRangeValue(value)) {
-    const [start, end] = value;
+    let [start, end] = value;
+
+    if (start < min) {
+      start = min;
+    }
+
+    if (end > max) {
+      end = max;
+    }
 
     return end - start;
   }
 
-  if (value >= 0) {
-    if (max < value) {
-      value = max;
-    }
-
-    if (min > 0) {
-      value -= min;
-    }
-  } else {
-    if (value < min) {
-      value = min;
-    }
-
-    if (max < 0) {
-      value -= max;
-    }
-
-    value = Math.abs(value);
-  }
-
-  return value;
+  return calibrateDrawingValue(value, min, max);
 }
 
 export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
@@ -122,7 +131,7 @@ export default class BoxSeries extends Component {
     this.offsetSizeKey = this.isBar ? 'width' : 'height';
   }
 
-  update(delta: number) {
+  initUpdate(delta: number) {
     if (!this.drawModels) {
       return;
     }
@@ -135,6 +144,7 @@ export default class BoxSeries extends Component {
 
       series.forEach((drawModel, index) => {
         const targetModel = modelSeries[index];
+
         const offsetSize = targetModel[this.offsetSizeKey] * delta;
 
         drawModel[this.offsetSizeKey] = offsetSize;
@@ -164,6 +174,25 @@ export default class BoxSeries extends Component {
     }
   }
 
+  makeRenderOptions(
+    axes: Partial<Record<AxisType, AxisData>>,
+    options: BarChartOptions | ColumnChartOptions
+  ): RenderOptions {
+    const { labels } = axes[this.valueAxis];
+    const { tickDistance } = axes[this.labelAxis];
+    const diverging = !!options.series?.diverging;
+    const { min, max } = getLimitOnAxis(labels, diverging);
+
+    return {
+      min,
+      max,
+      tickDistance,
+      diverging,
+      ratio: this.getValueRatio(min, max, diverging),
+      hasNegativeValue: hasNegative(labels),
+    };
+  }
+
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
     const { layout, series, theme, axes, categories, stackSeries, options } = chartState;
 
@@ -176,32 +205,23 @@ export default class BoxSeries extends Component {
 
     const { colors } = theme.series;
     const seriesData = series[this.name].data;
-    const { tickDistance } = axes[this.labelAxis];
-    const { labels, tickCount } = axes[this.valueAxis];
-    const diverging = !!options.series?.diverging;
-    const { min, max } = getLimitOnAxis(labels, diverging);
-    const renderOptions: RenderOptions = {
-      min,
-      max,
-      diverging,
-      ratio: this.getValueRatio(min, max, diverging),
-    };
+    const renderOptions = this.makeRenderOptions(axes, options);
+    this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
-    this.basePosition = this.getBasePosition(labels, tickCount);
+    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, colors, renderOptions);
 
-    const seriesModels: RectModel[] = this.renderSeriesModel(
+    const tooltipData: TooltipData[] = this.makeTooltipData(
       seriesData,
       colors,
-      labels,
-      tickDistance,
-      renderOptions
+      renderOptions,
+      categories
     );
+    const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
 
-    const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, colors, categories);
-    const hoveredSeries = this.renderHighlightSeriesModel(seriesModels);
-
-    this.models.clipRect = [this.renderClipRectAreaModel()];
-    this.models.series = seriesModels;
+    this.models = {
+      clipRect: [this.renderClipRectAreaModel()],
+      series: seriesModels,
+    };
 
     if (!this.drawModels) {
       this.drawModels = {
@@ -240,64 +260,66 @@ export default class BoxSeries extends Component {
   renderSeriesModel(
     seriesData: BoxSeriesType<BoxSeriesDataType>[],
     colors: string[],
-    valueLabels: string[],
-    tickDistance: number,
     renderOptions: RenderOptions
   ): RectModel[] {
-    const { diverging, min, max, ratio } = renderOptions;
+    const { diverging, tickDistance } = renderOptions;
     const validDiverging = diverging && seriesData.length === 2;
     const columnWidth = this.getColumnWidth(tickDistance, seriesData.length, validDiverging);
+    const seriesModels: RectModel[] = [];
 
-    return seriesData.flatMap(({ data }, seriesIndex) => {
+    seriesData.forEach(({ data }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
       const color = colors[seriesIndex];
 
       this.isRangeData = isRangeData(data);
 
-      return data.map((value, index) => {
+      data.forEach((value, index) => {
         const dataStart = seriesPos + index * tickDistance + this.hoverThickness;
-        const barLength = this.getBarLength(value, min, max, ratio);
-        const startPosition = this.getStartPosition(
-          barLength,
-          value,
-          valueLabels,
-          seriesIndex,
-          renderOptions
-        );
+        const barLength = this.makeBarLength(value, renderOptions);
 
-        return {
-          type: 'rect',
-          color,
-          ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
-        };
+        if (isNumber(barLength)) {
+          const startPosition = this.getStartPosition(barLength, value, seriesIndex, renderOptions);
+
+          seriesModels.push({
+            type: 'rect',
+            color,
+            ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
+          });
+        }
       });
+    });
+
+    return seriesModels;
+  }
+
+  protected renderHoveredSeriesModel(seriesModel: RectModel[]): RectModel[] {
+    return seriesModel.map((data) => {
+      return this.makeHoveredSeriesModel(data);
     });
   }
 
-  protected renderHighlightSeriesModel(seriesModel): RectModel[] {
-    return seriesModel.map((data) => {
-      const { x, y, width, height, color } = data;
-      const shadowOffset = this.hoverThickness / 2;
-      const style = [
-        {
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowOffsetX: shadowOffset,
-          shadowOffsetY: this.isBar ? shadowOffset : -1 * shadowOffset,
-          shadowBlur: this.hoverThickness + shadowOffset,
-        },
-      ];
+  makeHoveredSeriesModel(data: RectModel): RectModel {
+    const { x, y, width, height, color } = data!;
+    const shadowOffset = this.hoverThickness / 2;
+    const style = [
+      {
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowOffsetX: shadowOffset,
+        shadowOffsetY: this.isBar ? shadowOffset : -1 * shadowOffset,
+        shadowBlur: this.hoverThickness + shadowOffset,
+      },
+    ];
 
-      return {
-        type: 'rect',
-        color,
-        x,
-        y,
-        width,
-        height,
-        style,
-        thickness: this.hoverThickness,
-      };
-    });
+    return {
+      type: 'rect',
+      color,
+      x,
+      y,
+      width,
+      height,
+      style,
+      thickness: this.hoverThickness,
+    };
   }
 
   onMousemove({ responders }: { responders: RectModel[] }) {
@@ -311,45 +333,45 @@ export default class BoxSeries extends Component {
   private makeTooltipData(
     seriesData: BoxSeriesType<BoxSeriesDataType>[],
     colors: string[],
+    renderOptions: RenderOptions,
     categories?: string[]
   ): TooltipData[] {
-    return seriesData.flatMap(({ name, data }, index) =>
-      data.map((value, dataIdx) => ({
-        label: name,
-        color: colors[index],
-        value: this.getTooltipValue(value),
-        category: categories?.[dataIdx],
-      }))
-    );
+    const tooltipData: TooltipData[] = [];
+
+    seriesData.forEach(({ data, name }, seriesIndex) => {
+      data.forEach((value, dataIndex) => {
+        const barLength = this.makeBarLength(value, renderOptions);
+
+        if (isNumber(barLength)) {
+          tooltipData.push({
+            label: name,
+            color: colors[seriesIndex],
+            value: this.getTooltipValue(value),
+            category: categories?.[dataIndex],
+          });
+        }
+      });
+    });
+
+    return tooltipData;
   }
 
   private getTooltipValue(value) {
     return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
-  protected getBasePosition(valueLabels: string[], tickCount: number): number {
-    const labels = this.isBar ? valueLabels : [...valueLabels].reverse();
-    const zeroValueIndex = labels.findIndex((label) => Number(label) === 0);
+  protected getBasePosition({ labels, tickCount }: AxisData): number {
+    const valueLabels = this.isBar ? labels : [...labels].reverse();
+    const zeroValueIndex = valueLabels.findIndex((label) => Number(label) === 0);
     const tickPositions = makeTickPixelPositions(this.getOffsetSize(), tickCount);
+    const hasZeroOnAxis = zeroValueIndex > -1;
+    const seriesDirection = this.getSeriesDirection(valueLabels);
 
-    let basePosition = 0;
-
-    if (zeroValueIndex < 0) {
-      const hasPositiveOnly = labels.every((label) => Number(label) >= 0);
-      const hasNegativeOnly = labels.every((label) => Number(label) <= 0);
-
-      if (hasPositiveOnly) {
-        basePosition = Number(first(tickPositions));
-      }
-
-      if (hasNegativeOnly) {
-        basePosition = Number(last(tickPositions));
-      }
-    } else {
-      basePosition = tickPositions[zeroValueIndex];
-    }
-
-    return basePosition + this.hoverThickness;
+    return (
+      (hasZeroOnAxis
+        ? tickPositions[zeroValueIndex]
+        : this.getTickPositionIfNotZero(tickPositions, seriesDirection)) + this.hoverThickness
+    );
   }
 
   protected getOffsetSize(): number {
@@ -362,31 +384,54 @@ export default class BoxSeries extends Component {
     return this.getOffsetSize() / ((max - min) * multiple);
   }
 
-  getBarLength(value: BoxSeriesDataType, min: number, max: number, ratio: number) {
-    return calibrateDrawingValue(value, min, max) * ratio;
+  private makeBarLength(value: BoxSeriesDataType, renderOptions: RenderOptions) {
+    if (isNull(value)) {
+      return null;
+    }
+
+    const { min, max, ratio } = renderOptions;
+    const calculatedValue = calculateBarLength(value, min, max);
+
+    return Math.max(this.getBarLength(calculatedValue, ratio), 2);
+  }
+
+  protected getBarLength(value: number, ratio: number) {
+    return value < 0 ? Math.abs(value) * ratio : value * ratio;
+  }
+
+  getStartPositionWithRangeValue(
+    value: RangeDataType,
+    barLength: number,
+    renderOptions: RenderOptions
+  ) {
+    const { min, ratio } = renderOptions;
+    let [start] = value;
+
+    if (start < min) {
+      start = min;
+    }
+    const startPosition = (start - min) * ratio;
+
+    return this.isBar
+      ? startPosition + this.hoverThickness
+      : this.getOffsetSize() - startPosition - barLength + this.hoverThickness;
   }
 
   getStartPosition(
     barLength: number,
     value: BoxSeriesDataType,
-    labels: string[],
     seriesIndex: number,
     renderOptions: RenderOptions
-  ) {
+  ): number {
     const basePosition = this.basePosition;
-    const { min, ratio, diverging } = renderOptions;
+    const { diverging, hasNegativeValue } = renderOptions;
 
     if (isRangeValue(value)) {
-      const [start] = value;
-      const startPosition = (start - min) * ratio;
-
-      return this.isBar
-        ? startPosition
-        : this.getOffsetSize() - startPosition - barLength + this.hoverThickness;
+      return this.getStartPositionWithRangeValue(value, barLength, renderOptions);
     }
 
     const divergingSeries = diverging && isLeftBottomSide(seriesIndex);
-    const negativeValue = hasNegative(labels) && value < 0;
+    const negativeValue = hasNegativeValue && value < 0;
 
     if (negativeValue) {
       return this.isBar ? basePosition - barLength : basePosition;
@@ -405,8 +450,6 @@ export default class BoxSeries extends Component {
     barLength: number,
     columnWidth: number
   ): Rect {
-    barLength = Math.max(barLength, 1);
-
     return {
       x: this.isBar ? dataPosition : seriesPosition,
       y: this.isBar ? seriesPosition : dataPosition,
@@ -419,5 +462,31 @@ export default class BoxSeries extends Component {
     seriesLength = validDiverging ? 1 : seriesLength;
 
     return (tickDistance - this.padding * 2) / seriesLength;
+  }
+
+  protected getSeriesDirection(labels: string[]) {
+    let result = SeriesDirection.BOTH;
+
+    if (hasPositiveOnly(labels)) {
+      result = SeriesDirection.POSITIVE;
+    } else if (hasNegativeOnly(labels)) {
+      result = SeriesDirection.NEGATIVE;
+    }
+
+    return result;
+  }
+
+  protected getTickPositionIfNotZero(tickPositions: number[], direction: SeriesDirection) {
+    const firstTickPosition = Number(first(tickPositions));
+    const lastTickPosition = Number(last(tickPositions));
+    let tickPos = 0;
+
+    if (direction === SeriesDirection.POSITIVE) {
+      tickPos = this.isBar ? firstTickPosition : lastTickPosition;
+    } else if (direction === SeriesDirection.NEGATIVE) {
+      tickPos = this.isBar ? lastTickPosition : firstTickPosition;
+    }
+
+    return tickPos;
   }
 }

@@ -3,6 +3,7 @@ import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
 import { TooltipData } from '@t/components/tooltip';
 
+export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
 
 export interface CircleStyle {

@@ -9,6 +9,7 @@ import {
 import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import { BoxSeriesOptions } from '@t/options';
+import { hasNegativeOnly } from '@src/helpers/utils';
 
 interface StateProp {
   scale: ScaleData;
@@ -38,7 +39,7 @@ export function getValueAxisData(stateProp: StateProp) {
   let valueLabels = makeLabelsFromLimit(scale.limit, scale.stepSize);
 
   if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
-    valueLabels = valueLabels.slice(1).reverse().concat(valueLabels);
+    valueLabels = getDivergingValues(valueLabels);
   }
 
   return {
@@ -48,6 +49,12 @@ export function getValueAxisData(stateProp: StateProp) {
     tickCount: valueLabels.length,
     tickDistance: axisSize / valueLabels.length,
   };
+}
+
+function getDivergingValues(valueLabels) {
+  return hasNegativeOnly(valueLabels)
+    ? valueLabels.reverse().slice(1).concat(valueLabels)
+    : valueLabels.slice(1).reverse().concat(valueLabels);
 }
 
 const axes: StoreModule = {

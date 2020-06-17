@@ -6,6 +6,7 @@ import {
   budgetDataForGroupStack,
   negativeBudgetData,
   budgetDataForDiverging,
+  lossDataForGroupStack,
 } from './data';
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
@@ -109,6 +110,16 @@ export const negativePercentStack = () => {
 
 export const groupStack = () => {
   const { el } = createChart(budgetDataForGroupStack, {
+    series: {
+      stack: true,
+    },
+  });
+
+  return el;
+};
+
+export const negativeGroupStack = () => {
+  const { el } = createChart(lossDataForGroupStack, {
     series: {
       stack: true,
     },

@@ -286,3 +286,11 @@ export function hasNegative(values: (number | string)[] = []) {
 export function sum(items: number[]): number {
   return items.reduce((a, b) => a + b, 0);
 }
+
+export function hasPositiveOnly(values: (number | string)[]) {
+  return values.every((value) => Number(value) >= 0);
+}
+
+export function hasNegativeOnly(values: (number | string)[]) {
+  return values.every((value) => Number(value) <= 0);
+}

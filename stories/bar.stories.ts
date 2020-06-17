@@ -6,6 +6,7 @@ import {
   budgetDataForGroupStack,
   negativeBudgetData,
   budgetDataForDiverging,
+  lossDataForGroupStack,
 } from './data';
 import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
@@ -114,6 +115,16 @@ export const groupStack = () => {
   return el;
 };
 
+export const negativeGroupStack = () => {
+  const { el } = createChart(lossDataForGroupStack, {
+    series: {
+      stack: true,
+    },
+  });
+
+  return el;
+};
+
 export const defaultConnector = () => {
   const { el } = createChart(budgetDataForStack, {
     series: {
@@ -148,20 +159,6 @@ export const diverging = () => {
   const { el } = createChart(budgetDataForDiverging, {
     series: {
       diverging: true,
-    },
-  });
-
-  return el;
-};
-
-export const minMax = () => {
-  const { el } = createChart(budgetData, {
-    ...defaultOptions,
-    xAxis: {
-      scale: {
-        min: -1000,
-        max: 15000,
-      },
     },
   });
 
