@@ -89,7 +89,6 @@ export default class BubbleSeries extends CircleSeries {
 
     return seriesRawData.flatMap(({ data, name }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
-      // @TODO: active는 시리즈에 포함되는게 맞을듯?
       const { active } = legend.data.find(({ label }) => label === name)!;
       const color = getRGBA(colors[seriesIndex], active ? 0.8 : 0.3);
 
