@@ -19,7 +19,7 @@ import {
   AxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { RectModel, NullableNumber } from '@t/components/series';
+import { RectModel, Nullable } from '@t/components/series';
 import { deepCopyArray, includes, isNumber } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
 import { getLimitOnAxis } from '@src/helpers/axes';
@@ -255,8 +255,8 @@ export default class BoxStackSeries extends BoxSeries {
           isLBSideWithDiverging
         );
         const { x, y } = this.getAdjustedRect(seriesPos, dataPosition, barLength!, columnWidth);
-        let xPos: NullableNumber = null;
-        let yPos: NullableNumber = null;
+        let xPos: Nullable<number> = null;
+        let yPos: Nullable<number> = null;
 
         if (x) {
           xPos = !isLBSideWithDiverging && this.isBar ? x + barLength! : x;
@@ -385,7 +385,7 @@ export default class BoxStackSeries extends BoxSeries {
     seriesIndex: number,
     ratio: number,
     renderOptions: RenderOptions
-  ): NullableNumber {
+  ): Nullable<number> {
     const value = calibrateDrawingValue(values, seriesIndex, renderOptions);
 
     return isNumber(value) ? this.getBarLength(value, ratio) : null;
@@ -416,10 +416,10 @@ export default class BoxStackSeries extends BoxSeries {
     ratio: number,
     renderOptions: RenderOptions,
     isLBSideWithDiverging: boolean
-  ): NullableNumber {
+  ): Nullable<number> {
     const { stack, diverging, seriesDirection } = renderOptions;
 
-    let startPos: NullableNumber;
+    let startPos: Nullable<number>;
 
     if (diverging) {
       startPos = isLBSideWithDiverging
@@ -526,7 +526,7 @@ export default class BoxStackSeries extends BoxSeries {
     isLBSideWithDiverging: boolean
   ) {
     const barLength = this.getStackBarLength(values, seriesIndex, ratio, renderOptions);
-    const dataPosition: NullableNumber = isNumber(barLength)
+    const dataPosition: Nullable<number> = isNumber(barLength)
       ? this.getStackStartPosition(values, seriesIndex, ratio, renderOptions, isLBSideWithDiverging)
       : null;
 

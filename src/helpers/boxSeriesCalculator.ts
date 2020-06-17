@@ -1,4 +1,4 @@
-import { NullableNumber } from '@t/components/series';
+import { Nullable } from '@t/components/series';
 
 function limitNegative(value: number, min: number, max: number): number {
   if (value >= max) {
@@ -79,7 +79,7 @@ export function calibrateBoxStackDrawingValue(
   currentIndex: number,
   min: number,
   max: number
-): NullableNumber {
+): Nullable<number> {
   const totalOfIndexBefore = sumValuesBeforeIndex(values, currentIndex, false);
   const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
 

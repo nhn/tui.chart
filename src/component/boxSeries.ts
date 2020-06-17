@@ -1,5 +1,5 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel, SeriesRect, NullableNumber } from '@t/components/series';
+import { RectModel, ClipRectAreaModel, SeriesRect, Nullable } from '@t/components/series';
 import { ChartState, ChartType, BoxType, AxisData } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -390,11 +390,11 @@ export default class BoxSeries extends Component {
   }
 
   getStartPosition(
-    barLength: NullableNumber,
+    barLength: Nullable<number>,
     value: BoxSeriesDataType,
     seriesIndex: number,
     renderOptions: RenderOptions
-  ): NullableNumber {
+  ): Nullable<number> {
     if (isNull(barLength)) {
       return null;
     }
@@ -422,8 +422,8 @@ export default class BoxSeries extends Component {
 
   protected getAdjustedRect(
     seriesPosition: number,
-    dataPosition: NullableNumber,
-    barLength: NullableNumber,
+    dataPosition: Nullable<number>,
+    barLength: Nullable<number>,
     columnWidth: number
   ): SeriesRect {
     return {
