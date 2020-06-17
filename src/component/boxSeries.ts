@@ -262,7 +262,6 @@ export default class BoxSeries extends Component {
 
     seriesData.forEach(({ data, color }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
-
       this.isRangeData = isRangeData(data);
 
       data.forEach((value, index) => {

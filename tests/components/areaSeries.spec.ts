@@ -5,8 +5,8 @@ import EventEmitter from '@src/eventEmitter';
 
 let areaSeries;
 const seriesData = [
-  { name: 'han', data: [1, 2] },
-  { name: 'cho', data: [4, 5] },
+  { name: 'han', data: [1, 2], color: '#aaaaaa' },
+  { name: 'cho', data: [4, 5], color: '#bbbbbb' },
 ];
 
 const chartState = {
@@ -40,10 +40,11 @@ const chartState = {
   options: {
     series: {},
   },
-  theme: {
-    series: {
-      colors: ['#aaaaaa', '#bbbbbb'],
-    },
+  legend: {
+    data: [
+      { label: 'han', active: true, checked: true },
+      { label: 'cho', active: true, checked: true },
+    ],
   },
   categories: ['A', 'B'],
 };
@@ -61,7 +62,7 @@ const result = {
   rect: { width: 80, height: 80, x: 10, y: 80 },
   linePointsModel: [
     {
-      color: '#aaaaaa',
+      color: 'rgba(170, 170, 170, 1)',
       lineWidth: 6,
       points: [
         { x: 20, y: 80 },
@@ -71,7 +72,7 @@ const result = {
       type: 'linePoints',
     },
     {
-      color: '#bbbbbb',
+      color: 'rgba(187, 187, 187, 1)',
       lineWidth: 6,
       points: [
         { x: 20, y: 20 },
@@ -83,7 +84,7 @@ const result = {
   ],
   responders: [
     {
-      color: '#aaaaaa',
+      color: 'rgba(170, 170, 170, 1)',
       data: { category: 'A', color: '#aaaaaa', label: 'han', value: 1 },
       radius: 7,
       seriesIndex: 0,
@@ -93,7 +94,7 @@ const result = {
       y: 80,
     },
     {
-      color: '#aaaaaa',
+      color: 'rgba(170, 170, 170, 1)',
       data: { category: 'B', color: '#aaaaaa', label: 'han', value: 2 },
       radius: 7,
       seriesIndex: 0,
@@ -103,7 +104,7 @@ const result = {
       y: 60,
     },
     {
-      color: '#bbbbbb',
+      color: 'rgba(187, 187, 187, 1)',
       data: { category: 'A', color: '#bbbbbb', label: 'cho', value: 4 },
       radius: 7,
       seriesIndex: 1,
@@ -113,7 +114,7 @@ const result = {
       y: 20,
     },
     {
-      color: '#bbbbbb',
+      color: 'rgba(187, 187, 187, 1)',
       data: { category: 'B', color: '#bbbbbb', label: 'cho', value: 5 },
       radius: 7,
       seriesIndex: 1,
@@ -129,7 +130,7 @@ const result = {
       {
         bottomYPoint: 80,
         color: 'rgba(0, 0, 0, 0)',
-        fillColor: '#aaaaaa',
+        fillColor: 'rgba(170, 170, 170, 1)',
         lineWidth: 0,
         points: [
           { x: 20, y: 80 },
@@ -141,7 +142,7 @@ const result = {
       {
         bottomYPoint: 80,
         color: 'rgba(0, 0, 0, 0)',
-        fillColor: '#bbbbbb',
+        fillColor: 'rgba(187, 187, 187, 1)',
         lineWidth: 0,
         points: [
           { x: 20, y: 20 },

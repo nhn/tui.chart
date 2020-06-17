@@ -11,10 +11,12 @@ const seriesData = [
       { x: 10, y: 20 },
       { x: 15, y: 20 },
     ],
+    color: '#aaaaaa',
   },
   {
     name: 'nameB',
     data: [{ x: 20, y: 10 }],
+    color: '#bbbbbb',
   },
 ];
 
@@ -59,10 +61,11 @@ const chartState = {
   options: {
     series: {},
   },
-  theme: {
-    series: {
-      colors: ['#aaaaaa', '#bbbbbb'],
-    },
+  legend: {
+    data: [
+      { label: 'nameA', active: true, checked: true },
+      { label: 'nameB', active: true, checked: true },
+    ],
   },
 };
 

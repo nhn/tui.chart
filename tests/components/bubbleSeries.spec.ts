@@ -11,10 +11,12 @@ const seriesData = [
       { x: 10, y: 20, r: 100, label: 'A' },
       { x: 15, y: 20, r: 200, label: 'B' },
     ],
+    color: '#aaaaaa',
   },
   {
     name: 'nameB',
     data: [{ x: 20, y: 10, r: 30, label: 'C' }],
+    color: '#bbbbbb',
   },
 ];
 
@@ -60,10 +62,11 @@ const chartState = {
   options: {
     series: {},
   },
-  theme: {
-    series: {
-      colors: ['#aaaaaa', '#bbbbbb'],
-    },
+  legend: {
+    data: [
+      { label: 'nameA', active: true, checked: true },
+      { label: 'nameB', active: true, checked: true },
+    ],
   },
 };
 
@@ -136,7 +139,7 @@ const result = {
   models: {
     series: [
       {
-        color: 'rgba(170, 170, 170, 0.7)',
+        color: 'rgba(170, 170, 170, 0.8)',
         radius: 7.5,
         seriesIndex: 0,
         style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
@@ -145,7 +148,7 @@ const result = {
         y: 0,
       },
       {
-        color: 'rgba(170, 170, 170, 0.7)',
+        color: 'rgba(170, 170, 170, 0.8)',
         radius: 15,
         seriesIndex: 0,
         style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
@@ -154,7 +157,7 @@ const result = {
         y: 0,
       },
       {
-        color: 'rgba(187, 187, 187, 0.7)',
+        color: 'rgba(187, 187, 187, 0.8)',
         radius: 2.25,
         seriesIndex: 1,
         style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.3)' }],

@@ -13,7 +13,7 @@ import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
-import { AreaChartOptions, AreaSeriesData } from '@t/options';
+import { AreaChartOptions, AreaSeriesData, AreaSeriesType } from '@t/options';
 import Legend from '@src/component/legend';
 
 interface AreaChartProps {
@@ -30,7 +30,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        area: props.data.series,
+        area: props.data.series as AreaSeriesType[],
       },
       categories: props.data.categories,
     });

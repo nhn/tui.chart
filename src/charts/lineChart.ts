@@ -13,7 +13,7 @@ import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
-import { LineChartOptions, LineSeriesData } from '@t/options';
+import { LineChartOptions, LineSeriesData, LineSeriesType } from '@t/options';
 
 // 생성자를 따로 두기보다는 팩토리로 구현하는게 나을것 같다.
 interface LineChartProps {
@@ -30,7 +30,7 @@ export default class LineChart extends Chart<LineChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        line: props.data.series,
+        line: props.data.series as LineSeriesType[],
       },
       categories: props.data?.categories,
     });

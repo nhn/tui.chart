@@ -15,7 +15,7 @@ import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 
-import { ScatterChartOptions, ScatterSeriesData } from '@t/options';
+import { ScatterChartOptions, ScatterSeriesData, ScatterSeriesType } from '@t/options';
 
 interface ScatterChartProps {
   el: Element;
@@ -31,7 +31,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        scatter: props.data.series,
+        scatter: props.data.series as ScatterSeriesType[],
       },
       categories: props.data?.categories,
     });
