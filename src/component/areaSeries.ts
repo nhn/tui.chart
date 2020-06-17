@@ -13,7 +13,7 @@ import {
   RangeDataType,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
-import { ChartState, Legend, SeriesTheme, ValueEdge } from '@t/store/store';
+import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
@@ -30,7 +30,6 @@ interface AreaSeriesDrawModels {
 
 interface RenderOptions {
   pointOnColumn: boolean;
-  theme: SeriesTheme;
   options: LineTypeSeriesOptions;
   tickDistance: number;
 }
@@ -58,7 +57,7 @@ export default class AreaSeries extends Component {
   }
 
   public render(chartState: ChartState<AreaChartOptions>) {
-    const { layout, series, scale, theme, options, axes, categories = [], legend } = chartState;
+    const { layout, series, scale, options, axes, categories = [], legend } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
     }
@@ -71,7 +70,6 @@ export default class AreaSeries extends Component {
     const renderOptions: RenderOptions = {
       pointOnColumn,
       options: options.series || {},
-      theme: theme.series,
       tickDistance,
     };
 
@@ -87,13 +85,12 @@ export default class AreaSeries extends Component {
 
     const areaSeriesModel = this.renderAreaPointsModel(this.linePointsModel, bottomYPoint);
     const seriesCircleModel = this.renderCircleModel(this.linePointsModel);
-    const tooltipDataArr = this.makeTooltipData(areaData, renderOptions, categories);
+    const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
     this.models = {
       rect: [this.renderClipRectAreaModel()],
       series: areaSeriesModel,
       hoveredSeries: [],
-      // linePoints: [],
     };
 
     if (!this.drawModels) {
@@ -101,7 +98,6 @@ export default class AreaSeries extends Component {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(areaSeriesModel),
         hoveredSeries: [],
-        // linePoints: [],
       };
     }
 
@@ -121,14 +117,14 @@ export default class AreaSeries extends Component {
     };
   }
 
-  makeTooltipData(areaData: AreaSeriesType[], { theme }: RenderOptions, categories: string[]) {
-    return areaData.flatMap(({ data, name }, index) => {
+  makeTooltipData(areaData: AreaSeriesType[], categories: string[]) {
+    return areaData.flatMap(({ data, name, color }) => {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum: DatumType, dataIdx) => {
         tooltipData.push({
           label: name,
-          color: theme.colors[index],
+          color,
           value: getCoordinateYValue(datum),
           category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
         });
@@ -145,12 +141,12 @@ export default class AreaSeries extends Component {
     categories: string[],
     legend: Legend
   ): LinePointsModel[] {
-    const { pointOnColumn, theme, options, tickDistance } = renderOptions;
+    const { pointOnColumn, options, tickDistance } = renderOptions;
 
-    return seriesRawData.map(({ data, name }, seriesIndex) => {
+    return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
       const points: Point[] = [];
       const { active } = legend.data.find(({ label }) => label === name)!;
-      const color = getRGBA(theme.colors[seriesIndex], active ? 1 : 0.1);
+      const color = getRGBA(seriesColor, active ? 1 : 0.1);
 
       data.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);

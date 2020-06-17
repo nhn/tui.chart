@@ -1,16 +1,12 @@
 import { CircleModel } from '@t/components/series';
 import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
-import { ChartState, Legend, Scale, SeriesTheme } from '@t/store/store';
+import { ChartState, Legend, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { deepCopy } from '@src/helpers/utils';
-
-interface RenderOptions {
-  theme: SeriesTheme;
-}
 
 export default class ScatterSeries extends CircleSeries {
   initialize() {
@@ -19,20 +15,17 @@ export default class ScatterSeries extends CircleSeries {
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
-    const { layout, series, scale, theme, categories = [], legend } = chartState;
+    const { layout, series, scale, legend } = chartState;
     if (!series.scatter) {
       throw new Error("There's no scatter data!");
     }
 
     const scatterData = series.scatter.data;
-    const renderOptions: RenderOptions = {
-      theme: theme.series,
-    };
 
     this.rect = layout.plot;
 
-    const seriesModel = this.renderScatterPointsModel(scatterData, scale, renderOptions, legend);
-    const tooltipModel = this.makeTooltipModel(scatterData, categories, renderOptions);
+    const seriesModel = this.renderScatterPointsModel(scatterData, scale, legend);
+    const tooltipModel = this.makeTooltipModel(scatterData);
 
     this.models.series = seriesModel;
     if (!this.drawModels) {
@@ -52,20 +45,17 @@ export default class ScatterSeries extends CircleSeries {
   renderScatterPointsModel(
     seriesRawData: ScatterSeriesType[],
     scale: Scale,
-    renderOptions: RenderOptions,
     legend: Legend
   ): CircleModel[] {
-    const { theme } = renderOptions;
-    const { colors } = theme;
     const {
       xAxis: { limit: xAxisLimit },
       yAxis: { limit: yAxisLimit },
     } = scale;
 
-    return seriesRawData.flatMap(({ data, name }, seriesIndex) => {
+    return seriesRawData.flatMap(({ data, name, color: seriesColor }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
       const { active } = legend.data.find(({ label }) => label === name)!;
-      const color = getRGBA(colors[seriesIndex], active ? 0.9 : 0.3);
+      const color = getRGBA(seriesColor, active ? 0.9 : 0.3);
 
       data.forEach((datum) => {
         const xValue = getCoordinateXValue(datum);
@@ -92,20 +82,14 @@ export default class ScatterSeries extends CircleSeries {
     });
   }
 
-  makeTooltipModel(
-    circleData: ScatterSeriesType[],
-    categories: string[],
-    renderOptions: RenderOptions
-  ) {
-    const { theme } = renderOptions;
-
-    return [...circleData].flatMap(({ data, name }, index) => {
+  makeTooltipModel(circleData: ScatterSeriesType[]) {
+    return [...circleData].flatMap(({ data, name, color }) => {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum) => {
         tooltipData.push({
           label: name,
-          color: theme.colors[index],
+          color,
           value: { x: getCoordinateXValue(datum), y: getCoordinateYValue(datum) },
         });
       });

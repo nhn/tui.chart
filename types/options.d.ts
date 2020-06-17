@@ -32,40 +32,44 @@ export type Rect = Point & Size;
 export interface AreaSeriesType {
   name: string;
   data: AreaSeriesDataType;
+  color: string;
 }
 
 export interface AreaSeriesData {
   categories: string[];
-  series: AreaSeriesType[];
+  series: Pick<AreaSeriesType, 'name' | 'data'>[];
 }
 
 export interface LineSeriesType {
   name: string;
   data: LineSeriesDataType;
+  color: string;
 }
 
 export interface LineSeriesData {
   categories?: string[];
-  series: LineSeriesType[];
+  series: Pick<LineSeriesType, 'name' | 'data'>[];
 }
 
 export interface ScatterSeriesType {
   name: string;
   data: CoordinateSeriesDataType;
+  color: string;
 }
 
 export interface BubbleSeriesType {
   name: string;
   data: BubbleSeriesDataType;
+  color: string;
 }
 
 export interface ScatterSeriesData {
   categories?: string[];
-  series: ScatterSeriesType[];
+  series: Pick<ScatterSeriesType, 'name' | 'data'>[];
 }
 
 export interface BubbleSeriesData {
-  series: BubbleSeriesType[];
+  series: Pick<BubbleSeriesType, 'name' | 'data'>[];
 }
 
 interface TitleOptions {
@@ -202,6 +206,7 @@ export interface ColumnChartOptions extends BaseOptions {
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
   data: T[];
+  color: string;
   stackGroup?: string;
 }
 

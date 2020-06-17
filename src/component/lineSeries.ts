@@ -2,15 +2,13 @@ import Component from './component';
 import { CircleModel, CircleResponderModel } from '@t/components/series';
 import { LineChartOptions, LineTypeSeriesOptions, Point, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, Legend, SeriesTheme, ValueEdge } from '@t/store/store';
+import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { deepCopyArray } from '@src/helpers/utils';
 import { getRGBA } from '@src/helpers/color';
-
-type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
 
 interface LineSeriesDrawModels {
   rect: ClipRectAreaModel[];
@@ -20,7 +18,6 @@ interface LineSeriesDrawModels {
 
 interface RenderLineOptions {
   pointOnColumn: boolean;
-  theme: SeriesTheme;
   options: LineTypeSeriesOptions;
   tickDistance: number;
 }
@@ -46,7 +43,7 @@ export default class LineSeries extends Component {
   }
 
   render(chartState: ChartState<LineChartOptions>) {
-    const { layout, series, scale, theme, options, axes, categories = [], legend } = chartState;
+    const { layout, series, scale, options, axes, categories = [], legend } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -57,7 +54,6 @@ export default class LineSeries extends Component {
     const renderLineOptions: RenderLineOptions = {
       pointOnColumn,
       options: options.series || {},
-      theme: theme.series,
       tickDistance,
     };
 
@@ -73,13 +69,13 @@ export default class LineSeries extends Component {
 
     const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
 
-    const tooltipDataArr = series.line.data.flatMap(({ data, name }, index) => {
+    const tooltipDataArr = series.line.data.flatMap(({ data, name, color }) => {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum: DatumType, dataIdx) => {
         tooltipData.push({
           label: name,
-          color: theme.series.colors[index],
+          color,
           value: getCoordinateYValue(datum),
           category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
         });
@@ -125,14 +121,13 @@ export default class LineSeries extends Component {
     categories: string[],
     legend: Legend
   ): LinePointsModel[] {
-    const { pointOnColumn, theme, options, tickDistance } = renderOptions;
-    const { colors } = theme;
+    const { pointOnColumn, options, tickDistance } = renderOptions;
     const { spline } = options;
 
-    return seriesRawData.map(({ data, name }, seriesIndex) => {
+    return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
       const points: Point[] = [];
       const { active } = legend.data.find(({ label }) => label === name)!;
-      const color = getRGBA(colors[seriesIndex], active ? 1 : 0.3);
+      const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
       data.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);

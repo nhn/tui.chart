@@ -1,4 +1,4 @@
-import { StoreModule, SeriesTypes, SeriesRaw, Series } from '@t/store/store';
+import { StoreModule, SeriesTypes, SeriesRaw, Series, SeriesTheme } from '@t/store/store';
 import { extend } from '@src/store/store';
 
 import { sortSeries } from '@src/helpers/utils';
@@ -29,16 +29,15 @@ const seriesData: StoreModule = {
   }),
   action: {
     setSeriesData({ state }) {
-      const { series, disabledSeries } = state;
+      const { series, disabledSeries, theme } = state;
       const newSeriesData = {};
+      const { colors } = theme.series;
 
       Object.keys(series).forEach((seriesName) => {
-        const originSeriesData = series[seriesName];
+        const originSeriesData = series[seriesName].map((m, idx) => ({ ...m, color: colors[idx] }));
         const seriesCount = originSeriesData.length;
         const seriesGroupCount = originSeriesData[0].data.length;
-        const data = originSeriesData.filter(
-          ({ name }: SeriesTypes) => !disabledSeries.includes(name)
-        );
+        const data = originSeriesData.filter(({ name }) => !disabledSeries.includes(name));
 
         newSeriesData[seriesName] = {
           seriesCount,
