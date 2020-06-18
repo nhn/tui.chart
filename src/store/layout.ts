@@ -2,7 +2,12 @@ import { StoreModule, Layout, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { Align } from '@t/options';
 import { getTextWidth } from '@src/helpers/calculator';
-import { LEGEND_LABEL_FONT, CHECKBOX_SIZE, ICON_SIZE, margin } from '@src/brushes/legend';
+import {
+  LEGEND_LABEL_FONT,
+  LEGEND_CHECKBOX_SIZE,
+  LEGEND_ICON_SIZE,
+  LEGEND_MARGIN_X,
+} from '@src/brushes/legend';
 
 function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
@@ -16,7 +21,12 @@ function getLongestLabelWidth(names: string[]) {
   return getTextWidth(longestLabel, LEGEND_LABEL_FONT);
 }
 
-function calculateLegendWidth(width: number, names: string[], options: Options) {
+function calculateLegendWidth(
+  width: number,
+  names: string[],
+  options: Options,
+  showCheckbox: boolean
+) {
   const legendOptions = options?.legend;
   let legendWidth = width / 10;
 
@@ -25,7 +35,11 @@ function calculateLegendWidth(width: number, names: string[], options: Options) 
   }
 
   if (!isVerticalAlign(legendOptions?.align)) {
-    const labelAreaWidth = getLongestLabelWidth(names) + CHECKBOX_SIZE + ICON_SIZE + margin.X * 2;
+    const labelAreaWidth =
+      getLongestLabelWidth(names) +
+      (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
+      LEGEND_ICON_SIZE +
+      LEGEND_MARGIN_X;
     legendWidth = Math.max(labelAreaWidth, legendWidth);
   }
 
@@ -42,7 +56,7 @@ const layout: StoreModule = {
       const {
         chart: { height, width },
         options,
-        legend: { visible, data },
+        legend: { visible, data, showCheckbox },
       } = state;
 
       const padding = 10;
@@ -54,7 +68,9 @@ const layout: StoreModule = {
       };
 
       const legendLabels = data.map(({ label }) => label);
-      const legendWidth = visible ? calculateLegendWidth(width, legendLabels, options) : 0;
+      const legendWidth = visible
+        ? calculateLegendWidth(width, legendLabels, options, showCheckbox)
+        : 0;
 
       const xAxis = {
         width: width - (yAxis.x + yAxis.width + legendWidth + padding * 2),

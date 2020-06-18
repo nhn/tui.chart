@@ -12,6 +12,10 @@ function showLegend(options: Options, isBubbleChart = false) {
   return showCircleLegend(options, isBubbleChart) || visible;
 }
 
+function showCheckbox(options: Options) {
+  return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
+}
+
 function getLegendLabels(series: SeriesRaw) {
   return Object.keys(series).reduce((acc, type) => {
     const seriesName = series[type].map(({ name }) => name);
@@ -43,6 +47,7 @@ const legend: StoreModule = {
   state: ({ options, series }) => ({
     legend: {
       visible: showLegend(options, !!series.bubble),
+      showCheckbox: showCheckbox(options),
       iconType: getIconType(series),
       data: getLegendLabels(series).map((label) => ({ label, active: true, checked: true })),
     },

@@ -2,13 +2,14 @@ import Component from './component';
 import { ChartState, Options, Legend as LegendType, Theme } from '@t/store/store';
 import { LegendModel, LegendResponderModel, LegendResponderType } from '@t/components/legend';
 import {
-  CHECKBOX_SIZE,
-  ICON_SIZE,
-  LEGEND_ITEM_HEIGHT,
+  LEGEND_CHECKBOX_SIZE,
+  LEGEND_ICON_SIZE,
   LEGEND_LABEL_FONT,
-  margin,
+  LEGEND_MARGIN_X,
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
+
+const LEGEND_ITEM_HEIGHT = 25;
 
 export default class Legend extends Component {
   models!: LegendModel[];
@@ -66,9 +67,9 @@ export default class Legend extends Component {
   }
 
   renderLegendModel(legend: LegendType, theme: Theme): LegendModel[] {
-    const defaultX = this.rect.width / 10;
+    const defaultX = 0;
     const defaultY = 20;
-    const { iconType, data } = legend;
+    const { iconType, data, showCheckbox } = legend;
     const { colors } = theme.series;
 
     return [
@@ -76,6 +77,7 @@ export default class Legend extends Component {
         type: 'legend',
         iconType,
         align: 'right',
+        showCheckbox,
         data: data.map((datum, idx) => ({
           ...datum,
           color: colors[idx],
@@ -91,23 +93,31 @@ export default class Legend extends Component {
       return;
     }
 
+    const { showCheckbox } = legend;
     this.rect = layout.legend;
     this.models = this.renderLegendModel(legend, theme);
     const { data } = this.models[0];
-    this.responders = [
-      ...data.map((m) => ({
-        ...m,
-        type: 'checkbox' as LegendResponderType,
-        x: m.x + this.rect.x,
-        y: m.y + this.rect.y,
-      })),
-      ...data.map((m) => ({
-        ...m,
-        type: 'label' as LegendResponderType,
-        x: m.x + this.rect.x + CHECKBOX_SIZE + margin.X * 2 + ICON_SIZE,
-        y: m.y + this.rect.y,
-        width: getTextWidth(m.label, LEGEND_LABEL_FONT),
-      })),
-    ];
+    const checkboxResponder = showCheckbox
+      ? data.map((m) => ({
+          ...m,
+          type: 'checkbox' as LegendResponderType,
+          x: m.x + this.rect.x,
+          y: m.y + this.rect.y,
+        }))
+      : [];
+    const labelResponder = data.map((m) => ({
+      ...m,
+      type: 'label' as LegendResponderType,
+      x:
+        m.x +
+        this.rect.x +
+        (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
+        LEGEND_ICON_SIZE +
+        LEGEND_MARGIN_X,
+      y: m.y + this.rect.y,
+      width: getTextWidth(m.label, LEGEND_LABEL_FONT),
+    }));
+
+    this.responders = [...checkboxResponder, ...labelResponder];
   }
 }

@@ -11,6 +11,7 @@ type LegendData = {
 export type LegendModel = {
   type: 'legend';
   align: Align;
+  showCheckbox: boolean;
   iconType: LegendIconType;
   data: LegendData[];
 };

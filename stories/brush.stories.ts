@@ -348,6 +348,7 @@ export const legendBrush = () => {
     type: 'legend',
     iconType: 'circle',
     align: 'right',
+    showCheckbox: true,
     data: [
       {
         label: 'circle-checked-active',
@@ -378,8 +379,26 @@ export const legendBrush = () => {
 
   legend(ctx, {
     type: 'legend',
+    iconType: 'circle',
+    align: 'right',
+    showCheckbox: false,
+    data: [
+      {
+        label: 'circle-unchecked-active-hideCheckbox',
+        color: '#510a32',
+        checked: false,
+        active: true,
+        x: 100,
+        y: 160,
+      },
+    ],
+  });
+
+  legend(ctx, {
+    type: 'legend',
     iconType: 'line',
     align: 'right',
+    showCheckbox: true,
     data: [
       {
         label: 'line-checked-active',
@@ -387,7 +406,7 @@ export const legendBrush = () => {
         checked: true,
         active: true,
         x: 100,
-        y: 160,
+        y: 180,
       },
       {
         label: 'line-checked-inactive',
@@ -395,7 +414,7 @@ export const legendBrush = () => {
         checked: true,
         active: false,
         x: 100,
-        y: 180,
+        y: 200,
       },
     ],
   });
@@ -404,6 +423,7 @@ export const legendBrush = () => {
     type: 'legend',
     iconType: 'rect',
     align: 'right',
+    showCheckbox: true,
     data: [
       {
         label: 'rect-checked-active',
@@ -411,7 +431,7 @@ export const legendBrush = () => {
         checked: true,
         active: true,
         x: 100,
-        y: 200,
+        y: 220,
       },
       {
         label: 'rect-checked-inactive',
@@ -419,7 +439,7 @@ export const legendBrush = () => {
         checked: true,
         active: false,
         x: 100,
-        y: 220,
+        y: 240,
       },
     ],
   });

@@ -140,6 +140,7 @@ export type LegendIconType = 'rect' | 'circle' | 'spectrum' | 'line';
 export interface Legend {
   visible: boolean;
   iconType: LegendIconType;
+  showCheckbox: boolean;
   data: {
     label: string;
     active: boolean;

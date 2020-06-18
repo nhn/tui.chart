@@ -7,20 +7,19 @@ import { LegendIconType } from '@t/store/store';
 
 interface RenderOptions {
   iconType: LegendIconType;
+  showCheckbox: boolean;
   checked: boolean;
   active: boolean;
   color: string;
 }
 
-// @TODO; legend 상수로 변경하기
-export const margin = { X: 5 };
-export const CHECKBOX_SIZE = 12;
-export const ICON_SIZE = 12;
-export const RECT_SIZE = 10;
+export const LEGEND_MARGIN_X = 5;
+export const LEGEND_CHECKBOX_SIZE = 12;
+export const LEGEND_ICON_SIZE = 12;
 export const LEGEND_LABEL_FONT = 'normal 11px Arial';
-export const LEGEND_ITEM_HEIGHT = 25;
+const RECT_SIZE = 10;
 const LINE_ICON_PADDING = 2;
-const ICON_RADIUS = 6;
+const CIRCLE_ICON_RADIUS = 6;
 
 function renderLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
   const xCurveOffset = [2, 2, 6, 6, 10, 10];
@@ -78,8 +77,8 @@ function renderCheckbox(
     type: 'rect',
     x,
     y,
-    width: CHECKBOX_SIZE,
-    height: CHECKBOX_SIZE,
+    width: LEGEND_CHECKBOX_SIZE,
+    height: LEGEND_CHECKBOX_SIZE,
     color: '#fff',
     borderColor,
     thickness: 1,
@@ -96,15 +95,15 @@ function renderIcon(
   y: number,
   renderOptions: RenderOptions
 ) {
-  const { iconType, active, color } = renderOptions;
-  const iconX = x + CHECKBOX_SIZE + margin.X;
+  const { iconType, active, color, showCheckbox } = renderOptions;
+  const iconX = x + (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0);
   const iconColor = active ? color : getRGBA(color, 0.3);
 
   if (iconType === 'rect') {
     rect(ctx, {
       type: 'rect',
       x: iconX,
-      y: y + (CHECKBOX_SIZE - RECT_SIZE) / 2,
+      y: y + (LEGEND_CHECKBOX_SIZE - RECT_SIZE) / 2,
       width: RECT_SIZE,
       height: RECT_SIZE,
       color: iconColor,
@@ -114,9 +113,9 @@ function renderIcon(
   } else if (iconType === 'circle') {
     circle(ctx, {
       type: 'circle',
-      x: iconX + ICON_RADIUS,
-      y: y + ICON_RADIUS,
-      radius: ICON_RADIUS,
+      x: iconX + CIRCLE_ICON_RADIUS,
+      y: y + CIRCLE_ICON_RADIUS,
+      radius: CIRCLE_ICON_RADIUS,
       color: iconColor,
       style: ['default'],
     } as CircleModel);
@@ -130,12 +129,16 @@ function renderLabel(
   text: string,
   renderOptions: RenderOptions
 ) {
-  const { active } = renderOptions;
+  const { active, showCheckbox } = renderOptions;
   const fontColor = active ? '#333' : getRGBA('#333333', 0.3);
 
   label(ctx, {
     type: 'label',
-    x: x + CHECKBOX_SIZE + ICON_SIZE + margin.X * 2,
+    x:
+      x +
+      LEGEND_ICON_SIZE +
+      LEGEND_MARGIN_X +
+      (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0),
     y,
     text,
     style: ['default', { font: LEGEND_LABEL_FONT, textBaseline: 'top', fillStyle: fontColor }],
@@ -143,7 +146,7 @@ function renderLabel(
 }
 
 export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
-  const { data, iconType } = model;
+  const { data, iconType, showCheckbox } = model;
 
   data.forEach((datum) => {
     const { x, y, checked, active, color } = datum;
@@ -152,9 +155,12 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
       checked,
       active,
       color,
+      showCheckbox,
     };
 
-    renderCheckbox(ctx, x, y, renderOptions);
+    if (showCheckbox) {
+      renderCheckbox(ctx, x, y, renderOptions);
+    }
     renderIcon(ctx, x, y, renderOptions);
     renderLabel(ctx, x, y, datum.label, renderOptions);
   });
