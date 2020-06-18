@@ -1,4 +1,4 @@
-import { StoreModule, SeriesTypes, SeriesRaw, Series, SeriesTheme } from '@t/store/store';
+import { StoreModule, SeriesRaw, Series } from '@t/store/store';
 import { extend } from '@src/store/store';
 
 import { sortSeries } from '@src/helpers/utils';

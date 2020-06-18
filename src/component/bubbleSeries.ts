@@ -94,7 +94,7 @@ export default class BubbleSeries extends CircleSeries {
           type: 'circle',
           radius,
           color,
-          style: ['default', { strokeStyle: getRGBA(color, 0.3) }],
+          style: ['default', { strokeStyle: color }],
           seriesIndex,
         });
       });

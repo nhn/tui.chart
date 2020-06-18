@@ -2,6 +2,7 @@ import { ScatterChartOptions } from '@t/options';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import ScatterSeries from '@src/component/scatterSeries';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 let scatterSeries;
 const seriesData = [
@@ -179,4 +180,24 @@ it('should register closest responder to the mouse', () => {
   const responders = [closestResponder, distantResponder];
   scatterSeries.onMousemove({ responders, mousePosition: { x: 10, y: 80 } });
   expect(scatterSeries.activatedResponders).toEqual([closestResponder]);
+});
+
+it('should apply transparency when legend active false', () => {
+  scatterSeries = new ScatterSeries({
+    store: {} as Store<ScatterChartOptions>,
+    eventBus: new EventEmitter(),
+  });
+
+  scatterSeries.render(
+    deepMergedCopy(chartState, {
+      legend: {
+        data: [
+          { label: 'nameA', active: true, checked: true },
+          { label: 'nameB', active: false, checked: true },
+        ],
+      },
+    })
+  );
+
+  expect(scatterSeries.drawModels.series[2].color).toEqual('rgba(187, 187, 187, 0.3)');
 });

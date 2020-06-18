@@ -5,8 +5,8 @@ import { ChartState, StateFunc } from '@t/store/store';
 import Store from '@src/store/store';
 
 const data = [
-  { name: 'han', data: [1, 2, 3] },
-  { name: 'cho', data: [4, 5, 6] },
+  { name: 'han', data: [1, 2, 3], color: '#aaaaaa' },
+  { name: 'cho', data: [4, 5, 6], color: '#bbbbbb' },
 ];
 
 describe('StackSeriesData Store', () => {

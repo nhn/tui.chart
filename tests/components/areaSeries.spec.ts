@@ -2,6 +2,7 @@ import { AreaChartOptions } from '@t/options';
 import AreaSeries from '@src/component/areaSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 let areaSeries;
 const seriesData = [
@@ -210,4 +211,24 @@ it('remove line points model and circle model when mousemove after hover above l
   areaSeries.onMousemove({ responders: [] });
 
   expect(areaSeries.drawModels).toEqual(result.drawModels);
+});
+
+it('should apply transparency when legend active false', () => {
+  areaSeries = new AreaSeries({
+    store: {} as Store<AreaChartOptions>,
+    eventBus: new EventEmitter(),
+  });
+
+  areaSeries.render(
+    deepMergedCopy(chartState, {
+      legend: {
+        data: [
+          { label: 'han', active: true, checked: true },
+          { label: 'cho', active: false, checked: true },
+        ],
+      },
+    })
+  );
+
+  expect(areaSeries.drawModels.series[1].fillColor).toEqual('rgba(187, 187, 187, 0.1)');
 });

@@ -2,6 +2,7 @@ import { BubbleChartOptions } from '@t/options';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import BubbleSeries from '@src/component/bubbleSeries';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 let bubbleSeries;
 const seriesData = [
@@ -142,7 +143,7 @@ const result = {
         color: 'rgba(170, 170, 170, 0.8)',
         radius: 7.5,
         seriesIndex: 0,
-        style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
+        style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.8)' }],
         type: 'circle',
         x: 0,
         y: 0,
@@ -151,7 +152,7 @@ const result = {
         color: 'rgba(170, 170, 170, 0.8)',
         radius: 15,
         seriesIndex: 0,
-        style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.3)' }],
+        style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.8)' }],
         type: 'circle',
         x: 140,
         y: 0,
@@ -160,7 +161,7 @@ const result = {
         color: 'rgba(187, 187, 187, 0.8)',
         radius: 2.25,
         seriesIndex: 1,
-        style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.3)' }],
+        style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.8)' }],
         type: 'circle',
         x: 280,
         y: 280,
@@ -183,4 +184,26 @@ it('should register closest responder to the mouse', () => {
   const responders = [closestResponder, distantResponder];
   bubbleSeries.onMousemove({ responders, mousePosition: { x: 10, y: 80 } });
   expect(bubbleSeries.activatedResponders).toEqual([closestResponder]);
+});
+
+it('should apply transparency when legend active false', () => {
+  bubbleSeries = new BubbleSeries({
+    store: {} as Store<BubbleChartOptions>,
+    eventBus: new EventEmitter(),
+  });
+
+  bubbleSeries.render(chartState);
+
+  bubbleSeries.render(
+    deepMergedCopy(chartState, {
+      legend: {
+        data: [
+          { label: 'nameA', active: true, checked: true },
+          { label: 'nameB', active: false, checked: true },
+        ],
+      },
+    })
+  );
+
+  expect(bubbleSeries.models.series[2].color).toEqual('rgba(187, 187, 187, 0.1)');
 });
