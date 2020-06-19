@@ -7,6 +7,7 @@ import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { deepCopy } from '@src/helpers/utils';
+import { circle } from '@src/brushes/basic';
 
 const MINIMUM_DETECTING_AREA_RADIUS = 1;
 
@@ -27,8 +28,8 @@ export default class BubbleSeries extends CircleSeries {
   }
 
   render(chartState: ChartState<BaseOptions>) {
-    const { layout, series, scale, axes } = chartState;
-    const { legend, plot } = layout;
+    const { layout, series, scale, axes, circleLegend } = chartState;
+    const { plot } = layout;
 
     if (!series.bubble) {
       throw new Error("There's no bubble data!");
@@ -41,7 +42,7 @@ export default class BubbleSeries extends CircleSeries {
     const xAxisTickSize = this.rect.width / xAxis!.tickCount;
     const yAxisTickSize = this.rect.height / yAxis!.tickCount;
 
-    this.maxRadius = legend.width ? legend.width / 2 : Math.min(xAxisTickSize, yAxisTickSize);
+    this.maxRadius = circleLegend ? circleLegend.radius : Math.min(xAxisTickSize, yAxisTickSize);
     this.maxValue = getMaxRadius(bubbleData);
 
     const seriesModel = this.renderBubblePointsModel(bubbleData, scale, chartState.legend);

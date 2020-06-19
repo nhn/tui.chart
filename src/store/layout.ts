@@ -1,49 +1,100 @@
-import { StoreModule, Layout, Options } from '@t/store/store';
+import { StoreModule, Layout, CircleLegend } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { Align } from '@t/options';
-import { getTextWidth } from '@src/helpers/calculator';
-import {
-  LEGEND_LABEL_FONT,
-  LEGEND_CHECKBOX_SIZE,
-  LEGEND_ICON_SIZE,
-  LEGEND_MARGIN_X,
-} from '@src/brushes/legend';
+import { Align, Rect, Size } from '@t/options';
+import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_TOP, LEGEND_MARGIN_BOTTOM } from '@src/brushes/legend';
 
-function isVerticalAlign(align?: Align) {
+const padding = { X: 10, Y: 15 };
+const X_AXIS_LABEL_HEIGHT = 34;
+
+export function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
 }
 
-function getLongestLabelWidth(names: string[]) {
-  const longestLabel = names.reduce((acc, cur) => {
-    return acc.length > cur.length ? acc : cur;
-  }, '');
+function getYAxisRect(chartSize: Size, align: Align, legendWidth: number, verticalAlign: boolean) {
+  const { height } = chartSize;
 
-  return getTextWidth(longestLabel, LEGEND_LABEL_FONT);
+  const x = align === 'left' ? legendWidth + padding.X : padding.X;
+  const y = align === 'top' ? LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_BOTTOM + padding.Y : padding.Y;
+  const yAxisHeight = verticalAlign
+    ? height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT - LEGEND_ITEM_HEIGHT - LEGEND_MARGIN_BOTTOM
+    : height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT;
+
+  return {
+    x,
+    y,
+    height: yAxisHeight,
+    width: 40, // @TODO: y축 값 너비 계산해서 지정해줘야함
+  };
 }
 
-function calculateLegendWidth(
-  width: number,
-  names: string[],
-  options: Options,
-  showCheckbox: boolean
+function getXAxisRect(
+  chartSize: Size,
+  yAxis: Rect,
+  align: Align,
+  legendWidth: number,
+  circleLegend: CircleLegend
 ) {
-  const legendOptions = options?.legend;
-  let legendWidth = width / 10;
+  const { width } = chartSize;
+  const verticalAlign = isVerticalAlign(align);
 
-  if (legendOptions?.width) {
-    return legendOptions.width;
+  let xAxisWidth = width - (yAxis.x + yAxis.width + legendWidth + padding.X * 2);
+
+  if (align === 'left') {
+    xAxisWidth = width - (yAxis.width + legendWidth + padding.X * 2);
+  } else if (verticalAlign) {
+    xAxisWidth = width - (yAxis.x + yAxis.width + padding.X);
+
+    if (circleLegend.visible) {
+      xAxisWidth -= circleLegend.width;
+    }
   }
 
-  if (!isVerticalAlign(legendOptions?.align)) {
-    const labelAreaWidth =
-      getLongestLabelWidth(names) +
-      (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
-      LEGEND_ICON_SIZE +
-      LEGEND_MARGIN_X;
-    legendWidth = Math.max(labelAreaWidth, legendWidth);
+  return {
+    width: xAxisWidth,
+    height: 20,
+    x: yAxis.x + yAxis.width,
+    y: yAxis.y + yAxis.height,
+  };
+}
+
+function getLegendRect(
+  chartSize: Size,
+  xAxis: Rect,
+  yAxis: Rect,
+  align: Align,
+  legendWidth: number
+) {
+  const { width } = chartSize;
+  const verticalAlign = isVerticalAlign(align);
+  let x = xAxis.x + xAxis.width + padding.X;
+  let y = yAxis.y;
+
+  if (verticalAlign) {
+    x = (width - legendWidth) / 2;
+    y = align === 'top' ? 0 : yAxis.y + yAxis.height + LEGEND_MARGIN_TOP;
+  } else if (align === 'left') {
+    x = padding.X;
   }
 
-  return legendWidth;
+  return { width: legendWidth, height: yAxis.height, x, y };
+}
+
+function getCircleLegendRect(xAxis: Rect, yAxis: Rect, align: Align, width: number) {
+  return {
+    width,
+    height: yAxis.height,
+    x: align === 'left' ? 0 + padding.X : xAxis.x + xAxis.width + 10,
+    y: yAxis.y,
+  };
+}
+
+function getPlotRect(xAxis: Rect, yAxis: Rect) {
+  return {
+    width: xAxis.width,
+    height: yAxis.height,
+    x: xAxis.x,
+    y: yAxis.y,
+  };
 }
 
 const layout: StoreModule = {
@@ -55,45 +106,23 @@ const layout: StoreModule = {
     setLayout({ state }) {
       const {
         chart: { height, width },
-        options,
-        legend: { visible, data, showCheckbox },
+        legend: { align, width: legendWidth },
+        circleLegend: circleLegendState,
       } = state;
 
-      const padding = 10;
-      const yAxis = {
-        width: 50,
-        height: height - padding * 2 - 34,
-        x: 0 + padding,
-        y: 0 + padding,
-      };
+      const verticalAlign = isVerticalAlign(align);
+      const chartSize = { height, width };
 
-      const legendLabels = data.map(({ label }) => label);
-      const legendWidth = visible
-        ? calculateLegendWidth(width, legendLabels, options, showCheckbox)
-        : 0;
+      const yAxis = getYAxisRect(chartSize, align, legendWidth, verticalAlign);
+      const xAxis = getXAxisRect(chartSize, yAxis, align, legendWidth, circleLegendState);
+      const legend = getLegendRect(chartSize, xAxis, yAxis, align, legendWidth);
+      const circleLegend = circleLegendState.visible
+        ? getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width)
+        : null;
 
-      const xAxis = {
-        width: width - (yAxis.x + yAxis.width + legendWidth + padding * 2),
-        height: 20,
-        x: yAxis.x + yAxis.width,
-        y: yAxis.y + yAxis.height,
-      };
+      const plot = getPlotRect(xAxis, yAxis);
 
-      const legend = {
-        width: legendWidth,
-        height: yAxis.height,
-        x: xAxis.x + xAxis.width + padding,
-        y: yAxis.y,
-      };
-
-      const plot = {
-        width: xAxis.width,
-        height: yAxis.height,
-        x: xAxis.x,
-        y: 0 + padding,
-      };
-
-      extend(state.layout, { yAxis, xAxis, plot, legend });
+      extend(state.layout, { yAxis, xAxis, plot, legend, circleLegend });
     },
   },
   observe: {
