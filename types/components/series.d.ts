@@ -65,4 +65,5 @@ export type RectModel = {
   borderColor?: string;
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
+  value?: any;
 } & Rect;

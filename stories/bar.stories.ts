@@ -10,9 +10,11 @@ import {
 } from './data';
 import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
+import { withKnobs, number, radios, boolean, color } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Bar',
+  decorators: [withKnobs],
 };
 
 const width = 1000;
@@ -172,6 +174,32 @@ export const divergingGroupStack = () => {
       stack: {
         type: 'normal',
         connector: true,
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabels = () => {
+  const visible = boolean('visible', true);
+  const anchor = radios('anchor', { center: 'center', start: 'start', end: 'end' }, 'center');
+  const align = radios('align', { center: 'center', start: 'start', end: 'end' }, 'center');
+  const offset = number('offset', 5, { range: true, min: 0, max: 10, step: 1 });
+  const rotation = number('rotation', 5, { range: true, min: 0, max: 10, step: 1 });
+  const labelColor = color('label color', '#333333');
+
+  const { el } = createChart(budgetData, {
+    series: {
+      dataLabels: {
+        visible,
+        anchor,
+        align,
+        offset,
+        rotation,
+        style: {
+          color: labelColor,
+        },
       },
     },
   });

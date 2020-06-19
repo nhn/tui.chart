@@ -1,4 +1,5 @@
 import { SeriesRaw } from '@t/store/store';
+import DataLabel from '@src/component/dataLabel';
 
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
@@ -141,8 +142,8 @@ interface CircleLegendOptions {
 }
 
 interface BaseSeriesOptions {
-  showLabel?: boolean;
   allowSelect?: boolean;
+  dataLabels?: DataLabels;
 }
 
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
@@ -221,3 +222,24 @@ export interface ChartProps<T> {
   categories?: string[];
   options: T;
 }
+
+export type DataLabelAnchor = 'center' | 'start' | 'end';
+export type DataLabelAlign = 'center' | 'start' | 'end' | 'left' | 'right' | 'top' | 'bottom';
+export type DataLabelStyle = {
+  font?: string;
+  color?: string;
+};
+
+export type DataLabels = {
+  visible: boolean;
+  anchor?: DataLabelAnchor;
+  align?: DataLabelAlign;
+  offset?: number;
+  rotation?: number;
+  formatter?: (context: any) => string; // TODO: change any type
+  style?: DataLabelStyle;
+  stackTotal?: {
+    visible: boolean;
+    style?: DataLabelStyle;
+  };
+};

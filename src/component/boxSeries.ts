@@ -21,13 +21,14 @@ import {
   isNumber,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
-import { LineModel } from '@t/components/axis';
+import { LineModel, LabelModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { AxisType } from './axis';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
+import DataLabel from './dataLabel';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -40,6 +41,7 @@ type DrawModels = {
   series: RectModel[];
   hoveredSeries?: RectModel[];
   connector?: LineModel[];
+  label?: LabelModel[];
 };
 
 type RenderOptions = {
@@ -212,15 +214,22 @@ export default class BoxSeries extends Component {
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, renderOptions, categories);
     const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
 
+    const dataLabelOptions = options.series?.dataLabels;
+    const withoutSize = this.getOffsetSize() + this.hoverThickness;
+
     this.models = {
       clipRect: [this.renderClipRectAreaModel()],
       series: seriesModels,
+      label: dataLabelOptions
+        ? new DataLabel(this.name, seriesModels, dataLabelOptions, withoutSize).models
+        : [],
     };
 
     if (!this.drawModels) {
       this.drawModels = {
         clipRect: this.models.clipRect,
         series: deepCopyArray(seriesModels),
+        label: [],
       };
     }
 
@@ -274,6 +283,7 @@ export default class BoxSeries extends Component {
           seriesModels.push({
             type: 'rect',
             color,
+            value,
             ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
           });
         }
