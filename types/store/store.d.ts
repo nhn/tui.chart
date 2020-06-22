@@ -14,6 +14,7 @@ import {
   StackType,
   BubbleSeriesType,
   BubbleChartOptions,
+  Align,
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
@@ -93,7 +94,8 @@ export interface StoreModule extends StoreOptions {
     | 'seriesData'
     | 'dataRange'
     | 'stackSeriesData'
-    | 'legend';
+    | 'legend'
+    | 'circleLegend';
 }
 
 export interface SeriesTheme {
@@ -109,6 +111,7 @@ export interface Layout {
   yAxis: Rect;
   plot: Rect;
   legend: Rect;
+  circleLegend: Rect;
 }
 
 export interface Scale {
@@ -141,11 +144,20 @@ export interface Legend {
   visible: boolean;
   iconType: LegendIconType;
   showCheckbox: boolean;
+  align: Align;
+  width: number;
   data: {
     label: string;
     active: boolean;
     checked: boolean;
+    width: number;
   }[];
+}
+
+export interface CircleLegend {
+  visible: boolean;
+  width: number;
+  radius: number;
 }
 
 export interface ChartState<T extends Options> {
@@ -168,6 +180,7 @@ export interface ChartState<T extends Options> {
     lines?: PlotLine[];
   };
   legend: Legend;
+  circleLegend: CircleLegend;
 }
 
 export type StackTotal = {

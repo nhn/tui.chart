@@ -4,12 +4,14 @@ import { LegendModel, LegendResponderModel, LegendResponderType } from '@t/compo
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
+  LEGEND_ITEM_MARGIN_X,
   LEGEND_LABEL_FONT,
   LEGEND_MARGIN_X,
+  LEGEND_ITEM_HEIGHT,
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
-
-const LEGEND_ITEM_HEIGHT = 25;
+import { isVerticalAlign } from '@src/store/layout';
+import { sum } from '@src/helpers/utils';
 
 export default class Legend extends Component {
   models!: LegendModel[];
@@ -69,21 +71,27 @@ export default class Legend extends Component {
   renderLegendModel(legend: LegendType, theme: Theme): LegendModel[] {
     const defaultX = 0;
     const defaultY = 20;
-    const { iconType, data, showCheckbox } = legend;
+    const { iconType, data, showCheckbox, align } = legend;
     const { colors } = theme.series;
+    const verticalAlign = isVerticalAlign(align);
+    const legendWidths = data.map(({ width }) => width);
 
     return [
       {
         type: 'legend',
         iconType,
-        align: 'right',
+        align,
         showCheckbox,
-        data: data.map((datum, idx) => ({
-          ...datum,
-          color: colors[idx],
-          x: defaultX,
-          y: defaultY + LEGEND_ITEM_HEIGHT * idx,
-        })),
+        data: data.map((datum, idx) => {
+          const xOffset = sum(legendWidths.slice(0, idx)) + LEGEND_ITEM_MARGIN_X * idx;
+
+          return {
+            ...datum,
+            color: colors[idx],
+            x: verticalAlign ? defaultX + xOffset : defaultX,
+            y: verticalAlign ? defaultY : defaultY + LEGEND_ITEM_HEIGHT * idx,
+          };
+        }),
       },
     ];
   }

@@ -4,6 +4,7 @@ import { LegendModel } from '@t/components/legend';
 import { CircleModel } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
 import { LegendIconType } from '@t/store/store';
+import { Align } from '@t/options';
 
 interface RenderOptions {
   iconType: LegendIconType;
@@ -11,9 +12,13 @@ interface RenderOptions {
   checked: boolean;
   active: boolean;
   color: string;
+  align: Align;
 }
 
+export const LEGEND_ITEM_HEIGHT = 25;
+export const LEGEND_ITEM_MARGIN_X = 40;
 export const LEGEND_MARGIN_X = 5;
+export const LEGEND_MARGIN_Y = 15;
 export const LEGEND_CHECKBOX_SIZE = 12;
 export const LEGEND_ICON_SIZE = 12;
 export const LEGEND_LABEL_FONT = 'normal 11px Arial';
@@ -146,7 +151,7 @@ function renderLabel(
 }
 
 export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
-  const { data, iconType, showCheckbox } = model;
+  const { data, iconType, showCheckbox, align } = model;
 
   data.forEach((datum) => {
     const { x, y, checked, active, color } = datum;
@@ -156,6 +161,7 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
       active,
       color,
       showCheckbox,
+      align,
     };
 
     if (showCheckbox) {
