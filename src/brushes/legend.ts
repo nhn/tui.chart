@@ -18,8 +18,7 @@ interface RenderOptions {
 export const LEGEND_ITEM_HEIGHT = 25;
 export const LEGEND_ITEM_MARGIN_X = 40;
 export const LEGEND_MARGIN_X = 5;
-export const LEGEND_MARGIN_BOTTOM = 15;
-export const LEGEND_MARGIN_TOP = 30;
+export const LEGEND_MARGIN_Y = 15;
 export const LEGEND_CHECKBOX_SIZE = 12;
 export const LEGEND_ICON_SIZE = 12;
 export const LEGEND_LABEL_FONT = 'normal 11px Arial';

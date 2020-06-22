@@ -111,7 +111,7 @@ export interface Layout {
   yAxis: Rect;
   plot: Rect;
   legend: Rect;
-  circleLegend: Rect | null;
+  circleLegend: Rect;
 }
 
 export interface Scale {

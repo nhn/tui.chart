@@ -1,7 +1,7 @@
 import { StoreModule, Layout, CircleLegend } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { Align, Rect, Size } from '@t/options';
-import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_TOP, LEGEND_MARGIN_BOTTOM } from '@src/brushes/legend';
+import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
 
 const padding = { X: 10, Y: 15 };
 const X_AXIS_LABEL_HEIGHT = 34;
@@ -10,14 +10,38 @@ export function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
 }
 
-function getYAxisRect(chartSize: Size, align: Align, legendWidth: number, verticalAlign: boolean) {
+function getYAxisRect(
+  chartSize: Size,
+  align: Align,
+  legendWidth: number,
+  legendVisible: boolean,
+  circleLegend: CircleLegend
+) {
   const { height } = chartSize;
+  const verticalAlign = isVerticalAlign(align);
 
-  const x = align === 'left' ? legendWidth + padding.X : padding.X;
-  const y = align === 'top' ? LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_BOTTOM + padding.Y : padding.Y;
-  const yAxisHeight = verticalAlign
-    ? height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT - LEGEND_ITEM_HEIGHT - LEGEND_MARGIN_BOTTOM
-    : height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT;
+  let x = padding.X;
+  let y = padding.Y;
+  let yAxisHeight = height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT;
+
+  if (legendVisible) {
+    if (align === 'left') {
+      x = legendWidth + padding.X;
+    } else if (align === 'top') {
+      y = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
+    }
+
+    if (verticalAlign) {
+      yAxisHeight =
+        height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT - LEGEND_ITEM_HEIGHT - LEGEND_MARGIN_Y;
+    }
+  }
+
+  if (circleLegend.visible) {
+    if (align === 'left') {
+      x = Math.max(circleLegend.width + padding.X, x);
+    }
+  }
 
   return {
     x,
@@ -37,16 +61,16 @@ function getXAxisRect(
   const { width } = chartSize;
   const verticalAlign = isVerticalAlign(align);
 
-  let xAxisWidth = width - (yAxis.x + yAxis.width + legendWidth + padding.X * 2);
+  let xAxisWidth;
 
-  if (align === 'left') {
-    xAxisWidth = width - (yAxis.width + legendWidth + padding.X * 2);
-  } else if (verticalAlign) {
+  if (verticalAlign) {
     xAxisWidth = width - (yAxis.x + yAxis.width + padding.X);
 
     if (circleLegend.visible) {
       xAxisWidth -= circleLegend.width;
     }
+  } else {
+    xAxisWidth = width - (yAxis.width + Math.max(legendWidth, circleLegend.width) + padding.X) - 30; // @TODO: 마지막 라벨 길이
   }
 
   return {
@@ -71,7 +95,7 @@ function getLegendRect(
 
   if (verticalAlign) {
     x = (width - legendWidth) / 2;
-    y = align === 'top' ? 0 : yAxis.y + yAxis.height + LEGEND_MARGIN_TOP;
+    y = align === 'top' ? 0 : yAxis.y + yAxis.height + X_AXIS_LABEL_HEIGHT;
   } else if (align === 'left') {
     x = padding.X;
   }
@@ -83,7 +107,7 @@ function getCircleLegendRect(xAxis: Rect, yAxis: Rect, align: Align, width: numb
   return {
     width,
     height: yAxis.height,
-    x: align === 'left' ? 0 + padding.X : xAxis.x + xAxis.width + 10,
+    x: align === 'left' ? padding.X : xAxis.x + xAxis.width + 10,
     y: yAxis.y,
   };
 }
@@ -106,20 +130,16 @@ const layout: StoreModule = {
     setLayout({ state }) {
       const {
         chart: { height, width },
-        legend: { align, width: legendWidth },
+        legend: { align, width: legendWidth, visible: legendVisible },
         circleLegend: circleLegendState,
       } = state;
 
-      const verticalAlign = isVerticalAlign(align);
       const chartSize = { height, width };
 
-      const yAxis = getYAxisRect(chartSize, align, legendWidth, verticalAlign);
+      const yAxis = getYAxisRect(chartSize, align, legendWidth, legendVisible, circleLegendState);
       const xAxis = getXAxisRect(chartSize, yAxis, align, legendWidth, circleLegendState);
       const legend = getLegendRect(chartSize, xAxis, yAxis, align, legendWidth);
-      const circleLegend = circleLegendState.visible
-        ? getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width)
-        : null;
-
+      const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
       const plot = getPlotRect(xAxis, yAxis);
 
       extend(state.layout, { yAxis, xAxis, plot, legend, circleLegend });

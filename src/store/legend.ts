@@ -41,7 +41,10 @@ function calculateLegendWidth(
 }
 
 export function showCircleLegend(options: BubbleChartOptions, isBubbleChart = false) {
-  return isBubbleChart && !!options?.circleLegend?.visible;
+  return (
+    isBubbleChart &&
+    (isUndefined(options?.circleLegend?.visible) ? true : !!options?.circleLegend?.visible)
+  );
 }
 
 function showLegend(options: Options) {
@@ -94,7 +97,7 @@ function getItemWidth(label: string, checkboxVisible: boolean) {
 const legend: StoreModule = {
   name: 'legend',
   state: ({ options, series }) => {
-    const defaultWidth = options.chart!.width / 10;
+    const defaultWidth = Math.min(options.chart!.width / 10, 150);
     const align = getAlign(options);
     const visible = showLegend(options);
     const checkboxVisible = showCheckbox(options);
@@ -109,6 +112,7 @@ const legend: StoreModule = {
     const circleLegendWidth = isVerticalAlign(align)
       ? defaultWidth
       : Math.max(defaultWidth, legendWidth);
+    const circleLegendVisible = showCircleLegend(options, !!series.bubble);
 
     return {
       legend: {
@@ -120,9 +124,9 @@ const legend: StoreModule = {
         width: legendWidth,
       },
       circleLegend: {
-        visible: showCircleLegend(options, !!series.bubble),
-        width: circleLegendWidth,
-        radius: (circleLegendWidth - LEGEND_MARGIN_X) / 2,
+        visible: circleLegendVisible,
+        width: circleLegendVisible ? circleLegendWidth : 0,
+        radius: circleLegendVisible ? (circleLegendWidth - LEGEND_MARGIN_X) / 2 : 0,
       },
     };
   },
