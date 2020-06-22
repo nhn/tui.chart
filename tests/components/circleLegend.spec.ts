@@ -23,6 +23,7 @@ const chartState = {
   layout: {
     plot: { width: 280, height: 280, x: 10, y: 80 },
     legend: { width: 35, height: 280, x: 300, y: 280 },
+    circleLegend: { width: 15, height: 30, x: 10, y: 80 },
   },
   series: {
     bubble: {
@@ -53,10 +54,14 @@ const chartState = {
       colors: ['#aaaaaa', '#bbbbbb'],
     },
   },
+  circleLegend: {
+    radius: 15,
+    visible: true,
+  },
 };
 
 const models = {
-  circleLegend: [{ radius: 17.5, type: 'circleLegend', value: 200, x: 17.5, y: 262.5 }],
+  circleLegend: [{ radius: 15, type: 'circleLegend', value: 200, x: 15, y: 15 }],
 };
 
 it('should make models properly when calling render', () => {

@@ -69,6 +69,10 @@ const chartState = {
       { label: 'nameB', active: true, checked: true },
     ],
   },
+  circleLegend: {
+    radius: 15,
+    visible: true,
+  },
 };
 
 beforeEach(() => {

@@ -5,7 +5,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 describe('Legend Store', () => {
   it('should apply default options when legend options not exist', () => {
     const state = (legend.state as StateFunc)({
-      options: {},
+      options: { chart: { width: 300, height: 300 } },
       series: {
         line: [
           {
@@ -27,17 +27,20 @@ describe('Legend Store', () => {
           label: 'test',
           checked: true,
           active: true,
+          width: 38,
         },
       ],
       iconType: 'line',
       showCheckbox: true,
       visible: true,
+      align: 'right',
+      width: 38,
     });
   });
 
   describe('iconType', () => {
     const initStoreState = {
-      options: {},
+      options: { chart: { width: 300, height: 300 } },
       series: {},
     };
 
