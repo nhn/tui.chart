@@ -9,5 +9,6 @@ module.exports = {
       babelConfig: true,
     },
   },
+  setupFiles: ['jest-canvas-mock'],
   watchPathIgnorePatterns: ['<rootDir>/.storybook', '<rootDir>/.stories', '/node_modules/'],
 };
