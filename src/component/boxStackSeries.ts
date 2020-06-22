@@ -103,6 +103,8 @@ export default class BoxStackSeries extends BoxSeries {
 
     const { series, connector } = this.renderStackSeriesModel(seriesData, colors, renderOptions);
     const hoveredSeries = this.renderHoveredSeriesModel(series);
+    const clipRect = this.renderClipRectAreaModel();
+
     const tooltipData: TooltipData[] = this.getTooltipData(
       seriesData,
       colors,
@@ -111,14 +113,22 @@ export default class BoxStackSeries extends BoxSeries {
     );
 
     this.models = {
-      clipRect: [this.renderClipRectAreaModel()],
+      clipRect: [clipRect],
       series,
       connector,
     };
 
     if (!this.drawModels) {
       this.drawModels = {
-        clipRect: this.models.clipRect,
+        clipRect: [
+          {
+            type: 'clipRectArea',
+            width: this.isBar ? 0 : clipRect.width,
+            height: this.isBar ? clipRect.height : 0,
+            x: this.isBar ? 0 : clipRect.x,
+            y: this.isBar ? clipRect.y : 0,
+          },
+        ],
         series: deepCopyArray(series),
         connector: deepCopyArray(connector),
       };

@@ -28,7 +28,6 @@ import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { AxisType } from './axis';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
-import DataLabel from './dataLabel';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -142,17 +141,25 @@ export default class BoxSeries extends Component {
     const { clipRect, series, connector } = this.drawModels;
 
     if (this.isRangeData) {
-      const modelSeries = this.models.series;
+      this.drawModels.clipRect = this.models.clipRect;
 
-      series.forEach((drawModel, index) => {
-        const targetModel = modelSeries[index];
+      const target = this.models.series;
 
-        const offsetSize = targetModel[this.offsetSizeKey] * delta;
+      series.forEach((current, index) => {
+        const targetModel = target[index];
 
-        drawModel[this.offsetSizeKey] = offsetSize;
+        if (delta === 0) {
+          current[this.offsetSizeKey] = 0;
+        }
+
+        const offsetSize =
+          current[this.offsetSizeKey] +
+          (targetModel[this.offsetSizeKey] - current[this.offsetSizeKey]) * delta;
+
+        current[this.offsetSizeKey] = offsetSize;
 
         if (!this.isBar) {
-          drawModel[offsetKey] =
+          current[offsetKey] =
             targetModel[offsetKey] + targetModel[this.offsetSizeKey] - offsetSize;
         }
       });
@@ -161,17 +168,55 @@ export default class BoxSeries extends Component {
     }
 
     if (clipRect) {
-      clipRect[0][this.offsetSizeKey] = this.rect[this.offsetSizeKey] * delta;
-      clipRect[0][offsetKey] = this.basePosition * (1 - delta);
+      const current = clipRect[0];
+      const key = this.offsetSizeKey;
+      const target = this.models.clipRect![0];
+      const offsetSize = current[key] + (target[key] - current[key]) * delta;
+
+      current[key] = offsetSize;
+      current[offsetKey] = Math.max(
+        this.basePosition - (offsetSize * this.basePosition) / target[key],
+        0
+      );
     }
 
     if (connector) {
-      const modelConnector = this.models.connector!;
+      const target = this.models.connector!;
 
-      connector.forEach((drawModel, index) => {
-        const alpha = getAlpha(modelConnector[index].strokeStyle!) * delta;
+      connector.forEach((current, index) => {
+        const alpha = getAlpha(target[index].strokeStyle!) * delta;
 
-        drawModel.strokeStyle = getRGBA(drawModel.strokeStyle!, alpha);
+        current.strokeStyle = getRGBA(current.strokeStyle!, alpha);
+      });
+    }
+  }
+
+  update(delta) {
+    const offsetKey = this.isBar ? 'x' : 'y';
+    const { series } = this.drawModels;
+
+    if (series) {
+      this.drawModels.clipRect = this.models.clipRect;
+
+      const target = this.models.series;
+
+      series.forEach((current, index) => {
+        const targetModel = target[index];
+
+        if (delta === 0) {
+          current[this.offsetSizeKey] = 0;
+        }
+
+        const offsetSizeKey = this.offsetSizeKey;
+
+        const offsetSize =
+          current[offsetSizeKey] + (targetModel[offsetSizeKey] - current[offsetSizeKey]) * delta;
+
+        current[offsetSizeKey] = offsetSize;
+
+        if (targetModel[offsetKey] < this.basePosition) {
+          current[offsetKey] = targetModel[offsetKey] + targetModel[offsetSizeKey] - offsetSize;
+        }
       });
     }
   }
@@ -213,24 +258,35 @@ export default class BoxSeries extends Component {
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, renderOptions, categories);
     const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
+    const clipRect = this.renderClipRectAreaModel();
 
     const dataLabelOptions = options.series?.dataLabels;
-    const withoutSize = this.getOffsetSize() + this.hoverThickness;
 
     this.models = {
-      clipRect: [this.renderClipRectAreaModel()],
+      clipRect: [clipRect],
       series: seriesModels,
-      label: dataLabelOptions
-        ? new DataLabel(this.name, seriesModels, dataLabelOptions, withoutSize).models
-        : [],
     };
 
     if (!this.drawModels) {
       this.drawModels = {
-        clipRect: this.models.clipRect,
+        clipRect: [
+          {
+            type: 'clipRectArea',
+            width: this.isBar ? 0 : clipRect.width,
+            height: this.isBar ? clipRect.height : 0,
+            x: this.isBar ? 0 : clipRect.x,
+            y: this.isBar ? clipRect.y : 0,
+          },
+        ],
         series: deepCopyArray(seriesModels),
-        label: [],
       };
+    }
+
+    if (dataLabelOptions) {
+      setTimeout(
+        () => this.eventBus.emit('drawDataLabels', { seriesModels, seriesRect: this.rect }),
+        0
+      );
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
@@ -257,6 +313,7 @@ export default class BoxSeries extends Component {
       y: y - this.hoverThickness,
       width: width + (this.hoverThickness + this.axisThickness) * 2,
       height: height + (this.hoverThickness + this.axisThickness) * 2,
+      outsideSize: this.getOffsetSize() + this.hoverThickness,
     };
   }
 

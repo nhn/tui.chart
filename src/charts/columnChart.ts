@@ -20,6 +20,7 @@ import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 
 import { ColumnChartOptions, BoxSeriesData } from '@t/options';
+import DataLabels from '@src/component/dataLabels';
 
 interface ColumnChartProps {
   el: HTMLElement;
@@ -50,6 +51,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     this.componentManager.add(BoxStackSeries, { name: 'column' });
     this.componentManager.add(BoxSeries, { name: 'column' });
     this.componentManager.add(Axis, { name: 'yAxis' });
+    this.componentManager.add(DataLabels, { name: 'column' });
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes, legendBrush]);

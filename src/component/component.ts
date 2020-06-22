@@ -13,7 +13,8 @@ type ComponentType =
   | 'axis'
   | 'tooltip'
   | 'plot'
-  | 'circleLegend';
+  | 'circleLegend'
+  | 'dataLabels';
 
 export default abstract class Component {
   name = 'Component';

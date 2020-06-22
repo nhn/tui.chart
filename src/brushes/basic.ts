@@ -18,7 +18,7 @@ const circleStyle = {
   },
 };
 
-const labelStyle = {
+export const labelStyle = {
   default: {
     font: 'normal 11px Arial',
     fillStyle: '#333',
@@ -113,5 +113,5 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
     });
   }
 
-  ctx.fillText(text, x, y);
+  ctx.fillText(text, x, y + 1);
 }

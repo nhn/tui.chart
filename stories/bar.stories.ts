@@ -183,10 +183,22 @@ export const divergingGroupStack = () => {
 
 export const dataLabels = () => {
   const visible = boolean('visible', true);
-  const anchor = radios('anchor', { center: 'center', start: 'start', end: 'end' }, 'center');
-  const align = radios('align', { center: 'center', start: 'start', end: 'end' }, 'center');
+  const anchor = radios('anchor', { center: 'center', start: 'start', end: 'end' }, 'end');
+  const align = radios(
+    'align',
+    {
+      start: 'start',
+      end: 'end',
+      left: 'left',
+      right: 'right',
+      top: 'top',
+      bottom: 'bottom',
+      center: 'center',
+    },
+    'end'
+  );
   const offset = number('offset', 5, { range: true, min: 0, max: 10, step: 1 });
-  const rotation = number('rotation', 5, { range: true, min: 0, max: 10, step: 1 });
+  const rotation = number('rotation', 5, { range: true, min: 0, max: 360, step: 15 });
   const labelColor = color('label color', '#333333');
 
   const { el } = createChart(budgetData, {

@@ -28,8 +28,10 @@ export interface Size {
   height: number;
 }
 
-export type Rect = Point & Size;
-
+export type Rect = Point &
+  Size & {
+    outsideSize?: number;
+  };
 export interface AreaSeriesType {
   name: string;
   data: AreaSeriesDataType;
@@ -227,7 +229,7 @@ export type DataLabelAnchor = 'center' | 'start' | 'end';
 export type DataLabelAlign = 'center' | 'start' | 'end' | 'left' | 'right' | 'top' | 'bottom';
 export type DataLabelStyle = {
   font?: string;
-  color?: string;
+  color?: ((data: any) => string) | string;
 };
 
 export type DataLabels = {
@@ -236,7 +238,7 @@ export type DataLabels = {
   align?: DataLabelAlign;
   offset?: number;
   rotation?: number;
-  formatter?: (context: any) => string; // TODO: change any type
+  formatter?: (value: string | number) => string;
   style?: DataLabelStyle;
   stackTotal?: {
     visible: boolean;
