@@ -5,6 +5,7 @@ import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import plot from '@src/store/plot';
+import dataLabels from '@src/store/dataLabels';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
@@ -32,7 +33,7 @@ interface BarChartProps {
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot];
+  modules = [stackSeriesData, dataRange, scale, axes, plot, dataLabels];
 
   constructor({ el, options, data }: BarChartProps) {
     super({
@@ -54,7 +55,7 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(BoxSeries, { name: 'bar' });
     this.componentManager.add(BoxStackSeries, { name: 'bar' });
     this.componentManager.add(Axis, { name: 'xAxis' });
-    this.componentManager.add(DataLabels, { name: 'bar' });
+    this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes, legendBrush]);

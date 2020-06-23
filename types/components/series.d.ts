@@ -1,4 +1,4 @@
-import { Point, Rect, BezierPoint } from '../options';
+import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
 import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
 import { TooltipData } from '@t/components/tooltip';
@@ -65,5 +65,5 @@ export type RectModel = {
   borderColor?: string;
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
-  value?: any;
+  value?: BoxSeriesDataType;
 } & Rect;

@@ -3,11 +3,14 @@ import Chart from './chart';
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
+import dataLabels from '@src/store/dataLabels';
 import Tooltip from '@src/component/tooltip';
 import Plot from '@src/component/plot';
 import LineSeries from '@src/component/lineSeries';
 import Axis from '@src/component/axis';
 import Legend from '@src/component/legend';
+import DataLabels from '@src/component/dataLabels';
+
 import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -23,7 +26,7 @@ interface LineChartProps {
 }
 
 export default class LineChart extends Chart<LineChartOptions> {
-  modules = [dataRange, scale, axes];
+  modules = [dataRange, scale, axes, dataLabels];
 
   constructor(props: LineChartProps) {
     super({
@@ -44,6 +47,7 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(LineSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
+    this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([

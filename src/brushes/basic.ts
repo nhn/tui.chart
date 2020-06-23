@@ -1,6 +1,7 @@
 import { ClipRectAreaModel, PathRectModel, CircleModel, CircleStyle } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
 import { LabelModel, LabelStyle, LineModel } from '@t/components/axis';
+import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 
 export type CircleStyleName = 'default' | 'hover';
 export type LabelStyleName = 'default';

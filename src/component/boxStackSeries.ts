@@ -29,6 +29,8 @@ import {
   calibrateBoxStackDrawingValue,
   sumValuesBeforeIndex,
 } from '@src/helpers/boxSeriesCalculator';
+import { DefaultDataLabelOptions } from '@src/store/dataLabels';
+import { labelStyle } from '@src/brushes/basic';
 
 type RenderOptions = {
   stack: Stack;
@@ -86,7 +88,7 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, theme, axes, categories, stackSeries, options } = chartState;
+    const { layout, theme, axes, categories, stackSeries, options, dataLabels } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
@@ -94,6 +96,8 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
+
+    this.overflowedSize = this.getOverflowedSize();
 
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { colors } = theme.series;
@@ -132,6 +136,14 @@ export default class BoxStackSeries extends BoxSeries {
         series: deepCopyArray(series),
         connector: deepCopyArray(connector),
       };
+    }
+
+    const dataLabelOptions = options.series?.dataLabels;
+
+    if (dataLabelOptions && dataLabelOptions.visible) {
+      const dataLabelData = this.getDataLabels(series, dataLabelOptions);
+
+      this.store.dispatch('appendDataLabels', dataLabelData);
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
@@ -186,6 +198,7 @@ export default class BoxStackSeries extends BoxSeries {
           seriesModels.push({
             type: 'rect',
             color: colors![seriesIndex],
+            value,
             ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
           });
         }
@@ -573,6 +586,21 @@ export default class BoxStackSeries extends BoxSeries {
     return {
       barLength,
       dataPosition,
+    };
+  }
+
+  private makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
+    const { font, fillStyle } = labelStyle['default'];
+
+    return {
+      visible: false,
+      anchor: 'center',
+      align: 'center',
+      offset: 5,
+      style: {
+        font,
+        color: fillStyle,
+      },
     };
   }
 }

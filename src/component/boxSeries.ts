@@ -8,6 +8,7 @@ import {
   ColumnChartOptions,
   Rect,
   RangeDataType,
+  DataLabels,
 } from '@t/options';
 import {
   first,
@@ -27,7 +28,10 @@ import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { AxisType } from './axis';
+import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
+import { labelStyle } from '@src/brushes/basic';
+import { getDataLabelsOptions, DefaultDataLabelOptions } from '@src/store/dataLabels';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -120,6 +124,8 @@ export default class BoxSeries extends Component {
   basePosition = this.hoverThickness;
 
   isRangeData = false;
+
+  overflowedSize = 0;
 
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
@@ -250,17 +256,19 @@ export default class BoxSeries extends Component {
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
 
+    this.overflowedSize = this.getOverflowedSize();
+
     const seriesData = series[this.name].data;
     const renderOptions = this.makeRenderOptions(axes, options);
+
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions);
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, renderOptions, categories);
+
     const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
     const clipRect = this.renderClipRectAreaModel();
-
-    const dataLabelOptions = options.series?.dataLabels;
 
     this.models = {
       clipRect: [clipRect],
@@ -282,11 +290,12 @@ export default class BoxSeries extends Component {
       };
     }
 
-    if (dataLabelOptions) {
-      setTimeout(
-        () => this.eventBus.emit('drawDataLabels', { seriesModels, seriesRect: this.rect }),
-        0
-      );
+    const dataLabelOptions = options.series?.dataLabels;
+
+    if (dataLabelOptions && dataLabelOptions.visible) {
+      const dataLabelData = this.getDataLabels(seriesModels, dataLabelOptions);
+
+      this.store.dispatch('appendDataLabels', dataLabelData);
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
@@ -313,7 +322,6 @@ export default class BoxSeries extends Component {
       y: y - this.hoverThickness,
       width: width + (this.hoverThickness + this.axisThickness) * 2,
       height: height + (this.hoverThickness + this.axisThickness) * 2,
-      outsideSize: this.getOffsetSize() + this.hoverThickness,
     };
   }
 
@@ -413,7 +421,7 @@ export default class BoxSeries extends Component {
     return tooltipData;
   }
 
-  private getTooltipValue(value) {
+  private getTooltipValue(value: BoxSeriesDataType) {
     return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
@@ -545,5 +553,150 @@ export default class BoxSeries extends Component {
     }
 
     return tickPos;
+  }
+
+  getOverflowedSize() {
+    return this.getOffsetSize() + this.hoverThickness;
+  }
+
+  private makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
+    const { font, fillStyle } = labelStyle['default'];
+
+    return {
+      visible: false,
+      anchor: 'end',
+      align: 'end',
+      offset: 5,
+      style: {
+        font,
+        color: fillStyle,
+      },
+    };
+  }
+
+  getDataLabels(seriesModels: RectModel[], dataLabelOptions: DataLabels) {
+    const options: Required<DataLabels> = getDataLabelsOptions(
+      dataLabelOptions,
+      this.makeDefaultDataLabelOptions()
+    );
+
+    return seriesModels.map((data) =>
+      this.isBar ? this.makeBarLabelInfo(data, options) : this.makeColumnLabelInfo(data, options)
+    );
+  }
+
+  makeBarLabelInfo(data: RectModel, dataLabelOptions: Required<DataLabels>) {
+    const {
+      anchor,
+      align,
+      offset,
+      style: { font, color },
+      formatter,
+    } = dataLabelOptions;
+
+    const { width, height, value } = data;
+    const text = formatter(value);
+    let { x, y } = data;
+    let textAlign = 'center';
+    const textBaseline = 'middle';
+
+    y = data.y + height / 2;
+
+    if (anchor === 'start') {
+      x = data.x;
+      textAlign = 'start';
+    } else if (anchor === 'end') {
+      x = data.x + width;
+      textAlign = 'center';
+    } else {
+      x = data.x + width / 2;
+      textAlign = 'center';
+    }
+
+    if (includes(['end', 'right'], align)) {
+      textAlign = 'start';
+      x += offset;
+    } else if (includes(['start', 'left'], align)) {
+      textAlign = 'end';
+      x -= offset;
+    }
+
+    // adjust the position automatically, when outside and overflowing
+    if (
+      anchor === 'end' &&
+      includes(['end', 'right'], align) &&
+      this.overflowedSize &&
+      this.overflowedSize < x + getTextWidth(text, font!)
+    ) {
+      x = data.x + width - offset;
+      textAlign = 'end';
+    }
+
+    const style = { font, fillStyle: color, textAlign, textBaseline };
+    x -= this.hoverThickness;
+    y -= this.hoverThickness;
+
+    return {
+      x,
+      y,
+      text,
+      style,
+    };
+  }
+
+  makeColumnLabelInfo(data: RectModel, dataLabelOptions: Required<DataLabels>) {
+    const {
+      anchor,
+      align,
+      offset,
+      style: { font, color },
+      formatter,
+    } = dataLabelOptions;
+
+    const { width, height, value } = data;
+    const text = formatter(value);
+    let { x, y } = data;
+    const textAlign = 'center';
+    let textBaseline = 'middle';
+
+    x = data.x + width / 2;
+
+    if (anchor === 'start') {
+      y = data.y + data.height;
+    } else if (anchor === 'end') {
+      y = data.y;
+    } else {
+      y = data.y + data.height / 2;
+    }
+
+    if (includes(['top', 'end'], align)) {
+      y -= offset;
+      textBaseline = 'bottom';
+    } else if (includes(['bottom', 'start'], align)) {
+      y += offset;
+      textBaseline = 'top';
+    }
+
+    // adjust the position automatically, when outside and overflowing
+    if (
+      anchor === 'end' &&
+      includes(['end', 'top'], align) &&
+      this.overflowedSize &&
+      this.overflowedSize < height + getTextHeight(font!)
+    ) {
+      y = data.y + offset;
+      textBaseline = 'top';
+    }
+
+    const style = { font, fillStyle: color, textAlign, textBaseline };
+    x -= this.hoverThickness;
+    y -= this.hoverThickness;
+
+    return {
+      x,
+      y,
+      text,
+      style,
+    };
   }
 }

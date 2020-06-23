@@ -5,6 +5,7 @@ import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import plot from '@src/store/plot';
+import dataLabels from '@src/store/dataLabels';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
@@ -12,6 +13,7 @@ import BoxStackSeries from '@src/component/boxStackSeries';
 import Plot from '@src/component/plot';
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
+import DataLabels from '@src/component/dataLabels';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -20,7 +22,6 @@ import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 
 import { ColumnChartOptions, BoxSeriesData } from '@t/options';
-import DataLabels from '@src/component/dataLabels';
 
 interface ColumnChartProps {
   el: HTMLElement;
@@ -29,7 +30,7 @@ interface ColumnChartProps {
 }
 
 export default class ColumnChart extends Chart<ColumnChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot];
+  modules = [stackSeriesData, dataRange, scale, axes, plot, dataLabels];
 
   constructor({ el, options, data }: ColumnChartProps) {
     super({
@@ -51,7 +52,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     this.componentManager.add(BoxStackSeries, { name: 'column' });
     this.componentManager.add(BoxSeries, { name: 'column' });
     this.componentManager.add(Axis, { name: 'yAxis' });
-    this.componentManager.add(DataLabels, { name: 'column' });
+    this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes, legendBrush]);

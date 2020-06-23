@@ -1,14 +1,31 @@
 import Component from './component';
 import { CircleModel, CircleResponderModel } from '@t/components/series';
-import { LineChartOptions, LineTypeSeriesOptions, Point, CoordinateDataType } from '@t/options';
+import {
+  LineChartOptions,
+  LineTypeSeriesOptions,
+  Point,
+  CoordinateDataType,
+  DataLabels,
+  DataLabelAnchor,
+} from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
-import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
+import {
+  getValueRatio,
+  setSplineControlPoint,
+  getTextWidth,
+  getTextHeight,
+} from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
-import { deepCopyArray } from '@src/helpers/utils';
 import { getRGBA } from '@src/helpers/color';
+import { deepCopyArray, includes } from '@src/helpers/utils';
+import { getDataLabelsOptions } from '@src/store/dataLabels';
+import { labelStyle } from '@src/brushes/basic';
+
+type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
+>>>>>>> feat: render data labels
 
 interface LineSeriesDrawModels {
   rect: ClipRectAreaModel[];
@@ -98,6 +115,14 @@ export default class LineSeries extends Component {
       };
     }
 
+    const dataLabelOptions = options.series?.dataLabels;
+
+    if (dataLabelOptions && dataLabelOptions.visible) {
+      const dataLabelData = this.getDataLabels(lineSeriesModel, dataLabelOptions);
+
+      this.store.dispatch('appendDataLabels', dataLabelData);
+    }
+
     this.responders = seriesCircleModel.map((m, index) => ({
       ...m,
       data: tooltipDataArr[index],
@@ -138,7 +163,7 @@ export default class LineSeries extends Component {
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
 
-        points.push({ x, y });
+        points.push({ x, y, value });
       });
 
       if (spline) {
@@ -177,5 +202,73 @@ export default class LineSeries extends Component {
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
 
     this.eventBus.emit('needDraw');
+  }
+
+  getDataLabels(seriesModels: LinePointsModel[], dataLabelOptions: DataLabels) {
+    const { font, fillStyle } = labelStyle['default'];
+
+    const options: Required<DataLabels> = getDataLabelsOptions(dataLabelOptions, {
+      visible: false,
+      anchor: 'center',
+      align: 'center',
+      offset: 3,
+      style: {
+        font,
+        color: fillStyle,
+      },
+    });
+
+    const labels = seriesModels.flatMap((m) => {
+      const { points } = m;
+
+      points.map((point) => this.makeLinePointLabelInfo(point, options));
+    });
+
+    return labels;
+  }
+
+  makeLinePointLabelInfo(point: Point, dataLabelOptions: Required<DataLabels>) {
+    const {
+      anchor,
+      align,
+      offset,
+      style: { font, color },
+      formatter,
+    } = dataLabelOptions;
+
+    const text = formatter(point.value!);
+    let { x, y } = point;
+
+    let textAlign = 'center';
+    let textBaseline = 'middle';
+
+    if (anchor === 'end') {
+      textBaseline = 'bottom';
+    } else if (anchor === 'start') {
+      textBaseline = 'top';
+    }
+
+    if (includes(['top', 'end'], align)) {
+      y -= offset;
+      textBaseline = 'bottom';
+    } else if (includes(['bottom', 'start'], align)) {
+      y += offset;
+      textBaseline = 'top';
+    } else if (align === 'left') {
+      x -= offset;
+      textAlign = 'end';
+    } else if (align === 'right') {
+      x += offset;
+      textAlign = 'start';
+    }
+
+    const style = { font, fillStyle: color, textAlign, textBaseline };
+
+    return {
+      x,
+      y,
+      text,
+      style,
+    };
   }
 }

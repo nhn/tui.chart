@@ -1,5 +1,4 @@
 import { SeriesRaw } from '@t/store/store';
-import DataLabel from '@src/component/dataLabel';
 
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
@@ -14,6 +13,7 @@ export type Align = 'top' | 'bottom' | 'right' | 'left';
 export interface Point {
   x: number;
   y: number;
+  value?: number;
 }
 
 export type BezierPoint = {
@@ -237,7 +237,6 @@ export type DataLabels = {
   anchor?: DataLabelAnchor;
   align?: DataLabelAlign;
   offset?: number;
-  rotation?: number;
   formatter?: (value: string | number) => string;
   style?: DataLabelStyle;
   stackTotal?: {

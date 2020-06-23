@@ -15,9 +15,12 @@ import {
   BubbleSeriesType,
   BubbleChartOptions,
   Align,
+  DataLabels,
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
+import { LabelModel } from '@t/components/axis';
+import { RectModel, LinePointsModel } from '@t/components/series';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -95,7 +98,8 @@ export interface StoreModule extends StoreOptions {
     | 'dataRange'
     | 'stackSeriesData'
     | 'legend'
-    | 'circleLegend';
+    | 'circleLegend'
+    | 'dataLabels';
 }
 
 export interface SeriesTheme {
@@ -181,6 +185,7 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
+  dataLabels: LabelModel[];
 }
 
 export type StackTotal = {
