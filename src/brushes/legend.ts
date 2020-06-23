@@ -26,7 +26,7 @@ const RECT_SIZE = 10;
 const LINE_ICON_PADDING = 2;
 const CIRCLE_ICON_RADIUS = 6;
 
-function renderLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
+function drawLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
   const xCurveOffset = [2, 2, 6, 6, 10, 10];
   const yCurveOffset = [8, 0, 0, 8, 8, 0];
 
@@ -46,8 +46,9 @@ function renderLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, col
   });
 }
 
-function renderCheckIcon(ctx: CanvasRenderingContext2D, x: number, y: number, active: boolean) {
-  const strokeStyle = active ? '#555' : getRGBA('#555555', 0.3);
+function drawCheckIcon(ctx: CanvasRenderingContext2D, x: number, y: number, active: boolean) {
+  const color = '#555555';
+  const strokeStyle = active ? color : getRGBA(color, 0.3);
 
   line(ctx, {
     type: 'line',
@@ -69,7 +70,7 @@ function renderCheckIcon(ctx: CanvasRenderingContext2D, x: number, y: number, ac
   });
 }
 
-function renderCheckbox(
+function drawCheckbox(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -90,11 +91,11 @@ function renderCheckbox(
   });
 
   if (checked) {
-    renderCheckIcon(ctx, x, y, active);
+    drawCheckIcon(ctx, x, y, active);
   }
 }
 
-function renderIcon(
+function drawIcon(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -114,7 +115,7 @@ function renderIcon(
       color: iconColor,
     });
   } else if (iconType === 'line') {
-    renderLineIcon(ctx, iconX, y + LINE_ICON_PADDING, iconColor);
+    drawLineIcon(ctx, iconX, y + LINE_ICON_PADDING, iconColor);
   } else if (iconType === 'circle') {
     circle(ctx, {
       type: 'circle',
@@ -123,11 +124,11 @@ function renderIcon(
       radius: CIRCLE_ICON_RADIUS,
       color: iconColor,
       style: ['default'],
-    } as CircleModel);
+    });
   }
 }
 
-function renderLabel(
+function drawLabel(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -135,7 +136,8 @@ function renderLabel(
   renderOptions: RenderOptions
 ) {
   const { active, showCheckbox } = renderOptions;
-  const fontColor = active ? '#333' : getRGBA('#333333', 0.3);
+  const color = '#333333';
+  const fontColor = active ? color : getRGBA(color, 0.3);
 
   label(ctx, {
     type: 'label',
@@ -165,9 +167,9 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
     };
 
     if (showCheckbox) {
-      renderCheckbox(ctx, x, y, renderOptions);
+      drawCheckbox(ctx, x, y, renderOptions);
     }
-    renderIcon(ctx, x, y, renderOptions);
-    renderLabel(ctx, x, y, datum.label, renderOptions);
+    drawIcon(ctx, x, y, renderOptions);
+    drawLabel(ctx, x, y, datum.label, renderOptions);
   });
 }

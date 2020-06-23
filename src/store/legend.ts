@@ -107,7 +107,7 @@ const legend: StoreModule = {
       checked: true,
       width: getItemWidth(label, checkboxVisible),
     }));
-    const legendWidths = data.map(({ width: legendWidth }) => legendWidth);
+    const legendWidths = data.map(({ width }) => width);
     const legendWidth = calculateLegendWidth(defaultWidth, legendWidths, options, align, visible);
     const circleLegendWidth = isVerticalAlign(align)
       ? defaultWidth

@@ -107,7 +107,7 @@ function getCircleLegendRect(xAxis: Rect, yAxis: Rect, align: Align, width: numb
   return {
     width,
     height: yAxis.height,
-    x: align === 'left' ? padding.X : xAxis.x + xAxis.width + 10,
+    x: align === 'left' ? padding.X : xAxis.x + xAxis.width + padding.X,
     y: yAxis.y,
   };
 }

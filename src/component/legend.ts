@@ -1,6 +1,11 @@
 import Component from './component';
 import { ChartState, Options, Legend as LegendType, Theme } from '@t/store/store';
-import { LegendModel, LegendResponderModel, LegendResponderType } from '@t/components/legend';
+import {
+  LegendData,
+  LegendModel,
+  LegendResponderModel,
+  LegendResponderType,
+} from '@t/components/legend';
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
@@ -96,16 +101,8 @@ export default class Legend extends Component {
     ];
   }
 
-  render({ layout, legend, theme }: ChartState<Options>) {
-    if (!legend.visible) {
-      return;
-    }
-
-    const { showCheckbox } = legend;
-    this.rect = layout.legend;
-    this.models = this.renderLegendModel(legend, theme);
-    const { data } = this.models[0];
-    const checkboxResponder = showCheckbox
+  makeCheckboxResponder(data: LegendData[], showCheckbox: boolean) {
+    return showCheckbox
       ? data.map((m) => ({
           ...m,
           type: 'checkbox' as LegendResponderType,
@@ -113,7 +110,10 @@ export default class Legend extends Component {
           y: m.y + this.rect.y,
         }))
       : [];
-    const labelResponder = data.map((m) => ({
+  }
+
+  makeLabelResponder(data: LegendData[], showCheckbox: boolean) {
+    return data.map((m) => ({
       ...m,
       type: 'label' as LegendResponderType,
       x:
@@ -125,6 +125,20 @@ export default class Legend extends Component {
       y: m.y + this.rect.y,
       width: getTextWidth(m.label, LEGEND_LABEL_FONT),
     }));
+  }
+
+  render({ layout, legend, theme }: ChartState<Options>) {
+    if (!legend.visible) {
+      return;
+    }
+
+    const { showCheckbox } = legend;
+    this.rect = layout.legend;
+    this.models = this.renderLegendModel(legend, theme);
+
+    const { data } = this.models[0];
+    const checkboxResponder = this.makeCheckboxResponder(data, showCheckbox);
+    const labelResponder = this.makeLabelResponder(data, showCheckbox);
 
     this.responders = [...checkboxResponder, ...labelResponder];
   }

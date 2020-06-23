@@ -220,7 +220,7 @@ export default class AreaSeries extends Component {
       this.applyAreaOpacity(0.5);
     }
 
-    const linePoints = responders.map(({ seriesIndex }) => this.linePointsModel[seriesIndex]);
+    const linePoints = responders.map(({ seriesIndex }) => this.linePointsModel[seriesIndex!]);
     this.drawModels.hoveredSeries = [...linePoints, ...responders];
     this.activatedResponders = responders;
 

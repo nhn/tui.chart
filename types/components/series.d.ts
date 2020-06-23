@@ -19,7 +19,7 @@ export type CircleModel = {
   radius: number;
   color: string;
   style?: StyleProp<CircleStyle, CircleStyleName>;
-  seriesIndex: number;
+  seriesIndex?: number;
 } & Point;
 
 export type CircleResponderModel = {
