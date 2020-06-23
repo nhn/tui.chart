@@ -1,22 +1,18 @@
-import { StoreModule, Layout, CircleLegend } from '@t/store/store';
+import { StoreModule, Layout, CircleLegend, Legend } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { Align, Rect, Size } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
 
 const padding = { X: 10, Y: 15 };
 const X_AXIS_LABEL_HEIGHT = 34;
+const MAIN_TITLE_HEIGHT = 18;
 
 export function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
 }
 
-function getYAxisRect(
-  chartSize: Size,
-  align: Align,
-  legendWidth: number,
-  legendVisible: boolean,
-  circleLegend: CircleLegend
-) {
+function getYAxisRect(chartSize: Size, legend: Legend, circleLegend: CircleLegend, title: Rect) {
+  const { align, visible, width } = legend;
   const { height } = chartSize;
   const verticalAlign = isVerticalAlign(align);
 
@@ -24,9 +20,9 @@ function getYAxisRect(
   let y = padding.Y;
   let yAxisHeight = height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT;
 
-  if (legendVisible) {
+  if (visible) {
     if (align === 'left') {
-      x = legendWidth + padding.X;
+      x = width + padding.X;
     } else if (align === 'top') {
       y = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
     }
@@ -42,6 +38,9 @@ function getYAxisRect(
       x = Math.max(circleLegend.width + padding.X, x);
     }
   }
+
+  y += title.y;
+  yAxisHeight -= title.height;
 
   return {
     x,
@@ -121,6 +120,22 @@ function getPlotRect(xAxis: Rect, yAxis: Rect) {
   };
 }
 
+function getTitleRect(chartSize: Size, visible?: boolean) {
+  return visible
+    ? {
+        width: chartSize.width - padding.X * 2,
+        height: MAIN_TITLE_HEIGHT,
+        x: padding.X,
+        y: padding.Y,
+      }
+    : {
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0,
+      };
+}
+
 const layout: StoreModule = {
   name: 'layout',
   state: () => ({
@@ -128,21 +143,24 @@ const layout: StoreModule = {
   }),
   action: {
     setLayout({ state }) {
+      const { legend: legendState } = state;
       const {
         chart: { height, width },
-        legend: { align, width: legendWidth, visible: legendVisible },
+        legend: { align, width: legendWidth },
         circleLegend: circleLegendState,
+        options,
       } = state;
 
       const chartSize = { height, width };
 
-      const yAxis = getYAxisRect(chartSize, align, legendWidth, legendVisible, circleLegendState);
+      const title = getTitleRect(chartSize, !!options.chart?.title);
+      const yAxis = getYAxisRect(chartSize, legendState, circleLegendState, title);
       const xAxis = getXAxisRect(chartSize, yAxis, align, legendWidth, circleLegendState);
       const legend = getLegendRect(chartSize, xAxis, yAxis, align, legendWidth);
       const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
       const plot = getPlotRect(xAxis, yAxis);
 
-      extend(state.layout, { yAxis, xAxis, plot, legend, circleLegend });
+      extend(state.layout, { yAxis, xAxis, plot, legend, circleLegend, title });
     },
   },
   observe: {

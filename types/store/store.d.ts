@@ -112,6 +112,7 @@ export interface Layout {
   plot: Rect;
   legend: Rect;
   circleLegend: Rect;
+  title: Rect;
 }
 
 export interface Scale {

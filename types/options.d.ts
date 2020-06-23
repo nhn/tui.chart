@@ -73,13 +73,13 @@ export interface BubbleSeriesData {
 }
 
 interface TitleOptions {
-  text?: string;
+  text: string;
   offsetX?: number;
   offsetY?: number;
-  align?: string;
+  align?: 'left' | 'right' | 'center';
 }
 
-type BaseChartOptions = {
+export type BaseChartOptions = {
   title?: string | TitleOptions;
 } & Size;
 

@@ -3,7 +3,8 @@ import { makeStyleObj } from '@src/helpers/style';
 import { LabelModel, LabelStyle, LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover';
-export type LabelStyleName = 'default';
+export type LabelStyleName = 'default' | 'title';
+export const TITLE_TEXT = '100 18px Arial';
 
 const circleStyle = {
   default: {
@@ -23,6 +24,11 @@ const labelStyle = {
     font: 'normal 11px Arial',
     fillStyle: '#333',
     textAlign: 'left',
+    textBaseline: 'middle',
+  },
+  title: {
+    font: TITLE_TEXT,
+    fillStyle: '#333',
     textBaseline: 'middle',
   },
 };
