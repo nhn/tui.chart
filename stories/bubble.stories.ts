@@ -35,21 +35,7 @@ function createChart(data: BubbleSeriesData, customOptions?: BubbleChartOptions)
 }
 
 export const basic = () => {
-  const { el } = createChart(lifeExpectancyPerGDPData, {
-    circleLegend: {
-      visible: false,
-    },
-  });
-
-  return el;
-};
-
-export const withCircleLegend = () => {
-  const { el } = createChart(lifeExpectancyPerGDPData, {
-    circleLegend: {
-      visible: true,
-    },
-  });
+  const { el } = createChart(lifeExpectancyPerGDPData);
 
   return el;
 };

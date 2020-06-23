@@ -5,6 +5,8 @@ type EventType =
   | 'loopStart'
   | 'loopComplete'
   | 'seriesPointHovered'
+  | 'clickLegendCheckbox'
+  | 'clickLegendLabel'
   | 'animationCompleted';
 type EventListener = (evt: any) => void;
 

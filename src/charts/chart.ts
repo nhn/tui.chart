@@ -3,6 +3,7 @@ import root from '@src/store/root';
 import layout from '@src/store/layout';
 import seriesData from '@src/store/seriesData';
 import category from '@src/store/category';
+import legend from '@src/store/legend';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
@@ -115,12 +116,12 @@ export default abstract class Chart<T extends Options> {
     });
   }
 
-  protected initStore(defalutModules: StoreModule[]) {
-    [...defalutModules, ...(this.modules ?? [])].forEach((module) => this.store.setModule(module));
+  protected initStore(defaultModules: StoreModule[]) {
+    [...defaultModules, ...(this.modules ?? [])].forEach((module) => this.store.setModule(module));
   }
 
   protected initialize() {
-    this.initStore([root, seriesData, layout, category]);
+    this.initStore([root, seriesData, legend, layout, category]);
   }
 
   draw() {

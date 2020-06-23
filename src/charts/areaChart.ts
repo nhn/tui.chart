@@ -12,7 +12,9 @@ import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
-import { AreaChartOptions, AreaSeriesData } from '@t/options';
+import * as legendBrush from '@src/brushes/legend';
+import { AreaChartOptions, AreaSeriesData, AreaSeriesType } from '@t/options';
+import Legend from '@src/component/legend';
 
 interface AreaChartProps {
   el: Element;
@@ -28,7 +30,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        area: props.data.series,
+        area: props.data.series as AreaSeriesType[],
       },
       categories: props.data.categories,
     });
@@ -38,11 +40,18 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     super.initialize();
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Legend);
     this.componentManager.add(AreaSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, lineSeriesBrushes]);
+    this.painter.addGroups([
+      basicBrushes,
+      axisBrushes,
+      tooltipBrushes,
+      lineSeriesBrushes,
+      legendBrush,
+    ]);
   }
 }

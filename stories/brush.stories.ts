@@ -4,6 +4,7 @@ import { tick } from '@src/brushes/axis';
 import { rect } from '@src/brushes/boxSeries';
 import { tooltip } from '@src/brushes/tooltip';
 import { circleLegend } from '@src/brushes/circleLegend';
+import { legend } from '@src/brushes/legend';
 
 import {
   AreaPointsModel,
@@ -335,6 +336,112 @@ export const circleLegendBrush = () => {
     y: 150,
     radius: 100,
     value: 10,
+  });
+
+  return el;
+};
+
+export const legendBrush = () => {
+  const { ctx, el } = setup();
+
+  legend(ctx, {
+    type: 'legend',
+    iconType: 'circle',
+    align: 'right',
+    showCheckbox: true,
+    data: [
+      {
+        label: 'circle-checked-active',
+        color: '#ff4250',
+        checked: true,
+        active: true,
+        x: 100,
+        y: 100,
+      },
+      {
+        label: 'circle-checked-inactive',
+        color: '#ff4250',
+        checked: true,
+        active: false,
+        x: 100,
+        y: 120,
+      },
+      {
+        label: 'circle-unchecked-active',
+        color: '#ff4250',
+        checked: false,
+        active: true,
+        x: 100,
+        y: 140,
+      },
+    ],
+  });
+
+  legend(ctx, {
+    type: 'legend',
+    iconType: 'circle',
+    align: 'right',
+    showCheckbox: false,
+    data: [
+      {
+        label: 'circle-unchecked-active-hideCheckbox',
+        color: '#510a32',
+        checked: false,
+        active: true,
+        x: 100,
+        y: 160,
+      },
+    ],
+  });
+
+  legend(ctx, {
+    type: 'legend',
+    iconType: 'line',
+    align: 'right',
+    showCheckbox: true,
+    data: [
+      {
+        label: 'line-checked-active',
+        color: '#f9d423',
+        checked: true,
+        active: true,
+        x: 100,
+        y: 180,
+      },
+      {
+        label: 'line-checked-inactive',
+        color: '#f9d423',
+        checked: true,
+        active: false,
+        x: 100,
+        y: 200,
+      },
+    ],
+  });
+
+  legend(ctx, {
+    type: 'legend',
+    iconType: 'rect',
+    align: 'right',
+    showCheckbox: true,
+    data: [
+      {
+        label: 'rect-checked-active',
+        color: '#83af9b',
+        checked: true,
+        active: true,
+        x: 100,
+        y: 220,
+      },
+      {
+        label: 'rect-checked-inactive',
+        color: '#83af9b',
+        checked: true,
+        active: false,
+        x: 100,
+        y: 240,
+      },
+    ],
   });
 
   return el;

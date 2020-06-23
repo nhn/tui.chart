@@ -194,7 +194,7 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, theme, axes, categories, stackSeries, options } = chartState;
+    const { layout, series, axes, categories, stackSeries, options } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -203,19 +203,13 @@ export default class BoxSeries extends Component {
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
 
-    const { colors } = theme.series;
     const seriesData = series[this.name].data;
     const renderOptions = this.makeRenderOptions(axes, options);
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
-    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, colors, renderOptions);
+    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions);
 
-    const tooltipData: TooltipData[] = this.makeTooltipData(
-      seriesData,
-      colors,
-      renderOptions,
-      categories
-    );
+    const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, renderOptions, categories);
     const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
 
     this.models = {
@@ -259,7 +253,6 @@ export default class BoxSeries extends Component {
 
   renderSeriesModel(
     seriesData: BoxSeriesType<BoxSeriesDataType>[],
-    colors: string[],
     renderOptions: RenderOptions
   ): RectModel[] {
     const { diverging, tickDistance } = renderOptions;
@@ -267,10 +260,8 @@ export default class BoxSeries extends Component {
     const columnWidth = this.getColumnWidth(tickDistance, seriesData.length, validDiverging);
     const seriesModels: RectModel[] = [];
 
-    seriesData.forEach(({ data }, seriesIndex) => {
+    seriesData.forEach(({ data, color }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
-      const color = colors[seriesIndex];
-
       this.isRangeData = isRangeData(data);
 
       data.forEach((value, index) => {
@@ -332,20 +323,19 @@ export default class BoxSeries extends Component {
 
   private makeTooltipData(
     seriesData: BoxSeriesType<BoxSeriesDataType>[],
-    colors: string[],
     renderOptions: RenderOptions,
     categories?: string[]
   ): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
-    seriesData.forEach(({ data, name }, seriesIndex) => {
+    seriesData.forEach(({ data, name, color }) => {
       data.forEach((value, dataIndex) => {
         const barLength = this.makeBarLength(value, renderOptions);
 
         if (isNumber(barLength)) {
           tooltipData.push({
             label: name,
-            color: colors[seriesIndex],
+            color,
             value: this.getTooltipValue(value),
             category: categories?.[dataIndex],
           });

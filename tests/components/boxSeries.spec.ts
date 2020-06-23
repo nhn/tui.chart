@@ -5,8 +5,8 @@ import { BarChartOptions } from '@t/options';
 
 let boxSeries;
 const seriesData = [
-  { name: 'han', data: [1, 2] },
-  { name: 'cho', data: [4, 5] },
+  { name: 'han', data: [1, 2], color: '#aaaaaa' },
+  { name: 'cho', data: [4, 5], color: '#bbbbbb' },
 ];
 
 const chartState = {
@@ -32,11 +32,6 @@ const chartState = {
     yAxis: {
       pointOnColumn: true,
       tickDistance: 40,
-    },
-  },
-  theme: {
-    series: {
-      colors: ['#aaaaaa', '#bbbbbb'],
     },
   },
   categories: ['A', 'B'],

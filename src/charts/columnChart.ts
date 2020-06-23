@@ -11,11 +11,13 @@ import BoxSeries from '@src/component/boxSeries';
 import BoxStackSeries from '@src/component/boxStackSeries';
 import Plot from '@src/component/plot';
 import Tooltip from '@src/component/tooltip';
+import Legend from '@src/component/legend';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as boxBrushes from '@src/brushes/boxSeries';
 import * as tooltipBrushes from '@src/brushes/tooltip';
+import * as legendBrush from '@src/brushes/legend';
 
 import { ColumnChartOptions, BoxSeriesData } from '@t/options';
 
@@ -43,12 +45,13 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     super.initialize();
 
     this.componentManager.add(Plot);
+    this.componentManager.add(Legend);
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(BoxStackSeries, { name: 'column' });
     this.componentManager.add(BoxSeries, { name: 'column' });
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes]);
+    this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes, legendBrush]);
   }
 }

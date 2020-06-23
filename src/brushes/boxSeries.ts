@@ -4,7 +4,7 @@ import { makeStyleObj } from '@src/helpers/style';
 export type RectStyleName = 'default';
 
 export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
-  const { x, y, width, height, style, thickness = 0 } = model;
+  const { x, y, width, height, style, thickness = 0, color, borderColor = '#fff' } = model;
 
   ctx.beginPath();
 
@@ -17,12 +17,12 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   }
 
   if (thickness) {
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = borderColor;
     ctx.fillRect(x - thickness, y - thickness, width + thickness * 2, height + thickness * 2);
     ctx.shadowColor = 'transparent';
   }
 
-  ctx.fillStyle = model.color;
+  ctx.fillStyle = color;
   ctx.rect(x, y, width, height);
   ctx.fill();
 }
