@@ -15,6 +15,8 @@ import {
   BubbleSeriesType,
   BubbleChartOptions,
   Align,
+  AxisTitle,
+  AxisTitleOption,
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
@@ -207,6 +209,7 @@ export interface AxisData {
   tickDistance: number;
   tickInterval: number;
   labelInterval: number;
+  title?: Required<AxisTitleOption>;
 }
 
 export interface ValueEdge {

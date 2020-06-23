@@ -38,7 +38,8 @@ function createChart(data: AreaSeriesData, customOptions?: AreaChartOptions) {
 
 export const basic = () => {
   const { el } = createChart(avgTemperatureData, {
-    xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'xAxis' } },
+    yAxis: { title: 'yAxis' },
     series: { spline: boolean('spline', false) },
   });
 

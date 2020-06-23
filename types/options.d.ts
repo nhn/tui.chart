@@ -72,7 +72,7 @@ export interface BubbleSeriesData {
   series: Pick<BubbleSeriesType, 'name' | 'data'>[];
 }
 
-interface TitleOptions {
+interface TitleOption {
   text: string;
   offsetX?: number;
   offsetY?: number;
@@ -80,7 +80,7 @@ interface TitleOptions {
 }
 
 export type BaseChartOptions = {
-  title?: string | TitleOptions;
+  title?: string | TitleOption;
 } & Size;
 
 export interface Scale {
@@ -88,6 +88,9 @@ export interface Scale {
   max?: number;
   stepSize?: 'auto' | number;
 }
+
+export type AxisTitleOption = Omit<TitleOption, 'align'>;
+type AxisTitle = string | AxisTitleOption;
 
 type BaseAxisOptions = {
   tick?: {
@@ -97,6 +100,7 @@ type BaseAxisOptions = {
     interval?: number;
   };
   scale?: Scale;
+  title?: AxisTitle;
 };
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {

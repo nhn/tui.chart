@@ -3,6 +3,9 @@ import Painter from '@src/painter';
 import { ChartState, Options } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel } from '@t/components/axis';
+import { AxisTitleOption } from '@t/options';
+import { isUndefined, last } from '@src/helpers/utils';
+import { padding, X_AXIS_HEIGHT } from '@src/store/layout';
 
 export enum AxisType {
   Y = 'yAxis',
@@ -47,6 +50,7 @@ export default class Axis extends Component {
       tickDistance,
       tickInterval,
       labelInterval,
+      title,
     } = axes[this.name]!;
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
@@ -59,6 +63,8 @@ export default class Axis extends Component {
       tickInterval,
       labelInterval,
     };
+
+    this.models.title = this.renderTitleModels(relativePositions, title);
 
     this.models.label = this.renderLabelModels(
       relativePositions,
@@ -80,7 +86,7 @@ export default class Axis extends Component {
     if (!this.drawModels) {
       this.drawModels = {};
 
-      ['tick', 'label'].forEach((type) => {
+      ['tick', 'label', 'title'].forEach((type) => {
         this.drawModels[type] = this.models[type].map((m) => {
           const drawModel = { ...m };
 
@@ -96,6 +102,36 @@ export default class Axis extends Component {
 
       this.drawModels.axisLine = this.models.axisLine;
     }
+  }
+
+  renderTitleModels(relativePositions: number[], title?: Required<AxisTitleOption>): LabelModel[] {
+    if (isUndefined(title)) {
+      return [];
+    }
+
+    const { offsetX, offsetY, text } = title;
+
+    if (this.name === 'yAxis') {
+      return [
+        {
+          type: 'label',
+          x: offsetX,
+          y: offsetY,
+          text: text,
+          style: ['axisTitle'],
+        },
+      ];
+    }
+
+    return [
+      {
+        type: 'label',
+        x: offsetX + last(relativePositions)!,
+        y: offsetY + X_AXIS_HEIGHT + padding.Y,
+        text: text,
+        style: ['axisTitle', { textAlign: 'right' }],
+      },
+    ];
   }
 
   renderAxisLineModel(): LineModel {

@@ -3,9 +3,11 @@ import { extend } from '@src/store/store';
 import { Align, Rect, Size } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
 
-const padding = { X: 10, Y: 15 };
-const X_AXIS_LABEL_HEIGHT = 34;
+export const padding = { X: 10, Y: 15 };
+export const X_AXIS_HEIGHT = 20;
 const MAIN_TITLE_HEIGHT = 18;
+const X_AXIS_TITLE_HEIGHT = 11;
+const Y_AXIS_TITLE_HEIGHT = 11;
 
 export function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
@@ -13,12 +15,12 @@ export function isVerticalAlign(align?: Align) {
 
 function getYAxisRect(chartSize: Size, legend: Legend, circleLegend: CircleLegend, title: Rect) {
   const { align, visible, width } = legend;
-  const { height } = chartSize;
   const verticalAlign = isVerticalAlign(align);
 
   let x = padding.X;
   let y = padding.Y;
-  let yAxisHeight = height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT;
+  const height = chartSize.height - padding.Y * 2;
+  let yAxisHeight = height - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
 
   if (visible) {
     if (align === 'left') {
@@ -29,7 +31,12 @@ function getYAxisRect(chartSize: Size, legend: Legend, circleLegend: CircleLegen
 
     if (verticalAlign) {
       yAxisHeight =
-        height - padding.Y * 2 - X_AXIS_LABEL_HEIGHT - LEGEND_ITEM_HEIGHT - LEGEND_MARGIN_Y;
+        height -
+        X_AXIS_HEIGHT -
+        Y_AXIS_TITLE_HEIGHT -
+        X_AXIS_TITLE_HEIGHT -
+        LEGEND_ITEM_HEIGHT -
+        LEGEND_MARGIN_Y;
     }
   }
 
@@ -39,7 +46,9 @@ function getYAxisRect(chartSize: Size, legend: Legend, circleLegend: CircleLegen
     }
   }
 
-  y += title.y;
+  // @TODO: xAxis title, yAxis title 존재 여부 확인 후 빼줘야함
+
+  y += title.y + Y_AXIS_TITLE_HEIGHT;
   yAxisHeight -= title.height;
 
   return {
@@ -74,7 +83,7 @@ function getXAxisRect(
 
   return {
     width: xAxisWidth,
-    height: 20,
+    height: X_AXIS_HEIGHT,
     x: yAxis.x + yAxis.width,
     y: yAxis.y + yAxis.height,
   };
@@ -94,7 +103,7 @@ function getLegendRect(
 
   if (verticalAlign) {
     x = (width - legendWidth) / 2;
-    y = align === 'top' ? 0 : yAxis.y + yAxis.height + X_AXIS_LABEL_HEIGHT;
+    y = align === 'top' ? 0 : yAxis.y + yAxis.height + X_AXIS_HEIGHT + X_AXIS_TITLE_HEIGHT;
   } else if (align === 'left') {
     x = padding.X;
   }

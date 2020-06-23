@@ -1,6 +1,6 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { TitleOptions } from '@t/options';
+import { TitleOption } from '@t/options';
 import { isString } from '@src/helpers/utils';
 import { LabelModel } from '@t/components/axis';
 import { getTextWidth } from '@src/helpers/calculator';
@@ -14,7 +14,7 @@ export default class Title extends Component {
     this.name = 'title';
   }
 
-  renderTitle(options: string | TitleOptions): LabelModel[] {
+  renderTitle(options: string | TitleOption): LabelModel[] {
     let text = '';
     let x = 0;
     let y = 0;
