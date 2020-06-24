@@ -6,17 +6,11 @@ import {
   Point,
   CoordinateDataType,
   DataLabels,
-  DataLabelAnchor,
 } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
-import {
-  getValueRatio,
-  setSplineControlPoint,
-  getTextWidth,
-  getTextHeight,
-} from '@src/helpers/calculator';
+import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
@@ -25,7 +19,6 @@ import { getDataLabelsOptions } from '@src/store/dataLabels';
 import { labelStyle } from '@src/brushes/basic';
 
 type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
->>>>>>> feat: render data labels
 
 interface LineSeriesDrawModels {
   rect: ClipRectAreaModel[];
@@ -218,13 +211,11 @@ export default class LineSeries extends Component {
       },
     });
 
-    const labels = seriesModels.flatMap((m) => {
+    return seriesModels.flatMap((m) => {
       const { points } = m;
 
-      points.map((point) => this.makeLinePointLabelInfo(point, options));
+      return points.map((point) => this.makeLinePointLabelInfo(point, options));
     });
-
-    return labels;
   }
 
   makeLinePointLabelInfo(point: Point, dataLabelOptions: Required<DataLabels>) {

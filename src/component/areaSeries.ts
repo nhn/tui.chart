@@ -240,7 +240,7 @@ export default class AreaSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  getDataLabels(seriesModels: LinePointsModel[], dataLabelOptions: DataLabels) {
+  getDataLabels(seriesModels: AreaPointsModel[], dataLabelOptions: DataLabels) {
     const { font, fillStyle } = labelStyle['default'];
 
     const options: Required<DataLabels> = getDataLabelsOptions(dataLabelOptions, {
@@ -254,20 +254,14 @@ export default class AreaSeries extends Component {
       },
     });
 
-    const labels = [];
-
-    seriesModels.forEach((m) => {
+    return seriesModels.flatMap((m) => {
       const { points } = m;
 
-      points.forEach((point) => {
-        labels.push(this.makeLinePointLabelInfo(point, options));
-      });
+      return points.map((point) => this.makeAreaPointLabelInfo(point, options));
     });
-
-    return labels;
   }
 
-  makeLinePointLabelInfo(point: Point, dataLabelOptions: Required<DataLabels>) {
+  makeAreaPointLabelInfo(point: Point, dataLabelOptions: Required<DataLabels>) {
     const {
       anchor,
       align,

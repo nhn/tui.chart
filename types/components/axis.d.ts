@@ -13,7 +13,6 @@ export type LabelModel = {
   type: 'label';
   style?: StyleProp<LabelStyle, LabelStyleName>;
   text: string;
-  angle?: number;
 } & Point;
 
 export type TickModel = {

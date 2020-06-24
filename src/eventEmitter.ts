@@ -7,6 +7,7 @@ type EventType =
   | 'seriesPointHovered'
   | 'clickLegendCheckbox'
   | 'clickLegendLabel'
+  | 'animationCompleted'
   | 'drawDataLabels';
 
 type EventListener = (evt: any) => void;
