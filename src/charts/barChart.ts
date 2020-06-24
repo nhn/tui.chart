@@ -12,6 +12,8 @@ import BoxStackSeries from '@src/component/boxStackSeries';
 import Plot from '@src/component/plot';
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
+import AxisTitle from '@src/component/axisTitle';
+import Title from '@src/component/title';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -47,12 +49,15 @@ export default class BarChart extends Chart<BarChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(BoxSeries, { name: 'bar' });
     this.componentManager.add(BoxStackSeries, { name: 'bar' });
     this.componentManager.add(Axis, { name: 'xAxis' });
+    this.componentManager.add(AxisTitle, { name: 'xAxis' });
+    this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes, legendBrush]);

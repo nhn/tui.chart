@@ -21,9 +21,10 @@ const defaultOptions = {
   chart: {
     width,
     height,
+    title: '24-hr Average Temperature',
   },
-  yAxis: {},
-  xAxis: {},
+  xAxis: { title: 'Month' },
+  yAxis: { title: 'Amount' },
   series: {},
   tooltip: {},
   plot: {},
@@ -60,7 +61,9 @@ export const spline = () => {
 
 export const coordinate = () => {
   const { el } = createChart(coordinateData, {
-    xAxis: { pointOnColumn: true },
+    chart: { title: 'Concurrent user' },
+    xAxis: { pointOnColumn: true, title: 'minute' },
+    yAxis: { title: 'users' },
   });
 
   return el;
@@ -68,7 +71,9 @@ export const coordinate = () => {
 
 export const tupleCoordinate = () => {
   const { el } = createChart(tupleCoordinateData as LineSeriesData, {
-    xAxis: { pointOnColumn: true },
+    chart: { title: 'Concurrent user' },
+    xAxis: { pointOnColumn: true, title: 'minute' },
+    yAxis: { title: 'users' },
   });
 
   return el;
@@ -84,35 +89,45 @@ export const tupleCoordinate = () => {
 // };
 
 export const tickInterval = () => {
-  const xAxisOptions = {
-    tick: {
-      interval: number('tickInterval', 2, {
-        range: true,
-        min: 1,
-        max: 20,
-        step: 1,
-      }),
+  const options = {
+    chart: { title: 'Label Interval' },
+    xAxis: {
+      title: 'x axis data',
+      tick: {
+        interval: number('tickInterval', 2, {
+          range: true,
+          min: 1,
+          max: 20,
+          step: 1,
+        }),
+      },
     },
+    yAxis: { title: 'y axis data' },
   };
 
-  const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
+  const { el } = createChart(randomData(50), options);
 
   return el;
 };
 
 export const labelInterval = () => {
-  const xAxisOptions = {
-    label: {
-      interval: number('labelInterval', 2, {
-        range: true,
-        min: 1,
-        max: 20,
-        step: 1,
-      }),
+  const options = {
+    chart: { title: 'Label Interval' },
+    xAxis: {
+      title: 'x axis data',
+      label: {
+        interval: number('labelInterval', 2, {
+          range: true,
+          min: 1,
+          max: 20,
+          step: 1,
+        }),
+      },
     },
+    yAxis: { title: 'y axis data' },
   };
 
-  const { el } = createChart(randomData(50), { xAxis: xAxisOptions });
+  const { el } = createChart(randomData(50), options);
 
   return el;
 };

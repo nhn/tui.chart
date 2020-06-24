@@ -8,7 +8,7 @@ import {
   budgetDataForDiverging,
   lossDataForGroupStack,
 } from './data';
-import { BarChartOptions } from '@t/options';
+import { BarChartOptions, BaseChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
 export default {
@@ -21,7 +21,10 @@ const defaultOptions: BarChartOptions = {
   chart: {
     width,
     height,
+    title: 'Monthly Revenue',
   },
+  xAxis: { title: 'Amount' },
+  yAxis: { title: 'Month' },
 };
 
 function createChart(data, customOptions?: BarChartOptions) {
@@ -42,7 +45,11 @@ function createChart(data, customOptions?: BarChartOptions) {
 }
 
 export const basic = () => {
-  const { el } = createChart(budgetData);
+  const { el } = createChart(budgetData, {
+    chart: { title: 'Monthly Revenue' } as BaseChartOptions,
+    xAxis: { title: 'Amount' },
+    yAxis: { title: 'Month' },
+  });
 
   return el;
 };

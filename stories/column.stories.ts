@@ -21,7 +21,10 @@ const defaultOptions: ColumnChartOptions = {
   chart: {
     width,
     height,
+    title: 'Monthly Revenue',
   },
+  xAxis: { title: 'Month' },
+  yAxis: { title: 'Amount' },
   series: {
     showLabel: true,
   },

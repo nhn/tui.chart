@@ -13,9 +13,14 @@ const defaultOptions = {
   chart: {
     width,
     height,
+    title: 'Life Expectancy per GDP',
   },
-  yAxis: {},
-  xAxis: {},
+  yAxis: {
+    title: 'Life Expectancy (years)',
+  },
+  xAxis: {
+    title: 'GDP',
+  },
   series: {},
   tooltip: {},
   plot: {},

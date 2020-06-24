@@ -13,9 +13,10 @@ const defaultOptions = {
   chart: {
     width,
     height,
+    title: 'Height vs Weight',
   },
-  yAxis: {},
-  xAxis: {},
+  xAxis: { title: 'Height (cm)' },
+  yAxis: { title: 'Weight (kg)' },
   series: {},
   tooltip: {},
   plot: {},
