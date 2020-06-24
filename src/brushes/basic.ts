@@ -25,17 +25,17 @@ const labelStyle = {
     font: 'normal 11px Arial',
     fillStyle: '#333',
     textAlign: 'left',
-    textBaseline: 'middle',
+    textBaseline: 'top',
   },
   title: {
     font: TITLE_TEXT,
     fillStyle: '#333',
-    textBaseline: 'middle',
+    textBaseline: 'top',
   },
   axisTitle: {
     font: AXIS_TITLE_TEXT,
     fillStyle: '#bbb',
-    textBaseline: 'middle',
+    textBaseline: 'top',
   },
 };
 

@@ -111,6 +111,8 @@ export type Theme = {
 export interface Layout {
   xAxis: Rect;
   yAxis: Rect;
+  xAxisTitle: Rect;
+  yAxisTitle: Rect;
   plot: Rect;
   legend: Rect;
   circleLegend: Rect;

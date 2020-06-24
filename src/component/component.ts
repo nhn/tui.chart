@@ -14,7 +14,8 @@ type ComponentType =
   | 'tooltip'
   | 'plot'
   | 'circleLegend'
-  | 'title';
+  | 'title'
+  | 'axisTitle';
 
 export default abstract class Component {
   name = 'Component';

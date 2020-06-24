@@ -13,30 +13,30 @@ export function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
 }
 
-function getYAxisRect(chartSize: Size, legend: Legend, circleLegend: CircleLegend, title: Rect) {
-  const { align, visible, width } = legend;
-  const verticalAlign = isVerticalAlign(align);
+function getYAxisRect(
+  chartSize: Size,
+  legend: Legend,
+  circleLegend: CircleLegend,
+  yAxisTitle: Rect
+) {
+  const { height } = chartSize;
+  const { align, visible } = legend;
 
-  let x = padding.X;
-  let y = padding.Y;
-  const height = chartSize.height - padding.Y * 2;
-  let yAxisHeight = height - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
+  let x = yAxisTitle.x;
+  let y = yAxisTitle.y + yAxisTitle.height;
+  let yAxisHeight = height - y - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
 
   if (visible) {
-    if (align === 'left') {
-      x = width + padding.X;
-    } else if (align === 'top') {
-      y = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
-    }
+    const legendAreaHeight = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
+    const topArea = Math.max(yAxisTitle.y + yAxisTitle.height, legendAreaHeight);
 
-    if (verticalAlign) {
-      yAxisHeight =
-        height -
-        X_AXIS_HEIGHT -
-        Y_AXIS_TITLE_HEIGHT -
-        X_AXIS_TITLE_HEIGHT -
-        LEGEND_ITEM_HEIGHT -
-        LEGEND_MARGIN_Y;
+    if (align === 'left') {
+      x = yAxisTitle.x;
+    } else if (align === 'top') {
+      y = topArea;
+      yAxisHeight = height - topArea - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
+    } else if (align === 'bottom') {
+      yAxisHeight = height - y - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT - LEGEND_ITEM_HEIGHT;
     }
   }
 
@@ -45,11 +45,6 @@ function getYAxisRect(chartSize: Size, legend: Legend, circleLegend: CircleLegen
       x = Math.max(circleLegend.width + padding.X, x);
     }
   }
-
-  // @TODO: xAxis title, yAxis title 존재 여부 확인 후 빼줘야함
-
-  y += title.y + Y_AXIS_TITLE_HEIGHT;
-  yAxisHeight -= title.height;
 
   return {
     x,
@@ -78,7 +73,7 @@ function getXAxisRect(
       xAxisWidth -= circleLegend.width;
     }
   } else {
-    xAxisWidth = width - (yAxis.width + Math.max(legendWidth, circleLegend.width) + padding.X) - 30; // @TODO: 마지막 라벨 길이
+    xAxisWidth = width - (yAxis.width + Math.max(legendWidth, circleLegend.width));
   }
 
   return {
@@ -108,7 +103,7 @@ function getLegendRect(
     x = padding.X;
   }
 
-  return { width: legendWidth, height: yAxis.height, x, y };
+  return { width: legendWidth, height: yAxis.height - xAxis.height, x, y };
 }
 
 function getCircleLegendRect(xAxis: Rect, yAxis: Rect, align: Align, width: number) {
@@ -130,19 +125,45 @@ function getPlotRect(xAxis: Rect, yAxis: Rect) {
 }
 
 function getTitleRect(chartSize: Size, visible?: boolean) {
+  const point = { x: padding.X, y: padding.Y };
+  const marginBottom = 10;
+
   return visible
     ? {
-        width: chartSize.width - padding.X * 2,
-        height: MAIN_TITLE_HEIGHT,
-        x: padding.X,
-        y: padding.Y,
+        width: chartSize.width,
+        height: MAIN_TITLE_HEIGHT + marginBottom,
+        ...point,
       }
-    : {
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0,
-      };
+    : { width: 0, height: 0, ...point };
+}
+
+function getYAxisTitleRect(chartSize: Size, visible: boolean, title: Rect, legend: Legend) {
+  const point = { x: title.x, y: title.y + title.height };
+  const marginBottom = 5;
+
+  if (legend.visible && legend.align === 'left') {
+    point.x += legend.width;
+  }
+
+  return visible
+    ? {
+        height: Y_AXIS_TITLE_HEIGHT + marginBottom,
+        width: chartSize.width - legend.width,
+        ...point,
+      }
+    : { height: 0, width: 0, ...point };
+}
+
+function getXAxisTitleRect(visible: boolean, xAxis: Rect) {
+  const point = { x: xAxis.x, y: xAxis.y + xAxis.height };
+
+  return visible
+    ? {
+        height: X_AXIS_TITLE_HEIGHT,
+        width: xAxis.width,
+        ...point,
+      }
+    : { height: 0, width: 0, ...point };
 }
 
 const layout: StoreModule = {
@@ -154,22 +175,38 @@ const layout: StoreModule = {
     setLayout({ state }) {
       const { legend: legendState } = state;
       const {
-        chart: { height, width },
         legend: { align, width: legendWidth },
         circleLegend: circleLegendState,
         options,
+        chart,
       } = state;
 
-      const chartSize = { height, width };
+      const chartSize = {
+        height: chart.height - padding.Y * 2,
+        width: chart.width - padding.X * 2,
+      };
 
+      // Don't change the order!
+      // title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
       const title = getTitleRect(chartSize, !!options.chart?.title);
-      const yAxis = getYAxisRect(chartSize, legendState, circleLegendState, title);
+      const yAxisTitle = getYAxisTitleRect(chartSize, !!options.yAxis?.title, title, legendState);
+      const yAxis = getYAxisRect(chartSize, legendState, circleLegendState, yAxisTitle);
       const xAxis = getXAxisRect(chartSize, yAxis, align, legendWidth, circleLegendState);
+      const xAxisTitle = getXAxisTitleRect(!!options.xAxis?.title, xAxis);
       const legend = getLegendRect(chartSize, xAxis, yAxis, align, legendWidth);
       const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
       const plot = getPlotRect(xAxis, yAxis);
 
-      extend(state.layout, { yAxis, xAxis, plot, legend, circleLegend, title });
+      extend(state.layout, {
+        title,
+        plot,
+        legend,
+        circleLegend,
+        xAxis,
+        xAxisTitle,
+        yAxis,
+        yAxisTitle,
+      });
     },
   },
   observe: {
