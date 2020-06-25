@@ -2,6 +2,8 @@ import { StoreModule, Layout, CircleLegend, Legend } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { Align, Rect, Size } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
+import { isUndefined } from '@src/helpers/utils';
+import { EXPORT_BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
@@ -120,11 +122,11 @@ function getPlotRect(xAxis: Rect, yAxis: Rect) {
   };
 }
 
-function getTitleRect(chartSize: Size, visible?: boolean) {
+function getTitleRect(chartSize: Size, exportMenu: Rect, visible: boolean) {
   const point = { x: padding.X, y: padding.Y };
   const marginBottom = 5;
   const width = visible ? chartSize.width : 0;
-  const height = visible ? MAIN_TITLE_HEIGHT + marginBottom : 0;
+  const height = visible ? Math.max(MAIN_TITLE_HEIGHT + marginBottom, exportMenu.height) : 0;
 
   return { width, height, ...point };
 }
@@ -154,6 +156,21 @@ function getXAxisTitleRect(visible: boolean, xAxis: Rect) {
   return { height, width, ...point };
 }
 
+function getExportMenuRect(chartSize: Size, visible: boolean) {
+  return visible
+    ? {
+        x: padding.X + chartSize.width - EXPORT_BUTTON_RECT_SIZE,
+        y: padding.Y,
+        height: EXPORT_BUTTON_RECT_SIZE,
+        width: EXPORT_BUTTON_RECT_SIZE,
+      }
+    : { x: 0, y: 0, height: 0, width: 0 };
+}
+
+export function isExportMenuVisible(visible?: boolean) {
+  return isUndefined(visible) ? true : visible;
+}
+
 const layout: StoreModule = {
   name: 'layout',
   state: () => ({
@@ -175,8 +192,12 @@ const layout: StoreModule = {
       };
 
       // Don't change the order!
-      // title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
-      const title = getTitleRect(chartSize, !!options.chart?.title);
+      // exportMenu -> title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
+      const exportMenu = getExportMenuRect(
+        chartSize,
+        isExportMenuVisible(options.exportMenu?.visible)
+      );
+      const title = getTitleRect(chartSize, exportMenu, !!options.chart?.title);
       const yAxisTitle = getYAxisTitleRect(chartSize, !!options.yAxis?.title, title, legendState);
       const yAxis = getYAxisRect(chartSize, legendState, circleLegendState, yAxisTitle);
       const xAxis = getXAxisRect(chartSize, yAxis, align, legendWidth, circleLegendState);
@@ -194,6 +215,7 @@ const layout: StoreModule = {
         xAxisTitle,
         yAxis,
         yAxisTitle,
+        exportMenu,
       });
     },
   },

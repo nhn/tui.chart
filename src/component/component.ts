@@ -15,7 +15,8 @@ type ComponentType =
   | 'plot'
   | 'circleLegend'
   | 'title'
-  | 'axisTitle';
+  | 'axisTitle'
+  | 'exportMenu';
 
 export default abstract class Component {
   name = 'Component';
