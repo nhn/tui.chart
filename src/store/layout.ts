@@ -84,13 +84,8 @@ function getXAxisRect(
   };
 }
 
-function getLegendRect(
-  chartSize: Size,
-  xAxis: Rect,
-  yAxis: Rect,
-  align: Align,
-  legendWidth: number
-) {
+function getLegendRect(chartSize: Size, xAxis: Rect, yAxis: Rect, title: Rect, legend: Legend) {
+  const { align, width: legendWidth } = legend;
   const { width } = chartSize;
   const verticalAlign = isVerticalAlign(align);
   let x = xAxis.x + xAxis.width + padding.X;
@@ -98,7 +93,8 @@ function getLegendRect(
 
   if (verticalAlign) {
     x = (width - legendWidth) / 2;
-    y = align === 'top' ? 0 : yAxis.y + yAxis.height + X_AXIS_HEIGHT + X_AXIS_TITLE_HEIGHT;
+    y =
+      align === 'top' ? title.height : yAxis.y + yAxis.height + X_AXIS_HEIGHT + X_AXIS_TITLE_HEIGHT;
   } else if (align === 'left') {
     x = padding.X;
   }
@@ -126,7 +122,7 @@ function getPlotRect(xAxis: Rect, yAxis: Rect) {
 
 function getTitleRect(chartSize: Size, visible?: boolean) {
   const point = { x: padding.X, y: padding.Y };
-  const marginBottom = 10;
+  const marginBottom = 5;
 
   return visible
     ? {
@@ -141,8 +137,12 @@ function getYAxisTitleRect(chartSize: Size, visible: boolean, title: Rect, legen
   const point = { x: title.x, y: title.y + title.height };
   const marginBottom = 5;
 
-  if (legend.visible && legend.align === 'left') {
-    point.x += legend.width;
+  if (legend.visible) {
+    if (legend.align === 'left') {
+      point.x += legend.width;
+    } else if (legend.align === 'top') {
+      point.y += LEGEND_ITEM_HEIGHT;
+    }
   }
 
   return visible
@@ -193,7 +193,7 @@ const layout: StoreModule = {
       const yAxis = getYAxisRect(chartSize, legendState, circleLegendState, yAxisTitle);
       const xAxis = getXAxisRect(chartSize, yAxis, align, legendWidth, circleLegendState);
       const xAxisTitle = getXAxisTitleRect(!!options.xAxis?.title, xAxis);
-      const legend = getLegendRect(chartSize, xAxis, yAxis, align, legendWidth);
+      const legend = getLegendRect(chartSize, xAxis, yAxis, title, legendState);
       const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
       const plot = getPlotRect(xAxis, yAxis);
 
