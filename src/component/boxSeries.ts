@@ -196,37 +196,6 @@ export default class BoxSeries extends Component {
       });
     }
   }
-  /*
-  update(delta) {
-    const offsetKey = this.isBar ? 'x' : 'y';
-    const { series } = this.drawModels;
-
-    if (series) {
-      this.drawModels.clipRect = this.models.clipRect;
-
-      const target = this.models.series;
-
-      series.forEach((current, index) => {
-        const targetModel = target[index];
-
-        if (delta === 0) {
-          current[this.offsetSizeKey] = 0;
-        }
-
-        const offsetSizeKey = this.offsetSizeKey;
-
-        const offsetSize =
-          current[offsetSizeKey] + (targetModel[offsetSizeKey] - current[offsetSizeKey]) * delta;
-
-        current[offsetSizeKey] = offsetSize;
-
-        if (targetModel[offsetKey] < this.basePosition) {
-          current[offsetKey] = targetModel[offsetKey] + targetModel[offsetSizeKey] - offsetSize;
-        }
-      });
-    }
-  }
-  */
 
   makeRenderOptions(
     axes: Partial<Record<AxisType, AxisData>>,

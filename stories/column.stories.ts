@@ -10,11 +10,9 @@ import {
 } from './data';
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { withKnobs, number, radios, boolean, color } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Column',
-  decorators: [withKnobs],
 };
 
 const width = 1000;

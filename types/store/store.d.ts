@@ -15,12 +15,10 @@ import {
   BubbleSeriesType,
   BubbleChartOptions,
   Align,
-  DataLabels,
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
-import { LabelModel } from '@t/components/axis';
-import { RectModel, LinePointsModel } from '@t/components/series';
+import { DataLabelModel } from '@t/components/series';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -185,7 +183,7 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
-  dataLabels: LabelModel[];
+  dataLabels: DataLabelModel[];
 }
 
 export type StackTotal = {
