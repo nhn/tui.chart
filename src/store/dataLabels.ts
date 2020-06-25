@@ -60,13 +60,13 @@ function getStyle(
   dataLabelOptions: DataLabelOption,
   defaultOptions: DefaultDataLabelOptions
 ): Required<DataLabelStyle> {
-  const { font, color, backgroundColor, strokeStyle } = defaultOptions.style;
+  const { font, color, textBgColor, textStrokeColor } = defaultOptions.style;
 
   return {
     font: dataLabelOptions.style?.font ?? font,
     color: dataLabelOptions.style?.color ?? color,
-    backgroundColor: dataLabelOptions.style?.backgroundColor ?? backgroundColor,
-    strokeStyle: dataLabelOptions?.style?.strokeStyle ?? strokeStyle,
+    textBgColor: dataLabelOptions.style?.textBgColor ?? textBgColor,
+    textStrokeColor: dataLabelOptions?.style?.textStrokeColor ?? textStrokeColor,
   };
 }
 
@@ -92,8 +92,8 @@ export function getDataLabelsOptions(
     style: {
       font: dataLabelOptions.stackTotal?.style?.font ?? style.font,
       color: dataLabelOptions.stackTotal?.style?.color ?? style.color,
-      backgroundColor: dataLabelOptions.style?.backgroundColor ?? style.backgroundColor,
-      strokeStyle: dataLabelOptions?.style?.strokeStyle ?? style.strokeStyle,
+      textBgColor: dataLabelOptions.style?.textBgColor ?? style.textBgColor,
+      textStrokeColor: dataLabelOptions?.style?.textStrokeColor ?? style.textStrokeColor,
     },
   };
 

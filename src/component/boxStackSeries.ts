@@ -6,6 +6,7 @@ import {
   BarChartOptions,
   Point,
   Connector,
+  DataLabelStyle,
 } from '@t/options';
 import {
   ChartState,
@@ -591,11 +592,11 @@ export default class BoxStackSeries extends BoxSeries {
 
   makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
     const { font, fillStyle } = labelStyle['default'];
-    const style = {
+    const style: Required<DataLabelStyle> = {
       font,
       color: fillStyle,
-      backgroundColor: 'rgba(255, 255, 255, 0)',
-      strokeStyle: 'rgba(255, 255, 255, 0.5)',
+      textBgColor: 'rgba(255, 255, 255, 0)',
+      textStrokeColor: 'rgba(255, 255, 255, 0.5)',
     };
 
     return {

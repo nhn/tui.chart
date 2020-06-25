@@ -35,7 +35,7 @@ export default class DataLabels extends Component {
 
   renderLabelModel(dataLabels): DataLabelModel[] {
     return dataLabels.map((dataLabel) => {
-      const { x, y, text, style, bgColor, strokeStyle } = dataLabel;
+      const { x, y, text, style, bgColor, textStrokeColor } = dataLabel;
 
       return {
         type: 'dataLabel',
@@ -43,7 +43,7 @@ export default class DataLabels extends Component {
         x,
         y,
         bgColor,
-        strokeStyle,
+        textStrokeColor,
         style: ['default', style],
       };
     });

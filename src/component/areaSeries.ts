@@ -251,8 +251,8 @@ export default class AreaSeries extends Component {
       style: {
         font,
         color: fillStyle,
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        strokeStyle: 'rgba(255, 255, 255, 0.5)',
+        textBgColor: 'rgba(255, 255, 255, 0)',
+        textStrokeColor: 'rgba(255, 255, 255, 0.5)',
       },
     });
 
@@ -268,7 +268,7 @@ export default class AreaSeries extends Component {
       anchor,
       align,
       offset,
-      style: { font, color, backgroundColor, strokeStyle },
+      style: { font, color, textBgColor, textStrokeColor },
       formatter,
     } = dataLabelOptions;
 
@@ -305,8 +305,8 @@ export default class AreaSeries extends Component {
       y,
       text,
       style,
-      bgColor: backgroundColor,
-      strokeStyle,
+      bgColor: textBgColor,
+      textStrokeColor,
     };
   }
 }

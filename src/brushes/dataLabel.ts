@@ -29,16 +29,16 @@ export function dataLabel(ctx: CanvasRenderingContext2D, labelModel: DataLabelMo
 }
 
 function drawStrokeText(ctx: CanvasRenderingContext2D, labelModel: DataLabelModel) {
-  if (!getAlpha(labelModel.strokeStyle)) {
+  if (!getAlpha(labelModel.textStrokeColor)) {
     return;
   }
-  const { text, x, y, strokeStyle } = labelModel;
+  const { text, x, y, textStrokeColor } = labelModel;
 
   ctx.lineWidth = 4;
-  ctx.strokeStyle = strokeStyle;
+  ctx.strokeStyle = textStrokeColor;
   ctx.strokeText(text, x, y);
 
-  ctx.shadowColor = strokeStyle;
+  ctx.shadowColor = textStrokeColor;
   ctx.shadowBlur = 5;
 }
 

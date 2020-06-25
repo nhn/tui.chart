@@ -236,8 +236,8 @@ export type DataLabelAlign = 'center' | 'start' | 'end' | 'left' | 'right' | 'to
 export type DataLabelStyle = {
   font?: string;
   color?: string;
-  backgroundColor?: string;
-  strokeStyle?: string;
+  textBgColor?: string;
+  textStrokeColor?: string;
 };
 
 export type DataLabels = {

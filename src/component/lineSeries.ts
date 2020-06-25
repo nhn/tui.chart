@@ -208,8 +208,8 @@ export default class LineSeries extends Component {
       style: {
         font,
         color: fillStyle,
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        strokeStyle: 'rgba(255, 255, 255, 1)',
+        textBgColor: 'rgba(255, 255, 255, 0)',
+        textStrokeColor: 'rgba(255, 255, 255, 1)',
       },
     });
 
@@ -225,7 +225,7 @@ export default class LineSeries extends Component {
       anchor,
       align,
       offset,
-      style: { font, color, strokeStyle },
+      style: { font, color, textBgColor, textStrokeColor },
       formatter,
     } = dataLabelOptions;
 
@@ -262,7 +262,8 @@ export default class LineSeries extends Component {
       y,
       text,
       style,
-      strokeStyle,
+      bgColor: textBgColor,
+      textStrokeColor,
     };
   }
 }

@@ -72,7 +72,7 @@ export type RectModel = {
 export type DataLabelModel = {
   type: 'dataLabel';
   bgColor: string;
-  strokeStyle: string;
+  textStrokeColor: string;
   text: string;
   style?: StyleProp<LabelStyle, LabelStyleName>;
 } & Point;
