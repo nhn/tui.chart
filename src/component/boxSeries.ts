@@ -196,7 +196,7 @@ export default class BoxSeries extends Component {
       });
     }
   }
-
+  /*
   update(delta) {
     const offsetKey = this.isBar ? 'x' : 'y';
     const { series } = this.drawModels;
@@ -226,6 +226,7 @@ export default class BoxSeries extends Component {
       });
     }
   }
+  */
 
   makeRenderOptions(
     axes: Partial<Record<AxisType, AxisData>>,
@@ -326,7 +327,7 @@ export default class BoxSeries extends Component {
   }
 
   renderSeriesModel(
-    seriesData: BoxSeriesType<BoxSeriesDataType>[],
+    seriesData: BoxSeriesType<number | (RangeDataType & number)>[],
     renderOptions: RenderOptions
   ): RectModel[] {
     const { diverging, tickDistance } = renderOptions;
@@ -559,7 +560,7 @@ export default class BoxSeries extends Component {
     return this.getOffsetSize() + this.hoverThickness;
   }
 
-  private makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
+  makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
     const { font, fillStyle } = labelStyle['default'];
 
     return {
@@ -570,6 +571,8 @@ export default class BoxSeries extends Component {
       style: {
         font,
         color: fillStyle,
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        strokeStyle: 'rgba(255, 255, 255, 0)',
       },
     };
   }
@@ -590,12 +593,12 @@ export default class BoxSeries extends Component {
       anchor,
       align,
       offset,
-      style: { font, color },
+      style: { font, color, backgroundColor, strokeStyle },
       formatter,
     } = dataLabelOptions;
 
     const { width, height, value } = data;
-    const text = formatter(value);
+    const text = formatter(value!);
     let { x, y } = data;
     let textAlign = 'center';
     const textBaseline = 'middle';
@@ -641,6 +644,8 @@ export default class BoxSeries extends Component {
       y,
       text,
       style,
+      bgColor: backgroundColor,
+      strokeStyle,
     };
   }
 
@@ -649,12 +654,12 @@ export default class BoxSeries extends Component {
       anchor,
       align,
       offset,
-      style: { font, color },
+      style: { font, color, backgroundColor, strokeStyle },
       formatter,
     } = dataLabelOptions;
 
     const { width, height, value } = data;
-    const text = formatter(value);
+    const text = formatter(value!);
     let { x, y } = data;
     const textAlign = 'center';
     let textBaseline = 'middle';
@@ -697,6 +702,8 @@ export default class BoxSeries extends Component {
       y,
       text,
       style,
+      bgColor: backgroundColor,
+      strokeStyle,
     };
   }
 }

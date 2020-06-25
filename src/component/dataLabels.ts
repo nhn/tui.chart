@@ -1,12 +1,12 @@
 import Component from './component';
-import { LabelModel } from '@t/components/axis';
 import { ChartState, Options } from '@t/store/store';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { DataLabelModel } from '@t/components/series';
 
 export default class DataLabels extends Component {
-  models!: LabelModel[];
+  models!: DataLabelModel[];
 
-  drawModels!: LabelModel[];
+  drawModels!: DataLabelModel[];
 
   initialize() {
     this.type = 'dataLabels';
@@ -15,9 +15,6 @@ export default class DataLabels extends Component {
 
   render({ series, layout, dataLabels }: ChartState<Options>) {
     this.rect = layout.plot;
-    if (!dataLabels.length) {
-      return;
-    }
 
     this.models = this.renderLabelModel(dataLabels);
 
@@ -36,17 +33,19 @@ export default class DataLabels extends Component {
     }
   }
 
-  renderLabelModel(dataLabels): LabelModel[] {
+  renderLabelModel(dataLabels): DataLabelModel[] {
     return dataLabels.map((dataLabel) => {
-      const { x, y, text, style } = dataLabel;
+      const { x, y, text, style, bgColor, strokeStyle } = dataLabel;
 
       return {
-        type: 'label',
+        type: 'dataLabel',
         text,
         x,
         y,
+        bgColor,
+        strokeStyle,
         style: ['default', style],
-      } as LabelModel;
+      };
     });
   }
 }

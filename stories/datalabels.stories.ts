@@ -169,6 +169,7 @@ export const dataLabelsOnLine = () => {
         visible: true,
       },
     },
+    xAxis: { pointOnColumn: true },
   });
 
   return el;

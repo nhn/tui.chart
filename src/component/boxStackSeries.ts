@@ -88,7 +88,7 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, theme, axes, categories, stackSeries, options, dataLabels } = chartState;
+    const { layout, theme, axes, categories, stackSeries, options } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
@@ -589,17 +589,24 @@ export default class BoxStackSeries extends BoxSeries {
     };
   }
 
-  private makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
+  makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
     const { font, fillStyle } = labelStyle['default'];
+    const style = {
+      font,
+      color: fillStyle,
+      backgroundColor: 'rgba(255, 255, 255, 0)',
+      strokeStyle: 'rgba(255, 255, 255, 0.5)',
+    };
 
     return {
       visible: false,
       anchor: 'center',
       align: 'center',
       offset: 5,
-      style: {
-        font,
-        color: fillStyle,
+      style,
+      stackTotal: {
+        visible: false,
+        style,
       },
     };
   }

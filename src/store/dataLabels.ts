@@ -6,6 +6,7 @@ import {
   DataLabels,
   DataLabelAnchor,
   DataLabelAlign,
+  SeriesDataType,
 } from '@t/options';
 
 const ANCHOR_TYPES = ['center', 'start', 'end'];
@@ -16,10 +17,10 @@ export type DefaultDataLabelOptions = {
   anchor: DataLabelAnchor;
   align: DataLabelAlign;
   offset: number;
-  style: DataLabelStyle;
+  style: Required<DataLabelStyle>;
   stackTotal?: {
     visible: boolean;
-    style?: DataLabelStyle;
+    style?: Required<DataLabelStyle>;
   };
 };
 
@@ -59,11 +60,13 @@ function getStyle(
   dataLabelOptions: DataLabelOption,
   defaultOptions: DefaultDataLabelOptions
 ): Required<DataLabelStyle> {
-  const { font, color } = defaultOptions.style;
+  const { font, color, backgroundColor, strokeStyle } = defaultOptions.style;
 
   return {
-    font: dataLabelOptions.style?.font || font!,
-    color: dataLabelOptions.style?.color || color!,
+    font: dataLabelOptions.style?.font ?? font,
+    color: dataLabelOptions.style?.color ?? color,
+    backgroundColor: dataLabelOptions.style?.backgroundColor ?? backgroundColor,
+    strokeStyle: dataLabelOptions?.style?.strokeStyle ?? strokeStyle,
   };
 }
 
@@ -77,7 +80,7 @@ export function getDataLabelsOptions(
   const offset = getOffset(dataLabelOptions, defaultOptions);
   const formatter = isFunction(dataLabelOptions.formatter)
     ? dataLabelOptions.formatter!
-    : function (value: number | string): string {
+    : function (value: SeriesDataType): string {
         return String(value) || '';
       };
 
@@ -85,10 +88,12 @@ export function getDataLabelsOptions(
   const stackTotal = {
     visible: isBoolean(dataLabelOptions.stackTotal?.visible)
       ? dataLabelOptions.stackTotal?.visible!
-      : defaultOptions.stackTotal?.visible!,
+      : defaultOptions.stackTotal?.visible! || visible,
     style: {
-      font: dataLabelOptions.stackTotal?.style?.font || style.font,
-      color: dataLabelOptions.stackTotal?.style?.color || style.color,
+      font: dataLabelOptions.stackTotal?.style?.font ?? style.font,
+      color: dataLabelOptions.stackTotal?.style?.color ?? style.color,
+      backgroundColor: dataLabelOptions.style?.backgroundColor ?? style.backgroundColor,
+      strokeStyle: dataLabelOptions?.style?.strokeStyle ?? style.strokeStyle,
     },
   };
 
@@ -110,7 +115,7 @@ const dataLabels: StoreModule = {
   }),
   action: {
     appendDataLabels({ state }, dataLabelData) {
-      state.dataLabels = [...state.dataLabels, ...dataLabelData];
+      state.dataLabels = [...dataLabelData];
     },
   },
 };

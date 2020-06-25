@@ -20,6 +20,7 @@ import * as axisBrushes from '@src/brushes/axis';
 import * as boxBrushes from '@src/brushes/boxSeries';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
+import * as dataLabelBrush from '@src/brushes/dataLabel';
 
 import { BoxSeriesType, BoxSeriesDataType, BarChartOptions } from '@t/options';
 
@@ -58,6 +59,13 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip);
 
-    this.painter.addGroups([basicBrushes, axisBrushes, boxBrushes, tooltipBrushes, legendBrush]);
+    this.painter.addGroups([
+      basicBrushes,
+      axisBrushes,
+      boxBrushes,
+      tooltipBrushes,
+      legendBrush,
+      dataLabelBrush,
+    ]);
   }
 }

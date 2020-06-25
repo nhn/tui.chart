@@ -2,11 +2,10 @@ import { SeriesRaw } from '@t/store/store';
 
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
-type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
-type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
+type LineSeriesDataType = number | Point | [number, number] | [string, number];
 export type CoordinateDataType = Point | [number, number] | [string, number];
-export type AreaSeriesDataType = number[] | RangeDataType[];
-export type BubbleSeriesDataType = ({ label: string } & BubblePoint)[];
+export type AreaSeriesDataType = number | RangeDataType;
+export type BubbleSeriesDataType = { label: string } & BubblePoint;
 export type BubblePoint = Point & { r: number };
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 
@@ -34,7 +33,7 @@ export type Rect = Point &
   };
 export interface AreaSeriesType {
   name: string;
-  data: AreaSeriesDataType;
+  data: AreaSeriesDataType[];
   color: string;
 }
 
@@ -45,7 +44,7 @@ export interface AreaSeriesData {
 
 export interface LineSeriesType {
   name: string;
-  data: LineSeriesDataType;
+  data: LineSeriesDataType[];
   color: string;
 }
 
@@ -56,13 +55,13 @@ export interface LineSeriesData {
 
 export interface ScatterSeriesType {
   name: string;
-  data: CoordinateSeriesDataType;
+  data: CoordinateDataType[];
   color: string;
 }
 
 export interface BubbleSeriesType {
   name: string;
-  data: BubbleSeriesDataType;
+  data: BubbleSeriesDataType[];
   color: string;
 }
 
@@ -225,11 +224,20 @@ export interface ChartProps<T> {
   options: T;
 }
 
+export type SeriesDataType =
+  | BoxSeriesDataType
+  | AreaSeriesDataType
+  | LineSeriesDataType
+  | CoordinateDataType
+  | BubbleSeriesDataType;
+
 export type DataLabelAnchor = 'center' | 'start' | 'end';
 export type DataLabelAlign = 'center' | 'start' | 'end' | 'left' | 'right' | 'top' | 'bottom';
 export type DataLabelStyle = {
   font?: string;
-  color?: ((data: any) => string) | string;
+  color?: string;
+  backgroundColor?: string;
+  strokeStyle?: string;
 };
 
 export type DataLabels = {
@@ -237,7 +245,7 @@ export type DataLabels = {
   anchor?: DataLabelAnchor;
   align?: DataLabelAlign;
   offset?: number;
-  formatter?: (value: string | number) => string;
+  formatter?: (value: SeriesDataType) => string;
   style?: DataLabelStyle;
   stackTotal?: {
     visible: boolean;

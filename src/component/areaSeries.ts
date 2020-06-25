@@ -245,12 +245,14 @@ export default class AreaSeries extends Component {
 
     const options: Required<DataLabels> = getDataLabelsOptions(dataLabelOptions, {
       visible: false,
-      anchor: 'center',
-      align: 'center',
-      offset: 3,
+      anchor: 'end',
+      align: 'top',
+      offset: 5,
       style: {
         font,
         color: fillStyle,
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        strokeStyle: 'rgba(255, 255, 255, 0.5)',
       },
     });
 
@@ -266,7 +268,7 @@ export default class AreaSeries extends Component {
       anchor,
       align,
       offset,
-      style: { font, color },
+      style: { font, color, backgroundColor, strokeStyle },
       formatter,
     } = dataLabelOptions;
 
@@ -303,6 +305,8 @@ export default class AreaSeries extends Component {
       y,
       text,
       style,
+      bgColor: backgroundColor,
+      strokeStyle,
     };
   }
 }
