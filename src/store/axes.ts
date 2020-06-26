@@ -8,8 +8,8 @@ import {
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { BoxSeriesOptions } from '@t/options';
-import { hasNegativeOnly } from '@src/helpers/utils';
+import { AxisTitle, BoxSeriesOptions } from '@t/options';
+import { deepMergedCopy, hasNegativeOnly, isString, isUndefined } from '@src/helpers/utils';
 
 interface StateProp {
   scale: ScaleData;
@@ -57,17 +57,35 @@ function getDivergingValues(valueLabels) {
     : valueLabels.slice(1).reverse().concat(valueLabels);
 }
 
+function makeTitleOption(title?: AxisTitle) {
+  if (isUndefined(title)) {
+    return title;
+  }
+
+  const defaultOption = {
+    text: '',
+    offsetX: 0,
+    offsetY: 0,
+  };
+
+  return isString(title)
+    ? deepMergedCopy(defaultOption, { text: title })
+    : deepMergedCopy(defaultOption, title);
+}
+
 const axes: StoreModule = {
   name: 'axes',
   state: ({ options }) => ({
     axes: {
       xAxis: {
-        tickInterval: options.xAxis?.tick?.interval || 1,
-        labelInterval: options.xAxis?.label?.interval || 1,
+        tickInterval: options.xAxis?.tick?.interval ?? 1,
+        labelInterval: options.xAxis?.label?.interval ?? 1,
+        title: makeTitleOption(options.xAxis?.title),
       } as AxisData,
       yAxis: {
-        tickInterval: options.yAxis?.tick?.interval || 1,
-        labelInterval: options.yAxis?.label?.interval || 1,
+        tickInterval: options.yAxis?.tick?.interval ?? 1,
+        labelInterval: options.yAxis?.label?.interval ?? 1,
+        title: makeTitleOption(options.yAxis?.title),
       } as AxisData,
     },
   }),

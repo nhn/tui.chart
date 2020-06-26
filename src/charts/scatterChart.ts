@@ -9,6 +9,8 @@ import Plot from '@src/component/plot';
 import ScatterSeries from '@src/component/scatterSeries';
 import Axis from '@src/component/axis';
 import Legend from '@src/component/legend';
+import Title from '@src/component/title';
+import AxisTitle from '@src/component/axisTitle';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -40,11 +42,14 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
     this.componentManager.add(ScatterSeries);
-    this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
+    this.componentManager.add(Axis, { name: 'yAxis' });
+    this.componentManager.add(AxisTitle, { name: 'xAxis' });
+    this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([basicBrushes, axisBrushes, tooltipBrushes, legendBrush]);

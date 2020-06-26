@@ -3,7 +3,9 @@ import { makeStyleObj } from '@src/helpers/style';
 import { LabelModel, LabelStyle, LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover';
-export type LabelStyleName = 'default';
+export type LabelStyleName = 'default' | 'title' | 'axisTitle';
+export const TITLE_TEXT = '100 18px Arial';
+const AXIS_TITLE_TEXT = '700 11px Arial';
 
 const circleStyle = {
   default: {
@@ -23,7 +25,17 @@ export const labelStyle = {
     font: 'normal 11px Arial',
     fillStyle: '#333',
     textAlign: 'left',
-    textBaseline: 'middle',
+    textBaseline: 'top',
+  },
+  title: {
+    font: TITLE_TEXT,
+    fillStyle: '#333',
+    textBaseline: 'top',
+  },
+  axisTitle: {
+    font: AXIS_TITLE_TEXT,
+    fillStyle: '#bbb',
+    textBaseline: 'top',
   },
 };
 

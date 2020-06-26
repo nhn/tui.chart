@@ -9,6 +9,8 @@ import BubbleSeries from '@src/component/bubbleSeries';
 import Axis from '@src/component/axis';
 import CircleLegend from '@src/component/circleLegend';
 import Legend from '@src/component/legend';
+import Title from '@src/component/title';
+import AxisTitle from '@src/component/axisTitle';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -40,11 +42,14 @@ export default class BubbleChart extends Chart<BaseOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
     this.componentManager.add(BubbleSeries);
-    this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
+    this.componentManager.add(Axis, { name: 'yAxis' });
+    this.componentManager.add(AxisTitle, { name: 'xAxis' });
+    this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
     this.componentManager.add(CircleLegend);
 

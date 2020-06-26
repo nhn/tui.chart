@@ -1,7 +1,6 @@
 import { label, line, circle } from '@src/brushes/basic';
 import { rect } from '@src/brushes/boxSeries';
 import { LegendModel } from '@t/components/legend';
-import { CircleModel } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
 import { LegendIconType } from '@t/store/store';
 import { Align } from '@t/options';
