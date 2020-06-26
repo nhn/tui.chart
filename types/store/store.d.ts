@@ -15,6 +15,8 @@ import {
   BubbleSeriesType,
   BubbleChartOptions,
   Align,
+  AxisTitle,
+  AxisTitleOption,
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
@@ -109,9 +111,12 @@ export type Theme = {
 export interface Layout {
   xAxis: Rect;
   yAxis: Rect;
+  xAxisTitle: Rect;
+  yAxisTitle: Rect;
   plot: Rect;
   legend: Rect;
   circleLegend: Rect;
+  title: Rect;
 }
 
 export interface Scale {
@@ -206,6 +211,7 @@ export interface AxisData {
   tickDistance: number;
   tickInterval: number;
   labelInterval: number;
+  title?: Required<AxisTitleOption>;
 }
 
 export interface ValueEdge {

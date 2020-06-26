@@ -3,11 +3,15 @@ import Chart from './chart';
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
+
 import Tooltip from '@src/component/tooltip';
 import Plot from '@src/component/plot';
 import LineSeries from '@src/component/lineSeries';
 import Axis from '@src/component/axis';
 import Legend from '@src/component/legend';
+import AxisTitle from '@src/component/axisTitle';
+import Title from '@src/component/title';
+
 import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -39,11 +43,14 @@ export default class LineChart extends Chart<LineChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
     this.componentManager.add(LineSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
+    this.componentManager.add(AxisTitle, { name: 'xAxis' });
+    this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([
