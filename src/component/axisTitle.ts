@@ -17,28 +17,12 @@ export default class AxisTitle extends Component {
 
   renderAxisTitle(option: Required<AxisTitleOption>): LabelModel[] {
     const { text, offsetX, offsetY } = option;
+    const [x, y] = this.isYAxis
+      ? [offsetX, offsetY]
+      : [this.rect.width + offsetX, this.rect.height + offsetY];
+    const textAlign = this.isYAxis ? 'left' : 'right';
 
-    if (this.isYAxis) {
-      return [
-        {
-          type: 'label',
-          text,
-          x: offsetX,
-          y: offsetY,
-          style: ['axisTitle', { textAlign: 'left' }],
-        },
-      ];
-    }
-
-    return [
-      {
-        type: 'label',
-        text,
-        x: this.rect.width + offsetX,
-        y: this.rect.height + offsetY,
-        style: ['axisTitle', { textAlign: 'right' }],
-      },
-    ];
+    return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign }] }];
   }
 
   render({ axes, layout }: ChartState<Options>) {

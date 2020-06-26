@@ -20,13 +20,13 @@ function getYAxisRect(
   yAxisTitle: Rect
 ) {
   const { height } = chartSize;
-  const { align, visible } = legend;
+  const { align } = legend;
 
   let x = yAxisTitle.x;
   let y = yAxisTitle.y + yAxisTitle.height;
   let yAxisHeight = height - y - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
 
-  if (visible) {
+  if (legend.visible) {
     const legendAreaHeight = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
     const topArea = Math.max(yAxisTitle.y + yAxisTitle.height, legendAreaHeight);
 
@@ -123,19 +123,17 @@ function getPlotRect(xAxis: Rect, yAxis: Rect) {
 function getTitleRect(chartSize: Size, visible?: boolean) {
   const point = { x: padding.X, y: padding.Y };
   const marginBottom = 5;
+  const width = visible ? chartSize.width : 0;
+  const height = visible ? MAIN_TITLE_HEIGHT + marginBottom : 0;
 
-  return visible
-    ? {
-        width: chartSize.width,
-        height: MAIN_TITLE_HEIGHT + marginBottom,
-        ...point,
-      }
-    : { width: 0, height: 0, ...point };
+  return { width, height, ...point };
 }
 
 function getYAxisTitleRect(chartSize: Size, visible: boolean, title: Rect, legend: Legend) {
   const point = { x: title.x, y: title.y + title.height };
   const marginBottom = 5;
+  const height = visible ? Y_AXIS_TITLE_HEIGHT + marginBottom : 0;
+  const width = visible ? chartSize.width - legend.width : 0;
 
   if (legend.visible) {
     if (legend.align === 'left') {
@@ -145,25 +143,15 @@ function getYAxisTitleRect(chartSize: Size, visible: boolean, title: Rect, legen
     }
   }
 
-  return visible
-    ? {
-        height: Y_AXIS_TITLE_HEIGHT + marginBottom,
-        width: chartSize.width - legend.width,
-        ...point,
-      }
-    : { height: 0, width: 0, ...point };
+  return { height, width, ...point };
 }
 
 function getXAxisTitleRect(visible: boolean, xAxis: Rect) {
   const point = { x: xAxis.x, y: xAxis.y + xAxis.height };
+  const height = visible ? X_AXIS_TITLE_HEIGHT : 0;
+  const width = visible ? xAxis.width : 0;
 
-  return visible
-    ? {
-        height: X_AXIS_TITLE_HEIGHT,
-        width: xAxis.width,
-        ...point,
-      }
-    : { height: 0, width: 0, ...point };
+  return { height, width, ...point };
 }
 
 const layout: StoreModule = {
