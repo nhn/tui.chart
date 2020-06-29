@@ -4,7 +4,7 @@ import { LegendModel } from '@t/components/legend';
 import { getRGBA } from '@src/helpers/color';
 import { LegendIconType } from '@t/store/store';
 import { Align } from '@t/options';
-import { label } from './label';
+import { label } from '@src/brushes/label';
 
 interface RenderOptions {
   iconType: LegendIconType;

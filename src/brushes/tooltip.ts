@@ -6,7 +6,7 @@ import { LabelModel } from '@t/components/axis';
 import { BubblePoint, Point } from '@t/options';
 import { deepMergedCopy, isObject } from '@src/helpers/utils';
 import { getTextWidth } from '@src/helpers/calculator';
-import { LabelStyle } from './label';
+import { LabelStyle } from '@src/brushes/label';
 
 const MINIMUM_TOOLTIP_TEXT_WIDTH = 100;
 const CATEGORY_FONT_STYLE = 'bold 13px Arial';
