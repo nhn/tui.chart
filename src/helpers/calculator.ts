@@ -114,5 +114,5 @@ export function getTextHeight(font: string) {
   ctx.font = font;
   const matches = ctx.font.match(/\d+/);
 
-  return parseInt(String(matches), 10);
+  return parseInt(String(Number(matches) * 1.2), 10);
 }
