@@ -44,7 +44,6 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   initialize() {
     super.initialize();
-
     // @TODO: 배열로 넘겨서 처리하는 것 생각해보자
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
@@ -54,7 +53,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
-    this.componentManager.add(ExportMenu);
+    this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([

@@ -5,7 +5,6 @@ import { rect } from '@src/brushes/boxSeries';
 import { tooltip } from '@src/brushes/tooltip';
 import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';
-import { exportMenu, exportMenuButton } from '@src/brushes/exportMenu';
 
 import {
   AreaPointsModel,
@@ -444,20 +443,6 @@ export const legendBrush = () => {
       },
     ],
   });
-
-  return el;
-};
-
-export const exportMenuBrush = () => {
-  const { ctx, el } = setup();
-
-  exportMenuButton(ctx, { opened: false, x: 100, y: 100 });
-  exportMenuButton(ctx, { opened: true, x: 150, y: 100 });
-
-  const x = 200;
-  const y = 200;
-  exportMenuButton(ctx, { x, y, opened: true });
-  exportMenu(ctx, { x, y });
 
   return el;
 };

@@ -1,32 +1,77 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { ExportMenuButtonModel, ExportMenuModel } from '@t/components/exportMenu';
-import { isExportMenuVisible } from '@src/store/layout';
+import { ExportMenuButtonModel } from '@t/components/exportMenu';
+import { isExportMenuVisible, padding } from '@src/store/layout';
 import { LegendResponderModel } from '@t/components/legend';
 import { Rect } from '@t/options';
+import '../css/exportMenu.css';
 
+const EXPORT_MENU_WIDTH = 140;
 export const EXPORT_BUTTON_RECT_SIZE = 24;
 export type BoxResponderModel = Rect & { type: 'box' };
 
 export default class ExportMenu extends Component {
-  models!: { exportMenuButton: ExportMenuButtonModel[]; exportMenu: ExportMenuModel[] };
+  models!: { exportMenuButton: ExportMenuButtonModel[] };
 
-  initialize() {
+  opened = false;
+
+  chartEl!: HTMLDivElement;
+
+  exportMenuEl!: HTMLDivElement;
+
+  onClickExportButton(ev) {
+    // @TODO: different action
+    console.log(ev.target.id);
+  }
+
+  getExportMenuEl(chartWidth: number) {
+    const { top, left } = this.chartEl.getBoundingClientRect();
+    const topPosition = top + padding.Y + EXPORT_BUTTON_RECT_SIZE + 5;
+    const leftPosition = left + chartWidth - EXPORT_MENU_WIDTH - padding.X;
+
+    const el = document.createElement('div');
+    el.onclick = this.onClickExportButton;
+    el.innerHTML = `
+        <div class="export-menu" style="top: ${topPosition}px; left: ${leftPosition}px;">
+          <p class="export-menu-title">Export to</p>
+          <div class="export-menu-btn-wrapper">
+            <button class="export-menu-btn" id="xls">xls</button>
+            <button class="export-menu-btn" id="png">png</button>
+            <button class="export-menu-btn" id="csv">csv</button>
+            <button class="export-menu-btn" id="jpeg">jpeg</button>
+          </div>
+        </div>
+      `;
+
+    return el;
+  }
+
+  initialize({ chartEl }) {
+    this.chartEl = chartEl;
     this.type = 'exportMenu';
     this.name = 'exportMenu';
   }
 
   onClick({ responders }: { responders: LegendResponderModel[] }) {
     if (responders.length) {
-      console.log(responders);
+      this.opened = !this.opened;
+      this.models.exportMenuButton[0].opened = this.opened;
+      this.eventBus.emit('needDraw');
+
+      if (this.opened) {
+        this.chartEl.appendChild(this.exportMenuEl);
+      } else {
+        this.chartEl.removeChild(this.exportMenuEl);
+      }
     }
   }
 
-  render({ options, layout }: ChartState<Options>) {
+  render({ options, layout, chart }: ChartState<Options>) {
     if (!isExportMenuVisible(options.exportMenu?.visible)) {
       return;
     }
 
+    this.exportMenuEl = this.getExportMenuEl(chart.width);
     this.rect = layout.exportMenu;
     this.models = {
       exportMenuButton: [
@@ -34,24 +79,19 @@ export default class ExportMenu extends Component {
           type: 'exportMenuButton',
           x: 0,
           y: 0,
-          opened: false,
-        },
-      ],
-      exportMenu: [
-        {
-          type: 'exportMenu',
-          x: 0,
-          y: 0,
+          opened: this.opened,
         },
       ],
     };
 
-    this.responders = this.models.exportMenuButton.map(() => ({
-      type: 'box',
-      width: EXPORT_BUTTON_RECT_SIZE,
-      height: EXPORT_BUTTON_RECT_SIZE,
-      x: this.rect.x,
-      y: this.rect.y,
-    }));
+    this.responders = [
+      {
+        type: 'box',
+        width: EXPORT_BUTTON_RECT_SIZE,
+        height: EXPORT_BUTTON_RECT_SIZE,
+        x: this.rect.x,
+        y: this.rect.y,
+      },
+    ];
   }
 }
