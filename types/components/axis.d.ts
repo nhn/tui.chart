@@ -1,17 +1,18 @@
 import { Point } from '../options';
 import { StyleProp } from '@t/components/series';
-import { LabelStyleName } from '@src/brushes/basic';
+import { StrokeLabelStyleName, StrokeLabelStyle, LabelStyleName } from '@src/brushes/label';
 
 interface LabelStyle {
   font?: string;
   fillStyle?: string;
-  textAlign?: 'left' | 'right' | 'center';
-  textBaseline?: 'middle' | 'bottom' | 'top' | 'alphabetic' | 'hanging';
+  textAlign?: CanvasTextAlign;
+  textBaseline?: CanvasTextBaseline;
 }
 
 export type LabelModel = {
   type: 'label';
   style?: StyleProp<LabelStyle, LabelStyleName>;
+  stroke?: StyleProp<StrokeLabelStyle, StrokeLabelStyleName>;
   text: string;
 } & Point;
 

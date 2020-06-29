@@ -1,22 +1,17 @@
 import { StoreModule } from '@t/store/store';
-import { isFunction, isNumber, includes, isBoolean } from '@src/helpers/utils';
-import {
-  DataLabels as DataLabelOption,
-  DataLabelStyle,
-  DataLabels,
-  DataLabelAnchor,
-  DataLabelAlign,
-  SeriesDataType,
-} from '@t/options';
+import { isFunction, includes, deepMergedCopy } from '@src/helpers/utils';
+import { DataLabels, DataLabelStyle, DataLabelAnchor, SeriesDataType } from '@t/options';
+import { PointModel, RectModel } from '@t/components/series';
+import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
+import { strokeLabelStyle, labelStyle } from '@src/brushes/label';
 
 const ANCHOR_TYPES = ['center', 'start', 'end'];
-const ALIGN_TYPES = ['center', 'start', 'end', 'left', 'right', 'top', 'bottom'];
 
 export type DefaultDataLabelOptions = {
   visible: boolean;
   anchor: DataLabelAnchor;
-  align: DataLabelAlign;
-  offset: number;
+  offsetX: number;
+  offsetY: number;
   style: Required<DataLabelStyle>;
   stackTotal?: {
     visible: boolean;
@@ -24,15 +19,35 @@ export type DefaultDataLabelOptions = {
   };
 };
 
-function getVisible(
-  dataLabelOptions: DataLabelOption,
-  defaultOptions: DefaultDataLabelOptions
-): boolean {
-  return dataLabelOptions.visible ? dataLabelOptions.visible : defaultOptions.visible;
+function getDefaultOptions(type: DataLabelType) {
+  const style = {
+    font: labelStyle['default'].font,
+    color: labelStyle['default'].fillStyle,
+    textStrokeColor: strokeLabelStyle.stroke.strokeStyle,
+  };
+
+  return {
+    point: {
+      anchor: 'center',
+      style,
+    } as DefaultDataLabelOptions,
+    rect: {
+      anchor: 'end',
+      style,
+    } as DefaultDataLabelOptions,
+    stack: {
+      anchor: 'end',
+      style,
+      stackTotal: {
+        visible: true,
+        style,
+      },
+    } as DefaultDataLabelOptions,
+  }[type];
 }
 
 function getAnchor(
-  dataLabelOptions: DataLabelOption,
+  dataLabelOptions: DataLabels,
   defaultOptions: DefaultDataLabelOptions
 ): DataLabelAnchor {
   return includes(ANCHOR_TYPES, dataLabelOptions.anchor)
@@ -40,71 +55,117 @@ function getAnchor(
     : defaultOptions.anchor;
 }
 
-function getAlign(
-  dataLabelOptions: DataLabelOption,
-  defaultOptions: DefaultDataLabelOptions
-): DataLabelAlign {
-  return includes(ALIGN_TYPES, dataLabelOptions.align)
-    ? dataLabelOptions.align!
-    : defaultOptions.align;
-}
-
-function getOffset(
-  dataLabelOptions: DataLabelOption,
-  defaultOptions: DefaultDataLabelOptions
-): number {
-  return isNumber(dataLabelOptions.offset) ? dataLabelOptions.offset! : defaultOptions.offset;
-}
-
 function getStyle(
-  dataLabelOptions: DataLabelOption,
+  dataLabelOptions: DataLabels,
   defaultOptions: DefaultDataLabelOptions
 ): Required<DataLabelStyle> {
-  const { font, color, textBgColor, textStrokeColor } = defaultOptions.style;
+  const { font, color, textStrokeColor } = defaultOptions.style;
 
   return {
     font: dataLabelOptions.style?.font ?? font,
     color: dataLabelOptions.style?.color ?? color,
-    textBgColor: dataLabelOptions.style?.textBgColor ?? textBgColor,
     textStrokeColor: dataLabelOptions?.style?.textStrokeColor ?? textStrokeColor,
   };
 }
 
 export function getDataLabelsOptions(
-  dataLabelOptions: DataLabelOption,
-  defaultOptions: DefaultDataLabelOptions
-): Required<DataLabels> {
-  const visible = getVisible(dataLabelOptions, defaultOptions);
+  dataLabelOptions: DataLabels,
+  type: DataLabelType
+): DataLabelOption {
+  const defaultOptions = getDefaultOptions(type);
   const anchor = getAnchor(dataLabelOptions, defaultOptions);
-  const align = getAlign(dataLabelOptions, defaultOptions);
-  const offset = getOffset(dataLabelOptions, defaultOptions);
+  const { offsetX = 0, offsetY = 0 } = dataLabelOptions;
   const formatter = isFunction(dataLabelOptions.formatter)
     ? dataLabelOptions.formatter!
     : function (value: SeriesDataType): string {
         return String(value) || '';
       };
-
   const style = getStyle(dataLabelOptions, defaultOptions);
-  const stackTotal = {
-    visible: isBoolean(dataLabelOptions.stackTotal?.visible)
-      ? dataLabelOptions.stackTotal?.visible!
-      : defaultOptions.stackTotal?.visible! || visible,
-    style: {
-      font: dataLabelOptions.stackTotal?.style?.font ?? style.font,
-      color: dataLabelOptions.stackTotal?.style?.color ?? style.color,
-      textBgColor: dataLabelOptions.style?.textBgColor ?? style.textBgColor,
-      textStrokeColor: dataLabelOptions?.style?.textStrokeColor ?? style.textStrokeColor,
-    },
-  };
+
+  const options: DataLabelOption = { anchor, offsetX, offsetY, formatter, style };
+
+  if (type === 'stack') {
+    options.stackTotal = deepMergedCopy(
+      dataLabelOptions.stackTotal!,
+      defaultOptions.stackTotal!
+    ) as DataLabelStackTotal;
+  }
+
+  return options;
+}
+
+function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
+  const { anchor, offsetX = 0, offsetY = 0, formatter, style } = dataLabelOptions;
+
+  let posX = point.x;
+  let posY = point.y;
+
+  const textAlign = 'center';
+  let textBaseline: CanvasTextBaseline = 'middle';
+
+  if (anchor === 'end') {
+    textBaseline = 'bottom';
+  } else if (anchor === 'start') {
+    textBaseline = 'top';
+  }
+
+  posX += offsetX;
+  posY += offsetY;
 
   return {
-    visible,
-    anchor,
-    align,
-    offset,
-    formatter,
+    x: posX,
+    y: posY,
+    text: formatter!(point.value!),
+    textAlign,
+    textBaseline,
     style,
-    stackTotal,
+  };
+}
+
+type DataLabelType = 'point' | 'rect' | 'stack';
+type PointDataLabel = PointModel & {
+  type: 'point';
+};
+type RectDataLabel = RectModel & {
+  direction: 'vertical' | 'horizontal';
+};
+
+function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
+  const { value, width, height, direction } = rect;
+  const { anchor, offsetX = 0, offsetY = 0, formatter, style } = dataLabelOptions;
+  let textAlign: CanvasTextAlign = 'center';
+  let textBaseline: CanvasTextBaseline = 'middle';
+  let posX = rect.x;
+  let posY = rect.y;
+
+  if (direction === 'horizontal') {
+    posX += width / 2;
+
+    if (anchor === 'end') {
+      textAlign = 'right';
+    } else if (anchor === 'start') {
+      textAlign = 'left';
+    }
+  } else if (direction === 'vertical') {
+    posY = posY + height / 2;
+
+    if (anchor === 'end') {
+      textBaseline = 'top';
+    } else if (anchor === 'start') {
+      textBaseline = 'bottom';
+    }
+  }
+
+  posX += offsetX;
+  posY += offsetY;
+
+  return {
+    x: posX,
+    y: posY,
+    text: formatter!(value!),
+    textAlign,
+    textBaseline,
+    style,
   };
 }
 
@@ -114,8 +175,24 @@ const dataLabels: StoreModule = {
     dataLabels: [],
   }),
   action: {
-    appendDataLabels({ state }, dataLabelData) {
-      state.dataLabels = [...dataLabelData];
+    appendDataLabels({ state }, dataLabelData: Array<PointDataLabel | RectDataLabel>) {
+      const { options } = state;
+      const dataLabelOptions = options.series?.dataLabels!;
+
+      const labels = dataLabelData.map((model) => {
+        if (!model.type) {
+          return model;
+        }
+
+        const { type } = model;
+        const labelOptions = getDataLabelsOptions(dataLabelOptions, type);
+
+        return type === 'point'
+          ? makePointLabelInfo(model as PointDataLabel, labelOptions)
+          : makeRectLabelInfo(model as RectDataLabel, labelOptions);
+      });
+
+      state.dataLabels = [...labels];
     },
   },
 };

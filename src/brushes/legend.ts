@@ -1,9 +1,10 @@
-import { label, line, circle } from '@src/brushes/basic';
+import { line, circle } from '@src/brushes/basic';
 import { rect } from '@src/brushes/boxSeries';
 import { LegendModel } from '@t/components/legend';
 import { getRGBA } from '@src/helpers/color';
 import { LegendIconType } from '@t/store/store';
 import { Align } from '@t/options';
+import { label } from './label';
 
 interface RenderOptions {
   iconType: LegendIconType;

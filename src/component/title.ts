@@ -4,7 +4,7 @@ import { TitleOption } from '@t/options';
 import { isString } from '@src/helpers/utils';
 import { LabelModel } from '@t/components/axis';
 import { getTextWidth } from '@src/helpers/calculator';
-import { TITLE_TEXT } from '@src/brushes/basic';
+import { TITLE_TEXT } from '@src/brushes/label';
 
 export default class Title extends Component {
   models!: LabelModel[];

@@ -30,8 +30,8 @@ import { getLimitOnAxis } from '@src/helpers/axes';
 import { AxisType } from './axis';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
-import { labelStyle } from '@src/brushes/basic';
-import { getDataLabelsOptions, DefaultDataLabelOptions } from '@src/store/dataLabels';
+import { DataLabel, DataLabelOption } from '@t/components/dataLabels';
+import { getDataLabelsOptions } from '@src/store/dataLabels';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -47,7 +47,7 @@ type DrawModels = {
   label?: LabelModel[];
 };
 
-type RenderOptions = {
+export type RenderOptions = {
   tickDistance: number;
   min: number;
   max: number;
@@ -124,8 +124,6 @@ export default class BoxSeries extends Component {
   basePosition = this.hoverThickness;
 
   isRangeData = false;
-
-  overflowedSize = 0;
 
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
@@ -226,8 +224,6 @@ export default class BoxSeries extends Component {
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
 
-    this.overflowedSize = this.getOverflowedSize();
-
     const seriesData = series[this.name].data;
     const renderOptions = this.makeRenderOptions(axes, options);
 
@@ -260,10 +256,8 @@ export default class BoxSeries extends Component {
       };
     }
 
-    const dataLabelOptions = options.series?.dataLabels;
-
-    if (dataLabelOptions && dataLabelOptions.visible) {
-      const dataLabelData = this.getDataLabels(seriesModels, dataLabelOptions);
+    if (options.series?.dataLabels?.visible) {
+      const dataLabelData = this.getDataLabels(seriesModels, options.series?.dataLabels);
 
       this.store.dispatch('appendDataLabels', dataLabelData);
     }
@@ -419,7 +413,7 @@ export default class BoxSeries extends Component {
     return this.getOffsetSize() / ((max - min) * multiple);
   }
 
-  private makeBarLength(value: BoxSeriesDataType, renderOptions: RenderOptions) {
+  makeBarLength(value: BoxSeriesDataType, renderOptions: RenderOptions) {
     if (isNull(value)) {
       return null;
     }
@@ -525,154 +519,139 @@ export default class BoxSeries extends Component {
     return tickPos;
   }
 
-  getOverflowedSize() {
-    return this.getOffsetSize() + this.hoverThickness;
-  }
-
-  makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
-    const { font, fillStyle } = labelStyle['default'];
-
-    return {
-      visible: false,
-      anchor: 'end',
-      align: 'end',
-      offset: 5,
-      style: {
-        font,
-        color: fillStyle,
-        textBgColor: 'rgba(255, 255, 255, 0)',
-        textStrokeColor: 'rgba(255, 255, 255, 0)',
-      },
-    };
-  }
-
   getDataLabels(seriesModels: RectModel[], dataLabelOptions: DataLabels) {
-    const options: Required<DataLabels> = getDataLabelsOptions(
-      dataLabelOptions,
-      this.makeDefaultDataLabelOptions()
-    );
+    const options = getDataLabelsOptions(dataLabelOptions, 'rect');
 
     return seriesModels.map((data) =>
       this.isBar ? this.makeBarLabelInfo(data, options) : this.makeColumnLabelInfo(data, options)
     );
   }
 
-  makeBarLabelInfo(data: RectModel, dataLabelOptions: Required<DataLabels>) {
-    const {
-      anchor,
-      align,
-      offset,
-      style: { font, color, textBgColor, textStrokeColor },
-      formatter,
-    } = dataLabelOptions;
+  // eslint-disable-next-line complexity
+  makeColumnLabelInfo(data: RectModel, options: DataLabelOption, withStack = false): DataLabel {
+    const { anchor, offsetX, offsetY, formatter, style } = options;
+    const { width, height } = data;
+    const dataValue = data.value!;
+    const text = formatter!(dataValue);
+    const isBottomSide = !isRangeValue(dataValue) && data.y >= this.basePosition;
+    const padding = 5;
 
-    const { width, height, value } = data;
-    const text = formatter(value!);
-    let { x, y } = data;
-    let textAlign = 'center';
-    const textBaseline = 'middle';
+    let posX = data.x + width / 2;
+    let posY = data.y;
+    let textBaseline: CanvasTextBaseline = isBottomSide ? 'top' : 'bottom';
 
-    y = data.y + height / 2;
-
-    if (anchor === 'start') {
-      x = data.x;
-      textAlign = 'start';
-    } else if (anchor === 'end') {
-      x = data.x + width;
-      textAlign = 'center';
-    } else {
-      x = data.x + width / 2;
-      textAlign = 'center';
+    if ((anchor === 'start' && !isBottomSide) || (anchor === 'end' && isBottomSide)) {
+      posY += height;
+    } else if (anchor === 'center') {
+      posY += height / 2;
+      textBaseline = 'middle';
     }
 
-    if (includes(['end', 'right'], align)) {
-      textAlign = 'start';
-      x += offset;
-    } else if (includes(['start', 'left'], align)) {
-      textAlign = 'end';
-      x -= offset;
+    posX += offsetX;
+    posY += offsetY;
+
+    // set default padding
+    if (withStack && anchor === 'end') {
+      textBaseline = isBottomSide ? 'bottom' : 'top';
+      posY += isBottomSide ? -padding : padding;
+    } else if (anchor !== 'center') {
+      posY += isBottomSide ? padding : -padding;
     }
 
     // adjust the position automatically, when outside and overflowing
-    if (
+    const textHeight = getTextHeight(style?.font!);
+    const isOverflow =
       anchor === 'end' &&
-      includes(['end', 'right'], align) &&
-      this.overflowedSize &&
-      this.overflowedSize < x + getTextWidth(text, font!)
-    ) {
-      x = data.x + width - offset;
-      textAlign = 'end';
+      ((!isBottomSide && posY - textHeight < 0) || posY + textHeight > this.plot.height);
+
+    if (isOverflow) {
+      posY = data.y + padding;
+      textBaseline = 'top';
+
+      if (posY + textHeight > this.plot.height) {
+        posY = data.y - padding;
+        textBaseline = 'bottom';
+      }
+
+      if (isBottomSide) {
+        posY = data.y + height - padding;
+        textBaseline = 'bottom';
+      }
     }
 
-    const style = { font, fillStyle: color, textAlign, textBaseline };
-    x -= this.hoverThickness;
-    y -= this.hoverThickness;
+    posX -= this.hoverThickness;
+    posY -= this.hoverThickness;
 
     return {
-      x,
-      y,
+      x: posX,
+      y: posY,
       text,
       style,
-      bgColor: textBgColor,
-      textStrokeColor,
+      textAlign: 'center',
+      textBaseline,
     };
   }
 
-  makeColumnLabelInfo(data: RectModel, dataLabelOptions: Required<DataLabels>) {
-    const {
-      anchor,
-      align,
-      offset,
-      style: { font, color, textBgColor, textStrokeColor },
-      formatter,
-    } = dataLabelOptions;
+  // eslint-disable-next-line complexity
+  makeBarLabelInfo(data: RectModel, options: DataLabelOption, withStack = false): DataLabel {
+    const { anchor, offsetX, offsetY, formatter, style } = options;
+    const { width, height } = data;
+    const dataValue = data.value!;
+    const text = formatter!(dataValue);
+    const isLeftSide = !isRangeValue(dataValue) && data.x < this.basePosition;
+    const padding = 5;
 
-    const { width, height, value } = data;
-    const text = formatter(value!);
-    let { x, y } = data;
-    const textAlign = 'center';
-    let textBaseline = 'middle';
+    let textAlign: CanvasTextAlign = 'center';
+    let posX = data.x;
+    let posY = data.y + height / 2;
 
-    x = data.x + width / 2;
-
-    if (anchor === 'start') {
-      y = data.y + data.height;
-    } else if (anchor === 'end') {
-      y = data.y;
-    } else {
-      y = data.y + data.height / 2;
+    if ((anchor === 'start' && isLeftSide) || (anchor === 'end' && !isLeftSide)) {
+      posX += width;
+    } else if (anchor === 'center') {
+      posX += width / 2;
     }
 
-    if (includes(['top', 'end'], align)) {
-      y -= offset;
-      textBaseline = 'bottom';
-    } else if (includes(['bottom', 'start'], align)) {
-      y += offset;
-      textBaseline = 'top';
+    if (includes(['start', 'end'], anchor)) {
+      textAlign = isLeftSide ? 'right' : 'left';
+    }
+
+    posX += offsetX;
+    posY += offsetY;
+
+    // set default padding
+    if (withStack && anchor === 'end') {
+      textAlign = isLeftSide ? 'left' : 'right';
+      posX += isLeftSide ? padding : -padding;
+    } else if (anchor !== 'center') {
+      posX += isLeftSide ? -padding : padding;
     }
 
     // adjust the position automatically, when outside and overflowing
-    if (
+    const textWidth = getTextWidth(text, style?.font!);
+    const isOverflow =
       anchor === 'end' &&
-      includes(['end', 'top'], align) &&
-      this.overflowedSize &&
-      this.overflowedSize < height + getTextHeight(font!)
-    ) {
-      y = data.y + offset;
-      textBaseline = 'top';
+      ((isLeftSide && posX - textWidth < 0) || posX + textWidth > this.plot.width);
+
+    if (!withStack && isOverflow) {
+      posX = data.x + width - padding;
+      textAlign = 'end';
+
+      if (isLeftSide && width >= textWidth) {
+        posX = data.x + padding;
+        textAlign = 'start';
+      }
     }
 
-    const style = { font, fillStyle: color, textAlign, textBaseline };
-    x -= this.hoverThickness;
-    y -= this.hoverThickness;
+    posX -= this.hoverThickness;
+    posY -= this.hoverThickness;
 
     return {
-      x,
-      y,
+      x: posX,
+      y: posY,
       text,
       style,
-      bgColor: textBgColor,
-      textStrokeColor,
+      textAlign,
+      textBaseline: 'middle',
     };
   }
 }

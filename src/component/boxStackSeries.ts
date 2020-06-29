@@ -1,4 +1,8 @@
-import BoxSeries, { isLeftBottomSide, SeriesDirection } from './boxSeries';
+import BoxSeries, {
+  isLeftBottomSide,
+  SeriesDirection,
+  RenderOptions as BoxRenderOptions,
+} from './boxSeries';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -6,7 +10,7 @@ import {
   BarChartOptions,
   Point,
   Connector,
-  DataLabelStyle,
+  DataLabels,
 } from '@t/options';
 import {
   ChartState,
@@ -21,7 +25,7 @@ import {
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel, Nullable } from '@t/components/series';
-import { deepCopyArray, includes, isNumber } from '@src/helpers/utils';
+import { deepCopyArray, includes, isNumber, hasNegative } from '@src/helpers/utils';
 import { LineModel } from '@t/components/axis';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
@@ -30,8 +34,8 @@ import {
   calibrateBoxStackDrawingValue,
   sumValuesBeforeIndex,
 } from '@src/helpers/boxSeriesCalculator';
-import { DefaultDataLabelOptions } from '@src/store/dataLabels';
-import { labelStyle } from '@src/brushes/basic';
+import { DataLabel, DataLabelOption } from '@t/components/dataLabels';
+import { getDataLabelsOptions } from '@src/store/dataLabels';
 
 type RenderOptions = {
   stack: Stack;
@@ -40,6 +44,7 @@ type RenderOptions = {
   min: number;
   max: number;
   diverging: boolean;
+  hasNegativeValue: boolean;
   seriesDirection: SeriesDirection;
 };
 
@@ -66,6 +71,18 @@ function getDivisorForPercent(total: StackTotal, scaleType: PercentScaleType) {
   return divisor;
 }
 
+function getDirectionKeys(seriesDirection: SeriesDirection) {
+  let result = ['positive', 'negative'];
+
+  if (seriesDirection === SeriesDirection.POSITIVE) {
+    result = ['positive'];
+  } else if (seriesDirection === SeriesDirection.NEGATIVE) {
+    result = ['negative'];
+  }
+
+  return result;
+}
+
 export default class BoxStackSeries extends BoxSeries {
   makeStackRenderOptions(
     axes: Partial<Record<AxisType, AxisData>>,
@@ -84,6 +101,7 @@ export default class BoxStackSeries extends BoxSeries {
       min,
       max,
       diverging,
+      hasNegativeValue: hasNegative(labels),
       seriesDirection: this.getSeriesDirection(labels),
     };
   }
@@ -97,8 +115,6 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
-
-    this.overflowedSize = this.getOverflowedSize();
 
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { colors } = theme.series;
@@ -139,12 +155,15 @@ export default class BoxStackSeries extends BoxSeries {
       };
     }
 
-    const dataLabelOptions = options.series?.dataLabels;
+    if (options.series?.dataLabels?.visible) {
+      const dataLabelData = this.getDataLabels(series, options.series?.dataLabels);
+      const stackTotalData = this.getTotalDataLabels(
+        seriesData,
+        renderOptions,
+        options.series?.dataLabels
+      );
 
-    if (dataLabelOptions && dataLabelOptions.visible) {
-      const dataLabelData = this.getDataLabels(series, dataLabelOptions);
-
-      this.store.dispatch('appendDataLabels', dataLabelData);
+      this.store.dispatch('appendDataLabels', [...dataLabelData, ...stackTotalData]);
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
@@ -590,25 +609,106 @@ export default class BoxStackSeries extends BoxSeries {
     };
   }
 
-  makeDefaultDataLabelOptions(): DefaultDataLabelOptions {
-    const { font, fillStyle } = labelStyle['default'];
-    const style: Required<DataLabelStyle> = {
-      font,
-      color: fillStyle,
-      textBgColor: 'rgba(255, 255, 255, 0)',
-      textStrokeColor: 'rgba(255, 255, 255, 0.5)',
-    };
+  getDataLabels(seriesModels: RectModel[], dataLabelOptions: DataLabels) {
+    const options = getDataLabelsOptions(dataLabelOptions, 'stack');
 
-    return {
-      visible: false,
-      anchor: 'center',
-      align: 'center',
-      offset: 5,
-      style,
-      stackTotal: {
-        visible: false,
-        style,
-      },
-    };
+    return seriesModels.map((data) =>
+      this.isBar
+        ? this.makeBarLabelInfo(data, options, true)
+        : this.makeColumnLabelInfo(data, options, true)
+    );
+  }
+
+  getTotalDataLabels(
+    seriesData: StackSeriesData<BoxType>,
+    renderOptions: RenderOptions,
+    dataLabelOptions: DataLabels
+  ): DataLabel[] {
+    const { stackData } = seriesData;
+    const options = getDataLabelsOptions(dataLabelOptions, 'stack');
+
+    if (!options.stackTotal?.visible) {
+      return [];
+    }
+
+    return isGroupStack(stackData)
+      ? this.makeGroupTotalDataLabels(seriesData, renderOptions, options)
+      : this.makeTotalDataLabels(stackData, renderOptions, options);
+  }
+
+  makeGroupTotalDataLabels(
+    stackSeries: StackSeriesData<BoxType>,
+    renderOptions: RenderOptions,
+    dataLabelOptions: DataLabelOption
+  ): DataLabel[] {
+    let dataLabels: DataLabel[] = [];
+
+    const stackGroupData = stackSeries.stackData as StackGroupData;
+    const stackGroupIds = Object.keys(stackGroupData);
+
+    stackGroupIds.forEach((groupId, groupIndex) => {
+      const totalDataLabels = this.makeTotalDataLabels(
+        stackGroupData[groupId],
+        renderOptions,
+        dataLabelOptions,
+        stackGroupIds.length,
+        groupIndex
+      );
+
+      dataLabels = [...dataLabels, ...totalDataLabels];
+    });
+
+    return dataLabels;
+  }
+
+  makeTotalDataLabels(
+    stackData: StackDataValues,
+    renderOptions: RenderOptions,
+    dataLabelOptions: DataLabelOption,
+    stackGroupCount = 1,
+    stackGroupIndex = 0
+  ): DataLabel[] {
+    const dataLabels: DataLabel[] = [];
+    const { min, max, diverging, hasNegativeValue, seriesDirection } = renderOptions;
+    const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
+
+    stackData.forEach(({ total }, dataIndex) => {
+      const seriesPos = this.getSeriesPosition(
+        renderOptions,
+        columnWidth,
+        dataIndex,
+        stackGroupIndex
+      );
+      const ratio = this.getStackValueRatio(total, renderOptions);
+      const directionKeys = getDirectionKeys(seriesDirection);
+
+      directionKeys.forEach((key) => {
+        const value = total[key];
+
+        const barLength = this.makeBarLength(value, {
+          min,
+          max,
+          ratio,
+        } as BoxRenderOptions)!;
+
+        const dataPosition = this.getStartPosition(barLength, value, 0, {
+          diverging,
+          hasNegativeValue,
+        } as BoxRenderOptions);
+
+        const rect = {
+          value,
+          ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
+        } as RectModel;
+
+        const labelInfo = this.isBar
+          ? this.makeBarLabelInfo(rect, { ...dataLabelOptions, anchor: 'end' })
+          : this.makeColumnLabelInfo(rect, { ...dataLabelOptions, anchor: 'end' });
+
+        dataLabels.push(labelInfo);
+      });
+    });
+
+    return dataLabels;
   }
 }

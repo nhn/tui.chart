@@ -46,3 +46,15 @@ export const basic = () => {
 
   return el;
 };
+
+export const dataLabels = () => {
+  const { el } = createChart(avgTemperatureData, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+  });
+
+  return el;
+};

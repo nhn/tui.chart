@@ -1,5 +1,6 @@
 import { CircleLegendModel } from '@t/components/circleLegend';
-import { circle, label } from '@src/brushes/basic';
+import { circle } from '@src/brushes/basic';
+import { label } from './label';
 
 export function circleLegend(ctx: CanvasRenderingContext2D, circleLegendModel: CircleLegendModel) {
   const { x, y, radius, value } = circleLegendModel;

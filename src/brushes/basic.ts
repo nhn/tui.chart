@@ -1,11 +1,8 @@
 import { ClipRectAreaModel, PathRectModel, CircleModel, CircleStyle } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
-import { LabelModel, LabelStyle, LineModel } from '@t/components/axis';
+import { LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover';
-export type LabelStyleName = 'default' | 'title' | 'axisTitle';
-export const TITLE_TEXT = '100 18px Arial';
-const AXIS_TITLE_TEXT = '700 11px Arial';
 
 const circleStyle = {
   default: {
@@ -17,25 +14,6 @@ const circleStyle = {
     shadowBlur: 4,
     shadowOffsetY: 4,
     lineWidth: 3,
-  },
-};
-
-export const labelStyle = {
-  default: {
-    font: 'normal 11px Arial',
-    fillStyle: '#333',
-    textAlign: 'left',
-    textBaseline: 'top',
-  },
-  title: {
-    font: TITLE_TEXT,
-    fillStyle: '#333',
-    textBaseline: 'top',
-  },
-  axisTitle: {
-    font: AXIS_TITLE_TEXT,
-    fillStyle: '#bbb',
-    textBaseline: 'top',
   },
 };
 
@@ -113,7 +91,7 @@ export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
   ctx.stroke();
   ctx.closePath();
 }
-
+/*
 export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   const { x, y, text, style } = labelModel;
 
@@ -127,3 +105,4 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
 
   ctx.fillText(text, x, y);
 }
+*/

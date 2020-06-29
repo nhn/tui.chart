@@ -22,7 +22,7 @@ import * as axisBrushes from '@src/brushes/axis';
 import * as boxBrushes from '@src/brushes/boxSeries';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
-import * as dataLabelBrush from '@src/brushes/dataLabel';
+import * as labelBrush from '@src/brushes/label';
 
 import { ColumnChartOptions, BoxSeriesData } from '@t/options';
 
@@ -67,7 +67,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
       boxBrushes,
       tooltipBrushes,
       legendBrush,
-      dataLabelBrush,
+      labelBrush,
     ]);
   }
 }

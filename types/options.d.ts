@@ -12,7 +12,6 @@ export type Align = 'top' | 'bottom' | 'right' | 'left';
 export interface Point {
   x: number;
   y: number;
-  value?: number;
 }
 
 export type BezierPoint = {
@@ -27,10 +26,8 @@ export interface Size {
   height: number;
 }
 
-export type Rect = Point &
-  Size & {
-    outsideSize?: number;
-  };
+export type Rect = Point & Size;
+
 export interface AreaSeriesType {
   name: string;
   data: AreaSeriesDataType[];
@@ -236,19 +233,17 @@ export type SeriesDataType =
   | BubbleSeriesDataType;
 
 export type DataLabelAnchor = 'center' | 'start' | 'end';
-export type DataLabelAlign = 'center' | 'start' | 'end' | 'left' | 'right' | 'top' | 'bottom';
 export type DataLabelStyle = {
   font?: string;
   color?: string;
-  textBgColor?: string;
   textStrokeColor?: string;
 };
 
 export type DataLabels = {
   visible: boolean;
   anchor?: DataLabelAnchor;
-  align?: DataLabelAlign;
-  offset?: number;
+  offsetX?: number;
+  offsetY?: number;
   formatter?: (value: SeriesDataType) => string;
   style?: DataLabelStyle;
   stackTotal?: {

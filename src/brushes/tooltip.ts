@@ -1,10 +1,12 @@
-import { pathRect, label as labelBrush, line } from '@src/brushes/basic';
+import { line, pathRect } from '@src/brushes/basic';
+import { label as labelBrush } from '@src/brushes/label';
 import { TooltipData, TooltipDataValue, TooltipModel } from '@t/components/tooltip';
 import { rect } from '@src/brushes/boxSeries';
-import { LabelModel, LabelStyle } from '@t/components/axis';
+import { LabelModel } from '@t/components/axis';
 import { BubblePoint, Point } from '@t/options';
 import { deepMergedCopy, isObject } from '@src/helpers/utils';
 import { getTextWidth } from '@src/helpers/calculator';
+import { LabelStyle } from './label';
 
 const MINIMUM_TOOLTIP_TEXT_WIDTH = 100;
 const CATEGORY_FONT_STYLE = 'bold 13px Arial';

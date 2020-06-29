@@ -14,7 +14,7 @@ type ComponentType =
   | 'tooltip'
   | 'plot'
   | 'circleLegend'
-  | 'dataLabels';
+  | 'dataLabels'
   | 'title'
   | 'axisTitle';
 

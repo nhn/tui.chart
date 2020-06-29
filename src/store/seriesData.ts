@@ -1,8 +1,6 @@
 import { StoreModule, SeriesRaw, Series } from '@t/store/store';
 import { extend } from '@src/store/store';
-
 import { sortSeries } from '@src/helpers/utils';
-import layout from './layout';
 
 function makeInitSeries(series: SeriesRaw) {
   const result: Series = {};

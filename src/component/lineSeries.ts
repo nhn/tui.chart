@@ -1,12 +1,6 @@
 import Component from './component';
-import { CircleModel, CircleResponderModel } from '@t/components/series';
-import {
-  LineChartOptions,
-  LineTypeSeriesOptions,
-  Point,
-  CoordinateDataType,
-  DataLabels,
-} from '@t/options';
+import { CircleModel, CircleResponderModel, PointModel } from '@t/components/series';
+import { LineChartOptions, LineTypeSeriesOptions, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
@@ -14,11 +8,7 @@ import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray, includes } from '@src/helpers/utils';
-import { getDataLabelsOptions } from '@src/store/dataLabels';
-import { labelStyle } from '@src/brushes/basic';
-
-type DrawModels = LinePointsModel | ClipRectAreaModel | CircleModel;
+import { deepCopyArray } from '@src/helpers/utils';
 
 interface LineSeriesDrawModels {
   rect: ClipRectAreaModel[];
@@ -108,12 +98,8 @@ export default class LineSeries extends Component {
       };
     }
 
-    const dataLabelOptions = options.series?.dataLabels;
-
-    if (dataLabelOptions && dataLabelOptions.visible) {
-      const dataLabelData = this.getDataLabels(lineSeriesModel, dataLabelOptions);
-
-      this.store.dispatch('appendDataLabels', dataLabelData);
+    if (options.series?.dataLabels?.visible) {
+      this.store.dispatch('appendDataLabels', this.getDataLabels(lineSeriesModel));
     }
 
     this.responders = seriesCircleModel.map((m, index) => ({
@@ -143,7 +129,7 @@ export default class LineSeries extends Component {
     const { spline } = options;
 
     return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
-      const points: Point[] = [];
+      const points: PointModel[] = [];
       const { active } = legend.data.find(({ label }) => label === name)!;
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
@@ -197,73 +183,11 @@ export default class LineSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  getDataLabels(seriesModels: LinePointsModel[], dataLabelOptions: DataLabels) {
-    const { font, fillStyle } = labelStyle['default'];
-
-    const options: Required<DataLabels> = getDataLabelsOptions(dataLabelOptions, {
-      visible: false,
-      anchor: 'center',
-      align: 'center',
-      offset: 3,
-      style: {
-        font,
-        color: fillStyle,
-        textBgColor: 'rgba(255, 255, 255, 0)',
-        textStrokeColor: 'rgba(255, 255, 255, 1)',
-      },
-    });
-
+  getDataLabels(seriesModels: LinePointsModel[]): PointModel[] {
     return seriesModels.flatMap((m) => {
       const { points } = m;
 
-      return points.map((point) => this.makeLinePointLabelInfo(point, options));
+      return points.map((point) => ({ type: 'point', ...point }));
     });
-  }
-
-  makeLinePointLabelInfo(point: Point, dataLabelOptions: Required<DataLabels>) {
-    const {
-      anchor,
-      align,
-      offset,
-      style: { font, color, textBgColor, textStrokeColor },
-      formatter,
-    } = dataLabelOptions;
-
-    const text = formatter(point.value!);
-    let { x, y } = point;
-
-    let textAlign = 'center';
-    let textBaseline = 'middle';
-
-    if (anchor === 'end') {
-      textBaseline = 'bottom';
-    } else if (anchor === 'start') {
-      textBaseline = 'top';
-    }
-
-    if (includes(['top', 'end'], align)) {
-      y -= offset;
-      textBaseline = 'bottom';
-    } else if (includes(['bottom', 'start'], align)) {
-      y += offset;
-      textBaseline = 'top';
-    } else if (align === 'left') {
-      x -= offset;
-      textAlign = 'end';
-    } else if (align === 'right') {
-      x += offset;
-      textAlign = 'start';
-    }
-
-    const style = { font, fillStyle: color, textAlign, textBaseline };
-
-    return {
-      x,
-      y,
-      text,
-      style,
-      bgColor: textBgColor,
-      textStrokeColor,
-    };
   }
 }

@@ -1,12 +1,11 @@
 import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
-import { CircleStyleName, LabelStyleName } from '@src/brushes/basic';
+import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
 import { TooltipData } from '@t/components/tooltip';
-import { LabelStyle } from './axis';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
-
+export type PointModel = Point & { value?: number };
 export interface CircleStyle {
   strokeStyle?: string;
   lineWidth?: number;
@@ -68,11 +67,3 @@ export type RectModel = {
   thickness?: number;
   value?: BoxSeriesDataType;
 } & Rect;
-
-export type DataLabelModel = {
-  type: 'dataLabel';
-  bgColor: string;
-  textStrokeColor: string;
-  text: string;
-  style?: StyleProp<LabelStyle, LabelStyleName>;
-} & Point;

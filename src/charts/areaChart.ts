@@ -18,7 +18,7 @@ import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
-import * as dataLabelBrush from '@src/brushes/dataLabel';
+import * as labelBrush from '@src/brushes/label';
 
 import { AreaChartOptions, AreaSeriesData, AreaSeriesType } from '@t/options';
 import Legend from '@src/component/legend';
@@ -63,7 +63,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
       tooltipBrushes,
       lineSeriesBrushes,
       legendBrush,
-      dataLabelBrush,
+      labelBrush,
     ]);
   }
 }

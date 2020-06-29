@@ -161,3 +161,16 @@ export const scale = () => {
 
   return el;
 };
+
+export const dataLabels = () => {
+  const { el } = createChart(temperatureData, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+    xAxis: { pointOnColumn: true },
+  });
+
+  return el;
+};
