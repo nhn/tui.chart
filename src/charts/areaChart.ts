@@ -44,7 +44,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   initialize() {
     super.initialize();
-    // @TODO: 배열로 넘겨서 처리하는 것 생각해보자
+
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

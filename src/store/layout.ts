@@ -91,7 +91,7 @@ function getLegendRect(chartSize: Size, xAxis: Rect, yAxis: Rect, title: Rect, l
   const { width } = chartSize;
   const verticalAlign = isVerticalAlign(align);
   let x = xAxis.x + xAxis.width + padding.X;
-  let y = yAxis.y;
+  let y = Math.max(yAxis.y, EXPORT_BUTTON_RECT_SIZE);
 
   if (verticalAlign) {
     x = (width - legendWidth) / 2;
@@ -157,14 +157,12 @@ function getXAxisTitleRect(visible: boolean, xAxis: Rect) {
 }
 
 function getExportMenuRect(chartSize: Size, visible: boolean) {
-  return visible
-    ? {
-        x: padding.X + chartSize.width - EXPORT_BUTTON_RECT_SIZE,
-        y: padding.Y,
-        height: EXPORT_BUTTON_RECT_SIZE,
-        width: EXPORT_BUTTON_RECT_SIZE,
-      }
-    : { x: 0, y: 0, height: 0, width: 0 };
+  const x = visible ? padding.X + chartSize.width - EXPORT_BUTTON_RECT_SIZE : 0;
+  const y = visible ? padding.Y : 0;
+  const height = visible ? EXPORT_BUTTON_RECT_SIZE : 0;
+  const width = visible ? EXPORT_BUTTON_RECT_SIZE : 0;
+
+  return { x, y, height, width };
 }
 
 export function isExportMenuVisible(visible?: boolean) {
