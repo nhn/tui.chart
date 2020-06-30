@@ -238,16 +238,17 @@ export type DataLabelStyle = {
   color?: string;
   textStrokeColor?: string;
 };
+export type DataLabelStackTotal = {
+  visible?: boolean;
+  style?: DataLabelStyle;
+};
 
 export type DataLabels = {
-  visible: boolean;
+  visible?: boolean;
   anchor?: DataLabelAnchor;
   offsetX?: number;
   offsetY?: number;
   formatter?: (value: SeriesDataType) => string;
   style?: DataLabelStyle;
-  stackTotal?: {
-    visible: boolean;
-    style?: DataLabelStyle;
-  };
+  stackTotal?: DataLabelStackTotal;
 };

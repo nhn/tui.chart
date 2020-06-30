@@ -28,20 +28,13 @@ export type RectDataLabel = Omit<RectModel, 'type' | 'color'> & {
   };
 };
 
-export type DefaultDataLabelOptions = {
-  visible: boolean;
+type DefaultDataLabelOptions = {
   anchor: DataLabelAnchor;
-  offsetX: number;
-  offsetY: number;
   style: Required<DataLabelStyle>;
-  stackTotal: {
-    visible: boolean;
-    style: Required<DataLabelStyle>;
-  };
+  stackTotal?: Required<DataLabelStackTotal>;
 };
-
-function getDefaultOptions(type: DataLabelType, withStack = false) {
-  const style = {
+function getDefaultOptions(type: DataLabelType, withStack = false): DefaultDataLabelOptions {
+  const style: Required<DataLabelStyle> = {
     font: labelStyle['default'].font,
     color: labelStyle['default'].fillStyle,
     textStrokeColor: strokeLabelStyle.stroke.strokeStyle,
@@ -72,13 +65,10 @@ function getDefaultOptions(type: DataLabelType, withStack = false) {
   return options;
 }
 
-function getAnchor(
-  dataLabelOptions: DataLabels,
-  defaultOptions: DefaultDataLabelOptions
-): DataLabelAnchor {
+function getAnchor(dataLabelOptions: DataLabels, defaultOptions: DataLabels): DataLabelAnchor {
   return includes(['center', 'start', 'end', 'auto'], dataLabelOptions.anchor)
     ? dataLabelOptions.anchor!
-    : defaultOptions.anchor;
+    : defaultOptions.anchor!;
 }
 
 function getStyle(
@@ -101,14 +91,14 @@ export function getDataLabelsOptions(
 ): DataLabelOption {
   const defaultOptions = getDefaultOptions(type, withStack);
   const anchor =
-    type !== 'stackTotal' ? getAnchor(dataLabelOptions, defaultOptions) : defaultOptions.anchor;
+    type === 'stackTotal' ? defaultOptions.anchor : getAnchor(dataLabelOptions, defaultOptions);
   const { offsetX = 0, offsetY = 0 } = dataLabelOptions;
   const formatter = isFunction(dataLabelOptions.formatter)
     ? dataLabelOptions.formatter!
     : function (value: SeriesDataType): string {
         return String(value) || '';
       };
-  const style = getStyle(defaultOptions.style, dataLabelOptions.style);
+  const style = getStyle(defaultOptions.style as Required<DataLabelStyle>, dataLabelOptions.style);
   const options: DataLabelOption = { anchor, offsetX, offsetY, formatter, style };
 
   if (withStack) {
@@ -116,7 +106,10 @@ export function getDataLabelsOptions(
       visible: isBoolean(dataLabelOptions.stackTotal?.visible)
         ? dataLabelOptions.stackTotal?.visible
         : true,
-      style: getStyle(defaultOptions.stackTotal.style, dataLabelOptions.stackTotal?.style),
+      style: getStyle(
+        defaultOptions.stackTotal!.style as Required<DataLabelStyle>,
+        dataLabelOptions.stackTotal?.style
+      ),
     } as DataLabelStackTotal;
   }
 
