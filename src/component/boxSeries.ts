@@ -8,7 +8,6 @@ import {
   ColumnChartOptions,
   Rect,
   RangeDataType,
-  DataLabels,
 } from '@t/options';
 import {
   first,
@@ -28,10 +27,8 @@ import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { AxisType } from './axis';
-import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
-import { DataLabel, DataLabelOption } from '@t/components/dataLabels';
-import { getDataLabelsOptions } from '@src/store/dataLabels';
+import { RectDataLabel, RectDirection } from '@src/store/dataLabels';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -278,7 +275,7 @@ export default class BoxSeries extends Component {
     }
 
     if (options.series?.dataLabels?.visible) {
-      const dataLabelData = this.getDataLabels(seriesModels, options.series?.dataLabels);
+      const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data));
 
       this.store.dispatch('appendDataLabels', dataLabelData);
     }
@@ -540,139 +537,27 @@ export default class BoxSeries extends Component {
     return tickPos;
   }
 
-  getDataLabels(seriesModels: RectModel[], dataLabelOptions: DataLabels) {
-    const options = getDataLabelsOptions(dataLabelOptions, 'rect');
-
-    return seriesModels.map((data) =>
-      this.isBar ? this.makeBarLabelInfo(data, options) : this.makeColumnLabelInfo(data, options)
-    );
+  makeDataLabel(rect: RectModel) {
+    return {
+      ...rect,
+      direction: this.getDataLabelDirection(rect),
+      plot: {
+        x: this.hoverThickness,
+        y: this.hoverThickness,
+        size: this.plot[this.offsetSizeKey],
+      },
+    } as RectDataLabel;
   }
 
-  // eslint-disable-next-line complexity
-  makeColumnLabelInfo(data: RectModel, options: DataLabelOption, isStack = false): DataLabel {
-    const { anchor, offsetX, offsetY, formatter, style } = options;
-    const { width, height } = data;
-    const dataValue = data.value!;
-    const text = formatter!(dataValue);
-    const isBottomSide = !isRangeValue(dataValue) && data.y >= this.basePosition;
-    const padding = 5;
+  getDataLabelDirection(rect: RectModel): RectDirection {
+    let direction: RectDirection = 'right';
 
-    let posX = data.x + width / 2;
-    let posY = data.y;
-    let textBaseline: CanvasTextBaseline = isBottomSide ? 'top' : 'bottom';
-
-    if ((anchor === 'start' && !isBottomSide) || (anchor === 'end' && isBottomSide)) {
-      posY += height;
-    } else if (anchor === 'center') {
-      posY += height / 2;
-      textBaseline = 'middle';
+    if (this.isBar) {
+      direction = !isRangeValue(rect.value!) && rect.x < this.basePosition ? 'left' : 'right';
+    } else {
+      direction = !isRangeValue(rect.value!) && rect.y >= this.basePosition ? 'bottom' : 'top';
     }
 
-    posX += offsetX;
-    posY += offsetY;
-
-    // set default padding
-    if (isStack && anchor === 'end') {
-      textBaseline = isBottomSide ? 'bottom' : 'top';
-      posY += isBottomSide ? -padding : padding;
-    } else if (anchor !== 'center') {
-      posY += isBottomSide ? padding : -padding;
-    }
-
-    // adjust the position automatically, when outside and overflowing
-    const textHeight = getTextHeight(style?.font!);
-    const isOverflow =
-      anchor === 'end' &&
-      ((!isBottomSide && posY - textHeight < 0) || posY + textHeight > this.plot.height);
-
-    if (isOverflow) {
-      posY = data.y + padding;
-      textBaseline = 'top';
-
-      if (posY + textHeight > this.plot.height) {
-        posY = data.y - padding;
-        textBaseline = 'bottom';
-      }
-
-      if (isBottomSide) {
-        posY = data.y + height - padding;
-        textBaseline = 'bottom';
-      }
-    }
-
-    posX -= this.hoverThickness;
-    posY -= this.hoverThickness;
-
-    return {
-      x: posX,
-      y: posY,
-      text,
-      textAlign: 'center',
-      textBaseline,
-      style,
-    };
-  }
-
-  // eslint-disable-next-line complexity
-  makeBarLabelInfo(data: RectModel, options: DataLabelOption, isStack = false): DataLabel {
-    const { anchor, offsetX, offsetY, formatter, style } = options;
-    const { width, height } = data;
-    const dataValue = data.value!;
-    const text = formatter!(dataValue);
-    const isLeftSide = !isRangeValue(dataValue) && data.x < this.basePosition;
-    const padding = 5;
-
-    let textAlign: CanvasTextAlign = 'center';
-    let posX = data.x;
-    let posY = data.y + height / 2;
-
-    if ((anchor === 'start' && isLeftSide) || (anchor === 'end' && !isLeftSide)) {
-      posX += width;
-    } else if (anchor === 'center') {
-      posX += width / 2;
-    }
-
-    if (includes(['start', 'end'], anchor)) {
-      textAlign = isLeftSide ? 'right' : 'left';
-    }
-
-    posX += offsetX;
-    posY += offsetY;
-
-    // set default padding
-    if (isStack && anchor === 'end') {
-      textAlign = isLeftSide ? 'left' : 'right';
-      posX += isLeftSide ? padding : -padding;
-    } else if (anchor !== 'center') {
-      posX += isLeftSide ? -padding : padding;
-    }
-
-    // adjust the position automatically, when outside and overflowing
-    const textWidth = getTextWidth(text, style?.font!);
-    const isOverflow =
-      anchor === 'end' &&
-      ((isLeftSide && posX - textWidth < 0) || posX + textWidth > this.plot.width);
-
-    if (!isStack && isOverflow) {
-      posX = data.x + width - padding;
-      textAlign = 'end';
-
-      if (isLeftSide && width >= textWidth) {
-        posX = data.x + padding;
-        textAlign = 'start';
-      }
-    }
-
-    posX -= this.hoverThickness;
-    posY -= this.hoverThickness;
-
-    return {
-      x: posX,
-      y: posY,
-      text,
-      textAlign,
-      textBaseline: 'middle',
-      style,
-    };
+    return direction;
   }
 }

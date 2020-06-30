@@ -35,8 +35,12 @@ function createChart(data, customOptions?: BarChartOptions) {
   return { el, chart };
 }
 
-export const defaultDataLabels = () => {
-  const anchor = radios('anchor', { center: 'center', start: 'start', end: 'end' }, 'end');
+export const dataLabels = () => {
+  const anchor = radios(
+    'anchor',
+    { center: 'center', start: 'start', end: 'end', auto: 'auto' },
+    'auto'
+  );
   const { el } = createChart(negativeBudgetData, {
     xAxis: {
       scale: {

@@ -232,7 +232,7 @@ export type SeriesDataType =
   | CoordinateDataType
   | BubbleSeriesDataType;
 
-export type DataLabelAnchor = 'center' | 'start' | 'end';
+export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto';
 export type DataLabelStyle = {
   font?: string;
   color?: string;
