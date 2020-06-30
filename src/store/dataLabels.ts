@@ -5,7 +5,13 @@ import { PointModel, RectModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { strokeLabelStyle, labelStyle } from '@src/brushes/label';
 
-const ANCHOR_TYPES = ['center', 'start', 'end'];
+type DataLabelType = 'point' | 'rect' | 'box' | 'stack';
+type PointDataLabel = PointModel & {
+  type: 'point';
+};
+type RectDataLabel = RectModel & {
+  direction: 'vertical' | 'horizontal';
+};
 
 export type DefaultDataLabelOptions = {
   visible: boolean;
@@ -50,7 +56,7 @@ function getAnchor(
   dataLabelOptions: DataLabels,
   defaultOptions: DefaultDataLabelOptions
 ): DataLabelAnchor {
-  return includes(ANCHOR_TYPES, dataLabelOptions.anchor)
+  return includes(['center', 'start', 'end'], dataLabelOptions.anchor)
     ? dataLabelOptions.anchor!
     : defaultOptions.anchor;
 }
@@ -122,37 +128,34 @@ function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOp
   };
 }
 
-type DataLabelType = 'point' | 'rect' | 'stack';
-type PointDataLabel = PointModel & {
-  type: 'point';
-};
-type RectDataLabel = RectModel & {
-  direction: 'vertical' | 'horizontal';
-};
-
 function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
-  const { value, width, height, direction } = rect;
+  const { x, y, value, width, height, direction } = rect;
   const { anchor, offsetX = 0, offsetY = 0, formatter, style } = dataLabelOptions;
   let textAlign: CanvasTextAlign = 'center';
   let textBaseline: CanvasTextBaseline = 'middle';
-  let posX = rect.x;
-  let posY = rect.y;
+  let posX, posY;
 
   if (direction === 'horizontal') {
-    posX += width / 2;
-
-    if (anchor === 'end') {
-      textAlign = 'right';
-    } else if (anchor === 'start') {
+    if (anchor === 'start') {
       textAlign = 'left';
+      posX = x;
+    } else if (anchor === 'end') {
+      textAlign = 'right';
+      posX = x + width;
+    } else {
+      textAlign = 'center';
+      posX = x + width / 2;
     }
   } else if (direction === 'vertical') {
-    posY = posY + height / 2;
-
     if (anchor === 'end') {
       textBaseline = 'top';
+      posY = y;
     } else if (anchor === 'start') {
       textBaseline = 'bottom';
+      posY = y + height;
+    } else {
+      textBaseline = 'middle';
+      posY = y + height / 2;
     }
   }
 

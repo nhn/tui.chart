@@ -125,10 +125,13 @@ export default class BoxSeries extends Component {
 
   isRangeData = false;
 
+  offsetKey = 'x';
+
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
     this.name = name;
     this.isBar = name === BOX.BAR;
+    this.offsetKey = this.isBar ? 'x' : 'y';
     this.padding = this.isBar ? PADDING.TB : PADDING.LR;
     this.valueAxis = this.isBar ? 'xAxis' : 'yAxis';
     this.labelAxis = this.isBar ? 'yAxis' : 'xAxis';
@@ -141,58 +144,76 @@ export default class BoxSeries extends Component {
       return;
     }
 
-    const offsetKey = this.isBar ? 'x' : 'y';
-    const { clipRect, series, connector } = this.drawModels;
-
     if (this.isRangeData) {
-      this.drawModels.clipRect = this.models.clipRect;
-
-      const target = this.models.series;
-
-      series.forEach((current, index) => {
-        const targetModel = target[index];
-
-        if (delta === 0) {
-          current[this.offsetSizeKey] = 0;
-        }
-
-        const offsetSize =
-          current[this.offsetSizeKey] +
-          (targetModel[this.offsetSizeKey] - current[this.offsetSizeKey]) * delta;
-
-        current[this.offsetSizeKey] = offsetSize;
-
-        if (!this.isBar) {
-          current[offsetKey] =
-            targetModel[offsetKey] + targetModel[this.offsetSizeKey] - offsetSize;
-        }
-      });
+      this.initUpdateRangeData(delta);
 
       return;
     }
 
-    if (clipRect) {
-      const current = clipRect[0];
-      const key = this.offsetSizeKey;
-      const target = this.models.clipRect![0];
-      const offsetSize = current[key] + (target[key] - current[key]) * delta;
+    this.initUpdateClipRect(delta);
 
-      current[key] = offsetSize;
-      current[offsetKey] = Math.max(
-        this.basePosition - (offsetSize * this.basePosition) / target[key],
-        0
-      );
+    this.initUpdateConnector(delta);
+  }
+
+  initUpdateRangeData(delta: number) {
+    const { series } = this.drawModels;
+    this.drawModels.clipRect = this.models.clipRect;
+
+    const target = this.models.series;
+
+    series.forEach((current, index) => {
+      const targetModel = target[index];
+
+      if (delta === 0) {
+        current[this.offsetSizeKey] = 0;
+      }
+
+      const offsetSize =
+        current[this.offsetSizeKey] +
+        (targetModel[this.offsetSizeKey] - current[this.offsetSizeKey]) * delta;
+
+      current[this.offsetSizeKey] = offsetSize;
+
+      if (!this.isBar) {
+        current[this.offsetKey] =
+          targetModel[this.offsetKey] + targetModel[this.offsetSizeKey] - offsetSize;
+      }
+    });
+  }
+
+  initUpdateClipRect(delta: number) {
+    const { clipRect } = this.drawModels;
+
+    if (!clipRect) {
+      return;
     }
 
-    if (connector) {
-      const target = this.models.connector!;
+    const current = clipRect[0];
+    const key = this.offsetSizeKey;
+    const target = this.models.clipRect![0];
+    const offsetSize = current[key] + (target[key] - current[key]) * delta;
 
-      connector.forEach((current, index) => {
-        const alpha = getAlpha(target[index].strokeStyle!) * delta;
+    current[key] = offsetSize;
+    current[this.offsetKey] = Math.max(
+      this.basePosition - (offsetSize * this.basePosition) / target[key],
+      0
+    );
+  }
 
-        current.strokeStyle = getRGBA(current.strokeStyle!, alpha);
-      });
+  initUpdateConnector(delta: number) {
+    const { connector } = this.drawModels;
+
+    if (!connector) {
+      return;
     }
+
+    const target = this.models.connector!;
+
+    connector.forEach((current, index) => {
+      const alpha = getAlpha(target[index].strokeStyle!) * delta;
+
+      current.strokeStyle = getRGBA(current.strokeStyle!, alpha);
+    });
   }
 
   makeRenderOptions(
@@ -528,7 +549,7 @@ export default class BoxSeries extends Component {
   }
 
   // eslint-disable-next-line complexity
-  makeColumnLabelInfo(data: RectModel, options: DataLabelOption, withStack = false): DataLabel {
+  makeColumnLabelInfo(data: RectModel, options: DataLabelOption, isStack = false): DataLabel {
     const { anchor, offsetX, offsetY, formatter, style } = options;
     const { width, height } = data;
     const dataValue = data.value!;
@@ -551,7 +572,7 @@ export default class BoxSeries extends Component {
     posY += offsetY;
 
     // set default padding
-    if (withStack && anchor === 'end') {
+    if (isStack && anchor === 'end') {
       textBaseline = isBottomSide ? 'bottom' : 'top';
       posY += isBottomSide ? -padding : padding;
     } else if (anchor !== 'center') {
@@ -586,14 +607,14 @@ export default class BoxSeries extends Component {
       x: posX,
       y: posY,
       text,
-      style,
       textAlign: 'center',
       textBaseline,
+      style,
     };
   }
 
   // eslint-disable-next-line complexity
-  makeBarLabelInfo(data: RectModel, options: DataLabelOption, withStack = false): DataLabel {
+  makeBarLabelInfo(data: RectModel, options: DataLabelOption, isStack = false): DataLabel {
     const { anchor, offsetX, offsetY, formatter, style } = options;
     const { width, height } = data;
     const dataValue = data.value!;
@@ -619,7 +640,7 @@ export default class BoxSeries extends Component {
     posY += offsetY;
 
     // set default padding
-    if (withStack && anchor === 'end') {
+    if (isStack && anchor === 'end') {
       textAlign = isLeftSide ? 'left' : 'right';
       posX += isLeftSide ? padding : -padding;
     } else if (anchor !== 'center') {
@@ -632,7 +653,7 @@ export default class BoxSeries extends Component {
       anchor === 'end' &&
       ((isLeftSide && posX - textWidth < 0) || posX + textWidth > this.plot.width);
 
-    if (!withStack && isOverflow) {
+    if (!isStack && isOverflow) {
       posX = data.x + width - padding;
       textAlign = 'end';
 
@@ -649,9 +670,9 @@ export default class BoxSeries extends Component {
       x: posX,
       y: posY,
       text,
-      style,
       textAlign,
       textBaseline: 'middle',
+      style,
     };
   }
 }
