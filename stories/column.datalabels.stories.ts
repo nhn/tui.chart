@@ -79,7 +79,7 @@ export const negativeOnly = () => {
   return el;
 };
 
-export const defaultDataLabelsOnStack = () => {
+export const dataLabelsOnStack = () => {
   const anchor = radios('anchor', { center: 'center', start: 'start', end: 'end' }, 'center');
   const showStackTotal = boolean('Show Stack Total', true);
   const { el } = createChart(negativeBudgetData, {
@@ -95,6 +95,9 @@ export const defaultDataLabelsOnStack = () => {
         anchor,
         stackTotal: {
           visible: showStackTotal,
+          style: {
+            font: '700 12px Arial',
+          },
         },
       },
     },
@@ -114,9 +117,6 @@ export const dataLabelsOnGroupStack = () => {
       stack: true,
       dataLabels: {
         visible: true,
-        style: {
-          textStrokeColor: 'rgba(255, 255, 255, 0.6)',
-        },
       },
     },
   });

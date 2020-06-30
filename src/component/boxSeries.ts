@@ -28,7 +28,7 @@ import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { AxisType } from './axis';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
-import { RectDataLabel, RectDirection } from '@src/store/dataLabels';
+import { RectDirection, RectDataLabel } from '@src/store/dataLabels';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -537,7 +537,7 @@ export default class BoxSeries extends Component {
     return tickPos;
   }
 
-  makeDataLabel(rect: RectModel) {
+  makeDataLabel(rect: RectModel): RectDataLabel {
     return {
       ...rect,
       direction: this.getDataLabelDirection(rect),
@@ -546,10 +546,10 @@ export default class BoxSeries extends Component {
         y: this.hoverThickness,
         size: this.plot[this.offsetSizeKey],
       },
-    } as RectDataLabel;
+    };
   }
 
-  getDataLabelDirection(rect: RectModel): RectDirection {
+  getDataLabelDirection(rect: RectModel | RectDataLabel): RectDirection {
     let direction: RectDirection = 'right';
 
     if (this.isBar) {

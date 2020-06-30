@@ -1,10 +1,11 @@
 import { StoreModule } from '@t/store/store';
-import { isFunction, includes } from '@src/helpers/utils';
-import { DataLabels, DataLabelStyle, DataLabelAnchor, SeriesDataType, Point } from '@t/options';
+import { isFunction, includes, isBoolean } from '@src/helpers/utils';
+import { DataLabels, DataLabelStyle, DataLabelAnchor, SeriesDataType } from '@t/options';
 import { PointModel, RectModel } from '@t/components/series';
-import { DataLabel, DataLabelOption } from '@t/components/dataLabels';
+import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { strokeLabelStyle, labelStyle } from '@src/brushes/label';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
+import { pickStackOption } from './stackSeriesData';
 
 type LabelPosition = {
   x: number;
@@ -12,25 +13,19 @@ type LabelPosition = {
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
 };
-type DataLabelType = 'point' | 'rect' | 'box' | 'stack';
-type PointDataLabel = PointModel & {
+type DataLabelType = 'point' | 'rect' | 'stackTotal';
+export type PointDataLabel = PointModel & {
   type: 'point';
 };
 export type RectDirection = 'top' | 'bottom' | 'left' | 'right';
-export type RectDataLabel = RectModel & {
+export type RectDataLabel = Omit<RectModel, 'type' | 'color'> & {
+  type: 'rect' | 'stackTotal';
   direction: RectDirection;
-  padding: number;
-  hoverThickness: number;
   plot: {
     x: number;
     y: number;
     size: number;
   };
-};
-export type StackDataLabel = Omit<RectDataLabel, 'type'> & {
-  type: 'stack';
-  isStack: boolean;
-  isTotal: boolean;
 };
 
 export type DefaultDataLabelOptions = {
@@ -39,29 +34,42 @@ export type DefaultDataLabelOptions = {
   offsetX: number;
   offsetY: number;
   style: Required<DataLabelStyle>;
-  stackTotal?: {
+  stackTotal: {
     visible: boolean;
-    style?: Required<DataLabelStyle>;
+    style: Required<DataLabelStyle>;
   };
 };
 
-function getDefaultOptions(type: DataLabelType) {
+function getDefaultOptions(type: DataLabelType, withStack = false) {
   const style = {
     font: labelStyle['default'].font,
     color: labelStyle['default'].fillStyle,
     textStrokeColor: strokeLabelStyle.stroke.strokeStyle,
   };
 
-  return {
+  const options = {
     point: {
       anchor: 'center',
       style,
     } as DefaultDataLabelOptions,
     rect: {
+      anchor: !withStack ? 'auto' : 'center',
+      style,
+    } as DefaultDataLabelOptions,
+    stackTotal: {
       anchor: 'auto',
       style,
     } as DefaultDataLabelOptions,
   }[type];
+
+  if (withStack) {
+    options.stackTotal = {
+      visible: true,
+      style,
+    };
+  }
+
+  return options;
 }
 
 function getAnchor(
@@ -74,33 +82,45 @@ function getAnchor(
 }
 
 function getStyle(
-  dataLabelOptions: DataLabels,
-  defaultOptions: DefaultDataLabelOptions
+  defaultStyle: Required<DataLabelStyle>,
+  style?: DataLabelStyle
 ): Required<DataLabelStyle> {
-  const { font, color, textStrokeColor } = defaultOptions.style;
+  const { font, color, textStrokeColor } = defaultStyle;
 
   return {
-    font: dataLabelOptions.style?.font ?? font,
-    color: dataLabelOptions.style?.color ?? color,
-    textStrokeColor: dataLabelOptions?.style?.textStrokeColor ?? textStrokeColor,
+    font: style?.font ?? font,
+    color: style?.color ?? color,
+    textStrokeColor: style?.textStrokeColor ?? textStrokeColor,
   };
 }
 
 export function getDataLabelsOptions(
   dataLabelOptions: DataLabels,
-  type: DataLabelType
+  type: DataLabelType,
+  withStack = false
 ): DataLabelOption {
-  const defaultOptions = getDefaultOptions(type);
-  const anchor = getAnchor(dataLabelOptions, defaultOptions);
+  const defaultOptions = getDefaultOptions(type, withStack);
+  const anchor =
+    type !== 'stackTotal' ? getAnchor(dataLabelOptions, defaultOptions) : defaultOptions.anchor;
   const { offsetX = 0, offsetY = 0 } = dataLabelOptions;
   const formatter = isFunction(dataLabelOptions.formatter)
     ? dataLabelOptions.formatter!
     : function (value: SeriesDataType): string {
         return String(value) || '';
       };
-  const style = getStyle(dataLabelOptions, defaultOptions);
+  const style = getStyle(defaultOptions.style, dataLabelOptions.style);
+  const options: DataLabelOption = { anchor, offsetX, offsetY, formatter, style };
 
-  return { anchor, offsetX, offsetY, formatter, style };
+  if (withStack) {
+    options.stackTotal = {
+      visible: isBoolean(dataLabelOptions.stackTotal?.visible)
+        ? dataLabelOptions.stackTotal?.visible
+        : true,
+      style: getStyle(defaultOptions.stackTotal.style, dataLabelOptions.stackTotal?.style),
+    } as DataLabelStackTotal;
+  }
+
+  return options;
 }
 
 function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
@@ -158,7 +178,7 @@ function makeHorizontalRectPosition(rect: RectDataLabel, anchor: DataLabelAnchor
         posX = x + width / 2;
         break;
       default:
-        textAlign = 'start';
+        textAlign = 'left';
         posX = x + width;
     }
   } else {
@@ -263,11 +283,11 @@ function adjustOverflowHorizontalRect(
 
   if (isOverflow) {
     x = rect.x + width;
-    textAlign = 'end';
+    textAlign = 'right';
 
     if (direction === 'left' && width >= textWidth) {
       x = rect.x;
-      textAlign = 'start';
+      textAlign = 'left';
     }
   }
 
@@ -342,6 +362,14 @@ function makeHorizontalRectLabelInfo(
     posX = posX + offsetX;
   }
 
+  const padding = 5;
+
+  if (textAlign === 'right') {
+    posX -= padding;
+  } else if (textAlign === 'left') {
+    posX += padding;
+  }
+
   posX -= startOffsetX;
   posY -= startOffsetY;
 
@@ -380,6 +408,14 @@ function makeVerticalRectLabelInfo(
     posY = posY - offsetY;
   }
 
+  const padding = 5;
+
+  if (textBaseline === 'bottom') {
+    posY -= padding;
+  } else if (textBaseline === 'top') {
+    posY += padding;
+  }
+
   posX -= startOffsetX;
   posY -= startOffsetY;
 
@@ -392,8 +428,8 @@ function makeVerticalRectLabelInfo(
 }
 
 function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
-  const { value, direction } = rect;
-  const { formatter, style } = dataLabelOptions;
+  const { type, value, direction } = rect;
+  const { formatter, style, stackTotal } = dataLabelOptions;
   const horizontal = isHorizontal(direction);
   const labelPosition = horizontal
     ? makeHorizontalRectLabelInfo(rect, dataLabelOptions)
@@ -402,7 +438,7 @@ function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOptio
   return {
     ...labelPosition,
     text: formatter!(value!),
-    style,
+    style: type === 'stackTotal' ? stackTotal?.style! : style,
   };
 }
 
@@ -415,14 +451,24 @@ const dataLabels: StoreModule = {
     appendDataLabels({ state }, dataLabelData: Array<PointDataLabel | RectDataLabel>) {
       const { options } = state;
       const dataLabelOptions = options.series?.dataLabels!;
+      const withStack = !!pickStackOption(options);
+      const labels: DataLabel[] = [];
 
-      const labels = dataLabelData.map((model) => {
+      dataLabelData.forEach((model) => {
         const { type } = model;
-        const labelOptions = getDataLabelsOptions(dataLabelOptions, type);
+        const labelOptions = getDataLabelsOptions(dataLabelOptions, type, withStack);
+        const disableStackTotal = type === 'stackTotal' && !labelOptions.stackTotal?.visible;
 
-        return type === 'point'
-          ? makePointLabelInfo(model as PointDataLabel, labelOptions)
-          : makeRectLabelInfo(model as RectDataLabel, labelOptions);
+        if (disableStackTotal) {
+          return;
+        }
+
+        const dataLabel =
+          type === 'point'
+            ? makePointLabelInfo(model as PointDataLabel, labelOptions)
+            : makeRectLabelInfo(model as RectDataLabel, labelOptions);
+
+        labels.push(dataLabel);
       });
 
       state.dataLabels = [...labels];
