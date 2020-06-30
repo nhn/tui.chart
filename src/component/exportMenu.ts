@@ -90,7 +90,6 @@ export default class ExportMenu extends Component {
   }
 
   getFileName(title?: string | TitleOption) {
-    // @TODO: 사용자 정의 파일 이름
     return isString(title) ? title : title?.text ?? 'tui-chart';
   }
 
@@ -100,7 +99,7 @@ export default class ExportMenu extends Component {
     }
 
     this.data = { series, categories };
-    this.fileName = this.getFileName(chart.title);
+    this.fileName = this.getFileName(options?.exportMenu?.filename || chart.title);
     this.exportMenuEl = this.getExportMenuEl(chart.width);
     this.rect = layout.exportMenu;
     this.models = {
