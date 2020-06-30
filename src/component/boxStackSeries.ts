@@ -611,7 +611,11 @@ export default class BoxStackSeries extends BoxSeries {
     seriesData: StackSeriesData<BoxType>,
     renderOptions: RenderOptions
   ): RectDataLabel[] {
-    const { stackData } = seriesData;
+    const { stackData, stack } = seriesData;
+
+    if (isPercentStack(stack)) {
+      return [];
+    }
 
     return isGroupStack(stackData)
       ? this.makeGroupTotalDataLabels(seriesData, renderOptions)
