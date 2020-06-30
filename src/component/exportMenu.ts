@@ -1,28 +1,59 @@
 import Component from './component';
-import { ChartState, Options } from '@t/store/store';
+import { ChartState, Options, Series } from '@t/store/store';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
 import { LegendResponderModel } from '@t/components/legend';
-import { Rect } from '@t/options';
+import { Rect, TitleOption } from '@t/options';
+import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
+import { isString } from '@src/helpers/utils';
+
 import '../css/exportMenu.css';
 
 const EXPORT_MENU_WIDTH = 140;
 export const EXPORT_BUTTON_RECT_SIZE = 24;
 export type BoxResponderModel = Rect & { type: 'box' };
+export interface DataToExport {
+  series: Series;
+  categories?: string[];
+}
 
 export default class ExportMenu extends Component {
   models!: { exportMenuButton: ExportMenuButtonModel[] };
 
   opened = false;
 
+  fileName!: string;
+
+  data!: DataToExport;
+
   chartEl!: HTMLDivElement;
 
   exportMenuEl!: HTMLDivElement;
 
-  onClickExportButton(ev) {
-    // @TODO: different action
-    console.log(ev.target.id);
-  }
+  toggleExportMenu = () => {
+    this.opened = !this.opened;
+    this.models.exportMenuButton[0].opened = this.opened;
+    this.eventBus.emit('needDraw');
+
+    if (this.opened) {
+      this.chartEl.appendChild(this.exportMenuEl);
+    } else {
+      this.chartEl.removeChild(this.exportMenuEl);
+    }
+  };
+
+  onClickExportButton = (ev) => {
+    const { id } = ev.target;
+    const canvas = this.chartEl.getElementsByTagName('canvas')[0];
+
+    if (id === 'png' || id === 'jpeg') {
+      execDownload(this.fileName, id, canvas.toDataURL(`image/${id}`, 1));
+    } else {
+      downloadSpreadSheet(this.fileName, id, this.data);
+    }
+
+    this.toggleExportMenu();
+  };
 
   getExportMenuEl(chartWidth: number) {
     const { top, left } = this.chartEl.getBoundingClientRect();
@@ -36,8 +67,8 @@ export default class ExportMenu extends Component {
           <p class="export-menu-title">Export to</p>
           <div class="export-menu-btn-wrapper">
             <button class="export-menu-btn" id="xls">xls</button>
-            <button class="export-menu-btn" id="png">png</button>
             <button class="export-menu-btn" id="csv">csv</button>
+            <button class="export-menu-btn" id="png">png</button>
             <button class="export-menu-btn" id="jpeg">jpeg</button>
           </div>
         </div>
@@ -54,23 +85,22 @@ export default class ExportMenu extends Component {
 
   onClick({ responders }: { responders: LegendResponderModel[] }) {
     if (responders.length) {
-      this.opened = !this.opened;
-      this.models.exportMenuButton[0].opened = this.opened;
-      this.eventBus.emit('needDraw');
-
-      if (this.opened) {
-        this.chartEl.appendChild(this.exportMenuEl);
-      } else {
-        this.chartEl.removeChild(this.exportMenuEl);
-      }
+      this.toggleExportMenu();
     }
   }
 
-  render({ options, layout, chart }: ChartState<Options>) {
+  getFileName(title?: string | TitleOption) {
+    // @TODO: 사용자 정의 파일 이름
+    return isString(title) ? title : title?.text ?? 'tui-chart';
+  }
+
+  render({ options, layout, chart, series, categories }: ChartState<Options>) {
     if (!isExportMenuVisible(options.exportMenu?.visible)) {
       return;
     }
 
+    this.data = { series, categories };
+    this.fileName = this.getFileName(chart.title);
     this.exportMenuEl = this.getExportMenuEl(chart.width);
     this.rect = layout.exportMenu;
     this.models = {
