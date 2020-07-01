@@ -19,9 +19,9 @@ import {
   AxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { RectModel, Nullable } from '@t/components/series';
-import { deepCopyArray, includes, isNumber, hasNegative } from '@src/helpers/utils';
+import { RectModel, Nullable, StackTotalModel } from '@t/components/series';
 import { LineModel } from '@t/components/axis';
+import { deepCopyArray, includes, isNumber, hasNegative } from '@src/helpers/utils';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
 import { AxisType } from './axis';
@@ -159,7 +159,6 @@ export default class BoxStackSeries extends BoxSeries {
   renderStackSeriesModel(seriesData: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
     const { stackData } = seriesData;
     const colors = seriesData.data.map(({ color }) => color);
-    console.log(seriesData);
 
     return isGroupStack(stackData)
       ? this.makeStackGroupSeriesModel(seriesData, renderOptions)
@@ -642,7 +641,8 @@ export default class BoxStackSeries extends BoxSeries {
     const { min, max, diverging, hasNegativeValue, seriesDirection } = renderOptions;
     const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
 
-    stackData.forEach(({ total }, dataIndex) => {
+    stackData.forEach((data, dataIndex) => {
+      const { total } = data;
       const seriesPos = this.getSeriesPosition(
         renderOptions,
         columnWidth,
@@ -653,8 +653,11 @@ export default class BoxStackSeries extends BoxSeries {
       const directionKeys = getDirectionKeys(seriesDirection);
 
       directionKeys.forEach((key) => {
-        const value = total[key];
+        if (!total[key]) {
+          return;
+        }
 
+        const value = total[key];
         const barLength = this.makeBarLength(value, {
           min,
           max,
@@ -666,20 +669,20 @@ export default class BoxStackSeries extends BoxSeries {
           hasNegativeValue,
         });
 
-        const label = {
+        const stackTotal: StackTotalModel = {
           type: 'stackTotal',
           value,
           ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
-        } as RectDataLabel;
+        };
 
-        dataLabels.push(this.makeTotalDataLabel(label));
+        dataLabels.push(this.makeTotalDataLabel(stackTotal));
       });
     });
 
     return dataLabels;
   }
 
-  makeTotalDataLabel(totalLabel: RectDataLabel): RectDataLabel {
+  makeTotalDataLabel(totalLabel: StackTotalModel): RectDataLabel {
     return {
       ...totalLabel,
       direction: this.getDataLabelDirection(totalLabel),

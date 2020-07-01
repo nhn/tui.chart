@@ -1,5 +1,5 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel } from '@t/components/series';
+import { RectModel, ClipRectAreaModel, StackTotalModel } from '@t/components/series';
 import { ChartState, ChartType, BoxType, AxisData } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -26,7 +26,7 @@ import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
-import { AxisType } from './axis';
+import { AxisType } from '@src/component/axis';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { RectDirection, RectDataLabel } from '@src/store/dataLabels';
 
@@ -554,7 +554,7 @@ export default class BoxSeries extends Component {
     };
   }
 
-  getDataLabelDirection(rect: RectModel | RectDataLabel): RectDirection {
+  getDataLabelDirection(rect: RectModel | StackTotalModel): RectDirection {
     let direction: RectDirection = 'right';
 
     if (this.isBar) {
