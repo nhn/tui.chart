@@ -1,7 +1,7 @@
 import AreaChart from '@src/charts/areaChart';
 import { AreaChartOptions, AreaSeriesData, BaseChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { avgTemperatureData } from './data';
+import { avgTemperatureData, temperatureRangeData } from './data';
 import { withKnobs, boolean } from '@storybook/addon-knobs';
 
 export default {
@@ -54,6 +54,19 @@ export const dataLabels = () => {
         visible: true,
       },
     },
+  });
+
+  return el;
+};
+
+export const range = () => {
+  const { el } = createChart(temperatureRangeData as AreaSeriesData, {
+    chart: { title: 'Temperature Range' } as BaseChartOptions,
+    xAxis: {
+      title: { text: 'Temperature (Celsius)' },
+    },
+    yAxis: { title: 'Month' },
+    series: { spline: boolean('spline', false) },
   });
 
   return el;
