@@ -10,11 +10,14 @@ import AreaSeries from '@src/component/areaSeries';
 import Axis from '@src/component/axis';
 import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
+import ExportMenu from '@src/component/exportMenu';
+
 import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
+import * as exportMenuBrush from '@src/brushes/exportMenu';
 
 import { AreaChartOptions, AreaSeriesData, AreaSeriesType } from '@t/options';
 import Legend from '@src/component/legend';
@@ -50,6 +53,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
+    this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([
@@ -58,6 +62,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
       tooltipBrushes,
       lineSeriesBrushes,
       legendBrush,
+      exportMenuBrush,
     ]);
   }
 }

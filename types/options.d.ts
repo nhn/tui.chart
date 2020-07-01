@@ -123,6 +123,11 @@ interface BasePlotOptions {
   }[];
 }
 
+interface ExportMenuOptions {
+  filename?: string;
+  visible?: boolean;
+}
+
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
@@ -130,6 +135,7 @@ interface BaseOptions {
   yAxis?: BaseAxisOptions;
   plot?: BasePlotOptions;
   legend?: BaseLegendOptions;
+  exportMenu?: ExportMenuOptions;
 }
 
 interface BaseLegendOptions {

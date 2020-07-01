@@ -15,7 +15,6 @@ import {
   BubbleSeriesType,
   BubbleChartOptions,
   Align,
-  AxisTitle,
   AxisTitleOption,
 } from '@t/options';
 import Store from '@src/store/store';
@@ -117,6 +116,7 @@ export interface Layout {
   legend: Rect;
   circleLegend: Rect;
   title: Rect;
+  exportMenu: Rect;
 }
 
 export interface Scale {
