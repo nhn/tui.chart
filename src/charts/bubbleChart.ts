@@ -11,6 +11,7 @@ import CircleLegend from '@src/component/circleLegend';
 import Legend from '@src/component/legend';
 import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
+import ExportMenu from '@src/component/exportMenu';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -19,6 +20,7 @@ import * as circleLegendBrush from '@src/brushes/circleLegend';
 import * as boxSeriesBrush from '@src/brushes/boxSeries';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
+import * as exportMenuBrush from '@src/brushes/exportMenu';
 
 import { BubbleSeriesData, BaseOptions, BubbleSeriesType } from '@t/options';
 
@@ -52,6 +54,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
+    this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip);
     this.componentManager.add(CircleLegend);
 
@@ -63,6 +66,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
       boxSeriesBrush,
       legendBrush,
       labelBrush,
+      exportMenuBrush,
     ]);
   }
 }

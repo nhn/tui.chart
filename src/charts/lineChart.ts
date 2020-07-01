@@ -13,6 +13,7 @@ import Legend from '@src/component/legend';
 import DataLabels from '@src/component/dataLabels';
 import AxisTitle from '@src/component/axisTitle';
 import Title from '@src/component/title';
+import ExportMenu from '@src/component/exportMenu';
 
 import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
@@ -20,6 +21,8 @@ import * as axisBrushes from '@src/brushes/axis';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
+import * as exportMenuBrush from '@src/brushes/exportMenu';
+
 import { LineChartOptions, LineSeriesData, LineSeriesType } from '@t/options';
 
 // 생성자를 따로 두기보다는 팩토리로 구현하는게 나을것 같다.
@@ -55,6 +58,7 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(DataLabels);
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
+    this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([
@@ -64,6 +68,7 @@ export default class LineChart extends Chart<LineChartOptions> {
       lineSeriesBrushes,
       legendBrush,
       labelBrush,
+      exportMenuBrush
     ]);
   }
 }
