@@ -84,9 +84,6 @@ export const percentStack = () => {
       stack: {
         type: 'percent',
       },
-      dataLabels: {
-        visible: true,
-      },
     },
   });
 

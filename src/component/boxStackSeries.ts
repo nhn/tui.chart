@@ -1,8 +1,4 @@
-import BoxSeries, {
-  isLeftBottomSide,
-  SeriesDirection,
-  RenderOptions as BoxRenderOptions,
-} from './boxSeries';
+import BoxSeries, { isLeftBottomSide, SeriesDirection } from './boxSeries';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -105,7 +101,7 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, theme, axes, categories, stackSeries, options } = chartState;
+    const { layout, theme, axes, categories, stackSeries, options, dataLabels } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
@@ -153,7 +149,7 @@ export default class BoxStackSeries extends BoxSeries {
       };
     }
 
-    if (options.series?.dataLabels?.visible) {
+    if (dataLabels.visible) {
       const dataLabelData = this.getDataLabels(series);
       const stackTotalData = this.getTotalDataLabels(seriesData, renderOptions);
 
@@ -672,12 +668,12 @@ export default class BoxStackSeries extends BoxSeries {
           min,
           max,
           ratio,
-        } as BoxRenderOptions)!;
+        })!;
 
         const dataPosition = this.getStartPosition(barLength, value, 0, {
           diverging,
           hasNegativeValue,
-        } as BoxRenderOptions);
+        });
 
         const label = {
           type: 'stackTotal',

@@ -14,6 +14,11 @@ type LabelPosition = {
   textBaseline: CanvasTextBaseline;
 };
 type DataLabelType = 'point' | 'rect' | 'stackTotal';
+type DefaultDataLabelOptions = {
+  anchor: DataLabelAnchor;
+  style: Required<DataLabelStyle>;
+  stackTotal?: Required<DataLabelStackTotal>;
+};
 export type PointDataLabel = PointModel & {
   type: 'point';
 };
@@ -28,32 +33,33 @@ export type RectDataLabel = Omit<RectModel, 'type' | 'color'> & {
   };
 };
 
-type DefaultDataLabelOptions = {
-  anchor: DataLabelAnchor;
-  style: Required<DataLabelStyle>;
-  stackTotal?: Required<DataLabelStackTotal>;
-};
 function getDefaultOptions(type: DataLabelType, withStack = false): DefaultDataLabelOptions {
   const style: Required<DataLabelStyle> = {
     font: labelStyle['default'].font,
     color: labelStyle['default'].fillStyle,
-    textStrokeColor: strokeLabelStyle.stroke.strokeStyle,
+    textStrokeColor: strokeLabelStyle['default'].strokeStyle,
   };
 
-  const options = {
-    point: {
-      anchor: 'center',
-      style,
-    } as DefaultDataLabelOptions,
-    rect: {
-      anchor: !withStack ? 'auto' : 'center',
-      style,
-    } as DefaultDataLabelOptions,
-    stackTotal: {
-      anchor: 'auto',
-      style,
-    } as DefaultDataLabelOptions,
-  }[type];
+  let anchor: DataLabelAnchor = 'auto';
+
+  switch (type) {
+    case 'point':
+      anchor = 'center';
+      break;
+    case 'rect':
+      anchor = !withStack ? 'auto' : 'center';
+      break;
+    case 'stackTotal': {
+      anchor = 'auto';
+      style.font = '600 11px Arial';
+      break;
+    }
+  }
+
+  const options: DefaultDataLabelOptions = {
+    anchor,
+    style,
+  };
 
   if (withStack) {
     options.stackTotal = {
@@ -95,9 +101,7 @@ export function getDataLabelsOptions(
   const { offsetX = 0, offsetY = 0 } = dataLabelOptions;
   const formatter = isFunction(dataLabelOptions.formatter)
     ? dataLabelOptions.formatter!
-    : function (value: SeriesDataType): string {
-        return String(value) || '';
-      };
+    : (value: SeriesDataType) => String(value) || '';
   const style = getStyle(defaultOptions.style as Required<DataLabelStyle>, dataLabelOptions.style);
   const options: DataLabelOption = { anchor, offsetX, offsetY, formatter, style };
 
@@ -118,11 +122,8 @@ export function getDataLabelsOptions(
 
 function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
   const { anchor, offsetX = 0, offsetY = 0, formatter, style } = dataLabelOptions;
+  const { x, y } = point;
 
-  let posX = point.x;
-  let posY = point.y;
-
-  const textAlign = 'center';
   let textBaseline: CanvasTextBaseline = 'middle';
 
   if (anchor === 'end') {
@@ -131,14 +132,11 @@ function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOp
     textBaseline = 'top';
   }
 
-  posX += offsetX;
-  posY += offsetY;
-
   return {
-    x: posX,
-    y: posY,
+    x: x + offsetX,
+    y: y + offsetY,
     text: formatter!(point.value!),
-    textAlign,
+    textAlign: 'center',
     textBaseline,
     style,
   };
@@ -437,8 +435,11 @@ function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOptio
 
 const dataLabels: StoreModule = {
   name: 'dataLabels',
-  state: () => ({
-    dataLabels: [],
+  state: ({ options }) => ({
+    dataLabels: {
+      visible: !!options.series?.dataLabels?.visible,
+      data: [],
+    },
   }),
   action: {
     appendDataLabels({ state }, dataLabelData: Array<PointDataLabel | RectDataLabel>) {
@@ -464,7 +465,7 @@ const dataLabels: StoreModule = {
         labels.push(dataLabel);
       });
 
-      state.dataLabels = [...labels];
+      state.dataLabels.data = [...labels];
     },
   },
 };

@@ -15,7 +15,10 @@ describe('Data Labels Store module', () => {
           },
         },
       },
-      dataLabels: [] as DataLabel[],
+      dataLabels: {
+        visible: true,
+        data: [] as DataLabel[],
+      },
     } as ChartState<LineChartOptions>;
 
     const store = { state } as Store<LineChartOptions>;
@@ -61,7 +64,10 @@ describe('Data Labels Store module', () => {
           },
         },
       },
-      dataLabels: [] as DataLabel[],
+      dataLabels: {
+        visible: true,
+        data: [] as DataLabel[],
+      },
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;

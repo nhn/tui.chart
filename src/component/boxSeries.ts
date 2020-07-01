@@ -44,13 +44,13 @@ type DrawModels = {
   label?: LabelModel[];
 };
 
-export type RenderOptions = {
-  tickDistance: number;
-  min: number;
-  max: number;
-  diverging: boolean;
-  ratio: number;
-  hasNegativeValue: boolean;
+type RenderOptions = {
+  tickDistance?: number;
+  min?: number;
+  max?: number;
+  diverging?: boolean;
+  ratio?: number;
+  hasNegativeValue?: boolean;
 };
 
 const BOX = {
@@ -233,7 +233,7 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, axes, categories, stackSeries, options } = chartState;
+    const { layout, series, axes, categories, stackSeries, options, dataLabels } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -274,7 +274,7 @@ export default class BoxSeries extends Component {
       };
     }
 
-    if (options.series?.dataLabels?.visible) {
+    if (dataLabels.visible) {
       const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data));
 
       this.store.dispatch('appendDataLabels', dataLabelData);
@@ -311,7 +311,8 @@ export default class BoxSeries extends Component {
     seriesData: BoxSeriesType<number | (RangeDataType & number)>[],
     renderOptions: RenderOptions
   ): RectModel[] {
-    const { diverging, tickDistance } = renderOptions;
+    const { diverging } = renderOptions;
+    const tickDistance = renderOptions.tickDistance!;
     const validDiverging = diverging && seriesData.length === 2;
     const columnWidth = this.getColumnWidth(tickDistance, seriesData.length, validDiverging);
     const seriesModels: RectModel[] = [];
@@ -403,7 +404,7 @@ export default class BoxSeries extends Component {
     return tooltipData;
   }
 
-  private getTooltipValue(value: BoxSeriesDataType) {
+  private getTooltipValue(value: BoxSeriesDataType): string | number {
     return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
@@ -431,12 +432,16 @@ export default class BoxSeries extends Component {
     return this.getOffsetSize() / ((max - min) * multiple);
   }
 
-  makeBarLength(value: BoxSeriesDataType, renderOptions: RenderOptions) {
+  makeBarLength(
+    value: BoxSeriesDataType,
+    renderOptions: Pick<RenderOptions, 'min' | 'max' | 'ratio'>
+  ) {
     if (isNull(value)) {
       return null;
     }
-
-    const { min, max, ratio } = renderOptions;
+    const min = renderOptions.min!;
+    const max = renderOptions.max!;
+    const ratio = renderOptions.ratio!;
     const calculatedValue = calculateBarLength(value, min, max);
 
     return Math.max(this.getBarLength(calculatedValue, ratio), 2);
@@ -451,13 +456,13 @@ export default class BoxSeries extends Component {
     barLength: number,
     renderOptions: RenderOptions
   ) {
-    const { min, ratio } = renderOptions;
+    const min = renderOptions.min!;
     let [start] = value;
 
     if (start < min) {
       start = min;
     }
-    const startPosition = (start - min) * ratio;
+    const startPosition = (start - min) * renderOptions.ratio!;
 
     return this.isBar
       ? startPosition + this.hoverThickness

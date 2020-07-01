@@ -5,7 +5,7 @@ const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
 export const TITLE_TEXT = '100 18px Arial';
 const AXIS_TITLE_TEXT = '700 11px Arial';
 
-export type LabelStyleName = 'default' | 'title' | 'axisTitle' | 'dataLabel';
+export type LabelStyleName = 'default' | 'title' | 'axisTitle';
 export type StrokeLabelStyleName = 'default' | 'stroke';
 
 export interface LabelStyle {
@@ -42,7 +42,7 @@ export const labelStyle = {
 };
 
 export const strokeLabelStyle = {
-  stroke: {
+  default: {
     lineWidth: 4,
     strokeStyle: 'rgba(255, 255, 255, 0.5)',
   },

@@ -91,18 +91,3 @@ export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
   ctx.stroke();
   ctx.closePath();
 }
-/*
-export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
-  const { x, y, text, style } = labelModel;
-
-  if (style) {
-    const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
-
-    Object.keys(styleObj).forEach((key) => {
-      ctx[key] = styleObj[key];
-    });
-  }
-
-  ctx.fillText(text, x, y);
-}
-*/

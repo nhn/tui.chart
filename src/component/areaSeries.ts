@@ -6,13 +6,7 @@ import {
   LinePointsModel,
   PointModel,
 } from '@t/components/series';
-import {
-  AreaChartOptions,
-  AreaSeriesType,
-  LineTypeSeriesOptions,
-  RangeDataType,
-  DataLabels,
-} from '@t/options';
+import { AreaChartOptions, AreaSeriesType, LineTypeSeriesOptions, RangeDataType } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
@@ -20,8 +14,6 @@ import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray } from '@src/helpers/utils';
-import { DataLabelOption, DataLabel } from '@t/components/dataLabels';
-import { labelStyle } from '@src/brushes/label';
 
 type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
 
@@ -60,7 +52,16 @@ export default class AreaSeries extends Component {
   }
 
   public render(chartState: ChartState<AreaChartOptions>) {
-    const { layout, series, scale, options, axes, categories = [], legend } = chartState;
+    const {
+      layout,
+      series,
+      scale,
+      options,
+      axes,
+      categories = [],
+      legend,
+      dataLabels,
+    } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
     }
@@ -104,7 +105,7 @@ export default class AreaSeries extends Component {
       };
     }
 
-    if (options.series?.dataLabels?.visible) {
+    if (dataLabels.visible) {
       this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
     }
 
@@ -237,10 +238,8 @@ export default class AreaSeries extends Component {
   }
 
   getDataLabels(seriesModels: AreaPointsModel[]) {
-    return seriesModels.flatMap((m) => {
-      const { points } = m;
-
-      return points.map((point) => ({ type: 'point', ...point }));
-    });
+    return seriesModels.flatMap(({ points }) =>
+      points.map((point) => ({ type: 'point', ...point }))
+    );
   }
 }

@@ -48,11 +48,6 @@ export const positiveOnly = () => {
         max: 8000,
       },
     },
-    series: {
-      dataLabels: {
-        visible: true,
-      },
-    },
   });
 
   return el;
@@ -65,11 +60,6 @@ export const negativeOnly = () => {
       scale: {
         min: -8000,
         max: -1000,
-      },
-    },
-    series: {
-      dataLabels: {
-        visible: true,
       },
     },
   });

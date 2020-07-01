@@ -6,11 +6,6 @@ import { deepCopy } from '@src/helpers/utils';
 import { DataLabel } from '@t/components/dataLabels';
 import { StrokeLabelStyle } from '@src/brushes/label';
 
-type RenderOptions = {
-  font?: string;
-  textColor?: string;
-  textStrokeColor?: string;
-};
 export default class DataLabels extends Component {
   models!: LabelModel[];
 
@@ -21,7 +16,11 @@ export default class DataLabels extends Component {
     this.name = 'dataLabels';
   }
 
-  initUpdate(delta) {
+  initUpdate(delta: number) {
+    if (!this.drawModels) {
+      return;
+    }
+
     this.drawModels.forEach((current, index) => {
       const target = this.models[index];
       const targetStyle = target.style![1] as LabelStyle;
@@ -37,8 +36,12 @@ export default class DataLabels extends Component {
   }
 
   render({ layout, dataLabels }: ChartState<Options>) {
+    if (!dataLabels.visible) {
+      return;
+    }
+
     this.rect = layout.plot;
-    this.models = this.renderLabelModel(dataLabels);
+    this.models = this.renderLabelModel(dataLabels.data);
 
     if (!this.drawModels) {
       this.drawModels = this.models.map((m) => {
@@ -80,7 +83,7 @@ export default class DataLabels extends Component {
         x,
         y: y + 1,
         style: ['default', textStyle],
-        stroke: ['stroke', strokeStyles],
+        stroke: ['default', strokeStyles],
       };
     });
   }

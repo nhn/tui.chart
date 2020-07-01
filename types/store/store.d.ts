@@ -187,7 +187,10 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
-  dataLabels: DataLabel[];
+  dataLabels: {
+    visible: boolean;
+    data: DataLabel[];
+  };
 }
 
 export type StackTotal = {

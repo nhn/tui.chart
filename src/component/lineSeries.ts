@@ -43,7 +43,16 @@ export default class LineSeries extends Component {
   }
 
   render(chartState: ChartState<LineChartOptions>) {
-    const { layout, series, scale, options, axes, categories = [], legend } = chartState;
+    const {
+      layout,
+      series,
+      scale,
+      options,
+      axes,
+      categories = [],
+      legend,
+      dataLabels,
+    } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -98,7 +107,7 @@ export default class LineSeries extends Component {
       };
     }
 
-    if (options.series?.dataLabels?.visible) {
+    if (dataLabels.visible) {
       this.store.dispatch('appendDataLabels', this.getDataLabels(lineSeriesModel));
     }
 
@@ -184,10 +193,8 @@ export default class LineSeries extends Component {
   }
 
   getDataLabels(seriesModels: LinePointsModel[]): PointModel[] {
-    return seriesModels.flatMap((m) => {
-      const { points } = m;
-
-      return points.map((point) => ({ type: 'point', ...point }));
-    });
+    return seriesModels.flatMap(({ points }) =>
+      points.map((point) => ({ type: 'point', ...point }))
+    );
   }
 }

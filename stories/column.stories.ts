@@ -181,36 +181,3 @@ export const divergingGroupStack = () => {
 
   return el;
 };
-
-export const defaultDataLabelsOnBox = () => {
-  const { el } = createChart(budgetData, {
-    series: {
-      dataLabels: {
-        visible: true,
-        style: {
-          color: '#795548',
-        },
-      },
-    },
-  });
-
-  return el;
-};
-
-export const defaultDataLabelsOnStack = () => {
-  const { el } = createChart(budgetData, {
-    yAxis: {
-      scale: {
-        max: 16000,
-      },
-    },
-    series: {
-      stack: true,
-      dataLabels: {
-        visible: true,
-      },
-    },
-  });
-
-  return el;
-};
