@@ -118,6 +118,7 @@ export interface Layout {
   legend: Rect;
   circleLegend: Rect;
   title: Rect;
+  exportMenu: Rect;
 }
 
 export interface Scale {

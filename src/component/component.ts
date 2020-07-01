@@ -16,7 +16,8 @@ type ComponentType =
   | 'circleLegend'
   | 'dataLabels'
   | 'title'
-  | 'axisTitle';
+  | 'axisTitle'
+  | 'exportMenu';
 
 export default abstract class Component {
   name = 'Component';

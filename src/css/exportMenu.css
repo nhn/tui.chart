@@ -1,0 +1,42 @@
+button:focus {
+  outline: none;
+}
+
+.export-menu {
+  font-family: Arial, sans-serif;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #bab9ba;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.export-menu-title {
+  height: 34px;
+  width: 140px;
+  background: #f4f4f4;
+  margin: 0;
+  font-size: 11px;
+  padding: 10px;
+  box-sizing: inherit;
+}
+
+.export-menu-btn-wrapper {
+  width: 100%;
+  height: 76px;
+}
+
+.export-menu-btn {
+  width: 50%;
+  height: 50%;
+  border: none;
+  padding: 12px 3px;
+  font-size: 11px;
+  float: left;
+  background: #fff;
+  cursor: pointer;
+}
+
+.export-menu-btn:hover {
+  font-weight: bold;
+}
