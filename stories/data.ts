@@ -111,7 +111,7 @@ export const negativeBudgetData = {
     },
     {
       name: 'Income',
-      data: [7000, 8000, 1000, 7000, 2000, 7000],
+      data: [7000, 8000, 2000, 7000, 2500, 7000],
     },
     {
       name: 'Expenses',
@@ -119,7 +119,7 @@ export const negativeBudgetData = {
     },
     {
       name: 'Debt',
-      data: [-3000, -6000, -3000, -3000, -1000, -2000],
+      data: [-3000, -6000, -3000, -5000, -2000, -1500],
     },
   ],
 };

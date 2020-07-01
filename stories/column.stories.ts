@@ -25,9 +25,6 @@ const defaultOptions: ColumnChartOptions = {
   },
   xAxis: { title: 'Month' },
   yAxis: { title: 'Amount' },
-  series: {
-    showLabel: true,
-  },
 };
 
 function createChart(data, customOptions?: ColumnChartOptions) {

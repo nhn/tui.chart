@@ -1,10 +1,11 @@
-import { circle, line, label, CircleStyleName } from '@src/brushes/basic';
+import { circle, line, CircleStyleName } from '@src/brushes/basic';
 import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
 import { rect } from '@src/brushes/boxSeries';
 import { tooltip } from '@src/brushes/tooltip';
 import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';
+import { label } from '@src/brushes/label';
 
 import {
   AreaPointsModel,
@@ -164,6 +165,14 @@ export const labelBrush = () => {
   };
 
   label(ctx, labelModel);
+  label(ctx, {
+    type: 'label',
+    x: 200,
+    y: 100,
+    text: 'Stroke Text',
+    style: ['default', { textAlign, textBaseline, font, fillStyle: '#ffffff' }],
+    stroke: ['stroke', { lineWidth: 5, strokeStyle: '#9c27b0' }],
+  } as LabelModel);
 
   return el;
 };

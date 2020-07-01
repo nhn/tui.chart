@@ -19,6 +19,7 @@ import {
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
+import { DataLabel } from '@t/components/dataLabels';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -96,7 +97,8 @@ export interface StoreModule extends StoreOptions {
     | 'dataRange'
     | 'stackSeriesData'
     | 'legend'
-    | 'circleLegend';
+    | 'circleLegend'
+    | 'dataLabels';
 }
 
 export interface SeriesTheme {
@@ -186,6 +188,10 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
+  dataLabels: {
+    visible: boolean;
+    data: DataLabel[];
+  };
 }
 
 export type StackTotal = {

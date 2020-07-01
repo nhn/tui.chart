@@ -2,11 +2,10 @@ import { SeriesRaw } from '@t/store/store';
 
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
-type LineSeriesDataType = number[] | Point[] | [number, number][] | [string, number][];
-type CoordinateSeriesDataType = Point[] | [number, number][] | [string, number][];
+type LineSeriesDataType = number | Point | [number, number] | [string, number];
 export type CoordinateDataType = Point | [number, number] | [string, number];
-export type AreaSeriesDataType = number[] | RangeDataType[];
-export type BubbleSeriesDataType = ({ label: string } & BubblePoint)[];
+export type AreaSeriesDataType = number | RangeDataType;
+export type BubbleSeriesDataType = { label: string } & BubblePoint;
 export type BubblePoint = Point & { r: number };
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 
@@ -31,7 +30,7 @@ export type Rect = Point & Size;
 
 export interface AreaSeriesType {
   name: string;
-  data: AreaSeriesDataType;
+  data: AreaSeriesDataType[];
   color: string;
 }
 
@@ -42,7 +41,7 @@ export interface AreaSeriesData {
 
 export interface LineSeriesType {
   name: string;
-  data: LineSeriesDataType;
+  data: LineSeriesDataType[];
   color: string;
 }
 
@@ -53,13 +52,13 @@ export interface LineSeriesData {
 
 export interface ScatterSeriesType {
   name: string;
-  data: CoordinateSeriesDataType;
+  data: CoordinateDataType[];
   color: string;
 }
 
 export interface BubbleSeriesType {
   name: string;
-  data: BubbleSeriesDataType;
+  data: BubbleSeriesDataType[];
   color: string;
 }
 
@@ -151,8 +150,8 @@ interface CircleLegendOptions {
 }
 
 interface BaseSeriesOptions {
-  showLabel?: boolean;
   allowSelect?: boolean;
+  dataLabels?: DataLabels;
 }
 
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
@@ -231,3 +230,31 @@ export interface ChartProps<T> {
   categories?: string[];
   options: T;
 }
+
+export type SeriesDataType =
+  | BoxSeriesDataType
+  | AreaSeriesDataType
+  | LineSeriesDataType
+  | CoordinateDataType
+  | BubbleSeriesDataType;
+
+export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto';
+export type DataLabelStyle = {
+  font?: string;
+  color?: string;
+  textStrokeColor?: string;
+};
+export type DataLabelStackTotal = {
+  visible?: boolean;
+  style?: DataLabelStyle;
+};
+
+export type DataLabels = {
+  visible?: boolean;
+  anchor?: DataLabelAnchor;
+  offsetX?: number;
+  offsetY?: number;
+  formatter?: (value: SeriesDataType) => string;
+  style?: DataLabelStyle;
+  stackTotal?: DataLabelStackTotal;
+};

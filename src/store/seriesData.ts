@@ -1,6 +1,5 @@
 import { StoreModule, SeriesRaw, Series } from '@t/store/store';
 import { extend } from '@src/store/store';
-
 import { sortSeries } from '@src/helpers/utils';
 
 function makeInitSeries(series: SeriesRaw) {

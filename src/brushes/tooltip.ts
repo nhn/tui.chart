@@ -1,7 +1,9 @@
-import { pathRect, label as labelBrush, line } from '@src/brushes/basic';
-import { TooltipData, TooltipDataValue, TooltipModel } from '@t/components/tooltip';
+import { line, pathRect } from '@src/brushes/basic';
+import { label as labelBrush } from '@src/brushes/label';
+import { LabelStyle } from '@src/brushes/label';
 import { rect } from '@src/brushes/boxSeries';
-import { LabelModel, LabelStyle } from '@t/components/axis';
+import { TooltipData, TooltipDataValue, TooltipModel } from '@t/components/tooltip';
+import { LabelModel } from '@t/components/axis';
 import { BubblePoint, Point } from '@t/options';
 import { deepMergedCopy, isObject } from '@src/helpers/utils';
 import { getTextWidth } from '@src/helpers/calculator';

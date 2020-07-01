@@ -31,6 +31,10 @@ export function isObject(obj: unknown): obj is object {
   return typeof obj === 'object' && obj !== null;
 }
 
+export function isFunction(value: unknown): value is Function {
+  return typeof value === 'function';
+}
+
 export function forEach<T extends object, K extends Extract<keyof T, string>, V extends T[K]>(
   obj: T,
   cb: (item: V, key: K) => void

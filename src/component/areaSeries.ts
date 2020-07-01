@@ -4,14 +4,9 @@ import {
   CircleModel,
   CircleResponderModel,
   LinePointsModel,
+  PointModel,
 } from '@t/components/series';
-import {
-  AreaChartOptions,
-  AreaSeriesType,
-  LineTypeSeriesOptions,
-  Point,
-  RangeDataType,
-} from '@t/options';
+import { AreaChartOptions, AreaSeriesType, LineTypeSeriesOptions, RangeDataType } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
@@ -57,7 +52,16 @@ export default class AreaSeries extends Component {
   }
 
   public render(chartState: ChartState<AreaChartOptions>) {
-    const { layout, series, scale, options, axes, categories = [], legend } = chartState;
+    const {
+      layout,
+      series,
+      scale,
+      options,
+      axes,
+      categories = [],
+      legend,
+      dataLabels,
+    } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
     }
@@ -99,6 +103,10 @@ export default class AreaSeries extends Component {
         series: deepCopyArray(areaSeriesModel),
         hoveredSeries: [],
       };
+    }
+
+    if (dataLabels.visible) {
+      this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
     }
 
     this.responders = seriesCircleModel.map((m, dataIndex) => ({
@@ -144,7 +152,7 @@ export default class AreaSeries extends Component {
     const { pointOnColumn, options, tickDistance } = renderOptions;
 
     return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
-      const points: Point[] = [];
+      const points: PointModel[] = [];
       const { active } = legend.data.find(({ label }) => label === name)!;
       const color = getRGBA(seriesColor, active ? 1 : 0.1);
 
@@ -156,7 +164,7 @@ export default class AreaSeries extends Component {
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
         const y = (1 - valueRatio) * this.rect.height;
 
-        points.push({ x, y });
+        points.push({ x, y, value });
       });
 
       if (options?.spline) {
@@ -227,5 +235,11 @@ export default class AreaSeries extends Component {
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
 
     this.eventBus.emit('needDraw');
+  }
+
+  getDataLabels(seriesModels: AreaPointsModel[]) {
+    return seriesModels.flatMap(({ points }) =>
+      points.map((point) => ({ type: 'point', ...point }))
+    );
   }
 }

@@ -14,6 +14,7 @@ type ComponentType =
   | 'tooltip'
   | 'plot'
   | 'circleLegend'
+  | 'dataLabels'
   | 'title'
   | 'axisTitle'
   | 'exportMenu';

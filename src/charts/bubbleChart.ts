@@ -19,6 +19,7 @@ import * as tooltipBrush from '@src/brushes/tooltip';
 import * as circleLegendBrush from '@src/brushes/circleLegend';
 import * as boxSeriesBrush from '@src/brushes/boxSeries';
 import * as legendBrush from '@src/brushes/legend';
+import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 
 import { BubbleSeriesData, BaseOptions, BubbleSeriesType } from '@t/options';
@@ -64,6 +65,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
       circleLegendBrush,
       boxSeriesBrush,
       legendBrush,
+      labelBrush,
       exportMenuBrush,
     ]);
   }

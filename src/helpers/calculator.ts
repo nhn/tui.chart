@@ -108,3 +108,11 @@ export function getTextWidth(text: string, font: string) {
 
   return ctx.measureText(text).width;
 }
+
+export function getTextHeight(font: string) {
+  const ctx = document.createElement('canvas').getContext('2d')!;
+  ctx.font = font;
+  const matches = ctx.font.match(/\d+/);
+
+  return parseInt(String(Number(matches) * 1.2), 10);
+}

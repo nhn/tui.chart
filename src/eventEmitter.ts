@@ -7,7 +7,9 @@ type EventType =
   | 'seriesPointHovered'
   | 'clickLegendCheckbox'
   | 'clickLegendLabel'
-  | 'animationCompleted';
+  | 'animationCompleted'
+  | 'drawDataLabels';
+
 type EventListener = (evt: any) => void;
 
 export default class EventEmitter {

@@ -36,6 +36,9 @@ const chartState = {
   },
   categories: ['A', 'B'],
   options: {},
+  dataLabels: {
+    visible: false,
+  },
 };
 
 const result = {
@@ -48,6 +51,7 @@ const result = {
       height: 5,
       x: 5,
       y: 19,
+      value: 1,
     },
     {
       type: 'rect',
@@ -56,6 +60,7 @@ const result = {
       height: 5,
       x: 5,
       y: 59,
+      value: 2,
     },
     {
       type: 'rect',
@@ -64,6 +69,7 @@ const result = {
       height: 5,
       x: 5,
       y: 24,
+      value: 4,
     },
     {
       type: 'rect',
@@ -72,6 +78,7 @@ const result = {
       height: 5,
       x: 5,
       y: 64,
+      value: 5,
     },
   ],
 };

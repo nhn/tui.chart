@@ -48,6 +48,9 @@ const chartState = {
     ],
   },
   categories: ['A', 'B'],
+  dataLabels: {
+    visible: false,
+  },
 };
 
 beforeEach(() => {
@@ -66,8 +69,8 @@ const result = {
       color: 'rgba(170, 170, 170, 1)',
       lineWidth: 6,
       points: [
-        { x: 20, y: 80 },
-        { x: 60, y: 60 },
+        { value: 1, x: 20, y: 80 },
+        { value: 2, x: 60, y: 60 },
       ],
       seriesIndex: 0,
       type: 'linePoints',
@@ -76,8 +79,8 @@ const result = {
       color: 'rgba(187, 187, 187, 1)',
       lineWidth: 6,
       points: [
-        { x: 20, y: 20 },
-        { x: 60, y: 0 },
+        { value: 4, x: 20, y: 20 },
+        { value: 5, x: 60, y: 0 },
       ],
       seriesIndex: 1,
       type: 'linePoints',
@@ -134,8 +137,8 @@ const result = {
         fillColor: 'rgba(170, 170, 170, 1)',
         lineWidth: 0,
         points: [
-          { x: 20, y: 80 },
-          { x: 60, y: 60 },
+          { value: 1, x: 20, y: 80 },
+          { value: 2, x: 60, y: 60 },
         ],
         seriesIndex: 0,
         type: 'areaPoints',
@@ -146,8 +149,8 @@ const result = {
         fillColor: 'rgba(187, 187, 187, 1)',
         lineWidth: 0,
         points: [
-          { x: 20, y: 20 },
-          { x: 60, y: 0 },
+          { value: 4, x: 20, y: 20 },
+          { value: 5, x: 60, y: 0 },
         ],
         seriesIndex: 1,
         type: 'areaPoints',
@@ -164,8 +167,8 @@ const result = {
         fillColor: 'rgba(170, 170, 170, 1)',
         lineWidth: 0,
         points: [
-          { x: 20, y: 80 },
-          { x: 60, y: 60 },
+          { value: 1, x: 20, y: 80 },
+          { value: 2, x: 60, y: 60 },
         ],
         seriesIndex: 0,
         type: 'areaPoints',
@@ -176,8 +179,8 @@ const result = {
         fillColor: 'rgba(187, 187, 187, 1)',
         lineWidth: 0,
         points: [
-          { x: 20, y: 20 },
-          { x: 60, y: 0 },
+          { value: 4, x: 20, y: 20 },
+          { value: 5, x: 60, y: 0 },
         ],
         seriesIndex: 1,
         type: 'areaPoints',
