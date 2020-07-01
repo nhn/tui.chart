@@ -36,6 +36,9 @@ const chartState = {
   },
   categories: ['A', 'B'],
   options: {},
+  dataLabels: {
+    visible: false,
+  },
 };
 
 const result = {

@@ -48,6 +48,9 @@ const chartState = {
     ],
   },
   categories: ['A', 'B'],
+  dataLabels: {
+    visible: false,
+  },
 };
 
 beforeEach(() => {

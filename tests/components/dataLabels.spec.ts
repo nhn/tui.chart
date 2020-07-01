@@ -19,24 +19,27 @@ describe('DataLabels', () => {
 
     dataLabels.render({
       layout: { plot: { x: 10, y: 10, width: 80, height: 80 } },
-      dataLabels: [
-        {
-          style,
-          text: '4000',
-          textAlign: 'left' as CanvasTextAlign,
-          textBaseline: 'middle' as CanvasTextBaseline,
-          x: 20,
-          y: 20,
-        },
-        {
-          style,
-          text: '7000',
-          textAlign: 'right' as CanvasTextAlign,
-          textBaseline: 'bottom' as CanvasTextBaseline,
-          x: 40,
-          y: 35,
-        },
-      ],
+      dataLabels: {
+        visible: true,
+        data: [
+          {
+            style,
+            text: '4000',
+            textAlign: 'left' as CanvasTextAlign,
+            textBaseline: 'middle' as CanvasTextBaseline,
+            x: 20,
+            y: 20,
+          },
+          {
+            style,
+            text: '7000',
+            textAlign: 'right' as CanvasTextAlign,
+            textBaseline: 'bottom' as CanvasTextBaseline,
+            x: 40,
+            y: 35,
+          },
+        ],
+      },
     });
   });
 
@@ -56,7 +59,7 @@ describe('DataLabels', () => {
             font: 'normal 11px Arial',
           },
         ],
-        stroke: ['stroke', { strokeStyle: 'rgba(255, 255, 255, 0.5)' }],
+        stroke: ['default', { strokeStyle: 'rgba(255, 255, 255, 0.5)' }],
       },
       {
         type: 'label',
@@ -72,7 +75,7 @@ describe('DataLabels', () => {
             font: 'normal 11px Arial',
           },
         ],
-        stroke: ['stroke', { strokeStyle: 'rgba(255, 255, 255, 0.5)' }],
+        stroke: ['default', { strokeStyle: 'rgba(255, 255, 255, 0.5)' }],
       },
     ]);
   });

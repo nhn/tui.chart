@@ -34,7 +34,7 @@ describe('Data Labels Store module', () => {
 
     dataLabels.action!.appendDataLabels(store, pointDataLabels);
 
-    expect(state.dataLabels).toEqual([
+    expect(state.dataLabels.data).toEqual([
       {
         style: {
           color: '#333333',
@@ -91,7 +91,7 @@ describe('Data Labels Store module', () => {
 
     dataLabels.action!.appendDataLabels(store, rectDataLabels);
 
-    expect(state.dataLabels).toEqual([
+    expect(state.dataLabels.data).toEqual([
       {
         style: {
           color: '#ff0000',
