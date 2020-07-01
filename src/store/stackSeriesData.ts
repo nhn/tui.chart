@@ -240,6 +240,8 @@ const stackSeriesData: StoreModule = {
             dataRangeValues,
             scaleType: getScaleType(getStackDataValues(stackData), stackType, diverging),
           };
+
+          state.stackSeries[seriesName].stackData = stackData;
         }
 
         extend(state.stackSeries, newStackSeries);
