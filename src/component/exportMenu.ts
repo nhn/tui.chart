@@ -11,7 +11,7 @@ import '../css/exportMenu.css';
 
 const EXPORT_MENU_WIDTH = 140;
 export const EXPORT_BUTTON_RECT_SIZE = 24;
-export type BoxResponderModel = Rect & { type: 'box' };
+export type BoxResponderModel = Rect & { type: 'bound' };
 export interface DataToExport {
   series: Series;
   categories?: string[];
@@ -42,11 +42,21 @@ export default class ExportMenu extends Component {
     }
   };
 
+  getCanvasExportBtnRemoved = () => {
+    const canvas = this.chartEl.getElementsByTagName('canvas')[0];
+    const ctx = canvas.getContext('2d')!;
+    const { x, y, height: h, width: w } = this.rect;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(x, y, w, h);
+
+    return canvas;
+  };
+
   onClickExportButton = (ev) => {
     const { id } = ev.target;
-    const canvas = this.chartEl.getElementsByTagName('canvas')[0];
 
     if (id === 'png' || id === 'jpeg') {
+      const canvas = this.getCanvasExportBtnRemoved();
       execDownload(this.fileName, id, canvas.toDataURL(`image/${id}`, 1));
     } else {
       downloadSpreadSheet(this.fileName, id, this.data);
@@ -94,7 +104,7 @@ export default class ExportMenu extends Component {
   }
 
   render({ options, layout, chart, series, categories }: ChartState<Options>) {
-    if (!isExportMenuVisible(options.exportMenu?.visible)) {
+    if (!isExportMenuVisible(options)) {
       return;
     }
 
@@ -115,7 +125,7 @@ export default class ExportMenu extends Component {
 
     this.responders = [
       {
-        type: 'box',
+        type: 'bound',
         width: EXPORT_BUTTON_RECT_SIZE,
         height: EXPORT_BUTTON_RECT_SIZE,
         x: this.rect.x,

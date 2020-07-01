@@ -5,7 +5,7 @@ import { LegendResponderModel } from '@t/components/legend';
 import { LEGEND_CHECKBOX_SIZE } from '@src/brushes/legend';
 import { BoxResponderModel } from '@src/component/exportMenu';
 
-type DetectorType = 'circle' | 'rect' | 'label' | 'checkbox' | 'box';
+type DetectorType = 'circle' | 'rect' | 'label' | 'checkbox' | 'bound';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
@@ -31,7 +31,7 @@ export const responderDetectors: ResponderDetectors = {
       y <= modelY + LEGEND_CHECKBOX_SIZE
     );
   },
-  box: (mousePosition: Point, model: BoxResponderModel) => {
+  bound: (mousePosition: Point, model: BoxResponderModel) => {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, width, height } = model;
 

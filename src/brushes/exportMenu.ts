@@ -4,13 +4,19 @@ import { Point } from '@t/options';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
 import { EXPORT_BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 
-function renderXIcon(ctx: CanvasRenderingContext2D, point: Point) {
-  const { x, y } = point;
+function drawXIcon(ctx: CanvasRenderingContext2D, point: Point) {
+  const { x: startX, y: startY } = point;
   const offset = EXPORT_BUTTON_RECT_SIZE / 3;
   const strokeStyle = '#555555';
+
+  const x = startX + offset;
+  const y = startY + offset;
+  const x2 = startX + offset * 2;
+  const y2 = startY + offset * 2;
+
   const points = [
-    { x: x + offset, y: y + offset, x2: x + offset * 2, y2: y + offset * 2 },
-    { x: x + offset, y: y + offset * 2, x2: x + offset * 2, y2: y + offset },
+    { x, y, x2, y2 },
+    { x, y: y2, x2, y2: y },
   ];
 
   points.forEach((p) => {
@@ -18,7 +24,7 @@ function renderXIcon(ctx: CanvasRenderingContext2D, point: Point) {
   });
 }
 
-function renderMoreIcon(ctx: CanvasRenderingContext2D, point: Point) {
+function drawMoreIcon(ctx: CanvasRenderingContext2D, point: Point) {
   const { x, y } = point;
   const centerX = x + 11;
   const points = [
@@ -54,8 +60,8 @@ export function exportMenuButton(
   });
 
   if (opened) {
-    renderXIcon(ctx, { x, y });
+    drawXIcon(ctx, { x, y });
   } else {
-    renderMoreIcon(ctx, { x, y });
+    drawMoreIcon(ctx, { x, y });
   }
 }

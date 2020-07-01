@@ -1,4 +1,4 @@
-import { StoreModule, Layout, CircleLegend, Legend } from '@t/store/store';
+import { StoreModule, Layout, CircleLegend, Legend, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { Align, Rect, Size } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
@@ -126,7 +126,9 @@ function getTitleRect(chartSize: Size, exportMenu: Rect, visible: boolean) {
   const point = { x: padding.X, y: padding.Y };
   const marginBottom = 5;
   const width = visible ? chartSize.width : 0;
-  const height = visible ? Math.max(MAIN_TITLE_HEIGHT + marginBottom, exportMenu.height) : 0;
+  const height = visible
+    ? Math.max(MAIN_TITLE_HEIGHT + marginBottom, exportMenu.height)
+    : exportMenu.height;
 
   return { width, height, ...point };
 }
@@ -157,15 +159,18 @@ function getXAxisTitleRect(visible: boolean, xAxis: Rect) {
 }
 
 function getExportMenuRect(chartSize: Size, visible: boolean) {
+  const marginY = 5;
   const x = visible ? padding.X + chartSize.width - EXPORT_BUTTON_RECT_SIZE : 0;
   const y = visible ? padding.Y : 0;
-  const height = visible ? EXPORT_BUTTON_RECT_SIZE : 0;
+  const height = visible ? EXPORT_BUTTON_RECT_SIZE + marginY : 0;
   const width = visible ? EXPORT_BUTTON_RECT_SIZE : 0;
 
   return { x, y, height, width };
 }
 
-export function isExportMenuVisible(visible?: boolean) {
+export function isExportMenuVisible(options: Options) {
+  const visible = options.exportMenu?.visible;
+
   return isUndefined(visible) ? true : visible;
 }
 
@@ -191,10 +196,7 @@ const layout: StoreModule = {
 
       // Don't change the order!
       // exportMenu -> title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
-      const exportMenu = getExportMenuRect(
-        chartSize,
-        isExportMenuVisible(options.exportMenu?.visible)
-      );
+      const exportMenu = getExportMenuRect(chartSize, isExportMenuVisible(options));
       const title = getTitleRect(chartSize, exportMenu, !!options.chart?.title);
       const yAxisTitle = getYAxisTitleRect(chartSize, !!options.yAxis?.title, title, legendState);
       const yAxis = getYAxisRect(chartSize, legendState, circleLegendState, yAxisTitle);
