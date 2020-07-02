@@ -57,7 +57,7 @@ function makeStackData(seriesData: SeriesRawData): StackDataValues {
     const stackValues: number[] = [];
 
     for (let j = 0; j < seriesCount; j += 1) {
-      stackValues.push((seriesData[j].data[i] as number) || 0);
+      stackValues.push(seriesData[j].data[i] as number);
     }
 
     stackData[i] = {
