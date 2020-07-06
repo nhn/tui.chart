@@ -5,7 +5,17 @@ import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
 import { isNumber } from '@src/helpers/utils';
 import { setSplineControlPoint } from '@src/helpers/calculator';
-
+import {
+  AreaSeriesModels,
+  BoxSeriesModels,
+  CircleSeriesModels,
+  LineSeriesModels,
+} from '@t/components/series';
+import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
+import { ExportMenuModels } from '@t/components/exportMenu';
+import { LegendModel } from '@t/components/legend';
+import { TooltipModel } from '@t/components/tooltip';
+import { CircleLegendModels } from '@t/components/circleLegend';
 type ComponentType =
   | 'component'
   | 'series'
@@ -18,6 +28,19 @@ type ComponentType =
   | 'title'
   | 'axisTitle'
   | 'exportMenu';
+
+type ComponentModels =
+  | AxisModels
+  | AreaSeriesModels
+  | BoxSeriesModels
+  | CircleSeriesModels
+  | LineSeriesModels
+  | ExportMenuModels
+  | CircleLegendModels
+  | LabelModel[]
+  | LegendModel[]
+  | TooltipModel[]
+  | Record<string, LineModel[]>; // plot
 
 export default abstract class Component {
   name = 'Component';
@@ -37,9 +60,9 @@ export default abstract class Component {
 
   eventBus: EventEmitter;
 
-  models!: any; // @TODO: 정의
+  models!: ComponentModels;
 
-  drawModels!: any; // @TODO: 정의
+  drawModels!: ComponentModels;
 
   responders!: any[]; // @TODO: 정의
 

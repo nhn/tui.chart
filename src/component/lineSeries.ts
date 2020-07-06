@@ -1,5 +1,10 @@
 import Component from './component';
-import { CircleModel, CircleResponderModel, PointModel } from '@t/components/series';
+import {
+  CircleModel,
+  CircleResponderModel,
+  PointModel,
+  LineSeriesModels,
+} from '@t/components/series';
 import { LineChartOptions, LineTypeSeriesOptions, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Legend, ValueEdge } from '@t/store/store';
@@ -10,12 +15,6 @@ import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordi
 import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray } from '@src/helpers/utils';
 
-interface LineSeriesDrawModels {
-  rect: ClipRectAreaModel[];
-  series: LinePointsModel[];
-  hoveredSeries: CircleModel[];
-}
-
 interface RenderLineOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
@@ -25,9 +24,9 @@ interface RenderLineOptions {
 type DatumType = CoordinateDataType | number;
 
 export default class LineSeries extends Component {
-  models: LineSeriesDrawModels = { rect: [], series: [], hoveredSeries: [] };
+  models: LineSeriesModels = { rect: [], series: [], hoveredSeries: [] };
 
-  drawModels!: LineSeriesDrawModels;
+  drawModels!: LineSeriesModels;
 
   responders!: CircleResponderModel[];
 

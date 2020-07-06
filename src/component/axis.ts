@@ -2,7 +2,7 @@ import Component from './component';
 import Painter from '@src/painter';
 import { ChartState, Options } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
-import { LabelModel, TickModel, LineModel } from '@t/components/axis';
+import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 
 export enum AxisType {
   Y = 'yAxis',
@@ -10,8 +10,6 @@ export enum AxisType {
   CENTER_Y = 'yCenterAxis',
 }
 
-type DrawModels = LabelModel | TickModel | LineModel;
-type AxisModels = Record<string, DrawModels[]>;
 type CoordinateKey = 'x' | 'y';
 
 interface RenderOptions {

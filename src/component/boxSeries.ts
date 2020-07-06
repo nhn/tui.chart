@@ -1,5 +1,5 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel } from '@t/components/series';
+import { RectModel, ClipRectAreaModel, BoxSeriesModels } from '@t/components/series';
 import { ChartState, ChartType, BoxType, AxisData } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -21,7 +21,6 @@ import {
   isNumber,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
-import { LineModel, LabelModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
@@ -35,14 +34,6 @@ export enum SeriesDirection {
   NEGATIVE,
   BOTH,
 }
-
-type DrawModels = {
-  clipRect?: ClipRectAreaModel[];
-  series: RectModel[];
-  hoveredSeries?: RectModel[];
-  connector?: LineModel[];
-  label?: LabelModel[];
-};
 
 type RenderOptions = {
   tickDistance?: number;
@@ -90,9 +81,9 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 }
 
 export default class BoxSeries extends Component {
-  models: DrawModels = { series: [] };
+  models: BoxSeriesModels = { series: [] };
 
-  drawModels!: DrawModels;
+  drawModels!: BoxSeriesModels;
 
   responders!: RectModel[];
 

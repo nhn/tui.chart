@@ -1,6 +1,6 @@
 import Component from './component';
 import { ChartState, Options, Series } from '@t/store/store';
-import { ExportMenuButtonModel } from '@t/components/exportMenu';
+import { ExportMenuModels } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
 import { LegendResponderModel } from '@t/components/legend';
 import { Rect, TitleOption } from '@t/options';
@@ -18,7 +18,7 @@ export interface DataToExport {
 }
 
 export default class ExportMenu extends Component {
-  models!: { exportMenuButton: ExportMenuButtonModel[] };
+  models!: ExportMenuModels;
 
   opened = false;
 

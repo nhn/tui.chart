@@ -29,3 +29,5 @@ export type LineModel = {
   lineWidth?: number;
   dashedPattern?: number[];
 } & Point;
+
+export type AxisModels = Record<string, Array<LabelModel | TickModel | LineModel>>;
