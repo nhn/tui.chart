@@ -661,11 +661,12 @@ export default class BoxStackSeries extends BoxSeries {
       const directionKeys = getDirectionKeys(seriesDirection);
 
       directionKeys.forEach((key) => {
-        if (!total[key]) {
+        const value = total[key];
+
+        if (!value) {
           return;
         }
 
-        const value = total[key];
         const barLength = this.makeBarLength(value, {
           min,
           max,
