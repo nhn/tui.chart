@@ -6,14 +6,21 @@ import {
   LinePointsModel,
   PointModel,
 } from '@t/components/series';
-import { AreaChartOptions, AreaSeriesType, LineTypeSeriesOptions, RangeDataType } from '@t/options';
+import {
+  AreaChartOptions,
+  AreaSeriesDataType,
+  AreaSeriesType,
+  LineTypeSeriesOptions,
+  RangeDataType,
+} from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
+import { getCoordinateDataIndex } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray } from '@src/helpers/utils';
+import { deepCopyArray, deepMergedCopy, first, last } from '@src/helpers/utils';
+import { isRangeData } from '@src/helpers/range';
 
 type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
 
@@ -27,6 +34,7 @@ interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
   tickDistance: number;
+  pairModel?: boolean;
 }
 
 type DatumType = number | RangeDataType;
@@ -41,6 +49,8 @@ export default class AreaSeries extends Component {
   activatedResponders: this['responders'] = [];
 
   linePointsModel!: LinePointsModel[];
+
+  isRangeData = false;
 
   initialize() {
     this.type = 'series';
@@ -78,17 +88,11 @@ export default class AreaSeries extends Component {
     };
 
     this.rect = layout.plot;
+    this.isRangeData = isRangeData(first(areaData)!.data);
+    this.linePointsModel = this.renderLinePointsModel(areaData, yAxis.limit, renderOptions, legend);
 
-    this.linePointsModel = this.renderLinePointsModel(
-      areaData,
-      yAxis.limit,
-      renderOptions,
-      categories,
-      legend
-    );
-
-    const areaSeriesModel = this.renderAreaPointsModel(this.linePointsModel, bottomYPoint);
-    const seriesCircleModel = this.renderCircleModel(this.linePointsModel);
+    const areaSeriesModel = this.renderAreaPointsModel(bottomYPoint);
+    const seriesCircleModel = this.renderCircleModel();
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
     this.models = {
@@ -111,7 +115,7 @@ export default class AreaSeries extends Component {
 
     this.responders = seriesCircleModel.map((m, dataIndex) => ({
       ...m,
-      data: tooltipDataArr[dataIndex],
+      data: tooltipDataArr[dataIndex % tooltipDataArr.length],
     }));
   }
 
@@ -130,10 +134,11 @@ export default class AreaSeries extends Component {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum: DatumType, dataIdx) => {
+        const value = this.isRangeData ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
         tooltipData.push({
           label: name,
           color,
-          value: getCoordinateYValue(datum),
+          value,
           category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
         });
       });
@@ -142,61 +147,116 @@ export default class AreaSeries extends Component {
     });
   }
 
+  getLinePointModelValue(datum: AreaSeriesDataType, pairModel?: boolean) {
+    if (this.isRangeData) {
+      return pairModel ? datum[0] : datum[1];
+    }
+
+    return datum;
+  }
+
+  getLinePointModel(
+    series: AreaSeriesType,
+    seriesIndex: number,
+    legend: Legend,
+    limit: ValueEdge,
+    renderOptions: RenderOptions
+  ): LinePointsModel {
+    const { pointOnColumn, options, tickDistance, pairModel } = renderOptions;
+    const { data, name, color: seriesColor } = series;
+    const points: PointModel[] = [];
+    const { active } = legend.data.find(({ label }) => label === name)!;
+    const color = getRGBA(seriesColor, active ? 1 : 0.1);
+
+    data.forEach((datum, idx) => {
+      const value = this.getLinePointModelValue(datum, pairModel);
+      const valueRatio = getValueRatio(value, limit);
+      const x = tickDistance * idx + (pointOnColumn ? tickDistance / 2 : 0);
+      const y = (1 - valueRatio) * this.rect.height;
+
+      points.push({ x, y, value });
+    });
+
+    if (options?.spline) {
+      setSplineControlPoint(points);
+    }
+
+    return {
+      type: 'linePoints',
+      lineWidth: 6,
+      color,
+      points,
+      seriesIndex,
+    };
+  }
+
   renderLinePointsModel(
     seriesRawData: AreaSeriesType[],
     limit: ValueEdge,
     renderOptions: RenderOptions,
-    categories: string[],
     legend: Legend
   ): LinePointsModel[] {
-    const { pointOnColumn, options, tickDistance } = renderOptions;
+    const linePointsModels = seriesRawData.map((series, seriesIndex) =>
+      this.getLinePointModel(series, seriesIndex, legend, limit, renderOptions)
+    );
 
-    return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
-      const points: PointModel[] = [];
-      const { active } = legend.data.find(({ label }) => label === name)!;
-      const color = getRGBA(seriesColor, active ? 1 : 0.1);
+    if (this.isRangeData) {
+      const renderOptionsForPair = deepMergedCopy(renderOptions, { pairModel: true });
+      const pair = seriesRawData.map((series, seriesIndex) =>
+        this.getLinePointModel(series, seriesIndex, legend, limit, renderOptionsForPair)
+      );
 
-      data.forEach((datum, idx) => {
-        const value = getCoordinateYValue(datum);
-        const dataIndex = getCoordinateDataIndex(datum, categories, idx);
-        const valueRatio = getValueRatio(value, limit);
+      linePointsModels.push(...pair);
+    }
 
-        const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
-        const y = (1 - valueRatio) * this.rect.height;
-
-        points.push({ x, y, value });
-      });
-
-      if (options?.spline) {
-        setSplineControlPoint(points);
-      }
-
-      return {
-        type: 'linePoints',
-        lineWidth: 6,
-        color,
-        points,
-        seriesIndex,
-      };
-    });
+    return linePointsModels;
   }
 
-  renderAreaPointsModel(
-    linePointsModel: LinePointsModel[],
-    bottomYPoint: number
-  ): AreaPointsModel[] {
-    return linePointsModel.map((m) => ({
+  addBottomPoints(points: PointModel[], bottomYPoint: number) {
+    const firstPoint = first(points);
+    const lastPoint = last(points);
+
+    if (!firstPoint || !lastPoint) {
+      return points;
+    }
+
+    return [...points, { x: lastPoint.x, y: bottomYPoint }, { x: firstPoint.x, y: bottomYPoint }];
+  }
+
+  combineLinePointsModel() {
+    if (!this.isRangeData) {
+      return this.linePointsModel;
+    }
+
+    const combinedLinePointsModel: LinePointsModel[] = [];
+    const mid = this.linePointsModel.length / 2;
+
+    for (let i = 0; i < mid; i += 1) {
+      combinedLinePointsModel.push({
+        ...this.linePointsModel[i],
+        points: [
+          ...this.linePointsModel[i].points,
+          ...deepCopyArray(this.linePointsModel[mid + i].points).reverse(),
+        ],
+      });
+    }
+
+    return combinedLinePointsModel;
+  }
+
+  renderAreaPointsModel(bottomYPoint: number): AreaPointsModel[] {
+    return this.combineLinePointsModel().map((m) => ({
       ...m,
+      points: this.isRangeData ? m.points : this.addBottomPoints(m.points, bottomYPoint),
       type: 'areaPoints',
       lineWidth: 0,
       color: 'rgba(0, 0, 0, 0)', // make area border transparent
-      bottomYPoint,
       fillColor: m.color,
     }));
   }
 
-  renderCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
-    return lineSeriesModel.flatMap(({ points, color, seriesIndex }) =>
+  renderCircleModel(): CircleModel[] {
+    return this.linePointsModel.flatMap(({ points, color, seriesIndex }) =>
       points.map(({ x, y }) => ({
         type: 'circle',
         x,
@@ -228,12 +288,28 @@ export default class AreaSeries extends Component {
       this.applyAreaOpacity(0.5);
     }
 
-    const linePoints = responders.map(({ seriesIndex }) => this.linePointsModel[seriesIndex!]);
-    this.drawModels.hoveredSeries = [...linePoints, ...responders];
+    const pairCircleModels: CircleResponderModel[] = [];
+    if (this.isRangeData) {
+      responders.forEach((circle) => {
+        const pairCircleModel = this.responders
+          .filter((responder) => responder.seriesIndex === circle.seriesIndex)
+          .find((responder) => responder.x === circle.x && responder.y !== circle.y)!;
+        pairCircleModels.push(pairCircleModel);
+      });
+    }
+
+    const linePoints = responders.reduce(
+      (acc, { seriesIndex }) => [
+        ...acc,
+        ...this.linePointsModel.filter((a) => a.seriesIndex === seriesIndex),
+      ],
+      [] as LinePointsModel[]
+    );
+
+    this.drawModels.hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];
     this.activatedResponders = responders;
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
-
     this.eventBus.emit('needDraw');
   }
 
