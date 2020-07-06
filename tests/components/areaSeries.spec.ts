@@ -289,7 +289,7 @@ describe('range', () => {
     legend: {
       data: [{ label: 'han', active: true, checked: true }],
     },
-    categories: ['A'],
+    categories: ['A', 'B'],
     dataLabels: {
       visible: false,
     },
@@ -331,7 +331,7 @@ describe('range', () => {
     responders: [
       {
         color: 'rgba(170, 170, 170, 1)',
-        data: { category: undefined, color: '#aaaaaa', label: 'han', value: '1 ~ 2' }, // eslint-disable-line no-undefined
+        data: { category: 'A', color: '#aaaaaa', label: 'han', value: '1 ~ 2' },
         radius: 7,
         seriesIndex: 0,
         style: ['default', 'hover'],
@@ -341,7 +341,7 @@ describe('range', () => {
       },
       {
         color: 'rgba(170, 170, 170, 1)',
-        data: { category: undefined, color: '#aaaaaa', label: 'han', value: '3 ~ 5' }, // eslint-disable-line no-undefined
+        data: { category: 'B', color: '#aaaaaa', label: 'han', value: '3 ~ 5' },
         radius: 7,
         seriesIndex: 0,
         style: ['default', 'hover'],
@@ -351,7 +351,7 @@ describe('range', () => {
       },
       {
         color: 'rgba(170, 170, 170, 1)',
-        data: { category: undefined, color: '#aaaaaa', label: 'han', value: '1 ~ 2' }, // eslint-disable-line no-undefined
+        data: { category: 'A', color: '#aaaaaa', label: 'han', value: '1 ~ 2' },
         radius: 7,
         seriesIndex: 0,
         style: ['default', 'hover'],
@@ -361,7 +361,7 @@ describe('range', () => {
       },
       {
         color: 'rgba(170, 170, 170, 1)',
-        data: { category: undefined, color: '#aaaaaa', label: 'han', value: '3 ~ 5' }, // eslint-disable-line no-undefined
+        data: { category: 'B', color: '#aaaaaa', label: 'han', value: '3 ~ 5' },
         radius: 7,
         seriesIndex: 0,
         style: ['default', 'hover'],

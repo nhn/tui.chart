@@ -139,7 +139,7 @@ export default class AreaSeries extends Component {
           label: name,
           color,
           value,
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
+          category: categories[dataIdx],
         });
       });
 
