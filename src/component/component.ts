@@ -27,7 +27,8 @@ type ComponentType =
   | 'dataLabels'
   | 'title'
   | 'axisTitle'
-  | 'exportMenu';
+  | 'exportMenu'
+  | 'plotAxis';
 
 type ComponentModels =
   | AxisModels
@@ -37,6 +38,7 @@ type ComponentModels =
   | LineSeriesModels
   | ExportMenuModels
   | CircleLegendModels
+  | LineModel[]
   | LabelModel[]
   | LegendModel[]
   | TooltipModel[]
