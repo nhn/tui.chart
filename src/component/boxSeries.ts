@@ -36,12 +36,13 @@ export enum SeriesDirection {
 }
 
 type RenderOptions = {
-  tickDistance?: number;
-  min?: number;
-  max?: number;
-  diverging?: boolean;
+  tickDistance: number;
+  min: number;
+  max: number;
+  diverging: boolean;
   ratio?: number;
-  hasNegativeValue?: boolean;
+  hasNegativeValue: boolean;
+  padding: number;
 };
 
 const BOX = {
@@ -89,8 +90,6 @@ export default class BoxSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  padding = PADDING.TB;
-
   isBar = true;
 
   name = BOX.BAR;
@@ -120,7 +119,6 @@ export default class BoxSeries extends Component {
     this.name = name;
     this.isBar = name === BOX.BAR;
     this.offsetKey = this.isBar ? 'x' : 'y';
-    this.padding = this.isBar ? PADDING.TB : PADDING.LR;
     this.valueAxis = this.isBar ? 'xAxis' : 'yAxis';
     this.labelAxis = this.isBar ? 'yAxis' : 'xAxis';
     this.anchorSizeKey = this.isBar ? 'height' : 'width';
@@ -220,6 +218,7 @@ export default class BoxSeries extends Component {
       diverging,
       ratio: this.getValueRatio(min, max, diverging),
       hasNegativeValue: hasNegative(labels),
+      padding: this.getPadding(tickDistance),
     };
   }
 
@@ -302,14 +301,13 @@ export default class BoxSeries extends Component {
     seriesData: BoxSeriesType<number | (RangeDataType & number)>[],
     renderOptions: RenderOptions
   ): RectModel[] {
-    const { diverging } = renderOptions;
-    const tickDistance = renderOptions.tickDistance!;
+    const { tickDistance, diverging, padding } = renderOptions;
     const validDiverging = diverging && seriesData.length === 2;
-    const columnWidth = this.getColumnWidth(tickDistance, seriesData.length, validDiverging);
+    const columnWidth = this.getColumnWidth(renderOptions, seriesData.length, validDiverging);
     const seriesModels: RectModel[] = [];
 
     seriesData.forEach(({ data, color }, seriesIndex) => {
-      const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
+      const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;
       this.isRangeData = isRangeData(data);
 
       data.forEach((value, index) => {
@@ -430,12 +428,10 @@ export default class BoxSeries extends Component {
     if (isNull(value)) {
       return null;
     }
-    const min = renderOptions.min!;
-    const max = renderOptions.max!;
-    const ratio = renderOptions.ratio!;
+    const { min, max, ratio } = renderOptions;
     const calculatedValue = calculateBarLength(value, min, max);
 
-    return Math.max(this.getBarLength(calculatedValue, ratio), 2);
+    return Math.max(this.getBarLength(calculatedValue, ratio!), 2);
   }
 
   protected getBarLength(value: number, ratio: number) {
@@ -447,13 +443,13 @@ export default class BoxSeries extends Component {
     barLength: number,
     renderOptions: RenderOptions
   ) {
-    const min = renderOptions.min!;
+    const { min, ratio } = renderOptions;
     let [start] = value;
 
     if (start < min) {
       start = min;
     }
-    const startPosition = (start - min) * renderOptions.ratio!;
+    const startPosition = (start - min) * ratio!;
 
     return this.isBar
       ? startPosition + this.hoverThickness
@@ -501,13 +497,11 @@ export default class BoxSeries extends Component {
     };
   }
 
-  getColumnWidth(tickDistance: number, seriesLength: number, validDiverging = false) {
+  getColumnWidth(renderOptions: RenderOptions, seriesLength: number, validDiverging = false) {
+    const { tickDistance, padding } = renderOptions;
     seriesLength = validDiverging ? 1 : seriesLength;
-    const columnWidth = Math.max((tickDistance - this.padding * 2) / seriesLength, 5);
 
-    this.padding = (tickDistance - columnWidth * seriesLength) / 2;
-
-    return columnWidth;
+    return (tickDistance - padding * 2) / seriesLength;
   }
 
   protected getSeriesDirection(labels: string[]) {
@@ -558,5 +552,11 @@ export default class BoxSeries extends Component {
     }
 
     return direction;
+  }
+
+  getPadding(tickDistance: number) {
+    const defaultValue = this.isBar ? PADDING.TB : PADDING.LR;
+
+    return Math.min(defaultValue, Math.floor(tickDistance * 0.3));
   }
 }
