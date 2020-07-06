@@ -301,7 +301,7 @@ export default class AreaSeries extends Component {
     const linePoints = responders.reduce(
       (acc, { seriesIndex }) => [
         ...acc,
-        ...this.linePointsModel.filter((a) => a.seriesIndex === seriesIndex),
+        ...this.linePointsModel.filter((model) => model.seriesIndex === seriesIndex),
       ],
       [] as LinePointsModel[]
     );
