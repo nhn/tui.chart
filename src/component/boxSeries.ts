@@ -503,8 +503,11 @@ export default class BoxSeries extends Component {
 
   getColumnWidth(tickDistance: number, seriesLength: number, validDiverging = false) {
     seriesLength = validDiverging ? 1 : seriesLength;
+    const columnWidth = Math.max((tickDistance - this.padding * 2) / seriesLength, 5);
 
-    return (tickDistance - this.padding * 2) / seriesLength;
+    this.padding = (tickDistance - columnWidth * seriesLength) / 2;
+
+    return columnWidth;
   }
 
   protected getSeriesDirection(labels: string[]) {
