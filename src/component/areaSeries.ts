@@ -52,6 +52,10 @@ export default class AreaSeries extends Component {
   }
 
   initUpdate(delta: number) {
+    if (!this.drawModels) {
+      return;
+    }
+
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
@@ -72,11 +76,15 @@ export default class AreaSeries extends Component {
       categories = [],
       legend,
       dataLabels,
+      stackSeries,
     } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
     }
 
+    if (stackSeries && stackSeries.area) {
+      return;
+    }
     this.rect = layout.plot;
 
     const { yAxis } = scale;

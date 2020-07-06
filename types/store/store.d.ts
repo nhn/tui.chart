@@ -188,7 +188,7 @@ export interface ChartState<T extends Options> {
   options: T;
   categories?: string[];
   stackSeries: {
-    [key in BoxType]?: StackSeriesData<key>;
+    [key in StackSeriesType]?: StackSeriesData<key>;
   };
   plot: {
     lines: PlotLine[];
@@ -245,7 +245,9 @@ export type PercentScaleType =
   | 'dualPercentStack'
   | 'divergingPercentStack';
 
-export type StackSeriesData<K extends BoxType> = {
+type StackSeriesType = BoxType | 'area';
+
+export type StackSeriesData<K extends StackSeriesType> = {
   data: ChartSeriesMap[K];
   stackData: StackDataType;
   dataRangeValues: number[];

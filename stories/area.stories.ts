@@ -70,3 +70,27 @@ export const range = () => {
 
   return el;
 };
+
+export const normalStack = () => {
+  const { el } = createChart(avgTemperatureData, {
+    series: {
+      stack: {
+        type: 'normal',
+      },
+    },
+  });
+
+  return el;
+};
+
+export const percentStack = () => {
+  const { el } = createChart(avgTemperatureData, {
+    series: {
+      stack: {
+        type: 'percent',
+      },
+    },
+  });
+
+  return el;
+};

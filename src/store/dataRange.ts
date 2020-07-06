@@ -76,12 +76,10 @@ const dataRange: StoreModule = {
             (arr, value) => (Array.isArray(value) ? [...arr, ...value] : [...value]),
             []
           );
+        } else if (stackSeries[seriesName]?.stack) {
+          values = stackSeries[seriesName].dataRangeValues;
         } else if (isBoxSeries(seriesName as ChartType)) {
-          if (stackSeries[seriesName]?.stack) {
-            values = stackSeries[seriesName].dataRangeValues;
-          } else {
-            values.push(0);
-          }
+          values.push(0);
         }
 
         newDataRange[seriesName][valueAxisName] = getLimitSafely([...new Set(values)] as number[]);

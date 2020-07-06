@@ -244,6 +244,10 @@ export default class BoxSeries extends Component {
       return;
     }
 
+    if (!stackSeries[this.name]) {
+      return;
+    }
+
     this.plot = layout.plot;
     this.rect = this.makeSeriesRect(layout.plot);
 

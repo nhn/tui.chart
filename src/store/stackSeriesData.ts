@@ -86,16 +86,13 @@ function makeStackGroupData(seriesData: SeriesRawData): StackGroupData {
   return stackData;
 }
 
-function initializeStack(stackOption: StackOptionType): Required<StackInfo> | undefined {
+function initializeStack(
+  stackOption: StackOptionType,
+  seriesName: ChartType
+): Required<StackInfo> | undefined {
   if (!stackOption) {
     return;
   }
-
-  const defaultConnector = {
-    type: 'solid',
-    color: 'rgba(51, 85, 139, 0.3)',
-    width: 1,
-  } as Connector;
 
   const defaultStackOption = {
     type: 'normal',
@@ -103,7 +100,13 @@ function initializeStack(stackOption: StackOptionType): Required<StackInfo> | un
   } as StackInfo;
 
   if (isStackObject(stackOption)) {
-    if (stackOption.connector) {
+    if (isBoxSeries(seriesName) && stackOption.connector) {
+      const defaultConnector = {
+        type: 'solid',
+        color: 'rgba(51, 85, 139, 0.3)',
+        width: 1,
+      } as Connector;
+
       stackOption.connector = (isConnectorObject(stackOption.connector)
         ? { ...defaultConnector, ...stackOption.connector }
         : defaultConnector) as Required<Connector>;
@@ -201,14 +204,15 @@ const stackSeriesData: StoreModule = {
     const stackSeries = {};
 
     Object.keys(series).forEach((seriesName) => {
+      const chartType = seriesName as ChartType;
       const stackOption = pickStackOption(options);
 
-      if (stackOption && isBoxSeries(seriesName as ChartType)) {
-        if (!stackSeries[seriesName]) {
-          stackSeries[seriesName] = {} as StackSeriesData<BoxType>;
+      if (stackOption) {
+        if (!stackSeries[chartType]) {
+          stackSeries[chartType] = {};
         }
 
-        stackSeries[seriesName].stack = initializeStack(stackOption);
+        stackSeries[chartType].stack = initializeStack(stackOption, chartType);
       }
     });
 

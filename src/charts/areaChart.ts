@@ -4,10 +4,12 @@ import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import dataLabels from '@src/store/dataLabels';
+import stackSeriesData from '@src/store/stackSeriesData';
 
 import Tooltip from '@src/component/tooltip';
 import Plot from '@src/component/plot';
 import AreaSeries from '@src/component/areaSeries';
+import AreaStackSeries from '@src/component/areaStackSeries';
 import Axis from '@src/component/axis';
 import DataLabels from '@src/component/dataLabels';
 import Title from '@src/component/title';
@@ -32,7 +34,7 @@ interface AreaChartProps {
 }
 
 export default class AreaChart extends Chart<AreaChartOptions> {
-  modules = [dataRange, scale, axes, dataLabels];
+  modules = [stackSeriesData, dataRange, scale, axes, dataLabels];
 
   constructor(props: AreaChartProps) {
     super({
@@ -51,6 +53,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
+    this.componentManager.add(AreaStackSeries);
     this.componentManager.add(AreaSeries);
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(DataLabels);
