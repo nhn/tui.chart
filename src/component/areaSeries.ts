@@ -17,7 +17,6 @@ import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, Legend, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray, deepMergedCopy, first, last } from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
@@ -88,7 +87,7 @@ export default class AreaSeries extends Component {
     };
 
     this.rect = layout.plot;
-    this.isRangeData = isRangeData(first(areaData)!.data);
+    this.isRangeData = isRangeData(first(areaData)?.data);
     this.linePointsModel = this.renderLinePointsModel(areaData, yAxis.limit, renderOptions, legend);
 
     const areaSeriesModel = this.renderAreaPointsModel(bottomYPoint);
@@ -113,9 +112,10 @@ export default class AreaSeries extends Component {
       this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
     }
 
+    const tooltipDataLength = tooltipDataArr.length;
     this.responders = seriesCircleModel.map((m, dataIndex) => ({
       ...m,
-      data: tooltipDataArr[dataIndex % tooltipDataArr.length],
+      data: tooltipDataArr[dataIndex % tooltipDataLength],
     }));
   }
 
@@ -177,6 +177,7 @@ export default class AreaSeries extends Component {
       points.push({ x, y, value });
     });
 
+    // @TODO: range spline 처리 필요
     if (options?.spline) {
       setSplineControlPoint(points);
     }
@@ -298,12 +299,12 @@ export default class AreaSeries extends Component {
       });
     }
 
-    const linePoints = responders.reduce(
+    const linePoints = responders.reduce<LinePointsModel[]>(
       (acc, { seriesIndex }) => [
         ...acc,
         ...this.linePointsModel.filter((model) => model.seriesIndex === seriesIndex),
       ],
-      [] as LinePointsModel[]
+      []
     );
 
     this.drawModels.hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];

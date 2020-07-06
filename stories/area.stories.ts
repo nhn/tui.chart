@@ -66,7 +66,6 @@ export const range = () => {
       title: { text: 'Temperature (Celsius)' },
     },
     yAxis: { title: 'Month' },
-    series: { spline: boolean('spline', false) },
   });
 
   return el;

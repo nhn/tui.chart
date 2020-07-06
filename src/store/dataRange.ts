@@ -1,5 +1,5 @@
 import { ValueEdge, StoreModule, ChartType, DataRange } from '@t/store/store';
-import { getFirstExistValue, isObject } from '@src/helpers/utils';
+import { getFirstValidValue, isObject } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
 import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
@@ -54,7 +54,7 @@ const dataRange: StoreModule = {
           return disabledSeries.includes(name) ? [] : data;
         });
 
-        const firstExistValue = getFirstExistValue(values);
+        const firstExistValue = getFirstValidValue(values);
 
         if (isCoordinateSeries(series)) {
           let xAxisValues;
