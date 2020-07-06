@@ -62,7 +62,7 @@ export default class Axis extends Component {
 
     this.models.label = this.renderLabelModels(
       relativePositions,
-      !isLabelAxis && this.yAxisComponent ? labels.reverse() : labels,
+      !isLabelAxis && this.yAxisComponent ? [...labels].reverse() : labels,
       offsetKey,
       anchorKey,
       renderOptions

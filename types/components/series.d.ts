@@ -67,3 +67,7 @@ export type RectModel = {
   thickness?: number;
   value?: BoxSeriesDataType;
 } & Rect;
+
+export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
+  type: 'stackTotal';
+};

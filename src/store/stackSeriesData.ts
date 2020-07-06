@@ -57,7 +57,7 @@ function makeStackData(seriesData: SeriesRawData): StackDataValues {
     const stackValues: number[] = [];
 
     for (let j = 0; j < seriesCount; j += 1) {
-      stackValues.push((seriesData[j].data[i] as number) || 0);
+      stackValues.push(seriesData[j].data[i] as number);
     }
 
     stackData[i] = {
@@ -240,6 +240,8 @@ const stackSeriesData: StoreModule = {
             dataRangeValues,
             scaleType: getScaleType(getStackDataValues(stackData), stackType, diverging),
           };
+
+          state.stackSeries[seriesName].stackData = stackData;
         }
 
         extend(state.stackSeries, newStackSeries);
