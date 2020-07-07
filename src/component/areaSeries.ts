@@ -273,7 +273,7 @@ export default class AreaSeries extends Component {
 
   renderCircleModel(): CircleModel[] {
     return this.linePointsModel.flatMap(({ points, color, seriesIndex }) =>
-      points.map(({ x, y }) => ({
+      points.map(({ x, y }, index) => ({
         type: 'circle',
         x,
         y,
@@ -281,6 +281,7 @@ export default class AreaSeries extends Component {
         color,
         style: ['default', 'hover'],
         seriesIndex,
+        index,
       }))
     );
   }

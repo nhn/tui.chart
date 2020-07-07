@@ -23,6 +23,8 @@ export type CircleModel = {
   seriesIndex?: number;
 } & Point;
 
+export type BoundResponderModel = Rect & { type: 'bound'; index?: number };
+
 export type CircleResponderModel = {
   detectionRadius?: number;
   data: TooltipData;

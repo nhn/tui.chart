@@ -1,7 +1,7 @@
 import AreaChart from '@src/charts/areaChart';
 import { AreaChartOptions, AreaSeriesData, BaseChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { avgTemperatureData, temperatureRangeData } from './data';
+import { avgTemperatureData, budgetData, temperatureRangeData } from './data';
 import { withKnobs, boolean } from '@storybook/addon-knobs';
 
 export default {
@@ -72,7 +72,12 @@ export const range = () => {
 };
 
 export const normalStack = () => {
-  const { el } = createChart(avgTemperatureData, {
+  const { el } = createChart(budgetData, {
+    chart: { title: 'Monthly Revenue' } as BaseChartOptions,
+    xAxis: {
+      title: { text: 'Month' },
+    },
+    yAxis: { title: 'Amount' },
     series: {
       stack: {
         type: 'normal',
@@ -84,7 +89,12 @@ export const normalStack = () => {
 };
 
 export const percentStack = () => {
-  const { el } = createChart(avgTemperatureData, {
+  const { el } = createChart(budgetData, {
+    chart: { title: 'Monthly Revenue' } as BaseChartOptions,
+    xAxis: {
+      title: { text: 'Month' },
+    },
+    yAxis: { title: 'Amount' },
     series: {
       stack: {
         type: 'percent',

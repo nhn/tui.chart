@@ -3,7 +3,7 @@ import { PathRectModel, RectModel, CircleResponderModel } from '@t/components/se
 import { isUndefined } from '@src/helpers/utils';
 import { LegendResponderModel } from '@t/components/legend';
 import { LEGEND_CHECKBOX_SIZE } from '@src/brushes/legend';
-import { BoxResponderModel } from '@src/component/exportMenu';
+import { BoundResponderModel } from '@t/components/series';
 
 type DetectorType = 'circle' | 'rect' | 'label' | 'checkbox' | 'bound';
 
@@ -31,7 +31,7 @@ export const responderDetectors: ResponderDetectors = {
       y <= modelY + LEGEND_CHECKBOX_SIZE
     );
   },
-  bound: (mousePosition: Point, model: BoxResponderModel) => {
+  bound: (mousePosition: Point, model: BoundResponderModel) => {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, width, height } = model;
 
