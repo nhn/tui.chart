@@ -322,10 +322,10 @@ export default class BoxSeries extends Component {
     const columnWidth = this.getColumnWidth(renderOptions, seriesData.length, validDiverging);
     const seriesModels: RectModel[] = [];
 
-    seriesData.forEach(({ data, color: seriesColor }, seriesIndex) => {
+    seriesData.forEach(({ data, color: seriesColor, name }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;
       const isLBSideWithDiverging = diverging && isLeftBottomSide(seriesIndex);
-      
+
       this.isRangeData = isRangeData(data);
 
       data.forEach((value, index) => {

@@ -31,7 +31,7 @@ type ComponentType =
   | 'title'
   | 'axisTitle'
   | 'exportMenu'
-  | 'plotAxis';
+  | 'zeroAxis';
 
 type ComponentModels =
   | AxisModels

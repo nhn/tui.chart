@@ -17,7 +17,7 @@ function needZeroLine(series: Series, axes: Partial<Record<AxisType, AxisData>>)
   return hasNegative(axes[valueAxisName]?.labels);
 }
 
-export default class PlotAxis extends Component {
+export default class ZeroAxis extends Component {
   name!: string;
 
   models: LineModel[] = [];
@@ -25,7 +25,7 @@ export default class PlotAxis extends Component {
   drawModels!: LineModel[];
 
   initialize() {
-    this.type = 'plotAxis';
+    this.type = 'zeroAxis';
     this.name = name;
   }
 

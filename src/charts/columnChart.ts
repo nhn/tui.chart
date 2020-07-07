@@ -17,7 +17,7 @@ import DataLabels from '@src/component/dataLabels';
 import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
-import PlotAxis from '@src/component/plotAxis';
+import ZeroAxis from '@src/component/zeroAxis';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -55,7 +55,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
-    this.componentManager.add(PlotAxis);
+    this.componentManager.add(ZeroAxis);
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(BoxStackSeries, { name: 'column' });
     this.componentManager.add(BoxSeries, { name: 'column' });

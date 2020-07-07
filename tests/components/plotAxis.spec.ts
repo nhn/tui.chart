@@ -1,4 +1,4 @@
-import PlotAxis from '@src/component/plotAxis';
+import ZeroAxis from '@src/component/zeroAxis';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import { BarChartOptions } from '@t/options';
@@ -31,7 +31,7 @@ const chartState = {
 };
 describe('PlotAxis', () => {
   beforeEach(() => {
-    plotAxis = new PlotAxis({
+    plotAxis = new ZeroAxis({
       store: {} as Store<BarChartOptions>,
       eventBus: new EventEmitter(),
     });
