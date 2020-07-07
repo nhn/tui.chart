@@ -60,6 +60,13 @@ export default class AreaSeries extends Component {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
+  getBaseValueYPosition(limit: ValueEdge) {
+    const baseValue = limit.min >= 0 ? limit.min : Math.min(limit.max, 0);
+    const intervalSize = this.rect.height / (limit.max - limit.min);
+
+    return (limit.max - baseValue) * intervalSize;
+  }
+
   public render(chartState: ChartState<AreaChartOptions>) {
     const {
       layout,
@@ -75,10 +82,12 @@ export default class AreaSeries extends Component {
       throw new Error("There's no area data!");
     }
 
+    this.rect = layout.plot;
+
     const { yAxis } = scale;
     const { tickDistance, pointOnColumn } = axes.xAxis!;
     const areaData = series.area.data;
-    const bottomYPoint = layout.xAxis.y - layout.xAxis.height + 10; // padding
+    const baseValueYPosition = this.getBaseValueYPosition(yAxis.limit);
 
     const renderOptions: RenderOptions = {
       pointOnColumn,
@@ -86,11 +95,10 @@ export default class AreaSeries extends Component {
       tickDistance,
     };
 
-    this.rect = layout.plot;
     this.isRangeData = isRangeData(first(areaData)?.data);
     this.linePointsModel = this.renderLinePointsModel(areaData, yAxis.limit, renderOptions, legend);
 
-    const areaSeriesModel = this.renderAreaPointsModel(bottomYPoint);
+    const areaSeriesModel = this.renderAreaPointsModel(baseValueYPosition);
     const seriesCircleModel = this.renderCircleModel();
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
@@ -213,7 +221,7 @@ export default class AreaSeries extends Component {
     return linePointsModels;
   }
 
-  addBottomPoints(points: PointModel[], bottomYPoint: number) {
+  addBottomPoints(points: PointModel[], baseValueYPosition: number) {
     const firstPoint = first(points);
     const lastPoint = last(points);
 
@@ -221,7 +229,11 @@ export default class AreaSeries extends Component {
       return points;
     }
 
-    return [...points, { x: lastPoint.x, y: bottomYPoint }, { x: firstPoint.x, y: bottomYPoint }];
+    return [
+      ...points,
+      { x: lastPoint.x, y: baseValueYPosition },
+      { x: firstPoint.x, y: baseValueYPosition },
+    ];
   }
 
   combineLinePointsModel() {
@@ -245,10 +257,10 @@ export default class AreaSeries extends Component {
     return combinedLinePointsModel;
   }
 
-  renderAreaPointsModel(bottomYPoint: number): AreaPointsModel[] {
+  renderAreaPointsModel(baseValueYPosition: number): AreaPointsModel[] {
     return this.combineLinePointsModel().map((m) => ({
       ...m,
-      points: this.isRangeData ? m.points : this.addBottomPoints(m.points, bottomYPoint),
+      points: this.isRangeData ? m.points : this.addBottomPoints(m.points, baseValueYPosition),
       type: 'areaPoints',
       lineWidth: 0,
       color: 'rgba(0, 0, 0, 0)', // make area border transparent
