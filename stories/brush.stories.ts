@@ -48,6 +48,23 @@ function getLinePointsModel(bezier: BezierOptions) {
   return model;
 }
 
+function getAreaPointsModel(bezier: BezierOptions) {
+  const model = [
+    { x: 50, y: 100 },
+    { x: 200, y: 50 },
+    { x: 350, y: 200 },
+    { x: 500, y: 150 },
+    { x: 500, y: 250 },
+    { x: 50, y: 250 },
+  ];
+
+  if (bezier === 'bezier') {
+    setSplineControlPoint(model);
+  }
+
+  return model;
+}
+
 const linePointsModel = (lineWidth: number, color: string, bezier: BezierOptions) =>
   ({
     color,
@@ -72,12 +89,10 @@ const circleModel = (
     ...point,
   } as CircleModel);
 
-const areaPointsModel = (fillColor: string, bottomYPoint: number, bezier: BezierOptions) =>
+const areaPointsModel = (fillColor: string, bezier: BezierOptions) =>
   ({
     fillColor,
-    bottomYPoint,
-    points: getLinePointsModel(bezier),
-    seriesIndex: 0,
+    points: getAreaPointsModel(bezier),
     type: 'areaPoints',
   } as AreaPointsModel);
 
@@ -250,14 +265,8 @@ export const areaPointsBrush = () => {
 
   const fillColor = radios('fillColor', { green: 'green', blue: 'blue', red: 'red' }, 'green');
   const bezier = radios('bezier', { basic: 'basic', bezier: 'bezier' }, 'basic');
-  const bottomYPoint = number('bottomYPoint', 300, {
-    range: true,
-    min: 300,
-    max: 800,
-    step: 50,
-  });
 
-  areaPoints(ctx, areaPointsModel(fillColor, bottomYPoint, bezier));
+  areaPoints(ctx, areaPointsModel(fillColor, bezier));
 
   return el;
 };

@@ -298,3 +298,7 @@ export function hasPositiveOnly(values: (number | string)[]) {
 export function hasNegativeOnly(values: (number | string)[]) {
   return values.every((value) => Number(value) <= 0);
 }
+
+export function getFirstValidValue(values: any) {
+  return values.find((value) => value !== null);
+}

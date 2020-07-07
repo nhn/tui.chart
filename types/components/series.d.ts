@@ -41,7 +41,6 @@ export type LinePointsModel = {
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
   type: 'areaPoints';
-  bottomYPoint: number;
   fillColor: string;
 };
 
