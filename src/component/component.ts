@@ -10,12 +10,15 @@ import {
   BoxSeriesModels,
   CircleSeriesModels,
   LineSeriesModels,
+  CircleResponderModel,
+  RectModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
-import { LegendModel } from '@t/components/legend';
+import { LegendModel, LegendResponderModel } from '@t/components/legend';
 import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
+import { BoxResponderModel } from './exportMenu';
 type ComponentType =
   | 'component'
   | 'series'
@@ -44,6 +47,10 @@ type ComponentModels =
   | TooltipModel[]
   | Record<string, LineModel[]>; // plot
 
+type ComponentResponders = Array<
+  CircleResponderModel | RectModel | LegendResponderModel | BoxResponderModel
+>;
+
 export default abstract class Component {
   name = 'Component';
 
@@ -66,7 +73,7 @@ export default abstract class Component {
 
   drawModels!: ComponentModels;
 
-  responders!: any[]; // @TODO: 정의
+  responders!: ComponentResponders;
 
   constructor({ store, eventBus }: { store: Store<Options>; eventBus: EventEmitter }) {
     this.store = store;
