@@ -39,6 +39,12 @@ const chartState = {
   dataLabels: {
     visible: false,
   },
+  legend: {
+    data: [
+      { label: 'han', active: true, checked: true },
+      { label: 'cho', active: true, checked: true },
+    ],
+  },
 };
 
 const result = {
@@ -46,7 +52,7 @@ const result = {
   series: [
     {
       type: 'rect',
-      color: '#aaaaaa',
+      color: 'rgba(170, 170, 170, 1)',
       width: 16,
       height: 8,
       x: 5,
@@ -55,7 +61,7 @@ const result = {
     },
     {
       type: 'rect',
-      color: '#aaaaaa',
+      color: 'rgba(170, 170, 170, 1)',
       width: 32,
       height: 8,
       x: 5,
@@ -64,7 +70,7 @@ const result = {
     },
     {
       type: 'rect',
-      color: '#bbbbbb',
+      color: 'rgba(187, 187, 187, 1)',
       width: 64,
       height: 8,
       x: 5,
@@ -73,7 +79,7 @@ const result = {
     },
     {
       type: 'rect',
-      color: '#bbbbbb',
+      color: 'rgba(187, 187, 187, 1)',
       width: 80,
       height: 8,
       x: 5,
@@ -86,7 +92,7 @@ const result = {
 const respondersResult = [
   {
     type: 'rect',
-    color: '#aaaaaa',
+    color: 'rgba(170, 170, 170, 1)',
     x: 5,
     y: 16,
     width: 16,
@@ -104,7 +110,7 @@ const respondersResult = [
   },
   {
     type: 'rect',
-    color: '#aaaaaa',
+    color: 'rgba(170, 170, 170, 1)',
     x: 5,
     y: 56,
     width: 32,
@@ -122,7 +128,7 @@ const respondersResult = [
   },
   {
     type: 'rect',
-    color: '#bbbbbb',
+    color: 'rgba(187, 187, 187, 1)',
     x: 5,
     y: 24,
     width: 64,
@@ -140,7 +146,7 @@ const respondersResult = [
   },
   {
     type: 'rect',
-    color: '#bbbbbb',
+    color: 'rgba(187, 187, 187, 1)',
     x: 5,
     y: 64,
     width: 80,

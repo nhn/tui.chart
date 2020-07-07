@@ -1,6 +1,11 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel, BoxSeriesModels } from '@t/components/series';
-import { ChartState, ChartType, BoxType, AxisData } from '@t/store/store';
+import {
+  RectModel,
+  ClipRectAreaModel,
+  BoxSeriesModels,
+  StackTotalModel,
+} from '@t/components/series';
+import { ChartState, ChartType, BoxType, AxisData, Legend } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -25,10 +30,9 @@ import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
-import { AxisType } from './axis';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
+import { AxisType } from '@src/component/axis';
 import { RectDirection, RectDataLabel } from '@src/store/dataLabels';
-
 export enum SeriesDirection {
   POSITIVE,
   NEGATIVE,
@@ -210,7 +214,7 @@ export default class BoxSeries extends Component {
     const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;
-    const { min, max } = getLimitOnAxis(labels, diverging);
+    const { min, max } = getLimitOnAxis(labels);
 
     return {
       min,
@@ -225,7 +229,16 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, axes, categories, stackSeries, options, dataLabels } = chartState;
+    const {
+      layout,
+      series,
+      axes,
+      categories,
+      stackSeries,
+      options,
+      dataLabels,
+      legend,
+    } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -239,7 +252,7 @@ export default class BoxSeries extends Component {
 
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
-    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions);
+    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions, legend);
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, renderOptions, categories);
 
@@ -301,22 +314,25 @@ export default class BoxSeries extends Component {
 
   renderSeriesModel(
     seriesData: BoxSeriesType<number | (RangeDataType & number)>[],
-    renderOptions: RenderOptions
+    renderOptions: RenderOptions,
+    legend: Legend
   ): RectModel[] {
     const { tickDistance, diverging, padding } = renderOptions;
     const validDiverging = diverging && seriesData.length === 2;
     const columnWidth = this.getColumnWidth(renderOptions, seriesData.length, validDiverging);
     const seriesModels: RectModel[] = [];
 
-    seriesData.forEach(({ data, color }, seriesIndex) => {
+    seriesData.forEach(({ data, color: seriesColor }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;
       const isLBSideWithDiverging = diverging && isLeftBottomSide(seriesIndex);
-
+      
       this.isRangeData = isRangeData(data);
 
       data.forEach((value, index) => {
         const dataStart = seriesPos + index * tickDistance + this.hoverThickness;
         const barLength = this.makeBarLength(value, renderOptions);
+        const { active } = legend.data.find(({ label }) => label === name)!;
+        const color = getRGBA(seriesColor, active ? 1 : 0.2);
 
         if (isNumber(barLength)) {
           const startPosition = this.getStartPosition(
@@ -573,7 +589,7 @@ export default class BoxSeries extends Component {
     };
   }
 
-  getDataLabelDirection(rect: RectModel | RectDataLabel): RectDirection {
+  getDataLabelDirection(rect: RectModel | StackTotalModel): RectDirection {
     let direction: RectDirection = 'right';
 
     if (this.isBar) {

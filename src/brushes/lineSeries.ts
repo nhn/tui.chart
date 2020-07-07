@@ -2,7 +2,7 @@ import { AreaPointsModel, LinePointsModel } from '@t/components/series';
 
 type PointsModel = LinePointsModel | AreaPointsModel;
 
-export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel, close = true) {
+export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel) {
   const { color, lineWidth, points } = pointsModel;
 
   ctx.lineWidth = lineWidth;
@@ -28,24 +28,14 @@ export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsMod
   });
 
   ctx.stroke();
-  if (close) {
-    ctx.closePath();
-  }
+  ctx.closePath();
 }
 
 export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaPointsModel) {
-  const { points, bottomYPoint, fillColor } = areaPointsModel;
+  const { fillColor } = areaPointsModel;
 
   ctx.beginPath();
-
-  const startPoint = points[0];
-  const endPoint = points[points.length - 1];
-
-  linePoints(ctx, areaPointsModel, false);
-
-  ctx.lineTo(endPoint.x, bottomYPoint);
-  ctx.lineTo(startPoint.x, bottomYPoint);
-  ctx.lineTo(startPoint.x, startPoint.y);
+  linePoints(ctx, areaPointsModel);
 
   ctx.fillStyle = fillColor;
   ctx.fill();

@@ -60,7 +60,7 @@ export default class Axis extends Component {
 
     this.models.label = this.renderLabelModels(
       relativePositions,
-      !isLabelAxis && this.yAxisComponent ? labels.reverse() : labels,
+      !isLabelAxis && this.yAxisComponent ? [...labels].reverse() : labels,
       offsetKey,
       anchorKey,
       renderOptions
@@ -127,7 +127,7 @@ export default class Axis extends Component {
     const tickAnchorPoint = this.yAxisComponent ? crispPixel(this.rect.width) : crispPixel(0);
     const { tickInterval } = renderOptions;
 
-    return relativePositions.reduce((positions, position, index) => {
+    return relativePositions.reduce<TickModel[]>((positions, position, index) => {
       return index % tickInterval
         ? positions
         : [
@@ -139,7 +139,7 @@ export default class Axis extends Component {
               [anchorKey]: tickAnchorPoint,
             } as TickModel,
           ];
-    }, [] as TickModel[]);
+    }, []);
   }
 
   renderLabelModels(

@@ -56,11 +56,11 @@ function showCheckbox(options: Options) {
 }
 
 function getLegendLabels(series: SeriesRaw) {
-  return Object.keys(series).reduce((acc, type) => {
+  return Object.keys(series).reduce<string[]>((acc, type) => {
     const seriesName = series[type].map(({ name }) => name);
 
     return [...acc, ...seriesName];
-  }, [] as string[]);
+  }, []);
 }
 
 function getIconType(series: SeriesRaw): LegendIconType {

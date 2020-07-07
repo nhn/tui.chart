@@ -42,7 +42,6 @@ export type LinePointsModel = {
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
   type: 'areaPoints';
-  bottomYPoint: number;
   fillColor: string;
 };
 
@@ -92,4 +91,8 @@ export type LineSeriesModels = {
   rect: ClipRectAreaModel[];
   series: LinePointsModel[];
   hoveredSeries: CircleModel[];
+}
+
+export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
+  type: 'stackTotal';
 };

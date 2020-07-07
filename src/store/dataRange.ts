@@ -1,9 +1,10 @@
 import { ValueEdge, StoreModule, ChartType, DataRange } from '@t/store/store';
-import { isObject } from '@src/helpers/utils';
+import { getFirstValidValue, isObject } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
 import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
+import { isRangeValue } from '@src/helpers/range';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -53,22 +54,12 @@ const dataRange: StoreModule = {
           return disabledSeries.includes(name) ? [] : data;
         });
 
-        const tupleCoord = Array.isArray(values[0]);
-        const objectCoord = isObject(values[0]);
+        const firstExistValue = getFirstValidValue(values);
 
-        if (isBoxSeries(seriesName as ChartType)) {
-          if (tupleCoord) {
-            values = values.reduce(
-              (arr, value) => (Array.isArray(value) ? [...arr, ...value] : value),
-              []
-            );
-          } else if (stackSeries[seriesName]?.stack) {
-            values = stackSeries[seriesName].dataRangeValues;
-          } else {
-            values.push(0);
-          }
-        } else if (isCoordinateSeries(series)) {
+        if (isCoordinateSeries(series)) {
           let xAxisValues;
+          const tupleCoord = Array.isArray(firstExistValue);
+          const objectCoord = isObject(firstExistValue);
           if (tupleCoord) {
             xAxisValues = values.map((value) => value[0]);
             values = values.map((value) => value[1]);
@@ -80,6 +71,17 @@ const dataRange: StoreModule = {
           newDataRange[seriesName][labelAxisName] = getLimitSafely([
             ...new Set(xAxisValues),
           ] as number[]);
+        } else if (isRangeValue(firstExistValue)) {
+          values = values.reduce(
+            (arr, value) => (Array.isArray(value) ? [...arr, ...value] : [...value]),
+            []
+          );
+        } else if (isBoxSeries(seriesName as ChartType)) {
+          if (stackSeries[seriesName]?.stack) {
+            values = stackSeries[seriesName].dataRangeValues;
+          } else {
+            values.push(0);
+          }
         }
 
         newDataRange[seriesName][valueAxisName] = getLimitSafely([...new Set(values)] as number[]);
