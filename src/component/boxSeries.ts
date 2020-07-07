@@ -42,6 +42,7 @@ type RenderOptions = {
   diverging: boolean;
   ratio?: number;
   hasNegativeValue: boolean;
+  seriesDirection: SeriesDirection;
   padding: number;
 };
 
@@ -218,6 +219,7 @@ export default class BoxSeries extends Component {
       diverging,
       ratio: this.getValueRatio(min, max, diverging),
       hasNegativeValue: hasNegative(labels),
+      seriesDirection: this.getSeriesDirection(labels),
       padding: this.getPadding(tickDistance),
     };
   }
@@ -308,6 +310,8 @@ export default class BoxSeries extends Component {
 
     seriesData.forEach(({ data, color }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;
+      const isLBSideWithDiverging = diverging && isLeftBottomSide(seriesIndex);
+
       this.isRangeData = isRangeData(data);
 
       data.forEach((value, index) => {
@@ -315,7 +319,12 @@ export default class BoxSeries extends Component {
         const barLength = this.makeBarLength(value, renderOptions);
 
         if (isNumber(barLength)) {
-          const startPosition = this.getStartPosition(barLength, value, seriesIndex, renderOptions);
+          const startPosition = this.getStartPosition(
+            barLength,
+            value,
+            renderOptions,
+            isLBSideWithDiverging
+          );
 
           seriesModels.push({
             type: 'rect',
@@ -459,28 +468,50 @@ export default class BoxSeries extends Component {
   getStartPosition(
     barLength: number,
     value: BoxSeriesDataType,
-    seriesIndex: number,
-    renderOptions: RenderOptions
+    renderOptions: RenderOptions,
+    isLBSideWithDiverging: boolean
   ): number {
-    const basePosition = this.basePosition;
-    const { diverging, hasNegativeValue } = renderOptions;
+    const { diverging, seriesDirection } = renderOptions;
+    let startPos: number;
 
     if (isRangeValue(value)) {
-      return this.getStartPositionWithRangeValue(value, barLength, renderOptions);
+      startPos = this.getStartPositionWithRangeValue(value, barLength, renderOptions);
+    } else if (diverging) {
+      startPos = isLBSideWithDiverging
+        ? this.getStartPosOnLeftBottomSide(barLength, seriesDirection)
+        : this.getStartPosOnRightTopSide(barLength, diverging);
+    } else if (seriesDirection === SeriesDirection.POSITIVE) {
+      startPos = this.getStartPosOnRightTopSide(barLength);
+    } else if (seriesDirection === SeriesDirection.NEGATIVE) {
+      startPos = this.getStartPosOnLeftBottomSide(barLength, seriesDirection);
+    } else {
+      startPos =
+        value < 0
+          ? this.getStartPosOnLeftBottomSide(barLength, seriesDirection)
+          : this.getStartPosOnRightTopSide(barLength);
     }
 
-    const divergingSeries = diverging && isLeftBottomSide(seriesIndex);
-    const negativeValue = hasNegativeValue && value < 0;
+    return startPos;
+  }
 
-    if (negativeValue) {
-      return this.isBar ? basePosition - barLength : basePosition;
+  private getStartPosOnRightTopSide(barLength: number, diverging = false) {
+    let pos: number;
+
+    if (diverging) {
+      pos = this.isBar
+        ? this.basePosition - this.axisThickness
+        : this.basePosition - barLength + this.axisThickness;
+    } else {
+      pos = this.isBar ? this.basePosition + this.axisThickness : this.basePosition - barLength;
     }
 
-    if (divergingSeries) {
-      return this.isBar ? basePosition - barLength + this.axisThickness : basePosition;
-    }
+    return pos;
+  }
 
-    return this.isBar ? basePosition + this.axisThickness : basePosition - barLength;
+  private getStartPosOnLeftBottomSide(barLength: number, seriesDirection: SeriesDirection) {
+    return this.isBar
+      ? this.basePosition - barLength
+      : this.basePosition + (seriesDirection === SeriesDirection.NEGATIVE ? this.axisThickness : 0);
   }
 
   protected getAdjustedRect(

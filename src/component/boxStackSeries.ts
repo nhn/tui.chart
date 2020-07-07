@@ -650,7 +650,7 @@ export default class BoxStackSeries extends BoxSeries {
     stackGroupIndex = 0
   ): RectDataLabel[] {
     const dataLabels: RectDataLabel[] = [];
-    const { min, max, seriesDirection } = renderOptions;
+    const { min, max, seriesDirection, diverging } = renderOptions;
     const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
 
     stackData.forEach(({ total }, dataIndex) => {
@@ -672,7 +672,12 @@ export default class BoxStackSeries extends BoxSeries {
           ratio,
         })!;
 
-        const dataPosition = this.getStartPosition(barLength, value, 0, renderOptions);
+        const dataPosition = this.getStartPosition(
+          barLength,
+          value,
+          renderOptions,
+          diverging && isLeftBottomSide(0)
+        );
 
         const label = {
           type: 'stackTotal',
