@@ -1,11 +1,13 @@
 import Component from './component';
-import { ChartState, Options, PlotLine, Axes, AxisData } from '@t/store/store';
+import { ChartState, Options, PlotLine, Axes, AxisData, PlotBand } from '@t/store/store';
 import { crispPixel, makeTickPixelPositions } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
+import { PlotModels } from '@t/components/plot';
+import { RectModel } from '@t/components/series';
 
 export default class Plot extends Component {
-  models: Record<string, LineModel[]> = {};
+  models: PlotModels = { plot: [], line: [], band: [] };
 
   initialize() {
     this.type = 'plot';
@@ -21,6 +23,11 @@ export default class Plot extends Component {
 
       return this.makeLineModel(vertical, vertical ? position : size - position, color);
     });
+  }
+
+  renderBands(bands: PlotBand[], axes: Axes): RectModel[] {
+    // TODO: return Bands models
+    return [];
   }
 
   renderModels(relativePositions: number[], vertical: boolean): LineModel[] {
@@ -44,9 +51,10 @@ export default class Plot extends Component {
       ...this.renderModels(this.getTickPixelPositions(true, axes), true),
     ];
 
-    if (plot) {
-      this.models.lines = [...this.renderLines(plot.lines!, axes)];
-    }
+    const { lines, bands } = plot;
+
+    this.models.line = this.renderLines(lines, axes);
+    this.models.band = this.renderBands(bands, axes);
   }
 
   makeLineModel(vertical: boolean, position: number, color: string): LineModel {
