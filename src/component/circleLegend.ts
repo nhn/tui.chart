@@ -1,11 +1,11 @@
 import Component from './component';
 import { ChartState, Options, CircleLegend as CircleLegendType } from '@t/store/store';
-import { CircleLegendModel } from '@t/components/circleLegend';
+import { CircleLegendModels } from '@t/components/circleLegend';
 import { BubbleSeriesType } from '@t/options';
 import { getMaxRadius } from '@src/component/bubbleSeries';
 
 export default class CircleLegend extends Component {
-  models: { circleLegend: CircleLegendModel[] } = { circleLegend: [] };
+  models: CircleLegendModels = { circleLegend: [] };
 
   initialize() {
     this.type = 'circleLegend';

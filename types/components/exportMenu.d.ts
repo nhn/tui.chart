@@ -8,3 +8,5 @@ export type ExportMenuButtonModel = {
 export type ExportMenuModel = {
   type: 'exportMenu';
 } & Point;
+
+export type ExportMenuModels = { exportMenuButton: ExportMenuButtonModel[] };

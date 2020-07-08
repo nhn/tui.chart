@@ -2,7 +2,7 @@ import Component from './component';
 import Painter from '@src/painter';
 import { ChartState, Options } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
-import { LabelModel, TickModel, LineModel } from '@t/components/axis';
+import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 
 export enum AxisType {
   Y = 'yAxis',
@@ -10,8 +10,6 @@ export enum AxisType {
   CENTER_Y = 'yCenterAxis',
 }
 
-type DrawModels = LabelModel | TickModel | LineModel;
-type AxisModels = Record<string, DrawModels[]>;
 type CoordinateKey = 'x' | 'y';
 
 interface RenderOptions {
@@ -24,7 +22,7 @@ interface RenderOptions {
 export default class Axis extends Component {
   name!: AxisType;
 
-  models: AxisModels = {};
+  models: AxisModels = { label: [], tick: [], axisLine: [] };
 
   drawModels!: AxisModels;
 
@@ -78,7 +76,11 @@ export default class Axis extends Component {
     this.models.axisLine = [this.renderAxisLineModel()];
 
     if (!this.drawModels) {
-      this.drawModels = {};
+      this.drawModels = {
+        tick: [],
+        label: [],
+        axisLine: this.models.axisLine,
+      };
 
       ['tick', 'label'].forEach((type) => {
         this.drawModels[type] = this.models[type].map((m) => {
@@ -93,8 +95,6 @@ export default class Axis extends Component {
           return drawModel;
         });
       });
-
-      this.drawModels.axisLine = this.models.axisLine;
     }
   }
 

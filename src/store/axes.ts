@@ -1,4 +1,4 @@
-import { AxisData, Options, ScaleData, Series, StoreModule } from '@t/store/store';
+import { AxisData, Options, ScaleData, Series, StoreModule, ValueEdge } from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
   getAxisName,
@@ -20,6 +20,20 @@ interface StateProp {
 
 type ValueStateProp = StateProp & { categories: string[] };
 
+function getZeroPosition(limit: ValueEdge, axisSize: number, labelAxisOnYAxis: boolean) {
+  const { min, max } = limit;
+  const hasZeroValue = min <= 0 && max >= 0;
+
+  if (!hasZeroValue) {
+    return null;
+  }
+
+  const position = ((0 - min) / (max - min)) * axisSize;
+  const zeroPosition = labelAxisOnYAxis ? position : axisSize - position;
+
+  return zeroPosition;
+}
+
 export function getLabelAxisData(stateProp: ValueStateProp) {
   const { scale, axisSize, categories, series, options } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
@@ -36,10 +50,14 @@ export function getLabelAxisData(stateProp: ValueStateProp) {
 
 export function getValueAxisData(stateProp: StateProp) {
   const { scale, axisSize, series, options } = stateProp;
-  let valueLabels = makeLabelsFromLimit(scale.limit, scale.stepSize);
+  const { limit, stepSize } = scale;
+
+  let valueLabels = makeLabelsFromLimit(limit, stepSize);
+  let zeroPosition = getZeroPosition(limit, axisSize, isLabelAxisOnYAxis(series));
 
   if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
     valueLabels = getDivergingValues(valueLabels);
+    zeroPosition = axisSize / 2;
   }
 
   return {
@@ -48,6 +66,7 @@ export function getValueAxisData(stateProp: StateProp) {
     isLabelAxis: false,
     tickCount: valueLabels.length,
     tickDistance: axisSize / valueLabels.length,
+    zeroPosition,
   };
 }
 

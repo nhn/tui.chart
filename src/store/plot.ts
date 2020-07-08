@@ -1,32 +1,31 @@
-import { StoreModule, PlotLine } from '@t/store/store';
-import { isLabelAxisOnYAxis, hasBoxTypeSeries } from '@src/helpers/axes';
+import { StoreModule, PlotLine, PlotBand } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { hasNegative } from '@src/helpers/utils';
 
 const plot: StoreModule = {
   name: 'plot',
   state: () => ({
-    plot: {},
+    plot: {
+      lines: [],
+      bands: [],
+    },
   }),
   action: {
     setPlot({ state }) {
-      const { options, series, axes } = state;
+      const { options } = state;
       const plotLines = options.plot?.lines || [];
+      const plotBands = options.plot?.bands || [];
       const lines: PlotLine[] = plotLines.map(({ color, value }) => ({
         value,
         color,
         vertical: true,
       }));
+      const bands: PlotBand[] = plotBands.map(({ color, range }) => ({
+        range,
+        color,
+        vertical: true,
+      }));
 
-      if (needZeroLine(series, axes)) {
-        lines.push({
-          value: 0,
-          color: 'rgba(0, 0, 0, 0.5)',
-          vertical: isLabelAxisOnYAxis(series),
-        });
-      }
-
-      extend(state.plot, { lines });
+      extend(state.plot, { lines, bands });
     },
   },
   observe: {
@@ -35,15 +34,5 @@ const plot: StoreModule = {
     },
   },
 };
-
-function needZeroLine(series, axes) {
-  if (!hasBoxTypeSeries(series)) {
-    return false;
-  }
-
-  const valueAxisName = isLabelAxisOnYAxis(series) ? 'xAxis' : 'yAxis';
-
-  return hasNegative(axes[valueAxisName]?.labels);
-}
 
 export default plot;

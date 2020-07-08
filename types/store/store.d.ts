@@ -16,6 +16,7 @@ import {
   BubbleChartOptions,
   Align,
   AxisTitleOption,
+  PlotLineValue,
 } from '@t/options';
 import Store from '@src/store/store';
 import { AxisType } from '@src/component/axis';
@@ -127,7 +128,13 @@ export interface Scale {
 }
 
 type PlotLine = {
-  value: number | string;
+  value: PlotLineValue;
+  color: string;
+  vertical: boolean;
+};
+
+type PlotBand = {
+  range: [PlotLineValue, PlotLineValue];
   color: string;
   vertical: boolean;
 };
@@ -184,7 +191,8 @@ export interface ChartState<T extends Options> {
     [key in BoxType]?: StackSeriesData<key>;
   };
   plot: {
-    lines?: PlotLine[];
+    lines: PlotLine[];
+    bands: PlotBand[];
   };
   legend: Legend;
   circleLegend: CircleLegend;
@@ -218,6 +226,7 @@ export interface AxisData {
   tickInterval: number;
   labelInterval: number;
   title?: Required<AxisTitleOption>;
+  zeroPosition?: number;
 }
 
 export interface ValueEdge {

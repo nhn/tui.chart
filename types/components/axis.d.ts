@@ -29,3 +29,9 @@ export type LineModel = {
   lineWidth?: number;
   dashedPattern?: number[];
 } & Point;
+
+export type AxisModels = {
+  label: LabelModel[];
+  tick: TickModel[];
+  axisLine: LineModel[];
+};

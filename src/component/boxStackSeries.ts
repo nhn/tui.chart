@@ -42,6 +42,7 @@ type RenderOptions = {
   diverging: boolean;
   hasNegativeValue: boolean;
   seriesDirection: SeriesDirection;
+  padding: number;
 };
 
 function calibrateDrawingValue(
@@ -99,6 +100,7 @@ export default class BoxStackSeries extends BoxSeries {
       diverging,
       hasNegativeValue: hasNegative(labels),
       seriesDirection: this.getSeriesDirection(labels),
+      padding: this.getPadding(tickDistance),
     };
   }
 
@@ -451,10 +453,10 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   private getStackColumnWidth(renderOptions: RenderOptions, stackGroupCount: number) {
-    const { tickDistance, diverging } = renderOptions;
+    const { tickDistance, diverging, padding } = renderOptions;
     const divisor = diverging ? 1 : stackGroupCount;
 
-    return (tickDistance - this.padding * 2) / divisor;
+    return (tickDistance - padding * 2) / divisor;
   }
 
   private getSeriesPosition(
@@ -463,10 +465,10 @@ export default class BoxStackSeries extends BoxSeries {
     dataIndex: number,
     stackGroupIndex: number
   ) {
-    const { tickDistance, diverging } = renderOptions;
+    const { tickDistance, diverging, padding } = renderOptions;
     const groupIndex = diverging ? 0 : stackGroupIndex;
 
-    return dataIndex * tickDistance + this.padding + columnWidth * groupIndex + this.hoverThickness;
+    return dataIndex * tickDistance + padding + columnWidth * groupIndex + this.hoverThickness;
   }
 
   private getStackStartPosition(
@@ -646,7 +648,7 @@ export default class BoxStackSeries extends BoxSeries {
     stackGroupIndex = 0
   ): RectDataLabel[] {
     const dataLabels: RectDataLabel[] = [];
-    const { min, max, diverging, hasNegativeValue, seriesDirection } = renderOptions;
+    const { min, max, seriesDirection, diverging } = renderOptions;
     const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
 
     stackData.forEach((data, dataIndex) => {
@@ -673,10 +675,12 @@ export default class BoxStackSeries extends BoxSeries {
           ratio,
         })!;
 
-        const dataPosition = this.getStartPosition(barLength, value, 0, {
-          diverging,
-          hasNegativeValue,
-        });
+        const dataPosition = this.getStartPosition(
+          barLength,
+          value,
+          renderOptions,
+          diverging && isLeftBottomSide(0)
+        );
 
         const stackTotal: StackTotalModel = {
           type: 'stackTotal',

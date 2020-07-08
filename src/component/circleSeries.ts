@@ -1,12 +1,7 @@
 import Component from './component';
-import { CircleModel, CircleResponderModel } from '@t/components/series';
+import { CircleModel, CircleResponderModel, CircleSeriesModels } from '@t/components/series';
 import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
-
-type CircleSeriesModels = {
-  series: CircleModel[];
-  hoveredSeries: CircleModel[];
-};
 
 export default abstract class CircleSeries extends Component {
   models: CircleSeriesModels = { series: [], hoveredSeries: [] };

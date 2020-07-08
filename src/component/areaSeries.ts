@@ -5,6 +5,7 @@ import {
   CircleResponderModel,
   LinePointsModel,
   PointModel,
+  AreaSeriesModels,
 } from '@t/components/series';
 import {
   AreaChartOptions,
@@ -23,12 +24,6 @@ import { isRangeData } from '@src/helpers/range';
 
 type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
 
-interface AreaSeriesDrawModels {
-  rect: ClipRectAreaModel[];
-  series: AreaPointsModel[];
-  hoveredSeries: (CircleModel | LinePointsModel)[];
-}
-
 interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
@@ -39,9 +34,9 @@ interface RenderOptions {
 type DatumType = number | RangeDataType;
 
 export default class AreaSeries extends Component {
-  models: AreaSeriesDrawModels = { rect: [], hoveredSeries: [], series: [] };
+  models: AreaSeriesModels = { rect: [], hoveredSeries: [], series: [] };
 
-  drawModels!: AreaSeriesDrawModels;
+  drawModels!: AreaSeriesModels;
 
   responders!: CircleResponderModel[];
 

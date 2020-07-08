@@ -5,7 +5,21 @@ import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
 import { isNumber } from '@src/helpers/utils';
 import { setSplineControlPoint } from '@src/helpers/calculator';
-
+import {
+  AreaSeriesModels,
+  BoxSeriesModels,
+  CircleSeriesModels,
+  LineSeriesModels,
+  CircleResponderModel,
+  RectModel,
+} from '@t/components/series';
+import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
+import { ExportMenuModels } from '@t/components/exportMenu';
+import { LegendModel, LegendResponderModel } from '@t/components/legend';
+import { TooltipModel } from '@t/components/tooltip';
+import { CircleLegendModels } from '@t/components/circleLegend';
+import { BoxResponderModel } from './exportMenu';
+import { PlotModels } from '@t/components/plot';
 type ComponentType =
   | 'component'
   | 'series'
@@ -17,7 +31,26 @@ type ComponentType =
   | 'dataLabels'
   | 'title'
   | 'axisTitle'
-  | 'exportMenu';
+  | 'exportMenu'
+  | 'zeroAxis';
+
+type ComponentModels =
+  | AxisModels
+  | AreaSeriesModels
+  | BoxSeriesModels
+  | CircleSeriesModels
+  | LineSeriesModels
+  | ExportMenuModels
+  | CircleLegendModels
+  | PlotModels
+  | LineModel[]
+  | LabelModel[]
+  | LegendModel[]
+  | TooltipModel[];
+
+type ComponentResponders = Array<
+  CircleResponderModel | RectModel | LegendResponderModel | BoxResponderModel
+>;
 
 export default abstract class Component {
   name = 'Component';
@@ -37,11 +70,11 @@ export default abstract class Component {
 
   eventBus: EventEmitter;
 
-  models!: any; // @TODO: 정의
+  models!: ComponentModels;
 
-  drawModels!: any; // @TODO: 정의
+  drawModels!: ComponentModels;
 
-  responders!: any[]; // @TODO: 정의
+  responders!: ComponentResponders;
 
   constructor({ store, eventBus }: { store: Store<Options>; eventBus: EventEmitter }) {
     this.store = store;

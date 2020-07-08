@@ -5,3 +5,5 @@ export type CircleLegendModel = {
   value: number;
   type: 'circleLegend';
 } & Point;
+
+export type CircleLegendModels = { circleLegend: CircleLegendModel[] };

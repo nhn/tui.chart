@@ -2,6 +2,7 @@ import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
 import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
 import { TooltipData } from '@t/components/tooltip';
+import { LineModel, LabelModel } from '@t/components/axis';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
@@ -66,6 +67,31 @@ export type RectModel = {
   thickness?: number;
   value?: BoxSeriesDataType;
 } & Rect;
+
+export type AreaSeriesModels = {
+  rect: ClipRectAreaModel[];
+  series: AreaPointsModel[];
+  hoveredSeries: (CircleModel | LinePointsModel)[];
+};
+
+export type BoxSeriesModels = {
+  clipRect?: ClipRectAreaModel[];
+  series: RectModel[];
+  hoveredSeries?: RectModel[];
+  connector?: LineModel[];
+  label?: LabelModel[];
+};
+
+export type CircleSeriesModels = {
+  series: CircleModel[];
+  hoveredSeries: CircleModel[];
+};
+
+export type LineSeriesModels = {
+  rect: ClipRectAreaModel[];
+  series: LinePointsModel[];
+  hoveredSeries: CircleModel[];
+};
 
 export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
   type: 'stackTotal';

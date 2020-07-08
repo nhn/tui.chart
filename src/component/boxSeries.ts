@@ -1,5 +1,10 @@
 import Component from './component';
-import { RectModel, ClipRectAreaModel, StackTotalModel } from '@t/components/series';
+import {
+  RectModel,
+  ClipRectAreaModel,
+  BoxSeriesModels,
+  StackTotalModel,
+} from '@t/components/series';
 import { ChartState, ChartType, BoxType, AxisData, Legend } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -21,7 +26,6 @@ import {
   isNumber,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
-import { LineModel, LabelModel } from '@t/components/axis';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
@@ -35,21 +39,15 @@ export enum SeriesDirection {
   BOTH,
 }
 
-type DrawModels = {
-  clipRect?: ClipRectAreaModel[];
-  series: RectModel[];
-  hoveredSeries?: RectModel[];
-  connector?: LineModel[];
-  label?: LabelModel[];
-};
-
 type RenderOptions = {
-  tickDistance?: number;
-  min?: number;
-  max?: number;
-  diverging?: boolean;
+  tickDistance: number;
+  min: number;
+  max: number;
+  diverging: boolean;
   ratio?: number;
-  hasNegativeValue?: boolean;
+  hasNegativeValue: boolean;
+  seriesDirection: SeriesDirection;
+  padding: number;
 };
 
 const BOX = {
@@ -58,8 +56,8 @@ const BOX = {
 };
 
 const PADDING = {
-  TB: 15, // top & bottom
-  LR: 24, // left & right
+  vertical: 15, // top & bottom
+  horizontal: 24, // left & right
 };
 
 export function isLeftBottomSide(seriesIndex: number) {
@@ -89,15 +87,13 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 }
 
 export default class BoxSeries extends Component {
-  models: DrawModels = { series: [] };
+  models: BoxSeriesModels = { series: [] };
 
-  drawModels!: DrawModels;
+  drawModels!: BoxSeriesModels;
 
   responders!: RectModel[];
 
   activatedResponders: this['responders'] = [];
-
-  padding = PADDING.TB;
 
   isBar = true;
 
@@ -128,7 +124,6 @@ export default class BoxSeries extends Component {
     this.name = name;
     this.isBar = name === BOX.BAR;
     this.offsetKey = this.isBar ? 'x' : 'y';
-    this.padding = this.isBar ? PADDING.TB : PADDING.LR;
     this.valueAxis = this.isBar ? 'xAxis' : 'yAxis';
     this.labelAxis = this.isBar ? 'yAxis' : 'xAxis';
     this.anchorSizeKey = this.isBar ? 'height' : 'width';
@@ -228,6 +223,8 @@ export default class BoxSeries extends Component {
       diverging,
       ratio: this.getValueRatio(min, max, diverging),
       hasNegativeValue: hasNegative(labels),
+      seriesDirection: this.getSeriesDirection(labels),
+      padding: this.getPadding(tickDistance),
     };
   }
 
@@ -320,14 +317,15 @@ export default class BoxSeries extends Component {
     renderOptions: RenderOptions,
     legend: Legend
   ): RectModel[] {
-    const { diverging } = renderOptions;
-    const tickDistance = renderOptions.tickDistance!;
+    const { tickDistance, diverging, padding } = renderOptions;
     const validDiverging = diverging && seriesData.length === 2;
-    const columnWidth = this.getColumnWidth(tickDistance, seriesData.length, validDiverging);
+    const columnWidth = this.getColumnWidth(renderOptions, seriesData.length, validDiverging);
     const seriesModels: RectModel[] = [];
 
-    seriesData.forEach(({ data, name, color: seriesColor }, seriesIndex) => {
-      const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + this.padding;
+    seriesData.forEach(({ data, color: seriesColor, name }, seriesIndex) => {
+      const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;
+      const isLBSideWithDiverging = diverging && isLeftBottomSide(seriesIndex);
+
       this.isRangeData = isRangeData(data);
 
       data.forEach((value, index) => {
@@ -337,7 +335,12 @@ export default class BoxSeries extends Component {
         const color = getRGBA(seriesColor, active ? 1 : 0.2);
 
         if (isNumber(barLength)) {
-          const startPosition = this.getStartPosition(barLength, value, seriesIndex, renderOptions);
+          const startPosition = this.getStartPosition(
+            barLength,
+            value,
+            renderOptions,
+            isLBSideWithDiverging
+          );
 
           seriesModels.push({
             type: 'rect',
@@ -450,12 +453,10 @@ export default class BoxSeries extends Component {
     if (isNull(value)) {
       return null;
     }
-    const min = renderOptions.min!;
-    const max = renderOptions.max!;
-    const ratio = renderOptions.ratio!;
+    const { min, max, ratio } = renderOptions;
     const calculatedValue = calculateBarLength(value, min, max);
 
-    return Math.max(this.getBarLength(calculatedValue, ratio), 2);
+    return Math.max(this.getBarLength(calculatedValue, ratio!), 2);
   }
 
   protected getBarLength(value: number, ratio: number) {
@@ -467,13 +468,13 @@ export default class BoxSeries extends Component {
     barLength: number,
     renderOptions: RenderOptions
   ) {
-    const min = renderOptions.min!;
+    const { min, ratio } = renderOptions;
     let [start] = value;
 
     if (start < min) {
       start = min;
     }
-    const startPosition = (start - min) * renderOptions.ratio!;
+    const startPosition = (start - min) * ratio!;
 
     return this.isBar
       ? startPosition + this.hoverThickness
@@ -483,28 +484,50 @@ export default class BoxSeries extends Component {
   getStartPosition(
     barLength: number,
     value: BoxSeriesDataType,
-    seriesIndex: number,
-    renderOptions: RenderOptions
+    renderOptions: RenderOptions,
+    isLBSideWithDiverging: boolean
   ): number {
-    const basePosition = this.basePosition;
-    const { diverging, hasNegativeValue } = renderOptions;
+    const { diverging, seriesDirection } = renderOptions;
+    let startPos: number;
 
     if (isRangeValue(value)) {
-      return this.getStartPositionWithRangeValue(value, barLength, renderOptions);
+      startPos = this.getStartPositionWithRangeValue(value, barLength, renderOptions);
+    } else if (diverging) {
+      startPos = isLBSideWithDiverging
+        ? this.getStartPosOnLeftBottomSide(barLength, seriesDirection)
+        : this.getStartPosOnRightTopSide(barLength, diverging);
+    } else if (seriesDirection === SeriesDirection.POSITIVE) {
+      startPos = this.getStartPosOnRightTopSide(barLength);
+    } else if (seriesDirection === SeriesDirection.NEGATIVE) {
+      startPos = this.getStartPosOnLeftBottomSide(barLength, seriesDirection);
+    } else {
+      startPos =
+        value < 0
+          ? this.getStartPosOnLeftBottomSide(barLength, seriesDirection)
+          : this.getStartPosOnRightTopSide(barLength);
     }
 
-    const divergingSeries = diverging && isLeftBottomSide(seriesIndex);
-    const negativeValue = hasNegativeValue && value < 0;
+    return startPos;
+  }
 
-    if (negativeValue) {
-      return this.isBar ? basePosition - barLength : basePosition;
+  private getStartPosOnRightTopSide(barLength: number, diverging = false) {
+    let pos: number;
+
+    if (diverging) {
+      pos = this.isBar
+        ? this.basePosition - this.axisThickness
+        : this.basePosition - barLength + this.axisThickness;
+    } else {
+      pos = this.isBar ? this.basePosition + this.axisThickness : this.basePosition - barLength;
     }
 
-    if (divergingSeries) {
-      return this.isBar ? basePosition - barLength + this.axisThickness : basePosition;
-    }
+    return pos;
+  }
 
-    return this.isBar ? basePosition + this.axisThickness : basePosition - barLength;
+  private getStartPosOnLeftBottomSide(barLength: number, seriesDirection: SeriesDirection) {
+    return this.isBar
+      ? this.basePosition - barLength
+      : this.basePosition + (seriesDirection === SeriesDirection.NEGATIVE ? this.axisThickness : 0);
   }
 
   protected getAdjustedRect(
@@ -521,10 +544,11 @@ export default class BoxSeries extends Component {
     };
   }
 
-  getColumnWidth(tickDistance: number, seriesLength: number, validDiverging = false) {
+  getColumnWidth(renderOptions: RenderOptions, seriesLength: number, validDiverging = false) {
+    const { tickDistance, padding } = renderOptions;
     seriesLength = validDiverging ? 1 : seriesLength;
 
-    return (tickDistance - this.padding * 2) / seriesLength;
+    return (tickDistance - padding * 2) / seriesLength;
   }
 
   protected getSeriesDirection(labels: string[]) {
@@ -575,5 +599,11 @@ export default class BoxSeries extends Component {
     }
 
     return direction;
+  }
+
+  getPadding(tickDistance: number) {
+    const defaultValue = this.isBar ? PADDING.vertical : PADDING.horizontal;
+
+    return Math.min(defaultValue, Math.floor(tickDistance * 0.3));
   }
 }

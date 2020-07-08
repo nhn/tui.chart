@@ -54,25 +54,25 @@ const result = {
       type: 'rect',
       color: 'rgba(170, 170, 170, 1)',
       width: 16,
-      height: 5,
+      height: 8,
       x: 5,
-      y: 19,
+      y: 16,
       value: 1,
     },
     {
       type: 'rect',
       color: 'rgba(170, 170, 170, 1)',
       width: 32,
-      height: 5,
+      height: 8,
       x: 5,
-      y: 59,
+      y: 56,
       value: 2,
     },
     {
       type: 'rect',
       color: 'rgba(187, 187, 187, 1)',
       width: 64,
-      height: 5,
+      height: 8,
       x: 5,
       y: 24,
       value: 4,
@@ -81,7 +81,7 @@ const result = {
       type: 'rect',
       color: 'rgba(187, 187, 187, 1)',
       width: 80,
-      height: 5,
+      height: 8,
       x: 5,
       y: 64,
       value: 5,
@@ -94,9 +94,9 @@ const respondersResult = [
     type: 'rect',
     color: 'rgba(170, 170, 170, 1)',
     x: 5,
-    y: 19,
+    y: 16,
     width: 16,
-    height: 5,
+    height: 8,
     style: [
       {
         shadowBlur: 6,
@@ -112,9 +112,9 @@ const respondersResult = [
     type: 'rect',
     color: 'rgba(170, 170, 170, 1)',
     x: 5,
-    y: 59,
+    y: 56,
     width: 32,
-    height: 5,
+    height: 8,
     style: [
       {
         shadowBlur: 6,
@@ -132,7 +132,7 @@ const respondersResult = [
     x: 5,
     y: 24,
     width: 64,
-    height: 5,
+    height: 8,
     style: [
       {
         shadowBlur: 6,
@@ -150,7 +150,7 @@ const respondersResult = [
     x: 5,
     y: 64,
     width: 80,
-    height: 5,
+    height: 8,
     style: [
       {
         shadowBlur: 6,
