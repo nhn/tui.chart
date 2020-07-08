@@ -5,7 +5,6 @@ import { isLabelAxisOnYAxis, hasBoxTypeSeries } from '@src/helpers/axes';
 import { hasNegative } from '@src/helpers/utils';
 import { AxisType } from './axis';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
-import Painter from '@src/painter';
 
 function needZeroLine(series: Series, axes: Partial<Record<AxisType, AxisData>>) {
   if (!hasBoxTypeSeries(series)) {
@@ -31,7 +30,6 @@ export default class ZeroAxis extends Component {
     this.rect = layout.plot;
 
     const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
-
     const valueAxisName = labelAxisOnYAxis ? 'xAxis' : 'yAxis';
     const size = labelAxisOnYAxis ? this.rect.width : this.rect.height;
     const { labels, tickCount } = axes[valueAxisName]!;

@@ -43,7 +43,8 @@ export default class Plot extends Component {
     return makeTickPixelPositions(size, tickCount);
   }
 
-  render({ layout, axes, plot }: ChartState<Options>) {
+  render(state: ChartState<Options>) {
+    const { layout, axes, plot } = state;
     this.rect = layout.plot;
 
     this.models.plot = [
@@ -51,10 +52,12 @@ export default class Plot extends Component {
       ...this.renderModels(this.getTickPixelPositions(true, axes), true),
     ];
 
-    const { lines, bands } = plot;
+    if (state.plot) {
+      const { lines, bands } = plot;
 
-    this.models.line = this.renderLines(lines, axes);
-    this.models.band = this.renderBands(bands, axes);
+      this.models.line = this.renderLines(lines, axes);
+      this.models.band = this.renderBands(bands, axes);
+    }
   }
 
   makeLineModel(vertical: boolean, position: number, color: string): LineModel {

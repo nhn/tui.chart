@@ -174,3 +174,27 @@ export const dataLabels = () => {
 
   return el;
 };
+
+export const plotOptions = () => {
+  const { el } = createChart(coordinateData, {
+    chart: { title: 'Concurrent user' },
+    xAxis: { title: 'minute' },
+    yAxis: { title: 'users' },
+    plot: {
+      bands: [
+        {
+          range: ['9', '11'],
+          color: 'rgba(136, 136, 136, 0.2)',
+        },
+      ],
+      lines: [
+        {
+          value: '2',
+          color: '#fa2828',
+        },
+      ],
+    },
+  });
+
+  return el;
+};

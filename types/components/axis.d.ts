@@ -33,5 +33,5 @@ export type LineModel = {
 export type AxisModels = {
   label: LabelModel[];
   tick: TickModel[];
-  axis: LineModel[];
+  axisLine: LineModel[];
 };

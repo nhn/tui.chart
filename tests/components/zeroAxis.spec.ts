@@ -48,6 +48,7 @@ describe('PlotAxis', () => {
         x2: 50.5,
         y: 0.5,
         y2: 150.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.5)',
       },
     ]);
   });

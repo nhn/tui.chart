@@ -22,7 +22,7 @@ interface RenderOptions {
 export default class Axis extends Component {
   name!: AxisType;
 
-  models: AxisModels = {};
+  models: AxisModels = { label: [], tick: [], axisLine: [] };
 
   drawModels!: AxisModels;
 
@@ -76,7 +76,11 @@ export default class Axis extends Component {
     this.models.axisLine = [this.renderAxisLineModel()];
 
     if (!this.drawModels) {
-      this.drawModels = {};
+      this.drawModels = {
+        tick: [],
+        label: [],
+        axisLine: this.models.axisLine,
+      };
 
       ['tick', 'label'].forEach((type) => {
         this.drawModels[type] = this.models[type].map((m) => {
@@ -91,8 +95,6 @@ export default class Axis extends Component {
           return drawModel;
         });
       });
-
-      this.drawModels.axisLine = this.models.axisLine;
     }
   }
 
