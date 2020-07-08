@@ -10,7 +10,8 @@ import {
   PointModel,
 } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
-import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
+import { crispPixel, getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
+import { LineModel } from '@t/components/axis';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -22,10 +23,14 @@ interface RenderOptions {
 export default class AreaStackSeries extends AreaSeries {
   seriesCircleModel!: CircleModel[];
 
-  getStackValue(areaStackSeries: StackSeriesData<'area'>, seriesIndex: number, index: number) {
-    const { stackData } = areaStackSeries;
+  tooltipCircleMap!: Record<number, CircleResponderModel[]>;
 
-    return sum(stackData[index].values.slice(0, seriesIndex + 1));
+  getStackValue(areaStackSeries: StackSeriesData<'area'>, seriesIndex: number, index: number) {
+    const { type } = areaStackSeries.stack;
+    const { values, sum: sumValue } = areaStackSeries.stackData[index];
+    const stackedValue = sum(values.slice(0, seriesIndex + 1));
+
+    return type === 'percent' ? (stackedValue * 100) / sumValue : stackedValue;
   }
 
   getStackLinePointModel(
@@ -110,27 +115,19 @@ export default class AreaStackSeries extends AreaSeries {
     const { height, x, y } = this.rect;
     const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount];
 
-    const boundOptions = {
-      y,
-      height,
-      type: 'bound',
-    };
+    const boundOptions = { type: 'bound', y, height };
+    const halfWidth = tickDistance / 2;
 
     return range(0, tickCount).map((index) => {
       const half = halfDetectAreaIndex.includes(index);
-      const width = half ? tickDistance / 2 : tickDistance;
-      let xx = x;
-      // @TODO: refactoring
-      if (index !== 0 && !pointOnColumn) {
-        xx += width / 2 + tickDistance * (index - 1);
+      const width = half ? halfWidth : tickDistance;
+      let startX = x;
+
+      if (index !== 0) {
+        startX += pointOnColumn ? tickDistance * index : halfWidth + tickDistance * (index - 1);
       }
 
-      return {
-        x: xx,
-        width,
-        ...boundOptions,
-        index,
-      };
+      return { x: startX, width, index, ...boundOptions };
     });
   }
 
@@ -156,12 +153,11 @@ export default class AreaStackSeries extends AreaSeries {
     }
 
     this.rect = layout.plot;
-    const { yAxis } = scale;
+    const { limit } = scale.yAxis;
+    this.baseValueYPosition = this.getBaseValueYPosition(limit);
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
     const areaData = series.area.data;
     const areaStackSeries = stackSeries.area;
-    const baseValueYPosition = this.getBaseValueYPosition(yAxis.limit);
-    this.baseValueYPosition = baseValueYPosition;
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
     const renderOptions: RenderOptions = {
@@ -174,13 +170,12 @@ export default class AreaStackSeries extends AreaSeries {
     this.linePointsModel = this.renderStackLinePointsModel(
       areaData,
       areaStackSeries,
-      yAxis.limit,
+      limit,
       renderOptions,
       legend
     );
     this.seriesCircleModel = this.renderCircleModel();
-    const areaSeriesModel = this.renderAreaPointsModel(baseValueYPosition);
-    console.log(areaSeriesModel);
+    const areaSeriesModel = this.renderAreaPointsModel();
 
     this.models = {
       rect: [this.renderClipRectAreaModel()],
@@ -200,27 +195,51 @@ export default class AreaStackSeries extends AreaSeries {
       this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
     }
 
-    // @TODO: 묶어서 정리 필요
-    this.arr = this.seriesCircleModel.map((m, dataIndex) => ({
-      ...m,
-      data: tooltipDataArr[dataIndex],
-    }));
+    this.tooltipCircleMap = this.seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>(
+      (acc, cur, dataIndex) => {
+        const index = cur.index!;
+        const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex] };
+        if (!acc[index]) {
+          acc[index] = [];
+        }
+        acc[index].push(tooltipModel);
+
+        return acc;
+      },
+      {}
+    );
 
     this.responders = this.makeBoundResponderModel(renderOptions);
   }
 
+  renderGuideLineModel(circleModels: CircleResponderModel[]): LineModel[] {
+    const x = crispPixel(circleModels[0].x);
+
+    return [
+      {
+        type: 'line',
+        x,
+        y: 0,
+        x2: x,
+        y2: this.rect.height,
+        strokeStyle: '#ddd',
+        lineWidth: 1,
+      },
+    ];
+  }
+
   onMousemove({ responders }: { responders: BoundResponderModel[] }) {
     let circleModels: CircleResponderModel[] = [];
+    let guideLine: LineModel[] = [];
 
     if (responders.length) {
-      const { index } = responders[0];
-      // circlemodel 인덱스별로 만들면안되나? 매번 필터할거없이
-      circleModels = this.arr.filter((model) => model.index === index);
-      // render도 해야함
-      // console.log(circleModels);
+      const index = responders[0].index!;
+      circleModels = this.tooltipCircleMap[index];
+
+      guideLine = this.renderGuideLineModel(circleModels);
     }
 
-    this.drawModels.hoveredSeries = [...circleModels];
+    this.drawModels.hoveredSeries = [...guideLine, ...circleModels];
     this.activatedResponders = circleModels;
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);

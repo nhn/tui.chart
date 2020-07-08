@@ -21,6 +21,7 @@ export type CircleModel = {
   color: string;
   style?: StyleProp<CircleStyle, CircleStyleName>;
   seriesIndex?: number;
+  index?: number;
 } & Point;
 
 export type BoundResponderModel = Rect & { type: 'bound'; index?: number };

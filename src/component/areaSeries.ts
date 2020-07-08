@@ -44,6 +44,8 @@ export default class AreaSeries extends Component {
 
   linePointsModel!: LinePointsModel[];
 
+  baseValueYPosition!: number;
+
   isRangeData = false;
 
   initialize() {
@@ -87,10 +89,10 @@ export default class AreaSeries extends Component {
     }
     this.rect = layout.plot;
 
-    const { yAxis } = scale;
+    const { limit } = scale.yAxis;
     const { tickDistance, pointOnColumn } = axes.xAxis!;
     const areaData = series.area.data;
-    const baseValueYPosition = this.getBaseValueYPosition(yAxis.limit);
+    this.baseValueYPosition = this.getBaseValueYPosition(limit);
 
     const renderOptions: RenderOptions = {
       pointOnColumn,
@@ -99,9 +101,9 @@ export default class AreaSeries extends Component {
     };
 
     this.isRangeData = isRangeData(first(areaData)?.data);
-    this.linePointsModel = this.renderLinePointsModel(areaData, yAxis.limit, renderOptions, legend);
+    this.linePointsModel = this.renderLinePointsModel(areaData, limit, renderOptions, legend);
 
-    const areaSeriesModel = this.renderAreaPointsModel(baseValueYPosition);
+    const areaSeriesModel = this.renderAreaPointsModel();
     const seriesCircleModel = this.renderCircleModel();
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
@@ -260,10 +262,10 @@ export default class AreaSeries extends Component {
     return combinedLinePointsModel;
   }
 
-  renderAreaPointsModel(baseValueYPosition: number): AreaPointsModel[] {
+  renderAreaPointsModel(): AreaPointsModel[] {
     return this.combineLinePointsModel().map((m) => ({
       ...m,
-      points: this.isRangeData ? m.points : this.addBottomPoints(m.points, baseValueYPosition),
+      points: this.isRangeData ? m.points : this.addBottomPoints(m.points, this.baseValueYPosition),
       type: 'areaPoints',
       lineWidth: 0,
       color: 'rgba(0, 0, 0, 0)', // make area border transparent
