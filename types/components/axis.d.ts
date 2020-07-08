@@ -30,4 +30,8 @@ export type LineModel = {
   dashedPattern?: number[];
 } & Point;
 
-export type AxisModels = Record<string, Array<LabelModel | TickModel | LineModel>>;
+export type AxisModels = {
+  label: LabelModel[];
+  tick: TickModel[];
+  axis: LineModel[];
+};

@@ -22,8 +22,6 @@ export default class ZeroAxis extends Component {
 
   models: LineModel[] = [];
 
-  drawModels!: LineModel[];
-
   initialize() {
     this.type = 'zeroAxis';
     this.name = name;
@@ -65,6 +63,7 @@ export default class ZeroAxis extends Component {
         y: zeroPixel,
         x2: position,
         y2: crispPixel(this.rect.height),
+        strokeStyle: 'rgba(0, 0, 0, 0.5)',
       };
     } else {
       model = {
@@ -73,14 +72,10 @@ export default class ZeroAxis extends Component {
         y: position,
         x2: this.rect.width,
         y2: crispPixel(position),
+        strokeStyle: 'rgba(0, 0, 0, 0.5)',
       };
     }
 
     return [model];
-  }
-
-  beforeDraw(painter: Painter) {
-    painter.ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-    painter.ctx.lineWidth = 1;
   }
 }

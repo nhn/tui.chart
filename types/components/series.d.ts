@@ -91,7 +91,7 @@ export type LineSeriesModels = {
   rect: ClipRectAreaModel[];
   series: LinePointsModel[];
   hoveredSeries: CircleModel[];
-}
+};
 
 export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
   type: 'stackTotal';

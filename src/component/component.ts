@@ -19,6 +19,7 @@ import { LegendModel, LegendResponderModel } from '@t/components/legend';
 import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { BoxResponderModel } from './exportMenu';
+import { PlotModels } from '@t/components/plot';
 type ComponentType =
   | 'component'
   | 'series'
@@ -41,11 +42,11 @@ type ComponentModels =
   | LineSeriesModels
   | ExportMenuModels
   | CircleLegendModels
+  | PlotModels
   | LineModel[]
   | LabelModel[]
   | LegendModel[]
-  | TooltipModel[]
-  | Record<string, LineModel[]>; // plot
+  | TooltipModel[];
 
 type ComponentResponders = Array<
   CircleResponderModel | RectModel | LegendResponderModel | BoxResponderModel

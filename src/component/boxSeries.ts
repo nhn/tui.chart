@@ -56,8 +56,8 @@ const BOX = {
 };
 
 const PADDING = {
-  TB: 15, // top & bottom
-  LR: 24, // left & right
+  vertical: 15, // top & bottom
+  horizontal: 24, // left & right
 };
 
 export function isLeftBottomSide(seriesIndex: number) {
@@ -602,7 +602,7 @@ export default class BoxSeries extends Component {
   }
 
   getPadding(tickDistance: number) {
-    const defaultValue = this.isBar ? PADDING.TB : PADDING.LR;
+    const defaultValue = this.isBar ? PADDING.vertical : PADDING.horizontal;
 
     return Math.min(defaultValue, Math.floor(tickDistance * 0.3));
   }

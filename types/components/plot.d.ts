@@ -1,5 +1,8 @@
-import { Rect } from '../options';
+import { LineModel } from '@t/components/axis';
+import { RectModel } from '@t/components/series';
 
-export type PlotModel = {
-  type: 'plot';
-} & Rect;
+export type PlotModels = {
+  plot: LineModel[];
+  line: LineModel[];
+  band: RectModel[];
+};
