@@ -22,6 +22,7 @@ const chartState = {
   axes: {
     xAxis: {
       labels: ['-3', '-2', '-1', '0', '1', '2', '3'],
+      tickCount: 7,
     },
     yAxis: {},
   },
@@ -43,8 +44,8 @@ describe('PlotAxis', () => {
     expect(plotAxis.models).toEqual([
       {
         type: 'line',
-        x: NaN,
-        x2: NaN,
+        x: 50.5,
+        x2: 50.5,
         y: 0.5,
         y2: 150.5,
       },
