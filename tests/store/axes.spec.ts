@@ -70,6 +70,7 @@ describe('Axes Store module', () => {
         pointOnColumn: false,
         tickCount: 6,
         tickDistance: 25,
+        zeroPosition: 150,
       },
     });
   });

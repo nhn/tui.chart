@@ -21,8 +21,7 @@ const chartState = {
   },
   axes: {
     xAxis: {
-      labels: ['-3', '-2', '-1', '0', '1', '2', '3'],
-      tickCount: 7,
+      zeroPosition: 50,
     },
     yAxis: {},
   },
@@ -57,7 +56,7 @@ describe('PlotAxis', () => {
     const state = {
       chart: { width: 120, height: 120 },
       layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
-      scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } },
+      scale: { xAxis: { limit: { min: 1, max: 5 }, stepSize: 1, stepCount: 1 } },
       series: {
         bar: {
           data: [
