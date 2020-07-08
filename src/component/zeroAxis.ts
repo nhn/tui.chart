@@ -1,20 +1,9 @@
 import Component from './component';
 import { LineModel } from '@t/components/axis';
-import { ChartState, Options, AxisData, Series } from '@t/store/store';
-import { isLabelAxisOnYAxis, hasBoxTypeSeries } from '@src/helpers/axes';
-import { hasNegative } from '@src/helpers/utils';
-import { AxisType } from './axis';
-import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
-
-function needZeroLine(series: Series, axes: Partial<Record<AxisType, AxisData>>) {
-  if (!hasBoxTypeSeries(series)) {
-    return false;
-  }
-
-  const valueAxisName = isLabelAxisOnYAxis(series) ? 'xAxis' : 'yAxis';
-
-  return hasNegative(axes[valueAxisName]?.labels);
-}
+import { ChartState, Options } from '@t/store/store';
+import { isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { crispPixel } from '@src/helpers/calculator';
+import { isNumber } from '@src/helpers/utils';
 
 export default class ZeroAxis extends Component {
   name!: string;
@@ -28,29 +17,18 @@ export default class ZeroAxis extends Component {
 
   render({ layout, axes, series }: ChartState<Options>) {
     this.rect = layout.plot;
-
     const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
     const valueAxisName = labelAxisOnYAxis ? 'xAxis' : 'yAxis';
-    const size = labelAxisOnYAxis ? this.rect.width : this.rect.height;
-    const { labels, tickCount } = axes[valueAxisName]!;
-    const relativePositions = makeTickPixelPositions(size, tickCount);
-    const axisLabels = labelAxisOnYAxis ? labels : [...labels].reverse();
+    const { zeroPosition } = axes[valueAxisName]!;
 
-    this.models = needZeroLine(series, axes)
-      ? this.renderZeroModel(relativePositions, axisLabels, labelAxisOnYAxis)
-      : [];
-
-    this.drawModels = this.models;
+    if (isNumber(zeroPosition)) {
+      this.models = this.renderZeroModel(zeroPosition, labelAxisOnYAxis);
+    }
   }
 
-  renderZeroModel(relativePositions: number[], labels: string[], vertical: boolean): LineModel[] {
+  renderZeroModel(zeroPosition: number, vertical: boolean): LineModel[] {
     const zeroPixel = crispPixel(0);
-    const index = labels.findIndex((label) => Number(label) === 0);
-    const position = crispPixel(relativePositions[index]);
-
-    if (index < 0) {
-      return [];
-    }
+    const position = crispPixel(zeroPosition);
 
     let model: LineModel;
 
@@ -68,8 +46,8 @@ export default class ZeroAxis extends Component {
         type: 'line',
         x: zeroPixel,
         y: position,
-        x2: this.rect.width,
-        y2: crispPixel(position),
+        x2: crispPixel(this.rect.width),
+        y2: position,
         strokeStyle: 'rgba(0, 0, 0, 0.5)',
       };
     }

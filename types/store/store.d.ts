@@ -226,6 +226,7 @@ export interface AxisData {
   tickInterval: number;
   labelInterval: number;
   title?: Required<AxisTitleOption>;
+  zeroPosition?: number;
 }
 
 export interface ValueEdge {
