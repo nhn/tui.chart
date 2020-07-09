@@ -7,6 +7,7 @@ import {
   temperatureData,
   coordinateData,
   randomData,
+  temperatureData2,
 } from './data';
 import { boolean, number, withKnobs } from '@storybook/addon-knobs';
 
@@ -52,7 +53,7 @@ export const basic = () => {
 };
 
 export const spline = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(temperatureData2, {
     series: { spline: boolean('spline', true) },
   });
 
@@ -133,7 +134,7 @@ export const labelInterval = () => {
 };
 
 export const scale = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(temperatureData2, {
     yAxis: {
       scale: {
         min: number('min', -1000, {
