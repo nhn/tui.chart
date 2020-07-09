@@ -9,7 +9,13 @@ import {
 import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import { AxisTitle, BoxSeriesOptions } from '@t/options';
-import { deepMergedCopy, hasNegativeOnly, isString, isUndefined } from '@src/helpers/utils';
+import {
+  deepMergedCopy,
+  hasNegativeOnly,
+  isString,
+  isUndefined,
+  isNumber,
+} from '@src/helpers/utils';
 
 interface StateProp {
   scale: ScaleData;
@@ -60,14 +66,19 @@ export function getValueAxisData(stateProp: StateProp) {
     zeroPosition = axisSize / 2;
   }
 
-  return {
+  const axisData = {
     labels: valueLabels,
     pointOnColumn: false,
     isLabelAxis: false,
     tickCount: valueLabels.length,
     tickDistance: axisSize / valueLabels.length,
-    zeroPosition,
-  };
+  } as AxisData;
+
+  if (isNumber(zeroPosition)) {
+    axisData.zeroPosition = zeroPosition;
+  }
+
+  return axisData;
 }
 
 function getDivergingValues(valueLabels) {
