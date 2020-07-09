@@ -76,7 +76,7 @@ const dataRange: StoreModule = {
             (arr, value) => (Array.isArray(value) ? [...arr, ...value] : [...value]),
             []
           );
-        } else if (stackSeries[seriesName]?.stack) {
+        } else if (stackSeries && stackSeries[seriesName]?.stack) {
           values = stackSeries[seriesName].dataRangeValues;
         } else if (isBoxSeries(seriesName as ChartType)) {
           values.push(0);

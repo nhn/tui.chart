@@ -12,6 +12,7 @@ import Legend from '@src/component/legend';
 import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
+import HoveredSeries from '@src/component/hoveredSeries';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -54,6 +55,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
+    this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([

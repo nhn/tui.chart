@@ -23,7 +23,10 @@ import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray, deepMergedCopy, first, last, range, sum } from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
 
-type DrawModels = LinePointsModel | AreaPointsModel | ClipRectAreaModel | CircleModel;
+interface AreaSeriesDrawModels {
+  rect: ClipRectAreaModel[];
+  series: AreaPointsModel[];
+}
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -39,7 +42,7 @@ type DatumType = number | RangeDataType;
 type ChartType = 'range' | 'normal' | 'stack';
 
 export default class AreaSeries extends Component {
-  models: AreaSeriesModels = { rect: [], hoveredSeries: [], series: [] };
+  models: AreaSeriesDrawModels = { rect: [], series: [] };
 
   drawModels!: AreaSeriesModels;
 
@@ -101,10 +104,6 @@ export default class AreaSeries extends Component {
 
     let areaStackSeries;
 
-    if (stackSeries && stackSeries.area) {
-      this.chartType = 'stack';
-      areaStackSeries = stackSeries.area;
-    }
     this.rect = layout.plot;
 
     const { limit } = scale.yAxis;
@@ -112,7 +111,10 @@ export default class AreaSeries extends Component {
     const areaData = series.area.data;
     this.baseValueYPosition = this.getBaseValueYPosition(limit);
 
-    if (isRangeData(first(areaData)?.data)) {
+    if (stackSeries && stackSeries.area) {
+      this.chartType = 'stack';
+      areaStackSeries = stackSeries.area;
+    } else if (isRangeData(first(areaData)?.data)) {
       this.chartType = 'range';
     }
 
@@ -133,14 +135,12 @@ export default class AreaSeries extends Component {
     this.models = {
       rect: [this.renderClipRectAreaModel()],
       series: areaSeriesModel,
-      hoveredSeries: [],
     };
 
     if (!this.drawModels) {
       this.drawModels = {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(areaSeriesModel),
-        hoveredSeries: [],
       };
     }
 
@@ -315,52 +315,40 @@ export default class AreaSeries extends Component {
     ];
   }
 
-  combineLinePointsModel() {
+  getCombinedLinePointsModel(): LinePointsModel[] {
     if (this.chartType === 'normal') {
-      return this.linePointsModel;
+      return this.linePointsModel.map((m) => ({
+        ...m,
+        points: this.addBottomPoints(m.points, this.baseValueYPosition),
+      }));
     }
 
-    const combinedLinePointsModel: LinePointsModel[] = [];
-    let len;
+    const len =
+      this.chartType === 'range' ? this.linePointsModel.length / 2 : this.linePointsModel.length;
 
-    if (this.chartType === 'range') {
-      len = this.linePointsModel.length / 2;
-      for (let i = 0; i < len; i += 1) {
-        combinedLinePointsModel.push({
-          ...this.linePointsModel[i],
-          points: [
-            ...this.linePointsModel[i].points,
-            ...deepCopyArray(this.linePointsModel[len + i].points).reverse(),
-          ],
-        });
-      }
-    } else {
-      // @TODO: refactor
-      len = this.linePointsModel.length;
-      for (let i = 0; i < len; i += 1) {
-        combinedLinePointsModel.push({
+    return range(0, len).reduce<LinePointsModel[]>((acc, i) => {
+      const start = this.chartType === 'range' ? i : i - 1;
+      const end = this.chartType === 'range' ? len + i : i;
+
+      return [
+        ...acc,
+        {
           ...this.linePointsModel[i],
           points:
-            i === 0
+            this.chartType === 'stack' && i === 0
               ? this.addBottomPoints(this.linePointsModel[i].points, this.baseValueYPosition)
               : [
-                  ...this.linePointsModel[i - 1].points,
-                  ...[...this.linePointsModel[i].points].reverse(),
+                  ...this.linePointsModel[start].points,
+                  ...[...this.linePointsModel[end].points].reverse(),
                 ],
-        });
-      }
-    }
-
-    return combinedLinePointsModel;
+        },
+      ];
+    }, []);
   }
 
   renderAreaPointsModel(): AreaPointsModel[] {
-    return this.combineLinePointsModel().map((m) => ({
+    return this.getCombinedLinePointsModel().map((m) => ({
       ...m,
-      points:
-        this.chartType === 'range'
-          ? m.points
-          : this.addBottomPoints(m.points, this.baseValueYPosition),
       type: 'areaPoints',
       lineWidth: 0,
       color: 'rgba(0, 0, 0, 0)', // make area border transparent
@@ -383,12 +371,8 @@ export default class AreaSeries extends Component {
     );
   }
 
-  isAreaPointsModel(model: DrawModels): model is AreaPointsModel {
-    return model.type === 'areaPoints';
-  }
-
   applyAreaOpacity(opacity: number) {
-    this.drawModels.series.filter(this.isAreaPointsModel).forEach((model) => {
+    this.drawModels.series.forEach((model) => {
       model.fillColor = getRGBA(model.fillColor, opacity);
     });
   }
@@ -419,7 +403,7 @@ export default class AreaSeries extends Component {
       guideLine = this.renderGuideLineModel(circleModels);
     }
 
-    this.drawModels.hoveredSeries = [...guideLine, ...circleModels];
+    this.eventBus.emit('renderHoveredSeries', [...guideLine, ...circleModels]);
     this.activatedResponders = circleModels;
   }
 
@@ -450,7 +434,7 @@ export default class AreaSeries extends Component {
       []
     );
 
-    this.drawModels.hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];
+    this.eventBus.emit('renderHoveredSeries', [...linePoints, ...responders, ...pairCircleModels]);
     this.activatedResponders = responders;
   }
 
@@ -463,6 +447,12 @@ export default class AreaSeries extends Component {
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
     this.eventBus.emit('needDraw');
+  }
+
+  onMouseoutComponent() {
+    this.applyAreaOpacity(1);
+    this.eventBus.emit('seriesPointHovered', []);
+    this.eventBus.emit('renderHoveredSeries', []);
   }
 
   getDataLabels(seriesModels: AreaPointsModel[]) {

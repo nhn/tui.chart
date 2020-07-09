@@ -24,7 +24,7 @@ interface RenderLineOptions {
 type DatumType = CoordinateDataType | number;
 
 export default class LineSeries extends Component {
-  models: LineSeriesModels = { rect: [], series: [], hoveredSeries: [] };
+  models: LineSeriesModels = { rect: [], series: [] };
 
   drawModels!: LineSeriesModels;
 
@@ -92,17 +92,12 @@ export default class LineSeries extends Component {
       return tooltipData;
     });
 
-    this.models = {
-      rect: [this.renderClipRectAreaModel()],
-      series: lineSeriesModel,
-      hoveredSeries: [],
-    };
+    this.models = { rect: [this.renderClipRectAreaModel()], series: lineSeriesModel };
 
     if (!this.drawModels) {
       this.drawModels = {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(lineSeriesModel),
-        hoveredSeries: [],
       };
     }
 
@@ -182,7 +177,7 @@ export default class LineSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] }) {
-    this.drawModels.hoveredSeries = [...responders];
+    this.eventBus.emit('renderHoveredSeries', responders);
 
     this.activatedResponders = responders;
 

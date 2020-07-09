@@ -4,7 +4,7 @@ import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
 
 export default abstract class CircleSeries extends Component {
-  models: CircleSeriesModels = { series: [], hoveredSeries: [] };
+  models: CircleSeriesModels = { series: [] };
 
   drawModels!: CircleSeriesModels;
 
@@ -41,7 +41,8 @@ export default abstract class CircleSeries extends Component {
 
   onMousemove({ responders, mousePosition }) {
     const closestResponder = this.getClosestResponder(responders, mousePosition);
-    this.drawModels.hoveredSeries = closestResponder;
+
+    this.eventBus.emit('renderHoveredSeries', closestResponder);
     this.activatedResponders = closestResponder;
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
