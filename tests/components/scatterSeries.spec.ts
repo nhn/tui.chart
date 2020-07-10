@@ -163,7 +163,6 @@ const result = {
         y: 280,
       },
     ],
-    hoveredSeries: [],
   },
 };
 

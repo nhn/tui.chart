@@ -22,6 +22,8 @@ import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray, deepMergedCopy, first, last, range, sum } from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
+import { LineModel } from '@t/components/axis';
+import { tick } from '@src/brushes/axis';
 
 interface AreaSeriesDrawModels {
   rect: ClipRectAreaModel[];
