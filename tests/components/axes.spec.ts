@@ -34,8 +34,8 @@ describe('yAxis', () => {
 
     it('tick model', () => {
       expect(axis.models.tick).toEqual([
-        { isYAxis: true, type: 'tick', x: 10.5, y: 0.5 },
-        { isYAxis: true, type: 'tick', x: 10.5, y: 80.5 },
+        { isYAxis: true, type: 'tick', x: 10.5, y: 0.5, direction: 'left' },
+        { isYAxis: true, type: 'tick', x: 10.5, y: 80.5, direction: 'left' },
       ]);
     });
 
@@ -118,8 +118,8 @@ describe('xAxis', () => {
 
     it('tick model', () => {
       expect(axis.models.tick).toEqual([
-        { isYAxis: false, type: 'tick', x: 0.5, y: 0.5 },
-        { isYAxis: false, type: 'tick', x: 80.5, y: 0.5 },
+        { isYAxis: false, type: 'tick', x: 0.5, y: 0.5, direction: 'bottom' },
+        { isYAxis: false, type: 'tick', x: 80.5, y: 0.5, direction: 'bottom' },
       ]);
     });
 

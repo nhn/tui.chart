@@ -55,10 +55,10 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
-    this.componentManager.add(ZeroAxis);
-    this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(BoxStackSeries, { name: 'column' });
     this.componentManager.add(BoxSeries, { name: 'column' });
+    this.componentManager.add(ZeroAxis);
+    this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(DataLabels);
     this.componentManager.add(AxisTitle, { name: 'xAxis' });

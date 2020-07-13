@@ -27,7 +27,7 @@ export const labelStyle = {
     font: DEFAULT_LABEL_TEXT,
     fillStyle: '#333333',
     textAlign: 'left',
-    textBaseline: 'top',
+    textBaseline: 'middle',
   },
   title: {
     font: TITLE_TEXT,

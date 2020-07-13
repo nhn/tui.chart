@@ -1,4 +1,12 @@
-import { AxisData, Options, ScaleData, Series, StoreModule, ValueEdge } from '@t/store/store';
+import {
+  AxisData,
+  Options,
+  ScaleData,
+  Series,
+  StoreModule,
+  ValueEdge,
+  Layout,
+} from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
   getAxisName,
@@ -25,6 +33,12 @@ interface StateProp {
 }
 
 type ValueStateProp = StateProp & { categories: string[] };
+
+type YCenterStateProp = {
+  scale: ScaleData;
+  axisSize: number;
+  layout: Layout;
+};
 
 function getZeroPosition(limit: ValueEdge, axisSize: number, labelAxisOnYAxis: boolean) {
   const { min, max } = limit;
@@ -63,7 +77,7 @@ export function getValueAxisData(stateProp: StateProp) {
 
   if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
     valueLabels = getDivergingValues(valueLabels);
-    zeroPosition = axisSize / 2;
+    zeroPosition = null;
   }
 
   const axisData = {
@@ -103,6 +117,21 @@ function makeTitleOption(title?: AxisTitle) {
     : deepMergedCopy(defaultOption, title);
 }
 
+function getValueYCenterAxisData(stateProp: YCenterStateProp) {
+  const { scale, axisSize, layout } = stateProp;
+  const { limit, stepSize } = scale;
+  const valueLabels = makeLabelsFromLimit(limit, stepSize);
+  const halfSize = (axisSize - layout.yAxis.width) / 2;
+
+  return {
+    labels: valueLabels,
+    pointOnColumn: false,
+    isLabelAxis: false,
+    tickCount: valueLabels.length,
+    tickDistance: halfSize / valueLabels.length,
+  };
+}
+
 const axes: StoreModule = {
   name: 'axes',
   state: ({ options }) => ({
@@ -121,7 +150,7 @@ const axes: StoreModule = {
   }),
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, categories = [] } = state;
+      const { scale, options, series, layout, categories = [], yCenterAxis } = state;
       const { plot } = layout;
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
@@ -130,12 +159,18 @@ const axes: StoreModule = {
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
 
-      const valueAxisData = getValueAxisData({
-        scale: scale[valueAxisName],
-        axisSize: valueAxisSize,
-        options,
-        series,
-      });
+      const valueAxisData = yCenterAxis?.visible
+        ? getValueYCenterAxisData({
+            scale: scale[valueAxisName],
+            axisSize: valueAxisSize,
+            layout,
+          })
+        : getValueAxisData({
+            scale: scale[valueAxisName],
+            axisSize: valueAxisSize,
+            options,
+            series,
+          });
       const labelAxisData = getLabelAxisData({
         scale: scale[labelAxisName],
         axisSize: labelAxisSize,

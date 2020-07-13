@@ -99,7 +99,8 @@ export interface StoreModule extends StoreOptions {
     | 'stackSeriesData'
     | 'legend'
     | 'circleLegend'
-    | 'dataLabels';
+    | 'dataLabels'
+    | 'yCenterAxis';
 }
 
 export interface SeriesTheme {
@@ -174,6 +175,14 @@ export interface CircleLegend {
   radius: number;
 }
 
+export type YCenterAxis = {
+  visible: boolean;
+  rect: Rect;
+  xAxisHalfSize: number;
+  centerX: number;
+  secondStartX: number;
+};
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -200,6 +209,7 @@ export interface ChartState<T extends Options> {
     visible: boolean;
     data: DataLabel[];
   };
+  yCenterAxis: YCenterAxis;
 }
 
 export type StackTotal = {

@@ -7,6 +7,7 @@ import {
   negativeBudgetData,
   budgetDataForDiverging,
   lossDataForGroupStack,
+  genderAgeGroupData,
 } from './data';
 import { BarChartOptions, BaseChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
@@ -23,8 +24,6 @@ const defaultOptions: BarChartOptions = {
     height,
     title: 'Monthly Revenue',
   },
-  xAxis: { title: 'Amount' },
-  yAxis: { title: 'Month' },
 };
 
 function createChart(data, customOptions?: BarChartOptions) {
@@ -54,7 +53,7 @@ export const basic = () => {
   return el;
 };
 
-export const negative = () => {
+export const withNegative = () => {
   const { el } = createChart(negativeBudgetData);
 
   return el;
@@ -174,11 +173,39 @@ export const diverging = () => {
 
 export const divergingGroupStack = () => {
   const { el } = createChart(budgetDataForGroupStack, {
+    yAxis: {
+      align: 'center',
+    },
     series: {
       diverging: true,
       stack: {
         type: 'normal',
         connector: true,
+      },
+      dataLabels: {
+        visible: true,
+      },
+    },
+  });
+
+  return el;
+};
+
+export const divergingWithCenterYAxis = () => {
+  const { el } = createChart(genderAgeGroupData, {
+    chart: {
+      title: 'Population Distribution',
+      width,
+      height,
+    },
+    yAxis: {
+      title: 'Age Group',
+      align: 'center',
+    },
+    series: {
+      diverging: true,
+      dataLabels: {
+        visible: true,
       },
     },
   });
