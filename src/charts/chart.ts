@@ -12,7 +12,7 @@ import { debounce } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
-import { ComponentType } from '@src/component/component';
+import Component from '@src/component/component';
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -33,7 +33,7 @@ export default abstract class Chart<T extends Options> {
 
   modules?: StoreModule[];
 
-  hoveredComponentType: ComponentType[] = [];
+  enteredComponents: Component[] = [];
 
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories } = props;
@@ -102,20 +102,22 @@ export default abstract class Chart<T extends Options> {
       y: clientY - canvasRect.top,
     };
 
-    const newHoveredComponent: ComponentType[] = [];
+    const newEnteredComponents: Component[] = [];
 
     if (eventType === 'mousemove') {
       this.componentManager.forEach((component) => {
         const { x, y, height, width } = component.rect;
-        const exist = this.hoveredComponentType.some((type) => type === component.type);
-        const hovered =
+        const exist = this.enteredComponents.some(
+          (enteredComponent) => enteredComponent === component
+        );
+        const entered =
           mousePosition.x >= x &&
           mousePosition.x <= x + width &&
           mousePosition.y >= y &&
           mousePosition.y <= y + height;
 
-        if (hovered) {
-          newHoveredComponent.push(component.type);
+        if (entered) {
+          newEnteredComponents.push(component);
 
           if (!exist && component.onMouseenterComponent) {
             component.onMouseenterComponent();
@@ -125,7 +127,7 @@ export default abstract class Chart<T extends Options> {
         }
       });
 
-      this.hoveredComponentType = newHoveredComponent;
+      this.enteredComponents = newEnteredComponents;
     }
 
     this.componentManager.forEach((component) => {
