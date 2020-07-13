@@ -146,28 +146,40 @@ export const budgetDataForStack = {
   ],
 };
 
-export const budgetDataForGroupStack = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+export const genderAgeGroupData = {
+  categories: [
+    '0 ~ 9',
+    '10 ~ 19',
+    '20 ~ 29',
+    '30 ~ 39',
+    '40 ~ 49',
+    '50 ~ 59',
+    '60 ~ 69',
+    '70 ~ 79',
+    '80 ~ 89',
+    '90 ~ 99',
+    '100 ~',
+  ],
   series: [
     {
-      name: 'Budget',
-      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
-      stackGroup: 'A',
+      name: 'Male - Seoul',
+      data: [4007, 5067, 7221, 8358, 8500, 7730, 4962, 2670, 6700, 776, 131],
+      stackGroup: 'Male',
     },
     {
-      name: 'Income',
-      data: [8000, 1000, 7000, 2000, 6000, 3000, 5000],
-      stackGroup: 'B',
+      name: 'Female - Seoul',
+      data: [3805, 4728, 7244, 8291, 8530, 8126, 5483, 3161, 1274, 2217, 377],
+      stackGroup: 'Female',
     },
     {
-      name: 'Expenses',
-      data: [4000, 4000, 6000, 3000, 4000, 5000, 7000],
-      stackGroup: 'A',
+      name: 'Male - Incheon',
+      data: [1392, 1671, 2092, 2339, 2611, 2511, 1277, 6145, 1713, 1974, 194],
+      stackGroup: 'Male',
     },
     {
-      name: 'Debt',
-      data: [6000, 3000, 3000, 1000, 2000, 4000, 3000],
-      stackGroup: 'B',
+      name: 'Female - Incheon',
+      data: [1320, 1558, 1927, 2212, 2556, 2433, 1304, 8076, 3800, 6057, 523],
+      stackGroup: 'Female',
     },
   ],
 };
@@ -212,20 +224,6 @@ export const lossDataForGroupStack = {
       name: 'Flowerbeat',
       data: [-6000, -3000, -3000, -1000, -2000, -4000, -3000],
       stackGroup: 'B',
-    },
-  ],
-};
-
-export const budgetDataForDiverging = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  series: [
-    {
-      name: 'Budget',
-      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
-    },
-    {
-      name: 'Income',
-      data: [8000, 1000, 7000, 2000, 6000, 3000, 5000],
     },
   ],
 };
@@ -1020,7 +1018,7 @@ export const lifeExpectancyPerGDPData = {
   ],
 };
 
-export const genderAgeGroupData = {
+export const genderAgeData = {
   categories: [
     '100 ~',
     '90 ~ 99',

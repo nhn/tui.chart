@@ -1,0 +1,191 @@
+import BarChart from '@src/charts/barChart';
+import { budgetDataForStack, negativeBudgetData, budgetData, lossData } from './data';
+import { BarChartOptions } from '@t/options';
+import { deepMergedCopy } from '@src/helpers/utils';
+import { withKnobs, radios, boolean } from '@storybook/addon-knobs';
+
+export default {
+  title: 'chart.Bar.Stack',
+  decorators: [withKnobs],
+};
+
+const width = 1000;
+const height = 500;
+const defaultOptions: BarChartOptions = {
+  chart: {
+    width,
+    height,
+    title: 'Monthly Revenue',
+  },
+};
+
+function createChart(data, customOptions?: BarChartOptions) {
+  const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions || {});
+
+  el.style.outline = '1px solid red';
+  el.style.width = `${width}px`;
+  el.style.height = `${height}px`;
+
+  const chart = new BarChart({
+    el,
+    data,
+    options,
+  });
+
+  return { el, chart };
+}
+
+export const normal = () => {
+  const { el } = createChart(budgetDataForStack, {
+    series: {
+      stack: {
+        type: 'normal',
+      },
+    },
+  });
+
+  return el;
+};
+
+export const percent = () => {
+  const { el } = createChart(budgetDataForStack, {
+    series: {
+      stack: {
+        type: 'percent',
+      },
+    },
+  });
+
+  return el;
+};
+
+export const positiveWithMinMax = () => {
+  const { el } = createChart(budgetData, {
+    ...defaultOptions,
+    xAxis: {
+      scale: {
+        min: 3500,
+        max: 8000,
+      },
+    },
+    series: {
+      stack: true,
+    },
+  });
+
+  return el;
+};
+
+export const negativeWithMinMax = () => {
+  const { el } = createChart(lossData, {
+    ...defaultOptions,
+    xAxis: {
+      scale: {
+        min: -8000,
+        max: -1000,
+      },
+    },
+    series: {
+      stack: true,
+    },
+  });
+
+  return el;
+};
+
+export const both = () => {
+  const { el } = createChart(negativeBudgetData, {
+    series: {
+      stack: true,
+    },
+  });
+
+  return el;
+};
+
+export const bothWithMinMax = () => {
+  const { el } = createChart(negativeBudgetData, {
+    series: {
+      stack: true,
+    },
+    xAxis: {
+      scale: {
+        min: -8000,
+        max: 12000,
+      },
+    },
+  });
+
+  return el;
+};
+
+export const bothPercent = () => {
+  const { el } = createChart(negativeBudgetData, {
+    series: {
+      stack: {
+        type: 'percent',
+      },
+    },
+  });
+
+  return el;
+};
+
+export const defaultConnector = () => {
+  const { el } = createChart(budgetDataForStack, {
+    series: {
+      stack: {
+        type: 'normal',
+        connector: true,
+      },
+    },
+  });
+
+  return el;
+};
+
+export const styledConnector = () => {
+  const { el } = createChart(budgetDataForStack, {
+    series: {
+      stack: {
+        type: 'normal',
+        connector: {
+          type: 'dashed',
+          color: '#031f4b',
+          width: 2,
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabels = () => {
+  const anchor = radios('anchor', { center: 'center', start: 'start', end: 'end' }, 'center');
+  const showStackTotal = boolean('Show Stack Total', true);
+  const { el } = createChart(negativeBudgetData, {
+    xAxis: {
+      scale: {
+        min: -16000,
+        max: 16000,
+      },
+    },
+    series: {
+      stack: true,
+      dataLabels: {
+        visible: true,
+        anchor,
+        stackTotal: {
+          visible: showStackTotal,
+          style: {
+            font: '700 12px Arial',
+          },
+        },
+      },
+    },
+  });
+
+  return el;
+};

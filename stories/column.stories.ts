@@ -2,17 +2,17 @@ import ColumnChart from '@src/charts/columnChart';
 import {
   budgetData,
   temperatureRangeData,
-  budgetDataForStack,
-  budgetDataForGroupStack,
   negativeBudgetData,
-  budgetDataForDiverging,
-  lossDataForGroupStack,
+  lossData,
+  genderAgeData,
 } from './data';
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
+import { withKnobs, radios } from '@storybook/addon-knobs';
 
 export default {
-  title: 'chart|Column',
+  title: 'chart.Column.General',
+  decorators: [withKnobs],
 };
 
 const width = 1000;
@@ -23,8 +23,6 @@ const defaultOptions: ColumnChartOptions = {
     height,
     title: 'Monthly Revenue',
   },
-  xAxis: { title: 'Month' },
-  yAxis: { title: 'Amount' },
 };
 
 function createChart(data, customOptions?: ColumnChartOptions) {
@@ -44,14 +42,59 @@ function createChart(data, customOptions?: ColumnChartOptions) {
   return { el, chart };
 }
 
-export const basic = () => {
+export const positive = () => {
   const { el } = createChart(budgetData);
 
   return el;
 };
 
+export const positiveWithMinMax = () => {
+  const { el } = createChart(budgetData, {
+    yAxis: {
+      scale: {
+        min: 1000,
+        max: 8000,
+      },
+    },
+  });
+
+  return el;
+};
+
 export const negative = () => {
+  const { el } = createChart(lossData);
+
+  return el;
+};
+
+export const negativeWithMinMax = () => {
+  const { el } = createChart(lossData, {
+    yAxis: {
+      scale: {
+        min: -8000,
+        max: -1000,
+      },
+    },
+  });
+
+  return el;
+};
+
+export const both = () => {
   const { el } = createChart(negativeBudgetData);
+
+  return el;
+};
+
+export const bothWithMinMax = () => {
+  const { el } = createChart(negativeBudgetData, {
+    yAxis: {
+      scale: {
+        min: -6000,
+        max: 6000,
+      },
+    },
+  });
 
   return el;
 };
@@ -62,95 +105,12 @@ export const range = () => {
   return el;
 };
 
-export const normalStack = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'normal',
-      },
-    },
-  });
-
-  return el;
-};
-
-export const percentStack = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'percent',
-      },
-    },
-  });
-
-  return el;
-};
-
-export const negativeStack = () => {
-  const { el } = createChart(negativeBudgetData, {
-    series: {
-      stack: true,
-    },
-  });
-
-  return el;
-};
-
-export const negativePercentStack = () => {
-  const { el } = createChart(negativeBudgetData, {
-    series: {
-      stack: {
-        type: 'percent',
-      },
-    },
-  });
-
-  return el;
-};
-
-export const groupStack = () => {
-  const { el } = createChart(budgetDataForGroupStack, {
-    series: {
-      stack: true,
-    },
-  });
-
-  return el;
-};
-
-export const negativeGroupStack = () => {
-  const { el } = createChart(lossDataForGroupStack, {
-    series: {
-      stack: true,
-    },
-  });
-
-  return el;
-};
-
-export const defaultConnector = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'normal',
-        connector: true,
-      },
-    },
-  });
-
-  return el;
-};
-
-export const styledConnector = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'normal',
-        connector: {
-          type: 'dashed',
-          color: '#031f4b',
-          width: 2,
-        },
+export const rangeWithMinMax = () => {
+  const { el } = createChart(temperatureRangeData, {
+    yAxis: {
+      scale: {
+        min: -4,
+        max: 24,
       },
     },
   });
@@ -159,7 +119,15 @@ export const styledConnector = () => {
 };
 
 export const diverging = () => {
-  const { el } = createChart(budgetDataForDiverging, {
+  const { el } = createChart(genderAgeData, {
+    xAxis: {
+      title: 'Age Group',
+    },
+    yAxis: {
+      label: {
+        interval: 2,
+      },
+    },
     series: {
       diverging: true,
     },
@@ -168,13 +136,17 @@ export const diverging = () => {
   return el;
 };
 
-export const divergingGroupStack = () => {
-  const { el } = createChart(budgetDataForGroupStack, {
+export const dataLabels = () => {
+  const anchor = radios(
+    'anchor',
+    { center: 'center', start: 'start', end: 'end', auto: 'auto' },
+    'auto'
+  );
+  const { el } = createChart(negativeBudgetData, {
     series: {
-      diverging: true,
-      stack: {
-        type: 'normal',
-        connector: true,
+      dataLabels: {
+        visible: true,
+        anchor,
       },
     },
   });

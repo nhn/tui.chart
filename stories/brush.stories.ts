@@ -143,12 +143,14 @@ export const lineBrush = () => {
 
 export const tickBrush = () => {
   const { ctx, el } = setup();
+  const isYAxis = boolean('isYAxis', false);
 
   const tickModel: TickModel = {
     type: 'tick',
     x: 100,
     y: 100,
-    isYAxis: boolean('isYAxis', false),
+    isYAxis,
+    direction: isYAxis ? 'left' : 'bottom',
   };
   tick(ctx, tickModel);
 

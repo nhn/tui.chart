@@ -2,18 +2,17 @@ import BarChart from '@src/charts/barChart';
 import {
   budgetData,
   temperatureRangeData,
-  budgetDataForStack,
-  budgetDataForGroupStack,
   negativeBudgetData,
-  budgetDataForDiverging,
-  lossDataForGroupStack,
-  genderAgeGroupData,
+  lossData,
+  genderAgeData,
 } from './data';
-import { BarChartOptions, BaseChartOptions } from '@t/options';
+import { BarChartOptions, BarTypeYAxisOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
+import { withKnobs, radios, boolean } from '@storybook/addon-knobs';
 
 export default {
-  title: 'chart|Bar',
+  title: 'chart.Bar.General',
+  decorators: [withKnobs],
 };
 
 const width = 1000;
@@ -43,18 +42,59 @@ function createChart(data, customOptions?: BarChartOptions) {
   return { el, chart };
 }
 
-export const basic = () => {
+export const positive = () => {
+  const { el } = createChart(budgetData);
+
+  return el;
+};
+
+export const positiveWithMinMax = () => {
   const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue' } as BaseChartOptions,
-    xAxis: { title: 'Amount' },
-    yAxis: { title: 'Month' },
+    xAxis: {
+      scale: {
+        min: 1000,
+        max: 8000,
+      },
+    },
   });
 
   return el;
 };
 
-export const withNegative = () => {
+export const negative = () => {
+  const { el } = createChart(lossData);
+
+  return el;
+};
+
+export const negativeWithMinMax = () => {
+  const { el } = createChart(lossData, {
+    xAxis: {
+      scale: {
+        min: -8000,
+        max: -1000,
+      },
+    },
+  });
+
+  return el;
+};
+
+export const both = () => {
   const { el } = createChart(negativeBudgetData);
+
+  return el;
+};
+
+export const bothWithMinMax = () => {
+  const { el } = createChart(negativeBudgetData, {
+    xAxis: {
+      scale: {
+        min: -6000,
+        max: 6000,
+      },
+    },
+  });
 
   return el;
 };
@@ -65,95 +105,12 @@ export const range = () => {
   return el;
 };
 
-export const normalStack = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'normal',
-      },
-    },
-  });
-
-  return el;
-};
-
-export const percentStack = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'percent',
-      },
-    },
-  });
-
-  return el;
-};
-
-export const negativeStack = () => {
-  const { el } = createChart(negativeBudgetData, {
-    series: {
-      stack: true,
-    },
-  });
-
-  return el;
-};
-
-export const negativePercentStack = () => {
-  const { el } = createChart(negativeBudgetData, {
-    series: {
-      stack: {
-        type: 'percent',
-      },
-    },
-  });
-
-  return el;
-};
-
-export const groupStack = () => {
-  const { el } = createChart(budgetDataForGroupStack, {
-    series: {
-      stack: true,
-    },
-  });
-
-  return el;
-};
-
-export const negativeGroupStack = () => {
-  const { el } = createChart(lossDataForGroupStack, {
-    series: {
-      stack: true,
-    },
-  });
-
-  return el;
-};
-
-export const defaultConnector = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'normal',
-        connector: true,
-      },
-    },
-  });
-
-  return el;
-};
-
-export const styledConnector = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'normal',
-        connector: {
-          type: 'dashed',
-          color: '#031f4b',
-          width: 2,
-        },
+export const rangeWithMinMax = () => {
+  const { el } = createChart(temperatureRangeData, {
+    xAxis: {
+      scale: {
+        min: -4,
+        max: 24,
       },
     },
   });
@@ -162,7 +119,22 @@ export const styledConnector = () => {
 };
 
 export const diverging = () => {
-  const { el } = createChart(budgetDataForDiverging, {
+  const centerYAxisMode = boolean('Center Y Axis', false);
+  const yAxis: BarTypeYAxisOptions = {
+    title: 'Age Group',
+  };
+
+  if (centerYAxisMode) {
+    yAxis.align = 'center';
+  }
+
+  const { el } = createChart(genderAgeData, {
+    yAxis,
+    xAxis: {
+      label: {
+        interval: 2,
+      },
+    },
     series: {
       diverging: true,
     },
@@ -171,41 +143,23 @@ export const diverging = () => {
   return el;
 };
 
-export const divergingGroupStack = () => {
-  const { el } = createChart(budgetDataForGroupStack, {
-    yAxis: {
-      align: 'center',
-    },
-    series: {
-      diverging: true,
-      stack: {
-        type: 'normal',
-        connector: true,
-      },
-      dataLabels: {
-        visible: true,
+export const dataLabels = () => {
+  const anchor = radios(
+    'anchor',
+    { center: 'center', start: 'start', end: 'end', auto: 'auto' },
+    'auto'
+  );
+  const { el } = createChart(negativeBudgetData, {
+    xAxis: {
+      scale: {
+        min: -8000,
+        max: 8000,
       },
     },
-  });
-
-  return el;
-};
-
-export const divergingWithCenterYAxis = () => {
-  const { el } = createChart(genderAgeGroupData, {
-    chart: {
-      title: 'Population Distribution',
-      width,
-      height,
-    },
-    yAxis: {
-      title: 'Age Group',
-      align: 'center',
-    },
     series: {
-      diverging: true,
       dataLabels: {
         visible: true,
+        anchor,
       },
     },
   });
