@@ -10,7 +10,7 @@ import { isString } from '@src/helpers/utils';
 import '../css/exportMenu.css';
 
 const EXPORT_MENU_WIDTH = 140;
-export const EXPORT_BUTTON_RECT_SIZE = 24;
+export const BUTTON_RECT_SIZE = 24;
 export interface DataToExport {
   series: Series;
   categories?: string[];
@@ -66,7 +66,7 @@ export default class ExportMenu extends Component {
 
   getExportMenuEl(chartWidth: number) {
     const { top, left } = this.chartEl.getBoundingClientRect();
-    const topPosition = top + padding.Y + EXPORT_BUTTON_RECT_SIZE + 5;
+    const topPosition = top + padding.Y + BUTTON_RECT_SIZE + 5;
     const leftPosition = left + chartWidth - EXPORT_MENU_WIDTH - padding.X;
 
     const el = document.createElement('div');
@@ -125,8 +125,8 @@ export default class ExportMenu extends Component {
     this.responders = [
       {
         type: 'bound',
-        width: EXPORT_BUTTON_RECT_SIZE,
-        height: EXPORT_BUTTON_RECT_SIZE,
+        width: BUTTON_RECT_SIZE,
+        height: BUTTON_RECT_SIZE,
         x: this.rect.x,
         y: this.rect.y,
       },

@@ -3,8 +3,8 @@ import { extend } from '@src/store/store';
 import { Align, Rect, Size } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
 import { isUndefined } from '@src/helpers/utils';
-import { EXPORT_BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 import { isCenterYAxis } from './axes';
+import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
@@ -129,7 +129,7 @@ function getLegendRect(chartSize: Size, xAxis: Rect, yAxis: Rect, title: Rect, l
   const { width } = chartSize;
   const verticalAlign = isVerticalAlign(align);
   let x = xAxis.x + xAxis.width + padding.X;
-  let y = Math.max(yAxis.y, EXPORT_BUTTON_RECT_SIZE);
+  let y = Math.max(yAxis.y, BUTTON_RECT_SIZE);
 
   if (verticalAlign) {
     x = (width - legendWidth) / 2;
@@ -208,10 +208,10 @@ function getXAxisTitleRect(visible: boolean, xAxis: Rect) {
 
 function getExportMenuRect(chartSize: Size, visible: boolean) {
   const marginY = 5;
-  const x = visible ? padding.X + chartSize.width - EXPORT_BUTTON_RECT_SIZE : 0;
+  const x = visible ? padding.X + chartSize.width - BUTTON_RECT_SIZE : 0;
   const y = visible ? padding.Y : 0;
-  const height = visible ? EXPORT_BUTTON_RECT_SIZE + marginY : 0;
-  const width = visible ? EXPORT_BUTTON_RECT_SIZE : 0;
+  const height = visible ? BUTTON_RECT_SIZE + marginY : 0;
+  const width = visible ? BUTTON_RECT_SIZE : 0;
 
   return { x, y, height, width };
 }
