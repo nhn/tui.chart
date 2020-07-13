@@ -29,14 +29,17 @@ export default class Axis extends Component {
 
   yAxisComponent!: boolean;
 
+  visibleYCenterAxis!: boolean;
+
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
     this.name = name;
-    this.yAxisComponent = name === AxisType.Y || name === AxisType.CENTER_Y;
+    this.yAxisComponent = name === AxisType.Y;
   }
 
   render({ layout, axes, yCenterAxis }: ChartState<Options>) {
     this.rect = layout[this.name];
+    this.visibleYCenterAxis = !!yCenterAxis?.visible;
 
     const {
       labels,
@@ -158,12 +161,12 @@ export default class Axis extends Component {
           type: 'line',
           x: zeroPixel,
           y: zeroPixel,
-          x2: crispPixel(xAxisHalfSize),
+          x2: crispPixel(xAxisHalfSize!),
           y2: zeroPixel,
         },
         {
           type: 'line',
-          x: crispPixel(secondStartX),
+          x: crispPixel(secondStartX!),
           y: zeroPixel,
           x2: crispPixel(this.rect.width),
           y2: zeroPixel,
@@ -197,10 +200,10 @@ export default class Axis extends Component {
           ];
     }, []);
 
-    if (yCenterAxis?.visible) {
+    if (this.visibleYCenterAxis) {
       tickModels = [
         ...tickModels,
-        ...this.getAddedTickModels(tickModels, offsetKey, anchorKey, yCenterAxis?.secondStartX),
+        ...this.getAddedTickModels(tickModels, offsetKey, anchorKey, yCenterAxis?.secondStartX!),
       ];
     }
 
@@ -246,19 +249,18 @@ export default class Axis extends Component {
   ): LabelModel[] {
     const { tickDistance, pointOnColumn, labelInterval, yCenterAxis } = renderOptions;
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
-    const visibleYCenterAxis = yCenterAxis?.visible;
     let labelAnchorPoint, textAlign, textLabels;
 
     if (this.yAxisComponent) {
-      labelAnchorPoint = visibleYCenterAxis
-        ? crispPixel(yCenterAxis?.rect.width / 2)
+      labelAnchorPoint = this.visibleYCenterAxis
+        ? crispPixel(yCenterAxis?.yAxisLabelAnchorPoint!)
         : crispPixel(0);
-      textAlign = visibleYCenterAxis ? 'center' : 'left';
+      textAlign = this.visibleYCenterAxis ? 'center' : 'left';
       textLabels = labels;
     } else {
       labelAnchorPoint = crispPixel(this.rect.height);
       textAlign = 'center';
-      textLabels = visibleYCenterAxis ? [...labels].reverse() : labels;
+      textLabels = this.visibleYCenterAxis ? [...labels].reverse() : labels;
     }
 
     let models = textLabels.reduce((positions, text, index) => {
@@ -276,10 +278,10 @@ export default class Axis extends Component {
           ];
     }, []);
 
-    if (visibleYCenterAxis && !this.yAxisComponent) {
+    if (this.visibleYCenterAxis && !this.yAxisComponent) {
       models = [
         ...models,
-        ...this.getAddedLabelModels(labels, models, offsetKey, yCenterAxis?.secondStartX),
+        ...this.getAddedLabelModels(labels, models, offsetKey, yCenterAxis?.secondStartX!),
       ];
     }
 
@@ -304,8 +306,10 @@ export default class Axis extends Component {
 
     if (this.yAxisComponent) {
       size = this.rect.height;
+    } else if (this.visibleYCenterAxis) {
+      size = yCenterAxis?.xAxisHalfSize!;
     } else {
-      size = yCenterAxis?.visible ? yCenterAxis?.xAxisHalfSize : this.rect.width;
+      size = this.rect.width;
     }
 
     return size;

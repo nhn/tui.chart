@@ -206,7 +206,7 @@ const layout: StoreModule = {
   }),
   action: {
     setLayout({ state }) {
-      const { legend: legendState } = state;
+      const { legend: legendState, yCenterAxis } = state;
       const {
         legend: { align },
         circleLegend: circleLegendState,
@@ -217,7 +217,7 @@ const layout: StoreModule = {
         height: chart.height - padding.Y * 2,
         width: chart.width - padding.X * 2,
       };
-      const visibleYCenterAxis = state.yCenterAxis?.visible;
+      const visibleYCenterAxis = !!yCenterAxis?.visible;
 
       // Don't change the order!
       // exportMenu -> title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot

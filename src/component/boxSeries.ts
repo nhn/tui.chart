@@ -5,7 +5,7 @@ import {
   BoxSeriesModels,
   StackTotalModel,
 } from '@t/components/series';
-import { ChartState, ChartType, BoxType, AxisData, Legend } from '@t/store/store';
+import { ChartState, ChartType, BoxType, AxisData, Legend, YCenterAxis } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -107,10 +107,6 @@ export default class BoxSeries extends Component {
   offsetSizeKey = 'width';
 
   hoverThickness = 4;
-
-  axisThickness = 1;
-
-  plot!: Rect;
 
   basePosition = 0;
 
@@ -244,13 +240,13 @@ export default class BoxSeries extends Component {
     let offsetSize: number = this.getOffsetSize();
 
     if (diverging) {
-      const [left, right] = this.getDivergingBasePosition(layout.yAxis!);
+      const [left, right] = this.getDivergingBasePosition(yCenterAxis);
 
-      this.basePosition = this.rect.width / 2;
+      this.basePosition = this.getOffsetSize() / 2;
       this.leftBasePosition = left;
       this.rightBasePosition = right;
 
-      offsetSize = this.getOffsetSizeWithDiverging(layout.yAxis!.width);
+      offsetSize = this.getOffsetSizeWithDiverging(yCenterAxis);
     }
 
     const renderOptions: RenderOptions = {
@@ -433,20 +429,16 @@ export default class BoxSeries extends Component {
       : this.getTickPositionIfNotZero(tickPositions, seriesDirection);
   }
 
-  getDivergingBasePosition(yAxisRect: Rect) {
+  getDivergingBasePosition(yCenterAxis: YCenterAxis) {
     let leftZeroPosition: number, rightZeroPosition: number;
 
     if (this.visibleCenterYAxis) {
-      const rectWidth = this.rect.width;
-      const yAxisRectWith = yAxisRect.width;
-
-      leftZeroPosition = (rectWidth - yAxisRectWith) / 2;
-      rightZeroPosition = (rectWidth + yAxisRectWith) / 2;
+      leftZeroPosition = yCenterAxis?.xAxisHalfSize!;
+      rightZeroPosition = yCenterAxis?.secondStartX!;
     } else {
       const divergingZeroPosition = this.getOffsetSize() / 2;
 
-      leftZeroPosition = divergingZeroPosition;
-      rightZeroPosition = divergingZeroPosition;
+      leftZeroPosition = rightZeroPosition = divergingZeroPosition;
     }
 
     return [leftZeroPosition, rightZeroPosition];
@@ -600,7 +592,7 @@ export default class BoxSeries extends Component {
       plot: {
         x: 0,
         y: 0,
-        size: this.rect[this.offsetSizeKey],
+        size: this.getOffsetSize(),
       },
     };
   }
@@ -610,10 +602,9 @@ export default class BoxSeries extends Component {
 
     if (isRangeValue(rect.value!)) {
       direction = this.isBar ? 'right' : 'top';
-    } else if (this.visibleCenterYAxis) {
-      direction = rect.x < this.leftBasePosition ? 'left' : 'right';
     } else if (this.isBar) {
-      direction = rect.x < this.basePosition ? 'left' : 'right';
+      const basePos = this.visibleCenterYAxis ? this.leftBasePosition : this.basePosition;
+      direction = rect.x < basePos ? 'left' : 'right';
     } else {
       direction = rect.y >= this.basePosition ? 'bottom' : 'top';
     }
@@ -627,9 +618,7 @@ export default class BoxSeries extends Component {
     return Math.min(defaultValue, Math.floor(tickDistance * 0.3));
   }
 
-  getOffsetSizeWithDiverging(yAxisRectWidth: number) {
-    return this.visibleCenterYAxis
-      ? (this.getOffsetSize() - yAxisRectWidth) / 2
-      : this.getOffsetSize() / 2;
+  getOffsetSizeWithDiverging(yCenterAxis: YCenterAxis) {
+    return this.visibleCenterYAxis ? yCenterAxis?.xAxisHalfSize! : this.getOffsetSize() / 2;
   }
 }

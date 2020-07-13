@@ -55,8 +55,8 @@ export default class Plot extends Component {
     });
   }
 
-  renderGridsIfCenterYAxis(axes: Axes, yCenterAxis: YCenterAxis): LineModel[] {
-    const { xAxisHalfSize, secondStartX, rect } = yCenterAxis;
+  renderGridsIfCenterYAxis(axes: Axes, yCenterAxis: Required<YCenterAxis>): LineModel[] {
+    const { xAxisHalfSize, secondStartX, yAxisHeight } = yCenterAxis;
 
     // vertical
     const xAxisTickCount = axes?.xAxis?.tickCount!;
@@ -72,12 +72,12 @@ export default class Plot extends Component {
     const yAxisTickCount = axes?.yAxis?.tickCount!;
     const horizontalLines = [
       ...this.renderGridLineModels(
-        makeTickPixelPositions(rect.height, yAxisTickCount),
+        makeTickPixelPositions(yAxisHeight, yAxisTickCount),
         false,
         xAxisHalfSize
       ),
       ...this.renderGridLineModels(
-        makeTickPixelPositions(rect.height, yAxisTickCount),
+        makeTickPixelPositions(yAxisHeight, yAxisTickCount),
         false,
         xAxisHalfSize,
         secondStartX
@@ -89,7 +89,7 @@ export default class Plot extends Component {
 
   renderGrids(axes: Axes, yCenterAxis: YCenterAxis): LineModel[] {
     return yCenterAxis?.visible
-      ? this.renderGridsIfCenterYAxis(axes, yCenterAxis)
+      ? this.renderGridsIfCenterYAxis(axes, yCenterAxis as Required<YCenterAxis>)
       : [
           ...this.renderGridLineModels(this.getTickPixelPositions(false, axes), false),
           ...this.renderGridLineModels(this.getTickPixelPositions(true, axes), true),

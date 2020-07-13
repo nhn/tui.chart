@@ -177,10 +177,10 @@ export interface CircleLegend {
 
 export type YCenterAxis = {
   visible: boolean;
-  rect: Rect;
-  xAxisHalfSize: number;
-  centerX: number;
-  secondStartX: number;
+  xAxisHalfSize?: number;
+  secondStartX?: number;
+  yAxisLabelAnchorPoint?: number;
+  yAxisHeight?: number;
 };
 
 export interface ChartState<T extends Options> {

@@ -111,13 +111,13 @@ export default class BoxStackSeries extends BoxSeries {
     let offsetSize: number = this.getOffsetSize();
 
     if (diverging) {
-      const [left, right] = this.getDivergingBasePosition(layout.yAxis!);
+      const [left, right] = this.getDivergingBasePosition(yCenterAxis);
 
-      this.basePosition = this.rect.width / 2;
+      this.basePosition = this.getOffsetSize() / 2;
       this.leftBasePosition = left;
       this.rightBasePosition = right;
 
-      offsetSize = this.getOffsetSizeWithDiverging(layout.yAxis!.width);
+      offsetSize = this.getOffsetSizeWithDiverging(yCenterAxis);
     }
 
     const renderOptions: RenderOptions = {
@@ -449,7 +449,7 @@ export default class BoxStackSeries extends BoxSeries {
     } = renderOptions;
 
     if (stackType === 'percent') {
-      return this.getOffsetSize() / getDivisorForPercent(total, scaleType);
+      return offsetSize / getDivisorForPercent(total, scaleType);
     }
 
     return this.getValueRatio(min, max, offsetSize);
@@ -721,7 +721,7 @@ export default class BoxStackSeries extends BoxSeries {
       plot: {
         x: 0,
         y: 0,
-        size: this.rect[this.offsetSizeKey],
+        size: this.getOffsetSize(),
       },
     };
   }

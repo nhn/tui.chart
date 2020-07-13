@@ -34,6 +34,6 @@ export default class AxisTitle extends Component {
     }
 
     this.rect = this.isYAxis ? layout.yAxisTitle : layout.xAxisTitle;
-    this.models = this.renderAxisTitle(titleOption, yCenterAxis?.visible);
+    this.models = this.renderAxisTitle(titleOption, !!yCenterAxis?.visible);
   }
 }

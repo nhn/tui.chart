@@ -1,5 +1,5 @@
 import { StoreModule, Options, ChartSeriesMap } from '@t/store/store';
-import { BarTypeYAxisOptions, Rect } from '@t/options';
+import { BarTypeYAxisOptions } from '@t/options';
 import { extend } from '@src/store/store';
 import { pickProperty } from '@src/helpers/utils';
 
@@ -15,10 +15,6 @@ const yCenterAxis: StoreModule = {
   state: ({ options, series }) => ({
     yCenterAxis: {
       visible: enableYCenterAxis(series, options),
-      rect: {} as Rect,
-      xAxisHalfSize: 0,
-      centerX: 0,
-      secondStartX: 0,
     },
   }),
   action: {
@@ -30,15 +26,12 @@ const yCenterAxis: StoreModule = {
       this.dispatch('setLayout');
 
       const { xAxis, yAxis } = state.layout;
-      const xAxisHalfSize = (xAxis.width - yAxis.width) / 2;
-      const centerX = xAxis.width / 2;
-      const secondStartX = (xAxis.width + yAxis.width) / 2;
 
       extend(state.yCenterAxis, {
-        rect: yAxis,
-        xAxisHalfSize,
-        centerX,
-        secondStartX,
+        xAxisHalfSize: (xAxis.width - yAxis.width) / 2,
+        secondStartX: (xAxis.width + yAxis.width) / 2,
+        yAxisLabelAnchorPoint: yAxis.width / 2,
+        yAxisHeight: yAxis.height,
       });
     },
   },

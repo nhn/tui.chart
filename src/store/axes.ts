@@ -5,7 +5,7 @@ import {
   Series,
   StoreModule,
   ValueEdge,
-  Layout,
+  YCenterAxis,
 } from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
@@ -30,15 +30,10 @@ interface StateProp {
   axisSize: number;
   options: Options;
   series: Series;
+  yCenterAxis?: YCenterAxis;
 }
 
 type ValueStateProp = StateProp & { categories: string[] };
-
-type YCenterStateProp = {
-  scale: ScaleData;
-  axisSize: number;
-  layout: Layout;
-};
 
 function getZeroPosition(limit: ValueEdge, axisSize: number, labelAxisOnYAxis: boolean) {
   const { min, max } = limit;
@@ -69,13 +64,15 @@ export function getLabelAxisData(stateProp: ValueStateProp) {
 }
 
 export function getValueAxisData(stateProp: StateProp) {
-  const { scale, axisSize, series, options } = stateProp;
+  const { scale, axisSize, series, options, yCenterAxis } = stateProp;
   const { limit, stepSize } = scale;
-
+  const size = yCenterAxis?.visible ? yCenterAxis?.xAxisHalfSize! : axisSize;
   let valueLabels = makeLabelsFromLimit(limit, stepSize);
   let zeroPosition = getZeroPosition(limit, axisSize, isLabelAxisOnYAxis(series));
 
-  if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
+  if (yCenterAxis?.visible) {
+    zeroPosition = null;
+  } else if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
     valueLabels = getDivergingValues(valueLabels);
     zeroPosition = null;
   }
@@ -85,7 +82,7 @@ export function getValueAxisData(stateProp: StateProp) {
     pointOnColumn: false,
     isLabelAxis: false,
     tickCount: valueLabels.length,
-    tickDistance: axisSize / valueLabels.length,
+    tickDistance: size / valueLabels.length,
   } as AxisData;
 
   if (isNumber(zeroPosition)) {
@@ -117,21 +114,6 @@ function makeTitleOption(title?: AxisTitle) {
     : deepMergedCopy(defaultOption, title);
 }
 
-function getValueYCenterAxisData(stateProp: YCenterStateProp) {
-  const { scale, axisSize, layout } = stateProp;
-  const { limit, stepSize } = scale;
-  const valueLabels = makeLabelsFromLimit(limit, stepSize);
-  const halfSize = (axisSize - layout.yAxis.width) / 2;
-
-  return {
-    labels: valueLabels,
-    pointOnColumn: false,
-    isLabelAxis: false,
-    tickCount: valueLabels.length,
-    tickDistance: halfSize / valueLabels.length,
-  };
-}
-
 const axes: StoreModule = {
   name: 'axes',
   state: ({ options }) => ({
@@ -159,18 +141,13 @@ const axes: StoreModule = {
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
 
-      const valueAxisData = yCenterAxis?.visible
-        ? getValueYCenterAxisData({
-            scale: scale[valueAxisName],
-            axisSize: valueAxisSize,
-            layout,
-          })
-        : getValueAxisData({
-            scale: scale[valueAxisName],
-            axisSize: valueAxisSize,
-            options,
-            series,
-          });
+      const valueAxisData = getValueAxisData({
+        scale: scale[valueAxisName],
+        axisSize: valueAxisSize,
+        options,
+        series,
+        yCenterAxis,
+      });
       const labelAxisData = getLabelAxisData({
         scale: scale[labelAxisName],
         axisSize: labelAxisSize,
