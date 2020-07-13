@@ -37,7 +37,8 @@ export type ComponentType =
   | 'title'
   | 'axisTitle'
   | 'exportMenu'
-  | 'zeroAxis';
+  | 'zeroAxis'
+  | 'selectionArea';
 
 type ComponentModels =
   | AxisModels
