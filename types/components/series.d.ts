@@ -23,6 +23,10 @@ export type CircleModel = {
   style?: StyleProp<CircleStyle, CircleStyleName>;
   seriesIndex?: number;
   index?: number;
+  angle?: {
+    start: number;
+    end: number;
+  };
 } & Point;
 
 export type BoundResponderModel = Rect & { type: 'bound'; index?: number };
@@ -41,8 +45,8 @@ export type LinePointsModel = {
   color: string;
   lineWidth: number;
   points: BezierPoint[];
-  seriesIndex: number;
   name: string;
+  seriesIndex?: number;
 };
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
