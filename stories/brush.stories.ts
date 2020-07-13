@@ -6,6 +6,7 @@ import { tooltip } from '@src/brushes/tooltip';
 import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';
 import { label } from '@src/brushes/label';
+import { resetButton } from '@src/brushes/resetButton';
 
 import {
   AreaPointsModel,
@@ -462,6 +463,18 @@ export const legendBrush = () => {
         y: 240,
       },
     ],
+  });
+
+  return el;
+};
+
+export const resetButtonBrush = () => {
+  const { ctx, el } = setup();
+
+  resetButton(ctx, {
+    type: 'resetButton',
+    x: 100,
+    y: 100,
   });
 
   return el;

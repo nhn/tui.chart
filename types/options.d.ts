@@ -172,6 +172,7 @@ interface BaseSeriesOptions {
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
+  zoomable?: boolean;
 }
 
 interface AreaTypeSeriesOptions extends BaseSeriesOptions {

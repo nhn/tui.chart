@@ -174,3 +174,13 @@ export const dataLabels = () => {
 
   return el;
 };
+
+export const zoomable = () => {
+  const { el } = createChart(temperatureData, {
+    series: {
+      zoomable: true,
+    },
+  });
+
+  return el;
+};

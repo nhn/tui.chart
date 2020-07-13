@@ -49,6 +49,7 @@ type ComponentModels =
   | CircleLegendModels
   | PieSeriesModels
   | PlotModels
+  | RectModel[]
   | LineModel[]
   | LabelModel[]
   | DataLabelModel[]
@@ -199,6 +200,10 @@ export default abstract class Component {
   onMouseenterComponent?(): void;
 
   onMouseoutComponent?(): void;
+
+  onMousedown?(responseData: any): void;
+
+  onMouseup?(responseData: any): void;
 
   draw(painter: Painter) {
     const models = this.drawModels ? this.drawModels : this.models;
