@@ -91,9 +91,9 @@ export default abstract class Chart<T extends Options> {
   }
 
   handleEvent(event: MouseEvent) {
-    const delegationMethod = `on${event.type[0].toUpperCase() + event.type.substring(1)}`;
+    const { clientX, clientY, type: eventType } = event;
 
-    const { clientX, clientY } = event;
+    const delegationMethod = `on${eventType[0].toUpperCase() + eventType.substring(1)}`;
 
     const canvasRect = this.painter.ctx.canvas.getBoundingClientRect();
 
@@ -104,7 +104,7 @@ export default abstract class Chart<T extends Options> {
 
     const newHoveredComponent: ComponentType[] = [];
 
-    if (event.type === 'mousemove') {
+    if (eventType === 'mousemove') {
       this.componentManager.forEach((component) => {
         const { x, y, height, width } = component.rect;
         const exist = this.hoveredComponentType.some((type) => type === component.type);
@@ -116,6 +116,7 @@ export default abstract class Chart<T extends Options> {
 
         if (hovered) {
           newHoveredComponent.push(component.type);
+
           if (!exist && component.onMouseenterComponent) {
             component.onMouseenterComponent();
           }

@@ -211,8 +211,6 @@ describe('basic', () => {
     areaSeries.onMousemove({ responders: [responder] });
 
     expect(applyAreaOpacity).toHaveBeenCalledWith(0.5);
-
-    // expect(areaSeries.drawModels.hoveredSeries).toEqual([result.linePointsModel[0], responder]);
   });
 
   it('remove line points model and circle model when mousemove after hover above line point', () => {
@@ -419,7 +417,6 @@ describe('stack', () => {
     },
   ];
 
-  // @썌얘: stack
   const chartState = {
     chart: { width: 100, height: 100 },
     layout: {

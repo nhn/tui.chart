@@ -23,7 +23,6 @@ import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray, deepMergedCopy, first, last, range, sum } from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
 import { LineModel } from '@t/components/axis';
-import { tick } from '@src/brushes/axis';
 
 interface AreaSeriesDrawModels {
   rect: ClipRectAreaModel[];
@@ -113,7 +112,7 @@ export default class AreaSeries extends Component {
     const areaData = series.area.data;
     this.baseValueYPosition = this.getBaseValueYPosition(limit);
 
-    if (stackSeries && stackSeries.area) {
+    if (stackSeries?.area) {
       this.chartType = 'stack';
       areaStackSeries = stackSeries.area;
     } else if (isRangeData(first(areaData)?.data)) {
@@ -289,9 +288,7 @@ export default class AreaSeries extends Component {
     );
 
     if (this.chartType === 'range') {
-      const renderOptionsForPair = deepMergedCopy(renderOptions, {
-        pairModel: true,
-      });
+      const renderOptionsForPair = deepMergedCopy(renderOptions, { pairModel: true });
       const pair = seriesRawData.map((series, seriesIndex) =>
         this.getLinePointModel(series, seriesIndex, legend, limit, renderOptionsForPair)
       );
@@ -302,7 +299,7 @@ export default class AreaSeries extends Component {
     return linePointsModels;
   }
 
-  addBottomPoints(points: PointModel[], baseValueYPosition: number) {
+  addBottomPoints(points: PointModel[]) {
     const firstPoint = first(points);
     const lastPoint = last(points);
 
@@ -312,8 +309,8 @@ export default class AreaSeries extends Component {
 
     return [
       ...points,
-      { x: lastPoint.x, y: baseValueYPosition },
-      { x: firstPoint.x, y: baseValueYPosition },
+      { x: lastPoint.x, y: this.baseValueYPosition },
+      { x: firstPoint.x, y: this.baseValueYPosition },
     ];
   }
 
@@ -321,7 +318,7 @@ export default class AreaSeries extends Component {
     if (this.chartType === 'normal') {
       return this.linePointsModel.map((m) => ({
         ...m,
-        points: this.addBottomPoints(m.points, this.baseValueYPosition),
+        points: this.addBottomPoints(m.points),
       }));
     }
 
@@ -331,20 +328,15 @@ export default class AreaSeries extends Component {
     return range(0, len).reduce<LinePointsModel[]>((acc, i) => {
       const start = this.chartType === 'range' ? i : i - 1;
       const end = this.chartType === 'range' ? len + i : i;
+      const points =
+        this.chartType === 'stack' && i === 0
+          ? this.addBottomPoints(this.linePointsModel[i].points)
+          : [
+              ...this.linePointsModel[start].points,
+              ...[...this.linePointsModel[end].points].reverse(),
+            ];
 
-      return [
-        ...acc,
-        {
-          ...this.linePointsModel[i],
-          points:
-            this.chartType === 'stack' && i === 0
-              ? this.addBottomPoints(this.linePointsModel[i].points, this.baseValueYPosition)
-              : [
-                  ...this.linePointsModel[start].points,
-                  ...[...this.linePointsModel[end].points].reverse(),
-                ],
-        },
-      ];
+      return [...acc, { ...this.linePointsModel[i], points }];
     }, []);
   }
 

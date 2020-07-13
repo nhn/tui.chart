@@ -449,11 +449,11 @@ const dataLabels: StoreModule = {
       const labels: DataLabel[] = [];
 
       dataLabelData.forEach((model) => {
-        const { type } = model;
+        const { type, value } = model;
         const labelOptions = getDataLabelsOptions(dataLabelOptions, type, withStack);
         const disableStackTotal = type === 'stackTotal' && !labelOptions.stackTotal?.visible;
 
-        if (disableStackTotal || !model.value) {
+        if (disableStackTotal || !value) {
           return;
         }
 

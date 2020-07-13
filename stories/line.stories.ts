@@ -2,7 +2,6 @@ import LineChart from '@src/charts/lineChart';
 import { LineSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import {
-  budgetData,
   tupleCoordinateData,
   temperatureData,
   coordinateData,

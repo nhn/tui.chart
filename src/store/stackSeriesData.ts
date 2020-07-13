@@ -101,11 +101,11 @@ function initializeStack(
 
   if (isStackObject(stackOption)) {
     if (isBoxSeries(seriesName) && stackOption.connector) {
-      const defaultConnector = {
+      const defaultConnector: Connector = {
         type: 'solid',
         color: 'rgba(51, 85, 139, 0.3)',
         width: 1,
-      } as Connector;
+      };
 
       stackOption.connector = (isConnectorObject(stackOption.connector)
         ? { ...defaultConnector, ...stackOption.connector }
