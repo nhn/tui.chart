@@ -2,6 +2,7 @@ import Axis from '@src/component/axis';
 import Store from '@src/store/store';
 import { LineChartOptions } from '@t/options';
 import EventEmitter from '@src/eventEmitter';
+import axes from '@src/store/axes';
 
 let axis;
 
@@ -88,6 +89,52 @@ describe('yAxis', () => {
       expect(axis.models.label).toHaveLength(5);
     });
   });
+
+  describe('using center y axis', () => {
+    beforeEach(() => {
+      axis.render({
+        layout: { yAxis: { x: 10, y: 10, width: 10, height: 80 } },
+        axes: {
+          yAxis: {
+            pointOnColumn: true,
+            tickDistance: 16,
+            tickInterval: 1,
+            labelInterval: 1,
+            labels: ['1', '2', '3', '4', '5'],
+            tickCount: 6,
+          },
+        },
+        yCenterAxis: {
+          visible: true,
+          xAxisHalfSize: 35,
+          secondStartX: 45,
+          yAxisLabelAnchorPoint: 5,
+          yAxisHeight: 80,
+        },
+      });
+    });
+
+    it('should have two axis lines', () => {
+      expect(axis.models.axisLine).toHaveLength(2);
+    });
+
+    it('should have tick models pointing to the left and right respectively', () => {
+      const tickModel = axis.models.tick;
+      const ticksToLeft = tickModel.filter(({ direction }) => direction === 'left');
+      const ticksToRight = tickModel.filter(({ direction }) => direction === 'right');
+
+      expect(tickModel).toHaveLength(12);
+      expect(ticksToLeft).toHaveLength(6);
+      expect(ticksToRight).toHaveLength(6);
+    });
+
+    it('should be text alignment center', () => {
+      const labelModel = axis.models.label;
+      const isAlignCenter = labelModel.every(({ style }) => style[1].textAlign === 'center');
+
+      expect(isAlignCenter).toBeTruthy();
+    });
+  });
 });
 
 describe('xAxis', () => {
@@ -170,6 +217,46 @@ describe('xAxis', () => {
 
     it('label interval option apply the number of label model', () => {
       expect(axis.models.label).toHaveLength(5);
+    });
+  });
+
+  describe('using center y axis', () => {
+    beforeEach(() => {
+      axis.render({
+        layout: { xAxis: { x: 10, y: 10, width: 80, height: 10 } },
+        axes: {
+          xAxis: {
+            pointOnColumn: false,
+            tickDistance: 20,
+            tickInterval: 1,
+            labelInterval: 1,
+            labels: ['1', '2', '3', '4', '5'],
+            tickCount: 5,
+          },
+        },
+        yCenterAxis: {
+          visible: true,
+          xAxisHalfSize: 35,
+          secondStartX: 45,
+          yAxisLabelAnchorPoint: 5,
+          yAxisHeight: 80,
+        },
+      });
+    });
+
+    it('should have two axis lines', () => {
+      expect(axis.models.axisLine).toHaveLength(2);
+    });
+
+    it('should have tick models pointing to the left and right respectively', () => {
+      expect(axis.models.tick).toHaveLength(10);
+    });
+
+    it('should have diverging labels', () => {
+      const labelModel = axis.models.label;
+      const divergingLabels = labelModel.map(({ text }) => text);
+
+      expect(divergingLabels).toEqual(['5', '4', '3', '2', '1', '1', '2', '3', '4', '5']);
     });
   });
 });

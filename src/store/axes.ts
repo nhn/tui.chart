@@ -66,11 +66,12 @@ export function getLabelAxisData(stateProp: ValueStateProp) {
 export function getValueAxisData(stateProp: StateProp) {
   const { scale, axisSize, series, options, yCenterAxis } = stateProp;
   const { limit, stepSize } = scale;
-  const size = yCenterAxis?.visible ? yCenterAxis?.xAxisHalfSize! : axisSize;
+  const visibleYCenterAxis = !!yCenterAxis?.visible;
+  const size = visibleYCenterAxis ? yCenterAxis?.xAxisHalfSize! : axisSize;
   let valueLabels = makeLabelsFromLimit(limit, stepSize);
   let zeroPosition = getZeroPosition(limit, axisSize, isLabelAxisOnYAxis(series));
 
-  if (yCenterAxis?.visible) {
+  if (visibleYCenterAxis) {
     zeroPosition = null;
   } else if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
     valueLabels = getDivergingValues(valueLabels);
