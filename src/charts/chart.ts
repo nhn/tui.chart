@@ -12,6 +12,7 @@ import { debounce } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
+import Component from '@src/component/component';
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -31,6 +32,8 @@ export default abstract class Chart<T extends Options> {
   readonly componentManager: ComponentManager<T>;
 
   modules?: StoreModule[];
+
+  enteredComponents: Component[] = [];
 
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories } = props;
@@ -88,9 +91,9 @@ export default abstract class Chart<T extends Options> {
   }
 
   handleEvent(event: MouseEvent) {
-    const delegationMethod = `on${event.type[0].toUpperCase() + event.type.substring(1)}`;
+    const { clientX, clientY, type: eventType } = event;
 
-    const { clientX, clientY } = event;
+    const delegationMethod = `on${eventType[0].toUpperCase() + eventType.substring(1)}`;
 
     const canvasRect = this.painter.ctx.canvas.getBoundingClientRect();
 
@@ -98,6 +101,34 @@ export default abstract class Chart<T extends Options> {
       x: clientX - canvasRect.left,
       y: clientY - canvasRect.top,
     };
+
+    const newEnteredComponents: Component[] = [];
+
+    if (eventType === 'mousemove') {
+      this.componentManager.forEach((component) => {
+        const { x, y, height, width } = component.rect;
+        const exist = this.enteredComponents.some(
+          (enteredComponent) => enteredComponent === component
+        );
+        const entered =
+          mousePosition.x >= x &&
+          mousePosition.x <= x + width &&
+          mousePosition.y >= y &&
+          mousePosition.y <= y + height;
+
+        if (entered) {
+          newEnteredComponents.push(component);
+
+          if (!exist && component.onMouseenterComponent) {
+            component.onMouseenterComponent();
+          }
+        } else if (exist && component.onMouseoutComponent) {
+          component.onMouseoutComponent();
+        }
+      });
+
+      this.enteredComponents = newEnteredComponents;
+    }
 
     this.componentManager.forEach((component) => {
       if (!component[delegationMethod]) {

@@ -158,8 +158,14 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
   spline?: boolean;
 }
 
+interface AreaTypeSeriesOptions extends BaseSeriesOptions {
+  showDot?: boolean;
+  spline?: boolean;
+  stack?: StackOptionType;
+}
+
 export interface AreaChartOptions extends BaseOptions {
-  series?: LineTypeSeriesOptions;
+  series?: AreaTypeSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
 }
 

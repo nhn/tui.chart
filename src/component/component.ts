@@ -12,17 +12,19 @@ import {
   LineSeriesModels,
   CircleResponderModel,
   RectModel,
+  BoundResponderModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { LegendModel, LegendResponderModel } from '@t/components/legend';
 import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
-import { BoxResponderModel } from './exportMenu';
 import { PlotModels } from '@t/components/plot';
-type ComponentType =
+
+export type ComponentType =
   | 'component'
   | 'series'
+  | 'hoveredSeries'
   | 'legend'
   | 'axis'
   | 'tooltip'
@@ -49,7 +51,7 @@ type ComponentModels =
   | TooltipModel[];
 
 type ComponentResponders = Array<
-  CircleResponderModel | RectModel | LegendResponderModel | BoxResponderModel
+  CircleResponderModel | RectModel | LegendResponderModel | BoundResponderModel
 >;
 
 export default abstract class Component {
@@ -182,6 +184,10 @@ export default abstract class Component {
   onClick?(responseData: any): void;
 
   onMousemove?(responseData: any): void;
+
+  onMouseenterComponent?(): void;
+
+  onMouseoutComponent?(): void;
 
   draw(painter: Painter) {
     const models = this.drawModels ? this.drawModels : this.models;

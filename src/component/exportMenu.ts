@@ -3,7 +3,7 @@ import { ChartState, Options, Series } from '@t/store/store';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
 import { LegendResponderModel } from '@t/components/legend';
-import { Rect, TitleOption } from '@t/options';
+import { TitleOption } from '@t/options';
 import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
 
@@ -11,7 +11,6 @@ import '../css/exportMenu.css';
 
 const EXPORT_MENU_WIDTH = 140;
 export const EXPORT_BUTTON_RECT_SIZE = 24;
-export type BoxResponderModel = Rect & { type: 'bound' };
 export interface DataToExport {
   series: Series;
   categories?: string[];
