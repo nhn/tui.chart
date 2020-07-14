@@ -40,8 +40,6 @@ interface RenderOptions {
 
 type DatumType = number | RangeDataType;
 
-type ChartType = 'range' | 'normal' | 'stack';
-
 export default class AreaSeries extends Component {
   models: AreaSeriesDrawModels = { rect: [], series: [] };
 
@@ -57,7 +55,9 @@ export default class AreaSeries extends Component {
 
   baseValueYPosition!: number;
 
-  chartType: ChartType = 'normal';
+  isStackChart = false;
+
+  isRangeChart = false;
 
   initialize() {
     this.type = 'series';
@@ -113,10 +113,10 @@ export default class AreaSeries extends Component {
     this.baseValueYPosition = this.getBaseValueYPosition(limit);
 
     if (stackSeries?.area) {
-      this.chartType = 'stack';
+      this.isStackChart = true;
       areaStackSeries = stackSeries.area;
     } else if (isRangeData(first(areaData)?.data)) {
-      this.chartType = 'range';
+      this.isRangeChart = true;
     }
 
     const renderOptions: RenderOptions = {
@@ -149,7 +149,7 @@ export default class AreaSeries extends Component {
       this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
     }
 
-    if (this.chartType === 'stack') {
+    if (this.isStackChart) {
       this.tooltipCircleMap = seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>(
         (acc, cur, dataIndex) => {
           const index = cur.index!;
@@ -165,10 +165,9 @@ export default class AreaSeries extends Component {
       );
     }
 
-    this.responders =
-      this.chartType === 'stack'
-        ? this.makeBoundResponderModel(renderOptions)
-        : this.makeDefaultResponderModel(seriesCircleModel, tooltipDataArr);
+    this.responders = this.isStackChart
+      ? this.makeBoundResponderModel(renderOptions)
+      : this.makeDefaultResponderModel(seriesCircleModel, tooltipDataArr);
   }
 
   makeDefaultResponderModel(
@@ -218,7 +217,7 @@ export default class AreaSeries extends Component {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum: DatumType, dataIdx) => {
-        const value = this.chartType === 'range' ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
+        const value = this.isRangeChart ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
         tooltipData.push({
           label: name,
           color,
@@ -232,7 +231,7 @@ export default class AreaSeries extends Component {
   }
 
   getLinePointModelValue(datum: AreaSeriesDataType, pairModel?: boolean) {
-    if (this.chartType === 'range') {
+    if (this.isRangeChart) {
       return pairModel ? datum[0] : datum[1];
     }
 
@@ -254,8 +253,9 @@ export default class AreaSeries extends Component {
 
     data.forEach((datum, idx) => {
       const value = this.getLinePointModelValue(datum, pairModel);
-      const stackedValue =
-        this.chartType === 'stack' ? this.getStackValue(areaStackSeries!, seriesIndex, idx) : value;
+      const stackedValue = this.isStackChart
+        ? this.getStackValue(areaStackSeries!, seriesIndex, idx)
+        : value;
       const valueRatio = getValueRatio(stackedValue, limit);
       const x = tickDistance * idx + (pointOnColumn ? tickDistance / 2 : 0);
       const y = (1 - valueRatio) * this.rect.height;
@@ -287,7 +287,7 @@ export default class AreaSeries extends Component {
       this.getLinePointModel(series, seriesIndex, legend, limit, renderOptions)
     );
 
-    if (this.chartType === 'range') {
+    if (this.isRangeChart) {
       const renderOptionsForPair = deepMergedCopy(renderOptions, { pairModel: true });
       const pair = seriesRawData.map((series, seriesIndex) =>
         this.getLinePointModel(series, seriesIndex, legend, limit, renderOptionsForPair)
@@ -315,21 +315,20 @@ export default class AreaSeries extends Component {
   }
 
   getCombinedLinePointsModel(): LinePointsModel[] {
-    if (this.chartType === 'normal') {
+    if (!this.isRangeChart && !this.isStackChart) {
       return this.linePointsModel.map((m) => ({
         ...m,
         points: this.addBottomPoints(m.points),
       }));
     }
 
-    const len =
-      this.chartType === 'range' ? this.linePointsModel.length / 2 : this.linePointsModel.length;
+    const len = this.isRangeChart ? this.linePointsModel.length / 2 : this.linePointsModel.length;
 
     return range(0, len).reduce<LinePointsModel[]>((acc, i) => {
-      const start = this.chartType === 'range' ? i : i - 1;
-      const end = this.chartType === 'range' ? len + i : i;
+      const start = this.isRangeChart ? i : i - 1;
+      const end = this.isRangeChart ? len + i : i;
       const points =
-        this.chartType === 'stack' && i === 0
+        this.isStackChart && i === 0
           ? this.addBottomPoints(this.linePointsModel[i].points)
           : [
               ...this.linePointsModel[start].points,
@@ -411,7 +410,7 @@ export default class AreaSeries extends Component {
     }
 
     const pairCircleModels: CircleResponderModel[] = [];
-    if (this.chartType === 'range') {
+    if (this.isRangeChart) {
       responders.forEach((circle) => {
         const pairCircleModel = (this.responders as CircleResponderModel[])
           .filter((responder) => responder.seriesIndex === circle.seriesIndex)
@@ -433,7 +432,7 @@ export default class AreaSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] | BoundResponderModel[] }) {
-    if (this.chartType === 'stack') {
+    if (this.isStackChart) {
       this.onMouseMoveStackType(responders as BoundResponderModel[]);
     } else {
       this.onMouseMoveDefault(responders as CircleResponderModel[]);
