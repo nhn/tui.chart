@@ -16,7 +16,7 @@ import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
-interface RenderLineOptions {
+interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
   tickDistance: number;
@@ -60,7 +60,7 @@ export default class LineSeries extends Component {
     const { yAxis } = scale;
     const { tickDistance, pointOnColumn } = axes.xAxis!;
 
-    const renderLineOptions: RenderLineOptions = {
+    const renderLineOptions: RenderOptions = {
       pointOnColumn,
       options: options.series || {},
       tickDistance,
@@ -125,7 +125,7 @@ export default class LineSeries extends Component {
   renderLinePointsModel(
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
-    renderOptions: RenderLineOptions,
+    renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
     const { pointOnColumn, options, tickDistance } = renderOptions;

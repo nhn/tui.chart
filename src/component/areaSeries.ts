@@ -192,7 +192,7 @@ export default class AreaSeries extends Component {
   makeBoundResponderModel(renderOptions: RenderOptions): BoundResponderModel[] {
     const { pointOnColumn, tickCount, tickDistance } = renderOptions;
     const { height, x, y } = this.rect;
-    const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount];
+    const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
 
     const halfWidth = tickDistance / 2;
 
