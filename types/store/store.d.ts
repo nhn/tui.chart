@@ -36,7 +36,7 @@ export type ChartType = keyof ChartSeriesMap;
 
 export type BoxType = 'bar' | 'column';
 
-type SeriesRaw = Partial<ChartSeriesMap>;
+type RawSeries = Partial<ChartSeriesMap>;
 
 export interface SeriesGroup {
   seriesCount: number;
@@ -83,7 +83,7 @@ export interface StoreOptions {
 
 interface InitStoreState<T extends Options = Options> {
   categories?: string[];
-  series: SeriesRaw;
+  series: RawSeries;
   options: T;
 }
 
@@ -192,7 +192,6 @@ export interface ChartState<T extends Options> {
   scale: Scale;
   disabledSeries: string[];
   series: Series;
-  seriesRaw: SeriesRaw;
   // 기존의 limitMap
   axes: Axes;
   dataRange: DataRange;

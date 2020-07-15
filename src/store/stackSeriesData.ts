@@ -1,8 +1,6 @@
 import {
   StoreModule,
   ChartType,
-  StackSeriesData,
-  BoxType,
   StackDataType,
   StackGroupData,
   Options,
@@ -23,7 +21,7 @@ import {
 import { extend } from '@src/store/store';
 import { pickProperty, isObject, sum } from '@src/helpers/utils';
 
-type SeriesRawData = BoxSeriesType<BoxSeriesDataType>[];
+type RawSeriesData = BoxSeriesType<BoxSeriesDataType>[];
 
 export function isPercentStack(stack?: Stack): boolean {
   return !!(stack?.type === 'percent');
@@ -47,7 +45,7 @@ export function pickStackOption(options: Options): StackOptionType {
   return pickProperty(options, ['series', 'stack']) as StackOptionType;
 }
 
-function makeStackData(seriesData: SeriesRawData): StackDataValues {
+function makeStackData(seriesData: RawSeriesData): StackDataValues {
   const seriesCount = seriesData.length;
   const groupCountLengths = seriesData.map(({ data }) => data.length);
   const seriesGroupCount = Math.max(...groupCountLengths);
@@ -73,7 +71,7 @@ function makeStackData(seriesData: SeriesRawData): StackDataValues {
   return stackData;
 }
 
-function makeStackGroupData(seriesData: SeriesRawData): StackGroupData {
+function makeStackGroupData(seriesData: RawSeriesData): StackGroupData {
   const stackData: StackGroupData = {};
   const stackGroupIds = [...new Set(seriesData.map(({ stackGroup }) => stackGroup))] as string[];
 
@@ -126,7 +124,7 @@ function isConnectorObject(connector: boolean | Connector): connector is Connect
   return isObject(connector);
 }
 
-function hasStackGrouped(seriesRawData: SeriesRawData): boolean {
+function hasStackGrouped(seriesRawData: RawSeriesData): boolean {
   return seriesRawData.some((rawData) => rawData.hasOwnProperty('stackGroup'));
 }
 

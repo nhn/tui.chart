@@ -1,8 +1,8 @@
-import { StoreModule, SeriesRaw, Series } from '@t/store/store';
+import { StoreModule, RawSeries, Series } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { sortSeries } from '@src/helpers/utils';
 
-function makeInitSeries(series: SeriesRaw) {
+function makeInitSeries(series: RawSeries) {
   const result: Series = {};
 
   Object.keys(series).forEach((key) => {
