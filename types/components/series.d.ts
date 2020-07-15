@@ -21,7 +21,10 @@ export type CircleModel = {
   color: string;
   style?: StyleProp<CircleStyle, CircleStyleName>;
   seriesIndex?: number;
+  index?: number;
 } & Point;
+
+export type BoundResponderModel = Rect & { type: 'bound'; index?: number };
 
 export type CircleResponderModel = {
   detectionRadius?: number;
@@ -71,26 +74,22 @@ export type RectModel = {
 export type AreaSeriesModels = {
   rect: ClipRectAreaModel[];
   series: AreaPointsModel[];
-  hoveredSeries: (CircleModel | LinePointsModel)[];
 };
 
 export type BoxSeriesModels = {
   clipRect?: ClipRectAreaModel[];
   series: RectModel[];
-  hoveredSeries?: RectModel[];
   connector?: LineModel[];
   label?: LabelModel[];
 };
 
 export type CircleSeriesModels = {
   series: CircleModel[];
-  hoveredSeries: CircleModel[];
 };
 
 export type LineSeriesModels = {
   rect: ClipRectAreaModel[];
   series: LinePointsModel[];
-  hoveredSeries: CircleModel[];
 };
 
 export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {

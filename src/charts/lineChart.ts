@@ -15,6 +15,7 @@ import DataLabels from '@src/component/dataLabels';
 import AxisTitle from '@src/component/axisTitle';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
+import HoveredSeries from '@src/component/hoveredSeries';
 
 import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
@@ -60,6 +61,7 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
+    this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([

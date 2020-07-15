@@ -390,7 +390,7 @@ export default class BoxSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: RectModel[] }) {
-    this.drawModels.hoveredSeries = responders;
+    this.eventBus.emit('renderHoveredSeries', responders);
     this.activatedResponders = responders;
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);

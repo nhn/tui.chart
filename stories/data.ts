@@ -53,6 +53,24 @@ export const temperatureData = {
   ],
 };
 
+export const temperatureData2 = {
+  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+  series: [
+    {
+      name: 'Budget',
+      data: [5000, 3000, 6000, 3000, 6000, 4000],
+    },
+    {
+      name: 'Income',
+      data: [8000, 1000, 7000, 2000, 5000, 3000],
+    },
+    {
+      name: 'Outgo',
+      data: [900, 6000, 1000, 9000, 3000, 1000],
+    },
+  ],
+};
+
 export const avgTemperatureData = {
   categories: [
     'Jan',
@@ -85,19 +103,23 @@ export const avgTemperatureData = {
 };
 
 export const budgetData = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Budget',
-      data: [5000, 3000, 6000, 3000, 6000, 4000],
+      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
     },
     {
       name: 'Income',
-      data: [8000, 1000, 7000, 2000, 5000, 3000],
+      data: [8000, 4000, 7000, 2000, 6000, 3000, 5000],
     },
     {
-      name: 'Outgo',
-      data: [900, 6000, 1000, 9000, 3000, 1000],
+      name: 'Expenses',
+      data: [4000, 4000, 6000, 3000, 4000, 5000, 7000],
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, 4000, 3000],
     },
   ],
 };

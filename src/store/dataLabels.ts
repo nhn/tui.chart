@@ -135,7 +135,7 @@ function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOp
   return {
     x: x + offsetX,
     y: y + offsetY,
-    text: formatter!(point.value!),
+    text: formatter(point.value!),
     textAlign: 'center',
     textBaseline,
     style,
@@ -428,7 +428,7 @@ function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOptio
 
   return {
     ...labelPosition,
-    text: formatter!(value!),
+    text: formatter(value!),
     style: type === 'stackTotal' ? stackTotal?.style! : style,
   };
 }
@@ -449,11 +449,11 @@ const dataLabels: StoreModule = {
       const labels: DataLabel[] = [];
 
       dataLabelData.forEach((model) => {
-        const { type } = model;
+        const { type, value } = model;
         const labelOptions = getDataLabelsOptions(dataLabelOptions, type, withStack);
         const disableStackTotal = type === 'stackTotal' && !labelOptions.stackTotal?.visible;
 
-        if (disableStackTotal) {
+        if (disableStackTotal || !value) {
           return;
         }
 
