@@ -6,9 +6,9 @@ import {
   lossData,
   genderAgeData,
 } from './data';
-import { BarChartOptions, BarTypeYAxisOptions } from '@t/options';
+import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { withKnobs, radios, boolean } from '@storybook/addon-knobs';
+import { withKnobs, radios } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart.Bar.General',
@@ -80,13 +80,13 @@ export const negativeWithMinMax = () => {
   return el;
 };
 
-export const both = () => {
+export const positiveAndNegative = () => {
   const { el } = createChart(negativeBudgetData);
 
   return el;
 };
 
-export const bothWithMinMax = () => {
+export const positiveAndNegativeWithMinMax = () => {
   const { el } = createChart(negativeBudgetData, {
     xAxis: {
       scale: {
@@ -119,17 +119,24 @@ export const rangeWithMinMax = () => {
 };
 
 export const diverging = () => {
-  const centerYAxisMode = boolean('Center Y Axis', false);
-  const yAxis: BarTypeYAxisOptions = {
-    title: 'Age Group',
-  };
-
-  if (centerYAxisMode) {
-    yAxis.align = 'center';
-  }
-
   const { el } = createChart(genderAgeData, {
-    yAxis,
+    yAxis: {
+      title: 'Age Group',
+    },
+    series: {
+      diverging: true,
+    },
+  });
+
+  return el;
+};
+
+export const centerYAxis = () => {
+  const { el } = createChart(genderAgeData, {
+    yAxis: {
+      title: 'Age Group',
+      align: 'center',
+    },
     xAxis: {
       label: {
         interval: 2,

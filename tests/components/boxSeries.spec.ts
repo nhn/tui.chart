@@ -33,6 +33,9 @@ const chartState = {
       pointOnColumn: true,
       tickDistance: 40,
     },
+    centerYAxis: {
+      visible: false,
+    },
   },
   categories: ['A', 'B'],
   options: {},

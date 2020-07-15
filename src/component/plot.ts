@@ -1,13 +1,5 @@
 import Component from './component';
-import {
-  ChartState,
-  Options,
-  PlotLine,
-  Axes,
-  AxisData,
-  PlotBand,
-  YCenterAxis,
-} from '@t/store/store';
+import { ChartState, Options, PlotLine, Axes, AxisData, PlotBand } from '@t/store/store';
 import { crispPixel, makeTickPixelPositions } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
@@ -38,7 +30,7 @@ export default class Plot extends Component {
     return [];
   }
 
-  renderGridLineModels(
+  renderPlotLineModels(
     relativePositions: number[],
     vertical: boolean,
     size?: number,
@@ -55,28 +47,28 @@ export default class Plot extends Component {
     });
   }
 
-  renderGridsIfCenterYAxis(axes: Axes, yCenterAxis: Required<YCenterAxis>): LineModel[] {
-    const { xAxisHalfSize, secondStartX, yAxisHeight } = yCenterAxis;
+  renderPlotsOfCenterYAxisChart(axes: Axes): LineModel[] {
+    const { xAxisHalfSize, secondStartX, yAxisHeight } = axes.centerYAxis;
 
     // vertical
-    const xAxisTickCount = axes?.xAxis?.tickCount!;
+    const xAxisTickCount = axes.xAxis.tickCount!;
     const verticalLines = [
-      ...this.renderGridLineModels(makeTickPixelPositions(xAxisHalfSize, xAxisTickCount), true),
-      ...this.renderGridLineModels(
+      ...this.renderPlotLineModels(makeTickPixelPositions(xAxisHalfSize, xAxisTickCount), true),
+      ...this.renderPlotLineModels(
         makeTickPixelPositions(xAxisHalfSize, xAxisTickCount, secondStartX),
         true
       ),
     ];
 
     // horizontal
-    const yAxisTickCount = axes?.yAxis?.tickCount!;
+    const yAxisTickCount = axes.yAxis.tickCount!;
     const horizontalLines = [
-      ...this.renderGridLineModels(
+      ...this.renderPlotLineModels(
         makeTickPixelPositions(yAxisHeight, yAxisTickCount),
         false,
         xAxisHalfSize
       ),
-      ...this.renderGridLineModels(
+      ...this.renderPlotLineModels(
         makeTickPixelPositions(yAxisHeight, yAxisTickCount),
         false,
         xAxisHalfSize,
@@ -87,12 +79,14 @@ export default class Plot extends Component {
     return [...verticalLines, ...horizontalLines];
   }
 
-  renderGrids(axes: Axes, yCenterAxis: YCenterAxis): LineModel[] {
-    return yCenterAxis?.visible
-      ? this.renderGridsIfCenterYAxis(axes, yCenterAxis as Required<YCenterAxis>)
+  renderPlots(axes: Axes): LineModel[] {
+    const vertical = true;
+
+    return axes.centerYAxis.visible
+      ? this.renderPlotsOfCenterYAxisChart(axes)
       : [
-          ...this.renderGridLineModels(this.getTickPixelPositions(false, axes), false),
-          ...this.renderGridLineModels(this.getTickPixelPositions(true, axes), true),
+          ...this.renderPlotLineModels(this.getTickPixelPositions(!vertical, axes), !vertical),
+          ...this.renderPlotLineModels(this.getTickPixelPositions(vertical, axes), vertical),
         ];
   }
 
@@ -104,10 +98,10 @@ export default class Plot extends Component {
   }
 
   render(state: ChartState<Options>) {
-    const { layout, axes, plot, yCenterAxis } = state;
+    const { layout, axes, plot } = state;
     this.rect = layout.plot;
 
-    this.models.plot = this.renderGrids(axes, yCenterAxis);
+    this.models.plot = this.renderPlots(axes);
 
     if (state.plot) {
       const { lines, bands } = plot;

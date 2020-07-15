@@ -93,7 +93,7 @@ export const negativeWithMinMax = () => {
   return el;
 };
 
-export const both = () => {
+export const positiveAndNegative = () => {
   const { el } = createChart(negativeBudgetData, {
     series: {
       stack: true,
@@ -103,7 +103,7 @@ export const both = () => {
   return el;
 };
 
-export const bothWithMinMax = () => {
+export const positiveAndNegativeWithMinMax = () => {
   const { el } = createChart(negativeBudgetData, {
     series: {
       stack: true,
@@ -120,7 +120,7 @@ export const bothWithMinMax = () => {
   return el;
 };
 
-export const bothPercent = () => {
+export const positiveAndNegativePercent = () => {
   const { el } = createChart(negativeBudgetData, {
     series: {
       stack: {

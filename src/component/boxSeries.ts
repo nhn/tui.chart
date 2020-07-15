@@ -5,7 +5,7 @@ import {
   BoxSeriesModels,
   StackTotalModel,
 } from '@t/components/series';
-import { ChartState, ChartType, BoxType, AxisData, Legend, YCenterAxis } from '@t/store/store';
+import { ChartState, ChartType, BoxType, AxisData, Legend, CenterYAxisData } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -218,7 +218,6 @@ export default class BoxSeries extends Component {
       options,
       dataLabels,
       legend,
-      yCenterAxis,
     } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
@@ -229,24 +228,30 @@ export default class BoxSeries extends Component {
 
     const seriesData = series[this.name].data;
 
+    this.visibleCenterYAxis = axes.centerYAxis.visible;
+
+    if (this.visibleCenterYAxis) {
+      this.valueAxis = 'centerYAxis';
+    }
+
     const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;
     const { min, max } = getLimitOnAxis(labels);
 
-    this.visibleCenterYAxis = !!yCenterAxis?.visible;
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     let offsetSize: number = this.getOffsetSize();
 
     if (diverging) {
-      const [left, right] = this.getDivergingBasePosition(yCenterAxis);
+      const { centerYAxis } = axes;
+      const [left, right] = this.getDivergingBasePosition(centerYAxis);
 
       this.basePosition = this.getOffsetSize() / 2;
       this.leftBasePosition = left;
       this.rightBasePosition = right;
 
-      offsetSize = this.getOffsetSizeWithDiverging(yCenterAxis);
+      offsetSize = this.getOffsetSizeWithDiverging(centerYAxis);
     }
 
     const renderOptions: RenderOptions = {
@@ -274,15 +279,7 @@ export default class BoxSeries extends Component {
 
     if (!this.drawModels) {
       this.drawModels = {
-        clipRect: [
-          {
-            type: 'clipRectArea',
-            width: this.isBar ? 0 : clipRect.width,
-            height: this.isBar ? clipRect.height : 0,
-            x: this.isBar ? 0 : clipRect.x,
-            y: this.isBar ? clipRect.y : 0,
-          },
-        ],
+        clipRect: [this.initClipRect(clipRect)],
         series: deepCopyArray(seriesModels),
       };
     }
@@ -306,6 +303,16 @@ export default class BoxSeries extends Component {
       y: 0,
       width: this.rect.width,
       height: this.rect.height,
+    };
+  }
+
+  private initClipRect(clipRect: ClipRectAreaModel): ClipRectAreaModel {
+    return {
+      type: 'clipRectArea',
+      width: this.isBar ? 0 : clipRect.width,
+      height: this.isBar ? clipRect.height : 0,
+      x: this.isBar ? 0 : clipRect.x,
+      y: this.isBar ? clipRect.y : 0,
     };
   }
 
@@ -429,12 +436,12 @@ export default class BoxSeries extends Component {
       : this.getTickPositionIfNotZero(tickPositions, seriesDirection);
   }
 
-  getDivergingBasePosition(yCenterAxis: YCenterAxis) {
+  getDivergingBasePosition({ xAxisHalfSize, secondStartX }: CenterYAxisData) {
     let leftZeroPosition: number, rightZeroPosition: number;
 
     if (this.visibleCenterYAxis) {
-      leftZeroPosition = yCenterAxis?.xAxisHalfSize!;
-      rightZeroPosition = yCenterAxis?.secondStartX!;
+      leftZeroPosition = xAxisHalfSize;
+      rightZeroPosition = secondStartX;
     } else {
       const divergingZeroPosition = this.getOffsetSize() / 2;
 
@@ -618,7 +625,7 @@ export default class BoxSeries extends Component {
     return Math.min(defaultValue, Math.floor(tickDistance * 0.3));
   }
 
-  getOffsetSizeWithDiverging(yCenterAxis: YCenterAxis) {
-    return this.visibleCenterYAxis ? yCenterAxis?.xAxisHalfSize! : this.getOffsetSize() / 2;
+  getOffsetSizeWithDiverging({ xAxisHalfSize }: CenterYAxisData) {
+    return this.visibleCenterYAxis ? xAxisHalfSize : this.getOffsetSize() / 2;
   }
 }

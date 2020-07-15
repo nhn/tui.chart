@@ -5,7 +5,8 @@ import {
   Series,
   StoreModule,
   ValueEdge,
-  YCenterAxis,
+  CenterYAxisData,
+  Axes,
 } from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
@@ -16,13 +17,14 @@ import {
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { AxisTitle, BoxSeriesOptions } from '@t/options';
+import { AxisTitle, BoxSeriesOptions, BarTypeYAxisOptions } from '@t/options';
 import {
   deepMergedCopy,
   hasNegativeOnly,
   isString,
   isUndefined,
   isNumber,
+  pickProperty,
 } from '@src/helpers/utils';
 
 interface StateProp {
@@ -30,16 +32,32 @@ interface StateProp {
   axisSize: number;
   options: Options;
   series: Series;
-  yCenterAxis?: YCenterAxis;
+  centerYAxis?: Pick<CenterYAxisData, 'visible' | 'xAxisHalfSize'>;
 }
 
 type ValueStateProp = StateProp & { categories: string[] };
 
-function getZeroPosition(limit: ValueEdge, axisSize: number, labelAxisOnYAxis: boolean) {
+export function enableCenterYAxis(options: Options, isBar: boolean) {
+  const diverging = !!pickProperty(options, ['series', 'diverging']);
+  const alignCenter = (options.yAxis as BarTypeYAxisOptions)?.align === 'center';
+
+  return isBar && diverging && alignCenter;
+}
+
+function isDivergingBoxSeries(series: Series, options: Options) {
+  return hasBoxTypeSeries(series) && !!(options.series as BoxSeriesOptions)?.diverging;
+}
+
+function getZeroPosition(
+  limit: ValueEdge,
+  axisSize: number,
+  labelAxisOnYAxis: boolean,
+  isDivergingSeries: boolean
+) {
   const { min, max } = limit;
   const hasZeroValue = min <= 0 && max >= 0;
 
-  if (!hasZeroValue) {
+  if (!hasZeroValue || isDivergingSeries) {
     return null;
   }
 
@@ -64,18 +82,21 @@ export function getLabelAxisData(stateProp: ValueStateProp) {
 }
 
 export function getValueAxisData(stateProp: StateProp) {
-  const { scale, axisSize, series, options, yCenterAxis } = stateProp;
+  const { scale, axisSize, series, options, centerYAxis } = stateProp;
   const { limit, stepSize } = scale;
-  const visibleYCenterAxis = !!yCenterAxis?.visible;
-  const size = visibleYCenterAxis ? yCenterAxis?.xAxisHalfSize! : axisSize;
+  const visibleCenterYAxis = centerYAxis!.visible;
+  const size = visibleCenterYAxis ? centerYAxis!.xAxisHalfSize : axisSize;
+  const divergingBoxSeries = isDivergingBoxSeries(series, options);
+  const zeroPosition = getZeroPosition(
+    limit,
+    axisSize,
+    isLabelAxisOnYAxis(series),
+    divergingBoxSeries
+  );
   let valueLabels = makeLabelsFromLimit(limit, stepSize);
-  let zeroPosition = getZeroPosition(limit, axisSize, isLabelAxisOnYAxis(series));
 
-  if (visibleYCenterAxis) {
-    zeroPosition = null;
-  } else if (hasBoxTypeSeries(series) && (options.series as BoxSeriesOptions)?.diverging) {
+  if (!visibleCenterYAxis && divergingBoxSeries) {
     valueLabels = getDivergingValues(valueLabels);
-    zeroPosition = null;
   }
 
   const axisData = {
@@ -117,7 +138,7 @@ function makeTitleOption(title?: AxisTitle) {
 
 const axes: StoreModule = {
   name: 'axes',
-  state: ({ options }) => ({
+  state: ({ series, options }) => ({
     axes: {
       xAxis: {
         tickInterval: options.xAxis?.tick?.interval ?? 1,
@@ -129,26 +150,34 @@ const axes: StoreModule = {
         labelInterval: options.yAxis?.label?.interval ?? 1,
         title: makeTitleOption(options.yAxis?.title),
       } as AxisData,
+      centerYAxis: {
+        visible: enableCenterYAxis(options, !!series.bar),
+      } as CenterYAxisData,
     },
   }),
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, categories = [], yCenterAxis } = state;
-      const { plot } = layout;
+      const { scale, options, series, layout, categories = [] } = state;
+      const { xAxis, yAxis, plot } = layout;
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const { valueAxisName, labelAxisName } = getAxisName(labelAxisOnYAxis);
       const { valueSizeKey, labelSizeKey } = getSizeKey(labelAxisOnYAxis);
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
+      const visibleCenterYAxis = state.axes.centerYAxis.visible;
 
       const valueAxisData = getValueAxisData({
         scale: scale[valueAxisName],
         axisSize: valueAxisSize,
         options,
         series,
-        yCenterAxis,
+        centerYAxis: {
+          visible: visibleCenterYAxis,
+          xAxisHalfSize: (xAxis.width - yAxis.width) / 2,
+        },
       });
+
       const labelAxisData = getLabelAxisData({
         scale: scale[labelAxisName],
         axisSize: labelAxisSize,
@@ -157,10 +186,21 @@ const axes: StoreModule = {
         series,
       });
 
-      extend(state.axes, {
-        xAxis: (labelAxisOnYAxis ? valueAxisData : labelAxisData) as AxisData,
-        yAxis: (labelAxisOnYAxis ? labelAxisData : valueAxisData) as AxisData,
-      });
+      const axesState = {
+        xAxis: labelAxisOnYAxis ? valueAxisData : labelAxisData,
+        yAxis: labelAxisOnYAxis ? labelAxisData : valueAxisData,
+      } as Axes;
+
+      if (visibleCenterYAxis) {
+        axesState.centerYAxis = deepMergedCopy(valueAxisData, {
+          xAxisHalfSize: (xAxis.width - yAxis.width) / 2,
+          secondStartX: (xAxis.width + yAxis.width) / 2,
+          yAxisLabelAnchorPoint: yAxis.width / 2,
+          yAxisHeight: yAxis.height,
+        }) as CenterYAxisData;
+      }
+
+      extend(state.axes, axesState);
     },
   },
   computed: {},

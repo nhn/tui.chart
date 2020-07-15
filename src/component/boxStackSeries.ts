@@ -81,16 +81,7 @@ function getDirectionKeys(seriesDirection: SeriesDirection) {
 
 export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const {
-      layout,
-      axes,
-      categories,
-      stackSeries,
-      options,
-      dataLabels,
-      legend,
-      yCenterAxis,
-    } = chartState;
+    const { layout, axes, categories, stackSeries, options, dataLabels, legend } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
@@ -104,20 +95,22 @@ export default class BoxStackSeries extends BoxSeries {
     const diverging = !!options.series?.diverging;
     const { min, max } = getLimitOnAxis(labels);
     const { stack, scaleType } = seriesData;
-    this.visibleCenterYAxis = !!yCenterAxis?.visible;
+
+    this.visibleCenterYAxis = axes.centerYAxis.visible;
 
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     let offsetSize: number = this.getOffsetSize();
 
     if (diverging) {
-      const [left, right] = this.getDivergingBasePosition(yCenterAxis);
+      const { centerYAxis } = axes;
+      const [left, right] = this.getDivergingBasePosition(centerYAxis);
 
       this.basePosition = this.getOffsetSize() / 2;
       this.leftBasePosition = left;
       this.rightBasePosition = right;
 
-      offsetSize = this.getOffsetSizeWithDiverging(yCenterAxis);
+      offsetSize = this.getOffsetSizeWithDiverging(centerYAxis);
     }
 
     const renderOptions: RenderOptions = {
@@ -550,12 +543,13 @@ export default class BoxStackSeries extends BoxSeries {
     const collideEdge = totalOfValues > max;
     const usingValue = this.isBar ? totalOfIndexBefore : totalOfValues;
     const result = min > 0 ? Math.max(usingValue - min, 0) : usingValue;
+    const barLength = result * ratio;
     let pos: number;
 
     if (this.isBar) {
-      pos = basePosition + result * ratio;
+      pos = basePosition + barLength;
     } else {
-      pos = collideEdge ? 0 : basePosition - result * ratio;
+      pos = collideEdge ? 0 : basePosition - barLength;
     }
 
     return pos;

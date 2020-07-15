@@ -2,7 +2,6 @@ import Axis from '@src/component/axis';
 import Store from '@src/store/store';
 import { LineChartOptions } from '@t/options';
 import EventEmitter from '@src/eventEmitter';
-import axes from '@src/store/axes';
 
 let axis;
 
@@ -29,14 +28,17 @@ describe('yAxis', () => {
             labels: ['1', '2'],
             tickCount: 2,
           },
+          centerYAxis: {
+            visible: false,
+          },
         },
       });
     });
 
     it('tick model', () => {
       expect(axis.models.tick).toEqual([
-        { isYAxis: true, type: 'tick', x: 10.5, y: 0.5, direction: 'left' },
-        { isYAxis: true, type: 'tick', x: 10.5, y: 80.5, direction: 'left' },
+        { isYAxis: true, type: 'tick', x: 10.5, y: 0.5, tickSize: -5 },
+        { isYAxis: true, type: 'tick', x: 10.5, y: 80.5, tickSize: -5 },
       ]);
     });
 
@@ -77,6 +79,9 @@ describe('yAxis', () => {
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             tickCount: 10,
           },
+          centerYAxis: {
+            visible: false,
+          },
         },
       });
     });
@@ -103,36 +108,17 @@ describe('yAxis', () => {
             labels: ['1', '2', '3', '4', '5'],
             tickCount: 6,
           },
-        },
-        yCenterAxis: {
-          visible: true,
-          xAxisHalfSize: 35,
-          secondStartX: 45,
-          yAxisLabelAnchorPoint: 5,
-          yAxisHeight: 80,
+          centerYAxis: {
+            visible: true,
+          },
         },
       });
     });
 
-    it('should have two axis lines', () => {
-      expect(axis.models.axisLine).toHaveLength(2);
-    });
-
-    it('should have tick models pointing to the left and right respectively', () => {
-      const tickModel = axis.models.tick;
-      const ticksToLeft = tickModel.filter(({ direction }) => direction === 'left');
-      const ticksToRight = tickModel.filter(({ direction }) => direction === 'right');
-
-      expect(tickModel).toHaveLength(12);
-      expect(ticksToLeft).toHaveLength(6);
-      expect(ticksToRight).toHaveLength(6);
-    });
-
-    it('should be text alignment center', () => {
-      const labelModel = axis.models.label;
-      const isAlignCenter = labelModel.every(({ style }) => style[1].textAlign === 'center');
-
-      expect(isAlignCenter).toBeTruthy();
+    it('should have empty models', () => {
+      expect(axis.models.axisLine).toHaveLength(0);
+      expect(axis.models.tick).toHaveLength(0);
+      expect(axis.models.label).toHaveLength(0);
     });
   });
 });
@@ -159,14 +145,17 @@ describe('xAxis', () => {
             labels: ['1', '2'],
             tickCount: 2,
           },
+          centerYAxis: {
+            visible: false,
+          },
         },
       });
     });
 
     it('tick model', () => {
       expect(axis.models.tick).toEqual([
-        { isYAxis: false, type: 'tick', x: 0.5, y: 0.5, direction: 'bottom' },
-        { isYAxis: false, type: 'tick', x: 80.5, y: 0.5, direction: 'bottom' },
+        { isYAxis: false, type: 'tick', x: 0.5, y: 0.5, tickSize: 5 },
+        { isYAxis: false, type: 'tick', x: 80.5, y: 0.5, tickSize: 5 },
       ]);
     });
 
@@ -207,6 +196,9 @@ describe('xAxis', () => {
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             tickCount: 10,
           },
+          centerYAxis: {
+            visible: false,
+          },
         },
       });
     });
@@ -233,30 +225,17 @@ describe('xAxis', () => {
             labels: ['1', '2', '3', '4', '5'],
             tickCount: 5,
           },
-        },
-        yCenterAxis: {
-          visible: true,
-          xAxisHalfSize: 35,
-          secondStartX: 45,
-          yAxisLabelAnchorPoint: 5,
-          yAxisHeight: 80,
+          centerYAxis: {
+            visible: true,
+          },
         },
       });
     });
 
-    it('should have two axis lines', () => {
-      expect(axis.models.axisLine).toHaveLength(2);
-    });
-
-    it('should have tick models pointing to the left and right respectively', () => {
-      expect(axis.models.tick).toHaveLength(10);
-    });
-
-    it('should have diverging labels', () => {
-      const labelModel = axis.models.label;
-      const divergingLabels = labelModel.map(({ text }) => text);
-
-      expect(divergingLabels).toEqual(['5', '4', '3', '2', '1', '1', '2', '3', '4', '5']);
+    it('should have empty models', () => {
+      expect(axis.models.axisLine).toHaveLength(0);
+      expect(axis.models.tick).toHaveLength(0);
+      expect(axis.models.label).toHaveLength(0);
     });
   });
 });

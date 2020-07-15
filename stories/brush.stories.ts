@@ -150,7 +150,7 @@ export const tickBrush = () => {
     x: 100,
     y: 100,
     isYAxis,
-    direction: isYAxis ? 'left' : 'bottom',
+    tickSize: isYAxis ? -5 : 5,
   };
   tick(ctx, tickModel);
 

@@ -6,7 +6,6 @@ import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import plot from '@src/store/plot';
 import dataLabels from '@src/store/dataLabels';
-import yCenterAxis from '@src/store/yCenterAxis';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
@@ -19,6 +18,7 @@ import AxisTitle from '@src/component/axisTitle';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import ZeroAxis from '@src/component/zeroAxis';
+import AxisUsingCenterY from '@src/component/axisUsingCenterY';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -40,7 +40,7 @@ interface BarChartProps {
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
-  modules = [yCenterAxis, stackSeriesData, dataRange, scale, axes, plot, dataLabels];
+  modules = [stackSeriesData, dataRange, scale, axes, plot, dataLabels];
 
   constructor({ el, options, data }: BarChartProps) {
     super({
@@ -64,6 +64,8 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(ZeroAxis);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
+    this.componentManager.add(AxisUsingCenterY, { name: 'yAxis' });
+    this.componentManager.add(AxisUsingCenterY, { name: 'xAxis' });
     this.componentManager.add(DataLabels);
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });

@@ -2,7 +2,7 @@ import BarChart from '@src/charts/barChart';
 import { budgetDataForStack, negativeBudgetData, budgetData, lossData } from './data';
 import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { withKnobs, radios, boolean } from '@storybook/addon-knobs';
+import { withKnobs, radios } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart.Bar.Stack',
@@ -94,7 +94,7 @@ export const negativeWithMinMax = () => {
   return el;
 };
 
-export const both = () => {
+export const positiveAndNegative = () => {
   const { el } = createChart(negativeBudgetData, {
     series: {
       stack: true,
@@ -104,7 +104,7 @@ export const both = () => {
   return el;
 };
 
-export const bothWithMinMax = () => {
+export const positiveAndNegativeWithMinMax = () => {
   const { el } = createChart(negativeBudgetData, {
     series: {
       stack: true,
@@ -120,7 +120,7 @@ export const bothWithMinMax = () => {
   return el;
 };
 
-export const bothPercent = () => {
+export const positiveAndNegativePercent = () => {
   const { el } = createChart(negativeBudgetData, {
     series: {
       stack: {
@@ -164,7 +164,6 @@ export const styledConnector = () => {
 
 export const dataLabels = () => {
   const anchor = radios('anchor', { center: 'center', start: 'start', end: 'end' }, 'center');
-  const showStackTotal = boolean('Show Stack Total', true);
   const { el } = createChart(negativeBudgetData, {
     xAxis: {
       scale: {
@@ -178,7 +177,30 @@ export const dataLabels = () => {
         visible: true,
         anchor,
         stackTotal: {
-          visible: showStackTotal,
+          visible: false,
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabelsWithStackTotal = () => {
+  const { el } = createChart(negativeBudgetData, {
+    xAxis: {
+      scale: {
+        min: -16000,
+        max: 16000,
+      },
+    },
+    series: {
+      stack: true,
+      dataLabels: {
+        visible: true,
+        anchor: 'center',
+        stackTotal: {
+          visible: true,
           style: {
             font: '700 12px Arial',
           },

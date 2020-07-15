@@ -80,13 +80,13 @@ export const negativeWithMinMax = () => {
   return el;
 };
 
-export const both = () => {
+export const positiveAndNegative = () => {
   const { el } = createChart(negativeBudgetData);
 
   return el;
 };
 
-export const bothWithMinMax = () => {
+export const positiveAndNegativeWithMinMax = () => {
   const { el } = createChart(negativeBudgetData, {
     yAxis: {
       scale: {

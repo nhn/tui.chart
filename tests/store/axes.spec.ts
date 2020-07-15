@@ -1,7 +1,7 @@
 import axes from '@src/store/axes';
 
 import Store from '@src/store/store';
-import { LineChartOptions } from '@t/options';
+import { LineChartOptions, BarChartOptions, ColumnChartOptions } from '@t/options';
 import { ChartState, Scale, StateFunc } from '@t/store/store';
 
 describe('Axes Store module', () => {
@@ -13,6 +13,7 @@ describe('Axes Store module', () => {
         axes: {
           xAxis: { labelInterval: 1, tickInterval: 1 },
           yAxis: { labelInterval: 1, tickInterval: 1 },
+          centerYAxis: { visible: false },
         },
       });
     });
@@ -27,6 +28,28 @@ describe('Axes Store module', () => {
         axes: {
           xAxis: { tickInterval: 2, labelInterval: 3 },
           yAxis: { tickInterval: 4, labelInterval: 5 },
+          centerYAxis: { visible: false },
+        },
+      });
+    });
+
+    it("should be stored the values, when diverging is enabled and y-axis alignment is 'center' on bar series", () => {
+      const data = [
+        { name: 'han', data: [1, 2, 3], color: '#aaaaaa' },
+        { name: 'cho', data: [4, 5, 6], color: '#bbbbbb' },
+      ];
+
+      const series = { bar: { ...data } };
+      const options = {
+        yAxis: { align: 'center' },
+        series: { diverging: true },
+      } as BarChartOptions;
+
+      expect(axesStateFunc({ series, options })).toEqual({
+        axes: {
+          xAxis: { tickInterval: 1, labelInterval: 1 },
+          yAxis: { tickInterval: 1, labelInterval: 1 },
+          centerYAxis: { visible: true },
         },
       });
     });
@@ -35,7 +58,11 @@ describe('Axes Store module', () => {
   it('should be setAxesData with state values', () => {
     const state = {
       chart: { width: 120, height: 120 },
-      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
+      layout: {
+        plot: { width: 100, height: 150, x: 30, y: 10 },
+        yAxis: { x: 10, y: 10, width: 10, height: 80 },
+        xAxis: { x: 10, y: 10, width: 80, height: 10 },
+      },
       scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
       series: {
         line: {
@@ -48,6 +75,7 @@ describe('Axes Store module', () => {
       axes: {
         xAxis: {},
         yAxis: {},
+        centerYAxis: { visible: false },
       },
       categories: ['A', 'B'],
       options: {},
@@ -72,6 +100,7 @@ describe('Axes Store module', () => {
         tickDistance: 25,
         zeroPosition: 150,
       },
+      centerYAxis: { visible: false },
     });
   });
 });
@@ -80,7 +109,11 @@ describe('pointOnColumn state is properly created', () => {
   it('[bar chart] xAxis.pointOnColumn: false, yAxis.pointOnColumn: true', () => {
     const state = {
       chart: { width: 120, height: 120 },
-      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
+      layout: {
+        plot: { width: 100, height: 150, x: 30, y: 10 },
+        yAxis: { x: 10, y: 10, width: 10, height: 80 },
+        xAxis: { x: 10, y: 10, width: 80, height: 10 },
+      },
       scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
       series: {
         bar: {
@@ -93,24 +126,30 @@ describe('pointOnColumn state is properly created', () => {
       axes: {
         xAxis: {},
         yAxis: {},
+        centerYAxis: { visible: false },
       },
       categories: ['A', 'B'],
       options: {},
-    } as ChartState<LineChartOptions>;
+    } as ChartState<BarChartOptions>;
 
-    const store = { state } as Store<LineChartOptions>;
+    const store = { state } as Store<BarChartOptions>;
     axes.action!.setAxesData(store);
 
     expect(store.state.axes).toMatchObject({
       xAxis: { pointOnColumn: false },
       yAxis: { pointOnColumn: true },
+      centerYAxis: { visible: false },
     });
   });
 
   it('[column chart] xAxis.pointOnColumn: true, yAxis.pointOnColumn: false', () => {
     const state = {
       chart: { width: 120, height: 120 },
-      layout: { plot: { width: 100, height: 150, x: 30, y: 10 } },
+      layout: {
+        plot: { width: 100, height: 150, x: 30, y: 10 },
+        yAxis: { x: 10, y: 10, width: 10, height: 80 },
+        xAxis: { x: 10, y: 10, width: 80, height: 10 },
+      },
       scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
 
       series: {
@@ -124,17 +163,19 @@ describe('pointOnColumn state is properly created', () => {
       axes: {
         xAxis: {},
         yAxis: {},
+        centerYAxis: { visible: false },
       },
       categories: ['A', 'B'],
       options: {},
-    } as ChartState<LineChartOptions>;
+    } as ChartState<ColumnChartOptions>;
 
-    const store = { state } as Store<LineChartOptions>;
+    const store = { state } as Store<ColumnChartOptions>;
     axes.action!.setAxesData(store);
 
     expect(store.state.axes).toMatchObject({
       xAxis: { pointOnColumn: true },
       yAxis: { pointOnColumn: false },
+      centerYAxis: { visible: false },
     });
   });
 });

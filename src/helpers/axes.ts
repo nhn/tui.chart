@@ -6,7 +6,7 @@ export function isLabelAxisOnYAxis(series: Series) {
 }
 
 export function hasBoxTypeSeries(series: Series) {
-  return series.column || series.bar;
+  return !!series.column || !!series.bar;
 }
 
 export function isPointOnColumn(series: Series, options: Options) {

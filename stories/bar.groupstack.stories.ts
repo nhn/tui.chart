@@ -1,12 +1,10 @@
 import BarChart from '@src/charts/barChart';
 import { lossDataForGroupStack, genderAgeGroupData } from './data';
-import { BarChartOptions, BarTypeYAxisOptions } from '@t/options';
+import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { withKnobs, boolean } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart.Bar.GroupStack',
-  decorators: [withKnobs],
 };
 
 const width = 1000;
@@ -62,22 +60,40 @@ export const negative = () => {
 };
 
 export const diverging = () => {
-  const centerYAxisMode = boolean('Center Y Axis', false);
-  const yAxis: BarTypeYAxisOptions = {
-    title: 'Age Group',
-  };
-
-  if (centerYAxisMode) {
-    yAxis.align = 'center';
-  }
-
   const { el } = createChart(genderAgeGroupData, {
     chart: {
       width,
       height: 500,
       title: 'Population Distribution',
     },
-    yAxis,
+    yAxis: {
+      title: 'Age Group',
+    },
+    series: {
+      stack: true,
+      diverging: true,
+    },
+  });
+
+  return el;
+};
+
+export const centerYAxis = () => {
+  const { el } = createChart(genderAgeGroupData, {
+    chart: {
+      width,
+      height: 500,
+      title: 'Population Distribution',
+    },
+    yAxis: {
+      title: 'Age Group',
+      align: 'center',
+    },
+    xAxis: {
+      label: {
+        interval: 4,
+      },
+    },
     series: {
       stack: true,
       diverging: true,

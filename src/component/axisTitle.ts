@@ -26,14 +26,15 @@ export default class AxisTitle extends Component {
     return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign }] }];
   }
 
-  render({ axes, layout, yCenterAxis }: ChartState<Options>) {
-    const titleOption = this.isYAxis ? axes.yAxis?.title : axes.xAxis?.title;
+  render({ axes, layout }: ChartState<Options>) {
+    const { xAxis, yAxis, centerYAxis } = axes;
+    const titleOption = this.isYAxis ? yAxis.title : xAxis.title;
 
     if (!titleOption) {
       return;
     }
 
     this.rect = this.isYAxis ? layout.yAxisTitle : layout.xAxisTitle;
-    this.models = this.renderAxisTitle(titleOption, !!yCenterAxis?.visible);
+    this.models = this.renderAxisTitle(titleOption, centerYAxis.visible);
   }
 }

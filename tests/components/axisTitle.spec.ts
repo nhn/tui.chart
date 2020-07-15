@@ -10,6 +10,7 @@ const chartState = {
   axes: {
     xAxis: { title: { text: 'xAxisTitle', offsetX: 0, offsetY: 0 } },
     yAxis: { title: { text: 'yAxisTitle', offsetX: 0, offsetY: 0 } },
+    centerYAxis: { visible: false },
   },
   layout: {
     yAxisTitle: { x: 100, y: 100, height: 100, width: 100 },
@@ -54,6 +55,23 @@ describe('yAxisTitle', () => {
         type: 'label',
         x: 100,
         y: 100,
+      },
+    ]);
+  });
+
+  it('should be center alignment, when using the center y-axis', () => {
+    const state = deepMergedCopy(chartState, {
+      axes: { centerYAxis: { visible: true } },
+    });
+    title.render(state);
+
+    expect(title.models).toEqual([
+      {
+        style: ['axisTitle', { textAlign: 'center' }],
+        text: 'yAxisTitle',
+        type: 'label',
+        x: 0,
+        y: 0,
       },
     ]);
   });

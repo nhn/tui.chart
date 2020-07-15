@@ -19,7 +19,6 @@ import {
   PlotLineValue,
 } from '@t/options';
 import Store from '@src/store/store';
-import { AxisType } from '@src/component/axis';
 import { DataLabel } from '@t/components/dataLabels';
 
 type ChartSeriesMap = {
@@ -99,8 +98,7 @@ export interface StoreModule extends StoreOptions {
     | 'stackSeriesData'
     | 'legend'
     | 'circleLegend'
-    | 'dataLabels'
-    | 'yCenterAxis';
+    | 'dataLabels';
 }
 
 export interface SeriesTheme {
@@ -140,7 +138,11 @@ type PlotBand = {
   vertical: boolean;
 };
 
-export type Axes = Partial<Record<AxisType, AxisData>>;
+export type Axes = {
+  xAxis: AxisData;
+  yAxis: AxisData;
+  centerYAxis: CenterYAxisData;
+};
 
 export type DataRange = {
   [key in keyof ChartSeriesMap]: {
@@ -175,13 +177,13 @@ export interface CircleLegend {
   radius: number;
 }
 
-export type YCenterAxis = {
+export type CenterYAxisData = {
   visible: boolean;
-  xAxisHalfSize?: number;
-  secondStartX?: number;
-  yAxisLabelAnchorPoint?: number;
-  yAxisHeight?: number;
-};
+  xAxisHalfSize: number;
+  secondStartX: number;
+  yAxisLabelAnchorPoint: number;
+  yAxisHeight: number;
+} & AxisData;
 
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
@@ -209,7 +211,6 @@ export interface ChartState<T extends Options> {
     visible: boolean;
     data: DataLabel[];
   };
-  yCenterAxis: YCenterAxis;
 }
 
 export type StackTotal = {

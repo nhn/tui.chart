@@ -29,6 +29,9 @@ const chartState = {
       tickDistance: 40,
       tickCount: 2,
     },
+    centerYAxis: {
+      visible: false,
+    },
   },
   series: {
     bar: {
@@ -57,7 +60,7 @@ describe('plot grid lines', () => {
     });
   });
 
-  it('should be drawwn depending on the tick of the axis', () => {
+  it('should be drawn depending on the tick of the axis', () => {
     plot.render(chartState);
 
     const result = [
@@ -98,15 +101,17 @@ describe('plot grid lines', () => {
     expect(plot.models.plot).toEqual(result);
   });
 
-  it('should be drawn on both sides, when using the center Y-axis', () => {
+  it('should be drawn on both sides, when using the center y-axis', () => {
     plot.render(
       deepMergedCopy(chartState, {
-        yCenterAxis: {
-          visible: true,
-          xAxisHalfSize: 35,
-          secondStartX: 45,
-          yAxisLabelAnchorPoint: 5,
-          yAxisHeight: 80,
+        axes: {
+          centerYAxis: {
+            visible: true,
+            xAxisHalfSize: 35,
+            secondStartX: 45,
+            yAxisLabelAnchorPoint: 5,
+            yAxisHeight: 80,
+          },
         },
       })
     );
