@@ -161,7 +161,7 @@ describe('xAxis', () => {
       const labelModel = axis.models.label;
       const divergingLabels = labelModel.map(({ text }) => text);
 
-      expect(divergingLabels).toEqual(['5', '4', '3', '2', '1', '1', '2', '3', '4', '5']);
+      expect(divergingLabels).toEqual(['5', '1', '4', '2', '3', '3', '2', '4', '1', '5']);
     });
   });
 });

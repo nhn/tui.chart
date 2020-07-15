@@ -1,13 +1,9 @@
 import Component from './component';
 import Painter from '@src/painter';
+import { AxisType } from '@src/component/axis';
 import { ChartState, Options, CenterYAxisData } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
-
-export enum AxisType {
-  Y = 'yAxis',
-  X = 'xAxis',
-}
 
 type CoordinateKey = 'x' | 'y';
 
@@ -51,7 +47,7 @@ export default class AxisUsingCenterY extends Component {
       tickDistance,
       tickInterval,
       labelInterval,
-    } = axes[this.name]!;
+    } = axes[this.name];
 
     const renderOptions: RenderOptions = {
       pointOnColumn,
@@ -158,53 +154,37 @@ export default class AxisUsingCenterY extends Component {
     renderOptions: RenderOptions
   ): TickModel[] {
     const tickAnchorPoint = this.yAxisComponent ? crispPixel(this.rect.width) : crispPixel(0);
-    const { tickInterval, centerYAxis } = renderOptions;
-    let tickModels = relativePositions.reduce<TickModel[]>((positions, position, index) => {
-      return index % tickInterval
-        ? positions
-        : [
-            ...positions,
-            {
-              type: 'tick',
-              isYAxis: this.yAxisComponent,
-              tickSize: -5,
-              [offsetKey]: crispPixel(position),
-              [anchorKey]: tickAnchorPoint,
-            } as TickModel,
-          ];
+    const { tickInterval, centerYAxis: {secondStartX} } = renderOptions;
+
+    return relativePositions.reduce<TickModel[]>((positions, position, index) => {
+      if (index % tickInterval) {
+        return positions;
+      }
+
+      const model = {
+        type: 'tick',
+        isYAxis: this.yAxisComponent,
+        tickSize: this.yAxisComponent? -5: 5,
+        [offsetKey]: crispPixel(position),
+        [anchorKey]: tickAnchorPoint,
+      } as TickModel;
+
+      const added = {...model};
+
+      if (this.yAxisComponent) {
+        added[anchorKey] = crispPixel(0);
+        added.tickSize = 5;
+      } else {
+        added[offsetKey] = crispPixel(position + secondStartX);
+      }
+
+      return[
+        ...positions,
+        model,
+        added
+      ];
+
     }, []);
-
-    tickModels = [
-      ...tickModels,
-      ...this.getAddedTickModels(tickModels, offsetKey, anchorKey, centerYAxis.secondStartX!),
-    ];
-
-
-    return tickModels;
-  }
-
-  getAddedTickModels(
-    basicTickModels: TickModel[],
-    offsetKey: CoordinateKey,
-    anchorKey: CoordinateKey,
-    secondStartX: number
-  ): TickModel[] {
-    let models: TickModel[] = [];
-
-    if (this.yAxisComponent) {
-      models = basicTickModels.map((model) =>({
-        ...model,
-        [anchorKey]: crispPixel(0),
-        tickSize: 5,
-      }));
-    } else {
-      models = basicTickModels.map((model) =>({
-        ...model,
-        [offsetKey]: crispPixel(model[offsetKey] + secondStartX),
-      }));
-    }
-
-    return models;
   }
 
   renderLabelModels(
@@ -214,12 +194,12 @@ export default class AxisUsingCenterY extends Component {
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): LabelModel[] {
-    const { tickDistance, pointOnColumn, labelInterval, centerYAxis } = renderOptions;
+    const { tickDistance, pointOnColumn, labelInterval, centerYAxis: {secondStartX, yAxisLabelAnchorPoint} } = renderOptions;
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
     let labelAnchorPoint, textAlign, textLabels;
 
     if (this.yAxisComponent) {
-      labelAnchorPoint = crispPixel(centerYAxis.yAxisLabelAnchorPoint!)
+      labelAnchorPoint = crispPixel(yAxisLabelAnchorPoint!)
       textAlign = 'center';
       textLabels = labels;
     } else {
@@ -228,42 +208,33 @@ export default class AxisUsingCenterY extends Component {
       textLabels = [...labels].reverse();
     }
 
-    let models = textLabels.reduce((positions, text, index) => {
-      return index % labelInterval
-        ? positions
-        : [
+    return textLabels.reduce((positions, text, index) => {
+      if (index % labelInterval) {
+        return positions;
+      }
+
+      const model = {
+        type: 'label',
+        text,
+        style: ['default', { textAlign }],
+        [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
+        [anchorKey]: labelAnchorPoint,
+      } as LabelModel;
+      const models: LabelModel[] = [model];
+
+      if (!this.yAxisComponent) {
+        const added = {...model};
+        added.text = labels[index],
+        added[offsetKey] = crispPixel(model[offsetKey] + secondStartX);
+
+        models.push(added);
+      }
+
+      return [
             ...positions,
-            {
-              type: 'label',
-              text,
-              style: ['default', { textAlign }],
-              [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
-              [anchorKey]: labelAnchorPoint,
-            },
+            ...models
           ];
     }, []);
-
-    if (!this.yAxisComponent) {
-      models = [
-        ...models,
-        ...this.getAddedLabelModels(labels, models, offsetKey, centerYAxis.secondStartX),
-      ];
-    }
-
-    return models;
-  }
-
-  getAddedLabelModels(
-    labels: string[],
-    labelModels: LabelModel[],
-    offsetKey: CoordinateKey,
-    secondStartX: number
-  ): LabelModel[] {
-    return labelModels.map((model, index) => ({
-      ...model,
-      text: labels[index],
-      [offsetKey]: crispPixel(model[offsetKey] + secondStartX),
-    }));
   }
 
   axisSize(centerYAxis: CenterYAxisData) {
