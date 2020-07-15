@@ -9,7 +9,7 @@ function drawResetIcon(ctx: CanvasRenderingContext2D, point: Point) {
   const { x, y } = point;
   const centerX = x + BUTTON_RECT_SIZE / 2;
   const centerY = y + BUTTON_RECT_SIZE / 2;
-  const tickSize = BUTTON_RECT_SIZE / 8;
+  const tickSize = BUTTON_RECT_SIZE / 10;
   const color = '#545454';
 
   circle(ctx, {
@@ -19,7 +19,7 @@ function drawResetIcon(ctx: CanvasRenderingContext2D, point: Point) {
     radius: tickSize * 2,
     angle: { start: 0, end: Math.PI / 2 },
     color: 'transparent',
-    style: [{ lineWidth: 3, strokeStyle: color }],
+    style: [{ lineWidth: 2, strokeStyle: color }],
   });
 
   const points = [
