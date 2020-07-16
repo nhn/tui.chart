@@ -2,7 +2,7 @@ import { TickModel, LineModel } from '@t/components/axis';
 import { line } from '@src/brushes/basic';
 
 export function tick(ctx: CanvasRenderingContext2D, tickModel: TickModel) {
-  const { x, y, isYAxis, tickSize } = tickModel;
+  const { x, y, isYAxis, tickSize = 5 } = tickModel;
   const lineModel: LineModel = { type: 'line', x, y, x2: x, y2: y };
 
   if (isYAxis) {

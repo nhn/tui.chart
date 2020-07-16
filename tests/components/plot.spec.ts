@@ -29,9 +29,6 @@ const chartState = {
       tickDistance: 40,
       tickCount: 2,
     },
-    centerYAxis: {
-      visible: false,
-    },
   },
   series: {
     bar: {
@@ -106,7 +103,6 @@ describe('plot grid lines', () => {
       deepMergedCopy(chartState, {
         axes: {
           centerYAxis: {
-            visible: true,
             xAxisHalfSize: 35,
             secondStartX: 45,
             yAxisLabelAnchorPoint: 5,

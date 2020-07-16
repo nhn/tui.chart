@@ -34,7 +34,7 @@ export default class Axis extends Component {
   }
 
   render({ layout, axes }: ChartState<Options>) {
-    if (axes.centerYAxis.visible) {
+    if (axes.centerYAxis) {
       return;
     }
 

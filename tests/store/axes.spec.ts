@@ -13,7 +13,6 @@ describe('Axes Store module', () => {
         axes: {
           xAxis: { labelInterval: 1, tickInterval: 1 },
           yAxis: { labelInterval: 1, tickInterval: 1 },
-          centerYAxis: { visible: false },
         },
       });
     });
@@ -28,7 +27,6 @@ describe('Axes Store module', () => {
         axes: {
           xAxis: { tickInterval: 2, labelInterval: 3 },
           yAxis: { tickInterval: 4, labelInterval: 5 },
-          centerYAxis: { visible: false },
         },
       });
     });
@@ -49,7 +47,7 @@ describe('Axes Store module', () => {
         axes: {
           xAxis: { tickInterval: 1, labelInterval: 1 },
           yAxis: { tickInterval: 1, labelInterval: 1 },
-          centerYAxis: { visible: true },
+          centerYAxis: {},
         },
       });
     });
@@ -75,7 +73,6 @@ describe('Axes Store module', () => {
       axes: {
         xAxis: {},
         yAxis: {},
-        centerYAxis: { visible: false },
       },
       categories: ['A', 'B'],
       options: {},
@@ -100,7 +97,6 @@ describe('Axes Store module', () => {
         tickDistance: 25,
         zeroPosition: 150,
       },
-      centerYAxis: { visible: false },
     });
   });
 });
@@ -126,7 +122,6 @@ describe('pointOnColumn state is properly created', () => {
       axes: {
         xAxis: {},
         yAxis: {},
-        centerYAxis: { visible: false },
       },
       categories: ['A', 'B'],
       options: {},
@@ -138,7 +133,6 @@ describe('pointOnColumn state is properly created', () => {
     expect(store.state.axes).toMatchObject({
       xAxis: { pointOnColumn: false },
       yAxis: { pointOnColumn: true },
-      centerYAxis: { visible: false },
     });
   });
 
@@ -163,7 +157,6 @@ describe('pointOnColumn state is properly created', () => {
       axes: {
         xAxis: {},
         yAxis: {},
-        centerYAxis: { visible: false },
       },
       categories: ['A', 'B'],
       options: {},
@@ -175,7 +168,6 @@ describe('pointOnColumn state is properly created', () => {
     expect(store.state.axes).toMatchObject({
       xAxis: { pointOnColumn: true },
       yAxis: { pointOnColumn: false },
-      centerYAxis: { visible: false },
     });
   });
 });

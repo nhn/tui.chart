@@ -47,8 +47,8 @@ export default class Plot extends Component {
     });
   }
 
-  renderPlotsOfCenterYAxisChart(axes: Axes): LineModel[] {
-    const { xAxisHalfSize, secondStartX, yAxisHeight } = axes.centerYAxis;
+  renderPlotsForCenterYAxis(axes: Axes): LineModel[] {
+    const { xAxisHalfSize, secondStartX, yAxisHeight } = axes.centerYAxis!;
 
     // vertical
     const xAxisTickCount = axes.xAxis.tickCount!;
@@ -82,8 +82,8 @@ export default class Plot extends Component {
   renderPlots(axes: Axes): LineModel[] {
     const vertical = true;
 
-    return axes.centerYAxis.visible
-      ? this.renderPlotsOfCenterYAxisChart(axes)
+    return axes.centerYAxis
+      ? this.renderPlotsForCenterYAxis(axes)
       : [
           ...this.renderPlotLineModels(this.getTickPixelPositions(!vertical, axes), !vertical),
           ...this.renderPlotLineModels(this.getTickPixelPositions(vertical, axes), vertical),

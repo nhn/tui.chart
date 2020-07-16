@@ -141,7 +141,7 @@ type PlotBand = {
 export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
-  centerYAxis: CenterYAxisData;
+  centerYAxis?: CenterYAxisData;
 };
 
 export type DataRange = {
@@ -178,7 +178,6 @@ export interface CircleLegend {
 }
 
 export type CenterYAxisData = {
-  visible: boolean;
   xAxisHalfSize: number;
   secondStartX: number;
   yAxisLabelAnchorPoint: number;

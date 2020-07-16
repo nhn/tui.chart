@@ -15,12 +15,12 @@ export default class AxisTitle extends Component {
     this.isYAxis = name === 'yAxis';
   }
 
-  renderAxisTitle(option: Required<AxisTitleOption>, visibleCenterYAxis = false): LabelModel[] {
+  renderAxisTitle(option: Required<AxisTitleOption>, hasCenterYAxis = false): LabelModel[] {
     const { text, offsetX, offsetY } = option;
     const [x, y] = this.isYAxis
       ? [offsetX, offsetY]
       : [this.rect.width + offsetX, this.rect.height + offsetY];
-    const yAxisTitleTextAlign = visibleCenterYAxis ? 'center' : 'left';
+    const yAxisTitleTextAlign = hasCenterYAxis ? 'center' : 'left';
     const textAlign = this.isYAxis ? yAxisTitleTextAlign : 'right';
 
     return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign }] }];
@@ -35,6 +35,6 @@ export default class AxisTitle extends Component {
     }
 
     this.rect = this.isYAxis ? layout.yAxisTitle : layout.xAxisTitle;
-    this.models = this.renderAxisTitle(titleOption, centerYAxis.visible);
+    this.models = this.renderAxisTitle(titleOption, !!centerYAxis);
   }
 }

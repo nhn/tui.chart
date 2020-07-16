@@ -17,6 +17,7 @@ import {
   PercentScaleType,
   StackTotal,
   Legend,
+  CenterYAxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel, Nullable, StackTotalModel } from '@t/components/series';
@@ -42,6 +43,7 @@ type RenderOptions = {
   seriesDirection: SeriesDirection;
   padding: number;
   offsetSize: number;
+  centerYAxis?: CenterYAxisData;
 };
 
 function calibrateDrawingValue(
@@ -96,21 +98,20 @@ export default class BoxStackSeries extends BoxSeries {
     const { min, max } = getLimitOnAxis(labels);
     const { stack, scaleType } = seriesData;
 
-    this.visibleCenterYAxis = axes.centerYAxis.visible;
-
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     let offsetSize: number = this.getOffsetSize();
 
+    const { centerYAxis } = axes;
+
     if (diverging) {
-      const { centerYAxis } = axes;
-      const [left, right] = this.getDivergingBasePosition(centerYAxis);
+      const [left, right] = this.getDivergingBasePosition(centerYAxis!);
 
       this.basePosition = this.getOffsetSize() / 2;
       this.leftBasePosition = left;
       this.rightBasePosition = right;
 
-      offsetSize = this.getOffsetSizeWithDiverging(centerYAxis);
+      offsetSize = this.getOffsetSizeWithDiverging(centerYAxis!);
     }
 
     const renderOptions: RenderOptions = {
@@ -124,6 +125,7 @@ export default class BoxStackSeries extends BoxSeries {
       seriesDirection: this.getSeriesDirection(labels),
       padding: this.getPadding(tickDistance),
       offsetSize,
+      centerYAxis,
     };
 
     const { series, connector } = this.renderStackSeriesModel(seriesData, renderOptions, legend);
@@ -155,7 +157,7 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     if (dataLabels.visible) {
-      const dataLabelData = this.getDataLabels(series);
+      const dataLabelData = this.getDataLabels(series, renderOptions);
       const stackTotalData = this.getTotalDataLabels(seriesData, renderOptions);
 
       this.store.dispatch('appendDataLabels', [...dataLabelData, ...stackTotalData]);
@@ -612,8 +614,8 @@ export default class BoxStackSeries extends BoxSeries {
     };
   }
 
-  getDataLabels(seriesModels: RectModel[]) {
-    return seriesModels.map((data) => this.makeDataLabel(data));
+  getDataLabels(seriesModels: RectModel[], renderOptions: RenderOptions) {
+    return seriesModels.map((data) => this.makeDataLabel(data, renderOptions.centerYAxis));
   }
 
   getTotalDataLabels(
@@ -661,7 +663,7 @@ export default class BoxStackSeries extends BoxSeries {
     stackGroupIndex = 0
   ): RectDataLabel[] {
     const dataLabels: RectDataLabel[] = [];
-    const { min, max, seriesDirection, diverging } = renderOptions;
+    const { min, max, seriesDirection, diverging, centerYAxis } = renderOptions;
     const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
 
     stackData.forEach((data, dataIndex) => {
@@ -701,17 +703,17 @@ export default class BoxStackSeries extends BoxSeries {
           ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
         };
 
-        dataLabels.push(this.makeTotalDataLabel(stackTotal));
+        dataLabels.push(this.makeTotalDataLabel(stackTotal, centerYAxis));
       });
     });
 
     return dataLabels;
   }
 
-  makeTotalDataLabel(totalLabel: StackTotalModel): RectDataLabel {
+  makeTotalDataLabel(totalLabel: StackTotalModel, centerYAxis?: CenterYAxisData): RectDataLabel {
     return {
       ...totalLabel,
-      direction: this.getDataLabelDirection(totalLabel),
+      direction: this.getDataLabelDirection(totalLabel, centerYAxis),
       plot: {
         x: 0,
         y: 0,

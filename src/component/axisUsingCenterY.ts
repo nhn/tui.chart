@@ -33,7 +33,7 @@ export default class AxisUsingCenterY extends Component {
   render({ layout, axes }: ChartState<Options>) {
     const {centerYAxis} = axes;
 
-    if (!centerYAxis.visible) {
+    if (!centerYAxis) {
       return;
     }
 

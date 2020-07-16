@@ -114,8 +114,6 @@ export default class BoxSeries extends Component {
 
   rightBasePosition = 0;
 
-  visibleCenterYAxis = false;
-
   isRangeData = false;
 
   offsetKey = 'x';
@@ -228,9 +226,7 @@ export default class BoxSeries extends Component {
 
     const seriesData = series[this.name].data;
 
-    this.visibleCenterYAxis = axes.centerYAxis.visible;
-
-    if (this.visibleCenterYAxis) {
+    if (axes.centerYAxis) {
       this.valueAxis = 'centerYAxis';
     }
 
@@ -242,16 +238,16 @@ export default class BoxSeries extends Component {
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     let offsetSize: number = this.getOffsetSize();
+    const { centerYAxis } = axes;
 
     if (diverging) {
-      const { centerYAxis } = axes;
-      const [left, right] = this.getDivergingBasePosition(centerYAxis);
+      const [left, right] = this.getDivergingBasePosition(centerYAxis!);
 
       this.basePosition = this.getOffsetSize() / 2;
       this.leftBasePosition = left;
       this.rightBasePosition = right;
 
-      offsetSize = this.getOffsetSizeWithDiverging(centerYAxis);
+      offsetSize = this.getOffsetSizeWithDiverging(centerYAxis!);
     }
 
     const renderOptions: RenderOptions = {
@@ -285,7 +281,7 @@ export default class BoxSeries extends Component {
     }
 
     if (dataLabels.visible) {
-      const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data));
+      const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data, centerYAxis));
 
       this.store.dispatch('appendDataLabels', dataLabelData);
     }
@@ -436,12 +432,12 @@ export default class BoxSeries extends Component {
       : this.getTickPositionIfNotZero(tickPositions, seriesDirection);
   }
 
-  getDivergingBasePosition({ xAxisHalfSize, secondStartX }: CenterYAxisData) {
+  getDivergingBasePosition(centerYAxis: CenterYAxisData) {
     let leftZeroPosition: number, rightZeroPosition: number;
 
-    if (this.visibleCenterYAxis) {
-      leftZeroPosition = xAxisHalfSize;
-      rightZeroPosition = secondStartX;
+    if (centerYAxis) {
+      leftZeroPosition = centerYAxis.xAxisHalfSize;
+      rightZeroPosition = centerYAxis.secondStartX;
     } else {
       const divergingZeroPosition = this.getOffsetSize() / 2;
 
@@ -592,10 +588,10 @@ export default class BoxSeries extends Component {
     return tickPos;
   }
 
-  makeDataLabel(rect: RectModel): RectDataLabel {
+  makeDataLabel(rect: RectModel, centerYAxis?: CenterYAxisData): RectDataLabel {
     return {
       ...rect,
-      direction: this.getDataLabelDirection(rect),
+      direction: this.getDataLabelDirection(rect, centerYAxis),
       plot: {
         x: 0,
         y: 0,
@@ -604,13 +600,16 @@ export default class BoxSeries extends Component {
     };
   }
 
-  getDataLabelDirection(rect: RectModel | StackTotalModel): RectDirection {
+  getDataLabelDirection(
+    rect: RectModel | StackTotalModel,
+    centerYAxis?: CenterYAxisData
+  ): RectDirection {
     let direction: RectDirection;
 
     if (isRangeValue(rect.value!)) {
       direction = this.isBar ? 'right' : 'top';
     } else if (this.isBar) {
-      const basePos = this.visibleCenterYAxis ? this.leftBasePosition : this.basePosition;
+      const basePos = centerYAxis ? this.leftBasePosition : this.basePosition;
       direction = rect.x < basePos ? 'left' : 'right';
     } else {
       direction = rect.y >= this.basePosition ? 'bottom' : 'top';
@@ -625,7 +624,7 @@ export default class BoxSeries extends Component {
     return Math.min(defaultValue, Math.floor(tickDistance * 0.3));
   }
 
-  getOffsetSizeWithDiverging({ xAxisHalfSize }: CenterYAxisData) {
-    return this.visibleCenterYAxis ? xAxisHalfSize : this.getOffsetSize() / 2;
+  getOffsetSizeWithDiverging(centerYAxis: CenterYAxisData) {
+    return centerYAxis ? centerYAxis.xAxisHalfSize : this.getOffsetSize() / 2;
   }
 }

@@ -28,9 +28,6 @@ describe('yAxis', () => {
             labels: ['1', '2'],
             tickCount: 2,
           },
-          centerYAxis: {
-            visible: false,
-          },
         },
       });
     });
@@ -79,9 +76,6 @@ describe('yAxis', () => {
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             tickCount: 10,
           },
-          centerYAxis: {
-            visible: false,
-          },
         },
       });
     });
@@ -108,9 +102,7 @@ describe('yAxis', () => {
             labels: ['1', '2', '3', '4', '5'],
             tickCount: 6,
           },
-          centerYAxis: {
-            visible: true,
-          },
+          centerYAxis: {},
         },
       });
     });
@@ -144,9 +136,6 @@ describe('xAxis', () => {
             labelInterval: 1,
             labels: ['1', '2'],
             tickCount: 2,
-          },
-          centerYAxis: {
-            visible: false,
           },
         },
       });
@@ -196,9 +185,6 @@ describe('xAxis', () => {
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             tickCount: 10,
           },
-          centerYAxis: {
-            visible: false,
-          },
         },
       });
     });
@@ -225,9 +211,7 @@ describe('xAxis', () => {
             labels: ['1', '2', '3', '4', '5'],
             tickCount: 5,
           },
-          centerYAxis: {
-            visible: true,
-          },
+          centerYAxis: {},
         },
       });
     });
