@@ -164,7 +164,6 @@ export const styledConnector = () => {
 
 export const dataLabels = () => {
   const anchor = radios('anchor', { center: 'center', start: 'start', end: 'end' }, 'center');
-  const showStackTotal = boolean('Show Stack Total', true);
   const { el } = createChart(negativeBudgetData, {
     series: {
       stack: true,
@@ -172,7 +171,24 @@ export const dataLabels = () => {
         visible: true,
         anchor,
         stackTotal: {
-          visible: showStackTotal,
+          visible: false,
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabelsWithStackTotal = () => {
+  const { el } = createChart(negativeBudgetData, {
+    series: {
+      stack: true,
+      dataLabels: {
+        visible: true,
+        anchor: 'center',
+        stackTotal: {
+          visible: true,
           style: {
             font: '700 12px Arial',
           },
