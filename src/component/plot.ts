@@ -30,10 +30,64 @@ export default class Plot extends Component {
     return [];
   }
 
-  renderModels(relativePositions: number[], vertical: boolean): LineModel[] {
+  renderPlotLineModels(
+    relativePositions: number[],
+    vertical: boolean,
+    size?: number,
+    startPosistion?: number
+  ): LineModel[] {
     return relativePositions.map((position) => {
-      return this.makeLineModel(vertical, position, 'rgba(0, 0, 0, 0.05)');
+      return this.makeLineModel(
+        vertical,
+        position,
+        'rgba(0, 0, 0, 0.05)',
+        size ?? this.rect.width,
+        startPosistion ?? 0
+      );
     });
+  }
+
+  renderPlotsForCenterYAxis(axes: Axes): LineModel[] {
+    const { xAxisHalfSize, secondStartX, yAxisHeight } = axes.centerYAxis!;
+
+    // vertical
+    const xAxisTickCount = axes.xAxis.tickCount!;
+    const verticalLines = [
+      ...this.renderPlotLineModels(makeTickPixelPositions(xAxisHalfSize, xAxisTickCount), true),
+      ...this.renderPlotLineModels(
+        makeTickPixelPositions(xAxisHalfSize, xAxisTickCount, secondStartX),
+        true
+      ),
+    ];
+
+    // horizontal
+    const yAxisTickCount = axes.yAxis.tickCount!;
+    const horizontalLines = [
+      ...this.renderPlotLineModels(
+        makeTickPixelPositions(yAxisHeight, yAxisTickCount),
+        false,
+        xAxisHalfSize
+      ),
+      ...this.renderPlotLineModels(
+        makeTickPixelPositions(yAxisHeight, yAxisTickCount),
+        false,
+        xAxisHalfSize,
+        secondStartX
+      ),
+    ];
+
+    return [...verticalLines, ...horizontalLines];
+  }
+
+  renderPlots(axes: Axes): LineModel[] {
+    const vertical = true;
+
+    return axes.centerYAxis
+      ? this.renderPlotsForCenterYAxis(axes)
+      : [
+          ...this.renderPlotLineModels(this.getTickPixelPositions(!vertical, axes), !vertical),
+          ...this.renderPlotLineModels(this.getTickPixelPositions(vertical, axes), vertical),
+        ];
   }
 
   getTickPixelPositions(vertical: boolean, axes: Axes) {
@@ -47,10 +101,7 @@ export default class Plot extends Component {
     const { layout, axes, plot } = state;
     this.rect = layout.plot;
 
-    this.models.plot = [
-      ...this.renderModels(this.getTickPixelPositions(false, axes), false),
-      ...this.renderModels(this.getTickPixelPositions(true, axes), true),
-    ];
+    this.models.plot = this.renderPlots(axes);
 
     if (state.plot) {
       const { lines, bands } = plot;
@@ -60,10 +111,16 @@ export default class Plot extends Component {
     }
   }
 
-  makeLineModel(vertical: boolean, position: number, color: string): LineModel {
-    const x = vertical ? crispPixel(position) : crispPixel(0);
+  makeLineModel(
+    vertical: boolean,
+    position: number,
+    color: string,
+    sizeWidth?: number,
+    xPos = 0
+  ): LineModel {
+    const x = vertical ? crispPixel(position) : crispPixel(xPos);
     const y = vertical ? crispPixel(0) : crispPixel(position);
-    const width = vertical ? 0 : this.rect.width;
+    const width = vertical ? 0 : sizeWidth ?? this.rect.width;
     const height = vertical ? this.rect.height : 0;
 
     return {

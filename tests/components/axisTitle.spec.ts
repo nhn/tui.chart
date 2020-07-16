@@ -57,6 +57,23 @@ describe('yAxisTitle', () => {
       },
     ]);
   });
+
+  it('should be center alignment, when using the center y-axis', () => {
+    const state = deepMergedCopy(chartState, {
+      axes: { centerYAxis: {} },
+    });
+    title.render(state);
+
+    expect(title.models).toEqual([
+      {
+        style: ['axisTitle', { textAlign: 'center' }],
+        text: 'yAxisTitle',
+        type: 'label',
+        x: 0,
+        y: 0,
+      },
+    ]);
+  });
 });
 
 describe('xAxisTitle', () => {

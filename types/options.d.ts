@@ -100,6 +100,7 @@ type BaseAxisOptions = {
   };
   scale?: Scale;
   title?: AxisTitle;
+  width?: number;
 };
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {
@@ -109,6 +110,10 @@ interface LineTypeXAxisOptions extends BaseXAxisOptions {
 interface BaseXAxisOptions extends BaseAxisOptions {
   // @TODO: 추가 필요
   rotateLabel?: boolean;
+}
+
+interface BarTypeYAxisOptions extends BaseAxisOptions {
+  align?: 'center';
 }
 
 export type PlotLineValue = string | number;
@@ -211,6 +216,7 @@ interface BoxSeriesOptions extends BaseSeriesOptions {
 
 export interface BarChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
+  yAxis?: BarTypeYAxisOptions;
 }
 
 export interface ColumnChartOptions extends BaseOptions {

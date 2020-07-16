@@ -16,8 +16,8 @@ import {
   StackDataValues,
   PercentScaleType,
   StackTotal,
-  AxisData,
   Legend,
+  CenterYAxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel, Nullable, StackTotalModel } from '@t/components/series';
@@ -25,7 +25,6 @@ import { LineModel } from '@t/components/axis';
 import { deepCopyArray, includes, isNumber, hasNegative } from '@src/helpers/utils';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
-import { AxisType } from './axis';
 import {
   calibrateBoxStackDrawingValue,
   sumValuesBeforeIndex,
@@ -43,6 +42,8 @@ type RenderOptions = {
   hasNegativeValue: boolean;
   seriesDirection: SeriesDirection;
   padding: number;
+  offsetSize: number;
+  centerYAxis?: CenterYAxisData;
 };
 
 function calibrateDrawingValue(
@@ -81,17 +82,39 @@ function getDirectionKeys(seriesDirection: SeriesDirection) {
 }
 
 export default class BoxStackSeries extends BoxSeries {
-  makeStackRenderOptions(
-    axes: Partial<Record<AxisType, AxisData>>,
-    options: BarChartOptions | ColumnChartOptions,
-    { stack, scaleType }: StackSeriesData<BoxType>
-  ): RenderOptions {
+  render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
+    const { layout, axes, categories, stackSeries, options, dataLabels, legend } = chartState;
+
+    if (!stackSeries[this.name]) {
+      return;
+    }
+
+    this.rect = layout.plot;
+
+    const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;
     const { min, max } = getLimitOnAxis(labels);
+    const { stack, scaleType } = seriesData;
 
-    return {
+    this.basePosition = this.getBasePosition(axes[this.valueAxis]);
+
+    let offsetSize: number = this.getOffsetSize();
+
+    const { centerYAxis } = axes;
+
+    if (diverging) {
+      const [left, right] = this.getDivergingBasePosition(centerYAxis!);
+
+      this.basePosition = this.getOffsetSize() / 2;
+      this.leftBasePosition = left;
+      this.rightBasePosition = right;
+
+      offsetSize = this.getOffsetSizeWithDiverging(centerYAxis!);
+    }
+
+    const renderOptions: RenderOptions = {
       stack,
       scaleType,
       tickDistance,
@@ -101,23 +124,9 @@ export default class BoxStackSeries extends BoxSeries {
       hasNegativeValue: hasNegative(labels),
       seriesDirection: this.getSeriesDirection(labels),
       padding: this.getPadding(tickDistance),
+      offsetSize,
+      centerYAxis,
     };
-  }
-
-  render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, axes, categories, stackSeries, options, dataLabels, legend } = chartState;
-
-    if (!stackSeries[this.name]) {
-      return;
-    }
-
-    this.plot = layout.plot;
-    this.rect = this.makeSeriesRect(layout.plot);
-
-    const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
-    const renderOptions = this.makeStackRenderOptions(axes, options, seriesData);
-
-    this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
     const { series, connector } = this.renderStackSeriesModel(seriesData, renderOptions, legend);
     const hoveredSeries = this.renderHoveredSeriesModel(series);
@@ -148,7 +157,7 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     if (dataLabels.visible) {
-      const dataLabelData = this.getDataLabels(series);
+      const dataLabelData = this.getDataLabels(series, renderOptions);
       const stackTotalData = this.getTotalDataLabels(seriesData, renderOptions);
 
       this.store.dispatch('appendDataLabels', [...dataLabelData, ...stackTotalData]);
@@ -431,14 +440,14 @@ export default class BoxStackSeries extends BoxSeries {
       scaleType,
       min,
       max,
-      diverging,
+      offsetSize,
     } = renderOptions;
 
     if (stackType === 'percent') {
-      return this.getOffsetSize() / getDivisorForPercent(total, scaleType);
+      return offsetSize / getDivisorForPercent(total, scaleType);
     }
 
-    return this.getValueRatio(min, max, diverging);
+    return this.getValueRatio(min, max, offsetSize);
   }
 
   private getStackBarLength(
@@ -468,7 +477,7 @@ export default class BoxStackSeries extends BoxSeries {
     const { tickDistance, diverging, padding } = renderOptions;
     const groupIndex = diverging ? 0 : stackGroupIndex;
 
-    return dataIndex * tickDistance + padding + columnWidth * groupIndex + this.hoverThickness;
+    return dataIndex * tickDistance + padding + columnWidth * groupIndex;
   }
 
   private getStackStartPosition(
@@ -505,21 +514,22 @@ export default class BoxStackSeries extends BoxSeries {
     renderOptions: RenderOptions,
     ratio: number
   ) {
-    const basePosition = this.basePosition;
-    const { min, max } = renderOptions;
+    const { min, max, diverging } = renderOptions;
+    const basePosition = diverging ? this.leftBasePosition : this.basePosition;
     const totalOfIndexBefore = sumValuesBeforeIndex(values, currentIndex, false);
     const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
     const collideEdge = totalOfValues < min;
     const usingValue = this.isBar ? totalOfValues : totalOfIndexBefore;
     const result = max < 0 ? Math.min(usingValue - max, 0) : usingValue;
+    let pos: number;
 
     if (this.isBar) {
-      return collideEdge
-        ? this.hoverThickness + this.axisThickness
-        : basePosition - Math.abs(result) * ratio + this.axisThickness;
+      pos = collideEdge ? 0 : basePosition - Math.abs(result) * ratio;
+    } else {
+      pos = basePosition + Math.abs(result) * ratio;
     }
 
-    return basePosition + Math.abs(result) * ratio;
+    return pos;
   }
 
   private calcStartPosOnRightTopSide(
@@ -528,23 +538,28 @@ export default class BoxStackSeries extends BoxSeries {
     renderOptions: RenderOptions,
     ratio: number
   ) {
-    const basePosition = this.basePosition;
-    const { min, max } = renderOptions;
+    const { min, max, diverging } = renderOptions;
+    const basePosition = diverging ? this.rightBasePosition : this.basePosition;
     const totalOfIndexBefore = sumValuesBeforeIndex(values, currentIndex, false);
     const totalOfValues = sumValuesBeforeIndex(values, currentIndex, true);
     const collideEdge = totalOfValues > max;
     const usingValue = this.isBar ? totalOfIndexBefore : totalOfValues;
     const result = min > 0 ? Math.max(usingValue - min, 0) : usingValue;
+    const barLength = result * ratio;
+    let pos: number;
 
     if (this.isBar) {
-      return basePosition + result * ratio + this.axisThickness;
+      pos = basePosition + barLength;
+    } else {
+      pos = collideEdge ? 0 : basePosition - barLength;
     }
 
-    return collideEdge ? this.hoverThickness + this.axisThickness : basePosition - result * ratio;
+    return pos;
   }
 
   private calcStartPositionWithStack(
     values: number[],
+
     currentIndex: number,
     renderOptions: RenderOptions,
     ratio: number
@@ -568,7 +583,7 @@ export default class BoxStackSeries extends BoxSeries {
     );
 
     return this.isBar
-      ? totalPrevValues * ratio + basePosition + this.axisThickness
+      ? totalPrevValues * ratio + basePosition
       : basePosition - totalPrevValues * ratio;
   }
 
@@ -599,8 +614,8 @@ export default class BoxStackSeries extends BoxSeries {
     };
   }
 
-  getDataLabels(seriesModels: RectModel[]) {
-    return seriesModels.map((data) => this.makeDataLabel(data));
+  getDataLabels(seriesModels: RectModel[], renderOptions: RenderOptions) {
+    return seriesModels.map((data) => this.makeDataLabel(data, renderOptions.centerYAxis));
   }
 
   getTotalDataLabels(
@@ -648,7 +663,7 @@ export default class BoxStackSeries extends BoxSeries {
     stackGroupIndex = 0
   ): RectDataLabel[] {
     const dataLabels: RectDataLabel[] = [];
-    const { min, max, seriesDirection, diverging } = renderOptions;
+    const { min, max, seriesDirection, diverging, centerYAxis } = renderOptions;
     const columnWidth = this.getStackColumnWidth(renderOptions, stackGroupCount);
 
     stackData.forEach((data, dataIndex) => {
@@ -679,7 +694,7 @@ export default class BoxStackSeries extends BoxSeries {
           barLength,
           value,
           renderOptions,
-          diverging && isLeftBottomSide(0)
+          diverging && isLeftBottomSide(stackGroupIndex)
         );
 
         const stackTotal: StackTotalModel = {
@@ -688,21 +703,21 @@ export default class BoxStackSeries extends BoxSeries {
           ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
         };
 
-        dataLabels.push(this.makeTotalDataLabel(stackTotal));
+        dataLabels.push(this.makeTotalDataLabel(stackTotal, centerYAxis));
       });
     });
 
     return dataLabels;
   }
 
-  makeTotalDataLabel(totalLabel: StackTotalModel): RectDataLabel {
+  makeTotalDataLabel(totalLabel: StackTotalModel, centerYAxis?: CenterYAxisData): RectDataLabel {
     return {
       ...totalLabel,
-      direction: this.getDataLabelDirection(totalLabel),
+      direction: this.getDataLabelDirection(totalLabel, centerYAxis),
       plot: {
-        x: this.hoverThickness,
-        y: this.hoverThickness,
-        size: this.plot[this.offsetSizeKey],
+        x: 0,
+        y: 0,
+        size: this.getOffsetSize(),
       },
     };
   }

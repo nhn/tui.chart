@@ -18,6 +18,7 @@ import AxisTitle from '@src/component/axisTitle';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import ZeroAxis from '@src/component/zeroAxis';
+import AxisUsingCenterY from '@src/component/axisUsingCenterY';
 import HoveredSeries from '@src/component/hoveredSeries';
 
 import * as basicBrushes from '@src/brushes/basic';
@@ -59,11 +60,13 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
-    this.componentManager.add(ZeroAxis);
-    this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(BoxSeries, { name: 'bar' });
     this.componentManager.add(BoxStackSeries, { name: 'bar' });
+    this.componentManager.add(ZeroAxis);
+    this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
+    this.componentManager.add(AxisUsingCenterY, { name: 'yAxis' });
+    this.componentManager.add(AxisUsingCenterY, { name: 'xAxis' });
     this.componentManager.add(DataLabels);
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });

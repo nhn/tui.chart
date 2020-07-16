@@ -56,15 +56,15 @@ const chartState = {
 };
 
 const result = {
-  clipRect: [{ type: 'clipRectArea', x: 0, y: 0, width: 90, height: 90 }],
+  clipRect: [{ type: 'clipRectArea', x: 0, y: 0, width: 80, height: 80 }],
   series: [
     {
       type: 'rect',
       color: 'rgba(170, 170, 170, 1)',
       width: 10,
       height: 16,
-      x: 5,
-      y: 16,
+      x: 0,
+      y: 12,
       value: 1,
     },
     {
@@ -72,8 +72,8 @@ const result = {
       color: 'rgba(187, 187, 187, 1)',
       width: 40,
       height: 16,
-      x: 15,
-      y: 16,
+      x: 10,
+      y: 12,
       value: 4,
     },
     {
@@ -81,8 +81,8 @@ const result = {
       color: 'rgba(170, 170, 170, 1)',
       width: 20,
       height: 16,
-      x: 5,
-      y: 56,
+      x: 0,
+      y: 52,
       value: 2,
     },
     {
@@ -90,8 +90,8 @@ const result = {
       color: 'rgba(187, 187, 187, 1)',
       width: 50,
       height: 16,
-      x: 25,
-      y: 56,
+      x: 20,
+      y: 52,
       value: 5,
     },
   ],
@@ -102,8 +102,8 @@ const respondersResult = [
   {
     type: 'rect',
     color: 'rgba(170, 170, 170, 1)',
-    x: 5,
-    y: 16,
+    x: 0,
+    y: 12,
     width: 10,
     height: 16,
     style: [
@@ -120,8 +120,8 @@ const respondersResult = [
   {
     type: 'rect',
     color: 'rgba(187, 187, 187, 1)',
-    x: 15,
-    y: 16,
+    x: 10,
+    y: 12,
     width: 40,
     height: 16,
     style: [
@@ -138,8 +138,8 @@ const respondersResult = [
   {
     type: 'rect',
     color: 'rgba(170, 170, 170, 1)',
-    x: 5,
-    y: 56,
+    x: 0,
+    y: 52,
     width: 20,
     height: 16,
     style: [
@@ -156,8 +156,8 @@ const respondersResult = [
   {
     type: 'rect',
     color: 'rgba(187, 187, 187, 1)',
-    x: 25,
-    y: 56,
+    x: 20,
+    y: 52,
     width: 50,
     height: 16,
     style: [

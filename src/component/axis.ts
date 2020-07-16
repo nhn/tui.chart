@@ -7,7 +7,6 @@ import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis
 export enum AxisType {
   Y = 'yAxis',
   X = 'xAxis',
-  CENTER_Y = 'yCenterAxis',
 }
 
 type CoordinateKey = 'x' | 'y';
@@ -31,10 +30,14 @@ export default class Axis extends Component {
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
     this.name = name;
-    this.yAxisComponent = name === AxisType.Y || name === AxisType.CENTER_Y;
+    this.yAxisComponent = name === AxisType.Y;
   }
 
   render({ layout, axes }: ChartState<Options>) {
+    if (axes.centerYAxis) {
+      return;
+    }
+
     this.rect = layout[this.name];
 
     const {
@@ -100,24 +103,28 @@ export default class Axis extends Component {
 
   renderAxisLineModel(): LineModel {
     const zeroPixel = crispPixel(0);
+    const widthPixel =  crispPixel(this.rect.width);
+    let lineModel: LineModel;
 
     if (this.yAxisComponent) {
-      return {
+      lineModel = {
         type: 'line',
-        x: crispPixel(this.rect.width),
+        x:widthPixel,
         y: zeroPixel,
-        x2: crispPixel(this.rect.width),
+        x2: widthPixel,
         y2: crispPixel(this.rect.height),
+      };
+    } else {
+      lineModel = {
+        type: 'line',
+        x: zeroPixel,
+        y: zeroPixel,
+        x2: widthPixel,
+        y2: zeroPixel,
       };
     }
 
-    return {
-      type: 'line',
-      x: zeroPixel,
-      y: zeroPixel,
-      x2: crispPixel(this.rect.width),
-      y2: zeroPixel,
-    };
+    return lineModel;
   }
 
   renderTickModels(
@@ -137,6 +144,7 @@ export default class Axis extends Component {
             {
               type: 'tick',
               isYAxis: this.yAxisComponent,
+              tickSize: this.yAxisComponent ? -5 : 5,
               [offsetKey]: crispPixel(position),
               [anchorKey]: tickAnchorPoint,
             } as TickModel,

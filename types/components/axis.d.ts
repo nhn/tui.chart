@@ -19,6 +19,7 @@ export type LabelModel = {
 export type TickModel = {
   type: 'tick';
   isYAxis: boolean;
+  tickSize: number;
 } & Point;
 
 export type LineModel = {

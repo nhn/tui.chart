@@ -4,6 +4,7 @@ import { Align, Rect, Size } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
 import { isUndefined } from '@src/helpers/utils';
 import { EXPORT_BUTTON_RECT_SIZE } from '@src/component/exportMenu';
+import { isCenterYAxis } from './axes';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
@@ -19,9 +20,10 @@ function getYAxisRect(
   chartSize: Size,
   legend: Legend,
   circleLegend: CircleLegend,
-  yAxisTitle: Rect
+  yAxisTitle: Rect,
+  hasCenterYAxis: boolean
 ) {
-  const { height } = chartSize;
+  const { height, width } = chartSize;
   const { align } = legend;
 
   let x = yAxisTitle.x;
@@ -48,25 +50,34 @@ function getYAxisRect(
     }
   }
 
+  let yAxisWidth = 40; // @TODO: y축 값 너비 계산해서 지정해줘야함
+
+  if (hasCenterYAxis) {
+    yAxisWidth = 80; // @TODO: y축 값 너비 계산해서 지정
+    x = (width - legend.width - yAxisWidth + padding.X * 2) / 2;
+  }
+
   return {
     x,
     y,
     height: yAxisHeight,
-    width: 40, // @TODO: y축 값 너비 계산해서 지정해줘야함
+    width: yAxisWidth,
   };
 }
 
 function getXAxisRect(
   chartSize: Size,
   yAxis: Rect,
-  align: Align,
-  legendWidth: number,
-  circleLegend: CircleLegend
+  legend: Legend,
+  circleLegend: CircleLegend,
+  hasCenterYAxis: boolean
 ) {
   const { width } = chartSize;
+  const { align, width: legendWidth } = legend;
   const verticalAlign = isVerticalAlign(align);
 
   let xAxisWidth;
+  let x = yAxis.x + yAxis.width;
 
   if (verticalAlign) {
     xAxisWidth = width - (yAxis.x + yAxis.width + padding.X);
@@ -78,10 +89,15 @@ function getXAxisRect(
     xAxisWidth = width - (yAxis.width + Math.max(legendWidth, circleLegend.width));
   }
 
+  if (hasCenterYAxis) {
+    x = padding.X * 2;
+    xAxisWidth = width - legendWidth - padding.X * 2;
+  }
+
   return {
     width: xAxisWidth,
     height: X_AXIS_HEIGHT,
-    x: yAxis.x + yAxis.width,
+    x,
     y: yAxis.y + yAxis.height,
   };
 }
@@ -133,7 +149,13 @@ function getTitleRect(chartSize: Size, exportMenu: Rect, visible: boolean) {
   return { width, height, ...point };
 }
 
-function getYAxisTitleRect(chartSize: Size, visible: boolean, title: Rect, legend: Legend) {
+function getYAxisTitleRect(
+  chartSize: Size,
+  visible: boolean,
+  title: Rect,
+  legend: Legend,
+  hasCenterYAxis: boolean
+) {
   const point = { x: title.x, y: title.y + title.height };
   const marginBottom = 5;
   const height = visible ? Y_AXIS_TITLE_HEIGHT + marginBottom : 0;
@@ -145,6 +167,10 @@ function getYAxisTitleRect(chartSize: Size, visible: boolean, title: Rect, legen
     } else if (legend.align === 'top') {
       point.y += LEGEND_ITEM_HEIGHT;
     }
+  }
+
+  if (hasCenterYAxis) {
+    point.x = (width + padding.X * 2) / 2;
   }
 
   return { height, width, ...point };
@@ -183,24 +209,37 @@ const layout: StoreModule = {
     setLayout({ state }) {
       const { legend: legendState } = state;
       const {
-        legend: { align, width: legendWidth },
+        legend: { align },
         circleLegend: circleLegendState,
+        series,
         options,
         chart,
       } = state;
-
       const chartSize = {
         height: chart.height - padding.Y * 2,
         width: chart.width - padding.X * 2,
       };
+      const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
 
       // Don't change the order!
       // exportMenu -> title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
       const exportMenu = getExportMenuRect(chartSize, isExportMenuVisible(options));
       const title = getTitleRect(chartSize, exportMenu, !!options.chart?.title);
-      const yAxisTitle = getYAxisTitleRect(chartSize, !!options.yAxis?.title, title, legendState);
-      const yAxis = getYAxisRect(chartSize, legendState, circleLegendState, yAxisTitle);
-      const xAxis = getXAxisRect(chartSize, yAxis, align, legendWidth, circleLegendState);
+      const yAxisTitle = getYAxisTitleRect(
+        chartSize,
+        !!options.yAxis?.title,
+        title,
+        legendState,
+        hasCenterYAxis
+      );
+      const yAxis = getYAxisRect(
+        chartSize,
+        legendState,
+        circleLegendState,
+        yAxisTitle,
+        hasCenterYAxis
+      );
+      const xAxis = getXAxisRect(chartSize, yAxis, legendState, circleLegendState, hasCenterYAxis);
       const xAxisTitle = getXAxisTitleRect(!!options.xAxis?.title, xAxis);
       const legend = getLegendRect(chartSize, xAxis, yAxis, title, legendState);
       const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
