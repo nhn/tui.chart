@@ -1,4 +1,4 @@
-import { SeriesRaw } from '@t/store/store';
+import { RawSeries } from '@t/store/store';
 
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
@@ -175,14 +175,14 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
   zoomable?: boolean;
 }
 
-interface AreaTypeSeriesOptions extends BaseSeriesOptions {
+interface AreaSeriesOptions extends LineTypeSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
   stack?: StackOptionType;
 }
 
 export interface AreaChartOptions extends BaseOptions {
-  series?: AreaTypeSeriesOptions;
+  series?: AreaSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
 }
 
@@ -257,7 +257,7 @@ export interface BoxSeriesData {
 
 export interface ChartProps<T> {
   el: Element;
-  series: SeriesRaw;
+  series: RawSeries;
   categories?: string[];
   options: T;
 }
