@@ -108,11 +108,8 @@ export const percentStack = () => {
 export const zoomable = () => {
   const { el } = createChart(avgTemperatureData, {
     series: {
-      dataLabels: {
-        visible: true,
-      },
+      zoomable: true,
     },
-    xAxis: { pointOnColumn: true },
   });
 
   return el;

@@ -15,18 +15,21 @@ import DataLabels from '@src/component/dataLabels';
 import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
+import Legend from '@src/component/legend';
+import Zoom from '@src/component/zoom';
 
 import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
+import * as boxSeriesBrush from '@src/brushes/boxSeries';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
+import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { AreaChartOptions, AreaSeriesData, AreaSeriesType } from '@t/options';
-import Legend from '@src/component/legend';
 
 interface AreaChartProps {
   el: Element;
@@ -63,6 +66,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip);
+    this.componentManager.add(Zoom);
 
     this.painter.addGroups([
       basicBrushes,
@@ -71,8 +75,10 @@ export default class AreaChart extends Chart<AreaChartOptions> {
       lineSeriesBrushes,
       legendBrush,
       labelBrush,
+      boxSeriesBrush,
       exportMenuBrush,
       dataLabelBrush,
+      resetButtonBrush,
     ]);
   }
 }
