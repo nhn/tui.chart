@@ -16,7 +16,7 @@ import AxisTitle from '@src/component/axisTitle';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
-import SelectionArea from '@src/component/selectionArea';
+import Zoom from '@src/component/zoom';
 
 import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
@@ -27,6 +27,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as boxSeriesBrush from '@src/brushes/boxSeries';
+import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { LineChartOptions, LineSeriesData, LineSeriesType } from '@t/options';
 
@@ -66,7 +67,7 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip);
-    this.componentManager.add(SelectionArea);
+    this.componentManager.add(Zoom);
 
     this.painter.addGroups([
       basicBrushes,
@@ -78,6 +79,7 @@ export default class LineChart extends Chart<LineChartOptions> {
       exportMenuBrush,
       dataLabelBrush,
       boxSeriesBrush,
+      resetButtonBrush,
     ]);
   }
 }

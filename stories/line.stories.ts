@@ -176,10 +176,21 @@ export const dataLabels = () => {
 };
 
 export const zoomable = () => {
-  const { el } = createChart(temperatureData, {
+  const { el } = createChart(randomData(50), {
     series: {
       zoomable: true,
     },
+  });
+
+  return el;
+};
+
+export const coordinateZoomable = () => {
+  const { el } = createChart(coordinateData, {
+    chart: { title: 'Concurrent user' },
+    xAxis: { pointOnColumn: true, title: 'minute' },
+    yAxis: { title: 'users' },
+    series: { zoomable: true },
   });
 
   return el;

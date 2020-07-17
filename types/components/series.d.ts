@@ -29,7 +29,13 @@ export type CircleModel = {
   };
 } & Point;
 
-export type BoundResponderModel = Rect & { type: 'bound'; index?: number };
+type BoundResponderModelData = { name?: string; value?: string };
+
+export type BoundResponderModel = Rect & {
+  type: 'bound';
+  index?: number;
+  data?: BoundResponderModelData;
+};
 
 export type CircleResponderModel = {
   detectionRadius?: number;

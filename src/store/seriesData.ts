@@ -1,6 +1,9 @@
-import { StoreModule, RawSeries, Series } from '@t/store/store';
+import { StoreModule, RawSeries, Series, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { sortSeries } from '@src/helpers/utils';
+import { deepCopy, getFirstValidValue, isNumber, sortSeries } from '@src/helpers/utils';
+import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
+import { makeRawCategories } from '@src/store/category';
+import { getCoordinateXValue } from '@src/helpers/coordinate';
 
 function makeInitSeries(series: RawSeries) {
   const result: Series = {};
@@ -20,20 +23,86 @@ function makeInitSeries(series: RawSeries) {
   return result;
 }
 
+function getInitSeriesRange(
+  series: RawSeries,
+  options: Options,
+  categories?: string[]
+): RangeDataType | undefined {
+  if (!(options.series as LineTypeSeriesOptions)?.zoomable) {
+    return;
+  }
+
+  const rawCategoriesLength = Object.keys(makeRawCategories(series, categories)).length;
+
+  return [0, rawCategoriesLength - 1];
+}
+
+function getStartIdx(data, rawCategories: string[], zoomRange: RangeDataType) {
+  return getDataIndex(data, rawCategories, zoomRange, false);
+}
+
+function getEndIdx(data, rawCategories: string[], zoomRange: RangeDataType) {
+  return getDataIndex(data, rawCategories, zoomRange, true);
+}
+
+function getDataIndex(data, rawCategories: string[], zoomRange: RangeDataType, isEnd: boolean) {
+  const [start, end] = zoomRange;
+  const startIdx = isEnd ? rawCategories.length - 1 : start - 1;
+  const endIdx = isEnd ? end : 0;
+
+  for (let i = startIdx; i >= endIdx; i -= 1) {
+    const category = rawCategories[i];
+    const idx = data.findIndex((datum) => getCoordinateXValue(datum).toString() === category);
+
+    if (idx !== -1) {
+      return idx;
+    }
+  }
+
+  const boundaryCategory = isEnd ? rawCategories[end] : rawCategories[start];
+
+  return data.findIndex((datum) => getCoordinateXValue(datum).toString() === boundaryCategory);
+}
+
+function getDataInRange(data, rawCategories: string[], zoomRange?: RangeDataType) {
+  if (!zoomRange) {
+    return data;
+  }
+
+  const [start, end] = zoomRange;
+
+  if (isNumber(getFirstValidValue(data))) {
+    return data.slice(start, end + 1);
+  }
+
+  const startIdx = getStartIdx(data, rawCategories, zoomRange);
+  const endIdx = getEndIdx(data, rawCategories, zoomRange);
+
+  return data.slice(startIdx, endIdx + 1);
+}
+
 const seriesData: StoreModule = {
   name: 'seriesData',
-  state: ({ series }) => ({
+  state: ({ series, categories, options }) => ({
+    rawCategories: makeRawCategories(series, categories),
     series: makeInitSeries(series),
+    zoomRange: getInitSeriesRange(series, options, categories),
     disabledSeries: [],
   }),
   action: {
-    setSeriesData({ state }) {
-      const { series, disabledSeries, theme } = state;
+    setSeriesData({ state, initStoreState }) {
+      const rawSeries = deepCopy(initStoreState.series);
+      const { disabledSeries, theme, zoomRange, rawCategories } = state;
       const newSeriesData = {};
       const { colors } = theme.series;
 
-      Object.keys(series).forEach((seriesName) => {
-        const originSeriesData = series[seriesName].map((m, idx) => ({ ...m, color: colors[idx] }));
+      Object.keys(rawSeries).forEach((seriesName) => {
+        const originSeriesData = rawSeries[seriesName].map((m, idx) => ({
+          ...m,
+          data: getDataInRange(m.data, rawCategories, zoomRange),
+          color: colors[idx],
+        }));
+
         const seriesCount = originSeriesData.length;
         const seriesGroupCount = originSeriesData[0].data.length;
         const data = originSeriesData.filter(({ name }) => !disabledSeries.includes(name));
@@ -55,6 +124,21 @@ const seriesData: StoreModule = {
       const index = state.disabledSeries.findIndex((disabled) => disabled === name);
       state.disabledSeries.splice(index, 1);
       this.notify(state, 'disabledSeries');
+    },
+    zoom({ state }, rangeCategory: string[]) {
+      const { rawCategories } = state;
+
+      state.zoomRange = rangeCategory.map((o) =>
+        rawCategories.findIndex((category) => category === o)
+      ) as RangeDataType;
+
+      this.notify(state, 'zoomRange');
+    },
+    resetZoom({ state, initStoreState }) {
+      const { categories, series, options } = initStoreState;
+      state.zoomRange = getInitSeriesRange(series, options, categories);
+
+      this.notify(state, 'zoomRange');
     },
   },
   observe: {

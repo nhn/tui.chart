@@ -1,9 +1,9 @@
 import { ValueEdge, StoreModule, ChartType, DataRange } from '@t/store/store';
-import { getFirstValidValue, isObject } from '@src/helpers/utils';
+import { getFirstValidValue } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
 import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
-import { isCoordinateSeries } from '@src/helpers/coordinate';
+import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
@@ -39,7 +39,7 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const { series, disabledSeries, stackSeries } = state;
+      const { series, disabledSeries, stackSeries, rawCategories, zoomRange } = state;
       const newDataRange = {} as DataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
@@ -57,20 +57,18 @@ const dataRange: StoreModule = {
         const firstExistValue = getFirstValidValue(values);
 
         if (isCoordinateSeries(series)) {
-          let xAxisValues;
-          const tupleCoord = Array.isArray(firstExistValue);
-          const objectCoord = isObject(firstExistValue);
-          if (tupleCoord) {
-            xAxisValues = values.map((value) => value[0]);
-            values = values.map((value) => value[1]);
-          } else if (objectCoord) {
-            xAxisValues = values.map((value) => value.x);
-            values = values.map((value) => value.y);
+          values = values.map((value) => getCoordinateYValue(value));
+
+          let xAxisValues = rawCategories.map((value) => Number(value));
+
+          if (zoomRange) {
+            xAxisValues = xAxisValues.slice(zoomRange[0], zoomRange[1] + 1);
           }
 
-          newDataRange[seriesName][labelAxisName] = getLimitSafely([
-            ...new Set(xAxisValues),
-          ] as number[]);
+          newDataRange[seriesName][labelAxisName] = {
+            min: Math.min(...xAxisValues),
+            max: Math.max(...xAxisValues),
+          };
         } else if (isRangeValue(firstExistValue)) {
           values = values.reduce(
             (arr, value) => (Array.isArray(value) ? [...arr, ...value] : [...value]),

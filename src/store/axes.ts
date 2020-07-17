@@ -62,21 +62,19 @@ function getZeroPosition(
   }
 
   const position = ((0 - min) / (max - min)) * axisSize;
-  const zeroPosition = labelAxisOnYAxis ? position : axisSize - position;
 
-  return zeroPosition;
+  return labelAxisOnYAxis ? position : axisSize - position;
 }
 
 export function getLabelAxisData(stateProp: ValueStateProp) {
-  const { scale, axisSize, categories, series, options } = stateProp;
+  const { axisSize, categories, series, options } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
-  const labels = scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
 
   return {
-    labels,
+    labels: categories,
     pointOnColumn,
     isLabelAxis: true,
-    tickCount: labels.length + (pointOnColumn ? 1 : 0),
+    tickCount: categories.length + (pointOnColumn ? 1 : 0),
     tickDistance: axisSize / (categories.length - (pointOnColumn ? 0 : 1)),
   };
 }
@@ -161,7 +159,8 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, categories = [] } = state;
+      const { scale, options, series, layout } = state;
+      const categories = state.categories!;
       const { xAxis, yAxis, plot } = layout;
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);

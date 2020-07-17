@@ -18,6 +18,7 @@ import {
   AxisTitleOption,
   PlotLineValue,
   PieSeriesType,
+  RangeDataType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -192,12 +193,14 @@ export interface ChartState<T extends Options> {
   scale: Scale;
   disabledSeries: string[];
   series: Series;
+  zoomRange?: RangeDataType;
   // 기존의 limitMap
   axes: Axes;
   dataRange: DataRange;
   theme: Theme;
   options: T;
   categories?: string[];
+  rawCategories: string[];
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };

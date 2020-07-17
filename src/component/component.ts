@@ -23,6 +23,7 @@ import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
 import { DataLabelModel } from '@t/components/dataLabels';
+import { ZoomModels } from '@t/components/zoom';
 
 export type ComponentType =
   | 'component'
@@ -49,6 +50,7 @@ type ComponentModels =
   | ExportMenuModels
   | CircleLegendModels
   | PieSeriesModels
+  | ZoomModels
   | PlotModels
   | RectModel[]
   | LineModel[]
@@ -146,7 +148,7 @@ export default abstract class Component {
               curPoint.y = y + (nextY - y) * delta;
             });
 
-            if (current[key][0].controlPoint) {
+            if (current[key].length && current[key][0].controlPoint) {
               setSplineControlPoint(current[key]);
             }
           } else {
