@@ -17,7 +17,7 @@ import {
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { AxisTitle, BoxSeriesOptions, BarTypeYAxisOptions } from '@t/options';
+import { AxisTitle, BoxSeriesOptions, BarTypeYAxisOptions, RangeDataType } from '@t/options';
 import {
   deepMergedCopy,
   hasNegativeOnly,
@@ -33,6 +33,7 @@ interface StateProp {
   options: Options;
   series: Series;
   centerYAxis?: Pick<CenterYAxisData, 'xAxisHalfSize'> | null;
+  zoomRange?: RangeDataType;
 }
 
 type ValueStateProp = StateProp & { categories: string[] };
@@ -67,14 +68,16 @@ function getZeroPosition(
 }
 
 export function getLabelAxisData(stateProp: ValueStateProp) {
-  const { axisSize, categories, series, options } = stateProp;
+  const { axisSize, categories, series, options, scale, zoomRange } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
+  const labels =
+    !zoomRange && scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
 
   return {
-    labels: categories,
+    labels,
     pointOnColumn,
     isLabelAxis: true,
-    tickCount: categories.length + (pointOnColumn ? 1 : 0),
+    tickCount: labels.length + (pointOnColumn ? 1 : 0),
     tickDistance: axisSize / (categories.length - (pointOnColumn ? 0 : 1)),
   };
 }
@@ -159,7 +162,7 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout } = state;
+      const { scale, options, series, layout, zoomRange } = state;
       const categories = state.categories!;
       const { xAxis, yAxis, plot } = layout;
 
@@ -188,6 +191,7 @@ const axes: StoreModule = {
         categories,
         options,
         series,
+        zoomRange,
       });
 
       const axesState = {

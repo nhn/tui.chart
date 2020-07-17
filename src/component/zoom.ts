@@ -23,11 +23,16 @@ export default class Zoom extends Component {
   private dragStartPoint: BoundResponderModel | null = null;
 
   initialize() {
-    this.type = 'selectionArea';
+    this.type = 'zoom';
   }
 
   render(state: ChartState<Options>) {
+    if (!state.zoomRange) {
+      return;
+    }
+
     const { layout, axes, categories } = state;
+
     this.rect = layout.plot;
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
 

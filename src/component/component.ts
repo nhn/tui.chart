@@ -39,7 +39,7 @@ export type ComponentType =
   | 'axisTitle'
   | 'exportMenu'
   | 'zeroAxis'
-  | 'selectionArea';
+  | 'zoom';
 
 type ComponentModels =
   | AxisModels

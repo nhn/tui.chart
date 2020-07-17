@@ -30,9 +30,14 @@ const category: StoreModule = {
   action: {
     setCategory({ state }) {
       const { rawCategories, zoomRange } = state;
-      const [start, end] = zoomRange;
+      let categories = rawCategories;
 
-      state.categories = rawCategories.slice(start, end + 1);
+      if (zoomRange) {
+        const [start, end] = zoomRange;
+        categories = rawCategories.slice(start, end + 1);
+      }
+
+      state.categories = categories;
 
       this.notify(state, 'categories');
     },
