@@ -1,8 +1,8 @@
 import { Point } from '@t/options';
 
-type RadialType = 'start' | 'center' | 'end';
+type RadialAnchor = 'start' | 'center' | 'end';
 type RadialPositionParam = {
-  type: RadialType;
+  anchor: RadialAnchor;
   x: number;
   y: number;
   radius: number;
@@ -27,18 +27,19 @@ export function calculateRadianToDegree(radian: number) {
 }
 
 export function getRadialPosition(param: RadialPositionParam): Point {
-  const { type, x, y, radius, startDegree, endDegree } = param;
+  const { anchor, x, y, radius, startDegree, endDegree } = param;
   const degree = startDegree + (endDegree - startDegree) / 2;
   const radian = calculateDegreeToRadian(degree);
 
   let posX: number = x;
   let posY: number = y;
 
-  if (type === 'center') {
+  if (anchor === 'center') {
     const halfRadius = radius / 2;
+
     posX = x + halfRadius * Math.cos(radian);
     posY = y + halfRadius * Math.sin(radian);
-  } else if (type === 'end') {
+  } else if (anchor === 'end') {
     posX = x + radius * Math.cos(radian);
     posY = y + radius * Math.sin(radian);
   }

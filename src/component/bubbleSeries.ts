@@ -8,7 +8,7 @@ import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { deepCopy } from '@src/helpers/utils';
 
-export const MINIMUM_DETECTING_AREA_RADIUS = 1;
+const MINIMUM_DETECTING_AREA_RADIUS = 1;
 
 export function getMaxRadius(bubbleData: BubbleSeriesType[]) {
   return bubbleData.reduce((acc, cur) => {

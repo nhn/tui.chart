@@ -476,7 +476,7 @@ function makeRadialLabelPosition(
 ): LabelPosition {
   const param = pick(model, 'x', 'y', 'radius', 'startDegree', 'endDegree');
   const position = getRadialPosition({
-    type: 'center',
+    anchor: 'center',
     ...param,
   });
 
@@ -508,18 +508,18 @@ function makeRadialSeriesNameLabelInfo(
   const color = hasOuterAnchor ? (model as RadialDataLabel).color : '#ffffff';
 
   const param = pick(model as RadialDataLabel, 'x', 'y', 'radius', 'startDegree', 'endDegree');
-  param.radius = hasOuterAnchor ? (param.radius += 25) : param.radius;
+  param.radius += hasOuterAnchor ? 25 : 0;
 
   const position = getRadialPosition({
-    type: hasOuterAnchor ? 'end' : 'center',
+    anchor: hasOuterAnchor ? 'end' : 'center',
     ...param,
   });
 
   return {
     ...position,
+    textBaseline,
     textAlign: 'center',
     text: (model as RadialDataLabel).name,
-    textBaseline,
     style: {
       font: '400 11px Arial',
       color,

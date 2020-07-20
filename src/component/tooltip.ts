@@ -26,7 +26,10 @@ export default class Tooltip extends Component {
         (acc, item) => {
           const { data } = item;
 
-          if (!acc.x && !acc.y) {
+          if (data.x && data.y) {
+            acc.x = data.x;
+            acc.y = data.y;
+          } else if (!acc.x && !acc.y) {
             acc.x = item.x;
             acc.y = item.y;
           } else {
@@ -43,14 +46,6 @@ export default class Tooltip extends Component {
 
           if (!acc.category && data.category) {
             acc.category = data.category;
-          }
-
-          if (data.x) {
-            acc.x = data.x;
-          }
-
-          if (data.y) {
-            acc.y = data.y;
           }
 
           return acc;

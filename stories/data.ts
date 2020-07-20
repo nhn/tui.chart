@@ -1,5 +1,3 @@
-import { PieSeriesData } from '@t/options';
-
 export const randomData = (count: number) => {
   const categories = [...Array(count).keys()].map((numb) => String(numb));
   const series = [

@@ -40,7 +40,7 @@ export const labelStyle = {
     textBaseline: 'top',
   },
   seriesName: {
-    font: '400 13px Arial',
+    font: '400 11px Arial',
     fillStyle: '#ffffff',
     textBaseline: 'top',
   },
@@ -50,6 +50,9 @@ export const strokeLabelStyle = {
   default: {
     lineWidth: 4,
     strokeStyle: 'rgba(255, 255, 255, 0.5)',
+  },
+  seriesName: {
+    strokeStyle: 'rgba(255, 255, 255, 0)',
   },
 };
 

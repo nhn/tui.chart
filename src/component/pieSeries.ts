@@ -4,7 +4,7 @@ import { ChartState, Legend } from '@t/store/store';
 import { SectorModel, PieSeriesModels, SectorResponderModel } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
-import { pick, deepCopy } from '@src/helpers/utils';
+import { pick } from '@src/helpers/utils';
 import { getRadialPosition } from '@src/helpers/sector';
 
 export default class PieSeries extends Component {
@@ -106,13 +106,14 @@ export default class PieSeries extends Component {
 
       sectorModels.push({
         type: 'sector',
+        name,
         color,
+        x: radius,
+        y: radius,
         startDegree: startDegree,
         endDegree: startDegree + degree,
         radius: radius * 0.9,
-        x: radius,
-        y: radius,
-        name,
+
         value: data,
         style: ['default'],
       });
@@ -126,15 +127,13 @@ export default class PieSeries extends Component {
     seriesModel: SectorModel[],
     categories?: string[]
   ): TooltipData[] {
-    const category = categories ? categories[0] : '';
-
     return seriesRawData.map(({ data, name, color }, index) => ({
       label: name,
       color: color!,
       value: data,
-      category,
+      category: categories ? categories[0] : '',
       ...getRadialPosition({
-        type: 'center',
+        anchor: 'center',
         ...pick(seriesModel[index], 'x', 'y', 'radius', 'startDegree', 'endDegree'),
       }),
     }));
