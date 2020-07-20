@@ -1,8 +1,9 @@
-import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
+import { Point, Rect, BezierPoint, BoxSeriesDataType, PieSeriesDataType } from '../options';
 import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel, LabelModel } from '@t/components/axis';
+import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
@@ -95,3 +96,22 @@ export type LineSeriesModels = {
 export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
   type: 'stackTotal';
 };
+
+export type PieSeriesModels = {
+  series: SectorModel[];
+};
+
+export type SectorModel = {
+  type: 'sector';
+  color: string;
+  startDegree: number;
+  endDegree: number;
+  radius: number;
+  name: string;
+  value?: PieSeriesDataType;
+  style?: StyleProp<SectorStyle, SectorStyleName>;
+} & Point;
+
+export type SectorResponderModel = {
+  data: TooltipData;
+} & SectorModel;

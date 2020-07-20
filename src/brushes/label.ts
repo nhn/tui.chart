@@ -5,7 +5,7 @@ const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
 export const TITLE_TEXT = '100 18px Arial';
 const AXIS_TITLE_TEXT = '700 11px Arial';
 
-export type LabelStyleName = 'default' | 'title' | 'axisTitle';
+export type LabelStyleName = 'default' | 'title' | 'axisTitle' | 'seriesName';
 export type StrokeLabelStyleName = 'default' | 'stroke';
 
 export interface LabelStyle {
@@ -37,6 +37,11 @@ export const labelStyle = {
   axisTitle: {
     font: AXIS_TITLE_TEXT,
     fillStyle: '#bbbbbb',
+    textBaseline: 'top',
+  },
+  seriesName: {
+    font: '400 13px Arial',
+    fillStyle: '#ffffff',
     textBaseline: 'top',
   },
 };

@@ -2,6 +2,7 @@ import { ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
+import { SectorModel } from '@t/components/series';
 
 export const getDecimalLength = (value: string | number) => {
   const valueArr = String(value).split('.');

@@ -7,7 +7,7 @@ export type TooltipData = {
   color: string;
   value: TooltipDataValue;
   category?: string;
-};
+} & Partial<Point>;
 
 export type TooltipInfo = {
   data: TooltipData;

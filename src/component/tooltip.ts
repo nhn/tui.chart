@@ -45,6 +45,14 @@ export default class Tooltip extends Component {
             acc.category = data.category;
           }
 
+          if (data.x) {
+            acc.x = data.x;
+          }
+
+          if (data.y) {
+            acc.y = data.y;
+          }
+
           return acc;
         },
         { type: 'tooltip', x: 0, y: 0, data: [] }

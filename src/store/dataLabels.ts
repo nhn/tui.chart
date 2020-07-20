@@ -1,11 +1,18 @@
 import { StoreModule } from '@t/store/store';
-import { isFunction, includes, isBoolean } from '@src/helpers/utils';
-import { DataLabels, DataLabelStyle, DataLabelAnchor, SeriesDataType } from '@t/options';
-import { PointModel, RectModel } from '@t/components/series';
+import { pickStackOption } from '@src/store/stackSeriesData';
+import { isFunction, includes, isBoolean, pick } from '@src/helpers/utils';
+import {
+  DataLabels,
+  DataLabelStyle,
+  DataLabelAnchor,
+  SeriesDataType,
+  DataLabelPieSeriesName,
+} from '@t/options';
+import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { strokeLabelStyle, labelStyle } from '@src/brushes/label';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
-import { pickStackOption } from './stackSeriesData';
+import { getRadialPosition } from '@src/helpers/sector';
 
 type LabelPosition = {
   x: number;
@@ -13,14 +20,19 @@ type LabelPosition = {
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
 };
-type DataLabelType = 'point' | 'rect' | 'stackTotal';
+type DataLabelType = 'point' | 'radial' | 'rect' | 'stackTotal';
 type DefaultDataLabelOptions = {
   anchor: DataLabelAnchor;
   style: Required<DataLabelStyle>;
   stackTotal?: Required<DataLabelStackTotal>;
+  formatter?: (value: any) => string;
+  pieSeriesName?: DataLabelPieSeriesName;
 };
 export type PointDataLabel = PointModel & {
   type: 'point';
+};
+export type RadialDataLabel = Omit<SectorModel, 'type'> & {
+  type: 'radial';
 };
 export type RectDirection = 'top' | 'bottom' | 'left' | 'right';
 export type RectDataLabel = Omit<RectModel, 'type' | 'color'> & {
@@ -49,11 +61,16 @@ function getDefaultOptions(type: DataLabelType, withStack = false): DefaultDataL
     case 'rect':
       anchor = !withStack ? 'auto' : 'center';
       break;
-    case 'stackTotal': {
+    case 'radial':
+      anchor = 'center';
+      style.color = '#ffffff';
+      style.textStrokeColor = 'rgba(0,0,0,0)';
+      style.font = '100 15px Arial';
+      break;
+    case 'stackTotal':
       anchor = 'auto';
       style.font = '600 11px Arial';
       break;
-    }
   }
 
   const options: DefaultDataLabelOptions = {
@@ -65,6 +82,16 @@ function getDefaultOptions(type: DataLabelType, withStack = false): DefaultDataL
     options.stackTotal = {
       visible: true,
       style,
+    };
+  }
+
+  if (type === 'radial') {
+    options.formatter = function (value) {
+      return `${value}%`;
+    };
+    options.pieSeriesName = {
+      visible: false,
+      anchor: 'center',
     };
   }
 
@@ -99,9 +126,12 @@ export function getDataLabelsOptions(
   const anchor =
     type === 'stackTotal' ? defaultOptions.anchor : getAnchor(dataLabelOptions, defaultOptions);
   const { offsetX = 0, offsetY = 0 } = dataLabelOptions;
+  const defaultFormatter = defaultOptions.formatter
+    ? defaultOptions.formatter
+    : (value: SeriesDataType) => String(value) || '';
   const formatter = isFunction(dataLabelOptions.formatter)
     ? dataLabelOptions.formatter!
-    : (value: SeriesDataType) => String(value) || '';
+    : defaultFormatter;
   const style = getStyle(defaultOptions.style as Required<DataLabelStyle>, dataLabelOptions.style);
   const options: DataLabelOption = { anchor, offsetX, offsetY, formatter, style };
 
@@ -115,6 +145,13 @@ export function getDataLabelsOptions(
         dataLabelOptions.stackTotal?.style
       ),
     } as DataLabelStackTotal;
+  }
+
+  if (type === 'radial' && dataLabelOptions.pieSeriesName?.visible) {
+    options.pieSeriesName = {
+      ...defaultOptions.pieSeriesName,
+      ...dataLabelOptions.pieSeriesName,
+    };
   }
 
   return options;
@@ -433,6 +470,64 @@ function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOptio
   };
 }
 
+function makeRadialLabelPosition(
+  model: RadialDataLabel,
+  dataLabelOptions: DataLabelOption
+): LabelPosition {
+  const param = pick(model, 'x', 'y', 'radius', 'startDegree', 'endDegree');
+  const position = getRadialPosition({
+    type: 'center',
+    ...param,
+  });
+
+  return {
+    ...position,
+    textAlign: 'center',
+    textBaseline: dataLabelOptions.pieSeriesName?.anchor === 'center' ? 'bottom' : 'middle',
+  };
+}
+
+function makeRadialLabelInfo(model: RadialDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
+  const { formatter, style } = dataLabelOptions;
+  const labelPosition = makeRadialLabelPosition(model, dataLabelOptions);
+
+  return {
+    ...labelPosition,
+    text: formatter(model.value!),
+    style,
+  };
+}
+
+function makeRadialSeriesNameLabelInfo(
+  model: RadialDataLabel,
+  dataLabelOptions: DataLabelOption
+): DataLabel {
+  const seriesNameAnchor = dataLabelOptions.pieSeriesName?.anchor;
+  const hasOuterAnchor = seriesNameAnchor === 'outer';
+  const textBaseline = hasOuterAnchor ? 'middle' : 'top';
+  const color = hasOuterAnchor ? (model as RadialDataLabel).color : '#ffffff';
+
+  const param = pick(model as RadialDataLabel, 'x', 'y', 'radius', 'startDegree', 'endDegree');
+  param.radius = hasOuterAnchor ? (param.radius += 25) : param.radius;
+
+  const position = getRadialPosition({
+    type: hasOuterAnchor ? 'end' : 'center',
+    ...param,
+  });
+
+  return {
+    ...position,
+    textAlign: 'center',
+    text: (model as RadialDataLabel).name,
+    textBaseline,
+    style: {
+      font: '400 11px Arial',
+      color,
+      textStrokeColor: 'rgba(0,0,0,0)',
+    },
+  };
+}
+
 const dataLabels: StoreModule = {
   name: 'dataLabels',
   state: ({ options }) => ({
@@ -442,7 +537,10 @@ const dataLabels: StoreModule = {
     },
   }),
   action: {
-    appendDataLabels({ state }, dataLabelData: Array<PointDataLabel | RectDataLabel>) {
+    appendDataLabels(
+      { state },
+      dataLabelData: Array<PointDataLabel | RadialDataLabel | RectDataLabel>
+    ) {
       const { options } = state;
       const dataLabelOptions = options.series?.dataLabels!;
       const withStack = !!pickStackOption(options);
@@ -457,10 +555,24 @@ const dataLabels: StoreModule = {
           return;
         }
 
-        const dataLabel =
-          type === 'point'
-            ? makePointLabelInfo(model as PointDataLabel, labelOptions)
-            : makeRectLabelInfo(model as RectDataLabel, labelOptions);
+        let dataLabel!: DataLabel;
+
+        if (type === 'point') {
+          dataLabel = makePointLabelInfo(model as PointDataLabel, labelOptions);
+        } else if (type === 'radial') {
+          dataLabel = makeRadialLabelInfo(model as RadialDataLabel, labelOptions);
+
+          if (labelOptions.pieSeriesName?.visible) {
+            const seriesNameLabel = makeRadialSeriesNameLabelInfo(
+              model as RadialDataLabel,
+              labelOptions
+            );
+
+            labels.push(seriesNameLabel);
+          }
+        } else {
+          dataLabel = makeRectLabelInfo(model as RectDataLabel, labelOptions);
+        }
 
         labels.push(dataLabel);
       });

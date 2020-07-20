@@ -6,6 +6,7 @@ type LineSeriesDataType = number | Point | [number, number] | [string, number];
 export type CoordinateDataType = Point | [number, number] | [string, number];
 export type AreaSeriesDataType = number | RangeDataType;
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
+export type PieSeriesDataType = number;
 export type BubblePoint = Point & { r: number };
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 
@@ -70,6 +71,17 @@ export interface ScatterSeriesData {
 export interface BubbleSeriesData {
   series: Pick<BubbleSeriesType, 'name' | 'data'>[];
 }
+
+export type PieSeriesType = {
+  name: string;
+  data: number;
+  color?: string;
+};
+
+export type PieSeriesData = {
+  categories?: [string];
+  series: PieSeriesType[];
+};
 
 interface TitleOption {
   text: string;
@@ -223,6 +235,14 @@ export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
 }
 
+interface PieSeriesOptions extends BaseSeriesOptions {
+  radiusRange?: [string, string];
+}
+
+export interface PieChartOptions extends BaseOptions {
+  series?: PieSeriesOptions;
+}
+
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
   data: T[];
@@ -247,7 +267,8 @@ export type SeriesDataType =
   | AreaSeriesDataType
   | LineSeriesDataType
   | CoordinateDataType
-  | BubbleSeriesDataType;
+  | BubbleSeriesDataType
+  | PieSeriesDataType;
 
 export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto';
 export type DataLabelStyle = {
@@ -260,6 +281,11 @@ export type DataLabelStackTotal = {
   style?: DataLabelStyle;
 };
 
+export type DataLabelPieSeriesName = {
+  visible: boolean;
+  anchor?: 'center' | 'outer';
+};
+
 export type DataLabels = {
   visible?: boolean;
   anchor?: DataLabelAnchor;
@@ -268,4 +294,5 @@ export type DataLabels = {
   formatter?: (value: SeriesDataType) => string;
   style?: DataLabelStyle;
   stackTotal?: DataLabelStackTotal;
+  pieSeriesName?: DataLabelPieSeriesName;
 };

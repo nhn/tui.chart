@@ -7,9 +7,11 @@ function makeCategories(series: SeriesRaw) {
 
   Object.keys(series).forEach((key) => {
     series[key].forEach(({ data }) => {
-      data.forEach((datum) => {
-        categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
-      });
+      if (Array.isArray(data)) {
+        data.forEach((datum) => {
+          categories.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
+        });
+      }
     });
   });
 

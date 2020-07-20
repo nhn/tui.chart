@@ -23,20 +23,25 @@ export default class DataLabels extends Component {
 
     this.drawModels.forEach((current, index) => {
       const target = this.models[index];
-      const targetStyle = target.style![1] as LabelStyle;
-      const currentStyle = current.style![1] as LabelStyle;
-      const targetStrokeStyle = target.stroke![1] as StrokeLabelStyle;
-      const currentStrokeStyle = current.style![1] as StrokeLabelStyle;
-      const alpha = getAlpha(targetStyle.fillStyle!) * delta;
-      const strokeAlpha = getAlpha(targetStrokeStyle.strokeStyle!) * delta;
+      const lastIndex = target.style!.length - 1;
+      const targetStyle = target.style![lastIndex] as LabelStyle;
+      const currentStyle = current.style![lastIndex] as LabelStyle;
+      const targetStrokeStyle = target.stroke![lastIndex] as StrokeLabelStyle;
 
-      currentStyle.fillStyle = getRGBA(currentStyle.fillStyle!, alpha);
-      currentStrokeStyle.strokeStyle = getRGBA(currentStrokeStyle.strokeStyle!, strokeAlpha);
+      if (targetStyle?.fillStyle) {
+        const alpha = getAlpha(targetStyle.fillStyle!) * delta;
+        currentStyle.fillStyle = getRGBA(currentStyle.fillStyle!, alpha);
+      }
+      if (targetStrokeStyle?.strokeStyle) {
+        const strokeAlpha = getAlpha(targetStrokeStyle.strokeStyle!) * delta;
+        const currentStrokeStyle = current.style![lastIndex] as StrokeLabelStyle;
+        currentStrokeStyle.strokeStyle = getRGBA(currentStrokeStyle.strokeStyle!, strokeAlpha);
+      }
     });
   }
 
   render({ layout, dataLabels }: ChartState<Options>) {
-    if (!dataLabels.visible) {
+    if (!dataLabels?.visible) {
       return;
     }
 
@@ -46,8 +51,9 @@ export default class DataLabels extends Component {
     if (!this.drawModels) {
       this.drawModels = this.models.map((m) => {
         const drawModel = { ...deepCopy(m) };
-        const style = drawModel.style![1] as LabelStyle;
-        const stroke = drawModel.style![1] as StrokeLabelStyle;
+        const lastIndex = m.style!.length - 1;
+        const style = drawModel.style![lastIndex] as LabelStyle;
+        const stroke = drawModel.style![lastIndex] as StrokeLabelStyle;
 
         style.fillStyle = getRGBA(style.fillStyle!, 0);
         stroke.strokeStyle = getRGBA(stroke.strokeStyle!, 0);
