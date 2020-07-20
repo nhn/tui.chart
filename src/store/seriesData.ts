@@ -38,37 +38,47 @@ function getInitSeriesRange(
 }
 
 function getStartIdx(data, rawCategories: string[], zoomRange: RangeDataType) {
-  return getDataIndex(data, rawCategories, zoomRange, false);
-}
+  const [start] = zoomRange;
 
-function getEndIdx(data, rawCategories: string[], zoomRange: RangeDataType) {
-  return getDataIndex(data, rawCategories, zoomRange, true);
-}
-
-function getDataIndex(data, rawCategories: string[], zoomRange: RangeDataType, isEnd: boolean) {
-  const [start, end] = zoomRange;
-  const startIdx = isEnd ? rawCategories.length - 1 : start - 1;
-  const endIdx = isEnd ? end : 0;
-
-  for (let i = startIdx; i >= endIdx; i -= 1) {
-    const category = rawCategories[i];
-    const idx = data.findIndex((datum) => getCoordinateXValue(datum).toString() === category);
+  for (let i = start - 1; i >= 0; i -= 1) {
+    const idx = data.findIndex(
+      (datum) => getCoordinateXValue(datum).toString() === rawCategories[i]
+    );
 
     if (idx !== -1) {
       return idx;
     }
   }
 
-  const boundaryCategory = isEnd ? rawCategories[end] : rawCategories[start];
   const exactIdx = data.findIndex(
-    (datum) => getCoordinateXValue(datum).toString() === boundaryCategory
+    (datum) => getCoordinateXValue(datum).toString() === rawCategories[start]
+  );
+
+  return exactIdx === -1 ? 0 : exactIdx;
+}
+
+function getEndIdx(data, rawCategories: string[], zoomRange: RangeDataType) {
+  const [, end] = zoomRange;
+
+  for (let i = end + 1; i < rawCategories.length; i += 1) {
+    const idx = data.findIndex(
+      (datum) => getCoordinateXValue(datum).toString() === rawCategories[i]
+    );
+
+    if (idx !== -1) {
+      return idx;
+    }
+  }
+
+  const exactIdx = data.findIndex(
+    (datum) => getCoordinateXValue(datum).toString() === rawCategories[end]
   );
 
   if (exactIdx === -1) {
-    return isEnd ? data.length - 1 : 0;
+    return data.length - 1;
   }
 
-  return exactIdx;
+  return exactIdx === -1 ? data.length - 1 : exactIdx;
 }
 
 function getDataInRange(
@@ -92,9 +102,6 @@ function getDataInRange(
     startIdx = getStartIdx(data, rawCategories, zoomRange);
     endIdx = getEndIdx(data, rawCategories, zoomRange);
   }
-
-  const startIdx = getStartIdx(data, rawCategories, zoomRange);
-  const endIdx = getEndIdx(data, rawCategories, zoomRange);
 
   return data.slice(startIdx, endIdx + 1);
 }
