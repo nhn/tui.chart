@@ -60,19 +60,37 @@ function getDataIndex(data, rawCategories: string[], zoomRange: RangeDataType, i
   }
 
   const boundaryCategory = isEnd ? rawCategories[end] : rawCategories[start];
+  const exactIdx = data.findIndex(
+    (datum) => getCoordinateXValue(datum).toString() === boundaryCategory
+  );
 
-  return data.findIndex((datum) => getCoordinateXValue(datum).toString() === boundaryCategory);
+  if (exactIdx === -1) {
+    return isEnd ? data.length - 1 : 0;
+  }
+
+  return exactIdx;
 }
 
-function getDataInRange(data, rawCategories: string[], zoomRange?: RangeDataType) {
+function getDataInRange(
+  data,
+  rawCategories: string[],
+  areaChart: boolean,
+  zoomRange?: RangeDataType
+) {
   if (!zoomRange) {
     return data;
   }
 
   const [start, end] = zoomRange;
+  let startIdx, endIdx;
 
-  if (isNumber(getFirstValidValue(data))) {
-    return data.slice(start, end + 1);
+  // @TODO: area chart 대신 명확한 이름이여야함
+  if (isNumber(getFirstValidValue(data)) || areaChart) {
+    startIdx = start > 0 ? start - 1 : start;
+    endIdx = end === rawCategories.length - 1 ? end : end + 1;
+  } else {
+    startIdx = getStartIdx(data, rawCategories, zoomRange);
+    endIdx = getEndIdx(data, rawCategories, zoomRange);
   }
 
   const startIdx = getStartIdx(data, rawCategories, zoomRange);
@@ -99,7 +117,7 @@ const seriesData: StoreModule = {
       Object.keys(rawSeries).forEach((seriesName) => {
         const originSeriesData = rawSeries[seriesName].map((m, idx) => ({
           ...m,
-          data: getDataInRange(m.data, rawCategories, zoomRange),
+          data: getDataInRange(m.data, rawCategories, seriesName === 'area', zoomRange),
           color: colors[idx],
         }));
 
