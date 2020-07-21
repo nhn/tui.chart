@@ -84,13 +84,12 @@ export const responderDetectors: ResponderDetectors = {
 
     const withinRadius = xPos ** 2 + yPos ** 2 < radius ** 2;
     let detectionDegree = calculateRadianToDegree(Math.atan2(yPos, xPos));
-    let withinRadian = false;
 
     if (detectionDegree < 0) {
       detectionDegree += 360;
     }
 
-    withinRadian = startDegree <= detectionDegree && endDegree > detectionDegree;
+    const withinRadian = startDegree <= detectionDegree && endDegree > detectionDegree;
 
     return withinRadius && withinRadian;
   },

@@ -6,7 +6,6 @@ import {
   LabelStyleName,
 } from '@src/brushes/label';
 import { DataLabelModel } from '@t/components/dataLabels';
-import { isNumber } from '@src/helpers/utils';
 
 export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
   const {

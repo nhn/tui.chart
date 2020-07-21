@@ -2,7 +2,6 @@ import { PieChartOptions } from '@t/options';
 import PieSeries from '@src/component/pieSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
-import { deepMergedCopy } from '@src/helpers/utils';
 import { browserUsageData } from '../../stories/data';
 
 let pieSeries;

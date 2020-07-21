@@ -18,9 +18,9 @@ export default class PieSeries extends Component {
 
   initUpdate(delta: number) {
     const currentDegree = 360 * delta;
-    const index = this.models.series.findIndex(({ startDegree, endDegree }) => {
-      return startDegree <= currentDegree && endDegree >= currentDegree;
-    });
+    const index = this.models.series.findIndex(
+      ({ startDegree, endDegree }) => startDegree <= currentDegree && endDegree >= currentDegree
+    );
 
     if (index < 0) {
       return;
@@ -110,7 +110,6 @@ export default class PieSeries extends Component {
         startDegree: startDegree,
         endDegree: startDegree + degree,
         radius: radius * 0.9,
-
         value: data,
         style: ['default'],
       });
