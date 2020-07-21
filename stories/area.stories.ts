@@ -66,6 +66,9 @@ export const range = () => {
       title: { text: 'Temperature (Celsius)' },
     },
     yAxis: { title: 'Month' },
+    series: {
+      zoomable: true,
+    },
   });
 
   return el;
@@ -82,6 +85,7 @@ export const normalStack = () => {
       stack: {
         type: 'normal',
       },
+      zoomable: true,
     },
   });
 
@@ -99,6 +103,7 @@ export const percentStack = () => {
       stack: {
         type: 'percent',
       },
+      zoomable: true,
     },
   });
 
@@ -109,6 +114,9 @@ export const zoomable = () => {
   const { el } = createChart(avgTemperatureData, {
     series: {
       zoomable: true,
+    },
+    xAxis: {
+      pointOnColumn: false,
     },
   });
 

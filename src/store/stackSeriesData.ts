@@ -47,7 +47,7 @@ export function pickStackOption(options: Options): StackOptionType {
 
 function makeStackData(seriesData: RawSeriesData): StackDataValues {
   const seriesCount = seriesData.length;
-  const groupCountLengths = seriesData.map(({ data }) => data.length);
+  const groupCountLengths = seriesData.map(({ rawData }) => rawData.length);
   const seriesGroupCount = Math.max(...groupCountLengths);
   const stackData: StackDataValues = [];
 
@@ -55,7 +55,7 @@ function makeStackData(seriesData: RawSeriesData): StackDataValues {
     const stackValues: number[] = [];
 
     for (let j = 0; j < seriesCount; j += 1) {
-      stackValues.push(seriesData[j].data[i] as number);
+      stackValues.push(seriesData[j].rawData[i] as number);
     }
 
     stackData[i] = {

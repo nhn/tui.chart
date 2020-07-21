@@ -65,6 +65,8 @@ export default class AreaSeries extends Component {
 
   isRangeChart = false;
 
+  startIndex!: number;
+
   initialize() {
     this.type = 'series';
     this.name = 'areaSeries';
@@ -104,6 +106,7 @@ export default class AreaSeries extends Component {
       legend,
       dataLabels,
       stackSeries,
+      zoomRange,
     } = chartState;
     if (!series.area) {
       throw new Error("There's no area data!");
@@ -113,6 +116,7 @@ export default class AreaSeries extends Component {
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.startIndex = zoomRange ? zoomRange[0] : 0;
 
     const { limit } = scale.yAxis;
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
@@ -220,10 +224,10 @@ export default class AreaSeries extends Component {
   }
 
   makeTooltipData(areaData: AreaSeriesType[], categories: string[]) {
-    return areaData.flatMap(({ data, name, color }) => {
+    return areaData.flatMap(({ rawData, name, color }) => {
       const tooltipData: TooltipData[] = [];
 
-      data.forEach((datum: DatumType, dataIdx) => {
+      rawData.forEach((datum: DatumType, dataIdx) => {
         const value = this.isRangeChart ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
         tooltipData.push({
           label: name,
@@ -252,18 +256,18 @@ export default class AreaSeries extends Component {
     renderOptions: RenderOptions
   ): LinePointsModel {
     const { pointOnColumn, options, tickDistance, pairModel, areaStackSeries } = renderOptions;
-    const { data, name, color: seriesColor } = series;
+    const { rawData, name, color: seriesColor } = series;
     const points: PointModel[] = [];
     const active = this.activeSeriesMap![name];
     const color = getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
 
-    data.forEach((datum, idx) => {
+    rawData.forEach((datum, idx) => {
       const value = this.getLinePointModelValue(datum, pairModel);
       const stackedValue = this.isStackChart
         ? this.getStackValue(areaStackSeries!, seriesIndex, idx)
         : value;
       const valueRatio = getValueRatio(stackedValue, limit);
-      const x = tickDistance * idx + (pointOnColumn ? tickDistance / 2 : 0);
+      const x = tickDistance * (idx - this.startIndex) + (pointOnColumn ? tickDistance / 2 : 0);
       const y = (1 - valueRatio) * this.rect.height;
 
       points.push({ x, y, value });
@@ -404,7 +408,7 @@ export default class AreaSeries extends Component {
     let guideLine: LineModel[] = [];
 
     if (responders.length) {
-      const index = responders[0].index!;
+      const index = responders[0].index! + this.startIndex;
       circleModels = this.tooltipCircleMap![index];
       guideLine = this.renderGuideLineModel(circleModels);
     }

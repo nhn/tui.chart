@@ -24,8 +24,8 @@ export function makeRawCategories(series: RawSeries, categories?: string[]) {
 
 const category: StoreModule = {
   name: 'category',
-  state: () => ({
-    categories: [],
+  state: ({ categories, series }) => ({
+    categories: makeRawCategories(series, categories),
   }),
   action: {
     setCategory({ state }) {

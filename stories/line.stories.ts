@@ -46,6 +46,9 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
 export const basic = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+    series: {
+      zoomable: true,
+    },
   });
 
   return el;
@@ -176,9 +179,15 @@ export const dataLabels = () => {
 };
 
 export const zoomable = () => {
-  const { el } = createChart(randomData(50), {
+  const { el } = createChart(randomData(30), {
     series: {
       zoomable: true,
+      dataLabels: {
+        visible: true,
+      },
+    },
+    xAxis: {
+      pointOnColumn: false,
     },
   });
 

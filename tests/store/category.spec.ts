@@ -30,6 +30,11 @@ describe('Category Store', () => {
                 { x: 1, y: 2 },
                 { x: 3, y: 5 },
               ],
+              rawData: [
+                { x: 10, y: 5 },
+                { x: 1, y: 2 },
+                { x: 3, y: 5 },
+              ],
               color: '#aaaaaa',
             },
           ],
@@ -50,6 +55,11 @@ describe('Category Store', () => {
             {
               name: 'test',
               data: [
+                [10, 5],
+                [1, 2],
+                [3, 5],
+              ],
+              rawData: [
                 [10, 5],
                 [1, 2],
                 [3, 5],

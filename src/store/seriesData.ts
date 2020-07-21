@@ -1,6 +1,12 @@
 import { StoreModule, RawSeries, Series, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { deepCopy, getFirstValidValue, isNumber, sortSeries } from '@src/helpers/utils';
+import {
+  deepCopy,
+  getFirstValidValue,
+  isNumber,
+  isUndefined,
+  sortSeries,
+} from '@src/helpers/utils';
 import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
@@ -37,48 +43,26 @@ function initZoomRange(
   return [0, rawCategoriesLength - 1];
 }
 
-function getStartIdx(data, rawCategories: string[], zoomRange: RangeDataType) {
-  const [start] = zoomRange;
+function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeDataType) {
+  let start, end;
 
-  for (let i = start - 1; i >= 0; i -= 1) {
+  for (let i = zoomRange[0]; i <= zoomRange[1]; i += 1) {
     const idx = data.findIndex(
       (datum) => getCoordinateXValue(datum).toString() === rawCategories[i]
     );
 
     if (idx !== -1) {
-      return idx;
+      if (isUndefined(start)) {
+        start = idx;
+      }
+
+      if (!isUndefined(start)) {
+        end = Math.max(idx, end ?? 0);
+      }
     }
   }
 
-  const exactIdx = data.findIndex(
-    (datum) => getCoordinateXValue(datum).toString() === rawCategories[start]
-  );
-
-  return exactIdx === -1 ? 0 : exactIdx;
-}
-
-function getEndIdx(data, rawCategories: string[], zoomRange: RangeDataType) {
-  const [, end] = zoomRange;
-
-  for (let i = end + 1; i < rawCategories.length; i += 1) {
-    const idx = data.findIndex(
-      (datum) => getCoordinateXValue(datum).toString() === rawCategories[i]
-    );
-
-    if (idx !== -1) {
-      return idx;
-    }
-  }
-
-  const exactIdx = data.findIndex(
-    (datum) => getCoordinateXValue(datum).toString() === rawCategories[end]
-  );
-
-  if (exactIdx === -1) {
-    return data.length - 1;
-  }
-
-  return exactIdx === -1 ? data.length - 1 : exactIdx;
+  return [start, end];
 }
 
 function getDataInRange(
@@ -91,16 +75,13 @@ function getDataInRange(
     return data;
   }
 
-  const [start, end] = zoomRange;
   let startIdx, endIdx;
 
   // @TODO: area chart 대신 명확한 이름이여야함
   if (isNumber(getFirstValidValue(data)) || areaChart) {
-    startIdx = start > 0 ? start - 1 : start;
-    endIdx = end === rawCategories.length - 1 ? end : end + 1;
+    [startIdx, endIdx] = zoomRange;
   } else {
-    startIdx = getStartIdx(data, rawCategories, zoomRange);
-    endIdx = getEndIdx(data, rawCategories, zoomRange);
+    [startIdx, endIdx] = getCoordinateDataRange(data, rawCategories, zoomRange);
   }
 
   return data.slice(startIdx, endIdx + 1);
@@ -124,6 +105,7 @@ const seriesData: StoreModule = {
       Object.keys(rawSeries).forEach((seriesName) => {
         const originSeriesData = rawSeries[seriesName].map((m, idx) => ({
           ...m,
+          rawData: m.data,
           data: getDataInRange(m.data, rawCategories, seriesName === 'area', zoomRange),
           color: colors[idx],
         }));

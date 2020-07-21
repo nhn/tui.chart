@@ -1,4 +1,4 @@
-import { CoordinateDataType } from '@t/options';
+import { CoordinateDataType, RangeDataType } from '@t/options';
 import { first, isNumber, isObject, last } from '@src/helpers/utils';
 import { Series } from '@t/store/store';
 
@@ -18,10 +18,13 @@ export function getCoordinateXValue(datum: CoordinateDataType) {
 export function getCoordinateDataIndex(
   datum: number | CoordinateDataType,
   categories: string[],
-  dataIndex: number
+  dataIndex: number,
+  zoomRange?: RangeDataType
 ) {
   if (isNumber(datum)) {
-    return dataIndex;
+    const start = zoomRange ? zoomRange[0] : 0;
+
+    return dataIndex - start;
   }
 
   const value = getCoordinateXValue(datum);

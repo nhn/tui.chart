@@ -2,14 +2,14 @@ import { AreaChartOptions } from '@t/options';
 import AreaSeries from '@src/component/areaSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy } from '@src/helpers/utils';
 
 let areaSeries;
 
 describe('basic', () => {
   const seriesData = [
-    { name: 'han', data: [1, 2], color: '#aaaaaa' },
-    { name: 'cho', data: [4, 5], color: '#bbbbbb' },
+    { name: 'han', data: [1, 2], rawData: [1, 2], color: '#aaaaaa' },
+    { name: 'cho', data: [4, 5], rawData: [4, 5], color: '#bbbbbb' },
   ];
 
   const chartState = {
@@ -49,6 +49,7 @@ describe('basic', () => {
         { label: 'cho', active: true, checked: true },
       ],
     },
+    rawCategories: ['A', 'B'],
     categories: ['A', 'B'],
     dataLabels: {
       visible: false,
@@ -257,6 +258,10 @@ describe('range', () => {
         [1, 2],
         [3, 5],
       ],
+      rawData: [
+        [1, 2],
+        [3, 5],
+      ],
       color: '#aaaaaa',
     },
   ];
@@ -417,11 +422,13 @@ describe('stack', () => {
     {
       name: 'han',
       data: [1, 2],
+      rawData: [1, 2],
       color: '#aaaaaa',
     },
     {
       name: 'cho',
       data: [1, 4],
+      rawData: [1, 4],
       color: '#bbbbbb',
     },
   ];
@@ -553,7 +560,7 @@ describe('stack', () => {
         height: 80,
         index: 4,
         type: 'bound',
-        width: 40,
+        width: 20,
         x: 150,
         y: 80,
       },

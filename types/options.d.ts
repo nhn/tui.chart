@@ -30,6 +30,7 @@ export type Rect = Point & Size;
 
 export interface AreaSeriesType {
   name: string;
+  rawData: AreaSeriesDataType[];
   data: AreaSeriesDataType[];
   color: string;
 }
@@ -42,6 +43,7 @@ export interface AreaSeriesData {
 export interface LineSeriesType {
   name: string;
   data: LineSeriesDataType[];
+  rawData: LineSeriesDataType[];
   color: string;
 }
 
@@ -246,6 +248,7 @@ export interface PieChartOptions extends BaseOptions {
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
   data: T[];
+  rawData: T[];
   color: string;
   stackGroup?: string;
 }

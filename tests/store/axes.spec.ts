@@ -33,8 +33,8 @@ describe('Axes Store module', () => {
 
     it("should be stored the values, when diverging is enabled and y-axis alignment is 'center' on bar series", () => {
       const data = [
-        { name: 'han', data: [1, 2, 3], color: '#aaaaaa' },
-        { name: 'cho', data: [4, 5, 6], color: '#bbbbbb' },
+        { name: 'han', data: [1, 2, 3], rawData: [1, 2, 3], color: '#aaaaaa' },
+        { name: 'cho', data: [4, 5, 6], rawData: [4, 5, 6], color: '#bbbbbb' },
       ];
 
       const series = { bar: { ...data } };
