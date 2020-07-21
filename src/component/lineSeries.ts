@@ -5,12 +5,7 @@ import {
   PointModel,
   LineSeriesModels,
 } from '@t/components/series';
-import {
-  LineChartOptions,
-  LineTypeSeriesOptions,
-  CoordinateDataType,
-  RangeDataType,
-} from '@t/options';
+import { LineChartOptions, LineTypeSeriesOptions, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
@@ -25,7 +20,6 @@ interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
   tickDistance: number;
-  zoomRange?: RangeDataType;
 }
 
 type DatumType = CoordinateDataType | number;
@@ -38,6 +32,8 @@ export default class LineSeries extends Component {
   responders!: CircleResponderModel[];
 
   activatedResponders: this['responders'] = [];
+
+  startIndex!: number;
 
   initialize() {
     this.type = 'series';
@@ -72,11 +68,11 @@ export default class LineSeries extends Component {
       pointOnColumn,
       options: options.series || {},
       tickDistance,
-      zoomRange,
     };
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.startIndex = zoomRange ? zoomRange[0] : 0;
 
     const lineSeriesModel = this.renderLinePointsModel(
       lineSeriesData,
@@ -95,7 +91,7 @@ export default class LineSeries extends Component {
           label: name,
           color,
           value: getCoordinateYValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
+          category: categories[getCoordinateDataIndex(datum, categories, dataIdx, this.startIndex)],
         });
       });
 
@@ -137,7 +133,7 @@ export default class LineSeries extends Component {
     renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
-    const { pointOnColumn, options, tickDistance, zoomRange } = renderOptions;
+    const { pointOnColumn, options, tickDistance } = renderOptions;
     const { spline } = options;
 
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
@@ -147,7 +143,7 @@ export default class LineSeries extends Component {
 
       rawData.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
-        const dataIndex = getCoordinateDataIndex(datum, categories, idx, zoomRange);
+        const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
         const valueRatio = getValueRatio(value, limit);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);

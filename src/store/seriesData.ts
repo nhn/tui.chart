@@ -5,6 +5,7 @@ import {
   getFirstValidValue,
   isNumber,
   isUndefined,
+  range,
   sortSeries,
 } from '@src/helpers/utils';
 import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
@@ -44,9 +45,10 @@ function initZoomRange(
 }
 
 function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeDataType) {
+  const [zoomStart, zoomEnd] = zoomRange;
   let start, end;
 
-  for (let i = zoomRange[0]; i <= zoomRange[1]; i += 1) {
+  range(zoomStart, zoomEnd + 1).forEach((i) => {
     const idx = data.findIndex(
       (datum) => getCoordinateXValue(datum).toString() === rawCategories[i]
     );
@@ -60,7 +62,7 @@ function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeD
         end = Math.max(idx, end ?? 0);
       }
     }
-  }
+  });
 
   return [start, end];
 }
@@ -75,12 +77,10 @@ function getDataInRange(
     return data;
   }
 
-  let startIdx, endIdx;
+  let [startIdx, endIdx] = zoomRange;
+  const isCoordinateChart = !areaChart && !isNumber(getFirstValidValue(data));
 
-  // @TODO: area chart 대신 명확한 이름이여야함
-  if (isNumber(getFirstValidValue(data)) || areaChart) {
-    [startIdx, endIdx] = zoomRange;
-  } else {
+  if (isCoordinateChart) {
     [startIdx, endIdx] = getCoordinateDataRange(data, rawCategories, zoomRange);
   }
 
@@ -132,11 +132,11 @@ const seriesData: StoreModule = {
       state.disabledSeries.splice(index, 1);
       this.notify(state, 'disabledSeries');
     },
-    zoom({ state }, rangeCategory: string[]) {
+    zoom({ state }, rangeCategories: string[]) {
       const { rawCategories } = state;
 
-      state.zoomRange = rangeCategory.map((o) =>
-        rawCategories.findIndex((category) => category === o)
+      state.zoomRange = rangeCategories.map((rangeCategory) =>
+        rawCategories.findIndex((category) => category === rangeCategory)
       ) as RangeDataType;
 
       this.notify(state, 'zoomRange');

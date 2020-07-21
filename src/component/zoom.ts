@@ -99,6 +99,7 @@ export default class Zoom extends Component {
         .map((m) => m.data!.value);
 
       this.store.dispatch('zoom', dragRange);
+      this.eventBus.emit('renderHoveredSeries', []);
       if (!this.models.resetButton.length) {
         this.models.resetButton = this.renderResetButton();
         this.addResetButtonResponder();
@@ -113,8 +114,8 @@ export default class Zoom extends Component {
   ): BoundResponderModel[] {
     const { pointOnColumn, tickCount, tickDistance } = renderOptions;
     const { height, x, y } = this.rect;
-    const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
 
+    const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
     const halfWidth = tickDistance / 2;
 
     return range(0, tickCount).map((index) => {
@@ -140,10 +141,10 @@ export default class Zoom extends Component {
 
   onMousemove({ responders }: { responders: BoundResponderModel[] }) {
     if (this.dragStartPoint && responders.length) {
-      const { index: startIndex } = this.dragStartPoint!;
-      const { index: endIndex } = responders[0];
-      const [start, end] = [startIndex!, endIndex!].sort(sortNumber);
-      const includedResponders = this.responders.slice(start, end! + 1);
+      const startIndex = this.dragStartPoint!.index!;
+      const endIndex = responders[0].index!;
+      const [start, end] = [startIndex, endIndex].sort(sortNumber);
+      const includedResponders = this.responders.slice(start, end + 1);
 
       this.models.selectionArea = [
         ...includedResponders.map<RectModel>((m) => ({

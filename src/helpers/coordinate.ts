@@ -19,12 +19,10 @@ export function getCoordinateDataIndex(
   datum: number | CoordinateDataType,
   categories: string[],
   dataIndex: number,
-  zoomRange?: RangeDataType
+  startIdx: number
 ) {
   if (isNumber(datum)) {
-    const start = zoomRange ? zoomRange[0] : 0;
-
-    return dataIndex - start;
+    return dataIndex - startIdx;
   }
 
   const value = getCoordinateXValue(datum);

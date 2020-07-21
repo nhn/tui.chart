@@ -52,7 +52,6 @@ type ComponentModels =
   | PieSeriesModels
   | ZoomModels
   | PlotModels
-  | RectModel[]
   | LineModel[]
   | LabelModel[]
   | DataLabelModel[]
