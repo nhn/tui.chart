@@ -1,12 +1,20 @@
 import { LabelModel } from '@t/components/axis';
 import { makeStyleObj } from '@src/helpers/style';
+import { isNumber } from '@src/helpers/utils';
+import { getAlpha, getRGBA } from '@src/helpers/color';
 
 const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
 export const TITLE_TEXT = '100 18px Arial';
 const AXIS_TITLE_TEXT = '700 11px Arial';
 
-export type LabelStyleName = 'default' | 'title' | 'axisTitle' | 'seriesName';
-export type StrokeLabelStyleName = 'default' | 'stroke';
+export type LabelStyleName =
+  | 'default'
+  | 'title'
+  | 'axisTitle'
+  | 'stackTotal'
+  | 'sector'
+  | 'pieSeriesName';
+export type StrokeLabelStyleName = 'none' | 'stroke';
 
 export interface LabelStyle {
   font?: string;
@@ -39,31 +47,51 @@ export const labelStyle = {
     fillStyle: '#bbbbbb',
     textBaseline: 'top',
   },
-  seriesName: {
+  stackTotal: {
+    font: '600 11px Arial',
+    fillStyle: '#333333',
+    textBaseline: 'middle',
+  },
+  sector: {
+    font: '100 15px Arial',
+    fillStyle: '#333333',
+    textAlign: 'center',
+    textBaseline: 'middle',
+  },
+  pieSeriesName: {
     font: '400 11px Arial',
-    fillStyle: '#ffffff',
-    textBaseline: 'top',
+    fillStyle: '#333333',
+    textAlign: 'center',
+    textBaseline: 'middle',
   },
 };
 
 export const strokeLabelStyle = {
-  default: {
+  none: {
+    lineWidth: 1,
+    strokeStyle: 'rgba(255, 255, 255, 0)',
+  },
+  stroke: {
     lineWidth: 4,
     strokeStyle: 'rgba(255, 255, 255, 0.5)',
   },
-  seriesName: {
-    strokeStyle: 'rgba(255, 255, 255, 0)',
-  },
 };
 
+function rgba(color: string, opacity: number) {
+  const alpha = getAlpha(color) * opacity;
+
+  return getRGBA(color, alpha);
+}
+
 export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
-  const { x, y, text, style, stroke } = labelModel;
+  const { x, y, text, style, stroke, opacity } = labelModel;
 
   if (style) {
     const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
 
     Object.keys(styleObj).forEach((key) => {
-      ctx[key] = styleObj[key];
+      ctx[key] =
+        key === 'fillStyle' && isNumber(opacity) ? rgba(styleObj[key]!, opacity) : styleObj[key];
     });
   }
 
@@ -74,7 +102,10 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
     );
 
     Object.keys(strokeStyleObj).forEach((key) => {
-      ctx[key] = strokeStyleObj[key];
+      ctx[key] =
+        key === 'strokeStyle' && isNumber(opacity)
+          ? rgba(strokeStyleObj[key]!, opacity)
+          : strokeStyleObj[key];
     });
 
     ctx.strokeText(text, x, y);

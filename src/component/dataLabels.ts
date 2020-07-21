@@ -1,15 +1,37 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { getRGBA, getAlpha } from '@src/helpers/color';
-import { LabelStyle, LabelModel } from '@t/components/axis';
-import { deepCopy } from '@src/helpers/utils';
-import { DataLabel } from '@t/components/dataLabels';
-import { StrokeLabelStyle } from '@src/brushes/label';
+import { DataLabels as DataLabelOptions } from '@t/options';
+import { DataLabel, DataLabelModel, DataLabelType } from '@t/components/dataLabels';
 
+function getOptionStyle(type: DataLabelType, options: DataLabelOptions) {
+  let font: string | undefined;
+  let fillStyle: string | undefined;
+  let strokeStyle: string | undefined;
+
+  if (type === 'pieSeriesName') {
+    font = options.pieSeriesName?.style?.font;
+    fillStyle = options.pieSeriesName?.style?.color;
+    strokeStyle = options.pieSeriesName?.style?.textStrokeColor;
+  } else if (type === 'stackTotal') {
+    font = options.stackTotal?.style?.font;
+    fillStyle = options.stackTotal?.style?.color;
+    strokeStyle = options.stackTotal?.style?.textStrokeColor;
+  } else {
+    font = options.style?.font;
+    fillStyle = options.style?.color;
+    strokeStyle = options.style?.textStrokeColor;
+  }
+
+  return {
+    font,
+    fillStyle,
+    strokeStyle,
+  };
+}
 export default class DataLabels extends Component {
-  models!: LabelModel[];
+  models: DataLabelModel[] = [];
 
-  drawModels!: LabelModel[];
+  drawModels!: DataLabelModel[];
 
   initialize() {
     this.type = 'dataLabels';
@@ -21,75 +43,38 @@ export default class DataLabels extends Component {
       return;
     }
 
-    this.drawModels.forEach((current, index) => {
-      const target = this.models[index];
-      const lastIndex = target.style!.length - 1;
-      const targetStyle = target.style![lastIndex] as LabelStyle;
-      const currentStyle = current.style![lastIndex] as LabelStyle;
-      const targetStrokeStyle = target.stroke![lastIndex] as StrokeLabelStyle;
-
-      if (targetStyle?.fillStyle) {
-        const alpha = getAlpha(targetStyle.fillStyle!) * delta;
-        currentStyle.fillStyle = getRGBA(currentStyle.fillStyle!, alpha);
-      }
-      if (targetStrokeStyle?.strokeStyle) {
-        const strokeAlpha = getAlpha(targetStrokeStyle.strokeStyle!) * delta;
-        const currentStrokeStyle = current.style![lastIndex] as StrokeLabelStyle;
-        currentStrokeStyle.strokeStyle = getRGBA(currentStrokeStyle.strokeStyle!, strokeAlpha);
-      }
-    });
+    this.drawModels = this.models.map((m) => ({ ...m, opacity: delta }));
   }
 
-  render({ layout, dataLabels }: ChartState<Options>) {
+  render({ layout, dataLabels, options }: ChartState<Options>) {
     if (!dataLabels?.visible) {
       return;
     }
 
     this.rect = layout.plot;
-    this.models = this.renderLabelModel(dataLabels.data);
+    this.models = this.renderLabelModel(dataLabels.data, options.series?.dataLabels ?? {});
 
     if (!this.drawModels) {
-      this.drawModels = this.models.map((m) => {
-        const drawModel = { ...deepCopy(m) };
-        const lastIndex = m.style!.length - 1;
-        const style = drawModel.style![lastIndex] as LabelStyle;
-        const stroke = drawModel.style![lastIndex] as StrokeLabelStyle;
-
-        style.fillStyle = getRGBA(style.fillStyle!, 0);
-        stroke.strokeStyle = getRGBA(stroke.strokeStyle!, 0);
-
-        return drawModel;
-      });
+      this.drawModels = this.models.map((m) => ({ ...m, opacity: 0 }));
     }
   }
 
-  renderLabelModel(dataLabels: DataLabel[]): LabelModel[] {
+  renderLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModel[] {
     return dataLabels.map((dataLabel) => {
-      const {
-        x,
-        y,
-        text,
-        textAlign,
-        textBaseline,
-        style: { font, color, textStrokeColor },
-      } = dataLabel;
-      const textStyle: LabelStyle = {
-        font,
-        fillStyle: color,
-        textAlign,
-        textBaseline,
-      };
-      const strokeStyles: StrokeLabelStyle = {
-        strokeStyle: textStrokeColor,
-      };
+      const { type, x, y, text, textAlign, textBaseline, fillColor } = dataLabel;
+      const { font, fillStyle, strokeStyle } = getOptionStyle(type, options);
 
       return {
-        type: 'label',
+        type: 'dataLabel',
+        dataLabelType: type,
         text,
         x,
         y: y + 1,
-        style: ['default', textStyle],
-        stroke: ['default', strokeStyles],
+        textAlign,
+        textBaseline,
+        font,
+        fillStyle: fillStyle ?? fillColor,
+        strokeStyle: strokeStyle,
       };
     });
   }

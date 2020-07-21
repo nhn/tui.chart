@@ -284,6 +284,7 @@ export type DataLabelStackTotal = {
 export type DataLabelPieSeriesName = {
   visible: boolean;
   anchor?: 'center' | 'outer';
+  style?: DataLabelStyle;
 };
 
 export type DataLabels = {

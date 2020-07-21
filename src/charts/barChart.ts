@@ -27,6 +27,7 @@ import * as boxBrushes from '@src/brushes/boxSeries';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
+import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 
 import { BoxSeriesType, BoxSeriesDataType, BarChartOptions } from '@t/options';
@@ -82,6 +83,7 @@ export default class BarChart extends Chart<BarChartOptions> {
       legendBrush,
       labelBrush,
       exportMenuBrush,
+      dataLabelBrush,
     ]);
   }
 }

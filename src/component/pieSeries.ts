@@ -65,10 +65,7 @@ export default class PieSeries extends Component {
     }
 
     if (dataLabels?.visible) {
-      const dataLabelData = seriesModel.map((data) => ({
-        ...data,
-        type: 'radial',
-      }));
+      const dataLabelData = seriesModel;
       this.store.dispatch('appendDataLabels', dataLabelData);
     }
 

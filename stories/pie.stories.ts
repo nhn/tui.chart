@@ -68,6 +68,9 @@ export const withOuterSeriesName = () => {
     series: {
       dataLabels: {
         visible: true,
+        style: {
+          color: '#ffffff',
+        },
         pieSeriesName: {
           visible: true,
           anchor: 'outer',

@@ -16,6 +16,7 @@ import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as sectorBrush from '@src/brushes/sector';
+import * as dataLabelBrush from '@src/brushes/dataLabel';
 
 import { PieChartOptions, PieSeriesData } from '@t/options';
 
@@ -57,6 +58,7 @@ export default class PieChart extends Chart<PieChartOptions> {
       labelBrush,
       exportMenuBrush,
       sectorBrush,
+      dataLabelBrush,
     ]);
   }
 }

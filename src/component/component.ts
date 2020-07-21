@@ -22,6 +22,7 @@ import { LegendModel, LegendResponderModel } from '@t/components/legend';
 import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
+import { DataLabelModel } from '@t/components/dataLabels';
 
 export type ComponentType =
   | 'component'
@@ -50,6 +51,7 @@ type ComponentModels =
   | PlotModels
   | LineModel[]
   | LabelModel[]
+  | DataLabelModel[]
   | LegendModel[]
   | TooltipModel[];
 
