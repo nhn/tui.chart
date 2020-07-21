@@ -4,11 +4,6 @@ import EventEmitter from '@src/eventEmitter';
 import { LineChartOptions } from '@t/options';
 
 let dataLabels;
-const style = {
-  color: '#333333',
-  font: 'normal 11px Arial',
-  textStrokeColor: 'rgba(255, 255, 255, 0.5)',
-};
 
 describe('DataLabels', () => {
   beforeEach(() => {
@@ -23,7 +18,7 @@ describe('DataLabels', () => {
         visible: true,
         data: [
           {
-            style,
+            type: 'point',
             text: '4000',
             textAlign: 'left' as CanvasTextAlign,
             textBaseline: 'middle' as CanvasTextBaseline,
@@ -31,7 +26,7 @@ describe('DataLabels', () => {
             y: 20,
           },
           {
-            style,
+            type: 'point',
             text: '7000',
             textAlign: 'right' as CanvasTextAlign,
             textBaseline: 'bottom' as CanvasTextBaseline,
@@ -46,36 +41,22 @@ describe('DataLabels', () => {
   it('data label model', () => {
     expect(dataLabels.models).toEqual([
       {
-        type: 'label',
+        type: 'dataLabel',
+        dataLabelType: 'point',
         text: '4000',
         x: 20,
         y: 21,
-        style: [
-          'default',
-          {
-            textAlign: 'left',
-            textBaseline: 'middle',
-            fillStyle: '#333333',
-            font: 'normal 11px Arial',
-          },
-        ],
-        stroke: ['default', { strokeStyle: 'rgba(255, 255, 255, 0.5)' }],
+        textAlign: 'left',
+        textBaseline: 'middle',
       },
       {
-        type: 'label',
+        type: 'dataLabel',
+        dataLabelType: 'point',
         text: '7000',
         x: 40,
         y: 36,
-        style: [
-          'default',
-          {
-            textAlign: 'right',
-            textBaseline: 'bottom',
-            fillStyle: '#333333',
-            font: 'normal 11px Arial',
-          },
-        ],
-        stroke: ['default', { strokeStyle: 'rgba(255, 255, 255, 0.5)' }],
+        textAlign: 'right',
+        textBaseline: 'bottom',
       },
     ]);
   });

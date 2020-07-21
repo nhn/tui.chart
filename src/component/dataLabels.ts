@@ -52,7 +52,7 @@ export default class DataLabels extends Component {
     }
 
     this.rect = layout.plot;
-    this.models = this.renderLabelModel(dataLabels.data, options.series?.dataLabels ?? {});
+    this.models = this.renderLabelModel(dataLabels.data, options?.series?.dataLabels ?? {});
 
     if (!this.drawModels) {
       this.drawModels = this.models.map((m) => ({ ...m, opacity: 0 }));

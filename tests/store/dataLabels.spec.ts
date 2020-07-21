@@ -36,11 +36,7 @@ describe('Data Labels Store module', () => {
 
     expect(state.dataLabels.data).toEqual([
       {
-        style: {
-          color: '#333333',
-          font: 'normal 11px Arial',
-          textStrokeColor: 'rgba(255, 255, 255, 0.5)',
-        },
+        type: 'point',
         text: '3.5',
         textAlign: 'center',
         textBaseline: 'middle',
@@ -93,11 +89,7 @@ describe('Data Labels Store module', () => {
 
     expect(state.dataLabels.data).toEqual([
       {
-        style: {
-          color: '#ff0000',
-          font: '500 12px Arial',
-          textStrokeColor: '#ffffff',
-        },
+        type: 'rect',
         text: '1000',
         textAlign: 'left',
         textBaseline: 'middle',
