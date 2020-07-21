@@ -23,7 +23,7 @@ function makeInitSeries(series: RawSeries) {
   return result;
 }
 
-function getInitSeriesRange(
+function initZoomRange(
   series: RawSeries,
   options: Options,
   categories?: string[]
@@ -111,7 +111,7 @@ const seriesData: StoreModule = {
   state: ({ series, categories, options }) => ({
     rawCategories: makeRawCategories(series, categories),
     series: makeInitSeries(series),
-    zoomRange: getInitSeriesRange(series, options, categories),
+    zoomRange: initZoomRange(series, options, categories),
     disabledSeries: [],
   }),
   action: {
@@ -161,7 +161,7 @@ const seriesData: StoreModule = {
     },
     resetZoom({ state, initStoreState }) {
       const { categories, series, options } = initStoreState;
-      state.zoomRange = getInitSeriesRange(series, options, categories);
+      state.zoomRange = initZoomRange(series, options, categories);
 
       this.notify(state, 'zoomRange');
     },

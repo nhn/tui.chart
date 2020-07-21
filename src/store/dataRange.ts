@@ -39,7 +39,7 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const { series, disabledSeries, stackSeries, rawCategories, zoomRange } = state;
+      const { series, disabledSeries, stackSeries, rawCategories } = state;
       const newDataRange = {} as DataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
@@ -50,20 +50,16 @@ const dataRange: StoreModule = {
         }
         newDataRange[seriesName] = {};
 
-        let values = series[seriesName].flatMap(({ data, name }) => {
-          return disabledSeries.includes(name) ? [] : data;
-        });
+        let values = series[seriesName].data.flatMap(({ data, name }) =>
+          disabledSeries.includes(name) ? [] : data
+        );
 
         const firstExistValue = getFirstValidValue(values);
 
         if (isCoordinateSeries(series)) {
           values = values.map((value) => getCoordinateYValue(value));
 
-          let xAxisValues = rawCategories.map((value) => Number(value));
-
-          if (zoomRange) {
-            xAxisValues = xAxisValues.slice(zoomRange[0], zoomRange[1] + 1);
-          }
+          const xAxisValues = rawCategories.map((value) => Number(value));
 
           newDataRange[seriesName][labelAxisName] = {
             min: Math.min(...xAxisValues),

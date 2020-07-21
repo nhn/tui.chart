@@ -72,13 +72,15 @@ export function getLabelAxisData(stateProp: ValueStateProp) {
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
     !zoomRange && scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
+  const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
+  const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
 
   return {
     labels,
     pointOnColumn,
     isLabelAxis: true,
     tickCount: labels.length + (pointOnColumn ? 1 : 0),
-    tickDistance: axisSize / (categories.length - (pointOnColumn ? 0 : 1)),
+    tickDistance,
   };
 }
 
