@@ -14,6 +14,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray } from '@src/helpers/utils';
+import { getActiveSeriesMap } from '@src/helpers/legend';
 
 interface RenderLineOptions {
   pointOnColumn: boolean;
@@ -31,8 +32,6 @@ export default class LineSeries extends Component {
   responders!: CircleResponderModel[];
 
   activatedResponders: this['responders'] = [];
-
-  activeSeriesMap!: { [key: string]: boolean };
 
   initialize() {
     this.type = 'series';
@@ -68,11 +67,7 @@ export default class LineSeries extends Component {
     };
 
     this.rect = layout.plot;
-    // @TODO: 이거 다 공통 컴퍼넌트로 뺴버릴까?
-    this.activeSeriesMap = legend.data.reduce(
-      (acc, { active, label }) => ({ ...acc, [label]: active }),
-      {}
-    );
+    this.activeSeriesMap = getActiveSeriesMap(legend);
 
     const lineSeriesModel = this.renderLinePointsModel(
       series.line.data,
@@ -138,7 +133,7 @@ export default class LineSeries extends Component {
 
     return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
-      const active = this.activeSeriesMap[name];
+      const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
       data.forEach((datum, idx) => {

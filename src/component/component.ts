@@ -78,6 +78,8 @@ export default abstract class Component {
 
   responders!: ComponentResponders;
 
+  activeSeriesMap?: { [key: string]: boolean };
+
   constructor({ store, eventBus }: { store: Store<Options>; eventBus: EventEmitter }) {
     this.store = store;
     this.eventBus = eventBus;

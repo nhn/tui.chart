@@ -1,12 +1,13 @@
 import { CircleModel } from '@t/components/series';
 import { BaseOptions, BubbleSeriesType } from '@t/options';
-import { ChartState, Legend, Scale } from '@t/store/store';
+import { ChartState, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { deepCopy } from '@src/helpers/utils';
+import { getActiveSeriesMap } from '@src/helpers/legend';
 
 const MINIMUM_DETECTING_AREA_RADIUS = 1;
 
@@ -27,7 +28,7 @@ export default class BubbleSeries extends CircleSeries {
   }
 
   render(chartState: ChartState<BaseOptions>) {
-    const { layout, series, scale, axes, circleLegend } = chartState;
+    const { layout, series, scale, axes, circleLegend, legend } = chartState;
     const { plot } = layout;
 
     if (!series.bubble) {
@@ -38,6 +39,8 @@ export default class BubbleSeries extends CircleSeries {
     const bubbleData = series.bubble.data;
 
     this.rect = plot;
+    this.activeSeriesMap = getActiveSeriesMap(legend);
+
     const xAxisTickSize = this.rect.width / xAxis!.tickCount;
     const yAxisTickSize = this.rect.height / yAxis!.tickCount;
 
@@ -46,7 +49,7 @@ export default class BubbleSeries extends CircleSeries {
       : Math.min(xAxisTickSize, yAxisTickSize);
     this.maxValue = getMaxRadius(bubbleData);
 
-    const seriesModel = this.renderBubblePointsModel(bubbleData, scale, chartState.legend);
+    const seriesModel = this.renderBubblePointsModel(bubbleData, scale);
     const tooltipModel = this.makeTooltipModel(bubbleData);
 
     this.models.series = seriesModel;
@@ -64,11 +67,7 @@ export default class BubbleSeries extends CircleSeries {
     }));
   }
 
-  renderBubblePointsModel(
-    seriesRawData: BubbleSeriesType[],
-    scale: Scale,
-    legend: Legend
-  ): CircleModel[] {
+  renderBubblePointsModel(seriesRawData: BubbleSeriesType[], scale: Scale): CircleModel[] {
     const {
       xAxis: { limit: xAxisLimit },
       yAxis: { limit: yAxisLimit },
@@ -76,7 +75,7 @@ export default class BubbleSeries extends CircleSeries {
 
     return seriesRawData.flatMap(({ data, name, color: seriesColor }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
-      const { active } = legend.data.find(({ label }) => label === name)!;
+      const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 0.8 : 0.1);
 
       data.forEach((datum) => {

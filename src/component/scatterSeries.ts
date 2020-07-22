@@ -1,12 +1,13 @@
 import { CircleModel } from '@t/components/series';
 import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
-import { ChartState, Legend, Scale } from '@t/store/store';
+import { ChartState, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { deepCopy } from '@src/helpers/utils';
+import { getActiveSeriesMap } from '@src/helpers/legend';
 
 export default class ScatterSeries extends CircleSeries {
   initialize() {
@@ -23,8 +24,9 @@ export default class ScatterSeries extends CircleSeries {
     const scatterData = series.scatter.data;
 
     this.rect = layout.plot;
+    this.activeSeriesMap = getActiveSeriesMap(legend);
 
-    const seriesModel = this.renderScatterPointsModel(scatterData, scale, legend);
+    const seriesModel = this.renderScatterPointsModel(scatterData, scale);
     const tooltipModel = this.makeTooltipModel(scatterData);
 
     this.models.series = seriesModel;
@@ -42,11 +44,7 @@ export default class ScatterSeries extends CircleSeries {
     }));
   }
 
-  renderScatterPointsModel(
-    seriesRawData: ScatterSeriesType[],
-    scale: Scale,
-    legend: Legend
-  ): CircleModel[] {
+  renderScatterPointsModel(seriesRawData: ScatterSeriesType[], scale: Scale): CircleModel[] {
     const {
       xAxis: { limit: xAxisLimit },
       yAxis: { limit: yAxisLimit },
@@ -54,7 +52,7 @@ export default class ScatterSeries extends CircleSeries {
 
     return seriesRawData.flatMap(({ data, name, color: seriesColor }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
-      const { active } = legend.data.find(({ label }) => label === name)!;
+      const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 0.9 : 0.3);
 
       data.forEach((datum) => {

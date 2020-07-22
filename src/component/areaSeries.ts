@@ -23,6 +23,7 @@ import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray, deepMergedCopy, first, last, range, sum } from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
 import { LineModel } from '@t/components/axis';
+import { getActiveSeriesMap } from '@src/helpers/legend';
 
 interface AreaSeriesDrawModels {
   rect: ClipRectAreaModel[];
@@ -63,8 +64,6 @@ export default class AreaSeries extends Component {
   isStackChart = false;
 
   isRangeChart = false;
-
-  activeSeriesMap!: { [key: string]: boolean };
 
   initialize() {
     this.type = 'series';
@@ -113,10 +112,7 @@ export default class AreaSeries extends Component {
     let areaStackSeries;
 
     this.rect = layout.plot;
-    this.activeSeriesMap = legend.data.reduce(
-      (acc, { active, label }) => ({ ...acc, [label]: active }),
-      {}
-    );
+    this.activeSeriesMap = getActiveSeriesMap(legend);
 
     const { limit } = scale.yAxis;
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
@@ -258,7 +254,7 @@ export default class AreaSeries extends Component {
     const { pointOnColumn, options, tickDistance, pairModel, areaStackSeries } = renderOptions;
     const { data, name, color: seriesColor } = series;
     const points: PointModel[] = [];
-    const active = this.activeSeriesMap[name];
+    const active = this.activeSeriesMap![name];
     const color = getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
 
     data.forEach((datum, idx) => {
@@ -378,7 +374,7 @@ export default class AreaSeries extends Component {
 
   applyAreaOpacity(opacity: number) {
     this.drawModels.series.forEach((model) => {
-      if (opacity === seriesOpacity.ACTIVE && this.activeSeriesMap[model.name]) {
+      if (opacity === seriesOpacity.ACTIVE && this.activeSeriesMap![model.name]) {
         model.fillColor = getRGBA(model.fillColor, opacity);
       }
       if (opacity === seriesOpacity.INACTIVE) {
