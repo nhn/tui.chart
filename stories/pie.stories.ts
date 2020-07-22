@@ -31,13 +31,13 @@ function createChart(data: PieSeriesData, customOptions?: PieChartOptions) {
 }
 
 export const basic = () => {
-  const { el } = createChart(browserUsageData as PieSeriesData);
+  const { el } = createChart(browserUsageData);
 
   return el;
 };
 
 export const dataLabels = () => {
-  const { el } = createChart(browserUsageData as PieSeriesData, {
+  const { el } = createChart(browserUsageData, {
     series: {
       dataLabels: {
         visible: true,
@@ -49,7 +49,7 @@ export const dataLabels = () => {
 };
 
 export const withSeriesName = () => {
-  const { el } = createChart(browserUsageData as PieSeriesData, {
+  const { el } = createChart(browserUsageData, {
     series: {
       dataLabels: {
         visible: true,
@@ -64,7 +64,7 @@ export const withSeriesName = () => {
 };
 
 export const withOuterSeriesName = () => {
-  const { el } = createChart(browserUsageData as PieSeriesData, {
+  const { el } = createChart(browserUsageData, {
     series: {
       dataLabels: {
         visible: true,

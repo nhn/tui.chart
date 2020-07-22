@@ -1,7 +1,7 @@
 import { LabelModel } from '@t/components/axis';
 import { makeStyleObj } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
-import { getAlpha, getRGBA } from '@src/helpers/color';
+import { rgba } from '@src/helpers/color';
 
 const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
 export const TITLE_TEXT = '100 18px Arial';
@@ -76,12 +76,6 @@ export const strokeLabelStyle = {
     strokeStyle: 'rgba(255, 255, 255, 0.5)',
   },
 };
-
-function rgba(color: string, opacity: number) {
-  const alpha = getAlpha(color) * opacity;
-
-  return getRGBA(color, alpha);
-}
 
 export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   const { x, y, text, style, stroke, opacity } = labelModel;

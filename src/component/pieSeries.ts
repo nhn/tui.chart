@@ -26,11 +26,12 @@ export default class PieSeries extends Component {
       return;
     }
 
-    if (
-      index &&
-      this.drawModels.series[index - 1].endDegree !== this.models.series[index - 1].endDegree
-    ) {
-      this.drawModels.series[index - 1].endDegree = this.models.series[index - 1].endDegree;
+    if (index) {
+      const targetEndDegree = this.models.series[index - 1].endDegree;
+
+      if (this.drawModels.series[index - 1].endDegree !== targetEndDegree) {
+        this.drawModels.series[index - 1].endDegree = targetEndDegree;
+      }
     }
 
     this.drawModels.series[index].endDegree = currentDegree;
@@ -43,62 +44,54 @@ export default class PieSeries extends Component {
 
   render(chartState: ChartState<PieChartOptions>) {
     const { layout, series, legend, dataLabels, categories } = chartState;
+
+    if (!series.pie) {
+      throw new Error("There's no pie data");
+    }
+
     const pieData = series.pie?.data!;
 
     this.rect = layout.plot;
 
     const seriesModel = this.renderPieModel(pieData, legend);
-    const tooltipModel = this.makeTooltipModel(pieData, seriesModel, categories);
+    const tooltipModel = this.makeTooltipModel(pieData, categories);
 
     this.models.series = seriesModel;
 
     if (!this.drawModels) {
       this.drawModels = {
-        series: this.models.series.map((m) => {
-          const drawModel = { ...m };
-
-          drawModel.endDegree = m.startDegree;
-
-          return drawModel;
-        }),
+        series: this.models.series.map((m) => ({ ...m, endDegree: m.startDegree })),
       };
     }
 
     if (dataLabels?.visible) {
-      const dataLabelData = seriesModel;
-      this.store.dispatch('appendDataLabels', dataLabelData);
+      this.store.dispatch('appendDataLabels', seriesModel);
     }
 
-    this.responders = seriesModel.map((m, index) => {
-      return {
-        ...m,
-        type: 'sector',
-        radius: m.radius,
-        style: ['hover'],
-        data: tooltipModel[index],
-      };
-    });
+    this.responders = seriesModel.map((m, index) => ({
+      ...m,
+      type: 'sector',
+      radius: m.radius,
+      style: ['hover'],
+      seriesIndex: index,
+      data: tooltipModel[index],
+    }));
   }
 
   renderPieModel(seriesRawData: PieSeriesType[], legend: Legend): SectorModel[] {
     const sectorModels: SectorModel[] = [];
-    const total = seriesRawData.reduce((sum, { data }) => {
-      sum += data;
-
-      return sum;
-    }, 0);
+    const total = seriesRawData.reduce((sum, { data }) => sum + data, 0);
 
     seriesRawData.forEach(({ data, name, color: seriesColor }, seriesIndex) => {
       const { active } = legend.data.find(({ label }) => label === name)!;
       const color = getRGBA(seriesColor!, active ? 1 : 0.3);
-      const radius = Math.min(this.rect.width, this.rect.height) / 2;
+      const { width, height } = this.rect;
+      const radius = Math.min(width, height) / 2;
       const degree = (data / total) * 360;
       let startDegree = 0;
 
       if (seriesIndex) {
-        const { endDegree: beforeEndAngle } = sectorModels[seriesIndex - 1];
-
-        startDegree = beforeEndAngle;
+        startDegree = sectorModels[seriesIndex - 1].endDegree;
       }
 
       sectorModels.push({
@@ -118,26 +111,35 @@ export default class PieSeries extends Component {
     return sectorModels;
   }
 
-  makeTooltipModel(
-    seriesRawData: PieSeriesType[],
-    seriesModel: SectorModel[],
-    categories?: string[]
-  ): TooltipData[] {
-    return seriesRawData.map(({ data, name, color }, index) => ({
+  makeTooltipModel(seriesRawData: PieSeriesType[], categories?: string[]): TooltipData[] {
+    return seriesRawData.map(({ data, name, color }) => ({
       label: name,
       color: color!,
       value: data,
       category: categories ? categories[0] : '',
+    }));
+  }
+
+  makeTooltipResponder(responders: SectorResponderModel[]) {
+    return responders.map((responder) => ({
+      ...responder,
       ...getRadialPosition({
         anchor: 'center',
-        ...pick(seriesModel[index], 'x', 'y', 'radius', 'startDegree', 'endDegree'),
+        ...pick(
+          this.models.series[responder.seriesIndex],
+          'x',
+          'y',
+          'radius',
+          'startDegree',
+          'endDegree'
+        ),
       }),
     }));
   }
 
   onMousemove({ responders }) {
     this.eventBus.emit('renderHoveredSeries', responders);
-    this.activatedResponders = responders;
+    this.activatedResponders = this.makeTooltipResponder(responders);
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
     this.eventBus.emit('needDraw');

@@ -78,17 +78,10 @@ export const responderDetectors: ResponderDetectors = {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, radius, startDegree, endDegree } = model;
     const { x: compX, y: compY } = componentRect;
-
     const xPos = x - (modelX + compX);
     const yPos = y - (modelY + compY);
-
     const withinRadius = xPos ** 2 + yPos ** 2 < radius ** 2;
-    let detectionDegree = calculateRadianToDegree(Math.atan2(yPos, xPos));
-
-    if (detectionDegree < 0) {
-      detectionDegree += 360;
-    }
-
+    const detectionDegree = calculateRadianToDegree(Math.atan2(yPos, xPos));
     const withinRadian = startDegree <= detectionDegree && endDegree > detectionDegree;
 
     return withinRadius && withinRadian;

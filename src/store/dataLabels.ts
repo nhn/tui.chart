@@ -448,10 +448,10 @@ function makePieSeriesNameLabelInfo(
   const seriesNameAnchor = dataLabelOptions.pieSeriesName?.anchor;
   const hasOuterAnchor = seriesNameAnchor === 'outer';
   const textBaseline = hasOuterAnchor ? 'middle' : 'top';
-  let color!: string;
+  let defaultColor!: string;
 
   if (hasOuterAnchor) {
-    color = model.color;
+    defaultColor = model.color;
   }
 
   const param = pick(model, 'x', 'y', 'radius', 'startDegree', 'endDegree');
@@ -468,7 +468,7 @@ function makePieSeriesNameLabelInfo(
     text: model.name,
     textBaseline,
     textAlign: 'center',
-    fillColor: color,
+    defaultColor,
   };
 }
 

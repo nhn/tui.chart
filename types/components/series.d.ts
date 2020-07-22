@@ -1,4 +1,4 @@
-import { Point, Rect, BezierPoint, BoxSeriesDataType, PieSeriesDataType } from '../options';
+import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
 import { CircleStyleName } from '@src/brushes/basic';
 import { RectStyleName } from '@src/brushes/boxSeries';
 import { TooltipData } from '@t/components/tooltip';
@@ -108,10 +108,11 @@ export type SectorModel = {
   endDegree: number;
   radius: number;
   name: string;
-  value?: PieSeriesDataType;
+  value?: number;
   style?: StyleProp<SectorStyle, SectorStyleName>;
 } & Point;
 
 export type SectorResponderModel = {
   data: TooltipData;
+  seriesIndex: number;
 } & SectorModel;

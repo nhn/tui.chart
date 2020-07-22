@@ -6,7 +6,6 @@ type LineSeriesDataType = number | Point | [number, number] | [string, number];
 export type CoordinateDataType = Point | [number, number] | [string, number];
 export type AreaSeriesDataType = number | RangeDataType;
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
-export type PieSeriesDataType = number;
 export type BubblePoint = Point & { r: number };
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 
@@ -79,7 +78,7 @@ export type PieSeriesType = {
 };
 
 export type PieSeriesData = {
-  categories?: [string];
+  categories?: string[];
   series: PieSeriesType[];
 };
 
@@ -267,8 +266,7 @@ export type SeriesDataType =
   | AreaSeriesDataType
   | LineSeriesDataType
   | CoordinateDataType
-  | BubbleSeriesDataType
-  | PieSeriesDataType;
+  | BubbleSeriesDataType;
 
 export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto';
 export type DataLabelStyle = {

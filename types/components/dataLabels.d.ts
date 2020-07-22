@@ -7,7 +7,7 @@ export type DataLabel = {
   text: string;
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
-  fillColor?: string;
+  defaultColor?: string;
 } & Point;
 
 export type DataLabelStackTotal = {
@@ -31,8 +31,7 @@ export type DataLabelModel = {
   y: number;
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
-  font?: string;
-  fillStyle?: string;
-  strokeStyle?: string;
+  style?: DataLabelStyle;
   opacity?: number;
+  defaultColor?: string;
 };

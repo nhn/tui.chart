@@ -1,32 +1,19 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { DataLabels as DataLabelOptions } from '@t/options';
+import { DataLabels as DataLabelOptions, DataLabelStyle } from '@t/options';
 import { DataLabel, DataLabelModel, DataLabelType } from '@t/components/dataLabels';
+import { includes } from '@src/helpers/utils';
 
 function getOptionStyle(type: DataLabelType, options: DataLabelOptions) {
-  let font: string | undefined;
-  let fillStyle: string | undefined;
-  let strokeStyle: string | undefined;
+  let style: DataLabelStyle | undefined;
 
-  if (type === 'pieSeriesName') {
-    font = options.pieSeriesName?.style?.font;
-    fillStyle = options.pieSeriesName?.style?.color;
-    strokeStyle = options.pieSeriesName?.style?.textStrokeColor;
-  } else if (type === 'stackTotal') {
-    font = options.stackTotal?.style?.font;
-    fillStyle = options.stackTotal?.style?.color;
-    strokeStyle = options.stackTotal?.style?.textStrokeColor;
+  if (includes(['pieSeriesName', 'stackTotal'], type)) {
+    style = options[type].style;
   } else {
-    font = options.style?.font;
-    fillStyle = options.style?.color;
-    strokeStyle = options.style?.textStrokeColor;
+    style = options.style;
   }
 
-  return {
-    font,
-    fillStyle,
-    strokeStyle,
-  };
+  return style;
 }
 export default class DataLabels extends Component {
   models: DataLabelModel[] = [];
@@ -61,8 +48,7 @@ export default class DataLabels extends Component {
 
   renderLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModel[] {
     return dataLabels.map((dataLabel) => {
-      const { type, x, y, text, textAlign, textBaseline, fillColor } = dataLabel;
-      const { font, fillStyle, strokeStyle } = getOptionStyle(type, options);
+      const { type, x, y, text, textAlign, textBaseline, defaultColor } = dataLabel;
 
       return {
         type: 'dataLabel',
@@ -72,9 +58,8 @@ export default class DataLabels extends Component {
         y: y + 1,
         textAlign,
         textBaseline,
-        font,
-        fillStyle: fillStyle ?? fillColor,
-        strokeStyle: strokeStyle,
+        defaultColor,
+        style: getOptionStyle(type, options),
       };
     });
   }

@@ -23,7 +23,7 @@ export function calculateDegreeToRadian(degree: number) {
 }
 
 export function calculateRadianToDegree(radian: number) {
-  return (radian * 180) / Math.PI + 90;
+  return ((radian * 180) / Math.PI + 90 + 360) % 360;
 }
 
 export function getRadialPosition(param: RadialPositionParam): Point {

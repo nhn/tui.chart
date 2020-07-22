@@ -26,10 +26,7 @@ export default class Tooltip extends Component {
         (acc, item) => {
           const { data } = item;
 
-          if (data.x && data.y) {
-            acc.x = data.x;
-            acc.y = data.y;
-          } else if (!acc.x && !acc.y) {
+          if (!acc.x && !acc.y) {
             acc.x = item.x;
             acc.y = item.y;
           } else {

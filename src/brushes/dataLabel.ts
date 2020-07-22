@@ -5,7 +5,28 @@ import {
   StrokeLabelStyleName,
   LabelStyleName,
 } from '@src/brushes/label';
-import { DataLabelModel } from '@t/components/dataLabels';
+import { DataLabelModel, DataLabelType } from '@t/components/dataLabels';
+
+function getStyleDefaultName(type: DataLabelType) {
+  let styleDefault: LabelStyleName = 'default';
+  let strokeStyleDefault: StrokeLabelStyleName = 'stroke';
+
+  if (type === 'stackTotal') {
+    styleDefault = 'stackTotal';
+    strokeStyleDefault = 'none';
+  } else if (type === 'sector') {
+    styleDefault = 'sector';
+    strokeStyleDefault = 'none';
+  } else if (type === 'pieSeriesName') {
+    styleDefault = 'pieSeriesName';
+    strokeStyleDefault = 'none';
+  }
+
+  return {
+    styleDefault,
+    strokeStyleDefault,
+  };
+}
 
 export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
   const {
@@ -15,45 +36,40 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     text,
     textAlign,
     textBaseline,
-    font,
-    fillStyle,
-    strokeStyle,
+    style,
     opacity,
+    defaultColor,
   } = model;
   const textStyle: LabelStyle = { textAlign, textBaseline };
   const textStrokeStyle: StrokeLabelStyle = {};
 
-  if (font) {
-    textStyle.font = font;
+  if (defaultColor) {
+    textStyle.fillStyle = defaultColor;
   }
 
-  if (fillStyle) {
-    textStyle.fillStyle = fillStyle;
+  if (style) {
+    Object.keys(style).forEach((key) => {
+      const styleValue = style[key];
+
+      if (!styleValue) {
+        return;
+      }
+
+      switch (key) {
+        case 'font':
+          textStyle.font = styleValue;
+          break;
+        case 'color':
+          textStyle.fillStyle = styleValue;
+          break;
+        case 'textStrokeColor':
+          textStrokeStyle.strokeStyle = styleValue;
+          break;
+      }
+    });
   }
 
-  if (strokeStyle) {
-    textStrokeStyle.strokeStyle = strokeStyle;
-  }
-
-  let styleDefault: LabelStyleName, strokeStyleDefault: StrokeLabelStyleName;
-
-  switch (dataLabelType) {
-    case 'stackTotal':
-      styleDefault = 'stackTotal';
-      strokeStyleDefault = 'none';
-      break;
-    case 'sector':
-      styleDefault = 'sector';
-      strokeStyleDefault = 'none';
-      break;
-    case 'pieSeriesName':
-      styleDefault = 'pieSeriesName';
-      strokeStyleDefault = 'none';
-      break;
-    default:
-      styleDefault = 'default';
-      strokeStyleDefault = 'stroke';
-  }
+  const { styleDefault, strokeStyleDefault } = getStyleDefaultName(dataLabelType);
 
   label(ctx, {
     type: 'label',

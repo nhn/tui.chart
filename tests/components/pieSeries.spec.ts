@@ -2,11 +2,21 @@ import { PieChartOptions } from '@t/options';
 import PieSeries from '@src/component/pieSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
-import { browserUsageData } from '../../stories/data';
 
 let pieSeries;
-const colors = ['#00a9ff', '#ffb840', '#ff5a46', '#00bd9f', '#785fff', '#f28b8c'];
-const seriesData = browserUsageData.series;
+const colors = ['#00a9ff', '#ffb840'];
+
+const seriesData = [
+  {
+    name: 'A',
+    data: 50,
+  },
+  {
+    name: 'B',
+    data: 50,
+  },
+];
+
 const chartState = {
   chart: { width: 100, height: 100 },
   layout: {
@@ -23,15 +33,11 @@ const chartState = {
   },
   legend: {
     data: [
-      { label: 'Chrome', active: true, checked: true },
-      { label: 'IE', active: true, checked: true },
-      { label: 'Firefox', active: true, checked: true },
-      { label: 'Safari', active: true, checked: true },
-      { label: 'Opera', active: true, checked: true },
-      { label: 'Etc', active: true, checked: true },
+      { label: 'A', active: true, checked: true },
+      { label: 'B', active: true, checked: true },
     ],
   },
-  categories: browserUsageData.categories,
+  categories: ['Browser'],
   dataLabels: {
     visible: false,
   },
@@ -48,85 +54,66 @@ describe('basic', () => {
   });
 
   it('should be rendered pie series', () => {
-    console.log(pieSeries.models);
-
     const result = {
       series: [
         {
           color: 'rgba(0, 169, 255, 1)',
-          endDegree: 165.67199999999997,
-          name: 'Chrome',
+          endDegree: 180,
+          name: 'A',
           radius: 40.5,
           startDegree: 0,
           style: ['default'],
           type: 'sector',
-          value: 46.02,
+          value: 50,
           x: 45,
           y: 45,
         },
         {
           color: 'rgba(255, 184, 64, 1)',
-          endDegree: 239.36399999999998,
-          name: 'IE',
-          radius: 40.5,
-          startDegree: 165.67199999999997,
-          style: ['default'],
-          type: 'sector',
-          value: 20.47,
-          x: 45,
-          y: 45,
-        },
-        {
-          color: 'rgba(255, 90, 70, 1)',
-          endDegree: 303.11999999999995,
-          name: 'Firefox',
-          radius: 40.5,
-          startDegree: 239.36399999999998,
-          style: ['default'],
-          type: 'sector',
-          value: 17.71,
-          x: 45,
-          y: 45,
-        },
-        {
-          color: 'rgba(0, 189, 159, 1)',
-          endDegree: 322.73999999999995,
-          name: 'Safari',
-          radius: 40.5,
-          startDegree: 303.11999999999995,
-          style: ['default'],
-          type: 'sector',
-          value: 5.45,
-          x: 45,
-          y: 45,
-        },
-        {
-          color: 'rgba(120, 95, 255, 1)',
-          endDegree: 333.9,
-          name: 'Opera',
-          radius: 40.5,
-          startDegree: 322.73999999999995,
-          style: ['default'],
-          type: 'sector',
-          value: 3.1,
-          x: 45,
-          y: 45,
-        },
-        {
-          color: 'rgba(242, 139, 140, 1)',
           endDegree: 360,
-          name: 'Etc',
+          name: 'B',
           radius: 40.5,
-          startDegree: 333.9,
+          startDegree: 180,
           style: ['default'],
           type: 'sector',
-          value: 7.25,
+          value: 50,
           x: 45,
           y: 45,
         },
       ],
     };
 
+    const responderResult = [
+      {
+        type: 'sector',
+        name: 'A',
+        color: 'rgba(0, 169, 255, 1)',
+        x: 45,
+        y: 45,
+        startDegree: 0,
+        endDegree: 180,
+        radius: 40.5,
+        value: 50,
+        style: ['hover'],
+        seriesIndex: 0,
+        data: { label: 'A', color: '#00a9ff', value: 50, category: 'Browser' },
+      },
+      {
+        type: 'sector',
+        name: 'B',
+        color: 'rgba(255, 184, 64, 1)',
+        x: 45,
+        y: 45,
+        startDegree: 180,
+        endDegree: 360,
+        radius: 40.5,
+        value: 50,
+        style: ['hover'],
+        seriesIndex: 1,
+        data: { label: 'B', color: '#ffb840', value: 50, category: 'Browser' },
+      },
+    ];
     expect(pieSeries.models).toEqual(result);
+    expect(pieSeries.responders).toEqual(responderResult);
   });
 });
