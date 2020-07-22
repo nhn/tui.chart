@@ -5,7 +5,7 @@ import {
   BoxSeriesModels,
   StackTotalModel,
 } from '@t/components/series';
-import { ChartState, ChartType, BoxType, AxisData, Legend, CenterYAxisData } from '@t/store/store';
+import { ChartState, ChartType, BoxType, AxisData, CenterYAxisData } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -264,7 +264,7 @@ export default class BoxSeries extends Component {
       padding: this.getPadding(tickDistance),
     };
 
-    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions, legend);
+    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions);
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, renderOptions, categories);
 
@@ -317,8 +317,7 @@ export default class BoxSeries extends Component {
 
   renderSeriesModel(
     seriesData: BoxSeriesType<number | (RangeDataType & number)>[],
-    renderOptions: RenderOptions,
-    legend: Legend
+    renderOptions: RenderOptions
   ): RectModel[] {
     const { tickDistance, diverging, padding } = renderOptions;
     const validDiverging = diverging && seriesData.length === 2;
