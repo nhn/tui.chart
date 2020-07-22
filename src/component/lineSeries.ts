@@ -7,7 +7,7 @@ import {
 } from '@t/components/series';
 import { LineChartOptions, LineTypeSeriesOptions, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, Legend, ValueEdge } from '@t/store/store';
+import { ChartState, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
@@ -31,6 +31,8 @@ export default class LineSeries extends Component {
   responders!: CircleResponderModel[];
 
   activatedResponders: this['responders'] = [];
+
+  activeSeriesMap!: { [key: string]: boolean };
 
   initialize() {
     this.type = 'series';
@@ -66,13 +68,17 @@ export default class LineSeries extends Component {
     };
 
     this.rect = layout.plot;
+    // @TODO: 이거 다 공통 컴퍼넌트로 뺴버릴까?
+    this.activeSeriesMap = legend.data.reduce(
+      (acc, { active, label }) => ({ ...acc, [label]: active }),
+      {}
+    );
 
     const lineSeriesModel = this.renderLinePointsModel(
       series.line.data,
       yAxis.limit,
       renderLineOptions,
-      categories,
-      legend
+      categories
     );
 
     const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
@@ -125,15 +131,14 @@ export default class LineSeries extends Component {
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     renderOptions: RenderLineOptions,
-    categories: string[],
-    legend: Legend
+    categories: string[]
   ): LinePointsModel[] {
     const { pointOnColumn, options, tickDistance } = renderOptions;
     const { spline } = options;
 
     return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
-      const { active } = legend.data.find(({ label }) => label === name)!;
+      const active = this.activeSeriesMap[name];
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
       data.forEach((datum, idx) => {
@@ -158,6 +163,7 @@ export default class LineSeries extends Component {
         color,
         points,
         seriesIndex,
+        name,
       };
     });
   }
