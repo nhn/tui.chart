@@ -2,7 +2,7 @@ import ColumnChart from '@src/charts/columnChart';
 import { budgetData, budgetDataForStack, negativeBudgetData, lossData } from './data';
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { withKnobs, radios, boolean } from '@storybook/addon-knobs';
+import { withKnobs, radios } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart.Column.Stack',

@@ -31,7 +31,7 @@ export default class AxisUsingCenterY extends Component {
   }
 
   render({ layout, axes }: ChartState<Options>) {
-    const {centerYAxis} = axes;
+    const { centerYAxis } = axes;
 
     if (!centerYAxis) {
       return;
@@ -54,7 +54,7 @@ export default class AxisUsingCenterY extends Component {
       tickDistance,
       tickInterval,
       labelInterval,
-      centerYAxis
+      centerYAxis,
     };
     const relativePositions = makeTickPixelPositions(this.axisSize(centerYAxis), tickCount);
     const offsetKey = this.yAxisComponent ? 'y' : 'x';
@@ -115,14 +115,14 @@ export default class AxisUsingCenterY extends Component {
           x: widthPixel,
           y: zeroPixel,
           x2: widthPixel,
-          y2:heightPixel,
+          y2: heightPixel,
         },
         {
           type: 'line',
           x: zeroPixel,
           y: zeroPixel,
           x2: zeroPixel,
-          y2: heightPixel
+          y2: heightPixel,
         },
       ];
     } else {
@@ -154,7 +154,10 @@ export default class AxisUsingCenterY extends Component {
     renderOptions: RenderOptions
   ): TickModel[] {
     const tickAnchorPoint = this.yAxisComponent ? crispPixel(this.rect.width) : crispPixel(0);
-    const { tickInterval, centerYAxis: {secondStartX} } = renderOptions;
+    const {
+      tickInterval,
+      centerYAxis: { secondStartX },
+    } = renderOptions;
 
     return relativePositions.reduce<TickModel[]>((positions, position, index) => {
       if (index % tickInterval) {
@@ -164,12 +167,12 @@ export default class AxisUsingCenterY extends Component {
       const model = {
         type: 'tick',
         isYAxis: this.yAxisComponent,
-        tickSize: this.yAxisComponent? -5: 5,
+        tickSize: this.yAxisComponent ? -5 : 5,
         [offsetKey]: crispPixel(position),
         [anchorKey]: tickAnchorPoint,
       } as TickModel;
 
-      const added = {...model};
+      const added = { ...model };
 
       if (this.yAxisComponent) {
         added[anchorKey] = crispPixel(0);
@@ -178,12 +181,7 @@ export default class AxisUsingCenterY extends Component {
         added[offsetKey] = crispPixel(position + secondStartX);
       }
 
-      return[
-        ...positions,
-        model,
-        added
-      ];
-
+      return [...positions, model, added];
     }, []);
   }
 
@@ -194,12 +192,17 @@ export default class AxisUsingCenterY extends Component {
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): LabelModel[] {
-    const { tickDistance, pointOnColumn, labelInterval, centerYAxis: {secondStartX, yAxisLabelAnchorPoint} } = renderOptions;
+    const {
+      tickDistance,
+      pointOnColumn,
+      labelInterval,
+      centerYAxis: { secondStartX, yAxisLabelAnchorPoint },
+    } = renderOptions;
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
     let labelAnchorPoint, textAlign, textLabels;
 
     if (this.yAxisComponent) {
-      labelAnchorPoint = crispPixel(yAxisLabelAnchorPoint!)
+      labelAnchorPoint = crispPixel(yAxisLabelAnchorPoint!);
       textAlign = 'center';
       textLabels = labels;
     } else {
@@ -223,17 +226,16 @@ export default class AxisUsingCenterY extends Component {
       const models: LabelModel[] = [model];
 
       if (!this.yAxisComponent) {
-        const added = {...model};
-        added.text = labels[index],
-        added[offsetKey] = crispPixel(model[offsetKey] + secondStartX);
+        const added = {
+          ...model,
+          text: labels[index],
+          [offsetKey]: crispPixel(model[offsetKey] + secondStartX),
+        };
 
         models.push(added);
       }
 
-      return [
-            ...positions,
-            ...models
-          ];
+      return [...positions, ...models];
     }, []);
   }
 
