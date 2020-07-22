@@ -17,6 +17,10 @@ export default class PieSeries extends Component {
   activatedResponders: this['responders'] = [];
 
   initUpdate(delta: number) {
+    if (!this.drawModels) {
+      return;
+    }
+
     const currentDegree = 360 * delta;
     const index = this.models.series.findIndex(
       ({ startDegree, endDegree }) => startDegree <= currentDegree && endDegree >= currentDegree
@@ -49,9 +53,9 @@ export default class PieSeries extends Component {
       throw new Error("There's no pie data");
     }
 
-    const pieData = series.pie?.data!;
-
     this.rect = layout.plot;
+
+    const pieData = series.pie?.data!;
 
     const seriesModel = this.renderPieModel(pieData, legend);
     const tooltipModel = this.makeTooltipModel(pieData, categories);
@@ -98,8 +102,8 @@ export default class PieSeries extends Component {
         type: 'sector',
         name,
         color,
-        x: radius,
-        y: radius,
+        x: width / 2,
+        y: height / 2,
         startDegree: startDegree,
         endDegree: startDegree + degree,
         radius: radius * 0.9,
