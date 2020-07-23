@@ -75,7 +75,7 @@ export default class Zoom extends Component {
     this.store.dispatch('resetZoom');
   }
 
-  addResetButtonResponder(): BoundResponderModel[] | undefined {
+  addResetButtonResponder(): BoundResponderModel[] {
     return [
       {
         x: this.rect.x + RESET_BUTTON_MARGIN,
@@ -102,7 +102,6 @@ export default class Zoom extends Component {
       this.eventBus.emit('renderHoveredSeries', []);
       if (!this.models.resetButton.length) {
         this.models.resetButton = this.renderResetButton();
-        this.addResetButtonResponder();
       }
     }
     this.resetSelectionArea();

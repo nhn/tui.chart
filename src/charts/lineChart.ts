@@ -26,7 +26,6 @@ import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
-import * as boxSeriesBrush from '@src/brushes/boxSeries';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { LineChartOptions, LineSeriesData, LineSeriesType } from '@t/options';
@@ -78,7 +77,6 @@ export default class LineChart extends Chart<LineChartOptions> {
       labelBrush,
       exportMenuBrush,
       dataLabelBrush,
-      boxSeriesBrush,
       resetButtonBrush,
     ]);
   }

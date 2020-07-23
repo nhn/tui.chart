@@ -1,6 +1,5 @@
-import { line, circle } from '@src/brushes/basic';
+import { line, circle, rect } from '@src/brushes/basic';
 import { label } from '@src/brushes/label';
-import { rect } from '@src/brushes/boxSeries';
 import { LegendModel } from '@t/components/legend';
 import { getRGBA } from '@src/helpers/color';
 import { LegendIconType } from '@t/store/store';

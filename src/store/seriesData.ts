@@ -70,7 +70,7 @@ function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeD
 function getDataInRange(
   data,
   rawCategories: string[],
-  areaChart: boolean,
+  chartType: string,
   zoomRange?: RangeDataType
 ) {
   if (!zoomRange) {
@@ -78,7 +78,7 @@ function getDataInRange(
   }
 
   let [startIdx, endIdx] = zoomRange;
-  const isCoordinateChart = !areaChart && !isNumber(getFirstValidValue(data));
+  const isCoordinateChart = chartType !== 'area' && !isNumber(getFirstValidValue(data));
 
   if (isCoordinateChart) {
     [startIdx, endIdx] = getCoordinateDataRange(data, rawCategories, zoomRange);
@@ -106,7 +106,7 @@ const seriesData: StoreModule = {
         const originSeriesData = rawSeries[seriesName].map((m, idx) => ({
           ...m,
           rawData: m.data,
-          data: getDataInRange(m.data, rawCategories, seriesName === 'area', zoomRange),
+          data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
           color: colors[idx],
         }));
 

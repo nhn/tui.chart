@@ -1,7 +1,6 @@
-import { circle, line, CircleStyleName } from '@src/brushes/basic';
+import { circle, line, CircleStyleName, rect } from '@src/brushes/basic';
 import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
-import { rect } from '@src/brushes/boxSeries';
 import { tooltip } from '@src/brushes/tooltip';
 import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';

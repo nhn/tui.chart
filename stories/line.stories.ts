@@ -46,9 +46,6 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
 export const basic = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
-    series: {
-      zoomable: true,
-    },
   });
 
   return el;

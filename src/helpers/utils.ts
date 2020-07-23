@@ -274,7 +274,7 @@ export function sortCategories(x: number | string, y: number | string) {
 }
 
 export function sortNumber(x: number, y: number) {
-  return Number(x) - Number(y);
+  return x - y;
 }
 
 export function first<T>(items: T[]): T | undefined {

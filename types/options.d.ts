@@ -178,8 +178,6 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
 }
 
 interface AreaSeriesOptions extends LineTypeSeriesOptions {
-  showDot?: boolean;
-  spline?: boolean;
   stack?: StackOptionType;
 }
 

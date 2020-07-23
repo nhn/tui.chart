@@ -1,5 +1,4 @@
-import { line } from '@src/brushes/basic';
-import { rect } from '@src/brushes/boxSeries';
+import { line, rect } from '@src/brushes/basic';
 import { Point } from '@t/options';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';

@@ -164,8 +164,7 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, zoomRange } = state;
-      const categories = state.categories!;
+      const { scale, options, series, layout, zoomRange, categories = [] } = state;
       const { xAxis, yAxis, plot } = layout;
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);

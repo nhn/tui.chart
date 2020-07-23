@@ -21,7 +21,6 @@ import Zoom from '@src/component/zoom';
 import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
-import * as boxSeriesBrush from '@src/brushes/boxSeries';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
@@ -75,7 +74,6 @@ export default class AreaChart extends Chart<AreaChartOptions> {
       lineSeriesBrushes,
       legendBrush,
       labelBrush,
-      boxSeriesBrush,
       exportMenuBrush,
       dataLabelBrush,
       resetButtonBrush,

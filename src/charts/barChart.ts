@@ -23,7 +23,6 @@ import HoveredSeries from '@src/component/hoveredSeries';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
-import * as boxBrushes from '@src/brushes/boxSeries';
 import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
@@ -78,7 +77,6 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.painter.addGroups([
       basicBrushes,
       axisBrushes,
-      boxBrushes,
       tooltipBrushes,
       legendBrush,
       labelBrush,

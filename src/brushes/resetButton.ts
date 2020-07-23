@@ -1,8 +1,7 @@
-import { rect } from '@src/brushes/boxSeries';
 import { Point } from '@t/options';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 import { ResetButtonModel } from '@t/components/resetButton';
-import { circle } from '@src/brushes/basic';
+import { circle, rect } from '@src/brushes/basic';
 import { areaPoints } from '@src/brushes/lineSeries';
 
 function drawResetIcon(ctx: CanvasRenderingContext2D, point: Point) {

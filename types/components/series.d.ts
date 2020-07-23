@@ -1,6 +1,5 @@
 import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
-import { CircleStyleName } from '@src/brushes/basic';
-import { RectStyleName } from '@src/brushes/boxSeries';
+import { CircleStyleName, RectStyleName } from '@src/brushes/basic';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel, LabelModel } from '@t/components/axis';
 import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
