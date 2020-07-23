@@ -71,6 +71,17 @@ export interface BubbleSeriesData {
   series: Pick<BubbleSeriesType, 'name' | 'data'>[];
 }
 
+export type PieSeriesType = {
+  name: string;
+  data: number;
+  color?: string;
+};
+
+export type PieSeriesData = {
+  categories?: string[];
+  series: PieSeriesType[];
+};
+
 interface TitleOption {
   text: string;
   offsetX?: number;
@@ -223,6 +234,14 @@ export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
 }
 
+interface PieSeriesOptions extends BaseSeriesOptions {
+  radiusRange?: [string, string];
+}
+
+export interface PieChartOptions extends BaseOptions {
+  series?: PieSeriesOptions;
+}
+
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
   data: T[];
@@ -260,6 +279,12 @@ export type DataLabelStackTotal = {
   style?: DataLabelStyle;
 };
 
+export type DataLabelPieSeriesName = {
+  visible: boolean;
+  anchor?: 'center' | 'outer';
+  style?: DataLabelStyle;
+};
+
 export type DataLabels = {
   visible?: boolean;
   anchor?: DataLabelAnchor;
@@ -268,4 +293,5 @@ export type DataLabels = {
   formatter?: (value: SeriesDataType) => string;
   style?: DataLabelStyle;
   stackTotal?: DataLabelStackTotal;
+  pieSeriesName?: DataLabelPieSeriesName;
 };

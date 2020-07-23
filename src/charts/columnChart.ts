@@ -27,6 +27,7 @@ import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
+import * as dataLabelBrush from '@src/brushes/dataLabel';
 
 import { ColumnChartOptions, BoxSeriesData } from '@t/options';
 
@@ -61,11 +62,11 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     this.componentManager.add(ZeroAxis);
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Axis, { name: 'yAxis' });
-    this.componentManager.add(DataLabels);
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
+    this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([
@@ -76,6 +77,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
       legendBrush,
       labelBrush,
       exportMenuBrush,
+      dataLabelBrush,
     ]);
   }
 }

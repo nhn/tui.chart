@@ -241,3 +241,9 @@ export function getAlpha(str: string) {
 
   return 1;
 }
+
+export function rgba(color: string, opacity: number) {
+  const alpha = getAlpha(color) * opacity;
+
+  return getRGBA(color, alpha);
+}

@@ -1065,3 +1065,33 @@ export const genderAgeData = {
     },
   ],
 };
+
+export const browserUsageData = {
+  categories: ['Browser'],
+  series: [
+    {
+      name: 'Chrome',
+      data: 46.02,
+    },
+    {
+      name: 'IE',
+      data: 20.47,
+    },
+    {
+      name: 'Firefox',
+      data: 17.71,
+    },
+    {
+      name: 'Safari',
+      data: 5.45,
+    },
+    {
+      name: 'Opera',
+      data: 3.1,
+    },
+    {
+      name: 'Etc',
+      data: 7.25,
+    },
+  ],
+};

@@ -17,6 +17,7 @@ import {
   Align,
   AxisTitleOption,
   PlotLineValue,
+  PieSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -28,6 +29,7 @@ type ChartSeriesMap = {
   column: BoxSeriesType<BoxSeriesDataType>[];
   area: AreaSeriesType[];
   bubble: BubbleSeriesType[];
+  pie: PieSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;

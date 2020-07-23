@@ -103,13 +103,13 @@ export default class Axis extends Component {
 
   renderAxisLineModel(): LineModel {
     const zeroPixel = crispPixel(0);
-    const widthPixel =  crispPixel(this.rect.width);
+    const widthPixel = crispPixel(this.rect.width);
     let lineModel: LineModel;
 
     if (this.yAxisComponent) {
       lineModel = {
         type: 'line',
-        x:widthPixel,
+        x: widthPixel,
         y: zeroPixel,
         x2: widthPixel,
         y2: crispPixel(this.rect.height),
@@ -162,8 +162,9 @@ export default class Axis extends Component {
     const { tickDistance, pointOnColumn, labelInterval } = renderOptions;
     const labelAnchorPoint = this.yAxisComponent ? crispPixel(0) : crispPixel(this.rect.height);
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
+    const style = ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }];
 
-    return labels.reduce((positions, text, index) => {
+    return labels.reduce<LabelModel[]>((positions, text, index) => {
       return index % labelInterval
         ? positions
         : [
@@ -171,12 +172,12 @@ export default class Axis extends Component {
             {
               type: 'label',
               text,
-              style: ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }],
+              style,
               [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
               [anchorKey]: labelAnchorPoint,
             } as LabelModel,
           ];
-    }, [] as LabelModel[]);
+    }, []);
   }
 
   axisSize() {

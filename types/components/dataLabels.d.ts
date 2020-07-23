@@ -1,12 +1,13 @@
-import { Point, DataLabels, DataLabelStyle } from '@t/options';
+import { Point, DataLabels, DataLabelStyle, DataLabelPieSeriesName } from '@t/options';
 
-export type DataLabelType = 'horizontal' | 'vertical' | 'radial';
+export type DataLabelType = 'stackTotal' | 'rect' | 'point' | 'sector' | 'pieSeriesName';
 
 export type DataLabel = {
+  type: DataLabelType;
   text: string;
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
-  style: DataLabelStyle;
+  defaultColor?: string;
 } & Point;
 
 export type DataLabelStackTotal = {
@@ -15,7 +16,22 @@ export type DataLabelStackTotal = {
 };
 
 export type DataLabelOption = Required<
-  Pick<DataLabels, 'anchor' | 'offsetX' | 'offsetY' | 'formatter' | 'style'>
+  Pick<DataLabels, 'anchor' | 'offsetX' | 'offsetY' | 'formatter'>
 > & {
+  style?: DataLabelStyle;
   stackTotal?: DataLabelStackTotal;
+  pieSeriesName?: DataLabelPieSeriesName;
+};
+
+export type DataLabelModel = {
+  type: 'dataLabel';
+  dataLabelType: DataLabelType;
+  text: string;
+  x: number;
+  y: number;
+  textAlign: CanvasTextAlign;
+  textBaseline: CanvasTextBaseline;
+  style?: DataLabelStyle;
+  opacity?: number;
+  defaultColor?: string;
 };
