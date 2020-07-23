@@ -4,16 +4,8 @@ import { DataLabels as DataLabelOptions, DataLabelStyle } from '@t/options';
 import { DataLabel, DataLabelModel, DataLabelType } from '@t/components/dataLabels';
 import { includes } from '@src/helpers/utils';
 
-function getOptionStyle(type: DataLabelType, options: DataLabelOptions) {
-  let style: DataLabelStyle | undefined;
-
-  if (includes(['pieSeriesName', 'stackTotal'], type)) {
-    style = options[type].style;
-  } else {
-    style = options.style;
-  }
-
-  return style;
+function getOptionStyle(type: DataLabelType, options: DataLabelOptions): DataLabelStyle {
+  return includes(['pieSeriesName', 'stackTotal'], type) ? options[type].style : options.style;
 }
 export default class DataLabels extends Component {
   models: DataLabelModel[] = [];
