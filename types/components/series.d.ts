@@ -41,6 +41,7 @@ export type LinePointsModel = {
   lineWidth: number;
   points: BezierPoint[];
   seriesIndex: number;
+  name: string;
 };
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {

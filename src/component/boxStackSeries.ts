@@ -16,7 +16,6 @@ import {
   StackDataValues,
   PercentScaleType,
   StackTotal,
-  Legend,
   CenterYAxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
@@ -31,6 +30,7 @@ import {
 } from '@src/helpers/boxSeriesCalculator';
 import { RectDataLabel } from '@src/store/dataLabels';
 import { getRGBA } from '@src/helpers/color';
+import { getActiveSeriesMap } from '@src/helpers/legend';
 
 type RenderOptions = {
   stack: Stack;
@@ -90,6 +90,7 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     this.rect = layout.plot;
+    this.activeSeriesMap = getActiveSeriesMap(legend);
 
     const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { labels } = axes[this.valueAxis];
@@ -128,7 +129,7 @@ export default class BoxStackSeries extends BoxSeries {
       centerYAxis,
     };
 
-    const { series, connector } = this.renderStackSeriesModel(seriesData, renderOptions, legend);
+    const { series, connector } = this.renderStackSeriesModel(seriesData, renderOptions);
     const hoveredSeries = this.renderHoveredSeriesModel(series);
     const clipRect = this.renderClipRectAreaModel();
 
@@ -169,16 +170,12 @@ export default class BoxStackSeries extends BoxSeries {
     }));
   }
 
-  renderStackSeriesModel(
-    seriesData: StackSeriesData<BoxType>,
-    renderOptions: RenderOptions,
-    legend: Legend
-  ) {
+  renderStackSeriesModel(seriesData: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
     const { stackData } = seriesData;
-    const colors = this.getSeriesColors(seriesData.data, legend);
+    const colors = this.getSeriesColors(seriesData.data);
 
     return isGroupStack(stackData)
-      ? this.makeStackGroupSeriesModel(seriesData, renderOptions, legend)
+      ? this.makeStackGroupSeriesModel(seriesData, renderOptions)
       : this.makeStackSeriesModel(stackData, renderOptions, colors);
   }
 
@@ -234,11 +231,7 @@ export default class BoxStackSeries extends BoxSeries {
     };
   }
 
-  makeStackGroupSeriesModel(
-    stackSeries: StackSeriesData<BoxType>,
-    renderOptions: RenderOptions,
-    legend: Legend
-  ) {
+  makeStackGroupSeriesModel(stackSeries: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
     const { stack } = renderOptions;
     const stackGroupData = stackSeries.stackData as StackGroupData;
     const seriesRawData = stackSeries.data;
@@ -249,7 +242,7 @@ export default class BoxStackSeries extends BoxSeries {
 
     stackGroupIds.forEach((groupId, groupIndex) => {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
-      const colors = this.getSeriesColors(filtered, legend);
+      const colors = this.getSeriesColors(filtered);
       const { series, connector } = this.makeStackSeriesModel(
         stackGroupData[groupId],
         renderOptions,
@@ -722,9 +715,9 @@ export default class BoxStackSeries extends BoxSeries {
     };
   }
 
-  getSeriesColors(seriesRawData: BoxSeriesType<BoxSeriesDataType>[], legend: Legend): string[] {
+  getSeriesColors(seriesRawData: BoxSeriesType<BoxSeriesDataType>[]): string[] {
     return seriesRawData.map(({ color, name }) => {
-      const { active } = legend.data.find(({ label }) => label === name)!;
+      const active = this.activeSeriesMap![name];
 
       return getRGBA(color, active ? 1 : 0.2);
     });

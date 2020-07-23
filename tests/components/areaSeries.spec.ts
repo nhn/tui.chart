@@ -74,6 +74,7 @@ describe('basic', () => {
           { value: 1, x: 20, y: 80 },
           { value: 2, x: 60, y: 60 },
         ],
+        name: 'han',
         seriesIndex: 0,
         type: 'linePoints',
       },
@@ -84,6 +85,7 @@ describe('basic', () => {
           { value: 4, x: 20, y: 20 },
           { value: 5, x: 60, y: 0 },
         ],
+        name: 'cho',
         seriesIndex: 1,
         type: 'linePoints',
       },
@@ -141,6 +143,7 @@ describe('basic', () => {
           color: 'rgba(0, 0, 0, 0)',
           fillColor: 'rgba(170, 170, 170, 1)',
           lineWidth: 0,
+          name: 'han',
           points: [
             { value: 1, x: 20, y: 80 },
             { value: 2, x: 60, y: 60 },
@@ -154,6 +157,7 @@ describe('basic', () => {
           color: 'rgba(0, 0, 0, 0)',
           fillColor: 'rgba(187, 187, 187, 1)',
           lineWidth: 0,
+          name: 'cho',
           points: [
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
@@ -172,6 +176,7 @@ describe('basic', () => {
           color: 'rgba(0, 0, 0, 0)',
           fillColor: 'rgba(170, 170, 170, 1)',
           lineWidth: 0,
+          name: 'han',
           points: [
             { value: 1, x: 20, y: 80 },
             { value: 2, x: 60, y: 60 },
@@ -185,6 +190,7 @@ describe('basic', () => {
           color: 'rgba(0, 0, 0, 0)',
           fillColor: 'rgba(187, 187, 187, 1)',
           lineWidth: 0,
+          name: 'cho',
           points: [
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
@@ -210,7 +216,7 @@ describe('basic', () => {
 
     areaSeries.onMousemove({ responders: [responder] });
 
-    expect(applyAreaOpacity).toHaveBeenCalledWith(0.5);
+    expect(applyAreaOpacity).toHaveBeenCalledWith(0.2);
   });
 
   it('remove line points model and circle model when mousemove after hover above line point', () => {
@@ -239,7 +245,7 @@ describe('basic', () => {
       })
     );
 
-    expect(areaSeries.drawModels.series[1].fillColor).toEqual('rgba(187, 187, 187, 0.1)');
+    expect(areaSeries.drawModels.series[1].fillColor).toEqual('rgba(187, 187, 187, 0.2)');
   });
 });
 
@@ -310,6 +316,7 @@ describe('range', () => {
       {
         color: 'rgba(170, 170, 170, 1)',
         lineWidth: 6,
+        name: 'han',
         points: [
           { value: 1, x: 20, y: 80 },
           { value: 2, x: 60, y: 60 },
@@ -321,6 +328,7 @@ describe('range', () => {
       {
         color: 'rgba(170, 170, 170, 1)',
         lineWidth: 6,
+        name: 'cho',
         points: [
           { value: 4, x: 20, y: 20 },
           { value: 5, x: 60, y: 0 },
@@ -383,6 +391,7 @@ describe('range', () => {
           color: 'rgba(0, 0, 0, 0)',
           fillColor: 'rgba(170, 170, 170, 1)',
           lineWidth: 0,
+          name: 'han',
           points: [
             { value: 2, x: 0, y: 60 },
             { value: 5, x: 40, y: 0 },
@@ -556,6 +565,7 @@ describe('stack', () => {
           color: 'rgba(0, 0, 0, 0)',
           fillColor: 'rgba(170, 170, 170, 1)',
           lineWidth: 0,
+          name: 'han',
           points: [
             { value: 1, x: 0, y: 80 },
             { value: 2, x: 40, y: 80 },
@@ -569,6 +579,7 @@ describe('stack', () => {
           color: 'rgba(0, 0, 0, 0)',
           fillColor: 'rgba(187, 187, 187, 1)',
           lineWidth: 0,
+          name: 'cho',
           points: [
             { value: 1, x: 0, y: 80 },
             { value: 2, x: 40, y: 80 },

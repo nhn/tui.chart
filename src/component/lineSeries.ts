@@ -7,13 +7,14 @@ import {
 } from '@t/components/series';
 import { LineChartOptions, LineTypeSeriesOptions, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, Legend, ValueEdge } from '@t/store/store';
+import { ChartState, ValueEdge } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray } from '@src/helpers/utils';
+import { getActiveSeriesMap } from '@src/helpers/legend';
 
 interface RenderLineOptions {
   pointOnColumn: boolean;
@@ -66,13 +67,13 @@ export default class LineSeries extends Component {
     };
 
     this.rect = layout.plot;
+    this.activeSeriesMap = getActiveSeriesMap(legend);
 
     const lineSeriesModel = this.renderLinePointsModel(
       series.line.data,
       yAxis.limit,
       renderLineOptions,
-      categories,
-      legend
+      categories
     );
 
     const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
@@ -125,15 +126,14 @@ export default class LineSeries extends Component {
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
     renderOptions: RenderLineOptions,
-    categories: string[],
-    legend: Legend
+    categories: string[]
   ): LinePointsModel[] {
     const { pointOnColumn, options, tickDistance } = renderOptions;
     const { spline } = options;
 
     return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
-      const { active } = legend.data.find(({ label }) => label === name)!;
+      const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
       data.forEach((datum, idx) => {
@@ -158,6 +158,7 @@ export default class LineSeries extends Component {
         color,
         points,
         seriesIndex,
+        name,
       };
     });
   }

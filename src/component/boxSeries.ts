@@ -5,7 +5,7 @@ import {
   BoxSeriesModels,
   StackTotalModel,
 } from '@t/components/series';
-import { ChartState, ChartType, BoxType, AxisData, Legend, CenterYAxisData } from '@t/store/store';
+import { ChartState, ChartType, BoxType, AxisData, CenterYAxisData } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -32,6 +32,8 @@ import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { RectDirection, RectDataLabel } from '@src/store/dataLabels';
+import { getActiveSeriesMap } from '@src/helpers/legend';
+
 export enum SeriesDirection {
   POSITIVE,
   NEGATIVE,
@@ -223,6 +225,7 @@ export default class BoxSeries extends Component {
     }
 
     this.rect = layout.plot;
+    this.activeSeriesMap = getActiveSeriesMap(legend);
 
     const seriesData = series[this.name].data;
 
@@ -261,7 +264,7 @@ export default class BoxSeries extends Component {
       padding: this.getPadding(tickDistance),
     };
 
-    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions, legend);
+    const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions);
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, renderOptions, categories);
 
@@ -314,8 +317,7 @@ export default class BoxSeries extends Component {
 
   renderSeriesModel(
     seriesData: BoxSeriesType<number | (RangeDataType & number)>[],
-    renderOptions: RenderOptions,
-    legend: Legend
+    renderOptions: RenderOptions
   ): RectModel[] {
     const { tickDistance, diverging, padding } = renderOptions;
     const validDiverging = diverging && seriesData.length === 2;
@@ -331,7 +333,7 @@ export default class BoxSeries extends Component {
       data.forEach((value, index) => {
         const dataStart = seriesPos + index * tickDistance;
         const barLength = this.makeBarLength(value, renderOptions);
-        const { active } = legend.data.find(({ label }) => label === name)!;
+        const active = this.activeSeriesMap![name];
         const color = getRGBA(seriesColor, active ? 1 : 0.2);
 
         if (isNumber(barLength)) {
