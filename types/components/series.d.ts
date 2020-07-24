@@ -50,7 +50,7 @@ export type LinePointsModel = {
   color: string;
   lineWidth: number;
   points: BezierPoint[];
-  name: string;
+  name?: string;
   seriesIndex?: number;
 };
 

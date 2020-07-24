@@ -379,7 +379,7 @@ export default class AreaSeries extends Component {
   applyAreaOpacity(opacity: number) {
     this.drawModels.series.forEach((model) => {
       if (
-        (opacity === seriesOpacity.ACTIVE && this.activeSeriesMap![model.name]) ||
+        (model.name && opacity === seriesOpacity.ACTIVE && this.activeSeriesMap![model.name]) ||
         opacity === seriesOpacity.INACTIVE
       ) {
         model.fillColor = getRGBA(model.fillColor, opacity);
