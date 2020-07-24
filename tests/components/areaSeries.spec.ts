@@ -249,6 +249,65 @@ describe('basic', () => {
   });
 });
 
+describe('basic with area opacity options', () => {
+  const seriesData = [{ name: 'han', data: [1, 2], color: '#aaaaaa' }];
+
+  const chartState = {
+    chart: { width: 100, height: 100 },
+    layout: {
+      xAxis: { x: 10, y: 80, width: 80, height: 10 },
+      yAxis: { x: 10, y: 10, width: 10, height: 80 },
+      plot: { width: 80, height: 80, x: 10, y: 80 },
+    },
+    series: {
+      area: {
+        data: seriesData,
+        seriesCount: seriesData.length,
+        seriesGroupCount: seriesData[0].data.length,
+      },
+    },
+    scale: {
+      yAxis: {
+        limit: {
+          min: 1,
+          max: 2,
+        },
+      },
+    },
+    axes: {
+      xAxis: {
+        pointOnColumn: true,
+        tickDistance: 40,
+      },
+    },
+    options: {
+      series: {
+        areaOpacity: 0.4,
+      },
+    },
+    legend: {
+      data: [{ label: 'han', active: true, checked: true }],
+    },
+    categories: ['A', 'B'],
+    dataLabels: {
+      visible: false,
+    },
+  };
+
+  beforeEach(() => {
+    areaSeries = new AreaSeries({
+      store: {} as Store<AreaChartOptions>,
+      eventBus: new EventEmitter(),
+    });
+
+    areaSeries.render(chartState);
+  });
+
+  it(`should make model's fillColor properly when calling render with areaOpacity options`, () => {
+    expect(areaSeries.models.series[0].fillColor).toEqual('rgba(170, 170, 170, 0.4)');
+  });
+});
+
 describe('range', () => {
   const rangeData = [
     {

@@ -41,11 +41,6 @@ interface RenderOptions {
 
 type DatumType = number | RangeDataType;
 
-const seriesOpacity = {
-  INACTIVE: 0.2,
-  ACTIVE: 1,
-};
-
 export default class AreaSeries extends Component {
   models: AreaSeriesDrawModels = { rect: [], series: [] };
 
@@ -64,6 +59,11 @@ export default class AreaSeries extends Component {
   isStackChart = false;
 
   isRangeChart = false;
+
+  seriesOpacity = {
+    INACTIVE: 0.2,
+    ACTIVE: 1,
+  };
 
   initialize() {
     this.type = 'series';
@@ -105,6 +105,7 @@ export default class AreaSeries extends Component {
       dataLabels,
       stackSeries,
     } = chartState;
+
     if (!series.area) {
       throw new Error("There's no area data!");
     }
@@ -113,6 +114,7 @@ export default class AreaSeries extends Component {
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.seriesOpacity.ACTIVE = options?.series?.areaOpacity ?? this.seriesOpacity.ACTIVE;
 
     const { limit } = scale.yAxis;
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
@@ -255,7 +257,10 @@ export default class AreaSeries extends Component {
     const { data, name, color: seriesColor } = series;
     const points: PointModel[] = [];
     const active = this.activeSeriesMap![name];
-    const color = getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
+    const color = getRGBA(
+      seriesColor,
+      active ? this.seriesOpacity.ACTIVE : this.seriesOpacity.INACTIVE
+    );
 
     data.forEach((datum, idx) => {
       const value = this.getLinePointModelValue(datum, pairModel);
@@ -375,8 +380,8 @@ export default class AreaSeries extends Component {
   applyAreaOpacity(opacity: number) {
     this.drawModels.series.forEach((model) => {
       if (
-        (opacity === seriesOpacity.ACTIVE && this.activeSeriesMap![model.name]) ||
-        opacity === seriesOpacity.INACTIVE
+        (opacity === this.seriesOpacity.ACTIVE && this.activeSeriesMap![model.name]) ||
+        opacity === this.seriesOpacity.INACTIVE
       ) {
         model.fillColor = getRGBA(model.fillColor, opacity);
       }
@@ -433,7 +438,9 @@ export default class AreaSeries extends Component {
     );
 
     const hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];
-    this.applyAreaOpacity(hoveredSeries.length ? seriesOpacity.INACTIVE : seriesOpacity.ACTIVE);
+    this.applyAreaOpacity(
+      hoveredSeries.length ? this.seriesOpacity.INACTIVE : this.seriesOpacity.ACTIVE
+    );
 
     this.eventBus.emit('renderHoveredSeries', hoveredSeries);
     this.activatedResponders = responders;
@@ -453,7 +460,7 @@ export default class AreaSeries extends Component {
   onMouseoutComponent() {
     this.eventBus.emit('seriesPointHovered', []);
     this.eventBus.emit('renderHoveredSeries', []);
-    this.applyAreaOpacity(seriesOpacity.ACTIVE);
+    this.applyAreaOpacity(this.seriesOpacity.ACTIVE);
   }
 
   getDataLabels(seriesModels: AreaPointsModel[]) {

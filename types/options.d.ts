@@ -178,6 +178,7 @@ interface AreaTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
   stack?: StackOptionType;
+  areaOpacity?: number;
 }
 
 export interface AreaChartOptions extends BaseOptions {
