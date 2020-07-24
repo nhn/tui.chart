@@ -332,7 +332,7 @@ describe('range', () => {
       {
         color: 'rgba(170, 170, 170, 1)',
         lineWidth: 6,
-        name: 'cho',
+        name: 'han',
         points: [
           { value: 1, x: 0, y: 80 },
           { value: 3, x: 40, y: 40 },
@@ -507,6 +507,7 @@ describe('stack', () => {
         ],
         seriesIndex: 0,
         type: 'linePoints',
+        name: 'han',
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -517,6 +518,7 @@ describe('stack', () => {
         ],
         seriesIndex: 1,
         type: 'linePoints',
+        name: 'cho',
       },
     ],
     responders: [
@@ -676,6 +678,7 @@ describe('zoom', () => {
         ],
         seriesIndex: 0,
         type: 'linePoints',
+        name: 'han',
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -687,6 +690,7 @@ describe('zoom', () => {
         ],
         seriesIndex: 1,
         type: 'linePoints',
+        name: 'cho',
       },
     ],
     models: {
@@ -705,6 +709,7 @@ describe('zoom', () => {
           ],
           seriesIndex: 0,
           type: 'areaPoints',
+          name: 'han',
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -719,6 +724,7 @@ describe('zoom', () => {
           ],
           seriesIndex: 1,
           type: 'areaPoints',
+          name: 'cho',
         },
       ],
     },

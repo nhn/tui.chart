@@ -120,6 +120,7 @@ describe('basic', () => {
           ],
           seriesIndex: 0,
           type: 'linePoints',
+          name: 'han',
         },
         {
           color: 'rgba(187, 187, 187, 1)',
@@ -130,6 +131,7 @@ describe('basic', () => {
           ],
           seriesIndex: 1,
           type: 'linePoints',
+          name: 'cho',
         },
       ],
     },
@@ -245,6 +247,7 @@ describe('zoom', () => {
             { value: 3, x: 60, y: 40 },
           ],
           seriesIndex: 0,
+          name: 'han',
           type: 'linePoints',
         },
         {
@@ -256,6 +259,7 @@ describe('zoom', () => {
             { value: 5, x: 60, y: 0 },
           ],
           seriesIndex: 1,
+          name: 'cho',
           type: 'linePoints',
         },
       ],

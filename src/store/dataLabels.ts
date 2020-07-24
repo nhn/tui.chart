@@ -1,6 +1,6 @@
 import { StoreModule } from '@t/store/store';
 import { pickStackOption } from '@src/store/stackSeriesData';
-import { isFunction, includes, isBoolean, pick } from '@src/helpers/utils';
+import { isFunction, includes, isBoolean, pick, isNumber } from '@src/helpers/utils';
 import { DataLabels, DataLabelAnchor, SeriesDataType } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
@@ -495,7 +495,7 @@ const dataLabels: StoreModule = {
         const labelOptions = getDataLabelsOptions(dataLabelOptions, type, withStack);
         const disableStackTotal = type === 'stackTotal' && !labelOptions.stackTotal?.visible;
 
-        if (disableStackTotal || !value) {
+        if (disableStackTotal || !isNumber(value)) {
           return;
         }
 

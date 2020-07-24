@@ -48,6 +48,7 @@ describe('DataLabels', () => {
         y: 21,
         textAlign: 'left',
         textBaseline: 'middle',
+        opacity: 1,
       },
       {
         type: 'dataLabel',
@@ -57,6 +58,7 @@ describe('DataLabels', () => {
         y: 36,
         textAlign: 'right',
         textBaseline: 'bottom',
+        opacity: 1,
       },
     ]);
   });

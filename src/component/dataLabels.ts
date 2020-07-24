@@ -52,6 +52,7 @@ export default class DataLabels extends Component {
         textBaseline,
         defaultColor,
         style: getOptionStyle(type, options),
+        opacity: 1,
       };
     });
   }
