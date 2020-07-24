@@ -47,6 +47,17 @@ export const basic = () => {
   return el;
 };
 
+export const basicWithShowDot = () => {
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    series: { spline: boolean('spline', false), showDot: true },
+  });
+
+  return el;
+};
+
 export const dataLabels = () => {
   const { el } = createChart(avgTemperatureData, {
     series: {

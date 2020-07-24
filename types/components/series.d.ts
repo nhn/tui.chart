@@ -26,6 +26,7 @@ export type CircleModel = {
     start: number;
     end: number;
   };
+  name?: string;
 } & Point;
 
 type BoundResponderModelData = { name?: string; value?: string };
@@ -85,6 +86,7 @@ export type RectModel = {
 export type AreaSeriesModels = {
   rect: ClipRectAreaModel[];
   series: AreaPointsModel[];
+  dot: CircleModel[];
 };
 
 export type BoxSeriesModels = {
@@ -101,6 +103,7 @@ export type CircleSeriesModels = {
 export type LineSeriesModels = {
   rect: ClipRectAreaModel[];
   series: LinePointsModel[];
+  dot: CircleModel[];
 };
 
 export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {

@@ -25,7 +25,7 @@ interface RenderOptions {
 type DatumType = CoordinateDataType | number;
 
 export default class LineSeries extends Component {
-  models: LineSeriesModels = { rect: [], series: [] };
+  models: LineSeriesModels = { rect: [], series: [], dot: [] };
 
   drawModels!: LineSeriesModels;
 
@@ -98,12 +98,19 @@ export default class LineSeries extends Component {
       return tooltipData;
     });
 
-    this.models = { rect: [this.renderClipRectAreaModel()], series: lineSeriesModel };
+    const dotSeriesModel = this.renderDotSeriesModel(seriesCircleModel, renderLineOptions);
+
+    this.models = {
+      rect: [this.renderClipRectAreaModel()],
+      series: lineSeriesModel,
+      dot: dotSeriesModel,
+    };
 
     if (!this.drawModels) {
       this.drawModels = {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(lineSeriesModel),
+        dot: deepCopyArray(dotSeriesModel),
       };
     }
 
@@ -115,6 +122,19 @@ export default class LineSeries extends Component {
       ...m,
       data: tooltipDataArr[index],
     }));
+  }
+
+  renderDotSeriesModel(
+    seriesCircleModel: CircleModel[],
+    { options }: RenderOptions
+  ): CircleModel[] {
+    return options?.showDot
+      ? seriesCircleModel.map((m) => ({
+          ...m,
+          radius: 5,
+          style: ['default', { strokeStyle: m.color }],
+        }))
+      : [];
   }
 
   renderClipRectAreaModel(isDrawModel?: boolean): ClipRectAreaModel {
