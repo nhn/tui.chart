@@ -536,7 +536,7 @@ describe('stack', () => {
       {
         height: 80,
         index: 0,
-        type: 'bound',
+        type: 'rect',
         width: 20,
         x: 10,
         y: 80,
@@ -544,7 +544,7 @@ describe('stack', () => {
       {
         height: 80,
         index: 1,
-        type: 'bound',
+        type: 'rect',
         width: 40,
         x: 30,
         y: 80,
@@ -552,7 +552,7 @@ describe('stack', () => {
       {
         height: 80,
         index: 2,
-        type: 'bound',
+        type: 'rect',
         width: 40,
         x: 70,
         y: 80,
@@ -560,7 +560,7 @@ describe('stack', () => {
       {
         height: 80,
         index: 3,
-        type: 'bound',
+        type: 'rect',
         width: 40,
         x: 110,
         y: 80,
@@ -568,8 +568,8 @@ describe('stack', () => {
       {
         height: 80,
         index: 4,
-        type: 'bound',
         width: 20,
+        type: 'rect',
         x: 150,
         y: 80,
       },

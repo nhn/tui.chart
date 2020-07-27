@@ -1,8 +1,8 @@
 import { BoxSeriesDataType, RangeDataType } from '@t/options';
-import { getFirstValidValue } from '@src/helpers/utils';
+import { getFirstValidValue, isNumber } from '@src/helpers/utils';
 
-export function isRangeValue(value: BoxSeriesDataType): value is RangeDataType {
-  return Array.isArray(value);
+export function isRangeValue(value: unknown): value is RangeDataType {
+  return Array.isArray(value) && value.length === 2 && isNumber(value[0]) && isNumber(value[1]);
 }
 
 export function isRangeData(data?: BoxSeriesDataType[]): data is RangeDataType[] {

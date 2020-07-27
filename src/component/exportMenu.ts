@@ -2,10 +2,10 @@ import Component from './component';
 import { ChartState, Options, Series } from '@t/store/store';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
-import { LegendResponderModel } from '@t/components/legend';
 import { TitleOption } from '@t/options';
 import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
+import { RectResponderModel } from '@t/components/series';
 
 import '../css/exportMenu.css';
 
@@ -17,6 +17,8 @@ export interface DataToExport {
 }
 
 export default class ExportMenu extends Component {
+  responders!: RectResponderModel[];
+
   models!: ExportMenuModels;
 
   opened = false;
@@ -92,7 +94,7 @@ export default class ExportMenu extends Component {
     this.name = 'exportMenu';
   }
 
-  onClick({ responders }: { responders: LegendResponderModel[] }) {
+  onClick({ responders }: { responders: RectResponderModel[] }) {
     if (responders.length) {
       this.toggleExportMenu();
     }
@@ -124,7 +126,7 @@ export default class ExportMenu extends Component {
 
     this.responders = [
       {
-        type: 'bound',
+        type: 'rect',
         width: BUTTON_RECT_SIZE,
         height: BUTTON_RECT_SIZE,
         x: this.rect.x,

@@ -1,11 +1,6 @@
 import Component from './component';
 import { ChartState, Options, Legend as LegendType, Theme } from '@t/store/store';
-import {
-  LegendData,
-  LegendModel,
-  LegendResponderModel,
-  LegendResponderType,
-} from '@t/components/legend';
+import { LegendData, LegendModel } from '@t/components/legend';
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
@@ -17,18 +12,19 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign } from '@src/store/layout';
 import { sum } from '@src/helpers/utils';
+import { RectResponderModel } from '@t/components/series';
 
 export default class Legend extends Component {
   models!: LegendModel[];
 
-  responders!: LegendResponderModel[];
+  responders!: RectResponderModel[];
 
-  activatedResponders: LegendResponderModel[] = [];
+  activatedResponders: RectResponderModel[] = [];
 
-  onClick({ responders }: { responders: LegendResponderModel[] }) {
+  onClick({ responders }: { responders: RectResponderModel[] }) {
     if (responders.length) {
-      const { type } = responders[0];
-      if (type === 'checkbox') {
+      const { data } = responders[0];
+      if (data?.name === 'checkbox') {
         this.eventBus.emit('clickLegendCheckbox', responders);
       } else {
         this.eventBus.emit('clickLegendLabel', responders);
@@ -101,29 +97,33 @@ export default class Legend extends Component {
     ];
   }
 
-  makeCheckboxResponder(data: LegendData[], showCheckbox: boolean) {
+  makeCheckboxResponder(data: LegendData[], showCheckbox: boolean): RectResponderModel[] {
     return showCheckbox
       ? data.map((m) => ({
           ...m,
-          type: 'checkbox' as LegendResponderType,
-          x: m.x + this.rect.x,
-          y: m.y + this.rect.y,
+          type: 'rect',
+          x: m.x,
+          y: m.y,
+          width: LEGEND_CHECKBOX_SIZE,
+          height: LEGEND_CHECKBOX_SIZE,
+          data: { name: 'checkbox' },
         }))
       : [];
   }
 
-  makeLabelResponder(data: LegendData[], showCheckbox: boolean) {
+  makeLabelResponder(data: LegendData[], showCheckbox: boolean): RectResponderModel[] {
     return data.map((m) => ({
       ...m,
-      type: 'label' as LegendResponderType,
+      type: 'rect',
       x:
         m.x +
-        this.rect.x +
         (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
         LEGEND_ICON_SIZE +
         LEGEND_MARGIN_X,
-      y: m.y + this.rect.y,
+      y: m.y,
       width: getTextWidth(m.label, LEGEND_LABEL_FONT),
+      data: { name: 'label' },
+      height: LEGEND_CHECKBOX_SIZE,
     }));
   }
 

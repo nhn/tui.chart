@@ -4,6 +4,7 @@ import {
   ClipRectAreaModel,
   BoxSeriesModels,
   StackTotalModel,
+  RectResponderModel,
 } from '@t/components/series';
 import { ChartState, ChartType, BoxType, AxisData, CenterYAxisData } from '@t/store/store';
 import {
@@ -92,7 +93,7 @@ export default class BoxSeries extends Component {
 
   drawModels!: BoxSeriesModels;
 
-  responders!: RectModel[];
+  responders!: RectResponderModel[];
 
   activatedResponders: this['responders'] = [];
 

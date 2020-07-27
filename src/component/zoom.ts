@@ -1,6 +1,6 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { BoundResponderModel, RectModel } from '@t/components/series';
+import { RectResponderModel, RectModel } from '@t/components/series';
 import { range } from '@src/helpers/utils';
 import { sortNumber } from '@src/helpers/utils';
 import { ResetButtonModel } from '@t/components/resetButton';
@@ -18,9 +18,9 @@ const RESET_BUTTON_MARGIN = 10;
 export default class Zoom extends Component {
   models: ZoomModels = { selectionArea: [], resetButton: [] };
 
-  responders!: BoundResponderModel[];
+  responders!: RectResponderModel[];
 
-  private dragStartPoint: BoundResponderModel | null = null;
+  private dragStartPoint: RectResponderModel | null = null;
 
   initialize() {
     this.type = 'zoom';
@@ -37,7 +37,7 @@ export default class Zoom extends Component {
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
 
     this.responders = [
-      ...this.makeBoundResponderModel(categories!, {
+      ...this.makeRectResponderModel(categories!, {
         pointOnColumn,
         tickDistance,
         tickCount,
@@ -52,7 +52,7 @@ export default class Zoom extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  onMousedown({ responders }: { responders: BoundResponderModel[] }) {
+  onMousedown({ responders }: { responders: RectResponderModel[] }) {
     if (responders.length) {
       const pushResetButton = responders.some(
         (responder) => responder.data!.name === 'resetButton'
@@ -75,12 +75,12 @@ export default class Zoom extends Component {
     this.store.dispatch('resetZoom');
   }
 
-  addResetButtonResponder(): BoundResponderModel[] {
+  addResetButtonResponder(): RectResponderModel[] {
     return [
       {
-        x: this.rect.x + RESET_BUTTON_MARGIN,
-        y: this.rect.y + RESET_BUTTON_MARGIN,
-        type: 'bound',
+        x: RESET_BUTTON_MARGIN,
+        y: RESET_BUTTON_MARGIN,
+        type: 'rect',
         width: BUTTON_RECT_SIZE,
         height: BUTTON_RECT_SIZE,
         data: { name: 'resetButton' },
@@ -92,11 +92,11 @@ export default class Zoom extends Component {
     return [{ type: 'resetButton', x: RESET_BUTTON_MARGIN, y: RESET_BUTTON_MARGIN }];
   }
 
-  onMouseup({ responders }: { responders: BoundResponderModel[] }) {
+  onMouseup({ responders }: { responders: RectResponderModel[] }) {
     if (this.dragStartPoint && responders.length) {
       const dragRange = [this.dragStartPoint, responders[0]]
         .sort((a, b) => a.index! - b.index!)
-        .map((m) => m.data!.value);
+        .map((m) => m.data?.value);
 
       this.store.dispatch('zoom', dragRange);
       this.eventBus.emit('renderHoveredSeries', []);
@@ -107,10 +107,7 @@ export default class Zoom extends Component {
     this.resetSelectionArea();
   }
 
-  makeBoundResponderModel(
-    categories: string[],
-    renderOptions: RenderOptions
-  ): BoundResponderModel[] {
+  makeRectResponderModel(categories: string[], renderOptions: RenderOptions): RectResponderModel[] {
     const { pointOnColumn, tickCount, tickDistance } = renderOptions;
     const { height, x, y } = this.rect;
 
@@ -127,7 +124,7 @@ export default class Zoom extends Component {
       }
 
       return {
-        type: 'bound',
+        type: 'rect',
         y,
         height,
         x: startX,
@@ -138,7 +135,7 @@ export default class Zoom extends Component {
     });
   }
 
-  onMousemove({ responders }: { responders: BoundResponderModel[] }) {
+  onMousemove({ responders }: { responders: RectResponderModel[] }) {
     if (this.dragStartPoint && responders.length) {
       const startIndex = this.dragStartPoint!.index!;
       const endIndex = responders[0].index!;

@@ -3,6 +3,7 @@ import { CircleStyleName, RectStyleName } from '@src/brushes/basic';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel, LabelModel } from '@t/components/axis';
 import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
+import { LegendData } from '@t/components/legend';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
@@ -28,14 +29,6 @@ export type CircleModel = {
   };
   name?: string;
 } & Point;
-
-type BoundResponderModelData = { name?: string; value?: string };
-
-export type BoundResponderModel = Rect & {
-  type: 'bound';
-  index?: number;
-  data?: BoundResponderModelData;
-};
 
 export type CircleResponderModel = {
   detectionRadius?: number;
@@ -82,6 +75,13 @@ export type RectModel = {
   thickness?: number;
   value?: BoxSeriesDataType;
 } & Rect;
+
+export type RectResponderModel = Partial<RectModel> & {
+  type: 'rect';
+  index?: number;
+  data?: { name?: string } & Partial<TooltipData>;
+} & Rect &
+  Partial<LegendData>;
 
 export type AreaSeriesModels = {
   rect: ClipRectAreaModel[];
