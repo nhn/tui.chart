@@ -51,6 +51,15 @@ export const basic = () => {
   return el;
 };
 
+export const basicWithShowDot = () => {
+  const { el } = createChart(temperatureData, {
+    xAxis: { pointOnColumn: true },
+    series: { showDot: true },
+  });
+
+  return el;
+};
+
 export const spline = () => {
   const { el } = createChart(temperatureData2, {
     series: { spline: boolean('spline', true) },

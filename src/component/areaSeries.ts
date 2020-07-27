@@ -28,6 +28,7 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 interface AreaSeriesDrawModels {
   rect: ClipRectAreaModel[];
   series: AreaPointsModel[];
+  dot: CircleModel[];
 }
 
 interface RenderOptions {
@@ -47,7 +48,7 @@ const seriesOpacity = {
 };
 
 export default class AreaSeries extends Component {
-  models: AreaSeriesDrawModels = { rect: [], series: [] };
+  models: AreaSeriesDrawModels = { rect: [], series: [], dot: [] };
 
   drawModels!: AreaSeriesModels;
 
@@ -142,17 +143,20 @@ export default class AreaSeries extends Component {
 
     const areaSeriesModel = this.renderAreaPointsModel();
     const seriesCircleModel = this.renderCircleModel();
+    const circleDotModel = this.renderDotSeriesModel(seriesCircleModel, renderOptions);
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
     this.models = {
       rect: [this.renderClipRectAreaModel()],
       series: areaSeriesModel,
+      dot: circleDotModel,
     };
 
     if (!this.drawModels) {
       this.drawModels = {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(areaSeriesModel),
+        dot: deepCopyArray(circleDotModel),
       };
     }
 
@@ -179,6 +183,19 @@ export default class AreaSeries extends Component {
     this.responders = this.isStackChart
       ? this.makeBoundResponderModel(renderOptions)
       : this.makeDefaultResponderModel(seriesCircleModel, tooltipDataArr);
+  }
+
+  renderDotSeriesModel(
+    seriesCircleModel: CircleModel[],
+    { options }: RenderOptions
+  ): CircleModel[] {
+    return options?.showDot
+      ? seriesCircleModel.map((m) => ({
+          ...m,
+          radius: 6,
+          style: ['default'],
+        }))
+      : [];
   }
 
   makeDefaultResponderModel(
@@ -280,7 +297,7 @@ export default class AreaSeries extends Component {
 
     return {
       type: 'linePoints',
-      lineWidth: 6,
+      lineWidth: 3,
       color,
       points,
       seriesIndex,
@@ -362,7 +379,7 @@ export default class AreaSeries extends Component {
   }
 
   renderCircleModel(): CircleModel[] {
-    return this.linePointsModel.flatMap(({ points, color, seriesIndex }) =>
+    return this.linePointsModel.flatMap(({ points, color, seriesIndex, name }) =>
       points.map(({ x, y }, index) => ({
         type: 'circle',
         x,
@@ -372,17 +389,28 @@ export default class AreaSeries extends Component {
         style: ['default', 'hover'],
         seriesIndex,
         index,
+        name,
       }))
+    );
+  }
+
+  private isAvailableApplyOpacity(opacity: number, name: string) {
+    return (
+      (opacity === seriesOpacity.ACTIVE && this.activeSeriesMap![name]) ||
+      opacity === seriesOpacity.INACTIVE
     );
   }
 
   applyAreaOpacity(opacity: number) {
     this.drawModels.series.forEach((model) => {
-      if (
-        (model.name && opacity === seriesOpacity.ACTIVE && this.activeSeriesMap![model.name]) ||
-        opacity === seriesOpacity.INACTIVE
-      ) {
+      if (this.isAvailableApplyOpacity(opacity, model.name!)) {
         model.fillColor = getRGBA(model.fillColor, opacity);
+      }
+    });
+
+    this.drawModels.dot.forEach((model) => {
+      if (this.isAvailableApplyOpacity(opacity, model.name!)) {
+        model.color = getRGBA(model.color, opacity);
       }
     });
   }
