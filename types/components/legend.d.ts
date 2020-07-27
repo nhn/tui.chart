@@ -15,11 +15,3 @@ export type LegendModel = {
   iconType: LegendIconType;
   data: LegendData[];
 };
-
-export type LegendResponderType = 'checkbox' | 'label';
-
-export type LegendResponderModel = LegendData &
-  Point & {
-    type: LegendResponderType;
-    width?: number;
-  };

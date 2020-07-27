@@ -2,12 +2,12 @@ import Component from './component';
 import { ChartState, Options, Series } from '@t/store/store';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
-import { LegendResponderModel } from '@t/components/legend';
 import { TitleOption } from '@t/options';
 import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
 
 import '../css/exportMenu.css';
+import { BoundResponderModel } from '@t/components/series';
 
 const EXPORT_MENU_WIDTH = 140;
 export const BUTTON_RECT_SIZE = 24;
@@ -92,7 +92,7 @@ export default class ExportMenu extends Component {
     this.name = 'exportMenu';
   }
 
-  onClick({ responders }: { responders: LegendResponderModel[] }) {
+  onClick({ responders }: { responders: BoundResponderModel[] }) {
     if (responders.length) {
       this.toggleExportMenu();
     }

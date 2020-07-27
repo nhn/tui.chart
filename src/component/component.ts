@@ -18,7 +18,7 @@ import {
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
-import { LegendModel, LegendResponderModel } from '@t/components/legend';
+import { LegendModel } from '@t/components/legend';
 import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
@@ -59,11 +59,7 @@ type ComponentModels =
   | TooltipModel[];
 
 type ComponentResponders = Array<
-  | CircleResponderModel
-  | RectModel
-  | LegendResponderModel
-  | BoundResponderModel
-  | SectorResponderModel
+  CircleResponderModel | RectModel | BoundResponderModel | SectorResponderModel
 >;
 
 export default abstract class Component {

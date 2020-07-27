@@ -7,36 +7,15 @@ import {
 } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
 import { calculateRadianToDegree } from '@src/helpers/sector';
-import { LegendResponderModel } from '@t/components/legend';
 import { BoundResponderModel } from '@t/components/series';
-import { LEGEND_CHECKBOX_SIZE } from '@src/brushes/legend';
 
-type DetectorType = 'circle' | 'rect' | 'label' | 'checkbox' | 'bound' | 'sector';
+type DetectorType = 'circle' | 'rect' | 'bound' | 'sector';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
 };
 
 export const responderDetectors: ResponderDetectors = {
-  label: (mousePosition: Point, model: LegendResponderModel) => {
-    const { x, y } = mousePosition;
-    const { x: modelX, y: modelY, width: modelWidth } = model;
-
-    return (
-      x >= modelX && x <= modelX + modelWidth! && y >= modelY && y <= modelY + LEGEND_CHECKBOX_SIZE
-    );
-  },
-  checkbox: (mousePosition: Point, model: LegendResponderModel) => {
-    const { x, y } = mousePosition;
-    const { x: modelX, y: modelY } = model;
-
-    return (
-      x >= modelX &&
-      x <= modelX + LEGEND_CHECKBOX_SIZE &&
-      y >= modelY &&
-      y <= modelY + LEGEND_CHECKBOX_SIZE
-    );
-  },
   bound: (mousePosition: Point, model: BoundResponderModel) => {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, width, height } = model;

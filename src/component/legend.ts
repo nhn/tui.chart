@@ -1,11 +1,6 @@
 import Component from './component';
 import { ChartState, Options, Legend as LegendType, Theme } from '@t/store/store';
-import {
-  LegendData,
-  LegendModel,
-  LegendResponderModel,
-  LegendResponderType,
-} from '@t/components/legend';
+import { LegendData, LegendModel } from '@t/components/legend';
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
@@ -17,18 +12,19 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign } from '@src/store/layout';
 import { sum } from '@src/helpers/utils';
+import { BoundResponderModel } from '@t/components/series';
 
 export default class Legend extends Component {
   models!: LegendModel[];
 
-  responders!: LegendResponderModel[];
+  responders!: BoundResponderModel[];
 
-  activatedResponders: LegendResponderModel[] = [];
+  activatedResponders: BoundResponderModel[] = [];
 
-  onClick({ responders }: { responders: LegendResponderModel[] }) {
+  onClick({ responders }: { responders: BoundResponderModel[] }) {
     if (responders.length) {
-      const { type } = responders[0];
-      if (type === 'checkbox') {
+      const { data } = responders[0];
+      if (data?.name === 'checkbox') {
         this.eventBus.emit('clickLegendCheckbox', responders);
       } else {
         this.eventBus.emit('clickLegendLabel', responders);
@@ -37,7 +33,9 @@ export default class Legend extends Component {
   }
 
   onClickCheckbox = (responders) => {
-    const { label, checked } = responders[0];
+    const {
+      data: { label, checked },
+    } = responders[0];
 
     this.store.dispatch('setAllLegendActiveState', true);
     this.store.dispatch('setLegendCheckedState', { name: label, checked: !checked });
@@ -52,9 +50,11 @@ export default class Legend extends Component {
   };
 
   onClickLabel = (responders) => {
-    const { label } = responders[0];
+    const {
+      data: { label },
+    } = responders[0];
 
-    if (this.activatedResponders.length && this.activatedResponders[0].label === label) {
+    if (this.activatedResponders.length && this.activatedResponders[0].data?.label === label) {
       this.store.dispatch('setAllLegendActiveState', true);
       this.activatedResponders = [];
     } else {
@@ -101,21 +101,22 @@ export default class Legend extends Component {
     ];
   }
 
-  makeCheckboxResponder(data: LegendData[], showCheckbox: boolean) {
+  makeCheckboxResponder(data: LegendData[], showCheckbox: boolean): BoundResponderModel[] {
     return showCheckbox
       ? data.map((m) => ({
-          ...m,
-          type: 'checkbox' as LegendResponderType,
+          type: 'bound',
           x: m.x + this.rect.x,
           y: m.y + this.rect.y,
+          width: LEGEND_CHECKBOX_SIZE,
+          height: LEGEND_CHECKBOX_SIZE,
+          data: { name: 'checkbox', ...m },
         }))
       : [];
   }
 
-  makeLabelResponder(data: LegendData[], showCheckbox: boolean) {
+  makeLabelResponder(data: LegendData[], showCheckbox: boolean): BoundResponderModel[] {
     return data.map((m) => ({
-      ...m,
-      type: 'label' as LegendResponderType,
+      type: 'bound',
       x:
         m.x +
         this.rect.x +
@@ -124,6 +125,8 @@ export default class Legend extends Component {
         LEGEND_MARGIN_X,
       y: m.y + this.rect.y,
       width: getTextWidth(m.label, LEGEND_LABEL_FONT),
+      data: { name: 'label', ...m },
+      height: LEGEND_CHECKBOX_SIZE,
     }));
   }
 
