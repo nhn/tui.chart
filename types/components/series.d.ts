@@ -75,7 +75,6 @@ export type RectModel = {
   value?: BoxSeriesDataType;
 } & Rect;
 
-// @TODO: 타입 다시보기
 export type RectResponderModel = Partial<RectModel> & {
   type: 'rect';
   index?: number;
