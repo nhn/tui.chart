@@ -70,7 +70,7 @@ describe('basic', () => {
     linePointsModel: [
       {
         color: 'rgba(170, 170, 170, 1)',
-        lineWidth: 6,
+        lineWidth: 3,
         points: [
           { value: 1, x: 20, y: 80 },
           { value: 2, x: 60, y: 60 },
@@ -81,7 +81,7 @@ describe('basic', () => {
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        lineWidth: 6,
+        lineWidth: 3,
         points: [
           { value: 4, x: 20, y: 20 },
           { value: 5, x: 60, y: 0 },
@@ -326,7 +326,7 @@ describe('range', () => {
     linePointsModel: [
       {
         color: 'rgba(170, 170, 170, 1)',
-        lineWidth: 6,
+        lineWidth: 3,
         name: 'han',
         points: [
           { value: 2, x: 0, y: 60 },
@@ -337,7 +337,7 @@ describe('range', () => {
       },
       {
         color: 'rgba(170, 170, 170, 1)',
-        lineWidth: 6,
+        lineWidth: 3,
         name: 'han',
         points: [
           { value: 1, x: 0, y: 80 },
@@ -511,7 +511,7 @@ describe('stack', () => {
     linePointsModel: [
       {
         color: 'rgba(170, 170, 170, 1)',
-        lineWidth: 6,
+        lineWidth: 3,
         points: [
           { value: 1, x: 0, y: 80 },
           { value: 2, x: 40, y: 80 },
@@ -522,7 +522,7 @@ describe('stack', () => {
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        lineWidth: 6,
+        lineWidth: 3,
         points: [
           { value: 1, x: 0, y: 40 },
           { value: 4, x: 40, y: 0 },
@@ -682,7 +682,7 @@ describe('zoom', () => {
     linePointsModel: [
       {
         color: 'rgba(170, 170, 170, 1)',
-        lineWidth: 6,
+        lineWidth: 3,
         points: [
           { value: 1, x: -20, y: 80 },
           { value: 2, x: 20, y: 60 },
@@ -694,7 +694,7 @@ describe('zoom', () => {
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        lineWidth: 6,
+        lineWidth: 3,
         points: [
           { value: 3, x: -20, y: 40 },
           { value: 4, x: 20, y: 20 },
@@ -848,7 +848,7 @@ describe('with showDot options', () => {
           color: 'rgba(170, 170, 170, 1)',
           index: 0,
           name: 'han',
-          radius: 5,
+          radius: 6,
           seriesIndex: 0,
           style: ['default'],
           type: 'circle',
@@ -859,7 +859,7 @@ describe('with showDot options', () => {
           color: 'rgba(170, 170, 170, 1)',
           index: 1,
           name: 'han',
-          radius: 5,
+          radius: 6,
           seriesIndex: 0,
           style: ['default'],
           type: 'circle',
@@ -870,7 +870,7 @@ describe('with showDot options', () => {
           color: 'rgba(187, 187, 187, 1)',
           index: 0,
           name: 'cho',
-          radius: 5,
+          radius: 6,
           seriesIndex: 1,
           style: ['default'],
           type: 'circle',
@@ -881,7 +881,7 @@ describe('with showDot options', () => {
           color: 'rgba(187, 187, 187, 1)',
           index: 1,
           name: 'cho',
-          radius: 5,
+          radius: 6,
           seriesIndex: 1,
           style: ['default'],
           type: 'circle',

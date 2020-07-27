@@ -113,7 +113,7 @@ describe('basic', () => {
       series: [
         {
           color: 'rgba(170, 170, 170, 1)',
-          lineWidth: 6,
+          lineWidth: 3,
           points: [
             { value: 1, x: 20, y: 80 },
             { value: 2, x: 60, y: 60 },
@@ -124,7 +124,7 @@ describe('basic', () => {
         },
         {
           color: 'rgba(187, 187, 187, 1)',
-          lineWidth: 6,
+          lineWidth: 3,
           points: [
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
@@ -141,7 +141,7 @@ describe('basic', () => {
       series: [
         {
           color: 'rgba(0, 0, 0, 0)',
-          lineWidth: 6,
+          lineWidth: 3,
           points: [
             { value: 1, x: 20, y: 80 },
             { value: 2, x: 60, y: 60 },
@@ -153,7 +153,7 @@ describe('basic', () => {
         },
         {
           color: 'rgba(0, 0, 0, 0)',
-          lineWidth: 6,
+          lineWidth: 3,
           points: [
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
@@ -240,7 +240,7 @@ describe('zoom', () => {
       series: [
         {
           color: 'rgba(170, 170, 170, 1)',
-          lineWidth: 6,
+          lineWidth: 3,
           points: [
             { value: 1, x: -20, y: 80 },
             { value: 2, x: 20, y: 60 },
@@ -252,7 +252,7 @@ describe('zoom', () => {
         },
         {
           color: 'rgba(187, 187, 187, 1)',
-          lineWidth: 6,
+          lineWidth: 3,
           points: [
             { value: 3, x: -20, y: 40 },
             { value: 4, x: 20, y: 20 },
@@ -382,7 +382,7 @@ describe('with show dot options', () => {
       series: [
         {
           color: 'rgba(170, 170, 170, 1)',
-          lineWidth: 6,
+          lineWidth: 3,
           points: [
             { value: 1, x: 20, y: 80 },
             { value: 2, x: 60, y: 60 },
@@ -393,7 +393,7 @@ describe('with show dot options', () => {
         },
         {
           color: 'rgba(187, 187, 187, 1)',
-          lineWidth: 6,
+          lineWidth: 3,
           points: [
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
@@ -406,36 +406,36 @@ describe('with show dot options', () => {
       dot: [
         {
           color: 'rgba(170, 170, 170, 1)',
-          radius: 5,
+          radius: 6,
           seriesIndex: 0,
-          style: ['default', { strokeStyle: 'rgba(170, 170, 170, 1)' }],
+          style: ['default'],
           type: 'circle',
           x: 20,
           y: 80,
         },
         {
           color: 'rgba(170, 170, 170, 1)',
-          radius: 5,
+          radius: 6,
           seriesIndex: 0,
-          style: ['default', { strokeStyle: 'rgba(170, 170, 170, 1)' }],
+          style: ['default'],
           type: 'circle',
           x: 60,
           y: 60,
         },
         {
           color: 'rgba(187, 187, 187, 1)',
-          radius: 5,
+          radius: 6,
           seriesIndex: 1,
-          style: ['default', { strokeStyle: 'rgba(187, 187, 187, 1)' }],
+          style: ['default'],
           type: 'circle',
           x: 20,
           y: 20,
         },
         {
           color: 'rgba(187, 187, 187, 1)',
-          radius: 5,
+          radius: 6,
           seriesIndex: 1,
-          style: ['default', { strokeStyle: 'rgba(187, 187, 187, 1)' }],
+          style: ['default'],
           type: 'circle',
           x: 60,
           y: 0,
