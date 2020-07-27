@@ -15,6 +15,11 @@ describe('Legend Store', () => {
               { x: 1, y: 2 },
               { x: 3, y: 5 },
             ],
+            rawData: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
             color: '#aaaaaa',
           },
         ],

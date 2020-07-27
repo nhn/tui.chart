@@ -1,4 +1,4 @@
-import { SeriesRaw } from '@t/store/store';
+import { RawSeries } from '@t/store/store';
 
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
@@ -30,6 +30,7 @@ export type Rect = Point & Size;
 
 export interface AreaSeriesType {
   name: string;
+  rawData: AreaSeriesDataType[];
   data: AreaSeriesDataType[];
   color: string;
 }
@@ -42,6 +43,7 @@ export interface AreaSeriesData {
 export interface LineSeriesType {
   name: string;
   data: LineSeriesDataType[];
+  rawData: LineSeriesDataType[];
   color: string;
 }
 
@@ -172,16 +174,15 @@ interface BaseSeriesOptions {
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
+  zoomable?: boolean;
 }
 
-interface AreaTypeSeriesOptions extends BaseSeriesOptions {
-  showDot?: boolean;
-  spline?: boolean;
+interface AreaSeriesOptions extends LineTypeSeriesOptions {
   stack?: StackOptionType;
 }
 
 export interface AreaChartOptions extends BaseOptions {
-  series?: AreaTypeSeriesOptions;
+  series?: AreaSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
 }
 
@@ -245,6 +246,7 @@ export interface PieChartOptions extends BaseOptions {
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
   data: T[];
+  rawData: T[];
   color: string;
   stackGroup?: string;
 }
@@ -256,7 +258,7 @@ export interface BoxSeriesData {
 
 export interface ChartProps<T> {
   el: Element;
-  series: SeriesRaw;
+  series: RawSeries;
   categories?: string[];
   options: T;
 }

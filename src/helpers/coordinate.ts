@@ -1,5 +1,5 @@
 import { CoordinateDataType } from '@t/options';
-import { first, isNumber, isObject } from '@src/helpers/utils';
+import { first, isNumber, isObject, last } from '@src/helpers/utils';
 import { Series } from '@t/store/store';
 
 export function getCoordinateYValue(datum: number | CoordinateDataType) {
@@ -18,15 +18,21 @@ export function getCoordinateXValue(datum: CoordinateDataType) {
 export function getCoordinateDataIndex(
   datum: number | CoordinateDataType,
   categories: string[],
-  dataIndex: number
+  dataIndex: number,
+  startIndex: number
 ) {
   if (isNumber(datum)) {
-    return dataIndex;
+    return dataIndex - startIndex;
   }
 
-  const value = Array.isArray(datum) ? datum[0] : datum.x;
+  const value = getCoordinateXValue(datum);
+  let index = categories.findIndex((category) => category === String(value));
 
-  return categories.findIndex((category) => category === String(value));
+  if (index === -1 && value >= Number(last(categories))) {
+    index = categories.length;
+  }
+
+  return index;
 }
 
 function isLineCoordinateSeries(series: Series) {

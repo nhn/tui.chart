@@ -1,8 +1,18 @@
-import { StoreModule, SeriesRaw, Series } from '@t/store/store';
+import { StoreModule, RawSeries, Series, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { sortSeries } from '@src/helpers/utils';
+import {
+  deepCopy,
+  getFirstValidValue,
+  isNumber,
+  isUndefined,
+  range,
+  sortSeries,
+} from '@src/helpers/utils';
+import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
+import { makeRawCategories } from '@src/store/category';
+import { getCoordinateXValue } from '@src/helpers/coordinate';
 
-function makeInitSeries(series: SeriesRaw) {
+function makeInitSeries(series: RawSeries) {
   const result: Series = {};
 
   Object.keys(series).forEach((key) => {
@@ -20,20 +30,86 @@ function makeInitSeries(series: SeriesRaw) {
   return result;
 }
 
+function initZoomRange(
+  series: RawSeries,
+  options: Options,
+  categories?: string[]
+): RangeDataType | undefined {
+  if (!(options.series as LineTypeSeriesOptions)?.zoomable) {
+    return;
+  }
+
+  const rawCategoriesLength = Object.keys(makeRawCategories(series, categories)).length;
+
+  return [0, rawCategoriesLength - 1];
+}
+
+function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeDataType) {
+  const [zoomStart, zoomEnd] = zoomRange;
+  let start, end;
+
+  range(zoomStart, zoomEnd + 1).forEach((i) => {
+    const idx = data.findIndex(
+      (datum) => getCoordinateXValue(datum).toString() === rawCategories[i]
+    );
+
+    if (idx !== -1) {
+      if (isUndefined(start)) {
+        start = idx;
+      }
+
+      if (!isUndefined(start)) {
+        end = Math.max(idx, end ?? 0);
+      }
+    }
+  });
+
+  return [start, end];
+}
+
+function getDataInRange(
+  data,
+  rawCategories: string[],
+  chartType: string,
+  zoomRange?: RangeDataType
+) {
+  if (!zoomRange) {
+    return data;
+  }
+
+  let [startIdx, endIdx] = zoomRange;
+  const isCoordinateChart = chartType !== 'area' && !isNumber(getFirstValidValue(data));
+
+  if (isCoordinateChart) {
+    [startIdx, endIdx] = getCoordinateDataRange(data, rawCategories, zoomRange);
+  }
+
+  return data.slice(startIdx, endIdx + 1);
+}
+
 const seriesData: StoreModule = {
   name: 'seriesData',
-  state: ({ series }) => ({
+  state: ({ series, categories, options }) => ({
+    rawCategories: makeRawCategories(series, categories),
     series: makeInitSeries(series),
+    zoomRange: initZoomRange(series, options, categories),
     disabledSeries: [],
   }),
   action: {
-    setSeriesData({ state }) {
-      const { series, disabledSeries, theme } = state;
+    setSeriesData({ state, initStoreState }) {
+      const rawSeries = deepCopy(initStoreState.series);
+      const { disabledSeries, theme, zoomRange, rawCategories } = state;
       const newSeriesData = {};
       const { colors } = theme.series;
 
-      Object.keys(series).forEach((seriesName) => {
-        const originSeriesData = series[seriesName].map((m, idx) => ({ ...m, color: colors[idx] }));
+      Object.keys(rawSeries).forEach((seriesName) => {
+        const originSeriesData = rawSeries[seriesName].map((m, idx) => ({
+          ...m,
+          rawData: m.data,
+          data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
+          color: colors[idx],
+        }));
+
         const seriesCount = originSeriesData.length;
         const seriesGroupCount = originSeriesData[0].data.length;
         const data = originSeriesData.filter(({ name }) => !disabledSeries.includes(name));
@@ -55,6 +131,21 @@ const seriesData: StoreModule = {
       const index = state.disabledSeries.findIndex((disabled) => disabled === name);
       state.disabledSeries.splice(index, 1);
       this.notify(state, 'disabledSeries');
+    },
+    zoom({ state }, rangeCategories: string[]) {
+      const { rawCategories } = state;
+
+      state.zoomRange = rangeCategories.map((rangeCategory) =>
+        rawCategories.findIndex((category) => category === rangeCategory)
+      ) as RangeDataType;
+
+      this.notify(state, 'zoomRange');
+    },
+    resetZoom({ state, initStoreState }) {
+      const { categories, series, options } = initStoreState;
+      state.zoomRange = initZoomRange(series, options, categories);
+
+      this.notify(state, 'zoomRange');
     },
   },
   observe: {

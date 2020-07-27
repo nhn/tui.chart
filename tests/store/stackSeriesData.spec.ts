@@ -5,8 +5,8 @@ import { ChartState, StateFunc } from '@t/store/store';
 import Store from '@src/store/store';
 
 const data = [
-  { name: 'han', data: [1, 2, 3], color: '#aaaaaa' },
-  { name: 'cho', data: [4, 5, 6], color: '#bbbbbb' },
+  { name: 'han', data: [1, 2, 3], rawData: [1, 2, 3], color: '#aaaaaa' },
+  { name: 'cho', data: [4, 5, 6], rawData: [4, 5, 6], color: '#bbbbbb' },
 ];
 
 describe('StackSeriesData Store', () => {
@@ -113,7 +113,7 @@ describe('StackSeriesData Store', () => {
       ]);
     });
 
-    it('shoule be make data for the stack group data, when data using the stack group is entered', () => {
+    it('should be make data for the stack group data, when data using the stack group is entered', () => {
       const state = {
         series: {
           bar: {
@@ -121,21 +121,25 @@ describe('StackSeriesData Store', () => {
               {
                 name: 'test1',
                 data: [1, 2, 3],
+                rawData: [1, 2, 3],
                 stackGroup: 'A',
               },
               {
                 name: 'test2',
                 data: [2, 4, 6],
+                rawData: [2, 4, 6],
                 stackGroup: 'B',
               },
               {
                 name: 'test3',
                 data: [3, 4, 5],
+                rawData: [3, 4, 5],
                 stackGroup: 'A',
               },
               {
                 name: 'test4',
                 data: [4, 1, 1],
+                rawData: [4, 1, 1],
                 stackGroup: 'B',
               },
             ],

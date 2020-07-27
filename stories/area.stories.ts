@@ -104,3 +104,19 @@ export const percentStack = () => {
 
   return el;
 };
+
+export const zoomable = () => {
+  const { el } = createChart(avgTemperatureData, {
+    series: {
+      zoomable: true,
+      dataLabels: {
+        visible: true,
+      },
+    },
+    xAxis: {
+      pointOnColumn: false,
+    },
+  });
+
+  return el;
+};

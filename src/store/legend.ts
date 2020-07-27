@@ -1,4 +1,4 @@
-import { LegendIconType, Options, SeriesRaw, StoreModule } from '@t/store/store';
+import { LegendIconType, Options, RawSeries, StoreModule } from '@t/store/store';
 import { Align, BubbleChartOptions } from '@t/options';
 import { isUndefined, sum } from '@src/helpers/utils';
 import {
@@ -55,7 +55,7 @@ function showCheckbox(options: Options) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
-function getLegendLabels(series: SeriesRaw) {
+function getLegendLabels(series: RawSeries) {
   return Object.keys(series).reduce<string[]>((acc, type) => {
     const seriesName = series[type].map(({ name }) => name);
 
@@ -63,7 +63,7 @@ function getLegendLabels(series: SeriesRaw) {
   }, []);
 }
 
-function getIconType(series: SeriesRaw): LegendIconType {
+function getIconType(series: RawSeries): LegendIconType {
   if (series.bubble || series.scatter) {
     return 'circle';
   }

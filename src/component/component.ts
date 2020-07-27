@@ -23,6 +23,7 @@ import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
 import { DataLabelModel } from '@t/components/dataLabels';
+import { ZoomModels } from '@t/components/zoom';
 
 export type ComponentType =
   | 'component'
@@ -37,7 +38,8 @@ export type ComponentType =
   | 'title'
   | 'axisTitle'
   | 'exportMenu'
-  | 'zeroAxis';
+  | 'zeroAxis'
+  | 'zoom';
 
 type ComponentModels =
   | AxisModels
@@ -48,6 +50,7 @@ type ComponentModels =
   | ExportMenuModels
   | CircleLegendModels
   | PieSeriesModels
+  | ZoomModels
   | PlotModels
   | LineModel[]
   | LabelModel[]
@@ -144,7 +147,7 @@ export default abstract class Component {
               curPoint.y = y + (nextY - y) * delta;
             });
 
-            if (current[key][0].controlPoint) {
+            if (current[key].length && current[key][0].controlPoint) {
               setSplineControlPoint(current[key]);
             }
           } else {
@@ -199,6 +202,10 @@ export default abstract class Component {
   onMouseenterComponent?(): void;
 
   onMouseoutComponent?(): void;
+
+  onMousedown?(responseData: any): void;
+
+  onMouseup?(responseData: any): void;
 
   draw(painter: Painter) {
     const models = this.drawModels ? this.drawModels : this.models;

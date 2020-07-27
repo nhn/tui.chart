@@ -273,6 +273,10 @@ export function sortCategories(x: number | string, y: number | string) {
   return isInteger(x) ? Number(x) - Number(y) : new Date(x).getTime() - new Date(y).getTime();
 }
 
+export function sortNumber(x: number, y: number) {
+  return x - y;
+}
+
 export function first<T>(items: T[]): T | undefined {
   // eslint-disable-next-line no-undefined
   return items.length ? items[0] : undefined;

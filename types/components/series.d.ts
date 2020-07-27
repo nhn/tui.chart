@@ -1,6 +1,5 @@
 import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
-import { CircleStyleName } from '@src/brushes/basic';
-import { RectStyleName } from '@src/brushes/boxSeries';
+import { CircleStyleName, RectStyleName } from '@src/brushes/basic';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel, LabelModel } from '@t/components/axis';
 import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
@@ -23,9 +22,19 @@ export type CircleModel = {
   style?: StyleProp<CircleStyle, CircleStyleName>;
   seriesIndex?: number;
   index?: number;
+  angle?: {
+    start: number;
+    end: number;
+  };
 } & Point;
 
-export type BoundResponderModel = Rect & { type: 'bound'; index?: number };
+type BoundResponderModelData = { name?: string; value?: string };
+
+export type BoundResponderModel = Rect & {
+  type: 'bound';
+  index?: number;
+  data?: BoundResponderModelData;
+};
 
 export type CircleResponderModel = {
   detectionRadius?: number;
@@ -41,8 +50,8 @@ export type LinePointsModel = {
   color: string;
   lineWidth: number;
   points: BezierPoint[];
-  seriesIndex: number;
-  name: string;
+  name?: string;
+  seriesIndex?: number;
 };
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {

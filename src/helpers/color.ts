@@ -242,7 +242,7 @@ export function getAlpha(str: string) {
   return 1;
 }
 
-export function rgba(color: string, opacity: number) {
+export function rgba(color: string, opacity = 1) {
   const alpha = getAlpha(color) * opacity;
 
   return getRGBA(color, alpha);

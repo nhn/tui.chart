@@ -1,12 +1,11 @@
-import { line } from '@src/brushes/basic';
-import { rect } from '@src/brushes/boxSeries';
+import { line, rect } from '@src/brushes/basic';
 import { Point } from '@t/options';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
-import { EXPORT_BUTTON_RECT_SIZE } from '@src/component/exportMenu';
+import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 
 function drawXIcon(ctx: CanvasRenderingContext2D, point: Point) {
   const { x: startX, y: startY } = point;
-  const offset = EXPORT_BUTTON_RECT_SIZE / 3;
+  const offset = BUTTON_RECT_SIZE / 3;
   const strokeStyle = '#555555';
 
   const x = startX + offset;
@@ -55,8 +54,8 @@ export function exportMenuButton(
     x,
     y,
     color: '#f4f4f4',
-    width: EXPORT_BUTTON_RECT_SIZE,
-    height: EXPORT_BUTTON_RECT_SIZE,
+    width: BUTTON_RECT_SIZE,
+    height: BUTTON_RECT_SIZE,
   });
 
   if (opened) {

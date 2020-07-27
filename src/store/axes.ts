@@ -17,7 +17,7 @@ import {
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { AxisTitle, BoxSeriesOptions, BarTypeYAxisOptions } from '@t/options';
+import { AxisTitle, BoxSeriesOptions, BarTypeYAxisOptions, RangeDataType } from '@t/options';
 import {
   deepMergedCopy,
   hasNegativeOnly,
@@ -33,6 +33,7 @@ interface StateProp {
   options: Options;
   series: Series;
   centerYAxis?: Pick<CenterYAxisData, 'xAxisHalfSize'> | null;
+  zoomRange?: RangeDataType;
 }
 
 type ValueStateProp = StateProp & { categories: string[] };
@@ -62,22 +63,24 @@ function getZeroPosition(
   }
 
   const position = ((0 - min) / (max - min)) * axisSize;
-  const zeroPosition = labelAxisOnYAxis ? position : axisSize - position;
 
-  return zeroPosition;
+  return labelAxisOnYAxis ? position : axisSize - position;
 }
 
 export function getLabelAxisData(stateProp: ValueStateProp) {
-  const { scale, axisSize, categories, series, options } = stateProp;
+  const { axisSize, categories, series, options, scale, zoomRange } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
-  const labels = scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
+  const labels =
+    !zoomRange && scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
+  const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
+  const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
 
   return {
     labels,
     pointOnColumn,
     isLabelAxis: true,
     tickCount: labels.length + (pointOnColumn ? 1 : 0),
-    tickDistance: axisSize / (categories.length - (pointOnColumn ? 0 : 1)),
+    tickDistance,
   };
 }
 
@@ -161,7 +164,7 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, categories = [] } = state;
+      const { scale, options, series, layout, zoomRange, categories = [] } = state;
       const { xAxis, yAxis, plot } = layout;
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
@@ -189,6 +192,7 @@ const axes: StoreModule = {
         categories,
         options,
         series,
+        zoomRange,
       });
 
       const axesState = {

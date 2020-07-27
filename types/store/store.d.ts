@@ -18,6 +18,7 @@ import {
   AxisTitleOption,
   PlotLineValue,
   PieSeriesType,
+  RangeDataType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -36,7 +37,7 @@ export type ChartType = keyof ChartSeriesMap;
 
 export type BoxType = 'bar' | 'column';
 
-type SeriesRaw = Partial<ChartSeriesMap>;
+type RawSeries = Partial<ChartSeriesMap>;
 
 export interface SeriesGroup {
   seriesCount: number;
@@ -83,7 +84,7 @@ export interface StoreOptions {
 
 interface InitStoreState<T extends Options = Options> {
   categories?: string[];
-  series: SeriesRaw;
+  series: RawSeries;
   options: T;
 }
 
@@ -192,13 +193,14 @@ export interface ChartState<T extends Options> {
   scale: Scale;
   disabledSeries: string[];
   series: Series;
-  seriesRaw: SeriesRaw;
+  zoomRange?: RangeDataType;
   // 기존의 limitMap
   axes: Axes;
   dataRange: DataRange;
   theme: Theme;
   options: T;
   categories?: string[];
+  rawCategories: string[];
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };

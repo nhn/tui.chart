@@ -1,7 +1,6 @@
-import { line, pathRect } from '@src/brushes/basic';
+import { line, pathRect, rect } from '@src/brushes/basic';
 import { label as labelBrush } from '@src/brushes/label';
 import { LabelStyle } from '@src/brushes/label';
-import { rect } from '@src/brushes/boxSeries';
 import { TooltipData, TooltipDataValue, TooltipModel } from '@t/components/tooltip';
 import { LabelModel } from '@t/components/axis';
 import { BubblePoint, Point } from '@t/options';

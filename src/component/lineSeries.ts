@@ -16,7 +16,7 @@ import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
-interface RenderLineOptions {
+interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
   tickDistance: number;
@@ -32,6 +32,8 @@ export default class LineSeries extends Component {
   responders!: CircleResponderModel[];
 
   activatedResponders: this['responders'] = [];
+
+  startIndex!: number;
 
   initialize() {
     this.type = 'series';
@@ -52,6 +54,7 @@ export default class LineSeries extends Component {
       categories = [],
       legend,
       dataLabels,
+      zoomRange,
     } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
@@ -59,8 +62,9 @@ export default class LineSeries extends Component {
 
     const { yAxis } = scale;
     const { tickDistance, pointOnColumn } = axes.xAxis!;
+    const lineSeriesData = series.line.data;
 
-    const renderLineOptions: RenderLineOptions = {
+    const renderLineOptions: RenderOptions = {
       pointOnColumn,
       options: options.series || {},
       tickDistance,
@@ -68,9 +72,10 @@ export default class LineSeries extends Component {
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.startIndex = zoomRange ? zoomRange[0] : 0;
 
     const lineSeriesModel = this.renderLinePointsModel(
-      series.line.data,
+      lineSeriesData,
       yAxis.limit,
       renderLineOptions,
       categories
@@ -78,15 +83,15 @@ export default class LineSeries extends Component {
 
     const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
 
-    const tooltipDataArr = series.line.data.flatMap(({ data, name, color }) => {
+    const tooltipDataArr = lineSeriesData.flatMap(({ rawData, name, color }) => {
       const tooltipData: TooltipData[] = [];
 
-      data.forEach((datum: DatumType, dataIdx) => {
+      rawData.forEach((datum: DatumType, dataIdx) => {
         tooltipData.push({
           label: name,
           color,
           value: getCoordinateYValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx)],
+          category: categories[getCoordinateDataIndex(datum, categories, dataIdx, this.startIndex)],
         });
       });
 
@@ -125,21 +130,20 @@ export default class LineSeries extends Component {
   renderLinePointsModel(
     seriesRawData: LineSeriesType[],
     limit: ValueEdge,
-    renderOptions: RenderLineOptions,
+    renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
     const { pointOnColumn, options, tickDistance } = renderOptions;
     const { spline } = options;
 
-    return seriesRawData.map(({ data, name, color: seriesColor }, seriesIndex) => {
+    return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
-      data.forEach((datum, idx) => {
+      rawData.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
-        const dataIndex = getCoordinateDataIndex(datum, categories, idx);
-
+        const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
         const valueRatio = getValueRatio(value, limit);
 
         const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);

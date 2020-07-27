@@ -174,3 +174,30 @@ export const dataLabels = () => {
 
   return el;
 };
+
+export const zoomable = () => {
+  const { el } = createChart(randomData(30), {
+    series: {
+      zoomable: true,
+      dataLabels: {
+        visible: true,
+      },
+    },
+    xAxis: {
+      pointOnColumn: false,
+    },
+  });
+
+  return el;
+};
+
+export const coordinateZoomable = () => {
+  const { el } = createChart(coordinateData, {
+    chart: { title: 'Concurrent user' },
+    xAxis: { pointOnColumn: true, title: 'minute' },
+    yAxis: { title: 'users' },
+    series: { zoomable: true },
+  });
+
+  return el;
+};
