@@ -1,7 +1,7 @@
 import { StoreModule } from '@t/store/store';
 import { pickStackOption } from '@src/store/stackSeriesData';
 import { isFunction, includes, isBoolean, pick, isNumber } from '@src/helpers/utils';
-import { DataLabels, DataLabelAnchor, SeriesDataType } from '@t/options';
+import { DataLabels, DataLabelAnchor, SeriesDataType, BoxSeriesDataType } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';

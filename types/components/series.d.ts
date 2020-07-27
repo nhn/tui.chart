@@ -78,8 +78,9 @@ export type RectModel = {
 export type RectResponderModel = Partial<RectModel> & {
   type: 'rect';
   index?: number;
-  data?: { name?: string } & Partial<LegendData>;
-} & Rect;
+  data?: { name?: string } & Partial<TooltipData>;
+} & Rect &
+  Partial<LegendData>;
 
 export type AreaSeriesModels = {
   rect: ClipRectAreaModel[];
