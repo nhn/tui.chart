@@ -192,7 +192,7 @@ export default class AreaSeries extends Component {
     return options?.showDot
       ? seriesCircleModel.map((m) => ({
           ...m,
-          radius: 5,
+          radius: 6,
           style: ['default'],
         }))
       : [];
@@ -297,7 +297,7 @@ export default class AreaSeries extends Component {
 
     return {
       type: 'linePoints',
-      lineWidth: 6,
+      lineWidth: 3,
       color,
       points,
       seriesIndex,
