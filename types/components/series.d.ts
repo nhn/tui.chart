@@ -29,12 +29,6 @@ export type CircleModel = {
   };
 } & Point;
 
-export type BoundResponderModel = Rect & {
-  type: 'bound';
-  index?: number;
-  data?: { name?: string } & Partial<LegendData>;
-};
-
 export type CircleResponderModel = {
   detectionRadius?: number;
   data: TooltipData;
@@ -79,6 +73,13 @@ export type RectModel = {
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
   value?: BoxSeriesDataType;
+} & Rect;
+
+// @TODO: 타입 다시보기
+export type RectResponderModel = Partial<RectModel> & {
+  type: 'rect';
+  index?: number;
+  data?: { name?: string } & Partial<LegendData>;
 } & Rect;
 
 export type AreaSeriesModels = {

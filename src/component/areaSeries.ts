@@ -1,12 +1,12 @@
 import Component from './component';
 import {
   AreaPointsModel,
-  BoundResponderModel,
   CircleModel,
   CircleResponderModel,
   LinePointsModel,
   PointModel,
   AreaSeriesModels,
+  RectResponderModel,
 } from '@t/components/series';
 import {
   AreaChartOptions,
@@ -51,7 +51,7 @@ export default class AreaSeries extends Component {
 
   drawModels!: AreaSeriesModels;
 
-  responders!: CircleResponderModel[] | BoundResponderModel[];
+  responders!: CircleResponderModel[] | RectResponderModel[];
 
   activatedResponders: this['responders'] = [];
 
@@ -177,7 +177,7 @@ export default class AreaSeries extends Component {
     }
 
     this.responders = this.isStackChart
-      ? this.makeBoundResponderModel(renderOptions)
+      ? this.makeRectResponderModel(renderOptions)
       : this.makeDefaultResponderModel(seriesCircleModel, tooltipDataArr);
   }
 
@@ -193,7 +193,7 @@ export default class AreaSeries extends Component {
     }));
   }
 
-  makeBoundResponderModel(renderOptions: RenderOptions): BoundResponderModel[] {
+  makeRectResponderModel(renderOptions: RenderOptions): RectResponderModel[] {
     const { pointOnColumn, tickCount, tickDistance } = renderOptions;
     const { height, x, y } = this.rect;
     const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
@@ -209,7 +209,7 @@ export default class AreaSeries extends Component {
         startX += pointOnColumn ? tickDistance * index : halfWidth + tickDistance * (index - 1);
       }
 
-      return { type: 'bound', y, height, x: startX, width, index };
+      return { type: 'rect', y, height, x: startX, width, index };
     });
   }
 
@@ -403,7 +403,7 @@ export default class AreaSeries extends Component {
     ];
   }
 
-  onMouseMoveStackType(responders: BoundResponderModel[]) {
+  onMouseMoveStackType(responders: RectResponderModel[]) {
     let circleModels: CircleResponderModel[] = [];
     let guideLine: LineModel[] = [];
 
@@ -443,9 +443,9 @@ export default class AreaSeries extends Component {
     this.activatedResponders = responders;
   }
 
-  onMousemove({ responders }: { responders: CircleResponderModel[] | BoundResponderModel[] }) {
+  onMousemove({ responders }: { responders: CircleResponderModel[] | RectResponderModel[] }) {
     if (this.isStackChart) {
-      this.onMouseMoveStackType(responders as BoundResponderModel[]);
+      this.onMouseMoveStackType(responders as RectResponderModel[]);
     } else {
       this.onMouseMoveDefault(responders as CircleResponderModel[]);
     }

@@ -12,9 +12,9 @@ import {
   LineSeriesModels,
   CircleResponderModel,
   RectModel,
-  BoundResponderModel,
   PieSeriesModels,
   SectorResponderModel,
+  RectResponderModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -59,7 +59,7 @@ type ComponentModels =
   | TooltipModel[];
 
 type ComponentResponders = Array<
-  CircleResponderModel | RectModel | BoundResponderModel | SectorResponderModel
+  CircleResponderModel | RectModel | SectorResponderModel | RectResponderModel
 >;
 
 export default abstract class Component {

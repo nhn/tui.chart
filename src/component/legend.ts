@@ -12,16 +12,16 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign } from '@src/store/layout';
 import { sum } from '@src/helpers/utils';
-import { BoundResponderModel } from '@t/components/series';
+import { RectResponderModel } from '@t/components/series';
 
 export default class Legend extends Component {
   models!: LegendModel[];
 
-  responders!: BoundResponderModel[];
+  responders!: RectResponderModel[];
 
-  activatedResponders: BoundResponderModel[] = [];
+  activatedResponders: RectResponderModel[] = [];
 
-  onClick({ responders }: { responders: BoundResponderModel[] }) {
+  onClick({ responders }: { responders: RectResponderModel[] }) {
     if (responders.length) {
       const { data } = responders[0];
       if (data?.name === 'checkbox') {
@@ -101,12 +101,12 @@ export default class Legend extends Component {
     ];
   }
 
-  makeCheckboxResponder(data: LegendData[], showCheckbox: boolean): BoundResponderModel[] {
+  makeCheckboxResponder(data: LegendData[], showCheckbox: boolean): RectResponderModel[] {
     return showCheckbox
       ? data.map((m) => ({
-          type: 'bound',
-          x: m.x + this.rect.x,
-          y: m.y + this.rect.y,
+          type: 'rect',
+          x: m.x,
+          y: m.y,
           width: LEGEND_CHECKBOX_SIZE,
           height: LEGEND_CHECKBOX_SIZE,
           data: { name: 'checkbox', ...m },
@@ -114,16 +114,15 @@ export default class Legend extends Component {
       : [];
   }
 
-  makeLabelResponder(data: LegendData[], showCheckbox: boolean): BoundResponderModel[] {
+  makeLabelResponder(data: LegendData[], showCheckbox: boolean): RectResponderModel[] {
     return data.map((m) => ({
-      type: 'bound',
+      type: 'rect',
       x:
         m.x +
-        this.rect.x +
         (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
         LEGEND_ICON_SIZE +
         LEGEND_MARGIN_X,
-      y: m.y + this.rect.y,
+      y: m.y,
       width: getTextWidth(m.label, LEGEND_LABEL_FONT),
       data: { name: 'label', ...m },
       height: LEGEND_CHECKBOX_SIZE,

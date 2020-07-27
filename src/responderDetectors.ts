@@ -7,21 +7,14 @@ import {
 } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
 import { calculateRadianToDegree } from '@src/helpers/sector';
-import { BoundResponderModel } from '@t/components/series';
 
-type DetectorType = 'circle' | 'rect' | 'bound' | 'sector';
+type DetectorType = 'circle' | 'rect' | 'sector';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
 };
 
 export const responderDetectors: ResponderDetectors = {
-  bound: (mousePosition: Point, model: BoundResponderModel) => {
-    const { x, y } = mousePosition;
-    const { x: modelX, y: modelY, width, height } = model;
-
-    return x >= modelX && x <= modelX + width && y >= modelY && y <= modelY + height;
-  },
   circle: (mousePosition: Point, model: CircleResponderModel, componentRect: Rect) => {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, radius, detectionRadius } = model;
