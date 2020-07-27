@@ -24,6 +24,7 @@ import { deepCopyArray, deepMergedCopy, first, last, range, sum } from '@src/hel
 import { isRangeData } from '@src/helpers/range';
 import { LineModel } from '@t/components/axis';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import { isModelExistingInRect } from '@src/helpers/coordinate';
 
 interface AreaSeriesDrawModels {
   rect: ClipRectAreaModel[];
@@ -287,7 +288,9 @@ export default class AreaSeries extends Component {
       const x = tickDistance * (idx - this.startIndex) + (pointOnColumn ? tickDistance / 2 : 0);
       const y = (1 - valueRatio) * this.rect.height;
 
-      points.push({ x, y, value });
+      if (isModelExistingInRect(this.rect, { x, y })) {
+        points.push({ x, y, value });
+      }
     });
 
     // @TODO: range spline 처리 필요

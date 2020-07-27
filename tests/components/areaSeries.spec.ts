@@ -684,7 +684,6 @@ describe('zoom', () => {
         color: 'rgba(170, 170, 170, 1)',
         lineWidth: 3,
         points: [
-          { value: 1, x: -20, y: 80 },
           { value: 2, x: 20, y: 60 },
           { value: 3, x: 60, y: 40 },
         ],
@@ -696,7 +695,6 @@ describe('zoom', () => {
         color: 'rgba(187, 187, 187, 1)',
         lineWidth: 3,
         points: [
-          { value: 3, x: -20, y: 40 },
           { value: 4, x: 20, y: 20 },
           { value: 5, x: 60, y: 0 },
         ],
@@ -713,11 +711,10 @@ describe('zoom', () => {
           fillColor: 'rgba(170, 170, 170, 1)',
           lineWidth: 0,
           points: [
-            { value: 1, x: -20, y: 80 },
             { value: 2, x: 20, y: 60 },
             { value: 3, x: 60, y: 40 },
             { x: 60, y: 80 },
-            { x: -20, y: 80 },
+            { x: 20, y: 80 },
           ],
           seriesIndex: 0,
           type: 'areaPoints',
@@ -728,11 +725,10 @@ describe('zoom', () => {
           fillColor: 'rgba(187, 187, 187, 1)',
           lineWidth: 0,
           points: [
-            { value: 3, x: -20, y: 40 },
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
             { x: 60, y: 80 },
-            { x: -20, y: 80 },
+            { x: 20, y: 80 },
           ],
           seriesIndex: 1,
           type: 'areaPoints',
