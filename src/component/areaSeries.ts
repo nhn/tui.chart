@@ -20,7 +20,15 @@ import { ChartState, StackSeriesData, ValueEdge } from '@t/store/store';
 import { crispPixel, getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray, deepMergedCopy, first, last, range, sum } from '@src/helpers/utils';
+import {
+  deepCopy,
+  deepCopyArray,
+  deepMergedCopy,
+  first,
+  last,
+  range,
+  sum,
+} from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
 import { LineModel } from '@t/components/axis';
 import { getActiveSeriesMap } from '@src/helpers/legend';
@@ -147,11 +155,11 @@ export default class AreaSeries extends Component {
     const circleDotModel = this.renderDotSeriesModel(seriesCircleModel, renderOptions);
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
-    this.models = {
+    this.models = deepCopy({
       rect: [this.renderClipRectAreaModel()],
       series: areaSeriesModel,
       dot: circleDotModel,
-    };
+    });
 
     if (!this.drawModels) {
       this.drawModels = {

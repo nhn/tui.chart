@@ -82,6 +82,9 @@ function getDataInRange(
 
   if (isCoordinateChart) {
     [startIdx, endIdx] = getCoordinateDataRange(data, rawCategories, zoomRange);
+  } else {
+    startIdx = startIdx > 1 ? startIdx - 1 : startIdx;
+    endIdx = endIdx < rawCategories.length - 1 ? endIdx + 1 : endIdx;
   }
 
   return data.slice(startIdx, endIdx + 1);
