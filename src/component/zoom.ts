@@ -6,6 +6,7 @@ import { sortNumber } from '@src/helpers/utils';
 import { ResetButtonModel } from '@t/components/resetButton';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 import { ZoomModels } from '@t/components/zoom';
+import { Point } from '@t/options';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -13,6 +14,7 @@ interface RenderOptions {
   tickCount: number;
 }
 
+const DRAG_MIN_WIDTH = 15;
 const RESET_BUTTON_MARGIN = 10;
 
 export default class Zoom extends Component {
@@ -20,7 +22,11 @@ export default class Zoom extends Component {
 
   responders!: RectResponderModel[];
 
+  private dragStartPosition: Point | null = null;
+
   private dragStartPoint: RectResponderModel | null = null;
+
+  private isDragging = false;
 
   initialize() {
     this.type = 'zoom';
@@ -47,12 +53,14 @@ export default class Zoom extends Component {
   }
 
   resetSelectionArea() {
+    this.dragStartPosition = null;
     this.dragStartPoint = null;
     this.models.selectionArea = [];
+    this.isDragging = false;
     this.eventBus.emit('needDraw');
   }
 
-  onMousedown({ responders }: { responders: RectResponderModel[] }) {
+  onMousedown({ responders, mousePosition }) {
     if (responders.length) {
       const pushResetButton = responders.some(
         (responder) => responder.data!.name === 'resetButton'
@@ -65,6 +73,7 @@ export default class Zoom extends Component {
         this.dragStartPoint = responders.find(
           (responder) => responder.data!.name === 'selectionArea'
         )!;
+        this.dragStartPosition = mousePosition;
       }
     }
   }
@@ -93,7 +102,7 @@ export default class Zoom extends Component {
   }
 
   onMouseup({ responders }: { responders: RectResponderModel[] }) {
-    if (this.dragStartPoint && responders.length) {
+    if (this.isDragging && this.dragStartPoint && responders.length) {
       const dragRange = [this.dragStartPoint, responders[0]]
         .sort((a, b) => a.index! - b.index!)
         .map((m) => m.data?.value);
@@ -109,7 +118,7 @@ export default class Zoom extends Component {
 
   makeRectResponderModel(categories: string[], renderOptions: RenderOptions): RectResponderModel[] {
     const { pointOnColumn, tickCount, tickDistance } = renderOptions;
-    const { height, x, y } = this.rect;
+    const { height } = this.rect;
 
     const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
     const halfWidth = tickDistance / 2;
@@ -117,7 +126,7 @@ export default class Zoom extends Component {
     return range(0, tickCount).map((index) => {
       const half = halfDetectAreaIndex.includes(index);
       const width = half ? halfWidth : tickDistance;
-      let startX = x;
+      let startX = 0;
 
       if (index !== 0) {
         startX += pointOnColumn ? tickDistance * index : halfWidth + tickDistance * (index - 1);
@@ -125,9 +134,9 @@ export default class Zoom extends Component {
 
       return {
         type: 'rect',
-        y,
-        height,
         x: startX,
+        y: 0,
+        height,
         width,
         index,
         data: { name: 'selectionArea', value: categories[index] },
@@ -135,8 +144,19 @@ export default class Zoom extends Component {
     });
   }
 
-  onMousemove({ responders }: { responders: RectResponderModel[] }) {
-    if (this.dragStartPoint && responders.length) {
+  onMousemove({ responders, mousePosition }) {
+    if (!responders.length) {
+      return;
+    }
+
+    if (this.dragStartPosition && !this.isDragging) {
+      const { x } = mousePosition;
+      const { x: startX } = this.dragStartPosition;
+
+      this.isDragging = Math.abs(startX - x) > DRAG_MIN_WIDTH;
+    }
+
+    if (this.isDragging) {
       const startIndex = this.dragStartPoint!.index!;
       const endIndex = responders[0].index!;
       const [start, end] = [startIndex, endIndex].sort(sortNumber);
@@ -145,14 +165,14 @@ export default class Zoom extends Component {
       this.models.selectionArea = [
         ...includedResponders.map<RectModel>((m) => ({
           ...m,
-          x: m.x - this.rect.x,
+          x: m.x,
           y: 0,
           type: 'rect',
           color: 'rgba(0, 0, 0, 0.2)',
         })),
       ];
+      this.eventBus.emit('needDraw');
     }
-    this.eventBus.emit('needDraw');
   }
 
   onMouseoutComponent() {

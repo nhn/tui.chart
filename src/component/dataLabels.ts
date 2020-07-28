@@ -3,10 +3,12 @@ import { ChartState, Options } from '@t/store/store';
 import { DataLabels as DataLabelOptions, DataLabelStyle } from '@t/options';
 import { DataLabel, DataLabelModel, DataLabelType } from '@t/components/dataLabels';
 import { includes } from '@src/helpers/utils';
+import { isModelExistingInRect } from '@src/helpers/coordinate';
 
 function getOptionStyle(type: DataLabelType, options: DataLabelOptions): DataLabelStyle {
   return includes(['pieSeriesName', 'stackTotal'], type) ? options[type].style : options.style;
 }
+
 export default class DataLabels extends Component {
   models: DataLabelModel[] = [];
 
@@ -39,21 +41,26 @@ export default class DataLabels extends Component {
   }
 
   renderLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModel[] {
-    return dataLabels.map((dataLabel) => {
+    return dataLabels.reduce<DataLabelModel[]>((acc, dataLabel) => {
       const { type, x, y, text, textAlign, textBaseline, defaultColor } = dataLabel;
 
-      return {
-        type: 'dataLabel',
-        dataLabelType: type,
-        text,
-        x,
-        y: y + 1,
-        textAlign,
-        textBaseline,
-        defaultColor,
-        style: getOptionStyle(type, options),
-        opacity: 1,
-      };
-    });
+      return isModelExistingInRect(this.rect, { x, y: y + 1 })
+        ? [
+            ...acc,
+            {
+              type: 'dataLabel',
+              dataLabelType: type,
+              text,
+              x,
+              y: y + 1,
+              textAlign,
+              textBaseline,
+              defaultColor,
+              style: getOptionStyle(type, options),
+              opacity: 1,
+            },
+          ]
+        : acc;
+    }, []);
   }
 }

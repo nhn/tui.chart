@@ -11,13 +11,9 @@ export default class HoveredSeries extends Component {
     this.isShow = !!models.length;
 
     if (this.isShow) {
-      this.renderTooltip(models);
+      this.models = [...models];
     }
   };
-
-  renderTooltip(models) {
-    this.models = [...models];
-  }
 
   initialize() {
     this.type = 'hoveredSeries';
