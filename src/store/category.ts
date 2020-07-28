@@ -1,31 +1,40 @@
-import { StoreModule, RawSeries } from '@t/store/store';
+import { StoreModule, RawSeries, Options } from '@t/store/store';
+import { isObject, sortCategories } from '@src/helpers/utils';
+import { formatDate } from '@src/helpers/formatDate';
 
-import { sortCategories } from '@src/helpers/utils';
-
-export function makeRawCategories(series: RawSeries, categories?: string[]) {
-  if (categories) {
-    return categories;
+export function makeRawCategories(series: RawSeries, options: Options, categories?: string[]) {
+  let categoriesArr, format;
+  if (isObject(options?.xAxis?.date)) {
+    format = options.xAxis?.date.format;
   }
 
-  const firstValues: Set<string> = new Set();
+  if (categories) {
+    categoriesArr = categories;
+  } else {
+    const firstValues: Set<string> = new Set();
 
-  Object.keys(series).forEach((key) => {
-    series[key].forEach(({ data }) => {
-      if (Array.isArray(data)) {
-        data.forEach((datum) => {
-          firstValues.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
-        });
-      }
+    Object.keys(series).forEach((key) => {
+      series[key].forEach(({ data }) => {
+        if (Array.isArray(data)) {
+          data.forEach((datum) => {
+            firstValues.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
+          });
+        }
+      });
     });
-  });
 
-  return Array.from(firstValues).sort(sortCategories);
+    categoriesArr = Array.from(firstValues).sort(sortCategories);
+  }
+
+  return categoriesArr.map((category) => {
+    return format ? formatDate(format, new Date(category)) : category;
+  });
 }
 
 const category: StoreModule = {
   name: 'category',
-  state: ({ categories, series }) => ({
-    categories: makeRawCategories(series, categories),
+  state: ({ categories, series, options }) => ({
+    categories: makeRawCategories(series, options, categories),
   }),
   action: {
     setCategory({ state }) {

@@ -1,5 +1,5 @@
 import { RawSeries } from '@t/store/store';
-
+// @TODO: Date 카테고리 type 추가 필요
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
@@ -48,7 +48,7 @@ export interface LineSeriesType {
 }
 
 export interface LineSeriesData {
-  categories?: string[];
+  categories?: string[] | Date[]; // @TODO: category type 수정 필요
   series: Pick<LineSeriesType, 'name' | 'data'>[];
 }
 
@@ -121,8 +121,12 @@ interface LineTypeXAxisOptions extends BaseXAxisOptions {
 }
 
 interface BaseXAxisOptions extends BaseAxisOptions {
-  // @TODO: 추가 필요
   rotateLabel?: boolean;
+  date?:
+    | boolean
+    | {
+        format: string;
+      };
 }
 
 interface BarTypeYAxisOptions extends BaseAxisOptions {
