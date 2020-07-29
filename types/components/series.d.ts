@@ -121,7 +121,7 @@ export type SectorModel = {
   endDegree: number;
   radius: number;
   innerRadius: number;
-  name: string;
+  name?: string;
   value?: number;
   style?: StyleProp<SectorStyle, SectorStyleName>;
 } & Point;

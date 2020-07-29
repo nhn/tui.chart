@@ -5,7 +5,7 @@ import { DataLabels, DataLabelAnchor, SeriesDataType } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
-import { getRadialPosition, getRadialAnchorPosition } from '@src/helpers/sector';
+import { getRadialAnchorPosition } from '@src/helpers/sector';
 import { labelStyle } from '@src/brushes/label';
 
 type LabelPosition = {
@@ -465,7 +465,7 @@ function makePieSeriesNameLabelInfo(
   return {
     type: 'pieSeriesName',
     ...position,
-    text: model.name,
+    text: model.name!,
     textBaseline,
     textAlign: 'center',
     defaultColor,

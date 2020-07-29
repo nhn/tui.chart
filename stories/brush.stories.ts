@@ -6,6 +6,7 @@ import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';
 import { label } from '@src/brushes/label';
 import { resetButton } from '@src/brushes/resetButton';
+import { sector } from '@src/brushes/sector';
 
 import {
   AreaPointsModel,
@@ -295,6 +296,34 @@ export const rectBrush = () => {
         shadowBlur: 10,
       },
     ],
+  });
+
+  return el;
+};
+
+export const sectorBrush = () => {
+  const { ctx, el } = setup();
+
+  sector(ctx, {
+    type: 'sector',
+    x: 100,
+    y: 100,
+    radius: 50,
+    innerRadius: 0,
+    startDegree: 0,
+    endDegree: 90,
+    color: '#ff8787',
+  });
+
+  sector(ctx, {
+    type: 'sector',
+    x: 200,
+    y: 100,
+    radius: 100,
+    innerRadius: 50,
+    startDegree: 90,
+    endDegree: 180,
+    color: '#00bcd4',
   });
 
   return el;
