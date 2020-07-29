@@ -1,12 +1,18 @@
 import Component from './component';
 import { PieChartOptions, PieSeriesType } from '@t/options';
-import { ChartState, Legend } from '@t/store/store';
+import { ChartState } from '@t/store/store';
 import { SectorModel, PieSeriesModels, SectorResponderModel } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { pick } from '@src/helpers/utils';
-import { getRadialPosition } from '@src/helpers/sector';
+import { getRadialAnchorPosition } from '@src/helpers/sector';
+import { getActiveSeriesMap } from '@src/helpers/legend';
 
+type RenderOptions = {
+  radiusRange: [number, number] | null;
+  startAngle: number;
+  endAngle: number;
+};
 export default class PieSeries extends Component {
   models: PieSeriesModels = { series: [] };
 
@@ -47,17 +53,22 @@ export default class PieSeries extends Component {
   }
 
   render(chartState: ChartState<PieChartOptions>) {
-    const { layout, series, legend, dataLabels, categories } = chartState;
+    const { layout, series, legend, dataLabels, categories, options } = chartState;
 
     if (!series.pie) {
       throw new Error("There's no pie data");
     }
 
     this.rect = layout.plot;
+    this.activeSeriesMap = getActiveSeriesMap(legend);
 
     const pieData = series.pie?.data!;
 
-    const seriesModel = this.renderPieModel(pieData, legend);
+    const seriesModel = this.renderPieModel(pieData, {
+      radiusRange: options.series?.radiusRange?.length === 2 ? options.series?.radiusRange : null,
+      startAngle: options?.series?.startAngle ?? 0,
+      endAngle: options?.series?.endAngle ?? 360,
+    });
     const tooltipModel = this.makeTooltipModel(pieData, categories);
 
     this.models.series = seriesModel;
@@ -82,17 +93,19 @@ export default class PieSeries extends Component {
     }));
   }
 
-  renderPieModel(seriesRawData: PieSeriesType[], legend: Legend): SectorModel[] {
+  renderPieModel(seriesRawData: PieSeriesType[], renderOptions: RenderOptions): SectorModel[] {
     const sectorModels: SectorModel[] = [];
     const total = seriesRawData.reduce((sum, { data }) => sum + data, 0);
+    const { radiusRange, startAngle, endAngle } = renderOptions;
 
     seriesRawData.forEach(({ data, name, color: seriesColor }, seriesIndex) => {
-      const { active } = legend.data.find(({ label }) => label === name)!;
+      const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor!, active ? 1 : 0.3);
       const { width, height } = this.rect;
       const radius = Math.min(width, height) / 2;
-      const degree = (data / total) * 360;
-      let startDegree = 0;
+      const innerRadius = radiusRange ? (radius * radiusRange[0]) / radiusRange[1] : 0;
+      const degree = (data / total) * endAngle;
+      let startDegree = startAngle;
 
       if (seriesIndex) {
         startDegree = sectorModels[seriesIndex - 1].endDegree;
@@ -107,6 +120,7 @@ export default class PieSeries extends Component {
         startDegree: startDegree,
         endDegree: startDegree + degree,
         radius: radius * 0.9,
+        innerRadius,
         value: data,
         style: ['default'],
       });
@@ -127,13 +141,14 @@ export default class PieSeries extends Component {
   makeTooltipResponder(responders: SectorResponderModel[]) {
     return responders.map((responder) => ({
       ...responder,
-      ...getRadialPosition({
+      ...getRadialAnchorPosition({
         anchor: 'center',
         ...pick(
           this.models.series[responder.seriesIndex],
           'x',
           'y',
           'radius',
+          'innerRadius',
           'startDegree',
           'endDegree'
         ),

@@ -1,6 +1,6 @@
 import { SectorModel } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
-import { calculateDegreeToRadian } from '@src/helpers/sector';
+import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector';
 
 export type SectorStyle = {
   lineWidth?: number;
@@ -25,10 +25,15 @@ const sectorStyle = {
 };
 
 export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
-  const { x, y, radius, startDegree, endDegree, color, style } = sectorModel;
+  const { x, y, innerRadius, radius, startDegree, endDegree, color, style } = sectorModel;
+  const startRadian = calculateDegreeToRadian(startDegree);
+  const endRadian = calculateDegreeToRadian(endDegree);
+  const { x: innerStartPosX, y: innerStartPosY } = getRadialPosition(x, y, radius, startRadian);
+  const startX = innerRadius ? innerStartPosX : x;
+  const startY = innerRadius ? innerStartPosY : y;
 
-  ctx.beginPath();
   ctx.fillStyle = color;
+  ctx.beginPath();
 
   if (style) {
     const styleObj = makeStyleObj<SectorStyle, SectorStyleName>(style, sectorStyle);
@@ -38,8 +43,13 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
     });
   }
 
-  ctx.moveTo(x, y);
-  ctx.arc(x, y, radius, calculateDegreeToRadian(startDegree), calculateDegreeToRadian(endDegree));
+  ctx.moveTo(startX, startY);
+  ctx.arc(x, y, radius, startRadian, endRadian, false);
+
+  if (innerRadius) {
+    ctx.arc(x, y, innerRadius, endRadian, startRadian, true);
+  }
+
   ctx.closePath();
   ctx.fill();
   ctx.stroke();

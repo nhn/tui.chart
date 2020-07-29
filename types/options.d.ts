@@ -218,7 +218,6 @@ interface StackInfo {
 }
 
 type StackOptionType = boolean | StackInfo;
-
 interface BoxSeriesOptions extends BaseSeriesOptions {
   barWidth?: number;
   diverging?: boolean;
@@ -236,7 +235,9 @@ export interface ColumnChartOptions extends BaseOptions {
 }
 
 interface PieSeriesOptions extends BaseSeriesOptions {
-  radiusRange?: [string, string];
+  radiusRange?: [number, number];
+  startAngle?: number;
+  endAngle?: number;
 }
 
 export interface PieChartOptions extends BaseOptions {
