@@ -25,9 +25,20 @@ const sectorStyle = {
 };
 
 export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
-  const { x, y, innerRadius, radius, startDegree, endDegree, color, style } = sectorModel;
-  const startRadian = calculateDegreeToRadian(startDegree);
-  const endRadian = calculateDegreeToRadian(endDegree);
+  const {
+    x,
+    y,
+    innerRadius,
+    radius,
+    startDegree,
+    endDegree,
+    color,
+    style,
+    clockwise,
+    rangeStartAngle,
+  } = sectorModel;
+  const startRadian = calculateDegreeToRadian(startDegree, rangeStartAngle);
+  const endRadian = calculateDegreeToRadian(endDegree, rangeStartAngle);
   const { x: innerStartPosX, y: innerStartPosY } = getRadialPosition(x, y, radius, startRadian);
   const startX = innerRadius ? innerStartPosX : x;
   const startY = innerRadius ? innerStartPosY : y;
@@ -44,10 +55,10 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
   }
 
   ctx.moveTo(startX, startY);
-  ctx.arc(x, y, radius, startRadian, endRadian, false);
+  ctx.arc(x, y, radius, startRadian, endRadian, !clockwise);
 
   if (innerRadius) {
-    ctx.arc(x, y, innerRadius, endRadian, startRadian, true);
+    ctx.arc(x, y, innerRadius, endRadian, startRadian, clockwise);
   }
 
   ctx.closePath();

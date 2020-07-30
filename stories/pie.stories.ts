@@ -7,19 +7,19 @@ export default {
   title: 'chart|Pie',
 };
 
-const width = 660;
-const height = 560;
-const defaultOptions = {
-  chart: {
-    width,
-    height,
-    title: 'Usage share of web browsers',
-  },
-};
-
 function createChart(data: PieSeriesData, customOptions?: PieChartOptions) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = deepMergedCopy(
+    {
+      chart: {
+        width: 660,
+        height: 560,
+        title: 'Usage share of web browsers',
+      },
+    },
+    customOptions || {}
+  );
+  const { width, height } = options.chart;
 
   el.style.outline = '1px solid red';
   el.style.width = `${width}px`;
@@ -79,6 +79,26 @@ export const withOuterSeriesName = () => {
     },
     legend: {
       visible: false,
+    },
+  });
+
+  return el;
+};
+
+export const antiClockwise = () => {
+  const { el } = createChart(browserUsageData, {
+    series: {
+      clockwise: false,
+      dataLabels: {
+        visible: true,
+        style: {
+          color: '#ffffff',
+        },
+        pieSeriesName: {
+          visible: true,
+          anchor: 'outer',
+        },
+      },
     },
   });
 
@@ -153,6 +173,37 @@ export const donutWithOuterSeriesName = () => {
     },
     legend: {
       visible: false,
+    },
+  });
+
+  return el;
+};
+
+export const semicircle = () => {
+  const { el } = createChart(browserUsageData, {
+    chart: {
+      width: 660,
+      height: 350,
+      title: 'Usage share of web browsers',
+    },
+    series: {
+      radiusRange: [40, 100],
+      startAngle: -90,
+      endAngle: 90,
+      dataLabels: {
+        visible: true,
+        style: {
+          color: '#ffffff',
+        },
+        pieSeriesName: {
+          visible: true,
+          anchor: 'outer',
+        },
+      },
+    },
+    legend: {
+      align: 'bottom',
+      visible: true,
     },
   });
 

@@ -5,7 +5,7 @@ import { DataLabels, DataLabelAnchor, SeriesDataType } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
-import { getRadialAnchorPosition } from '@src/helpers/sector';
+import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
 import { labelStyle } from '@src/brushes/label';
 
 type LabelPosition = {
@@ -417,11 +417,7 @@ function makeSectorLabelPosition(
   model: RadialDataLabel,
   dataLabelOptions: DataLabelOption
 ): LabelPosition {
-  const param = pick(model, 'x', 'y', 'radius', 'innerRadius', 'startDegree', 'endDegree');
-  const position = getRadialAnchorPosition({
-    anchor: 'center',
-    ...param,
-  });
+  const position = getRadialAnchorPosition(makeAnchorPositionParam('center', model));
 
   return {
     ...position,
@@ -454,13 +450,12 @@ function makePieSeriesNameLabelInfo(
     defaultColor = model.color;
   }
 
-  const param = pick(model, 'x', 'y', 'radius', 'innerRadius', 'startDegree', 'endDegree');
-  param.radius += hasOuterAnchor ? 25 : 0;
-
-  const position = getRadialAnchorPosition({
-    anchor: hasOuterAnchor ? 'end' : 'center',
-    ...param,
-  });
+  const position = getRadialAnchorPosition(
+    makeAnchorPositionParam(hasOuterAnchor ? 'end' : 'center', {
+      ...model,
+      radius: hasOuterAnchor ? model.radius + 25 : model.radius,
+    })
+  );
 
   return {
     type: 'pieSeriesName',

@@ -46,6 +46,15 @@ function getYAxisRect({
   let x = yAxisTitle.x;
   let y = yAxisTitle.y + yAxisTitle.height;
   let yAxisHeight = height - y - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
+  let yAxisWidth = 40; // @TODO: y축 값 너비 계산해서 지정해줘야함
+
+  if (hasCenterYAxis) {
+    yAxisWidth = 80; // @TODO: y축 값 너비 계산해서 지정
+    x = (width - legend.width - yAxisWidth + padding.X * 2) / 2;
+  } else if (!hasAxis) {
+    yAxisWidth = 0;
+    yAxisHeight = height - y;
+  }
 
   if (legend.visible) {
     const legendAreaHeight = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
@@ -65,16 +74,6 @@ function getYAxisRect({
     if (align === 'left') {
       x = Math.max(circleLegend.width + padding.X, x);
     }
-  }
-
-  let yAxisWidth = 40; // @TODO: y축 값 너비 계산해서 지정해줘야함
-
-  if (hasCenterYAxis) {
-    yAxisWidth = 80; // @TODO: y축 값 너비 계산해서 지정
-    x = (width - legend.width - yAxisWidth + padding.X * 2) / 2;
-  } else if (!hasAxis) {
-    yAxisWidth = 0;
-    yAxisHeight = height - y;
   }
 
   return {

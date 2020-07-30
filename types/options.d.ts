@@ -238,6 +238,7 @@ interface PieSeriesOptions extends BaseSeriesOptions {
   radiusRange?: [number, number];
   startAngle?: number;
   endAngle?: number;
+  clockwise?: boolean;
 }
 
 export interface PieChartOptions extends BaseOptions {

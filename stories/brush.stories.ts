@@ -313,6 +313,8 @@ export const sectorBrush = () => {
     startDegree: 0,
     endDegree: 90,
     color: '#ff8787',
+    clockwise: true,
+    rangeStartAngle: -90,
   });
 
   sector(ctx, {
@@ -324,6 +326,8 @@ export const sectorBrush = () => {
     startDegree: 90,
     endDegree: 180,
     color: '#00bcd4',
+    clockwise: false,
+    rangeStartAngle: -90,
   });
 
   return el;

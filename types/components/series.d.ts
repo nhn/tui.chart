@@ -124,6 +124,8 @@ export type SectorModel = {
   name?: string;
   value?: number;
   style?: StyleProp<SectorStyle, SectorStyleName>;
+  clockwise: boolean;
+  rangeStartAngle: number;
 } & Point;
 
 export type SectorResponderModel = {

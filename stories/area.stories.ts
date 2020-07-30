@@ -65,6 +65,9 @@ export const dataLabels = () => {
         visible: true,
       },
     },
+    legend: {
+      align: 'bottom',
+    },
   });
 
   return el;

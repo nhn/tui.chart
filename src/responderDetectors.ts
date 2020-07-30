@@ -6,7 +6,7 @@ import {
   SectorResponderModel,
 } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
-import { calculateRadianToDegree } from '@src/helpers/sector';
+import { calculateRadianToDegree, withinRadian } from '@src/helpers/sector';
 
 type DetectorType = 'circle' | 'rect' | 'sector';
 
@@ -48,14 +48,21 @@ export const responderDetectors: ResponderDetectors = {
     componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
   ) => {
     const { x, y } = mousePosition;
-    const { x: modelX, y: modelY, radius, startDegree, endDegree } = model;
+    const {
+      x: modelX,
+      y: modelY,
+      radius,
+      startDegree,
+      endDegree,
+      rangeStartAngle,
+      clockwise,
+    } = model;
     const { x: compX, y: compY } = componentRect;
     const xPos = x - (modelX + compX);
     const yPos = y - (modelY + compY);
     const withinRadius = xPos ** 2 + yPos ** 2 < radius ** 2;
-    const detectionDegree = calculateRadianToDegree(Math.atan2(yPos, xPos));
-    const withinRadian = startDegree <= detectionDegree && endDegree > detectionDegree;
+    const detectionDegree = calculateRadianToDegree(Math.atan2(yPos, xPos), rangeStartAngle);
 
-    return withinRadius && withinRadian;
+    return withinRadius && withinRadian(clockwise, startDegree, endDegree, detectionDegree);
   },
 };

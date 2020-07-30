@@ -4,14 +4,34 @@ import { ChartState } from '@t/store/store';
 import { SectorModel, PieSeriesModels, SectorResponderModel } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
-import { pick } from '@src/helpers/utils';
-import { getRadialAnchorPosition } from '@src/helpers/sector';
+import {
+  getRadialAnchorPosition,
+  makeAnchorPositionParam,
+  withinRadian,
+} from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+
+function hasClockwiseSemiCircle(renderOptions: RenderOptions) {
+  const { clockwise, startAngle, endAngle } = renderOptions;
+
+  return (
+    clockwise && ((startAngle >= -90 && endAngle <= 90) || (startAngle >= 90 && endAngle <= 180))
+  );
+}
+
+function hasAntiClockwiseSemiCircle(renderOptions: RenderOptions) {
+  const { clockwise, startAngle, endAngle } = renderOptions;
+
+  return (
+    !clockwise && ((startAngle >= -180 && endAngle <= 90) || (startAngle <= 90 && endAngle >= -90))
+  );
+}
 
 type RenderOptions = {
   radiusRange: [number, number] | null;
   startAngle: number;
   endAngle: number;
+  clockwise: boolean;
 };
 export default class PieSeries extends Component {
   models: PieSeriesModels = { series: [] };
@@ -22,29 +42,34 @@ export default class PieSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
+  totalAngle = 360;
+
   initUpdate(delta: number) {
     if (!this.drawModels) {
       return;
     }
 
-    const currentDegree = 360 * delta;
-    const index = this.models.series.findIndex(
-      ({ startDegree, endDegree }) => startDegree <= currentDegree && endDegree >= currentDegree
-    );
+    let currentDegree: number;
+
+    const index = this.models.series.findIndex(({ clockwise, startDegree, endDegree }) => {
+      currentDegree = clockwise ? this.totalAngle * delta : 360 - this.totalAngle * delta;
+
+      return withinRadian(clockwise, startDegree, endDegree, currentDegree);
+    });
 
     if (index < 0) {
       return;
     }
 
     if (index) {
-      const targetEndDegree = this.models.series[index - 1].endDegree;
+      const prevTargetEndDegree = this.models.series[index - 1].endDegree;
 
-      if (this.drawModels.series[index - 1].endDegree !== targetEndDegree) {
-        this.drawModels.series[index - 1].endDegree = targetEndDegree;
+      if (this.drawModels.series[index - 1].endDegree !== prevTargetEndDegree) {
+        this.drawModels.series[index - 1].endDegree = prevTargetEndDegree;
       }
     }
 
-    this.drawModels.series[index].endDegree = currentDegree;
+    this.drawModels.series[index].endDegree = currentDegree!;
   }
 
   initialize() {
@@ -63,12 +88,16 @@ export default class PieSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
 
     const pieData = series.pie?.data!;
-
-    const seriesModel = this.renderPieModel(pieData, {
+    const renderOptions = {
       radiusRange: options.series?.radiusRange?.length === 2 ? options.series?.radiusRange : null,
       startAngle: options?.series?.startAngle ?? 0,
       endAngle: options?.series?.endAngle ?? 360,
-    });
+      clockwise: options?.series?.clockwise ?? true,
+    };
+
+    this.totalAngle = this.getTotalAngle(renderOptions);
+
+    const seriesModel = this.renderPieModel(pieData, renderOptions);
     const tooltipModel = this.makeTooltipModel(pieData, categories);
 
     this.models.series = seriesModel;
@@ -96,33 +125,41 @@ export default class PieSeries extends Component {
   renderPieModel(seriesRawData: PieSeriesType[], renderOptions: RenderOptions): SectorModel[] {
     const sectorModels: SectorModel[] = [];
     const total = seriesRawData.reduce((sum, { data }) => sum + data, 0);
-    const { radiusRange, startAngle, endAngle } = renderOptions;
+    const { radiusRange, startAngle, clockwise } = renderOptions;
+    const rangeStartAngle = startAngle - 90;
+    const isSemiCircular = this.isSemiCircle(renderOptions);
+    const { width, height } = this.rect;
+    const radius = isSemiCircular ? this.getSemiCicleRadius() : Math.min(width, height) / 2;
+    const innerRadius = radiusRange ? (radius * radiusRange[0]) / radiusRange[1] : 0;
+    const cx = width / 2;
+    const cy = isSemiCircular ? this.getSemiCircleCenterY(clockwise) : height / 2;
+    let startDegree = clockwise ? 0 : 360;
 
     seriesRawData.forEach(({ data, name, color: seriesColor }, seriesIndex) => {
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor!, active ? 1 : 0.3);
-      const { width, height } = this.rect;
-      const radius = Math.min(width, height) / 2;
-      const innerRadius = radiusRange ? (radius * radiusRange[0]) / radiusRange[1] : 0;
-      const degree = (data / total) * endAngle;
-      let startDegree = startAngle;
+      const degree = (data / total) * this.totalAngle;
 
       if (seriesIndex) {
         startDegree = sectorModels[seriesIndex - 1].endDegree;
       }
 
+      const endDegree = clockwise ? startDegree + degree : startDegree - degree;
+
       sectorModels.push({
         type: 'sector',
         name,
         color,
-        x: width / 2,
-        y: height / 2,
-        startDegree: startDegree,
-        endDegree: startDegree + degree,
+        x: cx,
+        y: cy,
+        startDegree,
+        endDegree,
         radius: radius * 0.9,
         innerRadius,
         value: data,
         style: ['default'],
+        clockwise,
+        rangeStartAngle,
       });
     });
 
@@ -141,18 +178,9 @@ export default class PieSeries extends Component {
   makeTooltipResponder(responders: SectorResponderModel[]) {
     return responders.map((responder) => ({
       ...responder,
-      ...getRadialAnchorPosition({
-        anchor: 'center',
-        ...pick(
-          this.models.series[responder.seriesIndex],
-          'x',
-          'y',
-          'radius',
-          'innerRadius',
-          'startDegree',
-          'endDegree'
-        ),
-      }),
+      ...getRadialAnchorPosition(
+        makeAnchorPositionParam('center', this.models.series[responder.seriesIndex])
+      ),
     }));
   }
 
@@ -162,5 +190,27 @@ export default class PieSeries extends Component {
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
     this.eventBus.emit('needDraw');
+  }
+
+  getTotalAngle(renderOptions: RenderOptions) {
+    const { clockwise, startAngle, endAngle } = renderOptions;
+    const totalAngle = Math.abs(endAngle - startAngle);
+
+    return totalAngle !== 360 && !clockwise ? 360 - totalAngle : totalAngle;
+  }
+
+  isSemiCircle(renderOptions: RenderOptions) {
+    return (
+      this.totalAngle <= 180 &&
+      (hasClockwiseSemiCircle(renderOptions) || hasAntiClockwiseSemiCircle(renderOptions))
+    );
+  }
+
+  getSemiCicleRadius() {
+    return this.rect.height * 0.9;
+  }
+
+  getSemiCircleCenterY(clockwise: boolean) {
+    return clockwise ? this.rect.height * 0.9 : this.rect.height * 0.1;
   }
 }
