@@ -5,6 +5,7 @@ type RadialPositionParam = {
   anchor: RadialAnchor;
   x: number;
   y: number;
+  innerRadius: number;
   radius: number;
   startDegree: number;
   endDegree: number;
@@ -26,23 +27,15 @@ export function calculateRadianToDegree(radian: number) {
   return ((radian * 180) / Math.PI + 90 + 360) % 360;
 }
 
-export function getRadialPosition(param: RadialPositionParam): Point {
-  const { anchor, x, y, radius, startDegree, endDegree } = param;
+export function getRadialAnchorPosition(param: RadialPositionParam): Point {
+  const { anchor, x, y, innerRadius, radius, startDegree, endDegree } = param;
   const degree = startDegree + (endDegree - startDegree) / 2;
   const radian = calculateDegreeToRadian(degree);
+  const r = anchor === 'center' ? (radius - innerRadius) / 2 + innerRadius : radius;
 
-  let posX: number = x;
-  let posY: number = y;
+  return getRadialPosition(x, y, r, radian);
+}
 
-  if (anchor === 'center') {
-    const halfRadius = radius / 2;
-
-    posX = x + halfRadius * Math.cos(radian);
-    posY = y + halfRadius * Math.sin(radian);
-  } else if (anchor === 'end') {
-    posX = x + radius * Math.cos(radian);
-    posY = y + radius * Math.sin(radian);
-  }
-
-  return { x: posX, y: posY };
+export function getRadialPosition(x: number, y: number, r: number, radian: number) {
+  return { x: x + r * Math.cos(radian), y: y + r * Math.sin(radian) };
 }

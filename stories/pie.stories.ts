@@ -48,7 +48,7 @@ export const dataLabels = () => {
   return el;
 };
 
-export const withSeriesName = () => {
+export const withCenterSeriesName = () => {
   const { el } = createChart(browserUsageData, {
     series: {
       dataLabels: {
@@ -76,6 +76,83 @@ export const withOuterSeriesName = () => {
           anchor: 'outer',
         },
       },
+    },
+    legend: {
+      visible: false,
+    },
+  });
+
+  return el;
+};
+
+export const donut = () => {
+  const { el } = createChart(browserUsageData, {
+    series: {
+      radiusRange: [40, 100],
+    },
+  });
+
+  return el;
+};
+
+export const donutWithDataLabels = () => {
+  const { el } = createChart(browserUsageData, {
+    series: {
+      radiusRange: [40, 100],
+      dataLabels: {
+        visible: true,
+        style: {
+          color: '#ffffff',
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const donutWithCenterSeriesName = () => {
+  const { el } = createChart(browserUsageData, {
+    series: {
+      radiusRange: [40, 100],
+      dataLabels: {
+        visible: true,
+        style: {
+          color: '#ffffff',
+        },
+        pieSeriesName: {
+          visible: true,
+          style: {
+            color: '#ffffff',
+          },
+        },
+      },
+    },
+    legend: {
+      visible: false,
+    },
+  });
+
+  return el;
+};
+
+export const donutWithOuterSeriesName = () => {
+  const { el } = createChart(browserUsageData, {
+    series: {
+      radiusRange: [40, 100],
+      dataLabels: {
+        visible: true,
+        style: {
+          color: '#ffffff',
+        },
+        pieSeriesName: {
+          visible: true,
+          anchor: 'outer',
+        },
+      },
+    },
+    legend: {
+      visible: false,
     },
   });
 

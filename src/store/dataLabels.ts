@@ -1,11 +1,11 @@
 import { StoreModule } from '@t/store/store';
 import { pickStackOption } from '@src/store/stackSeriesData';
 import { isFunction, includes, isBoolean, pick, isNumber } from '@src/helpers/utils';
-import { DataLabels, DataLabelAnchor, SeriesDataType, BoxSeriesDataType } from '@t/options';
+import { DataLabels, DataLabelAnchor, SeriesDataType } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
-import { getRadialPosition } from '@src/helpers/sector';
+import { getRadialAnchorPosition } from '@src/helpers/sector';
 import { labelStyle } from '@src/brushes/label';
 
 type LabelPosition = {
@@ -417,8 +417,8 @@ function makeSectorLabelPosition(
   model: RadialDataLabel,
   dataLabelOptions: DataLabelOption
 ): LabelPosition {
-  const param = pick(model, 'x', 'y', 'radius', 'startDegree', 'endDegree');
-  const position = getRadialPosition({
+  const param = pick(model, 'x', 'y', 'radius', 'innerRadius', 'startDegree', 'endDegree');
+  const position = getRadialAnchorPosition({
     anchor: 'center',
     ...param,
   });
@@ -454,10 +454,10 @@ function makePieSeriesNameLabelInfo(
     defaultColor = model.color;
   }
 
-  const param = pick(model, 'x', 'y', 'radius', 'startDegree', 'endDegree');
+  const param = pick(model, 'x', 'y', 'radius', 'innerRadius', 'startDegree', 'endDegree');
   param.radius += hasOuterAnchor ? 25 : 0;
 
-  const position = getRadialPosition({
+  const position = getRadialAnchorPosition({
     anchor: hasOuterAnchor ? 'end' : 'center',
     ...param,
   });
@@ -465,7 +465,7 @@ function makePieSeriesNameLabelInfo(
   return {
     type: 'pieSeriesName',
     ...position,
-    text: model.name,
+    text: model.name!,
     textBaseline,
     textAlign: 'center',
     defaultColor,
