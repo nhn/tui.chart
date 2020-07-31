@@ -6,6 +6,7 @@ import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
+
 import { labelStyle } from '@src/brushes/label';
 
 type LabelPosition = {

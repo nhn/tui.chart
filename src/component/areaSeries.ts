@@ -20,10 +20,19 @@ import { ChartState, StackSeriesData, ValueEdge } from '@t/store/store';
 import { crispPixel, getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray, deepMergedCopy, first, last, range, sum } from '@src/helpers/utils';
+import {
+  deepCopy,
+  deepCopyArray,
+  deepMergedCopy,
+  first,
+  last,
+  range,
+  sum,
+} from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
 import { LineModel } from '@t/components/axis';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import { isModelExistingInRect } from '@src/helpers/coordinate';
 
 interface AreaSeriesDrawModels {
   rect: ClipRectAreaModel[];
@@ -146,11 +155,11 @@ export default class AreaSeries extends Component {
     const circleDotModel = this.renderDotSeriesModel(seriesCircleModel, renderOptions);
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
-    this.models = {
+    this.models = deepCopy({
       rect: [this.renderClipRectAreaModel()],
       series: areaSeriesModel,
       dot: circleDotModel,
-    };
+    });
 
     if (!this.drawModels) {
       this.drawModels = {
@@ -287,7 +296,9 @@ export default class AreaSeries extends Component {
       const x = tickDistance * (idx - this.startIndex) + (pointOnColumn ? tickDistance / 2 : 0);
       const y = (1 - valueRatio) * this.rect.height;
 
-      points.push({ x, y, value });
+      if (isModelExistingInRect(this.rect, { x, y })) {
+        points.push({ x, y, value });
+      }
     });
 
     // @TODO: range spline 처리 필요

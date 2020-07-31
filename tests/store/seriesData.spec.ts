@@ -70,7 +70,8 @@ describe('SeriesData store', () => {
           xAxis: {},
           yAxis: {},
         },
-        categories: ['A', 'B', 'C'],
+        categories: ['B'],
+        rawCategories: ['A', 'B', 'C'],
         options: {},
         zoomRange: [1, 1],
         theme: {
@@ -101,19 +102,19 @@ describe('SeriesData store', () => {
           data: [
             {
               color: '#aaaaaa',
-              data: [3],
+              data: [3, 4],
               name: 'han',
               rawData: [1, 3, 4],
             },
             {
               color: '#bbbbbb',
-              data: [2],
+              data: [2, 4],
               name: 'cho',
               rawData: [5, 2, 4],
             },
           ],
           seriesCount: 2,
-          seriesGroupCount: 1,
+          seriesGroupCount: 2,
         },
       });
     });

@@ -98,6 +98,7 @@ export default class PieSeries extends Component {
     this.totalAngle = this.getTotalAngle(renderOptions);
 
     const seriesModel = this.renderPieModel(pieData, renderOptions);
+
     const tooltipModel = this.makeTooltipModel(pieData, categories);
 
     this.models.series = seriesModel;
@@ -143,7 +144,7 @@ export default class PieSeries extends Component {
       if (seriesIndex) {
         startDegree = sectorModels[seriesIndex - 1].endDegree;
       }
-
+      
       const endDegree = clockwise ? startDegree + degree : startDegree - degree;
 
       sectorModels.push({

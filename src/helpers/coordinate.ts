@@ -1,4 +1,4 @@
-import { CoordinateDataType } from '@t/options';
+import { CoordinateDataType, Point, Rect } from '@t/options';
 import { first, isNumber, isObject, last } from '@src/helpers/utils';
 import { Series } from '@t/store/store';
 
@@ -46,4 +46,11 @@ function isLineCoordinateSeries(series: Series) {
 
 export function isCoordinateSeries(series: Series) {
   return isLineCoordinateSeries(series) || series.scatter || series.bubble;
+}
+
+export function isModelExistingInRect(rect: Rect, point: Point) {
+  const { height, width } = rect;
+  const { x, y } = point;
+
+  return x >= 0 && x <= width && y >= 0 && y <= height;
 }
