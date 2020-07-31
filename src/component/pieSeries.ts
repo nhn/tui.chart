@@ -97,19 +97,15 @@ export default class PieSeries extends Component {
     const sectorModels: SectorModel[] = [];
     const total = seriesRawData.reduce((sum, { data }) => sum + data, 0);
     const { radiusRange, startAngle, endAngle } = renderOptions;
+    const { width, height } = this.rect;
+    const radius = Math.min(width, height) / 2;
+    const innerRadius = radiusRange ? (radius * radiusRange[0]) / radiusRange[1] : 0;
 
     seriesRawData.forEach(({ data, name, color: seriesColor }, seriesIndex) => {
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor!, active ? 1 : 0.3);
-      const { width, height } = this.rect;
-      const radius = Math.min(width, height) / 2;
-      const innerRadius = radiusRange ? (radius * radiusRange[0]) / radiusRange[1] : 0;
       const degree = (data / total) * endAngle;
-      let startDegree = startAngle;
-
-      if (seriesIndex) {
-        startDegree = sectorModels[seriesIndex - 1].endDegree;
-      }
+      const startDegree = seriesIndex ? sectorModels[seriesIndex - 1].endDegree : startAngle;
 
       sectorModels.push({
         type: 'sector',
