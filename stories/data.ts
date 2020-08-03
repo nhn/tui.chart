@@ -969,6 +969,46 @@ export const genderHeightWeightData = {
   ],
 };
 
+export const currentUserCoordinateDatetimeData = {
+  series: [
+    {
+      name: 'User1',
+      data: [
+        { x: new Date('08/22/2020 10:00:00'), y: 202 },
+        { x: new Date('08/22/2020 10:05:00'), y: 212 },
+        { x: new Date('08/22/2020 10:10:00'), y: 222 },
+        { x: new Date('08/22/2020 10:15:00'), y: 351 },
+        { x: new Date('08/22/2020 10:20:00'), y: 412 },
+        { x: new Date('08/22/2020 10:25:00'), y: 420 },
+        { x: new Date('08/22/2020 10:30:00'), y: 300 },
+        { x: new Date('08/22/2020 10:35:00'), y: 213 },
+        { x: new Date('08/22/2020 10:40:00'), y: 230 },
+        { x: new Date('08/22/2020 10:20:00'), y: 450 },
+        { x: new Date('08/22/2020 10:25:00'), y: 422 },
+        { x: new Date('08/22/2020 10:30:00'), y: 113 },
+        { x: new Date('08/22/2020 10:35:00'), y: 243 },
+        { x: new Date('08/22/2020 10:40:00'), y: 330 },
+        { x: new Date('08/22/2020 10:45:00'), y: 520 },
+        { x: new Date('08/22/2020 10:50:00'), y: 234 },
+        { x: new Date('08/22/2020 10:55:00'), y: 210 },
+        { x: new Date('08/22/2020 11:00:00'), y: 220 },
+      ],
+    },
+    {
+      name: 'User2',
+      data: [
+        { x: '08/22/2020 10:00:00', y: 312 },
+        { x: '08/22/2020 10:10:00', y: 320 },
+        { x: '08/22/2020 10:20:00', y: 295 },
+        { x: '08/22/2020 10:30:00', y: 300 },
+        { x: '08/22/2020 10:40:00', y: 320 },
+        { x: '08/22/2020 10:50:00', y: 190 },
+        { x: '08/22/2020 11:00:00', y: 156 },
+      ],
+    },
+  ],
+};
+
 export const lifeExpectancyPerGDPData = {
   series: [
     {
@@ -1074,6 +1114,35 @@ export const lifeExpectancyPerGDPData = {
         { x: 14500, y: 78.75, r: 108775, label: 'Virgin Islands' },
         { x: 23200, y: 78.49, r: 1993817, label: 'New Zealand' },
         { x: 30700, y: 80.26, r: 5991314, label: 'Australia' },
+      ],
+    },
+  ],
+};
+
+export const lifeExpectancyPerGDPDataWithDatetime = {
+  series: [
+    {
+      name: 'Africa',
+      data: [
+        { x: '08/22/2020 11:30:00', y: 70.35, r: 32209101, label: 'Morocco' },
+        { x: '08/22/2020 11:30:00', y: 70.71, r: 76117421, label: 'Egypt' },
+        { x: '08/22/2020 11:10:00', y: 56.46, r: 1355246, label: 'Gabon' },
+        { x: '08/22/2020 11:20:00', y: 76.28, r: 5631585, label: 'Libya' },
+        { x: '08/22/2020 11:30:00', y: 74.66, r: 9974722, label: 'Tunisia' },
+      ],
+    },
+    {
+      name: 'America',
+      data: [
+        { x: '08/22/2020 11:00:00', y: 74.64, r: 6191368, label: 'Paraguay' },
+        { x: '08/22/2020 11:05:00', y: 70.92, r: 6587541, label: 'El Salvador' },
+        { x: '08/22/2020 11:40:00', y: 69.22, r: 2754430, label: 'Peru' },
+        { x: '08/22/2020 11:15:00', y: 74.06, r: 2501738, label: 'Venezuela' },
+        { x: '08/22/2020 11:20:00', y: 67.63, r: 8833634, label: 'Dominican Republic' },
+        { x: '08/22/2020 11:25:00', y: 67.43, r: 272945, label: 'Belize' },
+        { x: '08/22/2020 11:10:00', y: 71.43, r: 4231077, label: 'Colombia' },
+        { x: '08/22/2020 11:10:00', y: 71.41, r: 78410118, label: 'Brazil' },
+        { x: '08/22/2020 11:15:00', y: 77.43, r: 89302754, label: 'United States' },
       ],
     },
   ],

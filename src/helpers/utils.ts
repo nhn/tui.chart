@@ -270,13 +270,6 @@ export function deepCopy<T extends Record<string, any>>(obj: T) {
   return resultObj as T;
 }
 
-export function sortSeries(obj1: CoordinateDataType, obj2: CoordinateDataType) {
-  const x = Array.isArray(obj1) ? obj1[0] : obj1.x;
-  const y = Array.isArray(obj2) ? obj2[0] : obj2.x;
-
-  return sortCategories(x, y);
-}
-
 export function sortCategories(x: number | string, y: number | string) {
   return isInteger(x) ? Number(x) - Number(y) : new Date(x).getTime() - new Date(y).getTime();
 }

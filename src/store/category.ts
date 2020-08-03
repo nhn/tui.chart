@@ -1,5 +1,5 @@
 import { StoreModule, RawSeries } from '@t/store/store';
-import { sortCategories } from '@src/helpers/utils';
+import { isNumber, sortCategories } from '@src/helpers/utils';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
 
 export function makeRawCategories(series: RawSeries, categories?: string[]) {
@@ -13,7 +13,9 @@ export function makeRawCategories(series: RawSeries, categories?: string[]) {
     series[key].forEach(({ data }) => {
       if (Array.isArray(data)) {
         data.forEach((datum) => {
-          firstValues.add(getCoordinateXValue(datum));
+          const rawXValue = getCoordinateXValue(datum);
+
+          firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
         });
       }
     });

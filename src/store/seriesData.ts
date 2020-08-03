@@ -1,34 +1,9 @@
 import { StoreModule, RawSeries, Series, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
-import {
-  deepCopy,
-  getFirstValidValue,
-  isNumber,
-  isUndefined,
-  range,
-  sortSeries,
-} from '@src/helpers/utils';
+import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src/helpers/utils';
 import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
-
-function makeInitSeries(series: RawSeries) {
-  const result: Series = {};
-
-  Object.keys(series).forEach((key) => {
-    result[key] = series[key].map((raw: any) => {
-      const seriesData = raw;
-
-      if (key === 'line') {
-        seriesData.data = raw.data.sort(sortSeries);
-      }
-
-      return seriesData;
-    });
-  });
-
-  return result;
-}
 
 function initZoomRange(
   series: RawSeries,
@@ -94,7 +69,9 @@ const seriesData: StoreModule = {
   name: 'seriesData',
   state: ({ series, categories, options }) => ({
     rawCategories: makeRawCategories(series, categories),
-    series: makeInitSeries(series),
+    series: {
+      ...series,
+    } as Series,
     zoomRange: initZoomRange(series, options, categories),
     disabledSeries: [],
   }),
