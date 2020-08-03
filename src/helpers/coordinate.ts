@@ -11,8 +11,7 @@ export function getCoordinateYValue(datum: number | CoordinateDataType) {
 }
 
 export function getCoordinateXValue(datum: CoordinateDataType) {
-  // @TODO: string일 경우 처리 필요(date)
-  return Array.isArray(datum) ? Number(datum[0]) : datum.x;
+  return Array.isArray(datum) ? datum[0] : datum.x;
 }
 
 export function getCoordinateDataIndex(

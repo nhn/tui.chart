@@ -39,7 +39,7 @@ function initZoomRange(
     return;
   }
 
-  const rawCategoriesLength = Object.keys(makeRawCategories(series, options, categories)).length;
+  const rawCategoriesLength = Object.keys(makeRawCategories(series, categories)).length;
 
   return [0, rawCategoriesLength - 1];
 }
@@ -93,7 +93,7 @@ function getDataInRange(
 const seriesData: StoreModule = {
   name: 'seriesData',
   state: ({ series, categories, options }) => ({
-    rawCategories: makeRawCategories(series, options, categories),
+    rawCategories: makeRawCategories(series, categories),
     series: makeInitSeries(series),
     zoomRange: initZoomRange(series, options, categories),
     disabledSeries: [],

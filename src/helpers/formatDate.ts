@@ -1,8 +1,18 @@
 // https://github.com/nhn/tui.code-snippet/blob/master/formatDate/formatDate.js
+import { isDate, isObject } from '@src/helpers/utils';
+import { Options } from '@t/store/store';
 
-import { isDate } from '@src/helpers/utils';
+export function getDateFormat(options?: Options): string | undefined {
+  if (!options || (options && !options.xAxis?.date)) {
+    return;
+  }
 
-const tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*A/gi;
+  const date = options.xAxis?.date;
+
+  return isObject(date) ? date.format : 'YY-MM-DD hh:mm:ss';
+}
+
+const tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*mm|[\\]*m|[\\]*ss|[\\]*s|[\\]*A/gi;
 const MONTH_STR = [
   'Invalid month',
   'January',
@@ -24,7 +34,7 @@ const replaceMap = {
   MM: (date) => {
     const month = date.month;
 
-    return Number(month) < 10 ? '0' + month : month;
+    return Number(month) < 10 ? `0${month}` : month;
   },
   MMM: (date) => MONTH_STR[Number(date.month)].substr(0, 3),
   MMMM: (date) => MONTH_STR[Number(date.month)],
@@ -33,16 +43,12 @@ const replaceMap = {
   DD: (date) => {
     const dayInMonth = date.date;
 
-    return Number(dayInMonth) < 10 ? '0' + dayInMonth : dayInMonth;
+    return Number(dayInMonth) < 10 ? `0${dayInMonth}` : dayInMonth;
   },
   dd: (date) => replaceMap.DD(date), // eslint-disable-line new-cap
-  YY: function (date) {
-    return Number(date.year) % 100;
-  },
-  yy: function (date) {
-    return replaceMap.YY(date); // eslint-disable-line new-cap
-  },
-  YYYY: function (date) {
+  YY: (date) => Number(date.year) % 100,
+  yy: (date) => replaceMap.YY(date), // eslint-disable-line new-cap
+  YYYY: (date) => {
     let prefix = '20';
     const year = date.year;
     if (year > 69 && year < 100) {
@@ -51,9 +57,7 @@ const replaceMap = {
 
     return Number(year) < 100 ? prefix + String(year) : year;
   },
-  yyyy: function (date) {
-    return replaceMap.YYYY(date); // eslint-disable-line new-cap
-  },
+  yyyy: (date) => replaceMap.YYYY(date), // eslint-disable-line new-cap
   A: (date) => date.meridiem,
   a: (date) => date.meridiem,
   hh: (date) => {
@@ -68,7 +72,13 @@ const replaceMap = {
   mm: (date) => {
     const minute = date.minute;
 
-    return Number(minute) < 10 ? '0' + minute : minute;
+    return Number(minute) < 10 ? `0${minute}` : minute;
+  },
+  s: (date) => String(Number(date.second)),
+  ss: (date) => {
+    const second = date.second;
+
+    return Number(second) < 10 ? `0${second}` : second;
   },
 };
 
@@ -104,11 +114,14 @@ function isValidDate(year: number, month: number, date: number) {
  * days            | D / DD / d / dd
  * hours           | H / HH / h / hh
  * minutes         | m / mm
+ * seconds         | s / ss
  * meridiem(AM,PM) | A / a
  */
 export function formatDate(
   form: string,
-  date: Date | { year: number; month: number; date: number; hour: number; minute: number },
+  date:
+    | Date
+    | { year: number; month: number; date: number; hour: number; minute: number; second: number },
   option?: { meridiemSet: { AM?: string; PM?: string } }
 ) {
   // eslint-disable-line complexity
@@ -123,6 +136,7 @@ export function formatDate(
       date: date.getDate(),
       hour: date.getHours(),
       minute: date.getMinutes(),
+      second: date.getSeconds(),
     };
   } else {
     nDate = {
@@ -131,6 +145,7 @@ export function formatDate(
       date: date.date,
       hour: date.hour,
       minute: date.minute,
+      second: date.second,
     };
   }
 
@@ -150,7 +165,7 @@ export function formatDate(
     nDate.meridiem = nDate.hour > 11 ? pm : am;
   }
 
-  return form.replace(tokens, function (key) {
+  return form.replace(tokens, (key) => {
     if (key.indexOf('\\') > -1) {
       // escape character
       return key.replace(/\\/, '');

@@ -6,7 +6,8 @@ import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 
-function getLimitSafely(baseValues: number[]): ValueEdge {
+// @TODO: 필요한건 여기로 옮겨야함(datetime)
+export function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
     min: Math.min(...baseValues),
     max: Math.max(...baseValues),
@@ -39,10 +40,11 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const { series, disabledSeries, stackSeries, rawCategories } = state;
+      const { series, disabledSeries, stackSeries, rawCategories, options } = state;
       const newDataRange = {} as DataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
+      const isDateValue = !!options.xAxis?.date;
 
       for (const seriesName in series) {
         if (!series.hasOwnProperty(seriesName)) {
@@ -59,12 +61,11 @@ const dataRange: StoreModule = {
         if (isCoordinateSeries(series)) {
           values = values.map((value) => getCoordinateYValue(value));
 
-          const xAxisValues = rawCategories.map((value) => Number(value));
+          const xAxisValues = rawCategories.map((value) =>
+            isDateValue ? Number(new Date(value)) : Number(value)
+          );
 
-          newDataRange[seriesName][labelAxisName] = {
-            min: Math.min(...xAxisValues),
-            max: Math.max(...xAxisValues),
-          };
+          newDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);
         } else if (isRangeValue(firstExistValue)) {
           values = values.reduce(
             (arr, value) => (Array.isArray(value) ? [...arr, ...value] : [...value]),

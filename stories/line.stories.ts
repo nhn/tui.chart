@@ -8,7 +8,6 @@ import {
   randomData,
   temperatureData2,
   datetimeCoordinateData,
-  temperatureDataWithDateObject,
 } from './data';
 import { boolean, number, withKnobs } from '@storybook/addon-knobs';
 
@@ -66,19 +65,6 @@ export const basicWithDateOptions = () => {
   return el;
 };
 
-export const basicWithDateTypeData = () => {
-  const { el } = createChart(temperatureDataWithDateObject, {
-    xAxis: {
-      pointOnColumn: true,
-      date: {
-        format: 'YY-MM-DD',
-      },
-    },
-  });
-
-  return el;
-};
-
 export const basicWithShowDot = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: true },
@@ -118,7 +104,8 @@ export const tupleCoordinate = () => {
 
 export const coordinateDatetime = () => {
   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
-    xAxis: { pointOnColumn: true, date: true },
+    xAxis: { pointOnColumn: true, date: { format: 'hh:mm' } },
+    series: { zoomable: true },
   });
 
   return el;

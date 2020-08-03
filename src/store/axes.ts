@@ -26,6 +26,7 @@ import {
   isNumber,
   pickProperty,
 } from '@src/helpers/utils';
+import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 
 interface StateProp {
   scale: ScaleData;
@@ -67,11 +68,20 @@ function getZeroPosition(
   return labelAxisOnYAxis ? position : axisSize - position;
 }
 
+function makeFormattedCategory(categories: string[], options: Options) {
+  const format = getDateFormat(options);
+
+  return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
+}
+
 export function getLabelAxisData(stateProp: ValueStateProp) {
   const { axisSize, categories, series, options, scale, zoomRange } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
-    !zoomRange && scale ? makeLabelsFromLimit(scale.limit, scale.stepSize) : categories;
+    !zoomRange && scale
+      ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
+      : makeFormattedCategory(categories, options);
+
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
 
