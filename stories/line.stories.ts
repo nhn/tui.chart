@@ -102,7 +102,7 @@ export const tupleCoordinate = () => {
   return el;
 };
 
-export const coordinateDatetime = () => {
+export const datetimeCoordinate = () => {
   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
     xAxis: { pointOnColumn: true, date: { format: 'hh:mm' } },
     series: { zoomable: true },

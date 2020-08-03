@@ -14,6 +14,20 @@ export function getCoordinateXValue(datum: CoordinateDataType) {
   return Array.isArray(datum) ? datum[0] : datum.x;
 }
 
+function isValueAfterLastCategory(value: number | string, categories: string[]) {
+  const category = last(categories);
+
+  if (!category) {
+    return false;
+  }
+
+  if (isNumber(value)) {
+    return value >= Number(category);
+  }
+
+  return new Date(value) >= new Date(category);
+}
+
 export function getCoordinateDataIndex(
   datum: number | CoordinateDataType,
   categories: string[],
@@ -27,7 +41,7 @@ export function getCoordinateDataIndex(
   const value = getCoordinateXValue(datum);
   let index = categories.findIndex((category) => category === String(value));
 
-  if (index === -1 && value >= Number(last(categories))) {
+  if (index === -1 && isValueAfterLastCategory(value, categories)) {
     index = categories.length;
   }
 
