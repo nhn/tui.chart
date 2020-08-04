@@ -2,18 +2,18 @@ import { RawSeries } from '@t/store/store';
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
-export type CoordinateDataType = ObjectDatetimePoint | ArrayDatetimePoint;
-export type ArrayDatetimePoint = [string, number] | [Date, number] | [number, number];
-export type ObjectDatetimePoint = Point | { x: Date; y: number } | { x: string; y: number };
 export type AreaSeriesDataType = number | RangeDataType;
-export type BubbleSeriesDataType = { label: string } & BubblePoint;
-export type BubblePoint = ObjectDatetimePoint & { r: number };
 export type Align = 'top' | 'bottom' | 'right' | 'left';
-
 export interface Point {
   x: number;
   y: number;
 }
+
+export type CoordinateDataType = ObjectDatetimePoint | ArrayDatetimePoint;
+export type ArrayDatetimePoint = [string, number] | [Date, number] | [number, number];
+export type ObjectDatetimePoint = Point | { x: Date; y: number } | { x: string; y: number };
+export type BubblePoint = ObjectDatetimePoint & { r: number };
+export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
 export type BezierPoint = {
   controlPoint?: {

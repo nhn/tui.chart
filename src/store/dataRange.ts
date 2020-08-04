@@ -6,7 +6,6 @@ import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 
-// @TODO: 필요한건 여기로 옮겨야함(datetime)
 export function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
     min: Math.min(...baseValues),
@@ -52,7 +51,7 @@ const dataRange: StoreModule = {
         }
         newDataRange[seriesName] = {};
 
-        let values = series[seriesName].flatMap(({ data, name }) =>
+        let values = series[seriesName].data.flatMap(({ data, name }) =>
           disabledSeries.includes(name) ? [] : data
         );
 

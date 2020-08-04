@@ -99,6 +99,43 @@ describe('Axes Store module', () => {
       },
     });
   });
+
+  it('should be make properly datetime category label', () => {
+    const state = {
+      chart: { width: 120, height: 120 },
+      layout: {
+        plot: { width: 100, height: 150, x: 30, y: 10 },
+        yAxis: { x: 10, y: 10, width: 10, height: 80 },
+        xAxis: { x: 10, y: 10, width: 80, height: 10 },
+      },
+      scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
+      series: {
+        line: {
+          data: [
+            { name: 'han', data: [1, 4] },
+            { name: 'cho', data: [5, 2] },
+          ],
+        },
+      },
+      axes: {
+        xAxis: {},
+        yAxis: {},
+      },
+      categories: ['2020/08/08', '2020/08/09'],
+      options: {
+        xAxis: {
+          date: {
+            format: 'yy-MM-DD',
+          },
+        },
+      },
+    } as ChartState<LineChartOptions>;
+
+    const store = { state } as Store<LineChartOptions>;
+    axes.action!.setAxesData(store);
+
+    expect(state.axes.xAxis.labels).toEqual(['20-08-08', '20-08-09']);
+  });
 });
 
 describe('pointOnColumn state is properly created', () => {

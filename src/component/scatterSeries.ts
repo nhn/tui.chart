@@ -5,7 +5,7 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
-import { TooltipData } from '@t/components/tooltip';
+import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
 import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
@@ -86,11 +86,12 @@ export default class ScatterSeries extends CircleSeries {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum) => {
-        tooltipData.push({
-          label: name,
-          color,
-          value: { x: getCoordinateXValue(datum).toString(), y: getCoordinateYValue(datum) }, // @TODO: tooltip format
-        });
+        const value = {
+          x: getCoordinateXValue(datum),
+          y: getCoordinateYValue(datum),
+        } as TooltipDataValue; // @TODO: tooltip format
+
+        tooltipData.push({ label: name, color, value });
       });
 
       return tooltipData;

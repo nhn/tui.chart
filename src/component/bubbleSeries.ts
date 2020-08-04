@@ -1,11 +1,11 @@
 import { CircleModel } from '@t/components/series';
-import { BaseOptions, BubbleSeriesType } from '@t/options';
+import { BaseOptions, BubbleSeriesType, ObjectDatetimePoint } from '@t/options';
 import { ChartState, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
-import { TooltipData } from '@t/components/tooltip';
+import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
 import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
@@ -111,11 +111,13 @@ export default class BubbleSeries extends CircleSeries {
 
       data.forEach((datum) => {
         const { r } = datum;
-        tooltipData.push({
-          label: name,
-          color,
-          value: { x: getCoordinateXValue(datum).toString(), y: getCoordinateYValue(datum), r }, // @TODO: tooltip format
-        });
+        const value = {
+          x: getCoordinateXValue(datum),
+          y: getCoordinateYValue(datum),
+          r,
+        } as TooltipDataValue; // @TODO: tooltip format
+
+        tooltipData.push({ label: name, color, value });
       });
 
       return tooltipData;
