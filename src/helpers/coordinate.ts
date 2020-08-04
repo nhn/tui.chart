@@ -21,11 +21,7 @@ function isValueAfterLastCategory(value: number | string | Date, categories: str
     return false;
   }
 
-  if (isNumber(value)) {
-    return value >= Number(category);
-  }
-
-  return new Date(value) >= new Date(category);
+  return isNumber(value) ? value >= Number(category) : new Date(value) >= new Date(category);
 }
 
 export function getCoordinateDataIndex(

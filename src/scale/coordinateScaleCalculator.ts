@@ -4,7 +4,6 @@ import { isExist, isNumber, omit } from '@src/helpers/utils';
 import { calculator } from '@src/helpers/calculator';
 
 const SNAP_VALUES = [1, 2, 5, 10];
-
 const DEFAULT_PIXELS_PER_STEP = 88;
 
 interface Overflowed {
@@ -214,24 +213,6 @@ export function getStackScaleData(type: stackScaleType): ScaleData {
   return { limit: { min: 0, max: 100 }, stepSize: 25, stepCount: 5 };
 }
 
-export function calculateDatetimeScale(options: LabelOptions) {
-  const { dataRange, rawCategoriesSize, scaleOption } = options;
-
-  const { minDate, divisionNumber, limit } = makeDatetimeInfo(
-    dataRange,
-    rawCategoriesSize,
-    scaleOption
-  );
-
-  const scale = calculateCoordinateScale({
-    ...omit(options, 'scaleOption'),
-    dataRange: limit,
-    minStepSize: 1,
-  });
-
-  return restoreScaleToDatetimeType(scale, minDate, divisionNumber);
-}
-
 const msMap = {
   year: 31536000000,
   month: 2678400000,
@@ -241,6 +222,20 @@ const msMap = {
   minute: 60000,
   second: 1000,
 };
+
+export function calculateDatetimeScale(options: LabelOptions) {
+  const { dataRange, rawCategoriesSize, scaleOption } = options;
+  const datetimeInfo = makeDatetimeInfo(dataRange, rawCategoriesSize, scaleOption);
+  const { minDate, divisionNumber, limit } = datetimeInfo;
+
+  const scale = calculateCoordinateScale({
+    ...omit(options, 'scaleOption'),
+    dataRange: limit,
+    minStepSize: 1,
+  });
+
+  return restoreScaleToDatetimeType(scale, minDate, divisionNumber);
+}
 
 const msTypes = ['year', 'month', 'week', 'date', 'hour', 'minute', 'second'];
 

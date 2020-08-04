@@ -4,28 +4,81 @@ import { range, isInteger } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 
-export const getDecimalLength = (value: string | number) => {
-  const valueArr = String(value).split('.');
+/**
+ * operation for floating point operation.
+ */
+export const calculator = {
+  getDecimalLength: (value: string) => {
+    const valueArr = value.split('.');
 
-  return valueArr.length === 2 ? valueArr[1].length : 0;
-};
+    return valueArr.length === 2 ? valueArr[1].length : 0;
+  },
+  findMultipleNum: (...args) => {
+    const underPointLens = args.map((value) => calculator.getDecimalLength(value));
+    const underPointLen = arrayUtil.max(underPointLens);
 
-export const findMultipleNum = (...args: number[]) => {
-  const underPointLens = args.map((value) => getDecimalLength(value));
-  const underPointLen = arrayUtil.max(underPointLens);
+    return 10 ** underPointLen;
+  },
+  mod: (target: number, modNum: number) => {
+    const multipleNum = calculator.findMultipleNum(modNum);
 
-  return 10 ** underPointLen;
+    return multipleNum === 1
+      ? target % modNum
+      : ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
+  },
+  add: (a: number, b: number) => {
+    const multipleNum = calculator.findMultipleNum(a, b);
+
+    return (a * multipleNum + b * multipleNum) / multipleNum;
+  },
+  subtract: (a: number, b: number) => {
+    const multipleNum = calculator.findMultipleNum(a, b);
+
+    return (a * multipleNum - b * multipleNum) / multipleNum;
+  },
+  multiply: (a: number, b: number) => {
+    const multipleNum = calculator.findMultipleNum(a, b);
+
+    return (a * multipleNum * (b * multipleNum)) / (multipleNum * multipleNum);
+  },
+  divide: (a: number, b: number) => {
+    const multipleNum = calculator.findMultipleNum(a, b);
+
+    return (a * multipleNum) / (b * multipleNum);
+  },
+  sum: (values: number[]) => {
+    const copyArr = values.slice();
+    copyArr.unshift(0);
+
+    return copyArr.reduce((base, value) =>
+      calculator.add(parseFloat(String(base)), parseFloat(String(value)))
+    );
+  },
+
+  divisors: (value: number) => {
+    const result: number[] = [];
+    for (let a = 2, b; a * a <= value; a += 1) {
+      if (value % a === 0) {
+        b = value / a;
+        result.push(a);
+        if (b !== a) {
+          result.push(b);
+        }
+      }
+    }
+
+    return result.sort((prev, next) => prev - next);
+  },
 };
 
 export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number, options?: Options) {
-  const multipleNum = findMultipleNum(stepSize);
+  const multipleNum = calculator.findMultipleNum(stepSize);
   const min = Math.round(limit.min * multipleNum);
   const max = Math.round(limit.max * multipleNum);
   const labels = range(min, max + 1, stepSize * multipleNum);
   const format = getDateFormat(options);
 
   return labels.map((label) => {
-    // scale 계산할 때..date는 좀 다르게 가야할거 같은데..
     return format ? formatDate(format, new Date(label)) : String(label / multipleNum);
   });
 }
@@ -121,75 +174,3 @@ export function getTextHeight(font: string) {
 
   return parseInt(String(Number(matches) * 1.2), 10);
 }
-
-/**
- * operation for floating point operation.
- */
-export const calculator = {
-  getDecimalLength: (value) => {
-    const valueArr = String(value).split('.');
-
-    return valueArr.length === 2 ? valueArr[1].length : 0;
-  },
-  findMultipleNum: (...args) => {
-    const underPointLens = args.map((value) => getDecimalLength(value));
-    const underPointLen = arrayUtil.max(underPointLens);
-
-    return 10 ** underPointLen;
-  },
-  mod: (target: number, modNum: number) => {
-    const multipleNum = findMultipleNum(modNum);
-    let result;
-
-    if (multipleNum === 1) {
-      result = target % modNum;
-    } else {
-      result = ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
-    }
-
-    return result;
-  },
-  add: (a: number, b: number) => {
-    const multipleNum = findMultipleNum(a, b);
-
-    return (a * multipleNum + b * multipleNum) / multipleNum;
-  },
-  subtract: (a: number, b: number) => {
-    const multipleNum = findMultipleNum(a, b);
-
-    return (a * multipleNum - b * multipleNum) / multipleNum;
-  },
-  multiply: (a: number, b: number) => {
-    const multipleNum = findMultipleNum(a, b);
-
-    return (a * multipleNum * (b * multipleNum)) / (multipleNum * multipleNum);
-  },
-  divide: (a: number, b: number) => {
-    const multipleNum = findMultipleNum(a, b);
-
-    return (a * multipleNum) / (b * multipleNum);
-  },
-  sum: (values: number[]) => {
-    const copyArr = values.slice();
-    copyArr.unshift(0);
-
-    return copyArr.reduce((base, value) =>
-      calculator.add(parseFloat(String(base)), parseFloat(String(value)))
-    );
-  },
-
-  divisors: (value: number) => {
-    const result: number[] = [];
-    for (let a = 2, b; a * a <= value; a += 1) {
-      if (value % a === 0) {
-        b = value / a;
-        result.push(a);
-        if (b !== a) {
-          result.push(b);
-        }
-      }
-    }
-
-    return result.sort((prev, next) => prev - next);
-  },
-};

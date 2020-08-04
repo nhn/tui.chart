@@ -6,7 +6,7 @@ import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 
-export function getLimitSafely(baseValues: number[]): ValueEdge {
+function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
     min: Math.min(...baseValues),
     max: Math.max(...baseValues),
@@ -43,7 +43,7 @@ const dataRange: StoreModule = {
       const newDataRange = {} as DataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
-      const isDateValue = !!options.xAxis?.date;
+      const hasDateValue = !!options.xAxis?.date;
 
       for (const seriesName in series) {
         if (!series.hasOwnProperty(seriesName)) {
@@ -61,7 +61,7 @@ const dataRange: StoreModule = {
           values = values.map((value) => getCoordinateYValue(value));
 
           const xAxisValues = rawCategories.map((value) =>
-            isDateValue ? Number(new Date(value)) : Number(value)
+            hasDateValue ? Number(new Date(value)) : Number(value)
           );
 
           newDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);

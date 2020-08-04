@@ -124,7 +124,6 @@ export function formatDate(
     | { year: number; month: number; date: number; hour: number; minute: number; second: number },
   option?: { meridiemSet: { AM?: string; PM?: string } }
 ) {
-  // eslint-disable-line complexity
   const am = option?.meridiemSet.AM ?? 'AM';
   const pm = option?.meridiemSet.PM || 'PM';
   let nDate;
@@ -139,14 +138,9 @@ export function formatDate(
       second: date.getSeconds(),
     };
   } else {
-    nDate = {
-      year: date.year,
-      month: date.month,
-      date: date.date,
-      hour: date.hour,
-      minute: date.minute,
-      second: date.second,
-    };
+    const { year, month, hour, minute, second } = date;
+
+    nDate = { year, month, date: date.date, hour, minute, second };
   }
 
   if (!isValidDate(nDate.year, nDate.month, nDate.date)) {

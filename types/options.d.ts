@@ -49,7 +49,7 @@ export interface LineSeriesType {
 }
 
 export interface LineSeriesData {
-  categories?: string[]; // @TODO: category type 수정 필요
+  categories?: string[];
   series: Pick<LineSeriesType, 'name' | 'data'>[];
 }
 
