@@ -74,11 +74,15 @@ function makeFormattedCategory(categories: string[], options: Options) {
   return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
 }
 
+function isZooming(categories: string[], zoomRange?: RangeDataType) {
+  return zoomRange && (zoomRange[0] !== 0 || zoomRange[1] !== categories.length - 1);
+}
+
 export function getLabelAxisData(stateProp: ValueStateProp) {
   const { axisSize, categories, series, options, scale, zoomRange } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
-    !zoomRange && scale
+    !isZooming(categories, zoomRange) && scale
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options);
 

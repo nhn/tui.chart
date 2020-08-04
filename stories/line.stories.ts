@@ -104,7 +104,13 @@ export const tupleCoordinate = () => {
 
 export const datetimeCoordinate = () => {
   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
-    xAxis: { pointOnColumn: true, date: { format: 'hh:mm' } },
+    chart: { title: 'Concurrent user' },
+    xAxis: {
+      title: 'minute',
+      pointOnColumn: false,
+      date: { format: 'hh:mm:ss' },
+    },
+    yAxis: { title: 'users' },
     series: { zoomable: true },
   });
 

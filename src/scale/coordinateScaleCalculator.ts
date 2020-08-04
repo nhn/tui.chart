@@ -1,6 +1,6 @@
 import { ValueEdge, ScaleData } from '@t/store/store';
 import { Scale } from '@t/options';
-import { isExist, isNumber } from '@src/helpers/utils';
+import { isExist, isNumber, omit } from '@src/helpers/utils';
 import { calculator } from '@src/helpers/calculator';
 
 const SNAP_VALUES = [1, 2, 5, 10];
@@ -146,7 +146,11 @@ function getNormalizedScale(
   };
 }
 
-function getRoughScale(scale: Required<Scale>, offsetSize: number): ScaleData {
+function getRoughScale(
+  scale: Required<Scale>,
+  offsetSize: number,
+  minStepSize?: number
+): ScaleData {
   const { min, max } = scale;
   const limitSize = Math.abs(max - min);
   const valuePerPixel = limitSize / offsetSize;
@@ -159,6 +163,9 @@ function getRoughScale(scale: Required<Scale>, offsetSize: number): ScaleData {
   if (hasStepSize(scale.stepSize)) {
     stepSize = scale.stepSize;
     stepCount = limitSize / stepSize;
+  } else if (isNumber(minStepSize) && stepSize < minStepSize) {
+    stepSize = minStepSize;
+    stepCount = limitSize / stepSize;
   }
 
   return { limit: { min, max }, stepSize, stepCount };
@@ -166,9 +173,9 @@ function getRoughScale(scale: Required<Scale>, offsetSize: number): ScaleData {
 
 function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Required<Scale> {
   return {
-    max: isNumber(scaleOptions?.max) ? scaleOptions!.max : dataRange.max,
-    min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min,
-    stepSize: isNumber(scaleOptions?.stepSize) ? scaleOptions!.stepSize : 'auto',
+    max: scaleOptions?.max ?? dataRange.max,
+    min: scaleOptions?.min ?? dataRange.min,
+    stepSize: scaleOptions?.stepSize ?? 'auto',
   };
 }
 
@@ -177,10 +184,11 @@ export function calculateCoordinateScale(options: {
   offsetSize: number;
   scaleOption?: Scale;
   showLabel?: boolean;
+  minStepSize?: number;
 }): ScaleData {
-  const { dataRange, scaleOption, offsetSize, showLabel } = options;
+  const { dataRange, scaleOption, offsetSize, showLabel, minStepSize } = options;
   const scale = makeScaleOption(dataRange, scaleOption);
-  const roughScale = getRoughScale(scale, offsetSize);
+  const roughScale = getRoughScale(scale, offsetSize, minStepSize);
   const normalizedScale = getNormalizedScale(roughScale, scale, showLabel);
   const overflowed = isSeriesOverflowed(normalizedScale, scale);
 
@@ -207,10 +215,19 @@ export function getStackScaleData(type: stackScaleType): ScaleData {
 }
 
 export function calculateDatetimeScale(options: LabelOptions) {
-  const { dataRange, rawCategoriesSize } = options;
+  const { dataRange, rawCategoriesSize, scaleOption } = options;
 
-  const { minDate, divisionNumber, limit } = makeDatetimeInfo(dataRange, rawCategoriesSize);
-  const scale = calculateCoordinateScale({ ...options, dataRange: limit });
+  const { minDate, divisionNumber, limit } = makeDatetimeInfo(
+    dataRange,
+    rawCategoriesSize,
+    scaleOption
+  );
+
+  const scale = calculateCoordinateScale({
+    ...omit(options, 'scaleOption'),
+    dataRange: limit,
+    minStepSize: 1,
+  });
 
   return restoreScaleToDatetimeType(scale, minDate, divisionNumber);
 }
@@ -225,7 +242,7 @@ const msMap = {
   second: 1000,
 };
 
-const millisecondTypes = ['year', 'month', 'week', 'date', 'hour', 'minute', 'second'];
+const msTypes = ['year', 'month', 'week', 'date', 'hour', 'minute', 'second'];
 
 function restoreScaleToDatetimeType(scale: ScaleData, minDate: number, divisionNumber: number) {
   const { limit, stepSize } = scale;
@@ -242,12 +259,14 @@ function restoreScaleToDatetimeType(scale: ScaleData, minDate: number, divisionN
   };
 }
 
-function makeDatetimeInfo(limit: ValueEdge, count: number) {
+function makeDatetimeInfo(limit: ValueEdge, count: number, scaleOption?: Scale) {
   const dateType = findDateType(limit, count);
-  const divisionNumber = msMap[dateType];
+  const divisionNumber = scaleOption?.stepSize ?? msMap[dateType];
+  const scale = makeScaleOption(limit, scaleOption);
   const { divide } = calculator;
-  const minDate = divide(limit.min, divisionNumber);
-  const maxDate = divide(limit.max, divisionNumber);
+
+  const minDate = divide(Number(new Date(scale.min)), divisionNumber);
+  const maxDate = divide(Number(new Date(scale.max)), divisionNumber);
   const max = maxDate - minDate;
 
   return { divisionNumber, minDate, limit: { min: 0, max } };
@@ -255,11 +274,11 @@ function makeDatetimeInfo(limit: ValueEdge, count: number) {
 
 function findDateType({ max, min }: ValueEdge, count: number) {
   const diff = max - min;
-  const lastTypeIndex = millisecondTypes.length - 1;
+  const lastTypeIndex = msTypes.length - 1;
   let foundType;
 
   if (diff) {
-    millisecondTypes.every((type, index) => {
+    msTypes.every((type, index) => {
       const millisecond = msMap[type];
       const dividedCount = Math.floor(diff / millisecond);
       let foundIndex;
@@ -267,7 +286,7 @@ function findDateType({ max, min }: ValueEdge, count: number) {
       if (dividedCount) {
         foundIndex =
           index < lastTypeIndex && dividedCount < 2 && dividedCount < count ? index + 1 : index;
-        foundType = millisecondTypes[foundIndex];
+        foundType = msTypes[foundIndex];
       }
 
       return !isExist(foundIndex);

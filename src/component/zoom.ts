@@ -117,13 +117,14 @@ export default class Zoom extends Component {
   }
 
   makeRectResponderModel(categories: string[], renderOptions: RenderOptions): RectResponderModel[] {
-    const { pointOnColumn, tickCount, tickDistance } = renderOptions;
+    const categorySize = categories.length;
+    const { pointOnColumn, tickDistance } = renderOptions;
     const { height } = this.rect;
 
-    const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
+    const halfDetectAreaIndex = pointOnColumn ? [] : [0, categorySize - 1];
     const halfWidth = tickDistance / 2;
 
-    return range(0, tickCount).map((index) => {
+    return range(0, categorySize).map((index) => {
       const half = halfDetectAreaIndex.includes(index);
       const width = half ? halfWidth : tickDistance;
       let startX = 0;

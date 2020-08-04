@@ -52,7 +52,7 @@ const dataRange: StoreModule = {
         }
         newDataRange[seriesName] = {};
 
-        let values = series[seriesName].data.flatMap(({ data, name }) =>
+        let values = series[seriesName].flatMap(({ data, name }) =>
           disabledSeries.includes(name) ? [] : data
         );
 
