@@ -28,7 +28,7 @@ export default class BubbleSeries extends CircleSeries {
   }
 
   render(chartState: ChartState<BaseOptions>) {
-    const { layout, series, scale, axes, circleLegend, legend } = chartState;
+    const { layout, series, scale, axes, circleLegend, legend, options } = chartState;
     const { plot } = layout;
 
     if (!series.bubble) {
@@ -40,6 +40,7 @@ export default class BubbleSeries extends CircleSeries {
 
     this.rect = plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.selectable = options?.series?.selectable ?? false;
 
     const xAxisTickSize = this.rect.width / xAxis!.tickCount;
     const yAxisTickSize = this.rect.height / yAxis!.tickCount;

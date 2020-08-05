@@ -4,7 +4,7 @@ import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
 
 export default abstract class CircleSeries extends Component {
-  models: CircleSeriesModels = { series: [] };
+  models: CircleSeriesModels = { series: [], selectedSeries: [] };
 
   drawModels!: CircleSeriesModels;
 
@@ -47,5 +47,12 @@ export default abstract class CircleSeries extends Component {
 
     this.eventBus.emit('seriesPointHovered', this.activatedResponders);
     this.eventBus.emit('needDraw');
+  }
+
+  onClick({ responders, mousePosition }) {
+    if (this.selectable) {
+      this.drawModels.selectedSeries = this.getClosestResponder(responders, mousePosition);
+      this.eventBus.emit('needDraw');
+    }
   }
 }
