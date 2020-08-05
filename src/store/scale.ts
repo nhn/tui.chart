@@ -1,11 +1,8 @@
 import { extend } from '@src/store/store';
 import { StoreModule, Scale } from '@t/store/store';
 import { getAxisName, getSizeKey, isLabelAxisOnYAxis } from '@src/helpers/axes';
-import {
-  calculateCoordinateScale,
-  calculateDatetimeScale,
-  getStackScaleData,
-} from '@src/scale/coordinateScaleCalculator';
+import { calculateCoordinateScale, getStackScaleData } from '@src/scale/coordinateScaleCalculator';
+import { calculateDatetimeScale } from '@src/scale/datetimeScaleCalculator';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
 import { hasPercentStackSeries } from './stackSeriesData';
 import { isExist } from '@src/helpers/utils';

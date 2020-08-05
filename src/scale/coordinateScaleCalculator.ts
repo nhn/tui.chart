@@ -17,14 +17,6 @@ type stackScaleType =
   | 'dualPercentStack'
   | 'divergingPercentStack';
 
-interface LabelOptions {
-  dataRange: ValueEdge;
-  offsetSize: number;
-  rawCategoriesSize: number;
-  scaleOption?: Scale;
-  showLabel?: boolean;
-}
-
 function adjustLimitForOverflow(limit: ValueEdge, stepSize: number, overflowed: Overflowed) {
   const { min, max } = limit;
 
@@ -170,7 +162,7 @@ function getRoughScale(
   return { limit: { min, max }, stepSize, stepCount };
 }
 
-function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Required<Scale> {
+export function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Required<Scale> {
   return {
     max: scaleOptions?.max ?? dataRange.max,
     min: scaleOptions?.min ?? dataRange.min,
@@ -213,82 +205,3 @@ export function getStackScaleData(type: stackScaleType): ScaleData {
   return { limit: { min: 0, max: 100 }, stepSize: 25, stepCount: 5 };
 }
 
-const msMap = {
-  year: 31536000000,
-  month: 2678400000,
-  week: 604800000,
-  date: 86400000,
-  hour: 3600000,
-  minute: 60000,
-  second: 1000,
-};
-
-export function calculateDatetimeScale(options: LabelOptions) {
-  const { dataRange, rawCategoriesSize, scaleOption } = options;
-  const datetimeInfo = makeDatetimeInfo(dataRange, rawCategoriesSize, scaleOption);
-  const { minDate, divisionNumber, limit } = datetimeInfo;
-
-  const scale = calculateCoordinateScale({
-    ...omit(options, 'scaleOption'),
-    dataRange: limit,
-    minStepSize: 1,
-  });
-
-  return restoreScaleToDatetimeType(scale, minDate, divisionNumber);
-}
-
-const msTypes = ['year', 'month', 'week', 'date', 'hour', 'minute', 'second'];
-
-function restoreScaleToDatetimeType(scale: ScaleData, minDate: number, divisionNumber: number) {
-  const { limit, stepSize } = scale;
-  const { min, max } = limit;
-  const { multiply, add } = calculator;
-
-  return {
-    ...scale,
-    stepSize: multiply(stepSize, divisionNumber),
-    limit: {
-      min: multiply(add(min, minDate), divisionNumber),
-      max: multiply(add(max, minDate), divisionNumber),
-    },
-  };
-}
-
-function makeDatetimeInfo(limit: ValueEdge, count: number, scaleOption?: Scale) {
-  const dateType = findDateType(limit, count);
-  const divisionNumber = scaleOption?.stepSize ?? msMap[dateType];
-  const scale = makeScaleOption(limit, scaleOption);
-  const { divide } = calculator;
-
-  const minDate = divide(Number(new Date(scale.min)), divisionNumber);
-  const maxDate = divide(Number(new Date(scale.max)), divisionNumber);
-  const max = maxDate - minDate;
-
-  return { divisionNumber, minDate, limit: { min: 0, max } };
-}
-
-function findDateType({ max, min }: ValueEdge, count: number) {
-  const diff = max - min;
-  const lastTypeIndex = msTypes.length - 1;
-  let foundType;
-
-  if (diff) {
-    msTypes.every((type, index) => {
-      const millisecond = msMap[type];
-      const dividedCount = Math.floor(diff / millisecond);
-      let foundIndex;
-
-      if (dividedCount) {
-        foundIndex =
-          index < lastTypeIndex && dividedCount < 2 && dividedCount < count ? index + 1 : index;
-        foundType = msTypes[foundIndex];
-      }
-
-      return !isExist(foundIndex);
-    });
-  } else {
-    foundType = 'second';
-  }
-
-  return foundType;
-}

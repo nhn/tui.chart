@@ -1,5 +1,5 @@
 import { CircleModel } from '@t/components/series';
-import { BaseOptions, BubbleSeriesType, ObjectDatetimePoint } from '@t/options';
+import { BaseOptions, BubbleSeriesType } from '@t/options';
 import { ChartState, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';

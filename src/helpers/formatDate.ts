@@ -82,11 +82,14 @@ const replaceMap = {
   },
 };
 
-// eslint-disable-next-line complexity
-function isValidDate(year: number, month: number, date: number) {
-  year = Number(year);
-  month = Number(month);
-  date = Number(date);
+function isLeapYear(month: number, year: number) {
+  return month === 2 && year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+}
+
+function isValidDate(y: number, m: number, d: number) {
+  const year = Number(y);
+  const month = Number(m);
+  const date = Number(d);
 
   const isValidYear = (year > -1 && year < 100) || (year > 1969 && year < 2070);
   const isValidMonth = month > 0 && month < 13;
@@ -95,12 +98,7 @@ function isValidDate(year: number, month: number, date: number) {
     return false;
   }
 
-  let lastDayInMonth = MONTH_DAYS[month];
-  if (month === 2 && year % 4 === 0) {
-    if (year % 100 !== 0 || year % 400 === 0) {
-      lastDayInMonth = 29;
-    }
-  }
+  const lastDayInMonth = isLeapYear(month, year) ? 29 : MONTH_DAYS[month];
 
   return date > 0 && date <= lastDayInMonth;
 }

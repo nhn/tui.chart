@@ -1,5 +1,3 @@
-import { CoordinateDataType } from '@t/options';
-
 type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
 type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
 

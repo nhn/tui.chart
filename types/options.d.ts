@@ -9,10 +9,11 @@ export interface Point {
   y: number;
 }
 
-export type CoordinateDataType = ObjectDatetimePoint | ArrayDatetimePoint;
-export type ArrayDatetimePoint = [string, number] | [Date, number] | [number, number];
-export type ObjectDatetimePoint = Point | { x: Date; y: number } | { x: string; y: number };
-export type BubblePoint = ObjectDatetimePoint & { r: number };
+export type CoordinateDataType = [number, number] | Point | DatetimePoint;
+type ObjectTypeDatetimePoint = { x: Date; y: number } | { x: string; y: number };
+type TupleTypeDatetimePoint = [string, number] | [Date, number];
+export type DatetimePoint = ObjectTypeDatetimePoint | TupleTypeDatetimePoint;
+export type BubblePoint = (Point | ObjectTypeDatetimePoint) & { r: number };
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
 export type BezierPoint = {

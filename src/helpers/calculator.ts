@@ -11,7 +11,7 @@ export const calculator = {
   getDecimalLength: (value: string | number) => {
     const valueArr = String(value).split('.');
 
-    return valueArr.length === 2 ? valueArr[1].length : 0;
+    return valueArr[1]?.length ?? 0;
   },
   findMultipleNum: (...args: (string | number)[]) => {
     const underPointLens = args.map((value) => calculator.getDecimalLength(value));

@@ -1,10 +1,11 @@
-import { ObjectDatetimePoint, Point } from '../options';
+import { ObjectTypeDatetimePoint, Point } from '../options';
 
 export type TooltipDataValue =
   | string
   | number
-  | ObjectDatetimePoint
-  | ({ r: number } & ObjectDatetimePoint);
+  | ObjectTypeDatetimePoint
+  | Point
+  | ({ r: number } & (ObjectTypeDatetimePoint | Point));
 
 export type TooltipData = {
   label: string;
