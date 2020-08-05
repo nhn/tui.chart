@@ -9,6 +9,7 @@ import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
 import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
+const MINIMUM_RADIUS = 0.5;
 const MINIMUM_DETECTING_AREA_RADIUS = 1;
 
 export function getMaxRadius(bubbleData: BubbleSeriesType[]) {
@@ -88,7 +89,7 @@ export default class BubbleSeries extends CircleSeries {
 
         const x = xValueRatio * this.rect.width;
         const y = (1 - yValueRatio) * this.rect.height;
-        const radius = (datum.r / this.maxValue) * this.maxRadius;
+        const radius = Math.max(MINIMUM_RADIUS, (datum.r / this.maxValue) * this.maxRadius);
 
         circleModels.push({
           x,
@@ -110,14 +111,16 @@ export default class BubbleSeries extends CircleSeries {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum) => {
-        const { r } = datum;
-        const value = {
-          x: getCoordinateXValue(datum),
-          y: getCoordinateYValue(datum),
-          r,
-        } as TooltipDataValue; // @TODO: tooltip format
-
-        tooltipData.push({ label: name, color, value });
+        const { r, label } = datum;
+        tooltipData.push({
+          label: `${name}/${label}`,
+          color,
+          value: {
+            x: getCoordinateXValue(datum),
+            y: getCoordinateYValue(datum),
+            r,
+          } as TooltipDataValue,
+        });
       });
 
       return tooltipData;
