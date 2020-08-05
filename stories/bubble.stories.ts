@@ -52,3 +52,9 @@ export const datetime = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(lifeExpectancyPerGDPData, { series: { selectable: true } });
+
+  return el;
+};

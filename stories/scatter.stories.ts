@@ -48,3 +48,9 @@ export const datetime = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(genderHeightWeightData, { series: { selectable: true } });
+
+  return el;
+};
