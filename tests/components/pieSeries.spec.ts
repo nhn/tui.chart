@@ -19,9 +19,9 @@ const seriesData = [
 ];
 
 const chartState = {
-  chart: { width: 100, height: 100 },
+  chart: { width: 110, height: 110 },
   layout: {
-    plot: { width: 90, height: 90, x: 10, y: 10 },
+    plot: { width: 100, height: 100, x: 10, y: 10 },
   },
   series: {
     pie: {
@@ -62,7 +62,7 @@ describe('basic', () => {
           name: 'A',
           radius: {
             inner: 0,
-            outer: 40.5,
+            outer: 45,
           },
           degree: {
             start: 0,
@@ -71,8 +71,8 @@ describe('basic', () => {
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 45,
+          x: 50,
+          y: 50,
           clockwise: true,
           drawingStartAngle: -90,
         },
@@ -81,7 +81,7 @@ describe('basic', () => {
           name: 'B',
           radius: {
             inner: 0,
-            outer: 40.5,
+            outer: 45,
           },
           degree: {
             start: 180,
@@ -90,8 +90,8 @@ describe('basic', () => {
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 45,
+          x: 50,
+          y: 50,
           clockwise: true,
           drawingStartAngle: -90,
         },
@@ -103,11 +103,11 @@ describe('basic', () => {
         type: 'sector',
         name: 'A',
         color: 'rgba(0, 169, 255, 1)',
-        x: 45,
-        y: 45,
+        x: 50,
+        y: 50,
         radius: {
           inner: 0,
-          outer: 40.5,
+          outer: 45,
         },
         degree: {
           start: 0,
@@ -124,11 +124,11 @@ describe('basic', () => {
         type: 'sector',
         name: 'B',
         color: 'rgba(255, 184, 64, 1)',
-        x: 45,
-        y: 45,
+        x: 50,
+        y: 50,
         radius: {
           inner: 0,
-          outer: 40.5,
+          outer: 45,
         },
         degree: {
           start: 180,
@@ -165,7 +165,7 @@ describe('basic', () => {
         drawingStartAngle: -90,
         radius: {
           inner: 0,
-          outer: 40.5,
+          outer: 45,
         },
         degree: {
           start: 360,
@@ -174,8 +174,8 @@ describe('basic', () => {
         style: ['default'],
         type: 'sector',
         value: 50,
-        x: 45,
-        y: 45,
+        x: 50,
+        y: 50,
       },
       {
         clockwise: false,
@@ -184,7 +184,7 @@ describe('basic', () => {
         drawingStartAngle: -90,
         radius: {
           inner: 0,
-          outer: 40.5,
+          outer: 45,
         },
         degree: {
           start: 180,
@@ -193,8 +193,8 @@ describe('basic', () => {
         style: ['default'],
         type: 'sector',
         value: 50,
-        x: 45,
-        y: 45,
+        x: 50,
+        y: 50,
       },
     ];
 
@@ -213,7 +213,10 @@ describe('donut', () => {
       deepMergedCopy(chartState, {
         options: {
           series: {
-            radiusRange: [40, 100],
+            radiusRange: {
+              inner: '40%',
+              outer: '100%',
+            },
           },
         },
       })
@@ -228,7 +231,7 @@ describe('donut', () => {
           name: 'A',
           radius: {
             inner: 18,
-            outer: 40.5,
+            outer: 45,
           },
           degree: {
             start: 0,
@@ -237,8 +240,8 @@ describe('donut', () => {
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 45,
+          x: 50,
+          y: 50,
           clockwise: true,
           drawingStartAngle: -90,
         },
@@ -247,7 +250,7 @@ describe('donut', () => {
           name: 'B',
           radius: {
             inner: 18,
-            outer: 40.5,
+            outer: 45,
           },
           degree: {
             start: 180,
@@ -256,8 +259,8 @@ describe('donut', () => {
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 45,
+          x: 50,
+          y: 50,
           clockwise: true,
           drawingStartAngle: -90,
         },
@@ -269,11 +272,11 @@ describe('donut', () => {
         type: 'sector',
         name: 'A',
         color: 'rgba(0, 169, 255, 1)',
-        x: 45,
-        y: 45,
+        x: 50,
+        y: 50,
         radius: {
           inner: 18,
-          outer: 40.5,
+          outer: 45,
         },
         degree: {
           start: 0,
@@ -290,11 +293,11 @@ describe('donut', () => {
         type: 'sector',
         name: 'B',
         color: 'rgba(255, 184, 64, 1)',
-        x: 45,
-        y: 45,
+        x: 50,
+        y: 50,
         radius: {
           inner: 18,
-          outer: 40.5,
+          outer: 45,
         },
         degree: {
           start: 180,
@@ -323,8 +326,10 @@ describe('donut', () => {
         deepMergedCopy(chartState, {
           options: {
             series: {
-              startAngle: -90,
-              endAngle: 90,
+              angleRange: {
+                start: -90,
+                end: 90,
+              },
             },
           },
         })
@@ -341,27 +346,27 @@ describe('donut', () => {
           clockwise: true,
           color: 'rgba(0, 169, 255, 1)',
           name: 'A',
-          radius: { inner: 0, outer: 72.9 },
+          radius: { inner: 0, outer: 81 },
           degree: { start: 0, end: 90 },
           drawingStartAngle: -180,
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 81,
+          x: 50,
+          y: 90,
         },
         {
           clockwise: true,
           color: 'rgba(255, 184, 64, 1)',
           name: 'B',
-          radius: { inner: 0, outer: 72.9 },
+          radius: { inner: 0, outer: 81 },
           degree: { start: 90, end: 180 },
           drawingStartAngle: -180,
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 81,
+          x: 50,
+          y: 90,
         },
       ];
 
