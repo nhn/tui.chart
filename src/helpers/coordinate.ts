@@ -45,9 +45,10 @@ export function getCoordinateDataIndex(
 }
 
 function isLineCoordinateSeries(series: Series) {
-  if (!series.line) {
+  if (!series.line || !series.line.data.length) {
     return false;
   }
+
   const firstData = getFirstValidValue(series.line.data[0].data);
 
   return firstData && (Array.isArray(firstData) || isObject(firstData));

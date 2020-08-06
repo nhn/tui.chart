@@ -1,6 +1,6 @@
 import { isExist, omit } from '@src/helpers/utils';
 import { ScaleData, ValueEdge } from '@t/store/store';
-import { calculator } from '@src/helpers/calculator';
+import { add, multiply, divide } from '@src/helpers/calculator';
 import { Scale } from '@t/options';
 import { calculateCoordinateScale, makeScaleOption } from '@src/scale/coordinateScaleCalculator';
 
@@ -41,7 +41,6 @@ const msTypes = ['year', 'month', 'week', 'date', 'hour', 'minute', 'second'];
 function restoreScaleToDatetimeType(scale: ScaleData, minDate: number, divisionNumber: number) {
   const { limit, stepSize } = scale;
   const { min, max } = limit;
-  const { multiply, add } = calculator;
 
   return {
     ...scale,
@@ -57,7 +56,6 @@ function makeDatetimeInfo(limit: ValueEdge, count: number, scaleOption?: Scale) 
   const dateType = findDateType(limit, count);
   const divisionNumber = scaleOption?.stepSize ?? msMap[dateType];
   const scale = makeScaleOption(limit, scaleOption);
-  const { divide } = calculator;
 
   const minDate = divide(Number(new Date(scale.min)), divisionNumber);
   const maxDate = divide(Number(new Date(scale.max)), divisionNumber);

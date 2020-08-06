@@ -30,7 +30,7 @@ describe('dataRange Store module', () => {
       });
     });
 
-    it('coordinate', () => {
+    it('should set min, max value properly using coordinate type value', () => {
       const data = deepMergedCopy(state, {
         series: {
           line: {
@@ -62,7 +62,7 @@ describe('dataRange Store module', () => {
       });
     });
 
-    it('coordinate datetime', () => {
+    it('should set ms min, max value properly using coordinate datetime type xAxis value', () => {
       const data = deepMergedCopy(state, {
         series: {
           line: {

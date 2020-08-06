@@ -1,78 +1,74 @@
+/**
+ * operation for floating point operation.
+ */
 import { Options, ValueEdge } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 
-/**
- * operation for floating point operation.
- */
-export const calculator = {
-  getDecimalLength: (value: string | number) => {
-    const valueArr = String(value).split('.');
+function getDecimalLength(value: string | number) {
+  const valueArr = String(value).split('.');
 
-    return valueArr[1]?.length ?? 0;
-  },
-  findMultipleNum: (...args: (string | number)[]) => {
-    const underPointLens = args.map((value) => calculator.getDecimalLength(value));
-    const underPointLen = arrayUtil.max(underPointLens);
+  return valueArr[1]?.length ?? 0;
+}
+function findMultipleNum(...args: (string | number)[]) {
+  const underPointLens = args.map((value) => getDecimalLength(value));
+  const underPointLen = arrayUtil.max(underPointLens);
 
-    return 10 ** underPointLen;
-  },
-  mod: (target: number, modNum: number) => {
-    const multipleNum = calculator.findMultipleNum(modNum);
+  return 10 ** underPointLen;
+}
+function mod(target: number, modNum: number) {
+  const multipleNum = findMultipleNum(modNum);
 
-    return multipleNum === 1
-      ? target % modNum
-      : ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
-  },
-  add: (a: number, b: number) => {
-    const multipleNum = calculator.findMultipleNum(a, b);
+  return multipleNum === 1
+    ? target % modNum
+    : ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
+}
+export function add(a: number, b: number) {
+  const multipleNum = findMultipleNum(a, b);
 
-    return (a * multipleNum + b * multipleNum) / multipleNum;
-  },
-  subtract: (a: number, b: number) => {
-    const multipleNum = calculator.findMultipleNum(a, b);
+  return (a * multipleNum + b * multipleNum) / multipleNum;
+}
+function subtract(a: number, b: number) {
+  const multipleNum = findMultipleNum(a, b);
 
-    return (a * multipleNum - b * multipleNum) / multipleNum;
-  },
-  multiply: (a: number, b: number) => {
-    const multipleNum = calculator.findMultipleNum(a, b);
+  return (a * multipleNum - b * multipleNum) / multipleNum;
+}
+export function multiply(a: number, b: number) {
+  const multipleNum = findMultipleNum(a, b);
 
-    return (a * multipleNum * (b * multipleNum)) / (multipleNum * multipleNum);
-  },
-  divide: (a: number, b: number) => {
-    const multipleNum = calculator.findMultipleNum(a, b);
+  return (a * multipleNum * (b * multipleNum)) / (multipleNum * multipleNum);
+}
+export function divide(a: number, b: number) {
+  const multipleNum = findMultipleNum(a, b);
 
-    return (a * multipleNum) / (b * multipleNum);
-  },
-  sum: (values: number[]) => {
-    const copyArr = values.slice();
-    copyArr.unshift(0);
+  return (a * multipleNum) / (b * multipleNum);
+}
+function sum(values: number[]) {
+  const copyArr = values.slice();
+  copyArr.unshift(0);
 
-    return copyArr.reduce((base, value) =>
-      calculator.add(parseFloat(String(base)), parseFloat(String(value)))
-    );
-  },
+  return copyArr.reduce((base, value) => add(parseFloat(String(base)), parseFloat(String(value))));
+}
 
-  divisors: (value: number) => {
-    const result: number[] = [];
-    for (let a = 2, b; a * a <= value; a += 1) {
-      if (value % a === 0) {
-        b = value / a;
-        result.push(a);
-        if (b !== a) {
-          result.push(b);
-        }
+function divisors(value: number) {
+  const result: number[] = [];
+  for (let a = 2, b; a * a <= value; a += 1) {
+    if (value % a === 0) {
+      b = value / a;
+      result.push(a);
+      if (b !== a) {
+        result.push(b);
       }
     }
+  }
 
-    return result.sort((prev, next) => prev - next);
-  },
-};
+  return result.sort((prev, next) => prev - next);
+}
 
 export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number, options?: Options) {
-  const multipleNum = calculator.findMultipleNum(stepSize);
+  const multipleNum = findMultipleNum(stepSize);
   const min = Math.round(limit.min * multipleNum);
   const max = Math.round(limit.max * multipleNum);
   const labels = range(min, max + 1, stepSize * multipleNum);

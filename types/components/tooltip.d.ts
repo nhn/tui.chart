@@ -1,11 +1,6 @@
-import { ObjectTypeDatetimePoint, Point } from '../options';
+import { BubblePoint, Point } from '../options';
 
-export type TooltipDataValue =
-  | string
-  | number
-  | ObjectTypeDatetimePoint
-  | Point
-  | ({ r: number } & (ObjectTypeDatetimePoint | Point));
+export type TooltipDataValue = string | number | BubblePoint | Point;
 
 export type TooltipData = {
   label: string;
