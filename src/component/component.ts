@@ -76,6 +76,8 @@ export default abstract class Component {
 
   isShow = true;
 
+  selectable!: boolean;
+
   store: Store<Options>;
 
   eventBus: EventEmitter;

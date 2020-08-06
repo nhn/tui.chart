@@ -163,6 +163,7 @@ const result = {
         y: 280,
       },
     ],
+    selectedSeries: [],
   },
 };
 

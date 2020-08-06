@@ -16,7 +16,7 @@ export default class ScatterSeries extends CircleSeries {
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
-    const { layout, series, scale, legend } = chartState;
+    const { layout, series, scale, legend, options } = chartState;
     if (!series.scatter) {
       throw new Error("There's no scatter data!");
     }
@@ -25,6 +25,7 @@ export default class ScatterSeries extends CircleSeries {
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.selectable = options?.series?.selectable ?? false;
 
     const seriesModel = this.renderScatterPointsModel(scatterData, scale);
     const tooltipModel = this.makeTooltipModel(scatterData);

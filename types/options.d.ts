@@ -173,7 +173,7 @@ interface CircleLegendOptions {
 }
 
 interface BaseSeriesOptions {
-  allowSelect?: boolean;
+  selectable?: boolean;
   dataLabels?: DataLabels;
 }
 
