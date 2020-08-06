@@ -1,7 +1,6 @@
 import { ValueEdge, ScaleData } from '@t/store/store';
 import { Scale } from '@t/options';
-import { isExist, isNumber, omit } from '@src/helpers/utils';
-import { calculator } from '@src/helpers/calculator';
+import { isNumber } from '@src/helpers/utils';
 
 const SNAP_VALUES = [1, 2, 5, 10];
 const DEFAULT_PIXELS_PER_STEP = 88;
@@ -204,4 +203,3 @@ export function getStackScaleData(type: stackScaleType): ScaleData {
 
   return { limit: { min: 0, max: 100 }, stepSize: 25, stepCount: 5 };
 }
-
