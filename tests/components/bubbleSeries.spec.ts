@@ -104,7 +104,7 @@ const result = {
       data: {
         category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
-        label: 'nameA',
+        label: 'nameA/A',
         value: { x: 10, y: 20, r: 100 },
       },
     },
@@ -120,7 +120,7 @@ const result = {
       data: {
         category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
-        label: 'nameA',
+        label: 'nameA/B',
         value: { x: 15, y: 20, r: 200 },
       },
     },
@@ -136,7 +136,7 @@ const result = {
       data: {
         category: undefined, // eslint-disable-line no-undefined
         color: '#bbbbbb',
-        label: 'nameB',
+        label: 'nameB/C',
         value: { x: 20, y: 10, r: 30 },
       },
     },
