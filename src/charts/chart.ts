@@ -40,18 +40,14 @@ export default abstract class Chart<T extends Options> {
   private getAnimationDuration(options: Options) {
     const { firstRendering } = this.animator;
     const animationOption = options.series?.animation;
-    let duration = DEFAULT_ANIM_DURATION;
+    let duration;
 
-    if (!firstRendering) {
-      return duration;
-    }
-
-    if (!isUndefined(animationOption)) {
-      if (isBoolean(animationOption)) {
-        duration = animationOption ? DEFAULT_ANIM_DURATION : 0;
-      } else if (isNumber(animationOption.duration)) {
-        duration = animationOption.duration;
-      }
+    if (!firstRendering || isUndefined(animationOption)) {
+      duration = DEFAULT_ANIM_DURATION;
+    } else if (isBoolean(animationOption)) {
+      duration = animationOption ? DEFAULT_ANIM_DURATION : 0;
+    } else if (isNumber(animationOption.duration)) {
+      duration = animationOption.duration;
     }
 
     return duration;
