@@ -8,11 +8,13 @@ import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce } from '@src/helpers/utils';
+import { debounce, isBoolean, isNumber, isUndefined } from '@src/helpers/utils';
 import { ChartProps } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
+
+export const DEFAULT_ANIM_DURATION = 1000;
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -34,6 +36,22 @@ export default abstract class Chart<T extends Options> {
   modules?: StoreModule[];
 
   enteredComponents: Component[] = [];
+
+  private getAnimationDuration(options: Options) {
+    const { firstRendering } = this.animator;
+    const animationOption = options.series?.animation;
+    let duration;
+
+    if (!firstRendering || isUndefined(animationOption)) {
+      duration = DEFAULT_ANIM_DURATION;
+    } else if (isBoolean(animationOption)) {
+      duration = animationOption ? DEFAULT_ANIM_DURATION : 0;
+    } else if (isNumber(animationOption.duration)) {
+      duration = animationOption.duration;
+    }
+
+    return duration;
+  }
 
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories } = props;
@@ -63,7 +81,7 @@ export default abstract class Chart<T extends Options> {
             this.eventBus.emit('loopComplete');
           },
           chart: this,
-          duration: 1000,
+          duration: this.getAnimationDuration(options),
           requester: this,
         });
       }, 10)
