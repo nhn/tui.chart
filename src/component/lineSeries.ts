@@ -25,7 +25,7 @@ interface RenderOptions {
 type DatumType = CoordinateDataType | number;
 
 export default class LineSeries extends Component {
-  models: LineSeriesModels = { rect: [], series: [], dot: [] };
+  models: LineSeriesModels = { rect: [], series: [], dot: [], selectedSeries: [] };
 
   drawModels!: LineSeriesModels;
 
@@ -73,6 +73,7 @@ export default class LineSeries extends Component {
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
+    this.selectable = this.getSelectableOption(options);
 
     const lineSeriesModel = this.renderLinePointsModel(
       lineSeriesData,
@@ -104,6 +105,7 @@ export default class LineSeries extends Component {
       rect: [this.renderClipRectAreaModel()],
       series: lineSeriesModel,
       dot: dotSeriesModel,
+      selectedSeries: [],
     };
 
     if (!this.drawModels) {
@@ -111,6 +113,7 @@ export default class LineSeries extends Component {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(lineSeriesModel),
         dot: deepCopyArray(dotSeriesModel),
+        selectedSeries: [],
       };
     }
 
@@ -215,5 +218,12 @@ export default class LineSeries extends Component {
     return seriesModels.flatMap(({ points }) =>
       points.map((point) => ({ type: 'point', ...point }))
     );
+  }
+
+  onClick({ responders }) {
+    if (this.selectable) {
+      this.drawModels.selectedSeries = responders;
+      this.eventBus.emit('needDraw');
+    }
   }
 }

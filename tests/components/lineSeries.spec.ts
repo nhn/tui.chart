@@ -135,6 +135,7 @@ describe('basic', () => {
         },
       ],
       dot: [],
+      selectedSeries: [],
     },
     drawModels: {
       rect: [{ height: 80, type: 'clipRectArea', width: 0, x: 0, y: 0 }],
@@ -164,6 +165,7 @@ describe('basic', () => {
           type: 'linePoints',
         },
       ],
+      selectedSeries: [],
     },
   };
 
@@ -264,6 +266,7 @@ describe('zoom', () => {
         },
       ],
       dot: [],
+      selectedSeries: [],
     },
   };
 
@@ -441,6 +444,7 @@ describe('with show dot options', () => {
           y: 0,
         },
       ],
+      selectedSeries: [],
     },
   };
 

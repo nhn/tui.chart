@@ -25,7 +25,7 @@ export default class ScatterSeries extends CircleSeries {
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
-    this.selectable = options?.series?.selectable ?? false;
+    this.selectable = this.getSelectableOption(options);
 
     const seriesModel = this.renderScatterPointsModel(scatterData, scale);
     const tooltipModel = this.makeTooltipModel(scatterData);

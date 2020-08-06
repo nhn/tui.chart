@@ -131,3 +131,14 @@ export const zoomable = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    xAxis: { title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    series: { selectable: true },
+  });
+
+  return el;
+};

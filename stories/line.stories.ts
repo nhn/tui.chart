@@ -248,3 +248,13 @@ export const animationDuration = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(temperatureData, {
+    series: {
+      selectable: true,
+    },
+  });
+
+  return el;
+};
