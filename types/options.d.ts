@@ -1,18 +1,20 @@
 import { RawSeries } from '@t/store/store';
-
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
-export type CoordinateDataType = Point | [number, number] | [string, number];
 export type AreaSeriesDataType = number | RangeDataType;
-export type BubbleSeriesDataType = { label: string } & BubblePoint;
-export type BubblePoint = Point & { r: number };
 export type Align = 'top' | 'bottom' | 'right' | 'left';
-
 export interface Point {
   x: number;
   y: number;
 }
+
+export type CoordinateDataType = [number, number] | Point | DatetimePoint;
+type ObjectTypeDatetimePoint = { x: Date; y: number } | { x: string; y: number };
+type TupleTypeDatetimePoint = [string, number] | [Date, number];
+export type DatetimePoint = ObjectTypeDatetimePoint | TupleTypeDatetimePoint;
+export type BubblePoint = (Point | ObjectTypeDatetimePoint) & { r: number };
+export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
 export type BezierPoint = {
   controlPoint?: {
@@ -121,8 +123,12 @@ interface LineTypeXAxisOptions extends BaseXAxisOptions {
 }
 
 interface BaseXAxisOptions extends BaseAxisOptions {
-  // @TODO: 추가 필요
   rotateLabel?: boolean;
+  date?:
+    | boolean
+    | {
+        format: string;
+      };
 }
 
 interface BarTypeYAxisOptions extends BaseAxisOptions {

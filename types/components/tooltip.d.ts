@@ -1,6 +1,6 @@
-import { Point } from '../options';
+import { BubblePoint, Point } from '../options';
 
-export type TooltipDataValue = string | number | Point | ({ r: number } & Point);
+export type TooltipDataValue = string | number | BubblePoint | Point;
 
 export type TooltipData = {
   label: string;

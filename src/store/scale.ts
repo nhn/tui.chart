@@ -1,9 +1,11 @@
 import { extend } from '@src/store/store';
 import { StoreModule, Scale } from '@t/store/store';
 import { getAxisName, getSizeKey, isLabelAxisOnYAxis } from '@src/helpers/axes';
-import { coordinateScaleCalculator, getStackScaleData } from '@src/scale/coordinateScaleCalculator';
+import { calculateCoordinateScale, getStackScaleData } from '@src/scale/coordinateScaleCalculator';
+import { calculateDatetimeScale } from '@src/scale/datetimeScaleCalculator';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
 import { hasPercentStackSeries } from './stackSeriesData';
+import { isExist } from '@src/helpers/utils';
 
 const scale: StoreModule = {
   name: 'scale',
@@ -28,21 +30,26 @@ const scale: StoreModule = {
         if (hasPercentStackSeries(stackSeries)) {
           scaleData[valueAxisName] = getStackScaleData(stackSeries[seriesName].scaleType);
         } else if (isCoordinateSeries(series)) {
+          const dateTypeLabel = isExist(options.xAxis?.date);
           const range = dataRange[seriesName];
-
-          scaleData[valueAxisName] = coordinateScaleCalculator({
-            dataRange: range[valueAxisName],
-            offsetSize: layout.plot[valueSizeKey],
-            scaleOption: scaleOptions[valueAxisName],
-          });
-
-          scaleData[labelAxisName] = coordinateScaleCalculator({
+          const labelOptions = {
             dataRange: range[labelAxisName],
             offsetSize: layout.plot[labelSizeKey],
             scaleOption: scaleOptions[labelAxisName],
-          });
+            rawCategoriesSize: state.rawCategories.length,
+          };
+          const valueOptions = {
+            dataRange: range[valueAxisName],
+            offsetSize: layout.plot[valueSizeKey],
+            scaleOption: scaleOptions[valueAxisName],
+          };
+
+          scaleData[valueAxisName] = calculateCoordinateScale(valueOptions);
+          scaleData[labelAxisName] = dateTypeLabel
+            ? calculateDatetimeScale(labelOptions)
+            : calculateCoordinateScale(labelOptions);
         } else {
-          scaleData[valueAxisName] = coordinateScaleCalculator({
+          scaleData[valueAxisName] = calculateCoordinateScale({
             dataRange: dataRange[seriesName][valueAxisName],
             offsetSize: layout.plot[valueSizeKey],
             scaleOption: scaleOptions[valueAxisName],

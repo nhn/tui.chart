@@ -53,6 +53,45 @@ export const temperatureData = {
   ],
 };
 
+export const temperatureDataWithDateObject = {
+  categories: [
+    new Date('01/01/2020'),
+    new Date('02/01/2020'),
+    new Date('03/01/2020'),
+    new Date('04/01/2020'),
+    new Date('05/01/2020'),
+    new Date('06/01/2020'),
+    new Date('07/01/2020'),
+    new Date('08/01/2020'),
+    new Date('09/01/2020'),
+    new Date('10/01/2020'),
+    new Date('11/01/2020'),
+    new Date('12/01/2020'),
+  ],
+  series: [
+    {
+      name: 'Seoul',
+      data: [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6],
+    },
+    {
+      name: 'Seattle',
+      data: [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5, 17.8, 15.0, 10.6, 6.4, 3.7],
+    },
+    {
+      name: 'Sydney',
+      data: [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2],
+    },
+    {
+      name: 'Moskva',
+      data: [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
+    },
+    {
+      name: 'Jungfrau',
+      data: [-13.2, -13.7, -13.1, -10.3, -6.1, -3.2, 0.0, -0.1, -1.8, -4.5, -9.0, -10.9],
+    },
+  ],
+};
+
 export const temperatureData2 = {
   categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
   series: [
@@ -930,6 +969,46 @@ export const genderHeightWeightData = {
   ],
 };
 
+export const currentUserCoordinateDatetimeData = {
+  series: [
+    {
+      name: 'User1',
+      data: [
+        { x: new Date('08/22/2020 10:00:00'), y: 202 },
+        { x: new Date('08/22/2020 10:05:00'), y: 212 },
+        { x: new Date('08/22/2020 10:10:00'), y: 222 },
+        { x: new Date('08/22/2020 10:15:00'), y: 351 },
+        { x: new Date('08/22/2020 10:20:00'), y: 412 },
+        { x: new Date('08/22/2020 10:25:00'), y: 420 },
+        { x: new Date('08/22/2020 10:30:00'), y: 300 },
+        { x: new Date('08/22/2020 10:35:00'), y: 213 },
+        { x: new Date('08/22/2020 10:40:00'), y: 230 },
+        { x: new Date('08/22/2020 10:20:00'), y: 450 },
+        { x: new Date('08/22/2020 10:25:00'), y: 422 },
+        { x: new Date('08/22/2020 10:30:00'), y: 113 },
+        { x: new Date('08/22/2020 10:35:00'), y: 243 },
+        { x: new Date('08/22/2020 10:40:00'), y: 330 },
+        { x: new Date('08/22/2020 10:45:00'), y: 520 },
+        { x: new Date('08/22/2020 10:50:00'), y: 234 },
+        { x: new Date('08/22/2020 10:55:00'), y: 210 },
+        { x: new Date('08/22/2020 11:00:00'), y: 220 },
+      ],
+    },
+    {
+      name: 'User2',
+      data: [
+        { x: '08/22/2020 10:00:00', y: 312 },
+        { x: '08/22/2020 10:10:00', y: 320 },
+        { x: '08/22/2020 10:20:00', y: 295 },
+        { x: '08/22/2020 10:30:00', y: 300 },
+        { x: '08/22/2020 10:40:00', y: 320 },
+        { x: '08/22/2020 10:50:00', y: 190 },
+        { x: '08/22/2020 11:00:00', y: 156 },
+      ],
+    },
+  ],
+};
+
 export const lifeExpectancyPerGDPData = {
   series: [
     {
@@ -1035,6 +1114,35 @@ export const lifeExpectancyPerGDPData = {
         { x: 14500, y: 78.75, r: 108775, label: 'Virgin Islands' },
         { x: 23200, y: 78.49, r: 1993817, label: 'New Zealand' },
         { x: 30700, y: 80.26, r: 5991314, label: 'Australia' },
+      ],
+    },
+  ],
+};
+
+export const lifeExpectancyPerGDPDataWithDatetime = {
+  series: [
+    {
+      name: 'Africa',
+      data: [
+        { x: '08/22/2020 11:30:00', y: 70.35, r: 32209101, label: 'Morocco' },
+        { x: '08/22/2020 11:30:00', y: 70.71, r: 76117421, label: 'Egypt' },
+        { x: '08/22/2020 11:10:00', y: 56.46, r: 1355246, label: 'Gabon' },
+        { x: '08/22/2020 11:20:00', y: 76.28, r: 5631585, label: 'Libya' },
+        { x: '08/22/2020 11:30:00', y: 74.66, r: 9974722, label: 'Tunisia' },
+      ],
+    },
+    {
+      name: 'America',
+      data: [
+        { x: '08/22/2020 11:00:00', y: 74.64, r: 6191368, label: 'Paraguay' },
+        { x: '08/22/2020 11:05:00', y: 70.92, r: 6587541, label: 'El Salvador' },
+        { x: '08/22/2020 11:40:00', y: 69.22, r: 2754430, label: 'Peru' },
+        { x: '08/22/2020 11:15:00', y: 74.06, r: 2501738, label: 'Venezuela' },
+        { x: '08/22/2020 11:20:00', y: 67.63, r: 8833634, label: 'Dominican Republic' },
+        { x: '08/22/2020 11:25:00', y: 67.43, r: 272945, label: 'Belize' },
+        { x: '08/22/2020 11:10:00', y: 71.43, r: 4231077, label: 'Colombia' },
+        { x: '08/22/2020 11:10:00', y: 71.41, r: 78410118, label: 'Brazil' },
+        { x: '08/22/2020 11:15:00', y: 77.43, r: 89302754, label: 'United States' },
       ],
     },
   ],

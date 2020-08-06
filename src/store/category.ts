@@ -1,25 +1,29 @@
 import { StoreModule, RawSeries } from '@t/store/store';
-
-import { sortCategories } from '@src/helpers/utils';
+import { isNumber, sortCategories } from '@src/helpers/utils';
+import { getCoordinateXValue } from '@src/helpers/coordinate';
 
 export function makeRawCategories(series: RawSeries, categories?: string[]) {
   if (categories) {
     return categories;
   }
 
-  const firstValues: Set<string> = new Set();
+  const firstValues: Set<string | number> = new Set();
 
   Object.keys(series).forEach((key) => {
     series[key].forEach(({ data }) => {
       if (Array.isArray(data)) {
         data.forEach((datum) => {
-          firstValues.add(Array.isArray(datum) ? String(datum[0]) : String(datum.x));
+          const rawXValue = getCoordinateXValue(datum);
+
+          firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
         });
       }
     });
   });
 
-  return Array.from(firstValues).sort(sortCategories);
+  return Array.from(firstValues)
+    .sort(sortCategories)
+    .map((category) => String(category));
 }
 
 const category: StoreModule = {

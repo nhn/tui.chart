@@ -3,7 +3,6 @@ import { Scale } from '@t/options';
 import { isNumber } from '@src/helpers/utils';
 
 const SNAP_VALUES = [1, 2, 5, 10];
-
 const DEFAULT_PIXELS_PER_STEP = 88;
 
 interface Overflowed {
@@ -137,7 +136,11 @@ function getNormalizedScale(
   };
 }
 
-function getRoughScale(scale: Required<Scale>, offsetSize: number): ScaleData {
+function getRoughScale(
+  scale: Required<Scale>,
+  offsetSize: number,
+  minStepSize?: number
+): ScaleData {
   const { min, max } = scale;
   const limitSize = Math.abs(max - min);
   const valuePerPixel = limitSize / offsetSize;
@@ -150,28 +153,32 @@ function getRoughScale(scale: Required<Scale>, offsetSize: number): ScaleData {
   if (hasStepSize(scale.stepSize)) {
     stepSize = scale.stepSize;
     stepCount = limitSize / stepSize;
+  } else if (isNumber(minStepSize) && stepSize < minStepSize) {
+    stepSize = minStepSize;
+    stepCount = limitSize / stepSize;
   }
 
   return { limit: { min, max }, stepSize, stepCount };
 }
 
-function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Required<Scale> {
+export function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Required<Scale> {
   return {
-    max: isNumber(scaleOptions?.max) ? scaleOptions!.max : dataRange.max,
-    min: isNumber(scaleOptions?.min) ? scaleOptions!.min : dataRange.min,
-    stepSize: isNumber(scaleOptions?.stepSize) ? scaleOptions!.stepSize : 'auto',
+    max: scaleOptions?.max ?? dataRange.max,
+    min: scaleOptions?.min ?? dataRange.min,
+    stepSize: scaleOptions?.stepSize ?? 'auto',
   };
 }
 
-export function coordinateScaleCalculator(options: {
+export function calculateCoordinateScale(options: {
   dataRange: ValueEdge;
   offsetSize: number;
   scaleOption?: Scale;
   showLabel?: boolean;
+  minStepSize?: number;
 }): ScaleData {
-  const { dataRange, scaleOption, offsetSize, showLabel } = options;
+  const { dataRange, scaleOption, offsetSize, showLabel, minStepSize } = options;
   const scale = makeScaleOption(dataRange, scaleOption);
-  const roughScale = getRoughScale(scale, offsetSize);
+  const roughScale = getRoughScale(scale, offsetSize, minStepSize);
   const normalizedScale = getNormalizedScale(roughScale, scale, showLabel);
   const overflowed = isSeriesOverflowed(normalizedScale, scale);
 

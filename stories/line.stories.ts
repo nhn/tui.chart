@@ -7,6 +7,7 @@ import {
   coordinateData,
   randomData,
   temperatureData2,
+  datetimeCoordinateData,
 } from './data';
 import { boolean, number, withKnobs } from '@storybook/addon-knobs';
 
@@ -51,6 +52,19 @@ export const basic = () => {
   return el;
 };
 
+export const basicWithDateOptions = () => {
+  const { el } = createChart(temperatureData, {
+    xAxis: {
+      pointOnColumn: true,
+      date: {
+        format: 'YY-MM-DD',
+      },
+    },
+  });
+
+  return el;
+};
+
 export const basicWithShowDot = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: true },
@@ -88,14 +102,20 @@ export const tupleCoordinate = () => {
   return el;
 };
 
-// @TODO: date 데이터 처리 이후 활성 필요
-// export const coordinateDatetime = () => {
-//   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
-//     xAxis: { pointOnColumn: true, type: 'datetime' }
-//   });
-//
-//   return el;
-// };
+export const datetimeCoordinate = () => {
+  const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
+    chart: { title: 'Concurrent user' },
+    xAxis: {
+      title: 'minute',
+      pointOnColumn: false,
+      date: { format: 'hh:mm:ss' },
+    },
+    yAxis: { title: 'users' },
+    series: { zoomable: true },
+  });
+
+  return el;
+};
 
 export const tickInterval = () => {
   const options = {

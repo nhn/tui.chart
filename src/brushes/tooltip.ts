@@ -3,7 +3,7 @@ import { label as labelBrush } from '@src/brushes/label';
 import { LabelStyle } from '@src/brushes/label';
 import { TooltipData, TooltipDataValue, TooltipModel } from '@t/components/tooltip';
 import { LabelModel } from '@t/components/axis';
-import { BubblePoint, Point } from '@t/options';
+import { BubblePoint, ObjectTypeDatetimePoint, Point } from '@t/options';
 import { deepMergedCopy, isObject } from '@src/helpers/utils';
 import { getTextWidth } from '@src/helpers/calculator';
 
@@ -29,7 +29,7 @@ type DataItemAreaInfo = {
   y: number;
 } & Pick<TooltipData, 'label' | 'value' | 'color'>;
 
-function isBubblePointType(value: Point | BubblePoint): value is BubblePoint {
+function isBubblePointType(value: ObjectTypeDatetimePoint | Point): value is BubblePoint {
   return value.hasOwnProperty('r');
 }
 

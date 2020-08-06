@@ -1,6 +1,6 @@
 import { ScatterChartOptions, ScatterSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { genderHeightWeightData } from './data';
+import { currentUserCoordinateDatetimeData, genderHeightWeightData } from './data';
 import ScatterChart from '@src/charts/scatterChart';
 
 export default {
@@ -35,8 +35,16 @@ function createChart(data: ScatterSeriesData, customOptions?: ScatterChartOption
   return { el, chart };
 }
 
-export const scatter = () => {
+export const basic = () => {
   const { el } = createChart(genderHeightWeightData);
+
+  return el;
+};
+
+export const datetime = () => {
+  const { el } = createChart(currentUserCoordinateDatetimeData, {
+    xAxis: { date: { format: 'HH:mm:ss' } },
+  });
 
   return el;
 };
