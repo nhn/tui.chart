@@ -210,3 +210,21 @@ export const coordinateZoomable = () => {
 
   return el;
 };
+
+export const animationDuration = () => {
+  const { el } = createChart(temperatureData, {
+    series: {
+      animation: {
+        duration: number('duration', 700, {
+          range: true,
+          min: 0,
+          max: 3000,
+          step: 100,
+        }),
+      },
+      zoomable: true,
+    },
+  });
+
+  return el;
+};

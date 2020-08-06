@@ -1,5 +1,6 @@
 import Chart from './charts/chart';
 import { Options } from '@t/store/store';
+import { isNull } from '@src/helpers/utils';
 
 type Anim = {
   chart: Chart<Options>;
@@ -94,7 +95,7 @@ export default class Animator {
 
   next(timestamp: number) {
     this.anims.forEach((anim) => {
-      if (anim.start === null) {
+      if (isNull(anim.start)) {
         anim.start = timestamp;
       }
 
@@ -105,13 +106,9 @@ export default class Animator {
         configurable: true,
       });
 
-      anim.current = Math.min((timestamp - anim.start) / anim.duration, 1);
-
+      anim.current = anim.duration ? Math.min((timestamp - anim.start) / anim.duration, 1) : 1;
       anim.onFrame(anim.current);
-
-      if (anim.current >= 1) {
-        anim.completed = true;
-      }
+      anim.completed = anim.current === 1;
     });
 
     this.anims.forEach((anim) => {

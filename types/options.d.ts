@@ -169,6 +169,7 @@ interface CircleLegendOptions {
 interface BaseSeriesOptions {
   allowSelect?: boolean;
   dataLabels?: DataLabels;
+  animation?: boolean | { duration: number };
 }
 
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
