@@ -258,3 +258,18 @@ export const selectable = () => {
 
   return el;
 };
+
+export const lineWidth = () => {
+  const { el } = createChart(temperatureData, {
+    series: {
+      lineWidth: number('line width', 3, {
+        range: true,
+        min: 1,
+        max: 10,
+        step: 1,
+      }),
+    },
+  });
+
+  return el;
+};
