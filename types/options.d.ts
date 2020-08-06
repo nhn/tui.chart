@@ -235,9 +235,14 @@ export interface ColumnChartOptions extends BaseOptions {
 }
 
 interface PieSeriesOptions extends BaseSeriesOptions {
-  radiusRange?: [number, number];
-  startAngle?: number;
-  endAngle?: number;
+  radiusRange?: {
+    inner?: number | string;
+    outer?: number | string;
+  };
+  angleRange?: {
+    start?: number;
+    end?: number;
+  };
   clockwise?: boolean;
 }
 

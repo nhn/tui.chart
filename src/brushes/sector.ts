@@ -28,20 +28,18 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
   const {
     x,
     y,
-    innerRadius,
-    radius,
-    startDegree,
-    endDegree,
+    radius: { inner, outer },
+    degree: { start, end },
     color,
     style,
     clockwise,
-    rangeStartAngle,
+    drawingStartAngle,
   } = sectorModel;
-  const startRadian = calculateDegreeToRadian(startDegree, rangeStartAngle);
-  const endRadian = calculateDegreeToRadian(endDegree, rangeStartAngle);
-  const { x: innerStartPosX, y: innerStartPosY } = getRadialPosition(x, y, radius, startRadian);
-  const startX = innerRadius ? innerStartPosX : x;
-  const startY = innerRadius ? innerStartPosY : y;
+  const startRadian = calculateDegreeToRadian(start, drawingStartAngle);
+  const endRadian = calculateDegreeToRadian(end, drawingStartAngle);
+  const { x: innerStartPosX, y: innerStartPosY } = getRadialPosition(x, y, outer, startRadian);
+  const startX = inner ? innerStartPosX : x;
+  const startY = inner ? innerStartPosY : y;
 
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -55,10 +53,10 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
   }
 
   ctx.moveTo(startX, startY);
-  ctx.arc(x, y, radius, startRadian, endRadian, !clockwise);
+  ctx.arc(x, y, outer, startRadian, endRadian, !clockwise);
 
-  if (innerRadius) {
-    ctx.arc(x, y, innerRadius, endRadian, startRadian, clockwise);
+  if (inner) {
+    ctx.arc(x, y, inner, endRadian, startRadian, clockwise);
   }
 
   ctx.closePath();

@@ -454,7 +454,10 @@ function makePieSeriesNameLabelInfo(
   const position = getRadialAnchorPosition(
     makeAnchorPositionParam(hasOuterAnchor ? 'end' : 'center', {
       ...model,
-      radius: hasOuterAnchor ? model.radius + 25 : model.radius,
+      radius: {
+        ...model.radius,
+        outer: hasOuterAnchor ? model.radius.outer + 25 : model.radius.outer,
+      },
     })
   );
 

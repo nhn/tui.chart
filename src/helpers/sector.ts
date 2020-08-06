@@ -7,50 +7,52 @@ type RadialPositionParam = {
   anchor: RadialAnchor;
   x: number;
   y: number;
-  innerRadius: number;
-  radius: number;
-  startDegree: number;
-  endDegree: number;
-  rangeStartAngle: number;
+  radius: {
+    inner: number;
+    outer: number;
+  };
+  degree: {
+    start: number;
+    end: number;
+  };
+  drawingStartAngle: number;
 };
 
 export function makeAnchorPositionParam(anchor: RadialAnchor, model: SectorModel) {
   return {
     anchor,
-    ...pick(
-      model,
-      'x',
-      'y',
-      'radius',
-      'innerRadius',
-      'startDegree',
-      'endDegree',
-      'rangeStartAngle'
-    ),
+    ...pick(model, 'x', 'y', 'radius', 'degree', 'drawingStartAngle'),
   };
 }
 
-export function calculateDegreeToRadian(degree: number, rangeStartAngle = -90) {
+export function calculateDegreeToRadian(degree: number, drawingStartAngle = -90) {
   let result = 0;
 
   if (degree % 360 === 0) {
-    result = (Math.PI / 180) * rangeStartAngle;
+    result = (Math.PI / 180) * drawingStartAngle;
   } else if (degree >= 0 && degree < 360) {
-    result = (Math.PI / 180) * (degree + rangeStartAngle);
+    result = (Math.PI / 180) * (degree + drawingStartAngle);
   }
 
   return result;
 }
 
-export function calculateRadianToDegree(radian: number, rangeStartAngle = -90) {
-  return ((radian * 180) / Math.PI - rangeStartAngle + 360) % 360;
+export function calculateRadianToDegree(radian: number, drawingStartAngle = -90) {
+  return ((radian * 180) / Math.PI - drawingStartAngle + 360) % 360;
 }
 
 export function getRadialAnchorPosition(param: RadialPositionParam): Point {
-  const { anchor, x, y, innerRadius, radius, startDegree, endDegree, rangeStartAngle } = param;
-  const degree = startDegree + (endDegree - startDegree) / 2;
-  const radian = calculateDegreeToRadian(degree, rangeStartAngle);
-  const r = anchor === 'center' ? (radius - innerRadius) / 2 + innerRadius : radius;
+  const {
+    anchor,
+    x,
+    y,
+    radius: { inner, outer },
+    degree: { start, end },
+    drawingStartAngle,
+  } = param;
+  const degree = start + (end - start) / 2;
+  const radian = calculateDegreeToRadian(degree, drawingStartAngle);
+  const r = anchor === 'center' ? (outer - inner) / 2 + inner : outer;
 
   return getRadialPosition(x, y, r, radian);
 }

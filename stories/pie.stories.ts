@@ -108,7 +108,10 @@ export const antiClockwise = () => {
 export const donut = () => {
   const { el } = createChart(browserUsageData, {
     series: {
-      radiusRange: [40, 100],
+      radiusRange: {
+        inner: '40%',
+        outer: '100%',
+      },
     },
   });
 
@@ -118,7 +121,10 @@ export const donut = () => {
 export const donutWithDataLabels = () => {
   const { el } = createChart(browserUsageData, {
     series: {
-      radiusRange: [40, 100],
+      radiusRange: {
+        inner: '40%',
+        outer: '100%',
+      },
       dataLabels: {
         visible: true,
         style: {
@@ -134,7 +140,10 @@ export const donutWithDataLabels = () => {
 export const donutWithCenterSeriesName = () => {
   const { el } = createChart(browserUsageData, {
     series: {
-      radiusRange: [40, 100],
+      radiusRange: {
+        inner: '40%',
+        outer: '100%',
+      },
       dataLabels: {
         visible: true,
         style: {
@@ -159,7 +168,10 @@ export const donutWithCenterSeriesName = () => {
 export const donutWithOuterSeriesName = () => {
   const { el } = createChart(browserUsageData, {
     series: {
-      radiusRange: [40, 100],
+      radiusRange: {
+        inner: '40%',
+        outer: '100%',
+      },
       dataLabels: {
         visible: true,
         style: {
@@ -187,9 +199,14 @@ export const semicircle = () => {
       title: 'Usage share of web browsers',
     },
     series: {
-      radiusRange: [40, 100],
-      startAngle: -90,
-      endAngle: 90,
+      radiusRange: {
+        inner: '40%',
+        outer: '100%',
+      },
+      angleRange: {
+        start: -90,
+        end: 90,
+      },
       dataLabels: {
         visible: true,
         style: {

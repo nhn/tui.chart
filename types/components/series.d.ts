@@ -117,15 +117,19 @@ export type PieSeriesModels = {
 export type SectorModel = {
   type: 'sector';
   color: string;
-  startDegree: number;
-  endDegree: number;
-  radius: number;
-  innerRadius: number;
+  degree: {
+    start: number;
+    end: number;
+  };
+  radius: {
+    inner: number;
+    outer: number;
+  };
   name?: string;
   value?: number;
   style?: StyleProp<SectorStyle, SectorStyleName>;
   clockwise: boolean;
-  rangeStartAngle: number;
+  drawingStartAngle: number;
 } & Point;
 
 export type SectorResponderModel = {
