@@ -6,7 +6,9 @@ import { includes } from '@src/helpers/utils';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
 
 function getOptionStyle(type: DataLabelType, options: DataLabelOptions): DataLabelStyle {
-  return includes(['pieSeriesName', 'stackTotal'], type) ? options[type].style : options.style;
+  return includes(['pieSeriesName', 'stackTotal'], type) && options[type]
+    ? options[type].style
+    : options.style;
 }
 
 export default class DataLabels extends Component {
