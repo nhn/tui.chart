@@ -146,7 +146,7 @@ describe('basic', () => {
     expect(pieSeries.responders).toEqual(responderResult);
   });
 
-  it('should be drawn anticlockwise, if clockwise is a false', () => {
+  it('should be drawn counterclockwise, if clockwise is a false', () => {
     pieSeries.render(
       deepMergedCopy(chartState, {
         options: {

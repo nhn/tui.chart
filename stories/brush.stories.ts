@@ -307,7 +307,7 @@ export const sectorBrush = () => {
   sector(ctx, {
     type: 'sector',
     x: 100,
-    y: 100,
+    y: 150,
     radius: { inner: 0, outer: 50 },
     degree: { start: 0, end: 90 },
     color: '#ff8787',
@@ -317,8 +317,8 @@ export const sectorBrush = () => {
 
   sector(ctx, {
     type: 'sector',
-    x: 200,
-    y: 100,
+    x: 350,
+    y: 150,
     radius: { inner: 50, outer: 100 },
     degree: { start: 90, end: 180 },
     color: '#00bcd4',

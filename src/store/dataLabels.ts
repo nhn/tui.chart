@@ -1,6 +1,6 @@
 import { StoreModule } from '@t/store/store';
 import { pickStackOption } from '@src/store/stackSeriesData';
-import { isFunction, includes, isBoolean, pick, isNumber } from '@src/helpers/utils';
+import { isFunction, includes, isBoolean, isNumber } from '@src/helpers/utils';
 import { DataLabels, DataLabelAnchor, SeriesDataType } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
@@ -8,6 +8,8 @@ import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
 
 import { labelStyle } from '@src/brushes/label';
+
+const RADIUS_PADDING = 25;
 
 type LabelPosition = {
   x: number;
@@ -456,7 +458,7 @@ function makePieSeriesNameLabelInfo(
       ...model,
       radius: {
         ...model.radius,
-        outer: hasOuterAnchor ? model.radius.outer + 25 : model.radius.outer,
+        outer: hasOuterAnchor ? model.radius.outer + RADIUS_PADDING : model.radius.outer,
       },
     })
   );

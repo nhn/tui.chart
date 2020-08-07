@@ -2,9 +2,11 @@ import PieChart from '@src/charts/pieChart';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { PieSeriesData, PieChartOptions } from '@t/options';
 import { browserUsageData } from './data';
+import { withKnobs, number } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Pie',
+  decorators: [withKnobs],
 };
 
 function createChart(data: PieSeriesData, customOptions?: PieChartOptions) {
@@ -85,7 +87,7 @@ export const withOuterSeriesName = () => {
   return el;
 };
 
-export const antiClockwise = () => {
+export const counterClockwise = () => {
   const { el } = createChart(browserUsageData, {
     series: {
       clockwise: false,
@@ -98,6 +100,36 @@ export const antiClockwise = () => {
           visible: true,
           anchor: 'outer',
         },
+      },
+    },
+    legend: {
+      visible: true,
+    },
+  });
+
+  return el;
+};
+
+export const useRadiusRangeWithPixel = () => {
+  const inner = number('radiusRange.inner', 50, {
+    range: true,
+    min: 0,
+    max: 180,
+    step: 10,
+  });
+
+  const outer = number('radiusRange.outer', 150, {
+    range: true,
+    min: 100,
+    max: 200,
+    step: 50,
+  });
+
+  const { el } = createChart(browserUsageData, {
+    series: {
+      radiusRange: {
+        inner,
+        outer,
       },
     },
   });

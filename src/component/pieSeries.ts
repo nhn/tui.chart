@@ -10,7 +10,13 @@ import {
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
-import { isString } from '@src/helpers/utils';
+import { isString, getPercentageValue } from '@src/helpers/utils';
+
+const DEFAULT_RADIUS_RATIO = 0.9;
+const semiCircleCenterYRatio = {
+  COUNTER_CLOCKWISE: 0.1,
+  CLOCKWISE: 0.9,
+};
 
 type RenderOptions = {
   clockwise: boolean;
@@ -28,18 +34,14 @@ function hasClockwiseSemiCircle(clockwise: boolean, startAngle: number, endAngle
   );
 }
 
-function hasAntiClockwiseSemiCircle(clockwise: boolean, startAngle: number, endAngle: number) {
+function hasCounterClockwiseSemiCircle(clockwise: boolean, startAngle: number, endAngle: number) {
   return (
     !clockwise && ((startAngle >= -180 && endAngle <= 90) || (startAngle <= 90 && endAngle >= -90))
   );
 }
 
-function getPercentage(input: string): number {
-  return Number(input.substr(0, input.length - 1));
-}
-
 function getRadius(defaultRadius: number, radius: string | number): number {
-  return isString(radius) ? (defaultRadius * getPercentage(radius)) / 100 : radius;
+  return isString(radius) ? (defaultRadius * getPercentageValue(radius)) / 100 : radius;
 }
 
 export default class PieSeries extends Component {
@@ -59,26 +61,31 @@ export default class PieSeries extends Component {
     }
 
     let currentDegree: number;
-
     const index = this.models.series.findIndex(({ clockwise, degree: { start, end } }) => {
       currentDegree = clockwise ? this.totalAngle * delta : 360 - this.totalAngle * delta;
 
       return withinRadian(clockwise, start, end, currentDegree);
     });
 
-    if (index < 0) {
+    this.syncEndAngle(index < 0 ? this.models.series.length : index);
+
+    if (~index) {
+      this.drawModels.series[index].degree.end = currentDegree!;
+    }
+  }
+
+  syncEndAngle(index: number) {
+    if (index < 1) {
       return;
     }
 
-    if (index) {
-      const prevTargetEndDegree = this.models.series[index - 1].degree.end;
+    for (let i = 0; i < index; i += 1) {
+      const prevTargetEndDegree = this.models.series[i].degree.end;
 
-      if (this.drawModels.series[index - 1].degree.end !== prevTargetEndDegree) {
-        this.drawModels.series[index - 1].degree.end = prevTargetEndDegree;
+      if (this.drawModels.series[i].degree.end !== prevTargetEndDegree) {
+        this.drawModels.series[i].degree.end = prevTargetEndDegree;
       }
     }
-
-    this.drawModels.series[index].degree.end = currentDegree!;
   }
 
   initialize() {
@@ -244,22 +251,27 @@ export default class PieSeries extends Component {
   getDefaultRadius(isSemiCircular = false) {
     const { width, height } = this.rect;
 
-    return (isSemiCircular ? this.getSemiCicleRadius() : Math.min(width, height) / 2) * 0.9;
+    return (
+      (isSemiCircular ? this.getSemiCircleRadius() : Math.min(width, height) / 2) *
+      DEFAULT_RADIUS_RATIO
+    );
   }
 
   isSemiCircle(clockwise: boolean, startAngle: number, endAngle: number) {
     return (
       this.getTotalAngle(clockwise, startAngle, endAngle) <= 180 &&
       (hasClockwiseSemiCircle(clockwise, startAngle, endAngle) ||
-        hasAntiClockwiseSemiCircle(clockwise, startAngle, endAngle))
+        hasCounterClockwiseSemiCircle(clockwise, startAngle, endAngle))
     );
   }
 
-  getSemiCicleRadius() {
-    return this.rect.height * 0.9;
+  getSemiCircleRadius() {
+    return this.rect.height * DEFAULT_RADIUS_RATIO;
   }
 
   getSemiCircleCenterY(clockwise: boolean) {
-    return clockwise ? this.rect.height * 0.9 : this.rect.height * 0.1;
+    return clockwise
+      ? this.rect.height * semiCircleCenterYRatio.CLOCKWISE
+      : this.rect.height * semiCircleCenterYRatio.COUNTER_CLOCKWISE;
   }
 }
