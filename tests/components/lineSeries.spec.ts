@@ -2,6 +2,7 @@ import { LineChartOptions } from '@t/options';
 import LineSeries from '@src/component/lineSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 let lineSeries;
 
@@ -275,7 +276,7 @@ describe('zoom', () => {
   });
 });
 
-describe('with show dot options', () => {
+describe('with series options', () => {
   const seriesData = [
     { name: 'han', data: [1, 2], rawData: [1, 2], color: '#aaaaaa' },
     { name: 'cho', data: [4, 5], rawData: [4, 5], color: '#bbbbbb' },
@@ -332,123 +333,66 @@ describe('with show dot options', () => {
       store: {} as Store<LineChartOptions>,
       eventBus: new EventEmitter(),
     });
-
-    lineSeries.render(chartState);
   });
 
-  const result = {
-    rect: { width: 80, height: 80, x: 10, y: 80 },
-    responders: [
+  it(`should make models properly when calling render with showDot options`, () => {
+    const state = deepMergedCopy(chartState, {
+      options: {
+        series: {
+          showDot: true,
+        },
+      },
+    });
+    lineSeries.render(state);
+    expect(lineSeries.models.dot).toEqual([
       {
         color: 'rgba(170, 170, 170, 1)',
-        data: { category: 'A', color: '#aaaaaa', label: 'han', value: 1 },
-        radius: 7,
+        radius: 6,
         seriesIndex: 0,
-        style: ['default', 'hover'],
+        style: ['default'],
         type: 'circle',
         x: 20,
         y: 80,
       },
       {
         color: 'rgba(170, 170, 170, 1)',
-        data: { category: 'B', color: '#aaaaaa', label: 'han', value: 2 },
-        radius: 7,
+        radius: 6,
         seriesIndex: 0,
-        style: ['default', 'hover'],
+        style: ['default'],
         type: 'circle',
         x: 60,
         y: 60,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        data: { category: 'A', color: '#bbbbbb', label: 'cho', value: 4 },
-        radius: 7,
+        radius: 6,
         seriesIndex: 1,
-        style: ['default', 'hover'],
+        style: ['default'],
         type: 'circle',
         x: 20,
         y: 20,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        data: { category: 'B', color: '#bbbbbb', label: 'cho', value: 5 },
-        radius: 7,
+        radius: 6,
         seriesIndex: 1,
-        style: ['default', 'hover'],
+        style: ['default'],
         type: 'circle',
         x: 60,
         y: 0,
       },
-    ],
-    models: {
-      rect: [{ height: 80, type: 'clipRectArea', width: 80, x: 0, y: 0 }],
-      series: [
-        {
-          color: 'rgba(170, 170, 170, 1)',
-          lineWidth: 3,
-          points: [
-            { value: 1, x: 20, y: 80 },
-            { value: 2, x: 60, y: 60 },
-          ],
-          seriesIndex: 0,
-          type: 'linePoints',
-          name: 'han',
-        },
-        {
-          color: 'rgba(187, 187, 187, 1)',
-          lineWidth: 3,
-          points: [
-            { value: 4, x: 20, y: 20 },
-            { value: 5, x: 60, y: 0 },
-          ],
-          seriesIndex: 1,
-          type: 'linePoints',
-          name: 'cho',
-        },
-      ],
-      dot: [
-        {
-          color: 'rgba(170, 170, 170, 1)',
-          radius: 6,
-          seriesIndex: 0,
-          style: ['default'],
-          type: 'circle',
-          x: 20,
-          y: 80,
-        },
-        {
-          color: 'rgba(170, 170, 170, 1)',
-          radius: 6,
-          seriesIndex: 0,
-          style: ['default'],
-          type: 'circle',
-          x: 60,
-          y: 60,
-        },
-        {
-          color: 'rgba(187, 187, 187, 1)',
-          radius: 6,
-          seriesIndex: 1,
-          style: ['default'],
-          type: 'circle',
-          x: 20,
-          y: 20,
-        },
-        {
-          color: 'rgba(187, 187, 187, 1)',
-          radius: 6,
-          seriesIndex: 1,
-          style: ['default'],
-          type: 'circle',
-          x: 60,
-          y: 0,
-        },
-      ],
-      selectedSeries: [],
-    },
-  };
+    ]);
+  });
 
-  it(`should make models properly when calling render`, () => {
-    expect(lineSeries.models).toEqual(result.models);
+  it(`should make models properly when calling render with lineWidth options`, () => {
+    const state = deepMergedCopy(chartState, {
+      options: {
+        series: {
+          lineWidth: 10,
+        },
+      },
+    });
+    lineSeries.render(state);
+    expect(lineSeries.models.series.map(({ lineWidth }) => lineWidth)).toEqual([10, 10]);
   });
 });

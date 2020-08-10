@@ -751,7 +751,7 @@ describe('zoom', () => {
   });
 });
 
-describe('with showDot options', () => {
+describe('with series options', () => {
   const seriesData = [
     { name: 'han', data: [1, 2], rawData: [1, 2], color: '#aaaaaa' },
     { name: 'cho', data: [4, 5], rawData: [4, 5], color: '#bbbbbb' },
@@ -785,11 +785,7 @@ describe('with showDot options', () => {
         tickDistance: 40,
       },
     },
-    options: {
-      series: {
-        showDot: true,
-      },
-    },
+
     legend: {
       data: [
         { label: 'han', active: true, checked: true },
@@ -807,94 +803,78 @@ describe('with showDot options', () => {
       store: {} as Store<AreaChartOptions>,
       eventBus: new EventEmitter(),
     });
-
-    areaSeries.render(chartState);
   });
 
-  const result = {
-    models: {
-      rect: [{ height: 80, type: 'clipRectArea', width: 80, x: 0, y: 0 }],
-      series: [
-        {
-          color: 'rgba(0, 0, 0, 0)',
-          fillColor: 'rgba(170, 170, 170, 1)',
-          lineWidth: 0,
-          name: 'han',
-          points: [
-            { value: 1, x: 20, y: 80 },
-            { value: 2, x: 60, y: 60 },
-            { x: 60, y: 80 },
-            { x: 20, y: 80 },
-          ],
-          seriesIndex: 0,
-          type: 'areaPoints',
+  it('should make models properly when calling render with showDot option', () => {
+    const state = deepMergedCopy(chartState, {
+      options: {
+        series: {
+          showDot: true,
         },
-        {
-          color: 'rgba(0, 0, 0, 0)',
-          fillColor: 'rgba(187, 187, 187, 1)',
-          lineWidth: 0,
-          name: 'cho',
-          points: [
-            { value: 4, x: 20, y: 20 },
-            { value: 5, x: 60, y: 0 },
-            { x: 60, y: 80 },
-            { x: 20, y: 80 },
-          ],
-          seriesIndex: 1,
-          type: 'areaPoints',
-        },
-      ],
-      dot: [
-        {
-          color: 'rgba(170, 170, 170, 1)',
-          index: 0,
-          name: 'han',
-          radius: 6,
-          seriesIndex: 0,
-          style: ['default'],
-          type: 'circle',
-          x: 20,
-          y: 80,
-        },
-        {
-          color: 'rgba(170, 170, 170, 1)',
-          index: 1,
-          name: 'han',
-          radius: 6,
-          seriesIndex: 0,
-          style: ['default'],
-          type: 'circle',
-          x: 60,
-          y: 60,
-        },
-        {
-          color: 'rgba(187, 187, 187, 1)',
-          index: 0,
-          name: 'cho',
-          radius: 6,
-          seriesIndex: 1,
-          style: ['default'],
-          type: 'circle',
-          x: 20,
-          y: 20,
-        },
-        {
-          color: 'rgba(187, 187, 187, 1)',
-          index: 1,
-          name: 'cho',
-          radius: 6,
-          seriesIndex: 1,
-          style: ['default'],
-          type: 'circle',
-          x: 60,
-          y: 0,
-        },
-      ],
-      selectedSeries: [],
-    },
-  };
+      },
+    });
 
-  it(`should make models properly when calling render`, () => {
-    expect(areaSeries.models).toEqual(result.models);
+    areaSeries.render(state);
+
+    expect(areaSeries.models.dot).toEqual([
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        index: 0,
+        name: 'han',
+        radius: 6,
+        seriesIndex: 0,
+        style: ['default'],
+        type: 'circle',
+        x: 20,
+        y: 80,
+      },
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        index: 1,
+        name: 'han',
+        radius: 6,
+        seriesIndex: 0,
+        style: ['default'],
+        type: 'circle',
+        x: 60,
+        y: 60,
+      },
+      {
+        color: 'rgba(187, 187, 187, 1)',
+        index: 0,
+        name: 'cho',
+        radius: 6,
+        seriesIndex: 1,
+        style: ['default'],
+        type: 'circle',
+        x: 20,
+        y: 20,
+      },
+      {
+        color: 'rgba(187, 187, 187, 1)',
+        index: 1,
+        name: 'cho',
+        radius: 6,
+        seriesIndex: 1,
+        style: ['default'],
+        type: 'circle',
+        x: 60,
+        y: 0,
+      },
+    ]);
+  });
+
+  it('should make models properly when calling render with lineWidth option', () => {
+    const state = deepMergedCopy(chartState, {
+      options: {
+        series: {
+          lineWidth: 10,
+        },
+      },
+    });
+
+    areaSeries.render(state);
+
+    expect(areaSeries.linePointsModel.map(({ lineWidth }) => lineWidth)).toEqual([10, 10]);
   });
 });
