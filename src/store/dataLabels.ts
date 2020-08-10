@@ -9,7 +9,7 @@ import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/s
 
 import { labelStyle } from '@src/brushes/label';
 
-const RADIUS_PADDING = 25;
+const RADIUS_PADDING = 20;
 
 type LabelPosition = {
   x: number;

@@ -11,12 +11,11 @@ import {
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
 import { isString, getPercentageValue } from '@src/helpers/utils';
-import seriesData from '@src/store/seriesData';
 
 const DEFAULT_RADIUS_RATIO = 0.9;
 const semiCircleCenterYRatio = {
   COUNTER_CLOCKWISE: 0.1,
-  CLOCKWISE: 0.9,
+  CLOCKWISE: 1,
 };
 
 type RenderOptions = {
@@ -58,6 +57,7 @@ export default class PieSeries extends Component {
 
   initUpdate(delta: number) {
     if (!this.drawModels) {
+      return;
     }
 
     let currentDegree: number;
