@@ -307,23 +307,23 @@ export const sectorBrush = () => {
   sector(ctx, {
     type: 'sector',
     x: 100,
-    y: 100,
-    radius: 50,
-    innerRadius: 0,
-    startDegree: 0,
-    endDegree: 90,
+    y: 150,
+    radius: { inner: 0, outer: 50 },
+    degree: { start: 0, end: 90 },
     color: '#ff8787',
+    clockwise: true,
+    drawingStartAngle: -90,
   });
 
   sector(ctx, {
     type: 'sector',
-    x: 200,
-    y: 100,
-    radius: 100,
-    innerRadius: 50,
-    startDegree: 90,
-    endDegree: 180,
+    x: 350,
+    y: 150,
+    radius: { inner: 50, outer: 100 },
+    degree: { start: 90, end: 180 },
     color: '#00bcd4',
+    clockwise: false,
+    drawingStartAngle: -90,
   });
 
   return el;

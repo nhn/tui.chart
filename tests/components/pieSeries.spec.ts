@@ -19,9 +19,9 @@ const seriesData = [
 ];
 
 const chartState = {
-  chart: { width: 100, height: 100 },
+  chart: { width: 110, height: 110 },
   layout: {
-    plot: { width: 90, height: 90, x: 10, y: 10 },
+    plot: { width: 100, height: 100, x: 10, y: 10 },
   },
   series: {
     pie: {
@@ -50,38 +50,50 @@ describe('basic', () => {
       store: {} as Store<PieChartOptions>,
       eventBus: new EventEmitter(),
     });
-
-    pieSeries.render(chartState);
   });
 
   it('should be rendered pie series', () => {
+    pieSeries.render(chartState);
+
     const result = {
       series: [
         {
           color: 'rgba(0, 169, 255, 1)',
-          endDegree: 180,
           name: 'A',
-          radius: 40.5,
-          innerRadius: 0,
-          startDegree: 0,
+          radius: {
+            inner: 0,
+            outer: 45,
+          },
+          degree: {
+            start: 0,
+            end: 180,
+          },
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 45,
+          x: 50,
+          y: 50,
+          clockwise: true,
+          drawingStartAngle: -90,
         },
         {
           color: 'rgba(255, 184, 64, 1)',
-          endDegree: 360,
           name: 'B',
-          radius: 40.5,
-          innerRadius: 0,
-          startDegree: 180,
+          radius: {
+            inner: 0,
+            outer: 45,
+          },
+          degree: {
+            start: 180,
+            end: 360,
+          },
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 45,
+          x: 50,
+          y: 50,
+          clockwise: true,
+          drawingStartAngle: -90,
         },
       ],
     };
@@ -91,13 +103,19 @@ describe('basic', () => {
         type: 'sector',
         name: 'A',
         color: 'rgba(0, 169, 255, 1)',
-        x: 45,
-        y: 45,
-        startDegree: 0,
-        endDegree: 180,
-        radius: 40.5,
-        innerRadius: 0,
+        x: 50,
+        y: 50,
+        radius: {
+          inner: 0,
+          outer: 45,
+        },
+        degree: {
+          start: 0,
+          end: 180,
+        },
         value: 50,
+        clockwise: true,
+        drawingStartAngle: -90,
         style: ['hover'],
         seriesIndex: 0,
         data: { label: 'A', color: '#00a9ff', value: 50, category: 'Browser' },
@@ -106,13 +124,19 @@ describe('basic', () => {
         type: 'sector',
         name: 'B',
         color: 'rgba(255, 184, 64, 1)',
-        x: 45,
-        y: 45,
-        startDegree: 180,
-        endDegree: 360,
-        radius: 40.5,
-        innerRadius: 0,
+        x: 50,
+        y: 50,
+        radius: {
+          inner: 0,
+          outer: 45,
+        },
+        degree: {
+          start: 180,
+          end: 360,
+        },
         value: 50,
+        clockwise: true,
+        drawingStartAngle: -90,
         style: ['hover'],
         seriesIndex: 1,
         data: { label: 'B', color: '#ffb840', value: 50, category: 'Browser' },
@@ -120,6 +144,61 @@ describe('basic', () => {
     ];
     expect(pieSeries.models).toEqual(result);
     expect(pieSeries.responders).toEqual(responderResult);
+  });
+
+  it('should be drawn counterclockwise, if clockwise is a false', () => {
+    pieSeries.render(
+      deepMergedCopy(chartState, {
+        options: {
+          series: {
+            clockwise: false,
+          },
+        },
+      })
+    );
+
+    const result = [
+      {
+        clockwise: false,
+        color: 'rgba(0, 169, 255, 1)',
+        name: 'A',
+        drawingStartAngle: -90,
+        radius: {
+          inner: 0,
+          outer: 45,
+        },
+        degree: {
+          start: 360,
+          end: 180,
+        },
+        style: ['default'],
+        type: 'sector',
+        value: 50,
+        x: 50,
+        y: 50,
+      },
+      {
+        clockwise: false,
+        color: 'rgba(255, 184, 64, 1)',
+        name: 'B',
+        drawingStartAngle: -90,
+        radius: {
+          inner: 0,
+          outer: 45,
+        },
+        degree: {
+          start: 180,
+          end: 0,
+        },
+        style: ['default'],
+        type: 'sector',
+        value: 50,
+        x: 50,
+        y: 50,
+      },
+    ];
+
+    expect(pieSeries.models.series).toEqual(result);
   });
 });
 
@@ -134,7 +213,10 @@ describe('donut', () => {
       deepMergedCopy(chartState, {
         options: {
           series: {
-            radiusRange: [40, 100],
+            radiusRange: {
+              inner: '40%',
+              outer: '100%',
+            },
           },
         },
       })
@@ -146,29 +228,41 @@ describe('donut', () => {
       series: [
         {
           color: 'rgba(0, 169, 255, 1)',
-          endDegree: 180,
           name: 'A',
-          radius: 40.5,
-          innerRadius: 18,
-          startDegree: 0,
+          radius: {
+            inner: 18,
+            outer: 45,
+          },
+          degree: {
+            start: 0,
+            end: 180,
+          },
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 45,
+          x: 50,
+          y: 50,
+          clockwise: true,
+          drawingStartAngle: -90,
         },
         {
           color: 'rgba(255, 184, 64, 1)',
-          endDegree: 360,
           name: 'B',
-          radius: 40.5,
-          innerRadius: 18,
-          startDegree: 180,
+          radius: {
+            inner: 18,
+            outer: 45,
+          },
+          degree: {
+            start: 180,
+            end: 360,
+          },
           style: ['default'],
           type: 'sector',
           value: 50,
-          x: 45,
-          y: 45,
+          x: 50,
+          y: 50,
+          clockwise: true,
+          drawingStartAngle: -90,
         },
       ],
     };
@@ -178,13 +272,19 @@ describe('donut', () => {
         type: 'sector',
         name: 'A',
         color: 'rgba(0, 169, 255, 1)',
-        x: 45,
-        y: 45,
-        startDegree: 0,
-        endDegree: 180,
-        radius: 40.5,
-        innerRadius: 18,
+        x: 50,
+        y: 50,
+        radius: {
+          inner: 18,
+          outer: 45,
+        },
+        degree: {
+          start: 0,
+          end: 180,
+        },
         value: 50,
+        clockwise: true,
+        drawingStartAngle: -90,
         style: ['hover'],
         seriesIndex: 0,
         data: { label: 'A', color: '#00a9ff', value: 50, category: 'Browser' },
@@ -193,13 +293,19 @@ describe('donut', () => {
         type: 'sector',
         name: 'B',
         color: 'rgba(255, 184, 64, 1)',
-        x: 45,
-        y: 45,
-        startDegree: 180,
-        endDegree: 360,
-        radius: 40.5,
-        innerRadius: 18,
+        x: 50,
+        y: 50,
+        radius: {
+          inner: 18,
+          outer: 45,
+        },
+        degree: {
+          start: 180,
+          end: 360,
+        },
         value: 50,
+        clockwise: true,
+        drawingStartAngle: -90,
         style: ['hover'],
         seriesIndex: 1,
         data: { label: 'B', color: '#ffb840', value: 50, category: 'Browser' },
@@ -207,5 +313,64 @@ describe('donut', () => {
     ];
     expect(pieSeries.models).toEqual(result);
     expect(pieSeries.responders).toEqual(responderResult);
+  });
+
+  describe('semi circle', () => {
+    beforeEach(() => {
+      pieSeries = new PieSeries({
+        store: {} as Store<PieChartOptions>,
+        eventBus: new EventEmitter(),
+      });
+
+      pieSeries.render(
+        deepMergedCopy(chartState, {
+          options: {
+            series: {
+              angleRange: {
+                start: -90,
+                end: 90,
+              },
+            },
+          },
+        })
+      );
+    });
+
+    it('should be 180 arc to be draw all series of the angles', () => {
+      expect(pieSeries.totalAngle).toBe(180);
+    });
+
+    it('should be rendered semi circle entering start angle and end angle', () => {
+      const result = [
+        {
+          clockwise: true,
+          color: 'rgba(0, 169, 255, 1)',
+          name: 'A',
+          radius: { inner: 0, outer: 81 },
+          degree: { start: 0, end: 90 },
+          drawingStartAngle: -180,
+          style: ['default'],
+          type: 'sector',
+          value: 50,
+          x: 50,
+          y: 100,
+        },
+        {
+          clockwise: true,
+          color: 'rgba(255, 184, 64, 1)',
+          name: 'B',
+          radius: { inner: 0, outer: 81 },
+          degree: { start: 90, end: 180 },
+          drawingStartAngle: -180,
+          style: ['default'],
+          type: 'sector',
+          value: 50,
+          x: 50,
+          y: 100,
+        },
+      ];
+
+      expect(pieSeries.models.series).toEqual(result);
+    });
   });
 });
