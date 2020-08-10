@@ -34,12 +34,6 @@ import { LineModel } from '@t/components/axis';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
 
-interface AreaSeriesDrawModels {
-  rect: ClipRectAreaModel[];
-  series: AreaPointsModel[];
-  dot: CircleModel[];
-}
-
 interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
@@ -57,7 +51,7 @@ const seriesOpacity = {
 };
 
 export default class AreaSeries extends Component {
-  models: AreaSeriesDrawModels = { rect: [], series: [], dot: [] };
+  models: AreaSeriesModels = { rect: [], series: [], dot: [], selectedSeries: [] };
 
   drawModels!: AreaSeriesModels;
 
@@ -118,6 +112,7 @@ export default class AreaSeries extends Component {
       stackSeries,
       zoomRange,
     } = chartState;
+
     if (!series.area) {
       throw new Error("There's no area data!");
     }
@@ -127,6 +122,7 @@ export default class AreaSeries extends Component {
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
+    this.selectable = this.getSelectableOption(options);
 
     const { limit } = scale.yAxis;
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
@@ -159,6 +155,7 @@ export default class AreaSeries extends Component {
       rect: [this.renderClipRectAreaModel()],
       series: areaSeriesModel,
       dot: circleDotModel,
+      selectedSeries: [],
     });
 
     if (!this.drawModels) {
@@ -166,6 +163,7 @@ export default class AreaSeries extends Component {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(areaSeriesModel),
         dot: deepCopyArray(circleDotModel),
+        selectedSeries: [],
       };
     }
 
@@ -174,24 +172,28 @@ export default class AreaSeries extends Component {
     }
 
     if (this.isStackChart) {
-      this.tooltipCircleMap = seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>(
-        (acc, cur, dataIndex) => {
-          const index = cur.index!;
-          const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex] };
-          if (!acc[index]) {
-            acc[index] = [];
-          }
-          acc[index].push(tooltipModel);
-
-          return acc;
-        },
-        {}
-      );
+      this.tooltipCircleMap = this.makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
     }
 
     this.responders = this.isStackChart
       ? this.makeRectResponderModel(renderOptions)
       : this.makeDefaultResponderModel(seriesCircleModel, tooltipDataArr);
+  }
+
+  makeTooltipCircleMap(seriesCircleModel: CircleModel[], tooltipDataArr: TooltipData[]) {
+    return seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>(
+      (acc, cur, dataIndex) => {
+        const index = cur.index!;
+        const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex] };
+        if (!acc[index]) {
+          acc[index] = [];
+        }
+        acc[index].push(tooltipModel);
+
+        return acc;
+      },
+      {}
+    );
   }
 
   renderDotSeriesModel(
@@ -503,5 +505,12 @@ export default class AreaSeries extends Component {
     return seriesModels.flatMap(({ points }) =>
       points.map((point) => ({ type: 'point', ...point }))
     );
+  }
+
+  onClick({ responders }) {
+    if (this.selectable) {
+      this.drawModels.selectedSeries = responders;
+      this.eventBus.emit('needDraw');
+    }
   }
 }

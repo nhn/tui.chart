@@ -87,6 +87,7 @@ export type AreaSeriesModels = {
   rect: ClipRectAreaModel[];
   series: AreaPointsModel[];
   dot: CircleModel[];
+  selectedSeries: CircleModel[];
 };
 
 export type BoxSeriesModels = {
@@ -105,6 +106,7 @@ export type LineSeriesModels = {
   rect: ClipRectAreaModel[];
   series: LinePointsModel[];
   dot: CircleModel[];
+  selectedSeries: CircleModel[];
 };
 
 export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {

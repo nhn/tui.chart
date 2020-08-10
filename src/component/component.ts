@@ -191,6 +191,10 @@ export default abstract class Component {
     this.changeCurrentModelToMatchTargetModel(drawModels, currentModels, targetModels);
   }
 
+  getSelectableOption(options: Options) {
+    return options?.series?.selectable ?? false;
+  }
+
   beforeDraw?(painter: Painter): void;
 
   onClick?(responseData: any): void;

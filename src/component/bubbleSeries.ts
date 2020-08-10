@@ -41,7 +41,7 @@ export default class BubbleSeries extends CircleSeries {
 
     this.rect = plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
-    this.selectable = options?.series?.selectable ?? false;
+    this.selectable = this.getSelectableOption(options);
 
     const xAxisTickSize = this.rect.width / xAxis!.tickCount;
     const yAxisTickSize = this.rect.height / yAxis!.tickCount;

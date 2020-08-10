@@ -174,6 +174,7 @@ describe('basic', () => {
         },
       ],
       dot: [],
+      selectedSeries: [],
     },
     drawModels: {
       rect: [{ height: 80, type: 'clipRectArea', width: 0, x: 0, y: 0 }],
@@ -208,6 +209,7 @@ describe('basic', () => {
         },
       ],
       dot: [],
+      selectedSeries: [],
     },
   };
 
@@ -416,6 +418,7 @@ describe('range', () => {
         },
       ],
       dot: [],
+      selectedSeries: [],
     },
   };
 
@@ -607,6 +610,7 @@ describe('stack', () => {
         },
       ],
       dot: [],
+      selectedSeries: [],
     },
   };
 
@@ -736,6 +740,7 @@ describe('zoom', () => {
         },
       ],
       dot: [],
+      selectedSeries: [],
     },
   };
 
@@ -885,6 +890,7 @@ describe('with showDot options', () => {
           y: 0,
         },
       ],
+      selectedSeries: [],
     },
   };
 
