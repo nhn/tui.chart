@@ -353,7 +353,7 @@ describe('donut', () => {
           type: 'sector',
           value: 50,
           x: 50,
-          y: 90,
+          y: 100,
         },
         {
           clockwise: true,
@@ -366,7 +366,7 @@ describe('donut', () => {
           type: 'sector',
           value: 50,
           x: 50,
-          y: 90,
+          y: 100,
         },
       ];
 
