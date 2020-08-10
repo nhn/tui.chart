@@ -4,6 +4,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { LineModel, LabelModel } from '@t/components/axis';
 import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
 import { LegendData } from '@t/components/legend';
+import { PolygonStyle, PolygonStyleName } from '@src/brushes/polygon';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
@@ -139,3 +140,13 @@ export type SectorResponderModel = {
   data: TooltipData;
   seriesIndex: number;
 } & SectorModel;
+
+export type PolygonModel = {
+  type: 'polygon';
+  style?: StyleProp<PolygonStyle, PolygonStyleName>;
+};
+
+export type RadarSeriesModels = {
+  polygon: PolygonModel[];
+  dot: CircleModel[];
+};

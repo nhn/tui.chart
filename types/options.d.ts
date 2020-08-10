@@ -137,13 +137,17 @@ interface BarTypeYAxisOptions extends BaseAxisOptions {
 
 export type PlotLineValue = string | number;
 
-interface BasePlotOptions {
+type BasePlotOptions = {
+  showLine?: boolean;
+};
+
+type LinePlotOptions = {
   lines?: { value: PlotLineValue; color: string }[];
   bands?: {
     range: [PlotLineValue, PlotLineValue];
     color: string;
   }[];
-}
+};
 
 interface ExportMenuOptions {
   filename?: string;
@@ -155,7 +159,6 @@ interface BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
   yAxis?: BaseAxisOptions;
-  plot?: BasePlotOptions;
   legend?: BaseLegendOptions;
   exportMenu?: ExportMenuOptions;
 }
@@ -192,22 +195,26 @@ interface AreaSeriesOptions extends LineTypeSeriesOptions {
 export interface AreaChartOptions extends BaseOptions {
   series?: AreaSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
+  plot?: BasePlotOptions & LinePlotOptions;
 }
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineTypeSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
+  plot?: BasePlotOptions & LinePlotOptions;
 }
 
 export interface ScatterChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
+  plot?: BasePlotOptions;
 }
 
 export interface BubbleChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
   circleLegend?: CircleLegendOptions;
+  plot?: BasePlotOptions;
 }
 
 type ConnectorLineType = 'dashed' | 'solid';
@@ -240,6 +247,7 @@ export interface BarChartOptions extends BaseOptions {
 
 export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
+  plot?: BasePlotOptions;
 }
 
 interface PieSeriesOptions extends BaseSeriesOptions {
@@ -256,6 +264,31 @@ interface PieSeriesOptions extends BaseSeriesOptions {
 
 export interface PieChartOptions extends BaseOptions {
   series?: PieSeriesOptions;
+}
+
+export type RadarSeriesType = {
+  name: string;
+  data: number[];
+  color?: string;
+};
+
+export type RadarSeriesData = {
+  categories?: string[];
+  series: Pick<RadarSeriesType, 'name' | 'data'>[];
+};
+
+interface RadarSeriesOptions extends BaseSeriesOptions {
+  showDot?: boolean;
+  showArea?: boolean;
+}
+
+export type RadarPlotType = 'spiderweb' | 'circle';
+
+export interface RadarChartOptions extends BaseOptions {
+  series?: RadarSeriesOptions;
+  plot?: {
+    type: RadarPlotType;
+  };
 }
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {

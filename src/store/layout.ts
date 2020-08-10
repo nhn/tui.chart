@@ -241,7 +241,7 @@ const layout: StoreModule = {
         width: chart.width - padding.X * 2,
       };
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
-      const hasAxis = !series.pie;
+      const hasAxis = !(series.pie || series.radar);
 
       // Don't change the order!
       // exportMenu -> title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
