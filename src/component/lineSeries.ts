@@ -22,6 +22,8 @@ interface RenderOptions {
   tickDistance: number;
 }
 
+export const DEFAULT_LINE_WIDTH = 3;
+
 type DatumType = CoordinateDataType | number;
 
 export default class LineSeries extends Component {
@@ -157,7 +159,7 @@ export default class LineSeries extends Component {
     categories: string[]
   ): LinePointsModel[] {
     const { pointOnColumn, options, tickDistance } = renderOptions;
-    const { spline } = options;
+    const { spline, lineWidth } = options;
 
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
@@ -181,7 +183,7 @@ export default class LineSeries extends Component {
 
       return {
         type: 'linePoints',
-        lineWidth: 3,
+        lineWidth: lineWidth ?? DEFAULT_LINE_WIDTH,
         color,
         points,
         seriesIndex,

@@ -33,6 +33,7 @@ import { isRangeData } from '@src/helpers/range';
 import { LineModel } from '@t/components/axis';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
+import { DEFAULT_LINE_WIDTH } from '@src/component/lineSeries';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -310,7 +311,7 @@ export default class AreaSeries extends Component {
 
     return {
       type: 'linePoints',
-      lineWidth: 3,
+      lineWidth: options?.lineWidth ?? DEFAULT_LINE_WIDTH,
       color,
       points,
       seriesIndex,
