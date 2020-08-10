@@ -1,8 +1,8 @@
-import { StoreModule, RawSeries } from '@t/store/store';
+import { StoreModule, RawSeries, Series } from '@t/store/store';
 import { isNumber, sortCategories } from '@src/helpers/utils';
-import { getCoordinateXValue } from '@src/helpers/coordinate';
+import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 
-export function makeRawCategories(series: RawSeries, categories?: string[]) {
+export function makeRawCategories(series: RawSeries | Series, categories?: string[]) {
   if (categories) {
     return categories;
   }
@@ -10,7 +10,7 @@ export function makeRawCategories(series: RawSeries, categories?: string[]) {
   const firstValues: Set<string | number> = new Set();
 
   Object.keys(series).forEach((key) => {
-    series[key].forEach(({ data }) => {
+    (series[key].data ?? series[key]).forEach(({ data }) => {
       if (Array.isArray(data)) {
         data.forEach((datum) => {
           const rawXValue = getCoordinateXValue(datum);
@@ -33,12 +33,13 @@ const category: StoreModule = {
   }),
   action: {
     setCategory({ state }) {
-      const { rawCategories, zoomRange } = state;
-      let categories = rawCategories;
+      const { rawCategories, zoomRange, series } = state;
+      let categories =
+        isCoordinateSeries(series) && !zoomRange ? makeRawCategories(series) : rawCategories;
 
       if (zoomRange) {
         const [start, end] = zoomRange;
-        categories = rawCategories.slice(start, end + 1);
+        categories = categories.slice(start, end + 1);
       }
 
       state.categories = categories;
