@@ -11,6 +11,7 @@ import {
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
 import { isString, getPercentageValue } from '@src/helpers/utils';
+import seriesData from '@src/store/seriesData';
 
 const DEFAULT_RADIUS_RATIO = 0.9;
 const semiCircleCenterYRatio = {
@@ -57,7 +58,6 @@ export default class PieSeries extends Component {
 
   initUpdate(delta: number) {
     if (!this.drawModels) {
-      return;
     }
 
     let currentDegree: number;
@@ -190,7 +190,9 @@ export default class PieSeries extends Component {
       const startDegree = seriesIndex
         ? sectorModels[seriesIndex - 1].degree.end
         : defaultStartDegree;
-      const endDegree = startDegree + degree;
+      const endDegree = clockwise
+        ? Math.min(startDegree + degree, 360)
+        : Math.max(startDegree + degree, 0);
 
       sectorModels.push({
         type: 'sector',
