@@ -50,8 +50,8 @@ export function getRadialAnchorPosition(param: RadialPositionParam): Point {
     degree: { start, end },
     drawingStartAngle,
   } = param;
-  const degree = start + (end - start) / 2;
-  const radian = calculateDegreeToRadian(degree, drawingStartAngle);
+  const halfDegree = start + (end - start) / 2;
+  const radian = calculateDegreeToRadian(halfDegree, drawingStartAngle);
   const r = anchor === 'center' ? (outer - inner) / 2 + inner : outer;
 
   return getRadialPosition(x, y, r, radian);
