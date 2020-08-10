@@ -51,7 +51,7 @@ export const responderDetectors: ResponderDetectors = {
     const {
       x: modelX,
       y: modelY,
-      radius: { outer },
+      radius: { outer, inner },
       degree: { start, end },
       drawingStartAngle,
       clockwise,
@@ -59,7 +59,9 @@ export const responderDetectors: ResponderDetectors = {
     const { x: compX, y: compY } = componentRect;
     const xPos = x - (modelX + compX);
     const yPos = y - (modelY + compY);
-    const withinRadius = xPos ** 2 + yPos ** 2 < outer ** 2;
+    const insideOuterRadius = xPos ** 2 + yPos ** 2 < outer ** 2;
+    const outsideInnerRadius = xPos ** 2 + yPos ** 2 > inner ** 2;
+    const withinRadius = insideOuterRadius && outsideInnerRadius;
     const detectionDegree = calculateRadianToDegree(Math.atan2(yPos, xPos), drawingStartAngle);
 
     return withinRadius && withinRadian(clockwise, start, end, detectionDegree);
