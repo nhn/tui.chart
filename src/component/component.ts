@@ -3,7 +3,7 @@ import { Rect } from '@t/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
-import { isNumber } from '@src/helpers/utils';
+import { getFirstValidValue, includes, isNumber } from '@src/helpers/utils';
 import { setSplineControlPoint } from '@src/helpers/calculator';
 import {
   AreaSeriesModels,
@@ -130,14 +130,13 @@ export default abstract class Component {
         }
 
         if (key[0] !== '_') {
-          if (isNumber(current[key])) {
-            current[key] = current[key] + (target[key] - current[key]) * delta;
-          } else if (key === 'opacity') {
-            // 투명도도 서서히 증가 시키면 좋을듯
-          } else if (key === 'points') {
-            this.changeCurrentModelToMatchTargetModel(current[key], current[key], target[key]);
+          const curValue = current[key];
 
-            current[key].forEach((curPoint, idx) => {
+          if (isNumber(current[key])) {
+            current[key] = curValue + (target[key] - curValue) * delta;
+          } else if (key === 'points') {
+            current[key] = this.getCurrentModelToMatchTargetModel(curValue, curValue, target[key]);
+            curValue.forEach((curPoint, idx) => {
               const { x, y } = curPoint;
               const { x: nextX, y: nextY } = target[key][idx];
 
@@ -145,8 +144,8 @@ export default abstract class Component {
               curPoint.y = y + (nextY - y) * delta;
             });
 
-            if (current[key].length && current[key][0].controlPoint) {
-              setSplineControlPoint(current[key]);
+            if (curValue.length && curValue[0].controlPoint) {
+              setSplineControlPoint(curValue);
             }
           } else {
             current[key] = target[key];
@@ -173,22 +172,64 @@ export default abstract class Component {
     }
   }
 
-  changeCurrentModelToMatchTargetModel(models, currentModels, targetModels) {
-    if (currentModels.length < targetModels.length) {
-      models.splice(
-        currentModels.length,
-        0,
-        ...targetModels.slice(currentModels.length, targetModels.length)
-      );
-    } else if (currentModels.length > targetModels.length) {
-      models.splice(targetModels.length, currentModels.length);
+  getCurrentModelToMatchTargetModel(models, currentModels, targetModels) {
+    if (getFirstValidValue(targetModels)?.id) {
+      if (currentModels.length > targetModels.length) {
+        const ids = [...new Set(targetModels.map(({ id }) => id))];
+
+        return models.filter(({ id }) => includes(ids, id));
+      }
+      if (currentModels.length < targetModels.length) {
+        const ids = [...new Set(models.map(({ id }) => id))];
+
+        const notIncludedModels = targetModels.reduce(
+          (acc, cur, idx) => {
+            const notIncluded = !includes(ids, cur.id);
+
+            return notIncluded
+              ? {
+                  models: [...acc.models, cur],
+                  modelIdx: [...acc.modelIdx, idx],
+                }
+              : acc;
+          },
+          { models: [], modelIdx: [] }
+        );
+
+        const newModels = [...models];
+
+        if (notIncludedModels.models.length) {
+          notIncludedModels.models.forEach((model, idx) => {
+            const modelIdx = notIncludedModels.modelIdx[idx];
+
+            newModels.splice(modelIdx, 0, model);
+          });
+        }
+
+        return newModels;
+      }
     }
+
+    if (currentModels.length < targetModels.length) {
+      return [...models, ...targetModels.slice(currentModels.length, targetModels.length)];
+    }
+
+    if (currentModels.length > targetModels.length) {
+      return models.slice(0, targetModels.length);
+    }
+
+    return models;
   }
 
   syncModels(currentModels, targetModels, type?: string) {
     const drawModels = type ? this.drawModels[type] : this.drawModels;
+    const model = this.getCurrentModelToMatchTargetModel(drawModels, currentModels, targetModels);
 
-    this.changeCurrentModelToMatchTargetModel(drawModels, currentModels, targetModels);
+    if (type) {
+      this.drawModels[type] = model;
+    } else {
+      this.drawModels = model;
+    }
   }
 
   getSelectableOption(options: Options) {

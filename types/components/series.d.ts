@@ -28,6 +28,7 @@ export type CircleModel = {
     end: number;
   };
   name?: string;
+  id?: string;
 } & Point;
 
 export type CircleResponderModel = {

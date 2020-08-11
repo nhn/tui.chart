@@ -188,6 +188,7 @@ export default class LineSeries extends Component {
         points,
         seriesIndex,
         name,
+        id: `line-series-${name}`,
       };
     });
   }
