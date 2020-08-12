@@ -389,6 +389,7 @@ export default class AreaSeries extends Component {
       lineWidth: 0,
       color: 'rgba(0, 0, 0, 0)', // make area border transparent
       fillColor: m.color,
+      id: `area-series-${m.name}`,
     }));
   }
 

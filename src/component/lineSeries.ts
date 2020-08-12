@@ -194,7 +194,7 @@ export default class LineSeries extends Component {
   }
 
   renderCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
-    return lineSeriesModel.flatMap(({ points, color }, seriesIndex) =>
+    return lineSeriesModel.flatMap(({ points, color, name }, seriesIndex) =>
       points.map(({ x, y }) => ({
         type: 'circle',
         x,
@@ -203,6 +203,7 @@ export default class LineSeries extends Component {
         color,
         style: ['default', 'hover'],
         seriesIndex,
+        id: `line-dot-${name}`,
       }))
     );
   }

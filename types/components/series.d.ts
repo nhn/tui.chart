@@ -47,6 +47,7 @@ export type LinePointsModel = {
   points: BezierPoint[];
   name?: string;
   seriesIndex?: number;
+  id?: string;
 };
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
@@ -75,6 +76,7 @@ export type RectModel = {
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
   value?: BoxSeriesDataType;
+  id?: string;
 } & Rect;
 
 export type RectResponderModel = Partial<RectModel> & {
