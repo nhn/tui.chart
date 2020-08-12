@@ -172,17 +172,16 @@ export default class BoxStackSeries extends BoxSeries {
 
   renderStackSeriesModel(seriesData: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
     const { stackData } = seriesData;
-    const colors = this.getSeriesColors(seriesData.data);
 
     return isGroupStack(stackData)
       ? this.makeStackGroupSeriesModel(seriesData, renderOptions)
-      : this.makeStackSeriesModel(stackData, renderOptions, colors);
+      : this.makeStackSeriesModel(stackData, renderOptions, seriesData.data);
   }
 
   makeStackSeriesModel(
     stackData: StackDataValues,
     renderOptions: RenderOptions,
-    colors: string[],
+    seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
     stackGroupCount = 1,
     stackGroupIndex = 0
   ) {
@@ -212,7 +211,8 @@ export default class BoxStackSeries extends BoxSeries {
         if (isNumber(barLength)) {
           seriesModels.push({
             type: 'rect',
-            color: colors[seriesIndex],
+            color: seriesRawData[seriesIndex].color,
+            name: seriesRawData[seriesIndex].name,
             value,
             ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
           });
@@ -242,11 +242,10 @@ export default class BoxStackSeries extends BoxSeries {
 
     stackGroupIds.forEach((groupId, groupIndex) => {
       const filtered = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
-      const colors = this.getSeriesColors(filtered);
       const { series, connector } = this.makeStackSeriesModel(
         stackGroupData[groupId],
         renderOptions,
-        colors,
+        filtered,
         stackGroupIds.length,
         groupIndex
       );
