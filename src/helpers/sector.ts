@@ -58,7 +58,7 @@ export function getRadialAnchorPosition(param: RadialPositionParam): Point {
 }
 
 export function getRadialPosition(x: number, y: number, r: number, radian: number) {
-  return { x: x + r * Math.cos(radian), y: y + r * Math.sin(radian) };
+  return { x: Math.round(x + r * Math.cos(radian)), y: Math.round(y + r * Math.sin(radian)) };
 }
 
 export function withinRadian(

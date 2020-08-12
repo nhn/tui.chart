@@ -40,11 +40,8 @@ function calculateLegendWidth(
   return legendWidth;
 }
 
-export function showCircleLegend(options: BubbleChartOptions, isBubbleChart = false) {
-  return (
-    isBubbleChart &&
-    (isUndefined(options?.circleLegend?.visible) ? true : !!options?.circleLegend?.visible)
-  );
+export function showCircleLegend(options: BubbleChartOptions) {
+  return isUndefined(options?.circleLegend?.visible) ? true : !!options?.circleLegend?.visible;
 }
 
 function showLegend(options: Options) {
@@ -69,7 +66,7 @@ function getIconType(series: RawSeries): LegendIconType {
   }
 
   // @TODO: ADD bullet chart
-  if (series.bar || series.column || series.area || series.pie) {
+  if (series.bar || series.column || series.area || series.pie || series.radar) {
     return 'rect';
   }
 
@@ -112,7 +109,9 @@ const legend: StoreModule = {
     const circleLegendWidth = isVerticalAlign(align)
       ? defaultWidth
       : Math.max(defaultWidth, legendWidth);
-    const circleLegendVisible = showCircleLegend(options, !!series.bubble);
+    const circleLegendVisible = series.bubble
+      ? showCircleLegend(options as BubbleChartOptions)
+      : false;
 
     return {
       legend: {

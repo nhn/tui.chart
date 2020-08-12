@@ -25,7 +25,7 @@ import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
 import { DataLabelModel } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
-import { RadarPlotModels } from '@src/component/radarPlot';
+import { RadarPlotModels } from '@t/components/radarPlot';
 
 export type ComponentType =
   | 'component'

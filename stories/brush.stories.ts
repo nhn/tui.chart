@@ -26,6 +26,7 @@ import {
 import { setSplineControlPoint } from '@src/helpers/calculator';
 import { LabelModel, LineModel, TickModel } from '@t/components/axis';
 import { Point } from '@t/options';
+import { polygon } from '@src/brushes/polygon';
 
 export default {
   title: 'brushes',
@@ -324,6 +325,38 @@ export const sectorBrush = () => {
     color: '#00bcd4',
     clockwise: false,
     drawingStartAngle: -90,
+  });
+
+  return el;
+};
+
+export const polygonBrush = () => {
+  const { ctx, el } = setup();
+
+  polygon(ctx, {
+    type: 'polygon',
+    color: '#d54062',
+    lineWidth: 6,
+    points: [
+      { x: 100, y: 100 },
+      { x: 150, y: 150 },
+      { x: 100, y: 200 },
+      { x: 50, y: 150 },
+    ],
+  });
+
+  polygon(ctx, {
+    type: 'polygon',
+    color: '#ffa36c',
+    lineWidth: 1,
+    points: [
+      { x: 300, y: 100 },
+      { x: 380, y: 150 },
+      { x: 380, y: 220 },
+      { x: 300, y: 270 },
+      { x: 220, y: 220 },
+      { x: 220, y: 150 },
+    ],
   });
 
   return el;

@@ -141,7 +141,7 @@ type BasePlotOptions = {
   showLine?: boolean;
 };
 
-type LinePlotOptions = {
+export type AreaLinePlotOptions = BasePlotOptions & {
   lines?: { value: PlotLineValue; color: string }[];
   bands?: {
     range: [PlotLineValue, PlotLineValue];
@@ -195,13 +195,13 @@ interface AreaSeriesOptions extends LineTypeSeriesOptions {
 export interface AreaChartOptions extends BaseOptions {
   series?: AreaSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
-  plot?: BasePlotOptions & LinePlotOptions;
+  plot?: AreaLinePlotOptions;
 }
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineTypeSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
-  plot?: BasePlotOptions & LinePlotOptions;
+  plot?: AreaLinePlotOptions;
 }
 
 export interface ScatterChartOptions extends BaseOptions {
@@ -243,6 +243,7 @@ interface BoxSeriesOptions extends BaseSeriesOptions {
 export interface BarChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
   yAxis?: BarTypeYAxisOptions;
+  plot?: BasePlotOptions;
 }
 
 export interface ColumnChartOptions extends BaseOptions {

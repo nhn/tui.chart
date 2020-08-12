@@ -1,5 +1,6 @@
 import { StoreModule, PlotLine, PlotBand } from '@t/store/store';
 import { extend } from '@src/store/store';
+import { AreaLinePlotOptions } from '@t/options';
 
 const plot: StoreModule = {
   name: 'plot',
@@ -11,14 +12,21 @@ const plot: StoreModule = {
   }),
   action: {
     setPlot({ state }) {
-      const { options } = state;
-      const plotLines = options.plot?.lines || [];
-      const plotBands = options.plot?.bands || [];
+      const { series, options } = state;
+
+      if (!(series.area || series.line)) {
+        return;
+      }
+
+      const plotLines = (options.plot as AreaLinePlotOptions)?.lines || [];
+      const plotBands = (options.plot as AreaLinePlotOptions)?.bands || [];
+
       const lines: PlotLine[] = plotLines.map(({ color, value }) => ({
         value,
         color,
         vertical: true,
       }));
+
       const bands: PlotBand[] = plotBands.map(({ color, range }) => ({
         range,
         color,

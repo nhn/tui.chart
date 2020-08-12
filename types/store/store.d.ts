@@ -149,6 +149,7 @@ export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
+  radarAxis?: RadarAxisData;
 };
 
 export type DataRange = {
@@ -190,6 +191,13 @@ export type CenterYAxisData = {
   yAxisLabelAnchorPoint: number;
   yAxisHeight: number;
 } & AxisData;
+
+export type RadarAxisData = {
+  labels: string[];
+  axisSize: number;
+  centerX: number;
+  centerY: number;
+};
 
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
