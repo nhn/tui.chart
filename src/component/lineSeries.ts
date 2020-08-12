@@ -13,7 +13,7 @@ import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray } from '@src/helpers/utils';
+import { deepCopyArray, generateModelId } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
 interface RenderOptions {
@@ -39,7 +39,7 @@ export default class LineSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'lineSeries';
+    this.name = 'line';
   }
 
   initUpdate(delta: number) {
@@ -165,6 +165,7 @@ export default class LineSeries extends Component {
       const points: PointModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
+      const id = generateModelId(this.name, this.type, name);
 
       rawData.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
@@ -188,7 +189,7 @@ export default class LineSeries extends Component {
         points,
         seriesIndex,
         name,
-        id: `line-series-${name}`,
+        id,
       };
     });
   }
@@ -203,7 +204,7 @@ export default class LineSeries extends Component {
         color,
         style: ['default', 'hover'],
         seriesIndex,
-        id: `line-dot-${name}`,
+        id: generateModelId(this.name, this.type, name!),
       }))
     );
   }

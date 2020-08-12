@@ -6,7 +6,7 @@ import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, isString } from '@src/helpers/utils';
+import { deepCopy, generateModelId, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
 const MINIMUM_RADIUS = 0.5;
@@ -25,7 +25,7 @@ export default class BubbleSeries extends CircleSeries {
 
   initialize() {
     this.type = 'series';
-    this.name = 'bubbleSeries';
+    this.name = 'bubble';
   }
 
   render(chartState: ChartState<BaseOptions>) {
@@ -100,7 +100,7 @@ export default class BubbleSeries extends CircleSeries {
           color,
           style: ['default', { strokeStyle: color }],
           seriesIndex,
-          id: `bubble-series-${name}`,
+          id: generateModelId(this.name, this.type, name),
         });
       });
 

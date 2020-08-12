@@ -25,6 +25,7 @@ import {
   deepCopyArray,
   deepMergedCopy,
   first,
+  generateModelId,
   last,
   range,
   sum,
@@ -74,7 +75,7 @@ export default class AreaSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'areaSeries';
+    this.name = 'area';
   }
 
   initUpdate(delta: number) {
@@ -389,13 +390,15 @@ export default class AreaSeries extends Component {
       lineWidth: 0,
       color: 'rgba(0, 0, 0, 0)', // make area border transparent
       fillColor: m.color,
-      id: `area-series-${m.name}`,
+      id: generateModelId(this.name, this.type, m.name!),
     }));
   }
 
   renderCircleModel(): CircleModel[] {
-    return this.linePointsModel.flatMap(({ points, color, seriesIndex, name }) =>
-      points.map(({ x, y }, index) => ({
+    return this.linePointsModel.flatMap(({ points, color, seriesIndex, name }) => {
+      const id = generateModelId(this.name, this.type, name!);
+
+      return points.map(({ x, y }, index) => ({
         type: 'circle',
         x,
         y,
@@ -405,8 +408,9 @@ export default class AreaSeries extends Component {
         seriesIndex,
         index,
         name,
-      }))
-    );
+        id,
+      }));
+    });
   }
 
   private isAvailableApplyOpacity(opacity: number, name: string) {

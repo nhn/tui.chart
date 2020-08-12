@@ -309,3 +309,7 @@ export function getFirstValidValue(values: any) {
 export function getPercentageValue(text: string): number {
   return Number(text.substr(0, text.length - 1));
 }
+
+export function generateModelId(chartType: string, elementType: string, name: string) {
+  return `${chartType}-${elementType}-${name}`;
+}
