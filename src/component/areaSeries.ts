@@ -503,8 +503,8 @@ export default class AreaSeries extends Component {
   }
 
   getDataLabels(seriesModels: AreaPointsModel[]) {
-    return seriesModels.flatMap(({ points }) =>
-      points.map((point) => ({ type: 'point', ...point }))
+    return seriesModels.flatMap(({ points, name }) =>
+      points.map((point) => ({ type: 'point', ...point, name }))
     );
   }
 

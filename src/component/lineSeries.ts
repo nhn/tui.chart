@@ -218,8 +218,8 @@ export default class LineSeries extends Component {
   }
 
   getDataLabels(seriesModels: LinePointsModel[]): PointModel[] {
-    return seriesModels.flatMap(({ points }) =>
-      points.map((point) => ({ type: 'point', ...point }))
+    return seriesModels.flatMap(({ points, name }) =>
+      points.map((point) => ({ type: 'point', ...point, name }))
     );
   }
 

@@ -44,9 +44,9 @@ export default class DataLabels extends Component {
 
   renderLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModel[] {
     return dataLabels.reduce<DataLabelModel[]>((acc, dataLabel) => {
-      const { type, x, y, text, textAlign, textBaseline, defaultColor } = dataLabel;
+      const { type, x, y, text, textAlign, textBaseline, defaultColor, name } = dataLabel;
 
-      return isModelExistingInRect(this.rect, { x, y: y + 1 })
+      return isModelExistingInRect(this.rect, { x, y })
         ? [
             ...acc,
             {
@@ -60,6 +60,7 @@ export default class DataLabels extends Component {
               defaultColor,
               style: getOptionStyle(type, options),
               opacity: 1,
+              name,
             },
           ]
         : acc;

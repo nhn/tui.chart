@@ -24,6 +24,7 @@ import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
 import { DataLabelModel } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
+import { isSameArray } from '@src/helpers/arrayUtil';
 
 export type ComponentType =
   | 'component'
@@ -174,39 +175,42 @@ export default abstract class Component {
 
   getCurrentModelToMatchTargetModel(models, currentModels, targetModels) {
     if (getFirstValidValue(targetModels)?.name) {
-      if (currentModels.length > targetModels.length) {
-        const names = [...new Set(targetModels.map(({ name }) => name))];
+      const modelNames = [...new Set(models.map(({ name }) => name))];
+      const targetNames = [...new Set(targetModels.map(({ name }) => name))];
+      const same = isSameArray(modelNames, targetNames);
 
-        return models.filter(({ name }) => includes(names, name));
-      }
-      if (currentModels.length < targetModels.length) {
-        const names = [...new Set(models.map(({ name }) => name))];
-
-        const notIncludedModels = targetModels.reduce(
-          (acc, cur, idx) => {
-            const notIncluded = !includes(names, cur.name);
-
-            return notIncluded
-              ? {
-                  models: [...acc.models, cur],
-                  modelIdx: [...acc.modelIdx, idx],
-                }
-              : acc;
-          },
-          { models: [], modelIdx: [] }
-        );
-
-        const newModels = [...models];
-
-        if (notIncludedModels.models.length) {
-          notIncludedModels.models.forEach((model, idx) => {
-            const modelIdx = notIncludedModels.modelIdx[idx];
-
-            newModels.splice(modelIdx, 0, model);
-          });
+      if (!same) {
+        if (currentModels.length > targetModels.length) {
+          return models.filter(({ name }) => includes(targetNames, name));
         }
 
-        return newModels;
+        if (currentModels.length < targetModels.length) {
+          const notIncludedModels = targetModels.reduce(
+            (acc, cur, idx) => {
+              const notIncluded = !includes(modelNames, cur.name);
+
+              return notIncluded
+                ? {
+                    models: [...acc.models, cur],
+                    modelIdx: [...acc.modelIdx, idx],
+                  }
+                : acc;
+            },
+            { models: [], modelIdx: [] }
+          );
+
+          const newModels = [...models];
+
+          if (notIncludedModels.models.length) {
+            notIncludedModels.models.forEach((model, idx) => {
+              const modelIdx = notIncludedModels.modelIdx[idx];
+
+              newModels.splice(modelIdx, 0, model);
+            });
+          }
+
+          return newModels;
+        }
       }
     }
 

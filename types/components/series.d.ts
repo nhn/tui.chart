@@ -7,7 +7,7 @@ import { LegendData } from '@t/components/legend';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
-export type PointModel = Point & { value?: number };
+export type PointModel = Point & { value?: number; name?: string };
 export interface CircleStyle {
   strokeStyle?: string;
   lineWidth?: number;

@@ -8,6 +8,7 @@ export type DataLabel = {
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
   defaultColor?: string;
+  name?: string;
 } & Point;
 
 export type DataLabelStackTotal = {
@@ -34,4 +35,5 @@ export type DataLabelModel = {
   style?: DataLabelStyle;
   opacity?: number;
   defaultColor?: string;
+  name?: string;
 };

@@ -104,8 +104,7 @@ export function getDataLabelsOptions(
 
 function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
   const { anchor, offsetX = 0, offsetY = 0, formatter } = dataLabelOptions;
-  const { x, y } = point;
-
+  const { x, y, name } = point;
   let textBaseline: CanvasTextBaseline = 'middle';
 
   if (anchor === 'end') {
@@ -121,6 +120,7 @@ function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOp
     text: formatter(point.value!),
     textAlign: 'center',
     textBaseline,
+    name,
   };
 }
 
@@ -402,7 +402,7 @@ function makeVerticalRectLabelInfo(
 }
 
 function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
-  const { type, value, direction } = rect;
+  const { type, value, direction, name } = rect;
   const { formatter } = dataLabelOptions;
   const horizontal = isHorizontal(direction);
   const labelPosition = horizontal
@@ -413,6 +413,7 @@ function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOptio
     type: type as DataLabelType,
     ...labelPosition,
     text: formatter(value!),
+    name,
   };
 }
 
@@ -432,11 +433,13 @@ function makeSectorLabelPosition(
 function makeSectorLabelInfo(model: RadialDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
   const { formatter } = dataLabelOptions;
   const labelPosition = makeSectorLabelPosition(model, dataLabelOptions);
+  const { value, name } = model;
 
   return {
     type: 'sector',
     ...labelPosition,
-    text: formatter(model.value!),
+    text: formatter(value!),
+    name,
   };
 }
 
