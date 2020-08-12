@@ -25,7 +25,6 @@ import {
   hasPositiveOnly,
   isNull,
   isNumber,
-  generateModelId,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
@@ -351,7 +350,7 @@ export default class BoxSeries extends Component {
             color,
             value,
             ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
-            id: generateModelId(this.name, this.type, name),
+            name,
           });
         }
       });

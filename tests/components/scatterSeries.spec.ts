@@ -101,6 +101,7 @@ const result = {
         label: 'nameA',
         value: { x: 10, y: 20 },
       },
+      name: 'nameA',
     },
     {
       color: 'rgba(170, 170, 170, 1)',
@@ -116,6 +117,7 @@ const result = {
         label: 'nameA',
         value: { x: 15, y: 20 },
       },
+      name: 'nameA',
     },
     {
       color: 'rgba(187, 187, 187, 1)',
@@ -131,6 +133,7 @@ const result = {
         label: 'nameB',
         value: { x: 20, y: 10 },
       },
+      name: 'nameB',
     },
   ],
   models: {
@@ -143,6 +146,7 @@ const result = {
         type: 'circle',
         x: 0,
         y: 0,
+        name: 'nameA',
       },
       {
         color: 'rgba(170, 170, 170, 0.9)',
@@ -152,6 +156,7 @@ const result = {
         type: 'circle',
         x: 140,
         y: 0,
+        name: 'nameA',
       },
       {
         color: 'rgba(187, 187, 187, 0.9)',
@@ -161,6 +166,7 @@ const result = {
         type: 'circle',
         x: 280,
         y: 280,
+        name: 'nameB',
       },
     ],
     selectedSeries: [],

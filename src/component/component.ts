@@ -173,18 +173,18 @@ export default abstract class Component {
   }
 
   getCurrentModelToMatchTargetModel(models, currentModels, targetModels) {
-    if (getFirstValidValue(targetModels)?.id) {
+    if (getFirstValidValue(targetModels)?.name) {
       if (currentModels.length > targetModels.length) {
-        const ids = [...new Set(targetModels.map(({ id }) => id))];
+        const names = [...new Set(targetModels.map(({ name }) => name))];
 
-        return models.filter(({ id }) => includes(ids, id));
+        return models.filter(({ name }) => includes(names, name));
       }
       if (currentModels.length < targetModels.length) {
-        const ids = [...new Set(models.map(({ id }) => id))];
+        const names = [...new Set(models.map(({ name }) => name))];
 
         const notIncludedModels = targetModels.reduce(
           (acc, cur, idx) => {
-            const notIncluded = !includes(ids, cur.id);
+            const notIncluded = !includes(names, cur.name);
 
             return notIncluded
               ? {

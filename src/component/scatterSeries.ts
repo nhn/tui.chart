@@ -6,7 +6,7 @@ import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, generateModelId, isString } from '@src/helpers/utils';
+import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
 export default class ScatterSeries extends CircleSeries {
@@ -55,7 +55,6 @@ export default class ScatterSeries extends CircleSeries {
       const circleModels: CircleModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 0.9 : 0.3);
-      const id = generateModelId(this.name, this.type, name);
 
       data.forEach((datum) => {
         const rawXValue = getCoordinateXValue(datum);
@@ -76,7 +75,7 @@ export default class ScatterSeries extends CircleSeries {
           style: ['default'],
           color,
           seriesIndex,
-          id,
+          name,
         });
       });
 

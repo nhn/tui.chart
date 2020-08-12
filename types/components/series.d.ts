@@ -28,7 +28,6 @@ export type CircleModel = {
     end: number;
   };
   name?: string;
-  id?: string;
 } & Point;
 
 export type CircleResponderModel = {
@@ -47,7 +46,6 @@ export type LinePointsModel = {
   points: BezierPoint[];
   name?: string;
   seriesIndex?: number;
-  id?: string;
 };
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
@@ -76,7 +74,7 @@ export type RectModel = {
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
   value?: BoxSeriesDataType;
-  id?: string;
+  name?: string;
 } & Rect;
 
 export type RectResponderModel = Partial<RectModel> & {

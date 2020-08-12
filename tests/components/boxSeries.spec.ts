@@ -58,6 +58,7 @@ const result = {
       x: 0,
       y: 12,
       value: 1,
+      name: 'han',
     },
     {
       type: 'rect',
@@ -67,6 +68,7 @@ const result = {
       x: 0,
       y: 52,
       value: 2,
+      name: 'han',
     },
     {
       type: 'rect',
@@ -76,6 +78,7 @@ const result = {
       x: 0,
       y: 20,
       value: 4,
+      name: 'cho',
     },
     {
       type: 'rect',
@@ -85,6 +88,7 @@ const result = {
       x: 0,
       y: 60,
       value: 5,
+      name: 'cho',
     },
   ],
 };
