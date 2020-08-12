@@ -74,7 +74,7 @@ export default class AreaSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'area';
+    this.name = 'areaSeries';
   }
 
   initUpdate(delta: number) {
@@ -393,8 +393,8 @@ export default class AreaSeries extends Component {
   }
 
   renderCircleModel(): CircleModel[] {
-    return this.linePointsModel.flatMap(({ points, color, seriesIndex, name }) => {
-      return points.map(({ x, y }, index) => ({
+    return this.linePointsModel.flatMap(({ points, color, seriesIndex, name }) =>
+      points.map(({ x, y }, index) => ({
         type: 'circle',
         x,
         y,
@@ -404,8 +404,8 @@ export default class AreaSeries extends Component {
         seriesIndex,
         index,
         name,
-      }));
-    });
+      }))
+    );
   }
 
   private isAvailableApplyOpacity(opacity: number, name: string) {

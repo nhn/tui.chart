@@ -39,7 +39,7 @@ export default class LineSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'line';
+    this.name = 'lineSeries';
   }
 
   initUpdate(delta: number) {
