@@ -207,12 +207,15 @@ export default class BoxStackSeries extends BoxSeries {
           renderOptions,
           isLBSideWithDiverging
         );
+        const name = seriesRawData[seriesIndex].name;
+        const active = this.activeSeriesMap![name];
+        const color = getRGBA(seriesRawData[seriesIndex].color, active ? 1 : 0.2);
 
         if (isNumber(barLength)) {
           seriesModels.push({
             type: 'rect',
-            color: seriesRawData[seriesIndex].color,
-            name: seriesRawData[seriesIndex].name,
+            color,
+            name,
             value,
             ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
           });
@@ -712,13 +715,5 @@ export default class BoxStackSeries extends BoxSeries {
         size: this.getOffsetSize(),
       },
     };
-  }
-
-  getSeriesColors(seriesRawData: BoxSeriesType<BoxSeriesDataType>[]): string[] {
-    return seriesRawData.map(({ color, name }) => {
-      const active = this.activeSeriesMap![name];
-
-      return getRGBA(color, active ? 1 : 0.2);
-    });
   }
 }
