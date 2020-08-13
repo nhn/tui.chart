@@ -40,7 +40,7 @@ describe('DataLabels', () => {
 
   it('data label model', () => {
     expect(dataLabels.models).toEqual({
-      point: [
+      series: [
         {
           type: 'dataLabel',
           dataLabelType: 'point',
@@ -62,6 +62,7 @@ describe('DataLabels', () => {
           opacity: 1,
         },
       ],
+      total: [],
     });
   });
 });

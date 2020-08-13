@@ -299,6 +299,7 @@ export default class AreaSeries extends Component {
       const x = tickDistance * (idx - this.startIndex) + (pointOnColumn ? tickDistance / 2 : 0);
       const y = (1 - valueRatio) * this.rect.height;
 
+      // @TODO: zoomable 어색한 부분 이후에 line 항상 떠있게 하면서 수정하면 해결 됨. 해당 조건 제거 필요
       if (isModelExistingInRect(this.rect, { x, y })) {
         points.push({ x, y, value });
       }

@@ -219,7 +219,7 @@ export default abstract class Component {
     }
 
     if (currentModels.length > targetModels.length) {
-      return models.slice(0, targetModels.length);
+      return currentModels.slice(0, targetModels.length);
     }
 
     return models;

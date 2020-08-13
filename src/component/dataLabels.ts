@@ -47,37 +47,42 @@ export default class DataLabels extends Component {
         ...acc,
         [key]: this.models[key].map((m) => ({ ...m, opacity })),
       }),
-      {} as DataLabelModels
+      { series: [], total: [] } as DataLabelModels
     );
   }
 
   renderLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModels {
-    return dataLabels.reduce((acc, dataLabel) => {
-      const { type, x, y, text, textAlign, textBaseline, defaultColor, name } = dataLabel;
+    return dataLabels.reduce(
+      (acc, dataLabel) => {
+        const { type, x, y, text, textAlign, textBaseline, defaultColor, name } = dataLabel;
 
-      if (!isModelExistingInRect(this.rect, { x, y })) {
-        return acc;
-      }
+        if (!isModelExistingInRect(this.rect, { x, y })) {
+          return acc;
+        }
 
-      return {
-        ...acc,
-        [type]: [
-          ...(acc[type] ?? []),
-          {
-            type: 'dataLabel',
-            dataLabelType: type,
-            text,
-            x,
-            y: y + 1,
-            textAlign,
-            textBaseline,
-            defaultColor,
-            style: getOptionStyle(type, options),
-            opacity: 1,
-            name,
-          },
-        ],
-      };
-    }, {} as DataLabelModels);
+        const modelName = type === 'stackTotal' ? 'total' : 'series';
+
+        return {
+          ...acc,
+          [modelName]: [
+            ...(acc[modelName] ?? []),
+            {
+              type: 'dataLabel',
+              dataLabelType: type,
+              text,
+              x,
+              y: y + 1,
+              textAlign,
+              textBaseline,
+              defaultColor,
+              style: getOptionStyle(type, options),
+              opacity: 1,
+              name,
+            },
+          ],
+        };
+      },
+      { series: [], total: [] } as DataLabelModels
+    );
   }
 }
