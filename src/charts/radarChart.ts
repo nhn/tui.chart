@@ -11,6 +11,7 @@ import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import Tooltip from '@src/component/tooltip';
+import RadarAxis from '@src/component/radarAxis';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as tooltipBrush from '@src/brushes/tooltip';
@@ -49,6 +50,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     this.componentManager.add(Legend);
     this.componentManager.add(RadarPlot);
     this.componentManager.add(RadarSeries);
+    this.componentManager.add(RadarAxis);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip);

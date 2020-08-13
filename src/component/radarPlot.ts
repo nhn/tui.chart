@@ -5,6 +5,7 @@ import { ChartState, RadarAxisData } from '@t/store/store';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
 import { Point, RadarPlotType, RadarChartOptions } from '@t/options';
 import { RadarPlotModels, RadarPlotModelType } from '@t/components/radarPlot';
+import { getRadarRadiusValues } from '@src/helpers/radar';
 
 type RenderOptions = {
   type: RadarPlotType;
@@ -50,7 +51,7 @@ export default class RadarPlot extends Component {
       centerX,
       centerY,
       seriesRadius: axisSize,
-      radiusRange: labels.map((_, index) => ((index + 1) / labels.length) * axisSize),
+      radiusRange: getRadarRadiusValues(labels, axisSize),
     };
   }
 
