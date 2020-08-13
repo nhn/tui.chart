@@ -22,7 +22,7 @@ import { LegendModel } from '@t/components/legend';
 import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
-import { DataLabelModel, DataLabelModels } from '@t/components/dataLabels';
+import { DataLabelModels } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
 import { isSameArray } from '@src/helpers/arrayUtil';
 
@@ -131,13 +131,15 @@ export default abstract class Component {
         }
 
         if (key[0] !== '_') {
-          const curValue = current[key];
-
           if (isNumber(current[key])) {
-            current[key] = curValue + (target[key] - curValue) * delta;
+            current[key] = current[key] + (target[key] - current[key]) * delta;
           } else if (key === 'points') {
-            current[key] = this.getCurrentModelToMatchTargetModel(curValue, curValue, target[key]);
-            curValue.forEach((curPoint, idx) => {
+            current[key] = this.getCurrentModelToMatchTargetModel(
+              current[key],
+              current[key],
+              target[key]
+            );
+            current[key].forEach((curPoint, idx) => {
               const { x, y } = curPoint;
               const { x: nextX, y: nextY } = target[key][idx];
 
@@ -145,8 +147,8 @@ export default abstract class Component {
               curPoint.y = y + (nextY - y) * delta;
             });
 
-            if (curValue.length && curValue[0].controlPoint) {
-              setSplineControlPoint(curValue);
+            if (current[key].length && current[key][0].controlPoint) {
+              setSplineControlPoint(current[key]);
             }
           } else {
             current[key] = target[key];
@@ -213,7 +215,7 @@ export default abstract class Component {
     }
 
     if (currentModels.length < targetModels.length) {
-      return [...models, ...targetModels.slice(currentModels.length, targetModels.length)];
+      return [...currentModels, ...targetModels.slice(currentModels.length, targetModels.length)];
     }
 
     if (currentModels.length > targetModels.length) {
