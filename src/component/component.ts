@@ -22,7 +22,7 @@ import { LegendModel } from '@t/components/legend';
 import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
-import { DataLabelModel } from '@t/components/dataLabels';
+import { DataLabelModel, DataLabelModels } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
 import { isSameArray } from '@src/helpers/arrayUtil';
 
@@ -55,7 +55,7 @@ type ComponentModels =
   | PlotModels
   | LineModel[]
   | LabelModel[]
-  | DataLabelModel[]
+  | DataLabelModels
   | LegendModel[]
   | TooltipModel[];
 
@@ -201,13 +201,11 @@ export default abstract class Component {
 
           const newModels = [...models];
 
-          if (notIncludedModels.models.length) {
-            notIncludedModels.models.forEach((model, idx) => {
-              const modelIdx = notIncludedModels.modelIdx[idx];
+          notIncludedModels.models.forEach((model, idx) => {
+            const modelIdx = notIncludedModels.modelIdx[idx];
 
-              newModels.splice(modelIdx, 0, model);
-            });
-          }
+            newModels.splice(modelIdx, 0, model);
+          });
 
           return newModels;
         }

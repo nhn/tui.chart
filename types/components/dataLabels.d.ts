@@ -27,13 +27,8 @@ export type DataLabelOption = Required<
 export type DataLabelModel = {
   type: 'dataLabel';
   dataLabelType: DataLabelType;
-  text: string;
-  x: number;
-  y: number;
-  textAlign: CanvasTextAlign;
-  textBaseline: CanvasTextBaseline;
   style?: DataLabelStyle;
   opacity?: number;
-  defaultColor?: string;
-  name?: string;
-};
+} & Omit<DataLabel, 'type'>;
+
+export type DataLabelModels = { [key in DataLabelType]: DataLabelModel[] };

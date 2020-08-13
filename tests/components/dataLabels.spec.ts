@@ -39,27 +39,29 @@ describe('DataLabels', () => {
   });
 
   it('data label model', () => {
-    expect(dataLabels.models).toEqual([
-      {
-        type: 'dataLabel',
-        dataLabelType: 'point',
-        text: '4000',
-        x: 20,
-        y: 21,
-        textAlign: 'left',
-        textBaseline: 'middle',
-        opacity: 1,
-      },
-      {
-        type: 'dataLabel',
-        dataLabelType: 'point',
-        text: '7000',
-        x: 40,
-        y: 36,
-        textAlign: 'right',
-        textBaseline: 'bottom',
-        opacity: 1,
-      },
-    ]);
+    expect(dataLabels.models).toEqual({
+      point: [
+        {
+          type: 'dataLabel',
+          dataLabelType: 'point',
+          text: '4000',
+          x: 20,
+          y: 21,
+          textAlign: 'left',
+          textBaseline: 'middle',
+          opacity: 1,
+        },
+        {
+          type: 'dataLabel',
+          dataLabelType: 'point',
+          text: '7000',
+          x: 40,
+          y: 36,
+          textAlign: 'right',
+          textBaseline: 'bottom',
+          opacity: 1,
+        },
+      ],
+    });
   });
 });

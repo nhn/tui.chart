@@ -491,7 +491,7 @@ export default class BoxStackSeries extends BoxSeries {
         ? this.calcStartPosOnLeftBottomSide(values, currentIndex, renderOptions, ratio)
         : this.calcStartPosOnRightTopSide(values, currentIndex, renderOptions, ratio);
     } else if (isPercentStack(stack)) {
-      startPos = this.calcStartPositionWithPercent(values, currentIndex, renderOptions, ratio);
+      startPos = this.calcStartPositionWithPercent(values, currentIndex, ratio);
     } else if (seriesDirection === SeriesDirection.POSITIVE) {
       startPos = this.calcStartPosOnRightTopSide(values, currentIndex, renderOptions, ratio);
     } else if (seriesDirection === SeriesDirection.NEGATIVE) {
@@ -567,7 +567,6 @@ export default class BoxStackSeries extends BoxSeries {
   private calcStartPositionWithPercent(
     values: number[],
     currentIndex: number,
-    renderOptions: RenderOptions,
     ratio: number
   ): number {
     const basePosition = this.basePosition;
