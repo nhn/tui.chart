@@ -694,6 +694,7 @@ export default class BoxStackSeries extends BoxSeries {
         const stackTotal: StackTotalModel = {
           type: 'stackTotal',
           value,
+          name: `totalLabel-${key}`,
           ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
         };
 
