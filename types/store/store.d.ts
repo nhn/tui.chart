@@ -149,7 +149,7 @@ export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
-  radarAxis?: RadarAxisData;
+  radialAxis?: RadialAxisData;
 };
 
 export type DataRange = {
@@ -192,7 +192,7 @@ export type CenterYAxisData = {
   yAxisHeight: number;
 } & AxisData;
 
-export type RadarAxisData = {
+export type RadialAxisData = {
   labels: string[];
   axisSize: number;
   centerX: number;

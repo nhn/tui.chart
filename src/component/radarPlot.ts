@@ -1,11 +1,11 @@
 import Component from './component';
 import { RectModel, CircleModel, PolygonModel } from '@t/components/series';
 import { LabelModel } from '@t/components/axis';
-import { ChartState, RadarAxisData } from '@t/store/store';
+import { ChartState, RadialAxisData } from '@t/store/store';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
 import { Point, RadarPlotType, RadarChartOptions } from '@t/options';
 import { RadarPlotModels, RadarPlotModelType } from '@t/components/radarPlot';
-import { getRadarRadiusValues } from '@src/helpers/radar';
+import { getRadialRadiusValues } from '@src/helpers/radar';
 
 type RenderOptions = {
   type: RadarPlotType;
@@ -17,18 +17,21 @@ type RenderOptions = {
   radiusRange: number[];
 };
 
+const CATEGORY_LABEL_PADDING = 35;
+
 export default class RadarPlot extends Component {
   models: RadarPlotModels = { plot: [], dot: [], label: [] };
 
   initialize() {
     this.type = 'plot';
+    this.name = 'radarPlot';
   }
 
   render(state: ChartState<RadarChartOptions>) {
     const { layout, axes, categories, options } = state;
     this.rect = layout.plot;
 
-    const renderOptions = this.makeRenderOptions(axes.radarAxis!, options.plot?.type, categories);
+    const renderOptions = this.makeRenderOptions(axes.radialAxis!, options.plot?.type, categories);
 
     this.models = {
       plot: this.renderPlot(renderOptions),
@@ -38,11 +41,11 @@ export default class RadarPlot extends Component {
   }
 
   makeRenderOptions(
-    radarAxis: RadarAxisData,
+    radialAxis: RadialAxisData,
     type: RadarPlotType = 'spiderweb',
     categories: string[] = []
   ): RenderOptions {
-    const { labels, axisSize, centerX, centerY } = radarAxis;
+    const { labels, axisSize, centerX, centerY } = radialAxis;
 
     return {
       type,
@@ -51,17 +54,17 @@ export default class RadarPlot extends Component {
       centerX,
       centerY,
       seriesRadius: axisSize,
-      radiusRange: getRadarRadiusValues(labels, axisSize),
+      radiusRange: getRadialRadiusValues(labels, axisSize),
     };
   }
 
   renderPlot(renderOptions: RenderOptions): RadarPlotModelType {
     return renderOptions.type === 'spiderweb'
-      ? this.makeLinePlot(renderOptions)
+      ? this.makeSpiderwebPlot(renderOptions)
       : this.makeCirclePlot(renderOptions);
   }
 
-  makeLinePlot(renderOptions: RenderOptions): PolygonModel[] {
+  makeSpiderwebPlot(renderOptions: RenderOptions): PolygonModel[] {
     const { degree, centerX, centerY, categories, radiusRange } = renderOptions;
 
     return radiusRange.map((radius) => {
@@ -84,7 +87,7 @@ export default class RadarPlot extends Component {
     return radiusRange.map((radius) => ({
       type: 'circle',
       color: 'rgba(0, 0, 0, 0)',
-      style: ['radarPlot'],
+      style: ['plot'],
       radius,
       x: centerX,
       y: centerY,
@@ -115,7 +118,7 @@ export default class RadarPlot extends Component {
 
   renderCategoryLabel(renderOptions: RenderOptions): LabelModel[] {
     const { degree, centerX, centerY, categories, seriesRadius } = renderOptions;
-    const radius = seriesRadius + 35;
+    const radius = seriesRadius + CATEGORY_LABEL_PADDING;
 
     return categories.map((text, index) => ({
       type: 'label',

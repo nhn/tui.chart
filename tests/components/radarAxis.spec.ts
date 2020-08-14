@@ -1,9 +1,9 @@
-import RadarAxis from '@src/component/RadarAxis';
+import RadialAxis from '@src/component/radialAxis';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import { Options } from '@t/store/store';
 
-let radarAxis;
+let radialAxis;
 
 const seriesData = [
   { name: 'han', data: [1, 2, 3, 4], color: '#aaaaaa' },
@@ -24,7 +24,7 @@ const chartState = {
   axes: {
     xAxis: {},
     yAxis: {},
-    radarAxis: {
+    radialAxis: {
       labels: ['1', '2', '3', '4', '5'],
       axisSize: 50,
       centerX: 100,
@@ -43,16 +43,16 @@ const chartState = {
 
 describe('Radar Axis', () => {
   beforeEach(() => {
-    radarAxis = new RadarAxis({
+    radialAxis = new RadialAxis({
       store: {} as Store<Options>,
       eventBus: new EventEmitter(),
     });
   });
 
   it('should be create label models', () => {
-    radarAxis.render(chartState);
+    radialAxis.render(chartState);
 
-    expect(radarAxis.models).toEqual([
+    expect(radialAxis.models).toEqual([
       {
         type: 'label',
         text: '1',

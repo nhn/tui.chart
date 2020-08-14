@@ -1,12 +1,8 @@
-export function getRadarRadiusValues(
-  labels: string[],
-  size: number,
-  deletedCountFromEndOfArray = 0
-): number[] {
+export function getRadialRadiusValues(labels: string[], size: number, deleteCount = 0): number[] {
   const result = labels.map((_, index) => ((index + 1) / labels.length) * size);
 
-  if (deletedCountFromEndOfArray) {
-    result.splice(result.length - deletedCountFromEndOfArray);
+  if (deleteCount) {
+    result.splice(result.length - deleteCount);
   }
 
   return result;

@@ -1,6 +1,4 @@
-import { StoreModule, PlotLine, PlotBand } from '@t/store/store';
-import { extend } from '@src/store/store';
-import { AreaLinePlotOptions } from '@t/options';
+import { StoreModule } from '@t/store/store';
 
 const plot: StoreModule = {
   name: 'plot',
@@ -11,7 +9,9 @@ const plot: StoreModule = {
     },
   }),
   action: {
-    setPlot({ state }) {
+    setPlot() {
+      // @TODO : lines, bands 옵션 처리 필요
+      /*
       const { series, options } = state;
 
       if (!(series.area || series.line)) {
@@ -34,6 +34,7 @@ const plot: StoreModule = {
       }));
 
       extend(state.plot, { lines, bands });
+      */
     },
   },
   observe: {

@@ -10,7 +10,7 @@ import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 
-import * as basicBrushes from '@src/brushes/basic';
+import * as basicBrush from '@src/brushes/basic';
 import * as tooltipBrush from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
@@ -52,7 +52,7 @@ export default class PieChart extends Chart<PieChartOptions> {
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([
-      basicBrushes,
+      basicBrush,
       tooltipBrush,
       legendBrush,
       labelBrush,

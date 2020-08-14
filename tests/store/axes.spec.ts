@@ -138,7 +138,7 @@ describe('Axes Store module', () => {
   });
 
   describe('when chart has radar series', () => {
-    it('should be stored the inital radarAxis property', () => {
+    it('should be stored the inital radialAxis property', () => {
       const data = [
         { name: 'han', data: [1, 2, 3], rawData: [1, 2, 3], color: '#aaaaaa' },
         { name: 'cho', data: [4, 5, 6], rawData: [4, 5, 6], color: '#bbbbbb' },
@@ -151,7 +151,7 @@ describe('Axes Store module', () => {
         axes: {
           xAxis: { tickInterval: 1, labelInterval: 1 },
           yAxis: { tickInterval: 1, labelInterval: 1 },
-          radarAxis: {},
+          radialAxis: {},
         },
       });
     });
@@ -176,7 +176,7 @@ describe('Axes Store module', () => {
         axes: {
           xAxis: {},
           yAxis: {},
-          radarAxis: {},
+          radialAxis: {},
         },
         categories: ['A', 'B', 'C', 'D'],
         options: {},
@@ -185,7 +185,7 @@ describe('Axes Store module', () => {
       const store = { state } as Store<Options>;
       axes.action!.setAxesData(store);
 
-      expect(store.state.axes.radarAxis).toMatchObject({
+      expect(store.state.axes.radialAxis).toMatchObject({
         labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
         axisSize: 50,
         centerX: 100,

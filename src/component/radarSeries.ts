@@ -12,6 +12,7 @@ import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector'
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getLimitOnAxis } from '@src/helpers/axes';
+import { DEFAULT_LINE_WIDTH } from './lineSeries';
 
 type RenderOptions = {
   categories: string[];
@@ -35,7 +36,7 @@ export default class RadarSeries extends Component {
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, axes, series, legend, categories, options } = state;
+    const { layout, axes, series, legend, categories = [], options } = state;
 
     if (!series.radar) {
       throw new Error("There's no radar data");
@@ -44,11 +45,11 @@ export default class RadarSeries extends Component {
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
 
-    const { labels, axisSize, centerX, centerY } = axes.radarAxis!;
+    const { labels, axisSize, centerX, centerY } = axes.radialAxis!;
     const { max } = getLimitOnAxis(labels);
     const renderOptions = {
-      categories: categories ?? [],
-      degree: 360 / (categories ?? []).length,
+      categories,
+      degree: 360 / categories.length,
       centerX,
       centerY,
       showArea: options?.series?.showArea ?? false,
@@ -128,7 +129,7 @@ export default class RadarSeries extends Component {
       return {
         type: 'polygon',
         color,
-        lineWidth: 4,
+        lineWidth: DEFAULT_LINE_WIDTH,
         points,
         fillColor: getRGBA(color, fillOpacity),
       };

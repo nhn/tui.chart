@@ -66,12 +66,11 @@ function getIconType(series: RawSeries): LegendIconType {
   }
 
   // @TODO: ADD bullet chart
-  if (series.bar || series.column || series.area || series.pie || series.radar) {
+  if (series.bar || series.column || series.area || series.pie) {
     return 'rect';
   }
 
-  // @TODO: ADD radial chart
-  if (series.line) {
+  if (series.line || series.radar) {
     return 'line';
   }
 

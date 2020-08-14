@@ -18,10 +18,10 @@ import ExportMenu from '@src/component/exportMenu';
 import Legend from '@src/component/legend';
 import Zoom from '@src/component/zoom';
 
-import * as lineSeriesBrushes from '@src/brushes/lineSeries';
-import * as basicBrushes from '@src/brushes/basic';
-import * as axisBrushes from '@src/brushes/axis';
-import * as tooltipBrushes from '@src/brushes/tooltip';
+import * as lineSeriesBrush from '@src/brushes/lineSeries';
+import * as basicBrush from '@src/brushes/basic';
+import * as axisBrush from '@src/brushes/axis';
+import * as tooltipBrush from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
@@ -68,10 +68,10 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(Zoom);
 
     this.painter.addGroups([
-      basicBrushes,
-      axisBrushes,
-      tooltipBrushes,
-      lineSeriesBrushes,
+      basicBrush,
+      axisBrush,
+      tooltipBrush,
+      lineSeriesBrush,
       legendBrush,
       labelBrush,
       exportMenuBrush,

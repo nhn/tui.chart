@@ -25,7 +25,7 @@ const chartState = {
   axes: {
     xAxis: {},
     yAxis: {},
-    radarAxis: {
+    radialAxis: {
       labels: ['1', '2', '3', '4', '5'],
       axisSize: 50,
       centerX: 100,
@@ -122,7 +122,7 @@ describe('radar plot', () => {
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: ['radarPlot'],
+          style: ['plot'],
           radius: 10,
           x: 100,
           y: 100,
@@ -130,7 +130,7 @@ describe('radar plot', () => {
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: ['radarPlot'],
+          style: ['plot'],
           radius: 20,
           x: 100,
           y: 100,
@@ -138,7 +138,7 @@ describe('radar plot', () => {
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: ['radarPlot'],
+          style: ['plot'],
           radius: 30,
           x: 100,
           y: 100,
@@ -146,7 +146,7 @@ describe('radar plot', () => {
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: ['radarPlot'],
+          style: ['plot'],
           radius: 40,
           x: 100,
           y: 100,
@@ -154,7 +154,7 @@ describe('radar plot', () => {
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: ['radarPlot'],
+          style: ['plot'],
           radius: 50,
           x: 100,
           y: 100,

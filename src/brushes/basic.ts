@@ -9,7 +9,7 @@ import {
 import { makeStyleObj } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
 
-export type CircleStyleName = 'default' | 'hover' | 'radarPlot';
+export type CircleStyleName = 'default' | 'hover' | 'plot';
 export type RectStyleName = 'default';
 
 const circleStyle = {
@@ -23,7 +23,7 @@ const circleStyle = {
     shadowOffsetY: 4,
     lineWidth: 3,
   },
-  radarPlot: {
+  plot: {
     lineWidth: 1,
     strokeStyle: 'rgba(0, 0, 0, 0.05)',
   },

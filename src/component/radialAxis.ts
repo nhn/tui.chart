@@ -1,28 +1,26 @@
 import Component from './component';
 import { LabelModel } from '@t/components/axis';
 import { ChartState, Options } from '@t/store/store';
-import { getRadarRadiusValues } from '@src/helpers/radar';
+import { getRadialRadiusValues } from '@src/helpers/radar';
 import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector';
 
-export default class RadarAxis extends Component {
-  name!: string;
-
+export default class RadialAxis extends Component {
   models: LabelModel[] = [];
 
   initialize() {
     this.type = 'axis';
-    this.name = name;
+    this.name = 'radialAxis';
   }
 
   render({ layout, axes }: ChartState<Options>) {
     this.rect = layout.plot;
 
-    if (!axes.radarAxis) {
+    if (!axes.radialAxis) {
       return;
     }
 
-    const { axisSize, centerX, centerY, labels } = axes.radarAxis!;
-    const radiusRange = getRadarRadiusValues(labels, axisSize, 1);
+    const { axisSize, centerX, centerY, labels } = axes.radialAxis!;
+    const radiusRange = getRadialRadiusValues(labels, axisSize, 1);
 
     this.models = radiusRange.map((radius, index) => ({
       type: 'label',

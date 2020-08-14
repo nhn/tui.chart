@@ -11,15 +11,14 @@ import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import Tooltip from '@src/component/tooltip';
-import RadarAxis from '@src/component/radarAxis';
+import RadialAxis from '@src/component/radialAxis';
 
-import * as basicBrushes from '@src/brushes/basic';
+import * as basicBrush from '@src/brushes/basic';
 import * as tooltipBrush from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as polygonBrush from '@src/brushes/polygon';
-import * as lineSeriesBrushes from '@src/brushes/lineSeries';
 
 import { RadarChartOptions, RadarSeriesData } from '@t/options';
 
@@ -50,19 +49,18 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     this.componentManager.add(Legend);
     this.componentManager.add(RadarPlot);
     this.componentManager.add(RadarSeries);
-    this.componentManager.add(RadarAxis);
+    this.componentManager.add(RadialAxis);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([
-      basicBrushes,
+      basicBrush,
       tooltipBrush,
       legendBrush,
       labelBrush,
       exportMenuBrush,
       polygonBrush,
-      lineSeriesBrushes,
     ]);
   }
 }

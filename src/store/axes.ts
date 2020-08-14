@@ -7,7 +7,7 @@ import {
   ValueEdge,
   CenterYAxisData,
   Axes,
-  RadarAxisData,
+  RadialAxisData,
 } from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
@@ -153,7 +153,7 @@ function makeTitleOption(title?: AxisTitle) {
     : deepMergedCopy(defaultOption, title);
 }
 
-function getRadarAxis(scale: ScaleData, plot: Rect): RadarAxisData {
+function getRadialAxis(scale: ScaleData, plot: Rect): RadialAxisData {
   const { limit, stepSize } = scale;
   const { width, height } = plot;
   const valueLabels = makeLabelsFromLimit(limit, stepSize) as string[];
@@ -189,7 +189,7 @@ const axes: StoreModule = {
     }
 
     if (series.radar) {
-      axesState.radarAxis = {} as RadarAxisData;
+      axesState.radialAxis = {} as RadialAxisData;
     }
 
     return {
@@ -243,8 +243,8 @@ const axes: StoreModule = {
         }) as CenterYAxisData;
       }
 
-      if (state.axes.radarAxis) {
-        axesState.radarAxis = getRadarAxis(scale[valueAxisName], plot);
+      if (state.axes.radialAxis) {
+        axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot);
       }
 
       extend(state.axes, axesState);

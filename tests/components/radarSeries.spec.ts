@@ -25,7 +25,7 @@ const chartState = {
   axes: {
     xAxis: {},
     yAxis: {},
-    radarAxis: {
+    radialAxis: {
       labels: ['1', '2', '3', '4', '5'],
       axisSize: 50,
       centerX: 100,
@@ -48,39 +48,40 @@ describe('radar series', () => {
       store: {} as Store<Options>,
       eventBus: new EventEmitter(),
     });
-  });
 
-  it('basic', () => {
     radarSeries.render(chartState);
-
-    expect(radarSeries.models.polygon).toEqual([
-      {
-        type: 'polygon',
-        color: 'rgba(170, 170, 170, 1)',
-        lineWidth: 4,
-        points: [
-          { x: 100, y: 90 },
-          { x: 120, y: 100 },
-          { x: 100, y: 130 },
-          { x: 60, y: 100 },
-        ],
-        fillColor: 'rgba(170, 170, 170, 0)',
-      },
-      {
-        type: 'polygon',
-        color: 'rgba(187, 187, 187, 1)',
-        lineWidth: 4,
-        points: [
-          { x: 100, y: 80 },
-          { x: 110, y: 100 },
-          { x: 100, y: 110 },
-          { x: 70, y: 100 },
-        ],
-        fillColor: 'rgba(187, 187, 187, 0)',
-      },
-    ]);
-    expect(radarSeries.models.dot).toEqual([]);
-    expect(radarSeries.responders).toEqual([
+  });
+  const result = {
+    models: {
+      polygon: [
+        {
+          type: 'polygon',
+          color: 'rgba(170, 170, 170, 1)',
+          lineWidth: 3,
+          points: [
+            { x: 100, y: 90 },
+            { x: 120, y: 100 },
+            { x: 100, y: 130 },
+            { x: 60, y: 100 },
+          ],
+          fillColor: 'rgba(170, 170, 170, 0)',
+        },
+        {
+          type: 'polygon',
+          color: 'rgba(187, 187, 187, 1)',
+          lineWidth: 3,
+          points: [
+            { x: 100, y: 80 },
+            { x: 110, y: 100 },
+            { x: 100, y: 110 },
+            { x: 70, y: 100 },
+          ],
+          fillColor: 'rgba(187, 187, 187, 0)',
+        },
+      ],
+      dot: [],
+    },
+    responders: [
       {
         type: 'circle',
         x: 100,
@@ -161,7 +162,13 @@ describe('radar series', () => {
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 3, category: 'D' },
       },
-    ]);
+    ],
+  };
+
+  ['models', 'responders'].forEach((modelName) => {
+    it(`should make ${modelName} properly when calling render`, () => {
+      expect(radarSeries[modelName]).toEqual(result[modelName]);
+    });
   });
 
   it('should be render circle models, when "series.showDot" is true', () => {
@@ -255,32 +262,9 @@ describe('radar series', () => {
       })
     );
 
-    expect(radarSeries.models.polygon).toEqual([
-      {
-        type: 'polygon',
-        color: 'rgba(170, 170, 170, 1)',
-        lineWidth: 4,
-        points: [
-          { x: 100, y: 90 },
-          { x: 120, y: 100 },
-          { x: 100, y: 130 },
-          { x: 60, y: 100 },
-        ],
-        fillColor: 'rgba(170, 170, 170, 0.2)',
-      },
-      {
-        type: 'polygon',
-        color: 'rgba(187, 187, 187, 1)',
-        lineWidth: 4,
-        points: [
-          { x: 100, y: 80 },
-          { x: 110, y: 100 },
-          { x: 100, y: 110 },
-          { x: 70, y: 100 },
-        ],
-        fillColor: 'rgba(187, 187, 187, 0.2)',
-      },
+    expect(radarSeries.models.polygon.map((m) => m.fillColor)).toEqual([
+      'rgba(170, 170, 170, 0.2)',
+      'rgba(187, 187, 187, 0.2)',
     ]);
-    expect(radarSeries.models.dot).toEqual([]);
   });
 });
