@@ -80,3 +80,13 @@ export const showArea = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      selectable: true,
+    },
+  });
+
+  return el;
+};

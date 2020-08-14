@@ -24,7 +24,7 @@ type RenderOptions = {
 };
 
 export default class RadarSeries extends Component {
-  models: RadarSeriesModels = { polygon: [], dot: [] };
+  models: RadarSeriesModels = { polygon: [], dot: [], selectedSeries: [] };
 
   responders!: CircleResponderModel[];
 
@@ -44,6 +44,7 @@ export default class RadarSeries extends Component {
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.selectable = this.getSelectableOption(options);
 
     const { labels, axisSize, centerX, centerY } = axes.radialAxis!;
     const { max } = getLimitOnAxis(labels);
@@ -100,6 +101,13 @@ export default class RadarSeries extends Component {
           } as TooltipData)
       )
     );
+  }
+
+  onClick({ responders }) {
+    if (this.selectable) {
+      this.models.selectedSeries = responders;
+      this.eventBus.emit('needDraw');
+    }
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] }) {

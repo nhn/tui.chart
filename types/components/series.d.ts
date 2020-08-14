@@ -151,4 +151,5 @@ export type PolygonModel = {
 export type RadarSeriesModels = {
   polygon: PolygonModel[];
   dot: CircleModel[];
+  selectedSeries: CircleModel[];
 };
