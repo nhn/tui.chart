@@ -13,12 +13,8 @@ export default class Tooltip extends Component {
 
   tooltipContainerEl!: HTMLDivElement;
 
-  isShow = false;
-
   onSeriesPointHovered = (tooltipInfos: TooltipInfo[]) => {
-    this.isShow = !!tooltipInfos.length;
-
-    if (this.isShow) {
+    if (tooltipInfos.length) {
       this.renderTooltip(tooltipInfos);
     } else {
       this.removeTooltip();
@@ -36,8 +32,15 @@ export default class Tooltip extends Component {
     this.tooltipContainerEl.innerHTML = '';
   }
 
-  // @TODO: position overflow 체크
-  // @TODO: 마우스 툴팁 위로 올라갔을 때 이벤트 탐지 안되는 것 해결 필요
+  isTooltipContainerOverflow(x: number, y: number) {
+    const { width, height } = this.tooltipContainerEl.getBoundingClientRect();
+    const { x: rectX, y: rectY, width: rectWidth, height: rectHeight } = this.rect;
+
+    return {
+      overflowX: x > rectX + rectWidth || x + width > rectX + rectWidth,
+      overflowY: y > rectY + rectHeight || y + height > rectY + rectHeight,
+    };
+  }
 
   renderTooltip(tooltipInfo: TooltipInfo[]) {
     let rForAdding = 0;
@@ -74,17 +77,29 @@ export default class Tooltip extends Component {
       { type: 'tooltip', x: 0, y: 0, data: [] }
     );
 
-    const leftMargin = 20;
-    const left = this.rect.x + model.x + rForAdding + leftMargin + wForAdding;
-    const top = this.rect.y + model.y;
-
+    const leftMargin = 15;
     this.tooltipContainerEl.innerHTML = this.getHtml(model);
-    this.setContainerPosition(top, left);
+
+    let x = this.rect.x + model.x + rForAdding + leftMargin + wForAdding;
+    let y = this.rect.y + model.y;
+
+    const { overflowX, overflowY } = this.isTooltipContainerOverflow(x, y);
+    const { width, height } = this.tooltipContainerEl.getBoundingClientRect();
+
+    if (overflowX) {
+      x = this.rect.x + model.x - (rForAdding + width);
+    }
+
+    if (overflowY) {
+      y = this.rect.y + model.y + leftMargin - height;
+    }
+
+    this.setContainerPosition(x, y);
   }
 
-  setContainerPosition(top: number, left: number) {
-    this.tooltipContainerEl.style.top = `${top}px`;
-    this.tooltipContainerEl.style.left = `${left}px`;
+  setContainerPosition(x: number, y: number) {
+    this.tooltipContainerEl.style.top = `${y}px`;
+    this.tooltipContainerEl.style.left = `${x}px`;
   }
 
   getHtml(model: TooltipModel) {

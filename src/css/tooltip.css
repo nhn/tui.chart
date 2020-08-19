@@ -10,6 +10,7 @@
   font-family: Arial, sans-serif;
   color: #fff;
   transition: top 0.2s, left 0.2s;
+  pointer-events: none;
 }
 
 .tooltip-category {
