@@ -143,6 +143,7 @@ export type SectorResponderModel = {
 export type PolygonModel = {
   type: 'polygon';
   points: Point[];
+  distances: number[];
   color: string;
   lineWidth: number;
   fillColor?: string;

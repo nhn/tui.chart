@@ -26,6 +26,8 @@ type RenderOptions = {
 export default class RadarSeries extends Component {
   models: RadarSeriesModels = { polygon: [], dot: [], selectedSeries: [] };
 
+  drawModels!: RadarSeriesModels;
+
   responders!: CircleResponderModel[];
 
   activatedResponders: this['responders'] = [];
@@ -61,9 +63,22 @@ export default class RadarSeries extends Component {
     const seriesModels = this.renderPolygonModels(radarData, renderOptions);
 
     this.models.polygon = seriesModels;
+    this.models.dot = options?.series?.showDot ? this.renderDotModels(seriesModels) : [];
 
-    if (options?.series?.showDot) {
-      this.models.dot = this.renderDotModels(seriesModels);
+    if (!this.drawModels) {
+      this.drawModels = {
+        polygon: seriesModels.map((m) => ({
+          ...m,
+          distances: m.distances.map(() => 0),
+          points: m.points.map(() => ({ x: centerX, y: centerY })),
+        })),
+        dot: this.models.dot.map((m) => ({
+          ...m,
+          x: centerX,
+          y: centerY,
+        })),
+        selectedSeries: [],
+      };
     }
 
     const seriesCircleModel = this.renderCircleModel(seriesModels);
@@ -105,7 +120,7 @@ export default class RadarSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      this.models.selectedSeries = responders;
+      this.drawModels.selectedSeries = responders;
       this.eventBus.emit('needDraw');
     }
   }
@@ -121,25 +136,36 @@ export default class RadarSeries extends Component {
   }
 
   renderPolygonModels(seriesData: RadarSeriesType[], renderOptions: RenderOptions): PolygonModel[] {
-    const { degree, centerX, centerY, ratio, showArea } = renderOptions;
+    const { centerX, centerY, degree, ratio, showArea } = renderOptions;
     const fillOpacity = showArea ? 0.2 : 0;
 
     return seriesData.map(({ data, color: seriesColor, name }) => {
-      const points: Point[] = data.map((value, index) => {
-        const radius = value * ratio;
-
-        return getRadialPosition(centerX, centerY, radius, calculateDegreeToRadian(degree * index));
-      });
-
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor!, active ? 1 : 0.2);
+      const polygon = data.reduce<{ points: Point[]; distances: number[] }>(
+        (acc, value, index) => {
+          const distance = value * ratio;
+          const point = getRadialPosition(
+            centerX,
+            centerY,
+            distance,
+            calculateDegreeToRadian(degree * index)
+          );
+
+          return {
+            distances: [...acc.distances, distance],
+            points: [...acc.points, point],
+          };
+        },
+        { points: [], distances: [] }
+      );
 
       return {
         type: 'polygon',
         color,
         lineWidth: DEFAULT_LINE_WIDTH,
-        points,
         fillColor: getRGBA(color, fillOpacity),
+        ...polygon,
       };
     });
   }
