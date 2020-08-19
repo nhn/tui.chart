@@ -21,9 +21,9 @@ import ZeroAxis from '@src/component/zeroAxis';
 import AxisUsingCenterY from '@src/component/axisUsingCenterY';
 import HoveredSeries from '@src/component/hoveredSeries';
 
-import * as basicBrushes from '@src/brushes/basic';
-import * as axisBrushes from '@src/brushes/axis';
-import * as tooltipBrushes from '@src/brushes/tooltip';
+import * as basicBrush from '@src/brushes/basic';
+import * as axisBrush from '@src/brushes/axis';
+import * as tooltipBrush from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
@@ -75,9 +75,9 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(Tooltip);
 
     this.painter.addGroups([
-      basicBrushes,
-      axisBrushes,
-      tooltipBrushes,
+      basicBrush,
+      axisBrush,
+      tooltipBrush,
       legendBrush,
       labelBrush,
       exportMenuBrush,

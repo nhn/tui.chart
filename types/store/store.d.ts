@@ -19,6 +19,8 @@ import {
   PlotLineValue,
   PieSeriesType,
   RangeDataType,
+  RadarSeriesType,
+  RadarChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -31,6 +33,7 @@ type ChartSeriesMap = {
   area: AreaSeriesType[];
   bubble: BubbleSeriesType[];
   pie: PieSeriesType[];
+  radar: RadarSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -58,6 +61,7 @@ type ChartOptionsMap = {
   column: ColumnChartOptions;
   area: AreaChartOptions;
   bubble: BubbleChartOptions;
+  radar: RadarChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -145,6 +149,7 @@ export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
+  radialAxis?: RadialAxisData;
 };
 
 export type DataRange = {
@@ -186,6 +191,13 @@ export type CenterYAxisData = {
   yAxisLabelAnchorPoint: number;
   yAxisHeight: number;
 } & AxisData;
+
+export type RadialAxisData = {
+  labels: string[];
+  axisSize: number;
+  centerX: number;
+  centerY: number;
+};
 
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;

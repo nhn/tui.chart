@@ -15,6 +15,7 @@ import {
   PieSeriesModels,
   SectorResponderModel,
   RectResponderModel,
+  RadarSeriesModels,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -24,6 +25,7 @@ import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
 import { DataLabelModels } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
+import { RadarPlotModels } from '@t/components/radarPlot';
 import { isSameArray } from '@src/helpers/arrayUtil';
 
 export type ComponentType =
@@ -51,8 +53,10 @@ type ComponentModels =
   | ExportMenuModels
   | CircleLegendModels
   | PieSeriesModels
+  | RadarSeriesModels
   | ZoomModels
   | PlotModels
+  | RadarPlotModels
   | LineModel[]
   | LabelModel[]
   | DataLabelModels

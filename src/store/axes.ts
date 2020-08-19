@@ -7,6 +7,7 @@ import {
   ValueEdge,
   CenterYAxisData,
   Axes,
+  RadialAxisData,
 } from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
@@ -17,7 +18,7 @@ import {
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { AxisTitle, BoxSeriesOptions, BarTypeYAxisOptions, RangeDataType } from '@t/options';
+import { AxisTitle, BoxSeriesOptions, BarTypeYAxisOptions, RangeDataType, Rect } from '@t/options';
 import {
   deepMergedCopy,
   hasNegativeOnly,
@@ -152,6 +153,21 @@ function makeTitleOption(title?: AxisTitle) {
     : deepMergedCopy(defaultOption, title);
 }
 
+function getRadialAxis(scale: ScaleData, plot: Rect): RadialAxisData {
+  const { limit, stepSize } = scale;
+  const { width, height } = plot;
+  const valueLabels = makeLabelsFromLimit(limit, stepSize) as string[];
+
+  valueLabels.push(`${Number(valueLabels[valueLabels.length - 1]) + stepSize}`);
+
+  return {
+    labels: valueLabels,
+    axisSize: Math.min(width, height) / 2 - 50,
+    centerX: width / 2,
+    centerY: height / 2,
+  };
+}
+
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
@@ -170,6 +186,10 @@ const axes: StoreModule = {
 
     if (isCenterYAxis(options, !!series.bar)) {
       axesState.centerYAxis = {} as CenterYAxisData;
+    }
+
+    if (series.radar) {
+      axesState.radialAxis = {} as RadialAxisData;
     }
 
     return {
@@ -222,6 +242,10 @@ const axes: StoreModule = {
           yAxisLabelAnchorPoint: yAxis.width / 2,
           yAxisHeight: yAxis.height,
         }) as CenterYAxisData;
+      }
+
+      if (state.axes.radialAxis) {
+        axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot);
       }
 
       extend(state.axes, axesState);

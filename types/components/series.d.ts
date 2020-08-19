@@ -140,3 +140,18 @@ export type SectorResponderModel = {
   data: TooltipData;
   seriesIndex: number;
 } & SectorModel;
+
+export type PolygonModel = {
+  type: 'polygon';
+  points: Point[];
+  color: string;
+  lineWidth: number;
+  fillColor?: string;
+  distances?: number[];
+};
+
+export type RadarSeriesModels = {
+  polygon: PolygonModel[];
+  dot: CircleModel[];
+  selectedSeries: CircleModel[];
+};

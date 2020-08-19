@@ -14,8 +14,8 @@ import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 
-import * as basicBrushes from '@src/brushes/basic';
-import * as axisBrushes from '@src/brushes/axis';
+import * as basicBrush from '@src/brushes/basic';
+import * as axisBrush from '@src/brushes/axis';
 import * as tooltipBrush from '@src/brushes/tooltip';
 import * as circleLegendBrush from '@src/brushes/circleLegend';
 import * as legendBrush from '@src/brushes/legend';
@@ -60,8 +60,8 @@ export default class BubbleChart extends Chart<BaseOptions> {
     this.componentManager.add(CircleLegend);
 
     this.painter.addGroups([
-      basicBrushes,
-      axisBrushes,
+      basicBrush,
+      axisBrush,
       tooltipBrush,
       circleLegendBrush,
       legendBrush,
