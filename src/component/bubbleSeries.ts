@@ -100,6 +100,7 @@ export default class BubbleSeries extends CircleSeries {
           color,
           style: ['default', { strokeStyle: color }],
           seriesIndex,
+          name,
         });
       });
 

@@ -37,7 +37,7 @@ interface StateProp {
   zoomRange?: RangeDataType;
 }
 
-type ValueStateProp = StateProp & { categories: string[] };
+type ValueStateProp = StateProp & { categories: string[]; rawCategories: string[] };
 
 export function isCenterYAxis(options: Options, isBar: boolean) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
@@ -79,14 +79,14 @@ function isZooming(categories: string[], zoomRange?: RangeDataType) {
 }
 
 export function getLabelAxisData(stateProp: ValueStateProp) {
-  const { axisSize, categories, series, options, scale, zoomRange } = stateProp;
+  const { axisSize, categories, series, options, scale, zoomRange, rawCategories } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
-    !isZooming(categories, zoomRange) && scale
+    !isZooming(rawCategories, zoomRange) && scale
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options);
 
-  const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
+  const tickIntervalCount = labels.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
 
   return {
@@ -178,7 +178,7 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, zoomRange, categories = [] } = state;
+      const { scale, options, series, layout, zoomRange, categories = [], rawCategories } = state;
       const { xAxis, yAxis, plot } = layout;
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
@@ -204,6 +204,7 @@ const axes: StoreModule = {
         scale: scale[labelAxisName],
         axisSize: labelAxisSize,
         categories,
+        rawCategories,
         options,
         series,
         zoomRange,

@@ -16,6 +16,7 @@ describe('dataRange Store module', () => {
     },
     disabledSeries: [] as string[],
     rawCategories: ['A', 'B'],
+    categories: ['A', 'B'],
     options: {},
     dataRange: {},
   } as ChartState<LineChartOptions>;
@@ -53,6 +54,7 @@ describe('dataRange Store module', () => {
           },
         },
         rawCategories: ['1', '2', '3'],
+        categories: ['1', '2', '3'],
       });
       const store = { state: data } as Store<LineChartOptions>;
       dataRange.action!.setDataRange(store);
@@ -85,6 +87,7 @@ describe('dataRange Store module', () => {
           },
         },
         rawCategories: ['2020/08/02', '2020/08/03', '2020/08/04'],
+        categories: ['2020/08/02', '2020/08/03', '2020/08/04'],
         options: {
           xAxis: {
             date: true,

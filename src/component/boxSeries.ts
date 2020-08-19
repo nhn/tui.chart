@@ -350,6 +350,7 @@ export default class BoxSeries extends Component {
             color,
             value,
             ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
+            name,
           });
         }
       });

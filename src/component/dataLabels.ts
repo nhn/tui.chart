@@ -1,7 +1,7 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import { DataLabels as DataLabelOptions, DataLabelStyle } from '@t/options';
-import { DataLabel, DataLabelModel, DataLabelType } from '@t/components/dataLabels';
+import { DataLabel, DataLabelModels, DataLabelType } from '@t/components/dataLabels';
 import { includes } from '@src/helpers/utils';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
 
@@ -12,9 +12,9 @@ function getOptionStyle(type: DataLabelType, options: DataLabelOptions): DataLab
 }
 
 export default class DataLabels extends Component {
-  models: DataLabelModel[] = [];
+  models!: DataLabelModels;
 
-  drawModels!: DataLabelModel[];
+  drawModels!: DataLabelModels;
 
   initialize() {
     this.type = 'dataLabels';
@@ -25,8 +25,7 @@ export default class DataLabels extends Component {
     if (!this.drawModels) {
       return;
     }
-
-    this.drawModels = this.models.map((m) => ({ ...m, opacity: delta }));
+    this.drawModels = this.getDrawModelsAppliedOpacity(delta);
   }
 
   render({ layout, dataLabels, options }: ChartState<Options>) {
@@ -38,17 +37,35 @@ export default class DataLabels extends Component {
     this.models = this.renderLabelModel(dataLabels.data, options?.series?.dataLabels ?? {});
 
     if (!this.drawModels) {
-      this.drawModels = this.models.map((m) => ({ ...m, opacity: 0 }));
+      this.drawModels = this.getDrawModelsAppliedOpacity(0);
     }
   }
 
-  renderLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModel[] {
-    return dataLabels.reduce<DataLabelModel[]>((acc, dataLabel) => {
-      const { type, x, y, text, textAlign, textBaseline, defaultColor } = dataLabel;
+  private getDrawModelsAppliedOpacity(opacity: number) {
+    return Object.keys(this.models).reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: this.models[key].map((m) => ({ ...m, opacity })),
+      }),
+      { series: [], total: [] } as DataLabelModels
+    );
+  }
 
-      return isModelExistingInRect(this.rect, { x, y: y + 1 })
-        ? [
-            ...acc,
+  renderLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModels {
+    return dataLabels.reduce(
+      (acc, dataLabel) => {
+        const { type, x, y, text, textAlign, textBaseline, defaultColor, name } = dataLabel;
+
+        if (!isModelExistingInRect(this.rect, { x, y })) {
+          return acc;
+        }
+
+        const modelName = type === 'stackTotal' ? 'total' : 'series';
+
+        return {
+          ...acc,
+          [modelName]: [
+            ...(acc[modelName] ?? []),
             {
               type: 'dataLabel',
               dataLabelType: type,
@@ -60,9 +77,12 @@ export default class DataLabels extends Component {
               defaultColor,
               style: getOptionStyle(type, options),
               opacity: 1,
+              name,
             },
-          ]
-        : acc;
-    }, []);
+          ],
+        };
+      },
+      { series: [], total: [] } as DataLabelModels
+    );
   }
 }

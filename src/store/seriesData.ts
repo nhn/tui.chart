@@ -14,7 +14,9 @@ function initZoomRange(
     return;
   }
 
-  const rawCategoriesLength = Object.keys(makeRawCategories(series, categories)).length;
+  const rawCategoriesLength = categories
+    ? categories.length
+    : Object.keys(makeRawCategories(series, categories)).length;
 
   return [0, rawCategoriesLength - 1];
 }
@@ -122,8 +124,10 @@ const seriesData: StoreModule = {
       this.notify(state, 'zoomRange');
     },
     resetZoom({ state, initStoreState }) {
-      const { categories, series, options } = initStoreState;
-      state.zoomRange = initZoomRange(series, options, categories);
+      const { series, options } = initStoreState;
+      const { rawCategories } = state;
+
+      state.zoomRange = initZoomRange(series, options, rawCategories);
 
       this.notify(state, 'zoomRange');
     },
