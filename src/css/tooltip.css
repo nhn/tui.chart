@@ -1,0 +1,53 @@
+.tooltip {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background: rgba(85, 85, 85, 0.95);
+  /*border: 1px solid #bab9ba;*/
+  user-select: none;
+  box-sizing: border-box;
+  min-width: 150px;
+  border-radius: 3px;
+  font-family: Arial, sans-serif;
+  color: #fff;
+}
+
+.tooltip-category {
+  padding: 8px 15px;
+  font-weight: bold;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-series-wrapper {
+  display: flex;
+  padding: 13px 15px;
+  font-size: 12px;
+  flex-direction: column;
+}
+
+.tooltip-series {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.series-name {
+  display: flex;
+  align-items: center;
+}
+
+.series-name .icon {
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+}
+
+.series-name .name {
+  white-space: nowrap;
+}
+
+.series-value {
+  white-space: nowrap;
+  margin-left: 10px;
+}
