@@ -69,7 +69,7 @@ export default class RadarSeries extends Component {
       this.drawModels = {
         polygon: seriesModels.map((m) => ({
           ...m,
-          distances: m.distances.map(() => 0),
+          distances: m.distances!.map(() => 0),
           points: m.points.map(() => ({ x: centerX, y: centerY })),
         })),
         dot: this.models.dot.map((m) => ({

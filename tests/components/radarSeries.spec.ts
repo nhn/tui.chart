@@ -65,6 +65,7 @@ describe('radar series', () => {
             { x: 60, y: 100 },
           ],
           fillColor: 'rgba(170, 170, 170, 0)',
+          distances: [10, 20, 30, 40],
         },
         {
           type: 'polygon',
@@ -77,9 +78,11 @@ describe('radar series', () => {
             { x: 70, y: 100 },
           ],
           fillColor: 'rgba(187, 187, 187, 0)',
+          distances: [20, 10, 10, 30],
         },
       ],
       dot: [],
+      selectedSeries: [],
     },
     responders: [
       {
