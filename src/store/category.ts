@@ -1,6 +1,6 @@
 import { StoreModule, RawSeries, Series } from '@t/store/store';
 import { isNumber, sortCategories } from '@src/helpers/utils';
-import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
+import { getCoordinateXValue } from '@src/helpers/coordinate';
 
 export function makeRawCategories(series: RawSeries | Series, categories?: string[]) {
   if (categories) {
@@ -33,9 +33,8 @@ const category: StoreModule = {
   }),
   action: {
     setCategory({ state }) {
-      const { rawCategories, zoomRange, series } = state;
-      let categories =
-        isCoordinateSeries(series) && !zoomRange ? makeRawCategories(series) : rawCategories;
+      const { rawCategories, zoomRange } = state;
+      let categories = rawCategories;
 
       if (zoomRange) {
         const [start, end] = zoomRange;

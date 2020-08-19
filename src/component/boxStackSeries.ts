@@ -207,7 +207,7 @@ export default class BoxStackSeries extends BoxSeries {
           renderOptions,
           isLBSideWithDiverging
         );
-        const name = seriesRawData[seriesIndex].name;
+        const { name } = seriesRawData[seriesIndex];
         const active = this.activeSeriesMap![name];
         const color = getRGBA(seriesRawData[seriesIndex].color, active ? 1 : 0.2);
 
