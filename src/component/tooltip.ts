@@ -28,10 +28,6 @@ export default class Tooltip extends Component {
     return el;
   }
 
-  removeTooltip() {
-    this.tooltipContainerEl.innerHTML = '';
-  }
-
   isTooltipContainerOverflow(x: number, y: number) {
     const { width, height } = this.tooltipContainerEl.getBoundingClientRect();
     const { x: rectX, y: rectY, width: rectWidth, height: rectHeight } = this.rect;
@@ -42,28 +38,42 @@ export default class Tooltip extends Component {
     };
   }
 
-  renderTooltip(tooltipInfo: TooltipInfo[]) {
-    let rForAdding = 0;
-    let wForAdding = 0;
+  getPositionInRect(model: TooltipModel) {
+    const margin = 15;
+    const { target } = model;
 
+    const startX = this.rect.x + model.x;
+    let x = startX + margin + target.radius + target.width;
+    let y = this.rect.y + model.y;
+
+    const { overflowX, overflowY } = this.isTooltipContainerOverflow(x, y);
+    const { width, height } = this.tooltipContainerEl.getBoundingClientRect();
+
+    if (overflowX) {
+      x = startX - (target.radius + width) > 0 ? startX - (target.radius + width) : startX + margin;
+    }
+
+    if (overflowY) {
+      y = this.rect.y + model.y + margin - height;
+    }
+
+    return { x, y };
+  }
+
+  renderTooltip(tooltipInfo: TooltipInfo[]) {
     const model = tooltipInfo.reduce<TooltipModel>(
       (acc, item) => {
         const { data, x, y, radius, width } = item;
 
-        if (!acc.x && !acc.y) {
-          acc.x = x;
-          acc.y = y;
-        } else {
-          acc.x = (acc.x + x) / 2;
-          acc.y = (acc.y + y) / 2;
-        }
+        acc.x = acc.x ? (acc.x + x) / 2 : x;
+        acc.y = acc.y ? (acc.y + y) / 2 : y;
 
         if (isNumber(radius)) {
-          rForAdding = Math.max(radius / 2, rForAdding);
+          acc.target.radius = radius;
         }
 
         if (width) {
-          wForAdding = Math.max(wForAdding, width);
+          acc.target.width = width;
         }
 
         acc.data.push(data);
@@ -74,32 +84,14 @@ export default class Tooltip extends Component {
 
         return acc;
       },
-      { type: 'tooltip', x: 0, y: 0, data: [] }
+      { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0 } }
     );
 
-    const leftMargin = 15;
     this.tooltipContainerEl.innerHTML = this.getHtml(model);
 
-    let x = this.rect.x + model.x + rForAdding + leftMargin + wForAdding;
-    let y = this.rect.y + model.y;
-
-    const { overflowX, overflowY } = this.isTooltipContainerOverflow(x, y);
-    const { width, height } = this.tooltipContainerEl.getBoundingClientRect();
-
-    if (overflowX) {
-      x = this.rect.x + model.x - (rForAdding + width);
-    }
-
-    if (overflowY) {
-      y = this.rect.y + model.y + leftMargin - height;
-    }
-
-    this.setContainerPosition(x, y);
-  }
-
-  setContainerPosition(x: number, y: number) {
-    this.tooltipContainerEl.style.top = `${y}px`;
+    const { x, y } = this.getPositionInRect(model);
     this.tooltipContainerEl.style.left = `${x}px`;
+    this.tooltipContainerEl.style.top = `${y}px`;
   }
 
   getHtml(model: TooltipModel) {
@@ -134,6 +126,10 @@ export default class Tooltip extends Component {
     this.chartEl.appendChild(this.tooltipContainerEl);
 
     this.eventBus.on('seriesPointHovered', this.onSeriesPointHovered);
+  }
+
+  removeTooltip() {
+    this.tooltipContainerEl.innerHTML = '';
   }
 
   render({ layout }: ChartState<Options>) {

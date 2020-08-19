@@ -20,4 +20,8 @@ export type TooltipModel = {
   type: 'tooltip';
   data: TooltipData[];
   category?: string;
+  target: {
+    radius: number;
+    width: number;
+  };
 } & Point;
