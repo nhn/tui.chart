@@ -2,6 +2,7 @@ import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import { TooltipInfo, TooltipModel } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
+import { isNumber } from '@src/helpers/utils';
 
 import '../css/tooltip.css';
 
@@ -35,18 +36,31 @@ export default class Tooltip extends Component {
     this.tooltipContainerEl.innerHTML = '';
   }
 
-  renderTooltip(tooltipInfos: TooltipInfo[]) {
-    const model = tooltipInfos.reduce<TooltipModel>(
+  // @TODO: position overflow 체크
+  // @TODO: 마우스 툴팁 위로 올라갔을 때 이벤트 탐지 안되는 것 해결 필요
+
+  renderTooltip(tooltipInfo: TooltipInfo[]) {
+    let rForAdding = 0;
+    let wForAdding = 0;
+
+    const model = tooltipInfo.reduce<TooltipModel>(
       (acc, item) => {
-        const { data } = item;
-        // @TODO: 마우스 포지션 비교해서 잡는게 좋을듯?
+        const { data, x, y, radius, width } = item;
 
         if (!acc.x && !acc.y) {
-          acc.x = item.x;
-          acc.y = item.y;
+          acc.x = x;
+          acc.y = y;
         } else {
-          acc.x = (acc.x + item.x) / 2;
-          acc.y = (acc.y + item.y) / 2;
+          acc.x = (acc.x + x) / 2;
+          acc.y = (acc.y + y) / 2;
+        }
+
+        if (isNumber(radius)) {
+          rForAdding = Math.max(radius / 2, rForAdding);
+        }
+
+        if (width) {
+          wForAdding = Math.max(wForAdding, width);
         }
 
         acc.data.push(data);
@@ -60,13 +74,17 @@ export default class Tooltip extends Component {
       { type: 'tooltip', x: 0, y: 0, data: [] }
     );
 
-    const leftMargin = 25;
-    const left = this.rect.x + model.x + leftMargin;
+    const leftMargin = 20;
+    const left = this.rect.x + model.x + rForAdding + leftMargin + wForAdding;
     const top = this.rect.y + model.y;
 
+    this.tooltipContainerEl.innerHTML = this.getHtml(model);
+    this.setContainerPosition(top, left);
+  }
+
+  setContainerPosition(top: number, left: number) {
     this.tooltipContainerEl.style.top = `${top}px`;
     this.tooltipContainerEl.style.left = `${left}px`;
-    this.tooltipContainerEl.innerHTML = this.getHtml(model);
   }
 
   getHtml(model: TooltipModel) {

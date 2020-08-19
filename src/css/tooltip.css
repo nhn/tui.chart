@@ -3,13 +3,13 @@
   flex-direction: column;
   position: absolute;
   background: rgba(85, 85, 85, 0.95);
-  /*border: 1px solid #bab9ba;*/
   user-select: none;
   box-sizing: border-box;
   min-width: 150px;
   border-radius: 3px;
   font-family: Arial, sans-serif;
   color: #fff;
+  transition: top 0.2s, left 0.2s;
 }
 
 .tooltip-category {

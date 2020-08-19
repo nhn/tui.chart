@@ -18,12 +18,14 @@ const semiCircleCenterYRatio = {
   CLOCKWISE: 1,
 };
 
+export type RadiusRange = { inner: number; outer: number };
+
 type RenderOptions = {
   clockwise: boolean;
   cx: number;
   cy: number;
   drawingStartAngle: number;
-  radiusRange: { inner: number; outer: number };
+  radiusRange: RadiusRange;
   angleRange: { start: number; end: number };
   totalAngle: number;
 };
