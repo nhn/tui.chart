@@ -31,4 +31,4 @@ export type DataLabelModel = {
   opacity?: number;
 } & Omit<DataLabel, 'type'>;
 
-export type DataLabelModels = { series: DataLabelModel[]; total: DataLabelModels[] };
+export type DataLabelModels = { series: DataLabelModel[]; total: DataLabelModel[] };
