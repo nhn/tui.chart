@@ -1,7 +1,7 @@
 import RadarChart from '@src/charts/radarChart';
 import { RadarSeriesData, RadarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { budgetData } from './data';
+import { budgetData2 } from './data';
 
 export default {
   title: 'chart|Radar',
@@ -29,7 +29,7 @@ function createChart(data: RadarSeriesData, customOptions?: RadarChartOptions) {
 }
 
 export const basic = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(budgetData2, {
     legend: {
       visible: true,
       align: 'bottom',
@@ -40,7 +40,7 @@ export const basic = () => {
 };
 
 export const usingCirclePlot = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(budgetData2, {
     plot: {
       type: 'circle',
     },
@@ -54,7 +54,7 @@ export const usingCirclePlot = () => {
 };
 
 export const showDot = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(budgetData2, {
     series: {
       showDot: true,
     },
@@ -68,7 +68,7 @@ export const showDot = () => {
 };
 
 export const showArea = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(budgetData2, {
     series: {
       showArea: true,
     },
@@ -82,7 +82,7 @@ export const showArea = () => {
 };
 
 export const selectable = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(budgetData2, {
     series: {
       selectable: true,
     },
