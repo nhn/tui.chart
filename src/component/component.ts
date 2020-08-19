@@ -3,7 +3,7 @@ import { Rect } from '@t/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
-import { isNumber } from '@src/helpers/utils';
+import { getFirstValidValue, includes, isNumber } from '@src/helpers/utils';
 import { setSplineControlPoint } from '@src/helpers/calculator';
 import {
   AreaSeriesModels,
@@ -23,9 +23,10 @@ import { LegendModel } from '@t/components/legend';
 import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
-import { DataLabelModel } from '@t/components/dataLabels';
+import { DataLabelModels } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
 import { RadarPlotModels } from '@t/components/radarPlot';
+import { isSameArray } from '@src/helpers/arrayUtil';
 
 export type ComponentType =
   | 'component'
@@ -58,7 +59,7 @@ type ComponentModels =
   | RadarPlotModels
   | LineModel[]
   | LabelModel[]
-  | DataLabelModel[]
+  | DataLabelModels
   | LegendModel[]
   | TooltipModel[];
 
@@ -136,11 +137,12 @@ export default abstract class Component {
         if (key[0] !== '_') {
           if (isNumber(current[key])) {
             current[key] = current[key] + (target[key] - current[key]) * delta;
-          } else if (key === 'opacity') {
-            // 투명도도 서서히 증가 시키면 좋을듯
           } else if (key === 'points') {
-            this.changeCurrentModelToMatchTargetModel(current[key], current[key], target[key]);
-
+            current[key] = this.getCurrentModelToMatchTargetModel(
+              current[key],
+              current[key],
+              target[key]
+            );
             current[key].forEach((curPoint, idx) => {
               const { x, y } = curPoint;
               const { x: nextX, y: nextY } = target[key][idx];
@@ -177,22 +179,65 @@ export default abstract class Component {
     }
   }
 
-  changeCurrentModelToMatchTargetModel(models, currentModels, targetModels) {
-    if (currentModels.length < targetModels.length) {
-      models.splice(
-        currentModels.length,
-        0,
-        ...targetModels.slice(currentModels.length, targetModels.length)
-      );
-    } else if (currentModels.length > targetModels.length) {
-      models.splice(targetModels.length, currentModels.length);
+  getCurrentModelToMatchTargetModel(models, currentModels, targetModels) {
+    if (getFirstValidValue(targetModels)?.name) {
+      const modelNames = [...new Set(models.map(({ name }) => name))];
+      const targetNames = [...new Set(targetModels.map(({ name }) => name))];
+      const same = isSameArray(modelNames, targetNames);
+
+      if (!same) {
+        if (currentModels.length > targetModels.length) {
+          return models.filter(({ name }) => includes(targetNames, name));
+        }
+
+        if (currentModels.length < targetModels.length) {
+          const notIncludedModels = targetModels.reduce(
+            (acc, cur, idx) => {
+              const notIncluded = !includes(modelNames, cur.name);
+
+              return notIncluded
+                ? {
+                    models: [...acc.models, cur],
+                    modelIdx: [...acc.modelIdx, idx],
+                  }
+                : acc;
+            },
+            { models: [], modelIdx: [] }
+          );
+
+          const newModels = [...models];
+
+          notIncludedModels.models.forEach((model, idx) => {
+            const modelIdx = notIncludedModels.modelIdx[idx];
+
+            newModels.splice(modelIdx, 0, model);
+          });
+
+          return newModels;
+        }
+      }
     }
+
+    if (currentModels.length < targetModels.length) {
+      return [...currentModels, ...targetModels.slice(currentModels.length, targetModels.length)];
+    }
+
+    if (currentModels.length > targetModels.length) {
+      return currentModels.slice(0, targetModels.length);
+    }
+
+    return models;
   }
 
   syncModels(currentModels, targetModels, type?: string) {
     const drawModels = type ? this.drawModels[type] : this.drawModels;
+    const model = this.getCurrentModelToMatchTargetModel(drawModels, currentModels, targetModels);
 
-    this.changeCurrentModelToMatchTargetModel(drawModels, currentModels, targetModels);
+    if (type) {
+      this.drawModels[type] = model;
+    } else {
+      this.drawModels = model;
+    }
   }
 
   getSelectableOption(options: Options) {

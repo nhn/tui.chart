@@ -66,6 +66,7 @@ const result = {
       x: 0,
       y: 12,
       value: 1,
+      name: 'han',
     },
     {
       type: 'rect',
@@ -75,6 +76,7 @@ const result = {
       x: 10,
       y: 12,
       value: 4,
+      name: 'cho',
     },
     {
       type: 'rect',
@@ -84,6 +86,7 @@ const result = {
       x: 0,
       y: 52,
       value: 2,
+      name: 'han',
     },
     {
       type: 'rect',
@@ -93,6 +96,7 @@ const result = {
       x: 20,
       y: 52,
       value: 5,
+      name: 'cho',
     },
   ],
   connector: [],

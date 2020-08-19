@@ -75,6 +75,7 @@ export default class ScatterSeries extends CircleSeries {
           style: ['default'],
           color,
           seriesIndex,
+          name,
         });
       });
 

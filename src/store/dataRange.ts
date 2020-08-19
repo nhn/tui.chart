@@ -39,7 +39,7 @@ const dataRange: StoreModule = {
   }),
   action: {
     setDataRange({ state }) {
-      const { series, disabledSeries, stackSeries, rawCategories, options } = state;
+      const { series, disabledSeries, stackSeries, categories, options } = state;
       const newDataRange = {} as DataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
@@ -60,7 +60,7 @@ const dataRange: StoreModule = {
         if (isCoordinateSeries(series)) {
           values = values.map((value) => getCoordinateYValue(value));
 
-          const xAxisValues = rawCategories.map((value) =>
+          const xAxisValues = categories!.map((value) =>
             hasDateValue ? Number(new Date(value)) : Number(value)
           );
 

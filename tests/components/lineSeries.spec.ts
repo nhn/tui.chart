@@ -77,6 +77,7 @@ describe('basic', () => {
         type: 'circle',
         x: 20,
         y: 80,
+        name: 'han',
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -87,6 +88,7 @@ describe('basic', () => {
         type: 'circle',
         x: 60,
         y: 60,
+        name: 'han',
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -97,6 +99,7 @@ describe('basic', () => {
         type: 'circle',
         x: 20,
         y: 20,
+        name: 'cho',
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -107,6 +110,7 @@ describe('basic', () => {
         type: 'circle',
         x: 60,
         y: 0,
+        name: 'cho',
       },
     ],
     models: {
@@ -353,6 +357,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 20,
         y: 80,
+        name: 'han',
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -362,6 +367,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 60,
         y: 60,
+        name: 'han',
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -371,6 +377,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 20,
         y: 20,
+        name: 'cho',
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -380,6 +387,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 60,
         y: 0,
+        name: 'cho',
       },
     ]);
   });
