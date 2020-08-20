@@ -95,9 +95,7 @@ export default class Tooltip extends Component {
   }
 
   getDefaultTemplate(model: TooltipModel, { header, body }: DefaultTooltipTemplate) {
-    return `
-      <div class="tooltip">${header}${body}</div>
-    `;
+    return `<div class="tooltip">${header}${body}</div>`;
   }
 
   getHeaderTemplate({ category }: TooltipModel) {
