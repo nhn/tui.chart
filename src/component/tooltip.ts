@@ -92,20 +92,22 @@ export default class Tooltip extends Component {
     const { category, data } = model;
 
     return `
-      ${category ? `<div class="tooltip-category">${category}</div>` : ''}
-      <div class="tooltip-series-wrapper">
-        ${data
-          .map(
-            ({ label, color, value }) =>
-              `<div class="tooltip-series">
-                <span class="series-name">
-                  <i class="icon" style="background: ${color}"></i>
-                  <span class="name">${label}</span>
-                </span>
-                <span class="series-value">${getValueString(value)}</span>
-              </div>`
-          )
-          .join('')}
+      <div class="tooltip">
+        ${category ? `<div class="tooltip-category">${category}</div>` : ''}
+        <div class="tooltip-series-wrapper">
+          ${data
+            .map(
+              ({ label, color, value }) =>
+                `<div class="tooltip-series">
+                  <span class="series-name">
+                    <i class="icon" style="background: ${color}"></i>
+                    <span class="name">${label}</span>
+                  </span>
+                  <span class="series-value">${getValueString(value)}</span>
+                </div>`
+            )
+            .join('')}
+        </div>
       </div>
     `;
   }
@@ -117,7 +119,7 @@ export default class Tooltip extends Component {
     this.chartEl = chartEl;
 
     this.tooltipContainerEl = document.createElement('div');
-    this.tooltipContainerEl.classList.add('tooltip');
+    this.tooltipContainerEl.classList.add('tooltip-container');
     this.chartEl.appendChild(this.tooltipContainerEl);
 
     this.eventBus.on('seriesPointHovered', this.onSeriesPointHovered);

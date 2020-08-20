@@ -1,16 +1,19 @@
+.tooltip-container {
+  position: absolute;
+  transition: top 0.2s, left 0.2s;
+  user-select: none;
+  pointer-events: none;
+}
+
 .tooltip {
   display: flex;
   flex-direction: column;
-  position: absolute;
-  background: rgba(85, 85, 85, 0.95);
-  user-select: none;
   box-sizing: border-box;
-  min-width: 150px;
-  border-radius: 3px;
   font-family: Arial, sans-serif;
+  border-radius: 3px;
   color: #fff;
-  transition: top 0.2s, left 0.2s;
-  pointer-events: none;
+  background: rgba(85, 85, 85, 0.95);
+  min-width: 150px;
 }
 
 .tooltip-category {
