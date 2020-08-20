@@ -7,8 +7,6 @@ import { isNumber } from '@src/helpers/utils';
 import '../css/tooltip.css';
 
 export default class Tooltip extends Component {
-  models: TooltipModel[] = [];
-
   chartEl!: HTMLDivElement;
 
   tooltipContainerEl!: HTMLDivElement;
@@ -20,13 +18,6 @@ export default class Tooltip extends Component {
       this.removeTooltip();
     }
   };
-
-  getTooltipContainerEl() {
-    const el = document.createElement('div');
-    el.classList.add('tooltip');
-
-    return el;
-  }
 
   isTooltipContainerOverflow(x: number, y: number) {
     const { width, height } = this.tooltipContainerEl.getBoundingClientRect();
@@ -60,6 +51,12 @@ export default class Tooltip extends Component {
     return { x, y };
   }
 
+  setTooltipPosition(model: TooltipModel) {
+    const { x, y } = this.getPositionInRect(model);
+    this.tooltipContainerEl.style.left = `${x}px`;
+    this.tooltipContainerEl.style.top = `${y}px`;
+  }
+
   renderTooltip(tooltipInfo: TooltipInfo[]) {
     const model = tooltipInfo.reduce<TooltipModel>(
       (acc, item) => {
@@ -88,10 +85,7 @@ export default class Tooltip extends Component {
     );
 
     this.tooltipContainerEl.innerHTML = this.getHtml(model);
-
-    const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.left = `${x}px`;
-    this.tooltipContainerEl.style.top = `${y}px`;
+    this.setTooltipPosition(model);
   }
 
   getHtml(model: TooltipModel) {
@@ -103,14 +97,13 @@ export default class Tooltip extends Component {
         ${data
           .map(
             ({ label, color, value }) =>
-              `
-          <div class="tooltip-series">
-            <span class="series-name">
-              <i class="icon" style="background: ${color}"></i>
-              <span class="name">${label}</span>
-            </span>
-            <span class="series-value">${getValueString(value)}</span>
-          </div>`
+              `<div class="tooltip-series">
+                <span class="series-name">
+                  <i class="icon" style="background: ${color}"></i>
+                  <span class="name">${label}</span>
+                </span>
+                <span class="series-value">${getValueString(value)}</span>
+              </div>`
           )
           .join('')}
       </div>
@@ -122,7 +115,9 @@ export default class Tooltip extends Component {
     this.name = 'tooltip';
 
     this.chartEl = chartEl;
-    this.tooltipContainerEl = this.getTooltipContainerEl();
+
+    this.tooltipContainerEl = document.createElement('div');
+    this.tooltipContainerEl.classList.add('tooltip');
     this.chartEl.appendChild(this.tooltipContainerEl);
 
     this.eventBus.on('seriesPointHovered', this.onSeriesPointHovered);
