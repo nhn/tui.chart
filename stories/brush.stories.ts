@@ -1,7 +1,6 @@
 import { circle, line, CircleStyleName, rect } from '@src/brushes/basic';
 import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
-import { tooltip } from '@src/brushes/tooltip';
 import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';
 import { label } from '@src/brushes/label';
@@ -357,45 +356,6 @@ export const polygonBrush = () => {
       { x: 220, y: 220 },
       { x: 220, y: 150 },
     ],
-  });
-
-  return el;
-};
-
-export const tooltipBrush = () => {
-  const { ctx, el } = setup();
-
-  tooltip(ctx, {
-    type: 'tooltip',
-    x: 100,
-    y: 100,
-    data: [{ label: 'A', color: '#ddd', value: 100 }],
-  });
-
-  tooltip(ctx, {
-    type: 'tooltip',
-    x: 300,
-    y: 100,
-    data: [
-      { label: 'A', color: 'blue', value: 100 },
-      { label: 'B', color: 'red', value: 5030 },
-      { label: 'C', color: 'green', value: 200 },
-    ],
-    category: 'category name',
-  });
-
-  tooltip(ctx, {
-    type: 'tooltip',
-    x: 100,
-    y: 300,
-    data: [{ label: 'A', color: 'blue', value: { x: 100, y: 300 } }],
-  });
-
-  tooltip(ctx, {
-    type: 'tooltip',
-    x: 300,
-    y: 300,
-    data: [{ label: 'A', color: 'blue', value: { x: 100, y: 300, r: 123456789 } }],
   });
 
   return el;

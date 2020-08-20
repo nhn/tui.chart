@@ -16,7 +16,6 @@ import HoveredSeries from '@src/component/hoveredSeries';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
-import * as tooltipBrush from '@src/brushes/tooltip';
 import * as circleLegendBrush from '@src/brushes/circleLegend';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
@@ -56,13 +55,12 @@ export default class BubbleChart extends Chart<BaseOptions> {
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
-    this.componentManager.add(Tooltip);
+    this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(CircleLegend);
 
     this.painter.addGroups([
       basicBrush,
       axisBrush,
-      tooltipBrush,
       circleLegendBrush,
       legendBrush,
       labelBrush,
