@@ -11,6 +11,8 @@ export default class Tooltip extends Component {
 
   tooltipContainerEl!: HTMLDivElement;
 
+  templateFunc!: (model: TooltipModel) => string;
+
   onSeriesPointHovered = (tooltipInfos: TooltipInfo[]) => {
     if (tooltipInfos.length) {
       this.renderTooltip(tooltipInfos);
@@ -84,7 +86,7 @@ export default class Tooltip extends Component {
       { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0 } }
     );
 
-    this.tooltipContainerEl.innerHTML = this.getHtml(model);
+    this.tooltipContainerEl.innerHTML = this.templateFunc(model);
     this.setTooltipPosition(model);
   }
 
@@ -129,7 +131,8 @@ export default class Tooltip extends Component {
     this.tooltipContainerEl.innerHTML = '';
   }
 
-  render({ layout }: ChartState<Options>) {
+  render({ layout, options }: ChartState<Options>) {
     this.rect = layout.plot;
+    this.templateFunc = options?.tooltip?.template ?? this.getHtml;
   }
 }

@@ -10,6 +10,7 @@ import {
   datetimeCoordinateData,
 } from './data';
 import { boolean, number, withKnobs } from '@storybook/addon-knobs';
+import { TooltipModel } from '@t/components/tooltip';
 
 export default {
   title: 'chart|Line',
@@ -69,6 +70,27 @@ export const basicWithShowDot = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: true },
     series: { showDot: true },
+  });
+
+  return el;
+};
+
+export const basicWithCustomTooltip = () => {
+  // wrapper 하나 더 감싸는게 좋을 듯. container에는 스타일이 없어야 함
+  const { el } = createChart(temperatureData, {
+    tooltip: {
+      template: (model: TooltipModel) => {
+        return `
+          <div style="background: #b28dff; padding: 10px">
+            <div>${model.category}</div>
+            <div>
+               ${model.data
+                 .map((datum) => `<div>${datum.label}</div><div>${datum.value}</div>`)
+                 .join('')}
+            </div>
+          </div>`;
+      },
+    },
   });
 
   return el;

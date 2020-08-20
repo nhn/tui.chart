@@ -1,4 +1,5 @@
 import { RawSeries } from '@t/store/store';
+import { TooltipModel } from '@t/components/tooltip';
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
@@ -154,6 +155,13 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
+interface BaseTooltipOptions {
+  template?: (model: TooltipModel) => string;
+  align?: string; // (left, center, right - top, middle, bottom)으로 조절됨. offset만 줘도 될거같음
+  offsetX?: number;
+  offsetY?: number;
+}
+
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
@@ -161,6 +169,7 @@ interface BaseOptions {
   yAxis?: BaseAxisOptions;
   legend?: BaseLegendOptions;
   exportMenu?: ExportMenuOptions;
+  tooltip?: BaseTooltipOptions;
 }
 
 interface BaseLegendOptions {
