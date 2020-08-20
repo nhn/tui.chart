@@ -1,4 +1,5 @@
 import { RawSeries } from '@t/store/store';
+import { TooltipModel } from '@t/components/tooltip';
 export type RangeDataType = [number, number];
 export type BoxSeriesDataType = number | RangeDataType;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
@@ -154,6 +155,20 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
+export type DefaultTooltipTemplate = { header: string; body: string };
+
+export type TooltipTemplateFunc = (
+  model: TooltipModel,
+  defaultTemplate: DefaultTooltipTemplate
+) => string;
+
+interface BaseTooltipOptions {
+  template?: TooltipTemplateFunc;
+  align?: string; // @deprecated? (left, center, right - top, middle, bottom)으로 조절됨. offset으로 대체?
+  offsetX?: number;
+  offsetY?: number;
+}
+
 interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
@@ -161,6 +176,7 @@ interface BaseOptions {
   yAxis?: BaseAxisOptions;
   legend?: BaseLegendOptions;
   exportMenu?: ExportMenuOptions;
+  tooltip?: BaseTooltipOptions;
 }
 
 interface BaseLegendOptions {
