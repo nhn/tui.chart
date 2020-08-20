@@ -3,6 +3,7 @@ import { ChartState, Options } from '@t/store/store';
 import { TooltipInfo, TooltipModel } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { isNumber } from '@src/helpers/utils';
+import { DefaultTooltipTemplate, TooltipTemplateFunc } from '@t/options';
 
 import '../css/tooltip.css';
 
@@ -11,7 +12,7 @@ export default class Tooltip extends Component {
 
   tooltipContainerEl!: HTMLDivElement;
 
-  templateFunc!: (model: TooltipModel) => string;
+  templateFunc!: TooltipTemplateFunc;
 
   onSeriesPointHovered = (tooltipInfos: TooltipInfo[]) => {
     if (tooltipInfos.length) {
@@ -86,32 +87,38 @@ export default class Tooltip extends Component {
       { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0 } }
     );
 
-    this.tooltipContainerEl.innerHTML = this.templateFunc(model);
+    this.tooltipContainerEl.innerHTML = this.templateFunc(model, {
+      header: this.getHeaderTemplate(model),
+      body: this.getBodyTemplate(model),
+    });
     this.setTooltipPosition(model);
   }
 
-  getHtml(model: TooltipModel) {
-    const { category, data } = model;
-
+  getDefaultTemplate(model: TooltipModel, { header, body }: DefaultTooltipTemplate) {
     return `
-      <div class="tooltip">
-        ${category ? `<div class="tooltip-category">${category}</div>` : ''}
-        <div class="tooltip-series-wrapper">
-          ${data
-            .map(
-              ({ label, color, value }) =>
-                `<div class="tooltip-series">
+      <div class="tooltip">${header}${body}</div>
+    `;
+  }
+
+  getHeaderTemplate({ category }: TooltipModel) {
+    return category ? `<div class="tooltip-category">${category}</div>` : '';
+  }
+
+  getBodyTemplate({ data }: TooltipModel) {
+    return `<div class="tooltip-series-wrapper">
+        ${data
+          .map(
+            ({ label, color, value }) =>
+              `<div class="tooltip-series">
                   <span class="series-name">
                     <i class="icon" style="background: ${color}"></i>
                     <span class="name">${label}</span>
                   </span>
                   <span class="series-value">${getValueString(value)}</span>
                 </div>`
-            )
-            .join('')}
-        </div>
-      </div>
-    `;
+          )
+          .join('')}
+      </div>`;
   }
 
   initialize({ chartEl }) {
@@ -133,6 +140,6 @@ export default class Tooltip extends Component {
 
   render({ layout, options }: ChartState<Options>) {
     this.rect = layout.plot;
-    this.templateFunc = options?.tooltip?.template ?? this.getHtml;
+    this.templateFunc = options?.tooltip?.template ?? this.getDefaultTemplate;
   }
 }

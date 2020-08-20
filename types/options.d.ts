@@ -155,9 +155,16 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
+export type DefaultTooltipTemplate = { header: string; body: string };
+
+export type TooltipTemplateFunc = (
+  model: TooltipModel,
+  defaultTemplate: DefaultTooltipTemplate
+) => string;
+
 interface BaseTooltipOptions {
-  template?: (model: TooltipModel) => string;
-  align?: string; // (left, center, right - top, middle, bottom)으로 조절됨. offset만 줘도 될거같음
+  template?: TooltipTemplateFunc;
+  align?: string; // @deprecated? (left, center, right - top, middle, bottom)으로 조절됨. offset으로 대체?
   offsetX?: number;
   offsetY?: number;
 }

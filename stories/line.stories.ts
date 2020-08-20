@@ -1,5 +1,5 @@
 import LineChart from '@src/charts/lineChart';
-import { LineSeriesData } from '@t/options';
+import { DefaultTooltipTemplate, LineSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import {
   tupleCoordinateData,
@@ -76,18 +76,13 @@ export const basicWithShowDot = () => {
 };
 
 export const basicWithCustomTooltip = () => {
-  // wrapper 하나 더 감싸는게 좋을 듯. container에는 스타일이 없어야 함
   const { el } = createChart(temperatureData, {
     tooltip: {
-      template: (model: TooltipModel) => {
+      template: (model: TooltipModel, { body }: DefaultTooltipTemplate) => {
         return `
-          <div style="background: #b28dff; padding: 10px">
-            <div>${model.category}</div>
-            <div>
-               ${model.data
-                 .map((datum) => `<div>${datum.label}</div><div>${datum.value}</div>`)
-                 .join('')}
-            </div>
+          <div style="display: flex; flex-direction: column; background: black; color: #fff;">
+            <p style="padding: 5px; margin: 0; border-bottom: 1px solid #ddd;font-size: 13px; text-align: center">🎊 ${model.category} 🎊</p>
+            ${body}
           </div>`;
       },
     },
