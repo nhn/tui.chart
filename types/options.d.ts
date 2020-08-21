@@ -164,7 +164,6 @@ export type TooltipTemplateFunc = (
 
 interface BaseTooltipOptions {
   template?: TooltipTemplateFunc;
-  align?: string; // @deprecated? (left, center, right - top, middle, bottom)으로 조절됨. offset으로 대체?
   offsetX?: number;
   offsetY?: number;
 }

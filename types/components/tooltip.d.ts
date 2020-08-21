@@ -14,6 +14,7 @@ export type TooltipInfo = {
   data: TooltipData;
   radius?: number | RadiusRange;
   width?: number;
+  height?: number;
 } & Point;
 
 export type TooltipModel = {
@@ -23,5 +24,6 @@ export type TooltipModel = {
   target: {
     radius: number;
     width: number;
+    height: number;
   };
 } & Point;

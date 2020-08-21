@@ -91,6 +91,27 @@ export const basicWithCustomTooltip = () => {
   return el;
 };
 
+export const basicWithTooltipOffset = () => {
+  const { el } = createChart(temperatureData, {
+    tooltip: {
+      offsetX: number('offsetX', 35, {
+        range: true,
+        min: 0,
+        max: 50,
+        step: 5,
+      }),
+      offsetY: number('offsetY', 35, {
+        range: true,
+        min: 0,
+        max: 50,
+        step: 5,
+      }),
+    },
+  });
+
+  return el;
+};
+
 export const spline = () => {
   const { el } = createChart(temperatureData2, {
     series: { spline: boolean('spline', true) },
