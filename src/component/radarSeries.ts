@@ -83,7 +83,7 @@ export default class RadarSeries extends Component {
 
     const seriesCircleModel = this.renderCircleModel(seriesModels);
 
-    const tooltipDataArr = this.makeTooltipModel(radarData, categories!);
+    const tooltipDataArr = this.makeTooltipModel(radarData, categories);
 
     this.responders = seriesCircleModel.map((m, index) => ({
       ...m,

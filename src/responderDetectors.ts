@@ -4,11 +4,12 @@ import {
   RectModel,
   CircleResponderModel,
   SectorResponderModel,
+  BoxPlotResponderModel,
 } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
 import { calculateRadianToDegree, withinRadian } from '@src/helpers/sector';
 
-type DetectorType = 'circle' | 'rect' | 'sector';
+type DetectorType = 'circle' | 'rect' | 'sector' | 'boxPlot';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
@@ -65,5 +66,27 @@ export const responderDetectors: ResponderDetectors = {
     const detectionDegree = calculateRadianToDegree(Math.atan2(yPos, xPos), drawingStartAngle);
 
     return withinRadius && withinRadian(clockwise, start, end, detectionDegree);
+  },
+  boxPlot: (
+    mousePosition: Point,
+    model: BoxPlotResponderModel,
+    componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
+  ) => {
+    return ['median', 'minimum', 'maximum', 'whisker'].some((prop) => {
+      if (!model[prop]) {
+        return false;
+      }
+
+      if (prop === 'box') {
+        return responderDetectors.rect(mousePosition, model[prop], componentRect);
+      }
+
+      if (prop === 'outlier') {
+        return responderDetectors.circle(mousePosition, model[prop], componentRect);
+      }
+
+      // @TODO: 직선체크, 한 직선위에 점이 있나없나!
+      return false;
+    });
   },
 };

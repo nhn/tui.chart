@@ -155,3 +155,16 @@ export type RadarSeriesModels = {
   dot: CircleModel[];
   selectedSeries: CircleModel[];
 };
+
+export type BoxPlotModel = RectModel | LineModel;
+
+export type BoxPlotSeriesModels = {
+  dot: CircleModel[];
+  rect: RectModel[];
+  line: LineModel[];
+  selectedSeries: BoxPlotModel[];
+};
+
+export type BoxPlotResponderModel = BoxPlotModel & {
+  data: TooltipData;
+};

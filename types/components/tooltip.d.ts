@@ -1,6 +1,7 @@
 import { BubblePoint, Point } from '../options';
 
-export type TooltipDataValue = string | number | BubblePoint | Point;
+export type TooltipTitleValues = { title: string; value: number }[];
+export type TooltipDataValue = string | number | BubblePoint | Point | TooltipTitleValues;
 
 export type TooltipData = {
   label: string;

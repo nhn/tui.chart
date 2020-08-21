@@ -16,6 +16,8 @@ import {
   SectorResponderModel,
   RectResponderModel,
   RadarSeriesModels,
+  BoxPlotSeriesModels,
+  BoxPlotResponderModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -54,6 +56,7 @@ type ComponentModels =
   | CircleLegendModels
   | PieSeriesModels
   | RadarSeriesModels
+  | BoxPlotSeriesModels
   | ZoomModels
   | PlotModels
   | RadarPlotModels
@@ -64,7 +67,11 @@ type ComponentModels =
   | TooltipModel[];
 
 type ComponentResponders = Array<
-  CircleResponderModel | RectModel | SectorResponderModel | RectResponderModel
+  | CircleResponderModel
+  | RectModel
+  | SectorResponderModel
+  | RectResponderModel
+  | BoxPlotResponderModel
 >;
 
 export default abstract class Component {
