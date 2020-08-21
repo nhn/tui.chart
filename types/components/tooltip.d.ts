@@ -1,4 +1,4 @@
-import { BubblePoint, Point } from '../options';
+import { BubblePoint, Formatter, Point } from '../options';
 import { RadiusRange } from '@src/component/pieSeries';
 
 export type TooltipDataValue = string | number | BubblePoint | Point;
@@ -7,6 +7,8 @@ export type TooltipData = {
   label: string;
   color: string;
   value: TooltipDataValue;
+  formattedValue?: string;
+  formatter?: Formatter;
   category?: string;
 };
 
