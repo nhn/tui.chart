@@ -14,9 +14,9 @@ export default class Tooltip extends Component {
 
   templateFunc!: TooltipTemplateFunc;
 
-  offsetX?: number;
+  offsetX!: number;
 
-  offsetY?: number;
+  offsetY!: number;
 
   onSeriesPointHovered = (tooltipInfos: TooltipInfo[]) => {
     if (tooltipInfos.length) {
@@ -38,28 +38,26 @@ export default class Tooltip extends Component {
 
   getPositionInRect(model: TooltipModel) {
     const { target } = model;
-    const offsetX = this.offsetX ?? 10;
-    const offsetY = this.offsetY ?? 0;
 
     const startX = this.rect.x + model.x;
     const startY = this.rect.y + model.y;
-    let x = startX + target.radius + target.width + offsetX;
-    let y = startY + offsetY;
+    let x = startX + target.radius + target.width + this.offsetX;
+    let y = startY + this.offsetY;
 
     const { overflowX, overflowY } = this.isTooltipContainerOverflow(x, y);
     const { width, height } = this.tooltipContainerEl.getBoundingClientRect();
 
     if (overflowX) {
       x =
-        startX - (width + target.radius + offsetX) > 0
-          ? startX - (width + target.radius + offsetX)
-          : startX + offsetX;
+        startX - (width + target.radius + this.offsetX) > 0
+          ? startX - (width + target.radius + this.offsetX)
+          : startX + this.offsetX;
     }
 
     if (overflowY) {
       y =
-        startY + target.height - (height + offsetY) > 0
-          ? startY + target.height - (height + offsetY)
+        startY + target.height - (height + this.offsetY) > 0
+          ? startY + target.height - (height + this.offsetY)
           : y;
     }
 
@@ -156,7 +154,7 @@ export default class Tooltip extends Component {
   render({ layout, options }: ChartState<Options>) {
     this.rect = layout.plot;
     this.templateFunc = options?.tooltip?.template ?? this.getDefaultTemplate;
-    this.offsetX = options?.tooltip?.offsetX;
-    this.offsetY = options?.tooltip?.offsetY;
+    this.offsetX = options?.tooltip?.offsetX ?? 10;
+    this.offsetY = options?.tooltip?.offsetY ?? 0;
   }
 }
