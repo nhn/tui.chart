@@ -11,7 +11,6 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 
 import * as basicBrush from '@src/brushes/basic';
-import * as tooltipBrush from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
@@ -49,11 +48,10 @@ export default class PieChart extends Chart<PieChartOptions> {
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);
-    this.componentManager.add(Tooltip);
+    this.componentManager.add(Tooltip, { chartEl: this.el });
 
     this.painter.addGroups([
       basicBrush,
-      tooltipBrush,
       legendBrush,
       labelBrush,
       exportMenuBrush,

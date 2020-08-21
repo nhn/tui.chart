@@ -23,7 +23,6 @@ import HoveredSeries from '@src/component/hoveredSeries';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
-import * as tooltipBrush from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
@@ -72,12 +71,11 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);
-    this.componentManager.add(Tooltip);
+    this.componentManager.add(Tooltip, { chartEl: this.el });
 
     this.painter.addGroups([
       basicBrush,
       axisBrush,
-      tooltipBrush,
       legendBrush,
       labelBrush,
       exportMenuBrush,

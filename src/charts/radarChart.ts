@@ -14,7 +14,6 @@ import Tooltip from '@src/component/tooltip';
 import RadialAxis from '@src/component/radialAxis';
 
 import * as basicBrush from '@src/brushes/basic';
-import * as tooltipBrush from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
@@ -52,15 +51,8 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     this.componentManager.add(RadialAxis);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
-    this.componentManager.add(Tooltip);
+    this.componentManager.add(Tooltip, { chartEl: this.el });
 
-    this.painter.addGroups([
-      basicBrush,
-      tooltipBrush,
-      legendBrush,
-      labelBrush,
-      exportMenuBrush,
-      polygonBrush,
-    ]);
+    this.painter.addGroups([basicBrush, legendBrush, labelBrush, exportMenuBrush, polygonBrush]);
   }
 }

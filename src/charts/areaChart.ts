@@ -21,7 +21,6 @@ import Zoom from '@src/component/zoom';
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
-import * as tooltipBrush from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
@@ -64,13 +63,12 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
-    this.componentManager.add(Tooltip);
+    this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
 
     this.painter.addGroups([
       basicBrush,
       axisBrush,
-      tooltipBrush,
       lineSeriesBrush,
       legendBrush,
       labelBrush,
