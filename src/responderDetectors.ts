@@ -8,8 +8,9 @@ import {
 } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
 import { calculateRadianToDegree, withinRadian } from '@src/helpers/sector';
+import { LineModel } from '@t/components/axis';
 
-type DetectorType = 'circle' | 'rect' | 'sector' | 'boxPlot';
+type DetectorType = 'circle' | 'rect' | 'sector' | 'boxPlot' | 'line';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
@@ -67,26 +68,60 @@ export const responderDetectors: ResponderDetectors = {
 
     return withinRadius && withinRadian(clockwise, start, end, detectionDegree);
   },
+  line: (
+    mousePosition: Point,
+    model: LineModel,
+    componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
+  ) => {
+    const { x, y } = mousePosition;
+    const { x: compX, y: compY } = componentRect;
+    const { x: modelX, y: modelY, x2, y2 } = model;
+
+    const numerator = y2 - modelY;
+    const denominator = x2 - modelX;
+    const detectionDistance = 3;
+    let result = false;
+
+    if (numerator === 0) {
+      // y = a
+      const minX = Math.min(modelX, x2);
+      const maxX = Math.max(modelX, x2);
+
+      result =
+        x - compX >= minX &&
+        x - compX <= maxX &&
+        y >= modelY + compY - detectionDistance &&
+        y <= modelY + compY + detectionDistance;
+    } else if (denominator === 0) {
+      // x = a
+      const minY = Math.min(modelY, y2);
+      const maxY = Math.max(modelY, y2);
+
+      result =
+        y - compY >= minY &&
+        y - compY <= maxY &&
+        x >= modelX + compX - detectionDistance &&
+        x <= modelX + compX + detectionDistance;
+    } else {
+      // y = ax + b
+      const slope = numerator / denominator;
+      const xPos = x - (modelX + compX);
+      const yPos = y - (modelY + compY);
+
+      result = slope * xPos === yPos;
+    }
+
+    return result;
+  },
   boxPlot: (
     mousePosition: Point,
     model: BoxPlotResponderModel,
     componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
   ) => {
-    return ['median', 'minimum', 'maximum', 'whisker'].some((prop) => {
-      if (!model[prop]) {
-        return false;
-      }
-
-      if (prop === 'box') {
-        return responderDetectors.rect(mousePosition, model[prop], componentRect);
-      }
-
-      if (prop === 'outlier') {
-        return responderDetectors.circle(mousePosition, model[prop], componentRect);
-      }
-
-      // @TODO: 직선체크, 한 직선위에 점이 있나없나!
-      return false;
-    });
+    return ['box', 'median', 'minimum', 'maximum', 'whisker'].some((prop) =>
+      prop === 'box'
+        ? responderDetectors.rect(mousePosition, model[prop], componentRect)
+        : responderDetectors.line(mousePosition, model[prop], componentRect)
+    );
   },
 };

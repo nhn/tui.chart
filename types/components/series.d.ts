@@ -159,12 +159,21 @@ export type RadarSeriesModels = {
 export type BoxPlotModel = RectModel | LineModel;
 
 export type BoxPlotSeriesModels = {
+  series: Array<RectModel | LineModel>;
   dot: CircleModel[];
-  rect: RectModel[];
-  line: LineModel[];
   selectedSeries: BoxPlotModel[];
 };
 
-export type BoxPlotResponderModel = BoxPlotModel & {
+export type Test = {
+  type: 'BoxPlot';
+  color: string;
+  box: Omit<RectModel, 'type' | 'color'>;
+  median: LineModel;
+  whisker: LineModel;
+  minimum: LineModel;
+  maximum: LineModel;
+};
+
+export type BoxPlotResponderModel = (Test | CircleModel) & {
   data: TooltipData;
 };
