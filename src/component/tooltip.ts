@@ -14,6 +14,10 @@ export default class Tooltip extends Component {
 
   templateFunc!: TooltipTemplateFunc;
 
+  offsetX!: number;
+
+  offsetY!: number;
+
   onSeriesPointHovered = (tooltipInfos: TooltipInfo[]) => {
     if (tooltipInfos.length) {
       this.renderTooltip(tooltipInfos);
@@ -33,37 +37,44 @@ export default class Tooltip extends Component {
   }
 
   getPositionInRect(model: TooltipModel) {
-    const margin = 15;
     const { target } = model;
 
     const startX = this.rect.x + model.x;
-    let x = startX + margin + target.radius + target.width;
-    let y = this.rect.y + model.y;
+    const startY = this.rect.y + model.y;
+    let x = startX + target.radius + target.width + this.offsetX;
+    let y = startY + this.offsetY;
 
     const { overflowX, overflowY } = this.isTooltipContainerOverflow(x, y);
     const { width, height } = this.tooltipContainerEl.getBoundingClientRect();
 
     if (overflowX) {
-      x = startX - (target.radius + width) > 0 ? startX - (target.radius + width) : startX + margin;
+      x =
+        startX - (width + target.radius + this.offsetX) > 0
+          ? startX - (width + target.radius + this.offsetX)
+          : startX + this.offsetX;
     }
 
     if (overflowY) {
-      y = this.rect.y + model.y + margin - height;
+      y =
+        startY + target.height - (height + this.offsetY) > 0
+          ? startY + target.height - (height + this.offsetY)
+          : y;
     }
 
     return { x, y };
   }
 
   setTooltipPosition(model: TooltipModel) {
+    const { x: chartX, y: chartY } = this.chartEl.getBoundingClientRect();
     const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.left = `${x}px`;
-    this.tooltipContainerEl.style.top = `${y}px`;
+    this.tooltipContainerEl.style.left = `${chartX + x}px`;
+    this.tooltipContainerEl.style.top = `${chartY + y}px`;
   }
 
   renderTooltip(tooltipInfo: TooltipInfo[]) {
     const model = tooltipInfo.reduce<TooltipModel>(
       (acc, item) => {
-        const { data, x, y, radius, width } = item;
+        const { data, x, y, radius, width, height } = item;
 
         acc.x = acc.x ? (acc.x + x) / 2 : x;
         acc.y = acc.y ? (acc.y + y) / 2 : y;
@@ -76,6 +87,10 @@ export default class Tooltip extends Component {
           acc.target.width = width;
         }
 
+        if (height) {
+          acc.target.height = height;
+        }
+
         acc.data.push(data);
 
         if (!acc.category && data.category) {
@@ -84,7 +99,7 @@ export default class Tooltip extends Component {
 
         return acc;
       },
-      { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0 } }
+      { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0, height: 0 } }
     );
 
     this.tooltipContainerEl.innerHTML = this.templateFunc(model, {
@@ -139,5 +154,7 @@ export default class Tooltip extends Component {
   render({ layout, options }: ChartState<Options>) {
     this.rect = layout.plot;
     this.templateFunc = options?.tooltip?.template ?? this.getDefaultTemplate;
+    this.offsetX = options?.tooltip?.offsetX ?? 10;
+    this.offsetY = options?.tooltip?.offsetY ?? 0;
   }
 }
