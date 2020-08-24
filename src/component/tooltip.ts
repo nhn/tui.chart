@@ -98,7 +98,6 @@ export default class Tooltip extends Component {
           formattedValue: this.formatter
             ? this.formatter(data.value as SeriesDataType)
             : getValueString(data.value),
-          formatter: this.formatter,
         });
 
         if (!acc.category && data.category) {

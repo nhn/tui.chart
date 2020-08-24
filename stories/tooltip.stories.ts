@@ -1,8 +1,8 @@
 import LineChart from '@src/charts/lineChart';
 import { DefaultTooltipTemplate, LineSeriesData, SeriesDataType } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { temperatureData, temperatureData2 } from './data';
-import { boolean, number, withKnobs } from '@storybook/addon-knobs';
+import { temperatureData } from './data';
+import { number, withKnobs } from '@storybook/addon-knobs';
 import { TooltipModel } from '@t/components/tooltip';
 
 export default {
