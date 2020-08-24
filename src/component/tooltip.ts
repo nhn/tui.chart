@@ -3,7 +3,7 @@ import { ChartState, Options } from '@t/store/store';
 import { TooltipInfo, TooltipModel } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { isNumber } from '@src/helpers/utils';
-import { DefaultTooltipTemplate, TooltipTemplateFunc } from '@t/options';
+import { DefaultTooltipTemplate, Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
 
 import '../css/tooltip.css';
 
@@ -17,6 +17,8 @@ export default class Tooltip extends Component {
   offsetX!: number;
 
   offsetY!: number;
+
+  formatter?: Formatter;
 
   onSeriesPointHovered = (tooltipInfos: TooltipInfo[]) => {
     if (tooltipInfos.length) {
@@ -91,7 +93,12 @@ export default class Tooltip extends Component {
           acc.target.height = height;
         }
 
-        acc.data.push(data);
+        acc.data.push({
+          ...data,
+          formattedValue: this.formatter
+            ? this.formatter(data.value as SeriesDataType)
+            : getValueString(data.value),
+        });
 
         if (!acc.category && data.category) {
           acc.category = data.category;
@@ -121,13 +128,13 @@ export default class Tooltip extends Component {
     return `<div class="tooltip-series-wrapper">
         ${data
           .map(
-            ({ label, color, value }) =>
+            ({ label, color, formattedValue }) =>
               `<div class="tooltip-series">
                   <span class="series-name">
                     <i class="icon" style="background: ${color}"></i>
                     <span class="name">${label}</span>
                   </span>
-                  <span class="series-value">${getValueString(value)}</span>
+                  <span class="series-value">${formattedValue}</span>
                 </div>`
           )
           .join('')}
@@ -156,5 +163,6 @@ export default class Tooltip extends Component {
     this.templateFunc = options?.tooltip?.template ?? this.getDefaultTemplate;
     this.offsetX = options?.tooltip?.offsetX ?? 10;
     this.offsetY = options?.tooltip?.offsetY ?? 0;
+    this.formatter = options?.tooltip?.formatter;
   }
 }

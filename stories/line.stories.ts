@@ -1,5 +1,5 @@
 import LineChart from '@src/charts/lineChart';
-import { DefaultTooltipTemplate, LineSeriesData } from '@t/options';
+import { LineSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import {
   tupleCoordinateData,
@@ -10,7 +10,6 @@ import {
   datetimeCoordinateData,
 } from './data';
 import { boolean, number, withKnobs } from '@storybook/addon-knobs';
-import { TooltipModel } from '@t/components/tooltip';
 
 export default {
   title: 'chart|Line',
@@ -70,43 +69,6 @@ export const basicWithShowDot = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: true },
     series: { showDot: true },
-  });
-
-  return el;
-};
-
-export const basicWithCustomTooltip = () => {
-  const { el } = createChart(temperatureData, {
-    tooltip: {
-      template: (model: TooltipModel, { body }: DefaultTooltipTemplate) => {
-        return `
-          <div style="display: flex; flex-direction: column; background: black; color: #fff;">
-            <p style="padding: 5px; margin: 0; border-bottom: 1px solid #ddd;font-size: 13px; text-align: center">🎊 ${model.category} 🎊</p>
-            ${body}
-          </div>`;
-      },
-    },
-  });
-
-  return el;
-};
-
-export const basicWithTooltipOffset = () => {
-  const { el } = createChart(temperatureData, {
-    tooltip: {
-      offsetX: number('offsetX', 35, {
-        range: true,
-        min: 0,
-        max: 50,
-        step: 5,
-      }),
-      offsetY: number('offsetY', 35, {
-        range: true,
-        min: 0,
-        max: 50,
-        step: 5,
-      }),
-    },
   });
 
   return el;

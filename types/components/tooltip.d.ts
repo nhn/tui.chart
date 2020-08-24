@@ -7,6 +7,7 @@ export type TooltipData = {
   label: string;
   color: string;
   value: TooltipDataValue;
+  formattedValue?: string;
   category?: string;
 };
 

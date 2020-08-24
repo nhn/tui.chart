@@ -155,6 +155,7 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
+type Formatter = (value: SeriesDataType) => string;
 export type DefaultTooltipTemplate = { header: string; body: string };
 
 export type TooltipTemplateFunc = (
@@ -166,6 +167,7 @@ interface BaseTooltipOptions {
   template?: TooltipTemplateFunc;
   offsetX?: number;
   offsetY?: number;
+  formatter?: Formatter;
 }
 
 interface BaseOptions {
@@ -356,7 +358,7 @@ export type DataLabels = {
   anchor?: DataLabelAnchor;
   offsetX?: number;
   offsetY?: number;
-  formatter?: (value: SeriesDataType) => string;
+  formatter?: Formatter;
   style?: DataLabelStyle;
   stackTotal?: DataLabelStackTotal;
   pieSeriesName?: DataLabelPieSeriesName;
