@@ -17,7 +17,6 @@ import HoveredSeries from '@src/component/hoveredSeries';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
-import * as tooltipBrushes from '@src/brushes/tooltip';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
@@ -63,7 +62,6 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
       basicBrushes,
       axisBrushes,
       BoxPlotBrush,
-      tooltipBrushes,
       legendBrush,
       labelBrush,
       exportMenuBrush,
