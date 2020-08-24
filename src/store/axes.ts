@@ -87,7 +87,7 @@ export function getLabelAxisData(stateProp: ValueStateProp) {
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options);
 
-  const tickIntervalCount = labels.length - (pointOnColumn ? 0 : 1);
+  const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
 
   return {

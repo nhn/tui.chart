@@ -25,11 +25,11 @@ function adjustLimitForOverflow(limit: ValueEdge, stepSize: number, overflowed: 
   };
 }
 
-function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>) {
+function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>, scaleOption?: Scale) {
   const { min, max } = scale;
   const scaleDataLimit = scaleData.limit;
-  const hasMinOption = isNumber(min);
-  const hasMaxOption = isNumber(max);
+  const hasMinOption = isNumber(scaleOption?.min);
+  const hasMaxOption = isNumber(scaleOption?.max);
 
   const isOverflowedMin = !hasMinOption && scaleDataLimit.min === min && scaleDataLimit.min !== 0;
   const isOverflowedMax = !hasMaxOption && scaleDataLimit.max === max && scaleDataLimit.max !== 0;
@@ -76,26 +76,22 @@ function getNormalizedStep(stepSize: number) {
  * Get normalized limit values
  * max = 155 and step = 10 ---> max = 160
  */
-function getNormalizedLimit(limit: ValueEdge, stepSize: number, showLabel?: boolean): ValueEdge {
+function getNormalizedLimit(limit: ValueEdge, stepSize: number): ValueEdge {
   let { min, max } = limit;
   const minNumber = Math.min(getDigits(max), getDigits(stepSize));
   const placeNumber = minNumber > 1 ? 1 : 1 / minNumber;
   const fixedStep = stepSize * placeNumber;
-  const noExtraMax = max;
 
   // ceil max value step digits
   max = (Math.ceil((max * placeNumber) / fixedStep) * fixedStep) / placeNumber;
-  const isNotEnoughSize = fixedStep / 2 > max - noExtraMax;
-
-  if (showLabel && isNotEnoughSize) {
-    max += fixedStep;
-  }
 
   if (min > stepSize) {
     // floor min value to multiples of step
     min = (Math.floor((min * placeNumber) / fixedStep) * fixedStep) / placeNumber;
   } else if (min < 0) {
     min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
+  } else {
+    min = 0;
   }
 
   return {
@@ -180,7 +176,8 @@ export function calculateCoordinateScale(options: {
   const scale = makeScaleOption(dataRange, scaleOption);
   const roughScale = getRoughScale(scale, offsetSize, minStepSize);
   const normalizedScale = getNormalizedScale(roughScale, scale, showLabel);
-  const overflowed = isSeriesOverflowed(normalizedScale, scale);
+  console.log(normalizedScale);
+  const overflowed = isSeriesOverflowed(normalizedScale, scale, scaleOption);
 
   if (overflowed) {
     const { stepSize, limit } = normalizedScale;

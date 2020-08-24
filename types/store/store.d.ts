@@ -157,10 +157,8 @@ export type Axes = {
 };
 
 export type DataRange = {
-  [key in keyof ChartSeriesMap]: {
-    xAxis: ValueEdge;
-    yAxis: ValueEdge;
-  };
+  xAxis?: ValueEdge;
+  yAxis?: ValueEdge;
 };
 
 export type StackSeries = {

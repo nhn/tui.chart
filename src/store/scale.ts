@@ -26,36 +26,36 @@ const scale: StoreModule = {
         yAxis: options?.yAxis?.scale,
       };
 
-      Object.keys(series).forEach((seriesName) => {
-        if (hasPercentStackSeries(stackSeries)) {
+      if (hasPercentStackSeries(stackSeries)) {
+        Object.keys(series).forEach((seriesName) => {
           scaleData[valueAxisName] = getStackScaleData(stackSeries[seriesName].scaleType);
-        } else if (isCoordinateSeries(series)) {
-          const dateTypeLabel = isExist(options.xAxis?.date);
-          const range = dataRange[seriesName];
-          const labelOptions = {
-            dataRange: range[labelAxisName],
-            offsetSize: layout.plot[labelSizeKey],
-            scaleOption: scaleOptions[labelAxisName],
-            rawCategoriesSize: state.rawCategories.length,
-          };
-          const valueOptions = {
-            dataRange: range[valueAxisName],
-            offsetSize: layout.plot[valueSizeKey],
-            scaleOption: scaleOptions[valueAxisName],
-          };
+        });
+      } else if (isCoordinateSeries(series)) {
+        const dateTypeLabel = isExist(options.xAxis?.date);
+        const range = dataRange;
+        const labelOptions = {
+          dataRange: range[labelAxisName],
+          offsetSize: layout.plot[labelSizeKey],
+          scaleOption: scaleOptions[labelAxisName],
+          rawCategoriesSize: state.rawCategories.length,
+        };
+        const valueOptions = {
+          dataRange: range[valueAxisName],
+          offsetSize: layout.plot[valueSizeKey],
+          scaleOption: scaleOptions[valueAxisName],
+        };
 
-          scaleData[valueAxisName] = calculateCoordinateScale(valueOptions);
-          scaleData[labelAxisName] = dateTypeLabel
-            ? calculateDatetimeScale(labelOptions)
-            : calculateCoordinateScale(labelOptions);
-        } else {
-          scaleData[valueAxisName] = calculateCoordinateScale({
-            dataRange: dataRange[seriesName][valueAxisName],
-            offsetSize: layout.plot[valueSizeKey],
-            scaleOption: scaleOptions[valueAxisName],
-          });
-        }
-      });
+        scaleData[valueAxisName] = calculateCoordinateScale(valueOptions);
+        scaleData[labelAxisName] = dateTypeLabel
+          ? calculateDatetimeScale(labelOptions)
+          : calculateCoordinateScale(labelOptions);
+      } else {
+        scaleData[valueAxisName] = calculateCoordinateScale({
+          dataRange: dataRange[valueAxisName],
+          offsetSize: layout.plot[valueSizeKey],
+          scaleOption: scaleOptions[valueAxisName],
+        });
+      }
 
       extend(state.scale, scaleData);
     },
