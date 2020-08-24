@@ -1,6 +1,12 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { TooltipInfo, TooltipModel } from '@t/components/tooltip';
+import {
+  TooltipInfo,
+  TooltipModel,
+  TooltipDataValue,
+  TooltipTitleValues,
+  TooltipValue,
+} from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { isNumber } from '@src/helpers/utils';
 import { DefaultTooltipTemplate, TooltipTemplateFunc } from '@t/options';
@@ -112,8 +118,9 @@ export default class Tooltip extends Component {
                     <i class="icon" style="background: ${color}"></i>
                     <span class="name">${label}</span>
                   </span>
-                  <span class="series-value">${getValueString(value)}</span>
-                </div>`
+                  ${this.getValueTemplate(value)}
+                </div>
+                ${this.getTitleValuesTemplate(value)}`
           )
           .join('')}
       </div>`;
@@ -139,5 +146,24 @@ export default class Tooltip extends Component {
   render({ layout, options }: ChartState<Options>) {
     this.rect = layout.plot;
     this.templateFunc = options?.tooltip?.template ?? this.getDefaultTemplate;
+  }
+
+  getTitleValuesTemplate(values: TooltipDataValue) {
+    return Array.isArray(values)
+      ? values.reduce((html, { title, value }) => {
+          html += `<div class="tooltip-series"><span class="series-name">
+          <span class="name">${title}</span></span>
+          <span class="series-value">${getValueString(value)}</span></div>
+        `;
+
+          return html;
+        }, '<div class="tooltip-title-values-container">') + '</div>'
+      : '';
+  }
+
+  getValueTemplate(value: TooltipDataValue) {
+    return !Array.isArray(value)
+      ? `<span class="series-value">${getValueString(value)}</span>`
+      : '';
   }
 }

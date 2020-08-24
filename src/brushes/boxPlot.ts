@@ -2,19 +2,8 @@ import { BoxPlotModel } from '@t/components/series';
 import { line, rect } from './basic';
 
 export function boxPlot(ctx: CanvasRenderingContext2D, model: BoxPlotModel) {
-  const {
-    x,
-    y,
-    width,
-    height,
-    thickness = 0,
-    style,
-    color,
-    whisker,
-    median,
-    minimum,
-    maximum,
-  } = model;
+  const { rect: rectModel, whisker, median, minimum, maximum } = model;
+  const { color } = rectModel;
 
   line(ctx, {
     type: 'line',
@@ -40,12 +29,7 @@ export function boxPlot(ctx: CanvasRenderingContext2D, model: BoxPlotModel) {
   rect(ctx, {
     type: 'rect',
     color,
-    x,
-    y,
-    width,
-    height,
-    thickness,
-    style,
+    ...rectModel,
   });
 
   line(ctx, {

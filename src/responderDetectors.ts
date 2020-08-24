@@ -118,8 +118,8 @@ export const responderDetectors: ResponderDetectors = {
     model: BoxPlotResponderModel,
     componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
   ) => {
-    return ['box', 'median', 'minimum', 'maximum', 'whisker'].some((prop) =>
-      prop === 'box'
+    return ['rect', 'median', 'minimum', 'maximum', 'whisker'].some((prop) =>
+      prop === 'rect'
         ? responderDetectors.rect(mousePosition, model[prop], componentRect)
         : responderDetectors.line(mousePosition, model[prop], componentRect)
     );

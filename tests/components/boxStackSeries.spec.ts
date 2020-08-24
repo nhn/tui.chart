@@ -110,14 +110,7 @@ const respondersResult = [
     y: 12,
     width: 10,
     height: 16,
-    style: [
-      {
-        shadowBlur: 6,
-        shadowColor: 'rgba(0, 0, 0, 0.3)',
-        shadowOffsetX: 2,
-        shadowOffsetY: 2,
-      },
-    ],
+    style: ['shadow'],
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
   },
@@ -128,14 +121,7 @@ const respondersResult = [
     y: 12,
     width: 40,
     height: 16,
-    style: [
-      {
-        shadowBlur: 6,
-        shadowColor: 'rgba(0, 0, 0, 0.3)',
-        shadowOffsetX: 2,
-        shadowOffsetY: 2,
-      },
-    ],
+    style: ['shadow'],
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' },
   },
@@ -146,14 +132,7 @@ const respondersResult = [
     y: 52,
     width: 20,
     height: 16,
-    style: [
-      {
-        shadowBlur: 6,
-        shadowColor: 'rgba(0, 0, 0, 0.3)',
-        shadowOffsetX: 2,
-        shadowOffsetY: 2,
-      },
-    ],
+    style: ['shadow'],
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
   },
@@ -164,14 +143,7 @@ const respondersResult = [
     y: 52,
     width: 50,
     height: 16,
-    style: [
-      {
-        shadowBlur: 6,
-        shadowColor: 'rgba(0, 0, 0, 0.3)',
-        shadowOffsetX: 2,
-        shadowOffsetY: 2,
-      },
-    ],
+    style: ['shadow'],
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' },
   },

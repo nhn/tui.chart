@@ -30,6 +30,7 @@ export type LineModel = {
   strokeStyle?: string;
   lineWidth?: number;
   dashedPattern?: number[];
+  name?: string;
 } & Point;
 
 export type AxisModels = {

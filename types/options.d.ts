@@ -272,7 +272,7 @@ export type BoxPlotChartOptions = BaseOptions;
 export type BoxPlotSeriesType = {
   name: string;
   data: number[][];
-  outliers: number[][];
+  outliers?: number[][];
   color?: string;
 };
 

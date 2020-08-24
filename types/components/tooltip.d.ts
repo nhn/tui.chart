@@ -2,7 +2,8 @@ import { BubblePoint, Point } from '../options';
 import { RadiusRange } from '@src/component/pieSeries';
 
 export type TooltipTitleValues = { title: string; value: number }[];
-export type TooltipDataValue = string | number | BubblePoint | Point | TooltipTitleValues;
+export type TooltipValue = string | number | BubblePoint | Point;
+export type TooltipDataValue = TooltipValue | TooltipTitleValues;
 
 export type TooltipData = {
   label: string;

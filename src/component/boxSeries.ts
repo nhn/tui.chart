@@ -367,15 +367,6 @@ export default class BoxSeries extends Component {
 
   makeHoveredSeriesModel(data: RectModel): RectModel {
     const { x, y, width, height, color } = data!;
-    const shadowOffset = this.hoverThickness / 2;
-    const style = [
-      {
-        shadowColor: 'rgba(0, 0, 0, 0.3)',
-        shadowOffsetX: shadowOffset,
-        shadowOffsetY: this.isBar ? shadowOffset : -1 * shadowOffset,
-        shadowBlur: this.hoverThickness + shadowOffset,
-      },
-    ];
 
     return {
       type: 'rect',
@@ -384,7 +375,7 @@ export default class BoxSeries extends Component {
       y,
       width,
       height,
-      style,
+      style: ['shadow'],
       thickness: this.hoverThickness,
     };
   }

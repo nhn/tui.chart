@@ -10,7 +10,7 @@ import { makeStyleObj } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover' | 'plot';
-export type RectStyleName = 'default';
+export type RectStyleName = 'shadow';
 
 const circleStyle = {
   default: {
@@ -26,6 +26,15 @@ const circleStyle = {
   plot: {
     lineWidth: 1,
     strokeStyle: 'rgba(0, 0, 0, 0.05)',
+  },
+};
+
+const rectStyle = {
+  shadow: {
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffsetX: 2,
+    shadowOffsetY: 2,
+    shadowBlur: 6,
   },
 };
 
@@ -110,7 +119,7 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   ctx.beginPath();
 
   if (style) {
-    const styleObj = makeStyleObj<RectStyle, RectStyleName>(style, {});
+    const styleObj = makeStyleObj<RectStyle, RectStyleName>(style, rectStyle);
 
     Object.keys(styleObj).forEach((key) => {
       ctx[key] = styleObj[key];
