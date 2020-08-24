@@ -9,11 +9,12 @@ import {
   RectModel,
   CircleModel,
   BoxPlotSeriesModel,
+  BoxPlotModel,
 } from '@t/components/series';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { deepCopyArray } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
+import { LineModel } from '@t/components/axis';
 
 type RenderOptions = {
   ratio: number;
@@ -21,7 +22,7 @@ type RenderOptions = {
   boxWidth: number;
 };
 
-type ResponderModels = Array<BoxPlotResponderModel | CircleResponderModel>;
+type BoxPlotModelData = Array<BoxPlotModel | CircleModel>;
 
 const seriesOpacity = {
   INACTIVE: 0.2,
@@ -31,11 +32,11 @@ const seriesOpacity = {
 const PADDING = 24;
 
 export default class BoxPlotSeries extends Component {
-  models: BoxPlotSeriesModels = { dot: [], series: [], selectedSeries: [] };
+  models: BoxPlotSeriesModels = { series: [], selectedSeries: [] };
 
   drawModels!: BoxPlotSeriesModels;
 
-  responders!: ResponderModels;
+  responders!: Array<BoxPlotResponderModel | CircleResponderModel>;
 
   activatedResponders: this['responders'] = [];
 
@@ -66,11 +67,10 @@ export default class BoxPlotSeries extends Component {
       boxWidth: Math.max((tickDistance - PADDING * (2 + (seriesLength - 1))) / seriesLength, 5),
     };
 
-    const seriesModels = this.renderBoxPlot(boxPlotData, renderOptions);
-    const dotModels = this.renderOutlier(boxPlotData, renderOptions);
-    const hoveredSeries = this.renderHoveredBoxPlot(boxPlotData, renderOptions);
+    const BoxPlotModelData = this.makeBoxPlots(boxPlotData, renderOptions);
+    const seriesModels = this.renderSeriesModels(BoxPlotModelData);
+
     this.models.series = seriesModels;
-    this.models.dot = dotModels;
 
     if (!this.drawModels) {
       this.drawModels = {
@@ -83,17 +83,21 @@ export default class BoxPlotSeries extends Component {
 
           return model;
         }),
-        dot: deepCopyArray(dotModels),
         selectedSeries: [],
       };
     }
 
     const tooltipDataArr = this.makeTooltipModel(boxPlotData, categories);
 
-    this.responders = hoveredSeries.map((m, index) => ({
-      ...m,
-      data: tooltipDataArr[index],
-    })) as BoxPlotResponderModel[];
+    this.responders = BoxPlotModelData.map((m, index) => {
+      const point = m.type === 'boxPlot' ? { x: m.rect.x, y: m.rect.y } : { x: m.x, y: m.y };
+
+      return {
+        ...m,
+        ...point,
+        data: tooltipDataArr[index],
+      };
+    });
   }
 
   onMousemove({ responders }) {
@@ -113,13 +117,48 @@ export default class BoxPlotSeries extends Component {
     }
   }
 
-  renderHoveredBoxPlot(
-    seriesData: BoxPlotSeriesType[],
-    renderOptions: RenderOptions
-  ): ResponderModels {
+  renderSeriesModels(boxPlots: BoxPlotModelData): BoxPlotSeriesModel[] {
+    const seriesModels: BoxPlotSeriesModel[] = [];
+
+    boxPlots.forEach((model) => {
+      const { color, type, name } = model;
+
+      if (type === 'boxPlot') {
+        ['rect', 'whisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
+          if (prop === 'rect') {
+            seriesModels.push({
+              type: 'rect',
+              color,
+              name,
+              ...model[prop],
+              style: [],
+              thickness: 0,
+            } as RectModel);
+          } else {
+            seriesModels.push({
+              type: 'line',
+              name,
+              ...model[prop],
+              strokeStyle: prop === 'median' ? '#ffffff' : color,
+              lineWidth: 1,
+            } as LineModel);
+          }
+        });
+      } else {
+        seriesModels.push({
+          ...model,
+          color: '#ffffff',
+        } as CircleModel);
+      }
+    });
+
+    return seriesModels;
+  }
+
+  makeBoxPlots(seriesData: BoxPlotSeriesType[], renderOptions: RenderOptions): BoxPlotModelData {
     const { ratio, boxWidth } = renderOptions;
     const HOVER_THICKNESS = 4;
-    const hoveredSeries: ResponderModels = [];
+    const boxPlotModels: BoxPlotModelData = [];
 
     seriesData.forEach(({ outliers = [], data, name, color }, seriesIndex) => {
       const seriesColor = this.getSeriesColor(name, color!);
@@ -128,16 +167,15 @@ export default class BoxPlotSeries extends Component {
         const [minimum, lowerQuartile, median, highQuartile, maximum] = datum;
         const startX = this.getStartX(seriesIndex, dataIndex, renderOptions);
 
-        hoveredSeries.push({
+        boxPlotModels.push({
           type: 'boxPlot',
-          x: startX,
-          y: this.getYPos(highQuartile, ratio),
+          color: seriesColor,
+          name,
           rect: {
             x: startX,
             y: this.getYPos(highQuartile, ratio),
             width: boxWidth,
             height: (highQuartile - lowerQuartile) * ratio,
-            color: seriesColor,
             style: ['shadow'],
             thickness: HOVER_THICKNESS,
           },
@@ -169,14 +207,14 @@ export default class BoxPlotSeries extends Component {
             y2: this.getYPos(maximum, ratio),
             detectionDistance: 3,
           },
-        } as BoxPlotResponderModel);
+        });
       });
 
       outliers.forEach((datum) => {
         const [dataIndex, value] = datum;
         const startX = this.getStartX(seriesIndex, dataIndex, renderOptions);
 
-        hoveredSeries.push({
+        boxPlotModels.push({
           type: 'circle',
           name,
           x: startX + boxWidth / 2,
@@ -184,11 +222,11 @@ export default class BoxPlotSeries extends Component {
           radius: 4,
           style: [{ strokeStyle: seriesColor, lineWidth: 2 }],
           color: seriesColor,
-        } as CircleResponderModel);
+        });
       });
     });
 
-    return hoveredSeries;
+    return boxPlotModels;
   }
 
   makeTooltipModel(seriesData: BoxPlotSeriesType[], categories: string[]): TooltipData[] {
@@ -240,103 +278,6 @@ export default class BoxPlotSeries extends Component {
     });
 
     return tooltipData;
-  }
-
-  renderBoxPlot(
-    seriesData: BoxPlotSeriesType[],
-    renderOptions: RenderOptions
-  ): BoxPlotSeriesModel[] {
-    const { ratio, boxWidth } = renderOptions;
-    const seriesModels: BoxPlotSeriesModel[] = [];
-
-    seriesData.forEach(({ data, name, color }, seriesIndex) => {
-      const seriesColor = this.getSeriesColor(name, color!);
-      data.forEach((datum, dataIndex) => {
-        const [minimum, lowerQuartile, median, highQuartile, maximum] = datum;
-        const startX = this.getStartX(seriesIndex, dataIndex, renderOptions);
-
-        seriesModels.push({
-          type: 'rect',
-          color: seriesColor,
-          name,
-          x: startX,
-          y: this.getYPos(highQuartile, ratio),
-          width: boxWidth,
-          height: (highQuartile - lowerQuartile) * ratio,
-        });
-
-        // whisker
-        seriesModels.push({
-          type: 'line',
-          lineWidth: 1,
-          strokeStyle: seriesColor,
-          x: startX + boxWidth / 2,
-          y: this.getYPos(minimum, ratio),
-          x2: startX + boxWidth / 2,
-          y2: this.getYPos(maximum, ratio),
-          name,
-        });
-
-        // maximum
-        seriesModels.push({
-          type: 'line',
-          lineWidth: 1,
-          strokeStyle: seriesColor,
-          x: startX + boxWidth / 2 / 2,
-          y: this.getYPos(maximum, ratio),
-          x2: startX + boxWidth / 2 / 2 + boxWidth / 2,
-          y2: this.getYPos(maximum, ratio),
-          name,
-        });
-
-        // minimum
-        seriesModels.push({
-          type: 'line',
-          lineWidth: 1,
-          strokeStyle: seriesColor,
-          x: startX + boxWidth / 2 / 2,
-          y: this.getYPos(minimum, ratio),
-          x2: startX + boxWidth / 2 / 2 + boxWidth / 2,
-          y2: this.getYPos(minimum, ratio),
-          name,
-        });
-
-        // median
-        seriesModels.push({
-          type: 'line',
-          lineWidth: 1,
-          strokeStyle: '#ffffff',
-          x: startX,
-          y: this.getYPos(median, ratio),
-          x2: startX + boxWidth,
-          y2: this.getYPos(median, ratio),
-          name,
-        });
-      });
-    });
-
-    return seriesModels;
-  }
-
-  renderOutlier(seriesData: BoxPlotSeriesType[], renderOptions: RenderOptions): CircleModel[] {
-    const { ratio, boxWidth } = renderOptions;
-
-    return seriesData.flatMap(({ outliers = [], name, color }, seriesIndex) =>
-      outliers.map((datum) => {
-        const [dataIndex, value] = datum;
-        const startX = this.getStartX(seriesIndex, dataIndex, renderOptions);
-
-        return {
-          type: 'circle',
-          color: '#ffffff',
-          name,
-          x: startX + boxWidth / 2,
-          y: this.getYPos(value, ratio),
-          radius: 4,
-          style: [{ strokeStyle: this.getSeriesColor(name, color!), lineWidth: 2 }],
-        };
-      })
-    );
   }
 
   getSeriesColor(name: string, seriesColor: string) {

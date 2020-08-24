@@ -156,11 +156,10 @@ export type RadarSeriesModels = {
   selectedSeries: CircleModel[];
 };
 
-export type BoxPlotSeriesModel = RectModel | LineModel;
+export type BoxPlotSeriesModel = RectModel | LineModel | CircleModel;
 
 export type BoxPlotSeriesModels = {
   series: BoxPlotSeriesModel[];
-  dot: CircleModel[];
   selectedSeries: BoxPlotSeriesModel[];
 };
 
@@ -172,7 +171,9 @@ export type BoxPlotLineResponderModel = {
 
 export type BoxPlotModel = {
   type: 'boxPlot';
-  rect: Omit<RectModel, 'type'>;
+  color: string;
+  name: string;
+  rect: Omit<RectModel, 'type' | 'color'>;
   median: BoxPlotLineResponderModel;
   whisker: BoxPlotLineResponderModel;
   minimum: BoxPlotLineResponderModel;

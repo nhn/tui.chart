@@ -61,17 +61,6 @@ describe('boxplot series', () => {
 
   const result = {
     models: {
-      dot: [
-        {
-          type: 'circle',
-          color: '#ffffff',
-          name: 'han',
-          x: 31,
-          y: 0,
-          radius: 4,
-          style: [{ strokeStyle: 'rgba(170, 170, 170, 1)', lineWidth: 2 }],
-        },
-      ],
       series: [
         {
           type: 'rect',
@@ -81,6 +70,8 @@ describe('boxplot series', () => {
           y: 60,
           width: 14,
           height: 20,
+          style: [],
+          thickness: 0,
         },
         {
           type: 'line',
@@ -91,6 +82,7 @@ describe('boxplot series', () => {
           x2: 31,
           y2: 50,
           name: 'han',
+          detectionDistance: 3,
         },
         {
           type: 'line',
@@ -101,6 +93,7 @@ describe('boxplot series', () => {
           x2: 34.5,
           y2: 50,
           name: 'han',
+          detectionDistance: 3,
         },
         {
           type: 'line',
@@ -111,6 +104,7 @@ describe('boxplot series', () => {
           x2: 34.5,
           y2: 90,
           name: 'han',
+          detectionDistance: 3,
         },
         {
           type: 'line',
@@ -121,6 +115,16 @@ describe('boxplot series', () => {
           x2: 38,
           y2: 70,
           name: 'han',
+          detectionDistance: 3,
+        },
+        {
+          type: 'circle',
+          color: '#ffffff',
+          name: 'han',
+          x: 31,
+          y: 0,
+          radius: 4,
+          style: [{ strokeStyle: 'rgba(170, 170, 170, 1)', lineWidth: 2 }],
         },
         {
           type: 'rect',
@@ -130,6 +134,8 @@ describe('boxplot series', () => {
           y: 20,
           width: 14,
           height: 40,
+          style: [],
+          thickness: 0,
         },
         {
           type: 'line',
@@ -140,6 +146,7 @@ describe('boxplot series', () => {
           x2: 69,
           y2: 0,
           name: 'cho',
+          detectionDistance: 3,
         },
         {
           type: 'line',
@@ -150,6 +157,7 @@ describe('boxplot series', () => {
           x2: 72.5,
           y2: 0,
           name: 'cho',
+          detectionDistance: 3,
         },
         {
           type: 'line',
@@ -160,6 +168,7 @@ describe('boxplot series', () => {
           x2: 72.5,
           y2: 80,
           name: 'cho',
+          detectionDistance: 3,
         },
         {
           type: 'line',
@@ -170,6 +179,7 @@ describe('boxplot series', () => {
           x2: 76,
           y2: 40,
           name: 'cho',
+          detectionDistance: 3,
         },
       ],
       selectedSeries: [],
@@ -177,6 +187,8 @@ describe('boxplot series', () => {
     responders: [
       {
         type: 'boxPlot',
+        color: 'rgba(170, 170, 170, 1)',
+        name: 'han',
         x: 24,
         y: 60,
         rect: {
@@ -184,7 +196,6 @@ describe('boxplot series', () => {
           y: 60,
           width: 14,
           height: 20,
-          color: 'rgba(170, 170, 170, 1)',
           style: ['shadow'],
           thickness: 4,
         },
@@ -237,6 +248,8 @@ describe('boxplot series', () => {
       },
       {
         type: 'boxPlot',
+        color: 'rgba(187, 187, 187, 1)',
+        name: 'cho',
         x: 62,
         y: 20,
         rect: {
@@ -244,7 +257,6 @@ describe('boxplot series', () => {
           y: 20,
           width: 14,
           height: 40,
-          color: 'rgba(187, 187, 187, 1)',
           style: ['shadow'],
           thickness: 4,
         },
