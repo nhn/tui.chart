@@ -4,7 +4,6 @@ import { ChartState } from '@t/store/store';
 import {
   BoxPlotSeriesModels,
   BoxPlotResponderModel,
-  CircleStyle,
   CircleResponderModel,
   RectModel,
   CircleModel,
