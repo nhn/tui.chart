@@ -297,35 +297,4 @@ export default class BoxPlotSeries extends Component {
   getYPos(value: number, ratio: number) {
     return this.rect.height - value * ratio;
   }
-
-  renderHoveredSeriesModel(seriesModels: BoxPlotSeriesModel[], dotModels: CircleModel[]) {
-    const HOVER_THICKNESS = 4;
-    const shadowOffset = HOVER_THICKNESS / 2;
-    const style = [
-      {
-        shadowColor: 'rgba(0, 0, 0, 0.3)',
-        shadowOffsetX: shadowOffset,
-        shadowOffsetY: shadowOffset * -1,
-        shadowBlur: HOVER_THICKNESS + shadowOffset,
-      },
-    ];
-
-    const boxPlots = seriesModels.map((m) => {
-      const model = { ...m };
-
-      if (m.type === 'rect') {
-        (model as RectModel).style = style;
-        (model as RectModel).thickness = HOVER_THICKNESS;
-      }
-
-      return model;
-    });
-
-    const outliers = dotModels.map((m) => ({
-      ...m,
-      color: (m.style![0] as CircleStyle).strokeStyle,
-    }));
-
-    return [...boxPlots, ...outliers];
-  }
 }
