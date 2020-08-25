@@ -155,6 +155,7 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
+type Formatter = (value: SeriesDataType) => string;
 export type DefaultTooltipTemplate = { header: string; body: string };
 
 export type TooltipTemplateFunc = (
@@ -164,9 +165,9 @@ export type TooltipTemplateFunc = (
 
 interface BaseTooltipOptions {
   template?: TooltipTemplateFunc;
-  align?: string; // @deprecated? (left, center, right - top, middle, bottom)으로 조절됨. offset으로 대체?
   offsetX?: number;
   offsetY?: number;
+  formatter?: Formatter;
 }
 
 interface BaseOptions {
@@ -369,7 +370,7 @@ export type DataLabels = {
   anchor?: DataLabelAnchor;
   offsetX?: number;
   offsetY?: number;
-  formatter?: (value: SeriesDataType) => string;
+  formatter?: Formatter;
   style?: DataLabelStyle;
   stackTotal?: DataLabelStackTotal;
   pieSeriesName?: DataLabelPieSeriesName;

@@ -5,10 +5,13 @@ export type TooltipTitleValues = { title: string; value: number }[];
 export type TooltipValue = string | number | BubblePoint | Point;
 export type TooltipDataValue = TooltipValue | TooltipTitleValues;
 
+type TooltipTemplateType = 'boxPlot';
+
 export type TooltipData = {
   label: string;
   color: string;
   value: TooltipDataValue;
+  formattedValue?: string;
   category?: string;
 };
 
@@ -16,7 +19,8 @@ export type TooltipInfo = {
   data: TooltipData;
   radius?: number | RadiusRange;
   width?: number;
-  templateType?: 'boxPlot';
+  height?: number;
+  templateType?: TooltipTemplateType;
 } & Point;
 
 export type TooltipModel = {
@@ -26,6 +30,7 @@ export type TooltipModel = {
   target: {
     radius: number;
     width: number;
+    height: number;
   };
-  templateType?: string;
+  templateType?: TooltipTemplateType;
 } & Point;
