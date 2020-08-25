@@ -1300,10 +1300,10 @@ export const efficiencyAndExpensesData = {
       {
         name: 'Expenses',
         data: [
-          { x: 0, y: 7 },
-          { x: 30, y: 37 },
-          { x: 60, y: 67 },
-          { x: 90, y: 97 },
+          { x: 5, y: 5 },
+          { x: 30, y: 35 },
+          { x: 55, y: 55 },
+          { x: 90, y: 90 },
         ],
       },
     ],

@@ -1,5 +1,5 @@
 import LineScatterChart from '@src/charts/lineScatterChart';
-import { LineSeriesData } from '@t/options';
+import { LineScatterData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { efficiencyAndExpensesData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -21,7 +21,7 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(data: LineSeriesData, customOptions?: Record<string, any>) {
+function createChart(data: LineScatterData, customOptions?: Record<string, any>) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
@@ -37,6 +37,22 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
 export const basic = () => {
   const { el } = createChart(efficiencyAndExpensesData, {
     chart: { title: 'Efficiency vs Expenses' },
+  });
+
+  return el;
+};
+
+export const basicWithOptions = () => {
+  const { el } = createChart(efficiencyAndExpensesData, {
+    chart: { title: 'Efficiency vs Expenses' },
+    series: {
+      line: {
+        showDot: true,
+        spline: true,
+      },
+      selectable: true,
+      dataLabels: { visible: true },
+    },
   });
 
   return el;

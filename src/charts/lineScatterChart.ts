@@ -28,23 +28,23 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
-import { LineChartOptions, LineSeriesData } from '@t/options';
+import { LineScatterChartOptions, LineScatterData } from '@t/options';
+import { RawSeries } from '@t/store/store';
 
-interface LineChartProps {
+interface LineScatterChartProps {
   el: Element;
-  options: LineChartOptions;
-  data: LineSeriesData;
+  options: LineScatterChartOptions;
+  data: LineScatterData;
 }
 
-export default class LineScatterChart extends Chart<LineChartOptions> {
+export default class LineScatterChart extends Chart<LineScatterChartOptions> {
   modules = [dataRange, scale, axes, dataLabels, plot];
 
-  constructor(props: LineChartProps) {
+  constructor(props: LineScatterChartProps) {
     super({
       el: props.el,
       options: props.options,
-      series: props.data.series,
-      categories: props.data?.categories,
+      series: props.data.series as RawSeries,
     });
   }
 

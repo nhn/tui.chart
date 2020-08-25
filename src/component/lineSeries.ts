@@ -5,7 +5,13 @@ import {
   PointModel,
   LineSeriesModels,
 } from '@t/components/series';
-import { LineChartOptions, LineTypeSeriesOptions, CoordinateDataType } from '@t/options';
+import {
+  LineChartOptions,
+  LineTypeSeriesOptions,
+  CoordinateDataType,
+  LineScatterChartOptions,
+  LineScatterChartSeriesOptions,
+} from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Scale } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
@@ -50,12 +56,11 @@ export default class LineSeries extends Component {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
-  render(chartState: ChartState<LineChartOptions>) {
+  render(chartState: ChartState<LineChartOptions | LineScatterChartOptions>) {
     const {
       layout,
       series,
       scale,
-      options,
       axes,
       categories = [],
       legend,
@@ -66,12 +71,20 @@ export default class LineSeries extends Component {
       throw new Error("There's no line data!");
     }
 
+    const options = { ...chartState.options } as LineChartOptions;
+    if ((options.series as LineScatterChartSeriesOptions)?.line) {
+      options.series = {
+        ...options.series,
+        ...(options.series as LineScatterChartSeriesOptions).line,
+      };
+    }
+
     const { tickDistance, pointOnColumn } = axes.xAxis!;
     const lineSeriesData = series.line.data;
 
     const renderLineOptions: RenderOptions = {
       pointOnColumn,
-      options: options.series || {},
+      options: (options.series || {}) as LineTypeSeriesOptions,
       tickDistance,
     };
 

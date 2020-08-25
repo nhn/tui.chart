@@ -23,6 +23,7 @@ import {
   RadarChartOptions,
   BoxPlotSeriesType,
   BaseOptions,
+  LineScatterChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -66,15 +67,10 @@ type ChartOptionsMap = {
   bubble: BubbleChartOptions;
   radar: RadarChartOptions;
   boxPlot: BaseOptions;
+  lineScatter: LineScatterChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
-
-type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType>
-  ? ElementType
-  : never;
-
-export type SeriesTypes = ElementType<ValueOf<ChartSeriesMap>>;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
