@@ -32,6 +32,8 @@ const PADDING = 24;
 
 const MIN_BAR_WIDTH = 5;
 
+const HOVER_THICKNESS = 4;
+
 export default class BoxPlotSeries extends Component {
   models: BoxPlotSeriesModels = { series: [], selectedSeries: [] };
 
@@ -96,9 +98,21 @@ export default class BoxPlotSeries extends Component {
 
     this.responders = BoxPlotModelData.map((m, index) => {
       const point = m.type === 'boxPlot' ? { x: m.rect.x, y: m.rect.y } : { x: m.x, y: m.y };
+      const model = { ...m };
+
+      if (m.type === 'boxPlot') {
+        ['rect', 'whisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
+          if (prop === 'rect') {
+            model[prop].style = ['shadow'];
+            model[prop].thickness = HOVER_THICKNESS;
+          } else {
+            model[prop].detectionSize = 3;
+          }
+        });
+      }
 
       return {
-        ...m,
+        ...model,
         ...point,
         templateType: 'boxPlot',
         data: tooltipDataArr[index],
@@ -137,8 +151,6 @@ export default class BoxPlotSeries extends Component {
               color,
               name,
               ...model[prop],
-              style: [],
-              thickness: 0,
             } as RectModel);
           } else {
             seriesModels.push({
@@ -160,7 +172,6 @@ export default class BoxPlotSeries extends Component {
 
   makeBoxPlots(seriesData: BoxPlotSeriesType[], renderOptions: RenderOptions): BoxPlotModelData {
     const { ratio, boxWidth } = renderOptions;
-    const HOVER_THICKNESS = 4;
     const boxPlotModels: BoxPlotModelData = [];
 
     seriesData.forEach(({ outliers = [], data, name, color }, seriesIndex) => {
@@ -179,36 +190,30 @@ export default class BoxPlotSeries extends Component {
             y: this.getYPos(highQuartile, ratio),
             width: boxWidth,
             height: (highQuartile - lowerQuartile) * ratio,
-            style: ['shadow'],
-            thickness: HOVER_THICKNESS,
           },
           median: {
             x: startX,
             y: this.getYPos(median, ratio),
             x2: startX + boxWidth,
             y2: this.getYPos(median, ratio),
-            detectionSize: 3,
           },
           whisker: {
             x: startX + boxWidth / 2,
             y: this.getYPos(minimum, ratio),
             x2: startX + boxWidth / 2,
             y2: this.getYPos(maximum, ratio),
-            detectionSize: 3,
           },
           minimum: {
             x: startX + boxWidth / 2 / 2,
             y: this.getYPos(minimum, ratio),
             x2: startX + boxWidth / 2 / 2 + boxWidth / 2,
             y2: this.getYPos(minimum, ratio),
-            detectionSize: 3,
           },
           maximum: {
             x: startX + boxWidth / 2 / 2,
             y: this.getYPos(maximum, ratio),
             x2: startX + boxWidth / 2 / 2 + boxWidth / 2,
             y2: this.getYPos(maximum, ratio),
-            detectionSize: 3,
           },
         });
       });

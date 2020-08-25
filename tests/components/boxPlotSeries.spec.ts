@@ -70,8 +70,6 @@ describe('boxplot series', () => {
           y: 60,
           width: 14,
           height: 20,
-          style: [],
-          thickness: 0,
         },
         {
           type: 'line',
@@ -82,7 +80,6 @@ describe('boxplot series', () => {
           x2: 31,
           y2: 50,
           name: 'han',
-          detectionSize: 3,
         },
         {
           type: 'line',
@@ -93,7 +90,6 @@ describe('boxplot series', () => {
           x2: 34.5,
           y2: 50,
           name: 'han',
-          detectionSize: 3,
         },
         {
           type: 'line',
@@ -104,7 +100,6 @@ describe('boxplot series', () => {
           x2: 34.5,
           y2: 90,
           name: 'han',
-          detectionSize: 3,
         },
         {
           type: 'line',
@@ -115,7 +110,6 @@ describe('boxplot series', () => {
           x2: 38,
           y2: 70,
           name: 'han',
-          detectionSize: 3,
         },
         {
           type: 'circle',
@@ -134,8 +128,6 @@ describe('boxplot series', () => {
           y: 20,
           width: 14,
           height: 40,
-          style: [],
-          thickness: 0,
         },
         {
           type: 'line',
@@ -146,7 +138,6 @@ describe('boxplot series', () => {
           x2: 69,
           y2: 0,
           name: 'cho',
-          detectionSize: 3,
         },
         {
           type: 'line',
@@ -157,7 +148,6 @@ describe('boxplot series', () => {
           x2: 72.5,
           y2: 0,
           name: 'cho',
-          detectionSize: 3,
         },
         {
           type: 'line',
@@ -168,7 +158,6 @@ describe('boxplot series', () => {
           x2: 72.5,
           y2: 80,
           name: 'cho',
-          detectionSize: 3,
         },
         {
           type: 'line',
@@ -179,7 +168,6 @@ describe('boxplot series', () => {
           x2: 76,
           y2: 40,
           name: 'cho',
-          detectionSize: 3,
         },
       ],
       selectedSeries: [],
@@ -230,6 +218,7 @@ describe('boxplot series', () => {
           ],
           category: 'A',
         },
+        templateType: 'boxPlot',
       },
       {
         type: 'circle',
@@ -245,6 +234,7 @@ describe('boxplot series', () => {
           value: [{ title: 'Outlier', value: 10 }],
           category: 'A',
         },
+        templateType: 'boxPlot',
       },
       {
         type: 'boxPlot',
@@ -291,6 +281,7 @@ describe('boxplot series', () => {
           ],
           category: 'A',
         },
+        templateType: 'boxPlot',
       },
     ],
   };
