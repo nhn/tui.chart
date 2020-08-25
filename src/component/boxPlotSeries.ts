@@ -52,7 +52,7 @@ export default class BoxPlotSeries extends Component {
     const { layout, axes, series, scale, legend, options, categories = [] } = state;
 
     if (!series.boxPlot) {
-      throw new Error("There's no boxplot data!");
+      throw new Error("There's no boxPlot data!");
     }
 
     this.rect = layout.plot;

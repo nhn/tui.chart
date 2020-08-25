@@ -71,7 +71,7 @@ export default class LineSeries extends Component {
       throw new Error("There's no line data!");
     }
 
-    const options = { ...chartState.options } as LineChartOptions;
+    const options = { ...chartState.options };
     if ((options.series as LineScatterChartSeriesOptions)?.line) {
       options.series = {
         ...options.series,

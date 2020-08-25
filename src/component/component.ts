@@ -22,7 +22,6 @@ import {
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { LegendModel } from '@t/components/legend';
-import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
 import { DataLabelModels } from '@t/components/dataLabels';

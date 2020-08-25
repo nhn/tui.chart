@@ -12,7 +12,7 @@ import { DefaultTooltipTemplate, Formatter, SeriesDataType, TooltipTemplateFunc 
 
 import '../css/tooltip.css';
 
-type TooltipModels = { [key in ComponentName]: TooltipInfo[] };
+type TooltipInfoModels = { [key in ComponentName]: TooltipInfo[] };
 
 export default class Tooltip extends Component {
   chartEl!: HTMLDivElement;
@@ -27,11 +27,11 @@ export default class Tooltip extends Component {
 
   formatter?: Formatter;
 
-  tooltipModels: TooltipModels = {} as TooltipModels;
+  tooltipInfoModels: TooltipInfoModels = {} as TooltipInfoModels;
 
   onSeriesPointHovered = ({ models, name }: { models: TooltipInfo[]; name: string }) => {
-    this.tooltipModels[name] = [...models];
-    const isShow = !!Object.values(this.tooltipModels).flatMap((val) => val).length;
+    this.tooltipInfoModels[name] = [...models];
+    const isShow = !!Object.values(this.tooltipInfoModels).flatMap((model) => model).length;
     if (isShow) {
       this.renderTooltip();
     } else {
@@ -85,7 +85,7 @@ export default class Tooltip extends Component {
   }
 
   renderTooltip() {
-    const model = Object.values(this.tooltipModels)
+    const model = Object.values(this.tooltipInfoModels)
       .flatMap((item) => item)
       .reduce<TooltipModel>(
         (acc, item) => {
@@ -147,7 +147,7 @@ export default class Tooltip extends Component {
 
   getBodyTemplate(model: TooltipModel) {
     return model.templateType === 'boxPlot'
-      ? this.getBoxplotTemplate(model)
+      ? this.getBoxPlotTemplate(model)
       : this.getDefaultBodyTemplate(model);
   }
 
@@ -197,7 +197,7 @@ export default class Tooltip extends Component {
     return this.formatter ? this.formatter(value as SeriesDataType) : getValueString(value);
   }
 
-  getBoxplotTemplate({ data }: TooltipModel) {
+  getBoxPlotTemplate({ data }: TooltipModel) {
     return `<div class="tooltip-series-wrapper">
     ${data
       .map(
