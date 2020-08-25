@@ -184,3 +184,8 @@ export type BoxPlotResponderModel = {
   data?: TooltipData;
 } & BoxPlotModel &
   Point;
+
+export type BulletSeriesModels = {
+  series: RectModel[];
+  selectedSeries: RectModel[];
+};

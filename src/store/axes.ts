@@ -107,7 +107,7 @@ export function getValueAxisData(stateProp: StateProp) {
   const zeroPosition = getZeroPosition(
     limit,
     axisSize,
-    isLabelAxisOnYAxis(series),
+    isLabelAxisOnYAxis(series, options),
     divergingBoxSeries
   );
   let valueLabels = makeLabelsFromLimit(limit, stepSize);
@@ -201,13 +201,12 @@ const axes: StoreModule = {
       const { scale, options, series, layout, zoomRange, categories = [], rawCategories } = state;
       const { xAxis, yAxis, plot } = layout;
 
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { valueAxisName, labelAxisName } = getAxisName(labelAxisOnYAxis);
       const { valueSizeKey, labelSizeKey } = getSizeKey(labelAxisOnYAxis);
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;
-
       const valueAxisData = getValueAxisData({
         scale: scale[valueAxisName],
         axisSize: valueAxisSize,

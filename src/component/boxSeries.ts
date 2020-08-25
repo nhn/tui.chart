@@ -57,7 +57,7 @@ const BOX = {
   COLUMN: 'column',
 };
 
-const PADDING = {
+export const PADDING = {
   vertical: 15, // top & bottom
   horizontal: 24, // left & right
 };

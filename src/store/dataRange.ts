@@ -5,6 +5,7 @@ import { extend } from '@src/store/store';
 import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
+import { isBulletSeries } from '@src/component/bulletSeries';
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -41,7 +42,7 @@ const dataRange: StoreModule = {
     setDataRange({ state }) {
       const { series, disabledSeries, stackSeries, categories, options } = state;
       const newDataRange = {} as DataRange;
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
       const hasDateValue = !!options.xAxis?.date;
 
@@ -78,6 +79,12 @@ const dataRange: StoreModule = {
           values = series[seriesName]!.data.flatMap(({ data, outliers = [] }) => [
             ...data.flatMap((datum) => datum),
             ...outliers.flatMap((datum) => datum),
+          ]);
+        } else if (isBulletSeries(seriesName)) {
+          values = series[seriesName].data.flatMap(({ data, markers, ranges }) => [
+            data,
+            ...markers.flatMap((datum) => datum),
+            ...ranges.flatMap((range) => range),
           ]);
         }
 
