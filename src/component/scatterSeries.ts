@@ -37,7 +37,7 @@ export default class ScatterSeries extends CircleSeries {
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',
-      detectionRadius: 0,
+      detectionSize: 0,
       radius: 7,
       color: getRGBA(m.color, 1),
       style: ['default', 'hover'],

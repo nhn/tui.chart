@@ -66,7 +66,7 @@ function getIconType(series: RawSeries): LegendIconType {
   }
 
   // @TODO: ADD bullet chart
-  if (series.bar || series.column || series.area || series.pie) {
+  if (series.bar || series.column || series.area || series.pie || series.boxPlot) {
     return 'rect';
   }
 

@@ -268,6 +268,18 @@ export interface ColumnChartOptions extends BaseOptions {
   plot?: BasePlotOptions;
 }
 
+export type BoxPlotSeriesType = {
+  name: string;
+  data: number[][];
+  outliers?: number[][];
+  color?: string;
+};
+
+export type BoxPlotSeriesData = {
+  categories: string[];
+  series: BoxPlotSeriesType[];
+};
+
 interface PieSeriesOptions extends BaseSeriesOptions {
   radiusRange?: {
     inner?: number | string;

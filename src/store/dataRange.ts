@@ -74,6 +74,11 @@ const dataRange: StoreModule = {
           values = stackSeries[seriesName].dataRangeValues;
         } else if (isBoxSeries(seriesName as ChartType)) {
           values.push(0);
+        } else if (seriesName === 'boxPlot') {
+          values = series[seriesName]!.data.flatMap(({ data, outliers = [] }) => [
+            ...data.flatMap((datum) => datum),
+            ...outliers.flatMap((datum) => datum),
+          ]);
         }
 
         newDataRange[seriesName][valueAxisName] = getLimitSafely([...new Set(values)] as number[]);

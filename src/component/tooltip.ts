@@ -1,6 +1,11 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { TooltipInfo, TooltipModel } from '@t/components/tooltip';
+import {
+  TooltipInfo,
+  TooltipModel,
+  TooltipTitleValues,
+  TooltipDataValue,
+} from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { isNumber } from '@src/helpers/utils';
 import { DefaultTooltipTemplate, Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
@@ -76,7 +81,7 @@ export default class Tooltip extends Component {
   renderTooltip(tooltipInfo: TooltipInfo[]) {
     const model = tooltipInfo.reduce<TooltipModel>(
       (acc, item) => {
-        const { data, x, y, radius, width, height } = item;
+        const { data, x, y, radius, width, height, templateType } = item;
 
         acc.x = acc.x ? (acc.x + x) / 2 : x;
         acc.y = acc.y ? (acc.y + y) / 2 : y;
@@ -95,13 +100,21 @@ export default class Tooltip extends Component {
 
         acc.data.push({
           ...data,
-          formattedValue: this.formatter
-            ? this.formatter(data.value as SeriesDataType)
-            : getValueString(data.value),
+          value: Array.isArray(data.value)
+            ? data.value.map((titleValue) => ({
+                ...titleValue,
+                formattedValue: this.getFormattedValue(titleValue.value),
+              }))
+            : data.value,
+          formattedValue: this.getFormattedValue(data.value),
         });
 
         if (!acc.category && data.category) {
           acc.category = data.category;
+        }
+
+        if (templateType) {
+          acc.templateType = templateType;
         }
 
         return acc;
@@ -124,7 +137,13 @@ export default class Tooltip extends Component {
     return category ? `<div class="tooltip-category">${category}</div>` : '';
   }
 
-  getBodyTemplate({ data }: TooltipModel) {
+  getBodyTemplate(model: TooltipModel) {
+    return model.templateType === 'boxPlot'
+      ? this.getBoxplotTemplate(model)
+      : this.getDefaultBodyTemplate(model);
+  }
+
+  getDefaultBodyTemplate({ data }: TooltipModel) {
     return `<div class="tooltip-series-wrapper">
         ${data
           .map(
@@ -164,5 +183,36 @@ export default class Tooltip extends Component {
     this.offsetX = options?.tooltip?.offsetX ?? 10;
     this.offsetY = options?.tooltip?.offsetY ?? 0;
     this.formatter = options?.tooltip?.formatter;
+  }
+
+  getFormattedValue(value: TooltipDataValue) {
+    return this.formatter ? this.formatter(value as SeriesDataType) : getValueString(value);
+  }
+
+  getBoxplotTemplate({ data }: TooltipModel) {
+    return `<div class="tooltip-series-wrapper">
+    ${data
+      .map(
+        ({ label, color, value: values }) =>
+          `<div class="tooltip-series">
+              <span class="series-name">
+                <i class="icon" style="background: ${color}"></i>
+                <span class="name">${label}</span>
+              </span>
+            </div>
+            <div>
+      ${(values as TooltipTitleValues)
+        .map(
+          ({ title, formattedValue }) =>
+            `<div class="tooltip-series">
+              <span class="series-name">${title}</span>
+              <span class="series-value">${formattedValue}</span>
+            </div>`
+        )
+        .join('')}
+        </div>`
+      )
+      .join('')}
+  </div>`;
   }
 }

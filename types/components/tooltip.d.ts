@@ -1,7 +1,15 @@
 import { BubblePoint, Point } from '../options';
 import { RadiusRange } from '@src/component/pieSeries';
 
-export type TooltipDataValue = string | number | BubblePoint | Point;
+export type TooltipTitleValues = {
+  title: string;
+  value: number;
+  formattedValue?: string;
+}[];
+export type TooltipValue = string | number | BubblePoint | Point;
+export type TooltipDataValue = TooltipValue | TooltipTitleValues;
+
+type TooltipTemplateType = 'boxPlot';
 
 export type TooltipData = {
   label: string;
@@ -16,6 +24,7 @@ export type TooltipInfo = {
   radius?: number | RadiusRange;
   width?: number;
   height?: number;
+  templateType?: TooltipTemplateType;
 } & Point;
 
 export type TooltipModel = {
@@ -27,4 +36,5 @@ export type TooltipModel = {
     width: number;
     height: number;
   };
+  templateType?: TooltipTemplateType;
 } & Point;

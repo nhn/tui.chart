@@ -7,7 +7,7 @@ function isBubblePointType(value: ObjectTypeDatetimePoint | Point): value is Bub
 }
 
 export function getValueString(value: TooltipDataValue) {
-  if (isObject(value)) {
+  if (isObject(value) && !Array.isArray(value)) {
     return `(${value.x}, ${value.y})` + (isBubblePointType(value) ? `, r: ${value.r}` : '');
   }
 

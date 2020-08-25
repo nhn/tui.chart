@@ -21,6 +21,8 @@ import {
   RangeDataType,
   RadarSeriesType,
   RadarChartOptions,
+  BoxPlotSeriesType,
+  BaseOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -34,6 +36,7 @@ type ChartSeriesMap = {
   bubble: BubbleSeriesType[];
   pie: PieSeriesType[];
   radar: RadarSeriesType[];
+  boxPlot: BoxPlotSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -62,6 +65,7 @@ type ChartOptionsMap = {
   area: AreaChartOptions;
   bubble: BubbleChartOptions;
   radar: RadarChartOptions;
+  boxPlot: BaseOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;

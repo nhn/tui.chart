@@ -61,7 +61,7 @@ export default class BubbleSeries extends CircleSeries {
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',
-      detectionRadius: 0,
+      detectionSize: 0,
       radius: m.radius + MINIMUM_DETECTING_AREA_RADIUS,
       color: getRGBA(m.color, 0.85),
       style: ['default', 'hover', { lineWidth: 2 }],
