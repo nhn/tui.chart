@@ -108,7 +108,7 @@ export default class Zoom extends Component {
         .map((m) => m.data?.value);
 
       this.store.dispatch('zoom', dragRange);
-      this.eventBus.emit('renderHoveredSeries', []);
+      this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
       if (!this.models.resetButton.length) {
         this.models.resetButton = this.renderResetButton();
       }

@@ -49,7 +49,7 @@ export default class LineSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'lineSeries';
+    this.name = 'line';
   }
 
   initUpdate(delta: number) {
@@ -235,11 +235,11 @@ export default class LineSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] }) {
-    this.eventBus.emit('renderHoveredSeries', responders);
+    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
 
     this.activatedResponders = responders;
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
 
     this.eventBus.emit('needDraw');
   }

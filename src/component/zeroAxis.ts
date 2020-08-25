@@ -6,13 +6,11 @@ import { crispPixel } from '@src/helpers/calculator';
 import { isNumber } from '@src/helpers/utils';
 
 export default class ZeroAxis extends Component {
-  name!: string;
-
   models: LineModel[] = [];
 
   initialize() {
     this.type = 'zeroAxis';
-    this.name = name;
+    this.name = 'zeroAxis';
   }
 
   render({ layout, axes, series }: ChartState<Options>) {

@@ -25,7 +25,7 @@ export default class BubbleSeries extends CircleSeries {
 
   initialize() {
     this.type = 'series';
-    this.name = 'bubbleSeries';
+    this.name = 'bubble';
   }
 
   render(chartState: ChartState<BaseOptions>) {

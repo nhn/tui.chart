@@ -19,8 +19,6 @@ interface RenderOptions {
 }
 
 export default class Axis extends Component {
-  name!: AxisType;
-
   models: AxisModels = { label: [], tick: [], axisLine: [] };
 
   drawModels!: AxisModels;

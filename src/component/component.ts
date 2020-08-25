@@ -29,6 +29,7 @@ import { DataLabelModels } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
 import { RadarPlotModels } from '@t/components/radarPlot';
 import { isSameArray } from '@src/helpers/arrayUtil';
+import { HoveredSeriesModel } from '@src/component/hoveredSeries';
 
 export type ComponentType =
   | 'component'
@@ -45,6 +46,28 @@ export type ComponentType =
   | 'exportMenu'
   | 'zeroAxis'
   | 'zoom';
+
+export type ComponentName =
+  | 'Component'
+  | 'line'
+  | 'scatter'
+  | 'bubble'
+  | 'area'
+  | 'boxPlot'
+  | 'bar'
+  | 'column'
+  | 'pie'
+  | 'hoveredSeries'
+  | 'exportMenu'
+  | 'tooltip'
+  | 'title'
+  | 'dataLabels'
+  | 'radar'
+  | 'radial'
+  | 'legend'
+  | 'xAxis'
+  | 'yAxis'
+  | 'zeroAxis';
 
 type ComponentModels =
   | AxisModels
@@ -64,7 +87,7 @@ type ComponentModels =
   | LabelModel[]
   | DataLabelModels
   | LegendModel[]
-  | TooltipModel[];
+  | HoveredSeriesModel;
 
 type ComponentResponders = Array<
   | CircleResponderModel
@@ -75,7 +98,7 @@ type ComponentResponders = Array<
 >;
 
 export default abstract class Component {
-  name = 'Component';
+  name: ComponentName = 'Component';
 
   type: ComponentType = 'component';
 
