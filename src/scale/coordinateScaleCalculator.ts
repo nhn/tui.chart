@@ -110,15 +110,11 @@ function hasStepSize(stepSize: number | 'auto'): stepSize is number {
   return isNumber(stepSize);
 }
 
-function getNormalizedScale(
-  scaleData: ScaleData,
-  scale: Required<Scale>,
-  showLabel?: boolean
-): ScaleData {
+function getNormalizedScale(scaleData: ScaleData, scale: Required<Scale>): ScaleData {
   const stepSize = hasStepSize(scale.stepSize)
     ? scaleData.stepSize
     : getNormalizedStep(scaleData.stepSize);
-  const edge = getNormalizedLimit(scaleData.limit, stepSize, showLabel);
+  const edge = getNormalizedLimit(scaleData.limit, stepSize);
   const limitSize = Math.abs(edge.max - edge.min);
   const stepCount = getNormalizedStepCount(limitSize, stepSize);
 
@@ -169,14 +165,12 @@ export function calculateCoordinateScale(options: {
   dataRange: ValueEdge;
   offsetSize: number;
   scaleOption?: Scale;
-  showLabel?: boolean;
   minStepSize?: number;
 }): ScaleData {
-  const { dataRange, scaleOption, offsetSize, showLabel, minStepSize } = options;
+  const { dataRange, scaleOption, offsetSize, minStepSize } = options;
   const scale = makeScaleOption(dataRange, scaleOption);
   const roughScale = getRoughScale(scale, offsetSize, minStepSize);
-  const normalizedScale = getNormalizedScale(roughScale, scale, showLabel);
-  console.log(normalizedScale);
+  const normalizedScale = getNormalizedScale(roughScale, scale);
   const overflowed = isSeriesOverflowed(normalizedScale, scale, scaleOption);
 
   if (overflowed) {

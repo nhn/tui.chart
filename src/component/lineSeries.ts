@@ -7,13 +7,17 @@ import {
 } from '@t/components/series';
 import { LineChartOptions, LineTypeSeriesOptions, CoordinateDataType } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, ValueEdge } from '@t/store/store';
+import { ChartState, Scale } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
+import {
+  getCoordinateDataIndex,
+  getCoordinateXValue,
+  getCoordinateYValue,
+} from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray } from '@src/helpers/utils';
+import { deepCopyArray, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
 interface RenderOptions {
@@ -62,7 +66,6 @@ export default class LineSeries extends Component {
       throw new Error("There's no line data!");
     }
 
-    const { yAxis } = scale;
     const { tickDistance, pointOnColumn } = axes.xAxis!;
     const lineSeriesData = series.line.data;
 
@@ -79,7 +82,7 @@ export default class LineSeries extends Component {
 
     const lineSeriesModel = this.renderLinePointsModel(
       lineSeriesData,
-      yAxis.limit,
+      scale,
       renderLineOptions,
       categories
     );
@@ -154,12 +157,14 @@ export default class LineSeries extends Component {
 
   renderLinePointsModel(
     seriesRawData: LineSeriesType[],
-    limit: ValueEdge,
+    scale: Scale,
     renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
     const { pointOnColumn, options, tickDistance } = renderOptions;
     const { spline, lineWidth } = options;
+    const yAxisLimit = scale.yAxis.limit;
+    const xAxisLimit = scale?.xAxis?.limit;
 
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
@@ -168,11 +173,20 @@ export default class LineSeries extends Component {
 
       rawData.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
-        const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
-        const valueRatio = getValueRatio(value, limit);
+        const yValueRatio = getValueRatio(value, yAxisLimit);
 
-        const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
-        const y = (1 - valueRatio) * this.rect.height;
+        let x;
+        if (xAxisLimit) {
+          const rawXValue = getCoordinateXValue(datum as CoordinateDataType);
+          const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
+          const xValueRatio = getValueRatio(xValue, xAxisLimit);
+          x = xValueRatio * this.rect.width;
+        } else {
+          const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
+          x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
+        }
+
+        const y = (1 - yValueRatio) * this.rect.height;
 
         points.push({ x, y, value });
       });
