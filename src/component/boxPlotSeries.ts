@@ -82,6 +82,7 @@ export default class BoxPlotSeries extends Component {
           const model = { ...m };
 
           if (m.type === 'rect') {
+            (model as RectModel).y = m.y + m.height;
             (model as RectModel).height = 0;
           }
 
