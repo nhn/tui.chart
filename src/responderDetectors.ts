@@ -5,10 +5,10 @@ import {
   CircleResponderModel,
   SectorResponderModel,
   BoxPlotResponderModel,
+  LineResponderModel,
 } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
 import { calculateRadianToDegree, withinRadian } from '@src/helpers/sector';
-import { LineModel } from '@t/components/axis';
 
 type DetectorType = 'circle' | 'rect' | 'sector' | 'boxPlot' | 'line';
 
@@ -19,10 +19,10 @@ type ResponderDetectors = {
 export const responderDetectors: ResponderDetectors = {
   circle: (mousePosition: Point, model: CircleResponderModel, componentRect: Rect) => {
     const { x, y } = mousePosition;
-    const { x: modelX, y: modelY, radius, detectionRadius } = model;
+    const { x: modelX, y: modelY, radius, detectionSize } = model;
     const { x: compX, y: compY } = componentRect;
 
-    const radiusAdjustment = isUndefined(detectionRadius) ? 10 : detectionRadius;
+    const radiusAdjustment = isUndefined(detectionSize) ? 10 : detectionSize;
 
     return (
       (x - (modelX + compX)) ** 2 + (y - (modelY + compY)) ** 2 < (radius + radiusAdjustment) ** 2
@@ -70,16 +70,15 @@ export const responderDetectors: ResponderDetectors = {
   },
   line: (
     mousePosition: Point,
-    model: LineModel,
+    model: LineResponderModel,
     componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
   ) => {
     const { x, y } = mousePosition;
     const { x: compX, y: compY } = componentRect;
-    const { x: modelX, y: modelY, x2, y2 } = model;
+    const { x: modelX, y: modelY, x2, y2, detectionSize = 3 } = model;
 
     const numerator = y2 - modelY;
     const denominator = x2 - modelX;
-    const detectionDistance = 3;
     let result = false;
 
     if (numerator === 0) {
@@ -90,8 +89,8 @@ export const responderDetectors: ResponderDetectors = {
       result =
         x - compX >= minX &&
         x - compX <= maxX &&
-        y >= modelY + compY - detectionDistance &&
-        y <= modelY + compY + detectionDistance;
+        y >= modelY + compY - detectionSize &&
+        y <= modelY + compY + detectionSize;
     } else if (denominator === 0) {
       // x = a
       const minY = Math.min(modelY, y2);
@@ -100,8 +99,8 @@ export const responderDetectors: ResponderDetectors = {
       result =
         y - compY >= minY &&
         y - compY <= maxY &&
-        x >= modelX + compX - detectionDistance &&
-        x <= modelX + compX + detectionDistance;
+        x >= modelX + compX - detectionSize &&
+        x <= modelX + compX + detectionSize;
     } else {
       // y = ax + b
       const slope = numerator / denominator;

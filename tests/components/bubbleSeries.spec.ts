@@ -100,7 +100,7 @@ const result = {
       type: 'circle',
       x: 0,
       y: 0,
-      detectionRadius: 0,
+      detectionSize: 0,
       data: {
         category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
@@ -117,7 +117,7 @@ const result = {
       type: 'circle',
       x: 140,
       y: 0,
-      detectionRadius: 0,
+      detectionSize: 0,
       data: {
         category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
@@ -134,7 +134,7 @@ const result = {
       type: 'circle',
       x: 280,
       y: 280,
-      detectionRadius: 0,
+      detectionSize: 0,
       data: {
         category: undefined, // eslint-disable-line no-undefined
         color: '#bbbbbb',

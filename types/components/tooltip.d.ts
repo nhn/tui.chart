@@ -16,6 +16,7 @@ export type TooltipInfo = {
   data: TooltipData;
   radius?: number | RadiusRange;
   width?: number;
+  templateType?: 'boxPlot';
 } & Point;
 
 export type TooltipModel = {
@@ -26,4 +27,5 @@ export type TooltipModel = {
     radius: number;
     width: number;
   };
+  templateType?: string;
 } & Point;

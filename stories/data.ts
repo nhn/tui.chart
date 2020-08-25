@@ -1230,7 +1230,7 @@ export const BudgetDataForBoxPlot = {
   categories: ['Budget', 'Income', 'Expenses', 'Debt'],
   series: [
     {
-      name: '2015',
+      name: '2020',
       data: [
         [1000, 2500, 3714, 5500, 7000],
         [1000, 2750, 4571, 5250, 8000],
@@ -1244,7 +1244,7 @@ export const BudgetDataForBoxPlot = {
       ],
     },
     {
-      name: '2016',
+      name: '2021',
       data: [
         [2000, 4500, 6714, 11500, 13000],
         [3000, 5750, 7571, 8250, 9000],

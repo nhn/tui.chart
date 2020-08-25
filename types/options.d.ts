@@ -267,8 +267,6 @@ export interface ColumnChartOptions extends BaseOptions {
   plot?: BasePlotOptions;
 }
 
-export type BoxPlotChartOptions = BaseOptions;
-
 export type BoxPlotSeriesType = {
   name: string;
   data: number[][];

@@ -1,13 +1,13 @@
 import BoxPlotChart from '@src/charts/boxPlotChart';
 import { BudgetDataForBoxPlot } from './data';
-import { BoxPlotChartOptions, BoxPlotSeriesData } from '@t/options';
+import { BaseOptions, BoxPlotSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 
 export default {
   title: 'chart|BoxPlot',
 };
 
-function createChart(data: BoxPlotSeriesData, customOptions?: BoxPlotChartOptions) {
+function createChart(data: BoxPlotSeriesData, customOptions?: BaseOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(
     {

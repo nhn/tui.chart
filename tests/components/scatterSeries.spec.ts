@@ -95,7 +95,7 @@ const result = {
       type: 'circle',
       x: 0,
       y: 0,
-      detectionRadius: 0,
+      detectionSize: 0,
       data: {
         color: '#aaaaaa',
         label: 'nameA',
@@ -111,7 +111,7 @@ const result = {
       type: 'circle',
       x: 140,
       y: 0,
-      detectionRadius: 0,
+      detectionSize: 0,
       data: {
         color: '#aaaaaa',
         label: 'nameA',
@@ -127,7 +127,7 @@ const result = {
       type: 'circle',
       x: 280,
       y: 280,
-      detectionRadius: 0,
+      detectionSize: 0,
       data: {
         color: '#bbbbbb',
         label: 'nameB',

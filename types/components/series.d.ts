@@ -31,7 +31,7 @@ export type CircleModel = {
 } & Point;
 
 export type CircleResponderModel = {
-  detectionRadius?: number;
+  detectionSize?: number;
   data: TooltipData;
 } & CircleModel;
 
@@ -163,10 +163,10 @@ export type BoxPlotSeriesModels = {
   selectedSeries: BoxPlotSeriesModel[];
 };
 
-export type BoxPlotLineResponderModel = {
+export type LineResponderModel = {
   x2: number;
   y2: number;
-  detectionDistance: number;
+  detectionSize?: number;
 } & Point;
 
 export type BoxPlotModel = {
@@ -174,10 +174,10 @@ export type BoxPlotModel = {
   color: string;
   name: string;
   rect: Omit<RectModel, 'type' | 'color'>;
-  median: BoxPlotLineResponderModel;
-  whisker: BoxPlotLineResponderModel;
-  minimum: BoxPlotLineResponderModel;
-  maximum: BoxPlotLineResponderModel;
+  median: LineResponderModel;
+  whisker: LineResponderModel;
+  minimum: LineResponderModel;
+  maximum: LineResponderModel;
 };
 
 export type BoxPlotResponderModel = {

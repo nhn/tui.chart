@@ -1,5 +1,5 @@
 import Component from './component';
-import { BoxPlotChartOptions, BoxPlotSeriesType } from '@t/options';
+import { BaseOptions, BoxPlotSeriesType } from '@t/options';
 import { ChartState } from '@t/store/store';
 import {
   BoxPlotSeriesModels,
@@ -30,6 +30,8 @@ const seriesOpacity = {
 
 const PADDING = 24;
 
+const MIN_BAR_WIDTH = 5;
+
 export default class BoxPlotSeries extends Component {
   models: BoxPlotSeriesModels = { series: [], selectedSeries: [] };
 
@@ -44,7 +46,7 @@ export default class BoxPlotSeries extends Component {
     this.name = 'boxPlotSeries';
   }
 
-  render(state: ChartState<BoxPlotChartOptions>): void {
+  render(state: ChartState<BaseOptions>): void {
     const { layout, axes, series, scale, legend, options, categories = [] } = state;
 
     if (!series.boxPlot) {
@@ -63,7 +65,10 @@ export default class BoxPlotSeries extends Component {
     const renderOptions = {
       ratio: this.rect.height / (max - min),
       tickDistance,
-      boxWidth: Math.max((tickDistance - PADDING * (2 + (seriesLength - 1))) / seriesLength, 5),
+      boxWidth: Math.max(
+        (tickDistance - PADDING * (2 + (seriesLength - 1))) / seriesLength,
+        MIN_BAR_WIDTH
+      ),
     };
 
     const BoxPlotModelData = this.makeBoxPlots(boxPlotData, renderOptions);
@@ -94,6 +99,7 @@ export default class BoxPlotSeries extends Component {
       return {
         ...m,
         ...point,
+        templateType: 'boxPlot',
         data: tooltipDataArr[index],
       };
     });
@@ -144,10 +150,7 @@ export default class BoxPlotSeries extends Component {
           }
         });
       } else {
-        seriesModels.push({
-          ...model,
-          color: '#ffffff',
-        } as CircleModel);
+        seriesModels.push({ ...model, color: '#ffffff' } as CircleModel);
       }
     });
 
@@ -183,28 +186,28 @@ export default class BoxPlotSeries extends Component {
             y: this.getYPos(median, ratio),
             x2: startX + boxWidth,
             y2: this.getYPos(median, ratio),
-            detectionDistance: 3,
+            detectionSize: 3,
           },
           whisker: {
             x: startX + boxWidth / 2,
             y: this.getYPos(minimum, ratio),
             x2: startX + boxWidth / 2,
             y2: this.getYPos(maximum, ratio),
-            detectionDistance: 3,
+            detectionSize: 3,
           },
           minimum: {
             x: startX + boxWidth / 2 / 2,
             y: this.getYPos(minimum, ratio),
             x2: startX + boxWidth / 2 / 2 + boxWidth / 2,
             y2: this.getYPos(minimum, ratio),
-            detectionDistance: 3,
+            detectionSize: 3,
           },
           maximum: {
             x: startX + boxWidth / 2 / 2,
             y: this.getYPos(maximum, ratio),
             x2: startX + boxWidth / 2 / 2 + boxWidth / 2,
             y2: this.getYPos(maximum, ratio),
-            detectionDistance: 3,
+            detectionSize: 3,
           },
         });
       });
@@ -239,26 +242,11 @@ export default class BoxPlotSeries extends Component {
           label: name,
           color: color!,
           value: [
-            {
-              title: 'Maximum',
-              value: maximum,
-            },
-            {
-              title: 'Upper Quartile',
-              value: highQuartile,
-            },
-            {
-              title: 'Median',
-              value: median,
-            },
-            {
-              title: 'Lower Quartile',
-              value: lowerQuartile,
-            },
-            {
-              title: 'Minimum',
-              value: minimum,
-            },
+            { title: 'Maximum', value: maximum },
+            { title: 'Upper Quartile', value: highQuartile },
+            { title: 'Median', value: median },
+            { title: 'Lower Quartile', value: lowerQuartile },
+            { title: 'Minimum', value: minimum },
           ],
           category: categories[dataIndex],
         });

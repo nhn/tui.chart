@@ -32,10 +32,6 @@ function getLimitSafely(baseValues: number[]): ValueEdge {
   return limit;
 }
 
-function isBoxPlotSeries(seriesName: string) {
-  return seriesName === 'boxPlot';
-}
-
 const dataRange: StoreModule = {
   name: 'dataRange',
   state: () => ({
@@ -78,8 +74,8 @@ const dataRange: StoreModule = {
           values = stackSeries[seriesName].dataRangeValues;
         } else if (isBoxSeries(seriesName as ChartType)) {
           values.push(0);
-        } else if (isBoxPlotSeries(seriesName)) {
-          values = series[seriesName].data.flatMap(({ data, outliers }) => [
+        } else if (seriesName === 'boxPlot') {
+          values = series[seriesName]!.data.flatMap(({ data, outliers = [] }) => [
             ...data.flatMap((datum) => datum),
             ...outliers.flatMap((datum) => datum),
           ]);

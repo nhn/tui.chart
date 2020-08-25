@@ -5,7 +5,6 @@ import {
   TooltipModel,
   TooltipDataValue,
   TooltipTitleValues,
-  TooltipValue,
 } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { isNumber } from '@src/helpers/utils';
@@ -69,7 +68,7 @@ export default class Tooltip extends Component {
   renderTooltip(tooltipInfo: TooltipInfo[]) {
     const model = tooltipInfo.reduce<TooltipModel>(
       (acc, item) => {
-        const { data, x, y, radius, width } = item;
+        const { data, x, y, radius, width, templateType } = item;
 
         acc.x = acc.x ? (acc.x + x) / 2 : x;
         acc.y = acc.y ? (acc.y + y) / 2 : y;
@@ -86,6 +85,10 @@ export default class Tooltip extends Component {
 
         if (!acc.category && data.category) {
           acc.category = data.category;
+        }
+
+        if (templateType) {
+          acc.templateType = templateType;
         }
 
         return acc;
@@ -108,19 +111,24 @@ export default class Tooltip extends Component {
     return category ? `<div class="tooltip-category">${category}</div>` : '';
   }
 
-  getBodyTemplate({ data }: TooltipModel) {
+  getBodyTemplate(model: TooltipModel) {
+    return model.templateType === 'boxPlot'
+      ? this.getBoxplotTemplate(model)
+      : this.getDefaultBodyTemplate(model);
+  }
+
+  getDefaultBodyTemplate({ data }: TooltipModel) {
     return `<div class="tooltip-series-wrapper">
         ${data
           .map(
-            ({ label, color, value }) =>
+            ({ label, color, formattedValue }) =>
               `<div class="tooltip-series">
                   <span class="series-name">
                     <i class="icon" style="background: ${color}"></i>
                     <span class="name">${label}</span>
                   </span>
-                  ${this.getValueTemplate(value)}
-                </div>
-                ${this.getTitleValuesTemplate(value)}`
+                  <span class="series-value">${formattedValue}</span>
+                </div>`
           )
           .join('')}
       </div>`;
@@ -148,22 +156,30 @@ export default class Tooltip extends Component {
     this.templateFunc = options?.tooltip?.template ?? this.getDefaultTemplate;
   }
 
-  getTitleValuesTemplate(values: TooltipDataValue) {
-    return Array.isArray(values)
-      ? values.reduce((html, { title, value }) => {
-          html += `<div class="tooltip-series"><span class="series-name">
-          <span class="name">${title}</span></span>
-          <span class="series-value">${getValueString(value)}</span></div>
-        `;
-
-          return html;
-        }, '<div class="tooltip-title-values-container">') + '</div>'
-      : '';
-  }
-
-  getValueTemplate(value: TooltipDataValue) {
-    return !Array.isArray(value)
-      ? `<span class="series-value">${getValueString(value)}</span>`
-      : '';
+  getBoxplotTemplate({ data }: TooltipModel) {
+    return `<div class="tooltip-series-wrapper">
+    ${data
+      .map(
+        ({ label, color, value: values }) =>
+          `<div class="tooltip-series">
+              <span class="series-name">
+                <i class="icon" style="background: ${color}"></i>
+                <span class="name">${label}</span>
+              </span>
+            </div>
+            <div>
+      ${(values as TooltipTitleValues)
+        .map(
+          ({ title, value }) =>
+            `<div class="tooltip-series">
+              <span class="series-name">${title}</span>
+              <span class="series-value">${getValueString(value)}</span>
+            </div>`
+        )
+        .join('')}
+        </div>`
+      )
+      .join('')}
+  </div>`;
   }
 }
