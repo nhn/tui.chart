@@ -42,7 +42,7 @@ function getTotalDataRange(seriesDataRange: SeriesDataRange) {
     max: Number.MIN_SAFE_INTEGER,
   };
 
-  return Object.values(seriesDataRange).reduce((acc, cur) => {
+  return Object.values(seriesDataRange).reduce<DataRange>((acc, cur) => {
     if (cur.xAxis) {
       acc.xAxis = {
         min: Math.min(cur.xAxis.min, acc.xAxis?.min ?? defaultDataRange.min),
@@ -57,7 +57,7 @@ function getTotalDataRange(seriesDataRange: SeriesDataRange) {
     }
 
     return acc;
-  }, {} as DataRange);
+  }, {});
 }
 
 const dataRange: StoreModule = {
