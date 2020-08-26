@@ -72,5 +72,36 @@ describe('Category Store', () => {
 
       expect(state.categories).toEqual(['1', '3', '10']);
     });
+
+    it('should make categories with series names on bullet chart', () => {
+      const state = (category.state as StateFunc)({
+        options: {
+          chart: {
+            width: 1,
+            height: 2,
+          },
+        },
+        series: {
+          bullet: [
+            {
+              name: 'han',
+              data: 0,
+              markers: [],
+              ranges: [],
+              color: '#aaaaaa',
+            },
+            {
+              name: 'cho',
+              data: 0,
+              markers: [],
+              ranges: [],
+              color: '#bbbbbb',
+            },
+          ],
+        },
+      });
+
+      expect(state.categories).toEqual(['han', 'cho']);
+    });
   });
 });

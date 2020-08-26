@@ -383,8 +383,8 @@ export interface BulletChartOptions extends BaseOptions {
 export type BulletSeriesType = {
   name: string;
   data: number;
-  markers: [number, number, number];
-  ranges: [RangeDataType, RangeDataType, RangeDataType];
+  markers: number[];
+  ranges: RangeDataType[];
   color?: string;
 };
 

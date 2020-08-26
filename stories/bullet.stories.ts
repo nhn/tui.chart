@@ -3,6 +3,8 @@ import { BulletSeriesData, BulletChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { budgetDataForBullet } from './data';
 
+const budgetData = budgetDataForBullet as BulletSeriesData;
+
 export default {
   title: 'chart|Bullet',
 };
@@ -29,13 +31,13 @@ function createChart(data: BulletSeriesData, customOptions?: BulletChartOptions)
 }
 
 export const basic = () => {
-  const { el } = createChart(budgetDataForBullet as BulletSeriesData);
+  const { el } = createChart(budgetData);
 
   return el;
 };
 
 export const vertical = () => {
-  const { el } = createChart(budgetDataForBullet as BulletSeriesData, {
+  const { el } = createChart(budgetData, {
     series: {
       vertical: true,
     },
@@ -44,8 +46,18 @@ export const vertical = () => {
   return el;
 };
 
+export const selecatable = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      selectable: true,
+    },
+  });
+
+  return el;
+};
+
 export const dataLabels = () => {
-  const { el } = createChart(budgetDataForBullet as BulletSeriesData, {
+  const { el } = createChart(budgetData, {
     series: {
       dataLabels: {
         visible: true,
