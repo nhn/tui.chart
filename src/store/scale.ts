@@ -1,11 +1,16 @@
 import { extend } from '@src/store/store';
 import { StoreModule, Scale } from '@t/store/store';
 import { getAxisName, getSizeKey, isLabelAxisOnYAxis } from '@src/helpers/axes';
-import { calculateCoordinateScale, getStackScaleData } from '@src/scale/coordinateScaleCalculator';
+import {
+  calculateCoordinateScale,
+  calculateScaleForCoordinateLineType,
+  getStackScaleData,
+} from '@src/scale/coordinateScaleCalculator';
 import { calculateDatetimeScale } from '@src/scale/datetimeScaleCalculator';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
 import { hasPercentStackSeries } from './stackSeriesData';
 import { isExist } from '@src/helpers/utils';
+import { LineChartOptions } from '@t/options';
 
 const scale: StoreModule = {
   name: 'scale',
@@ -14,7 +19,7 @@ const scale: StoreModule = {
   }),
   action: {
     setScale({ state }) {
-      const { series, dataRange, layout, stackSeries, options } = state;
+      const { series, dataRange, layout, stackSeries, options, categories } = state;
       const scaleData = {};
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
@@ -49,6 +54,13 @@ const scale: StoreModule = {
         scaleData[labelAxisName] = dateTypeLabel
           ? calculateDatetimeScale(labelOptions)
           : calculateCoordinateScale(labelOptions);
+        if (series.line) {
+          scaleData[labelAxisName] = calculateScaleForCoordinateLineType(
+            scaleData[labelAxisName],
+            options as LineChartOptions,
+            categories
+          );
+        }
       } else {
         scaleData[valueAxisName] = calculateCoordinateScale({
           dataRange: dataRange[valueAxisName],

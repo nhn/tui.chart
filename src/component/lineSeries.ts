@@ -30,6 +30,7 @@ interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
   tickDistance: number;
+  labelDistance?: number;
 }
 
 export const DEFAULT_LINE_WIDTH = 3;
@@ -79,13 +80,14 @@ export default class LineSeries extends Component {
       };
     }
 
-    const { tickDistance, pointOnColumn } = axes.xAxis!;
+    const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
     const lineSeriesData = series.line.data;
 
     const renderLineOptions: RenderOptions = {
       pointOnColumn,
       options: (options.series || {}) as LineTypeSeriesOptions,
       tickDistance,
+      labelDistance,
     };
 
     this.rect = layout.plot;
@@ -174,7 +176,7 @@ export default class LineSeries extends Component {
     renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
-    const { pointOnColumn, options, tickDistance } = renderOptions;
+    const { pointOnColumn, options, tickDistance, labelDistance } = renderOptions;
     const { spline, lineWidth } = options;
     const yAxisLimit = scale.yAxis.limit;
     const xAxisLimit = scale?.xAxis?.limit;
@@ -193,7 +195,9 @@ export default class LineSeries extends Component {
           const rawXValue = getCoordinateXValue(datum as CoordinateDataType);
           const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
           const xValueRatio = getValueRatio(xValue, xAxisLimit);
-          x = xValueRatio * this.rect.width;
+          x =
+            xValueRatio * (this.rect.width - (pointOnColumn ? labelDistance! : 0)) +
+            (pointOnColumn ? labelDistance! / 2 : 0);
         } else {
           const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
           x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);

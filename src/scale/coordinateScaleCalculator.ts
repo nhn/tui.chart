@@ -1,5 +1,5 @@
 import { ValueEdge, ScaleData } from '@t/store/store';
-import { Scale } from '@t/options';
+import { LineChartOptions, Scale } from '@t/options';
 import { isNumber } from '@src/helpers/utils';
 
 const SNAP_VALUES = [1, 2, 5, 10];
@@ -100,7 +100,7 @@ function getNormalizedLimit(limit: ValueEdge, stepSize: number): ValueEdge {
   };
 }
 
-function getNormalizedStepCount(limitSize: number, stepSize: number) {
+export function getNormalizedStepCount(limitSize: number, stepSize: number) {
   const multiplier = 1 / Math.min(getDigits(limitSize), getDigits(stepSize));
 
   return Math.ceil((limitSize * multiplier) / (stepSize * multiplier));
@@ -128,11 +128,7 @@ function getNormalizedScale(scaleData: ScaleData, scale: Required<Scale>): Scale
   };
 }
 
-function getRoughScale(
-  scale: Required<Scale>,
-  offsetSize: number,
-  minStepSize?: number
-): ScaleData {
+function getRoughScale(scale: Required<Scale>, offsetSize: number, minStepSize = 1): ScaleData {
   const { min, max } = scale;
   const limitSize = Math.abs(max - min);
   const valuePerPixel = limitSize / offsetSize;
@@ -193,4 +189,39 @@ export function getStackScaleData(type: stackScaleType): ScaleData {
   }
 
   return { limit: { min: 0, max: 100 }, stepSize: 25, stepCount: 5 };
+}
+
+export function calculateScaleForCoordinateLineType(
+  scale: ScaleData,
+  options: LineChartOptions,
+  categories?: string[]
+) {
+  if (!categories) {
+    return scale;
+  }
+
+  const dateType = !!options?.xAxis?.date;
+  const values = categories.map((value) => (dateType ? Number(new Date(value)) : Number(value)));
+  const { limit, stepSize } = scale;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const newLimit = { ...limit };
+
+  if (max - min) {
+    if (limit.min < min && limit.min + stepSize <= min) {
+      newLimit.min += stepSize;
+    }
+    if (limit.max > max && limit.max - stepSize >= max) {
+      newLimit.max -= stepSize;
+    }
+  }
+
+  const limitSize = Math.abs(newLimit.max - newLimit.min);
+  const newStepCount = getNormalizedStepCount(limitSize, stepSize);
+
+  return {
+    limit: newLimit,
+    stepCount: newStepCount,
+    stepSize,
+  };
 }

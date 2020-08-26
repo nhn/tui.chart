@@ -248,6 +248,7 @@ export interface AxisData {
   pointOnColumn: boolean;
   tickDistance: number;
   tickInterval: number;
+  labelDistance?: number;
   labelInterval: number;
   title?: Required<AxisTitleOption>;
   zeroPosition?: number;

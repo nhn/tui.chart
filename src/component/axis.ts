@@ -16,6 +16,7 @@ interface RenderOptions {
   tickDistance: number;
   tickInterval: number;
   labelInterval: number;
+  labelDistance: number;
 }
 
 export default class Axis extends Component {
@@ -46,6 +47,7 @@ export default class Axis extends Component {
       tickDistance,
       tickInterval,
       labelInterval,
+      labelDistance,
     } = axes[this.name]!;
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
@@ -57,6 +59,7 @@ export default class Axis extends Component {
       tickDistance,
       tickInterval,
       labelInterval,
+      labelDistance,
     };
 
     this.models.label = this.renderLabelModels(
@@ -157,9 +160,9 @@ export default class Axis extends Component {
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): LabelModel[] {
-    const { tickDistance, pointOnColumn, labelInterval } = renderOptions;
+    const { pointOnColumn, labelInterval, labelDistance } = renderOptions;
     const labelAnchorPoint = this.yAxisComponent ? crispPixel(0) : crispPixel(this.rect.height);
-    const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
+    const labelAdjustment = pointOnColumn ? labelDistance / 2 : 0;
     const style = ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }];
 
     return labels.reduce<LabelModel[]>((positions, text, index) => {
