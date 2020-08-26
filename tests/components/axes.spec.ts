@@ -27,6 +27,7 @@ describe('yAxis', () => {
             labelInterval: 1,
             labels: ['1', '2'],
             tickCount: 2,
+            labelDistance: 40,
           },
         },
       });
@@ -136,6 +137,7 @@ describe('xAxis', () => {
             labelInterval: 1,
             labels: ['1', '2'],
             tickCount: 2,
+            labelDistance: 40,
           },
         },
       });
