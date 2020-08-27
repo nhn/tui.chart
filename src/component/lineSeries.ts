@@ -73,11 +73,8 @@ export default class LineSeries extends Component {
     }
 
     const options = { ...chartState.options };
-    if ((options.series as LineScatterChartSeriesOptions)?.line) {
-      options.series = {
-        ...options.series,
-        ...(options.series as LineScatterChartSeriesOptions).line,
-      };
+    if (options?.series && 'line' in options.series) {
+      options.series = { ...options.series, ...options.series.line };
     }
 
     const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;

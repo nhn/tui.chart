@@ -1,15 +1,15 @@
-import Component, { ComponentName } from './component';
+import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { TooltipModel } from '@t/components/tooltip';
+import { TooltipModel, TooltipModelName } from '@t/components/tooltip';
 
-export type HoveredSeriesModel = { [key in ComponentName]: TooltipModel[] };
+export type HoveredSeriesModel = { [key in TooltipModelName]: TooltipModel[] };
 
 export default class HoveredSeries extends Component {
   models: HoveredSeriesModel = {} as HoveredSeriesModel;
 
   isShow = false;
 
-  renderHoveredSeries = ({ models, name }: { models: TooltipModel[]; name: ComponentName }) => {
+  renderHoveredSeries = ({ models, name }: { models: TooltipModel[]; name: TooltipModelName }) => {
     this.models[name] = [...models];
     this.isShow = !!Object.values(this.models).flatMap((val) => val).length;
   };

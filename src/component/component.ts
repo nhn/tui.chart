@@ -46,28 +46,6 @@ export type ComponentType =
   | 'zeroAxis'
   | 'zoom';
 
-export type ComponentName =
-  | 'Component'
-  | 'line'
-  | 'scatter'
-  | 'bubble'
-  | 'area'
-  | 'boxPlot'
-  | 'bar'
-  | 'column'
-  | 'pie'
-  | 'hoveredSeries'
-  | 'exportMenu'
-  | 'tooltip'
-  | 'title'
-  | 'dataLabels'
-  | 'radar'
-  | 'radial'
-  | 'legend'
-  | 'xAxis'
-  | 'yAxis'
-  | 'zeroAxis';
-
 type ComponentModels =
   | AxisModels
   | AreaSeriesModels
@@ -97,7 +75,7 @@ type ComponentResponders = Array<
 >;
 
 export default abstract class Component {
-  name: ComponentName = 'Component';
+  name = 'Component';
 
   type: ComponentType = 'component';
 

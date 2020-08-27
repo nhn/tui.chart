@@ -1,10 +1,11 @@
-import Component, { ComponentName } from './component';
+import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import {
   TooltipInfo,
   TooltipModel,
   TooltipTitleValues,
   TooltipDataValue,
+  TooltipModelName,
 } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { isNumber } from '@src/helpers/utils';
@@ -12,7 +13,7 @@ import { DefaultTooltipTemplate, Formatter, SeriesDataType, TooltipTemplateFunc 
 
 import '../css/tooltip.css';
 
-type TooltipInfoModels = { [key in ComponentName]: TooltipInfo[] };
+type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
 
 export default class Tooltip extends Component {
   chartEl!: HTMLDivElement;
@@ -29,9 +30,9 @@ export default class Tooltip extends Component {
 
   tooltipInfoModels: TooltipInfoModels = {} as TooltipInfoModels;
 
-  onSeriesPointHovered = ({ models, name }: { models: TooltipInfo[]; name: string }) => {
+  onSeriesPointHovered = ({ models, name }: { models: TooltipInfo[]; name: TooltipModelName }) => {
     this.tooltipInfoModels[name] = [...models];
-    const isShow = !!Object.values(this.tooltipInfoModels).flatMap((model) => model).length;
+    const isShow = !!this.getTooltipInfoModels().length;
     if (isShow) {
       this.renderTooltip();
     } else {
@@ -84,51 +85,53 @@ export default class Tooltip extends Component {
     this.tooltipContainerEl.style.top = `${chartY + y}px`;
   }
 
+  getTooltipInfoModels() {
+    return Object.values(this.tooltipInfoModels).flatMap((item) => item);
+  }
+
   renderTooltip() {
-    const model = Object.values(this.tooltipInfoModels)
-      .flatMap((item) => item)
-      .reduce<TooltipModel>(
-        (acc, item) => {
-          const { data, x, y, radius, width, height, templateType } = item;
+    const model = this.getTooltipInfoModels().reduce<TooltipModel>(
+      (acc, item) => {
+        const { data, x, y, radius, width, height, templateType } = item;
 
-          acc.x = acc.x ? (acc.x + x) / 2 : x;
-          acc.y = acc.y ? (acc.y + y) / 2 : y;
+        acc.x = acc.x ? (acc.x + x) / 2 : x;
+        acc.y = acc.y ? (acc.y + y) / 2 : y;
 
-          if (isNumber(radius)) {
-            acc.target.radius = radius;
-          }
+        if (isNumber(radius)) {
+          acc.target.radius = radius;
+        }
 
-          if (width) {
-            acc.target.width = width;
-          }
+        if (width) {
+          acc.target.width = width;
+        }
 
-          if (height) {
-            acc.target.height = height;
-          }
+        if (height) {
+          acc.target.height = height;
+        }
 
-          acc.data.push({
-            ...data,
-            value: Array.isArray(data.value)
-              ? data.value.map((titleValue) => ({
-                  ...titleValue,
-                  formattedValue: this.getFormattedValue(titleValue.value),
-                }))
-              : data.value,
-            formattedValue: this.getFormattedValue(data.value),
-          });
+        acc.data.push({
+          ...data,
+          value: Array.isArray(data.value)
+            ? data.value.map((titleValue) => ({
+                ...titleValue,
+                formattedValue: this.getFormattedValue(titleValue.value),
+              }))
+            : data.value,
+          formattedValue: this.getFormattedValue(data.value),
+        });
 
-          if (!acc.category && data.category) {
-            acc.category = data.category;
-          }
+        if (!acc.category && data.category) {
+          acc.category = data.category;
+        }
 
-          if (templateType) {
-            acc.templateType = templateType;
-          }
+        if (templateType) {
+          acc.templateType = templateType;
+        }
 
-          return acc;
-        },
-        { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0, height: 0 } }
-      );
+        return acc;
+      },
+      { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0, height: 0 } }
+    );
 
     this.tooltipContainerEl.innerHTML = this.templateFunc(model, {
       header: this.getHeaderTemplate(model),
