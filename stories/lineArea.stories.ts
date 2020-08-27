@@ -45,9 +45,7 @@ function createChart(data: LineAreaData, customOptions?: LineAreaChartOptions) {
 }
 
 export const basic = () => {
-  const { el } = createChart(energyUsageData, {
-    series: { area: { stack: { type: 'normal' } } },
-  });
+  const { el } = createChart(energyUsageData, {});
 
   return el;
 };
@@ -66,9 +64,7 @@ export const basicWithOptions = () => {
       line: {
         spline: true,
       },
-      area: {
-
-      }
+      area: {},
     },
   });
 
