@@ -42,10 +42,10 @@ export default abstract class CircleSeries extends Component {
   onMousemove({ responders, mousePosition }) {
     const closestResponder = this.getClosestResponder(responders, mousePosition);
 
-    this.eventBus.emit('renderHoveredSeries', closestResponder);
+    this.eventBus.emit('renderHoveredSeries', { models: closestResponder, name: this.name });
     this.activatedResponders = closestResponder;
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   }
 

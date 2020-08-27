@@ -36,6 +36,7 @@ const chartState = {
       labels: [0, 2, 4, 6, 8],
       tickCount: 4,
       tickDistance: 40,
+      labelDistance: 40,
     },
     yAxis: {
       pointOnColumn: true,
@@ -154,6 +155,7 @@ beforeEach(() => {
     store: {} as Store<BarChartOptions>,
     eventBus: new EventEmitter(),
   });
+  stackSeries.initialize({ name: 'bar' });
 });
 
 it('should be set the drawing models for stack series rendering', () => {

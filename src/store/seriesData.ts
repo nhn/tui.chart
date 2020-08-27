@@ -83,14 +83,19 @@ const seriesData: StoreModule = {
       const { disabledSeries, theme, zoomRange, rawCategories } = state;
       const newSeriesData = {};
       const { colors } = theme.series;
+      let colorIdx = 0;
 
       Object.keys(rawSeries).forEach((seriesName) => {
-        const originSeriesData = rawSeries[seriesName].map((m, idx) => ({
-          ...m,
-          rawData: m.data,
-          data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
-          color: colors[idx],
-        }));
+        const originSeriesData = rawSeries[seriesName].map((m) => {
+          colorIdx += 1;
+
+          return {
+            ...m,
+            rawData: m.data,
+            data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
+            color: colors[colorIdx - 1],
+          };
+        });
 
         const seriesCount = originSeriesData.length;
         const seriesGroupCount = originSeriesData[0].data.length;

@@ -25,6 +25,7 @@ import {
   BaseOptions,
   BulletSeriesType,
   BulletChartOptions,
+  LineScatterChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -70,15 +71,10 @@ type ChartOptionsMap = {
   radar: RadarChartOptions;
   boxPlot: BaseOptions;
   bullet: BulletChartOptions;
+  lineScatter: LineScatterChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
-
-type ElementType<T extends ReadonlyArray<unknown>> = T extends ReadonlyArray<infer ElementType>
-  ? ElementType
-  : never;
-
-export type SeriesTypes = ElementType<ValueOf<ChartSeriesMap>>;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
@@ -161,10 +157,8 @@ export type Axes = {
 };
 
 export type DataRange = {
-  [key in keyof ChartSeriesMap]: {
-    xAxis: ValueEdge;
-    yAxis: ValueEdge;
-  };
+  xAxis?: ValueEdge;
+  yAxis?: ValueEdge;
 };
 
 export type StackSeries = {
@@ -258,6 +252,7 @@ export interface AxisData {
   pointOnColumn: boolean;
   tickDistance: number;
   tickInterval: number;
+  labelDistance?: number;
   labelInterval: number;
   title?: Required<AxisTitleOption>;
   zeroPosition?: number;

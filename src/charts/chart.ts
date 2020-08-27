@@ -39,7 +39,7 @@ export default abstract class Chart<T extends Options> {
 
   private getAnimationDuration(options: Options) {
     const { firstRendering } = this.animator;
-    const animationOption = options.series?.animation;
+    const animationOption = options.chart?.animation;
     let duration;
 
     if (!firstRendering || isUndefined(animationOption)) {

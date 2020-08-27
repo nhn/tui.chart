@@ -1,5 +1,5 @@
 import { ValueEdge, ScaleData } from '@t/store/store';
-import { Scale } from '@t/options';
+import { LineChartOptions, Scale } from '@t/options';
 import { isNumber } from '@src/helpers/utils';
 
 const SNAP_VALUES = [1, 2, 5, 10];
@@ -25,11 +25,11 @@ function adjustLimitForOverflow(limit: ValueEdge, stepSize: number, overflowed: 
   };
 }
 
-function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>) {
+function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>, scaleOption?: Scale) {
   const { min, max } = scale;
   const scaleDataLimit = scaleData.limit;
-  const hasMinOption = isNumber(min);
-  const hasMaxOption = isNumber(max);
+  const hasMinOption = isNumber(scaleOption?.min);
+  const hasMaxOption = isNumber(scaleOption?.max);
 
   const isOverflowedMin = !hasMinOption && scaleDataLimit.min === min && scaleDataLimit.min !== 0;
   const isOverflowedMax = !hasMaxOption && scaleDataLimit.max === max && scaleDataLimit.max !== 0;
@@ -76,26 +76,22 @@ function getNormalizedStep(stepSize: number) {
  * Get normalized limit values
  * max = 155 and step = 10 ---> max = 160
  */
-function getNormalizedLimit(limit: ValueEdge, stepSize: number, showLabel?: boolean): ValueEdge {
+function getNormalizedLimit(limit: ValueEdge, stepSize: number): ValueEdge {
   let { min, max } = limit;
   const minNumber = Math.min(getDigits(max), getDigits(stepSize));
   const placeNumber = minNumber > 1 ? 1 : 1 / minNumber;
   const fixedStep = stepSize * placeNumber;
-  const noExtraMax = max;
 
   // ceil max value step digits
   max = (Math.ceil((max * placeNumber) / fixedStep) * fixedStep) / placeNumber;
-  const isNotEnoughSize = fixedStep / 2 > max - noExtraMax;
-
-  if (showLabel && isNotEnoughSize) {
-    max += fixedStep;
-  }
 
   if (min > stepSize) {
     // floor min value to multiples of step
     min = (Math.floor((min * placeNumber) / fixedStep) * fixedStep) / placeNumber;
   } else if (min < 0) {
     min = -(Math.ceil((Math.abs(min) * placeNumber) / fixedStep) * fixedStep) / placeNumber;
+  } else {
+    min = 0;
   }
 
   return {
@@ -104,7 +100,7 @@ function getNormalizedLimit(limit: ValueEdge, stepSize: number, showLabel?: bool
   };
 }
 
-function getNormalizedStepCount(limitSize: number, stepSize: number) {
+export function getNormalizedStepCount(limitSize: number, stepSize: number) {
   const multiplier = 1 / Math.min(getDigits(limitSize), getDigits(stepSize));
 
   return Math.ceil((limitSize * multiplier) / (stepSize * multiplier));
@@ -114,15 +110,11 @@ function hasStepSize(stepSize: number | 'auto'): stepSize is number {
   return isNumber(stepSize);
 }
 
-function getNormalizedScale(
-  scaleData: ScaleData,
-  scale: Required<Scale>,
-  showLabel?: boolean
-): ScaleData {
+function getNormalizedScale(scaleData: ScaleData, scale: Required<Scale>): ScaleData {
   const stepSize = hasStepSize(scale.stepSize)
     ? scaleData.stepSize
     : getNormalizedStep(scaleData.stepSize);
-  const edge = getNormalizedLimit(scaleData.limit, stepSize, showLabel);
+  const edge = getNormalizedLimit(scaleData.limit, stepSize);
   const limitSize = Math.abs(edge.max - edge.min);
   const stepCount = getNormalizedStepCount(limitSize, stepSize);
 
@@ -136,11 +128,7 @@ function getNormalizedScale(
   };
 }
 
-function getRoughScale(
-  scale: Required<Scale>,
-  offsetSize: number,
-  minStepSize?: number
-): ScaleData {
+function getRoughScale(scale: Required<Scale>, offsetSize: number, minStepSize = 1): ScaleData {
   const { min, max } = scale;
   const limitSize = Math.abs(max - min);
   const valuePerPixel = limitSize / offsetSize;
@@ -173,14 +161,13 @@ export function calculateCoordinateScale(options: {
   dataRange: ValueEdge;
   offsetSize: number;
   scaleOption?: Scale;
-  showLabel?: boolean;
   minStepSize?: number;
 }): ScaleData {
-  const { dataRange, scaleOption, offsetSize, showLabel, minStepSize } = options;
+  const { dataRange, scaleOption, offsetSize, minStepSize } = options;
   const scale = makeScaleOption(dataRange, scaleOption);
   const roughScale = getRoughScale(scale, offsetSize, minStepSize);
-  const normalizedScale = getNormalizedScale(roughScale, scale, showLabel);
-  const overflowed = isSeriesOverflowed(normalizedScale, scale);
+  const normalizedScale = getNormalizedScale(roughScale, scale);
+  const overflowed = isSeriesOverflowed(normalizedScale, scale, scaleOption);
 
   if (overflowed) {
     const { stepSize, limit } = normalizedScale;
@@ -202,4 +189,39 @@ export function getStackScaleData(type: stackScaleType): ScaleData {
   }
 
   return { limit: { min: 0, max: 100 }, stepSize: 25, stepCount: 5 };
+}
+
+export function calculateScaleForCoordinateLineType(
+  scale: ScaleData,
+  options: LineChartOptions,
+  categories?: string[]
+) {
+  if (!categories) {
+    return scale;
+  }
+
+  const dateType = !!options?.xAxis?.date;
+  const values = categories.map((value) => (dateType ? Number(new Date(value)) : Number(value)));
+  const { limit, stepSize } = scale;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const newLimit = { ...limit };
+
+  if (max - min) {
+    if (limit.min < min && limit.min + stepSize <= min) {
+      newLimit.min += stepSize;
+    }
+    if (limit.max > max && limit.max - stepSize >= max) {
+      newLimit.max -= stepSize;
+    }
+  }
+
+  const limitSize = Math.abs(newLimit.max - newLimit.min);
+  const newStepCount = getNormalizedStepCount(limitSize, stepSize);
+
+  return {
+    limit: newLimit,
+    stepCount: newStepCount,
+    stepSize,
+  };
 }

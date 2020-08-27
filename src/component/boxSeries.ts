@@ -95,8 +95,6 @@ export default class BoxSeries extends Component {
 
   isBar = true;
 
-  name = BOX.BAR;
-
   valueAxis = 'xAxis';
 
   labelAxis = 'yAxis';
@@ -375,10 +373,10 @@ export default class BoxSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: RectModel[] }) {
-    this.eventBus.emit('renderHoveredSeries', responders);
+    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
     this.activatedResponders = responders;
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   }
 

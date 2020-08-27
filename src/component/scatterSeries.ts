@@ -12,7 +12,7 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 export default class ScatterSeries extends CircleSeries {
   initialize() {
     this.type = 'series';
-    this.name = 'scatterSeries';
+    this.name = 'scatter';
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {

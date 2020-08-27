@@ -9,7 +9,7 @@ export default class RadialAxis extends Component {
 
   initialize() {
     this.type = 'axis';
-    this.name = 'radialAxis';
+    this.name = 'radial';
   }
 
   render({ layout, axes }: ChartState<Options>) {

@@ -38,3 +38,15 @@ export type TooltipModel = {
   };
   templateType?: TooltipTemplateType;
 } & Point;
+
+export type TooltipModelName =
+  | 'line'
+  | 'scatter'
+  | 'bubble'
+  | 'area'
+  | 'boxPlot'
+  | 'bar'
+  | 'column'
+  | 'pie'
+  | 'radar'
+  | 'radial';

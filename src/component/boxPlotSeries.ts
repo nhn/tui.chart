@@ -42,14 +42,14 @@ export default class BoxPlotSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'boxPlotSeries';
+    this.name = 'boxPlot';
   }
 
   render(state: ChartState<BaseOptions>): void {
     const { layout, axes, series, scale, legend, options, categories = [] } = state;
 
     if (!series.boxPlot) {
-      throw new Error("There's no boxplot data!");
+      throw new Error("There's no boxPlot data!");
     }
 
     this.rect = layout.plot;
@@ -118,11 +118,11 @@ export default class BoxPlotSeries extends Component {
   }
 
   onMousemove({ responders }) {
-    this.eventBus.emit('renderHoveredSeries', responders);
+    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
 
     this.activatedResponders = responders;
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
 
     this.eventBus.emit('needDraw');
   }
