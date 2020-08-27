@@ -14,6 +14,8 @@ import {
   AreaSeriesType,
   LineChartOptions,
   LineTypeEventDetectType,
+  LineAreaChartOptions,
+  LineAreaChartSeriesOptions,
   LineTypeSeriesOptions,
   Point,
   RangeDataType,
@@ -126,12 +128,23 @@ export default class AreaSeries extends Component {
     }
   }
 
-  public render(chartState: ChartState<AreaChartOptions>) {
+  getAreaOptions(options: AreaChartOptions | LineAreaChartOptions) {
+    const newOptions = { ...options };
+    if ((newOptions.series as LineAreaChartSeriesOptions)?.area) {
+      newOptions.series = {
+        ...newOptions.series,
+        ...(newOptions.series as LineAreaChartSeriesOptions).area,
+      };
+    }
+
+    return newOptions;
+  }
+
+  public render(chartState: ChartState<AreaChartOptions | LineAreaChartOptions>) {
     const {
       layout,
       series,
       scale,
-      options,
       axes,
       categories = [],
       legend,
@@ -145,6 +158,7 @@ export default class AreaSeries extends Component {
     }
 
     let areaStackSeries;
+    const options = this.getAreaOptions(chartState.options);
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);

@@ -13,6 +13,7 @@ import {
   LineScatterChartOptions,
   LineTypeEventDetectType,
   Point,
+  LineAreaChartOptions,
 } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Scale } from '@t/store/store';
@@ -85,7 +86,9 @@ export default class LineSeries extends Component {
     }
   }
 
-  render(chartState: ChartState<LineChartOptions | LineScatterChartOptions>) {
+  render(
+    chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>
+  ) {
     const {
       layout,
       series,
