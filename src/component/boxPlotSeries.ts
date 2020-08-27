@@ -14,6 +14,7 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import { LineModel } from '@t/components/axis';
+import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 
 type RenderOptions = {
   ratio: number;
@@ -28,11 +29,7 @@ const seriesOpacity = {
   ACTIVE: 1,
 };
 
-const PADDING = 24;
-
 const MIN_BAR_WIDTH = 5;
-
-const HOVER_THICKNESS = 4;
 
 export default class BoxPlotSeries extends Component {
   models: BoxPlotSeriesModels = { series: [], selectedSeries: [] };
@@ -68,7 +65,7 @@ export default class BoxPlotSeries extends Component {
       ratio: this.rect.height / (max - min),
       tickDistance,
       boxWidth: Math.max(
-        (tickDistance - PADDING * (2 + (seriesLength - 1))) / seriesLength,
+        (tickDistance - BOX_SERIES_PADDING.horizontal * (2 + (seriesLength - 1))) / seriesLength,
         MIN_BAR_WIDTH
       ),
     };
@@ -104,7 +101,7 @@ export default class BoxPlotSeries extends Component {
         ['rect', 'whisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
           if (prop === 'rect') {
             model[prop].style = ['shadow'];
-            model[prop].thickness = HOVER_THICKNESS;
+            model[prop].thickness = BOX_HOVER_THICKNESS;
           } else {
             model[prop].detectionSize = 3;
           }
@@ -283,7 +280,10 @@ export default class BoxPlotSeries extends Component {
     const { tickDistance, boxWidth } = renderOptions;
 
     return (
-      seriesIndex * boxWidth + PADDING + dataIndex * tickDistance + (seriesIndex ? PADDING : 0)
+      seriesIndex * boxWidth +
+      BOX_SERIES_PADDING.horizontal +
+      dataIndex * tickDistance +
+      (seriesIndex ? BOX_SERIES_PADDING.horizontal : 0)
     );
   }
 

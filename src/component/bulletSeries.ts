@@ -5,8 +5,8 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getRGBA } from '@src/helpers/color';
 import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/options';
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
-import { PADDING } from '@src/component/boxSeries';
 import { TooltipData } from '@t/components/tooltip';
+import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 
 type RenderOptions = {
   ratio: number;
@@ -23,9 +23,22 @@ const seriesOpacity = {
   ACTIVE: 1,
 };
 
-const HOVER_THICKNESS = 4;
-
 const RANGE_DEFAULT_COLORS = ['#666666', '#999999', '#bbbbbb'];
+
+function getBarWidths(vertical: boolean, tickDistance: number, seriesLength: number) {
+  const padding = vertical ? BOX_SERIES_PADDING.horizontal : BOX_SERIES_PADDING.vertical;
+
+  const barWidth = Math.max(
+    (tickDistance - padding * (2 + (seriesLength - 1))) / seriesLength,
+    tickDistance * 0.6
+  );
+
+  return {
+    barWidth,
+    bulletWidth: barWidth / 2,
+    markerWidth: barWidth * 0.8,
+  };
+}
 
 function getRectSize(vertical: boolean, barWidth: number, barLength: number): Size {
   return {
@@ -53,7 +66,7 @@ export default class BulletSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'bulletSeries';
+    this.name = 'bullet';
   }
 
   render(state: ChartState<BulletChartOptions>): void {
@@ -75,21 +88,13 @@ export default class BulletSeries extends Component {
     const { min, max } = scale[valueAxisName].limit;
     const vertical = !!options?.series?.vertical;
     const bulletData = series.bullet.data;
-    const seriesLength = bulletData.length;
-    const padding = vertical ? PADDING.horizontal : PADDING.vertical;
-    const barWidth = Math.max(
-      (tickDistance - padding * (2 + (seriesLength - 1))) / seriesLength,
-      tickDistance * 0.6
-    );
 
     const renderOptions = {
       ratio: this.rect[valueSizeKey] / (max - min),
       tickDistance,
       vertical,
       zeroPosition,
-      barWidth,
-      bulletWidth: barWidth / 2,
-      markerWidth: barWidth * 0.8,
+      ...getBarWidths(vertical, tickDistance, bulletData.length),
     };
 
     const seriesModels = this.renderSeries(bulletData, renderOptions);
@@ -124,7 +129,7 @@ export default class BulletSeries extends Component {
 
       if (m.modelType === 'bullet') {
         model.style = ['shadow'];
-        model.thickness = HOVER_THICKNESS;
+        model.thickness = BOX_HOVER_THICKNESS;
       }
 
       return {

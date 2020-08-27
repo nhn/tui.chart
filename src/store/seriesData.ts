@@ -110,8 +110,8 @@ const seriesData: StoreModule = {
       this.notify(state, 'disabledSeries');
 
       if (state.series.bullet) {
-        const index = state.rawCategories.findIndex((seriesName) => seriesName === name);
-        state.rawCategories.splice(index, 1);
+        const index = state.categories!.findIndex((seriesName) => seriesName === name);
+        state.categories!.splice(index, 1);
 
         this.notify(state, 'axes');
       }
@@ -122,7 +122,7 @@ const seriesData: StoreModule = {
       this.notify(state, 'disabledSeries');
 
       if (state.series.bullet) {
-        state.rawCategories = state.series.bullet.data.map(({ name: seriesName }) => seriesName);
+        state.categories = state.series.bullet.data.map(({ name: seriesName }) => seriesName);
         this.notify(state, 'axes');
       }
     },
