@@ -233,7 +233,7 @@ export const coordinateZoomable = () => {
 
 export const animationDuration = () => {
   const { el } = createChart(temperatureData, {
-    series: {
+    chart: {
       animation: {
         duration: number('duration', 700, {
           range: true,

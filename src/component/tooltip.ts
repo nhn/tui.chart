@@ -5,12 +5,15 @@ import {
   TooltipModel,
   TooltipTitleValues,
   TooltipDataValue,
+  TooltipModelName,
 } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { isNumber } from '@src/helpers/utils';
 import { DefaultTooltipTemplate, Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
 
 import '../css/tooltip.css';
+
+type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
 
 export default class Tooltip extends Component {
   chartEl!: HTMLDivElement;
@@ -25,9 +28,13 @@ export default class Tooltip extends Component {
 
   formatter?: Formatter;
 
-  onSeriesPointHovered = (tooltipInfos: TooltipInfo[]) => {
-    if (tooltipInfos.length) {
-      this.renderTooltip(tooltipInfos);
+  tooltipInfoModels: TooltipInfoModels = {} as TooltipInfoModels;
+
+  onSeriesPointHovered = ({ models, name }: { models: TooltipInfo[]; name: TooltipModelName }) => {
+    this.tooltipInfoModels[name] = [...models];
+    const isShow = !!this.getTooltipInfoModels().length;
+    if (isShow) {
+      this.renderTooltip();
     } else {
       this.removeTooltip();
     }
@@ -78,8 +85,12 @@ export default class Tooltip extends Component {
     this.tooltipContainerEl.style.top = `${chartY + y}px`;
   }
 
-  renderTooltip(tooltipInfo: TooltipInfo[]) {
-    const model = tooltipInfo.reduce<TooltipModel>(
+  getTooltipInfoModels() {
+    return Object.values(this.tooltipInfoModels).flatMap((item) => item);
+  }
+
+  renderTooltip() {
+    const model = this.getTooltipInfoModels().reduce<TooltipModel>(
       (acc, item) => {
         const { data, x, y, radius, width, height, templateType } = item;
 
@@ -139,7 +150,7 @@ export default class Tooltip extends Component {
 
   getBodyTemplate(model: TooltipModel) {
     return model.templateType === 'boxPlot'
-      ? this.getBoxplotTemplate(model)
+      ? this.getBoxPlotTemplate(model)
       : this.getDefaultBodyTemplate(model);
   }
 
@@ -189,7 +200,7 @@ export default class Tooltip extends Component {
     return this.formatter ? this.formatter(value as SeriesDataType) : getValueString(value);
   }
 
-  getBoxplotTemplate({ data }: TooltipModel) {
+  getBoxPlotTemplate({ data }: TooltipModel) {
     return `<div class="tooltip-series-wrapper">
     ${data
       .map(

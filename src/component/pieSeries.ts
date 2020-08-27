@@ -92,7 +92,7 @@ export default class PieSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'pieSeries';
+    this.name = 'pie';
   }
 
   render(chartState: ChartState<PieChartOptions>) {
@@ -239,10 +239,10 @@ export default class PieSeries extends Component {
   }
 
   onMousemove({ responders }) {
-    this.eventBus.emit('renderHoveredSeries', responders);
+    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
     this.activatedResponders = this.makeTooltipResponder(responders);
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   }
 

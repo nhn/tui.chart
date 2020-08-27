@@ -5,21 +5,32 @@ import {
   PointModel,
   LineSeriesModels,
 } from '@t/components/series';
-import { LineChartOptions, LineTypeSeriesOptions, CoordinateDataType } from '@t/options';
+import {
+  LineChartOptions,
+  LineTypeSeriesOptions,
+  CoordinateDataType,
+  LineScatterChartOptions,
+  LineScatterChartSeriesOptions,
+} from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, ValueEdge } from '@t/store/store';
+import { ChartState, Scale } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
-import { getCoordinateDataIndex, getCoordinateYValue } from '@src/helpers/coordinate';
+import {
+  getCoordinateDataIndex,
+  getCoordinateXValue,
+  getCoordinateYValue,
+} from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray } from '@src/helpers/utils';
+import { deepCopyArray, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
 interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
   tickDistance: number;
+  labelDistance?: number;
 }
 
 export const DEFAULT_LINE_WIDTH = 3;
@@ -39,19 +50,18 @@ export default class LineSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'lineSeries';
+    this.name = 'line';
   }
 
   initUpdate(delta: number) {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
-  render(chartState: ChartState<LineChartOptions>) {
+  render(chartState: ChartState<LineChartOptions | LineScatterChartOptions>) {
     const {
       layout,
       series,
       scale,
-      options,
       axes,
       categories = [],
       legend,
@@ -62,14 +72,19 @@ export default class LineSeries extends Component {
       throw new Error("There's no line data!");
     }
 
-    const { yAxis } = scale;
-    const { tickDistance, pointOnColumn } = axes.xAxis!;
+    const options = { ...chartState.options };
+    if (options?.series && 'line' in options.series) {
+      options.series = { ...options.series, ...options.series.line };
+    }
+
+    const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
     const lineSeriesData = series.line.data;
 
     const renderLineOptions: RenderOptions = {
       pointOnColumn,
-      options: options.series || {},
+      options: (options.series || {}) as LineTypeSeriesOptions,
       tickDistance,
+      labelDistance,
     };
 
     this.rect = layout.plot;
@@ -79,7 +94,7 @@ export default class LineSeries extends Component {
 
     const lineSeriesModel = this.renderLinePointsModel(
       lineSeriesData,
-      yAxis.limit,
+      scale,
       renderLineOptions,
       categories
     );
@@ -154,12 +169,14 @@ export default class LineSeries extends Component {
 
   renderLinePointsModel(
     seriesRawData: LineSeriesType[],
-    limit: ValueEdge,
+    scale: Scale,
     renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
-    const { pointOnColumn, options, tickDistance } = renderOptions;
+    const { pointOnColumn, options, tickDistance, labelDistance } = renderOptions;
     const { spline, lineWidth } = options;
+    const yAxisLimit = scale.yAxis.limit;
+    const xAxisLimit = scale?.xAxis?.limit;
 
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
@@ -168,11 +185,22 @@ export default class LineSeries extends Component {
 
       rawData.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
-        const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
-        const valueRatio = getValueRatio(value, limit);
+        const yValueRatio = getValueRatio(value, yAxisLimit);
 
-        const x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
-        const y = (1 - valueRatio) * this.rect.height;
+        let x;
+        if (xAxisLimit) {
+          const rawXValue = getCoordinateXValue(datum as CoordinateDataType);
+          const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
+          const xValueRatio = getValueRatio(xValue, xAxisLimit);
+          x =
+            xValueRatio * (this.rect.width - (pointOnColumn ? labelDistance! : 0)) +
+            (pointOnColumn ? labelDistance! / 2 : 0);
+        } else {
+          const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
+          x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
+        }
+
+        const y = (1 - yValueRatio) * this.rect.height;
 
         points.push({ x, y, value });
       });
@@ -208,11 +236,11 @@ export default class LineSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] }) {
-    this.eventBus.emit('renderHoveredSeries', responders);
+    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
 
     this.activatedResponders = responders;
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
 
     this.eventBus.emit('needDraw');
   }

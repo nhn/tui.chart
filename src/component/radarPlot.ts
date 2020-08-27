@@ -24,7 +24,7 @@ export default class RadarPlot extends Component {
 
   initialize() {
     this.type = 'plot';
-    this.name = 'radarPlot';
+    this.name = 'radar';
   }
 
   render(state: ChartState<RadarChartOptions>) {

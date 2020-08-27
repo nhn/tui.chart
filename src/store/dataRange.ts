@@ -1,10 +1,14 @@
-import { ValueEdge, StoreModule, ChartType, DataRange } from '@t/store/store';
+import { ValueEdge, StoreModule, ChartType, DataRange, ChartSeriesMap } from '@t/store/store';
 import { getFirstValidValue } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
 import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
+
+type SeriesDataRange = {
+  [key in keyof ChartSeriesMap]: DataRange;
+};
 
 function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
@@ -32,6 +36,30 @@ function getLimitSafely(baseValues: number[]): ValueEdge {
   return limit;
 }
 
+function getTotalDataRange(seriesDataRange: SeriesDataRange) {
+  const defaultDataRange = {
+    min: Number.MAX_SAFE_INTEGER,
+    max: Number.MIN_SAFE_INTEGER,
+  };
+
+  return Object.values(seriesDataRange).reduce<DataRange>((acc, cur) => {
+    if (cur.xAxis) {
+      acc.xAxis = {
+        min: Math.min(cur.xAxis.min, acc.xAxis?.min ?? defaultDataRange.min),
+        max: Math.max(cur.xAxis.max, acc.xAxis?.max ?? defaultDataRange.max),
+      };
+    }
+    if (cur.yAxis) {
+      acc.yAxis = {
+        min: Math.min(cur.yAxis.min, acc.yAxis?.min ?? defaultDataRange.min),
+        max: Math.max(cur.yAxis.max, acc.yAxis?.max ?? defaultDataRange.max),
+      };
+    }
+
+    return acc;
+  }, {});
+}
+
 const dataRange: StoreModule = {
   name: 'dataRange',
   state: () => ({
@@ -40,7 +68,7 @@ const dataRange: StoreModule = {
   action: {
     setDataRange({ state }) {
       const { series, disabledSeries, stackSeries, categories, options } = state;
-      const newDataRange = {} as DataRange;
+      const seriesDataRange = {} as SeriesDataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
       const hasDateValue = !!options.xAxis?.date;
@@ -49,7 +77,7 @@ const dataRange: StoreModule = {
         if (!series.hasOwnProperty(seriesName)) {
           continue;
         }
-        newDataRange[seriesName] = {};
+        seriesDataRange[seriesName] = {};
 
         let values = series[seriesName].data.flatMap(({ data, name }) =>
           disabledSeries.includes(name) ? [] : data
@@ -64,7 +92,7 @@ const dataRange: StoreModule = {
             hasDateValue ? Number(new Date(value)) : Number(value)
           );
 
-          newDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);
+          seriesDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);
         } else if (isRangeValue(firstExistValue)) {
           values = values.reduce(
             (arr, value) => (Array.isArray(value) ? [...arr, ...value] : [...value]),
@@ -81,8 +109,13 @@ const dataRange: StoreModule = {
           ]);
         }
 
-        newDataRange[seriesName][valueAxisName] = getLimitSafely([...new Set(values)] as number[]);
+        seriesDataRange[seriesName][valueAxisName] = getLimitSafely([
+          ...new Set(values),
+        ] as number[]);
       }
+
+      const newDataRange = getTotalDataRange(seriesDataRange);
+
       extend(state.dataRange, newDataRange);
     },
   },

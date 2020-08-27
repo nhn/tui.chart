@@ -74,7 +74,7 @@ export default class AreaSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'areaSeries';
+    this.name = 'area';
   }
 
   initUpdate(delta: number) {
@@ -456,7 +456,10 @@ export default class AreaSeries extends Component {
       guideLine = this.renderGuideLineModel(circleModels);
     }
 
-    this.eventBus.emit('renderHoveredSeries', [...guideLine, ...circleModels]);
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [...guideLine, ...circleModels],
+      name: this.name,
+    });
     this.activatedResponders = circleModels;
   }
 
@@ -482,7 +485,7 @@ export default class AreaSeries extends Component {
     const hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];
     this.applyAreaOpacity(hoveredSeries.length ? seriesOpacity.INACTIVE : seriesOpacity.ACTIVE);
 
-    this.eventBus.emit('renderHoveredSeries', hoveredSeries);
+    this.eventBus.emit('renderHoveredSeries', { models: hoveredSeries, name: this.name });
     this.activatedResponders = responders;
   }
 
@@ -493,13 +496,13 @@ export default class AreaSeries extends Component {
       this.onMouseMoveDefault(responders as CircleResponderModel[]);
     }
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   }
 
   onMouseoutComponent() {
-    this.eventBus.emit('seriesPointHovered', []);
-    this.eventBus.emit('renderHoveredSeries', []);
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
     this.applyAreaOpacity(seriesOpacity.ACTIVE);
   }
 

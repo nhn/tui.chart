@@ -34,7 +34,7 @@ export default class RadarSeries extends Component {
 
   initialize() {
     this.type = 'series';
-    this.name = 'radarSeries';
+    this.name = 'radar';
   }
 
   render(state: ChartState<RadarChartOptions>) {
@@ -126,11 +126,11 @@ export default class RadarSeries extends Component {
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] }) {
-    this.eventBus.emit('renderHoveredSeries', responders);
+    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
 
     this.activatedResponders = responders;
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
 
     this.eventBus.emit('needDraw');
   }

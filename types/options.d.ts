@@ -61,6 +61,13 @@ export interface ScatterSeriesType {
   color: string;
 }
 
+export interface LineScatterData {
+  series: {
+    line: Pick<LineSeriesType, 'name' | 'data'>[];
+    scatter: Pick<ScatterSeriesType, 'name' | 'data'>[];
+  };
+}
+
 export interface BubbleSeriesType {
   name: string;
   data: BubbleSeriesDataType[];
@@ -96,6 +103,7 @@ interface TitleOption {
 
 export type BaseChartOptions = {
   title?: string | TitleOption;
+  animation?: boolean | { duration: number };
 } & Size;
 
 export interface Scale {
@@ -195,7 +203,6 @@ interface CircleLegendOptions {
 interface BaseSeriesOptions {
   selectable?: boolean;
   dataLabels?: DataLabels;
-  animation?: boolean | { duration: number };
 }
 
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
@@ -219,6 +226,14 @@ export interface LineChartOptions extends BaseOptions {
   series?: LineTypeSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
   plot?: AreaLinePlotOptions;
+}
+
+type LineScatterChartSeriesOptions = {
+  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'>;
+} & BaseSeriesOptions;
+
+export interface LineScatterChartOptions extends BaseOptions {
+  series?: LineScatterChartSeriesOptions;
 }
 
 export interface ScatterChartOptions extends BaseOptions {

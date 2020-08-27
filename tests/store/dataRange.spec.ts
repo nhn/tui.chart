@@ -27,7 +27,7 @@ describe('dataRange Store module', () => {
       dataRange.action!.setDataRange(store);
 
       expect(state.dataRange).toEqual({
-        line: { yAxis: { max: 5, min: 1 } },
+        yAxis: { max: 5, min: 1 },
       });
     });
 
@@ -60,7 +60,8 @@ describe('dataRange Store module', () => {
       dataRange.action!.setDataRange(store);
 
       expect(state.dataRange).toEqual({
-        line: { yAxis: { max: 5, min: 1 }, xAxis: { max: 3, min: 1 } },
+        yAxis: { max: 5, min: 1 },
+        xAxis: { max: 3, min: 1 },
       });
     });
 
@@ -98,10 +99,8 @@ describe('dataRange Store module', () => {
       dataRange.action!.setDataRange(store);
 
       expect(state.dataRange).toEqual({
-        line: {
-          yAxis: { max: 5, min: 1 },
-          xAxis: { max: Number(new Date('2020/08/04')), min: Number(new Date('2020/08/02')) },
-        },
+        yAxis: { max: 5, min: 1 },
+        xAxis: { max: Number(new Date('2020/08/04')), min: Number(new Date('2020/08/02')) },
       });
     });
   });

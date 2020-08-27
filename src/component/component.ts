@@ -22,13 +22,13 @@ import {
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { LegendModel } from '@t/components/legend';
-import { TooltipModel } from '@t/components/tooltip';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
 import { DataLabelModels } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
 import { RadarPlotModels } from '@t/components/radarPlot';
 import { isSameArray } from '@src/helpers/arrayUtil';
+import { HoveredSeriesModel } from '@src/component/hoveredSeries';
 
 export type ComponentType =
   | 'component'
@@ -64,7 +64,7 @@ type ComponentModels =
   | LabelModel[]
   | DataLabelModels
   | LegendModel[]
-  | TooltipModel[];
+  | HoveredSeriesModel;
 
 type ComponentResponders = Array<
   | CircleResponderModel
