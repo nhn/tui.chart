@@ -32,7 +32,7 @@ const seriesData = [
 ];
 
 const chartState = {
-  chart: { width: 120, heigh: 120 },
+  chart: { width: 120, height: 120 },
   layout: {
     xAxis: { x: 10, y: 80, width: 80, height: 10 },
     yAxis: { x: 10, y: 10, width: 10, height: 80 },
@@ -293,7 +293,7 @@ describe('bullet series', () => {
     });
   });
 
-  it('should be drawn verticaly', () => {
+  it('should be drawn vertically', () => {
     bulletSeries.render(
       deepMergedCopy(chartState, {
         scale: {
