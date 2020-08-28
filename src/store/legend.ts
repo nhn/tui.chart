@@ -60,21 +60,32 @@ function getLegendLabels(series: RawSeries) {
   }, []);
 }
 
+function useRectIcon(series: RawSeries) {
+  return (
+    series.bar || series.column || series.area || series.pie || series.boxPlot || series.bullet
+  );
+}
+
+function useCircleIcon(series: RawSeries) {
+  return series.bubble || series.scatter;
+}
+
+function useLineIcon(series: RawSeries) {
+  return series.line || series.radar;
+}
+
 function getIconType(series: RawSeries): LegendIconType {
-  if (series.bubble || series.scatter) {
-    return 'circle';
+  let iconType: LegendIconType = 'spectrum';
+
+  if (useCircleIcon(series)) {
+    iconType = 'circle';
+  } else if (useRectIcon(series)) {
+    iconType = 'rect';
+  } else if (useLineIcon(series)) {
+    iconType = 'line';
   }
 
-  // @TODO: ADD bullet chart
-  if (series.bar || series.column || series.area || series.pie || series.boxPlot) {
-    return 'rect';
-  }
-
-  if (series.line || series.radar) {
-    return 'line';
-  }
-
-  return 'spectrum';
+  return iconType;
 }
 
 function getAlign(options: Options) {

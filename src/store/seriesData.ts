@@ -113,11 +113,23 @@ const seriesData: StoreModule = {
     disableSeries({ state }, name: string) {
       state.disabledSeries.push(name);
       this.notify(state, 'disabledSeries');
+
+      if (state.series.bullet) {
+        const index = state.categories!.findIndex((seriesName) => seriesName === name);
+        state.categories!.splice(index, 1);
+
+        this.notify(state, 'axes');
+      }
     },
     enableSeries({ state }, name: string) {
       const index = state.disabledSeries.findIndex((disabled) => disabled === name);
       state.disabledSeries.splice(index, 1);
       this.notify(state, 'disabledSeries');
+
+      if (state.series.bullet) {
+        state.categories = state.series.bullet.data.map(({ name: seriesName }) => seriesName);
+        this.notify(state, 'axes');
+      }
     },
     zoom({ state }, rangeCategories: string[]) {
       const { rawCategories } = state;

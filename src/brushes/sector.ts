@@ -30,6 +30,11 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
     color,
     style,
   } = sectorModel;
+
+  if (start === end) {
+    return;
+  }
+
   const isCircle = Math.abs(start - end) === 360;
 
   ctx.fillStyle = color;

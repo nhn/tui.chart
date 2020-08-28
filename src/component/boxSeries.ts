@@ -34,6 +34,7 @@ import { getLimitOnAxis } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { RectDirection, RectDataLabel } from '@src/store/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -55,11 +56,6 @@ type RenderOptions = {
 const BOX = {
   BAR: 'bar',
   COLUMN: 'column',
-};
-
-const PADDING = {
-  vertical: 15, // top & bottom
-  horizontal: 24, // left & right
 };
 
 export function isLeftBottomSide(seriesIndex: number) {
@@ -106,8 +102,6 @@ export default class BoxSeries extends Component {
   anchorSizeKey = 'height';
 
   offsetSizeKey = 'width';
-
-  hoverThickness = 4;
 
   basePosition = 0;
 
@@ -374,7 +368,7 @@ export default class BoxSeries extends Component {
       width,
       height,
       style: ['shadow'],
-      thickness: this.hoverThickness,
+      thickness: BOX_HOVER_THICKNESS,
     };
   }
 
@@ -612,7 +606,7 @@ export default class BoxSeries extends Component {
   }
 
   getPadding(tickDistance: number) {
-    const defaultValue = this.isBar ? PADDING.vertical : PADDING.horizontal;
+    const defaultValue = this.isBar ? BOX_SERIES_PADDING.vertical : BOX_SERIES_PADDING.horizontal;
 
     return Math.min(defaultValue, Math.floor(tickDistance * 0.3));
   }

@@ -390,3 +390,23 @@ export type DataLabels = {
   stackTotal?: DataLabelStackTotal;
   pieSeriesName?: DataLabelPieSeriesName;
 };
+
+export interface BulletChartOptions extends BaseOptions {
+  series?: BulletSeriesOptions;
+}
+
+export type BulletSeriesType = {
+  name: string;
+  data: number;
+  markers: number[];
+  ranges: RangeDataType[];
+  color?: string;
+};
+
+export type BulletSeriesData = {
+  series: BulletSeriesType[];
+};
+
+export interface BulletSeriesOptions extends BaseSeriesOptions {
+  vertical?: boolean;
+}

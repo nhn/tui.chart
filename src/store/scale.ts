@@ -22,10 +22,9 @@ const scale: StoreModule = {
       const { series, dataRange, layout, stackSeries, options, categories } = state;
       const scaleData = {};
 
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series);
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
       const { labelSizeKey, valueSizeKey } = getSizeKey(labelAxisOnYAxis);
-
       const scaleOptions = {
         xAxis: options?.xAxis?.scale,
         yAxis: options?.yAxis?.scale,

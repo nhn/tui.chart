@@ -1,12 +1,12 @@
 import { Options, Series } from '@t/store/store';
-import { LineTypeXAxisOptions } from '@t/options';
+import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
 
-export function isLabelAxisOnYAxis(series: Series) {
-  return !!series.bar;
+export function isLabelAxisOnYAxis(series: Series, options: Options) {
+  return !!series.bar || (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical);
 }
 
 export function hasBoxTypeSeries(series: Series) {
-  return !!series.column || !!series.bar || !!series.boxPlot;
+  return !!series.column || !!series.bar || !!series.boxPlot || !!series.bullet;
 }
 
 export function isPointOnColumn(series: Series, options: Options) {
