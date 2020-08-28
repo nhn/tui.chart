@@ -12,6 +12,8 @@ import {
   AreaChartOptions,
   AreaSeriesDataType,
   AreaSeriesType,
+  LineChartOptions,
+  LineTypeEventDetectType,
   LineTypeSeriesOptions,
   RangeDataType,
 } from '@t/options';
@@ -60,6 +62,8 @@ export default class AreaSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
+  eventType: LineTypeEventDetectType = 'nearest';
+
   tooltipCircleMap?: Record<number, CircleResponderModel[]>;
 
   linePointsModel!: LinePointsModel[];
@@ -69,6 +73,8 @@ export default class AreaSeries extends Component {
   isStackChart = false;
 
   isRangeChart = false;
+
+  isComboChart = false;
 
   startIndex!: number;
 
@@ -100,6 +106,16 @@ export default class AreaSeries extends Component {
     return type === 'percent' ? (stackedValue * 100) / sumValue : stackedValue;
   }
 
+  private setEventType(options?: LineChartOptions) {
+    if (options?.series?.eventDetectType) {
+      this.eventType = options?.series?.eventDetectType;
+    }
+
+    if (this.isComboChart || this.isStackChart) {
+      this.eventType = 'grouped';
+    }
+  }
+
   public render(chartState: ChartState<AreaChartOptions>) {
     const {
       layout,
@@ -120,6 +136,7 @@ export default class AreaSeries extends Component {
 
     let areaStackSeries;
 
+    this.setEventType(options);
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
@@ -172,13 +189,14 @@ export default class AreaSeries extends Component {
       this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
     }
 
-    if (this.isStackChart) {
+    if (this.eventType !== 'near') {
       this.tooltipCircleMap = this.makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
     }
 
-    this.responders = this.isStackChart
-      ? this.makeRectResponderModel(renderOptions)
-      : this.makeDefaultResponderModel(seriesCircleModel, tooltipDataArr);
+    this.responders =
+      this.eventType === 'near'
+        ? this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr)
+        : this.makeRectResponderModel(renderOptions);
   }
 
   makeTooltipCircleMap(seriesCircleModel: CircleModel[], tooltipDataArr: TooltipData[]) {
@@ -210,7 +228,7 @@ export default class AreaSeries extends Component {
       : [];
   }
 
-  makeDefaultResponderModel(
+  makeNearTypeResponderModel(
     seriesCircleModel: CircleModel[],
     tooltipDataArr: TooltipData[]
   ): CircleResponderModel[] {
@@ -446,7 +464,7 @@ export default class AreaSeries extends Component {
     ];
   }
 
-  onMouseMoveStackType(responders: RectResponderModel[]) {
+  onMousemoveGroupedType(responders: RectResponderModel[]) {
     let circleModels: CircleResponderModel[] = [];
     let guideLine: LineModel[] = [];
 
@@ -463,7 +481,7 @@ export default class AreaSeries extends Component {
     this.activatedResponders = circleModels;
   }
 
-  onMouseMoveDefault(responders: CircleResponderModel[]) {
+  onMousemoveNearType(responders: CircleResponderModel[]) {
     const pairCircleModels: CircleResponderModel[] = [];
     if (this.isRangeChart) {
       responders.forEach((circle) => {
@@ -489,11 +507,26 @@ export default class AreaSeries extends Component {
     this.activatedResponders = responders;
   }
 
+  onMousemoveNearestType(responders: CircleResponderModel[]) {
+    let circleModels: CircleResponderModel[] = [];
+
+    if (responders.length) {
+      const index = responders[0].index! + this.startIndex;
+      circleModels = this.tooltipCircleMap![index];
+      // 여기서 x, y가 가장 가까운 친구들을 골라야 겠군
+    }
+
+    this.eventBus.emit('renderHoveredSeries', { models: [...circleModels], name: this.name });
+    this.activatedResponders = circleModels;
+  }
+
   onMousemove({ responders }: { responders: CircleResponderModel[] | RectResponderModel[] }) {
-    if (this.isStackChart) {
-      this.onMouseMoveStackType(responders as RectResponderModel[]);
+    if (this.eventType === 'nearest') {
+      this.onMousemoveNearestType(responders as CircleResponderModel[]);
+    } else if (this.eventType === 'near') {
+      this.onMousemoveNearType(responders as CircleResponderModel[]);
     } else {
-      this.onMouseMoveDefault(responders as CircleResponderModel[]);
+      this.onMousemoveGroupedType(responders as RectResponderModel[]);
     }
 
     this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });

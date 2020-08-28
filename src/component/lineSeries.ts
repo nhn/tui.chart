@@ -10,7 +10,7 @@ import {
   LineTypeSeriesOptions,
   CoordinateDataType,
   LineScatterChartOptions,
-  LineScatterChartSeriesOptions,
+  LineTypeEventDetectType,
 } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Scale } from '@t/store/store';
@@ -46,7 +46,11 @@ export default class LineSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
+  eventType: LineTypeEventDetectType = 'nearest';
+
   startIndex!: number;
+
+  isComboChart = false;
 
   initialize() {
     this.type = 'series';
@@ -55,6 +59,16 @@ export default class LineSeries extends Component {
 
   initUpdate(delta: number) {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
+  }
+
+  private setEventType(options?: LineChartOptions) {
+    if (options?.series?.eventDetectType) {
+      this.eventType = options?.series?.eventDetectType;
+    }
+
+    if (this.isComboChart) {
+      this.eventType = 'grouped';
+    }
   }
 
   render(chartState: ChartState<LineChartOptions | LineScatterChartOptions>) {
@@ -75,7 +89,10 @@ export default class LineSeries extends Component {
     const options = { ...chartState.options };
     if (options?.series && 'line' in options.series) {
       options.series = { ...options.series, ...options.series.line };
+      this.isComboChart = true;
     }
+
+    this.setEventType(options);
 
     const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
     const lineSeriesData = series.line.data;
@@ -98,24 +115,8 @@ export default class LineSeries extends Component {
       renderLineOptions,
       categories
     );
-
     const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
-
-    const tooltipDataArr = lineSeriesData.flatMap(({ rawData, name, color }) => {
-      const tooltipData: TooltipData[] = [];
-
-      rawData.forEach((datum: DatumType, dataIdx) => {
-        tooltipData.push({
-          label: name,
-          color,
-          value: getCoordinateYValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx, this.startIndex)],
-        });
-      });
-
-      return tooltipData;
-    });
-
+    const tooltipDataArr = this.makeTooltipData(lineSeriesData, categories);
     const dotSeriesModel = this.renderDotSeriesModel(seriesCircleModel, renderLineOptions);
 
     this.models = {
@@ -142,6 +143,23 @@ export default class LineSeries extends Component {
       ...m,
       data: tooltipDataArr[index],
     }));
+  }
+
+  makeTooltipData(lineSeriesData: LineSeriesType[], categories: string[]) {
+    return lineSeriesData.flatMap(({ rawData, name, color }) => {
+      const tooltipData: TooltipData[] = [];
+
+      rawData.forEach((datum: DatumType, dataIdx) => {
+        tooltipData.push({
+          label: name,
+          color,
+          value: getCoordinateYValue(datum),
+          category: categories[getCoordinateDataIndex(datum, categories, dataIdx, this.startIndex)],
+        });
+      });
+
+      return tooltipData;
+    });
   }
 
   renderDotSeriesModel(

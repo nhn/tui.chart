@@ -17,6 +17,9 @@ export type DatetimePoint = ObjectTypeDatetimePoint | TupleTypeDatetimePoint;
 export type BubblePoint = (Point | ObjectTypeDatetimePoint) & { r: number };
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
+export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped';
+export type BoxTypeEventDetectType = 'nearest' | 'grouped';
+
 export type BezierPoint = {
   controlPoint?: {
     next: Point;
@@ -205,11 +208,20 @@ interface BaseSeriesOptions {
   dataLabels?: DataLabels;
 }
 
+interface BoxPlotSeriesOptions extends BaseSeriesOptions {
+  eventDetectType: BoxTypeEventDetectType;
+}
+
+export interface BoxPlotChartOptions extends BaseOptions {
+  series?: BoxPlotSeriesOptions;
+}
+
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
   zoomable?: boolean;
   lineWidth?: number;
+  eventDetectType?: LineTypeEventDetectType;
 }
 
 interface AreaSeriesOptions extends LineTypeSeriesOptions {
@@ -270,6 +282,7 @@ interface BoxSeriesOptions extends BaseSeriesOptions {
   diverging?: boolean;
   colorByPoint?: boolean;
   stack?: StackOptionType;
+  eventDetectType?: BoxTypeEventDetectType;
 }
 
 export interface BarChartOptions extends BaseOptions {
