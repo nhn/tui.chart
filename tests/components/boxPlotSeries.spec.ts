@@ -217,8 +217,8 @@ describe('boxplot series', () => {
             },
           ],
           category: 'A',
+          templateType: 'boxPlot',
         },
-        templateType: 'boxPlot',
       },
       {
         type: 'circle',
@@ -233,8 +233,8 @@ describe('boxplot series', () => {
           color: '#aaaaaa',
           value: [{ title: 'Outlier', value: 10 }],
           category: 'A',
+          templateType: 'boxPlot',
         },
-        templateType: 'boxPlot',
       },
       {
         type: 'boxPlot',
@@ -280,8 +280,8 @@ describe('boxplot series', () => {
             },
           ],
           category: 'A',
+          templateType: 'boxPlot',
         },
-        templateType: 'boxPlot',
       },
     ],
   };

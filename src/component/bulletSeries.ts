@@ -5,7 +5,7 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getRGBA } from '@src/helpers/color';
 import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/options';
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
-import { TooltipData } from '@t/components/tooltip';
+import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
 import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 
 type RenderOptions = {
@@ -132,9 +132,11 @@ export default class BulletSeries extends Component {
         model.thickness = BOX_HOVER_THICKNESS;
       }
 
+      const data = tooltipDataArr[index];
+
       return {
         ...model,
-        data: tooltipDataArr[index],
+        data,
       };
     });
 
@@ -157,11 +159,14 @@ export default class BulletSeries extends Component {
   }
 
   onMousemove({ responders }) {
-    this.eventBus.emit('renderHoveredSeries', this.filterBulletResponder(responders));
+    this.eventBus.emit('renderHoveredSeries', {
+      models: this.filterBulletResponder(responders),
+      name: this.name,
+    });
 
     this.activatedResponders = responders.length ? [responders[responders.length - 1]] : [];
 
-    this.eventBus.emit('seriesPointHovered', this.activatedResponders);
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
 
     this.eventBus.emit('needDraw');
   }
@@ -294,7 +299,8 @@ export default class BulletSeries extends Component {
       const rangesData = ranges.map((range) => ({
         label: name,
         color: color!,
-        value: `${range[0]} ~ ${range[1]}`,
+        value: [{ title: 'Range', value: range }],
+        templateType: 'bullet' as TooltipTemplateType,
       }));
 
       const bulletData = {
@@ -306,7 +312,8 @@ export default class BulletSeries extends Component {
       const markersData = markers.map((marker) => ({
         label: name,
         color: color!,
-        value: marker,
+        value: [{ title: 'Marker', value: marker }],
+        templateType: 'bullet' as TooltipTemplateType,
       }));
 
       return [...acc, ...rangesData, bulletData, ...markersData];

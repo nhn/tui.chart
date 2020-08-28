@@ -111,7 +111,6 @@ export default class BoxPlotSeries extends Component {
       return {
         ...model,
         ...point,
-        templateType: 'boxPlot',
         data: tooltipDataArr[index],
       };
     });
@@ -252,6 +251,7 @@ export default class BoxPlotSeries extends Component {
             { title: 'Minimum', value: minimum },
           ],
           category: categories[dataIndex],
+          templateType: 'boxPlot',
         });
       });
 
@@ -263,6 +263,7 @@ export default class BoxPlotSeries extends Component {
           color: color!,
           value: [{ title: 'Outlier', value: dataValue }],
           category: categories[dataIndex],
+          templateType: 'boxPlot',
         });
       });
     });

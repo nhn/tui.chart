@@ -187,7 +187,12 @@ describe('bullet series', () => {
         height: 30,
         color: '#666666',
         name: 'han',
-        data: { color: '#aaaaaa', label: 'han', value: '0 ~ 1' },
+        data: {
+          color: '#aaaaaa',
+          label: 'han',
+          value: [{ title: 'Range', value: [0, 1] }],
+          templateType: 'bullet',
+        },
       },
       {
         type: 'rect',
@@ -198,7 +203,12 @@ describe('bullet series', () => {
         height: 30,
         color: '#999999',
         name: 'han',
-        data: { color: '#aaaaaa', label: 'han', value: '1 ~ 4' },
+        data: {
+          color: '#aaaaaa',
+          label: 'han',
+          value: [{ title: 'Range', value: [1, 4] }],
+          templateType: 'bullet',
+        },
       },
       {
         type: 'rect',
@@ -209,7 +219,12 @@ describe('bullet series', () => {
         height: 30,
         color: '#bbbbbb',
         name: 'han',
-        data: { color: '#aaaaaa', label: 'han', value: '4 ~ 10' },
+        data: {
+          color: '#aaaaaa',
+          label: 'han',
+          value: [{ title: 'Range', value: [4, 10] }],
+          templateType: 'bullet',
+        },
       },
       {
         type: 'rect',
@@ -235,7 +250,12 @@ describe('bullet series', () => {
         color: 'rgba(170, 170, 170, 1)',
         value: 7,
         name: 'han',
-        data: { color: '#aaaaaa', label: 'han', value: 7 },
+        data: {
+          color: '#aaaaaa',
+          label: 'han',
+          value: [{ title: 'Marker', value: 7 }],
+          templateType: 'bullet',
+        },
       },
       {
         type: 'rect',
@@ -246,7 +266,12 @@ describe('bullet series', () => {
         height: 30,
         color: '#666666',
         name: 'cho',
-        data: { color: '#bbbbbb', label: 'cho', value: '0 ~ 2' },
+        data: {
+          color: '#bbbbbb',
+          label: 'cho',
+          value: [{ title: 'Range', value: [0, 2] }],
+          templateType: 'bullet',
+        },
       },
       {
         type: 'rect',
@@ -257,7 +282,12 @@ describe('bullet series', () => {
         height: 30,
         color: '#999999',
         name: 'cho',
-        data: { color: '#bbbbbb', label: 'cho', value: '2 ~ 5' },
+        data: {
+          color: '#bbbbbb',
+          label: 'cho',
+          value: [{ title: 'Range', value: [2, 5] }],
+          templateType: 'bullet',
+        },
       },
       {
         type: 'rect',
@@ -268,7 +298,12 @@ describe('bullet series', () => {
         height: 30,
         color: '#bbbbbb',
         name: 'cho',
-        data: { color: '#bbbbbb', label: 'cho', value: '5 ~ 10' },
+        data: {
+          color: '#bbbbbb',
+          label: 'cho',
+          value: [{ title: 'Range', value: [5, 10] }],
+          templateType: 'bullet',
+        },
       },
       {
         type: 'rect',
