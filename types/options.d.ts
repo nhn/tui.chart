@@ -144,18 +144,26 @@ interface BarTypeYAxisOptions extends BaseAxisOptions {
   align?: 'center';
 }
 
-export type PlotLineValue = string | number;
-
 type BasePlotOptions = {
   showLine?: boolean;
 };
 
+export type PlotRange = [number | string, number | string];
+
+export type PlotLine = {
+  value: number | string;
+  color: string;
+  vertical?: boolean;
+};
+
+export type PlotBand = {
+  range: PlotRange;
+  color: string;
+};
+
 export type AreaLinePlotOptions = BasePlotOptions & {
-  lines?: { value: PlotLineValue; color: string }[];
-  bands?: {
-    range: [PlotLineValue, PlotLineValue];
-    color: string;
-  }[];
+  lines?: PlotLine[];
+  bands?: PlotBand[];
 };
 
 interface ExportMenuOptions {

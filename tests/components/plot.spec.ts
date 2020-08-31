@@ -181,3 +181,124 @@ describe('plot grid lines', () => {
     expect(plot.models.plot).toEqual(result);
   });
 });
+
+describe('plot options', () => {
+  const state = {
+    chart: { width: 100, height: 100 },
+    layout: {
+      xAxis: { x: 10, y: 80, width: 80, height: 10 },
+      yAxis: { x: 10, y: 10, width: 10, height: 80 },
+      plot: { width: 80, height: 80, x: 10, y: 80 },
+    },
+    series: {
+      line: {
+        data: seriesData,
+        seriesCount: seriesData.length,
+        seriesGroupCount: seriesData[0].data.length,
+      },
+    },
+    axes: {
+      xAxis: {
+        labels: ['0', '1', '2', '3', '4', '5'],
+        tickCount: 6,
+        tickDistance: 16,
+      },
+      yAxis: {
+        labels: ['0', '1', '2', '3', '4', '5'],
+        tickCount: 6,
+        tickDistance: 16,
+      },
+    },
+    plot: {},
+    options: {
+      series: {},
+    },
+    legend: {
+      data: [
+        { label: 'han', active: true, checked: true },
+        { label: 'cho', active: true, checked: true },
+      ],
+    },
+    categories: ['A', 'B'],
+  };
+
+  beforeEach(() => {
+    plot = new Plot({
+      store: {} as Store<Options>,
+      eventBus: new EventEmitter(),
+    });
+  });
+
+  it('should be rendered rect models for bands', () => {
+    plot.render(
+      deepMergedCopy(state, {
+        plot: {
+          bands: [
+            {
+              range: ['1', '2'],
+              color: 'rgba(33, 33, 33, 0.2)',
+            },
+          ],
+        },
+        options: {
+          plot: {
+            bands: [
+              {
+                range: ['1', '2'],
+                color: 'rgba(33, 33, 33, 0.2)',
+              },
+            ],
+          },
+        },
+      })
+    );
+
+    expect(plot.models.band).toEqual([
+      {
+        type: 'rect',
+        color: 'rgba(33, 33, 33, 0.2)',
+        height: 80,
+        width: 16,
+        x: 16.5,
+        y: 0.5,
+      },
+    ]);
+  });
+
+  it('should be rendered line models for lines', () => {
+    plot.render(
+      deepMergedCopy(state, {
+        plot: {
+          lines: [
+            {
+              value: '4',
+              color: '#ff0000',
+              vertical: true,
+            },
+          ],
+        },
+        options: {
+          plot: {
+            lines: [
+              {
+                value: '4',
+                color: '#ff0000',
+              },
+            ],
+          },
+        },
+      })
+    );
+
+    expect(plot.models.line).toEqual([
+      {
+        type: 'line',
+        x: 64.5,
+        y: 0.5,
+        x2: 64.5,
+        y2: 80.5,
+        strokeStyle: '#ff0000',
+      },
+    ]);
+  });
+});

@@ -1,11 +1,19 @@
 import Component from './component';
-import { ChartState, Options, PlotLine, Axes, AxisData, PlotBand } from '@t/store/store';
+import { ChartState, Options, Axes, AxisData } from '@t/store/store';
 import { crispPixel, makeTickPixelPositions } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
 import { PlotModels } from '@t/components/plot';
 import { RectModel } from '@t/components/series';
+import { PlotLine, PlotBand } from '@t/options';
 
+function getLabelPosition(axisData: AxisData, size: number, value: number | string) {
+  const { labels, tickCount } = axisData;
+  const positions = makeTickPixelPositions(size, tickCount);
+  const index = labels.findIndex((label) => label === String(value));
+
+  return positions[index];
+}
 export default class Plot extends Component {
   models: PlotModels = { plot: [], line: [], band: [] };
 
@@ -13,21 +21,37 @@ export default class Plot extends Component {
     this.type = 'plot';
   }
 
-  renderLines(lines: PlotLine[], axes: Axes): LineModel[] {
-    return lines.map(({ value, color, vertical }) => {
-      const { labels, tickCount } = vertical ? (axes.xAxis as AxisData) : (axes.yAxis as AxisData);
-      const size = vertical ? this.rect.width : this.rect.height;
-      const positions = makeTickPixelPositions(size, tickCount);
-      const index = labels.findIndex((label) => Number(label) === value);
-      const position = positions[index];
+  getAxisAndSize(vertical: boolean, axes: Axes) {
+    return {
+      axisData: vertical ? axes.xAxis : axes.yAxis,
+      offsetSize: vertical ? this.rect.width : this.rect.height,
+      anchorSize: vertical ? this.rect.height : this.rect.width,
+    };
+  }
 
-      return this.makeLineModel(vertical, vertical ? position : size - position, color);
+  renderLines(axes: Axes, lines: PlotLine[] = []): LineModel[] {
+    return lines.map(({ value, color, vertical }) => {
+      const { axisData, offsetSize } = this.getAxisAndSize(vertical!, axes);
+      const position = getLabelPosition(axisData, offsetSize, value);
+
+      return this.makeLineModel(vertical!, vertical ? position : offsetSize - position, color);
     });
   }
 
-  renderBands(bands: PlotBand[], axes: Axes): RectModel[] {
-    // TODO: return Bands models
-    return [];
+  renderBands(axes: Axes, bands: PlotBand[] = []): RectModel[] {
+    return bands.map(({ range, color }) => {
+      const { axisData, offsetSize, anchorSize } = this.getAxisAndSize(true, axes);
+      const [start, end] = range.map((value) => getLabelPosition(axisData, offsetSize, value));
+
+      return {
+        type: 'rect',
+        x: crispPixel(start),
+        y: crispPixel(0),
+        width: end - start,
+        height: anchorSize,
+        color,
+      };
+    });
   }
 
   renderPlotLineModels(
@@ -91,24 +115,26 @@ export default class Plot extends Component {
   }
 
   getTickPixelPositions(vertical: boolean, axes: Axes) {
-    const size = vertical ? this.rect.width : this.rect.height;
-    const { tickCount } = vertical ? axes.xAxis! : axes.yAxis!;
+    const {
+      offsetSize,
+      axisData: { tickCount },
+    } = this.getAxisAndSize(vertical, axes);
 
-    return makeTickPixelPositions(size, tickCount);
+    return makeTickPixelPositions(offsetSize, tickCount);
   }
 
   render(state: ChartState<Options>) {
     const { layout, axes, plot } = state;
     this.rect = layout.plot;
 
-    this.models.plot = this.renderPlots(axes);
-
     if (state.plot) {
       const { lines, bands } = plot;
 
-      this.models.line = this.renderLines(lines, axes);
-      this.models.band = this.renderBands(bands, axes);
+      this.models.line = this.renderLines(axes, lines);
+      this.models.band = this.renderBands(axes, bands);
     }
+
+    this.models.plot = this.renderPlots(axes);
   }
 
   makeLineModel(

@@ -16,7 +16,6 @@ import {
   BubbleChartOptions,
   Align,
   AxisTitleOption,
-  PlotLineValue,
   PieSeriesType,
   RangeDataType,
   RadarSeriesType,
@@ -26,6 +25,8 @@ import {
   BulletSeriesType,
   BulletChartOptions,
   LineScatterChartOptions,
+  PlotLine,
+  PlotBand,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -136,18 +137,6 @@ export interface Scale {
   xAxis: ScaleData;
   yAxis: ScaleData;
 }
-
-type PlotLine = {
-  value: PlotLineValue;
-  color: string;
-  vertical: boolean;
-};
-
-type PlotBand = {
-  range: [PlotLineValue, PlotLineValue];
-  color: string;
-  vertical: boolean;
-};
 
 export type Axes = {
   xAxis: AxisData;
