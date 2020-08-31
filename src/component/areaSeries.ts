@@ -20,7 +20,7 @@ import {
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, StackSeriesData, ValueEdge } from '@t/store/store';
-import { crispPixel, getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
+import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import {
@@ -33,7 +33,6 @@ import {
   sum,
 } from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
-import { LineModel } from '@t/components/axis';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
 import { DEFAULT_LINE_WIDTH } from '@src/component/lineSeries';
@@ -422,22 +421,6 @@ export default class AreaSeries extends Component {
     });
   }
 
-  renderGuideLineModel(circleModels: CircleResponderModel[]): LineModel[] {
-    const x = crispPixel(circleModels[0].x);
-
-    return [
-      {
-        type: 'line',
-        x,
-        y: 0,
-        x2: x,
-        y2: this.rect.height,
-        strokeStyle: '#ddd',
-        lineWidth: 1,
-      },
-    ];
-  }
-
   getPairCircleModel(circleModels: CircleResponderModel[]) {
     const pairCircleModels: CircleResponderModel[] = [];
     circleModels.forEach((circle) => {
@@ -472,16 +455,15 @@ export default class AreaSeries extends Component {
 
   onMousemoveGroupedType(responders: RectResponderModel[]) {
     let circleModels: CircleResponderModel[] = [];
-    let guideLine: LineModel[] = [];
 
     if (responders.length) {
       circleModels = this.getCircleModelsFromRectResponders(responders);
-      guideLine = this.renderGuideLineModel(circleModels);
     }
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: [...guideLine, ...circleModels],
+      models: circleModels,
       name: this.name,
+      eventType: this.eventType,
     });
     this.activatedResponders = circleModels;
   }
@@ -501,7 +483,11 @@ export default class AreaSeries extends Component {
     const hoveredSeries = [...linePoints, ...circleModels, ...pairCircleModels];
 
     this.applyAreaOpacity(hoveredSeries.length ? seriesOpacity.INACTIVE : seriesOpacity.ACTIVE);
-    this.eventBus.emit('renderHoveredSeries', { models: hoveredSeries, name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: hoveredSeries,
+      name: this.name,
+      eventType: this.eventType,
+    });
     this.activatedResponders = circleModels;
   }
 
@@ -514,7 +500,11 @@ export default class AreaSeries extends Component {
     const hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];
 
     this.applyAreaOpacity(hoveredSeries.length ? seriesOpacity.INACTIVE : seriesOpacity.ACTIVE);
-    this.eventBus.emit('renderHoveredSeries', { models: hoveredSeries, name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: hoveredSeries,
+      name: this.name,
+      eventType: this.eventType,
+    });
     this.activatedResponders = responders;
   }
 
@@ -533,7 +523,11 @@ export default class AreaSeries extends Component {
 
   onMouseoutComponent() {
     this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
-    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+      eventType: this.eventType,
+    });
     this.applyAreaOpacity(seriesOpacity.ACTIVE);
 
     this.eventBus.emit('needDraw');

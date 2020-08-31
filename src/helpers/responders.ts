@@ -20,8 +20,12 @@ export function getNearestResponder(
     if (minDistance > distance) {
       minDistance = distance;
       result = [responder];
-    } else if (minDistance === distance && result.length && result[0].radius > responder.radius) {
-      result = [responder];
+    } else if (minDistance === distance) {
+      if (result.length && result[0].radius > responder.radius) {
+        result = [responder];
+      } else {
+        result.push(responder);
+      }
     }
   });
 

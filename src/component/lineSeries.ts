@@ -290,12 +290,20 @@ export default class LineSeries extends Component {
     if (responders.length) {
       circleModels = this.getCircleModelsFromRectResponders(responders, mousePositions);
     }
-    this.eventBus.emit('renderHoveredSeries', { models: circleModels, name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: circleModels,
+      name: this.name,
+      eventType: this.eventType,
+    });
     this.activatedResponders = circleModels;
   }
 
   onMousemoveNearType(responders: CircleResponderModel[]) {
-    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: responders,
+      name: this.name,
+      eventType: this.eventType,
+    });
     this.activatedResponders = responders;
   }
 
@@ -305,7 +313,11 @@ export default class LineSeries extends Component {
       circleModels = this.getCircleModelsFromRectResponders(responders);
     }
 
-    this.eventBus.emit('renderHoveredSeries', { models: circleModels, name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: circleModels,
+      name: this.name,
+      eventType: this.eventType,
+    });
     this.activatedResponders = circleModels;
   }
 
@@ -337,7 +349,11 @@ export default class LineSeries extends Component {
 
   onMouseoutComponent() {
     this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
-    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+      eventType: this.eventType,
+    });
 
     this.eventBus.emit('needDraw');
   }

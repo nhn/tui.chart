@@ -16,6 +16,13 @@ export interface CircleStyle {
   shadowOffsetY?: number;
 }
 
+export type ResponderModel =
+  | CircleResponderModel
+  | RectResponderModel
+  | LineResponderModel
+  | BoxPlotResponderModel
+  | SectorResponderModel;
+
 export type CircleModel = {
   type: 'circle';
   radius: number;
