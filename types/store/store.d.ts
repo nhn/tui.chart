@@ -188,6 +188,7 @@ export interface CircleLegend {
 }
 
 export type CenterYAxisData = {
+  x: number;
   xAxisHalfSize: number;
   secondStartX: number;
   yAxisLabelAnchorPoint: number;

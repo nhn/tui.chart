@@ -1,8 +1,10 @@
 import Component from './component';
 import Painter from '@src/painter';
 import { ChartState, Options } from '@t/store/store';
-import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
+import { makeTickPixelPositions, crispPixel, getTextHeight } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
+import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
+import { TICK_SIZE } from '@src/brushes/axis';
 
 export enum AxisType {
   Y = 'yAxis',
@@ -145,7 +147,7 @@ export default class Axis extends Component {
             {
               type: 'tick',
               isYAxis: this.yAxisComponent,
-              tickSize: this.yAxisComponent ? -5 : 5,
+              tickSize: this.yAxisComponent ? -1 * TICK_SIZE : TICK_SIZE,
               [offsetKey]: crispPixel(position),
               [anchorKey]: tickAnchorPoint,
             } as TickModel,
@@ -161,7 +163,9 @@ export default class Axis extends Component {
     renderOptions: RenderOptions
   ): LabelModel[] {
     const { pointOnColumn, labelInterval, labelDistance } = renderOptions;
-    const labelAnchorPoint = this.yAxisComponent ? crispPixel(0) : crispPixel(this.rect.height);
+    const labelAnchorPoint = this.yAxisComponent
+      ? crispPixel(0)
+      : crispPixel(TICK_SIZE * 2 + getTextHeight(DEFAULT_LABEL_TEXT) / 2);
     const labelAdjustment = pointOnColumn ? labelDistance / 2 : 0;
     const style = ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }];
 

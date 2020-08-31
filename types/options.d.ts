@@ -125,6 +125,7 @@ type BaseAxisOptions = {
   scale?: Scale;
   title?: AxisTitle;
   width?: number;
+  height?: number;
 };
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {

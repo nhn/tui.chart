@@ -6,6 +6,7 @@ import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
+import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 
 function getDecimalLength(value: string | number) {
   const valueArr = String(value).split('.');
@@ -156,14 +157,14 @@ export function getDistance(point1: Point, point2: Point) {
   return Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
 }
 
-export function getTextWidth(text: string, font: string) {
+export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
   const ctx = document.createElement('canvas').getContext('2d')!;
   ctx.font = font;
 
-  return ctx.measureText(text).width;
+  return Math.ceil(ctx.measureText(text).width);
 }
 
-export function getTextHeight(font: string) {
+export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
   const ctx = document.createElement('canvas').getContext('2d')!;
   ctx.font = font;
   const matches = ctx.font.match(/\d+/);
