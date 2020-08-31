@@ -321,9 +321,7 @@ export default class AreaSeries extends Component {
     );
 
     if (this.isRangeChart) {
-      const renderOptionsForPair = deepMergedCopy(renderOptions, {
-        pairModel: true,
-      });
+      const renderOptionsForPair = deepMergedCopy(renderOptions, { pairModel: true });
       const pair = seriesRawData.map((series, seriesIndex) =>
         this.getLinePointModel(series, seriesIndex, limit, renderOptionsForPair)
       );
@@ -445,7 +443,9 @@ export default class AreaSeries extends Component {
   }
 
   getCircleModelsFromRectResponders(responders: RectResponderModel[], mousePositions?: Point) {
-    const index = responders[0].index! + this.startIndex;
+    const index = responders[0].index!;
+    // @TODO: getLinePointsModel 에서 isModelExistingInRect 제거 시 해당 코드로 수정 필요
+    // const index = responders[0].index! + this.startIndex;
     const models = this.tooltipCircleMap![index];
 
     return this.eventType === 'grouped'
