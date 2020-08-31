@@ -252,7 +252,7 @@ export function isExportMenuVisible(options: Options) {
 function getMaxLabelWidth(labels: string[] = []) {
   const labelWidths = labels.map((label) => getTextWidth(label));
 
-  return labelWidths?.length ? Math.max(...labelWidths) + padding.X * 2 : Y_AXIS_MIN_WIDTH;
+  return labelWidths?.length ? Math.max(...labelWidths) + padding.X : Y_AXIS_MIN_WIDTH;
 }
 
 function getAxisSize(
