@@ -71,7 +71,7 @@ const dataRange: StoreModule = {
       const { series, disabledSeries, stackSeries, categories, options } = state;
       const seriesDataRange = {} as SeriesDataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
-      
+
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
       const hasDateValue = !!options.xAxis?.date;
 
