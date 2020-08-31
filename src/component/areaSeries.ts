@@ -15,6 +15,7 @@ import {
   LineChartOptions,
   LineTypeEventDetectType,
   LineTypeSeriesOptions,
+  Point,
   RangeDataType,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
@@ -36,6 +37,12 @@ import { LineModel } from '@t/components/axis';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
 import { DEFAULT_LINE_WIDTH } from '@src/component/lineSeries';
+import { getNearestResponder } from '@src/helpers/tooltip';
+
+interface MouseEventType {
+  responders: CircleResponderModel[] | RectResponderModel[];
+  mousePosition: Point;
+}
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -64,7 +71,7 @@ export default class AreaSeries extends Component {
 
   eventType: LineTypeEventDetectType = 'nearest';
 
-  tooltipCircleMap?: Record<number, CircleResponderModel[]>;
+  tooltipCircleMap!: Record<number, CircleResponderModel[]>;
 
   linePointsModel!: LinePointsModel[];
 
@@ -136,7 +143,6 @@ export default class AreaSeries extends Component {
 
     let areaStackSeries;
 
-    this.setEventType(options);
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
@@ -153,6 +159,8 @@ export default class AreaSeries extends Component {
     } else if (isRangeData(first(areaData)?.data)) {
       this.isRangeChart = true;
     }
+
+    this.setEventType(options);
 
     const renderOptions: RenderOptions = {
       pointOnColumn,
@@ -189,9 +197,7 @@ export default class AreaSeries extends Component {
       this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
     }
 
-    if (this.eventType !== 'near') {
-      this.tooltipCircleMap = this.makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
-    }
+    this.tooltipCircleMap = this.makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
 
     this.responders =
       this.eventType === 'near'
@@ -203,7 +209,7 @@ export default class AreaSeries extends Component {
     return seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>(
       (acc, cur, dataIndex) => {
         const index = cur.index!;
-        const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex] };
+        const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex % tooltipDataArr.length] };
         if (!acc[index]) {
           acc[index] = [];
         }
@@ -242,21 +248,21 @@ export default class AreaSeries extends Component {
 
   makeRectResponderModel(renderOptions: RenderOptions): RectResponderModel[] {
     const { pointOnColumn, tickCount, tickDistance } = renderOptions;
-    const { height, x, y } = this.rect;
-    const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
+    const { height } = this.rect;
 
+    const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
     const halfWidth = tickDistance / 2;
 
     return range(0, tickCount).map((index) => {
       const half = halfDetectAreaIndex.includes(index);
       const width = half ? halfWidth : tickDistance;
-      let startX = x;
+      let startX = 0;
 
       if (index !== 0) {
         startX += pointOnColumn ? tickDistance * index : halfWidth + tickDistance * (index - 1);
       }
 
-      return { type: 'rect', y, height, x: startX, width, index };
+      return { type: 'rect', y: 0, height, x: startX, width, index };
     });
   }
 
@@ -427,7 +433,7 @@ export default class AreaSeries extends Component {
     );
   }
 
-  private isAvailableApplyOpacity(opacity: number, name: string) {
+  isAvailableApplyOpacity(opacity: number, name: string) {
     return (
       (opacity === seriesOpacity.ACTIVE && this.activeSeriesMap![name]) ||
       opacity === seriesOpacity.INACTIVE
@@ -464,13 +470,44 @@ export default class AreaSeries extends Component {
     ];
   }
 
+  getPairCircleModel(circleModels: CircleResponderModel[]) {
+    const pairCircleModels: CircleResponderModel[] = [];
+    circleModels.forEach((circle) => {
+      const { index, seriesIndex, y } = circle;
+      const pairCircleModel = this.tooltipCircleMap[index!].find(
+        (model) => model.seriesIndex === seriesIndex && model.y !== y
+      )!;
+      pairCircleModels.push(pairCircleModel);
+    });
+
+    return pairCircleModels;
+  }
+
+  getLinePointsModels(circleModels: CircleResponderModel[]) {
+    return circleModels.reduce<LinePointsModel[]>(
+      (acc, { seriesIndex }) => [
+        ...acc,
+        ...this.linePointsModel.filter((model) => model.seriesIndex === seriesIndex),
+      ],
+      []
+    );
+  }
+
+  getCircleModelsFromRectResponders(responders: RectResponderModel[], mousePositions?: Point) {
+    const index = responders[0].index! + this.startIndex;
+    const models = this.tooltipCircleMap![index];
+
+    return this.eventType === 'grouped'
+      ? models
+      : getNearestResponder(models, mousePositions!, this.rect);
+  }
+
   onMousemoveGroupedType(responders: RectResponderModel[]) {
     let circleModels: CircleResponderModel[] = [];
     let guideLine: LineModel[] = [];
 
     if (responders.length) {
-      const index = responders[0].index! + this.startIndex;
-      circleModels = this.tooltipCircleMap![index];
+      circleModels = this.getCircleModelsFromRectResponders(responders);
       guideLine = this.renderGuideLineModel(circleModels);
     }
 
@@ -481,48 +518,41 @@ export default class AreaSeries extends Component {
     this.activatedResponders = circleModels;
   }
 
-  onMousemoveNearType(responders: CircleResponderModel[]) {
-    const pairCircleModels: CircleResponderModel[] = [];
-    if (this.isRangeChart) {
-      responders.forEach((circle) => {
-        const pairCircleModel = (this.responders as CircleResponderModel[])
-          .filter((responder) => responder.seriesIndex === circle.seriesIndex)
-          .find((responder) => responder.x === circle.x && responder.y !== circle.y)!;
-        pairCircleModels.push(pairCircleModel);
-      });
+  onMousemoveNearestType(responders: RectResponderModel[], mousePositions: Point) {
+    let circleModels: CircleResponderModel[] = [];
+    let pairCircleModels: CircleResponderModel[] = [];
+
+    if (responders.length) {
+      circleModels = this.getCircleModelsFromRectResponders(responders, mousePositions);
+      if (this.isRangeChart) {
+        pairCircleModels = this.getPairCircleModel(circleModels);
+      }
     }
 
-    const linePoints = responders.reduce<LinePointsModel[]>(
-      (acc, { seriesIndex }) => [
-        ...acc,
-        ...this.linePointsModel.filter((model) => model.seriesIndex === seriesIndex),
-      ],
-      []
-    );
+    const linePoints = this.getLinePointsModels(circleModels);
+    const hoveredSeries = [...linePoints, ...circleModels, ...pairCircleModels];
 
-    const hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];
     this.applyAreaOpacity(hoveredSeries.length ? seriesOpacity.INACTIVE : seriesOpacity.ACTIVE);
+    this.eventBus.emit('renderHoveredSeries', { models: hoveredSeries, name: this.name });
+    this.activatedResponders = circleModels;
+  }
 
+  onMousemoveNearType(responders: CircleResponderModel[]) {
+    let pairCircleModels: CircleResponderModel[] = [];
+    if (this.isRangeChart) {
+      pairCircleModels = this.getPairCircleModel(responders);
+    }
+    const linePoints = this.getLinePointsModels(responders);
+    const hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];
+
+    this.applyAreaOpacity(hoveredSeries.length ? seriesOpacity.INACTIVE : seriesOpacity.ACTIVE);
     this.eventBus.emit('renderHoveredSeries', { models: hoveredSeries, name: this.name });
     this.activatedResponders = responders;
   }
 
-  onMousemoveNearestType(responders: CircleResponderModel[]) {
-    let circleModels: CircleResponderModel[] = [];
-
-    if (responders.length) {
-      const index = responders[0].index! + this.startIndex;
-      circleModels = this.tooltipCircleMap![index];
-      // 여기서 x, y가 가장 가까운 친구들을 골라야 겠군
-    }
-
-    this.eventBus.emit('renderHoveredSeries', { models: [...circleModels], name: this.name });
-    this.activatedResponders = circleModels;
-  }
-
-  onMousemove({ responders }: { responders: CircleResponderModel[] | RectResponderModel[] }) {
+  onMousemove({ responders, mousePosition }: MouseEventType) {
     if (this.eventType === 'nearest') {
-      this.onMousemoveNearestType(responders as CircleResponderModel[]);
+      this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
     } else if (this.eventType === 'near') {
       this.onMousemoveNearType(responders as CircleResponderModel[]);
     } else {
@@ -537,6 +567,8 @@ export default class AreaSeries extends Component {
     this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
     this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
     this.applyAreaOpacity(seriesOpacity.ACTIVE);
+
+    this.eventBus.emit('needDraw');
   }
 
   getDataLabels(seriesModels: AreaPointsModel[]) {
@@ -545,9 +577,16 @@ export default class AreaSeries extends Component {
     );
   }
 
-  onClick({ responders }) {
+  onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = responders;
+      if (this.eventType === 'near') {
+        this.drawModels.selectedSeries = responders as CircleResponderModel[];
+      } else {
+        this.drawModels.selectedSeries = this.getCircleModelsFromRectResponders(
+          responders as RectResponderModel[],
+          mousePosition
+        );
+      }
       this.eventBus.emit('needDraw');
     }
   }
