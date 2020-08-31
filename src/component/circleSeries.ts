@@ -1,7 +1,7 @@
 import Component from './component';
 import { CircleModel, CircleResponderModel, CircleSeriesModels } from '@t/components/series';
 import { Rect } from '@t/options';
-import { getNearestResponder } from '@src/helpers/tooltip';
+import { getNearestResponder } from '@src/helpers/responders';
 
 export default abstract class CircleSeries extends Component {
   models: CircleSeriesModels = { series: [], selectedSeries: [] };

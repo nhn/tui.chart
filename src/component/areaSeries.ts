@@ -37,7 +37,11 @@ import { LineModel } from '@t/components/axis';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
 import { DEFAULT_LINE_WIDTH } from '@src/component/lineSeries';
-import { getNearestResponder } from '@src/helpers/tooltip';
+import {
+  getNearestResponder,
+  makeRectResponderModel,
+  makeTooltipCircleMap,
+} from '@src/helpers/responders';
 
 interface MouseEventType {
   responders: CircleResponderModel[] | RectResponderModel[];
@@ -197,28 +201,12 @@ export default class AreaSeries extends Component {
       this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
     }
 
-    this.tooltipCircleMap = this.makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
+    this.tooltipCircleMap = makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
 
     this.responders =
       this.eventType === 'near'
         ? this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr)
-        : this.makeRectResponderModel(renderOptions);
-  }
-
-  makeTooltipCircleMap(seriesCircleModel: CircleModel[], tooltipDataArr: TooltipData[]) {
-    return seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>(
-      (acc, cur, dataIndex) => {
-        const index = cur.index!;
-        const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex % tooltipDataArr.length] };
-        if (!acc[index]) {
-          acc[index] = [];
-        }
-        acc[index].push(tooltipModel);
-
-        return acc;
-      },
-      {}
-    );
+        : makeRectResponderModel(this.rect, axes.xAxis!);
   }
 
   renderDotSeriesModel(
@@ -244,26 +232,6 @@ export default class AreaSeries extends Component {
       ...m,
       data: tooltipDataArr[dataIndex % tooltipDataLength],
     }));
-  }
-
-  makeRectResponderModel(renderOptions: RenderOptions): RectResponderModel[] {
-    const { pointOnColumn, tickCount, tickDistance } = renderOptions;
-    const { height } = this.rect;
-
-    const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
-    const halfWidth = tickDistance / 2;
-
-    return range(0, tickCount).map((index) => {
-      const half = halfDetectAreaIndex.includes(index);
-      const width = half ? halfWidth : tickDistance;
-      let startX = 0;
-
-      if (index !== 0) {
-        startX += pointOnColumn ? tickDistance * index : halfWidth + tickDistance * (index - 1);
-      }
-
-      return { type: 'rect', y: 0, height, x: startX, width, index };
-    });
   }
 
   renderClipRectAreaModel(isDrawModel?: boolean): ClipRectAreaModel {
