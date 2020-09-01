@@ -118,7 +118,7 @@ export default class AreaSeries extends Component {
 
   private setEventType(options?: LineChartOptions) {
     if (options?.series?.eventDetectType) {
-      this.eventType = options?.series?.eventDetectType;
+      this.eventType = options.series.eventDetectType;
     }
 
     if (this.isComboChart || this.isStackChart) {
@@ -421,6 +421,7 @@ export default class AreaSeries extends Component {
 
   getPairCircleModel(circleModels: CircleResponderModel[]) {
     const pairCircleModels: CircleResponderModel[] = [];
+
     circleModels.forEach((circle) => {
       const { index, seriesIndex, y } = circle;
       const pairCircleModel = this.tooltipCircleMap[index!].find(
@@ -443,10 +444,14 @@ export default class AreaSeries extends Component {
   }
 
   getCircleModelsFromRectResponders(responders: RectResponderModel[], mousePositions?: Point) {
+    if (!responders.length) {
+      return [];
+    }
+
     const index = responders[0].index!;
     // @TODO: getLinePointsModel 에서 isModelExistingInRect 제거 시 해당 코드로 수정 필요
     // const index = responders[0].index! + this.startIndex;
-    const models = this.tooltipCircleMap![index];
+    const models = this.tooltipCircleMap[index];
 
     return this.eventType === 'grouped'
       ? models
@@ -454,11 +459,7 @@ export default class AreaSeries extends Component {
   }
 
   onMousemoveGroupedType(responders: RectResponderModel[]) {
-    let circleModels: CircleResponderModel[] = [];
-
-    if (responders.length) {
-      circleModels = this.getCircleModelsFromRectResponders(responders);
-    }
+    const circleModels = this.getCircleModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
       models: circleModels,
@@ -469,26 +470,9 @@ export default class AreaSeries extends Component {
   }
 
   onMousemoveNearestType(responders: RectResponderModel[], mousePositions: Point) {
-    let circleModels: CircleResponderModel[] = [];
-    let pairCircleModels: CircleResponderModel[] = [];
+    const circleModels = this.getCircleModelsFromRectResponders(responders, mousePositions);
 
-    if (responders.length) {
-      circleModels = this.getCircleModelsFromRectResponders(responders, mousePositions);
-      if (this.isRangeChart) {
-        pairCircleModels = this.getPairCircleModel(circleModels);
-      }
-    }
-
-    const linePoints = this.getLinePointsModels(circleModels);
-    const hoveredSeries = [...linePoints, ...circleModels, ...pairCircleModels];
-
-    this.applyAreaOpacity(hoveredSeries.length ? seriesOpacity.INACTIVE : seriesOpacity.ACTIVE);
-    this.eventBus.emit('renderHoveredSeries', {
-      models: hoveredSeries,
-      name: this.name,
-      eventType: this.eventType,
-    });
-    this.activatedResponders = circleModels;
+    this.onMousemoveNearType(circleModels);
   }
 
   onMousemoveNearType(responders: CircleResponderModel[]) {

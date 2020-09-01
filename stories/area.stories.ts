@@ -94,6 +94,7 @@ export const range = () => {
       title: { text: 'Temperature (Celsius)' },
     },
     yAxis: { title: 'Month' },
+    series: { eventDetectType: 'grouped' },
   });
 
   return el;

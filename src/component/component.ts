@@ -17,7 +17,7 @@ import {
   RectResponderModel,
   RadarSeriesModels,
   BoxPlotSeriesModels,
-  BoxPlotResponderModel,
+  BoxPlotResponderModel, ResponderModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -66,14 +66,6 @@ type ComponentModels =
   | LegendModel[]
   | HoveredSeriesModel;
 
-type ComponentResponders = Array<
-  | CircleResponderModel
-  | RectModel
-  | SectorResponderModel
-  | RectResponderModel
-  | BoxPlotResponderModel
->;
-
 export default abstract class Component {
   name = 'Component';
 
@@ -98,7 +90,7 @@ export default abstract class Component {
 
   drawModels!: ComponentModels;
 
-  responders!: ComponentResponders;
+  responders!: ResponderModel[];
 
   activeSeriesMap?: { [key: string]: boolean };
 
