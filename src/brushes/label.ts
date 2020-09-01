@@ -3,7 +3,7 @@ import { makeStyleObj } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
 
-const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
+export const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
 export const TITLE_TEXT = '100 18px Arial';
 const AXIS_TITLE_TEXT = '700 11px Arial';
 

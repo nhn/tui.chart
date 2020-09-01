@@ -2,7 +2,7 @@ import Component from './component';
 import Painter from '@src/painter';
 import { AxisType } from '@src/component/axis';
 import { ChartState, Options, CenterYAxisData } from '@t/store/store';
-import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
+import { makeTickPixelPositions, crispPixel, LABEL_ANCHOR_POINT } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 
 type CoordinateKey = 'x' | 'y';
@@ -38,6 +38,10 @@ export default class AxisUsingCenterY extends Component {
     }
 
     this.rect = layout[this.name];
+
+    if (this.name === 'yAxis') {
+      this.rect = { ...this.rect, x: centerYAxis.x };
+    }
 
     const {
       labels,
@@ -206,7 +210,7 @@ export default class AxisUsingCenterY extends Component {
       textAlign = 'center';
       textLabels = labels;
     } else {
-      labelAnchorPoint = crispPixel(this.rect.height);
+      labelAnchorPoint = LABEL_ANCHOR_POINT;
       textAlign = 'center';
       textLabels = [...labels].reverse();
     }

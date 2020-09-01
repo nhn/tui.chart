@@ -4,6 +4,8 @@ import Store from '@src/store/store';
 import { LineChartOptions, BarChartOptions, ColumnChartOptions } from '@t/options';
 import { ChartState, Scale, StateFunc, Options } from '@t/store/store';
 
+const notify = () => {};
+
 describe('Axes Store module', () => {
   const axesStateFunc = axes.state as StateFunc;
 
@@ -79,7 +81,7 @@ describe('Axes Store module', () => {
     } as ChartState<LineChartOptions>;
 
     const store = { state } as Store<LineChartOptions>;
-    axes.action!.setAxesData(store);
+    axes.action!.setAxesData.call({ notify }, store);
 
     expect(state.axes).toEqual({
       xAxis: {
@@ -133,7 +135,7 @@ describe('Axes Store module', () => {
     } as ChartState<LineChartOptions>;
 
     const store = { state } as Store<LineChartOptions>;
-    axes.action!.setAxesData(store);
+    axes.action!.setAxesData.call({ notify }, store);
 
     expect(state.axes.xAxis.labels).toEqual(['20-08-08', '20-08-09']);
   });
@@ -184,7 +186,7 @@ describe('Axes Store module', () => {
       } as ChartState<Options>;
 
       const store = { state } as Store<Options>;
-      axes.action!.setAxesData(store);
+      axes.action!.setAxesData.call({ notify }, store);
 
       expect(store.state.axes.radialAxis).toMatchObject({
         labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
@@ -223,7 +225,7 @@ describe('pointOnColumn state is properly created', () => {
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
-    axes.action!.setAxesData(store);
+    axes.action!.setAxesData.call({ notify }, store);
 
     expect(store.state.axes).toMatchObject({
       xAxis: { pointOnColumn: false },
@@ -258,7 +260,7 @@ describe('pointOnColumn state is properly created', () => {
     } as ChartState<ColumnChartOptions>;
 
     const store = { state } as Store<ColumnChartOptions>;
-    axes.action!.setAxesData(store);
+    axes.action!.setAxesData.call({ notify }, store);
 
     expect(store.state.axes).toMatchObject({
       xAxis: { pointOnColumn: true },

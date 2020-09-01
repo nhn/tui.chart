@@ -155,6 +155,7 @@ export type PolygonModel = {
   lineWidth: number;
   fillColor?: string;
   distances?: number[];
+  name?: string;
 };
 
 export type RadarSeriesModels = {

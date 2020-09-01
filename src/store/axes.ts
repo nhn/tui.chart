@@ -237,8 +237,10 @@ const axes: StoreModule = {
       } as Axes;
 
       if (centerYAxis) {
+        const xAxisHalfSize = (xAxis.width - yAxis.width) / 2;
         axesState.centerYAxis = deepMergedCopy(valueAxisData, {
-          xAxisHalfSize: (xAxis.width - yAxis.width) / 2,
+          x: xAxis.x + xAxisHalfSize,
+          xAxisHalfSize,
           secondStartX: (xAxis.width + yAxis.width) / 2,
           yAxisLabelAnchorPoint: yAxis.width / 2,
           yAxisHeight: yAxis.height,
@@ -248,6 +250,8 @@ const axes: StoreModule = {
       if (state.axes.radialAxis) {
         axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot);
       }
+
+      this.notify(state, 'layout');
 
       extend(state.axes, axesState);
     },

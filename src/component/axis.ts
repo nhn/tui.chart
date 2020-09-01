@@ -1,8 +1,9 @@
 import Component from './component';
 import Painter from '@src/painter';
 import { ChartState, Options } from '@t/store/store';
-import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
+import { makeTickPixelPositions, crispPixel, LABEL_ANCHOR_POINT } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
+import { TICK_SIZE } from '@src/brushes/axis';
 
 export enum AxisType {
   Y = 'yAxis',
@@ -17,6 +18,15 @@ interface RenderOptions {
   tickInterval: number;
   labelInterval: number;
   labelDistance: number;
+}
+
+function getOffsetAndAnchorKey(
+  hasBasedYAxis: boolean
+): { offsetKey: CoordinateKey; anchorKey: CoordinateKey } {
+  return {
+    offsetKey: hasBasedYAxis ? 'y' : 'x',
+    anchorKey: hasBasedYAxis ? 'x' : 'y',
+  };
 }
 
 export default class Axis extends Component {
@@ -51,8 +61,8 @@ export default class Axis extends Component {
     } = axes[this.name]!;
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
-    const offsetKey = this.yAxisComponent ? 'y' : 'x';
-    const anchorKey = this.yAxisComponent ? 'x' : 'y';
+
+    const { offsetKey, anchorKey } = getOffsetAndAnchorKey(this.yAxisComponent);
 
     const renderOptions: RenderOptions = {
       pointOnColumn,
@@ -62,20 +72,25 @@ export default class Axis extends Component {
       labelDistance,
     };
 
-    this.models.label = this.renderLabelModels(
-      relativePositions,
-      !isLabelAxis && this.yAxisComponent ? [...labels].reverse() : labels,
-      offsetKey,
-      anchorKey,
-      renderOptions
-    );
+    const hasOnlyAxisLine =
+      (this.name === 'yAxis' && !this.rect.width) || (this.name === 'xAxis' && !this.rect.height);
 
-    this.models.tick = this.renderTickModels(
-      relativePositions,
-      offsetKey,
-      anchorKey,
-      renderOptions
-    );
+    if (!hasOnlyAxisLine) {
+      this.models.label = this.renderLabelModels(
+        relativePositions,
+        !isLabelAxis && this.yAxisComponent ? [...labels].reverse() : labels,
+        offsetKey,
+        anchorKey,
+        renderOptions
+      );
+
+      this.models.tick = this.renderTickModels(
+        relativePositions,
+        offsetKey,
+        anchorKey,
+        renderOptions
+      );
+    }
 
     this.models.axisLine = [this.renderAxisLineModel()];
 
@@ -145,7 +160,7 @@ export default class Axis extends Component {
             {
               type: 'tick',
               isYAxis: this.yAxisComponent,
-              tickSize: this.yAxisComponent ? -5 : 5,
+              tickSize: this.yAxisComponent ? -TICK_SIZE : TICK_SIZE,
               [offsetKey]: crispPixel(position),
               [anchorKey]: tickAnchorPoint,
             } as TickModel,
@@ -161,7 +176,7 @@ export default class Axis extends Component {
     renderOptions: RenderOptions
   ): LabelModel[] {
     const { pointOnColumn, labelInterval, labelDistance } = renderOptions;
-    const labelAnchorPoint = this.yAxisComponent ? crispPixel(0) : crispPixel(this.rect.height);
+    const labelAnchorPoint = this.yAxisComponent ? crispPixel(0) : LABEL_ANCHOR_POINT;
     const labelAdjustment = pointOnColumn ? labelDistance / 2 : 0;
     const style = ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }];
 
