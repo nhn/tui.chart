@@ -175,7 +175,7 @@ export default class AreaSeries extends Component {
 
     this.linePointsModel = this.renderLinePointsModel(areaData, limit, renderOptions);
 
-    const areaSeriesModel = this.renderAreaPointsModel();
+    const areaSeriesModel = this.renderAreaPointsModel(renderOptions.options);
     const seriesCircleModel = this.renderCircleModel();
     const circleDotModel = this.renderDotSeriesModel(seriesCircleModel, renderOptions);
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
@@ -296,7 +296,10 @@ export default class AreaSeries extends Component {
       }
     });
 
-    // @TODO: range spline 처리 필요
+    if (pairModel) {
+      points.reverse();
+    }
+
     if (options?.spline) {
       setSplineControlPoint(points);
     }
@@ -347,7 +350,30 @@ export default class AreaSeries extends Component {
     ];
   }
 
-  getCombinedLinePointsModel(): LinePointsModel[] {
+  getCombinedPoints(start: number, end: number, options: LineTypeSeriesOptions) {
+    const startPoints = start >= 0 ? this.linePointsModel[start].points : [];
+    const endPoints = this.linePointsModel[end].points;
+    let points;
+
+    if (this.isStackChart) {
+      if (end === 0) {
+        points = this.addBottomPoints(endPoints);
+      } else {
+        const reversedLinePointsModel = deepCopyArray(endPoints).reverse();
+        if (options?.spline) {
+          setSplineControlPoint(reversedLinePointsModel);
+        }
+
+        points = [...startPoints, ...reversedLinePointsModel];
+      }
+    } else {
+      points = [...startPoints, ...endPoints];
+    }
+
+    return points;
+  }
+
+  getCombinedLinePointsModel(options: LineTypeSeriesOptions): LinePointsModel[] {
     if (!this.isRangeChart && !this.isStackChart) {
       return this.linePointsModel.map((m) => ({
         ...m,
@@ -360,20 +386,14 @@ export default class AreaSeries extends Component {
     return range(0, len).reduce<LinePointsModel[]>((acc, i) => {
       const start = this.isRangeChart ? i : i - 1;
       const end = this.isRangeChart ? len + i : i;
-      const points =
-        this.isStackChart && i === 0
-          ? this.addBottomPoints(this.linePointsModel[i].points)
-          : [
-              ...this.linePointsModel[start].points,
-              ...[...this.linePointsModel[end].points].reverse(),
-            ];
+      const points = this.getCombinedPoints(start, end, options);
 
       return [...acc, { ...this.linePointsModel[i], points }];
     }, []);
   }
 
-  renderAreaPointsModel(): AreaPointsModel[] {
-    return this.getCombinedLinePointsModel().map((m) => ({
+  renderAreaPointsModel(options: LineTypeSeriesOptions): AreaPointsModel[] {
+    return this.getCombinedLinePointsModel(options).map((m) => ({
       ...m,
       type: 'areaPoints',
       lineWidth: 0,
