@@ -157,7 +157,7 @@ function getXAxisRect({
   }
 
   if (!size?.xAxis?.width && size?.plot?.width) {
-    xAxisWidth = size.plot.height;
+    xAxisWidth = size.plot.width;
   }
 
   return {
