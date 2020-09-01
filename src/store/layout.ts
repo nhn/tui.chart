@@ -67,8 +67,8 @@ function getDefaultXAxisHeight(size: OptionSize) {
   return size.xAxis?.height && !size.yAxis ? size.xAxis.height : X_AXIS_HEIGHT;
 }
 
-// eslint-disable-next-line complexity
-function getYAxisRect({
+/*
+function getYAxisRect_old({
   chartSize,
   legend,
   circleLegend,
@@ -123,23 +123,122 @@ function getYAxisRect({
     ...getValidRectSize(size?.yAxis, yAxisWidth, yAxisHeight),
   };
 }
+*/
 
-function getXAxisRect({
+function getYAxisXPoint(yAxisRectParam: YAxisRectParam) {
+  const {
+    chartSize,
+    legend,
+    circleLegend,
+    yAxisTitle,
+    hasCenterYAxis,
+    maxLabelWidth,
+    size,
+  } = yAxisRectParam;
+  const { width } = chartSize;
+  const { align } = legend;
+
+  let x = yAxisTitle.x;
+  let yAxisWidth = size?.yAxis?.width ?? maxLabelWidth;
+
+  if (hasCenterYAxis) {
+    yAxisWidth = maxLabelWidth + (TICK_SIZE + padding.X) * 2;
+    x = (width - legend.width - yAxisWidth + padding.X * 2) / 2;
+  }
+
+  if (legend.visible && align === 'left') {
+    x = yAxisTitle.x;
+  }
+
+  if (circleLegend.visible && align === 'left') {
+    x = Math.max(circleLegend.width + padding.X, x);
+  }
+
+  return x;
+}
+
+function getYAxisYPoint({ legend, yAxisTitle }: YAxisRectParam) {
+  const { align } = legend;
+
+  let y = yAxisTitle.y + yAxisTitle.height;
+
+  if (legend.visible) {
+    const legendAreaHeight = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
+    const topArea = Math.max(y, legendAreaHeight);
+
+    if (align === 'top') {
+      y = topArea;
+    }
+  }
+
+  return y;
+}
+
+function getYAxisWidth({ hasCenterYAxis, hasAxis, maxLabelWidth, size }: YAxisRectParam) {
+  let yAxisWidth = size?.yAxis?.width ?? maxLabelWidth;
+
+  if (hasCenterYAxis) {
+    yAxisWidth = maxLabelWidth + (TICK_SIZE + padding.X) * 2;
+  } else if (!hasAxis) {
+    yAxisWidth = 0;
+  }
+
+  return yAxisWidth;
+}
+
+function getYAxisHeight({ chartSize, legend, yAxisTitle, hasAxis, size }: YAxisRectParam) {
+  const { height } = chartSize;
+  const { align } = legend;
+  const xAxisHeight = getDefaultXAxisHeight(size);
+
+  const y = yAxisTitle.y + yAxisTitle.height;
+  let yAxisHeight = height - y - xAxisHeight - X_AXIS_TITLE_HEIGHT;
+
+  if (!hasAxis) {
+    yAxisHeight = height - y;
+  }
+
+  if (legend.visible) {
+    const legendAreaHeight = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
+    const topArea = Math.max(y, legendAreaHeight);
+
+    if (align === 'top') {
+      yAxisHeight = height - topArea - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
+    } else if (align === 'bottom') {
+      yAxisHeight = height - y - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT - LEGEND_ITEM_HEIGHT;
+    }
+  }
+
+  if (!size?.yAxis?.height && size?.plot?.height) {
+    yAxisHeight = size.plot.height;
+  }
+
+  return yAxisHeight;
+}
+
+function getYAxisRect(yAxisRectParam: YAxisRectParam) {
+  const { size } = yAxisRectParam;
+  const x = getYAxisXPoint(yAxisRectParam);
+  const y = getYAxisYPoint(yAxisRectParam);
+  const yAxisWidth = getYAxisWidth(yAxisRectParam);
+  const yAxisHeight = getYAxisHeight(yAxisRectParam);
+
+  return { x, y, ...getValidRectSize(size?.yAxis, yAxisWidth, yAxisHeight) };
+}
+
+function getXAxisWidth({
   chartSize,
   yAxis,
+  hasCenterYAxis,
+  size,
   legend,
   circleLegend,
-  hasCenterYAxis,
-  hasAxis,
-  size,
 }: XAxisRectParam) {
   const { width } = chartSize;
   const { align, width: legendWidth } = legend;
   const verticalAlign = isVerticalAlign(align);
 
   let xAxisWidth;
-  let x = yAxis.x + yAxis.width;
-  const xAxisHeight = !hasAxis ? 0 : X_AXIS_HEIGHT;
 
   if (verticalAlign) {
     xAxisWidth = width - (yAxis.x + yAxis.width + padding.X);
@@ -152,7 +251,6 @@ function getXAxisRect({
   }
 
   if (hasCenterYAxis) {
-    x = padding.X * 2;
     xAxisWidth = width - legendWidth - padding.X * 2;
   }
 
@@ -160,9 +258,19 @@ function getXAxisRect({
     xAxisWidth = size.plot.width;
   }
 
+  return xAxisWidth;
+}
+
+function getXAxisRect(xAxisRectParam: XAxisRectParam) {
+  const { hasAxis, hasCenterYAxis, yAxis, size } = xAxisRectParam;
+  const x = hasCenterYAxis ? padding.X * 2 : yAxis.x + yAxis.width;
+  const y = yAxis.y + yAxis.height;
+  const xAxisWidth = getXAxisWidth(xAxisRectParam);
+  const xAxisHeight = !hasAxis ? 0 : X_AXIS_HEIGHT;
+
   return {
     x,
-    y: yAxis.y + yAxis.height,
+    y,
     ...getValidRectSize(size?.xAxis, xAxisWidth, xAxisHeight),
   };
 }
