@@ -21,15 +21,15 @@ import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as BoxPlotBrush from '@src/brushes/boxPlot';
-import { BaseOptions, BoxPlotSeriesType, BoxPlotSeriesData } from '@t/options';
+import { BoxPlotSeriesType, BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
 
 interface BoxPlotChartProps {
   el: Element;
-  options: BaseOptions;
+  options: BoxPlotChartOptions;
   data: BoxPlotSeriesData;
 }
 
-export default class BoxPlotChart extends Chart<BaseOptions> {
+export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
   modules = [dataRange, scale, axes, plot];
 
   constructor({ el, options, data: { series, categories } }: BoxPlotChartProps) {

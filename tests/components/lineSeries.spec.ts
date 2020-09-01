@@ -67,52 +67,6 @@ describe('basic', () => {
 
   const result = {
     rect: { width: 80, height: 80, x: 10, y: 80 },
-    responders: [
-      {
-        color: 'rgba(170, 170, 170, 1)',
-        data: { category: 'A', color: '#aaaaaa', label: 'han', value: 1 },
-        radius: 7,
-        seriesIndex: 0,
-        style: ['default', 'hover'],
-        type: 'circle',
-        x: 20,
-        y: 80,
-        name: 'han',
-      },
-      {
-        color: 'rgba(170, 170, 170, 1)',
-        data: { category: 'B', color: '#aaaaaa', label: 'han', value: 2 },
-        radius: 7,
-        seriesIndex: 0,
-        style: ['default', 'hover'],
-        type: 'circle',
-        x: 60,
-        y: 60,
-        name: 'han',
-      },
-      {
-        color: 'rgba(187, 187, 187, 1)',
-        data: { category: 'A', color: '#bbbbbb', label: 'cho', value: 4 },
-        radius: 7,
-        seriesIndex: 1,
-        style: ['default', 'hover'],
-        type: 'circle',
-        x: 20,
-        y: 20,
-        name: 'cho',
-      },
-      {
-        color: 'rgba(187, 187, 187, 1)',
-        data: { category: 'B', color: '#bbbbbb', label: 'cho', value: 5 },
-        radius: 7,
-        seriesIndex: 1,
-        style: ['default', 'hover'],
-        type: 'circle',
-        x: 60,
-        y: 0,
-        name: 'cho',
-      },
-    ],
     models: {
       rect: [{ height: 80, type: 'clipRectArea', width: 80, x: 0, y: 0 }],
       series: [
@@ -174,9 +128,138 @@ describe('basic', () => {
     },
   };
 
-  ['rect', 'responders', 'models'].forEach((modelName) => {
+  ['rect', 'models'].forEach((modelName) => {
     it(`should make ${modelName} properly when calling render`, () => {
       expect(lineSeries[modelName]).toEqual(result[modelName]);
+    });
+  });
+});
+
+describe('responders', () => {
+  const seriesData = [
+    { name: 'han', data: [1, 2], rawData: [1, 2], color: '#aaaaaa' },
+    { name: 'cho', data: [4, 5], rawData: [4, 5], color: '#bbbbbb' },
+  ];
+
+  const chartState = {
+    chart: { width: 100, height: 100 },
+    layout: {
+      xAxis: { x: 10, y: 80, width: 80, height: 10 },
+      yAxis: { x: 10, y: 10, width: 10, height: 80 },
+      plot: { width: 80, height: 80, x: 10, y: 80 },
+    },
+    series: {
+      line: {
+        data: seriesData,
+        seriesCount: seriesData.length,
+        seriesGroupCount: seriesData[0].data.length,
+      },
+    },
+    scale: {
+      yAxis: {
+        limit: {
+          min: 1,
+          max: 5,
+        },
+      },
+    },
+    axes: {
+      xAxis: {
+        pointOnColumn: true,
+        tickDistance: 40,
+        tickCount: 2,
+      },
+    },
+    options: {
+      series: {},
+    },
+    legend: {
+      data: [
+        { label: 'han', active: true, checked: true },
+        { label: 'cho', active: true, checked: true },
+      ],
+    },
+    rawCategories: ['A', 'B'],
+    categories: ['A', 'B'],
+    dataLabels: {
+      visible: false,
+    },
+  };
+
+  beforeEach(() => {
+    lineSeries = new LineSeries({
+      store: {} as Store<LineChartOptions>,
+      eventBus: new EventEmitter(),
+    });
+  });
+
+  const result = {
+    near: [
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        data: { category: 'A', color: '#aaaaaa', label: 'han', value: 1 },
+        radius: 7,
+        index: 0,
+        seriesIndex: 0,
+        style: ['default', 'hover'],
+        type: 'circle',
+        x: 20,
+        y: 80,
+        name: 'han',
+      },
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        data: { category: 'B', color: '#aaaaaa', label: 'han', value: 2 },
+        radius: 7,
+        index: 1,
+        seriesIndex: 0,
+        style: ['default', 'hover'],
+        type: 'circle',
+        x: 60,
+        y: 60,
+        name: 'han',
+      },
+      {
+        color: 'rgba(187, 187, 187, 1)',
+        data: { category: 'A', color: '#bbbbbb', label: 'cho', value: 4 },
+        radius: 7,
+        index: 0,
+        seriesIndex: 1,
+        style: ['default', 'hover'],
+        type: 'circle',
+        x: 20,
+        y: 20,
+        name: 'cho',
+      },
+      {
+        color: 'rgba(187, 187, 187, 1)',
+        data: { category: 'B', color: '#bbbbbb', label: 'cho', value: 5 },
+        radius: 7,
+        index: 1,
+        seriesIndex: 1,
+        style: ['default', 'hover'],
+        type: 'circle',
+        x: 60,
+        y: 0,
+        name: 'cho',
+      },
+    ],
+    nearest: [
+      { height: 80, index: 0, type: 'rect', width: 40, x: 0, y: 0 },
+      { height: 80, index: 1, type: 'rect', width: 40, x: 40, y: 0 },
+    ],
+    grouped: [
+      { height: 80, index: 0, type: 'rect', width: 40, x: 0, y: 0 },
+      { height: 80, index: 1, type: 'rect', width: 40, x: 40, y: 0 },
+    ],
+  };
+
+  ['near', 'nearest', 'grouped'].forEach((eventDetectType) => {
+    it(`should make responder properly when calling render according to ${eventDetectType} eventDetectType`, () => {
+      const state = deepMergedCopy(chartState, { options: { series: { eventDetectType } } });
+      lineSeries.render(state);
+
+      expect(lineSeries.responders).toEqual(result[eventDetectType]);
     });
   });
 });
@@ -358,6 +441,7 @@ describe('with series options', () => {
         x: 20,
         y: 80,
         name: 'han',
+        index: 0,
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -368,6 +452,7 @@ describe('with series options', () => {
         x: 60,
         y: 60,
         name: 'han',
+        index: 1,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -378,6 +463,7 @@ describe('with series options', () => {
         x: 20,
         y: 20,
         name: 'cho',
+        index: 0,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -388,6 +474,7 @@ describe('with series options', () => {
         x: 60,
         y: 0,
         name: 'cho',
+        index: 1,
       },
     ]);
   });

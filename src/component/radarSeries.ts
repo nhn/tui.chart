@@ -92,7 +92,7 @@ export default class RadarSeries extends Component {
   }
 
   renderCircleModel(seriesModels: PolygonModel[]): CircleModel[] {
-    return seriesModels.flatMap(({ points, color }, seriesIndex) =>
+    return seriesModels.flatMap(({ points, color, name }, seriesIndex) =>
       points.map((point) => ({
         type: 'circle',
         ...point,
@@ -100,6 +100,7 @@ export default class RadarSeries extends Component {
         color,
         style: ['default', 'hover'],
         seriesIndex,
+        name,
       }))
     );
   }
@@ -165,19 +166,21 @@ export default class RadarSeries extends Component {
         color,
         lineWidth: DEFAULT_LINE_WIDTH,
         fillColor: getRGBA(color, fillOpacity),
+        name,
         ...polygon,
       };
     });
   }
 
   renderDotModels(seriesModels: PolygonModel[]): CircleModel[] {
-    return seriesModels.flatMap(({ points, color }) =>
+    return seriesModels.flatMap(({ points, color, name }) =>
       points.map((point) => ({
         type: 'circle',
         ...point,
         radius: 5,
         color,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name,
       }))
     );
   }

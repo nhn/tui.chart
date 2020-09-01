@@ -17,6 +17,9 @@ export type DatetimePoint = ObjectTypeDatetimePoint | TupleTypeDatetimePoint;
 export type BubblePoint = (Point | ObjectTypeDatetimePoint) & { r: number };
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
+export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped';
+export type BoxTypeEventDetectType = 'nearest' | 'grouped';
+
 export type BezierPoint = {
   controlPoint?: {
     next: Point;
@@ -125,6 +128,7 @@ type BaseAxisOptions = {
   scale?: Scale;
   title?: AxisTitle;
   width?: number;
+  height?: number;
 };
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {
@@ -145,7 +149,8 @@ interface BarTypeYAxisOptions extends BaseAxisOptions {
 }
 
 type BasePlotOptions = {
-  showLine?: boolean;
+  width?: number;
+  height?: number;
 };
 
 export type PlotRange = [number | string, number | string];
@@ -162,8 +167,12 @@ export type PlotBand = {
 };
 
 export type AreaLinePlotOptions = BasePlotOptions & {
-  lines?: PlotLine[];
-  bands?: PlotBand[];
+  showLine?: boolean;
+  lines?: { value: PlotLineValue; color: string }[];
+  bands?: {
+    range: [PlotLineValue, PlotLineValue];
+    color: string;
+  }[];
 };
 
 interface ExportMenuOptions {
@@ -194,6 +203,7 @@ interface BaseOptions {
   legend?: BaseLegendOptions;
   exportMenu?: ExportMenuOptions;
   tooltip?: BaseTooltipOptions;
+  plot?: BasePlotOptions;
 }
 
 interface BaseLegendOptions {
@@ -213,11 +223,20 @@ interface BaseSeriesOptions {
   dataLabels?: DataLabels;
 }
 
+interface BoxPlotSeriesOptions extends BaseSeriesOptions {
+  eventDetectType: BoxTypeEventDetectType;
+}
+
+export interface BoxPlotChartOptions extends BaseOptions {
+  series?: BoxPlotSeriesOptions;
+}
+
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
   zoomable?: boolean;
   lineWidth?: number;
+  eventDetectType?: LineTypeEventDetectType;
 }
 
 interface AreaSeriesOptions extends LineTypeSeriesOptions {
@@ -247,14 +266,14 @@ export interface LineScatterChartOptions extends BaseOptions {
 export interface ScatterChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
-  plot?: BasePlotOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 export interface BubbleChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
   circleLegend?: CircleLegendOptions;
-  plot?: BasePlotOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 type ConnectorLineType = 'dashed' | 'solid';
@@ -278,17 +297,18 @@ interface BoxSeriesOptions extends BaseSeriesOptions {
   diverging?: boolean;
   colorByPoint?: boolean;
   stack?: StackOptionType;
+  eventDetectType?: BoxTypeEventDetectType;
 }
 
 export interface BarChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
   yAxis?: BarTypeYAxisOptions;
-  plot?: BasePlotOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
-  plot?: BasePlotOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 export type BoxPlotSeriesType = {
@@ -339,9 +359,7 @@ export type RadarPlotType = 'spiderweb' | 'circle';
 
 export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
-  plot?: {
-    type: RadarPlotType;
-  };
+  plot?: BasePlotOptions & { type: RadarPlotType };
 }
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {

@@ -16,6 +16,13 @@ export interface CircleStyle {
   shadowOffsetY?: number;
 }
 
+export type ResponderModel =
+  | CircleResponderModel
+  | RectResponderModel
+  | RectModel
+  | BoxPlotResponderModel
+  | SectorResponderModel;
+
 export type CircleModel = {
   type: 'circle';
   radius: number;
@@ -148,6 +155,7 @@ export type PolygonModel = {
   lineWidth: number;
   fillColor?: string;
   distances?: number[];
+  name?: string;
 };
 
 export type RadarSeriesModels = {

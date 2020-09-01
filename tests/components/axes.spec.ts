@@ -157,14 +157,14 @@ describe('xAxis', () => {
           text: '1',
           type: 'label',
           x: 20.5,
-          y: 10.5,
+          y: 16.5,
         },
         {
           style: ['default', { textAlign: 'center' }],
           text: '2',
           type: 'label',
           x: 100.5,
-          y: 10.5,
+          y: 16.5,
         },
       ]);
     });

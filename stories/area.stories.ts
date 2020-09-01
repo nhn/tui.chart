@@ -2,7 +2,7 @@ import AreaChart from '@src/charts/areaChart';
 import { AreaChartOptions, AreaSeriesData, BaseChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData, budgetData, temperatureRangeData } from './data';
-import { withKnobs, boolean, number } from '@storybook/addon-knobs';
+import { withKnobs, boolean, number, radios } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Area',
@@ -41,7 +41,17 @@ export const basic = () => {
     chart: { title: 'Average Temperature' } as BaseChartOptions,
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
-    series: { spline: boolean('spline', false) },
+  });
+
+  return el;
+};
+
+export const basicSpline = () => {
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    series: { spline: true },
   });
 
   return el;
@@ -52,7 +62,24 @@ export const basicWithShowDot = () => {
     chart: { title: 'Average Temperature' } as BaseChartOptions,
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
-    series: { spline: boolean('spline', false), showDot: true },
+    series: { showDot: true },
+  });
+
+  return el;
+};
+
+export const basicWithEventDetectType = () => {
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    series: {
+      eventDetectType: radios(
+        'eventType',
+        { near: 'near', nearest: 'nearest', grouped: 'grouped' },
+        'nearest'
+      ),
+    },
   });
 
   return el;
@@ -77,6 +104,20 @@ export const range = () => {
       title: { text: 'Temperature (Celsius)' },
     },
     yAxis: { title: 'Month' },
+    series: { eventDetectType: 'grouped' },
+  });
+
+  return el;
+};
+
+export const rangeSpline = () => {
+  const { el } = createChart(temperatureRangeData as AreaSeriesData, {
+    chart: { title: 'Temperature Range' } as BaseChartOptions,
+    xAxis: {
+      title: { text: 'Temperature (Celsius)' },
+    },
+    yAxis: { title: 'Month' },
+    series: { spline: true },
   });
 
   return el;
@@ -93,6 +134,24 @@ export const normalStack = () => {
       stack: {
         type: 'normal',
       },
+    },
+  });
+
+  return el;
+};
+
+export const normalStackSpline = () => {
+  const { el } = createChart(budgetData, {
+    chart: { title: 'Monthly Revenue' } as BaseChartOptions,
+    xAxis: {
+      title: { text: 'Month' },
+    },
+    yAxis: { title: 'Amount' },
+    series: {
+      stack: {
+        type: 'normal',
+      },
+      spline: true,
     },
   });
 

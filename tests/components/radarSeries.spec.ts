@@ -66,6 +66,7 @@ describe('radar series', () => {
           ],
           fillColor: 'rgba(170, 170, 170, 0)',
           distances: [10, 20, 30, 40],
+          name: 'han',
         },
         {
           type: 'polygon',
@@ -79,6 +80,7 @@ describe('radar series', () => {
           ],
           fillColor: 'rgba(187, 187, 187, 0)',
           distances: [20, 10, 10, 30],
+          name: 'cho',
         },
       ],
       dot: [],
@@ -94,6 +96,7 @@ describe('radar series', () => {
         style: ['default', 'hover'],
         seriesIndex: 0,
         data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
+        name: 'han',
       },
       {
         type: 'circle',
@@ -104,6 +107,7 @@ describe('radar series', () => {
         style: ['default', 'hover'],
         seriesIndex: 0,
         data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
+        name: 'han',
       },
       {
         type: 'circle',
@@ -114,6 +118,7 @@ describe('radar series', () => {
         style: ['default', 'hover'],
         seriesIndex: 0,
         data: { label: 'han', color: '#aaaaaa', value: 3, category: 'C' },
+        name: 'han',
       },
       {
         type: 'circle',
@@ -124,6 +129,7 @@ describe('radar series', () => {
         style: ['default', 'hover'],
         seriesIndex: 0,
         data: { label: 'han', color: '#aaaaaa', value: 4, category: 'D' },
+        name: 'han',
       },
       {
         type: 'circle',
@@ -134,6 +140,7 @@ describe('radar series', () => {
         style: ['default', 'hover'],
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 2, category: 'A' },
+        name: 'cho',
       },
       {
         type: 'circle',
@@ -144,6 +151,7 @@ describe('radar series', () => {
         style: ['default', 'hover'],
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 1, category: 'B' },
+        name: 'cho',
       },
       {
         type: 'circle',
@@ -154,6 +162,7 @@ describe('radar series', () => {
         style: ['default', 'hover'],
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 1, category: 'C' },
+        name: 'cho',
       },
       {
         type: 'circle',
@@ -164,6 +173,7 @@ describe('radar series', () => {
         style: ['default', 'hover'],
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 3, category: 'D' },
+        name: 'cho',
       },
     ],
   };
@@ -193,6 +203,7 @@ describe('radar series', () => {
         x: 100,
         y: 90,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'han',
       },
       {
         type: 'circle',
@@ -201,6 +212,7 @@ describe('radar series', () => {
         x: 120,
         y: 100,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'han',
       },
       {
         type: 'circle',
@@ -209,6 +221,7 @@ describe('radar series', () => {
         x: 100,
         y: 130,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'han',
       },
       {
         type: 'circle',
@@ -217,6 +230,7 @@ describe('radar series', () => {
         x: 60,
         y: 100,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'han',
       },
       {
         type: 'circle',
@@ -225,6 +239,7 @@ describe('radar series', () => {
         x: 100,
         y: 80,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'cho',
       },
       {
         type: 'circle',
@@ -233,6 +248,7 @@ describe('radar series', () => {
         x: 110,
         y: 100,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'cho',
       },
 
       {
@@ -242,6 +258,7 @@ describe('radar series', () => {
         x: 100,
         y: 110,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'cho',
       },
       {
         type: 'circle',
@@ -250,6 +267,7 @@ describe('radar series', () => {
         x: 70,
         y: 100,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'cho',
       },
     ]);
   });

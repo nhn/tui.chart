@@ -9,7 +9,7 @@ import {
   temperatureData2,
   datetimeCoordinateData,
 } from './data';
-import { boolean, number, withKnobs } from '@storybook/addon-knobs';
+import { boolean, number, radios, withKnobs } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Line',
@@ -69,6 +69,21 @@ export const basicWithShowDot = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: true },
     series: { showDot: true },
+  });
+
+  return el;
+};
+
+export const basicWithEventDetectType = () => {
+  const { el } = createChart(temperatureData, {
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+    series: {
+      eventDetectType: radios(
+        'eventType',
+        { near: 'near', nearest: 'nearest', grouped: 'grouped' },
+        'nearest'
+      ),
+    },
   });
 
   return el;
