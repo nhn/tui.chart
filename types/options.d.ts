@@ -58,6 +58,17 @@ export interface LineSeriesData {
   series: Pick<LineSeriesType, 'name' | 'data'>[];
 }
 
+export interface TreeMapSeriesType {
+  label: string;
+  value?: number;
+  colorValue?: number;
+  children: TreeMapSeriesType[];
+}
+
+export interface TreeMapSeriesData {
+  series: TreeMapSeriesType;
+}
+
 export interface ScatterSeriesType {
   name: string;
   data: CoordinateDataType[];
