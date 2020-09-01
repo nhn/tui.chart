@@ -1,7 +1,7 @@
 import Component from './component';
 import { CircleModel, CircleResponderModel, CircleSeriesModels } from '@t/components/series';
-import { Point, Rect } from '@t/options';
-import { getDistance } from '@src/helpers/calculator';
+import { Rect } from '@t/options';
+import { getNearestResponder } from '@src/helpers/responders';
 
 export default abstract class CircleSeries extends Component {
   models: CircleSeriesModels = { series: [], selectedSeries: [] };
@@ -20,27 +20,8 @@ export default abstract class CircleSeries extends Component {
     });
   }
 
-  getClosestResponder(responders: CircleResponderModel[], mousePosition: Point) {
-    let minDistance = Infinity;
-    let result: CircleResponderModel[] = [];
-    responders.forEach((responder) => {
-      const { x, y } = responder;
-      const responderPoint = { x: x + this.rect.x, y: y + this.rect.y };
-      const distance = getDistance(responderPoint, mousePosition);
-
-      if (minDistance > distance) {
-        minDistance = distance;
-        result = [responder];
-      } else if (minDistance === distance && result.length && result[0].radius > responder.radius) {
-        result = [responder];
-      }
-    });
-
-    return result;
-  }
-
   onMousemove({ responders, mousePosition }) {
-    const closestResponder = this.getClosestResponder(responders, mousePosition);
+    const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
 
     this.eventBus.emit('renderHoveredSeries', { models: closestResponder, name: this.name });
     this.activatedResponders = closestResponder;
@@ -51,7 +32,7 @@ export default abstract class CircleSeries extends Component {
 
   onClick({ responders, mousePosition }) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = this.getClosestResponder(responders, mousePosition);
+      this.drawModels.selectedSeries = getNearestResponder(responders, mousePosition, this.rect);
       this.eventBus.emit('needDraw');
     }
   }

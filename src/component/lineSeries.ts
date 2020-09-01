@@ -4,13 +4,15 @@ import {
   CircleResponderModel,
   PointModel,
   LineSeriesModels,
+  RectResponderModel,
 } from '@t/components/series';
 import {
   LineChartOptions,
   LineTypeSeriesOptions,
   CoordinateDataType,
   LineScatterChartOptions,
-  LineScatterChartSeriesOptions,
+  LineTypeEventDetectType,
+  Point,
 } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Scale } from '@t/store/store';
@@ -25,12 +27,22 @@ import {
 import { getRGBA } from '@src/helpers/color';
 import { deepCopyArray, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import {
+  getNearestResponder,
+  makeRectResponderModel,
+  makeTooltipCircleMap,
+} from '@src/helpers/responders';
 
 interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
   tickDistance: number;
   labelDistance?: number;
+}
+
+interface MouseEventType {
+  responders: CircleResponderModel[] | RectResponderModel[];
+  mousePosition: Point;
 }
 
 export const DEFAULT_LINE_WIDTH = 3;
@@ -42,11 +54,17 @@ export default class LineSeries extends Component {
 
   drawModels!: LineSeriesModels;
 
-  responders!: CircleResponderModel[];
+  responders!: CircleResponderModel[] | RectResponderModel[];
 
   activatedResponders: this['responders'] = [];
 
+  eventType: LineTypeEventDetectType = 'nearest';
+
+  tooltipCircleMap!: Record<number, CircleResponderModel[]>;
+
   startIndex!: number;
+
+  isComboChart = false;
 
   initialize() {
     this.type = 'series';
@@ -55,6 +73,16 @@ export default class LineSeries extends Component {
 
   initUpdate(delta: number) {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
+  }
+
+  private setEventType(options?: LineChartOptions) {
+    if (options?.series?.eventDetectType) {
+      this.eventType = options.series.eventDetectType;
+    }
+
+    if (this.isComboChart) {
+      this.eventType = 'grouped';
+    }
   }
 
   render(chartState: ChartState<LineChartOptions | LineScatterChartOptions>) {
@@ -75,7 +103,10 @@ export default class LineSeries extends Component {
     const options = { ...chartState.options };
     if (options?.series && 'line' in options.series) {
       options.series = { ...options.series, ...options.series.line };
+      this.isComboChart = true;
     }
+
+    this.setEventType(options);
 
     const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
     const lineSeriesData = series.line.data;
@@ -98,25 +129,10 @@ export default class LineSeries extends Component {
       renderLineOptions,
       categories
     );
-
     const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
-
-    const tooltipDataArr = lineSeriesData.flatMap(({ rawData, name, color }) => {
-      const tooltipData: TooltipData[] = [];
-
-      rawData.forEach((datum: DatumType, dataIdx) => {
-        tooltipData.push({
-          label: name,
-          color,
-          value: getCoordinateYValue(datum),
-          category: categories[getCoordinateDataIndex(datum, categories, dataIdx, this.startIndex)],
-        });
-      });
-
-      return tooltipData;
-    });
-
+    const tooltipDataArr = this.makeTooltipData(lineSeriesData, categories);
     const dotSeriesModel = this.renderDotSeriesModel(seriesCircleModel, renderLineOptions);
+    this.tooltipCircleMap = makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
 
     this.models = {
       rect: [this.renderClipRectAreaModel()],
@@ -138,10 +154,28 @@ export default class LineSeries extends Component {
       this.store.dispatch('appendDataLabels', this.getDataLabels(lineSeriesModel));
     }
 
-    this.responders = seriesCircleModel.map((m, index) => ({
+    this.responders =
+      this.eventType === 'near'
+        ? this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr)
+        : makeRectResponderModel(this.rect, axes.xAxis);
+  }
+
+  makeNearTypeResponderModel(seriesCircleModel: CircleModel[], tooltipDataArr: TooltipData[]) {
+    return seriesCircleModel.map((m, index) => ({
       ...m,
       data: tooltipDataArr[index],
     }));
+  }
+
+  makeTooltipData(lineSeriesData: LineSeriesType[], categories: string[]) {
+    return lineSeriesData.flatMap(({ rawData, name, color }) => {
+      return rawData.map((datum: DatumType, dataIdx) => ({
+        label: name,
+        color,
+        value: getCoordinateYValue(datum),
+        category: categories[getCoordinateDataIndex(datum, categories, dataIdx, this.startIndex)],
+      }));
+    });
   }
 
   renderDotSeriesModel(
@@ -222,7 +256,7 @@ export default class LineSeries extends Component {
 
   renderCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
     return lineSeriesModel.flatMap(({ points, color, name }, seriesIndex) =>
-      points.map(({ x, y }) => ({
+      points.map(({ x, y }, index) => ({
         type: 'circle',
         x,
         y,
@@ -231,17 +265,54 @@ export default class LineSeries extends Component {
         style: ['default', 'hover'],
         seriesIndex,
         name,
+        index,
       }))
     );
   }
 
-  onMousemove({ responders }: { responders: CircleResponderModel[] }) {
-    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
+  getCircleModelsFromRectResponders(responders: RectResponderModel[], mousePositions?: Point) {
+    if (!responders.length) {
+      return [];
+    }
+    const index = responders[0].index! + this.startIndex;
+    const models = this.tooltipCircleMap[index];
 
+    return this.eventType === 'grouped'
+      ? models
+      : getNearestResponder(models, mousePositions!, this.rect);
+  }
+
+  onMousemoveNearType(responders: CircleResponderModel[]) {
+    this.eventBus.emit('renderHoveredSeries', {
+      models: responders,
+      name: this.name,
+      eventType: this.eventType,
+    });
     this.activatedResponders = responders;
+  }
+
+  onMousemoveNearestType(responders: RectResponderModel[], mousePositions: Point) {
+    const circleModels = this.getCircleModelsFromRectResponders(responders, mousePositions);
+
+    this.onMousemoveNearType(circleModels);
+  }
+
+  onMousemoveGroupedType(responders: RectResponderModel[]) {
+    const circleModels = this.getCircleModelsFromRectResponders(responders);
+
+    this.onMousemoveNearType(circleModels);
+  }
+
+  onMousemove({ responders, mousePosition }: MouseEventType) {
+    if (this.eventType === 'nearest') {
+      this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
+    } else if (this.eventType === 'near') {
+      this.onMousemoveNearType(responders as CircleResponderModel[]);
+    } else {
+      this.onMousemoveGroupedType(responders as RectResponderModel[]);
+    }
 
     this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
-
     this.eventBus.emit('needDraw');
   }
 
@@ -256,5 +327,16 @@ export default class LineSeries extends Component {
       this.drawModels.selectedSeries = responders;
       this.eventBus.emit('needDraw');
     }
+  }
+
+  onMouseoutComponent() {
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+      eventType: this.eventType,
+    });
+
+    this.eventBus.emit('needDraw');
   }
 }
