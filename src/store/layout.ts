@@ -14,6 +14,7 @@ import { isUndefined, pick } from '@src/helpers/utils';
 import { isCenterYAxis } from './axes';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 import { getTextWidth } from '@src/helpers/calculator';
+import { TICK_SIZE } from '@src/brushes/axis';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
@@ -49,6 +50,8 @@ type XAxisRectParam = AxisParam & {
   yAxis: Rect;
 };
 
+type AxisOptions = BaseAxisOptions | BarTypeYAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions;
+
 function adjustRectSize(size: Partial<Size> | null, width: number, height: number) {
   return {
     height: size?.height ?? height,
@@ -57,7 +60,7 @@ function adjustRectSize(size: Partial<Size> | null, width: number, height: numbe
 }
 
 function getDefaultXAxisHeight(size: OptionAxisSize) {
-  return size.xAxis?.height && !size.yAxis ? size.xAxis?.height : X_AXIS_HEIGHT;
+  return size.xAxis?.height && !size.yAxis ? size.xAxis.height : X_AXIS_HEIGHT;
 }
 
 function getYAxisRect({
@@ -72,15 +75,15 @@ function getYAxisRect({
 }: YAxisRectParam) {
   const { height, width } = chartSize;
   const { align } = legend;
-  const DEFAULT_X_HEIGHT = getDefaultXAxisHeight(size);
+  const xAxisHeight = getDefaultXAxisHeight(size);
 
   let x = yAxisTitle.x;
   let y = yAxisTitle.y + yAxisTitle.height;
-  let yAxisHeight = height - y - DEFAULT_X_HEIGHT - X_AXIS_TITLE_HEIGHT;
+  let yAxisHeight = height - y - xAxisHeight - X_AXIS_TITLE_HEIGHT;
   let yAxisWidth = size?.yAxis?.width ?? maxLabelWidth;
 
   if (hasCenterYAxis) {
-    yAxisWidth = maxLabelWidth + 30;
+    yAxisWidth = maxLabelWidth + (TICK_SIZE + padding.X) * 2;
     x = (width - legend.width - yAxisWidth + padding.X * 2) / 2;
   } else if (!hasAxis) {
     yAxisWidth = 0;
@@ -252,13 +255,11 @@ export function isExportMenuVisible(options: Options) {
 function getMaxLabelWidth(labels: string[] = []) {
   const labelWidths = labels.map((label) => getTextWidth(label));
 
-  return labelWidths?.length ? Math.max(...labelWidths) + padding.X : Y_AXIS_MIN_WIDTH;
+  return labelWidths.length ? Math.max(...labelWidths) + padding.X : Y_AXIS_MIN_WIDTH;
 }
 
-function getAxisSize(
-  axis?: BaseAxisOptions | BarTypeYAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions
-): Partial<Size> | null {
-  if (!axis || (!axis?.width && !axis?.height)) {
+function getAxisSize(axis?: AxisOptions): Partial<Size> | null {
+  if (!axis || (isUndefined(axis.width) && isUndefined(axis.height))) {
     return null;
   }
 

@@ -7,6 +7,9 @@ import { range, isInteger } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
+import { TICK_SIZE } from '@src/brushes/axis';
+
+export const LABEL_ANCHOR_POINT = crispPixel(TICK_SIZE * 2 + getTextHeight(DEFAULT_LABEL_TEXT) / 2);
 
 function getDecimalLength(value: string | number) {
   const valueArr = String(value).split('.');
