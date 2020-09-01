@@ -270,12 +270,40 @@ function getMaxLabelWidth(labels: string[] = []) {
   return labelWidths.length ? Math.max(...labelWidths) + padding.X : Y_AXIS_MIN_WIDTH;
 }
 
-function getOptionSize(option?: AxisOptions | BasePlotOptions): OptionalSize {
+function pickOptionSize(option?: AxisOptions | BasePlotOptions): OptionalSize {
   if (!option || (isUndefined(option.width) && isUndefined(option.height))) {
     return null;
   }
 
   return pick(option, 'width', 'height');
+}
+
+function getOptionSize(options: Options) {
+  const xAxis = pickOptionSize(options.xAxis);
+  const yAxis = pickOptionSize(options.yAxis);
+  const plot = pickOptionSize(options.plot);
+
+  /*
+    If both the width of the x-axis and the width of the plot are entered,
+    set the maximum value.
+  */
+  if (xAxis?.width && plot?.width) {
+    xAxis.width = plot.width = Math.max(xAxis.width, plot.width);
+  }
+
+  /*
+    If both the height of the y-axis and the height of the plot are entered,
+    set the maximum value.
+  */
+  if (yAxis?.height && plot?.height) {
+    yAxis.height = plot.height = Math.max(yAxis.height, plot.height);
+  }
+
+  return {
+    xAxis,
+    yAxis,
+    plot,
+  };
 }
 
 const layout: StoreModule = {
@@ -300,11 +328,7 @@ const layout: StoreModule = {
       };
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
       const hasAxis = !(series.pie || series.radar);
-      const optionSize = {
-        xAxis: getOptionSize(options.xAxis),
-        yAxis: getOptionSize(options.yAxis),
-        plot: getOptionSize(options.plot),
-      };
+      const optionSize = getOptionSize(options);
 
       // Don't change the order!
       // exportMenu -> title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
