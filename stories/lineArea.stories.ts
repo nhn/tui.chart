@@ -64,7 +64,11 @@ export const basicWithOptions = () => {
       line: {
         spline: true,
       },
-      area: {},
+      area: {
+        showDot: true,
+      },
+      zoomable: true,
+      selectable: true,
     },
   });
 

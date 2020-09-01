@@ -21,7 +21,7 @@ import {
   RangeDataType,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
-import { ChartState, StackSeriesData, ValueEdge } from '@t/store/store';
+import { ChartState, Series, StackSeriesData, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
@@ -118,12 +118,12 @@ export default class AreaSeries extends Component {
     return type === 'percent' ? (stackedValue * 100) / sumValue : stackedValue;
   }
 
-  private setEventType(options?: LineChartOptions) {
+  private setEventType(series: Series, options?: LineChartOptions) {
     if (options?.series?.eventDetectType) {
       this.eventType = options.series.eventDetectType;
     }
 
-    if (this.isComboChart || this.isStackChart) {
+    if (series.line || this.isStackChart) {
       this.eventType = 'grouped';
     }
   }
@@ -177,7 +177,7 @@ export default class AreaSeries extends Component {
       this.isRangeChart = true;
     }
 
-    this.setEventType(options);
+    this.setEventType(series, options);
 
     const renderOptions: RenderOptions = {
       pointOnColumn,

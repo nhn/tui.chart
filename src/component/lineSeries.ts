@@ -16,7 +16,7 @@ import {
   LineAreaChartOptions,
 } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, Scale } from '@t/store/store';
+import { ChartState, Scale, Series } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
@@ -76,13 +76,17 @@ export default class LineSeries extends Component {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
-  private setEventType(options?: LineChartOptions) {
+  private setEventType(series: Series, options?: LineChartOptions) {
     if (options?.series?.eventDetectType) {
       this.eventType = options.series.eventDetectType;
     }
 
-    if (this.isComboChart) {
+    if (series.area) {
       this.eventType = 'grouped';
+    }
+
+    if (series.scatter) {
+      this.eventType = 'near';
     }
   }
 
@@ -106,10 +110,9 @@ export default class LineSeries extends Component {
     const options = { ...chartState.options };
     if (options?.series && 'line' in options.series) {
       options.series = { ...options.series, ...options.series.line };
-      this.isComboChart = true;
     }
 
-    this.setEventType(options);
+    this.setEventType(series, options);
 
     const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
     const lineSeriesData = series.line.data;
@@ -325,9 +328,16 @@ export default class LineSeries extends Component {
     );
   }
 
-  onClick({ responders }) {
+  onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = responders;
+      if (this.eventType === 'near') {
+        this.drawModels.selectedSeries = responders as CircleResponderModel[];
+      } else {
+        this.drawModels.selectedSeries = this.getCircleModelsFromRectResponders(
+          responders as RectResponderModel[],
+          mousePosition
+        );
+      }
       this.eventBus.emit('needDraw');
     }
   }
