@@ -8,6 +8,7 @@ import {
   BaseAxisOptions,
   BarTypeYAxisOptions,
   LineTypeXAxisOptions,
+  BasePlotOptions,
 } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
 import { isUndefined, pick } from '@src/helpers/utils';
@@ -27,9 +28,12 @@ export function isVerticalAlign(align?: Align) {
   return align === 'top' || align === 'bottom';
 }
 
-type OptionAxisSize = {
-  yAxis: Partial<Size> | null;
-  xAxis: Partial<Size> | null;
+type OptionalSize = Partial<Size> | null;
+
+type OptionSize = {
+  yAxis: OptionalSize;
+  xAxis: OptionalSize;
+  plot: OptionalSize;
 };
 
 type AxisParam = {
@@ -38,7 +42,7 @@ type AxisParam = {
   circleLegend: CircleLegend;
   hasCenterYAxis: boolean;
   hasAxis: boolean;
-  size: OptionAxisSize;
+  size: OptionSize;
 };
 
 type YAxisRectParam = AxisParam & {
@@ -52,17 +56,18 @@ type XAxisRectParam = AxisParam & {
 
 type AxisOptions = BaseAxisOptions | BarTypeYAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions;
 
-function adjustRectSize(size: Partial<Size> | null, width: number, height: number) {
+function getValidRectSize(size: OptionalSize, width: number, height: number) {
   return {
     height: size?.height ?? height,
     width: size?.width ?? width,
   };
 }
 
-function getDefaultXAxisHeight(size: OptionAxisSize) {
+function getDefaultXAxisHeight(size: OptionSize) {
   return size.xAxis?.height && !size.yAxis ? size.xAxis.height : X_AXIS_HEIGHT;
 }
 
+// eslint-disable-next-line complexity
 function getYAxisRect({
   chartSize,
   legend,
@@ -108,10 +113,14 @@ function getYAxisRect({
     x = Math.max(circleLegend.width + padding.X, x);
   }
 
+  if (!size?.yAxis?.height && size?.plot?.height) {
+    yAxisHeight = size.plot.height;
+  }
+
   return {
     x,
     y,
-    ...adjustRectSize(size?.yAxis, yAxisWidth, yAxisHeight),
+    ...getValidRectSize(size?.yAxis, yAxisWidth, yAxisHeight),
   };
 }
 
@@ -147,10 +156,14 @@ function getXAxisRect({
     xAxisWidth = width - legendWidth - padding.X * 2;
   }
 
+  if (!size?.xAxis?.width && size?.plot?.width) {
+    xAxisWidth = size.plot.height;
+  }
+
   return {
     x,
     y: yAxis.y + yAxis.height,
-    ...adjustRectSize(size?.xAxis, xAxisWidth, xAxisHeight),
+    ...getValidRectSize(size?.xAxis, xAxisWidth, xAxisHeight),
   };
 }
 
@@ -181,12 +194,11 @@ function getCircleLegendRect(xAxis: Rect, yAxis: Rect, align: Align, width: numb
   };
 }
 
-function getPlotRect(xAxis: Rect, yAxis: Rect) {
+function getPlotRect(xAxis: Rect, yAxis: Rect, size: OptionalSize) {
   return {
-    width: xAxis.width,
-    height: yAxis.height,
     x: xAxis.x,
     y: yAxis.y,
+    ...getValidRectSize(size, xAxis.width, yAxis.height),
   };
 }
 
@@ -258,12 +270,12 @@ function getMaxLabelWidth(labels: string[] = []) {
   return labelWidths.length ? Math.max(...labelWidths) + padding.X : Y_AXIS_MIN_WIDTH;
 }
 
-function getAxisSize(axis?: AxisOptions): Partial<Size> | null {
-  if (!axis || (isUndefined(axis.width) && isUndefined(axis.height))) {
+function getOptionSize(option?: AxisOptions | BasePlotOptions): OptionalSize {
+  if (!option || (isUndefined(option.width) && isUndefined(option.height))) {
     return null;
   }
 
-  return pick(axis, 'width', 'height');
+  return pick(option, 'width', 'height');
 }
 
 const layout: StoreModule = {
@@ -288,9 +300,10 @@ const layout: StoreModule = {
       };
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
       const hasAxis = !(series.pie || series.radar);
-      const optionsAxisSize = {
-        xAxis: getAxisSize(options.xAxis),
-        yAxis: getAxisSize(options.yAxis),
+      const optionSize = {
+        xAxis: getOptionSize(options.xAxis),
+        yAxis: getOptionSize(options.yAxis),
+        plot: getOptionSize(options.plot),
       };
 
       // Don't change the order!
@@ -312,7 +325,7 @@ const layout: StoreModule = {
         hasCenterYAxis,
         hasAxis,
         maxLabelWidth: getMaxLabelWidth(axes?.yAxis.labels),
-        size: optionsAxisSize,
+        size: optionSize,
       });
       const xAxis = getXAxisRect({
         chartSize,
@@ -321,12 +334,12 @@ const layout: StoreModule = {
         circleLegend: circleLegendState,
         hasCenterYAxis,
         hasAxis,
-        size: optionsAxisSize,
+        size: optionSize,
       });
       const xAxisTitle = getXAxisTitleRect(!!options.xAxis?.title, xAxis);
       const legend = getLegendRect(chartSize, xAxis, yAxis, title, legendState);
       const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
-      const plot = getPlotRect(xAxis, yAxis);
+      const plot = getPlotRect(xAxis, yAxis, optionSize.plot);
 
       extend(state.layout, {
         title,
@@ -345,31 +358,6 @@ const layout: StoreModule = {
     updateLayoutObserve() {
       this.dispatch('setLayout');
     },
-    // setLayout({chart}) {
-    //   const yAxis = {
-    //     width: 33,
-    //     height: chart.height,
-    //     x: 0,
-    //     y: 0
-    //   };
-    //   const xAxis = {
-    //     width: chart.width,
-    //     height: 34,
-    //     x: yAxis.x + yAxis.width,
-    //     y: yAxis.y + yAxis.height
-    //   };
-    //   const plot = {
-    //     width: chart.width - yAxis.width,
-    //     height: chart.height - xAxis.height,
-    //     x: yAxis.x + yAxis.width,
-    //     y: 0
-    //   };
-    //   this.dispatch('setLayout', {
-    //     plot,
-    //     xAxis,
-    //     yAxis
-    //   });
-    // }
   },
 };
 

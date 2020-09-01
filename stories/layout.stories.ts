@@ -1,7 +1,8 @@
 import { deepMergedCopy } from '@src/helpers/utils';
-import { BarChartOptions } from '@t/options';
+import { BarChartOptions, PieChartOptions } from '@t/options';
 import BarChart from '@src/charts/barChart';
-import { budgetData, genderAgeData } from './data';
+import { budgetData, genderAgeData, browserUsageData } from './data';
+import PieChart from '@src/charts/pieChart';
 
 export default {
   title: 'chart|Layout',
@@ -15,7 +16,7 @@ const defaultOptions = {
   },
 };
 
-function createChart(data, customOptions?: BarChartOptions) {
+function createChart(type, data, customOptions?: BarChartOptions | PieChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
@@ -23,13 +24,13 @@ function createChart(data, customOptions?: BarChartOptions) {
   el.style.width = `${options.chart.width}px`;
   el.style.height = `${options.chart.height}px`;
 
-  const chart = new BarChart({ el, data, options });
+  const param = { el, data, options };
 
-  return { el, chart };
+  return { el, chart: type === 'pie' ? new PieChart(param) : new BarChart(param) };
 }
 
 export const yAxis = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart('bar', budgetData, {
     yAxis: {
       width: 100,
       height: 350,
@@ -44,7 +45,7 @@ export const yAxis = () => {
 };
 
 export const xAxis = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart('bar', budgetData, {
     xAxis: {
       width: 700,
       height: 100,
@@ -59,7 +60,7 @@ export const xAxis = () => {
 };
 
 export const XAndYAxis = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart('bar', budgetData, {
     yAxis: {
       width: 100,
       height: 300,
@@ -76,7 +77,7 @@ export const XAndYAxis = () => {
 };
 
 export const centerYAxis = () => {
-  const { el } = createChart(genderAgeData, {
+  const { el } = createChart('bar', genderAgeData, {
     yAxis: {
       title: 'Age Group',
       align: 'center',
@@ -93,6 +94,22 @@ export const centerYAxis = () => {
     },
     series: {
       diverging: true,
+    },
+  });
+
+  return el;
+};
+
+export const plot = () => {
+  const { el } = createChart('pie', browserUsageData, {
+    chart: {
+      width: 660,
+      height: 560,
+      title: 'Usage share of web browsers',
+    },
+    plot: {
+      width: 400,
+      height: 400,
     },
   });
 

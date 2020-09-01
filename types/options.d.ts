@@ -148,10 +148,12 @@ interface BarTypeYAxisOptions extends BaseAxisOptions {
 export type PlotLineValue = string | number;
 
 type BasePlotOptions = {
-  showLine?: boolean;
+  width?: number;
+  height?: number;
 };
 
 export type AreaLinePlotOptions = BasePlotOptions & {
+  showLine?: boolean;
   lines?: { value: PlotLineValue; color: string }[];
   bands?: {
     range: [PlotLineValue, PlotLineValue];
@@ -187,6 +189,7 @@ interface BaseOptions {
   legend?: BaseLegendOptions;
   exportMenu?: ExportMenuOptions;
   tooltip?: BaseTooltipOptions;
+  plot?: BasePlotOptions;
 }
 
 interface BaseLegendOptions {
@@ -240,14 +243,14 @@ export interface LineScatterChartOptions extends BaseOptions {
 export interface ScatterChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
-  plot?: BasePlotOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 export interface BubbleChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
   circleLegend?: CircleLegendOptions;
-  plot?: BasePlotOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 type ConnectorLineType = 'dashed' | 'solid';
@@ -276,12 +279,12 @@ interface BoxSeriesOptions extends BaseSeriesOptions {
 export interface BarChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
   yAxis?: BarTypeYAxisOptions;
-  plot?: BasePlotOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
-  plot?: BasePlotOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 export type BoxPlotSeriesType = {
@@ -332,9 +335,7 @@ export type RadarPlotType = 'spiderweb' | 'circle';
 
 export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
-  plot?: {
-    type: RadarPlotType;
-  };
+  plot?: BasePlotOptions & { type: RadarPlotType };
 }
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
