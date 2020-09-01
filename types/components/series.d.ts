@@ -19,7 +19,7 @@ export interface CircleStyle {
 export type ResponderModel =
   | CircleResponderModel
   | RectResponderModel
-  | LineResponderModel
+  | RectModel
   | BoxPlotResponderModel
   | SectorResponderModel;
 
