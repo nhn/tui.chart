@@ -10,10 +10,10 @@ const defaultOptions = {
   chart: {
     width,
     height,
-    title: '24-hr Average Temperature',
+    title: 'Concurrent User',
   },
-  xAxis: { title: 'Month' },
-  yAxis: { title: 'Amount' },
+  xAxis: { title: 'hours' },
+  yAxis: { title: 'users' },
   series: {},
   tooltip: {},
   plot: {},
@@ -80,8 +80,8 @@ export const withoutSeriesData = () => {
   };
 
   const { el } = createChart(data, {
-    yAxis: { title: 'Temperature (Celsius)', scale: { min: 0, max: 600 } },
-    chart: { title: 'Concurrent user' },
+    yAxis: { title: 'Concurrent Users', scale: { min: 0, max: 600 } },
+    chart: { title: 'Traffic' },
     xAxis: { title: 'Month', type: 'datetime', date: { format: 'MMM' } },
     plot: {
       lines: [
@@ -124,9 +124,6 @@ export const withoutSeriesData = () => {
 
 export const coordinate = () => {
   const { el } = createChart(coordinateData, {
-    chart: { title: 'Concurrent user' },
-    xAxis: { title: 'minute' },
-    yAxis: { title: 'users' },
     plot: {
       bands: [
         {
@@ -149,10 +146,7 @@ export const coordinate = () => {
 
 export const dateTimeCoordinate = () => {
   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
-    chart: { title: 'Concurrent user' },
     xAxis: { title: 'minute', date: { format: 'hh:mm:ss' } },
-    yAxis: { title: 'users' },
-    series: { zoomable: true },
     plot: {
       lines: [
         {
@@ -183,8 +177,6 @@ export const dateTimeCoordinate = () => {
 
 export const mergeOverlappingRanges = () => {
   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
-    yAxis: { title: 'users' },
-    chart: { title: 'Concurrent user' },
     xAxis: { title: 'minute', date: { format: 'hh:mm:ss' } },
     plot: {
       bands: [

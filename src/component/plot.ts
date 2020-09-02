@@ -5,12 +5,8 @@ import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
 import { PlotModels } from '@t/components/plot';
 import { RectModel } from '@t/components/series';
-import { PlotLine, PlotBand, CoordinateDataType, PlotRangeType, PlotXPointType } from '@t/options';
-import {
-  getCoordinateXValue,
-  getCoordinateDataIndex,
-  isValueAfterLastCategory,
-} from '@src/helpers/coordinate';
+import { PlotLine, PlotBand, PlotRangeType, PlotXPointType } from '@t/options';
+import { isValueAfterLastCategory } from '@src/helpers/coordinate';
 import { isString, isNumber } from '@src/helpers/utils';
 
 type XPositionParam = {
@@ -42,27 +38,21 @@ function getXPosition({
   categories,
   startIndex = 0,
 }: XPositionParam) {
-  const { pointOnColumn, tickDistance, labelDistance, tickCount } = axisData;
+  const { pointOnColumn, tickDistance, labelDistance } = axisData;
 
   let x;
   if (xAxisLimit) {
-    const { min, max } = xAxisLimit;
-    console.log('바뀐게들어왔니?', min, max, offsetSize / (tickCount - 1));
     const xValue = isString(value) ? Number(new Date(value)) : Number(value);
     const xValueRatio = getValueRatio(xValue, xAxisLimit);
 
     x =
       xValueRatio * (offsetSize - (pointOnColumn ? labelDistance! : 0)) +
       (pointOnColumn ? labelDistance! / 2 : 0);
-
-    // console.log(xValue, xAxisLimit, xValueRatio, pointOnColumn, xValueRatio * offsetSize, x);
   } else {
     const dataIndex = getDataIndex(value, categories, startIndex);
 
     x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
   }
-
-  console.log(makeTickPixelPositions(offsetSize, tickCount), x > 0 ? Math.min(offsetSize, x) : 0);
 
   return x > 0 ? Math.min(offsetSize, x) : 0;
 }
