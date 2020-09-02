@@ -150,6 +150,10 @@ export default class LineSeries extends Component {
       };
     }
 
+    if (!lineSeriesData.length) {
+      return;
+    }
+
     if (dataLabels.visible) {
       this.store.dispatch('appendDataLabels', this.getDataLabels(lineSeriesModel));
     }

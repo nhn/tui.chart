@@ -288,30 +288,3 @@ export const lineWidth = () => {
 
   return el;
 };
-
-export const plotOptions = () => {
-  const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
-    xAxis: {
-      title: 'minute',
-      pointOnColumn: false,
-      date: { format: 'hh:mm:ss' },
-    },
-    yAxis: { title: 'users' },
-    plot: {
-      bands: [
-        {
-          range: ['08/22/2020 10:40:00', '08/22/2020 11:00:00'],
-          color: 'rgba(33, 33, 33, 0.2)',
-        },
-      ],
-      lines: [
-        {
-          value: '08/22/2020 10:10:00',
-          color: '#fa2828',
-        },
-      ],
-    },
-  });
-
-  return el;
-};

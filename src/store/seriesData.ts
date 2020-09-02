@@ -98,7 +98,7 @@ const seriesData: StoreModule = {
         });
 
         const seriesCount = originSeriesData.length;
-        const seriesGroupCount = originSeriesData[0].data.length;
+        const seriesGroupCount = originSeriesData[0]?.data.length;
         const data = originSeriesData.filter(({ name }) => !disabledSeries.includes(name));
 
         newSeriesData[seriesName] = {

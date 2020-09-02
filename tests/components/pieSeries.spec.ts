@@ -52,7 +52,7 @@ describe('basic', () => {
     });
   });
 
-  it('should be rendered pie series', () => {
+  it('should render pie series', () => {
     pieSeries.render(chartState);
 
     const result = {
@@ -223,7 +223,7 @@ describe('donut', () => {
     );
   });
 
-  it('should be rendered donut-shaped pie series', () => {
+  it('should render donut-shaped pie series', () => {
     const result = {
       series: [
         {
@@ -340,7 +340,7 @@ describe('donut', () => {
       expect(pieSeries.totalAngle).toBe(180);
     });
 
-    it('should be rendered semi circle entering start angle and end angle', () => {
+    it('should render semi circle entering start angle and end angle', () => {
       const result = [
         {
           clockwise: true,

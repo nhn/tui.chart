@@ -1,21 +1,75 @@
 import Component from './component';
-import { ChartState, Options, Axes, AxisData } from '@t/store/store';
-import { crispPixel, makeTickPixelPositions } from '@src/helpers/calculator';
+import { ChartState, Options, Axes, AxisData, ValueEdge } from '@t/store/store';
+import { crispPixel, makeTickPixelPositions, getValueRatio } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
 import { PlotModels } from '@t/components/plot';
 import { RectModel } from '@t/components/series';
-import { PlotLine, PlotBand } from '@t/options';
+import { PlotLine, PlotBand, CoordinateDataType, PlotRangeType, PlotXPointType } from '@t/options';
+import {
+  getCoordinateXValue,
+  getCoordinateDataIndex,
+  isValueAfterLastCategory,
+} from '@src/helpers/coordinate';
+import { isString, isNumber } from '@src/helpers/utils';
 
-function getLabelPosition(axisData: AxisData, size: number, value: number | string) {
-  const { labels, tickCount } = axisData;
-  const positions = makeTickPixelPositions(size, tickCount);
-  const index = labels.findIndex((label) => label === String(value));
+type XPositionParam = {
+  axisData: AxisData;
+  offsetSize: number;
+  value: number | string;
+  xAxisLimit: ValueEdge;
+  categories: string[];
+  startIndex: number;
+};
 
-  return positions[index];
+function getDataIndex(value: PlotXPointType, categories: string[], startIndex = 0) {
+  let index = categories.findIndex((category) => category === String(value));
+
+  if (~~index && isNumber(value)) {
+    index = index - startIndex;
+  } else if (index === -1 && isValueAfterLastCategory(value, categories)) {
+    index = categories.length;
+  }
+
+  return index;
+}
+
+function getXPosition({
+  axisData,
+  offsetSize,
+  value,
+  xAxisLimit,
+  categories,
+  startIndex = 0,
+}: XPositionParam) {
+  const { pointOnColumn, tickDistance, labelDistance, tickCount } = axisData;
+
+  let x;
+  if (xAxisLimit) {
+    const { min, max } = xAxisLimit;
+    console.log('바뀐게들어왔니?', min, max, offsetSize / (tickCount - 1));
+    const xValue = isString(value) ? Number(new Date(value)) : Number(value);
+    const xValueRatio = getValueRatio(xValue, xAxisLimit);
+
+    x =
+      xValueRatio * (offsetSize - (pointOnColumn ? labelDistance! : 0)) +
+      (pointOnColumn ? labelDistance! / 2 : 0);
+
+    // console.log(xValue, xAxisLimit, xValueRatio, pointOnColumn, xValueRatio * offsetSize, x);
+  } else {
+    const dataIndex = getDataIndex(value, categories, startIndex);
+
+    x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
+  }
+
+  console.log(makeTickPixelPositions(offsetSize, tickCount), x > 0 ? Math.min(offsetSize, x) : 0);
+
+  return x > 0 ? Math.min(offsetSize, x) : 0;
 }
 export default class Plot extends Component {
   models: PlotModels = { plot: [], line: [], band: [] };
+
+  startIndex = 0;
 
   initialize() {
     this.type = 'plot';
@@ -29,19 +83,46 @@ export default class Plot extends Component {
     };
   }
 
-  renderLines(axes: Axes, lines: PlotLine[] = []): LineModel[] {
+  renderLines(
+    axes: Axes,
+    xAxisLimit: ValueEdge,
+    categories: string[],
+    lines: PlotLine[] = []
+  ): LineModel[] {
     return lines.map(({ value, color, vertical }) => {
       const { axisData, offsetSize } = this.getAxisAndSize(vertical!, axes);
-      const position = getLabelPosition(axisData, offsetSize, value);
+      const position = getXPosition({
+        axisData,
+        offsetSize,
+        value,
+        xAxisLimit,
+        categories,
+        startIndex: this.startIndex,
+      });
 
       return this.makeLineModel(vertical!, vertical ? position : offsetSize - position, color);
     });
   }
 
-  renderBands(axes: Axes, bands: PlotBand[] = []): RectModel[] {
-    return bands.map(({ range, color }) => {
-      const { axisData, offsetSize, anchorSize } = this.getAxisAndSize(true, axes);
-      const [start, end] = range.map((value) => getLabelPosition(axisData, offsetSize, value));
+  renderBands(
+    axes: Axes,
+    xAxisLimit: ValueEdge,
+    categories: string[],
+    bands: PlotBand[] = []
+  ): RectModel[] {
+    const { axisData, offsetSize, anchorSize } = this.getAxisAndSize(true, axes);
+
+    return bands.map(({ range, color }: PlotBand) => {
+      const [start, end] = (range as PlotRangeType).map((value) =>
+        getXPosition({
+          axisData,
+          offsetSize,
+          value,
+          xAxisLimit,
+          categories,
+          startIndex: this.startIndex,
+        })
+      );
 
       return {
         type: 'rect',
@@ -60,15 +141,15 @@ export default class Plot extends Component {
     size?: number,
     startPosistion?: number
   ): LineModel[] {
-    return relativePositions.map((position) => {
-      return this.makeLineModel(
+    return relativePositions.map((position) =>
+      this.makeLineModel(
         vertical,
         position,
         'rgba(0, 0, 0, 0.05)',
         size ?? this.rect.width,
         startPosistion ?? 0
-      );
-    });
+      )
+    );
   }
 
   renderPlotsForCenterYAxis(axes: Axes): LineModel[] {
@@ -124,17 +205,23 @@ export default class Plot extends Component {
   }
 
   render(state: ChartState<Options>) {
-    const { layout, axes, plot } = state;
+    const { layout, axes, plot, scale, zoomRange, rawCategories = [] } = state;
     this.rect = layout.plot;
+    this.startIndex = zoomRange ? zoomRange[0] : 0;
 
-    if (state.plot) {
-      const { lines, bands } = plot;
-
-      this.models.line = this.renderLines(axes, lines);
-      this.models.band = this.renderBands(axes, bands);
+    if (!plot) {
+      return;
     }
 
-    this.models.plot = this.renderPlots(axes);
+    const { lines, bands, showLine } = plot;
+    const xAxisLimit = scale?.xAxis?.limit;
+
+    this.models.line = this.renderLines(axes, xAxisLimit, rawCategories, lines);
+    this.models.band = this.renderBands(axes, xAxisLimit, rawCategories, bands);
+
+    if (showLine) {
+      this.models.plot = this.renderPlots(axes);
+    }
   }
 
   makeLineModel(

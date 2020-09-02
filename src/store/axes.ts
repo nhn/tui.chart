@@ -89,7 +89,7 @@ export function getLabelAxisData(stateProp: ValueStateProp) {
 
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
-  const labelDistance = axisSize / labels.length - (pointOnColumn ? 0 : 1);
+  const labelDistance = axisSize / (labels.length - (pointOnColumn ? 0 : 1));
 
   return {
     labels,

@@ -153,26 +153,29 @@ type BasePlotOptions = {
   height?: number;
 };
 
-export type PlotRange = [number | string, number | string];
+export type PlotXPointType = number | string;
+type PlotRange<T> = [T, T];
+
+export type PlotRangeType = PlotRange<PlotXPointType>;
 
 export type PlotLine = {
-  value: number | string;
+  value: PlotXPointType;
   color: string;
+  opacity?: number;
   vertical?: boolean;
 };
 
 export type PlotBand = {
-  range: PlotRange;
+  range: PlotRangeType | PlotRangeType[];
   color: string;
+  opacity?: number;
+  mergeOverlappingRanges?: boolean;
 };
 
 export type AreaLinePlotOptions = BasePlotOptions & {
   showLine?: boolean;
-  lines?: { value: PlotLineValue; color: string }[];
-  bands?: {
-    range: [PlotLineValue, PlotLineValue];
-    color: string;
-  }[];
+  lines?: PlotLine[];
+  bands?: PlotBand[];
 };
 
 interface ExportMenuOptions {
@@ -229,6 +232,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 
 export interface BoxPlotChartOptions extends BaseOptions {
   series?: BoxPlotSeriesOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
@@ -261,6 +265,7 @@ type LineScatterChartSeriesOptions = {
 
 export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 export interface ScatterChartOptions extends BaseOptions {
@@ -419,6 +424,7 @@ export type DataLabels = {
 
 export interface BulletChartOptions extends BaseOptions {
   series?: BulletSeriesOptions;
+  plot?: BasePlotOptions & { showLine?: boolean };
 }
 
 export type BulletSeriesType = {

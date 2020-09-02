@@ -1,18 +1,42 @@
-import { StoreModule, Options } from '@t/store/store';
-import { LineChartOptions, AreaChartOptions, PlotLine, PlotBand, PlotRange } from '@t/options';
+import { StoreModule, ValueOf, ChartOptionsMap } from '@t/store/store';
+import { LineChartOptions, AreaChartOptions, PlotLine, PlotBand, PlotRangeType } from '@t/options';
 import { extend } from './store';
-import { getDateFormat, formatDate } from '@src/helpers/formatDate';
+import { rgba } from '@src/helpers/color';
 
-function makeFormattedLabel(label: number | string, options: Options) {
-  const format = getDateFormat(options);
+type UsingShowLineOptions = ValueOf<Omit<ChartOptionsMap, 'radar' | 'pie'>>;
 
-  return format ? (formatDate(format, new Date(label)) as string) : label;
+function isPlotRangeData(range: number | string | PlotRangeType) {
+  return Array.isArray(range) && range.length === 2;
+}
+
+function getOverlappingRange(range: PlotRangeType[]) {
+  const first = range[0];
+
+  return range.reduce<PlotRangeType>((acc, rangeData, index) => {
+    if (!index) {
+      return acc;
+    }
+
+    let [accStart, accEnd] = acc;
+    const [start, end] = rangeData;
+
+    if (start < accStart) {
+      accStart = start;
+    }
+
+    if (end > accEnd) {
+      accEnd = end;
+    }
+
+    return [accStart, accEnd];
+  }, first);
 }
 
 const plot: StoreModule = {
   name: 'plot',
-  state: () => ({
+  state: ({ options }) => ({
     plot: {
+      showLine: (options as UsingShowLineOptions)?.plot?.showLine ?? true,
       lines: [],
       bands: [],
     },
@@ -30,16 +54,38 @@ const plot: StoreModule = {
       const plotLines = lineAreaOptions?.plot?.lines ?? [];
       const plotBands = lineAreaOptions?.plot?.bands ?? [];
 
-      const lines: PlotLine[] = plotLines.map(({ color, value }) => ({
-        value: makeFormattedLabel(value, options),
-        color,
+      const lines: PlotLine[] = plotLines.map(({ value, color, opacity }) => ({
+        value,
+        color: rgba(color, opacity),
         vertical: true,
       }));
 
-      const bands: PlotBand[] = plotBands.map(({ color, range }) => ({
-        range: range.map((rangeData) => makeFormattedLabel(rangeData, options)) as PlotRange,
-        color,
-      }));
+      const bands: PlotBand[] = plotBands.flatMap(
+        ({ range, mergeOverlappingRanges = false, color: bgColor, opacity }) => {
+          const color = rgba(bgColor, opacity);
+
+          if (isPlotRangeData(range[0])) {
+            const rangeData = range as PlotRangeType[];
+
+            if (mergeOverlappingRanges) {
+              return {
+                color,
+                range: getOverlappingRange(rangeData),
+              };
+            }
+
+            return rangeData.map((dataRangeData) => ({
+              range: dataRangeData,
+              color,
+            }));
+          }
+
+          return {
+            color,
+            range,
+          };
+        }
+      );
 
       extend(state.plot, { lines, bands });
     },

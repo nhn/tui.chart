@@ -229,7 +229,7 @@ describe('plot options', () => {
     });
   });
 
-  it('should be rendered rect models for bands', () => {
+  it('should render rect models for bands', () => {
     plot.render(
       deepMergedCopy(state, {
         plot: {
@@ -265,7 +265,7 @@ describe('plot options', () => {
     ]);
   });
 
-  it('should be rendered line models for lines', () => {
+  it('should render line models for lines', () => {
     plot.render(
       deepMergedCopy(state, {
         plot: {
