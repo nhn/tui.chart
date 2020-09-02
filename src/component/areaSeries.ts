@@ -14,12 +14,14 @@ import {
   AreaSeriesType,
   LineChartOptions,
   LineTypeEventDetectType,
+  LineAreaChartOptions,
+  LineAreaChartSeriesOptions,
   LineTypeSeriesOptions,
   Point,
   RangeDataType,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
-import { ChartState, StackSeriesData, ValueEdge } from '@t/store/store';
+import { ChartState, Series, StackSeriesData, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
@@ -116,22 +118,33 @@ export default class AreaSeries extends Component {
     return type === 'percent' ? (stackedValue * 100) / sumValue : stackedValue;
   }
 
-  private setEventType(options?: LineChartOptions) {
+  private setEventType(series: Series, options?: LineChartOptions) {
     if (options?.series?.eventDetectType) {
       this.eventType = options.series.eventDetectType;
     }
 
-    if (this.isComboChart || this.isStackChart) {
+    if (series.line || this.isStackChart) {
       this.eventType = 'grouped';
     }
   }
 
-  public render(chartState: ChartState<AreaChartOptions>) {
+  getAreaOptions(options: AreaChartOptions | LineAreaChartOptions) {
+    const newOptions = { ...options };
+    if ((newOptions.series as LineAreaChartSeriesOptions)?.area) {
+      newOptions.series = {
+        ...newOptions.series,
+        ...(newOptions.series as LineAreaChartSeriesOptions).area,
+      };
+    }
+
+    return newOptions;
+  }
+
+  public render(chartState: ChartState<AreaChartOptions | LineAreaChartOptions>) {
     const {
       layout,
       series,
       scale,
-      options,
       axes,
       categories = [],
       legend,
@@ -145,6 +158,7 @@ export default class AreaSeries extends Component {
     }
 
     let areaStackSeries;
+    const options = this.getAreaOptions(chartState.options);
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
@@ -163,7 +177,7 @@ export default class AreaSeries extends Component {
       this.isRangeChart = true;
     }
 
-    this.setEventType(options);
+    this.setEventType(series, options);
 
     const renderOptions: RenderOptions = {
       pointOnColumn,

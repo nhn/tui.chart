@@ -71,6 +71,14 @@ export interface LineScatterData {
   };
 }
 
+export interface LineAreaData {
+  categories: string[];
+  series: {
+    line: Pick<LineSeriesType, 'name' | 'data'>[];
+    area: Pick<AreaSeriesType, 'name' | 'data'>[];
+  };
+}
+
 export interface BubbleSeriesType {
   name: string;
   data: BubbleSeriesDataType[];
@@ -251,6 +259,19 @@ type LineScatterChartSeriesOptions = {
 export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
 }
+
+export interface LineAreaChartOptions extends BaseOptions {
+  series?: LineAreaChartSeriesOptions;
+}
+
+type LineAreaChartSeriesOptions = {
+  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'>;
+  area?: Pick<AreaSeriesOptions, 'lineWidth' | 'stack' | 'spline' | 'showDot'>;
+  zoomable?: boolean;
+  showDot?: boolean;
+  lineWidth?: number;
+  spline?: boolean;
+} & BaseSeriesOptions;
 
 export interface ScatterChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
