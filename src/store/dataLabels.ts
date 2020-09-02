@@ -1,9 +1,9 @@
 import { StoreModule } from '@t/store/store';
 import { pickStackOption } from '@src/store/stackSeriesData';
 import { isFunction, includes, isBoolean, isNumber } from '@src/helpers/utils';
-import { DataLabels, DataLabelAnchor, SeriesDataType } from '@t/options';
+import { DataLabels, DataLabelAnchor, SeriesDataType, SubDataLabel } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
-import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
+import { DataLabel, DataLabelOption } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
 
@@ -92,7 +92,7 @@ export function getDataLabelsOptions(
         ? dataLabelOptions.stackTotal?.visible
         : true,
       style: dataLabelOptions.stackTotal?.style,
-    } as DataLabelStackTotal;
+    } as Required<SubDataLabel>;
   }
 
   if (type === 'sector' && dataLabelOptions.pieSeriesName?.visible) {

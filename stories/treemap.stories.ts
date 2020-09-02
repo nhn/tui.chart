@@ -1,10 +1,11 @@
-import { TreeMapSeriesData } from '@t/options';
+import { SeriesDataType, TreemapSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { usedDiskSpaceData } from './data';
-import { boolean, withKnobs } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
+import TreemapChart from '@src/charts/treemapChart';
 
 export default {
-  title: 'chart|treeMap',
+  title: 'chart|treemap',
   decorators: [withKnobs],
 };
 
@@ -14,16 +15,15 @@ const defaultOptions = {
   chart: {
     width,
     height,
-    title: '24-hr Average Temperature',
   },
-  xAxis: { title: 'Month' },
-  yAxis: { title: 'Amount' },
+  xAxis: {},
+  yAxis: {},
   series: {},
   tooltip: {},
   plot: {},
 };
 
-function createChart(data: TreeMapSeriesData, customOptions?: Record<string, any>) {
+function createChart(data: TreemapSeriesData, customOptions?: Record<string, any>) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
@@ -31,14 +31,15 @@ function createChart(data: TreeMapSeriesData, customOptions?: Record<string, any
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
 
-  // const chart = new LineChart({ el, data, options });
+  const chart = new TreemapChart({ el, data, options });
 
   return { el, chart };
 }
 
 export const basic = () => {
   const { el } = createChart(usedDiskSpaceData, {
-    xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+    chart: { title: 'Used disk space' },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
   });
 
   return el;

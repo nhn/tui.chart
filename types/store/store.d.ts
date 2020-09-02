@@ -28,6 +28,7 @@ import {
   PlotBand,
   BoxPlotChartOptions,
   PieChartOptions,
+  TreemapSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -43,6 +44,7 @@ type ChartSeriesMap = {
   radar: RadarSeriesType[];
   boxPlot: BoxPlotSeriesType[];
   bullet: BulletSeriesType[];
+  treemap: TreemapSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;

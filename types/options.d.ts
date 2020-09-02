@@ -58,15 +58,15 @@ export interface LineSeriesData {
   series: Pick<LineSeriesType, 'name' | 'data'>[];
 }
 
-export interface TreeMapSeriesType {
+export interface TreemapSeriesType {
   label: string;
-  value?: number;
+  data?: number;
   colorValue?: number;
-  children: TreeMapSeriesType[];
+  children?: TreemapSeriesType[];
 }
 
-export interface TreeMapSeriesData {
-  series: TreeMapSeriesType;
+export interface TreemapSeriesData {
+  series: TreemapSeriesType[];
 }
 
 export interface ScatterSeriesType {
@@ -310,6 +310,16 @@ export interface BubbleChartOptions extends BaseOptions {
   plot?: PlotOptions;
 }
 
+export interface TreemapChartSeriesOptions extends BaseSeriesOptions {
+  useColorValue?: boolean;
+  zoomable?: boolean;
+  dataLabels?: TreemapDataLabels;
+}
+
+export interface TreemapChartOptions extends BaseOptions {
+  series?: TreemapChartSeriesOptions;
+}
+
 type ConnectorLineType = 'dashed' | 'solid';
 
 interface Connector {
@@ -429,7 +439,7 @@ export type DataLabelStyle = {
   color?: string;
   textStrokeColor?: string;
 };
-export type DataLabelStackTotal = {
+export type SubDataLabel = {
   visible?: boolean;
   style?: DataLabelStyle;
 };
@@ -440,16 +450,21 @@ export type DataLabelPieSeriesName = {
   style?: DataLabelStyle;
 };
 
-export type DataLabels = {
+export interface DataLabels {
   visible?: boolean;
   anchor?: DataLabelAnchor;
   offsetX?: number;
   offsetY?: number;
   formatter?: Formatter;
   style?: DataLabelStyle;
-  stackTotal?: DataLabelStackTotal;
+  // @TODO: 각각 차트에 맞게 분리해서 해야하지 않나
+  stackTotal?: SubDataLabel;
   pieSeriesName?: DataLabelPieSeriesName;
-};
+}
+
+export interface TreemapDataLabels extends DataLabels {
+  treemapLeaf?: SubDataLabel;
+}
 
 export interface BulletChartOptions extends BaseOptions {
   series?: BulletSeriesOptions;

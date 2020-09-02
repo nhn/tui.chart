@@ -1582,25 +1582,25 @@ export const usedDiskSpaceData = {
           children: [
             {
               label: 'pages',
-              value: 1.3,
+              data: 1.3,
             },
             {
               label: 'keynote',
-              value: 2.5,
+              data: 2.5,
             },
             {
               label: 'numbers',
-              value: 1.2,
+              data: 1.2,
             },
           ],
         },
         {
           label: 'photos',
-          value: 5.5,
+          data: 5.5,
         },
         {
           label: 'videos',
-          value: 20.7,
+          data: 20.7,
         },
       ],
     },
@@ -1609,25 +1609,25 @@ export const usedDiskSpaceData = {
       children: [
         {
           label: 'recents',
-          value: 5.3,
+          data: 5.3,
         },
         {
-          label: '2015',
-          value: 10.1,
+          label: '2020',
+          data: 10.1,
         },
         {
-          label: '2014',
-          value: 8.2,
+          label: '2019',
+          data: 8.2,
         },
       ],
     },
     {
       label: 'Application',
-      value: 16.4,
+      data: 16.4,
     },
     {
       label: 'Desktop',
-      value: 4.5,
+      data: 4.5,
     },
   ],
 };
