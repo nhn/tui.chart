@@ -25,7 +25,6 @@ export default class TreemapSeries extends Component {
     this.rect = layout.plot;
 
     const treemapData = series.treemap.data;
-    console.log(treemapData);
   }
 
   onMousemove({ responders }) {

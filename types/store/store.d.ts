@@ -112,6 +112,7 @@ export interface StoreModule extends StoreOptions {
     | 'seriesData'
     | 'dataRange'
     | 'stackSeriesData'
+    | 'treemapSeriesData'
     | 'legend'
     | 'circleLegend'
     | 'dataLabels';
@@ -195,6 +196,18 @@ export type RadialAxisData = {
   centerY: number;
 };
 
+export interface TreemapSeriesData {
+  id: string;
+  parentId: string;
+  hasChild: boolean;
+  label: string;
+  indexes: number[];
+  depth: number;
+  data: number;
+  ratio: number;
+  color: string;
+}
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -212,6 +225,7 @@ export interface ChartState<T extends Options> {
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };
+  treemapSeries: TreemapSeriesData[];
   plot: {
     showLine: boolean;
     lines: PlotLine[];
