@@ -47,68 +47,6 @@ export const showLine = () => {
   return el;
 };
 
-export const withoutSeriesData = () => {
-  const data = {
-    categories: [
-      '01/01/2020',
-      '02/01/2020',
-      '03/01/2020',
-      '04/01/2020',
-      '05/01/2020',
-      '06/01/2020',
-      '07/01/2020',
-      '08/01/2020',
-      '09/01/2020',
-      '10/01/2020',
-      '11/01/2020',
-      '12/01/2020',
-    ],
-    series: [],
-  };
-
-  const { el } = createChart(data, {
-    yAxis: { title: 'Concurrent Users', scale: { min: 0, max: 600 } },
-    chart: { title: 'Traffic' },
-    xAxis: { title: 'Month', type: 'datetime', date: { format: 'MMM' } },
-    plot: {
-      lines: [
-        {
-          value: '05/01/2020',
-          color: '#ff5a46',
-        },
-        {
-          value: '08/01/2020',
-          color: '#00a9ff',
-        },
-      ],
-      bands: [
-        {
-          range: ['04/01/2020', '06/01/2020'],
-          color: '#ffb840',
-          opacity: 0.15,
-        },
-        {
-          range: ['07/01/2020', '09/01/2020'],
-          color: '#ef4a5d',
-          opacity: 0.15,
-        },
-        {
-          range: ['10/01/2020', '12/01/2029'],
-          color: '#19bc9c',
-          opacity: 0.15,
-        },
-        {
-          range: ['01/01/2020', '03/01/2020'],
-          color: '#4b96e6',
-          opacity: 0.15,
-        },
-      ],
-    },
-  });
-
-  return el;
-};
-
 export const coordinate = () => {
   const { el } = createChart(coordinateData, {
     plot: {
