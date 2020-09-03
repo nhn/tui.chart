@@ -46,6 +46,7 @@ const chartState = {
       { label: 'cho', active: true, checked: true },
     ],
   },
+  plot: { showLine: true },
   categories: ['A', 'B'],
 };
 
@@ -183,18 +184,19 @@ describe('plot grid lines', () => {
 });
 
 describe('plot options', () => {
+  const data = [];
   const state = {
     chart: { width: 100, height: 100 },
     layout: {
       xAxis: { x: 10, y: 80, width: 80, height: 10 },
       yAxis: { x: 10, y: 10, width: 10, height: 80 },
-      plot: { width: 80, height: 80, x: 10, y: 80 },
+      plot: { width: 80, height: 80, x: 10, y: 10 },
     },
     series: {
       line: {
-        data: seriesData,
-        seriesCount: seriesData.length,
-        seriesGroupCount: seriesData[0].data.length,
+        data: data,
+        seriesCount: 0,
+        seriesGroupCount: 0,
       },
     },
     axes: {
@@ -202,11 +204,13 @@ describe('plot options', () => {
         labels: ['0', '1', '2', '3', '4', '5'],
         tickCount: 6,
         tickDistance: 16,
+        labelDistance: 16,
       },
       yAxis: {
         labels: ['0', '1', '2', '3', '4', '5'],
         tickCount: 6,
         tickDistance: 16,
+        labelDistance: 16,
       },
     },
     plot: {},
@@ -219,7 +223,7 @@ describe('plot options', () => {
         { label: 'cho', active: true, checked: true },
       ],
     },
-    categories: ['A', 'B'],
+    categories: ['0', '1', '2', '3', '4', '5'],
   };
 
   beforeEach(() => {
@@ -235,7 +239,7 @@ describe('plot options', () => {
         plot: {
           bands: [
             {
-              range: ['1', '2'],
+              range: [1, 2],
               color: 'rgba(33, 33, 33, 0.2)',
             },
           ],
@@ -244,7 +248,7 @@ describe('plot options', () => {
           plot: {
             bands: [
               {
-                range: ['1', '2'],
+                range: [1, 2],
                 color: 'rgba(33, 33, 33, 0.2)',
               },
             ],
@@ -271,7 +275,7 @@ describe('plot options', () => {
         plot: {
           lines: [
             {
-              value: '4',
+              value: 4,
               color: '#ff0000',
               vertical: true,
             },
@@ -281,7 +285,7 @@ describe('plot options', () => {
           plot: {
             lines: [
               {
-                value: '4',
+                value: 4,
                 color: '#ff0000',
               },
             ],

@@ -39,8 +39,8 @@ function getXPosition({
   startIndex = 0,
 }: XPositionParam) {
   const { pointOnColumn, tickDistance, labelDistance } = axisData;
-
   let x;
+
   if (xAxisLimit) {
     const xValue = isString(value) ? Number(new Date(value)) : Number(value);
     const xValueRatio = getValueRatio(xValue, xAxisLimit);

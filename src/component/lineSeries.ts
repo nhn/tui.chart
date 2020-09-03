@@ -72,6 +72,10 @@ export default class LineSeries extends Component {
   }
 
   initUpdate(delta: number) {
+    if (!this.drawModels) {
+      return;
+    }
+
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
@@ -100,6 +104,14 @@ export default class LineSeries extends Component {
       throw new Error("There's no line data!");
     }
 
+    this.rect = layout.plot;
+
+    const lineSeriesData = series.line.data;
+
+    if (!lineSeriesData.length) {
+      return;
+    }
+
     const options = { ...chartState.options };
     if (options?.series && 'line' in options.series) {
       options.series = { ...options.series, ...options.series.line };
@@ -109,8 +121,6 @@ export default class LineSeries extends Component {
     this.setEventType(options);
 
     const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
-    const lineSeriesData = series.line.data;
-
     const renderLineOptions: RenderOptions = {
       pointOnColumn,
       options: (options.series || {}) as LineTypeSeriesOptions,
@@ -118,7 +128,6 @@ export default class LineSeries extends Component {
       labelDistance,
     };
 
-    this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
@@ -148,10 +157,6 @@ export default class LineSeries extends Component {
         dot: deepCopyArray(dotSeriesModel),
         selectedSeries: [],
       };
-    }
-
-    if (!lineSeriesData.length) {
-      return;
     }
 
     if (dataLabels.visible) {
