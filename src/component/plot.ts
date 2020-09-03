@@ -195,7 +195,7 @@ export default class Plot extends Component {
   }
 
   render(state: ChartState<Options>) {
-    const { layout, axes, plot, scale, zoomRange, rawCategories = [] } = state;
+    const { layout, axes, plot, scale, zoomRange, categories = [] } = state;
     this.rect = layout.plot;
     this.startIndex = zoomRange ? zoomRange[0] : 0;
 
@@ -206,8 +206,8 @@ export default class Plot extends Component {
     const { lines, bands, showLine } = plot;
     const xAxisLimit = scale?.xAxis?.limit;
 
-    this.models.line = this.renderLines(axes, xAxisLimit, rawCategories, lines);
-    this.models.band = this.renderBands(axes, xAxisLimit, rawCategories, bands);
+    this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
+    this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
 
     if (showLine) {
       this.models.plot = this.renderPlots(axes);

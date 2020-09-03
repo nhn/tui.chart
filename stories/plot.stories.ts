@@ -37,23 +37,10 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
   return { el, chart };
 }
 
-export const basic = () => {
+export const showLine = () => {
   const { el } = createChart(randomData(24), {
     plot: {
       showLine: boolean('showLine', true),
-      bands: [
-        {
-          range: [3, 8],
-          color: '#ff5722',
-          opacity: 0.2,
-        },
-      ],
-      lines: [
-        {
-          value: 20,
-          color: '#fa2828',
-        },
-      ],
     },
   });
 
