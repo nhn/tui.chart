@@ -218,7 +218,7 @@ export default class BulletSeries extends Component {
   }
 
   makeRangeModel(
-    ranges: RangeDataType[],
+    ranges: RangeDataType<number>[],
     renderOptions: RenderOptions,
     seriesIndex: number,
     color: string,

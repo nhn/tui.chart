@@ -16,16 +16,18 @@ import {
   BubbleChartOptions,
   Align,
   AxisTitleOption,
-  PlotLineValue,
   PieSeriesType,
   RangeDataType,
   RadarSeriesType,
   RadarChartOptions,
   BoxPlotSeriesType,
-  BaseOptions,
   BulletSeriesType,
   BulletChartOptions,
   LineScatterChartOptions,
+  PlotLine,
+  PlotBand,
+  BoxPlotChartOptions,
+  PieChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -62,14 +64,15 @@ type Series = {
 
 type ValueOf<T> = T[keyof T];
 
-type ChartOptionsMap = {
+export type ChartOptionsMap = {
   line: LineChartOptions;
   bar: BarChartOptions;
   column: ColumnChartOptions;
   area: AreaChartOptions;
   bubble: BubbleChartOptions;
   radar: RadarChartOptions;
-  boxPlot: BaseOptions;
+  pie: PieChartOptions;
+  boxPlot: BoxPlotChartOptions;
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
 };
@@ -137,18 +140,6 @@ export interface Scale {
   yAxis: ScaleData;
 }
 
-type PlotLine = {
-  value: PlotLineValue;
-  color: string;
-  vertical: boolean;
-};
-
-type PlotBand = {
-  range: [PlotLineValue, PlotLineValue];
-  color: string;
-  vertical: boolean;
-};
-
 export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
@@ -208,7 +199,7 @@ export interface ChartState<T extends Options> {
   scale: Scale;
   disabledSeries: string[];
   series: Series;
-  zoomRange?: RangeDataType;
+  zoomRange?: RangeDataType<number>;
   // 기존의 limitMap
   axes: Axes;
   dataRange: DataRange;
@@ -220,6 +211,7 @@ export interface ChartState<T extends Options> {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };
   plot: {
+    showLine: boolean;
     lines: PlotLine[];
     bands: PlotBand[];
   };

@@ -309,7 +309,7 @@ export default class BoxSeries extends Component {
   }
 
   renderSeriesModel(
-    seriesData: BoxSeriesType<number | (RangeDataType & number)>[],
+    seriesData: BoxSeriesType<number | (RangeDataType<number> & number)>[],
     renderOptions: RenderOptions
   ): RectModel[] {
     const { tickDistance, diverging, padding } = renderOptions;
@@ -460,7 +460,7 @@ export default class BoxSeries extends Component {
   }
 
   getStartPositionWithRangeValue(
-    value: RangeDataType,
+    value: RangeDataType<number>,
     barLength: number,
     renderOptions: RenderOptions
   ) {

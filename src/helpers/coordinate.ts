@@ -14,7 +14,7 @@ export function getCoordinateXValue(datum: CoordinateDataType) {
   return Array.isArray(datum) ? datum[0] : datum.x;
 }
 
-function isValueAfterLastCategory(value: number | string | Date, categories: string[]) {
+export function isValueAfterLastCategory(value: number | string | Date, categories: string[]) {
   const category = last(categories);
 
   if (!category) {

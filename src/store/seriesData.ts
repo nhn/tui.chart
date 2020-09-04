@@ -9,7 +9,7 @@ function initZoomRange(
   series: RawSeries,
   options: Options,
   categories?: string[]
-): RangeDataType | undefined {
+): RangeDataType<number> | undefined {
   if (!(options.series as LineTypeSeriesOptions)?.zoomable) {
     return;
   }
@@ -21,7 +21,7 @@ function initZoomRange(
   return [0, rawCategoriesLength - 1];
 }
 
-function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeDataType) {
+function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeDataType<number>) {
   const [zoomStart, zoomEnd] = zoomRange;
   let start, end;
 
@@ -48,7 +48,7 @@ function getDataInRange(
   data,
   rawCategories: string[],
   chartType: string,
-  zoomRange?: RangeDataType
+  zoomRange?: RangeDataType<number>
 ) {
   if (!zoomRange) {
     return data;
@@ -98,7 +98,7 @@ const seriesData: StoreModule = {
         });
 
         const seriesCount = originSeriesData.length;
-        const seriesGroupCount = originSeriesData[0].data.length;
+        const seriesGroupCount = originSeriesData[0]?.data.length ?? 0;
         const data = originSeriesData.filter(({ name }) => !disabledSeries.includes(name));
 
         newSeriesData[seriesName] = {
@@ -136,7 +136,7 @@ const seriesData: StoreModule = {
 
       state.zoomRange = rangeCategories.map((rangeCategory) =>
         rawCategories.findIndex((category) => category === rangeCategory)
-      ) as RangeDataType;
+      ) as RangeDataType<number>;
 
       this.notify(state, 'zoomRange');
     },
