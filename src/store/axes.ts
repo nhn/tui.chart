@@ -35,7 +35,7 @@ interface StateProp {
   options: Options;
   series: Series;
   centerYAxis?: Pick<CenterYAxisData, 'xAxisHalfSize'> | null;
-  zoomRange?: RangeDataType;
+  zoomRange?: RangeDataType<number>;
 }
 
 type ValueStateProp = StateProp & { categories: string[]; rawCategories: string[] };
@@ -75,7 +75,7 @@ function makeFormattedCategory(categories: string[], options: Options) {
   return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
 }
 
-function isZooming(categories: string[], zoomRange?: RangeDataType) {
+function isZooming(categories: string[], zoomRange?: RangeDataType<number>) {
   return zoomRange && (zoomRange[0] !== 0 || zoomRange[1] !== categories.length - 1);
 }
 

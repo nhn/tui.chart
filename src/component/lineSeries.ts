@@ -17,7 +17,7 @@ import {
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
 import { ChartState, Scale } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
-import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
+import { getValueRatio, setSplineControlPoint, getXPosition } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import {
   getCoordinateDataIndex,
@@ -25,7 +25,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray, isString } from '@src/helpers/utils';
+import { deepCopyArray, pick } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -207,8 +207,9 @@ export default class LineSeries extends Component {
     renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
-    const { pointOnColumn, options, tickDistance, labelDistance } = renderOptions;
-    const { spline, lineWidth } = options;
+    const {
+      options: { spline, lineWidth },
+    } = renderOptions;
     const yAxisLimit = scale.yAxis.limit;
     const xAxisLimit = scale?.xAxis?.limit;
 
@@ -220,22 +221,14 @@ export default class LineSeries extends Component {
       rawData.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
         const yValueRatio = getValueRatio(value, yAxisLimit);
-
-        let x;
-        if (xAxisLimit) {
-          const rawXValue = getCoordinateXValue(datum as CoordinateDataType);
-          const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
-          const xValueRatio = getValueRatio(xValue, xAxisLimit);
-          x =
-            xValueRatio * (this.rect.width - (pointOnColumn ? labelDistance! : 0)) +
-            (pointOnColumn ? labelDistance! / 2 : 0);
-        } else {
-          const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
-          x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
-        }
-
         const y = (1 - yValueRatio) * this.rect.height;
-
+        const x = getXPosition(
+          pick(renderOptions, 'pointOnColumn', 'tickDistance', 'labelDistance'),
+          this.rect.width,
+          xAxisLimit,
+          getCoordinateXValue(datum as CoordinateDataType),
+          getCoordinateDataIndex(datum, categories, idx, this.startIndex)
+        );
         points.push({ x, y, value });
       });
 

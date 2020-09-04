@@ -1,15 +1,6 @@
 import { StoreModule, Layout, CircleLegend, Legend, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
-import {
-  Align,
-  Rect,
-  Size,
-  BaseXAxisOptions,
-  BaseAxisOptions,
-  BarTypeYAxisOptions,
-  LineTypeXAxisOptions,
-  BasePlotOptions,
-} from '@t/options';
+import { Align, Rect, Size, BaseSizeOptions } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
 import { isUndefined, pick } from '@src/helpers/utils';
 import { isCenterYAxis } from './axes';
@@ -54,8 +45,6 @@ type XAxisRectParam = AxisParam & {
   yAxis: Rect;
 };
 
-type AxisOptions = BaseAxisOptions | BarTypeYAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions;
-
 function getValidRectSize(size: OptionalSize, width: number, height: number) {
   return {
     height: size?.height ?? height,
@@ -66,64 +55,6 @@ function getValidRectSize(size: OptionalSize, width: number, height: number) {
 function getDefaultXAxisHeight(size: OptionSize) {
   return size.xAxis?.height && !size.yAxis ? size.xAxis.height : X_AXIS_HEIGHT;
 }
-
-/*
-function getYAxisRect_old({
-  chartSize,
-  legend,
-  circleLegend,
-  yAxisTitle,
-  hasCenterYAxis,
-  hasAxis,
-  maxLabelWidth,
-  size,
-}: YAxisRectParam) {
-  const { height, width } = chartSize;
-  const { align } = legend;
-  const xAxisHeight = getDefaultXAxisHeight(size);
-
-  let x = yAxisTitle.x;
-  let y = yAxisTitle.y + yAxisTitle.height;
-  let yAxisHeight = height - y - xAxisHeight - X_AXIS_TITLE_HEIGHT;
-  let yAxisWidth = size?.yAxis?.width ?? maxLabelWidth;
-
-  if (hasCenterYAxis) {
-    yAxisWidth = maxLabelWidth + (TICK_SIZE + padding.X) * 2;
-    x = (width - legend.width - yAxisWidth + padding.X * 2) / 2;
-  } else if (!hasAxis) {
-    yAxisWidth = 0;
-    yAxisHeight = height - y;
-  }
-
-  if (legend.visible) {
-    const legendAreaHeight = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
-    const topArea = Math.max(y, legendAreaHeight);
-
-    if (align === 'left') {
-      x = yAxisTitle.x;
-    } else if (align === 'top') {
-      y = topArea;
-      yAxisHeight = height - topArea - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
-    } else if (align === 'bottom') {
-      yAxisHeight = height - y - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT - LEGEND_ITEM_HEIGHT;
-    }
-  }
-
-  if (circleLegend.visible && align === 'left') {
-    x = Math.max(circleLegend.width + padding.X, x);
-  }
-
-  if (!size?.yAxis?.height && size?.plot?.height) {
-    yAxisHeight = size.plot.height;
-  }
-
-  return {
-    x,
-    y,
-    ...getValidRectSize(size?.yAxis, yAxisWidth, yAxisHeight),
-  };
-}
-*/
 
 function getYAxisXPoint(yAxisRectParam: YAxisRectParam) {
   const {
@@ -378,7 +309,7 @@ function getMaxLabelWidth(labels: string[] = []) {
   return labelWidths.length ? Math.max(...labelWidths) + padding.X : Y_AXIS_MIN_WIDTH;
 }
 
-function pickOptionSize(option?: AxisOptions | BasePlotOptions): OptionalSize {
+function pickOptionSize(option?: BaseSizeOptions): OptionalSize {
   if (!option || (isUndefined(option.width) && isUndefined(option.height))) {
     return null;
   }

@@ -56,7 +56,7 @@ interface RenderOptions {
   pairModel?: boolean;
 }
 
-type DatumType = number | RangeDataType;
+type DatumType = number | RangeDataType<number>;
 
 const seriesOpacity = {
   INACTIVE: 0.2,

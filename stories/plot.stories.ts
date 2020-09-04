@@ -1,7 +1,7 @@
 import LineChart from '@src/charts/lineChart';
 import { LineSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { coordinateData, randomData, datetimeCoordinateData } from './data';
+import { coordinateData, randomData, datetimeCoordinateData, temperatureData } from './data';
 import { boolean, withKnobs } from '@storybook/addon-knobs';
 
 const width = 1000;
@@ -69,7 +69,7 @@ export const coordinate = () => {
   return el;
 };
 
-export const dateTimeCoordinate = () => {
+export const datetimeCoordinate = () => {
   const { el } = createChart(datetimeCoordinateData as LineSeriesData, {
     xAxis: { title: 'minute', date: { format: 'hh:mm:ss' } },
     plot: {
@@ -113,6 +113,35 @@ export const mergeOverlappingRanges = () => {
           color: '#00bcd4',
           opacity: 0.2,
           mergeOverlappingRanges: boolean('mergeOverlappingRanges', true),
+        },
+      ],
+    },
+  });
+
+  return el;
+};
+
+export const categoryRanges = () => {
+  const { el } = createChart(temperatureData, {
+    series: {
+      zoomable: true,
+    },
+    plot: {
+      bands: [
+        {
+          range: [
+            ['04/01/2020', '06/01/2020'],
+            ['03/01/2020', '05/01/2020'],
+          ],
+          color: '#cccccc',
+          opacity: 0.2,
+          mergeOverlappingRanges: true,
+        },
+      ],
+      lines: [
+        {
+          value: '11/01/2020',
+          color: '#fa2828',
         },
       ],
     },
