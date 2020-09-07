@@ -8,7 +8,6 @@ import { TreemapSeriesData } from '@t/store/store';
 import Component from '@src/component/component';
 import { SpectrumLegendModel, SpectrumLegendTooltipModel } from '@t/components/spectrumLegend';
 
-
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
 export type PointModel = Point & { value?: number; name?: string };
