@@ -12,7 +12,7 @@ function getOptionStyle(type: DataLabelType, options: DataLabelOptions): DataLab
 }
 
 export default class DataLabels extends Component {
-  models!: DataLabelModels;
+  models: DataLabelModels = { series: [], total: [] };
 
   drawModels!: DataLabelModels;
 
@@ -34,6 +34,7 @@ export default class DataLabels extends Component {
     }
 
     this.rect = layout.plot;
+
     this.models = this.renderLabelModel(dataLabels.data, options?.series?.dataLabels ?? {});
 
     if (!this.drawModels) {

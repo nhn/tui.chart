@@ -8,8 +8,7 @@ type EventType =
   | 'renderHoveredSeries'
   | 'clickLegendCheckbox'
   | 'clickLegendLabel'
-  | 'animationCompleted'
-  | 'drawDataLabels';
+  | 'animationCompleted';
 
 type EventListener = (evt: any) => void;
 

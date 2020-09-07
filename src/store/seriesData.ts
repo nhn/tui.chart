@@ -114,6 +114,8 @@ const seriesData: StoreModule = {
       state.disabledSeries.push(name);
       this.notify(state, 'disabledSeries');
 
+      this.dispatch('resetDataLabels');
+
       if (state.series.bullet) {
         const index = state.categories!.findIndex((seriesName) => seriesName === name);
         state.categories!.splice(index, 1);
@@ -125,6 +127,8 @@ const seriesData: StoreModule = {
       const index = state.disabledSeries.findIndex((disabled) => disabled === name);
       state.disabledSeries.splice(index, 1);
       this.notify(state, 'disabledSeries');
+
+      this.dispatch('resetDataLabels');
 
       if (state.series.bullet) {
         state.categories = state.series.bullet.data.map(({ name: seriesName }) => seriesName);

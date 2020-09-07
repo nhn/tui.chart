@@ -221,7 +221,7 @@ interface BaseSeriesOptions {
 }
 
 interface BoxPlotSeriesOptions extends BaseSeriesOptions {
-  eventDetectType: BoxTypeEventDetectType;
+  eventDetectType?: BoxTypeEventDetectType;
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {
@@ -262,11 +262,12 @@ export interface LineScatterChartOptions extends BaseOptions {
 
 export interface LineAreaChartOptions extends BaseOptions {
   series?: LineAreaChartSeriesOptions;
+  plot?: AreaLinePlotOptions;
 }
 
 type LineAreaChartSeriesOptions = {
-  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'>;
-  area?: Pick<AreaSeriesOptions, 'lineWidth' | 'stack' | 'spline' | 'showDot'>;
+  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'> & BaseSeriesOptions;
+  area?: Pick<AreaSeriesOptions, 'lineWidth' | 'stack' | 'spline' | 'showDot'> & BaseSeriesOptions;
   zoomable?: boolean;
   showDot?: boolean;
   lineWidth?: number;
@@ -302,7 +303,7 @@ interface StackInfo {
 }
 
 type StackOptionType = boolean | StackInfo;
-interface BoxSeriesOptions extends BaseSeriesOptions {
+export interface BoxSeriesOptions extends BaseSeriesOptions {
   barWidth?: number;
   diverging?: boolean;
   colorByPoint?: boolean;
@@ -446,3 +447,21 @@ export type BulletSeriesData = {
 export interface BulletSeriesOptions extends BaseSeriesOptions {
   vertical?: boolean;
 }
+
+type ColumnLineChartSeriesOptions = {
+  column?: Pick<BoxSeriesOptions, 'barWidth' | 'stack'>;
+  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'>;
+} & BaseSeriesOptions;
+
+export interface ColumnLineChartOptions extends BaseOptions {
+  series?: ColumnLineChartSeriesOptions;
+  plot?: AreaLinePlotOptions;
+}
+
+export type ColumnLineData = {
+  categories: string[];
+  series: {
+    column: Pick<BoxSeriesType<BoxSeriesDataType>, 'name' | 'data'>[];
+    line: Pick<LineSeriesType, 'name' | 'data'>[];
+  };
+};

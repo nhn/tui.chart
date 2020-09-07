@@ -8,6 +8,7 @@ import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
 
 import { labelStyle } from '@src/brushes/label';
+import { extend } from './reactive';
 
 const RADIUS_PADDING = 20;
 
@@ -492,7 +493,7 @@ const dataLabels: StoreModule = {
       const { options } = state;
       const dataLabelOptions = options.series?.dataLabels!;
       const withStack = !!pickStackOption(options);
-      const labels: DataLabel[] = [];
+      const labels: DataLabel[] = [...state.dataLabels.data];
 
       dataLabelData.forEach((model) => {
         const { type, value } = model;
@@ -525,7 +526,11 @@ const dataLabels: StoreModule = {
         labels.push(dataLabel);
       });
 
-      state.dataLabels.data = [...labels];
+      extend(state.dataLabels, { data: labels });
+    },
+
+    resetDataLabels({ state }) {
+      state.dataLabels = { ...state.dataLabels, data: [] };
     },
   },
 };

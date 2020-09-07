@@ -44,7 +44,7 @@ import {
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
 
-interface MouseEventType {
+export interface MouseEventType {
   responders: CircleResponderModel[] | RectResponderModel[];
   mousePosition: Point;
 }
