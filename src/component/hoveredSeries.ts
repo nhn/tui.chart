@@ -1,10 +1,10 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import { TooltipModelName } from '@t/components/tooltip';
-import { CircleResponderModel, ResponderModel } from '@t/components/series';
+import { CircleResponderModel, ResponderModel, BoxPlotResponderModel } from '@t/components/series';
 import { LineModel } from '@t/components/axis';
 import { crispPixel } from '@src/helpers/calculator';
-import { isUndefined } from '@src/helpers/utils';
+import { isUndefined, includes } from '@src/helpers/utils';
 import { LineTypeEventDetectType } from '@t/options';
 
 export type HoveredSeriesModel = { [key in TooltipModelName]: ResponderModel[] } & {
@@ -34,9 +34,11 @@ export default class HoveredSeries extends Component {
     this.models[name] = [...models];
     this.isShow = !!this.getSeriesModels().length;
 
-    if (eventType === 'grouped' && (name === 'line' || name === 'area')) {
+    if (eventType === 'grouped' && (name === 'line' || name === 'area' || name === 'boxPlot')) {
       if (this.isShow) {
-        const model = this.getSeriesModels().filter(({ type }) => type === 'circle')[0];
+        const model = this.getSeriesModels().filter(({ type }) =>
+          includes(['circle', 'boxPlot'], type)
+        )[0];
         if (!isUndefined(model)) {
           this.models.guideLine = [this.renderGuideLineModel(model)];
         }
@@ -46,8 +48,8 @@ export default class HoveredSeries extends Component {
     }
   };
 
-  renderGuideLineModel(circleModel: CircleResponderModel): LineModel {
-    const x = crispPixel(circleModel.x);
+  renderGuideLineModel(model: CircleResponderModel | BoxPlotResponderModel): LineModel {
+    const x = model.type === 'circle' ? crispPixel(model.x) : model.whisker.x;
 
     return {
       type: 'line',
