@@ -94,6 +94,7 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   }
 
   handleEventForAllResponders(
+    event: MouseEvent,
     responderModels: RespondersModel,
     delegationMethod: string,
     mousePosition: Point

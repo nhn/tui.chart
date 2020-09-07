@@ -9,7 +9,6 @@ type EventType =
   | 'clickLegendCheckbox'
   | 'clickLegendLabel'
   | 'animationCompleted'
-  | 'drawDataLabels'
   | 'renderSpectrumTooltip';
 
 type EventListener = (evt: any) => void;
