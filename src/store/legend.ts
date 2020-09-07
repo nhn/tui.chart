@@ -1,6 +1,6 @@
-import { LegendIconType, Options, RawSeries, StoreModule } from '@t/store/store';
+import { LegendIconType, Options, RawSeries, StoreModule, ChartType } from '@t/store/store';
 import { Align, BubbleChartOptions } from '@t/options';
-import { isUndefined, sum } from '@src/helpers/utils';
+import { isUndefined, sum, includes } from '@src/helpers/utils';
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
@@ -53,35 +53,34 @@ function showCheckbox(options: Options) {
 }
 
 function getLegendLabels(series: RawSeries) {
-  return Object.keys(series).reduce<string[]>((acc, type) => {
-    const seriesName = series[type].map(({ name }) => name);
-
-    return [...acc, ...seriesName];
-  }, []);
-}
-
-function useRectIcon(series: RawSeries) {
-  return (
-    series.bar || series.column || series.area || series.pie || series.boxPlot || series.bullet
+  return Object.keys(series).flatMap((type) =>
+    series[type].map(({ name }) => ({
+      label: name,
+      type,
+    }))
   );
 }
 
-function useCircleIcon(series: RawSeries) {
-  return series.bubble || series.scatter;
+function useRectIcon(type: ChartType) {
+  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet'], type);
 }
 
-function useLineIcon(series: RawSeries) {
-  return series.line || series.radar;
+function useCircleIcon(type: ChartType) {
+  return includes(['bubble', 'scatter'], type);
 }
 
-function getIconType(series: RawSeries): LegendIconType {
+function useLineIcon(type: ChartType) {
+  return includes(['line', 'radar'], type);
+}
+
+function getIconType(type: ChartType): LegendIconType {
   let iconType: LegendIconType = 'spectrum';
 
-  if (useCircleIcon(series)) {
+  if (useCircleIcon(type)) {
     iconType = 'circle';
-  } else if (useRectIcon(series)) {
+  } else if (useRectIcon(type)) {
     iconType = 'rect';
-  } else if (useLineIcon(series)) {
+  } else if (useLineIcon(type)) {
     iconType = 'line';
   }
 
@@ -108,11 +107,12 @@ const legend: StoreModule = {
     const align = getAlign(options);
     const visible = showLegend(options);
     const checkboxVisible = showCheckbox(options);
-    const data = getLegendLabels(series).map((label) => ({
+    const data = getLegendLabels(series).map(({ label, type }) => ({
       label,
       active: true,
       checked: true,
       width: getItemWidth(label, checkboxVisible),
+      iconType: getIconType(type),
     }));
     const legendWidths = data.map(({ width }) => width);
     const legendWidth = calculateLegendWidth(defaultWidth, legendWidths, options, align, visible);
@@ -127,7 +127,6 @@ const legend: StoreModule = {
       legend: {
         visible,
         showCheckbox: checkboxVisible,
-        iconType: getIconType(series),
         data,
         align,
         width: legendWidth,
