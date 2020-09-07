@@ -130,7 +130,7 @@ const legend: StoreModule = {
 
     const defaultWidth = Math.min(options.chart!.width / 10, 150);
     const legendLabels = getLegendLabels(series);
-    const data = legendLabels.map(({label, type}) => ({
+    const data = legendLabels.map(({ label, type }) => ({
       label,
       active: true,
       checked: true,
