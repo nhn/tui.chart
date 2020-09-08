@@ -21,13 +21,15 @@ export default class TreemapSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
+  depth = 0;
+
   initialize() {
     this.type = 'series';
     this.name = 'treemap';
   }
 
   render(chartState: ChartState<TreemapChartOptions>) {
-    const { layout, treemapSeries, dataLabels } = chartState;
+    const { layout, treemapSeries, dataLabels, options } = chartState;
 
     if (!treemapSeries.length) {
       throw new Error("There's no tree map data");
@@ -37,7 +39,8 @@ export default class TreemapSeries extends Component {
     this.models = this.renderTreemapSeries(treemapSeries);
 
     if (dataLabels.visible) {
-      const dataLabelModel = this.makeDataLabel();
+      const treemapLeaf = options.series?.dataLabels?.treemapLeaf?.visible ?? false;
+      const dataLabelModel = this.makeDataLabel(treemapLeaf);
 
       this.store.dispatch('appendDataLabels', dataLabelModel);
     }
@@ -84,16 +87,18 @@ export default class TreemapSeries extends Component {
     return boundMap;
   }
 
-  makeDataLabel(): RectDataLabel[] {
-    return this.models.series
-      .filter(({ hasChild }) => !hasChild)
-      .map((m) => ({
-        ...m,
-        type: 'treemapSeriesName',
-        value: m.label,
-        direction: 'left',
-        plot: { x: 0, y: 0, size: 0 },
-      }));
+  makeDataLabel(treemapLeaf: boolean): RectDataLabel[] {
+    const series = treemapLeaf
+      ? this.models.series.filter(({ hasChild }) => !hasChild)
+      : this.models.series.filter(({ depth }) => depth === this.depth);
+
+    return series.map((m) => ({
+      ...m,
+      type: 'treemapSeriesName',
+      value: m.label,
+      direction: 'left',
+      plot: { x: 0, y: 0, size: 0 },
+    }));
   }
 
   combineBoundMap(series: TreemapSeriesData[], boundMap: BoundMap) {
