@@ -67,22 +67,3 @@ export const dataLabels = () => {
 
   return el;
 };
-
-export const secondaryYAxis = () => {
-  const { el } = createChart(temperatureAverageData, {
-    yAxis: [
-      {
-        title: 'Temperature (Celsius)',
-        chartType: 'column',
-        labelMargin: 15,
-      },
-      {
-        title: 'Average',
-        chartType: 'line',
-        labelMargin: 15,
-      },
-    ],
-  });
-
-  return el;
-};
