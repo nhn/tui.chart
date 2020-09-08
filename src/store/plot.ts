@@ -1,4 +1,4 @@
-import { StoreModule, ValueOf, ChartOptionsMap } from '@t/store/store';
+import { StoreModule } from '@t/store/store';
 import {
   LineChartOptions,
   AreaChartOptions,
@@ -11,8 +11,6 @@ import { extend } from './store';
 import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
 import { isString } from '@src/helpers/utils';
-
-type UsingShowLineOptions = ValueOf<Omit<ChartOptionsMap, 'radar' | 'pie'>>;
 
 function getOverlappingRange(range: RangeDataType<number>[]) {
   return range.reduce<RangeDataType<number>>(
@@ -80,9 +78,8 @@ function makePlotBands(categories: string[], isDateType: boolean, plotBands: Plo
 }
 const plot: StoreModule = {
   name: 'plot',
-  state: ({ options }) => ({
+  state: () => ({
     plot: {
-      showLine: (options as UsingShowLineOptions)?.plot?.showLine ?? true,
       lines: [],
       bands: [],
     },

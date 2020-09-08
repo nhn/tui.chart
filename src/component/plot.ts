@@ -3,7 +3,7 @@ import { ChartState, Options, Axes, AxisData, ValueEdge } from '@t/store/store';
 import { crispPixel, makeTickPixelPositions, getXPosition } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
-import { PlotModels } from '@t/components/plot';
+import { PlotModels, UsingShowLineOptions } from '@t/components/plot';
 import { RectModel } from '@t/components/series';
 import { PlotLine, PlotBand, PlotRangeType } from '@t/options';
 
@@ -172,20 +172,20 @@ export default class Plot extends Component {
   }
 
   render(state: ChartState<Options>) {
-    const { layout, axes, plot, scale, zoomRange, categories = [] } = state;
-
-    if (!plot) {
-      return;
-    }
+    const { layout, axes, plot, scale, zoomRange, categories = [], options } = state;
 
     this.rect = layout.plot;
     this.startIndex = zoomRange ? zoomRange[0] : 0;
 
-    const { lines, bands, showLine } = plot;
-    const xAxisLimit = scale?.xAxis?.limit;
+    if (plot) {
+      const { lines, bands } = plot;
+      const xAxisLimit = scale?.xAxis?.limit;
 
-    this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
-    this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
+      this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
+      this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
+    }
+
+    const showLine = (options as UsingShowLineOptions)?.plot?.showLine ?? true;
 
     if (showLine) {
       this.models.plot = this.renderPlots(axes);
