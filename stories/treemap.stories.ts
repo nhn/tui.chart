@@ -65,9 +65,7 @@ export const useTreemapLeaf = () => {
     series: {
       dataLabels: {
         visible: true,
-        treemapLeaf: {
-          visible: true,
-        },
+        useTreemapLeaf: true,
       },
     },
     tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },

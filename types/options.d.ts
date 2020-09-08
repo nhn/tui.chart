@@ -463,7 +463,7 @@ export interface DataLabels {
 }
 
 export interface TreemapDataLabels extends DataLabels {
-  treemapLeaf?: SubDataLabel;
+  useTreemapLeaf?: boolean;
 }
 
 export interface BulletChartOptions extends BaseOptions {

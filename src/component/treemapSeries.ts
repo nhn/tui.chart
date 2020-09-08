@@ -39,8 +39,8 @@ export default class TreemapSeries extends Component {
     this.models = this.renderTreemapSeries(treemapSeries);
 
     if (dataLabels.visible) {
-      const treemapLeaf = options.series?.dataLabels?.treemapLeaf?.visible ?? false;
-      const dataLabelModel = this.makeDataLabel(treemapLeaf);
+      const useTreemapLeaf = options.series?.dataLabels?.useTreemapLeaf ?? false;
+      const dataLabelModel = this.makeDataLabel(useTreemapLeaf);
 
       this.store.dispatch('appendDataLabels', dataLabelModel);
     }
@@ -87,8 +87,8 @@ export default class TreemapSeries extends Component {
     return boundMap;
   }
 
-  makeDataLabel(treemapLeaf: boolean): RectDataLabel[] {
-    const series = treemapLeaf
+  makeDataLabel(useTreemapLeaf: boolean): RectDataLabel[] {
+    const series = useTreemapLeaf
       ? this.models.series.filter(({ hasChild }) => !hasChild)
       : this.models.series.filter(({ depth }) => depth === this.depth);
 
