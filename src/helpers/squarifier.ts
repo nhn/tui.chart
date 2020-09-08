@@ -77,82 +77,100 @@ function calculateFixedSize(baseSize: number, total: number, rows: WeightRows) {
   return total / baseSize;
 }
 
-export default {
-  boundMap: {} as BoundMap,
+function addBounds(startPosition: number, rows: WeightRows, fixedSize: number, callback: Function) {
+  rows.reduce((storedPosition, rowDatum) => {
+    const dynamicSize = rowDatum.weight / fixedSize;
 
-  addBounds(startPosition: number, rows: WeightRows, fixedSize: number, callback: Function) {
-    rows.reduce((storedPosition, rowDatum) => {
-      const dynamicSize = rowDatum.weight / fixedSize;
+    callback(dynamicSize, storedPosition, rowDatum.id);
 
-      callback(dynamicSize, storedPosition, rowDatum.id);
+    return storedPosition + dynamicSize;
+  }, startPosition);
+}
 
-      return storedPosition + dynamicSize;
-    }, startPosition);
-  },
+function addBound(boundMap: BoundMap, id: IdType, rect: Rect) {
+  boundMap[id] = rect;
+}
 
-  addBound(x: number, y: number, width: number, height: number, id: IdType) {
-    this.boundMap[id] = { x, y, width, height };
-  },
+function addBoundsForVerticalStack(
+  boundMap: BoundMap,
+  rows: WeightRows,
+  baseBound: Rect,
+  baseSize: number,
+  total: number
+) {
+  const fixedWidth = calculateFixedSize(baseSize, total, rows);
 
-  addBoundsForVerticalStack(rows: WeightRows, baseBound: Rect, baseSize: number, total: number) {
-    const fixedWidth = calculateFixedSize(baseSize, total, rows);
-
-    this.addBounds(baseBound.y, rows, fixedWidth, (dynamicHeight, storedTop, id) => {
-      this.addBound(baseBound.x, storedTop, fixedWidth, dynamicHeight, id);
+  addBounds(baseBound.y, rows, fixedWidth, (dynamicHeight, storedTop, id) => {
+    addBound(boundMap, id, {
+      x: baseBound.x,
+      y: storedTop,
+      width: fixedWidth,
+      height: dynamicHeight,
     });
+  });
 
-    baseBound.x += fixedWidth;
-    baseBound.width -= fixedWidth;
-  },
+  baseBound.x += fixedWidth;
+  baseBound.width -= fixedWidth;
+}
 
-  addBoundsForHorizontalStack(rows: WeightRows, baseBound: Rect, baseSize: number, total: number) {
-    const fixedHeight = calculateFixedSize(baseSize, total, rows);
+function addBoundsForHorizontalStack(
+  boundMap: BoundMap,
+  rows: WeightRows,
+  baseBound: Rect,
+  baseSize: number,
+  total: number
+) {
+  const fixedHeight = calculateFixedSize(baseSize, total, rows);
 
-    this.addBounds(baseBound.x, rows, fixedHeight, (dynamicWidth, storedLeft, id) => {
-      this.addBound(storedLeft, baseBound.y, dynamicWidth, fixedHeight, id);
+  addBounds(baseBound.x, rows, fixedHeight, (dynamicWidth, storedLeft, id) => {
+    addBound(boundMap, id, {
+      x: storedLeft,
+      y: baseBound.y,
+      width: dynamicWidth,
+      height: fixedHeight,
     });
+  });
 
-    baseBound.y += fixedHeight;
-    baseBound.height -= fixedHeight;
-  },
+  baseBound.y += fixedHeight;
+  baseBound.height -= fixedHeight;
+}
 
-  getAddingBoundsFunction(baseBound: Size) {
-    if (isVerticalStack(baseBound)) {
-      return this.addBoundsForVerticalStack.bind(this);
+function getAddingBoundsFunction(baseBound: Size) {
+  if (isVerticalStack(baseBound)) {
+    return addBoundsForVerticalStack;
+  }
+
+  return addBoundsForHorizontalStack;
+}
+
+export function squarify(layout: Rect, seriesItems: TreemapSeriesData[]) {
+  const baseBound = layout;
+  const baseData = makeBaseData(seriesItems, baseBound);
+  let row: WeightRows = [];
+  let baseSize, addBoundsFunc;
+
+  const boundMap = {};
+
+  baseData.forEach((datum) => {
+    const weights = pluck(row, 'weight');
+    const totalWeight = sum(weights);
+
+    if (row.length && changedStackDirection(totalWeight, weights, baseSize, datum.weight)) {
+      addBoundsFunc(boundMap, row, baseBound, baseSize, totalWeight);
+      row = [];
     }
 
-    return this.addBoundsForHorizontalStack.bind(this);
-  },
-
-  squarify(layout: Rect, seriesItems: TreemapSeriesData[]) {
-    const baseBound = layout;
-    const baseData = makeBaseData(seriesItems, baseBound);
-    let row: WeightRows = [];
-    let baseSize, addBounds;
-
-    this.boundMap = {};
-
-    baseData.forEach((datum) => {
-      const weights = pluck(row, 'weight');
-      const totalWeight = sum(weights);
-
-      if (row.length && changedStackDirection(totalWeight, weights, baseSize, datum.weight)) {
-        addBounds(row, baseBound, baseSize, totalWeight);
-        row = [];
-      }
-
-      if (!row.length) {
-        baseSize = selectBaseSize(baseBound);
-        addBounds = this.getAddingBoundsFunction(baseBound);
-      }
-
-      row.push(datum);
-    });
-
-    if (row.length) {
-      addBounds(row, baseBound, baseSize);
+    if (!row.length) {
+      baseSize = selectBaseSize(baseBound);
+      addBoundsFunc = getAddingBoundsFunction(baseBound);
     }
 
-    return this.boundMap;
-  },
-};
+    row.push(datum);
+  });
+
+  if (row.length) {
+    addBoundsFunc(boundMap, row, baseBound, baseSize);
+  }
+
+  return boundMap;
+}

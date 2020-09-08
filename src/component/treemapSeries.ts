@@ -6,7 +6,7 @@ import {
   TreemapRectResponderModel,
   TreemapSeriesModels,
 } from '@t/components/series';
-import squarifier, { BoundMap } from '@src/helpers/squarifier';
+import { BoundMap, squarify } from '@src/helpers/squarifier';
 import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
@@ -75,10 +75,7 @@ export default class TreemapSeries extends Component {
   ) {
     const seriesItems = series.filter((item) => item.parentId === parentId);
 
-    boundMap = {
-      ...boundMap,
-      ...squarifier.squarify({ ...layout }, seriesItems),
-    };
+    boundMap = { ...boundMap, ...squarify({ ...layout }, seriesItems) };
 
     seriesItems.forEach((seriesItem) => {
       boundMap = this.makeBoundMap(series, seriesItem.id, boundMap[seriesItem.id], boundMap);
