@@ -211,12 +211,27 @@ export default class BoxSeries extends Component {
     });
   }
 
-  private setEventType(series: Series, options?: BarChartOptions | ColumnChartOptions) {
+  protected setEventType(series: Series, options?: BarChartOptions | ColumnChartOptions) {
     if (options?.series?.eventDetectType) {
       this.eventType = options.series.eventDetectType;
     } else if (series.line) {
       this.eventType = 'grouped';
     }
+  }
+
+  protected getOptions(
+    chartOptions: BarChartOptions | ColumnChartOptions | ColumnLineChartOptions
+  ) {
+    const options = { ...chartOptions };
+
+    if (options?.series && (options.series as ColumnLineChartSeriesOptions).column) {
+      options.series = {
+        ...options.series,
+        ...(options.series as ColumnLineChartSeriesOptions).column,
+      };
+    }
+
+    return options;
   }
 
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
@@ -228,14 +243,7 @@ export default class BoxSeries extends Component {
       return;
     }
 
-    const options = { ...chartState.options };
-    if (options?.series && (options.series as ColumnLineChartSeriesOptions).column) {
-      options.series = {
-        ...options.series,
-        ...(options.series as ColumnLineChartSeriesOptions).column,
-      };
-    }
-
+    const options = this.getOptions(chartState.options);
     this.setEventType(series, options);
 
     this.rect = layout.plot;
@@ -317,10 +325,10 @@ export default class BoxSeries extends Component {
           }));
   }
 
-  makeTooltipRectMap(seriesModels: RectModel[], tooltipDataArr: TooltipData[]) {
+  protected makeTooltipRectMap(seriesModels: RectModel[], tooltipDataArr: TooltipData[]) {
     return seriesModels.reduce<RectResponderModel[][]>((acc, cur, dataIndex) => {
       const index = cur.index!;
-      const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex % tooltipDataArr.length] };
+      const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex] };
       if (!acc[index]) {
         acc[index] = [];
       }
@@ -340,7 +348,7 @@ export default class BoxSeries extends Component {
     };
   }
 
-  private initClipRect(clipRect: ClipRectAreaModel): ClipRectAreaModel {
+  protected initClipRect(clipRect: ClipRectAreaModel): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
       width: this.isBar ? 0 : clipRect.width,

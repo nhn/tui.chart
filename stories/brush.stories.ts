@@ -279,11 +279,11 @@ export const rectBrush = () => {
 
   const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
 
-  rect(ctx, { type: 'rect', x: 300, y: 100, height: 200, width: 100, color });
+  rect(ctx, { type: 'rect', x: 300, y: 50, height: 200, width: 100, color });
   rect(ctx, {
     type: 'rect',
-    x: 100,
-    y: 100,
+    x: 150,
+    y: 50,
     height: 200,
     width: 100,
     color,
@@ -296,6 +296,16 @@ export const rectBrush = () => {
         shadowBlur: 10,
       },
     ],
+  });
+  rect(ctx, {
+    type: 'rect',
+    x: 10,
+    y: 10,
+    height: 100,
+    width: 100,
+    color,
+    thickness: 5,
+    strokeOnly: true,
   });
 
   return el;

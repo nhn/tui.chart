@@ -59,6 +59,7 @@ const result = {
       y: 12,
       value: 1,
       name: 'han',
+      index: 0,
     },
     {
       type: 'rect',
@@ -69,6 +70,7 @@ const result = {
       y: 52,
       value: 2,
       name: 'han',
+      index: 1,
     },
     {
       type: 'rect',
@@ -79,6 +81,7 @@ const result = {
       y: 20,
       value: 4,
       name: 'cho',
+      index: 0,
     },
     {
       type: 'rect',
@@ -89,8 +92,10 @@ const result = {
       y: 60,
       value: 5,
       name: 'cho',
+      index: 1,
     },
   ],
+  selectedSeries: [],
 };
 
 const respondersResult = [
@@ -104,6 +109,7 @@ const respondersResult = [
     style: ['shadow'],
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
+    index: 0,
   },
   {
     type: 'rect',
@@ -115,6 +121,7 @@ const respondersResult = [
     style: ['shadow'],
     thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
+    index: 1,
   },
   {
     type: 'rect',
@@ -126,6 +133,7 @@ const respondersResult = [
     style: ['shadow'],
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' },
+    index: 0,
   },
   {
     type: 'rect',
@@ -137,6 +145,7 @@ const respondersResult = [
     style: ['shadow'],
     thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' },
+    index: 1,
   },
 ];
 

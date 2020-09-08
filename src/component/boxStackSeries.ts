@@ -6,6 +6,7 @@ import {
   BarChartOptions,
   Point,
   Connector,
+  ColumnLineChartOptions,
 } from '@t/options';
 import {
   ChartState,
@@ -19,9 +20,9 @@ import {
   CenterYAxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { RectModel, Nullable, StackTotalModel } from '@t/components/series';
+import { RectModel, Nullable, StackTotalModel, RectResponderModel } from '@t/components/series';
 import { LineModel } from '@t/components/axis';
-import { deepCopyArray, includes, isNumber, hasNegative } from '@src/helpers/utils';
+import { deepCopyArray, includes, isNumber, hasNegative, sumProperty } from '@src/helpers/utils';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
 import {
@@ -31,6 +32,7 @@ import {
 import { RectDataLabel } from '@src/store/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import { makeRectResponderModel } from '@src/helpers/responders';
 
 type RenderOptions = {
   stack: Stack;
@@ -82,22 +84,37 @@ function getDirectionKeys(seriesDirection: SeriesDirection) {
 }
 
 export default class BoxStackSeries extends BoxSeries {
-  render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, axes, categories, stackSeries, options, dataLabels, legend } = chartState;
+  render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
+    chartState: ChartState<T>
+  ) {
+    const {
+      layout,
+      series: seriesData,
+      axes,
+      categories,
+      stackSeries,
+      dataLabels,
+      legend,
+    } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
     }
 
+    const options = this.getOptions(chartState.options);
+
+    this.setEventType(seriesData, options);
+
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.selectable = this.getSelectableOption(options);
 
-    const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
+    const stackSeriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;
     const { min, max } = getLimitOnAxis(labels);
-    const { stack, scaleType } = seriesData;
+    const { stack, scaleType } = stackSeriesData;
 
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
@@ -129,45 +146,44 @@ export default class BoxStackSeries extends BoxSeries {
       centerYAxis,
     };
 
-    const { series, connector } = this.renderStackSeriesModel(seriesData, renderOptions);
+    const { series, connector } = this.renderStackSeriesModel(stackSeriesData, renderOptions);
     const hoveredSeries = this.renderHoveredSeriesModel(series);
     const clipRect = this.renderClipRectAreaModel();
 
-    const tooltipData: TooltipData[] = this.getTooltipData(seriesData, categories);
+    const tooltipData: TooltipData[] = this.getTooltipData(stackSeriesData, categories);
 
     this.models = {
       clipRect: [clipRect],
       series,
       connector,
+      selectedSeries: [],
     };
 
     if (!this.drawModels) {
       this.drawModels = {
-        clipRect: [
-          {
-            type: 'clipRectArea',
-            width: this.isBar ? 0 : clipRect.width,
-            height: this.isBar ? clipRect.height : 0,
-            x: this.isBar ? 0 : clipRect.x,
-            y: this.isBar ? clipRect.y : 0,
-          },
-        ],
+        clipRect: [this.initClipRect(clipRect)],
         series: deepCopyArray(series),
         connector: deepCopyArray(connector),
+        selectedSeries: [],
       };
     }
 
     if (dataLabels.visible) {
       const dataLabelData = this.getDataLabels(series, renderOptions);
-      const stackTotalData = this.getTotalDataLabels(seriesData, renderOptions);
+      const stackTotalData = this.getTotalDataLabels(stackSeriesData, renderOptions);
 
       this.store.dispatch('appendDataLabels', [...dataLabelData, ...stackTotalData]);
     }
 
-    this.responders = hoveredSeries.map((m, index) => ({
-      ...m,
-      data: tooltipData[index],
-    }));
+    this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
+
+    this.responders =
+      this.eventType === 'grouped'
+        ? makeRectResponderModel(this.rect, this.isBar ? axes.yAxis! : axes.xAxis!, !this.isBar)
+        : hoveredSeries.map((m, index) => ({
+            ...m,
+            data: tooltipData[index],
+          }));
   }
 
   renderStackSeriesModel(seriesData: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
@@ -217,6 +233,7 @@ export default class BoxStackSeries extends BoxSeries {
           name,
           value,
           ...this.getAdjustedRect(seriesPos, dataPosition, barLength ?? 0, columnWidth),
+          index: dataIndex,
         });
       });
     });
@@ -345,7 +362,7 @@ export default class BoxStackSeries extends BoxSeries {
   ): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
-    stackData.forEach(({ values, total }, dataIndex) => {
+    stackData.forEach(({ values }, dataIndex) => {
       values.forEach((value, seriesIndex) => {
         tooltipData.push({
           label: seriesRawData[seriesIndex].name,
@@ -691,5 +708,39 @@ export default class BoxStackSeries extends BoxSeries {
         size: this.getOffsetSize(),
       },
     };
+  }
+
+  private getOffsetPosition(models: RectResponderModel[]) {
+    const offsetValues = models.map((model) => model[this.offsetKey]);
+    const min = Math.min(...offsetValues);
+
+    return Math.max(min, 0);
+  }
+
+  private getGroupedHoverRect(models: RectResponderModel[]) {
+    const size = sumProperty(models, this.offsetSizeKey);
+    const offsetPos = this.getOffsetPosition(models);
+
+    return {
+      type: 'rect',
+      x: this.isBar ? offsetPos : models[0].x,
+      y: this.isBar ? models[0].y : offsetPos,
+      width: this.isBar ? size : models[0].width,
+      height: this.isBar ? models[0].height : size,
+      strokeOnly: true,
+      style: ['shadow'],
+    };
+  }
+
+  onMousemoveGroupedType(responders: RectResponderModel[]) {
+    const rectModels = this.getRectModelsFromRectResponders(responders);
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [...rectModels, this.getGroupedHoverRect(rectModels)],
+      name: this.name,
+      eventType: this.eventType,
+    });
+
+    this.activatedResponders = rectModels;
   }
 }

@@ -119,6 +119,7 @@ describe('boxplot series', () => {
           y: 0,
           radius: 4,
           style: [{ strokeStyle: 'rgba(170, 170, 170, 1)', lineWidth: 2 }],
+          index: 0,
         },
         {
           type: 'rect',
@@ -219,6 +220,7 @@ describe('boxplot series', () => {
           category: 'A',
           templateType: 'boxPlot',
         },
+        index: 0,
       },
       {
         type: 'circle',
@@ -235,6 +237,7 @@ describe('boxplot series', () => {
           category: 'A',
           templateType: 'boxPlot',
         },
+        index: 0,
       },
       {
         type: 'boxPlot',
@@ -282,6 +285,7 @@ describe('boxplot series', () => {
           category: 'A',
           templateType: 'boxPlot',
         },
+        index: 0,
       },
     ],
   };
