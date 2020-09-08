@@ -13,7 +13,8 @@ export type LabelStyleName =
   | 'axisTitle'
   | 'stackTotal'
   | 'sector'
-  | 'pieSeriesName';
+  | 'pieSeriesName'
+  | 'treemapSeriesName';
 export type StrokeLabelStyleName = 'none' | 'stroke';
 
 export interface LabelStyle {
@@ -61,6 +62,12 @@ export const labelStyle = {
   pieSeriesName: {
     font: '400 11px Arial',
     fillStyle: '#333333',
+    textAlign: 'center',
+    textBaseline: 'middle',
+  },
+  treemapSeriesName: {
+    font: '400 11px Arial',
+    fillStyle: '#ffffff',
     textAlign: 'center',
     textBaseline: 'middle',
   },

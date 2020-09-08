@@ -49,7 +49,8 @@ export function divide(a: number, b: number) {
 
   return (a * multipleNum) / (b * multipleNum);
 }
-function sum(values: number[]) {
+
+export function sum(values: number[]) {
   const copyArr = values.slice();
   copyArr.unshift(0);
 

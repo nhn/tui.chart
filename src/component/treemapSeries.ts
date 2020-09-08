@@ -1,12 +1,23 @@
 import Component from './component';
-import { PieChartOptions } from '@t/options';
-import { ChartState } from '@t/store/store';
-import { PieSeriesModels, RectResponderModel } from '@t/components/series';
+import { Rect, TreemapChartOptions } from '@t/options';
+import { ChartState, TreemapSeriesData } from '@t/store/store';
+import {
+  TreemapRectModel,
+  TreemapRectResponderModel,
+  TreemapSeriesModels,
+} from '@t/components/series';
+import squarifier, { BoundMap } from '@src/helpers/squarifier';
+import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
+import { getRGBA } from '@src/helpers/color';
+import { TooltipData } from '@t/components/tooltip';
+import { getDeepestNode } from '@src/helpers/responders';
+import { RectDataLabel } from '@src/store/dataLabels';
+import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 
 export default class TreemapSeries extends Component {
-  models: PieSeriesModels = { series: [] };
+  models: TreemapSeriesModels = { series: [], layer: [] };
 
-  responders!: RectResponderModel[];
+  responders!: TreemapRectResponderModel[];
 
   activatedResponders: this['responders'] = [];
 
@@ -15,22 +26,111 @@ export default class TreemapSeries extends Component {
     this.name = 'treemap';
   }
 
-  render(chartState: ChartState<PieChartOptions>) {
-    const { layout, series } = chartState;
+  render(chartState: ChartState<TreemapChartOptions>) {
+    const { layout, treemapSeries, dataLabels } = chartState;
 
-    if (!series.treemap) {
-      throw new Error("There's no pie data");
+    if (!treemapSeries.length) {
+      throw new Error("There's no tree map data");
     }
 
     this.rect = layout.plot;
+    this.models = this.renderTreemapSeries(treemapSeries);
 
-    const treemapData = series.treemap.data;
+    if (dataLabels.visible) {
+      const dataLabelModel = this.makeDataLabel();
+
+      this.store.dispatch('appendDataLabels', dataLabelModel);
+    }
+
+    this.responders = this.makeTreemapSeriesResponder();
+  }
+
+  makeTreemapSeriesResponder(): TreemapRectResponderModel[] {
+    const tooltipData: TooltipData[] = this.makeTooltipData();
+
+    return this.models.series.map<TreemapRectResponderModel>((m, idx) => ({
+      ...m,
+      data: tooltipData[idx],
+      thickness: BOX_HOVER_THICKNESS,
+      style: ['shadow'],
+    }));
+  }
+
+  private makeTooltipData(): TooltipData[] {
+    return this.models.series.map(({ label, data, color }) => ({
+      label: label!,
+      color,
+      value: data as number,
+    }));
+  }
+
+  makeBoundMap(
+    series: TreemapSeriesData[],
+    parentId: string,
+    layout: Rect,
+    boundMap: BoundMap = {}
+  ) {
+    const seriesItems = series.filter((item) => item.parentId === parentId);
+
+    boundMap = {
+      ...boundMap,
+      ...squarifier.squarify({ ...layout }, seriesItems),
+    };
+
+    seriesItems.forEach((seriesItem) => {
+      boundMap = this.makeBoundMap(series, seriesItem.id, boundMap[seriesItem.id], boundMap);
+    });
+
+    return boundMap;
+  }
+
+  makeDataLabel(): RectDataLabel[] {
+    return this.models.series
+      .filter(({ hasChild }) => !hasChild)
+      .map((m) => ({
+        ...m,
+        type: 'treemapSeriesName',
+        value: m.label,
+        direction: 'left',
+        plot: { x: 0, y: 0, size: 0 },
+      }));
+  }
+
+  combineBoundMap(series: TreemapSeriesData[], boundMap: BoundMap) {
+    return Object.keys(boundMap).map((id) => ({
+      ...series.find((item) => item.id === id)!,
+      ...boundMap[id],
+    }));
+  }
+
+  renderTreemapSeries(seriesData: TreemapSeriesData[]) {
+    const boundMap = this.makeBoundMap(seriesData, TREEMAP_ROOT_ID, {
+      ...this.rect,
+      x: 0,
+      y: 0,
+    });
+
+    const series: TreemapRectModel[] = this.combineBoundMap(seriesData, boundMap).map((m) => ({
+      ...m,
+      type: 'rect',
+    }));
+    const layer = series.map((m) => ({ ...m, color: getRGBA('#000000', m.opacity!) }));
+
+    return { series, layer };
+  }
+
+  onMouseoutComponent() {
+    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('needDraw');
   }
 
   onMousemove({ responders }) {
-    // this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
-    //
-    // this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
-    // this.eventBus.emit('needDraw');
+    const deepestNode = getDeepestNode(responders);
+    this.activatedResponders = deepestNode;
+
+    this.eventBus.emit('renderHoveredSeries', { models: deepestNode, name: this.name });
+    this.eventBus.emit('seriesPointHovered', { models: deepestNode, name: this.name });
+    this.eventBus.emit('needDraw');
   }
 }

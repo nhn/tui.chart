@@ -1,7 +1,13 @@
 import { StoreModule } from '@t/store/store';
 import { pickStackOption } from '@src/store/stackSeriesData';
-import { isFunction, includes, isBoolean, isNumber } from '@src/helpers/utils';
-import { DataLabels, DataLabelAnchor, SeriesDataType, SubDataLabel } from '@t/options';
+import { isFunction, includes, isBoolean, isUndefined, isString } from '@src/helpers/utils';
+import {
+  DataLabels,
+  DataLabelAnchor,
+  SeriesDataType,
+  SubDataLabel,
+  BoxSeriesDataType,
+} from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
@@ -17,7 +23,7 @@ type LabelPosition = {
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
 };
-type DataLabelType = 'point' | 'sector' | 'rect' | 'stackTotal';
+type DataLabelType = 'point' | 'sector' | 'rect' | 'stackTotal' | 'treemapSeriesName';
 
 export type PointDataLabel = PointModel & {
   type: 'point';
@@ -26,8 +32,9 @@ export type RadialDataLabel = Omit<SectorModel, 'type'> & {
   type: 'sector';
 };
 export type RectDirection = 'top' | 'bottom' | 'left' | 'right';
-export type RectDataLabel = Omit<RectModel, 'type' | 'color'> & {
-  type: 'rect' | 'stackTotal';
+export type RectDataLabel = Omit<RectModel, 'type' | 'color' | 'value'> & {
+  value?: BoxSeriesDataType | string;
+  type: 'rect' | 'stackTotal' | 'treemapSeriesName';
   direction: RectDirection;
   plot: {
     x: number;
@@ -47,6 +54,7 @@ function getDefaultAnchor(type: DataLabelType, withStack = false): DataLabelAnch
       anchor = !withStack ? 'auto' : 'center';
       break;
     case 'sector':
+    case 'treemapSeriesName':
       anchor = 'center';
       break;
     case 'stackTotal':
@@ -134,7 +142,7 @@ function makeHorizontalRectPosition(rect: RectDataLabel, anchor: DataLabelAnchor
   const posY = y + height / 2;
 
   let textAlign: CanvasTextAlign = 'center';
-  let posX = x;
+  let posX;
 
   if (direction === 'right') {
     switch (anchor) {
@@ -236,7 +244,10 @@ function makeVerticalRectPosition(rect: RectDataLabel, anchor: DataLabelAnchor):
     textBaseline,
   };
 }
-function getFont(type: 'stackTotal' | 'rect', dataLabelOptions: DataLabelOption) {
+function getFont(
+  type: 'stackTotal' | 'rect' | 'treemapSeriesName',
+  dataLabelOptions: DataLabelOption
+) {
   return type === 'stackTotal'
     ? dataLabelOptions.stackTotal?.style?.font ?? labelStyle.stackTotal.font
     : dataLabelOptions.style?.font ?? labelStyle['default'].font;
@@ -250,7 +261,7 @@ function adjustOverflowHorizontalRect(
   const { type, width, value, direction, plot } = rect;
   const { formatter } = dataLabelOptions;
   const font = getFont(type, dataLabelOptions);
-  const text = formatter(value!);
+  const text = isString(value) ? value : formatter(value!);
   const textWidth = getTextWidth(text, font!);
 
   let { x, textAlign } = position;
@@ -412,7 +423,7 @@ function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOptio
   return {
     type: type as DataLabelType,
     ...labelPosition,
-    text: formatter(value!),
+    text: isString(value) ? value : formatter(value!),
     name,
   };
 }
@@ -499,7 +510,7 @@ const dataLabels: StoreModule = {
         const labelOptions = getDataLabelsOptions(dataLabelOptions, type, withStack);
         const disableStackTotal = type === 'stackTotal' && !labelOptions.stackTotal?.visible;
 
-        if (disableStackTotal || !isNumber(value)) {
+        if (disableStackTotal || isUndefined(value)) {
           return;
         }
 

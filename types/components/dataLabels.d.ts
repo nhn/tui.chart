@@ -6,7 +6,13 @@ import {
   SubDataLabel,
 } from '@t/options';
 
-export type DataLabelType = 'stackTotal' | 'rect' | 'point' | 'sector' | 'pieSeriesName';
+export type DataLabelType =
+  | 'stackTotal'
+  | 'rect'
+  | 'point'
+  | 'sector'
+  | 'pieSeriesName'
+  | 'treemapSeriesName';
 
 export type DataLabel = {
   type: DataLabelType;

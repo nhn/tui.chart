@@ -20,6 +20,9 @@ function getStyleDefaultName(type: DataLabelType) {
   } else if (type === 'pieSeriesName') {
     styleDefault = 'pieSeriesName';
     strokeStyleDefault = 'none';
+  } else if (type === 'treemapSeriesName') {
+    styleDefault = 'treemapSeriesName';
+    strokeStyleDefault = 'none';
   }
 
   return {

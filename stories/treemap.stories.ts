@@ -44,3 +44,32 @@ export const basic = () => {
 
   return el;
 };
+
+export const dataLabels = () => {
+  const { el } = createChart(usedDiskSpaceData, {
+    chart: { title: 'Used disk space' },
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+  });
+
+  return el;
+};
+
+export const useTreemapLeaf = () => {
+  const { el } = createChart(usedDiskSpaceData, {
+    chart: { title: 'Used disk space' },
+    series: {
+      dataLabels: {
+        visible: true,
+        treemapLeaf: true,
+      },
+    },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+  });
+
+  return el;
+};

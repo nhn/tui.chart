@@ -206,6 +206,7 @@ export interface TreemapSeriesData {
   data: number;
   ratio: number;
   color: string;
+  opacity: number;
 }
 
 export interface ChartState<T extends Options> {

@@ -55,3 +55,9 @@ export function isSameArray(arr1: unknown[], arr2: unknown[]) {
 
   return true;
 }
+
+export function pluck(arr: any[], property: string | number) {
+  return arr.reduce((acc, cur) => {
+    return [...acc, cur[property]];
+  }, []);
+}

@@ -2,10 +2,9 @@ import { Series, StoreModule, Theme, TreemapSeriesData } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { TreemapSeriesType } from '@t/options';
 import { first, last } from '@src/helpers/utils';
-import { getRGBA } from '@src/helpers/color';
 
 const TREEMAP_ID_PREFIX = '__TOAST_UI_TREEMAP';
-const TREEMAP_ROOT_ID = `${TREEMAP_ID_PREFIX}_ROOT`;
+export const TREEMAP_ROOT_ID = `${TREEMAP_ID_PREFIX}_ROOT`;
 
 function makeTreeModel(
   series: TreemapSeriesType,
@@ -65,8 +64,8 @@ function fillColor(treemapSeries: TreemapSeriesData[], colors: string[]) {
     const { indexes, depth } = series;
     const colorIdx = first<number>(indexes)!;
     const idx = last<number>(indexes)!;
-    const opacity = indexes.length === 1 ? 1 : 0.1 * depth + 0.05 * idx;
-    series.color = getRGBA(colors[colorIdx], opacity);
+    series.opacity = indexes.length === 1 ? 0 : 0.1 * depth + 0.05 * idx;
+    series.color = colors[colorIdx];
   });
 }
 
@@ -79,7 +78,7 @@ function makeTreemapSeries(series: Series, theme: Theme) {
   const treemapSeries = series.treemap.data
     .map((data, idx) => makeTreeModel(data, [idx], 0))
     .flatMap((s) => s)
-    .sort((a, b) => a.depth - b.depth);
+    .sort((a, b) => b.depth - a.depth);
 
   fillData(treemapSeries);
   fillRatio(treemapSeries);

@@ -1570,7 +1570,7 @@ export const energyUsageStackData = {
       },
     ],
   },
-}
+};
 
 export const usedDiskSpaceData = {
   series: [
