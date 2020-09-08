@@ -452,6 +452,13 @@ export default class BoxSeries extends Component {
       : [];
   }
 
+  protected getGroupedHoverRect(responders: RectResponderModel[]) {
+    return responders.map((m) => ({
+      ...m,
+      color: 'rgba(0, 0, 0, 0.1)',
+    }));
+  }
+
   onMousemoveGroupedType(responders: RectResponderModel[]) {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 

@@ -49,4 +49,5 @@ export type TooltipModelName =
   | 'column'
   | 'pie'
   | 'radar'
-  | 'radial';
+  | 'radial'
+  | 'bullet';
