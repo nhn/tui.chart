@@ -211,7 +211,6 @@ export interface ChartState<T extends Options> {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };
   plot: {
-    showLine: boolean;
     lines: PlotLine[];
     bands: PlotBand[];
   };
