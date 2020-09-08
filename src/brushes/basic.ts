@@ -114,9 +114,25 @@ export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
 }
 
 export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
-  const { x, y, width, height, style, thickness = 0, color, borderColor = '#fff' } = model;
+  const {
+    x,
+    y,
+    width,
+    height,
+    style,
+    thickness = 0,
+    color,
+    borderColor = '#fff',
+    strokeOnly = false,
+  } = model;
 
   ctx.beginPath();
+
+  if (strokeOnly) {
+    drawStrokeRect(ctx, model);
+
+    return;
+  }
 
   if (style) {
     const styleObj = makeStyleObj<RectStyle, RectStyleName>(style, rectStyle);
@@ -135,4 +151,21 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   ctx.fillStyle = color;
   ctx.rect(x, y, width, height);
   ctx.fill();
+}
+
+function drawStrokeRect(ctx: CanvasRenderingContext2D, model: RectModel) {
+  const { x, y, width, height, thickness = 4, color = '#ffffff', style } = model;
+
+  ctx.strokeStyle = color;
+  ctx.lineWidth = thickness;
+
+  if (style) {
+    const styleObj = makeStyleObj<RectStyle, RectStyleName>(style, rectStyle);
+
+    Object.keys(styleObj).forEach((key) => {
+      ctx[key] = styleObj[key];
+    });
+  }
+
+  ctx.strokeRect(x - thickness / 2, y - thickness / 2, width + thickness, height + thickness);
 }

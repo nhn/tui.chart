@@ -13,8 +13,8 @@ import {
   PieSeriesModels,
   RadarSeriesModels,
   BoxPlotSeriesModels,
-  ResponderModel,
   TreemapSeriesModels,
+  ResponderModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
