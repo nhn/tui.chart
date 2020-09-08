@@ -118,7 +118,7 @@ export default {
 
   getAddingBoundsFunction(baseBound: Size) {
     if (isVerticalStack(baseBound)) {
-      return this.addBoundsForVerticalStack.bind(this); // @TODO: bind 지워?
+      return this.addBoundsForVerticalStack.bind(this);
     }
 
     return this.addBoundsForHorizontalStack.bind(this);

@@ -64,7 +64,7 @@ function fillColor(treemapSeries: TreemapSeriesData[], colors: string[]) {
     const { indexes, depth } = series;
     const colorIdx = first<number>(indexes)!;
     const idx = last<number>(indexes)!;
-    series.opacity = indexes.length === 1 ? 0 : 0.1 * depth + 0.05 * idx;
+    series.opacity = indexes.length === 1 ? 0 : Number((0.1 * depth + 0.05 * idx).toFixed(2));
     series.color = colors[colorIdx];
   });
 }
@@ -96,6 +96,7 @@ const treemapSeriesData: StoreModule = {
   action: {
     setTreemapSeriesData({ state }) {
       const { series, theme } = state;
+
       const treemapSeries = makeTreemapSeries(series, theme);
 
       extend(state.treemapSeries, treemapSeries);
