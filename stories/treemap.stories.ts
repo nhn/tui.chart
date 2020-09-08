@@ -1,6 +1,6 @@
 import { SeriesDataType, TreemapSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { usedDiskSpaceData } from './data';
+import { populationDensityData, usedDiskSpaceData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import TreemapChart from '@src/charts/treemapChart';
 
@@ -69,6 +69,21 @@ export const useTreemapLeaf = () => {
       },
     },
     tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+  });
+
+  return el;
+};
+
+export const colorValue = () => {
+  const { el } = createChart(populationDensityData, {
+    chart: { title: 'Population density of World' },
+    series: {
+      dataLabels: {
+        visible: true,
+        useTreemapLeaf: true,
+      },
+    },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}㎢` },
   });
 
   return el;
