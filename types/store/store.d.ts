@@ -29,6 +29,7 @@ import {
   PlotBand,
   BoxPlotChartOptions,
   PieChartOptions,
+  DataLabelOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -190,6 +191,8 @@ export type RadialAxisData = {
   centerY: number;
 };
 
+export type DataLabelSeriesType = 'area' | 'line' | 'bar' | 'column' | 'bullet' | 'pie';
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -214,11 +217,17 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
-  dataLabels: {
-    visible: boolean;
-    data: DataLabel[];
-  };
+  dataLabels: DataLabels;
 }
+
+export type DataLabels = {
+  [key in DataLabelSeriesType]?: DataLabelData;
+};
+
+type DataLabelData = {
+  data: DataLabel[];
+  options: DataLabelOptions;
+};
 
 export type StackTotal = {
   positive: number;

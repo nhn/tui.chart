@@ -294,18 +294,6 @@ export function sum(items: number[]): number {
   return items.reduce((a, b) => a + b, 0);
 }
 
-export function sumProperty(items: object[], propName: string) {
-  return items.reduce((acc, item, index) => {
-    if (!index) {
-      acc = item[propName];
-
-      return acc;
-    }
-
-    return acc + item[propName];
-  }, 0);
-}
-
 export function hasPositiveOnly(values: (number | string)[]) {
   return values.every((value) => Number(value) >= 0);
 }

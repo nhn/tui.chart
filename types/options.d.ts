@@ -18,7 +18,7 @@ export type BubblePoint = (Point | ObjectTypeDatetimePoint) & { r: number };
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
 export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped';
-export type BoxTypeEventDetectType = 'nearest' | 'grouped';
+export type BoxTypeEventDetectType = 'near' | 'grouped';
 
 export type BezierPoint = {
   controlPoint?: {
@@ -228,7 +228,7 @@ interface CircleLegendOptions {
 
 interface BaseSeriesOptions {
   selectable?: boolean;
-  dataLabels?: DataLabels;
+  dataLabels?: DataLabelOptions;
 }
 
 interface BoxPlotSeriesOptions extends BaseSeriesOptions {
@@ -430,7 +430,7 @@ export type DataLabelPieSeriesName = {
   style?: DataLabelStyle;
 };
 
-export type DataLabels = {
+export type DataLabelOptions = {
   visible?: boolean;
   anchor?: DataLabelAnchor;
   offsetX?: number;

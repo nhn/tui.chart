@@ -5,6 +5,7 @@ import {
   BoxSeriesModels,
   StackTotalModel,
   RectResponderModel,
+  MouseEventType,
 } from '@t/components/series';
 import { ChartState, ChartType, BoxType, AxisData, CenterYAxisData, Series } from '@t/store/store';
 import {
@@ -36,10 +37,9 @@ import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
-import { RectDirection, RectDataLabel } from '@src/store/dataLabels';
+import { RectDirection, RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
-import { MouseEventType } from './areaSeries';
 import { makeRectResponderModel } from '@src/helpers/responders';
 
 export enum SeriesDirection {
@@ -119,7 +119,7 @@ export default class BoxSeries extends Component {
 
   offsetKey = 'x';
 
-  eventType: BoxTypeEventDetectType = 'nearest';
+  eventType: BoxTypeEventDetectType = 'near';
 
   tooltipRectMap!: RectResponderModel[][];
 
@@ -212,10 +212,12 @@ export default class BoxSeries extends Component {
   }
 
   protected setEventType(series: Series, options?: BarChartOptions | ColumnChartOptions) {
+    if (series.line) {
+      this.eventType = 'grouped';
+    }
+
     if (options?.series?.eventDetectType) {
       this.eventType = options.series.eventDetectType;
-    } else if (series.line) {
-      this.eventType = 'grouped';
     }
   }
 
@@ -237,7 +239,7 @@ export default class BoxSeries extends Component {
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
     chartState: ChartState<T>
   ) {
-    const { layout, series, axes, categories, stackSeries, legend, dataLabels } = chartState;
+    const { layout, series, axes, categories, stackSeries, legend } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -308,13 +310,13 @@ export default class BoxSeries extends Component {
       };
     }
 
-    if (dataLabels.visible) {
+    if (getDataLabelsOptions(options, this.name).visible) {
       const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data, centerYAxis));
 
-      this.store.dispatch('appendDataLabels', dataLabelData);
+      this.store.dispatch('appendDataLabels', { data: dataLabelData, name: this.name });
     }
 
-    this.tooltipRectMap = this.makeTooltipRectMap(hoveredSeries, tooltipData);
+    this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
 
     this.responders =
       this.eventType === 'grouped'
@@ -432,11 +434,18 @@ export default class BoxSeries extends Component {
     return this.tooltipRectMap[responders[0].index!];
   }
 
+  protected getGroupedHoverRect(responders: RectResponderModel[]) {
+    return responders.map((m) => ({
+      ...m,
+      color: 'rgba(0, 0, 0, 0.1)',
+    }));
+  }
+
   onMousemoveGroupedType(responders: RectResponderModel[]) {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: rectModels,
+      models: [...this.getGroupedHoverRect(responders)],
       name: this.name,
       eventType: this.eventType,
     });

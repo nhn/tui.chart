@@ -10,14 +10,9 @@ import {
   BoxSeriesModels,
   CircleSeriesModels,
   LineSeriesModels,
-  CircleResponderModel,
-  RectModel,
   PieSeriesModels,
-  SectorResponderModel,
-  RectResponderModel,
   RadarSeriesModels,
   BoxPlotSeriesModels,
-  BoxPlotResponderModel,
   ResponderModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';

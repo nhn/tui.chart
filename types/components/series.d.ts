@@ -213,3 +213,8 @@ export type BulletSeriesModels = {
   series: BulletModel[];
   selectedSeries: BulletResponderModel[];
 };
+
+export interface MouseEventType {
+  responders: CircleResponderModel[] | RectResponderModel[];
+  mousePosition: Point;
+}

@@ -1,4 +1,4 @@
-import { Point, DataLabels, DataLabelStyle, DataLabelPieSeriesName } from '@t/options';
+import { Point, DataLabelOptions, DataLabelStyle, DataLabelPieSeriesName } from '@t/options';
 
 export type DataLabelType = 'stackTotal' | 'rect' | 'point' | 'sector' | 'pieSeriesName';
 
@@ -17,7 +17,7 @@ export type DataLabelStackTotal = {
 };
 
 export type DataLabelOption = Required<
-  Pick<DataLabels, 'anchor' | 'offsetX' | 'offsetY' | 'formatter'>
+  Pick<DataLabelOptions, 'anchor' | 'offsetX' | 'offsetY' | 'formatter'>
 > & {
   style?: DataLabelStyle;
   stackTotal?: DataLabelStackTotal;

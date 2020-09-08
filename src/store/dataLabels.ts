@@ -1,7 +1,7 @@
-import { StoreModule } from '@t/store/store';
+import { StoreModule, DataLabelSeriesType, Options } from '@t/store/store';
 import { pickStackOption } from '@src/store/stackSeriesData';
 import { isFunction, includes, isBoolean, isNumber } from '@src/helpers/utils';
-import { DataLabels, DataLabelAnchor, SeriesDataType } from '@t/options';
+import { DataLabelAnchor, SeriesDataType, DataLabelOptions } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption, DataLabelStackTotal } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
@@ -59,7 +59,7 @@ function getDefaultAnchor(type: DataLabelType, withStack = false): DataLabelAnch
 }
 
 function getAnchor(
-  dataLabelOptions: DataLabels,
+  dataLabelOptions: DataLabelOptions,
   type: DataLabelType,
   withStack = false
 ): DataLabelAnchor {
@@ -69,8 +69,8 @@ function getAnchor(
     : getDefaultAnchor(type, withStack);
 }
 
-export function getDataLabelsOptions(
-  dataLabelOptions: DataLabels,
+export function getDefaultDataLabelsOptions(
+  dataLabelOptions: DataLabelOptions,
   type: DataLabelType,
   withStack = false
 ): DataLabelOption {
@@ -477,27 +477,34 @@ function makePieSeriesNameLabelInfo(
   };
 }
 
+export function getDataLabelsOptions(options: Options, name: string) {
+  return options?.series?.[name]?.dataLabels || options?.series?.dataLabels || {};
+}
+
 const dataLabels: StoreModule = {
   name: 'dataLabels',
-  state: ({ options }) => ({
-    dataLabels: {
-      visible: !!options.series?.dataLabels?.visible,
-      data: [],
-    },
+  state: () => ({
+    dataLabels: {},
   }),
   action: {
     appendDataLabels(
       { state },
-      dataLabelData: Array<PointDataLabel | RadialDataLabel | RectDataLabel>
+      {
+        data,
+        name,
+      }: {
+        data: Array<PointDataLabel | RadialDataLabel | RectDataLabel>;
+        name: DataLabelSeriesType;
+      }
     ) {
       const { options } = state;
-      const dataLabelOptions = options.series?.dataLabels!;
+      const dataLabelOptions = getDataLabelsOptions(options, name);
       const withStack = !!pickStackOption(options);
-      const labels: DataLabel[] = [...state.dataLabels.data];
+      const labels: DataLabel[] = [];
 
-      dataLabelData.forEach((model) => {
+      data.forEach((model) => {
         const { type, value } = model;
-        const labelOptions = getDataLabelsOptions(dataLabelOptions, type, withStack);
+        const labelOptions = getDefaultDataLabelsOptions(dataLabelOptions, type, withStack);
         const disableStackTotal = type === 'stackTotal' && !labelOptions.stackTotal?.visible;
 
         if (disableStackTotal || !isNumber(value)) {
@@ -526,11 +533,19 @@ const dataLabels: StoreModule = {
         labels.push(dataLabel);
       });
 
-      extend(state.dataLabels, { data: labels });
+      state.dataLabels[name] = { data: labels, options: dataLabelOptions };
     },
-
     resetDataLabels({ state }) {
-      state.dataLabels = { ...state.dataLabels, data: [] };
+      const newDataLabels = {};
+
+      Object.keys(state.dataLabels).forEach((seriesName) => {
+        newDataLabels[seriesName] = {
+          data: [],
+          options: state.dataLabels[seriesName].options,
+        };
+      });
+
+      state.dataLabels = newDataLabels;
     },
   },
 };

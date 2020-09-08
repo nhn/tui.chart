@@ -5,6 +5,7 @@ import {
   PointModel,
   LineSeriesModels,
   RectResponderModel,
+  MouseEventType,
 } from '@t/components/series';
 import {
   LineChartOptions,
@@ -33,17 +34,13 @@ import {
   makeRectResponderModel,
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
+import { getDataLabelsOptions } from '@src/store/dataLabels';
 
 interface RenderOptions {
   pointOnColumn: boolean;
   options: LineTypeSeriesOptions;
   tickDistance: number;
   labelDistance?: number;
-}
-
-interface MouseEventType {
-  responders: CircleResponderModel[] | RectResponderModel[];
-  mousePosition: Point;
 }
 
 export const DEFAULT_LINE_WIDTH = 3;
@@ -77,12 +74,12 @@ export default class LineSeries extends Component {
   }
 
   private setEventType(series: Series, options?: LineChartOptions) {
-    if (options?.series?.eventDetectType) {
-      this.eventType = options.series.eventDetectType;
+    if (series.area || series.column) {
+      this.eventType = 'grouped';
     }
 
-    if (series.area) {
-      this.eventType = 'grouped';
+    if (options?.series?.eventDetectType) {
+      this.eventType = options.series.eventDetectType;
     }
 
     if (series.scatter) {
@@ -93,16 +90,7 @@ export default class LineSeries extends Component {
   render(
     chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>
   ) {
-    const {
-      layout,
-      series,
-      scale,
-      axes,
-      categories = [],
-      legend,
-      dataLabels,
-      zoomRange,
-    } = chartState;
+    const { layout, series, scale, axes, categories = [], legend, zoomRange } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -156,8 +144,11 @@ export default class LineSeries extends Component {
       };
     }
 
-    if (dataLabels.visible) {
-      this.store.dispatch('appendDataLabels', this.getDataLabels(lineSeriesModel));
+    if (getDataLabelsOptions(options, this.name).visible) {
+      this.store.dispatch('appendDataLabels', {
+        data: this.getDataLabels(lineSeriesModel),
+        name: this.name,
+      });
     }
 
     this.responders =
@@ -303,10 +294,10 @@ export default class LineSeries extends Component {
   }
 
   onMousemove({ responders, mousePosition }: MouseEventType) {
-    if (this.eventType === 'nearest') {
-      this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
-    } else if (this.eventType === 'near') {
+    if (this.eventType === 'near') {
       this.onMousemoveNearType(responders as CircleResponderModel[]);
+    } else if (this.eventType === 'nearest') {
+      this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
     } else {
       this.onMousemoveGroupedType(responders as RectResponderModel[]);
     }

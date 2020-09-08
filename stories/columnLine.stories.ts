@@ -52,8 +52,15 @@ export const selectable = () => {
 export const dataLabels = () => {
   const { el } = createChart(temperatureAverageData, {
     series: {
-      dataLabels: {
-        visible: true,
+      column: {
+        dataLabels: {
+          visible: false,
+        },
+      },
+      line: {
+        dataLabels: {
+          visible: true,
+        },
       },
     },
   });

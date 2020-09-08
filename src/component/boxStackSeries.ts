@@ -22,14 +22,14 @@ import {
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel, Nullable, StackTotalModel, RectResponderModel } from '@t/components/series';
 import { LineModel } from '@t/components/axis';
-import { deepCopyArray, includes, isNumber, hasNegative, sumProperty } from '@src/helpers/utils';
+import { deepCopyArray, includes, isNumber, hasNegative } from '@src/helpers/utils';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
 import {
   calibrateBoxStackDrawingValue,
   sumValuesBeforeIndex,
 } from '@src/helpers/boxSeriesCalculator';
-import { RectDataLabel } from '@src/store/dataLabels';
+import { RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { makeRectResponderModel } from '@src/helpers/responders';
@@ -87,15 +87,7 @@ export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
     chartState: ChartState<T>
   ) {
-    const {
-      layout,
-      series: seriesData,
-      axes,
-      categories,
-      stackSeries,
-      dataLabels,
-      legend,
-    } = chartState;
+    const { layout, series: seriesData, axes, categories, stackSeries, legend } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
@@ -168,11 +160,14 @@ export default class BoxStackSeries extends BoxSeries {
       };
     }
 
-    if (dataLabels.visible) {
+    if (getDataLabelsOptions(options, this.name).visible) {
       const dataLabelData = this.getDataLabels(series, renderOptions);
       const stackTotalData = this.getTotalDataLabels(stackSeriesData, renderOptions);
 
-      this.store.dispatch('appendDataLabels', [...dataLabelData, ...stackTotalData]);
+      this.store.dispatch('appendDataLabels', {
+        data: [...dataLabelData, ...stackTotalData],
+        name: this.name,
+      });
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
@@ -717,26 +712,11 @@ export default class BoxStackSeries extends BoxSeries {
     return Math.max(min, 0);
   }
 
-  private getGroupedHoverRect(models: RectResponderModel[]) {
-    const size = sumProperty(models, this.offsetSizeKey);
-    const offsetPos = this.getOffsetPosition(models);
-
-    return {
-      type: 'rect',
-      x: this.isBar ? offsetPos : models[0].x,
-      y: this.isBar ? models[0].y : offsetPos,
-      width: this.isBar ? size : models[0].width,
-      height: this.isBar ? models[0].height : size,
-      strokeOnly: true,
-      style: ['shadow'],
-    };
-  }
-
   onMousemoveGroupedType(responders: RectResponderModel[]) {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: [...rectModels, this.getGroupedHoverRect(rectModels)],
+      models: [...rectModels, ...this.getGroupedHoverRect(responders)],
       name: this.name,
       eventType: this.eventType,
     });

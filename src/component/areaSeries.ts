@@ -7,6 +7,7 @@ import {
   PointModel,
   AreaSeriesModels,
   RectResponderModel,
+  MouseEventType,
 } from '@t/components/series';
 import {
   AreaChartOptions,
@@ -43,11 +44,7 @@ import {
   makeRectResponderModel,
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
-
-export interface MouseEventType {
-  responders: CircleResponderModel[] | RectResponderModel[];
-  mousePosition: Point;
-}
+import { getDataLabelsOptions } from '@src/store/dataLabels';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -148,7 +145,6 @@ export default class AreaSeries extends Component {
       axes,
       categories = [],
       legend,
-      dataLabels,
       stackSeries,
       zoomRange,
     } = chartState;
@@ -210,8 +206,11 @@ export default class AreaSeries extends Component {
       };
     }
 
-    if (dataLabels.visible) {
-      this.store.dispatch('appendDataLabels', this.getDataLabels(areaSeriesModel));
+    if (getDataLabelsOptions(options, this.name).visible) {
+      this.store.dispatch('appendDataLabels', {
+        data: this.getDataLabels(areaSeriesModel),
+        name: this.name,
+      });
     }
 
     this.tooltipCircleMap = makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);

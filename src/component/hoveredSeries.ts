@@ -31,7 +31,7 @@ export default class HoveredSeries extends Component {
     name: TooltipModelName;
     eventType?: LineTypeEventDetectType;
   }) => {
-    this.models[name] = [...models];
+    this.models[name] = models?.length ? [...models] : [];
     this.isShow = !!this.getSeriesModels().length;
 
     if (eventType === 'grouped' && (name === 'line' || name === 'area' || name === 'boxPlot')) {

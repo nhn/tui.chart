@@ -32,7 +32,7 @@ export default class Tooltip extends Component {
   tooltipInfoModels: TooltipInfoModels = {} as TooltipInfoModels;
 
   onSeriesPointHovered = ({ models, name }: { models: TooltipInfo[]; name: TooltipModelName }) => {
-    this.tooltipInfoModels[name] = [...models];
+    this.tooltipInfoModels[name] = models?.length ? [...models] : [];
     const isShow = !!this.getTooltipInfoModels().length;
     if (isShow) {
       this.renderTooltip();

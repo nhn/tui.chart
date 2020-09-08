@@ -3,7 +3,6 @@ import dataLabels, { PointDataLabel, RectDataLabel } from '@src/store/dataLabels
 import Store from '@src/store/store';
 import { LineChartOptions, BarChartOptions } from '@t/options';
 import { ChartState } from '@t/store/store';
-import { DataLabel } from '@t/components/dataLabels';
 
 describe('Data Labels Store module', () => {
   it('should create data label of point type', () => {
@@ -15,10 +14,10 @@ describe('Data Labels Store module', () => {
           },
         },
       },
-      dataLabels: {
-        visible: true,
-        data: [] as DataLabel[],
+      series: {
+        line: {},
       },
+      dataLabels: {},
     } as ChartState<LineChartOptions>;
 
     const store = { state } as Store<LineChartOptions>;
@@ -32,9 +31,9 @@ describe('Data Labels Store module', () => {
       },
     ];
 
-    dataLabels.action!.appendDataLabels(store, pointDataLabels);
+    dataLabels.action!.appendDataLabels(store, { data: pointDataLabels, name: 'line' });
 
-    expect(state.dataLabels.data).toEqual([
+    expect(state.dataLabels.line!.data).toEqual([
       {
         type: 'point',
         text: '3.5',
@@ -60,10 +59,10 @@ describe('Data Labels Store module', () => {
           },
         },
       },
-      dataLabels: {
-        visible: true,
-        data: [] as DataLabel[],
+      series: {
+        bar: {},
       },
+      dataLabels: {},
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
@@ -85,9 +84,9 @@ describe('Data Labels Store module', () => {
       },
     ];
 
-    dataLabels.action!.appendDataLabels(store, rectDataLabels);
+    dataLabels.action!.appendDataLabels(store, { data: rectDataLabels, name: 'bar' });
 
-    expect(state.dataLabels.data).toEqual([
+    expect(state.dataLabels.bar!.data).toEqual([
       {
         type: 'rect',
         text: '1000',
