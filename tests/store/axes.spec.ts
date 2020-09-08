@@ -90,7 +90,7 @@ describe('Axes Store module', () => {
         pointOnColumn: false,
         tickCount: 2,
         tickDistance: 100,
-        labelDistance: 49,
+        labelDistance: 100,
       },
       yAxis: {
         isLabelAxis: false,

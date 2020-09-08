@@ -1,9 +1,9 @@
 /**
  * operation for floating point operation.
  */
-import { Options, ValueEdge } from '@t/store/store';
+import { Options, ValueEdge, AxisData } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
-import { range, isInteger } from '@src/helpers/utils';
+import { range, isInteger, isString } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
@@ -173,4 +173,27 @@ export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
   const matches = ctx.font.match(/\d+/);
 
   return parseInt(String(Number(matches) * 1.2), 10);
+}
+
+export function getXPosition(
+  axisData: Pick<AxisData, 'pointOnColumn' | 'tickDistance' | 'labelDistance'>,
+  offsetSize: number,
+  xAxisLimit: ValueEdge,
+  value: number | string | Date,
+  dataIndex: number
+) {
+  const { pointOnColumn, tickDistance, labelDistance } = axisData;
+  let x;
+
+  if (xAxisLimit) {
+    const xValue = isString(value) ? Number(new Date(value)) : Number(value);
+    const xValueRatio = getValueRatio(xValue, xAxisLimit);
+    x =
+      xValueRatio * (offsetSize - (pointOnColumn ? labelDistance! : 0)) +
+      (pointOnColumn ? labelDistance! / 2 : 0);
+  } else {
+    x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
+  }
+
+  return x;
 }

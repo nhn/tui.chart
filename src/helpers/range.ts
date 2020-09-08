@@ -1,10 +1,14 @@
-import { BoxSeriesDataType, RangeDataType } from '@t/options';
-import { getFirstValidValue, isNumber } from '@src/helpers/utils';
+import { RangeDataType, BoxSeriesDataType } from '@t/options';
+import { getFirstValidValue } from '@src/helpers/utils';
 
-export function isRangeValue(value: unknown): value is RangeDataType {
-  return Array.isArray(value) && value.length === 2 && isNumber(value[0]) && isNumber(value[1]);
+function isRangeLength<T>(range: T) {
+  return Array.isArray(range) && range.length === 2;
 }
 
-export function isRangeData(data?: BoxSeriesDataType[]): data is RangeDataType[] {
-  return Array.isArray(data) && !!data.length && isRangeValue(getFirstValidValue(data));
+export function isRangeValue<T>(value: unknown): value is RangeDataType<T> {
+  return isRangeLength(value);
+}
+
+export function isRangeData(data?: BoxSeriesDataType[]) {
+  return isRangeValue(getFirstValidValue(data));
 }

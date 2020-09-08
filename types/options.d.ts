@@ -1,9 +1,9 @@
 import { RawSeries } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
-export type RangeDataType = [number, number];
-export type BoxSeriesDataType = number | RangeDataType;
+export type RangeDataType<T> = [T, T];
+export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
-export type AreaSeriesDataType = number | RangeDataType;
+export type AreaSeriesDataType = number | RangeDataType<number>;
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 export interface Point {
   x: number;
@@ -123,6 +123,8 @@ export interface Scale {
   stepSize?: 'auto' | number;
 }
 
+type BaseSizeOptions = Partial<Size>;
+
 export type AxisTitleOption = Omit<TitleOption, 'align'>;
 type AxisTitle = string | AxisTitleOption;
 
@@ -135,9 +137,7 @@ type BaseAxisOptions = {
   };
   scale?: Scale;
   title?: AxisTitle;
-  width?: number;
-  height?: number;
-};
+} & BaseSizeOptions;
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {
   pointOnColumn?: boolean;
@@ -156,20 +156,31 @@ interface BarTypeYAxisOptions extends BaseAxisOptions {
   align?: 'center';
 }
 
-export type PlotLineValue = string | number;
+export type PlotXPointType = number | string;
 
-type BasePlotOptions = {
-  width?: number;
-  height?: number;
+export type PlotRangeType = RangeDataType<PlotXPointType>;
+
+export type PlotLine = {
+  value: PlotXPointType;
+  color: string;
+  opacity?: number;
+  vertical?: boolean;
 };
 
-export type AreaLinePlotOptions = BasePlotOptions & {
+export type PlotBand = {
+  range: PlotRangeType | PlotRangeType[];
+  color: string;
+  opacity?: number;
+  mergeOverlappingRanges?: boolean;
+};
+
+type PlotOptions = BaseSizeOptions & {
   showLine?: boolean;
-  lines?: { value: PlotLineValue; color: string }[];
-  bands?: {
-    range: [PlotLineValue, PlotLineValue];
-    color: string;
-  }[];
+};
+
+export type LineTypePlotOptions = PlotOptions & {
+  lines?: PlotLine[];
+  bands?: PlotBand[];
 };
 
 interface ExportMenuOptions {
@@ -200,7 +211,7 @@ interface BaseOptions {
   legend?: BaseLegendOptions;
   exportMenu?: ExportMenuOptions;
   tooltip?: BaseTooltipOptions;
-  plot?: BasePlotOptions;
+  plot?: BaseSizeOptions;
 }
 
 interface BaseLegendOptions {
@@ -226,6 +237,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 
 export interface BoxPlotChartOptions extends BaseOptions {
   series?: BoxPlotSeriesOptions;
+  plot?: PlotOptions;
 }
 
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
@@ -243,13 +255,13 @@ interface AreaSeriesOptions extends LineTypeSeriesOptions {
 export interface AreaChartOptions extends BaseOptions {
   series?: AreaSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
-  plot?: AreaLinePlotOptions;
+  plot?: LineTypePlotOptions;
 }
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineTypeSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
-  plot?: AreaLinePlotOptions;
+  plot?: LineTypePlotOptions;
 }
 
 type LineScatterChartSeriesOptions = {
@@ -258,6 +270,7 @@ type LineScatterChartSeriesOptions = {
 
 export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
+  plot?: PlotOptions;
 }
 
 export interface LineAreaChartOptions extends BaseOptions {
@@ -277,14 +290,14 @@ type LineAreaChartSeriesOptions = {
 export interface ScatterChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
-  plot?: BasePlotOptions & { showLine?: boolean };
+  plot?: PlotOptions;
 }
 
 export interface BubbleChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
   circleLegend?: CircleLegendOptions;
-  plot?: BasePlotOptions & { showLine?: boolean };
+  plot?: PlotOptions;
 }
 
 type ConnectorLineType = 'dashed' | 'solid';
@@ -314,12 +327,12 @@ export interface BoxSeriesOptions extends BaseSeriesOptions {
 export interface BarChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
   yAxis?: BarTypeYAxisOptions;
-  plot?: BasePlotOptions & { showLine?: boolean };
+  plot?: PlotOptions;
 }
 
 export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
-  plot?: BasePlotOptions & { showLine?: boolean };
+  plot?: PlotOptions;
 }
 
 export type BoxPlotSeriesType = {
@@ -370,7 +383,7 @@ export type RadarPlotType = 'spiderweb' | 'circle';
 
 export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
-  plot?: BasePlotOptions & { type: RadarPlotType };
+  plot?: BaseSizeOptions & { type?: RadarPlotType };
 }
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
@@ -430,13 +443,14 @@ export type DataLabels = {
 
 export interface BulletChartOptions extends BaseOptions {
   series?: BulletSeriesOptions;
+  plot?: PlotOptions;
 }
 
 export type BulletSeriesType = {
   name: string;
   data: number;
   markers: number[];
-  ranges: RangeDataType[];
+  ranges: RangeDataType<number>[];
   color?: string;
 };
 
