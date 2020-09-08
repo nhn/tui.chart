@@ -275,7 +275,7 @@ export interface LineScatterChartOptions extends BaseOptions {
 
 export interface LineAreaChartOptions extends BaseOptions {
   series?: LineAreaChartSeriesOptions;
-  plot?: AreaLinePlotOptions;
+  plot?: LineTypePlotOptions;
 }
 
 type LineAreaChartSeriesOptions = {
@@ -469,7 +469,7 @@ type ColumnLineChartSeriesOptions = {
 
 export interface ColumnLineChartOptions extends BaseOptions {
   series?: ColumnLineChartSeriesOptions;
-  plot?: AreaLinePlotOptions;
+  plot?: LineTypePlotOptions;
 }
 
 export type ColumnLineData = {

@@ -2,11 +2,9 @@ import ColumnLineChart from '@src/charts/columnLineChart';
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { temperatureAverageData } from './data';
-import { boolean, radios, withKnobs } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart.ColumnLine',
-  decorators: [withKnobs],
 };
 
 const defaultOptions: ColumnChartOptions = {
@@ -54,18 +52,6 @@ export const selectable = () => {
 export const dataLabels = () => {
   const { el } = createChart(temperatureAverageData, {
     series: {
-      /*
-      column: {
-        dataLabels: {
-          visible: boolean('column - DataLabels', false),
-        },
-      },
-      line: {
-        dataLabels: {
-          visible: boolean('line - DataLabels', false),
-        },
-      },
-      */
       dataLabels: {
         visible: true,
       },

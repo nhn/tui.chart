@@ -65,6 +65,8 @@ export default class LineSeries extends Component {
 
   startIndex!: number;
 
+  isComboChart = false;
+
   initialize() {
     this.type = 'series';
     this.name = 'line';
@@ -77,9 +79,13 @@ export default class LineSeries extends Component {
   private setEventType(series: Series, options?: LineChartOptions) {
     if (options?.series?.eventDetectType) {
       this.eventType = options.series.eventDetectType;
-    } else if (series.area || series.column) {
+    }
+
+    if (series.area) {
       this.eventType = 'grouped';
-    } else if (series.scatter) {
+    }
+
+    if (series.scatter) {
       this.eventType = 'near';
     }
   }
@@ -94,8 +100,8 @@ export default class LineSeries extends Component {
       axes,
       categories = [],
       legend,
-      zoomRange,
       dataLabels,
+      zoomRange,
     } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
@@ -129,7 +135,6 @@ export default class LineSeries extends Component {
       renderLineOptions,
       categories
     );
-
     const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
     const tooltipDataArr = this.makeTooltipData(lineSeriesData, categories);
     const dotSeriesModel = this.renderDotSeriesModel(seriesCircleModel, renderLineOptions);
@@ -151,14 +156,14 @@ export default class LineSeries extends Component {
       };
     }
 
-    if (dataLabels?.visible) {
+    if (dataLabels.visible) {
       this.store.dispatch('appendDataLabels', this.getDataLabels(lineSeriesModel));
     }
 
     this.responders =
-      this.eventType === 'grouped'
-        ? makeRectResponderModel(this.rect, axes.xAxis)
-        : this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr);
+      this.eventType === 'near'
+        ? this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr)
+        : makeRectResponderModel(this.rect, axes.xAxis);
   }
 
   makeNearTypeResponderModel(seriesCircleModel: CircleModel[], tooltipDataArr: TooltipData[]) {
@@ -260,7 +265,6 @@ export default class LineSeries extends Component {
         seriesIndex,
         name,
         index,
-        points,
       }))
     );
   }
