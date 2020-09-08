@@ -129,7 +129,7 @@ export function observable(
         }
 
         if (prevValue !== value) {
-          // console.trace('run observe', key, obs);
+          // console.log('run observe', key, obs);
           invokeObs(obs);
         }
       },

@@ -294,10 +294,10 @@ export default class LineSeries extends Component {
   }
 
   onMousemove({ responders, mousePosition }: MouseEventType) {
-    if (this.eventType === 'near') {
-      this.onMousemoveNearType(responders as CircleResponderModel[]);
-    } else if (this.eventType === 'nearest') {
+    if (this.eventType === 'nearest') {
       this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
+    } else if (this.eventType === 'near') {
+      this.onMousemoveNearType(responders as CircleResponderModel[]);
     } else {
       this.onMousemoveGroupedType(responders as RectResponderModel[]);
     }
