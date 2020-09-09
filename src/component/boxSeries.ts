@@ -119,7 +119,7 @@ export default class BoxSeries extends Component {
 
   offsetKey = 'x';
 
-  eventType: BoxTypeEventDetectType = 'near';
+  eventType: BoxTypeEventDetectType = 'nearest';
 
   tooltipRectMap!: RectResponderModel[][];
 
@@ -431,7 +431,7 @@ export default class BoxSeries extends Component {
       return [];
     }
 
-    return this.tooltipRectMap[responders[0].index!];
+    return this.tooltipRectMap[responders[0].index!] ?? [];
   }
 
   protected getGroupedHoverRect(responders: RectResponderModel[]) {
@@ -445,7 +445,7 @@ export default class BoxSeries extends Component {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: [...this.getGroupedHoverRect(responders)],
+      models: rectModels.length ? [...this.getGroupedHoverRect(responders)] : [],
       name: this.name,
       eventType: this.eventType,
     });

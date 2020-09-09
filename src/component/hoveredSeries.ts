@@ -16,10 +16,14 @@ export default class HoveredSeries extends Component {
 
   isShow = false;
 
-  getSeriesModels() {
-    const { guideLine, ...model } = this.models;
+  getModelsOnly() {
+    const { guideLine, ...models } = this.models;
 
-    return Object.values(model).flatMap((val) => val);
+    return models;
+  }
+
+  getSeriesModels() {
+    return Object.values(this.getModelsOnly()).flatMap((val) => val);
   }
 
   renderHoveredSeries = ({
@@ -34,7 +38,15 @@ export default class HoveredSeries extends Component {
     this.models[name] = models?.length ? [...models] : [];
     this.isShow = !!this.getSeriesModels().length;
 
-    if (eventType === 'grouped' && (name === 'line' || name === 'area' || name === 'boxPlot')) {
+    if (eventType === 'grouped') {
+      this.renderGroupedModels(name);
+    } else if (eventType === 'point') {
+      this.renderPointModels(name);
+    }
+  };
+
+  private renderGroupedModels(name: TooltipModelName) {
+    if (name === 'line' || name === 'area' || name === 'boxPlot') {
       if (this.isShow) {
         const model = this.getSeriesModels().filter(({ type }) =>
           includes(['circle', 'boxPlot'], type)
@@ -46,7 +58,26 @@ export default class HoveredSeries extends Component {
         this.models.guideLine = [];
       }
     }
-  };
+  }
+
+  private renderPointModels(name: TooltipModelName) {
+    if (name === 'line' || name === 'column') {
+      const models = this.getSeriesModels();
+
+      if (models.length < 2) {
+        return;
+      }
+
+      const modelKeys = Object.keys(this.getModelsOnly());
+      const includeLineAndColumn = ['line', 'column'].every((modelName) =>
+        includes(modelKeys, modelName)
+      );
+
+      if (includeLineAndColumn) {
+        this.models.column = [];
+      }
+    }
+  }
 
   renderGuideLineModel(model: CircleResponderModel | BoxPlotResponderModel): LineModel {
     const x = model.type === 'circle' ? crispPixel(model.x) : model.whisker.x;

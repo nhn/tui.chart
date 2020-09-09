@@ -17,7 +17,7 @@ import {
   LineAreaChartOptions,
 } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, Scale, Series } from '@t/store/store';
+import { ChartState, Scale, Series, AxisData } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint, getXPosition } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray, pick } from '@src/helpers/utils';
+import { deepCopyArray, pick, includes } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -46,13 +46,14 @@ interface RenderOptions {
 export const DEFAULT_LINE_WIDTH = 3;
 
 type DatumType = CoordinateDataType | number;
+type ResponderTypes = CircleResponderModel[] | RectResponderModel[];
 
 export default class LineSeries extends Component {
   models: LineSeriesModels = { rect: [], series: [], dot: [], selectedSeries: [] };
 
   drawModels!: LineSeriesModels;
 
-  responders!: CircleResponderModel[] | RectResponderModel[];
+  responders!: ResponderTypes;
 
   activatedResponders: this['responders'] = [];
 
@@ -151,16 +152,36 @@ export default class LineSeries extends Component {
       });
     }
 
-    this.responders =
-      this.eventType === 'near'
-        ? this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr)
-        : makeRectResponderModel(this.rect, axes.xAxis);
+    this.responders = this.getResponders(axes.xAxis, seriesCircleModel, tooltipDataArr);
   }
 
-  makeNearTypeResponderModel(seriesCircleModel: CircleModel[], tooltipDataArr: TooltipData[]) {
+  private getResponders(
+    axisData: AxisData,
+    seriesCircleModel: CircleModel[],
+    tooltipDataArr: TooltipData[]
+  ): ResponderTypes {
+    let res: ResponderTypes = [];
+
+    if (this.eventType === 'near') {
+      res = this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr);
+    } else if (this.eventType === 'point') {
+      res = this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr, 0);
+    } else {
+      res = makeRectResponderModel(this.rect, axisData);
+    }
+
+    return res;
+  }
+
+  makeNearTypeResponderModel(
+    seriesCircleModel: CircleModel[],
+    tooltipDataArr: TooltipData[],
+    detectionSize?: number
+  ) {
     return seriesCircleModel.map((m, index) => ({
       ...m,
       data: tooltipDataArr[index],
+      detectionSize,
     }));
   }
 
@@ -296,7 +317,7 @@ export default class LineSeries extends Component {
   onMousemove({ responders, mousePosition }: MouseEventType) {
     if (this.eventType === 'nearest') {
       this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
-    } else if (this.eventType === 'near') {
+    } else if (includes(['near', 'point'], this.eventType)) {
       this.onMousemoveNearType(responders as CircleResponderModel[]);
     } else {
       this.onMousemoveGroupedType(responders as RectResponderModel[]);
