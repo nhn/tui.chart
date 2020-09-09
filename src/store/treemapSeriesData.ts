@@ -97,9 +97,7 @@ const treemapSeriesData: StoreModule = {
     setTreemapSeriesData({ state }) {
       const { series, theme } = state;
 
-      const treemapSeries = makeTreemapSeries(series, theme);
-
-      extend(state.treemapSeries, treemapSeries);
+      extend(state.treemapSeries, makeTreemapSeries(series, theme));
     },
   },
   observe: {

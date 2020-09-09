@@ -98,13 +98,6 @@ export default class TreemapSeries extends Component {
     }));
   }
 
-  combineBoundMap(series: TreemapSeriesData[], boundMap: BoundMap) {
-    return Object.keys(boundMap).map((id) => ({
-      ...series.find((item) => item.id === id)!,
-      ...boundMap[id],
-    }));
-  }
-
   renderTreemapSeries(seriesData: TreemapSeriesData[]) {
     const boundMap = this.makeBoundMap(seriesData, TREEMAP_ROOT_ID, {
       ...this.rect,
@@ -112,27 +105,36 @@ export default class TreemapSeries extends Component {
       y: 0,
     });
 
-    const series: TreemapRectModel[] = this.combineBoundMap(seriesData, boundMap).map((m) => ({
-      ...m,
+    const series: TreemapRectModel[] = Object.keys(boundMap).map((id) => ({
+      ...seriesData.find((item) => item.id === id)!,
+      ...boundMap[id],
       type: 'rect',
     }));
+
     const layer = series.map((m) => ({ ...m, color: getRGBA('#000000', m.opacity!) }));
 
     return { series, layer };
   }
 
   onMouseoutComponent() {
-    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
-    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
-    this.eventBus.emit('needDraw');
+    this.emitMouseEvent([]);
   }
 
   onMousemove({ responders }) {
     const deepestNode = getDeepestNode(responders);
     this.activatedResponders = deepestNode;
+    this.emitMouseEvent(deepestNode);
+  }
 
-    this.eventBus.emit('renderHoveredSeries', { models: deepestNode, name: this.name });
-    this.eventBus.emit('seriesPointHovered', { models: deepestNode, name: this.name });
+  emitMouseEvent(responders: TreemapRectResponderModel[]) {
+    this.eventBus.emit('renderHoveredSeries', {
+      models: responders,
+      name: this.name,
+    });
+    this.eventBus.emit('seriesPointHovered', {
+      models: responders,
+      name: this.name,
+    });
     this.eventBus.emit('needDraw');
   }
 }
