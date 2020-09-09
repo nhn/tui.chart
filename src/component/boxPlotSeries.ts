@@ -41,7 +41,7 @@ export default class BoxPlotSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  eventType: BoxTypeEventDetectType = 'near';
+  eventType: BoxTypeEventDetectType = 'nearest';
 
   tooltipRectMap!: Record<string, BoxPlotResponderTypes[]>;
 
