@@ -4,6 +4,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { LineModel, LabelModel } from '@t/components/axis';
 import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
 import { LegendData } from '@t/components/legend';
+import { TreemapSeriesData } from '@t/store/store';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
@@ -21,7 +22,10 @@ export type ResponderModel =
   | RectResponderModel
   | RectModel
   | BoxPlotResponderModel
-  | SectorResponderModel;
+  | SectorResponderModel
+  | TreemapRectResponderModel;
+
+export type TreemapSeriesModels = { series: TreemapRectModel[]; layer: TreemapRectModel[] };
 
 export type CircleModel = {
   type: 'circle';
@@ -82,6 +86,19 @@ export type RectModel = {
   thickness?: number;
   value?: BoxSeriesDataType;
   name?: string;
+} & Rect;
+
+export type TreemapRectModel = {
+  type: 'rect';
+  color: string;
+  style?: StyleProp<RectStyle, RectStyleName>;
+  thickness?: number;
+} & Rect &
+  TreemapSeriesData;
+
+export type TreemapRectResponderModel = Omit<TreemapRectModel, 'data'> & {
+  index?: number;
+  data?: Partial<TooltipData>;
 } & Rect;
 
 export type RectResponderModel = Partial<RectModel> & {

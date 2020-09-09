@@ -1,7 +1,12 @@
-import { CircleModel, CircleResponderModel, RectResponderModel } from '@t/components/series';
+import {
+  CircleModel,
+  CircleResponderModel,
+  RectResponderModel,
+  TreemapRectResponderModel,
+} from '@t/components/series';
 import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
-import { AxisData } from '@t/store/store';
+import { AxisData, TreemapSeriesData } from '@t/store/store';
 import { range } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 
@@ -66,4 +71,18 @@ export function makeTooltipCircleMap(
 
     return acc;
   }, {});
+}
+
+export function getDeepestNode(responders: TreemapRectResponderModel[]) {
+  return responders.reduce<TreemapRectResponderModel[]>((acc, responder) => {
+    if (!acc.length) {
+      return [responder];
+    }
+
+    if (responder.depth > acc[0].depth) {
+      return [responder];
+    }
+
+    return acc;
+  }, []);
 }

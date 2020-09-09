@@ -28,6 +28,7 @@ import {
   PlotBand,
   BoxPlotChartOptions,
   PieChartOptions,
+  TreemapSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -43,6 +44,7 @@ type ChartSeriesMap = {
   radar: RadarSeriesType[];
   boxPlot: BoxPlotSeriesType[];
   bullet: BulletSeriesType[];
+  treemap: TreemapSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -110,6 +112,7 @@ export interface StoreModule extends StoreOptions {
     | 'seriesData'
     | 'dataRange'
     | 'stackSeriesData'
+    | 'treemapSeriesData'
     | 'legend'
     | 'circleLegend'
     | 'dataLabels';
@@ -193,6 +196,19 @@ export type RadialAxisData = {
   centerY: number;
 };
 
+export interface TreemapSeriesData {
+  id: string;
+  parentId: string;
+  hasChild: boolean;
+  label: string;
+  indexes: number[];
+  depth: number;
+  data: number;
+  ratio: number;
+  color: string;
+  opacity: number;
+}
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -210,6 +226,7 @@ export interface ChartState<T extends Options> {
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };
+  treemapSeries: TreemapSeriesData[];
   plot: {
     showLine: boolean;
     lines: PlotLine[];

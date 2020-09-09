@@ -10,14 +10,11 @@ import {
   BoxSeriesModels,
   CircleSeriesModels,
   LineSeriesModels,
-  CircleResponderModel,
-  RectModel,
   PieSeriesModels,
-  SectorResponderModel,
-  RectResponderModel,
   RadarSeriesModels,
   BoxPlotSeriesModels,
-  BoxPlotResponderModel, ResponderModel,
+  ResponderModel,
+  TreemapSeriesModels,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -64,7 +61,8 @@ type ComponentModels =
   | LabelModel[]
   | DataLabelModels
   | LegendModel[]
-  | HoveredSeriesModel;
+  | HoveredSeriesModel
+  | TreemapSeriesModels;
 
 export default abstract class Component {
   name = 'Component';

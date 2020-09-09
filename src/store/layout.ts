@@ -366,7 +366,7 @@ const layout: StoreModule = {
         width: chart.width - padding.X * 2,
       };
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
-      const hasAxis = !(series.pie || series.radar);
+      const hasAxis = !(series.pie || series.radar || series.treemap);
       const optionSize = getOptionSize(options);
 
       // Don't change the order!
