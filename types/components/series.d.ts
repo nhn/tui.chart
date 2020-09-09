@@ -83,7 +83,6 @@ export type RectModel = {
   value?: BoxSeriesDataType;
   name?: string;
   index?: number;
-  strokeOnly?: boolean;
 } & Rect;
 
 export type RectResponderModel = Partial<RectModel> & {

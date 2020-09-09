@@ -297,16 +297,6 @@ export const rectBrush = () => {
       },
     ],
   });
-  rect(ctx, {
-    type: 'rect',
-    x: 10,
-    y: 10,
-    height: 100,
-    width: 100,
-    color,
-    thickness: 5,
-    strokeOnly: true,
-  });
 
   return el;
 };
