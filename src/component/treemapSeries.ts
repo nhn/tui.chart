@@ -11,7 +11,7 @@ import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode } from '@src/helpers/responders';
-import { RectDataLabel } from '@src/store/dataLabels';
+import { RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 
 export default class TreemapSeries extends Component {
@@ -29,7 +29,7 @@ export default class TreemapSeries extends Component {
   }
 
   render(chartState: ChartState<TreemapChartOptions>) {
-    const { layout, treemapSeries, dataLabels, options } = chartState;
+    const { layout, treemapSeries, options } = chartState;
 
     if (!treemapSeries.length) {
       throw new Error("There's no tree map data");
@@ -38,11 +38,11 @@ export default class TreemapSeries extends Component {
     this.rect = layout.plot;
     this.models = this.renderTreemapSeries(treemapSeries);
 
-    if (dataLabels.visible) {
+    if (getDataLabelsOptions(options, this.name).visible) {
       const useTreemapLeaf = options.series?.dataLabels?.useTreemapLeaf ?? false;
       const dataLabelModel = this.makeDataLabel(useTreemapLeaf);
 
-      this.store.dispatch('appendDataLabels', dataLabelModel);
+      this.store.dispatch('appendDataLabels', { data: dataLabelModel, name: this.name });
     }
 
     this.responders = this.makeTreemapSeriesResponder();

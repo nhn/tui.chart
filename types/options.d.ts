@@ -461,9 +461,9 @@ export type DataLabelOptions = {
   // @TODO: 각각 차트에 맞게 분리해서 해야하지 않나
   stackTotal?: SubDataLabel;
   pieSeriesName?: DataLabelPieSeriesName;
-}
+};
 
-export interface TreemapDataLabels extends DataLabels {
+export interface TreemapDataLabels extends DataLabelOptions {
   useTreemapLeaf?: boolean;
 }
 

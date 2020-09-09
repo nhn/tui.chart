@@ -2,11 +2,11 @@ import { StoreModule, DataLabelSeriesType, Options } from '@t/store/store';
 import { pickStackOption } from '@src/store/stackSeriesData';
 import { isFunction, includes, isBoolean, isUndefined, isString } from '@src/helpers/utils';
 import {
-  DataLabels,
   DataLabelAnchor,
   SeriesDataType,
   SubDataLabel,
   BoxSeriesDataType,
+  DataLabelOptions,
 } from '@t/options';
 import { PointModel, RectModel, SectorModel } from '@t/components/series';
 import { DataLabel, DataLabelOption } from '@t/components/dataLabels';
