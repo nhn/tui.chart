@@ -14,17 +14,6 @@ describe('Plot Store', () => {
     it('should set true value for showLine property of plot by default', () => {
       expect(plotStateFunc({ series: {}, options: {} })).toEqual({
         plot: {
-          showLine: true,
-          lines: [],
-          bands: [],
-        },
-      });
-    });
-
-    it('should set false value for showLine property, if it is entered "showLine: false" in option', () => {
-      expect(plotStateFunc({ series: {}, options: { plot: { showLine: false } } })).toEqual({
-        plot: {
-          showLine: false,
           lines: [],
           bands: [],
         },
