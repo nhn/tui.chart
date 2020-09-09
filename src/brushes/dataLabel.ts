@@ -1,30 +1,21 @@
-import {
-  label,
-  StrokeLabelStyle,
-  LabelStyle,
-  StrokeLabelStyleName,
-  LabelStyleName,
-} from '@src/brushes/label';
+import { label, StrokeLabelStyle, LabelStyle, StrokeLabelStyleName } from '@src/brushes/label';
 import { DataLabelModel, DataLabelType } from '@t/components/dataLabels';
 
-function getStyleDefaultName(type: DataLabelType) {
-  let styleDefault: LabelStyleName = 'default';
-  let strokeStyleDefault: StrokeLabelStyleName = 'stroke';
+function getStyleDefaultName(
+  type: DataLabelType
+): { styleDefault: LabelStyle; strokeStyleDefault: StrokeLabelStyleName } {
+  const labelStyleDefaultMap = {
+    stackTotal: 'stackTotal',
+    sector: 'sector',
+    pieSeriesName: 'pieSeriesName',
+    treemapSeriesName: 'treemapSeriesName',
+  };
 
-  if (type === 'stackTotal') {
-    styleDefault = 'stackTotal';
-    strokeStyleDefault = 'none';
-  } else if (type === 'sector') {
-    styleDefault = 'sector';
-    strokeStyleDefault = 'none';
-  } else if (type === 'pieSeriesName') {
-    styleDefault = 'pieSeriesName';
-    strokeStyleDefault = 'none';
-  }
+  const styleDefaultWithType = labelStyleDefaultMap[type];
 
   return {
-    styleDefault,
-    strokeStyleDefault,
+    styleDefault: styleDefaultWithType ? styleDefaultWithType : 'default',
+    strokeStyleDefault: styleDefaultWithType ? 'none' : 'stroke',
   };
 }
 

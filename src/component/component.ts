@@ -13,6 +13,7 @@ import {
   PieSeriesModels,
   RadarSeriesModels,
   BoxPlotSeriesModels,
+  TreemapSeriesModels,
   ResponderModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
@@ -60,7 +61,8 @@ type ComponentModels =
   | LabelModel[]
   | DataLabelModels
   | LegendModel[]
-  | HoveredSeriesModel;
+  | HoveredSeriesModel
+  | TreemapSeriesModels;
 
 export default abstract class Component {
   name = 'Component';

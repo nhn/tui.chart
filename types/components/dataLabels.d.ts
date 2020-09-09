@@ -1,6 +1,12 @@
-import { Point, DataLabelOptions, DataLabelStyle, DataLabelPieSeriesName } from '@t/options';
+import { Point, DataLabelOptions, DataLabelStyle, DataLabelPieSeriesName, SubDataLabel, } from '@t/options';
 
-export type DataLabelType = 'stackTotal' | 'rect' | 'point' | 'sector' | 'pieSeriesName';
+export type DataLabelType =
+  | 'stackTotal'
+  | 'rect'
+  | 'point'
+  | 'sector'
+  | 'pieSeriesName'
+  | 'treemapSeriesName';
 
 export type DataLabel = {
   type: DataLabelType;
@@ -11,16 +17,11 @@ export type DataLabel = {
   name?: string;
 } & Point;
 
-export type DataLabelStackTotal = {
-  visible: boolean;
-  style: Required<DataLabelStyle>;
-};
-
 export type DataLabelOption = Required<
   Pick<DataLabelOptions, 'anchor' | 'offsetX' | 'offsetY' | 'formatter'>
 > & {
   style?: DataLabelStyle;
-  stackTotal?: DataLabelStackTotal;
+  stackTotal?: Required<SubDataLabel>;
   pieSeriesName?: DataLabelPieSeriesName;
 };
 

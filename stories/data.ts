@@ -1601,3 +1601,168 @@ export const temperatureAverageData = {
     ],
   },
 };
+
+export const usedDiskSpaceData = {
+  series: [
+    {
+      label: 'Documents',
+      children: [
+        {
+          label: 'docs',
+          children: [
+            {
+              label: 'pages',
+              data: 1.3,
+            },
+            {
+              label: 'keynote',
+              data: 2.5,
+            },
+            {
+              label: 'numbers',
+              data: 1.2,
+            },
+          ],
+        },
+        {
+          label: 'photos',
+          data: 5.5,
+        },
+        {
+          label: 'videos',
+          data: 20.7,
+        },
+      ],
+    },
+    {
+      label: 'Downloads',
+      children: [
+        {
+          label: 'recents',
+          data: 5.3,
+        },
+        {
+          label: '2020',
+          data: 10.1,
+        },
+        {
+          label: '2019',
+          data: 8.2,
+        },
+      ],
+    },
+    {
+      label: 'Application',
+      data: 16.4,
+    },
+    {
+      label: 'Desktop',
+      data: 4.5,
+    },
+  ],
+};
+
+export const populationDensityData = {
+  series: [
+    {
+      label: 'Asia',
+      children: [
+        {
+          label: 'South Korea',
+          value: 99909,
+          colorValue: 499.81,
+        },
+        {
+          label: 'Japan',
+          value: 364485,
+          colorValue: 335.61,
+        },
+        {
+          label: 'Jordan',
+          value: 88802,
+          colorValue: 86.07,
+        },
+        {
+          label: 'Iraq',
+          value: 437367,
+          colorValue: 81.6,
+        },
+      ],
+    },
+    {
+      label: 'Europe',
+      children: [
+        {
+          label: 'UK',
+          value: 241930,
+          colorValue: 262.84,
+        },
+        {
+          label: 'France',
+          value: 640427,
+          colorValue: 117.83,
+        },
+        {
+          label: 'Hungary',
+          value: 89608,
+          colorValue: 106.54,
+        },
+        {
+          label: 'Portugal',
+          value: 91470,
+          colorValue: 115.35,
+        },
+      ],
+    },
+    {
+      label: 'America',
+      children: [
+        {
+          label: 'Panama',
+          value: 74340,
+          colorValue: 52.81,
+        },
+        {
+          label: 'Honduras',
+          value: 111890,
+          colorValue: 75.15,
+        },
+        {
+          label: 'Uruguay',
+          value: 175015,
+          colorValue: 19.6,
+        },
+        {
+          label: 'Cuba',
+          value: 109820,
+          colorValue: 101.47,
+        },
+      ],
+    },
+    {
+      label: 'Africa',
+      children: [
+        {
+          label: 'Malawi',
+          value: 94080,
+          colorValue: 146.09,
+        },
+        {
+          label: 'Ghana',
+          value: 227533,
+          colorValue: 113.13,
+        },
+        {
+          label: 'Togo',
+          value: 54385,
+          colorValue: 126.28,
+        },
+        {
+          label: 'Benin',
+          value: 114305,
+          colorValue: 96.61,
+        },
+      ],
+    },
+  ],
+};
