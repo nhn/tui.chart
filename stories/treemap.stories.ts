@@ -78,6 +78,7 @@ export const colorValue = () => {
   const { el } = createChart(populationDensityData, {
     chart: { title: 'Population density of World' },
     series: {
+      useColorValue: true,
       dataLabels: {
         visible: true,
         useTreemapLeaf: true,

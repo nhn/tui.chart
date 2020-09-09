@@ -1,6 +1,6 @@
 import Component from './component';
 import { Rect, TreemapChartOptions } from '@t/options';
-import { ChartState, TreemapSeriesData } from '@t/store/store';
+import { ChartState, ScaleData, Theme, TreemapSeriesData } from '@t/store/store';
 import {
   TreemapRectModel,
   TreemapRectResponderModel,
@@ -8,11 +8,13 @@ import {
 } from '@t/components/series';
 import { BoundMap, squarify } from '@src/helpers/squarifier';
 import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
-import { getRGBA } from '@src/helpers/color';
+import { getRGBA, hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode } from '@src/helpers/responders';
 import { RectDataLabel } from '@src/store/dataLabels';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { first, isUndefined, last } from '@src/helpers/utils';
+import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 
 export default class TreemapSeries extends Component {
   models: TreemapSeriesModels = { series: [], layer: [] };
@@ -29,14 +31,14 @@ export default class TreemapSeries extends Component {
   }
 
   render(chartState: ChartState<TreemapChartOptions>) {
-    const { layout, treemapSeries, dataLabels, options } = chartState;
+    const { layout, treemapSeries, treemapScale, dataLabels, options, theme } = chartState;
 
     if (!treemapSeries.length) {
       throw new Error("There's no tree map data");
     }
 
     this.rect = layout.plot;
-    this.models = this.renderTreemapSeries(treemapSeries);
+    this.models = this.renderTreemapSeries(treemapSeries, options, theme, treemapScale);
 
     if (dataLabels.visible) {
       const useTreemapLeaf = options.series?.dataLabels?.useTreemapLeaf ?? false;
@@ -98,20 +100,75 @@ export default class TreemapSeries extends Component {
     }));
   }
 
-  renderTreemapSeries(seriesData: TreemapSeriesData[]) {
+  getColorWithColorValue(treemapSeries: TreemapSeriesData, treemapScale: ScaleData, colorMap) {
+    const { colorValue } = treemapSeries;
+
+    if (isUndefined(colorValue)) {
+      return '';
+    }
+
+    const { limit } = treemapScale;
+    const { startRGB, distances } = colorMap;
+    const ratio = getColorRatio(colorValue, limit);
+
+    return getSpectrumColor(ratio, distances, startRGB);
+  }
+
+  getColor(treemapSeries: TreemapSeriesData, colors: string[]) {
+    const { indexes } = treemapSeries;
+    const colorIdx = first<number>(indexes)!;
+
+    return colors[colorIdx];
+  }
+
+  getOpacity(treemapSeries: TreemapSeriesData) {
+    const { indexes, depth } = treemapSeries;
+    const idx = last<number>(indexes)!;
+
+    return indexes.length === 1 ? 0 : Number((0.1 * depth + 0.05 * idx).toFixed(2));
+  }
+
+  // @TODO: 렌더 옵션으로 분리?
+  renderTreemapSeries(
+    seriesData: TreemapSeriesData[],
+    options: TreemapChartOptions,
+    theme: Theme,
+    treemapScale: ScaleData
+  ) {
+    let layer: TreemapRectModel[] = [];
     const boundMap = this.makeBoundMap(seriesData, TREEMAP_ROOT_ID, {
       ...this.rect,
       x: 0,
       y: 0,
     });
 
-    const series: TreemapRectModel[] = Object.keys(boundMap).map((id) => ({
-      ...seriesData.find((item) => item.id === id)!,
-      ...boundMap[id],
-      type: 'rect',
-    }));
+    const { colors, startColor, endColor } = theme.series;
+    let colorMap;
+    const useColorValue = options.series?.useColorValue ?? false;
+    if (useColorValue) {
+      const startRGB = hexToRGB(startColor) as RGB;
+      const endRGB = hexToRGB(endColor) as RGB;
+      const distances = makeDistances(startRGB, endRGB);
+      colorMap = { startRGB, distances };
+    }
 
-    const layer = series.map((m) => ({ ...m, color: getRGBA('#000000', m.opacity!) }));
+    const series: TreemapRectModel[] = Object.keys(boundMap).map((id) => {
+      const treemapSeries = seriesData.find((item) => item.id === id)!;
+
+      return {
+        ...treemapSeries,
+        ...boundMap[id],
+        type: 'rect',
+        color: useColorValue
+          ? this.getColorWithColorValue(treemapSeries, treemapScale, colorMap)
+          : this.getColor(treemapSeries, colors),
+        opacity: useColorValue ? 0 : this.getOpacity(treemapSeries),
+      };
+    });
+
+    if (!options.series?.useColorValue) {
+      layer = series.map((m) => ({ ...m, color: getRGBA('#000000', m.opacity!) }));
+    }
 
     return { series, layer };
   }

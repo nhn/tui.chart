@@ -1,7 +1,7 @@
-import { Series, StoreModule, Theme, TreemapSeriesData } from '@t/store/store';
+import { Series, StoreModule, TreemapSeriesData } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { TreemapSeriesType } from '@t/options';
-import { first, last } from '@src/helpers/utils';
+import { last } from '@src/helpers/utils';
 
 const TREEMAP_ID_PREFIX = '__TOAST_UI_TREEMAP';
 export const TREEMAP_ROOT_ID = `${TREEMAP_ID_PREFIX}_ROOT`;
@@ -14,6 +14,7 @@ function makeTreeModel(
 ) {
   const idx = last(indexes);
   const id = parentId ? `${parentId}_${idx}` : `${TREEMAP_ID_PREFIX}_${idx}`;
+  const { colorValue } = series;
 
   const models = [
     {
@@ -24,6 +25,7 @@ function makeTreeModel(
       parentId: parentId ? parentId : TREEMAP_ROOT_ID,
       depth,
       data: series.data ?? 0,
+      colorValue,
     },
   ] as TreemapSeriesData[];
 
@@ -59,22 +61,11 @@ function fillRatio(treemapSeries: TreemapSeriesData[]) {
   });
 }
 
-function fillColor(treemapSeries: TreemapSeriesData[], colors: string[]) {
-  treemapSeries.forEach((series) => {
-    const { indexes, depth } = series;
-    const colorIdx = first<number>(indexes)!;
-    const idx = last<number>(indexes)!;
-    series.opacity = indexes.length === 1 ? 0 : Number((0.1 * depth + 0.05 * idx).toFixed(2));
-    series.color = colors[colorIdx];
-  });
-}
-
-function makeTreemapSeries(series: Series, theme: Theme) {
+function makeTreemapSeries(series: Series) {
   if (!series.treemap) {
     return [];
   }
 
-  const { colors } = theme.series;
   const treemapSeries = series.treemap.data
     .map((data, idx) => makeTreeModel(data, [idx], 0))
     .flatMap((s) => s)
@@ -82,8 +73,6 @@ function makeTreemapSeries(series: Series, theme: Theme) {
 
   fillData(treemapSeries);
   fillRatio(treemapSeries);
-  fillColor(treemapSeries, colors);
-  // @TODO: color Value
 
   return treemapSeries;
 }
@@ -95,9 +84,7 @@ const treemapSeriesData: StoreModule = {
   }),
   action: {
     setTreemapSeriesData({ state }) {
-      const { series, theme } = state;
-
-      extend(state.treemapSeries, makeTreemapSeries(series, theme));
+      extend(state.treemapSeries, makeTreemapSeries(state.series));
     },
   },
   observe: {
