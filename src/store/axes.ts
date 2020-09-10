@@ -15,10 +15,18 @@ import {
   getSizeKey,
   hasBoxTypeSeries,
   isPointOnColumn,
+  getYAxisOption,
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
-import { AxisTitle, BoxSeriesOptions, BarTypeYAxisOptions, RangeDataType, Rect } from '@t/options';
+import {
+  AxisTitle,
+  BoxSeriesOptions,
+  BarTypeYAxisOptions,
+  RangeDataType,
+  Rect,
+  BaseAxisOptions,
+} from '@t/options';
 import {
   deepMergedCopy,
   hasNegativeOnly,
@@ -170,20 +178,25 @@ function getRadialAxis(scale: ScaleData, plot: Rect): RadialAxisData {
   };
 }
 
+function makeDefaultYAxis(yAxis: BaseAxisOptions) {
+  return {
+    tickInterval: yAxis?.tick?.interval ?? 1,
+    labelInterval: yAxis?.label?.interval ?? 1,
+    title: makeTitleOption(yAxis?.title),
+  } as AxisData;
+}
+
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
+    const { yAxis, secondaryYAxis } = getYAxisOption(options);
     const axesState: Axes = {
       xAxis: {
         tickInterval: options.xAxis?.tick?.interval ?? 1,
         labelInterval: options.xAxis?.label?.interval ?? 1,
         title: makeTitleOption(options.xAxis?.title),
       } as AxisData,
-      yAxis: {
-        tickInterval: options.yAxis?.tick?.interval ?? 1,
-        labelInterval: options.yAxis?.label?.interval ?? 1,
-        title: makeTitleOption(options.yAxis?.title),
-      } as AxisData,
+      yAxis: makeDefaultYAxis(yAxis),
     };
 
     if (isCenterYAxis(options, !!series.bar)) {
@@ -192,6 +205,10 @@ const axes: StoreModule = {
 
     if (series.radar) {
       axesState.radialAxis = {} as RadialAxisData;
+    }
+
+    if (secondaryYAxis) {
+      axesState.secondaryYAxis = makeDefaultYAxis(secondaryYAxis);
     }
 
     return {
@@ -235,6 +252,16 @@ const axes: StoreModule = {
         xAxis: labelAxisOnYAxis ? valueAxisData : labelAxisData,
         yAxis: labelAxisOnYAxis ? labelAxisData : valueAxisData,
       } as Axes;
+
+      if (state.axes.secondaryYAxis) {
+        axesState.secondaryYAxis = getValueAxisData({
+          scale: scale.secondaryYAxis!,
+          axisSize: valueAxisSize,
+          options,
+          series,
+          centerYAxis: null,
+        });
+      }
 
       if (centerYAxis) {
         const xAxisHalfSize = (xAxis.width - yAxis.width) / 2;

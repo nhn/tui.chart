@@ -16,6 +16,7 @@ describe('Scale Store', () => {
       stackSeries: {},
       scale: {},
       dataRange: { xAxis: { min: 1, max: 6 } } as DataRange,
+      options: {},
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
@@ -44,6 +45,7 @@ describe('Scale Store', () => {
       },
       scale: {},
       dataRange: { xAxis: { min: 1, max: 6 } } as DataRange,
+      options: {},
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;

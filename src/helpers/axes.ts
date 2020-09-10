@@ -43,3 +43,22 @@ export function getLimitOnAxis(labels: string[]) {
     max: Math.max(...values),
   };
 }
+
+function hasSecondaryYAxis(options: Options) {
+  return Array.isArray(options?.yAxis) && options.yAxis.length === 2;
+}
+
+export function getYAxisOption(options: Options) {
+  const hasSecondaryY = hasSecondaryYAxis(options);
+
+  return {
+    yAxis: hasSecondaryY ? options.yAxis![0] : options.yAxis,
+    secondaryYAxis: hasSecondaryY ? options.yAxis![1] : null,
+  };
+}
+
+export function getValidValueAxisName(options: Options, seriesName: string, valueAxisName: string) {
+  const { secondaryYAxis } = getYAxisOption(options);
+
+  return secondaryYAxis?.chartType === seriesName ? 'secondaryYAxis' : valueAxisName;
+}

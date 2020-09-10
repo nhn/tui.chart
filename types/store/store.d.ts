@@ -140,11 +140,14 @@ export interface Layout {
   circleLegend: Rect;
   title: Rect;
   exportMenu: Rect;
+  secondaryYAxisTitle: Rect;
+  secondaryYAxis: Rect;
 }
 
 export interface Scale {
   xAxis: ScaleData;
   yAxis: ScaleData;
+  secondaryYAxis?: ScaleData;
 }
 
 export type Axes = {
@@ -152,11 +155,13 @@ export type Axes = {
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
   radialAxis?: RadialAxisData;
+  secondaryYAxis?: AxisData;
 };
 
 export type DataRange = {
   xAxis?: ValueEdge;
   yAxis?: ValueEdge;
+  secondaryYAxis?: ValueEdge;
 };
 
 export type StackSeries = {

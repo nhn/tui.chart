@@ -59,8 +59,10 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     this.componentManager.add(ZeroAxis);
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Axis, { name: 'yAxis' });
+    this.componentManager.add(Axis, { name: 'secondaryYAxis' });
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
+    this.componentManager.add(AxisTitle, { name: 'secondaryYAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);
