@@ -51,7 +51,7 @@ export default class AxisUsingCenterY extends Component {
       tickDistance,
       tickInterval,
       labelInterval,
-    } = axes[this.name];
+    } = axes[this.name]!;
 
     const renderOptions: RenderOptions = {
       pointOnColumn,

@@ -1,6 +1,12 @@
 import { extend } from '@src/store/store';
-import { StoreModule, Scale } from '@t/store/store';
-import { getAxisName, getSizeKey, isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { StoreModule, Scale, Options, ChartState } from '@t/store/store';
+import {
+  getAxisName,
+  getSizeKey,
+  isLabelAxisOnYAxis,
+  getYAxisOption,
+  getValidValueAxisName,
+} from '@src/helpers/axes';
 import {
   calculateCoordinateScale,
   calculateScaleForCoordinateLineType,
@@ -10,7 +16,75 @@ import { calculateDatetimeScale } from '@src/scale/datetimeScaleCalculator';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
 import { hasPercentStackSeries } from './stackSeriesData';
 import { isExist } from '@src/helpers/utils';
-import { LineChartOptions } from '@t/options';
+import { LineChartOptions, Scale as ScaleOption } from '@t/options';
+
+type ScaleOptions = {
+  xAxis?: ScaleOption;
+  yAxis?: ScaleOption;
+  secondaryYAxis?: ScaleOption;
+};
+
+function getLabelScaleData(
+  state: ChartState<Options>,
+  labelAxisOnYAxis: boolean,
+  scaleOptions: ScaleOptions,
+  labelAxisName: string
+) {
+  const { dataRange, layout, series, categories, rawCategories, options } = state;
+  const { labelSizeKey } = getSizeKey(labelAxisOnYAxis);
+  const dateTypeLabel = isExist(options.xAxis?.date);
+  const range = dataRange;
+  const labelOptions = {
+    dataRange: range[labelAxisName],
+    offsetSize: layout.plot[labelSizeKey],
+    scaleOption: scaleOptions[labelAxisName],
+    rawCategoriesSize: rawCategories.length,
+  };
+
+  let result = dateTypeLabel
+    ? calculateDatetimeScale(labelOptions)
+    : calculateCoordinateScale(labelOptions);
+
+  if (series.line) {
+    result = calculateScaleForCoordinateLineType(result, options as LineChartOptions, categories);
+  }
+
+  return result;
+}
+
+function getValueScaleData(
+  state: ChartState<Options>,
+  labelAxisOnYAxis: boolean,
+  scaleOptions: ScaleOptions,
+  valueAxisName: string
+) {
+  const { dataRange, layout, series, stackSeries } = state;
+  const { valueSizeKey } = getSizeKey(labelAxisOnYAxis);
+  let result;
+
+  if (hasPercentStackSeries(stackSeries)) {
+    Object.keys(series).forEach((seriesName) => {
+      result = getStackScaleData(stackSeries[seriesName].scaleType);
+    });
+  } else if (isCoordinateSeries(series)) {
+    const range = dataRange;
+    const valueOptions = {
+      dataRange: range[valueAxisName],
+      offsetSize: layout.plot[valueSizeKey],
+      scaleOption: scaleOptions[valueAxisName],
+    };
+
+    result = calculateCoordinateScale(valueOptions);
+  } else {
+    result = calculateCoordinateScale({
+      dataRange: dataRange[valueAxisName],
+      offsetSize: layout.plot[valueSizeKey],
+      scaleOption: scaleOptions[valueAxisName],
+    });
+  }
+
+  return result;
+}
 
 const scale: StoreModule = {
   name: 'scale',
@@ -19,53 +93,46 @@ const scale: StoreModule = {
   }),
   action: {
     setScale({ state }) {
-      const { series, dataRange, layout, stackSeries, options, categories } = state;
-      const scaleData = {};
-
+      const { series, options } = state;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
-      const { labelSizeKey, valueSizeKey } = getSizeKey(labelAxisOnYAxis);
-      const scaleOptions = {
+      const { yAxis, secondaryYAxis } = getYAxisOption(options);
+      const scaleData = {};
+
+      const scaleOptions: ScaleOptions = {
         xAxis: options?.xAxis?.scale,
-        yAxis: options?.yAxis?.scale,
+        yAxis: yAxis?.scale,
       };
 
-      if (hasPercentStackSeries(stackSeries)) {
-        Object.keys(series).forEach((seriesName) => {
-          scaleData[valueAxisName] = getStackScaleData(stackSeries[seriesName].scaleType);
-        });
-      } else if (isCoordinateSeries(series)) {
-        const dateTypeLabel = isExist(options.xAxis?.date);
-        const range = dataRange;
-        const labelOptions = {
-          dataRange: range[labelAxisName],
-          offsetSize: layout.plot[labelSizeKey],
-          scaleOption: scaleOptions[labelAxisName],
-          rawCategoriesSize: state.rawCategories.length,
-        };
-        const valueOptions = {
-          dataRange: range[valueAxisName],
-          offsetSize: layout.plot[valueSizeKey],
-          scaleOption: scaleOptions[valueAxisName],
-        };
+      if (secondaryYAxis) {
+        scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
 
-        scaleData[valueAxisName] = calculateCoordinateScale(valueOptions);
-        scaleData[labelAxisName] = dateTypeLabel
-          ? calculateDatetimeScale(labelOptions)
-          : calculateCoordinateScale(labelOptions);
-        if (series.line) {
-          scaleData[labelAxisName] = calculateScaleForCoordinateLineType(
-            scaleData[labelAxisName],
-            options as LineChartOptions,
-            categories
+        [yAxis.chartType, secondaryYAxis.chartType].forEach((seriesName) => {
+          const validValueAxisName = getValidValueAxisName(options, seriesName, valueAxisName);
+
+          scaleData[validValueAxisName] = getValueScaleData(
+            state,
+            labelAxisOnYAxis,
+            scaleOptions,
+            validValueAxisName
           );
-        }
-      } else {
-        scaleData[valueAxisName] = calculateCoordinateScale({
-          dataRange: dataRange[valueAxisName],
-          offsetSize: layout.plot[valueSizeKey],
-          scaleOption: scaleOptions[valueAxisName],
         });
+      } else {
+        scaleData[valueAxisName] = getValueScaleData(
+          state,
+          labelAxisOnYAxis,
+          scaleOptions,
+          valueAxisName
+        );
+      }
+
+      if (isCoordinateSeries(series)) {
+        scaleData[labelAxisName] = getLabelScaleData(
+          state,
+          labelAxisOnYAxis,
+          scaleOptions,
+          labelAxisName
+        );
       }
 
       extend(state.scale, scaleData);

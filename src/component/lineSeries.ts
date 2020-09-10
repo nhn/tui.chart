@@ -35,6 +35,7 @@ import {
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
 import { getDataLabelsOptions } from '@src/store/dataLabels';
+import { getValidValueAxisName } from '@src/helpers/axes';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -63,7 +64,7 @@ export default class LineSeries extends Component {
 
   startIndex!: number;
 
-  isComboChart = false;
+  yAxisName = 'yAxis';
 
   initialize() {
     this.type = 'series';
@@ -117,6 +118,7 @@ export default class LineSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
+    this.yAxisName = getValidValueAxisName(options, this.name, 'yAxis');
 
     const lineSeriesModel = this.renderLinePointsModel(
       lineSeriesData,
@@ -228,7 +230,7 @@ export default class LineSeries extends Component {
     const {
       options: { spline, lineWidth },
     } = renderOptions;
-    const yAxisLimit = scale.yAxis.limit;
+    const yAxisLimit = scale[this.yAxisName].limit;
     const xAxisLimit = scale?.xAxis?.limit;
 
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
