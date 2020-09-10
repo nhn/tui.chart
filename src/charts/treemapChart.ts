@@ -10,6 +10,7 @@ import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import TreemapSeries from '@src/component/treemapSeries';
+import SpectrumLegend from '@src/component/spectrumLegend';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -42,6 +43,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
     super.initialize();
 
     this.componentManager.add(Title);
+    this.componentManager.add(SpectrumLegend);
     this.componentManager.add(TreemapSeries);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);

@@ -1,5 +1,5 @@
 import { LegendIconType, Options, RawSeries, StoreModule } from '@t/store/store';
-import { Align, BubbleChartOptions } from '@t/options';
+import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
 import { isUndefined, sum } from '@src/helpers/utils';
 import {
   LEGEND_CHECKBOX_SIZE,
@@ -44,7 +44,11 @@ export function showCircleLegend(options: BubbleChartOptions) {
   return isUndefined(options?.circleLegend?.visible) ? true : !!options?.circleLegend?.visible;
 }
 
-function showLegend(options: Options) {
+function showLegend(options: Options, series: RawSeries) {
+  if (series.treemap && !(options.series as TreemapChartSeriesOptions).useColorValue) {
+    return false;
+  }
+
   return isUndefined(options.legend?.visible) ? true : !!options.legend?.visible;
 }
 
@@ -106,7 +110,7 @@ const legend: StoreModule = {
   state: ({ options, series }) => {
     const defaultWidth = Math.min(options.chart!.width / 10, 150);
     const align = getAlign(options);
-    const visible = showLegend(options);
+    const visible = showLegend(options, series);
     const checkboxVisible = showCheckbox(options);
     const data = getLegendLabels(series).map((label) => ({
       label,

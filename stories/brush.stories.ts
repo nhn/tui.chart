@@ -6,6 +6,7 @@ import { legend } from '@src/brushes/legend';
 import { label } from '@src/brushes/label';
 import { resetButton } from '@src/brushes/resetButton';
 import { sector } from '@src/brushes/sector';
+import { spectrumLegend } from '@src/brushes/spectrumLegend';
 
 import {
   AreaPointsModel,
@@ -102,8 +103,8 @@ function setup() {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d')!;
   const ratio = window.devicePixelRatio;
-  const width = 500;
-  const height = 500;
+  const width = 1000;
+  const height = 600;
 
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
@@ -497,6 +498,17 @@ export const resetButtonBrush = () => {
     x: 100,
     y: 100,
   });
+
+  return el;
+};
+
+export const spectrumLegendBrush = () => {
+  const { ctx, el } = setup();
+
+  spectrumLegend(ctx, { x: 0, y: 0, align: 'left' });
+  spectrumLegend(ctx, { x: 650, y: 0, align: 'right' });
+  spectrumLegend(ctx, { x: 100, y: 0, align: 'top' });
+  spectrumLegend(ctx, { x: 100, y: 400, align: 'bottom' });
 
   return el;
 };
