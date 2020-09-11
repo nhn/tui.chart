@@ -58,9 +58,11 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
     this.componentManager.add(ScatterSeries);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
+    this.componentManager.add(Axis, { name: 'secondaryYAxis' });
     this.componentManager.add(DataLabels);
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
+    this.componentManager.add(AxisTitle, { name: 'secondaryYAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });

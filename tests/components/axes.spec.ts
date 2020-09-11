@@ -115,7 +115,7 @@ describe('yAxis', () => {
     });
   });
 
-  describe('using secondary y axis', () => {
+  describe('using right y axis', () => {
     beforeEach(() => {
       axis.initialize({ name: 'secondaryYAxis' });
 
@@ -266,7 +266,7 @@ describe('yAxis', () => {
     };
 
     ['axisLine', 'tick', 'label'].forEach((modelType) => {
-      it(`should have ${modelType} models for secondary y axis`, () => {
+      it(`should have ${modelType} models for rigth y axis`, () => {
         expect(axis.models[modelType]).toEqual(result[modelType]);
       });
     });

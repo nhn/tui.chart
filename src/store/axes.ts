@@ -8,6 +8,8 @@ import {
   CenterYAxisData,
   Axes,
   RadialAxisData,
+  ChartOptionsUsingYAxis,
+  ChartState,
 } from '@t/store/store';
 import {
   isLabelAxisOnYAxis,
@@ -22,10 +24,10 @@ import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import {
   AxisTitle,
   BoxSeriesOptions,
-  BarTypeYAxisOptions,
   RangeDataType,
   Rect,
   BaseAxisOptions,
+  BarTypeYAxisOption,
 } from '@t/options';
 import {
   deepMergedCopy,
@@ -49,9 +51,9 @@ interface StateProp {
 
 type ValueStateProp = StateProp & { categories: string[]; rawCategories: string[] };
 
-export function isCenterYAxis(options: Options, isBar: boolean) {
+export function isCenterYAxis(options: ChartOptionsUsingYAxis, isBar: boolean) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
-  const alignCenter = (options.yAxis as BarTypeYAxisOptions)?.align === 'center';
+  const alignCenter = (options.yAxis as BarTypeYAxisOption)?.align === 'center';
 
   return isBar && diverging && alignCenter;
 }
@@ -103,7 +105,7 @@ export function getLabelAxisData(stateProp: ValueStateProp) {
     tickCount: labels.length + (pointOnColumn ? 1 : 0),
     tickDistance,
     labelDistance,
-  };
+  } as AxisData;
 }
 
 export function getValueAxisData(stateProp: StateProp) {
@@ -183,6 +185,34 @@ function makeDefaultYAxis(yAxis: BaseAxisOptions) {
   } as AxisData;
 }
 
+function getSecondaryYAxisData(
+  state: ChartState<Options>,
+  labelAxisOnYAxis: boolean,
+  valueAxisSize: number,
+  labelAxisSize: number,
+  labelAxisName: string
+) {
+  const { scale, options, series, zoomRange, categories = [], rawCategories } = state;
+
+  return labelAxisOnYAxis
+    ? getLabelAxisData({
+        scale: scale[labelAxisName],
+        axisSize: labelAxisSize,
+        categories: getYAxisOption(options).secondaryYAxis?.categories ?? categories,
+        rawCategories,
+        options,
+        series,
+        zoomRange,
+      })
+    : getValueAxisData({
+        scale: scale.secondaryYAxis!,
+        axisSize: valueAxisSize,
+        options,
+        series,
+        centerYAxis: null,
+      });
+}
+
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
@@ -223,6 +253,7 @@ const axes: StoreModule = {
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;
+
       const valueAxisData = getValueAxisData({
         scale: scale[valueAxisName],
         axisSize: valueAxisSize,
@@ -251,13 +282,13 @@ const axes: StoreModule = {
       } as Axes;
 
       if (state.axes.secondaryYAxis) {
-        axesState.secondaryYAxis = getValueAxisData({
-          scale: scale.secondaryYAxis!,
-          axisSize: valueAxisSize,
-          options,
-          series,
-          centerYAxis: null,
-        });
+        axesState.secondaryYAxis = getSecondaryYAxisData(
+          state,
+          labelAxisOnYAxis,
+          valueAxisSize,
+          labelAxisSize,
+          labelAxisName
+        );
       }
 
       if (centerYAxis) {

@@ -30,8 +30,8 @@ function createChart(data, customOptions?: BarChartOptions) {
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = `${options?.chart?.width}px`;
+  el.style.height = `${options?.chart?.height}px`;
 
   const chart = new BarChart({
     el,

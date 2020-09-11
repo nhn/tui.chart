@@ -77,6 +77,7 @@ describe('yAxisTitle', () => {
 
   it('should render to the right side, when using secondary Y Axis', () => {
     title.initialize({ name: 'secondaryYAxis' });
+
     const state = deepMergedCopy(chartState, {
       axes: {
         secondaryYAxis: {

@@ -85,6 +85,8 @@ export type ChartOptionsMap = {
 
 export type Options = ValueOf<ChartOptionsMap>;
 
+export type ChartOptionsUsingYAxis = ValueOf<Omit<ChartOptionsMap, 'pie' | 'radar'>>;
+
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
 type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;

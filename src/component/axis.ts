@@ -182,11 +182,11 @@ export default class Axis extends Component {
     renderOptions: RenderOptions
   ): LabelModel[] {
     const { pointOnColumn, labelInterval, labelDistance } = renderOptions;
-    const isSecondaryYAxis = this.isSecondaryYAxis();
-    const yAxisAnchorPoint = isSecondaryYAxis ? crispPixel(this.rect.width) : crispPixel(0);
+    const isRightSide = this.isRightSide();
+    const yAxisAnchorPoint = isRightSide ? crispPixel(this.rect.width) : crispPixel(0);
     const labelAnchorPoint = this.yAxisComponent ? yAxisAnchorPoint : LABEL_ANCHOR_POINT;
     const labelAdjustment = pointOnColumn ? labelDistance / 2 : 0;
-    const yAxisTextAlign = isSecondaryYAxis ? 'right' : 'left';
+    const yAxisTextAlign = isRightSide ? 'right' : 'left';
     const style = ['default', { textAlign: this.yAxisComponent ? yAxisTextAlign : 'center' }];
 
     return labels.reduce<LabelModel[]>((positions, text, index) => {
@@ -214,12 +214,12 @@ export default class Axis extends Component {
     painter.ctx.lineWidth = 1;
   }
 
-  private isSecondaryYAxis() {
+  private isRightSide() {
     return this.name === AxisType.SECONDARY_Y;
   }
 
   private getYAxisXPoint() {
-    return this.isSecondaryYAxis() ? crispPixel(0) : crispPixel(this.rect.width);
+    return this.isRightSide() ? crispPixel(0) : crispPixel(this.rect.width);
   }
 
   private hasOnlyAxisLine() {
