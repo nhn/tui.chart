@@ -33,6 +33,7 @@ import {
   makeRectResponderModel,
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
+import { getDataLabelsOptions } from '@src/store/dataLabels';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -93,16 +94,7 @@ export default class LineSeries extends Component {
   render(
     chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>
   ) {
-    const {
-      layout,
-      series,
-      scale,
-      axes,
-      categories = [],
-      legend,
-      dataLabels,
-      zoomRange,
-    } = chartState;
+    const { layout, series, scale, axes, categories = [], legend, zoomRange } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -156,8 +148,11 @@ export default class LineSeries extends Component {
       };
     }
 
-    if (dataLabels.visible) {
-      this.store.dispatch('appendDataLabels', this.getDataLabels(lineSeriesModel));
+    if (getDataLabelsOptions(options, this.name).visible) {
+      this.store.dispatch('appendDataLabels', {
+        data: this.getDataLabels(lineSeriesModel),
+        name: this.name,
+      });
     }
 
     this.responders =

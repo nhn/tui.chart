@@ -11,6 +11,7 @@ import {
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
 import { isString, getPercentageValue } from '@src/helpers/utils';
+import { getDataLabelsOptions } from '@src/store/dataLabels';
 
 const DEFAULT_RADIUS_RATIO = 0.9;
 const semiCircleCenterYRatio = {
@@ -96,7 +97,7 @@ export default class PieSeries extends Component {
   }
 
   render(chartState: ChartState<PieChartOptions>) {
-    const { layout, series, legend, dataLabels, categories, options } = chartState;
+    const { layout, series, legend, categories, options } = chartState;
 
     if (!series.pie) {
       throw new Error("There's no pie data");
@@ -125,8 +126,8 @@ export default class PieSeries extends Component {
       };
     }
 
-    if (dataLabels?.visible) {
-      this.store.dispatch('appendDataLabels', seriesModel);
+    if (getDataLabelsOptions(options, this.name).visible) {
+      this.store.dispatch('appendDataLabels', { data: seriesModel, name: this.name });
     }
 
     this.responders = seriesModel.map((m, index) => ({

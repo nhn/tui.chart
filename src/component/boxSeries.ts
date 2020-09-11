@@ -32,7 +32,7 @@ import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
-import { RectDirection, RectDataLabel } from '@src/store/dataLabels';
+import { RectDirection, RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 
@@ -85,7 +85,7 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 }
 
 export default class BoxSeries extends Component {
-  models: BoxSeriesModels = { series: [] };
+  models: BoxSeriesModels = { series: [], selectedSeries: [] };
 
   drawModels!: BoxSeriesModels;
 
@@ -202,16 +202,7 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const {
-      layout,
-      series,
-      axes,
-      categories,
-      stackSeries,
-      options,
-      dataLabels,
-      legend,
-    } = chartState;
+    const { layout, series, axes, categories, stackSeries, options, legend } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -219,6 +210,7 @@ export default class BoxSeries extends Component {
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.selectable = this.getSelectableOption(options);
 
     const seriesData = series[this.name].data;
 
@@ -267,25 +259,40 @@ export default class BoxSeries extends Component {
     this.models = {
       clipRect: [clipRect],
       series: seriesModels,
+      selectedSeries: [],
     };
 
     if (!this.drawModels) {
       this.drawModels = {
         clipRect: [this.initClipRect(clipRect)],
         series: deepCopyArray(seriesModels),
+        selectedSeries: [],
       };
     }
 
-    if (dataLabels.visible) {
+    if (getDataLabelsOptions(options, this.name).visible) {
       const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data, centerYAxis));
 
-      this.store.dispatch('appendDataLabels', dataLabelData);
+      this.store.dispatch('appendDataLabels', { data: dataLabelData, name: this.name });
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
       ...m,
       data: tooltipData[index],
     }));
+  }
+
+  protected makeTooltipRectMap(seriesModels: RectModel[], tooltipDataArr: TooltipData[]) {
+    return seriesModels.reduce<RectResponderModel[][]>((acc, cur, dataIndex) => {
+      const index = cur.index!;
+      const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex] };
+      if (!acc[index]) {
+        acc[index] = [];
+      }
+      acc[index].push(tooltipModel);
+
+      return acc;
+    }, []);
   }
 
   protected renderClipRectAreaModel(): ClipRectAreaModel {
@@ -298,7 +305,7 @@ export default class BoxSeries extends Component {
     };
   }
 
-  private initClipRect(clipRect: ClipRectAreaModel): ClipRectAreaModel {
+  protected initClipRect(clipRect: ClipRectAreaModel): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
       width: this.isBar ? 0 : clipRect.width,
@@ -343,6 +350,7 @@ export default class BoxSeries extends Component {
             value,
             ...this.getAdjustedRect(dataStart, startPosition, barLength, columnWidth),
             name,
+            index,
           });
         }
       });
@@ -358,7 +366,7 @@ export default class BoxSeries extends Component {
   }
 
   makeHoveredSeriesModel(data: RectModel): RectModel {
-    const { x, y, width, height, color } = data!;
+    const { x, y, width, height, color, index } = data!;
 
     return {
       type: 'rect',
@@ -369,6 +377,7 @@ export default class BoxSeries extends Component {
       height,
       style: ['shadow'],
       thickness: BOX_HOVER_THICKNESS,
+      index,
     };
   }
 

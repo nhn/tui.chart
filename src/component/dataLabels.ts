@@ -1,7 +1,7 @@
 import Component from './component';
-import { ChartState, Options } from '@t/store/store';
-import { DataLabels as DataLabelOptions, DataLabelStyle } from '@t/options';
-import { DataLabel, DataLabelModels, DataLabelType } from '@t/components/dataLabels';
+import { ChartState, Options, DataLabels as DataLabelStoreType } from '@t/store/store';
+import { DataLabelOptions, DataLabelStyle } from '@t/options';
+import { DataLabelModels, DataLabelType, DataLabel } from '@t/components/dataLabels';
 import { includes } from '@src/helpers/utils';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
 
@@ -12,7 +12,7 @@ function getOptionStyle(type: DataLabelType, options: DataLabelOptions): DataLab
 }
 
 export default class DataLabels extends Component {
-  models!: DataLabelModels;
+  models: DataLabelModels = { series: [], total: [] };
 
   drawModels!: DataLabelModels;
 
@@ -28,13 +28,14 @@ export default class DataLabels extends Component {
     this.drawModels = this.getDrawModelsAppliedOpacity(delta);
   }
 
-  render({ layout, dataLabels, options }: ChartState<Options>) {
-    if (!dataLabels?.visible) {
+  render({ layout, dataLabels }: ChartState<Options>) {
+    if (!Object.keys(dataLabels)?.length) {
       return;
     }
 
     this.rect = layout.plot;
-    this.models = this.renderLabelModel(dataLabels.data, options?.series?.dataLabels ?? {});
+
+    this.models = this.renderLabelModel(dataLabels);
 
     if (!this.drawModels) {
       this.drawModels = this.getDrawModelsAppliedOpacity(0);
@@ -51,7 +52,28 @@ export default class DataLabels extends Component {
     );
   }
 
-  renderLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModels {
+  renderLabelModel(dataLabels: DataLabelStoreType) {
+    return Object.keys(dataLabels)
+      .map((seriesName) => {
+        const { data, options } = dataLabels[seriesName];
+
+        return this.makeLabelModel(data, options);
+      })
+      .reduce<DataLabelModels>(
+        (acc, cur) => {
+          const { series: accSeries, total: accTotal } = acc;
+          const { series, total } = cur;
+
+          return {
+            series: [...accSeries, ...series],
+            total: [...accTotal, ...total],
+          };
+        },
+        { series: [], total: [] }
+      );
+  }
+
+  makeLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModels {
     return dataLabels.reduce(
       (acc, dataLabel) => {
         const { type, x, y, text, textAlign, textBaseline, defaultColor, name } = dataLabel;

@@ -28,7 +28,7 @@ import {
   calibrateBoxStackDrawingValue,
   sumValuesBeforeIndex,
 } from '@src/helpers/boxSeriesCalculator';
-import { RectDataLabel } from '@src/store/dataLabels';
+import { RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 
@@ -83,7 +83,7 @@ function getDirectionKeys(seriesDirection: SeriesDirection) {
 
 export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, axes, categories, stackSeries, options, dataLabels, legend } = chartState;
+    const { layout, axes, categories, stackSeries, options, legend } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
@@ -91,13 +91,14 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
+    this.selectable = this.getSelectableOption(options);
 
-    const seriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
+    const stackSeriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
     const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;
     const { min, max } = getLimitOnAxis(labels);
-    const { stack, scaleType } = seriesData;
+    const { stack, scaleType } = stackSeriesData;
 
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
 
@@ -129,39 +130,36 @@ export default class BoxStackSeries extends BoxSeries {
       centerYAxis,
     };
 
-    const { series, connector } = this.renderStackSeriesModel(seriesData, renderOptions);
+    const { series, connector } = this.renderStackSeriesModel(stackSeriesData, renderOptions);
     const hoveredSeries = this.renderHoveredSeriesModel(series);
     const clipRect = this.renderClipRectAreaModel();
 
-    const tooltipData: TooltipData[] = this.getTooltipData(seriesData, categories);
+    const tooltipData: TooltipData[] = this.getTooltipData(stackSeriesData, categories);
 
     this.models = {
       clipRect: [clipRect],
       series,
       connector,
+      selectedSeries: [],
     };
 
     if (!this.drawModels) {
       this.drawModels = {
-        clipRect: [
-          {
-            type: 'clipRectArea',
-            width: this.isBar ? 0 : clipRect.width,
-            height: this.isBar ? clipRect.height : 0,
-            x: this.isBar ? 0 : clipRect.x,
-            y: this.isBar ? clipRect.y : 0,
-          },
-        ],
+        clipRect: [this.initClipRect(clipRect)],
         series: deepCopyArray(series),
         connector: deepCopyArray(connector),
+        selectedSeries: [],
       };
     }
 
-    if (dataLabels.visible) {
+    if (getDataLabelsOptions(options, this.name).visible) {
       const dataLabelData = this.getDataLabels(series, renderOptions);
-      const stackTotalData = this.getTotalDataLabels(seriesData, renderOptions);
+      const stackTotalData = this.getTotalDataLabels(stackSeriesData, renderOptions);
 
-      this.store.dispatch('appendDataLabels', [...dataLabelData, ...stackTotalData]);
+      this.store.dispatch('appendDataLabels', {
+        data: [...dataLabelData, ...stackTotalData],
+        name: this.name,
+      });
     }
 
     this.responders = hoveredSeries.map((m, index) => ({
@@ -217,6 +215,7 @@ export default class BoxStackSeries extends BoxSeries {
           name,
           value,
           ...this.getAdjustedRect(seriesPos, dataPosition, barLength ?? 0, columnWidth),
+          index: dataIndex,
         });
       });
     });
@@ -345,7 +344,7 @@ export default class BoxStackSeries extends BoxSeries {
   ): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
-    stackData.forEach(({ values, total }, dataIndex) => {
+    stackData.forEach(({ values }, dataIndex) => {
       values.forEach((value, seriesIndex) => {
         tooltipData.push({
           label: seriesRawData[seriesIndex].name,
