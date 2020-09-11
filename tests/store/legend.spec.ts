@@ -33,9 +33,9 @@ describe('Legend Store', () => {
           checked: true,
           active: true,
           width: 38,
+          iconType: 'line',
         },
       ],
-      iconType: 'line',
       showCheckbox: true,
       visible: true,
       align: 'right',
@@ -78,10 +78,10 @@ describe('Legend Store', () => {
 
     data.forEach((datum) => {
       it(`${datum.type} chart return iconType ${datum.iconType}`, () => {
-        const series = { [datum.type]: [] };
+        const series = { [datum.type]: [{ name: 'han' }] };
         const state = (legend.state as StateFunc)(deepMergedCopy(initStoreState, { series }));
 
-        expect(state.legend!.iconType).toEqual(datum.iconType);
+        expect(state.legend!.data.map(({ iconType }) => iconType)).toEqual([datum.iconType]);
       });
     });
   });
