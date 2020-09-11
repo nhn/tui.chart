@@ -5,8 +5,9 @@ import {
   BoxSeriesModels,
   StackTotalModel,
   RectResponderModel,
+  MouseEventType,
 } from '@t/components/series';
-import { ChartState, ChartType, BoxType, AxisData, CenterYAxisData } from '@t/store/store';
+import { ChartState, ChartType, BoxType, AxisData, CenterYAxisData, Series } from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -14,6 +15,10 @@ import {
   ColumnChartOptions,
   Rect,
   RangeDataType,
+  BoxTypeEventDetectType,
+  ColumnLineChartOptions,
+  ColumnLineChartSeriesOptions,
+  BoxSeriesOptions,
 } from '@t/options';
 import {
   first,
@@ -35,6 +40,7 @@ import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { RectDirection, RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { makeRectResponderModel } from '@src/helpers/responders';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -112,6 +118,10 @@ export default class BoxSeries extends Component {
   isRangeData = false;
 
   offsetKey = 'x';
+
+  eventType: BoxTypeEventDetectType = 'nearest';
+
+  tooltipRectMap!: RectResponderModel[][];
 
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
@@ -201,12 +211,42 @@ export default class BoxSeries extends Component {
     });
   }
 
-  render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, series, axes, categories, stackSeries, options, legend } = chartState;
+  protected setEventType(series: Series, options?: BarChartOptions | ColumnChartOptions) {
+    if (series.line) {
+      this.eventType = 'grouped';
+    }
+
+    if (options?.series?.eventDetectType) {
+      this.eventType = options.series.eventDetectType;
+    }
+  }
+
+  protected getOptions(
+    chartOptions: BarChartOptions | ColumnChartOptions | ColumnLineChartOptions
+  ) {
+    const options = { ...chartOptions };
+
+    if (options?.series && (options.series as ColumnLineChartSeriesOptions).column) {
+      options.series = {
+        ...options.series,
+        ...(options.series as ColumnLineChartSeriesOptions).column,
+      };
+    }
+
+    return options;
+  }
+
+  render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
+    chartState: ChartState<T>
+  ) {
+    const { layout, series, axes, categories, stackSeries, legend } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
     }
+
+    const options = this.getOptions(chartState.options);
+    this.setEventType(series, options);
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
@@ -220,7 +260,7 @@ export default class BoxSeries extends Component {
 
     const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
-    const diverging = !!options.series?.diverging;
+    const diverging = !!(options.series as BoxSeriesOptions)?.diverging;
     const { min, max } = getLimitOnAxis(labels);
 
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
@@ -276,10 +316,15 @@ export default class BoxSeries extends Component {
       this.store.dispatch('appendDataLabels', { data: dataLabelData, name: this.name });
     }
 
-    this.responders = hoveredSeries.map((m, index) => ({
-      ...m,
-      data: tooltipData[index],
-    }));
+    this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
+
+    this.responders =
+      this.eventType === 'grouped'
+        ? makeRectResponderModel(this.rect, axes.xAxis!)
+        : hoveredSeries.map((m, index) => ({
+            ...m,
+            data: tooltipData[index],
+          }));
   }
 
   protected makeTooltipRectMap(seriesModels: RectModel[], tooltipDataArr: TooltipData[]) {
@@ -381,9 +426,44 @@ export default class BoxSeries extends Component {
     };
   }
 
+  getRectModelsFromRectResponders(responders: RectResponderModel[]) {
+    if (!responders.length) {
+      return [];
+    }
+
+    return this.tooltipRectMap[responders[0].index!] ?? [];
+  }
+
+  protected getGroupedHoverRect(responders: RectResponderModel[]) {
+    return responders.map((m) => ({
+      ...m,
+      color: 'rgba(0, 0, 0, 0.1)',
+    }));
+  }
+
+  onMousemoveGroupedType(responders: RectResponderModel[]) {
+    const rectModels = this.getRectModelsFromRectResponders(responders);
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models: rectModels.length ? [...this.getGroupedHoverRect(responders)] : [],
+      name: this.name,
+      eventType: this.eventType,
+    });
+
+    this.activatedResponders = rectModels;
+  }
+
   onMousemove({ responders }: { responders: RectModel[] }) {
-    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
-    this.activatedResponders = responders;
+    if (this.eventType === 'grouped') {
+      this.onMousemoveGroupedType(responders as RectResponderModel[]);
+    } else {
+      this.eventBus.emit('renderHoveredSeries', {
+        models: responders,
+        name: this.name,
+        eventType: this.eventType,
+      });
+      this.activatedResponders = responders;
+    }
 
     this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
@@ -622,5 +702,30 @@ export default class BoxSeries extends Component {
 
   getOffsetSizeWithDiverging(centerYAxis: CenterYAxisData) {
     return centerYAxis ? centerYAxis.xAxisHalfSize : this.getOffsetSize() / 2;
+  }
+
+  onClick({ responders }: MouseEventType) {
+    if (this.selectable) {
+      if (this.eventType === 'grouped') {
+        this.drawModels.selectedSeries = this.getRectModelsFromRectResponders(
+          responders as RectResponderModel[]
+        );
+      } else {
+        this.drawModels.selectedSeries = responders as RectResponderModel[];
+      }
+
+      this.eventBus.emit('needDraw');
+    }
+  }
+
+  onMouseoutComponent() {
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+      eventType: this.eventType,
+    });
+
+    this.eventBus.emit('needDraw');
   }
 }

@@ -37,23 +37,33 @@ export function getNearestResponder(
   return result;
 }
 
-export function makeRectResponderModel(rect: Rect, xAxis: AxisData): RectResponderModel[] {
-  const { pointOnColumn, tickCount, tickDistance } = xAxis;
-  const { height } = rect;
-
+export function makeRectResponderModel(
+  rect: Rect,
+  axis: AxisData,
+  vertical = true
+): RectResponderModel[] {
+  const { pointOnColumn, tickCount, tickDistance } = axis;
+  const { width, height } = rect;
   const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
-  const halfWidth = tickDistance / 2;
+  const halfSize = tickDistance / 2;
 
   return range(0, tickCount).map((index) => {
     const half = halfDetectAreaIndex.includes(index);
-    const width = half ? halfWidth : tickDistance;
-    let startX = 0;
+    const size = half ? halfSize : tickDistance;
+    let startPos = 0;
 
     if (index !== 0) {
-      startX += pointOnColumn ? tickDistance * index : halfWidth + tickDistance * (index - 1);
+      startPos += pointOnColumn ? tickDistance * index : halfSize + tickDistance * (index - 1);
     }
 
-    return { type: 'rect', y: 0, height, x: startX, width, index };
+    return {
+      type: 'rect',
+      y: vertical ? 0 : startPos,
+      height: vertical ? height : size,
+      x: vertical ? startPos : 0,
+      width: vertical ? size : width,
+      index,
+    };
   });
 }
 

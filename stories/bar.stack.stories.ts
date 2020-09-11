@@ -211,3 +211,29 @@ export const dataLabelsWithStackTotal = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(budgetDataForStack, {
+    series: {
+      stack: {
+        type: 'normal',
+      },
+      selectable: true,
+    },
+  });
+
+  return el;
+};
+
+export const eventDetectType = () => {
+  const { el } = createChart(budgetDataForStack, {
+    series: {
+      stack: {
+        type: 'normal',
+      },
+      eventDetectType: 'grouped',
+    },
+  });
+
+  return el;
+};
