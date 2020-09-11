@@ -171,6 +171,7 @@ interface BaseXAxisOptions extends BaseAxisOptions {
 
 type BarTypeYAxisOption = BaseAxisOptions & {
   align?: 'center';
+  categories?: string[];
 };
 type BarTypeYAxisOptions = BarTypeYAxisOption | BarTypeYAxisOption[];
 
@@ -254,6 +255,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 
 export interface BoxPlotChartOptions extends BaseOptions {
   series?: BoxPlotSeriesOptions;
+  yAxis?: BaseAxisOptions;
   plot?: PlotOptions;
 }
 
@@ -289,6 +291,7 @@ type LineScatterChartSeriesOptions = {
 
 export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
+  yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
 }
 

@@ -8,6 +8,7 @@ import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
 import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import { getValidValueAxisName } from '@src/helpers/axes';
 
 export default class ScatterSeries extends CircleSeries {
   initialize() {
@@ -27,7 +28,11 @@ export default class ScatterSeries extends CircleSeries {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
 
-    const seriesModel = this.renderScatterPointsModel(scatterData, scale);
+    const seriesModel = this.renderScatterPointsModel(
+      scatterData,
+      scale,
+      getValidValueAxisName(options, this.name, 'yAxis')
+    );
     const tooltipModel = this.makeTooltipModel(scatterData);
 
     this.models.series = seriesModel;
@@ -45,11 +50,15 @@ export default class ScatterSeries extends CircleSeries {
     }));
   }
 
-  renderScatterPointsModel(seriesRawData: ScatterSeriesType[], scale: Scale): CircleModel[] {
+  renderScatterPointsModel(
+    seriesRawData: ScatterSeriesType[],
+    scale: Scale,
+    valueAxisName: string
+  ): CircleModel[] {
     const {
       xAxis: { limit: xAxisLimit },
-      yAxis: { limit: yAxisLimit },
     } = scale;
+    const yAxisLimit = scale[valueAxisName].limit;
 
     return seriesRawData.flatMap(({ data, name, color: seriesColor }, seriesIndex) => {
       const circleModels: CircleModel[] = [];

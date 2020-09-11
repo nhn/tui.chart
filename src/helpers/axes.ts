@@ -1,4 +1,4 @@
-import { Options, Series } from '@t/store/store';
+import { Options, Series, ChartOptionsUsingYAxis } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
 
 export function isLabelAxisOnYAxis(series: Series, options: Options) {
@@ -44,21 +44,37 @@ export function getLimitOnAxis(labels: string[]) {
   };
 }
 
-function hasSecondaryYAxis(options: Options) {
+function hasRightYAxis(options: ChartOptionsUsingYAxis) {
   return Array.isArray(options?.yAxis) && options.yAxis.length === 2;
 }
 
-export function getYAxisOption(options: Options) {
-  const hasSecondaryY = hasSecondaryYAxis(options);
+export function getYAxisOption(options: ChartOptionsUsingYAxis) {
+  const rightYAxis = hasRightYAxis(options);
 
   return {
-    yAxis: hasSecondaryY ? options.yAxis![0] : options.yAxis,
-    rightYAxis: hasSecondaryY ? options.yAxis![1] : null,
+    yAxis: rightYAxis ? options.yAxis![0] : options.yAxis,
+    rightYAxis: rightYAxis ? options.yAxis![1] : null,
   };
 }
 
-export function getValidValueAxisName(options: Options, seriesName: string, valueAxisName: string) {
+export function getValidValueAxisName(
+  options: ChartOptionsUsingYAxis,
+  seriesName: string,
+  valueAxisName: string
+) {
   const { rightYAxis } = getYAxisOption(options);
 
   return rightYAxis?.chartType === seriesName ? 'rightYAxis' : valueAxisName;
+}
+
+export function getValidValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName: string) {
+  const { yAxis, rightYAxis } = getYAxisOption(options);
+
+  return valueAxisName !== 'xAxis' && rightYAxis
+    ? [yAxis.chartType, rightYAxis.chartType].map((seriesName, index) =>
+        seriesName
+          ? getValidValueAxisName(options, seriesName, valueAxisName)
+          : ['yAxis', 'rightYAxis'][index]
+      )
+    : [valueAxisName];
 }

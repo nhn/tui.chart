@@ -5,7 +5,7 @@ import {
   getSizeKey,
   isLabelAxisOnYAxis,
   getYAxisOption,
-  getValidValueAxisName,
+  getValidValueAxisNames,
 } from '@src/helpers/axes';
 import {
   calculateCoordinateScale,
@@ -67,9 +67,8 @@ function getValueScaleData(
       result = getStackScaleData(stackSeries[seriesName].scaleType);
     });
   } else if (isCoordinateSeries(series)) {
-    const range = dataRange;
     const valueOptions = {
-      dataRange: range[valueAxisName],
+      dataRange: dataRange[valueAxisName],
       offsetSize: layout.plot[valueSizeKey],
       scaleOption: scaleOptions[valueAxisName],
     };
@@ -106,25 +105,11 @@ const scale: StoreModule = {
 
       if (rightYAxis) {
         scaleOptions.rightYAxis = rightYAxis?.scale;
-
-        [yAxis.chartType, rightYAxis.chartType].forEach((seriesName) => {
-          const validValueAxisName = getValidValueAxisName(options, seriesName, valueAxisName);
-
-          scaleData[validValueAxisName] = getValueScaleData(
-            state,
-            labelAxisOnYAxis,
-            scaleOptions,
-            validValueAxisName
-          );
-        });
-      } else {
-        scaleData[valueAxisName] = getValueScaleData(
-          state,
-          labelAxisOnYAxis,
-          scaleOptions,
-          valueAxisName
-        );
       }
+
+      getValidValueAxisNames(options, valueAxisName).forEach((axisName) => {
+        scaleData[axisName] = getValueScaleData(state, labelAxisOnYAxis, scaleOptions, axisName);
+      });
 
       if (isCoordinateSeries(series)) {
         scaleData[labelAxisName] = getLabelScaleData(

@@ -9,7 +9,7 @@ import { includes } from '@src/helpers/utils';
 export enum AxisType {
   X = 'xAxis',
   Y = 'yAxis',
-  SECONDARY_Y = 'rightYAxis',
+  RIGHT_Y = 'rightYAxis',
 }
 
 type CoordinateKey = 'x' | 'y';
@@ -41,7 +41,7 @@ export default class Axis extends Component {
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
     this.name = name;
-    this.yAxisComponent = includes([AxisType.Y, AxisType.SECONDARY_Y], name);
+    this.yAxisComponent = includes([AxisType.Y, AxisType.RIGHT_Y], name);
   }
 
   render({ layout, axes }: ChartState<Options>) {
@@ -154,9 +154,7 @@ export default class Axis extends Component {
   ): TickModel[] {
     const tickAnchorPoint = this.yAxisComponent ? this.getYAxisXPoint() : crispPixel(0);
     const { tickInterval } = renderOptions;
-    const tickSize = includes([AxisType.SECONDARY_Y, AxisType.X], this.name)
-      ? TICK_SIZE
-      : -TICK_SIZE;
+    const tickSize = includes([AxisType.RIGHT_Y, AxisType.X], this.name) ? TICK_SIZE : -TICK_SIZE;
 
     return relativePositions.reduce<TickModel[]>((positions, position, index) => {
       return index % tickInterval
@@ -182,11 +180,11 @@ export default class Axis extends Component {
     renderOptions: RenderOptions
   ): LabelModel[] {
     const { pointOnColumn, labelInterval, labelDistance } = renderOptions;
-    const isSecondaryYAxis = this.isSecondaryYAxis();
-    const yAxisAnchorPoint = isSecondaryYAxis ? crispPixel(this.rect.width) : crispPixel(0);
+    const isRightSide = this.isRightSide();
+    const yAxisAnchorPoint = isRightSide ? crispPixel(this.rect.width) : crispPixel(0);
     const labelAnchorPoint = this.yAxisComponent ? yAxisAnchorPoint : LABEL_ANCHOR_POINT;
     const labelAdjustment = pointOnColumn ? labelDistance / 2 : 0;
-    const yAxisTextAlign = isSecondaryYAxis ? 'right' : 'left';
+    const yAxisTextAlign = isRightSide ? 'right' : 'left';
     const style = ['default', { textAlign: this.yAxisComponent ? yAxisTextAlign : 'center' }];
 
     return labels.reduce<LabelModel[]>((positions, text, index) => {
@@ -214,12 +212,12 @@ export default class Axis extends Component {
     painter.ctx.lineWidth = 1;
   }
 
-  private isSecondaryYAxis() {
-    return this.name === AxisType.SECONDARY_Y;
+  private isRightSide() {
+    return this.name === AxisType.RIGHT_Y;
   }
 
   private getYAxisXPoint() {
-    return this.isSecondaryYAxis() ? crispPixel(0) : crispPixel(this.rect.width);
+    return this.isRightSide() ? crispPixel(0) : crispPixel(this.rect.width);
   }
 
   private hasOnlyAxisLine() {

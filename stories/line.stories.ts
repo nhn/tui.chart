@@ -288,3 +288,22 @@ export const lineWidth = () => {
 
   return el;
 };
+
+export const rightYAxis = () => {
+  const { el } = createChart(temperatureData, {
+    yAxis: [
+      {
+        title: 'Temperature (Celsius)',
+      },
+      {
+        title: 'Percent (%)',
+        scale: {
+          min: 0,
+          max: 100,
+        },
+      },
+    ],
+  });
+
+  return el;
+};

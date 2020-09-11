@@ -57,3 +57,15 @@ export const basicWithOptions = () => {
 
   return el;
 };
+
+export const rightYAxis = () => {
+  const { el } = createChart(efficiencyAndExpensesData, {
+    chart: { title: 'Efficiency vs Expenses' },
+    yAxis: [
+      { title: 'Efficiency', chartType: 'scatter' },
+      { title: 'Expenses', chartType: 'line' },
+    ],
+  });
+
+  return el;
+};
