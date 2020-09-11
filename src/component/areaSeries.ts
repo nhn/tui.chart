@@ -45,7 +45,11 @@ import {
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
 import { getDataLabelsOptions } from '@src/store/dataLabels';
+<<<<<<< HEAD
 import { getValueAxisName } from '@src/helpers/axes';
+=======
+import { getValidValueAxisName } from '@src/helpers/axes';
+>>>>>>> feat: apply right axis for line-area combo chart
 
 interface RenderOptions {
   pointOnColumn: boolean;

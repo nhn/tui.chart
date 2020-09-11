@@ -521,10 +521,10 @@ const layout: StoreModule = {
         chartSize,
         xAxis,
         yAxis,
+        secondaryYAxis,
         title,
         legend: legendState,
         hasAxis,
-        secondaryYAxis,
       });
 
       const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
