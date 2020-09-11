@@ -21,7 +21,7 @@ import { LineChartOptions, Scale as ScaleOption } from '@t/options';
 type ScaleOptions = {
   xAxis?: ScaleOption;
   yAxis?: ScaleOption;
-  secondaryYAxis?: ScaleOption;
+  rightYAxis?: ScaleOption;
 };
 
 function getLabelScaleData(
@@ -96,7 +96,7 @@ const scale: StoreModule = {
       const { series, options } = state;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
-      const { yAxis, secondaryYAxis } = getYAxisOption(options);
+      const { yAxis, rightYAxis } = getYAxisOption(options);
       const scaleData = {};
 
       const scaleOptions: ScaleOptions = {
@@ -104,10 +104,10 @@ const scale: StoreModule = {
         yAxis: yAxis?.scale,
       };
 
-      if (secondaryYAxis) {
-        scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
+      if (rightYAxis) {
+        scaleOptions.rightYAxis = rightYAxis?.scale;
 
-        [yAxis.chartType, secondaryYAxis.chartType].forEach((seriesName) => {
+        [yAxis.chartType, rightYAxis.chartType].forEach((seriesName) => {
           const validValueAxisName = getValidValueAxisName(options, seriesName, valueAxisName);
 
           scaleData[validValueAxisName] = getValueScaleData(

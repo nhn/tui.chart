@@ -68,7 +68,7 @@ export const dataLabels = () => {
   return el;
 };
 
-export const secondaryYAxis = () => {
+export const rightYAxis = () => {
   const { el } = createChart(temperatureAverageData, {
     yAxis: [
       {

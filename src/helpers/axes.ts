@@ -53,12 +53,12 @@ export function getYAxisOption(options: Options) {
 
   return {
     yAxis: hasSecondaryY ? options.yAxis![0] : options.yAxis,
-    secondaryYAxis: hasSecondaryY ? options.yAxis![1] : null,
+    rightYAxis: hasSecondaryY ? options.yAxis![1] : null,
   };
 }
 
 export function getValidValueAxisName(options: Options, seriesName: string, valueAxisName: string) {
-  const { secondaryYAxis } = getYAxisOption(options);
+  const { rightYAxis } = getYAxisOption(options);
 
-  return secondaryYAxis?.chartType === seriesName ? 'secondaryYAxis' : valueAxisName;
+  return rightYAxis?.chartType === seriesName ? 'rightYAxis' : valueAxisName;
 }

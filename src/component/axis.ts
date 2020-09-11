@@ -9,7 +9,7 @@ import { includes } from '@src/helpers/utils';
 export enum AxisType {
   X = 'xAxis',
   Y = 'yAxis',
-  SECONDARY_Y = 'secondaryYAxis',
+  SECONDARY_Y = 'rightYAxis',
 }
 
 type CoordinateKey = 'x' | 'y';

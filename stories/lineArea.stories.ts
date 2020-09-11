@@ -76,3 +76,21 @@ export const basicWithOptions = () => {
 
   return el;
 };
+
+export const rightYAxis = () => {
+  const { el } = createChart(energyUsageStackData, {
+    series: { area: { stack: { type: 'normal' } } },
+    yAxis: [
+      {
+        title: 'Energy (kWh)',
+        chartType: 'line',
+      },
+      {
+        title: 'Powered Usage',
+        chartType: 'area',
+      },
+    ],
+  });
+
+  return el;
+};

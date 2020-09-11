@@ -56,10 +56,10 @@ function getTotalDataRange(seriesDataRange: SeriesDataRange) {
         max: Math.max(cur.yAxis.max, acc.yAxis?.max ?? defaultDataRange.max),
       };
     }
-    if (cur.secondaryYAxis) {
-      acc.secondaryYAxis = {
-        min: Math.min(cur.secondaryYAxis.min, acc.secondaryYAxis?.min ?? defaultDataRange.min),
-        max: Math.max(cur.secondaryYAxis.max, acc.secondaryYAxis?.max ?? defaultDataRange.max),
+    if (cur.rightYAxis) {
+      acc.rightYAxis = {
+        min: Math.min(cur.rightYAxis.min, acc.rightYAxis?.min ?? defaultDataRange.min),
+        max: Math.max(cur.rightYAxis.max, acc.rightYAxis?.max ?? defaultDataRange.max),
       };
     }
 

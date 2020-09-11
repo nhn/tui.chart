@@ -13,7 +13,7 @@ export default class AxisTitle extends Component {
   initialize({ name }: { name: AxisType }) {
     this.type = 'axisTitle';
     this.name = name;
-    this.isYAxis = includes(['yAxis', 'secondaryYAxis'], name);
+    this.isYAxis = includes(['yAxis', 'rightYAxis'], name);
   }
 
   renderAxisTitle(option: Required<AxisTitleOption>, textAlign: CanvasTextAlign): LabelModel[] {

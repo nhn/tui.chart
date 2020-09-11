@@ -189,7 +189,7 @@ function makeDefaultYAxis(yAxis: BaseAxisOptions) {
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
-    const { yAxis, secondaryYAxis } = getYAxisOption(options);
+    const { yAxis, rightYAxis } = getYAxisOption(options);
     const axesState: Axes = {
       xAxis: {
         tickInterval: options.xAxis?.tick?.interval ?? 1,
@@ -207,8 +207,8 @@ const axes: StoreModule = {
       axesState.radialAxis = {} as RadialAxisData;
     }
 
-    if (secondaryYAxis) {
-      axesState.secondaryYAxis = makeDefaultYAxis(secondaryYAxis);
+    if (rightYAxis) {
+      axesState.rightYAxis = makeDefaultYAxis(rightYAxis);
     }
 
     return {
@@ -253,9 +253,9 @@ const axes: StoreModule = {
         yAxis: labelAxisOnYAxis ? labelAxisData : valueAxisData,
       } as Axes;
 
-      if (state.axes.secondaryYAxis) {
-        axesState.secondaryYAxis = getValueAxisData({
-          scale: scale.secondaryYAxis!,
+      if (state.axes.rightYAxis) {
+        axesState.rightYAxis = getValueAxisData({
+          scale: scale.rightYAxis!,
           axisSize: valueAxisSize,
           options,
           series,

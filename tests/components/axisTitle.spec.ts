@@ -76,16 +76,16 @@ describe('yAxisTitle', () => {
   });
 
   it('should render to the right side, when using secondary Y Axis', () => {
-    title.initialize({ name: 'secondaryYAxis' });
+    title.initialize({ name: 'rightYAxis' });
     const state = deepMergedCopy(chartState, {
       axes: {
-        secondaryYAxis: {
-          title: { text: 'secondaryYAxisTitle', offsetX: 0, offsetY: 0 },
+        rightYAxis: {
+          title: { text: 'rightYAxisTitle', offsetX: 0, offsetY: 0 },
         },
       },
       layout: {
         yAxisTitle: { x: 0, y: 0, height: 100, width: 50 },
-        secondaryYAxisTitle: { x: 50, y: 0, height: 100, width: 50 },
+        rightYAxisTitle: { x: 50, y: 0, height: 100, width: 50 },
       },
     });
     title.render(state);
@@ -93,7 +93,7 @@ describe('yAxisTitle', () => {
     expect(title.models).toEqual([
       {
         style: ['axisTitle', { textAlign: 'right' }],
-        text: 'secondaryYAxisTitle',
+        text: 'rightYAxisTitle',
         type: 'label',
         x: 50,
         y: 0,
