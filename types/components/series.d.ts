@@ -5,6 +5,7 @@ import { LineModel, LabelModel } from '@t/components/axis';
 import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
 import { LegendData } from '@t/components/legend';
 import { TreemapSeriesData } from '@t/store/store';
+import { SpectrumLegendModel, SpectrumLegendTooltipModel } from '@t/components/spectrumLegend';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
@@ -91,6 +92,7 @@ export type RectModel = {
 export type TreemapRectModel = {
   type: 'rect';
   color: string;
+  colorRatio?: number;
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness?: number;
 } & Rect &

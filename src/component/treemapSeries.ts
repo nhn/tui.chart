@@ -13,7 +13,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode } from '@src/helpers/responders';
 import { RectDataLabel } from '@src/store/dataLabels';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
-import { first, isUndefined, last } from '@src/helpers/utils';
+import { first, last } from '@src/helpers/utils';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 
 export default class TreemapSeries extends Component {
@@ -100,20 +100,6 @@ export default class TreemapSeries extends Component {
     }));
   }
 
-  getColorWithColorValue(treemapSeries: TreemapSeriesData, treemapScale: ScaleData, colorMap) {
-    const { colorValue } = treemapSeries;
-
-    if (isUndefined(colorValue)) {
-      return '';
-    }
-
-    const { limit } = treemapScale;
-    const { startRGB, distances } = colorMap;
-    const ratio = getColorRatio(colorValue, limit);
-
-    return getSpectrumColor(ratio, distances, startRGB);
-  }
-
   getColor(treemapSeries: TreemapSeriesData, colors: string[]) {
     const { indexes } = treemapSeries;
     const colorIdx = first<number>(indexes)!;
@@ -143,24 +129,30 @@ export default class TreemapSeries extends Component {
     });
 
     const { colors, startColor, endColor } = theme.series;
-    let colorMap;
+    let startRGB, distances;
     const useColorValue = options.series?.useColorValue ?? false;
     if (useColorValue) {
-      const startRGB = hexToRGB(startColor) as RGB;
+      startRGB = hexToRGB(startColor) as RGB;
       const endRGB = hexToRGB(endColor) as RGB;
-      const distances = makeDistances(startRGB, endRGB);
-      colorMap = { startRGB, distances };
+      distances = makeDistances(startRGB, endRGB);
     }
 
     const series: TreemapRectModel[] = Object.keys(boundMap).map((id) => {
       const treemapSeries = seriesData.find((item) => item.id === id)!;
+      let colorRatio;
+      if (useColorValue) {
+        const colorValue = treemapSeries.colorValue!;
+
+        colorRatio = getColorRatio(colorValue, treemapScale.limit);
+      }
 
       return {
         ...treemapSeries,
         ...boundMap[id],
         type: 'rect',
+        colorRatio,
         color: useColorValue
-          ? this.getColorWithColorValue(treemapSeries, treemapScale, colorMap)
+          ? getSpectrumColor(colorRatio, distances, startRGB)
           : this.getColor(treemapSeries, colors),
         opacity: useColorValue ? 0 : this.getOpacity(treemapSeries),
       };
@@ -192,6 +184,7 @@ export default class TreemapSeries extends Component {
       models: responders,
       name: this.name,
     });
+    this.eventBus.emit('renderSpectrumTooltip', responders);
     this.eventBus.emit('needDraw');
   }
 }

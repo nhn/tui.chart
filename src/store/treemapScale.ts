@@ -2,7 +2,7 @@ import { extend } from '@src/store/store';
 import { StoreModule, ScaleData } from '@t/store/store';
 import { calculateCoordinateScale } from '@src/scale/coordinateScaleCalculator';
 import { getLimitSafely } from '@src/store/dataRange';
-import { TreemapChartSeriesOptions } from '@t/options';
+import { isVerticalAlign } from '@src/store/layout';
 
 const treemapScale: StoreModule = {
   name: 'treemapScale',
@@ -11,9 +11,9 @@ const treemapScale: StoreModule = {
   }),
   action: {
     setTreemapScale({ state }) {
-      const { layout, treemapSeries, options } = state;
+      const { layout, treemapSeries, legend } = state;
 
-      if (!(options.series as TreemapChartSeriesOptions).useColorValue) {
+      if (!legend.useSpectrumLegend) {
         return;
       }
 
@@ -23,12 +23,14 @@ const treemapScale: StoreModule = {
       );
 
       const dataRange = getLimitSafely([...new Set(values)]);
+      const offsetSize = isVerticalAlign(legend.align) ? layout.plot.width / 2 : layout.plot.height;
 
       extend(
         state.treemapScale,
         calculateCoordinateScale({
           dataRange,
-          offsetSize: layout.plot.width,
+          offsetSize,
+          useSpectrumLegend: true,
           scaleOption: {},
         })
       );

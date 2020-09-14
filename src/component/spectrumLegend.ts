@@ -1,23 +1,95 @@
 import Component from './component';
-import { ChartState, Options } from '@t/store/store';
-import { LegendModel } from '@t/components/legend';
+import { ChartState, Options, ScaleData } from '@t/store/store';
+import { range } from '@src/helpers/utils';
+import { SpectrumLegendModel, SpectrumLegendModels } from '@t/components/spectrumLegend';
+import { Align } from '@t/options';
+import { TreemapRectResponderModel } from '@t/components/series';
+
+interface RenderOptions {
+  startColor: string;
+  endColor: string;
+}
 
 export default class SpectrumLegend extends Component {
-  models!: LegendModel[];
+  models!: SpectrumLegendModels;
+
+  labels: string[] = [];
+
+  align: Align = 'right';
 
   initialize() {
     this.type = 'spectrumLegend';
     this.name = 'spectrumLegend';
   }
 
-  render({ layout, legend }: ChartState<Options>) {
+  makeLabels(scale: ScaleData) {
+    const { stepCount, limit, stepSize } = scale;
+    const minValue = limit.min;
+
+    return range(0, stepCount + 1).reduce<string[]>((acc, cur) => {
+      return [...acc, String(minValue + stepSize * cur)];
+    }, []);
+  }
+
+  renderSpectrumLegendModel(renderOptions: RenderOptions): SpectrumLegendModel[] {
+    const { width, height } = this.rect;
+    const { startColor, endColor } = renderOptions;
+
+    return [
+      {
+        type: 'spectrumLegend',
+        width,
+        height,
+        x: 0,
+        y: 0,
+        labels: this.labels,
+        startColor,
+        endColor,
+        align: this.align,
+      },
+    ];
+  }
+
+  renderSpectrumTooltip = ([responderData]: TreemapRectResponderModel[]) => {
+    if (responderData) {
+      const { colorValue, color } = responderData;
+      const colorRatio = responderData.colorRatio!;
+      const { width, height } = this.rect;
+
+      this.models.tooltip = [
+        {
+          type: 'spectrumTooltip',
+          align: this.align,
+          colorRatio,
+          color,
+          text: String(colorValue),
+          labels: this.labels,
+          width,
+          height,
+          x: 0,
+          y: 0,
+        },
+      ];
+    } else {
+      this.models.tooltip = [];
+    }
+  };
+
+  render({ layout, legend, treemapScale, theme }: ChartState<Options>) {
     if (!legend.visible) {
       return;
     }
 
     this.rect = layout.legend;
-    this.models = [
-      { type: 'rect', x: 0, y: 0, width: this.rect.width, height: this.rect.height, color: '#ccc' },
-    ];
+    this.labels = this.makeLabels(treemapScale);
+
+    this.align = legend.align;
+    const { startColor, endColor } = theme.series;
+
+    const renderOptions: RenderOptions = { startColor, endColor };
+
+    this.models = { legend: this.renderSpectrumLegendModel(renderOptions), tooltip: [] };
+
+    this.eventBus.on('renderSpectrumTooltip', this.renderSpectrumTooltip);
   }
 }

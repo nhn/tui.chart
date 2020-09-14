@@ -160,14 +160,17 @@ export function makeScaleOption(dataRange: ValueEdge, scaleOptions?: Scale): Req
 export function calculateCoordinateScale(options: {
   dataRange: ValueEdge;
   offsetSize: number;
+  useSpectrumLegend?: boolean;
   scaleOption?: Scale;
   minStepSize?: number;
 }): ScaleData {
-  const { dataRange, scaleOption, offsetSize, minStepSize } = options;
+  const { dataRange, scaleOption, offsetSize, minStepSize, useSpectrumLegend } = options;
   const scale = makeScaleOption(dataRange, scaleOption);
   const roughScale = getRoughScale(scale, offsetSize, minStepSize);
   const normalizedScale = getNormalizedScale(roughScale, scale);
-  const overflowed = isSeriesOverflowed(normalizedScale, scale, scaleOption);
+  const overflowed = useSpectrumLegend
+    ? null
+    : isSeriesOverflowed(normalizedScale, scale, scaleOption);
 
   if (overflowed) {
     const { stepSize, limit } = normalizedScale;

@@ -1,7 +1,7 @@
 import { SeriesDataType, TreemapSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { populationDensityData, usedDiskSpaceData } from './data';
-import { withKnobs } from '@storybook/addon-knobs';
+import { radios, withKnobs } from '@storybook/addon-knobs';
 import TreemapChart from '@src/charts/treemapChart';
 
 export default {
@@ -85,6 +85,13 @@ export const colorValue = () => {
       },
     },
     tooltip: { formatter: (value: SeriesDataType) => `${value}㎢` },
+    legend: {
+      align: radios(
+        'align',
+        { left: 'left', right: 'right', top: 'top', bottom: 'bottom' },
+        'right'
+      ),
+    },
   });
 
   return el;

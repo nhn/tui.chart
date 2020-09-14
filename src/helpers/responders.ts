@@ -6,7 +6,7 @@ import {
 } from '@t/components/series';
 import { Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
-import { AxisData, TreemapSeriesData } from '@t/store/store';
+import { AxisData } from '@t/store/store';
 import { range } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 

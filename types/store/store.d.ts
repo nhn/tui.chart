@@ -177,6 +177,7 @@ export interface Legend {
     checked: boolean;
     width: number;
   }[];
+  useSpectrumLegend: boolean;
 }
 
 export interface CircleLegend {

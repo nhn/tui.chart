@@ -17,6 +17,7 @@ import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
+import * as spectrumLegendBrush from '@src/brushes/spectrumLegend';
 
 import { TreemapChartOptions, TreemapSeriesData, TreemapSeriesType } from '@t/options';
 
@@ -50,6 +51,13 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
-    this.painter.addGroups([basicBrush, legendBrush, labelBrush, exportMenuBrush, dataLabelBrush]);
+    this.painter.addGroups([
+      basicBrush,
+      legendBrush,
+      labelBrush,
+      exportMenuBrush,
+      dataLabelBrush,
+      spectrumLegendBrush,
+    ]);
   }
 }

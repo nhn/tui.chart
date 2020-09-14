@@ -1,43 +1,284 @@
-import { LegendIconType } from '@t/store/store';
-import { Align, Point } from '@t/options';
 import { isVerticalAlign } from '@src/store/layout';
+import { getTextWidth } from '@src/helpers/calculator';
+import { label } from '@src/brushes/label';
+import { rect } from '@src/brushes/basic';
+import { polygon } from '@src/brushes/polygon';
+import {
+  SpectrumLegendModel,
+  SpectrumLegendTooltipModel,
+  SpectrumLegendTooltipPointModel,
+} from '@t/components/spectrumLegend';
 
-interface RenderOptions {
-  iconType: LegendIconType;
-  showCheckbox: boolean;
-  checked: boolean;
-  active: boolean;
-  color: string;
-  align: Align;
+export const SPECTRUM_LEGEND_LABEL_HEIGHT = 12;
+export const spectrumLegendBar = {
+  HEIGHT: 6,
+  PADDING: 5,
+};
+export const spectrumLegendTooltip = {
+  HEIGHT: 28,
+  POINT_WIDTH: 4,
+  POINT_HEIGHT: 4,
+  PADDING: 6,
+};
+
+// @TODO: 여러번 계산하는 로직은 최 상단에서 계싼해서 넘겨줘도 될듯
+function getTooltipWidth(labels: string[]) {
+  const maxWidth = getMaxLengthLabelWidth(labels);
+
+  return spectrumLegendTooltip.POINT_HEIGHT + 2 * spectrumLegendTooltip.PADDING + maxWidth;
 }
 
-type SpectrumLegendModel = {
-  align: Align;
-} & Point;
+function getMaxLengthLabelWidth(labels: string[]) {
+  const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
 
-export function spectrumLegend(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
-  const { x, y, align } = model;
+  return getTextWidth(maxLengthLabel);
+}
 
-  const startColor = '#FFE98A';
-  const endColor = '#D74177';
+function getBarLayout(model: SpectrumLegendModel) {
+  const { align, x, y, labels } = model;
 
-  let width = 400;
-  let height = 6;
+  if (align === 'top') {
+    return { x, y: y + SPECTRUM_LEGEND_LABEL_HEIGHT + spectrumLegendBar.PADDING };
+  }
+
+  if (align === 'bottom') {
+    return { x, y: y + spectrumLegendTooltip.HEIGHT };
+  }
+
+  if (align === 'left') {
+    return {
+      x: x + getMaxLengthLabelWidth(labels) + spectrumLegendBar.PADDING,
+      y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
+    };
+  }
+
+  if (align === 'right') {
+    return {
+      x: x + getTooltipWidth(labels) + spectrumLegendBar.PADDING,
+      y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
+    };
+  }
+}
+
+function getLabelsLayout(model: SpectrumLegendModel) {
+  const { align, x, y, width, labels } = model;
+
+  if (align === 'top') {
+    return { x, y };
+  }
+
+  if (align === 'bottom') {
+    return {
+      x,
+      y: y + spectrumLegendTooltip.HEIGHT + spectrumLegendBar.HEIGHT + spectrumLegendBar.PADDING,
+    };
+  }
+
+  if (align === 'left') {
+    return { x: x + getMaxLengthLabelWidth(labels), y };
+  }
+
+  if (align === 'right') {
+    return {
+      x: x + getTooltipWidth(labels) + spectrumLegendBar.HEIGHT + spectrumLegendBar.PADDING * 2,
+      y,
+    };
+  }
+}
+
+function getBarSize(width: number, height: number, verticalAlign: boolean) {
+  const barWidth = verticalAlign ? width : spectrumLegendBar.HEIGHT;
+  const barHeight = verticalAlign
+    ? spectrumLegendBar.HEIGHT
+    : height - SPECTRUM_LEGEND_LABEL_HEIGHT;
+
+  return { barWidth, barHeight };
+}
+
+function drawLabels(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
+  const { labels, align, x, y, width, height } = model;
+  const verticalAlign = isVerticalAlign(align);
+  const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
+
+  const labelSize = labels.length - 1;
+
+  const styleMap = {
+    left: {
+      textAlign: 'right',
+      textBaseline: 'top',
+    },
+    right: {
+      textAlign: 'left',
+      textBaseline: 'top',
+    },
+    top: {
+      textAlign: 'center',
+      textBaseline: 'top',
+    },
+    bottom: {
+      textAlign: 'center',
+      textBaseline: 'top',
+    },
+  };
+
+  labels.forEach((text, idx) => {
+    const xx = verticalAlign ? x + (barWidth / labelSize) * idx : x;
+    const yy = verticalAlign ? y : y + (barHeight / labelSize) * idx;
+
+    label(ctx, {
+      type: 'label',
+      x: xx,
+      y: yy,
+      text: String(text),
+      style: ['default', { ...styleMap[align] }],
+    });
+  });
+}
+
+function drawBar(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
+  const { align, width, height, startColor, endColor, x, y } = model;
+  const verticalAlign = isVerticalAlign(align);
+  const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
   let grd;
 
-  // label 은 scale에서 뽑아내고
-  // treeScale yAxis 로 지정해놓은거는 스펙트럼 너비, 높이 지정으로 되게 해야ㅎ마
-
-  if (isVerticalAlign(align)) {
-    grd = ctx.createLinearGradient(x, y, x + width, y);
+  if (verticalAlign) {
+    grd = ctx.createLinearGradient(x, y, x + barWidth, y);
   } else {
-    height = 400;
-    width = 6;
-    grd = ctx.createLinearGradient(x, y, x, y + height);
+    grd = ctx.createLinearGradient(x, y, x, y + barHeight);
   }
   grd.addColorStop(0, startColor);
   grd.addColorStop(1, endColor);
 
   ctx.fillStyle = grd;
-  ctx.fillRect(x, y, width, height);
+  ctx.fillRect(x, y, barWidth, barHeight);
+}
+
+export function spectrumLegend(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
+  const barLayout = getBarLayout(model);
+  const labelsLayout = getLabelsLayout(model);
+
+  drawLabels(ctx, { ...model, ...labelsLayout });
+  drawBar(ctx, { ...model, ...barLayout });
+}
+
+function drawTooltipPoint(
+  ctx: CanvasRenderingContext2D,
+  pointModel: SpectrumLegendTooltipPointModel
+) {
+  const { x, y, color, align } = pointModel;
+  let points;
+
+  if (align === 'top') {
+    points = [
+      { x, y },
+      { x: x - spectrumLegendTooltip.POINT_WIDTH / 2, y: y + spectrumLegendTooltip.POINT_HEIGHT },
+      { x: x + spectrumLegendTooltip.POINT_WIDTH / 2, y: y + spectrumLegendTooltip.POINT_HEIGHT },
+    ];
+  } else if (align === 'bottom') {
+    points = [
+      { x, y },
+      { x: x - spectrumLegendTooltip.POINT_WIDTH / 2, y: y - spectrumLegendTooltip.POINT_HEIGHT },
+      { x: x + spectrumLegendTooltip.POINT_WIDTH / 2, y: y - spectrumLegendTooltip.POINT_HEIGHT },
+    ];
+  } else if (align === 'right') {
+    points = [
+      { x, y },
+      { x: x - spectrumLegendTooltip.POINT_HEIGHT, y: y - spectrumLegendTooltip.POINT_WIDTH / 2 },
+      { x: x - spectrumLegendTooltip.POINT_HEIGHT, y: y + spectrumLegendTooltip.POINT_WIDTH / 2 },
+    ];
+  } else {
+    points = [
+      { x, y },
+      { x: x + spectrumLegendTooltip.POINT_HEIGHT, y: y - spectrumLegendTooltip.POINT_WIDTH / 2 },
+      { x: x + spectrumLegendTooltip.POINT_HEIGHT, y: y + spectrumLegendTooltip.POINT_WIDTH / 2 },
+    ];
+  }
+
+  polygon(ctx, { type: 'polygon', color, lineWidth: 0, points, fillColor: color });
+}
+
+function getTopPoint(model: SpectrumLegendTooltipModel) {
+  const { align, colorRatio, width, height, x, y, labels } = model;
+  const verticalAlign = isVerticalAlign(align);
+
+  const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
+
+  if (align === 'top') {
+    return {
+      x: x + barWidth * colorRatio,
+      y:
+        y + SPECTRUM_LEGEND_LABEL_HEIGHT + spectrumLegendBar.HEIGHT + spectrumLegendBar.PADDING * 2,
+    };
+  }
+
+  if (align === 'bottom') {
+    return {
+      x: x + barWidth * colorRatio,
+      y: y + SPECTRUM_LEGEND_LABEL_HEIGHT + spectrumLegendBar.PADDING * 2,
+    };
+  }
+
+  if (align === 'left') {
+    return {
+      x:
+        x +
+        getMaxLengthLabelWidth(labels) +
+        spectrumLegendBar.HEIGHT +
+        spectrumLegendBar.PADDING * 2,
+      y: y + barHeight * colorRatio + spectrumLegendBar.PADDING,
+    };
+  }
+
+  if (align === 'right') {
+    return {
+      x:
+        x +
+        getMaxLengthLabelWidth(labels) +
+        spectrumLegendBar.HEIGHT +
+        spectrumLegendBar.PADDING * 2,
+      y: y + barHeight * colorRatio + spectrumLegendBar.PADDING,
+    };
+  }
+}
+
+function drawTooltipBox(ctx: CanvasRenderingContext2D, model: SpectrumLegendTooltipModel) {
+  let { x: boxStartX, y: boxStartY } = model;
+  const { align, text, color } = model;
+
+  const labelWidth = getTextWidth(text);
+  const width = labelWidth + spectrumLegendTooltip.PADDING * 2;
+  const height = SPECTRUM_LEGEND_LABEL_HEIGHT + spectrumLegendTooltip.PADDING * 2;
+
+  if (align === 'top') {
+    boxStartY += spectrumLegendTooltip.POINT_HEIGHT;
+  } else if (align === 'left') {
+    boxStartX += spectrumLegendTooltip.POINT_HEIGHT;
+  } else if (align === 'right') {
+    boxStartX -= width + spectrumLegendTooltip.POINT_HEIGHT;
+  } else {
+    boxStartY -= height + spectrumLegendTooltip.POINT_HEIGHT;
+  }
+
+  if (isVerticalAlign(align)) {
+    boxStartX -= width / 2;
+  } else {
+    boxStartY -= height / 2;
+  }
+
+  rect(ctx, { type: 'rect', x: boxStartX, y: boxStartY, width, height, color });
+
+  label(ctx, {
+    type: 'label',
+    x: spectrumLegendTooltip.PADDING + boxStartX,
+    y: spectrumLegendTooltip.PADDING + boxStartY,
+    text,
+    style: ['default', { textBaseline: 'top' }],
+  });
+}
+
+export function spectrumTooltip(ctx: CanvasRenderingContext2D, model: SpectrumLegendTooltipModel) {
+  const { x, y } = getTopPoint(model)!;
+
+  drawTooltipPoint(ctx, { ...model, x, y });
+  drawTooltipBox(ctx, { ...model, x, y });
 }

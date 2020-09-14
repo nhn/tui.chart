@@ -10,6 +10,7 @@ import {
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign } from '@src/store/layout';
+import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
 
 function calculateLegendWidth(
   defaultWidth: number,
@@ -20,6 +21,7 @@ function calculateLegendWidth(
 ) {
   const verticalAlign = isVerticalAlign(align);
   const legendOptions = options?.legend;
+  const useColorValue = (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? false;
   let legendWidth = defaultWidth;
 
   if (!visible) {
@@ -30,7 +32,20 @@ function calculateLegendWidth(
     return legendOptions.width;
   }
 
-  if (!verticalAlign) {
+  if (useColorValue) {
+    if (verticalAlign) {
+      const labelAreaWidth = sum(legendWidths);
+      legendWidth = Math.max(options.chart!.width / 4, labelAreaWidth);
+    } else {
+      const { HEIGHT } = spectrumLegendBar;
+      const { POINT_HEIGHT } = spectrumLegendTooltip;
+
+      const spectrumAreaWidth =
+        spectrumLegendTooltip.PADDING * 2 + spectrumLegendBar.PADDING * 2 + POINT_HEIGHT + HEIGHT;
+
+      legendWidth = Math.max(...legendWidths) * 2 + spectrumAreaWidth;
+    }
+  } else if (!verticalAlign) {
     const labelAreaWidth = Math.max(...legendWidths);
     legendWidth = Math.max(labelAreaWidth, legendWidth);
   } else {
@@ -58,7 +73,7 @@ function showCheckbox(options: Options) {
 
 function getLegendLabels(series: RawSeries) {
   return Object.keys(series).reduce<string[]>((acc, type) => {
-    const seriesName = series[type].map(({ name }) => name);
+    const seriesName = series[type].map(({ name, colorValue }) => (colorValue ? colorValue : name));
 
     return [...acc, ...seriesName];
   }, []);
@@ -96,30 +111,36 @@ function getAlign(options: Options) {
   return isUndefined(options.legend?.align) ? 'right' : (options.legend?.align as Align);
 }
 
-function getItemWidth(label: string, checkboxVisible: boolean) {
+function getItemWidth(label: string, checkboxVisible: boolean, useSpectrumLegend: boolean) {
   return (
-    (checkboxVisible ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
-    LEGEND_ICON_SIZE +
-    LEGEND_MARGIN_X +
-    getTextWidth(label, LEGEND_LABEL_FONT)
+    (useSpectrumLegend
+      ? 0
+      : (checkboxVisible ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
+        LEGEND_ICON_SIZE +
+        LEGEND_MARGIN_X) + getTextWidth(label, LEGEND_LABEL_FONT)
   );
 }
 
 const legend: StoreModule = {
   name: 'legend',
   state: ({ options, series }) => {
-    const defaultWidth = Math.min(options.chart!.width / 10, 150);
     const align = getAlign(options);
     const visible = showLegend(options, series);
     const checkboxVisible = showCheckbox(options);
-    const data = getLegendLabels(series).map((label) => ({
+    const useSpectrumLegend =
+      (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? false;
+
+    const defaultWidth = Math.min(options.chart!.width / 10, 150);
+    const legendLabels = getLegendLabels(series);
+    const data = legendLabels.map((label) => ({
       label,
       active: true,
       checked: true,
-      width: getItemWidth(label, checkboxVisible),
+      width: getItemWidth(label, checkboxVisible, useSpectrumLegend),
     }));
     const legendWidths = data.map(({ width }) => width);
     const legendWidth = calculateLegendWidth(defaultWidth, legendWidths, options, align, visible);
+
     const circleLegendWidth = isVerticalAlign(align)
       ? defaultWidth
       : Math.max(defaultWidth, legendWidth);
@@ -130,6 +151,7 @@ const legend: StoreModule = {
     return {
       legend: {
         visible,
+        useSpectrumLegend,
         showCheckbox: checkboxVisible,
         iconType: getIconType(series),
         data,
