@@ -1,87 +1,99 @@
-import { AreaChartOptions, TreemapChartSeriesOptions } from '@t/options';
+import { AreaChartOptions } from '@t/options';
 import TreemapSeries from '@src/component/treemapSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 let treemapSeries;
 
-function getChartState(seriesData, options?: TreemapChartSeriesOptions) {
-  return {
-    chart: { width: 210, height: 100 },
-    theme: {
+function getChartState(seriesData, options?: any) {
+  return deepMergedCopy(
+    {
+      chart: { width: 210, height: 100 },
+      theme: {
+        series: {
+          colors: ['#00a9ff', '#ffb840'],
+          startColor: '#00a9ff',
+          endColor: '#ffb840',
+        },
+      },
+      treemapScale: {
+        limit: {
+          min: 1,
+          max: 2,
+        },
+        stepSize: 1,
+        stepCount: 2,
+      },
+      layout: {
+        plot: { width: 210, height: 100, x: 0, y: 0 },
+      },
       series: {
-        colors: ['#00a9ff', '#ffb840'],
-        startColor: '#00a9ff',
-        endColor: '#ffb840',
+        treemap: {
+          data: seriesData,
+          seriesCount: seriesData.length,
+          seriesGroupCount: 0,
+        },
+      },
+      treemapSeries: [
+        {
+          color: '#00a9ff',
+          data: 1,
+          depth: 1,
+          hasChild: false,
+          id: '__TOAST_UI_TREEMAP_0_0',
+          indexes: [0, 0],
+          label: 'B',
+          opacity: 0.1,
+          parentId: '__TOAST_UI_TREEMAP_0',
+          ratio: 0.5,
+        },
+        {
+          color: '#00a9ff',
+          data: 2,
+          depth: 1,
+          hasChild: false,
+          id: '__TOAST_UI_TREEMAP_0_1',
+          indexes: [0, 1],
+          label: 'C',
+          opacity: 0.15,
+          parentId: '__TOAST_UI_TREEMAP_0',
+          ratio: 0.5,
+        },
+        {
+          color: '#00a9ff',
+          data: 2,
+          depth: 0,
+          hasChild: true,
+          id: '__TOAST_UI_TREEMAP_0',
+          indexes: [0],
+          label: 'A',
+          opacity: 0,
+          parentId: '__TOAST_UI_TREEMAP_ROOT',
+          ratio: 0.5,
+        },
+        {
+          color: '#ffb840',
+          data: 2,
+          depth: 0,
+          hasChild: false,
+          id: '__TOAST_UI_TREEMAP_1',
+          indexes: [1],
+          label: 'D',
+          opacity: 0,
+          parentId: '__TOAST_UI_TREEMAP_ROOT',
+          ratio: 0.5,
+        },
+      ],
+      options: {
+        series: {},
+      },
+      dataLabels: {
+        visible: false,
       },
     },
-    layout: {
-      plot: { width: 210, height: 100, x: 0, y: 0 },
-    },
-    series: {
-      treemap: {
-        data: seriesData,
-        seriesCount: seriesData.length,
-        seriesGroupCount: 0,
-      },
-    },
-    treemapSeries: [
-      {
-        color: '#00a9ff',
-        data: 1,
-        depth: 1,
-        hasChild: false,
-        id: '__TOAST_UI_TREEMAP_0_0',
-        indexes: [0, 0],
-        label: 'B',
-        opacity: 0.1,
-        parentId: '__TOAST_UI_TREEMAP_0',
-        ratio: 0.5,
-      },
-      {
-        color: '#00a9ff',
-        data: 2,
-        depth: 1,
-        hasChild: false,
-        id: '__TOAST_UI_TREEMAP_0_1',
-        indexes: [0, 1],
-        label: 'C',
-        opacity: 0.15,
-        parentId: '__TOAST_UI_TREEMAP_0',
-        ratio: 0.5,
-      },
-      {
-        color: '#00a9ff',
-        data: 2,
-        depth: 0,
-        hasChild: true,
-        id: '__TOAST_UI_TREEMAP_0',
-        indexes: [0],
-        label: 'A',
-        opacity: 0,
-        parentId: '__TOAST_UI_TREEMAP_ROOT',
-        ratio: 0.5,
-      },
-      {
-        color: '#ffb840',
-        data: 2,
-        depth: 0,
-        hasChild: false,
-        id: '__TOAST_UI_TREEMAP_1',
-        indexes: [1],
-        label: 'D',
-        opacity: 0,
-        parentId: '__TOAST_UI_TREEMAP_ROOT',
-        ratio: 0.5,
-      },
-    ],
-    options: {
-      series: { ...options },
-    },
-    dataLabels: {
-      visible: false,
-    },
-  };
+    { ...options }
+  );
 }
 
 describe('basic', () => {
@@ -375,7 +387,64 @@ describe('with colorValue', () => {
       },
     ];
 
-    treemapSeries.render(getChartState(data, { useColorValue: true }));
+    treemapSeries.render(
+      getChartState(data, {
+        options: { series: { useColorValue: true } },
+        treemapSeries: [
+          {
+            color: '#00a9ff',
+            data: 1,
+            depth: 1,
+            hasChild: false,
+            id: '__TOAST_UI_TREEMAP_0_0',
+            indexes: [0, 0],
+            label: 'B',
+            opacity: 0.1,
+            parentId: '__TOAST_UI_TREEMAP_0',
+            ratio: 0.5,
+            colorValue: 1,
+          },
+          {
+            color: '#00a9ff',
+            data: 2,
+            depth: 1,
+            hasChild: false,
+            id: '__TOAST_UI_TREEMAP_0_1',
+            indexes: [0, 1],
+            label: 'C',
+            opacity: 0.15,
+            parentId: '__TOAST_UI_TREEMAP_0',
+            ratio: 0.5,
+            colorValue: 1,
+          },
+          {
+            color: '#00a9ff',
+            data: 2,
+            depth: 0,
+            hasChild: true,
+            id: '__TOAST_UI_TREEMAP_0',
+            indexes: [0],
+            label: 'A',
+            opacity: 0,
+            parentId: '__TOAST_UI_TREEMAP_ROOT',
+            ratio: 0.5,
+          },
+          {
+            color: '#ffb840',
+            data: 2,
+            depth: 0,
+            hasChild: false,
+            id: '__TOAST_UI_TREEMAP_1',
+            indexes: [1],
+            label: 'D',
+            opacity: 0,
+            parentId: '__TOAST_UI_TREEMAP_ROOT',
+            ratio: 0.5,
+            colorValue: 2,
+          },
+        ],
+      })
+    );
   });
 
   const result = {
@@ -401,8 +470,10 @@ describe('with colorValue', () => {
         y: 0,
       },
       {
-        color: '',
-        data: { color: '', label: 'D', value: 2 },
+        color: '#ffb840',
+        data: { color: '#ffb840', label: 'D', value: 2 },
+        colorRatio: 1,
+        colorValue: 2,
         depth: 0,
         hasChild: false,
         height: 100,
@@ -420,8 +491,10 @@ describe('with colorValue', () => {
         y: 0,
       },
       {
-        color: '',
-        data: { color: '', label: 'C', value: 2 },
+        color: '#00a9ff',
+        data: { color: '#00a9ff', label: 'C', value: 2 },
+        colorRatio: 0,
+        colorValue: 1,
         depth: 1,
         hasChild: false,
         height: 100,
@@ -439,8 +512,10 @@ describe('with colorValue', () => {
         y: 0,
       },
       {
-        color: '',
-        data: { color: '', label: 'B', value: 1 },
+        color: '#00a9ff',
+        data: { color: '#00a9ff', label: 'B', value: 1 },
+        colorRatio: 0,
+        colorValue: 1,
         depth: 1,
         hasChild: false,
         height: 100,
@@ -479,7 +554,9 @@ describe('with colorValue', () => {
           y: 0,
         },
         {
-          color: '',
+          color: '#ffb840',
+          colorValue: 2,
+          colorRatio: 1,
           data: 2,
           depth: 0,
           hasChild: false,
@@ -496,9 +573,11 @@ describe('with colorValue', () => {
           y: 0,
         },
         {
-          color: '',
+          color: '#00a9ff',
           data: 2,
           depth: 1,
+          colorValue: 1,
+          colorRatio: 0,
           hasChild: false,
           height: 100,
           id: '__TOAST_UI_TREEMAP_0_1',
@@ -513,7 +592,9 @@ describe('with colorValue', () => {
           y: 0,
         },
         {
-          color: '',
+          color: '#00a9ff',
+          colorRatio: 0,
+          colorValue: 1,
           data: 1,
           depth: 1,
           hasChild: false,

@@ -4,6 +4,7 @@ import { range } from '@src/helpers/utils';
 import { SpectrumLegendModel, SpectrumLegendModels } from '@t/components/spectrumLegend';
 import { Align } from '@t/options';
 import { TreemapRectResponderModel } from '@t/components/series';
+import { isVerticalAlign } from '@src/store/layout';
 
 interface RenderOptions {
   startColor: string;
@@ -46,6 +47,7 @@ export default class SpectrumLegend extends Component {
         align: this.align,
         startColor,
         endColor,
+        verticalAlign: isVerticalAlign(this.align),
       },
     ];
   }
@@ -68,6 +70,7 @@ export default class SpectrumLegend extends Component {
           colorRatio,
           color,
           text: String(colorValue),
+          verticalAlign: isVerticalAlign(this.align),
         },
       ];
     } else {

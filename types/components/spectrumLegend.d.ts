@@ -11,6 +11,7 @@ export type SpectrumLegendModel = {
   labels: string[];
   startColor: string;
   endColor: string;
+  verticalAlign: boolean;
 } & Rect;
 
 export type SpectrumLegendTooltipPointModel = Omit<SpectrumLegendTooltipModel, 'text'> & Point;
@@ -20,4 +21,5 @@ export type SpectrumLegendTooltipModel = {
   text: string;
   color: string;
   colorRatio: number;
+  verticalAlign: boolean;
 } & Omit<SpectrumLegendModel, 'startColor' | 'endColor' | 'type'>;

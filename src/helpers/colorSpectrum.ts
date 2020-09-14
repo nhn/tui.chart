@@ -1,5 +1,6 @@
 import { rgbToHEX } from '@src/helpers/color';
 import { ValueEdge } from '@t/store/store';
+import { isString, isUndefined } from '@src/helpers/utils';
 
 export type RGB = [number, number, number];
 
@@ -7,7 +8,10 @@ export function makeDistances(startRGB: RGB, endRGB: RGB) {
   return startRGB.map((value, index) => endRGB[index] - value);
 }
 
-export function getColorRatio(value: number, limit: ValueEdge) {
+export function getColorRatio(limit: ValueEdge, value?: number) {
+  if (isUndefined(value)) {
+    return;
+  }
   const divNumber = Math.abs(limit.max - limit.min);
   const subNumber = Math.max(0, limit.min);
 
@@ -19,5 +23,7 @@ export function getSpectrumColor(ratio: number, distances: RGB, startRGB: RGB) {
     (start, index) => start + parseInt(String(distances[index] * ratio), 10)
   ) as RGB;
 
-  return rgbToHEX(...rgbColor) as string;
+  const color = rgbToHEX(...rgbColor);
+
+  return isString(color) ? color : '';
 }

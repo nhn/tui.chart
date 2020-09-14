@@ -25,6 +25,15 @@ const treemapScale: StoreModule = {
       const dataRange = getLimitSafely([...new Set(values)]);
       const offsetSize = isVerticalAlign(legend.align) ? layout.plot.width / 2 : layout.plot.height;
 
+      console.log(
+        calculateCoordinateScale({
+          dataRange,
+          offsetSize,
+          useSpectrumLegend: true,
+          scaleOption: {},
+        })
+      );
+
       extend(
         state.treemapScale,
         calculateCoordinateScale({

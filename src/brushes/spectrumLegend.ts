@@ -1,4 +1,4 @@
-import { isVerticalAlign, padding } from '@src/store/layout';
+import { padding } from '@src/store/layout';
 import { getTextWidth } from '@src/helpers/calculator';
 import { label } from '@src/brushes/label';
 import { rect } from '@src/brushes/basic';
@@ -8,6 +8,7 @@ import {
   SpectrumLegendTooltipModel,
   SpectrumLegendTooltipPointModel,
 } from '@t/components/spectrumLegend';
+import { LabelStyle } from '@t/components/axis';
 
 export const SPECTRUM_LEGEND_LABEL_HEIGHT = 12;
 export const spectrumLegendBar = {
@@ -21,7 +22,6 @@ export const spectrumLegendTooltip = {
   PADDING: 6,
 };
 
-// @TODO: 여러번 계산하는 로직은 최 상단에서 계싼해서 넘겨줘도 될듯
 function getMaxLengthLabelWidth(labels: string[]) {
   const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
 
@@ -30,31 +30,26 @@ function getMaxLengthLabelWidth(labels: string[]) {
 
 function getBarLayout(model: SpectrumLegendModel) {
   const { align, x, y, labels, width } = model;
+  const { PADDING, HEIGHT } = spectrumLegendBar;
 
   if (align === 'top') {
-    return { x, y: y + SPECTRUM_LEGEND_LABEL_HEIGHT + spectrumLegendBar.PADDING };
+    return { x, y: y + SPECTRUM_LEGEND_LABEL_HEIGHT + PADDING };
   }
 
   if (align === 'bottom') {
-    return { x, y: y + spectrumLegendTooltip.HEIGHT };
+    return { x, y: y + HEIGHT };
   }
 
   if (align === 'left') {
     return {
-      x: x + getMaxLengthLabelWidth(labels) + spectrumLegendBar.PADDING,
+      x: x + getMaxLengthLabelWidth(labels) + PADDING,
       y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
     };
   }
 
   if (align === 'right') {
     return {
-      x:
-        x +
-        width -
-        (getMaxLengthLabelWidth(labels) +
-          padding.X +
-          spectrumLegendBar.PADDING * 2 +
-          spectrumLegendBar.HEIGHT),
+      x: x + width - (getMaxLengthLabelWidth(labels) + padding.X + PADDING * 2 + HEIGHT),
       y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
     };
   }
@@ -84,17 +79,15 @@ function getLabelsLayout(model: SpectrumLegendModel) {
 }
 
 function getBarSize(width: number, height: number, verticalAlign: boolean) {
-  const barWidth = verticalAlign ? width : spectrumLegendBar.HEIGHT;
-  const barHeight = verticalAlign
-    ? spectrumLegendBar.HEIGHT
-    : height - SPECTRUM_LEGEND_LABEL_HEIGHT;
+  const { HEIGHT } = spectrumLegendBar;
+  const barWidth = verticalAlign ? width : HEIGHT;
+  const barHeight = verticalAlign ? HEIGHT : height - SPECTRUM_LEGEND_LABEL_HEIGHT;
 
   return { barWidth, barHeight };
 }
 
 function drawLabels(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
-  const { labels, align, x, y, width, height } = model;
-  const verticalAlign = isVerticalAlign(align);
+  const { labels, align, x, y, width, height, verticalAlign } = model;
   const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
 
   const labelSize = labels.length - 1;
@@ -127,14 +120,13 @@ function drawLabels(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
       x: startX,
       y: startY,
       text: String(text),
-      style: ['default', { ...styleMap[align] }],
+      style: ['default', styleMap[align] as LabelStyle],
     });
   });
 }
 
 function drawBar(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
-  const { align, width, height, startColor, endColor, x, y } = model;
-  const verticalAlign = isVerticalAlign(align);
+  const { align, width, height, startColor, endColor, x, y, verticalAlign } = model;
   const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
   let grd;
 
@@ -162,32 +154,33 @@ function drawTooltipPoint(
   ctx: CanvasRenderingContext2D,
   pointModel: SpectrumLegendTooltipPointModel
 ) {
+  const { POINT_HEIGHT, POINT_WIDTH } = spectrumLegendTooltip;
   const { x, y, color, align } = pointModel;
   let points;
 
   if (align === 'top') {
     points = [
       { x, y },
-      { x: x - spectrumLegendTooltip.POINT_WIDTH / 2, y: y + spectrumLegendTooltip.POINT_HEIGHT },
-      { x: x + spectrumLegendTooltip.POINT_WIDTH / 2, y: y + spectrumLegendTooltip.POINT_HEIGHT },
+      { x: x - POINT_WIDTH / 2, y: y + POINT_HEIGHT },
+      { x: x + POINT_WIDTH / 2, y: y + POINT_HEIGHT },
     ];
   } else if (align === 'bottom') {
     points = [
       { x, y },
-      { x: x - spectrumLegendTooltip.POINT_WIDTH / 2, y: y - spectrumLegendTooltip.POINT_HEIGHT },
-      { x: x + spectrumLegendTooltip.POINT_WIDTH / 2, y: y - spectrumLegendTooltip.POINT_HEIGHT },
+      { x: x - POINT_WIDTH / 2, y: y - POINT_HEIGHT },
+      { x: x + POINT_WIDTH / 2, y: y - POINT_HEIGHT },
     ];
   } else if (align === 'right') {
     points = [
       { x, y },
-      { x: x - spectrumLegendTooltip.POINT_HEIGHT, y: y - spectrumLegendTooltip.POINT_WIDTH / 2 },
-      { x: x - spectrumLegendTooltip.POINT_HEIGHT, y: y + spectrumLegendTooltip.POINT_WIDTH / 2 },
+      { x: x - POINT_HEIGHT, y: y - POINT_WIDTH / 2 },
+      { x: x - POINT_HEIGHT, y: y + POINT_WIDTH / 2 },
     ];
   } else {
     points = [
       { x, y },
-      { x: x + spectrumLegendTooltip.POINT_HEIGHT, y: y - spectrumLegendTooltip.POINT_WIDTH / 2 },
-      { x: x + spectrumLegendTooltip.POINT_HEIGHT, y: y + spectrumLegendTooltip.POINT_WIDTH / 2 },
+      { x: x + POINT_HEIGHT, y: y - POINT_WIDTH / 2 },
+      { x: x + POINT_HEIGHT, y: y + POINT_WIDTH / 2 },
     ];
   }
 
@@ -195,9 +188,7 @@ function drawTooltipPoint(
 }
 
 function getTopPoint(model: SpectrumLegendTooltipModel) {
-  const { align, colorRatio, width, height, x, y, labels } = model;
-  const verticalAlign = isVerticalAlign(align);
-
+  const { align, colorRatio, width, height, x, y, labels, verticalAlign } = model;
   const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
 
   if (align === 'top') {
@@ -241,24 +232,25 @@ function getTopPoint(model: SpectrumLegendTooltipModel) {
 }
 
 function drawTooltipBox(ctx: CanvasRenderingContext2D, model: SpectrumLegendTooltipModel) {
+  const { PADDING, POINT_HEIGHT } = spectrumLegendTooltip;
   let { x: boxStartX, y: boxStartY } = model;
-  const { align, text, color } = model;
+  const { align, text, color, verticalAlign } = model;
 
   const labelWidth = getTextWidth(text);
-  const width = labelWidth + spectrumLegendTooltip.PADDING * 2;
-  const height = SPECTRUM_LEGEND_LABEL_HEIGHT + spectrumLegendTooltip.PADDING * 2;
+  const width = labelWidth + PADDING * 2;
+  const height = SPECTRUM_LEGEND_LABEL_HEIGHT + PADDING * 2;
 
   if (align === 'top') {
-    boxStartY += spectrumLegendTooltip.POINT_HEIGHT;
+    boxStartY += POINT_HEIGHT;
   } else if (align === 'left') {
-    boxStartX += spectrumLegendTooltip.POINT_HEIGHT;
+    boxStartX += POINT_HEIGHT;
   } else if (align === 'right') {
-    boxStartX -= width + spectrumLegendTooltip.POINT_HEIGHT;
+    boxStartX -= width + POINT_HEIGHT;
   } else {
-    boxStartY -= height + spectrumLegendTooltip.POINT_HEIGHT;
+    boxStartY -= height + POINT_HEIGHT;
   }
 
-  if (isVerticalAlign(align)) {
+  if (verticalAlign) {
     boxStartX -= width / 2;
   } else {
     boxStartY -= height / 2;
@@ -268,8 +260,8 @@ function drawTooltipBox(ctx: CanvasRenderingContext2D, model: SpectrumLegendTool
 
   label(ctx, {
     type: 'label',
-    x: spectrumLegendTooltip.PADDING + boxStartX,
-    y: spectrumLegendTooltip.PADDING + boxStartY,
+    x: PADDING + boxStartX,
+    y: PADDING + boxStartY,
     text,
     style: ['default', { textBaseline: 'top' }],
   });

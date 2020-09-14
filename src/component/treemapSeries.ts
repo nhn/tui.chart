@@ -141,9 +141,9 @@ export default class TreemapSeries extends Component {
       const treemapSeries = seriesData.find((item) => item.id === id)!;
       let colorRatio;
       if (useColorValue) {
-        const colorValue = treemapSeries.colorValue!;
+        const colorValue = treemapSeries.colorValue;
 
-        colorRatio = getColorRatio(colorValue, treemapScale.limit);
+        colorRatio = getColorRatio(treemapScale.limit, colorValue);
       }
 
       return {

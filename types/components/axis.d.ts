@@ -2,7 +2,7 @@ import { Point } from '../options';
 import { StyleProp } from '@t/components/series';
 import { StrokeLabelStyleName, StrokeLabelStyle, LabelStyleName } from '@src/brushes/label';
 
-interface LabelStyle {
+export interface LabelStyle {
   font?: string;
   fillStyle?: string;
   textAlign?: CanvasTextAlign;
