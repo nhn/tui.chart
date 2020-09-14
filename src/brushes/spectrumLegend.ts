@@ -1,4 +1,4 @@
-import { isVerticalAlign } from '@src/store/layout';
+import { isVerticalAlign, padding } from '@src/store/layout';
 import { getTextWidth } from '@src/helpers/calculator';
 import { label } from '@src/brushes/label';
 import { rect } from '@src/brushes/basic';
@@ -22,12 +22,6 @@ export const spectrumLegendTooltip = {
 };
 
 // @TODO: 여러번 계산하는 로직은 최 상단에서 계싼해서 넘겨줘도 될듯
-function getTooltipWidth(labels: string[]) {
-  const maxWidth = getMaxLengthLabelWidth(labels);
-
-  return spectrumLegendTooltip.POINT_HEIGHT + 2 * spectrumLegendTooltip.PADDING + maxWidth;
-}
-
 function getMaxLengthLabelWidth(labels: string[]) {
   const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
 
@@ -35,7 +29,7 @@ function getMaxLengthLabelWidth(labels: string[]) {
 }
 
 function getBarLayout(model: SpectrumLegendModel) {
-  const { align, x, y, labels } = model;
+  const { align, x, y, labels, width } = model;
 
   if (align === 'top') {
     return { x, y: y + SPECTRUM_LEGEND_LABEL_HEIGHT + spectrumLegendBar.PADDING };
@@ -54,14 +48,20 @@ function getBarLayout(model: SpectrumLegendModel) {
 
   if (align === 'right') {
     return {
-      x: x + getTooltipWidth(labels) + spectrumLegendBar.PADDING,
+      x:
+        x +
+        width -
+        (getMaxLengthLabelWidth(labels) +
+          padding.X +
+          spectrumLegendBar.PADDING * 2 +
+          spectrumLegendBar.HEIGHT),
       y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
     };
   }
 }
 
 function getLabelsLayout(model: SpectrumLegendModel) {
-  const { align, x, y, width, labels } = model;
+  const { align, x, y, labels, width } = model;
 
   if (align === 'top') {
     return { x, y };
@@ -79,10 +79,7 @@ function getLabelsLayout(model: SpectrumLegendModel) {
   }
 
   if (align === 'right') {
-    return {
-      x: x + getTooltipWidth(labels) + spectrumLegendBar.HEIGHT + spectrumLegendBar.PADDING * 2,
-      y,
-    };
+    return { x: x + width - getMaxLengthLabelWidth(labels) - padding.X, y };
   }
 }
 
@@ -122,13 +119,13 @@ function drawLabels(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
   };
 
   labels.forEach((text, idx) => {
-    const xx = verticalAlign ? x + (barWidth / labelSize) * idx : x;
-    const yy = verticalAlign ? y : y + (barHeight / labelSize) * idx;
+    const startX = verticalAlign ? x + (barWidth / labelSize) * idx : x;
+    const startY = verticalAlign ? y : y + (barHeight / labelSize) * idx;
 
     label(ctx, {
       type: 'label',
-      x: xx,
-      y: yy,
+      x: startX,
+      y: startY,
       text: String(text),
       style: ['default', { ...styleMap[align] }],
     });
@@ -233,9 +230,11 @@ function getTopPoint(model: SpectrumLegendTooltipModel) {
     return {
       x:
         x +
-        getMaxLengthLabelWidth(labels) +
-        spectrumLegendBar.HEIGHT +
-        spectrumLegendBar.PADDING * 2,
+        width -
+        (getMaxLengthLabelWidth(labels) +
+          padding.X +
+          spectrumLegendBar.PADDING * 3 +
+          spectrumLegendBar.HEIGHT),
       y: y + barHeight * colorRatio + spectrumLegendBar.PADDING,
     };
   }

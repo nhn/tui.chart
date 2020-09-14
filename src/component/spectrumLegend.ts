@@ -43,9 +43,9 @@ export default class SpectrumLegend extends Component {
         x: 0,
         y: 0,
         labels: this.labels,
+        align: this.align,
         startColor,
         endColor,
-        align: this.align,
       },
     ];
   }
@@ -59,15 +59,15 @@ export default class SpectrumLegend extends Component {
       this.models.tooltip = [
         {
           type: 'spectrumTooltip',
-          align: this.align,
-          colorRatio,
-          color,
-          text: String(colorValue),
-          labels: this.labels,
           width,
           height,
           x: 0,
           y: 0,
+          labels: this.labels,
+          align: this.align,
+          colorRatio,
+          color,
+          text: String(colorValue),
         },
       ];
     } else {
@@ -82,12 +82,11 @@ export default class SpectrumLegend extends Component {
 
     this.rect = layout.legend;
     this.labels = this.makeLabels(treemapScale);
-
     this.align = legend.align;
+
     const { startColor, endColor } = theme.series;
 
     const renderOptions: RenderOptions = { startColor, endColor };
-
     this.models = { legend: this.renderSpectrumLegendModel(renderOptions), tooltip: [] };
 
     this.eventBus.on('renderSpectrumTooltip', this.renderSpectrumTooltip);

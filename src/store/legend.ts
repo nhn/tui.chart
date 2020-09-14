@@ -9,7 +9,7 @@ import {
   LEGEND_MARGIN_X,
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
-import { isVerticalAlign } from '@src/store/layout';
+import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
 
 function calculateLegendWidth(
@@ -41,9 +41,13 @@ function calculateLegendWidth(
       const { POINT_HEIGHT } = spectrumLegendTooltip;
 
       const spectrumAreaWidth =
-        spectrumLegendTooltip.PADDING * 2 + spectrumLegendBar.PADDING * 2 + POINT_HEIGHT + HEIGHT;
+        spectrumLegendTooltip.PADDING * 2 +
+        spectrumLegendBar.PADDING * 2 +
+        POINT_HEIGHT +
+        HEIGHT +
+        padding.X * 2;
 
-      legendWidth = Math.max(...legendWidths) * 2 + spectrumAreaWidth;
+      legendWidth = Math.max(...legendWidths) + spectrumAreaWidth;
     }
   } else if (!verticalAlign) {
     const labelAreaWidth = Math.max(...legendWidths);

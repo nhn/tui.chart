@@ -8,12 +8,17 @@ import {
   LineTypeSeriesOptions,
   TreemapChartSeriesOptions,
 } from '@t/options';
-import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
+import { LEGEND_ITEM_HEIGHT } from '@src/brushes/legend';
 import { isUndefined, pick } from '@src/helpers/utils';
 import { isCenterYAxis } from './axes';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 import { getTextWidth } from '@src/helpers/calculator';
 import { TICK_SIZE } from '@src/brushes/axis';
+import {
+  SPECTRUM_LEGEND_LABEL_HEIGHT,
+  spectrumLegendBar,
+  spectrumLegendTooltip,
+} from '@src/brushes/spectrumLegend';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
@@ -50,6 +55,15 @@ type YAxisRectParam = AxisParam & {
 
 type XAxisRectParam = AxisParam & {
   yAxis: Rect;
+};
+
+type LegendRectParams = {
+  legend: Legend;
+  xAxis: Rect;
+  yAxis: Rect;
+  title: Rect;
+  chartSize: Size;
+  hasAxis: boolean;
 };
 
 function getValidRectSize(size: OptionalSize, width: number, height: number) {
@@ -95,21 +109,8 @@ function getYAxisXPoint(yAxisRectParam: YAxisRectParam) {
   return x;
 }
 
-function getYAxisYPoint({ legend, yAxisTitle }: YAxisRectParam) {
-  const { align } = legend;
-
-  let y = yAxisTitle.y + yAxisTitle.height;
-
-  if (legend.visible) {
-    const legendAreaHeight = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
-    const topArea = Math.max(y, legendAreaHeight);
-
-    if (align === 'top') {
-      y = topArea;
-    }
-  }
-
-  return y;
+function getYAxisYPoint({ yAxisTitle }: YAxisRectParam) {
+  return yAxisTitle.y + yAxisTitle.height;
 }
 
 function getYAxisWidth({ hasCenterYAxis, hasAxis, maxLabelWidth, size }: YAxisRectParam) {
@@ -126,7 +127,7 @@ function getYAxisWidth({ hasCenterYAxis, hasAxis, maxLabelWidth, size }: YAxisRe
 
 function getYAxisHeight({ chartSize, legend, yAxisTitle, hasAxis, size }: YAxisRectParam) {
   const { height } = chartSize;
-  const { align } = legend;
+  const { align, useSpectrumLegend } = legend;
   const xAxisHeight = getDefaultXAxisHeight(size);
 
   const y = yAxisTitle.y + yAxisTitle.height;
@@ -137,11 +138,11 @@ function getYAxisHeight({ chartSize, legend, yAxisTitle, hasAxis, size }: YAxisR
   }
 
   if (legend.visible) {
-    const legendAreaHeight = LEGEND_ITEM_HEIGHT + LEGEND_MARGIN_Y + padding.Y;
+    const legendAreaHeight = getTopLegendAreaHeight(useSpectrumLegend);
     const topArea = Math.max(y, legendAreaHeight);
 
     if (align === 'top') {
-      yAxisHeight = height - topArea - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT;
+      yAxisHeight = height - topArea - (hasAxis ? X_AXIS_HEIGHT + X_AXIS_TITLE_HEIGHT : 0);
     } else if (align === 'bottom') {
       yAxisHeight = height - y - X_AXIS_HEIGHT - X_AXIS_TITLE_HEIGHT - LEGEND_ITEM_HEIGHT;
     }
@@ -213,22 +214,28 @@ function getXAxisRect(xAxisRectParam: XAxisRectParam) {
   };
 }
 
-function getLegendRect(chartSize: Size, xAxis: Rect, yAxis: Rect, title: Rect, legend: Legend) {
+function getLegendRect(legendRectParams: LegendRectParams) {
+  const { legend, xAxis, yAxis, chartSize, title, hasAxis } = legendRectParams;
   const { align, width: legendWidth } = legend;
   const { width } = chartSize;
   const verticalAlign = isVerticalAlign(align);
   let x = xAxis.x + xAxis.width + padding.X;
   let y = Math.max(yAxis.y, BUTTON_RECT_SIZE);
+  let height = yAxis.height - xAxis.height;
 
   if (verticalAlign) {
     x = (width - legendWidth) / 2;
-    y =
-      align === 'top' ? title.height : yAxis.y + yAxis.height + X_AXIS_HEIGHT + X_AXIS_TITLE_HEIGHT;
+    if (align === 'top') {
+      y = title.y + title.height;
+      height = getTopLegendAreaHeight(legend.useSpectrumLegend);
+    } else {
+      y = yAxis.y + yAxis.height + (hasAxis ? X_AXIS_HEIGHT + X_AXIS_TITLE_HEIGHT : padding.Y);
+    }
   } else if (align === 'left') {
     x = padding.X;
   }
 
-  return { width: legendWidth, height: yAxis.height - xAxis.height, x, y };
+  return { width: legendWidth, height, x, y };
 }
 
 function getCircleLegendRect(xAxis: Rect, yAxis: Rect, align: Align, width: number) {
@@ -259,6 +266,16 @@ function getTitleRect(chartSize: Size, exportMenu: Rect, visible: boolean) {
   return { width, height, ...point };
 }
 
+function getTopLegendAreaHeight(useSpectrumLegend: boolean) {
+  return useSpectrumLegend
+    ? SPECTRUM_LEGEND_LABEL_HEIGHT +
+        spectrumLegendBar.PADDING * 2 +
+        spectrumLegendTooltip.POINT_HEIGHT +
+        spectrumLegendTooltip.HEIGHT +
+        padding.Y
+    : LEGEND_ITEM_HEIGHT + padding.Y;
+}
+
 function getYAxisTitleRect(
   chartSize: Size,
   visible: boolean,
@@ -266,6 +283,7 @@ function getYAxisTitleRect(
   legend: Legend,
   hasCenterYAxis: boolean
 ) {
+  const { useSpectrumLegend } = legend;
   const point = { x: title.x, y: title.y + title.height };
   const marginBottom = 5;
   const height = visible ? Y_AXIS_TITLE_HEIGHT + marginBottom : 0;
@@ -275,7 +293,7 @@ function getYAxisTitleRect(
     if (legend.align === 'left') {
       point.x += legend.width;
     } else if (legend.align === 'top') {
-      point.y += LEGEND_ITEM_HEIGHT;
+      point.y += getTopLegendAreaHeight(useSpectrumLegend);
     }
   }
 
@@ -422,7 +440,14 @@ const layout: StoreModule = {
         size: optionSize,
       });
       const xAxisTitle = getXAxisTitleRect(!!options.xAxis?.title, xAxis);
-      const legend = getLegendRect(chartSize, xAxis, yAxis, title, legendState);
+      const legend = getLegendRect({
+        chartSize,
+        xAxis,
+        yAxis,
+        title,
+        legend: legendState,
+        hasAxis,
+      });
       const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
       const plot = getPlotRect(xAxis, yAxis, optionSize.plot);
 
