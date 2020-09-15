@@ -42,6 +42,42 @@ function getValidValue(value, categories: string[], isDateType = false): number 
   return value;
 }
 
+function makePlotLines(categories: string[], isDateType: boolean, plotLines: PlotLine[] = []) {
+  return plotLines.map(({ value, color, opacity }) => ({
+    value: getValidValue(value, categories, isDateType),
+    color: rgba(color, opacity),
+    vertical: true,
+  }));
+}
+
+function makePlotBands(categories: string[], isDateType: boolean, plotBands: PlotBand[] = []) {
+  return plotBands.flatMap(({ range, mergeOverlappingRanges = false, color: bgColor, opacity }) => {
+    const color = rgba(bgColor, opacity);
+
+    if (isRangeValue(range[0])) {
+      const ranges = (range as PlotRangeType[]).map((rangeData) =>
+        rangeData.map((value) => getValidValue(value, categories, isDateType))
+      ) as RangeDataType<number>[];
+
+      if (mergeOverlappingRanges) {
+        return {
+          color,
+          range: getOverlappingRange(ranges),
+        };
+      }
+
+      return ranges.map((rangeData) => ({
+        range: rangeData,
+        color,
+      }));
+    }
+
+    return {
+      color,
+      range,
+    };
+  });
+}
 const plot: StoreModule = {
   name: 'plot',
   state: ({ options }) => ({
@@ -61,44 +97,16 @@ const plot: StoreModule = {
 
       const lineAreaOptions = options as LineChartOptions | AreaChartOptions;
 
-      const plotLines = lineAreaOptions?.plot?.lines ?? [];
-      const plotBands = lineAreaOptions?.plot?.bands ?? [];
+      const lines: PlotLine[] = makePlotLines(
+        rawCategories,
+        !!options?.xAxis?.date,
+        lineAreaOptions?.plot?.lines
+      );
 
-      const isDateType = !!options?.xAxis?.date;
-
-      const lines: PlotLine[] = plotLines.map(({ value, color, opacity }) => ({
-        value: getValidValue(value, rawCategories, isDateType),
-        color: rgba(color, opacity),
-        vertical: true,
-      }));
-
-      const bands: PlotBand[] = plotBands.flatMap(
-        ({ range, mergeOverlappingRanges = false, color: bgColor, opacity }) => {
-          const color = rgba(bgColor, opacity);
-
-          if (isRangeValue(range[0])) {
-            const ranges = (range as PlotRangeType[]).map((rangeData) =>
-              rangeData.map((value) => getValidValue(value, rawCategories, isDateType))
-            ) as RangeDataType<number>[];
-
-            if (mergeOverlappingRanges) {
-              return {
-                color,
-                range: getOverlappingRange(ranges),
-              };
-            }
-
-            return ranges.map((rangeData) => ({
-              range: rangeData,
-              color,
-            }));
-          }
-
-          return {
-            color,
-            range,
-          };
-        }
+      const bands: PlotBand[] = makePlotBands(
+        rawCategories,
+        !!options?.xAxis?.date,
+        lineAreaOptions?.plot?.bands
       );
 
       extend(state.plot, { lines, bands });
