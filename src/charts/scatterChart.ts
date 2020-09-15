@@ -3,6 +3,7 @@ import Chart from './chart';
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
+import plot from '@src/store/plot';
 
 import Tooltip from '@src/component/tooltip';
 import Plot from '@src/component/plot';
@@ -29,7 +30,7 @@ interface ScatterChartProps {
 }
 
 export default class ScatterChart extends Chart<ScatterChartOptions> {
-  modules = [dataRange, scale, axes];
+  modules = [dataRange, scale, axes, plot];
 
   constructor(props: ScatterChartProps) {
     super({

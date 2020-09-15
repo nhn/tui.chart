@@ -11,6 +11,7 @@ import { extend } from './store';
 import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
 import { isString } from '@src/helpers/utils';
+import { UsingShowLineOptions } from '@t/components/plot';
 
 function getOverlappingRange(range: RangeDataType<number>[]) {
   return range.reduce<RangeDataType<number>>(
@@ -42,8 +43,9 @@ function getValidValue(value, categories: string[], isDateType = false): number 
 
 const plot: StoreModule = {
   name: 'plot',
-  state: () => ({
+  state: ({ options }) => ({
     plot: {
+      showLine: (options as UsingShowLineOptions)?.plot?.showLine ?? true,
       lines: [],
       bands: [],
     },
