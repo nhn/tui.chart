@@ -181,16 +181,14 @@ export default class Plot extends Component {
     this.rect = layout.plot;
     this.startIndex = zoomRange ? zoomRange[0] : 0;
 
-    if (plot) {
-      const { lines, bands, showLine } = plot;
-      const xAxisLimit = scale?.xAxis?.limit;
+    const { lines, bands, showLine } = plot;
+    const xAxisLimit = scale?.xAxis?.limit;
 
-      this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
-      this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
+    this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
+    this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
 
-      if (showLine) {
-        this.models.plot = this.renderPlots(axes);
-      }
+    if (showLine) {
+      this.models.plot = this.renderPlots(axes);
     }
   }
 

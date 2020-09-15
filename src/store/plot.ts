@@ -1,4 +1,4 @@
-import { StoreModule } from '@t/store/store';
+import { StoreModule, ValueOf, ChartOptionsMap } from '@t/store/store';
 import {
   LineChartOptions,
   AreaChartOptions,
@@ -11,7 +11,8 @@ import { extend } from './store';
 import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
 import { isString } from '@src/helpers/utils';
-import { UsingShowLineOptions } from '@t/components/plot';
+
+type UsingShowLineOptions = ValueOf<Omit<ChartOptionsMap, 'radar' | 'pie'>>;
 
 function getOverlappingRange(range: RangeDataType<number>[]) {
   return range.reduce<RangeDataType<number>>(
