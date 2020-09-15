@@ -17,7 +17,7 @@ import {
   LineAreaChartOptions,
 } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, Scale, Series, AxisData } from '@t/store/store';
+import { ChartState, Scale, Series, LabelAxisData } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint, getXPosition } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
@@ -103,8 +103,8 @@ export default class LineSeries extends Component {
     }
 
     this.setEventType(series, options);
-
-    const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
+    const labelAxisData = axes.xAxis as LabelAxisData;
+    const { tickDistance, pointOnColumn, labelDistance } = labelAxisData;
     const lineSeriesData = series.line.data;
 
     const renderLineOptions: RenderOptions = {
@@ -154,11 +154,11 @@ export default class LineSeries extends Component {
       });
     }
 
-    this.responders = this.getResponders(axes.xAxis, seriesCircleModel, tooltipDataArr);
+    this.responders = this.getResponders(labelAxisData, seriesCircleModel, tooltipDataArr);
   }
 
   private getResponders(
-    axisData: AxisData,
+    axisData: LabelAxisData,
     seriesCircleModel: CircleModel[],
     tooltipDataArr: TooltipData[]
   ): ResponderTypes {
@@ -243,7 +243,7 @@ export default class LineSeries extends Component {
         const yValueRatio = getValueRatio(value, yAxisLimit);
         const y = (1 - yValueRatio) * this.rect.height;
         const x = getXPosition(
-          pick(renderOptions, 'pointOnColumn', 'tickDistance', 'labelDistance'),
+          pick(renderOptions, 'pointOnColumn', 'tickDistance', 'labelDistance') as LabelAxisData,
           this.rect.width,
           xAxisLimit,
           getCoordinateXValue(datum as CoordinateDataType),

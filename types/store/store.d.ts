@@ -192,7 +192,7 @@ export type CenterYAxisData = {
   secondStartX: number;
   yAxisLabelAnchorPoint: number;
   yAxisHeight: number;
-} & AxisData;
+} & ValueAxisData;
 
 export type RadialAxisData = {
   labels: string[];
@@ -267,18 +267,29 @@ export type StackDataValues = StackData[];
 export type StackGroupData = Record<string, StackDataValues>;
 export type StackDataType = StackDataValues | StackGroupData;
 
-export interface AxisData {
+export type AxisData = LabelAxisData | ValueAxisData;
+
+export type InitAxisData = {
+  tickInterval: number;
+  labelInterval: number;
+  title?: Required<AxisTitleOption>;
+};
+
+type BaseAxisData = InitAxisData & {
   labels: string[];
   tickCount: number;
   isLabelAxis: boolean;
   pointOnColumn: boolean;
   tickDistance: number;
-  tickInterval: number;
-  labelDistance?: number;
-  labelInterval: number;
-  title?: Required<AxisTitleOption>;
+};
+
+export type LabelAxisData = BaseAxisData & {
+  labelDistance: number;
+};
+
+export type ValueAxisData = BaseAxisData & {
   zeroPosition?: number;
-}
+};
 
 export interface ValueEdge {
   max: number;
