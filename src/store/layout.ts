@@ -2,7 +2,7 @@ import { StoreModule, Layout, CircleLegend, Legend, Options } from '@t/store/sto
 import { extend } from '@src/store/store';
 import { Align, Rect, Size, BaseSizeOptions } from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
-import { isUndefined, pick } from '@src/helpers/utils';
+import { isUndefined, pick, isNumber } from '@src/helpers/utils';
 import { isCenterYAxis } from './axes';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 import { getTextWidth } from '@src/helpers/calculator';
@@ -144,7 +144,7 @@ function getYAxisWidth(yAxisRectParam: YAxisRectParam) {
   } = yAxisRectParam;
   let yAxisWidth = getDefaultYAxisWidth(yAxisRectParam);
 
-  if (hasCenterYAxis) {
+  if (hasCenterYAxis && !isRightSide) {
     yAxisWidth = maxLabelWidth + (TICK_SIZE + padding.X) * 2;
   } else if (!hasAxis || (isRightSide && !visibleSecondaryYAxis)) {
     yAxisWidth = 0;
@@ -370,6 +370,15 @@ function pickOptionSize(option?: BaseSizeOptions): OptionalSize {
   return pick(option, 'width', 'height');
 }
 
+function validOffsetValue(axis: OptionalSize, plot: OptionalSize, sizeKey: 'width' | 'height') {
+  const axisSize = axis![sizeKey];
+  const plotSize = plot![sizeKey];
+
+  if (isNumber(axisSize) && isNumber(plotSize)) {
+    return Math.max(axisSize, plotSize);
+  }
+}
+
 function getOptionSize(options: Options) {
   const xAxis = pickOptionSize(options.xAxis);
 
@@ -378,24 +387,27 @@ function getOptionSize(options: Options) {
   const secondaryYAxis = pickOptionSize(yAxisOptions.secondaryYAxis);
 
   const plot = pickOptionSize(options.plot);
-  /*
+
+  if (plot) {
+    /*
     If both the width of the x-axis and the width of the plot are entered,
     set the maximum value.
   */
-  if (xAxis?.width && plot?.width) {
-    xAxis.width = plot.width = Math.max(xAxis.width, plot.width);
-  }
+    if (xAxis) {
+      xAxis.width = plot.width = validOffsetValue(xAxis, plot, 'width');
+    }
 
-  /*
+    /*
     If both the height of the y-axis and the height of the plot are entered,
     set the maximum value.
   */
-  if (yAxis?.height && plot?.height) {
-    yAxis.height = plot.height = Math.max(yAxis.height, plot.height);
-  }
+    if (yAxis) {
+      yAxis.height = plot.height = validOffsetValue(yAxis, plot, 'height');
+    }
 
-  if (secondaryYAxis?.height && plot?.height) {
-    secondaryYAxis.height = plot.height = Math.max(secondaryYAxis.height, plot.height);
+    if (secondaryYAxis) {
+      secondaryYAxis.height = plot.height = validOffsetValue(secondaryYAxis, plot, 'height');
+    }
   }
 
   return {
