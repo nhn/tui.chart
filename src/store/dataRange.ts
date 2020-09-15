@@ -2,7 +2,7 @@ import { ValueEdge, StoreModule, ChartType, DataRange, ChartSeriesMap } from '@t
 import { getFirstValidValue } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
-import { getAxisName, isLabelAxisOnYAxis, getValidValueAxisNames } from '@src/helpers/axes';
+import { getAxisName, isLabelAxisOnYAxis, getValueAxisNames } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 import { isBulletSeries } from '@src/component/bulletSeries';
@@ -123,7 +123,7 @@ const dataRange: StoreModule = {
           ]);
         }
 
-        getValidValueAxisNames(options, valueAxisName).forEach((axisName) => {
+        getValueAxisNames(options, valueAxisName).forEach((axisName) => {
           seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
         });
       }

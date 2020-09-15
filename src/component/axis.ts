@@ -224,7 +224,7 @@ export default class Axis extends Component {
 
   private hasOnlyAxisLine() {
     return (
-      (this.yAxisComponent && !this.rect.width) || (this.name === 'xAxis' && !this.rect.height)
+      (this.yAxisComponent && !this.rect.width) || (this.name === AxisType.X && !this.rect.height)
     );
   }
 }

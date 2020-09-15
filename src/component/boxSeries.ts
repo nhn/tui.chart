@@ -35,7 +35,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
-import { getLimitOnAxis, getValidValueAxisName } from '@src/helpers/axes';
+import { getLimitOnAxis, getValueAxisName } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { RectDirection, RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
@@ -256,7 +256,7 @@ export default class BoxSeries extends Component {
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
-    this.valueAxis = getValidValueAxisName(options, this.name, this.isBar ? 'xAxis' : 'yAxis');
+    this.valueAxis = getValueAxisName(options, this.name, this.isBar ? 'xAxis' : 'yAxis');
 
     const seriesData = series[this.name].data;
 

@@ -49,15 +49,19 @@ function hasSecondaryYAxis(options: ChartOptionsUsingYAxis) {
 }
 
 export function getYAxisOption(options: ChartOptionsUsingYAxis) {
-  const hasSecondaryY = hasSecondaryYAxis(options);
+  const secondaryYAxis = hasSecondaryYAxis(options);
 
   return {
-    yAxis: hasSecondaryY ? options.yAxis![0] : options.yAxis,
-    secondaryYAxis: hasSecondaryY ? options.yAxis![1] : null,
+    yAxis: secondaryYAxis ? options.yAxis![0] : options.yAxis,
+    secondaryYAxis: secondaryYAxis ? options.yAxis![1] : null,
   };
 }
 
-export function getValidValueAxisName(options: Options, seriesName: string, valueAxisName: string) {
+export function getValueAxisName(
+  options: ChartOptionsUsingYAxis,
+  seriesName: string,
+  valueAxisName: string
+) {
   const { secondaryYAxis } = getYAxisOption(options);
 
   return secondaryYAxis?.chartType === seriesName ? 'secondaryYAxis' : valueAxisName;
@@ -69,7 +73,7 @@ export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName
   return valueAxisName !== 'xAxis' && secondaryYAxis
     ? [yAxis.chartType, secondaryYAxis.chartType].map((seriesName, index) =>
         seriesName
-          ? getValidValueAxisName(options, seriesName, valueAxisName)
+          ? getValueAxisName(options, seriesName, valueAxisName)
           : ['yAxis', 'secondaryYAxis'][index]
       )
     : [valueAxisName];
