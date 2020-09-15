@@ -77,12 +77,12 @@ export default class LineSeries extends Component {
   }
 
   private setEventType(series: Series, options?: LineChartOptions) {
-    if (series.area) {
-      this.eventType = 'grouped';
-    }
-
     if (options?.series?.eventDetectType) {
       this.eventType = options.series.eventDetectType;
+    }
+
+    if (series.area) {
+      this.eventType = 'grouped';
     }
 
     if (series.scatter) {

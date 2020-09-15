@@ -16,7 +16,7 @@ export default class SpectrumLegend extends Component {
 
   labels: string[] = [];
 
-  align: Align = 'right';
+  align!: Align;
 
   initialize() {
     this.type = 'spectrumLegend';
@@ -27,8 +27,8 @@ export default class SpectrumLegend extends Component {
     const { stepCount, limit, stepSize } = scale;
     const minValue = limit.min;
 
-    return range(0, stepCount + 1).reduce<string[]>((acc, cur) => {
-      return [...acc, String(minValue + stepSize * cur)];
+    return range(0, stepCount + 1).reduce<string[]>((labels, value) => {
+      return [...labels, String(minValue + stepSize * value)];
     }, []);
   }
 
@@ -84,11 +84,10 @@ export default class SpectrumLegend extends Component {
     }
 
     this.rect = layout.legend;
-    this.labels = this.makeLabels(treemapScale);
     this.align = legend.align;
+    this.labels = this.makeLabels(treemapScale);
 
     const { startColor, endColor } = theme.series;
-
     const renderOptions: RenderOptions = { startColor, endColor };
     this.models = { legend: this.renderSpectrumLegendModel(renderOptions), tooltip: [] };
 

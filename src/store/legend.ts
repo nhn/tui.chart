@@ -37,14 +37,11 @@ function calculateLegendWidth(
       const labelAreaWidth = sum(legendWidths);
       legendWidth = Math.max(options.chart!.width / 4, labelAreaWidth);
     } else {
-      const { HEIGHT } = spectrumLegendBar;
-      const { POINT_HEIGHT } = spectrumLegendTooltip;
-
       const spectrumAreaWidth =
         spectrumLegendTooltip.PADDING * 2 +
         spectrumLegendBar.PADDING * 2 +
-        POINT_HEIGHT +
-        HEIGHT +
+        spectrumLegendTooltip.POINT_HEIGHT +
+        spectrumLegendBar.HEIGHT +
         padding.X * 2;
 
       legendWidth = Math.max(...legendWidths) + spectrumAreaWidth;

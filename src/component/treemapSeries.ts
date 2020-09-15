@@ -114,7 +114,6 @@ export default class TreemapSeries extends Component {
     return indexes.length === 1 ? 0 : Number((0.1 * depth + 0.05 * idx).toFixed(2));
   }
 
-  // @TODO: 렌더 옵션으로 분리?
   renderTreemapSeries(
     seriesData: TreemapSeriesData[],
     options: TreemapChartOptions,
@@ -133,17 +132,14 @@ export default class TreemapSeries extends Component {
     const useColorValue = options.series?.useColorValue ?? false;
     if (useColorValue) {
       startRGB = hexToRGB(startColor) as RGB;
-      const endRGB = hexToRGB(endColor) as RGB;
-      distances = makeDistances(startRGB, endRGB);
+      distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
     }
 
     const series: TreemapRectModel[] = Object.keys(boundMap).map((id) => {
       const treemapSeries = seriesData.find((item) => item.id === id)!;
       let colorRatio;
       if (useColorValue) {
-        const colorValue = treemapSeries.colorValue;
-
-        colorRatio = getColorRatio(treemapScale.limit, colorValue);
+        colorRatio = getColorRatio(treemapScale.limit, treemapSeries.colorValue);
       }
 
       return {
