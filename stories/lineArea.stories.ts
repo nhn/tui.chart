@@ -77,7 +77,7 @@ export const basicWithOptions = () => {
   return el;
 };
 
-export const rightYAxis = () => {
+export const secondaryYAxis = () => {
   const { el } = createChart(energyUsageStackData, {
     series: { area: { stack: { type: 'normal' } } },
     yAxis: [

@@ -26,7 +26,7 @@ type OptionSize = {
   yAxis: OptionalSize;
   xAxis: OptionalSize;
   plot: OptionalSize;
-  rightYAxis: OptionalSize;
+  secondaryYAxis: OptionalSize;
 };
 
 type AxisParam = {
@@ -42,12 +42,12 @@ type YAxisRectParam = AxisParam & {
   yAxisTitle: Rect;
   maxLabelWidth: number;
   isRightSide?: boolean;
-  visibleRightYAxis?: boolean;
+  visibleSecondaryYAxis?: boolean;
 };
 
 type XAxisRectParam = AxisParam & {
   yAxis: Rect;
-  rightYAxis: Rect;
+  secondaryYAxis: Rect;
 };
 
 type YAxisTitleRectParam = {
@@ -57,14 +57,14 @@ type YAxisTitleRectParam = {
   legend: Legend;
   hasCenterYAxis: boolean;
   isRightSide?: boolean;
-  visibleRightYAxis?: boolean;
+  visibleSecondaryYAxis?: boolean;
 };
 
 type LegendRectParam = {
   chartSize: Size;
   xAxis: Rect;
   yAxis: Rect;
-  rightYAxis: Rect;
+  secondaryYAxis: Rect;
   title: Rect;
   legend: Legend;
 };
@@ -81,10 +81,10 @@ function getDefaultXAxisHeight(size: OptionSize) {
 }
 
 function getDefaultYAxisXPoint(yAxisRectParam: YAxisRectParam) {
-  const { yAxisTitle, isRightSide, visibleRightYAxis } = yAxisRectParam;
+  const { yAxisTitle, isRightSide, visibleSecondaryYAxis } = yAxisRectParam;
   const yAxisWidth = getDefaultYAxisWidth(yAxisRectParam);
 
-  return isRightSide && visibleRightYAxis
+  return isRightSide && visibleSecondaryYAxis
     ? Math.max(yAxisTitle.x + yAxisTitle.width - yAxisWidth, 0)
     : yAxisTitle.x;
 }
@@ -131,7 +131,7 @@ function getYAxisYPoint({ legend, yAxisTitle }: YAxisRectParam) {
 }
 
 function getDefaultYAxisWidth({ maxLabelWidth, size, isRightSide = false }: YAxisRectParam) {
-  return size?.[isRightSide ? 'rightYAxis' : 'yAxis']?.width ?? maxLabelWidth;
+  return size?.[isRightSide ? 'secondaryYAxis' : 'yAxis']?.width ?? maxLabelWidth;
 }
 
 function getYAxisWidth(yAxisRectParam: YAxisRectParam) {
@@ -139,14 +139,14 @@ function getYAxisWidth(yAxisRectParam: YAxisRectParam) {
     hasCenterYAxis,
     hasAxis,
     maxLabelWidth,
-    visibleRightYAxis = false,
+    visibleSecondaryYAxis = false,
     isRightSide = false,
   } = yAxisRectParam;
   let yAxisWidth = getDefaultYAxisWidth(yAxisRectParam);
 
   if (hasCenterYAxis) {
     yAxisWidth = maxLabelWidth + (TICK_SIZE + padding.X) * 2;
-  } else if (!hasAxis || (isRightSide && !visibleRightYAxis)) {
+  } else if (!hasAxis || (isRightSide && !visibleSecondaryYAxis)) {
     yAxisWidth = 0;
   }
 
@@ -193,7 +193,7 @@ function getYAxisRect(yAxisRectParam: YAxisRectParam) {
   return {
     x,
     y,
-    ...getValidRectSize(isRightSide ? size?.rightYAxis : size?.yAxis, yAxisWidth, yAxisHeight),
+    ...getValidRectSize(isRightSide ? size?.secondaryYAxis : size?.yAxis, yAxisWidth, yAxisHeight),
   };
 }
 
@@ -203,7 +203,7 @@ function getXAxisWidth({
   hasCenterYAxis,
   legend,
   circleLegend,
-  rightYAxis,
+  secondaryYAxis,
 }: XAxisRectParam) {
   const { width } = chartSize;
   const { align, width: legendWidth } = legend;
@@ -225,7 +225,7 @@ function getXAxisWidth({
     xAxisWidth = width - legendWidth - padding.X * 2;
   }
 
-  return xAxisWidth - rightYAxis.width;
+  return xAxisWidth - secondaryYAxis.width;
 }
 
 function getXAxisRect(xAxisRectParam: XAxisRectParam) {
@@ -242,11 +242,18 @@ function getXAxisRect(xAxisRectParam: XAxisRectParam) {
   };
 }
 
-function getLegendRect({ chartSize, xAxis, yAxis, rightYAxis, title, legend }: LegendRectParam) {
+function getLegendRect({
+  chartSize,
+  xAxis,
+  yAxis,
+  secondaryYAxis,
+  title,
+  legend,
+}: LegendRectParam) {
   const { align, width: legendWidth } = legend;
   const { width } = chartSize;
   const verticalAlign = isVerticalAlign(align);
-  let x = xAxis.x + xAxis.width + rightYAxis.width + padding.X;
+  let x = xAxis.x + xAxis.width + secondaryYAxis.width + padding.X;
   let y = Math.max(yAxis.y, BUTTON_RECT_SIZE);
 
   if (verticalAlign) {
@@ -294,7 +301,7 @@ function getYAxisTitleRect({
   title,
   legend: { align: legendAlign, width: legendWidth, visible: legendVisible },
   hasCenterYAxis,
-  visibleRightYAxis,
+  visibleSecondaryYAxis,
   isRightSide = false,
 }: YAxisTitleRectParam) {
   const marginBottom = 5;
@@ -303,7 +310,7 @@ function getYAxisTitleRect({
 
   const width =
     (chartSize.width - (verticalLegendAlign ? padding.X * 2 : legendWidth)) /
-    (visibleRightYAxis ? 2 : 1);
+    (visibleSecondaryYAxis ? 2 : 1);
 
   const point = {
     x: isRightSide ? title.x + width : title.x,
@@ -368,7 +375,7 @@ function getOptionSize(options: Options) {
 
   const yAxisOptions = getYAxisOption(options);
   const yAxis = pickOptionSize(yAxisOptions.yAxis);
-  const rightYAxis = pickOptionSize(yAxisOptions.rightYAxis);
+  const secondaryYAxis = pickOptionSize(yAxisOptions.secondaryYAxis);
 
   const plot = pickOptionSize(options.plot);
   /*
@@ -387,15 +394,15 @@ function getOptionSize(options: Options) {
     yAxis.height = plot.height = Math.max(yAxis.height, plot.height);
   }
 
-  if (rightYAxis?.height && plot?.height) {
-    rightYAxis.height = plot.height = Math.max(rightYAxis.height, plot.height);
+  if (secondaryYAxis?.height && plot?.height) {
+    secondaryYAxis.height = plot.height = Math.max(secondaryYAxis.height, plot.height);
   }
 
   return {
     xAxis,
     yAxis,
     plot,
-    rightYAxis,
+    secondaryYAxis,
   };
 }
 
@@ -422,20 +429,20 @@ const layout: StoreModule = {
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
       const hasAxis = !(series.pie || series.radar || series.treemap);
       const optionSize = getOptionSize(options);
-      const { yAxis: yAxisOption, rightYAxis: rightYAxisOption } = getYAxisOption(options);
-      const visibleRightYAxis = !!rightYAxisOption;
+      const { yAxis: yAxisOption, secondaryYAxis: secondaryYAxisOption } = getYAxisOption(options);
+      const visibleSecondaryYAxis = !!secondaryYAxisOption;
 
       // Don't change the order!
-      // exportMenu -> title -> yAxis.title -> yAxis -> rightYAxisTitle -> rightYAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
+      // exportMenu -> title -> yAxis.title -> yAxis -> secondaryYAxisTitle -> secondaryYAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
       const exportMenu = getExportMenuRect(chartSize, isExportMenuVisible(options));
       const title = getTitleRect(chartSize, exportMenu, !!options.chart?.title);
       const yAxisTitle = getYAxisTitleRect({
         chartSize,
-        visible: !!yAxisOption?.title || !!rightYAxisOption?.title,
+        visible: !!yAxisOption?.title || !!secondaryYAxisOption?.title,
         title,
         legend: legendState,
         hasCenterYAxis,
-        visibleRightYAxis,
+        visibleSecondaryYAxis,
       });
 
       const yAxis = getYAxisRect({
@@ -449,33 +456,33 @@ const layout: StoreModule = {
         size: optionSize,
       });
 
-      const rightYAxisTitle = getYAxisTitleRect({
+      const secondaryYAxisTitle = getYAxisTitleRect({
         chartSize,
-        visible: !!yAxisOption?.title || !!rightYAxisOption?.title,
+        visible: !!yAxisOption?.title || !!secondaryYAxisOption?.title,
         title,
         legend: legendState,
         hasCenterYAxis,
         isRightSide: true,
-        visibleRightYAxis,
+        visibleSecondaryYAxis,
       });
 
-      const rightYAxis = getYAxisRect({
+      const secondaryYAxis = getYAxisRect({
         chartSize,
         legend: legendState,
         circleLegend: circleLegendState,
-        yAxisTitle: rightYAxisTitle,
+        yAxisTitle: secondaryYAxisTitle,
         hasCenterYAxis,
         hasAxis,
-        maxLabelWidth: getMaxLabelWidth(axes?.rightYAxis?.labels),
+        maxLabelWidth: getMaxLabelWidth(axes?.secondaryYAxis?.labels),
         size: optionSize,
         isRightSide: true,
-        visibleRightYAxis,
+        visibleSecondaryYAxis,
       });
 
       const xAxis = getXAxisRect({
         chartSize,
         yAxis,
-        rightYAxis,
+        secondaryYAxis,
         legend: legendState,
         circleLegend: circleLegendState,
         hasCenterYAxis,
@@ -487,7 +494,7 @@ const layout: StoreModule = {
         chartSize,
         xAxis,
         yAxis,
-        rightYAxis,
+        secondaryYAxis,
         title,
         legend: legendState,
       });
@@ -504,8 +511,8 @@ const layout: StoreModule = {
         yAxis,
         yAxisTitle,
         exportMenu,
-        rightYAxisTitle,
-        rightYAxis,
+        secondaryYAxisTitle,
+        secondaryYAxis,
       });
     },
   },

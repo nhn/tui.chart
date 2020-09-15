@@ -188,7 +188,7 @@ function makeDefaultYAxis(yAxis: BaseAxisOptions) {
   } as AxisData;
 }
 
-function getRightYAxisData(
+function getSecondaryYAxisData(
   state: ChartState<Options>,
   labelAxisOnYAxis: boolean,
   valueAxisSize: number,
@@ -201,14 +201,14 @@ function getRightYAxisData(
     ? getLabelAxisData({
         scale: scale[labelAxisName],
         axisSize: labelAxisSize,
-        categories: getYAxisOption(options).rightYAxis?.categories ?? categories,
+        categories: getYAxisOption(options).secondaryYAxis?.categories ?? categories,
         rawCategories,
         options,
         series,
         zoomRange,
       })
     : getValueAxisData({
-        scale: scale.rightYAxis!,
+        scale: scale.secondaryYAxis!,
         axisSize: valueAxisSize,
         options,
         series,
@@ -219,7 +219,7 @@ function getRightYAxisData(
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
-    const { yAxis, rightYAxis } = getYAxisOption(options);
+    const { yAxis, secondaryYAxis } = getYAxisOption(options);
     const axesState: Axes = {
       xAxis: {
         tickInterval: options.xAxis?.tick?.interval ?? 1,
@@ -237,8 +237,8 @@ const axes: StoreModule = {
       axesState.radialAxis = {} as RadialAxisData;
     }
 
-    if (rightYAxis) {
-      axesState.rightYAxis = makeDefaultYAxis(rightYAxis);
+    if (secondaryYAxis) {
+      axesState.secondaryYAxis = makeDefaultYAxis(secondaryYAxis);
     }
 
     return {
@@ -284,8 +284,8 @@ const axes: StoreModule = {
         yAxis: labelAxisOnYAxis ? labelAxisData : valueAxisData,
       } as Axes;
 
-      if (state.axes.rightYAxis) {
-        axesState.rightYAxis = getRightYAxisData(
+      if (state.axes.secondaryYAxis) {
+        axesState.secondaryYAxis = getSecondaryYAxisData(
           state,
           labelAxisOnYAxis,
           valueAxisSize,

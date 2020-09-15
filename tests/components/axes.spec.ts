@@ -117,12 +117,12 @@ describe('yAxis', () => {
 
   describe('using right y axis', () => {
     beforeEach(() => {
-      axis.initialize({ name: 'rightYAxis' });
+      axis.initialize({ name: 'secondaryYAxis' });
 
       axis.render({
-        layout: { rightYAxis: { x: 80, y: 10, width: 20, height: 80 } },
+        layout: { secondaryYAxis: { x: 80, y: 10, width: 20, height: 80 } },
         axes: {
-          rightYAxis: {
+          secondaryYAxis: {
             pointOnColumn: false,
             tickDistance: 16,
             labelDistance: 16,

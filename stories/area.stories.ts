@@ -220,7 +220,7 @@ export const lineWidth = () => {
   return el;
 };
 
-export const rightYAxis = () => {
+export const secondaryYAxis = () => {
   const { el } = createChart(avgTemperatureData, {
     yAxis: [
       {

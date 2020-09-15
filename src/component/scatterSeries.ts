@@ -1,6 +1,6 @@
 import { CircleModel } from '@t/components/series';
 import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
-import { ChartState, Scale } from '@t/store/store';
+import { ChartState, ValueEdge } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import CircleSeries from '@src/component/circleSeries';
@@ -8,7 +8,7 @@ import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
 import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { getValidValueAxisName } from '@src/helpers/axes';
+import { getValueAxisName } from '@src/helpers/axes';
 
 export default class ScatterSeries extends CircleSeries {
   initialize() {
@@ -30,8 +30,8 @@ export default class ScatterSeries extends CircleSeries {
 
     const seriesModel = this.renderScatterPointsModel(
       scatterData,
-      scale,
-      getValidValueAxisName(options, this.name, 'yAxis')
+      scale.xAxis.limit,
+      scale[getValueAxisName(options, this.name, 'yAxis')].limit
     );
     const tooltipModel = this.makeTooltipModel(scatterData);
 
@@ -52,14 +52,9 @@ export default class ScatterSeries extends CircleSeries {
 
   renderScatterPointsModel(
     seriesRawData: ScatterSeriesType[],
-    scale: Scale,
-    valueAxisName: string
+    xAxisLimit: ValueEdge,
+    yAxisLimit: ValueEdge
   ): CircleModel[] {
-    const {
-      xAxis: { limit: xAxisLimit },
-    } = scale;
-    const yAxisLimit = scale[valueAxisName].limit;
-
     return seriesRawData.flatMap(({ data, name, color: seriesColor }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
       const active = this.activeSeriesMap![name];

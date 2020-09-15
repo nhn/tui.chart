@@ -115,7 +115,7 @@ describe('axis size option', () => {
     });
   });
 
-  describe('using rightYAxis size option', () => {
+  describe('using secondaryYAxis size option', () => {
     const state = {
       legend: { visible: true, width: 20, align: 'right' },
       circleLegend: { radius: 0, visible: false, width: 0 },
@@ -126,11 +126,11 @@ describe('axis size option', () => {
         yAxis: {
           labels: ['1', '2', '3', '4', '5'],
         },
-        rightYAxis: {
+        secondaryYAxis: {
           labels: ['2', '4', '6', '8', '10'],
         },
       },
-      layout: { yAxis: {}, xAxis: {}, plot: {}, rightYAxis: {}, rightYAxisTitle: {} },
+      layout: { yAxis: {}, xAxis: {}, plot: {}, secondaryYAxis: {}, secondaryYAxisTitle: {} },
       options: {
         exportMenu: { visible: false },
         yAxis: [
@@ -146,11 +146,11 @@ describe('axis size option', () => {
 
     const result = {
       yAxis: { x: 10, y: 15, width: 25, height: 120 },
-      rightYAxisTitle: { x: 90, y: 15, width: 80, height: 0 },
-      rightYAxis: { x: 150, y: 15, width: 20, height: 120 },
+      secondaryYAxisTitle: { x: 90, y: 15, width: 80, height: 0 },
+      secondaryYAxis: { x: 150, y: 15, width: 20, height: 120 },
     };
 
-    ['yAxis', 'rightYAxisTitle', 'rightYAxis'].forEach((propName) => {
+    ['yAxis', 'secondaryYAxisTitle', 'secondaryYAxis'].forEach((propName) => {
       it(`should set ${propName} rect`, () => {
         expect(state.layout[propName]).toEqual(result[propName]);
       });
@@ -185,10 +185,10 @@ describe('only plot size option', () => {
     yAxis: { x: 10, y: 15, width: 11, height: 150 },
     xAxis: { x: 21, y: 165, width: 149, height: 20 },
     plot: { x: 21, y: 15, width: 150, height: 150 },
-    rightYAxis: { x: 170, y: 15, width: 0, height: 150 },
+    secondaryYAxis: { x: 170, y: 15, width: 0, height: 150 },
   };
 
-  ['yAxis', 'xAxis', 'plot', 'rightYAxis'].forEach((prop) => {
+  ['yAxis', 'xAxis', 'plot', 'secondaryYAxis'].forEach((prop) => {
     it(`should set ${prop} rect for plot size`, () => {
       expect(state.layout[prop]).toEqual(result[prop]);
     });

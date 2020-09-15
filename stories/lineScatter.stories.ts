@@ -58,7 +58,7 @@ export const basicWithOptions = () => {
   return el;
 };
 
-export const rightYAxis = () => {
+export const secondaryYAxis = () => {
   const { el } = createChart(efficiencyAndExpensesData, {
     chart: { title: 'Efficiency vs Expenses' },
     yAxis: [

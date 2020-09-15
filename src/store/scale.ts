@@ -5,7 +5,7 @@ import {
   getSizeKey,
   isLabelAxisOnYAxis,
   getYAxisOption,
-  getValidValueAxisNames,
+  getValueAxisNames,
 } from '@src/helpers/axes';
 import {
   calculateCoordinateScale,
@@ -21,7 +21,7 @@ import { LineChartOptions, Scale as ScaleOption } from '@t/options';
 type ScaleOptions = {
   xAxis?: ScaleOption;
   yAxis?: ScaleOption;
-  rightYAxis?: ScaleOption;
+  secondaryYAxis?: ScaleOption;
 };
 
 function getLabelScaleData(
@@ -95,7 +95,7 @@ const scale: StoreModule = {
       const { series, options } = state;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
-      const { yAxis, rightYAxis } = getYAxisOption(options);
+      const { yAxis, secondaryYAxis } = getYAxisOption(options);
       const scaleData = {};
 
       const scaleOptions: ScaleOptions = {
@@ -103,11 +103,11 @@ const scale: StoreModule = {
         yAxis: yAxis?.scale,
       };
 
-      if (rightYAxis) {
-        scaleOptions.rightYAxis = rightYAxis?.scale;
+      if (secondaryYAxis) {
+        scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
       }
 
-      getValidValueAxisNames(options, valueAxisName).forEach((axisName) => {
+      getValueAxisNames(options, valueAxisName).forEach((axisName) => {
         scaleData[axisName] = getValueScaleData(state, labelAxisOnYAxis, scaleOptions, axisName);
       });
 

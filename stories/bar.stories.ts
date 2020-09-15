@@ -174,7 +174,7 @@ export const dataLabels = () => {
   return el;
 };
 
-export const rightYAxis = () => {
+export const secondaryYAxis = () => {
   const { el } = createChart(budgetData, {
     yAxis: [
       {

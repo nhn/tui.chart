@@ -44,37 +44,37 @@ export function getLimitOnAxis(labels: string[]) {
   };
 }
 
-function hasRightYAxis(options: ChartOptionsUsingYAxis) {
+function hasSecondaryYAxis(options: ChartOptionsUsingYAxis) {
   return Array.isArray(options?.yAxis) && options.yAxis.length === 2;
 }
 
 export function getYAxisOption(options: ChartOptionsUsingYAxis) {
-  const rightYAxis = hasRightYAxis(options);
+  const secondaryYAxis = hasSecondaryYAxis(options);
 
   return {
-    yAxis: rightYAxis ? options.yAxis![0] : options.yAxis,
-    rightYAxis: rightYAxis ? options.yAxis![1] : null,
+    yAxis: secondaryYAxis ? options.yAxis![0] : options.yAxis,
+    secondaryYAxis: secondaryYAxis ? options.yAxis![1] : null,
   };
 }
 
-export function getValidValueAxisName(
+export function getValueAxisName(
   options: ChartOptionsUsingYAxis,
   seriesName: string,
   valueAxisName: string
 ) {
-  const { rightYAxis } = getYAxisOption(options);
+  const { secondaryYAxis } = getYAxisOption(options);
 
-  return rightYAxis?.chartType === seriesName ? 'rightYAxis' : valueAxisName;
+  return secondaryYAxis?.chartType === seriesName ? 'secondaryYAxis' : valueAxisName;
 }
 
-export function getValidValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName: string) {
-  const { yAxis, rightYAxis } = getYAxisOption(options);
+export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName: string) {
+  const { yAxis, secondaryYAxis } = getYAxisOption(options);
 
-  return valueAxisName !== 'xAxis' && rightYAxis
-    ? [yAxis.chartType, rightYAxis.chartType].map((seriesName, index) =>
+  return valueAxisName !== 'xAxis' && secondaryYAxis
+    ? [yAxis.chartType, secondaryYAxis.chartType].map((seriesName, index) =>
         seriesName
-          ? getValidValueAxisName(options, seriesName, valueAxisName)
-          : ['yAxis', 'rightYAxis'][index]
+          ? getValueAxisName(options, seriesName, valueAxisName)
+          : ['yAxis', 'secondaryYAxis'][index]
       )
     : [valueAxisName];
 }
