@@ -30,26 +30,31 @@ function getMaxLengthLabelWidth(labels: string[]) {
 
 function getBarLayout(model: SpectrumLegendModel) {
   const { align, x, y, labels, width } = model;
-  const { PADDING, HEIGHT } = spectrumLegendBar;
 
   if (align === 'top') {
-    return { x, y: y + SPECTRUM_LEGEND_LABEL_HEIGHT + PADDING };
+    return { x, y: y + SPECTRUM_LEGEND_LABEL_HEIGHT + spectrumLegendBar.PADDING };
   }
 
   if (align === 'bottom') {
-    return { x, y: y + HEIGHT };
+    return { x, y: y + spectrumLegendTooltip.HEIGHT };
   }
 
   if (align === 'left') {
     return {
-      x: x + getMaxLengthLabelWidth(labels) + PADDING,
+      x: x + getMaxLengthLabelWidth(labels) + spectrumLegendBar.PADDING,
       y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
     };
   }
 
   if (align === 'right') {
     return {
-      x: x + width - (getMaxLengthLabelWidth(labels) + padding.X + PADDING * 2 + HEIGHT),
+      x:
+        x +
+        width -
+        (getMaxLengthLabelWidth(labels) +
+          padding.X +
+          spectrumLegendBar.PADDING * 2 +
+          spectrumLegendBar.HEIGHT),
       y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
     };
   }
