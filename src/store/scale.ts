@@ -34,9 +34,8 @@ function getLabelScaleData(
   const { dataRange, layout, series, categories, rawCategories, options } = state;
   const { labelSizeKey } = getSizeKey(labelAxisOnYAxis);
   const dateTypeLabel = isExist(options.xAxis?.date);
-  const range = dataRange;
   const labelOptions = {
-    dataRange: range[labelAxisName],
+    dataRange: dataRange[labelAxisName],
     offsetSize: layout.plot[labelSizeKey],
     scaleOption: scaleOptions[labelAxisName],
     rawCategoriesSize: rawCategories.length,

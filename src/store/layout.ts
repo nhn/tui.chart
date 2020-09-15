@@ -130,7 +130,7 @@ function getYAxisYPoint({ yAxisTitle }: YAxisRectParam) {
   return yAxisTitle.y + yAxisTitle.height;
 }
 
-function getDefaultYAxisWidth({ maxLabelWidth, size, isRightSide = false }: YAxisRectParam) {
+function getDefaultYAxisWidth({ maxLabelWidth, size, isRightSide }: YAxisRectParam) {
   return size?.[isRightSide ? 'secondaryYAxis' : 'yAxis']?.width ?? maxLabelWidth;
 }
 

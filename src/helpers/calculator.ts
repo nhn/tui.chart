@@ -1,7 +1,7 @@
 /**
  * operation for floating point operation.
  */
-import { Options, ValueEdge, AxisData } from '@t/store/store';
+import { Options, ValueEdge, LabelAxisData } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger, isString } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
@@ -177,7 +177,7 @@ export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
 }
 
 export function getXPosition(
-  axisData: Pick<AxisData, 'pointOnColumn' | 'tickDistance' | 'labelDistance'>,
+  axisData: Pick<LabelAxisData, 'pointOnColumn' | 'tickDistance' | 'labelDistance'>,
   offsetSize: number,
   xAxisLimit: ValueEdge,
   value: number | string | Date,

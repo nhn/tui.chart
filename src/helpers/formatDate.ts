@@ -142,7 +142,7 @@ export function formatDate(
   }
 
   if (!isValidDate(nDate.year, nDate.month, nDate.date)) {
-    return false;
+    return '';
   }
 
   nDate.meridiem = '';

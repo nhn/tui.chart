@@ -1,6 +1,6 @@
 import Component from './component';
 import { LineModel } from '@t/components/axis';
-import { ChartState, Options } from '@t/store/store';
+import { ChartState, Options, ValueAxisData } from '@t/store/store';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { crispPixel } from '@src/helpers/calculator';
 import { isNumber } from '@src/helpers/utils';
@@ -17,7 +17,7 @@ export default class ZeroAxis extends Component {
     this.rect = layout.plot;
     const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
     const valueAxisName = labelAxisOnYAxis ? 'xAxis' : 'yAxis';
-    const { zeroPosition } = axes[valueAxisName]!;
+    const { zeroPosition } = axes[valueAxisName]! as ValueAxisData;
 
     if (isNumber(zeroPosition)) {
       this.models = this.renderZeroModel(zeroPosition, labelAxisOnYAxis);

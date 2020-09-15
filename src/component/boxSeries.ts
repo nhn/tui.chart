@@ -7,7 +7,14 @@ import {
   RectResponderModel,
   MouseEventType,
 } from '@t/components/series';
-import { ChartState, ChartType, BoxType, AxisData, CenterYAxisData, Series } from '@t/store/store';
+import {
+  ChartState,
+  ChartType,
+  BoxType,
+  ValueAxisData,
+  CenterYAxisData,
+  Series,
+} from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -517,7 +524,7 @@ export default class BoxSeries extends Component {
     return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
-  protected getBasePosition({ labels, tickCount, zeroPosition }: AxisData): number {
+  protected getBasePosition({ labels, tickCount, zeroPosition }: ValueAxisData): number {
     const valueLabels = this.isBar ? labels : [...labels].reverse();
     const tickPositions = makeTickPixelPositions(this.getOffsetSize(), tickCount);
     const seriesDirection = this.getSeriesDirection(valueLabels);
