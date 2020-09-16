@@ -32,25 +32,23 @@ function calculateLegendWidth(
     return legendOptions.width;
   }
 
-  if (useColorValue) {
-    if (verticalAlign) {
-      const labelAreaWidth = sum(legendWidths);
-      legendWidth = Math.max(options.chart!.width / 4, labelAreaWidth);
-    } else {
-      const spectrumAreaWidth =
-        spectrumLegendTooltip.PADDING * 2 +
-        spectrumLegendBar.PADDING * 2 +
-        spectrumLegendTooltip.POINT_HEIGHT +
-        spectrumLegendBar.HEIGHT +
-        padding.X * 2;
+  if (useColorValue && verticalAlign) {
+    const labelAreaWidth = sum(legendWidths);
+    legendWidth = Math.max(options.chart!.width / 4, labelAreaWidth);
+  } else if (useColorValue && !verticalAlign) {
+    const spectrumAreaWidth =
+      spectrumLegendTooltip.PADDING * 2 +
+      spectrumLegendBar.PADDING * 2 +
+      spectrumLegendTooltip.POINT_HEIGHT +
+      spectrumLegendBar.HEIGHT +
+      padding.X * 2;
 
-      legendWidth = Math.max(...legendWidths) + spectrumAreaWidth;
-    }
-  } else if (!verticalAlign) {
+    legendWidth = Math.max(...legendWidths) + spectrumAreaWidth;
+  } else if (!useColorValue && verticalAlign) {
+    legendWidth = sum(legendWidths) + LEGEND_ITEM_MARGIN_X * (legendWidths.length - 1);
+  } else {
     const labelAreaWidth = Math.max(...legendWidths);
     legendWidth = Math.max(labelAreaWidth, legendWidth);
-  } else {
-    legendWidth = sum(legendWidths) + LEGEND_ITEM_MARGIN_X * (legendWidths.length - 1);
   }
 
   return legendWidth;

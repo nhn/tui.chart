@@ -1,11 +1,11 @@
 import { SeriesDataType, TreemapSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { populationDensityData, usedDiskSpaceData } from './data';
-import { radios, withKnobs } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs';
 import TreemapChart from '@src/charts/treemapChart';
 
 export default {
-  title: 'chart|treemap',
+  title: 'chart|Treemap',
   decorators: [withKnobs],
 };
 

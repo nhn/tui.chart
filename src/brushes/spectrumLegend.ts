@@ -29,56 +29,50 @@ function getMaxLengthLabelWidth(labels: string[]) {
 }
 
 function getBarStartPoint(model: SpectrumLegendModel) {
-  const { align, x, y, labels, width } = model;
+  const { align, x: modelX, y: modelY, labels, width } = model;
   const { PADDING } = spectrumLegendBar;
+  let x, y;
 
   if (align === 'top') {
-    return { x, y: y + SPECTRUM_LEGEND_LABEL_HEIGHT + PADDING };
+    x = modelX;
+    y = modelY + SPECTRUM_LEGEND_LABEL_HEIGHT + PADDING;
+  } else if (align === 'bottom') {
+    x = modelX;
+    y = modelY + spectrumLegendTooltip.HEIGHT;
+  } else if (align === 'left') {
+    x = modelX + getMaxLengthLabelWidth(labels) + PADDING;
+    y = modelY + SPECTRUM_LEGEND_LABEL_HEIGHT / 2;
+  } else {
+    x =
+      modelX +
+      width -
+      (getMaxLengthLabelWidth(labels) + padding.X + PADDING * 2 + spectrumLegendBar.HEIGHT);
+    y = modelY + SPECTRUM_LEGEND_LABEL_HEIGHT / 2;
   }
 
-  if (align === 'bottom') {
-    return { x, y: y + spectrumLegendTooltip.HEIGHT };
-  }
-
-  if (align === 'left') {
-    return {
-      x: x + getMaxLengthLabelWidth(labels) + PADDING,
-      y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
-    };
-  }
-
-  if (align === 'right') {
-    return {
-      x:
-        x +
-        width -
-        (getMaxLengthLabelWidth(labels) + padding.X + PADDING * 2 + spectrumLegendBar.HEIGHT),
-      y: y + SPECTRUM_LEGEND_LABEL_HEIGHT / 2,
-    };
-  }
+  return { x, y };
 }
 
 function getLabelsStartPoint(model: SpectrumLegendModel) {
-  const { align, x, y, labels, width } = model;
+  const { align, x: modelX, y: modelY, labels, width } = model;
+  let x, y;
 
   if (align === 'top') {
-    return { x, y };
+    x = modelX;
+    y = modelY;
+  } else if (align === 'bottom') {
+    x = modelX;
+    y =
+      modelY + spectrumLegendTooltip.HEIGHT + spectrumLegendBar.HEIGHT + spectrumLegendBar.PADDING;
+  } else if (align === 'left') {
+    x = modelX + getMaxLengthLabelWidth(labels);
+    y = modelY;
+  } else {
+    x = modelX + width - getMaxLengthLabelWidth(labels) - padding.X;
+    y = modelY;
   }
 
-  if (align === 'bottom') {
-    return {
-      x,
-      y: y + spectrumLegendTooltip.HEIGHT + spectrumLegendBar.HEIGHT + spectrumLegendBar.PADDING,
-    };
-  }
-
-  if (align === 'left') {
-    return { x: x + getMaxLengthLabelWidth(labels), y };
-  }
-
-  if (align === 'right') {
-    return { x: x + width - getMaxLengthLabelWidth(labels) - padding.X, y };
-  }
+  return { x, y };
 }
 
 function getBarSize(width: number, height: number, verticalAlign: boolean) {
@@ -131,13 +125,10 @@ function drawLabels(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
 function drawBar(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
   const { width, height, startColor, endColor, x, y, verticalAlign } = model;
   const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
-  let gradient;
+  const gradient = verticalAlign
+    ? ctx.createLinearGradient(x, y, x + barWidth, y)
+    : ctx.createLinearGradient(x, y, x, y + barHeight);
 
-  if (verticalAlign) {
-    gradient = ctx.createLinearGradient(x, y, x + barWidth, y);
-  } else {
-    gradient = ctx.createLinearGradient(x, y, x, y + barHeight);
-  }
   gradient.addColorStop(0, startColor);
   gradient.addColorStop(1, endColor);
 
@@ -145,7 +136,7 @@ function drawBar(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
   ctx.fillRect(x, y, barWidth, barHeight);
 }
 
-function drawTooltipPoint(
+function drawTooltipArrow(
   ctx: CanvasRenderingContext2D,
   pointModel: SpectrumLegendTooltipPointModel
 ) {
@@ -182,7 +173,7 @@ function drawTooltipPoint(
   polygon(ctx, { type: 'polygon', color, lineWidth: 0, points, fillColor: color });
 }
 
-function getTopPoint(model: SpectrumLegendTooltipModel) {
+function getTooltipArrowPoint(model: SpectrumLegendTooltipModel) {
   const { align, colorRatio, width, height, x, y, labels, verticalAlign } = model;
   const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
   const { PADDING, HEIGHT } = spectrumLegendBar;
@@ -261,8 +252,8 @@ export function spectrumLegend(ctx: CanvasRenderingContext2D, model: SpectrumLeg
 }
 
 export function spectrumTooltip(ctx: CanvasRenderingContext2D, model: SpectrumLegendTooltipModel) {
-  const { x, y } = getTopPoint(model)!;
+  const { x, y } = getTooltipArrowPoint(model)!;
 
-  drawTooltipPoint(ctx, { ...model, x, y });
+  drawTooltipArrow(ctx, { ...model, x, y });
   drawTooltipBox(ctx, { ...model, x, y });
 }

@@ -38,7 +38,7 @@ function makeTreeModel(
   return models;
 }
 
-function fillData(treemapSeries: TreemapSeriesData[]) {
+function setParentSeriesData(treemapSeries: TreemapSeriesData[]) {
   treemapSeries.forEach(({ parentId, data }) => {
     if (parentId !== TREEMAP_ROOT_ID) {
       treemapSeries.find(({ id }) => id === parentId)!.data += data;
@@ -46,7 +46,7 @@ function fillData(treemapSeries: TreemapSeriesData[]) {
   });
 }
 
-function fillRatio(treemapSeries: TreemapSeriesData[]) {
+function setRatio(treemapSeries: TreemapSeriesData[]) {
   const rootTotal = treemapSeries
     .filter(({ parentId }) => parentId === TREEMAP_ROOT_ID)
     .reduce((acc, { data }) => acc + data, 0);
@@ -71,8 +71,8 @@ function makeTreemapSeries(series: Series) {
     .flatMap((s) => s)
     .sort((a, b) => b.depth - a.depth);
 
-  fillData(treemapSeries);
-  fillRatio(treemapSeries);
+  setParentSeriesData(treemapSeries);
+  setRatio(treemapSeries);
 
   return treemapSeries;
 }

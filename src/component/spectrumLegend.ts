@@ -33,6 +33,7 @@ export default class SpectrumLegend extends Component {
   }
 
   renderSpectrumLegendModel(renderOptions: RenderOptions): SpectrumLegendModel[] {
+    const { labels, align } = this;
     const { width, height } = this.rect;
     const { startColor, endColor } = renderOptions;
 
@@ -43,8 +44,8 @@ export default class SpectrumLegend extends Component {
         height,
         x: 0,
         y: 0,
-        labels: this.labels,
-        align: this.align,
+        labels,
+        align,
         startColor,
         endColor,
         verticalAlign: isVerticalAlign(this.align),
@@ -54,6 +55,7 @@ export default class SpectrumLegend extends Component {
 
   renderSpectrumTooltip = ([responderData]: TreemapRectResponderModel[]) => {
     if (responderData) {
+      const { labels, align } = this;
       const { colorValue, color } = responderData;
       const colorRatio = responderData.colorRatio!;
       const { width, height } = this.rect;
@@ -65,12 +67,12 @@ export default class SpectrumLegend extends Component {
           height,
           x: 0,
           y: 0,
-          labels: this.labels,
-          align: this.align,
+          labels,
+          align,
           colorRatio,
           color,
           text: String(colorValue),
-          verticalAlign: isVerticalAlign(this.align),
+          verticalAlign: isVerticalAlign(align),
         },
       ];
     } else {
