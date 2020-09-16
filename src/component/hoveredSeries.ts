@@ -1,14 +1,20 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import { TooltipModelName } from '@t/components/tooltip';
-import { CircleResponderModel, ResponderModel } from '@t/components/series';
+import { CircleResponderModel, ResponderModel, BoxPlotResponderModel } from '@t/components/series';
 import { LineModel } from '@t/components/axis';
 import { crispPixel } from '@src/helpers/calculator';
-import { isUndefined } from '@src/helpers/utils';
-import { LineTypeEventDetectType } from '@t/options';
+import { isUndefined, includes } from '@src/helpers/utils';
+import { LineTypeEventDetectType, BoxTypeEventDetectType } from '@t/options';
 
 export type HoveredSeriesModel = { [key in TooltipModelName]: ResponderModel[] } & {
   guideLine: LineModel[];
+};
+
+const guideLineType = {
+  line: 'circle',
+  area: 'circle',
+  boxPlot: 'boxPlot',
 };
 
 export default class HoveredSeries extends Component {
@@ -16,38 +22,54 @@ export default class HoveredSeries extends Component {
 
   isShow = false;
 
-  getSeriesModels() {
-    const { guideLine, ...model } = this.models;
+  modelForGuideLine!: CircleResponderModel | BoxPlotResponderModel;
 
-    return Object.values(model).flatMap((val) => val);
+  getSeriesModels() {
+    const { guideLine, ...models } = this.models;
+
+    return Object.values(models).flatMap((val) => val);
+  }
+
+  hasGuideLine() {
+    const [rectModel] = this.getSeriesModels().filter(({ type }) => type === 'rect');
+
+    return !isUndefined(this.modelForGuideLine) && isUndefined(rectModel);
+  }
+
+  getModelForGuideLine(name: TooltipModelName) {
+    return this.getSeriesModels().filter(({ type }) => type === guideLineType[name])[0];
   }
 
   renderHoveredSeries = ({
     models,
     name,
-    eventType,
+    eventDetectType,
   }: {
     models: ResponderModel[];
     name: TooltipModelName;
-    eventType?: LineTypeEventDetectType;
+    eventDetectType?: LineTypeEventDetectType | BoxTypeEventDetectType;
   }) => {
     this.models[name] = [...models];
     this.isShow = !!this.getSeriesModels().length;
+    this.modelForGuideLine = this.getModelForGuideLine(name);
 
-    if (eventType === 'grouped' && (name === 'line' || name === 'area')) {
-      if (this.isShow) {
-        const model = this.getSeriesModels().filter(({ type }) => type === 'circle')[0];
-        if (!isUndefined(model)) {
-          this.models.guideLine = [this.renderGuideLineModel(model)];
-        }
+    if (eventDetectType === 'grouped') {
+      this.renderGroupedModels(name);
+    }
+  };
+
+  private renderGroupedModels(name: TooltipModelName) {
+    if (includes(Object.keys(guideLineType), name)) {
+      if (this.isShow && this.hasGuideLine()) {
+        this.models.guideLine = [this.renderGuideLineModel(this.modelForGuideLine)];
       } else {
         this.models.guideLine = [];
       }
     }
-  };
+  }
 
-  renderGuideLineModel(circleModel: CircleResponderModel): LineModel {
-    const x = crispPixel(circleModel.x);
+  renderGuideLineModel(model: CircleResponderModel | BoxPlotResponderModel): LineModel {
+    const x = model.type === 'circle' ? crispPixel(model.x) : model.whisker.x;
 
     return {
       type: 'line',

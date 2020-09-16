@@ -71,7 +71,7 @@ export default class AreaSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  eventType: LineTypeEventDetectType = 'nearest';
+  eventDetectType: LineTypeEventDetectType = 'nearest';
 
   tooltipCircleMap!: Record<number, CircleResponderModel[]>;
 
@@ -115,13 +115,13 @@ export default class AreaSeries extends Component {
     return type === 'percent' ? (stackedValue * 100) / sumValue : stackedValue;
   }
 
-  private setEventType(series: Series, options?: LineChartOptions) {
+  private setEventDetectType(series: Series, options?: LineChartOptions) {
     if (options?.series?.eventDetectType) {
-      this.eventType = options.series.eventDetectType;
+      this.eventDetectType = options.series.eventDetectType;
     }
 
     if (series.line || this.isStackChart) {
-      this.eventType = 'grouped';
+      this.eventDetectType = 'grouped';
     }
   }
 
@@ -173,7 +173,7 @@ export default class AreaSeries extends Component {
       this.isRangeChart = true;
     }
 
-    this.setEventType(series, options);
+    this.setEventDetectType(series, options);
 
     const renderOptions: RenderOptions = {
       pointOnColumn,
@@ -216,7 +216,7 @@ export default class AreaSeries extends Component {
     this.tooltipCircleMap = makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
 
     this.responders =
-      this.eventType === 'near'
+      this.eventDetectType === 'near'
         ? this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr)
         : makeRectResponderModel(this.rect, axes.xAxis!);
   }
@@ -484,9 +484,9 @@ export default class AreaSeries extends Component {
     const index = responders[0].index!;
     // @TODO: getLinePointsModel 에서 isModelExistingInRect 제거 시 해당 코드로 수정 필요
     // const index = responders[0].index! + this.startIndex;
-    const models = this.tooltipCircleMap[index];
+    const models = this.tooltipCircleMap[index] ?? [];
 
-    return this.eventType === 'grouped'
+    return this.eventDetectType === 'grouped'
       ? models
       : getNearestResponder(models, mousePositions!, this.rect);
   }
@@ -497,7 +497,7 @@ export default class AreaSeries extends Component {
     this.eventBus.emit('renderHoveredSeries', {
       models: circleModels,
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
     this.activatedResponders = circleModels;
   }
@@ -520,15 +520,15 @@ export default class AreaSeries extends Component {
     this.eventBus.emit('renderHoveredSeries', {
       models: hoveredSeries,
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
     this.activatedResponders = responders;
   }
 
   onMousemove({ responders, mousePosition }: MouseEventType) {
-    if (this.eventType === 'nearest') {
+    if (this.eventDetectType === 'nearest') {
       this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
-    } else if (this.eventType === 'near') {
+    } else if (this.eventDetectType === 'near') {
       this.onMousemoveNearType(responders as CircleResponderModel[]);
     } else {
       this.onMousemoveGroupedType(responders as RectResponderModel[]);
@@ -543,7 +543,7 @@ export default class AreaSeries extends Component {
     this.eventBus.emit('renderHoveredSeries', {
       models: [],
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
     this.applyAreaOpacity(seriesOpacity.ACTIVE);
 
@@ -558,7 +558,7 @@ export default class AreaSeries extends Component {
 
   onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
-      if (this.eventType === 'near') {
+      if (this.eventDetectType === 'near') {
         this.drawModels.selectedSeries = responders as CircleResponderModel[];
       } else {
         this.drawModels.selectedSeries = this.getCircleModelsFromRectResponders(

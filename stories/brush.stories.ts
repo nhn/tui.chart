@@ -279,11 +279,11 @@ export const rectBrush = () => {
 
   const color = radios('color', { green: 'green', blue: 'blue', red: 'red' }, 'green');
 
-  rect(ctx, { type: 'rect', x: 300, y: 100, height: 200, width: 100, color });
+  rect(ctx, { type: 'rect', x: 300, y: 50, height: 200, width: 100, color });
   rect(ctx, {
     type: 'rect',
-    x: 100,
-    y: 100,
+    x: 150,
+    y: 50,
     height: 200,
     width: 100,
     color,
@@ -388,7 +388,6 @@ export const legendBrush = () => {
 
   legend(ctx, {
     type: 'legend',
-    iconType: 'circle',
     align: 'right',
     showCheckbox: true,
     data: [
@@ -399,6 +398,7 @@ export const legendBrush = () => {
         active: true,
         x: 100,
         y: 100,
+        iconType: 'circle',
       },
       {
         label: 'circle-checked-inactive',
@@ -407,6 +407,7 @@ export const legendBrush = () => {
         active: false,
         x: 100,
         y: 120,
+        iconType: 'circle',
       },
       {
         label: 'circle-unchecked-active',
@@ -415,13 +416,13 @@ export const legendBrush = () => {
         active: true,
         x: 100,
         y: 140,
+        iconType: 'circle',
       },
     ],
   });
 
   legend(ctx, {
     type: 'legend',
-    iconType: 'circle',
     align: 'right',
     showCheckbox: false,
     data: [
@@ -432,13 +433,13 @@ export const legendBrush = () => {
         active: true,
         x: 100,
         y: 160,
+        iconType: 'circle',
       },
     ],
   });
 
   legend(ctx, {
     type: 'legend',
-    iconType: 'line',
     align: 'right',
     showCheckbox: true,
     data: [
@@ -449,6 +450,7 @@ export const legendBrush = () => {
         active: true,
         x: 100,
         y: 180,
+        iconType: 'line',
       },
       {
         label: 'line-checked-inactive',
@@ -457,13 +459,13 @@ export const legendBrush = () => {
         active: false,
         x: 100,
         y: 200,
+        iconType: 'line',
       },
     ],
   });
 
   legend(ctx, {
     type: 'legend',
-    iconType: 'rect',
     align: 'right',
     showCheckbox: true,
     data: [
@@ -474,6 +476,7 @@ export const legendBrush = () => {
         active: true,
         x: 100,
         y: 220,
+        iconType: 'rect',
       },
       {
         label: 'rect-checked-inactive',
@@ -482,6 +485,7 @@ export const legendBrush = () => {
         active: false,
         x: 100,
         y: 240,
+        iconType: 'rect',
       },
     ],
   });

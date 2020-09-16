@@ -6,6 +6,7 @@ import {
   BarChartOptions,
   Point,
   Connector,
+  ColumnLineChartOptions,
 } from '@t/options';
 import {
   ChartState,
@@ -19,7 +20,7 @@ import {
   CenterYAxisData,
 } from '@t/store/store';
 import { TooltipData } from '@t/components/tooltip';
-import { RectModel, Nullable, StackTotalModel } from '@t/components/series';
+import { RectModel, Nullable, StackTotalModel, RectResponderModel } from '@t/components/series';
 import { LineModel } from '@t/components/axis';
 import { deepCopyArray, includes, isNumber, hasNegative } from '@src/helpers/utils';
 import { getLimitOnAxis } from '@src/helpers/axes';
@@ -31,6 +32,7 @@ import {
 import { RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import { makeRectResponderModel } from '@src/helpers/responders';
 
 type RenderOptions = {
   stack: Stack;
@@ -82,12 +84,18 @@ function getDirectionKeys(seriesDirection: SeriesDirection) {
 }
 
 export default class BoxStackSeries extends BoxSeries {
-  render<T extends BarChartOptions | ColumnChartOptions>(chartState: ChartState<T>) {
-    const { layout, axes, categories, stackSeries, options, legend } = chartState;
+  render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
+    chartState: ChartState<T>
+  ) {
+    const { layout, series: seriesData, axes, categories, stackSeries, legend } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
     }
+
+    const options = this.getOptions(chartState.options);
+
+    this.setEventDetectType(seriesData, options);
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
@@ -162,10 +170,15 @@ export default class BoxStackSeries extends BoxSeries {
       });
     }
 
-    this.responders = hoveredSeries.map((m, index) => ({
-      ...m,
-      data: tooltipData[index],
-    }));
+    this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
+
+    this.responders =
+      this.eventDetectType === 'grouped'
+        ? makeRectResponderModel(this.rect, this.isBar ? axes.yAxis! : axes.xAxis!, !this.isBar)
+        : hoveredSeries.map((m, index) => ({
+            ...m,
+            data: tooltipData[index],
+          }));
   }
 
   renderStackSeriesModel(seriesData: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
@@ -690,5 +703,24 @@ export default class BoxStackSeries extends BoxSeries {
         size: this.getOffsetSize(),
       },
     };
+  }
+
+  private getOffsetPosition(models: RectResponderModel[]) {
+    const offsetValues = models.map((model) => model[this.offsetKey]);
+    const min = Math.min(...offsetValues);
+
+    return Math.max(min, 0);
+  }
+
+  onMousemoveGroupedType(responders: RectResponderModel[]) {
+    const rectModels = this.getRectModelsFromRectResponders(responders);
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [...rectModels, ...this.getGroupedRect(responders)],
+      name: this.name,
+      eventDetectType: this.eventDetectType,
+    });
+
+    this.activatedResponders = rectModels;
   }
 }

@@ -18,7 +18,7 @@ export type BubblePoint = (Point | ObjectTypeDatetimePoint) & { r: number };
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
 export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped' | 'point';
-export type BoxTypeEventDetectType = 'nearest' | 'grouped' | 'point';
+export type BoxTypeEventDetectType = 'grouped' | 'point';
 
 export type BezierPoint = {
   controlPoint?: {
