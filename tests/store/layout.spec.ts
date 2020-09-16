@@ -1,5 +1,5 @@
 import layout from '@src/store/layout';
-import { BarChartOptions } from '@t/options';
+import { BarChartOptions, LineChartOptions } from '@t/options';
 import Store from '@src/store/store';
 
 const props = [
@@ -12,6 +12,7 @@ const props = [
   'legend',
   'circleLegend',
   'plot',
+  'resetButton',
 ];
 
 describe('default layout', () => {
@@ -34,7 +35,7 @@ describe('default layout', () => {
   layout.action!.setLayout(store);
 
   const result = {
-    exportMenu: { height: 0, width: 0, x: 0, y: 0 },
+    exportMenu: { height: 0, width: 0, x: 190, y: 15 },
     title: { x: 10, y: 15, width: 0, height: 0 },
     yAxisTitle: { width: 0, height: 0, x: 10, y: 15 },
     yAxis: { x: 10, y: 15, width: 11, height: 124 },
@@ -43,6 +44,7 @@ describe('default layout', () => {
     legend: { x: 180, y: 24, width: 20, height: 104 },
     circleLegend: { height: 124, width: 0, x: 180, y: 15 },
     plot: { x: 21, y: 15, width: 149, height: 124 },
+    resetButton: { height: 0, width: 0, x: 0, y: 0 },
   };
 
   props.forEach((prop) => {
@@ -149,5 +151,60 @@ describe('only plot size option', () => {
     it(`should set ${prop} rect for plot size`, () => {
       expect(state.layout[prop]).toEqual(result[prop]);
     });
+  });
+});
+
+describe('with export menu visible options', () => {
+  const state = {
+    legend: { visible: true, width: 20, align: 'right' },
+    circleLegend: { radius: 0, visible: false, width: 0 },
+    chart: { width: 200, height: 200 },
+    series: { bar: {} },
+    axes: {
+      xAxis: {},
+      yAxis: {
+        labels: ['a', 'b', 'c', 'd'],
+      },
+    },
+    layout: { yAxis: {}, xAxis: {}, plot: {} },
+    options: { exportMenu: { visible: true } },
+  };
+
+  const store = { state } as Store<BarChartOptions>;
+  layout.action!.setLayout(store);
+
+  const result = {
+    exportMenu: { height: 29, width: 24, x: 166, y: 15 },
+    title: { x: 10, y: 15, width: 0, height: 29 },
+  };
+
+  ['exportMenu', 'title'].forEach((prop) => {
+    it(`should set ${prop} rect`, () => {
+      expect(state.layout[prop]).toEqual(result[prop]);
+    });
+  });
+});
+
+describe('with reset button visible options', () => {
+  const state = {
+    legend: { visible: true, width: 20, align: 'right' },
+    circleLegend: { radius: 0, visible: false, width: 0 },
+    chart: { width: 200, height: 200 },
+    series: { bar: {} },
+    axes: {
+      xAxis: {},
+      yAxis: {
+        labels: ['a', 'b', 'c', 'd'],
+      },
+    },
+    layout: { yAxis: {}, xAxis: {}, plot: {}, resetButton: {} },
+    options: { series: { zoomable: true } },
+  };
+
+  const store = { state } as Store<LineChartOptions>;
+  layout.action!.setLayout(store);
+
+  it(`should set resetButton rect`, () => {
+    expect(state.layout.resetButton).toEqual({ height: 29, width: 24, x: 132, y: 15 });
   });
 });

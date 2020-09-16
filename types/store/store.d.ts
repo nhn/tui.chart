@@ -136,6 +136,7 @@ export interface Layout {
   circleLegend: Rect;
   title: Rect;
   exportMenu: Rect;
+  resetButton: Rect;
 }
 
 export interface Scale {

@@ -86,8 +86,6 @@ export default class AreaSeries extends Component {
 
   isRangeChart = false;
 
-  isComboChart = false;
-
   startIndex!: number;
 
   initialize() {

@@ -1,6 +1,13 @@
 import { StoreModule, Layout, CircleLegend, Legend, Options } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { Align, Rect, Size, BaseSizeOptions } from '@t/options';
+import {
+  Align,
+  Rect,
+  Size,
+  BaseSizeOptions,
+  LineTypeSeriesOptions,
+  TreemapChartSeriesOptions,
+} from '@t/options';
 import { LEGEND_ITEM_HEIGHT, LEGEND_MARGIN_Y } from '@src/brushes/legend';
 import { isUndefined, pick } from '@src/helpers/utils';
 import { isCenterYAxis } from './axes';
@@ -289,12 +296,26 @@ function getXAxisTitleRect(visible: boolean, xAxis: Rect) {
 
 function getExportMenuRect(chartSize: Size, visible: boolean) {
   const marginY = 5;
-  const x = visible ? padding.X + chartSize.width - BUTTON_RECT_SIZE : 0;
-  const y = visible ? padding.Y : 0;
+  const x = visible ? padding.X + chartSize.width - BUTTON_RECT_SIZE : padding.X + chartSize.width;
+  const y = padding.Y;
   const height = visible ? BUTTON_RECT_SIZE + marginY : 0;
   const width = visible ? BUTTON_RECT_SIZE : 0;
 
   return { x, y, height, width };
+}
+
+function getResetButtonRect(exportMenu: Rect, useResetButton: boolean) {
+  const marginY = 5;
+  const x = useResetButton ? exportMenu.x - BUTTON_RECT_SIZE - padding.X : 0;
+  const y = useResetButton ? exportMenu.y : 0;
+  const height = useResetButton ? BUTTON_RECT_SIZE + marginY : 0;
+  const width = useResetButton ? BUTTON_RECT_SIZE : 0;
+
+  return { x, y, height, width };
+}
+
+export function isUsingResetButton(options: Options) {
+  return !!(options.series as LineTypeSeriesOptions | TreemapChartSeriesOptions)?.zoomable;
 }
 
 export function isExportMenuVisible(options: Options) {
@@ -370,8 +391,9 @@ const layout: StoreModule = {
       const optionSize = getOptionSize(options);
 
       // Don't change the order!
-      // exportMenu -> title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
+      // exportMenu -> resetButton -> title -> yAxis.title -> yAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
       const exportMenu = getExportMenuRect(chartSize, isExportMenuVisible(options));
+      const resetButton = getResetButtonRect(exportMenu, isUsingResetButton(options));
       const title = getTitleRect(chartSize, exportMenu, !!options.chart?.title);
       const yAxisTitle = getYAxisTitleRect(
         chartSize,
@@ -414,6 +436,7 @@ const layout: StoreModule = {
         yAxis,
         yAxisTitle,
         exportMenu,
+        resetButton,
       });
     },
   },
