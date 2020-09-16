@@ -15,6 +15,7 @@ import DataLabels from '@src/component/dataLabels';
 import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
+import ResetButton from '@src/component/resetButton';
 import Legend from '@src/component/legend';
 import Zoom from '@src/component/zoom';
 
@@ -65,6 +66,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
+    this.componentManager.add(ResetButton);
 
     this.painter.addGroups([
       basicBrush,

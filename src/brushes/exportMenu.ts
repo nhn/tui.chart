@@ -1,4 +1,4 @@
-import { line, rect } from '@src/brushes/basic';
+import { line, rect, pathRect } from '@src/brushes/basic';
 import { Point } from '@t/options';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
@@ -49,13 +49,15 @@ export function exportMenuButton(
 ) {
   const { opened, x, y } = exportMenuButtonModel;
 
-  rect(ctx, {
-    type: 'rect',
+  pathRect(ctx, {
+    type: 'pathRect',
     x,
     y,
-    color: '#f4f4f4',
+    fill: '#f4f4f4',
+    stroke: '#f4f4f4',
     width: BUTTON_RECT_SIZE,
     height: BUTTON_RECT_SIZE,
+    radius: 5,
   });
 
   if (opened) {

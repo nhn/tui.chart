@@ -3,3 +3,5 @@ import { Point } from '../options';
 export type ResetButtonModel = {
   type: 'resetButton';
 } & Point;
+
+export type ResetButtonModels = ResetButtonModel[];

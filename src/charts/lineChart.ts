@@ -17,6 +17,7 @@ import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import Zoom from '@src/component/zoom';
+import ResetButton from '@src/component/resetButton';
 
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
@@ -66,6 +67,7 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
+    this.componentManager.add(ResetButton);
 
     this.painter.addGroups([
       basicBrush,

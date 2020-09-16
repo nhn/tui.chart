@@ -75,6 +75,7 @@ const seriesData: StoreModule = {
       ...series,
     } as Series,
     zoomRange: initZoomRange(series, options, categories),
+    isZooming: false,
     disabledSeries: [],
   }),
   action: {
@@ -138,16 +139,20 @@ const seriesData: StoreModule = {
       state.zoomRange = rangeCategories.map((rangeCategory) =>
         rawCategories.findIndex((category) => category === rangeCategory)
       ) as RangeDataType<number>;
+      state.isZooming = true;
 
       this.notify(state, 'zoomRange');
+      this.notify(state, 'isZooming');
     },
     resetZoom({ state, initStoreState }) {
       const { series, options } = initStoreState;
       const { rawCategories } = state;
 
       state.zoomRange = initZoomRange(series, options, rawCategories);
+      state.isZooming = false;
 
       this.notify(state, 'zoomRange');
+      this.notify(state, 'isZooming');
     },
   },
   observe: {

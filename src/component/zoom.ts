@@ -3,8 +3,6 @@ import { ChartState, Options } from '@t/store/store';
 import { RectResponderModel, RectModel } from '@t/components/series';
 import { range } from '@src/helpers/utils';
 import { sortNumber } from '@src/helpers/utils';
-import { ResetButtonModel } from '@t/components/resetButton';
-import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 import { ZoomModels } from '@t/components/zoom';
 import { Point } from '@t/options';
 
@@ -15,10 +13,9 @@ interface RenderOptions {
 }
 
 const DRAG_MIN_WIDTH = 15;
-const RESET_BUTTON_MARGIN = 10;
 
 export default class Zoom extends Component {
-  models: ZoomModels = { selectionArea: [], resetButton: [] };
+  models: ZoomModels = { selectionArea: [] };
 
   responders!: RectResponderModel[];
 
@@ -36,20 +33,18 @@ export default class Zoom extends Component {
     if (!state.zoomRange) {
       return;
     }
+    this.resetSelectionArea();
 
     const { layout, axes, categories } = state;
 
     this.rect = layout.plot;
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
 
-    this.responders = [
-      ...this.makeRectResponderModel(categories!, {
-        pointOnColumn,
-        tickDistance,
-        tickCount,
-      }),
-      ...this.addResetButtonResponder(),
-    ];
+    this.responders = this.makeRectResponderModel(categories!, {
+      pointOnColumn,
+      tickDistance,
+      tickCount,
+    });
   }
 
   resetSelectionArea() {
@@ -57,48 +52,15 @@ export default class Zoom extends Component {
     this.dragStartPoint = null;
     this.models.selectionArea = [];
     this.isDragging = false;
-    this.eventBus.emit('needDraw');
   }
 
   onMousedown({ responders, mousePosition }) {
     if (responders.length) {
-      const pushResetButton = responders.some(
-        (responder) => responder.data!.name === 'resetButton'
-      );
-      const isZooming = !!this.models.resetButton.length;
-
-      if (pushResetButton && isZooming) {
-        this.resetZoomState();
-      } else {
-        this.dragStartPoint = responders.find(
-          (responder) => responder.data!.name === 'selectionArea'
-        )!;
-        this.dragStartPosition = mousePosition;
-      }
+      this.dragStartPoint = responders.find(
+        (responder) => responder.data!.name === 'selectionArea'
+      )!;
+      this.dragStartPosition = mousePosition;
     }
-  }
-
-  resetZoomState() {
-    this.resetSelectionArea();
-    this.models.resetButton = [];
-    this.store.dispatch('resetZoom');
-  }
-
-  addResetButtonResponder(): RectResponderModel[] {
-    return [
-      {
-        x: RESET_BUTTON_MARGIN,
-        y: RESET_BUTTON_MARGIN,
-        type: 'rect',
-        width: BUTTON_RECT_SIZE,
-        height: BUTTON_RECT_SIZE,
-        data: { name: 'resetButton' },
-      },
-    ];
-  }
-
-  renderResetButton(): ResetButtonModel[] {
-    return [{ type: 'resetButton', x: RESET_BUTTON_MARGIN, y: RESET_BUTTON_MARGIN }];
   }
 
   onMouseup({ responders }: { responders: RectResponderModel[] }) {
@@ -109,9 +71,6 @@ export default class Zoom extends Component {
 
       this.store.dispatch('zoom', dragRange);
       this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
-      if (!this.models.resetButton.length) {
-        this.models.resetButton = this.renderResetButton();
-      }
     }
     this.resetSelectionArea();
   }
