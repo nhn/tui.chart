@@ -160,7 +160,7 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
       iconType,
       checked,
       active,
-      color: color!,
+      color,
       showCheckbox,
       align,
     };

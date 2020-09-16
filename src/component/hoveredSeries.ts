@@ -22,21 +22,18 @@ export default class HoveredSeries extends Component {
 
   isShow = false;
 
-  getModelsOnly() {
-    const { guideLine, ...models } = this.models;
-
-    return models;
-  }
+  modelForGuideLine!: CircleResponderModel | BoxPlotResponderModel;
 
   getSeriesModels() {
-    return Object.values(this.getModelsOnly()).flatMap((val) => val);
+    const { guideLine, ...models } = this.models;
+
+    return Object.values(models).flatMap((val) => val);
   }
 
-  hasGuideLine(name: TooltipModelName) {
-    const model = this.getModelForGuideLine(name);
+  hasGuideLine() {
     const [rectModel] = this.getSeriesModels().filter(({ type }) => type === 'rect');
 
-    return !isUndefined(model) && isUndefined(rectModel);
+    return !isUndefined(this.modelForGuideLine) && isUndefined(rectModel);
   }
 
   getModelForGuideLine(name: TooltipModelName) {
@@ -52,8 +49,9 @@ export default class HoveredSeries extends Component {
     name: TooltipModelName;
     eventDetectType?: LineTypeEventDetectType | BoxTypeEventDetectType;
   }) => {
-    this.models[name] = models?.length ? [...models] : [];
+    this.models[name] = [...models];
     this.isShow = !!this.getSeriesModels().length;
+    this.modelForGuideLine = this.getModelForGuideLine(name);
 
     if (eventDetectType === 'grouped') {
       this.renderGroupedModels(name);
@@ -62,9 +60,8 @@ export default class HoveredSeries extends Component {
 
   private renderGroupedModels(name: TooltipModelName) {
     if (includes(Object.keys(guideLineType), name)) {
-      if (this.isShow && this.hasGuideLine(name)) {
-        const model = this.getModelForGuideLine(name);
-        this.models.guideLine = [this.renderGuideLineModel(model)];
+      if (this.isShow && this.hasGuideLine()) {
+        this.models.guideLine = [this.renderGuideLineModel(this.modelForGuideLine)];
       } else {
         this.models.guideLine = [];
       }

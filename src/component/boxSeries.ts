@@ -64,6 +64,11 @@ const BOX = {
   COLUMN: 'column',
 };
 
+const groupRectOpacity = {
+  HOVERED: 0.05,
+  SELECTED: 0.2,
+};
+
 export function isLeftBottomSide(seriesIndex: number) {
   return !!(seriesIndex % 2);
 }
@@ -440,7 +445,9 @@ export default class BoxSeries extends Component {
     return rectModels.length
       ? responders.map((m) => ({
           ...m,
-          color: `rgba(0, 0, 0, ${selected ? 0.2 : 0.05})`,
+          color: `rgba(0, 0, 0, ${
+            selected ? groupRectOpacity.SELECTED : groupRectOpacity.HOVERED
+          })`,
         }))
       : [];
   }

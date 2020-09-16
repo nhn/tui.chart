@@ -484,7 +484,7 @@ export default class AreaSeries extends Component {
     const index = responders[0].index!;
     // @TODO: getLinePointsModel 에서 isModelExistingInRect 제거 시 해당 코드로 수정 필요
     // const index = responders[0].index! + this.startIndex;
-    const models = this.tooltipCircleMap[index];
+    const models = this.tooltipCircleMap[index] ?? [];
 
     return this.eventDetectType === 'grouped'
       ? models

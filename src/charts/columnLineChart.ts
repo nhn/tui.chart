@@ -1,5 +1,5 @@
 import Chart from './chart';
-import { ColumnLineData, ColumnLineChartOptions } from '@t/options';
+import { ColumnLineData, ColumnLineChartOptions, Point } from '@t/options';
 import { RawSeries } from '@t/store/store';
 import stackSeriesData from '@src/store/stackSeriesData';
 import dataLabels from '@src/store/dataLabels';
@@ -29,10 +29,26 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 
+import { isExist } from '@src/helpers/utils';
+import { RespondersModel } from '@t/components/series';
+
 interface ColumnLineChartProps {
   el: Element;
   options: ColumnLineChartOptions;
   data: ColumnLineData;
+}
+
+function hasPointEventType(respondersModel: RespondersModel, name: string) {
+  return respondersModel.find(
+    ({ component }) =>
+      component.name === name && (component as BoxSeries | LineSeries).eventDetectType === 'point'
+  );
+}
+function hasColumnLineUsingPointEventType(respondersModel: RespondersModel) {
+  return (
+    isExist(hasPointEventType(respondersModel, 'column')) &&
+    isExist(hasPointEventType(respondersModel, 'line'))
+  );
 }
 
 export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
@@ -75,5 +91,17 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
       dataLabelBrush,
       lineSeriesBrush,
     ]);
+  }
+
+  handleEventForAllResponders(
+    responderModels: RespondersModel,
+    delegationMethod: string,
+    mousePosition: Point
+  ) {
+    if (hasColumnLineUsingPointEventType(responderModels)) {
+      const columnSeries = responderModels.find(({ component }) => component.name === 'column')!;
+
+      columnSeries.component[delegationMethod]({ mousePosition, responders: [] }, event);
+    }
   }
 }

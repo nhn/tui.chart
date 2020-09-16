@@ -160,7 +160,7 @@ export default class LineSeries extends Component {
     seriesCircleModel: CircleModel[],
     tooltipDataArr: TooltipData[]
   ): ResponderTypes {
-    let res: ResponderTypes = [];
+    let res: ResponderTypes;
 
     if (this.eventDetectType === 'near') {
       res = this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr);
@@ -286,7 +286,7 @@ export default class LineSeries extends Component {
       return [];
     }
     const index = responders[0].index! + this.startIndex;
-    const models = this.tooltipCircleMap[index];
+    const models = this.tooltipCircleMap[index] ?? [];
 
     return this.eventDetectType === 'grouped'
       ? models

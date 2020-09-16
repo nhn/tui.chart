@@ -8,33 +8,14 @@ import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce, isBoolean, isNumber, isExist, isUndefined } from '@src/helpers/utils';
-import { ChartProps } from '@t/options';
+import { debounce, isBoolean, isNumber, isUndefined } from '@src/helpers/utils';
+import { ChartProps, Point } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
-import { ResponderModel } from '@t/components/series';
-import BoxSeries from '@src/component/boxSeries';
-import LineSeries from '@src/component/lineSeries';
+import { RespondersModel } from '@t/components/series';
+
 export const DEFAULT_ANIM_DURATION = 1000;
-
-type ResponderModelTypes = {
-  component: Component;
-  detected: ResponderModel[];
-}[];
-
-function hasPointEventType(responderModels: ResponderModelTypes, name: string) {
-  return responderModels.find(
-    ({ component }) =>
-      component.name === name && (component as BoxSeries | LineSeries).eventDetectType === 'point'
-  );
-}
-function hasColumnLineUsingPointEventType(responderModels: ResponderModelTypes) {
-  return (
-    isExist(hasPointEventType(responderModels, 'column')) &&
-    isExist(hasPointEventType(responderModels, 'line'))
-  );
-}
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -168,7 +149,7 @@ export default abstract class Chart<T extends Options> {
       this.enteredComponents = newEnteredComponents;
     }
 
-    const responderModels: ResponderModelTypes = [];
+    const allResponders: RespondersModel = [];
     this.componentManager.forEach((component) => {
       if (!component[delegationMethod]) {
         return;
@@ -183,16 +164,14 @@ export default abstract class Chart<T extends Options> {
       });
 
       if (detected.length) {
-        responderModels.push({ component, detected });
+        allResponders.push({ component, detected });
       }
 
       component[delegationMethod]({ mousePosition, responders: detected }, event);
     });
 
-    if (hasColumnLineUsingPointEventType(responderModels)) {
-      const columnSeries = responderModels.find(({ component }) => component.name === 'column')!;
-
-      columnSeries.component[delegationMethod]({ mousePosition, responders: [] }, event);
+    if (this.handleEventForAllResponders) {
+      this.handleEventForAllResponders(allResponders, delegationMethod, mousePosition);
     }
   }
 
@@ -228,4 +207,10 @@ export default abstract class Chart<T extends Options> {
   initUpdate(delta: number) {
     this.componentManager.invoke('initUpdate', delta);
   }
+
+  handleEventForAllResponders?(
+    responderModels: RespondersModel,
+    delegationMethod: string,
+    mousePosition: Point
+  ): void;
 }
