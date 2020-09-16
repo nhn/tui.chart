@@ -10,7 +10,7 @@ import {
   LEGEND_ITEM_HEIGHT,
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
-import { isVerticalAlign } from '@src/store/layout';
+import { isVerticalAlign, padding } from '@src/store/layout';
 import { sum } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
 
@@ -71,7 +71,6 @@ export default class Legend extends Component {
 
   renderLegendModel(legend: LegendType, theme: Theme): LegendModel[] {
     const defaultX = 0;
-    const defaultY = 20;
     const { iconType, data, showCheckbox, align } = legend;
     const { colors } = theme.series;
     const verticalAlign = isVerticalAlign(align);
@@ -90,7 +89,7 @@ export default class Legend extends Component {
             ...datum,
             color: colors[idx],
             x: verticalAlign ? defaultX + xOffset : defaultX,
-            y: verticalAlign ? defaultY : defaultY + LEGEND_ITEM_HEIGHT * idx,
+            y: verticalAlign ? padding.Y : padding.Y + LEGEND_ITEM_HEIGHT * idx,
           };
         }),
       },

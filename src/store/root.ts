@@ -21,6 +21,8 @@ const root: StoreModule = {
           '#29dbe3',
           '#dddddd',
         ],
+        startColor: '#FFE98A',
+        endColor: '#D74177',
       },
     },
   }),

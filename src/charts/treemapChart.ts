@@ -1,5 +1,6 @@
 import Chart from './chart';
 
+import treemapScale from '@src/store/treemapScale';
 import dataLabels from '@src/store/dataLabels';
 import treemapSeriesData from '@src/store/treemapSeriesData';
 
@@ -9,12 +10,14 @@ import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import TreemapSeries from '@src/component/treemapSeries';
+import SpectrumLegend from '@src/component/spectrumLegend';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
+import * as spectrumLegendBrush from '@src/brushes/spectrumLegend';
 
 import { TreemapChartOptions, TreemapSeriesData, TreemapSeriesType } from '@t/options';
 
@@ -25,7 +28,7 @@ interface TreemapChartProps {
 }
 
 export default class TreemapChart extends Chart<TreemapChartOptions> {
-  modules = [treemapSeriesData, dataLabels];
+  modules = [treemapSeriesData, treemapScale, dataLabels];
 
   constructor(props: TreemapChartProps) {
     super({
@@ -41,12 +44,20 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
     super.initialize();
 
     this.componentManager.add(Title);
+    this.componentManager.add(SpectrumLegend);
     this.componentManager.add(TreemapSeries);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
-    this.painter.addGroups([basicBrush, legendBrush, labelBrush, exportMenuBrush, dataLabelBrush]);
+    this.painter.addGroups([
+      basicBrush,
+      legendBrush,
+      labelBrush,
+      exportMenuBrush,
+      dataLabelBrush,
+      spectrumLegendBrush,
+    ]);
   }
 }

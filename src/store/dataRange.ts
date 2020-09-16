@@ -11,7 +11,7 @@ type SeriesDataRange = {
   [key in keyof ChartSeriesMap]: DataRange;
 };
 
-function getLimitSafely(baseValues: number[]): ValueEdge {
+export function getLimitSafely(baseValues: number[]): ValueEdge {
   const limit = {
     min: Math.min(...baseValues),
     max: Math.max(...baseValues),
