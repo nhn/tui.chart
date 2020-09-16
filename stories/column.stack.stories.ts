@@ -219,7 +219,7 @@ export const eventDetectType = () => {
       stack: {
         type: 'normal',
       },
-      eventDetectType: 'grouped',
+      eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'grouped'),
     },
   });
 

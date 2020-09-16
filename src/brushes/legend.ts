@@ -152,10 +152,10 @@ function drawLabel(
 }
 
 export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
-  const { data, iconType, showCheckbox, align } = model;
+  const { data, showCheckbox, align } = model;
 
   data.forEach((datum) => {
-    const { x, y, checked, active, color } = datum;
+    const { x, y, checked, active, color, iconType } = datum;
     const renderOptions: RenderOptions = {
       iconType,
       checked,

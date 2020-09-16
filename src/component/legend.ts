@@ -72,7 +72,7 @@ export default class Legend extends Component {
   renderLegendModel(legend: LegendType, theme: Theme): LegendModel[] {
     const defaultX = 0;
     const defaultY = 20;
-    const { iconType, data, showCheckbox, align } = legend;
+    const { data, showCheckbox, align } = legend;
     const { colors } = theme.series;
     const verticalAlign = isVerticalAlign(align);
     const legendWidths = data.map(({ width }) => width);
@@ -80,7 +80,6 @@ export default class Legend extends Component {
     return [
       {
         type: 'legend',
-        iconType,
         align,
         showCheckbox,
         data: data.map((datum, idx) => {

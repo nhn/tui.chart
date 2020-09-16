@@ -64,6 +64,11 @@ const BOX = {
   COLUMN: 'column',
 };
 
+const groupRectOpacity = {
+  HOVERED: 0.05,
+  SELECTED: 0.2,
+};
+
 export function isLeftBottomSide(seriesIndex: number) {
   return !!(seriesIndex % 2);
 }
@@ -119,7 +124,7 @@ export default class BoxSeries extends Component {
 
   offsetKey = 'x';
 
-  eventType: BoxTypeEventDetectType = 'nearest';
+  eventDetectType: BoxTypeEventDetectType = 'point';
 
   tooltipRectMap!: RectResponderModel[][];
 
@@ -211,13 +216,13 @@ export default class BoxSeries extends Component {
     });
   }
 
-  protected setEventType(series: Series, options?: BarChartOptions | ColumnChartOptions) {
+  protected setEventDetectType(series: Series, options?: BarChartOptions | ColumnChartOptions) {
     if (series.line) {
-      this.eventType = 'grouped';
+      this.eventDetectType = 'grouped';
     }
 
     if (options?.series?.eventDetectType) {
-      this.eventType = options.series.eventDetectType;
+      this.eventDetectType = options.series.eventDetectType;
     }
   }
 
@@ -246,7 +251,7 @@ export default class BoxSeries extends Component {
     }
 
     const options = this.getOptions(chartState.options);
-    this.setEventType(series, options);
+    this.setEventDetectType(series, options);
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
@@ -319,7 +324,7 @@ export default class BoxSeries extends Component {
     this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
 
     this.responders =
-      this.eventType === 'grouped'
+      this.eventDetectType === 'grouped'
         ? makeRectResponderModel(this.rect, axes.xAxis!)
         : hoveredSeries.map((m, index) => ({
             ...m,
@@ -434,33 +439,39 @@ export default class BoxSeries extends Component {
     return this.tooltipRectMap[responders[0].index!] ?? [];
   }
 
-  protected getGroupedHoverRect(responders: RectResponderModel[]) {
-    return responders.map((m) => ({
-      ...m,
-      color: 'rgba(0, 0, 0, 0.1)',
-    }));
+  protected getGroupedRect(responders: RectResponderModel[], selected = false) {
+    const rectModels = this.getRectModelsFromRectResponders(responders);
+
+    return rectModels.length
+      ? responders.map((m) => ({
+          ...m,
+          color: `rgba(0, 0, 0, ${
+            selected ? groupRectOpacity.SELECTED : groupRectOpacity.HOVERED
+          })`,
+        }))
+      : [];
   }
 
   onMousemoveGroupedType(responders: RectResponderModel[]) {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: rectModels.length ? [...this.getGroupedHoverRect(responders)] : [],
+      models: this.getGroupedRect(responders),
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
 
     this.activatedResponders = rectModels;
   }
 
   onMousemove({ responders }: { responders: RectModel[] }) {
-    if (this.eventType === 'grouped') {
+    if (this.eventDetectType === 'grouped') {
       this.onMousemoveGroupedType(responders as RectResponderModel[]);
     } else {
       this.eventBus.emit('renderHoveredSeries', {
         models: responders,
         name: this.name,
-        eventType: this.eventType,
+        eventDetectType: this.eventDetectType,
       });
       this.activatedResponders = responders;
     }
@@ -706,9 +717,10 @@ export default class BoxSeries extends Component {
 
   onClick({ responders }: MouseEventType) {
     if (this.selectable) {
-      if (this.eventType === 'grouped') {
-        this.drawModels.selectedSeries = this.getRectModelsFromRectResponders(
-          responders as RectResponderModel[]
+      if (this.eventDetectType === 'grouped') {
+        this.drawModels.selectedSeries = this.getGroupedRect(
+          responders as RectResponderModel[],
+          true
         );
       } else {
         this.drawModels.selectedSeries = responders as RectResponderModel[];
@@ -723,7 +735,7 @@ export default class BoxSeries extends Component {
     this.eventBus.emit('renderHoveredSeries', {
       models: [],
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
 
     this.eventBus.emit('needDraw');

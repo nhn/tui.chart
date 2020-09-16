@@ -24,6 +24,7 @@ import {
   BulletSeriesType,
   BulletChartOptions,
   LineScatterChartOptions,
+  ColumnLineChartOptions,
   PlotLine,
   PlotBand,
   BoxPlotChartOptions,
@@ -33,6 +34,7 @@ import {
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
+import { LegendData } from '@t/components/legend';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -78,6 +80,7 @@ export type ChartOptionsMap = {
   boxPlot: BoxPlotChartOptions;
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
+  columnLine: ColumnLineChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -164,16 +167,10 @@ export type LegendIconType = 'rect' | 'circle' | 'spectrum' | 'line';
 
 export interface Legend {
   visible: boolean;
-  iconType: LegendIconType;
   showCheckbox: boolean;
   align: Align;
   width: number;
-  data: {
-    label: string;
-    active: boolean;
-    checked: boolean;
-    width: number;
-  }[];
+  data: Array<Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType'> & { width: number }>;
 }
 
 export interface CircleLegend {

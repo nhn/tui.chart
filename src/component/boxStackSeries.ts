@@ -95,7 +95,7 @@ export default class BoxStackSeries extends BoxSeries {
 
     const options = this.getOptions(chartState.options);
 
-    this.setEventType(seriesData, options);
+    this.setEventDetectType(seriesData, options);
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
@@ -173,7 +173,7 @@ export default class BoxStackSeries extends BoxSeries {
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
 
     this.responders =
-      this.eventType === 'grouped'
+      this.eventDetectType === 'grouped'
         ? makeRectResponderModel(this.rect, this.isBar ? axes.yAxis! : axes.xAxis!, !this.isBar)
         : hoveredSeries.map((m, index) => ({
             ...m,
@@ -716,9 +716,9 @@ export default class BoxStackSeries extends BoxSeries {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: [...rectModels, ...this.getGroupedHoverRect(responders)],
+      models: [...rectModels, ...this.getGroupedRect(responders)],
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
 
     this.activatedResponders = rectModels;

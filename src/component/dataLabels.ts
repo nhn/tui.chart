@@ -60,15 +60,10 @@ export default class DataLabels extends Component {
         return this.makeLabelModel(data, options);
       })
       .reduce<DataLabelModels>(
-        (acc, cur) => {
-          const { series: accSeries, total: accTotal } = acc;
-          const { series, total } = cur;
-
-          return {
-            series: [...accSeries, ...series],
-            total: [...accTotal, ...total],
-          };
-        },
+        (acc, cur) => ({
+          series: [...acc.series, ...cur.series],
+          total: [...acc.total, ...cur.total],
+        }),
         { series: [], total: [] }
       );
   }
