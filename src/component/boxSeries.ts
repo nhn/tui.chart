@@ -434,18 +434,22 @@ export default class BoxSeries extends Component {
     return this.tooltipRectMap[responders[0].index!] ?? [];
   }
 
-  protected getGroupedHoverRect(responders: RectResponderModel[]) {
-    return responders.map((m) => ({
-      ...m,
-      color: 'rgba(0, 0, 0, 0.1)',
-    }));
+  protected getGroupedRect(responders: RectResponderModel[], selected = false) {
+    const rectModels = this.getRectModelsFromRectResponders(responders);
+
+    return rectModels.length
+      ? responders.map((m) => ({
+          ...m,
+          color: `rgba(0, 0, 0, ${selected ? 0.2 : 0.05})`,
+        }))
+      : [];
   }
 
   onMousemoveGroupedType(responders: RectResponderModel[]) {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: rectModels.length ? [...this.getGroupedHoverRect(responders)] : [],
+      models: this.getGroupedRect(responders),
       name: this.name,
       eventType: this.eventType,
     });
@@ -707,8 +711,9 @@ export default class BoxSeries extends Component {
   onClick({ responders }: MouseEventType) {
     if (this.selectable) {
       if (this.eventType === 'grouped') {
-        this.drawModels.selectedSeries = this.getRectModelsFromRectResponders(
-          responders as RectResponderModel[]
+        this.drawModels.selectedSeries = this.getGroupedRect(
+          responders as RectResponderModel[],
+          true
         );
       } else {
         this.drawModels.selectedSeries = responders as RectResponderModel[];

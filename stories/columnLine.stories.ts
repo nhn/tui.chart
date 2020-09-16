@@ -39,10 +39,21 @@ export const basic = () => {
   return el;
 };
 
-export const selectable = () => {
+export const selectableGrouped = () => {
   const { el } = createChart(temperatureAverageData, {
     series: {
       selectable: true,
+    },
+  });
+
+  return el;
+};
+
+export const selectablePoint = () => {
+  const { el } = createChart(temperatureAverageData, {
+    series: {
+      selectable: true,
+      eventDetectType: 'point',
     },
   });
 

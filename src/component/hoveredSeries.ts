@@ -11,6 +11,12 @@ export type HoveredSeriesModel = { [key in TooltipModelName]: ResponderModel[] }
   guideLine: LineModel[];
 };
 
+const guideLineType = {
+  line: 'circle',
+  area: 'circle',
+  boxPlot: 'boxPlot',
+};
+
 export default class HoveredSeries extends Component {
   models: HoveredSeriesModel = { guideLine: [] as LineModel[] } as HoveredSeriesModel;
 
@@ -24,6 +30,17 @@ export default class HoveredSeries extends Component {
 
   getSeriesModels() {
     return Object.values(this.getModelsOnly()).flatMap((val) => val);
+  }
+
+  hasGuideLine(name: TooltipModelName) {
+    const model = this.getModelForGuideLine(name);
+    const [rectModel] = this.getSeriesModels().filter(({ type }) => type === 'rect');
+
+    return !isUndefined(model) && isUndefined(rectModel);
+  }
+
+  getModelForGuideLine(name: TooltipModelName) {
+    return this.getSeriesModels().filter(({ type }) => type === guideLineType[name])[0];
   }
 
   renderHoveredSeries = ({
@@ -40,42 +57,16 @@ export default class HoveredSeries extends Component {
 
     if (eventType === 'grouped') {
       this.renderGroupedModels(name);
-    } else if (eventType === 'point') {
-      this.renderPointModels(name);
     }
   };
 
   private renderGroupedModels(name: TooltipModelName) {
-    if (includes(['line', 'area', 'boxPlot'], name)) {
-      if (this.isShow) {
-        const model = this.getSeriesModels().filter(({ type }) =>
-          includes(['circle', 'boxPlot'], type)
-        )[0];
-
-        if (!isUndefined(model)) {
-          this.models.guideLine = [this.renderGuideLineModel(model)];
-        }
+    if (includes(Object.keys(guideLineType), name)) {
+      if (this.isShow && this.hasGuideLine(name)) {
+        const model = this.getModelForGuideLine(name);
+        this.models.guideLine = [this.renderGuideLineModel(model)];
       } else {
         this.models.guideLine = [];
-      }
-    }
-  }
-
-  private renderPointModels(name: TooltipModelName) {
-    if (name === 'line' || name === 'column') {
-      const models = this.getSeriesModels();
-
-      if (models.length < 2) {
-        return;
-      }
-
-      const modelKeys = Object.keys(this.getModelsOnly());
-      const includeLineAndColumn = ['line', 'column'].every((modelName) =>
-        includes(modelKeys, modelName)
-      );
-
-      if (includeLineAndColumn) {
-        this.models.column = [];
       }
     }
   }
