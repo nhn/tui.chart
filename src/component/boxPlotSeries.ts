@@ -43,7 +43,7 @@ export default class BoxPlotSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  eventDetectType: BoxTypeEventDetectType = 'grouped';
+  eventDetectType: BoxTypeEventDetectType = 'point';
 
   tooltipRectMap!: TooltipRectMap;
 
