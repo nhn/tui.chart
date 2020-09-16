@@ -79,7 +79,7 @@ export const basicWithEventDetectType = () => {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
     series: {
       eventDetectType: radios(
-        'eventType',
+        'eventDetectType',
         { near: 'near', nearest: 'nearest', grouped: 'grouped' },
         'nearest'
       ),

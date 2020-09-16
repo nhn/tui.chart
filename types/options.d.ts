@@ -17,8 +17,8 @@ export type DatetimePoint = ObjectTypeDatetimePoint | TupleTypeDatetimePoint;
 export type BubblePoint = (Point | ObjectTypeDatetimePoint) & { r: number };
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
-export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped';
-export type BoxTypeEventDetectType = 'nearest' | 'grouped';
+export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped' | 'point';
+export type BoxTypeEventDetectType = 'grouped' | 'point';
 
 export type BezierPoint = {
   controlPoint?: {
@@ -239,11 +239,11 @@ interface CircleLegendOptions {
 
 interface BaseSeriesOptions {
   selectable?: boolean;
-  dataLabels?: DataLabels;
+  dataLabels?: DataLabelOptions;
 }
 
 interface BoxPlotSeriesOptions extends BaseSeriesOptions {
-  eventDetectType: BoxTypeEventDetectType;
+  eventDetectType?: BoxTypeEventDetectType;
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {
@@ -286,11 +286,12 @@ export interface LineScatterChartOptions extends BaseOptions {
 
 export interface LineAreaChartOptions extends BaseOptions {
   series?: LineAreaChartSeriesOptions;
+  plot?: LineTypePlotOptions;
 }
 
 type LineAreaChartSeriesOptions = {
-  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'>;
-  area?: Pick<AreaSeriesOptions, 'lineWidth' | 'stack' | 'spline' | 'showDot'>;
+  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'> & BaseSeriesOptions;
+  area?: Pick<AreaSeriesOptions, 'lineWidth' | 'stack' | 'spline' | 'showDot'> & BaseSeriesOptions;
   zoomable?: boolean;
   showDot?: boolean;
   lineWidth?: number;
@@ -336,7 +337,7 @@ interface StackInfo {
 }
 
 type StackOptionType = boolean | StackInfo;
-interface BoxSeriesOptions extends BaseSeriesOptions {
+export interface BoxSeriesOptions extends BaseSeriesOptions {
   barWidth?: number;
   diverging?: boolean;
   colorByPoint?: boolean;
@@ -450,7 +451,7 @@ export type DataLabelPieSeriesName = {
   style?: DataLabelStyle;
 };
 
-export interface DataLabels {
+export type DataLabelOptions = {
   visible?: boolean;
   anchor?: DataLabelAnchor;
   offsetX?: number;
@@ -460,9 +461,9 @@ export interface DataLabels {
   // @TODO: 각각 차트에 맞게 분리해서 해야하지 않나
   stackTotal?: SubDataLabel;
   pieSeriesName?: DataLabelPieSeriesName;
-}
+};
 
-export interface TreemapDataLabels extends DataLabels {
+export interface TreemapDataLabels extends DataLabelOptions {
   useTreemapLeaf?: boolean;
 }
 
@@ -486,3 +487,21 @@ export type BulletSeriesData = {
 export interface BulletSeriesOptions extends BaseSeriesOptions {
   vertical?: boolean;
 }
+
+type ColumnLineChartSeriesOptions = {
+  column?: Pick<BoxSeriesOptions, 'barWidth' | 'stack'>;
+  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'>;
+} & BaseSeriesOptions;
+
+export interface ColumnLineChartOptions extends BaseOptions {
+  series?: ColumnLineChartSeriesOptions;
+  plot?: LineTypePlotOptions;
+}
+
+export type ColumnLineData = {
+  categories: string[];
+  series: {
+    column: Pick<BoxSeriesType<BoxSeriesDataType>, 'name' | 'data'>[];
+    line: Pick<LineSeriesType, 'name' | 'data'>[];
+  };
+};

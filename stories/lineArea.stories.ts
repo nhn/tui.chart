@@ -63,9 +63,11 @@ export const basicWithOptions = () => {
     series: {
       line: {
         spline: true,
+        dataLabels: { visible: true },
       },
       area: {
         showDot: true,
+        dataLabels: { visible: false },
       },
       zoomable: true,
       selectable: true,

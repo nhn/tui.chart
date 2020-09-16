@@ -6,6 +6,7 @@ import {
   TooltipTitleValues,
   TooltipDataValue,
   TooltipModelName,
+  TooltipData,
 } from '@t/components/tooltip';
 import { getValueString, getSeriesNameTpl, getTitleValueTpl } from '@src/helpers/tooltip';
 import { isNumber } from '@src/helpers/utils';
@@ -31,7 +32,7 @@ export default class Tooltip extends Component {
   tooltipInfoModels: TooltipInfoModels = {} as TooltipInfoModels;
 
   onSeriesPointHovered = ({ models, name }: { models: TooltipInfo[]; name: TooltipModelName }) => {
-    this.tooltipInfoModels[name] = [...models];
+    this.tooltipInfoModels[name] = models?.length ? [...models] : [];
     const isShow = !!this.getTooltipInfoModels().length;
     if (isShow) {
       this.renderTooltip();
@@ -206,8 +207,22 @@ export default class Tooltip extends Component {
   }
 
   getBoxPlotTemplate({ data }: TooltipModel) {
+    const groupedData = data.reduce<TooltipData>((acc, item, index) => {
+      if (!index) {
+        acc = item;
+
+        return acc;
+      }
+
+      if (acc.category === item.category && acc.label === item.label) {
+        acc.value = [...acc.value, ...item.value] as TooltipTitleValues;
+      }
+
+      return acc;
+    }, {} as TooltipData);
+
     return `<div class="tooltip-series-wrapper">
-    ${data
+    ${[groupedData]
       .map(
         ({ label, color, value: values }) =>
           `<div class="tooltip-series">

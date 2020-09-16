@@ -7,6 +7,7 @@ import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/op
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
 import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
 import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { getDataLabelsOptions } from '@src/store/dataLabels';
 
 type RenderOptions = {
   ratio: number;
@@ -70,7 +71,7 @@ export default class BulletSeries extends Component {
   }
 
   render(state: ChartState<BulletChartOptions>): void {
-    const { layout, axes, series, scale, legend, options, dataLabels } = state;
+    const { layout, axes, series, scale, legend, options } = state;
 
     if (!series.bullet) {
       throw new Error("There's no bullet data!");
@@ -140,22 +141,26 @@ export default class BulletSeries extends Component {
       };
     });
 
-    if (dataLabels?.visible) {
-      this.store.dispatch(
-        'appendDataLabels',
-        seriesModels
-          .filter(({ modelType }) => modelType !== 'range')
-          .map((m) => ({
-            ...m,
-            direction: vertical ? 'top' : 'right',
-            plot: {
-              x: 0,
-              y: 0,
-              size: valueSizeKey,
-            },
-          }))
-      );
+    if (getDataLabelsOptions(options, this.name).visible) {
+      this.store.dispatch('appendDataLabels', {
+        data: this.getDataLabels(seriesModels, vertical, valueSizeKey),
+        name: this.name,
+      });
     }
+  }
+
+  private getDataLabels(seriesModels: BulletModel[], vertical: boolean, valueSizeKey: string) {
+    return seriesModels
+      .filter(({ modelType }) => modelType !== 'range')
+      .map((m) => ({
+        ...m,
+        direction: vertical ? 'top' : 'right',
+        plot: {
+          x: 0,
+          y: 0,
+          size: valueSizeKey,
+        },
+      }));
   }
 
   onMousemove({ responders }) {

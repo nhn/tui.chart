@@ -9,10 +9,11 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined } from '@src/helpers/utils';
-import { ChartProps } from '@t/options';
+import { ChartProps, Point } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
+import { RespondersModel } from '@t/components/series';
 
 export const DEFAULT_ANIM_DURATION = 1000;
 
@@ -148,6 +149,7 @@ export default abstract class Chart<T extends Options> {
       this.enteredComponents = newEnteredComponents;
     }
 
+    const allResponders: RespondersModel = [];
     this.componentManager.forEach((component) => {
       if (!component[delegationMethod]) {
         return;
@@ -161,8 +163,16 @@ export default abstract class Chart<T extends Options> {
         return responderDetectors[m.type](mousePosition, m, component.rect);
       });
 
+      if (detected.length) {
+        allResponders.push({ component, detected });
+      }
+
       component[delegationMethod]({ mousePosition, responders: detected }, event);
     });
+
+    if (this.handleEventForAllResponders) {
+      this.handleEventForAllResponders(allResponders, delegationMethod, mousePosition);
+    }
   }
 
   protected initStore(defaultModules: StoreModule[]) {
@@ -197,4 +207,10 @@ export default abstract class Chart<T extends Options> {
   initUpdate(delta: number) {
     this.componentManager.invoke('initUpdate', delta);
   }
+
+  handleEventForAllResponders?(
+    responderModels: RespondersModel,
+    delegationMethod: string,
+    mousePosition: Point
+  ): void;
 }

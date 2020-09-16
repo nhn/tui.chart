@@ -10,7 +10,7 @@ export function isRangeValue<T>(value: unknown): value is RangeDataType<T> {
 }
 
 export function isRangeData(data?: BoxSeriesDataType[]) {
-  return isRangeValue(getFirstValidValue(data));
+  return Array.isArray(data) && isRangeValue(getFirstValidValue(data));
 }
 
 export function isZooming(categories: string[], zoomRange?: RangeDataType<number>) {

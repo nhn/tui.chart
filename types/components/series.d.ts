@@ -5,11 +5,19 @@ import { LineModel, LabelModel } from '@t/components/axis';
 import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
 import { LegendData } from '@t/components/legend';
 import { TreemapSeriesData } from '@t/store/store';
+import Component from '@src/component/component';
 import { SpectrumLegendModel, SpectrumLegendTooltipModel } from '@t/components/spectrumLegend';
+
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
 export type PointModel = Point & { value?: number; name?: string };
+
+export type RespondersModel = {
+  component: Component;
+  detected: ResponderModel[];
+}[];
+
 export interface CircleStyle {
   strokeStyle?: string;
   lineWidth?: number;
@@ -87,6 +95,7 @@ export type RectModel = {
   thickness?: number;
   value?: BoxSeriesDataType;
   name?: string;
+  index?: number;
 } & Rect;
 
 export type TreemapRectModel = {
@@ -122,6 +131,7 @@ export type BoxSeriesModels = {
   series: RectModel[];
   connector?: LineModel[];
   label?: LabelModel[];
+  selectedSeries: RectResponderModel[];
 };
 
 export type CircleSeriesModels = {
@@ -184,10 +194,14 @@ export type RadarSeriesModels = {
 };
 
 export type BoxPlotSeriesModel = RectModel | LineModel | CircleModel;
+export type BoxPlotResponderTypes =
+  | BoxPlotResponderModel
+  | CircleResponderModel
+  | RectResponderModel;
 
 export type BoxPlotSeriesModels = {
   series: BoxPlotSeriesModel[];
-  selectedSeries: BoxPlotSeriesModel[];
+  selectedSeries: BoxPlotResponderTypes[];
 };
 
 export type LineResponderModel = {
@@ -205,6 +219,7 @@ export type BoxPlotModel = {
   whisker: LineResponderModel;
   minimum: LineResponderModel;
   maximum: LineResponderModel;
+  index?: number;
 };
 
 export type BoxPlotResponderModel = {
@@ -224,3 +239,8 @@ export type BulletSeriesModels = {
   series: BulletModel[];
   selectedSeries: BulletResponderModel[];
 };
+
+export interface MouseEventType {
+  responders: CircleResponderModel[] | RectResponderModel[];
+  mousePosition: Point;
+}

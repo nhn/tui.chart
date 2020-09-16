@@ -24,14 +24,17 @@ import {
   BulletSeriesType,
   BulletChartOptions,
   LineScatterChartOptions,
+  ColumnLineChartOptions,
   PlotLine,
   PlotBand,
   BoxPlotChartOptions,
   PieChartOptions,
+  DataLabelOptions,
   TreemapSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
+import { LegendData } from '@t/components/legend';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -77,6 +80,7 @@ export type ChartOptionsMap = {
   boxPlot: BoxPlotChartOptions;
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
+  columnLine: ColumnLineChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -167,16 +171,10 @@ export type LegendIconType = 'rect' | 'circle' | 'spectrum' | 'line';
 
 export interface Legend {
   visible: boolean;
-  iconType: LegendIconType;
   showCheckbox: boolean;
   align: Align;
   width: number;
-  data: {
-    label: string;
-    active: boolean;
-    checked: boolean;
-    width: number;
-  }[];
+  data: Array<Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType'> & { width: number }>;
   useSpectrumLegend: boolean;
 }
 
@@ -200,6 +198,8 @@ export type RadialAxisData = {
   centerX: number;
   centerY: number;
 };
+
+export type DataLabelSeriesType = 'area' | 'line' | 'bar' | 'column' | 'bullet' | 'pie';
 
 export interface TreemapSeriesData {
   id: string;
@@ -241,11 +241,17 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
-  dataLabels: {
-    visible: boolean;
-    data: DataLabel[];
-  };
+  dataLabels: DataLabels;
 }
+
+export type DataLabels = {
+  [key in DataLabelSeriesType]?: DataLabelData;
+};
+
+type DataLabelData = {
+  data: DataLabel[];
+  options: DataLabelOptions;
+};
 
 export type StackTotal = {
   positive: number;

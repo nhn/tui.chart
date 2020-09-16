@@ -15,25 +15,27 @@ describe('DataLabels', () => {
     dataLabels.render({
       layout: { plot: { x: 10, y: 10, width: 80, height: 80 } },
       dataLabels: {
-        visible: true,
-        data: [
-          {
-            type: 'point',
-            text: '4000',
-            textAlign: 'left' as CanvasTextAlign,
-            textBaseline: 'middle' as CanvasTextBaseline,
-            x: 20,
-            y: 20,
-          },
-          {
-            type: 'point',
-            text: '7000',
-            textAlign: 'right' as CanvasTextAlign,
-            textBaseline: 'bottom' as CanvasTextBaseline,
-            x: 40,
-            y: 35,
-          },
-        ],
+        line: {
+          data: [
+            {
+              type: 'point',
+              text: '4000',
+              textAlign: 'left',
+              textBaseline: 'middle',
+              x: 20,
+              y: 20,
+            },
+            {
+              type: 'point',
+              text: '7000',
+              textAlign: 'right',
+              textBaseline: 'bottom',
+              x: 40,
+              y: 35,
+            },
+          ],
+          options: {},
+        },
       },
     });
   });

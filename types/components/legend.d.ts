@@ -6,12 +6,12 @@ type LegendData = {
   label: string;
   checked: boolean;
   active: boolean;
+  iconType: LegendIconType;
 } & Point;
 
 export type LegendModel = {
   type: 'legend';
   align: Align;
   showCheckbox: boolean;
-  iconType: LegendIconType;
   data: LegendData[];
 };

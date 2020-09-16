@@ -1,6 +1,6 @@
 import {
   Point,
-  DataLabels,
+  DataLabelOptions,
   DataLabelStyle,
   DataLabelPieSeriesName,
   SubDataLabel,
@@ -24,7 +24,7 @@ export type DataLabel = {
 } & Point;
 
 export type DataLabelOption = Required<
-  Pick<DataLabels, 'anchor' | 'offsetX' | 'offsetY' | 'formatter'>
+  Pick<DataLabelOptions, 'anchor' | 'offsetX' | 'offsetY' | 'formatter'>
 > & {
   style?: DataLabelStyle;
   stackTotal?: Required<SubDataLabel>;
