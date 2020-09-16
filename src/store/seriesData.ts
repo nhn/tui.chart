@@ -4,6 +4,7 @@ import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src
 import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
+import { isZooming } from '@src/helpers/range';
 
 function initZoomRange(
   series: RawSeries,
@@ -75,7 +76,6 @@ const seriesData: StoreModule = {
       ...series,
     } as Series,
     zoomRange: initZoomRange(series, options, categories),
-    isZooming: false,
     disabledSeries: [],
   }),
   action: {
@@ -139,25 +139,27 @@ const seriesData: StoreModule = {
       state.zoomRange = rangeCategories.map((rangeCategory) =>
         rawCategories.findIndex((category) => category === rangeCategory)
       ) as RangeDataType<number>;
-      state.isZooming = true;
 
       this.notify(state, 'zoomRange');
-      this.notify(state, 'isZooming');
     },
     resetZoom({ state, initStoreState }) {
       const { series, options } = initStoreState;
       const { rawCategories } = state;
 
       state.zoomRange = initZoomRange(series, options, rawCategories);
-      state.isZooming = false;
 
       this.notify(state, 'zoomRange');
-      this.notify(state, 'isZooming');
     },
   },
   observe: {
     updateSeriesData() {
       this.dispatch('setSeriesData');
+    },
+  },
+  computed: {
+    isZooming: ({ zoomRange, rawCategories }) => {
+      // @TODO: treemap은 root id를 비교 해야한다.
+      return isZooming(rawCategories, zoomRange);
     },
   },
 };

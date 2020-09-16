@@ -239,7 +239,6 @@ export interface ChartState<T extends Options> {
     visible: boolean;
     data: DataLabel[];
   };
-  isZooming: boolean;
 }
 
 export type StackTotal = {

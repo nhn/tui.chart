@@ -22,13 +22,13 @@ export default class ResetButton extends Component {
     }
   }
 
-  render({ options, layout, isZooming }: ChartState<Options>) {
+  render({ options, layout }: ChartState<Options>) {
     if (!isUsingResetButton(options)) {
       return;
     }
 
     this.rect = layout.resetButton;
-    this.isShow = isZooming;
+    this.isShow = this.store.computed.isZooming;
     this.models = this.isShow ? [{ type: 'resetButton', x: 0, y: 0 }] : [];
 
     this.responders = [
