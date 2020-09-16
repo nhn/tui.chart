@@ -57,7 +57,7 @@ export default class LineSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  eventType: LineTypeEventDetectType = 'nearest';
+  eventDetectType: LineTypeEventDetectType = 'nearest';
 
   tooltipCircleMap!: Record<number, CircleResponderModel[]>;
 
@@ -74,17 +74,17 @@ export default class LineSeries extends Component {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
-  private setEventType(series: Series, options?: LineChartOptions) {
+  private setEventDetectType(series: Series, options?: LineChartOptions) {
     if (series.area || series.column) {
-      this.eventType = 'grouped';
+      this.eventDetectType = 'grouped';
     }
 
     if (options?.series?.eventDetectType) {
-      this.eventType = options.series.eventDetectType;
+      this.eventDetectType = options.series.eventDetectType;
     }
 
     if (series.scatter) {
-      this.eventType = 'near';
+      this.eventDetectType = 'near';
     }
   }
 
@@ -101,7 +101,7 @@ export default class LineSeries extends Component {
       options.series = { ...options.series, ...options.series.line };
     }
 
-    this.setEventType(series, options);
+    this.setEventDetectType(series, options);
 
     const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
     const lineSeriesData = series.line.data;
@@ -162,9 +162,9 @@ export default class LineSeries extends Component {
   ): ResponderTypes {
     let res: ResponderTypes = [];
 
-    if (this.eventType === 'near') {
+    if (this.eventDetectType === 'near') {
       res = this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr);
-    } else if (this.eventType === 'point') {
+    } else if (this.eventDetectType === 'point') {
       res = this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr, 0);
     } else {
       res = makeRectResponderModel(this.rect, axisData);
@@ -288,7 +288,7 @@ export default class LineSeries extends Component {
     const index = responders[0].index! + this.startIndex;
     const models = this.tooltipCircleMap[index];
 
-    return this.eventType === 'grouped'
+    return this.eventDetectType === 'grouped'
       ? models
       : getNearestResponder(models, mousePositions!, this.rect);
   }
@@ -297,7 +297,7 @@ export default class LineSeries extends Component {
     this.eventBus.emit('renderHoveredSeries', {
       models: responders,
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
     this.activatedResponders = responders;
   }
@@ -315,9 +315,9 @@ export default class LineSeries extends Component {
   }
 
   onMousemove({ responders, mousePosition }: MouseEventType) {
-    if (this.eventType === 'nearest') {
+    if (this.eventDetectType === 'nearest') {
       this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
-    } else if (includes(['near', 'point'], this.eventType)) {
+    } else if (includes(['near', 'point'], this.eventDetectType)) {
       this.onMousemoveNearType(responders as CircleResponderModel[]);
     } else {
       this.onMousemoveGroupedType(responders as RectResponderModel[]);
@@ -335,7 +335,7 @@ export default class LineSeries extends Component {
 
   onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
-      if (this.eventType === 'near') {
+      if (this.eventDetectType === 'near') {
         this.drawModels.selectedSeries = responders as CircleResponderModel[];
       } else {
         this.drawModels.selectedSeries = this.getCircleModelsFromRectResponders(
@@ -352,7 +352,7 @@ export default class LineSeries extends Component {
     this.eventBus.emit('renderHoveredSeries', {
       models: [],
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
 
     this.eventBus.emit('needDraw');

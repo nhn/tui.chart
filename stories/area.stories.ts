@@ -75,7 +75,7 @@ export const basicWithEventDetectType = () => {
     yAxis: { title: 'Temperature (Celsius)' },
     series: {
       eventDetectType: radios(
-        'eventType',
+        'eventDetectType',
         { near: 'near', nearest: 'nearest', grouped: 'grouped' },
         'nearest'
       ),

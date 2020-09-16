@@ -26,7 +26,7 @@ type ResponderModelTypes = {
 function hasPointEventType(responderModels: ResponderModelTypes, name: string) {
   return responderModels.find(
     ({ component }) =>
-      component.name === name && (component as BoxSeries | LineSeries).eventType === 'point'
+      component.name === name && (component as BoxSeries | LineSeries).eventDetectType === 'point'
   );
 }
 function hasColumnLineUsingPointEventType(responderModels: ResponderModelTypes) {

@@ -5,7 +5,7 @@ import { CircleResponderModel, ResponderModel, BoxPlotResponderModel } from '@t/
 import { LineModel } from '@t/components/axis';
 import { crispPixel } from '@src/helpers/calculator';
 import { isUndefined, includes } from '@src/helpers/utils';
-import { LineTypeEventDetectType } from '@t/options';
+import { LineTypeEventDetectType, BoxTypeEventDetectType } from '@t/options';
 
 export type HoveredSeriesModel = { [key in TooltipModelName]: ResponderModel[] } & {
   guideLine: LineModel[];
@@ -46,16 +46,16 @@ export default class HoveredSeries extends Component {
   renderHoveredSeries = ({
     models,
     name,
-    eventType,
+    eventDetectType,
   }: {
     models: ResponderModel[];
     name: TooltipModelName;
-    eventType?: LineTypeEventDetectType;
+    eventDetectType?: LineTypeEventDetectType | BoxTypeEventDetectType;
   }) => {
     this.models[name] = models?.length ? [...models] : [];
     this.isShow = !!this.getSeriesModels().length;
 
-    if (eventType === 'grouped') {
+    if (eventDetectType === 'grouped') {
       this.renderGroupedModels(name);
     }
   };
