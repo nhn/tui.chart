@@ -258,3 +258,13 @@ export const semicircle = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(browserUsageData, {
+    series: {
+      selectable: true,
+    },
+  });
+
+  return el;
+};

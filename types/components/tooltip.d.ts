@@ -1,5 +1,6 @@
 import { BubblePoint, Point, RangeDataType } from '../options';
-import { RadiusRange } from '@src/component/pieSeries';
+
+export type RadiusRange = { inner: number; outer: number };
 
 export type TooltipTitleValues = {
   title: string;

@@ -8,7 +8,6 @@ import { TreemapSeriesData } from '@t/store/store';
 import Component from '@src/component/component';
 import { SpectrumLegendModel, SpectrumLegendTooltipModel } from '@t/components/spectrumLegend';
 
-
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
 export type PointModel = Point & { value?: number; name?: string };
@@ -152,6 +151,7 @@ export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
 
 export type PieSeriesModels = {
   series: SectorModel[];
+  selectedSeries: SectorModel[];
 };
 
 export type SectorModel = {
@@ -170,6 +170,8 @@ export type SectorModel = {
   style?: StyleProp<SectorStyle, SectorStyleName>;
   clockwise: boolean;
   drawingStartAngle: number;
+  totalAngle: number;
+  alias?: string;
 } & Point;
 
 export type SectorResponderModel = {
@@ -244,3 +246,7 @@ export interface MouseEventType {
   responders: CircleResponderModel[] | RectResponderModel[];
   mousePosition: Point;
 }
+
+export type PieDonutSeriesModels = Record<string, SectorModel[]> & {
+  selectedSeries: SectorModel[];
+};
