@@ -46,7 +46,6 @@ function makePlotLines(categories: string[], isDateType: boolean, plotLines: Plo
   return plotLines.map(({ value, color, opacity }) => ({
     value: getValidValue(value, categories, isDateType),
     color: rgba(color, opacity),
-    vertical: true,
   }));
 }
 

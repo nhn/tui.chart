@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Options, Axes, ValueEdge, LabelAxisData, ValueAxisData } from '@t/store/store';
+import { ChartState, Options, Axes, ValueEdge, LabelAxisData } from '@t/store/store';
 import { crispPixel, makeTickPixelPositions, getXPosition } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
@@ -34,7 +34,7 @@ function validXPosition({
 }
 
 function getPlotAxisData(vertical: boolean, axes: Axes) {
-  return vertical ? (axes.xAxis as LabelAxisData) : (axes.yAxis as ValueAxisData);
+  return vertical ? axes.xAxis : axes.yAxis;
 }
 export default class Plot extends Component {
   models: PlotModels = { plot: [], line: [], band: [] };
@@ -61,7 +61,7 @@ export default class Plot extends Component {
     return lines.map(({ value, color, vertical }) => {
       const { offsetSize } = this.getPlotAxisSize(vertical!);
       const position = validXPosition({
-        axisData: getPlotAxisData(vertical!, axes) as LabelAxisData,
+        axisData: getPlotAxisData(true, axes) as LabelAxisData,
         offsetSize,
         value,
         xAxisLimit,
