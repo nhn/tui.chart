@@ -52,7 +52,7 @@ export function getYAxisOption(options: ChartOptionsUsingYAxis) {
   const secondaryYAxis = hasSecondaryYAxis(options);
 
   return {
-    yAxis: secondaryYAxis ? options.yAxis![0] : options.yAxis,
+    yAxis: secondaryYAxis ? options.yAxis![0] : options?.yAxis,
     secondaryYAxis: secondaryYAxis ? options.yAxis![1] : null,
   };
 }

@@ -242,6 +242,7 @@ export interface ChartState<T extends Options> {
   treemapSeries: TreemapSeriesData[];
   treemapScale: ScaleData;
   plot: {
+    showLine: boolean;
     lines: PlotLine[];
     bands: PlotBand[];
   };

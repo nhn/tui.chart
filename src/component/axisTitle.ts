@@ -13,13 +13,13 @@ export default class AxisTitle extends Component {
   initialize({ name }: { name: AxisType }) {
     this.type = 'axisTitle';
     this.name = name;
-    this.isYAxis = includes(['yAxis', 'secondaryYAxis'], name);
+    this.isYAxis = includes([AxisType.Y, AxisType.SECONDARY_Y], name);
   }
 
   renderAxisTitle(option: Required<AxisTitleOption>, textAlign: CanvasTextAlign): LabelModel[] {
     const { text, offsetX, offsetY } = option;
     const [x, y] = this.isYAxis
-      ? [this.name === 'yAxis' ? offsetX : this.rect.width + offsetX, offsetY]
+      ? [this.name === AxisType.Y ? offsetX : this.rect.width + offsetX, offsetY]
       : [this.rect.width + offsetX, this.rect.height + offsetY];
 
     return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign }] }];
@@ -28,7 +28,7 @@ export default class AxisTitle extends Component {
   getTextAlign(hasCenterYAxis = false) {
     let result: CanvasTextAlign = 'right';
 
-    if (this.name === 'yAxis') {
+    if (this.name === AxisType.Y) {
       result = hasCenterYAxis ? 'center' : 'left';
     }
 
@@ -36,7 +36,7 @@ export default class AxisTitle extends Component {
   }
 
   render({ axes, layout }: ChartState<Options>) {
-    const titleOption = axes[this.name]?.title; // @TODO: diverging, centerYAxis일 때 확인 필요
+    const titleOption = axes[this.name]?.title;
 
     if (!titleOption) {
       return;
