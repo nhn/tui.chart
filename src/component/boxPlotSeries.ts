@@ -25,6 +25,8 @@ type RenderOptions = {
 
 type BoxPlotModelData = Array<BoxPlotModel | CircleModel>;
 
+type TooltipRectMap = Record<string, BoxPlotResponderTypes[]>;
+
 const seriesOpacity = {
   INACTIVE: 0.2,
   ACTIVE: 1,
@@ -41,9 +43,9 @@ export default class BoxPlotSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  eventType: BoxTypeEventDetectType = 'point';
+  eventDetectType: BoxTypeEventDetectType = 'point';
 
-  tooltipRectMap!: Record<string, BoxPlotResponderTypes[]>;
+  tooltipRectMap!: TooltipRectMap;
 
   initialize() {
     this.type = 'series';
@@ -58,7 +60,7 @@ export default class BoxPlotSeries extends Component {
     }
 
     if (options?.series?.eventDetectType) {
-      this.eventType = options.series.eventDetectType;
+      this.eventDetectType = options.series.eventDetectType;
     }
 
     this.rect = layout.plot;
@@ -100,21 +102,20 @@ export default class BoxPlotSeries extends Component {
       };
     }
 
-    const tooltipDataArr = this.makeTooltipModel(boxPlotData, categories);
-    this.tooltipRectMap = this.makeTooltipRectMap(boxPlotModelData, tooltipDataArr);
+    const tooltipData = this.makeTooltipModel(boxPlotData, categories);
+    this.tooltipRectMap = this.makeTooltipRectMap(boxPlotModelData, tooltipData);
 
     this.responders =
-      this.eventType === 'grouped'
+      this.eventDetectType === 'grouped'
         ? this.makeGroupedResponderModel(boxPlotModelData)
-        : this.makeDefaultResponderModel(boxPlotModelData, tooltipDataArr);
+        : this.makeDefaultResponderModel(boxPlotModelData, tooltipData);
   }
 
-  makeTooltipRectMap(boxPlotModelData: BoxPlotModelData, tooltipDataArr: TooltipData[]) {
-    const result: Record<string, BoxPlotResponderTypes[]> = {};
+  makeTooltipRectMap(boxPlotModelData: BoxPlotModelData, tooltipData: TooltipData[]) {
+    const result: TooltipRectMap = {};
 
     boxPlotModelData.forEach((m, tooltipIndex) => {
-      const { index, name } = m;
-      const propName = `${name}-${index}`;
+      const propName = `${m.name}-${m.index}`;
 
       if (!result[propName]) {
         result[propName] = [];
@@ -122,7 +123,7 @@ export default class BoxPlotSeries extends Component {
 
       result[propName].push({
         ...this.makeHoveredModel(m),
-        data: tooltipDataArr[tooltipIndex],
+        data: tooltipData[tooltipIndex],
       } as BoxPlotResponderModel);
     });
 
@@ -161,11 +162,12 @@ export default class BoxPlotSeries extends Component {
     }));
   }
 
-  makeHoveredModel(m: BoxPlotModel | CircleModel) {
-    const point = m.type === 'boxPlot' ? { x: m.rect.x, y: m.rect.y } : { x: m.x, y: m.y };
-    const model = { ...m };
+  makeHoveredModel(model: BoxPlotModel | CircleModel) {
+    const point =
+      model.type === 'boxPlot' ? { x: model.rect.x, y: model.rect.y } : { x: model.x, y: model.y };
+    const hoveredModel = { ...model };
 
-    if (m.type === 'boxPlot') {
+    if (model.type === 'boxPlot') {
       ['rect', 'whisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
         if (prop === 'rect') {
           model[prop].style = ['shadow'];
@@ -177,7 +179,7 @@ export default class BoxPlotSeries extends Component {
     }
 
     return {
-      ...model,
+      ...hoveredModel,
       ...point,
     };
   }
@@ -192,19 +194,19 @@ export default class BoxPlotSeries extends Component {
   }
 
   onMousemove({ responders }) {
-    if (this.eventType === 'grouped') {
+    if (this.eventDetectType === 'grouped') {
       const models = this.getResponderModelFromMap(responders);
       this.eventBus.emit('renderHoveredSeries', {
         models,
         name: this.name,
-        eventType: this.eventType,
+        eventDetectType: this.eventDetectType,
       });
       this.activatedResponders = models;
     } else {
       this.eventBus.emit('renderHoveredSeries', {
         models: responders,
         name: this.name,
-        eventType: this.eventType,
+        eventDetectType: this.eventDetectType,
       });
 
       this.activatedResponders = responders;
@@ -217,7 +219,7 @@ export default class BoxPlotSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      if (this.eventType === 'grouped') {
+      if (this.eventDetectType === 'grouped') {
         this.drawModels.selectedSeries = this.getResponderModelFromMap(responders);
       } else {
         this.drawModels.selectedSeries = responders;
@@ -393,7 +395,7 @@ export default class BoxPlotSeries extends Component {
     this.eventBus.emit('renderHoveredSeries', {
       models: [],
       name: this.name,
-      eventType: this.eventType,
+      eventDetectType: this.eventDetectType,
     });
 
     this.eventBus.emit('needDraw');

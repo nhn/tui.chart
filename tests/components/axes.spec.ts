@@ -115,7 +115,7 @@ describe('yAxis', () => {
     });
   });
 
-  describe('using right y axis', () => {
+  describe('using secondary y axis', () => {
     beforeEach(() => {
       axis.initialize({ name: 'secondaryYAxis' });
 
