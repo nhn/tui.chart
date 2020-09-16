@@ -244,6 +244,7 @@ function getXAxisRect(xAxisRectParam: XAxisRectParam) {
 
 function getLegendRect(legendRectParams: LegendRectParams) {
   const { legend, xAxis, yAxis, chartSize, title, hasAxis, secondaryYAxis } = legendRectParams;
+
   const { align, width: legendWidth } = legend;
   const { width } = chartSize;
   const verticalAlign = isVerticalAlign(align);

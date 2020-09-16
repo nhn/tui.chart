@@ -6,7 +6,6 @@ import {
   isLabelAxisOnYAxis,
   getYAxisOption,
   getValueAxisNames,
-  getValueAxisName,
 } from '@src/helpers/axes';
 import {
   calculateCoordinateScale,
@@ -105,24 +104,6 @@ const scale: StoreModule = {
 
       if (secondaryYAxis) {
         scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
-
-        [yAxis.chartType, secondaryYAxis.chartType].forEach((seriesName) => {
-          const validValueAxisName = getValueAxisName(options, seriesName, valueAxisName);
-
-          scaleData[validValueAxisName] = getValueScaleData(
-            state,
-            labelAxisOnYAxis,
-            scaleOptions,
-            validValueAxisName
-          );
-        });
-      } else {
-        scaleData[valueAxisName] = getValueScaleData(
-          state,
-          labelAxisOnYAxis,
-          scaleOptions,
-          valueAxisName
-        );
       }
 
       getValueAxisNames(options, valueAxisName).forEach((axisName) => {
