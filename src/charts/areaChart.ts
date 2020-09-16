@@ -4,6 +4,7 @@ import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import dataLabels from '@src/store/dataLabels';
+import plot from '@src/store/plot';
 import stackSeriesData from '@src/store/stackSeriesData';
 
 import HoveredSeries from '@src/component/hoveredSeries';
@@ -15,6 +16,7 @@ import DataLabels from '@src/component/dataLabels';
 import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
+import ResetButton from '@src/component/resetButton';
 import Legend from '@src/component/legend';
 import Zoom from '@src/component/zoom';
 
@@ -36,7 +38,7 @@ interface AreaChartProps {
 }
 
 export default class AreaChart extends Chart<AreaChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, dataLabels];
+  modules = [stackSeriesData, dataRange, scale, axes, plot, dataLabels];
 
   constructor(props: AreaChartProps) {
     super({
@@ -65,6 +67,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
+    this.componentManager.add(ResetButton);
 
     this.painter.addGroups([
       basicBrush,

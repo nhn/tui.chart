@@ -1639,22 +1639,22 @@ export const populationDensityData = {
       children: [
         {
           label: 'South Korea',
-          value: 99909,
+          data: 99909,
           colorValue: 499.81,
         },
         {
           label: 'Japan',
-          value: 364485,
+          data: 364485,
           colorValue: 335.61,
         },
         {
           label: 'Jordan',
-          value: 88802,
+          data: 88802,
           colorValue: 86.07,
         },
         {
           label: 'Iraq',
-          value: 437367,
+          data: 437367,
           colorValue: 81.6,
         },
       ],
@@ -1664,22 +1664,22 @@ export const populationDensityData = {
       children: [
         {
           label: 'UK',
-          value: 241930,
+          data: 241930,
           colorValue: 262.84,
         },
         {
           label: 'France',
-          value: 640427,
+          data: 640427,
           colorValue: 117.83,
         },
         {
           label: 'Hungary',
-          value: 89608,
+          data: 89608,
           colorValue: 106.54,
         },
         {
           label: 'Portugal',
-          value: 91470,
+          data: 91470,
           colorValue: 115.35,
         },
       ],
@@ -1689,22 +1689,22 @@ export const populationDensityData = {
       children: [
         {
           label: 'Panama',
-          value: 74340,
+          data: 74340,
           colorValue: 52.81,
         },
         {
           label: 'Honduras',
-          value: 111890,
+          data: 111890,
           colorValue: 75.15,
         },
         {
           label: 'Uruguay',
-          value: 175015,
+          data: 175015,
           colorValue: 19.6,
         },
         {
           label: 'Cuba',
-          value: 109820,
+          data: 109820,
           colorValue: 101.47,
         },
       ],
@@ -1714,22 +1714,22 @@ export const populationDensityData = {
       children: [
         {
           label: 'Malawi',
-          value: 94080,
+          data: 94080,
           colorValue: 146.09,
         },
         {
           label: 'Ghana',
-          value: 227533,
+          data: 227533,
           colorValue: 113.13,
         },
         {
           label: 'Togo',
-          value: 54385,
+          data: 54385,
           colorValue: 126.28,
         },
         {
           label: 'Benin',
-          value: 114305,
+          data: 114305,
           colorValue: 96.61,
         },
       ],

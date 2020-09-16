@@ -1,6 +1,6 @@
 import Component from './component';
 import { Rect, TreemapChartOptions } from '@t/options';
-import { ChartState, TreemapSeriesData } from '@t/store/store';
+import { ChartState, ScaleData, Theme, TreemapSeriesData } from '@t/store/store';
 import {
   TreemapRectModel,
   TreemapRectResponderModel,
@@ -8,11 +8,13 @@ import {
 } from '@t/components/series';
 import { BoundMap, squarify } from '@src/helpers/squarifier';
 import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
-import { getRGBA } from '@src/helpers/color';
+import { getRGBA, hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode } from '@src/helpers/responders';
 import { RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { first, last } from '@src/helpers/utils';
+import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 
 export default class TreemapSeries extends Component {
   models: TreemapSeriesModels = { series: [], layer: [] };
@@ -29,14 +31,14 @@ export default class TreemapSeries extends Component {
   }
 
   render(chartState: ChartState<TreemapChartOptions>) {
-    const { layout, treemapSeries, options } = chartState;
+    const { layout, treemapSeries, treemapScale, options, theme } = chartState;
 
     if (!treemapSeries.length) {
       throw new Error("There's no tree map data");
     }
 
     this.rect = layout.plot;
-    this.models = this.renderTreemapSeries(treemapSeries);
+    this.models = this.renderTreemapSeries(treemapSeries, options, theme, treemapScale);
 
     if (getDataLabelsOptions(options, this.name).visible) {
       const useTreemapLeaf = options.series?.dataLabels?.useTreemapLeaf ?? false;
@@ -98,20 +100,63 @@ export default class TreemapSeries extends Component {
     }));
   }
 
-  renderTreemapSeries(seriesData: TreemapSeriesData[]) {
+  getColor(treemapSeries: TreemapSeriesData, colors: string[]) {
+    const { indexes } = treemapSeries;
+    const colorIdx = first<number>(indexes)!;
+
+    return colors[colorIdx];
+  }
+
+  getOpacity(treemapSeries: TreemapSeriesData) {
+    const { indexes, depth } = treemapSeries;
+    const idx = last<number>(indexes)!;
+
+    return indexes.length === 1 ? 0 : Number((0.1 * depth + 0.05 * idx).toFixed(2));
+  }
+
+  renderTreemapSeries(
+    seriesData: TreemapSeriesData[],
+    options: TreemapChartOptions,
+    theme: Theme,
+    treemapScale: ScaleData
+  ) {
+    let layer: TreemapRectModel[] = [];
     const boundMap = this.makeBoundMap(seriesData, TREEMAP_ROOT_ID, {
       ...this.rect,
       x: 0,
       y: 0,
     });
 
-    const series: TreemapRectModel[] = Object.keys(boundMap).map((id) => ({
-      ...seriesData.find((item) => item.id === id)!,
-      ...boundMap[id],
-      type: 'rect',
-    }));
+    const { colors, startColor, endColor } = theme.series;
+    let startRGB, distances;
+    const useColorValue = options.series?.useColorValue ?? false;
+    if (useColorValue) {
+      startRGB = hexToRGB(startColor) as RGB;
+      distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
+    }
 
-    const layer = series.map((m) => ({ ...m, color: getRGBA('#000000', m.opacity!) }));
+    const series: TreemapRectModel[] = Object.keys(boundMap).map((id) => {
+      const treemapSeries = seriesData.find((item) => item.id === id)!;
+      let colorRatio;
+      if (useColorValue) {
+        colorRatio = getColorRatio(treemapScale.limit, treemapSeries.colorValue);
+      }
+
+      return {
+        ...treemapSeries,
+        ...boundMap[id],
+        type: 'rect',
+        colorRatio,
+        color: useColorValue
+          ? getSpectrumColor(colorRatio, distances, startRGB)
+          : this.getColor(treemapSeries, colors),
+        opacity: useColorValue ? 0 : this.getOpacity(treemapSeries),
+      };
+    });
+
+    if (!options.series?.useColorValue) {
+      layer = series.map((m) => ({ ...m, color: getRGBA('#000000', m.opacity!) }));
+    }
 
     return { series, layer };
   }
@@ -135,6 +180,7 @@ export default class TreemapSeries extends Component {
       models: responders,
       name: this.name,
     });
+    this.eventBus.emit('renderSpectrumTooltip', responders);
     this.eventBus.emit('needDraw');
   }
 }

@@ -13,6 +13,7 @@ import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
+import plot from '@src/store/plot';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
@@ -30,7 +31,7 @@ interface BubbleChartProps {
 }
 
 export default class BubbleChart extends Chart<BaseOptions> {
-  modules = [dataRange, scale, axes];
+  modules = [dataRange, scale, axes, plot];
 
   constructor(props: BubbleChartProps) {
     super({

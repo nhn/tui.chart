@@ -119,11 +119,14 @@ export interface StoreModule extends StoreOptions {
     | 'treemapSeriesData'
     | 'legend'
     | 'circleLegend'
-    | 'dataLabels';
+    | 'dataLabels'
+    | 'treemapScale';
 }
 
 export interface SeriesTheme {
   colors: string[];
+  startColor: string;
+  endColor: string;
 }
 
 export type Theme = {
@@ -140,6 +143,7 @@ export interface Layout {
   circleLegend: Rect;
   title: Rect;
   exportMenu: Rect;
+  resetButton: Rect;
 }
 
 export interface Scale {
@@ -171,6 +175,7 @@ export interface Legend {
   align: Align;
   width: number;
   data: Array<Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType'> & { width: number }>;
+  useSpectrumLegend: boolean;
 }
 
 export interface CircleLegend {
@@ -206,7 +211,8 @@ export interface TreemapSeriesData {
   data: number;
   ratio: number;
   color: string;
-  opacity: number;
+  opacity?: number;
+  colorValue?: number;
 }
 
 export interface ChartState<T extends Options> {
@@ -227,6 +233,7 @@ export interface ChartState<T extends Options> {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };
   treemapSeries: TreemapSeriesData[];
+  treemapScale: ScaleData;
   plot: {
     showLine: boolean;
     lines: PlotLine[];

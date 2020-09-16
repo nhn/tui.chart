@@ -1,7 +1,7 @@
 import { Point } from '@t/options';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 import { ResetButtonModel } from '@t/components/resetButton';
-import { circle, rect } from '@src/brushes/basic';
+import { circle, pathRect } from '@src/brushes/basic';
 import { areaPoints } from '@src/brushes/lineSeries';
 
 function drawResetIcon(ctx: CanvasRenderingContext2D, point: Point) {
@@ -39,13 +39,15 @@ function drawResetIcon(ctx: CanvasRenderingContext2D, point: Point) {
 export function resetButton(ctx: CanvasRenderingContext2D, resetButtonModel: ResetButtonModel) {
   const { x, y } = resetButtonModel;
 
-  rect(ctx, {
-    type: 'rect',
+  pathRect(ctx, {
+    type: 'pathRect',
     x,
     y,
-    color: '#f4f4f4',
+    fill: '#f4f4f4',
+    stroke: '#f4f4f4',
     width: BUTTON_RECT_SIZE,
     height: BUTTON_RECT_SIZE,
+    radius: 5,
   });
 
   drawResetIcon(ctx, { x, y });

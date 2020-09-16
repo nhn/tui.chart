@@ -1,11 +1,11 @@
 import { SeriesDataType, TreemapSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { populationDensityData, usedDiskSpaceData } from './data';
+import { populationDensityData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import TreemapChart from '@src/charts/treemapChart';
 
 export default {
-  title: 'chart|Treemap',
+  title: 'chart|spectrumLegend',
   decorators: [withKnobs],
 };
 
@@ -36,45 +36,7 @@ function createChart(data: TreemapSeriesData, customOptions?: Record<string, any
   return { el, chart };
 }
 
-export const basic = () => {
-  const { el } = createChart(usedDiskSpaceData, {
-    chart: { title: 'Used disk space' },
-    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
-  });
-
-  return el;
-};
-
-export const dataLabels = () => {
-  const { el } = createChart(usedDiskSpaceData, {
-    chart: { title: 'Used disk space' },
-    series: {
-      dataLabels: {
-        visible: true,
-      },
-    },
-    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
-  });
-
-  return el;
-};
-
-export const useTreemapLeaf = () => {
-  const { el } = createChart(usedDiskSpaceData, {
-    chart: { title: 'Used disk space' },
-    series: {
-      dataLabels: {
-        visible: true,
-        useTreemapLeaf: true,
-      },
-    },
-    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
-  });
-
-  return el;
-};
-
-export const colorValue = () => {
+export const topAlign = () => {
   const { el } = createChart(populationDensityData, {
     chart: { title: 'Population density of World' },
     series: {
@@ -87,6 +49,63 @@ export const colorValue = () => {
     tooltip: { formatter: (value: SeriesDataType) => `${value}㎢` },
     legend: {
       align: 'top',
+    },
+  });
+
+  return el;
+};
+
+export const bottomAlign = () => {
+  const { el } = createChart(populationDensityData, {
+    chart: { title: 'Population density of World' },
+    series: {
+      useColorValue: true,
+      dataLabels: {
+        visible: true,
+        useTreemapLeaf: true,
+      },
+    },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}㎢` },
+    legend: {
+      align: 'bottom',
+    },
+  });
+
+  return el;
+};
+
+export const rightAlign = () => {
+  const { el } = createChart(populationDensityData, {
+    chart: { title: 'Population density of World' },
+    series: {
+      useColorValue: true,
+      dataLabels: {
+        visible: true,
+        useTreemapLeaf: true,
+      },
+    },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}㎢` },
+    legend: {
+      align: 'right',
+    },
+  });
+
+  return el;
+};
+
+export const leftAlign = () => {
+  const { el } = createChart(populationDensityData, {
+    chart: { title: 'Population density of World' },
+    series: {
+      useColorValue: true,
+      dataLabels: {
+        visible: true,
+        useTreemapLeaf: true,
+      },
+    },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}㎢` },
+    legend: {
+      align: 'left',
     },
   });
 

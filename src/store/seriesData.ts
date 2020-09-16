@@ -4,6 +4,7 @@ import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src
 import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
+import { isZooming } from '@src/helpers/range';
 
 function initZoomRange(
   series: RawSeries,
@@ -153,6 +154,12 @@ const seriesData: StoreModule = {
   observe: {
     updateSeriesData() {
       this.dispatch('setSeriesData');
+    },
+  },
+  computed: {
+    isZooming: ({ zoomRange, rawCategories }) => {
+      // @TODO: treemap은 root id를 비교 해야한다.
+      return isZooming(rawCategories, zoomRange);
     },
   },
 };

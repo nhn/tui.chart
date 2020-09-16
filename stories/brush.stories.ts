@@ -6,6 +6,7 @@ import { legend } from '@src/brushes/legend';
 import { label } from '@src/brushes/label';
 import { resetButton } from '@src/brushes/resetButton';
 import { sector } from '@src/brushes/sector';
+import { spectrumLegend, spectrumTooltip } from '@src/brushes/spectrumLegend';
 
 import {
   AreaPointsModel,
@@ -102,8 +103,8 @@ function setup() {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d')!;
   const ratio = window.devicePixelRatio;
-  const width = 500;
-  const height = 500;
+  const width = 1000;
+  const height = 600;
 
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
@@ -500,6 +501,74 @@ export const resetButtonBrush = () => {
     type: 'resetButton',
     x: 100,
     y: 100,
+  });
+
+  return el;
+};
+
+export const spectrumLegendHorizontalBrush = () => {
+  const { ctx, el } = setup();
+
+  const labels = ['0', '100', '200', '300', '400', '500'];
+  const startColor = '#FFE98A';
+  const endColor = '#D74177';
+  const width = 800;
+  const height = 100;
+  const params = { width, height, labels, startColor, endColor, verticalAlign: false };
+  const tooltipParams = {
+    width,
+    height,
+    labels,
+    color: '#e8857f',
+    text: '300',
+    colorRatio: 0.4,
+    verticalAlign: false,
+  };
+
+  spectrumLegend(ctx, { type: 'spectrumLegend', x: 10, y: 100, align: 'top', ...params });
+  spectrumLegend(ctx, { type: 'spectrumLegend', x: 10, y: 400, align: 'bottom', ...params });
+
+  spectrumTooltip(ctx, { type: 'spectrumTooltip', x: 424, y: 125, align: 'top', ...tooltipParams });
+  spectrumTooltip(ctx, {
+    type: 'spectrumTooltip',
+    x: 424,
+    y: 400,
+    align: 'bottom',
+    ...tooltipParams,
+  });
+
+  return el;
+};
+
+export const spectrumLegendVerticalBrush = () => {
+  const { ctx, el } = setup();
+
+  const labels = ['0', '100', '200', '300', '400', '500'];
+  const startColor = '#FFE98A';
+  const endColor = '#D74177';
+  const width = 100;
+  const height = 500;
+  const params = { width, height, labels, startColor, endColor, verticalAlign: true };
+  const tooltipParams = {
+    width,
+    height,
+    labels,
+    color: '#e8857f',
+    text: '300',
+    colorRatio: 0.4,
+    verticalAlign: true,
+  };
+
+  spectrumLegend(ctx, { type: 'spectrumLegend', x: 10, y: 10, align: 'left', ...params });
+  spectrumLegend(ctx, { type: 'spectrumLegend', x: 300, y: 10, align: 'right', ...params });
+
+  spectrumTooltip(ctx, { type: 'spectrumTooltip', x: 40, y: 286, align: 'left', ...tooltipParams });
+  spectrumTooltip(ctx, {
+    type: 'spectrumTooltip',
+    x: 290,
+    y: 286,
+    align: 'right',
+    ...tooltipParams,
   });
 
   return el;

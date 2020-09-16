@@ -37,6 +37,7 @@ describe('Legend Store', () => {
         },
       ],
       showCheckbox: true,
+      useSpectrumLegend: false,
       visible: true,
       align: 'right',
       width: 38,
