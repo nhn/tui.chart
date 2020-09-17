@@ -14,5 +14,5 @@ export function isRangeData(data?: BoxSeriesDataType[]) {
 }
 
 export function isZooming(categories: string[], zoomRange?: RangeDataType<number>) {
-  return zoomRange && (zoomRange[0] !== 0 || zoomRange[1] !== categories.length - 1);
+  return !!(zoomRange && (zoomRange[0] !== 0 || zoomRange[1] !== categories.length - 1));
 }

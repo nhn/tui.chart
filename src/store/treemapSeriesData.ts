@@ -1,7 +1,7 @@
 import { Series, StoreModule, TreemapSeriesData } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { TreemapSeriesType } from '@t/options';
-import { last } from '@src/helpers/utils';
+import { TreemapChartOptions, TreemapSeriesType } from '@t/options';
+import { isUndefined, last } from '@src/helpers/utils';
 
 const TREEMAP_ID_PREFIX = '__TOAST_UI_TREEMAP';
 export const TREEMAP_ROOT_ID = `${TREEMAP_ID_PREFIX}_ROOT`;
@@ -46,6 +46,20 @@ function setParentSeriesData(treemapSeries: TreemapSeriesData[]) {
   });
 }
 
+function setParentColorValue(treemapSeries: TreemapSeriesData[]) {
+  treemapSeries.forEach((datum) => {
+    const { id, colorValue } = datum;
+
+    if (isUndefined(colorValue)) {
+      const series = treemapSeries.filter(({ parentId }) => parentId === id);
+      const totalColorValue = series.reduce((acc, cur) => {
+        return acc + (isUndefined(cur.colorValue) ? 0 : cur.colorValue);
+      }, 0);
+      datum.colorValue = totalColorValue / series.length;
+    }
+  });
+}
+
 function setRatio(treemapSeries: TreemapSeriesData[]) {
   const rootTotal = treemapSeries
     .filter(({ parentId }) => parentId === TREEMAP_ROOT_ID)
@@ -61,7 +75,7 @@ function setRatio(treemapSeries: TreemapSeriesData[]) {
   });
 }
 
-function makeTreemapSeries(series: Series) {
+function makeTreemapSeries(series: Series, options: TreemapChartOptions) {
   if (!series.treemap) {
     return [];
   }
@@ -74,6 +88,10 @@ function makeTreemapSeries(series: Series) {
   setParentSeriesData(treemapSeries);
   setRatio(treemapSeries);
 
+  if (options.series?.useColorValue) {
+    setParentColorValue(treemapSeries);
+  }
+
   return treemapSeries;
 }
 
@@ -84,7 +102,7 @@ const treemapSeriesData: StoreModule = {
   }),
   action: {
     setTreemapSeriesData({ state }) {
-      extend(state.treemapSeries, makeTreemapSeries(state.series));
+      extend(state.treemapSeries, makeTreemapSeries(state.series, state.options));
     },
   },
   observe: {

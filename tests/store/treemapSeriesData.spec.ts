@@ -1,4 +1,4 @@
-import treemapSeriesData from '@src/store/treemapSeriesData';
+import treemapSeriesData, { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
 
 import { ChartState, TreemapSeriesData } from '@t/store/store';
 import Store from '@src/store/store';
@@ -38,6 +38,15 @@ describe('treemapSeriesData Store', () => {
         },
       },
       treemapSeries: [] as TreemapSeriesData[],
+      treemapZoomId: {
+        cur: TREEMAP_ROOT_ID,
+        prev: TREEMAP_ROOT_ID,
+      },
+      options: {
+        series: {
+          useColorValue: false,
+        },
+      },
     } as ChartState<TreemapChartOptions>;
 
     const store = { state } as Store<TreemapChartOptions>;

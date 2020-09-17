@@ -10,6 +10,7 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import TreemapSeries from '@src/component/treemapSeries';
 import SpectrumLegend from '@src/component/spectrumLegend';
+import BackButton from '@src/component/backButton';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -17,6 +18,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as spectrumLegendBrush from '@src/brushes/spectrumLegend';
+import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { TreemapChartOptions, TreemapSeriesData, TreemapSeriesType } from '@t/options';
 
@@ -49,6 +51,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
+    this.componentManager.add(BackButton);
 
     this.painter.addGroups([
       basicBrush,
@@ -57,6 +60,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
       exportMenuBrush,
       dataLabelBrush,
       spectrumLegendBrush,
+      resetButtonBrush,
     ]);
   }
 }

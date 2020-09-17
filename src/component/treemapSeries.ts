@@ -7,7 +7,6 @@ import {
   TreemapSeriesModels,
 } from '@t/components/series';
 import { BoundMap, squarify } from '@src/helpers/squarifier';
-import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
 import { getRGBA, hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode } from '@src/helpers/responders';
@@ -24,37 +23,68 @@ export default class TreemapSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  depth = 0;
+  zoomable!: boolean;
 
   initialize() {
     this.type = 'series';
     this.name = 'treemap';
   }
 
+  private getAllChildSeries(series: TreemapSeriesData[], parentId: string) {
+    const allChildSeries: TreemapSeriesData[] = [];
+
+    series.forEach((data) => {
+      if (data.parentId === parentId) {
+        allChildSeries.push(data);
+        if (data.hasChild) {
+          const res = this.getAllChildSeries(series, data.id);
+          allChildSeries.push(...res);
+        }
+      }
+    });
+
+    return allChildSeries;
+  }
+
   render(chartState: ChartState<TreemapChartOptions>) {
-    const { layout, treemapSeries, treemapScale, options, theme } = chartState;
+    const { layout, treemapSeries, treemapScale, options, theme, treemapZoomId } = chartState;
 
     if (!treemapSeries.length) {
       throw new Error("There's no tree map data");
     }
 
+    const currentTreemapZoomId = treemapZoomId.cur;
+    const series = this.getAllChildSeries(treemapSeries, currentTreemapZoomId);
+
     this.rect = layout.plot;
-    this.models = this.renderTreemapSeries(treemapSeries, options, theme, treemapScale);
+    this.models = this.renderTreemapSeries(
+      series,
+      options,
+      theme,
+      treemapScale,
+      currentTreemapZoomId
+    );
+    this.zoomable = options.series?.zoomable ?? false;
 
     if (getDataLabelsOptions(options, this.name).visible) {
       const useTreemapLeaf = options.series?.dataLabels?.useTreemapLeaf ?? false;
-      const dataLabelModel = this.makeDataLabel(useTreemapLeaf);
+      const dataLabelModel = this.makeDataLabel(useTreemapLeaf, currentTreemapZoomId);
 
       this.renderDataLabels(dataLabelModel);
     }
 
-    this.responders = this.makeTreemapSeriesResponder();
+    this.responders = this.makeTreemapSeriesResponder(currentTreemapZoomId);
   }
 
-  makeTreemapSeriesResponder(): TreemapRectResponderModel[] {
+  makeTreemapSeriesResponder(treemapCurrentDepthParentId: string): TreemapRectResponderModel[] {
     const tooltipData: TooltipData[] = this.makeTooltipData();
+    let { series } = this.models;
 
-    return this.models.series.map<TreemapRectResponderModel>((m, idx) => ({
+    if (this.zoomable) {
+      series = series.filter(({ parentId }) => parentId === treemapCurrentDepthParentId);
+    }
+
+    return series.map<TreemapRectResponderModel>((m, idx) => ({
       ...m,
       data: tooltipData[idx],
       thickness: BOX_HOVER_THICKNESS,
@@ -87,10 +117,10 @@ export default class TreemapSeries extends Component {
     return boundMap;
   }
 
-  makeDataLabel(useTreemapLeaf: boolean): RectDataLabel[] {
+  makeDataLabel(useTreemapLeaf: boolean, treemapCurrentDepthParentId: string): RectDataLabel[] {
     const series = useTreemapLeaf
       ? this.models.series.filter(({ hasChild }) => !hasChild)
-      : this.models.series.filter(({ depth }) => depth === this.depth);
+      : this.models.series.filter(({ parentId }) => parentId === treemapCurrentDepthParentId);
 
     return series.map((m) => ({
       ...m,
@@ -119,10 +149,11 @@ export default class TreemapSeries extends Component {
     seriesData: TreemapSeriesData[],
     options: TreemapChartOptions,
     theme: Theme,
-    treemapScale: ScaleData
+    treemapScale: ScaleData,
+    treemapCurrentDepthParentId: string
   ) {
     let layer: TreemapRectModel[] = [];
-    const boundMap = this.makeBoundMap(seriesData, TREEMAP_ROOT_ID, {
+    const boundMap = this.makeBoundMap(seriesData, treemapCurrentDepthParentId, {
       ...this.rect,
       x: 0,
       y: 0,
@@ -160,6 +191,18 @@ export default class TreemapSeries extends Component {
     }
 
     return { series, layer };
+  }
+
+  onClick({ responders }) {
+    if (this.zoomable && responders[0]) {
+      const { id, hasChild } = responders[0];
+
+      if (hasChild) {
+        this.emitMouseEvent([]);
+        this.store.dispatch('setTreemapZoomId', id);
+        this.eventBus.emit('needDraw');
+      }
+    }
   }
 
   onMouseoutComponent() {

@@ -11,7 +11,7 @@ function initZoomRange(
   options: Options,
   categories?: string[]
 ): RangeDataType<number> | undefined {
-  if (!(options.series as LineTypeSeriesOptions)?.zoomable) {
+  if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.zoomable) {
     return;
   }
 
@@ -157,8 +157,7 @@ const seriesData: StoreModule = {
     },
   },
   computed: {
-    isZooming: ({ zoomRange, rawCategories }) => {
-      // @TODO: treemap은 root id를 비교 해야한다.
+    isLineTypeSeriesZooming: ({ zoomRange, rawCategories }) => {
       return isZooming(rawCategories, zoomRange);
     },
   },
