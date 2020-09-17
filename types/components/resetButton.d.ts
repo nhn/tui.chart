@@ -5,3 +5,9 @@ export type ResetButtonModel = {
 } & Point;
 
 export type ResetButtonModels = ResetButtonModel[];
+
+export type BackButtonModel = {
+  type: 'backButton';
+} & Point;
+
+export type BackButtonModels = BackButtonModel[];
