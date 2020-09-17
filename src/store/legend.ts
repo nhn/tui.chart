@@ -1,5 +1,10 @@
 import { LegendIconType, Options, RawSeries, StoreModule, ChartType } from '@t/store/store';
-import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
+import {
+  Align,
+  BubbleChartOptions,
+  TreemapChartSeriesOptions,
+  PieDonutChartOptions,
+} from '@t/options';
 import { isUndefined, sum, includes } from '@src/helpers/utils';
 import {
   LEGEND_CHECKBOX_SIZE,
@@ -70,6 +75,26 @@ function showCheckbox(options: Options) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
+function getPieDonutLegendLabels(series: RawSeries, grouped = false) {
+  if (grouped) {
+    return Object.keys(series).flatMap((type) =>
+      series[type][0].data.map(({ name }) => ({
+        label: name,
+        type,
+      }))
+    );
+  }
+
+  return Object.keys(series).flatMap((type) =>
+    series[type].flatMap(({ data }) =>
+      data.map(({ name }) => ({
+        label: name,
+        type,
+      }))
+    )
+  );
+}
+
 function getLegendLabels(series: RawSeries) {
   return Object.keys(series).flatMap((type) =>
     series[type].map(({ name, colorValue }) => ({
@@ -80,7 +105,7 @@ function getLegendLabels(series: RawSeries) {
 }
 
 function useRectIcon(type: ChartType) {
-  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet'], type);
+  return includes(['bar', 'column', 'area', 'pie', 'pieDonut', 'boxPlot', 'bullet'], type);
 }
 
 function useCircleIcon(type: ChartType) {
@@ -129,14 +154,17 @@ const legend: StoreModule = {
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? false;
 
     const defaultWidth = Math.min(options.chart!.width / 10, 150);
-    const legendLabels = getLegendLabels(series);
-    const data = legendLabels.map(({label, type}) => ({
+    const legendLabels = series.pieDonut
+      ? getPieDonutLegendLabels(series, !!(options as PieDonutChartOptions)?.series?.grouped)
+      : getLegendLabels(series);
+    const data = legendLabels.map(({ label, type }) => ({
       label,
       active: true,
       checked: true,
       width: getItemWidth(label, checkboxVisible, useSpectrumLegend),
       iconType: getIconType(type),
     }));
+
     const legendWidths = data.map(({ width }) => width);
     const legendWidth = calculateLegendWidth(defaultWidth, legendWidths, options, align, visible);
 

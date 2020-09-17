@@ -505,3 +505,21 @@ export type ColumnLineData = {
     line: Pick<LineSeriesType, 'name' | 'data'>[];
   };
 };
+
+export type PieDonutSeriesType = {
+  alias: string;
+  data: PieSeriesType[];
+};
+
+export type PieDonutSeriesData = {
+  categories?: string[];
+  series: PieDonutSeriesType[];
+};
+
+export type PieDonutSeriesOptions = Record<string, PieSeriesOptions & BaseSeriesOptions> & {
+  grouped?: boolean;
+} & BaseSeriesOptions;
+
+export interface PieDonutChartOptions extends BaseOptions {
+  series?: PieDonutSeriesOptions;
+}

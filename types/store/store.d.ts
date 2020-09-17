@@ -31,6 +31,8 @@ import {
   PieChartOptions,
   DataLabelOptions,
   TreemapSeriesType,
+  PieDonutSeriesType,
+  PieDonutChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { DataLabel } from '@t/components/dataLabels';
@@ -48,6 +50,7 @@ type ChartSeriesMap = {
   boxPlot: BoxPlotSeriesType[];
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
+  pieDonut: PieDonutSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -56,10 +59,10 @@ export type BoxType = 'bar' | 'column';
 
 type RawSeries = Partial<ChartSeriesMap>;
 
-export interface SeriesGroup {
+type SeriesGroup = {
   seriesCount: number;
   seriesGroupCount: number;
-}
+};
 
 type Series = {
   [key in ChartType]?: {
@@ -81,6 +84,7 @@ export type ChartOptionsMap = {
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
+  pieDonut: PieDonutChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -242,7 +246,12 @@ export interface ChartState<T extends Options> {
   legend: Legend;
   circleLegend: CircleLegend;
   dataLabels: DataLabels;
+  nestedPieSeries: Record<string, NestedPieSeriesDataType>;
 }
+
+type NestedPieSeriesDataType = {
+  data: ChartSeriesMap['pie'];
+};
 
 export type DataLabels = {
   [key in DataLabelSeriesType]?: DataLabelData;

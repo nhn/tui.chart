@@ -86,7 +86,7 @@ export default class Legend extends Component {
 
           return {
             ...datum,
-            color: colors[idx],
+            color: colors[idx % colors.length],
             x: verticalAlign ? defaultX + xOffset : defaultX,
             y: verticalAlign ? padding.Y : padding.Y + LEGEND_ITEM_HEIGHT * idx,
           };

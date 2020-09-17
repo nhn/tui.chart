@@ -70,11 +70,11 @@ function drawSector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
   } = sectorModel;
   const startRadian = calculateDegreeToRadian(start, drawingStartAngle);
   const endRadian = calculateDegreeToRadian(end, drawingStartAngle);
-  const { x: innerStartPosX, y: innerStartPosY } = getRadialPosition(x, y, outer, startRadian);
-  const startX = inner ? innerStartPosX : x;
-  const startY = inner ? innerStartPosY : y;
 
-  ctx.moveTo(startX, startY);
+  if (!inner) {
+    ctx.moveTo(x, y);
+  }
+
   ctx.arc(x, y, outer, startRadian, endRadian, !clockwise);
 
   if (inner) {
