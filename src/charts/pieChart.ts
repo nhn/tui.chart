@@ -1,7 +1,5 @@
 import Chart from './chart';
 
-import dataLabels from '@src/store/dataLabels';
-
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
 import PieSeries from '@src/component/pieSeries';
@@ -26,7 +24,7 @@ interface PieChartProps {
 }
 
 export default class PieChart extends Chart<PieChartOptions> {
-  modules = [dataLabels];
+  modules = [];
 
   constructor({ el, options, data }: PieChartProps) {
     super({

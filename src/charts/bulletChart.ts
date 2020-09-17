@@ -4,8 +4,6 @@ import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import plot from '@src/store/plot';
-import dataLabels from '@src/store/dataLabels';
-
 import Axis from '@src/component/axis';
 import BulletSeries from '@src/component/bulletSeries';
 import Plot from '@src/component/plot';
@@ -32,7 +30,7 @@ interface BulletChartProps {
 }
 
 export default class BulletChart extends Chart<BulletChartOptions> {
-  modules = [dataRange, scale, axes, plot, dataLabels];
+  modules = [dataRange, scale, axes, plot];
 
   constructor({ el, options, data: { series } }: BulletChartProps) {
     super({

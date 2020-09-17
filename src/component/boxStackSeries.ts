@@ -29,10 +29,11 @@ import {
   calibrateBoxStackDrawingValue,
   sumValuesBeforeIndex,
 } from '@src/helpers/boxSeriesCalculator';
-import { RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
+import { getDataLabelsOptions } from '@src/helpers/dataLabelsCalculator';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { makeRectResponderModel } from '@src/helpers/responders';
+import { RectDataLabel } from '@t/components/dataLabels';
 
 type RenderOptions = {
   stack: Stack;
@@ -164,10 +165,7 @@ export default class BoxStackSeries extends BoxSeries {
       const dataLabelData = this.getDataLabels(series, renderOptions);
       const stackTotalData = this.getTotalDataLabels(stackSeriesData, renderOptions);
 
-      this.store.dispatch('appendDataLabels', {
-        data: [...dataLabelData, ...stackTotalData],
-        name: this.name,
-      });
+      this.drawDataLabels([...dataLabelData, ...stackTotalData]);
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);

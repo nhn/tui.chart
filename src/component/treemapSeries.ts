@@ -11,10 +11,11 @@ import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
 import { getRGBA, hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode } from '@src/helpers/responders';
-import { RectDataLabel, getDataLabelsOptions } from '@src/store/dataLabels';
+import { getDataLabelsOptions } from '@src/helpers/dataLabelsCalculator';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { first, last } from '@src/helpers/utils';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
+import { RectDataLabel } from '@t/components/dataLabels';
 
 export default class TreemapSeries extends Component {
   models: TreemapSeriesModels = { series: [], layer: [] };
@@ -44,7 +45,7 @@ export default class TreemapSeries extends Component {
       const useTreemapLeaf = options.series?.dataLabels?.useTreemapLeaf ?? false;
       const dataLabelModel = this.makeDataLabel(useTreemapLeaf);
 
-      this.store.dispatch('appendDataLabels', { data: dataLabelModel, name: this.name });
+      this.drawDataLabels(dataLabelModel);
     }
 
     this.responders = this.makeTreemapSeriesResponder();

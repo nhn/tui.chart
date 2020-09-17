@@ -3,7 +3,6 @@ import Chart from './chart';
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
-import dataLabels from '@src/store/dataLabels';
 import plot from '@src/store/plot';
 import stackSeriesData from '@src/store/stackSeriesData';
 
@@ -38,7 +37,7 @@ interface AreaChartProps {
 }
 
 export default class AreaChart extends Chart<AreaChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot, dataLabels];
+  modules = [stackSeriesData, dataRange, scale, axes, plot];
 
   constructor(props: AreaChartProps) {
     super({

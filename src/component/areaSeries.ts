@@ -44,7 +44,8 @@ import {
   makeRectResponderModel,
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
-import { getDataLabelsOptions } from '@src/store/dataLabels';
+import { getDataLabelsOptions } from '@src/helpers/dataLabelsCalculator';
+import { PointDataLabel } from '@t/components/dataLabels';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -205,10 +206,7 @@ export default class AreaSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      this.store.dispatch('appendDataLabels', {
-        data: this.getDataLabels(areaSeriesModel),
-        name: this.name,
-      });
+      this.drawDataLabels(this.getDataLabels(areaSeriesModel));
     }
 
     this.tooltipCircleMap = makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
@@ -548,7 +546,7 @@ export default class AreaSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  getDataLabels(seriesModels: AreaPointsModel[]) {
+  getDataLabels(seriesModels: AreaPointsModel[]): PointDataLabel[] {
     return seriesModels.flatMap(({ points, name }) =>
       points.map((point) => ({ type: 'point', ...point, name }))
     );

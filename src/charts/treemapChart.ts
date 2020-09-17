@@ -1,7 +1,6 @@
 import Chart from './chart';
 
 import treemapScale from '@src/store/treemapScale';
-import dataLabels from '@src/store/dataLabels';
 import treemapSeriesData from '@src/store/treemapSeriesData';
 
 import Tooltip from '@src/component/tooltip';
@@ -28,7 +27,7 @@ interface TreemapChartProps {
 }
 
 export default class TreemapChart extends Chart<TreemapChartOptions> {
-  modules = [treemapSeriesData, treemapScale, dataLabels];
+  modules = [treemapSeriesData, treemapScale];
 
   constructor(props: TreemapChartProps) {
     super({
