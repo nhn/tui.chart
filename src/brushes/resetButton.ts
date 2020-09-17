@@ -42,44 +42,45 @@ function drawResetIcon(ctx: CanvasRenderingContext2D, point: Point) {
 }
 
 function drawBackIcon(ctx: CanvasRenderingContext2D, point: Point) {
-  const tickSize = BUTTON_RECT_SIZE / 12;
+  const barWidth = 4;
+  const radius = BUTTON_RECT_SIZE / 7;
   const { x, y } = point;
   const centerX = x + BUTTON_RECT_SIZE / 2;
   const centerY = y + BUTTON_RECT_SIZE / 2;
   const color = '#545454';
 
+  line(ctx, {
+    type: 'line',
+    lineWidth: 2,
+    x: centerX - barWidth / 2,
+    y: centerY + radius,
+    x2: centerX + barWidth / 2,
+    y2: centerY + radius,
+    strokeStyle: color,
+  });
+
+  line(ctx, {
+    type: 'line',
+    lineWidth: 2,
+    x: centerX - barWidth / 2,
+    y: centerY - radius,
+    x2: centerX + barWidth / 2,
+    y2: centerY - radius,
+    strokeStyle: color,
+  });
+
   circle(ctx, {
     type: 'circle',
-    x: centerX,
+    x: centerX + barWidth / 2,
     y: centerY,
-    radius: tickSize * 2,
+    radius,
     angle: { start: Math.PI / 2, end: (Math.PI * 3) / 2 },
     color: 'transparent',
     style: [{ lineWidth: 2, strokeStyle: color }],
   });
 
-  line(ctx, {
-    type: 'line',
-    lineWidth: 2,
-    x: centerX - tickSize,
-    y: centerY + tickSize * 2,
-    x2: centerX,
-    y2: centerY + tickSize * 2,
-    strokeStyle: color,
-  });
-
-  line(ctx, {
-    type: 'line',
-    lineWidth: 2,
-    x: centerX - tickSize,
-    y: centerY - tickSize * 2,
-    x2: centerX,
-    y2: centerY - tickSize * 2,
-    strokeStyle: color,
-  });
-
-  const pointStartX = centerX - tickSize;
-  const pointStartY = centerY - tickSize * 2;
+  const pointStartX = centerX - barWidth / 2;
+  const pointStartY = centerY - radius;
   const points = [
     { x: pointStartX - ARROW_HEIGHT, y: pointStartY },
     { x: pointStartX, y: pointStartY - ARROW_WIDTH / 2 },
