@@ -16,6 +16,7 @@ import {
   ResponderModel,
   TreemapSeriesModels,
   HeatmapRectModels,
+  PieDonutSeriesModels,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -72,7 +73,8 @@ type ComponentModels =
   | ResetButtonModels
   | SpectrumLegendModels
   | BackButtonModels
-  | HeatmapRectModels;
+  | HeatmapRectModels
+  | PieDonutSeriesModels;
 
 export default abstract class Component {
   name = 'Component';

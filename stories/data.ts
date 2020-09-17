@@ -1809,3 +1809,189 @@ export const contributionsData = {
     [8, 2, 11, 14, 5, 12, 19, 10, 3, 13, 4, 5],
   ],
 };
+
+export const annualBrowserUsageData = {
+  categories: ['2018', '2019', '2020'],
+  series: [
+    {
+      alias: 'pie1',
+      data: [
+        {
+          name: 'Chrome - 2018',
+          data: 20.02,
+        },
+        {
+          name: 'IE - 2018',
+          data: 20.5,
+        },
+        {
+          name: 'Firefox - 2018',
+          data: 8.71,
+        },
+        {
+          name: 'Safari - 2018',
+          data: 6.45,
+        },
+        {
+          name: 'Opera - 2018',
+          data: 3.1,
+        },
+        {
+          name: 'Etc - 2018',
+          data: 7.25,
+        },
+      ],
+    },
+    {
+      alias: 'pie2',
+      data: [
+        {
+          name: 'Chrome - 2019',
+          data: 26.02,
+        },
+        {
+          name: 'IE - 2019',
+          data: 15.2,
+        },
+        {
+          name: 'Firefox - 2019',
+          data: 10.71,
+        },
+        {
+          name: 'Safari - 2019',
+          data: 5.45,
+        },
+        {
+          name: 'Opera - 2019',
+          data: 2.1,
+        },
+        {
+          name: 'Etc - 2019',
+          data: 7.25,
+        },
+      ],
+    },
+    {
+      alias: 'pie3',
+      data: [
+        {
+          name: 'Chrome',
+          data: 30.02,
+        },
+        {
+          name: 'IE',
+          data: 10.47,
+        },
+        {
+          name: 'Firefox',
+          data: 17.71,
+        },
+        {
+          name: 'Safari',
+          data: 5.45,
+        },
+        {
+          name: 'Opera',
+          data: 1.1,
+        },
+        {
+          name: 'Etc',
+          data: 7.25,
+        },
+      ],
+    },
+  ],
+};
+
+export const annualGroupedBrowserUsageData = {
+  categories: ['2018', '2019', '2020'],
+  series: [
+    {
+      alias: 'pie1',
+      data: [
+        {
+          name: 'Chrome',
+          data: 20.02,
+        },
+        {
+          name: 'IE',
+          data: 20.5,
+        },
+        {
+          name: 'Firefox',
+          data: 8.71,
+        },
+        {
+          name: 'Safari',
+          data: 6.45,
+        },
+        {
+          name: 'Opera',
+          data: 4.1,
+        },
+        {
+          name: 'Etc',
+          data: 7.25,
+        },
+      ],
+    },
+    {
+      alias: 'pie2',
+      data: [
+        {
+          name: 'Chrome',
+          data: 26.02,
+        },
+        {
+          name: 'IE',
+          data: 15.2,
+        },
+        {
+          name: 'Firefox',
+          data: 10.71,
+        },
+        {
+          name: 'Safari',
+          data: 5.45,
+        },
+        {
+          name: 'Opera',
+          data: 3.1,
+        },
+        {
+          name: 'Etc',
+          data: 7.25,
+        },
+      ],
+    },
+    {
+      alias: 'pie3',
+      data: [
+        {
+          name: 'Chrome',
+          data: 30.02,
+        },
+        {
+          name: 'IE',
+          data: 10.47,
+        },
+        {
+          name: 'Firefox',
+          data: 17.71,
+        },
+        {
+          name: 'Safari',
+          data: 5.45,
+        },
+        {
+          name: 'Opera',
+          data: 2.1,
+        },
+        {
+          name: 'Etc',
+          data: 7.25,
+        },
+      ],
+    },
+  ],
+};

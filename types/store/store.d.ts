@@ -33,9 +33,12 @@ import {
   HeatmapSeriesType,
   HeatmapCategoriesType,
   HeatmapChartOptions,
+  PieDonutSeriesType,
+  PieDonutChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
+import { DataLabelSeriesType, DataLabelData } from '@t/components/dataLabels';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -50,6 +53,7 @@ type ChartSeriesMap = {
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
   heatmap: HeatmapSeriesType[];
+  pieDonut: PieDonutSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -58,10 +62,10 @@ export type BoxType = 'bar' | 'column';
 
 type RawSeries = Partial<ChartSeriesMap>;
 
-export interface SeriesGroup {
+type SeriesGroup = {
   seriesCount: number;
   seriesGroupCount: number;
-}
+};
 
 type Series = {
   [key in ChartType]?: {
@@ -84,6 +88,7 @@ export type ChartOptionsMap = {
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
   heatmap: HeatmapChartOptions;
+  pieDonut: PieDonutChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -260,6 +265,16 @@ export interface ChartState<T extends Options> {
 export type TreemapZoomId = {
   cur: string;
   prev: string;
+  dataLabels: DataLabels;
+  nestedPieSeries: Record<string, NestedPieSeriesDataType>;
+};
+
+type NestedPieSeriesDataType = {
+  data: ChartSeriesMap['pie'];
+};
+
+export type DataLabels = {
+  [key in DataLabelSeriesType]?: DataLabelData;
 };
 
 export type HeatmapSeriesData = {
