@@ -200,7 +200,6 @@ export default class TreemapSeries extends Component {
       if (hasChild) {
         this.emitMouseEvent([]);
         this.store.dispatch('setTreemapZoomId', id);
-        this.eventBus.emit('needDraw');
       }
     }
   }
