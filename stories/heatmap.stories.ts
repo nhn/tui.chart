@@ -51,3 +51,15 @@ export const basic = () => {
 
   return el;
 };
+
+export const dataLabels = () => {
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+  });
+
+  return el;
+};

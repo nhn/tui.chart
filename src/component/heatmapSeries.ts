@@ -4,9 +4,10 @@ import { ChartState, HeatmapSeriesData, ScaleData, Theme } from '@t/store/store'
 import { HeatmapRectModel, HeatmapRectResponderModel } from '@t/components/series';
 import { hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
-import { getDataLabelsOptions } from '@src/store/dataLabels';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { SeriesDataLabelType } from '@t/components/dataLabels';
 
 export default class HeatmapSeries extends Component {
   models: HeatmapRectModel[] = [];
@@ -35,11 +36,20 @@ export default class HeatmapSeries extends Component {
     this.models = this.renderHeatmapSeries(heatmapSeries, cellSize, theme, colorValueScale);
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      // @TODO: dataLabels 만들기
-      //   this.store.dispatch('appendDataLabels', { data: dataLabelModel, name: this.name });
+      this.renderDataLabels(this.makeDataLabels());
     }
 
     this.responders = this.makeHeatmapSeriesResponder();
+  }
+
+  makeDataLabels(): SeriesDataLabelType {
+    return this.models.map((m) => ({
+      ...m,
+      type: 'treemapSeriesName',
+      value: m.colorValue,
+      direction: 'left',
+      plot: { x: 0, y: 0, size: 0 },
+    }));
   }
 
   makeHeatmapSeriesResponder() {
@@ -72,8 +82,6 @@ export default class HeatmapSeries extends Component {
     const distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
     const { height, width } = cellSize;
 
-    const seriesSize = seriesData.length;
-
     return seriesData.flatMap((data) => {
       return data.flatMap((datum) => {
         const { indexes, colorValue, category } = datum;
@@ -89,7 +97,7 @@ export default class HeatmapSeries extends Component {
           width: width - thickness * 2,
           height: height - thickness * 2,
           x: width * xIndex + thickness,
-          y: height * (seriesSize - yIndex - 1) + thickness,
+          y: height * yIndex + thickness,
           colorValue,
           colorRatio,
           color: getSpectrumColor(colorRatio, distances, startRGB),

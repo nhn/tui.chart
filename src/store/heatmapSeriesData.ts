@@ -7,11 +7,13 @@ function makeHeatmapSeries(
   categories: HeatmapCategoriesType
 ): HeatmapSeriesData[] {
   return series.reverse().map((rowSeries, y) => {
+    const categoriesYSize = categories.y.length - 1;
+
     return rowSeries.map((colorValue, x) => ({
       colorValue,
       category: {
         x: categories.x[x],
-        y: categories.y[y],
+        y: categories.y[categoriesYSize - y],
       },
       indexes: [x, y],
     }));

@@ -2,7 +2,6 @@ import Chart from './chart';
 
 import axes from '@src/store/axes';
 import heatmapSeriesData from '@src/store/heatmapSeriesData';
-import dataLabels from '@src/store/dataLabels';
 import colorValueScale from '@src/store/colorValueScale';
 
 import Tooltip from '@src/component/tooltip';
@@ -37,7 +36,7 @@ interface HeatmapChartProps {
 }
 
 export default class HeatmapChart extends Chart<BaseOptions> {
-  modules = [heatmapSeriesData, colorValueScale, axes, dataLabels];
+  modules = [heatmapSeriesData, colorValueScale, axes];
 
   constructor(props: HeatmapChartProps) {
     super({
@@ -61,8 +60,8 @@ export default class HeatmapChart extends Chart<BaseOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
-    this.componentManager.add(DataLabels);
     this.componentManager.add(HoveredSeries);
+    this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
     this.painter.addGroups([
