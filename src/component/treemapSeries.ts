@@ -47,7 +47,7 @@ export default class TreemapSeries extends Component {
   }
 
   render(chartState: ChartState<TreemapChartOptions>) {
-    const { layout, treemapSeries, treemapScale, options, theme, treemapZoomId } = chartState;
+    const { layout, treemapSeries, colorValueScale, options, theme, treemapZoomId } = chartState;
 
     if (!treemapSeries.length) {
       throw new Error("There's no tree map data");
@@ -61,7 +61,7 @@ export default class TreemapSeries extends Component {
       series,
       options,
       theme,
-      treemapScale,
+      colorValueScale,
       currentTreemapZoomId
     );
     this.zoomable = options.series?.zoomable ?? false;
@@ -149,7 +149,7 @@ export default class TreemapSeries extends Component {
     seriesData: TreemapSeriesData[],
     options: TreemapChartOptions,
     theme: Theme,
-    treemapScale: ScaleData,
+    colorValueScale: ScaleData,
     treemapCurrentDepthParentId: string
   ) {
     let layer: TreemapRectModel[] = [];
@@ -171,7 +171,7 @@ export default class TreemapSeries extends Component {
       const treemapSeries = seriesData.find((item) => item.id === id)!;
       let colorRatio;
       if (useColorValue) {
-        colorRatio = getColorRatio(treemapScale.limit, treemapSeries.colorValue);
+        colorRatio = getColorRatio(colorValueScale.limit, treemapSeries.colorValue);
       }
 
       return {

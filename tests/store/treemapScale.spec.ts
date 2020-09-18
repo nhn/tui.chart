@@ -1,4 +1,4 @@
-import treemapScale from '@src/store/treemapScale';
+import colorValueScale from '@src/store/colorValueScale';
 import Store from '@src/store/store';
 import { TreemapChartOptions } from '@t/options';
 import { ChartState } from '@t/store/store';
@@ -34,7 +34,7 @@ describe('Treemap Scale Store', () => {
       legend: {
         useSpectrumLegend: true,
       },
-      treemapScale: {},
+      colorValueScale: {},
       treemapSeries: [
         {
           color: '#00a9ff',
@@ -91,9 +91,9 @@ describe('Treemap Scale Store', () => {
     } as ChartState<TreemapChartOptions>;
 
     const store = { state } as Store<TreemapChartOptions>;
-    treemapScale.action!.setTreemapScale(store);
+    colorValueScale.action!.setColorValueScale(store);
 
-    expect(state.treemapScale).toEqual({
+    expect(state.colorValueScale).toEqual({
       limit: { max: 2, min: 0 },
       stepSize: 1,
       stepCount: 2,

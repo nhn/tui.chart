@@ -31,7 +31,7 @@ describe('spectrum legend', () => {
         legend: {
           visible: true,
         },
-        treemapScale: {
+        colorValueScale: {
           limit: { max: 2, min: 0 },
           stepSize: 1,
           stepCount: 2,

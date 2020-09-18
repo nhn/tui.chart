@@ -5,7 +5,7 @@ import { isString, isUndefined } from '@src/helpers/utils';
 export type RGB = [number, number, number];
 
 export function makeDistances(startRGB: RGB, endRGB: RGB) {
-  return startRGB.map((value, index) => endRGB[index] - value);
+  return startRGB.map((value, index) => endRGB[index] - value) as RGB;
 }
 
 export function getColorRatio(limit: ValueEdge, value?: number) {
@@ -13,9 +13,8 @@ export function getColorRatio(limit: ValueEdge, value?: number) {
     return;
   }
   const divNumber = Math.abs(limit.max - limit.min);
-  const subNumber = Math.max(0, limit.min);
 
-  return divNumber ? (value - subNumber) / divNumber : 0;
+  return divNumber ? (value - limit.min) / divNumber : 0;
 }
 
 export function getSpectrumColor(ratio: number, distances: RGB, startRGB: RGB) {

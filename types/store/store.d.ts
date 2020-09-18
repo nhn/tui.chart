@@ -29,6 +29,7 @@ import {
   PlotBand,
   BoxPlotChartOptions,
   PieChartOptions,
+  BaseOptions,
   TreemapSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
@@ -46,6 +47,7 @@ type ChartSeriesMap = {
   boxPlot: BoxPlotSeriesType[];
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
+  heatmap: HeatmapSeriesData[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -79,6 +81,7 @@ export type ChartOptionsMap = {
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
+  heatmap: BaseOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -117,9 +120,10 @@ export interface StoreModule extends StoreOptions {
     | 'dataRange'
     | 'stackSeriesData'
     | 'treemapSeriesData'
+    | 'heatmapSeriesData'
     | 'legend'
     | 'circleLegend'
-    | 'treemapScale';
+    | 'colorValueScale';
 }
 
 export interface SeriesTheme {
@@ -230,10 +234,11 @@ export interface ChartState<T extends Options> {
   theme: Theme;
   options: T;
   categories?: string[];
-  rawCategories: string[];
+  rawCategories: string[]; // @TODO: categories 통합 타입 만들기
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };
+  colorValueScale: ScaleData;
   plot: {
     showLine: boolean;
     lines: PlotLine[];
@@ -241,16 +246,24 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
-
   treemapSeries: TreemapSeriesData[];
-  treemapScale: ScaleData;
   treemapZoomId: TreemapZoomId;
+  heatmapSeries: HeatmapSeriesData[];
 }
 
 export type TreemapZoomId = {
   cur: string;
   prev: string;
 };
+
+export type HeatmapSeriesData = {
+  category: {
+    x: string;
+    y: string;
+  };
+  colorValue: number;
+  indexes: [number, number];
+}[];
 
 export type StackTotal = {
   positive: number;
