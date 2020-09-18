@@ -126,7 +126,7 @@ const legend: StoreModule = {
     const visible = showLegend(options, series);
     const checkboxVisible = showCheckbox(options);
     const useSpectrumLegend =
-      (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? false;
+      (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
     const defaultWidth = Math.min(options.chart!.width / 10, 150);
     const legendLabels = getLegendLabels(series);

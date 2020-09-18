@@ -3,6 +3,8 @@ import { TooltipModel } from '@t/components/tooltip';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
+type HeatmapSeriesDataType = number[];
+export type HeatmapCategoriesType = { x: string[]; y: string[] };
 export type AreaSeriesDataType = number | RangeDataType<number>;
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 export interface Point {
@@ -67,6 +69,11 @@ export interface TreemapSeriesType {
 
 export interface TreemapSeriesData {
   series: TreemapSeriesType[];
+}
+
+export interface HeatmapSeriesData {
+  categories: HeatmapCategoriesType;
+  series: HeatmapSeriesDataType[];
 }
 
 export interface ScatterSeriesType {
@@ -222,7 +229,7 @@ interface BaseTooltipOptions {
   formatter?: Formatter;
 }
 
-interface BaseOptions {
+export interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
@@ -438,7 +445,7 @@ export interface BoxSeriesData {
 export interface ChartProps<T> {
   el: Element;
   series: RawSeries;
-  categories?: string[];
+  categories?: string[] | HeatmapCategoriesType;
   options: T;
 }
 

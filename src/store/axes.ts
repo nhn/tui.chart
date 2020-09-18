@@ -1,24 +1,24 @@
 import {
+  Axes,
+  AxisData,
+  CenterYAxisData,
   Options,
+  RadialAxisData,
   ScaleData,
   Series,
   StoreModule,
   ValueEdge,
-  CenterYAxisData,
-  Axes,
-  RadialAxisData,
   ChartOptionsUsingYAxis,
   ChartState,
   LabelAxisData,
   ValueAxisData,
   InitAxisData,
-  AxisData,
 } from '@t/store/store';
 import {
-  isLabelAxisOnYAxis,
   getAxisName,
   getSizeKey,
   hasBoxTypeSeries,
+  isLabelAxisOnYAxis,
   isPointOnColumn,
   getYAxisOption,
 } from '@src/helpers/axes';
@@ -26,24 +26,26 @@ import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import {
   AxisTitle,
-  BoxSeriesOptions,
-  RangeDataType,
-  Rect,
   BaseAxisOptions,
   BarTypeYAxisOption,
   BaseXAxisOptions,
   LineTypeXAxisOptions,
+  BoxSeriesOptions,
+  HeatmapCategoriesType,
+  RangeDataType,
+  Rect,
 } from '@t/options';
 import {
   deepMergedCopy,
   hasNegativeOnly,
+  isNumber,
   isString,
   isUndefined,
-  isNumber,
   pickProperty,
 } from '@src/helpers/utils';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { isZooming } from '@src/helpers/range';
+import { AxisType } from '@src/component/axis';
 
 interface StateProp {
   scale: ScaleData;
@@ -55,6 +57,7 @@ interface StateProp {
 }
 
 type ValueStateProp = StateProp & { categories: string[]; rawCategories: string[] };
+type HeatmapStateProp = { axisSize: number; categories: HeatmapCategoriesType };
 
 type LabelAxisState = Omit<LabelAxisData, 'tickInterval' | 'labelInterval'>;
 type ValueAxisState = Omit<ValueAxisData, 'tickInterval' | 'labelInterval'>;
@@ -223,6 +226,26 @@ function getSecondaryYAxisData(
       });
 }
 
+function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
+  const { categories, axisSize } = stateProp;
+  const isLabelAxis = axisType === AxisType.X;
+  const axisName = isLabelAxis ? 'x' : 'y';
+  const labels = categories[axisName];
+
+  const tickIntervalCount = labels.length;
+  const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
+  const labelDistance = axisSize / labels.length;
+
+  return {
+    labels,
+    pointOnColumn: true,
+    isLabelAxis,
+    tickCount: labels.length + 1,
+    tickDistance,
+    labelDistance,
+  };
+}
+
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
@@ -250,7 +273,16 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, zoomRange, categories = [], rawCategories } = state;
+      const {
+        scale,
+        options,
+        series,
+        layout,
+        zoomRange,
+        categories = [],
+        rawCategories,
+        heatmapSeries,
+      } = state;
       const { xAxis, yAxis, plot } = layout;
 
       const labelOnYAxis = isLabelAxisOnYAxis(series, options);
@@ -260,27 +292,31 @@ const axes: StoreModule = {
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;
 
-      const valueAxisData = getValueAxisData({
-        scale: scale[valueAxisName],
-        axisSize: valueAxisSize,
-        options,
-        series,
-        centerYAxis: centerYAxis
-          ? {
-              xAxisHalfSize: (xAxis.width - yAxis.width) / 2,
-            }
-          : null,
-      });
+      const valueAxisData = heatmapSeries
+        ? getHeatmapAxisData({ axisSize: valueAxisSize, categories: rawCategories }, valueAxisName)
+        : getValueAxisData({
+            scale: scale[valueAxisName],
+            axisSize: valueAxisSize,
+            options,
+            series,
+            centerYAxis: centerYAxis
+              ? {
+                  xAxisHalfSize: (xAxis.width - yAxis.width) / 2,
+                }
+              : null,
+          });
 
-      const labelAxisData = getLabelAxisData({
-        scale: scale[labelAxisName],
-        axisSize: labelAxisSize,
-        categories,
-        rawCategories,
-        options,
-        series,
-        zoomRange,
-      });
+      const labelAxisData = heatmapSeries
+        ? getHeatmapAxisData({ axisSize: labelAxisSize, categories: rawCategories }, labelAxisName)
+        : getLabelAxisData({
+            scale: scale[labelAxisName],
+            axisSize: labelAxisSize,
+            categories,
+            rawCategories,
+            options,
+            series,
+            zoomRange,
+          });
 
       const axesState = {
         xAxis: labelOnYAxis ? valueAxisData : labelAxisData,
