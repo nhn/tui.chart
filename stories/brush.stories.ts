@@ -4,7 +4,7 @@ import { tick } from '@src/brushes/axis';
 import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';
 import { label } from '@src/brushes/label';
-import { resetButton } from '@src/brushes/resetButton';
+import { resetButton, backButton } from '@src/brushes/resetButton';
 import { sector } from '@src/brushes/sector';
 import { spectrumLegend, spectrumTooltip } from '@src/brushes/spectrumLegend';
 
@@ -500,6 +500,12 @@ export const resetButtonBrush = () => {
   resetButton(ctx, {
     type: 'resetButton',
     x: 100,
+    y: 100,
+  });
+
+  backButton(ctx, {
+    type: 'backButton',
+    x: 200,
     y: 100,
   });
 

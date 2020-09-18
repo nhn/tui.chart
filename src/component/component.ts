@@ -26,7 +26,7 @@ import { ZoomModels } from '@t/components/zoom';
 import { RadarPlotModels } from '@t/components/radarPlot';
 import { isSameArray } from '@src/helpers/arrayUtil';
 import { HoveredSeriesModel } from '@src/component/hoveredSeries';
-import { ResetButtonModels } from '@t/components/resetButton';
+import { BackButtonModels, ResetButtonModels } from '@t/components/resetButton';
 import { SpectrumLegendModels } from '@t/components/spectrumLegend';
 
 export type ComponentType =
@@ -45,7 +45,8 @@ export type ComponentType =
   | 'exportMenu'
   | 'resetButton'
   | 'zeroAxis'
-  | 'zoom';
+  | 'zoom'
+  | 'backButton';
 
 type ComponentModels =
   | AxisModels
@@ -68,7 +69,8 @@ type ComponentModels =
   | HoveredSeriesModel
   | TreemapSeriesModels
   | ResetButtonModels
-  | SpectrumLegendModels;
+  | SpectrumLegendModels
+  | BackButtonModels;
 
 export default abstract class Component {
   name = 'Component';

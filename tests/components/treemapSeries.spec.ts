@@ -3,6 +3,7 @@ import TreemapSeries from '@src/component/treemapSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import { deepMergedCopy } from '@src/helpers/utils';
+import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
 
 let treemapSeries;
 
@@ -90,6 +91,10 @@ function getChartState(seriesData, options?: any) {
       },
       dataLabels: {
         visible: false,
+      },
+      treemapZoomId: {
+        cur: TREEMAP_ROOT_ID,
+        prev: TREEMAP_ROOT_ID,
       },
     },
     { ...options }
@@ -618,5 +623,125 @@ describe('with colorValue', () => {
     it(`should make ${modelName} properly when calling render`, () => {
       expect(treemapSeries[modelName]).toEqual(result[modelName]);
     });
+  });
+});
+
+describe('zoom', () => {
+  beforeEach(() => {
+    const seriesData = [
+      {
+        label: 'A',
+        children: [
+          {
+            label: 'B',
+            data: 1,
+          },
+          {
+            label: 'C',
+            data: 1,
+          },
+        ],
+      },
+      {
+        label: 'D',
+        data: 2,
+      },
+    ];
+
+    treemapSeries = new TreemapSeries({
+      store: {} as Store<AreaChartOptions>,
+      eventBus: new EventEmitter(),
+    });
+
+    treemapSeries.render(
+      getChartState(seriesData, {
+        treemapZoomId: {
+          cur: '__TOAST_UI_TREEMAP_0',
+          prev: TREEMAP_ROOT_ID,
+        },
+        options: {
+          zoomable: true,
+        },
+      })
+    );
+  });
+
+  const models = {
+    layer: [
+      {
+        color: 'rgba(0, 0, 0, 0.15)',
+        data: 2,
+        depth: 1,
+        hasChild: false,
+        height: 100,
+        id: '__TOAST_UI_TREEMAP_0_1',
+        indexes: [0, 1],
+        label: 'C',
+        opacity: 0.15,
+        parentId: '__TOAST_UI_TREEMAP_0',
+        ratio: 0.5,
+        type: 'rect',
+        width: 140,
+        x: 0,
+        y: 0,
+      },
+      {
+        color: 'rgba(0, 0, 0, 0.1)',
+        data: 1,
+        depth: 1,
+        hasChild: false,
+        height: 100,
+        id: '__TOAST_UI_TREEMAP_0_0',
+        indexes: [0, 0],
+        label: 'B',
+        opacity: 0.1,
+        parentId: '__TOAST_UI_TREEMAP_0',
+        ratio: 0.5,
+        type: 'rect',
+        width: 70,
+        x: 140,
+        y: 0,
+      },
+    ],
+    series: [
+      {
+        color: '#00a9ff',
+        data: 2,
+        depth: 1,
+        hasChild: false,
+        height: 100,
+        id: '__TOAST_UI_TREEMAP_0_1',
+        indexes: [0, 1],
+        label: 'C',
+        opacity: 0.15,
+        parentId: '__TOAST_UI_TREEMAP_0',
+        ratio: 0.5,
+        type: 'rect',
+        width: 140,
+        x: 0,
+        y: 0,
+      },
+      {
+        color: '#00a9ff',
+        data: 1,
+        depth: 1,
+        hasChild: false,
+        height: 100,
+        id: '__TOAST_UI_TREEMAP_0_0',
+        indexes: [0, 0],
+        label: 'B',
+        opacity: 0.1,
+        parentId: '__TOAST_UI_TREEMAP_0',
+        ratio: 0.5,
+        type: 'rect',
+        width: 70,
+        x: 140,
+        y: 0,
+      },
+    ],
+  };
+
+  it(`only the model inside the zoom area is created`, () => {
+    expect(treemapSeries.models).toEqual(models);
   });
 });

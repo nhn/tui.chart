@@ -227,8 +227,6 @@ export interface ChartState<T extends Options> {
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };
-  treemapSeries: TreemapSeriesData[];
-  treemapScale: ScaleData;
   plot: {
     showLine: boolean;
     lines: PlotLine[];
@@ -236,7 +234,16 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
+
+  treemapSeries: TreemapSeriesData[];
+  treemapScale: ScaleData;
+  treemapZoomId: TreemapZoomId;
 }
+
+export type TreemapZoomId = {
+  cur: string;
+  prev: string;
+};
 
 export type StackTotal = {
   positive: number;
