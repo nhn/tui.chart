@@ -171,7 +171,7 @@ export default abstract class Chart<T extends Options> {
     });
 
     if (this.handleEventForAllResponders) {
-      this.handleEventForAllResponders(allResponders, delegationMethod, mousePosition);
+      this.handleEventForAllResponders(event, allResponders, delegationMethod, mousePosition);
     }
   }
 
@@ -209,6 +209,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   handleEventForAllResponders?(
+    event: MouseEvent,
     responderModels: RespondersModel,
     delegationMethod: string,
     mousePosition: Point

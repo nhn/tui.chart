@@ -2,11 +2,11 @@ import Chart from './chart';
 import { ColumnLineData, ColumnLineChartOptions, Point } from '@t/options';
 import { RawSeries } from '@t/store/store';
 import stackSeriesData from '@src/store/stackSeriesData';
-import dataLabels from '@src/store/dataLabels';
 import plot from '@src/store/plot';
 import axes from '@src/store/axes';
 import scale from '@src/store/scale';
 import dataRange from '@src/store/dataRange';
+
 import Legend from '@src/component/legend';
 import BoxStackSeries from '@src/component/boxStackSeries';
 import BoxSeries from '@src/component/boxSeries';
@@ -52,7 +52,7 @@ function hasColumnLineUsingPointEventType(respondersModel: RespondersModel) {
 }
 
 export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot, dataLabels];
+  modules = [stackSeriesData, dataRange, scale, axes, plot];
 
   constructor({ el, options, data: { series, categories } }: ColumnLineChartProps) {
     super({
@@ -94,6 +94,7 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   }
 
   handleEventForAllResponders(
+    event: MouseEvent,
     responderModels: RespondersModel,
     delegationMethod: string,
     mousePosition: Point

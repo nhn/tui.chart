@@ -1,15 +1,13 @@
-import { StoreModule, DataLabelSeriesType, Options } from '@t/store/store';
-import { pickStackOption } from '@src/store/stackSeriesData';
-import { isFunction, includes, isBoolean, isUndefined, isString } from '@src/helpers/utils';
+import { Options } from '@t/store/store';
+import { isFunction, includes, isBoolean, isString } from '@src/helpers/utils';
+import { DataLabelAnchor, SeriesDataType, SubDataLabel, DataLabelOptions } from '@t/options';
 import {
-  DataLabelAnchor,
-  SeriesDataType,
-  SubDataLabel,
-  BoxSeriesDataType,
-  DataLabelOptions,
-} from '@t/options';
-import { PointModel, RectModel, SectorModel } from '@t/components/series';
-import { DataLabel, DataLabelOption } from '@t/components/dataLabels';
+  DataLabel,
+  DataLabelOption,
+  PointDataLabel,
+  RectDataLabel,
+  RadialDataLabel,
+} from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
 import { labelStyle } from '@src/brushes/label';
@@ -23,24 +21,6 @@ type LabelPosition = {
   textBaseline: CanvasTextBaseline;
 };
 type DataLabelType = 'point' | 'sector' | 'rect' | 'stackTotal' | 'treemapSeriesName';
-
-export type PointDataLabel = PointModel & {
-  type: 'point';
-};
-export type RadialDataLabel = Omit<SectorModel, 'type'> & {
-  type: 'sector';
-};
-export type RectDirection = 'top' | 'bottom' | 'left' | 'right';
-export type RectDataLabel = Omit<RectModel, 'type' | 'color' | 'value'> & {
-  value?: BoxSeriesDataType | string;
-  type: 'rect' | 'stackTotal' | 'treemapSeriesName';
-  direction: RectDirection;
-  plot: {
-    x: number;
-    y: number;
-    size: number;
-  };
-};
 
 function getDefaultAnchor(type: DataLabelType, withStack = false): DataLabelAnchor {
   let anchor: DataLabelAnchor = 'auto';
@@ -109,7 +89,10 @@ export function getDefaultDataLabelsOptions(
   return options;
 }
 
-function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
+export function makePointLabelInfo(
+  point: PointDataLabel,
+  dataLabelOptions: DataLabelOption
+): DataLabel {
   const { anchor, offsetX = 0, offsetY = 0, formatter } = dataLabelOptions;
   const { x, y, name } = point;
   let textBaseline: CanvasTextBaseline = 'middle';
@@ -411,7 +394,10 @@ function makeVerticalRectLabelInfo(
   };
 }
 
-function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
+export function makeRectLabelInfo(
+  rect: RectDataLabel,
+  dataLabelOptions: DataLabelOption
+): DataLabel {
   const { type, value, direction, name } = rect;
   const { formatter } = dataLabelOptions;
   const horizontal = isHorizontal(direction);
@@ -427,7 +413,7 @@ function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOptio
   };
 }
 
-function makeSectorLabelPosition(
+export function makeSectorLabelPosition(
   model: RadialDataLabel,
   dataLabelOptions: DataLabelOption
 ): LabelPosition {
@@ -440,7 +426,10 @@ function makeSectorLabelPosition(
   };
 }
 
-function makeSectorLabelInfo(model: RadialDataLabel, dataLabelOptions: DataLabelOption): DataLabel {
+export function makeSectorLabelInfo(
+  model: RadialDataLabel,
+  dataLabelOptions: DataLabelOption
+): DataLabel {
   const { formatter } = dataLabelOptions;
   const labelPosition = makeSectorLabelPosition(model, dataLabelOptions);
   const { value, name } = model;
@@ -453,7 +442,7 @@ function makeSectorLabelInfo(model: RadialDataLabel, dataLabelOptions: DataLabel
   };
 }
 
-function makePieSeriesNameLabelInfo(
+export function makePieSeriesNameLabelInfo(
   model: RadialDataLabel,
   dataLabelOptions: DataLabelOption
 ): DataLabel {
@@ -489,74 +478,3 @@ function makePieSeriesNameLabelInfo(
 export function getDataLabelsOptions(options: Options, name: string) {
   return options?.series?.[name]?.dataLabels || options?.series?.dataLabels || {};
 }
-
-const dataLabels: StoreModule = {
-  name: 'dataLabels',
-  state: () => ({
-    dataLabels: {},
-  }),
-  action: {
-    appendDataLabels(
-      { state },
-      {
-        data,
-        name,
-      }: {
-        data: Array<PointDataLabel | RadialDataLabel | RectDataLabel>;
-        name: DataLabelSeriesType;
-      }
-    ) {
-      const { options } = state;
-      const dataLabelOptions = getDataLabelsOptions(options, name);
-      const withStack = !!pickStackOption(options);
-      const labels: DataLabel[] = [];
-
-      data.forEach((model) => {
-        const { type, value } = model;
-        const labelOptions = getDefaultDataLabelsOptions(dataLabelOptions, type, withStack);
-        const disableStackTotal = type === 'stackTotal' && !labelOptions.stackTotal?.visible;
-
-        if (disableStackTotal || isUndefined(value)) {
-          return;
-        }
-
-        let dataLabel!: DataLabel;
-
-        if (type === 'point') {
-          dataLabel = makePointLabelInfo(model as PointDataLabel, labelOptions);
-        } else if (type === 'sector') {
-          dataLabel = makeSectorLabelInfo(model as RadialDataLabel, labelOptions);
-
-          if (labelOptions.pieSeriesName?.visible) {
-            const seriesNameLabel = makePieSeriesNameLabelInfo(
-              model as RadialDataLabel,
-              labelOptions
-            );
-
-            labels.push(seriesNameLabel);
-          }
-        } else {
-          dataLabel = makeRectLabelInfo(model as RectDataLabel, labelOptions);
-        }
-
-        labels.push(dataLabel);
-      });
-
-      state.dataLabels[name] = { data: labels, options: dataLabelOptions };
-    },
-    resetDataLabels({ state }) {
-      const newDataLabels = {};
-
-      Object.keys(state.dataLabels).forEach((seriesName) => {
-        newDataLabels[seriesName] = {
-          data: [],
-          options: state.dataLabels[seriesName].options,
-        };
-      });
-
-      state.dataLabels = newDataLabels;
-    },
-  },
-};
-
-export default dataLabels;

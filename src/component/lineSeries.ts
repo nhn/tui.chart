@@ -34,7 +34,8 @@ import {
   makeRectResponderModel,
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
-import { getDataLabelsOptions } from '@src/store/dataLabels';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
+import { PointDataLabel } from '@t/components/dataLabels';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -146,10 +147,7 @@ export default class LineSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      this.store.dispatch('appendDataLabels', {
-        data: this.getDataLabels(lineSeriesModel),
-        name: this.name,
-      });
+      this.renderDataLabels(this.getDataLabels(lineSeriesModel));
     }
 
     this.responders = this.getResponders(axes.xAxis, seriesCircleModel, tooltipDataArr);
@@ -327,7 +325,7 @@ export default class LineSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  getDataLabels(seriesModels: LinePointsModel[]): PointModel[] {
+  getDataLabels(seriesModels: LinePointsModel[]): PointDataLabel[] {
     return seriesModels.flatMap(({ points, name }) =>
       points.map((point) => ({ type: 'point', ...point, name }))
     );

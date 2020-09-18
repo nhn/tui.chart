@@ -5,7 +5,6 @@ import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import plot from '@src/store/plot';
-import dataLabels from '@src/store/dataLabels';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
@@ -36,7 +35,7 @@ interface ColumnChartProps {
 }
 
 export default class ColumnChart extends Chart<ColumnChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot, dataLabels];
+  modules = [stackSeriesData, dataRange, scale, axes, plot];
 
   constructor({ el, options, data }: ColumnChartProps) {
     super({
