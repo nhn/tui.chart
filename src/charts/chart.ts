@@ -209,7 +209,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   handleEventForAllResponders?(
-    evnet: MouseEvent,
+    event: MouseEvent,
     responderModels: RespondersModel,
     delegationMethod: string,
     mousePosition: Point

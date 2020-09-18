@@ -24,8 +24,6 @@ interface PieChartProps {
 }
 
 export default class PieChart extends Chart<PieChartOptions> {
-  modules = [];
-
   constructor({ el, options, data }: PieChartProps) {
     super({
       el,
