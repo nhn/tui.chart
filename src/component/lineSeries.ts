@@ -34,7 +34,7 @@ import {
   makeRectResponderModel,
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
-import { getDataLabelsOptions } from '@src/helpers/dataLabelsCalculator';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 
 interface RenderOptions {
@@ -147,7 +147,7 @@ export default class LineSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      this.drawDataLabels(this.getDataLabels(lineSeriesModel));
+      this.renderDataLabels(this.getDataLabels(lineSeriesModel));
     }
 
     this.responders = this.getResponders(axes.xAxis, seriesCircleModel, tooltipDataArr);

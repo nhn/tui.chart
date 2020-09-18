@@ -11,7 +11,7 @@ import {
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
 import { isString, getPercentageValue } from '@src/helpers/utils';
-import { getDataLabelsOptions } from '@src/helpers/dataLabelsCalculator';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 
 const DEFAULT_RADIUS_RATIO = 0.9;
 const semiCircleCenterYRatio = {
@@ -127,7 +127,7 @@ export default class PieSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      this.drawDataLabels(seriesModel);
+      this.renderDataLabels(seriesModel);
     }
 
     this.responders = seriesModel.map((m, index) => ({

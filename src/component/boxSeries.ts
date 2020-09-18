@@ -37,7 +37,7 @@ import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
-import { getDataLabelsOptions } from '@src/helpers/dataLabelsCalculator';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { makeRectResponderModel } from '@src/helpers/responders';
@@ -319,7 +319,7 @@ export default class BoxSeries extends Component {
     if (getDataLabelsOptions(options, this.name).visible) {
       const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data, centerYAxis));
 
-      this.drawDataLabels(dataLabelData);
+      this.renderDataLabels(dataLabelData);
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);

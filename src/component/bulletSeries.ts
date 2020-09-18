@@ -7,7 +7,7 @@ import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/op
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
 import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
 import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
-import { getDataLabelsOptions } from '@src/helpers/dataLabelsCalculator';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel } from '@t/components/dataLabels';
 
 type RenderOptions = {
@@ -143,7 +143,7 @@ export default class BulletSeries extends Component {
     });
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      this.drawDataLabels(this.getDataLabels(seriesModels, vertical, this.rect[valueSizeKey]));
+      this.renderDataLabels(this.getDataLabels(seriesModels, vertical, this.rect[valueSizeKey]));
     }
   }
 

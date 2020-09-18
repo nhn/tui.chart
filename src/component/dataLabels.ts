@@ -21,7 +21,7 @@ import {
   makeSectorLabelInfo,
   makePieSeriesNameLabelInfo,
   makeRectLabelInfo,
-} from '@src/helpers/dataLabelsCalculator';
+} from '@src/helpers/dataLabels';
 import { pickStackOption } from '@src/store/stackSeriesData';
 
 type SeriesDataLabel = {
@@ -48,7 +48,7 @@ export default class DataLabels extends Component {
     this.type = 'dataLabels';
     this.name = 'dataLabels';
 
-    this.eventBus.on('renderDataLabels', this.renderDataLabels);
+    this.eventBus.on('renderDataLabels', this.renderSeriesDataLabels);
   }
 
   initUpdate(delta: number) {
@@ -63,7 +63,7 @@ export default class DataLabels extends Component {
     this.options = options;
   }
 
-  renderDataLabels = (seriesDataLabel: SeriesDataLabel) => {
+  renderSeriesDataLabels = (seriesDataLabel: SeriesDataLabel) => {
     this.appendDataLabels(seriesDataLabel);
 
     this.models = this.renderLabelModel();

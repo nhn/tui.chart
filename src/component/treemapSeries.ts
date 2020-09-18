@@ -11,7 +11,7 @@ import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
 import { getRGBA, hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode } from '@src/helpers/responders';
-import { getDataLabelsOptions } from '@src/helpers/dataLabelsCalculator';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { first, last } from '@src/helpers/utils';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
@@ -45,7 +45,7 @@ export default class TreemapSeries extends Component {
       const useTreemapLeaf = options.series?.dataLabels?.useTreemapLeaf ?? false;
       const dataLabelModel = this.makeDataLabel(useTreemapLeaf);
 
-      this.drawDataLabels(dataLabelModel);
+      this.renderDataLabels(dataLabelModel);
     }
 
     this.responders = this.makeTreemapSeriesResponder();
