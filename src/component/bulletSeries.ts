@@ -7,7 +7,8 @@ import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/op
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
 import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
 import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
-import { getDataLabelsOptions } from '@src/store/dataLabels';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
+import { RectDataLabel } from '@t/components/dataLabels';
 
 type RenderOptions = {
   ratio: number;
@@ -142,14 +143,15 @@ export default class BulletSeries extends Component {
     });
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      this.store.dispatch('appendDataLabels', {
-        data: this.getDataLabels(seriesModels, vertical, valueSizeKey),
-        name: this.name,
-      });
+      this.renderDataLabels(this.getDataLabels(seriesModels, vertical, this.rect[valueSizeKey]));
     }
   }
 
-  private getDataLabels(seriesModels: BulletModel[], vertical: boolean, valueSizeKey: string) {
+  private getDataLabels(
+    seriesModels: BulletModel[],
+    vertical: boolean,
+    size: number
+  ): RectDataLabel[] {
     return seriesModels
       .filter(({ modelType }) => modelType !== 'range')
       .map((m) => ({
@@ -158,7 +160,7 @@ export default class BulletSeries extends Component {
         plot: {
           x: 0,
           y: 0,
-          size: valueSizeKey,
+          size,
         },
       }));
   }

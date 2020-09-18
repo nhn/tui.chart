@@ -4,7 +4,11 @@ import {
   DataLabelStyle,
   DataLabelPieSeriesName,
   SubDataLabel,
+  BoxSeriesDataType,
 } from '@t/options';
+import { PointModel, SectorModel, RectModel } from './series';
+
+export type DataLabelSeriesType = 'area' | 'line' | 'bar' | 'column' | 'bullet' | 'pie';
 
 export type DataLabelType =
   | 'stackTotal'
@@ -13,6 +17,15 @@ export type DataLabelType =
   | 'sector'
   | 'pieSeriesName'
   | 'treemapSeriesName';
+
+type DataLabelData = {
+  data: DataLabel[];
+  options: DataLabelOptions;
+};
+
+export type DataLabelsMap = {
+  [key in DataLabelSeriesType]?: DataLabelData;
+};
 
 export type DataLabel = {
   type: DataLabelType;
@@ -39,3 +52,24 @@ export type DataLabelModel = {
 } & Omit<DataLabel, 'type'>;
 
 export type DataLabelModels = { series: DataLabelModel[]; total: DataLabelModel[] };
+
+export type PointDataLabel = PointModel & {
+  type: 'point';
+};
+export type RadialDataLabel = Omit<SectorModel, 'type'> & {
+  type: 'sector';
+};
+export type RectDirection = 'top' | 'bottom' | 'left' | 'right';
+
+export type RectDataLabel = Omit<RectModel, 'type' | 'color' | 'value'> & {
+  value?: BoxSeriesDataType | string;
+  type: 'rect' | 'stackTotal' | 'treemapSeriesName';
+  direction: RectDirection;
+  plot: {
+    x: number;
+    y: number;
+    size: number;
+  };
+};
+
+export type SeriesDataLabelType = Array<PointDataLabel | RadialDataLabel | RectDataLabel>;

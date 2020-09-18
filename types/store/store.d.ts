@@ -29,11 +29,9 @@ import {
   PlotBand,
   BoxPlotChartOptions,
   PieChartOptions,
-  DataLabelOptions,
   TreemapSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
-import { DataLabel } from '@t/components/dataLabels';
 import { LegendData } from '@t/components/legend';
 
 type ChartSeriesMap = {
@@ -121,7 +119,6 @@ export interface StoreModule extends StoreOptions {
     | 'treemapSeriesData'
     | 'legend'
     | 'circleLegend'
-    | 'dataLabels'
     | 'treemapScale';
 }
 
@@ -206,8 +203,6 @@ export type RadialAxisData = {
   centerY: number;
 };
 
-export type DataLabelSeriesType = 'area' | 'line' | 'bar' | 'column' | 'bullet' | 'pie';
-
 export interface TreemapSeriesData {
   id: string;
   parentId: string;
@@ -248,17 +243,7 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
-  dataLabels: DataLabels;
 }
-
-export type DataLabels = {
-  [key in DataLabelSeriesType]?: DataLabelData;
-};
-
-type DataLabelData = {
-  data: DataLabel[];
-  options: DataLabelOptions;
-};
 
 export type StackTotal = {
   positive: number;

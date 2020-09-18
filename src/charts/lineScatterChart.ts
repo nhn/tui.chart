@@ -3,7 +3,6 @@ import Chart from './chart';
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
-import dataLabels from '@src/store/dataLabels';
 import plot from '@src/store/plot';
 
 import Tooltip from '@src/component/tooltip';
@@ -38,7 +37,7 @@ interface LineScatterChartProps {
 }
 
 export default class LineScatterChart extends Chart<LineScatterChartOptions> {
-  modules = [dataRange, scale, axes, dataLabels, plot];
+  modules = [dataRange, scale, axes, plot];
 
   constructor(props: LineScatterChartProps) {
     super({

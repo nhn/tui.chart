@@ -5,7 +5,6 @@ import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import plot from '@src/store/plot';
-import dataLabels from '@src/store/dataLabels';
 
 import Axis from '@src/component/axis';
 import BoxSeries from '@src/component/boxSeries';
@@ -40,7 +39,7 @@ interface BarChartProps {
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot, dataLabels];
+  modules = [stackSeriesData, dataRange, scale, axes, plot];
 
   constructor({ el, options, data }: BarChartProps) {
     super({
