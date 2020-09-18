@@ -36,7 +36,6 @@ export default class HeatmapSeries extends Component {
 
     if (getDataLabelsOptions(options, this.name).visible) {
       // @TODO: dataLabels 만들기
-      //   const dataLabelModel = this.makeDataLabel();
       //   this.store.dispatch('appendDataLabels', { data: dataLabelModel, name: this.name });
     }
 
@@ -82,7 +81,7 @@ export default class HeatmapSeries extends Component {
         const [xIndex, yIndex] = indexes;
 
         const colorRatio = getColorRatio(colorValueScale.limit, colorValue)!;
-        const thickness = 0; // @TODO: thickness 옵션 받기
+        const thickness = 0; // @TODO: theme.series.borderWidth 로 처리되어 있음. 이후 개발 필요
 
         return {
           type: 'rect',

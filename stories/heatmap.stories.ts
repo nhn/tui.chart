@@ -9,8 +9,8 @@ export default {
   decorators: [withKnobs],
 };
 
-const width = 1000;
-const height = 500;
+const width = 800;
+const height = 450;
 const defaultOptions = {
   chart: {
     width,
@@ -28,6 +28,9 @@ const defaultOptions = {
     formatter: (value: SeriesDataType) => `${value}°C`,
   },
   plot: {},
+  legend: {
+    align: 'bottom',
+  },
 };
 
 function createChart(data: HeatmapSeriesData, customOptions?: Record<string, any>) {
