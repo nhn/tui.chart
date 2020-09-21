@@ -28,8 +28,8 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
 
 const axes: StoreModule = {
   name: 'axes',
-  state: ({ options }) => {
-    const axesState: Axes = {
+  state: ({ options }) => ({
+    axes: {
       xAxis: {
         tickInterval: options.xAxis?.tick?.interval ?? 1,
         labelInterval: options.xAxis?.label?.interval ?? 1,
@@ -40,12 +40,8 @@ const axes: StoreModule = {
         labelInterval: options.yAxis?.label?.interval ?? 1,
         title: makeTitleOption(options.yAxis?.title),
       } as AxisData,
-    };
-
-    return {
-      axes: axesState,
-    };
-  },
+    },
+  }),
   action: {
     setAxesData({ state }) {
       const { layout, rawCategories } = state;
