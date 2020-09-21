@@ -1,13 +1,9 @@
-import { StoreModule, RawSeries, Series } from '@t/store/store';
+import { StoreModule, RawSeries, Series, Categories } from '@t/store/store';
 import { isNumber, sortCategories } from '@src/helpers/utils';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
 import { isBulletSeries } from '@src/component/bulletSeries';
-import { HeatmapCategoriesType } from '@t/options';
 
-export function makeRawCategories(
-  series: RawSeries | Series,
-  categories?: string[] | HeatmapCategoriesType
-) {
+export function makeRawCategories(series: RawSeries | Series, categories?: Categories) {
   if (categories) {
     return categories;
   }

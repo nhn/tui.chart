@@ -1,4 +1,4 @@
-import { RawSeries } from '@t/store/store';
+import { Categories, RawSeries } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
@@ -450,7 +450,7 @@ export interface BoxSeriesData {
 export interface ChartProps<T> {
   el: Element;
   series: RawSeries;
-  categories?: string[] | HeatmapCategoriesType;
+  categories?: Categories;
   options: T;
 }
 

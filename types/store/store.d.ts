@@ -105,7 +105,7 @@ export interface StoreOptions {
 }
 
 interface InitStoreState<T extends Options = Options> {
-  categories?: string[] | HeatmapCategoriesType;
+  categories?: Categories;
   series: RawSeries;
   options: T;
 }
@@ -223,6 +223,8 @@ export interface TreemapSeriesData {
   colorValue?: number;
 }
 
+export type Categories = string[] | HeatmapCategoriesType;
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -235,8 +237,8 @@ export interface ChartState<T extends Options> {
   dataRange: DataRange;
   theme: Theme;
   options: T;
-  categories?: string[] | HeatmapCategoriesType;
-  rawCategories: string[] | HeatmapCategoriesType; // @TODO: categories 통합 타입 만들기
+  categories?: Categories;
+  rawCategories: Categories;
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };

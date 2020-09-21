@@ -1,7 +1,7 @@
-import { StoreModule, RawSeries, Series, Options } from '@t/store/store';
+import { StoreModule, RawSeries, Series, Options, Categories } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src/helpers/utils';
-import { HeatmapCategoriesType, LineTypeSeriesOptions, RangeDataType } from '@t/options';
+import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
@@ -9,7 +9,7 @@ import { isZooming } from '@src/helpers/range';
 function initZoomRange(
   series: RawSeries,
   options: Options,
-  categories?: string[] | HeatmapCategoriesType
+  categories?: Categories
 ): RangeDataType<number> | undefined {
   if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.zoomable) {
     return;
@@ -47,7 +47,7 @@ function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeD
 
 function getDataInRange(
   data,
-  rawCategories: string[] | HeatmapCategoriesType,
+  rawCategories: Categories,
   chartType: string,
   zoomRange?: RangeDataType<number>
 ) {
