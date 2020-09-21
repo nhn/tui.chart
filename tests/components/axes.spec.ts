@@ -114,6 +114,163 @@ describe('yAxis', () => {
       expect(axis.models.label).toHaveLength(0);
     });
   });
+
+  describe('using secondary y axis', () => {
+    beforeEach(() => {
+      axis.initialize({ name: 'secondaryYAxis' });
+
+      axis.render({
+        layout: { secondaryYAxis: { x: 80, y: 10, width: 20, height: 80 } },
+        axes: {
+          secondaryYAxis: {
+            pointOnColumn: false,
+            tickDistance: 16,
+            labelDistance: 16,
+            tickInterval: 1,
+            labelInterval: 1,
+            labels: ['0', '1', '2', '3', '4', '5'],
+            tickCount: 6,
+          },
+        },
+      });
+    });
+
+    const result = {
+      axisLine: [
+        {
+          type: 'line',
+          x: 0.5,
+          x2: 0.5,
+          y: 0.5,
+          y2: 80.5,
+        },
+      ],
+      tick: [
+        {
+          isYAxis: true,
+          tickSize: 5,
+          type: 'tick',
+          x: 0.5,
+          y: 0.5,
+        },
+        {
+          isYAxis: true,
+          tickSize: 5,
+          type: 'tick',
+          x: 0.5,
+          y: 16.5,
+        },
+        {
+          isYAxis: true,
+          tickSize: 5,
+          type: 'tick',
+          x: 0.5,
+          y: 32.5,
+        },
+        {
+          isYAxis: true,
+          tickSize: 5,
+          type: 'tick',
+          x: 0.5,
+          y: 48.5,
+        },
+        {
+          isYAxis: true,
+          tickSize: 5,
+          type: 'tick',
+          x: 0.5,
+          y: 64.5,
+        },
+        {
+          isYAxis: true,
+          tickSize: 5,
+          type: 'tick',
+          x: 0.5,
+          y: 80.5,
+        },
+      ],
+      label: [
+        {
+          style: [
+            'default',
+            {
+              textAlign: 'right',
+            },
+          ],
+          text: '5',
+          type: 'label',
+          x: 20.5,
+          y: 0.5,
+        },
+        {
+          style: [
+            'default',
+            {
+              textAlign: 'right',
+            },
+          ],
+          text: '4',
+          type: 'label',
+          x: 20.5,
+          y: 16.5,
+        },
+        {
+          style: [
+            'default',
+            {
+              textAlign: 'right',
+            },
+          ],
+          text: '3',
+          type: 'label',
+          x: 20.5,
+          y: 32.5,
+        },
+        {
+          style: [
+            'default',
+            {
+              textAlign: 'right',
+            },
+          ],
+          text: '2',
+          type: 'label',
+          x: 20.5,
+          y: 48.5,
+        },
+        {
+          style: [
+            'default',
+            {
+              textAlign: 'right',
+            },
+          ],
+          text: '1',
+          type: 'label',
+          x: 20.5,
+          y: 64.5,
+        },
+        {
+          style: [
+            'default',
+            {
+              textAlign: 'right',
+            },
+          ],
+          text: '0',
+          type: 'label',
+          x: 20.5,
+          y: 80.5,
+        },
+      ],
+    };
+
+    ['axisLine', 'tick', 'label'].forEach((modelType) => {
+      it(`should have ${modelType} models for rigth y axis`, () => {
+        expect(axis.models[modelType]).toEqual(result[modelType]);
+      });
+    });
+  });
 });
 
 describe('xAxis', () => {

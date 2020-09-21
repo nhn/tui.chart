@@ -7,7 +7,14 @@ import {
   RectResponderModel,
   MouseEventType,
 } from '@t/components/series';
-import { ChartState, ChartType, BoxType, AxisData, CenterYAxisData, Series } from '@t/store/store';
+import {
+  ChartState,
+  ChartType,
+  BoxType,
+  ValueAxisData,
+  CenterYAxisData,
+  Series,
+} from '@t/store/store';
 import {
   BoxSeriesType,
   BoxSeriesDataType,
@@ -35,7 +42,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { isRangeData, isRangeValue } from '@src/helpers/range';
-import { getLimitOnAxis } from '@src/helpers/axes';
+import { getLimitOnAxis, getValueAxisName } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
@@ -257,6 +264,7 @@ export default class BoxSeries extends Component {
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
+    this.valueAxis = getValueAxisName(options, this.name, this.isBar ? 'xAxis' : 'yAxis');
 
     const seriesData = series[this.name].data;
 
@@ -510,7 +518,7 @@ export default class BoxSeries extends Component {
     return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
-  protected getBasePosition({ labels, tickCount, zeroPosition }: AxisData): number {
+  protected getBasePosition({ labels, tickCount, zeroPosition }: ValueAxisData): number {
     const valueLabels = this.isBar ? labels : [...labels].reverse();
     const tickPositions = makeTickPixelPositions(this.getOffsetSize(), tickCount);
     const seriesDirection = this.getSeriesDirection(valueLabels);

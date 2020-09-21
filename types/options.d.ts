@@ -154,6 +154,12 @@ interface LineTypeXAxisOptions extends BaseXAxisOptions {
   pointOnColumn?: boolean;
 }
 
+type YAxisOptions = BaseAxisOptions & {
+  chartType?: string;
+};
+
+type BothSidesYAxisOptions = YAxisOptions | YAxisOptions[];
+
 interface BaseXAxisOptions extends BaseAxisOptions {
   rotateLabel?: boolean;
   date?:
@@ -163,9 +169,11 @@ interface BaseXAxisOptions extends BaseAxisOptions {
       };
 }
 
-interface BarTypeYAxisOptions extends BaseAxisOptions {
+type BarTypeYAxisOption = BaseAxisOptions & {
   align?: 'center';
-}
+  categories?: string[];
+};
+type BarTypeYAxisOptions = BarTypeYAxisOption | BarTypeYAxisOption[];
 
 export type PlotXPointType = number | string;
 
@@ -218,7 +226,6 @@ interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
-  yAxis?: BaseAxisOptions;
   legend?: BaseLegendOptions;
   exportMenu?: ExportMenuOptions;
   tooltip?: BaseTooltipOptions;
@@ -248,6 +255,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 
 export interface BoxPlotChartOptions extends BaseOptions {
   series?: BoxPlotSeriesOptions;
+  yAxis?: BaseAxisOptions;
   plot?: PlotOptions;
 }
 
@@ -266,12 +274,14 @@ interface AreaSeriesOptions extends LineTypeSeriesOptions {
 export interface AreaChartOptions extends BaseOptions {
   series?: AreaSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
+  yAxis?: BothSidesYAxisOptions;
   plot?: LineTypePlotOptions;
 }
 
 export interface LineChartOptions extends BaseOptions {
   series?: LineTypeSeriesOptions;
   xAxis?: LineTypeXAxisOptions;
+  yAxis?: BothSidesYAxisOptions;
   plot?: LineTypePlotOptions;
 }
 
@@ -281,12 +291,14 @@ type LineScatterChartSeriesOptions = {
 
 export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
+  yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
 }
 
 export interface LineAreaChartOptions extends BaseOptions {
   series?: LineAreaChartSeriesOptions;
   plot?: LineTypePlotOptions;
+  yAxis?: BothSidesYAxisOptions;
 }
 
 type LineAreaChartSeriesOptions = {
@@ -301,12 +313,14 @@ type LineAreaChartSeriesOptions = {
 export interface ScatterChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
+  yAxis?: BaseAxisOptions;
   plot?: PlotOptions;
 }
 
 export interface BubbleChartOptions extends BaseOptions {
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
+  yAxis?: BaseAxisOptions;
   circleLegend?: CircleLegendOptions;
   plot?: PlotOptions;
 }
@@ -353,6 +367,7 @@ export interface BarChartOptions extends BaseOptions {
 
 export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
+  yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
 }
 
@@ -468,6 +483,7 @@ export interface TreemapDataLabels extends DataLabelOptions {
 }
 
 export interface BulletChartOptions extends BaseOptions {
+  yAxis?: BaseAxisOptions;
   series?: BulletSeriesOptions;
   plot?: PlotOptions;
 }
@@ -496,6 +512,7 @@ type ColumnLineChartSeriesOptions = {
 export interface ColumnLineChartOptions extends BaseOptions {
   series?: ColumnLineChartSeriesOptions;
   plot?: LineTypePlotOptions;
+  yAxis?: BothSidesYAxisOptions;
 }
 
 export type ColumnLineData = {

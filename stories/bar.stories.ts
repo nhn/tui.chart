@@ -30,8 +30,8 @@ function createChart(data, customOptions?: BarChartOptions) {
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = `${options?.chart?.width}px`;
+  el.style.height = `${options?.chart?.height}px`;
 
   const chart = new BarChart({
     el,
@@ -169,6 +169,30 @@ export const dataLabels = () => {
         anchor,
       },
     },
+  });
+
+  return el;
+};
+
+export const secondaryYAxis = () => {
+  const { el } = createChart(budgetData, {
+    yAxis: [
+      {
+        title: 'Month',
+      },
+      {
+        title: 'Secondary Info',
+        categories: [
+          '06 / 2020',
+          '07 / 2020',
+          '08 / 2020',
+          '09 / 2020',
+          '10 / 2020',
+          '11 / 2020',
+          '12 / 2020',
+        ],
+      },
+    ],
   });
 
   return el;

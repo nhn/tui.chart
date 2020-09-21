@@ -2,7 +2,7 @@ import { ValueEdge, StoreModule, ChartType, DataRange, ChartSeriesMap } from '@t
 import { getFirstValidValue } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
-import { getAxisName, isLabelAxisOnYAxis } from '@src/helpers/axes';
+import { getAxisName, isLabelAxisOnYAxis, getValueAxisNames } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 import { isBulletSeries } from '@src/component/bulletSeries';
@@ -54,6 +54,12 @@ function getTotalDataRange(seriesDataRange: SeriesDataRange) {
       acc.yAxis = {
         min: Math.min(cur.yAxis.min, acc.yAxis?.min ?? defaultDataRange.min),
         max: Math.max(cur.yAxis.max, acc.yAxis?.max ?? defaultDataRange.max),
+      };
+    }
+    if (cur.secondaryYAxis) {
+      acc.secondaryYAxis = {
+        min: Math.min(cur.secondaryYAxis.min, acc.secondaryYAxis?.min ?? defaultDataRange.min),
+        max: Math.max(cur.secondaryYAxis.max, acc.secondaryYAxis?.max ?? defaultDataRange.max),
       };
     }
 
@@ -117,9 +123,9 @@ const dataRange: StoreModule = {
           ]);
         }
 
-        seriesDataRange[seriesName][valueAxisName] = getLimitSafely([
-          ...new Set(values),
-        ] as number[]);
+        getValueAxisNames(options, valueAxisName).forEach((axisName) => {
+          seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
+        });
       }
 
       const newDataRange = getTotalDataRange(seriesDataRange);

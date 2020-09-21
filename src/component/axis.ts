@@ -4,10 +4,12 @@ import { ChartState, Options } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel, LABEL_ANCHOR_POINT } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 import { TICK_SIZE } from '@src/brushes/axis';
+import { includes } from '@src/helpers/utils';
 
 export enum AxisType {
-  Y = 'yAxis',
   X = 'xAxis',
+  Y = 'yAxis',
+  SECONDARY_Y = 'secondaryYAxis',
 }
 
 type CoordinateKey = 'x' | 'y';
@@ -39,11 +41,11 @@ export default class Axis extends Component {
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
     this.name = name;
-    this.yAxisComponent = name === AxisType.Y;
+    this.yAxisComponent = includes([AxisType.Y, AxisType.SECONDARY_Y], name);
   }
 
   render({ layout, axes }: ChartState<Options>) {
-    if (axes.centerYAxis) {
+    if (axes.centerYAxis || !axes[this.name]) {
       return;
     }
 
@@ -58,7 +60,7 @@ export default class Axis extends Component {
       tickInterval,
       labelInterval,
       labelDistance,
-    } = axes[this.name]!;
+    } = axes[this.name];
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
 
@@ -72,8 +74,7 @@ export default class Axis extends Component {
       labelDistance,
     };
 
-    const hasOnlyAxisLine =
-      (this.name === 'yAxis' && !this.rect.width) || (this.name === 'xAxis' && !this.rect.height);
+    const hasOnlyAxisLine = this.hasOnlyAxisLine();
 
     if (!hasOnlyAxisLine) {
       this.models.label = this.renderLabelModels(
@@ -123,11 +124,13 @@ export default class Axis extends Component {
     let lineModel: LineModel;
 
     if (this.yAxisComponent) {
+      const x = this.getYAxisXPoint();
+
       lineModel = {
         type: 'line',
-        x: widthPixel,
+        x,
         y: zeroPixel,
-        x2: widthPixel,
+        x2: x,
         y2: crispPixel(this.rect.height),
       };
     } else {
@@ -149,8 +152,11 @@ export default class Axis extends Component {
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): TickModel[] {
-    const tickAnchorPoint = this.yAxisComponent ? crispPixel(this.rect.width) : crispPixel(0);
+    const tickAnchorPoint = this.yAxisComponent ? this.getYAxisXPoint() : crispPixel(0);
     const { tickInterval } = renderOptions;
+    const tickSize = includes([AxisType.SECONDARY_Y, AxisType.X], this.name)
+      ? TICK_SIZE
+      : -TICK_SIZE;
 
     return relativePositions.reduce<TickModel[]>((positions, position, index) => {
       return index % tickInterval
@@ -160,7 +166,7 @@ export default class Axis extends Component {
             {
               type: 'tick',
               isYAxis: this.yAxisComponent,
-              tickSize: this.yAxisComponent ? -TICK_SIZE : TICK_SIZE,
+              tickSize,
               [offsetKey]: crispPixel(position),
               [anchorKey]: tickAnchorPoint,
             } as TickModel,
@@ -176,9 +182,12 @@ export default class Axis extends Component {
     renderOptions: RenderOptions
   ): LabelModel[] {
     const { pointOnColumn, labelInterval, labelDistance } = renderOptions;
-    const labelAnchorPoint = this.yAxisComponent ? crispPixel(0) : LABEL_ANCHOR_POINT;
+    const isRightSide = this.isRightSide();
+    const yAxisAnchorPoint = isRightSide ? crispPixel(this.rect.width) : crispPixel(0);
+    const labelAnchorPoint = this.yAxisComponent ? yAxisAnchorPoint : LABEL_ANCHOR_POINT;
     const labelAdjustment = pointOnColumn ? labelDistance / 2 : 0;
-    const style = ['default', { textAlign: this.yAxisComponent ? 'left' : 'center' }];
+    const yAxisTextAlign = isRightSide ? 'right' : 'left';
+    const style = ['default', { textAlign: this.yAxisComponent ? yAxisTextAlign : 'center' }];
 
     return labels.reduce<LabelModel[]>((positions, text, index) => {
       return index % labelInterval
@@ -203,5 +212,19 @@ export default class Axis extends Component {
   beforeDraw(painter: Painter) {
     painter.ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
     painter.ctx.lineWidth = 1;
+  }
+
+  private isRightSide() {
+    return this.name === AxisType.SECONDARY_Y;
+  }
+
+  private getYAxisXPoint() {
+    return this.isRightSide() ? crispPixel(0) : crispPixel(this.rect.width);
+  }
+
+  private hasOnlyAxisLine() {
+    return (
+      (this.yAxisComponent && !this.rect.width) || (this.name === AxisType.X && !this.rect.height)
+    );
   }
 }

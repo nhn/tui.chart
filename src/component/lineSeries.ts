@@ -17,7 +17,7 @@ import {
   LineAreaChartOptions,
 } from '@t/options';
 import { ClipRectAreaModel, LinePointsModel } from '@t/components/series';
-import { ChartState, Scale, Series, AxisData } from '@t/store/store';
+import { ChartState, Scale, Series, LabelAxisData } from '@t/store/store';
 import { LineSeriesType } from '@t/options';
 import { getValueRatio, setSplineControlPoint, getXPosition } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
@@ -34,6 +34,7 @@ import {
   makeRectResponderModel,
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
+import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 
@@ -64,7 +65,7 @@ export default class LineSeries extends Component {
 
   startIndex!: number;
 
-  isComboChart = false;
+  yAxisName = 'yAxis';
 
   initialize() {
     this.type = 'series';
@@ -104,7 +105,8 @@ export default class LineSeries extends Component {
 
     this.setEventDetectType(series, options);
 
-    const { tickDistance, pointOnColumn, labelDistance } = axes.xAxis!;
+    const labelAxisData = axes.xAxis as LabelAxisData;
+    const { tickDistance, pointOnColumn, labelDistance } = labelAxisData;
     const lineSeriesData = series.line.data;
 
     const renderLineOptions: RenderOptions = {
@@ -118,6 +120,7 @@ export default class LineSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
+    this.yAxisName = getValueAxisName(options, this.name, 'yAxis');
 
     const lineSeriesModel = this.renderLinePointsModel(
       lineSeriesData,
@@ -150,11 +153,11 @@ export default class LineSeries extends Component {
       this.renderDataLabels(this.getDataLabels(lineSeriesModel));
     }
 
-    this.responders = this.getResponders(axes.xAxis, seriesCircleModel, tooltipDataArr);
+    this.responders = this.getResponders(labelAxisData, seriesCircleModel, tooltipDataArr);
   }
 
   private getResponders(
-    axisData: AxisData,
+    axisData: LabelAxisData,
     seriesCircleModel: CircleModel[],
     tooltipDataArr: TooltipData[]
   ): ResponderTypes {
@@ -226,7 +229,7 @@ export default class LineSeries extends Component {
     const {
       options: { spline, lineWidth },
     } = renderOptions;
-    const yAxisLimit = scale.yAxis.limit;
+    const yAxisLimit = scale[this.yAxisName].limit;
     const xAxisLimit = scale?.xAxis?.limit;
 
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
@@ -239,7 +242,7 @@ export default class LineSeries extends Component {
         const yValueRatio = getValueRatio(value, yAxisLimit);
         const y = (1 - yValueRatio) * this.rect.height;
         const x = getXPosition(
-          pick(renderOptions, 'pointOnColumn', 'tickDistance', 'labelDistance'),
+          pick(renderOptions, 'pointOnColumn', 'tickDistance', 'labelDistance') as LabelAxisData,
           this.rect.width,
           xAxisLimit,
           getCoordinateXValue(datum as CoordinateDataType),

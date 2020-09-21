@@ -56,7 +56,6 @@ describe('Plot Store', () => {
         {
           value: 3,
           color: 'rgba(255, 0, 0, 0.2)',
-          vertical: true,
         },
       ]);
     });

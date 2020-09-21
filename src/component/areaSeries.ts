@@ -44,6 +44,7 @@ import {
   makeRectResponderModel,
   makeTooltipCircleMap,
 } from '@src/helpers/responders';
+import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 
@@ -160,7 +161,7 @@ export default class AreaSeries extends Component {
     this.startIndex = zoomRange ? zoomRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
 
-    const { limit } = scale.yAxis;
+    const { limit } = scale[getValueAxisName(options, this.name, 'yAxis')];
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
     const areaData = series.area.data;
     this.baseValueYPosition = this.getBaseValueYPosition(limit);

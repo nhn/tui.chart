@@ -1,4 +1,4 @@
-import { Options, Series } from '@t/store/store';
+import { Options, Series, ChartOptionsUsingYAxis } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
 
 export function isLabelAxisOnYAxis(series: Series, options: Options) {
@@ -42,4 +42,39 @@ export function getLimitOnAxis(labels: string[]) {
     min: Math.min(...values),
     max: Math.max(...values),
   };
+}
+
+function hasSecondaryYAxis(options: ChartOptionsUsingYAxis) {
+  return Array.isArray(options?.yAxis) && options.yAxis.length === 2;
+}
+
+export function getYAxisOption(options: ChartOptionsUsingYAxis) {
+  const secondaryYAxis = hasSecondaryYAxis(options);
+
+  return {
+    yAxis: secondaryYAxis ? options.yAxis![0] : options?.yAxis,
+    secondaryYAxis: secondaryYAxis ? options.yAxis![1] : null,
+  };
+}
+
+export function getValueAxisName(
+  options: ChartOptionsUsingYAxis,
+  seriesName: string,
+  valueAxisName: string
+) {
+  const { secondaryYAxis } = getYAxisOption(options);
+
+  return secondaryYAxis?.chartType === seriesName ? 'secondaryYAxis' : valueAxisName;
+}
+
+export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName: string) {
+  const { yAxis, secondaryYAxis } = getYAxisOption(options);
+
+  return valueAxisName !== 'xAxis' && secondaryYAxis
+    ? [yAxis.chartType, secondaryYAxis.chartType].map((seriesName, index) =>
+        seriesName
+          ? getValueAxisName(options, seriesName, valueAxisName)
+          : ['yAxis', 'secondaryYAxis'][index]
+      )
+    : [valueAxisName];
 }

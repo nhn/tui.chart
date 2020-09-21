@@ -219,3 +219,22 @@ export const lineWidth = () => {
 
   return el;
 };
+
+export const secondaryYAxis = () => {
+  const { el } = createChart(avgTemperatureData, {
+    yAxis: [
+      {
+        title: 'Temperature (Celsius)',
+      },
+      {
+        title: 'Percent (%)',
+        scale: {
+          min: 0,
+          max: 100,
+        },
+      },
+    ],
+  });
+
+  return el;
+};
