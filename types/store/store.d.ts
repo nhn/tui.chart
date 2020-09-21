@@ -31,7 +31,7 @@ import {
   PieChartOptions,
   BaseOptions,
   TreemapSeriesType,
-  HeatmapSeriesDataType,
+  HeatmapSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -48,7 +48,7 @@ type ChartSeriesMap = {
   boxPlot: BoxPlotSeriesType[];
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
-  heatmap: HeatmapSeriesDataType[];
+  heatmap: HeatmapSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;

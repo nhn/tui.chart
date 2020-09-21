@@ -35,6 +35,18 @@ interface HeatmapChartProps {
   data: HeatmapSeriesData;
 }
 
+function getSeriesWithYCategory(
+  series: HeatmapSeriesDataType[],
+  categories: HeatmapCategoriesType
+) {
+  return series
+    .map((rowSeries, y) => ({
+      data: rowSeries,
+      yCategory: categories.y[y],
+    }))
+    .reverse();
+}
+
 export default class HeatmapChart extends Chart<BaseOptions> {
   modules = [heatmapSeriesData, colorValueScale, axes];
 
@@ -44,7 +56,7 @@ export default class HeatmapChart extends Chart<BaseOptions> {
       categories: props.data.categories as HeatmapCategoriesType,
       options: props.options,
       series: {
-        heatmap: props.data.series as HeatmapSeriesDataType[],
+        heatmap: getSeriesWithYCategory(props.data.series, props.data.categories),
       },
     });
   }

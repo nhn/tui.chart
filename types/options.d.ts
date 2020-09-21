@@ -60,6 +60,11 @@ export interface LineSeriesData {
   series: Pick<LineSeriesType, 'name' | 'data'>[];
 }
 
+export interface HeatmapSeriesType {
+  data: HeatmapSeriesDataType;
+  yCategory: string;
+}
+
 export interface TreemapSeriesType {
   label: string;
   data?: number;

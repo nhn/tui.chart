@@ -1,19 +1,20 @@
-import { HeatmapSeriesData, StoreModule } from '@t/store/store';
+import { HeatmapSeriesData, Series, StoreModule } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { HeatmapCategoriesType, HeatmapSeriesDataType } from '@t/options';
+import { HeatmapCategoriesType } from '@t/options';
 
-function makeHeatmapSeries(
-  series: HeatmapSeriesDataType[],
-  categories: HeatmapCategoriesType
-): HeatmapSeriesData[] {
-  return series.reverse().map((rowSeries, y) => {
-    const categoriesYSize = categories.y.length - 1;
+function makeHeatmapSeries(series: Series, categories: HeatmapCategoriesType): HeatmapSeriesData[] {
+  if (!series.heatmap) {
+    return [];
+  }
 
-    return rowSeries.map((colorValue, x) => ({
+  return series.heatmap.data.map((rowSeries, y) => {
+    const { data, yCategory } = rowSeries;
+
+    return data.map((colorValue, x) => ({
       colorValue,
       category: {
         x: categories.x[x],
-        y: categories.y[categoriesYSize - y],
+        y: yCategory,
       },
       indexes: [x, y],
     }));
@@ -27,7 +28,7 @@ const heatmapSeriesData: StoreModule = {
   }),
   action: {
     setHeatmapSeriesData({ state }) {
-      extend(state.heatmapSeries, makeHeatmapSeries(state.series.heatmap, state.categories));
+      extend(state.heatmapSeries, makeHeatmapSeries(state.series, state.categories));
     },
   },
   observe: {
