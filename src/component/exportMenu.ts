@@ -2,7 +2,7 @@ import Component from './component';
 import { ChartState, Options, Series } from '@t/store/store';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
-import { TitleOption } from '@t/options';
+import { HeatmapCategoriesType, TitleOption } from '@t/options';
 import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
@@ -13,7 +13,7 @@ const EXPORT_MENU_WIDTH = 140;
 export const BUTTON_RECT_SIZE = 24;
 export interface DataToExport {
   series: Series;
-  categories?: string[];
+  categories?: string[] | HeatmapCategoriesType;
 }
 
 export default class ExportMenu extends Component {

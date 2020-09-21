@@ -30,7 +30,9 @@ function getLabelScaleData(
   scaleOptions: ScaleOptions,
   labelAxisName: string
 ) {
-  const { dataRange, layout, series, categories, rawCategories, options } = state;
+  const { dataRange, layout, series, options } = state;
+  const categories = state.categories as string[];
+  const rawCategories = state.rawCategories as string[];
   const { labelSizeKey } = getSizeKey(labelAxisOnYAxis);
   const dateTypeLabel = isExist(options.xAxis?.date);
   const labelOptions = {
@@ -92,6 +94,7 @@ const scale: StoreModule = {
   action: {
     setScale({ state }) {
       const { series, options } = state;
+
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
       const { yAxis, secondaryYAxis } = getYAxisOption(options);

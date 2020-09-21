@@ -28,7 +28,10 @@ const heatmapSeriesData: StoreModule = {
   }),
   action: {
     setHeatmapSeriesData({ state }) {
-      extend(state.heatmapSeries, makeHeatmapSeries(state.series, state.categories));
+      extend(
+        state.heatmapSeries,
+        makeHeatmapSeries(state.series, state.categories as HeatmapCategoriesType)
+      );
     },
   },
   observe: {

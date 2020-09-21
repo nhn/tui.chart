@@ -418,7 +418,7 @@ export type RadarSeriesType = {
 };
 
 export type RadarSeriesData = {
-  categories?: string[];
+  categories: string[];
   series: Pick<RadarSeriesType, 'name' | 'data'>[];
 };
 

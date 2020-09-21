@@ -252,12 +252,13 @@ export default class BoxSeries extends Component {
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
     chartState: ChartState<T>
   ) {
-    const { layout, series, axes, categories, stackSeries, legend } = chartState;
+    const { layout, series, axes, stackSeries, legend } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
     }
 
+    const categories = (chartState.categories as string[]) ?? [];
     const options = this.getOptions(chartState.options);
     this.setEventDetectType(series, options);
 
@@ -492,7 +493,7 @@ export default class BoxSeries extends Component {
   private makeTooltipData(
     seriesData: BoxSeriesType<BoxSeriesDataType>[],
     renderOptions: RenderOptions,
-    categories?: string[]
+    categories: string[]
   ): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
@@ -505,7 +506,7 @@ export default class BoxSeries extends Component {
             label: name,
             color,
             value: this.getTooltipValue(value),
-            category: categories?.[dataIndex],
+            category: categories.length ? categories[dataIndex] : '',
           });
         }
       });

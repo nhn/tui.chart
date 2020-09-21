@@ -53,7 +53,7 @@ export default class BoxPlotSeries extends Component {
   }
 
   render(state: ChartState<BoxPlotChartOptions>): void {
-    const { layout, axes, series, scale, legend, options, categories = [] } = state;
+    const { layout, axes, series, scale, legend, options } = state;
 
     if (!series.boxPlot) {
       throw new Error("There's no boxPlot data!");
@@ -67,6 +67,7 @@ export default class BoxPlotSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
 
+    const categories = state.categories as string[];
     const { tickDistance } = axes.xAxis;
     const { min, max } = scale.yAxis.limit;
     const boxPlotData = series.boxPlot.data;

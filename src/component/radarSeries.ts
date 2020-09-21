@@ -38,7 +38,7 @@ export default class RadarSeries extends Component {
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, axes, series, legend, categories = [], options } = state;
+    const { layout, axes, series, legend, options } = state;
 
     if (!series.radar) {
       throw new Error("There's no radar data");
@@ -48,6 +48,7 @@ export default class RadarSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
 
+    const categories = state.categories as string[];
     const { labels, axisSize, centerX, centerY } = axes.radialAxis!;
     const { max } = getLimitOnAxis(labels);
     const renderOptions = {

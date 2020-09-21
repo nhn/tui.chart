@@ -172,7 +172,7 @@ export default class Plot extends Component {
   }
 
   render(state: ChartState<Options>) {
-    const { layout, axes, plot, scale, zoomRange, categories = [] } = state;
+    const { layout, axes, plot, scale, zoomRange } = state;
 
     if (!plot) {
       return;
@@ -181,6 +181,7 @@ export default class Plot extends Component {
     this.rect = layout.plot;
     this.startIndex = zoomRange ? zoomRange[0] : 0;
 
+    const categories = (state.categories as string[]) ?? [];
     const { lines, bands, showLine } = plot;
     const xAxisLimit = scale?.xAxis?.limit;
 

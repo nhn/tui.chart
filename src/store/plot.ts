@@ -88,12 +88,13 @@ const plot: StoreModule = {
   }),
   action: {
     setPlot({ state }) {
-      const { series, options, rawCategories } = state;
+      const { series, options } = state;
 
       if (!(series.area || series.line)) {
         return;
       }
 
+      const rawCategories = state.rawCategories as string[];
       const lineAreaOptions = options as LineChartOptions | AreaChartOptions;
 
       const lines: PlotLine[] = makePlotLines(

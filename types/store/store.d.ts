@@ -32,6 +32,7 @@ import {
   BaseOptions,
   TreemapSeriesType,
   HeatmapSeriesType,
+  HeatmapCategoriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -104,7 +105,7 @@ export interface StoreOptions {
 }
 
 interface InitStoreState<T extends Options = Options> {
-  categories?: string[];
+  categories?: string[] | HeatmapCategoriesType;
   series: RawSeries;
   options: T;
 }
@@ -234,8 +235,8 @@ export interface ChartState<T extends Options> {
   dataRange: DataRange;
   theme: Theme;
   options: T;
-  categories?: string[];
-  rawCategories: string[]; // @TODO: categories 통합 타입 만들기
+  categories?: string[] | HeatmapCategoriesType;
+  rawCategories: string[] | HeatmapCategoriesType; // @TODO: categories 통합 타입 만들기
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };

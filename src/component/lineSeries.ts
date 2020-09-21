@@ -93,11 +93,12 @@ export default class LineSeries extends Component {
   render(
     chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>
   ) {
-    const { layout, series, scale, axes, categories = [], legend, zoomRange } = chartState;
+    const { layout, series, scale, axes, legend, zoomRange } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
 
+    const categories = (chartState.categories as string[]) ?? [];
     const options = { ...chartState.options };
     if (options?.series && 'line' in options.series) {
       options.series = { ...options.series, ...options.series.line };

@@ -40,7 +40,7 @@ export default class Zoom extends Component {
     this.rect = layout.plot;
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
 
-    this.responders = this.makeRectResponderModel(categories!, {
+    this.responders = this.makeRectResponderModel(categories as string[], {
       pointOnColumn,
       tickDistance,
       tickCount,

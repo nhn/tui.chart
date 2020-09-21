@@ -1,6 +1,6 @@
 import Chart from './chart';
 
-import axes from '@src/store/axes';
+import heatmapAxes from '@src/store/heatmapAxes';
 import heatmapSeriesData from '@src/store/heatmapSeriesData';
 import colorValueScale from '@src/store/colorValueScale';
 
@@ -48,7 +48,7 @@ function getSeriesWithYCategory(
 }
 
 export default class HeatmapChart extends Chart<BaseOptions> {
-  modules = [heatmapSeriesData, colorValueScale, axes];
+  modules = [heatmapSeriesData, colorValueScale, heatmapAxes];
 
   constructor(props: HeatmapChartProps) {
     super({

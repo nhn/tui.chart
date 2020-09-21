@@ -97,7 +97,8 @@ export default class PieSeries extends Component {
   }
 
   render(chartState: ChartState<PieChartOptions>) {
-    const { layout, series, legend, categories, options } = chartState;
+    const { layout, series, legend, options } = chartState;
+    const categories = (chartState.categories as string[]) ?? [];
 
     if (!series.pie) {
       throw new Error("There's no pie data");
@@ -221,12 +222,12 @@ export default class PieSeries extends Component {
     return sectorModels;
   }
 
-  makeTooltipModel(seriesRawData: PieSeriesType[], categories?: string[]): TooltipData[] {
+  makeTooltipModel(seriesRawData: PieSeriesType[], categories: string[]): TooltipData[] {
     return seriesRawData.map(({ data, name, color }) => ({
       label: name,
       color: color!,
       value: data,
-      category: categories ? categories[0] : '',
+      category: categories.length ? categories[0] : '',
     }));
   }
 
