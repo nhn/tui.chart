@@ -12,7 +12,7 @@ import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
 import { isString } from '@src/helpers/utils';
 
-type UsingShowLineOptions = ValueOf<Omit<ChartOptionsMap, 'radar' | 'pie'>>;
+type UsingShowLineOptions = ValueOf<Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap'>>;
 
 function getOverlappingRange(range: RangeDataType<number>[]) {
   return range.reduce<RangeDataType<number>>(
@@ -88,12 +88,13 @@ const plot: StoreModule = {
   }),
   action: {
     setPlot({ state }) {
-      const { series, options, rawCategories } = state;
+      const { series, options } = state;
 
       if (!(series.area || series.line)) {
         return;
       }
 
+      const rawCategories = state.rawCategories as string[];
       const lineAreaOptions = options as LineChartOptions | AreaChartOptions;
 
       const lines: PlotLine[] = makePlotLines(

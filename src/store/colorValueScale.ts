@@ -5,24 +5,25 @@ import { getLimitSafely } from '@src/store/dataRange';
 import { isVerticalAlign } from '@src/store/layout';
 import { TREEMAP_ROOT_ID } from '@src/store/treemapSeriesData';
 
-const treemapScale: StoreModule = {
-  name: 'treemapScale',
+const colorValueScale: StoreModule = {
+  name: 'colorValueScale',
   state: () => ({
-    treemapScale: {} as ScaleData,
     treemapZoomId: {
       prev: TREEMAP_ROOT_ID,
       cur: TREEMAP_ROOT_ID,
     },
+    colorValueScale: {} as ScaleData,
   }),
   action: {
-    setTreemapScale({ state }) {
-      const { layout, treemapSeries, legend } = state;
+    setColorValueScale({ state }) {
+      const { layout, treemapSeries, legend, heatmapSeries } = state;
 
       if (!legend.useSpectrumLegend) {
         return;
       }
 
-      const values = treemapSeries.reduce<number[]>(
+      const series = treemapSeries ?? heatmapSeries.flatMap((value) => value);
+      const values = series.reduce<number[]>(
         (acc, { colorValue }) => (colorValue ? [...acc, colorValue] : acc),
         []
       );
@@ -31,7 +32,7 @@ const treemapScale: StoreModule = {
       const offsetSize = isVerticalAlign(legend.align) ? layout.plot.width / 2 : layout.plot.height;
 
       extend(
-        state.treemapScale,
+        state.colorValueScale,
         calculateCoordinateScale({
           dataRange,
           offsetSize,
@@ -54,8 +55,8 @@ const treemapScale: StoreModule = {
     },
   },
   observe: {
-    updateTreemapScale() {
-      this.dispatch('setTreemapScale');
+    updateColorValueScale() {
+      this.dispatch('setColorValueScale');
     },
   },
   computed: {
@@ -65,4 +66,4 @@ const treemapScale: StoreModule = {
   },
 };
 
-export default treemapScale;
+export default colorValueScale;

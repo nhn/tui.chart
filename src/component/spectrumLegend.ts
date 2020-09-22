@@ -80,14 +80,14 @@ export default class SpectrumLegend extends Component {
     }
   };
 
-  render({ layout, legend, treemapScale, theme }: ChartState<Options>) {
+  render({ layout, legend, colorValueScale, theme }: ChartState<Options>) {
     if (!legend.visible) {
       return;
     }
 
     this.rect = layout.legend;
     this.align = legend.align;
-    this.labels = this.makeLabels(treemapScale);
+    this.labels = this.makeLabels(colorValueScale);
 
     const { startColor, endColor } = theme.series;
     const renderOptions: RenderOptions = { startColor, endColor };

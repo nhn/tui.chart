@@ -28,9 +28,10 @@ export default class RadarPlot extends Component {
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, axes, categories, options } = state;
+    const { layout, axes, options } = state;
     this.rect = layout.plot;
 
+    const categories = (state.categories as string[]) ?? [];
     const renderOptions = this.makeRenderOptions(axes.radialAxis!, options.plot?.type, categories);
 
     this.models = {

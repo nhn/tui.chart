@@ -1,24 +1,24 @@
 import {
+  Axes,
+  AxisData,
+  CenterYAxisData,
   Options,
+  RadialAxisData,
   ScaleData,
   Series,
   StoreModule,
   ValueEdge,
-  CenterYAxisData,
-  Axes,
-  RadialAxisData,
   ChartOptionsUsingYAxis,
   ChartState,
   LabelAxisData,
   ValueAxisData,
   InitAxisData,
-  AxisData,
 } from '@t/store/store';
 import {
-  isLabelAxisOnYAxis,
   getAxisName,
   getSizeKey,
   hasBoxTypeSeries,
+  isLabelAxisOnYAxis,
   isPointOnColumn,
   getYAxisOption,
 } from '@src/helpers/axes';
@@ -26,20 +26,20 @@ import { extend } from '@src/store/store';
 import { makeLabelsFromLimit } from '@src/helpers/calculator';
 import {
   AxisTitle,
-  BoxSeriesOptions,
-  RangeDataType,
-  Rect,
   BaseAxisOptions,
   BarTypeYAxisOption,
   BaseXAxisOptions,
   LineTypeXAxisOptions,
+  BoxSeriesOptions,
+  RangeDataType,
+  Rect,
 } from '@t/options';
 import {
   deepMergedCopy,
   hasNegativeOnly,
+  isNumber,
   isString,
   isUndefined,
-  isNumber,
   pickProperty,
 } from '@src/helpers/utils';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
@@ -154,7 +154,7 @@ function getDivergingValues(valueLabels) {
     : valueLabels.slice(1).reverse().concat(valueLabels);
 }
 
-function makeTitleOption(title?: AxisTitle) {
+export function makeTitleOption(title?: AxisTitle) {
   if (isUndefined(title)) {
     return title;
   }
@@ -202,7 +202,9 @@ function getSecondaryYAxisData(
   labelAxisSize: number,
   labelAxisName: string
 ): LabelAxisState | ValueAxisState {
-  const { scale, options, series, zoomRange, categories = [], rawCategories } = state;
+  const { scale, options, series, zoomRange } = state;
+  const categories = state.categories as string[];
+  const rawCategories = state.rawCategories as string[];
 
   return labelAxisOnYAxis
     ? getLabelAxisData({
@@ -250,12 +252,16 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, zoomRange, categories = [], rawCategories } = state;
+      const { scale, options, series, layout, zoomRange } = state;
       const { xAxis, yAxis, plot } = layout;
 
       const labelOnYAxis = isLabelAxisOnYAxis(series, options);
-      const { valueAxisName, labelAxisName } = getAxisName(labelOnYAxis);
-      const { valueSizeKey, labelSizeKey } = getSizeKey(labelOnYAxis);
+      const categories = (state.categories as string[]) ?? [];
+      const rawCategories = (state.rawCategories as string[]) ?? [];
+
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
+      const { valueAxisName, labelAxisName } = getAxisName(labelAxisOnYAxis);
+      const { valueSizeKey, labelSizeKey } = getSizeKey(labelAxisOnYAxis);
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;

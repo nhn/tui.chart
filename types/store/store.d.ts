@@ -30,6 +30,9 @@ import {
   BoxPlotChartOptions,
   PieChartOptions,
   TreemapSeriesType,
+  HeatmapSeriesType,
+  HeatmapCategoriesType,
+  HeatmapChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -46,6 +49,7 @@ type ChartSeriesMap = {
   boxPlot: BoxPlotSeriesType[];
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
+  heatmap: HeatmapSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -79,11 +83,14 @@ export type ChartOptionsMap = {
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
+  heatmap: HeatmapChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
 
-export type ChartOptionsUsingYAxis = ValueOf<Omit<ChartOptionsMap, 'pie' | 'radar'>>;
+export type ChartOptionsUsingYAxis = ValueOf<
+  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap'>
+>;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
@@ -100,7 +107,7 @@ export interface StoreOptions {
 }
 
 interface InitStoreState<T extends Options = Options> {
-  categories?: string[];
+  categories?: Categories;
   series: RawSeries;
   options: T;
 }
@@ -117,9 +124,10 @@ export interface StoreModule extends StoreOptions {
     | 'dataRange'
     | 'stackSeriesData'
     | 'treemapSeriesData'
+    | 'heatmapSeriesData'
     | 'legend'
     | 'circleLegend'
-    | 'treemapScale';
+    | 'colorValueScale';
 }
 
 export interface SeriesTheme {
@@ -217,6 +225,8 @@ export interface TreemapSeriesData {
   colorValue?: number;
 }
 
+export type Categories = string[] | HeatmapCategoriesType;
+
 export interface ChartState<T extends Options> {
   chart: BaseChartOptions;
   layout: Layout;
@@ -229,11 +239,12 @@ export interface ChartState<T extends Options> {
   dataRange: DataRange;
   theme: Theme;
   options: T;
-  categories?: string[];
-  rawCategories: string[];
+  categories?: Categories;
+  rawCategories: Categories;
   stackSeries: {
     [key in StackSeriesType]?: StackSeriesData<key>;
   };
+  colorValueScale: ScaleData;
   plot: {
     showLine: boolean;
     lines: PlotLine[];
@@ -241,16 +252,24 @@ export interface ChartState<T extends Options> {
   };
   legend: Legend;
   circleLegend: CircleLegend;
-
   treemapSeries: TreemapSeriesData[];
-  treemapScale: ScaleData;
   treemapZoomId: TreemapZoomId;
+  heatmapSeries: HeatmapSeriesData[];
 }
 
 export type TreemapZoomId = {
   cur: string;
   prev: string;
 };
+
+export type HeatmapSeriesData = {
+  category: {
+    x: string;
+    y: string;
+  };
+  colorValue: number;
+  indexes: [number, number];
+}[];
 
 export type StackTotal = {
   positive: number;

@@ -1,4 +1,4 @@
-import { StoreModule, RawSeries, Series, Options } from '@t/store/store';
+import { StoreModule, RawSeries, Series, Options, Categories } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src/helpers/utils';
 import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
@@ -9,14 +9,14 @@ import { isZooming } from '@src/helpers/range';
 function initZoomRange(
   series: RawSeries,
   options: Options,
-  categories?: string[]
+  categories?: Categories
 ): RangeDataType<number> | undefined {
   if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.zoomable) {
     return;
   }
 
   const rawCategoriesLength = categories
-    ? categories.length
+    ? (categories as string[]).length
     : Object.keys(makeRawCategories(series, categories)).length;
 
   return [0, rawCategoriesLength - 1];
@@ -47,7 +47,7 @@ function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeD
 
 function getDataInRange(
   data,
-  rawCategories: string[],
+  rawCategories: Categories,
   chartType: string,
   zoomRange?: RangeDataType<number>
 ) {
@@ -59,10 +59,10 @@ function getDataInRange(
   const isCoordinateChart = chartType !== 'area' && !isNumber(getFirstValidValue(data));
 
   if (isCoordinateChart) {
-    [startIdx, endIdx] = getCoordinateDataRange(data, rawCategories, zoomRange);
+    [startIdx, endIdx] = getCoordinateDataRange(data, rawCategories as string[], zoomRange);
   } else {
     startIdx = startIdx > 1 ? startIdx - 1 : startIdx;
-    endIdx = endIdx < rawCategories.length - 1 ? endIdx + 1 : endIdx;
+    endIdx = endIdx < (rawCategories as string[]).length - 1 ? endIdx + 1 : endIdx;
   }
 
   return data.slice(startIdx, endIdx + 1);
@@ -117,8 +117,8 @@ const seriesData: StoreModule = {
       this.notify(state, 'disabledSeries');
 
       if (state.series.bullet) {
-        const index = state.categories!.findIndex((seriesName) => seriesName === name);
-        state.categories!.splice(index, 1);
+        const index = (state.categories as string[]).findIndex((seriesName) => seriesName === name);
+        (state.categories as string[]).splice(index, 1);
 
         this.notify(state, 'axes');
       }
@@ -134,7 +134,7 @@ const seriesData: StoreModule = {
       }
     },
     zoom({ state }, rangeCategories: string[]) {
-      const { rawCategories } = state;
+      const rawCategories = state.rawCategories as string[];
 
       state.zoomRange = rangeCategories.map((rangeCategory) =>
         rawCategories.findIndex((category) => category === rangeCategory)
@@ -144,7 +144,7 @@ const seriesData: StoreModule = {
     },
     resetZoom({ state, initStoreState }) {
       const { series, options } = initStoreState;
-      const { rawCategories } = state;
+      const rawCategories = state.rawCategories as string[];
 
       state.zoomRange = initZoomRange(series, options, rawCategories);
 
@@ -158,7 +158,7 @@ const seriesData: StoreModule = {
   },
   computed: {
     isLineTypeSeriesZooming: ({ zoomRange, rawCategories }) => {
-      return isZooming(rawCategories, zoomRange);
+      return isZooming(rawCategories as string[], zoomRange);
     },
   },
 };

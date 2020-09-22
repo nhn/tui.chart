@@ -138,16 +138,7 @@ export default class AreaSeries extends Component {
   }
 
   public render(chartState: ChartState<AreaChartOptions | LineAreaChartOptions>) {
-    const {
-      layout,
-      series,
-      scale,
-      axes,
-      categories = [],
-      legend,
-      stackSeries,
-      zoomRange,
-    } = chartState;
+    const { layout, series, scale, axes, legend, stackSeries, zoomRange } = chartState;
 
     if (!series.area) {
       throw new Error("There's no area data!");
@@ -155,6 +146,7 @@ export default class AreaSeries extends Component {
 
     let areaStackSeries;
     const options = this.getAreaOptions(chartState.options);
+    const categories = chartState.categories as string[];
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);

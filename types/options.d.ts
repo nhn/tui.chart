@@ -1,8 +1,10 @@
-import { RawSeries } from '@t/store/store';
+import { Categories, RawSeries } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
+type HeatmapSeriesDataType = number[];
+export type HeatmapCategoriesType = { x: string[]; y: string[] };
 export type AreaSeriesDataType = number | RangeDataType<number>;
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 export interface Point {
@@ -58,6 +60,11 @@ export interface LineSeriesData {
   series: Pick<LineSeriesType, 'name' | 'data'>[];
 }
 
+export interface HeatmapSeriesType {
+  data: HeatmapSeriesDataType;
+  yCategory: string;
+}
+
 export interface TreemapSeriesType {
   label: string;
   data?: number;
@@ -67,6 +74,11 @@ export interface TreemapSeriesType {
 
 export interface TreemapSeriesData {
   series: TreemapSeriesType[];
+}
+
+export interface HeatmapSeriesData {
+  categories: HeatmapCategoriesType;
+  series: HeatmapSeriesDataType[];
 }
 
 export interface ScatterSeriesType {
@@ -222,7 +234,7 @@ interface BaseTooltipOptions {
   formatter?: Formatter;
 }
 
-interface BaseOptions {
+export interface BaseOptions {
   chart?: BaseChartOptions;
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
@@ -251,6 +263,10 @@ interface BaseSeriesOptions {
 
 interface BoxPlotSeriesOptions extends BaseSeriesOptions {
   eventDetectType?: BoxTypeEventDetectType;
+}
+
+export interface HeatmapChartOptions extends BaseOptions {
+  yAxis?: BaseAxisOptions;
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {
@@ -406,7 +422,7 @@ export type RadarSeriesType = {
 };
 
 export type RadarSeriesData = {
-  categories?: string[];
+  categories: string[];
   series: Pick<RadarSeriesType, 'name' | 'data'>[];
 };
 
@@ -438,7 +454,7 @@ export interface BoxSeriesData {
 export interface ChartProps<T> {
   el: Element;
   series: RawSeries;
-  categories?: string[];
+  categories?: Categories;
   options: T;
 }
 

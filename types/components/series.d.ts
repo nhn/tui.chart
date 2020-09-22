@@ -105,6 +105,20 @@ export type TreemapRectModel = {
 } & Rect &
   TreemapSeriesData;
 
+export type HeatmapRectModel = {
+  type: 'rect';
+  name: string;
+  color: string;
+  colorRatio: number;
+  colorValue: number;
+  style?: StyleProp<RectStyle, RectStyleName>;
+  thickness: number;
+} & Rect;
+
+export type HeatmapRectResponderModel = HeatmapRectModel & {
+  data?: { name?: string } & Partial<TooltipData>;
+};
+
 export type TreemapRectResponderModel = Omit<TreemapRectModel, 'data'> & {
   index?: number;
   data?: Partial<TooltipData>;

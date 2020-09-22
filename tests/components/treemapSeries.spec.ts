@@ -18,7 +18,7 @@ function getChartState(seriesData, options?: any) {
           endColor: '#ffb840',
         },
       },
-      treemapScale: {
+      colorValueScale: {
         limit: {
           min: 1,
           max: 2,

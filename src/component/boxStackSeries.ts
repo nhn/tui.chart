@@ -88,12 +88,13 @@ export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
     chartState: ChartState<T>
   ) {
-    const { layout, series: seriesData, axes, categories, stackSeries, legend } = chartState;
+    const { layout, series: seriesData, axes, stackSeries, legend } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
     }
 
+    const categories = (chartState.categories as string[]) ?? [];
     const options = this.getOptions(chartState.options);
 
     this.setEventDetectType(seriesData, options);
@@ -322,7 +323,7 @@ export default class BoxStackSeries extends BoxSeries {
 
   private getTooltipData(
     seriesData: StackSeriesData<BoxType>,
-    categories?: string[]
+    categories: string[]
   ): TooltipData[] {
     const seriesRawData = seriesData.data;
     const { stackData } = seriesData;
@@ -336,7 +337,7 @@ export default class BoxStackSeries extends BoxSeries {
   private makeGroupStackTooltipData(
     seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
     stackData: StackGroupData,
-    categories?: string[]
+    categories: string[]
   ) {
     return Object.keys(stackData).flatMap((groupId) => {
       const colors = seriesRawData
@@ -351,7 +352,7 @@ export default class BoxStackSeries extends BoxSeries {
     seriesRawData: BoxSeriesType<BoxSeriesDataType>[],
     stackData: StackDataValues,
     colors: string[],
-    categories?: string[]
+    categories: string[]
   ): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
@@ -361,7 +362,7 @@ export default class BoxStackSeries extends BoxSeries {
           label: seriesRawData[seriesIndex].name,
           color: colors[seriesIndex],
           value,
-          category: categories?.[dataIndex],
+          category: categories.length ? categories[dataIndex] : '',
         });
       });
     });
@@ -701,13 +702,6 @@ export default class BoxStackSeries extends BoxSeries {
         size: this.getOffsetSize(),
       },
     };
-  }
-
-  private getOffsetPosition(models: RectResponderModel[]) {
-    const offsetValues = models.map((model) => model[this.offsetKey]);
-    const min = Math.min(...offsetValues);
-
-    return Math.max(min, 0);
   }
 
   onMousemoveGroupedType(responders: RectResponderModel[]) {

@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Options, Series } from '@t/store/store';
+import { Categories, ChartState, Options, Series } from '@t/store/store';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
 import { TitleOption } from '@t/options';
@@ -13,7 +13,7 @@ const EXPORT_MENU_WIDTH = 140;
 export const BUTTON_RECT_SIZE = 24;
 export interface DataToExport {
   series: Series;
-  categories?: string[];
+  categories?: Categories;
 }
 
 export default class ExportMenu extends Component {
