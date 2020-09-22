@@ -45,7 +45,8 @@ interface RenderOptions {
   labelDistance?: number;
 }
 
-export const DEFAULT_LINE_WIDTH = 3;
+export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
+export const DEFAULT_LINE_WIDTH = 2;
 
 type DatumType = CoordinateDataType | number;
 type ResponderTypes = CircleResponderModel[] | RectResponderModel[];
@@ -203,8 +204,8 @@ export default class LineSeries extends Component {
     return options?.showDot
       ? seriesCircleModel.map((m) => ({
           ...m,
-          radius: 6,
-          style: ['default'],
+          radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
+          style: [{ lineWidth: 0, strokeStyle: m.color }],
         }))
       : [];
   }
@@ -271,7 +272,7 @@ export default class LineSeries extends Component {
         type: 'circle',
         x,
         y,
-        radius: 7,
+        radius: DEFAULT_LINE_SERIES_DOT_RADIUS + 2, // line Width
         color,
         style: ['default', 'hover'],
         seriesIndex,
