@@ -1,6 +1,6 @@
 import { HeatmapSeriesData, SeriesDataType } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { temperatureAverageDataForHeatmap } from './data';
+import { contributionsData, temperatureAverageDataForHeatmap } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import HeatmapChart from '@src/charts/heatmapChart';
 
@@ -68,6 +68,19 @@ export const selectable = () => {
   const { el } = createChart(temperatureAverageDataForHeatmap, {
     series: {
       selectable: true,
+    },
+  });
+
+  return el;
+};
+
+export const datetimeCategory = () => {
+  const { el } = createChart(contributionsData, {
+    xAxis: {
+      date: { format: 'yyyy-MM' },
+    },
+    tooltip: {
+      formatter: (value: SeriesDataType) => `${value} commit`,
     },
   });
 

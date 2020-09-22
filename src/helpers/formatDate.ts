@@ -1,15 +1,15 @@
 // https://github.com/nhn/tui.code-snippet/blob/master/formatDate/formatDate.js
 import { isDate, isObject } from '@src/helpers/utils';
-import { Options } from '@t/store/store';
+import { DateOption } from '@t/options';
 
-export function getDateFormat(options?: Options): string | undefined {
-  if (!options || (options && !options.xAxis?.date)) {
+export const DEFAULT_DATE_FORMAT = 'YY-MM-DD hh:mm:ss';
+
+export function getDateFormat(date?: DateOption): string | undefined {
+  if (!date) {
     return;
   }
 
-  const date = options.xAxis?.date;
-
-  return isObject(date) ? date.format : 'YY-MM-DD hh:mm:ss';
+  return isObject(date) ? date.format : DEFAULT_DATE_FORMAT;
 }
 
 const tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*mm|[\\]*m|[\\]*ss|[\\]*s|[\\]*A/gi;

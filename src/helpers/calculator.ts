@@ -77,7 +77,7 @@ export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number, options?
   const min = Math.round(limit.min * multipleNum);
   const max = Math.round(limit.max * multipleNum);
   const labels = range(min, max + 1, stepSize * multipleNum);
-  const format = getDateFormat(options);
+  const format = getDateFormat(options?.xAxis?.date);
 
   return labels.map((label) => {
     return format ? formatDate(format, new Date(label)) : String(label / multipleNum);

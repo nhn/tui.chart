@@ -2,15 +2,19 @@ import { Axes, AxisData, StoreModule } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
 import { AxisType } from '@src/component/axis';
-import { makeTitleOption } from '@src/store/axes';
+import { makeFormattedCategory, makeTitleOption } from '@src/store/axes';
 
-type HeatmapStateProp = { axisSize: number; categories: HeatmapCategoriesType };
+type HeatmapStateProp = {
+  axisSize: number;
+  categories: HeatmapCategoriesType;
+  options: HeatmapChartOptions;
+};
 
 function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
-  const { categories, axisSize } = stateProp;
+  const { categories, axisSize, options } = stateProp;
   const isLabelAxis = axisType === AxisType.X;
   const axisName = isLabelAxis ? 'x' : 'y';
-  const labels = categories[axisName];
+  const labels = makeFormattedCategory(categories[axisName], options[axisType]?.date);
 
   const tickIntervalCount = labels.length;
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
@@ -51,9 +55,10 @@ const axes: StoreModule = {
       const { layout, rawCategories } = state;
       const { width, height } = layout.plot;
       const categories = rawCategories as HeatmapCategoriesType;
+      const options = state.options as HeatmapChartOptions;
 
-      const xAxisData = getHeatmapAxisData({ axisSize: width, categories }, AxisType.X);
-      const yAxisData = getHeatmapAxisData({ axisSize: height, categories }, AxisType.Y);
+      const xAxisData = getHeatmapAxisData({ axisSize: width, categories, options }, AxisType.X);
+      const yAxisData = getHeatmapAxisData({ axisSize: height, categories, options }, AxisType.Y);
       const axesState = { xAxis: xAxisData, yAxis: yAxisData } as Axes;
 
       this.notify(state, 'layout');
