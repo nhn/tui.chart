@@ -3,7 +3,6 @@ import { HeatmapChartOptions, Size } from '@t/options';
 import { ChartState, HeatmapSeriesData, ScaleData, Theme } from '@t/store/store';
 import { HeatmapRectModel, HeatmapRectResponderModel } from '@t/components/series';
 import { hexToRGB } from '@src/helpers/color';
-import { TooltipData } from '@t/components/tooltip';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
