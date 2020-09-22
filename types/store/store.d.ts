@@ -29,10 +29,10 @@ import {
   PlotBand,
   BoxPlotChartOptions,
   PieChartOptions,
-  BaseOptions,
   TreemapSeriesType,
   HeatmapSeriesType,
   HeatmapCategoriesType,
+  HeatmapChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -83,12 +83,14 @@ export type ChartOptionsMap = {
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
-  heatmap: BaseOptions;
+  heatmap: HeatmapChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
 
-export type ChartOptionsUsingYAxis = ValueOf<Omit<ChartOptionsMap, 'pie' | 'radar'>>;
+export type ChartOptionsUsingYAxis = ValueOf<
+  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap'>
+>;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;

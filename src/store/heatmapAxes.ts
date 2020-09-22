@@ -1,6 +1,6 @@
 import { Axes, AxisData, StoreModule } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { HeatmapCategoriesType } from '@t/options';
+import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
 import { AxisType } from '@src/component/axis';
 import { makeTitleOption } from '@src/store/axes';
 
@@ -28,20 +28,24 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
 
 const axes: StoreModule = {
   name: 'axes',
-  state: ({ options }) => ({
-    axes: {
-      xAxis: {
-        tickInterval: options.xAxis?.tick?.interval ?? 1,
-        labelInterval: options.xAxis?.label?.interval ?? 1,
-        title: makeTitleOption(options.xAxis?.title),
-      } as AxisData,
-      yAxis: {
-        tickInterval: options.yAxis?.tick?.interval ?? 1,
-        labelInterval: options.yAxis?.label?.interval ?? 1,
-        title: makeTitleOption(options.yAxis?.title),
-      } as AxisData,
-    },
-  }),
+  state: (initStoreState) => {
+    const options = initStoreState.options as HeatmapChartOptions;
+
+    return {
+      axes: {
+        xAxis: {
+          tickInterval: options.xAxis?.tick?.interval ?? 1,
+          labelInterval: options.xAxis?.label?.interval ?? 1,
+          title: makeTitleOption(options.xAxis?.title),
+        } as AxisData,
+        yAxis: {
+          tickInterval: options.yAxis?.tick?.interval ?? 1,
+          labelInterval: options.yAxis?.label?.interval ?? 1,
+          title: makeTitleOption(options.yAxis?.title),
+        } as AxisData,
+      },
+    };
+  },
   action: {
     setAxesData({ state }) {
       const { layout, rawCategories } = state;

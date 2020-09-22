@@ -265,6 +265,10 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
   eventDetectType?: BoxTypeEventDetectType;
 }
 
+export interface HeatmapChartOptions extends BaseOptions {
+  yAxis?: BaseAxisOptions;
+}
+
 export interface BoxPlotChartOptions extends BaseOptions {
   series?: BoxPlotSeriesOptions;
   yAxis?: BaseAxisOptions;

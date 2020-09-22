@@ -1,5 +1,5 @@
 import Component from './component';
-import { BaseOptions, Size } from '@t/options';
+import { HeatmapChartOptions, Size } from '@t/options';
 import { ChartState, HeatmapSeriesData, ScaleData, Theme } from '@t/store/store';
 import { HeatmapRectModel, HeatmapRectResponderModel } from '@t/components/series';
 import { hexToRGB } from '@src/helpers/color';
@@ -21,7 +21,7 @@ export default class HeatmapSeries extends Component {
     this.name = 'heatmap';
   }
 
-  render(chartState: ChartState<BaseOptions>) {
+  render(chartState: ChartState<HeatmapChartOptions>) {
     const { layout, heatmapSeries, axes, theme, colorValueScale, options } = chartState;
 
     if (!heatmapSeries.length) {

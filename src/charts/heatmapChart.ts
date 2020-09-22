@@ -25,6 +25,7 @@ import * as axisBrush from '@src/brushes/axis';
 import {
   BaseOptions,
   HeatmapCategoriesType,
+  HeatmapChartOptions,
   HeatmapSeriesData,
   HeatmapSeriesDataType,
 } from '@t/options';
@@ -47,7 +48,7 @@ function getSeriesWithYCategory(
     .reverse();
 }
 
-export default class HeatmapChart extends Chart<BaseOptions> {
+export default class HeatmapChart extends Chart<HeatmapChartOptions> {
   modules = [heatmapSeriesData, colorValueScale, heatmapAxes];
 
   constructor(props: HeatmapChartProps) {
