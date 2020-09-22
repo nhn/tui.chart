@@ -53,21 +53,15 @@ export default class HeatmapSeries extends Component {
   }
 
   makeHeatmapSeriesResponder() {
-    const tooltipData = this.makeTooltipData();
-
-    return this.models.map<HeatmapRectResponderModel>((model, idx) => ({
+    return this.models.map<HeatmapRectResponderModel>((model) => ({
       ...model,
-      data: tooltipData[idx],
+      data: {
+        ...model,
+        label: model.name,
+        value: model.colorValue,
+      },
       thickness: BOX_HOVER_THICKNESS,
       style: ['shadow'],
-    }));
-  }
-
-  private makeTooltipData(): TooltipData[] {
-    return this.models.map<TooltipData>((m) => ({
-      ...m,
-      label: m.name!,
-      value: m.colorValue!,
     }));
   }
 

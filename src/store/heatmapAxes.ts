@@ -14,13 +14,13 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
 
   const tickIntervalCount = labels.length;
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
-  const labelDistance = axisSize / labels.length;
+  const labelDistance = axisSize / tickIntervalCount;
 
   return {
     labels,
     pointOnColumn: true,
     isLabelAxis,
-    tickCount: labels.length + 1,
+    tickCount: tickIntervalCount + 1,
     tickDistance,
     labelDistance,
   };
@@ -50,16 +50,10 @@ const axes: StoreModule = {
     setAxesData({ state }) {
       const { layout, rawCategories } = state;
       const { width, height } = layout.plot;
+      const categories = rawCategories as HeatmapCategoriesType;
 
-      const xAxisData = getHeatmapAxisData(
-        { axisSize: width, categories: rawCategories as HeatmapCategoriesType },
-        AxisType.X
-      );
-      const yAxisData = getHeatmapAxisData(
-        { axisSize: height, categories: rawCategories as HeatmapCategoriesType },
-        AxisType.Y
-      );
-
+      const xAxisData = getHeatmapAxisData({ axisSize: width, categories }, AxisType.X);
+      const yAxisData = getHeatmapAxisData({ axisSize: height, categories }, AxisType.Y);
       const axesState = { xAxis: xAxisData, yAxis: yAxisData } as Axes;
 
       this.notify(state, 'layout');
