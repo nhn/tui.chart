@@ -105,6 +105,11 @@ export type TreemapRectModel = {
 } & Rect &
   TreemapSeriesData;
 
+export type HeatmapRectModels = {
+  series: HeatmapRectModel[];
+  selectedSeries: HeatmapRectResponderModel[];
+};
+
 export type HeatmapRectModel = {
   type: 'rect';
   name: string;

@@ -63,3 +63,13 @@ export const dataLabels = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    series: {
+      selectable: true,
+    },
+  });
+
+  return el;
+};

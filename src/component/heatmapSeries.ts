@@ -1,15 +1,20 @@
 import Component from './component';
 import { HeatmapChartOptions, Size } from '@t/options';
 import { ChartState, HeatmapSeriesData, ScaleData, Theme } from '@t/store/store';
-import { HeatmapRectModel, HeatmapRectResponderModel } from '@t/components/series';
+import {
+  HeatmapRectModel,
+  HeatmapRectModels,
+  HeatmapRectResponderModel,
+} from '@t/components/series';
 import { hexToRGB } from '@src/helpers/color';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { SeriesDataLabelType } from '@t/components/dataLabels';
+import { isClickSameSeries } from '@src/helpers/responders';
 
 export default class HeatmapSeries extends Component {
-  models: HeatmapRectModel[] = [];
+  models!: HeatmapRectModels;
 
   responders!: HeatmapRectResponderModel[];
 
@@ -27,12 +32,16 @@ export default class HeatmapSeries extends Component {
       throw new Error("There's no heatmap data");
     }
 
+    this.selectable = this.getSelectableOption(options);
     this.rect = layout.plot;
     const cellSize = {
       height: axes.yAxis.tickDistance,
       width: axes.xAxis.tickDistance,
     };
-    this.models = this.renderHeatmapSeries(heatmapSeries, cellSize, theme, colorValueScale);
+    this.models = {
+      series: this.renderHeatmapSeries(heatmapSeries, cellSize, theme, colorValueScale),
+      selectedSeries: [],
+    };
 
     if (getDataLabelsOptions(options, this.name).visible) {
       this.renderDataLabels(this.makeDataLabels());
@@ -42,7 +51,7 @@ export default class HeatmapSeries extends Component {
   }
 
   makeDataLabels(): SeriesDataLabelType {
-    return this.models.map((m) => ({
+    return this.models.series.map((m) => ({
       ...m,
       type: 'treemapSeriesName',
       value: m.colorValue,
@@ -52,7 +61,7 @@ export default class HeatmapSeries extends Component {
   }
 
   makeHeatmapSeriesResponder() {
-    return this.models.map<HeatmapRectResponderModel>((model) => ({
+    return this.models.series.map<HeatmapRectResponderModel>((model) => ({
       ...model,
       data: {
         ...model,
@@ -98,6 +107,17 @@ export default class HeatmapSeries extends Component {
         };
       });
     });
+  }
+
+  onClick({ responders }: { responders: HeatmapRectResponderModel[] }) {
+    let selectedSeries = responders;
+    if (this.selectable) {
+      if (isClickSameSeries<HeatmapRectResponderModel>(responders, this.models.selectedSeries)) {
+        selectedSeries = [];
+      }
+      this.models.selectedSeries = selectedSeries as HeatmapRectResponderModel[];
+      this.eventBus.emit('needDraw');
+    }
   }
 
   onMouseoutComponent() {
