@@ -172,13 +172,11 @@ type YAxisOptions = BaseAxisOptions & {
 
 type BothSidesYAxisOptions = YAxisOptions | YAxisOptions[];
 
+type DateOption = boolean | { format: string };
+
 interface BaseXAxisOptions extends BaseAxisOptions {
   rotateLabel?: boolean;
-  date?:
-    | boolean
-    | {
-        format: string;
-      };
+  date?: DateOption;
 }
 
 type BarTypeYAxisOption = BaseAxisOptions & {
@@ -266,7 +264,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 }
 
 export interface HeatmapChartOptions extends BaseOptions {
-  yAxis?: BaseAxisOptions;
+  yAxis?: BaseAxisOptions & { date: DateOption };
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {

@@ -33,6 +33,7 @@ import {
   BoxSeriesOptions,
   RangeDataType,
   Rect,
+  DateOption,
 } from '@t/options';
 import {
   deepMergedCopy,
@@ -88,8 +89,8 @@ function getZeroPosition(
   return labelAxisOnYAxis ? position : axisSize - position;
 }
 
-function makeFormattedCategory(categories: string[], options: Options) {
-  const format = getDateFormat(options);
+export function makeFormattedCategory(categories: string[], date?: DateOption) {
+  const format = getDateFormat(date);
 
   return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
 }
@@ -100,7 +101,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const labels =
     !isZooming(rawCategories, zoomRange) && scale
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
-      : makeFormattedCategory(categories, options);
+      : makeFormattedCategory(categories, options?.xAxis?.date);
 
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
