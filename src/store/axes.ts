@@ -32,7 +32,8 @@ import {
   LineTypeXAxisOptions,
   BoxSeriesOptions,
   RangeDataType,
-  Rect, DateOption,
+  Rect,
+  DateOption,
 } from '@t/options';
 import {
   deepMergedCopy,
