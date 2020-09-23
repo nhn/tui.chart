@@ -277,10 +277,6 @@ export type HeatmapSeriesData = {
   indexes: [number, number];
 }[];
 
-export type DataLabels = {
-  [key in DataLabelSeriesType]?: DataLabelData;
-};
-
 type NestedPieSeriesDataType = {
   data: ChartSeriesMap['pie'];
 };

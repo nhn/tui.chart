@@ -164,7 +164,7 @@ export const budgetData = {
 };
 
 export const budgetData2 = {
-  categories: ['', '', '', '', '', ''],
+  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
   series: [
     {
       name: 'Budget',

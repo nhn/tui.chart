@@ -65,6 +65,7 @@ export default class DataLabels extends Component {
 
   renderSeriesDataLabels = (seriesDataLabel: SeriesDataLabel) => {
     this.appendDataLabels(seriesDataLabel);
+
     this.models = this.renderLabelModel();
 
     if (!this.drawModels) {
