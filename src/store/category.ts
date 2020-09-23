@@ -16,7 +16,9 @@ export function makeRawCategories(series: RawSeries | Series, categories?: Categ
         data.forEach((datum) => {
           const rawXValue = getCoordinateXValue(datum);
 
-          firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
+          if (rawXValue) {
+            firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
+          }
         });
       } else if (isBulletSeries(key)) {
         firstValues.add(name);

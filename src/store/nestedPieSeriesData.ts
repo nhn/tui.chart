@@ -1,7 +1,6 @@
 import { StoreModule } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { deepCopy } from '@src/helpers/utils';
-import { PieDonutChartOptions } from '@t/options';
 
 const nestedPieSeriesData: StoreModule = {
   name: 'seriesData',
@@ -10,26 +9,35 @@ const nestedPieSeriesData: StoreModule = {
   }),
   action: {
     setNestedPieSeriesData({ state, initStoreState }) {
-      const { theme, disabledSeries, options } = state;
+      const { theme, disabledSeries } = state;
       const { colors } = theme.series;
       const rawSeries = deepCopy(initStoreState.series);
-      const grouped = (options as PieDonutChartOptions)?.series?.grouped ?? false;
       const newSeriesData = {};
+      const colorMap = {};
       let colorIdx = 0;
 
-      rawSeries.pieDonut!.forEach(({ alias, data }) => {
-        const originSeriesData = data.map((m, dataIndex) => {
+      rawSeries.pieDonut!.forEach(({ name: alias, data }, seriesIndex) => {
+        const originSeriesData = data.map((m) => {
           colorIdx += 1;
+
+          const color =
+            m.parent && seriesIndex ? colorMap[m.parent] : colors[(colorIdx - 1) % colors.length];
+
+          if (!seriesIndex) {
+            colorMap[m.name] = color;
+          }
 
           return {
             ...m,
             data: m.data,
-            color: colors[(grouped ? dataIndex : colorIdx - 1) % colors.length],
+            color,
           };
         });
 
         newSeriesData[alias] = {
-          data: originSeriesData.filter(({ name }) => !disabledSeries.includes(name)),
+          data: originSeriesData.filter(({ name, parent }) => {
+            return parent ? !disabledSeries.includes(parent) : !disabledSeries.includes(name);
+          }),
         };
       });
 

@@ -192,8 +192,8 @@ export default class PieDonutSeries extends Component {
     } = renderOptions;
     const defaultStartDegree = clockwise ? 0 : 360;
 
-    seriesRawData.forEach(({ data, name, color: seriesColor }, seriesIndex) => {
-      const active = this.activeSeriesMap![name];
+    seriesRawData.forEach(({ data, name, color: seriesColor, parent }, seriesIndex) => {
+      const active = this.activeSeriesMap![parent ?? name];
       const color = getRGBA(seriesColor!, active ? 1 : 0.3);
       const degree = (data / total) * totalAngle * (clockwise ? 1 : -1);
       const startDegree = seriesIndex
@@ -218,7 +218,7 @@ export default class PieDonutSeries extends Component {
           outer,
         },
         value: data,
-        style: ['default'],
+        style: ['nested'],
         clockwise,
         drawingStartAngle,
         totalAngle,

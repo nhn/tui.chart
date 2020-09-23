@@ -1,6 +1,6 @@
 import { PieDonutChartOptions, PieDonutSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { annualBrowserUsageData, annualGroupedBrowserUsageData } from './data';
+import { browserUsageData2, groupedBrowserUsageData } from './data';
 import PieDonutChart from '@src/charts/pieDonutChart';
 
 export default {
@@ -34,24 +34,18 @@ function createChart(data: PieDonutSeriesData, customOptions?: PieDonutChartOpti
 }
 
 export const basic = () => {
-  const { el } = createChart(annualBrowserUsageData, {
+  const { el } = createChart(browserUsageData2, {
     series: {
-      pie1: {
+      browsers: {
         radiusRange: {
-          inner: 0,
+          inner: '20%',
           outer: '50%',
         },
       },
-      pie3: {
-        radiusRange: {
-          inner: '80%',
-          outer: '100%',
-        },
-      },
-      pie2: {
+      versions: {
         radiusRange: {
           inner: '55%',
-          outer: '75%',
+          outer: '85%',
         },
       },
     },
@@ -62,25 +56,55 @@ export const basic = () => {
 };
 
 export const grouped = () => {
-  const { el } = createChart(annualGroupedBrowserUsageData, {
+  const { el } = createChart(groupedBrowserUsageData, {
     series: {
-      grouped: true,
-      pie1: {
+      browsers: {
         radiusRange: {
-          inner: 0,
+          inner: '20%',
           outer: '50%',
         },
       },
-      pie2: {
+      versions: {
         radiusRange: {
           inner: '55%',
-          outer: '75%',
+          outer: '85%',
         },
       },
-      pie3: {
+      /*
+      pie: {
+        // pie 디폴트 옵션
+        angleRange: {
+          start: -90,
+          end: 90,
+        },
+      },
+      */
+    },
+    legend: { visible: true },
+  } as PieDonutChartOptions);
+
+  return el;
+};
+
+export const dataLabels = () => {
+  const { el } = createChart(groupedBrowserUsageData, {
+    series: {
+      browsers: {
         radiusRange: {
-          inner: '80%',
-          outer: '100%',
+          inner: '20%',
+          outer: '50%',
+        },
+        dataLabels: {
+          visible: true,
+          pieSeriesName: {
+            visible: false,
+          },
+        },
+      },
+      versions: {
+        radiusRange: {
+          inner: '55%',
+          outer: '85%',
         },
         dataLabels: {
           visible: true,
@@ -92,70 +116,24 @@ export const grouped = () => {
       },
     },
     legend: { visible: true },
-  } as PieDonutChartOptions);
-
-  return el;
-};
-
-export const dataLabels = () => {
-  const { el } = createChart(annualBrowserUsageData, {
-    series: {
-      pie1: {
-        radiusRange: {
-          inner: 0,
-          outer: '50%',
-        },
-      },
-      pie2: {
-        radiusRange: {
-          inner: '55%',
-          outer: '75%',
-        },
-        dataLabels: {
-          visible: true,
-          pieSeriesName: {
-            visible: false,
-          },
-        },
-      },
-      pie3: {
-        radiusRange: {
-          inner: '80%',
-          outer: '100%',
-        },
-        dataLabels: {
-          visible: true,
-          pieSeriesName: {
-            visible: true,
-            anchor: 'outer',
-          },
-        },
-      },
-    },
   });
 
   return el;
 };
 
 export const selectable = () => {
-  const { el } = createChart(annualBrowserUsageData, {
+  const { el } = createChart(groupedBrowserUsageData, {
     series: {
-      pie1: {
+      browsers: {
         radiusRange: {
-          inner: 0,
+          inner: '20%',
           outer: '50%',
         },
       },
-      pie2: {
+      versions: {
         radiusRange: {
-          inner: '55%',
-          outer: '75%',
-        },
-      },
-      pie3: {
-        radiusRange: {
-          inner: '80%',
-          outer: '100%',
+          inner: '65%',
+          outer: '95%',
         },
       },
       selectable: true,

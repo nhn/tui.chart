@@ -120,6 +120,7 @@ export interface BubbleSeriesData {
 export type PieSeriesType = {
   name: string;
   data: number;
+  parent?: string;
   color?: string;
 };
 
@@ -538,7 +539,7 @@ export type ColumnLineData = {
 };
 
 export type PieDonutSeriesType = {
-  alias: string;
+  name: string;
   data: PieSeriesType[];
 };
 
@@ -547,9 +548,8 @@ export type PieDonutSeriesData = {
   series: PieDonutSeriesType[];
 };
 
-export type PieDonutSeriesOptions = Record<string, PieSeriesOptions & BaseSeriesOptions> & {
-  grouped?: boolean;
-} & BaseSeriesOptions;
+export type PieDonutSeriesOptions = Record<string, PieSeriesOptions & BaseSeriesOptions> &
+  BaseSeriesOptions;
 
 export interface PieDonutChartOptions extends BaseOptions {
   series?: PieDonutSeriesOptions;

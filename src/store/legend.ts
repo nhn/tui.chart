@@ -1,10 +1,5 @@
 import { LegendIconType, Options, RawSeries, StoreModule, ChartType } from '@t/store/store';
-import {
-  Align,
-  BubbleChartOptions,
-  TreemapChartSeriesOptions,
-  PieDonutChartOptions,
-} from '@t/options';
+import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
 import { isUndefined, sum, includes } from '@src/helpers/utils';
 import {
   LEGEND_CHECKBOX_SIZE,
@@ -16,6 +11,11 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
+
+type LegendLabels = {
+  label: string;
+  type: ChartType;
+}[];
 
 function calculateLegendWidth(
   defaultWidth: number,
@@ -75,27 +75,24 @@ function showCheckbox(options: Options) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
-function getPieDonutLegendLabels(series: RawSeries, grouped = false) {
-  if (grouped) {
-    return Object.keys(series).flatMap((type) =>
-      series[type][0].data.map(({ name }) => ({
-        label: name,
-        type,
-      }))
-    );
-  }
+function getPieDonutLegendLabels(series: RawSeries) {
+  const result: LegendLabels = [];
 
-  return Object.keys(series).flatMap((type) =>
-    series[type].flatMap(({ data }) =>
-      data.map(({ name }) => ({
-        label: name,
-        type,
-      }))
-    )
-  );
+  (series.pieDonut ?? []).forEach(({ data }) => {
+    data.forEach(({ name, parent }) => {
+      if (!parent) {
+        result.push({
+          label: name,
+          type: 'pieDonut',
+        });
+      }
+    });
+  });
+
+  return result;
 }
 
-function getLegendLabels(series: RawSeries) {
+function getLegendLabels(series: RawSeries): LegendLabels {
   return Object.keys(series).flatMap((type) =>
     series[type].map(({ name, colorValue }) => ({
       label: colorValue ? colorValue : name,
@@ -155,7 +152,7 @@ const legend: StoreModule = {
 
     const defaultWidth = Math.min(options.chart!.width / 10, 150);
     const legendLabels = series.pieDonut
-      ? getPieDonutLegendLabels(series, !!(options as PieDonutChartOptions)?.series?.grouped)
+      ? getPieDonutLegendLabels(series)
       : getLegendLabels(series);
     const data = legendLabels.map(({ label, type }) => ({
       label,

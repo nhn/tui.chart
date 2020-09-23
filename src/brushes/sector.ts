@@ -9,7 +9,7 @@ export type SectorStyle = {
   shadowBlur?: number;
 };
 
-export type SectorStyleName = 'default' | 'hover';
+export type SectorStyleName = 'default' | 'hover' | 'nested';
 
 const sectorStyle = {
   default: {
@@ -21,6 +21,10 @@ const sectorStyle = {
     strokeStyle: '#ffffff',
     shadowColor: '#cccccc',
     shadowBlur: 5,
+  },
+  nested: {
+    lineWidth: 1,
+    strokeStyle: '#ffffff',
   },
 };
 

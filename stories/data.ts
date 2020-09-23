@@ -164,7 +164,7 @@ export const budgetData = {
 };
 
 export const budgetData2 = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+  categories: ['', '', '', '', '', ''],
   series: [
     {
       name: 'Budget',
@@ -1810,186 +1810,210 @@ export const contributionsData = {
   ],
 };
 
-export const annualBrowserUsageData = {
-  categories: ['2018', '2019', '2020'],
+export const groupedBrowserUsageData = {
   series: [
     {
-      alias: 'pie1',
-      data: [
-        {
-          name: 'Chrome - 2018',
-          data: 20.02,
-        },
-        {
-          name: 'IE - 2018',
-          data: 20.5,
-        },
-        {
-          name: 'Firefox - 2018',
-          data: 8.71,
-        },
-        {
-          name: 'Safari - 2018',
-          data: 6.45,
-        },
-        {
-          name: 'Opera - 2018',
-          data: 3.1,
-        },
-        {
-          name: 'Etc - 2018',
-          data: 7.25,
-        },
-      ],
-    },
-    {
-      alias: 'pie2',
-      data: [
-        {
-          name: 'Chrome - 2019',
-          data: 26.02,
-        },
-        {
-          name: 'IE - 2019',
-          data: 15.2,
-        },
-        {
-          name: 'Firefox - 2019',
-          data: 10.71,
-        },
-        {
-          name: 'Safari - 2019',
-          data: 5.45,
-        },
-        {
-          name: 'Opera - 2019',
-          data: 2.1,
-        },
-        {
-          name: 'Etc - 2019',
-          data: 7.25,
-        },
-      ],
-    },
-    {
-      alias: 'pie3',
+      name: 'browsers',
       data: [
         {
           name: 'Chrome',
-          data: 30.02,
-        },
-        {
-          name: 'IE',
-          data: 10.47,
-        },
-        {
-          name: 'Firefox',
-          data: 17.71,
+          data: 50,
         },
         {
           name: 'Safari',
-          data: 5.45,
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: 10,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
         },
         {
           name: 'Opera',
-          data: 1.1,
+          data: 3,
         },
         {
           name: 'Etc',
-          data: 7.25,
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          parent: 'Chrome',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          parent: 'Chrome',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          parent: 'Safari',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          parent: 'Safari',
+          data: 5,
+        },
+        {
+          name: 'IE 11',
+          parent: 'IE',
+          data: 4,
+        },
+        {
+          name: 'IE 10',
+          parent: 'IE',
+          data: 3,
+        },
+        {
+          name: 'IE 9',
+          parent: 'IE',
+          data: 2,
+        },
+        {
+          name: 'IE 8',
+          parent: 'IE',
+          data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          parent: 'Firefox',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          parent: 'Firefox',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          parent: 'Opera',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          parent: 'Opera',
+          data: 1,
+        },
+        {
+          name: 'Etc 1',
+          parent: 'Etc',
+          data: 3,
+        },
+        {
+          name: 'Etc 2',
+          parent: 'Etc',
+          data: 2,
+        },
+        {
+          name: 'Etc 3',
+          parent: 'Etc',
+          data: 1,
+        },
+        {
+          name: 'Etc 4',
+          parent: 'Etc',
+          data: 1,
         },
       ],
     },
   ],
 };
 
-export const annualGroupedBrowserUsageData = {
-  categories: ['2018', '2019', '2020'],
+export const browserUsageData2 = {
   series: [
     {
-      alias: 'pie1',
+      name: 'browsers',
       data: [
         {
           name: 'Chrome',
-          data: 20.02,
-        },
-        {
-          name: 'IE',
-          data: 20.5,
-        },
-        {
-          name: 'Firefox',
-          data: 8.71,
+          data: 50,
         },
         {
           name: 'Safari',
-          data: 6.45,
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: 10,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
         },
         {
           name: 'Opera',
-          data: 4.1,
+          data: 3,
         },
         {
           name: 'Etc',
-          data: 7.25,
+          data: 7,
         },
       ],
     },
     {
-      alias: 'pie2',
+      name: 'versions',
       data: [
         {
-          name: 'Chrome',
-          data: 26.02,
+          name: 'Chrome 64',
+          data: 40,
         },
         {
-          name: 'IE',
-          data: 15.2,
+          name: 'Chrome 63',
+          data: 10,
         },
         {
-          name: 'Firefox',
-          data: 10.71,
+          name: 'Safari 13',
+          data: 15,
         },
         {
-          name: 'Safari',
-          data: 5.45,
+          name: 'Safari 12',
+          data: 5,
         },
         {
-          name: 'Opera',
-          data: 3.1,
+          name: 'IE 11',
+          data: 4,
         },
         {
-          name: 'Etc',
-          data: 7.25,
-        },
-      ],
-    },
-    {
-      alias: 'pie3',
-      data: [
-        {
-          name: 'Chrome',
-          data: 30.02,
+          name: 'IE 10',
+          data: 3,
         },
         {
-          name: 'IE',
-          data: 10.47,
+          name: 'IE 9',
+          data: 2,
         },
         {
-          name: 'Firefox',
-          data: 17.71,
+          name: 'IE 8',
+          data: 1,
         },
         {
-          name: 'Safari',
-          data: 5.45,
+          name: 'Firefox 13',
+          data: 8,
         },
         {
-          name: 'Opera',
-          data: 2.1,
+          name: 'Firefox 12',
+          data: 2,
         },
         {
-          name: 'Etc',
-          data: 7.25,
+          name: 'Opera 15',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          data: 1,
+        },
+        {
+          name: 'Etc - 2020',
+          data: 7,
         },
       ],
     },
