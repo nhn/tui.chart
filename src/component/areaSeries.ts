@@ -442,7 +442,6 @@ export default class AreaSeries extends Component {
     if (!responders.length) {
       return [];
     }
-
     const index = responders[0].index! + this.startIndex;
     const models = this.tooltipCircleMap[index] ?? [];
 
