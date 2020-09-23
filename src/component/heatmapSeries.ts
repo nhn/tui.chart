@@ -11,6 +11,7 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { SeriesDataLabelType } from '@t/components/dataLabels';
+import { isClickSameSeries } from '@src/helpers/responders';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
@@ -108,19 +109,10 @@ export default class HeatmapSeries extends Component {
     });
   }
 
-  private isClickSameSeries(responders: HeatmapRectResponderModel[]) {
-    let same = false;
-    if (responders.length && this.models.selectedSeries.length) {
-      same = responders[0].name === this.models.selectedSeries[0].name;
-    }
-
-    return same;
-  }
-
   onClick({ responders }: { responders: HeatmapRectResponderModel[] }) {
     let selectedSeries = responders;
     if (this.selectable) {
-      if (this.isClickSameSeries(responders)) {
+      if (isClickSameSeries<HeatmapRectResponderModel>(responders, this.models.selectedSeries)) {
         selectedSeries = [];
       }
       this.models.selectedSeries = selectedSeries as HeatmapRectResponderModel[];

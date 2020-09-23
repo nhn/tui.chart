@@ -1,6 +1,7 @@
 import {
   CircleModel,
   CircleResponderModel,
+  HeatmapRectResponderModel,
   RectResponderModel,
   TreemapRectResponderModel,
 } from '@t/components/series';
@@ -96,4 +97,17 @@ export function getDeepestNode(responders: TreemapRectResponderModel[]) {
 
     return acc;
   }, []);
+}
+
+// @TODO: 모든 ResponderModel 변경 뒤 extends type ResponderModel로 변경해야
+export function isClickSameSeries<T extends HeatmapRectResponderModel>(
+  responders: T[],
+  selectedSeries: T[]
+) {
+  let same = false;
+  if (responders.length && selectedSeries.length) {
+    same = responders[0].name === selectedSeries[0].name;
+  }
+
+  return same;
 }
