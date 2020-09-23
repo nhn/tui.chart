@@ -37,8 +37,11 @@ import {
 } from '@src/helpers/utils';
 import { isRangeData } from '@src/helpers/range';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { isModelExistingInRect } from '@src/helpers/coordinate';
-import { DEFAULT_LINE_WIDTH } from '@src/component/lineSeries';
+import {
+  DEFAULT_LINE_SERIES_DOT_RADIUS,
+  DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
+  DEFAULT_LINE_SERIES_WIDTH,
+} from '@src/component/lineSeries';
 import {
   getNearestResponder,
   makeRectResponderModel,
@@ -60,7 +63,7 @@ interface RenderOptions {
 type DatumType = number | RangeDataType<number>;
 
 const seriesOpacity = {
-  INACTIVE: 0.2,
+  INACTIVE: 0.06,
   ACTIVE: 1,
 };
 
@@ -184,15 +187,14 @@ export default class AreaSeries extends Component {
 
     this.models = deepCopy({
       rect: [this.renderClipRectAreaModel()],
-      series: areaSeriesModel,
+      series: [...this.linePointsModel, ...areaSeriesModel],
       dot: circleDotModel,
     });
 
     if (!this.drawModels) {
       this.drawModels = {
+        ...this.models,
         rect: [this.renderClipRectAreaModel(true)],
-        series: deepCopyArray(areaSeriesModel),
-        dot: deepCopyArray(circleDotModel),
       };
     }
 
@@ -215,8 +217,8 @@ export default class AreaSeries extends Component {
     return options?.showDot
       ? seriesCircleModel.map((m) => ({
           ...m,
-          radius: 6,
-          style: ['default'],
+          radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
+          style: [{ lineWidth: 0, strokeStyle: m.color }],
         }))
       : [];
   }
@@ -277,8 +279,8 @@ export default class AreaSeries extends Component {
   ): LinePointsModel {
     const { pointOnColumn, options, tickDistance, pairModel, areaStackSeries } = renderOptions;
     const { rawData, name, color: seriesColor } = series;
-    const points: PointModel[] = [];
     const active = this.activeSeriesMap![name];
+    const points: PointModel[] = [];
     const color = getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
 
     rawData.forEach((datum, idx) => {
@@ -290,10 +292,7 @@ export default class AreaSeries extends Component {
       const x = tickDistance * (idx - this.startIndex) + (pointOnColumn ? tickDistance / 2 : 0);
       const y = (1 - valueRatio) * this.rect.height;
 
-      // @TODO: zoomable 어색한 부분 이후에 line 항상 떠있게 하면서 수정하면 해결 됨. 해당 조건 제거 필요
-      if (isModelExistingInRect(this.rect, { x, y })) {
-        points.push({ x, y, value });
-      }
+      points.push({ x, y, value });
     });
 
     if (pairModel) {
@@ -306,7 +305,7 @@ export default class AreaSeries extends Component {
 
     return {
       type: 'linePoints',
-      lineWidth: options?.lineWidth ?? DEFAULT_LINE_WIDTH,
+      lineWidth: options?.lineWidth ?? DEFAULT_LINE_SERIES_WIDTH,
       color,
       points,
       seriesIndex,
@@ -393,49 +392,35 @@ export default class AreaSeries extends Component {
   }
 
   renderAreaPointsModel(options: LineTypeSeriesOptions): AreaPointsModel[] {
-    return this.getCombinedLinePointsModel(options).map((m) => ({
-      ...m,
-      type: 'areaPoints',
-      lineWidth: 0,
-      color: 'rgba(0, 0, 0, 0)', // make area border transparent
-      fillColor: m.color,
-    }));
+    return this.getCombinedLinePointsModel(options).map((m) => {
+      const active = this.activeSeriesMap![m.name!];
+
+      return {
+        ...m,
+        type: 'areaPoints',
+        lineWidth: 0,
+        color: 'rgba(0, 0, 0, 0)', // make area border transparent
+        fillColor: getRGBA(m.color, active ? 0.3 : 0.06),
+      };
+    });
   }
 
   renderCircleModel(): CircleModel[] {
-    return this.linePointsModel.flatMap(({ points, color, seriesIndex, name }) =>
-      points.map(({ x, y }, index) => ({
+    return this.linePointsModel.flatMap(({ points, color, seriesIndex, name }, modelIndex) => {
+      const isPairLinePointsModel =
+        this.isRangeChart && modelIndex >= this.linePointsModel.length / 2;
+
+      return points.map(({ x, y }, index) => ({
         type: 'circle',
         x,
         y,
-        radius: 7,
-        color,
+        radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
+        color: getRGBA(color, 1),
         style: ['default', 'hover'],
         seriesIndex,
-        index,
+        index: isPairLinePointsModel ? points.length - index - 1 : index,
         name,
-      }))
-    );
-  }
-
-  isAvailableApplyOpacity(opacity: number, name: string) {
-    return (
-      (opacity === seriesOpacity.ACTIVE && this.activeSeriesMap![name]) ||
-      opacity === seriesOpacity.INACTIVE
-    );
-  }
-
-  applyAreaOpacity(opacity: number) {
-    this.drawModels.series.forEach((model) => {
-      if (this.isAvailableApplyOpacity(opacity, model.name!)) {
-        model.fillColor = getRGBA(model.fillColor, opacity);
-      }
-    });
-
-    this.drawModels.dot.forEach((model) => {
-      if (this.isAvailableApplyOpacity(opacity, model.name!)) {
-        model.color = getRGBA(model.color, opacity);
-      }
+      }));
     });
   }
 
@@ -453,24 +438,12 @@ export default class AreaSeries extends Component {
     return pairCircleModels;
   }
 
-  getLinePointsModels(circleModels: CircleResponderModel[]) {
-    return circleModels.reduce<LinePointsModel[]>(
-      (acc, { seriesIndex }) => [
-        ...acc,
-        ...this.linePointsModel.filter((model) => model.seriesIndex === seriesIndex),
-      ],
-      []
-    );
-  }
-
   getCircleModelsFromRectResponders(responders: RectResponderModel[], mousePositions?: Point) {
     if (!responders.length) {
       return [];
     }
 
-    const index = responders[0].index!;
-    // @TODO: getLinePointsModel 에서 isModelExistingInRect 제거 시 해당 코드로 수정 필요
-    // const index = responders[0].index! + this.startIndex;
+    const index = responders[0].index! + this.startIndex;
     const models = this.tooltipCircleMap[index] ?? [];
 
     return this.eventDetectType === 'grouped'
@@ -500,10 +473,8 @@ export default class AreaSeries extends Component {
     if (this.isRangeChart) {
       pairCircleModels = this.getPairCircleModel(responders);
     }
-    const linePoints = this.getLinePointsModels(responders);
-    const hoveredSeries = [...linePoints, ...responders, ...pairCircleModels];
+    const hoveredSeries = [...responders, ...pairCircleModels];
 
-    this.applyAreaOpacity(hoveredSeries.length ? seriesOpacity.INACTIVE : seriesOpacity.ACTIVE);
     this.eventBus.emit('renderHoveredSeries', {
       models: hoveredSeries,
       name: this.name,
@@ -532,7 +503,6 @@ export default class AreaSeries extends Component {
       name: this.name,
       eventDetectType: this.eventDetectType,
     });
-    this.applyAreaOpacity(seriesOpacity.ACTIVE);
 
     this.eventBus.emit('needDraw');
   }

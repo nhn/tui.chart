@@ -137,7 +137,7 @@ export type RectResponderModel = Partial<RectModel> & {
 
 export type AreaSeriesModels = {
   rect: ClipRectAreaModel[];
-  series: AreaPointsModel[];
+  series: (AreaPointsModel | LinePointsModel)[];
   dot: CircleModel[];
 };
 
