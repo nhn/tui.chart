@@ -267,9 +267,9 @@ export default abstract class Component {
 
   onMouseup?(responseData: any): void;
 
-  renderDataLabels(data: SeriesDataLabelType) {
+  renderDataLabels(data: SeriesDataLabelType, name?: string) {
     setTimeout(() => {
-      this.eventBus.emit('renderDataLabels', { data, name: this.name });
+      this.eventBus.emit('renderDataLabels', { data, name: name ?? this.name });
     }, 0);
   }
 

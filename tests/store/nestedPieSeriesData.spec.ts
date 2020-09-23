@@ -17,7 +17,7 @@ describe('NestedPieSeriesData store', () => {
           pieDonut: {
             data: [
               {
-                alias: 'pie1',
+                name: 'pie1',
                 data: [
                   { name: 'han', data: 50 },
                   { name: 'cho', data: 50 },
@@ -29,7 +29,7 @@ describe('NestedPieSeriesData store', () => {
                 color: '#aaaaaa',
               },
               {
-                alias: 'pie2',
+                name: 'pie2',
                 data: [
                   { name: 'kim', data: 60 },
                   { name: 'lee', data: 40 },
@@ -53,14 +53,14 @@ describe('NestedPieSeriesData store', () => {
         series: {
           pieDonut: [
             {
-              alias: 'pie1',
+              name: 'pie1',
               data: [
                 { name: 'han', data: 50 },
                 { name: 'cho', data: 50 },
               ],
             },
             {
-              alias: 'pie2',
+              name: 'pie2',
               data: [
                 { name: 'kim', data: 60 },
                 { name: 'lee', data: 40 },
@@ -112,7 +112,7 @@ describe('NestedPieSeriesData store', () => {
           pieDonut: {
             data: [
               {
-                alias: 'pie1',
+                name: 'pie1',
                 data: [
                   { name: 'han', data: 50 },
                   { name: 'cho', data: 50 },
@@ -124,21 +124,24 @@ describe('NestedPieSeriesData store', () => {
                 color: '#aaaaaa',
               },
               {
-                alias: 'pie2',
+                name: 'pie2',
                 data: [
-                  { name: 'han', data: 60 },
-                  { name: 'cho', data: 40 },
+                  { name: 'han1', parent: 'han', data: 30 },
+                  { name: 'han2', parent: 'han', data: 20 },
+                  { name: 'cho1', parent: 'cho', data: 40 },
+                  { name: 'cho2', parent: 'cho', data: 10 },
                 ],
                 rawData: [
-                  { name: 'han', data: 60 },
-                  { name: 'cho', data: 40 },
+                  { name: 'han1', parent: 'han', data: 30 },
+                  { name: 'han2', parent: 'han', data: 20 },
+                  { name: 'cho1', parent: 'cho', data: 40 },
+                  { name: 'cho2', parent: 'cho', data: 10 },
                 ],
                 color: '#bbbbbb',
               },
             ],
           },
         },
-        options: { series: { grouped: true } },
         theme,
         nestedPieSeries: {},
         disabledSeries: [],
@@ -148,17 +151,19 @@ describe('NestedPieSeriesData store', () => {
         series: {
           pieDonut: [
             {
-              alias: 'pie1',
+              name: 'pie1',
               data: [
                 { name: 'han', data: 50 },
                 { name: 'cho', data: 50 },
               ],
             },
             {
-              alias: 'pie2',
+              name: 'pie2',
               data: [
-                { name: 'han', data: 60 },
-                { name: 'cho', data: 40 },
+                { name: 'han1', parent: 'han', data: 30 },
+                { name: 'han2', parent: 'han', data: 20 },
+                { name: 'cho1', parent: 'cho', data: 40 },
+                { name: 'cho2', parent: 'cho', data: 10 },
               ],
             },
           ],
@@ -186,16 +191,10 @@ describe('NestedPieSeriesData store', () => {
         },
         pie2: {
           data: [
-            {
-              color: '#aaaaaa',
-              data: 60,
-              name: 'han',
-            },
-            {
-              color: '#bbbbbb',
-              data: 40,
-              name: 'cho',
-            },
+            { name: 'han1', parent: 'han', data: 30, color: '#aaaaaa' },
+            { name: 'han2', parent: 'han', data: 20, color: '#aaaaaa' },
+            { name: 'cho1', parent: 'cho', data: 40, color: '#bbbbbb' },
+            { name: 'cho2', parent: 'cho', data: 10, color: '#bbbbbb' },
           ],
         },
       });

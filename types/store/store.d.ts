@@ -94,7 +94,7 @@ export type ChartOptionsMap = {
 export type Options = ValueOf<ChartOptionsMap>;
 
 export type ChartOptionsUsingYAxis = ValueOf<
-  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap'>
+  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap' | 'pieDonut'>
 >;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
@@ -260,21 +260,12 @@ export interface ChartState<T extends Options> {
   treemapSeries: TreemapSeriesData[];
   treemapZoomId: TreemapZoomId;
   heatmapSeries: HeatmapSeriesData[];
+  nestedPieSeries: Record<string, NestedPieSeriesDataType>;
 }
 
 export type TreemapZoomId = {
   cur: string;
   prev: string;
-  dataLabels: DataLabels;
-  nestedPieSeries: Record<string, NestedPieSeriesDataType>;
-};
-
-type NestedPieSeriesDataType = {
-  data: ChartSeriesMap['pie'];
-};
-
-export type DataLabels = {
-  [key in DataLabelSeriesType]?: DataLabelData;
 };
 
 export type HeatmapSeriesData = {
@@ -285,6 +276,14 @@ export type HeatmapSeriesData = {
   colorValue: number;
   indexes: [number, number];
 }[];
+
+export type DataLabels = {
+  [key in DataLabelSeriesType]?: DataLabelData;
+};
+
+type NestedPieSeriesDataType = {
+  data: ChartSeriesMap['pie'];
+};
 
 export type StackTotal = {
   positive: number;

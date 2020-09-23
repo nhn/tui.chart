@@ -10,7 +10,7 @@ import {
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
-import { getDataLabelsOptions } from '@src/store/dataLabels';
+import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import {
   getTotalAngle,
   isSemiCircle,
@@ -103,7 +103,7 @@ export default class PieDonutSeries extends Component {
       tooltipDataModels[alias] = makePieTooltipData(data, categories?.[index]);
 
       if (getDataLabelsOptions(options, alias).visible) {
-        this.store.dispatch('appendDataLabels', { data: seriesModels[alias], name: alias });
+        this.renderDataLabels(seriesModels[alias], alias);
       }
     });
 

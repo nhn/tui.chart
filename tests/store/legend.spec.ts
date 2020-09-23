@@ -95,14 +95,14 @@ describe('Legend Store', () => {
         series: {
           pieDonut: [
             {
-              alias: 'pie1',
+              name: 'pie1',
               data: [
                 { name: 'A', data: 50 },
                 { name: 'B', data: 50 },
               ],
             },
             {
-              alias: 'pie2',
+              name: 'pie2',
               data: [
                 { name: 'C', data: 60 },
                 { name: 'D', data: 40 },
@@ -153,17 +153,19 @@ describe('Legend Store', () => {
         series: {
           pieDonut: [
             {
-              alias: 'pie1',
+              name: 'pie1',
               data: [
                 { name: 'A', data: 50 },
                 { name: 'B', data: 50 },
               ],
             },
             {
-              alias: 'pie2',
+              name: 'pie2',
               data: [
-                { name: 'A', data: 60 },
-                { name: 'B', data: 40 },
+                { name: 'A1', parent: 'A', data: 30 },
+                { name: 'A2', parent: 'A', data: 20 },
+                { name: 'B1', parent: 'B', data: 40 },
+                { name: 'B2', parent: 'B', data: 10 },
               ],
             },
           ],

@@ -1,7 +1,6 @@
 import Chart from './chart';
 
 import nestedPieSeriesData from '@src/store/nestedPieSeriesData';
-import dataLabels from '@src/store/dataLabels';
 
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
@@ -27,7 +26,7 @@ interface PieDonutChartProps {
 }
 
 export default class PieDonutChart extends Chart<PieDonutChartOptions> {
-  modules = [nestedPieSeriesData, dataLabels];
+  modules = [nestedPieSeriesData];
 
   constructor({ el, options, data: { series, categories } }: PieDonutChartProps) {
     super({
