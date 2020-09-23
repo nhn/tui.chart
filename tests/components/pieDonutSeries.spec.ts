@@ -35,14 +35,14 @@ const chartState = {
   nestedPieSeries: {
     pie1: {
       data: [
-        { name: 'A', data: 50, color: '#aaaaaa' },
-        { name: 'B', data: 50, color: '#bbbbbb' },
+        { name: 'A', data: 50, color: '#aaaaaa', rootParent: 'A' },
+        { name: 'B', data: 50, color: '#bbbbbb', rootParent: 'B' },
       ],
     },
     pie2: {
       data: [
-        { name: 'C', data: 60, color: '#cccccc' },
-        { name: 'D', data: 40, color: '#dddddd' },
+        { name: 'C', data: 60, color: '#cccccc', rootParent: 'C' },
+        { name: 'D', data: 40, color: '#dddddd', rootParent: 'D' },
       ],
     },
   },
