@@ -70,15 +70,6 @@ export const grouped = () => {
           outer: '85%',
         },
       },
-      /*
-      pie: {
-        // pie 디폴트 옵션
-        angleRange: {
-          start: -90,
-          end: 90,
-        },
-      },
-      */
     },
     legend: { visible: true },
   } as PieDonutChartOptions);
@@ -132,8 +123,8 @@ export const selectable = () => {
       },
       versions: {
         radiusRange: {
-          inner: '65%',
-          outer: '95%',
+          inner: '55%',
+          outer: '85%',
         },
       },
       selectable: true,

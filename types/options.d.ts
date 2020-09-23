@@ -121,6 +121,7 @@ export type PieSeriesType = {
   name: string;
   data: number;
   parent?: string;
+  rootParent?: string;
   color?: string;
 };
 

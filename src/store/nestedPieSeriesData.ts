@@ -2,6 +2,12 @@ import { StoreModule } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { deepCopy } from '@src/helpers/utils';
 
+function findRootName(rawSeries, seriesIndex, parent) {
+  const item = rawSeries.pieDonut?.[seriesIndex].data.find(({ name }) => name === parent);
+
+  return item.parent ? findRootName(rawSeries, seriesIndex - 1, item.parent) : item.name;
+}
+
 const nestedPieSeriesData: StoreModule = {
   name: 'seriesData',
   state: () => ({
@@ -23,20 +29,22 @@ const nestedPieSeriesData: StoreModule = {
           const color =
             m.parent && seriesIndex ? colorMap[m.parent] : colors[(colorIdx - 1) % colors.length];
 
-          if (!seriesIndex) {
-            colorMap[m.name] = color;
-          }
+          colorMap[m.name] = color;
+
+          const rootParent: string =
+            m.parent && seriesIndex ? findRootName(rawSeries, seriesIndex - 1, m.parent) : m.name;
 
           return {
             ...m,
             data: m.data,
+            rootParent,
             color,
           };
         });
 
         newSeriesData[alias] = {
-          data: originSeriesData.filter(({ name, parent }) => {
-            return parent ? !disabledSeries.includes(parent) : !disabledSeries.includes(name);
+          data: originSeriesData.filter(({ rootParent }) => {
+            return !disabledSeries.includes(rootParent);
           }),
         };
       });

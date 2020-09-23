@@ -95,12 +95,12 @@ export default class PieDonutSeries extends Component {
     const seriesModels = {};
     const tooltipDataModels = {};
 
-    this.pieAlias.forEach((alias, index) => {
+    this.pieAlias.forEach((alias, pieIndex) => {
       const renderOptions = this.makeRenderOptions(options, alias);
       const { data } = nestedPieSeries[alias];
 
-      seriesModels[alias] = this.renderPieModel(data, renderOptions, alias);
-      tooltipDataModels[alias] = makePieTooltipData(data, categories?.[index]);
+      seriesModels[alias] = this.renderPieModel(data, renderOptions, alias, pieIndex);
+      tooltipDataModels[alias] = makePieTooltipData(data, categories?.[pieIndex]);
 
       if (getDataLabelsOptions(options, alias).visible) {
         this.renderDataLabels(seriesModels[alias], alias);
@@ -175,10 +175,18 @@ export default class PieDonutSeries extends Component {
     };
   }
 
+  getOpacity(rootParent: string, parent: string, pieIndex: number) {
+    const active = this.activeSeriesMap![rootParent ?? name];
+    const alpha = active ? 1 : 0.3;
+
+    return pieIndex && parent ? Number((alpha * 0.8 ** pieIndex).toFixed(2)) : alpha;
+  }
+
   renderPieModel(
     seriesRawData: PieSeriesType[],
     renderOptions: RenderOptions,
-    alias: string
+    alias: string,
+    pieIndex: number
   ): SectorModel[] {
     const sectorModels: SectorModel[] = [];
     const total = seriesRawData.reduce((sum, { data }) => sum + data, 0);
@@ -192,9 +200,9 @@ export default class PieDonutSeries extends Component {
     } = renderOptions;
     const defaultStartDegree = clockwise ? 0 : 360;
 
-    seriesRawData.forEach(({ data, name, color: seriesColor, parent }, seriesIndex) => {
-      const active = this.activeSeriesMap![parent ?? name];
-      const color = getRGBA(seriesColor!, active ? 1 : 0.3);
+    seriesRawData.forEach(({ data, name, color: seriesColor, rootParent, parent }, seriesIndex) => {
+      const opacity = this.getOpacity(rootParent!, parent!, pieIndex);
+      const color = getRGBA(seriesColor!, opacity);
       const degree = (data / total) * totalAngle * (clockwise ? 1 : -1);
       const startDegree = seriesIndex
         ? sectorModels[seriesIndex - 1].degree.end
