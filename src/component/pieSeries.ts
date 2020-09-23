@@ -9,7 +9,6 @@ import {
   withinRadian,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { TooltipData } from '@t/components/tooltip';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import {
   getTotalAngle,
@@ -207,15 +206,6 @@ export default class PieSeries extends Component {
     });
 
     return sectorModels;
-  }
-
-  makeTooltipModel(seriesRawData: PieSeriesType[], categories: string[]): TooltipData[] {
-    return seriesRawData.map(({ data, name, color }) => ({
-      label: name,
-      color: color!,
-      value: data,
-      category: categories.length ? categories[0] : '',
-    }));
   }
 
   makeTooltipResponder(responders: SectorResponderModel[]) {
