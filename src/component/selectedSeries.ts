@@ -36,6 +36,7 @@ export default class SelectedSeries extends Component {
           models as BulletResponderModel[],
           this.models as BulletResponderModel[]
         );
+      case 'radar':
       case 'bubble':
       case 'scatter':
       case 'area':

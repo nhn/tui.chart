@@ -205,7 +205,6 @@ export type PolygonModel = {
 export type RadarSeriesModels = {
   polygon: PolygonModel[];
   dot: CircleModel[];
-  selectedSeries: CircleModel[];
 };
 
 export type BoxPlotSeriesModel = RectModel | LineModel | CircleModel;
