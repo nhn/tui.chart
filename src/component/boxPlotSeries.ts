@@ -35,7 +35,7 @@ const seriesOpacity = {
 const MIN_BAR_WIDTH = 5;
 
 export default class BoxPlotSeries extends Component {
-  models: BoxPlotSeriesModels = { series: [], selectedSeries: [] };
+  models: BoxPlotSeriesModels = { series: [] };
 
   drawModels!: BoxPlotSeriesModels;
 
@@ -99,7 +99,6 @@ export default class BoxPlotSeries extends Component {
 
           return model;
         }),
-        selectedSeries: [],
       };
     }
 
@@ -220,12 +219,14 @@ export default class BoxPlotSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
+      let models;
       if (this.eventDetectType === 'grouped') {
-        this.drawModels.selectedSeries = this.getResponderModelFromMap(responders);
+        models = this.getResponderModelFromMap(responders);
       } else {
-        this.drawModels.selectedSeries = responders;
+        models = responders;
       }
 
+      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }

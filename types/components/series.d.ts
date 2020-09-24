@@ -216,7 +216,6 @@ export type BoxPlotResponderTypes =
 
 export type BoxPlotSeriesModels = {
   series: BoxPlotSeriesModel[];
-  selectedSeries: BoxPlotResponderTypes[];
 };
 
 export type LineResponderModel = {
@@ -252,7 +251,6 @@ export type BulletResponderModel = {
 
 export type BulletSeriesModels = {
   series: BulletModel[];
-  selectedSeries: BulletResponderModel[];
 };
 
 export interface MouseEventType {

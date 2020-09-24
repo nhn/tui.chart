@@ -1,6 +1,8 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import {
+  BoxPlotResponderModel,
+  BulletResponderModel,
   CircleResponderModel,
   HeatmapRectResponderModel,
   RectResponderModel,
@@ -8,7 +10,7 @@ import {
 } from '@t/components/series';
 import {
   isClickSameCircleResponder,
-  isClickSameHeatmapRectResponder,
+  isClickSameNameResponder,
   isClickSameRectResponder,
 } from '@src/helpers/responders';
 
@@ -25,9 +27,14 @@ export default class SelectedSeries extends Component {
   isClickSameSeries({ models, name }: SelectedSeriesEventModel) {
     switch (name) {
       case 'heatmap':
-        return isClickSameHeatmapRectResponder(
+        return isClickSameNameResponder<HeatmapRectResponderModel>(
           models as HeatmapRectResponderModel[],
           this.models as HeatmapRectResponderModel[]
+        );
+      case 'bullet':
+        return isClickSameNameResponder<BulletResponderModel>(
+          models as BulletResponderModel[],
+          this.models as BulletResponderModel[]
         );
       case 'bubble':
       case 'scatter':
@@ -39,9 +46,14 @@ export default class SelectedSeries extends Component {
         );
       case 'column':
       case 'bar':
-        return isClickSameRectResponder(
+        return isClickSameRectResponder<RectResponderModel>(
           models as RectResponderModel[],
           this.models as RectResponderModel[]
+        );
+      case 'boxPlot':
+        return isClickSameRectResponder<BoxPlotResponderModel>(
+          models as BoxPlotResponderModel[],
+          this.models as BoxPlotResponderModel[]
         );
       default:
         return false;
@@ -50,6 +62,7 @@ export default class SelectedSeries extends Component {
 
   renderSelectedSeries = (selectedSeriesEventModel: SelectedSeriesEventModel) => {
     const { models } = selectedSeriesEventModel;
+    console.log(models);
     const selectedSeries = this.isClickSameSeries(selectedSeriesEventModel) ? [] : models;
 
     this.isShow = !!selectedSeries.length;

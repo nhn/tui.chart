@@ -1,4 +1,6 @@
 import {
+  BoxPlotResponderModel,
+  BulletResponderModel,
   CircleModel,
   CircleResponderModel,
   HeatmapRectResponderModel,
@@ -99,10 +101,9 @@ export function getDeepestNode(responders: TreemapRectResponderModel[]) {
   }, []);
 }
 
-export function isClickSameHeatmapRectResponder(
-  responders: HeatmapRectResponderModel[],
-  selectedSeries: HeatmapRectResponderModel[]
-) {
+export function isClickSameNameResponder<
+  T extends HeatmapRectResponderModel | BulletResponderModel
+>(responders: T[], selectedSeries: T[]) {
   let same = false;
   if (responders.length && selectedSeries.length) {
     same = responders[0].name === selectedSeries[0].name;
@@ -129,9 +130,9 @@ export function isClickSameCircleResponder(
   return same;
 }
 
-export function isClickSameRectResponder(
-  responders: RectResponderModel[],
-  selectedSeries: RectResponderModel[]
+export function isClickSameRectResponder<T extends RectResponderModel | BoxPlotResponderModel>(
+  responders: T[],
+  selectedSeries: T[]
 ) {
   let same = false;
   if (responders.length && selectedSeries.length && responders.length === selectedSeries.length) {
