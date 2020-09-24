@@ -99,10 +99,9 @@ export function getDeepestNode(responders: TreemapRectResponderModel[]) {
   }, []);
 }
 
-// @TODO: 모든 ResponderModel 변경 뒤 extends type ResponderModel로 변경해야
-export function isClickSameSeries<T extends HeatmapRectResponderModel>(
-  responders: T[],
-  selectedSeries: T[]
+export function isClickSameHeatmapRectResponder(
+  responders: HeatmapRectResponderModel[],
+  selectedSeries: HeatmapRectResponderModel[]
 ) {
   let same = false;
   if (responders.length && selectedSeries.length) {

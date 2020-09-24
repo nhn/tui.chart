@@ -35,6 +35,7 @@ export type ComponentType =
   | 'component'
   | 'series'
   | 'hoveredSeries'
+  | 'selectedSeries'
   | 'legend'
   | 'axis'
   | 'tooltip'
@@ -74,7 +75,8 @@ type ComponentModels =
   | SpectrumLegendModels
   | BackButtonModels
   | HeatmapRectModels
-  | NestedPieSeriesModels;
+  | NestedPieSeriesModels
+  | ResponderModel[];
 
 export default abstract class Component {
   name = 'Component';

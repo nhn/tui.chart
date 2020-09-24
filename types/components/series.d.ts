@@ -107,7 +107,6 @@ export type TreemapRectModel = {
 
 export type HeatmapRectModels = {
   series: HeatmapRectModel[];
-  selectedSeries: HeatmapRectResponderModel[];
 };
 
 export type HeatmapRectModel = {
