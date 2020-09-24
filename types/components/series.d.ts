@@ -151,7 +151,6 @@ export type BoxSeriesModels = {
 
 export type CircleSeriesModels = {
   series: CircleModel[];
-  selectedSeries: CircleModel[];
 };
 
 export type LineSeriesModels = {

@@ -27,6 +27,8 @@ export default class SelectedSeries extends Component {
           models as HeatmapRectResponderModel[],
           this.models as HeatmapRectResponderModel[]
         );
+      case 'bubble':
+      case 'scatter':
       case 'area':
       case 'line':
         return isClickSameCircleResponder(
