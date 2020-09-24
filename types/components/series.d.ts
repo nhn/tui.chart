@@ -146,7 +146,6 @@ export type BoxSeriesModels = {
   series: RectModel[];
   connector?: LineModel[];
   label?: LabelModel[];
-  selectedSeries: RectResponderModel[];
 };
 
 export type CircleSeriesModels = {

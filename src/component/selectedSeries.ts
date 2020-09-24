@@ -3,11 +3,13 @@ import { ChartState, Options } from '@t/store/store';
 import {
   CircleResponderModel,
   HeatmapRectResponderModel,
+  RectResponderModel,
   ResponderModel,
 } from '@t/components/series';
 import {
   isClickSameCircleResponder,
   isClickSameHeatmapRectResponder,
+  isClickSameRectResponder,
 } from '@src/helpers/responders';
 
 interface SelectedSeriesEventModel {
@@ -34,6 +36,12 @@ export default class SelectedSeries extends Component {
         return isClickSameCircleResponder(
           models as CircleResponderModel[],
           this.models as CircleResponderModel[]
+        );
+      case 'column':
+      case 'bar':
+        return isClickSameRectResponder(
+          models as RectResponderModel[],
+          this.models as RectResponderModel[]
         );
       default:
         return false;

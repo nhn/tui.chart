@@ -128,3 +128,21 @@ export function isClickSameCircleResponder(
 
   return same;
 }
+
+export function isClickSameRectResponder(
+  responders: RectResponderModel[],
+  selectedSeries: RectResponderModel[]
+) {
+  let same = false;
+  if (responders.length && selectedSeries.length && responders.length === selectedSeries.length) {
+    same = responders.reduce<boolean>((acc, cur, idx) => {
+      return (
+        acc &&
+        cur.data?.label === selectedSeries[idx].data?.label &&
+        cur.data?.category === selectedSeries[idx].data?.category
+      );
+    }, true);
+  }
+
+  return same;
+}

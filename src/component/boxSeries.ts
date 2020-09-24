@@ -104,7 +104,7 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 }
 
 export default class BoxSeries extends Component {
-  models: BoxSeriesModels = { series: [], selectedSeries: [] };
+  models: BoxSeriesModels = { series: [] };
 
   drawModels!: BoxSeriesModels;
 
@@ -314,14 +314,12 @@ export default class BoxSeries extends Component {
     this.models = {
       clipRect: [clipRect],
       series: seriesModels,
-      selectedSeries: [],
     };
 
     if (!this.drawModels) {
       this.drawModels = {
         clipRect: [this.initClipRect(clipRect)],
         series: deepCopyArray(seriesModels),
-        selectedSeries: [],
       };
     }
 
@@ -727,15 +725,14 @@ export default class BoxSeries extends Component {
 
   onClick({ responders }: MouseEventType) {
     if (this.selectable) {
+      let models;
       if (this.eventDetectType === 'grouped') {
-        this.drawModels.selectedSeries = this.getGroupedRect(
-          responders as RectResponderModel[],
-          true
-        );
+        models = this.getGroupedRect(responders as RectResponderModel[], true);
       } else {
-        this.drawModels.selectedSeries = responders as RectResponderModel[];
+        models = responders as RectResponderModel[];
       }
 
+      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }
