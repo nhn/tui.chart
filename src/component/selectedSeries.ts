@@ -1,7 +1,14 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { HeatmapRectResponderModel, ResponderModel } from '@t/components/series';
-import { isClickSameHeatmapRectResponder } from '@src/helpers/responders';
+import {
+  CircleResponderModel,
+  HeatmapRectResponderModel,
+  ResponderModel,
+} from '@t/components/series';
+import {
+  isClickSameCircleResponder,
+  isClickSameHeatmapRectResponder,
+} from '@src/helpers/responders';
 
 interface SelectedSeriesEventModel {
   models: ResponderModel[];
@@ -19,6 +26,12 @@ export default class SelectedSeries extends Component {
         return isClickSameHeatmapRectResponder(
           models as HeatmapRectResponderModel[],
           this.models as HeatmapRectResponderModel[]
+        );
+      case 'area':
+      case 'line':
+        return isClickSameCircleResponder(
+          models as CircleResponderModel[],
+          this.models as CircleResponderModel[]
         );
       default:
         return false;

@@ -110,3 +110,21 @@ export function isClickSameHeatmapRectResponder(
 
   return same;
 }
+
+export function isClickSameCircleResponder(
+  responders: CircleResponderModel[],
+  selectedSeries: CircleResponderModel[]
+) {
+  let same = false;
+  if (responders.length && selectedSeries.length && responders.length === selectedSeries.length) {
+    same = responders.reduce<boolean>((acc, cur, idx) => {
+      return (
+        acc &&
+        cur.seriesIndex === selectedSeries[idx].seriesIndex &&
+        cur.index === selectedSeries[idx].index
+      );
+    }, true);
+  }
+
+  return same;
+}
