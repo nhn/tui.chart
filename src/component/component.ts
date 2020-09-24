@@ -16,6 +16,7 @@ import {
   ResponderModel,
   TreemapSeriesModels,
   HeatmapRectModels,
+  NestedPieSeriesModels,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -72,7 +73,8 @@ type ComponentModels =
   | ResetButtonModels
   | SpectrumLegendModels
   | BackButtonModels
-  | HeatmapRectModels;
+  | HeatmapRectModels
+  | NestedPieSeriesModels;
 
 export default abstract class Component {
   name = 'Component';
@@ -265,9 +267,9 @@ export default abstract class Component {
 
   onMouseup?(responseData: any): void;
 
-  renderDataLabels(data: SeriesDataLabelType) {
+  renderDataLabels(data: SeriesDataLabelType, name?: string) {
     setTimeout(() => {
-      this.eventBus.emit('renderDataLabels', { data, name: this.name });
+      this.eventBus.emit('renderDataLabels', { data, name: name ?? this.name });
     }, 0);
   }
 

@@ -12,7 +12,9 @@ import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
 import { isString } from '@src/helpers/utils';
 
-type UsingShowLineOptions = ValueOf<Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap'>>;
+type UsingShowLineOptions = ValueOf<
+  Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie'>
+>;
 
 function getOverlappingRange(range: RangeDataType<number>[]) {
   return range.reduce<RangeDataType<number>>(

@@ -12,7 +12,7 @@ import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
 import { labelStyle } from '@src/brushes/label';
 
-const RADIUS_PADDING = 20;
+const RADIUS_PADDING = 30;
 
 type LabelPosition = {
   x: number;

@@ -120,6 +120,8 @@ export interface BubbleSeriesData {
 export type PieSeriesType = {
   name: string;
   data: number;
+  parentName?: string;
+  rootParentName?: string;
   color?: string;
 };
 
@@ -536,3 +538,20 @@ export type ColumnLineData = {
     line: Pick<LineSeriesType, 'name' | 'data'>[];
   };
 };
+
+export type NestedPieSeriesType = {
+  name: string;
+  data: PieSeriesType[];
+};
+
+export type NestedPieSeriesData = {
+  categories?: string[];
+  series: NestedPieSeriesType[];
+};
+
+export type NestedPieSeriesOptions = Record<string, PieSeriesOptions & BaseSeriesOptions> &
+  BaseSeriesOptions;
+
+export interface NestedPieChartOptions extends BaseOptions {
+  series?: NestedPieSeriesOptions;
+}

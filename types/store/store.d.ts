@@ -33,6 +33,8 @@ import {
   HeatmapSeriesType,
   HeatmapCategoriesType,
   HeatmapChartOptions,
+  NestedPieSeriesType,
+  NestedPieChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -50,6 +52,7 @@ type ChartSeriesMap = {
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
   heatmap: HeatmapSeriesType[];
+  nestedPie: NestedPieSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -58,10 +61,10 @@ export type BoxType = 'bar' | 'column';
 
 type RawSeries = Partial<ChartSeriesMap>;
 
-export interface SeriesGroup {
+type SeriesGroup = {
   seriesCount: number;
   seriesGroupCount: number;
-}
+};
 
 type Series = {
   [key in ChartType]?: {
@@ -84,12 +87,13 @@ export type ChartOptionsMap = {
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
   heatmap: HeatmapChartOptions;
+  nestedPie: NestedPieChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
 
 export type ChartOptionsUsingYAxis = ValueOf<
-  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap'>
+  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap' | 'nestedPie'>
 >;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
@@ -255,6 +259,7 @@ export interface ChartState<T extends Options> {
   treemapSeries: TreemapSeriesData[];
   treemapZoomId: TreemapZoomId;
   heatmapSeries: HeatmapSeriesData[];
+  nestedPieSeries: Record<string, NestedPieSeriesDataType>;
 }
 
 export type TreemapZoomId = {
@@ -270,6 +275,10 @@ export type HeatmapSeriesData = {
   colorValue: number;
   indexes: [number, number];
 }[];
+
+type NestedPieSeriesDataType = {
+  data: ChartSeriesMap['pie'];
+};
 
 export type StackTotal = {
   positive: number;

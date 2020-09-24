@@ -75,6 +75,7 @@ describe('basic', () => {
           y: 50,
           clockwise: true,
           drawingStartAngle: -90,
+          totalAngle: 360,
         },
         {
           color: 'rgba(255, 184, 64, 1)',
@@ -94,8 +95,10 @@ describe('basic', () => {
           y: 50,
           clockwise: true,
           drawingStartAngle: -90,
+          totalAngle: 360,
         },
       ],
+      selectedSeries: [],
     };
 
     const responderResult = [
@@ -119,6 +122,7 @@ describe('basic', () => {
         style: ['hover'],
         seriesIndex: 0,
         data: { label: 'A', color: '#00a9ff', value: 50, category: 'Browser' },
+        totalAngle: 360,
       },
       {
         type: 'sector',
@@ -140,6 +144,7 @@ describe('basic', () => {
         style: ['hover'],
         seriesIndex: 1,
         data: { label: 'B', color: '#ffb840', value: 50, category: 'Browser' },
+        totalAngle: 360,
       },
     ];
     expect(pieSeries.models).toEqual(result);
@@ -176,6 +181,7 @@ describe('basic', () => {
         value: 50,
         x: 50,
         y: 50,
+        totalAngle: 360,
       },
       {
         clockwise: false,
@@ -195,6 +201,7 @@ describe('basic', () => {
         value: 50,
         x: 50,
         y: 50,
+        totalAngle: 360,
       },
     ];
 
@@ -244,6 +251,7 @@ describe('donut', () => {
           y: 50,
           clockwise: true,
           drawingStartAngle: -90,
+          totalAngle: 360,
         },
         {
           color: 'rgba(255, 184, 64, 1)',
@@ -263,8 +271,10 @@ describe('donut', () => {
           y: 50,
           clockwise: true,
           drawingStartAngle: -90,
+          totalAngle: 360,
         },
       ],
+      selectedSeries: [],
     };
 
     const responderResult = [
@@ -288,6 +298,7 @@ describe('donut', () => {
         style: ['hover'],
         seriesIndex: 0,
         data: { label: 'A', color: '#00a9ff', value: 50, category: 'Browser' },
+        totalAngle: 360,
       },
       {
         type: 'sector',
@@ -309,6 +320,7 @@ describe('donut', () => {
         style: ['hover'],
         seriesIndex: 1,
         data: { label: 'B', color: '#ffb840', value: 50, category: 'Browser' },
+        totalAngle: 360,
       },
     ];
     expect(pieSeries.models).toEqual(result);
@@ -336,10 +348,6 @@ describe('donut', () => {
       );
     });
 
-    it('should be 180 arc to be draw all series of the angles', () => {
-      expect(pieSeries.totalAngle).toBe(180);
-    });
-
     it('should render semi circle entering start angle and end angle', () => {
       const result = [
         {
@@ -354,6 +362,7 @@ describe('donut', () => {
           value: 50,
           x: 50,
           y: 100,
+          totalAngle: 180,
         },
         {
           clockwise: true,
@@ -367,6 +376,7 @@ describe('donut', () => {
           value: 50,
           x: 50,
           y: 100,
+          totalAngle: 180,
         },
       ];
 

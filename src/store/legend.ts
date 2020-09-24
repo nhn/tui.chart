@@ -12,6 +12,11 @@ import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
 
+type LegendLabels = {
+  label: string;
+  type: ChartType;
+}[];
+
 function calculateLegendWidth(
   defaultWidth: number,
   legendWidths: number[],
@@ -70,7 +75,24 @@ function showCheckbox(options: Options) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
-function getLegendLabels(series: RawSeries) {
+function getNestedPieLegendLabels(series: RawSeries) {
+  const result: LegendLabels = [];
+
+  series.nestedPie!.forEach(({ data }) => {
+    data.forEach(({ name, parentName }) => {
+      if (!parentName) {
+        result.push({
+          label: name,
+          type: 'nestedPie',
+        });
+      }
+    });
+  });
+
+  return result;
+}
+
+function getLegendLabels(series: RawSeries): LegendLabels {
   return Object.keys(series).flatMap((type) =>
     series[type].map(({ name, colorValue }) => ({
       label: colorValue ? colorValue : name,
@@ -80,7 +102,7 @@ function getLegendLabels(series: RawSeries) {
 }
 
 function useRectIcon(type: ChartType) {
-  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet'], type);
+  return includes(['bar', 'column', 'area', 'pie', 'nestedPie', 'boxPlot', 'bullet'], type);
 }
 
 function useCircleIcon(type: ChartType) {
@@ -129,7 +151,9 @@ const legend: StoreModule = {
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
     const defaultWidth = Math.min(options.chart!.width / 10, 150);
-    const legendLabels = getLegendLabels(series);
+    const legendLabels = series.nestedPie
+      ? getNestedPieLegendLabels(series)
+      : getLegendLabels(series);
     const data = legendLabels.map(({ label, type }) => ({
       label,
       active: true,
@@ -137,6 +161,7 @@ const legend: StoreModule = {
       width: getItemWidth(label, checkboxVisible, useSpectrumLegend),
       iconType: getIconType(type),
     }));
+
     const legendWidths = data.map(({ width }) => width);
     const legendWidth = calculateLegendWidth(defaultWidth, legendWidths, options, align, visible);
 

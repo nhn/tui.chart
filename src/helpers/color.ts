@@ -247,3 +247,14 @@ export function rgba(color: string, opacity = 1) {
 
   return getRGBA(color, alpha);
 }
+
+export function getColorSpectrumBrightnessAlpha(
+  originAlpha: number,
+  depth: number,
+  indexOfGroup: number,
+  brightness = 0.85
+) {
+  const depthAlpha = Number((originAlpha * brightness ** depth).toFixed(2));
+
+  return Number((depthAlpha ** (indexOfGroup + 1)).toFixed(2));
+}
