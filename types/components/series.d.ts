@@ -265,6 +265,6 @@ export interface MouseEventType {
   mousePosition: Point;
 }
 
-export type PieDonutSeriesModels = Record<string, SectorModel[]> & {
+export type NestedPieSeriesModels = Record<string, SectorModel[]> & {
   selectedSeries: SectorModel[];
 };

@@ -1,7 +1,7 @@
 import nestedPieSeriesData from '@src/store/nestedPieSeriesData';
 import { InitStoreState } from '@t/store/store';
 import Store from '@src/store/store';
-import { PieDonutChartOptions } from '@t/options';
+import { NestedPieChartOptions } from '@t/options';
 
 describe('NestedPieSeriesData store', () => {
   describe('setNestedPieSeriesData', () => {
@@ -14,7 +14,7 @@ describe('NestedPieSeriesData store', () => {
     it('should make nested pie series data', () => {
       const state = {
         series: {
-          pieDonut: {
+          nestedPie: {
             data: [
               {
                 name: 'pie1',
@@ -51,7 +51,7 @@ describe('NestedPieSeriesData store', () => {
 
       const initStoreState = {
         series: {
-          pieDonut: [
+          nestedPie: [
             {
               name: 'pie1',
               data: [
@@ -69,9 +69,9 @@ describe('NestedPieSeriesData store', () => {
           ],
         },
         options: {},
-      } as InitStoreState<PieDonutChartOptions>;
+      } as InitStoreState<NestedPieChartOptions>;
 
-      const store = { state, initStoreState } as Store<PieDonutChartOptions>;
+      const store = { state, initStoreState } as Store<NestedPieChartOptions>;
       nestedPieSeriesData.action!.setNestedPieSeriesData(store);
 
       expect(state.nestedPieSeries).toEqual({
@@ -81,13 +81,13 @@ describe('NestedPieSeriesData store', () => {
               color: '#aaaaaa',
               data: 50,
               name: 'han',
-              rootParent: 'han',
+              rootParentName: 'han',
             },
             {
               color: '#bbbbbb',
               data: 50,
               name: 'cho',
-              rootParent: 'cho',
+              rootParentName: 'cho',
             },
           ],
         },
@@ -97,13 +97,13 @@ describe('NestedPieSeriesData store', () => {
               color: '#cccccc',
               data: 60,
               name: 'kim',
-              rootParent: 'kim',
+              rootParentName: 'kim',
             },
             {
               color: '#dddddd',
               data: 40,
               name: 'lee',
-              rootParent: 'lee',
+              rootParentName: 'lee',
             },
           ],
         },
@@ -113,7 +113,7 @@ describe('NestedPieSeriesData store', () => {
     it('should make nested pie series data for using grouped option', () => {
       const state = {
         series: {
-          pieDonut: {
+          nestedPie: {
             data: [
               {
                 name: 'pie1',
@@ -130,16 +130,16 @@ describe('NestedPieSeriesData store', () => {
               {
                 name: 'pie2',
                 data: [
-                  { name: 'han1', parent: 'han', data: 30 },
-                  { name: 'han2', parent: 'han', data: 20 },
-                  { name: 'cho1', parent: 'cho', data: 40 },
-                  { name: 'cho2', parent: 'cho', data: 10 },
+                  { name: 'han1', parentName: 'han', data: 30 },
+                  { name: 'han2', parentName: 'han', data: 20 },
+                  { name: 'cho1', parentName: 'cho', data: 40 },
+                  { name: 'cho2', parentName: 'cho', data: 10 },
                 ],
                 rawData: [
-                  { name: 'han1', parent: 'han', data: 30 },
-                  { name: 'han2', parent: 'han', data: 20 },
-                  { name: 'cho1', parent: 'cho', data: 40 },
-                  { name: 'cho2', parent: 'cho', data: 10 },
+                  { name: 'han1', parentName: 'han', data: 30 },
+                  { name: 'han2', parentName: 'han', data: 20 },
+                  { name: 'cho1', parentName: 'cho', data: 40 },
+                  { name: 'cho2', parentName: 'cho', data: 10 },
                 ],
                 color: '#bbbbbb',
               },
@@ -153,7 +153,7 @@ describe('NestedPieSeriesData store', () => {
 
       const initStoreState = {
         series: {
-          pieDonut: [
+          nestedPie: [
             {
               name: 'pie1',
               data: [
@@ -164,18 +164,18 @@ describe('NestedPieSeriesData store', () => {
             {
               name: 'pie2',
               data: [
-                { name: 'han1', parent: 'han', data: 30 },
-                { name: 'han2', parent: 'han', data: 20 },
-                { name: 'cho1', parent: 'cho', data: 40 },
-                { name: 'cho2', parent: 'cho', data: 10 },
+                { name: 'han1', parentName: 'han', data: 30 },
+                { name: 'han2', parentName: 'han', data: 20 },
+                { name: 'cho1', parentName: 'cho', data: 40 },
+                { name: 'cho2', parentName: 'cho', data: 10 },
               ],
             },
           ],
         },
         options: {},
-      } as InitStoreState<PieDonutChartOptions>;
+      } as InitStoreState<NestedPieChartOptions>;
 
-      const store = { state, initStoreState } as Store<PieDonutChartOptions>;
+      const store = { state, initStoreState } as Store<NestedPieChartOptions>;
       nestedPieSeriesData.action!.setNestedPieSeriesData(store);
 
       expect(state.nestedPieSeries).toEqual({
@@ -185,22 +185,22 @@ describe('NestedPieSeriesData store', () => {
               color: '#aaaaaa',
               data: 50,
               name: 'han',
-              rootParent: 'han',
+              rootParentName: 'han',
             },
             {
               color: '#bbbbbb',
               data: 50,
               name: 'cho',
-              rootParent: 'cho',
+              rootParentName: 'cho',
             },
           ],
         },
         pie2: {
           data: [
-            { name: 'han1', parent: 'han', data: 30, color: '#aaaaaa', rootParent: 'han' },
-            { name: 'han2', parent: 'han', data: 20, color: '#aaaaaa', rootParent: 'han' },
-            { name: 'cho1', parent: 'cho', data: 40, color: '#bbbbbb', rootParent: 'cho' },
-            { name: 'cho2', parent: 'cho', data: 10, color: '#bbbbbb', rootParent: 'cho' },
+            { name: 'han1', parentName: 'han', data: 30, color: '#aaaaaa', rootParentName: 'han' },
+            { name: 'han2', parentName: 'han', data: 20, color: '#aaaaaa', rootParentName: 'han' },
+            { name: 'cho1', parentName: 'cho', data: 40, color: '#bbbbbb', rootParentName: 'cho' },
+            { name: 'cho2', parentName: 'cho', data: 10, color: '#bbbbbb', rootParentName: 'cho' },
           ],
         },
       });

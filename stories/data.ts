@@ -1811,6 +1811,7 @@ export const contributionsData = {
 };
 
 export const groupedBrowserUsageData = {
+  categories: ['A', 'B'],
   series: [
     {
       name: 'browsers',
@@ -1846,82 +1847,82 @@ export const groupedBrowserUsageData = {
       data: [
         {
           name: 'Chrome 64',
-          parent: 'Chrome',
+          parentName: 'Chrome',
           data: 40,
         },
         {
           name: 'Chrome 63',
-          parent: 'Chrome',
+          parentName: 'Chrome',
           data: 10,
         },
         {
           name: 'Safari 13',
-          parent: 'Safari',
+          parentName: 'Safari',
           data: 15,
         },
         {
           name: 'Safari 12',
-          parent: 'Safari',
+          parentName: 'Safari',
           data: 5,
         },
         {
           name: 'IE 11',
-          parent: 'IE',
+          parentName: 'IE',
           data: 4,
         },
         {
           name: 'IE 10',
-          parent: 'IE',
+          parentName: 'IE',
           data: 3,
         },
         {
           name: 'IE 9',
-          parent: 'IE',
+          parentName: 'IE',
           data: 2,
         },
         {
           name: 'IE 8',
-          parent: 'IE',
+          parentName: 'IE',
           data: 1,
         },
         {
           name: 'Firefox 13',
-          parent: 'Firefox',
+          parentName: 'Firefox',
           data: 8,
         },
         {
           name: 'Firefox 12',
-          parent: 'Firefox',
+          parentName: 'Firefox',
           data: 2,
         },
         {
           name: 'Opera 15',
-          parent: 'Opera',
+          parentName: 'Opera',
           data: 2,
         },
         {
           name: 'Opera 12',
-          parent: 'Opera',
+          parentName: 'Opera',
           data: 1,
         },
         {
           name: 'Etc 1',
-          parent: 'Etc',
+          parentName: 'Etc',
           data: 3,
         },
         {
           name: 'Etc 2',
-          parent: 'Etc',
+          parentName: 'Etc',
           data: 2,
         },
         {
           name: 'Etc 3',
-          parent: 'Etc',
+          parentName: 'Etc',
           data: 1,
         },
         {
           name: 'Etc 4',
-          parent: 'Etc',
+          parentName: 'Etc',
           data: 1,
         },
       ],

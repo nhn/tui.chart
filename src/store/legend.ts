@@ -75,15 +75,15 @@ function showCheckbox(options: Options) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
-function getPieDonutLegendLabels(series: RawSeries) {
+function getNestedPieLegendLabels(series: RawSeries) {
   const result: LegendLabels = [];
 
-  (series.pieDonut ?? []).forEach(({ data }) => {
-    data.forEach(({ name, parent }) => {
-      if (!parent) {
+  series.nestedPie!.forEach(({ data }) => {
+    data.forEach(({ name, parentName }) => {
+      if (!parentName) {
         result.push({
           label: name,
-          type: 'pieDonut',
+          type: 'nestedPie',
         });
       }
     });
@@ -102,7 +102,7 @@ function getLegendLabels(series: RawSeries): LegendLabels {
 }
 
 function useRectIcon(type: ChartType) {
-  return includes(['bar', 'column', 'area', 'pie', 'pieDonut', 'boxPlot', 'bullet'], type);
+  return includes(['bar', 'column', 'area', 'pie', 'nestedPie', 'boxPlot', 'bullet'], type);
 }
 
 function useCircleIcon(type: ChartType) {
@@ -151,8 +151,8 @@ const legend: StoreModule = {
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
     const defaultWidth = Math.min(options.chart!.width / 10, 150);
-    const legendLabels = series.pieDonut
-      ? getPieDonutLegendLabels(series)
+    const legendLabels = series.nestedPie
+      ? getNestedPieLegendLabels(series)
       : getLegendLabels(series);
     const data = legendLabels.map(({ label, type }) => ({
       label,

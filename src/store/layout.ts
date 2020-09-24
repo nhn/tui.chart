@@ -463,7 +463,7 @@ const layout: StoreModule = {
         width: chart.width - padding.X * 2,
       };
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
-      const hasAxis = !(series.pie || series.pieDonut || series.radar || series.treemap);
+      const hasAxis = !(series.pie || series.nestedPie || series.radar || series.treemap);
       const optionSize = getOptionSize(options);
       const { yAxis: yAxisOption, secondaryYAxis: secondaryYAxisOption } = getYAxisOption(options);
       const visibleSecondaryYAxis = !!secondaryYAxisOption;

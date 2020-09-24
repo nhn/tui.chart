@@ -1,11 +1,10 @@
-import { StoreModule } from '@t/store/store';
+import { StoreModule, RawSeries } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { deepCopy } from '@src/helpers/utils';
 
-function findRootName(rawSeries, seriesIndex, parent) {
-  const item = rawSeries.pieDonut?.[seriesIndex].data.find(({ name }) => name === parent);
+function findRootName(rawSeries: RawSeries, seriesIndex: number, parentName: string) {
+  const item = rawSeries.nestedPie?.[seriesIndex].data.find(({ name }) => name === parentName);
 
-  return item.parent ? findRootName(rawSeries, seriesIndex - 1, item.parent) : item.name;
+  return item?.parentName ? findRootName(rawSeries, seriesIndex - 1, item.parentName) : parentName;
 }
 
 const nestedPieSeriesData: StoreModule = {
@@ -17,34 +16,36 @@ const nestedPieSeriesData: StoreModule = {
     setNestedPieSeriesData({ state, initStoreState }) {
       const { theme, disabledSeries } = state;
       const { colors } = theme.series;
-      const rawSeries = deepCopy(initStoreState.series);
+      const rawSeries = initStoreState.series;
       const newSeriesData = {};
       const colorMap = {};
       let colorIdx = 0;
 
-      rawSeries.pieDonut!.forEach(({ name: alias, data }, seriesIndex) => {
+      rawSeries.nestedPie!.forEach(({ name: alias, data }, seriesIndex) => {
         const originSeriesData = data.map((m) => {
+          const { parentName, name: dataName } = m;
+          const color = parentName && seriesIndex ? colorMap[parentName] : colors[colorIdx];
+
+          colorMap[dataName] = color;
+
+          const rootParentName: string =
+            parentName && seriesIndex
+              ? findRootName(rawSeries, seriesIndex - 1, parentName)
+              : dataName;
+
           colorIdx += 1;
-
-          const color =
-            m.parent && seriesIndex ? colorMap[m.parent] : colors[(colorIdx - 1) % colors.length];
-
-          colorMap[m.name] = color;
-
-          const rootParent: string =
-            m.parent && seriesIndex ? findRootName(rawSeries, seriesIndex - 1, m.parent) : m.name;
 
           return {
             ...m,
             data: m.data,
-            rootParent,
+            rootParentName,
             color,
           };
         });
 
         newSeriesData[alias] = {
-          data: originSeriesData.filter(({ rootParent }) => {
-            return !disabledSeries.includes(rootParent);
+          data: originSeriesData.filter(({ rootParentName }) => {
+            return !disabledSeries.includes(rootParentName);
           }),
         };
       });

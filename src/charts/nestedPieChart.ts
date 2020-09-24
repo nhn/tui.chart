@@ -4,7 +4,7 @@ import nestedPieSeriesData from '@src/store/nestedPieSeriesData';
 
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
-import PieDonutSeries from '@src/component/pieDonutSeries';
+import NestedPieSeries from '@src/component/NestedPieSeries';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
@@ -17,22 +17,22 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as sectorBrush from '@src/brushes/sector';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 
-import { PieDonutChartOptions, PieDonutSeriesData } from '@t/options';
+import { NestedPieChartOptions, NestedPieSeriesData } from '@t/options';
 
-interface PieDonutChartProps {
+interface NestedPieChartProps {
   el: Element;
-  options: PieDonutChartOptions;
-  data: PieDonutSeriesData;
+  options: NestedPieChartOptions;
+  data: NestedPieSeriesData;
 }
 
-export default class PieDonutChart extends Chart<PieDonutChartOptions> {
+export default class NestedPieChart extends Chart<NestedPieChartOptions> {
   modules = [nestedPieSeriesData];
 
-  constructor({ el, options, data: { series, categories } }: PieDonutChartProps) {
+  constructor({ el, options, data: { series, categories } }: NestedPieChartProps) {
     super({
       el,
       options,
-      series: { pieDonut: series },
+      series: { nestedPie: series },
       categories,
     });
   }
@@ -42,7 +42,7 @@ export default class PieDonutChart extends Chart<PieDonutChartOptions> {
 
     this.componentManager.add(Title);
     this.componentManager.add(Legend);
-    this.componentManager.add(PieDonutSeries);
+    this.componentManager.add(NestedPieSeries);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);

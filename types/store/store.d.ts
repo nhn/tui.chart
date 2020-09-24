@@ -33,12 +33,11 @@ import {
   HeatmapSeriesType,
   HeatmapCategoriesType,
   HeatmapChartOptions,
-  PieDonutSeriesType,
-  PieDonutChartOptions,
+  NestedPieSeriesType,
+  NestedPieChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
-import { DataLabelSeriesType, DataLabelData } from '@t/components/dataLabels';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -53,7 +52,7 @@ type ChartSeriesMap = {
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
   heatmap: HeatmapSeriesType[];
-  pieDonut: PieDonutSeriesType[];
+  nestedPie: NestedPieSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -88,13 +87,13 @@ export type ChartOptionsMap = {
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
   heatmap: HeatmapChartOptions;
-  pieDonut: PieDonutChartOptions;
+  nestedPie: NestedPieChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
 
 export type ChartOptionsUsingYAxis = ValueOf<
-  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap' | 'pieDonut'>
+  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap' | 'nestedPie'>
 >;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;

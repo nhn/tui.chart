@@ -1,7 +1,7 @@
 import legend from '@src/store/legend';
 import { StateFunc } from '@t/store/store';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { PieDonutChartOptions } from '@t/options';
+import { NestedPieChartOptions } from '@t/options';
 
 describe('Legend Store', () => {
   it('should apply default options when legend options not exist', () => {
@@ -89,11 +89,11 @@ describe('Legend Store', () => {
   });
 
   describe('using pie donut', () => {
-    it('shoulde legend data properly for pie donut series', () => {
+    it('should legend data properly for pie donut series', () => {
       const state = (legend.state as StateFunc)({
         options: { chart: { width: 300, height: 300 } },
         series: {
-          pieDonut: [
+          nestedPie: [
             {
               name: 'pie1',
               data: [
@@ -144,14 +144,14 @@ describe('Legend Store', () => {
       ]);
     });
 
-    it('shoulde legend data properly for grouped pie donut series', () => {
+    it('should legend data properly for grouped pie donut series', () => {
       const state = (legend.state as StateFunc)({
         options: {
           chart: { width: 300, height: 300 },
           series: { grouped: true },
-        } as PieDonutChartOptions,
+        } as NestedPieChartOptions,
         series: {
-          pieDonut: [
+          nestedPie: [
             {
               name: 'pie1',
               data: [
@@ -162,10 +162,10 @@ describe('Legend Store', () => {
             {
               name: 'pie2',
               data: [
-                { name: 'A1', parent: 'A', data: 30 },
-                { name: 'A2', parent: 'A', data: 20 },
-                { name: 'B1', parent: 'B', data: 40 },
-                { name: 'B2', parent: 'B', data: 10 },
+                { name: 'A1', parentName: 'A', data: 30 },
+                { name: 'A2', parentName: 'A', data: 20 },
+                { name: 'B1', parentName: 'B', data: 40 },
+                { name: 'B2', parentName: 'B', data: 10 },
               ],
             },
           ],

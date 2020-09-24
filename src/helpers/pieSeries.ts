@@ -1,4 +1,4 @@
-import { getPercentageValue, isString } from './utils';
+import { getPercentageValue, isString, includes } from './utils';
 import { Rect, PieSeriesType } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
 
@@ -25,7 +25,9 @@ export function hasCounterClockwiseSemiCircle(
 }
 
 export function getRadius(defaultRadius: number, radius: string | number): number {
-  return isString(radius) ? (defaultRadius * getPercentageValue(radius)) / 100 : radius;
+  return isString(radius)
+    ? Number(((defaultRadius * getPercentageValue(radius)) / 100).toFixed(2))
+    : radius;
 }
 
 export function getTotalAngle(clockwise: boolean, startAngle: number, endAngle: number) {
@@ -68,4 +70,8 @@ export function makePieTooltipData(seriesRawData: PieSeriesType[], category = ''
     value: data,
     category,
   }));
+}
+
+export function isPieTypeSeries(seriesName: string) {
+  return includes(['pie', 'nestedPie'], seriesName);
 }

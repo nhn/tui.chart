@@ -1,13 +1,13 @@
-import { PieDonutChartOptions, PieDonutSeriesData } from '@t/options';
+import { NestedPieChartOptions, NestedPieSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { browserUsageData2, groupedBrowserUsageData } from './data';
-import PieDonutChart from '@src/charts/pieDonutChart';
+import NestedPieChart from '@src/charts/nestedPieChart';
 
 export default {
-  title: 'chart|PieDonut',
+  title: 'chart|NestedPie',
 };
 
-function createChart(data: PieDonutSeriesData, customOptions?: PieDonutChartOptions) {
+function createChart(data: NestedPieSeriesData, customOptions?: NestedPieChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(
     {
@@ -28,7 +28,7 @@ function createChart(data: PieDonutSeriesData, customOptions?: PieDonutChartOpti
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
 
-  const chart = new PieDonutChart({ el, data, options });
+  const chart = new NestedPieChart({ el, data, options });
 
   return { el, chart };
 }
@@ -72,7 +72,7 @@ export const grouped = () => {
       },
     },
     legend: { visible: true },
-  } as PieDonutChartOptions);
+  } as NestedPieChartOptions);
 
   return el;
 };
@@ -117,19 +117,19 @@ export const selectable = () => {
     series: {
       browsers: {
         radiusRange: {
-          inner: '20%',
-          outer: '50%',
+          inner: '30%',
+          outer: '60%',
         },
       },
       versions: {
         radiusRange: {
-          inner: '55%',
-          outer: '85%',
+          inner: '70%',
+          outer: '100%',
         },
       },
       selectable: true,
     },
-  } as PieDonutChartOptions);
+  } as NestedPieChartOptions);
 
   return el;
 };

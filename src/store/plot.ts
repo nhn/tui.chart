@@ -13,7 +13,7 @@ import { isRangeValue } from '@src/helpers/range';
 import { isString } from '@src/helpers/utils';
 
 type UsingShowLineOptions = ValueOf<
-  Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'pieDonut'>
+  Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie'>
 >;
 
 function getOverlappingRange(range: RangeDataType<number>[]) {

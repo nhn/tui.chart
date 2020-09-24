@@ -2,6 +2,7 @@ import { StoreModule, RawSeries, Series, Categories } from '@t/store/store';
 import { isNumber, sortCategories } from '@src/helpers/utils';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
 import { isBulletSeries } from '@src/component/bulletSeries';
+import { isPieTypeSeries } from '@src/helpers/pieSeries';
 
 export function makeRawCategories(series: RawSeries | Series, categories?: Categories) {
   if (categories) {
@@ -11,14 +12,16 @@ export function makeRawCategories(series: RawSeries | Series, categories?: Categ
   const firstValues: Set<string | number> = new Set();
 
   Object.keys(series).forEach((key) => {
+    if (isPieTypeSeries(key)) {
+      return;
+    }
+
     (series[key].data ?? series[key]).forEach(({ data, name }) => {
       if (Array.isArray(data)) {
         data.forEach((datum) => {
           const rawXValue = getCoordinateXValue(datum);
 
-          if (rawXValue) {
-            firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
-          }
+          firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
         });
       } else if (isBulletSeries(key)) {
         firstValues.add(name);

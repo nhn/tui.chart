@@ -1,5 +1,5 @@
-import { PieDonutChartOptions } from '@t/options';
-import PieDonutSeries from '@src/component/pieDonutSeries';
+import { NestedPieChartOptions } from '@t/options';
+import NestedPieSeries from '@src/component/NestedPieSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 
@@ -28,21 +28,21 @@ const chartState = {
     plot: { width: 200, height: 200, x: 10, y: 10 },
   },
   series: {
-    pieDonut: {
+    nestedPie: {
       data: seriesData,
     },
   },
   nestedPieSeries: {
     pie1: {
       data: [
-        { name: 'A', data: 50, color: '#aaaaaa', rootParent: 'A' },
-        { name: 'B', data: 50, color: '#bbbbbb', rootParent: 'B' },
+        { name: 'A', data: 50, color: '#aaaaaa', rootParentName: 'A' },
+        { name: 'B', data: 50, color: '#bbbbbb', rootParentName: 'B' },
       ],
     },
     pie2: {
       data: [
-        { name: 'C', data: 60, color: '#cccccc', rootParent: 'C' },
-        { name: 'D', data: 40, color: '#dddddd', rootParent: 'D' },
+        { name: 'C', data: 60, color: '#cccccc', rootParentName: 'C' },
+        { name: 'D', data: 40, color: '#dddddd', rootParentName: 'D' },
       ],
     },
   },
@@ -78,8 +78,8 @@ const chartState = {
 
 describe('basic', () => {
   beforeEach(() => {
-    pieSeries = new PieDonutSeries({
-      store: {} as Store<PieDonutChartOptions>,
+    pieSeries = new NestedPieSeries({
+      store: {} as Store<NestedPieChartOptions>,
       eventBus: new EventEmitter(),
     });
   });
