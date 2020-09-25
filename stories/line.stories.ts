@@ -31,13 +31,17 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(data: LineSeriesData, customOptions?: Record<string, any>) {
+function createChart(
+  data: LineSeriesData,
+  customOptions: Record<string, any> = {},
+  reactive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = reactive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = reactive ? '90vw' : `${width}px`;
+  el.style.height = reactive ? '90vh' : `${height}px`;
 
   const chart = new LineChart({ el, data, options });
 
@@ -304,6 +308,16 @@ export const secondaryYAxis = () => {
       },
     ],
   });
+
+  return el;
+};
+
+export const reactive = () => {
+  const { el } = createChart(
+    temperatureData,
+    { chart: { title: '24-hr Average Temperature' } },
+    true
+  );
 
   return el;
 };

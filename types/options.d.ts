@@ -137,18 +137,19 @@ interface TitleOption {
   align?: 'left' | 'right' | 'center';
 }
 
+type BaseSizeOptions = Partial<Size>;
+
 export type BaseChartOptions = {
   title?: string | TitleOption;
   animation?: boolean | { duration: number };
-} & Size;
+  responsive?: boolean;
+} & BaseSizeOptions;
 
 export interface Scale {
   min?: number;
   max?: number;
   stepSize?: 'auto' | number;
 }
-
-type BaseSizeOptions = Partial<Size>;
 
 export type AxisTitleOption = Omit<TitleOption, 'align'>;
 type AxisTitle = string | AxisTitleOption;

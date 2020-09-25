@@ -35,6 +35,8 @@ import {
   HeatmapChartOptions,
   NestedPieSeriesType,
   NestedPieChartOptions,
+  TitleOption,
+  Size,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -231,8 +233,14 @@ export interface TreemapSeriesData {
 
 export type Categories = string[] | HeatmapCategoriesType;
 
+type ChartOptions = {
+  title?: string | TitleOption;
+  animation?: boolean | { duration: number };
+  responsive?: boolean;
+} & Size;
+
 export interface ChartState<T extends Options> {
-  chart: BaseChartOptions;
+  chart: ChartOptions;
   layout: Layout;
   scale: Scale;
   disabledSeries: string[];

@@ -26,13 +26,17 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(data: BubbleSeriesData, customOptions?: BubbleChartOptions) {
+function createChart(
+  data: BubbleSeriesData,
+  customOptions: BubbleChartOptions = {},
+  reactive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = reactive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = reactive ? '90vw' : `${width}px`;
+  el.style.height = reactive ? '100vh' : `${height}px`;
 
   const chart = new BubbleChart({ el, data, options });
 
@@ -55,6 +59,16 @@ export const datetime = () => {
 
 export const selectable = () => {
   const { el } = createChart(lifeExpectancyPerGDPData, { series: { selectable: true } });
+
+  return el;
+};
+
+export const reactive = () => {
+  const { el } = createChart(
+    lifeExpectancyPerGDPData,
+    { chart: { title: 'Life Expectancy per GDP' } },
+    true
+  );
 
   return el;
 };

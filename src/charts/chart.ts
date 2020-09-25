@@ -8,7 +8,7 @@ import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce, isBoolean, isNumber, isUndefined } from '@src/helpers/utils';
+import { debounce, isBoolean, isNumber, isUndefined, throttle } from '@src/helpers/utils';
 import { ChartProps, Point } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
@@ -106,7 +106,21 @@ export default abstract class Chart<T extends Options> {
       this.store.observe(() => {
         this.painter.setup();
       });
+
+      if (options?.chart?.responsive ?? true) {
+        this.setResponsive();
+      }
     }, 0);
+  }
+
+  setResponsive() {
+    window.addEventListener(
+      'resize',
+      debounce(() => {
+        const { width, height } = this.el.getBoundingClientRect();
+        this.store.dispatch('setChartSize', { width, height });
+      }, 100)
+    );
   }
 
   handleEvent(event: MouseEvent) {
@@ -181,6 +195,8 @@ export default abstract class Chart<T extends Options> {
 
   protected initialize() {
     this.initStore([root, seriesData, legend, layout, category]);
+
+    this.store.dispatch('initChartSize', this.el);
   }
 
   draw() {

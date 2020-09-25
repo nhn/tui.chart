@@ -25,13 +25,13 @@ const defaultOptions: ColumnChartOptions = {
   },
 };
 
-function createChart(data, customOptions?: ColumnChartOptions) {
+function createChart(data, customOptions: ColumnChartOptions = {}, reactive = false) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = reactive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = reactive ? '100vw' : `${width}px`;
+  el.style.height = reactive ? '100vh' : `${height}px`;
 
   const chart = new ColumnChart({
     el,
@@ -150,6 +150,12 @@ export const dataLabels = () => {
       },
     },
   });
+
+  return el;
+};
+
+export const reactive = () => {
+  const { el } = createChart(budgetData, { chart: { title: 'Monthly Revenue' } }, true);
 
   return el;
 };

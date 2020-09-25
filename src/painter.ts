@@ -20,6 +20,8 @@ export default class Painter {
 
   chart: Chart<Options>;
 
+  canvas!: HTMLCanvasElement;
+
   ctx!: CanvasRenderingContext2D;
 
   constructor(chart: Chart<Options>) {
@@ -32,9 +34,9 @@ export default class Painter {
     if (!this.ctx) {
       const canvas = document.createElement('canvas');
 
+      this.canvas = canvas;
+
       canvas.style.backgroundColor = '#fff';
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
 
       this.chart.el.appendChild(canvas);
 
@@ -49,6 +51,13 @@ export default class Painter {
         this.ctx = ctx;
       }
     }
+
+    this.setSize(width, height);
+  }
+
+  setSize(width: number, height: number) {
+    this.canvas.style.width = `${width}px`;
+    this.canvas.style.height = `${height}px`;
 
     this.width = width || 0;
     this.height = height || 0;
