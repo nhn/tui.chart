@@ -78,7 +78,7 @@ function drawSector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
   if (!inner) {
     ctx.moveTo(x, y);
   }
-  console.trace(startRadian, endRadian);
+
   ctx.arc(x, y, outer, startRadian, endRadian, !clockwise);
 
   if (inner) {
