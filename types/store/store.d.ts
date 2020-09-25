@@ -1,5 +1,4 @@
 import {
-  BaseChartOptions,
   LineChartOptions,
   LineSeriesType,
   Rect,
@@ -233,7 +232,7 @@ export interface TreemapSeriesData {
 
 export type Categories = string[] | HeatmapCategoriesType;
 
-type ChartOptions = {
+export type ChartOptions = {
   title?: string | TitleOption;
   animation?: boolean | { duration: number };
   responsive?: boolean;

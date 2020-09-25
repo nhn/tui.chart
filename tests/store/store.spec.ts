@@ -1,5 +1,6 @@
 import Store from '@src/store/store';
 import { BaseOptions } from '@t/options';
+import { ChartOptions } from '@t/store/store';
 
 describe('Store', () => {
   let store: Store<BaseOptions>;
@@ -117,9 +118,7 @@ describe('Store', () => {
 
       store.setModule({
         name: 'layout',
-        state: ({ options }) => ({
-          chart: options.chart,
-        }),
+        state: ({ options }) => ({ chart: options.chart as ChartOptions }),
       });
 
       expect(store.state.chart.width).toEqual(10);
