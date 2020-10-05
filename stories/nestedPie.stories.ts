@@ -9,28 +9,29 @@ export default {
 
 function createChart(
   data: NestedPieSeriesData,
-  customOptions?: NestedPieChartOptions,
-  reactive = false
+  customOptions: NestedPieChartOptions = {},
+  responsive = false
 ) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(
-    {
-      chart: {
-        width: 660,
-        height: 560,
-        title: 'Usage share of web browsers',
-      },
-      legend: {
-        visible: false,
-      },
-    },
-    customOptions || {}
-  );
-  const { width, height } = options.chart;
+  const options = responsive
+    ? customOptions
+    : deepMergedCopy(
+        {
+          chart: {
+            width: 660,
+            height: 560,
+            title: 'Usage share of web browsers',
+          },
+          legend: {
+            visible: false,
+          },
+        },
+        customOptions || {}
+      );
 
   el.style.outline = '1px solid red';
-  el.style.width = reactive ? '90vw' : `${width}px`;
-  el.style.height = reactive ? '90vw' : `${height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new NestedPieChart({ el, data, options });
 

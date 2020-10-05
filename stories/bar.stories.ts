@@ -25,14 +25,14 @@ const defaultOptions: BarChartOptions = {
   },
 };
 
-function createChart(data, customOptions: BarChartOptions = {}, reactive = false) {
+function createChart(data, customOptions: BarChartOptions = {}, responsive = false) {
   const el = document.createElement('div');
-  const options = reactive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
 
-  el.style.width = reactive ? '100vw' : `${options.chart?.width}px`;
-  el.style.height = reactive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new BarChart({
     el,
@@ -199,7 +199,7 @@ export const secondaryYAxis = () => {
   return el;
 };
 
-export const reactive = () => {
+export const responsive = () => {
   const { el } = createChart(budgetData, { chart: { title: 'Monthly Revenue' } }, true);
 
   return el;
