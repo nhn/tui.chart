@@ -64,7 +64,7 @@ export function showCircleLegend(options: BubbleChartOptions) {
 }
 
 function showLegend(options: Options, series: RawSeries) {
-  if (series.treemap && !(options.series as TreemapChartSeriesOptions).useColorValue) {
+  if (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue) {
     return false;
   }
 

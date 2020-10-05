@@ -23,13 +23,17 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(data: AreaSeriesData, customOptions?: AreaChartOptions) {
+function createChart(
+  data: AreaSeriesData,
+  customOptions: AreaChartOptions = {},
+  responsive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new AreaChart({ el, data, options });
 
@@ -235,6 +239,12 @@ export const secondaryYAxis = () => {
       },
     ],
   });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(avgTemperatureData, { chart: { title: 'Average Temperature' } }, true);
 
   return el;
 };

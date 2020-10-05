@@ -9,23 +9,28 @@ export default {
   decorators: [withKnobs],
 };
 
-function createChart(data: BoxPlotSeriesData, customOptions?: BoxPlotChartOptions) {
+function createChart(
+  data: BoxPlotSeriesData,
+  customOptions: BoxPlotChartOptions = {},
+  responsive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(
-    {
-      chart: {
-        width: 900,
-        height: 540,
-        title: 'Monthly Revenue',
-      },
-    },
-    customOptions || {}
-  );
-  const { width, height } = options.chart;
+  const options = responsive
+    ? customOptions
+    : deepMergedCopy(
+        {
+          chart: {
+            width: 900,
+            height: 540,
+            title: 'Monthly Revenue',
+          },
+        },
+        customOptions || {}
+      );
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new BoxPlotChart({ el, data, options });
 
@@ -55,6 +60,12 @@ export const eventDetectType = () => {
       eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'grouped'),
     },
   });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(BudgetDataForBoxPlot, { chart: { title: 'Monthly Revenue' } }, true);
 
   return el;
 };

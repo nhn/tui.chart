@@ -33,13 +33,17 @@ const defaultOptions = {
   },
 };
 
-function createChart(data: HeatmapSeriesData, customOptions?: Record<string, any>) {
+function createChart(
+  data: HeatmapSeriesData,
+  customOptions: Record<string, any> = {},
+  responsive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new HeatmapChart({ el, data, options });
 
@@ -83,6 +87,15 @@ export const datetimeCategory = () => {
       formatter: (value: SeriesDataType) => `${value} commit`,
     },
   });
+
+  return el;
+};
+export const responsive = () => {
+  const { el } = createChart(
+    temperatureAverageDataForHeatmap,
+    { chart: { title: '24-hr Average Temperature' } },
+    true
+  );
 
   return el;
 };

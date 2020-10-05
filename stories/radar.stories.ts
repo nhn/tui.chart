@@ -15,13 +15,17 @@ const defaultOptions = {
   },
 };
 
-function createChart(data: RadarSeriesData, customOptions?: RadarChartOptions) {
+function createChart(
+  data: RadarSeriesData,
+  customOptions: RadarChartOptions = {},
+  responsive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions || {});
 
   el.style.outline = '1px solid red';
-  el.style.width = `${options.chart.width}px`;
-  el.style.height = `${options.chart.height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new RadarChart({ el, data, options });
 
@@ -87,6 +91,12 @@ export const selectable = () => {
       selectable: true,
     },
   });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(budgetData2, { chart: { title: 'Annual Incomes' } }, true);
 
   return el;
 };
