@@ -19,5 +19,7 @@ it('formatDate', () => {
     '2020-03-04 05:06:00'
   );
 
-  expect(formatDate('YYYY-MM-DD HH:mm:ss', new Date('2020-03-04'))).toBe('2020-03-04 09:00:00');
+  expect(formatDate('YYYY-MM-DD HH:mm:ss', new Date('2020-03-04T00:00'))).toBe(
+    '2020-03-04 00:00:00'
+  );
 });
