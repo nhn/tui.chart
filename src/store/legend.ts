@@ -39,7 +39,7 @@ function calculateLegendWidth(
 
   if (useColorValue && verticalAlign) {
     const labelAreaWidth = sum(legendWidths);
-    legendWidth = Math.max(getDefaultWidth(options) / 4, labelAreaWidth);
+    legendWidth = Math.max(getInitialWidth(options) / 4, labelAreaWidth);
   } else if (useColorValue && !verticalAlign) {
     const spectrumAreaWidth =
       spectrumLegendTooltip.PADDING * 2 +
@@ -141,7 +141,7 @@ function getItemWidth(label: string, checkboxVisible: boolean, useSpectrumLegend
   );
 }
 
-function getDefaultWidth(options: Options) {
+function getInitialWidth(options: Options) {
   return options.chart?.width ?? 0;
 }
 
@@ -154,7 +154,7 @@ const legend: StoreModule = {
     const useSpectrumLegend =
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
-    const defaultWidth = Math.min(getDefaultWidth(options) / 10, 150);
+    const defaultWidth = Math.min(getInitialWidth(options) / 10, 150);
     const legendLabels = series.nestedPie
       ? getNestedPieLegendLabels(series)
       : getLegendLabels(series);

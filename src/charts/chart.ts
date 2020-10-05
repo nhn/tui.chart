@@ -108,19 +108,19 @@ export default abstract class Chart<T extends Options> {
       });
 
       if (options?.chart?.responsive ?? true) {
-        this.setResponsive();
+        this.setResizeEvent();
       }
     }, 0);
   }
 
-  setResponsive() {
-    window.addEventListener(
-      'resize',
-      debounce(() => {
-        const { width, height } = this.el.getBoundingClientRect();
+  setResizeEvent() {
+    window.addEventListener('resize', () => {
+      const { width, height } = this.el.getBoundingClientRect();
+
+      if (width || height) {
         this.store.dispatch('setChartSize', { width, height });
-      }, 100)
-    );
+      }
+    });
   }
 
   handleEvent(event: MouseEvent) {
