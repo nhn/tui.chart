@@ -1,0 +1,19 @@
+name: Comment trigger
+
+on:
+  pull_request:
+    branches: [ next ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Pull Request Comment Trigger
+        # uses: Khan/pull-request-comment-trigger@af6260d48c05e1f2f1641f9d14794bd04687c023
+        uses: Khan/pull-request-comment-trigger@1.0.0
+        with:
+          trigger: 'ok to test'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
