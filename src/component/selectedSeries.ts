@@ -7,11 +7,12 @@ import {
   HeatmapRectResponderModel,
   RectResponderModel,
   ResponderModel,
+  SectorResponderModel,
 } from '@t/components/series';
 import {
   isClickSameCircleResponder,
+  isClickSameDataResponder,
   isClickSameNameResponder,
-  isClickSameRectResponder,
 } from '@src/helpers/responders';
 
 interface SelectedSeriesEventModel {
@@ -24,6 +25,7 @@ export default class SelectedSeries extends Component {
 
   isShow = false;
 
+  // eslint-disable-next-line complexity
   isClickSameSeries({ models, name }: SelectedSeriesEventModel) {
     switch (name) {
       case 'heatmap':
@@ -45,14 +47,20 @@ export default class SelectedSeries extends Component {
           models as CircleResponderModel[],
           this.models as CircleResponderModel[]
         );
+      case 'pie':
+      case 'nestedPie':
+        return isClickSameDataResponder<SectorResponderModel>(
+          models as SectorResponderModel[],
+          this.models as SectorResponderModel[]
+        );
       case 'column':
       case 'bar':
-        return isClickSameRectResponder<RectResponderModel>(
+        return isClickSameDataResponder<RectResponderModel>(
           models as RectResponderModel[],
           this.models as RectResponderModel[]
         );
       case 'boxPlot':
-        return isClickSameRectResponder<BoxPlotResponderModel>(
+        return isClickSameDataResponder<BoxPlotResponderModel>(
           models as BoxPlotResponderModel[],
           this.models as BoxPlotResponderModel[]
         );

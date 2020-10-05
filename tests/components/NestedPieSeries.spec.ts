@@ -176,7 +176,6 @@ describe('basic', () => {
           alias: 'pie2',
         },
       ],
-      selectedSeries: [],
     };
 
     const responderResult = [

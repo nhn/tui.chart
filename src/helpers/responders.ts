@@ -4,6 +4,7 @@ import {
   CircleModel,
   CircleResponderModel,
   HeatmapRectResponderModel,
+  SectorResponderModel,
   RectResponderModel,
   TreemapRectResponderModel,
 } from '@t/components/series';
@@ -130,10 +131,9 @@ export function isClickSameCircleResponder(
   return same;
 }
 
-export function isClickSameRectResponder<T extends RectResponderModel | BoxPlotResponderModel>(
-  responders: T[],
-  selectedSeries: T[]
-) {
+export function isClickSameDataResponder<
+  T extends RectResponderModel | BoxPlotResponderModel | SectorResponderModel
+>(responders: T[], selectedSeries: T[]) {
   let same = false;
   if (responders.length && selectedSeries.length && responders.length === selectedSeries.length) {
     same = responders.reduce<boolean>((acc, cur, idx) => {
