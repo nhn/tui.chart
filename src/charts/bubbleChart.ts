@@ -3,6 +3,8 @@ import Chart from './chart';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import dataRange from '@src/store/dataRange';
+import plot from '@src/store/plot';
+
 import Tooltip from '@src/component/tooltip';
 import Plot from '@src/component/plot';
 import BubbleSeries from '@src/component/bubbleSeries';
@@ -13,7 +15,7 @@ import Title from '@src/component/title';
 import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
-import plot from '@src/store/plot';
+import SelectedSeries from '@src/component/selectedSeries';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
@@ -55,6 +57,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(CircleLegend);

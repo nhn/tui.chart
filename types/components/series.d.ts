@@ -107,7 +107,6 @@ export type TreemapRectModel = {
 
 export type HeatmapRectModels = {
   series: HeatmapRectModel[];
-  selectedSeries: HeatmapRectResponderModel[];
 };
 
 export type HeatmapRectModel = {
@@ -140,7 +139,6 @@ export type AreaSeriesModels = {
   rect: ClipRectAreaModel[];
   series: AreaPointsModel[];
   dot: CircleModel[];
-  selectedSeries: CircleModel[];
 };
 
 export type BoxSeriesModels = {
@@ -148,19 +146,16 @@ export type BoxSeriesModels = {
   series: RectModel[];
   connector?: LineModel[];
   label?: LabelModel[];
-  selectedSeries: RectResponderModel[];
 };
 
 export type CircleSeriesModels = {
   series: CircleModel[];
-  selectedSeries: CircleModel[];
 };
 
 export type LineSeriesModels = {
   rect: ClipRectAreaModel[];
   series: LinePointsModel[];
   dot: CircleModel[];
-  selectedSeries: CircleModel[];
 };
 
 export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
@@ -169,7 +164,6 @@ export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
 
 export type PieSeriesModels = {
   series: SectorModel[];
-  selectedSeries: SectorModel[];
 };
 
 export type SectorModel = {
@@ -210,7 +204,6 @@ export type PolygonModel = {
 export type RadarSeriesModels = {
   polygon: PolygonModel[];
   dot: CircleModel[];
-  selectedSeries: CircleModel[];
 };
 
 export type BoxPlotSeriesModel = RectModel | LineModel | CircleModel;
@@ -221,7 +214,6 @@ export type BoxPlotResponderTypes =
 
 export type BoxPlotSeriesModels = {
   series: BoxPlotSeriesModel[];
-  selectedSeries: BoxPlotResponderTypes[];
 };
 
 export type LineResponderModel = {
@@ -257,7 +249,6 @@ export type BulletResponderModel = {
 
 export type BulletSeriesModels = {
   series: BulletModel[];
-  selectedSeries: BulletResponderModel[];
 };
 
 export interface MouseEventType {

@@ -19,6 +19,7 @@ import {
   getSemiCircleCenterY,
   makePieTooltipData,
 } from '@src/helpers/pieSeries';
+import { deepCopy } from '@src/helpers/utils';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -101,7 +102,7 @@ export default class NestedPieSeries extends Component {
     this.selectable = this.getSelectableOption(options); // @TODO: Nested Pie Series 개선되면서 각각의 옵션 적용가능 하도록 수정
     this.pieAlias = Object.keys(nestedPieSeries);
 
-    const seriesModels = {};
+    const seriesModels = {} as NestedPieSeriesModels;
     const tooltipDataModels = {};
 
     const radiusRangeMap = this.getRadiusRangeMap(options);
@@ -126,10 +127,10 @@ export default class NestedPieSeries extends Component {
       }
     });
 
-    this.models = { ...seriesModels, selectedSeries: [] };
+    this.models = seriesModels;
 
     if (!this.drawModels) {
-      const drawModels = {};
+      const drawModels = {} as NestedPieSeriesModels;
 
       this.pieAlias.forEach((alias) => {
         drawModels[alias] = this.models[alias].map((m) => ({
@@ -138,7 +139,7 @@ export default class NestedPieSeries extends Component {
         }));
       });
 
-      this.drawModels = { ...drawModels, selectedSeries: [] };
+      this.drawModels = deepCopy(drawModels);
     }
 
     this.responders = this.makeResponderModels(seriesModels, tooltipDataModels);
@@ -361,9 +362,7 @@ export default class NestedPieSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      // @TODO : 두번 클릭 조건 => name으로 비교 (heatmapSeries와 동일)
-      this.drawModels.selectedSeries = responders;
-
+      this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }

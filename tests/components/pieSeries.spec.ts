@@ -98,7 +98,6 @@ describe('basic', () => {
           totalAngle: 360,
         },
       ],
-      selectedSeries: [],
     };
 
     const responderResult = [
@@ -274,7 +273,6 @@ describe('donut', () => {
           totalAngle: 360,
         },
       ],
-      selectedSeries: [],
     };
 
     const responderResult = [

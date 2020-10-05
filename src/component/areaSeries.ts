@@ -65,7 +65,7 @@ const seriesOpacity = {
 };
 
 export default class AreaSeries extends Component {
-  models: AreaSeriesModels = { rect: [], series: [], dot: [], selectedSeries: [] };
+  models: AreaSeriesModels = { rect: [], series: [], dot: [] };
 
   drawModels!: AreaSeriesModels;
 
@@ -186,7 +186,6 @@ export default class AreaSeries extends Component {
       rect: [this.renderClipRectAreaModel()],
       series: areaSeriesModel,
       dot: circleDotModel,
-      selectedSeries: [],
     });
 
     if (!this.drawModels) {
@@ -194,7 +193,6 @@ export default class AreaSeries extends Component {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(areaSeriesModel),
         dot: deepCopyArray(circleDotModel),
-        selectedSeries: [],
       };
     }
 
@@ -547,14 +545,16 @@ export default class AreaSeries extends Component {
 
   onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
+      let models;
       if (this.eventDetectType === 'near') {
-        this.drawModels.selectedSeries = responders as CircleResponderModel[];
+        models = responders as CircleResponderModel[];
       } else {
-        this.drawModels.selectedSeries = this.getCircleModelsFromRectResponders(
+        models = this.getCircleModelsFromRectResponders(
           responders as RectResponderModel[],
           mousePosition
         );
       }
+      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }

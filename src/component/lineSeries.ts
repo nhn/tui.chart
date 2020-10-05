@@ -51,7 +51,7 @@ type DatumType = CoordinateDataType | number;
 type ResponderTypes = CircleResponderModel[] | RectResponderModel[];
 
 export default class LineSeries extends Component {
-  models: LineSeriesModels = { rect: [], series: [], dot: [], selectedSeries: [] };
+  models: LineSeriesModels = { rect: [], series: [], dot: [] };
 
   drawModels!: LineSeriesModels;
 
@@ -138,7 +138,6 @@ export default class LineSeries extends Component {
       rect: [this.renderClipRectAreaModel()],
       series: lineSeriesModel,
       dot: dotSeriesModel,
-      selectedSeries: [],
     };
 
     if (!this.drawModels) {
@@ -146,7 +145,6 @@ export default class LineSeries extends Component {
         rect: [this.renderClipRectAreaModel(true)],
         series: deepCopyArray(lineSeriesModel),
         dot: deepCopyArray(dotSeriesModel),
-        selectedSeries: [],
       };
     }
 
@@ -337,14 +335,16 @@ export default class LineSeries extends Component {
 
   onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
+      let models;
       if (this.eventDetectType === 'near') {
-        this.drawModels.selectedSeries = responders as CircleResponderModel[];
+        models = responders as CircleResponderModel[];
       } else {
-        this.drawModels.selectedSeries = this.getCircleModelsFromRectResponders(
+        models = this.getCircleModelsFromRectResponders(
           responders as RectResponderModel[],
           mousePosition
         );
       }
+      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }

@@ -108,7 +108,6 @@ const result = {
     },
   ],
   connector: [],
-  selectedSeries: [],
 };
 
 const respondersResult = [

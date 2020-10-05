@@ -12,6 +12,7 @@ import Legend from '@src/component/legend';
 import AxisTitle from '@src/component/axisTitle';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
+import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 
@@ -54,6 +55,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });

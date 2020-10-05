@@ -58,7 +58,7 @@ export function isBulletSeries(seriesName: string) {
 }
 
 export default class BulletSeries extends Component {
-  models: BulletSeriesModels = { series: [], selectedSeries: [] };
+  models: BulletSeriesModels = { series: [] };
 
   drawModels!: BulletSeriesModels;
 
@@ -120,7 +120,6 @@ export default class BulletSeries extends Component {
             ...model,
           };
         }),
-        selectedSeries: [],
       };
     }
 
@@ -180,7 +179,10 @@ export default class BulletSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = this.filterBulletResponder(responders);
+      this.eventBus.emit('renderSelectedSeries', {
+        models: this.filterBulletResponder(responders),
+        name: this.name,
+      });
       this.eventBus.emit('needDraw');
     }
   }

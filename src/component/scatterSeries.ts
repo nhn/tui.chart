@@ -47,6 +47,7 @@ export default class ScatterSeries extends CircleSeries {
       color: getRGBA(m.color, 1),
       style: ['default', 'hover'],
       data: tooltipModel[index],
+      index,
     }));
   }
 

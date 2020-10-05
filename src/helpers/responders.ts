@@ -1,7 +1,10 @@
 import {
+  BoxPlotResponderModel,
+  BulletResponderModel,
   CircleModel,
   CircleResponderModel,
   HeatmapRectResponderModel,
+  SectorResponderModel,
   RectResponderModel,
   TreemapRectResponderModel,
 } from '@t/components/series';
@@ -99,14 +102,47 @@ export function getDeepestNode(responders: TreemapRectResponderModel[]) {
   }, []);
 }
 
-// @TODO: 모든 ResponderModel 변경 뒤 extends type ResponderModel로 변경해야
-export function isClickSameSeries<T extends HeatmapRectResponderModel>(
-  responders: T[],
-  selectedSeries: T[]
-) {
+export function isClickSameNameResponder<
+  T extends HeatmapRectResponderModel | BulletResponderModel
+>(responders: T[], selectedSeries: T[]) {
   let same = false;
   if (responders.length && selectedSeries.length) {
     same = responders[0].name === selectedSeries[0].name;
+  }
+
+  return same;
+}
+
+export function isClickSameCircleResponder(
+  responders: CircleResponderModel[],
+  selectedSeries: CircleResponderModel[]
+) {
+  let same = false;
+  if (responders.length && selectedSeries.length && responders.length === selectedSeries.length) {
+    same = responders.reduce<boolean>((acc, cur, idx) => {
+      return (
+        acc &&
+        cur.seriesIndex === selectedSeries[idx].seriesIndex &&
+        cur.index === selectedSeries[idx].index
+      );
+    }, true);
+  }
+
+  return same;
+}
+
+export function isClickSameDataResponder<
+  T extends RectResponderModel | BoxPlotResponderModel | SectorResponderModel
+>(responders: T[], selectedSeries: T[]) {
+  let same = false;
+  if (responders.length && selectedSeries.length && responders.length === selectedSeries.length) {
+    same = responders.reduce<boolean>((acc, cur, idx) => {
+      return (
+        acc &&
+        cur.data?.label === selectedSeries[idx].data?.label &&
+        cur.data?.category === selectedSeries[idx].data?.category
+      );
+    }, true);
   }
 
   return same;

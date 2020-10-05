@@ -271,7 +271,6 @@ describe('basic', () => {
           y: 40,
         },
       ],
-      selectedSeries: [],
     },
   };
 

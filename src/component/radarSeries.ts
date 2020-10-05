@@ -24,7 +24,7 @@ type RenderOptions = {
 };
 
 export default class RadarSeries extends Component {
-  models: RadarSeriesModels = { polygon: [], dot: [], selectedSeries: [] };
+  models: RadarSeriesModels = { polygon: [], dot: [] };
 
   drawModels!: RadarSeriesModels;
 
@@ -78,7 +78,6 @@ export default class RadarSeries extends Component {
           x: centerX,
           y: centerY,
         })),
-        selectedSeries: [],
       };
     }
 
@@ -94,7 +93,7 @@ export default class RadarSeries extends Component {
 
   renderCircleModel(seriesModels: PolygonModel[]): CircleModel[] {
     return seriesModels.flatMap(({ points, color, name }, seriesIndex) =>
-      points.map((point) => ({
+      points.map((point, index) => ({
         type: 'circle',
         ...point,
         radius: 6,
@@ -102,6 +101,7 @@ export default class RadarSeries extends Component {
         style: ['default', 'hover'],
         seriesIndex,
         name,
+        index,
       }))
     );
   }
@@ -122,7 +122,7 @@ export default class RadarSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = responders;
+      this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }

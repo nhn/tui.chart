@@ -66,6 +66,7 @@ export default class BubbleSeries extends CircleSeries {
       color: getRGBA(m.color, 0.85),
       style: ['default', 'hover', { lineWidth: 2 }],
       data: tooltipModel[index],
+      index,
     }));
   }
 

@@ -150,7 +150,6 @@ export default class BoxStackSeries extends BoxSeries {
       clipRect: [clipRect],
       series,
       connector,
-      selectedSeries: [],
     };
 
     if (!this.drawModels) {
@@ -158,7 +157,6 @@ export default class BoxStackSeries extends BoxSeries {
         clipRect: [this.initClipRect(clipRect)],
         series: deepCopyArray(series),
         connector: deepCopyArray(connector),
-        selectedSeries: [],
       };
     }
 

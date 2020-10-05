@@ -14,6 +14,7 @@ import AxisTitle from '@src/component/axisTitle';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
+import SelectedSeries from '@src/component/selectedSeries';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -55,6 +56,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 

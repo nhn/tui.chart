@@ -19,8 +19,6 @@ import {
   makePieTooltipData,
 } from '@src/helpers/pieSeries';
 
-export type RadiusRange = { inner: number; outer: number };
-
 type RenderOptions = {
   clockwise: boolean;
   cx: number;
@@ -32,7 +30,7 @@ type RenderOptions = {
 };
 
 export default class PieSeries extends Component {
-  models: PieSeriesModels = { series: [], selectedSeries: [] };
+  models: PieSeriesModels = { series: [] };
 
   drawModels!: PieSeriesModels;
 
@@ -107,7 +105,6 @@ export default class PieSeries extends Component {
           ...m,
           degree: { ...m.degree, end: m.degree.start },
         })),
-        selectedSeries: [],
       };
     }
 
@@ -227,8 +224,7 @@ export default class PieSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = responders;
-
+      this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }

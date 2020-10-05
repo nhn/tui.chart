@@ -95,7 +95,6 @@ const result = {
       index: 1,
     },
   ],
-  selectedSeries: [],
 };
 
 const respondersResult = [

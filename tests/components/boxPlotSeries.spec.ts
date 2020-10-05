@@ -171,7 +171,6 @@ describe('boxplot series', () => {
           name: 'cho',
         },
       ],
-      selectedSeries: [],
     },
     responders: [
       {
