@@ -63,7 +63,6 @@ export default class SelectedSeries extends Component {
 
   renderSelectedSeries = (selectedSeriesEventModel: SelectedSeriesEventModel) => {
     const { models } = selectedSeriesEventModel;
-    console.log(models);
     const selectedSeries = this.isClickSameSeries(selectedSeriesEventModel) ? [] : models;
 
     this.isShow = !!selectedSeries.length;

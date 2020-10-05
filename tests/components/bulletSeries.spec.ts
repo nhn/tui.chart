@@ -175,7 +175,6 @@ describe('bullet series', () => {
           name: 'cho',
         },
       ],
-      selectedSeries: [],
     },
     responders: [
       {
