@@ -69,13 +69,36 @@ export default class SelectedSeries extends Component {
     }
   }
 
+  private getSeriesNames(selectedSeries: ResponderModel[], name: string) {
+    switch (name) {
+      case 'line':
+      case 'area':
+        return selectedSeries.map((model) => (model as CircleResponderModel).name);
+      default:
+        return [];
+    }
+  }
+
   renderSelectedSeries = (selectedSeriesEventModel: SelectedSeriesEventModel) => {
-    const { models } = selectedSeriesEventModel;
+    const { models, name } = selectedSeriesEventModel;
     const selectedSeries = this.isClickSameSeries(selectedSeriesEventModel) ? [] : models;
 
     this.isShow = !!selectedSeries.length;
+
+    this.setActiveState(selectedSeries, name);
     this.models = selectedSeries;
   };
+
+  private setActiveState(selectedSeries: ResponderModel[], name: string) {
+    if (selectedSeries.length) {
+      this.store.dispatch('setAllLegendActiveState', false);
+      this.getSeriesNames(selectedSeries, name).forEach((seriesName) => {
+        this.store.dispatch('setLegendActiveState', { name: seriesName, active: true });
+      });
+    } else {
+      this.store.dispatch('setAllLegendActiveState', true);
+    }
+  }
 
   initialize() {
     this.type = 'selectedSeries';

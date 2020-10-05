@@ -274,7 +274,7 @@ export default class LineSeries extends Component {
         x,
         y,
         radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
-        color,
+        color: getRGBA(color, 1),
         style: ['default', 'hover'],
         seriesIndex,
         name,
