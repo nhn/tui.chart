@@ -428,7 +428,7 @@ export default class BoxSeries extends Component {
 
     return {
       type: 'rect',
-      color,
+      color: getRGBA(color, 1),
       x,
       y,
       width,
