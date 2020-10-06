@@ -119,6 +119,7 @@ export default class PieSeries extends Component {
       style: ['hover'],
       seriesIndex: index,
       data: tooltipModel[index],
+      color: getRGBA(m.color, 1),
     }));
   }
 

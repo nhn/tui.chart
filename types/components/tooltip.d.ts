@@ -19,6 +19,7 @@ export type TooltipData = {
   formattedValue?: string;
   category?: string;
   templateType?: TooltipTemplateType;
+  rootParentName?: string;
 };
 
 export type TooltipInfo = {
