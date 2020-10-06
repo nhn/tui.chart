@@ -171,6 +171,8 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
 
+    console.log(series, tooltipData, this.tooltipRectMap);
+
     this.responders =
       this.eventDetectType === 'grouped'
         ? makeRectResponderModel(this.rect, this.isBar ? axes.yAxis! : axes.xAxis!, !this.isBar)
@@ -340,11 +342,10 @@ export default class BoxStackSeries extends BoxSeries {
     categories: string[]
   ) {
     return Object.keys(stackData).flatMap((groupId) => {
-      const colors = seriesRawData
-        .filter(({ stackGroup }) => stackGroup === groupId)
-        .map(({ color }) => color);
+      const filteredRawData = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
+      const colors = filteredRawData.map(({ color }) => color);
 
-      return this.makeStackTooltipData(seriesRawData, stackData[groupId], colors, categories);
+      return this.makeStackTooltipData(filteredRawData, stackData[groupId], colors, categories);
     });
   }
 
