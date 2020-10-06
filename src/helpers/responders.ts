@@ -104,9 +104,9 @@ export function getDeepestNode(responders: TreemapRectResponderModel[]) {
 
 export function isClickSameNameResponder<
   T extends HeatmapRectResponderModel | BulletResponderModel
->(responders: T[], selectedSeries: T[]) {
+>(responders: T[], selectedSeries?: T[]) {
   let same = false;
-  if (responders.length && selectedSeries.length) {
+  if (responders.length && selectedSeries && selectedSeries.length) {
     same = responders[0].name === selectedSeries[0].name;
   }
 
@@ -115,10 +115,15 @@ export function isClickSameNameResponder<
 
 export function isClickSameCircleResponder(
   responders: CircleResponderModel[],
-  selectedSeries: CircleResponderModel[]
+  selectedSeries?: CircleResponderModel[]
 ) {
   let same = false;
-  if (responders.length && selectedSeries.length && responders.length === selectedSeries.length) {
+  if (
+    responders.length &&
+    selectedSeries &&
+    selectedSeries.length &&
+    responders.length === selectedSeries.length
+  ) {
     same = responders.reduce<boolean>((acc, cur, idx) => {
       return (
         acc &&
@@ -133,9 +138,14 @@ export function isClickSameCircleResponder(
 
 export function isClickSameDataResponder<
   T extends RectResponderModel | BoxPlotResponderModel | SectorResponderModel
->(responders: T[], selectedSeries: T[]) {
+>(responders: T[], selectedSeries?: T[]) {
   let same = false;
-  if (responders.length && selectedSeries.length && responders.length === selectedSeries.length) {
+  if (
+    responders.length &&
+    selectedSeries &&
+    selectedSeries.length &&
+    responders.length === selectedSeries.length
+  ) {
     same = responders.reduce<boolean>((acc, cur, idx) => {
       return (
         acc &&

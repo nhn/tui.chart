@@ -14,14 +14,18 @@ import {
   isClickSameDataResponder,
   isClickSameNameResponder,
 } from '@src/helpers/responders';
+import { includes } from '@src/helpers/utils';
+import { TooltipModelName } from '@t/components/tooltip';
 
 interface SelectedSeriesEventModel {
   models: ResponderModel[];
   name: string;
 }
 
+export type ResponderSeriesModel = { [key in TooltipModelName]: ResponderModel[] };
+
 export default class SelectedSeries extends Component {
-  models: ResponderModel[] = [];
+  models: ResponderSeriesModel = {} as ResponderSeriesModel;
 
   isShow = false;
 
@@ -31,12 +35,12 @@ export default class SelectedSeries extends Component {
       case 'heatmap':
         return isClickSameNameResponder<HeatmapRectResponderModel>(
           models as HeatmapRectResponderModel[],
-          this.models as HeatmapRectResponderModel[]
+          this.models[name] as HeatmapRectResponderModel[]
         );
       case 'bullet':
         return isClickSameNameResponder<BulletResponderModel>(
           models as BulletResponderModel[],
-          this.models as BulletResponderModel[]
+          this.models[name] as BulletResponderModel[]
         );
       case 'radar':
       case 'bubble':
@@ -45,24 +49,24 @@ export default class SelectedSeries extends Component {
       case 'line':
         return isClickSameCircleResponder(
           models as CircleResponderModel[],
-          this.models as CircleResponderModel[]
+          this.models[name] as CircleResponderModel[]
         );
       case 'pie':
       case 'nestedPie':
         return isClickSameDataResponder<SectorResponderModel>(
           models as SectorResponderModel[],
-          this.models as SectorResponderModel[]
+          this.models[name] as SectorResponderModel[]
         );
       case 'column':
       case 'bar':
         return isClickSameDataResponder<RectResponderModel>(
           models as RectResponderModel[],
-          this.models as RectResponderModel[]
+          this.models[name] as RectResponderModel[]
         );
       case 'boxPlot':
         return isClickSameDataResponder<BoxPlotResponderModel>(
           models as BoxPlotResponderModel[],
-          this.models as BoxPlotResponderModel[]
+          this.models[name] as BoxPlotResponderModel[]
         );
       default:
         return false;
@@ -70,34 +74,55 @@ export default class SelectedSeries extends Component {
   }
 
   private getSeriesNames(selectedSeries: ResponderModel[], name: string) {
-    switch (name) {
-      case 'line':
-      case 'area':
-        return selectedSeries.map((model) => (model as CircleResponderModel).name);
-      default:
-        return [];
+    const names: string[] = [];
+
+    if (includes(['line', 'area', 'radar', 'bubble', 'scatter', 'bullet', 'boxPlot'], name)) {
+      selectedSeries.forEach((model) => {
+        const label = (model as CircleResponderModel | BulletResponderModel | BoxPlotResponderModel)
+          .name;
+        if (label) {
+          names.push(label);
+        }
+      });
+    } else if (includes(['bar', 'column', 'pie'], name)) {
+      selectedSeries.forEach((model) => {
+        const label = (model as RectResponderModel | SectorResponderModel).data?.label;
+        if (label) {
+          names.push(label);
+        }
+      });
+    } else if (name === 'nestedPie') {
+      selectedSeries.forEach((model) => {
+        const label = (model as RectResponderModel | SectorResponderModel).data?.rootParentName;
+        if (label) {
+          names.push(label);
+        }
+      });
     }
+
+    return names;
   }
 
   renderSelectedSeries = (selectedSeriesEventModel: SelectedSeriesEventModel) => {
     const { models, name } = selectedSeriesEventModel;
-    const selectedSeries = this.isClickSameSeries(selectedSeriesEventModel) ? [] : models;
 
-    this.isShow = !!selectedSeries.length;
-
-    this.setActiveState(selectedSeries, name);
-    this.models = selectedSeries;
+    this.models[name] = this.isClickSameSeries(selectedSeriesEventModel) ? [] : models;
+    this.isShow = !!Object.values(this.models).flatMap((value) => value).length;
+    this.setActiveState();
   };
 
-  private setActiveState(selectedSeries: ResponderModel[], name: string) {
-    if (selectedSeries.length) {
+  private setActiveState() {
+    if (this.isShow) {
       this.store.dispatch('setAllLegendActiveState', false);
-      this.getSeriesNames(selectedSeries, name).forEach((seriesName) => {
-        this.store.dispatch('setLegendActiveState', { name: seriesName, active: true });
+      Object.keys(this.models).forEach((name) => {
+        this.getSeriesNames(this.models[name], name).forEach((seriesName) => {
+          this.store.dispatch('setLegendActiveState', { name: seriesName, active: true });
+        });
       });
     } else {
       this.store.dispatch('setAllLegendActiveState', true);
     }
+    this.eventBus.emit('needDraw');
   }
 
   initialize() {

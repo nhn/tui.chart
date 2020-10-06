@@ -30,6 +30,7 @@ import { isSameArray } from '@src/helpers/arrayUtil';
 import { HoveredSeriesModel } from '@src/component/hoveredSeries';
 import { BackButtonModels, ResetButtonModels } from '@t/components/resetButton';
 import { SpectrumLegendModels } from '@t/components/spectrumLegend';
+import { ResponderSeriesModel } from '@src/component/selectedSeries';
 
 export type ComponentType =
   | 'component'
@@ -76,7 +77,7 @@ type ComponentModels =
   | BackButtonModels
   | HeatmapRectModels
   | NestedPieSeriesModels
-  | ResponderModel[];
+  | ResponderSeriesModel;
 
 export default abstract class Component {
   name = 'Component';
