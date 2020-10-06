@@ -196,7 +196,7 @@ export const selectable = () => {
     chart: { title: 'Average Temperature' } as BaseChartOptions,
     xAxis: { title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
-    series: { selectable: true, eventDetectType: 'grouped' },
+    series: { selectable: true, eventDetectType: 'near' },
   });
 
   return el;
