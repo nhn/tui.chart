@@ -57,7 +57,7 @@ describe('radar series', () => {
         {
           type: 'polygon',
           color: 'rgba(170, 170, 170, 1)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { x: 100, y: 90 },
             { x: 120, y: 100 },
@@ -71,7 +71,7 @@ describe('radar series', () => {
         {
           type: 'polygon',
           color: 'rgba(187, 187, 187, 1)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { x: 100, y: 80 },
             { x: 110, y: 100 },
