@@ -242,6 +242,7 @@ export interface BaseOptions {
   exportMenu?: ExportMenuOptions;
   tooltip?: BaseTooltipOptions;
   plot?: BaseSizeOptions;
+  theme?: BaseThemeOptions;
 }
 
 interface BaseLegendOptions {
@@ -299,6 +300,7 @@ export interface LineChartOptions extends BaseOptions {
   xAxis?: LineTypeXAxisOptions;
   yAxis?: BothSidesYAxisOptions;
   plot?: LineTypePlotOptions;
+  theme?: LineChartThemeOptions;
 }
 
 type LineScatterChartSeriesOptions = {

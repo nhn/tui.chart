@@ -4,6 +4,7 @@ import layout from '@src/store/layout';
 import seriesData from '@src/store/seriesData';
 import category from '@src/store/category';
 import legend from '@src/store/legend';
+import theme from '@src/store/theme';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
@@ -180,7 +181,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   protected initialize() {
-    this.initStore([root, seriesData, legend, layout, category]);
+    this.initStore([root, theme, seriesData, legend, layout, category]);
   }
 
   draw() {
