@@ -193,6 +193,13 @@ const legend: StoreModule = {
     };
   },
   action: {
+    setLegend({ state }) {
+      const { options, series } = state;
+      const align = getAlign(options);
+
+
+      console.log(series);
+    },
     setLegendActiveState({ state }, { name, active }) {
       const { data } = state.legend;
       const model = data.find(({ label }) => label === name)!;
@@ -209,6 +216,11 @@ const legend: StoreModule = {
       const model = state.legend.data.find(({ label }) => label === name)!;
       model.checked = checked;
       this.notify(state, 'legend');
+    },
+  },
+  observe: {
+    setLegend() {
+      this.dispatch('setLegend');
     },
   },
 };

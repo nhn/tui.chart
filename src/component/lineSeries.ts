@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray, pick, includes } from '@src/helpers/utils';
+import { pick, includes } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -144,9 +144,8 @@ export default class LineSeries extends Component {
 
     if (!this.drawModels) {
       this.drawModels = {
+        ...this.models,
         rect: [this.renderClipRectAreaModel(true)],
-        series: deepCopyArray(lineSeriesModel),
-        dot: deepCopyArray(dotSeriesModel),
       };
     }
 

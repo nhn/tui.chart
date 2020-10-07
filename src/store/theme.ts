@@ -1,4 +1,4 @@
-import { StoreModule } from '@t/store/store';
+import { Options, RawSeries, StoreModule } from '@t/store/store';
 // import { extend } from '@src/store/store';
 import { deepMergedCopy } from '@src/helpers/utils';
 
@@ -37,10 +37,30 @@ const defaultTheme = {
   },
 };
 
+function makeDefaultTheme(series: RawSeries) {
+  const isComboChart = Object.keys(series).length > 1;
+  const res = { ...defaultTheme };
+
+  if (isComboChart) {
+    const defaultSeriesOptions = { ...res.series };
+    res.series = {};
+
+    Object.keys(series).forEach((seriesName) => {
+      res.series[seriesName] = { ...defaultSeriesOptions };
+    });
+  }
+
+  return res;
+}
+
+function getTheme(options: Options, series: RawSeries) {
+  return deepMergedCopy(makeDefaultTheme(series), options?.theme ?? {});
+}
+
 const theme: StoreModule = {
   name: 'heatmapSeriesData',
-  state: ({ options }) => ({
-    theme: deepMergedCopy(defaultTheme, options?.theme ?? {}),
+  state: ({ options, series }) => ({
+    theme: getTheme(options, series),
   }),
   action: {
     setTheme({ state }) {},

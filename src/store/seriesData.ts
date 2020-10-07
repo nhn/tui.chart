@@ -83,10 +83,12 @@ const seriesData: StoreModule = {
       const rawSeries = deepCopy(initStoreState.series);
       const { disabledSeries, theme, zoomRange, rawCategories } = state;
       const newSeriesData = {};
-      const { colors } = theme.series;
+      // console.log(theme);
+      // const { colors } = theme.series;
       let colorIdx = 0;
 
       Object.keys(rawSeries).forEach((seriesName) => {
+        const { colors } = theme.series[seriesName];
         const originSeriesData = rawSeries[seriesName].map((m) => {
           colorIdx += 1;
 

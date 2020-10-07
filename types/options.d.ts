@@ -317,6 +317,7 @@ export interface LineAreaChartOptions extends BaseOptions {
   series?: LineAreaChartSeriesOptions;
   plot?: LineTypePlotOptions;
   yAxis?: BothSidesYAxisOptions;
+  theme?: LineAreaChartThemeOptions;
 }
 
 type LineAreaChartSeriesOptions = {
