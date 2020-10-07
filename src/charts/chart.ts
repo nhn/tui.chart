@@ -9,7 +9,7 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined } from '@src/helpers/utils';
-import { ChartProps, Point } from '@t/options';
+import { ChartProps, Point, Size } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
@@ -107,20 +107,49 @@ export default abstract class Chart<T extends Options> {
         this.painter.setup();
       });
 
-      if (options?.chart?.responsive ?? true) {
+      if (options?.responsive ?? true) {
         this.setResizeEvent();
       }
     }, 0);
   }
 
-  setResizeEvent() {
-    window.addEventListener('resize', () => {
-      const { width, height } = this.el.getBoundingClientRect();
+  resize() {
+    const { offsetWidth: width, offsetHeight: height } = this.el as HTMLElement;
 
-      if (width || height) {
-        this.store.dispatch('setChartSize', { width, height });
+    if (!width && !height) {
+      return;
+    }
+
+    this.setOptions({ width, height });
+    this.store.dispatch('setChartSize', { width, height });
+  }
+
+  setResizeEvent() {
+    window.addEventListener(
+      'resize',
+      debounce(() => {
+        this.eventBus.emit('resetHoveredSeries');
+        this.resize();
+      }, 100)
+    );
+  }
+
+  setOptions(size: Size) {
+    const { options } = this.store.initStoreState;
+
+    if (!Array.isArray(options.responsive)) {
+      return;
+    }
+
+    const newOptions = options.responsive.reduce((acc, cur) => {
+      if (cur.condition(size)) {
+        return { ...acc, ...cur.options };
       }
-    });
+
+      return acc;
+    }, {});
+
+    this.store.dispatch('setOptions', Object.keys(newOptions).length ? newOptions : options);
   }
 
   handleEvent(event: MouseEvent) {
@@ -197,6 +226,8 @@ export default abstract class Chart<T extends Options> {
     this.initStore([root, seriesData, legend, layout, category]);
 
     this.store.dispatch('initChartSize', this.el);
+
+    this.resize();
   }
 
   draw() {

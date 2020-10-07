@@ -39,6 +39,8 @@ export default class AxisTitle extends Component {
     const titleOption = axes[this.name]?.title;
 
     if (!titleOption) {
+      this.models = [];
+
       return;
     }
 

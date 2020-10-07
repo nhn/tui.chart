@@ -18,9 +18,29 @@ import {
   StoreModule,
   ObserveFunc,
   Options,
+  RawSeries,
 } from '@t/store/store';
 
 import { isUndefined, forEach, pickPropertyWithMakeup, deepCopy } from '@src/helpers/utils';
+
+function getDefaultOptions(series: RawSeries) {
+  return {
+    chart: {
+      title: '',
+    },
+    legend: {
+      align: 'right',
+      showCheckbox: true,
+      visible: true,
+    },
+    circleLegend: { visible: !!series?.bubble },
+    exportMenu: { filename: 'toast-ui-chartdata', visible: true },
+    xAxis: { title: '' },
+    yAxis: { title: '' },
+    series: { selectable: false, dataLabels: { visible: false } },
+    responsive: true,
+  };
+}
 
 export default class Store<T extends Options> {
   state!: ChartState<T>;
@@ -33,6 +53,10 @@ export default class Store<T extends Options> {
 
   constructor(initStoreState: InitStoreState<T>) {
     this.initStoreState = deepCopy(initStoreState);
+    this.initStoreState.options = {
+      ...getDefaultOptions(this.initStoreState.series),
+      ...this.initStoreState.options,
+    };
 
     this.setRootState({});
   }

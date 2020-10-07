@@ -17,6 +17,8 @@ export default class CircleLegend extends Component {
     }
 
     if (!circleLegend.visible) {
+      this.models.circleLegend = [];
+
       return;
     }
 

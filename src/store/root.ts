@@ -1,4 +1,4 @@
-import { StoreModule } from '@t/store/store';
+import { StoreModule, Options } from '@t/store/store';
 import { Size } from '@t/options';
 
 const root: StoreModule = {
@@ -63,6 +63,9 @@ const root: StoreModule = {
           }, 0);
         }
       }
+    },
+    setOptions({ state }, options: Options) {
+      state.options = { ...state.options, ...options };
     },
   },
 };

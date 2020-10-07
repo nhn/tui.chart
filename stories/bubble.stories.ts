@@ -66,7 +66,44 @@ export const selectable = () => {
 export const responsive = () => {
   const { el } = createChart(
     lifeExpectancyPerGDPData,
-    { chart: { title: 'Life Expectancy per GDP' } },
+    {
+      chart: { title: 'Life Expectancy per GDP' },
+      xAxis: { title: 'GDP' },
+      yAxis: { title: 'Expectancy' },
+      series: { selectable: true },
+      responsive: [
+        {
+          condition: function ({ width: w }) {
+            return w <= 600;
+          },
+          options: {
+            legend: { align: 'bottom' },
+            circleLegend: { visible: false },
+            exportMenu: { visible: false },
+          },
+        },
+        {
+          condition: function ({ width: w }) {
+            return w <= 400;
+          },
+          options: {
+            legend: { visible: false },
+            circleLegend: { visible: false },
+            exportMenu: { visible: false },
+          },
+        },
+        {
+          condition: function ({ height: h }) {
+            return h <= 330;
+          },
+          options: {
+            xAxis: { title: '' },
+            yAxis: { title: '' },
+            circleLegend: { visible: false },
+          },
+        },
+      ],
+    },
     true
   );
 
