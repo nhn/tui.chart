@@ -156,6 +156,7 @@ export default class NestedPieSeries extends Component {
         style: ['hover'],
         seriesIndex: index,
         data: tooltipDataModels[alias][index],
+        color: getRGBA(m.color, 1),
       }))
     );
   }

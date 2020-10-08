@@ -126,18 +126,16 @@ export default class BulletSeries extends Component {
     const tooltipDataArr = this.makeTooltipModel(bulletData);
 
     this.responders = seriesModels.map((m, index) => {
-      const model = { ...m };
+      const model = { ...m, color: getRGBA(m.color, 1) };
 
       if (m.modelType === 'bullet') {
         model.style = ['shadow'];
         model.thickness = BOX_HOVER_THICKNESS;
       }
 
-      const data = tooltipDataArr[index];
-
       return {
         ...model,
-        data,
+        data: tooltipDataArr[index],
       };
     });
 

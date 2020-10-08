@@ -16,9 +16,6 @@ function createChart(data: NestedPieSeriesData, customOptions?: NestedPieChartOp
         height: 560,
         title: 'Usage share of web browsers',
       },
-      legend: {
-        visible: false,
-      },
     },
     customOptions || {}
   );
@@ -49,7 +46,6 @@ export const basic = () => {
         },
       },
     },
-    legend: { visible: true },
   });
 
   return el;
@@ -71,7 +67,6 @@ export const grouped = () => {
         },
       },
     },
-    legend: { visible: true },
   } as NestedPieChartOptions);
 
   return el;
@@ -106,7 +101,6 @@ export const dataLabels = () => {
         },
       },
     },
-    legend: { visible: true },
   });
 
   return el;

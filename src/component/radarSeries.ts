@@ -88,6 +88,7 @@ export default class RadarSeries extends Component {
     this.responders = seriesCircleModel.map((m, index) => ({
       ...m,
       data: tooltipDataArr[index],
+      color: getRGBA(m.color, 1),
     }));
   }
 

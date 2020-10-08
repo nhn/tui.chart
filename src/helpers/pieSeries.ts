@@ -64,11 +64,12 @@ export function getSemiCircleCenterY(rectHeight: number, clockwise: boolean) {
 }
 
 export function makePieTooltipData(seriesRawData: PieSeriesType[], category = ''): TooltipData[] {
-  return seriesRawData.map(({ data, name, color }) => ({
+  return seriesRawData.map(({ data, name, color, rootParentName }) => ({
     label: name,
     color: color!,
     value: data,
     category,
+    rootParentName,
   }));
 }
 

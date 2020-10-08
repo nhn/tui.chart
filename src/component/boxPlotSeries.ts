@@ -159,6 +159,7 @@ export default class BoxPlotSeries extends Component {
     return boxPlotModelData.map((m, index) => ({
       ...this.makeHoveredModel(m),
       data: tooltipDataArr[index],
+      color: getRGBA(m.color, 1),
     }));
   }
 

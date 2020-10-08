@@ -200,7 +200,13 @@ describe('basic', () => {
         alias: 'pie1',
         style: ['hover'],
         seriesIndex: 0,
-        data: { label: 'A', color: '#aaaaaa', value: 50, category: 'Category1' },
+        data: {
+          label: 'A',
+          color: '#aaaaaa',
+          value: 50,
+          category: 'Category1',
+          rootParentName: 'A',
+        },
       },
       {
         type: 'sector',
@@ -223,7 +229,13 @@ describe('basic', () => {
         alias: 'pie1',
         style: ['hover'],
         seriesIndex: 1,
-        data: { label: 'B', color: '#bbbbbb', value: 50, category: 'Category1' },
+        data: {
+          label: 'B',
+          color: '#bbbbbb',
+          value: 50,
+          category: 'Category1',
+          rootParentName: 'B',
+        },
       },
       {
         type: 'sector',
@@ -246,7 +258,13 @@ describe('basic', () => {
         alias: 'pie2',
         style: ['hover'],
         seriesIndex: 0,
-        data: { label: 'C', color: '#cccccc', value: 60, category: 'Category2' },
+        data: {
+          label: 'C',
+          color: '#cccccc',
+          value: 60,
+          category: 'Category2',
+          rootParentName: 'C',
+        },
       },
       {
         type: 'sector',
@@ -269,7 +287,13 @@ describe('basic', () => {
         alias: 'pie2',
         style: ['hover'],
         seriesIndex: 1,
-        data: { label: 'D', color: '#dddddd', value: 40, category: 'Category2' },
+        data: {
+          label: 'D',
+          color: '#dddddd',
+          value: 40,
+          category: 'Category2',
+          rootParentName: 'D',
+        },
       },
     ];
     expect(pieSeries.models).toEqual(result);

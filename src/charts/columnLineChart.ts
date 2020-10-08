@@ -17,6 +17,7 @@ import ZeroAxis from '@src/component/zeroAxis';
 import Axis from '@src/component/axis';
 import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
+import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import Tooltip from '@src/component/tooltip';
@@ -80,6 +81,7 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(AxisTitle, { name: 'secondaryYAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
