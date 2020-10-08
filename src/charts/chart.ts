@@ -9,7 +9,7 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined } from '@src/helpers/utils';
-import { ChartProps, Point, Size } from '@t/options';
+import { ChartProps, Point } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
