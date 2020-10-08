@@ -162,9 +162,7 @@ export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
   type: 'stackTotal';
 };
 
-export type PieSeriesModels = {
-  series: SectorModel[];
-};
+export type PieSeriesModels = Record<string, SectorModel[]>;
 
 export type SectorModel = {
   type: 'sector';

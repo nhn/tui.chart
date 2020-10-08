@@ -21,7 +21,7 @@ const nestedPieSeriesData: StoreModule = {
       const colorMap = {};
       let colorIdx = 0;
 
-      rawSeries.nestedPie!.forEach(({ name: alias, data }, seriesIndex) => {
+      rawSeries.pie!.forEach(({ name: alias, data }, seriesIndex) => {
         const originSeriesData = data.map((m) => {
           const { parentName, name: dataName } = m;
           const color = parentName && seriesIndex ? colorMap[parentName] : colors[colorIdx];
