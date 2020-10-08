@@ -210,11 +210,18 @@ function getRadialAxis(scale: ScaleData, plot: Rect): RadialAxisData {
 function makeDefaultAxisData(
   axis?: BaseAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions
 ): InitAxisData {
-  return {
+  const axisData: InitAxisData = {
     tickInterval: axis?.tick?.interval ?? 1,
     labelInterval: axis?.label?.interval ?? 1,
-    title: makeTitleOption(axis?.title),
   };
+
+  const title = makeTitleOption(axis?.title);
+
+  if (title) {
+    axisData.title = title;
+  }
+
+  return axisData;
 }
 
 function getInitialAxisData(options: Options) {

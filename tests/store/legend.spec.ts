@@ -37,11 +37,7 @@ describe('Legend Store', () => {
           iconType: 'line',
         },
       ],
-      showCheckbox: true,
       useSpectrumLegend: false,
-      visible: true,
-      align: 'right',
-      width: 38,
     });
   });
 

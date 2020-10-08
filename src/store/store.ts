@@ -23,7 +23,7 @@ import {
 
 import { isUndefined, forEach, pickPropertyWithMakeup, deepCopy } from '@src/helpers/utils';
 
-function getDefaultOptions(series: RawSeries) {
+function getDefaultOptions(series: RawSeries = {}) {
   return {
     chart: {
       title: '',
@@ -33,7 +33,7 @@ function getDefaultOptions(series: RawSeries) {
       showCheckbox: true,
       visible: true,
     },
-    circleLegend: { visible: !!series?.bubble },
+    circleLegend: { visible: !!series.bubble },
     exportMenu: { filename: 'toast-ui-chartdata', visible: true },
     xAxis: { title: '' },
     yAxis: { title: '' },

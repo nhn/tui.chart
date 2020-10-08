@@ -74,7 +74,7 @@ export const responsive = () => {
       responsive: [
         {
           condition: function ({ width: w }) {
-            return w <= 600;
+            return w > 400 && w <= 600;
           },
           options: {
             legend: { align: 'bottom' },
