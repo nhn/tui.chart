@@ -727,12 +727,19 @@ export default class BoxSeries extends Component {
     if (this.selectable) {
       let models;
       if (this.eventDetectType === 'grouped') {
-        models = this.getGroupedRect(responders as RectResponderModel[], true);
+        models = [
+          ...this.getGroupedRect(responders as RectResponderModel[], true),
+          ...this.getRectModelsFromRectResponders(responders as RectResponderModel[]),
+        ];
       } else {
         models = responders as RectResponderModel[];
       }
 
-      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
+      this.eventBus.emit('renderSelectedSeries', {
+        models,
+        name: this.name,
+        eventDetectType: this.eventDetectType,
+      });
       this.eventBus.emit('needDraw');
     }
   }

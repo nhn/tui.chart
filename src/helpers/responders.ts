@@ -106,7 +106,7 @@ export function isClickSameNameResponder<
   T extends HeatmapRectResponderModel | BulletResponderModel
 >(responders: T[], selectedSeries?: T[]) {
   let same = false;
-  if (responders.length && selectedSeries && selectedSeries.length) {
+  if (responders.length && selectedSeries?.length) {
     same = responders[0].name === selectedSeries[0].name;
   }
 
@@ -118,12 +118,7 @@ export function isClickSameCircleResponder(
   selectedSeries?: CircleResponderModel[]
 ) {
   let same = false;
-  if (
-    responders.length &&
-    selectedSeries &&
-    selectedSeries.length &&
-    responders.length === selectedSeries.length
-  ) {
+  if (responders.length && selectedSeries?.length && responders.length === selectedSeries.length) {
     same = responders.reduce<boolean>((acc, cur, idx) => {
       return (
         acc &&
@@ -140,12 +135,7 @@ export function isClickSameDataResponder<
   T extends RectResponderModel | BoxPlotResponderModel | SectorResponderModel
 >(responders: T[], selectedSeries?: T[]) {
   let same = false;
-  if (
-    responders.length &&
-    selectedSeries &&
-    selectedSeries.length &&
-    responders.length === selectedSeries.length
-  ) {
+  if (responders.length && selectedSeries?.length && responders.length === selectedSeries.length) {
     same = responders.reduce<boolean>((acc, cur, idx) => {
       return (
         acc &&
@@ -153,6 +143,18 @@ export function isClickSameDataResponder<
         cur.data?.category === selectedSeries[idx].data?.category
       );
     }, true);
+  }
+
+  return same;
+}
+
+export function isClickSameGroupedRectResponder(
+  responders: RectResponderModel[],
+  selectedSeries?: RectResponderModel[]
+) {
+  let same = false;
+  if (responders.length && selectedSeries?.length) {
+    same = responders[0].index === selectedSeries[0].index;
   }
 
   return same;

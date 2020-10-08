@@ -49,7 +49,9 @@ export const positive = () => {
 };
 
 export const selectable = () => {
-  const { el } = createChart(budgetData, { series: { selectable: true } });
+  const { el } = createChart(budgetData, {
+    series: { selectable: true, eventDetectType: 'grouped' },
+  });
 
   return el;
 };

@@ -12,25 +12,32 @@ import {
 import {
   isClickSameCircleResponder,
   isClickSameDataResponder,
+  isClickSameGroupedRectResponder,
   isClickSameNameResponder,
 } from '@src/helpers/responders';
 import { includes } from '@src/helpers/utils';
 import { TooltipModelName } from '@t/components/tooltip';
+import { LineTypeEventDetectType } from '@t/options';
 
 interface SelectedSeriesEventModel {
   models: ResponderModel[];
   name: string;
+  eventDetectType?: LineTypeEventDetectType;
 }
 
 export type ResponderSeriesModel = { [key in TooltipModelName]: ResponderModel[] };
 
+type ActiveSeriesNames = { [key in TooltipModelName]: string[] };
+
 export default class SelectedSeries extends Component {
   models: ResponderSeriesModel = {} as ResponderSeriesModel;
+
+  activeSeriesNames: ActiveSeriesNames = {} as ActiveSeriesNames;
 
   isShow = false;
 
   // eslint-disable-next-line complexity
-  isClickSameSeries({ models, name }: SelectedSeriesEventModel) {
+  isClickSameSeries({ models, name, eventDetectType }: SelectedSeriesEventModel) {
     switch (name) {
       case 'heatmap':
         return isClickSameNameResponder<HeatmapRectResponderModel>(
@@ -59,10 +66,15 @@ export default class SelectedSeries extends Component {
         );
       case 'column':
       case 'bar':
-        return isClickSameDataResponder<RectResponderModel>(
-          models as RectResponderModel[],
-          this.models[name] as RectResponderModel[]
-        );
+        return eventDetectType === 'grouped'
+          ? isClickSameGroupedRectResponder(
+              models as RectResponderModel[],
+              this.models[name] as RectResponderModel[]
+            )
+          : isClickSameDataResponder<RectResponderModel>(
+              models as RectResponderModel[],
+              this.models[name] as RectResponderModel[]
+            );
       case 'boxPlot':
         return isClickSameDataResponder<BoxPlotResponderModel>(
           models as BoxPlotResponderModel[],
@@ -103,20 +115,35 @@ export default class SelectedSeries extends Component {
     return names;
   }
 
-  renderSelectedSeries = (selectedSeriesEventModel: SelectedSeriesEventModel) => {
-    const { models, name } = selectedSeriesEventModel;
+  getSelectedSeriesModels(selectedSeriesEventModel: SelectedSeriesEventModel) {
+    const { models, eventDetectType, name } = selectedSeriesEventModel;
+    let selectedSeriesModels = models;
 
-    this.models[name] = this.isClickSameSeries(selectedSeriesEventModel) ? [] : models;
+    if ((name === 'column' || name === 'bar') && eventDetectType === 'grouped') {
+      selectedSeriesModels = models.filter((model) => !(model as RectResponderModel).data);
+    }
+
+    return selectedSeriesModels;
+  }
+
+  renderSelectedSeries = (selectedSeriesEventModel: SelectedSeriesEventModel) => {
+    const { name } = selectedSeriesEventModel;
+    const models = this.getSelectedSeriesModels(selectedSeriesEventModel);
+
+    this.models[name] = this.isClickSameSeries({ ...selectedSeriesEventModel, models })
+      ? []
+      : models;
     this.isShow = !!Object.values(this.models).flatMap((value) => value).length;
+    this.activeSeriesNames[name] = this.getSeriesNames(selectedSeriesEventModel.models, name);
     this.setActiveState();
   };
 
   private setActiveState() {
     if (this.isShow) {
       this.store.dispatch('setAllLegendActiveState', false);
-      Object.keys(this.models).forEach((name) => {
-        this.getSeriesNames(this.models[name], name).forEach((seriesName) => {
-          this.store.dispatch('setLegendActiveState', { name: seriesName, active: true });
+      Object.values(this.activeSeriesNames).forEach((names) => {
+        names.forEach((name) => {
+          this.store.dispatch('setLegendActiveState', { name, active: true });
         });
       });
     } else {
