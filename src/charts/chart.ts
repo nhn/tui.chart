@@ -14,6 +14,7 @@ import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
 import { RespondersModel } from '@t/components/series';
+import responsive from '@src/store/responsive';
 
 export const DEFAULT_ANIM_DURATION = 1000;
 
@@ -120,7 +121,6 @@ export default abstract class Chart<T extends Options> {
       return;
     }
 
-    this.setOptions({ width, height });
     this.store.dispatch('setChartSize', { width, height });
   }
 
@@ -132,24 +132,6 @@ export default abstract class Chart<T extends Options> {
         this.resize();
       }, 100)
     );
-  }
-
-  setOptions(size: Size) {
-    const { options } = this.store.initStoreState;
-
-    if (!Array.isArray(options.responsive)) {
-      return;
-    }
-
-    const newOptions = options.responsive.reduce((acc, cur) => {
-      if (cur.condition(size)) {
-        return { ...acc, ...cur.options };
-      }
-
-      return acc;
-    }, {});
-
-    this.store.dispatch('setOptions', Object.keys(newOptions).length ? newOptions : options);
   }
 
   handleEvent(event: MouseEvent) {
@@ -223,7 +205,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   protected initialize() {
-    this.initStore([root, seriesData, legend, layout, category]);
+    this.initStore([root, responsive, seriesData, legend, layout, category]);
 
     this.store.dispatch('initChartSize', this.el);
 

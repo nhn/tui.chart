@@ -21,7 +21,6 @@ import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
 import { extend } from '@src/store/store';
-import { circleLegend } from '@src/brushes/circleLegend';
 
 type LegendLabels = {
   label: string;
@@ -181,20 +180,26 @@ const legend: StoreModule = {
   },
   action: {
     setLegendLayout({ state }) {
-      const { options, legend: legendData, series } = state;
+      const { legend: legendData, series, responsiveOptions } = state;
 
-      const align = getAlign(options);
-      const visible = showLegend(options, series);
-      const checkboxVisible = showCheckbox(options);
-      const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
+      const align = getAlign(responsiveOptions);
+      const visible = showLegend(responsiveOptions, series);
+      const checkboxVisible = showCheckbox(responsiveOptions);
+      const initialWidth = Math.min(getInitialWidth(responsiveOptions) / 10, 150);
       const legendWidths = legendData.data.map(({ width }) => width);
-      const legendWidth = calculateLegendWidth(initialWidth, legendWidths, options, align, visible);
+      const legendWidth = calculateLegendWidth(
+        initialWidth,
+        legendWidths,
+        responsiveOptions,
+        align,
+        visible
+      );
 
       const circleLegendWidth = isVerticalAlign(align)
         ? initialWidth
         : Math.max(initialWidth, legendWidth);
       const circleLegendVisible = series.bubble
-        ? showCircleLegend(options as BubbleChartOptions)
+        ? showCircleLegend(responsiveOptions as BubbleChartOptions)
         : false;
 
       extend(state.legend, {

@@ -294,26 +294,26 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { scale, options, series, layout, zoomRange } = state;
+      const { scale, series, layout, zoomRange, responsiveOptions } = state;
       const { xAxis, yAxis, plot } = layout;
 
-      const labelOnYAxis = isLabelAxisOnYAxis(series, options);
+      const labelOnYAxis = isLabelAxisOnYAxis(series, responsiveOptions);
       const categories = (state.categories as string[]) ?? [];
       const rawCategories = (state.rawCategories as string[]) ?? [];
 
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
+      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, responsiveOptions);
       const { valueAxisName, labelAxisName } = getAxisName(labelAxisOnYAxis);
       const { valueSizeKey, labelSizeKey } = getSizeKey(labelAxisOnYAxis);
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;
 
-      const initialAxisData = getInitialAxisData(options);
+      const initialAxisData = getInitialAxisData(responsiveOptions);
 
       const valueAxisData = getValueAxisData({
         scale: scale[valueAxisName],
         axisSize: valueAxisSize,
-        options,
+        options: responsiveOptions,
         series,
         centerYAxis: centerYAxis
           ? {
@@ -328,7 +328,7 @@ const axes: StoreModule = {
         axisSize: labelAxisSize,
         categories,
         rawCategories,
-        options,
+        options: responsiveOptions,
         series,
         zoomRange,
         initialAxisData: initialAxisData[labelAxisName],

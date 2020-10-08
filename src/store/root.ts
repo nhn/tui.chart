@@ -64,9 +64,6 @@ const root: StoreModule = {
         }
       }
     },
-    setOptions({ state }, options: Options) {
-      state.options = { ...state.options, ...options };
-    },
   },
 };
 
