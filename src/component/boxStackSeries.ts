@@ -141,7 +141,7 @@ export default class BoxStackSeries extends BoxSeries {
     };
 
     const { series, connector } = this.renderStackSeriesModel(stackSeriesData, renderOptions);
-    const hoveredSeries = this.renderHoveredSeriesModel(series);
+
     const clipRect = this.renderClipRectAreaModel();
 
     const tooltipData: TooltipData[] = this.getTooltipData(stackSeriesData, categories);
@@ -171,13 +171,7 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
 
-    this.responders =
-      this.eventDetectType === 'grouped'
-        ? makeRectResponderModel(this.rect, this.isBar ? axes.yAxis! : axes.xAxis!, !this.isBar)
-        : hoveredSeries.map((m, index) => ({
-            ...m,
-            data: tooltipData[index],
-          }));
+    this.responders = this.getBoxSeriesResponders(series, tooltipData, axes);
   }
 
   renderStackSeriesModel(seriesData: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
