@@ -1,8 +1,35 @@
-interface SeriesTheme {
-  colors?: string[];
+type SeriesTheme = LineChartSeriesTheme | AreaChartSeriesTheme | ComboChartSeriesTheme;
+type Theme = {
+  series: {
+    line?: LineChartSeriesTheme;
+    area?: AreaChartSeriesTheme;
+    scatter?: BaseSeriesTheme;
+    heatmap?: HeatmapChartSeriesTheme;
+    treemap?: TreemapChartSeriesTheme;
+  };
+};
+
+type ComboChartSeriesTheme =
+  | NestedPieChartSeriesTheme
+  | LineScatterChartSeriesTheme
+  | ColumnLineChartSeriesTheme
+  | LineAreaChartSeriesTheme;
+
+interface BaseSeriesTheme {
+  colors: string[];
 }
 
-interface LineChartSeriesTheme extends SeriesTheme {
+interface TreemapChartSeriesTheme extends BaseSeriesTheme {
+  startColor: string;
+  endColor: string;
+}
+
+interface HeatmapChartSeriesTheme extends BaseSeriesTheme {
+  startColor: string;
+  endColor: string;
+}
+
+interface LineChartSeriesTheme extends BaseSeriesTheme {
   lineWidth?: number;
 
   select?: {
@@ -20,17 +47,29 @@ interface LineChartSeriesTheme extends SeriesTheme {
   };
 }
 
-interface AreaChartSeriesTheme extends SeriesTheme {
+interface AreaChartSeriesTheme extends BaseSeriesTheme {
   areaOpacity?: number;
 }
 
-interface LineAreaChartSeriesTheme extends SeriesTheme {
+type NestedPieChartSeriesTheme = BaseSeriesTheme & Record<string, BaseSeriesTheme>;
+
+interface LineScatterChartSeriesTheme extends BaseSeriesTheme {
+  line?: BaseSeriesTheme;
+  scatter?: BaseSeriesTheme;
+}
+
+interface ColumnLineChartSeriesTheme extends BaseSeriesTheme {
+  column?: BaseSeriesTheme;
+  line?: BaseSeriesTheme;
+}
+
+interface LineAreaChartSeriesTheme extends BaseSeriesTheme {
   line?: LineChartSeriesTheme;
   area?: AreaChartSeriesTheme;
 }
 
 interface BaseThemeOptions {
-  series?: SeriesTheme;
+  series?: BaseSeriesTheme;
   chart?: {};
   plot?: {};
   xAxis?: {};

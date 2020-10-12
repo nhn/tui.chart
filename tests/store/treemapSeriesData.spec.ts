@@ -34,7 +34,9 @@ describe('treemapSeriesData Store', () => {
       },
       theme: {
         series: {
-          colors: ['#00a9ff', '#ffb840'],
+          treemap: {
+            colors: ['#00a9ff', '#ffb840'],
+          },
         },
       },
       treemapSeries: [] as TreemapSeriesData[],

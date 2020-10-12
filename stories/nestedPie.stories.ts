@@ -127,3 +127,49 @@ export const selectable = () => {
 
   return el;
 };
+
+// export const theme = () => {
+//   const { el } = createChart(groupedBrowserUsageData, {
+//     series: {
+//       browsers: {
+//         radiusRange: {
+//           inner: '30%',
+//           outer: '60%',
+//         },
+//       },
+//       versions: {
+//         radiusRange: {
+//           inner: '70%',
+//           outer: '100%',
+//         },
+//       },
+//     },
+//     theme: {
+//       series: {
+//         browsers: {
+//           colors: ['#eef4c4', '#77543f', '#b7c72e', '#447bal', '#30076f', '#clf3f1', '#f75294'],
+//         },
+//         version: {
+//           colors: [
+//             '#cddbda',
+//             '#efd1d1',
+//             '#ea005e',
+//             '#fece2f',
+//             '#fc6104',
+//             '#dd2429',
+//             '#ebc7ff',
+//             '#ebc7ff',
+//             '#ebc7ff',
+//             '#fece2f',
+//             '#dd2429',
+//             '#ff8d3a',
+//             '#fc6104',
+//             '#5ac18e',
+//           ],
+//         },
+//       },
+//     },
+//   } as NestedPieChartOptions);
+//
+//   return el;
+// };

@@ -1,6 +1,6 @@
 import Component from './component';
 import { HeatmapChartOptions, Size } from '@t/options';
-import { ChartState, HeatmapSeriesData, ScaleData, Theme } from '@t/store/store';
+import { ChartState, HeatmapSeriesData, ScaleData } from '@t/store/store';
 import {
   HeatmapRectModel,
   HeatmapRectModels,
@@ -77,7 +77,7 @@ export default class HeatmapSeries extends Component {
     theme: Theme,
     colorValueScale: ScaleData
   ): HeatmapRectModel[] {
-    const { startColor, endColor } = theme.series;
+    const { startColor, endColor } = theme.series.heatmap!;
     const startRGB = hexToRGB(startColor) as RGB;
     const distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
     const { height, width } = cellSize;

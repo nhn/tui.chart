@@ -102,8 +102,9 @@ export const theme = () => {
         colors: ['#957DAD'],
       },
       area: {
-        colors: ['#FEC8D8'],
+        colors: ['#FEE333'],
       },
+      colors: ['#FEC8D8'],
     },
   };
 
