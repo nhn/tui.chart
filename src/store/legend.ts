@@ -1,4 +1,4 @@
-import { LegendIconType, Options, RawSeries, StoreModule, ChartType, Series } from '@t/store/store';
+import { LegendIconType, Options, RawSeries, StoreModule, ChartType } from '@t/store/store';
 import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
 import { isUndefined, sum, includes } from '@src/helpers/utils';
 import {
@@ -11,7 +11,6 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
-import { calibrateBoxStackDrawingValue } from '@src/helpers/boxSeriesCalculator';
 
 type LegendLabels = {
   label: string;
