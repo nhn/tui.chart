@@ -115,16 +115,14 @@ export default class ExportMenu extends Component {
     this.fileName = this.getFileName(options?.exportMenu?.filename || chart.title);
     this.exportMenuEl = this.getExportMenuEl(chart.width);
     this.rect = layout.exportMenu;
-    this.models = {
-      exportMenuButton: [
-        {
-          type: 'exportMenuButton',
-          x: 0,
-          y: 0,
-          opened: this.opened,
-        },
-      ],
-    };
+    this.models.exportMenuButton = [
+      {
+        type: 'exportMenuButton',
+        x: 0,
+        y: 0,
+        opened: this.opened,
+      },
+    ];
 
     this.responders = [
       {
