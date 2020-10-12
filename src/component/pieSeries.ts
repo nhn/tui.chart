@@ -206,6 +206,7 @@ export default class PieSeries extends Component {
       style: ['hover'],
       seriesIndex: index,
       data: tooltipDataModel[index],
+      color: getRGBA(m.color, 1),
     }));
   }
 
@@ -359,17 +360,18 @@ export default class PieSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
+      this.eventBus.emit('renderSelectedSeries', {
+        models: responders,
+        name: this.name,
+        alias: this.alias,
+      });
       this.eventBus.emit('needDraw');
     }
   }
 
   onMouseoutComponent() {
-    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
-    this.eventBus.emit('renderHoveredSeries', {
-      models: [],
-      name: this.name,
-    });
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.alias ?? this.name });
+    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.alias ?? this.name });
 
     this.eventBus.emit('needDraw');
   }

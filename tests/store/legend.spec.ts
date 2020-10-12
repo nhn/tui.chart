@@ -151,7 +151,7 @@ describe('Legend Store', () => {
           series: { grouped: true },
         } as NestedPieChartOptions,
         series: {
-          nestedPie: [
+          pie: [
             {
               name: 'pie1',
               data: [

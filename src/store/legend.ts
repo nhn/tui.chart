@@ -11,6 +11,7 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
+import { calibrateBoxStackDrawingValue } from '@src/helpers/boxSeriesCalculator';
 
 type LegendLabels = {
   label: string;

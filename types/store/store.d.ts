@@ -46,13 +46,12 @@ type ChartSeriesMap = {
   column: BoxSeriesType<BoxSeriesDataType>[];
   area: AreaSeriesType[];
   bubble: BubbleSeriesType[];
-  pie: PieSeriesType[];
+  pie: PieSeriesType[] | NestedPieSeriesType[];
   radar: RadarSeriesType[];
   boxPlot: BoxPlotSeriesType[];
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
   heatmap: HeatmapSeriesType[];
-  nestedPie: NestedPieSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -81,13 +80,12 @@ export type ChartOptionsMap = {
   area: AreaChartOptions;
   bubble: BubbleChartOptions;
   radar: RadarChartOptions;
-  pie: PieChartOptions;
+  pie: PieChartOptions | NestedPieChartOptions;
   boxPlot: BoxPlotChartOptions;
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
   heatmap: HeatmapChartOptions;
-  nestedPie: NestedPieChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
