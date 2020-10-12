@@ -222,11 +222,21 @@ export const responsive = () => {
       responsive: [
         {
           condition: function ({ width: w }) {
-            return w <= 800;
+            return w <= 600;
           },
           options: {
             legend: {
               align: 'bottom',
+            },
+          },
+        },
+        {
+          condition: function ({ width: w }) {
+            return w <= 400;
+          },
+          options: {
+            legend: {
+              visible: false,
             },
             exportMenu: {
               visible: false,

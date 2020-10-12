@@ -74,17 +74,16 @@ export const responsive = () => {
       responsive: [
         {
           condition: function ({ width: w }) {
-            return w > 400 && w <= 600;
+            return w > 500 && w <= 700;
           },
           options: {
             legend: { align: 'bottom' },
             circleLegend: { visible: false },
-            exportMenu: { visible: false },
           },
         },
         {
           condition: function ({ width: w }) {
-            return w <= 400;
+            return w <= 500;
           },
           options: {
             legend: { visible: false },
@@ -100,6 +99,7 @@ export const responsive = () => {
             xAxis: { title: '' },
             yAxis: { title: '' },
             circleLegend: { visible: false },
+            exportMenu: { visible: false },
           },
         },
       ],

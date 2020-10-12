@@ -4,6 +4,7 @@ import layout from '@src/store/layout';
 import seriesData from '@src/store/seriesData';
 import category from '@src/store/category';
 import legend from '@src/store/legend';
+import optionsStore, { useResponsive } from '@src/store/optionsData';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
@@ -14,7 +15,6 @@ import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
 import { RespondersModel } from '@t/components/series';
-import responsive from '@src/store/responsive';
 
 export const DEFAULT_ANIM_DURATION = 1000;
 
@@ -108,7 +108,7 @@ export default abstract class Chart<T extends Options> {
         this.painter.setup();
       });
 
-      if (options?.responsive ?? true) {
+      if (useResponsive(options)) {
         this.setResizeEvent();
       }
     }, 0);
@@ -205,7 +205,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   protected initialize() {
-    this.initStore([root, responsive, seriesData, legend, layout, category]);
+    this.initStore([root, optionsStore, seriesData, legend, layout, category]);
 
     this.store.dispatch('initChartSize', this.el);
 

@@ -32,7 +32,6 @@ import {
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { makeRectResponderModel } from '@src/helpers/responders';
 import { RectDataLabel } from '@t/components/dataLabels';
 
 type RenderOptions = {

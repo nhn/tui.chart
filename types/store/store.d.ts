@@ -133,7 +133,7 @@ export interface StoreModule extends StoreOptions {
     | 'legend'
     | 'circleLegend'
     | 'colorValueScale'
-    | 'responsive';
+    | 'optionsData';
 }
 
 export interface SeriesTheme {
@@ -236,7 +236,6 @@ export type Categories = string[] | HeatmapCategoriesType;
 export type ChartOptions = {
   title?: string | TitleOption;
   animation?: boolean | { duration: number };
-  responsive?: boolean;
 } & Size;
 
 export interface ChartState<T extends Options> {
@@ -268,8 +267,7 @@ export interface ChartState<T extends Options> {
   treemapZoomId: TreemapZoomId;
   heatmapSeries: HeatmapSeriesData[];
   nestedPieSeries: Record<string, NestedPieSeriesDataType>;
-  responsive: Responsive;
-  responsiveOptions: T;
+  prevOptions: T;
 }
 
 type Responsive = {};
