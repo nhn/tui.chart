@@ -270,8 +270,6 @@ export interface ChartState<T extends Options> {
   prevOptions: T;
 }
 
-type Responsive = {};
-
 export type TreemapZoomId = {
   cur: string;
   prev: string;
