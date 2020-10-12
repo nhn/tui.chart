@@ -33,8 +33,8 @@ import {
   HeatmapSeriesType,
   HeatmapCategoriesType,
   HeatmapChartOptions,
-  NestedPieSeriesType,
   NestedPieChartOptions,
+  NestedPieSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -275,7 +275,7 @@ export type HeatmapSeriesData = {
 }[];
 
 type NestedPieSeriesDataType = {
-  data: ChartSeriesMap['pie'];
+  data: PieSeriesType[];
 };
 
 export type StackTotal = {

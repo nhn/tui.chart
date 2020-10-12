@@ -14,7 +14,7 @@ describe('NestedPieSeriesData store', () => {
     it('should make nested pie series data', () => {
       const state = {
         series: {
-          nestedPie: {
+          pie: {
             data: [
               {
                 name: 'pie1',
@@ -51,7 +51,7 @@ describe('NestedPieSeriesData store', () => {
 
       const initStoreState = {
         series: {
-          nestedPie: [
+          pie: [
             {
               name: 'pie1',
               data: [
@@ -113,7 +113,7 @@ describe('NestedPieSeriesData store', () => {
     it('should make nested pie series data for using grouped option', () => {
       const state = {
         series: {
-          nestedPie: {
+          pie: {
             data: [
               {
                 name: 'pie1',
@@ -153,7 +153,7 @@ describe('NestedPieSeriesData store', () => {
 
       const initStoreState = {
         series: {
-          nestedPie: [
+          pie: [
             {
               name: 'pie1',
               data: [

@@ -1,5 +1,5 @@
 import Component from './component';
-import { PieChartOptions, PieSeriesType } from '@t/options';
+import { PieChartOptions, PieSeriesType, NestedPieSeriesType } from '@t/options';
 import { ChartState } from '@t/store/store';
 import { SectorModel, PieSeriesModels, SectorResponderModel } from '@t/components/series';
 import { getRGBA, getColorSpectrumBrightnessAlpha } from '@src/helpers/color';

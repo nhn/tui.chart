@@ -1,8 +1,11 @@
 import { StoreModule, RawSeries } from '@t/store/store';
 import { extend } from '@src/store/store';
+import { NestedPieSeriesType } from '@t/options';
 
 function findRootName(rawSeries: RawSeries, seriesIndex: number, parentName: string) {
-  const item = rawSeries.nestedPie?.[seriesIndex].data.find(({ name }) => name === parentName);
+  const item = (rawSeries.pie as NestedPieSeriesType[])?.[seriesIndex].data.find(
+    ({ name }) => name === parentName
+  );
 
   return item?.parentName ? findRootName(rawSeries, seriesIndex - 1, item.parentName) : parentName;
 }
