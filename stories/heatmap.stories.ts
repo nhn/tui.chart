@@ -86,3 +86,16 @@ export const datetimeCategory = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    theme: {
+      series: {
+        startColor: '#F3FFE3',
+        endColor: '#FF9CEE',
+      },
+    },
+  });
+
+  return el;
+};

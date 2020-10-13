@@ -1,12 +1,38 @@
-type SeriesTheme = LineChartSeriesTheme | AreaChartSeriesTheme | ComboChartSeriesTheme;
-type Theme = {
-  series: {
-    line?: LineChartSeriesTheme;
-    area?: AreaChartSeriesTheme;
-    scatter?: BaseSeriesTheme;
-    heatmap?: HeatmapChartSeriesTheme;
-    treemap?: TreemapChartSeriesTheme;
+type SeriesThemeMap = {
+  line?: LineChartSeriesTheme;
+  area?: AreaChartSeriesTheme;
+  scatter?: BaseSeriesTheme;
+  heatmap?: HeatmapChartSeriesTheme;
+  treemap?: TreemapChartSeriesTheme;
+  bar: BaseSeriesTheme;
+  column: BaseSeriesTheme;
+  bubble: BaseSeriesTheme;
+  pie: BaseSeriesTheme;
+  radar: BaseSeriesTheme;
+  boxPlot: BaseSeriesTheme;
+  bullet: BaseSeriesTheme;
+  nestedPie: BaseSeriesTheme;
+};
+
+type SeriesTheme =
+  | LineChartSeriesTheme
+  | AreaChartSeriesTheme
+  | ComboChartSeriesTheme
+  | BaseSeriesTheme
+  | HeatmapChartSeriesTheme
+  | TreemapChartSeriesTheme;
+
+type ChartTheme = {
+  title: {
+    fontSize: number;
+    fontFamily: string;
+    fontWeight: string;
   };
+};
+
+type Theme = {
+  series: SeriesThemeMap;
+  chart: ChartTheme;
 };
 
 type ComboChartSeriesTheme =

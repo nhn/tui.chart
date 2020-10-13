@@ -1,60 +1,78 @@
-import { Options, RawSeries, StoreModule } from '@t/store/store';
-import { deepMergedCopy, omit } from '@src/helpers/utils';
-
-const defaultColors = [
-  '#00a9ff',
-  '#ffb840',
-  '#ff5a46',
-  '#00bd9f',
-  '#785fff',
-  '#f28b8c',
-  '#989486',
-  '#516f7d',
-  '#29dbe3',
-  '#dddddd',
-  '#64e38b',
-  '#e3b664',
-  '#fB826e',
-  '#64e3C2',
-  '#f66efb',
-  '#e3cd64',
-  '#82e364',
-  '#8570ff',
-  '#e39e64',
-  '#fa5643',
-  '#7a4b46',
-  '#81b1c7',
-  '#257a6c',
-  '#58527a',
-  '#fbb0b0',
-  '#c7c7c7',
-];
+import { ChartType, Options, RawSeries, StoreModule } from '@t/store/store';
+import { deepMergedCopy, includes, omit } from '@src/helpers/utils';
 
 const defaultTheme = {
   series: {
+    colors: [
+      '#00a9ff',
+      '#ffb840',
+      '#ff5a46',
+      '#00bd9f',
+      '#785fff',
+      '#f28b8c',
+      '#989486',
+      '#516f7d',
+      '#29dbe3',
+      '#dddddd',
+      '#64e38b',
+      '#e3b664',
+      '#fB826e',
+      '#64e3C2',
+      '#f66efb',
+      '#e3cd64',
+      '#82e364',
+      '#8570ff',
+      '#e39e64',
+      '#fa5643',
+      '#7a4b46',
+      '#81b1c7',
+      '#257a6c',
+      '#58527a',
+      '#fbb0b0',
+      '#c7c7c7',
+    ],
     startColor: '#ffe98a',
     endColor: '#d74177',
   },
+  chart: {
+    title: {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: '500',
+    },
+  },
 };
 
-function makeDefaultTheme(series: RawSeries) {
-  // 차트별 디폴트 테마를 만들어야 하나..
-  const theme = { ...defaultTheme };
+function getSeriesTheme(seriesName: ChartType) {
+  const defaultSeriesTheme = omit(defaultTheme.series, 'colors');
 
-  const defaultSeriesOptions = { ...theme.series };
-  theme.series = {};
+  if (includes(['line', 'area'], seriesName)) {
+    return omit(defaultSeriesTheme, 'startColor', 'endColor');
+  }
 
-  Object.keys(series).forEach((seriesName) => {
-    theme.series[seriesName] = { ...defaultSeriesOptions };
-  });
-
-  return theme;
+  return defaultSeriesTheme;
 }
 
-function getCommonSeriesOptions(options: Options, series: RawSeries) {
+function getDefaultTheme(series: RawSeries): Theme {
+  const theme = omit(defaultTheme, 'series') as Theme;
+  theme.series = {} as SeriesThemeMap;
+  const seriesNames = Object.keys(series) as ChartType[];
+
+  return seriesNames.reduce<Theme>((acc, seriesName) => {
+    return {
+      ...acc,
+      series: {
+        ...acc.series,
+        [seriesName]: getSeriesTheme(seriesName),
+      },
+    };
+  }, theme);
+}
+
+function getCommonSeriesOptions(options: Options, series: RawSeries): SeriesTheme {
   const theme = options?.theme;
   if (!theme?.series) {
-    return {};
+    return {} as SeriesTheme;
   }
 
   const seriesNames = Object.keys(series);
@@ -107,7 +125,12 @@ function getThemeOptionsWithSeriesName(
 
 function setColors(theme, series: RawSeries, commonSeriesOptions: SeriesTheme) {
   let index = 0;
-  const commonColorsOption = [...(commonSeriesOptions?.colors ?? []), ...defaultColors];
+  const commonColorsOption = [
+    ...(commonSeriesOptions?.colors ?? []),
+    ...defaultTheme.series.colors,
+  ];
+
+  console.log(theme);
 
   Object.keys(series).forEach((seriesName) => {
     const size = series[seriesName].length;
@@ -118,11 +141,11 @@ function setColors(theme, series: RawSeries, commonSeriesOptions: SeriesTheme) {
   });
 }
 
-function getTheme(options: Options, series: RawSeries) {
-  const commonSeriesOptions = getCommonSeriesOptions(options, series);
+function getTheme(options: Options, series: RawSeries): Theme {
+  const commonSeriesOptions: SeriesTheme = getCommonSeriesOptions(options, series);
 
   const theme = deepMergedCopy(
-    makeDefaultTheme(series),
+    getDefaultTheme(series),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions)
   );
 
