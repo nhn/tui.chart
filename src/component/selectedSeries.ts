@@ -8,11 +8,13 @@ import {
   RectResponderModel,
   ResponderModel,
   SectorResponderModel,
+  TreemapRectResponderModel,
 } from '@t/components/series';
 import {
   isClickSameCircleResponder,
   isClickSameDataResponder,
   isClickSameGroupedRectResponder,
+  isClickSameLabelResponder,
   isClickSameNameResponder,
 } from '@src/helpers/responders';
 import { includes } from '@src/helpers/utils';
@@ -80,6 +82,11 @@ export default class SelectedSeries extends Component {
           models as BoxPlotResponderModel[],
           this.models[name] as BoxPlotResponderModel[]
         );
+      case 'treemap':
+        return isClickSameLabelResponder(
+          models as TreemapRectResponderModel[],
+          this.models[name] as TreemapRectResponderModel[]
+        );
       default:
         return false;
     }
@@ -138,6 +145,10 @@ export default class SelectedSeries extends Component {
     this.setActiveState();
   };
 
+  resetSelectedSeries = () => {
+    this.models = {} as ResponderSeriesModel;
+  };
+
   private setActiveState() {
     if (this.isShow) {
       this.store.dispatch('setAllLegendActiveState', false);
@@ -156,6 +167,7 @@ export default class SelectedSeries extends Component {
     this.type = 'selectedSeries';
     this.name = 'selectedSeries';
     this.eventBus.on('renderSelectedSeries', this.renderSelectedSeries);
+    this.eventBus.on('resetSelectedSeries', this.resetSelectedSeries);
   }
 
   render({ layout }: ChartState<Options>) {

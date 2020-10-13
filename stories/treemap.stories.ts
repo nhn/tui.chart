@@ -127,3 +127,19 @@ export const colorValueZoom = () => {
 
   return el;
 };
+
+export const selectable = () => {
+  const { el } = createChart(usedDiskSpaceData, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+      zoomable: true,
+      selectable: true,
+    },
+    chart: { title: 'Used disk space' },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+  });
+
+  return el;
+};

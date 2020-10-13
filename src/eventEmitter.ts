@@ -7,6 +7,7 @@ type EventType =
   | 'seriesPointHovered'
   | 'renderHoveredSeries'
   | 'renderSelectedSeries'
+  | 'resetSelectedSeries'
   | 'clickLegendCheckbox'
   | 'clickLegendLabel'
   | 'animationCompleted'
