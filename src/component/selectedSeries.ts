@@ -23,6 +23,7 @@ interface SelectedSeriesEventModel {
   models: ResponderModel[];
   name: string;
   eventDetectType?: LineTypeEventDetectType;
+  alias?: string;
 }
 
 export type ResponderSeriesModel = { [key in TooltipModelName]: ResponderModel[] };
@@ -37,7 +38,7 @@ export default class SelectedSeries extends Component {
   isShow = false;
 
   // eslint-disable-next-line complexity
-  isClickSameSeries({ models, name, eventDetectType }: SelectedSeriesEventModel) {
+  isClickSameSeries({ models, name, eventDetectType, alias }: SelectedSeriesEventModel) {
     switch (name) {
       case 'heatmap':
         return isClickSameNameResponder<HeatmapRectResponderModel>(
@@ -59,10 +60,9 @@ export default class SelectedSeries extends Component {
           this.models[name] as CircleResponderModel[]
         );
       case 'pie':
-      case 'nestedPie':
         return isClickSameDataResponder<SectorResponderModel>(
           models as SectorResponderModel[],
-          this.models[name] as SectorResponderModel[]
+          this.models[alias ?? name] as SectorResponderModel[]
         );
       case 'column':
       case 'bar':
@@ -96,20 +96,22 @@ export default class SelectedSeries extends Component {
           names.push(label);
         }
       });
-    } else if (includes(['bar', 'column', 'pie'], name)) {
+    } else if (includes(['bar', 'column'], name)) {
       selectedSeries.forEach((model) => {
-        const label = (model as RectResponderModel | SectorResponderModel).data?.label;
+        const label = (model as RectResponderModel).data?.label;
         if (label) {
           names.push(label);
         }
       });
-    } else if (name === 'nestedPie') {
-      selectedSeries.forEach((model) => {
-        const label = (model as RectResponderModel | SectorResponderModel).data?.rootParentName;
-        if (label) {
-          names.push(label);
-        }
-      });
+    } else if (name === 'pie') {
+      Object.keys(this.models)
+        .flatMap((key) => this.models[key])
+        .forEach((model) => {
+          const label = (model as SectorResponderModel).data?.rootParentName;
+          if (label) {
+            names.push(label);
+          }
+        });
     }
 
     return names;
@@ -127,12 +129,13 @@ export default class SelectedSeries extends Component {
   }
 
   renderSelectedSeries = (selectedSeriesEventModel: SelectedSeriesEventModel) => {
-    const { name } = selectedSeriesEventModel;
+    const { name, alias } = selectedSeriesEventModel;
     const models = this.getSelectedSeriesModels(selectedSeriesEventModel);
 
-    this.models[name] = this.isClickSameSeries({ ...selectedSeriesEventModel, models })
+    this.models[alias ?? name] = this.isClickSameSeries({ ...selectedSeriesEventModel, models })
       ? []
       : models;
+
     this.isShow = !!Object.values(this.models).flatMap((value) => value).length;
     this.activeSeriesNames[name] = this.getSeriesNames(selectedSeriesEventModel.models, name);
     this.setActiveState();

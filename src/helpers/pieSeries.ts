@@ -72,7 +72,3 @@ export function makePieTooltipData(seriesRawData: PieSeriesType[], category = ''
     rootParentName,
   }));
 }
-
-export function isPieTypeSeries(seriesName: string) {
-  return includes(['pie', 'nestedPie'], seriesName);
-}
