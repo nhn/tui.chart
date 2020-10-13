@@ -228,14 +228,14 @@ export default class PieSeries extends Component {
     const renderOptionsMap = this.initRenderOptionsMap(options, pieAlias);
     const radiusRangeMap = this.getRadiusRangeMap(options, pieAlias);
 
-    pieAlias.forEach((alias, index) => {
+    pieAlias.forEach((alias, pieIndex) => {
       const radiusRanges = Object.values(renderOptionsMap).map(({ radiusRange }) => radiusRange);
 
       renderOptionsMap[alias].radiusRange = getCalculatedRadiusRange({
         alias,
         renderOptions: renderOptionsMap[alias],
         radiusRangeMap,
-        pieIndex: index,
+        pieIndex,
         radiusRanges,
         totalPieAliasCount: pieAlias.length,
       });
