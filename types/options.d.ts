@@ -139,9 +139,11 @@ interface TitleOption {
 
 type BaseSizeOptions = Partial<Size>;
 
+type BaseAnimation = boolean | { duration: number };
+
 export type BaseChartOptions = {
   title?: string | TitleOption;
-  animation?: boolean | { duration: number };
+  animation?: BaseAnimation;
 } & BaseSizeOptions;
 
 export interface Scale {
@@ -245,12 +247,17 @@ export interface BaseOptions {
   responsive?: ResponsiveOptions;
 }
 
-type ResponsiveObjectType = {
+export type ResponsiveObjectType = {
+  animation?: BaseAnimation;
+  rules?: ResponsiveRule[];
+};
+
+type ResponsiveRule = {
   condition: ({ width, height }: Size) => boolean;
   options: Options;
 };
 
-type ResponsiveOptions = boolean | ResponsiveObjectType[];
+type ResponsiveOptions = boolean | ResponsiveObjectType;
 
 interface BaseLegendOptions {
   align?: Align;

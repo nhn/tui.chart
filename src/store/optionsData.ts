@@ -1,17 +1,17 @@
 import { StoreModule, Options } from '@t/store/store';
-import { Size } from '@t/options';
+import { Size, ResponsiveObjectType } from '@t/options';
 import { deepCopy, isUndefined } from '@src/helpers/utils';
 
 function getOptionsBySize(size: Size, options: Options): Options {
-  return !Array.isArray(options.responsive)
-    ? options
-    : options.responsive.reduce((acc, cur) => {
+  return Array.isArray((options.responsive as ResponsiveObjectType)?.rules)
+    ? (options.responsive as ResponsiveObjectType).rules!.reduce((acc, cur) => {
         if (cur.condition(size)) {
           return { ...acc, ...cur.options };
         }
 
         return acc;
-      }, options);
+      }, options)
+    : options;
 }
 
 export function useResponsive(options: Options) {

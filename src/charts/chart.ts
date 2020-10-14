@@ -9,8 +9,8 @@ import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce, isBoolean, isNumber, isUndefined } from '@src/helpers/utils';
-import { ChartProps, Point } from '@t/options';
+import { debounce, isBoolean, isNumber, isUndefined, throttle } from '@src/helpers/utils';
+import { ChartProps, Point, BaseAnimation } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
@@ -39,12 +39,14 @@ export default abstract class Chart<T extends Options> {
 
   enteredComponents: Component[] = [];
 
-  private getAnimationDuration(options: Options) {
-    const { firstRendering } = this.animator;
-    const animationOption = options.chart?.animation;
+  isResizing = false;
+
+  isLooping = false;
+
+  private getAnimationDuration(animationOption?: BaseAnimation) {
     let duration;
 
-    if (!firstRendering || isUndefined(animationOption)) {
+    if (isUndefined(animationOption)) {
       duration = DEFAULT_ANIM_DURATION;
     } else if (isBoolean(animationOption)) {
       duration = animationOption ? DEFAULT_ANIM_DURATION : 0;
@@ -76,6 +78,19 @@ export default abstract class Chart<T extends Options> {
     this.eventBus.on(
       'needLoop',
       debounce(() => {
+        if (this.isLooping) {
+          return;
+        }
+
+        let duration = this.getAnimationDuration(options.chart?.animation);
+
+        if (this.isResizing) {
+          duration = isBoolean(options.responsive)
+            ? this.getAnimationDuration()
+            : this.getAnimationDuration(options.responsive?.animation);
+          this.isResizing = false;
+        }
+
         this.eventBus.emit('loopStart');
 
         this.animator.add({
@@ -83,11 +98,19 @@ export default abstract class Chart<T extends Options> {
             this.eventBus.emit('loopComplete');
           },
           chart: this,
-          duration: this.getAnimationDuration(options),
+          duration,
           requester: this,
         });
       }, 10)
     );
+
+    this.eventBus.on('loopStart', () => {
+      this.isLooping = true;
+    });
+
+    this.eventBus.on('loopComplete', () => {
+      this.isLooping = false;
+    });
 
     this.eventBus.on('needSubLoop', (opts) => {
       this.animator.add({ ...opts, chart: this });
@@ -104,9 +127,7 @@ export default abstract class Chart<T extends Options> {
     setTimeout(() => {
       this.initialize();
 
-      this.store.observe(() => {
-        this.painter.setup();
-      });
+      this.painter.setup();
 
       if (useResponsive(options)) {
         this.setResizeEvent();
@@ -115,22 +136,31 @@ export default abstract class Chart<T extends Options> {
   }
 
   resize() {
-    const { offsetWidth: width, offsetHeight: height } = this.el as HTMLElement;
+    this.isResizing = true;
+    const { offsetWidth, offsetHeight } = this.el as HTMLElement;
+    const { width, height } = this.store.state.chart;
 
-    if (!width && !height) {
+    if ((!offsetWidth && !offsetHeight) || (offsetWidth === width && offsetHeight === height)) {
+      this.isResizing = false;
+
       return;
     }
 
-    this.store.dispatch('setChartSize', { width, height });
+    this.eventBus.emit('resetHoveredSeries');
+
+    this.store.dispatch('setChartSize', { width: offsetWidth, height: offsetHeight });
+
+    this.painter.setSize(offsetWidth, offsetHeight);
+
+    this.draw();
   }
 
   setResizeEvent() {
     window.addEventListener(
       'resize',
-      debounce(() => {
-        this.eventBus.emit('resetHoveredSeries');
+      throttle(() => {
         this.resize();
-      }, 100)
+      }, 200)
     );
   }
 
@@ -208,8 +238,6 @@ export default abstract class Chart<T extends Options> {
     this.initStore([root, optionsStore, seriesData, legend, layout, category]);
 
     this.store.dispatch('initChartSize', this.el);
-
-    this.resize();
   }
 
   draw() {
@@ -224,6 +252,7 @@ export default abstract class Chart<T extends Options> {
       if (component.beforeDraw) {
         component.beforeDraw(this.painter);
       }
+
       component.draw(this.painter);
       this.painter.afterDraw();
     });

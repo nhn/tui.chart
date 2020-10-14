@@ -219,31 +219,34 @@ export const responsive = () => {
     budgetData,
     {
       chart: { title: 'Monthly Revenue' },
-      responsive: [
-        {
-          condition: function ({ width: w }) {
-            return w <= 600;
-          },
-          options: {
-            legend: {
-              align: 'bottom',
+      responsive: {
+        animation: { duration: 0 },
+        rules: [
+          {
+            condition: function ({ width: w }) {
+              return w <= 600;
+            },
+            options: {
+              legend: {
+                align: 'bottom',
+              },
             },
           },
-        },
-        {
-          condition: function ({ width: w }) {
-            return w <= 400;
-          },
-          options: {
-            legend: {
-              visible: false,
+          {
+            condition: function ({ width: w }) {
+              return w <= 400;
             },
-            exportMenu: {
-              visible: false,
+            options: {
+              legend: {
+                visible: false,
+              },
+              exportMenu: {
+                visible: false,
+              },
             },
           },
-        },
-      ],
+        ],
+      },
     },
     true
   );
