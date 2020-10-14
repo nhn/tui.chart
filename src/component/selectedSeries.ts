@@ -62,7 +62,7 @@ export default class SelectedSeries extends Component {
       case 'pie':
         return isClickSameDataResponder<SectorResponderModel>(
           models as SectorResponderModel[],
-          this.models[alias ?? name] as SectorResponderModel[]
+          this.models[alias || name] as SectorResponderModel[]
         );
       case 'column':
       case 'bar':
@@ -107,7 +107,9 @@ export default class SelectedSeries extends Component {
       Object.keys(this.models)
         .flatMap((key) => this.models[key])
         .forEach((model) => {
-          const label = (model as SectorResponderModel).data?.rootParentName;
+          const label =
+            (model as SectorResponderModel).data?.rootParentName ||
+            (model as SectorResponderModel).data?.label;
           if (label) {
             names.push(label);
           }
