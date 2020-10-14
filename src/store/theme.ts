@@ -1,5 +1,7 @@
 import { ChartType, Options, RawSeries, StoreModule } from '@t/store/store';
 import { deepMergedCopy, includes, omit } from '@src/helpers/utils';
+import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
+import { NestedPieSeriesType } from '@t/options';
 
 const defaultTheme = {
   series: {
@@ -44,10 +46,10 @@ const defaultTheme = {
 };
 
 function getSeriesTheme(seriesName: ChartType) {
-  const defaultSeriesTheme = omit(defaultTheme.series, 'colors');
+  let defaultSeriesTheme: SeriesTheme = omit(defaultTheme.series, 'colors');
 
   if (includes(['line', 'area'], seriesName)) {
-    return omit(defaultSeriesTheme, 'startColor', 'endColor');
+    defaultSeriesTheme = omit(defaultSeriesTheme, 'startColor', 'endColor');
   }
 
   return defaultSeriesTheme;
@@ -69,13 +71,17 @@ function getDefaultTheme(series: RawSeries): Theme {
   }, theme);
 }
 
-function getCommonSeriesOptions(options: Options, series: RawSeries): SeriesTheme {
+function getCommonSeriesOptions(
+  options: Options,
+  series: RawSeries,
+  isNestedPieChart: boolean
+): SeriesTheme {
   const theme = options?.theme;
   if (!theme?.series) {
     return {} as SeriesTheme;
   }
 
-  const seriesNames = Object.keys(series);
+  const seriesNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
 
   return seriesNames.reduce<SeriesTheme>(
     (acc, seriesName) => {
@@ -90,25 +96,41 @@ function getCommonSeriesOptions(options: Options, series: RawSeries): SeriesThem
 function getThemeOptionsWithSeriesName(
   options: Options,
   series: RawSeries,
-  commonSeriesOptions: SeriesTheme
+  commonSeriesOptions: SeriesTheme,
+  isNestedPieChart: boolean
 ) {
   const theme = options?.theme;
+
   if (!theme?.series) {
     return {};
   }
 
   const seriesTheme = { series: {} };
   const seriesNames = Object.keys(series);
-  const isComboChart = seriesNames.length > 1; // @TODO: nestedPie 차트 판별 못함
+  const isComboChart = seriesNames.length > 1;
 
-  if (isComboChart) {
+  if (isNestedPieChart) {
+    const aliasNames = getNestedPieChartAliasNames(series);
+    seriesTheme.series = {
+      pie: aliasNames.reduce(
+        (acc, aliasName) => ({
+          ...acc,
+          [aliasName]: deepMergedCopy(
+            theme.series?.[aliasName],
+            omit(commonSeriesOptions as PieChartSeriesTheme, 'colors')
+          ),
+        }),
+        {}
+      ),
+    };
+  } else if (isComboChart) {
     seriesTheme.series = {
       ...seriesNames.reduce(
         (acc, seriesName) => ({
           ...acc,
           [seriesName]: deepMergedCopy(
             theme.series?.[seriesName],
-            omit(commonSeriesOptions, 'colors')
+            omit(commonSeriesOptions as ComboChartSeriesTheme, 'colors')
           ),
         }),
         {}
@@ -123,33 +145,52 @@ function getThemeOptionsWithSeriesName(
   return seriesTheme;
 }
 
-function setColors(theme, series: RawSeries, commonSeriesOptions: SeriesTheme) {
+function setColors(
+  theme: Theme,
+  series: RawSeries,
+  commonSeriesOptions: SeriesTheme,
+  isNestedPieChart: boolean
+) {
+  if (!('colors' in commonSeriesOptions)) {
+    return;
+  }
+
   let index = 0;
   const commonColorsOption = [
     ...(commonSeriesOptions?.colors ?? []),
     ...defaultTheme.series.colors,
   ];
+  const themeNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
 
-  console.log(theme);
+  themeNames.forEach((name, idx) => {
+    const size = isNestedPieChart
+      ? (series.pie as NestedPieSeriesType[])[idx].data.length
+      : series[name].length;
+    const target = isNestedPieChart ? theme.series.pie : theme.series;
 
-  Object.keys(series).forEach((seriesName) => {
-    const size = series[seriesName].length;
-    if (!theme.series[seriesName].colors) {
-      theme.series[seriesName].colors = commonColorsOption.slice(index, index + size);
+    if (!target?.[name]?.colors) {
+      target![name] = {
+        ...target![name],
+        colors: commonColorsOption.slice(index, index + size),
+      };
       index += size;
     }
   });
 }
 
 function getTheme(options: Options, series: RawSeries): Theme {
-  const commonSeriesOptions: SeriesTheme = getCommonSeriesOptions(options, series);
-
+  const isNestedPieChart = hasNestedPieSeries(series);
+  const commonSeriesOptions: SeriesTheme = getCommonSeriesOptions(
+    options,
+    series,
+    isNestedPieChart
+  );
   const theme = deepMergedCopy(
     getDefaultTheme(series),
-    getThemeOptionsWithSeriesName(options, series, commonSeriesOptions)
+    getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 
-  setColors(theme, series, commonSeriesOptions);
+  setColors(theme, series, commonSeriesOptions, isNestedPieChart);
 
   return theme as Theme;
 }

@@ -293,6 +293,7 @@ export interface AreaChartOptions extends BaseOptions {
   xAxis?: LineTypeXAxisOptions;
   yAxis?: BothSidesYAxisOptions;
   plot?: LineTypePlotOptions;
+  theme?: AreaChartThemeOptions;
 }
 
 export interface LineChartOptions extends BaseOptions {
@@ -416,6 +417,7 @@ interface PieSeriesOptions extends BaseSeriesOptions {
 
 export interface PieChartOptions extends BaseOptions {
   series?: PieSeriesOptions;
+  theme?: PieChartThemeOptions;
 }
 
 export type RadarSeriesType = {
@@ -557,4 +559,5 @@ export type NestedPieSeriesOptions = Record<string, PieSeriesOptions & BaseSerie
 
 export interface NestedPieChartOptions extends BaseOptions {
   series?: NestedPieSeriesOptions;
+  theme?: NestedPieChartThemeOptions;
 }

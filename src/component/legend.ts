@@ -73,8 +73,9 @@ export default class Legend extends Component {
 
   setColorMap(series: Series) {
     this.seriesColorMap = {};
-    Object.values(series).forEach((o) => {
-      o!.data.forEach(({ name, color }) => {
+
+    Object.values(series).forEach((s) => {
+      s!.data.forEach(({ name, color }) => {
         this.seriesColorMap[name] = color;
       });
     });
@@ -135,7 +136,7 @@ export default class Legend extends Component {
     }));
   }
 
-  render({ layout, legend, series }: ChartState<Options>) {
+  render({ layout, legend, series, nestedPieSeries }: ChartState<Options>) {
     if (!legend.visible) {
       return;
     }
@@ -144,7 +145,7 @@ export default class Legend extends Component {
 
     const { showCheckbox } = legend;
     this.rect = layout.legend;
-    this.setColorMap(series);
+    this.setColorMap(nestedPieSeries ?? series);
     this.models = this.renderLegendModel(legend);
 
     const { data } = this.models[0];

@@ -96,7 +96,7 @@ export const secondaryYAxis = () => {
 };
 
 export const theme = () => {
-  const themeOptions = {
+  const themeOptions: LineAreaChartThemeOptions = {
     series: {
       line: {
         colors: ['#957DAD'],

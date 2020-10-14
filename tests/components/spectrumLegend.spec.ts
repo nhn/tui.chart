@@ -91,8 +91,10 @@ describe('spectrum legend', () => {
         ],
         theme: {
           series: {
-            startColor: '00a9ff',
-            endColor: '#ffb840',
+            treemap: {
+              startColor: '00a9ff',
+              endColor: '#ffb840',
+            },
           },
         },
       });
