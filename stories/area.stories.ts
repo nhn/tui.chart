@@ -32,8 +32,8 @@ function createChart(
   const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '860px' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '649px' : `${options.chart?.height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new AreaChart({ el, data, options });
 
