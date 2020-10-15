@@ -148,13 +148,9 @@ function getThemeOptionsWithSeriesName(
 function setColors(
   theme: Theme,
   series: RawSeries,
-  commonSeriesOptions: SeriesTheme,
+  commonSeriesOptions: Exclude<SeriesTheme, HeatmapChartSeriesTheme>,
   isNestedPieChart: boolean
 ) {
-  if (!('colors' in commonSeriesOptions)) {
-    return;
-  }
-
   let index = 0;
   const commonColorsOption = [
     ...(commonSeriesOptions?.colors ?? []),
@@ -190,7 +186,9 @@ function getTheme(options: Options, series: RawSeries): Theme {
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 
-  setColors(theme, series, commonSeriesOptions, isNestedPieChart);
+  if (!series.heatmap) {
+    setColors(theme, series, commonSeriesOptions, isNestedPieChart);
+  }
 
   return theme as Theme;
 }
