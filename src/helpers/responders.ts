@@ -148,6 +148,18 @@ export function isClickSameDataResponder<
   return same;
 }
 
+export function isClickSameLabelResponder(
+  responders: TreemapRectResponderModel[],
+  selectedSeries?: TreemapRectResponderModel[]
+) {
+  let same = false;
+  if (responders.length && selectedSeries?.length) {
+    same = responders[0].label === selectedSeries[0].label;
+  }
+
+  return same;
+}
+
 export function isClickSameGroupedRectResponder(
   responders: RectResponderModel[],
   selectedSeries?: RectResponderModel[]
