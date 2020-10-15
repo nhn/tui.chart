@@ -48,7 +48,7 @@ const defaultTheme = {
 function getSeriesTheme(seriesName: ChartType) {
   let defaultSeriesTheme: SeriesTheme = omit(defaultTheme.series, 'colors');
 
-  if (includes(['line', 'area'], seriesName)) {
+  if (!includes(['treemap', 'heatmap'], seriesName)) {
     defaultSeriesTheme = omit(defaultSeriesTheme, 'startColor', 'endColor');
   }
 
