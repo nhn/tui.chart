@@ -220,7 +220,7 @@ export const responsive = () => {
     {
       chart: { title: 'Monthly Revenue' },
       responsive: {
-        animation: { duration: 0 },
+        animation: { duration: 300 },
         rules: [
           {
             condition: function ({ width: w }) {

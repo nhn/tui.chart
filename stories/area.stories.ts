@@ -247,9 +247,9 @@ export const responsive = () => {
   const { el } = createChart(
     avgTemperatureData,
     {
-      chart: { title: 'Average Temperature', animation: { duration: 0 } },
+      chart: { title: 'Average Temperature' },
       responsive: {
-        animation: { duration: 400 },
+        animation: { duration: 300 },
       },
     },
     true
