@@ -132,7 +132,7 @@ export const theme = () => {
   const themeOptions: NestedPieChartThemeOptions = {
     series: {
       browsers: {
-        colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569', '#f75294'],
+        colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
       },
       versions: {
         colors: [

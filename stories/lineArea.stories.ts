@@ -104,7 +104,6 @@ export const theme = () => {
       area: {
         colors: ['#FEE333'],
       },
-      colors: ['#FEC8D8'],
     },
   };
 

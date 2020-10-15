@@ -45,10 +45,12 @@ const defaultTheme = {
   },
 };
 
+const SERIES_USING_COLOR_RANGE = ['treemap', 'heatmap'];
+
 function getSeriesTheme(seriesName: ChartType) {
   let defaultSeriesTheme: SeriesTheme = omit(defaultTheme.series, 'colors');
 
-  if (!includes(['treemap', 'heatmap'], seriesName)) {
+  if (!includes(SERIES_USING_COLOR_RANGE, seriesName)) {
     defaultSeriesTheme = omit(defaultSeriesTheme, 'startColor', 'endColor');
   }
 
@@ -98,14 +100,14 @@ function getThemeOptionsWithSeriesName(
   series: RawSeries,
   commonSeriesOptions: SeriesTheme,
   isNestedPieChart: boolean
-) {
+): Theme {
   const theme = options?.theme;
 
   if (!theme?.series) {
-    return {};
+    return {} as Theme;
   }
 
-  const seriesTheme = { series: {} };
+  const seriesTheme = { series: {} } as Theme;
   const seriesNames = Object.keys(series);
   const isComboChart = seriesNames.length > 1;
 
@@ -162,9 +164,9 @@ function setColors(
     const size = isNestedPieChart
       ? (series.pie as NestedPieSeriesType[])[idx].data.length
       : series[name].length;
-    const target = isNestedPieChart ? theme.series.pie : theme.series;
+    const target = isNestedPieChart ? theme.series.pie! : theme.series;
 
-    if (!target?.[name]?.colors) {
+    if (!target[name]?.colors) {
       target![name] = {
         ...target![name],
         colors: commonColorsOption.slice(index, index + size),
@@ -190,7 +192,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
     setColors(theme, series, commonSeriesOptions, isNestedPieChart);
   }
 
-  return theme as Theme;
+  return theme;
 }
 
 const theme: StoreModule = {
