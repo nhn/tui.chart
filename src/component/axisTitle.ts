@@ -38,9 +38,9 @@ export default class AxisTitle extends Component {
   render({ axes, layout }: ChartState<Options>) {
     const titleOption = axes[this.name]?.title;
 
-    if (!titleOption) {
-      this.models = [];
+    this.isShow = !!titleOption;
 
+    if (!this.isShow) {
       return;
     }
 

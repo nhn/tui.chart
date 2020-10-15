@@ -126,9 +126,9 @@ export default class Legend extends Component {
   }
 
   render({ layout, legend, theme }: ChartState<Options>) {
-    if (!legend.visible) {
-      this.models = [];
+    this.isShow = legend.visible;
 
+    if (!this.isShow) {
       return;
     }
 

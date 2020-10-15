@@ -4,19 +4,19 @@ import layout from '@src/store/layout';
 import seriesData from '@src/store/seriesData';
 import category from '@src/store/category';
 import legend from '@src/store/legend';
-import optionsStore, { useResponsive } from '@src/store/optionsData';
+import optionsStore, { useResponsive } from '@src/store/options';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined, throttle } from '@src/helpers/utils';
-import { ChartProps, Point, BaseAnimation } from '@t/options';
+import { ChartProps, Point, AnimationOptions } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
 import { RespondersModel } from '@t/components/series';
 
-export const DEFAULT_ANIM_DURATION = 1000;
+export const DEFAULT_ANIM_DURATION = 500;
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -41,12 +41,11 @@ export default abstract class Chart<T extends Options> {
 
   isResizing = false;
 
-  isLooping = false;
-
-  private getAnimationDuration(animationOption?: BaseAnimation) {
+  private getAnimationDuration(animationOption?: AnimationOptions) {
+    const { firstRendering } = this.animator;
     let duration;
 
-    if (isUndefined(animationOption)) {
+    if ((!firstRendering && !this.isResizing) || isUndefined(animationOption)) {
       duration = DEFAULT_ANIM_DURATION;
     } else if (isBoolean(animationOption)) {
       duration = animationOption ? DEFAULT_ANIM_DURATION : 0;
@@ -78,10 +77,6 @@ export default abstract class Chart<T extends Options> {
     this.eventBus.on(
       'needLoop',
       debounce(() => {
-        if (this.isLooping) {
-          return;
-        }
-
         let duration = this.getAnimationDuration(options.chart?.animation);
 
         if (this.isResizing) {
@@ -103,14 +98,6 @@ export default abstract class Chart<T extends Options> {
         });
       }, 10)
     );
-
-    this.eventBus.on('loopStart', () => {
-      this.isLooping = true;
-    });
-
-    this.eventBus.on('loopComplete', () => {
-      this.isLooping = false;
-    });
 
     this.eventBus.on('needSubLoop', (opts) => {
       this.animator.add({ ...opts, chart: this });

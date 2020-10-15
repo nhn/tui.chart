@@ -16,9 +16,9 @@ export default class CircleLegend extends Component {
       throw new Error('circleLegend is only possible when bubble series is present');
     }
 
-    if (!circleLegend.visible) {
-      this.models.circleLegend = [];
+    this.isShow = circleLegend.visible;
 
+    if (!this.isShow) {
       return;
     }
 

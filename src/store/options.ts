@@ -1,15 +1,13 @@
 import { StoreModule, Options } from '@t/store/store';
 import { Size, ResponsiveObjectType } from '@t/options';
-import { deepCopy, isUndefined } from '@src/helpers/utils';
+import { deepCopy, isUndefined, deepMergedCopy } from '@src/helpers/utils';
 
 function getOptionsBySize(size: Size, options: Options): Options {
-  return Array.isArray((options.responsive as ResponsiveObjectType)?.rules)
-    ? (options.responsive as ResponsiveObjectType).rules!.reduce((acc, cur) => {
-        if (cur.condition(size)) {
-          return { ...acc, ...cur.options };
-        }
+  const rules = (options.responsive as ResponsiveObjectType)?.rules;
 
-        return acc;
+  return Array.isArray(rules)
+    ? rules.reduce((acc, cur) => {
+        return cur.condition(size) ? deepMergedCopy(acc, cur.options) : acc;
       }, options)
     : options;
 }
@@ -19,9 +17,9 @@ export function useResponsive(options: Options) {
 }
 
 const optionsData: StoreModule = {
-  name: 'optionsData',
+  name: 'options',
   state: ({ options }) => ({
-    prevOptions: deepCopy(options),
+    originalOptions: deepCopy(options),
     options,
   }),
   action: {
@@ -32,13 +30,11 @@ const optionsData: StoreModule = {
 
       const { width, height } = state.chart;
 
-      if (!(width > 0 && height > 0)) {
+      if (width < 0 || height < 0) {
         return;
       }
 
-      const options = getOptionsBySize({ width, height }, state.prevOptions);
-
-      state.options = options;
+      state.options = getOptionsBySize({ width, height }, state.originalOptions);
     },
   },
   observe: {

@@ -36,6 +36,7 @@ import {
   NestedPieChartOptions,
   TitleOption,
   Size,
+  AnimationOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -133,7 +134,7 @@ export interface StoreModule extends StoreOptions {
     | 'legend'
     | 'circleLegend'
     | 'colorValueScale'
-    | 'optionsData';
+    | 'options';
 }
 
 export interface SeriesTheme {
@@ -235,7 +236,7 @@ export type Categories = string[] | HeatmapCategoriesType;
 
 export type ChartOptions = {
   title?: string | TitleOption;
-  animation?: boolean | { duration: number };
+  animation?: AnimationOptions;
 } & Size;
 
 export interface ChartState<T extends Options> {
@@ -267,7 +268,7 @@ export interface ChartState<T extends Options> {
   treemapZoomId: TreemapZoomId;
   heatmapSeries: HeatmapSeriesData[];
   nestedPieSeries: Record<string, NestedPieSeriesDataType>;
-  prevOptions: T;
+  originalOptions: T;
 }
 
 export type TreemapZoomId = {

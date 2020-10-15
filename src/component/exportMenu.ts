@@ -105,9 +105,9 @@ export default class ExportMenu extends Component {
   }
 
   render({ options, layout, chart, series, categories }: ChartState<Options>) {
-    if (!isExportMenuVisible(options)) {
-      this.models.exportMenuButton = [];
+    this.isShow = isExportMenuVisible(options);
 
+    if (!this.isShow) {
       return;
     }
 

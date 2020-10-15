@@ -139,11 +139,11 @@ interface TitleOption {
 
 type BaseSizeOptions = Partial<Size>;
 
-type BaseAnimation = boolean | { duration: number };
+type AnimationOptions = boolean | { duration: number };
 
 export type BaseChartOptions = {
   title?: string | TitleOption;
-  animation?: BaseAnimation;
+  animation?: AnimationOptions;
 } & BaseSizeOptions;
 
 export interface Scale {
@@ -248,7 +248,7 @@ export interface BaseOptions {
 }
 
 export type ResponsiveObjectType = {
-  animation?: BaseAnimation;
+  animation?: AnimationOptions;
   rules?: ResponsiveRule[];
 };
 

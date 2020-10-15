@@ -333,10 +333,17 @@ export default class BoxStackSeries extends BoxSeries {
     categories: string[]
   ) {
     return Object.keys(stackData).flatMap((groupId) => {
-      const filteredRawData = seriesRawData.filter(({ stackGroup }) => stackGroup === groupId);
-      const colors = filteredRawData.map(({ color }) => color);
+      const rawDataWithSameGroupId = seriesRawData.filter(
+        ({ stackGroup }) => stackGroup === groupId
+      );
+      const colors = rawDataWithSameGroupId.map(({ color }) => color);
 
-      return this.makeStackTooltipData(filteredRawData, stackData[groupId], colors, categories);
+      return this.makeStackTooltipData(
+        rawDataWithSameGroupId,
+        stackData[groupId],
+        colors,
+        categories
+      );
     });
   }
 
