@@ -76,7 +76,9 @@ describe('SeriesData store', () => {
         zoomRange: [1, 1],
         theme: {
           series: {
-            colors: ['#aaaaaa', '#bbbbbb'],
+            line: {
+              colors: ['#aaaaaa', '#bbbbbb'],
+            },
           },
         },
         disabledSeries: [] as string[],

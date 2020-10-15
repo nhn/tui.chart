@@ -13,9 +13,11 @@ function getChartState(seriesData, options?: any) {
       chart: { width: 210, height: 100 },
       theme: {
         series: {
-          colors: ['#00a9ff', '#ffb840'],
-          startColor: '#00a9ff',
-          endColor: '#ffb840',
+          treemap: {
+            colors: ['#00a9ff', '#ffb840'],
+            startColor: '#00a9ff',
+            endColor: '#ffb840',
+          },
         },
       },
       colorValueScale: {

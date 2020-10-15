@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Options, Legend as LegendType, Theme } from '@t/store/store';
+import { ChartState, Options, Legend as LegendType, Series } from '@t/store/store';
 import { LegendData, LegendModel } from '@t/components/legend';
 import {
   LEGEND_CHECKBOX_SIZE,
@@ -20,6 +20,8 @@ export default class Legend extends Component {
   responders!: RectResponderModel[];
 
   activatedResponders: RectResponderModel[] = [];
+
+  seriesColorMap: Record<string, string> = {};
 
   onClick({ responders }: { responders: RectResponderModel[] }) {
     if (responders.length) {
@@ -69,10 +71,19 @@ export default class Legend extends Component {
     this.eventBus.on('clickLegendLabel', this.onClickLabel);
   }
 
-  renderLegendModel(legend: LegendType, theme: Theme): LegendModel[] {
+  setColorMap(series: Series) {
+    this.seriesColorMap = {};
+
+    Object.values(series).forEach((s) => {
+      s!.data.forEach(({ name, color }) => {
+        this.seriesColorMap[name] = color;
+      });
+    });
+  }
+
+  renderLegendModel(legend: LegendType): LegendModel[] {
     const defaultX = 0;
     const { data, showCheckbox, align } = legend;
-    const { colors } = theme.series;
     const verticalAlign = isVerticalAlign(align);
     const legendWidths = data.map(({ width }) => width);
 
@@ -86,7 +97,7 @@ export default class Legend extends Component {
 
           return {
             ...datum,
-            color: colors[idx],
+            color: this.seriesColorMap[datum.label],
             x: verticalAlign ? defaultX + xOffset : defaultX,
             y: verticalAlign ? padding.Y : padding.Y + LEGEND_ITEM_HEIGHT * idx,
           };
@@ -125,7 +136,7 @@ export default class Legend extends Component {
     }));
   }
 
-  render({ layout, legend, theme }: ChartState<Options>) {
+  render({ layout, legend, series, nestedPieSeries }: ChartState<Options>) {
     if (!legend.visible) {
       return;
     }
@@ -134,7 +145,8 @@ export default class Legend extends Component {
 
     const { showCheckbox } = legend;
     this.rect = layout.legend;
-    this.models = this.renderLegendModel(legend, theme);
+    this.setColorMap(nestedPieSeries ?? series);
+    this.models = this.renderLegendModel(legend);
 
     const { data } = this.models[0];
     const checkboxResponder = this.makeCheckboxResponder(data, showCheckbox);

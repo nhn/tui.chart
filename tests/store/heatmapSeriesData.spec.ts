@@ -17,11 +17,7 @@ describe('heatmapSeriesData Store', () => {
           data,
         },
       },
-      theme: {
-        series: {
-          colors: ['#00a9ff', '#ffb840'],
-        },
-      },
+      theme: {},
       heatmapSeries: [] as HeatmapSeriesData[],
       categories: {
         x: ['A', 'B'],

@@ -127,3 +127,78 @@ export const selectable = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const themeOptions: NestedPieChartThemeOptions = {
+    series: {
+      browsers: {
+        colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
+      },
+      versions: {
+        colors: [
+          '#cddbda',
+          '#efd1d1',
+          '#ea005e',
+          '#fece2f',
+          '#fc6104',
+          '#dd2429',
+          '#ebc7ff',
+          '#fece2f',
+          '#dd2429',
+          '#ff8d3a',
+          '#fc6104',
+          '#5ac18e',
+          '#8570ff',
+        ],
+      },
+    },
+  };
+
+  const { el } = createChart(browserUsageData2, {
+    series: {
+      browsers: {
+        radiusRange: {
+          inner: '30%',
+          outer: '60%',
+        },
+      },
+      versions: {
+        radiusRange: {
+          inner: '70%',
+          outer: '100%',
+        },
+      },
+    },
+    theme: themeOptions,
+  } as NestedPieChartOptions);
+
+  return el;
+};
+
+export const groupedTheme = () => {
+  const themeOptions: NestedPieChartThemeOptions = {
+    series: {
+      colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569', '#f75294'],
+    },
+  };
+
+  const { el } = createChart(groupedBrowserUsageData, {
+    series: {
+      browsers: {
+        radiusRange: {
+          inner: '30%',
+          outer: '60%',
+        },
+      },
+      versions: {
+        radiusRange: {
+          inner: '70%',
+          outer: '100%',
+        },
+      },
+    },
+    theme: themeOptions,
+  } as NestedPieChartOptions);
+
+  return el;
+};

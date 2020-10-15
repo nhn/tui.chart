@@ -143,3 +143,24 @@ export const selectable = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const { el } = createChart(populationDensityData, {
+    chart: { title: 'Population density of World' },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}㎢` },
+    legend: {
+      align: 'top',
+    },
+    series: {
+      useColorValue: true,
+    },
+    theme: {
+      series: {
+        startColor: '#F3FFE3',
+        endColor: '#FF9CEE',
+      },
+    },
+  });
+
+  return el;
+};

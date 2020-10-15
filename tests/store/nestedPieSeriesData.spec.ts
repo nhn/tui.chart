@@ -7,7 +7,14 @@ describe('NestedPieSeriesData store', () => {
   describe('setNestedPieSeriesData', () => {
     const theme = {
       series: {
-        colors: ['#aaaaaa', '#bbbbbb', '#cccccc', '#dddddd'],
+        pie: {
+          pie1: {
+            colors: ['#aaaaaa', '#bbbbbb'],
+          },
+          pie2: {
+            colors: ['#cccccc', '#dddddd'],
+          },
+        },
       },
     };
 

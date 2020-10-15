@@ -1,6 +1,6 @@
 import Component from './component';
 import { Rect, TreemapChartOptions } from '@t/options';
-import { ChartState, ScaleData, Theme, TreemapSeriesData } from '@t/store/store';
+import { ChartState, ScaleData, TreemapSeriesData } from '@t/store/store';
 import {
   TreemapRectModel,
   TreemapRectResponderModel,
@@ -160,10 +160,10 @@ export default class TreemapSeries extends Component {
       y: 0,
     });
 
-    const { colors, startColor, endColor } = theme.series;
+    const { colors, startColor, endColor } = theme.series.treemap!;
     let startRGB, distances;
     const useColorValue = options.series?.useColorValue ?? false;
-    if (useColorValue) {
+    if (useColorValue && startColor && endColor) {
       startRGB = hexToRGB(startColor) as RGB;
       distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
     }
@@ -182,7 +182,7 @@ export default class TreemapSeries extends Component {
         colorRatio,
         color: useColorValue
           ? getSpectrumColor(colorRatio, distances, startRGB)
-          : this.getColor(treemapSeries, colors),
+          : this.getColor(treemapSeries, colors!),
         opacity: useColorValue ? 0 : this.getOpacity(treemapSeries),
       };
     });

@@ -129,18 +129,9 @@ export interface StoreModule extends StoreOptions {
     | 'heatmapSeriesData'
     | 'legend'
     | 'circleLegend'
-    | 'colorValueScale';
+    | 'colorValueScale'
+    | 'theme';
 }
-
-export interface SeriesTheme {
-  colors: string[];
-  startColor: string;
-  endColor: string;
-}
-
-export type Theme = {
-  series: SeriesTheme;
-};
 
 export interface Layout {
   xAxis: Rect;

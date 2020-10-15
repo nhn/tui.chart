@@ -11,6 +11,7 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
+import { hasNestedPieSeries } from '@src/helpers/pieSeries';
 
 type LegendLabels = {
   label: string;
@@ -139,10 +140,6 @@ function getItemWidth(label: string, checkboxVisible: boolean, useSpectrumLegend
         LEGEND_ICON_SIZE +
         LEGEND_MARGIN_X) + getTextWidth(label, LEGEND_LABEL_FONT)
   );
-}
-
-function hasNestedPieSeries(series: RawSeries) {
-  return series.pie && Array.isArray(series.pie[0].data);
 }
 
 const legend: StoreModule = {

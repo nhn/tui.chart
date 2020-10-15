@@ -94,3 +94,20 @@ export const secondaryYAxis = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const themeOptions: LineAreaChartThemeOptions = {
+    series: {
+      line: {
+        colors: ['#957DAD'],
+      },
+      area: {
+        colors: ['#FEE333'],
+      },
+    },
+  };
+
+  const { el } = createChart(energyUsageData, { theme: themeOptions });
+
+  return el;
+};
