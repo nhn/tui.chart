@@ -280,7 +280,7 @@ function getPlotRect(xAxis: Rect, yAxis: Rect, size: OptionalSize) {
   return {
     x: xAxis.x,
     y: yAxis.y,
-    ...getValidRectSize(size, xAxis.width, yAxis.height),
+    ...getValidRectSize(size, Math.max(xAxis.width, 1), Math.max(yAxis.height, 1)),
   };
 }
 
