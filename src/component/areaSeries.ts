@@ -38,11 +38,6 @@ import {
 import { isRangeData } from '@src/helpers/range';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
-  DEFAULT_LINE_SERIES_DOT_RADIUS,
-  DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
-  DEFAULT_LINE_SERIES_WIDTH,
-} from '@src/store/theme';
-import {
   getNearestResponder,
   makeRectResponderModel,
   makeTooltipCircleMap,
@@ -71,6 +66,8 @@ export default class AreaSeries extends Component {
   models: AreaSeriesModels = { rect: [], series: [], dot: [] };
 
   drawModels!: AreaSeriesModels;
+
+  theme!: Required<AreaChartSeriesTheme>;
 
   responders!: CircleResponderModel[] | RectResponderModel[];
 
@@ -141,7 +138,7 @@ export default class AreaSeries extends Component {
   }
 
   public render(chartState: ChartState<AreaChartOptions | LineAreaChartOptions>) {
-    const { layout, series, scale, axes, legend, stackSeries, zoomRange } = chartState;
+    const { layout, series, scale, axes, legend, stackSeries, zoomRange, theme } = chartState;
 
     if (!series.area) {
       throw new Error("There's no area data!");
@@ -151,6 +148,7 @@ export default class AreaSeries extends Component {
     const options = this.getAreaOptions(chartState.options);
     const categories = chartState.categories as string[];
 
+    this.theme = theme.series.area as Required<AreaChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
@@ -181,14 +179,13 @@ export default class AreaSeries extends Component {
     this.linePointsModel = this.renderLinePointsModel(areaData, limit, renderOptions);
 
     const areaSeriesModel = this.renderAreaPointsModel(renderOptions.options);
-    const seriesCircleModel = this.renderCircleModel();
-    const circleDotModel = this.renderDotSeriesModel(seriesCircleModel, renderOptions);
+    const { dotSeriesModel, responderModel } = this.renderCircleModel(renderOptions);
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
     this.models = deepCopy({
       rect: [this.renderClipRectAreaModel()],
       series: [...this.linePointsModel, ...areaSeriesModel],
-      dot: circleDotModel,
+      dot: dotSeriesModel,
     });
 
     if (!this.drawModels) {
@@ -202,25 +199,12 @@ export default class AreaSeries extends Component {
       this.renderDataLabels(this.getDataLabels(areaSeriesModel));
     }
 
-    this.tooltipCircleMap = makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
+    this.tooltipCircleMap = makeTooltipCircleMap(responderModel, tooltipDataArr);
 
     this.responders =
       this.eventDetectType === 'near'
-        ? this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr)
+        ? this.makeNearTypeResponderModel(responderModel, tooltipDataArr)
         : makeRectResponderModel(this.rect, axes.xAxis!);
-  }
-
-  renderDotSeriesModel(
-    seriesCircleModel: CircleModel[],
-    { options }: RenderOptions
-  ): CircleModel[] {
-    return options?.showDot
-      ? seriesCircleModel.map((m) => ({
-          ...m,
-          radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
-          style: [{ lineWidth: 0, strokeStyle: m.color }],
-        }))
-      : [];
   }
 
   makeNearTypeResponderModel(
@@ -282,6 +266,7 @@ export default class AreaSeries extends Component {
     const active = this.activeSeriesMap![name];
     const points: PointModel[] = [];
     const color = getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
+    const { lineWidth, dashSegments } = this.theme;
 
     rawData.forEach((datum, idx) => {
       const value = this.getLinePointModelValue(datum, pairModel);
@@ -305,7 +290,8 @@ export default class AreaSeries extends Component {
 
     return {
       type: 'linePoints',
-      lineWidth: options?.lineWidth ?? DEFAULT_LINE_SERIES_WIDTH,
+      lineWidth,
+      dashSegments,
       color,
       points,
       seriesIndex,
@@ -391,37 +377,68 @@ export default class AreaSeries extends Component {
     }, []);
   }
 
-  renderAreaPointsModel(options: LineTypeSeriesOptions): AreaPointsModel[] {
-    return this.getCombinedLinePointsModel(options).map((m) => {
-      const active = this.activeSeriesMap![m.name!];
+  private getAreaOpacity(name: string, color: string) {
+    const { select, areaOpacity } = this.theme;
+    const active = this.activeSeriesMap![name];
+    const selected = Object.values(this.activeSeriesMap!).some((elem) => !elem);
 
-      return {
-        ...m,
-        type: 'areaPoints',
-        lineWidth: 0,
-        color: 'rgba(0, 0, 0, 0)', // make area border transparent
-        fillColor: getRGBA(m.color, active ? 0.3 : 0.06),
-      };
-    });
+    return selected
+      ? getRGBA(color, active ? select.areaOpacity! : select.restSeries!.areaOpacity!)
+      : getRGBA(color, areaOpacity);
   }
 
-  renderCircleModel(): CircleModel[] {
-    return this.linePointsModel.flatMap(({ points, color, seriesIndex, name }, modelIndex) => {
+  renderAreaPointsModel(options: LineTypeSeriesOptions): AreaPointsModel[] {
+    return this.getCombinedLinePointsModel(options).map((m) => ({
+      ...m,
+      type: 'areaPoints',
+      lineWidth: 0,
+      color: 'rgba(0, 0, 0, 0)', // make area border transparent
+      fillColor: this.getAreaOpacity(m.name!, m.color!),
+    }));
+  }
+
+  renderCircleModel({
+    options,
+  }: RenderOptions): { dotSeriesModel: CircleModel[]; responderModel: CircleModel[] } {
+    const dotSeriesModel = [] as CircleModel[];
+    const responderModel = [] as CircleModel[];
+    const showDot = !!options.showDot;
+    const { hover, dot: dotTheme } = this.theme;
+    const hoverDotTheme = hover.dot!;
+
+    this.linePointsModel.forEach(({ points, color, seriesIndex, name }, modelIndex) => {
       const isPairLinePointsModel =
         this.isRangeChart && modelIndex >= this.linePointsModel.length / 2;
-
-      return points.map(({ x, y }, index) => ({
-        type: 'circle',
-        x,
-        y,
-        radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
-        color: getRGBA(color, 1),
-        style: ['default', 'hover'],
-        seriesIndex,
-        index: isPairLinePointsModel ? points.length - index - 1 : index,
-        name,
-      }));
+      const active = this.activeSeriesMap![name!];
+      points.forEach(({ x, y }, index) => {
+        const model = {
+          type: 'circle',
+          x,
+          y,
+          seriesIndex,
+          name,
+          index: isPairLinePointsModel ? points.length - index - 1 : index,
+        } as CircleModel;
+        if (showDot) {
+          dotSeriesModel.push({
+            ...model,
+            radius: dotTheme.radius!,
+            color: getRGBA(color, active ? 1 : 0.3),
+            style: [
+              { lineWidth: dotTheme.borderWidth, strokeStyle: dotTheme.borderColor ?? color },
+            ],
+          });
+        }
+        responderModel.push({
+          ...model,
+          radius: hoverDotTheme.radius!,
+          color: hoverDotTheme.color ?? getRGBA(color, 1),
+          style: ['default', 'hover'],
+        });
+      });
     });
+
+    return { dotSeriesModel, responderModel };
   }
 
   getPairCircleModel(circleModels: CircleResponderModel[]) {
@@ -512,6 +529,17 @@ export default class AreaSeries extends Component {
     );
   }
 
+  private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
+    const { dot } = this.theme.select;
+
+    return models.map((model) => ({
+      ...model,
+      radius: dot?.radius,
+      color: dot?.color ?? model.color,
+      style: ['hover', { lineWidth: dot!.borderWidth, strokeStyle: dot!.borderColor }],
+    }));
+  }
+
   onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
       let models;
@@ -523,7 +551,10 @@ export default class AreaSeries extends Component {
           mousePosition
         );
       }
-      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
+      this.eventBus.emit('renderSelectedSeries', {
+        models: this.getSelectedSeriesWithTheme(models),
+        name: this.name,
+      });
       this.eventBus.emit('needDraw');
     }
   }

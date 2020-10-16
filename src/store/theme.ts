@@ -47,6 +47,11 @@ const defaultTheme = {
         borderWidth: 2,
         borderColor: '#fff',
       },
+      areaOpacity: 0.06,
+      // @TODO: 이름 확인 한 번 조절 해보자
+      restSeries: {
+        areaOpacity: 0.06,
+      },
     },
     hover: {
       dot: {
@@ -58,6 +63,7 @@ const defaultTheme = {
     dot: {
       radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
     },
+    areaOpacity: 0.3,
   },
   chart: {
     title: {

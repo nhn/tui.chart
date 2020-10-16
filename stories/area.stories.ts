@@ -2,7 +2,7 @@ import AreaChart from '@src/charts/areaChart';
 import { AreaChartOptions, AreaSeriesData, BaseChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData, budgetData, temperatureRangeData } from './data';
-import { withKnobs, boolean, number, radios } from '@storybook/addon-knobs';
+import { withKnobs, boolean, radios } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Area',
@@ -206,24 +206,6 @@ export const selectable = () => {
   return el;
 };
 
-export const lineWidth = () => {
-  const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
-    xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
-    yAxis: { title: 'Temperature (Celsius)' },
-    series: {
-      lineWidth: number('line width', 3, {
-        range: true,
-        min: 1,
-        max: 10,
-        step: 1,
-      }),
-    },
-  });
-
-  return el;
-};
-
 export const secondaryYAxis = () => {
   const { el } = createChart(avgTemperatureData, {
     yAxis: [
@@ -254,6 +236,66 @@ export const responsive = () => {
     },
     true
   );
+
+  return el;
+};
+
+export const theme = () => {
+  const themeOptions = {
+    series: {
+      colors: [
+        '#83b14e',
+        '#458a3f',
+        '#295ba0',
+        '#2a4175',
+        '#289399',
+        '#289399',
+        '#617178',
+        '#8a9a9a',
+        '#516f7d',
+        '#dddddd',
+      ],
+      dashSegments: [5, 10],
+      lineWidth: 1,
+      select: {
+        dot: {
+          color: '#ff416d',
+          radius: 6,
+          borderColor: '#00b5a1',
+          borderWidth: 2,
+        },
+        restSeries: {
+          areaOpacity: 0.01,
+        },
+        areaOpacity: 0.5,
+      },
+      hover: {
+        dot: {
+          color: '#00ffff',
+          radius: 6,
+          borderColor: '#0859c6',
+          borderWidth: 2,
+        },
+      },
+      dot: {
+        radius: 6,
+        borderColor: '#ffff00',
+        borderWidth: 2,
+      },
+      areaOpacity: 0.7,
+    },
+  };
+
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    series: {
+      selectable: true,
+      showDot: true,
+    },
+    xAxis: { pointOnColumn: false, title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    theme: themeOptions,
+  });
 
   return el;
 };

@@ -63,13 +63,13 @@ interface DotTheme {
   borderWidth?: number;
 }
 
-interface LineSeriesTheme {
-  colors?: string;
+interface LineTypeSeriesTheme {
+  color?: string;
   lineWidth?: number;
   dashSegments?: number[];
 }
 
-interface LineChartSeriesTheme extends Omit<LineSeriesTheme, 'colors'> {
+interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
   colors?: string[];
   dot?: Omit<DotTheme, 'color'>;
   select?: {
@@ -84,9 +84,15 @@ interface CommonSeriesTheme {
   colors?: string[];
 }
 
-interface AreaChartSeriesTheme {
-  colors?: string[];
+interface AreaChartSeriesTheme extends LineChartSeriesTheme {
   areaOpacity?: number;
+  select?: {
+    dot?: DotTheme;
+    areaOpacity?: number;
+    restSeries?: {
+      areaOpacity?: number;
+    };
+  };
 }
 
 interface LineScatterChartSeriesTheme {

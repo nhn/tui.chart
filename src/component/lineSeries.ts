@@ -266,13 +266,14 @@ export default class LineSeries extends Component {
     const hoverDotTheme = hover.dot!;
 
     lineSeriesModel.forEach(({ color, name, points }, seriesIndex) => {
+      const active = this.activeSeriesMap![name!];
       points.forEach(({ x, y }, index) => {
         const model = { type: 'circle', x, y, seriesIndex, name, index } as CircleModel;
         if (showDot) {
           dotSeriesModel.push({
             ...model,
             radius: dotTheme.radius!,
-            color: getRGBA(color, 1),
+            color: getRGBA(color, active ? 1 : 0.3),
             style: [
               { lineWidth: dotTheme.borderWidth, strokeStyle: dotTheme.borderColor ?? color },
             ],
@@ -367,8 +368,10 @@ export default class LineSeries extends Component {
           mousePosition
         );
       }
-      models = this.getSelectedSeriesWithTheme(models);
-      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
+      this.eventBus.emit('renderSelectedSeries', {
+        models: this.getSelectedSeriesWithTheme(models),
+        name: this.name,
+      });
       this.eventBus.emit('needDraw');
     }
   }
