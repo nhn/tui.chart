@@ -31,7 +31,7 @@ export default class Painter {
   setup() {
     const { height, width } = this.chart.store.state.chart;
 
-    if (!this.ctx) {
+    if (!this.canvas) {
       const canvas = document.createElement('canvas');
 
       this.canvas = canvas;
