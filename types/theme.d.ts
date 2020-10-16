@@ -56,23 +56,27 @@ interface HeatmapChartSeriesTheme {
   endColor: string;
 }
 
-interface LineChartSeriesTheme {
-  colors?: string[];
+interface DotTheme {
+  color?: string;
+  radius?: number;
+  borderColor?: string;
+  borderWidth?: number;
+}
 
+interface LineSeriesTheme {
+  colors?: string;
   lineWidth?: number;
+  dashSegments?: number[];
+}
 
+interface LineChartSeriesTheme extends Omit<LineSeriesTheme, 'colors'> {
+  colors?: string[];
+  dot?: Omit<DotTheme, 'color'>;
   select?: {
-    color?: string;
+    dot?: DotTheme;
   };
-
-  dot?: {
-    color?: string;
-    borderWidth?: number;
-  };
-
-  hoverDot?: {
-    color?: string;
-    borderWidth?: number;
+  hover?: {
+    dot?: DotTheme;
   };
 }
 

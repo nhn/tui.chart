@@ -3,6 +3,10 @@ import { deepMergedCopy, includes, omit } from '@src/helpers/utils';
 import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
 
+export const DEFAULT_LINE_SERIES_WIDTH = 2;
+export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
+export const DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS = DEFAULT_LINE_SERIES_DOT_RADIUS + 2;
+
 const defaultTheme = {
   series: {
     colors: [
@@ -35,6 +39,25 @@ const defaultTheme = {
     ],
     startColor: '#ffe98a',
     endColor: '#d74177',
+    lineWidth: DEFAULT_LINE_SERIES_WIDTH,
+    dashSegments: [],
+    select: {
+      dot: {
+        radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
+        borderWidth: 2,
+        borderColor: '#fff',
+      },
+    },
+    hover: {
+      dot: {
+        radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
+        borderWidth: 2,
+        borderColor: '#fff',
+      },
+    },
+    dot: {
+      radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
+    },
   },
   chart: {
     title: {

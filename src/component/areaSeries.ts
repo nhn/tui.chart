@@ -41,7 +41,7 @@ import {
   DEFAULT_LINE_SERIES_DOT_RADIUS,
   DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
   DEFAULT_LINE_SERIES_WIDTH,
-} from '@src/component/lineSeries';
+} from '@src/store/theme';
 import {
   getNearestResponder,
   makeRectResponderModel,
