@@ -133,6 +133,20 @@ export const selectable = () => {
   return el;
 };
 
+export const responsive = () => {
+  const { el } = createChart(
+    groupedBrowserUsageData,
+    {
+      chart: {
+        title: 'Usage share of web browsers',
+      },
+    },
+    true
+  );
+
+  return el;
+};
+
 export const theme = () => {
   const themeOptions: NestedPieChartThemeOptions = {
     series: {
@@ -204,21 +218,6 @@ export const groupedTheme = () => {
     },
     theme: themeOptions,
   } as NestedPieChartOptions);
-
-  return el;
-};
-
-
-export const responsive = () => {
-  const { el } = createChart(
-    groupedBrowserUsageData,
-    {
-      chart: {
-        title: 'Usage share of web browsers',
-      },
-    },
-    true
-  );
 
   return el;
 };

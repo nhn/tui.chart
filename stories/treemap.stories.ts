@@ -148,6 +148,12 @@ export const selectable = () => {
   return el;
 };
 
+export const responsive = () => {
+  const { el } = createChart(usedDiskSpaceData, { chart: { title: 'Used disk space' } }, true);
+
+  return el;
+};
+
 export const theme = () => {
   const { el } = createChart(populationDensityData, {
     chart: { title: 'Population density of World' },
@@ -165,13 +171,6 @@ export const theme = () => {
       },
     },
   });
-
-  return el;
-};
-
-
-export const responsive = () => {
-  const { el } = createChart(usedDiskSpaceData, { chart: { title: 'Used disk space' } }, true);
 
   return el;
 };

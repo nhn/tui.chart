@@ -312,6 +312,16 @@ export const secondaryYAxis = () => {
   return el;
 };
 
+export const responsive = () => {
+  const { el } = createChart(
+    temperatureData,
+    { chart: { title: '24-hr Average Temperature' } },
+    true
+  );
+
+  return el;
+};
+
 export const theme = () => {
   const themeOptions = {
     series: {
@@ -334,15 +344,5 @@ export const theme = () => {
     theme: themeOptions,
   });
 
-  return el;
-};
-
-export const responsive = () => {
-  const { el } = createChart(
-    temperatureData,
-    { chart: { title: '24-hr Average Temperature' } },
-    true
-  );
-  
   return el;
 };

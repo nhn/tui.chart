@@ -281,6 +281,9 @@ function getPlotRect(xAxis: Rect, yAxis: Rect, size: OptionalSize) {
     x: xAxis.x,
     y: yAxis.y,
     ...getValidRectSize(size, Math.max(xAxis.width, 1), Math.max(yAxis.height, 1)),
+    // @TODO: Math.max(xAxis.width, 1), Math.max(yAxis.height, 1) 리팩토링 필요
+    // 차트 사이즈를 지정하지 않는 상태에서 plot의 너비와 높이가 잘못 계산되고,
+    // scale의 stepSize에 영향을 줌. xAxis.width, yAxis.height 값을 보정하도록 해야함.
   };
 }
 

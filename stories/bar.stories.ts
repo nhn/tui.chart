@@ -211,17 +211,6 @@ export const secondaryYAxis = () => {
   return el;
 };
 
-export const selectable = () => {
-  const { el } = createChart(budgetData, {
-    series: {
-      selectable: true,
-      eventDetectType: 'grouped',
-    },
-  });
-
-  return el;
-};
-
 export const responsive = () => {
   const { el } = createChart(
     budgetData,

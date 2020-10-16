@@ -270,6 +270,20 @@ export const selectable = () => {
   return el;
 };
 
+export const responsive = () => {
+  const { el } = createChart(
+    browserUsageData,
+    {
+      chart: {
+        title: 'Usage share of web browsers',
+      },
+    },
+    true
+  );
+
+  return el;
+};
+
 export const theme = () => {
   const themeOptions: PieChartThemeOptions = {
     series: {
@@ -291,20 +305,6 @@ export const theme = () => {
   const { el } = createChart(browserUsageData, {
     theme: themeOptions,
   });
-
-  return el;
-};
-
-export const responsive = () => {
-  const { el } = createChart(
-    browserUsageData,
-    {
-      chart: {
-        title: 'Usage share of web browsers',
-      },
-    },
-    true
-  );
 
   return el;
 };

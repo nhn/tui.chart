@@ -163,7 +163,6 @@ const legend: StoreModule = {
     const useSpectrumLegend =
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
-    const defaultWidth = Math.min(options.chart!.width / 10, 150);
     const legendLabels = hasNestedPieSeries(series)
       ? getNestedPieLegendLabels(series)
       : getLegendLabels(series);

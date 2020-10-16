@@ -91,6 +91,16 @@ export const datetimeCategory = () => {
   return el;
 };
 
+export const responsive = () => {
+  const { el } = createChart(
+    temperatureAverageDataForHeatmap,
+    { chart: { title: '24-hr Average Temperature' } },
+    true
+  );
+
+  return el;
+};
+
 export const theme = () => {
   const { el } = createChart(temperatureAverageDataForHeatmap, {
     theme: {
@@ -100,17 +110,6 @@ export const theme = () => {
       },
     },
   });
-
-  return el;
-};
-
-
-export const responsive = () => {
-  const { el } = createChart(
-    temperatureAverageDataForHeatmap,
-    { chart: { title: '24-hr Average Temperature' } },
-    true
-  );
 
   return el;
 };
