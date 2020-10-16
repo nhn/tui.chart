@@ -10,25 +10,57 @@ describe('Axes Store module', () => {
   const axesStateFunc = axes.state as StateFunc;
 
   describe('state', () => {
-    it('should make intervals', () => {
-      expect(axesStateFunc({ series: {}, options: {} })).toEqual({
-        axes: {
-          xAxis: { labelInterval: 1, tickInterval: 1 },
-          yAxis: { labelInterval: 1, tickInterval: 1 },
-        },
-      });
-    });
-
     it('could use with options', () => {
-      const options = {
-        xAxis: { tick: { interval: 2 }, label: { interval: 3 } },
-        yAxis: { tick: { interval: 4 }, label: { interval: 5 } },
-      } as LineChartOptions;
-
-      expect(axesStateFunc({ series: {}, options })).toEqual({
+      const state = {
+        chart: { width: 120, height: 120 },
+        layout: {
+          plot: { width: 100, height: 150, x: 30, y: 10 },
+          yAxis: { x: 10, y: 10, width: 10, height: 80 },
+          xAxis: { x: 10, y: 10, width: 80, height: 10 },
+        },
+        scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
+        series: {
+          line: {
+            data: [
+              { name: 'han', data: [1, 4] },
+              { name: 'cho', data: [5, 2] },
+            ],
+          },
+        },
         axes: {
-          xAxis: { tickInterval: 2, labelInterval: 3 },
-          yAxis: { tickInterval: 4, labelInterval: 5 },
+          xAxis: {},
+          yAxis: {},
+        },
+        categories: ['A', 'B'],
+        options: {
+          xAxis: { tick: { interval: 2 }, label: { interval: 3 } },
+          yAxis: { tick: { interval: 4 }, label: { interval: 5 } },
+        },
+      } as ChartState<LineChartOptions>;
+
+      const store = { state } as Store<Options>;
+      axes.action!.setAxesData.call({ notify }, store);
+
+      expect(state.axes).toEqual({
+        xAxis: {
+          isLabelAxis: true,
+          labelDistance: 100,
+          labelInterval: 3,
+          labels: ['A', 'B'],
+          pointOnColumn: false,
+          tickCount: 2,
+          tickDistance: 100,
+          tickInterval: 2,
+        },
+        yAxis: {
+          isLabelAxis: false,
+          labelInterval: 5,
+          labels: ['0', '1', '2', '3', '4', '5'],
+          pointOnColumn: false,
+          tickCount: 6,
+          tickDistance: 25,
+          tickInterval: 4,
+          zeroPosition: 150,
         },
       });
     });
@@ -47,8 +79,8 @@ describe('Axes Store module', () => {
 
       expect(axesStateFunc({ series, options })).toEqual({
         axes: {
-          xAxis: { tickInterval: 1, labelInterval: 1 },
-          yAxis: { tickInterval: 1, labelInterval: 1 },
+          xAxis: {},
+          yAxis: {},
           centerYAxis: {},
         },
       });
@@ -91,6 +123,8 @@ describe('Axes Store module', () => {
         tickCount: 2,
         tickDistance: 100,
         labelDistance: 100,
+        labelInterval: 1,
+        tickInterval: 1,
       },
       yAxis: {
         isLabelAxis: false,
@@ -99,6 +133,8 @@ describe('Axes Store module', () => {
         tickCount: 6,
         tickDistance: 25,
         zeroPosition: 150,
+        labelInterval: 1,
+        tickInterval: 1,
       },
     });
   });
@@ -152,8 +188,8 @@ describe('Axes Store module', () => {
 
       expect(axesStateFunc({ series, options })).toEqual({
         axes: {
-          xAxis: { tickInterval: 1, labelInterval: 1 },
-          yAxis: { tickInterval: 1, labelInterval: 1 },
+          xAxis: {},
+          yAxis: {},
           radialAxis: {},
         },
       });
@@ -188,11 +224,15 @@ describe('Axes Store module', () => {
       const store = { state } as Store<Options>;
       axes.action!.setAxesData.call({ notify }, store);
 
-      expect(store.state.axes.radialAxis).toMatchObject({
-        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-        axisSize: 50,
-        centerX: 100,
-        centerY: 100,
+      expect(store.state.axes).toMatchObject({
+        xAxis: { tickInterval: 1, labelInterval: 1 },
+        yAxis: { tickInterval: 1, labelInterval: 1 },
+        radialAxis: {
+          labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+          axisSize: 50,
+          centerX: 100,
+          centerY: 100,
+        },
       });
     });
   });

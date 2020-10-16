@@ -19,7 +19,7 @@ export interface DataToExport {
 export default class ExportMenu extends Component {
   responders!: RectResponderModel[];
 
-  models!: ExportMenuModels;
+  models: ExportMenuModels = { exportMenuButton: [] };
 
   opened = false;
 
@@ -105,7 +105,9 @@ export default class ExportMenu extends Component {
   }
 
   render({ options, layout, chart, series, categories }: ChartState<Options>) {
-    if (!isExportMenuVisible(options)) {
+    this.isShow = isExportMenuVisible(options);
+
+    if (!this.isShow) {
       return;
     }
 
@@ -113,16 +115,14 @@ export default class ExportMenu extends Component {
     this.fileName = this.getFileName(options?.exportMenu?.filename || chart.title);
     this.exportMenuEl = this.getExportMenuEl(chart.width);
     this.rect = layout.exportMenu;
-    this.models = {
-      exportMenuButton: [
-        {
-          type: 'exportMenuButton',
-          x: 0,
-          y: 0,
-          opened: this.opened,
-        },
-      ],
-    };
+    this.models.exportMenuButton = [
+      {
+        type: 'exportMenuButton',
+        x: 0,
+        y: 0,
+        opened: this.opened,
+      },
+    ];
 
     this.responders = [
       {

@@ -1,4 +1,13 @@
-import { LegendIconType, Options, RawSeries, StoreModule, ChartType } from '@t/store/store';
+import {
+  LegendIconType,
+  Options,
+  RawSeries,
+  StoreModule,
+  ChartType,
+  Series,
+  Legend,
+  CircleLegend,
+} from '@t/store/store';
 import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
 import { isUndefined, sum, includes } from '@src/helpers/utils';
 import {
@@ -11,6 +20,7 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
+import { extend } from '@src/store/store';
 
 type LegendLabels = {
   label: string;
@@ -63,7 +73,7 @@ export function showCircleLegend(options: BubbleChartOptions) {
   return isUndefined(options?.circleLegend?.visible) ? true : !!options?.circleLegend?.visible;
 }
 
-function showLegend(options: Options, series: RawSeries) {
+function showLegend(options: Options, series: Series | RawSeries) {
   if (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue) {
     return false;
   }
@@ -148,13 +158,10 @@ function getInitialWidth(options: Options) {
 const legend: StoreModule = {
   name: 'legend',
   state: ({ options, series }) => {
-    const align = getAlign(options);
-    const visible = showLegend(options, series);
     const checkboxVisible = showCheckbox(options);
     const useSpectrumLegend =
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
-    const defaultWidth = Math.min(getInitialWidth(options) / 10, 150);
     const legendLabels = series.nestedPie
       ? getNestedPieLegendLabels(series)
       : getLegendLabels(series);
@@ -166,33 +173,42 @@ const legend: StoreModule = {
       iconType: getIconType(type),
     }));
 
-    const legendWidths = data.map(({ width }) => width);
-    const legendWidth = calculateLegendWidth(defaultWidth, legendWidths, options, align, visible);
-
-    const circleLegendWidth = isVerticalAlign(align)
-      ? defaultWidth
-      : Math.max(defaultWidth, legendWidth);
-    const circleLegendVisible = series.bubble
-      ? showCircleLegend(options as BubbleChartOptions)
-      : false;
-
     return {
-      legend: {
-        visible,
-        useSpectrumLegend,
-        showCheckbox: checkboxVisible,
-        data,
-        align,
-        width: legendWidth,
-      },
-      circleLegend: {
-        visible: circleLegendVisible,
-        width: circleLegendVisible ? circleLegendWidth : 0,
-        radius: circleLegendVisible ? (circleLegendWidth - LEGEND_MARGIN_X) / 2 : 0,
-      },
+      legend: { useSpectrumLegend, data } as Legend,
+      circleLegend: {} as CircleLegend,
     };
   },
   action: {
+    setLegendLayout({ state }) {
+      const { legend: legendData, series, options } = state;
+
+      const align = getAlign(options);
+      const visible = showLegend(options, series);
+      const checkboxVisible = showCheckbox(options);
+      const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
+      const legendWidths = legendData.data.map(({ width }) => width);
+      const legendWidth = calculateLegendWidth(initialWidth, legendWidths, options, align, visible);
+
+      const circleLegendWidth = isVerticalAlign(align)
+        ? initialWidth
+        : Math.max(initialWidth, legendWidth);
+      const circleLegendVisible = series.bubble
+        ? showCircleLegend(options as BubbleChartOptions)
+        : false;
+
+      extend(state.legend, {
+        visible,
+        align,
+        showCheckbox: checkboxVisible,
+        width: legendWidth,
+      });
+
+      extend(state.circleLegend, {
+        visible: circleLegendVisible,
+        width: circleLegendVisible ? circleLegendWidth : 0,
+        radius: circleLegendVisible ? Math.max((circleLegendWidth - LEGEND_MARGIN_X) / 2, 0) : 0,
+      });
+    },
     setLegendActiveState({ state }, { name, active }) {
       const { data } = state.legend;
       const model = data.find(({ label }) => label === name)!;
@@ -209,6 +225,12 @@ const legend: StoreModule = {
       const model = state.legend.data.find(({ label }) => label === name)!;
       model.checked = checked;
       this.notify(state, 'legend');
+    },
+  },
+
+  observe: {
+    updateLegendLayout() {
+      this.dispatch('setLegendLayout');
     },
   },
 };

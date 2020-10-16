@@ -82,10 +82,15 @@ export default class HoveredSeries extends Component {
     };
   }
 
+  resetHoveredSeries = () => {
+    this.models = { guideLine: [] as LineModel[] } as HoveredSeriesModel;
+  };
+
   initialize() {
     this.type = 'hoveredSeries';
     this.name = 'hoveredSeries';
     this.eventBus.on('renderHoveredSeries', this.renderHoveredSeries);
+    this.eventBus.on('resetHoveredSeries', this.resetHoveredSeries);
   }
 
   render({ layout }: ChartState<Options>) {
