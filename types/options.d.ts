@@ -1,4 +1,4 @@
-import { Categories, RawSeries } from '@t/store/store';
+import { Categories, RawSeries, Options } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
@@ -139,10 +139,11 @@ interface TitleOption {
 
 type BaseSizeOptions = Partial<Size>;
 
+type AnimationOptions = boolean | { duration: number };
+
 export type BaseChartOptions = {
   title?: string | TitleOption;
-  animation?: boolean | { duration: number };
-  responsive?: boolean;
+  animation?: AnimationOptions;
 } & BaseSizeOptions;
 
 export interface Scale {
@@ -243,7 +244,20 @@ export interface BaseOptions {
   exportMenu?: ExportMenuOptions;
   tooltip?: BaseTooltipOptions;
   plot?: BaseSizeOptions;
+  responsive?: ResponsiveOptions;
 }
+
+export type ResponsiveObjectType = {
+  animation?: AnimationOptions;
+  rules?: ResponsiveRule[];
+};
+
+type ResponsiveRule = {
+  condition: ({ width, height }: Size) => boolean;
+  options: Options;
+};
+
+type ResponsiveOptions = boolean | ResponsiveObjectType;
 
 interface BaseLegendOptions {
   align?: Align;

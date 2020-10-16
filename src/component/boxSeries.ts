@@ -14,6 +14,7 @@ import {
   ValueAxisData,
   CenterYAxisData,
   Series,
+  Axes,
 } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -308,7 +309,6 @@ export default class BoxSeries extends Component {
 
     const tooltipData: TooltipData[] = this.makeTooltipData(seriesData, renderOptions, categories);
 
-    const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
     const clipRect = this.renderClipRectAreaModel();
 
     this.models = {
@@ -333,13 +333,22 @@ export default class BoxSeries extends Component {
 
     this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
 
-    this.responders =
-      this.eventDetectType === 'grouped'
-        ? makeRectResponderModel(this.rect, axes.xAxis!)
-        : hoveredSeries.map((m, index) => ({
-            ...m,
-            data: tooltipData[index],
-          }));
+    this.responders = this.getBoxSeriesResponders(seriesModels, tooltipData, axes);
+  }
+
+  protected getBoxSeriesResponders(
+    seriesModels: RectModel[],
+    tooltipData: TooltipData[],
+    axes: Axes
+  ) {
+    const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
+
+    return this.eventDetectType === 'grouped'
+      ? makeRectResponderModel(this.rect, this.isBar ? axes.yAxis! : axes.xAxis!, !this.isBar)
+      : hoveredSeries.map((m, index) => ({
+          ...m,
+          data: tooltipData[index],
+        }));
   }
 
   protected makeTooltipRectMap(seriesModels: RectModel[], tooltipDataArr: TooltipData[]) {

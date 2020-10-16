@@ -244,7 +244,16 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(avgTemperatureData, { chart: { title: 'Average Temperature' } }, true);
+  const { el } = createChart(
+    avgTemperatureData,
+    {
+      chart: { title: 'Average Temperature' },
+      responsive: {
+        animation: { duration: 300 },
+      },
+    },
+    true
+  );
 
   return el;
 };

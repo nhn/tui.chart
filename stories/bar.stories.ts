@@ -25,7 +25,7 @@ const defaultOptions: BarChartOptions = {
   },
 };
 
-function createChart(data, customOptions: BarChartOptions = {}, responsive = false) {
+function createChart(data, customOptions: Record<string, any> = {}, responsive = false) {
   const el = document.createElement('div');
   const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
@@ -194,13 +194,62 @@ export const secondaryYAxis = () => {
         ],
       },
     ],
+    series: {
+      selectable: true,
+      eventDetectType: 'grouped',
+    },
+  });
+
+  return el;
+};
+
+export const selectable = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      selectable: true,
+      eventDetectType: 'grouped',
+    },
   });
 
   return el;
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetData, { chart: { title: 'Monthly Revenue' } }, true);
+  const { el } = createChart(
+    budgetData,
+    {
+      chart: { title: 'Monthly Revenue' },
+      responsive: {
+        animation: { duration: 300 },
+        rules: [
+          {
+            condition: function ({ width: w }) {
+              return w <= 600;
+            },
+            options: {
+              legend: {
+                align: 'bottom',
+              },
+            },
+          },
+          {
+            condition: function ({ width: w }) {
+              return w <= 400;
+            },
+            options: {
+              legend: {
+                visible: false,
+              },
+              exportMenu: {
+                visible: false,
+              },
+            },
+          },
+        ],
+      },
+    },
+    true
+  );
 
   return el;
 };

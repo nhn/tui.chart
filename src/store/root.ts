@@ -6,7 +6,6 @@ const root: StoreModule = {
   // 파라메터로 data 초기 데이터도 받아야 한다.
   state: ({ options }) => ({
     chart: { width: 0, height: 0, ...options.chart },
-    options,
     theme: {
       series: {
         colors: [

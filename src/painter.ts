@@ -59,17 +59,17 @@ export default class Painter {
     this.canvas.style.width = `${width}px`;
     this.canvas.style.height = `${height}px`;
 
-    this.width = width || 0;
-    this.height = height || 0;
-
-    this.scaleCanvasRatio();
-  }
-
-  scaleCanvasRatio() {
     const ratio = window.devicePixelRatio;
 
-    this.ctx.canvas.width = this.width * ratio;
-    this.ctx.canvas.height = this.height * ratio;
+    this.width = width * ratio || 0;
+    this.height = height * ratio || 0;
+
+    this.scaleCanvasRatio(ratio);
+  }
+
+  scaleCanvasRatio(ratio: number) {
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
 
     this.ctx.scale(ratio, ratio);
   }
