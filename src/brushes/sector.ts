@@ -72,6 +72,11 @@ function drawSector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
     clockwise,
     drawingStartAngle,
   } = sectorModel;
+
+  if (inner <= 0 && outer <= 0) {
+    return;
+  }
+
   const startRadian = calculateDegreeToRadian(start, drawingStartAngle);
   const endRadian = calculateDegreeToRadian(end, drawingStartAngle);
 

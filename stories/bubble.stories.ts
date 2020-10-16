@@ -26,13 +26,17 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(data: BubbleSeriesData, customOptions?: BubbleChartOptions) {
+function createChart(
+  data: BubbleSeriesData,
+  customOptions: BubbleChartOptions = {},
+  responsive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = responsive ? '90vw' : `${width}px`;
+  el.style.height = responsive ? '90vh' : `${height}px`;
 
   const chart = new BubbleChart({ el, data, options });
 
@@ -55,6 +59,56 @@ export const datetime = () => {
 
 export const selectable = () => {
   const { el } = createChart(lifeExpectancyPerGDPData, { series: { selectable: true } });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(
+    lifeExpectancyPerGDPData,
+    {
+      chart: { title: 'Life Expectancy per GDP' },
+      xAxis: { title: 'GDP' },
+      yAxis: { title: 'Expectancy' },
+      series: { selectable: true },
+      responsive: {
+        animation: { duration: 100 },
+        rules: [
+          {
+            condition: function ({ width: w }) {
+              return w > 500 && w <= 700;
+            },
+            options: {
+              legend: { align: 'bottom' },
+              circleLegend: { visible: false },
+            },
+          },
+          {
+            condition: function ({ width: w }) {
+              return w <= 500;
+            },
+            options: {
+              legend: { visible: false },
+              circleLegend: { visible: false },
+              exportMenu: { visible: false },
+            },
+          },
+          {
+            condition: function ({ height: h }) {
+              return h <= 330;
+            },
+            options: {
+              xAxis: { title: '' },
+              yAxis: { title: '' },
+              circleLegend: { visible: false },
+              exportMenu: { visible: false },
+            },
+          },
+        ],
+      },
+    },
+    true
+  );
 
   return el;
 };

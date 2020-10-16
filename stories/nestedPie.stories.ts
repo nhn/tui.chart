@@ -7,23 +7,28 @@ export default {
   title: 'chart|NestedPie',
 };
 
-function createChart(data: NestedPieSeriesData, customOptions?: NestedPieChartOptions) {
+function createChart(
+  data: NestedPieSeriesData,
+  customOptions: NestedPieChartOptions = {},
+  responsive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(
-    {
-      chart: {
-        width: 660,
-        height: 560,
-        title: 'Usage share of web browsers',
-      },
-    },
-    customOptions || {}
-  );
-  const { width, height } = options.chart;
+  const options = responsive
+    ? customOptions
+    : deepMergedCopy(
+        {
+          chart: {
+            width: 660,
+            height: 560,
+            title: 'Usage share of web browsers',
+          },
+        },
+        customOptions || {}
+      );
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new NestedPieChart({ el, data, options });
 
@@ -124,6 +129,20 @@ export const selectable = () => {
       selectable: true,
     },
   } as NestedPieChartOptions);
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(
+    groupedBrowserUsageData,
+    {
+      chart: {
+        title: 'Usage share of web browsers',
+      },
+    },
+    true
+  );
 
   return el;
 };

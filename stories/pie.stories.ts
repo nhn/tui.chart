@@ -9,23 +9,24 @@ export default {
   decorators: [withKnobs],
 };
 
-function createChart(data: PieSeriesData, customOptions?: PieChartOptions) {
+function createChart(data: PieSeriesData, customOptions: PieChartOptions = {}, responsive = false) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(
-    {
-      chart: {
-        width: 660,
-        height: 560,
-        title: 'Usage share of web browsers',
-      },
-    },
-    customOptions || {}
-  );
-  const { width, height } = options.chart;
+  const options = responsive
+    ? customOptions
+    : deepMergedCopy(
+        {
+          chart: {
+            width: 660,
+            height: 560,
+            title: 'Usage share of web browsers',
+          },
+        },
+        customOptions || {}
+      );
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new PieChart({ el, data, options });
 
@@ -265,6 +266,20 @@ export const selectable = () => {
       selectable: true,
     },
   });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(
+    browserUsageData,
+    {
+      chart: {
+        title: 'Usage share of web browsers',
+      },
+    },
+    true
+  );
 
   return el;
 };

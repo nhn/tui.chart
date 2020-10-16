@@ -1,5 +1,4 @@
 import {
-  BaseChartOptions,
   LineChartOptions,
   LineSeriesType,
   Rect,
@@ -34,6 +33,9 @@ import {
   HeatmapCategoriesType,
   HeatmapChartOptions,
   NestedPieChartOptions,
+  TitleOption,
+  Size,
+  AnimationOptions,
   NestedPieSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
@@ -130,7 +132,14 @@ export interface StoreModule extends StoreOptions {
     | 'legend'
     | 'circleLegend'
     | 'colorValueScale'
+    | 'options'
     | 'theme';
+}
+
+export interface SeriesTheme {
+  colors: string[];
+  startColor: string;
+  endColor: string;
 }
 
 export interface Layout {
@@ -220,8 +229,13 @@ export interface TreemapSeriesData {
 
 export type Categories = string[] | HeatmapCategoriesType;
 
+export type ChartOptions = {
+  title?: string | TitleOption;
+  animation?: AnimationOptions;
+} & Size;
+
 export interface ChartState<T extends Options> {
-  chart: BaseChartOptions;
+  chart: ChartOptions;
   layout: Layout;
   scale: Scale;
   disabledSeries: string[];
@@ -249,6 +263,7 @@ export interface ChartState<T extends Options> {
   treemapZoomId: TreemapZoomId;
   heatmapSeries: HeatmapSeriesData[];
   nestedPieSeries: Record<string, NestedPieSeriesDataType>;
+  originalOptions: T;
 }
 
 export type TreemapZoomId = {

@@ -32,7 +32,6 @@ import {
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { makeRectResponderModel } from '@src/helpers/responders';
 import { RectDataLabel } from '@t/components/dataLabels';
 
 type RenderOptions = {
@@ -141,7 +140,7 @@ export default class BoxStackSeries extends BoxSeries {
     };
 
     const { series, connector } = this.renderStackSeriesModel(stackSeriesData, renderOptions);
-    const hoveredSeries = this.renderHoveredSeriesModel(series);
+
     const clipRect = this.renderClipRectAreaModel();
 
     const tooltipData: TooltipData[] = this.getTooltipData(stackSeriesData, categories);
@@ -169,13 +168,7 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
 
-    this.responders =
-      this.eventDetectType === 'grouped'
-        ? makeRectResponderModel(this.rect, this.isBar ? axes.yAxis! : axes.xAxis!, !this.isBar)
-        : hoveredSeries.map((m, index) => ({
-            ...m,
-            data: tooltipData[index],
-          }));
+    this.responders = this.getBoxSeriesResponders(series, tooltipData, axes);
   }
 
   renderStackSeriesModel(seriesData: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
@@ -338,11 +331,17 @@ export default class BoxStackSeries extends BoxSeries {
     categories: string[]
   ) {
     return Object.keys(stackData).flatMap((groupId) => {
-      const colors = seriesRawData
-        .filter(({ stackGroup }) => stackGroup === groupId)
-        .map(({ color }) => color);
+      const rawDataWithSameGroupId = seriesRawData.filter(
+        ({ stackGroup }) => stackGroup === groupId
+      );
+      const colors = rawDataWithSameGroupId.map(({ color }) => color);
 
-      return this.makeStackTooltipData(seriesRawData, stackData[groupId], colors, categories);
+      return this.makeStackTooltipData(
+        rawDataWithSameGroupId,
+        stackData[groupId],
+        colors,
+        categories
+      );
     });
   }
 

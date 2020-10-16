@@ -17,13 +17,17 @@ const defaultOptions = {
   },
 };
 
-function createChart(data: BulletSeriesData, customOptions?: BulletChartOptions) {
+function createChart(
+  data: BulletSeriesData,
+  customOptions: BulletChartOptions = {},
+  responsive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${options.chart.width}px`;
-  el.style.height = `${options.chart.height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new BulletChart({ el, data, options });
 
@@ -64,6 +68,12 @@ export const dataLabels = () => {
       },
     },
   });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(budgetData, { chart: { title: 'Monthly Revenue' } }, true);
 
   return el;
 };

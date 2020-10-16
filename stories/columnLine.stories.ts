@@ -17,13 +17,13 @@ const defaultOptions: ColumnChartOptions = {
   xAxis: { title: 'Month' },
 };
 
-function createChart(data, customOptions?: Record<string, any>) {
+function createChart(data, customOptions: Record<string, any> = {}, responsive = false) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${options.chart?.width}px`;
-  el.style.height = `${options.chart?.height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new ColumnLineChart({
     el,
@@ -92,6 +92,21 @@ export const secondaryYAxis = () => {
       },
     ],
   });
+
+  return el;
+};
+export const responsive = () => {
+  const { el } = createChart(
+    temperatureAverageData,
+    {
+      chart: {
+        title: '24-hr Average Temperature',
+      },
+      yAxis: [{ title: 'Temperature (Celsius)' }, { title: 'Average' }],
+      xAxis: { title: 'Month' },
+    },
+    true
+  );
 
   return el;
 };

@@ -31,13 +31,17 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(data: LineAreaData, customOptions?: LineAreaChartOptions) {
+function createChart(
+  data: LineAreaData,
+  customOptions: LineAreaChartOptions = {},
+  responsive = false
+) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new LineAreaChart({ el, data, options });
 
@@ -91,6 +95,30 @@ export const secondaryYAxis = () => {
       },
     ],
   });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(
+    energyUsageData,
+    {
+      chart: { title: 'Energy Usage' },
+      yAxis: [
+        {
+          title: 'Energy (kWh)',
+        },
+        {
+          title: 'Powered Usage',
+        },
+      ],
+      xAxis: {
+        title: 'Month',
+        date: { format: 'yy/MM' },
+      },
+    },
+    true
+  );
 
   return el;
 };

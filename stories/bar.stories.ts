@@ -25,13 +25,14 @@ const defaultOptions: BarChartOptions = {
   },
 };
 
-function createChart(data, customOptions?: BarChartOptions) {
+function createChart(data, customOptions: Record<string, any> = {}, responsive = false) {
   const el = document.createElement('div');
-  const options = deepMergedCopy(defaultOptions, customOptions || {});
+  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = `${options?.chart?.width}px`;
-  el.style.height = `${options?.chart?.height}px`;
+
+  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new BarChart({
     el,
@@ -201,7 +202,51 @@ export const secondaryYAxis = () => {
         ],
       },
     ],
+    series: {
+      selectable: true,
+      eventDetectType: 'grouped',
+    },
   });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(
+    budgetData,
+    {
+      chart: { title: 'Monthly Revenue' },
+      responsive: {
+        animation: { duration: 300 },
+        rules: [
+          {
+            condition: function ({ width: w }) {
+              return w <= 600;
+            },
+            options: {
+              legend: {
+                align: 'bottom',
+              },
+            },
+          },
+          {
+            condition: function ({ width: w }) {
+              return w <= 400;
+            },
+            options: {
+              legend: {
+                visible: false,
+              },
+              exportMenu: {
+                visible: false,
+              },
+            },
+          },
+        ],
+      },
+    },
+    true
+  );
 
   return el;
 };

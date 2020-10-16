@@ -137,7 +137,9 @@ export default class Legend extends Component {
   }
 
   render({ layout, legend, series, nestedPieSeries }: ChartState<Options>) {
-    if (!legend.visible) {
+    this.isShow = legend.visible;
+
+    if (!this.isShow) {
       return;
     }
 

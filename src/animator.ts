@@ -46,26 +46,41 @@ export default class Animator {
     onCompleted: Function;
     onFrame?: (delta: number) => void;
   }) {
-    const prevIndex = this.anims.findIndex((anim) => anim.requester === requester);
-
-    if (~prevIndex) {
-      this.anims.splice(prevIndex, 1);
+    if (this.anims.length) {
+      this.reset();
     }
-
-    this.anims.push({
-      chart,
-      requester,
-      duration,
-      onFrame,
-      onCompleted,
-      start: null,
-      current: null,
-      completed: false,
-    });
 
     if (this.state === 'IDLE') {
+      this.anims.push({
+        chart,
+        requester,
+        duration,
+        onFrame,
+        onCompleted,
+        start: null,
+        current: null,
+        completed: false,
+      });
+
       this.start();
     }
+  }
+
+  reset() {
+    this.anims.forEach((anim) => {
+      anim.current = 1;
+      anim.onFrame(anim.current);
+      anim.completed = true;
+    });
+
+    this.anims = [];
+
+    if (this.requestId) {
+      window.cancelAnimationFrame(this.requestId);
+    }
+
+    this.state = 'IDLE';
+    this.requestId = null;
   }
 
   start() {
@@ -105,7 +120,6 @@ export default class Animator {
         writable: false,
         configurable: true,
       });
-
       anim.current = anim.duration ? Math.min((timestamp - anim.start) / anim.duration, 1) : 1;
       anim.onFrame(anim.current);
       anim.completed = anim.current === 1;

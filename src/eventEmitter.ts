@@ -12,7 +12,8 @@ type EventType =
   | 'clickLegendLabel'
   | 'animationCompleted'
   | 'renderSpectrumTooltip'
-  | 'renderDataLabels';
+  | 'renderDataLabels'
+  | 'resetHoveredSeries';
 
 type EventListener = (evt: any) => void;
 
