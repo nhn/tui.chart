@@ -1,8 +1,11 @@
 import { StoreModule, RawSeries } from '@t/store/store';
 import { extend } from '@src/store/store';
+import { NestedPieSeriesType } from '@t/options';
 
 function findRootName(rawSeries: RawSeries, seriesIndex: number, parentName: string) {
-  const item = rawSeries.nestedPie?.[seriesIndex].data.find(({ name }) => name === parentName);
+  const item = (rawSeries.pie as NestedPieSeriesType[])?.[seriesIndex].data.find(
+    ({ name }) => name === parentName
+  );
 
   return item?.parentName ? findRootName(rawSeries, seriesIndex - 1, item.parentName) : parentName;
 }
@@ -15,16 +18,15 @@ const nestedPieSeriesData: StoreModule = {
   action: {
     setNestedPieSeriesData({ state, initStoreState }) {
       const { theme, disabledSeries } = state;
-      const { colors } = theme.series;
       const rawSeries = initStoreState.series;
       const newSeriesData = {};
       const colorMap = {};
-      let colorIdx = 0;
 
-      rawSeries.nestedPie!.forEach(({ name: alias, data }, seriesIndex) => {
-        const originSeriesData = data.map((m) => {
+      rawSeries.pie!.forEach(({ name: alias, data }, seriesIndex) => {
+        const { colors } = theme.series.pie![alias];
+        const originSeriesData = data.map((m, index) => {
           const { parentName, name: dataName } = m;
-          const color = parentName && seriesIndex ? colorMap[parentName] : colors[colorIdx];
+          const color = parentName && seriesIndex ? colorMap[parentName] : colors?.[index];
 
           colorMap[dataName] = color;
 
@@ -32,8 +34,6 @@ const nestedPieSeriesData: StoreModule = {
             parentName && seriesIndex
               ? findRootName(rawSeries, seriesIndex - 1, parentName)
               : dataName;
-
-          colorIdx += 1;
 
           return {
             ...m,

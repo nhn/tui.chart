@@ -132,6 +132,44 @@ export const colorValueZoom = () => {
   return el;
 };
 
+export const selectable = () => {
+  const { el } = createChart(usedDiskSpaceData, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+      zoomable: true,
+      selectable: true,
+    },
+    chart: { title: 'Used disk space' },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+  });
+
+  return el;
+};
+
+export const theme = () => {
+  const { el } = createChart(populationDensityData, {
+    chart: { title: 'Population density of World' },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}㎢` },
+    legend: {
+      align: 'top',
+    },
+    series: {
+      useColorValue: true,
+    },
+    theme: {
+      series: {
+        startColor: '#F3FFE3',
+        endColor: '#FF9CEE',
+      },
+    },
+  });
+
+  return el;
+};
+
+
 export const responsive = () => {
   const { el } = createChart(usedDiskSpaceData, { chart: { title: 'Used disk space' } }, true);
 

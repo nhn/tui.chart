@@ -32,11 +32,11 @@ import {
   HeatmapSeriesType,
   HeatmapCategoriesType,
   HeatmapChartOptions,
-  NestedPieSeriesType,
   NestedPieChartOptions,
   TitleOption,
   Size,
   AnimationOptions,
+  NestedPieSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -48,13 +48,12 @@ type ChartSeriesMap = {
   column: BoxSeriesType<BoxSeriesDataType>[];
   area: AreaSeriesType[];
   bubble: BubbleSeriesType[];
-  pie: PieSeriesType[];
+  pie: PieSeriesType[] | NestedPieSeriesType[];
   radar: RadarSeriesType[];
   boxPlot: BoxPlotSeriesType[];
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
   heatmap: HeatmapSeriesType[];
-  nestedPie: NestedPieSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -83,13 +82,12 @@ export type ChartOptionsMap = {
   area: AreaChartOptions;
   bubble: BubbleChartOptions;
   radar: RadarChartOptions;
-  pie: PieChartOptions;
+  pie: PieChartOptions | NestedPieChartOptions;
   boxPlot: BoxPlotChartOptions;
   bullet: BulletChartOptions;
   lineScatter: LineScatterChartOptions;
   columnLine: ColumnLineChartOptions;
   heatmap: HeatmapChartOptions;
-  nestedPie: NestedPieChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -134,7 +132,8 @@ export interface StoreModule extends StoreOptions {
     | 'legend'
     | 'circleLegend'
     | 'colorValueScale'
-    | 'options';
+    | 'options'
+    | 'theme';
 }
 
 export interface SeriesTheme {
@@ -142,10 +141,6 @@ export interface SeriesTheme {
   startColor: string;
   endColor: string;
 }
-
-export type Theme = {
-  series: SeriesTheme;
-};
 
 export interface Layout {
   xAxis: Rect;
@@ -286,7 +281,7 @@ export type HeatmapSeriesData = {
 }[];
 
 type NestedPieSeriesDataType = {
-  data: ChartSeriesMap['pie'];
+  data: PieSeriesType[];
 };
 
 export type StackTotal = {

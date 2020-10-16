@@ -19,6 +19,7 @@ export default class BackButton extends Component {
   onClick({ responders }: { responders: RectResponderModel[] }) {
     if (responders.length) {
       this.store.dispatch('zoomBack');
+      this.eventBus.emit('resetSelectedSeries');
     }
   }
 

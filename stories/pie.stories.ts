@@ -270,6 +270,31 @@ export const selectable = () => {
   return el;
 };
 
+export const theme = () => {
+  const themeOptions: PieChartThemeOptions = {
+    series: {
+      colors: [
+        '#ea005e',
+        '#fece2f',
+        '#fc6104',
+        '#dd2429',
+        '#ebc7ff',
+        '#fece2f',
+        '#dd2429',
+        '#ff8d3a',
+        '#fc6104',
+        '#5ac18e',
+      ],
+    },
+  };
+
+  const { el } = createChart(browserUsageData, {
+    theme: themeOptions,
+  });
+
+  return el;
+};
+
 export const responsive = () => {
   const { el } = createChart(
     browserUsageData,

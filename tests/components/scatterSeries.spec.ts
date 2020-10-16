@@ -102,6 +102,7 @@ const result = {
         value: { x: 10, y: 20 },
       },
       name: 'nameA',
+      index: 0,
     },
     {
       color: 'rgba(170, 170, 170, 1)',
@@ -118,6 +119,7 @@ const result = {
         value: { x: 15, y: 20 },
       },
       name: 'nameA',
+      index: 1,
     },
     {
       color: 'rgba(187, 187, 187, 1)',
@@ -134,6 +136,7 @@ const result = {
         value: { x: 20, y: 10 },
       },
       name: 'nameB',
+      index: 2,
     },
   ],
   models: {
@@ -169,7 +172,6 @@ const result = {
         name: 'nameB',
       },
     ],
-    selectedSeries: [],
   },
 };
 

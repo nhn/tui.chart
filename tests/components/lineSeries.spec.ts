@@ -72,7 +72,7 @@ describe('basic', () => {
       series: [
         {
           color: 'rgba(170, 170, 170, 1)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { value: 1, x: 20, y: 80 },
             { value: 2, x: 60, y: 60 },
@@ -83,7 +83,7 @@ describe('basic', () => {
         },
         {
           color: 'rgba(187, 187, 187, 1)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
@@ -94,14 +94,13 @@ describe('basic', () => {
         },
       ],
       dot: [],
-      selectedSeries: [],
     },
     drawModels: {
       rect: [{ height: 80, type: 'clipRectArea', width: 0, x: 0, y: 0 }],
       series: [
         {
           color: 'rgba(0, 0, 0, 0)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { value: 1, x: 20, y: 80 },
             { value: 2, x: 60, y: 60 },
@@ -113,7 +112,7 @@ describe('basic', () => {
         },
         {
           color: 'rgba(0, 0, 0, 0)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
@@ -124,7 +123,6 @@ describe('basic', () => {
           type: 'linePoints',
         },
       ],
-      selectedSeries: [],
     },
   };
 
@@ -198,7 +196,7 @@ describe('responders', () => {
       {
         color: 'rgba(170, 170, 170, 1)',
         data: { category: 'A', color: '#aaaaaa', label: 'han', value: 1 },
-        radius: 7,
+        radius: 5,
         index: 0,
         seriesIndex: 0,
         style: ['default', 'hover'],
@@ -210,7 +208,7 @@ describe('responders', () => {
       {
         color: 'rgba(170, 170, 170, 1)',
         data: { category: 'B', color: '#aaaaaa', label: 'han', value: 2 },
-        radius: 7,
+        radius: 5,
         index: 1,
         seriesIndex: 0,
         style: ['default', 'hover'],
@@ -222,7 +220,7 @@ describe('responders', () => {
       {
         color: 'rgba(187, 187, 187, 1)',
         data: { category: 'A', color: '#bbbbbb', label: 'cho', value: 4 },
-        radius: 7,
+        radius: 5,
         index: 0,
         seriesIndex: 1,
         style: ['default', 'hover'],
@@ -234,7 +232,7 @@ describe('responders', () => {
       {
         color: 'rgba(187, 187, 187, 1)',
         data: { category: 'B', color: '#bbbbbb', label: 'cho', value: 5 },
-        radius: 7,
+        radius: 5,
         index: 1,
         seriesIndex: 1,
         style: ['default', 'hover'],
@@ -330,7 +328,7 @@ describe('zoom', () => {
       series: [
         {
           color: 'rgba(170, 170, 170, 1)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { value: 1, x: -20, y: 80 },
             { value: 2, x: 20, y: 60 },
@@ -342,7 +340,7 @@ describe('zoom', () => {
         },
         {
           color: 'rgba(187, 187, 187, 1)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { value: 3, x: -20, y: 40 },
             { value: 4, x: 20, y: 20 },
@@ -354,7 +352,6 @@ describe('zoom', () => {
         },
       ],
       dot: [],
-      selectedSeries: [],
     },
   };
 
@@ -434,9 +431,9 @@ describe('with series options', () => {
     expect(lineSeries.models.dot).toEqual([
       {
         color: 'rgba(170, 170, 170, 1)',
-        radius: 6,
+        radius: 3,
         seriesIndex: 0,
-        style: ['default'],
+        style: [{ lineWidth: 0, strokeStyle: 'rgba(170, 170, 170, 1)' }],
         type: 'circle',
         x: 20,
         y: 80,
@@ -445,9 +442,9 @@ describe('with series options', () => {
       },
       {
         color: 'rgba(170, 170, 170, 1)',
-        radius: 6,
+        radius: 3,
         seriesIndex: 0,
-        style: ['default'],
+        style: [{ lineWidth: 0, strokeStyle: 'rgba(170, 170, 170, 1)' }],
         type: 'circle',
         x: 60,
         y: 60,
@@ -456,9 +453,9 @@ describe('with series options', () => {
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        radius: 6,
+        radius: 3,
         seriesIndex: 1,
-        style: ['default'],
+        style: [{ lineWidth: 0, strokeStyle: 'rgba(187, 187, 187, 1)' }],
         type: 'circle',
         x: 20,
         y: 20,
@@ -467,9 +464,9 @@ describe('with series options', () => {
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        radius: 6,
+        radius: 3,
         seriesIndex: 1,
-        style: ['default'],
+        style: [{ lineWidth: 0, strokeStyle: 'rgba(187, 187, 187, 1)' }],
         type: 'circle',
         x: 60,
         y: 0,

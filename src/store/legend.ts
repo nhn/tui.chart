@@ -20,6 +20,7 @@ import {
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
+import { hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { extend } from '@src/store/store';
 
 type LegendLabels = {
@@ -88,12 +89,12 @@ function showCheckbox(options: Options) {
 function getNestedPieLegendLabels(series: RawSeries) {
   const result: LegendLabels = [];
 
-  series.nestedPie!.forEach(({ data }) => {
+  series.pie!.forEach(({ data }) => {
     data.forEach(({ name, parentName }) => {
       if (!parentName) {
         result.push({
           label: name,
-          type: 'nestedPie',
+          type: 'pie',
         });
       }
     });
@@ -112,7 +113,7 @@ function getLegendLabels(series: RawSeries): LegendLabels {
 }
 
 function useRectIcon(type: ChartType) {
-  return includes(['bar', 'column', 'area', 'pie', 'nestedPie', 'boxPlot', 'bullet'], type);
+  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet'], type);
 }
 
 function useCircleIcon(type: ChartType) {
@@ -162,7 +163,8 @@ const legend: StoreModule = {
     const useSpectrumLegend =
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
-    const legendLabels = series.nestedPie
+    const defaultWidth = Math.min(options.chart!.width / 10, 150);
+    const legendLabels = hasNestedPieSeries(series)
       ? getNestedPieLegendLabels(series)
       : getLegendLabels(series);
     const data = legendLabels.map(({ label, type }) => ({

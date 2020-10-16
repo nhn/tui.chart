@@ -57,7 +57,7 @@ describe('radar series', () => {
         {
           type: 'polygon',
           color: 'rgba(170, 170, 170, 1)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { x: 100, y: 90 },
             { x: 120, y: 100 },
@@ -71,7 +71,7 @@ describe('radar series', () => {
         {
           type: 'polygon',
           color: 'rgba(187, 187, 187, 1)',
-          lineWidth: 3,
+          lineWidth: 2,
           points: [
             { x: 100, y: 80 },
             { x: 110, y: 100 },
@@ -84,7 +84,6 @@ describe('radar series', () => {
         },
       ],
       dot: [],
-      selectedSeries: [],
     },
     responders: [
       {
@@ -97,6 +96,7 @@ describe('radar series', () => {
         seriesIndex: 0,
         data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
         name: 'han',
+        index: 0,
       },
       {
         type: 'circle',
@@ -108,6 +108,7 @@ describe('radar series', () => {
         seriesIndex: 0,
         data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
         name: 'han',
+        index: 1,
       },
       {
         type: 'circle',
@@ -119,6 +120,7 @@ describe('radar series', () => {
         seriesIndex: 0,
         data: { label: 'han', color: '#aaaaaa', value: 3, category: 'C' },
         name: 'han',
+        index: 2,
       },
       {
         type: 'circle',
@@ -130,6 +132,7 @@ describe('radar series', () => {
         seriesIndex: 0,
         data: { label: 'han', color: '#aaaaaa', value: 4, category: 'D' },
         name: 'han',
+        index: 3,
       },
       {
         type: 'circle',
@@ -141,6 +144,7 @@ describe('radar series', () => {
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 2, category: 'A' },
         name: 'cho',
+        index: 0,
       },
       {
         type: 'circle',
@@ -152,6 +156,7 @@ describe('radar series', () => {
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 1, category: 'B' },
         name: 'cho',
+        index: 1,
       },
       {
         type: 'circle',
@@ -163,6 +168,7 @@ describe('radar series', () => {
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 1, category: 'C' },
         name: 'cho',
+        index: 2,
       },
       {
         type: 'circle',
@@ -174,6 +180,7 @@ describe('radar series', () => {
         seriesIndex: 1,
         data: { label: 'cho', color: '#bbbbbb', value: 3, category: 'D' },
         name: 'cho',
+        index: 3,
       },
     ],
   };

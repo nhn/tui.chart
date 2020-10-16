@@ -58,7 +58,7 @@ export function isBulletSeries(seriesName: string) {
 }
 
 export default class BulletSeries extends Component {
-  models: BulletSeriesModels = { series: [], selectedSeries: [] };
+  models: BulletSeriesModels = { series: [] };
 
   drawModels!: BulletSeriesModels;
 
@@ -120,25 +120,22 @@ export default class BulletSeries extends Component {
             ...model,
           };
         }),
-        selectedSeries: [],
       };
     }
 
     const tooltipDataArr = this.makeTooltipModel(bulletData);
 
     this.responders = seriesModels.map((m, index) => {
-      const model = { ...m };
+      const model = { ...m, color: getRGBA(m.color, 1) };
 
       if (m.modelType === 'bullet') {
         model.style = ['shadow'];
         model.thickness = BOX_HOVER_THICKNESS;
       }
 
-      const data = tooltipDataArr[index];
-
       return {
         ...model,
-        data,
+        data: tooltipDataArr[index],
       };
     });
 
@@ -180,7 +177,10 @@ export default class BulletSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = this.filterBulletResponder(responders);
+      this.eventBus.emit('renderSelectedSeries', {
+        models: this.filterBulletResponder(responders),
+        name: this.name,
+      });
       this.eventBus.emit('needDraw');
     }
   }

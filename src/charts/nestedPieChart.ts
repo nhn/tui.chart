@@ -4,11 +4,11 @@ import nestedPieSeriesData from '@src/store/nestedPieSeriesData';
 
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
-import NestedPieSeries from '@src/component/NestedPieSeries';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
+import SelectedSeries from '@src/component/selectedSeries';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -18,6 +18,7 @@ import * as sectorBrush from '@src/brushes/sector';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 
 import { NestedPieChartOptions, NestedPieSeriesData } from '@t/options';
+import PieSeries from '@src/component/pieSeries';
 
 interface NestedPieChartProps {
   el: Element;
@@ -32,7 +33,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
     super({
       el,
       options,
-      series: { nestedPie: series },
+      series: { pie: series },
       categories,
     });
   }
@@ -42,8 +43,13 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
 
     this.componentManager.add(Title);
     this.componentManager.add(Legend);
-    this.componentManager.add(NestedPieSeries);
+
+    (this.store.initStoreState.series.pie ?? []).forEach(({ name }) => {
+      this.componentManager.add(PieSeries, { alias: name });
+    });
+
     this.componentManager.add(ExportMenu, { chartEl: this.el });
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });

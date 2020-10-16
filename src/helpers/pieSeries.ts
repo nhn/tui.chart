@@ -1,6 +1,7 @@
-import { getPercentageValue, isString, includes } from './utils';
-import { Rect, PieSeriesType } from '@t/options';
+import { getPercentageValue, isString } from './utils';
+import { Rect, PieSeriesType, NestedPieSeriesType } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
+import { RawSeries } from '@t/store/store';
 
 const DEFAULT_RADIUS_RATIO = 0.9;
 const semiCircleCenterYRatio = {
@@ -64,14 +65,19 @@ export function getSemiCircleCenterY(rectHeight: number, clockwise: boolean) {
 }
 
 export function makePieTooltipData(seriesRawData: PieSeriesType[], category = ''): TooltipData[] {
-  return seriesRawData.map(({ data, name, color }) => ({
+  return seriesRawData.map(({ data, name, color, rootParentName }) => ({
     label: name,
     color: color!,
     value: data,
     category,
+    rootParentName,
   }));
 }
 
-export function isPieTypeSeries(seriesName: string) {
-  return includes(['pie', 'nestedPie'], seriesName);
+export function hasNestedPieSeries(series: RawSeries) {
+  return !!(series.pie && Array.isArray(series.pie[0].data));
+}
+
+export function getNestedPieChartAliasNames(series: RawSeries) {
+  return (series.pie as NestedPieSeriesType[]).map(({ name }) => name);
 }

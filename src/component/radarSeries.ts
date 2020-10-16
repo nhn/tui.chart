@@ -12,7 +12,7 @@ import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector'
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getLimitOnAxis } from '@src/helpers/axes';
-import { DEFAULT_LINE_WIDTH } from './lineSeries';
+import { DEFAULT_LINE_SERIES_WIDTH } from './lineSeries';
 
 type RenderOptions = {
   categories: string[];
@@ -24,7 +24,7 @@ type RenderOptions = {
 };
 
 export default class RadarSeries extends Component {
-  models: RadarSeriesModels = { polygon: [], dot: [], selectedSeries: [] };
+  models: RadarSeriesModels = { polygon: [], dot: [] };
 
   drawModels!: RadarSeriesModels;
 
@@ -78,7 +78,6 @@ export default class RadarSeries extends Component {
           x: centerX,
           y: centerY,
         })),
-        selectedSeries: [],
       };
     }
 
@@ -89,12 +88,13 @@ export default class RadarSeries extends Component {
     this.responders = seriesCircleModel.map((m, index) => ({
       ...m,
       data: tooltipDataArr[index],
+      color: getRGBA(m.color, 1),
     }));
   }
 
   renderCircleModel(seriesModels: PolygonModel[]): CircleModel[] {
     return seriesModels.flatMap(({ points, color, name }, seriesIndex) =>
-      points.map((point) => ({
+      points.map((point, index) => ({
         type: 'circle',
         ...point,
         radius: 6,
@@ -102,6 +102,7 @@ export default class RadarSeries extends Component {
         style: ['default', 'hover'],
         seriesIndex,
         name,
+        index,
       }))
     );
   }
@@ -122,7 +123,7 @@ export default class RadarSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = responders;
+      this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }
@@ -165,7 +166,7 @@ export default class RadarSeries extends Component {
       return {
         type: 'polygon',
         color,
-        lineWidth: DEFAULT_LINE_WIDTH,
+        lineWidth: DEFAULT_LINE_SERIES_WIDTH,
         fillColor: getRGBA(color, fillOpacity),
         name,
         ...polygon,

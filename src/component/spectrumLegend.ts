@@ -88,8 +88,9 @@ export default class SpectrumLegend extends Component {
     this.rect = layout.legend;
     this.align = legend.align;
     this.labels = this.makeLabels(colorValueScale);
+    const seriesTheme = theme.series?.heatmap! || theme.series?.treemap!;
 
-    const { startColor, endColor } = theme.series;
+    const { startColor, endColor } = seriesTheme;
     const renderOptions: RenderOptions = { startColor, endColor };
     this.models = { legend: this.renderSpectrumLegendModel(renderOptions), tooltip: [] };
 

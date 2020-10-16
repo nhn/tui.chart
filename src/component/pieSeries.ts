@@ -18,8 +18,7 @@ import {
   getSemiCircleCenterY,
   makePieTooltipData,
 } from '@src/helpers/pieSeries';
-
-export type RadiusRange = { inner: number; outer: number };
+import { RadiusRange } from '@t/components/tooltip';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -29,16 +28,91 @@ type RenderOptions = {
   radiusRange: { inner: number; outer: number };
   angleRange: { start: number; end: number };
   totalAngle: number;
+  defaultRadius?: number;
 };
 
+type RadiusRangeOption = {
+  inner?: number | string;
+  outer?: number | string;
+};
+
+type RadiusRangeMap = Record<string, RadiusRangeOption>;
+type RenderOptionsMap = Record<string, RenderOptions>;
+
+type CalculatedRadiusRangeParam = {
+  alias: string;
+  renderOptions: RenderOptions;
+  radiusRangeMap: RadiusRangeMap;
+  pieIndex: number;
+  radiusRanges: RadiusRange[];
+  totalPieAliasCount: number;
+  innerRadius?: number;
+};
+
+function getCalculatedRadiusRange({
+  alias,
+  renderOptions,
+  radiusRangeMap,
+  pieIndex,
+  radiusRanges,
+  totalPieAliasCount,
+}: CalculatedRadiusRangeParam) {
+  const radiusRangeLength = Object.keys(radiusRangeMap).length;
+  const { defaultRadius = 0 } = renderOptions;
+
+  let { inner, outer } = renderOptions.radiusRange;
+
+  if (!radiusRangeMap[alias]) {
+    if (!radiusRangeLength) {
+      const radius = defaultRadius / totalPieAliasCount;
+
+      inner = pieIndex * radius;
+      outer = (pieIndex + 1) * radius;
+    } else {
+      if (pieIndex && radiusRanges[pieIndex - 1].outer) {
+        inner = radiusRanges[pieIndex - 1].outer;
+      }
+
+      if (radiusRanges[pieIndex + 1]?.inner) {
+        outer = radiusRanges[pieIndex + 1].inner;
+      } else if (pieIndex === totalPieAliasCount - 1) {
+        outer = defaultRadius;
+      } else {
+        const radius =
+          (defaultRadius -
+            (radiusRanges[pieIndex - 1]?.outer ?? 0) -
+            (radiusRanges[pieIndex + 1]?.inner ?? 0)) /
+          (totalPieAliasCount - radiusRangeLength);
+
+        outer = inner + radius;
+      }
+    }
+  }
+
+  return { inner, outer };
+}
+
+function getPieSeriesOpacityByDepth(
+  originAlpha: number,
+  depth: number,
+  indexOfGroup: number,
+  brightness = 0.85
+) {
+  const depthAlpha = Number((originAlpha * brightness ** depth).toFixed(2));
+
+  return Number((depthAlpha ** (indexOfGroup + 1)).toFixed(2));
+}
+
 export default class PieSeries extends Component {
-  models: PieSeriesModels = { series: [], selectedSeries: [] };
+  models: PieSeriesModels = { series: [] };
 
   drawModels!: PieSeriesModels;
 
   responders!: SectorResponderModel[];
 
   activatedResponders: this['responders'] = [];
+
+  alias!: string;
 
   initUpdate(delta: number) {
     if (!this.drawModels) {
@@ -75,13 +149,14 @@ export default class PieSeries extends Component {
     }
   }
 
-  initialize() {
+  initialize(param: { alias?: string }) {
     this.type = 'series';
     this.name = 'pie';
+    this.alias = param?.alias ?? '';
   }
 
   render(chartState: ChartState<PieChartOptions>) {
-    const { layout, series, legend, options } = chartState;
+    const { layout, series, legend, options, nestedPieSeries } = chartState;
     const categories = (chartState.categories as string[]) ?? [];
 
     if (!series.pie) {
@@ -92,12 +167,24 @@ export default class PieSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
 
-    const pieData = series.pie?.data! as PieSeriesType[];
-    const renderOptions = this.makeRenderOptions(options);
+    let seriesModel, tooltipDataModel;
 
-    const seriesModel = this.renderPieModel(pieData, renderOptions);
+    if (nestedPieSeries) {
+      const { data } = nestedPieSeries[this.alias];
 
-    const tooltipModel = makePieTooltipData(pieData, categories?.[0]);
+      const pieAlias = Object.keys(nestedPieSeries);
+      const pieIndex = pieAlias.findIndex((alias) => alias === this.alias);
+      const renderOptionsMap = this.getRenderOptionsMap(options, pieAlias);
+
+      seriesModel = this.renderPieModel(data, renderOptionsMap[this.alias], pieIndex);
+      tooltipDataModel = makePieTooltipData(data, categories?.[pieIndex]);
+    } else {
+      const pieData = series.pie?.data! as PieSeriesType[];
+      const renderOptions = this.makeRenderOptions(options);
+
+      seriesModel = this.renderPieModel(pieData, renderOptions);
+      tooltipDataModel = makePieTooltipData(pieData, categories?.[0]);
+    }
 
     this.models.series = seriesModel;
 
@@ -107,12 +194,11 @@ export default class PieSeries extends Component {
           ...m,
           degree: { ...m.degree, end: m.degree.start },
         })),
-        selectedSeries: [],
       };
     }
 
-    if (getDataLabelsOptions(options, this.name).visible) {
-      this.renderDataLabels(seriesModel);
+    if (getDataLabelsOptions(options, this.alias).visible) {
+      this.renderDataLabels(seriesModel, this.alias);
     }
 
     this.responders = seriesModel.map((m, index) => ({
@@ -121,24 +207,81 @@ export default class PieSeries extends Component {
       radius: m.radius,
       style: ['hover'],
       seriesIndex: index,
-      data: tooltipModel[index],
+      data: tooltipDataModel[index],
+      color: getRGBA(m.color, 1),
     }));
   }
 
+  getRadiusRangeMap(options: PieChartOptions, pieAlias: string[]) {
+    return pieAlias.reduce<RadiusRangeMap>((acc, alias) => {
+      const seriesOptions = this.getOptions(options, alias).series;
+
+      if (seriesOptions?.radiusRange) {
+        acc[alias] = seriesOptions?.radiusRange;
+      }
+
+      return acc;
+    }, {} as RadiusRangeMap);
+  }
+
+  getRenderOptionsMap(options: PieChartOptions, pieAlias: string[]) {
+    const renderOptionsMap = this.initRenderOptionsMap(options, pieAlias);
+    const radiusRangeMap = this.getRadiusRangeMap(options, pieAlias);
+
+    pieAlias.forEach((alias, pieIndex) => {
+      const radiusRanges = Object.values(renderOptionsMap).map(({ radiusRange }) => radiusRange);
+
+      renderOptionsMap[alias].radiusRange = getCalculatedRadiusRange({
+        alias,
+        renderOptions: renderOptionsMap[alias],
+        radiusRangeMap,
+        pieIndex,
+        radiusRanges,
+        totalPieAliasCount: pieAlias.length,
+      });
+    });
+
+    return renderOptionsMap;
+  }
+
+  initRenderOptionsMap(options: PieChartOptions, pieAlias: string[]) {
+    return pieAlias.reduce<RenderOptionsMap>(
+      (acc, alias) => ({
+        ...acc,
+        [alias]: this.makeRenderOptions(this.getOptions(options, alias)),
+      }),
+      {} as RenderOptionsMap
+    );
+  }
+
+  getOptions(chartOptions: PieChartOptions, alias?: string) {
+    const options = { ...chartOptions };
+
+    if (options?.series && alias) {
+      options.series = {
+        ...options.series,
+        ...options.series[alias],
+      };
+    }
+
+    return options;
+  }
+
   makeRenderOptions(options: PieChartOptions): RenderOptions {
-    const clockwise = options?.series?.clockwise ?? true;
-    const startAngle = options?.series?.angleRange?.start ?? 0;
-    const endAngle = options?.series?.angleRange?.end ?? 360;
+    const seriesOptions = options.series;
+    const clockwise = seriesOptions?.clockwise ?? true;
+    const startAngle = seriesOptions?.angleRange?.start ?? 0;
+    const endAngle = seriesOptions?.angleRange?.end ?? 360;
     const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
     const isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
     const { width, height } = this.rect;
     const defaultRadius = getDefaultRadius(this.rect, isSemiCircular);
-    const innerRadius = getRadius(defaultRadius, options.series?.radiusRange?.inner ?? 0);
+
+    const innerRadius = getRadius(defaultRadius, seriesOptions?.radiusRange?.inner ?? 0);
     const outerRadius = getRadius(
       defaultRadius,
-      options.series?.radiusRange?.outer ?? defaultRadius
+      seriesOptions?.radiusRange?.outer ?? (this.alias ? 0 : defaultRadius)
     );
-
     const cx = width / 2;
     const cy = isSemiCircular ? getSemiCircleCenterY(this.rect.height, clockwise) : height / 2;
 
@@ -156,10 +299,15 @@ export default class PieSeries extends Component {
         end: endAngle,
       },
       totalAngle,
+      defaultRadius,
     };
   }
 
-  renderPieModel(seriesRawData: PieSeriesType[], renderOptions: RenderOptions): SectorModel[] {
+  renderPieModel(
+    seriesRawData: PieSeriesType[],
+    renderOptions: RenderOptions,
+    pieIndex?: number
+  ): SectorModel[] {
     const sectorModels: SectorModel[] = [];
     const total = seriesRawData.reduce((sum, { data }) => sum + data, 0);
     const {
@@ -172,10 +320,12 @@ export default class PieSeries extends Component {
     } = renderOptions;
     const defaultStartDegree = clockwise ? 0 : 360;
 
-    seriesRawData.forEach(({ data, name, color: seriesColor }, seriesIndex) => {
-      const active = this.activeSeriesMap![name];
-      const color = getRGBA(seriesColor!, active ? 1 : 0.3);
+    seriesRawData.forEach((rawData, seriesIndex) => {
+      const color = this.getSeriesColor(rawData, seriesRawData, pieIndex);
+
+      const { data, name } = rawData;
       const degree = (data / total) * totalAngle * (clockwise ? 1 : -1);
+
       const startDegree = seriesIndex
         ? sectorModels[seriesIndex - 1].degree.end
         : defaultStartDegree;
@@ -198,7 +348,7 @@ export default class PieSeries extends Component {
           outer,
         },
         value: data,
-        style: ['default'],
+        style: [this.alias ? 'nested' : 'default'],
         clockwise,
         drawingStartAngle,
         totalAngle,
@@ -218,28 +368,64 @@ export default class PieSeries extends Component {
   }
 
   onMousemove({ responders }) {
-    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: responders,
+      name: this.alias || this.name,
+    });
     this.activatedResponders = this.makeTooltipResponder(responders);
 
-    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
+    this.eventBus.emit('seriesPointHovered', {
+      models: this.activatedResponders,
+      name: this.alias || this.name,
+    });
     this.eventBus.emit('needDraw');
   }
 
   onClick({ responders }) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = responders;
-
+      this.eventBus.emit('renderSelectedSeries', {
+        models: responders,
+        name: this.name,
+        alias: this.alias,
+      });
       this.eventBus.emit('needDraw');
     }
   }
 
   onMouseoutComponent() {
-    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
-    this.eventBus.emit('renderHoveredSeries', {
-      models: [],
-      name: this.name,
-    });
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.alias || this.name });
+    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.alias || this.name });
 
     this.eventBus.emit('needDraw');
+  }
+
+  getOpacity(rootParentName: string, parentName: string, pieIndex: number, indexOfGroup: number) {
+    const active = this.activeSeriesMap![rootParentName ?? name];
+    const alpha = active ? 1 : 0.3;
+
+    return pieIndex && parentName
+      ? getPieSeriesOpacityByDepth(alpha, pieIndex, indexOfGroup)
+      : alpha;
+  }
+
+  getIndexOfGroup(seriesRawData: PieSeriesType[], parentName: string, name: string) {
+    return seriesRawData
+      .filter((datum) => parentName === datum.parentName)
+      .findIndex((datum) => name === datum.name);
+  }
+
+  getSeriesColor(rawData: PieSeriesType, seriesRawData: PieSeriesType[], pieIndex?: number) {
+    const { color, name } = rawData;
+    const active = this.activeSeriesMap![name];
+    let opacity = active ? 1 : 0.3;
+
+    if (this.alias) {
+      const { rootParentName, parentName } = rawData;
+      const indexOfGroup = this.getIndexOfGroup(seriesRawData, parentName!, name);
+
+      opacity = this.getOpacity(rootParentName!, parentName!, pieIndex!, indexOfGroup);
+    }
+
+    return getRGBA(color!, opacity);
   }
 }

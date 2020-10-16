@@ -6,10 +6,9 @@ import { LineModel } from '@t/components/axis';
 import { crispPixel } from '@src/helpers/calculator';
 import { isUndefined, includes } from '@src/helpers/utils';
 import { LineTypeEventDetectType, BoxTypeEventDetectType } from '@t/options';
+import { ResponderSeriesModel } from '@src/component/selectedSeries';
 
-export type HoveredSeriesModel = { [key in TooltipModelName]: ResponderModel[] } & {
-  guideLine: LineModel[];
-};
+export type HoveredSeriesModel = ResponderSeriesModel & { guideLine: LineModel[] };
 
 const guideLineType = {
   line: 'circle',

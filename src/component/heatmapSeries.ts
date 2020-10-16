@@ -1,6 +1,6 @@
 import Component from './component';
 import { HeatmapChartOptions, Size } from '@t/options';
-import { ChartState, HeatmapSeriesData, ScaleData, Theme } from '@t/store/store';
+import { ChartState, HeatmapSeriesData, ScaleData } from '@t/store/store';
 import {
   HeatmapRectModel,
   HeatmapRectModels,
@@ -11,7 +11,6 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { SeriesDataLabelType } from '@t/components/dataLabels';
-import { isClickSameSeries } from '@src/helpers/responders';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
@@ -40,7 +39,6 @@ export default class HeatmapSeries extends Component {
     };
     this.models = {
       series: this.renderHeatmapSeries(heatmapSeries, cellSize, theme, colorValueScale),
-      selectedSeries: [],
     };
 
     if (getDataLabelsOptions(options, this.name).visible) {
@@ -79,7 +77,7 @@ export default class HeatmapSeries extends Component {
     theme: Theme,
     colorValueScale: ScaleData
   ): HeatmapRectModel[] {
-    const { startColor, endColor } = theme.series;
+    const { startColor, endColor } = theme.series.heatmap!;
     const startRGB = hexToRGB(startColor) as RGB;
     const distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
     const { height, width } = cellSize;
@@ -110,12 +108,8 @@ export default class HeatmapSeries extends Component {
   }
 
   onClick({ responders }: { responders: HeatmapRectResponderModel[] }) {
-    let selectedSeries = responders;
     if (this.selectable) {
-      if (isClickSameSeries<HeatmapRectResponderModel>(responders, this.models.selectedSeries)) {
-        selectedSeries = [];
-      }
-      this.models.selectedSeries = selectedSeries as HeatmapRectResponderModel[];
+      this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }

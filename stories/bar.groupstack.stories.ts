@@ -44,6 +44,17 @@ export const positive = () => {
   return el;
 };
 
+export const selectable = () => {
+  const { el } = createChart(genderAgeGroupData, {
+    series: {
+      stack: true,
+      selectable: true,
+    },
+  });
+
+  return el;
+};
+
 export const negative = () => {
   const { el } = createChart(lossDataForGroupStack, {
     chart: {

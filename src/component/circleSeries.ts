@@ -4,7 +4,7 @@ import { Rect } from '@t/options';
 import { getNearestResponder } from '@src/helpers/responders';
 
 export default abstract class CircleSeries extends Component {
-  models: CircleSeriesModels = { series: [], selectedSeries: [] };
+  models: CircleSeriesModels = { series: [] };
 
   drawModels!: CircleSeriesModels;
 
@@ -32,7 +32,11 @@ export default abstract class CircleSeries extends Component {
 
   onClick({ responders, mousePosition }) {
     if (this.selectable) {
-      this.drawModels.selectedSeries = getNearestResponder(responders, mousePosition, this.rect);
+      this.eventBus.emit('renderSelectedSeries', {
+        models: getNearestResponder(responders, mousePosition, this.rect),
+        name: this.name,
+      });
+
       this.eventBus.emit('needDraw');
     }
   }

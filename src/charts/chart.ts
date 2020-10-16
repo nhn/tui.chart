@@ -5,6 +5,7 @@ import seriesData from '@src/store/seriesData';
 import category from '@src/store/category';
 import legend from '@src/store/legend';
 import optionsStore, { useResponsive } from '@src/store/options';
+import theme from '@src/store/theme';
 import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
@@ -222,7 +223,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   protected initialize() {
-    this.initStore([root, optionsStore, seriesData, legend, layout, category]);
+    this.initStore([root, optionsStore, theme, seriesData, legend, layout, category]);
 
     this.store.dispatch('initChartSize', this.el);
   }

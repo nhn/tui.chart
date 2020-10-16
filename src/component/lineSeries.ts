@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { deepCopyArray, pick, includes } from '@src/helpers/utils';
+import { pick, includes } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -45,13 +45,15 @@ interface RenderOptions {
   labelDistance?: number;
 }
 
-export const DEFAULT_LINE_WIDTH = 3;
+export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
+export const DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS = DEFAULT_LINE_SERIES_DOT_RADIUS + 2;
+export const DEFAULT_LINE_SERIES_WIDTH = 2;
 
 type DatumType = CoordinateDataType | number;
 type ResponderTypes = CircleResponderModel[] | RectResponderModel[];
 
 export default class LineSeries extends Component {
-  models: LineSeriesModels = { rect: [], series: [], dot: [], selectedSeries: [] };
+  models: LineSeriesModels = { rect: [], series: [], dot: [] };
 
   drawModels!: LineSeriesModels;
 
@@ -138,15 +140,12 @@ export default class LineSeries extends Component {
       rect: [this.renderClipRectAreaModel()],
       series: lineSeriesModel,
       dot: dotSeriesModel,
-      selectedSeries: [],
     };
 
     if (!this.drawModels) {
       this.drawModels = {
+        ...this.models,
         rect: [this.renderClipRectAreaModel(true)],
-        series: deepCopyArray(lineSeriesModel),
-        dot: deepCopyArray(dotSeriesModel),
-        selectedSeries: [],
       };
     }
 
@@ -205,8 +204,8 @@ export default class LineSeries extends Component {
     return options?.showDot
       ? seriesCircleModel.map((m) => ({
           ...m,
-          radius: 6,
-          style: ['default'],
+          radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
+          style: [{ lineWidth: 0, strokeStyle: m.color }],
         }))
       : [];
   }
@@ -258,7 +257,7 @@ export default class LineSeries extends Component {
 
       return {
         type: 'linePoints',
-        lineWidth: lineWidth ?? DEFAULT_LINE_WIDTH,
+        lineWidth: lineWidth ?? DEFAULT_LINE_SERIES_WIDTH,
         color,
         points,
         seriesIndex,
@@ -273,8 +272,8 @@ export default class LineSeries extends Component {
         type: 'circle',
         x,
         y,
-        radius: 7,
-        color,
+        radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
+        color: getRGBA(color, 1),
         style: ['default', 'hover'],
         seriesIndex,
         name,
@@ -337,14 +336,16 @@ export default class LineSeries extends Component {
 
   onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
+      let models;
       if (this.eventDetectType === 'near') {
-        this.drawModels.selectedSeries = responders as CircleResponderModel[];
+        models = responders as CircleResponderModel[];
       } else {
-        this.drawModels.selectedSeries = this.getCircleModelsFromRectResponders(
+        models = this.getCircleModelsFromRectResponders(
           responders as RectResponderModel[],
           mousePosition
         );
       }
+      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
       this.eventBus.emit('needDraw');
     }
   }

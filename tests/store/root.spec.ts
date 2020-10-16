@@ -8,40 +8,6 @@ describe('Root store', () => {
 
       expect(state).toEqual({
         chart: { width: 0, height: 0 },
-        theme: {
-          series: {
-            colors: [
-              '#00a9ff',
-              '#ffb840',
-              '#ff5a46',
-              '#00bd9f',
-              '#785fff',
-              '#f28b8c',
-              '#989486',
-              '#516f7d',
-              '#29dbe3',
-              '#dddddd',
-              '#64e38b',
-              '#e3b664',
-              '#fB826e',
-              '#64e3C2',
-              '#f66efb',
-              '#e3cd64',
-              '#82e364',
-              '#8570ff',
-              '#e39e64',
-              '#fa5643',
-              '#7a4b46',
-              '#81b1c7',
-              '#257a6c',
-              '#58527a',
-              '#fbb0b0',
-              '#c7c7c7',
-            ],
-            startColor: '#ffe98a',
-            endColor: '#d74177',
-          },
-        },
       });
     });
 

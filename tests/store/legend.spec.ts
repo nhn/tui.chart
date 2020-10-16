@@ -89,7 +89,7 @@ describe('Legend Store', () => {
       const state = (legend.state as StateFunc)({
         options: { chart: { width: 300, height: 300 } },
         series: {
-          nestedPie: [
+          pie: [
             {
               name: 'pie1',
               data: [
@@ -147,7 +147,7 @@ describe('Legend Store', () => {
           series: { grouped: true },
         } as NestedPieChartOptions,
         series: {
-          nestedPie: [
+          pie: [
             {
               name: 'pie1',
               data: [

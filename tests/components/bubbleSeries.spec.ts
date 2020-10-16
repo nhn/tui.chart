@@ -102,12 +102,12 @@ const result = {
       y: 0,
       detectionSize: 0,
       data: {
-        category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
         label: 'nameA/A',
         value: { x: 10, y: 20, r: 100 },
       },
       name: 'nameA',
+      index: 0,
     },
     {
       color: 'rgba(170, 170, 170, 0.85)',
@@ -119,12 +119,12 @@ const result = {
       y: 0,
       detectionSize: 0,
       data: {
-        category: undefined, // eslint-disable-line no-undefined
         color: '#aaaaaa',
         label: 'nameA/B',
         value: { x: 15, y: 20, r: 200 },
       },
       name: 'nameA',
+      index: 1,
     },
     {
       color: 'rgba(187, 187, 187, 0.85)',
@@ -136,12 +136,12 @@ const result = {
       y: 280,
       detectionSize: 0,
       data: {
-        category: undefined, // eslint-disable-line no-undefined
         color: '#bbbbbb',
         label: 'nameB/C',
         value: { x: 20, y: 10, r: 30 },
       },
       name: 'nameB',
+      index: 2,
     },
   ],
   models: {
@@ -177,7 +177,6 @@ const result = {
         name: 'nameB',
       },
     ],
-    selectedSeries: [],
   },
 };
 

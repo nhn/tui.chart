@@ -83,20 +83,15 @@ const seriesData: StoreModule = {
       const rawSeries = deepCopy(initStoreState.series);
       const { disabledSeries, theme, zoomRange, rawCategories } = state;
       const newSeriesData = {};
-      const { colors } = theme.series;
-      let colorIdx = 0;
 
       Object.keys(rawSeries).forEach((seriesName) => {
-        const originSeriesData = rawSeries[seriesName].map((m) => {
-          colorIdx += 1;
-
-          return {
-            ...m,
-            rawData: m.data,
-            data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
-            color: colors[colorIdx - 1],
-          };
-        });
+        const { colors } = theme.series![seriesName];
+        const originSeriesData = rawSeries[seriesName].map((m, idx) => ({
+          ...m,
+          rawData: m.data,
+          data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
+          color: colors ? colors[idx] : '',
+        }));
 
         const seriesCount = originSeriesData.length;
         const seriesGroupCount = originSeriesData[0]?.data?.length ?? 0;

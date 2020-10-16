@@ -312,12 +312,37 @@ export const secondaryYAxis = () => {
   return el;
 };
 
+export const theme = () => {
+  const themeOptions = {
+    series: {
+      colors: [
+        '#83b14e',
+        '#458a3f',
+        '#295ba0',
+        '#2a4175',
+        '#289399',
+        '#289399',
+        '#617178',
+        '#8a9a9a',
+        '#516f7d',
+        '#dddddd',
+      ],
+    },
+  };
+
+  const { el } = createChart(temperatureData, {
+    theme: themeOptions,
+  });
+
+  return el;
+};
+
 export const responsive = () => {
   const { el } = createChart(
     temperatureData,
     { chart: { title: '24-hr Average Temperature' } },
     true
   );
-
+  
   return el;
 };

@@ -48,6 +48,14 @@ export const positive = () => {
   return el;
 };
 
+export const selectable = () => {
+  const { el } = createChart(budgetData, {
+    series: { selectable: true, eventDetectType: 'grouped' },
+  });
+
+  return el;
+};
+
 export const positiveWithMinMax = () => {
   const { el } = createChart(budgetData, {
     yAxis: {

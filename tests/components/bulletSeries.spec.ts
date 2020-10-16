@@ -175,7 +175,6 @@ describe('bullet series', () => {
           name: 'cho',
         },
       ],
-      selectedSeries: [],
     },
     responders: [
       {
@@ -185,7 +184,7 @@ describe('bullet series', () => {
         y: 10,
         width: 10,
         height: 30,
-        color: '#666666',
+        color: 'rgba(102, 102, 102, 1)',
         name: 'han',
         data: {
           color: '#aaaaaa',
@@ -201,7 +200,7 @@ describe('bullet series', () => {
         y: 10,
         width: 30,
         height: 30,
-        color: '#999999',
+        color: 'rgba(153, 153, 153, 1)',
         name: 'han',
         data: {
           color: '#aaaaaa',
@@ -217,7 +216,7 @@ describe('bullet series', () => {
         y: 10,
         width: 60,
         height: 30,
-        color: '#bbbbbb',
+        color: 'rgba(187, 187, 187, 1)',
         name: 'han',
         data: {
           color: '#aaaaaa',
@@ -264,7 +263,7 @@ describe('bullet series', () => {
         y: 60,
         width: 20,
         height: 30,
-        color: '#666666',
+        color: 'rgba(102, 102, 102, 1)',
         name: 'cho',
         data: {
           color: '#bbbbbb',
@@ -280,7 +279,7 @@ describe('bullet series', () => {
         y: 60,
         width: 30,
         height: 30,
-        color: '#999999',
+        color: 'rgba(153, 153, 153, 1)',
         name: 'cho',
         data: {
           color: '#bbbbbb',
@@ -296,7 +295,7 @@ describe('bullet series', () => {
         y: 60,
         width: 50,
         height: 30,
-        color: '#bbbbbb',
+        color: 'rgba(187, 187, 187, 1)',
         name: 'cho',
         data: {
           color: '#bbbbbb',
