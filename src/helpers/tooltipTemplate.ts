@@ -128,12 +128,16 @@ function getHeatmapTemplate({ data }: TooltipModel) {
     .join('')}`;
 }
 
+export const tooltipTemplates = {
+  default: getDefaultTemplate,
+  defaultHeader: getHeaderTemplate,
+  defaultBody: getDefaultBodyTemplate,
+  boxPlot: getBoxPlotTemplate,
+  bullet: getBulletTemplate,
+  pie: getPieTemplate,
+  heatmap: getHeatmapTemplate,
+};
+
 export function getBodyTemplate(type?: TooltipTemplateType) {
-  return {
-    default: getDefaultBodyTemplate,
-    boxPlot: getBoxPlotTemplate,
-    bullet: getBulletTemplate,
-    pie: getPieTemplate,
-    heatmap: getHeatmapTemplate,
-  }[type || 'default'];
+  return tooltipTemplates[type || 'defaultBody'];
 }

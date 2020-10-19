@@ -8,11 +8,7 @@ import {
   TooltipModelName,
 } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
-import {
-  getDefaultTemplate,
-  getHeaderTemplate,
-  getBodyTemplate,
-} from '@src/helpers/tooltipTemplate';
+import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
 import { isNumber } from '@src/helpers/utils';
 import { Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
 
@@ -139,14 +135,10 @@ export default class Tooltip extends Component {
     );
 
     this.tooltipContainerEl.innerHTML = this.templateFunc(model, {
-      header: getHeaderTemplate(model),
-      body: this.getBodyTemplate(model),
+      header: tooltipTemplates.defaultHeader(model),
+      body: getBodyTemplate(model.templateType)(model),
     });
     this.setTooltipPosition(model);
-  }
-
-  getBodyTemplate(model: TooltipModel) {
-    return getBodyTemplate(model.templateType)(model);
   }
 
   initialize({ chartEl }) {
@@ -168,7 +160,7 @@ export default class Tooltip extends Component {
 
   render({ layout, options }: ChartState<Options>) {
     this.rect = layout.plot;
-    this.templateFunc = options?.tooltip?.template ?? getDefaultTemplate;
+    this.templateFunc = options?.tooltip?.template ?? tooltipTemplates['default'];
     this.offsetX = options?.tooltip?.offsetX ?? 10;
     this.offsetY = options?.tooltip?.offsetY ?? 0;
     this.formatter = options?.tooltip?.formatter;
