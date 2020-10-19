@@ -54,6 +54,32 @@ describe('basic', () => {
     dataLabels: {
       visible: false,
     },
+    theme: {
+      series: {
+        line: {
+          colors: ['#aaaaaa', '#bbbbbb'],
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+        },
+      },
+    },
   };
 
   beforeEach(() => {
@@ -80,6 +106,7 @@ describe('basic', () => {
           seriesIndex: 0,
           type: 'linePoints',
           name: 'han',
+          dashSegments: [],
         },
         {
           color: 'rgba(187, 187, 187, 1)',
@@ -91,6 +118,7 @@ describe('basic', () => {
           seriesIndex: 1,
           type: 'linePoints',
           name: 'cho',
+          dashSegments: [],
         },
       ],
       dot: [],
@@ -109,6 +137,7 @@ describe('basic', () => {
           ],
           seriesIndex: 0,
           type: 'linePoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -121,6 +150,7 @@ describe('basic', () => {
           ],
           seriesIndex: 1,
           type: 'linePoints',
+          dashSegments: [],
         },
       ],
     },
@@ -181,6 +211,32 @@ describe('responders', () => {
     categories: ['A', 'B'],
     dataLabels: {
       visible: false,
+    },
+    theme: {
+      series: {
+        line: {
+          colors: ['#aaaaaa', '#bbbbbb'],
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+        },
+      },
     },
   };
 
@@ -311,6 +367,32 @@ describe('zoom', () => {
       visible: false,
     },
     zoomRange: [1, 1],
+    theme: {
+      series: {
+        line: {
+          colors: ['#aaaaaa', '#bbbbbb'],
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+        },
+      },
+    },
   };
 
   beforeEach(() => {
@@ -337,6 +419,7 @@ describe('zoom', () => {
           seriesIndex: 0,
           name: 'han',
           type: 'linePoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(187, 187, 187, 1)',
@@ -349,6 +432,7 @@ describe('zoom', () => {
           seriesIndex: 1,
           name: 'cho',
           type: 'linePoints',
+          dashSegments: [],
         },
       ],
       dot: [],
@@ -410,6 +494,32 @@ describe('with series options', () => {
     dataLabels: {
       visible: false,
     },
+    theme: {
+      series: {
+        line: {
+          colors: ['#aaaaaa', '#bbbbbb'],
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+        },
+      },
+    },
   };
 
   beforeEach(() => {
@@ -433,7 +543,7 @@ describe('with series options', () => {
         color: 'rgba(170, 170, 170, 1)',
         radius: 3,
         seriesIndex: 0,
-        style: [{ lineWidth: 0, strokeStyle: 'rgba(170, 170, 170, 1)' }],
+        style: [{ strokeStyle: 'rgba(170, 170, 170, 1)' }],
         type: 'circle',
         x: 20,
         y: 80,
@@ -444,7 +554,7 @@ describe('with series options', () => {
         color: 'rgba(170, 170, 170, 1)',
         radius: 3,
         seriesIndex: 0,
-        style: [{ lineWidth: 0, strokeStyle: 'rgba(170, 170, 170, 1)' }],
+        style: [{ strokeStyle: 'rgba(170, 170, 170, 1)' }],
         type: 'circle',
         x: 60,
         y: 60,
@@ -455,7 +565,7 @@ describe('with series options', () => {
         color: 'rgba(187, 187, 187, 1)',
         radius: 3,
         seriesIndex: 1,
-        style: [{ lineWidth: 0, strokeStyle: 'rgba(187, 187, 187, 1)' }],
+        style: [{ strokeStyle: 'rgba(187, 187, 187, 1)' }],
         type: 'circle',
         x: 20,
         y: 20,
@@ -466,7 +576,7 @@ describe('with series options', () => {
         color: 'rgba(187, 187, 187, 1)',
         radius: 3,
         seriesIndex: 1,
-        style: [{ lineWidth: 0, strokeStyle: 'rgba(187, 187, 187, 1)' }],
+        style: [{ strokeStyle: 'rgba(187, 187, 187, 1)' }],
         type: 'circle',
         x: 60,
         y: 0,
@@ -474,17 +584,5 @@ describe('with series options', () => {
         index: 1,
       },
     ]);
-  });
-
-  it(`should make models properly when calling render with lineWidth options`, () => {
-    const state = deepMergedCopy(chartState, {
-      options: {
-        series: {
-          lineWidth: 10,
-        },
-      },
-    });
-    lineSeries.render(state);
-    expect(lineSeries.models.series.map(({ lineWidth }) => lineWidth)).toEqual([10, 10]);
   });
 });

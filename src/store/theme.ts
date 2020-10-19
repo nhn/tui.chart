@@ -1,109 +1,8 @@
-import { ChartType, Options, RawSeries, StoreModule } from '@t/store/store';
-import { deepMergedCopy, includes, omit } from '@src/helpers/utils';
+import { Options, RawSeries, StoreModule } from '@t/store/store';
+import { deepMergedCopy, omit } from '@src/helpers/utils';
 import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
-
-export const DEFAULT_LINE_SERIES_WIDTH = 2;
-export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
-export const DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS = DEFAULT_LINE_SERIES_DOT_RADIUS + 2;
-
-const defaultTheme = {
-  series: {
-    colors: [
-      '#00a9ff',
-      '#ffb840',
-      '#ff5a46',
-      '#00bd9f',
-      '#785fff',
-      '#f28b8c',
-      '#989486',
-      '#516f7d',
-      '#29dbe3',
-      '#dddddd',
-      '#64e38b',
-      '#e3b664',
-      '#fB826e',
-      '#64e3C2',
-      '#f66efb',
-      '#e3cd64',
-      '#82e364',
-      '#8570ff',
-      '#e39e64',
-      '#fa5643',
-      '#7a4b46',
-      '#81b1c7',
-      '#257a6c',
-      '#58527a',
-      '#fbb0b0',
-      '#c7c7c7',
-    ],
-    startColor: '#ffe98a',
-    endColor: '#d74177',
-    lineWidth: DEFAULT_LINE_SERIES_WIDTH,
-    dashSegments: [],
-    select: {
-      dot: {
-        radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
-        borderWidth: 2,
-        borderColor: '#fff',
-      },
-      areaOpacity: 0.06,
-      restSeries: {
-        areaOpacity: 0.06,
-      },
-    },
-    hover: {
-      dot: {
-        radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
-        borderWidth: 2,
-        borderColor: '#fff',
-      },
-    },
-    dot: {
-      radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
-    },
-    areaOpacity: 0.3,
-  },
-  chart: {
-    title: {
-      fontSize: 11,
-      fontFamily: 'Arial',
-      fontWeight: '500',
-    },
-  },
-};
-
-const SERIES_USING_COLOR_RANGE = ['treemap', 'heatmap'];
-
-function getSeriesTheme(seriesName: ChartType) {
-  let defaultSeriesTheme: SeriesTheme = omit(defaultTheme.series, 'colors');
-
-  if (!includes(SERIES_USING_COLOR_RANGE, seriesName)) {
-    defaultSeriesTheme = omit(
-      defaultSeriesTheme as HeatmapChartSeriesTheme | TreemapChartSeriesTheme,
-      'startColor',
-      'endColor'
-    );
-  }
-
-  return defaultSeriesTheme;
-}
-
-function getDefaultTheme(series: RawSeries): Theme {
-  const theme = omit(defaultTheme, 'series') as Theme;
-  theme.series = {} as SeriesThemeMap;
-  const seriesNames = Object.keys(series) as ChartType[];
-
-  return seriesNames.reduce<Theme>((acc, seriesName) => {
-    return {
-      ...acc,
-      series: {
-        ...acc.series,
-        [seriesName]: getSeriesTheme(seriesName),
-      },
-    };
-  }, theme);
-}
+import { defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
 
 function getCommonSeriesOptions(
   options: Options,
@@ -186,10 +85,7 @@ function setColors(
   isNestedPieChart: boolean
 ) {
   let index = 0;
-  const commonColorsOption = [
-    ...(commonSeriesOptions?.colors ?? []),
-    ...defaultTheme.series.colors,
-  ];
+  const commonColorsOption = [...(commonSeriesOptions?.colors ?? []), ...defaultSeriesTheme.colors];
   const themeNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
 
   themeNames.forEach((name, idx) => {
