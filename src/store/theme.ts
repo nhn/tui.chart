@@ -48,7 +48,6 @@ const defaultTheme = {
         borderColor: '#fff',
       },
       areaOpacity: 0.06,
-      // @TODO: 이름 확인 한 번 조절 해보자
       restSeries: {
         areaOpacity: 0.06,
       },
@@ -80,7 +79,11 @@ function getSeriesTheme(seriesName: ChartType) {
   let defaultSeriesTheme: SeriesTheme = omit(defaultTheme.series, 'colors');
 
   if (!includes(SERIES_USING_COLOR_RANGE, seriesName)) {
-    defaultSeriesTheme = omit(defaultSeriesTheme, 'startColor', 'endColor');
+    defaultSeriesTheme = omit(
+      defaultSeriesTheme as HeatmapChartSeriesTheme | TreemapChartSeriesTheme,
+      'startColor',
+      'endColor'
+    );
   }
 
   return defaultSeriesTheme;

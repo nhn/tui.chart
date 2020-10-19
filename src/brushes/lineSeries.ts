@@ -3,7 +3,7 @@ import { AreaPointsModel, LinePointsModel } from '@t/components/series';
 type PointsModel = LinePointsModel | AreaPointsModel;
 
 export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel) {
-  const { color, lineWidth, points, dashSegments } = pointsModel;
+  const { color, lineWidth, points, dashSegments = [] } = pointsModel;
 
   ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';

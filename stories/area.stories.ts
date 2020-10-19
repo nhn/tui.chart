@@ -267,7 +267,7 @@ export const theme = () => {
         restSeries: {
           areaOpacity: 0.01,
         },
-        areaOpacity: 0.5,
+        areaOpacity: 0.8,
       },
       hover: {
         dot: {
@@ -282,7 +282,7 @@ export const theme = () => {
         borderColor: '#ffff00',
         borderWidth: 2,
       },
-      areaOpacity: 0.7,
+      areaOpacity: 0.4,
     },
   };
 
