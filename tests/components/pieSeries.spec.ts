@@ -128,8 +128,6 @@ describe('basic', () => {
           value: 50,
           category: 'Browser',
           percentValue: 50,
-          // eslint-disable-next-line no-undefined
-          rootParentName: undefined,
           templateType: 'pie',
         },
         totalAngle: 360,
@@ -160,8 +158,6 @@ describe('basic', () => {
           value: 50,
           category: 'Browser',
           percentValue: 50,
-          // eslint-disable-next-line no-undefined
-          rootParentName: undefined,
           templateType: 'pie',
         },
         totalAngle: 360,
@@ -327,8 +323,6 @@ describe('donut', () => {
           value: 50,
           category: 'Browser',
           percentValue: 50,
-          // eslint-disable-next-line no-undefined
-          rootParentName: undefined,
           templateType: 'pie',
         },
         totalAngle: 360,
@@ -359,8 +353,6 @@ describe('donut', () => {
           value: 50,
           category: 'Browser',
           percentValue: 50,
-          // eslint-disable-next-line no-undefined
-          rootParentName: undefined,
           templateType: 'pie',
         },
         totalAngle: 360,

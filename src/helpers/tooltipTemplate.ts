@@ -7,21 +7,21 @@ import {
 import { DefaultTooltipTemplate } from '@t/options';
 
 function pieTooltipLabelFormatter(percentValue: number) {
-  const percentageString = percentValue.toFixed(4);
+  const percentageString = percentValue.toFixed(2);
   const percent = parseFloat(percentageString);
-  const needSlice = percent < 0.0009 || percentageString.length > 5;
+  const needSlice = percentageString.length > 5;
 
-  return `${needSlice ? percentageString.substr(0, 4) : String(percent)}%  `;
+  return `${needSlice ? parseFloat(percentageString.substr(0, 4)) : String(percent)}%  `;
 }
 
-function getSeriesNameTpl(label: string, color: string) {
+function getSeriesNameTemplate(label: string, color: string) {
   return `<span class="series-name">
     <i class="icon" style="background: ${color}"></i>
     <span class="name">${label}</span>
   </span>`;
 }
 
-function getTitleValueTpl(title: string, value: string) {
+function getTitleValueTemplate(title: string, value: string) {
   return `<div class="tooltip-series">
     <span class="series-name">${title}</span>
     <span class="series-value">${value}</span>
@@ -42,7 +42,7 @@ function getDefaultBodyTemplate({ data }: TooltipModel) {
         .map(
           ({ label, color, formattedValue }) =>
             `<div class="tooltip-series">
-                ${getSeriesNameTpl(label, color)}
+                ${getSeriesNameTemplate(label, color)}
                 <span class="series-value">${formattedValue}</span>
               </div>`
         )
@@ -53,9 +53,7 @@ function getDefaultBodyTemplate({ data }: TooltipModel) {
 function getBoxPlotTemplate({ data }: TooltipModel) {
   const groupedData = data.reduce<TooltipData>((acc, item, index) => {
     if (!index) {
-      acc = item;
-
-      return acc;
+      return item;
     }
 
     if (acc.category === item.category && acc.label === item.label) {
@@ -70,11 +68,11 @@ function getBoxPlotTemplate({ data }: TooltipModel) {
       .map(
         ({ label, color, value: values }) =>
           `<div class="tooltip-series">
-            ${getSeriesNameTpl(label, color)}
+            ${getSeriesNameTemplate(label, color)}
           </div>
           <div>
         ${(values as TooltipTitleValues)
-          .map(({ title, formattedValue }) => getTitleValueTpl(title, formattedValue!))
+          .map(({ title, formattedValue }) => getTitleValueTemplate(title, formattedValue!))
           .join('')}
           </div>`
       )
@@ -88,10 +86,10 @@ function getBulletTemplate({ data }: TooltipModel) {
       .map(
         ({ label, color, value: values }) =>
           `<div class="tooltip-series">
-            ${getSeriesNameTpl(label, color)}
+            ${getSeriesNameTemplate(label, color)}
           </div>
           ${(values as TooltipTitleValues)
-            .map(({ title, formattedValue }) => getTitleValueTpl(title, formattedValue!))
+            .map(({ title, formattedValue }) => getTitleValueTemplate(title, formattedValue!))
             .join('')}`
       )
       .join('')}
@@ -104,7 +102,7 @@ function getPieTemplate({ data }: TooltipModel) {
       .map(
         ({ label, color, formattedValue, percentValue }) =>
           `<div class="tooltip-series">
-        ${getSeriesNameTpl(label, color)}
+        ${getSeriesNameTemplate(label, color)}
         <span class="series-value">${pieTooltipLabelFormatter(
           percentValue!
         )} (${formattedValue!})</span>
@@ -122,7 +120,7 @@ function getHeatmapTemplate({ data }: TooltipModel) {
           ${label}
         </div>
         <div class="tooltip-series-wrapper">
-          <div class="tooltip-series">${getSeriesNameTpl(formattedValue!, color)}</div>
+          <div class="tooltip-series">${getSeriesNameTemplate(formattedValue!, color)}</div>
         </div>`
     )
     .join('')}`;
