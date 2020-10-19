@@ -11,11 +11,7 @@ import { getValueString } from '@src/helpers/tooltip';
 import {
   getDefaultTemplate,
   getHeaderTemplate,
-  getDefaultBodyTemplate,
-  getBoxPlotTemplate,
-  getBulletTemplate,
-  getPieTemplate,
-  getHeatmapTemplate,
+  getBodyTemplate,
 } from '@src/helpers/tooltipTemplate';
 import { isNumber } from '@src/helpers/utils';
 import { Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
@@ -150,21 +146,7 @@ export default class Tooltip extends Component {
   }
 
   getBodyTemplate(model: TooltipModel) {
-    let tpl;
-
-    if (model.templateType === 'boxPlot') {
-      tpl = getBoxPlotTemplate(model);
-    } else if (model.templateType === 'bullet') {
-      tpl = getBulletTemplate(model);
-    } else if (model.templateType === 'pie') {
-      tpl = getPieTemplate(model);
-    } else if (model.templateType === 'heatmap') {
-      tpl = getHeatmapTemplate(model);
-    } else {
-      tpl = getDefaultBodyTemplate(model);
-    }
-
-    return tpl;
+    return getBodyTemplate(model.templateType)(model);
   }
 
   initialize({ chartEl }) {

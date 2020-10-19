@@ -1,14 +1,27 @@
-import { TooltipModel, TooltipData, TooltipTitleValues } from '@t/components/tooltip';
+import {
+  TooltipModel,
+  TooltipData,
+  TooltipTitleValues,
+  TooltipTemplateType,
+} from '@t/components/tooltip';
 import { DefaultTooltipTemplate } from '@t/options';
 
-export function getSeriesNameTpl(label: string, color: string) {
+function pieTooltipLabelFormatter(percentValue: number) {
+  const percentageString = percentValue.toFixed(4);
+  const percent = parseFloat(percentageString);
+  const needSlice = percent < 0.0009 || percentageString.length > 5;
+
+  return `${needSlice ? percentageString.substr(0, 4) : String(percent)}%  `;
+}
+
+function getSeriesNameTpl(label: string, color: string) {
   return `<span class="series-name">
     <i class="icon" style="background: ${color}"></i>
     <span class="name">${label}</span>
   </span>`;
 }
 
-export function getTitleValueTpl(title: string, value: string) {
+function getTitleValueTpl(title: string, value: string) {
   return `<div class="tooltip-series">
     <span class="series-name">${title}</span>
     <span class="series-value">${value}</span>
@@ -23,7 +36,7 @@ export function getHeaderTemplate({ category }: TooltipModel) {
   return category ? `<div class="tooltip-category">${category}</div>` : '';
 }
 
-export function getDefaultBodyTemplate({ data }: TooltipModel) {
+function getDefaultBodyTemplate({ data }: TooltipModel) {
   return `<div class="tooltip-series-wrapper">
       ${data
         .map(
@@ -37,7 +50,7 @@ export function getDefaultBodyTemplate({ data }: TooltipModel) {
     </div>`;
 }
 
-export function getBoxPlotTemplate({ data }: TooltipModel) {
+function getBoxPlotTemplate({ data }: TooltipModel) {
   const groupedData = data.reduce<TooltipData>((acc, item, index) => {
     if (!index) {
       acc = item;
@@ -69,7 +82,7 @@ export function getBoxPlotTemplate({ data }: TooltipModel) {
   </div>`;
 }
 
-export function getBulletTemplate({ data }: TooltipModel) {
+function getBulletTemplate({ data }: TooltipModel) {
   return `<div class="tooltip-series-wrapper">
     ${data
       .map(
@@ -85,35 +98,42 @@ export function getBulletTemplate({ data }: TooltipModel) {
   </div>`;
 }
 
-export function getPieTemplate({ data }: TooltipModel) {
+function getPieTemplate({ data }: TooltipModel) {
   return `<div class="tooltip-series-wrapper">
     ${data
       .map(
         ({ label, color, formattedValue, percentValue }) =>
           `<div class="tooltip-series">
         ${getSeriesNameTpl(label, color)}
-        <span class="series-value">${percentValue}% (${formattedValue!})</span>
+        <span class="series-value">${pieTooltipLabelFormatter(
+          percentValue!
+        )} (${formattedValue!})</span>
       </div>`
       )
       .join('')}
   </div>`;
 }
 
-export function getHeatmapTemplate({ data }: TooltipModel) {
-  console.log(data);
+function getHeatmapTemplate({ data }: TooltipModel) {
+  return `${data
+    .map(
+      ({ label, color, formattedValue }) =>
+        `<div class="tooltip-category">
+          ${label}
+        </div>
+        <div class="tooltip-series-wrapper">
+          <div class="tooltip-series">${getSeriesNameTpl(formattedValue!, color)}</div>
+        </div>`
+    )
+    .join('')}`;
+}
 
-  return `<div class="tooltip-series-wrapper">
-    ${data
-      .map(
-        ({ label, color, formattedValue }) =>
-          `
-          <div class="tooltip-series">
-            ${label}
-          </div>
-          <div class="tooltip-series">
-        ${getSeriesNameTpl(formattedValue!, color)}
-      </div>`
-      )
-      .join('')}
-  </div>`;
+export function getBodyTemplate(type?: TooltipTemplateType) {
+  return {
+    default: getDefaultBodyTemplate,
+    boxPlot: getBoxPlotTemplate,
+    bullet: getBulletTemplate,
+    pie: getPieTemplate,
+    heatmap: getHeatmapTemplate,
+  }[type || 'default'];
 }

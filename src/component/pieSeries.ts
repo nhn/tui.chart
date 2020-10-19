@@ -325,7 +325,7 @@ export default class PieSeries extends Component {
 
       const { data, name } = rawData;
       const degree = (data / total) * totalAngle * (clockwise ? 1 : -1);
-      const percentValue = ((data / total) * 100).toFixed(2);
+      const percentValue = (data / total) * 100;
       const startDegree = seriesIndex
         ? sectorModels[seriesIndex - 1].degree.end
         : defaultStartDegree;
@@ -374,7 +374,6 @@ export default class PieSeries extends Component {
       name: this.alias || this.name,
     });
     this.activatedResponders = this.makeTooltipResponder(responders);
-    console.log(responders);
     this.eventBus.emit('seriesPointHovered', {
       models: this.activatedResponders,
       name: this.alias || this.name,
