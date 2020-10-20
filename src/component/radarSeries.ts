@@ -11,8 +11,8 @@ import { RadarSeriesType, Point, RadarChartOptions } from '@t/options';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
-import { getLimitOnAxis } from '@src/helpers/axes';
 import { DEFAULT_LINE_SERIES_WIDTH } from './lineSeries';
+import { getLimitOnAxis } from '@src/helpers/axes';
 
 type RenderOptions = {
   categories: string[];
@@ -50,14 +50,14 @@ export default class RadarSeries extends Component {
 
     const categories = state.categories as string[];
     const { labels, axisSize, centerX, centerY } = axes.radialAxis!;
-    const { max } = getLimitOnAxis(labels);
+    const { min, max } = getLimitOnAxis(labels);
     const renderOptions = {
       categories,
       degree: 360 / categories.length,
       centerX,
       centerY,
       showArea: options?.series?.showArea ?? false,
-      ratio: axisSize / max,
+      ratio: axisSize / (max - min),
     };
 
     const radarData = series.radar?.data;
@@ -140,7 +140,7 @@ export default class RadarSeries extends Component {
 
   renderPolygonModels(seriesData: RadarSeriesType[], renderOptions: RenderOptions): PolygonModel[] {
     const { centerX, centerY, degree, ratio, showArea } = renderOptions;
-    const fillOpacity = showArea ? 0.2 : 0;
+    const fillOpacity = showArea ? 0.3 : 0;
 
     return seriesData.map(({ data, color: seriesColor, name }) => {
       const active = this.activeSeriesMap![name];
@@ -167,7 +167,7 @@ export default class RadarSeries extends Component {
         type: 'polygon',
         color,
         lineWidth: DEFAULT_LINE_SERIES_WIDTH,
-        fillColor: getRGBA(color, fillOpacity),
+        fillColor: getRGBA(color, fillOpacity * (active ? 1 : 0.5)),
         name,
         ...polygon,
       };

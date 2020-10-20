@@ -21,9 +21,10 @@ import {
   isLabelAxisOnYAxis,
   isPointOnColumn,
   getYAxisOption,
+  getMaxLabelTextWidth,
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
-import { makeLabelsFromLimit } from '@src/helpers/calculator';
+import { makeLabelsFromLimit, getTextHeight } from '@src/helpers/calculator';
 import {
   AxisTitle,
   BaseAxisOptions,
@@ -192,18 +193,23 @@ export function makeTitleOption(title?: AxisTitle) {
     : deepMergedCopy(defaultOption, title);
 }
 
-function getRadialAxis(scale: ScaleData, plot: Rect): RadialAxisData {
+function getRadialAxis(
+  scale: ScaleData,
+  plot: Rect,
+  { labelInterval }: InitAxisData
+): RadialAxisData {
   const { limit, stepSize } = scale;
   const { width, height } = plot;
-  const valueLabels = makeLabelsFromLimit(limit, stepSize) as string[];
-
-  valueLabels.push(`${Number(valueLabels[valueLabels.length - 1]) + stepSize}`);
+  const valueLabels = makeLabelsFromLimit(limit, stepSize);
 
   return {
     labels: valueLabels,
     axisSize: Math.min(width, height) / 2 - 50,
     centerX: width / 2,
     centerY: height / 2,
+    maxLabelTextWidth: getMaxLabelTextWidth(valueLabels),
+    labelTextHeight: getTextHeight(valueLabels[0]),
+    labelInterval,
   };
 }
 
@@ -362,7 +368,7 @@ const axes: StoreModule = {
       }
 
       if (state.axes.radialAxis) {
-        axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot);
+        axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot, initialAxisData.yAxis);
       }
 
       this.notify(state, 'layout');

@@ -1,11 +1,17 @@
 import Component from './component';
-import { LabelModel } from '@t/components/axis';
 import { ChartState, Options } from '@t/store/store';
 import { getRadialRadiusValues } from '@src/helpers/radar';
 import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector';
+import { RectLabelModel } from '@t/components/axis';
+
+const padding = { X: 5, Y: 1 };
+
+function filterDisplayLabels<T>(labels: T[]) {
+  return labels.slice(1, labels.length - 1);
+}
 
 export default class RadialAxis extends Component {
-  models: LabelModel[] = [];
+  models: RectLabelModel[] = [];
 
   initialize() {
     this.type = 'axis';
@@ -19,14 +25,41 @@ export default class RadialAxis extends Component {
       return;
     }
 
-    const { axisSize, centerX, centerY, labels } = axes.radialAxis!;
-    const radiusRange = getRadialRadiusValues(labels, axisSize, 1);
+    const {
+      axisSize,
+      centerX,
+      centerY,
+      labels,
+      maxLabelTextWidth,
+      labelTextHeight,
+      labelInterval,
+    } = axes.radialAxis!;
+    const radiusRange = filterDisplayLabels(getRadialRadiusValues(labels, axisSize));
+    const width = maxLabelTextWidth + padding.X * 2;
+    const height = labelTextHeight + padding.Y * 2;
+    const displayLabels = filterDisplayLabels(labels);
 
-    this.models = radiusRange.map((radius, index) => ({
-      type: 'label',
-      text: labels[index],
-      style: ['default', { textAlign: 'center' }],
-      ...getRadialPosition(centerX, centerY, radius, calculateDegreeToRadian(0)),
-    }));
+    this.models = displayLabels.reduce<RectLabelModel[]>((positions, text, index) => {
+      return index % labelInterval
+        ? positions
+        : [
+            ...positions,
+            {
+              type: 'rectLabel',
+              text,
+              style: ['rectLabel'],
+              width,
+              height,
+              rectBorderRadius: 7,
+              bgFill: '#f3f3f3',
+              ...getRadialPosition(
+                centerX,
+                centerY,
+                radiusRange[index],
+                calculateDegreeToRadian(0)
+              ),
+            } as RectLabelModel,
+          ];
+    }, []);
   }
 }

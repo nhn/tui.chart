@@ -26,7 +26,7 @@ const chartState = {
     xAxis: {},
     yAxis: {},
     radialAxis: {
-      labels: ['1', '2', '3', '4', '5'],
+      labels: ['0', '1', '2', '3', '4', '5'],
       axisSize: 50,
       centerX: 100,
       centerY: 100,
@@ -291,8 +291,8 @@ describe('radar series', () => {
     );
 
     expect(radarSeries.models.polygon.map((m) => m.fillColor)).toEqual([
-      'rgba(170, 170, 170, 0.2)',
-      'rgba(187, 187, 187, 0.2)',
+      'rgba(170, 170, 170, 0.3)',
+      'rgba(187, 187, 187, 0.3)',
     ]);
   });
 });
