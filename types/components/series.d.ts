@@ -182,6 +182,7 @@ export type SectorModel = {
   drawingStartAngle: number;
   totalAngle: number;
   alias?: string;
+  percentValue?: number;
 } & Point;
 
 export type SectorResponderModel = {

@@ -76,6 +76,7 @@ describe('basic', () => {
           clockwise: true,
           drawingStartAngle: -90,
           totalAngle: 360,
+          percentValue: 50,
         },
         {
           color: 'rgba(255, 184, 64, 1)',
@@ -96,6 +97,7 @@ describe('basic', () => {
           clockwise: true,
           drawingStartAngle: -90,
           totalAngle: 360,
+          percentValue: 50,
         },
       ],
     };
@@ -120,8 +122,16 @@ describe('basic', () => {
         drawingStartAngle: -90,
         style: ['hover'],
         seriesIndex: 0,
-        data: { label: 'A', color: '#00a9ff', value: 50, category: 'Browser' },
+        data: {
+          label: 'A',
+          color: '#00a9ff',
+          value: 50,
+          category: 'Browser',
+          percentValue: 50,
+          templateType: 'pie',
+        },
         totalAngle: 360,
+        percentValue: 50,
       },
       {
         type: 'sector',
@@ -142,8 +152,16 @@ describe('basic', () => {
         drawingStartAngle: -90,
         style: ['hover'],
         seriesIndex: 1,
-        data: { label: 'B', color: '#ffb840', value: 50, category: 'Browser' },
+        data: {
+          label: 'B',
+          color: '#ffb840',
+          value: 50,
+          category: 'Browser',
+          percentValue: 50,
+          templateType: 'pie',
+        },
         totalAngle: 360,
+        percentValue: 50,
       },
     ];
     expect(pieSeries.models).toEqual(result);
@@ -181,6 +199,7 @@ describe('basic', () => {
         x: 50,
         y: 50,
         totalAngle: 360,
+        percentValue: 50,
       },
       {
         clockwise: false,
@@ -201,6 +220,7 @@ describe('basic', () => {
         x: 50,
         y: 50,
         totalAngle: 360,
+        percentValue: 50,
       },
     ];
 
@@ -251,6 +271,7 @@ describe('donut', () => {
           clockwise: true,
           drawingStartAngle: -90,
           totalAngle: 360,
+          percentValue: 50,
         },
         {
           color: 'rgba(255, 184, 64, 1)',
@@ -271,6 +292,7 @@ describe('donut', () => {
           clockwise: true,
           drawingStartAngle: -90,
           totalAngle: 360,
+          percentValue: 50,
         },
       ],
     };
@@ -295,8 +317,16 @@ describe('donut', () => {
         drawingStartAngle: -90,
         style: ['hover'],
         seriesIndex: 0,
-        data: { label: 'A', color: '#00a9ff', value: 50, category: 'Browser' },
+        data: {
+          label: 'A',
+          color: '#00a9ff',
+          value: 50,
+          category: 'Browser',
+          percentValue: 50,
+          templateType: 'pie',
+        },
         totalAngle: 360,
+        percentValue: 50,
       },
       {
         type: 'sector',
@@ -317,8 +347,16 @@ describe('donut', () => {
         drawingStartAngle: -90,
         style: ['hover'],
         seriesIndex: 1,
-        data: { label: 'B', color: '#ffb840', value: 50, category: 'Browser' },
+        data: {
+          label: 'B',
+          color: '#ffb840',
+          value: 50,
+          category: 'Browser',
+          percentValue: 50,
+          templateType: 'pie',
+        },
         totalAngle: 360,
+        percentValue: 50,
       },
     ];
     expect(pieSeries.models).toEqual(result);
@@ -361,6 +399,7 @@ describe('donut', () => {
           x: 50,
           y: 100,
           totalAngle: 180,
+          percentValue: 50,
         },
         {
           clockwise: true,
@@ -375,6 +414,7 @@ describe('donut', () => {
           x: 50,
           y: 100,
           totalAngle: 180,
+          percentValue: 50,
         },
       ];
 

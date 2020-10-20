@@ -71,6 +71,7 @@ export function makePieTooltipData(seriesRawData: PieSeriesType[], category = ''
     value: data,
     category,
     rootParentName,
+    templateType: 'pie',
   }));
 }
 

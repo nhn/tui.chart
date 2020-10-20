@@ -207,7 +207,7 @@ export default class PieSeries extends Component {
       radius: m.radius,
       style: ['hover'],
       seriesIndex: index,
-      data: tooltipDataModel[index],
+      data: { ...tooltipDataModel[index], percentValue: m.percentValue },
       color: getRGBA(m.color, 1),
     }));
   }
@@ -325,7 +325,7 @@ export default class PieSeries extends Component {
 
       const { data, name } = rawData;
       const degree = (data / total) * totalAngle * (clockwise ? 1 : -1);
-
+      const percentValue = (data / total) * 100;
       const startDegree = seriesIndex
         ? sectorModels[seriesIndex - 1].degree.end
         : defaultStartDegree;
@@ -352,6 +352,7 @@ export default class PieSeries extends Component {
         clockwise,
         drawingStartAngle,
         totalAngle,
+        percentValue,
       });
     });
 
@@ -373,7 +374,6 @@ export default class PieSeries extends Component {
       name: this.alias || this.name,
     });
     this.activatedResponders = this.makeTooltipResponder(responders);
-
     this.eventBus.emit('seriesPointHovered', {
       models: this.activatedResponders,
       name: this.alias || this.name,

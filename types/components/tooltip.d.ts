@@ -10,7 +10,7 @@ export type TooltipTitleValues = {
 export type TooltipValue = string | number | BubblePoint | Point | RangeDataType<number>;
 export type TooltipDataValue = TooltipValue | TooltipTitleValues;
 
-type TooltipTemplateType = 'boxPlot' | 'bullet';
+type TooltipTemplateType = 'boxPlot' | 'bullet' | 'pie' | 'heatmap';
 
 export type TooltipData = {
   label: string;
@@ -20,6 +20,7 @@ export type TooltipData = {
   category?: string;
   templateType?: TooltipTemplateType;
   rootParentName?: string;
+  percentValue?: number;
 };
 
 export type TooltipInfo = {
