@@ -23,6 +23,17 @@ type RenderOptions = {
   ratio: number;
 };
 
+const areaOpacity = {
+  SHOW: 0.3,
+  NONE: 0,
+  INACTIVE: 0.05,
+};
+
+const seriesOpacity = {
+  INACTIVE: 0.2,
+  ACTIVE: 1,
+};
+
 export default class RadarSeries extends Component {
   models: RadarSeriesModels = { polygon: [], dot: [] };
 
@@ -97,7 +108,7 @@ export default class RadarSeries extends Component {
       points.map((point, index) => ({
         type: 'circle',
         ...point,
-        radius: 6,
+        radius: 4,
         color,
         style: ['default', 'hover'],
         seriesIndex,
@@ -140,11 +151,11 @@ export default class RadarSeries extends Component {
 
   renderPolygonModels(seriesData: RadarSeriesType[], renderOptions: RenderOptions): PolygonModel[] {
     const { centerX, centerY, degree, ratio, showArea } = renderOptions;
-    const fillOpacity = showArea ? 0.3 : 0;
+    const fillOpacity = showArea ? areaOpacity.SHOW : areaOpacity.NONE;
 
     return seriesData.map(({ data, color: seriesColor, name }) => {
       const active = this.activeSeriesMap![name];
-      const color = getRGBA(seriesColor!, active ? 1 : 0.2);
+      const color = getRGBA(seriesColor!, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
       const polygon = data.reduce<{ points: Point[]; distances: number[] }>(
         (acc, value, index) => {
           const distance = value * ratio;
@@ -167,7 +178,7 @@ export default class RadarSeries extends Component {
         type: 'polygon',
         color,
         lineWidth: DEFAULT_LINE_SERIES_WIDTH,
-        fillColor: getRGBA(color, fillOpacity * (active ? 1 : 0.5)),
+        fillColor: getRGBA(color, active ? fillOpacity : areaOpacity.INACTIVE),
         name,
         ...polygon,
       };
@@ -179,7 +190,7 @@ export default class RadarSeries extends Component {
       points.map((point) => ({
         type: 'circle',
         ...point,
-        radius: 5,
+        radius: 3,
         color,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
         name,

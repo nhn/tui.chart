@@ -19,8 +19,8 @@ const circleStyle = {
   },
   hover: {
     shadowColor: 'rgba(0, 0, 0, 0.3)',
-    shadowBlur: 4,
-    shadowOffsetY: 4,
+    shadowBlur: 2,
+    shadowOffsetY: 2,
     lineWidth: 2,
   },
   plot: {
