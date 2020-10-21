@@ -10,7 +10,7 @@ import { hexToRGB } from '@src/helpers/color';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
-import { SeriesDataLabelType } from '@t/components/dataLabels';
+import { SeriesDataLabels } from '@t/components/dataLabels';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
@@ -48,7 +48,7 @@ export default class HeatmapSeries extends Component {
     this.responders = this.makeHeatmapSeriesResponder();
   }
 
-  makeDataLabels(): SeriesDataLabelType {
+  makeDataLabels(): SeriesDataLabels {
     return this.models.series.map((m) => ({
       ...m,
       type: 'treemapSeriesName',
