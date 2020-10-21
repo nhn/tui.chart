@@ -16,7 +16,8 @@ export type LabelStyleName =
   | 'sector'
   | 'pieSeriesName'
   | 'treemapSeriesName'
-  | 'rectLabel';
+  | 'rectLabel'
+  | 'rectDataLabel';
 export type StrokeLabelStyleName = 'none' | 'stroke';
 
 export interface LabelStyle {
@@ -51,7 +52,7 @@ export const labelStyle = {
     textBaseline: 'top',
   },
   stackTotal: {
-    font: '600 11px Arial',
+    font: '400 9px Arial',
     fillStyle: '#333333',
     textBaseline: 'middle',
   },
@@ -76,6 +77,12 @@ export const labelStyle = {
   rectLabel: {
     font: DEFAULT_LABEL_TEXT,
     fillStyle: 'rgba(0, 0, 0, 0.3)',
+    textAlign: 'center',
+    textBaseline: 'middle',
+  },
+  rectDataLabel: {
+    font: '400 9px Arial',
+    fillStyle: 'rgba(0,0,0,0.5)',
     textAlign: 'center',
     textBaseline: 'middle',
   },
