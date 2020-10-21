@@ -8,6 +8,7 @@ import {
   RectDataLabel,
   RadialDataLabel,
   LineDataLabel,
+  DataLabelType,
 } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
@@ -21,7 +22,6 @@ type LabelPosition = {
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
 };
-type DataLabelType = 'point' | 'sector' | 'rect' | 'stackTotal' | 'treemapSeriesName';
 
 function getDefaultAnchor(type: DataLabelType, withStack = false): DataLabelAnchor {
   let anchor: DataLabelAnchor = 'auto';
