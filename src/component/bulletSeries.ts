@@ -6,7 +6,7 @@ import { getRGBA } from '@src/helpers/color';
 import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/options';
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
 import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
-import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { BOX_HOVER_THICKNESS, getBoxSeriesPadding } from '@src/helpers/boxStyle';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel } from '@t/components/dataLabels';
 
@@ -26,9 +26,10 @@ const seriesOpacity = {
 };
 
 const RANGE_DEFAULT_COLORS = ['#666666', '#999999', '#bbbbbb'];
+const RANGE_COLOR_OPACITY = [0.5, 0.3, 0.1];
 
-function getBarWidths(vertical: boolean, tickDistance: number, seriesLength: number) {
-  const padding = vertical ? BOX_SERIES_PADDING.horizontal : BOX_SERIES_PADDING.vertical;
+function getBarWidths(tickDistance: number, seriesLength: number) {
+  const padding = getBoxSeriesPadding(tickDistance);
 
   const barWidth = Math.max(
     (tickDistance - padding * (2 + (seriesLength - 1))) / seriesLength,
@@ -96,7 +97,7 @@ export default class BulletSeries extends Component {
       tickDistance,
       vertical,
       zeroPosition,
-      ...getBarWidths(vertical, tickDistance, bulletData.length),
+      ...getBarWidths(tickDistance, bulletData.length),
     };
 
     const seriesModels = this.renderSeries(bulletData, renderOptions);
@@ -241,7 +242,7 @@ export default class BulletSeries extends Component {
       return {
         type: 'rect',
         name,
-        color: RANGE_DEFAULT_COLORS[rangeIndex],
+        color: getRGBA(color, RANGE_COLOR_OPACITY[rangeIndex]),
         x: vertical ? rangeStartX : start * ratio + zeroPosition,
         y: vertical ? zeroPosition - end * ratio : rangeStartX,
         ...getRectSize(vertical, barWidth, barLength),

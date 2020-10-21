@@ -60,13 +60,22 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
   ctx.lineTo(x, y + radius);
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
-  if (fill) {
-    ctx.fillStyle = fill;
-    ctx.fill();
-  }
+
+  // @TODO: shadow 사용할 때!
+  ctx.shadowColor = 'rgba(0,0,0,0.3)';
+  ctx.shadowOffsetY = 1;
+  ctx.shadowBlur = 2;
+
   if (stroke) {
     ctx.strokeStyle = stroke;
     ctx.stroke();
+  }
+
+  ctx.shadowColor = 'transparent'; // @TODO: shadow있을 때!
+
+  if (fill) {
+    ctx.fillStyle = fill;
+    ctx.fill();
   }
 }
 

@@ -189,9 +189,6 @@ export const dataLabelsWithStackTotal = () => {
         anchor: 'center',
         stackTotal: {
           visible: true,
-          style: {
-            font: '700 12px Arial',
-          },
         },
       },
     },
