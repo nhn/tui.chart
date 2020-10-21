@@ -44,9 +44,6 @@ export const vertical = () => {
   const { el } = createChart(budgetData, {
     series: {
       vertical: true,
-      dataLabels: {
-        visible: true,
-      },
     },
   });
 

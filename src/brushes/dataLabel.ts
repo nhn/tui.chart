@@ -137,7 +137,7 @@ function drawBalloonArrow(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
       { x: x + POINT_HEIGHT, y: y + POINT_WIDTH / 2 },
     ];
   }
-  console.log(model, points);
+
   polygon(ctx, { type: 'polygon', color: '#ffffff', lineWidth: 1, points, fillColor: '#ffffff' });
   line(ctx, {
     type: 'line',
