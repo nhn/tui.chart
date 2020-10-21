@@ -23,7 +23,7 @@ import { ExportMenuModels } from '@t/components/exportMenu';
 import { LegendModel } from '@t/components/legend';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
-import { DataLabelModels, SeriesDataLabelType } from '@t/components/dataLabels';
+import { DataLabelModels, SeriesDataLabels } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
 import { RadarPlotModels } from '@t/components/radarPlot';
 import { isSameArray } from '@src/helpers/arrayUtil';
@@ -271,7 +271,7 @@ export default abstract class Component {
 
   onMouseup?(responseData: any): void;
 
-  renderDataLabels(data: SeriesDataLabelType, name?: string) {
+  renderDataLabels(data: SeriesDataLabels, name?: string) {
     setTimeout(() => {
       this.eventBus.emit('renderDataLabels', { data, name: name ?? this.name });
     }, 0);

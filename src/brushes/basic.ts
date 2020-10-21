@@ -11,6 +11,7 @@ import { LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover' | 'plot';
 export type RectStyleName = 'shadow';
+export type PathRectStyleName = 'shadow';
 
 // @TODO: 테마로 옮길 것들 옮겨야함. 원형 시리즈 사용하는 것 확인 후 제거 필요
 const circleStyle = {
@@ -39,6 +40,14 @@ const rectStyle = {
   },
 };
 
+const pathRectStyle = {
+  shadow: {
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffsetY: 2,
+    shadowBlur: 6,
+  },
+};
+
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
 
@@ -48,7 +57,7 @@ export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: C
 }
 
 export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectModel) {
-  const { x, y, width, height, radius = 0, stroke = 'black', fill = '' } = pathRectModel;
+  const { x, y, width, height, radius = 0, stroke = 'black', fill = '', style } = pathRectModel;
 
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -62,17 +71,22 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
 
-  // @TODO: shadow 사용할 때!
-  ctx.shadowColor = 'rgba(0,0,0,0.3)';
-  ctx.shadowOffsetY = 1;
-  ctx.shadowBlur = 2;
+  if (style) {
+    const styleObj = makeStyleObj<RectStyle, PathRectStyleName>(style, pathRectStyle);
+
+    Object.keys(styleObj).forEach((key) => {
+      ctx[key] = styleObj[key];
+    });
+  }
 
   if (stroke) {
     ctx.strokeStyle = stroke;
     ctx.stroke();
   }
 
-  ctx.shadowColor = 'transparent'; // @TODO: shadow있을 때!
+  if (ctx.shadowColor) {
+    ctx.shadowColor = 'transparent';
+  }
 
   if (fill) {
     ctx.fillStyle = fill;

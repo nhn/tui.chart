@@ -1,8 +1,15 @@
-import { label, StrokeLabelStyle, LabelStyle, StrokeLabelStyleName } from '@src/brushes/label';
+import {
+  label,
+  StrokeLabelStyle,
+  LabelStyle,
+  StrokeLabelStyleName,
+  labelStyle,
+} from '@src/brushes/label';
 import { DataLabelModel, DataLabelType } from '@t/components/dataLabels';
 import { polygon } from './polygon';
-import { rect, pathRect, line } from './basic';
+import { pathRect, line } from './basic';
 import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
+import { includes } from '@src/helpers/utils';
 
 function getStyleDefaultName(
   type: DataLabelType
@@ -13,13 +20,15 @@ function getStyleDefaultName(
     pieSeriesName: 'pieSeriesName',
     treemapSeriesName: 'treemapSeriesName',
     rect: 'rectDataLabel',
+    line: 'lineDataLabel',
   };
 
   const styleDefaultWithType = labelStyleDefaultMap[type];
 
   return {
     styleDefault: styleDefaultWithType ? styleDefaultWithType : 'default',
-    strokeStyleDefault: styleDefaultWithType || type === 'rect' ? 'none' : 'stroke',
+    strokeStyleDefault:
+      styleDefaultWithType || includes(['rect', 'line'], type) ? 'none' : 'stroke',
   };
 }
 
@@ -34,6 +43,7 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     style,
     opacity,
     defaultColor,
+    hasTextBalloon = false,
   } = model;
   const textStyle: LabelStyle = { textAlign, textBaseline };
   const textStrokeStyle: StrokeLabelStyle = {};
@@ -42,7 +52,7 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     textStyle.fillStyle = defaultColor;
   }
 
-  /*
+  // @TODO: 테마로 입력받은 값 사용
   if (style) {
     Object.keys(style).forEach((key) => {
       const styleValue = style[key];
@@ -64,15 +74,14 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
       }
     });
   }
-  */
 
-  const { styleDefault, strokeStyleDefault } = getStyleDefaultName(dataLabelType);
-
-  if (dataLabelType === 'stackTotal') {
-    drawBalloon(ctx, model);
+  if (hasTextBalloon) {
+    drawBalloonLabel(ctx, model);
 
     return;
   }
+
+  const { styleDefault, strokeStyleDefault } = getStyleDefaultName(dataLabelType);
 
   label(ctx, {
     type: 'label',
@@ -93,7 +102,7 @@ const dataLabelBalloon = {
   PADDING_Y: 2,
 };
 
-function drawBalloon(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
+function drawBalloonLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
   drawBalloonBox(ctx, model);
   drawBalloonArrow(ctx, model);
 }
@@ -128,39 +137,48 @@ function drawBalloonArrow(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
       { x: x + POINT_HEIGHT, y: y + POINT_WIDTH / 2 },
     ];
   }
-
-  polygon(ctx, { type: 'polygon', color: '#eeeeee', lineWidth: 0, points, fillColor: '#ffffff' });
+  console.log(model, points);
+  polygon(ctx, { type: 'polygon', color: '#ffffff', lineWidth: 1, points, fillColor: '#ffffff' });
   line(ctx, {
     type: 'line',
-    x: points[1].x,
-    y: points[1].y,
+    x: points[0].x,
+    y: points[0].y,
+    x2: points[1].x,
+    y2: points[1].y,
+    lineWidth: 1,
+    strokeStyle: '#eeeeee',
+  });
+  line(ctx, {
+    type: 'line',
+    x: points[0].x,
+    y: points[0].y,
     x2: points[2].x,
     y2: points[2].y,
     lineWidth: 1,
-    strokeStyle: '#ffffff',
+    strokeStyle: '#eeeeee',
   });
 }
 
 function drawBalloonBox(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
-  const { PADDING_X, PADDING_Y, POINT_HEIGHT, POINT_WIDTH } = dataLabelBalloon;
+  const { PADDING_X, PADDING_Y, POINT_HEIGHT } = dataLabelBalloon;
   let { x: boxX, y: boxY } = model;
   const { dataLabelType, text, textAlign, textBaseline } = model;
-  const textStrokeStyle: StrokeLabelStyle = {};
-  const labelWidth = getTextWidth(text);
+  const font = labelStyle.rectDataLabel.font;
+  const labelWidth = getTextWidth(text, font);
   const width = labelWidth + PADDING_X * 2;
-  const height = getTextHeight(text) + PADDING_Y * 2;
+  const height = getTextHeight(font) + PADDING_Y * 2;
 
   if (textAlign === 'center' && textBaseline === 'top') {
     boxX -= width / 2;
-    boxY += POINT_HEIGHT - 1;
+    boxY += POINT_HEIGHT;
   } else if (textAlign === 'center' && textBaseline === 'bottom') {
     boxX -= width / 2;
     boxY -= height + POINT_HEIGHT;
   } else if (textBaseline === 'middle' && textAlign === 'right') {
-    boxX -= width + POINT_WIDTH;
+    boxX -= width + POINT_HEIGHT;
     boxY -= height / 2;
   } else if (textBaseline === 'middle' && textAlign === 'left') {
-    boxX += POINT_WIDTH;
+    boxX += POINT_HEIGHT;
     boxY -= height / 2;
   }
 
@@ -173,6 +191,7 @@ function drawBalloonBox(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
     fill: '#ffffff',
     stroke: '#eeeeee',
     radius: height / 2,
+    style: ['shadow'],
   });
 
   const { styleDefault, strokeStyleDefault } = getStyleDefaultName(dataLabelType);
@@ -183,6 +202,6 @@ function drawBalloonBox(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
     y: boxY + height / 2,
     text,
     style: [styleDefault, { textAlign: 'center' }],
-    stroke: [strokeStyleDefault, textStrokeStyle],
+    stroke: [strokeStyleDefault],
   });
 }

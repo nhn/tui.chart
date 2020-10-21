@@ -1,5 +1,5 @@
 import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
-import { CircleStyleName, RectStyleName } from '@src/brushes/basic';
+import { CircleStyleName, RectStyleName, PathRectStyleName } from '@src/brushes/basic';
 import { TooltipData } from '@t/components/tooltip';
 import { LineModel, LabelModel } from '@t/components/axis';
 import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
@@ -30,7 +30,9 @@ export type ResponderModel =
   | RectModel
   | BoxPlotResponderModel
   | SectorResponderModel
-  | TreemapRectResponderModel;
+  | TreemapRectResponderModel
+  | MarkerResponderModel
+  | BulletResponderModel;
 
 export type TreemapSeriesModels = { series: TreemapRectModel[]; layer: TreemapRectModel[] };
 
@@ -77,14 +79,15 @@ export type PathRectModel = {
   radius?: number;
   fill?: string;
   stroke?: string;
+  style?: StyleProp<RectStyle, PathRectStyleName>;
 } & Rect;
 
-export interface RectStyle {
+export type RectStyle = {
   shadowColor?: string;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
   shadowBlur?: number;
-}
+};
 
 export type RectModel = {
   type: 'rect';
@@ -239,16 +242,25 @@ export type BoxPlotResponderModel = {
 } & BoxPlotModel &
   Point;
 
-export type BulletModel = {
-  modelType: 'bullet' | 'range' | 'marker';
+export type MarkerModel = LineModel;
+
+export type BulletRectModel = {
+  modelType: 'bullet' | 'range';
 } & RectModel;
+
+type BulletModel = BulletRectModel | MarkerModel;
+
+export type MarkerResponderModel = {
+  data?: TooltipData;
+} & MarkerModel &
+  LineResponderModel;
 
 export type BulletResponderModel = {
   data?: TooltipData;
 } & BulletModel;
 
 export type BulletSeriesModels = {
-  series: BulletModel[];
+  series: Array<BulletModel>;
 };
 
 export interface MouseEventType {

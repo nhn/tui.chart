@@ -6,11 +6,12 @@ import {
   DataLabelType,
   DataLabel,
   DataLabelsMap,
-  SeriesDataLabelType,
+  SeriesDataLabels,
   PointDataLabel,
   RadialDataLabel,
   DataLabelSeriesType,
   RectDataLabel,
+  LineDataLabel,
 } from '@t/components/dataLabels';
 import { includes, isUndefined } from '@src/helpers/utils';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
@@ -21,11 +22,12 @@ import {
   makeSectorLabelInfo,
   makePieSeriesNameLabelInfo,
   makeRectLabelInfo,
+  makeLineLabelInfo,
 } from '@src/helpers/dataLabels';
 import { pickStackOption } from '@src/store/stackSeriesData';
 
 type SeriesDataLabel = {
-  data: SeriesDataLabelType;
+  data: SeriesDataLabels;
   name: DataLabelSeriesType;
 };
 
@@ -104,11 +106,15 @@ export default class DataLabels extends Component {
 
           labels.push(seriesNameLabel);
         }
+      } else if (type === 'line') {
+        dataLabel = makeLineLabelInfo(model as LineDataLabel, labelOptions);
       } else {
         dataLabel = makeRectLabelInfo(model as RectDataLabel, labelOptions);
       }
 
-      labels.push(dataLabel);
+      if (dataLabel) {
+        labels.push(dataLabel);
+      }
     });
 
     this.dataLabelsMap[name] = { data: labels, options: dataLabelOptions };
@@ -143,7 +149,17 @@ export default class DataLabels extends Component {
   makeLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModels {
     return dataLabels.reduce(
       (acc, dataLabel) => {
-        const { type, x, y, text, textAlign, textBaseline, defaultColor, name } = dataLabel;
+        const {
+          type,
+          x,
+          y,
+          text,
+          textAlign,
+          textBaseline,
+          defaultColor,
+          name,
+          hasTextBalloon,
+        } = dataLabel;
 
         if (!isModelExistingInRect(this.rect, { x, y })) {
           return acc;
@@ -167,6 +183,7 @@ export default class DataLabels extends Component {
               style: getOptionStyle(type, options),
               opacity: 1,
               name,
+              hasTextBalloon,
             },
           ],
         };

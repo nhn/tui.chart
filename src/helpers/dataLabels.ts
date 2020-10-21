@@ -7,6 +7,7 @@ import {
   PointDataLabel,
   RectDataLabel,
   RadialDataLabel,
+  LineDataLabel,
 } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
@@ -410,6 +411,8 @@ export function makeRectLabelInfo(
     ...labelPosition,
     text: isString(value) ? value : formatter(value!),
     name,
+    hasTextBalloon:
+      rect.type === 'stackTotal' || (rect.type === 'rect' && rect.modelType === 'bullet'),
   };
 }
 
@@ -477,4 +480,16 @@ export function makePieSeriesNameLabelInfo(
 
 export function getDataLabelsOptions(options: Options, name: string) {
   return options?.series?.[name]?.dataLabels || options?.series?.dataLabels || {};
+}
+
+export function makeLineLabelInfo(model: LineDataLabel, dataLabelOptions: DataLabelOption) {
+  const { value, textAlign, textBaseline } = model;
+  const { formatter } = dataLabelOptions;
+
+  return {
+    ...model,
+    textAlign: textAlign ?? 'center',
+    textBaseline: textBaseline ?? 'middle',
+    text: isString(value) ? value : formatter(value!),
+  };
 }
