@@ -141,7 +141,7 @@ export default class SelectedSeries extends Component {
     const { name, alias } = selectedSeriesEventModel;
     const models = this.getSelectedSeriesModels(selectedSeriesEventModel);
 
-    this.models[alias ?? name] = this.isClickSameSeries({ ...selectedSeriesEventModel, models })
+    this.models[alias || name] = this.isClickSameSeries({ ...selectedSeriesEventModel, models })
       ? []
       : models;
 

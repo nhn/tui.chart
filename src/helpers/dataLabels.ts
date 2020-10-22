@@ -1,18 +1,34 @@
 import { Options } from '@t/store/store';
 import { isFunction, includes, isBoolean, isString } from '@src/helpers/utils';
-import { DataLabelAnchor, SeriesDataType, SubDataLabel, DataLabelOptions } from '@t/options';
+import {
+  DataLabelAnchor,
+  SeriesDataType,
+  SubDataLabel,
+  DataLabelOptions,
+  PieDataLabels,
+  BoxDataLabels,
+  DataLabelPieSeriesName,
+} from '@t/options';
 import {
   DataLabel,
   DataLabelOption,
   PointDataLabel,
   RectDataLabel,
   RadialDataLabel,
+  RadialAnchor,
 } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
-import { getRadialAnchorPosition, makeAnchorPositionParam } from '@src/helpers/sector';
+import {
+  getRadialAnchorPosition,
+  makeAnchorPositionParam,
+  calculateDegreeToRadian,
+} from '@src/helpers/sector';
 import { labelStyle } from '@src/brushes/label';
+import { LineModel } from '@t/components/axis';
+import { Nullable } from '@t/components/series';
 
 const RADIUS_PADDING = 30;
+const CALLOUT_LENGTH = 20;
 
 type LabelPosition = {
   x: number;
@@ -50,7 +66,7 @@ function getAnchor(
   withStack = false
 ): DataLabelAnchor {
   return type !== 'stackTotal' &&
-    includes(['center', 'start', 'end', 'auto'], dataLabelOptions.anchor)
+    includes(['center', 'start', 'end', 'auto', 'outer'], dataLabelOptions.anchor)
     ? dataLabelOptions.anchor!
     : getDefaultAnchor(type, withStack);
 }
@@ -74,16 +90,18 @@ export function getDefaultDataLabelsOptions(
   };
 
   if (withStack) {
+    const stackTotal = (dataLabelOptions as BoxDataLabels).stackTotal;
     options.stackTotal = {
-      visible: isBoolean(dataLabelOptions.stackTotal?.visible)
-        ? dataLabelOptions.stackTotal?.visible
-        : true,
-      style: dataLabelOptions.stackTotal?.style,
+      visible: isBoolean(stackTotal?.visible) ? stackTotal?.visible : true,
+      style: stackTotal?.style,
     } as Required<SubDataLabel>;
   }
 
-  if (type === 'sector' && dataLabelOptions.pieSeriesName?.visible) {
-    options.pieSeriesName = { ...{ anchor: 'center' }, ...dataLabelOptions.pieSeriesName };
+  if (type === 'sector' && (dataLabelOptions as PieDataLabels).pieSeriesName?.visible) {
+    options.pieSeriesName = {
+      ...{ anchor: 'center' },
+      ...(dataLabelOptions as PieDataLabels).pieSeriesName,
+    } as DataLabelPieSeriesName;
   }
 
   return options;
@@ -406,7 +424,7 @@ export function makeRectLabelInfo(
     : makeVerticalRectLabelInfo(rect, dataLabelOptions);
 
   return {
-    type: type as DataLabelType,
+    type: type,
     ...labelPosition,
     text: isString(value) ? value : formatter(value!),
     name,
@@ -417,13 +435,50 @@ export function makeSectorLabelPosition(
   model: RadialDataLabel,
   dataLabelOptions: DataLabelOption
 ): LabelPosition {
-  const position = getRadialAnchorPosition(makeAnchorPositionParam('center', model));
+  const anchor = dataLabelOptions.anchor as RadialAnchor;
+  const position = getRadialAnchorPosition(
+    makeAnchorPositionParam(anchor, {
+      ...model,
+      radius: {
+        ...model.radius,
+        outer: anchor === 'outer' ? model.radius.outer + RADIUS_PADDING : model.radius.outer,
+      },
+    })
+  );
+  const textAlign = getPieDataLabelAlign(model, anchor);
 
   return {
     ...position,
-    textAlign: 'center',
-    textBaseline: dataLabelOptions.pieSeriesName?.anchor === 'center' ? 'bottom' : 'middle',
+    textAlign,
+    textBaseline: hasSameAnchorPieDataLabel(dataLabelOptions) ? 'bottom' : 'middle',
   };
+}
+
+function getPieDataLabelAlign(model: RadialDataLabel, anchor: RadialAnchor) {
+  const {
+    degree: { start, end },
+    drawingStartAngle,
+  } = model;
+
+  let textAlign: CanvasTextAlign = 'center';
+
+  if (anchor !== 'outer') {
+    return textAlign;
+  }
+
+  const radian0 = calculateDegreeToRadian(0, drawingStartAngle);
+  const radian180 = calculateDegreeToRadian(180, drawingStartAngle);
+
+  const halfDegree = (end + start) / 2;
+  const radian = calculateDegreeToRadian(halfDegree, drawingStartAngle);
+
+  if (radian0 < radian && radian180 > radian) {
+    textAlign = 'left';
+  } else if (radian180 < radian) {
+    textAlign = 'right';
+  }
+
+  return textAlign;
 }
 
 export function makeSectorLabelInfo(
@@ -433,12 +488,15 @@ export function makeSectorLabelInfo(
   const { formatter } = dataLabelOptions;
   const labelPosition = makeSectorLabelPosition(model, dataLabelOptions);
   const { value, name } = model;
+  const anchor = dataLabelOptions.anchor as RadialAnchor;
 
   return {
     type: 'sector',
     ...labelPosition,
     text: formatter(value!),
     name,
+    callout: hasSectorCallout(dataLabelOptions) ? getPieDataLabelCallout(model, anchor) : null,
+    defaultColor: dataLabelOptions.anchor === 'outer' ? model.color : '',
   };
 }
 
@@ -446,17 +504,10 @@ export function makePieSeriesNameLabelInfo(
   model: RadialDataLabel,
   dataLabelOptions: DataLabelOption
 ): DataLabel {
-  const seriesNameAnchor = dataLabelOptions.pieSeriesName?.anchor;
+  const seriesNameAnchor = dataLabelOptions.pieSeriesName?.anchor as RadialAnchor;
   const hasOuterAnchor = seriesNameAnchor === 'outer';
-  const textBaseline = hasOuterAnchor ? 'middle' : 'top';
-  let defaultColor!: string;
-
-  if (hasOuterAnchor) {
-    defaultColor = model.color;
-  }
-
   const position = getRadialAnchorPosition(
-    makeAnchorPositionParam(hasOuterAnchor ? 'end' : 'center', {
+    makeAnchorPositionParam(seriesNameAnchor, {
       ...model,
       radius: {
         ...model.radius,
@@ -465,16 +516,64 @@ export function makePieSeriesNameLabelInfo(
     })
   );
 
+  const textAlign = getPieDataLabelAlign(model, seriesNameAnchor);
+
   return {
     type: 'pieSeriesName',
     ...position,
     text: model.name!,
-    textBaseline,
-    textAlign: 'center',
-    defaultColor,
+    defaultColor: hasOuterAnchor ? model.color : '',
+    callout: hasPieSeriesNameCallout(dataLabelOptions)
+      ? getPieDataLabelCallout(model, seriesNameAnchor)
+      : null,
+    textAlign,
+    textBaseline: hasSameAnchorPieDataLabel(dataLabelOptions) ? 'top' : 'middle',
   };
 }
 
 export function getDataLabelsOptions(options: Options, name: string) {
   return options?.series?.[name]?.dataLabels || options?.series?.dataLabels || {};
+}
+
+function hasSameAnchorPieDataLabel(dataLabelOptions: DataLabelOption) {
+  return dataLabelOptions.anchor === dataLabelOptions.pieSeriesName?.anchor;
+}
+
+function hasSectorCallout(dataLabelOptions: DataLabelOption) {
+  return dataLabelOptions.anchor === 'outer' || dataLabelOptions.pieSeriesName?.anchor !== 'outer';
+}
+
+function hasPieSeriesNameCallout(dataLabelOptions: DataLabelOption) {
+  return dataLabelOptions.anchor !== 'outer' || dataLabelOptions.pieSeriesName?.anchor === 'outer';
+}
+
+function getPieDataLabelCallout(model: RadialDataLabel, anchor: RadialAnchor): Nullable<LineModel> {
+  if (anchor !== 'outer') {
+    return null;
+  }
+
+  const { x, y } = getRadialAnchorPosition(
+    makeAnchorPositionParam('outer', {
+      ...model,
+      radius: {
+        ...model.radius,
+        outer: model.radius.outer + CALLOUT_LENGTH,
+      },
+    })
+  );
+
+  const { x: x2, y: y2 } = getRadialAnchorPosition(
+    makeAnchorPositionParam('outer', {
+      ...model,
+    })
+  );
+
+  return {
+    type: 'line',
+    strokeStyle: model.color,
+    x,
+    y,
+    x2,
+    y2,
+  };
 }

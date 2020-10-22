@@ -392,6 +392,7 @@ export interface BoxSeriesOptions extends BaseSeriesOptions {
   colorByPoint?: boolean;
   stack?: StackOptionType;
   eventDetectType?: BoxTypeEventDetectType;
+  dataLabels?: BoxDataLabels;
 }
 
 export interface BarChartOptions extends BaseOptions {
@@ -428,6 +429,7 @@ interface PieSeriesOptions extends BaseSeriesOptions {
     end?: number;
   };
   clockwise?: boolean;
+  dataLabels?: PieDataLabels;
 }
 
 export interface PieChartOptions extends BaseOptions {
@@ -485,7 +487,7 @@ export type SeriesDataType =
   | CoordinateDataType
   | BubbleSeriesDataType;
 
-export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto';
+export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto' | 'outer';
 export type DataLabelStyle = {
   font?: string;
   color?: string;
@@ -509,10 +511,14 @@ export type DataLabelOptions = {
   offsetY?: number;
   formatter?: Formatter;
   style?: DataLabelStyle;
-  // @TODO: 각각 차트에 맞게 분리해서 해야하지 않나
-  stackTotal?: SubDataLabel;
-  pieSeriesName?: DataLabelPieSeriesName;
 };
+
+export interface BoxDataLabels extends DataLabelOptions {
+  stackTotal?: SubDataLabel;
+}
+export interface PieDataLabels extends DataLabelOptions {
+  pieSeriesName?: DataLabelPieSeriesName;
+}
 
 export interface TreemapDataLabels extends DataLabelOptions {
   useTreemapLeaf?: boolean;

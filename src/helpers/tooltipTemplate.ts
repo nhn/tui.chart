@@ -5,14 +5,7 @@ import {
   TooltipTemplateType,
 } from '@t/components/tooltip';
 import { DefaultTooltipTemplate } from '@t/options';
-
-function pieTooltipLabelFormatter(percentValue: number) {
-  const percentageString = percentValue.toFixed(2);
-  const percent = parseFloat(percentageString);
-  const needSlice = percentageString.length > 5;
-
-  return `${needSlice ? parseFloat(percentageString.substr(0, 4)) : String(percent)}%  `;
-}
+import { pieTooltipLabelFormatter } from './pieSeries';
 
 function getSeriesNameTemplate(label: string, color: string) {
   return `<span class="series-name">
@@ -105,7 +98,7 @@ function getPieTemplate({ data }: TooltipModel) {
         ${getSeriesNameTemplate(label, color)}
         <span class="series-value">${pieTooltipLabelFormatter(
           percentValue!
-        )} (${formattedValue!})</span>
+        )}&nbsp;&nbsp;(${formattedValue!})</span>
       </div>`
       )
       .join('')}

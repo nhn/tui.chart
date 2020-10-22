@@ -54,14 +54,14 @@ export const labelStyle = {
     textBaseline: 'middle',
   },
   sector: {
-    font: '100 15px Arial',
-    fillStyle: '#333333',
+    font: '600 16px Arial',
+    fillStyle: '#ffffff',
     textAlign: 'center',
     textBaseline: 'middle',
   },
   pieSeriesName: {
     font: '400 11px Arial',
-    fillStyle: '#333333',
+    fillStyle: '#ffffff',
     textAlign: 'center',
     textBaseline: 'middle',
   },

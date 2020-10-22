@@ -17,6 +17,7 @@ import {
   getDefaultRadius,
   getSemiCircleCenterY,
   makePieTooltipData,
+  pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
 
@@ -198,14 +199,17 @@ export default class PieSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.alias).visible) {
-      this.renderDataLabels(seriesModel, this.alias);
+      const dataLabelData = seriesModel.map((m) => ({
+        ...m,
+        value: `${pieTooltipLabelFormatter(m.percentValue)}`,
+      }));
+      this.renderDataLabels(dataLabelData, this.alias);
     }
 
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'sector',
       radius: m.radius,
-      style: ['hover'],
       seriesIndex: index,
       data: { ...tooltipDataModel[index], percentValue: m.percentValue },
       color: getRGBA(m.color, 1),
@@ -370,7 +374,11 @@ export default class PieSeries extends Component {
 
   onMousemove({ responders }) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: responders,
+      models: responders.map((m) => ({
+        ...m,
+        style: ['hover'],
+        radius: { ...m.radius, outer: m.radius.outer + 3 },
+      })),
       name: this.alias || this.name,
     });
     this.activatedResponders = this.makeTooltipResponder(responders);

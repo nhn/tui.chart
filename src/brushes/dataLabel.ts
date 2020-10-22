@@ -1,5 +1,6 @@
 import { label, StrokeLabelStyle, LabelStyle, StrokeLabelStyleName } from '@src/brushes/label';
 import { DataLabelModel, DataLabelType } from '@t/components/dataLabels';
+import { line } from './basic';
 
 function getStyleDefaultName(
   type: DataLabelType
@@ -30,6 +31,7 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     style,
     opacity,
     defaultColor,
+    callout,
   } = model;
   const textStyle: LabelStyle = { textAlign, textBaseline };
   const textStrokeStyle: StrokeLabelStyle = {};
@@ -71,4 +73,8 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     stroke: [strokeStyleDefault, textStrokeStyle],
     opacity,
   });
+
+  if (callout) {
+    line(ctx, callout);
+  }
 }
