@@ -33,7 +33,7 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RectDataLabel } from '@t/components/dataLabels';
-import { getBoxSeriesPadding } from '@src/helpers/boxStyle';
+import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 
 type RenderOptions = {
   stack: Stack;
@@ -135,7 +135,7 @@ export default class BoxStackSeries extends BoxSeries {
       diverging,
       hasNegativeValue: hasNegative(labels),
       seriesDirection: this.getSeriesDirection(labels),
-      padding: getBoxSeriesPadding(tickDistance),
+      padding: getBoxTypeSeriesPadding(tickDistance),
       offsetSize,
       centerYAxis,
     };

@@ -47,7 +47,7 @@ import { getLimitOnAxis, getValueAxisName } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { BOX_HOVER_THICKNESS, getBoxSeriesPadding } from '@src/helpers/boxStyle';
+import { BOX_HOVER_THICKNESS, getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { makeRectResponderModel } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 
@@ -302,7 +302,7 @@ export default class BoxSeries extends Component {
       ratio: this.getValueRatio(min, max, offsetSize),
       hasNegativeValue: hasNegative(labels),
       seriesDirection: this.getSeriesDirection(labels),
-      padding: getBoxSeriesPadding(tickDistance),
+      padding: getBoxTypeSeriesPadding(tickDistance),
     };
 
     const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions);
