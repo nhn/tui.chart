@@ -13,7 +13,7 @@ import { getRGBA } from '@src/helpers/color';
 import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/options';
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
 import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
-import { BOX_HOVER_THICKNESS, getBoxSeriesPadding } from '@src/helpers/boxStyle';
+import { BOX_HOVER_THICKNESS, getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 
@@ -35,7 +35,7 @@ const seriesOpacity = {
 const RANGE_OPACITY = [0.5, 0.3, 0.1];
 
 function getBarWidths(tickDistance: number, seriesLength: number) {
-  const padding = getBoxSeriesPadding(tickDistance);
+  const padding = getBoxTypeSeriesPadding(tickDistance);
 
   const barWidth = Math.max(
     (tickDistance - padding * (2 + (seriesLength - 1))) / seriesLength,
