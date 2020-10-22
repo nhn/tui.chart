@@ -60,15 +60,13 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
   ctx.lineTo(x, y + radius);
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
-
-  if (stroke) {
-    ctx.strokeStyle = stroke;
-    ctx.stroke();
-  }
-
   if (fill) {
     ctx.fillStyle = fill;
     ctx.fill();
+  }
+  if (stroke) {
+    ctx.strokeStyle = stroke;
+    ctx.stroke();
   }
 }
 
