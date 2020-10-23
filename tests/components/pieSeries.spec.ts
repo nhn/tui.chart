@@ -120,7 +120,7 @@ describe('basic', () => {
         value: 50,
         clockwise: true,
         drawingStartAngle: -90,
-        style: ['hover'],
+        style: ['default'],
         seriesIndex: 0,
         data: {
           label: 'A',
@@ -150,7 +150,7 @@ describe('basic', () => {
         value: 50,
         clockwise: true,
         drawingStartAngle: -90,
-        style: ['hover'],
+        style: ['default'],
         seriesIndex: 1,
         data: {
           label: 'B',
@@ -315,7 +315,7 @@ describe('donut', () => {
         value: 50,
         clockwise: true,
         drawingStartAngle: -90,
-        style: ['hover'],
+        style: ['default'],
         seriesIndex: 0,
         data: {
           label: 'A',
@@ -345,7 +345,7 @@ describe('donut', () => {
         value: 50,
         clockwise: true,
         drawingStartAngle: -90,
-        style: ['hover'],
+        style: ['default'],
         seriesIndex: 1,
         data: {
           label: 'B',
