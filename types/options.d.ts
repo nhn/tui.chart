@@ -295,7 +295,6 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
   zoomable?: boolean;
-  lineWidth?: number;
   eventDetectType?: LineTypeEventDetectType;
 }
 
@@ -320,7 +319,7 @@ export interface LineChartOptions extends BaseOptions {
 }
 
 type LineScatterChartSeriesOptions = {
-  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'>;
+  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot'>;
 } & BaseSeriesOptions;
 
 export interface LineScatterChartOptions extends BaseOptions {
@@ -337,8 +336,8 @@ export interface LineAreaChartOptions extends BaseOptions {
 }
 
 type LineAreaChartSeriesOptions = {
-  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'> & BaseSeriesOptions;
-  area?: Pick<AreaSeriesOptions, 'lineWidth' | 'stack' | 'spline' | 'showDot'> & BaseSeriesOptions;
+  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot'> & BaseSeriesOptions;
+  area?: Pick<AreaSeriesOptions, 'stack' | 'spline' | 'showDot'> & BaseSeriesOptions;
   zoomable?: boolean;
   showDot?: boolean;
   lineWidth?: number;
@@ -542,7 +541,7 @@ export interface BulletSeriesOptions extends BaseSeriesOptions {
 
 type ColumnLineChartSeriesOptions = {
   column?: Pick<BoxSeriesOptions, 'barWidth' | 'stack'>;
-  line?: Pick<LineTypeSeriesOptions, 'lineWidth' | 'spline' | 'showDot'>;
+  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot'>;
 } & BaseSeriesOptions;
 
 export interface ColumnLineChartOptions extends BaseOptions {

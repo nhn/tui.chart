@@ -128,9 +128,16 @@ export const theme = () => {
     series: {
       line: {
         colors: ['#957DAD'],
+        hover: {
+          dot: {
+            radius: 8,
+          },
+        },
       },
       area: {
         colors: ['#FEE333'],
+        areaOpacity: 0.4,
+        lineWidth: 5,
       },
     },
   };
