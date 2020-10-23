@@ -102,10 +102,8 @@ function getSeriesTheme(seriesName: string) {
         startColor: defaultSeriesTheme.startColor,
         endColor: defaultSeriesTheme.endColor,
       };
-    case 'pie':
-      return {};
     default:
-      return lineTypeSeriesTheme;
+      return {};
   }
 }
 

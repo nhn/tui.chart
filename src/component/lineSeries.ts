@@ -347,13 +347,13 @@ export default class LineSeries extends Component {
   }
 
   private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
-    const { dot } = this.theme.select;
+    const { radius, color, borderWidth, borderColor } = this.theme.select.dot as DotTheme;
 
     return models.map((model) => ({
       ...model,
-      radius: dot?.radius,
-      color: dot?.color ?? model.color,
-      style: ['hover', { lineWidth: dot!.borderWidth, strokeStyle: dot!.borderColor }],
+      radius,
+      color: color ?? model.color,
+      style: ['hover', { lineWidth: borderWidth, strokeStyle: borderColor }],
     }));
   }
 

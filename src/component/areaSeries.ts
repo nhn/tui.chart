@@ -179,7 +179,8 @@ export default class AreaSeries extends Component {
     this.linePointsModel = this.renderLinePointsModel(areaData, limit, renderOptions);
 
     const areaSeriesModel = this.renderAreaPointsModel(renderOptions.options);
-    const { dotSeriesModel, responderModel } = this.renderCircleModel(renderOptions);
+    const showDot = !!options.series?.showDot;
+    const { dotSeriesModel, responderModel } = this.renderCircleModel(showDot);
     const tooltipDataArr = this.makeTooltipData(areaData, categories);
 
     this.models = deepCopy({
@@ -397,12 +398,11 @@ export default class AreaSeries extends Component {
     }));
   }
 
-  renderCircleModel({
-    options,
-  }: RenderOptions): { dotSeriesModel: CircleModel[]; responderModel: CircleModel[] } {
-    const dotSeriesModel = [] as CircleModel[];
-    const responderModel = [] as CircleModel[];
-    const showDot = !!options.showDot;
+  renderCircleModel(
+    showDot: boolean
+  ): { dotSeriesModel: CircleModel[]; responderModel: CircleModel[] } {
+    const dotSeriesModel: CircleModel[] = [];
+    const responderModel: CircleModel[] = [];
     const { hover, dot: dotTheme } = this.theme;
     const hoverDotTheme = hover.dot!;
 
@@ -530,13 +530,13 @@ export default class AreaSeries extends Component {
   }
 
   private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
-    const { dot } = this.theme.select;
+    const { radius, color, borderWidth, borderColor } = this.theme.select.dot as DotTheme;
 
     return models.map((model) => ({
       ...model,
-      radius: dot?.radius,
-      color: dot?.color ?? model.color,
-      style: ['hover', { lineWidth: dot!.borderWidth, strokeStyle: dot!.borderColor }],
+      radius,
+      color: color ?? model.color,
+      style: ['hover', { lineWidth: borderWidth, strokeStyle: borderColor }],
     }));
   }
 
