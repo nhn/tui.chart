@@ -241,17 +241,15 @@ export type BoxPlotResponderModel = {
 } & BoxPlotModel &
   Point;
 
-export type MarkerModel = LineModel;
-
 export type BulletRectModel = {
   modelType: 'bullet' | 'range';
 } & RectModel;
 
-type BulletModel = BulletRectModel | MarkerModel;
+type BulletModel = BulletRectModel | LineModel;
 
 export type MarkerResponderModel = {
   data?: TooltipData;
-} & MarkerModel &
+} & LineModel &
   LineResponderModel;
 
 export type BulletResponderModel = {
@@ -259,7 +257,7 @@ export type BulletResponderModel = {
 } & BulletModel;
 
 export type BulletSeriesModels = {
-  series: Array<BulletModel>;
+  series: BulletModel[];
 };
 
 export interface MouseEventType {

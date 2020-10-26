@@ -4,7 +4,6 @@ import {
   BulletSeriesModels,
   BulletModel,
   BulletResponderModel,
-  MarkerModel,
   BulletRectModel,
   MarkerResponderModel,
 } from '@t/components/series';
@@ -16,6 +15,7 @@ import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
 import { BOX_HOVER_THICKNESS, getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
+import { LineModel } from '@t/components/axis';
 
 type RenderOptions = {
   ratio: number;
@@ -233,7 +233,7 @@ export default class BulletSeries extends Component {
           name
         );
 
-        const markerModels: MarkerModel[] = this.makeMarkerModel(
+        const markerModels: LineModel[] = this.makeMarkerModel(
           markers,
           renderOptions,
           seriesIndex,
@@ -304,7 +304,7 @@ export default class BulletSeries extends Component {
     seriesIndex: number,
     color: string,
     name: string
-  ): MarkerModel[] {
+  ): LineModel[] {
     const { tickDistance, ratio, vertical, zeroPosition, markerWidth } = renderOptions;
     const markerStartX = getStartX(seriesIndex, tickDistance, markerWidth);
 
