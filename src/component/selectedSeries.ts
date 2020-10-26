@@ -16,7 +16,7 @@ import {
   isClickSameGroupedRectResponder,
   isClickSameLabelResponder,
   isClickSameNameResponder,
-  isClickSameTypeDataResponder,
+  isClickSameBoxPlotDataResponder,
 } from '@src/helpers/responders';
 import { includes } from '@src/helpers/utils';
 import { TooltipModelName } from '@t/components/tooltip';
@@ -84,11 +84,10 @@ export default class SelectedSeries extends Component {
               models as BoxPlotResponderModel[],
               this.models[name] as BoxPlotResponderModel[]
             )
-          : isClickSameTypeDataResponder(
+          : isClickSameBoxPlotDataResponder(
               models as BoxPlotResponderModel[],
               this.models[name] as BoxPlotResponderModel[]
             );
-
       case 'treemap':
         return isClickSameLabelResponder(
           models as TreemapRectResponderModel[],
