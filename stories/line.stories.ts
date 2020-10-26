@@ -278,21 +278,6 @@ export const selectable = () => {
   return el;
 };
 
-export const lineWidth = () => {
-  const { el } = createChart(temperatureData, {
-    series: {
-      lineWidth: number('line width', 3, {
-        range: true,
-        min: 1,
-        max: 10,
-        step: 1,
-      }),
-    },
-  });
-
-  return el;
-};
-
 export const secondaryYAxis = () => {
   const { el } = createChart(temperatureData, {
     yAxis: [
@@ -337,11 +322,41 @@ export const theme = () => {
         '#516f7d',
         '#dddddd',
       ],
+      dashSegments: [5, 10],
+      lineWidth: 3,
+      select: {
+        dot: {
+          color: '#ff416d',
+          radius: 6,
+          borderColor: '#00b5a1',
+          borderWidth: 2,
+        },
+      },
+      hover: {
+        dot: {
+          color: '#00ffff',
+          radius: 6,
+          borderColor: '#0859c6',
+          borderWidth: 2,
+        },
+      },
+      dot: {
+        radius: 6,
+        borderColor: '#ffff00',
+        borderWidth: 2,
+      },
     },
   };
 
   const { el } = createChart(temperatureData, {
     theme: themeOptions,
+    series: {
+      selectable: true,
+      showDot: true,
+    },
+    xAxis: {
+      pointOnColumn: true,
+    },
   });
 
   return el;

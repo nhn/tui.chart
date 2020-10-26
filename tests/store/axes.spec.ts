@@ -203,7 +203,7 @@ describe('Axes Store module', () => {
           yAxis: { x: 10, y: 10, width: 10, height: 10 },
           xAxis: { x: 10, y: 10, width: 10, height: 10 },
         },
-        scale: { yAxis: { limit: { min: 1, max: 8 }, stepSize: 1, stepCount: 1 } } as Scale,
+        scale: { yAxis: { limit: { min: 0, max: 8 }, stepSize: 1, stepCount: 1 } } as Scale,
         series: {
           radar: {
             data: [
@@ -224,15 +224,12 @@ describe('Axes Store module', () => {
       const store = { state } as Store<Options>;
       axes.action!.setAxesData.call({ notify }, store);
 
-      expect(store.state.axes).toMatchObject({
-        xAxis: { tickInterval: 1, labelInterval: 1 },
-        yAxis: { tickInterval: 1, labelInterval: 1 },
-        radialAxis: {
-          labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-          axisSize: 50,
-          centerX: 100,
-          centerY: 100,
-        },
+      expect(store.state.axes.radialAxis).toMatchObject({
+        labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
+        axisSize: 50,
+        centerX: 100,
+        centerY: 100,
+        labelTextHeight: 13,
       });
     });
   });

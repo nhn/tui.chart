@@ -26,7 +26,7 @@ const chartState = {
     xAxis: {},
     yAxis: {},
     radialAxis: {
-      labels: ['1', '2', '3', '4', '5'],
+      labels: ['0', '1', '2', '3', '4', '5'],
       axisSize: 50,
       centerX: 100,
       centerY: 100,
@@ -90,7 +90,7 @@ describe('radar series', () => {
         type: 'circle',
         x: 100,
         y: 90,
-        radius: 6,
+        radius: 4,
         color: 'rgba(170, 170, 170, 1)',
         style: ['default', 'hover'],
         seriesIndex: 0,
@@ -102,7 +102,7 @@ describe('radar series', () => {
         type: 'circle',
         x: 120,
         y: 100,
-        radius: 6,
+        radius: 4,
         color: 'rgba(170, 170, 170, 1)',
         style: ['default', 'hover'],
         seriesIndex: 0,
@@ -114,7 +114,7 @@ describe('radar series', () => {
         type: 'circle',
         x: 100,
         y: 130,
-        radius: 6,
+        radius: 4,
         color: 'rgba(170, 170, 170, 1)',
         style: ['default', 'hover'],
         seriesIndex: 0,
@@ -126,7 +126,7 @@ describe('radar series', () => {
         type: 'circle',
         x: 60,
         y: 100,
-        radius: 6,
+        radius: 4,
         color: 'rgba(170, 170, 170, 1)',
         style: ['default', 'hover'],
         seriesIndex: 0,
@@ -138,7 +138,7 @@ describe('radar series', () => {
         type: 'circle',
         x: 100,
         y: 80,
-        radius: 6,
+        radius: 4,
         color: 'rgba(187, 187, 187, 1)',
         style: ['default', 'hover'],
         seriesIndex: 1,
@@ -150,7 +150,7 @@ describe('radar series', () => {
         type: 'circle',
         x: 110,
         y: 100,
-        radius: 6,
+        radius: 4,
         color: 'rgba(187, 187, 187, 1)',
         style: ['default', 'hover'],
         seriesIndex: 1,
@@ -162,7 +162,7 @@ describe('radar series', () => {
         type: 'circle',
         x: 100,
         y: 110,
-        radius: 6,
+        radius: 4,
         color: 'rgba(187, 187, 187, 1)',
         style: ['default', 'hover'],
         seriesIndex: 1,
@@ -174,7 +174,7 @@ describe('radar series', () => {
         type: 'circle',
         x: 70,
         y: 100,
-        radius: 6,
+        radius: 4,
         color: 'rgba(187, 187, 187, 1)',
         style: ['default', 'hover'],
         seriesIndex: 1,
@@ -206,7 +206,7 @@ describe('radar series', () => {
       {
         type: 'circle',
         color: 'rgba(170, 170, 170, 1)',
-        radius: 5,
+        radius: 3,
         x: 100,
         y: 90,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
@@ -215,7 +215,7 @@ describe('radar series', () => {
       {
         type: 'circle',
         color: 'rgba(170, 170, 170, 1)',
-        radius: 5,
+        radius: 3,
         x: 120,
         y: 100,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
@@ -224,7 +224,7 @@ describe('radar series', () => {
       {
         type: 'circle',
         color: 'rgba(170, 170, 170, 1)',
-        radius: 5,
+        radius: 3,
         x: 100,
         y: 130,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
@@ -233,7 +233,7 @@ describe('radar series', () => {
       {
         type: 'circle',
         color: 'rgba(170, 170, 170, 1)',
-        radius: 5,
+        radius: 3,
         x: 60,
         y: 100,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
@@ -242,7 +242,7 @@ describe('radar series', () => {
       {
         type: 'circle',
         color: 'rgba(187, 187, 187, 1)',
-        radius: 5,
+        radius: 3,
         x: 100,
         y: 80,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
@@ -251,7 +251,7 @@ describe('radar series', () => {
       {
         type: 'circle',
         color: 'rgba(187, 187, 187, 1)',
-        radius: 5,
+        radius: 3,
         x: 110,
         y: 100,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
@@ -261,7 +261,7 @@ describe('radar series', () => {
       {
         type: 'circle',
         color: 'rgba(187, 187, 187, 1)',
-        radius: 5,
+        radius: 3,
         x: 100,
         y: 110,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
@@ -270,7 +270,7 @@ describe('radar series', () => {
       {
         type: 'circle',
         color: 'rgba(187, 187, 187, 1)',
-        radius: 5,
+        radius: 3,
         x: 70,
         y: 100,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
@@ -291,8 +291,8 @@ describe('radar series', () => {
     );
 
     expect(radarSeries.models.polygon.map((m) => m.fillColor)).toEqual([
-      'rgba(170, 170, 170, 0.2)',
-      'rgba(187, 187, 187, 0.2)',
+      'rgba(170, 170, 170, 0.3)',
+      'rgba(187, 187, 187, 0.3)',
     ]);
   });
 });

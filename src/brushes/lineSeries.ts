@@ -3,12 +3,13 @@ import { AreaPointsModel, LinePointsModel } from '@t/components/series';
 type PointsModel = LinePointsModel | AreaPointsModel;
 
 export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel) {
-  const { color, lineWidth, points } = pointsModel;
+  const { color, lineWidth, points, dashSegments = [] } = pointsModel;
 
   ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';
   ctx.strokeStyle = color;
   ctx.beginPath();
+  ctx.setLineDash(dashSegments);
 
   points.forEach((point, idx) => {
     if (idx === 0) {
@@ -29,6 +30,7 @@ export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsMod
 
   ctx.stroke();
   ctx.closePath();
+  ctx.setLineDash([]);
 }
 
 export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaPointsModel) {

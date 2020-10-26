@@ -176,6 +176,12 @@ export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
   return parseInt(String(Number(matches) * 1.2), 10);
 }
 
+export function getMaxLengthLabelWidth(labels: string[]) {
+  const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
+
+  return getTextWidth(maxLengthLabel);
+}
+
 export function getXPosition(
   axisData: Pick<LabelAxisData, 'pointOnColumn' | 'tickDistance' | 'labelDistance'>,
   offsetSize: number,

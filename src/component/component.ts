@@ -18,7 +18,7 @@ import {
   HeatmapRectModels,
   NestedPieSeriesModels,
 } from '@t/components/series';
-import { AxisModels, LabelModel, LineModel } from '@t/components/axis';
+import { AxisModels, LabelModel, LineModel, RectLabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { LegendModel } from '@t/components/legend';
 import { CircleLegendModels } from '@t/components/circleLegend';
@@ -77,7 +77,8 @@ type ComponentModels =
   | BackButtonModels
   | HeatmapRectModels
   | NestedPieSeriesModels
-  | ResponderSeriesModel;
+  | ResponderSeriesModel
+  | RectLabelModel[];
 
 export default abstract class Component {
   name = 'Component';

@@ -1,5 +1,5 @@
 import { Point } from '../options';
-import { StyleProp } from '@t/components/series';
+import { StyleProp, PathRectModel } from '@t/components/series';
 import { StrokeLabelStyleName, StrokeLabelStyle, LabelStyleName } from '@src/brushes/label';
 
 export interface LabelStyle {
@@ -38,3 +38,10 @@ export type AxisModels = {
   tick: TickModel[];
   axisLine: LineModel[];
 };
+
+export type RectLabelModel = {
+  type: 'rectLabel';
+  borderRadius?: number;
+  backgroundColor?: string;
+} & Omit<PathRectModel, 'type'> &
+  Omit<LabelModel, 'type'>;

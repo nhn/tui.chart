@@ -211,6 +211,9 @@ export type RadialAxisData = {
   axisSize: number;
   centerX: number;
   centerY: number;
+  maxLabelTextWidth: number;
+  labelTextHeight: number;
+  labelInterval: number;
 };
 
 export interface TreemapSeriesData {

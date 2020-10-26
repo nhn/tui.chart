@@ -55,6 +55,37 @@ describe('basic', () => {
     dataLabels: {
       visible: false,
     },
+    theme: {
+      series: {
+        area: {
+          colors: ['#ff5a46', '#00bd9f'],
+          areaOpacity: 0.3,
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            areaOpacity: 0.3,
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+            restSeries: {
+              areaOpacity: 0.06,
+            },
+          },
+        },
+      },
+    },
   };
 
   beforeEach(() => {
@@ -79,6 +110,7 @@ describe('basic', () => {
         name: 'han',
         seriesIndex: 0,
         type: 'linePoints',
+        dashSegments: [],
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -90,6 +122,7 @@ describe('basic', () => {
         name: 'cho',
         seriesIndex: 1,
         type: 'linePoints',
+        dashSegments: [],
       },
     ],
     responders: [
@@ -155,6 +188,7 @@ describe('basic', () => {
           name: 'han',
           seriesIndex: 0,
           type: 'linePoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(187, 187, 187, 1)',
@@ -166,6 +200,7 @@ describe('basic', () => {
           name: 'cho',
           seriesIndex: 1,
           type: 'linePoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -180,6 +215,7 @@ describe('basic', () => {
           ],
           seriesIndex: 0,
           type: 'areaPoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -194,6 +230,7 @@ describe('basic', () => {
           ],
           seriesIndex: 1,
           type: 'areaPoints',
+          dashSegments: [],
         },
       ],
       dot: [],
@@ -211,6 +248,7 @@ describe('basic', () => {
           name: 'han',
           seriesIndex: 0,
           type: 'linePoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(187, 187, 187, 1)',
@@ -222,6 +260,7 @@ describe('basic', () => {
           name: 'cho',
           seriesIndex: 1,
           type: 'linePoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -236,6 +275,7 @@ describe('basic', () => {
           ],
           seriesIndex: 0,
           type: 'areaPoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -250,6 +290,7 @@ describe('basic', () => {
           ],
           seriesIndex: 1,
           type: 'areaPoints',
+          dashSegments: [],
         },
       ],
       dot: [],
@@ -340,6 +381,37 @@ describe('responders', () => {
     categories: ['A', 'B'],
     dataLabels: {
       visible: false,
+    },
+    theme: {
+      series: {
+        area: {
+          colors: ['#ff5a46', '#00bd9f'],
+          areaOpacity: 0.3,
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            areaOpacity: 0.3,
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+            restSeries: {
+              areaOpacity: 0.06,
+            },
+          },
+        },
+      },
     },
   };
 
@@ -476,6 +548,37 @@ describe('range', () => {
     dataLabels: {
       visible: false,
     },
+    theme: {
+      series: {
+        area: {
+          colors: ['#ff5a46', '#00bd9f'],
+          areaOpacity: 0.3,
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            areaOpacity: 0.3,
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+            restSeries: {
+              areaOpacity: 0.06,
+            },
+          },
+        },
+      },
+    },
   };
 
   beforeEach(() => {
@@ -500,6 +603,7 @@ describe('range', () => {
         ],
         seriesIndex: 0,
         type: 'linePoints',
+        dashSegments: [],
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -511,6 +615,7 @@ describe('range', () => {
         ],
         seriesIndex: 0,
         type: 'linePoints',
+        dashSegments: [],
       },
     ],
     responders: [
@@ -530,6 +635,7 @@ describe('range', () => {
           ],
           seriesIndex: 0,
           type: 'linePoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(170, 170, 170, 1)',
@@ -541,6 +647,7 @@ describe('range', () => {
           ],
           seriesIndex: 0,
           type: 'linePoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -555,6 +662,7 @@ describe('range', () => {
           ],
           seriesIndex: 0,
           type: 'areaPoints',
+          dashSegments: [],
         },
       ],
       dot: [],
@@ -637,6 +745,37 @@ describe('stack', () => {
     dataLabels: {
       visible: false,
     },
+    theme: {
+      series: {
+        area: {
+          colors: ['#ff5a46', '#00bd9f'],
+          areaOpacity: 0.3,
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            areaOpacity: 0.3,
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+            restSeries: {
+              areaOpacity: 0.06,
+            },
+          },
+        },
+      },
+    },
   };
 
   beforeEach(() => {
@@ -661,6 +800,7 @@ describe('stack', () => {
         seriesIndex: 0,
         type: 'linePoints',
         name: 'han',
+        dashSegments: [],
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -672,6 +812,7 @@ describe('stack', () => {
         seriesIndex: 1,
         type: 'linePoints',
         name: 'cho',
+        dashSegments: [],
       },
     ],
     responders: [
@@ -729,6 +870,7 @@ describe('stack', () => {
           seriesIndex: 0,
           type: 'linePoints',
           name: 'han',
+          dashSegments: [],
         },
         {
           color: 'rgba(187, 187, 187, 1)',
@@ -740,6 +882,7 @@ describe('stack', () => {
           seriesIndex: 1,
           type: 'linePoints',
           name: 'cho',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -754,6 +897,7 @@ describe('stack', () => {
           ],
           seriesIndex: 0,
           type: 'areaPoints',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -768,6 +912,7 @@ describe('stack', () => {
           ],
           seriesIndex: 1,
           type: 'areaPoints',
+          dashSegments: [],
         },
       ],
       dot: [],
@@ -831,6 +976,37 @@ describe('zoom', () => {
       visible: false,
     },
     zoomRange: [1, 1],
+    theme: {
+      series: {
+        area: {
+          colors: ['#ff5a46', '#00bd9f'],
+          areaOpacity: 0.3,
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            areaOpacity: 0.3,
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+            restSeries: {
+              areaOpacity: 0.06,
+            },
+          },
+        },
+      },
+    },
   };
 
   beforeEach(() => {
@@ -856,6 +1032,7 @@ describe('zoom', () => {
         seriesIndex: 0,
         type: 'linePoints',
         name: 'han',
+        dashSegments: [],
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -868,6 +1045,7 @@ describe('zoom', () => {
         seriesIndex: 1,
         type: 'linePoints',
         name: 'cho',
+        dashSegments: [],
       },
     ],
     models: {
@@ -884,6 +1062,7 @@ describe('zoom', () => {
           seriesIndex: 0,
           type: 'linePoints',
           name: 'han',
+          dashSegments: [],
         },
         {
           color: 'rgba(187, 187, 187, 1)',
@@ -896,6 +1075,7 @@ describe('zoom', () => {
           seriesIndex: 1,
           type: 'linePoints',
           name: 'cho',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -911,6 +1091,7 @@ describe('zoom', () => {
           seriesIndex: 0,
           type: 'areaPoints',
           name: 'han',
+          dashSegments: [],
         },
         {
           color: 'rgba(0, 0, 0, 0)',
@@ -926,6 +1107,7 @@ describe('zoom', () => {
           seriesIndex: 1,
           type: 'areaPoints',
           name: 'cho',
+          dashSegments: [],
         },
       ],
       dot: [],
@@ -985,6 +1167,37 @@ describe('with series options', () => {
     dataLabels: {
       visible: false,
     },
+    theme: {
+      series: {
+        area: {
+          colors: ['#ff5a46', '#00bd9f'],
+          areaOpacity: 0.3,
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            areaOpacity: 0.3,
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+            restSeries: {
+              areaOpacity: 0.06,
+            },
+          },
+        },
+      },
+    },
   };
 
   beforeEach(() => {
@@ -1012,7 +1225,7 @@ describe('with series options', () => {
         name: 'han',
         radius: 3,
         seriesIndex: 0,
-        style: [{ lineWidth: 0, strokeStyle: 'rgba(170, 170, 170, 1)' }],
+        style: [{ strokeStyle: 'rgba(170, 170, 170, 1)' }],
         type: 'circle',
         x: 20,
         y: 80,
@@ -1023,7 +1236,7 @@ describe('with series options', () => {
         name: 'han',
         radius: 3,
         seriesIndex: 0,
-        style: [{ lineWidth: 0, strokeStyle: 'rgba(170, 170, 170, 1)' }],
+        style: [{ strokeStyle: 'rgba(170, 170, 170, 1)' }],
         type: 'circle',
         x: 60,
         y: 60,
@@ -1034,7 +1247,7 @@ describe('with series options', () => {
         name: 'cho',
         radius: 3,
         seriesIndex: 1,
-        style: [{ lineWidth: 0, strokeStyle: 'rgba(187, 187, 187, 1)' }],
+        style: [{ strokeStyle: 'rgba(187, 187, 187, 1)' }],
         type: 'circle',
         x: 20,
         y: 20,
@@ -1045,25 +1258,11 @@ describe('with series options', () => {
         name: 'cho',
         radius: 3,
         seriesIndex: 1,
-        style: [{ lineWidth: 0, strokeStyle: 'rgba(187, 187, 187, 1)' }],
+        style: [{ strokeStyle: 'rgba(187, 187, 187, 1)' }],
         type: 'circle',
         x: 60,
         y: 0,
       },
     ]);
-  });
-
-  it('should make models properly when calling render with lineWidth option', () => {
-    const state = deepMergedCopy(chartState, {
-      options: {
-        series: {
-          lineWidth: 10,
-        },
-      },
-    });
-
-    areaSeries.render(state);
-
-    expect(areaSeries.linePointsModel.map(({ lineWidth }) => lineWidth)).toEqual([10, 10]);
   });
 });
