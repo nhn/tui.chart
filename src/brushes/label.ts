@@ -74,12 +74,6 @@ export const labelStyle = {
     textAlign: 'center',
     textBaseline: 'middle',
   },
-  rectLabel: {
-    font: DEFAULT_LABEL_TEXT,
-    fillStyle: 'rgba(0, 0, 0, 0.3)',
-    textAlign: 'center',
-    textBaseline: 'middle',
-  },
   rectDataLabel: {
     font: '400 9px Arial',
     fillStyle: 'rgba(0, 0, 0, 0.5)',
@@ -89,6 +83,12 @@ export const labelStyle = {
   lineDataLabel: {
     font: '400 9px Arial',
     fillStyle: 'rgba(0, 0, 0, 0.5)',
+    textAlign: 'center',
+    textBaseline: 'middle',
+  },
+  rectLabel: {
+    font: DEFAULT_LABEL_TEXT,
+    fillStyle: 'rgba(0, 0, 0, 0.3)',
     textAlign: 'center',
     textBaseline: 'middle',
   },
