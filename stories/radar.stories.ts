@@ -32,7 +32,7 @@ function createChart(
   return { el, chart };
 }
 
-export const basci = () => {
+export const basic = () => {
   const { el } = createChart(budgetData2, {
     legend: {
       visible: true,

@@ -34,6 +34,9 @@ const seriesOpacity = {
   ACTIVE: 1,
 };
 
+const DEFAULT_RADAR_SERIES_DOT_RADIUS = 3;
+const DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS = DEFAULT_RADAR_SERIES_DOT_RADIUS + 1;
+
 export default class RadarSeries extends Component {
   models: RadarSeriesModels = { polygon: [], dot: [] };
 
@@ -108,7 +111,7 @@ export default class RadarSeries extends Component {
       points.map((point, index) => ({
         type: 'circle',
         ...point,
-        radius: 4,
+        radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
         color,
         style: ['default', 'hover'],
         seriesIndex,
@@ -151,11 +154,8 @@ export default class RadarSeries extends Component {
 
   renderPolygonModels(seriesData: RadarSeriesType[], renderOptions: RenderOptions): PolygonModel[] {
     const { centerX, centerY, degree, ratio, showArea } = renderOptions;
-    const fillOpacity = showArea ? areaOpacity.SHOW : areaOpacity.NONE;
 
     return seriesData.map(({ data, color: seriesColor, name }) => {
-      const active = this.activeSeriesMap![name];
-      const color = getRGBA(seriesColor!, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
       const polygon = data.reduce<{ points: Point[]; distances: number[] }>(
         (acc, value, index) => {
           const distance = value * ratio;
@@ -176,11 +176,10 @@ export default class RadarSeries extends Component {
 
       return {
         type: 'polygon',
-        color,
         lineWidth: DEFAULT_LINE_SERIES_WIDTH,
-        fillColor: getRGBA(color, active ? fillOpacity : areaOpacity.INACTIVE),
         name,
         ...polygon,
+        ...this.getSeriesColor(showArea, seriesColor!, name),
       };
     });
   }
@@ -190,11 +189,19 @@ export default class RadarSeries extends Component {
       points.map((point) => ({
         type: 'circle',
         ...point,
-        radius: 3,
+        radius: DEFAULT_RADAR_SERIES_DOT_RADIUS,
         color,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
         name,
       }))
     );
+  }
+
+  getSeriesColor(showArea: boolean, seriesColor: string, name: string) {
+    const fillOpacity = showArea ? areaOpacity.SHOW : areaOpacity.NONE;
+    const active = this.activeSeriesMap![name];
+    const color = getRGBA(seriesColor!, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
+
+    return { color, fillColor: getRGBA(color, active ? fillOpacity : areaOpacity.INACTIVE) };
   }
 }

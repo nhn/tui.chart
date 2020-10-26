@@ -205,8 +205,8 @@ export const rectLabelBrush = () => {
     style: ['rectLabel', { fillStyle: '#333333' }],
     x: 200,
     y: 100,
-    rectBorderRadius: 5,
-    bgFill: 'rgba(0,0,0,.3)',
+    borderRadius: 5,
+    backgroundColor: 'rgba(0,0,0,.3)',
     width: 100,
     height: 20,
   });

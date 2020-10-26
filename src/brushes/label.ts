@@ -75,7 +75,7 @@ export const labelStyle = {
   },
   rectLabel: {
     font: DEFAULT_LABEL_TEXT,
-    fillStyle: 'rgba(0,0,0,0.3)',
+    fillStyle: 'rgba(0, 0, 0, 0.3)',
     textAlign: 'center',
     textBaseline: 'middle',
   },
@@ -124,7 +124,7 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
 }
 
 export function rectLabel(ctx: CanvasRenderingContext2D, model: RectLabelModel) {
-  const { x, y, style, text, width, height, rectBorderRadius, bgFill } = model;
+  const { x, y, style, text, width, height, borderRadius = 0, backgroundColor } = model;
 
   pathRect(ctx, {
     type: 'pathRect',
@@ -132,8 +132,8 @@ export function rectLabel(ctx: CanvasRenderingContext2D, model: RectLabelModel) 
     y: y - height / 2,
     width,
     height,
-    radius: rectBorderRadius,
-    fill: bgFill,
+    radius: borderRadius,
+    fill: backgroundColor,
     stroke: '',
   });
 

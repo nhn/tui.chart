@@ -229,7 +229,7 @@ describe('Axes Store module', () => {
         axisSize: 50,
         centerX: 100,
         centerY: 100,
-        labelTextHeight: 12,
+        labelTextHeight: 13,
       });
     });
   });

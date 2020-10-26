@@ -14,7 +14,7 @@ export type RectStyleName = 'shadow';
 
 const circleStyle = {
   default: {
-    strokeStyle: '#fff',
+    strokeStyle: '#ffffff',
     lineWidth: 2,
   },
   hover: {
@@ -86,6 +86,11 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
   ctx.fill();
+
+  if (ctx.shadowColor) {
+    ctx.shadowColor = 'transparent';
+  }
+
   ctx.stroke();
   ctx.closePath();
 }

@@ -1,6 +1,6 @@
 import { padding } from '@src/store/layout';
-import { getTextWidth } from '@src/helpers/calculator';
-import { label } from '@src/brushes/label';
+import { getTextWidth, getMaxLengthLabelWidth } from '@src/helpers/calculator';
+import { label, rectLabel } from '@src/brushes/label';
 import { rect } from '@src/brushes/basic';
 import { polygon } from '@src/brushes/polygon';
 import {
@@ -21,12 +21,6 @@ export const spectrumLegendTooltip = {
   POINT_HEIGHT: 4,
   PADDING: 6,
 };
-
-function getMaxLengthLabelWidth(labels: string[]) {
-  const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
-
-  return getTextWidth(maxLengthLabel);
-}
 
 function getBarStartPoint(model: SpectrumLegendModel) {
   const { align, x: modelX, y: modelY, labels, width } = model;
@@ -232,14 +226,15 @@ function drawTooltipBox(ctx: CanvasRenderingContext2D, model: SpectrumLegendTool
     boxStartY -= height / 2;
   }
 
-  rect(ctx, { type: 'rect', x: boxStartX, y: boxStartY, width, height, color });
-
-  label(ctx, {
-    type: 'label',
-    x: PADDING + boxStartX,
-    y: PADDING + boxStartY,
+  rectLabel(ctx, {
+    type: 'rectLabel',
+    x: boxStartX + width / 2,
+    y: boxStartY + height / 2,
+    width,
+    height,
+    backgroundColor: color,
+    style: ['default', { textAlign: 'center' }],
     text,
-    style: ['default', { textBaseline: 'top' }],
   });
 }
 

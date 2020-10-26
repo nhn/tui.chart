@@ -18,7 +18,8 @@ import {
   spectrumLegendBar,
   spectrumLegendTooltip,
 } from '@src/brushes/spectrumLegend';
-import { getYAxisOption, getMaxLabelTextWidth } from '@src/helpers/axes';
+import { getYAxisOption } from '@src/helpers/axes';
+import { getMaxLengthLabelWidth } from '@src/helpers/calculator';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
@@ -383,7 +384,7 @@ export function isExportMenuVisible(options: Options) {
 }
 
 function getMaxLabelWidth(labels: string[] = []) {
-  return labels.length ? getMaxLabelTextWidth(labels) + padding.X : Y_AXIS_MIN_WIDTH;
+  return labels.length ? getMaxLengthLabelWidth(labels) + padding.X : Y_AXIS_MIN_WIDTH;
 }
 
 function pickOptionSize(option?: BaseSizeOptions): OptionalSize {

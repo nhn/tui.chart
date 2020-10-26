@@ -5,6 +5,7 @@ import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector'
 import { RectLabelModel } from '@t/components/axis';
 
 const padding = { X: 5, Y: 1 };
+const RADIAL_AXIS_LABEL_RECT_BORDER_RADIUS = 7;
 
 function filterDisplayLabels<T>(labels: T[]) {
   return labels.slice(1, labels.length - 1);
@@ -50,8 +51,8 @@ export default class RadialAxis extends Component {
               style: ['rectLabel'],
               width,
               height,
-              rectBorderRadius: 7,
-              bgFill: '#f3f3f3',
+              borderRadius: RADIAL_AXIS_LABEL_RECT_BORDER_RADIUS,
+              backgroundColor: '#f3f3f3',
               ...getRadialPosition(
                 centerX,
                 centerY,

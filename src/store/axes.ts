@@ -21,10 +21,13 @@ import {
   isLabelAxisOnYAxis,
   isPointOnColumn,
   getYAxisOption,
-  getMaxLabelTextWidth,
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
-import { makeLabelsFromLimit, getTextHeight } from '@src/helpers/calculator';
+import {
+  makeLabelsFromLimit,
+  getTextHeight,
+  getMaxLengthLabelWidth,
+} from '@src/helpers/calculator';
 import {
   AxisTitle,
   BaseAxisOptions,
@@ -46,6 +49,7 @@ import {
 } from '@src/helpers/utils';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { isZooming } from '@src/helpers/range';
+import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 
 interface StateProp {
   scale: ScaleData;
@@ -207,8 +211,8 @@ function getRadialAxis(
     axisSize: Math.min(width, height) / 2 - 50,
     centerX: width / 2,
     centerY: height / 2,
-    maxLabelTextWidth: getMaxLabelTextWidth(valueLabels),
-    labelTextHeight: getTextHeight(valueLabels[0]),
+    maxLabelTextWidth: getMaxLengthLabelWidth(valueLabels),
+    labelTextHeight: getTextHeight(DEFAULT_LABEL_TEXT),
     labelInterval,
   };
 }

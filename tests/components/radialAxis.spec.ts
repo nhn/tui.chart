@@ -63,8 +63,8 @@ describe('Radar Axis', () => {
         y: 90,
         width: 30,
         height: 17,
-        bgFill: '#f3f3f3',
-        rectBorderRadius: 7,
+        backgroundColor: '#f3f3f3',
+        borderRadius: 7,
       },
       {
         type: 'rectLabel',
@@ -74,8 +74,8 @@ describe('Radar Axis', () => {
         y: 80,
         width: 30,
         height: 17,
-        bgFill: '#f3f3f3',
-        rectBorderRadius: 7,
+        backgroundColor: '#f3f3f3',
+        borderRadius: 7,
       },
       {
         type: 'rectLabel',
@@ -85,8 +85,8 @@ describe('Radar Axis', () => {
         y: 70,
         width: 30,
         height: 17,
-        bgFill: '#f3f3f3',
-        rectBorderRadius: 7,
+        backgroundColor: '#f3f3f3',
+        borderRadius: 7,
       },
       {
         type: 'rectLabel',
@@ -96,8 +96,8 @@ describe('Radar Axis', () => {
         y: 60,
         width: 30,
         height: 17,
-        bgFill: '#f3f3f3',
-        rectBorderRadius: 7,
+        backgroundColor: '#f3f3f3',
+        borderRadius: 7,
       },
     ]);
   });

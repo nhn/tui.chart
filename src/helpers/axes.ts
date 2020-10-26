@@ -1,6 +1,5 @@
 import { Options, Series, ChartOptionsUsingYAxis } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
-import { getTextWidth } from './calculator';
 
 export function isLabelAxisOnYAxis(series: Series, options: Options) {
   return !!series.bar || (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical);
@@ -78,10 +77,4 @@ export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName
           : ['yAxis', 'secondaryYAxis'][index]
       )
     : [valueAxisName];
-}
-
-export function getMaxLabelTextWidth(labels: string[] = []) {
-  const labelWidths = labels.map((label) => getTextWidth(label));
-
-  return Math.max(...labelWidths);
 }

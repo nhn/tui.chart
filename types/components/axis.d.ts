@@ -41,7 +41,7 @@ export type AxisModels = {
 
 export type RectLabelModel = {
   type: 'rectLabel';
-  rectBorderRadius?: number;
-  bgFill?: string;
+  borderRadius?: number;
+  backgroundColor?: string;
 } & Omit<PathRectModel, 'type'> &
   Omit<LabelModel, 'type'>;
