@@ -182,6 +182,7 @@ export default class BoxPlotSeries extends Component {
     return {
       ...hoveredModel,
       ...point,
+      color: getRGBA(hoveredModel.color, 1),
     };
   }
 
@@ -227,7 +228,11 @@ export default class BoxPlotSeries extends Component {
         models = responders;
       }
 
-      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
+      this.eventBus.emit('renderSelectedSeries', {
+        models,
+        name: this.name,
+        eventDetectType: this.eventDetectType,
+      });
       this.eventBus.emit('needDraw');
     }
   }

@@ -171,3 +171,19 @@ export function isClickSameGroupedRectResponder(
 
   return same;
 }
+
+export function isClickSameBoxPlotDataResponder(
+  responders: BoxPlotResponderModel[],
+  selectedSeries?: BoxPlotResponderModel[]
+) {
+  let same = false;
+  if (responders.length && selectedSeries?.length) {
+    const { type, data } = responders[0];
+    same =
+      type === selectedSeries[0].type &&
+      data?.label === selectedSeries[0].data?.label &&
+      data?.category === selectedSeries[0].data?.category;
+  }
+
+  return same;
+}
