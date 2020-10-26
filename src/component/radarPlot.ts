@@ -55,7 +55,7 @@ export default class RadarPlot extends Component {
       centerX,
       centerY,
       seriesRadius: axisSize,
-      radiusRange: getRadialRadiusValues(labels, axisSize),
+      radiusRange: getRadialRadiusValues(labels, axisSize).slice(1, labels.length),
     };
   }
 

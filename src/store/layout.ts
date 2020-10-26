@@ -12,7 +12,6 @@ import { LEGEND_ITEM_HEIGHT } from '@src/brushes/legend';
 import { isUndefined, pick, isNumber } from '@src/helpers/utils';
 import { isCenterYAxis } from './axes';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
-import { getTextWidth } from '@src/helpers/calculator';
 import { TICK_SIZE } from '@src/brushes/axis';
 import {
   SPECTRUM_LEGEND_LABEL_HEIGHT,
@@ -20,6 +19,7 @@ import {
   spectrumLegendTooltip,
 } from '@src/brushes/spectrumLegend';
 import { getYAxisOption } from '@src/helpers/axes';
+import { getMaxLengthLabelWidth } from '@src/helpers/calculator';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
@@ -384,9 +384,7 @@ export function isExportMenuVisible(options: Options) {
 }
 
 function getMaxLabelWidth(labels: string[] = []) {
-  const labelWidths = labels.map((label) => getTextWidth(label));
-
-  return labelWidths.length ? Math.max(...labelWidths) + padding.X : Y_AXIS_MIN_WIDTH;
+  return labels.length ? getMaxLengthLabelWidth(labels) + padding.X : Y_AXIS_MIN_WIDTH;
 }
 
 function pickOptionSize(option?: BaseSizeOptions): OptionalSize {

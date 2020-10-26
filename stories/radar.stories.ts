@@ -100,3 +100,21 @@ export const responsive = () => {
 
   return el;
 };
+
+export const labelInterval = () => {
+  const { el } = createChart(budgetData2, {
+    legend: {
+      visible: true,
+      align: 'bottom',
+    },
+    yAxis: {
+      scale: {
+        max: 10000,
+        stepSize: 1000,
+      },
+      label: { interval: 2 },
+    },
+  });
+
+  return el;
+};

@@ -15,13 +15,13 @@ export type RectStyleName = 'shadow';
 // @TODO: 테마로 옮길 것들 옮겨야함. 원형 시리즈 사용하는 것 확인 후 제거 필요
 const circleStyle = {
   default: {
-    strokeStyle: '#fff',
+    strokeStyle: '#ffffff',
     lineWidth: 2,
   },
   hover: {
     shadowColor: 'rgba(0, 0, 0, 0.3)',
-    shadowBlur: 4,
-    shadowOffsetY: 4,
+    shadowBlur: 2,
+    shadowOffsetY: 2,
     lineWidth: 2,
   },
   plot: {
@@ -87,6 +87,11 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
   ctx.fill();
+
+  if (ctx.shadowColor) {
+    ctx.shadowColor = 'transparent';
+  }
+
   ctx.stroke();
   ctx.closePath();
 }

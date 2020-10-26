@@ -1,7 +1,8 @@
-import { LabelModel } from '@t/components/axis';
+import { LabelModel, RectLabelModel } from '@t/components/axis';
 import { makeStyleObj } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
+import { pathRect } from './basic';
 
 export const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
 export const TITLE_TEXT = '100 18px Arial';
@@ -14,7 +15,8 @@ export type LabelStyleName =
   | 'stackTotal'
   | 'sector'
   | 'pieSeriesName'
-  | 'treemapSeriesName';
+  | 'treemapSeriesName'
+  | 'rectLabel';
 export type StrokeLabelStyleName = 'none' | 'stroke';
 
 export interface LabelStyle {
@@ -71,6 +73,12 @@ export const labelStyle = {
     textAlign: 'center',
     textBaseline: 'middle',
   },
+  rectLabel: {
+    font: DEFAULT_LABEL_TEXT,
+    fillStyle: 'rgba(0, 0, 0, 0.3)',
+    textAlign: 'center',
+    textBaseline: 'middle',
+  },
 };
 
 export const strokeLabelStyle = {
@@ -113,4 +121,27 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   }
 
   ctx.fillText(text, x, y);
+}
+
+export function rectLabel(ctx: CanvasRenderingContext2D, model: RectLabelModel) {
+  const { x, y, style, text, width, height, borderRadius = 0, backgroundColor } = model;
+
+  pathRect(ctx, {
+    type: 'pathRect',
+    x: x - width / 2,
+    y: y - height / 2,
+    width,
+    height,
+    radius: borderRadius,
+    fill: backgroundColor,
+    stroke: '',
+  });
+
+  label(ctx, {
+    type: 'label',
+    x,
+    y,
+    style,
+    text,
+  });
 }

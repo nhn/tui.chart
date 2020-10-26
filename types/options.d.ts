@@ -455,6 +455,7 @@ export type RadarPlotType = 'spiderweb' | 'circle';
 export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
   plot?: BaseSizeOptions & { type?: RadarPlotType };
+  yAxis?: BaseAxisOptions;
 }
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {

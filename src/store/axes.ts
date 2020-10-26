@@ -23,7 +23,11 @@ import {
   getYAxisOption,
 } from '@src/helpers/axes';
 import { extend } from '@src/store/store';
-import { makeLabelsFromLimit } from '@src/helpers/calculator';
+import {
+  makeLabelsFromLimit,
+  getTextHeight,
+  getMaxLengthLabelWidth,
+} from '@src/helpers/calculator';
 import {
   AxisTitle,
   BaseAxisOptions,
@@ -45,6 +49,7 @@ import {
 } from '@src/helpers/utils';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { isZooming } from '@src/helpers/range';
+import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 
 interface StateProp {
   scale: ScaleData;
@@ -192,18 +197,23 @@ export function makeTitleOption(title?: AxisTitle) {
     : deepMergedCopy(defaultOption, title);
 }
 
-function getRadialAxis(scale: ScaleData, plot: Rect): RadialAxisData {
+function getRadialAxis(
+  scale: ScaleData,
+  plot: Rect,
+  { labelInterval }: InitAxisData
+): RadialAxisData {
   const { limit, stepSize } = scale;
   const { width, height } = plot;
-  const valueLabels = makeLabelsFromLimit(limit, stepSize) as string[];
-
-  valueLabels.push(`${Number(valueLabels[valueLabels.length - 1]) + stepSize}`);
+  const valueLabels = makeLabelsFromLimit(limit, stepSize);
 
   return {
     labels: valueLabels,
     axisSize: Math.min(width, height) / 2 - 50,
     centerX: width / 2,
     centerY: height / 2,
+    maxLabelTextWidth: getMaxLengthLabelWidth(valueLabels),
+    labelTextHeight: getTextHeight(DEFAULT_LABEL_TEXT),
+    labelInterval,
   };
 }
 
@@ -362,7 +372,7 @@ const axes: StoreModule = {
       }
 
       if (state.axes.radialAxis) {
-        axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot);
+        axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot, initialAxisData.yAxis);
       }
 
       this.notify(state, 'layout');

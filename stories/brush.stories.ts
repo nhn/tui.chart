@@ -3,7 +3,7 @@ import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
 import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';
-import { label } from '@src/brushes/label';
+import { label, rectLabel } from '@src/brushes/label';
 import { resetButton, backButton } from '@src/brushes/resetButton';
 import { sector } from '@src/brushes/sector';
 import { spectrumLegend, spectrumTooltip } from '@src/brushes/spectrumLegend';
@@ -192,6 +192,24 @@ export const labelBrush = () => {
     style: ['default', { textAlign, textBaseline, font, fillStyle: '#ffffff' }],
     stroke: ['stroke', { lineWidth: 5, strokeStyle: '#9c27b0' }],
   } as LabelModel);
+
+  return el;
+};
+
+export const rectLabelBrush = () => {
+  const { ctx, el } = setup();
+
+  rectLabel(ctx, {
+    type: 'rectLabel',
+    text: 'Hello World',
+    style: ['rectLabel', { fillStyle: '#333333' }],
+    x: 200,
+    y: 100,
+    borderRadius: 5,
+    backgroundColor: 'rgba(0,0,0,.3)',
+    width: 100,
+    height: 20,
+  });
 
   return el;
 };
