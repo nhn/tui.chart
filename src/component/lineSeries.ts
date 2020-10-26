@@ -45,10 +45,6 @@ interface RenderOptions {
   labelDistance?: number;
 }
 
-export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
-export const DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS = DEFAULT_LINE_SERIES_DOT_RADIUS + 2;
-export const DEFAULT_LINE_SERIES_WIDTH = 2;
-
 type DatumType = CoordinateDataType | number;
 type ResponderTypes = CircleResponderModel[] | RectResponderModel[];
 
@@ -58,6 +54,8 @@ export default class LineSeries extends Component {
   drawModels!: LineSeriesModels;
 
   responders!: ResponderTypes;
+
+  theme!: Required<LineChartSeriesTheme>;
 
   activatedResponders: this['responders'] = [];
 
@@ -95,7 +93,7 @@ export default class LineSeries extends Component {
   render(
     chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>
   ) {
-    const { layout, series, scale, axes, legend, zoomRange } = chartState;
+    const { layout, series, scale, axes, legend, zoomRange, theme } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -119,6 +117,7 @@ export default class LineSeries extends Component {
       labelDistance,
     };
 
+    this.theme = theme.series.line as Required<LineChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = zoomRange ? zoomRange[0] : 0;
@@ -131,10 +130,12 @@ export default class LineSeries extends Component {
       renderLineOptions,
       categories
     );
-    const seriesCircleModel = this.renderCircleModel(lineSeriesModel);
+    const { dotSeriesModel, responderModel } = this.renderCircleModel(
+      lineSeriesModel,
+      renderLineOptions
+    );
     const tooltipDataArr = this.makeTooltipData(lineSeriesData, categories);
-    const dotSeriesModel = this.renderDotSeriesModel(seriesCircleModel, renderLineOptions);
-    this.tooltipCircleMap = makeTooltipCircleMap(seriesCircleModel, tooltipDataArr);
+    this.tooltipCircleMap = makeTooltipCircleMap(responderModel, tooltipDataArr);
 
     this.models = {
       rect: [this.renderClipRectAreaModel()],
@@ -153,7 +154,7 @@ export default class LineSeries extends Component {
       this.renderDataLabels(this.getDataLabels(lineSeriesModel));
     }
 
-    this.responders = this.getResponders(labelAxisData, seriesCircleModel, tooltipDataArr);
+    this.responders = this.getResponders(labelAxisData, responderModel, tooltipDataArr);
   }
 
   private getResponders(
@@ -197,19 +198,6 @@ export default class LineSeries extends Component {
     });
   }
 
-  renderDotSeriesModel(
-    seriesCircleModel: CircleModel[],
-    { options }: RenderOptions
-  ): CircleModel[] {
-    return options?.showDot
-      ? seriesCircleModel.map((m) => ({
-          ...m,
-          radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
-          style: [{ lineWidth: 0, strokeStyle: m.color }],
-        }))
-      : [];
-  }
-
   renderClipRectAreaModel(isDrawModel?: boolean): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
@@ -227,15 +215,15 @@ export default class LineSeries extends Component {
     categories: string[]
   ): LinePointsModel[] {
     const {
-      options: { spline, lineWidth },
+      options: { spline },
     } = renderOptions;
     const yAxisLimit = scale[this.yAxisName].limit;
     const xAxisLimit = scale?.xAxis?.limit;
+    const { lineWidth, dashSegments } = this.theme;
 
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
       const active = this.activeSeriesMap![name];
-      const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
       rawData.forEach((datum, idx) => {
         const value = getCoordinateYValue(datum);
@@ -257,32 +245,56 @@ export default class LineSeries extends Component {
 
       return {
         type: 'linePoints',
-        lineWidth: lineWidth ?? DEFAULT_LINE_SERIES_WIDTH,
-        color,
         points,
         seriesIndex,
         name,
+        color: getRGBA(seriesColor, active ? 1 : 0.3),
+        lineWidth,
+        dashSegments,
       };
     });
   }
 
-  renderCircleModel(lineSeriesModel: LinePointsModel[]): CircleModel[] {
-    return lineSeriesModel.flatMap(({ points, color, name }, seriesIndex) =>
-      points.map(({ x, y }, index) => ({
-        type: 'circle',
-        x,
-        y,
-        radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
-        color: getRGBA(color, 1),
-        style: ['default', 'hover'],
-        seriesIndex,
-        name,
-        index,
-      }))
-    );
+  renderCircleModel(
+    lineSeriesModel: LinePointsModel[],
+    { options }: RenderOptions
+  ): { dotSeriesModel: CircleModel[]; responderModel: CircleModel[] } {
+    const dotSeriesModel = [] as CircleModel[];
+    const responderModel = [] as CircleModel[];
+    const showDot = !!options.showDot;
+    const { hover, dot: dotTheme } = this.theme;
+    const hoverDotTheme = hover.dot!;
+
+    lineSeriesModel.forEach(({ color, name, points }, seriesIndex) => {
+      const active = this.activeSeriesMap![name!];
+      points.forEach(({ x, y }, index) => {
+        const model = { type: 'circle', x, y, seriesIndex, name, index } as CircleModel;
+        if (showDot) {
+          dotSeriesModel.push({
+            ...model,
+            radius: dotTheme.radius!,
+            color: getRGBA(color, active ? 1 : 0.3),
+            style: [
+              { lineWidth: dotTheme.borderWidth, strokeStyle: dotTheme.borderColor ?? color },
+            ],
+          });
+        }
+        responderModel.push({
+          ...model,
+          radius: hoverDotTheme.radius!,
+          color: hoverDotTheme.color ?? getRGBA(color, 1),
+          style: ['default', 'hover'],
+        });
+      });
+    });
+
+    return { dotSeriesModel, responderModel };
   }
 
-  getCircleModelsFromRectResponders(responders: RectResponderModel[], mousePositions?: Point) {
+  getCircleModelsFromRectResponders(
+    responders: RectResponderModel[],
+    mousePositions?: Point
+  ): CircleResponderModel[] {
     if (!responders.length) {
       return [];
     }
@@ -334,6 +346,17 @@ export default class LineSeries extends Component {
     );
   }
 
+  private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
+    const { radius, color, borderWidth, borderColor } = this.theme.select.dot as DotTheme;
+
+    return models.map((model) => ({
+      ...model,
+      radius,
+      color: color ?? model.color,
+      style: ['hover', { lineWidth: borderWidth, strokeStyle: borderColor }],
+    }));
+  }
+
   onClick({ responders, mousePosition }: MouseEventType) {
     if (this.selectable) {
       let models;
@@ -345,7 +368,10 @@ export default class LineSeries extends Component {
           mousePosition
         );
       }
-      this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
+      this.eventBus.emit('renderSelectedSeries', {
+        models: this.getSelectedSeriesWithTheme(models),
+        name: this.name,
+      });
       this.eventBus.emit('needDraw');
     }
   }

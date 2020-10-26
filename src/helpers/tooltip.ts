@@ -20,17 +20,3 @@ export function getValueString(value: TooltipDataValue) {
 
   return result;
 }
-
-export function getSeriesNameTpl(label: string, color: string) {
-  return `<span class="series-name">
-    <i class="icon" style="background: ${color}"></i>
-    <span class="name">${label}</span>
-  </span>`;
-}
-
-export function getTitleValueTpl(title: string, value: string) {
-  return `<div class="tooltip-series">
-    <span class="series-name">${title}</span>
-    <span class="series-value">${value}</span>
-  </div>`;
-}

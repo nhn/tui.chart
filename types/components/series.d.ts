@@ -64,6 +64,7 @@ export type LinePointsModel = {
   points: BezierPoint[];
   name?: string;
   seriesIndex?: number;
+  dashSegments?: number[];
 };
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
@@ -182,6 +183,7 @@ export type SectorModel = {
   drawingStartAngle: number;
   totalAngle: number;
   alias?: string;
+  percentValue?: number;
 } & Point;
 
 export type SectorResponderModel = {

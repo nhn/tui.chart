@@ -65,6 +65,7 @@ export default class HeatmapSeries extends Component {
         ...model,
         label: model.name,
         value: model.colorValue,
+        templateType: 'heatmap',
       },
       thickness: BOX_HOVER_THICKNESS,
       style: ['shadow'],

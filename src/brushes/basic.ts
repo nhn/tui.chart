@@ -12,6 +12,7 @@ import { LineModel } from '@t/components/axis';
 export type CircleStyleName = 'default' | 'hover' | 'plot';
 export type RectStyleName = 'shadow';
 
+// @TODO: 테마로 옮길 것들 옮겨야함. 원형 시리즈 사용하는 것 확인 후 제거 필요
 const circleStyle = {
   default: {
     strokeStyle: '#ffffff',

@@ -6,11 +6,11 @@ import {
   TooltipTitleValues,
   TooltipDataValue,
   TooltipModelName,
-  TooltipData,
 } from '@t/components/tooltip';
-import { getValueString, getSeriesNameTpl, getTitleValueTpl } from '@src/helpers/tooltip';
+import { getValueString } from '@src/helpers/tooltip';
+import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
 import { isNumber } from '@src/helpers/utils';
-import { DefaultTooltipTemplate, Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
+import { Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
 
 import '../css/tooltip.css';
 
@@ -135,46 +135,10 @@ export default class Tooltip extends Component {
     );
 
     this.tooltipContainerEl.innerHTML = this.templateFunc(model, {
-      header: this.getHeaderTemplate(model),
-      body: this.getBodyTemplate(model),
+      header: tooltipTemplates.defaultHeader(model),
+      body: getBodyTemplate(model.templateType)(model),
     });
     this.setTooltipPosition(model);
-  }
-
-  getDefaultTemplate(model: TooltipModel, { header, body }: DefaultTooltipTemplate) {
-    return `<div class="tooltip">${header}${body}</div>`;
-  }
-
-  getHeaderTemplate({ category }: TooltipModel) {
-    return category ? `<div class="tooltip-category">${category}</div>` : '';
-  }
-
-  getBodyTemplate(model: TooltipModel) {
-    let tpl;
-
-    if (model.templateType === 'boxPlot') {
-      tpl = this.getBoxPlotTemplate(model);
-    } else if (model.templateType === 'bullet') {
-      tpl = this.getBulletTemplate(model);
-    } else {
-      tpl = this.getDefaultBodyTemplate(model);
-    }
-
-    return tpl;
-  }
-
-  getDefaultBodyTemplate({ data }: TooltipModel) {
-    return `<div class="tooltip-series-wrapper">
-        ${data
-          .map(
-            ({ label, color, formattedValue }) =>
-              `<div class="tooltip-series">
-                  ${getSeriesNameTpl(label, color)}
-                  <span class="series-value">${formattedValue}</span>
-                </div>`
-          )
-          .join('')}
-      </div>`;
   }
 
   initialize({ chartEl }) {
@@ -196,7 +160,7 @@ export default class Tooltip extends Component {
 
   render({ layout, options }: ChartState<Options>) {
     this.rect = layout.plot;
-    this.templateFunc = options?.tooltip?.template ?? this.getDefaultTemplate;
+    this.templateFunc = options?.tooltip?.template ?? tooltipTemplates['default'];
     this.offsetX = options?.tooltip?.offsetX ?? 10;
     this.offsetY = options?.tooltip?.offsetY ?? 0;
     this.formatter = options?.tooltip?.formatter;
@@ -204,53 +168,5 @@ export default class Tooltip extends Component {
 
   getFormattedValue(value: TooltipDataValue) {
     return this.formatter ? this.formatter(value as SeriesDataType) : getValueString(value);
-  }
-
-  getBoxPlotTemplate({ data }: TooltipModel) {
-    const groupedData = data.reduce<TooltipData>((acc, item, index) => {
-      if (!index) {
-        acc = item;
-
-        return acc;
-      }
-
-      if (acc.category === item.category && acc.label === item.label) {
-        acc.value = [...acc.value, ...item.value] as TooltipTitleValues;
-      }
-
-      return acc;
-    }, {} as TooltipData);
-
-    return `<div class="tooltip-series-wrapper">
-    ${[groupedData]
-      .map(
-        ({ label, color, value: values }) =>
-          `<div class="tooltip-series">
-            ${getSeriesNameTpl(label, color)}
-          </div>
-          <div>
-        ${(values as TooltipTitleValues)
-          .map(({ title, formattedValue }) => getTitleValueTpl(title, formattedValue!))
-          .join('')}
-          </div>`
-      )
-      .join('')}
-  </div>`;
-  }
-
-  getBulletTemplate({ data }: TooltipModel) {
-    return `<div class="tooltip-series-wrapper">
-    ${data
-      .map(
-        ({ label, color, value: values }) =>
-          `<div class="tooltip-series">
-            ${getSeriesNameTpl(label, color)}
-          </div>
-          ${(values as TooltipTitleValues)
-            .map(({ title, formattedValue }) => getTitleValueTpl(title, formattedValue!))
-            .join('')}`
-      )
-      .join('')}
-  </div>`;
   }
 }

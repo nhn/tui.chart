@@ -22,7 +22,30 @@ describe('theme store', () => {
               fontWeight: '500',
             },
           },
-          series: { line: { colors: ['#00a9ff', '#ffb840'] } },
+          series: {
+            line: {
+              colors: ['#00a9ff', '#ffb840'],
+              dashSegments: [],
+              dot: {
+                radius: 3,
+              },
+              hover: {
+                dot: {
+                  borderColor: '#fff',
+                  borderWidth: 2,
+                  radius: 5,
+                },
+              },
+              lineWidth: 2,
+              select: {
+                dot: {
+                  borderColor: '#fff',
+                  borderWidth: 2,
+                  radius: 5,
+                },
+              },
+            },
+          },
         });
       });
 
@@ -32,6 +55,25 @@ describe('theme store', () => {
             theme: {
               series: {
                 colors: ['#aaaaaa', '#bbbbbb'],
+                dashSegments: [5, 10],
+                dot: {
+                  radius: 10,
+                },
+                hover: {
+                  dot: {
+                    borderColor: '#ffffff',
+                    borderWidth: 5,
+                    radius: 10,
+                  },
+                },
+                lineWidth: 10,
+                select: {
+                  dot: {
+                    borderColor: '#ddddd',
+                    borderWidth: 2,
+                    radius: 3,
+                  },
+                },
               },
             },
           },
@@ -47,7 +89,28 @@ describe('theme store', () => {
             },
           },
           series: {
-            line: { colors: ['#aaaaaa', '#bbbbbb'] },
+            line: {
+              colors: ['#aaaaaa', '#bbbbbb'],
+              dashSegments: [5, 10],
+              dot: {
+                radius: 10,
+              },
+              hover: {
+                dot: {
+                  borderColor: '#ffffff',
+                  borderWidth: 5,
+                  radius: 10,
+                },
+              },
+              lineWidth: 10,
+              select: {
+                dot: {
+                  borderColor: '#ddddd',
+                  borderWidth: 2,
+                  radius: 3,
+                },
+              },
+            },
           },
         });
       });
@@ -77,8 +140,55 @@ describe('theme store', () => {
             },
           },
           series: {
-            line: { colors: ['#00a9ff', '#ffb840'] },
-            area: { colors: ['#ff5a46', '#00bd9f'] },
+            line: {
+              colors: ['#00a9ff', '#ffb840'],
+              dashSegments: [],
+              dot: {
+                radius: 3,
+              },
+              hover: {
+                dot: {
+                  borderColor: '#fff',
+                  borderWidth: 2,
+                  radius: 5,
+                },
+              },
+              lineWidth: 2,
+              select: {
+                dot: {
+                  borderColor: '#fff',
+                  borderWidth: 2,
+                  radius: 5,
+                },
+              },
+            },
+            area: {
+              colors: ['#ff5a46', '#00bd9f'],
+              areaOpacity: 0.3,
+              dashSegments: [],
+              dot: {
+                radius: 3,
+              },
+              hover: {
+                dot: {
+                  borderColor: '#fff',
+                  borderWidth: 2,
+                  radius: 5,
+                },
+              },
+              lineWidth: 2,
+              select: {
+                areaOpacity: 0.3,
+                dot: {
+                  borderColor: '#fff',
+                  borderWidth: 2,
+                  radius: 5,
+                },
+                restSeries: {
+                  areaOpacity: 0.06,
+                },
+              },
+            },
           },
         });
       });
@@ -95,8 +205,55 @@ describe('theme store', () => {
           series,
         });
         expect(state.theme?.series).toEqual({
-          area: { colors: ['#cccccc', '#dddddd'] },
-          line: { colors: ['#aaaaaa', '#bbbbbb'] },
+          area: {
+            colors: ['#cccccc', '#dddddd'],
+            areaOpacity: 0.3,
+            dashSegments: [],
+            dot: {
+              radius: 3,
+            },
+            hover: {
+              dot: {
+                borderColor: '#fff',
+                borderWidth: 2,
+                radius: 5,
+              },
+            },
+            lineWidth: 2,
+            select: {
+              areaOpacity: 0.3,
+              dot: {
+                borderColor: '#fff',
+                borderWidth: 2,
+                radius: 5,
+              },
+              restSeries: {
+                areaOpacity: 0.06,
+              },
+            },
+          },
+          line: {
+            colors: ['#aaaaaa', '#bbbbbb'],
+            dashSegments: [],
+            dot: {
+              radius: 3,
+            },
+            hover: {
+              dot: {
+                borderColor: '#fff',
+                borderWidth: 2,
+                radius: 5,
+              },
+            },
+            lineWidth: 2,
+            select: {
+              dot: {
+                borderColor: '#fff',
+                borderWidth: 2,
+                radius: 5,
+              },
+            },
+          },
         });
       });
 
@@ -107,6 +264,16 @@ describe('theme store', () => {
               series: {
                 area: {
                   colors: ['#aaaaaa', '#bbbbbb'],
+                  areaOpacity: 0.8,
+                  dot: {
+                    radius: 10,
+                  },
+                  select: {
+                    areaOpacity: 0.1,
+                    restSeries: {
+                      areaOpacity: 0.2,
+                    },
+                  },
                 },
                 line: {
                   colors: ['#cccccc', '#dddddd'],
@@ -117,8 +284,55 @@ describe('theme store', () => {
           series,
         });
         expect(state.theme?.series).toEqual({
-          area: { colors: ['#aaaaaa', '#bbbbbb'] },
-          line: { colors: ['#cccccc', '#dddddd'] },
+          area: {
+            colors: ['#aaaaaa', '#bbbbbb'],
+            areaOpacity: 0.8,
+            dashSegments: [],
+            dot: {
+              radius: 10,
+            },
+            hover: {
+              dot: {
+                borderColor: '#fff',
+                borderWidth: 2,
+                radius: 5,
+              },
+            },
+            lineWidth: 2,
+            select: {
+              areaOpacity: 0.1,
+              dot: {
+                borderColor: '#fff',
+                borderWidth: 2,
+                radius: 5,
+              },
+              restSeries: {
+                areaOpacity: 0.2,
+              },
+            },
+          },
+          line: {
+            colors: ['#cccccc', '#dddddd'],
+            dashSegments: [],
+            dot: {
+              radius: 3,
+            },
+            hover: {
+              dot: {
+                borderColor: '#fff',
+                borderWidth: 2,
+                radius: 5,
+              },
+            },
+            lineWidth: 2,
+            select: {
+              dot: {
+                borderColor: '#fff',
+                borderWidth: 2,
+                radius: 5,
+              },
+            },
+          },
         });
       });
     });
