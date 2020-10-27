@@ -294,8 +294,8 @@ $ npm run test
 See the older versions of API page on the [releases page](https://github.com/nhn/tui.chart/releases).
 
 ## 💬 Contributing
-* [Code of Conduct](CODE_OF_CONDUCT.md)
-* [Contributing guideline](CONTRIBUTING.md)
+* [Code of Conduct](https://github.com/nhn/tui.chart/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/tui.chart/blob/master/CONTRIBUTING.md)
 * [Issue guideline](https://github.com/nhn/tui.chart/blob/master/docs/ISSUE_TEMPLATE.md)
 * [Commit convention](https://github.com/nhn/tui.chart/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
