@@ -49,11 +49,26 @@ interface TreemapChartSeriesTheme {
   colors?: string[];
   startColor?: string;
   endColor?: string;
+  border?: BorderTheme;
+  select?: {
+    border?: BorderTheme;
+    color?: string;
+  };
+  hover?: {
+    border?: BorderTheme;
+    color?: string;
+  };
+}
+
+interface BorderTheme {
+  color?: string;
+  width?: number;
 }
 
 interface HeatmapChartSeriesTheme {
   startColor: string;
   endColor: string;
+  border?: BorderTheme;
 }
 
 interface DotTheme {
@@ -138,4 +153,12 @@ interface PieChartThemeOptions extends BaseThemeOptions {
 
 interface NestedPieChartThemeOptions extends BaseThemeOptions {
   series?: NestedPieChartSeriesTheme;
+}
+
+interface HeatmapChartThemeOptions extends BaseThemeOptions {
+  series?: HeatmapChartSeriesTheme;
+}
+
+interface TreemapChartThemeOptions extends BaseThemeOptions {
+  series?: TreemapChartSeriesTheme;
 }

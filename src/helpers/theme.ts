@@ -40,6 +40,10 @@ export const defaultSeriesTheme = {
   endColor: '#d74177',
   lineWidth: DEFAULT_LINE_SERIES_WIDTH,
   dashSegments: [],
+  border: {
+    width: 0,
+    color: '#ffffff',
+  },
   select: {
     dot: {
       radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,

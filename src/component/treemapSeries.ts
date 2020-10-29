@@ -21,6 +21,8 @@ export default class TreemapSeries extends Component {
 
   responders!: TreemapRectResponderModel[];
 
+  theme!: Required<TreemapChartSeriesTheme>;
+
   activatedResponders: this['responders'] = [];
 
   zoomable!: boolean;
@@ -56,15 +58,10 @@ export default class TreemapSeries extends Component {
     const currentTreemapZoomId = treemapZoomId.cur;
     const series = this.getAllChildSeries(treemapSeries, currentTreemapZoomId);
 
+    this.theme = theme.series.treemap as Required<TreemapChartSeriesTheme>;
     this.rect = layout.plot;
     this.selectable = this.getSelectableOption(options);
-    this.models = this.renderTreemapSeries(
-      series,
-      options,
-      theme,
-      colorValueScale,
-      currentTreemapZoomId
-    );
+    this.models = this.renderTreemapSeries(series, options, colorValueScale, currentTreemapZoomId);
     this.zoomable = options.series?.zoomable ?? false;
 
     if (getDataLabelsOptions(options, this.name).visible) {
@@ -149,7 +146,6 @@ export default class TreemapSeries extends Component {
   renderTreemapSeries(
     seriesData: TreemapSeriesData[],
     options: TreemapChartOptions,
-    theme: Theme,
     colorValueScale: ScaleData,
     treemapCurrentDepthParentId: string
   ) {
@@ -160,7 +156,7 @@ export default class TreemapSeries extends Component {
       y: 0,
     });
 
-    const { colors, startColor, endColor } = theme.series.treemap!;
+    const { colors, startColor, endColor, border } = this.theme;
     let startRGB, distances;
     const useColorValue = options.series?.useColorValue ?? false;
     if (useColorValue && startColor && endColor) {
@@ -184,6 +180,8 @@ export default class TreemapSeries extends Component {
           ? getSpectrumColor(colorRatio, distances, startRGB)
           : this.getColor(treemapSeries, colors!),
         opacity: useColorValue ? 0 : this.getOpacity(treemapSeries),
+        thickness: border?.width,
+        borderColor: border?.color,
       };
     });
 
@@ -192,6 +190,17 @@ export default class TreemapSeries extends Component {
     }
 
     return { series, layer };
+  }
+
+  getRespondersWithTheme(responders: TreemapRectResponderModel[], type: 'select' | 'hover') {
+    const { color, border } = this.theme[type];
+
+    return responders.map((responder) => ({
+      ...responder,
+      color: color ?? responder.color,
+      borderColor: border?.color,
+      thickness: border?.width,
+    }));
   }
 
   onClick({ responders }) {
@@ -204,12 +213,18 @@ export default class TreemapSeries extends Component {
           this.store.dispatch('setTreemapZoomId', id);
           this.eventBus.emit('resetSelectedSeries');
         } else if (this.selectable) {
-          this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
+          this.eventBus.emit('renderSelectedSeries', {
+            models: this.getRespondersWithTheme(responders, 'select'),
+            name: this.name,
+          });
         }
       } else if (this.selectable) {
         const deepestNode = getDeepestNode(responders);
 
-        this.eventBus.emit('renderSelectedSeries', { models: deepestNode, name: this.name });
+        this.eventBus.emit('renderSelectedSeries', {
+          models: this.getRespondersWithTheme(deepestNode, 'select'),
+          name: this.name,
+        });
       }
     }
   }
@@ -226,7 +241,7 @@ export default class TreemapSeries extends Component {
 
   emitMouseEvent(responders: TreemapRectResponderModel[]) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: responders,
+      models: this.getRespondersWithTheme(responders, 'hover'),
       name: this.name,
     });
     this.eventBus.emit('seriesPointHovered', {
