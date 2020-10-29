@@ -69,6 +69,14 @@ interface HeatmapChartSeriesTheme {
   startColor: string;
   endColor: string;
   border?: BorderTheme;
+  select?: {
+    border?: BorderTheme;
+    color?: string;
+  };
+  hover?: {
+    border?: BorderTheme;
+    color?: string;
+  };
 }
 
 interface DotTheme {

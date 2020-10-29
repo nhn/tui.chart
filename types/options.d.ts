@@ -283,6 +283,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 
 export interface HeatmapChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions & { date: DateOption };
+  theme?: HeatmapChartThemeOptions;
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {
@@ -367,6 +368,7 @@ export interface TreemapChartSeriesOptions extends BaseSeriesOptions {
 
 export interface TreemapChartOptions extends BaseOptions {
   series?: TreemapChartSeriesOptions;
+  theme?: TreemapChartThemeOptions;
 }
 
 type ConnectorLineType = 'dashed' | 'solid';

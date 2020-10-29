@@ -24,7 +24,6 @@ import * as spectrumLegendBrush from '@src/brushes/spectrumLegend';
 import * as axisBrush from '@src/brushes/axis';
 
 import {
-  BaseOptions,
   HeatmapCategoriesType,
   HeatmapChartOptions,
   HeatmapSeriesData,
@@ -33,7 +32,7 @@ import {
 
 interface HeatmapChartProps {
   el: Element;
-  options: BaseOptions;
+  options: HeatmapChartOptions;
   data: HeatmapSeriesData;
 }
 
