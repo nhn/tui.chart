@@ -16,6 +16,10 @@ function getChartState(seriesData, options?: any) {
             colors: ['#00a9ff', '#ffb840'],
             startColor: '#00a9ff',
             endColor: '#ffb840',
+            border: {
+              width: 0,
+              color: '#fff',
+            },
           },
         },
       },
@@ -117,7 +121,9 @@ describe('basic', () => {
         color: '#3facd0',
         colorRatio: 0.25,
         colorValue: 1,
+        borderColor: '#fff',
         data: {
+          borderColor: '#fff',
           color: '#3facd0',
           colorRatio: 0.25,
           colorValue: 1,
@@ -145,7 +151,9 @@ describe('basic', () => {
         color: '#7fb0a0',
         colorRatio: 0.5,
         colorValue: 2,
+        borderColor: '#fff',
         data: {
+          borderColor: '#fff',
           color: '#7fb0a0',
           colorRatio: 0.5,
           colorValue: 2,
@@ -173,7 +181,9 @@ describe('basic', () => {
         color: '#bfb470',
         colorRatio: 0.75,
         colorValue: 3,
+        borderColor: '#fff',
         data: {
+          borderColor: '#fff',
           color: '#bfb470',
           colorRatio: 0.75,
           colorValue: 3,
@@ -201,7 +211,9 @@ describe('basic', () => {
         color: '#ffb840',
         colorRatio: 1,
         colorValue: 4,
+        borderColor: '#fff',
         data: {
+          borderColor: '#fff',
           color: '#ffb840',
           colorRatio: 1,
           colorValue: 4,
@@ -229,6 +241,7 @@ describe('basic', () => {
     models: {
       series: [
         {
+          borderColor: '#fff',
           color: '#3facd0',
           colorRatio: 0.25,
           colorValue: 1,
@@ -241,6 +254,7 @@ describe('basic', () => {
           y: 0,
         },
         {
+          borderColor: '#fff',
           color: '#7fb0a0',
           colorRatio: 0.5,
           colorValue: 2,
@@ -253,6 +267,7 @@ describe('basic', () => {
           y: 0,
         },
         {
+          borderColor: '#fff',
           color: '#bfb470',
           colorRatio: 0.75,
           colorValue: 3,
@@ -265,6 +280,7 @@ describe('basic', () => {
           y: 40,
         },
         {
+          borderColor: '#fff',
           color: '#ffb840',
           colorRatio: 1,
           colorValue: 4,
