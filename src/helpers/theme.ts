@@ -105,6 +105,7 @@ function getSeriesTheme(seriesName: string) {
       return {
         startColor: defaultSeriesTheme.startColor,
         endColor: defaultSeriesTheme.endColor,
+        border: defaultSeriesTheme.border,
       };
     default:
       return {};
