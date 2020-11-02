@@ -44,13 +44,16 @@ export default class ScatterSeries extends CircleSeries {
     if (!this.drawModels) {
       this.drawModels = deepCopy(this.models);
     }
+
+    const transparentColor = 'rgba(255, 255, 255, 0)';
+
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',
       detectionSize: 0,
       radius: 6,
-      color: 'rgba(0,0,0,0)',
-      style: [{ strokeStyle: 'rgba(0,0,0,0)' }],
+      color: transparentColor,
+      style: [{ strokeStyle: transparentColor }],
       data: tooltipModel[index],
     }));
   }
@@ -63,7 +66,7 @@ export default class ScatterSeries extends CircleSeries {
     return seriesRawData.flatMap(({ data, name, color: seriesColor, iconType }, seriesIndex) => {
       const models: ScatterSeriesModel[] = [];
       const active = this.activeSeriesMap![name];
-      const color = getRGBA(seriesColor, active ? 0.9 : 0.3);
+      const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
       data.forEach((datum, index) => {
         const rawXValue = getCoordinateXValue(datum);
