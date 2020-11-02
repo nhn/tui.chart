@@ -1,5 +1,6 @@
 import { Categories, RawSeries, Options } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
+import { ScatterSeriesIconType } from '@t/components/series';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
@@ -85,6 +86,7 @@ export interface ScatterSeriesType {
   name: string;
   data: CoordinateDataType[];
   color: string;
+  iconType: ScatterSeriesIconType;
 }
 
 export interface LineScatterData {

@@ -48,7 +48,16 @@ export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: C
 }
 
 export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectModel) {
-  const { x, y, width, height, radius = 0, stroke = 'black', fill = '' } = pathRectModel;
+  const {
+    x,
+    y,
+    width,
+    height,
+    radius = 0,
+    stroke = 'black',
+    fill = '',
+    lineWidth = 1,
+  } = pathRectModel;
 
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -66,6 +75,7 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
     ctx.fill();
   }
   if (stroke) {
+    ctx.lineWidth = lineWidth;
     ctx.strokeStyle = stroke;
     ctx.stroke();
   }

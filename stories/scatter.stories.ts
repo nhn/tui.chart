@@ -68,3 +68,19 @@ export const responsive = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const { el } = createChart(currentUserCoordinateDatetimeData, {
+    xAxis: { date: { format: 'HH:mm:ss' } },
+    series: {
+      selectable: true,
+    },
+    theme: {
+      series: {
+        iconTypes: ['rect', 'triangle', 'pentagon', 'star', 'diamond', 'cross', 'hexagon'],
+      },
+    },
+  });
+
+  return el;
+};

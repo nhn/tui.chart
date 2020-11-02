@@ -1,4 +1,3 @@
-import { CircleModel } from '@t/components/series';
 import { ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ChartState, ValueEdge } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
@@ -9,21 +8,27 @@ import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
 import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
+import { CircleResponderModel, ScatterSeriesModel } from '@t/components/series';
+import { ScatterChartSeriesTheme } from '@t/theme';
+import { getNearestResponder } from '@src/helpers/responders';
 
 export default class ScatterSeries extends CircleSeries {
+  theme!: Required<ScatterChartSeriesTheme>;
+
   initialize() {
     this.type = 'series';
     this.name = 'scatter';
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
-    const { layout, series, scale, legend, options } = chartState;
+    const { layout, series, scale, legend, options, theme } = chartState;
     if (!series.scatter) {
       throw new Error("There's no scatter data!");
     }
 
     const scatterData = series.scatter.data;
 
+    this.theme = theme.series.scatter as Required<ScatterChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -43,11 +48,10 @@ export default class ScatterSeries extends CircleSeries {
       ...m,
       type: 'circle',
       detectionSize: 0,
-      radius: 7,
-      color: getRGBA(m.color, 1),
-      style: ['default', 'hover'],
+      radius: 6,
+      color: 'rgba(0,0,0,0)',
+      style: [{ strokeStyle: 'rgba(0,0,0,0)' }],
       data: tooltipModel[index],
-      index,
     }));
   }
 
@@ -55,13 +59,13 @@ export default class ScatterSeries extends CircleSeries {
     seriesRawData: ScatterSeriesType[],
     xAxisLimit: ValueEdge,
     yAxisLimit: ValueEdge
-  ): CircleModel[] {
-    return seriesRawData.flatMap(({ data, name, color: seriesColor }, seriesIndex) => {
-      const circleModels: CircleModel[] = [];
+  ): ScatterSeriesModel[] {
+    return seriesRawData.flatMap(({ data, name, color: seriesColor, iconType }, seriesIndex) => {
+      const models: ScatterSeriesModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 0.9 : 0.3);
 
-      data.forEach((datum) => {
+      data.forEach((datum, index) => {
         const rawXValue = getCoordinateXValue(datum);
         const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
         const yValue = getCoordinateYValue(datum);
@@ -72,19 +76,20 @@ export default class ScatterSeries extends CircleSeries {
         const x = xValueRatio * this.rect.width;
         const y = (1 - yValueRatio) * this.rect.height;
 
-        circleModels.push({
+        models.push({
           x,
           y,
-          type: 'circle',
-          radius: 7,
-          style: ['default'],
-          color,
+          type: 'scatterSeries',
+          iconType,
+          radius: 6,
           seriesIndex,
           name,
+          borderColor: color,
+          index,
         });
       });
 
-      return circleModels;
+      return models;
     });
   }
 
@@ -103,5 +108,35 @@ export default class ScatterSeries extends CircleSeries {
 
       return tooltipData;
     });
+  }
+
+  private getClosestModel(closestResponder: CircleResponderModel[]) {
+    if (!closestResponder.length) {
+      return [];
+    }
+
+    const closestModel = (this.models.series as ScatterSeriesModel[]).find(
+      ({ index, seriesIndex }) =>
+        index === closestResponder[0].index && seriesIndex === closestResponder[0].seriesIndex
+    );
+
+    if (closestModel) {
+      // @TODO: 색칠
+      closestModel.fillColor = 'rgb(255,255,255)';
+      closestModel.borderWidth = 2;
+    }
+
+    return closestModel ? [closestModel] : [];
+  }
+
+  onMousemove({ responders, mousePosition }) {
+    const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
+    const closestModel = this.getClosestModel(closestResponder);
+
+    this.eventBus.emit('renderHoveredSeries', { models: closestModel, name: this.name });
+    this.activatedResponders = closestResponder;
+
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
+    this.eventBus.emit('needDraw');
   }
 }

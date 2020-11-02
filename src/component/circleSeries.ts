@@ -20,16 +20,6 @@ export default abstract class CircleSeries extends Component {
     });
   }
 
-  onMousemove({ responders, mousePosition }) {
-    const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
-
-    this.eventBus.emit('renderHoveredSeries', { models: closestResponder, name: this.name });
-    this.activatedResponders = closestResponder;
-
-    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
-    this.eventBus.emit('needDraw');
-  }
-
   onClick({ responders, mousePosition }) {
     if (this.selectable) {
       this.eventBus.emit('renderSelectedSeries', {

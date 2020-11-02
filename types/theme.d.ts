@@ -1,7 +1,9 @@
+import { ScatterSeriesIconType } from '@t/components/series';
+
 type SeriesThemeMap = {
   line?: LineChartSeriesTheme;
   area?: AreaChartSeriesTheme;
-  scatter?: CommonSeriesTheme;
+  scatter?: ScatterChartSeriesTheme;
   heatmap?: HeatmapChartSeriesTheme;
   treemap?: TreemapChartSeriesTheme;
   bar?: CommonSeriesTheme;
@@ -93,6 +95,10 @@ interface LineTypeSeriesTheme {
   dashSegments?: number[];
 }
 
+interface ScatterChartSeriesTheme extends CommonSeriesTheme {
+  iconTypes: ScatterSeriesIconType[];
+}
+
 interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
   colors?: string[];
   dot?: Omit<DotTheme, 'color'>;
@@ -121,7 +127,7 @@ interface AreaChartSeriesTheme extends LineChartSeriesTheme {
 
 interface LineScatterChartSeriesTheme {
   line?: LineChartSeriesTheme;
-  scatter?: CommonSeriesTheme;
+  scatter?: ScatterChartSeriesTheme;
   colors?: string[];
 }
 

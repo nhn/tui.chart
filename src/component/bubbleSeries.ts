@@ -8,6 +8,7 @@ import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
 import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import { getNearestResponder } from '@src/helpers/responders';
 
 const MINIMUM_RADIUS = 0.5;
 const MINIMUM_DETECTING_AREA_RADIUS = 1;
@@ -128,5 +129,15 @@ export default class BubbleSeries extends CircleSeries {
 
       return tooltipData;
     });
+  }
+
+  onMousemove({ responders, mousePosition }) {
+    const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
+
+    this.eventBus.emit('renderHoveredSeries', { models: closestResponder, name: this.name });
+    this.activatedResponders = closestResponder;
+
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
+    this.eventBus.emit('needDraw');
   }
 }
