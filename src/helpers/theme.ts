@@ -1,5 +1,6 @@
 import { RawSeries } from '@t/store/store';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { Theme } from '@t/theme';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;

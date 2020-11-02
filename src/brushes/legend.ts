@@ -2,8 +2,10 @@ import { line, circle, rect } from '@src/brushes/basic';
 import { label } from '@src/brushes/label';
 import { LegendModel } from '@t/components/legend';
 import { getRGBA } from '@src/helpers/color';
-import { LegendIconType } from '@t/store/store';
 import { Align } from '@t/options';
+import { scatterSeries } from '@src/brushes/scatterSeries';
+import { ScatterSeriesIconType } from '@t/components/series';
+import { LegendIconType } from '@t/store/store';
 
 interface RenderOptions {
   iconType: LegendIconType;
@@ -127,6 +129,26 @@ function drawIcon(
   }
 }
 
+function drawScatterIcon(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  renderOptions: RenderOptions
+) {
+  const { iconType, active, color, showCheckbox } = renderOptions;
+  const iconX = x + (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0);
+  const iconColor = active ? color : getRGBA(color, 0.3);
+
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: iconType as ScatterSeriesIconType,
+    x: iconX + CIRCLE_ICON_RADIUS,
+    y: y + CIRCLE_ICON_RADIUS,
+    borderColor: iconColor,
+    radius: CIRCLE_ICON_RADIUS,
+  });
+}
+
 function drawLabel(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -155,7 +177,7 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
   const { data, showCheckbox, align } = model;
 
   data.forEach((datum) => {
-    const { x, y, checked, active, color, iconType } = datum;
+    const { x, y, checked, active, color, iconType, useScatterChartIcon } = datum;
     const renderOptions: RenderOptions = {
       iconType,
       checked,
@@ -168,7 +190,12 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
     if (showCheckbox) {
       drawCheckbox(ctx, x, y, renderOptions);
     }
-    drawIcon(ctx, x, y, renderOptions);
+    if (useScatterChartIcon && iconType !== 'line') {
+      drawScatterIcon(ctx, x, y, renderOptions);
+    } else {
+      drawIcon(ctx, x, y, renderOptions);
+    }
+
     drawLabel(ctx, x, y, datum.label, renderOptions);
   });
 }

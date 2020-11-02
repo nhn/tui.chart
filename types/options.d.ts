@@ -1,6 +1,16 @@
 import { Categories, RawSeries, Options } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
 import { ScatterSeriesIconType } from '@t/components/series';
+import {
+  AreaChartThemeOptions,
+  BaseThemeOptions,
+  LineAreaChartThemeOptions,
+  LineChartThemeOptions,
+  LineScatterChartThemeOptions,
+  NestedPieChartThemeOptions,
+  PieChartThemeOptions,
+  ScatterChartThemeOptions,
+} from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
@@ -329,6 +339,7 @@ export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
   yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
+  theme?: LineScatterChartThemeOptions;
 }
 
 export interface LineAreaChartOptions extends BaseOptions {
@@ -352,6 +363,7 @@ export interface ScatterChartOptions extends BaseOptions {
   xAxis?: BaseXAxisOptions;
   yAxis?: BaseAxisOptions;
   plot?: PlotOptions;
+  theme?: ScatterChartThemeOptions;
 }
 
 export interface BubbleChartOptions extends BaseOptions {

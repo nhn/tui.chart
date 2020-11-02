@@ -162,6 +162,10 @@ interface LineAreaChartThemeOptions extends BaseThemeOptions {
   series?: LineAreaChartSeriesTheme;
 }
 
+interface LineScatterChartThemeOptions extends BaseThemeOptions {
+  series?: LineScatterChartSeriesTheme;
+}
+
 interface PieChartThemeOptions extends BaseThemeOptions {
   series?: PieChartSeriesTheme;
 }
@@ -176,4 +180,8 @@ interface HeatmapChartThemeOptions extends BaseThemeOptions {
 
 interface TreemapChartThemeOptions extends BaseThemeOptions {
   series?: TreemapChartSeriesTheme;
+}
+
+interface ScatterChartThemeOptions extends BaseThemeOptions {
+  series?: ScatterChartSeriesTheme;
 }

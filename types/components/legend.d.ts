@@ -7,6 +7,7 @@ type LegendData = {
   checked: boolean;
   active: boolean;
   iconType: LegendIconType;
+  useScatterChartIcon?: boolean;
 } & Point;
 
 export type LegendModel = {

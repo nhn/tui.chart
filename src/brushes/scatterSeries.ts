@@ -55,12 +55,13 @@ function star(ctx: CanvasRenderingContext2D, model: StarIconModel) {
   ctx.save();
   ctx.beginPath();
   ctx.translate(x, y);
+  ctx.moveTo(0, -size);
 
   for (let i = 0; i < 5; i += 1) {
     ctx.rotate(Math.PI / 5);
-    ctx.lineTo(0, 0 - size / 2);
+    ctx.lineTo(0, -size / 2);
     ctx.rotate(Math.PI / 5);
-    ctx.lineTo(0, 0 - size);
+    ctx.lineTo(0, -size);
   }
 
   ctx.fill();

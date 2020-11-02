@@ -77,6 +77,16 @@ export const theme = () => {
     },
     theme: {
       series: {
+        colors: [
+          '#ff9cee',
+          '#9b283c',
+          '#d6aaff',
+          '#97a2ff',
+          '#6eb5ff',
+          '#ffabab',
+          '#f79aff',
+          '#f6a6ff',
+        ],
         iconTypes: ['rect', 'triangle', 'pentagon', 'star', 'diamond', 'cross', 'hexagon'],
       },
     },

@@ -9,8 +9,8 @@ import { deepCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
 import { CircleResponderModel, ScatterSeriesModel } from '@t/components/series';
-import { ScatterChartSeriesTheme } from '@t/theme';
 import { getNearestResponder } from '@src/helpers/responders';
+import { ScatterChartSeriesTheme } from '@t/theme';
 
 export default class ScatterSeries extends CircleSeries {
   theme!: Required<ScatterChartSeriesTheme>;
@@ -123,7 +123,6 @@ export default class ScatterSeries extends CircleSeries {
     if (closestModel) {
       // @TODO: 색칠
       closestModel.fillColor = 'rgb(255,255,255)';
-      closestModel.borderWidth = 2;
     }
 
     return closestModel ? [closestModel] : [];

@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Options, Legend as LegendType, Series } from '@t/store/store';
+import { ChartState, Options, Legend as LegendType, Series, LegendIconType } from '@t/store/store';
 import { LegendData, LegendModel } from '@t/components/legend';
 import {
   LEGEND_CHECKBOX_SIZE,
@@ -22,6 +22,8 @@ export default class Legend extends Component {
   activatedResponders: RectResponderModel[] = [];
 
   seriesColorMap: Record<string, string> = {};
+
+  seriesIconTypeMap: Record<string, string> = {};
 
   onClick({ responders }: { responders: RectResponderModel[] }) {
     if (responders.length) {
@@ -72,19 +74,21 @@ export default class Legend extends Component {
     this.eventBus.on('clickLegendLabel', this.onClickLabel);
   }
 
-  setColorMap(series: Series) {
+  initColorAndIconTypeMap(series: Series) {
     this.seriesColorMap = {};
+    this.seriesIconTypeMap = {};
 
     Object.values(series).forEach((s) => {
-      s!.data.forEach(({ name, color }) => {
+      s!.data.forEach(({ name, color, iconType }) => {
         this.seriesColorMap[name] = color;
+        this.seriesIconTypeMap[name] = iconType;
       });
     });
   }
 
   renderLegendModel(legend: LegendType): LegendModel[] {
     const defaultX = 0;
-    const { data, showCheckbox, align } = legend;
+    const { data, showCheckbox, align, useScatterChartIcon } = legend;
     const verticalAlign = isVerticalAlign(align);
     const legendWidths = data.map(({ width }) => width);
 
@@ -98,9 +102,11 @@ export default class Legend extends Component {
 
           return {
             ...datum,
+            iconType: (this.seriesIconTypeMap[datum.label] ?? datum.iconType) as LegendIconType,
             color: this.seriesColorMap[datum.label],
             x: verticalAlign ? defaultX + xOffset : defaultX,
             y: verticalAlign ? padding.Y : padding.Y + LEGEND_ITEM_HEIGHT * idx,
+            useScatterChartIcon,
           };
         }),
       },
@@ -148,7 +154,7 @@ export default class Legend extends Component {
 
     const { showCheckbox } = legend;
     this.rect = layout.legend;
-    this.setColorMap(nestedPieSeries ?? series);
+    this.initColorAndIconTypeMap(nestedPieSeries ?? series);
     this.models = this.renderLegendModel(legend);
 
     const { data } = this.models[0];
