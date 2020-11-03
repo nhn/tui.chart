@@ -114,6 +114,10 @@ interface ScatterChartSeriesTheme extends CommonSeriesTheme {
   };
 }
 
+interface BubbleChartSeriesTheme extends CommonSeriesTheme {
+  borderWidth?: number;
+}
+
 interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
   colors?: string[];
   dot?: Omit<DotTheme, 'color'>;

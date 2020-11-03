@@ -5,7 +5,7 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isString } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNumber, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
 import {
@@ -71,7 +71,7 @@ export default class ScatterSeries extends Component {
       ...m,
       type: 'circle',
       detectionSize: 0,
-      radius: 6,
+      radius: this.theme.size / 2,
       color: transparentColor,
       style: [{ strokeStyle: transparentColor }],
       data: tooltipModel[index],
@@ -137,26 +137,30 @@ export default class ScatterSeries extends Component {
     });
   }
 
-  private getClosestModel(closestResponder: CircleResponderModel[], type: 'hover' | 'select') {
+  private getClosestModel(closestResponder: CircleResponderModel[]): ScatterSeriesModel[] {
     if (!closestResponder.length) {
       return [];
     }
 
-    let closestModel = (this.models.series as ScatterSeriesModel[]).find(
+    const model = (this.models.series as ScatterSeriesModel[]).find(
       ({ index, seriesIndex }) =>
-        index === closestResponder[0].index && seriesIndex === closestResponder[0].seriesIndex
+        isNumber(index) &&
+        isNumber(seriesIndex) &&
+        index === closestResponder[0].index &&
+        seriesIndex === closestResponder[0].seriesIndex
     );
 
-    if (closestModel) {
-      closestModel = deepMergedCopy(closestModel, this.theme[type]);
-    }
+    return model ? [model] : [];
+  }
 
-    return closestModel ? [closestModel] : [];
+  private applyThemeToResponderModel(closestModel: ScatterSeriesModel[], type: 'hover' | 'select') {
+    return closestModel.map((model) => deepMergedCopy(model, this.theme[type]));
   }
 
   onMousemove({ responders, mousePosition }) {
     const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
-    const closestModel = this.getClosestModel(closestResponder, 'hover');
+    let closestModel = this.getClosestModel(closestResponder);
+    closestModel = this.applyThemeToResponderModel(closestModel, 'hover');
 
     this.eventBus.emit('renderHoveredSeries', { models: closestModel, name: this.name });
     this.activatedResponders = closestResponder;
@@ -168,7 +172,8 @@ export default class ScatterSeries extends Component {
   onClick({ responders, mousePosition }) {
     if (this.selectable) {
       const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
-      const closestModel = this.getClosestModel(closestResponder, 'select');
+      let closestModel = this.getClosestModel(closestResponder);
+      closestModel = this.applyThemeToResponderModel(closestModel, 'select');
 
       this.eventBus.emit('renderSelectedSeries', {
         models: closestModel,
