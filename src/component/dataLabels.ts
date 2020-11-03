@@ -158,7 +158,7 @@ export default class DataLabels extends Component {
           textBaseline,
           defaultColor,
           name,
-          hasTextBalloon,
+          hasTextBubble,
         } = dataLabel;
 
         if (!isModelExistingInRect(this.rect, { x, y })) {
@@ -183,7 +183,7 @@ export default class DataLabels extends Component {
               style: getOptionStyle(type, options),
               opacity: 1,
               name,
-              hasTextBalloon,
+              hasTextBubble,
             },
           ],
         };

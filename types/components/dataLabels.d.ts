@@ -36,7 +36,7 @@ export type DataLabel = {
   textBaseline: CanvasTextBaseline;
   defaultColor?: string;
   name?: string;
-  hasTextBalloon?: boolean;
+  hasTextBubble?: boolean;
 } & Point;
 
 export type DataLabelOption = Required<

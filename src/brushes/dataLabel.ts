@@ -4,40 +4,21 @@ import {
   LabelStyle,
   StrokeLabelStyleName,
   labelStyle,
+  bubbleLabel,
 } from '@src/brushes/label';
 import { DataLabelModel, DataLabelType } from '@t/components/dataLabels';
 import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 import { includes } from '@src/helpers/utils';
-import { makeStyleObj } from '@src/helpers/style';
-import { RectStyle, StyleProp } from '@t/components/series';
 import { Point } from '@t/options';
 
 type PathRectStyleName = 'shadow';
 
-type TextBubbleModel = {
-  radius?: number;
-  width: number;
-  height: number;
-  style: StyleProp<RectStyle, PathRectStyleName>;
-  stroke?: string;
-  fill?: string;
-  lineWidth?: number;
-  points?: Point[];
-  direction?: string;
-} & Point;
+export type ArrowDirection = 'top' | 'right' | 'bottom' | 'left';
 
-const textBubbleStyle = {
-  shadow: {
-    shadowColor: 'rgba(0, 0, 0, 0.3)',
-    shadowOffsetY: 2,
-    shadowBlur: 2,
-  },
-};
-
-const textBubble = {
+export const textBubble = {
   HEIGHT: 28,
-  POINT_WIDTH: 6,
-  POINT_HEIGHT: 4,
+  POINT_WIDTH: 8,
+  POINT_HEIGHT: 6,
   PADDING_X: 5,
   PADDING_Y: 2,
 };
@@ -74,7 +55,7 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     style,
     opacity,
     defaultColor,
-    hasTextBalloon = false,
+    hasTextBubble = false,
   } = model;
   const textStyle: LabelStyle = { textAlign, textBaseline };
   const textStrokeStyle: StrokeLabelStyle = {};
@@ -106,7 +87,7 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     });
   }
 
-  if (hasTextBalloon) {
+  if (hasTextBubble) {
     drawBubbleLabel(ctx, model);
 
     return;
@@ -125,86 +106,78 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
   });
 }
 
-function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
-  const { PADDING_X, PADDING_Y, POINT_HEIGHT, POINT_WIDTH } = textBubble;
+export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
+  const { PADDING_X, PADDING_Y, POINT_HEIGHT } = textBubble;
   const { dataLabelType, text, textAlign, textBaseline } = model;
   const font = labelStyle.rectDataLabel.font;
   const labelWidth = getTextWidth(text, font);
   const width = labelWidth + PADDING_X * 2;
-  const height = getTextHeight(font) + PADDING_Y * 2;
+  let height = getTextHeight(font) + PADDING_Y * 2;
   let { x: boxX, y: boxY } = model;
+  let direction: ArrowDirection = 'top';
 
   if (textAlign === 'center' && textBaseline === 'top') {
     boxX -= width / 2;
     boxY += POINT_HEIGHT;
+    direction = 'top';
   } else if (textAlign === 'center' && textBaseline === 'bottom') {
     boxX -= width / 2;
     boxY -= height + POINT_HEIGHT;
+    direction = 'bottom';
   } else if (textBaseline === 'middle' && textAlign === 'right') {
+    height += 5;
     boxX -= width + POINT_HEIGHT;
     boxY -= height / 2;
+    direction = 'right';
   } else if (textBaseline === 'middle' && textAlign === 'left') {
+    height += 5;
     boxX += POINT_HEIGHT;
     boxY -= height / 2;
+    direction = 'left';
   }
 
-  const { direction, points } = getTextBubbleArrow({ ...model, y: model.y - 1 });
-  const vertical = includes(['top', 'bottom'], direction);
-
-  drawTextBubble(ctx, {
-    x: boxX,
-    y: boxY - 1,
-    radius: vertical ? height / 2 : (height - POINT_WIDTH) / 2,
-    width,
-    height,
-    style: ['shadow'],
-    fill: '#ffffff',
-    stroke: '#eeeeee',
-    lineWidth: 1,
-    direction,
-    points,
-  });
-
+  const points = getBubbleArrowPoints(direction, { x: model.x, y: model.y - 1 });
   const { styleDefault, strokeStyleDefault } = getStyleDefaultName(dataLabelType);
 
-  label(ctx, {
-    type: 'label',
-    x: boxX + width / 2,
-    y: boxY + height / 2,
+  bubbleLabel(ctx, {
+    x: boxX,
+    y: boxY - 1,
+    radius: 7,
+    width,
+    height,
+    stroke: '#eeeeee',
+    bubbleStyle: ['shadow'],
+    direction,
+    points,
+    labelStyle: [styleDefault, { textAlign: 'center' }],
+    labelStrokeStyle: [strokeStyleDefault],
     text,
-    style: [styleDefault, { textAlign: 'center' }],
-    stroke: [strokeStyleDefault],
   });
 }
 
-function getTextBubbleArrow(model: DataLabelModel) {
+export function getBubbleArrowPoints(direction: ArrowDirection, { x, y }: Point): Point[] {
   const { POINT_HEIGHT, POINT_WIDTH } = textBubble;
-  const { x, y, textAlign, textBaseline } = model;
-  let direction, points;
+  let points: Point[] = [];
 
-  if (textAlign === 'center' && textBaseline === 'top') {
-    direction = 'top';
+  if (direction === 'top') {
     points = [
       { x: x - POINT_WIDTH / 2, y: y + POINT_HEIGHT },
       { x, y },
       { x: x + POINT_WIDTH / 2, y: y + POINT_HEIGHT },
     ];
-  } else if (textAlign === 'center' && textBaseline === 'bottom') {
-    direction = 'bottom';
+  } else if (direction === 'bottom') {
     points = [
       { x: x + POINT_WIDTH / 2, y: y - POINT_HEIGHT },
       { x, y },
       { x: x - POINT_WIDTH / 2, y: y - POINT_HEIGHT },
     ];
-  } else if (textBaseline === 'middle' && textAlign === 'right') {
-    direction = 'right';
+  } else if (direction === 'right') {
     points = [
       { x: x - POINT_HEIGHT, y: y - POINT_WIDTH / 2 },
       { x, y },
       { x: x - POINT_HEIGHT, y: y + POINT_WIDTH / 2 },
     ];
-  } else if (textBaseline === 'middle' && textAlign === 'left') {
-    direction = 'left';
+  } else if (direction === 'left') {
     points = [
       { x: x + POINT_HEIGHT, y: y + POINT_WIDTH / 2 },
       { x, y },
@@ -212,91 +185,5 @@ function getTextBubbleArrow(model: DataLabelModel) {
     ];
   }
 
-  return {
-    direction,
-    points,
-  };
-}
-
-function drawTextBubbleArrow(ctx: CanvasRenderingContext2D, points: Point[]) {
-  if (!points.length) {
-    return;
-  }
-
-  ctx.lineTo(points[0].x, points[0].y);
-  ctx.lineTo(points[1].x, points[1].y);
-  ctx.lineTo(points[2].x, points[2].y);
-}
-
-function drawTextBubble(ctx: CanvasRenderingContext2D, model: TextBubbleModel) {
-  const {
-    x,
-    y,
-    radius = 0,
-    width,
-    height,
-    style,
-    stroke,
-    fill,
-    lineWidth = 1,
-    points = [],
-    direction = '',
-  } = model;
-
-  const right = x + width;
-  const bottom = y + height;
-
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-
-  if (direction === 'top') {
-    drawTextBubbleArrow(ctx, points);
-  }
-
-  ctx.lineTo(right - radius, y);
-  ctx.quadraticCurveTo(right, y, right, y + radius);
-
-  if (direction === 'right') {
-    drawTextBubbleArrow(ctx, points);
-  }
-
-  ctx.lineTo(right, y + height - radius);
-  ctx.quadraticCurveTo(right, bottom, right - radius, bottom);
-
-  if (direction === 'bottom') {
-    drawTextBubbleArrow(ctx, points);
-  }
-
-  ctx.lineTo(x + radius, bottom);
-  ctx.quadraticCurveTo(x, bottom, x, bottom - radius);
-
-  if (direction === 'left') {
-    drawTextBubbleArrow(ctx, points);
-  }
-
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-
-  if (style) {
-    const styleObj = makeStyleObj<RectStyle, PathRectStyleName>(style, textBubbleStyle);
-
-    Object.keys(styleObj).forEach((key) => {
-      ctx[key] = styleObj[key];
-    });
-  }
-
-  if (fill) {
-    ctx.fillStyle = fill;
-    ctx.fill();
-  }
-
-  if (ctx.shadowColor) {
-    ctx.shadowColor = 'transparent';
-  }
-
-  if (stroke) {
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = lineWidth;
-    ctx.stroke();
-  }
+  return points;
 }

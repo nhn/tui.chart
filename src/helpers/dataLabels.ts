@@ -411,7 +411,7 @@ export function makeRectLabelInfo(
     ...labelPosition,
     text: isString(value) ? value : formatter(value!),
     name,
-    hasTextBalloon:
+    hasTextBubble:
       rect.type === 'stackTotal' || (rect.type === 'rect' && rect.modelType === 'bullet'),
   };
 }
