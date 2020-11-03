@@ -4,6 +4,7 @@ import { ScatterSeriesIconType } from '@t/components/series';
 import {
   AreaChartThemeOptions,
   BaseThemeOptions,
+  BubbleChartThemeOptions,
   LineAreaChartThemeOptions,
   LineChartThemeOptions,
   LineScatterChartThemeOptions,
@@ -372,6 +373,7 @@ export interface BubbleChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions;
   circleLegend?: CircleLegendOptions;
   plot?: PlotOptions;
+  theme?: BubbleChartThemeOptions;
 }
 
 export interface TreemapChartSeriesOptions extends BaseSeriesOptions {

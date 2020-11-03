@@ -46,6 +46,8 @@ export type CircleModel = {
     end: number;
   };
   name?: string;
+  borderWidth?: number;
+  borderColor?: string;
 } & Point;
 
 export type CircleResponderModel = {

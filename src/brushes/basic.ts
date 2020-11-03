@@ -82,7 +82,16 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
 }
 
 export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
-  const { x, y, style, radius, color, angle = { start: 0, end: Math.PI * 2 } } = circleModel;
+  const {
+    x,
+    y,
+    style,
+    radius,
+    color,
+    angle = { start: 0, end: Math.PI * 2 },
+    borderWidth,
+    borderColor,
+  } = circleModel;
 
   ctx.beginPath();
   ctx.fillStyle = color;
@@ -97,6 +106,14 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
   ctx.fill();
+
+  if (borderWidth) {
+    ctx.lineWidth = borderWidth;
+  }
+
+  if (borderColor) {
+    ctx.strokeStyle = borderColor;
+  }
 
   if (ctx.shadowColor) {
     ctx.shadowColor = 'transparent';

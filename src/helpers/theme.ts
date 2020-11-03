@@ -87,6 +87,8 @@ function getSeriesTheme(seriesName: string) {
     dot: defaultSeriesTheme.dot,
   };
 
+  const transparentColor = 'rgba(255, 255, 255, 0)';
+
   switch (seriesName) {
     case 'line':
       return lineTypeSeriesTheme;
@@ -120,13 +122,20 @@ function getSeriesTheme(seriesName: string) {
       return {
         size: 12,
         borderWidth: 1.5,
-        fillColor: 'rgba(255, 255, 255, 0)',
+        fillColor: transparentColor,
         select: {
           fillColor: 'rgba(255, 255, 255, 1)',
         },
         hover: {
           fillColor: 'rgba(255, 255, 255, 1)',
         },
+      };
+    case 'bubble':
+      return {
+        borderWidth: 0,
+        borderColor: transparentColor,
+        select: {},
+        hover: {},
       };
     default:
       return {};

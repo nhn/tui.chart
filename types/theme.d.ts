@@ -116,6 +116,9 @@ interface ScatterChartSeriesTheme extends CommonSeriesTheme {
 
 interface BubbleChartSeriesTheme extends CommonSeriesTheme {
   borderWidth?: number;
+  borderColor?: string;
+  select?: Omit<DotTheme, 'radius'>;
+  hover?: Omit<DotTheme, 'radius'>;
 }
 
 interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
@@ -203,4 +206,8 @@ interface TreemapChartThemeOptions extends BaseThemeOptions {
 
 interface ScatterChartThemeOptions extends BaseThemeOptions {
   series?: ScatterChartSeriesTheme;
+}
+
+interface BubbleChartThemeOptions extends BaseThemeOptions {
+  series?: BubbleChartSeriesTheme;
 }
