@@ -151,7 +151,11 @@ export type BoxSeriesModels = {
 };
 
 export type CircleSeriesModels = {
-  series: CircleModel[] | ScatterSeriesModel[];
+  series: CircleModel[];
+};
+
+export type ScatterSeriesModels = {
+  series: ScatterSeriesModel[];
 };
 
 export type LineSeriesModels = {
@@ -276,11 +280,10 @@ export interface ScatterSeriesModel {
   iconType: ScatterSeriesIconType;
   x: number;
   y: number;
-  radius?: number;
-  borderColor?: string;
-  borderWidth?: number;
-  fillColor?: string;
-  size?: number;
+  borderColor: string;
+  borderWidth: number;
+  fillColor: string;
+  size: number;
   index?: number;
   seriesIndex?: number;
   name?: string;

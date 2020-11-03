@@ -611,6 +611,8 @@ export const scatterSeriesBrush = () => {
     y: 10,
     borderColor: '#ff6600',
     fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
   });
   scatterSeries(ctx, {
     type: 'scatterSeries',
@@ -618,7 +620,8 @@ export const scatterSeriesBrush = () => {
     x: 10,
     y: 10,
     borderColor: '#ff6600',
-    radius: 5,
+    borderWidth: 1.5,
+    size: 12,
     fillColor: '#dd6699',
   });
   scatterSeries(ctx, {
@@ -638,6 +641,8 @@ export const scatterSeriesBrush = () => {
     y: 10,
     borderColor: '#ff6600',
     fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
   });
   scatterSeries(ctx, {
     type: 'scatterSeries',
@@ -646,6 +651,8 @@ export const scatterSeriesBrush = () => {
     y: 10,
     borderColor: '#ff6600',
     fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
   });
   scatterSeries(ctx, {
     type: 'scatterSeries',
@@ -654,6 +661,8 @@ export const scatterSeriesBrush = () => {
     y: 10,
     borderColor: '#ff6600',
     fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
   });
   scatterSeries(ctx, {
     type: 'scatterSeries',
@@ -662,6 +671,8 @@ export const scatterSeriesBrush = () => {
     y: 10,
     borderColor: '#ff6600',
     fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
   });
   scatterSeries(ctx, {
     type: 'scatterSeries',
@@ -670,6 +681,8 @@ export const scatterSeriesBrush = () => {
     y: 10,
     borderColor: '#ff6600',
     fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
   });
 
   return el;

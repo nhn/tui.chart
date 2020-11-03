@@ -70,7 +70,14 @@ const chartState = {
   },
   theme: {
     series: {
-      scatter: {},
+      scatter: {
+        size: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0)',
+        fillColor: 'rgba(0, 0, 0, 0)',
+        select: {},
+        hover: {},
+      },
     },
   },
 };
@@ -96,12 +103,15 @@ const result = {
       borderColor: 'rgba(170, 170, 170, 1)',
       color: 'rgba(255, 255, 255, 0)',
       radius: 6,
+      size: 12,
       seriesIndex: 0,
       style: [{ strokeStyle: 'rgba(255, 255, 255, 0)' }],
       type: 'circle',
       x: 0,
       y: 0,
       detectionSize: 0,
+      borderWidth: 1,
+      fillColor: 'rgba(0, 0, 0, 0)',
       data: {
         color: '#aaaaaa',
         label: 'nameA',
@@ -111,9 +121,12 @@ const result = {
       index: 0,
     },
     {
+      fillColor: 'rgba(0, 0, 0, 0)',
       borderColor: 'rgba(170, 170, 170, 1)',
+      borderWidth: 1,
       color: 'rgba(255, 255, 255, 0)',
       radius: 6,
+      size: 12,
       seriesIndex: 0,
       style: [{ strokeStyle: 'rgba(255, 255, 255, 0)' }],
       type: 'circle',
@@ -129,9 +142,12 @@ const result = {
       index: 1,
     },
     {
+      fillColor: 'rgba(0, 0, 0, 0)',
       borderColor: 'rgba(187, 187, 187, 1)',
+      borderWidth: 1,
       color: 'rgba(255, 255, 255, 0)',
       radius: 6,
+      size: 12,
       seriesIndex: 1,
       style: [{ strokeStyle: 'rgba(255, 255, 255, 0)' }],
       type: 'circle',
@@ -150,8 +166,10 @@ const result = {
   models: {
     series: [
       {
+        borderWidth: 1,
+        fillColor: 'rgba(0, 0, 0, 0)',
         borderColor: 'rgba(170, 170, 170, 1)',
-        radius: 6,
+        size: 12,
         seriesIndex: 0,
         index: 0,
         type: 'scatterSeries',
@@ -160,8 +178,10 @@ const result = {
         name: 'nameA',
       },
       {
+        borderWidth: 1,
+        fillColor: 'rgba(0, 0, 0, 0)',
         borderColor: 'rgba(170, 170, 170, 1)',
-        radius: 6,
+        size: 12,
         seriesIndex: 0,
         index: 1,
         type: 'scatterSeries',
@@ -170,8 +190,10 @@ const result = {
         name: 'nameA',
       },
       {
+        borderWidth: 1,
+        fillColor: 'rgba(0, 0, 0, 0)',
         borderColor: 'rgba(187, 187, 187, 1)',
-        radius: 6,
+        size: 12,
         seriesIndex: 1,
         index: 0,
         type: 'scatterSeries',

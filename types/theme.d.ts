@@ -96,7 +96,22 @@ interface LineTypeSeriesTheme {
 }
 
 interface ScatterChartSeriesTheme extends CommonSeriesTheme {
-  iconTypes: ScatterSeriesIconType[];
+  iconTypes?: ScatterSeriesIconType[];
+  borderWidth?: number;
+  fillColor?: string;
+  size?: number;
+  select?: {
+    size?: number;
+    borderColor?: string;
+    borderWidth?: number;
+    fillColor?: string;
+  };
+  hover?: {
+    size?: number;
+    borderColor?: string;
+    borderWidth?: number;
+    fillColor?: string;
+  };
 }
 
 interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {

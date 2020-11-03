@@ -116,6 +116,18 @@ function getSeriesTheme(seriesName: string) {
           borderColor: '#ffffff',
         },
       };
+    case 'scatter':
+      return {
+        size: 12,
+        borderWidth: 1.5,
+        fillColor: 'rgba(255, 255, 255, 0)',
+        select: {
+          fillColor: 'rgba(255, 255, 255, 1)',
+        },
+        hover: {
+          fillColor: 'rgba(255, 255, 255, 1)',
+        },
+      };
     default:
       return {};
   }

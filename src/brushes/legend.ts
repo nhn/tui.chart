@@ -145,7 +145,9 @@ function drawScatterIcon(
     x: iconX + CIRCLE_ICON_RADIUS,
     y: y + CIRCLE_ICON_RADIUS,
     borderColor: iconColor,
-    radius: CIRCLE_ICON_RADIUS,
+    size: CIRCLE_ICON_RADIUS * 2,
+    fillColor: 'rgba(255, 255, 255, 0)',
+    borderWidth: 1.5,
   });
 }
 

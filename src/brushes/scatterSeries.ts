@@ -120,16 +120,7 @@ function getNumberOfSidesByIconType(iconType: 'triangle' | 'diamond' | 'pentagon
 }
 
 export function scatterSeries(ctx: CanvasRenderingContext2D, model: ScatterSeriesModel) {
-  const {
-    x,
-    y,
-    radius,
-    borderColor = 'rgba(255, 255, 255, 0)',
-    borderWidth = 1.5,
-    fillColor = 'rgba(255, 255, 255, 0)',
-    size = 12,
-    iconType,
-  } = model;
+  const { x, y, borderColor, borderWidth, fillColor, iconType, size } = model;
   const commonModel = { x, y, fillColor, borderColor, borderWidth, size };
 
   ctx.beginPath();
@@ -161,7 +152,7 @@ export function scatterSeries(ctx: CanvasRenderingContext2D, model: ScatterSerie
       star(ctx, {
         type: 'star',
         ...commonModel,
-        size: 6,
+        size: size / 2,
       });
       break;
     case 'cross':
@@ -175,7 +166,7 @@ export function scatterSeries(ctx: CanvasRenderingContext2D, model: ScatterSerie
         type: 'circle',
         x,
         y,
-        radius: radius!,
+        radius: size / 2,
         style: [{ strokeStyle: borderColor, lineWidth: borderWidth }],
         color: fillColor,
       });
