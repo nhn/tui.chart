@@ -153,14 +153,14 @@ export default class ScatterSeries extends Component {
     return model ? [model] : [];
   }
 
-  private applyThemeToResponderModel(closestModel: ScatterSeriesModel[], type: 'hover' | 'select') {
+  private getResponderAppliedTheme(closestModel: ScatterSeriesModel[], type: 'hover' | 'select') {
     return closestModel.map((model) => deepMergedCopy(model, this.theme[type]));
   }
 
   onMousemove({ responders, mousePosition }) {
     const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
     let closestModel = this.getClosestModel(closestResponder);
-    closestModel = this.applyThemeToResponderModel(closestModel, 'hover');
+    closestModel = this.getResponderAppliedTheme(closestModel, 'hover');
 
     this.eventBus.emit('renderHoveredSeries', { models: closestModel, name: this.name });
     this.activatedResponders = closestResponder;
@@ -173,7 +173,7 @@ export default class ScatterSeries extends Component {
     if (this.selectable) {
       const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
       let closestModel = this.getClosestModel(closestResponder);
-      closestModel = this.applyThemeToResponderModel(closestModel, 'select');
+      closestModel = this.getResponderAppliedTheme(closestModel, 'select');
 
       this.eventBus.emit('renderSelectedSeries', {
         models: closestModel,

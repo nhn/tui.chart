@@ -155,7 +155,6 @@ export default class BubbleSeries extends Component {
     });
   }
 
-  // @TODO: 타차트 이름도 바꾸기
   private getResponderAppliedTheme(responders: CircleResponderModel[], type: 'select' | 'hover') {
     return responders.map((responder) => deepMergedCopy(responder, this.theme[type]));
   }
