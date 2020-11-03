@@ -21,6 +21,8 @@ import {
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
 
+const PIE_HOVER_THICKNESS = 3;
+
 type RenderOptions = {
   clockwise: boolean;
   cx: number;
@@ -377,7 +379,7 @@ export default class PieSeries extends Component {
       models: responders.map((m) => ({
         ...m,
         style: ['hover'],
-        radius: { ...m.radius, outer: m.radius.outer + 3 },
+        radius: { ...m.radius, outer: m.radius.outer + PIE_HOVER_THICKNESS },
       })),
       name: this.alias || this.name,
     });

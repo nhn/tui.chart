@@ -456,6 +456,7 @@ export function makeSectorLabelPosition(
 
 function getPieDataLabelAlign(model: RadialDataLabel, anchor: RadialAnchor) {
   const {
+    totalAngle,
     degree: { start, end },
     drawingStartAngle,
   } = model;
@@ -467,15 +468,21 @@ function getPieDataLabelAlign(model: RadialDataLabel, anchor: RadialAnchor) {
   }
 
   const radian0 = calculateDegreeToRadian(0, drawingStartAngle);
-  const radian180 = calculateDegreeToRadian(180, drawingStartAngle);
+  const halfRadian = calculateDegreeToRadian(totalAngle / 2, drawingStartAngle);
 
   const halfDegree = (end + start) / 2;
   const radian = calculateDegreeToRadian(halfDegree, drawingStartAngle);
 
-  if (radian0 < radian && radian180 > radian) {
-    textAlign = 'left';
-  } else if (radian180 < radian) {
+  if (drawingStartAngle >= -90 && drawingStartAngle < 90) {
+    if (radian0 < radian && halfRadian > radian) {
+      textAlign = 'left';
+    } else if (halfRadian < radian) {
+      textAlign = 'right';
+    }
+  } else if (radian0 < radian && halfRadian > radian) {
     textAlign = 'right';
+  } else if (halfRadian < radian) {
+    textAlign = 'left';
   }
 
   return textAlign;
