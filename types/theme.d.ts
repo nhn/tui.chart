@@ -22,6 +22,8 @@ type SeriesTheme =
   | HeatmapChartSeriesTheme
   | TreemapChartSeriesTheme
   | PieChartSeriesTheme
+  | ScatterChartSeriesTheme
+  | BubbleChartSeriesTheme
   | NestedPieChartSeriesTheme;
 
 type ChartTheme = {
