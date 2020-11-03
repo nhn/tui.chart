@@ -10,6 +10,7 @@ import { DataLabelModel, DataLabelType } from '@t/components/dataLabels';
 import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 import { includes } from '@src/helpers/utils';
 import { Point } from '@t/options';
+import { line } from './basic';
 
 type PathRectStyleName = 'shadow';
 
@@ -56,6 +57,7 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     opacity,
     defaultColor,
     hasTextBubble = false,
+    callout,
   } = model;
   const textStyle: LabelStyle = { textAlign, textBaseline };
   const textStrokeStyle: StrokeLabelStyle = {};
@@ -104,6 +106,10 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     stroke: [strokeStyleDefault, textStrokeStyle],
     opacity,
   });
+
+  if (callout) {
+    line(ctx, callout);
+  }
 }
 
 export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {

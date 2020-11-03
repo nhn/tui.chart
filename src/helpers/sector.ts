@@ -1,8 +1,8 @@
 import { Point } from '@t/options';
 import { SectorModel } from '@t/components/series';
 import { pick } from '@src/helpers/utils';
+import { RadialAnchor } from '@t/components/dataLabels';
 
-type RadialAnchor = 'start' | 'center' | 'end';
 type RadialPositionParam = {
   anchor: RadialAnchor;
   x: number;

@@ -6,7 +6,7 @@ import {
   SubDataLabel,
   BoxSeriesDataType,
 } from '@t/options';
-import { PointModel, SectorModel, RectModel } from './series';
+import { PointModel, SectorModel, RectModel, Nullable } from './series';
 import { LineModel } from './axis';
 
 export type DataLabelSeriesType = 'area' | 'line' | 'bar' | 'column' | 'bullet' | 'pie';
@@ -35,6 +35,7 @@ export type DataLabel = {
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
   defaultColor?: string;
+  callout?: Nullable<LineModel>;
   name?: string;
   hasTextBubble?: boolean;
 } & Point;
@@ -85,3 +86,5 @@ export type LineDataLabel = LineModel & {
 export type SeriesDataLabelType = PointDataLabel | RadialDataLabel | RectDataLabel | LineDataLabel;
 
 export type SeriesDataLabels = Array<SeriesDataLabelType>;
+
+export type RadialAnchor = 'center' | 'outer';

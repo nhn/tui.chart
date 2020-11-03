@@ -82,3 +82,11 @@ export function hasNestedPieSeries(series: RawSeries) {
 export function getNestedPieChartAliasNames(series: RawSeries) {
   return (series.pie as NestedPieSeriesType[]).map(({ name }) => name);
 }
+
+export function pieTooltipLabelFormatter(percentValue: number) {
+  const percentageString = percentValue.toFixed(2);
+  const percent = parseFloat(percentageString);
+  const needSlice = percentageString.length > 5;
+
+  return `${needSlice ? parseFloat(percentageString.substr(0, 4)) : String(percent)}%`;
+}
