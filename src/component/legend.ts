@@ -51,6 +51,7 @@ export default class Legend extends Component {
 
   onClickLabel = (responders) => {
     const { label } = responders[0];
+    this.eventBus.emit('resetSelectedSeries');
 
     if (this.activatedResponders.length && this.activatedResponders[0].label === label) {
       this.store.dispatch('setAllLegendActiveState', true);

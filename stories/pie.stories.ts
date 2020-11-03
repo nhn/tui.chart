@@ -71,9 +71,6 @@ export const withOuterSeriesName = () => {
     series: {
       dataLabels: {
         visible: true,
-        style: {
-          color: '#ffffff',
-        },
         pieSeriesName: {
           visible: true,
           anchor: 'outer',
@@ -160,10 +157,32 @@ export const donutWithDataLabels = () => {
       },
       dataLabels: {
         visible: true,
-        style: {
-          color: '#ffffff',
+      },
+    },
+  });
+
+  return el;
+};
+
+export const donutWithOuterDataLabels = () => {
+  const { el } = createChart(browserUsageData, {
+    series: {
+      clockwise: false,
+      radiusRange: {
+        inner: '40%',
+        outer: '90%',
+      },
+      dataLabels: {
+        visible: true,
+        anchor: 'outer',
+        pieSeriesName: {
+          visible: true,
+          anchor: 'outer',
         },
       },
+    },
+    legend: {
+      visible: false,
     },
   });
 
@@ -179,14 +198,8 @@ export const donutWithCenterSeriesName = () => {
       },
       dataLabels: {
         visible: true,
-        style: {
-          color: '#ffffff',
-        },
         pieSeriesName: {
           visible: true,
-          style: {
-            color: '#ffffff',
-          },
         },
       },
     },
@@ -203,13 +216,10 @@ export const donutWithOuterSeriesName = () => {
     series: {
       radiusRange: {
         inner: '40%',
-        outer: '100%',
+        outer: '90%',
       },
       dataLabels: {
         visible: true,
-        style: {
-          color: '#ffffff',
-        },
         pieSeriesName: {
           visible: true,
           anchor: 'outer',

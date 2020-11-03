@@ -143,7 +143,17 @@ export default class DataLabels extends Component {
   makeLabelModel(dataLabels: DataLabel[], options: DataLabelOptions): DataLabelModels {
     return dataLabels.reduce(
       (acc, dataLabel) => {
-        const { type, x, y, text, textAlign, textBaseline, defaultColor, name } = dataLabel;
+        const {
+          type,
+          x,
+          y,
+          text,
+          textAlign,
+          textBaseline,
+          defaultColor,
+          name,
+          callout,
+        } = dataLabel;
 
         if (!isModelExistingInRect(this.rect, { x, y })) {
           return acc;
@@ -167,6 +177,7 @@ export default class DataLabels extends Component {
               style: getOptionStyle(type, options),
               opacity: 1,
               name,
+              callout,
             },
           ],
         };
