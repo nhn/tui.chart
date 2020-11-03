@@ -1,6 +1,10 @@
 import { ScatterChartOptions, ScatterSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { currentUserCoordinateDatetimeData, genderHeightWeightData } from './data';
+import {
+  currentUserCoordinate,
+  currentUserCoordinateDatetimeData,
+  genderHeightWeightData,
+} from './data';
 import ScatterChart from '@src/charts/scatterChart';
 
 export default {
@@ -70,8 +74,33 @@ export const responsive = () => {
 };
 
 export const theme = () => {
-  const { el } = createChart(currentUserCoordinateDatetimeData, {
-    xAxis: { date: { format: 'HH:mm:ss' } },
+  const { el } = createChart(genderHeightWeightData, {
+    series: { selectable: true },
+    theme: {
+      series: {
+        size: 8,
+        borderWidth: 1,
+        select: {
+          size: 14,
+          borderWidth: 4,
+          borderColor: '#FFE662',
+          fillColor: '#C23B22',
+        },
+        hover: {
+          size: 14,
+          borderWidth: 4,
+          borderColor: '#FFE662',
+          fillColor: '#ff6961',
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const iconType = () => {
+  const { el } = createChart(currentUserCoordinate, {
     series: {
       selectable: true,
     },
