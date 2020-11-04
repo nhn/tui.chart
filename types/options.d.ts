@@ -458,6 +458,7 @@ export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
   plot?: BaseSizeOptions & { type?: RadarPlotType };
   yAxis?: BaseAxisOptions;
+  theme?: RadarChartThemeOptions;
 }
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {

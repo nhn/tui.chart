@@ -8,7 +8,7 @@ type SeriesThemeMap = {
   column?: CommonSeriesTheme;
   bubble?: CommonSeriesTheme;
   pie?: PieChartSeriesTheme;
-  radar?: CommonSeriesTheme;
+  radar?: RadarChartSeriesTheme;
   boxPlot?: CommonSeriesTheme;
   bullet?: CommonSeriesTheme;
 };
@@ -20,7 +20,8 @@ type SeriesTheme =
   | HeatmapChartSeriesTheme
   | TreemapChartSeriesTheme
   | PieChartSeriesTheme
-  | NestedPieChartSeriesTheme;
+  | NestedPieChartSeriesTheme
+  | RadarChartSeriesTheme;
 
 type ChartTheme = {
   title: {
@@ -120,6 +121,19 @@ interface BaseThemeOptions {
   series?: {};
 }
 
+interface RadarChartSeriesTheme {
+  colors?: string[];
+  lineWidth?: number;
+  dashSegments?: number[];
+  dot?: Omit<DotTheme, 'color'>;
+  select?: {
+    dot?: DotTheme;
+  };
+  hover?: {
+    dot?: DotTheme;
+  };
+}
+
 interface LineChartThemeOptions extends BaseThemeOptions {
   series?: LineChartSeriesTheme;
 }
@@ -138,4 +152,8 @@ interface PieChartThemeOptions extends BaseThemeOptions {
 
 interface NestedPieChartThemeOptions extends BaseThemeOptions {
   series?: NestedPieChartSeriesTheme;
+}
+
+interface RadarChartThemeOptions extends BaseThemeOptions {
+  series?: RadarChartSeriesTheme;
 }
