@@ -128,11 +128,13 @@ export const theme = () => {
     theme: {
       series: {
         colors: ['#264653', '#2A9D8F', '#E9C46A', '#F4A261', '#E76F51'],
-        lineWidth: 5,
-        dashSegments: [0, 10],
+        // lineWidth: 5,
+        // dashSegments: [0, 10],
+        /*
         dot: {
           radius: 5,
         },
+
         hover: {
           dot: {
             radius: 6,
@@ -147,6 +149,7 @@ export const theme = () => {
             borderColor: '#000000',
           },
         },
+        */
       },
     },
   });

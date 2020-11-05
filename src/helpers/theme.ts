@@ -46,7 +46,7 @@ export const defaultSeriesTheme = {
     dot: {
       radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
       borderWidth: 2,
-      borderColor: '#ffffff',
+      borderColor: '#fff',
     },
     areaOpacity: DEFAULT_AREA_SELECTED_SERIES_OPACITY,
     restSeries: {
@@ -57,7 +57,7 @@ export const defaultSeriesTheme = {
     dot: {
       radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
       borderWidth: 2,
-      borderColor: '#ffffff',
+      borderColor: '#fff',
     },
   },
   dot: {
@@ -110,14 +110,14 @@ function getSeriesTheme(seriesName: string) {
           dot: {
             radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
             borderColor: '#ffffff',
-            borderWidth: 1,
+            borderWidth: 2,
           },
         },
         select: {
           dot: {
             radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
             borderColor: '#ffffff',
-            borderWidth: 1,
+            borderWidth: 2,
           },
         },
         dot: {
