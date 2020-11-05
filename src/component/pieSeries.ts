@@ -20,6 +20,8 @@ import {
   pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
+import { PieChartSeriesTheme } from '@t/theme';
+import { omit } from '@src/helpers/utils';
 
 const PIE_HOVER_THICKNESS = 3;
 
@@ -117,6 +119,8 @@ export default class PieSeries extends Component {
 
   alias!: string;
 
+  theme!: Required<PieChartSeriesTheme>;
+
   initUpdate(delta: number) {
     if (!this.drawModels) {
       return;
@@ -159,13 +163,14 @@ export default class PieSeries extends Component {
   }
 
   render(chartState: ChartState<PieChartOptions>) {
-    const { layout, series, legend, options, nestedPieSeries } = chartState;
+    const { layout, series, legend, options, nestedPieSeries, theme } = chartState;
     const categories = (chartState.categories as string[]) ?? [];
 
     if (!series.pie) {
       throw new Error("There's no pie data");
     }
 
+    this.theme = theme.series.pie;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -325,6 +330,7 @@ export default class PieSeries extends Component {
       totalAngle,
     } = renderOptions;
     const defaultStartDegree = clockwise ? 0 : 360;
+    const { lineWidth, strokeStyle } = this.getSeriesTheme();
 
     seriesRawData.forEach((rawData, seriesIndex) => {
       const color = this.getSeriesColor(rawData, seriesRawData, pieIndex);
@@ -354,15 +360,28 @@ export default class PieSeries extends Component {
           outer,
         },
         value: data,
-        style: [this.alias ? 'nested' : 'default'],
+        style: [{ lineWidth, strokeStyle }],
         clockwise,
         drawingStartAngle,
         totalAngle,
         percentValue,
+        hoverColor: this.getThemeColors(color, seriesIndex, 'hover'),
+        selectColor: this.getThemeColors(color, seriesIndex, 'select'),
       });
     });
 
     return sectorModels;
+  }
+
+  getThemeColors(defaultColor: string, seriesIndex: number, type: 'select' | 'hover') {
+    const theme = this.getSeriesTheme()[type];
+
+    const result =
+      theme && Array.isArray(theme.colors)
+        ? theme.colors[seriesIndex % theme.colors.length]
+        : defaultColor;
+
+    return result;
   }
 
   makeTooltipResponder(responders: SectorResponderModel[]) {
@@ -376,11 +395,7 @@ export default class PieSeries extends Component {
 
   onMousemove({ responders }) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: responders.map((m) => ({
-        ...m,
-        style: ['hover'],
-        radius: { ...m.radius, outer: m.radius.outer + PIE_HOVER_THICKNESS },
-      })),
+      models: this.getResonderModelsWithTheme(responders, 'hover'),
       name: this.alias || this.name,
     });
     this.activatedResponders = this.makeTooltipResponder(responders);
@@ -394,12 +409,23 @@ export default class PieSeries extends Component {
   onClick({ responders }) {
     if (this.selectable) {
       this.eventBus.emit('renderSelectedSeries', {
-        models: responders,
+        models: this.getResonderModelsWithTheme(responders, 'select'),
         name: this.name,
         alias: this.alias,
       });
       this.eventBus.emit('needDraw');
     }
+  }
+
+  getResonderModelsWithTheme(responders: SectorResponderModel[], type: 'select' | 'hover') {
+    const theme = this.getSeriesTheme()[type];
+
+    return responders.map((m) => ({
+      ...m,
+      color: m[`${type}Color`],
+      style: [omit(theme, 'colors')],
+      radius: { ...m.radius, outer: m.radius.outer + PIE_HOVER_THICKNESS },
+    }));
   }
 
   onMouseoutComponent() {
@@ -437,5 +463,9 @@ export default class PieSeries extends Component {
     }
 
     return getRGBA(color!, opacity);
+  }
+
+  getSeriesTheme() {
+    return this.alias ? this.theme[this.alias] : this.theme;
   }
 }

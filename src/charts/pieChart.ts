@@ -43,8 +43,8 @@ export default class PieChart extends Chart<PieChartOptions> {
     this.componentManager.add(Legend);
     this.componentManager.add(PieSeries);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
-    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 

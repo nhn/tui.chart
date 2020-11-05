@@ -1,3 +1,5 @@
+import { SectorStyle } from '@src/brushes/sector';
+
 type SeriesThemeMap = {
   line?: LineChartSeriesTheme;
   area?: AreaChartSeriesTheme;
@@ -41,7 +43,13 @@ type ComboChartSeriesTheme =
   | ColumnLineChartSeriesTheme
   | LineAreaChartSeriesTheme;
 
-type PieChartSeriesTheme = { colors?: string[] };
+type PieChartSeriesTheme = {
+  colors?: string[];
+  lineWidth?: number;
+  strokeStyle?: string;
+  hover?: SectorStyle & { colors?: string[] };
+  select?: SectorStyle & { colors?: string[] };
+};
 
 type NestedPieChartSeriesTheme = Record<string, PieChartSeriesTheme> | PieChartSeriesTheme;
 

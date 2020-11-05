@@ -3,6 +3,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { PieSeriesData, PieChartOptions } from '@t/options';
 import { browserUsageData } from './data';
 import { withKnobs, number } from '@storybook/addon-knobs';
+import { PieChartThemeOptions } from '@t/theme';
 
 export default {
   title: 'chart|Pie',
@@ -297,23 +298,25 @@ export const responsive = () => {
 export const theme = () => {
   const themeOptions: PieChartThemeOptions = {
     series: {
-      colors: [
-        '#ea005e',
-        '#fece2f',
-        '#fc6104',
-        '#dd2429',
-        '#ebc7ff',
-        '#fece2f',
-        '#dd2429',
-        '#ff8d3a',
-        '#fc6104',
-        '#5ac18e',
-      ],
+      colors: ['#F94144', '#F3722C', '#F8961E', '#F9C74F', '#90BE6D', '#43AA8B', '#577590'],
+      lineWidth: 1,
+      strokeStyle: '#000000',
+      hover: {
+        colors: ['#FB888A', '#F7A578', '#FABE75', '#FBD989', '#B6D39C', '#6DC5AB', '#8CA5BA'],
+        strokeStyle: '#000000',
+        shadowColor: 'rgba(0, 0, 0, 0)',
+      },
+      select: {
+        colors: ['#F81215', '#E75A0D', '#EC8609', '#F7B926', '#81B356', '#3A9278', '#4D6880'],
+        strokeStyle: '#000000',
+        shadowColor: 'rgba(0, 0, 0, 0)',
+      },
     },
   };
 
   const { el } = createChart(browserUsageData, {
     theme: themeOptions,
+    series: { selectable: true },
   });
 
   return el;

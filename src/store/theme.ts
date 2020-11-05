@@ -1,8 +1,14 @@
-import { Options, RawSeries, StoreModule } from '@t/store/store';
+import { Options, RawSeries, StoreModule, SeriesTheme } from '@t/store/store';
 import { deepMergedCopy, omit } from '@src/helpers/utils';
 import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
 import { defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
+import {
+  Theme,
+  PieChartSeriesTheme,
+  ComboChartSeriesTheme,
+  HeatmapChartSeriesTheme,
+} from '@t/theme';
 
 function getCommonSeriesOptions(
   options: Options,
@@ -112,7 +118,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
     isNestedPieChart
   );
   const theme = deepMergedCopy(
-    getDefaultTheme(series),
+    getDefaultTheme(series, isNestedPieChart),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 

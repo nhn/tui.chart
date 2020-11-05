@@ -1,4 +1,5 @@
 import { RawSeries } from '@t/store/store';
+import { Theme } from '@t/theme';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -74,7 +75,7 @@ const defaultTheme = {
   },
 };
 
-function getSeriesTheme(seriesName: string) {
+function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
   const lineTypeSeriesTheme = {
     lineWidth: defaultSeriesTheme.lineWidth,
     dashSegments: defaultSeriesTheme.dashSegments,
@@ -102,18 +103,35 @@ function getSeriesTheme(seriesName: string) {
         startColor: defaultSeriesTheme.startColor,
         endColor: defaultSeriesTheme.endColor,
       };
+    case 'pie':
+      return {
+        strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(0, 0, 0, 0)',
+        lineWidth: isNestedPieChart ? 1 : 0,
+        hover: {
+          lineWidth: 5,
+          strokeStyle: '#ffffff',
+          shadowColor: '#cccccc',
+          shadowBlur: 5,
+        },
+        select: {
+          lineWidth: 5,
+          strokeStyle: '#ffffff',
+          shadowColor: '#cccccc',
+          shadowBlur: 5,
+        },
+      };
     default:
       return {};
   }
 }
 
-export function getDefaultTheme(series: RawSeries): Theme {
+export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Theme {
   return Object.keys(series).reduce<Theme>(
     (acc, seriesName) => ({
       ...acc,
       series: {
         ...acc.series,
-        [seriesName]: getSeriesTheme(seriesName),
+        [seriesName]: getSeriesTheme(seriesName, isNestedPieChart),
       },
     }),
     defaultTheme as Theme

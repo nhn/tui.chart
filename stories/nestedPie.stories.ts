@@ -2,6 +2,7 @@ import { NestedPieChartOptions, NestedPieSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { browserUsageData2, groupedBrowserUsageData } from './data';
 import NestedPieChart from '@src/charts/nestedPieChart';
+import { NestedPieChartThemeOptions } from '@t/theme';
 
 export default {
   title: 'chart|NestedPie',
@@ -150,6 +151,8 @@ export const responsive = () => {
 export const theme = () => {
   const themeOptions: NestedPieChartThemeOptions = {
     series: {
+      lineWidth: 2,
+      strokeStyle: '#cccccc',
       browsers: {
         colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
       },
@@ -198,6 +201,14 @@ export const groupedTheme = () => {
   const themeOptions: NestedPieChartThemeOptions = {
     series: {
       colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569', '#f75294'],
+      lineWidth: 2,
+      strokeStyle: '#cccccc',
+      browsers: {
+        hover: { colors: ['#6D9B46'] },
+      },
+      versions: {
+        hover: { colors: ['#3A9278'] },
+      },
     },
   };
 
