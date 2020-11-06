@@ -26,12 +26,15 @@ type SeriesTheme =
   | BubbleChartSeriesTheme
   | NestedPieChartSeriesTheme;
 
+type FontTheme = {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  color?: string;
+};
+
 type ChartTheme = {
-  title: {
-    fontSize: number;
-    fontFamily: string;
-    fontWeight: string;
-  };
+  title?: FontTheme;
 };
 
 type Theme = {
