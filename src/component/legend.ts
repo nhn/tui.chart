@@ -152,9 +152,13 @@ export default class Legend extends Component {
 
     // @TODO: stack 일 떄 라벨 순서 역순으로(스택이 쌓인 순서대로) 되어야
 
-    const { showCheckbox } = legend;
+    const { showCheckbox, data: legendData } = legend;
     this.rect = layout.legend;
-    this.initColorAndIconTypeMap(nestedPieSeries ?? series);
+
+    if (legendData.length !== Object.keys(this.seriesColorMap).length) {
+      this.initColorAndIconTypeMap(nestedPieSeries ?? series);
+    }
+
     this.models = this.renderLegendModel(legend);
 
     const { data } = this.models[0];

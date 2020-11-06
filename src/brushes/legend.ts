@@ -23,6 +23,9 @@ export const LEGEND_MARGIN_Y = 15;
 export const LEGEND_CHECKBOX_SIZE = 12;
 export const LEGEND_ICON_SIZE = 12;
 export const LEGEND_LABEL_FONT = 'normal 11px Arial';
+const ICON_BORDER_WIDTH = 1.5
+
+const INACTIVE_OPACITY = 0.3;
 const RECT_SIZE = 10;
 const LINE_ICON_PADDING = 2;
 const CIRCLE_ICON_RADIUS = 6;
@@ -49,7 +52,7 @@ function drawLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color
 
 function drawCheckIcon(ctx: CanvasRenderingContext2D, x: number, y: number, active: boolean) {
   const color = '#555555';
-  const strokeStyle = active ? color : getRGBA(color, 0.3);
+  const strokeStyle = active ? color : getRGBA(color, INACTIVE_OPACITY);
 
   line(ctx, {
     type: 'line',
@@ -78,7 +81,7 @@ function drawCheckbox(
   renderOptions: RenderOptions
 ) {
   const { active, checked } = renderOptions;
-  const borderColor = active ? '#bbb' : getRGBA('#bbbbbb', 0.3);
+  const borderColor = active ? '#bbb' : getRGBA('#bbbbbb', INACTIVE_OPACITY);
 
   rect(ctx, {
     type: 'rect',
@@ -104,7 +107,7 @@ function drawIcon(
 ) {
   const { iconType, active, color, showCheckbox } = renderOptions;
   const iconX = x + (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0);
-  const iconColor = active ? color : getRGBA(color, 0.3);
+  const iconColor = active ? color : getRGBA(color, INACTIVE_OPACITY);
 
   if (iconType === 'rect') {
     rect(ctx, {
@@ -137,7 +140,7 @@ function drawScatterIcon(
 ) {
   const { iconType, active, color, showCheckbox } = renderOptions;
   const iconX = x + (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0);
-  const iconColor = active ? color : getRGBA(color, 0.3);
+  const iconColor = active ? color : getRGBA(color, INACTIVE_OPACITY);
 
   scatterSeries(ctx, {
     type: 'scatterSeries',
@@ -147,7 +150,7 @@ function drawScatterIcon(
     borderColor: iconColor,
     size: CIRCLE_ICON_RADIUS * 2,
     fillColor: 'rgba(255, 255, 255, 0)',
-    borderWidth: 1.5,
+    borderWidth: ICON_BORDER_WIDTH,
   });
 }
 
@@ -160,7 +163,7 @@ function drawLabel(
 ) {
   const { active, showCheckbox } = renderOptions;
   const color = '#333333';
-  const fontColor = active ? color : getRGBA(color, 0.3);
+  const fontColor = active ? color : getRGBA(color, INACTIVE_OPACITY);
 
   label(ctx, {
     type: 'label',

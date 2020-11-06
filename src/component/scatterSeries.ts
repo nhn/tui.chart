@@ -13,7 +13,7 @@ import {
   ScatterSeriesModel,
   ScatterSeriesModels,
 } from '@t/components/series';
-import { getNearestResponder } from '@src/helpers/responders';
+import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import { ScatterChartSeriesTheme } from '@t/theme';
 
 export default class ScatterSeries extends Component {
@@ -153,7 +153,7 @@ export default class ScatterSeries extends Component {
     return model ? [model] : [];
   }
 
-  private getResponderAppliedTheme(closestModel: ScatterSeriesModel[], type: 'hover' | 'select') {
+  private getResponderAppliedTheme(closestModel: ScatterSeriesModel[], type: RespondersThemeType) {
     return closestModel.map((model) => deepMergedCopy(model, this.theme[type]));
   }
 
