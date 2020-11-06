@@ -49,32 +49,33 @@ interface TreemapChartSeriesTheme {
   colors?: string[];
   startColor?: string;
   endColor?: string;
-  border?: BorderTheme;
+  borderColor?: string;
+  borderWidth?: number;
   select?: {
-    border?: BorderTheme;
+    borderColor?: string;
+    borderWidth?: number;
     color?: string;
   };
   hover?: {
-    border?: BorderTheme;
+    borderColor?: string;
+    borderWidth?: number;
     color?: string;
   };
-}
-
-interface BorderTheme {
-  color?: string;
-  width?: number;
 }
 
 interface HeatmapChartSeriesTheme {
   startColor: string;
   endColor: string;
-  border?: BorderTheme;
+  borderColor?: string;
+  borderWidth?: number;
   select?: {
-    border?: BorderTheme;
+    borderColor?: string;
+    borderWidth?: number;
     color?: string;
   };
   hover?: {
-    border?: BorderTheme;
+    borderColor?: string;
+    borderWidth?: number;
     color?: string;
   };
 }

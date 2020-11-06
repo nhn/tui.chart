@@ -9,10 +9,10 @@ import {
 import { BoundMap, squarify } from '@src/helpers/squarifier';
 import { getRGBA, hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
-import { getDeepestNode } from '@src/helpers/responders';
+import { getDeepestNode, RespondersThemeType } from '@src/helpers/responders';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
-import { first, last } from '@src/helpers/utils';
+import { deepMergedCopy, first, last } from '@src/helpers/utils';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { RectDataLabel } from '@t/components/dataLabels';
 
@@ -156,7 +156,7 @@ export default class TreemapSeries extends Component {
       y: 0,
     });
 
-    const { colors, startColor, endColor, border } = this.theme;
+    const { colors, startColor, endColor, borderWidth, borderColor } = this.theme;
     let startRGB, distances;
     const useColorValue = options.series?.useColorValue ?? false;
     if (useColorValue && startColor && endColor) {
@@ -180,8 +180,8 @@ export default class TreemapSeries extends Component {
           ? getSpectrumColor(colorRatio, distances, startRGB)
           : this.getColor(treemapSeries, colors!),
         opacity: useColorValue ? 0 : this.getOpacity(treemapSeries),
-        thickness: border?.width,
-        borderColor: border?.color,
+        thickness: borderWidth,
+        borderColor: borderColor,
       };
     });
 
@@ -192,15 +192,13 @@ export default class TreemapSeries extends Component {
     return { series, layer };
   }
 
-  getRespondersWithTheme(responders: TreemapRectResponderModel[], type: 'select' | 'hover') {
-    const { color, border } = this.theme[type];
-
-    return responders.map((responder) => ({
-      ...responder,
-      color: color ?? responder.color,
-      borderColor: border?.color,
-      thickness: border?.width,
-    }));
+  getRespondersWithTheme(responders: TreemapRectResponderModel[], type: RespondersThemeType) {
+    return responders.map((responder) =>
+      deepMergedCopy(responder, {
+        ...this.theme[type],
+        style: ['shadow'],
+      })
+    );
   }
 
   onClick({ responders }) {

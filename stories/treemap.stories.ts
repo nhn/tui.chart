@@ -170,23 +170,17 @@ export const theme = () => {
       series: {
         startColor: '#F3FFE3',
         endColor: '#FF9CEE',
-        border: {
-          width: 3,
-          color: '#ddd',
-        },
+        borderWidth: 3,
+        borderColor: '#ddd',
         select: {
           color: '#fdfd96',
-          border: {
-            width: 2,
-            color: '#80CEE1',
-          },
+          borderWidth: 2,
+          borderColor: '#80CEE1',
         },
         hover: {
           color: '#FFB144',
-          border: {
-            width: 5,
-            color: '#CAE7C1',
-          },
+          borderWidth: 5,
+          borderColor: '#CAE7C1',
         },
       },
     },

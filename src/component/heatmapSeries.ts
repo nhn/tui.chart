@@ -11,6 +11,8 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { SeriesDataLabelType } from '@t/components/dataLabels';
+import { RespondersThemeType } from '@src/helpers/responders';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
@@ -80,7 +82,7 @@ export default class HeatmapSeries extends Component {
     cellSize: Size,
     colorValueScale: ScaleData
   ): HeatmapRectModel[] {
-    const { startColor, endColor, border } = this.theme;
+    const { startColor, endColor, borderColor, borderWidth } = this.theme;
     const startRGB = hexToRGB(startColor) as RGB;
     const distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
     const { height, width } = cellSize;
@@ -92,8 +94,7 @@ export default class HeatmapSeries extends Component {
         const [xIndex, yIndex] = indexes;
 
         const colorRatio = getColorRatio(colorValueScale.limit, colorValue)!;
-        const thickness = border?.width!;
-        const borderColor = border?.color;
+        const thickness = borderWidth;
 
         return {
           type: 'rect',
@@ -112,15 +113,10 @@ export default class HeatmapSeries extends Component {
     });
   }
 
-  getRespondersWithTheme(responders: HeatmapRectResponderModel[], type: 'select' | 'hover') {
-    const { color, border } = this.theme[type];
-
-    return responders.map((responder) => ({
-      ...responder,
-      color: color ?? responder.color,
-      borderColor: border?.color,
-      thickness: border?.width,
-    }));
+  getRespondersWithTheme(responders: HeatmapRectResponderModel[], type: RespondersThemeType) {
+    return responders.map((responder) =>
+      deepMergedCopy(responder, { ...this.theme[type], style: ['shadow'] })
+    );
   }
 
   onClick({ responders }: { responders: HeatmapRectResponderModel[] }) {

@@ -1,4 +1,5 @@
 import { RawSeries } from '@t/store/store';
+import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -40,10 +41,8 @@ export const defaultSeriesTheme = {
   endColor: '#d74177',
   lineWidth: DEFAULT_LINE_SERIES_WIDTH,
   dashSegments: [],
-  border: {
-    width: 0,
-    color: '#ffffff',
-  },
+  borderWidth: 0,
+  borderColor: '#ffffff',
   select: {
     dot: {
       radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
@@ -105,7 +104,16 @@ function getSeriesTheme(seriesName: string) {
       return {
         startColor: defaultSeriesTheme.startColor,
         endColor: defaultSeriesTheme.endColor,
-        border: defaultSeriesTheme.border,
+        borderWidth: 0,
+        borderColor: '#ffffff',
+        hover: {
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+        },
+        select: {
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+        },
       };
     default:
       return {};

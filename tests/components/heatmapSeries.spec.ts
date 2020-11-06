@@ -16,10 +16,8 @@ function getChartState(seriesData, options?: any) {
             colors: ['#00a9ff', '#ffb840'],
             startColor: '#00a9ff',
             endColor: '#ffb840',
-            border: {
-              width: 0,
-              color: '#fff',
-            },
+            borderWidth: 0,
+            borderColor: '#fff',
           },
         },
       },
