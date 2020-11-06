@@ -11,11 +11,15 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { SeriesDataLabelType } from '@t/components/dataLabels';
+import { RespondersThemeType } from '@src/helpers/responders';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
 
   responders!: HeatmapRectResponderModel[];
+
+  theme!: Required<HeatmapChartSeriesTheme>;
 
   activatedResponders: this['responders'] = [];
 
@@ -31,6 +35,7 @@ export default class HeatmapSeries extends Component {
       throw new Error("There's no heatmap data");
     }
 
+    this.theme = theme.series.heatmap as Required<HeatmapChartSeriesTheme>;
     this.selectable = this.getSelectableOption(options);
     this.rect = layout.plot;
     const cellSize = {
@@ -38,7 +43,7 @@ export default class HeatmapSeries extends Component {
       width: axes.xAxis.tickDistance,
     };
     this.models = {
-      series: this.renderHeatmapSeries(heatmapSeries, cellSize, theme, colorValueScale),
+      series: this.renderHeatmapSeries(heatmapSeries, cellSize, colorValueScale),
     };
 
     if (getDataLabelsOptions(options, this.name).visible) {
@@ -75,10 +80,9 @@ export default class HeatmapSeries extends Component {
   renderHeatmapSeries(
     seriesData: HeatmapSeriesData[],
     cellSize: Size,
-    theme: Theme,
     colorValueScale: ScaleData
   ): HeatmapRectModel[] {
-    const { startColor, endColor } = theme.series.heatmap!;
+    const { startColor, endColor, borderColor, borderWidth } = this.theme;
     const startRGB = hexToRGB(startColor) as RGB;
     const distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
     const { height, width } = cellSize;
@@ -90,7 +94,7 @@ export default class HeatmapSeries extends Component {
         const [xIndex, yIndex] = indexes;
 
         const colorRatio = getColorRatio(colorValueScale.limit, colorValue)!;
-        const thickness = 0; // @TODO: theme.series.borderWidth 로 처리되어 있음. 이후 개발 필요
+        const thickness = borderWidth;
 
         return {
           type: 'rect',
@@ -103,14 +107,24 @@ export default class HeatmapSeries extends Component {
           colorRatio,
           color: getSpectrumColor(colorRatio, distances, startRGB),
           thickness,
+          borderColor,
         };
       });
     });
   }
 
+  getRespondersWithTheme(responders: HeatmapRectResponderModel[], type: RespondersThemeType) {
+    return responders.map((responder) =>
+      deepMergedCopy(responder, { ...this.theme[type], style: ['shadow'] })
+    );
+  }
+
   onClick({ responders }: { responders: HeatmapRectResponderModel[] }) {
     if (this.selectable) {
-      this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
+      this.eventBus.emit('renderSelectedSeries', {
+        models: this.getRespondersWithTheme(responders, 'select'),
+        name: this.name,
+      });
       this.eventBus.emit('needDraw');
     }
   }
@@ -126,7 +140,7 @@ export default class HeatmapSeries extends Component {
 
   emitMouseEvent(responders: HeatmapRectResponderModel[]) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: responders,
+      models: this.getRespondersWithTheme(responders, 'hover'),
       name: this.name,
     });
     this.eventBus.emit('seriesPointHovered', {
