@@ -15,7 +15,7 @@ import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { deepMergedCopy, first, last } from '@src/helpers/utils';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { RectDataLabel } from '@t/components/dataLabels';
-import { Theme } from '@t/theme';
+import { TreemapChartSeriesTheme } from '@t/theme';
 
 export default class TreemapSeries extends Component {
   models: TreemapSeriesModels = { series: [], layer: [] };

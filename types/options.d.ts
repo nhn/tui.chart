@@ -5,12 +5,14 @@ import {
   AreaChartThemeOptions,
   BaseThemeOptions,
   BubbleChartThemeOptions,
+  HeatmapChartThemeOptions,
   LineAreaChartThemeOptions,
   LineChartThemeOptions,
   LineScatterChartThemeOptions,
   NestedPieChartThemeOptions,
   PieChartThemeOptions,
   ScatterChartThemeOptions,
+  TreemapChartThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
