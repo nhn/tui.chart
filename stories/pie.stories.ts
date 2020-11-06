@@ -3,6 +3,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { PieSeriesData, PieChartOptions } from '@t/options';
 import { browserUsageData } from './data';
 import { withKnobs, number } from '@storybook/addon-knobs';
+import { PieChartThemeOptions } from '@t/theme';
 
 export default {
   title: 'chart|Pie',

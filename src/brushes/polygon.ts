@@ -4,7 +4,6 @@ export function polygon(ctx: CanvasRenderingContext2D, polygonModel: PolygonMode
   const { color, points, lineWidth, fillColor } = polygonModel;
 
   ctx.lineWidth = lineWidth;
-  ctx.lineCap = 'round';
   ctx.strokeStyle = color;
 
   if (fillColor) {

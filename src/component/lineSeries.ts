@@ -37,6 +37,7 @@ import {
 import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
+import { DotTheme, LineChartSeriesTheme } from '@t/theme';
 
 interface RenderOptions {
   pointOnColumn: boolean;

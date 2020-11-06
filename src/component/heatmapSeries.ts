@@ -13,6 +13,7 @@ import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { SeriesDataLabelType } from '@t/components/dataLabels';
 import { RespondersThemeType } from '@src/helpers/responders';
 import { deepMergedCopy } from '@src/helpers/utils';
+import { HeatmapChartSeriesTheme } from '@t/theme';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;

@@ -3,6 +3,13 @@ import { deepMergedCopy, omit } from '@src/helpers/utils';
 import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
 import { defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
+import {
+  ComboChartSeriesTheme,
+  HeatmapChartSeriesTheme,
+  PieChartSeriesTheme,
+  SeriesTheme,
+  Theme,
+} from '@t/theme';
 
 function getCommonSeriesOptions(
   options: Options,

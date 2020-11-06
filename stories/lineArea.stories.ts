@@ -3,6 +3,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { energyUsageData, energyUsageStackData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import LineAreaChart from '@src/charts/lineAreaChart';
+import { LineAreaChartThemeOptions } from '@t/theme';
 
 export default {
   title: 'chart|LineArea',

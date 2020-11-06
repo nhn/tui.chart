@@ -1,5 +1,19 @@
 import { Categories, RawSeries, Options } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
+import { ScatterSeriesIconType } from '@t/components/series';
+import {
+  AreaChartThemeOptions,
+  BaseThemeOptions,
+  BubbleChartThemeOptions,
+  HeatmapChartThemeOptions,
+  LineAreaChartThemeOptions,
+  LineChartThemeOptions,
+  LineScatterChartThemeOptions,
+  NestedPieChartThemeOptions,
+  PieChartThemeOptions,
+  ScatterChartThemeOptions,
+  TreemapChartThemeOptions,
+} from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
@@ -85,6 +99,7 @@ export interface ScatterSeriesType {
   name: string;
   data: CoordinateDataType[];
   color: string;
+  iconType: ScatterSeriesIconType;
 }
 
 export interface LineScatterData {
@@ -327,6 +342,7 @@ export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
   yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
+  theme?: LineScatterChartThemeOptions;
 }
 
 export interface LineAreaChartOptions extends BaseOptions {
@@ -350,6 +366,7 @@ export interface ScatterChartOptions extends BaseOptions {
   xAxis?: BaseXAxisOptions;
   yAxis?: BaseAxisOptions;
   plot?: PlotOptions;
+  theme?: ScatterChartThemeOptions;
 }
 
 export interface BubbleChartOptions extends BaseOptions {
@@ -358,6 +375,7 @@ export interface BubbleChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions;
   circleLegend?: CircleLegendOptions;
   plot?: PlotOptions;
+  theme?: BubbleChartThemeOptions;
 }
 
 export interface TreemapChartSeriesOptions extends BaseSeriesOptions {

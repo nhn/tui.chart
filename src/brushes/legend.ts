@@ -2,8 +2,10 @@ import { line, circle, rect } from '@src/brushes/basic';
 import { label } from '@src/brushes/label';
 import { LegendModel } from '@t/components/legend';
 import { getRGBA } from '@src/helpers/color';
-import { LegendIconType } from '@t/store/store';
 import { Align } from '@t/options';
+import { scatterSeries } from '@src/brushes/scatterSeries';
+import { ScatterSeriesIconType } from '@t/components/series';
+import { LegendIconType } from '@t/store/store';
 
 interface RenderOptions {
   iconType: LegendIconType;
@@ -21,6 +23,9 @@ export const LEGEND_MARGIN_Y = 15;
 export const LEGEND_CHECKBOX_SIZE = 12;
 export const LEGEND_ICON_SIZE = 12;
 export const LEGEND_LABEL_FONT = 'normal 11px Arial';
+const ICON_BORDER_WIDTH = 1.5
+
+const INACTIVE_OPACITY = 0.3;
 const RECT_SIZE = 10;
 const LINE_ICON_PADDING = 2;
 const CIRCLE_ICON_RADIUS = 6;
@@ -47,7 +52,7 @@ function drawLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color
 
 function drawCheckIcon(ctx: CanvasRenderingContext2D, x: number, y: number, active: boolean) {
   const color = '#555555';
-  const strokeStyle = active ? color : getRGBA(color, 0.3);
+  const strokeStyle = active ? color : getRGBA(color, INACTIVE_OPACITY);
 
   line(ctx, {
     type: 'line',
@@ -76,7 +81,7 @@ function drawCheckbox(
   renderOptions: RenderOptions
 ) {
   const { active, checked } = renderOptions;
-  const borderColor = active ? '#bbb' : getRGBA('#bbbbbb', 0.3);
+  const borderColor = active ? '#bbb' : getRGBA('#bbbbbb', INACTIVE_OPACITY);
 
   rect(ctx, {
     type: 'rect',
@@ -102,7 +107,7 @@ function drawIcon(
 ) {
   const { iconType, active, color, showCheckbox } = renderOptions;
   const iconX = x + (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0);
-  const iconColor = active ? color : getRGBA(color, 0.3);
+  const iconColor = active ? color : getRGBA(color, INACTIVE_OPACITY);
 
   if (iconType === 'rect') {
     rect(ctx, {
@@ -127,6 +132,28 @@ function drawIcon(
   }
 }
 
+function drawScatterIcon(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  renderOptions: RenderOptions
+) {
+  const { iconType, active, color, showCheckbox } = renderOptions;
+  const iconX = x + (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0);
+  const iconColor = active ? color : getRGBA(color, INACTIVE_OPACITY);
+
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: iconType as ScatterSeriesIconType,
+    x: iconX + CIRCLE_ICON_RADIUS,
+    y: y + CIRCLE_ICON_RADIUS,
+    borderColor: iconColor,
+    size: CIRCLE_ICON_RADIUS * 2,
+    fillColor: 'rgba(255, 255, 255, 0)',
+    borderWidth: ICON_BORDER_WIDTH,
+  });
+}
+
 function drawLabel(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -136,7 +163,7 @@ function drawLabel(
 ) {
   const { active, showCheckbox } = renderOptions;
   const color = '#333333';
-  const fontColor = active ? color : getRGBA(color, 0.3);
+  const fontColor = active ? color : getRGBA(color, INACTIVE_OPACITY);
 
   label(ctx, {
     type: 'label',
@@ -155,7 +182,7 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
   const { data, showCheckbox, align } = model;
 
   data.forEach((datum) => {
-    const { x, y, checked, active, color, iconType } = datum;
+    const { x, y, checked, active, color, iconType, useScatterChartIcon } = datum;
     const renderOptions: RenderOptions = {
       iconType,
       checked,
@@ -168,7 +195,12 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
     if (showCheckbox) {
       drawCheckbox(ctx, x, y, renderOptions);
     }
-    drawIcon(ctx, x, y, renderOptions);
+    if (useScatterChartIcon && iconType !== 'line') {
+      drawScatterIcon(ctx, x, y, renderOptions);
+    } else {
+      drawIcon(ctx, x, y, renderOptions);
+    }
+
     drawLabel(ctx, x, y, datum.label, renderOptions);
   });
 }

@@ -1,5 +1,6 @@
 import { RawSeries } from '@t/store/store';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { Theme } from '@t/theme';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -86,6 +87,8 @@ function getSeriesTheme(seriesName: string) {
     dot: defaultSeriesTheme.dot,
   };
 
+  const transparentColor = 'rgba(255, 255, 255, 0)';
+
   switch (seriesName) {
     case 'line':
       return lineTypeSeriesTheme;
@@ -114,6 +117,25 @@ function getSeriesTheme(seriesName: string) {
           borderWidth: BOX_HOVER_THICKNESS,
           borderColor: '#ffffff',
         },
+      };
+    case 'scatter':
+      return {
+        size: 12,
+        borderWidth: 1.5,
+        fillColor: transparentColor,
+        select: {
+          fillColor: 'rgba(255, 255, 255, 1)',
+        },
+        hover: {
+          fillColor: 'rgba(255, 255, 255, 1)',
+        },
+      };
+    case 'bubble':
+      return {
+        borderWidth: 0,
+        borderColor: transparentColor,
+        select: {},
+        hover: {},
       };
     default:
       return {};

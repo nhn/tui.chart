@@ -38,6 +38,7 @@ describe('Legend Store', () => {
         },
       ],
       useSpectrumLegend: false,
+      useScatterChartIcon: false,
     });
   });
 

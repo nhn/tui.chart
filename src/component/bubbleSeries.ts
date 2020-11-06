@@ -1,13 +1,15 @@
-import { CircleModel } from '@t/components/series';
-import { BaseOptions, BubbleSeriesType } from '@t/options';
+import { CircleModel, CircleResponderModel, CircleSeriesModels } from '@t/components/series';
+import { BaseOptions, BubbleSeriesType, Rect } from '@t/options';
 import { ChartState, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import CircleSeries from '@src/component/circleSeries';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, isString } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
+import { getNearestResponder } from '@src/helpers/responders';
+import Component from './component';
+import { BubbleChartSeriesTheme } from '@t/theme';
 
 const MINIMUM_RADIUS = 0.5;
 const MINIMUM_DETECTING_AREA_RADIUS = 1;
@@ -18,7 +20,19 @@ export function getMaxRadius(bubbleData: BubbleSeriesType[]) {
   }, 0);
 }
 
-export default class BubbleSeries extends CircleSeries {
+export default class BubbleSeries extends Component {
+  models: CircleSeriesModels = { series: [] };
+
+  drawModels!: CircleSeriesModels;
+
+  responders!: CircleResponderModel[];
+
+  activatedResponders: CircleResponderModel[] = [];
+
+  theme!: Required<BubbleChartSeriesTheme>;
+
+  rect!: Rect;
+
   maxRadius = -1;
 
   maxValue = -1;
@@ -28,8 +42,14 @@ export default class BubbleSeries extends CircleSeries {
     this.name = 'bubble';
   }
 
+  initUpdate(delta: number) {
+    this.drawModels.series.forEach((model, index) => {
+      model.radius = (this.models.series[index] as CircleModel).radius * delta;
+    });
+  }
+
   render(chartState: ChartState<BaseOptions>) {
-    const { layout, series, scale, axes, circleLegend, legend, options } = chartState;
+    const { layout, series, scale, axes, circleLegend, legend, options, theme } = chartState;
     const { plot } = layout;
 
     if (!series.bubble) {
@@ -39,6 +59,7 @@ export default class BubbleSeries extends CircleSeries {
     const { xAxis, yAxis } = axes;
     const bubbleData = series.bubble.data;
 
+    this.theme = theme.series.bubble as Required<BubbleChartSeriesTheme>;
     this.rect = plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -76,6 +97,8 @@ export default class BubbleSeries extends CircleSeries {
       yAxis: { limit: yAxisLimit },
     } = scale;
 
+    const { borderWidth, borderColor } = this.theme;
+
     return seriesRawData.flatMap(({ data, name, color: seriesColor }, seriesIndex) => {
       const circleModels: CircleModel[] = [];
       const active = this.activeSeriesMap![name];
@@ -99,9 +122,11 @@ export default class BubbleSeries extends CircleSeries {
           type: 'circle',
           radius,
           color,
-          style: ['default', { strokeStyle: color }],
+          style: ['default'],
           seriesIndex,
           name,
+          borderWidth,
+          borderColor,
         });
       });
 
@@ -128,5 +153,34 @@ export default class BubbleSeries extends CircleSeries {
 
       return tooltipData;
     });
+  }
+
+  private getResponderAppliedTheme(responders: CircleResponderModel[], type: 'select' | 'hover') {
+    return responders.map((responder) => deepMergedCopy(responder, this.theme[type]));
+  }
+
+  onMousemove({ responders, mousePosition }) {
+    const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
+    const responderWithTheme = this.getResponderAppliedTheme(closestResponder, 'hover');
+
+    this.eventBus.emit('renderHoveredSeries', { models: responderWithTheme, name: this.name });
+    this.activatedResponders = closestResponder;
+
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
+    this.eventBus.emit('needDraw');
+  }
+
+  onClick({ responders, mousePosition }) {
+    if (this.selectable) {
+      const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
+      const responderWithTheme = this.getResponderAppliedTheme(closestResponder, 'select');
+
+      this.eventBus.emit('renderSelectedSeries', {
+        models: responderWithTheme,
+        name: this.name,
+      });
+
+      this.eventBus.emit('needDraw');
+    }
   }
 }
