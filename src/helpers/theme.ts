@@ -70,11 +70,13 @@ export const defaultSeriesTheme = {
 
 const defaultTheme = {
   chart: {
-    title: {
-      fontSize: 11,
-      fontFamily: 'Arial',
-      fontWeight: '500',
-    },
+    fontFamily: 'Arial',
+  },
+  title: {
+    fontSize: 18,
+    fontFamily: 'Arial',
+    fontWeight: 100,
+    color: '#333333',
   },
 };
 

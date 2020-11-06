@@ -46,12 +46,12 @@ export const title = () => {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     theme: {
-      // title: {
-      //   fontFamily: '',
-      //   fontSize: 14,
-      //   fontWeight: 200,
-      //   color: '#ff416d',
-      // },
+      title: {
+        fontFamily: 'Comic Sans MS',
+        fontSize: 45,
+        fontWeight: 100,
+        color: '#ff416d',
+      },
     },
   });
 

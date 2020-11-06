@@ -20,10 +20,10 @@ import {
 } from '@src/brushes/spectrumLegend';
 import { getYAxisOption } from '@src/helpers/axes';
 import { getMaxLengthLabelWidth } from '@src/helpers/calculator';
+import { Theme } from '@t/theme';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
-const MAIN_TITLE_HEIGHT = 18;
 const X_AXIS_TITLE_HEIGHT = 11;
 const Y_AXIS_TITLE_HEIGHT = 11;
 const Y_AXIS_MIN_WIDTH = 40;
@@ -287,12 +287,13 @@ function getPlotRect(xAxis: Rect, yAxis: Rect, size: OptionalSize) {
   };
 }
 
-function getTitleRect(chartSize: Size, exportMenu: Rect, visible: boolean) {
+function getTitleRect(chartSize: Size, exportMenu: Rect, visible: boolean, theme: Theme) {
+  const titleHeight = theme.title.fontSize as number;
   const point = { x: padding.X, y: padding.Y };
   const marginBottom = 5;
   const width = visible ? chartSize.width : 0;
   const height = visible
-    ? Math.max(MAIN_TITLE_HEIGHT + marginBottom, exportMenu.height)
+    ? Math.max(titleHeight + marginBottom, exportMenu.height)
     : exportMenu.height;
 
   return { width, height, ...point };
@@ -450,7 +451,7 @@ const layout: StoreModule = {
   }),
   action: {
     setLayout({ state }) {
-      const { legend: legendState } = state;
+      const { legend: legendState, theme } = state;
       const {
         legend: { align },
         circleLegend: circleLegendState,
@@ -473,7 +474,7 @@ const layout: StoreModule = {
       // exportMenu -> resetButton -> title -> yAxis.title -> yAxis -> secondaryYAxisTitle -> secondaryYAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
       const exportMenu = getExportMenuRect(chartSize, isExportMenuVisible(options));
       const resetButton = getResetButtonRect(exportMenu, isUsingResetButton(options));
-      const title = getTitleRect(chartSize, exportMenu, !!options.chart?.title);
+      const title = getTitleRect(chartSize, exportMenu, !!options.chart?.title, theme);
       const yAxisTitle = getYAxisTitleRect({
         chartSize,
         visible: !!yAxisOption?.title || !!secondaryYAxisOption?.title,

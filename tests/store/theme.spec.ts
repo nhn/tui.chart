@@ -16,11 +16,13 @@ describe('theme store', () => {
 
         expect(state.theme).toEqual({
           chart: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Arial',
-              fontWeight: '500',
-            },
+            fontFamily: 'Arial',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 100,
+            color: '#333333',
           },
           series: {
             line: {
@@ -82,11 +84,13 @@ describe('theme store', () => {
 
         expect(state.theme).toEqual({
           chart: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Arial',
-              fontWeight: '500',
-            },
+            fontFamily: 'Arial',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 100,
+            color: '#333333',
           },
           series: {
             line: {
@@ -133,11 +137,13 @@ describe('theme store', () => {
 
         expect(state.theme).toEqual({
           chart: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Arial',
-              fontWeight: '500',
-            },
+            fontFamily: 'Arial',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 100,
+            color: '#333333',
           },
           series: {
             line: {
@@ -381,11 +387,13 @@ describe('theme store', () => {
 
         expect(state.theme).toEqual({
           chart: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Arial',
-              fontWeight: '500',
-            },
+            fontFamily: 'Arial',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 100,
+            color: '#333333',
           },
           series: {
             pie: {

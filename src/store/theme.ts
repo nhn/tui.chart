@@ -42,10 +42,10 @@ function getThemeOptionsWithSeriesName(
   const theme = options?.theme;
 
   if (!theme?.series) {
-    return {} as Theme;
+    return { ...theme } as Theme;
   }
 
-  const seriesTheme = { series: {} } as Theme;
+  const seriesTheme = { ...theme, series: {} } as Theme;
   const seriesNames = Object.keys(series);
   const isComboChart = seriesNames.length > 1;
 
@@ -118,6 +118,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
     series,
     isNestedPieChart
   );
+
   const theme = deepMergedCopy(
     getDefaultTheme(series),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)

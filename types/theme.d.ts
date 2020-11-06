@@ -29,17 +29,18 @@ type SeriesTheme =
 type FontTheme = {
   fontSize?: number;
   fontFamily?: string;
-  fontWeight?: string;
+  fontWeight?: string | number;
   color?: string;
 };
 
 type ChartTheme = {
-  title?: FontTheme;
+  fontFamily?: string;
 };
 
 type Theme = {
+  chart?: ChartTheme;
   series: SeriesThemeMap;
-  chart: ChartTheme;
+  title: FontTheme;
 };
 
 type ComboChartSeriesTheme =
@@ -172,6 +173,7 @@ interface LineAreaChartSeriesTheme {
 
 interface BaseThemeOptions {
   chart?: ChartTheme;
+  title?: FontTheme;
   tooltip?: {};
   chartExportMenu?: {};
   series?: {};

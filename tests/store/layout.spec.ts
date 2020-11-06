@@ -34,6 +34,14 @@ describe('default layout', () => {
     },
     layout: { yAxis: {}, xAxis: {}, plot: {} },
     options: { exportMenu: { visible: false } },
+    theme: {
+      title: {
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontWeight: 200,
+        color: '#333333',
+      },
+    },
   };
 
   const store = { state } as Store<BarChartOptions>;
@@ -77,6 +85,14 @@ describe('axis size option', () => {
         exportMenu: { visible: false },
         yAxis: { width: 50, height: 100 },
       },
+      theme: {
+        title: {
+          fontSize: 18,
+          fontFamily: 'Arial',
+          fontWeight: 200,
+          color: '#333333',
+        },
+      },
     };
 
     const store = { state } as Store<BarChartOptions>;
@@ -108,6 +124,14 @@ describe('axis size option', () => {
         exportMenu: { visible: false },
         xAxis: { width: 130, height: 100 },
       },
+      theme: {
+        title: {
+          fontSize: 18,
+          fontFamily: 'Arial',
+          fontWeight: 200,
+          color: '#333333',
+        },
+      },
     };
 
     const store = { state } as Store<BarChartOptions>;
@@ -135,6 +159,14 @@ describe('axis size option', () => {
         },
         secondaryYAxis: {
           labels: ['2', '4', '6', '8', '10'],
+        },
+      },
+      theme: {
+        title: {
+          fontSize: 18,
+          fontFamily: 'Arial',
+          fontWeight: 200,
+          color: '#333333',
         },
       },
       layout: { yAxis: {}, xAxis: {}, plot: {}, secondaryYAxis: {}, secondaryYAxisTitle: {} },
@@ -177,6 +209,14 @@ describe('only plot size option', () => {
         labels: ['a', 'b', 'c', 'd'],
       },
     },
+    theme: {
+      title: {
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontWeight: 200,
+        color: '#333333',
+      },
+    },
     layout: { yAxis: {}, xAxis: {}, plot: {} },
     options: {
       exportMenu: { visible: false },
@@ -214,6 +254,14 @@ describe('with export menu visible options', () => {
         labels: ['a', 'b', 'c', 'd'],
       },
     },
+    theme: {
+      title: {
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontWeight: 200,
+        color: '#333333',
+      },
+    },
     layout: { yAxis: {}, xAxis: {}, plot: {} },
     options: { exportMenu: { visible: true } },
   };
@@ -243,6 +291,14 @@ describe('with reset button visible options', () => {
       xAxis: {},
       yAxis: {
         labels: ['a', 'b', 'c', 'd'],
+      },
+    },
+    theme: {
+      title: {
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontWeight: 200,
+        color: '#333333',
       },
     },
     layout: { yAxis: {}, xAxis: {}, plot: {}, resetButton: {} },
