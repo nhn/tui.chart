@@ -125,9 +125,14 @@ interface RadarChartSeriesTheme {
   colors?: string[];
   lineWidth?: number;
   dashSegments?: number[];
-  dot?: Omit<DotTheme, 'color'>;
+  areaOpacity?: number;
+  dot?: DotTheme;
   select?: {
     dot?: DotTheme;
+    areaOpacity?: number;
+    restSeries?: {
+      areaOpacity: number;
+    };
   };
   hover?: {
     dot?: DotTheme;

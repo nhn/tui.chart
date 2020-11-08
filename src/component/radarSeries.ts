@@ -21,13 +21,7 @@ type RenderOptions = {
   showArea: boolean;
   ratio: number;
 };
-
-const areaOpacity = {
-  SHOW: 0.3,
-  NONE: 0,
-  INACTIVE: 0.05,
-};
-
+const NONE_AREA_OPACITY = 0;
 const seriesOpacity = {
   INACTIVE: 0.2,
   ACTIVE: 1,
@@ -135,11 +129,13 @@ export default class RadarSeries extends Component {
   }
 
   getRespondersWithTheme(responders: CircleResponderModel[], type: 'select' | 'hover') {
-    const { radius, borderWidth, borderColor } = this.theme[type].dot!;
+    const { radius, borderWidth, borderColor, color } = this.theme[type].dot!;
+    console.log(responders, this.theme[type]);
 
     return responders.map((responder) => ({
       ...responder,
       radius,
+      color: color ?? responder.color,
       style: [{ lineWidth: borderWidth, strokeStyle: borderColor }],
     }));
   }
@@ -202,14 +198,14 @@ export default class RadarSeries extends Component {
   }
 
   renderDotModels(seriesModels: PolygonModel[]): CircleModel[] {
-    const { radius } = this.theme.dot as Required<DotTheme>;
+    const { radius, color: dotColor } = this.theme.dot as Required<DotTheme>;
 
     return seriesModels.flatMap(({ points, color, name }) =>
       points.map((point) => ({
         type: 'circle',
         ...point,
         radius,
-        color,
+        color: dotColor ?? color,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
         name,
       }))
@@ -218,11 +214,14 @@ export default class RadarSeries extends Component {
 
   getSeriesColor(showArea: boolean, seriesColor: string, name: string) {
     const active = this.activeSeriesMap![name];
+    const { select, areaOpacity } = this.theme;
+    const selected = Object.values(this.activeSeriesMap!).some((elem) => !elem);
     const color = getRGBA(seriesColor!, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
-    let fillOpacity = areaOpacity.NONE;
+    let fillOpacity = NONE_AREA_OPACITY;
 
     if (showArea) {
-      fillOpacity = active ? areaOpacity.SHOW : areaOpacity.INACTIVE;
+      const selectedAreaOpacity = active ? select.areaOpacity! : select.restSeries!.areaOpacity;
+      fillOpacity = selected ? selectedAreaOpacity : areaOpacity;
     }
 
     return { color, fillColor: getRGBA(color, fillOpacity) };

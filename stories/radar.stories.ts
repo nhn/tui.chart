@@ -123,6 +123,7 @@ export const theme = () => {
   const { el } = createChart(budgetData2, {
     series: {
       showDot: true,
+      showArea: true,
       selectable: true,
     },
     theme: {
@@ -130,10 +131,10 @@ export const theme = () => {
         colors: ['#264653', '#2A9D8F', '#E9C46A', '#F4A261', '#E76F51'],
         lineWidth: 5,
         dashSegments: [0, 10],
+        areaOpacity: 0.5,
         dot: {
           radius: 5,
         },
-
         hover: {
           dot: {
             radius: 6,
@@ -147,6 +148,10 @@ export const theme = () => {
             borderWidth: 2,
             borderColor: '#000000',
           },
+          restSeries: {
+            areaOpacity: 0.01,
+          },
+          areaOpacity: 1,
         },
       },
     },
