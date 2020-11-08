@@ -43,6 +43,7 @@ const chartState = {
   theme: {
     series: {
       radar: {
+        areaOpacity: 0.3,
         colors: ['#aaaaaa', '#bbbbbb'],
         dot: {
           radius: 3,

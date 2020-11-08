@@ -13,6 +13,7 @@ import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { DEFAULT_LINE_SERIES_WIDTH } from '@src/helpers/theme';
+import { RadarChartSeriesTheme, DotTheme } from '@t/theme';
 type RenderOptions = {
   categories: string[];
   centerX: number;

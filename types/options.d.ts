@@ -13,6 +13,7 @@ import {
   PieChartThemeOptions,
   ScatterChartThemeOptions,
   TreemapChartThemeOptions,
+  RadarChartThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
