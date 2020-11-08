@@ -1,7 +1,9 @@
+import { ScatterSeriesIconType } from '@t/components/series';
+
 type SeriesThemeMap = {
   line?: LineChartSeriesTheme;
   area?: AreaChartSeriesTheme;
-  scatter?: CommonSeriesTheme;
+  scatter?: ScatterChartSeriesTheme;
   heatmap?: HeatmapChartSeriesTheme;
   treemap?: TreemapChartSeriesTheme;
   bar?: CommonSeriesTheme;
@@ -20,6 +22,8 @@ type SeriesTheme =
   | HeatmapChartSeriesTheme
   | TreemapChartSeriesTheme
   | PieChartSeriesTheme
+  | ScatterChartSeriesTheme
+  | BubbleChartSeriesTheme
   | NestedPieChartSeriesTheme;
 
 type ChartTheme = {
@@ -49,11 +53,35 @@ interface TreemapChartSeriesTheme {
   colors?: string[];
   startColor?: string;
   endColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
+  select?: {
+    borderColor?: string;
+    borderWidth?: number;
+    color?: string;
+  };
+  hover?: {
+    borderColor?: string;
+    borderWidth?: number;
+    color?: string;
+  };
 }
 
 interface HeatmapChartSeriesTheme {
   startColor: string;
   endColor: string;
+  borderColor?: string;
+  borderWidth?: number;
+  select?: {
+    borderColor?: string;
+    borderWidth?: number;
+    color?: string;
+  };
+  hover?: {
+    borderColor?: string;
+    borderWidth?: number;
+    color?: string;
+  };
 }
 
 interface DotTheme {
@@ -67,6 +95,32 @@ interface LineTypeSeriesTheme {
   color?: string;
   lineWidth?: number;
   dashSegments?: number[];
+}
+
+interface ScatterChartSeriesTheme extends CommonSeriesTheme {
+  iconTypes?: ScatterSeriesIconType[];
+  borderWidth?: number;
+  fillColor?: string;
+  size?: number;
+  select?: {
+    size?: number;
+    borderColor?: string;
+    borderWidth?: number;
+    fillColor?: string;
+  };
+  hover?: {
+    size?: number;
+    borderColor?: string;
+    borderWidth?: number;
+    fillColor?: string;
+  };
+}
+
+interface BubbleChartSeriesTheme extends CommonSeriesTheme {
+  borderWidth?: number;
+  borderColor?: string;
+  select?: Omit<DotTheme, 'radius'>;
+  hover?: Omit<DotTheme, 'radius'>;
 }
 
 interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
@@ -97,7 +151,7 @@ interface AreaChartSeriesTheme extends LineChartSeriesTheme {
 
 interface LineScatterChartSeriesTheme {
   line?: LineChartSeriesTheme;
-  scatter?: CommonSeriesTheme;
+  scatter?: ScatterChartSeriesTheme;
   colors?: string[];
 }
 
@@ -132,10 +186,30 @@ interface LineAreaChartThemeOptions extends BaseThemeOptions {
   series?: LineAreaChartSeriesTheme;
 }
 
+interface LineScatterChartThemeOptions extends BaseThemeOptions {
+  series?: LineScatterChartSeriesTheme;
+}
+
 interface PieChartThemeOptions extends BaseThemeOptions {
   series?: PieChartSeriesTheme;
 }
 
 interface NestedPieChartThemeOptions extends BaseThemeOptions {
   series?: NestedPieChartSeriesTheme;
+}
+
+interface HeatmapChartThemeOptions extends BaseThemeOptions {
+  series?: HeatmapChartSeriesTheme;
+}
+
+interface TreemapChartThemeOptions extends BaseThemeOptions {
+  series?: TreemapChartSeriesTheme;
+}
+
+interface ScatterChartThemeOptions extends BaseThemeOptions {
+  series?: ScatterChartSeriesTheme;
+}
+
+interface BubbleChartThemeOptions extends BaseThemeOptions {
+  series?: BubbleChartSeriesTheme;
 }

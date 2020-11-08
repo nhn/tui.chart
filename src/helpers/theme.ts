@@ -1,4 +1,6 @@
 import { RawSeries } from '@t/store/store';
+import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { Theme } from '@t/theme';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -40,6 +42,8 @@ export const defaultSeriesTheme = {
   endColor: '#d74177',
   lineWidth: DEFAULT_LINE_SERIES_WIDTH,
   dashSegments: [],
+  borderWidth: 0,
+  borderColor: '#ffffff',
   select: {
     dot: {
       radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
@@ -83,6 +87,8 @@ function getSeriesTheme(seriesName: string) {
     dot: defaultSeriesTheme.dot,
   };
 
+  const transparentColor = 'rgba(255, 255, 255, 0)';
+
   switch (seriesName) {
     case 'line':
       return lineTypeSeriesTheme;
@@ -101,6 +107,35 @@ function getSeriesTheme(seriesName: string) {
       return {
         startColor: defaultSeriesTheme.startColor,
         endColor: defaultSeriesTheme.endColor,
+        borderWidth: 0,
+        borderColor: '#ffffff',
+        hover: {
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+        },
+        select: {
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+        },
+      };
+    case 'scatter':
+      return {
+        size: 12,
+        borderWidth: 1.5,
+        fillColor: transparentColor,
+        select: {
+          fillColor: 'rgba(255, 255, 255, 1)',
+        },
+        hover: {
+          fillColor: 'rgba(255, 255, 255, 1)',
+        },
+      };
+    case 'bubble':
+      return {
+        borderWidth: 0,
+        borderColor: transparentColor,
+        select: {},
+        hover: {},
       };
     default:
       return {};

@@ -103,10 +103,26 @@ export const responsive = () => {
 
 export const theme = () => {
   const { el } = createChart(temperatureAverageDataForHeatmap, {
+    series: {
+      selectable: true,
+      dataLabels: { visible: true },
+    },
     theme: {
       series: {
         startColor: '#F3FFE3',
         endColor: '#FF9CEE',
+        borderWidth: 3,
+        borderColor: '#ffffff',
+        select: {
+          color: '#fdfd96',
+          borderWidth: 2,
+          borderColor: '#80CEE1',
+        },
+        hover: {
+          color: '#FFB144',
+          borderWidth: 5,
+          borderColor: '#CAE7C1',
+        },
       },
     },
   });

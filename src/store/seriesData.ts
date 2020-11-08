@@ -85,13 +85,20 @@ const seriesData: StoreModule = {
       const newSeriesData = {};
 
       Object.keys(rawSeries).forEach((seriesName) => {
-        const { colors } = theme.series![seriesName];
-        const originSeriesData = rawSeries[seriesName].map((m, idx) => ({
+        const { colors, iconTypes } = theme.series![seriesName];
+        let originSeriesData = rawSeries[seriesName].map((m, idx) => ({
           ...m,
           rawData: m.data,
           data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
           color: colors ? colors[idx] : '',
         }));
+
+        if (seriesName === 'scatter') {
+          originSeriesData = originSeriesData.map((m, idx) => ({
+            ...m,
+            iconType: iconTypes ? iconTypes[idx] : 'circle',
+          }));
+        }
 
         const seriesCount = originSeriesData.length;
         const seriesGroupCount = originSeriesData[0]?.data?.length ?? 0;

@@ -14,6 +14,8 @@ import { AxisData } from '@t/store/store';
 import { range } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 
+export type RespondersThemeType = 'select' | 'hover';
+
 export function getNearestResponder(
   responders: CircleResponderModel[],
   mousePosition: Point,

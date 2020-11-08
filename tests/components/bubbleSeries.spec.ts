@@ -73,6 +73,16 @@ const chartState = {
     radius: 15,
     visible: true,
   },
+  theme: {
+    series: {
+      bubble: {
+        borderWidth: 0,
+        borderColor: 'rgba(0, 0, 0, 0)',
+        select: {},
+        hover: {},
+      },
+    },
+  },
 };
 
 beforeEach(() => {
@@ -93,6 +103,8 @@ const result = {
   },
   responders: [
     {
+      borderWidth: 0,
+      borderColor: 'rgba(0, 0, 0, 0)',
       color: 'rgba(170, 170, 170, 0.85)',
       radius: 8.5,
       seriesIndex: 0,
@@ -110,6 +122,8 @@ const result = {
       index: 0,
     },
     {
+      borderWidth: 0,
+      borderColor: 'rgba(0, 0, 0, 0)',
       color: 'rgba(170, 170, 170, 0.85)',
       radius: 16,
       seriesIndex: 0,
@@ -127,6 +141,8 @@ const result = {
       index: 1,
     },
     {
+      borderWidth: 0,
+      borderColor: 'rgba(0, 0, 0, 0)',
       color: 'rgba(187, 187, 187, 0.85)',
       radius: 3.25,
       seriesIndex: 1,
@@ -147,30 +163,36 @@ const result = {
   models: {
     series: [
       {
+        borderWidth: 0,
+        borderColor: 'rgba(0, 0, 0, 0)',
         color: 'rgba(170, 170, 170, 0.8)',
         radius: 7.5,
         seriesIndex: 0,
-        style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.8)' }],
+        style: ['default'],
         type: 'circle',
         x: 0,
         y: 0,
         name: 'nameA',
       },
       {
+        borderWidth: 0,
+        borderColor: 'rgba(0, 0, 0, 0)',
         color: 'rgba(170, 170, 170, 0.8)',
         radius: 15,
         seriesIndex: 0,
-        style: ['default', { strokeStyle: 'rgba(170, 170, 170, 0.8)' }],
+        style: ['default'],
         type: 'circle',
         x: 140,
         y: 0,
         name: 'nameA',
       },
       {
+        borderWidth: 0,
+        borderColor: 'rgba(0, 0, 0, 0)',
         color: 'rgba(187, 187, 187, 0.8)',
         radius: 2.25,
         seriesIndex: 1,
-        style: ['default', { strokeStyle: 'rgba(187, 187, 187, 0.8)' }],
+        style: ['default'],
         type: 'circle',
         x: 280,
         y: 280,

@@ -112,3 +112,30 @@ export const responsive = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const { el } = createChart(lifeExpectancyPerGDPData, {
+    series: {
+      selectable: true,
+    },
+    theme: {
+      series: {
+        colors: ['#ff9cee', '#9b283c', '#d6aaff', '#97a2ff', '#6eb5ff'],
+        borderWidth: 2,
+        borderColor: '#fdfd96',
+        select: {
+          borderWidth: 4,
+          borderColor: '#80CEE1',
+          color: '#C23B22',
+        },
+        hover: {
+          borderWidth: 4,
+          borderColor: '#80CEE1',
+          color: '#ff6961',
+        },
+      },
+    },
+  });
+
+  return el;
+};

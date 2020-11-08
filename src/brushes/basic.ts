@@ -48,7 +48,16 @@ export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: C
 }
 
 export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectModel) {
-  const { x, y, width, height, radius = 0, stroke = 'black', fill = '' } = pathRectModel;
+  const {
+    x,
+    y,
+    width,
+    height,
+    radius = 0,
+    stroke = 'black',
+    fill = '',
+    lineWidth = 1,
+  } = pathRectModel;
 
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -66,13 +75,23 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
     ctx.fill();
   }
   if (stroke) {
+    ctx.lineWidth = lineWidth;
     ctx.strokeStyle = stroke;
     ctx.stroke();
   }
 }
 
 export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
-  const { x, y, style, radius, color, angle = { start: 0, end: Math.PI * 2 } } = circleModel;
+  const {
+    x,
+    y,
+    style,
+    radius,
+    color,
+    angle = { start: 0, end: Math.PI * 2 },
+    borderWidth,
+    borderColor,
+  } = circleModel;
 
   ctx.beginPath();
   ctx.fillStyle = color;
@@ -87,6 +106,14 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
   ctx.fill();
+
+  if (borderWidth) {
+    ctx.lineWidth = borderWidth;
+  }
+
+  if (borderColor) {
+    ctx.strokeStyle = borderColor;
+  }
 
   if (ctx.shadowColor) {
     ctx.shadowColor = 'transparent';
