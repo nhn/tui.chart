@@ -429,9 +429,12 @@ export function makeRectLabelInfo(
     ...labelPosition,
     text: isString(value) ? value : formatter(value!),
     name,
-    hasTextBubble:
-      rect.type === 'stackTotal' || (rect.type === 'rect' && rect.modelType === 'bullet'),
+    hasTextBubble: hasTextBubble(rect),
   };
+}
+
+function hasTextBubble(rect: RectDataLabel) {
+  return rect.type === 'stackTotal' || (rect.type === 'rect' && rect.modelType === 'bullet');
 }
 
 export function makeSectorLabelPosition(

@@ -54,7 +54,7 @@ export const labelStyle = {
     textBaseline: 'top',
   },
   stackTotal: {
-    font: '400 9px Arial',
+    font: '400 11px Arial',
     fillStyle: '#333333',
     textBaseline: 'middle',
   },
@@ -77,13 +77,13 @@ export const labelStyle = {
     textBaseline: 'middle',
   },
   rectDataLabel: {
-    font: '400 9px Arial',
+    font: '400 11px Arial',
     fillStyle: 'rgba(0, 0, 0, 0.5)',
     textAlign: 'center',
     textBaseline: 'middle',
   },
   lineDataLabel: {
-    font: '400 9px Arial',
+    font: '400 11px Arial',
     fillStyle: 'rgba(0, 0, 0, 0.5)',
     textAlign: 'center',
     textBaseline: 'middle',
@@ -184,7 +184,7 @@ const textBubbleStyle = {
   shadow: {
     shadowColor: 'rgba(0, 0, 0, 0.3)',
     shadowOffsetY: 2,
-    shadowBlur: 2,
+    shadowBlur: 4,
   },
 };
 

@@ -37,6 +37,29 @@ function getOptionStyle(type: DataLabelType, options: DataLabelOptions): DataLab
     : options.style;
 }
 
+function getLabelInfo(model, labelOptions) {
+  const { type } = model;
+  const dataLabel: DataLabel[] = [];
+
+  if (type === 'point') {
+    dataLabel.push(makePointLabelInfo(model as PointDataLabel, labelOptions));
+  } else if (type === 'sector') {
+    dataLabel.push(makeSectorLabelInfo(model as RadialDataLabel, labelOptions));
+
+    if (labelOptions.pieSeriesName?.visible) {
+      const seriesNameLabel = makePieSeriesNameLabelInfo(model as RadialDataLabel, labelOptions);
+
+      dataLabel.push(seriesNameLabel);
+    }
+  } else if (type === 'line') {
+    dataLabel.push(makeLineLabelInfo(model as LineDataLabel, labelOptions));
+  } else {
+    dataLabel.push(makeRectLabelInfo(model as RectDataLabel, labelOptions));
+  }
+
+  return dataLabel;
+}
+
 export default class DataLabels extends Component {
   models!: DataLabelModels;
 
@@ -91,30 +114,7 @@ export default class DataLabels extends Component {
         return;
       }
 
-      let dataLabel!: DataLabel;
-
-      if (type === 'point') {
-        dataLabel = makePointLabelInfo(model as PointDataLabel, labelOptions);
-      } else if (type === 'sector') {
-        dataLabel = makeSectorLabelInfo(model as RadialDataLabel, labelOptions);
-
-        if (labelOptions.pieSeriesName?.visible) {
-          const seriesNameLabel = makePieSeriesNameLabelInfo(
-            model as RadialDataLabel,
-            labelOptions
-          );
-
-          labels.push(seriesNameLabel);
-        }
-      } else if (type === 'line') {
-        dataLabel = makeLineLabelInfo(model as LineDataLabel, labelOptions);
-      } else {
-        dataLabel = makeRectLabelInfo(model as RectDataLabel, labelOptions);
-      }
-
-      if (dataLabel) {
-        labels.push(dataLabel);
-      }
+      labels.splice(labels.length, 0, ...getLabelInfo(model, labelOptions));
     });
 
     this.dataLabelsMap[name] = { data: labels, options: dataLabelOptions };

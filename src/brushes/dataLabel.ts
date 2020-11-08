@@ -12,8 +12,6 @@ import { includes } from '@src/helpers/utils';
 import { Point } from '@t/options';
 import { line } from './basic';
 
-type PathRectStyleName = 'shadow';
-
 export type ArrowDirection = 'top' | 'right' | 'bottom' | 'left';
 
 export const textBubble = {
@@ -151,7 +149,6 @@ export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelM
     radius: 7,
     width,
     height,
-    stroke: '#eeeeee',
     bubbleStyle: ['shadow'],
     direction,
     points,
