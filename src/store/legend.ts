@@ -162,6 +162,7 @@ const legend: StoreModule = {
     const checkboxVisible = showCheckbox(options);
     const useSpectrumLegend =
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
+    const useScatterChartIcon = !!series?.scatter;
 
     const legendLabels = hasNestedPieSeries(series)
       ? getNestedPieLegendLabels(series)
@@ -175,7 +176,7 @@ const legend: StoreModule = {
     }));
 
     return {
-      legend: { useSpectrumLegend, data } as Legend,
+      legend: { useSpectrumLegend, data, useScatterChartIcon } as Legend,
       circleLegend: {} as CircleLegend,
     };
   },

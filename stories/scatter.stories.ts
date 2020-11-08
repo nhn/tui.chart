@@ -1,6 +1,10 @@
 import { ScatterChartOptions, ScatterSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { currentUserCoordinateDatetimeData, genderHeightWeightData } from './data';
+import {
+  currentUserCoordinate,
+  currentUserCoordinateDatetimeData,
+  genderHeightWeightData,
+} from './data';
 import ScatterChart from '@src/charts/scatterChart';
 
 export default {
@@ -65,6 +69,57 @@ export const responsive = () => {
     { chart: { title: 'Height vs Weight' } },
     true
   );
+
+  return el;
+};
+
+export const theme = () => {
+  const { el } = createChart(genderHeightWeightData, {
+    series: { selectable: true },
+    theme: {
+      series: {
+        size: 8,
+        borderWidth: 1,
+        select: {
+          size: 14,
+          borderWidth: 4,
+          borderColor: '#FFE662',
+          fillColor: '#C23B22',
+        },
+        hover: {
+          size: 14,
+          borderWidth: 4,
+          borderColor: '#FFE662',
+          fillColor: '#ff6961',
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const iconType = () => {
+  const { el } = createChart(currentUserCoordinate, {
+    series: {
+      selectable: true,
+    },
+    theme: {
+      series: {
+        colors: [
+          '#ff9cee',
+          '#9b283c',
+          '#d6aaff',
+          '#97a2ff',
+          '#6eb5ff',
+          '#ffabab',
+          '#f79aff',
+          '#f6a6ff',
+        ],
+        iconTypes: ['rect', 'triangle', 'pentagon', 'star', 'diamond', 'cross', 'hexagon'],
+      },
+    },
+  });
 
   return el;
 };

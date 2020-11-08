@@ -46,6 +46,8 @@ export type CircleModel = {
     end: number;
   };
   name?: string;
+  borderWidth?: number;
+  borderColor?: string;
 } & Point;
 
 export type CircleResponderModel = {
@@ -77,6 +79,7 @@ export type PathRectModel = {
   radius?: number;
   fill?: string;
   stroke?: string;
+  lineWidth?: number;
 } & Rect;
 
 export interface RectStyle {
@@ -151,6 +154,10 @@ export type BoxSeriesModels = {
 
 export type CircleSeriesModels = {
   series: CircleModel[];
+};
+
+export type ScatterSeriesModels = {
+  series: ScatterSeriesModel[];
 };
 
 export type LineSeriesModels = {
@@ -260,3 +267,27 @@ export interface MouseEventType {
 export type NestedPieSeriesModels = Record<string, SectorModel[]> & {
   selectedSeries: SectorModel[];
 };
+
+export type ScatterSeriesIconType =
+  | 'circle'
+  | 'rect'
+  | 'triangle'
+  | 'pentagon'
+  | 'star'
+  | 'diamond'
+  | 'cross'
+  | 'hexagon';
+
+export interface ScatterSeriesModel {
+  type: 'scatterSeries';
+  iconType: ScatterSeriesIconType;
+  x: number;
+  y: number;
+  borderColor: string;
+  borderWidth: number;
+  fillColor: string;
+  size: number;
+  index?: number;
+  seriesIndex?: number;
+  name?: string;
+}

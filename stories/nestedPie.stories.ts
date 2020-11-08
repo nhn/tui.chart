@@ -2,6 +2,7 @@ import { NestedPieChartOptions, NestedPieSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { browserUsageData2, groupedBrowserUsageData } from './data';
 import NestedPieChart from '@src/charts/nestedPieChart';
+import { NestedPieChartThemeOptions } from '@t/theme';
 
 export default {
   title: 'chart|NestedPie',

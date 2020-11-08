@@ -40,6 +40,8 @@ import {
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
+import { ScatterSeriesIconType } from '@t/components/series';
+import { Theme } from '@t/theme';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -181,7 +183,7 @@ export type StackSeries = {
   [key in BoxType]?: StackSeriesData<key>;
 };
 
-export type LegendIconType = 'rect' | 'circle' | 'spectrum' | 'line';
+export type LegendIconType = 'spectrum' | 'line' | ScatterSeriesIconType;
 
 export interface Legend {
   visible: boolean;
@@ -190,6 +192,7 @@ export interface Legend {
   width: number;
   data: Array<Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType'> & { width: number }>;
   useSpectrumLegend: boolean;
+  useScatterChartIcon: boolean;
 }
 
 export interface CircleLegend {

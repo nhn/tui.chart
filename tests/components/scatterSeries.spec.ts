@@ -68,6 +68,18 @@ const chartState = {
       { label: 'nameB', active: true, checked: true },
     ],
   },
+  theme: {
+    series: {
+      scatter: {
+        size: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0)',
+        fillColor: 'rgba(0, 0, 0, 0)',
+        select: {},
+        hover: {},
+      },
+    },
+  },
 };
 
 beforeEach(() => {
@@ -88,14 +100,18 @@ const result = {
   },
   responders: [
     {
-      color: 'rgba(170, 170, 170, 1)',
-      radius: 7,
+      borderColor: 'rgba(170, 170, 170, 1)',
+      color: 'rgba(255, 255, 255, 0)',
+      radius: 6,
+      size: 12,
       seriesIndex: 0,
-      style: ['default', 'hover'],
+      style: [{ strokeStyle: 'rgba(255, 255, 255, 0)' }],
       type: 'circle',
       x: 0,
       y: 0,
       detectionSize: 0,
+      borderWidth: 1,
+      fillColor: 'rgba(0, 0, 0, 0)',
       data: {
         color: '#aaaaaa',
         label: 'nameA',
@@ -105,10 +121,14 @@ const result = {
       index: 0,
     },
     {
-      color: 'rgba(170, 170, 170, 1)',
-      radius: 7,
+      fillColor: 'rgba(0, 0, 0, 0)',
+      borderColor: 'rgba(170, 170, 170, 1)',
+      borderWidth: 1,
+      color: 'rgba(255, 255, 255, 0)',
+      radius: 6,
+      size: 12,
       seriesIndex: 0,
-      style: ['default', 'hover'],
+      style: [{ strokeStyle: 'rgba(255, 255, 255, 0)' }],
       type: 'circle',
       x: 140,
       y: 0,
@@ -122,10 +142,14 @@ const result = {
       index: 1,
     },
     {
-      color: 'rgba(187, 187, 187, 1)',
-      radius: 7,
+      fillColor: 'rgba(0, 0, 0, 0)',
+      borderColor: 'rgba(187, 187, 187, 1)',
+      borderWidth: 1,
+      color: 'rgba(255, 255, 255, 0)',
+      radius: 6,
+      size: 12,
       seriesIndex: 1,
-      style: ['default', 'hover'],
+      style: [{ strokeStyle: 'rgba(255, 255, 255, 0)' }],
       type: 'circle',
       x: 280,
       y: 280,
@@ -136,37 +160,43 @@ const result = {
         value: { x: 20, y: 10 },
       },
       name: 'nameB',
-      index: 2,
+      index: 0,
     },
   ],
   models: {
     series: [
       {
-        color: 'rgba(170, 170, 170, 0.9)',
-        radius: 7,
+        borderWidth: 1,
+        fillColor: 'rgba(0, 0, 0, 0)',
+        borderColor: 'rgba(170, 170, 170, 1)',
+        size: 12,
         seriesIndex: 0,
-        style: ['default'],
-        type: 'circle',
+        index: 0,
+        type: 'scatterSeries',
         x: 0,
         y: 0,
         name: 'nameA',
       },
       {
-        color: 'rgba(170, 170, 170, 0.9)',
-        radius: 7,
+        borderWidth: 1,
+        fillColor: 'rgba(0, 0, 0, 0)',
+        borderColor: 'rgba(170, 170, 170, 1)',
+        size: 12,
         seriesIndex: 0,
-        style: ['default'],
-        type: 'circle',
+        index: 1,
+        type: 'scatterSeries',
         x: 140,
         y: 0,
         name: 'nameA',
       },
       {
-        color: 'rgba(187, 187, 187, 0.9)',
-        radius: 7,
+        borderWidth: 1,
+        fillColor: 'rgba(0, 0, 0, 0)',
+        borderColor: 'rgba(187, 187, 187, 1)',
+        size: 12,
         seriesIndex: 1,
-        style: ['default'],
-        type: 'circle',
+        index: 0,
+        type: 'scatterSeries',
         x: 280,
         y: 280,
         name: 'nameB',
@@ -207,5 +237,5 @@ it('should apply transparency when legend active false', () => {
     })
   );
 
-  expect(scatterSeries.drawModels.series[2].color).toEqual('rgba(187, 187, 187, 0.3)');
+  expect(scatterSeries.drawModels.series[2].borderColor).toEqual('rgba(187, 187, 187, 0.3)');
 });
