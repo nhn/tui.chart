@@ -2,22 +2,26 @@ import Component from './component';
 import { ChartState, Options, Legend as LegendType, Series, LegendIconType } from '@t/store/store';
 import { LegendData, LegendModel } from '@t/components/legend';
 import {
+  getLegendItemHeight,
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
   LEGEND_ITEM_MARGIN_X,
-  LEGEND_LABEL_FONT,
   LEGEND_MARGIN_X,
-  LEGEND_ITEM_HEIGHT,
+  // LEGEND_ITEM_HEIGHT,
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
 import { sum } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
+import { LegendTheme } from '@t/theme';
+import { getTitleFontString } from '@src/helpers/style';
 
 export default class Legend extends Component {
   models!: LegendModel[];
 
   responders!: RectResponderModel[];
+
+  theme!: Required<LegendTheme>;
 
   activatedResponders: RectResponderModel[] = [];
 
@@ -91,6 +95,7 @@ export default class Legend extends Component {
     const { data, showCheckbox, align, useScatterChartIcon } = legend;
     const verticalAlign = isVerticalAlign(align);
     const legendWidths = data.map(({ width }) => width);
+    const itemHeight = getLegendItemHeight(this.theme.label.fontSize!);
 
     return [
       {
@@ -105,10 +110,11 @@ export default class Legend extends Component {
             iconType: (this.seriesIconTypeMap[datum.label] ?? datum.iconType) as LegendIconType,
             color: this.seriesColorMap[datum.label],
             x: verticalAlign ? defaultX + xOffset : defaultX,
-            y: verticalAlign ? padding.Y : padding.Y + LEGEND_ITEM_HEIGHT * idx,
+            y: verticalAlign ? padding.Y : padding.Y + itemHeight * idx,
             useScatterChartIcon,
           };
         }),
+        ...this.theme.label,
       },
     ];
   }
@@ -128,6 +134,8 @@ export default class Legend extends Component {
   }
 
   makeLabelResponder(data: LegendData[], showCheckbox: boolean): RectResponderModel[] {
+    const font = getTitleFontString(this.theme.label);
+
     return data.map((m) => ({
       ...m,
       type: 'rect',
@@ -137,13 +145,13 @@ export default class Legend extends Component {
         LEGEND_ICON_SIZE +
         LEGEND_MARGIN_X,
       y: m.y,
-      width: getTextWidth(m.label, LEGEND_LABEL_FONT),
+      width: getTextWidth(m.label, font),
       data: { name: 'label' },
       height: LEGEND_CHECKBOX_SIZE,
     }));
   }
 
-  render({ layout, legend, series, nestedPieSeries }: ChartState<Options>) {
+  render({ layout, legend, series, nestedPieSeries, theme }: ChartState<Options>) {
     this.isShow = legend.visible;
 
     if (!this.isShow) {
@@ -154,6 +162,7 @@ export default class Legend extends Component {
 
     const { showCheckbox, data: legendData } = legend;
     this.rect = layout.legend;
+    this.theme = theme.legend as Required<LegendTheme>;
 
     if (legendData.length !== Object.keys(this.seriesColorMap).length) {
       this.initColorAndIconTypeMap(nestedPieSeries ?? series);

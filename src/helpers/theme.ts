@@ -68,7 +68,7 @@ export const defaultSeriesTheme = {
   areaOpacity: DEFAULT_AREA_OPACITY,
 };
 
-const defaultTheme = {
+export const defaultTheme = {
   chart: {
     fontFamily: 'Arial',
   },
@@ -109,6 +109,14 @@ const defaultTheme = {
     },
     width: 1,
     color: '#333333',
+  },
+  legend: {
+    label: {
+      color: '#333333',
+      fontSize: 11,
+      fontWeight: 'normal',
+      fontFamily: 'Arial',
+    },
   },
 };
 

@@ -37,12 +37,17 @@ type ChartTheme = {
   fontFamily?: string;
 };
 
+type LegendTheme = {
+  label?: FontTheme;
+};
+
 type Theme = {
   chart: ChartTheme;
   series: SeriesThemeMap;
   title: FontTheme;
   xAxis: AxisTheme;
   yAxis: AxisTheme | AxisTheme[];
+  legend: LegendTheme;
 };
 
 type AxisTheme = {
@@ -185,6 +190,7 @@ interface BaseThemeOptions {
   title?: FontTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
+  legend?: LegendTheme;
   tooltip?: {};
   chartExportMenu?: {};
   series?: {};
