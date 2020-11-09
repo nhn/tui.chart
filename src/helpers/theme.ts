@@ -85,6 +85,14 @@ const defaultTheme = {
       fontWeight: 700,
       color: '#bbbbbb',
     },
+    label: {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 'normal',
+      color: '#333333',
+    },
+    width: 1,
+    color: '#333333',
   },
   xAxis: {
     title: {
@@ -93,6 +101,14 @@ const defaultTheme = {
       fontWeight: 700,
       color: '#bbbbbb',
     },
+    label: {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 'normal',
+      color: '#333333',
+    },
+    width: 1,
+    color: '#333333',
   },
 };
 

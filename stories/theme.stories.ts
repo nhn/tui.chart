@@ -58,7 +58,7 @@ export const title = () => {
   return el;
 };
 
-export const axisTitle = () => {
+export const axis = () => {
   const { el } = createChart(avgTemperatureData, {
     chart: { title: 'Average Temperature' },
     xAxis: { title: { text: 'Month' } },
@@ -82,15 +82,31 @@ export const axisTitle = () => {
           fontWeight: 400,
           color: '#ff416d',
         },
+        label: {
+          fontFamily: 'fantasy',
+          fontSize: 11,
+          fontWeight: 700,
+          color: '#6EB5FF',
+        },
+        width: 2,
+        color: '#6655EE',
       },
       yAxis: [
         {
           title: {
             fontFamily: 'Impact',
-            fontSize: 15,
+            fontSize: 17,
             fontWeight: 400,
             color: '#03C03C',
           },
+          label: {
+            fontFamily: 'cursive',
+            fontSize: 11,
+            fontWeight: 700,
+            color: '#6655EE',
+          },
+          width: 3,
+          color: '#88ddEE',
         },
         {
           title: {
@@ -99,6 +115,14 @@ export const axisTitle = () => {
             fontWeight: 600,
             color: '#00a9ff',
           },
+          label: {
+            fontFamily: 'cursive',
+            fontSize: 11,
+            fontWeight: 700,
+            color: '#FFABAB',
+          },
+          width: 3,
+          color: '#AFFCCA',
         },
       ],
     },

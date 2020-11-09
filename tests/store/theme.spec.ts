@@ -31,6 +31,14 @@ describe('theme store', () => {
               fontWeight: 700,
               color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           xAxis: {
             title: {
@@ -39,6 +47,14 @@ describe('theme store', () => {
               fontWeight: 700,
               color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           series: {
             line: {
@@ -115,6 +131,14 @@ describe('theme store', () => {
               fontWeight: 700,
               color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           xAxis: {
             title: {
@@ -123,6 +147,14 @@ describe('theme store', () => {
               fontWeight: 700,
               color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           series: {
             line: {
@@ -184,6 +216,14 @@ describe('theme store', () => {
               fontWeight: 700,
               color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           xAxis: {
             title: {
@@ -192,6 +232,14 @@ describe('theme store', () => {
               fontWeight: 700,
               color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           series: {
             line: {
@@ -450,6 +498,14 @@ describe('theme store', () => {
               fontWeight: 700,
               color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           xAxis: {
             title: {
@@ -458,6 +514,14 @@ describe('theme store', () => {
               fontWeight: 700,
               color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           series: {
             pie: {

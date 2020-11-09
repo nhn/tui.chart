@@ -5,6 +5,9 @@ import { makeTickPixelPositions, crispPixel, LABEL_ANCHOR_POINT } from '@src/hel
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 import { TICK_SIZE } from '@src/brushes/axis';
 import { includes } from '@src/helpers/utils';
+import { getAxisTheme } from '@src/helpers/axes';
+import { AxisTheme } from '@t/theme';
+import { getTitleFontString } from '@src/helpers/style';
 
 export enum AxisType {
   X = 'xAxis',
@@ -38,17 +41,20 @@ export default class Axis extends Component {
 
   yAxisComponent!: boolean;
 
+  theme!: Required<AxisTheme>;
+
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
     this.name = name;
     this.yAxisComponent = includes([AxisType.Y, AxisType.SECONDARY_Y], name);
   }
 
-  render({ layout, axes }: ChartState<Options>) {
+  render({ layout, axes, theme }: ChartState<Options>) {
     if (axes.centerYAxis || !axes[this.name]) {
       return;
     }
 
+    this.theme = getAxisTheme(theme, this.name) as Required<AxisTheme>;
     this.rect = layout[this.name];
 
     const {
@@ -169,6 +175,8 @@ export default class Axis extends Component {
               tickSize,
               [offsetKey]: crispPixel(position),
               [anchorKey]: tickAnchorPoint,
+              strokeStyle: this.theme.color,
+              lineWidth: this.theme.width,
             } as TickModel,
           ];
     }, []);
@@ -187,7 +195,10 @@ export default class Axis extends Component {
     const labelAnchorPoint = this.yAxisComponent ? yAxisAnchorPoint : LABEL_ANCHOR_POINT;
     const labelAdjustment = pointOnColumn ? labelDistance / 2 : 0;
     const yAxisTextAlign = isRightSide ? 'right' : 'left';
-    const style = ['default', { textAlign: this.yAxisComponent ? yAxisTextAlign : 'center' }];
+    const textAlign = this.yAxisComponent ? yAxisTextAlign : 'center';
+    const labelTheme = this.theme.label;
+    const font = getTitleFontString(labelTheme);
+    const style = ['default', { textAlign, font, fillStyle: labelTheme.color }];
 
     return labels.reduce<LabelModel[]>((positions, text, index) => {
       return index % labelInterval

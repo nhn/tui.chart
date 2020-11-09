@@ -48,8 +48,8 @@ type Theme = {
 type AxisTheme = {
   title?: FontTheme;
   label?: FontTheme;
-  tickWidth?: number;
-  tickColor?: string;
+  width?: number;
+  color?: string;
 };
 
 type ComboChartSeriesTheme =
