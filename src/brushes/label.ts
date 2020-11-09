@@ -5,7 +5,6 @@ import { rgba } from '@src/helpers/color';
 import { pathRect } from './basic';
 
 export const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
-const AXIS_TITLE_TEXT = '700 11px Arial';
 
 export type LabelStyleName =
   | 'default'
@@ -43,8 +42,6 @@ export const labelStyle = {
     textBaseline: 'top',
   },
   axisTitle: {
-    font: AXIS_TITLE_TEXT,
-    fillStyle: '#bbbbbb',
     textBaseline: 'top',
   },
   stackTotal: {

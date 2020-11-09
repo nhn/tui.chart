@@ -20,6 +20,31 @@ const props = [
   'resetButton',
 ];
 
+const defaultTheme = {
+  title: {
+    fontSize: 18,
+    fontFamily: 'Arial',
+    fontWeight: 200,
+    color: '#333333',
+  },
+  xAxis: {
+    title: {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 700,
+      color: '#bbbbbb',
+    },
+  },
+  yAxis: {
+    title: {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 700,
+      color: '#bbbbbb',
+    },
+  },
+};
+
 describe('default layout', () => {
   const state = {
     legend: { visible: true, width: 20, align: 'right' },
@@ -34,14 +59,7 @@ describe('default layout', () => {
     },
     layout: { yAxis: {}, xAxis: {}, plot: {} },
     options: { exportMenu: { visible: false } },
-    theme: {
-      title: {
-        fontSize: 18,
-        fontFamily: 'Arial',
-        fontWeight: 200,
-        color: '#333333',
-      },
-    },
+    theme: defaultTheme,
   };
 
   const store = { state } as Store<BarChartOptions>;
@@ -85,14 +103,7 @@ describe('axis size option', () => {
         exportMenu: { visible: false },
         yAxis: { width: 50, height: 100 },
       },
-      theme: {
-        title: {
-          fontSize: 18,
-          fontFamily: 'Arial',
-          fontWeight: 200,
-          color: '#333333',
-        },
-      },
+      theme: defaultTheme,
     };
 
     const store = { state } as Store<BarChartOptions>;
@@ -124,14 +135,7 @@ describe('axis size option', () => {
         exportMenu: { visible: false },
         xAxis: { width: 130, height: 100 },
       },
-      theme: {
-        title: {
-          fontSize: 18,
-          fontFamily: 'Arial',
-          fontWeight: 200,
-          color: '#333333',
-        },
-      },
+      theme: defaultTheme,
     };
 
     const store = { state } as Store<BarChartOptions>;
@@ -161,14 +165,7 @@ describe('axis size option', () => {
           labels: ['2', '4', '6', '8', '10'],
         },
       },
-      theme: {
-        title: {
-          fontSize: 18,
-          fontFamily: 'Arial',
-          fontWeight: 200,
-          color: '#333333',
-        },
-      },
+      theme: defaultTheme,
       layout: { yAxis: {}, xAxis: {}, plot: {}, secondaryYAxis: {}, secondaryYAxisTitle: {} },
       options: {
         exportMenu: { visible: false },
@@ -209,14 +206,7 @@ describe('only plot size option', () => {
         labels: ['a', 'b', 'c', 'd'],
       },
     },
-    theme: {
-      title: {
-        fontSize: 18,
-        fontFamily: 'Arial',
-        fontWeight: 200,
-        color: '#333333',
-      },
-    },
+    theme: defaultTheme,
     layout: { yAxis: {}, xAxis: {}, plot: {} },
     options: {
       exportMenu: { visible: false },
@@ -254,14 +244,7 @@ describe('with export menu visible options', () => {
         labels: ['a', 'b', 'c', 'd'],
       },
     },
-    theme: {
-      title: {
-        fontSize: 18,
-        fontFamily: 'Arial',
-        fontWeight: 200,
-        color: '#333333',
-      },
-    },
+    theme: defaultTheme,
     layout: { yAxis: {}, xAxis: {}, plot: {} },
     options: { exportMenu: { visible: true } },
   };
@@ -293,14 +276,7 @@ describe('with reset button visible options', () => {
         labels: ['a', 'b', 'c', 'd'],
       },
     },
-    theme: {
-      title: {
-        fontSize: 18,
-        fontFamily: 'Arial',
-        fontWeight: 200,
-        color: '#333333',
-      },
-    },
+    theme: defaultTheme,
     layout: { yAxis: {}, xAxis: {}, plot: {}, resetButton: {} },
     options: { series: { zoomable: true } },
   };

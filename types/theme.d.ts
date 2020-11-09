@@ -38,9 +38,18 @@ type ChartTheme = {
 };
 
 type Theme = {
-  chart?: ChartTheme;
+  chart: ChartTheme;
   series: SeriesThemeMap;
   title: FontTheme;
+  xAxis: AxisTheme;
+  yAxis: AxisTheme | AxisTheme[];
+};
+
+type AxisTheme = {
+  title?: FontTheme;
+  label?: FontTheme;
+  tickWidth?: number;
+  tickColor?: string;
 };
 
 type ComboChartSeriesTheme =
@@ -174,6 +183,8 @@ interface LineAreaChartSeriesTheme {
 interface BaseThemeOptions {
   chart?: ChartTheme;
   title?: FontTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
   tooltip?: {};
   chartExportMenu?: {};
   series?: {};

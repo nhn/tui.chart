@@ -78,6 +78,22 @@ const defaultTheme = {
     fontWeight: 100,
     color: '#333333',
   },
+  yAxis: {
+    title: {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 700,
+      color: '#bbbbbb',
+    },
+  },
+  xAxis: {
+    title: {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 700,
+      color: '#bbbbbb',
+    },
+  },
 };
 
 function getSeriesTheme(seriesName: string) {

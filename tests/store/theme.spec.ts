@@ -24,6 +24,22 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+          },
           series: {
             line: {
               colors: ['#00a9ff', '#ffb840'],
@@ -92,6 +108,22 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+          },
           series: {
             line: {
               colors: ['#aaaaaa', '#bbbbbb'],
@@ -144,6 +176,22 @@ describe('theme store', () => {
             fontFamily: 'Arial',
             fontWeight: 100,
             color: '#333333',
+          },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
           },
           series: {
             line: {
@@ -394,6 +442,22 @@ describe('theme store', () => {
             fontFamily: 'Arial',
             fontWeight: 100,
             color: '#333333',
+          },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
           },
           series: {
             pie: {

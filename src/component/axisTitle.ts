@@ -4,11 +4,15 @@ import { LabelModel } from '@t/components/axis';
 import { AxisType } from '@src/component/axis';
 import { AxisTitleOption } from '@t/options';
 import { includes } from '@src/helpers/utils';
+import { FontTheme, Theme } from '@t/theme';
+import { getTitleFontString } from '@src/helpers/style';
 
 export default class AxisTitle extends Component {
   models!: LabelModel[];
 
   isYAxis!: boolean;
+
+  theme!: Required<FontTheme>;
 
   initialize({ name }: { name: AxisType }) {
     this.type = 'axisTitle';
@@ -21,8 +25,10 @@ export default class AxisTitle extends Component {
     const [x, y] = this.isYAxis
       ? [this.name === AxisType.Y ? offsetX : this.rect.width + offsetX, offsetY]
       : [this.rect.width + offsetX, this.rect.height + offsetY];
+    const font = getTitleFontString(this.theme);
+    const fillStyle = this.theme.color;
 
-    return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign }] }];
+    return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign, fillStyle, font }] }];
   }
 
   getTextAlign(hasCenterYAxis = false) {
@@ -35,7 +41,22 @@ export default class AxisTitle extends Component {
     return result;
   }
 
-  render({ axes, layout }: ChartState<Options>) {
+  private getAxisTitleTheme(theme: Theme) {
+    const { xAxis, yAxis } = theme;
+    let axisTheme;
+
+    if (this.name === AxisType.X) {
+      axisTheme = xAxis;
+    } else if (Array.isArray(yAxis)) {
+      axisTheme = this.name === AxisType.Y ? yAxis[0] : yAxis[1];
+    } else {
+      axisTheme = yAxis;
+    }
+
+    return axisTheme.title as Required<FontTheme>;
+  }
+
+  render({ axes, layout, theme }: ChartState<Options>) {
     const titleOption = axes[this.name]?.title;
 
     this.isShow = !!titleOption;
@@ -45,6 +66,7 @@ export default class AxisTitle extends Component {
     }
 
     this.rect = layout[`${this.name}Title`];
+    this.theme = this.getAxisTitleTheme(theme);
     this.models = this.renderAxisTitle(titleOption, this.getTextAlign(!!axes.centerYAxis));
   }
 }

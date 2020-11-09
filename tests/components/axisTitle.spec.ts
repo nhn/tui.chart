@@ -15,6 +15,24 @@ const chartState = {
     yAxisTitle: { x: 100, y: 100, height: 100, width: 100 },
     xAxisTitle: { x: 50, y: 50, height: 50, width: 50 },
   },
+  theme: {
+    yAxis: {
+      title: {
+        fontSize: 11,
+        fontFamily: 'Arial',
+        fontWeight: 700,
+        color: '#bbbbbb',
+      },
+    },
+    xAxis: {
+      title: {
+        fontSize: 11,
+        fontFamily: 'Arial',
+        fontWeight: 700,
+        color: '#bbbbbb',
+      },
+    },
+  },
 };
 
 describe('yAxisTitle', () => {
@@ -32,7 +50,7 @@ describe('yAxisTitle', () => {
 
     expect(title.models).toEqual([
       {
-        style: ['axisTitle', { textAlign: 'left' }],
+        style: ['axisTitle', { textAlign: 'left', fillStyle: '#bbbbbb', font: '700 11px Arial' }],
         text: 'yAxisTitle',
         type: 'label',
         x: 0,
@@ -49,7 +67,7 @@ describe('yAxisTitle', () => {
 
     expect(title.models).toEqual([
       {
-        style: ['axisTitle', { textAlign: 'left' }],
+        style: ['axisTitle', { textAlign: 'left', fillStyle: '#bbbbbb', font: '700 11px Arial' }],
         text: 'yAxisTitle',
         type: 'label',
         x: 100,
@@ -66,7 +84,7 @@ describe('yAxisTitle', () => {
 
     expect(title.models).toEqual([
       {
-        style: ['axisTitle', { textAlign: 'center' }],
+        style: ['axisTitle', { textAlign: 'center', fillStyle: '#bbbbbb', font: '700 11px Arial' }],
         text: 'yAxisTitle',
         type: 'label',
         x: 0,
@@ -88,12 +106,28 @@ describe('yAxisTitle', () => {
         yAxisTitle: { x: 0, y: 0, height: 100, width: 50 },
         secondaryYAxisTitle: { x: 50, y: 0, height: 100, width: 50 },
       },
+      yAxis: {
+        title: {
+          fontSize: 11,
+          fontFamily: 'Arial',
+          fontWeight: 700,
+          color: '#bbbbbb',
+        },
+      },
+      xAxis: {
+        title: {
+          fontSize: 11,
+          fontFamily: 'Arial',
+          fontWeight: 700,
+          color: '#bbbbbb',
+        },
+      },
     });
     title.render(state);
 
     expect(title.models).toEqual([
       {
-        style: ['axisTitle', { textAlign: 'right' }],
+        style: ['axisTitle', { textAlign: 'right', fillStyle: '#bbbbbb', font: '700 11px Arial' }],
         text: 'secondaryYAxisTitle',
         type: 'label',
         x: 50,
@@ -118,7 +152,7 @@ describe('xAxisTitle', () => {
 
     expect(title.models).toEqual([
       {
-        style: ['axisTitle', { textAlign: 'right' }],
+        style: ['axisTitle', { textAlign: 'right', fillStyle: '#bbbbbb', font: '700 11px Arial' }],
         text: 'xAxisTitle',
         type: 'label',
         x: 50,
@@ -135,7 +169,7 @@ describe('xAxisTitle', () => {
 
     expect(title.models).toEqual([
       {
-        style: ['axisTitle', { textAlign: 'right' }],
+        style: ['axisTitle', { textAlign: 'right', fillStyle: '#bbbbbb', font: '700 11px Arial' }],
         text: 'xAxisTitle',
         type: 'label',
         x: 150,

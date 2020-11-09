@@ -57,3 +57,52 @@ export const title = () => {
 
   return el;
 };
+
+export const axisTitle = () => {
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' },
+    xAxis: { title: { text: 'Month' } },
+    yAxis: [
+      {
+        title: 'Temperature (Celsius)',
+      },
+      {
+        title: 'Percent (%)',
+        scale: {
+          min: 0,
+          max: 100,
+        },
+      },
+    ],
+    theme: {
+      xAxis: {
+        title: {
+          fontFamily: 'Impact',
+          fontSize: 15,
+          fontWeight: 400,
+          color: '#ff416d',
+        },
+      },
+      yAxis: [
+        {
+          title: {
+            fontFamily: 'Impact',
+            fontSize: 15,
+            fontWeight: 400,
+            color: '#03C03C',
+          },
+        },
+        {
+          title: {
+            fontFamily: 'Comic Sans MS',
+            fontSize: 13,
+            fontWeight: 600,
+            color: '#00a9ff',
+          },
+        },
+      ],
+    },
+  });
+
+  return el;
+};

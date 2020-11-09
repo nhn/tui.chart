@@ -4,6 +4,7 @@ import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pi
 import { NestedPieSeriesType } from '@t/options';
 import { defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
 import {
+  AxisTheme,
   ComboChartSeriesTheme,
   HeatmapChartSeriesTheme,
   PieChartSeriesTheme,
@@ -33,13 +34,40 @@ function getCommonSeriesOptions(
   );
 }
 
+function getThemeAppliedSecondaryYAxis(options: Options) {
+  const theme = { ...options.theme } as Theme;
+
+  if (!Array.isArray(theme.yAxis)) {
+    return theme;
+  }
+
+  const yAxis = (theme.yAxis as AxisTheme[]).map((yAxisTheme) =>
+    deepMergedCopy(
+      {
+        title: {
+          fontSize: 11,
+          fontFamily: 'Arial',
+          fontWeight: 700,
+          color: '#bbbbbb',
+        },
+      },
+      { ...yAxisTheme }
+    )
+  );
+
+  return {
+    ...theme,
+    yAxis,
+  };
+}
+
 function getThemeOptionsWithSeriesName(
   options: Options,
   series: RawSeries,
   commonSeriesOptions: SeriesTheme,
   isNestedPieChart: boolean
 ): Theme {
-  const theme = options?.theme;
+  const theme = getThemeAppliedSecondaryYAxis(options);
 
   if (!theme?.series) {
     return { ...theme } as Theme;
