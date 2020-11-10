@@ -72,12 +72,67 @@ export const defaultSeriesTheme = {
   areaOpacity: DEFAULT_AREA_OPACITY,
 };
 
-const defaultTheme = {
+export const axisTitleTheme = {
+  fontSize: 11,
+  fontFamily: 'Arial',
+  fontWeight: 700,
+  color: '#bbbbbb',
+};
+
+const axisLabelTheme = {
+  fontSize: 11,
+  fontFamily: 'Arial',
+  fontWeight: 'normal',
+  color: '#333333',
+};
+
+export const defaultTheme = {
   chart: {
-    title: {
+    fontFamily: 'Arial',
+  },
+  title: {
+    fontSize: 18,
+    fontFamily: 'Arial',
+    fontWeight: 100,
+    color: '#333333',
+  },
+  yAxis: {
+    title: { ...axisTitleTheme },
+    label: { ...axisLabelTheme },
+    width: 1,
+    color: '#333333',
+  },
+  xAxis: {
+    title: { ...axisTitleTheme },
+    label: { ...axisLabelTheme },
+    width: 1,
+    color: '#333333',
+  },
+  legend: {
+    label: {
+      color: '#333333',
       fontSize: 11,
+      fontWeight: 'normal',
       fontFamily: 'Arial',
-      fontWeight: '500',
+    },
+  },
+  tooltip: {
+    background: 'rgba(85, 85, 85, 0.95)',
+    borderColor: 'rgba(255, 255, 255, 0)',
+    borderWidth: 0,
+    borderRadius: 3,
+    borderStyle: 'solid',
+    body: {
+      fontSize: 12,
+      fontFamily: 'Arial, sans-serif',
+      fontWeight: 'normal',
+      color: '#ffffff',
+    },
+    header: {
+      fontSize: 13,
+      fontFamily: 'Arial, sans-serif',
+      fontWeight: 'bold',
+      color: '#ffffff',
     },
   },
 };

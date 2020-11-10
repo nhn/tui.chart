@@ -27,17 +27,46 @@ type SeriesTheme =
   | BubbleChartSeriesTheme
   | NestedPieChartSeriesTheme;
 
+type FontTheme = {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
+};
+
 type ChartTheme = {
-  title: {
-    fontSize: number;
-    fontFamily: string;
-    fontWeight: string;
-  };
+  fontFamily?: string;
+};
+
+type LegendTheme = {
+  label?: FontTheme;
 };
 
 type Theme = {
-  series: SeriesThemeMap;
   chart: ChartTheme;
+  series: SeriesThemeMap;
+  title: FontTheme;
+  xAxis: AxisTheme;
+  yAxis: AxisTheme | AxisTheme[];
+  legend: LegendTheme;
+  tooltip: TooltipTheme;
+};
+
+type AxisTheme = {
+  title?: FontTheme;
+  label?: FontTheme;
+  width?: number;
+  color?: string;
+};
+
+type TooltipTheme = {
+  background?: string;
+  borderColor?: string;
+  borderWidth?: number;
+  borderStyle?: string;
+  borderRadius?: number;
+  header?: FontTheme;
+  body?: FontTheme;
 };
 
 type ComboChartSeriesTheme =
@@ -170,7 +199,11 @@ interface LineAreaChartSeriesTheme {
 
 interface BaseThemeOptions {
   chart?: ChartTheme;
-  tooltip?: {};
+  title?: FontTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
+  legend?: LegendTheme;
+  tooltip?: TooltipTheme;
   chartExportMenu?: {};
   series?: {};
 }

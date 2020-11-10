@@ -2,8 +2,9 @@ import { Options, RawSeries, StoreModule } from '@t/store/store';
 import { deepMergedCopy, omit } from '@src/helpers/utils';
 import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
-import { defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
+import { axisTitleTheme, defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
 import {
+  AxisTheme,
   ComboChartSeriesTheme,
   HeatmapChartSeriesTheme,
   PieChartSeriesTheme,
@@ -33,19 +34,36 @@ function getCommonSeriesOptions(
   );
 }
 
+function getThemeAppliedSecondaryYAxis(options: Options) {
+  const theme = { ...options.theme } as Theme;
+
+  if (!Array.isArray(theme.yAxis)) {
+    return theme;
+  }
+
+  const yAxis = (theme.yAxis as AxisTheme[]).map((yAxisTheme) =>
+    deepMergedCopy({ title: { ...axisTitleTheme } }, { ...yAxisTheme })
+  );
+
+  return {
+    ...theme,
+    yAxis,
+  };
+}
+
 function getThemeOptionsWithSeriesName(
   options: Options,
   series: RawSeries,
   commonSeriesOptions: SeriesTheme,
   isNestedPieChart: boolean
 ): Theme {
-  const theme = options?.theme;
+  const theme = getThemeAppliedSecondaryYAxis(options);
 
   if (!theme?.series) {
-    return {} as Theme;
+    return { ...theme } as Theme;
   }
 
-  const seriesTheme = { series: {} } as Theme;
+  const seriesTheme = { ...theme, series: {} } as Theme;
   const seriesNames = Object.keys(series);
   const isComboChart = seriesNames.length > 1;
 
@@ -118,6 +136,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
     series,
     isNestedPieChart
   );
+
   const theme = deepMergedCopy(
     getDefaultTheme(series),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
