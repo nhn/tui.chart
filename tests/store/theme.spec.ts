@@ -56,6 +56,14 @@ describe('theme store', () => {
             width: 1,
             color: '#333333',
           },
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+          },
           series: {
             line: {
               colors: ['#00a9ff', '#ffb840'],
@@ -123,6 +131,14 @@ describe('theme store', () => {
             fontFamily: 'Arial',
             fontWeight: 100,
             color: '#333333',
+          },
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
           },
           yAxis: {
             title: {
@@ -208,6 +224,14 @@ describe('theme store', () => {
             fontFamily: 'Arial',
             fontWeight: 100,
             color: '#333333',
+          },
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
           },
           yAxis: {
             title: {
@@ -363,6 +387,14 @@ describe('theme store', () => {
         const state = (theme.state as StateFunc)({
           options: {
             theme: {
+              legend: {
+                label: {
+                  fontSize: 11,
+                  fontFamily: 'Arial',
+                  fontWeight: 'normal',
+                  color: '#333333',
+                },
+              },
               series: {
                 area: {
                   colors: ['#aaaaaa', '#bbbbbb'],
@@ -522,6 +554,14 @@ describe('theme store', () => {
             },
             width: 1,
             color: '#333333',
+          },
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
           },
           series: {
             pie: {

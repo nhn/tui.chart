@@ -43,6 +43,14 @@ const defaultTheme = {
       color: '#bbbbbb',
     },
   },
+  legend: {
+    label: {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 'normal',
+      color: '#333333',
+    },
+  },
 };
 
 describe('default layout', () => {

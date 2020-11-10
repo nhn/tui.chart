@@ -9,12 +9,11 @@ import {
   CircleLegend,
 } from '@t/store/store';
 import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
-import { isUndefined, sum, includes } from '@src/helpers/utils';
+import { isUndefined, sum, includes, deepMergedCopy } from '@src/helpers/utils';
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
   LEGEND_ITEM_MARGIN_X,
-  LEGEND_LABEL_FONT,
   LEGEND_MARGIN_X,
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
@@ -22,6 +21,8 @@ import { isVerticalAlign, padding } from '@src/store/layout';
 import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
 import { hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { extend } from '@src/store/store';
+import { getTitleFontString } from '@src/helpers/style';
+import { defaultTheme } from '@src/helpers/theme';
 
 type LegendLabels = {
   label: string;
@@ -142,13 +143,18 @@ function getAlign(options: Options) {
   return isUndefined(options.legend?.align) ? 'right' : (options.legend?.align as Align);
 }
 
-function getItemWidth(label: string, checkboxVisible: boolean, useSpectrumLegend: boolean) {
+function getItemWidth(
+  label: string,
+  checkboxVisible: boolean,
+  useSpectrumLegend: boolean,
+  font: string
+) {
   return (
     (useSpectrumLegend
       ? 0
       : (checkboxVisible ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
         LEGEND_ICON_SIZE +
-        LEGEND_MARGIN_X) + getTextWidth(label, LEGEND_LABEL_FONT)
+        LEGEND_MARGIN_X) + getTextWidth(label, font)
   );
 }
 
@@ -163,6 +169,9 @@ const legend: StoreModule = {
     const useSpectrumLegend =
       (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
     const useScatterChartIcon = !!series?.scatter;
+    const font = getTitleFontString(
+      deepMergedCopy(defaultTheme.legend.label, { ...options.theme?.legend?.label })
+    );
 
     const legendLabels = hasNestedPieSeries(series)
       ? getNestedPieLegendLabels(series)
@@ -171,7 +180,7 @@ const legend: StoreModule = {
       label,
       active: true,
       checked: true,
-      width: getItemWidth(label, checkboxVisible, useSpectrumLegend),
+      width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
       iconType: getIconType(type),
     }));
 

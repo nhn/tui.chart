@@ -2,7 +2,7 @@ import AreaChart from '@src/charts/areaChart';
 import { AreaChartOptions, AreaSeriesData, BaseChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData } from './data';
-import { withKnobs, boolean } from '@storybook/addon-knobs';
+import { withKnobs, boolean, radios } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|common component theme',
@@ -125,6 +125,29 @@ export const axis = () => {
           color: '#AFFCCA',
         },
       ],
+    },
+  });
+
+  return el;
+};
+
+export const legend = () => {
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    xAxis: { title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    legend: {
+      align: radios('align', { top: 'top', bottom: 'bottom', left: 'left', right: 'right' }, 'top'),
+    },
+    theme: {
+      legend: {
+        label: {
+          fontFamily: 'cursive',
+          fontSize: 15,
+          fontWeight: 700,
+          color: '#ff416d',
+        },
+      },
     },
   });
 
