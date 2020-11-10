@@ -27,6 +27,7 @@ import { setSplineControlPoint } from '@src/helpers/calculator';
 import { LabelModel, LineModel, TickModel } from '@t/components/axis';
 import { Point } from '@t/options';
 import { polygon } from '@src/brushes/polygon';
+import { scatterSeries } from '@src/brushes/scatterSeries';
 
 export default {
   title: 'brushes',
@@ -595,6 +596,93 @@ export const spectrumLegendVerticalBrush = () => {
     y: 286,
     align: 'right',
     ...tooltipParams,
+  });
+
+  return el;
+};
+
+export const scatterSeriesBrush = () => {
+  const { ctx, el } = setup();
+
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: 'star',
+    x: 150,
+    y: 10,
+    borderColor: '#ff6600',
+    fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
+  });
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: 'circle',
+    x: 10,
+    y: 10,
+    borderColor: '#ff6600',
+    borderWidth: 1.5,
+    size: 12,
+    fillColor: '#dd6699',
+  });
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: 'rect',
+    x: 30,
+    y: 10,
+    borderColor: '#ff6600',
+    borderWidth: 1,
+    size: 10,
+    fillColor: '#dd6699',
+  });
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: 'triangle',
+    x: 50,
+    y: 10,
+    borderColor: '#ff6600',
+    fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
+  });
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: 'diamond',
+    x: 70,
+    y: 10,
+    borderColor: '#ff6600',
+    fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
+  });
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: 'pentagon',
+    x: 90,
+    y: 10,
+    borderColor: '#ff6600',
+    fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
+  });
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: 'hexagon',
+    x: 110,
+    y: 10,
+    borderColor: '#ff6600',
+    fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
+  });
+  scatterSeries(ctx, {
+    type: 'scatterSeries',
+    iconType: 'cross',
+    x: 130,
+    y: 10,
+    borderColor: '#ff6600',
+    fillColor: '#dd6699',
+    borderWidth: 1.5,
+    size: 12,
   });
 
   return el;

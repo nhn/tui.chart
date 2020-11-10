@@ -1,6 +1,7 @@
 import { RawSeries } from '@t/store/store';
+import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { Theme } from '@t/theme';
-import { getNestedPieChartAliasNames } from './pieSeries';
+import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -8,6 +9,10 @@ export const DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS = DEFAULT_LINE_SERIES_DOT_RADI
 const DEFAULT_AREA_OPACITY = 0.3;
 const DEFAULT_AREA_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
 const DEFAULT_AREA_UNSELECTED_SERIES_OPACITY = 0.06;
+const DEFAULT_RADAR_SERIES_DOT_RADIUS = 3;
+const DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS = DEFAULT_RADAR_SERIES_DOT_RADIUS + 1;
+const DEFAULT_RADAR_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
+const DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY = 0.05;
 
 export const defaultSeriesTheme = {
   colors: [
@@ -42,6 +47,8 @@ export const defaultSeriesTheme = {
   endColor: '#d74177',
   lineWidth: DEFAULT_LINE_SERIES_WIDTH,
   dashSegments: [],
+  borderWidth: 0,
+  borderColor: '#ffffff',
   select: {
     dot: {
       radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
@@ -85,6 +92,8 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
     dot: defaultSeriesTheme.dot,
   };
 
+  const transparentColor = 'rgba(255, 255, 255, 0)';
+
   switch (seriesName) {
     case 'line':
       return lineTypeSeriesTheme;
@@ -103,6 +112,60 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
       return {
         startColor: defaultSeriesTheme.startColor,
         endColor: defaultSeriesTheme.endColor,
+        borderWidth: 0,
+        borderColor: '#ffffff',
+        hover: {
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+        },
+        select: {
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+        },
+      };
+    case 'scatter':
+      return {
+        size: 12,
+        borderWidth: 1.5,
+        fillColor: transparentColor,
+        select: {
+          fillColor: 'rgba(255, 255, 255, 1)',
+        },
+        hover: {
+          fillColor: 'rgba(255, 255, 255, 1)',
+        },
+      };
+    case 'bubble':
+      return {
+        borderWidth: 0,
+        borderColor: transparentColor,
+        select: {},
+        hover: {},
+      };
+    case 'radar':
+      return {
+        areaOpacity: DEFAULT_RADAR_SELECTED_SERIES_OPACITY,
+        hover: {
+          dot: {
+            radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
+            borderColor: '#ffffff',
+            borderWidth: 2,
+          },
+        },
+        select: {
+          dot: {
+            radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
+            borderColor: '#ffffff',
+            borderWidth: 2,
+          },
+          restSeries: {
+            areaOpacity: DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY,
+          },
+          areaOpacity: DEFAULT_RADAR_SELECTED_SERIES_OPACITY,
+        },
+        dot: {
+          radius: DEFAULT_RADAR_SERIES_DOT_RADIUS,
+        },
       };
     case 'pie':
       return {

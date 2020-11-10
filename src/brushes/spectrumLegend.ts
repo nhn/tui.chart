@@ -1,14 +1,9 @@
 import { padding } from '@src/store/layout';
 import { getTextWidth, getMaxLengthLabelWidth } from '@src/helpers/calculator';
-import { label, rectLabel } from '@src/brushes/label';
-import { rect } from '@src/brushes/basic';
-import { polygon } from '@src/brushes/polygon';
-import {
-  SpectrumLegendModel,
-  SpectrumLegendTooltipModel,
-  SpectrumLegendTooltipPointModel,
-} from '@t/components/spectrumLegend';
+import { label, bubbleLabel } from '@src/brushes/label';
+import { SpectrumLegendModel, SpectrumLegendTooltipModel } from '@t/components/spectrumLegend';
 import { LabelStyle } from '@t/components/axis';
+import { textBubble, getBubbleArrowPoints } from './dataLabel';
 
 export const SPECTRUM_LEGEND_LABEL_HEIGHT = 12;
 export const spectrumLegendBar = {
@@ -17,8 +12,8 @@ export const spectrumLegendBar = {
 };
 export const spectrumLegendTooltip = {
   HEIGHT: 28,
-  POINT_WIDTH: 4,
-  POINT_HEIGHT: 4,
+  POINT_WIDTH: textBubble.POINT_WIDTH,
+  POINT_HEIGHT: textBubble.POINT_HEIGHT,
   PADDING: 6,
 };
 
@@ -130,43 +125,6 @@ function drawBar(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
   ctx.fillRect(x, y, barWidth, barHeight);
 }
 
-function drawTooltipArrow(
-  ctx: CanvasRenderingContext2D,
-  pointModel: SpectrumLegendTooltipPointModel
-) {
-  const { POINT_HEIGHT, POINT_WIDTH } = spectrumLegendTooltip;
-  const { x, y, color, align } = pointModel;
-  let points;
-
-  if (align === 'top') {
-    points = [
-      { x, y },
-      { x: x - POINT_WIDTH / 2, y: y + POINT_HEIGHT },
-      { x: x + POINT_WIDTH / 2, y: y + POINT_HEIGHT },
-    ];
-  } else if (align === 'bottom') {
-    points = [
-      { x, y },
-      { x: x - POINT_WIDTH / 2, y: y - POINT_HEIGHT },
-      { x: x + POINT_WIDTH / 2, y: y - POINT_HEIGHT },
-    ];
-  } else if (align === 'right') {
-    points = [
-      { x, y },
-      { x: x - POINT_HEIGHT, y: y - POINT_WIDTH / 2 },
-      { x: x - POINT_HEIGHT, y: y + POINT_WIDTH / 2 },
-    ];
-  } else {
-    points = [
-      { x, y },
-      { x: x + POINT_HEIGHT, y: y - POINT_WIDTH / 2 },
-      { x: x + POINT_HEIGHT, y: y + POINT_WIDTH / 2 },
-    ];
-  }
-
-  polygon(ctx, { type: 'polygon', color, lineWidth: 0, points, fillColor: color });
-}
-
 function getTooltipArrowPoint(model: SpectrumLegendTooltipModel) {
   const { align, colorRatio, width, height, x, y, labels, verticalAlign } = model;
   const { barWidth, barHeight } = getBarSize(width, height, verticalAlign);
@@ -201,43 +159,6 @@ function getTooltipArrowPoint(model: SpectrumLegendTooltipModel) {
   }
 }
 
-function drawTooltipBox(ctx: CanvasRenderingContext2D, model: SpectrumLegendTooltipModel) {
-  const { PADDING, POINT_HEIGHT } = spectrumLegendTooltip;
-  let { x: boxStartX, y: boxStartY } = model;
-  const { align, text, color, verticalAlign } = model;
-
-  const labelWidth = getTextWidth(text);
-  const width = labelWidth + PADDING * 2;
-  const height = SPECTRUM_LEGEND_LABEL_HEIGHT + PADDING * 2;
-
-  if (align === 'top') {
-    boxStartY += POINT_HEIGHT;
-  } else if (align === 'left') {
-    boxStartX += POINT_HEIGHT;
-  } else if (align === 'right') {
-    boxStartX -= width + POINT_HEIGHT;
-  } else {
-    boxStartY -= height + POINT_HEIGHT;
-  }
-
-  if (verticalAlign) {
-    boxStartX -= width / 2;
-  } else {
-    boxStartY -= height / 2;
-  }
-
-  rectLabel(ctx, {
-    type: 'rectLabel',
-    x: boxStartX + width / 2,
-    y: boxStartY + height / 2,
-    width,
-    height,
-    backgroundColor: color,
-    style: ['default', { textAlign: 'center' }],
-    text,
-  });
-}
-
 export function spectrumLegend(ctx: CanvasRenderingContext2D, model: SpectrumLegendModel) {
   const labelsStartPoint = getLabelsStartPoint(model);
   const barStartPoint = getBarStartPoint(model);
@@ -249,6 +170,39 @@ export function spectrumLegend(ctx: CanvasRenderingContext2D, model: SpectrumLeg
 export function spectrumTooltip(ctx: CanvasRenderingContext2D, model: SpectrumLegendTooltipModel) {
   const { x, y } = getTooltipArrowPoint(model)!;
 
-  drawTooltipArrow(ctx, { ...model, x, y });
-  drawTooltipBox(ctx, { ...model, x, y });
+  const { PADDING, POINT_HEIGHT } = spectrumLegendTooltip;
+  const { align, text, color } = model;
+
+  const labelWidth = getTextWidth(text);
+  const width = labelWidth + PADDING * 2;
+  const height = SPECTRUM_LEGEND_LABEL_HEIGHT + PADDING * 2;
+  const direction = align;
+  let boxStartX = x;
+  let boxStartY = y;
+
+  if (align === 'top') {
+    boxStartY += POINT_HEIGHT;
+  } else if (align === 'right') {
+    boxStartX -= width / 2 + POINT_HEIGHT;
+    boxStartY -= height / 2;
+  } else if (align === 'left') {
+    boxStartX += width / 2 + POINT_HEIGHT;
+    boxStartY -= height / 2;
+  } else if (align === 'bottom') {
+    boxStartY -= height + POINT_HEIGHT;
+  }
+
+  const points = getBubbleArrowPoints(align, { x, y });
+
+  bubbleLabel(ctx, {
+    x: boxStartX - width / 2,
+    y: boxStartY,
+    width,
+    height,
+    text,
+    labelStyle: ['default', { textAlign: 'center' }],
+    points,
+    direction,
+    fill: color,
+  });
 }

@@ -21,6 +21,7 @@ import * as axisBrush from '@src/brushes/axis';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
+import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
 
 import { ScatterChartOptions, ScatterSeriesData, ScatterSeriesType } from '@t/options';
 
@@ -60,6 +61,13 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
-    this.painter.addGroups([basicBrush, axisBrush, legendBrush, labelBrush, exportMenuBrush]);
+    this.painter.addGroups([
+      basicBrush,
+      axisBrush,
+      legendBrush,
+      labelBrush,
+      exportMenuBrush,
+      scatterSeriesBrush,
+    ]);
   }
 }

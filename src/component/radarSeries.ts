@@ -13,7 +13,7 @@ import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { DEFAULT_LINE_SERIES_WIDTH } from '@src/helpers/theme';
-
+import { RadarChartSeriesTheme, DotTheme } from '@t/theme';
 type RenderOptions = {
   categories: string[];
   centerX: number;
@@ -22,20 +22,11 @@ type RenderOptions = {
   showArea: boolean;
   ratio: number;
 };
-
-const areaOpacity = {
-  SHOW: 0.3,
-  NONE: 0,
-  INACTIVE: 0.05,
-};
-
+const NONE_AREA_OPACITY = 0;
 const seriesOpacity = {
   INACTIVE: 0.2,
   ACTIVE: 1,
 };
-
-const DEFAULT_RADAR_SERIES_DOT_RADIUS = 3;
-const DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS = DEFAULT_RADAR_SERIES_DOT_RADIUS + 1;
 
 export default class RadarSeries extends Component {
   models: RadarSeriesModels = { polygon: [], dot: [] };
@@ -46,17 +37,21 @@ export default class RadarSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
+  theme!: Required<RadarChartSeriesTheme>;
+
   initialize() {
     this.type = 'series';
     this.name = 'radar';
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, axes, series, legend, options } = state;
+    const { layout, axes, series, legend, options, theme } = state;
 
     if (!series.radar) {
       throw new Error("There's no radar data");
     }
+
+    this.theme = theme.series.radar as Required<RadarChartSeriesTheme>;
 
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
@@ -111,9 +106,8 @@ export default class RadarSeries extends Component {
       points.map((point, index) => ({
         type: 'circle',
         ...point,
-        radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
         color,
-        style: ['default', 'hover'],
+        radius: this.theme.dot.radius!,
         seriesIndex,
         name,
         index,
@@ -135,15 +129,33 @@ export default class RadarSeries extends Component {
     );
   }
 
+  getRespondersWithTheme(responders: CircleResponderModel[], type: 'select' | 'hover') {
+    const { radius, borderWidth, borderColor, color } = this.theme[type].dot!;
+    console.log(responders, this.theme[type]);
+
+    return responders.map((responder) => ({
+      ...responder,
+      radius,
+      color: color ?? responder.color,
+      style: [{ lineWidth: borderWidth, strokeStyle: borderColor }],
+    }));
+  }
+
   onClick({ responders }) {
     if (this.selectable) {
-      this.eventBus.emit('renderSelectedSeries', { models: responders, name: this.name });
+      this.eventBus.emit('renderSelectedSeries', {
+        models: this.getRespondersWithTheme(responders, 'select'),
+        name: this.name,
+      });
       this.eventBus.emit('needDraw');
     }
   }
 
   onMousemove({ responders }: { responders: CircleResponderModel[] }) {
-    this.eventBus.emit('renderHoveredSeries', { models: responders, name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: this.getRespondersWithTheme(responders, 'hover'),
+      name: this.name,
+    });
 
     this.activatedResponders = responders;
 
@@ -154,6 +166,7 @@ export default class RadarSeries extends Component {
 
   renderPolygonModels(seriesData: RadarSeriesType[], renderOptions: RenderOptions): PolygonModel[] {
     const { centerX, centerY, degree, ratio, showArea } = renderOptions;
+    const { lineWidth, dashSegments } = this.theme;
 
     return seriesData.map(({ data, color: seriesColor, name }) => {
       const polygon = data.reduce<{ points: Point[]; distances: number[] }>(
@@ -176,21 +189,24 @@ export default class RadarSeries extends Component {
 
       return {
         type: 'polygon',
-        lineWidth: DEFAULT_LINE_SERIES_WIDTH,
+        lineWidth: lineWidth ?? DEFAULT_LINE_SERIES_WIDTH,
         name,
         ...polygon,
         ...this.getSeriesColor(showArea, seriesColor!, name),
+        dashSegments,
       };
     });
   }
 
   renderDotModels(seriesModels: PolygonModel[]): CircleModel[] {
+    const { radius, color: dotColor } = this.theme.dot as Required<DotTheme>;
+
     return seriesModels.flatMap(({ points, color, name }) =>
       points.map((point) => ({
         type: 'circle',
         ...point,
-        radius: DEFAULT_RADAR_SERIES_DOT_RADIUS,
-        color,
+        radius,
+        color: dotColor ?? color,
         style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
         name,
       }))
@@ -198,10 +214,17 @@ export default class RadarSeries extends Component {
   }
 
   getSeriesColor(showArea: boolean, seriesColor: string, name: string) {
-    const fillOpacity = showArea ? areaOpacity.SHOW : areaOpacity.NONE;
     const active = this.activeSeriesMap![name];
+    const { select, areaOpacity } = this.theme;
+    const selected = Object.values(this.activeSeriesMap!).some((elem) => !elem);
     const color = getRGBA(seriesColor!, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
+    let fillOpacity = NONE_AREA_OPACITY;
 
-    return { color, fillColor: getRGBA(color, active ? fillOpacity : areaOpacity.INACTIVE) };
+    if (showArea) {
+      const selectedAreaOpacity = active ? select.areaOpacity! : select.restSeries!.areaOpacity;
+      fillOpacity = selected ? selectedAreaOpacity : areaOpacity;
+    }
+
+    return { color, fillColor: getRGBA(color, fillOpacity) };
   }
 }

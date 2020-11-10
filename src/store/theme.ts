@@ -4,11 +4,11 @@ import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pi
 import { NestedPieSeriesType } from '@t/options';
 import { defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
 import {
-  Theme,
-  PieChartSeriesTheme,
   ComboChartSeriesTheme,
   HeatmapChartSeriesTheme,
+  PieChartSeriesTheme,
   SeriesTheme,
+  Theme,
 } from '@t/theme';
 
 function getCommonSeriesOptions(

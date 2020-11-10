@@ -27,6 +27,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
+import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
 
 import { LineScatterChartOptions, LineScatterData } from '@t/options';
 import { RawSeries } from '@t/store/store';
@@ -78,6 +79,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
       exportMenuBrush,
       dataLabelBrush,
       resetButtonBrush,
+      scatterSeriesBrush,
     ]);
   }
 }

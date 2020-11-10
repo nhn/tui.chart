@@ -1,13 +1,20 @@
 import { Categories, RawSeries, Options } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
+import { ScatterSeriesIconType } from '@t/components/series';
 import {
-  BaseThemeOptions,
   AreaChartThemeOptions,
-  LineChartThemeOptions,
+  BaseThemeOptions,
+  BubbleChartThemeOptions,
+  HeatmapChartThemeOptions,
   LineAreaChartThemeOptions,
-  PieChartThemeOptions,
+  LineChartThemeOptions,
+  LineScatterChartThemeOptions,
   NestedPieChartThemeOptions,
-} from './theme';
+  PieChartThemeOptions,
+  ScatterChartThemeOptions,
+  TreemapChartThemeOptions,
+  RadarChartThemeOptions,
+} from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
@@ -93,6 +100,7 @@ export interface ScatterSeriesType {
   name: string;
   data: CoordinateDataType[];
   color: string;
+  iconType: ScatterSeriesIconType;
 }
 
 export interface LineScatterData {
@@ -291,6 +299,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 
 export interface HeatmapChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions & { date: DateOption };
+  theme?: HeatmapChartThemeOptions;
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {
@@ -334,6 +343,7 @@ export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
   yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
+  theme?: LineScatterChartThemeOptions;
 }
 
 export interface LineAreaChartOptions extends BaseOptions {
@@ -357,6 +367,7 @@ export interface ScatterChartOptions extends BaseOptions {
   xAxis?: BaseXAxisOptions;
   yAxis?: BaseAxisOptions;
   plot?: PlotOptions;
+  theme?: ScatterChartThemeOptions;
 }
 
 export interface BubbleChartOptions extends BaseOptions {
@@ -365,6 +376,7 @@ export interface BubbleChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions;
   circleLegend?: CircleLegendOptions;
   plot?: PlotOptions;
+  theme?: BubbleChartThemeOptions;
 }
 
 export interface TreemapChartSeriesOptions extends BaseSeriesOptions {
@@ -375,6 +387,7 @@ export interface TreemapChartSeriesOptions extends BaseSeriesOptions {
 
 export interface TreemapChartOptions extends BaseOptions {
   series?: TreemapChartSeriesOptions;
+  theme?: TreemapChartThemeOptions;
 }
 
 type ConnectorLineType = 'dashed' | 'solid';
@@ -466,6 +479,7 @@ export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
   plot?: BaseSizeOptions & { type?: RadarPlotType };
   yAxis?: BaseAxisOptions;
+  theme?: RadarChartThemeOptions;
 }
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
