@@ -16,6 +16,7 @@ export type DataLabelType =
   | 'rect'
   | 'point'
   | 'sector'
+  | 'line'
   | 'pieSeriesName'
   | 'treemapSeriesName';
 
@@ -36,6 +37,7 @@ export type DataLabel = {
   defaultColor?: string;
   callout?: Nullable<LineModel>;
   name?: string;
+  hasTextBubble?: boolean;
 } & Point;
 
 export type DataLabelOption = Required<
@@ -72,8 +74,17 @@ export type RectDataLabel = Omit<RectModel, 'type' | 'color' | 'value'> & {
     y: number;
     size: number;
   };
+  modelType?: string;
 };
 
-export type SeriesDataLabelType = Array<PointDataLabel | RadialDataLabel | RectDataLabel>;
+export type LineDataLabel = LineModel & {
+  value: number;
+  textAlign?: CanvasTextAlign;
+  textBaseline?: CanvasTextBaseline;
+};
+
+export type SeriesDataLabelType = PointDataLabel | RadialDataLabel | RectDataLabel | LineDataLabel;
+
+export type SeriesDataLabels = Array<SeriesDataLabelType>;
 
 export type RadialAnchor = 'center' | 'outer';

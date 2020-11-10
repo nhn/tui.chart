@@ -30,7 +30,9 @@ export type ResponderModel =
   | RectModel
   | BoxPlotResponderModel
   | SectorResponderModel
-  | TreemapRectResponderModel;
+  | TreemapRectResponderModel
+  | MarkerResponderModel
+  | BulletResponderModel;
 
 export type TreemapSeriesModels = { series: TreemapRectModel[]; layer: TreemapRectModel[] };
 
@@ -82,12 +84,12 @@ export type PathRectModel = {
   lineWidth?: number;
 } & Rect;
 
-export interface RectStyle {
+export type RectStyle = {
   shadowColor?: string;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
   shadowBlur?: number;
-}
+};
 
 export type RectModel = {
   type: 'rect';
@@ -246,9 +248,16 @@ export type BoxPlotResponderModel = {
 } & BoxPlotModel &
   Point;
 
-export type BulletModel = {
-  modelType: 'bullet' | 'range' | 'marker';
+export type BulletRectModel = {
+  modelType: 'bullet' | 'range';
 } & RectModel;
+
+type BulletModel = BulletRectModel | LineModel;
+
+export type MarkerResponderModel = {
+  data?: TooltipData;
+} & LineModel &
+  LineResponderModel;
 
 export type BulletResponderModel = {
   data?: TooltipData;

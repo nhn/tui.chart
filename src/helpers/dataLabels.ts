@@ -15,6 +15,8 @@ import {
   PointDataLabel,
   RectDataLabel,
   RadialDataLabel,
+  LineDataLabel,
+  DataLabelType,
   RadialAnchor,
 } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
@@ -36,7 +38,6 @@ type LabelPosition = {
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
 };
-type DataLabelType = 'point' | 'sector' | 'rect' | 'stackTotal' | 'treemapSeriesName';
 
 function getDefaultAnchor(type: DataLabelType, withStack = false): DataLabelAnchor {
   let anchor: DataLabelAnchor = 'auto';
@@ -428,7 +429,12 @@ export function makeRectLabelInfo(
     ...labelPosition,
     text: isString(value) ? value : formatter(value!),
     name,
+    hasTextBubble: hasTextBubble(rect),
   };
+}
+
+function hasTextBubble(rect: RectDataLabel) {
+  return rect.type === 'stackTotal' || (rect.type === 'rect' && rect.modelType === 'bullet');
 }
 
 export function makeSectorLabelPosition(
@@ -540,6 +546,18 @@ export function makePieSeriesNameLabelInfo(
 
 export function getDataLabelsOptions(options: Options, name: string) {
   return options?.series?.[name]?.dataLabels || options?.series?.dataLabels || {};
+}
+
+export function makeLineLabelInfo(model: LineDataLabel, dataLabelOptions: DataLabelOption) {
+  const { value, textAlign, textBaseline } = model;
+  const { formatter } = dataLabelOptions;
+
+  return {
+    ...model,
+    textAlign: textAlign ?? 'center',
+    textBaseline: textBaseline ?? 'middle',
+    text: isString(value) ? value : formatter(value!),
+  };
 }
 
 function hasSameAnchorPieDataLabel(dataLabelOptions: DataLabelOption) {

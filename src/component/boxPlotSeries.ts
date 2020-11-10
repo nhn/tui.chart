@@ -15,7 +15,7 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import { LineModel } from '@t/components/axis';
-import { BOX_SERIES_PADDING, BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
+import { BOX_HOVER_THICKNESS, getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 
 type RenderOptions = {
   ratio: number;
@@ -77,7 +77,8 @@ export default class BoxPlotSeries extends Component {
       ratio: this.rect.height / (max - min),
       tickDistance,
       boxWidth: Math.max(
-        (tickDistance - BOX_SERIES_PADDING.horizontal * (2 + (seriesLength - 1))) / seriesLength,
+        (tickDistance - getBoxTypeSeriesPadding(tickDistance) * (2 + (seriesLength - 1))) /
+          seriesLength,
         MIN_BAR_WIDTH
       ),
     };
@@ -385,12 +386,10 @@ export default class BoxPlotSeries extends Component {
 
   getStartX(seriesIndex: number, dataIndex: number, renderOptions: RenderOptions) {
     const { tickDistance, boxWidth } = renderOptions;
+    const padding = getBoxTypeSeriesPadding(tickDistance);
 
     return (
-      seriesIndex * boxWidth +
-      BOX_SERIES_PADDING.horizontal +
-      dataIndex * tickDistance +
-      (seriesIndex ? BOX_SERIES_PADDING.horizontal : 0)
+      seriesIndex * boxWidth + padding + dataIndex * tickDistance + (seriesIndex ? padding : 0)
     );
   }
 
