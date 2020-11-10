@@ -151,10 +151,11 @@ export const responsive = () => {
 export const theme = () => {
   const themeOptions: NestedPieChartThemeOptions = {
     series: {
-      lineWidth: 2,
-      strokeStyle: '#cccccc',
       browsers: {
         colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
+        lineWidth: 3,
+        strokeStyle: '#0000ff',
+        hover: { color: '#ff0000' },
       },
       versions: {
         colors: [
@@ -172,6 +173,9 @@ export const theme = () => {
           '#5ac18e',
           '#8570ff',
         ],
+        lineWidth: 2,
+        strokeStyle: '#ff0000',
+        hover: { color: '#ffffff' },
       },
     },
   };

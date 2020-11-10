@@ -302,15 +302,20 @@ export const theme = () => {
       lineWidth: 1,
       strokeStyle: '#000000',
       hover: {
-        colors: ['#FB888A', '#F7A578', '#FABE75', '#FBD989', '#B6D39C', '#6DC5AB', '#8CA5BA'],
+        color: '#335F70',
         strokeStyle: '#000000',
         shadowColor: 'rgba(0, 0, 0, 0)',
       },
       select: {
-        colors: ['#F81215', '#E75A0D', '#EC8609', '#F7B926', '#81B356', '#3A9278', '#4D6880'],
+        color: '#203B46',
         strokeStyle: '#000000',
         shadowColor: 'rgba(0, 0, 0, 0)',
+        restSeries: {
+          areaOpacity: 0.5,
+        },
+        areaOpacity: 1,
       },
+      areaOpacity: 1,
     },
   };
 

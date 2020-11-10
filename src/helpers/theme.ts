@@ -1,5 +1,6 @@
 import { RawSeries } from '@t/store/store';
 import { Theme } from '@t/theme';
+import { getNestedPieChartAliasNames } from './pieSeries';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -105,6 +106,7 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
       };
     case 'pie':
       return {
+        areaOpacity: 1,
         strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(0, 0, 0, 0)',
         lineWidth: isNestedPieChart ? 1 : 0,
         hover: {
@@ -118,6 +120,10 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
           strokeStyle: '#ffffff',
           shadowColor: '#cccccc',
           shadowBlur: 5,
+          restSeries: {
+            areaOpacity: 0.3,
+          },
+          areaOpacity: 1,
         },
       };
     default:
@@ -126,7 +132,7 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
 }
 
 export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Theme {
-  return Object.keys(series).reduce<Theme>(
+  const result = Object.keys(series).reduce<Theme>(
     (acc, seriesName) => ({
       ...acc,
       series: {
@@ -136,4 +142,20 @@ export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Th
     }),
     defaultTheme as Theme
   );
+
+  if (isNestedPieChart) {
+    const aliasNames = getNestedPieChartAliasNames(series);
+
+    const aliasDefaultTheme = aliasNames.reduce(
+      (acc, cur) => ({
+        ...acc,
+        [cur]: getSeriesTheme('pie', isNestedPieChart),
+      }),
+      {}
+    );
+
+    result.series.pie = { ...result.series.pie, ...aliasDefaultTheme };
+  }
+
+  return result;
 }

@@ -40,6 +40,7 @@ import {
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
+import { Theme } from '@t/theme';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];
@@ -134,12 +135,6 @@ export interface StoreModule extends StoreOptions {
     | 'colorValueScale'
     | 'options'
     | 'theme';
-}
-
-export interface SeriesTheme {
-  colors: string[];
-  startColor: string;
-  endColor: string;
 }
 
 export interface Layout {

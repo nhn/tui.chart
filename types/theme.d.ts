@@ -43,12 +43,21 @@ type ComboChartSeriesTheme =
   | ColumnLineChartSeriesTheme
   | LineAreaChartSeriesTheme;
 
+type SelectSectorStyle = SectorStyle & {
+  color?: string;
+  restSeries?: {
+    areaOpacity?: number;
+  };
+  areaOpacity?: number;
+};
+
 type PieChartSeriesTheme = {
   colors?: string[];
   lineWidth?: number;
   strokeStyle?: string;
-  hover?: SectorStyle & { colors?: string[] };
-  select?: SectorStyle & { colors?: string[] };
+  hover?: SectorStyle & { color?: string };
+  select?: SelectSectorStyle;
+  areaOpacity?: number;
 };
 
 type NestedPieChartSeriesTheme = Record<string, PieChartSeriesTheme> | PieChartSeriesTheme;

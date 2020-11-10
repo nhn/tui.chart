@@ -1,4 +1,4 @@
-import { Options, RawSeries, StoreModule, SeriesTheme } from '@t/store/store';
+import { Options, RawSeries, StoreModule } from '@t/store/store';
 import { deepMergedCopy, omit } from '@src/helpers/utils';
 import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
@@ -8,6 +8,7 @@ import {
   PieChartSeriesTheme,
   ComboChartSeriesTheme,
   HeatmapChartSeriesTheme,
+  SeriesTheme,
 } from '@t/theme';
 
 function getCommonSeriesOptions(

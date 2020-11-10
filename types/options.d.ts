@@ -1,5 +1,13 @@
 import { Categories, RawSeries, Options } from '@t/store/store';
 import { TooltipModel } from '@t/components/tooltip';
+import {
+  BaseThemeOptions,
+  AreaChartThemeOptions,
+  LineChartThemeOptions,
+  LineAreaChartThemeOptions,
+  PieChartThemeOptions,
+  NestedPieChartThemeOptions,
+} from './theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number];
