@@ -12,6 +12,7 @@ import {
   NestedPieChartThemeOptions,
   PieChartThemeOptions,
   ScatterChartThemeOptions,
+  TooltipTheme,
   TreemapChartThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
@@ -241,7 +242,8 @@ export type DefaultTooltipTemplate = { header: string; body: string };
 
 export type TooltipTemplateFunc = (
   model: TooltipModel,
-  defaultTemplate: DefaultTooltipTemplate
+  defaultTemplate: DefaultTooltipTemplate,
+  theme: Required<TooltipTheme>
 ) => string;
 
 interface BaseTooltipOptions {

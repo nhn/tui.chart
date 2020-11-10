@@ -9,24 +9,17 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
-  border-radius: 3px;
-  color: #fff;
-  background: rgba(85, 85, 85, 0.95);
   min-width: 150px;
 }
 
 .tooltip-category {
   padding: 8px 15px;
-  font-weight: bold;
-  font-size: 13px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .tooltip-series-wrapper {
   display: flex;
   padding: 13px 15px;
-  font-size: 12px;
   flex-direction: column;
 }
 

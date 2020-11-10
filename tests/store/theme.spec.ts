@@ -88,6 +88,25 @@ describe('theme store', () => {
               },
             },
           },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
+            },
+          },
         });
       });
 
@@ -172,6 +191,25 @@ describe('theme store', () => {
             width: 1,
             color: '#333333',
           },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
+            },
+          },
           series: {
             line: {
               colors: ['#aaaaaa', '#bbbbbb'],
@@ -231,6 +269,25 @@ describe('theme store', () => {
               fontFamily: 'Arial',
               fontWeight: 'normal',
               color: '#333333',
+            },
+          },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
             },
           },
           yAxis: {
@@ -555,12 +612,32 @@ describe('theme store', () => {
             width: 1,
             color: '#333333',
           },
+
           legend: {
             label: {
               fontSize: 11,
               fontFamily: 'Arial',
               fontWeight: 'normal',
               color: '#333333',
+            },
+          },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
             },
           },
           series: {

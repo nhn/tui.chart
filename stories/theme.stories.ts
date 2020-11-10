@@ -153,3 +153,45 @@ export const legend = () => {
 
   return el;
 };
+
+export const tooltip = () => {
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' },
+    xAxis: { title: { text: 'Month' } },
+    yAxis: [
+      {
+        title: 'Temperature (Celsius)',
+      },
+      {
+        title: 'Percent (%)',
+        scale: {
+          min: 0,
+          max: 100,
+        },
+      },
+    ],
+    theme: {
+      tooltip: {
+        background: '#80CEE1',
+        borderColor: '#3065AC',
+        borderWidth: 10,
+        borderRadius: 20,
+        borderStyle: 'double',
+        header: {
+          fontSize: 15,
+          fontWeight: 700,
+          color: '#333333',
+          fontFamily: 'monospace',
+        },
+        body: {
+          fontSize: 11,
+          fontWeight: 700,
+          color: '#a66033',
+          fontFamily: 'monospace',
+        },
+      },
+    },
+  });
+
+  return el;
+};
