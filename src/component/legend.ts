@@ -7,7 +7,6 @@ import {
   LEGEND_ICON_SIZE,
   LEGEND_ITEM_MARGIN_X,
   LEGEND_MARGIN_X,
-  // LEGEND_ITEM_HEIGHT,
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
