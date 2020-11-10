@@ -4,7 +4,8 @@
       "@babel/preset-env",
       {
         "useBuiltIns": "usage",
-        "debug": false
+        "debug": false,
+        "modules": false
       }
     ],
     "@babel/preset-typescript"

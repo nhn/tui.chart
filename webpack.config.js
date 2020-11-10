@@ -2,13 +2,18 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = (env, argv) => {
   let config = {
+    plugins: [new MiniCssExtractPlugin()],
     entry: ['@babel/polyfill', './src/index.ts'],
     output: {
       filename: 'main.js',
       path: path.resolve(__dirname, 'dist'),
+    },
+    optimization: {
+      usedExports: true,
     },
     module: {
       rules: [
@@ -18,6 +23,10 @@ module.exports = (env, argv) => {
           use: {
             loader: 'babel-loader',
           },
+        },
+        {
+          test: /\.css$/i,
+          use: [MiniCssExtractPlugin.loader, 'style-loader', 'css-loader'],
         },
       ],
     },
