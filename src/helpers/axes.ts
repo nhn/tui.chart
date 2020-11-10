@@ -1,6 +1,6 @@
 import { Options, Series, ChartOptionsUsingYAxis } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
-import { FontTheme, Theme } from '@t/theme';
+import { Theme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
 
 export function isLabelAxisOnYAxis(series: Series, options: Options) {

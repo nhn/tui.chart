@@ -68,6 +68,20 @@ export const defaultSeriesTheme = {
   areaOpacity: DEFAULT_AREA_OPACITY,
 };
 
+export const axisTitleTheme = {
+  fontSize: 11,
+  fontFamily: 'Arial',
+  fontWeight: 700,
+  color: '#bbbbbb',
+};
+
+const axisLabelTheme = {
+  fontSize: 11,
+  fontFamily: 'Arial',
+  fontWeight: 'normal',
+  color: '#333333',
+};
+
 export const defaultTheme = {
   chart: {
     fontFamily: 'Arial',
@@ -79,34 +93,14 @@ export const defaultTheme = {
     color: '#333333',
   },
   yAxis: {
-    title: {
-      fontSize: 11,
-      fontFamily: 'Arial',
-      fontWeight: 700,
-      color: '#bbbbbb',
-    },
-    label: {
-      fontSize: 11,
-      fontFamily: 'Arial',
-      fontWeight: 'normal',
-      color: '#333333',
-    },
+    title: { ...axisTitleTheme },
+    label: { ...axisLabelTheme },
     width: 1,
     color: '#333333',
   },
   xAxis: {
-    title: {
-      fontSize: 11,
-      fontFamily: 'Arial',
-      fontWeight: 700,
-      color: '#bbbbbb',
-    },
-    label: {
-      fontSize: 11,
-      fontFamily: 'Arial',
-      fontWeight: 'normal',
-      color: '#333333',
-    },
+    title: { ...axisTitleTheme },
+    label: { ...axisLabelTheme },
     width: 1,
     color: '#333333',
   },

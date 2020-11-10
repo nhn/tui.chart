@@ -2,7 +2,7 @@ import { Options, RawSeries, StoreModule } from '@t/store/store';
 import { deepMergedCopy, omit } from '@src/helpers/utils';
 import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
-import { defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
+import { axisTitleTheme, defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
 import {
   AxisTheme,
   ComboChartSeriesTheme,
@@ -42,17 +42,7 @@ function getThemeAppliedSecondaryYAxis(options: Options) {
   }
 
   const yAxis = (theme.yAxis as AxisTheme[]).map((yAxisTheme) =>
-    deepMergedCopy(
-      {
-        title: {
-          fontSize: 11,
-          fontFamily: 'Arial',
-          fontWeight: 700,
-          color: '#bbbbbb',
-        },
-      },
-      { ...yAxisTheme }
-    )
+    deepMergedCopy({ title: { ...axisTitleTheme } }, { ...yAxisTheme })
   );
 
   return {
