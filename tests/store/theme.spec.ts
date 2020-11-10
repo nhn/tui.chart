@@ -93,6 +93,7 @@ describe('theme store', () => {
             borderColor: 'rgba(255, 255, 255, 0)',
             borderWidth: 0,
             borderRadius: 3,
+            borderStyle: 'solid',
             body: {
               fontSize: 12,
               fontFamily: 'Arial, sans-serif',
@@ -195,6 +196,7 @@ describe('theme store', () => {
             borderColor: 'rgba(255, 255, 255, 0)',
             borderWidth: 0,
             borderRadius: 3,
+            borderStyle: 'solid',
             body: {
               fontSize: 12,
               fontFamily: 'Arial, sans-serif',
@@ -274,6 +276,7 @@ describe('theme store', () => {
             borderColor: 'rgba(255, 255, 255, 0)',
             borderWidth: 0,
             borderRadius: 3,
+            borderStyle: 'solid',
             body: {
               fontSize: 12,
               fontFamily: 'Arial, sans-serif',
@@ -623,6 +626,7 @@ describe('theme store', () => {
             borderColor: 'rgba(255, 255, 255, 0)',
             borderWidth: 0,
             borderRadius: 3,
+            borderStyle: 'solid',
             body: {
               fontSize: 12,
               fontFamily: 'Arial, sans-serif',

@@ -33,8 +33,8 @@ export function getDefaultTemplate(
   { header, body }: DefaultTooltipTemplate,
   theme: Required<TooltipTheme>
 ) {
-  const { borderColor, borderWidth, background, borderRadius } = theme;
-  const style = `border: ${borderWidth}px solid ${borderColor};border-radius: ${borderRadius}px;background: ${background};`;
+  const { borderColor, borderWidth, background, borderRadius, borderStyle } = theme;
+  const style = `border: ${borderWidth}px ${borderStyle} ${borderColor};border-radius: ${borderRadius}px;background: ${background};`;
 
   return `<div class="tooltip" style="${style}">${header}${body}</div>`;
 }

@@ -176,6 +176,7 @@ export const tooltip = () => {
         borderColor: '#3065AC',
         borderWidth: 10,
         borderRadius: 20,
+        borderStyle: 'double',
         header: {
           fontSize: 15,
           fontWeight: 700,

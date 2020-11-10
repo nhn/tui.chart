@@ -62,8 +62,8 @@ type TooltipTheme = {
   background?: string;
   borderColor?: string;
   borderWidth?: number;
+  borderStyle?: string;
   borderRadius?: number;
-
   header?: FontTheme;
   body?: FontTheme;
 };
