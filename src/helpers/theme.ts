@@ -83,6 +83,7 @@ const defaultTheme = {
   },
 };
 
+// eslint-disable-next-line complexity
 function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
   const lineTypeSeriesTheme = {
     lineWidth: defaultSeriesTheme.lineWidth,
@@ -209,15 +210,13 @@ export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Th
   if (isNestedPieChart) {
     const aliasNames = getNestedPieChartAliasNames(series);
 
-    const aliasDefaultTheme = aliasNames.reduce(
+    result.series.pie = aliasNames.reduce(
       (acc, cur) => ({
         ...acc,
         [cur]: getSeriesTheme('pie', isNestedPieChart),
       }),
       {}
     );
-
-    result.series.pie = { ...result.series.pie, ...aliasDefaultTheme };
   }
 
   return result;

@@ -42,6 +42,31 @@ const chartState = {
   dataLabels: {
     visible: false,
   },
+  theme: {
+    series: {
+      pie: {
+        areaOpacity: 1,
+        strokeStyle: 'rgba(0, 0, 0, 0)',
+        lineWidth: 0,
+        hover: {
+          lineWidth: 5,
+          strokeStyle: '#ffffff',
+          shadowColor: '#cccccc',
+          shadowBlur: 5,
+        },
+        select: {
+          lineWidth: 5,
+          strokeStyle: '#ffffff',
+          shadowColor: '#cccccc',
+          shadowBlur: 5,
+          restSeries: {
+            areaOpacity: 0.3,
+          },
+          areaOpacity: 1,
+        },
+      },
+    },
+  },
 };
 
 describe('basic', () => {
@@ -68,7 +93,12 @@ describe('basic', () => {
             start: 0,
             end: 180,
           },
-          style: ['default'],
+          style: [
+            {
+              lineWidth: 0,
+              strokeStyle: 'rgba(0, 0, 0, 0)',
+            },
+          ],
           type: 'sector',
           value: 50,
           x: 50,
@@ -89,7 +119,12 @@ describe('basic', () => {
             start: 180,
             end: 360,
           },
-          style: ['default'],
+          style: [
+            {
+              lineWidth: 0,
+              strokeStyle: 'rgba(0, 0, 0, 0)',
+            },
+          ],
           type: 'sector',
           value: 50,
           x: 50,
@@ -120,7 +155,12 @@ describe('basic', () => {
         value: 50,
         clockwise: true,
         drawingStartAngle: -90,
-        style: ['default'],
+        style: [
+          {
+            lineWidth: 0,
+            strokeStyle: 'rgba(0, 0, 0, 0)',
+          },
+        ],
         seriesIndex: 0,
         data: {
           label: 'A',
@@ -150,7 +190,12 @@ describe('basic', () => {
         value: 50,
         clockwise: true,
         drawingStartAngle: -90,
-        style: ['default'],
+        style: [
+          {
+            lineWidth: 0,
+            strokeStyle: 'rgba(0, 0, 0, 0)',
+          },
+        ],
         seriesIndex: 1,
         data: {
           label: 'B',
@@ -193,7 +238,12 @@ describe('basic', () => {
           start: 360,
           end: 180,
         },
-        style: ['default'],
+        style: [
+          {
+            lineWidth: 0,
+            strokeStyle: 'rgba(0, 0, 0, 0)',
+          },
+        ],
         type: 'sector',
         value: 50,
         x: 50,
@@ -214,7 +264,12 @@ describe('basic', () => {
           start: 180,
           end: 0,
         },
-        style: ['default'],
+        style: [
+          {
+            lineWidth: 0,
+            strokeStyle: 'rgba(0, 0, 0, 0)',
+          },
+        ],
         type: 'sector',
         value: 50,
         x: 50,
@@ -263,7 +318,12 @@ describe('donut', () => {
             start: 0,
             end: 180,
           },
-          style: ['default'],
+          style: [
+            {
+              lineWidth: 0,
+              strokeStyle: 'rgba(0, 0, 0, 0)',
+            },
+          ],
           type: 'sector',
           value: 50,
           x: 50,
@@ -284,7 +344,12 @@ describe('donut', () => {
             start: 180,
             end: 360,
           },
-          style: ['default'],
+          style: [
+            {
+              lineWidth: 0,
+              strokeStyle: 'rgba(0, 0, 0, 0)',
+            },
+          ],
           type: 'sector',
           value: 50,
           x: 50,
@@ -315,7 +380,12 @@ describe('donut', () => {
         value: 50,
         clockwise: true,
         drawingStartAngle: -90,
-        style: ['default'],
+        style: [
+          {
+            lineWidth: 0,
+            strokeStyle: 'rgba(0, 0, 0, 0)',
+          },
+        ],
         seriesIndex: 0,
         data: {
           label: 'A',
@@ -345,7 +415,12 @@ describe('donut', () => {
         value: 50,
         clockwise: true,
         drawingStartAngle: -90,
-        style: ['default'],
+        style: [
+          {
+            lineWidth: 0,
+            strokeStyle: 'rgba(0, 0, 0, 0)',
+          },
+        ],
         seriesIndex: 1,
         data: {
           label: 'B',
@@ -393,7 +468,12 @@ describe('donut', () => {
           radius: { inner: 0, outer: 81 },
           degree: { start: 0, end: 90 },
           drawingStartAngle: -180,
-          style: ['default'],
+          style: [
+            {
+              lineWidth: 0,
+              strokeStyle: 'rgba(0, 0, 0, 0)',
+            },
+          ],
           type: 'sector',
           value: 50,
           x: 50,
@@ -408,7 +488,12 @@ describe('donut', () => {
           radius: { inner: 0, outer: 81 },
           degree: { start: 90, end: 180 },
           drawingStartAngle: -180,
-          style: ['default'],
+          style: [
+            {
+              lineWidth: 0,
+              strokeStyle: 'rgba(0, 0, 0, 0)',
+            },
+          ],
           type: 'sector',
           value: 50,
           x: 50,

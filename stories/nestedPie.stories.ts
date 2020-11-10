@@ -155,7 +155,7 @@ export const theme = () => {
         colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
         lineWidth: 3,
         strokeStyle: '#0000ff',
-        hover: { color: '#ff0000' },
+        hover: { color: '#0000ff' },
       },
       versions: {
         colors: [
@@ -175,7 +175,7 @@ export const theme = () => {
         ],
         lineWidth: 2,
         strokeStyle: '#ff0000',
-        hover: { color: '#ffffff' },
+        hover: { color: '#ff0000' },
       },
     },
   };
@@ -205,13 +205,13 @@ export const groupedTheme = () => {
   const themeOptions: NestedPieChartThemeOptions = {
     series: {
       colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569', '#f75294'],
-      lineWidth: 2,
+      lineWidth: 5,
       strokeStyle: '#cccccc',
       browsers: {
-        hover: { colors: ['#6D9B46'] },
+        hover: { color: '#6D9B46' },
       },
       versions: {
-        hover: { colors: ['#3A9278'] },
+        hover: { color: '#3A9278' },
       },
     },
   };
