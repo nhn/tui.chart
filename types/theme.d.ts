@@ -10,7 +10,7 @@ type SeriesThemeMap = {
   column?: CommonSeriesTheme;
   bubble?: CommonSeriesTheme;
   pie?: PieChartSeriesTheme;
-  radar?: CommonSeriesTheme;
+  radar?: RadarChartSeriesTheme;
   boxPlot?: CommonSeriesTheme;
   bullet?: CommonSeriesTheme;
 };
@@ -22,6 +22,7 @@ type SeriesTheme =
   | HeatmapChartSeriesTheme
   | TreemapChartSeriesTheme
   | PieChartSeriesTheme
+  | RadarChartSeriesTheme
   | ScatterChartSeriesTheme
   | BubbleChartSeriesTheme
   | NestedPieChartSeriesTheme;
@@ -174,6 +175,24 @@ interface BaseThemeOptions {
   series?: {};
 }
 
+interface RadarChartSeriesTheme {
+  colors?: string[];
+  lineWidth?: number;
+  dashSegments?: number[];
+  areaOpacity?: number;
+  dot?: DotTheme;
+  select?: {
+    dot?: DotTheme;
+    areaOpacity?: number;
+    restSeries?: {
+      areaOpacity: number;
+    };
+  };
+  hover?: {
+    dot?: DotTheme;
+  };
+}
+
 interface LineChartThemeOptions extends BaseThemeOptions {
   series?: LineChartSeriesTheme;
 }
@@ -196,6 +215,10 @@ interface PieChartThemeOptions extends BaseThemeOptions {
 
 interface NestedPieChartThemeOptions extends BaseThemeOptions {
   series?: NestedPieChartSeriesTheme;
+}
+
+interface RadarChartThemeOptions extends BaseThemeOptions {
+  series?: RadarChartSeriesTheme;
 }
 
 interface HeatmapChartThemeOptions extends BaseThemeOptions {

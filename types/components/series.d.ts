@@ -208,6 +208,7 @@ export type PolygonModel = {
   fillColor?: string;
   distances?: number[];
   name?: string;
+  dashSegments?: number[];
 };
 
 export type RadarSeriesModels = {

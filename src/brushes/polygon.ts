@@ -1,7 +1,7 @@
 import { PolygonModel } from '@t/components/series';
 
 export function polygon(ctx: CanvasRenderingContext2D, polygonModel: PolygonModel) {
-  const { color, points, lineWidth, fillColor } = polygonModel;
+  const { color, points, lineWidth, fillColor, dashSegments = [] } = polygonModel;
 
   ctx.lineWidth = lineWidth;
   ctx.strokeStyle = color;
@@ -11,6 +11,10 @@ export function polygon(ctx: CanvasRenderingContext2D, polygonModel: PolygonMode
   }
 
   ctx.beginPath();
+
+  if (dashSegments) {
+    ctx.setLineDash(dashSegments);
+  }
 
   points.forEach(({ x, y }, idx) => {
     if (idx === 0) {

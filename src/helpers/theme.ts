@@ -8,6 +8,10 @@ export const DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS = DEFAULT_LINE_SERIES_DOT_RADI
 const DEFAULT_AREA_OPACITY = 0.3;
 const DEFAULT_AREA_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
 const DEFAULT_AREA_UNSELECTED_SERIES_OPACITY = 0.06;
+const DEFAULT_RADAR_SERIES_DOT_RADIUS = 3;
+const DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS = DEFAULT_RADAR_SERIES_DOT_RADIUS + 1;
+const DEFAULT_RADAR_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
+const DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY = 0.05;
 
 export const defaultSeriesTheme = {
   colors: [
@@ -136,6 +140,31 @@ function getSeriesTheme(seriesName: string) {
         borderColor: transparentColor,
         select: {},
         hover: {},
+      };
+    case 'radar':
+      return {
+        areaOpacity: DEFAULT_RADAR_SELECTED_SERIES_OPACITY,
+        hover: {
+          dot: {
+            radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
+            borderColor: '#ffffff',
+            borderWidth: 2,
+          },
+        },
+        select: {
+          dot: {
+            radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
+            borderColor: '#ffffff',
+            borderWidth: 2,
+          },
+          restSeries: {
+            areaOpacity: DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY,
+          },
+          areaOpacity: DEFAULT_RADAR_SELECTED_SERIES_OPACITY,
+        },
+        dot: {
+          radius: DEFAULT_RADAR_SERIES_DOT_RADIUS,
+        },
       };
     default:
       return {};

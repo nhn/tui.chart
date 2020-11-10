@@ -13,6 +13,7 @@ import {
   PieChartThemeOptions,
   ScatterChartThemeOptions,
   TreemapChartThemeOptions,
+  RadarChartThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
@@ -478,6 +479,7 @@ export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
   plot?: BaseSizeOptions & { type?: RadarPlotType };
   yAxis?: BaseAxisOptions;
+  theme?: RadarChartThemeOptions;
 }
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
