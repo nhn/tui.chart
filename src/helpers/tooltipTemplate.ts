@@ -6,6 +6,13 @@ import {
 } from '@t/components/tooltip';
 import { DefaultTooltipTemplate } from '@t/options';
 import { pieTooltipLabelFormatter } from './pieSeries';
+import { FontTheme, TooltipTheme } from '@t/theme';
+
+function getFontStyleString(theme: FontTheme) {
+  const { color, fontSize, fontFamily, fontWeight } = theme;
+
+  return `font-weight: ${fontWeight}; font-family: ${fontFamily}; font-size: ${fontSize}px; color: ${color};`;
+}
 
 function getSeriesNameTemplate(label: string, color: string) {
   return `<span class="series-name">
@@ -21,16 +28,25 @@ function getTitleValueTemplate(title: string, value: string) {
   </div>`;
 }
 
-export function getDefaultTemplate(model: TooltipModel, { header, body }: DefaultTooltipTemplate) {
-  return `<div class="tooltip">${header}${body}</div>`;
+export function getDefaultTemplate(
+  model: TooltipModel,
+  { header, body }: DefaultTooltipTemplate,
+  theme: Required<TooltipTheme>
+) {
+  const { borderColor, borderWidth, background, borderRadius } = theme;
+  const style = `border: ${borderWidth}px solid ${borderColor};border-radius: ${borderRadius}px;background: ${background};`;
+
+  return `<div class="tooltip" style="${style}">${header}${body}</div>`;
 }
 
-export function getHeaderTemplate({ category }: TooltipModel) {
-  return category ? `<div class="tooltip-category">${category}</div>` : '';
+export function getHeaderTemplate({ category }: TooltipModel, theme: Required<TooltipTheme>) {
+  return category
+    ? `<div class="tooltip-category" style="${getFontStyleString(theme.header)}">${category}</div>`
+    : '';
 }
 
-function getDefaultBodyTemplate({ data }: TooltipModel) {
-  return `<div class="tooltip-series-wrapper">
+function getDefaultBodyTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
+  return `<div class="tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
       ${data
         .map(
           ({ label, color, formattedValue }) =>
@@ -43,7 +59,7 @@ function getDefaultBodyTemplate({ data }: TooltipModel) {
     </div>`;
 }
 
-function getBoxPlotTemplate({ data }: TooltipModel) {
+function getBoxPlotTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
   const groupedData = data.reduce<TooltipData>((acc, item, index) => {
     if (!index) {
       return item;
@@ -56,7 +72,7 @@ function getBoxPlotTemplate({ data }: TooltipModel) {
     return acc;
   }, {} as TooltipData);
 
-  return `<div class="tooltip-series-wrapper">
+  return `<div class="tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
     ${[groupedData]
       .map(
         ({ label, color, value: values }) =>
@@ -73,8 +89,8 @@ function getBoxPlotTemplate({ data }: TooltipModel) {
   </div>`;
 }
 
-function getBulletTemplate({ data }: TooltipModel) {
-  return `<div class="tooltip-series-wrapper">
+function getBulletTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
+  return `<div class="tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
     ${data
       .map(
         ({ label, color, value: values }) =>
@@ -89,8 +105,8 @@ function getBulletTemplate({ data }: TooltipModel) {
   </div>`;
 }
 
-function getPieTemplate({ data }: TooltipModel) {
-  return `<div class="tooltip-series-wrapper">
+function getPieTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
+  return `<div class="tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
     ${data
       .map(
         ({ label, color, formattedValue, percentValue }) =>
@@ -105,14 +121,14 @@ function getPieTemplate({ data }: TooltipModel) {
   </div>`;
 }
 
-function getHeatmapTemplate({ data }: TooltipModel) {
+function getHeatmapTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
   return `${data
     .map(
       ({ label, color, formattedValue }) =>
-        `<div class="tooltip-category">
+        `<div class="tooltip-category" style="${getFontStyleString(theme.header)}">
           ${label}
         </div>
-        <div class="tooltip-series-wrapper">
+        <div class="tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
           <div class="tooltip-series">${getSeriesNameTemplate(formattedValue!, color)}</div>
         </div>`
     )

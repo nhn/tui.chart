@@ -118,6 +118,24 @@ export const defaultTheme = {
       fontFamily: 'Arial',
     },
   },
+  tooltip: {
+    background: 'rgba(85, 85, 85, 0.95)',
+    borderColor: 'rgba(255, 255, 255, 0)',
+    borderWidth: 0,
+    borderRadius: 3,
+    body: {
+      fontSize: 12,
+      fontFamily: 'Arial, sans-serif',
+      fontWeight: 'normal',
+      color: '#ffffff',
+    },
+    header: {
+      fontSize: 13,
+      fontFamily: 'Arial, sans-serif',
+      fontWeight: 'bold',
+      color: '#ffffff',
+    },
+  },
 };
 
 function getSeriesTheme(seriesName: string) {

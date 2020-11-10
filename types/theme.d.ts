@@ -48,6 +48,7 @@ type Theme = {
   xAxis: AxisTheme;
   yAxis: AxisTheme | AxisTheme[];
   legend: LegendTheme;
+  tooltip: TooltipTheme;
 };
 
 type AxisTheme = {
@@ -55,6 +56,16 @@ type AxisTheme = {
   label?: FontTheme;
   width?: number;
   color?: string;
+};
+
+type TooltipTheme = {
+  background?: string;
+  borderColor?: string;
+  borderWidth?: number;
+  borderRadius?: number;
+
+  header?: FontTheme;
+  body?: FontTheme;
 };
 
 type ComboChartSeriesTheme =
@@ -191,7 +202,7 @@ interface BaseThemeOptions {
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
   legend?: LegendTheme;
-  tooltip?: {};
+  tooltip?: TooltipTheme;
   chartExportMenu?: {};
   series?: {};
 }
