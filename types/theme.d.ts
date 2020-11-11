@@ -194,7 +194,6 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
     borderColor?: string;
     borderWidth?: number;
     groupedRect?: GroupedRect;
-    shadow?: boolean | ShadowStyle;
   } & ShadowStyle;
   select?: {
     color?: string;
@@ -219,7 +218,6 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
     color?: string;
     borderColor?: string;
     borderWidth?: number;
-    shadow?: boolean | ShadowStyle;
   } & ShadowStyle;
   select?: {
     color?: string;
@@ -231,6 +229,47 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
     areaOpacity?: number;
   } & ShadowStyle;
 }
+
+interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
+  areaOpacity?: number;
+  barWidth?: number;
+  barWidthRatios?: number[];
+  dot?: BoxPlotDotTheme;
+  line?: BoxPlotLineTypeTheme;
+  rect?: BoxPlotRectTypeTheme;
+  hover?: {
+    color?: string;
+    rect?: BoxPlotRectTypeTheme;
+    dot?: BoxPlotDotTheme;
+    line?: BoxPlotLineTypeTheme;
+  } & ShadowStyle;
+  select?: {
+    color?: string;
+    rect?: BoxPlotRectTypeTheme;
+    dot?: BoxPlotDotTheme;
+    line?: BoxPlotLineTypeTheme;
+    restSeries?: {
+      areaOpacity?: number;
+    };
+    areaOpacity?: number;
+  } & ShadowStyle;
+}
+
+type LineTypeTheme = { lineWidth?: number; color?: string };
+
+type BoxPlotRectTypeTheme = {
+  borderColor?: string;
+  borderWidth?: number;
+};
+
+type BoxPlotLineTypeTheme = {
+  whisker?: LineTypeTheme;
+  minimum?: LineTypeTheme;
+  maximum?: LineTypeTheme;
+  median?: LineTypeTheme;
+};
+
+type BoxPlotDotTheme = DotTheme & { useSeriesColor?: boolean };
 
 type ShadowStyle = {
   shadowColor?: string;
@@ -307,4 +346,8 @@ interface BoxChartThemeOptions extends BaseThemeOptions {
 
 interface BulletCharThemeOptions extends BaseThemeOptions {
   series?: BulletChartSeriesTheme;
+}
+
+interface BoxPlotCharThemeOptions extends BaseThemeOptions {
+  series?: BoxPlotChartSeriesTheme;
 }

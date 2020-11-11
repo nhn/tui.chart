@@ -8,6 +8,7 @@ import {
 } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
+import { getAlpha } from '@src/helpers/color';
 
 export type CircleStyleName = 'default' | 'hover' | 'plot';
 export type RectStyleName = 'shadow';
@@ -160,8 +161,12 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   }
 
   if (thickness) {
-    ctx.fillStyle = borderColor;
-    ctx.fillRect(x - thickness, y - thickness, width + thickness * 2, height + thickness * 2);
+    ctx.lineWidth = thickness * (getAlpha(color) === 1 ? 2 : 1);
+    ctx.strokeStyle = borderColor;
+    ctx.strokeRect(x, y, width, height);
+  }
+
+  if (ctx.shadowColor) {
     ctx.shadowColor = 'transparent';
   }
 

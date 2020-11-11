@@ -227,20 +227,19 @@ export type BoxPlotSeriesModels = {
 };
 
 export type LineResponderModel = {
-  x2: number;
-  y2: number;
   detectionSize?: number;
-} & Point;
+} & LineModel;
 
 export type BoxPlotModel = {
   type: 'boxPlot';
   color: string;
   name: string;
-  rect: Omit<RectModel, 'type' | 'color'>;
-  median: LineResponderModel;
-  whisker: LineResponderModel;
-  minimum: LineResponderModel;
-  maximum: LineResponderModel;
+  rect: RectModel;
+  median: LineModel;
+  upperWhisker: LineModel;
+  lowerWhisker: LineModel;
+  minimum: LineModel;
+  maximum: LineModel;
   index?: number;
 };
 
