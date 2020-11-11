@@ -223,9 +223,9 @@ export const theme = () => {
           borderColor: '#73C8E7',
           borderWidth: 0,
           shadowColor: 'rgba(0, 0, 0, 0.7)',
-          shadowOffsetX: 0,
-          shadowOffsetY: 0,
-          shadowBlur: 10,
+          shadowOffsetX: 4,
+          shadowOffsetY: 4,
+          shadowBlur: 6,
           groupedRect: {
             color: '#F0DCBC',
             opacity: 0.5,
