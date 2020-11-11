@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "noEmit": true,
     "target": "ES5",
     "module": "commonJS",
     "strict": true,

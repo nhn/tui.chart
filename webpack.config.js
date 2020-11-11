@@ -2,14 +2,30 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const pkg = require('./package.json');
 
 module.exports = (env, argv) => {
+  const isProduction = argv.mode === 'production';
+  const FILENAME = pkg.name + (isProduction ? '.min' : '');
+  const BANNER = [
+    'TOAST UI Chart 4th Edition',
+    '@version ' + pkg.version + ' | ' + new Date().toDateString(),
+    '@author ' + pkg.author,
+    '@license ' + pkg.license
+  ].join('\n');
+
   let config = {
-    plugins: [new MiniCssExtractPlugin()],
+    plugins: [new webpack.BannerPlugin({
+      banner: BANNER,
+      entryOnly: true
+    })],
     entry: ['@babel/polyfill', './src/index.ts'],
     output: {
-      filename: 'main.js',
+      library: ['tui', 'Chart'],
+      libraryTarget: 'umd',
+      libraryExport: 'default',
+      filename: `${FILENAME}.js`,
       path: path.resolve(__dirname, 'dist'),
     },
     optimization: {
@@ -18,7 +34,7 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.(ts|js)$/,
+          test: /\.(ts|tsx|js)$/,
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
@@ -26,7 +42,8 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.css$/i,
-          use: [MiniCssExtractPlugin.loader, 'style-loader', 'css-loader'],
+          // use: [MiniCssExtractPlugin.loader, 'style-loader', 'css-loader'],
+          use: ['style-loader', 'css-loader'],
         },
       ],
     },

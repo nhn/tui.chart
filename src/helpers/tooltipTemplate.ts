@@ -66,7 +66,7 @@ function getBoxPlotTemplate({ data }: TooltipModel, theme: Required<TooltipTheme
     }
 
     if (acc.category === item.category && acc.label === item.label) {
-      acc.value = [...acc.value, ...item.value] as TooltipTitleValues;
+      acc.value = [...(acc.value as TooltipTitleValues), ...(item.value as TooltipTitleValues)];
     }
 
     return acc;

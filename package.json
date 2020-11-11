@@ -3,6 +3,7 @@
   "version": "4.0.0",
   "description": "TOAST UI Application: Chart",
   "main": "dist/tui-chart.js",
+  "module": "dist/esm/",
   "sideEffects": false,
   "scripts": {
     "check-types": "tsc --project ./tsconfig.json",
@@ -11,9 +12,11 @@
     "test": "jest --detectOpenHandles --forceExit",
     "test:watch": "jest --watch",
     "test:ci": "npm run validate && jest",
+    "build": "npm run build:clean && npm run build:prod && npm run build:esm",
     "build:clean": "rm -rf ./dist",
-    "build": "npm run lint && webpack --mode=production",
-    "serve": "npm run validate && webpack-dev-server --mode=development",
+    "build:prod": "webpack --mode=production",
+    "build:esm": "ttsc -p tsconfig.esm.json",
+    "serve": "webpack-dev-server --mode=development",
     "storybook": "start-storybook -p 6006"
   },
   "repository": {
@@ -58,7 +61,9 @@
     "prettier": "^2.0.5",
     "style-loader": "^2.0.0",
     "ts-jest": "^24.2.0",
+    "ttypescript": "^1.5.12",
     "typescript": "^3.7.3",
+    "typescript-transform-paths": "^2.0.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0"

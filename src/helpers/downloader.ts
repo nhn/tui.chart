@@ -112,7 +112,7 @@ function get2DArrayFromRawData(data: DataToExport) {
   const { categories = [] } = data;
 
   // @TODO: 각 차트별 데이터 생성 필요
-  resultArray.push(['', ...categories]);
+  // resultArray.push(['', ...categories]);
 
   Object.keys(data.series).forEach((type) => {
     data.series[type].forEach((datum) => {
