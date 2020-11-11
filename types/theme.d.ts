@@ -209,6 +209,29 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
   connector?: ConnectorTheme;
 }
 
+interface BulletChartSeriesTheme extends CommonSeriesTheme {
+  areaOpacity?: number;
+  barWidth?: number;
+  barWidthRatios?: number[];
+  markerLineWidth?: number;
+  rangeColors?: string[];
+  hover?: {
+    color?: string;
+    borderColor?: string;
+    borderWidth?: number;
+    shadow?: boolean | ShadowStyle;
+  } & ShadowStyle;
+  select?: {
+    color?: string;
+    borderColor?: string;
+    borderWidth?: number;
+    restSeries?: {
+      areaOpacity?: number;
+    };
+    areaOpacity?: number;
+  } & ShadowStyle;
+}
+
 type ShadowStyle = {
   shadowColor?: string;
   shadowOffsetX?: number;
@@ -280,4 +303,8 @@ interface BubbleChartThemeOptions extends BaseThemeOptions {
 
 interface BoxChartThemeOptions extends BaseThemeOptions {
   series?: BoxChartSeriesTheme;
+}
+
+interface BulletCharThemeOptions extends BaseThemeOptions {
+  series?: BulletChartSeriesTheme;
 }

@@ -12,6 +12,15 @@ const DEFAULT_RADAR_SERIES_DOT_RADIUS = 3;
 const DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS = DEFAULT_RADAR_SERIES_DOT_RADIUS + 1;
 const DEFAULT_RADAR_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
 const DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY = 0.05;
+export const DEFAULT_BULLET_RANGE_OPACITY = [0.5, 0.3, 0.1];
+const DEFAULT_BOX_HOVER = {
+  borderWidth: BOX_HOVER_THICKNESS,
+  borderColor: '#ffffff',
+  shadowColor: 'rgba(0, 0, 0, 0.3)',
+  shadowOffsetX: 2,
+  shadowOffsetY: 2,
+  shadowBlur: 6,
+};
 
 export const defaultSeriesTheme = {
   colors: [
@@ -82,6 +91,7 @@ const defaultTheme = {
   },
 };
 
+// eslint-disable-next-line complexity
 function getSeriesTheme(seriesName: string) {
   const lineTypeSeriesTheme = {
     lineWidth: defaultSeriesTheme.lineWidth,
@@ -171,24 +181,14 @@ function getSeriesTheme(seriesName: string) {
       return {
         areaOpacity: 1,
         hover: {
-          borderWidth: BOX_HOVER_THICKNESS,
-          borderColor: '#ffffff',
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowOffsetX: 2,
-          shadowOffsetY: 2,
-          shadowBlur: 6,
+          ...DEFAULT_BOX_HOVER,
           groupedRect: {
             color: '#000000',
             opacity: 0.05,
           },
         },
         select: {
-          borderWidth: BOX_HOVER_THICKNESS,
-          borderColor: '#ffffff',
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowOffsetX: 2,
-          shadowOffsetY: 2,
-          shadowBlur: 6,
+          ...DEFAULT_BOX_HOVER,
           groupedRect: {
             color: '#000000',
             opacity: 0.2,
@@ -203,6 +203,22 @@ function getSeriesTheme(seriesName: string) {
           borderColor: 'rgba(51, 85, 139, 0.3)',
           borderWidth: 1,
           dashSegments: [5, 5],
+        },
+      };
+    case 'bullet':
+      return {
+        areaOpacity: 1,
+        barWidthRatios: [1, 0.5, 0.8],
+        markerLineWidth: 1,
+        hover: {
+          ...DEFAULT_BOX_HOVER,
+        },
+        select: {
+          ...DEFAULT_BOX_HOVER,
+          restSeries: {
+            areaOpacity: 0.2,
+          },
+          areaOpacity: 1,
         },
       };
     default:

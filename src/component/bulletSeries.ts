@@ -8,46 +8,27 @@ import {
   MarkerResponderModel,
 } from '@t/components/series';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { getRGBA } from '@src/helpers/color';
+import { getRGBA, getAlpha } from '@src/helpers/color';
 import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/options';
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
 import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
-import { BOX_HOVER_THICKNESS, getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 import { LineModel } from '@t/components/axis';
+import { BulletChartSeriesTheme } from '@t/theme';
+import { DEFAULT_BULLET_RANGE_OPACITY } from '@src/helpers/theme';
+import { isNumber } from '@src/helpers/utils';
 
 type RenderOptions = {
   ratio: number;
   tickDistance: number;
   vertical: boolean;
   zeroPosition: number;
-  barWidth: number;
+  rangeWidth: number;
   bulletWidth: number;
   markerWidth: number;
 };
-
-const seriesOpacity = {
-  INACTIVE: 0.2,
-  ACTIVE: 1,
-};
-
-const RANGE_OPACITY = [0.5, 0.3, 0.1];
-
-function getBarWidths(tickDistance: number, seriesLength: number) {
-  const padding = getBoxTypeSeriesPadding(tickDistance);
-
-  const barWidth = Math.max(
-    (tickDistance - padding * (2 + (seriesLength - 1))) / seriesLength,
-    tickDistance * 0.6
-  );
-
-  return {
-    barWidth,
-    bulletWidth: barWidth / 2,
-    markerWidth: barWidth * 0.8,
-  };
-}
 
 function getRectSize(vertical: boolean, barWidth: number, barLength: number): Size {
   return {
@@ -73,18 +54,21 @@ export default class BulletSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
+  theme!: Required<BulletChartSeriesTheme>;
+
   initialize() {
     this.type = 'series';
     this.name = 'bullet';
   }
 
   render(state: ChartState<BulletChartOptions>): void {
-    const { layout, axes, series, scale, legend, options } = state;
+    const { layout, axes, series, scale, legend, options, theme } = state;
 
     if (!series.bullet) {
       throw new Error("There's no bullet data!");
     }
 
+    this.theme = theme.series.bullet as Required<BulletChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -103,7 +87,7 @@ export default class BulletSeries extends Component {
       tickDistance,
       vertical,
       zeroPosition,
-      ...getBarWidths(tickDistance, bulletData.length),
+      ...this.getBulletBarWidths(tickDistance),
     };
 
     const seriesModels = this.renderSeries(bulletData, renderOptions);
@@ -187,7 +171,7 @@ export default class BulletSeries extends Component {
 
   onMousemove({ responders }) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: this.filterBulletResponder(responders),
+      models: this.getRespondersWithTheme(responders, 'hover'),
       name: this.name,
     });
 
@@ -201,7 +185,7 @@ export default class BulletSeries extends Component {
   onClick({ responders }) {
     if (this.selectable) {
       this.eventBus.emit('renderSelectedSeries', {
-        models: this.filterBulletResponder(responders),
+        models: this.getRespondersWithTheme(responders, 'select'),
         name: this.name,
       });
       this.eventBus.emit('needDraw');
@@ -215,7 +199,7 @@ export default class BulletSeries extends Component {
   renderSeries(bulletData: BulletSeriesType[], renderOptions: RenderOptions): Array<BulletModel> {
     return bulletData.reduce<BulletModel[]>(
       (acc, { data, ranges, markers, name, color }, seriesIndex) => {
-        const seriesColor = this.getSeriesColor(name, color!);
+        const seriesColor = getRGBA(color!, this.getSeriesOpacity(name));
 
         const rangeModels: BulletRectModel[] = this.makeRangeModel(
           ranges,
@@ -254,21 +238,20 @@ export default class BulletSeries extends Component {
     color: string,
     name: string
   ): BulletRectModel[] {
-    const active = this.activeSeriesMap![name];
-    const { tickDistance, ratio, vertical, zeroPosition, barWidth } = renderOptions;
+    const { tickDistance, ratio, vertical, zeroPosition, rangeWidth } = renderOptions;
 
     return ranges.map((range, rangeIndex) => {
       const [start, end] = range;
       const barLength = (end - start) * ratio;
-      const rangeStartX = getStartX(seriesIndex, tickDistance, barWidth);
+      const rangeStartX = getStartX(seriesIndex, tickDistance, rangeWidth);
 
       return {
         type: 'rect',
         name,
-        color: getRGBA(color, RANGE_OPACITY[rangeIndex] * (active ? 1 : 0.2)),
+        color: this.getRangeColor(color, rangeIndex, name),
         x: vertical ? rangeStartX : start * ratio + zeroPosition,
         y: vertical ? zeroPosition - end * ratio : rangeStartX,
-        ...getRectSize(vertical, barWidth, barLength),
+        ...getRectSize(vertical, rangeWidth, barLength),
         modelType: 'range',
       };
     });
@@ -307,6 +290,7 @@ export default class BulletSeries extends Component {
   ): LineModel[] {
     const { tickDistance, ratio, vertical, zeroPosition, markerWidth } = renderOptions;
     const markerStartX = getStartX(seriesIndex, tickDistance, markerWidth);
+    const { markerLineWidth } = this.theme;
 
     return markers.map((marker) => {
       const dataPosition = marker * ratio;
@@ -321,7 +305,7 @@ export default class BulletSeries extends Component {
         x2: vertical ? x + markerWidth : x,
         y2: vertical ? y : y + markerWidth,
         strokeStyle: color,
-        lineWidth: 1,
+        lineWidth: markerLineWidth,
         value: marker,
       };
     });
@@ -353,9 +337,62 @@ export default class BulletSeries extends Component {
     }, []);
   }
 
-  getSeriesColor(name: string, seriesColor: string) {
-    const active = this.activeSeriesMap![name];
+  getBulletBarWidths(tickDistance: number) {
+    const { barWidth: barThemeWidth, barWidthRatios } = this.theme;
+    const [rangeRatio, bulletRatio, markerRatio] = barWidthRatios;
+    const barWidth = isNumber(barThemeWidth) ? barThemeWidth : tickDistance * 0.6;
 
-    return getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
+    return {
+      rangeWidth: barWidth * rangeRatio,
+      bulletWidth: barWidth * bulletRatio,
+      markerWidth: barWidth * markerRatio,
+    };
+  }
+
+  getRangeColor(seriesColor: string, rangeIndex: number, seriesName: string) {
+    const { rangeColors } = this.theme;
+    const hasThemeRangeColor = Array.isArray(rangeColors) && rangeColors[rangeIndex];
+    const color = hasThemeRangeColor ? rangeColors[rangeIndex] : seriesColor;
+    const opacity = hasThemeRangeColor
+      ? getAlpha(rangeColors[rangeIndex])
+      : DEFAULT_BULLET_RANGE_OPACITY[rangeIndex];
+
+    return getRGBA(color, opacity * this.getSeriesOpacity(seriesName));
+  }
+
+  getSeriesOpacity(seriesName: string) {
+    const { select, areaOpacity } = this.theme;
+    const active = this.activeSeriesMap![seriesName];
+    const selected = Object.values(this.activeSeriesMap!).some((elem) => !elem);
+    const selectedOpacity = active ? select.areaOpacity! : select.restSeries!.areaOpacity!;
+
+    return selected ? selectedOpacity : areaOpacity;
+  }
+
+  getRespondersWithTheme(responders: BulletResponderModel[], type: 'hover' | 'select') {
+    const {
+      color,
+      borderColor,
+      borderWidth,
+      shadowBlur,
+      shadowColor,
+      shadowOffsetX,
+      shadowOffsetY,
+    } = this.theme[type];
+
+    return (this.filterBulletResponder(responders) as BulletRectModel[]).map((model) => ({
+      ...model,
+      color: color ?? model.color,
+      thickness: borderWidth,
+      borderColor,
+      style: [
+        {
+          shadowBlur,
+          shadowColor,
+          shadowOffsetX,
+          shadowOffsetY,
+        },
+      ],
+    }));
   }
 }

@@ -77,3 +77,37 @@ export const responsive = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      selectable: true,
+    },
+    theme: {
+      series: {
+        colors: ['#540D6E', '#EE4266', '#FFD23F', '#3BCEAC'],
+        barWidth: 50,
+        barWidthRatios: [1, 0.5, 0.8],
+        markerLineWidth: 3,
+        rangeColors: ['rgba(0, 0, 0, 0.6)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.2)'],
+        hover: {
+          borderWidth: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.7)',
+          shadowOffsetX: 4,
+          shadowOffsetY: 4,
+          shadowBlur: 6,
+        },
+        select: {
+          borderColor: '#000000',
+          borderWidth: 3,
+          shadowColor: 'rgba(0, 0, 0, 0.7)',
+          shadowOffsetX: 4,
+          shadowOffsetY: 4,
+          shadowBlur: 6,
+        },
+      },
+    },
+  });
+
+  return el;
+};
