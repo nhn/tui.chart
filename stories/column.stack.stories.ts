@@ -132,29 +132,12 @@ export const positiveAndNegativePercent = () => {
   return el;
 };
 
-export const defaultConnector = () => {
+export const connector = () => {
   const { el } = createChart(budgetDataForStack, {
     series: {
       stack: {
         type: 'normal',
         connector: true,
-      },
-    },
-  });
-
-  return el;
-};
-
-export const styledConnector = () => {
-  const { el } = createChart(budgetDataForStack, {
-    series: {
-      stack: {
-        type: 'normal',
-        connector: {
-          type: 'dashed',
-          color: '#031f4b',
-          width: 2,
-        },
       },
     },
   });
@@ -217,6 +200,56 @@ export const eventDetectType = () => {
         type: 'normal',
       },
       eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'grouped'),
+    },
+  });
+
+  return el;
+};
+
+export const theme = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      stack: {
+        type: 'normal',
+        connector: true,
+      },
+      selectable: true,
+      eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'grouped'),
+    },
+    theme: {
+      series: {
+        colors: ['#EDAE49', '#D1495B', '#00798C', '#30638E'],
+        hover: {
+          borderColor: '#73C8E7',
+          borderWidth: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.7)',
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
+          shadowBlur: 10,
+          groupedRect: {
+            color: '#F0DCBC',
+            opacity: 0.5,
+          },
+        },
+        select: {
+          borderColor: '#000000',
+          borderWidth: 10,
+          shadowColor: 'rgba(0, 0, 0, 0)',
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
+          shadowBlur: 0,
+          shadow: false,
+          groupedRect: {
+            color: '#74521A',
+            opacity: 0.2,
+          },
+        },
+        connector: {
+          borderStyle: 'dashed',
+          borderColor: '#031f4b',
+          borderWidth: 2,
+        },
+      },
     },
   });
 

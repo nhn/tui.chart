@@ -8,13 +8,11 @@ import {
   Stack,
   StackSeries,
 } from '@t/store/store';
-import { isBoxSeries } from '@src/component/boxSeries';
 import {
   BoxSeriesOptions,
   StackType,
   StackOptionType,
   StackInfo,
-  Connector,
   BoxSeriesDataType,
   BoxSeriesType,
 } from '@t/options';
@@ -85,10 +83,7 @@ function makeStackGroupData(seriesData: RawSeriesData): StackGroupData {
   return stackData;
 }
 
-function initializeStack(
-  stackOption: StackOptionType,
-  seriesName: ChartType
-): Required<StackInfo> | undefined {
+function initializeStack(stackOption: StackOptionType): Required<StackInfo> | undefined {
   if (!stackOption) {
     return;
   }
@@ -99,18 +94,6 @@ function initializeStack(
   } as StackInfo;
 
   if (isStackObject(stackOption)) {
-    if (isBoxSeries(seriesName) && stackOption.connector) {
-      const defaultConnector: Connector = {
-        type: 'solid',
-        color: 'rgba(51, 85, 139, 0.3)',
-        width: 1,
-      };
-
-      stackOption.connector = (isConnectorObject(stackOption.connector)
-        ? { ...defaultConnector, ...stackOption.connector }
-        : defaultConnector) as Required<Connector>;
-    }
-
     return { ...defaultStackOption, ...stackOption } as Required<StackInfo>;
   }
 
@@ -119,10 +102,6 @@ function initializeStack(
 
 function isStackObject(stackOption: StackOptionType): stackOption is StackInfo {
   return isObject(stackOption);
-}
-
-function isConnectorObject(connector: boolean | Connector): connector is Connector {
-  return isObject(connector);
 }
 
 function hasStackGrouped(seriesRawData: RawSeriesData): boolean {
@@ -211,7 +190,7 @@ const stackSeriesData: StoreModule = {
           stackSeries[chartType] = {};
         }
 
-        stackSeries[chartType].stack = initializeStack(stackOption, chartType);
+        stackSeries[chartType].stack = initializeStack(stackOption);
       }
     });
 

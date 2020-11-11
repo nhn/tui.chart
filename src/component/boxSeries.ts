@@ -47,9 +47,10 @@ import { getLimitOnAxis, getValueAxisName } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { BOX_HOVER_THICKNESS, getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { makeRectResponderModel } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
+import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -71,11 +72,6 @@ type RenderOptions = {
 const BOX = {
   BAR: 'bar',
   COLUMN: 'column',
-};
-
-const groupRectOpacity = {
-  HOVERED: 0.05,
-  SELECTED: 0.2,
 };
 
 export function isLeftBottomSide(seriesIndex: number) {
@@ -136,6 +132,8 @@ export default class BoxSeries extends Component {
   eventDetectType: BoxTypeEventDetectType = 'point';
 
   tooltipRectMap!: RectResponderModel[][];
+
+  theme!: Required<BoxChartSeriesTheme>;
 
   initialize({ name }: { name: BoxType }) {
     this.type = 'series';
@@ -253,7 +251,7 @@ export default class BoxSeries extends Component {
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
     chartState: ChartState<T>
   ) {
-    const { layout, series, axes, stackSeries, legend } = chartState;
+    const { layout, series, axes, stackSeries, legend, theme } = chartState;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -263,6 +261,7 @@ export default class BoxSeries extends Component {
     const options = this.getOptions(chartState.options);
     this.setEventDetectType(series, options);
 
+    this.theme = theme.series[this.name];
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -400,8 +399,7 @@ export default class BoxSeries extends Component {
       data.forEach((value, index) => {
         const dataStart = seriesPos + index * tickDistance;
         const barLength = this.makeBarLength(value, renderOptions);
-        const active = this.activeSeriesMap![name];
-        const color = getRGBA(seriesColor, active ? 1 : 0.2);
+        const color = this.getSeriesColor(name, seriesColor);
 
         if (isNumber(barLength)) {
           const startPosition = this.getStartPosition(
@@ -442,8 +440,6 @@ export default class BoxSeries extends Component {
       y,
       width,
       height,
-      style: ['shadow'],
-      thickness: BOX_HOVER_THICKNESS,
       index,
     };
   }
@@ -456,15 +452,14 @@ export default class BoxSeries extends Component {
     return this.tooltipRectMap[responders[0].index!] ?? [];
   }
 
-  protected getGroupedRect(responders: RectResponderModel[], selected = false) {
+  protected getGroupedRect(responders: RectResponderModel[], type: 'hover' | 'select') {
     const rectModels = this.getRectModelsFromRectResponders(responders);
+    const { color, opacity } = this.theme[type].groupedRect as Required<GroupedRect>;
 
     return rectModels.length
       ? responders.map((m) => ({
           ...m,
-          color: `rgba(0, 0, 0, ${
-            selected ? groupRectOpacity.SELECTED : groupRectOpacity.HOVERED
-          })`,
+          color: getRGBA(color, opacity),
         }))
       : [];
   }
@@ -473,7 +468,7 @@ export default class BoxSeries extends Component {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: this.getGroupedRect(responders),
+      models: this.getGroupedRect(responders, 'hover'),
       name: this.name,
       eventDetectType: this.eventDetectType,
     });
@@ -486,7 +481,7 @@ export default class BoxSeries extends Component {
       this.onMousemoveGroupedType(responders as RectResponderModel[]);
     } else {
       this.eventBus.emit('renderHoveredSeries', {
-        models: responders,
+        models: this.getRespondersWithTheme(responders, 'hover'),
         name: this.name,
         eventDetectType: this.eventDetectType,
       });
@@ -731,11 +726,11 @@ export default class BoxSeries extends Component {
       let models;
       if (this.eventDetectType === 'grouped') {
         models = [
-          ...this.getGroupedRect(responders as RectResponderModel[], true),
+          ...this.getGroupedRect(responders as RectResponderModel[], 'select'),
           ...this.getRectModelsFromRectResponders(responders as RectResponderModel[]),
         ];
       } else {
-        models = responders as RectResponderModel[];
+        models = this.getRespondersWithTheme(responders as RectResponderModel[], 'select');
       }
 
       this.eventBus.emit('renderSelectedSeries', {
@@ -756,5 +751,42 @@ export default class BoxSeries extends Component {
     });
 
     this.eventBus.emit('needDraw');
+  }
+
+  getRespondersWithTheme(responders: RectResponderModel[], type: 'hover' | 'select') {
+    const {
+      color,
+      borderColor,
+      borderWidth,
+      shadowBlur,
+      shadowColor,
+      shadowOffsetX,
+      shadowOffsetY,
+    } = this.theme[type];
+
+    return responders.map((model) => ({
+      ...model,
+      color: color ?? model.color,
+      thickness: borderWidth,
+      borderColor,
+      style: [
+        {
+          shadowBlur,
+          shadowColor,
+          shadowOffsetX,
+          shadowOffsetY,
+        },
+      ],
+    }));
+  }
+
+  getSeriesColor(name: string, color: string) {
+    const { select, areaOpacity } = this.theme;
+    const active = this.activeSeriesMap![name];
+    const selected = Object.values(this.activeSeriesMap!).some((elem) => !elem);
+
+    return selected
+      ? getRGBA(color, active ? select.areaOpacity! : select.restSeries!.areaOpacity!)
+      : getRGBA(color, areaOpacity);
   }
 }

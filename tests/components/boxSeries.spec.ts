@@ -45,6 +45,47 @@ const chartState = {
       { label: 'cho', active: true, checked: true },
     ],
   },
+  theme: {
+    series: {
+      bar: {
+        areaOpacity: 1,
+        hover: {
+          borderWidth: 4,
+          borderColor: '#ffffff',
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+          shadowBlur: 6,
+          groupedRect: {
+            color: '#000000',
+            opacity: 0.05,
+          },
+        },
+        select: {
+          borderWidth: 4,
+          borderColor: '#ffffff',
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+          shadowBlur: 6,
+          groupedRect: {
+            color: '#000000',
+            opacity: 0.2,
+          },
+          restSeries: {
+            areaOpacity: 0.2,
+          },
+          areaOpacity: 1,
+        },
+        connector: {
+          borderStyle: 'solid',
+          borderColor: 'rgba(51, 85, 139, 0.3)',
+          borderWidth: 1,
+          dashSegments: [5, 5],
+        },
+      },
+    },
+  },
 };
 
 const result = {
@@ -105,8 +146,6 @@ const respondersResult = [
     y: 6,
     width: 16,
     height: 14,
-    style: ['shadow'],
-    thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
     index: 0,
   },
@@ -117,8 +156,6 @@ const respondersResult = [
     y: 46,
     width: 32,
     height: 14,
-    style: ['shadow'],
-    thickness: 4,
     data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
     index: 1,
   },
@@ -129,8 +166,6 @@ const respondersResult = [
     y: 20,
     width: 64,
     height: 14,
-    style: ['shadow'],
-    thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' },
     index: 0,
   },
@@ -141,8 +176,6 @@ const respondersResult = [
     y: 60,
     width: 80,
     height: 14,
-    style: ['shadow'],
-    thickness: 4,
     data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' },
     index: 1,
   },

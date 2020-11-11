@@ -5,7 +5,6 @@ import {
   ColumnChartOptions,
   BarChartOptions,
   Point,
-  Connector,
   ColumnLineChartOptions,
 } from '@t/options';
 import {
@@ -88,7 +87,7 @@ export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
     chartState: ChartState<T>
   ) {
-    const { layout, series: seriesData, axes, stackSeries, legend } = chartState;
+    const { layout, series: seriesData, axes, stackSeries, legend, theme } = chartState;
 
     if (!stackSeries[this.name]) {
       return;
@@ -99,6 +98,7 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.setEventDetectType(seriesData, options);
 
+    this.theme = theme.series[this.name];
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -370,16 +370,14 @@ export default class BoxStackSeries extends BoxSeries {
 
   private makeConnectorModel(
     pointsForConnector: Array<Point[]>,
-    connector: boolean | Required<Connector>,
+    connector: boolean,
     columnWidth: number
   ) {
     if (!connector || !pointsForConnector.length) {
       return [];
     }
 
-    const { type: lineType, color: strokeStyle, width: lineWidth } = connector as Required<
-      Connector
-    >;
+    const { borderStyle, borderColor, borderWidth, dashSegments } = this.theme.connector;
     const connectorModels: LineModel[] = [];
     const seriesDataCount = pointsForConnector.length;
     const seriesCount = pointsForConnector[0].length;
@@ -403,9 +401,9 @@ export default class BoxStackSeries extends BoxSeries {
             y: this.isBar ? y + columnWidth : y,
             x2: nextX,
             y2: nextY,
-            dashedPattern: lineType === 'dashed' ? [5, 5] : [],
-            strokeStyle,
-            lineWidth,
+            dashedPattern: borderStyle === 'dashed' ? dashSegments : [],
+            strokeStyle: borderColor,
+            lineWidth: borderWidth,
           });
         }
       });
@@ -706,7 +704,7 @@ export default class BoxStackSeries extends BoxSeries {
     const rectModels = this.getRectModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: [...rectModels, ...this.getGroupedRect(responders)],
+      models: [...rectModels, ...this.getGroupedRect(responders, 'hover')],
       name: this.name,
       eventDetectType: this.eventDetectType,
     });

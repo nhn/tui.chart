@@ -157,7 +157,7 @@ interface LineScatterChartSeriesTheme {
 }
 
 interface ColumnLineChartSeriesTheme {
-  column?: CommonSeriesTheme;
+  column?: BoxChartSeriesTheme;
   line?: LineChartSeriesTheme;
   colors?: string[];
 }
@@ -174,6 +174,47 @@ interface BaseThemeOptions {
   chartExportMenu?: {};
   series?: {};
 }
+
+type GroupedRect = {
+  color?: string;
+  opacity?: number;
+};
+
+type ConnectorTheme = {
+  borderStyle?: 'solid' | 'dashed';
+  borderColor?: string;
+  borderWidth?: number;
+  dashSegments?: number[];
+};
+
+interface BoxChartSeriesTheme extends CommonSeriesTheme {
+  areaOpacity?: number;
+  hover?: {
+    color?: string;
+    borderColor?: string;
+    borderWidth?: number;
+    groupedRect?: GroupedRect;
+    shadow?: boolean | ShadowStyle;
+  } & ShadowStyle;
+  select?: {
+    color?: string;
+    borderColor?: string;
+    borderWidth?: number;
+    groupedRect?: GroupedRect;
+    restSeries?: {
+      areaOpacity?: number;
+    };
+    areaOpacity?: number;
+  } & ShadowStyle;
+  connector?: ConnectorTheme;
+}
+
+type ShadowStyle = {
+  shadowColor?: string;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
+  shadowBlur?: number;
+};
 
 interface RadarChartSeriesTheme {
   colors?: string[];
@@ -235,4 +276,8 @@ interface ScatterChartThemeOptions extends BaseThemeOptions {
 
 interface BubbleChartThemeOptions extends BaseThemeOptions {
   series?: BubbleChartSeriesTheme;
+}
+
+interface BoxChartThemeOptions extends BaseThemeOptions {
+  series?: BoxChartSeriesTheme;
 }
