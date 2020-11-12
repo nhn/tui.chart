@@ -1,5 +1,5 @@
 {
-  "name": "@toast-ui/chart",
+  "name": "tui-chart",
   "version": "4.0.0",
   "description": "TOAST UI Application: Chart",
   "main": "dist/tui-chart.js",
@@ -14,8 +14,8 @@
     "test:ci": "npm run validate && jest",
     "build": "npm run build:clean && npm run build:prod && npm run build:esm",
     "build:clean": "rm -rf ./dist",
-    "build:prod": "webpack --mode=production",
-    "build:esm": "ttsc -p tsconfig.esm.json",
+    "build:prod": "webpack --mode=production --minify",
+    "build:esm": "ttsc -p tsconfig.esm.json && prettier dist/esm/**/*.js --write",
     "serve": "webpack-dev-server --mode=development",
     "storybook": "start-storybook -p 6006"
   },
@@ -60,12 +60,14 @@
     "mini-css-extract-plugin": "^1.3.0",
     "prettier": "^2.0.5",
     "style-loader": "^2.0.0",
+    "terser-webpack-plugin": "^4.2.3",
     "ts-jest": "^24.2.0",
     "ttypescript": "^1.5.12",
     "typescript": "^3.7.3",
     "typescript-transform-paths": "^2.0.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
+    "webpack-dev-server": "^3.9.0",
+    "webpack-merge": "^5.3.0"
   }
 }
