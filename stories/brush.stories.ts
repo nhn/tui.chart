@@ -7,6 +7,7 @@ import { label, rectLabel } from '@src/brushes/label';
 import { resetButton, backButton } from '@src/brushes/resetButton';
 import { sector } from '@src/brushes/sector';
 import { spectrumLegend, spectrumTooltip } from '@src/brushes/spectrumLegend';
+import '@src/css/chart.css';
 
 import {
   AreaPointsModel,

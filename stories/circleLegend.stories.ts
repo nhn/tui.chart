@@ -2,6 +2,7 @@ import { BubbleChartOptions, BubbleSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { lifeExpectancyPerGDPData } from './data';
 import BubbleChart from '@src/charts/bubbleChart';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|CircleLegend',

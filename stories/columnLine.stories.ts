@@ -2,6 +2,7 @@ import ColumnLineChart from '@src/charts/columnLineChart';
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { temperatureAverageData } from './data';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart.ColumnLine',

@@ -4,6 +4,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { temperatureData } from './data';
 import { number, withKnobs } from '@storybook/addon-knobs';
 import { TooltipModel } from '@t/components/tooltip';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|Tooltip',

@@ -3,6 +3,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { populationDensityData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import TreemapChart from '@src/charts/treemapChart';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|spectrumLegend',

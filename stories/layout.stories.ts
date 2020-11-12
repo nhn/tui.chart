@@ -3,6 +3,7 @@ import { BarChartOptions, PieChartOptions } from '@t/options';
 import BarChart from '@src/charts/barChart';
 import { budgetData, genderAgeData, browserUsageData } from './data';
 import PieChart from '@src/charts/pieChart';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|Layout',

@@ -7,8 +7,6 @@ import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
 
-import '../css/exportMenu.css';
-
 const EXPORT_MENU_WIDTH = 140;
 export const BUTTON_RECT_SIZE = 24;
 export interface DataToExport {
