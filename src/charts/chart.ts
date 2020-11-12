@@ -10,7 +10,7 @@ import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce, isBoolean, isNumber, isUndefined, throttle } from '@src/helpers/utils';
+import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
 import { ChartProps, Point, AnimationOptions } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
@@ -260,4 +260,17 @@ export default abstract class Chart<T extends Options> {
     delegationMethod: string,
     mousePosition: Point
   ): void;
+
+  /**
+   * Get checked legend chart type and label, checked state.
+   * @returns {[{checked: boolean, chartType: ChartType, label: string}]} array data that whether series has checked
+   * @api
+   */
+  public getCheckedLegend = () => {
+    const { data } = this.store.state.legend;
+
+    return data
+      .filter((datum) => datum.checked)
+      .map((datum) => pick(datum, 'chartType', 'label', 'checked'));
+  };
 }

@@ -176,12 +176,14 @@ const legend: StoreModule = {
     const legendLabels = hasNestedPieSeries(series)
       ? getNestedPieLegendLabels(series)
       : getLegendLabels(series);
+
     const data = legendLabels.map(({ label, type }) => ({
       label,
       active: true,
       checked: true,
       width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
       iconType: getIconType(type),
+      chartType: type,
     }));
 
     return {
