@@ -13,6 +13,7 @@ const DEFAULT_RADAR_SERIES_DOT_RADIUS = 3;
 const DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS = DEFAULT_RADAR_SERIES_DOT_RADIUS + 1;
 const DEFAULT_RADAR_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
 const DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY = 0.05;
+const DEFAULT_PIE_LINE_WIDTH = 5;
 
 export const defaultSeriesTheme = {
   colors: [
@@ -171,19 +172,23 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
     case 'pie':
       return {
         areaOpacity: 1,
-        strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(0, 0, 0, 0)',
+        strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(255, 255, 255, 0)',
         lineWidth: isNestedPieChart ? 1 : 0,
         hover: {
-          lineWidth: 5,
+          lineWidth: DEFAULT_PIE_LINE_WIDTH,
           strokeStyle: '#ffffff',
           shadowColor: '#cccccc',
           shadowBlur: 5,
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
         },
         select: {
-          lineWidth: 5,
+          lineWidth: DEFAULT_PIE_LINE_WIDTH,
           strokeStyle: '#ffffff',
           shadowColor: '#cccccc',
           shadowBlur: 5,
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
           restSeries: {
             areaOpacity: 0.3,
           },

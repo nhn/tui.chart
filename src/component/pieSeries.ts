@@ -21,9 +21,8 @@ import {
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
 import { PieChartSeriesTheme, SelectSectorStyle } from '@t/theme';
-import { omit } from '@src/helpers/utils';
-
-const PIE_HOVER_THICKNESS = 3;
+import { pick } from '@src/helpers/utils';
+import { RespondersThemeType } from '@src/helpers/responders';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -170,7 +169,8 @@ export default class PieSeries extends Component {
       throw new Error("There's no pie data");
     }
 
-    this.theme = theme.series.pie as Required<PieChartSeriesTheme>;
+    const pieTheme = theme.series.pie as Required<PieChartSeriesTheme>;
+    this.theme = this.alias ? pieTheme[this.alias] : pieTheme;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -330,7 +330,7 @@ export default class PieSeries extends Component {
       totalAngle,
     } = renderOptions;
     const defaultStartDegree = clockwise ? 0 : 360;
-    const { lineWidth, strokeStyle } = this.getSeriesTheme();
+    const { lineWidth, strokeStyle } = this.theme;
 
     seriesRawData.forEach((rawData, seriesIndex) => {
       const color = this.alias
@@ -383,7 +383,7 @@ export default class PieSeries extends Component {
 
   onMousemove({ responders }) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: this.getResonderModelsWithTheme(responders, 'hover'),
+      models: this.getResponderModelsWithTheme(responders, 'hover'),
       name: this.alias || this.name,
     });
     this.activatedResponders = this.makeTooltipResponder(responders);
@@ -397,7 +397,7 @@ export default class PieSeries extends Component {
   onClick({ responders }) {
     if (this.selectable) {
       this.eventBus.emit('renderSelectedSeries', {
-        models: this.getResonderModelsWithTheme(responders, 'select'),
+        models: this.getResponderModelsWithTheme(responders, 'select'),
         name: this.name,
         alias: this.alias,
       });
@@ -405,14 +405,30 @@ export default class PieSeries extends Component {
     }
   }
 
-  getResonderModelsWithTheme(responders: SectorResponderModel[], type: 'select' | 'hover') {
-    const theme = this.getSeriesTheme()[type];
+  getResponderModelsWithTheme(responders: SectorResponderModel[], type: RespondersThemeType) {
+    const theme = this.theme[type];
+    const lineWidth = theme.lineWidth!;
+    const isSameLineWidth = this.theme.lineWidth === lineWidth;
+    const thickness = isSameLineWidth ? 0 : lineWidth * 0.5;
 
     return responders.map((m) => ({
       ...m,
       color: theme?.color ?? m.color,
-      style: [omit(theme, 'color')],
-      radius: { ...m.radius, outer: m.radius.outer + PIE_HOVER_THICKNESS },
+      style: [
+        pick(
+          theme,
+          'lineWidth',
+          'strokeStyle',
+          'shadowBlur',
+          'shadowColor',
+          'shadowOffsetX',
+          'shadowOffsetY'
+        ),
+      ],
+      radius: {
+        inner: Math.max(m.radius.inner - thickness, 0),
+        outer: m.radius.outer + thickness,
+      },
     }));
   }
 
@@ -424,15 +440,14 @@ export default class PieSeries extends Component {
   }
 
   getOpacity(active: boolean, selectedState: boolean): number {
-    const { select, areaOpacity } = this.getSeriesTheme();
+    const { select, areaOpacity } = this.theme;
     const {
       areaOpacity: selectedAreaOpacity,
       restSeries: { areaOpacity: restAreaOpacity },
     } = select as Required<SelectSectorStyle>;
     const selectThemeOpacity = active ? selectedAreaOpacity : restAreaOpacity!;
-    const opacity = selectedState ? selectThemeOpacity : areaOpacity;
 
-    return opacity;
+    return selectedState ? selectThemeOpacity : areaOpacity;
   }
 
   getIndexOfGroup(seriesRawData: PieSeriesType[], parentName: string, name: string) {
@@ -449,15 +464,11 @@ export default class PieSeries extends Component {
     return getRGBA(color!, opacity);
   }
 
-  getSeriesTheme() {
-    return this.alias ? this.theme[this.alias] : this.theme;
-  }
-
   getAliasSeriesColor(rawData: PieSeriesType, seriesRawData: PieSeriesType[], pieIndex: number) {
     const { color, name } = rawData;
     const {
       select: { color: selectedColor },
-    } = this.getSeriesTheme();
+    } = this.theme;
     const { rootParentName, parentName } = rawData;
     const indexOfGroup = this.getIndexOfGroup(seriesRawData, parentName!, name);
     const opacity = this.getAliasSeriesOpacity(

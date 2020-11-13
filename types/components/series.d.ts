@@ -193,8 +193,6 @@ export type SectorModel = {
   totalAngle: number;
   alias?: string;
   percentValue?: number;
-  hoverColor?: string;
-  selectColor?: string;
 } & Point;
 
 export type SectorResponderModel = {

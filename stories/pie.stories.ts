@@ -299,17 +299,21 @@ export const theme = () => {
   const themeOptions: PieChartThemeOptions = {
     series: {
       colors: ['#F94144', '#F3722C', '#F8961E', '#F9C74F', '#90BE6D', '#43AA8B', '#577590'],
-      lineWidth: 1,
+      lineWidth: 2,
       strokeStyle: '#000000',
       hover: {
         color: '#335F70',
+        lineWidth: 2,
         strokeStyle: '#000000',
-        shadowColor: 'rgba(0, 0, 0, 0)',
+        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        shadowBlur: 10,
       },
       select: {
         color: '#203B46',
+        lineWidth: 2,
         strokeStyle: '#000000',
-        shadowColor: 'rgba(0, 0, 0, 0)',
+        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        shadowBlur: 10,
         restSeries: {
           areaOpacity: 0.5,
         },

@@ -153,9 +153,15 @@ export const theme = () => {
     series: {
       browsers: {
         colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
-        lineWidth: 3,
+        lineWidth: 5,
         strokeStyle: '#0000ff',
-        hover: { color: '#0000ff' },
+        hover: {
+          color: '#0000ff',
+          lineWidth: 5,
+          strokeStyle: '#000000',
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+          shadowBlur: 10,
+        },
       },
       versions: {
         colors: [
@@ -175,7 +181,13 @@ export const theme = () => {
         ],
         lineWidth: 2,
         strokeStyle: '#ff0000',
-        hover: { color: '#ff0000' },
+        hover: {
+          color: '#ff0000',
+          lineWidth: 2,
+          strokeStyle: '#000000',
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+          shadowBlur: 10,
+        },
       },
     },
   };

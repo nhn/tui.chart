@@ -7,26 +7,11 @@ export type SectorStyle = {
   strokeStyle?: string;
   shadowColor?: string;
   shadowBlur?: number;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
 };
 
 export type SectorStyleName = 'default' | 'hover' | 'nested';
-
-const sectorStyle = {
-  default: {
-    lineWidth: 0,
-    strokeStyle: 'rgba(255, 255, 255, 0)',
-  },
-  hover: {
-    lineWidth: 5,
-    strokeStyle: '#ffffff',
-    shadowColor: '#cccccc',
-    shadowBlur: 5,
-  },
-  nested: {
-    lineWidth: 1,
-    strokeStyle: '#ffffff',
-  },
-};
 
 export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
   const {
@@ -45,7 +30,7 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
   ctx.beginPath();
 
   if (style) {
-    const styleObj = makeStyleObj<SectorStyle, SectorStyleName>(style, sectorStyle);
+    const styleObj = makeStyleObj<SectorStyle, SectorStyleName>(style, {});
 
     Object.keys(styleObj).forEach((key) => {
       ctx[key] = styleObj[key];
