@@ -13,13 +13,13 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import {
   getTotalAngle,
   isSemiCircle,
-  getRadius,
   getDefaultRadius,
   getSemiCircleCenterY,
   makePieTooltipData,
   pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
+import { calculateSizeWithPercentString } from '@src/helpers/utils';
 
 const PIE_HOVER_THICKNESS = 3;
 
@@ -283,8 +283,11 @@ export default class PieSeries extends Component {
     const { width, height } = this.rect;
     const defaultRadius = getDefaultRadius(this.rect, isSemiCircular);
 
-    const innerRadius = getRadius(defaultRadius, seriesOptions?.radiusRange?.inner ?? 0);
-    const outerRadius = getRadius(
+    const innerRadius = calculateSizeWithPercentString(
+      defaultRadius,
+      seriesOptions?.radiusRange?.inner ?? 0
+    );
+    const outerRadius = calculateSizeWithPercentString(
       defaultRadius,
       seriesOptions?.radiusRange?.outer ?? (this.alias ? 0 : defaultRadius)
     );

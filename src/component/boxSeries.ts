@@ -38,6 +38,7 @@ import {
   hasPositiveOnly,
   isNull,
   isNumber,
+  calculateSizeWithPercentString,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
@@ -48,7 +49,7 @@ import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
-import { makeRectResponderModel } from '@src/helpers/responders';
+import { makeRectResponderModel, RespondersThemeType } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
 
@@ -66,7 +67,7 @@ type RenderOptions = {
   ratio?: number;
   hasNegativeValue: boolean;
   seriesDirection: SeriesDirection;
-  padding: number;
+  defaultPadding: number;
 };
 
 const BOX = {
@@ -301,7 +302,7 @@ export default class BoxSeries extends Component {
       ratio: this.getValueRatio(min, max, offsetSize),
       hasNegativeValue: hasNegative(labels),
       seriesDirection: this.getSeriesDirection(labels),
-      padding: getBoxTypeSeriesPadding(tickDistance),
+      defaultPadding: getBoxTypeSeriesPadding(tickDistance),
     };
 
     const seriesModels: RectModel[] = this.renderSeriesModel(seriesData, renderOptions);
@@ -385,10 +386,12 @@ export default class BoxSeries extends Component {
     seriesData: BoxSeriesType<number | (RangeDataType<number> & number)>[],
     renderOptions: RenderOptions
   ): RectModel[] {
-    const { tickDistance, diverging, padding } = renderOptions;
+    const { tickDistance, diverging } = renderOptions;
+    const seriesLength = seriesData.length;
     const validDiverging = diverging && seriesData.length === 2;
-    const columnWidth = this.getColumnWidth(renderOptions, seriesData.length, validDiverging);
+    const columnWidth = this.getColumnWidth(renderOptions, seriesLength, validDiverging);
     const seriesModels: RectModel[] = [];
+    const padding = (tickDistance - columnWidth * seriesLength) / 2;
 
     seriesData.forEach(({ data, color: seriesColor, name }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;
@@ -655,10 +658,13 @@ export default class BoxSeries extends Component {
   }
 
   getColumnWidth(renderOptions: RenderOptions, seriesLength: number, validDiverging = false) {
-    const { tickDistance, padding } = renderOptions;
+    const { tickDistance, defaultPadding } = renderOptions;
     seriesLength = validDiverging ? 1 : seriesLength;
+    const themeBarWidth = this.theme.barWidth;
 
-    return (tickDistance - padding * 2) / seriesLength;
+    return themeBarWidth
+      ? calculateSizeWithPercentString(tickDistance, themeBarWidth)
+      : (tickDistance - defaultPadding * 2) / seriesLength;
   }
 
   protected getSeriesDirection(labels: string[]) {
@@ -753,7 +759,7 @@ export default class BoxSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  getRespondersWithTheme(responders: RectResponderModel[], type: 'hover' | 'select') {
+  getRespondersWithTheme(responders: RectResponderModel[], type: RespondersThemeType) {
     const {
       color,
       borderColor,

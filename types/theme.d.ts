@@ -57,15 +57,11 @@ interface TreemapChartSeriesTheme {
   borderColor?: string;
   borderWidth?: number;
   select?: {
-    borderColor?: string;
-    borderWidth?: number;
     color?: string;
-  };
+  } & BorderTheme;
   hover?: {
-    borderColor?: string;
-    borderWidth?: number;
     color?: string;
-  };
+  } & BorderTheme;
 }
 
 interface HeatmapChartSeriesTheme {
@@ -74,23 +70,17 @@ interface HeatmapChartSeriesTheme {
   borderColor?: string;
   borderWidth?: number;
   select?: {
-    borderColor?: string;
-    borderWidth?: number;
     color?: string;
-  };
+  } & BorderTheme;
   hover?: {
-    borderColor?: string;
-    borderWidth?: number;
     color?: string;
-  };
+  } & BorderTheme;
 }
 
-interface DotTheme {
+type DotTheme = {
   color?: string;
   radius?: number;
-  borderColor?: string;
-  borderWidth?: number;
-}
+} & BorderTheme;
 
 interface LineTypeSeriesTheme {
   color?: string;
@@ -105,16 +95,12 @@ interface ScatterChartSeriesTheme extends CommonSeriesTheme {
   size?: number;
   select?: {
     size?: number;
-    borderColor?: string;
-    borderWidth?: number;
     fillColor?: string;
-  };
+  } & BorderTheme;
   hover?: {
     size?: number;
-    borderColor?: string;
-    borderWidth?: number;
     fillColor?: string;
-  };
+  } & BorderTheme;
 }
 
 interface BubbleChartSeriesTheme extends CommonSeriesTheme {
@@ -180,32 +166,34 @@ type GroupedRect = {
   opacity?: number;
 };
 
-type ConnectorTheme = {
-  borderStyle?: 'solid' | 'dashed';
+type BorderTheme = {
   borderColor?: string;
   borderWidth?: number;
+};
+
+type ConnectorTheme = {
+  color?: string;
+  lineWidth?: number;
   dashSegments?: number[];
 };
 
 interface BoxChartSeriesTheme extends CommonSeriesTheme {
+  barWidth?: number | string;
   areaOpacity?: number;
   hover?: {
     color?: string;
-    borderColor?: string;
-    borderWidth?: number;
     groupedRect?: GroupedRect;
-    shadow?: boolean | ShadowStyle;
-  } & ShadowStyle;
+  } & ShadowStyle &
+    BorderTheme;
   select?: {
     color?: string;
-    borderColor?: string;
-    borderWidth?: number;
     groupedRect?: GroupedRect;
     restSeries?: {
       areaOpacity?: number;
     };
     areaOpacity?: number;
-  } & ShadowStyle;
+  } & ShadowStyle &
+    BorderTheme;
   connector?: ConnectorTheme;
 }
 

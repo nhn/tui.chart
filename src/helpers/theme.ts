@@ -199,10 +199,9 @@ function getSeriesTheme(seriesName: string) {
           areaOpacity: 1,
         },
         connector: {
-          borderStyle: 'solid',
-          borderColor: 'rgba(51, 85, 139, 0.3)',
-          borderWidth: 1,
-          dashSegments: [5, 5],
+          color: 'rgba(51, 85, 139, 0.3)',
+          lineWidth: 1,
+          dashSegments: [],
         },
       };
     default:
