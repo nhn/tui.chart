@@ -147,7 +147,7 @@ export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
 }
 
 export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
-  const { x, y, width, height, style, thickness = 0, color, borderColor = '#fff' } = model;
+  const { x, y, width, height, style, thickness = 0, color, borderColor = '#ffffff' } = model;
 
   ctx.beginPath();
 

@@ -167,3 +167,51 @@ export const responsive = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      selectable: true,
+      eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'grouped'),
+    },
+    theme: {
+      series: {
+        barWidth: 10,
+        areaOpacity: 1,
+        colors: ['#EDAE49', '#D1495B', '#00798C', '#30638E'],
+        hover: {
+          color: '#00ff00',
+          borderColor: '#73C8E7',
+          borderWidth: 3,
+          shadowColor: 'rgba(0, 0, 0, 0.7)',
+          shadowOffsetX: 4,
+          shadowOffsetY: 4,
+          shadowBlur: 6,
+          groupedRect: {
+            color: '#F0DCBC',
+            opacity: 0.5,
+          },
+        },
+        select: {
+          color: '#0000ff',
+          borderColor: '#000000',
+          borderWidth: 3,
+          shadowColor: 'rgba(0, 0, 0, 0.7)',
+          shadowOffsetX: 4,
+          shadowOffsetY: 4,
+          shadowBlur: 6,
+          groupedRect: {
+            color: '#74521A',
+            opacity: 0.2,
+          },
+          restSeries: {
+            areaOpacity: 0.5,
+          },
+          areaOpacity: 0.8,
+        },
+      },
+    },
+  });
+
+  return el;
+};

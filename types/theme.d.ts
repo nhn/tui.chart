@@ -102,15 +102,11 @@ interface TreemapChartSeriesTheme {
   borderColor?: string;
   borderWidth?: number;
   select?: {
-    borderColor?: string;
-    borderWidth?: number;
     color?: string;
-  };
+  } & BorderTheme;
   hover?: {
-    borderColor?: string;
-    borderWidth?: number;
     color?: string;
-  };
+  } & BorderTheme;
 }
 
 interface HeatmapChartSeriesTheme {
@@ -119,23 +115,17 @@ interface HeatmapChartSeriesTheme {
   borderColor?: string;
   borderWidth?: number;
   select?: {
-    borderColor?: string;
-    borderWidth?: number;
     color?: string;
-  };
+  } & BorderTheme;
   hover?: {
-    borderColor?: string;
-    borderWidth?: number;
     color?: string;
-  };
+  } & BorderTheme;
 }
 
-interface DotTheme {
+type DotTheme = {
   color?: string;
   radius?: number;
-  borderColor?: string;
-  borderWidth?: number;
-}
+} & BorderTheme;
 
 interface LineTypeSeriesTheme {
   color?: string;
@@ -150,16 +140,12 @@ interface ScatterChartSeriesTheme extends CommonSeriesTheme {
   size?: number;
   select?: {
     size?: number;
-    borderColor?: string;
-    borderWidth?: number;
     fillColor?: string;
-  };
+  } & BorderTheme;
   hover?: {
     size?: number;
-    borderColor?: string;
-    borderWidth?: number;
     fillColor?: string;
-  };
+  } & BorderTheme;
 }
 
 interface BubbleChartSeriesTheme extends CommonSeriesTheme {
@@ -202,7 +188,7 @@ interface LineScatterChartSeriesTheme {
 }
 
 interface ColumnLineChartSeriesTheme {
-  column?: CommonSeriesTheme;
+  column?: BoxChartSeriesTheme;
   line?: LineChartSeriesTheme;
   colors?: string[];
 }
@@ -223,6 +209,49 @@ interface BaseThemeOptions {
   chartExportMenu?: {};
   series?: {};
 }
+
+type GroupedRect = {
+  color?: string;
+  opacity?: number;
+};
+
+type BorderTheme = {
+  borderColor?: string;
+  borderWidth?: number;
+};
+
+type ConnectorTheme = {
+  color?: string;
+  lineWidth?: number;
+  dashSegments?: number[];
+};
+
+interface BoxChartSeriesTheme extends CommonSeriesTheme {
+  barWidth?: number | string;
+  areaOpacity?: number;
+  hover?: {
+    color?: string;
+    groupedRect?: GroupedRect;
+  } & ShadowStyle &
+    BorderTheme;
+  select?: {
+    color?: string;
+    groupedRect?: GroupedRect;
+    restSeries?: {
+      areaOpacity?: number;
+    };
+    areaOpacity?: number;
+  } & ShadowStyle &
+    BorderTheme;
+  connector?: ConnectorTheme;
+}
+
+type ShadowStyle = {
+  shadowColor?: string;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
+  shadowBlur?: number;
+};
 
 interface RadarChartSeriesTheme {
   colors?: string[];
@@ -284,4 +313,8 @@ interface ScatterChartThemeOptions extends BaseThemeOptions {
 
 interface BubbleChartThemeOptions extends BaseThemeOptions {
   series?: BubbleChartSeriesTheme;
+}
+
+interface BoxChartThemeOptions extends BaseThemeOptions {
+  series?: BoxChartSeriesTheme;
 }

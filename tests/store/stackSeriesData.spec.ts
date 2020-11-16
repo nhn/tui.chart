@@ -31,30 +31,7 @@ describe('StackSeriesData Store', () => {
 
       expect(state.stackSeries?.bar?.stack).toEqual({
         type: 'normal',
-        connector: {
-          type: 'solid',
-          color: 'rgba(51, 85, 139, 0.3)',
-          width: 1,
-        },
-      });
-    });
-
-    it('should be extended from the connector default, if the connector type is object', () => {
-      const state = (stackSeriesData.state as StateFunc)({
-        series: { bar: { ...data } },
-        options: {
-          series: {
-            stack: {
-              type: 'percent',
-              connector: { type: 'dashed', color: '#ff0000' },
-            },
-          },
-        },
-      });
-
-      expect(state.stackSeries?.bar?.stack).toEqual({
-        type: 'percent',
-        connector: { type: 'dashed', color: '#ff0000', width: 1 },
+        connector: true,
       });
     });
   });
@@ -67,11 +44,7 @@ describe('StackSeriesData Store', () => {
           bar: {
             stack: {
               type: 'normal',
-              connector: {
-                type: 'solid',
-                color: 'rgba(51, 85, 139, 0,3)',
-                width: 1,
-              },
+              connector: true,
             },
           },
         },
@@ -149,11 +122,7 @@ describe('StackSeriesData Store', () => {
           bar: {
             stack: {
               type: 'normal',
-              connector: {
-                type: 'solid',
-                color: 'rgba(51, 85, 139, 0,3)',
-                width: 1,
-              },
+              connector: true,
             },
           },
         },

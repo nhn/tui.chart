@@ -224,6 +224,44 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
           radius: DEFAULT_RADAR_SERIES_DOT_RADIUS,
         },
       };
+    case 'bar':
+    case 'column':
+      return {
+        areaOpacity: 1,
+        hover: {
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+          shadowBlur: 6,
+          groupedRect: {
+            color: '#000000',
+            opacity: 0.05,
+          },
+        },
+        select: {
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+          shadowBlur: 6,
+          groupedRect: {
+            color: '#000000',
+            opacity: 0.2,
+          },
+          restSeries: {
+            areaOpacity: 0.2,
+          },
+          areaOpacity: 1,
+        },
+        connector: {
+          color: 'rgba(51, 85, 139, 0.3)',
+          lineWidth: 1,
+          dashSegments: [],
+        },
+      };
     case 'pie':
       return {
         areaOpacity: 1,

@@ -15,6 +15,7 @@ import {
   TooltipTheme,
   TreemapChartThemeOptions,
   RadarChartThemeOptions,
+  BoxChartThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
@@ -392,19 +393,11 @@ export interface TreemapChartOptions extends BaseOptions {
   theme?: TreemapChartThemeOptions;
 }
 
-type ConnectorLineType = 'dashed' | 'solid';
-
-interface Connector {
-  type: ConnectorLineType;
-  color?: string;
-  width?: number;
-}
-
 export type StackType = 'normal' | 'percent';
 
 interface StackInfo {
   type: StackType;
-  connector?: boolean | Connector;
+  connector?: boolean;
 }
 
 type StackOptionType = boolean | StackInfo;
@@ -421,6 +414,7 @@ export interface BarChartOptions extends BaseOptions {
   series?: BoxSeriesOptions;
   yAxis?: BarTypeYAxisOptions;
   plot?: PlotOptions;
+  theme?: BoxChartThemeOptions;
 }
 
 export interface ColumnChartOptions extends BaseOptions {

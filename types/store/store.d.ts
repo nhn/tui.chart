@@ -9,7 +9,6 @@ import {
   ScatterSeriesType,
   AreaSeriesType,
   AreaChartOptions,
-  Connector,
   StackType,
   BubbleSeriesType,
   BubbleChartOptions,
@@ -330,7 +329,7 @@ export interface ValueEdge {
 
 export type Stack = {
   type: StackType;
-  connector: boolean | Required<Connector>;
+  connector: boolean;
 };
 
 export type PercentScaleType =
