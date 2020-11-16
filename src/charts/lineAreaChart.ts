@@ -66,8 +66,8 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(AxisTitle, { name: 'secondaryYAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
-    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
 

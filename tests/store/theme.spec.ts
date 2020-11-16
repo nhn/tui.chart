@@ -16,10 +16,52 @@ describe('theme store', () => {
 
         expect(state.theme).toEqual({
           chart: {
+            fontFamily: 'Arial',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 100,
+            color: '#333333',
+          },
+          yAxis: {
             title: {
               fontSize: 11,
               fontFamily: 'Arial',
-              fontWeight: '500',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
             },
           },
           series: {
@@ -44,6 +86,25 @@ describe('theme store', () => {
                   radius: 5,
                 },
               },
+            },
+          },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
             },
           },
         });
@@ -82,10 +143,71 @@ describe('theme store', () => {
 
         expect(state.theme).toEqual({
           chart: {
+            fontFamily: 'Arial',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 100,
+            color: '#333333',
+          },
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+          },
+          yAxis: {
             title: {
               fontSize: 11,
               fontFamily: 'Arial',
-              fontWeight: '500',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
             },
           },
           series: {
@@ -133,11 +255,72 @@ describe('theme store', () => {
 
         expect(state.theme).toEqual({
           chart: {
+            fontFamily: 'Arial',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 100,
+            color: '#333333',
+          },
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+          },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
+            },
+          },
+          yAxis: {
             title: {
               fontSize: 11,
               fontFamily: 'Arial',
-              fontWeight: '500',
+              fontWeight: 700,
+              color: '#bbbbbb',
             },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
           series: {
             line: {
@@ -261,6 +444,14 @@ describe('theme store', () => {
         const state = (theme.state as StateFunc)({
           options: {
             theme: {
+              legend: {
+                label: {
+                  fontSize: 11,
+                  fontFamily: 'Arial',
+                  fontWeight: 'normal',
+                  color: '#333333',
+                },
+              },
               series: {
                 area: {
                   colors: ['#aaaaaa', '#bbbbbb'],
@@ -381,19 +572,127 @@ describe('theme store', () => {
 
         expect(state.theme).toEqual({
           chart: {
+            fontFamily: 'Arial',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 100,
+            color: '#333333',
+          },
+          yAxis: {
             title: {
               fontSize: 11,
               fontFamily: 'Arial',
-              fontWeight: '500',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+          },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Arial, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
             },
           },
           series: {
             pie: {
               A: {
+                areaOpacity: 1,
                 colors: ['#00a9ff', '#ffb840'],
+                hover: {
+                  lineWidth: 5,
+                  shadowBlur: 5,
+                  shadowColor: '#cccccc',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  strokeStyle: '#ffffff',
+                },
+                lineWidth: 1,
+                select: {
+                  areaOpacity: 1,
+                  lineWidth: 5,
+                  restSeries: {
+                    areaOpacity: 0.3,
+                  },
+                  shadowBlur: 5,
+                  shadowColor: '#cccccc',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  strokeStyle: '#ffffff',
+                },
+                strokeStyle: '#ffffff',
               },
               B: {
+                areaOpacity: 1,
                 colors: ['#ff5a46', '#00bd9f', '#785fff'],
+                hover: {
+                  lineWidth: 5,
+                  shadowBlur: 5,
+                  shadowColor: '#cccccc',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  strokeStyle: '#ffffff',
+                },
+                lineWidth: 1,
+                select: {
+                  areaOpacity: 1,
+                  lineWidth: 5,
+                  restSeries: {
+                    areaOpacity: 0.3,
+                  },
+                  shadowBlur: 5,
+                  shadowColor: '#cccccc',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  strokeStyle: '#ffffff',
+                },
+                strokeStyle: '#ffffff',
               },
             },
           },
@@ -415,10 +714,56 @@ describe('theme store', () => {
         expect(state.theme?.series).toEqual({
           pie: {
             A: {
+              areaOpacity: 1,
               colors: ['#aaaaaa', '#bbbbbb'],
+              hover: {
+                lineWidth: 5,
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              lineWidth: 1,
+              select: {
+                areaOpacity: 1,
+                lineWidth: 5,
+                restSeries: {
+                  areaOpacity: 0.3,
+                },
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              strokeStyle: '#ffffff',
             },
             B: {
+              areaOpacity: 1,
               colors: ['#cccccc', '#dddddd', '#eeeeee'],
+              hover: {
+                lineWidth: 5,
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              lineWidth: 1,
+              select: {
+                areaOpacity: 1,
+                lineWidth: 5,
+                restSeries: {
+                  areaOpacity: 0.3,
+                },
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              strokeStyle: '#ffffff',
             },
           },
         });
@@ -444,10 +789,56 @@ describe('theme store', () => {
         expect(state.theme?.series).toEqual({
           pie: {
             A: {
+              areaOpacity: 1,
               colors: ['#aaaaaa', '#bbbbbb'],
+              hover: {
+                lineWidth: 5,
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              lineWidth: 1,
+              select: {
+                areaOpacity: 1,
+                lineWidth: 5,
+                restSeries: {
+                  areaOpacity: 0.3,
+                },
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              strokeStyle: '#ffffff',
             },
             B: {
+              areaOpacity: 1,
               colors: ['#cccccc', '#dddddd', '#eeeeee'],
+              hover: {
+                lineWidth: 5,
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              lineWidth: 1,
+              select: {
+                areaOpacity: 1,
+                lineWidth: 5,
+                restSeries: {
+                  areaOpacity: 0.3,
+                },
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              strokeStyle: '#ffffff',
             },
           },
         });

@@ -6,6 +6,8 @@ import { Align } from '@t/options';
 import { scatterSeries } from '@src/brushes/scatterSeries';
 import { ScatterSeriesIconType } from '@t/components/series';
 import { LegendIconType } from '@t/store/store';
+import { getTitleFontString } from '@src/helpers/style';
+import { getTextHeight } from '@src/helpers/calculator';
 
 interface RenderOptions {
   iconType: LegendIconType;
@@ -14,21 +16,25 @@ interface RenderOptions {
   active: boolean;
   color: string;
   align: Align;
+  font: string;
+  fontColor: string;
 }
 
-export const LEGEND_ITEM_HEIGHT = 25;
 export const LEGEND_ITEM_MARGIN_X = 40;
 export const LEGEND_MARGIN_X = 5;
-export const LEGEND_MARGIN_Y = 15;
+export const LEGEND_MARGIN_Y = 13;
 export const LEGEND_CHECKBOX_SIZE = 12;
 export const LEGEND_ICON_SIZE = 12;
-export const LEGEND_LABEL_FONT = 'normal 11px Arial';
-const ICON_BORDER_WIDTH = 1.5
+const ICON_BORDER_WIDTH = 1.5;
 
 const INACTIVE_OPACITY = 0.3;
 const RECT_SIZE = 10;
 const LINE_ICON_PADDING = 2;
 const CIRCLE_ICON_RADIUS = 6;
+
+export function getLegendItemHeight(fontSize: number) {
+  return fontSize + LEGEND_MARGIN_Y;
+}
 
 function drawLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
   const xCurveOffset = [2, 2, 6, 6, 10, 10];
@@ -161,9 +167,8 @@ function drawLabel(
   text: string,
   renderOptions: RenderOptions
 ) {
-  const { active, showCheckbox } = renderOptions;
-  const color = '#333333';
-  const fontColor = active ? color : getRGBA(color, INACTIVE_OPACITY);
+  const { active, showCheckbox, font, fontColor } = renderOptions;
+  const fillStyle = active ? fontColor : getRGBA(fontColor, INACTIVE_OPACITY);
 
   label(ctx, {
     type: 'label',
@@ -174,15 +179,18 @@ function drawLabel(
       (showCheckbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0),
     y,
     text,
-    style: ['default', { font: LEGEND_LABEL_FONT, textBaseline: 'top', fillStyle: fontColor }],
+    style: ['default', { font, textBaseline: 'top', fillStyle }],
   });
 }
 
 export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
-  const { data, showCheckbox, align } = model;
+  const { data, showCheckbox, align, fontSize, fontFamily, fontWeight } = model;
+  const font = getTitleFontString({ fontSize, fontFamily, fontWeight });
+  const fontColor = model.color!;
 
   data.forEach((datum) => {
     const { x, y, checked, active, color, iconType, useScatterChartIcon } = datum;
+    const iconY = y - 1 + (getTextHeight(font) - 11) / 4;
     const renderOptions: RenderOptions = {
       iconType,
       checked,
@@ -190,15 +198,17 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
       color,
       showCheckbox,
       align,
+      font,
+      fontColor,
     };
 
     if (showCheckbox) {
-      drawCheckbox(ctx, x, y, renderOptions);
+      drawCheckbox(ctx, x, iconY, renderOptions);
     }
     if (useScatterChartIcon && iconType !== 'line') {
-      drawScatterIcon(ctx, x, y, renderOptions);
+      drawScatterIcon(ctx, x, iconY, renderOptions);
     } else {
-      drawIcon(ctx, x, y, renderOptions);
+      drawIcon(ctx, x, iconY, renderOptions);
     }
 
     drawLabel(ctx, x, y, datum.label, renderOptions);

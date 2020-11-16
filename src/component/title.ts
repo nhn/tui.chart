@@ -4,10 +4,13 @@ import { TitleOption } from '@t/options';
 import { isString } from '@src/helpers/utils';
 import { LabelModel } from '@t/components/axis';
 import { getTextWidth } from '@src/helpers/calculator';
-import { TITLE_TEXT } from '@src/brushes/label';
+import { FontTheme } from '@t/theme';
+import { getTitleFontString } from '@src/helpers/style';
 
 export default class Title extends Component {
   models!: LabelModel[];
+
+  theme!: Required<FontTheme>;
 
   initialize() {
     this.type = 'title';
@@ -29,7 +32,8 @@ export default class Title extends Component {
       y += options.offsetY ?? 0;
     }
 
-    const textWidth = getTextWidth(text, TITLE_TEXT);
+    const font = getTitleFontString(this.theme);
+    const textWidth = getTextWidth(text, font);
 
     if (align === 'center') {
       x += (this.rect.width - textWidth) / 2;
@@ -43,16 +47,17 @@ export default class Title extends Component {
         x,
         y,
         text,
-        style: ['title'],
+        style: ['title', { font, fillStyle: this.theme.color }],
       },
     ];
   }
 
-  render({ options, layout }: ChartState<Options>) {
+  render({ options, layout, theme }: ChartState<Options>) {
     if (!options.chart?.title) {
       return;
     }
 
+    this.theme = theme.title as Required<FontTheme>;
     this.rect = layout.title;
     this.models = this.renderTitle(options.chart.title);
   }

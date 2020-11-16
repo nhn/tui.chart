@@ -7,7 +7,7 @@ import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
 import { deepCopy, deepMergedCopy, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { getNearestResponder } from '@src/helpers/responders';
+import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import Component from './component';
 import { BubbleChartSeriesTheme } from '@t/theme';
 
@@ -155,7 +155,7 @@ export default class BubbleSeries extends Component {
     });
   }
 
-  private getResponderAppliedTheme(responders: CircleResponderModel[], type: 'select' | 'hover') {
+  private getResponderAppliedTheme(responders: CircleResponderModel[], type: RespondersThemeType) {
     return responders.map((responder) => deepMergedCopy(responder, this.theme[type]));
   }
 

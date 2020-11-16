@@ -216,6 +216,7 @@ export const dataLabels = () => {
       dataLabels: {
         visible: true,
       },
+      showDot: true,
     },
     xAxis: { pointOnColumn: true },
   });
