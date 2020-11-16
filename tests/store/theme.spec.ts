@@ -643,10 +643,56 @@ describe('theme store', () => {
           series: {
             pie: {
               A: {
+                areaOpacity: 1,
                 colors: ['#00a9ff', '#ffb840'],
+                hover: {
+                  lineWidth: 5,
+                  shadowBlur: 5,
+                  shadowColor: '#cccccc',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  strokeStyle: '#ffffff',
+                },
+                lineWidth: 1,
+                select: {
+                  areaOpacity: 1,
+                  lineWidth: 5,
+                  restSeries: {
+                    areaOpacity: 0.3,
+                  },
+                  shadowBlur: 5,
+                  shadowColor: '#cccccc',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  strokeStyle: '#ffffff',
+                },
+                strokeStyle: '#ffffff',
               },
               B: {
+                areaOpacity: 1,
                 colors: ['#ff5a46', '#00bd9f', '#785fff'],
+                hover: {
+                  lineWidth: 5,
+                  shadowBlur: 5,
+                  shadowColor: '#cccccc',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  strokeStyle: '#ffffff',
+                },
+                lineWidth: 1,
+                select: {
+                  areaOpacity: 1,
+                  lineWidth: 5,
+                  restSeries: {
+                    areaOpacity: 0.3,
+                  },
+                  shadowBlur: 5,
+                  shadowColor: '#cccccc',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  strokeStyle: '#ffffff',
+                },
+                strokeStyle: '#ffffff',
               },
             },
           },
@@ -668,10 +714,56 @@ describe('theme store', () => {
         expect(state.theme?.series).toEqual({
           pie: {
             A: {
+              areaOpacity: 1,
               colors: ['#aaaaaa', '#bbbbbb'],
+              hover: {
+                lineWidth: 5,
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              lineWidth: 1,
+              select: {
+                areaOpacity: 1,
+                lineWidth: 5,
+                restSeries: {
+                  areaOpacity: 0.3,
+                },
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              strokeStyle: '#ffffff',
             },
             B: {
+              areaOpacity: 1,
               colors: ['#cccccc', '#dddddd', '#eeeeee'],
+              hover: {
+                lineWidth: 5,
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              lineWidth: 1,
+              select: {
+                areaOpacity: 1,
+                lineWidth: 5,
+                restSeries: {
+                  areaOpacity: 0.3,
+                },
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              strokeStyle: '#ffffff',
             },
           },
         });
@@ -697,10 +789,56 @@ describe('theme store', () => {
         expect(state.theme?.series).toEqual({
           pie: {
             A: {
+              areaOpacity: 1,
               colors: ['#aaaaaa', '#bbbbbb'],
+              hover: {
+                lineWidth: 5,
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              lineWidth: 1,
+              select: {
+                areaOpacity: 1,
+                lineWidth: 5,
+                restSeries: {
+                  areaOpacity: 0.3,
+                },
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              strokeStyle: '#ffffff',
             },
             B: {
+              areaOpacity: 1,
               colors: ['#cccccc', '#dddddd', '#eeeeee'],
+              hover: {
+                lineWidth: 5,
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              lineWidth: 1,
+              select: {
+                areaOpacity: 1,
+                lineWidth: 5,
+                restSeries: {
+                  areaOpacity: 0.3,
+                },
+                shadowBlur: 5,
+                shadowColor: '#cccccc',
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                strokeStyle: '#ffffff',
+              },
+              strokeStyle: '#ffffff',
             },
           },
         });

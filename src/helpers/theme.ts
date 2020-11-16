@@ -1,6 +1,7 @@
 import { RawSeries } from '@t/store/store';
 import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { Theme } from '@t/theme';
+import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -12,6 +13,7 @@ const DEFAULT_RADAR_SERIES_DOT_RADIUS = 3;
 const DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS = DEFAULT_RADAR_SERIES_DOT_RADIUS + 1;
 const DEFAULT_RADAR_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
 const DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY = 0.05;
+const DEFAULT_PIE_LINE_WIDTH = 5;
 
 export const defaultSeriesTheme = {
   colors: [
@@ -137,7 +139,8 @@ export const defaultTheme = {
   },
 };
 
-function getSeriesTheme(seriesName: string) {
+// eslint-disable-next-line complexity
+function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
   const lineTypeSeriesTheme = {
     lineWidth: defaultSeriesTheme.lineWidth,
     dashSegments: defaultSeriesTheme.dashSegments,
@@ -221,20 +224,60 @@ function getSeriesTheme(seriesName: string) {
           radius: DEFAULT_RADAR_SERIES_DOT_RADIUS,
         },
       };
+    case 'pie':
+      return {
+        areaOpacity: 1,
+        strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(255, 255, 255, 0)',
+        lineWidth: isNestedPieChart ? 1 : 0,
+        hover: {
+          lineWidth: DEFAULT_PIE_LINE_WIDTH,
+          strokeStyle: '#ffffff',
+          shadowColor: '#cccccc',
+          shadowBlur: 5,
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
+        },
+        select: {
+          lineWidth: DEFAULT_PIE_LINE_WIDTH,
+          strokeStyle: '#ffffff',
+          shadowColor: '#cccccc',
+          shadowBlur: 5,
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
+          restSeries: {
+            areaOpacity: 0.3,
+          },
+          areaOpacity: 1,
+        },
+      };
     default:
       return {};
   }
 }
 
-export function getDefaultTheme(series: RawSeries): Theme {
-  return Object.keys(series).reduce<Theme>(
+export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Theme {
+  const result = Object.keys(series).reduce<Theme>(
     (acc, seriesName) => ({
       ...acc,
       series: {
         ...acc.series,
-        [seriesName]: getSeriesTheme(seriesName),
+        [seriesName]: getSeriesTheme(seriesName, isNestedPieChart),
       },
     }),
     defaultTheme as Theme
   );
+
+  if (isNestedPieChart) {
+    const aliasNames = getNestedPieChartAliasNames(series);
+
+    result.series.pie = aliasNames.reduce(
+      (acc, cur) => ({
+        ...acc,
+        [cur]: getSeriesTheme('pie', isNestedPieChart),
+      }),
+      {}
+    );
+  }
+
+  return result;
 }

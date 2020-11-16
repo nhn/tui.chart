@@ -138,7 +138,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
   );
 
   const theme = deepMergedCopy(
-    getDefaultTheme(series),
+    getDefaultTheme(series, isNestedPieChart),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 

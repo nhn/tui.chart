@@ -138,12 +138,6 @@ export interface StoreModule extends StoreOptions {
     | 'theme';
 }
 
-export interface SeriesTheme {
-  colors: string[];
-  startColor: string;
-  endColor: string;
-}
-
 export interface Layout {
   xAxis: Rect;
   yAxis: Rect;

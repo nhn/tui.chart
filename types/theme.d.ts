@@ -1,3 +1,4 @@
+import { SectorStyle } from '@src/brushes/sector';
 import { ScatterSeriesIconType } from '@t/components/series';
 
 type SeriesThemeMap = {
@@ -75,7 +76,22 @@ type ComboChartSeriesTheme =
   | ColumnLineChartSeriesTheme
   | LineAreaChartSeriesTheme;
 
-type PieChartSeriesTheme = { colors?: string[] };
+type SelectSectorStyle = SectorStyle & {
+  color?: string;
+  restSeries?: {
+    areaOpacity?: number;
+  };
+  areaOpacity?: number;
+};
+
+type PieChartSeriesTheme = {
+  colors?: string[];
+  lineWidth?: number;
+  strokeStyle?: string;
+  hover?: SectorStyle & { color?: string };
+  select?: SelectSectorStyle;
+  areaOpacity?: number;
+};
 
 type NestedPieChartSeriesTheme = Record<string, PieChartSeriesTheme> | PieChartSeriesTheme;
 
