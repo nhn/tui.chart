@@ -261,6 +261,7 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
           lineWidth: 1,
           dashSegments: [],
         },
+      };
     case 'pie':
       return {
         areaOpacity: 1,
