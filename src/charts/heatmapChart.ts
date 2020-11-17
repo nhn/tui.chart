@@ -30,7 +30,7 @@ import {
   HeatmapSeriesDataType,
 } from '@t/options';
 
-interface HeatmapChartProps {
+export interface HeatmapChartProps {
   el: Element;
   options: HeatmapChartOptions;
   data: HeatmapSeriesData;

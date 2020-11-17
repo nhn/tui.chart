@@ -23,7 +23,7 @@ import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { TreemapChartOptions, TreemapSeriesData, TreemapSeriesType } from '@t/options';
 
-interface TreemapChartProps {
+export interface TreemapChartProps {
   el: Element;
   options: TreemapChartOptions;
   data: TreemapSeriesData;

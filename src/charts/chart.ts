@@ -16,6 +16,7 @@ import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
 import { RespondersModel } from '@t/components/series';
+import { CheckedLegendType } from '@t/components/legend';
 
 export const DEFAULT_ANIM_DURATION = 500;
 
@@ -266,7 +267,7 @@ export default abstract class Chart<T extends Options> {
    * @returns {[{checked: boolean, chartType: ChartType, label: string}]} array data that whether series has checked
    * @api
    */
-  public getCheckedLegend = () => {
+  public getCheckedLegend = (): CheckedLegendType => {
     const { data } = this.store.state.legend;
 
     return data

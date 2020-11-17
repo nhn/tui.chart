@@ -29,7 +29,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 
 import { ColumnChartOptions, BoxSeriesData } from '@t/options';
 
-interface ColumnChartProps {
+export interface ColumnChartProps {
   el: HTMLElement;
   options: ColumnChartOptions;
   data: BoxSeriesData;

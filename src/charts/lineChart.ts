@@ -30,8 +30,7 @@ import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { LineChartOptions, LineSeriesData, LineSeriesType } from '@t/options';
 
-// 생성자를 따로 두기보다는 팩토리로 구현하는게 나을것 같다.
-interface LineChartProps {
+export interface LineChartProps {
   el: Element;
   options: LineChartOptions;
   data: LineSeriesData;

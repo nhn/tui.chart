@@ -33,7 +33,7 @@ import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import { isExist } from '@src/helpers/utils';
 import { RespondersModel } from '@t/components/series';
 
-interface ColumnLineChartProps {
+export interface ColumnLineChartProps {
   el: Element;
   options: ColumnLineChartOptions;
   data: ColumnLineData;

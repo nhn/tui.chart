@@ -4,6 +4,7 @@
   "description": "TOAST UI Application: Chart",
   "main": "dist/tui-chart.js",
   "module": "dist/esm/",
+  "types": "types/index.d.ts",
   "sideEffects": false,
   "scripts": {
     "check-types": "tsc --project ./tsconfig.json",

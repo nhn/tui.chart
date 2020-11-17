@@ -9,10 +9,10 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"],
-      "@t/*": ["types/*"]
+      "@src/*": ["./src/*"],
+      "@t/*": ["./types/*"]
     },
-    "typeRoots": ["types"],
+    "typeRoots": ["./types"],
     "types": ["webpack-env"],
     "listEmittedFiles": true,
     "importHelpers": true,
@@ -22,12 +22,9 @@
         "transform": "typescript-transform-paths"
       }
     ],
-    "lib": ["esnext", "dom", "dom.iterable"]
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "declaration": true
   },
-  "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "types/**/*"
-  ],
+  "include": ["src/**/*.js", "src/**/*.ts", "types/**/*"],
   "exclude": ["node_modules"]
 }
