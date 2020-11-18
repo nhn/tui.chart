@@ -7,8 +7,6 @@ import { Point } from '@t/options';
 import { RectStyle, StyleProp, Nullable } from '@t/components/series';
 
 export const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
-export const TITLE_TEXT = '100 18px Arial';
-const AXIS_TITLE_TEXT = '700 11px Arial';
 
 export type LabelStyleName =
   | 'default'
@@ -44,13 +42,9 @@ export const labelStyle = {
     textBaseline: 'middle',
   },
   title: {
-    font: TITLE_TEXT,
-    fillStyle: '#333333',
     textBaseline: 'top',
   },
   axisTitle: {
-    font: AXIS_TITLE_TEXT,
-    fillStyle: '#bbbbbb',
     textBaseline: 'top',
   },
   stackTotal: {

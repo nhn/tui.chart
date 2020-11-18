@@ -4,11 +4,16 @@ import { LabelModel } from '@t/components/axis';
 import { AxisType } from '@src/component/axis';
 import { AxisTitleOption } from '@t/options';
 import { includes } from '@src/helpers/utils';
+import { FontTheme } from '@t/theme';
+import { getTitleFontString } from '@src/helpers/style';
+import { getAxisTheme } from '@src/helpers/axes';
 
 export default class AxisTitle extends Component {
   models!: LabelModel[];
 
   isYAxis!: boolean;
+
+  theme!: Required<FontTheme>;
 
   initialize({ name }: { name: AxisType }) {
     this.type = 'axisTitle';
@@ -21,8 +26,10 @@ export default class AxisTitle extends Component {
     const [x, y] = this.isYAxis
       ? [this.name === AxisType.Y ? offsetX : this.rect.width + offsetX, offsetY]
       : [this.rect.width + offsetX, this.rect.height + offsetY];
+    const font = getTitleFontString(this.theme);
+    const fillStyle = this.theme.color;
 
-    return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign }] }];
+    return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign, fillStyle, font }] }];
   }
 
   getTextAlign(hasCenterYAxis = false) {
@@ -35,7 +42,7 @@ export default class AxisTitle extends Component {
     return result;
   }
 
-  render({ axes, layout }: ChartState<Options>) {
+  render({ axes, layout, theme }: ChartState<Options>) {
     const titleOption = axes[this.name]?.title;
 
     this.isShow = !!titleOption;
@@ -45,6 +52,7 @@ export default class AxisTitle extends Component {
     }
 
     this.rect = layout[`${this.name}Title`];
+    this.theme = getAxisTheme(theme, this.name).title as Required<FontTheme>;
     this.models = this.renderAxisTitle(titleOption, this.getTextAlign(!!axes.centerYAxis));
   }
 }

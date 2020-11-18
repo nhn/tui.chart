@@ -11,6 +11,7 @@ import { getValueString } from '@src/helpers/tooltip';
 import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
 import { isNumber } from '@src/helpers/utils';
 import { Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
+import { TooltipTheme } from '@t/theme';
 
 import '../css/tooltip.css';
 
@@ -22,6 +23,8 @@ export default class Tooltip extends Component {
   tooltipContainerEl!: HTMLDivElement;
 
   templateFunc!: TooltipTemplateFunc;
+
+  theme!: Required<TooltipTheme>;
 
   offsetX!: number;
 
@@ -134,10 +137,14 @@ export default class Tooltip extends Component {
       { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0, height: 0 } }
     );
 
-    this.tooltipContainerEl.innerHTML = this.templateFunc(model, {
-      header: tooltipTemplates.defaultHeader(model),
-      body: getBodyTemplate(model.templateType)(model),
-    });
+    this.tooltipContainerEl.innerHTML = this.templateFunc(
+      model,
+      {
+        header: tooltipTemplates.defaultHeader(model, this.theme),
+        body: getBodyTemplate(model.templateType)(model, this.theme),
+      },
+      this.theme
+    );
     this.setTooltipPosition(model);
   }
 
@@ -158,8 +165,9 @@ export default class Tooltip extends Component {
     this.tooltipContainerEl.innerHTML = '';
   }
 
-  render({ layout, options }: ChartState<Options>) {
+  render({ layout, options, theme }: ChartState<Options>) {
     this.rect = layout.plot;
+    this.theme = theme.tooltip as Required<TooltipTheme>;
     this.templateFunc = options?.tooltip?.template ?? tooltipTemplates['default'];
     this.offsetX = options?.tooltip?.offsetX ?? 10;
     this.offsetY = options?.tooltip?.offsetY ?? 0;

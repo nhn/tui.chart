@@ -14,6 +14,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { DEFAULT_LINE_SERIES_WIDTH } from '@src/helpers/theme';
 import { RadarChartSeriesTheme, DotTheme } from '@t/theme';
+import { RespondersThemeType } from '@src/helpers/responders';
 type RenderOptions = {
   categories: string[];
   centerX: number;
@@ -129,9 +130,8 @@ export default class RadarSeries extends Component {
     );
   }
 
-  getRespondersWithTheme(responders: CircleResponderModel[], type: 'select' | 'hover') {
+  getRespondersWithTheme(responders: CircleResponderModel[], type: RespondersThemeType) {
     const { radius, borderWidth, borderColor, color } = this.theme[type].dot!;
-    console.log(responders, this.theme[type]);
 
     return responders.map((responder) => ({
       ...responder,

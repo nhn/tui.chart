@@ -21,6 +21,8 @@ export type TickModel = {
   type: 'tick';
   isYAxis: boolean;
   tickSize: number;
+  strokeStyle: string;
+  lineWidth: number;
 } & Point;
 
 export type LineModel = {

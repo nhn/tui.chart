@@ -298,23 +298,34 @@ export const responsive = () => {
 export const theme = () => {
   const themeOptions: PieChartThemeOptions = {
     series: {
-      colors: [
-        '#ea005e',
-        '#fece2f',
-        '#fc6104',
-        '#dd2429',
-        '#ebc7ff',
-        '#fece2f',
-        '#dd2429',
-        '#ff8d3a',
-        '#fc6104',
-        '#5ac18e',
-      ],
+      colors: ['#F94144', '#F3722C', '#F8961E', '#F9C74F', '#90BE6D', '#43AA8B', '#577590'],
+      lineWidth: 2,
+      strokeStyle: '#000000',
+      hover: {
+        color: '#335F70',
+        lineWidth: 2,
+        strokeStyle: '#000000',
+        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        shadowBlur: 10,
+      },
+      select: {
+        color: '#203B46',
+        lineWidth: 2,
+        strokeStyle: '#000000',
+        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        shadowBlur: 10,
+        restSeries: {
+          areaOpacity: 0.5,
+        },
+        areaOpacity: 1,
+      },
+      areaOpacity: 1,
     },
   };
 
   const { el } = createChart(browserUsageData, {
     theme: themeOptions,
+    series: { selectable: true },
   });
 
   return el;

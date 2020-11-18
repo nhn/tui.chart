@@ -20,13 +20,39 @@ const chartState = {
       width: 100,
     },
   },
+  theme: {
+    title: {
+      fontSize: 18,
+      fontFamily: 'Arial',
+      fontWeight: 200,
+      color: '#333333',
+    },
+  },
 };
 
 describe('Title', () => {
   const alignResult = {
-    center: { style: ['title'], text: 'hey', type: 'label', x: 48.5, y: 0 },
-    right: { style: ['title'], text: 'hey', type: 'label', x: 97, y: 0 },
-    left: { style: ['title'], text: 'hey', type: 'label', x: 0, y: 0 },
+    center: {
+      style: ['title', { fillStyle: '#333333', font: '200 18px Arial' }],
+      text: 'hey',
+      type: 'label',
+      x: 48.5,
+      y: 0,
+    },
+    right: {
+      style: ['title', { fillStyle: '#333333', font: '200 18px Arial' }],
+      text: 'hey',
+      type: 'label',
+      x: 97,
+      y: 0,
+    },
+    left: {
+      style: ['title', { fillStyle: '#333333', font: '200 18px Arial' }],
+      text: 'hey',
+      type: 'label',
+      x: 0,
+      y: 0,
+    },
   };
 
   beforeEach(() => {
@@ -52,7 +78,13 @@ describe('Title', () => {
     title.render(state);
 
     expect(title.models).toEqual([
-      { style: ['title'], text: 'hey', type: 'label', x: 100, y: 100 },
+      {
+        style: ['title', { fillStyle: '#333333', font: '200 18px Arial' }],
+        text: 'hey',
+        type: 'label',
+        x: 100,
+        y: 100,
+      },
     ]);
   });
 });

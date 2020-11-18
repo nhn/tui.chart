@@ -13,15 +13,16 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import {
   getTotalAngle,
   isSemiCircle,
-  getRadius,
   getDefaultRadius,
   getSemiCircleCenterY,
   makePieTooltipData,
   pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
-
-const PIE_HOVER_THICKNESS = 3;
+import { calculateSizeWithPercentString } from '@src/helpers/utils';
+import { PieChartSeriesTheme, SelectSectorStyle } from '@t/theme';
+import { pick } from '@src/helpers/utils';
+import { RespondersThemeType } from '@src/helpers/responders';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -117,6 +118,8 @@ export default class PieSeries extends Component {
 
   alias!: string;
 
+  theme!: Required<PieChartSeriesTheme>;
+
   initUpdate(delta: number) {
     if (!this.drawModels) {
       return;
@@ -159,13 +162,15 @@ export default class PieSeries extends Component {
   }
 
   render(chartState: ChartState<PieChartOptions>) {
-    const { layout, series, legend, options, nestedPieSeries } = chartState;
+    const { layout, series, legend, options, nestedPieSeries, theme } = chartState;
     const categories = (chartState.categories as string[]) ?? [];
 
     if (!series.pie) {
       throw new Error("There's no pie data");
     }
 
+    const pieTheme = theme.series.pie as Required<PieChartSeriesTheme>;
+    this.theme = this.alias ? pieTheme[this.alias] : pieTheme;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -283,8 +288,11 @@ export default class PieSeries extends Component {
     const { width, height } = this.rect;
     const defaultRadius = getDefaultRadius(this.rect, isSemiCircular);
 
-    const innerRadius = getRadius(defaultRadius, seriesOptions?.radiusRange?.inner ?? 0);
-    const outerRadius = getRadius(
+    const innerRadius = calculateSizeWithPercentString(
+      defaultRadius,
+      seriesOptions?.radiusRange?.inner ?? 0
+    );
+    const outerRadius = calculateSizeWithPercentString(
       defaultRadius,
       seriesOptions?.radiusRange?.outer ?? (this.alias ? 0 : defaultRadius)
     );
@@ -325,10 +333,12 @@ export default class PieSeries extends Component {
       totalAngle,
     } = renderOptions;
     const defaultStartDegree = clockwise ? 0 : 360;
+    const { lineWidth, strokeStyle } = this.theme;
 
     seriesRawData.forEach((rawData, seriesIndex) => {
-      const color = this.getSeriesColor(rawData, seriesRawData, pieIndex);
-
+      const color = this.alias
+        ? this.getAliasSeriesColor(rawData, seriesRawData, pieIndex!)
+        : this.getSeriesColor(rawData);
       const { data, name } = rawData;
       const degree = (data / total) * totalAngle * (clockwise ? 1 : -1);
       const percentValue = (data / total) * 100;
@@ -354,7 +364,7 @@ export default class PieSeries extends Component {
           outer,
         },
         value: data,
-        style: [this.alias ? 'nested' : 'default'],
+        style: [{ lineWidth, strokeStyle }],
         clockwise,
         drawingStartAngle,
         totalAngle,
@@ -376,11 +386,7 @@ export default class PieSeries extends Component {
 
   onMousemove({ responders }) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: responders.map((m) => ({
-        ...m,
-        style: ['hover'],
-        radius: { ...m.radius, outer: m.radius.outer + PIE_HOVER_THICKNESS },
-      })),
+      models: this.getResponderModelsWithTheme(responders, 'hover'),
       name: this.alias || this.name,
     });
     this.activatedResponders = this.makeTooltipResponder(responders);
@@ -394,12 +400,39 @@ export default class PieSeries extends Component {
   onClick({ responders }) {
     if (this.selectable) {
       this.eventBus.emit('renderSelectedSeries', {
-        models: responders,
+        models: this.getResponderModelsWithTheme(responders, 'select'),
         name: this.name,
         alias: this.alias,
       });
       this.eventBus.emit('needDraw');
     }
+  }
+
+  getResponderModelsWithTheme(responders: SectorResponderModel[], type: RespondersThemeType) {
+    const theme = this.theme[type];
+    const lineWidth = theme.lineWidth!;
+    const isSameLineWidth = this.theme.lineWidth === lineWidth;
+    const thickness = isSameLineWidth ? 0 : lineWidth * 0.5;
+
+    return responders.map((m) => ({
+      ...m,
+      color: theme?.color ?? m.color,
+      style: [
+        pick(
+          theme,
+          'lineWidth',
+          'strokeStyle',
+          'shadowBlur',
+          'shadowColor',
+          'shadowOffsetX',
+          'shadowOffsetY'
+        ),
+      ],
+      radius: {
+        inner: Math.max(m.radius.inner - thickness, 0),
+        outer: m.radius.outer + thickness,
+      },
+    }));
   }
 
   onMouseoutComponent() {
@@ -409,13 +442,15 @@ export default class PieSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  getOpacity(rootParentName: string, parentName: string, pieIndex: number, indexOfGroup: number) {
-    const active = this.activeSeriesMap![rootParentName ?? name];
-    const alpha = active ? 1 : 0.3;
+  getOpacity(active: boolean, selectedState: boolean): number {
+    const { select, areaOpacity } = this.theme;
+    const {
+      areaOpacity: selectedAreaOpacity,
+      restSeries: { areaOpacity: restAreaOpacity },
+    } = select as Required<SelectSectorStyle>;
+    const selectThemeOpacity = active ? selectedAreaOpacity : restAreaOpacity!;
 
-    return pieIndex && parentName
-      ? getPieSeriesOpacityByDepth(alpha, pieIndex, indexOfGroup)
-      : alpha;
+    return selectedState ? selectThemeOpacity : areaOpacity;
   }
 
   getIndexOfGroup(seriesRawData: PieSeriesType[], parentName: string, name: string) {
@@ -424,18 +459,50 @@ export default class PieSeries extends Component {
       .findIndex((datum) => name === datum.name);
   }
 
-  getSeriesColor(rawData: PieSeriesType, seriesRawData: PieSeriesType[], pieIndex?: number) {
+  getSeriesColor(rawData: PieSeriesType) {
     const { color, name } = rawData;
     const active = this.activeSeriesMap![name];
-    let opacity = active ? 1 : 0.3;
-
-    if (this.alias) {
-      const { rootParentName, parentName } = rawData;
-      const indexOfGroup = this.getIndexOfGroup(seriesRawData, parentName!, name);
-
-      opacity = this.getOpacity(rootParentName!, parentName!, pieIndex!, indexOfGroup);
-    }
+    const opacity = this.getOpacity(active, this.hasActiveSeries());
 
     return getRGBA(color!, opacity);
+  }
+
+  getAliasSeriesColor(rawData: PieSeriesType, seriesRawData: PieSeriesType[], pieIndex: number) {
+    const { color, name } = rawData;
+    const {
+      select: { color: selectedColor },
+    } = this.theme;
+    const { rootParentName, parentName } = rawData;
+    const indexOfGroup = this.getIndexOfGroup(seriesRawData, parentName!, name);
+    const opacity = this.getAliasSeriesOpacity(
+      rootParentName!,
+      parentName!,
+      pieIndex!,
+      indexOfGroup,
+      name
+    );
+    const active = this.activeSeriesMap![rootParentName ?? name];
+    const seriesColor = active ? selectedColor ?? color! : color!;
+
+    return getRGBA(seriesColor, opacity);
+  }
+
+  getAliasSeriesOpacity(
+    rootParentName: string,
+    parentName: string,
+    pieIndex: number,
+    indexOfGroup: number,
+    name: string
+  ) {
+    const active = this.activeSeriesMap![rootParentName ?? name];
+    const opacity = this.getOpacity(active, this.hasActiveSeries());
+
+    return pieIndex && parentName
+      ? getPieSeriesOpacityByDepth(opacity, pieIndex, indexOfGroup)
+      : opacity;
+  }
+
+  hasActiveSeries() {
+    return Object.values(this.activeSeriesMap!).some((elem) => !elem);
   }
 }

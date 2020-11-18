@@ -1,5 +1,7 @@
 import { Options, Series, ChartOptionsUsingYAxis } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
+import { Theme } from '@t/theme';
+import { AxisType } from '@src/component/axis';
 
 export function isLabelAxisOnYAxis(series: Series, options: Options) {
   return !!series.bar || (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical);
@@ -77,4 +79,19 @@ export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName
           : ['yAxis', 'secondaryYAxis'][index]
       )
     : [valueAxisName];
+}
+
+export function getAxisTheme(theme: Theme, name: string) {
+  const { xAxis, yAxis } = theme;
+  let axisTheme;
+
+  if (name === AxisType.X) {
+    axisTheme = xAxis;
+  } else if (Array.isArray(yAxis)) {
+    axisTheme = name === AxisType.Y ? yAxis[0] : yAxis[1];
+  } else {
+    axisTheme = yAxis;
+  }
+
+  return axisTheme;
 }

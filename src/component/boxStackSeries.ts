@@ -21,7 +21,13 @@ import {
 import { TooltipData } from '@t/components/tooltip';
 import { RectModel, Nullable, StackTotalModel, RectResponderModel } from '@t/components/series';
 import { LineModel } from '@t/components/axis';
-import { deepCopyArray, includes, isNumber, hasNegative } from '@src/helpers/utils';
+import {
+  deepCopyArray,
+  includes,
+  isNumber,
+  hasNegative,
+  calculateSizeWithPercentString,
+} from '@src/helpers/utils';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
 import {
@@ -43,7 +49,7 @@ type RenderOptions = {
   diverging: boolean;
   hasNegativeValue: boolean;
   seriesDirection: SeriesDirection;
-  padding: number;
+  defaultPadding: number;
   offsetSize: number;
   centerYAxis?: CenterYAxisData;
 };
@@ -135,7 +141,7 @@ export default class BoxStackSeries extends BoxSeries {
       diverging,
       hasNegativeValue: hasNegative(labels),
       seriesDirection: this.getSeriesDirection(labels),
-      padding: getBoxTypeSeriesPadding(tickDistance),
+      defaultPadding: getBoxTypeSeriesPadding(tickDistance),
       offsetSize,
       centerYAxis,
     };
@@ -197,7 +203,8 @@ export default class BoxStackSeries extends BoxSeries {
         renderOptions,
         columnWidth,
         dataIndex,
-        stackGroupIndex
+        stackGroupIndex,
+        stackGroupCount
       );
       const ratio = this.getStackValueRatio(total, renderOptions);
 
@@ -287,7 +294,13 @@ export default class BoxStackSeries extends BoxSeries {
     const connectorPoints: Array<Point[]> = [];
 
     stackData.forEach(({ values, total }, index) => {
-      const seriesPos = this.getSeriesPosition(renderOptions, columnWidth, index, stackGroupIndex);
+      const seriesPos = this.getSeriesPosition(
+        renderOptions,
+        columnWidth,
+        index,
+        stackGroupIndex,
+        stackGroupCount
+      );
       const points: Point[] = [];
       const ratio = this.getStackValueRatio(total, renderOptions);
 
@@ -377,7 +390,7 @@ export default class BoxStackSeries extends BoxSeries {
       return [];
     }
 
-    const { borderStyle, borderColor, borderWidth, dashSegments } = this.theme.connector;
+    const { color, lineWidth, dashSegments } = this.theme.connector;
     const connectorModels: LineModel[] = [];
     const seriesDataCount = pointsForConnector.length;
     const seriesCount = pointsForConnector[0].length;
@@ -401,9 +414,9 @@ export default class BoxStackSeries extends BoxSeries {
             y: this.isBar ? y + columnWidth : y,
             x2: nextX,
             y2: nextY,
-            dashedPattern: borderStyle === 'dashed' ? dashSegments : [],
-            strokeStyle: borderColor,
-            lineWidth: borderWidth,
+            dashedPattern: dashSegments,
+            strokeStyle: color,
+            lineWidth,
           });
         }
       });
@@ -440,20 +453,25 @@ export default class BoxStackSeries extends BoxSeries {
   }
 
   private getStackColumnWidth(renderOptions: RenderOptions, stackGroupCount: number) {
-    const { tickDistance, diverging, padding } = renderOptions;
+    const { tickDistance, diverging, defaultPadding } = renderOptions;
     const divisor = diverging ? 1 : stackGroupCount;
+    const themeBarWidth = this.theme.barWidth;
 
-    return (tickDistance - padding * 2) / divisor;
+    return themeBarWidth
+      ? calculateSizeWithPercentString(tickDistance, themeBarWidth)
+      : (tickDistance - defaultPadding * 2) / divisor;
   }
 
   private getSeriesPosition(
     renderOptions: RenderOptions,
     columnWidth: number,
     dataIndex: number,
-    stackGroupIndex: number
+    stackGroupIndex: number,
+    stackGroupCount: number
   ) {
-    const { tickDistance, diverging, padding } = renderOptions;
+    const { tickDistance, diverging } = renderOptions;
     const groupIndex = diverging ? 0 : stackGroupIndex;
+    const padding = (tickDistance - columnWidth * stackGroupCount) / 2;
 
     return dataIndex * tickDistance + padding + columnWidth * groupIndex;
   }
@@ -649,7 +667,8 @@ export default class BoxStackSeries extends BoxSeries {
         renderOptions,
         columnWidth,
         dataIndex,
-        stackGroupIndex
+        stackGroupIndex,
+        stackGroupCount
       );
       const ratio = this.getStackValueRatio(total, renderOptions);
       const directionKeys = getDirectionKeys(seriesDirection);

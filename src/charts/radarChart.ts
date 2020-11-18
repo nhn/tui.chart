@@ -52,8 +52,8 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     this.componentManager.add(RadialAxis);
     this.componentManager.add(RadarSeries);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
-    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
     this.painter.addGroups([
