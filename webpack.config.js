@@ -18,7 +18,7 @@ const commonConfig = {
     publicPath: '/dist',
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.json'],
+    extensions: ['.ts', '.js', '.json'],
     alias: {
       '@src': path.resolve(__dirname, 'src/'),
       '@t': path.resolve(__dirname, 'types/'),
