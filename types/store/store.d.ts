@@ -183,7 +183,9 @@ export interface Legend {
   showCheckbox: boolean;
   align: Align;
   width: number;
-  data: Array<Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType'> & { width: number }>;
+  data: Array<
+    Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType' | 'chartType'> & { width: number }
+  >;
   useSpectrumLegend: boolean;
   useScatterChartIcon: boolean;
 }

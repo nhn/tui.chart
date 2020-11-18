@@ -35,6 +35,7 @@ describe('Legend Store', () => {
           active: true,
           width: 38,
           iconType: 'line',
+          chartType: 'line',
         },
       ],
       useSpectrumLegend: false,
@@ -116,6 +117,7 @@ describe('Legend Store', () => {
           active: true,
           width: 35,
           iconType: 'rect',
+          chartType: 'pie',
         },
         {
           label: 'B',
@@ -123,6 +125,7 @@ describe('Legend Store', () => {
           active: true,
           width: 35,
           iconType: 'rect',
+          chartType: 'pie',
         },
         {
           label: 'C',
@@ -130,6 +133,7 @@ describe('Legend Store', () => {
           active: true,
           width: 35,
           iconType: 'rect',
+          chartType: 'pie',
         },
         {
           label: 'D',
@@ -137,6 +141,7 @@ describe('Legend Store', () => {
           active: true,
           width: 35,
           iconType: 'rect',
+          chartType: 'pie',
         },
       ]);
     });
@@ -176,6 +181,7 @@ describe('Legend Store', () => {
           active: true,
           width: 35,
           iconType: 'rect',
+          chartType: 'pie',
         },
         {
           label: 'B',
@@ -183,6 +189,7 @@ describe('Legend Store', () => {
           active: true,
           width: 35,
           iconType: 'rect',
+          chartType: 'pie',
         },
       ]);
     });

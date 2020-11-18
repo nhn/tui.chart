@@ -3,6 +3,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { browserUsageData2, groupedBrowserUsageData } from './data';
 import NestedPieChart from '@src/charts/nestedPieChart';
 import { NestedPieChartThemeOptions } from '@t/theme';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|NestedPie',

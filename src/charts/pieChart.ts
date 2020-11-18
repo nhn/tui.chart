@@ -18,7 +18,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 
 import { PieChartOptions, PieSeriesData } from '@t/options';
 
-interface PieChartProps {
+export interface PieChartProps {
   el: Element;
   options: PieChartOptions;
   data: PieSeriesData;

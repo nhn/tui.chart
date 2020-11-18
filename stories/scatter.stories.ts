@@ -6,6 +6,7 @@ import {
   genderHeightWeightData,
 } from './data';
 import ScatterChart from '@src/charts/scatterChart';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|Scatter',

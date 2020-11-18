@@ -25,7 +25,7 @@ import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
 
 import { ScatterChartOptions, ScatterSeriesData, ScatterSeriesType } from '@t/options';
 
-interface ScatterChartProps {
+export interface ScatterChartProps {
   el: Element;
   options: ScatterChartOptions;
   data: ScatterSeriesData;

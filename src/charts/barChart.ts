@@ -30,7 +30,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 
 import { BoxSeriesType, BoxSeriesDataType, BarChartOptions } from '@t/options';
 
-interface BarChartProps {
+export interface BarChartProps {
   el: HTMLElement;
   options: BarChartOptions;
   data: {

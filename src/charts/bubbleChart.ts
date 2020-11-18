@@ -26,7 +26,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 
 import { BubbleSeriesData, BaseOptions, BubbleSeriesType } from '@t/options';
 
-interface BubbleChartProps {
+export interface BubbleChartProps {
   el: Element;
   options: BaseOptions;
   data: BubbleSeriesData;

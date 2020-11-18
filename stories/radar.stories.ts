@@ -2,6 +2,7 @@ import RadarChart from '@src/charts/radarChart';
 import { RadarSeriesData, RadarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { budgetData2 } from './data';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|Radar',

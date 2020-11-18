@@ -3,6 +3,7 @@ import { LineSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { coordinateData, randomData, datetimeCoordinateData, temperatureData } from './data';
 import { boolean, withKnobs } from '@storybook/addon-knobs';
+import '@src/css/chart.css';
 
 const width = 1000;
 const height = 500;
