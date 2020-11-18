@@ -1,5 +1,6 @@
 import { Align, Point } from '@t/options';
 import { LegendIconType } from '@t/store/store';
+import { FontTheme } from '@t/theme';
 
 type LegendData = {
   color: string;
@@ -15,4 +16,4 @@ export type LegendModel = {
   align: Align;
   showCheckbox: boolean;
   data: LegendData[];
-};
+} & FontTheme;

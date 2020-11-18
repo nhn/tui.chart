@@ -309,3 +309,7 @@ export function getFirstValidValue(values: any) {
 export function getPercentageValue(text: string): number {
   return Number(text.substr(0, text.length - 1));
 }
+
+export function calculateSizeWithPercentString(size: number, value: string | number): number {
+  return isNumber(value) ? value : Number(((size * getPercentageValue(value)) / 100).toFixed(2));
+}

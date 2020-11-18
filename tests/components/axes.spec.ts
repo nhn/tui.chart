@@ -30,27 +30,71 @@ describe('yAxis', () => {
             labelDistance: 40,
           },
         },
+        theme: {
+          xAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          yAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+        },
       });
     });
 
     it('tick model', () => {
       expect(axis.models.tick).toEqual([
-        { isYAxis: true, type: 'tick', x: 10.5, y: 0.5, tickSize: -5 },
-        { isYAxis: true, type: 'tick', x: 10.5, y: 80.5, tickSize: -5 },
+        {
+          isYAxis: true,
+          strokeStyle: '#333333',
+          lineWidth: 1,
+          type: 'tick',
+          x: 10.5,
+          y: 0.5,
+          tickSize: -5,
+        },
+        {
+          isYAxis: true,
+          strokeStyle: '#333333',
+          lineWidth: 1,
+          type: 'tick',
+          x: 10.5,
+          y: 80.5,
+          tickSize: -5,
+        },
       ]);
     });
 
     it('label model', () => {
       expect(axis.models.label).toEqual([
         {
-          style: ['default', { textAlign: 'left' }],
+          style: [
+            'default',
+            { textAlign: 'left', fillStyle: '#333333', font: 'normal 11px Arial' },
+          ],
           text: '2',
           type: 'label',
           x: 0.5,
           y: 20.5,
         },
         {
-          style: ['default', { textAlign: 'left' }],
+          style: [
+            'default',
+            { textAlign: 'left', fillStyle: '#333333', font: 'normal 11px Arial' },
+          ],
           text: '1',
           type: 'label',
           x: 0.5,
@@ -76,6 +120,28 @@ describe('yAxis', () => {
             labelInterval: 2,
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             tickCount: 10,
+          },
+        },
+        theme: {
+          xAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          yAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
         },
       });
@@ -132,6 +198,28 @@ describe('yAxis', () => {
             tickCount: 6,
           },
         },
+        theme: {
+          xAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          yAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+        },
       });
     });
 
@@ -152,6 +240,8 @@ describe('yAxis', () => {
           type: 'tick',
           x: 0.5,
           y: 0.5,
+          lineWidth: 1,
+          strokeStyle: '#333333',
         },
         {
           isYAxis: true,
@@ -159,6 +249,8 @@ describe('yAxis', () => {
           type: 'tick',
           x: 0.5,
           y: 16.5,
+          lineWidth: 1,
+          strokeStyle: '#333333',
         },
         {
           isYAxis: true,
@@ -166,6 +258,8 @@ describe('yAxis', () => {
           type: 'tick',
           x: 0.5,
           y: 32.5,
+          lineWidth: 1,
+          strokeStyle: '#333333',
         },
         {
           isYAxis: true,
@@ -173,6 +267,8 @@ describe('yAxis', () => {
           type: 'tick',
           x: 0.5,
           y: 48.5,
+          lineWidth: 1,
+          strokeStyle: '#333333',
         },
         {
           isYAxis: true,
@@ -180,6 +276,8 @@ describe('yAxis', () => {
           type: 'tick',
           x: 0.5,
           y: 64.5,
+          lineWidth: 1,
+          strokeStyle: '#333333',
         },
         {
           isYAxis: true,
@@ -187,6 +285,8 @@ describe('yAxis', () => {
           type: 'tick',
           x: 0.5,
           y: 80.5,
+          lineWidth: 1,
+          strokeStyle: '#333333',
         },
       ],
       label: [
@@ -195,6 +295,8 @@ describe('yAxis', () => {
             'default',
             {
               textAlign: 'right',
+              fillStyle: '#333333',
+              font: 'normal 11px Arial',
             },
           ],
           text: '5',
@@ -207,6 +309,8 @@ describe('yAxis', () => {
             'default',
             {
               textAlign: 'right',
+              fillStyle: '#333333',
+              font: 'normal 11px Arial',
             },
           ],
           text: '4',
@@ -219,6 +323,8 @@ describe('yAxis', () => {
             'default',
             {
               textAlign: 'right',
+              fillStyle: '#333333',
+              font: 'normal 11px Arial',
             },
           ],
           text: '3',
@@ -231,6 +337,8 @@ describe('yAxis', () => {
             'default',
             {
               textAlign: 'right',
+              fillStyle: '#333333',
+              font: 'normal 11px Arial',
             },
           ],
           text: '2',
@@ -243,6 +351,8 @@ describe('yAxis', () => {
             'default',
             {
               textAlign: 'right',
+              fillStyle: '#333333',
+              font: 'normal 11px Arial',
             },
           ],
           text: '1',
@@ -255,6 +365,8 @@ describe('yAxis', () => {
             'default',
             {
               textAlign: 'right',
+              fillStyle: '#333333',
+              font: 'normal 11px Arial',
             },
           ],
           text: '0',
@@ -297,27 +409,71 @@ describe('xAxis', () => {
             labelDistance: 40,
           },
         },
+        theme: {
+          xAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          yAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+        },
       });
     });
 
     it('tick model', () => {
       expect(axis.models.tick).toEqual([
-        { isYAxis: false, type: 'tick', x: 0.5, y: 0.5, tickSize: 5 },
-        { isYAxis: false, type: 'tick', x: 80.5, y: 0.5, tickSize: 5 },
+        {
+          isYAxis: false,
+          lineWidth: 1,
+          strokeStyle: '#333333',
+          type: 'tick',
+          x: 0.5,
+          y: 0.5,
+          tickSize: 5,
+        },
+        {
+          isYAxis: false,
+          lineWidth: 1,
+          strokeStyle: '#333333',
+          type: 'tick',
+          x: 80.5,
+          y: 0.5,
+          tickSize: 5,
+        },
       ]);
     });
 
     it('label model', () => {
       expect(axis.models.label).toEqual([
         {
-          style: ['default', { textAlign: 'center' }],
+          style: [
+            'default',
+            { textAlign: 'center', fillStyle: '#333333', font: 'normal 11px Arial' },
+          ],
           text: '1',
           type: 'label',
           x: 20.5,
           y: 16.5,
         },
         {
-          style: ['default', { textAlign: 'center' }],
+          style: [
+            'default',
+            { textAlign: 'center', fillStyle: '#333333', font: 'normal 11px Arial' },
+          ],
           text: '2',
           type: 'label',
           x: 100.5,
@@ -343,6 +499,28 @@ describe('xAxis', () => {
             labelInterval: 2,
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             tickCount: 10,
+          },
+        },
+        theme: {
+          xAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          yAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
         },
       });

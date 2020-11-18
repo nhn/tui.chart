@@ -73,8 +73,8 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
-    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 

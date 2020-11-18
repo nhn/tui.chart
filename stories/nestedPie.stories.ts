@@ -153,6 +153,15 @@ export const theme = () => {
     series: {
       browsers: {
         colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
+        lineWidth: 5,
+        strokeStyle: '#0000ff',
+        hover: {
+          color: '#0000ff',
+          lineWidth: 5,
+          strokeStyle: '#000000',
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+          shadowBlur: 10,
+        },
       },
       versions: {
         colors: [
@@ -170,6 +179,15 @@ export const theme = () => {
           '#5ac18e',
           '#8570ff',
         ],
+        lineWidth: 2,
+        strokeStyle: '#ff0000',
+        hover: {
+          color: '#ff0000',
+          lineWidth: 2,
+          strokeStyle: '#000000',
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+          shadowBlur: 10,
+        },
       },
     },
   };
@@ -199,6 +217,14 @@ export const groupedTheme = () => {
   const themeOptions: NestedPieChartThemeOptions = {
     series: {
       colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569', '#f75294'],
+      lineWidth: 5,
+      strokeStyle: '#cccccc',
+      browsers: {
+        hover: { color: '#6D9B46' },
+      },
+      versions: {
+        hover: { color: '#3A9278' },
+      },
     },
   };
 

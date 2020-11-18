@@ -22,7 +22,6 @@ import * as spectrumLegendBrush from '@src/brushes/spectrumLegend';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { TreemapChartOptions, TreemapSeriesData, TreemapSeriesType } from '@t/options';
-import selectedSeries from '@src/component/selectedSeries';
 
 interface TreemapChartProps {
   el: Element;
@@ -50,8 +49,8 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
     this.componentManager.add(SpectrumLegend);
     this.componentManager.add(TreemapSeries);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
-    this.componentManager.add(selectedSeries);
     this.componentManager.add(HoveredSeries);
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(BackButton);

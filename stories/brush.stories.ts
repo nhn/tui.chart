@@ -154,6 +154,8 @@ export const tickBrush = () => {
     y: 100,
     isYAxis,
     tickSize: isYAxis ? -5 : 5,
+    strokeStyle: '#333333',
+    lineWidth: 2,
   };
   tick(ctx, tickModel);
 
