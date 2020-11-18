@@ -69,3 +69,106 @@ export const responsive = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const { el } = createChart(BudgetDataForBoxPlot, {
+    series: {
+      selectable: true,
+    },
+    theme: {
+      series: {
+        colors: ['#EE4266', '#FFD23F', '#3BCEAC'],
+        barWidth: 40,
+        barWidthRatios: [1, 0.8],
+        dot: {
+          radius: 5,
+          borderWidth: 3,
+          borderColor: '#000000',
+          useSeriesColor: true,
+        },
+        rect: {
+          borderWidth: 2,
+          borderColor: '#000000',
+        },
+        line: {
+          whisker: {
+            lineWidth: 2,
+            color: '#000000',
+          },
+          maximum: {
+            lineWidth: 2,
+            color: '#000000',
+          },
+          minimum: {
+            lineWidth: 2,
+            color: '#000000',
+          },
+          median: {
+            lineWidth: 2,
+            color: '#000000',
+          },
+        },
+        hover: {
+          color: '#96D6ED',
+          rect: { borderColor: '#00ff00', borderWidth: 2 },
+          dot: { radius: 6 },
+          shadowColor: 'rgba(0, 0, 0, 0.7)',
+          shadowOffsetX: 4,
+          shadowOffsetY: 4,
+          shadowBlur: 6,
+          line: {
+            whisker: {
+              lineWidth: 2,
+              color: '#00ff00',
+            },
+            maximum: {
+              lineWidth: 2,
+              color: '#00ff00',
+            },
+            minimum: {
+              lineWidth: 2,
+              color: '#00ff00',
+            },
+            median: {
+              lineWidth: 2,
+              color: '#00ff00',
+            },
+          },
+        },
+        select: {
+          color: '#73C8E7',
+          rect: { borderColor: '#0000ff', borderWidth: 4 },
+          dot: { radius: 6 },
+          shadowColor: 'rgba(0, 0, 0, 0)',
+          shadowOffsetX: 4,
+          shadowOffsetY: 4,
+          shadowBlur: 6,
+          line: {
+            whisker: {
+              lineWidth: 2,
+              color: '#0000ff',
+            },
+            maximum: {
+              lineWidth: 2,
+              color: '#0000ff',
+            },
+            minimum: {
+              lineWidth: 2,
+              color: '#0000ff',
+            },
+            median: {
+              lineWidth: 2,
+              color: '#0000ff',
+            },
+          },
+          areaOpacity: 1,
+          restSeries: {
+            areaOpacity: 0.8,
+          },
+        },
+      },
+    },
+  });
+
+  return el;
+};

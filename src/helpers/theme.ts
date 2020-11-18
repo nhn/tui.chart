@@ -15,12 +15,18 @@ const DEFAULT_RADAR_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
 const DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY = 0.05;
 export const DEFAULT_BULLET_RANGE_OPACITY = [0.5, 0.3, 0.1];
 const DEFAULT_BOX_HOVER = {
-  borderWidth: BOX_HOVER_THICKNESS,
-  borderColor: '#ffffff',
   shadowColor: 'rgba(0, 0, 0, 0.3)',
   shadowOffsetX: 2,
   shadowOffsetY: 2,
   shadowBlur: 6,
+};
+const DEFAULT_BOXPLOT_OUTLIER_RADIUS = 4;
+const DEFAULT_BOXPLOT_OUTLIER_BORDER_WIDTH = 2;
+const DEFAULT_BOXPLOT_LINE_TYPE = {
+  whisker: { lineWidth: 1 },
+  maximum: { lineWidth: 1 },
+  minimum: { lineWidth: 1 },
+  median: { lineWidth: 1, color: '#ffffff' },
 };
 const DEFAULT_PIE_LINE_WIDTH = 5;
 
@@ -239,6 +245,8 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
         areaOpacity: 1,
         hover: {
           ...DEFAULT_BOX_HOVER,
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
           groupedRect: {
             color: '#000000',
             opacity: 0.05,
@@ -246,6 +254,8 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
         },
         select: {
           ...DEFAULT_BOX_HOVER,
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
           groupedRect: {
             color: '#000000',
             opacity: 0.2,
@@ -268,9 +278,51 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
         markerLineWidth: 1,
         hover: {
           ...DEFAULT_BOX_HOVER,
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
         },
         select: {
           ...DEFAULT_BOX_HOVER,
+          borderWidth: BOX_HOVER_THICKNESS,
+          borderColor: '#ffffff',
+          restSeries: {
+            areaOpacity: 0.2,
+          },
+          areaOpacity: 1,
+        },
+      };
+    case 'boxPlot':
+      return {
+        areaOpacity: 1,
+        barWidthRatios: [1, 0.5],
+        markerLineWidth: 1,
+        dot: {
+          color: '#ffffff',
+          radius: DEFAULT_BOXPLOT_OUTLIER_RADIUS,
+          borderWidth: DEFAULT_BOXPLOT_OUTLIER_BORDER_WIDTH,
+          useSeriesColor: false,
+        },
+        rect: { borderWidth: 0 },
+        line: { ...DEFAULT_BOXPLOT_LINE_TYPE },
+        hover: {
+          ...DEFAULT_BOX_HOVER,
+          rect: { borderWidth: BOX_HOVER_THICKNESS, borderColor: '#ffffff' },
+          dot: {
+            radius: DEFAULT_BOXPLOT_OUTLIER_RADIUS,
+            borderWidth: 0,
+            useSeriesColor: true,
+          },
+          line: { ...DEFAULT_BOXPLOT_LINE_TYPE },
+        },
+        select: {
+          ...DEFAULT_BOX_HOVER,
+          rect: { borderWidth: BOX_HOVER_THICKNESS, borderColor: '#ffffff' },
+          dot: {
+            radius: DEFAULT_BOXPLOT_OUTLIER_RADIUS,
+            borderWidth: DEFAULT_BOXPLOT_OUTLIER_BORDER_WIDTH,
+            useSeriesColor: true,
+          },
+          line: { ...DEFAULT_BOXPLOT_LINE_TYPE },
           restSeries: {
             areaOpacity: 0.2,
           },

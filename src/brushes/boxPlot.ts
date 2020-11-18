@@ -2,15 +2,17 @@ import { BoxPlotModel } from '@t/components/series';
 import { line, rect } from './basic';
 
 export function boxPlot(ctx: CanvasRenderingContext2D, model: BoxPlotModel) {
-  const { color, rect: rectModel, whisker, median, minimum, maximum } = model;
+  const { rect: rectModel, upperWhisker, lowerWhisker, median, minimum, maximum } = model;
 
-  line(ctx, { type: 'line', lineWidth: 1, strokeStyle: color, ...whisker });
+  line(ctx, { type: 'line', ...minimum });
 
-  line(ctx, { type: 'line', lineWidth: 1, strokeStyle: color, ...minimum });
+  line(ctx, { type: 'line', ...lowerWhisker });
 
-  line(ctx, { type: 'line', lineWidth: 1, strokeStyle: color, ...maximum });
+  rect(ctx, { type: 'rect', ...rectModel });
 
-  rect(ctx, { type: 'rect', color, ...rectModel });
+  line(ctx, { type: 'line', ...upperWhisker });
 
-  line(ctx, { type: 'line', lineWidth: 1, strokeStyle: '#ffffff', ...median });
+  line(ctx, { type: 'line', ...maximum });
+
+  line(ctx, { type: 'line', ...median });
 }

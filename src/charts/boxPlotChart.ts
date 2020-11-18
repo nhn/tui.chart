@@ -56,8 +56,8 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(ExportMenu, { chartEl: this.el });
-    this.componentManager.add(SelectedSeries);
     this.componentManager.add(HoveredSeries);
+    this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
     this.painter.addGroups([
