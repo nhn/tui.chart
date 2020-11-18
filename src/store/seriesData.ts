@@ -109,6 +109,7 @@ const seriesData: StoreModule = {
           seriesCount,
           seriesGroupCount,
           data,
+          colors,
         };
       });
 

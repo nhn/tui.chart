@@ -1,5 +1,11 @@
 import Component from './component';
-import { ChartState, Options, Legend as LegendType, Series, LegendIconType } from '@t/store/store';
+import {
+  ChartState,
+  Options,
+  Legend as LegendType,
+  LegendIconType,
+  LegendDataList,
+} from '@t/store/store';
 import { LegendData, LegendModel } from '@t/components/legend';
 import {
   getLegendItemHeight,
@@ -77,15 +83,13 @@ export default class Legend extends Component {
     this.eventBus.on('clickLegendLabel', this.onClickLabel);
   }
 
-  initColorAndIconTypeMap(series: Series) {
+  initColorAndIconTypeMap(legendData: LegendDataList) {
     this.seriesColorMap = {};
     this.seriesIconTypeMap = {};
 
-    Object.values(series).forEach((s) => {
-      s!.data.forEach(({ name, color, iconType }) => {
-        this.seriesColorMap[name] = color;
-        this.seriesIconTypeMap[name] = iconType;
-      });
+    legendData.forEach(({ label, color, iconType }) => {
+      this.seriesColorMap[label] = color;
+      this.seriesIconTypeMap[label] = iconType;
     });
   }
 
@@ -163,10 +167,7 @@ export default class Legend extends Component {
     this.rect = layout.legend;
     this.theme = theme.legend as Required<LegendTheme>;
 
-    if (legendData.length !== Object.keys(this.seriesColorMap).length) {
-      this.initColorAndIconTypeMap(nestedPieSeries ?? series);
-    }
-
+    this.initColorAndIconTypeMap(legendData);
     this.models = this.renderLegendModel(legend);
 
     const { data } = this.models[0];

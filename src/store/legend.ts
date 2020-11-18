@@ -7,6 +7,7 @@ import {
   Series,
   Legend,
   CircleLegend,
+  LegendDataList,
 } from '@t/store/store';
 import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
 import { isUndefined, sum, includes, deepMergedCopy } from '@src/helpers/utils';
@@ -23,6 +24,7 @@ import { hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { extend } from '@src/store/store';
 import { getTitleFontString } from '@src/helpers/style';
 import { defaultTheme } from '@src/helpers/theme';
+import { LegendData } from '@t/components/legend';
 
 type LegendLabels = {
   label: string;
@@ -162,6 +164,15 @@ function getInitialWidth(options: Options) {
   return options.chart?.width ?? 0;
 }
 
+function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
+  const colors = Object.values(series).reduce<string[]>((acc, cur) => [...acc, ...cur?.colors], []);
+
+  return data.map((datum, idx) => ({
+    ...datum,
+    color: colors[idx],
+  }));
+}
+
 const legend: StoreModule = {
   name: 'legend',
   state: ({ options, series }) => {
@@ -192,7 +203,7 @@ const legend: StoreModule = {
     };
   },
   action: {
-    setLegendLayout({ state }) {
+    setLegendLayout({ state, initStoreState }) {
       const { legend: legendData, series, options } = state;
 
       const align = getAlign(options);
@@ -201,6 +212,7 @@ const legend: StoreModule = {
       const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
       const legendWidths = legendData.data.map(({ width }) => width);
       const legendWidth = calculateLegendWidth(initialWidth, legendWidths, options, align, visible);
+      const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
 
       const circleLegendWidth = isVerticalAlign(align)
         ? initialWidth
@@ -221,6 +233,10 @@ const legend: StoreModule = {
         width: circleLegendVisible ? circleLegendWidth : 0,
         radius: circleLegendVisible ? Math.max((circleLegendWidth - LEGEND_MARGIN_X) / 2, 0) : 0,
       });
+
+      if (!isNestedPieChart) {
+        this.dispatch('updateLegendColor');
+      }
     },
     setLegendActiveState({ state }, { name, active }) {
       const { data } = state.legend;
@@ -238,6 +254,22 @@ const legend: StoreModule = {
       const model = state.legend.data.find(({ label }) => label === name)!;
       model.checked = checked;
       this.notify(state, 'legend');
+    },
+    updateLegendColor({ state }) {
+      const { legend: legendData, series, options, nestedPieSeries } = state;
+
+      const useSpectrumLegend =
+        (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
+      const data = useSpectrumLegend
+        ? legendData.data
+        : getLegendDataAppliedTheme(legendData.data, nestedPieSeries ?? series);
+      extend(state.legend, { data });
+    },
+    updateNestedPieChartLegend({ state }) {
+      const { legend: legendData, series, nestedPieSeries } = state;
+      extend(state.legend, {
+        data: getLegendDataAppliedTheme(legendData.data, nestedPieSeries ?? series),
+      });
     },
   },
 

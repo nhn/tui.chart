@@ -274,4 +274,8 @@ export default abstract class Chart<T extends Options> {
       .filter((datum) => datum.checked)
       .map((datum) => pick(datum, 'chartType', 'label', 'checked'));
   };
+
+  public setOptions = (options: Options) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }
