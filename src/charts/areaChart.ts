@@ -31,7 +31,7 @@ import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { AreaChartOptions, AreaSeriesData, AreaSeriesType } from '@t/options';
 
-interface AreaChartProps {
+export interface AreaChartProps {
   el: Element;
   options: AreaChartOptions;
   data: AreaSeriesData;

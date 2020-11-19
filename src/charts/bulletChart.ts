@@ -24,7 +24,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import { BulletChartOptions, BulletSeriesType, BulletSeriesData } from '@t/options';
 
-interface BulletChartProps {
+export interface BulletChartProps {
   el: Element;
   options: BulletChartOptions;
   data: BulletSeriesData;

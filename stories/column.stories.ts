@@ -9,6 +9,7 @@ import {
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart.Column.General',

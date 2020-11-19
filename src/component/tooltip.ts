@@ -13,8 +13,6 @@ import { isNumber } from '@src/helpers/utils';
 import { Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
 import { TooltipTheme } from '@t/theme';
 
-import '../css/tooltip.css';
-
 type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
 
 export default class Tooltip extends Component {

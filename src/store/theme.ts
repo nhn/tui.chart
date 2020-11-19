@@ -110,7 +110,10 @@ function setColors(
   isNestedPieChart: boolean
 ) {
   let index = 0;
-  const commonColorsOption = [...(commonSeriesOptions?.colors ?? []), ...defaultSeriesTheme.colors];
+  const commonColorsOption = [
+    ...((commonSeriesOptions?.colors as string[]) ?? []),
+    ...defaultSeriesTheme.colors,
+  ];
   const themeNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
 
   themeNames.forEach((name, idx) => {

@@ -2,6 +2,7 @@ import BulletChart from '@src/charts/bulletChart';
 import { BulletSeriesData, BulletChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { budgetDataForBullet } from './data';
+import '@src/css/chart.css';
 
 const budgetData = budgetDataForBullet as BulletSeriesData;
 

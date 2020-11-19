@@ -1,12 +1,15 @@
 import { Align, Point } from '@t/options';
-import { LegendIconType } from '@t/store/store';
+import { ChartType, LegendIconType } from '@t/store/store';
 import { FontTheme } from '@t/theme';
+
+export type CheckedLegendType = Pick<LegendData, 'chartType' | 'label' | 'checked'>[];
 
 type LegendData = {
   color: string;
   label: string;
   checked: boolean;
   active: boolean;
+  chartType: ChartType;
   iconType: LegendIconType;
   useScatterChartIcon?: boolean;
 } & Point;

@@ -4,6 +4,7 @@ import { PieSeriesData, PieChartOptions } from '@t/options';
 import { browserUsageData } from './data';
 import { withKnobs, number } from '@storybook/addon-knobs';
 import { PieChartThemeOptions } from '@t/theme';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|Pie',

@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "target": "es6",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "outDir": "dist/esm/",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@t/*": ["./types/*"]
+    },
+    "typeRoots": ["./types"],
+    "types": ["webpack-env"],
+    "listEmittedFiles": true,
+    "importHelpers": true,
+    "downlevelIteration": true,
+    "plugins": [
+      {
+        "transform": "typescript-transform-paths"
+      }
+    ],
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "declaration": true
+  },
+  "include": ["src/**/*.js", "src/**/*.ts", "types/**/*"],
+  "exclude": ["node_modules"]
+}

@@ -23,7 +23,7 @@ import * as axisBrush from '@src/brushes/axis';
 
 import { RadarChartOptions, RadarSeriesData } from '@t/options';
 
-interface RadarChartProps {
+export interface RadarChartProps {
   el: Element;
   options: RadarChartOptions;
   data: RadarSeriesData;

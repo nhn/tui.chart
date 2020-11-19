@@ -3,6 +3,7 @@ import { AreaChartOptions, AreaSeriesData, BaseChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData, budgetData, temperatureRangeData } from './data';
 import { withKnobs, boolean, radios } from '@storybook/addon-knobs';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|Area',

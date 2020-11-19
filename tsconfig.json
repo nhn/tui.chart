@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "noEmit": true,
     "target": "ES5",
     "module": "commonJS",
     "strict": true,
@@ -12,14 +11,16 @@
     "noImplicitAny": false,
     "sourceMap": true,
     "baseUrl": ".",
-    "typeRoots": ["./types", "./node_modules/@types"],
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "types": ["jest", "node"],
     "paths": {
-      "@src/*": ["src/*"],
-      "@t/*": ["types/*"]
+      "@src/*": ["./src/*"],
+      "@t/*": ["./types/*"]
     },
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "declaration": true,
+    "noEmit": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "types": ["jest", "node"],
+    "lib": ["esnext", "dom", "dom.iterable"]
   },
   "include": [
     "src/**/*.js",

@@ -32,7 +32,7 @@ import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
 import { LineScatterChartOptions, LineScatterData } from '@t/options';
 import { RawSeries } from '@t/store/store';
 
-interface LineScatterChartProps {
+export interface LineScatterChartProps {
   el: Element;
   options: LineScatterChartOptions;
   data: LineScatterData;

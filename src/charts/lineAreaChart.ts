@@ -32,7 +32,7 @@ import * as resetButtonBrush from '@src/brushes/resetButton';
 import { LineAreaChartOptions, LineAreaData } from '@t/options';
 import { RawSeries } from '@t/store/store';
 
-interface LineAreaChartProps {
+export interface LineAreaChartProps {
   el: Element;
   options: LineAreaChartOptions;
   data: LineAreaData;

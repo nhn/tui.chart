@@ -3,6 +3,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { contributionsData, temperatureAverageDataForHeatmap } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import HeatmapChart from '@src/charts/heatmapChart';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|Heatmap',

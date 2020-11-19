@@ -3,6 +3,7 @@ import { LineScatterData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { efficiencyAndExpensesData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|LineScatter',

@@ -10,6 +10,7 @@ import {
   datetimeCoordinateData,
 } from './data';
 import { boolean, number, radios, withKnobs } from '@storybook/addon-knobs';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|Line',

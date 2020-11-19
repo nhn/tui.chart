@@ -20,7 +20,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 import { NestedPieChartOptions, NestedPieSeriesData } from '@t/options';
 import PieSeries from '@src/component/pieSeries';
 
-interface NestedPieChartProps {
+export interface NestedPieChartProps {
   el: Element;
   options: NestedPieChartOptions;
   data: NestedPieSeriesData;

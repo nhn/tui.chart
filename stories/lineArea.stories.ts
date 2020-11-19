@@ -4,6 +4,7 @@ import { energyUsageData, energyUsageStackData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import LineAreaChart from '@src/charts/lineAreaChart';
 import { LineAreaChartThemeOptions } from '@t/theme';
+import '@src/css/chart.css';
 
 export default {
   title: 'chart|LineArea',
