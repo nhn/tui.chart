@@ -8,7 +8,6 @@ import {
 } from '@t/components/series';
 import { makeStyleObj } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
-import { getAlpha } from '@src/helpers/color';
 
 export type CircleStyleName = 'default' | 'hover' | 'plot';
 export type RectStyleName = 'shadow';
