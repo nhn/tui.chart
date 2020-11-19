@@ -141,8 +141,6 @@ export default abstract class Chart<T extends Options> {
 
     this.store.dispatch('setChartSize', { width: offsetWidth, height: offsetHeight });
 
-    this.painter.setSize(offsetWidth, offsetHeight);
-
     this.draw();
   }
 
