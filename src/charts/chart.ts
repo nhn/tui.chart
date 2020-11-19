@@ -116,7 +116,9 @@ export default abstract class Chart<T extends Options> {
     setTimeout(() => {
       this.initialize();
 
-      this.painter.setup();
+      this.store.observe(() => {
+        this.painter.setup();
+      });
 
       if (useResponsive(options)) {
         this.setResizeEvent();
