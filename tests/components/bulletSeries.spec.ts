@@ -70,7 +70,11 @@ const chartState = {
     series: {
       bullet: {
         areaOpacity: 1,
-        barWidthRatios: [1, 0.5, 0.8],
+        barWidthRatios: {
+          rangeRatio: 1,
+          bulletRatio: 0.5,
+          markerRatio: 0.8,
+        },
         markerLineWidth: 1,
         hover: {
           borderWidth: 4,

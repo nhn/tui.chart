@@ -376,7 +376,7 @@ export default class BoxPlotSeries extends Component {
 
   getBarWidths(tickDistance: number, seriesLength: number) {
     const { barWidth: barThemeWidth, barWidthRatios } = this.theme;
-    const [barRatio, minMaxBarRatio] = barWidthRatios;
+    const { barRatio, minMaxBarRatio } = barWidthRatios;
     const defaultBarWidth = Math.max(
       (tickDistance - getBoxTypeSeriesPadding(tickDistance) * (2 + (seriesLength - 1))) /
         seriesLength,
@@ -385,8 +385,8 @@ export default class BoxPlotSeries extends Component {
     const barWidth = isNumber(barThemeWidth) ? barThemeWidth : defaultBarWidth;
 
     return {
-      barWidth: barWidth * barRatio,
-      minMaxBarWidth: barWidth * minMaxBarRatio,
+      barWidth: barWidth * barRatio!,
+      minMaxBarWidth: barWidth * minMaxBarRatio!,
     };
   }
 

@@ -11,11 +11,11 @@ import { getRGBA, hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode, RespondersThemeType } from '@src/helpers/responders';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
-import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { deepMergedCopy, first, last } from '@src/helpers/utils';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { RectDataLabel } from '@t/components/dataLabels';
 import { TreemapChartSeriesTheme } from '@t/theme';
+import { boxDefault } from '@src/helpers/theme';
 
 export default class TreemapSeries extends Component {
   models: TreemapSeriesModels = { series: [], layer: [] };
@@ -86,7 +86,7 @@ export default class TreemapSeries extends Component {
     return series.map<TreemapRectResponderModel>((m, idx) => ({
       ...m,
       data: tooltipData[idx],
-      thickness: BOX_HOVER_THICKNESS,
+      thickness: boxDefault.HOVER_THICKNESS,
       style: ['shadow'],
     }));
   }

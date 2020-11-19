@@ -51,7 +51,10 @@ const chartState = {
     series: {
       boxPlot: {
         areaOpacity: 1,
-        barWidthRatios: [1, 0.5],
+        barWidthRatios: {
+          barRatio: 1,
+          minMaxBarRatio: 0.5,
+        },
         markerLineWidth: 1,
         dot: {
           color: '#ffffff',
@@ -152,8 +155,6 @@ describe('boxplot series', () => {
           y: 60,
           width: 27.5,
           height: 20,
-          // eslint-disable-next-line no-undefined
-          borderColor: undefined,
           thickness: 0,
         },
         {
@@ -193,8 +194,7 @@ describe('boxplot series', () => {
           x: 28.75,
           y: 0,
           radius: 4,
-          // eslint-disable-next-line no-undefined
-          style: [{ strokeStyle: undefined, lineWidth: 2 }],
+          style: [{ lineWidth: 2 }],
           index: 0,
         },
         {
@@ -225,8 +225,6 @@ describe('boxplot series', () => {
           y: 20,
           width: 27.5,
           height: 40,
-          // eslint-disable-next-line no-undefined
-          borderColor: undefined,
           thickness: 0,
         },
         {
@@ -275,8 +273,6 @@ describe('boxplot series', () => {
           width: 27.5,
           height: 20,
           thickness: 0,
-          // eslint-disable-next-line no-undefined
-          borderColor: undefined,
           color: 'rgba(170, 170, 170, 1)',
         },
         median: {
@@ -390,8 +386,6 @@ describe('boxplot series', () => {
           width: 27.5,
           height: 40,
           thickness: 0,
-          // eslint-disable-next-line no-undefined
-          borderColor: undefined,
           color: 'rgba(187, 187, 187, 1)',
         },
         median: {

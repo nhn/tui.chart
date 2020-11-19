@@ -249,41 +249,48 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
 interface BulletChartSeriesTheme extends CommonSeriesTheme {
   areaOpacity?: number;
   barWidth?: number;
-  barWidthRatios?: number[];
+  barWidthRatios?: {
+    rangeRatio?: number;
+    bulletRatio?: number;
+    markerRatio?: number;
+  };
   markerLineWidth?: number;
   rangeColors?: string[];
+  borderColor?: string;
+  borderWidth?: number;
   hover?: {
     color?: string;
-    borderColor?: string;
-    borderWidth?: number;
-  } & ShadowStyle;
+  } & BorderTheme &
+    ShadowStyle;
   select?: {
     color?: string;
-    borderColor?: string;
-    borderWidth?: number;
     restSeries?: {
       areaOpacity?: number;
     };
     areaOpacity?: number;
-  } & ShadowStyle;
+  } & BorderTheme &
+    ShadowStyle;
 }
 
 interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
   areaOpacity?: number;
   barWidth?: number;
-  barWidthRatios?: number[];
+  barWidthRatios?: {
+    barRatio?: number;
+    minMaxBarRatio?: number;
+  };
   dot?: BoxPlotDotTheme;
   line?: BoxPlotLineTypeTheme;
-  rect?: BoxPlotRectTypeTheme;
+  rect?: BorderTheme;
   hover?: {
     color?: string;
-    rect?: BoxPlotRectTypeTheme;
+    rect?: BorderTheme;
     dot?: BoxPlotDotTheme;
     line?: BoxPlotLineTypeTheme;
   } & ShadowStyle;
   select?: {
     color?: string;
-    rect?: BoxPlotRectTypeTheme;
+    rect?: BorderTheme;
     dot?: BoxPlotDotTheme;
     line?: BoxPlotLineTypeTheme;
     restSeries?: {
@@ -294,11 +301,6 @@ interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
 }
 
 type LineTypeTheme = { lineWidth?: number; color?: string };
-
-type BoxPlotRectTypeTheme = {
-  borderColor?: string;
-  borderWidth?: number;
-};
 
 type BoxPlotLineTypeTheme = {
   whisker?: LineTypeTheme;

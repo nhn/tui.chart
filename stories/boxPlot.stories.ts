@@ -3,6 +3,7 @@ import { BudgetDataForBoxPlot } from './data';
 import { BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
+import { rgba } from '@src/helpers/color';
 
 export default {
   title: 'chart|BoxPlot',
@@ -77,9 +78,12 @@ export const theme = () => {
     },
     theme: {
       series: {
-        colors: ['#EE4266', '#FFD23F', '#3BCEAC'],
+        colors: ['#EE4266', '#FFD23F'],
         barWidth: 40,
-        barWidthRatios: [1, 0.8],
+        barWidthRatios: {
+          barRatio: 1,
+          minMaxBarRatio: 0.8,
+        },
         dot: {
           radius: 5,
           borderWidth: 3,
@@ -163,7 +167,7 @@ export const theme = () => {
           },
           areaOpacity: 1,
           restSeries: {
-            areaOpacity: 0.8,
+            areaOpacity: 0.5,
           },
         },
       },

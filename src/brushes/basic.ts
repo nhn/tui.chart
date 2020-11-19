@@ -161,9 +161,8 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   }
 
   if (thickness) {
-    ctx.lineWidth = thickness * (getAlpha(color) === 1 ? 2 : 1);
-    ctx.strokeStyle = borderColor;
-    ctx.strokeRect(x, y, width, height);
+    ctx.fillStyle = borderColor;
+    ctx.fillRect(x - thickness, y - thickness, width + thickness * 2, height + thickness * 2);
   }
 
   if (ctx.shadowColor) {

@@ -12,7 +12,7 @@ import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector'
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getLimitOnAxis } from '@src/helpers/axes';
-import { DEFAULT_LINE_SERIES_WIDTH } from '@src/helpers/theme';
+import { radarDefault } from '@src/helpers/theme';
 import { RadarChartSeriesTheme, DotTheme } from '@t/theme';
 import { RespondersThemeType } from '@src/helpers/responders';
 type RenderOptions = {
@@ -189,7 +189,7 @@ export default class RadarSeries extends Component {
 
       return {
         type: 'polygon',
-        lineWidth: lineWidth ?? DEFAULT_LINE_SERIES_WIDTH,
+        lineWidth: lineWidth ?? radarDefault.LINE_WIDTH,
         name,
         ...polygon,
         ...this.getSeriesColor(showArea, seriesColor!, name),

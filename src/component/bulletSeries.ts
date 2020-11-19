@@ -12,12 +12,11 @@ import { getRGBA, getAlpha } from '@src/helpers/color';
 import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/options';
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
 import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
-import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 import { LineModel } from '@t/components/axis';
 import { BulletChartSeriesTheme } from '@t/theme';
-import { DEFAULT_BULLET_RANGE_OPACITY } from '@src/helpers/theme';
+import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
 import { isNumber } from '@src/helpers/utils';
 
 type RenderOptions = {
@@ -122,7 +121,7 @@ export default class BulletSeries extends Component {
       if ((m as BulletRectModel).modelType === 'bullet') {
         (model as BulletRectModel).color = getRGBA((m as BulletRectModel).color, 1);
         (model as BulletRectModel).style = ['shadow'];
-        (model as BulletRectModel).thickness = BOX_HOVER_THICKNESS;
+        (model as BulletRectModel).thickness = boxDefault.HOVER_THICKNESS;
       }
 
       if (m.type === 'line') {
@@ -264,6 +263,7 @@ export default class BulletSeries extends Component {
     color: string,
     name: string
   ): BulletRectModel {
+    const { borderColor, borderWidth } = this.theme;
     const { tickDistance, ratio, vertical, zeroPosition, bulletWidth } = renderOptions;
 
     const bulletLength = value * ratio;
@@ -276,6 +276,8 @@ export default class BulletSeries extends Component {
       x: vertical ? bulletStartX : zeroPosition,
       y: vertical ? zeroPosition - bulletLength : bulletStartX,
       ...getRectSize(vertical, bulletWidth, bulletLength),
+      thickness: borderWidth,
+      borderColor: borderColor,
       modelType: 'bullet',
       value,
     };
@@ -339,13 +341,13 @@ export default class BulletSeries extends Component {
 
   getBulletBarWidths(tickDistance: number) {
     const { barWidth: barThemeWidth, barWidthRatios } = this.theme;
-    const [rangeRatio, bulletRatio, markerRatio] = barWidthRatios;
+    const { rangeRatio, bulletRatio, markerRatio } = barWidthRatios;
     const barWidth = isNumber(barThemeWidth) ? barThemeWidth : tickDistance * 0.6;
 
     return {
-      rangeWidth: barWidth * rangeRatio,
-      bulletWidth: barWidth * bulletRatio,
-      markerWidth: barWidth * markerRatio,
+      rangeWidth: barWidth * rangeRatio!,
+      bulletWidth: barWidth * bulletRatio!,
+      markerWidth: barWidth * markerRatio!,
     };
   }
 
