@@ -116,7 +116,9 @@ export default abstract class Chart<T extends Options> {
     setTimeout(() => {
       this.initialize();
 
-      this.painter.setup();
+      this.store.observe(() => {
+        this.painter.setup();
+      });
 
       if (useResponsive(options)) {
         this.setResizeEvent();
@@ -138,8 +140,6 @@ export default abstract class Chart<T extends Options> {
     this.eventBus.emit('resetHoveredSeries');
 
     this.store.dispatch('setChartSize', { width: offsetWidth, height: offsetHeight });
-
-    this.painter.setSize(offsetWidth, offsetHeight);
 
     this.draw();
   }
