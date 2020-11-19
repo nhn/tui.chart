@@ -246,6 +246,71 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
   connector?: ConnectorTheme;
 }
 
+interface BulletChartSeriesTheme extends CommonSeriesTheme {
+  areaOpacity?: number;
+  barWidth?: number;
+  barWidthRatios?: {
+    rangeRatio?: number;
+    bulletRatio?: number;
+    markerRatio?: number;
+  };
+  markerLineWidth?: number;
+  rangeColors?: string[];
+  borderColor?: string;
+  borderWidth?: number;
+  hover?: {
+    color?: string;
+  } & BorderTheme &
+    ShadowStyle;
+  select?: {
+    color?: string;
+    restSeries?: {
+      areaOpacity?: number;
+    };
+    areaOpacity?: number;
+  } & BorderTheme &
+    ShadowStyle;
+}
+
+interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
+  areaOpacity?: number;
+  barWidth?: number;
+  barWidthRatios?: {
+    barRatio?: number;
+    minMaxBarRatio?: number;
+  };
+  dot?: BoxPlotDotTheme;
+  line?: BoxPlotLineTypeTheme;
+  rect?: BorderTheme;
+  hover?: {
+    color?: string;
+    rect?: BorderTheme;
+    dot?: BoxPlotDotTheme;
+    line?: BoxPlotLineTypeTheme;
+  } & ShadowStyle;
+  select?: {
+    color?: string;
+    rect?: BorderTheme;
+    dot?: BoxPlotDotTheme;
+    line?: BoxPlotLineTypeTheme;
+    restSeries?: {
+      areaOpacity?: number;
+    };
+    areaOpacity?: number;
+  } & ShadowStyle;
+}
+
+type LineTypeTheme = { lineWidth?: number; color?: string };
+
+type BoxPlotLineTypeTheme = {
+  whisker?: LineTypeTheme;
+  minimum?: LineTypeTheme;
+  maximum?: LineTypeTheme;
+  median?: LineTypeTheme;
+};
+
+type BoxPlotDotTheme = DotTheme & { useSeriesColor?: boolean };
+
 type ShadowStyle = {
   shadowColor?: string;
   shadowOffsetX?: number;
@@ -317,4 +382,12 @@ interface BubbleChartThemeOptions extends BaseThemeOptions {
 
 interface BoxChartThemeOptions extends BaseThemeOptions {
   series?: BoxChartSeriesTheme;
+}
+
+interface BulletCharThemeOptions extends BaseThemeOptions {
+  series?: BulletChartSeriesTheme;
+}
+
+interface BoxPlotCharThemeOptions extends BaseThemeOptions {
+  series?: BoxPlotChartSeriesTheme;
 }

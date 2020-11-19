@@ -1,5 +1,4 @@
 import { RawSeries } from '@t/store/store';
-import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { Theme } from '@t/theme';
 import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
 
@@ -9,10 +8,37 @@ export const DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS = DEFAULT_LINE_SERIES_DOT_RADI
 const DEFAULT_AREA_OPACITY = 0.3;
 const DEFAULT_AREA_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
 const DEFAULT_AREA_UNSELECTED_SERIES_OPACITY = 0.06;
-const DEFAULT_RADAR_SERIES_DOT_RADIUS = 3;
-const DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS = DEFAULT_RADAR_SERIES_DOT_RADIUS + 1;
-const DEFAULT_RADAR_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
-const DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY = 0.05;
+
+export const radarDefault = {
+  LINE_WIDTH: 2,
+  DOT_RADIUS: 3,
+  HOVER_DOT_RADIUS: 4,
+  SELECTED_SERIES_OPACITY: 0.3,
+  UNSELECTED_SERIES_OPACITY: 0.05,
+};
+
+export const boxDefault = {
+  HOVER_THICKNESS: 4,
+  BOX_HOVER: {
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffsetX: 2,
+    shadowOffsetY: 2,
+    shadowBlur: 6,
+  },
+};
+
+const boxplotDefault = {
+  OUTLIER_RADIUS: 4,
+  OUTLIER_BORDER_WIDTH: 2,
+  LINE_TYPE: {
+    whisker: { lineWidth: 1 },
+    maximum: { lineWidth: 1 },
+    minimum: { lineWidth: 1 },
+    median: { lineWidth: 1, color: '#ffffff' },
+  },
+};
+
+export const DEFAULT_BULLET_RANGE_OPACITY = [0.5, 0.3, 0.1];
 const DEFAULT_PIE_LINE_WIDTH = 5;
 
 export const defaultSeriesTheme = {
@@ -172,11 +198,11 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
         borderWidth: 0,
         borderColor: '#ffffff',
         hover: {
-          borderWidth: BOX_HOVER_THICKNESS,
+          borderWidth: boxDefault.HOVER_THICKNESS,
           borderColor: '#ffffff',
         },
         select: {
-          borderWidth: BOX_HOVER_THICKNESS,
+          borderWidth: boxDefault.HOVER_THICKNESS,
           borderColor: '#ffffff',
         },
       };
@@ -201,27 +227,27 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
       };
     case 'radar':
       return {
-        areaOpacity: DEFAULT_RADAR_SELECTED_SERIES_OPACITY,
+        areaOpacity: radarDefault.SELECTED_SERIES_OPACITY,
         hover: {
           dot: {
-            radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
+            radius: radarDefault.HOVER_DOT_RADIUS,
             borderColor: '#ffffff',
             borderWidth: 2,
           },
         },
         select: {
           dot: {
-            radius: DEFAULT_RADAR_SERIES_HOVER_DOT_RADIUS,
+            radius: radarDefault.HOVER_DOT_RADIUS,
             borderColor: '#ffffff',
             borderWidth: 2,
           },
           restSeries: {
-            areaOpacity: DEFAULT_RADAR_UNSELECTED_SERIES_OPACITY,
+            areaOpacity: radarDefault.UNSELECTED_SERIES_OPACITY,
           },
-          areaOpacity: DEFAULT_RADAR_SELECTED_SERIES_OPACITY,
+          areaOpacity: radarDefault.SELECTED_SERIES_OPACITY,
         },
         dot: {
-          radius: DEFAULT_RADAR_SERIES_DOT_RADIUS,
+          radius: radarDefault.DOT_RADIUS,
         },
       };
     case 'bar':
@@ -229,24 +255,18 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
       return {
         areaOpacity: 1,
         hover: {
-          borderWidth: BOX_HOVER_THICKNESS,
+          ...boxDefault.BOX_HOVER,
+          borderWidth: boxDefault.HOVER_THICKNESS,
           borderColor: '#ffffff',
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowOffsetX: 2,
-          shadowOffsetY: 2,
-          shadowBlur: 6,
           groupedRect: {
             color: '#000000',
             opacity: 0.05,
           },
         },
         select: {
-          borderWidth: BOX_HOVER_THICKNESS,
+          ...boxDefault.BOX_HOVER,
+          borderWidth: boxDefault.HOVER_THICKNESS,
           borderColor: '#ffffff',
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowOffsetX: 2,
-          shadowOffsetY: 2,
-          shadowBlur: 6,
           groupedRect: {
             color: '#000000',
             opacity: 0.2,
@@ -260,6 +280,73 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
           color: 'rgba(51, 85, 139, 0.3)',
           lineWidth: 1,
           dashSegments: [],
+        },
+      };
+    case 'bullet':
+      return {
+        areaOpacity: 1,
+        barWidthRatios: {
+          rangeRatio: 1,
+          bulletRatio: 0.5,
+          markerRatio: 0.8,
+        },
+        markerLineWidth: 1,
+        borderWidth: 0,
+        borderColor: 'rgba(255, 255, 255, 0)',
+        hover: {
+          ...boxDefault.BOX_HOVER,
+          borderWidth: boxDefault.HOVER_THICKNESS,
+          borderColor: '#ffffff',
+        },
+        select: {
+          ...boxDefault.BOX_HOVER,
+          borderWidth: boxDefault.HOVER_THICKNESS,
+          borderColor: '#ffffff',
+          restSeries: {
+            areaOpacity: 0.2,
+          },
+          areaOpacity: 1,
+        },
+      };
+    case 'boxPlot':
+      return {
+        areaOpacity: 1,
+        barWidthRatios: {
+          barRatio: 1,
+          minMaxBarRatio: 0.5,
+        },
+        markerLineWidth: 1,
+        dot: {
+          color: '#ffffff',
+          radius: boxplotDefault.OUTLIER_RADIUS,
+          borderWidth: boxplotDefault.OUTLIER_BORDER_WIDTH,
+          useSeriesColor: false,
+        },
+        rect: { borderWidth: 0 },
+        line: { ...boxplotDefault.LINE_TYPE },
+        hover: {
+          ...boxDefault.BOX_HOVER,
+          rect: { borderWidth: boxDefault.HOVER_THICKNESS, borderColor: '#ffffff' },
+          dot: {
+            radius: boxplotDefault.OUTLIER_RADIUS,
+            borderWidth: 0,
+            useSeriesColor: true,
+          },
+          line: { ...boxplotDefault.LINE_TYPE },
+        },
+        select: {
+          ...boxDefault.BOX_HOVER,
+          rect: { borderWidth: boxDefault.HOVER_THICKNESS, borderColor: '#ffffff' },
+          dot: {
+            radius: boxplotDefault.OUTLIER_RADIUS,
+            borderWidth: boxplotDefault.OUTLIER_BORDER_WIDTH,
+            useSeriesColor: true,
+          },
+          line: { ...boxplotDefault.LINE_TYPE },
+          restSeries: {
+            areaOpacity: 0.2,
+          },
+          areaOpacity: 1,
         },
       };
     case 'pie':

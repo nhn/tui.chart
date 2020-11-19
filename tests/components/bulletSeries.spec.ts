@@ -66,6 +66,39 @@ const chartState = {
     ],
   },
   dataLabels: {},
+  theme: {
+    series: {
+      bullet: {
+        areaOpacity: 1,
+        barWidthRatios: {
+          rangeRatio: 1,
+          bulletRatio: 0.5,
+          markerRatio: 0.8,
+        },
+        markerLineWidth: 1,
+        hover: {
+          borderWidth: 4,
+          borderColor: '#ffffff',
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+          shadowBlur: 6,
+        },
+        select: {
+          borderWidth: 4,
+          borderColor: '#ffffff',
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2,
+          shadowBlur: 6,
+          restSeries: {
+            areaOpacity: 0.2,
+          },
+          areaOpacity: 1,
+        },
+      },
+    },
+  },
 };
 
 describe('bullet series', () => {

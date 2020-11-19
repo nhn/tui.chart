@@ -15,24 +15,27 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import { LineModel } from '@t/components/axis';
-import { BOX_HOVER_THICKNESS, getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '@t/theme';
+import { isNumber } from '@src/helpers/utils';
+import { crispPixel } from '@src/helpers/calculator';
 
 type RenderOptions = {
   ratio: number;
   tickDistance: number;
-  boxWidth: number;
+  barWidth: number;
+  minMaxBarWidth: number;
 };
 
 type BoxPlotModelData = Array<BoxPlotModel | CircleModel>;
 
 type TooltipRectMap = Record<string, BoxPlotResponderTypes[]>;
 
-const seriesOpacity = {
-  INACTIVE: 0.2,
-  ACTIVE: 1,
-};
-
 const MIN_BAR_WIDTH = 5;
+
+function getPadding(tickDistance: number, barWidth: number, seriesLength: number) {
+  return (tickDistance - barWidth * seriesLength) / (seriesLength + 1);
+}
 
 export default class BoxPlotSeries extends Component {
   models: BoxPlotSeriesModels = { series: [] };
@@ -47,13 +50,15 @@ export default class BoxPlotSeries extends Component {
 
   tooltipRectMap!: TooltipRectMap;
 
+  theme!: Required<BoxPlotChartSeriesTheme>;
+
   initialize() {
     this.type = 'series';
     this.name = 'boxPlot';
   }
 
   render(state: ChartState<BoxPlotChartOptions>): void {
-    const { layout, axes, series, scale, legend, options } = state;
+    const { layout, axes, series, scale, legend, options, theme } = state;
 
     if (!series.boxPlot) {
       throw new Error("There's no boxPlot data!");
@@ -63,6 +68,7 @@ export default class BoxPlotSeries extends Component {
       this.eventDetectType = options.series.eventDetectType;
     }
 
+    this.theme = theme.series.boxPlot as Required<BoxPlotChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
@@ -76,11 +82,7 @@ export default class BoxPlotSeries extends Component {
     const renderOptions = {
       ratio: this.rect.height / (max - min),
       tickDistance,
-      boxWidth: Math.max(
-        (tickDistance - getBoxTypeSeriesPadding(tickDistance) * (2 + (seriesLength - 1))) /
-          seriesLength,
-        MIN_BAR_WIDTH
-      ),
+      ...this.getBarWidths(tickDistance, seriesLength),
     };
 
     const boxPlotModelData = this.makeBoxPlots(boxPlotData, renderOptions);
@@ -170,13 +172,8 @@ export default class BoxPlotSeries extends Component {
     const hoveredModel = { ...model };
 
     if (model.type === 'boxPlot') {
-      ['rect', 'whisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
-        if (prop === 'rect') {
-          model[prop].style = ['shadow'];
-          model[prop].thickness = BOX_HOVER_THICKNESS;
-        } else {
-          model[prop].detectionSize = 3;
-        }
+      ['lowerWhisker', 'upperWhisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
+        model[prop].detectionSize = 3;
       });
     }
 
@@ -207,7 +204,7 @@ export default class BoxPlotSeries extends Component {
       this.activatedResponders = models;
     } else {
       this.eventBus.emit('renderHoveredSeries', {
-        models: responders,
+        models: this.getRespondersWithTheme(responders, 'hover'),
         name: this.name,
         eventDetectType: this.eventDetectType,
       });
@@ -226,7 +223,7 @@ export default class BoxPlotSeries extends Component {
       if (this.eventDetectType === 'grouped') {
         models = this.getResponderModelFromMap(responders);
       } else {
-        models = responders;
+        models = this.getRespondersWithTheme(responders, 'select');
       }
 
       this.eventBus.emit('renderSelectedSeries', {
@@ -242,29 +239,19 @@ export default class BoxPlotSeries extends Component {
     const seriesModels: BoxPlotSeriesModel[] = [];
 
     boxPlots.forEach((model) => {
-      const { color, type, name } = model;
+      const { type, name } = model;
 
       if (type === 'boxPlot') {
-        ['rect', 'whisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
-          if (prop === 'rect') {
-            seriesModels.push({
-              type: 'rect',
-              color,
-              name,
-              ...model[prop],
-            } as RectModel);
-          } else {
-            seriesModels.push({
-              type: 'line',
-              name,
-              ...model[prop],
-              strokeStyle: prop === 'median' ? '#ffffff' : color,
-              lineWidth: 1,
-            } as LineModel);
-          }
+        ['maximum', 'minimum', 'rect', 'median', 'upperWhisker', 'lowerWhisker'].forEach((prop) => {
+          seriesModels.push({
+            name,
+            ...model[prop],
+          });
         });
       } else {
-        seriesModels.push({ ...model, color: '#ffffff' } as CircleModel);
+        seriesModels.push({
+          ...model,
+        } as CircleModel);
       }
     });
 
@@ -272,66 +259,46 @@ export default class BoxPlotSeries extends Component {
   }
 
   makeBoxPlots(seriesData: BoxPlotSeriesType[], renderOptions: RenderOptions): BoxPlotModelData {
-    const { ratio, boxWidth } = renderOptions;
+    const { ratio, barWidth } = renderOptions;
     const boxPlotModels: BoxPlotModelData = [];
+    const seriesLength = seriesData.length;
+    const { dot } = this.theme;
 
     seriesData.forEach(({ outliers = [], data, name, color }, seriesIndex) => {
       const seriesColor = this.getSeriesColor(name, color!);
 
       data.forEach((datum, dataIndex) => {
-        const [minimum, lowerQuartile, median, highQuartile, maximum] = datum;
-        const startX = this.getStartX(seriesIndex, dataIndex, renderOptions);
+        const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
+        const rect = this.getRect(datum, startX, seriesColor, renderOptions);
 
         boxPlotModels.push({
           type: 'boxPlot',
           color: seriesColor,
           name,
-          rect: {
-            x: startX,
-            y: this.getYPos(highQuartile, ratio),
-            width: boxWidth,
-            height: (highQuartile - lowerQuartile) * ratio,
-          },
-          median: {
-            x: startX,
-            y: this.getYPos(median, ratio),
-            x2: startX + boxWidth,
-            y2: this.getYPos(median, ratio),
-          },
-          whisker: {
-            x: startX + boxWidth / 2,
-            y: this.getYPos(minimum, ratio),
-            x2: startX + boxWidth / 2,
-            y2: this.getYPos(maximum, ratio),
-          },
-          minimum: {
-            x: startX + boxWidth / 2 / 2,
-            y: this.getYPos(minimum, ratio),
-            x2: startX + boxWidth / 2 / 2 + boxWidth / 2,
-            y2: this.getYPos(minimum, ratio),
-          },
-          maximum: {
-            x: startX + boxWidth / 2 / 2,
-            y: this.getYPos(maximum, ratio),
-            x2: startX + boxWidth / 2 / 2 + boxWidth / 2,
-            y2: this.getYPos(maximum, ratio),
-          },
+          rect,
+          median: this.getMedian(datum, startX, seriesColor, renderOptions),
+          minimum: this.getMinimum(datum, startX, seriesColor, renderOptions),
+          maximum: this.getMaximum(datum, startX, seriesColor, renderOptions),
+          ...this.getWhisker(datum, startX, seriesColor, renderOptions, rect),
           index: dataIndex,
         });
       });
 
+      const { color: dotColor, radius, borderColor, borderWidth, useSeriesColor } = dot as Required<
+        BoxPlotDotTheme
+      >;
       outliers.forEach((datum) => {
         const [dataIndex, value] = datum;
-        const startX = this.getStartX(seriesIndex, dataIndex, renderOptions);
+        const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
 
         boxPlotModels.push({
           type: 'circle',
           name,
-          x: startX + boxWidth / 2,
+          x: startX + barWidth / 2,
           y: this.getYPos(value, ratio),
-          radius: 4,
-          style: [{ strokeStyle: seriesColor, lineWidth: 2 }],
-          color: seriesColor,
+          radius: radius!,
+          style: [{ strokeStyle: borderColor, lineWidth: borderWidth }],
+          color: useSeriesColor ? seriesColor : dotColor,
           index: dataIndex,
         });
       });
@@ -378,23 +345,22 @@ export default class BoxPlotSeries extends Component {
     return tooltipData;
   }
 
-  getSeriesColor(name: string, seriesColor: string) {
-    const active = this.activeSeriesMap![name];
+  getStartX(
+    seriesIndex: number,
+    dataIndex: number,
+    renderOptions: RenderOptions,
+    seriesLength: number
+  ) {
+    const { tickDistance, barWidth } = renderOptions;
+    const padding = getPadding(tickDistance, barWidth, seriesLength);
 
-    return getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
+    return dataIndex * tickDistance + (seriesIndex + 1) * padding + barWidth * seriesIndex;
   }
 
-  getStartX(seriesIndex: number, dataIndex: number, renderOptions: RenderOptions) {
-    const { tickDistance, boxWidth } = renderOptions;
-    const padding = getBoxTypeSeriesPadding(tickDistance);
-
-    return (
-      seriesIndex * boxWidth + padding + dataIndex * tickDistance + (seriesIndex ? padding : 0)
-    );
-  }
-
-  getYPos(value: number, ratio: number) {
-    return this.rect.height - value * ratio;
+  getYPos(value: number, ratio: number, lineWidth?: number) {
+    return isNumber(lineWidth)
+      ? crispPixel(this.rect.height - value * ratio, lineWidth)
+      : this.rect.height - value * ratio;
   }
 
   onMouseoutComponent() {
@@ -406,5 +372,214 @@ export default class BoxPlotSeries extends Component {
     });
 
     this.eventBus.emit('needDraw');
+  }
+
+  getBarWidths(tickDistance: number, seriesLength: number) {
+    const { barWidth: barThemeWidth, barWidthRatios } = this.theme;
+    const { barRatio, minMaxBarRatio } = barWidthRatios;
+    const defaultBarWidth = Math.max(
+      (tickDistance - getBoxTypeSeriesPadding(tickDistance) * (2 + (seriesLength - 1))) /
+        seriesLength,
+      MIN_BAR_WIDTH
+    );
+    const barWidth = isNumber(barThemeWidth) ? barThemeWidth : defaultBarWidth;
+
+    return {
+      barWidth: barWidth * barRatio!,
+      minMaxBarWidth: barWidth * minMaxBarRatio!,
+    };
+  }
+
+  getRespondersWithTheme(responders: BoxPlotResponderTypes[], type: 'hover' | 'select') {
+    const {
+      color,
+      rect,
+      dot,
+      line,
+      shadowColor,
+      shadowOffsetX,
+      shadowOffsetY,
+      shadowBlur,
+    } = this.theme[type];
+    const { whisker, median, maximum, minimum } = line as Required<BoxPlotLineTypeTheme>;
+    const { color: dotColor, radius, borderColor, borderWidth, useSeriesColor } = dot as Required<
+      BoxPlotDotTheme
+    >;
+
+    return responders.map((m) => {
+      const seriesColor = m.color;
+      let model;
+
+      if (m.type === 'circle') {
+        model = {
+          ...m,
+          radius,
+          color: useSeriesColor ? seriesColor : dotColor,
+          style: [{ strokeStyle: borderColor ?? seriesColor, lineWidth: borderWidth }],
+        };
+      } else {
+        model = {
+          ...m,
+          rect: {
+            ...(m as BoxPlotModel).rect,
+            color: color ?? (m as BoxPlotModel).color,
+            thickness: rect!.borderWidth,
+            borderColor: rect!.borderColor,
+            style: [{ shadowColor, shadowOffsetX, shadowOffsetY, shadowBlur }],
+          },
+          upperWhisker: {
+            ...(m as BoxPlotModel).upperWhisker,
+            strokeStyle: whisker.color ?? seriesColor,
+            lineWidth: whisker.lineWidth,
+          },
+          lowerWhisker: {
+            ...(m as BoxPlotModel).lowerWhisker,
+            strokeStyle: whisker.color ?? seriesColor,
+            lineWidth: whisker.lineWidth,
+          },
+          median: {
+            ...(m as BoxPlotModel).median,
+            strokeStyle: median.color ?? seriesColor,
+            lineWidth: median.lineWidth,
+          },
+          maximum: {
+            ...(m as BoxPlotModel).maximum,
+            strokeStyle: maximum.color ?? seriesColor,
+            lineWidth: maximum.lineWidth,
+          },
+          minimum: {
+            ...(m as BoxPlotModel).minimum,
+            strokeStyle: minimum.color ?? seriesColor,
+            lineWidth: minimum.lineWidth,
+          },
+        };
+      }
+
+      return model;
+    });
+  }
+
+  getRect(
+    datum: number[],
+    startX: number,
+    seriesColor: string,
+    { barWidth, ratio }: RenderOptions
+  ): RectModel {
+    const { rect } = this.theme;
+    const [, lowerQuartile, , highQuartile] = datum;
+
+    return {
+      type: 'rect',
+      x: startX,
+      y: this.getYPos(highQuartile, ratio),
+      width: barWidth,
+      height: (highQuartile - lowerQuartile) * ratio,
+      thickness: rect.borderWidth!,
+      borderColor: rect.borderColor!,
+      color: seriesColor,
+    };
+  }
+
+  getWhisker(
+    datum: number[],
+    startX: number,
+    seriesColor: string,
+    { barWidth, ratio }: RenderOptions,
+    { height: rectHeight, y: rectY }: RectModel
+  ): Record<'upperWhisker' | 'lowerWhisker', LineModel> {
+    const [minimum, , , , maximum] = datum;
+    const { lineWidth, color } = this.theme.line.whisker!;
+    const x = crispPixel(startX + barWidth / 2, lineWidth);
+
+    return {
+      upperWhisker: {
+        type: 'line',
+        x,
+        y: this.getYPos(maximum, ratio, lineWidth),
+        x2: x,
+        y2: rectY,
+        strokeStyle: color ?? seriesColor,
+        lineWidth: lineWidth,
+      },
+      lowerWhisker: {
+        type: 'line',
+        x,
+        y: this.getYPos(minimum, ratio, lineWidth),
+        x2: x,
+        y2: crispPixel(rectY + rectHeight, lineWidth),
+        strokeStyle: color ?? seriesColor,
+        lineWidth: lineWidth,
+      },
+    };
+  }
+
+  getMedian(
+    datum: number[],
+    startX: number,
+    seriesColor: string,
+    { barWidth, ratio }: RenderOptions
+  ): LineModel {
+    const median = datum[2];
+    const { lineWidth, color } = this.theme.line.median!;
+
+    return {
+      type: 'line',
+      x: crispPixel(startX, lineWidth),
+      y: this.getYPos(median, ratio, lineWidth),
+      x2: crispPixel(startX + barWidth, lineWidth),
+      y2: this.getYPos(median, ratio, lineWidth),
+      strokeStyle: color ?? seriesColor,
+      lineWidth: lineWidth,
+    };
+  }
+
+  getMinimum(
+    datum: number[],
+    startX: number,
+    seriesColor: string,
+    { barWidth, ratio, minMaxBarWidth }: RenderOptions
+  ): LineModel {
+    const minimum = datum[0];
+    const { lineWidth, color } = this.theme.line.minimum!;
+
+    return {
+      type: 'line',
+      x: crispPixel(startX + (barWidth - minMaxBarWidth) / 2, lineWidth),
+      y: this.getYPos(minimum, ratio, lineWidth),
+      x2: crispPixel(startX + (barWidth - minMaxBarWidth) / 2 + minMaxBarWidth, lineWidth),
+      y2: this.getYPos(minimum, ratio, lineWidth),
+      strokeStyle: color ?? seriesColor,
+      lineWidth: lineWidth,
+    };
+  }
+
+  getMaximum(
+    datum: number[],
+    startX: number,
+    seriesColor: string,
+    { barWidth, ratio, minMaxBarWidth }: RenderOptions
+  ): LineModel {
+    const maximum = datum[4];
+    const { lineWidth, color } = this.theme.line.maximum!;
+
+    return {
+      type: 'line',
+      x: crispPixel(startX + (barWidth - minMaxBarWidth) / 2, lineWidth),
+      y: this.getYPos(maximum, ratio, lineWidth),
+      x2: crispPixel(startX + (barWidth - minMaxBarWidth) / 2 + minMaxBarWidth, lineWidth),
+      y2: this.getYPos(maximum, ratio, lineWidth),
+      strokeStyle: color ?? seriesColor,
+      lineWidth: lineWidth,
+    };
+  }
+
+  getSeriesColor(seriesName: string, seriesColor: string) {
+    const { select, areaOpacity } = this.theme;
+    const active = this.activeSeriesMap![seriesName];
+    const selected = Object.values(this.activeSeriesMap!).some((elem) => !elem);
+    const selectedOpacity = active ? select.areaOpacity! : select.restSeries!.areaOpacity!;
+    const opacity = selected ? selectedOpacity : areaOpacity;
+
+    return getRGBA(seriesColor, opacity);
   }
 }

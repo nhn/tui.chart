@@ -162,6 +162,9 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   if (thickness) {
     ctx.fillStyle = borderColor;
     ctx.fillRect(x - thickness, y - thickness, width + thickness * 2, height + thickness * 2);
+  }
+
+  if (ctx.shadowColor) {
     ctx.shadowColor = 'transparent';
   }
 

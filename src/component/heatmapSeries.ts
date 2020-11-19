@@ -9,11 +9,11 @@ import {
 import { hexToRGB } from '@src/helpers/color';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
-import { BOX_HOVER_THICKNESS } from '@src/helpers/boxStyle';
 import { SeriesDataLabels } from '@t/components/dataLabels';
 import { RespondersThemeType } from '@src/helpers/responders';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { HeatmapChartSeriesTheme } from '@t/theme';
+import { boxDefault } from '@src/helpers/theme';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
@@ -73,7 +73,7 @@ export default class HeatmapSeries extends Component {
         value: model.colorValue,
         templateType: 'heatmap',
       },
-      thickness: BOX_HOVER_THICKNESS,
+      thickness: boxDefault.HOVER_THICKNESS,
       style: ['shadow'],
     }));
   }

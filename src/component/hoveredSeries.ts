@@ -68,7 +68,7 @@ export default class HoveredSeries extends Component {
   }
 
   renderGuideLineModel(model: CircleResponderModel | BoxPlotResponderModel): LineModel {
-    const x = model.type === 'circle' ? crispPixel(model.x) : model.whisker.x;
+    const x = model.type === 'circle' ? crispPixel(model.x) : model.upperWhisker.x;
 
     return {
       type: 'line',
