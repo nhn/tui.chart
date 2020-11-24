@@ -27,7 +27,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 
-import { ColumnChartOptions, BoxSeriesData } from '@t/options';
+import { ColumnChartOptions, BoxSeriesData, BoxSeriesDataType } from '@t/options';
 
 export interface ColumnChartProps {
   el: HTMLElement;
@@ -77,4 +77,8 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
       dataLabelBrush,
     ]);
   }
+
+  public addData = (data: BoxSeriesDataType[], category: string) => {
+    this.store.dispatch('addData', { data, category });
+  };
 }

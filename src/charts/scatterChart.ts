@@ -23,7 +23,12 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
 
-import { ScatterChartOptions, ScatterSeriesData, ScatterSeriesType } from '@t/options';
+import {
+  CoordinateDataType,
+  ScatterChartOptions,
+  ScatterSeriesData,
+  ScatterSeriesType,
+} from '@t/options';
 
 export interface ScatterChartProps {
   el: Element;
@@ -70,4 +75,8 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
       scatterSeriesBrush,
     ]);
   }
+
+  public addData = (data: CoordinateDataType[]) => {
+    this.store.dispatch('addData', { data });
+  };
 }

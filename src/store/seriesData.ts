@@ -1,9 +1,9 @@
-import { StoreModule, RawSeries, Series, Options, Categories } from '@t/store/store';
+import { StoreModule, RawSeries, Series, Options, Categories, ChartType } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src/helpers/utils';
-import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
+import { HeatmapCategoriesType, LineTypeSeriesOptions, RangeDataType } from '@t/options';
 import { makeRawCategories } from '@src/store/category';
-import { getCoordinateXValue } from '@src/helpers/coordinate';
+import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
 
 function initZoomRange(
@@ -66,6 +66,13 @@ function getDataInRange(
   }
 
   return data.slice(startIdx, endIdx + 1);
+}
+
+function isCoordinateTypeSeries(series: Series, chartType?: ChartType) {
+  return (
+    isCoordinateSeries(series) &&
+    (isUndefined(chartType) || chartType === 'line' || chartType === 'scatter')
+  );
 }
 
 const seriesData: StoreModule = {
@@ -152,6 +159,40 @@ const seriesData: StoreModule = {
       state.zoomRange = initZoomRange(series, options, rawCategories);
 
       this.notify(state, 'zoomRange');
+    },
+    addData({ state, initStoreState }, { data, category, chartType }) {
+      const { series } = initStoreState;
+      let { categories } = initStoreState;
+      categories = series.heatmap ? (categories as HeatmapCategoriesType).x : categories;
+      const coordinateChart = isCoordinateTypeSeries(state.series, chartType);
+
+      if (category && Array.isArray(categories)) {
+        const isExist = categories.some((c) => c === category);
+        if (!isExist) {
+          categories.push(category);
+        }
+      }
+
+      if (chartType) {
+        series[chartType].forEach((datum, idx) => {
+          datum.data.push(data[idx]);
+        });
+      } else {
+        const [seriesName] = Object.keys(initStoreState.series);
+
+        series[seriesName].forEach((datum, idx) => {
+          datum.data.push(data[idx]);
+        });
+      }
+
+      this.notify(state, 'series');
+      this.notify(state, 'rawCategories');
+      if (Array.isArray(state.zoomRange)) {
+        this.dispatch('resetZoom');
+      }
+      if (coordinateChart) {
+        this.dispatch('updateCategoryForCoordinateData');
+      }
     },
   },
   observe: {

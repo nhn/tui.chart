@@ -65,4 +65,8 @@ export default class RadarChart extends Chart<RadarChartOptions> {
       axisBrush,
     ]);
   }
+
+  public addData = (data: number[], category: string) => {
+    this.store.dispatch('addData', { data, category });
+  };
 }

@@ -29,7 +29,12 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
-import { LineAreaChartOptions, LineAreaData } from '@t/options';
+import {
+  AreaSeriesDataType,
+  LineAreaChartOptions,
+  LineAreaData,
+  LineSeriesDataType,
+} from '@t/options';
 import { RawSeries } from '@t/store/store';
 
 export interface LineAreaChartProps {
@@ -82,4 +87,12 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
       resetButtonBrush,
     ]);
   }
+
+  public addData = (
+    data: LineSeriesDataType[] | AreaSeriesDataType[],
+    category: string,
+    chartType: 'line' | 'area'
+  ) => {
+    this.store.dispatch('addData', { data, category, chartType });
+  };
 }

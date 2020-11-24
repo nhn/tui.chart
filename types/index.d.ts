@@ -55,6 +55,8 @@ declare class BaseChart {
   public getCheckedLegend(): CheckedLegendType;
 
   public setOptions(options: Options): void;
+
+  public addData(): void;
 }
 
 export class LineChart extends BaseChart {

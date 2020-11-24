@@ -28,7 +28,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
-import { LineChartOptions, LineSeriesData, LineSeriesType } from '@t/options';
+import { LineChartOptions, LineSeriesData, LineSeriesDataType, LineSeriesType } from '@t/options';
 
 export interface LineChartProps {
   el: Element;
@@ -82,4 +82,8 @@ export default class LineChart extends Chart<LineChartOptions> {
       resetButtonBrush,
     ]);
   }
+
+  public addData = (data: LineSeriesDataType[], category?: string) => {
+    this.store.dispatch('addData', { data, category });
+  };
 }

@@ -24,7 +24,7 @@ import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 
-import { BubbleSeriesData, BaseOptions, BubbleSeriesType } from '@t/options';
+import { BubbleSeriesData, BaseOptions, BubbleSeriesType, BubbleSeriesDataType } from '@t/options';
 
 export interface BubbleChartProps {
   el: Element;
@@ -71,4 +71,8 @@ export default class BubbleChart extends Chart<BaseOptions> {
       exportMenuBrush,
     ]);
   }
+
+  public addData = (data: BubbleSeriesDataType[]) => {
+    this.store.dispatch('addData', { data });
+  };
 }

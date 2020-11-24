@@ -85,4 +85,8 @@ export default class BarChart extends Chart<BarChartOptions> {
       dataLabelBrush,
     ]);
   }
+
+  public addData = (data: BoxSeriesDataType[], category: string) => {
+    this.store.dispatch('addData', { data, category });
+  };
 }
