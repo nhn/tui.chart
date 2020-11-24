@@ -88,4 +88,8 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
       spectrumLegendBrush,
     ]);
   }
+
+  public addData = (data: HeatmapSeriesDataType, category: string) => {
+    this.store.dispatch('addData', { data, category });
+  };
 }

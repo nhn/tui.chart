@@ -1,5 +1,11 @@
 import Chart from './chart';
-import { ColumnLineData, ColumnLineChartOptions, Point } from '@t/options';
+import {
+  ColumnLineData,
+  ColumnLineChartOptions,
+  Point,
+  LineSeriesDataType,
+  BoxSeriesDataType,
+} from '@t/options';
 import { RawSeries } from '@t/store/store';
 import stackSeriesData from '@src/store/stackSeriesData';
 import plot from '@src/store/plot';
@@ -109,4 +115,12 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
       columnSeries.component[delegationMethod]({ mousePosition, responders: [] }, event);
     }
   }
+
+  public addData = (
+    data: BoxSeriesDataType[] | LineSeriesDataType[],
+    category: string,
+    chartType: 'line' | 'column'
+  ) => {
+    this.store.dispatch('addData', { data, category, chartType });
+  };
 }

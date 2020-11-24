@@ -40,9 +40,20 @@ const category: StoreModule = {
   }),
   action: {
     setCategory({ state }) {
-      const { rawCategories, zoomRange } = state;
-      let categories = rawCategories;
+      const { zoomRange } = state;
+      let categories = state.rawCategories;
+      if (zoomRange && Array.isArray(categories)) {
+        const [start, end] = zoomRange;
+        categories = categories.slice(start, end + 1);
+      }
 
+      state.categories = categories;
+
+      this.notify(state, 'categories');
+    },
+    updateCategoryForCoordinateData({ initStoreState, state }) {
+      const { zoomRange } = state;
+      let categories = makeRawCategories(initStoreState.series);
       if (zoomRange && Array.isArray(categories)) {
         const [start, end] = zoomRange;
         categories = categories.slice(start, end + 1);

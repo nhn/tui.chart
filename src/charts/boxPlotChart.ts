@@ -69,4 +69,8 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
       exportMenuBrush,
     ]);
   }
+
+  public addData = (data: number[][], category: string) => {
+    this.store.dispatch('addData', { data, category });
+  };
 }

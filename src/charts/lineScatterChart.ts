@@ -29,7 +29,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
 
-import { LineScatterChartOptions, LineScatterData } from '@t/options';
+import { CoordinateDataType, LineScatterChartOptions, LineScatterData } from '@t/options';
 import { RawSeries } from '@t/store/store';
 
 export interface LineScatterChartProps {
@@ -82,4 +82,8 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
       scatterSeriesBrush,
     ]);
   }
+
+  public addData = (data: CoordinateDataType[], chartType: 'line' | 'scatter') => {
+    this.store.dispatch('addData', { data, chartType });
+  };
 }

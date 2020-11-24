@@ -29,7 +29,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
-import { AreaChartOptions, AreaSeriesData, AreaSeriesType } from '@t/options';
+import { AreaChartOptions, AreaSeriesData, AreaSeriesDataType, AreaSeriesType } from '@t/options';
 
 export interface AreaChartProps {
   el: Element;
@@ -83,4 +83,8 @@ export default class AreaChart extends Chart<AreaChartOptions> {
       resetButtonBrush,
     ]);
   }
+
+  public addData = (data: AreaSeriesDataType[], category: string) => {
+    this.store.dispatch('addData', { data, category });
+  };
 }

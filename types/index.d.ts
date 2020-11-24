@@ -52,6 +52,8 @@ declare namespace tui {
 
 declare class BaseChart {
   public getCheckedLegend(): CheckedLegendType;
+
+  public addData(): void;
 }
 
 export class LineChart extends BaseChart {
