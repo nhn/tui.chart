@@ -6,20 +6,28 @@ import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
 
-function initZoomRange(
-  series: RawSeries,
-  options: Options,
-  categories?: Categories
-): RangeDataType<number> | undefined {
-  if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.zoomable) {
-    return;
-  }
-
+function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> | undefined {
   const rawCategoriesLength = categories
     ? (categories as string[]).length
     : Object.keys(makeRawCategories(series, categories)).length;
 
   return [0, rawCategoriesLength - 1];
+}
+
+function initZoomRange(series: RawSeries, options: Options, categories?: Categories) {
+  if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.zoomable) {
+    return;
+  }
+
+  return initRange(series, categories);
+}
+
+function initShiftRange(series: RawSeries, options: Options, categories?: Categories) {
+  if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.shift) {
+    return;
+  }
+
+  return initRange(series, categories);
 }
 
 function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeDataType<number>) {
@@ -83,6 +91,7 @@ const seriesData: StoreModule = {
       ...series,
     } as Series,
     zoomRange: initZoomRange(series, options, categories),
+    shiftRange: initShiftRange(series, options, categories),
     disabledSeries: [],
   }),
   action: {
@@ -190,6 +199,10 @@ const seriesData: StoreModule = {
       if (Array.isArray(state.zoomRange)) {
         this.dispatch('resetZoom');
       }
+      if (Array.isArray(state.shiftRange)) {
+        const [start, end] = state.shiftRange;
+        state.shiftRange = [start + 1, end + 1];
+      }
       if (coordinateChart) {
         this.dispatch('updateCategoryForCoordinateData');
       }
@@ -203,6 +216,9 @@ const seriesData: StoreModule = {
   computed: {
     isLineTypeSeriesZooming: ({ zoomRange, rawCategories }) => {
       return isZooming(rawCategories as string[], zoomRange);
+    },
+    viewRange: ({ zoomRange, shiftRange }) => {
+      return zoomRange || shiftRange;
     },
   },
 };
