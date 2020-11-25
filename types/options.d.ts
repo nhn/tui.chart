@@ -364,6 +364,7 @@ type LineAreaChartSeriesOptions = {
   showDot?: boolean;
   lineWidth?: number;
   spline?: boolean;
+  shift?: boolean;
 } & BaseSeriesOptions;
 
 export interface ScatterChartOptions extends BaseOptions {
