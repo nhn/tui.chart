@@ -39,11 +39,12 @@ const category: StoreModule = {
     categories: makeRawCategories(series, categories),
   }),
   action: {
-    setCategory({ state }) {
-      const { zoomRange } = state;
+    setCategory({ state, computed }) {
+      const { viewRange } = computed;
       let categories = state.rawCategories;
-      if (zoomRange && Array.isArray(categories)) {
-        const [start, end] = zoomRange;
+
+      if (viewRange && Array.isArray(categories)) {
+        const [start, end] = viewRange;
         categories = categories.slice(start, end + 1);
       }
 

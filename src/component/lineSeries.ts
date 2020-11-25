@@ -92,9 +92,11 @@ export default class LineSeries extends Component {
   }
 
   render(
-    chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>
+    chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>,
+    computed
   ) {
-    const { layout, series, scale, axes, legend, zoomRange, theme } = chartState;
+    const { viewRange } = computed;
+    const { layout, series, scale, axes, legend, theme } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -121,7 +123,7 @@ export default class LineSeries extends Component {
     this.theme = theme.series.line as Required<LineChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
-    this.startIndex = zoomRange ? zoomRange[0] : 0;
+    this.startIndex = viewRange ? viewRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
     this.yAxisName = getValueAxisName(options, this.name, 'yAxis');
 
@@ -221,6 +223,8 @@ export default class LineSeries extends Component {
     const yAxisLimit = scale[this.yAxisName].limit;
     const xAxisLimit = scale?.xAxis?.limit;
     const { lineWidth, dashSegments } = this.theme;
+
+    // @TODO: 모든 모델 계산 대신 slice 하고 + - 1개씩 계산 필요. 범위 내에 해당하는 값인지 계산이 필요하다.
 
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];

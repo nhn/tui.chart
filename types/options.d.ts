@@ -316,6 +316,7 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
   spline?: boolean;
   zoomable?: boolean;
   eventDetectType?: LineTypeEventDetectType;
+  shift?: boolean;
 }
 
 interface AreaSeriesOptions extends LineTypeSeriesOptions {
