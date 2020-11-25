@@ -179,6 +179,11 @@ const seriesData: StoreModule = {
         const isExist = categories.some((c) => c === category);
         if (!isExist) {
           categories.push(category);
+
+          if (Array.isArray(state.shiftRange)) {
+            const [start, end] = state.shiftRange;
+            state.shiftRange = [start + 1, end + 1];
+          }
         }
       }
 
@@ -199,10 +204,7 @@ const seriesData: StoreModule = {
       if (Array.isArray(state.zoomRange)) {
         this.dispatch('resetZoom');
       }
-      if (Array.isArray(state.shiftRange)) {
-        const [start, end] = state.shiftRange;
-        state.shiftRange = [start + 1, end + 1];
-      }
+
       if (coordinateChart) {
         this.dispatch('updateCategoryForCoordinateData');
       }
