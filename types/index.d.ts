@@ -1,4 +1,13 @@
-import { LineChartOptions, LineSeriesData } from '@t/options';
+import {
+  AreaSeriesDataType,
+  BoxSeriesDataType,
+  BubbleSeriesDataType,
+  CoordinateDataType,
+  HeatmapSeriesDataType,
+  LineChartOptions,
+  LineSeriesData,
+  LineSeriesDataType,
+} from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
 import { BarChartProps } from '@src/charts/barChart';
@@ -52,24 +61,30 @@ declare namespace tui {
 
 declare class BaseChart {
   public getCheckedLegend(): CheckedLegendType;
-
-  public addData(): void;
 }
 
 export class LineChart extends BaseChart {
   constructor(props: LineChartProps);
+
+  public addData(data: LineSeriesDataType[], category?: string): void;
 }
 
 export class AreaChart extends BaseChart {
   constructor(props: AreaChartProps);
+
+  public addData(data: AreaSeriesDataType[], category: string): void;
 }
 
 export class BarChart extends BaseChart {
   constructor(props: BarChartProps);
+
+  public addData(data: BoxSeriesDataType[], category: string): void;
 }
 
 export class ColumnChart extends BaseChart {
   constructor(props: ColumnChartProps);
+
+  public addData(data: BoxSeriesDataType[], category: string): void;
 }
 
 export class PieChart extends BaseChart {
@@ -78,14 +93,20 @@ export class PieChart extends BaseChart {
 
 export class HeatmapChart extends BaseChart {
   constructor(props: HeatmapChartProps);
+
+  public addData(data: HeatmapSeriesDataType, category: string): void;
 }
 
 export class BubbleChart extends BaseChart {
   constructor(props: BubbleChartProps);
+
+  public addData(data: BubbleSeriesDataType[]): void;
 }
 
 export class ScatterChart extends BaseChart {
   constructor(props: ScatterChartProps);
+
+  public addData(data: CoordinateDataType[]): void;
 }
 
 export class BulletChart extends BaseChart {
@@ -94,6 +115,8 @@ export class BulletChart extends BaseChart {
 
 export class RadarChart extends BaseChart {
   constructor(props: RadarChartProps);
+
+  public addData(data: number[], category: string): void;
 }
 
 export class TreemapChart extends BaseChart {
@@ -106,14 +129,28 @@ export class NestedPieChart extends BaseChart {
 
 export class LineAreaChart extends BaseChart {
   constructor(props: LineAreaChartProps);
+
+  public addData(
+    data: LineSeriesDataType[] | AreaSeriesDataType[],
+    category: string,
+    chartType: 'line' | 'area'
+  ): void;
 }
 
 export class LineScatterChart extends BaseChart {
   constructor(props: LineScatterChartProps);
+
+  public addData(data: CoordinateDataType[], chartType: 'line' | 'scatter'): void;
 }
 
 export class ColumnLineChart extends BaseChart {
   constructor(props: ColumnLineChartProps);
+
+  public addData(
+    data: BoxSeriesDataType[] | LineSeriesDataType[],
+    category: string,
+    chartType: 'line' | 'column'
+  ): void;
 }
 
 export { LineChartOptions, LineSeriesData };
