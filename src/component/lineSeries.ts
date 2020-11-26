@@ -224,8 +224,7 @@ export default class LineSeries extends Component {
     const xAxisLimit = scale?.xAxis?.limit;
     const { lineWidth, dashSegments } = this.theme;
 
-    // @TODO: 모든 모델 계산 대신 slice 하고 + - 1개씩 계산 필요. 범위 내에 해당하는 값인지 계산이 필요하다.
-
+    // @TODO: model 렌더링 시 x, y가 범위 밖에 있는 좌표라면 그려주지 않도록 처리 필요..
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
       const active = this.activeSeriesMap![name];
@@ -234,6 +233,7 @@ export default class LineSeries extends Component {
         const value = getCoordinateYValue(datum);
         const yValueRatio = getValueRatio(value, yAxisLimit);
         const y = (1 - yValueRatio) * this.rect.height;
+
         const x = getXPosition(
           pick(renderOptions, 'pointOnColumn', 'tickDistance', 'labelDistance') as LabelAxisData,
           this.rect.width,
