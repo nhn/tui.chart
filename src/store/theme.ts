@@ -159,18 +159,12 @@ const theme: StoreModule = {
     theme: getTheme(options, series),
   }),
   action: {
-    updateTheme({ state, initStoreState }) {
-      const { series, options } = initStoreState;
-
+    initThemeState({ state, initStoreState }) {
       extend(state.theme, getTheme(initStoreState.options, initStoreState.series));
     },
     applyTheme({ state }) {},
   },
-  observe: {
-    updateTheme() {
-      this.dispatch('updateTheme');
-    },
-  },
+  observe: {},
 };
 
 export default theme;

@@ -200,7 +200,7 @@ const legend: StoreModule = {
     };
   },
   action: {
-    setLegend({ state, initStoreState }) {
+    initLegendState({ state, initStoreState }) {
       extend(state.legend, getLegendState(initStoreState.options, initStoreState.series));
     },
     setLegendLayout({ state }) {
@@ -254,7 +254,6 @@ const legend: StoreModule = {
 
   observe: {
     updateLegendLayout() {
-      this.dispatch('setLegend');
       this.dispatch('setLegendLayout');
     },
   },

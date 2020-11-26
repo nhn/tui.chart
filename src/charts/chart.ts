@@ -11,7 +11,14 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
-import { ChartProps, Point, AnimationOptions } from '@t/options';
+import {
+  ChartProps,
+  Point,
+  AnimationOptions,
+  LineSeries,
+  AreaSeries,
+  ScatterSeries,
+} from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
@@ -19,6 +26,8 @@ import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
 
 export const DEFAULT_ANIM_DURATION = 500;
+
+type SeriesData = LineSeries | AreaSeries | ScatterSeries;
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -286,7 +295,7 @@ export default abstract class Chart<T extends Options> {
   };
 
   //@TODO:  nestedpie 해당 안되면 chartType조절 필요
-  public addSeries = (data, chartType?: string) => {
+  public addSeries = (data: SeriesData, chartType?: string) => {
     this.store.dispatch('addSeries', { data, chartType });
   };
 }

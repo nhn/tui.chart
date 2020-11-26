@@ -60,9 +60,11 @@ export interface AreaSeriesType {
   color: string;
 }
 
+export type AreaSeries = Pick<AreaSeriesType, 'name' | 'data'>;
+
 export interface AreaSeriesData {
   categories: string[];
-  series: Pick<AreaSeriesType, 'name' | 'data'>[];
+  series: AreaSeries[];
 }
 
 export interface LineSeriesType {
@@ -72,9 +74,11 @@ export interface LineSeriesType {
   color: string;
 }
 
+export type LineSeries = Pick<LineSeriesType, 'name' | 'data'>;
+
 export interface LineSeriesData {
   categories?: string[];
-  series: Pick<LineSeriesType, 'name' | 'data'>[];
+  series: LineSeries[];
 }
 
 export interface HeatmapSeriesType {
@@ -107,16 +111,16 @@ export interface ScatterSeriesType {
 
 export interface LineScatterData {
   series: {
-    line: Pick<LineSeriesType, 'name' | 'data'>[];
-    scatter: Pick<ScatterSeriesType, 'name' | 'data'>[];
+    line: LineSeries[];
+    scatter: ScatterSeries[];
   };
 }
 
 export interface LineAreaData {
   categories: string[];
   series: {
-    line: Pick<LineSeriesType, 'name' | 'data'>[];
-    area: Pick<AreaSeriesType, 'name' | 'data'>[];
+    line: LineSeries[];
+    area: AreaSeries[];
   };
 }
 
@@ -126,9 +130,11 @@ export interface BubbleSeriesType {
   color: string;
 }
 
+export type ScatterSeries = Pick<ScatterSeriesType, 'name' | 'data'>;
+
 export interface ScatterSeriesData {
   categories?: string[];
-  series: Pick<ScatterSeriesType, 'name' | 'data'>[];
+  series: ScatterSeries[];
 }
 
 export interface BubbleSeriesData {

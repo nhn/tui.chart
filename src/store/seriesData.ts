@@ -222,7 +222,10 @@ const seriesData: StoreModule = {
       });
 
       this.notify(state, 'series');
-      this.notify(state, 'theme');
+      // coordinate일 떄
+      this.dispatch('updateCategoryForCoordinateData');
+      this.dispatch('initThemeState');
+      this.dispatch('initLegendState');
     },
   },
   observe: {
