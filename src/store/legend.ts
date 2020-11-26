@@ -162,36 +162,47 @@ function getInitialWidth(options: Options) {
   return options.chart?.width ?? 0;
 }
 
+function getLegendState(options: Options, series: RawSeries): Legend {
+  const checkboxVisible = showCheckbox(options);
+  const useSpectrumLegend =
+    (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
+  const useScatterChartIcon = !!series?.scatter;
+  const font = getTitleFontString(
+    deepMergedCopy(defaultTheme.legend.label, { ...options.theme?.legend?.label })
+  );
+
+  const legendLabels = hasNestedPieSeries(series)
+    ? getNestedPieLegendLabels(series)
+    : getLegendLabels(series);
+
+  const data = legendLabels.map(({ label, type }) => ({
+    label,
+    active: true,
+    checked: true,
+    width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
+    iconType: getIconType(type),
+    chartType: type,
+  }));
+
+  return {
+    useSpectrumLegend,
+    useScatterChartIcon,
+    data,
+  } as Legend;
+}
+
 const legend: StoreModule = {
   name: 'legend',
   state: ({ options, series }) => {
-    const checkboxVisible = showCheckbox(options);
-    const useSpectrumLegend =
-      (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
-    const useScatterChartIcon = !!series?.scatter;
-    const font = getTitleFontString(
-      deepMergedCopy(defaultTheme.legend.label, { ...options.theme?.legend?.label })
-    );
-
-    const legendLabels = hasNestedPieSeries(series)
-      ? getNestedPieLegendLabels(series)
-      : getLegendLabels(series);
-
-    const data = legendLabels.map(({ label, type }) => ({
-      label,
-      active: true,
-      checked: true,
-      width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
-      iconType: getIconType(type),
-      chartType: type,
-    }));
-
     return {
-      legend: { useSpectrumLegend, data, useScatterChartIcon } as Legend,
+      legend: getLegendState(options, series) as Legend,
       circleLegend: {} as CircleLegend,
     };
   },
   action: {
+    setLegend({ state, initStoreState }) {
+      extend(state.legend, getLegendState(initStoreState.options, initStoreState.series));
+    },
     setLegendLayout({ state }) {
       const { legend: legendData, series, options } = state;
 
@@ -243,6 +254,7 @@ const legend: StoreModule = {
 
   observe: {
     updateLegendLayout() {
+      this.dispatch('setLegend');
       this.dispatch('setLegendLayout');
     },
   },

@@ -284,4 +284,9 @@ export default abstract class Chart<T extends Options> {
       .filter((datum) => datum.checked)
       .map((datum) => pick(datum, 'chartType', 'label', 'checked'));
   };
+
+  //@TODO:  nestedpie 해당 안되면 chartType조절 필요
+  public addSeries = (data, chartType?: string) => {
+    this.store.dispatch('addSeries', { data, chartType });
+  };
 }

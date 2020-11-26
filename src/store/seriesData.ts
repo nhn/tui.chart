@@ -1,7 +1,7 @@
 import { StoreModule, RawSeries, Series, Options, Categories, ChartType } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src/helpers/utils';
 import { HeatmapCategoriesType, LineTypeSeriesOptions, RangeDataType } from '@t/options';
+import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src/helpers/utils';
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
@@ -207,6 +207,22 @@ const seriesData: StoreModule = {
       if (coordinateChart) {
         this.dispatch('updateCategoryForCoordinateData');
       }
+    },
+    addSeries({ state, initStoreState }, { data, chartType }) {
+      const { series } = initStoreState;
+
+      const seriesNames = Object.keys(series);
+
+      // isExist는 타입별로 해야겠네요
+      seriesNames.forEach((seriesName) => {
+        const isExist = series[seriesName].some(({ name }) => name === data.name);
+        if (!isExist) {
+          series[seriesName].push(data);
+        }
+      });
+
+      this.notify(state, 'series');
+      this.notify(state, 'theme');
     },
   },
   observe: {

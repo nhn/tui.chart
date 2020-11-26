@@ -3,6 +3,7 @@ import { deepMergedCopy, omit } from '@src/helpers/utils';
 import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
 import { axisTitleTheme, defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
+import { extend } from '@src/store/store';
 import {
   AxisTheme,
   ComboChartSeriesTheme,
@@ -158,12 +159,16 @@ const theme: StoreModule = {
     theme: getTheme(options, series),
   }),
   action: {
-    setTheme({ state }) {},
+    updateTheme({ state, initStoreState }) {
+      const { series, options } = initStoreState;
+
+      extend(state.theme, getTheme(initStoreState.options, initStoreState.series));
+    },
     applyTheme({ state }) {},
   },
   observe: {
     updateTheme() {
-      this.dispatch('setTheme');
+      this.dispatch('updateTheme');
     },
   },
 };
