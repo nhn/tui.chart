@@ -382,7 +382,7 @@ export const liveUpdate = () => {
   const { el, chart } = createChart(data, {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
     series: {
-      shift: true,
+      shift: boolean('shift', true),
     },
   });
 
