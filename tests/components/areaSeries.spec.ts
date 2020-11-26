@@ -94,7 +94,7 @@ describe('basic', () => {
       eventBus: new EventEmitter(),
     });
 
-    areaSeries.render(chartState);
+    areaSeries.render(chartState, { viewRange: [0, 1] });
   });
 
   const result = {
@@ -326,7 +326,8 @@ describe('basic', () => {
             { label: 'cho', active: false, checked: true },
           ],
         },
-      })
+      }),
+      { viewRange: [0, 1] }
     );
 
     expect(areaSeries.drawModels.series[3].fillColor).toEqual('rgba(187, 187, 187, 0.06)');
@@ -483,10 +484,10 @@ describe('responders', () => {
         eventBus: new EventEmitter(),
       });
 
-      areaSeries.render(chartState);
+      areaSeries.render(chartState, { viewRange: [0, 1] });
 
       const state = deepMergedCopy(chartState, { options: { series: { eventDetectType } } });
-      areaSeries.render(state);
+      areaSeries.render(state, { viewRange: [0, 1] });
 
       expect(areaSeries.responders).toEqual(result[eventDetectType]);
     });
@@ -587,7 +588,7 @@ describe('range', () => {
       eventBus: new EventEmitter(),
     });
 
-    areaSeries.render(chartState);
+    areaSeries.render(chartState, { viewRange: [0, 1] });
   });
 
   const result = {
@@ -784,7 +785,7 @@ describe('stack', () => {
       eventBus: new EventEmitter(),
     });
 
-    areaSeries.render(chartState);
+    areaSeries.render(chartState, { viewRange: [0, 1] });
   });
 
   const result = {
@@ -1015,7 +1016,7 @@ describe('zoom', () => {
       eventBus: new EventEmitter(),
     });
 
-    areaSeries.render(chartState);
+    areaSeries.render(chartState, { viewRange: [1, 1] });
   });
 
   const result = {
@@ -1216,7 +1217,7 @@ describe('with series options', () => {
       },
     });
 
-    areaSeries.render(state);
+    areaSeries.render(state, { viewRange: [0, 1] });
 
     expect(areaSeries.models.dot).toEqual([
       {
