@@ -90,6 +90,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
   }
 
   public addData = (data: HeatmapSeriesDataType, category: string) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 }

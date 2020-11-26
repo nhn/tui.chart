@@ -77,6 +77,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
   }
 
   public addData = (data: CoordinateDataType[]) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data });
   };
 }

@@ -93,6 +93,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
     category: string,
     chartType: 'line' | 'area'
   ) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category, chartType });
   };
 }

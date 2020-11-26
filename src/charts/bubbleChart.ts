@@ -73,6 +73,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
   }
 
   public addData = (data: BubbleSeriesDataType[]) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data });
   };
 }

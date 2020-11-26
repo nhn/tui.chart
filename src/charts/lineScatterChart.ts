@@ -84,6 +84,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
   }
 
   public addData = (data: CoordinateDataType[], chartType: 'line' | 'scatter') => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, chartType });
   };
 }

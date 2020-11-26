@@ -224,7 +224,7 @@ export default class LineSeries extends Component {
     const xAxisLimit = scale?.xAxis?.limit;
     const { lineWidth, dashSegments } = this.theme;
 
-    // @TODO: model 렌더링 시 x, y가 범위 밖에 있는 좌표라면 그려주지 않도록 처리 필요..
+    // @TODO: model paint 시 x, y가 범위 밖에 있는 좌표라면 그려주지 않도록 처리 필요.
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
       const active = this.activeSeriesMap![name];
