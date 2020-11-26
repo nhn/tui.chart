@@ -87,6 +87,7 @@ export default class BarChart extends Chart<BarChartOptions> {
   }
 
   public addData = (data: BoxSeriesDataType[], category: string) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 }

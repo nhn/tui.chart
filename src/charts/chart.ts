@@ -41,19 +41,30 @@ export default abstract class Chart<T extends Options> {
 
   enteredComponents: Component[] = [];
 
-  isResizing = false;
+  animationControlFlag = {
+    resizing: false,
+    updating: false,
+  };
 
   private getAnimationDuration(animationOption?: AnimationOptions) {
     const { firstRendering } = this.animator;
+    const { resizing, updating } = this.animationControlFlag;
     let duration;
 
-    if ((!firstRendering && !this.isResizing) || isUndefined(animationOption)) {
+    if ((!firstRendering && !resizing) || isUndefined(animationOption)) {
       duration = DEFAULT_ANIM_DURATION;
     } else if (isBoolean(animationOption)) {
       duration = animationOption ? DEFAULT_ANIM_DURATION : 0;
     } else if (isNumber(animationOption.duration)) {
       duration = animationOption.duration;
     }
+
+    if (updating) {
+      duration = 0;
+    }
+
+    this.animationControlFlag.resizing = false;
+    this.animationControlFlag.updating = false;
 
     return duration;
   }
@@ -81,11 +92,10 @@ export default abstract class Chart<T extends Options> {
       debounce(() => {
         let duration = this.getAnimationDuration(options.chart?.animation);
 
-        if (this.isResizing) {
+        if (this.animationControlFlag.resizing) {
           duration = isBoolean(options.responsive)
             ? this.getAnimationDuration()
             : this.getAnimationDuration(options.responsive?.animation);
-          this.isResizing = false;
         }
 
         this.eventBus.emit('loopStart');
@@ -127,12 +137,12 @@ export default abstract class Chart<T extends Options> {
   }
 
   resize() {
-    this.isResizing = true;
+    this.animationControlFlag.resizing = true;
     const { offsetWidth, offsetHeight } = this.el as HTMLElement;
     const { width, height } = this.store.state.chart;
 
     if ((!offsetWidth && !offsetHeight) || (offsetWidth === width && offsetHeight === height)) {
-      this.isResizing = false;
+      this.animationControlFlag.resizing = false;
 
       return;
     }

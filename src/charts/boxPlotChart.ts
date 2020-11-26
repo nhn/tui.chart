@@ -71,6 +71,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
   }
 
   public addData = (data: number[][], category: string) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 }

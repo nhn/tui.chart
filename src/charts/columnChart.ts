@@ -79,6 +79,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
   }
 
   public addData = (data: BoxSeriesDataType[], category: string) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 }

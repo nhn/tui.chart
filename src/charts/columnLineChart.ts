@@ -121,6 +121,7 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     category: string,
     chartType: 'line' | 'column'
   ) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category, chartType });
   };
 }

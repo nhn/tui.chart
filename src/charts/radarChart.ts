@@ -67,6 +67,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
   }
 
   public addData = (data: number[], category: string) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 }
