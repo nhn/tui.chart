@@ -15,9 +15,19 @@ import {
   ChartProps,
   Point,
   AnimationOptions,
-  LineSeries,
-  AreaSeries,
-  ScatterSeries,
+  LineSeriesInput,
+  AreaSeriesInput,
+  ScatterSeriesInput,
+  BubbleSeriesInput,
+  TreemapSeriesType,
+  RadarSeriesInput,
+  PieSeriesType,
+  HeatmapSeriesDataType,
+  BulletSeriesType,
+  BoxPlotSeriesType,
+  BoxSeriesDataType,
+  BoxSeriesInput,
+  NestedPieSeriesType,
 } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
@@ -27,7 +37,21 @@ import { CheckedLegendType } from '@t/components/legend';
 
 export const DEFAULT_ANIM_DURATION = 500;
 
-type SeriesData = LineSeries | AreaSeries | ScatterSeries;
+export type SeriesDataInput =
+  | LineSeriesInput
+  | AreaSeriesInput
+  | ScatterSeriesInput
+  | BubbleSeriesInput
+  | TreemapSeriesType
+  | RadarSeriesInput
+  | PieSeriesType
+  | HeatmapSeriesDataType
+  | BulletSeriesType
+  | BoxPlotSeriesType
+  | BoxSeriesInput<BoxSeriesDataType>
+  | NestedPieSeriesType;
+
+export type AddSeriesDataInfo = { chartType?: string; category?: string };
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -294,8 +318,5 @@ export default abstract class Chart<T extends Options> {
       .map((datum) => pick(datum, 'chartType', 'label', 'checked'));
   };
 
-  //@TODO:  nestedpie 해당 안되면 chartType조절 필요
-  public addSeries = (data: SeriesData, chartType?: string) => {
-    this.store.dispatch('addSeries', { data, chartType });
-  };
+  public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
 }

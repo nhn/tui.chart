@@ -160,7 +160,7 @@ const theme: StoreModule = {
   }),
   action: {
     initThemeState({ state, initStoreState }) {
-      extend(state.theme, getTheme(initStoreState.options, initStoreState.series));
+      state.theme = getTheme(initStoreState.options, initStoreState.series);
     },
     applyTheme({ state }) {},
   },
