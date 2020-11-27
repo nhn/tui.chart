@@ -107,7 +107,7 @@ function isCoordinateTypeSeries(series: Series, chartType?: ChartType) {
 
 function isSeriesAlreadyExist(
   series: Partial<ChartSeriesMap>,
-  seriesName: ChartType,
+  seriesName: string,
   data: Exclude<SeriesDataInput, TreemapSeriesType | HeatmapSeriesDataType>
 ) {
   return series[seriesName]!.some(({ label }) => label === data.name);
