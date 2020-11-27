@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import colorValueScale from '@src/store/colorValueScale';
 import treemapSeriesData from '@src/store/treemapSeriesData';
@@ -64,5 +64,9 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
       spectrumLegendBrush,
       resetButtonBrush,
     ]);
+  }
+
+  public addSeries(data: TreemapSeriesType, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addTreemapSeries', { data, ...dataInfo });
   }
 }

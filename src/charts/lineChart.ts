@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -28,7 +28,13 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
-import { LineChartOptions, LineSeriesData, LineSeriesDataType, LineSeriesType } from '@t/options';
+import {
+  LineChartOptions,
+  LineSeriesData,
+  LineSeriesDataType,
+  LineSeriesType,
+  LineSeriesInput,
+} from '@t/options';
 
 export interface LineChartProps {
   el: Element;
@@ -86,4 +92,8 @@ export default class LineChart extends Chart<LineChartOptions> {
   public addData = (data: LineSeriesDataType[], category?: string) => {
     this.store.dispatch('addData', { data, category });
   };
+
+  public addSeries(data: LineSeriesInput, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
 }

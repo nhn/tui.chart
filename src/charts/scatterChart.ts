@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -28,6 +28,7 @@ import {
   ScatterChartOptions,
   ScatterSeriesData,
   ScatterSeriesType,
+  ScatterSeriesInput,
 } from '@t/options';
 
 export interface ScatterChartProps {
@@ -80,4 +81,8 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data });
   };
+
+  public addSeries(data: ScatterSeriesInput, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
 }

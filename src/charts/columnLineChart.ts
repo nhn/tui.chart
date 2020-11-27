@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 import {
   ColumnLineData,
   ColumnLineChartOptions,
@@ -124,4 +124,8 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category, chartType });
   };
+
+  public addSeries(data, dataInfo: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
 }

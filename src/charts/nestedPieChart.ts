@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import nestedPieSeriesData from '@src/store/nestedPieSeriesData';
 
@@ -17,7 +17,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as sectorBrush from '@src/brushes/sector';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 
-import { NestedPieChartOptions, NestedPieSeriesData } from '@t/options';
+import { NestedPieChartOptions, NestedPieSeriesData, NestedPieSeriesType } from '@t/options';
 import PieSeries from '@src/component/pieSeries';
 
 export interface NestedPieChartProps {
@@ -62,5 +62,10 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
       sectorBrush,
       dataLabelBrush,
     ]);
+  }
+
+  public addSeries(data: NestedPieSeriesType, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+    this.componentManager.add(PieSeries, { alias: data.name });
   }
 }

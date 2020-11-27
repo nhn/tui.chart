@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -74,4 +74,8 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
+
+  public addSeries(data: BoxPlotSeriesType, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
 }

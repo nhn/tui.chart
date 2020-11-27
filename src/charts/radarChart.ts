@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -21,7 +21,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as polygonBrush from '@src/brushes/polygon';
 import * as axisBrush from '@src/brushes/axis';
 
-import { RadarChartOptions, RadarSeriesData } from '@t/options';
+import { RadarChartOptions, RadarSeriesData, RadarSeriesInput } from '@t/options';
 
 export interface RadarChartProps {
   el: Element;
@@ -70,4 +70,8 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
+
+  public addSeries(data: RadarSeriesInput, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
 }
