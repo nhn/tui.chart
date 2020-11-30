@@ -191,7 +191,7 @@ beforeEach(() => {
 });
 
 it('should be set the drawing models for series rendering', () => {
-  boxSeries.render(chartState);
+  boxSeries.render(chartState, { viewRange: [0, 1] });
   const { models, responders } = boxSeries;
 
   expect(models).toEqual(result);
