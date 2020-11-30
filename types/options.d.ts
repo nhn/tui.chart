@@ -569,6 +569,7 @@ export interface BulletSeriesOptions extends BaseSeriesOptions {
 type ColumnLineChartSeriesOptions = {
   column?: Pick<BoxSeriesOptions, 'barWidth' | 'stack'>;
   line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot'>;
+  shift?: boolean;
 } & BaseSeriesOptions;
 
 export interface ColumnLineChartOptions extends BaseOptions {
