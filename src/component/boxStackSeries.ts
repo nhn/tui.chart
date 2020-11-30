@@ -6,6 +6,7 @@ import {
   BarChartOptions,
   Point,
   ColumnLineChartOptions,
+  RangeDataType,
 } from '@t/options';
 import {
   ChartState,
@@ -89,11 +90,42 @@ function getDirectionKeys(seriesDirection: SeriesDirection) {
   return result;
 }
 
+function getStackSeriesDataInViewRange(
+  stackSeriesData: StackSeriesData<BoxType>,
+  viewRange?: RangeDataType<number>
+): StackSeriesData<BoxType> {
+  if (!viewRange) {
+    return stackSeriesData;
+  }
+  const [start, end] = viewRange;
+
+  const stackData = Array.isArray(stackSeriesData.stackData)
+    ? stackSeriesData.stackData.slice(start, end + 1)
+    : {
+        ...Object.keys(stackSeriesData.stackData).reduce(
+          (acc, name) => ({
+            ...acc,
+            [name]: stackSeriesData.stackData[name].slice(start, end + 1),
+          }),
+          {}
+        ),
+      };
+
+  const data = stackSeriesData.data.map((seriesDatum) => ({
+    ...seriesDatum,
+    data: seriesDatum.data.slice(start, end + 1),
+  }));
+
+  return { ...stackSeriesData, data, stackData };
+}
+
 export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
-    chartState: ChartState<T>
+    chartState: ChartState<T>,
+    computed
   ) {
     const { layout, series: seriesData, axes, stackSeries, legend, theme } = chartState;
+    const { viewRange } = computed;
 
     if (!stackSeries[this.name]) {
       return;
@@ -109,7 +141,7 @@ export default class BoxStackSeries extends BoxSeries {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
 
-    const stackSeriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
+    const stackSeriesData = getStackSeriesDataInViewRange(stackSeries[this.name], viewRange);
     const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;

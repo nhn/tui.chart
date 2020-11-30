@@ -420,7 +420,7 @@ export interface BarChartOptions extends BaseOptions {
 }
 
 export interface ColumnChartOptions extends BaseOptions {
-  series?: BoxSeriesOptions;
+  series?: BoxSeriesOptions & { shift?: boolean };
   yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
 }

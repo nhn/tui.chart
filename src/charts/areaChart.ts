@@ -85,6 +85,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
   }
 
   public addData = (data: AreaSeriesDataType[], category: string) => {
+    this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 }

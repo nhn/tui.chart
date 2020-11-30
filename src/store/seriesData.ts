@@ -6,7 +6,7 @@ import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
 
-function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> | undefined {
+function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
   const rawCategoriesLength = categories
     ? (categories as string[]).length
     : Object.keys(makeRawCategories(series, categories)).length;
@@ -23,7 +23,10 @@ function initZoomRange(series: RawSeries, options: Options, categories?: Categor
 }
 
 function initShiftRange(series: RawSeries, options: Options, categories?: Categories) {
-  if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.shift) {
+  if (
+    !(series.line || series.area || series.column) ||
+    !(options.series as LineTypeSeriesOptions)?.shift
+  ) {
     return;
   }
 
@@ -171,9 +174,9 @@ const seriesData: StoreModule = {
     },
     addData({ state, initStoreState }, { data, category, chartType }) {
       const { series } = initStoreState;
+      const coordinateChart = isCoordinateTypeSeries(state.series, chartType);
       let { categories } = initStoreState;
       categories = series.heatmap ? (categories as HeatmapCategoriesType).x : categories;
-      const coordinateChart = isCoordinateTypeSeries(state.series, chartType);
 
       if (category && Array.isArray(categories)) {
         const isExist = categories.some((c) => c === category);

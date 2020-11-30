@@ -250,9 +250,11 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
-    chartState: ChartState<T>
+    chartState: ChartState<T>,
+    computed
   ) {
     const { layout, series, axes, stackSeries, legend, theme } = chartState;
+    const { viewRange } = computed;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -268,7 +270,10 @@ export default class BoxSeries extends Component {
     this.selectable = this.getSelectableOption(options);
     this.valueAxis = getValueAxisName(options, this.name, this.isBar ? 'xAxis' : 'yAxis');
 
-    const seriesData = series[this.name].data;
+    const seriesData = series[this.name].data.map((seriesDatum) => ({
+      ...seriesDatum,
+      data: viewRange ? seriesDatum.data.slice(viewRange[0], viewRange[1] + 1) : seriesDatum.data,
+    }));
 
     if (axes.centerYAxis) {
       this.valueAxis = 'centerYAxis';
