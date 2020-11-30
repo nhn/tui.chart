@@ -7,9 +7,13 @@ import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate
 import { isZooming } from '@src/helpers/range';
 
 function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
-  const rawCategoriesLength = categories
-    ? (categories as string[]).length
-    : Object.keys(makeRawCategories(series, categories)).length;
+  let rawCategoriesLength;
+
+  if (categories) {
+    rawCategoriesLength = Array.isArray(categories) ? categories.length : categories.x.length;
+  } else {
+    rawCategoriesLength = Object.keys(makeRawCategories(series, categories)).length;
+  }
 
   return [0, rawCategoriesLength - 1];
 }
@@ -24,7 +28,7 @@ function initZoomRange(series: RawSeries, options: Options, categories?: Categor
 
 function initShiftRange(series: RawSeries, options: Options, categories?: Categories) {
   if (
-    !(series.line || series.area || series.column) ||
+    !(series.line || series.area || series.column || series.heatmap) ||
     !(options.series as LineTypeSeriesOptions)?.shift
   ) {
     return;

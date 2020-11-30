@@ -1,5 +1,5 @@
 import { HeatmapSeriesData, SeriesDataType } from '@t/options';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { deepMergedCopy, range } from '@src/helpers/utils';
 import { contributionsData, temperatureAverageDataForHeatmap } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import HeatmapChart from '@src/charts/heatmapChart';
@@ -53,6 +53,36 @@ function createChart(
 
 export const basic = () => {
   const { el } = createChart(temperatureAverageDataForHeatmap);
+
+  return el;
+};
+
+export const liveUpdate = () => {
+  const data = {
+    categories: {
+      x: ['1', '2', '3', '4', '5', '6', '7'],
+      y: ['A', 'B', 'C'],
+    },
+    series: [
+      [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9],
+      [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5],
+      [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8],
+    ],
+  };
+
+  const { el, chart } = createChart(data, {
+    series: { shift: true },
+  });
+
+  let index = 8;
+  const intervalId = setInterval(() => {
+    const random = range(0, 3).map(() => Math.round(Math.random() * 50));
+    chart.addData(random, index.toString());
+    if (index === 15) {
+      clearInterval(intervalId);
+    }
+    index += 1;
+  }, 3000);
 
   return el;
 };

@@ -303,6 +303,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 export interface HeatmapChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions & { date: DateOption };
   theme?: HeatmapChartThemeOptions;
+  series?: BaseSeriesOptions & { shift?: boolean };
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {

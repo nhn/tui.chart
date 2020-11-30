@@ -43,9 +43,16 @@ const category: StoreModule = {
       const { viewRange } = computed;
       let categories = state.rawCategories;
 
-      if (viewRange && Array.isArray(categories)) {
+      if (viewRange) {
         const [start, end] = viewRange;
-        categories = categories.slice(start, end + 1);
+        if (Array.isArray(categories)) {
+          categories = categories.slice(start, end + 1);
+        } else {
+          categories = {
+            ...categories,
+            x: categories.x.slice(start, end + 1),
+          };
+        }
       }
 
       state.categories = categories;
