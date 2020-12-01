@@ -6,7 +6,7 @@ import { SectorStyle, SectorStyleName } from '@src/brushes/sector';
 import { LegendData } from '@t/components/legend';
 import { TreemapSeriesData } from '@t/store/store';
 import Component from '@src/component/component';
-import { CommonDataLabelTheme } from '@t/theme';
+import { DataLabelWithBubble } from '@t/theme';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
@@ -171,7 +171,7 @@ export type LineSeriesModels = {
 
 export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
   type: 'stackTotal';
-  theme: CommonDataLabelTheme;
+  theme: DataLabelWithBubble;
 };
 
 export type PieSeriesModels = Record<string, SectorModel[]>;

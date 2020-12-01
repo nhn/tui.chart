@@ -10,7 +10,7 @@ import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 import { Point, Rect } from '@t/options';
 import { line } from './basic';
 import { getFont } from '@src/helpers/style';
-import { ArrowTheme, CommonDataLabelTheme, TextBubbleTheme } from '@t/theme';
+import { ArrowTheme, CommonDataLabelTheme, TextBubbleTheme, DataLabelWithBubble } from '@t/theme';
 import { Nullable, StyleProp, RectStyle } from '@t/components/series';
 import { pick } from '@src/helpers/utils';
 
@@ -67,7 +67,7 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
 
 export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
   const { text, theme } = model;
-  const { color, textStrokeColor } = theme as Required<CommonDataLabelTheme>;
+  const { color, textStrokeColor } = theme as Required<DataLabelWithBubble>;
   const font = getFont(theme);
   const textStyle: LabelStyle = {
     textAlign: 'center',
@@ -128,7 +128,7 @@ export function getBubbleArrowPoints(
 
 function getBubbleInfo(model: DataLabelModel): BubbleInfo {
   const { text, theme, textAlign, textBaseline } = model;
-  const font = getFont(theme as Required<CommonDataLabelTheme>);
+  const font = getFont(theme as Required<DataLabelWithBubble>);
   const {
     arrow,
     paddingX,

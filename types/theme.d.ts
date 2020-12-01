@@ -109,7 +109,7 @@ interface TreemapChartSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme;
-  dataLabels?: CommonDataLabelThemeWithoutArrow;
+  dataLabels?: DataLabelWithoutBubbleArrow;
 }
 
 interface HeatmapChartSeriesTheme {
@@ -123,7 +123,7 @@ interface HeatmapChartSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme;
-  dataLabels?: CommonDataLabelThemeWithoutArrow;
+  dataLabels?: DataLabelWithoutBubbleArrow;
 }
 
 type DotTheme = {
@@ -168,7 +168,7 @@ interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
   hover?: {
     dot?: DotTheme;
   };
-  dataLabels?: CommonDataLabelTheme;
+  dataLabels?: DataLabelWithBubble;
 }
 
 interface CommonSeriesTheme {
@@ -184,7 +184,7 @@ interface AreaChartSeriesTheme extends LineChartSeriesTheme {
       areaOpacity?: number;
     };
   };
-  dataLabels?: CommonDataLabelTheme;
+  dataLabels?: DataLabelWithBubble;
 }
 
 interface LineScatterChartSeriesTheme {
@@ -373,48 +373,33 @@ interface CommonDataLabelTheme {
   lineWidth?: number;
   shadowColor?: string;
   shadowBlur?: number;
+}
+
+interface DataLabelWithBubble extends CommonDataLabelTheme {
   textBubble?: TextBubbleTheme;
 }
 
-interface CommonDataLabelThemeWithoutArrow {
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string | number;
-  color?: string;
-  useSeriesColor?: boolean;
-  textStrokeColor?: string;
-  lineWidth?: number;
-  shadowColor?: string;
-  shadowBlur?: number;
+interface DataLabelWithoutBubbleArrow extends CommonDataLabelTheme {
   textBubble?: Omit<TextBubbleTheme, 'arrow'>;
 }
 
-interface BubbleWithArrowTheme extends CommonDataLabelTheme {
-  textBubble?: TextBubbleTheme;
+interface BoxTypeDataLabelTheme extends DataLabelWithBubble {
+  stackTotal?: DataLabelWithBubble;
 }
 
-interface BoxTypeDataLabelTheme extends CommonDataLabelTheme {
-  stackTotal?: CommonDataLabelTheme;
+interface BulletDataLabelTheme extends DataLabelWithBubble {
+  marker?: DataLabelWithBubble;
 }
 
-interface BulletDataLabelTheme extends CommonDataLabelTheme {
-  marker?: CommonDataLabelTheme;
-}
-
-type LineTypeLabelTheme = CommonDataLabelTheme;
-
-interface PieDataLabelTheme extends CommonDataLabelThemeWithoutArrow {
-  pieSeriesName?: CommonDataLabelThemeWithoutArrow;
+interface PieDataLabelTheme extends DataLabelWithoutBubbleArrow {
+  pieSeriesName?: DataLabelWithoutBubbleArrow;
   callout?: CalloutTheme;
-  outer?: CommonDataLabelThemeWithoutArrow & { pieSeriesName?: CommonDataLabelThemeWithoutArrow };
+  outer?: DataLabelWithoutBubbleArrow & { pieSeriesName?: DataLabelWithoutBubbleArrow };
 }
-
-// 화살표 없는거
-// heatmap, treemap
 
 type DataLabelTheme =
-  | CommonDataLabelTheme // line, area, heatmap, treemap
-  | CommonDataLabelThemeWithoutArrow
+  | DataLabelWithBubble
+  | DataLabelWithoutBubbleArrow
   | BoxTypeDataLabelTheme
   | BulletDataLabelTheme
   | PieDataLabelTheme;
