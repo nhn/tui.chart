@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
@@ -24,7 +24,13 @@ import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 
-import { BubbleSeriesData, BaseOptions, BubbleSeriesType, BubbleSeriesDataType } from '@t/options';
+import {
+  BubbleSeriesData,
+  BaseOptions,
+  BubbleSeriesType,
+  BubbleSeriesDataType,
+  BubbleSeriesInput,
+} from '@t/options';
 
 export interface BubbleChartProps {
   el: Element;
@@ -76,4 +82,8 @@ export default class BubbleChart extends Chart<BaseOptions> {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data });
   };
+
+  public addSeries(data: BubbleSeriesInput, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
 }

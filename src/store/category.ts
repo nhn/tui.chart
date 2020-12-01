@@ -59,7 +59,7 @@ const category: StoreModule = {
 
       this.notify(state, 'categories');
     },
-    updateCategoryForCoordinateData({ initStoreState, state }) {
+    initCategory({ initStoreState, state }) {
       const { zoomRange } = state;
       let categories = makeRawCategories(initStoreState.series);
       if (zoomRange && Array.isArray(categories)) {

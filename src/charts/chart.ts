@@ -11,7 +11,7 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
-import { ChartProps, Point, AnimationOptions } from '@t/options';
+import { ChartProps, Point, AnimationOptions, SeriesDataInput } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
@@ -19,6 +19,8 @@ import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
 
 export const DEFAULT_ANIM_DURATION = 500;
+
+export type AddSeriesDataInfo = { chartType?: string; category?: string };
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -288,4 +290,6 @@ export default abstract class Chart<T extends Options> {
   public setOptions = (options: Options) => {
     this.store.dispatch('updateOptions', options);
   };
+
+  public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
 }

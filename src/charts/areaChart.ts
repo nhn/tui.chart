@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -29,7 +29,13 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
-import { AreaChartOptions, AreaSeriesData, AreaSeriesDataType, AreaSeriesType } from '@t/options';
+import {
+  AreaChartOptions,
+  AreaSeriesData,
+  AreaSeriesDataType,
+  AreaSeriesType,
+  AreaSeriesInput,
+} from '@t/options';
 
 export interface AreaChartProps {
   el: Element;
@@ -88,4 +94,8 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
+
+  public addSeries(data: AreaSeriesInput, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
 }

@@ -1,7 +1,29 @@
-import { StoreModule, RawSeries, Series, Options, Categories, ChartType } from '@t/store/store';
+import {
+  StoreModule,
+  RawSeries,
+  Series,
+  Options,
+  Categories,
+  ChartType,
+  ChartSeriesMap,
+} from '@t/store/store';
 import { extend } from '@src/store/store';
-import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src/helpers/utils';
-import { HeatmapCategoriesType, LineTypeSeriesOptions, RangeDataType } from '@t/options';
+import {
+  HeatmapCategoriesType,
+  HeatmapSeriesDataType,
+  LineTypeSeriesOptions,
+  RangeDataType,
+  SeriesDataInput,
+  TreemapSeriesType,
+} from '@t/options';
+import {
+  deepCopy,
+  getFirstValidValue,
+  includes,
+  isNumber,
+  isUndefined,
+  range,
+} from '@src/helpers/utils';
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
@@ -88,6 +110,22 @@ function isCoordinateTypeSeries(series: Series, chartType?: ChartType) {
     isCoordinateSeries(series) &&
     (isUndefined(chartType) || chartType === 'line' || chartType === 'scatter')
   );
+}
+
+function isSeriesAlreadyExist(
+  series: Partial<ChartSeriesMap>,
+  seriesName: string,
+  data: Exclude<SeriesDataInput, TreemapSeriesType | HeatmapSeriesDataType>
+) {
+  return series[seriesName]!.some(({ label }) => label === data.name);
+}
+
+function isTreemapSeriesAlreadyExist(series: Partial<ChartSeriesMap>, data: TreemapSeriesType) {
+  return series.treemap!.some(({ label }) => label === data.label);
+}
+
+function isHeatmapSeriesAlreadyExist(categories: HeatmapCategoriesType, category: string) {
+  return includes((categories as HeatmapCategoriesType).y, category);
 }
 
 const seriesData: StoreModule = {
@@ -213,8 +251,74 @@ const seriesData: StoreModule = {
       }
 
       if (coordinateChart) {
-        this.dispatch('updateCategoryForCoordinateData');
+        this.dispatch('initCategory');
       }
+    },
+    addSeries(
+      { state, initStoreState },
+      {
+        data,
+        chartType,
+        category,
+      }: {
+        data: Exclude<SeriesDataInput, HeatmapSeriesDataType | TreemapSeriesType>;
+        chartType?: ChartType;
+        category?: string;
+      }
+    ) {
+      const { series, categories } = initStoreState;
+      const coordinateChart = isCoordinateTypeSeries(state.series, chartType);
+      const seriesName = chartType || Object.keys(series)[0];
+
+      const isExist = isSeriesAlreadyExist(series, seriesName, data);
+
+      if (!isExist) {
+        series[seriesName].push(data);
+        if (Array.isArray(categories) && category) {
+          categories.push(category);
+        }
+      }
+
+      this.dispatch('initThemeState');
+      this.dispatch('initLegendState');
+      this.notify(state, 'series');
+
+      if (coordinateChart || seriesName === 'bullet') {
+        this.dispatch('initCategory');
+      }
+    },
+    addHeatmapSeries(
+      { state, initStoreState },
+      { data, category }: { data: HeatmapSeriesDataType; category: string }
+    ) {
+      const { series, categories } = initStoreState;
+
+      const isExist = isHeatmapSeriesAlreadyExist(categories as HeatmapCategoriesType, category);
+      if (!isExist) {
+        series.heatmap!.push({ data, yCategory: category });
+      }
+
+      if (!isExist && category) {
+        (categories as HeatmapCategoriesType).y.push(category);
+        this.notify(state, 'rawCategories');
+      }
+
+      this.notify(state, 'series');
+      this.dispatch('initThemeState');
+      this.dispatch('initLegendState');
+    },
+    addTreemapSeries({ state, initStoreState }, { data }) {
+      const { series } = initStoreState;
+
+      const isExist = isTreemapSeriesAlreadyExist(series, data);
+      if (!isExist) {
+        series.treemap!.push(data);
+      }
+
+      this.notify(state, 'series');
+      this.notify(state, 'treemapSeries');
+      this.dispatch('initThemeState');
+      this.dispatch('initLegendState');
     },
   },
   observe: {

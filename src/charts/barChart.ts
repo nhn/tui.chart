@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -28,7 +28,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 
-import { BoxSeriesType, BoxSeriesDataType, BarChartOptions } from '@t/options';
+import { BoxSeriesType, BoxSeriesDataType, BarChartOptions, BoxSeriesInput } from '@t/options';
 
 export interface BarChartProps {
   el: HTMLElement;
@@ -90,4 +90,8 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
+
+  public addSeries(data: BoxSeriesInput<BoxSeriesDataType>, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
 }

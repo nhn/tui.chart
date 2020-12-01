@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
@@ -16,7 +16,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as sectorBrush from '@src/brushes/sector';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 
-import { PieChartOptions, PieSeriesData } from '@t/options';
+import { PieChartOptions, PieSeriesData, PieSeriesType } from '@t/options';
 
 export interface PieChartProps {
   el: Element;
@@ -56,5 +56,9 @@ export default class PieChart extends Chart<PieChartOptions> {
       sectorBrush,
       dataLabelBrush,
     ]);
+  }
+
+  public addSeries(data: PieSeriesType, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
   }
 }

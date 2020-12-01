@@ -60,9 +60,11 @@ export interface AreaSeriesType {
   color: string;
 }
 
+export type AreaSeriesInput = Pick<AreaSeriesType, 'name' | 'data'>;
+
 export interface AreaSeriesData {
   categories: string[];
-  series: Pick<AreaSeriesType, 'name' | 'data'>[];
+  series: AreaSeriesInput[];
 }
 
 export interface LineSeriesType {
@@ -72,9 +74,11 @@ export interface LineSeriesType {
   color: string;
 }
 
+export type LineSeriesInput = Pick<LineSeriesType, 'name' | 'data'>;
+
 export interface LineSeriesData {
   categories?: string[];
-  series: Pick<LineSeriesType, 'name' | 'data'>[];
+  series: LineSeriesInput[];
 }
 
 export interface HeatmapSeriesType {
@@ -107,16 +111,16 @@ export interface ScatterSeriesType {
 
 export interface LineScatterData {
   series: {
-    line: Pick<LineSeriesType, 'name' | 'data'>[];
-    scatter: Pick<ScatterSeriesType, 'name' | 'data'>[];
+    line: LineSeriesInput[];
+    scatter: ScatterSeriesInput[];
   };
 }
 
 export interface LineAreaData {
   categories: string[];
   series: {
-    line: Pick<LineSeriesType, 'name' | 'data'>[];
-    area: Pick<AreaSeriesType, 'name' | 'data'>[];
+    line: LineSeriesInput[];
+    area: AreaSeriesInput[];
   };
 }
 
@@ -126,13 +130,17 @@ export interface BubbleSeriesType {
   color: string;
 }
 
+export type ScatterSeriesInput = Pick<ScatterSeriesType, 'name' | 'data'>;
+
 export interface ScatterSeriesData {
   categories?: string[];
-  series: Pick<ScatterSeriesType, 'name' | 'data'>[];
+  series: ScatterSeriesInput[];
 }
 
+export type BubbleSeriesInput = Pick<BubbleSeriesType, 'name' | 'data'>;
+
 export interface BubbleSeriesData {
-  series: Pick<BubbleSeriesType, 'name' | 'data'>[];
+  series: BubbleSeriesInput[];
 }
 
 export type PieSeriesType = {
@@ -462,9 +470,11 @@ export type RadarSeriesType = {
   color?: string;
 };
 
+export type RadarSeriesInput = Pick<RadarSeriesType, 'name' | 'data'>;
+
 export type RadarSeriesData = {
   categories: string[];
-  series: Pick<RadarSeriesType, 'name' | 'data'>[];
+  series: RadarSeriesInput[];
 };
 
 interface RadarSeriesOptions extends BaseSeriesOptions {
@@ -480,6 +490,11 @@ export interface RadarChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions;
   theme?: RadarChartThemeOptions;
 }
+
+export type BoxSeriesInput<T extends BoxSeriesDataType> = Pick<
+  BoxSeriesType<T>,
+  'data' | 'name' | 'stackGroup'
+>;
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
@@ -604,3 +619,17 @@ export interface NestedPieChartOptions extends BaseOptions {
   series?: NestedPieSeriesOptions;
   theme?: NestedPieChartThemeOptions;
 }
+
+export type SeriesDataInput =
+  | LineSeriesInput
+  | AreaSeriesInput
+  | ScatterSeriesInput
+  | BubbleSeriesInput
+  | TreemapSeriesType
+  | RadarSeriesInput
+  | PieSeriesType
+  | HeatmapSeriesDataType
+  | BulletSeriesType
+  | BoxPlotSeriesType
+  | BoxSeriesInput<BoxSeriesDataType>
+  | NestedPieSeriesType;
