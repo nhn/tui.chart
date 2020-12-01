@@ -1,5 +1,6 @@
 import { SectorStyle } from '@src/brushes/sector';
 import { ScatterSeriesIconType } from '@t/components/series';
+import { ArrowDirection } from '@src/brushes/dataLabel';
 
 type SeriesThemeMap = {
   line?: LineChartSeriesTheme;
@@ -91,6 +92,7 @@ type PieChartSeriesTheme = {
   hover?: SectorStyle & { color?: string };
   select?: SelectSectorStyle;
   areaOpacity?: number;
+  dataLabels?: PieDataLabelTheme;
 };
 
 type NestedPieChartSeriesTheme = Record<string, PieChartSeriesTheme> | PieChartSeriesTheme;
@@ -107,6 +109,7 @@ interface TreemapChartSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme;
+  dataLabels?: CommonDataLabelThemeWithoutArrow;
 }
 
 interface HeatmapChartSeriesTheme {
@@ -120,6 +123,7 @@ interface HeatmapChartSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme;
+  dataLabels?: CommonDataLabelThemeWithoutArrow;
 }
 
 type DotTheme = {
@@ -164,6 +168,7 @@ interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
   hover?: {
     dot?: DotTheme;
   };
+  dataLabels?: CommonDataLabelTheme;
 }
 
 interface CommonSeriesTheme {
@@ -179,6 +184,7 @@ interface AreaChartSeriesTheme extends LineChartSeriesTheme {
       areaOpacity?: number;
     };
   };
+  dataLabels?: CommonDataLabelTheme;
 }
 
 interface LineScatterChartSeriesTheme {
@@ -232,7 +238,7 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
   hover?: {
     color?: string;
     groupedRect?: GroupedRect;
-  } & ShadowStyle &
+  } & ShadowTheme &
     BorderTheme;
   select?: {
     color?: string;
@@ -241,9 +247,10 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
       areaOpacity?: number;
     };
     areaOpacity?: number;
-  } & ShadowStyle &
+  } & ShadowTheme &
     BorderTheme;
   connector?: ConnectorTheme;
+  dataLabels?: BoxTypeDataLabelTheme;
 }
 
 interface BulletChartSeriesTheme extends CommonSeriesTheme {
@@ -261,7 +268,7 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme &
-    ShadowStyle;
+    ShadowTheme;
   select?: {
     color?: string;
     restSeries?: {
@@ -269,7 +276,8 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
     };
     areaOpacity?: number;
   } & BorderTheme &
-    ShadowStyle;
+    ShadowTheme;
+  dataLabels?: BulletDataLabelTheme;
 }
 
 interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
@@ -287,7 +295,7 @@ interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
     rect?: BorderTheme;
     dot?: BoxPlotDotTheme;
     line?: BoxPlotLineTypeTheme;
-  } & ShadowStyle;
+  } & ShadowTheme;
   select?: {
     color?: string;
     rect?: BorderTheme;
@@ -297,7 +305,7 @@ interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
       areaOpacity?: number;
     };
     areaOpacity?: number;
-  } & ShadowStyle;
+  } & ShadowTheme;
 }
 
 type LineTypeTheme = { lineWidth?: number; color?: string };
@@ -311,7 +319,7 @@ type BoxPlotLineTypeTheme = {
 
 type BoxPlotDotTheme = DotTheme & { useSeriesColor?: boolean };
 
-type ShadowStyle = {
+type ShadowTheme = {
   shadowColor?: string;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
@@ -335,6 +343,81 @@ interface RadarChartSeriesTheme {
     dot?: DotTheme;
   };
 }
+
+type ArrowTheme = {
+  visible?: boolean;
+  width?: number;
+  height?: number;
+  direction?: ArrowDirection;
+};
+
+type TextBubbleTheme = {
+  visible?: boolean;
+  arrow?: ArrowTheme;
+  paddingX?: number;
+  paddingY?: number;
+  backgroundColor?: string;
+  borderRadius?: number;
+} & BorderTheme &
+  ShadowTheme;
+
+type CalloutTheme = { lineWidth?: number; lineColor?: string; useSeriesColor?: boolean };
+
+interface CommonDataLabelTheme {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
+  useSeriesColor?: boolean;
+  textStrokeColor?: string;
+  lineWidth?: number;
+  shadowColor?: string;
+  shadowBlur?: number;
+  textBubble?: TextBubbleTheme;
+}
+
+interface CommonDataLabelThemeWithoutArrow {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
+  useSeriesColor?: boolean;
+  textStrokeColor?: string;
+  lineWidth?: number;
+  shadowColor?: string;
+  shadowBlur?: number;
+  textBubble?: Omit<TextBubbleTheme, 'arrow'>;
+}
+
+interface BubbleWithArrowTheme extends CommonDataLabelTheme {
+  textBubble?: TextBubbleTheme;
+}
+
+interface BoxTypeDataLabelTheme extends CommonDataLabelTheme {
+  stackTotal?: CommonDataLabelTheme;
+}
+
+interface BulletDataLabelTheme extends CommonDataLabelTheme {
+  marker?: CommonDataLabelTheme;
+}
+
+type LineTypeLabelTheme = CommonDataLabelTheme;
+
+interface PieDataLabelTheme extends CommonDataLabelThemeWithoutArrow {
+  pieSeriesName?: CommonDataLabelThemeWithoutArrow;
+  callout?: CalloutTheme;
+  outer?: CommonDataLabelThemeWithoutArrow & { pieSeriesName?: CommonDataLabelThemeWithoutArrow };
+}
+
+// 화살표 없는거
+// heatmap, treemap
+
+type DataLabelTheme =
+  | CommonDataLabelTheme // line, area, heatmap, treemap
+  | CommonDataLabelThemeWithoutArrow
+  | BoxTypeDataLabelTheme
+  | BulletDataLabelTheme
+  | PieDataLabelTheme;
 
 interface LineChartThemeOptions extends BaseThemeOptions {
   series?: LineChartSeriesTheme;

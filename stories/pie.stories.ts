@@ -1,9 +1,9 @@
 import PieChart from '@src/charts/pieChart';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { PieSeriesData, PieChartOptions } from '@t/options';
+import { PieSeriesData, PieChartOptions, PieDataLabels } from '@t/options';
 import { browserUsageData } from './data';
 import { withKnobs, number } from '@storybook/addon-knobs';
-import { PieChartThemeOptions } from '@t/theme';
+import { PieChartThemeOptions, PieDataLabelTheme } from '@t/theme';
 import '@src/css/chart.css';
 
 export default {
@@ -93,9 +93,6 @@ export const counterClockwise = () => {
       clockwise: false,
       dataLabels: {
         visible: true,
-        style: {
-          color: '#ffffff',
-        },
         pieSeriesName: {
           visible: true,
           anchor: 'outer',
@@ -254,9 +251,6 @@ export const semicircle = () => {
       },
       dataLabels: {
         visible: true,
-        style: {
-          color: '#ffffff',
-        },
         pieSeriesName: {
           visible: true,
           anchor: 'outer',
@@ -327,6 +321,52 @@ export const theme = () => {
   const { el } = createChart(browserUsageData, {
     theme: themeOptions,
     series: { selectable: true },
+  });
+
+  return el;
+};
+
+export const dataLabelsWithTheme = () => {
+  const themeOptions: PieChartThemeOptions = {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        useSeriesColor: true,
+        lineWidth: 2,
+        textStrokeColor: '#ffffff',
+        shadowColor: '#ffffff',
+        shadowBlur: 4,
+        callout: {
+          lineWidth: 3,
+          lineColor: '#f44336',
+          useSeriesColor: false,
+        },
+        outer: {
+          pieSeriesName: {
+            useSeriesColor: false,
+            color: '#f44336',
+            fontFamily: 'fantasy',
+            fontSize: 13,
+            textBubble: {
+              visible: true,
+              paddingX: 1,
+              paddingY: 1,
+              backgroundColor: 'rgba(158, 158, 158, 0.3)',
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 0,
+              shadowColor: 'rgba(0, 0, 0, 0)',
+            },
+          },
+        },
+      },
+    },
+  };
+  const { el } = createChart(browserUsageData, {
+    series: {
+      dataLabels: { visible: true, pieSeriesName: { visible: true, anchor: 'outer' } },
+    },
+    theme: themeOptions,
   });
 
   return el;

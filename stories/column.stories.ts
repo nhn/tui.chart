@@ -216,3 +216,35 @@ export const theme = () => {
 
   return el;
 };
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(
+    { ...negativeBudgetData, categories: [...negativeBudgetData.categories].splice(0, 2) },
+    {
+      series: {
+        dataLabels: {
+          visible: true,
+        },
+      },
+      theme: {
+        series: {
+          dataLabels: {
+            fontFamily: 'Impact',
+            fontSize: 13,
+            color: '#ffffff',
+            textBubble: {
+              visible: true,
+              arrow: { visible: true },
+              borderRadius: 7,
+              borderWidth: 2,
+              borderColor: '#e91e63',
+              backgroundColor: '#0f73a2',
+            },
+          },
+        },
+      },
+    }
+  );
+
+  return el;
+};

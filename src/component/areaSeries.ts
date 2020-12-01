@@ -525,8 +525,18 @@ export default class AreaSeries extends Component {
   }
 
   getDataLabels(seriesModels: AreaPointsModel[]): PointDataLabel[] {
-    return seriesModels.flatMap(({ points, name }) =>
-      points.map((point) => ({ type: 'point', ...point, name }))
+    const dataLabelTheme = this.theme.dataLabels;
+
+    return seriesModels.flatMap(({ points, name, fillColor }) =>
+      points.map((point) => ({
+        type: 'point',
+        ...point,
+        name,
+        theme: {
+          ...dataLabelTheme,
+          color: dataLabelTheme.useSeriesColor ? getRGBA(fillColor, 1) : dataLabelTheme.color,
+        },
+      }))
     );
   }
 

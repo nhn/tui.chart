@@ -73,8 +73,39 @@ export const dataLabels = () => {
   return el;
 };
 
-export const responsive = () => {
-  const { el } = createChart(budgetData, { chart: { title: 'Monthly Revenue' } }, true);
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'fantasy',
+          fontSize: 13,
+          fontWeight: 500,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            backgroundColor: '#ffffff',
+            borderWidth: 1,
+            borderColor: '#333333',
+            borderRadius: 3,
+            arrow: { visible: true },
+          },
+          marker: {
+            fontFamily: 'fantasy',
+            fontSize: 13,
+            fontWeight: 400,
+            useSeriesColor: false,
+            textBubble: { visible: false },
+          },
+        },
+      },
+    },
+  });
 
   return el;
 };
@@ -116,6 +147,12 @@ export const theme = () => {
       },
     },
   });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(budgetData, { chart: { title: 'Monthly Revenue' } }, true);
 
   return el;
 };

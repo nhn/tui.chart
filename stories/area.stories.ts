@@ -300,3 +300,56 @@ export const theme = () => {
 
   return el;
 };
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(avgTemperatureData, {
+    series: {
+      dataLabels: { visible: true },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 13,
+          fontWeight: 700,
+          useSeriesColor: true,
+          lineWidth: 2,
+          textStrokeColor: '#000000',
+          shadowColor: '#000000',
+          shadowBlur: 6,
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabelsWithBubbleTheme = () => {
+  const { el } = createChart(avgTemperatureData, {
+    series: {
+      dataLabels: { visible: true, offsetY: -10 },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom',
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return el;
+};

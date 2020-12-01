@@ -697,6 +697,7 @@ export default class BoxStackSeries extends BoxSeries {
           type: 'stackTotal',
           value,
           name: `totalLabel-${key}`,
+          theme: this.theme.dataLabels.stackTotal!,
           ...this.getAdjustedRect(seriesPos, dataPosition, barLength, columnWidth),
         };
 

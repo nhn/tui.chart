@@ -18,6 +18,7 @@ import {
   LineDataLabel,
   DataLabelType,
   RadialAnchor,
+  Callout,
 } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import {
@@ -25,9 +26,8 @@ import {
   makeAnchorPositionParam,
   calculateDegreeToRadian,
 } from '@src/helpers/sector';
-import { labelStyle } from '@src/brushes/label';
-import { LineModel } from '@t/components/axis';
 import { Nullable } from '@t/components/series';
+import { getFont } from './style';
 
 const RADIUS_PADDING = 30;
 const CALLOUT_LENGTH = 20;
@@ -87,14 +87,12 @@ export function getDefaultDataLabelsOptions(
     offsetX,
     offsetY,
     formatter,
-    style: dataLabelOptions.style,
   };
 
   if (withStack) {
     const stackTotal = (dataLabelOptions as BoxDataLabels).stackTotal;
     options.stackTotal = {
       visible: isBoolean(stackTotal?.visible) ? stackTotal?.visible : true,
-      style: stackTotal?.style,
     } as Required<SubDataLabel>;
   }
 
@@ -113,7 +111,7 @@ export function makePointLabelInfo(
   dataLabelOptions: DataLabelOption
 ): DataLabel {
   const { anchor, offsetX = 0, offsetY = 0, formatter } = dataLabelOptions;
-  const { x, y, name } = point;
+  const { x, y, name, theme } = point;
   let textBaseline: CanvasTextBaseline = 'middle';
 
   if (anchor === 'end') {
@@ -130,6 +128,7 @@ export function makePointLabelInfo(
     textAlign: 'center',
     textBaseline,
     name,
+    theme,
   };
 }
 
@@ -245,23 +244,15 @@ function makeVerticalRectPosition(rect: RectDataLabel, anchor: DataLabelAnchor):
     textBaseline,
   };
 }
-function getFont(
-  type: 'stackTotal' | 'rect' | 'treemapSeriesName',
-  dataLabelOptions: DataLabelOption
-) {
-  return type === 'stackTotal'
-    ? dataLabelOptions.stackTotal?.style?.font ?? labelStyle.stackTotal.font
-    : dataLabelOptions.style?.font ?? labelStyle['default'].font;
-}
 
 function adjustOverflowHorizontalRect(
   rect: RectDataLabel,
   dataLabelOptions: DataLabelOption,
   position: Pick<LabelPosition, 'x' | 'textAlign'>
 ): Pick<LabelPosition, 'x' | 'textAlign'> {
-  const { type, width, value, direction, plot } = rect;
+  const { width, value, direction, plot, theme } = rect;
   const { formatter } = dataLabelOptions;
-  const font = getFont(type, dataLabelOptions);
+  const font = getFont(theme);
   const text = isString(value) ? value : formatter(value!);
   const textWidth = getTextWidth(text, font!);
 
@@ -290,8 +281,8 @@ function adjustOverflowVerticalRect(
   dataLabelOptions: DataLabelOption,
   position: Pick<LabelPosition, 'y' | 'textBaseline'>
 ): Pick<LabelPosition, 'y' | 'textBaseline'> {
-  const { type, height, direction, plot } = rect;
-  const font = getFont(type, dataLabelOptions);
+  const { height, direction, plot, theme } = rect;
+  const font = getFont(theme);
 
   const plotSize = plot!.size;
   const textHeight = getTextHeight(font!);
@@ -348,7 +339,7 @@ function makeHorizontalRectLabelInfo(
     posX = posX + offsetX;
   }
 
-  const padding = 5;
+  const padding = 10;
 
   if (textAlign === 'right') {
     posX -= padding;
@@ -417,7 +408,7 @@ export function makeRectLabelInfo(
   rect: RectDataLabel,
   dataLabelOptions: DataLabelOption
 ): DataLabel {
-  const { type, value, direction, name } = rect;
+  const { type, value, direction, name, theme } = rect;
   const { formatter } = dataLabelOptions;
   const horizontal = isHorizontal(direction);
   const labelPosition = horizontal
@@ -429,12 +420,9 @@ export function makeRectLabelInfo(
     ...labelPosition,
     text: isString(value) ? value : formatter(value!),
     name,
-    hasTextBubble: hasTextBubble(rect),
+    seriesColor: rect.color,
+    theme,
   };
-}
-
-function hasTextBubble(rect: RectDataLabel) {
-  return rect.type === 'stackTotal' || (rect.type === 'rect' && rect.modelType === 'bullet');
 }
 
 export function makeSectorLabelPosition(
@@ -502,6 +490,11 @@ export function makeSectorLabelInfo(
   const labelPosition = makeSectorLabelPosition(model, dataLabelOptions);
   const { value, name } = model;
   const anchor = dataLabelOptions.anchor as RadialAnchor;
+  const dataLabelTheme = model.theme;
+  const theme = {
+    ...dataLabelTheme,
+    color: dataLabelTheme.useSeriesColor ? model.color : dataLabelTheme.color,
+  };
 
   return {
     type: 'sector',
@@ -509,7 +502,7 @@ export function makeSectorLabelInfo(
     text: formatter(value!),
     name,
     callout: hasSectorCallout(dataLabelOptions) ? getPieDataLabelCallout(model, anchor) : null,
-    defaultColor: dataLabelOptions.anchor === 'outer' ? model.color : '',
+    theme,
   };
 }
 
@@ -530,17 +523,24 @@ export function makePieSeriesNameLabelInfo(
   );
 
   const textAlign = getPieDataLabelAlign(model, seriesNameAnchor);
+  const pieSeriesNameTheme = hasOuterAnchor
+    ? model.theme.outer!.pieSeriesName!
+    : model.theme.pieSeriesName!;
+  const theme = {
+    ...pieSeriesNameTheme,
+    color: pieSeriesNameTheme.useSeriesColor ? model.color : pieSeriesNameTheme.color,
+  };
 
   return {
     type: 'pieSeriesName',
     ...position,
     text: model.name!,
-    defaultColor: hasOuterAnchor ? model.color : '',
     callout: hasPieSeriesNameCallout(dataLabelOptions)
       ? getPieDataLabelCallout(model, seriesNameAnchor)
       : null,
     textAlign,
     textBaseline: hasSameAnchorPieDataLabel(dataLabelOptions) ? 'top' : 'middle',
+    theme,
   };
 }
 
@@ -554,6 +554,8 @@ export function makeLineLabelInfo(model: LineDataLabel, dataLabelOptions: DataLa
 
   return {
     ...model,
+    x: model.x,
+    y: (model.y + model.y2) / 2,
     textAlign: textAlign ?? 'center',
     textBaseline: textBaseline ?? 'middle',
     text: isString(value) ? value : formatter(value!),
@@ -572,7 +574,7 @@ function hasPieSeriesNameCallout(dataLabelOptions: DataLabelOption) {
   return dataLabelOptions.anchor !== 'outer' || dataLabelOptions.pieSeriesName?.anchor === 'outer';
 }
 
-function getPieDataLabelCallout(model: RadialDataLabel, anchor: RadialAnchor): Nullable<LineModel> {
+function getPieDataLabelCallout(model: RadialDataLabel, anchor: RadialAnchor): Nullable<Callout> {
   if (anchor !== 'outer') {
     return null;
   }
@@ -593,12 +595,17 @@ function getPieDataLabelCallout(model: RadialDataLabel, anchor: RadialAnchor): N
     })
   );
 
+  const calloutTheme = model.theme.callout!;
+  const theme = {
+    ...calloutTheme,
+    lineColor: calloutTheme.useSeriesColor ? model.color : calloutTheme.lineColor,
+  };
+
   return {
-    type: 'line',
-    strokeStyle: model.color,
     x,
     y,
     x2,
     y2,
+    theme: theme,
   };
 }

@@ -303,3 +303,29 @@ export const theme = () => {
 
   return el;
 };
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(
+    { ...negativeBudgetData, categories: [...negativeBudgetData.categories].splice(0, 2) },
+    {
+      series: {
+        dataLabels: {
+          visible: true,
+        },
+      },
+      theme: {
+        series: {
+          dataLabels: {
+            fontFamily: 'Impact',
+            fontSize: 13,
+            fontWeight: 500,
+            color: '#ff416d',
+            textBubble: { visible: true, arrow: { visible: true } },
+          },
+        },
+      },
+    }
+  );
+
+  return el;
+};

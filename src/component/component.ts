@@ -32,6 +32,7 @@ import { HoveredSeriesModel } from '@src/component/hoveredSeries';
 import { BackButtonModels, ResetButtonModels } from '@t/components/resetButton';
 import { SpectrumLegendModels } from '@t/components/spectrumLegend';
 import { ResponderSeriesModel } from '@src/component/selectedSeries';
+import { DataLabelTheme } from '@t/theme';
 
 export type ComponentType =
   | 'component'

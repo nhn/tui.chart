@@ -4,6 +4,7 @@ import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { dataLabel } from '@src/brushes/dataLabel';
 
 export default {
   title: 'chart.Column.Stack',
@@ -256,6 +257,45 @@ export const theme = () => {
           color: '#031f4b',
           lineWidth: 2,
           dashSegments: [5, 10],
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      stack: true,
+      dataLabels: { visible: true },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          lineWidth: 2,
+          textStrokeColor: '#ffffff',
+          shadowColor: '#ffffff',
+          shadowBlur: 4,
+          stackTotal: {
+            fontFamily: 'monaco',
+            fontWeight: 14,
+            color: '#ffffff',
+            textBubble: {
+              visible: true,
+              paddingY: 6,
+              borderWidth: 3,
+              borderColor: '#00bcd4',
+              borderRadius: 7,
+              backgroundColor: '#041367',
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 0,
+              shadowColor: 'rgba(0, 0, 0, 0)',
+            },
+          },
         },
       },
     },
