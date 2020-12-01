@@ -128,9 +128,11 @@ export default class ExportMenu extends Component {
         type: 'rect',
         width: BUTTON_RECT_SIZE,
         height: BUTTON_RECT_SIZE,
-        x: this.rect.x,
-        y: this.rect.y,
+        x: 0,
+        y: 0,
       },
     ];
+
+    console.log(this.rect, this.models.exportMenuButton);
   }
 }
