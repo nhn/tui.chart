@@ -58,10 +58,8 @@ export const withCenterSeriesName = () => {
     series: {
       dataLabels: {
         visible: true,
-        anchor: 'outer',
         pieSeriesName: {
           visible: true,
-          anchor: 'outer',
         },
       },
     },
