@@ -163,6 +163,10 @@ export const defaultTheme = {
       color: '#ffffff',
     },
   },
+  plot: {
+    lineColor: 'rgba(0, 0, 0, 0.05)',
+    backgroundColor: '#ffffff',
+  },
 };
 
 // eslint-disable-next-line complexity

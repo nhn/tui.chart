@@ -51,6 +51,7 @@ type Theme = {
   yAxis: AxisTheme | AxisTheme[];
   legend: LegendTheme;
   tooltip: TooltipTheme;
+  plot: PlotTheme;
 };
 
 type AxisTheme = {
@@ -68,6 +69,11 @@ type TooltipTheme = {
   borderRadius?: number;
   header?: FontTheme;
   body?: FontTheme;
+};
+
+type PlotTheme = {
+  lineColor?: string;
+  backgroundColor?: string;
 };
 
 type ComboChartSeriesTheme =
@@ -208,6 +214,7 @@ interface BaseThemeOptions {
   tooltip?: TooltipTheme;
   chartExportMenu?: {};
   series?: {};
+  plot?: PlotTheme;
 }
 
 type GroupedRect = {

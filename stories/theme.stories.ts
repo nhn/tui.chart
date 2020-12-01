@@ -196,3 +196,16 @@ export const tooltip = () => {
 
   return el;
 };
+
+export const plot = () => {
+  const { el } = createChart(avgTemperatureData, {
+    theme: {
+      plot: {
+        lineColor: 'rgba(60, 80, 180, 0.3)',
+        backgroundColor: 'rgba(60, 80, 180, 0.1)',
+      },
+    },
+  });
+
+  return el;
+};

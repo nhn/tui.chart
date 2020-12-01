@@ -6,6 +6,8 @@ import { LineModel } from '@t/components/axis';
 import { PlotModels } from '@t/components/plot';
 import { RectModel } from '@t/components/series';
 import { PlotLine, PlotBand, PlotRangeType } from '@t/options';
+import { PlotTheme } from '@t/theme';
+import { pick } from '@src/helpers/utils';
 
 type XPositionParam = {
   axisData: LabelAxisData;
@@ -40,6 +42,8 @@ export default class Plot extends Component {
   models: PlotModels = { plot: [], line: [], band: [] };
 
   startIndex = 0;
+
+  theme!: Required<PlotTheme>;
 
   initialize() {
     this.type = 'plot';
@@ -114,7 +118,7 @@ export default class Plot extends Component {
       this.makeLineModel(
         vertical,
         position,
-        'rgba(0, 0, 0, 0.05)',
+        this.theme.lineColor,
         size ?? this.rect.width,
         startPosistion ?? 0
       )
@@ -171,8 +175,18 @@ export default class Plot extends Component {
     return makeTickPixelPositions(offsetSize, axisData.tickCount);
   }
 
+  renderPlotBackgroundRect(): RectModel {
+    return {
+      type: 'rect',
+      x: 0,
+      y: 0,
+      ...pick(this.rect, 'width', 'height'),
+      color: this.theme.backgroundColor,
+    };
+  }
+
   render(state: ChartState<Options>) {
-    const { layout, axes, plot, scale, zoomRange } = state;
+    const { layout, axes, plot, scale, zoomRange, theme } = state;
 
     if (!plot) {
       return;
@@ -180,6 +194,7 @@ export default class Plot extends Component {
 
     this.rect = layout.plot;
     this.startIndex = zoomRange ? zoomRange[0] : 0;
+    this.theme = theme.plot! as Required<PlotTheme>;
 
     const categories = (state.categories as string[]) ?? [];
     const { lines, bands, showLine } = plot;
@@ -189,7 +204,7 @@ export default class Plot extends Component {
     this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
 
     if (showLine) {
-      this.models.plot = this.renderPlots(axes);
+      this.models.plot = [this.renderPlotBackgroundRect(), ...this.renderPlots(axes)];
     }
   }
 
