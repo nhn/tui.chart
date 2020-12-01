@@ -2,6 +2,7 @@ import { line, rect, pathRect } from '@src/brushes/basic';
 import { Point } from '@t/options';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
+import { ExportMenuTheme } from '@t/theme';
 
 type IconModel = {
   color: string;
@@ -52,13 +53,15 @@ export function exportMenuButton(
   ctx: CanvasRenderingContext2D,
   exportMenuButtonModel: ExportMenuButtonModel
 ) {
+  const { opened, x, y, theme } = exportMenuButtonModel;
   const {
-    opened,
-    x,
-    y,
-    theme: { borderColor, backgroundColor, borderWidth, borderRadius, color, xLineWidth },
-  } = exportMenuButtonModel;
-
+    borderColor,
+    backgroundColor,
+    borderWidth,
+    borderRadius,
+    color,
+    xLineWidth,
+  } = theme as Required<ExportMenuTheme>;
   pathRect(ctx, {
     type: 'pathRect',
     x,
