@@ -40,6 +40,7 @@ import {
   isNumber,
   calculateSizeWithPercentString,
   omit,
+  isUndefined,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
@@ -807,8 +808,13 @@ export default class BoxSeries extends Component {
   selectSeries = ({
     index,
     seriesIndex,
+    chartType,
   }: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
-    if (!isNumber(index) || !isNumber(seriesIndex)) {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'column')
+    ) {
       return;
     }
 
@@ -821,7 +827,6 @@ export default class BoxSeries extends Component {
     this.eventBus.emit('renderSelectedSeries', {
       models: this.getRespondersWithTheme([model], 'select'),
       name: this.name,
-      eventDetectType: this.eventDetectType,
     });
     this.eventBus.emit('needDraw');
   };

@@ -19,7 +19,7 @@ import {
   pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
-import { calculateSizeWithPercentString, isNumber } from '@src/helpers/utils';
+import { calculateSizeWithPercentString, isNumber, isUndefined } from '@src/helpers/utils';
 import { PieChartSeriesTheme, SelectSectorStyle } from '@t/theme';
 import { pick } from '@src/helpers/utils';
 import { RespondersThemeType } from '@src/helpers/responders';
@@ -509,8 +509,8 @@ export default class PieSeries extends Component {
     return Object.values(this.activeSeriesMap!).some((elem) => !elem);
   }
 
-  selectSeries = ({ index, state }: SelectSeriesHandlerParams<PieChartOptions>) => {
-    if (!isNumber(index)) {
+  selectSeries = ({ index, alias }: SelectSeriesHandlerParams<PieChartOptions>) => {
+    if (!isNumber(index) || (!isUndefined(alias) && alias !== this.alias)) {
       return;
     }
 

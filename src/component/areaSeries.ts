@@ -32,6 +32,7 @@ import {
   deepMergedCopy,
   first,
   isNumber,
+  isUndefined,
   last,
   range,
   sum,
@@ -574,8 +575,16 @@ export default class AreaSeries extends Component {
     }
   }
 
-  selectSeries = ({ index, seriesIndex }: SelectSeriesHandlerParams<AreaChartOptions>) => {
-    if (!isNumber(index) || !isNumber(seriesIndex)) {
+  selectSeries = ({
+    index,
+    seriesIndex,
+    chartType,
+  }: SelectSeriesHandlerParams<AreaChartOptions>) => {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'area')
+    ) {
       return;
     }
 

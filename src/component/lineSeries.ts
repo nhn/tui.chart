@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { pick, includes, isNumber } from '@src/helpers/utils';
+import { pick, includes, isNumber, isUndefined } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -404,8 +404,16 @@ export default class LineSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  selectSeries = ({ index, seriesIndex }: SelectSeriesHandlerParams<LineChartOptions>) => {
-    if (!isNumber(index) || !isNumber(seriesIndex)) {
+  selectSeries = ({
+    index,
+    seriesIndex,
+    chartType,
+  }: SelectSeriesHandlerParams<LineChartOptions>) => {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'line')
+    ) {
       return;
     }
 

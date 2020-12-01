@@ -24,6 +24,7 @@ export type AddSeriesDataInfo = { chartType?: string; category?: string };
 export type SelectSeriesInfo = {
   seriesIndex?: number;
   index?: number;
+  alias?: string;
   chartType?: 'line' | 'area' | 'column' | 'scatter';
 };
 

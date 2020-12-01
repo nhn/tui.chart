@@ -5,7 +5,7 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNumber, isString } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNumber, isString, isUndefined } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
 import {
@@ -190,8 +190,13 @@ export default class ScatterSeries extends Component {
     index,
     seriesIndex,
     state,
+    chartType,
   }: SelectSeriesHandlerParams<ScatterChartOptions>) => {
-    if (!isNumber(index) || !isNumber(seriesIndex)) {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'scatter')
+    ) {
       return;
     }
 
