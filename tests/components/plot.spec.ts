@@ -48,6 +48,9 @@ const chartState = {
   },
   plot: { showLine: true },
   categories: ['A', 'B'],
+  theme: {
+    plot: { lineColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: '#ffffff' },
+  },
 };
 
 describe('plot grid lines', () => {
@@ -62,6 +65,14 @@ describe('plot grid lines', () => {
     plot.render(chartState);
 
     const result = [
+      {
+        type: 'rect',
+        x: 0,
+        y: 0,
+        width: 80,
+        height: 80,
+        color: '#ffffff',
+      },
       {
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
@@ -114,6 +125,14 @@ describe('plot grid lines', () => {
     );
 
     const result = [
+      {
+        type: 'rect',
+        x: 0,
+        y: 0,
+        width: 80,
+        height: 80,
+        color: '#ffffff',
+      },
       {
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
@@ -224,6 +243,9 @@ describe('plot options', () => {
       ],
     },
     categories: ['0', '1', '2', '3', '4', '5'],
+    theme: {
+      plot: { lineColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: '#ffffff' },
+    },
   };
 
   beforeEach(() => {

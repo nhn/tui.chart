@@ -107,6 +107,18 @@ describe('theme store', () => {
               color: '#ffffff',
             },
           },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: '#ffffff',
+          },
+          exportMenu: {
+            backgroundColor: '#f4f4f4',
+            borderColor: '#f4f4f4',
+            borderRadius: 5,
+            borderWidth: 1,
+            color: '#555555',
+            xLineWidth: 2,
+          },
         });
       });
 
@@ -210,6 +222,18 @@ describe('theme store', () => {
               color: '#ffffff',
             },
           },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: '#ffffff',
+          },
+          exportMenu: {
+            backgroundColor: '#f4f4f4',
+            borderColor: '#f4f4f4',
+            borderRadius: 5,
+            borderWidth: 1,
+            color: '#555555',
+            xLineWidth: 2,
+          },
           series: {
             line: {
               colors: ['#aaaaaa', '#bbbbbb'],
@@ -289,6 +313,18 @@ describe('theme store', () => {
               fontWeight: 'bold',
               color: '#ffffff',
             },
+          },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: '#ffffff',
+          },
+          exportMenu: {
+            backgroundColor: '#f4f4f4',
+            borderColor: '#f4f4f4',
+            borderRadius: 5,
+            borderWidth: 1,
+            color: '#555555',
+            xLineWidth: 2,
           },
           yAxis: {
             title: {
@@ -639,6 +675,18 @@ describe('theme store', () => {
               fontWeight: 'bold',
               color: '#ffffff',
             },
+          },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: '#ffffff',
+          },
+          exportMenu: {
+            backgroundColor: '#f4f4f4',
+            borderColor: '#f4f4f4',
+            borderRadius: 5,
+            borderWidth: 1,
+            color: '#555555',
+            xLineWidth: 2,
           },
           series: {
             pie: {
