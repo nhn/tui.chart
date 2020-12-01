@@ -132,7 +132,5 @@ export default class ExportMenu extends Component {
         y: 0,
       },
     ];
-
-    console.log(this.rect, this.models.exportMenuButton);
   }
 }
