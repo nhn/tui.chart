@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { pick, includes } from '@src/helpers/utils';
+import { pick, includes, isNumber } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -38,6 +38,7 @@ import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { DotTheme, LineChartSeriesTheme } from '@t/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -71,6 +72,7 @@ export default class LineSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'line';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   initUpdate(delta: number) {
@@ -401,4 +403,19 @@ export default class LineSeries extends Component {
 
     this.eventBus.emit('needDraw');
   }
+
+  selectSeries = ({ index, seriesIndex }: SelectSeriesHandlerParams<LineChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const model = this.tooltipCircleMap[index][seriesIndex];
+
+    if (!model) {
+      throw new Error('The index value is invalid.');
+    }
+
+    this.eventBus.emit('renderSelectedSeries', { models: [model], name: this.name });
+    this.eventBus.emit('needDraw');
+  };
 }

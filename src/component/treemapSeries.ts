@@ -11,11 +11,12 @@ import { getRGBA, hexToRGB } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getDeepestNode, RespondersThemeType } from '@src/helpers/responders';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
-import { deepMergedCopy, first, last } from '@src/helpers/utils';
+import { deepMergedCopy, first, isNumber, last } from '@src/helpers/utils';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { RectDataLabel } from '@t/components/dataLabels';
 import { TreemapChartSeriesTheme } from '@t/theme';
 import { boxDefault } from '@src/helpers/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 
 export default class TreemapSeries extends Component {
   models: TreemapSeriesModels = { series: [], layer: [] };
@@ -31,6 +32,7 @@ export default class TreemapSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'treemap';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   private getAllChildSeries(series: TreemapSeriesData[], parentId: string) {
@@ -255,4 +257,23 @@ export default class TreemapSeries extends Component {
     this.eventBus.emit('renderSpectrumTooltip', responders);
     this.eventBus.emit('needDraw');
   }
+
+  selectSeries = ({ index }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
+    if (!isNumber(index)) {
+      return;
+    }
+
+    const model = this.responders.find(({ indexes }) => last(indexes) === index);
+
+    if (!model) {
+      throw new Error('The index value is invalid.');
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: [model],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
 }

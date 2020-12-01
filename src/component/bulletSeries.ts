@@ -18,6 +18,7 @@ import { LineModel } from '@t/components/axis';
 import { BulletChartSeriesTheme } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
 import { isNumber, omit } from '@src/helpers/utils';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 
 type RenderOptions = {
   ratio: number;
@@ -58,6 +59,7 @@ export default class BulletSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'bullet';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   render(state: ChartState<BulletChartOptions>): void {
@@ -195,6 +197,8 @@ export default class BulletSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
+      console.log(responders);
+
       this.eventBus.emit('renderSelectedSeries', {
         models: this.getRespondersWithTheme(responders, 'select'),
         name: this.name,
@@ -409,4 +413,26 @@ export default class BulletSeries extends Component {
       ],
     }));
   }
+
+  selectSeries = ({ index, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
+    if (!isNumber(index)) {
+      return;
+    }
+
+    const { name } = state.series.bullet?.[index];
+
+    const model = this.filterBulletResponder(this.responders).filter(
+      ({ name: dataName }) => dataName === name
+    );
+
+    if (!model) {
+      throw new Error('The index value is invalid.');
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getRespondersWithTheme(model, 'select'),
+      name: this.name,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

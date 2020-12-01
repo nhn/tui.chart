@@ -19,6 +19,7 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '@t/theme';
 import { isNumber } from '@src/helpers/utils';
 import { crispPixel } from '@src/helpers/calculator';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 
 type RenderOptions = {
   ratio: number;
@@ -72,6 +73,7 @@ export default class BoxPlotSeries extends Component {
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
+    this.eventBus.on('selectSeries', this.selectSeries);
 
     const categories = state.categories as string[];
     const { tickDistance } = axes.xAxis;
@@ -582,4 +584,24 @@ export default class BoxPlotSeries extends Component {
 
     return getRGBA(seriesColor, opacity);
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    state,
+  }: SelectSeriesHandlerParams<BoxPlotChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.boxPlot![seriesIndex];
+    const models = this.getRespondersWithTheme(this.tooltipRectMap[`${name}-${index}`], 'select');
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models,
+      name: this.name,
+      eventDetectType: this.eventDetectType,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

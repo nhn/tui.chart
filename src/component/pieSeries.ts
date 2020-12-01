@@ -19,10 +19,11 @@ import {
   pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
-import { calculateSizeWithPercentString } from '@src/helpers/utils';
+import { calculateSizeWithPercentString, isNumber } from '@src/helpers/utils';
 import { PieChartSeriesTheme, SelectSectorStyle } from '@t/theme';
 import { pick } from '@src/helpers/utils';
 import { RespondersThemeType } from '@src/helpers/responders';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -159,6 +160,7 @@ export default class PieSeries extends Component {
     this.type = 'series';
     this.name = 'pie';
     this.alias = param?.alias ?? '';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   render(chartState: ChartState<PieChartOptions>) {
@@ -506,4 +508,23 @@ export default class PieSeries extends Component {
   hasActiveSeries() {
     return Object.values(this.activeSeriesMap!).some((elem) => !elem);
   }
+
+  selectSeries = ({ index, state }: SelectSeriesHandlerParams<PieChartOptions>) => {
+    if (!isNumber(index)) {
+      return;
+    }
+
+    const model = this.responders[index];
+
+    if (!model) {
+      throw new Error('The index value is invalid.');
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getResponderModelsWithTheme([model], 'select'),
+      name: this.name,
+      alias: this.alias,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

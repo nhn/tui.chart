@@ -15,6 +15,7 @@ import {
 } from '@t/components/series';
 import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import { ScatterChartSeriesTheme } from '@t/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 
 export default class ScatterSeries extends Component {
   theme!: Required<ScatterChartSeriesTheme>;
@@ -32,6 +33,7 @@ export default class ScatterSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'scatter';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   initUpdate(delta: number) {
@@ -183,4 +185,28 @@ export default class ScatterSeries extends Component {
       this.eventBus.emit('needDraw');
     }
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    state,
+  }: SelectSeriesHandlerParams<ScatterChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.scatter!.data[seriesIndex];
+    const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
+
+    if (!model) {
+      throw new Error('The index value is invalid.');
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: [model],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
 }

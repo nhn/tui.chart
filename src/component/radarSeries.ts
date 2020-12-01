@@ -15,6 +15,8 @@ import { getLimitOnAxis } from '@src/helpers/axes';
 import { radarDefault } from '@src/helpers/theme';
 import { RadarChartSeriesTheme, DotTheme } from '@t/theme';
 import { RespondersThemeType } from '@src/helpers/responders';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { isNumber } from '@src/helpers/utils';
 type RenderOptions = {
   categories: string[];
   centerX: number;
@@ -43,6 +45,7 @@ export default class RadarSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'radar';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   render(state: ChartState<RadarChartOptions>) {
@@ -227,4 +230,23 @@ export default class RadarSeries extends Component {
 
     return { color, fillColor: getRGBA(color, fillOpacity) };
   }
+
+  selectSeries = ({ index, seriesIndex, state }: SelectSeriesHandlerParams<RadarChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.radar!.data[seriesIndex];
+    const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
+
+    if (!model) {
+      throw new Error('The index value is invalid.');
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getRespondersWithTheme([model], 'select'),
+      name: this.name,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

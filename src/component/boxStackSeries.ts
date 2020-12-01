@@ -41,6 +41,7 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RectDataLabel } from '@t/components/dataLabels';
 import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { getDataInRange } from '@src/helpers/range';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 
 type RenderOptions = {
   stack: Stack;
@@ -135,6 +136,7 @@ export default class BoxStackSeries extends BoxSeries {
     const options = this.getOptions(chartState.options);
 
     this.setEventDetectType(seriesData, options);
+    this.eventBus.on('selectSeries', this.selectSeries);
 
     this.theme = theme.series[this.name];
     this.rect = layout.plot;
@@ -206,7 +208,6 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
-
     this.responders = this.getBoxSeriesResponders(series, tooltipData, axes);
   }
 
@@ -763,4 +764,30 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.activatedResponders = rectModels;
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    state,
+  }: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { stackSeries } = state;
+    const stackSeriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
+    const { name } = stackSeriesData.data[seriesIndex];
+    const model = this.tooltipRectMap[index].find(({ name: seriesName }) => seriesName === name);
+
+    if (!model) {
+      throw new Error('The index value is invalid.');
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getRespondersWithTheme([model], 'select'),
+      name: this.name,
+      eventDetectType: this.eventDetectType,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

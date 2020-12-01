@@ -53,6 +53,7 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { makeRectResponderModel, RespondersThemeType } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -262,7 +263,9 @@ export default class BoxSeries extends Component {
 
     const categories = (chartState.categories as string[]) ?? [];
     const options = this.getOptions(chartState.options);
+
     this.setEventDetectType(series, options);
+    this.eventBus.on('selectSeries', this.selectSeries);
 
     this.theme = theme.series[this.name];
     this.rect = layout.plot;
@@ -335,7 +338,6 @@ export default class BoxSeries extends Component {
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
-
     this.responders = this.getBoxSeriesResponders(seriesModels, tooltipData, axes);
   }
 
@@ -801,4 +803,26 @@ export default class BoxSeries extends Component {
       ? getRGBA(color, active ? select.areaOpacity! : select.restSeries!.areaOpacity!)
       : getRGBA(color, areaOpacity);
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+  }: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const model = this.tooltipRectMap[index][seriesIndex];
+
+    if (!model) {
+      throw new Error('The index value is invalid.');
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getRespondersWithTheme([model], 'select'),
+      name: this.name,
+      eventDetectType: this.eventDetectType,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }
