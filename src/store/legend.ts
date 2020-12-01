@@ -163,7 +163,6 @@ function getInitialWidth(options: Options) {
   return options.chart?.width ?? 0;
 }
 
-
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
   const colors = Object.values(series).reduce<string[]>((acc, cur) => [...acc, ...cur?.colors], []);
 
@@ -171,6 +170,7 @@ function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
     ...datum,
     color: colors[idx],
   }));
+}
 
 function getLegendState(options: Options, series: RawSeries): Legend {
   const checkboxVisible = showCheckbox(options);
@@ -199,7 +199,6 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     useScatterChartIcon,
     data,
   } as Legend;
-
 }
 
 const legend: StoreModule = {
@@ -279,7 +278,6 @@ const legend: StoreModule = {
       });
     },
   },
-
   observe: {
     updateLegendLayout() {
       this.dispatch('setLegendLayout');
