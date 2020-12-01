@@ -394,7 +394,6 @@ interface BulletDataLabelTheme extends DataLabelWithBubble {
 interface PieDataLabelTheme extends DataLabelWithoutBubbleArrow {
   pieSeriesName?: DataLabelWithoutBubbleArrow;
   callout?: CalloutTheme;
-  outer?: DataLabelWithoutBubbleArrow & { pieSeriesName?: DataLabelWithoutBubbleArrow };
 }
 
 type DataLabelTheme =
