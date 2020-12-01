@@ -40,6 +40,7 @@ import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RectDataLabel } from '@t/components/dataLabels';
 import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getDataInRange } from '@src/helpers/range';
 
 type RenderOptions = {
   stack: Stack;
@@ -97,15 +98,14 @@ function getStackSeriesDataInViewRange(
   if (!viewRange) {
     return stackSeriesData;
   }
-  const [start, end] = viewRange;
 
   const stackData = Array.isArray(stackSeriesData.stackData)
-    ? stackSeriesData.stackData.slice(start, end + 1)
+    ? getDataInRange(stackSeriesData.stackData, viewRange)
     : {
         ...Object.keys(stackSeriesData.stackData).reduce(
           (acc, name) => ({
             ...acc,
-            [name]: stackSeriesData.stackData[name].slice(start, end + 1),
+            [name]: getDataInRange(stackSeriesData.stackData[name], viewRange),
           }),
           {}
         ),
@@ -113,7 +113,7 @@ function getStackSeriesDataInViewRange(
 
   const data = stackSeriesData.data.map((seriesDatum) => ({
     ...seriesDatum,
-    data: seriesDatum.data.slice(start, end + 1),
+    data: getDataInRange(seriesDatum.data, viewRange),
   }));
 
   return { ...stackSeriesData, data, stackData };

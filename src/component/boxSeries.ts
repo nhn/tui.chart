@@ -43,7 +43,7 @@ import {
 import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
-import { isRangeData, isRangeValue } from '@src/helpers/range';
+import { getDataInRange, isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis, getValueAxisName } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
@@ -254,7 +254,6 @@ export default class BoxSeries extends Component {
     computed
   ) {
     const { layout, series, axes, stackSeries, legend, theme } = chartState;
-    const { viewRange } = computed;
 
     if (stackSeries && stackSeries[this.name]) {
       return;
@@ -272,7 +271,7 @@ export default class BoxSeries extends Component {
 
     const seriesData = series[this.name].data.map((seriesDatum) => ({
       ...seriesDatum,
-      data: viewRange ? seriesDatum.data.slice(viewRange[0], viewRange[1] + 1) : seriesDatum.data,
+      data: getDataInRange(seriesDatum.data, computed.viewRange),
     }));
 
     if (axes.centerYAxis) {

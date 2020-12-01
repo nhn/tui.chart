@@ -1,6 +1,7 @@
 import { HeatmapSeriesData, Series, StoreModule } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { HeatmapCategoriesType, RangeDataType } from '@t/options';
+import { getDataInRange } from '@src/helpers/range';
 
 function makeHeatmapSeries(
   series: Series,
@@ -12,10 +13,9 @@ function makeHeatmapSeries(
   }
 
   return series.heatmap.data.map((rowSeries, y) => {
-    const { yCategory } = rowSeries;
-    const data = viewRange ? rowSeries.data.slice(viewRange[0], viewRange[1] + 1) : rowSeries.data;
+    const { yCategory, data } = rowSeries;
 
-    return data.map((colorValue, x) => ({
+    return getDataInRange(data, viewRange).map((colorValue, x) => ({
       colorValue,
       category: {
         x: categories.x[x],

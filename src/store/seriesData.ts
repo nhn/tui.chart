@@ -82,7 +82,7 @@ function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeD
   return [start, end];
 }
 
-function getDataInRange(
+function getSeriesDataInRange(
   data,
   rawCategories: Categories,
   chartType: string,
@@ -150,7 +150,7 @@ const seriesData: StoreModule = {
         let originSeriesData = rawSeries[seriesName].map((m, idx) => ({
           ...m,
           rawData: m.data,
-          data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
+          data: getSeriesDataInRange(m.data, rawCategories, seriesName, zoomRange),
           color: colors ? colors[idx] : '',
         }));
 
