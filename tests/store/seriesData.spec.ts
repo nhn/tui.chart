@@ -115,6 +115,7 @@ describe('SeriesData store', () => {
               rawData: [5, 2, 4],
             },
           ],
+          colors: ['#aaaaaa', '#bbbbbb'],
           seriesCount: 2,
           seriesGroupCount: 2,
         },

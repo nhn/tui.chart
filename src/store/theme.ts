@@ -158,8 +158,11 @@ const theme: StoreModule = {
     theme: getTheme(options, series),
   }),
   action: {
+    updateTheme({ state, initStoreState }) {
+      const { series } = initStoreState;
+      state.theme = getTheme(state.options, series);
+    },
     setTheme({ state }) {},
-    applyTheme({ state }) {},
   },
   observe: {
     updateTheme() {

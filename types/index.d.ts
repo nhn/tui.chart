@@ -15,6 +15,7 @@ import { LineAreaChartProps } from '@src/charts/lineAreaChart';
 import { LineScatterChartProps } from '@src/charts/lineScatterChart';
 import { ColumnLineChartProps } from '@src/charts/columnLineChart';
 import { CheckedLegendType } from '@t/components/legend';
+import { Options } from '@t/store/store';
 
 declare namespace tui {
   export class Chart {
@@ -52,6 +53,8 @@ declare namespace tui {
 
 declare class BaseChart {
   public getCheckedLegend(): CheckedLegendType;
+
+  public setOptions(options: Options): void;
 }
 
 export class LineChart extends BaseChart {
