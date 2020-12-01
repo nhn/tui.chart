@@ -617,3 +617,17 @@ export interface NestedPieChartOptions extends BaseOptions {
   series?: NestedPieSeriesOptions;
   theme?: NestedPieChartThemeOptions;
 }
+
+export type SeriesDataInput =
+  | LineSeriesInput
+  | AreaSeriesInput
+  | ScatterSeriesInput
+  | BubbleSeriesInput
+  | TreemapSeriesType
+  | RadarSeriesInput
+  | PieSeriesType
+  | HeatmapSeriesDataType
+  | BulletSeriesType
+  | BoxPlotSeriesType
+  | BoxSeriesInput<BoxSeriesDataType>
+  | NestedPieSeriesType;

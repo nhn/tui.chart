@@ -11,24 +11,7 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
-import {
-  ChartProps,
-  Point,
-  AnimationOptions,
-  LineSeriesInput,
-  AreaSeriesInput,
-  ScatterSeriesInput,
-  BubbleSeriesInput,
-  TreemapSeriesType,
-  RadarSeriesInput,
-  PieSeriesType,
-  HeatmapSeriesDataType,
-  BulletSeriesType,
-  BoxPlotSeriesType,
-  BoxSeriesDataType,
-  BoxSeriesInput,
-  NestedPieSeriesType,
-} from '@t/options';
+import { ChartProps, Point, AnimationOptions, SeriesDataInput } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
@@ -36,20 +19,6 @@ import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
 
 export const DEFAULT_ANIM_DURATION = 500;
-
-export type SeriesDataInput =
-  | LineSeriesInput
-  | AreaSeriesInput
-  | ScatterSeriesInput
-  | BubbleSeriesInput
-  | TreemapSeriesType
-  | RadarSeriesInput
-  | PieSeriesType
-  | HeatmapSeriesDataType
-  | BulletSeriesType
-  | BoxPlotSeriesType
-  | BoxSeriesInput<BoxSeriesDataType>
-  | NestedPieSeriesType;
 
 export type AddSeriesDataInfo = { chartType?: string; category?: string };
 

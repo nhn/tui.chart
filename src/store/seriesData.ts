@@ -13,6 +13,7 @@ import {
   HeatmapSeriesDataType,
   LineTypeSeriesOptions,
   RangeDataType,
+  SeriesDataInput,
   TreemapSeriesType,
 } from '@t/options';
 import {
@@ -26,7 +27,6 @@ import {
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
-import { SeriesDataInput } from '@src/charts/chart';
 
 function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> | undefined {
   const rawCategoriesLength = categories
