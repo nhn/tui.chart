@@ -209,3 +209,20 @@ export const plot = () => {
 
   return el;
 };
+
+export const exportMenu = () => {
+  const { el } = createChart(avgTemperatureData, {
+    theme: {
+      exportMenu: {
+        backgroundColor: '#ff0000',
+        borderRadius: 5,
+        borderWidth: 2,
+        borderColor: '#000000',
+        color: '#ffffff',
+        xLineWidth: 4,
+      },
+    },
+  });
+
+  return el;
+};

@@ -167,6 +167,14 @@ export const defaultTheme = {
     lineColor: 'rgba(0, 0, 0, 0.05)',
     backgroundColor: '#ffffff',
   },
+  exportMenu: {
+    backgroundColor: '#f4f4f4',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#f4f4f4',
+    color: '#555555',
+    xLineWidth: 2,
+  },
 };
 
 // eslint-disable-next-line complexity

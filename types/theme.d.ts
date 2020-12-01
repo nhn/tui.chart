@@ -52,6 +52,7 @@ type Theme = {
   legend: LegendTheme;
   tooltip: TooltipTheme;
   plot: PlotTheme;
+  exportMenu: ExportMenuTheme;
 };
 
 type AxisTheme = {
@@ -74,6 +75,15 @@ type TooltipTheme = {
 type PlotTheme = {
   lineColor?: string;
   backgroundColor?: string;
+};
+
+type ExportMenuTheme = {
+  backgroundColor?: string;
+  borderRadius?: number;
+  borderWidth?: number;
+  borderColor?: string;
+  color?: string;
+  xLineWidth?: number;
 };
 
 type ComboChartSeriesTheme =
@@ -215,6 +225,7 @@ interface BaseThemeOptions {
   chartExportMenu?: {};
   series?: {};
   plot?: PlotTheme;
+  exportMenu?: ExportMenuTheme;
 }
 
 type GroupedRect = {

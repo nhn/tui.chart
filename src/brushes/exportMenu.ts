@@ -3,10 +3,15 @@ import { Point } from '@t/options';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
 
-function drawXIcon(ctx: CanvasRenderingContext2D, point: Point) {
-  const { x: startX, y: startY } = point;
+type IconModel = {
+  color: string;
+  xLineWidth?: number;
+} & Point;
+
+function drawXIcon(ctx: CanvasRenderingContext2D, icon: IconModel) {
+  const { x: startX, y: startY, color, xLineWidth } = icon;
   const offset = BUTTON_RECT_SIZE / 3;
-  const strokeStyle = '#555555';
+  const strokeStyle = color;
 
   const x = startX + offset;
   const y = startY + offset;
@@ -19,12 +24,12 @@ function drawXIcon(ctx: CanvasRenderingContext2D, point: Point) {
   ];
 
   points.forEach((p) => {
-    line(ctx, { type: 'line', ...p, strokeStyle, lineWidth: 2 });
+    line(ctx, { type: 'line', ...p, strokeStyle, lineWidth: xLineWidth });
   });
 }
 
-function drawMoreIcon(ctx: CanvasRenderingContext2D, point: Point) {
-  const { x, y } = point;
+function drawMoreIcon(ctx: CanvasRenderingContext2D, icon: IconModel) {
+  const { x, y, color } = icon;
   const centerX = x + 11;
   const points = [
     { x: centerX, y: y + 7 },
@@ -36,7 +41,7 @@ function drawMoreIcon(ctx: CanvasRenderingContext2D, point: Point) {
     rect(ctx, {
       type: 'rect',
       ...p,
-      color: '#555555',
+      color: color,
       width: 2,
       height: 2,
     });
@@ -47,22 +52,28 @@ export function exportMenuButton(
   ctx: CanvasRenderingContext2D,
   exportMenuButtonModel: ExportMenuButtonModel
 ) {
-  const { opened, x, y } = exportMenuButtonModel;
+  const {
+    opened,
+    x,
+    y,
+    theme: { borderColor, backgroundColor, borderWidth, borderRadius, color, xLineWidth },
+  } = exportMenuButtonModel;
 
   pathRect(ctx, {
     type: 'pathRect',
     x,
     y,
-    fill: '#f4f4f4',
-    stroke: '#f4f4f4',
+    fill: borderColor,
+    stroke: backgroundColor,
     width: BUTTON_RECT_SIZE,
     height: BUTTON_RECT_SIZE,
-    radius: 5,
+    radius: borderRadius,
+    lineWidth: borderWidth,
   });
 
   if (opened) {
-    drawXIcon(ctx, { x, y });
+    drawXIcon(ctx, { x, y, color, xLineWidth });
   } else {
-    drawMoreIcon(ctx, { x, y });
+    drawMoreIcon(ctx, { x, y, color });
   }
 }

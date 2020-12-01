@@ -102,7 +102,7 @@ export default class ExportMenu extends Component {
     return isString(title) ? title : title?.text ?? 'tui-chart';
   }
 
-  render({ options, layout, chart, series, categories }: ChartState<Options>) {
+  render({ options, layout, chart, series, categories, theme }: ChartState<Options>) {
     this.isShow = isExportMenuVisible(options);
 
     if (!this.isShow) {
@@ -119,6 +119,7 @@ export default class ExportMenu extends Component {
         x: 0,
         y: 0,
         opened: this.opened,
+        theme: theme.exportMenu,
       },
     ];
 
