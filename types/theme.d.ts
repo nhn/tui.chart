@@ -459,3 +459,8 @@ interface BulletCharThemeOptions extends BaseThemeOptions {
 interface BoxPlotCharThemeOptions extends BaseThemeOptions {
   series?: BoxPlotChartSeriesTheme;
 }
+
+type CheckAnchorPieSeries = {
+  hasOuterAnchor: boolean;
+  hasOuterAnchorPieSeriesName: boolean;
+};

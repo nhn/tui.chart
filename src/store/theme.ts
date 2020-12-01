@@ -1,6 +1,11 @@
 import { Options, RawSeries, StoreModule } from '@t/store/store';
 import { deepMergedCopy, omit } from '@src/helpers/utils';
-import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
+import {
+  getNestedPieChartAliasNames,
+  hasNestedPieSeries,
+  hasOuterDataLabel,
+  hasOuterPieSeriesName,
+} from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
 import { axisTitleTheme, defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
 import {
@@ -10,6 +15,7 @@ import {
   PieChartSeriesTheme,
   SeriesTheme,
   Theme,
+  CheckAnchorPieSeries,
 } from '@t/theme';
 
 function getCommonSeriesOptions(
@@ -132,6 +138,14 @@ function setColors(
   });
 }
 
+function checkAnchorPieSeriesOption(options: Options, series: RawSeries, alias: string) {
+  return {
+    hasOuterAnchor: !!series.pie && options?.series?.[alias]?.dataLabels?.anchor === 'outer',
+    hasOuterAnchorPieSeriesName:
+      !!series.pie && options?.series?.[alias]?.dataLabels?.pieSeriesName?.anchor === 'outer',
+  };
+}
+
 function getTheme(options: Options, series: RawSeries): Theme {
   const isNestedPieChart = hasNestedPieSeries(series);
   const commonSeriesOptions: SeriesTheme = getCommonSeriesOptions(
@@ -140,8 +154,25 @@ function getTheme(options: Options, series: RawSeries): Theme {
     isNestedPieChart
   );
 
+  let checkAnchorPieSeries: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries> = {
+    hasOuterAnchor: hasOuterDataLabel(options, series),
+    hasOuterAnchorPieSeriesName: hasOuterPieSeriesName(options, series),
+  };
+
+  if (isNestedPieChart) {
+    const aliasNames = getNestedPieChartAliasNames(series);
+
+    checkAnchorPieSeries = aliasNames.reduce(
+      (acc, cur) => ({
+        ...acc,
+        [cur]: checkAnchorPieSeriesOption(options, series, cur),
+      }),
+      {}
+    );
+  }
+
   const theme = deepMergedCopy(
-    getDefaultTheme(series, isNestedPieChart),
+    getDefaultTheme(series, checkAnchorPieSeries, isNestedPieChart),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 

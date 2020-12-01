@@ -488,9 +488,8 @@ export function makeSectorLabelInfo(
 ): DataLabel {
   const { formatter } = dataLabelOptions;
   const labelPosition = makeSectorLabelPosition(model, dataLabelOptions);
-  const { value, name } = model;
+  const { value, name, theme: dataLabelTheme } = model;
   const anchor = dataLabelOptions.anchor as RadialAnchor;
-  const dataLabelTheme = model.theme;
   const theme = {
     ...dataLabelTheme,
     color: dataLabelTheme.useSeriesColor ? model.color : dataLabelTheme.color,
@@ -523,9 +522,7 @@ export function makePieSeriesNameLabelInfo(
   );
 
   const textAlign = getPieDataLabelAlign(model, seriesNameAnchor);
-  const pieSeriesNameTheme = hasOuterAnchor
-    ? model.theme.outer!.pieSeriesName!
-    : model.theme.pieSeriesName!;
+  const pieSeriesNameTheme = model.theme.pieSeriesName!;
   const theme = {
     ...pieSeriesNameTheme,
     color: pieSeriesNameTheme.useSeriesColor ? model.color : pieSeriesNameTheme.color,

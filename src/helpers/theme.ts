@@ -1,5 +1,5 @@
 import { RawSeries } from '@t/store/store';
-import { Theme } from '@t/theme';
+import { Theme, CheckAnchorPieSeries } from '@t/theme';
 import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
@@ -193,7 +193,11 @@ export const defaultTheme = {
 };
 
 // eslint-disable-next-line complexity
-function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
+function getSeriesTheme(
+  seriesName: string,
+  { hasOuterAnchor = false, hasOuterAnchorPieSeriesName = false },
+  isNestedPieChart = false
+) {
   const lineTypeSeriesTheme = {
     lineWidth: defaultSeriesTheme.lineWidth,
     dashSegments: defaultSeriesTheme.dashSegments,
@@ -217,7 +221,7 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
             ...DEFAULT_TEXT_BUBBLE,
             borderRadius: 7,
             backgroundColor: 'rgba(255, 255, 255, 1)',
-            arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
+            arrow: { visible: false, direction: 'bottom', ...DEFAULT_BUBBLE_ARROW },
           },
         },
       };
@@ -238,7 +242,7 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
             ...DEFAULT_TEXT_BUBBLE,
             borderRadius: 7,
             backgroundColor: 'rgba(255, 255, 255, 1)',
-            arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
+            arrow: { visible: false, direction: 'bottom', ...DEFAULT_BUBBLE_ARROW },
           },
         },
       };
@@ -496,10 +500,10 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
           fontFamily: 'Arial',
           fontSize: 16,
           fontWeight: 600,
-          color: '#ffffff',
+          color: hasOuterAnchor ? '#333333' : '#ffffff',
           ...DEFAULT_DATA_LABEL_TEXT_STROKE,
-          useSeriesColor: false,
-          textBubble: { visible: false },
+          useSeriesColor: !!hasOuterAnchor,
+          textBubble: { visible: false, ...DEFAULT_TEXT_BUBBLE },
           callout: {
             lineWidth: 1,
             useSeriesColor: true,
@@ -508,25 +512,9 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
           pieSeriesName: {
             ...DEFAULT_DATA_LABEL,
             ...DEFAULT_DATA_LABEL_TEXT_STROKE,
-            color: '#ffffff',
-            textBubble: { visible: false },
-          },
-          outer: {
-            fontFamily: 'Arial',
-            fontSize: 16,
-            fontWeight: 600,
-            useSeriesColor: true,
-            textBubble: { visible: false, arrow: { visible: false } },
-            pieSeriesName: {
-              ...DEFAULT_DATA_LABEL,
-              useSeriesColor: true,
-              textBubble: {
-                visible: false,
-                ...DEFAULT_TEXT_BUBBLE,
-                borderRadius: 1,
-                backgroundColor: '#ffffff',
-              },
-            },
+            useSeriesColor: !!hasOuterAnchorPieSeriesName,
+            color: hasOuterAnchorPieSeriesName ? '#333333' : '#ffffff',
+            textBubble: { visible: false, ...DEFAULT_TEXT_BUBBLE },
           },
         },
       };
@@ -535,13 +523,17 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
   }
 }
 
-export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Theme {
+export function getDefaultTheme(
+  series: RawSeries,
+  addedOptions: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries>,
+  isNestedPieChart = false
+): Theme {
   const result = Object.keys(series).reduce<Theme>(
     (acc, seriesName) => ({
       ...acc,
       series: {
         ...acc.series,
-        [seriesName]: getSeriesTheme(seriesName, isNestedPieChart),
+        [seriesName]: getSeriesTheme(seriesName, addedOptions),
       },
     }),
     defaultTheme as Theme
@@ -553,7 +545,7 @@ export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Th
     result.series.pie = aliasNames.reduce(
       (acc, cur) => ({
         ...acc,
-        [cur]: getSeriesTheme('pie', isNestedPieChart),
+        [cur]: getSeriesTheme('pie', addedOptions[cur], isNestedPieChart),
       }),
       {}
     );

@@ -58,8 +58,10 @@ export const withCenterSeriesName = () => {
     series: {
       dataLabels: {
         visible: true,
+        anchor: 'outer',
         pieSeriesName: {
           visible: true,
+          anchor: 'outer',
         },
       },
     },
@@ -341,22 +343,20 @@ export const dataLabelsWithTheme = () => {
           lineColor: '#f44336',
           useSeriesColor: false,
         },
-        outer: {
-          pieSeriesName: {
-            useSeriesColor: false,
-            color: '#f44336',
-            fontFamily: 'fantasy',
-            fontSize: 13,
-            textBubble: {
-              visible: true,
-              paddingX: 1,
-              paddingY: 1,
-              backgroundColor: 'rgba(158, 158, 158, 0.3)',
-              shadowOffsetX: 0,
-              shadowOffsetY: 0,
-              shadowBlur: 0,
-              shadowColor: 'rgba(0, 0, 0, 0)',
-            },
+        pieSeriesName: {
+          useSeriesColor: false,
+          color: '#f44336',
+          fontFamily: 'fantasy',
+          fontSize: 13,
+          textBubble: {
+            visible: true,
+            paddingX: 1,
+            paddingY: 1,
+            backgroundColor: 'rgba(158, 158, 158, 0.3)',
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 0,
+            shadowColor: 'rgba(0, 0, 0, 0)',
           },
         },
       },

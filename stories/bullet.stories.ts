@@ -76,12 +76,10 @@ export const dataLabels = () => {
 export const dataLabelsWithTheme = () => {
   const { el } = createChart(budgetData, {
     series: {
-      vertical: true,
       dataLabels: {
         visible: true,
       },
     },
-    /*
     theme: {
       series: {
         dataLabels: {
@@ -91,23 +89,26 @@ export const dataLabelsWithTheme = () => {
           useSeriesColor: true,
           textBubble: {
             visible: true,
-            backgroundColor: '#ffffff',
+            backgroundColor: '#eeeeee',
             borderWidth: 1,
             borderColor: '#333333',
-            borderRadius: 3,
-            arrow: { visible: true },
+            borderRadius: 5,
+            arrow: { visible: true, width: 4, height: 4 },
           },
           marker: {
             fontFamily: 'fantasy',
             fontSize: 13,
-            fontWeight: 400,
+            fontWeight: 600,
             useSeriesColor: false,
+            color: '#ffffff',
+            textStrokeColor: '#000000',
+            shadowColor: '#000000',
+            shadowBlur: 6,
             textBubble: { visible: false },
           },
         },
       },
     },
-    */
   });
 
   return el;

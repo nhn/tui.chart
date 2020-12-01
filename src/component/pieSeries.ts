@@ -206,14 +206,10 @@ export default class PieSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.alias).visible) {
-      const { dataLabels: dataLabelTheme } = this.theme;
       const dataLabelData = seriesModel.map((m) => ({
         ...m,
         value: `${pieTooltipLabelFormatter(m.percentValue)}`,
-        theme: {
-          ...dataLabelTheme,
-          color: dataLabelTheme.useSeriesColor ? m.color : dataLabelTheme.color,
-        },
+        theme: this.theme.dataLabels,
       }));
       this.renderDataLabels(dataLabelData, this.alias);
     }

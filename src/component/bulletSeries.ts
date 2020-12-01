@@ -155,6 +155,7 @@ export default class BulletSeries extends Component {
 
           return {
             ...m,
+            x: vertical ? (m.x + m.x2) / 2 : m.x,
             theme: {
               ...markerStyle,
               color: markerStyle!.useSeriesColor ? m.strokeStyle : markerStyle!.color,
