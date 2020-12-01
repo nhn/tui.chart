@@ -180,7 +180,9 @@ export type StackSeries = {
 export type LegendIconType = 'spectrum' | 'line' | ScatterSeriesIconType;
 
 export type LegendDataList = Array<
-  Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType' | 'color'> & { width: number }
+  Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType' | 'color' | 'chartType'> & {
+    width: number;
+  }
 >;
 
 export interface Legend {

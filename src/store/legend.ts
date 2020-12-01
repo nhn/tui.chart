@@ -256,19 +256,15 @@ const legend: StoreModule = {
       this.notify(state, 'legend');
     },
     updateLegendColor({ state }) {
-      const { legend: legendData, series, options, nestedPieSeries } = state;
+      const { legend: legendData, series } = state;
 
-      const useSpectrumLegend =
-        (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
-      const data = useSpectrumLegend
-        ? legendData.data
-        : getLegendDataAppliedTheme(legendData.data, nestedPieSeries ?? series);
+      const data = getLegendDataAppliedTheme(legendData.data, series);
       extend(state.legend, { data });
     },
     updateNestedPieChartLegend({ state }) {
-      const { legend: legendData, series, nestedPieSeries } = state;
+      const { legend: legendData, nestedPieSeries } = state;
       extend(state.legend, {
-        data: getLegendDataAppliedTheme(legendData.data, nestedPieSeries ?? series),
+        data: getLegendDataAppliedTheme(legendData.data, nestedPieSeries),
       });
     },
   },
