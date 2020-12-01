@@ -92,9 +92,10 @@ export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelM
 export function getBubbleArrowPoints(
   direction: ArrowDirection,
   { x, y }: Point,
-  arrowPointTheme: Required<ArrowTheme>
+  arrowPointTheme: ArrowTheme
 ): Point[] {
-  const { width, height } = arrowPointTheme;
+  const width = arrowPointTheme.width!;
+  const height = arrowPointTheme.height!;
   let points: Point[] = [];
 
   if (direction === 'top') {

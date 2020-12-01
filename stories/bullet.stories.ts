@@ -76,10 +76,12 @@ export const dataLabels = () => {
 export const dataLabelsWithTheme = () => {
   const { el } = createChart(budgetData, {
     series: {
+      vertical: true,
       dataLabels: {
         visible: true,
       },
     },
+    /*
     theme: {
       series: {
         dataLabels: {
@@ -105,6 +107,7 @@ export const dataLabelsWithTheme = () => {
         },
       },
     },
+    */
   });
 
   return el;
