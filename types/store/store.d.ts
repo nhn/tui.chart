@@ -247,6 +247,7 @@ export interface ChartState<T extends Options> {
   disabledSeries: string[];
   series: Series;
   zoomRange?: RangeDataType<number>;
+  shiftRange?: RangeDataType<number>;
   // 기존의 limitMap
   axes: Axes;
   dataRange: DataRange;

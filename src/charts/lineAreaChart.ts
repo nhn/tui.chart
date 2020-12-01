@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -29,7 +29,14 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
-import { LineAreaChartOptions, LineAreaData } from '@t/options';
+import {
+  AreaSeriesDataType,
+  AreaSeriesInput,
+  LineAreaChartOptions,
+  LineAreaData,
+  LineSeriesDataType,
+  LineSeriesInput,
+} from '@t/options';
 import { RawSeries } from '@t/store/store';
 
 export interface LineAreaChartProps {
@@ -82,4 +89,20 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
       resetButtonBrush,
     ]);
   }
+
+  public addData = (
+    data: LineSeriesDataType[] | AreaSeriesDataType[],
+    category: string,
+    chartType: 'line' | 'area'
+  ) => {
+    this.animationControlFlag.updating = true;
+    this.store.dispatch('addData', { data, category, chartType });
+  };
+
+  public addSeries = (
+    data: LineSeriesInput | AreaSeriesInput,
+    addSeriesDataInfo: AddSeriesDataInfo
+  ) => {
+    this.store.dispatch('addSeries', { data, ...addSeriesDataInfo });
+  };
 }

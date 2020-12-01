@@ -1,16 +1,21 @@
 import { HeatmapSeriesData, Series, StoreModule } from '@t/store/store';
 import { extend } from '@src/store/store';
-import { HeatmapCategoriesType } from '@t/options';
+import { HeatmapCategoriesType, RangeDataType } from '@t/options';
+import { getDataInRange } from '@src/helpers/range';
 
-function makeHeatmapSeries(series: Series, categories: HeatmapCategoriesType): HeatmapSeriesData[] {
+function makeHeatmapSeries(
+  series: Series,
+  categories: HeatmapCategoriesType,
+  viewRange?: RangeDataType<number>
+): HeatmapSeriesData[] {
   if (!series.heatmap) {
     return [];
   }
 
   return series.heatmap.data.map((rowSeries, y) => {
-    const { data, yCategory } = rowSeries;
+    const { yCategory, data } = rowSeries;
 
-    return data.map((colorValue, x) => ({
+    return getDataInRange(data, viewRange).map((colorValue, x) => ({
       colorValue,
       category: {
         x: categories.x[x],
@@ -27,10 +32,14 @@ const heatmapSeriesData: StoreModule = {
     heatmapSeries: [],
   }),
   action: {
-    setHeatmapSeriesData({ state }) {
+    setHeatmapSeriesData({ state, computed }) {
       extend(
         state.heatmapSeries,
-        makeHeatmapSeries(state.series, state.categories as HeatmapCategoriesType)
+        makeHeatmapSeries(
+          state.series,
+          state.categories as HeatmapCategoriesType,
+          computed.viewRange
+        )
       );
     },
   },

@@ -26,7 +26,11 @@ describe('heatmapSeriesData Store', () => {
       options: {},
     } as ChartState<BaseOptions>;
 
-    const store = { state } as Store<BaseOptions>;
+    const computed: Record<string, any> = {
+      viewRange: [0, 1],
+    };
+
+    const store = { state, computed } as Store<BaseOptions>;
     heatmapSeriesData.action!.setHeatmapSeriesData(store);
 
     expect(state.heatmapSeries).toEqual([

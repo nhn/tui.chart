@@ -43,7 +43,7 @@ import {
 import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
-import { isRangeData, isRangeValue } from '@src/helpers/range';
+import { getDataInRange, isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis, getValueAxisName } from '@src/helpers/axes';
 import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
@@ -250,7 +250,8 @@ export default class BoxSeries extends Component {
   }
 
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
-    chartState: ChartState<T>
+    chartState: ChartState<T>,
+    computed
   ) {
     const { layout, series, axes, stackSeries, legend, theme } = chartState;
 
@@ -268,7 +269,10 @@ export default class BoxSeries extends Component {
     this.selectable = this.getSelectableOption(options);
     this.valueAxis = getValueAxisName(options, this.name, this.isBar ? 'xAxis' : 'yAxis');
 
-    const seriesData = series[this.name].data;
+    const seriesData = series[this.name].data.map((seriesDatum) => ({
+      ...seriesDatum,
+      data: getDataInRange(seriesDatum.data, computed.viewRange),
+    }));
 
     if (axes.centerYAxis) {
       this.valueAxis = 'centerYAxis';

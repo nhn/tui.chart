@@ -202,7 +202,7 @@ beforeEach(() => {
 });
 
 it('should be set the drawing models for stack series rendering', () => {
-  stackSeries.render(chartState);
+  stackSeries.render(chartState, { viewRange: [0, 1] });
   const { models, responders } = stackSeries;
 
   expect(models).toEqual(result);
