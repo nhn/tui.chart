@@ -83,13 +83,28 @@ type PlotTheme = {
   backgroundColor?: string;
 };
 
-type ExportMenuTheme = {
+type ExportMenuButtonTheme = {
   backgroundColor?: string;
   borderRadius?: number;
   borderWidth?: number;
   borderColor?: string;
   color?: string;
-  xLineWidth?: number;
+  xIconLineWidth?: number;
+};
+
+type ExportMenuPanelTheme = BorderTheme & {
+  borderRadius?: number;
+  header?: FontTheme & {
+    backgroundColor?: string;
+  };
+  body?: FontTheme & {
+    backgroundColor?: string;
+  };
+};
+
+type ExportMenuTheme = {
+  button?: ExportMenuButtonTheme;
+  panel?: ExportMenuPanelTheme;
 };
 
 type ComboChartSeriesTheme =

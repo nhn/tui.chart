@@ -2,15 +2,15 @@ import { line, rect, pathRect } from '@src/brushes/basic';
 import { Point } from '@t/options';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
-import { ExportMenuTheme } from '@t/theme';
+import { ExportMenuButtonTheme } from '@t/theme';
 
 type IconModel = {
   color: string;
-  xLineWidth?: number;
+  xIconLineWidth?: number;
 } & Point;
 
 function drawXIcon(ctx: CanvasRenderingContext2D, icon: IconModel) {
-  const { x: startX, y: startY, color, xLineWidth } = icon;
+  const { x: startX, y: startY, color, xIconLineWidth } = icon;
   const offset = BUTTON_RECT_SIZE / 3;
   const strokeStyle = color;
 
@@ -25,7 +25,7 @@ function drawXIcon(ctx: CanvasRenderingContext2D, icon: IconModel) {
   ];
 
   points.forEach((p) => {
-    line(ctx, { type: 'line', ...p, strokeStyle, lineWidth: xLineWidth });
+    line(ctx, { type: 'line', ...p, strokeStyle, lineWidth: xIconLineWidth });
   });
 }
 
@@ -60,8 +60,8 @@ export function exportMenuButton(
     borderWidth,
     borderRadius,
     color,
-    xLineWidth,
-  } = theme as Required<ExportMenuTheme>;
+    xIconLineWidth,
+  } = theme as Required<ExportMenuButtonTheme>;
   pathRect(ctx, {
     type: 'pathRect',
     x,
@@ -75,7 +75,7 @@ export function exportMenuButton(
   });
 
   if (opened) {
-    drawXIcon(ctx, { x, y, color, xLineWidth });
+    drawXIcon(ctx, { x, y, color, xIconLineWidth });
   } else {
     drawMoreIcon(ctx, { x, y, color });
   }

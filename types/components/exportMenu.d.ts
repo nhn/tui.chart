@@ -1,10 +1,10 @@
 import { Point } from '@t/options';
-import { ExportMenuTheme } from '@t/theme';
+import { ExportMenuButtonTheme } from '@t/theme';
 
 export type ExportMenuButtonModel = {
   type: 'exportMenuButton';
   opened: boolean;
-  theme: ExportMenuTheme;
+  theme: Required<ExportMenuButtonTheme>;
 } & Point;
 
 export type ExportMenuModel = {

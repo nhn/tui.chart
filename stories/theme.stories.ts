@@ -219,12 +219,33 @@ export const exportMenu = () => {
   const { el } = createChart(avgTemperatureData, {
     theme: {
       exportMenu: {
-        backgroundColor: '#ff0000',
-        borderRadius: 5,
-        borderWidth: 2,
-        borderColor: '#000000',
-        color: '#ffffff',
-        xLineWidth: 4,
+        button: {
+          backgroundColor: '#ff0000',
+          borderRadius: 5,
+          borderWidth: 2,
+          borderColor: '#000000',
+          color: '#ffffff',
+          xIconLineWidth: 4,
+        },
+        panel: {
+          borderColor: '#ff0000',
+          borderWidth: 2,
+          borderRadius: 10,
+          header: {
+            fontSize: 15,
+            fontFamily: 'fantasy',
+            color: '#ffeb3b',
+            fontWeight: 700,
+            backgroundColor: '#673ab7',
+          },
+          body: {
+            fontSize: 12,
+            fontFamily: 'fantasy',
+            color: '#ff0000',
+            fontWeight: '500',
+            backgroundColor: '#000000',
+          },
+        },
       },
     },
   });

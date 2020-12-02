@@ -118,12 +118,33 @@ describe('theme store', () => {
             backgroundColor: '#ffffff',
           },
           exportMenu: {
-            backgroundColor: '#f4f4f4',
-            borderColor: '#f4f4f4',
-            borderRadius: 5,
-            borderWidth: 1,
-            color: '#555555',
-            xLineWidth: 2,
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              color: '#555555',
+              xIconLineWidth: 2,
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 400,
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 400,
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
+            },
           },
         });
       });
@@ -239,12 +260,33 @@ describe('theme store', () => {
             backgroundColor: '#ffffff',
           },
           exportMenu: {
-            backgroundColor: '#f4f4f4',
-            borderColor: '#f4f4f4',
-            borderRadius: 5,
-            borderWidth: 1,
-            color: '#555555',
-            xLineWidth: 2,
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              color: '#555555',
+              xIconLineWidth: 2,
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 400,
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 400,
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
+            },
           },
           series: {
             line: {
@@ -337,12 +379,33 @@ describe('theme store', () => {
             backgroundColor: '#ffffff',
           },
           exportMenu: {
-            backgroundColor: '#f4f4f4',
-            borderColor: '#f4f4f4',
-            borderRadius: 5,
-            borderWidth: 1,
-            color: '#555555',
-            xLineWidth: 2,
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              color: '#555555',
+              xIconLineWidth: 2,
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 400,
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 400,
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
+            },
           },
           yAxis: {
             title: {
@@ -705,12 +768,33 @@ describe('theme store', () => {
             backgroundColor: '#ffffff',
           },
           exportMenu: {
-            backgroundColor: '#f4f4f4',
-            borderColor: '#f4f4f4',
-            borderRadius: 5,
-            borderWidth: 1,
-            color: '#555555',
-            xLineWidth: 2,
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              color: '#555555',
+              xIconLineWidth: 2,
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 400,
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 400,
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
+            },
           },
           series: {
             pie: {

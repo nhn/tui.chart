@@ -8,7 +8,6 @@ button:focus {
   font-family: Arial, sans-serif;
   position: absolute;
   background: #fff;
-  border: 1px solid #bab9ba;
   user-select: none;
   box-sizing: border-box;
 }
@@ -16,9 +15,9 @@ button:focus {
 .export-menu-title {
   height: 34px;
   width: 140px;
-  background: #f4f4f4;
+  /* background: #f4f4f4; */
   margin: 0;
-  font-size: 11px;
+  /*  font-size: 11px; */
   padding: 10px;
   box-sizing: inherit;
 }
@@ -33,9 +32,10 @@ button:focus {
   height: 50%;
   border: none;
   padding: 12px 3px;
-  font-size: 11px;
   float: left;
-  background: #fff;
+  color: inherit;
+  font-family: inherit;
+  background: transparent;
   cursor: pointer;
 }
 
@@ -43,6 +43,13 @@ button:focus {
   font-weight: bold;
 }
 
+.export-menu-btn:nth-child(3) {
+  border-bottom-left-radius: inherit;
+}
+
+.export-menu-btn:nth-child(4) {
+  border-bottom-right-radius: inherit;
+}
 
 /* tooltip */
 
