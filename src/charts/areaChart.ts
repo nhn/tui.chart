@@ -98,4 +98,9 @@ export default class AreaChart extends Chart<AreaChartOptions> {
   public addSeries(data: AreaSeriesInput, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: AreaSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { area: series }, categories });
+  }
 }
