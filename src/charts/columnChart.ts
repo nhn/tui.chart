@@ -86,4 +86,9 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
   public addSeries(data: BoxSeriesInput<BoxSeriesDataType>, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: BoxSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { column: series }, categories });
+  }
 }
