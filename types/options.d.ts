@@ -642,4 +642,5 @@ export type DataInput =
   | ScatterSeriesData
   | BubbleSeriesData
   | BulletSeriesData
-  | HeatmapSeriesData;
+  | HeatmapSeriesData
+  | PieSeriesData;
