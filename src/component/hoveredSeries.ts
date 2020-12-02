@@ -50,6 +50,7 @@ export default class HoveredSeries extends Component {
   }) => {
     this.models[name] = [...models];
     this.isShow = !!this.getSeriesModels().length;
+    this.eventBus.emit(this.isShow ? 'hoverSeries' : 'unhoverSeries', this.models);
     this.modelForGuideLine = this.getModelForGuideLine(name);
 
     if (eventDetectType === 'grouped') {

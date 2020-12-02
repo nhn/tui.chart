@@ -7,6 +7,7 @@ import {
   Series,
   Legend,
   CircleLegend,
+  LegendDataList,
 } from '@t/store/store';
 import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
 import { isUndefined, sum, includes, deepMergedCopy } from '@src/helpers/utils';
@@ -162,37 +163,57 @@ function getInitialWidth(options: Options) {
   return options.chart?.width ?? 0;
 }
 
+function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
+  const colors = Object.values(series).reduce<string[]>((acc, cur) => [...acc, ...cur?.colors], []);
+
+  return data.map((datum, idx) => ({
+    ...datum,
+    color: colors[idx],
+  }));
+}
+
+function getLegendState(options: Options, series: RawSeries): Legend {
+  const checkboxVisible = showCheckbox(options);
+  const useSpectrumLegend =
+    (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
+  const useScatterChartIcon = !!series?.scatter;
+  const font = getTitleFontString(
+    deepMergedCopy(defaultTheme.legend.label, { ...options.theme?.legend?.label })
+  );
+
+  const legendLabels = hasNestedPieSeries(series)
+    ? getNestedPieLegendLabels(series)
+    : getLegendLabels(series);
+
+  const data = legendLabels.map(({ label, type }) => ({
+    label,
+    active: true,
+    checked: true,
+    width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
+    iconType: getIconType(type),
+    chartType: type,
+  }));
+
+  return {
+    useSpectrumLegend,
+    useScatterChartIcon,
+    data,
+  } as Legend;
+}
+
 const legend: StoreModule = {
   name: 'legend',
   state: ({ options, series }) => {
-    const checkboxVisible = showCheckbox(options);
-    const useSpectrumLegend =
-      (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
-    const useScatterChartIcon = !!series?.scatter;
-    const font = getTitleFontString(
-      deepMergedCopy(defaultTheme.legend.label, { ...options.theme?.legend?.label })
-    );
-
-    const legendLabels = hasNestedPieSeries(series)
-      ? getNestedPieLegendLabels(series)
-      : getLegendLabels(series);
-
-    const data = legendLabels.map(({ label, type }) => ({
-      label,
-      active: true,
-      checked: true,
-      width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
-      iconType: getIconType(type),
-      chartType: type,
-    }));
-
     return {
-      legend: { useSpectrumLegend, data, useScatterChartIcon } as Legend,
+      legend: getLegendState(options, series) as Legend,
       circleLegend: {} as CircleLegend,
     };
   },
   action: {
-    setLegendLayout({ state }) {
+    initLegendState({ state, initStoreState }) {
+      extend(state.legend, getLegendState(initStoreState.options, initStoreState.series));
+    },
+    setLegendLayout({ state, initStoreState }) {
       const { legend: legendData, series, options } = state;
 
       const align = getAlign(options);
@@ -201,6 +222,7 @@ const legend: StoreModule = {
       const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
       const legendWidths = legendData.data.map(({ width }) => width);
       const legendWidth = calculateLegendWidth(initialWidth, legendWidths, options, align, visible);
+      const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
 
       const circleLegendWidth = isVerticalAlign(align)
         ? initialWidth
@@ -221,6 +243,10 @@ const legend: StoreModule = {
         width: circleLegendVisible ? circleLegendWidth : 0,
         radius: circleLegendVisible ? Math.max((circleLegendWidth - LEGEND_MARGIN_X) / 2, 0) : 0,
       });
+
+      if (!isNestedPieChart) {
+        this.dispatch('updateLegendColor');
+      }
     },
     setLegendActiveState({ state }, { name, active }) {
       const { data } = state.legend;
@@ -239,8 +265,19 @@ const legend: StoreModule = {
       model.checked = checked;
       this.notify(state, 'legend');
     },
-  },
+    updateLegendColor({ state }) {
+      const { legend: legendData, series } = state;
 
+      const data = getLegendDataAppliedTheme(legendData.data, series);
+      extend(state.legend, { data });
+    },
+    updateNestedPieChartLegend({ state }) {
+      const { legend: legendData, nestedPieSeries } = state;
+      extend(state.legend, {
+        data: getLegendDataAppliedTheme(legendData.data, nestedPieSeries),
+      });
+    },
+  },
   observe: {
     updateLegendLayout() {
       this.dispatch('setLegendLayout');

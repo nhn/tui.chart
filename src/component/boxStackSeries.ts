@@ -6,6 +6,7 @@ import {
   BarChartOptions,
   Point,
   ColumnLineChartOptions,
+  RangeDataType,
 } from '@t/options';
 import {
   ChartState,
@@ -39,6 +40,7 @@ import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RectDataLabel } from '@t/components/dataLabels';
 import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getDataInRange } from '@src/helpers/range';
 
 type RenderOptions = {
   stack: Stack;
@@ -89,11 +91,41 @@ function getDirectionKeys(seriesDirection: SeriesDirection) {
   return result;
 }
 
+function getStackSeriesDataInViewRange(
+  stackSeriesData: StackSeriesData<BoxType>,
+  viewRange?: RangeDataType<number>
+): StackSeriesData<BoxType> {
+  if (!viewRange) {
+    return stackSeriesData;
+  }
+
+  const stackData = Array.isArray(stackSeriesData.stackData)
+    ? getDataInRange(stackSeriesData.stackData, viewRange)
+    : {
+        ...Object.keys(stackSeriesData.stackData).reduce(
+          (acc, name) => ({
+            ...acc,
+            [name]: getDataInRange(stackSeriesData.stackData[name], viewRange),
+          }),
+          {}
+        ),
+      };
+
+  const data = stackSeriesData.data.map((seriesDatum) => ({
+    ...seriesDatum,
+    data: getDataInRange(seriesDatum.data, viewRange),
+  }));
+
+  return { ...stackSeriesData, data, stackData };
+}
+
 export default class BoxStackSeries extends BoxSeries {
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
-    chartState: ChartState<T>
+    chartState: ChartState<T>,
+    computed
   ) {
     const { layout, series: seriesData, axes, stackSeries, legend, theme } = chartState;
+    const { viewRange } = computed;
 
     if (!stackSeries[this.name]) {
       return;
@@ -109,7 +141,7 @@ export default class BoxStackSeries extends BoxSeries {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
 
-    const stackSeriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
+    const stackSeriesData = getStackSeriesDataInViewRange(stackSeries[this.name], viewRange);
     const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;

@@ -4,18 +4,27 @@ type EventType =
   | 'needLoop'
   | 'loopStart'
   | 'loopComplete'
-  | 'seriesPointHovered'
-  | 'renderHoveredSeries'
-  | 'renderSelectedSeries'
-  | 'resetSelectedSeries'
-  | 'clickLegendCheckbox'
-  | 'clickLegendLabel'
   | 'animationCompleted'
   | 'renderSpectrumTooltip'
   | 'renderDataLabels'
-  | 'resetHoveredSeries';
+  | 'resetHoveredSeries'
+  | 'resetSelectedSeries'
+  | 'renderSelectedSeries'
+  | 'renderHoveredSeries'
+  | 'seriesPointHovered'
+  | CustomEventType;
 
-type EventListener = (evt: any) => void;
+export type CustomEventType =
+  | 'clickLegendLabel'
+  | 'clickLegendCheckbox'
+  | 'selectSeries'
+  | 'unselectSeries'
+  | 'hoverSeries'
+  | 'unhoverSeries'
+  | 'zoom'
+  | 'resetZoom';
+
+export type EventListener = (evt: any) => void;
 
 export default class EventEmitter {
   handlers: EventListener[] = [];
