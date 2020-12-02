@@ -102,10 +102,7 @@ const treemapSeriesData: StoreModule = {
   }),
   action: {
     setTreemapSeriesData({ state }) {
-      extend(
-        state.treemapSeries,
-        makeTreemapSeries(state.series, state.options as TreemapChartOptions)
-      );
+      state.treemapSeries = makeTreemapSeries(state.series, state.options as TreemapChartOptions);
     },
   },
   observe: {

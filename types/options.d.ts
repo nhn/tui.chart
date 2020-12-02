@@ -644,4 +644,5 @@ export type DataInput =
   | BulletSeriesData
   | HeatmapSeriesData
   | PieSeriesData
-  | RadarSeriesData;
+  | RadarSeriesData
+  | TreemapSeriesData;
