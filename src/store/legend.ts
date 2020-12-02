@@ -266,9 +266,13 @@ const legend: StoreModule = {
       this.notify(state, 'legend');
     },
     updateLegendColor({ state }) {
-      const { legend: legendData, series } = state;
+      const { legend: legendData, series, options } = state;
+      const useSpectrumLegend =
+        (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
-      const data = getLegendDataAppliedTheme(legendData.data, series);
+      const data = useSpectrumLegend
+        ? legendData.data
+        : getLegendDataAppliedTheme(legendData.data, series);
       extend(state.legend, { data });
     },
     updateNestedPieChartLegend({ state }) {
