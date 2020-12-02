@@ -154,7 +154,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
     isNestedPieChart
   );
 
-  let checkAnchorPieSeries: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries> = {
+  let pieSeriesOuterAnchors: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries> = {
     hasOuterAnchor: hasOuterDataLabel(options, series),
     hasOuterAnchorPieSeriesName: hasOuterPieSeriesName(options, series),
   };
@@ -162,7 +162,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
   if (isNestedPieChart) {
     const aliasNames = getNestedPieChartAliasNames(series);
 
-    checkAnchorPieSeries = aliasNames.reduce(
+    pieSeriesOuterAnchors = aliasNames.reduce(
       (acc, cur) => ({
         ...acc,
         [cur]: checkAnchorPieSeriesOption(options, series, cur),
@@ -172,7 +172,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
   }
 
   const theme = deepMergedCopy(
-    getDefaultTheme(series, checkAnchorPieSeries, isNestedPieChart),
+    getDefaultTheme(series, pieSeriesOuterAnchors, isNestedPieChart),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 

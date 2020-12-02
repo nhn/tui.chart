@@ -1,6 +1,6 @@
 import { StyleProp } from '@t/components/series';
 import { isString, pick } from '@src/helpers/utils';
-import { FontTheme, DataLabelWithBubble, DataLabelWithoutBubbleArrow } from '@t/theme';
+import { FontTheme, BubbleDataLabel, BoxDataLabel } from '@t/theme';
 
 export function makeStyleObj<T, K>(style: StyleProp<T, K>, styleSet: Record<string, object>) {
   return style.reduce((acc: T, curValue) => {
@@ -18,6 +18,6 @@ export function getTitleFontString(fontTheme: FontTheme) {
   return `${fontWeight} ${fontSize}px ${fontFamily}`;
 }
 
-export function getFont(theme: DataLabelWithBubble | DataLabelWithoutBubbleArrow) {
+export function getFont(theme: BubbleDataLabel | BoxDataLabel) {
   return getTitleFontString(pick(theme, 'fontFamily', 'fontWeight', 'fontSize'));
 }

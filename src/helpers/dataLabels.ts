@@ -592,17 +592,11 @@ function getPieDataLabelCallout(model: RadialDataLabel, anchor: RadialAnchor): N
     })
   );
 
-  const calloutTheme = model.theme.callout!;
+  const { callout } = model.theme;
   const theme = {
-    ...calloutTheme,
-    lineColor: calloutTheme.useSeriesColor ? model.color : calloutTheme.lineColor,
+    ...callout,
+    lineColor: callout!.useSeriesColor ? model.color : callout!.lineColor,
   };
 
-  return {
-    x,
-    y,
-    x2,
-    y2,
-    theme: theme,
-  };
+  return { x, y, x2, y2, theme };
 }

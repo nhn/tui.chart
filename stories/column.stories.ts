@@ -5,6 +5,7 @@ import {
   negativeBudgetData,
   lossData,
   genderAgeData,
+  simpleBudgetData,
 } from './data';
 import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
@@ -218,33 +219,30 @@ export const theme = () => {
 };
 
 export const dataLabelsWithTheme = () => {
-  const { el } = createChart(
-    { ...negativeBudgetData, categories: [...negativeBudgetData.categories].splice(0, 2) },
-    {
+  const { el } = createChart(simpleBudgetData, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+    theme: {
       series: {
         dataLabels: {
-          visible: true,
-        },
-      },
-      theme: {
-        series: {
-          dataLabels: {
-            fontFamily: 'Impact',
-            fontSize: 13,
-            color: '#ffffff',
-            textBubble: {
-              visible: true,
-              arrow: { visible: true },
-              borderRadius: 7,
-              borderWidth: 2,
-              borderColor: '#e91e63',
-              backgroundColor: '#0f73a2',
-            },
+          fontFamily: 'Impact',
+          fontSize: 13,
+          color: '#ffffff',
+          textBubble: {
+            visible: true,
+            arrow: { visible: true },
+            borderRadius: 7,
+            borderWidth: 2,
+            borderColor: '#e91e63',
+            backgroundColor: '#0f73a2',
           },
         },
       },
-    }
-  );
+    },
+  });
 
   return el;
 };

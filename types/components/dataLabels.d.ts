@@ -7,12 +7,7 @@ import {
 } from '@t/options';
 import { PointModel, SectorModel, RectModel, Nullable } from './series';
 import { LineModel } from './axis';
-import {
-  PieDataLabelTheme,
-  CalloutTheme,
-  DataLabelWithoutBubbleArrow,
-  DataLabelWithBubble,
-} from '@t/theme';
+import { PieDataLabelTheme, CalloutTheme, BoxDataLabel, BubbleDataLabel } from '@t/theme';
 
 export type DataLabelSeriesType = 'area' | 'line' | 'bar' | 'column' | 'bullet' | 'pie';
 
@@ -42,7 +37,7 @@ export type DataLabel = {
   callout?: Nullable<Callout>;
   name?: string;
   seriesColor?: string;
-  theme: DataLabelWithBubble | DataLabelWithoutBubbleArrow;
+  theme: BubbleDataLabel | BoxDataLabel;
 } & Point;
 
 export type DataLabelOption = Required<
@@ -62,7 +57,7 @@ export type DataLabelModels = { series: DataLabelModel[]; total: DataLabelModel[
 
 export type PointDataLabel = PointModel & {
   type: 'point';
-  theme: DataLabelWithBubble;
+  theme: BubbleDataLabel;
 };
 export type RadialDataLabel = Omit<SectorModel, 'type'> & {
   type: 'sector';
@@ -81,14 +76,14 @@ export type RectDataLabel = Omit<RectModel, 'type' | 'color' | 'value'> & {
   };
   modelType?: string;
   color?: string;
-  theme: DataLabelWithBubble | DataLabelWithoutBubbleArrow;
+  theme: BubbleDataLabel | BoxDataLabel;
 };
 
 export type LineDataLabel = LineModel & {
   value: number;
   textAlign?: CanvasTextAlign;
   textBaseline?: CanvasTextBaseline;
-  theme: DataLabelWithBubble;
+  theme: BubbleDataLabel;
 };
 
 export type Callout = Point & { x2: number; y2: number; theme: CalloutTheme };

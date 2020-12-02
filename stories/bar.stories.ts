@@ -5,6 +5,8 @@ import {
   negativeBudgetData,
   lossData,
   genderAgeData,
+  simpleBudgetData,
+
 } from './data';
 import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
@@ -305,27 +307,24 @@ export const theme = () => {
 };
 
 export const dataLabelsWithTheme = () => {
-  const { el } = createChart(
-    { ...negativeBudgetData, categories: [...negativeBudgetData.categories].splice(0, 2) },
-    {
+  const { el } = createChart(simpleBudgetData, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+    theme: {
       series: {
         dataLabels: {
-          visible: true,
+          fontFamily: 'Impact',
+          fontSize: 13,
+          fontWeight: 500,
+          color: '#ff416d',
+          textBubble: { visible: true, arrow: { visible: true } },
         },
       },
-      theme: {
-        series: {
-          dataLabels: {
-            fontFamily: 'Impact',
-            fontSize: 13,
-            fontWeight: 500,
-            color: '#ff416d',
-            textBubble: { visible: true, arrow: { visible: true } },
-          },
-        },
-      },
-    }
-  );
+    },
+  });
 
   return el;
 };

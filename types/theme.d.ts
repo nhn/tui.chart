@@ -1,6 +1,5 @@
 import { SectorStyle } from '@src/brushes/sector';
 import { ScatterSeriesIconType } from '@t/components/series';
-import { ArrowDirection } from '@src/brushes/dataLabel';
 
 type SeriesThemeMap = {
   line?: LineChartSeriesTheme;
@@ -109,7 +108,7 @@ interface TreemapChartSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme;
-  dataLabels?: DataLabelWithoutBubbleArrow;
+  dataLabels?: BoxDataLabel;
 }
 
 interface HeatmapChartSeriesTheme {
@@ -123,7 +122,7 @@ interface HeatmapChartSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme;
-  dataLabels?: DataLabelWithoutBubbleArrow;
+  dataLabels?: BoxDataLabel;
 }
 
 type DotTheme = {
@@ -168,7 +167,7 @@ interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
   hover?: {
     dot?: DotTheme;
   };
-  dataLabels?: DataLabelWithBubble;
+  dataLabels?: BubbleDataLabel;
 }
 
 interface CommonSeriesTheme {
@@ -184,7 +183,7 @@ interface AreaChartSeriesTheme extends LineChartSeriesTheme {
       areaOpacity?: number;
     };
   };
-  dataLabels?: DataLabelWithBubble;
+  dataLabels?: BubbleDataLabel;
 }
 
 interface LineScatterChartSeriesTheme {
@@ -344,6 +343,8 @@ interface RadarChartSeriesTheme {
   };
 }
 
+type ArrowDirection = 'top' | 'right' | 'bottom' | 'left';
+
 type ArrowTheme = {
   visible?: boolean;
   width?: number;
@@ -363,42 +364,41 @@ type TextBubbleTheme = {
 
 type CalloutTheme = { lineWidth?: number; lineColor?: string; useSeriesColor?: boolean };
 
-interface CommonDataLabelTheme {
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string | number;
-  color?: string;
-  useSeriesColor?: boolean;
-  textStrokeColor?: string;
+type TextStrokeTheme = {
   lineWidth?: number;
+  textStrokeColor?: string;
   shadowColor?: string;
   shadowBlur?: number;
+};
+
+interface CommonDataLabelTheme extends FontTheme, TextStrokeTheme {
+  useSeriesColor?: boolean;
 }
 
-interface DataLabelWithBubble extends CommonDataLabelTheme {
+interface BubbleDataLabel extends CommonDataLabelTheme {
   textBubble?: TextBubbleTheme;
 }
 
-interface DataLabelWithoutBubbleArrow extends CommonDataLabelTheme {
+interface BoxDataLabel extends CommonDataLabelTheme {
   textBubble?: Omit<TextBubbleTheme, 'arrow'>;
 }
 
-interface BoxTypeDataLabelTheme extends DataLabelWithBubble {
-  stackTotal?: DataLabelWithBubble;
+interface BoxTypeDataLabelTheme extends BubbleDataLabel {
+  stackTotal?: BubbleDataLabel;
 }
 
-interface BulletDataLabelTheme extends DataLabelWithBubble {
-  marker?: DataLabelWithBubble;
+interface BulletDataLabelTheme extends BubbleDataLabel {
+  marker?: BubbleDataLabel;
 }
 
-interface PieDataLabelTheme extends DataLabelWithoutBubbleArrow {
-  pieSeriesName?: DataLabelWithoutBubbleArrow;
+interface PieDataLabelTheme extends BoxDataLabel {
+  pieSeriesName?: BoxDataLabel;
   callout?: CalloutTheme;
 }
 
 type DataLabelTheme =
-  | DataLabelWithBubble
-  | DataLabelWithoutBubbleArrow
+  | BubbleDataLabel
+  | BoxDataLabel
   | BoxTypeDataLabelTheme
   | BulletDataLabelTheme
   | PieDataLabelTheme;

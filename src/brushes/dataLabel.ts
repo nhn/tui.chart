@@ -10,7 +10,7 @@ import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 import { Point, Rect } from '@t/options';
 import { line } from './basic';
 import { getFont } from '@src/helpers/style';
-import { ArrowTheme, CommonDataLabelTheme, TextBubbleTheme, DataLabelWithBubble } from '@t/theme';
+import { ArrowTheme, CommonDataLabelTheme, TextBubbleTheme, BubbleDataLabel } from '@t/theme';
 import { Nullable, StyleProp, RectStyle } from '@t/components/series';
 import { pick } from '@src/helpers/utils';
 
@@ -67,7 +67,7 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
 
 export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
   const { text, theme } = model;
-  const { color, textStrokeColor } = theme as Required<DataLabelWithBubble>;
+  const { color, textStrokeColor } = theme as Required<BubbleDataLabel>;
   const font = getFont(theme);
   const textStyle: LabelStyle = {
     textAlign: 'center',
@@ -82,7 +82,7 @@ export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelM
   }
 
   bubbleLabel(ctx, {
-    ...getBubbleInfo(model),
+    ...getBubbleRect(model),
     labelStyle: [textStyle],
     labelStrokeStyle: [textStrokeStyle],
     text,
@@ -127,9 +127,9 @@ export function getBubbleArrowPoints(
   return points;
 }
 
-function getBubbleInfo(model: DataLabelModel): BubbleInfo {
+function getBubbleRect(model: DataLabelModel): BubbleInfo {
   const { text, theme, textAlign, textBaseline } = model;
-  const font = getFont(theme as Required<DataLabelWithBubble>);
+  const font = getFont(theme as Required<BubbleDataLabel>);
   const {
     arrow,
     paddingX,
@@ -160,7 +160,7 @@ function getBubbleInfo(model: DataLabelModel): BubbleInfo {
     y -= height;
   }
 
-  const rect: Rect = { x, y, width, height };
+  const rect = { x, y, width, height };
 
   return {
     ...rect,
@@ -191,12 +191,11 @@ function getArrowInfo(
   }
 
   const arrowHeight = theme.height!;
-  const { x, y, width, height } = rect;
-  let { x: boxX, y: boxY } = rect;
-  let pointX: number = x;
-  let pointY: number = y;
-
+  const { width, height } = rect;
   const direction: ArrowDirection = theme.direction ?? getArrowDirection(textAlign, textBaseline);
+
+  let { x: boxX, y: boxY } = rect;
+  let { x: pointX, y: pointY } = rect;
 
   if (direction === 'top') {
     boxY += arrowHeight;
@@ -211,9 +210,9 @@ function getArrowInfo(
   }
 
   if (textAlign === 'center') {
-    pointX = x + width / 2;
+    pointX = rect.x + width / 2;
   } else if (textBaseline === 'middle') {
-    pointY = y + height / 2;
+    pointY = rect.y + height / 2;
   }
 
   return {
@@ -248,23 +247,11 @@ function getArrowDirection(
 }
 
 function getTextStrokeStyle(theme: CommonDataLabelTheme) {
-  const { textStrokeColor, lineWidth, shadowColor, shadowBlur } = theme;
-  const textStrokeStyle: StrokeLabelStyle = {};
+  const { textStrokeColor } = theme;
+  const textStrokeStyle: StrokeLabelStyle = pick(theme, 'lineWidth', 'shadowColor', 'shadowBlur');
 
   if (textStrokeColor) {
     textStrokeStyle.strokeStyle = textStrokeColor;
-  }
-
-  if (lineWidth) {
-    textStrokeStyle.lineWidth = lineWidth;
-  }
-
-  if (shadowColor) {
-    textStrokeStyle.shadowColor = shadowColor;
-  }
-
-  if (shadowBlur) {
-    textStrokeStyle.shadowBlur = shadowBlur;
   }
 
   return textStrokeStyle;

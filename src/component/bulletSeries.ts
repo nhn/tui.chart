@@ -145,20 +145,21 @@ export default class BulletSeries extends Component {
     vertical: boolean,
     size: number
   ): (RectDataLabel | LineDataLabel)[] {
-    const dataLabelsTheme = this.theme.dataLabels;
+    const { dataLabels: dataLabelTheme } = this.theme;
+    const bulletLabelTheme = omit(dataLabelTheme, 'marker');
+    const { useSeriesColor, color } = bulletLabelTheme;
+    const { marker } = dataLabelTheme;
 
     return seriesModels
       .filter((m) => m.type === 'line' || (m as BulletRectModel).modelType !== 'range')
       .map((m) => {
         if (m.type === 'line') {
-          const markerStyle = dataLabelsTheme.marker;
-
           return {
             ...m,
             x: vertical ? (m.x + m.x2) / 2 : m.x,
             theme: {
-              ...markerStyle,
-              color: markerStyle!.useSeriesColor ? m.strokeStyle : markerStyle!.color,
+              ...marker,
+              color: marker!.useSeriesColor ? m.strokeStyle : marker!.color,
             },
           } as LineDataLabel;
         }
@@ -172,8 +173,8 @@ export default class BulletSeries extends Component {
             size,
           },
           theme: {
-            ...omit(dataLabelsTheme, 'marker'),
-            color: dataLabelsTheme.useSeriesColor ? m.color : dataLabelsTheme.color,
+            ...bulletLabelTheme,
+            color: useSeriesColor ? m.color : color,
           },
         } as RectDataLabel;
       });

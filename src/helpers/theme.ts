@@ -61,13 +61,6 @@ const DEFAULT_BUBBLE_ARROW = {
   height: 6,
 };
 
-const DEFAULT_DATA_LABEL_TEXT_STROKE = {
-  lineWidth: 0,
-  textStrokeColor: 'rgba(0,0,0,0)',
-  shadowColor: 'rgba(0,0,0,0)',
-  shadowBlur: 0,
-};
-
 export const defaultSeriesTheme = {
   colors: [
     '#00a9ff',
@@ -501,7 +494,6 @@ function getSeriesTheme(
           fontSize: 16,
           fontWeight: 600,
           color: hasOuterAnchor ? '#333333' : '#ffffff',
-          ...DEFAULT_DATA_LABEL_TEXT_STROKE,
           useSeriesColor: !!hasOuterAnchor,
           textBubble: { visible: false, ...DEFAULT_TEXT_BUBBLE },
           callout: {
@@ -511,7 +503,6 @@ function getSeriesTheme(
           },
           pieSeriesName: {
             ...DEFAULT_DATA_LABEL,
-            ...DEFAULT_DATA_LABEL_TEXT_STROKE,
             useSeriesColor: !!hasOuterAnchorPieSeriesName,
             color: hasOuterAnchorPieSeriesName ? '#333333' : '#ffffff',
             textBubble: { visible: false, ...DEFAULT_TEXT_BUBBLE },
@@ -525,7 +516,7 @@ function getSeriesTheme(
 
 export function getDefaultTheme(
   series: RawSeries,
-  addedOptions: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries>,
+  pieSeriesOuterAnchors: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries>,
   isNestedPieChart = false
 ): Theme {
   const result = Object.keys(series).reduce<Theme>(
@@ -533,7 +524,7 @@ export function getDefaultTheme(
       ...acc,
       series: {
         ...acc.series,
-        [seriesName]: getSeriesTheme(seriesName, addedOptions),
+        [seriesName]: getSeriesTheme(seriesName, pieSeriesOuterAnchors),
       },
     }),
     defaultTheme as Theme
@@ -545,7 +536,7 @@ export function getDefaultTheme(
     result.series.pie = aliasNames.reduce(
       (acc, cur) => ({
         ...acc,
-        [cur]: getSeriesTheme('pie', addedOptions[cur], isNestedPieChart),
+        [cur]: getSeriesTheme('pie', pieSeriesOuterAnchors[cur], isNestedPieChart),
       }),
       {}
     );
