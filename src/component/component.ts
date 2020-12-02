@@ -201,35 +201,13 @@ export default abstract class Component {
       const same = isSameArray(modelNames, targetNames);
 
       if (!same) {
-        if (currentModels.length > targetModels.length) {
-          return models.filter(({ name }) => includes(targetNames, name));
-        }
-
-        if (currentModels.length < targetModels.length) {
-          const notIncludedModels = targetModels.reduce(
-            (acc, cur, idx) => {
-              const notIncluded = !includes(modelNames, cur.name);
-
-              return notIncluded
-                ? {
-                    models: [...acc.models, cur],
-                    modelIdx: [...acc.modelIdx, idx],
-                  }
-                : acc;
-            },
-            { models: [], modelIdx: [] }
-          );
-
-          const newModels = [...models];
-
-          notIncludedModels.models.forEach((model, idx) => {
-            const modelIdx = notIncludedModels.modelIdx[idx];
-
-            newModels.splice(modelIdx, 0, model);
-          });
-
-          return newModels;
-        }
+        return this.getCurrentModelWithDifferentModel(
+          models,
+          currentModels,
+          targetModels,
+          modelNames,
+          targetNames
+        );
       }
     }
 
@@ -239,6 +217,50 @@ export default abstract class Component {
 
     if (currentModels.length > targetModels.length) {
       return currentModels.slice(0, targetModels.length);
+    }
+
+    return models;
+  }
+
+  private getCurrentModelWithDifferentModel(
+    models,
+    currentModels,
+    targetModels,
+    modelNames,
+    targetNames
+  ) {
+    if (currentModels.length > targetModels.length) {
+      const newModels = models.filter(({ name }) => includes(targetNames, name));
+
+      return newModels.length !== targetModels.length ? targetModels : newModels;
+    }
+
+    if (currentModels.length < targetModels.length) {
+      const notIncludedModels = targetModels.reduce(
+        (acc, cur, idx) => {
+          const notIncluded = !includes(modelNames, cur.name);
+
+          return notIncluded
+            ? {
+                models: [...acc.models, cur],
+                modelIdx: [...acc.modelIdx, idx],
+              }
+            : acc;
+        },
+        { models: [], modelIdx: [] }
+      );
+
+      if (models.length + notIncludedModels.models.length === targetModels.length) {
+        const newModels = [...models];
+
+        notIncludedModels.models.forEach((model, idx) => {
+          newModels.splice(notIncludedModels.modelIdx[idx], 0, model);
+        });
+
+        return newModels;
+      }
+
+      return targetModels;
     }
 
     return models;

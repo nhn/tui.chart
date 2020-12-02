@@ -96,4 +96,9 @@ export default class LineChart extends Chart<LineChartOptions> {
   public addSeries(data: LineSeriesInput, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: LineSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { line: series }, categories });
+  }
 }

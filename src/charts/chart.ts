@@ -11,7 +11,7 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
-import { ChartProps, Point, AnimationOptions, SeriesDataInput } from '@t/options';
+import { ChartProps, Point, AnimationOptions, SeriesDataInput, DataInput } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
@@ -386,4 +386,6 @@ export default abstract class Chart<T extends Options> {
      */
     this.eventBus.on(eventName, handler);
   };
+
+  public abstract setData(data: DataInput): void;
 }
