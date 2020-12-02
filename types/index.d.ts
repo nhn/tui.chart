@@ -25,6 +25,7 @@ import { LineScatterChartProps } from '@src/charts/lineScatterChart';
 import { ColumnLineChartProps } from '@src/charts/columnLineChart';
 import { CheckedLegendType } from '@t/components/legend';
 import { Options } from '@t/store/store';
+import { CustomEventType, EventListener } from '@src/eventEmitter';
 
 declare namespace tui {
   export class Chart {
@@ -64,6 +65,8 @@ declare class BaseChart {
   public getCheckedLegend(): CheckedLegendType;
 
   public setOptions(options: Options): void;
+
+  public on(eventName: CustomEventType, handler: EventListener): void;
 }
 
 export class LineChart extends BaseChart {

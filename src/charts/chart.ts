@@ -6,7 +6,7 @@ import category from '@src/store/category';
 import legend from '@src/store/legend';
 import optionsStore, { useResponsive } from '@src/store/options';
 import theme from '@src/store/theme';
-import EventEmitter from '@src/eventEmitter';
+import EventEmitter, { CustomEventType, EventListener } from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
@@ -292,4 +292,98 @@ export default abstract class Chart<T extends Options> {
   };
 
   public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
+
+  /**
+   * Register of user event.
+   * @param {string} eventName event name
+   * @param {function} func event callback
+   * @api
+   */
+  public on = (eventName: CustomEventType, handler: EventListener) => {
+    /**
+     * Register Events that occur when click legend label
+     * @event ChartBase#clickLegendLabel
+     * @param {object} info selected legend info
+     * @api
+     * @example
+     * chart.on('clickLegendLabel', (info) => {
+     *   console.log(info);
+     * });
+     */
+
+    /**
+     * Register Events that occur when click legend checkbox
+     * @event ChartBase#clickLegendCheckbox
+     * @param {object} info selected legend info
+     * @api
+     * @example
+     * chart.on('clickLegendCheckbox', (info) => {
+     *   console.log(info);
+     * });
+     */
+
+    /**
+     * Register Events that occur when select series
+     * @event ChartBase#selectSeries
+     * @param {object} info selected series info
+     * @api
+     * @example
+     * chart.on('selectSeries', (info) => {
+     *   console.log(info);
+     * });
+     */
+
+    /**
+     * Register Events that occur when unselect series
+     * @event ChartBase#unselectSeries
+     * @param {object} info unselected series info
+     * @api
+     * @example
+     * chart.on('unselectSeries', (info) => {
+     *   console.log(info);
+     * });
+     */
+
+    /**
+     * Register Events that occur when hover to series
+     * @event ChartBase#hoverSeries
+     * @param {object} info hovered series info
+     * @api
+     * @example
+     * chart.on('hoverSeries', (info) => {
+     *   console.log(info);
+     * });
+     */
+
+    /**
+     * Register Events that occur when unhover from series
+     * @event ChartBase#unhoverSeries
+     * @param {object} info unhovered series info
+     * @api
+     * @example
+     * chart.on('unhoverSeries', (info) => {
+     *  console.log(info);
+     * });
+     */
+
+    /**
+     * Register Events that occur when zooming
+     * @event ChartBase#zoom
+     * @param {string[]} dataRange - []
+     * @api
+     * @example
+     * chart.on('zoom', (dataRange) => {
+     *    console.log(dataRange);
+     * });
+     */
+
+    /**
+     * Register Events that occur when zoom is reset
+     * @event ChartBase#resetZoom
+     * @api
+     * @example
+     * chart.on('resetZoom', () => {});
+     */
+    this.eventBus.on(eventName, handler);
+  };
 }
