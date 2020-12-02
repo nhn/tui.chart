@@ -641,4 +641,5 @@ export type DataInput =
   | BoxPlotSeriesData
   | ScatterSeriesData
   | BubbleSeriesData
-  | BulletSeriesData;
+  | BulletSeriesData
+  | HeatmapSeriesData;
