@@ -46,14 +46,7 @@ const DEFAULT_DATA_LABEL = {
   fontSize: 11,
   fontWeight: 400,
   color: '#333333',
-};
-
-const DEFAULT_TEXT_BUBBLE = {
-  paddingX: 5,
-  paddingY: 1,
-  shadowColor: 'rgba(0, 0, 0, 0.3)',
-  shadowOffsetY: 2,
-  shadowBlur: 4,
+  useSeriesColor: false,
 };
 
 const DEFAULT_BUBBLE_ARROW = {
@@ -185,6 +178,25 @@ export const defaultTheme = {
   },
 };
 
+function makeDefaultTextBubbleTheme(
+  visible = false,
+  borderRadius = 7,
+  paddingX = 5,
+  paddingY = 1,
+  backgroundColor = '#ffffff'
+) {
+  return {
+    visible,
+    paddingX,
+    paddingY,
+    borderRadius,
+    backgroundColor,
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffsetY: 2,
+    shadowBlur: 4,
+  };
+}
+
 // eslint-disable-next-line complexity
 function getSeriesTheme(
   seriesName: string,
@@ -197,27 +209,20 @@ function getSeriesTheme(
     select: { dot: defaultSeriesTheme.select.dot },
     hover: { dot: defaultSeriesTheme.hover.dot },
     dot: defaultSeriesTheme.dot,
-    dataLabels: DEFAULT_DATA_LABEL,
+    dataLabels: {
+      ...DEFAULT_DATA_LABEL,
+      textBubble: {
+        ...makeDefaultTextBubbleTheme(),
+        arrow: { visible: false, direction: 'bottom', ...DEFAULT_BUBBLE_ARROW },
+      },
+    },
   };
 
   const transparentColor = 'rgba(255, 255, 255, 0)';
 
   switch (seriesName) {
     case 'line':
-      return {
-        ...lineTypeSeriesTheme,
-        dataLabels: {
-          ...DEFAULT_DATA_LABEL,
-          useSeriesColor: false,
-          textBubble: {
-            visible: false,
-            ...DEFAULT_TEXT_BUBBLE,
-            borderRadius: 7,
-            backgroundColor: 'rgba(255, 255, 255, 1)',
-            arrow: { visible: false, direction: 'bottom', ...DEFAULT_BUBBLE_ARROW },
-          },
-        },
-      };
+      return { ...lineTypeSeriesTheme };
     case 'area':
       return {
         ...lineTypeSeriesTheme,
@@ -227,17 +232,6 @@ function getSeriesTheme(
           restSeries: defaultSeriesTheme.select.restSeries,
         },
         areaOpacity: DEFAULT_AREA_OPACITY,
-        dataLabels: {
-          ...DEFAULT_DATA_LABEL,
-          useSeriesColor: false,
-          textBubble: {
-            visible: false,
-            ...DEFAULT_TEXT_BUBBLE,
-            borderRadius: 7,
-            backgroundColor: 'rgba(255, 255, 255, 1)',
-            arrow: { visible: false, direction: 'bottom', ...DEFAULT_BUBBLE_ARROW },
-          },
-        },
       };
     case 'treemap':
     case 'heatmap':
@@ -257,12 +251,8 @@ function getSeriesTheme(
         dataLabels: {
           ...DEFAULT_DATA_LABEL,
           color: '#ffffff',
-          useSeriesColor: false,
           textBubble: {
-            visible: false,
-            ...DEFAULT_TEXT_BUBBLE,
-            borderRadius: 1,
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            ...makeDefaultTextBubbleTheme(false, 1, 5, 1, 'rgba(255, 255, 255, 0.5)'),
           },
         },
       };
@@ -343,26 +333,14 @@ function getSeriesTheme(
         },
         dataLabels: {
           ...DEFAULT_DATA_LABEL,
-          useSeriesColor: false,
           textBubble: {
-            visible: false,
-            ...DEFAULT_TEXT_BUBBLE,
-            paddingX: 4,
-            paddingY: 3,
-            borderRadius: 1,
-            backgroundColor: 'rgba(255, 255, 255, 1)',
+            ...makeDefaultTextBubbleTheme(false, 1, 4, 3),
             arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
           },
           stackTotal: {
             ...DEFAULT_DATA_LABEL,
-            useSeriesColor: true,
             textBubble: {
-              visible: true,
-              ...DEFAULT_TEXT_BUBBLE,
-              paddingX: 4,
-              paddingY: 3,
-              borderRadius: 1,
-              backgroundColor: '#ffffff',
+              ...makeDefaultTextBubbleTheme(true, 1, 4, 3),
               arrow: { visible: true, ...DEFAULT_BUBBLE_ARROW },
             },
           },
@@ -395,24 +373,16 @@ function getSeriesTheme(
         },
         dataLabels: {
           ...DEFAULT_DATA_LABEL,
-          useSeriesColor: false,
           textBubble: {
-            visible: false,
-            ...DEFAULT_TEXT_BUBBLE,
-            borderRadius: 7,
-            backgroundColor: 'rgba(255, 255, 255, 1)',
+            ...makeDefaultTextBubbleTheme(),
             arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
           },
           marker: {
-            fontFamily: 'Arial',
+            ...DEFAULT_DATA_LABEL,
             fontSize: 9,
-            fontWeight: 400,
-            color: '#333333',
             useSeriesColor: true,
             textBubble: {
-              visible: true,
-              ...DEFAULT_TEXT_BUBBLE,
-              borderRadius: 7,
+              ...makeDefaultTextBubbleTheme(),
               backgroundColor: 'rgba(255, 255, 255, 0.8)',
               shadowColor: 'rgba(0, 0, 0, 0.0)',
               shadowOffsetX: 0,
@@ -495,7 +465,7 @@ function getSeriesTheme(
           fontWeight: 600,
           color: hasOuterAnchor ? '#333333' : '#ffffff',
           useSeriesColor: !!hasOuterAnchor,
-          textBubble: { visible: false, ...DEFAULT_TEXT_BUBBLE },
+          textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
           callout: {
             lineWidth: 1,
             useSeriesColor: true,
@@ -505,7 +475,7 @@ function getSeriesTheme(
             ...DEFAULT_DATA_LABEL,
             useSeriesColor: !!hasOuterAnchorPieSeriesName,
             color: hasOuterAnchorPieSeriesName ? '#333333' : '#ffffff',
-            textBubble: { visible: false, ...DEFAULT_TEXT_BUBBLE },
+            textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
           },
         },
       };
