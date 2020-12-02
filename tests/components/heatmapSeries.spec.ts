@@ -109,7 +109,7 @@ describe('basic', () => {
       eventBus: new EventEmitter(),
     });
 
-    heatmapSeries.render(getChartState(seriesData));
+    heatmapSeries.render(getChartState(seriesData), { viewRange: [0, 1] });
   });
 
   const result = {

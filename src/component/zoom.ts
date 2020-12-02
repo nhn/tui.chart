@@ -70,6 +70,7 @@ export default class Zoom extends Component {
         .map((m) => m.data?.value);
 
       this.store.dispatch('zoom', dragRange);
+      this.eventBus.emit('zoom', dragRange);
       this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
     }
     this.resetSelectionArea();

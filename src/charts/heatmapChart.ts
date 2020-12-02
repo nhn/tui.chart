@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import heatmapAxes from '@src/store/heatmapAxes';
 import heatmapSeriesData from '@src/store/heatmapSeriesData';
@@ -88,4 +88,13 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
       spectrumLegendBrush,
     ]);
   }
+
+  public addData = (data: HeatmapSeriesDataType, category: string) => {
+    this.animationControlFlag.updating = true;
+    this.store.dispatch('addData', { data, category });
+  };
+
+  public addSeries = (data: HeatmapSeriesDataType, dataInfo: AddSeriesDataInfo) => {
+    this.store.dispatch('addHeatmapSeries', { data, ...dataInfo });
+  };
 }

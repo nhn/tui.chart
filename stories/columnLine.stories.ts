@@ -1,6 +1,6 @@
 import ColumnLineChart from '@src/charts/columnLineChart';
 import { ColumnChartOptions } from '@t/options';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { deepMergedCopy, range } from '@src/helpers/utils';
 import { temperatureAverageData } from './data';
 import '@src/css/chart.css';
 
@@ -36,6 +36,57 @@ function createChart(data, customOptions: Record<string, any> = {}, responsive =
 }
 export const basic = () => {
   const { el } = createChart(temperatureAverageData);
+
+  return el;
+};
+
+export const liveUpdate = () => {
+  const data = {
+    categories: ['1', '2', '3', '4', '5'],
+    series: {
+      column: [
+        {
+          name: 'A',
+          data: [10, 17, 22, 10, 40],
+        },
+        {
+          name: 'B',
+          data: [9.9, 16.0, 21.2, 24.2, 23.2],
+        },
+        {
+          name: 'C',
+          data: [18.3, 15.2, 12.8, 11.8, 13.0],
+        },
+        {
+          name: 'D',
+          data: [4.4, 12.2, 16.3, 18.5, 16.7],
+        },
+      ],
+      line: [
+        {
+          name: 'E',
+          data: [11, 40.1, 24.8, 30.7, 19.5],
+        },
+      ],
+    },
+  };
+
+  const { el, chart } = createChart(data, {
+    series: {
+      shift: true,
+    },
+  });
+
+  let idx = 6;
+  const intervalId = setInterval(() => {
+    const randomData = range(0, 4).map(() => Math.round(Math.random() * 100));
+    chart.addData(randomData, idx.toString(), 'column');
+    chart.addData([randomData[0]], idx.toString(), 'line');
+    if (idx === 20) {
+      clearInterval(intervalId);
+    }
+    idx += 1;
+  }, 2500);
 
   return el;
 };

@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -23,7 +23,13 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
 
-import { ScatterChartOptions, ScatterSeriesData, ScatterSeriesType } from '@t/options';
+import {
+  CoordinateDataType,
+  ScatterChartOptions,
+  ScatterSeriesData,
+  ScatterSeriesType,
+  ScatterSeriesInput,
+} from '@t/options';
 
 export interface ScatterChartProps {
   el: Element;
@@ -69,5 +75,14 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
       exportMenuBrush,
       scatterSeriesBrush,
     ]);
+  }
+
+  public addData = (data: CoordinateDataType[]) => {
+    this.animationControlFlag.updating = true;
+    this.store.dispatch('addData', { data });
+  };
+
+  public addSeries(data: ScatterSeriesInput, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
   }
 }

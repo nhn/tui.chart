@@ -1,7 +1,7 @@
 import ColumnChart from '@src/charts/columnChart';
 import { budgetData, budgetDataForStack, negativeBudgetData, lossData } from './data';
 import { ColumnChartOptions } from '@t/options';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { deepMergedCopy, range as rangeUtil } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 import { dataLabel } from '@src/brushes/dataLabel';
@@ -46,6 +46,43 @@ export const normal = () => {
       },
     },
   });
+
+  return el;
+};
+
+export const liveUpdate = () => {
+  const data = {
+    categories: ['1', '2', '3', '4', '5', '6', '7'],
+    series: [
+      {
+        name: 'A',
+        data: [10, 20, 30, 20, 60, 100, 150],
+      },
+      {
+        name: 'B',
+        data: [50, 10, 20, 10, 40, 150, 100],
+      },
+    ],
+  };
+
+  const { el, chart } = createChart(data, {
+    series: {
+      stack: {
+        type: radios('stackType', { normal: 'normal', percent: 'percent' }, 'normal'),
+      },
+      shift: true,
+    },
+  });
+
+  let idx = 8;
+  const intervalId = setInterval(() => {
+    const randomData = rangeUtil(0, 2).map(() => Math.round(Math.random() * 200));
+    chart.addData(randomData, idx.toString());
+    if (idx === 20) {
+      clearInterval(intervalId);
+    }
+    idx += 1;
+  }, 2500);
 
   return el;
 };

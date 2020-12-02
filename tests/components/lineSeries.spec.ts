@@ -3,6 +3,7 @@ import LineSeries from '@src/component/lineSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import { deepMergedCopy } from '@src/helpers/utils';
+import { computed } from '@src/store/reactive';
 
 let lineSeries;
 
@@ -88,7 +89,7 @@ describe('basic', () => {
       eventBus: new EventEmitter(),
     });
 
-    lineSeries.render(chartState);
+    lineSeries.render(chartState, { viewRange: [0, 1] });
   });
 
   const result = {
@@ -311,7 +312,7 @@ describe('responders', () => {
   ['near', 'nearest', 'grouped'].forEach((eventDetectType) => {
     it(`should make responder properly when calling render according to ${eventDetectType} eventDetectType`, () => {
       const state = deepMergedCopy(chartState, { options: { series: { eventDetectType } } });
-      lineSeries.render(state);
+      lineSeries.render(state, { viewRange: [0, 1] });
 
       expect(lineSeries.responders).toEqual(result[eventDetectType]);
     });
@@ -401,7 +402,7 @@ describe('zoom', () => {
       eventBus: new EventEmitter(),
     });
 
-    lineSeries.render(chartState);
+    lineSeries.render(chartState, { viewRange: [1, 1] });
   });
 
   const result = {
@@ -537,7 +538,7 @@ describe('with series options', () => {
         },
       },
     });
-    lineSeries.render(state);
+    lineSeries.render(state, { viewRange: [0, 1] });
     expect(lineSeries.models.dot).toEqual([
       {
         color: 'rgba(170, 170, 170, 1)',

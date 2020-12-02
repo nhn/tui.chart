@@ -138,8 +138,9 @@ export default class AreaSeries extends Component {
     return newOptions;
   }
 
-  public render(chartState: ChartState<AreaChartOptions | LineAreaChartOptions>) {
-    const { layout, series, scale, axes, legend, stackSeries, zoomRange, theme } = chartState;
+  public render(chartState: ChartState<AreaChartOptions | LineAreaChartOptions>, computed) {
+    const { viewRange } = computed;
+    const { layout, series, scale, axes, legend, stackSeries, theme } = chartState;
 
     if (!series.area) {
       throw new Error("There's no area data!");
@@ -152,7 +153,7 @@ export default class AreaSeries extends Component {
     this.theme = theme.series.area as Required<AreaChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
-    this.startIndex = zoomRange ? zoomRange[0] : 0;
+    this.startIndex = viewRange ? viewRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
 
     const { limit } = scale[getValueAxisName(options, this.name, 'yAxis')];

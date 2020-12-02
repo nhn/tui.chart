@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -27,7 +27,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 
-import { ColumnChartOptions, BoxSeriesData } from '@t/options';
+import { ColumnChartOptions, BoxSeriesData, BoxSeriesDataType, BoxSeriesInput } from '@t/options';
 
 export interface ColumnChartProps {
   el: HTMLElement;
@@ -76,5 +76,14 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
       exportMenuBrush,
       dataLabelBrush,
     ]);
+  }
+
+  public addData = (data: BoxSeriesDataType[], category: string) => {
+    this.animationControlFlag.updating = true;
+    this.store.dispatch('addData', { data, category });
+  };
+
+  public addSeries(data: BoxSeriesInput<BoxSeriesDataType>, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
   }
 }
