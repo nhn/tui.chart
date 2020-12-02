@@ -382,7 +382,7 @@ function getSeriesTheme(
             fontSize: 9,
             useSeriesColor: true,
             textBubble: {
-              ...makeDefaultTextBubbleTheme(),
+              ...makeDefaultTextBubbleTheme(true),
               backgroundColor: 'rgba(255, 255, 255, 0.8)',
               shadowColor: 'rgba(0, 0, 0, 0.0)',
               shadowOffsetX: 0,
