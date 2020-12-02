@@ -856,9 +856,6 @@ describe('theme store', () => {
                   fontFamily: 'Arial',
                   fontSize: 16,
                   fontWeight: 600,
-                  lineWidth: 0,
-                  shadowBlur: 0,
-                  shadowColor: 'rgba(0,0,0,0)',
                   textBubble: {
                     visible: false,
                     paddingX: 5,
@@ -867,7 +864,6 @@ describe('theme store', () => {
                     shadowColor: 'rgba(0, 0, 0, 0.3)',
                     shadowOffsetY: 2,
                   },
-                  textStrokeColor: 'rgba(0,0,0,0)',
                   useSeriesColor: false,
                   callout: {
                     lineColor: '#e9e9e9',
@@ -879,10 +875,6 @@ describe('theme store', () => {
                     fontFamily: 'Arial',
                     fontSize: 11,
                     fontWeight: 400,
-                    lineWidth: 0,
-                    shadowBlur: 0,
-                    shadowColor: 'rgba(0,0,0,0)',
-                    textStrokeColor: 'rgba(0,0,0,0)',
                     useSeriesColor: false,
                     textBubble: {
                       visible: false,
@@ -925,9 +917,6 @@ describe('theme store', () => {
                   fontFamily: 'Arial',
                   fontSize: 16,
                   fontWeight: 600,
-                  lineWidth: 0,
-                  shadowBlur: 0,
-                  shadowColor: 'rgba(0,0,0,0)',
                   textBubble: {
                     visible: false,
                     paddingX: 5,
@@ -936,7 +925,6 @@ describe('theme store', () => {
                     shadowColor: 'rgba(0, 0, 0, 0.3)',
                     shadowOffsetY: 2,
                   },
-                  textStrokeColor: 'rgba(0,0,0,0)',
                   useSeriesColor: false,
                   callout: {
                     lineColor: '#e9e9e9',
@@ -948,10 +936,6 @@ describe('theme store', () => {
                     fontFamily: 'Arial',
                     fontSize: 11,
                     fontWeight: 400,
-                    lineWidth: 0,
-                    shadowBlur: 0,
-                    shadowColor: 'rgba(0,0,0,0)',
-                    textStrokeColor: 'rgba(0,0,0,0)',
                     useSeriesColor: false,
                     textBubble: {
                       visible: false,
@@ -1013,9 +997,6 @@ describe('theme store', () => {
                 fontFamily: 'Arial',
                 fontSize: 16,
                 fontWeight: 600,
-                lineWidth: 0,
-                shadowBlur: 0,
-                shadowColor: 'rgba(0,0,0,0)',
                 textBubble: {
                   visible: false,
                   paddingX: 5,
@@ -1024,7 +1005,6 @@ describe('theme store', () => {
                   shadowColor: 'rgba(0, 0, 0, 0.3)',
                   shadowOffsetY: 2,
                 },
-                textStrokeColor: 'rgba(0,0,0,0)',
                 useSeriesColor: false,
                 callout: {
                   lineColor: '#e9e9e9',
@@ -1036,9 +1016,6 @@ describe('theme store', () => {
                   fontFamily: 'Arial',
                   fontSize: 11,
                   fontWeight: 400,
-                  lineWidth: 0,
-                  shadowBlur: 0,
-                  shadowColor: 'rgba(0,0,0,0)',
                   textBubble: {
                     visible: false,
                     paddingX: 5,
@@ -1047,7 +1024,6 @@ describe('theme store', () => {
                     shadowColor: 'rgba(0, 0, 0, 0.3)',
                     shadowOffsetY: 2,
                   },
-                  textStrokeColor: 'rgba(0,0,0,0)',
                   useSeriesColor: false,
                 },
               },
@@ -1082,9 +1058,6 @@ describe('theme store', () => {
                 fontFamily: 'Arial',
                 fontSize: 16,
                 fontWeight: 600,
-                lineWidth: 0,
-                shadowBlur: 0,
-                shadowColor: 'rgba(0,0,0,0)',
                 textBubble: {
                   visible: false,
                   paddingX: 5,
@@ -1093,7 +1066,6 @@ describe('theme store', () => {
                   shadowColor: 'rgba(0, 0, 0, 0.3)',
                   shadowOffsetY: 2,
                 },
-                textStrokeColor: 'rgba(0,0,0,0)',
                 useSeriesColor: false,
                 callout: {
                   lineColor: '#e9e9e9',
@@ -1105,9 +1077,6 @@ describe('theme store', () => {
                   fontFamily: 'Arial',
                   fontSize: 11,
                   fontWeight: 400,
-                  lineWidth: 0,
-                  shadowBlur: 0,
-                  shadowColor: 'rgba(0,0,0,0)',
                   textBubble: {
                     visible: false,
                     paddingX: 5,
@@ -1116,7 +1085,6 @@ describe('theme store', () => {
                     shadowColor: 'rgba(0, 0, 0, 0.3)',
                     shadowOffsetY: 2,
                   },
-                  textStrokeColor: 'rgba(0,0,0,0)',
                   useSeriesColor: false,
                 },
               },
@@ -1174,9 +1142,6 @@ describe('theme store', () => {
                 fontFamily: 'Arial',
                 fontSize: 16,
                 fontWeight: 600,
-                lineWidth: 0,
-                shadowBlur: 0,
-                shadowColor: 'rgba(0,0,0,0)',
                 textBubble: {
                   visible: false,
                   paddingX: 5,
@@ -1185,7 +1150,6 @@ describe('theme store', () => {
                   shadowColor: 'rgba(0, 0, 0, 0.3)',
                   shadowOffsetY: 2,
                 },
-                textStrokeColor: 'rgba(0,0,0,0)',
                 useSeriesColor: false,
                 callout: {
                   lineColor: '#e9e9e9',
@@ -1197,9 +1161,6 @@ describe('theme store', () => {
                   fontFamily: 'Arial',
                   fontSize: 11,
                   fontWeight: 400,
-                  lineWidth: 0,
-                  shadowBlur: 0,
-                  shadowColor: 'rgba(0,0,0,0)',
                   textBubble: {
                     visible: false,
                     paddingX: 5,
@@ -1208,7 +1169,6 @@ describe('theme store', () => {
                     shadowColor: 'rgba(0, 0, 0, 0.3)',
                     shadowOffsetY: 2,
                   },
-                  textStrokeColor: 'rgba(0,0,0,0)',
                   useSeriesColor: false,
                 },
               },
@@ -1243,9 +1203,6 @@ describe('theme store', () => {
                 fontFamily: 'Arial',
                 fontSize: 16,
                 fontWeight: 600,
-                lineWidth: 0,
-                shadowBlur: 0,
-                shadowColor: 'rgba(0,0,0,0)',
                 textBubble: {
                   visible: false,
                   paddingX: 5,
@@ -1254,7 +1211,6 @@ describe('theme store', () => {
                   shadowColor: 'rgba(0, 0, 0, 0.3)',
                   shadowOffsetY: 2,
                 },
-                textStrokeColor: 'rgba(0,0,0,0)',
                 useSeriesColor: false,
                 callout: {
                   lineColor: '#e9e9e9',
@@ -1266,9 +1222,6 @@ describe('theme store', () => {
                   fontFamily: 'Arial',
                   fontSize: 11,
                   fontWeight: 400,
-                  lineWidth: 0,
-                  shadowBlur: 0,
-                  shadowColor: 'rgba(0,0,0,0)',
                   textBubble: {
                     visible: false,
                     paddingX: 5,
@@ -1277,7 +1230,6 @@ describe('theme store', () => {
                     shadowColor: 'rgba(0, 0, 0, 0.3)',
                     shadowOffsetY: 2,
                   },
-                  textStrokeColor: 'rgba(0,0,0,0)',
                   useSeriesColor: false,
                 },
               },
