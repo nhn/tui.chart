@@ -132,6 +132,16 @@ function setColors(
   });
 }
 
+function setPlot(theme: Theme) {
+  ['vertical', 'horizontal'].reduce((acc, cur) => {
+    if (!acc[cur]) {
+      acc[cur] = { lineColor: acc.lineColor };
+    }
+
+    return acc;
+  }, theme.plot);
+}
+
 function getTheme(options: Options, series: RawSeries): Theme {
   const isNestedPieChart = hasNestedPieSeries(series);
   const commonSeriesOptions: SeriesTheme = getCommonSeriesOptions(
@@ -148,6 +158,8 @@ function getTheme(options: Options, series: RawSeries): Theme {
   if (!series.heatmap) {
     setColors(theme, series, commonSeriesOptions, isNestedPieChart);
   }
+
+  setPlot(theme);
 
   return theme;
 }

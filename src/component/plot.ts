@@ -114,11 +114,16 @@ export default class Plot extends Component {
     size?: number,
     startPosistion?: number
   ): LineModel[] {
+    const {
+      vertical: { lineColor: verticalLineColor },
+      horizontal: { lineColor: horizontalLineColor },
+    } = this.theme;
+
     return relativePositions.map((position) =>
       this.makeLineModel(
         vertical,
         position,
-        this.theme.lineColor,
+        vertical ? verticalLineColor! : horizontalLineColor!,
         size ?? this.rect.width,
         startPosistion ?? 0
       )

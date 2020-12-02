@@ -201,7 +201,12 @@ export const plot = () => {
   const { el } = createChart(avgTemperatureData, {
     theme: {
       plot: {
-        lineColor: 'rgba(60, 80, 180, 0.3)',
+        vertical: {
+          lineColor: 'rgba(60, 80, 180, 0.3)',
+        },
+        horizontal: {
+          lineColor: 'rgba(0, 0, 0, 0)',
+        },
         backgroundColor: 'rgba(60, 80, 180, 0.1)',
       },
     },

@@ -74,6 +74,12 @@ type TooltipTheme = {
 
 type PlotTheme = {
   lineColor?: string;
+  vertical?: {
+    lineColor?: string;
+  };
+  horizontal?: {
+    lineColor?: string;
+  };
   backgroundColor?: string;
 };
 

@@ -109,6 +109,12 @@ describe('theme store', () => {
           },
           plot: {
             lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
             backgroundColor: '#ffffff',
           },
           exportMenu: {
@@ -224,6 +230,12 @@ describe('theme store', () => {
           },
           plot: {
             lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
             backgroundColor: '#ffffff',
           },
           exportMenu: {
@@ -316,6 +328,12 @@ describe('theme store', () => {
           },
           plot: {
             lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
             backgroundColor: '#ffffff',
           },
           exportMenu: {
@@ -678,6 +696,12 @@ describe('theme store', () => {
           },
           plot: {
             lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
             backgroundColor: '#ffffff',
           },
           exportMenu: {

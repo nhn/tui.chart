@@ -49,7 +49,16 @@ const chartState = {
   plot: { showLine: true },
   categories: ['A', 'B'],
   theme: {
-    plot: { lineColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: '#ffffff' },
+    plot: {
+      lineColor: 'rgba(0, 0, 0, 0.05)',
+      vertical: {
+        lineColor: 'rgba(0, 0, 0, 0.05)',
+      },
+      horizontal: {
+        lineColor: 'rgba(0, 0, 0, 0.05)',
+      },
+      backgroundColor: '#ffffff',
+    },
   },
 };
 
@@ -244,7 +253,16 @@ describe('plot options', () => {
     },
     categories: ['0', '1', '2', '3', '4', '5'],
     theme: {
-      plot: { lineColor: 'rgba(0, 0, 0, 0.05)', backgroundColor: '#ffffff' },
+      plot: {
+        lineColor: 'rgba(0, 0, 0, 0.05)',
+        vertical: {
+          lineColor: 'rgba(0, 0, 0, 0.05)',
+        },
+        horizontal: {
+          lineColor: 'rgba(0, 0, 0, 0.05)',
+        },
+        backgroundColor: '#ffffff',
+      },
     },
   };
 
