@@ -634,4 +634,4 @@ export type SeriesDataInput =
   | BoxSeriesInput<BoxSeriesDataType>
   | NestedPieSeriesType;
 
-export type DataInput = LineSeriesData | AreaSeriesData | BoxSeriesData;
+export type DataInput = LineSeriesData | AreaSeriesData | BoxSeriesData | BoxPlotSeriesData;
