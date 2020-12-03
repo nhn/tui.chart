@@ -645,4 +645,7 @@ export type DataInput =
   | HeatmapSeriesData
   | PieSeriesData
   | RadarSeriesData
-  | TreemapSeriesData;
+  | TreemapSeriesData
+  | LineAreaData
+  | LineScatterData
+  | ColumnLineData;

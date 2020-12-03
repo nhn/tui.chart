@@ -96,4 +96,8 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
   public addSeries = (data: ScatterSeriesInput, addSeriesDataInfo: AddSeriesDataInfo) => {
     this.store.dispatch('addSeries', { data, ...addSeriesDataInfo });
   };
+
+  public setData(data: LineScatterData) {
+    this.store.dispatch('setData', data);
+  }
 }

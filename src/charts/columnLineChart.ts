@@ -128,4 +128,8 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   public addSeries(data, dataInfo: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: ColumnLineData) {
+    this.store.dispatch('setData', data);
+  }
 }
