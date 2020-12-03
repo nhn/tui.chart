@@ -72,15 +72,28 @@ type TooltipTheme = {
   body?: FontTheme;
 };
 
-type PlotTheme = {
+type LineTheme = {
   lineColor?: string;
-  vertical?: {
-    lineColor?: string;
-  };
-  horizontal?: {
-    lineColor?: string;
-  };
+  lineWidth?: number;
+  dashSegments?: number[];
+};
+
+interface PlotTheme extends LineTheme {
+  vertical?: LineTheme;
+  horizontal?: LineTheme;
   backgroundColor?: string;
+}
+
+type XIconTheme = {
+  color?: string;
+  lineWidth?: number;
+};
+
+type DotIconTheme = {
+  color?: string;
+  width?: number;
+  height?: number;
+  gap?: number;
 };
 
 type ExportMenuButtonTheme = {
@@ -88,8 +101,8 @@ type ExportMenuButtonTheme = {
   borderRadius?: number;
   borderWidth?: number;
   borderColor?: string;
-  color?: string;
-  xIconLineWidth?: number;
+  xIcon?: XIconTheme;
+  dotIcon?: DotIconTheme;
 };
 
 type ExportMenuPanelTheme = BorderTheme & {

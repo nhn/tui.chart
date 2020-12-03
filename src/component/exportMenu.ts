@@ -156,6 +156,6 @@ export default class ExportMenu extends Component {
       `border-${direction}-left-radius: ${borderRadiusPx};`,
       `border-${direction}-right-radius: ${borderRadiusPx};`,
       `background-color: ${sectionTheme!.backgroundColor};`,
-    ].join();
+    ].join('');
   }
 }

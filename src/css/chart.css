@@ -15,9 +15,7 @@ button:focus {
 .export-menu-title {
   height: 34px;
   width: 140px;
-  /* background: #f4f4f4; */
   margin: 0;
-  /*  font-size: 11px; */
   padding: 10px;
   box-sizing: inherit;
 }

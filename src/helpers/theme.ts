@@ -107,7 +107,7 @@ export const axisTitleTheme = {
   color: '#bbbbbb',
 };
 
-const axisLabelTheme = {
+const commonTextTheme = {
   fontSize: 11,
   fontFamily: 'Arial',
   fontWeight: 'normal',
@@ -126,13 +126,13 @@ export const defaultTheme = {
   },
   yAxis: {
     title: { ...axisTitleTheme },
-    label: { ...axisLabelTheme },
+    label: { ...commonTextTheme },
     width: 1,
     color: '#333333',
   },
   xAxis: {
     title: { ...axisTitleTheme },
-    label: { ...axisLabelTheme },
+    label: { ...commonTextTheme },
     width: 1,
     color: '#333333',
   },
@@ -169,34 +169,36 @@ export const defaultTheme = {
   },
   exportMenu: {
     button: {
+      ...makeBorderTheme(5, '#f4f4f4'),
       backgroundColor: '#f4f4f4',
-      borderRadius: 5,
-      borderWidth: 1,
-      borderColor: '#f4f4f4',
-      color: '#555555',
-      xIconLineWidth: 2,
+      xIcon: {
+        color: '#555555',
+        lineWidth: 2,
+      },
+      dotIcon: {
+        color: '#555555',
+        width: 2,
+        height: 2,
+        gap: 2,
+      },
     },
     panel: {
-      borderWidth: 1,
-      borderRadius: 0,
-      borderColor: '#bab9ba',
+      ...makeBorderTheme(0, '#bab9ba'),
       header: {
-        fontFamily: 'Arial',
-        color: '#333333',
-        fontSize: 11,
-        fontWeight: 400,
+        ...commonTextTheme,
         backgroundColor: '#f4f4f4',
       },
       body: {
-        fontFamily: 'Arial',
-        color: '#333333',
-        fontSize: 11,
-        fontWeight: 400,
+        ...commonTextTheme,
         backgroundColor: '#ffffff',
       },
     },
   },
 };
+
+function makeBorderTheme(borderRadius, borderColor, borderWidth = 1) {
+  return { borderWidth, borderRadius, borderColor };
+}
 
 // eslint-disable-next-line complexity
 function getSeriesTheme(seriesName: string, isNestedPieChart = false) {

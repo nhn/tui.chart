@@ -6,7 +6,7 @@ import { LineModel } from '@t/components/axis';
 import { PlotModels } from '@t/components/plot';
 import { RectModel } from '@t/components/series';
 import { PlotLine, PlotBand, PlotRangeType } from '@t/options';
-import { PlotTheme } from '@t/theme';
+import { PlotTheme, LineTheme } from '@t/theme';
 import { pick } from '@src/helpers/utils';
 
 type XPositionParam = {
@@ -73,7 +73,7 @@ export default class Plot extends Component {
         startIndex: this.startIndex,
       });
 
-      return this.makeLineModel(vertical!, vertical ? position : offsetSize - position, color);
+      return this.makeLineModel(vertical!, vertical ? position : offsetSize - position, { color });
     });
   }
 
@@ -112,20 +112,19 @@ export default class Plot extends Component {
     relativePositions: number[],
     vertical: boolean,
     size?: number,
-    startPosistion?: number
+    startPosition?: number
   ): LineModel[] {
-    const {
-      vertical: { lineColor: verticalLineColor },
-      horizontal: { lineColor: horizontalLineColor },
-    } = this.theme;
+    const { lineColor: color, lineWidth, dashSegments } = this.theme[
+      vertical ? 'vertical' : 'horizontal'
+    ] as Required<LineTheme>;
 
     return relativePositions.map((position) =>
       this.makeLineModel(
         vertical,
         position,
-        vertical ? verticalLineColor! : horizontalLineColor!,
+        { color, lineWidth, dashSegments },
         size ?? this.rect.width,
-        startPosistion ?? 0
+        startPosition ?? 0
       )
     );
   }
@@ -216,7 +215,11 @@ export default class Plot extends Component {
   makeLineModel(
     vertical: boolean,
     position: number,
-    color: string,
+    {
+      color,
+      dashSegments = [],
+      lineWidth = 1,
+    }: { color: string; dashSegments?: number[]; lineWidth?: number },
     sizeWidth?: number,
     xPos = 0
   ): LineModel {
@@ -232,6 +235,8 @@ export default class Plot extends Component {
       x2: x + width,
       y2: y + height,
       strokeStyle: color,
+      lineWidth,
+      dashedPattern: dashSegments,
     };
   }
 

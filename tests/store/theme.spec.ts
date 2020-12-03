@@ -123,8 +123,16 @@ describe('theme store', () => {
               borderColor: '#f4f4f4',
               borderRadius: 5,
               borderWidth: 1,
-              color: '#555555',
-              xIconLineWidth: 2,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
             },
             panel: {
               borderWidth: 1,
@@ -133,14 +141,14 @@ describe('theme store', () => {
               header: {
                 fontFamily: 'Arial',
                 fontSize: 11,
-                fontWeight: 400,
+                fontWeight: 'normal',
                 color: '#333333',
                 backgroundColor: '#f4f4f4',
               },
               body: {
                 fontFamily: 'Arial',
                 fontSize: 11,
-                fontWeight: 400,
+                fontWeight: 'normal',
                 color: '#333333',
                 backgroundColor: '#ffffff',
               },
@@ -265,8 +273,16 @@ describe('theme store', () => {
               borderColor: '#f4f4f4',
               borderRadius: 5,
               borderWidth: 1,
-              color: '#555555',
-              xIconLineWidth: 2,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
             },
             panel: {
               borderWidth: 1,
@@ -275,14 +291,14 @@ describe('theme store', () => {
               header: {
                 fontFamily: 'Arial',
                 fontSize: 11,
-                fontWeight: 400,
+                fontWeight: 'normal',
                 color: '#333333',
                 backgroundColor: '#f4f4f4',
               },
               body: {
                 fontFamily: 'Arial',
                 fontSize: 11,
-                fontWeight: 400,
+                fontWeight: 'normal',
                 color: '#333333',
                 backgroundColor: '#ffffff',
               },
@@ -384,8 +400,16 @@ describe('theme store', () => {
               borderColor: '#f4f4f4',
               borderRadius: 5,
               borderWidth: 1,
-              color: '#555555',
-              xIconLineWidth: 2,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
             },
             panel: {
               borderWidth: 1,
@@ -394,14 +418,14 @@ describe('theme store', () => {
               header: {
                 fontFamily: 'Arial',
                 fontSize: 11,
-                fontWeight: 400,
+                fontWeight: 'normal',
                 color: '#333333',
                 backgroundColor: '#f4f4f4',
               },
               body: {
                 fontFamily: 'Arial',
                 fontSize: 11,
-                fontWeight: 400,
+                fontWeight: 'normal',
                 color: '#333333',
                 backgroundColor: '#ffffff',
               },
@@ -773,8 +797,16 @@ describe('theme store', () => {
               borderColor: '#f4f4f4',
               borderRadius: 5,
               borderWidth: 1,
-              color: '#555555',
-              xIconLineWidth: 2,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
             },
             panel: {
               borderWidth: 1,
@@ -783,14 +815,14 @@ describe('theme store', () => {
               header: {
                 fontFamily: 'Arial',
                 fontSize: 11,
-                fontWeight: 400,
+                fontWeight: 'normal',
                 color: '#333333',
                 backgroundColor: '#f4f4f4',
               },
               body: {
                 fontFamily: 'Arial',
                 fontSize: 11,
-                fontWeight: 400,
+                fontWeight: 'normal',
                 color: '#333333',
                 backgroundColor: '#ffffff',
               },

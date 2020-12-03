@@ -203,6 +203,8 @@ export const plot = () => {
       plot: {
         vertical: {
           lineColor: 'rgba(60, 80, 180, 0.3)',
+          lineWidth: 5,
+          dashSegments: [5, 20],
         },
         horizontal: {
           lineColor: 'rgba(0, 0, 0, 0)',
@@ -224,8 +226,16 @@ export const exportMenu = () => {
           borderRadius: 5,
           borderWidth: 2,
           borderColor: '#000000',
-          color: '#ffffff',
-          xIconLineWidth: 4,
+          xIcon: {
+            color: '#ffffff',
+            lineWidth: 3,
+          },
+          dotIcon: {
+            color: '#ffffff',
+            width: 10,
+            height: 3,
+            gap: 1,
+          },
         },
         panel: {
           borderColor: '#ff0000',
