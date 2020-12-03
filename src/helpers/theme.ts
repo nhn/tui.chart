@@ -464,7 +464,7 @@ function getSeriesTheme(
           fontSize: 16,
           fontWeight: 600,
           color: hasOuterAnchor ? '#333333' : '#ffffff',
-          useSeriesColor: !!hasOuterAnchor,
+          useSeriesColor: hasOuterAnchor,
           textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
           callout: {
             lineWidth: 1,
@@ -473,7 +473,7 @@ function getSeriesTheme(
           },
           pieSeriesName: {
             ...DEFAULT_DATA_LABEL,
-            useSeriesColor: !!hasOuterAnchorPieSeriesName,
+            useSeriesColor: hasOuterAnchorPieSeriesName,
             color: hasOuterAnchorPieSeriesName ? '#333333' : '#ffffff',
             textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
           },
