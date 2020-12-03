@@ -363,3 +363,70 @@ export const theme = () => {
 
   return el;
 };
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(temperatureData, {
+    series: {
+      dataLabels: { visible: true, offsetY: -10 },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom',
+            },
+          },
+        },
+      },
+    },
+  });
+  
+  return el;
+};
+
+export const liveUpdate = () => {
+  const data = {
+    categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    series: [
+      {
+        name: 'A',
+        data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+      },
+      {
+        name: 'B',
+        data: [60, 40, 10, 33, 70, 90, 100, 17, 40, 80],
+      },
+    ],
+  };
+
+  const { el, chart } = createChart(data, {
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+    series: {
+      shift: boolean('shift', true),
+    },
+  });
+
+  let index = 11;
+  const intervalId = setInterval(() => {
+    const random = Math.round(Math.random() * 100);
+    const random2 = Math.round(Math.random() * 100);
+    chart.addData([random, random2], index.toString());
+    index += 1;
+    if (index === 30) {
+      clearInterval(intervalId);
+    }
+  }, 1500);
+
+  return el;
+};

@@ -51,6 +51,42 @@ export const basic = () => {
   return el;
 };
 
+export const liveUpdate = () => {
+  const data = {
+    categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    series: [
+      {
+        name: 'A',
+        data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+      },
+      {
+        name: 'B',
+        data: [60, 40, 10, 33, 70, 90, 100, 17, 40, 80],
+      },
+    ],
+  };
+
+  const { el, chart } = createChart(data, {
+    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    series: { shift: true },
+  });
+
+  let index = 11;
+  const intervalId = setInterval(() => {
+    const random = Math.round(Math.random() * 100);
+    const random2 = Math.round(Math.random() * 100);
+    chart.addData([random, random2], index.toString());
+    index += 1;
+    if (index === 30) {
+      clearInterval(intervalId);
+    }
+  }, 1500);
+
+  return el;
+};
+
 export const basicSpline = () => {
   const { el } = createChart(avgTemperatureData, {
     chart: { title: 'Average Temperature' } as BaseChartOptions,
@@ -296,6 +332,59 @@ export const theme = () => {
     xAxis: { pointOnColumn: false, title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     theme: themeOptions,
+  });
+
+  return el;
+};
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(avgTemperatureData, {
+    series: {
+      dataLabels: { visible: true },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 13,
+          fontWeight: 700,
+          useSeriesColor: true,
+          lineWidth: 2,
+          textStrokeColor: '#000000',
+          shadowColor: '#000000',
+          shadowBlur: 6,
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabelsWithBubbleTheme = () => {
+  const { el } = createChart(avgTemperatureData, {
+    series: {
+      dataLabels: { visible: true, offsetY: -10 },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom',
+            },
+          },
+        },
+      },
+    },
   });
 
   return el;

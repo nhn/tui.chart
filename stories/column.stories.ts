@@ -5,9 +5,10 @@ import {
   negativeBudgetData,
   lossData,
   genderAgeData,
+  simpleBudgetData,
 } from './data';
 import { ColumnChartOptions } from '@t/options';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { deepMergedCopy, range as rangeUtil } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 
@@ -45,6 +46,40 @@ function createChart(data, customOptions: ColumnChartOptions = {}, responsive = 
 
 export const positive = () => {
   const { el } = createChart(budgetData);
+
+  return el;
+};
+
+export const liveUpdate = () => {
+  const data = {
+    categories: ['1', '2', '3', '4', '5', '6', '7'],
+    series: [
+      {
+        name: 'A',
+        data: [10, 20, 30, 20, 60, 100, 150],
+      },
+      {
+        name: 'B',
+        data: [50, 10, 20, 10, 40, 150, 100],
+      },
+    ],
+  };
+
+  const { el, chart } = createChart(data, {
+    series: {
+      shift: true,
+    },
+  });
+
+  let idx = 8;
+  const intervalId = setInterval(() => {
+    const randomData = rangeUtil(0, 2).map(() => Math.round(Math.random() * 200));
+    chart.addData(randomData, idx.toString());
+    if (idx === 20) {
+      clearInterval(intervalId);
+    }
+    idx += 1;
+  }, 2500);
 
   return el;
 };
@@ -209,6 +244,35 @@ export const theme = () => {
             areaOpacity: 0.5,
           },
           areaOpacity: 0.8,
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(simpleBudgetData, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'Impact',
+          fontSize: 13,
+          color: '#ffffff',
+          textBubble: {
+            visible: true,
+            arrow: { visible: true },
+            borderRadius: 7,
+            borderWidth: 2,
+            borderColor: '#e91e63',
+            backgroundColor: '#0f73a2',
+          },
         },
       },
     },

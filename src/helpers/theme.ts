@@ -1,5 +1,5 @@
 import { RawSeries } from '@t/store/store';
-import { Theme } from '@t/theme';
+import { Theme, CheckAnchorPieSeries } from '@t/theme';
 import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
@@ -40,6 +40,19 @@ const boxplotDefault = {
 
 export const DEFAULT_BULLET_RANGE_OPACITY = [0.5, 0.3, 0.1];
 const DEFAULT_PIE_LINE_WIDTH = 5;
+
+const DEFAULT_DATA_LABEL = {
+  fontFamily: 'Arial',
+  fontSize: 11,
+  fontWeight: 400,
+  color: '#333333',
+  useSeriesColor: false,
+};
+
+const DEFAULT_BUBBLE_ARROW = {
+  width: 8,
+  height: 6,
+};
 
 export const defaultSeriesTheme = {
   colors: [
@@ -200,21 +213,51 @@ function makeBorderTheme(borderRadius, borderColor, borderWidth = 1) {
   return { borderWidth, borderRadius, borderColor };
 }
 
+function makeDefaultTextBubbleTheme(
+  visible = false,
+  borderRadius = 7,
+  paddingX = 5,
+  paddingY = 1,
+  backgroundColor = '#ffffff'
+) {
+  return {
+    visible,
+    paddingX,
+    paddingY,
+    borderRadius,
+    backgroundColor,
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffsetY: 2,
+    shadowBlur: 4,
+  };
+}
+
 // eslint-disable-next-line complexity
-function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
+function getSeriesTheme(
+  seriesName: string,
+  { hasOuterAnchor = false, hasOuterAnchorPieSeriesName = false },
+  isNestedPieChart = false
+) {
   const lineTypeSeriesTheme = {
     lineWidth: defaultSeriesTheme.lineWidth,
     dashSegments: defaultSeriesTheme.dashSegments,
     select: { dot: defaultSeriesTheme.select.dot },
     hover: { dot: defaultSeriesTheme.hover.dot },
     dot: defaultSeriesTheme.dot,
+    dataLabels: {
+      ...DEFAULT_DATA_LABEL,
+      textBubble: {
+        ...makeDefaultTextBubbleTheme(),
+        arrow: { visible: false, direction: 'bottom', ...DEFAULT_BUBBLE_ARROW },
+      },
+    },
   };
 
   const transparentColor = 'rgba(255, 255, 255, 0)';
 
   switch (seriesName) {
     case 'line':
-      return lineTypeSeriesTheme;
+      return { ...lineTypeSeriesTheme };
     case 'area':
       return {
         ...lineTypeSeriesTheme,
@@ -239,6 +282,13 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
         select: {
           borderWidth: boxDefault.HOVER_THICKNESS,
           borderColor: '#ffffff',
+        },
+        dataLabels: {
+          ...DEFAULT_DATA_LABEL,
+          color: '#ffffff',
+          textBubble: {
+            ...makeDefaultTextBubbleTheme(false, 1, 5, 1, 'rgba(255, 255, 255, 0.5)'),
+          },
         },
       };
     case 'scatter':
@@ -316,6 +366,20 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
           lineWidth: 1,
           dashSegments: [],
         },
+        dataLabels: {
+          ...DEFAULT_DATA_LABEL,
+          textBubble: {
+            ...makeDefaultTextBubbleTheme(false, 1, 4, 3),
+            arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
+          },
+          stackTotal: {
+            ...DEFAULT_DATA_LABEL,
+            textBubble: {
+              ...makeDefaultTextBubbleTheme(true, 1, 4, 3),
+              arrow: { visible: true, ...DEFAULT_BUBBLE_ARROW },
+            },
+          },
+        },
       };
     case 'bullet':
       return {
@@ -341,6 +405,27 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
             areaOpacity: 0.2,
           },
           areaOpacity: 1,
+        },
+        dataLabels: {
+          ...DEFAULT_DATA_LABEL,
+          textBubble: {
+            ...makeDefaultTextBubbleTheme(),
+            arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
+          },
+          marker: {
+            ...DEFAULT_DATA_LABEL,
+            fontSize: 9,
+            useSeriesColor: true,
+            textBubble: {
+              ...makeDefaultTextBubbleTheme(true),
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              shadowColor: 'rgba(0, 0, 0, 0.0)',
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 0,
+              arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
+            },
+          },
         },
       };
     case 'boxPlot':
@@ -409,19 +494,42 @@ function getSeriesTheme(seriesName: string, isNestedPieChart = false) {
           },
           areaOpacity: 1,
         },
+        dataLabels: {
+          fontFamily: 'Arial',
+          fontSize: 16,
+          fontWeight: 600,
+          color: hasOuterAnchor ? '#333333' : '#ffffff',
+          useSeriesColor: hasOuterAnchor,
+          textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
+          callout: {
+            lineWidth: 1,
+            useSeriesColor: true,
+            lineColor: '#e9e9e9',
+          },
+          pieSeriesName: {
+            ...DEFAULT_DATA_LABEL,
+            useSeriesColor: hasOuterAnchorPieSeriesName,
+            color: hasOuterAnchorPieSeriesName ? '#333333' : '#ffffff',
+            textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
+          },
+        },
       };
     default:
       return {};
   }
 }
 
-export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Theme {
+export function getDefaultTheme(
+  series: RawSeries,
+  pieSeriesOuterAnchors: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries>,
+  isNestedPieChart = false
+): Theme {
   const result = Object.keys(series).reduce<Theme>(
     (acc, seriesName) => ({
       ...acc,
       series: {
         ...acc.series,
-        [seriesName]: getSeriesTheme(seriesName, isNestedPieChart),
+        [seriesName]: getSeriesTheme(seriesName, pieSeriesOuterAnchors),
       },
     }),
     defaultTheme as Theme
@@ -433,7 +541,7 @@ export function getDefaultTheme(series: RawSeries, isNestedPieChart = false): Th
     result.series.pie = aliasNames.reduce(
       (acc, cur) => ({
         ...acc,
-        [cur]: getSeriesTheme('pie', isNestedPieChart),
+        [cur]: getSeriesTheme('pie', pieSeriesOuterAnchors[cur], isNestedPieChart),
       }),
       {}
     );

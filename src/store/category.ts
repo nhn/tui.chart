@@ -2,6 +2,7 @@ import { StoreModule, RawSeries, Series, Categories } from '@t/store/store';
 import { isNumber, sortCategories } from '@src/helpers/utils';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
 import { isBulletSeries } from '@src/component/bulletSeries';
+import { getDataInRange } from '@src/helpers/range';
 
 export function makeRawCategories(series: RawSeries | Series, categories?: Categories) {
   if (categories) {
@@ -39,13 +40,30 @@ const category: StoreModule = {
     categories: makeRawCategories(series, categories),
   }),
   action: {
-    setCategory({ state }) {
-      const { rawCategories, zoomRange } = state;
-      let categories = rawCategories;
+    setCategory({ state, computed }) {
+      const { viewRange } = computed;
+      let categories = state.rawCategories;
 
+      if (viewRange) {
+        if (Array.isArray(categories)) {
+          categories = getDataInRange(categories, viewRange);
+        } else {
+          categories = {
+            ...categories,
+            x: getDataInRange(categories.x, viewRange),
+          };
+        }
+      }
+
+      state.categories = categories;
+
+      this.notify(state, 'categories');
+    },
+    initCategory({ initStoreState, state }) {
+      const { zoomRange } = state;
+      let categories = makeRawCategories(initStoreState.series);
       if (zoomRange && Array.isArray(categories)) {
-        const [start, end] = zoomRange;
-        categories = categories.slice(start, end + 1);
+        categories = getDataInRange(categories, zoomRange);
       }
 
       state.categories = categories;

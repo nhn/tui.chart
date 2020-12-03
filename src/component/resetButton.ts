@@ -18,6 +18,7 @@ export default class ResetButton extends Component {
 
   onClick({ responders }: { responders: RectResponderModel[] }) {
     if (responders.length) {
+      this.eventBus.emit('resetZoom');
       this.store.dispatch('resetZoom');
     }
   }

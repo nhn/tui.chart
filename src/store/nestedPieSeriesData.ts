@@ -24,9 +24,11 @@ const nestedPieSeriesData: StoreModule = {
 
       rawSeries.pie!.forEach(({ name: alias, data }, seriesIndex) => {
         const { colors } = theme.series.pie![alias];
+        const colorList: string[] = [];
         const originSeriesData = data.map((m, index) => {
           const { parentName, name: dataName } = m;
           const color = parentName && seriesIndex ? colorMap[parentName] : colors?.[index];
+          colorList.push(color);
 
           colorMap[dataName] = color;
 
@@ -47,10 +49,12 @@ const nestedPieSeriesData: StoreModule = {
           data: originSeriesData.filter(({ rootParentName }) => {
             return !disabledSeries.includes(rootParentName);
           }),
+          colors: colorList,
         };
       });
 
       extend(state.nestedPieSeries, newSeriesData);
+      this.dispatch('updateNestedPieChartLegend');
     },
   },
   observe: {

@@ -1,4 +1,4 @@
-import Chart from './chart';
+import Chart, { AddSeriesDataInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -68,5 +68,9 @@ export default class BulletChart extends Chart<BulletChartOptions> {
       exportMenuBrush,
       dataLabelBrush,
     ]);
+  }
+
+  public addSeries(data: BulletSeriesType, dataInfo?: AddSeriesDataInfo) {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
   }
 }

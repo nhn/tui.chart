@@ -152,6 +152,7 @@ export default class SelectedSeries extends Component {
       : models;
 
     this.isShow = !!Object.values(this.models).flatMap((value) => value).length;
+    this.eventBus.emit(this.isShow ? 'selectSeries' : 'unselectSeries', this.models);
     this.activeSeriesNames[name] = this.getSeriesNames(selectedSeriesEventModel.models, name);
     this.setActiveState();
   };

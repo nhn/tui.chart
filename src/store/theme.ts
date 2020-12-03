@@ -1,6 +1,11 @@
 import { Options, RawSeries, StoreModule } from '@t/store/store';
 import { deepMergedCopy, omit } from '@src/helpers/utils';
-import { getNestedPieChartAliasNames, hasNestedPieSeries } from '@src/helpers/pieSeries';
+import {
+  getNestedPieChartAliasNames,
+  hasNestedPieSeries,
+  hasOuterDataLabel,
+  hasOuterPieSeriesName,
+} from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
 import { axisTitleTheme, defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
 import {
@@ -10,6 +15,7 @@ import {
   PieChartSeriesTheme,
   SeriesTheme,
   Theme,
+  CheckAnchorPieSeries,
 } from '@t/theme';
 
 function getCommonSeriesOptions(
@@ -142,6 +148,14 @@ function setPlot(theme: Theme) {
   }, theme.plot);
 }
 
+function checkAnchorPieSeriesOption(options: Options, series: RawSeries, alias: string) {
+  return {
+    hasOuterAnchor: !!series.pie && options?.series?.[alias]?.dataLabels?.anchor === 'outer',
+    hasOuterAnchorPieSeriesName:
+      !!series.pie && options?.series?.[alias]?.dataLabels?.pieSeriesName?.anchor === 'outer',
+  };
+}
+
 function getTheme(options: Options, series: RawSeries): Theme {
   const isNestedPieChart = hasNestedPieSeries(series);
   const commonSeriesOptions: SeriesTheme = getCommonSeriesOptions(
@@ -150,8 +164,25 @@ function getTheme(options: Options, series: RawSeries): Theme {
     isNestedPieChart
   );
 
+  let pieSeriesOuterAnchors: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries> = {
+    hasOuterAnchor: hasOuterDataLabel(options, series),
+    hasOuterAnchorPieSeriesName: hasOuterPieSeriesName(options, series),
+  };
+
+  if (isNestedPieChart) {
+    const aliasNames = getNestedPieChartAliasNames(series);
+
+    pieSeriesOuterAnchors = aliasNames.reduce(
+      (acc, cur) => ({
+        ...acc,
+        [cur]: checkAnchorPieSeriesOption(options, series, cur),
+      }),
+      {}
+    );
+  }
+
   const theme = deepMergedCopy(
-    getDefaultTheme(series, isNestedPieChart),
+    getDefaultTheme(series, pieSeriesOuterAnchors, isNestedPieChart),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 
@@ -170,14 +201,12 @@ const theme: StoreModule = {
     theme: getTheme(options, series),
   }),
   action: {
-    setTheme({ state }) {},
+    initThemeState({ state, initStoreState }) {
+      state.theme = getTheme(initStoreState.options, initStoreState.series);
+    },
     applyTheme({ state }) {},
   },
-  observe: {
-    updateTheme() {
-      this.dispatch('setTheme');
-    },
-  },
+  observe: {},
 };
 
 export default theme;

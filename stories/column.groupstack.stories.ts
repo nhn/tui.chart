@@ -1,7 +1,7 @@
 import ColumnChart from '@src/charts/columnChart';
 import { lossDataForGroupStack, genderAgeGroupData } from './data';
 import { ColumnChartOptions } from '@t/options';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { deepMergedCopy, range as rangeUtil } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 
@@ -47,6 +47,53 @@ export const positive = () => {
   return el;
 };
 
+export const liveUpdate = () => {
+  const data = {
+    categories: ['1', '2', '3', '4', '5'],
+    series: [
+      {
+        name: 'A - A',
+        data: [4007, 5067, 7221, 8358, 8500],
+        stackGroup: 'Male',
+      },
+      {
+        name: 'A - B',
+        data: [3805, 4728, 7244, 8291, 8530],
+        stackGroup: 'Female',
+      },
+      {
+        name: 'A - B',
+        data: [1392, 1671, 2092, 2339, 2611],
+        stackGroup: 'Male',
+      },
+      {
+        name: 'B - B',
+        data: [1320, 1558, 1927, 2212, 2556],
+        stackGroup: 'Female',
+      },
+    ],
+  };
+
+  const { el, chart } = createChart(data, {
+    series: {
+      stack: true,
+      shift: true,
+    },
+  });
+
+  let idx = 6;
+  const intervalId = setInterval(() => {
+    const randomData = rangeUtil(0, 4).map(() => Math.round(Math.random() * 10000));
+    chart.addData(randomData, idx.toString());
+    if (idx === 20) {
+      clearInterval(intervalId);
+    }
+    idx += 1;
+  }, 2500);
+
+  return el;
+};
+
 export const selectable = () => {
   const { el } = createChart(genderAgeGroupData, {
     series: {
@@ -88,12 +135,7 @@ export const dataLabels = () => {
     },
     series: {
       stack: true,
-      dataLabels: {
-        visible: true,
-        style: {
-          textStrokeColor: 'rgba(255, 255, 255, 0.6)',
-        },
-      },
+      dataLabels: { visible: true },
     },
   });
 

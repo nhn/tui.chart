@@ -3,6 +3,7 @@ import { extend } from '@src/store/store';
 import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
 import { AxisType } from '@src/component/axis';
 import { makeFormattedCategory, makeTitleOption } from '@src/store/axes';
+import category from '@src/store/category';
 
 type HeatmapStateProp = {
   axisSize: number;
@@ -52,9 +53,9 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { layout, rawCategories } = state;
+      const { layout } = state;
       const { width, height } = layout.plot;
-      const categories = rawCategories as HeatmapCategoriesType;
+      const categories = state.categories as HeatmapCategoriesType;
       const options = state.options as HeatmapChartOptions;
 
       const xAxisData = getHeatmapAxisData({ axisSize: width, categories, options }, AxisType.X);

@@ -1,7 +1,7 @@
 import { getPercentageValue, isString } from './utils';
-import { Rect, PieSeriesType, NestedPieSeriesType } from '@t/options';
+import { Rect, PieSeriesType, NestedPieSeriesType, PieDataLabels } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
-import { RawSeries } from '@t/store/store';
+import { RawSeries, Options } from '@t/store/store';
 
 const DEFAULT_RADIUS_RATIO = 0.9;
 const semiCircleCenterYRatio = {
@@ -89,4 +89,15 @@ export function pieTooltipLabelFormatter(percentValue: number) {
   const needSlice = percentageString.length > 5;
 
   return `${needSlice ? parseFloat(percentageString.substr(0, 4)) : String(percent)}%`;
+}
+
+export function hasOuterDataLabel(options: Options, series: RawSeries) {
+  return !!series.pie && options?.series?.dataLabels?.anchor === 'outer';
+}
+
+export function hasOuterPieSeriesName(options: Options, series: RawSeries) {
+  return (
+    !!series.pie &&
+    (options?.series?.dataLabels as PieDataLabels)?.pieSeriesName?.anchor === 'outer'
+  );
 }

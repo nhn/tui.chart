@@ -2139,3 +2139,25 @@ export const browserUsageData2 = {
     },
   ],
 };
+
+export const simpleBudgetData = {
+  categories: ['May', 'June'],
+  series: [
+    {
+      name: 'Budget',
+      data: [4000, 5000],
+    },
+    {
+      name: 'Income',
+      data: [7000, 8000],
+    },
+    {
+      name: 'Expenses',
+      data: [-5000, -4000],
+    },
+    {
+      name: 'Debt',
+      data: [-3000, -6000],
+    },
+  ],
+};

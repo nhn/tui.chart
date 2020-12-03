@@ -1,13 +1,13 @@
 import {
   Point,
   DataLabelOptions,
-  DataLabelStyle,
   DataLabelPieSeriesName,
   SubDataLabel,
   BoxSeriesDataType,
 } from '@t/options';
 import { PointModel, SectorModel, RectModel, Nullable } from './series';
 import { LineModel } from './axis';
+import { PieDataLabelTheme, CalloutTheme, BoxDataLabel, BubbleDataLabel } from '@t/theme';
 
 export type DataLabelSeriesType = 'area' | 'line' | 'bar' | 'column' | 'bullet' | 'pie';
 
@@ -34,16 +34,15 @@ export type DataLabel = {
   text: string;
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
-  defaultColor?: string;
-  callout?: Nullable<LineModel>;
+  callout?: Nullable<Callout>;
   name?: string;
-  hasTextBubble?: boolean;
+  seriesColor?: string;
+  theme: BubbleDataLabel | BoxDataLabel;
 } & Point;
 
 export type DataLabelOption = Required<
   Pick<DataLabelOptions, 'anchor' | 'offsetX' | 'offsetY' | 'formatter'>
 > & {
-  style?: DataLabelStyle;
   stackTotal?: Required<SubDataLabel>;
   pieSeriesName?: DataLabelPieSeriesName;
 };
@@ -51,7 +50,6 @@ export type DataLabelOption = Required<
 export type DataLabelModel = {
   type: 'dataLabel';
   dataLabelType: DataLabelType;
-  style?: DataLabelStyle;
   opacity?: number;
 } & Omit<DataLabel, 'type'>;
 
@@ -59,9 +57,11 @@ export type DataLabelModels = { series: DataLabelModel[]; total: DataLabelModel[
 
 export type PointDataLabel = PointModel & {
   type: 'point';
+  theme: BubbleDataLabel;
 };
 export type RadialDataLabel = Omit<SectorModel, 'type'> & {
   type: 'sector';
+  theme: PieDataLabelTheme;
 };
 export type RectDirection = 'top' | 'bottom' | 'left' | 'right';
 
@@ -75,14 +75,18 @@ export type RectDataLabel = Omit<RectModel, 'type' | 'color' | 'value'> & {
     size: number;
   };
   modelType?: string;
+  color?: string;
+  theme: BubbleDataLabel | BoxDataLabel;
 };
 
 export type LineDataLabel = LineModel & {
   value: number;
   textAlign?: CanvasTextAlign;
   textBaseline?: CanvasTextBaseline;
+  theme: BubbleDataLabel;
 };
 
+export type Callout = Point & { x2: number; y2: number; theme: CalloutTheme };
 export type SeriesDataLabelType = PointDataLabel | RadialDataLabel | RectDataLabel | LineDataLabel;
 
 export type SeriesDataLabels = Array<SeriesDataLabelType>;

@@ -14,6 +14,7 @@ import { RespondersThemeType } from '@src/helpers/responders';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { HeatmapChartSeriesTheme } from '@t/theme';
 import { boxDefault } from '@src/helpers/theme';
+import { dataLabel } from '@src/brushes/dataLabel';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
@@ -55,12 +56,18 @@ export default class HeatmapSeries extends Component {
   }
 
   makeDataLabels(): SeriesDataLabels {
+    const dataLabelTheme = this.theme.dataLabels;
+
     return this.models.series.map((m) => ({
       ...m,
       type: 'treemapSeriesName',
       value: m.colorValue,
       direction: 'left',
       plot: { x: 0, y: 0, size: 0 },
+      theme: {
+        ...dataLabelTheme,
+        color: dataLabelTheme.useSeriesColor ? m.color : dataLabelTheme.color,
+      },
     }));
   }
 

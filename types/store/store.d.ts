@@ -71,6 +71,7 @@ type SeriesGroup = {
 type Series = {
   [key in ChartType]?: {
     data: ChartSeriesMap[key];
+    colors?: string[];
   } & SeriesGroup;
 };
 
@@ -178,14 +179,18 @@ export type StackSeries = {
 
 export type LegendIconType = 'spectrum' | 'line' | ScatterSeriesIconType;
 
+export type LegendDataList = Array<
+  Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType' | 'color' | 'chartType'> & {
+    width: number;
+  }
+>;
+
 export interface Legend {
   visible: boolean;
   showCheckbox: boolean;
   align: Align;
   width: number;
-  data: Array<
-    Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType' | 'chartType'> & { width: number }
-  >;
+  data: LegendDataList;
   useSpectrumLegend: boolean;
   useScatterChartIcon: boolean;
 }
@@ -242,6 +247,7 @@ export interface ChartState<T extends Options> {
   disabledSeries: string[];
   series: Series;
   zoomRange?: RangeDataType<number>;
+  shiftRange?: RangeDataType<number>;
   // 기존의 limitMap
   axes: Axes;
   dataRange: DataRange;

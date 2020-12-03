@@ -3,6 +3,8 @@ import { InitStoreState } from '@t/store/store';
 import Store from '@src/store/store';
 import { NestedPieChartOptions } from '@t/options';
 
+const dispatch = () => {};
+
 describe('NestedPieSeriesData store', () => {
   describe('setNestedPieSeriesData', () => {
     const theme = {
@@ -79,7 +81,7 @@ describe('NestedPieSeriesData store', () => {
       } as InitStoreState<NestedPieChartOptions>;
 
       const store = { state, initStoreState } as Store<NestedPieChartOptions>;
-      nestedPieSeriesData.action!.setNestedPieSeriesData(store);
+      nestedPieSeriesData.action!.setNestedPieSeriesData.call({ dispatch }, store);
 
       expect(state.nestedPieSeries).toEqual({
         pie1: {
@@ -97,6 +99,7 @@ describe('NestedPieSeriesData store', () => {
               rootParentName: 'cho',
             },
           ],
+          colors: ['#aaaaaa', '#bbbbbb'],
         },
         pie2: {
           data: [
@@ -113,6 +116,7 @@ describe('NestedPieSeriesData store', () => {
               rootParentName: 'lee',
             },
           ],
+          colors: ['#cccccc', '#dddddd'],
         },
       });
     });
@@ -183,7 +187,7 @@ describe('NestedPieSeriesData store', () => {
       } as InitStoreState<NestedPieChartOptions>;
 
       const store = { state, initStoreState } as Store<NestedPieChartOptions>;
-      nestedPieSeriesData.action!.setNestedPieSeriesData(store);
+      nestedPieSeriesData.action!.setNestedPieSeriesData.call({ dispatch }, store);
 
       expect(state.nestedPieSeries).toEqual({
         pie1: {
@@ -201,6 +205,7 @@ describe('NestedPieSeriesData store', () => {
               rootParentName: 'cho',
             },
           ],
+          colors: ['#aaaaaa', '#bbbbbb'],
         },
         pie2: {
           data: [
@@ -209,6 +214,7 @@ describe('NestedPieSeriesData store', () => {
             { name: 'cho1', parentName: 'cho', data: 40, color: '#bbbbbb', rootParentName: 'cho' },
             { name: 'cho2', parentName: 'cho', data: 10, color: '#bbbbbb', rootParentName: 'cho' },
           ],
+          colors: ['#aaaaaa', '#aaaaaa', '#bbbbbb', '#bbbbbb'],
         },
       });
     });

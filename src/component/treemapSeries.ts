@@ -120,6 +120,7 @@ export default class TreemapSeries extends Component {
     const series = useTreemapLeaf
       ? this.models.series.filter(({ hasChild }) => !hasChild)
       : this.models.series.filter(({ parentId }) => parentId === treemapCurrentDepthParentId);
+    const dataLabelTheme = this.theme.dataLabels;
 
     return series.map((m) => ({
       ...m,
@@ -127,6 +128,10 @@ export default class TreemapSeries extends Component {
       value: m.label,
       direction: 'left',
       plot: { x: 0, y: 0, size: 0 },
+      theme: {
+        ...dataLabelTheme,
+        color: dataLabelTheme.useSeriesColor ? m.color : dataLabelTheme.color,
+      },
     }));
   }
 

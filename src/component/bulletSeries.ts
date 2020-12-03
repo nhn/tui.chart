@@ -17,7 +17,7 @@ import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 import { LineModel } from '@t/components/axis';
 import { BulletChartSeriesTheme } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
-import { isNumber } from '@src/helpers/utils';
+import { isNumber, omit } from '@src/helpers/utils';
 
 type RenderOptions = {
   ratio: number;
@@ -145,14 +145,22 @@ export default class BulletSeries extends Component {
     vertical: boolean,
     size: number
   ): (RectDataLabel | LineDataLabel)[] {
+    const { dataLabels: dataLabelTheme } = this.theme;
+    const bulletLabelTheme = omit(dataLabelTheme, 'marker');
+    const { useSeriesColor, color } = bulletLabelTheme;
+    const { marker } = dataLabelTheme;
+
     return seriesModels
       .filter((m) => m.type === 'line' || (m as BulletRectModel).modelType !== 'range')
       .map((m) => {
         if (m.type === 'line') {
           return {
             ...m,
-            x: (m.x + m.x2) / 2,
-            y: (m.y + m.y2) / 2,
+            x: vertical ? (m.x + m.x2) / 2 : m.x,
+            theme: {
+              ...marker,
+              color: marker!.useSeriesColor ? m.strokeStyle : marker!.color,
+            },
           } as LineDataLabel;
         }
 
@@ -163,6 +171,10 @@ export default class BulletSeries extends Component {
             x: 0,
             y: 0,
             size,
+          },
+          theme: {
+            ...bulletLabelTheme,
+            color: useSeriesColor ? m.color : color,
           },
         } as RectDataLabel;
       });

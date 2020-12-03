@@ -92,9 +92,11 @@ export default class LineSeries extends Component {
   }
 
   render(
-    chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>
+    chartState: ChartState<LineChartOptions | LineScatterChartOptions | LineAreaChartOptions>,
+    computed
   ) {
-    const { layout, series, scale, axes, legend, zoomRange, theme } = chartState;
+    const { viewRange } = computed;
+    const { layout, series, scale, axes, legend, theme } = chartState;
     if (!series.line) {
       throw new Error("There's no line data!");
     }
@@ -121,7 +123,7 @@ export default class LineSeries extends Component {
     this.theme = theme.series.line as Required<LineChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
-    this.startIndex = zoomRange ? zoomRange[0] : 0;
+    this.startIndex = viewRange ? viewRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
     this.yAxisName = getValueAxisName(options, this.name, 'yAxis');
 
@@ -222,6 +224,7 @@ export default class LineSeries extends Component {
     const xAxisLimit = scale?.xAxis?.limit;
     const { lineWidth, dashSegments } = this.theme;
 
+    // @TODO: model paint 시 x, y가 범위 밖에 있는 좌표라면 그려주지 않도록 처리 필요.
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
       const points: PointModel[] = [];
       const active = this.activeSeriesMap![name];
@@ -230,6 +233,7 @@ export default class LineSeries extends Component {
         const value = getCoordinateYValue(datum);
         const yValueRatio = getValueRatio(value, yAxisLimit);
         const y = (1 - yValueRatio) * this.rect.height;
+
         const x = getXPosition(
           pick(renderOptions, 'pointOnColumn', 'tickDistance', 'labelDistance') as LabelAxisData,
           this.rect.width,
@@ -342,8 +346,18 @@ export default class LineSeries extends Component {
   }
 
   getDataLabels(seriesModels: LinePointsModel[]): PointDataLabel[] {
-    return seriesModels.flatMap(({ points, name }) =>
-      points.map((point) => ({ type: 'point', ...point, name }))
+    const dataLabelTheme = this.theme.dataLabels;
+
+    return seriesModels.flatMap(({ points, name, color }) =>
+      points.map((point) => ({
+        type: 'point',
+        ...point,
+        name,
+        theme: {
+          ...dataLabelTheme,
+          color: dataLabelTheme.useSeriesColor ? color : dataLabelTheme.color,
+        },
+      }))
     );
   }
 

@@ -1,7 +1,7 @@
 import ColumnChart from '@src/charts/columnChart';
 import { budgetData, budgetDataForStack, negativeBudgetData, lossData } from './data';
 import { ColumnChartOptions } from '@t/options';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { deepMergedCopy, range as rangeUtil } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 
@@ -45,6 +45,43 @@ export const normal = () => {
       },
     },
   });
+
+  return el;
+};
+
+export const liveUpdate = () => {
+  const data = {
+    categories: ['1', '2', '3', '4', '5', '6', '7'],
+    series: [
+      {
+        name: 'A',
+        data: [10, 20, 30, 20, 60, 100, 150],
+      },
+      {
+        name: 'B',
+        data: [50, 10, 20, 10, 40, 150, 100],
+      },
+    ],
+  };
+
+  const { el, chart } = createChart(data, {
+    series: {
+      stack: {
+        type: radios('stackType', { normal: 'normal', percent: 'percent' }, 'normal'),
+      },
+      shift: true,
+    },
+  });
+
+  let idx = 8;
+  const intervalId = setInterval(() => {
+    const randomData = rangeUtil(0, 2).map(() => Math.round(Math.random() * 200));
+    chart.addData(randomData, idx.toString());
+    if (idx === 20) {
+      clearInterval(intervalId);
+    }
+    idx += 1;
+  }, 2500);
 
   return el;
 };
@@ -256,6 +293,45 @@ export const theme = () => {
           color: '#031f4b',
           lineWidth: 2,
           dashSegments: [5, 10],
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      stack: true,
+      dataLabels: { visible: true },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          lineWidth: 2,
+          textStrokeColor: '#ffffff',
+          shadowColor: '#ffffff',
+          shadowBlur: 4,
+          stackTotal: {
+            fontFamily: 'monaco',
+            fontWeight: 14,
+            color: '#ffffff',
+            textBubble: {
+              visible: true,
+              paddingY: 6,
+              borderWidth: 3,
+              borderColor: '#00bcd4',
+              borderRadius: 7,
+              backgroundColor: '#041367',
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 0,
+              shadowColor: 'rgba(0, 0, 0, 0)',
+            },
+          },
         },
       },
     },

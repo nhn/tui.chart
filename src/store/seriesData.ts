@@ -1,25 +1,62 @@
-import { StoreModule, RawSeries, Series, Options, Categories } from '@t/store/store';
+import {
+  StoreModule,
+  RawSeries,
+  Series,
+  Options,
+  Categories,
+  ChartType,
+  ChartSeriesMap,
+} from '@t/store/store';
 import { extend } from '@src/store/store';
-import { deepCopy, getFirstValidValue, isNumber, isUndefined, range } from '@src/helpers/utils';
-import { LineTypeSeriesOptions, RangeDataType } from '@t/options';
+import {
+  HeatmapCategoriesType,
+  HeatmapSeriesDataType,
+  LineTypeSeriesOptions,
+  RangeDataType,
+  SeriesDataInput,
+  TreemapSeriesType,
+} from '@t/options';
+import {
+  deepCopy,
+  getFirstValidValue,
+  includes,
+  isNumber,
+  isUndefined,
+  range,
+} from '@src/helpers/utils';
 import { makeRawCategories } from '@src/store/category';
-import { getCoordinateXValue } from '@src/helpers/coordinate';
+import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
 
-function initZoomRange(
-  series: RawSeries,
-  options: Options,
-  categories?: Categories
-): RangeDataType<number> | undefined {
+function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
+  let rawCategoriesLength;
+
+  if (categories) {
+    rawCategoriesLength = Array.isArray(categories) ? categories.length : categories.x.length;
+  } else {
+    rawCategoriesLength = Object.keys(makeRawCategories(series, categories)).length;
+  }
+
+  return [0, rawCategoriesLength - 1];
+}
+
+function initZoomRange(series: RawSeries, options: Options, categories?: Categories) {
   if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.zoomable) {
     return;
   }
 
-  const rawCategoriesLength = categories
-    ? (categories as string[]).length
-    : Object.keys(makeRawCategories(series, categories)).length;
+  return initRange(series, categories);
+}
 
-  return [0, rawCategoriesLength - 1];
+function initShiftRange(series: RawSeries, options: Options, categories?: Categories) {
+  if (
+    !(series.line || series.area || series.column || series.heatmap) ||
+    !(options.series as LineTypeSeriesOptions)?.shift
+  ) {
+    return;
+  }
+
+  return initRange(series, categories);
 }
 
 function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeDataType<number>) {
@@ -45,7 +82,7 @@ function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeD
   return [start, end];
 }
 
-function getDataInRange(
+function getSeriesDataInRange(
   data,
   rawCategories: Categories,
   chartType: string,
@@ -68,6 +105,29 @@ function getDataInRange(
   return data.slice(startIdx, endIdx + 1);
 }
 
+function isCoordinateTypeSeries(series: Series, chartType?: ChartType) {
+  return (
+    isCoordinateSeries(series) &&
+    (isUndefined(chartType) || chartType === 'line' || chartType === 'scatter')
+  );
+}
+
+function isSeriesAlreadyExist(
+  series: Partial<ChartSeriesMap>,
+  seriesName: string,
+  data: Exclude<SeriesDataInput, TreemapSeriesType | HeatmapSeriesDataType>
+) {
+  return series[seriesName]!.some(({ label }) => label === data.name);
+}
+
+function isTreemapSeriesAlreadyExist(series: Partial<ChartSeriesMap>, data: TreemapSeriesType) {
+  return series.treemap!.some(({ label }) => label === data.label);
+}
+
+function isHeatmapSeriesAlreadyExist(categories: HeatmapCategoriesType, category: string) {
+  return includes((categories as HeatmapCategoriesType).y, category);
+}
+
 const seriesData: StoreModule = {
   name: 'seriesData',
   state: ({ series, categories, options }) => ({
@@ -76,6 +136,7 @@ const seriesData: StoreModule = {
       ...series,
     } as Series,
     zoomRange: initZoomRange(series, options, categories),
+    shiftRange: initShiftRange(series, options, categories),
     disabledSeries: [],
   }),
   action: {
@@ -89,7 +150,7 @@ const seriesData: StoreModule = {
         let originSeriesData = rawSeries[seriesName].map((m, idx) => ({
           ...m,
           rawData: m.data,
-          data: getDataInRange(m.data, rawCategories, seriesName, zoomRange),
+          data: getSeriesDataInRange(m.data, rawCategories, seriesName, zoomRange),
           color: colors ? colors[idx] : '',
         }));
 
@@ -109,6 +170,7 @@ const seriesData: StoreModule = {
           seriesCount,
           seriesGroupCount,
           data,
+          colors,
         };
       });
 
@@ -152,6 +214,112 @@ const seriesData: StoreModule = {
 
       this.notify(state, 'zoomRange');
     },
+    addData({ state, initStoreState }, { data, category, chartType }) {
+      const { series } = initStoreState;
+      const coordinateChart = isCoordinateTypeSeries(state.series, chartType);
+      let { categories } = initStoreState;
+      categories = series.heatmap ? (categories as HeatmapCategoriesType).x : categories;
+
+      if (category && Array.isArray(categories)) {
+        const isExist = categories.some((c) => c === category);
+        if (!isExist) {
+          categories.push(category);
+
+          if (Array.isArray(state.shiftRange)) {
+            const [start, end] = state.shiftRange;
+            state.shiftRange = [start + 1, end + 1];
+          }
+        }
+      }
+
+      if (chartType) {
+        series[chartType].forEach((datum, idx) => {
+          datum.data.push(data[idx]);
+        });
+      } else {
+        const [seriesName] = Object.keys(initStoreState.series);
+
+        series[seriesName].forEach((datum, idx) => {
+          datum.data.push(data[idx]);
+        });
+      }
+
+      this.notify(state, 'series');
+      this.notify(state, 'rawCategories');
+      if (Array.isArray(state.zoomRange)) {
+        this.dispatch('resetZoom');
+      }
+
+      if (coordinateChart) {
+        this.dispatch('initCategory');
+      }
+    },
+    addSeries(
+      { state, initStoreState },
+      {
+        data,
+        chartType,
+        category,
+      }: {
+        data: Exclude<SeriesDataInput, HeatmapSeriesDataType | TreemapSeriesType>;
+        chartType?: ChartType;
+        category?: string;
+      }
+    ) {
+      const { series, categories } = initStoreState;
+      const coordinateChart = isCoordinateTypeSeries(state.series, chartType);
+      const seriesName = chartType || Object.keys(series)[0];
+
+      const isExist = isSeriesAlreadyExist(series, seriesName, data);
+
+      if (!isExist) {
+        series[seriesName].push(data);
+        if (Array.isArray(categories) && category) {
+          categories.push(category);
+        }
+      }
+
+      this.dispatch('initThemeState');
+      this.dispatch('initLegendState');
+      this.notify(state, 'series');
+
+      if (coordinateChart || seriesName === 'bullet') {
+        this.dispatch('initCategory');
+      }
+    },
+    addHeatmapSeries(
+      { state, initStoreState },
+      { data, category }: { data: HeatmapSeriesDataType; category: string }
+    ) {
+      const { series, categories } = initStoreState;
+
+      const isExist = isHeatmapSeriesAlreadyExist(categories as HeatmapCategoriesType, category);
+      if (!isExist) {
+        series.heatmap!.push({ data, yCategory: category });
+      }
+
+      if (!isExist && category) {
+        (categories as HeatmapCategoriesType).y.push(category);
+        this.notify(state, 'rawCategories');
+      }
+
+      this.notify(state, 'series');
+      this.dispatch('initThemeState');
+      this.dispatch('initLegendState');
+    },
+    addTreemapSeries({ state, initStoreState }, { data }) {
+      const { series } = initStoreState;
+
+      const isExist = isTreemapSeriesAlreadyExist(series, data);
+      if (!isExist) {
+        series.treemap!.push(data);
+      }
+
+      this.notify(state, 'series');
+      this.notify(state, 'treemapSeries');
+      this.dispatch('initThemeState');
+      this.dispatch('initLegendState');
+    },
   },
   observe: {
     updateSeriesData() {
@@ -161,6 +329,9 @@ const seriesData: StoreModule = {
   computed: {
     isLineTypeSeriesZooming: ({ zoomRange, rawCategories }) => {
       return isZooming(rawCategories as string[], zoomRange);
+    },
+    viewRange: ({ zoomRange, shiftRange }) => {
+      return zoomRange || shiftRange;
     },
   },
 };
