@@ -648,4 +648,5 @@ export type DataInput =
   | TreemapSeriesData
   | LineAreaData
   | LineScatterData
-  | ColumnLineData;
+  | ColumnLineData
+  | NestedPieSeriesData;
