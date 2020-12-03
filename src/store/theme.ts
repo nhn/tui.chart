@@ -138,6 +138,16 @@ function setColors(
   });
 }
 
+function setPlot(theme: Theme) {
+  ['vertical', 'horizontal'].reduce((acc, cur) => {
+    if (!acc[cur]) {
+      acc[cur] = { lineColor: acc.lineColor };
+    }
+
+    return acc;
+  }, theme.plot);
+}
+
 function checkAnchorPieSeriesOption(options: Options, series: RawSeries, alias: string) {
   return {
     hasOuterAnchor: !!series.pie && options?.series?.[alias]?.dataLabels?.anchor === 'outer',
@@ -179,6 +189,8 @@ function getTheme(options: Options, series: RawSeries): Theme {
   if (!series.heatmap) {
     setColors(theme, series, commonSeriesOptions, isNestedPieChart);
   }
+
+  setPlot(theme);
 
   return theme;
 }

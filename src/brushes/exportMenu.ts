@@ -2,11 +2,23 @@ import { line, rect, pathRect } from '@src/brushes/basic';
 import { Point } from '@t/options';
 import { ExportMenuButtonModel } from '@t/components/exportMenu';
 import { BUTTON_RECT_SIZE } from '@src/component/exportMenu';
+import { ExportMenuButtonTheme, DotIconTheme, XIconTheme } from '@t/theme';
 
-function drawXIcon(ctx: CanvasRenderingContext2D, point: Point) {
-  const { x: startX, y: startY } = point;
+interface XIconModel extends Point {
+  theme: Required<XIconTheme>;
+}
+
+interface DotIconModel extends Point {
+  theme: Required<DotIconTheme>;
+}
+
+function drawXIcon(ctx: CanvasRenderingContext2D, icon: XIconModel) {
+  const {
+    x: startX,
+    y: startY,
+    theme: { color: strokeStyle, lineWidth },
+  } = icon;
   const offset = BUTTON_RECT_SIZE / 3;
-  const strokeStyle = '#555555';
 
   const x = startX + offset;
   const y = startY + offset;
@@ -19,26 +31,33 @@ function drawXIcon(ctx: CanvasRenderingContext2D, point: Point) {
   ];
 
   points.forEach((p) => {
-    line(ctx, { type: 'line', ...p, strokeStyle, lineWidth: 2 });
+    line(ctx, { type: 'line', ...p, strokeStyle, lineWidth });
   });
 }
 
-function drawMoreIcon(ctx: CanvasRenderingContext2D, point: Point) {
-  const { x, y } = point;
-  const centerX = x + 11;
+function drawMoreIcon(ctx: CanvasRenderingContext2D, icon: DotIconModel) {
+  const {
+    x,
+    y,
+    theme: { color, width, height, gap },
+  } = icon;
+  const paddingX = (BUTTON_RECT_SIZE - width) / 2;
+  const paddingY = (BUTTON_RECT_SIZE - (height * 3 + gap * 2)) / 2;
+  const centerX = x + paddingX;
+
   const points = [
-    { x: centerX, y: y + 7 },
-    { x: centerX, y: y + 11 },
-    { x: centerX, y: y + 15 },
+    { x: centerX, y: y + paddingY },
+    { x: centerX, y: y + paddingY + height + gap },
+    { x: centerX, y: y + paddingY + (height + gap) * 2 },
   ];
 
   points.forEach((p) => {
     rect(ctx, {
       type: 'rect',
       ...p,
-      color: '#555555',
-      width: 2,
-      height: 2,
+      color,
+      width: width,
+      height: height,
     });
   });
 }
@@ -47,22 +66,30 @@ export function exportMenuButton(
   ctx: CanvasRenderingContext2D,
   exportMenuButtonModel: ExportMenuButtonModel
 ) {
-  const { opened, x, y } = exportMenuButtonModel;
-
+  const { opened, x, y, theme } = exportMenuButtonModel;
+  const {
+    borderColor,
+    backgroundColor,
+    borderWidth,
+    borderRadius,
+    xIcon,
+    dotIcon,
+  } = theme as Required<ExportMenuButtonTheme>;
   pathRect(ctx, {
     type: 'pathRect',
     x,
     y,
-    fill: '#f4f4f4',
-    stroke: '#f4f4f4',
+    fill: backgroundColor,
+    stroke: borderColor,
     width: BUTTON_RECT_SIZE,
     height: BUTTON_RECT_SIZE,
-    radius: 5,
+    radius: borderRadius,
+    lineWidth: borderWidth,
   });
 
   if (opened) {
-    drawXIcon(ctx, { x, y });
+    drawXIcon(ctx, { x, y, theme: xIcon as Required<XIconTheme> });
   } else {
-    drawMoreIcon(ctx, { x, y });
+    drawMoreIcon(ctx, { x, y, theme: dotIcon as Required<DotIconTheme> });
   }
 }

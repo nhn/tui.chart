@@ -120,7 +120,7 @@ export const axisTitleTheme = {
   color: '#bbbbbb',
 };
 
-const axisLabelTheme = {
+const commonTextTheme = {
   fontSize: 11,
   fontFamily: 'Arial',
   fontWeight: 'normal',
@@ -139,13 +139,13 @@ export const defaultTheme = {
   },
   yAxis: {
     title: { ...axisTitleTheme },
-    label: { ...axisLabelTheme },
+    label: { ...commonTextTheme },
     width: 1,
     color: '#333333',
   },
   xAxis: {
     title: { ...axisTitleTheme },
-    label: { ...axisLabelTheme },
+    label: { ...commonTextTheme },
     width: 1,
     color: '#333333',
   },
@@ -176,7 +176,42 @@ export const defaultTheme = {
       color: '#ffffff',
     },
   },
+  plot: {
+    lineColor: 'rgba(0, 0, 0, 0.05)',
+    backgroundColor: '#ffffff',
+  },
+  exportMenu: {
+    button: {
+      ...makeBorderTheme(5, '#f4f4f4'),
+      backgroundColor: '#f4f4f4',
+      xIcon: {
+        color: '#555555',
+        lineWidth: 2,
+      },
+      dotIcon: {
+        color: '#555555',
+        width: 2,
+        height: 2,
+        gap: 2,
+      },
+    },
+    panel: {
+      ...makeBorderTheme(0, '#bab9ba'),
+      header: {
+        ...commonTextTheme,
+        backgroundColor: '#f4f4f4',
+      },
+      body: {
+        ...commonTextTheme,
+        backgroundColor: '#ffffff',
+      },
+    },
+  },
 };
+
+function makeBorderTheme(borderRadius, borderColor, borderWidth = 1) {
+  return { borderWidth, borderRadius, borderColor };
+}
 
 function makeDefaultTextBubbleTheme(
   visible = false,

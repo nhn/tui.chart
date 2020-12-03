@@ -130,6 +130,53 @@ describe('theme store', () => {
               color: '#ffffff',
             },
           },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            backgroundColor: '#ffffff',
+          },
+          exportMenu: {
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
+            },
+          },
         });
       });
 
@@ -233,6 +280,53 @@ describe('theme store', () => {
               color: '#ffffff',
             },
           },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            backgroundColor: '#ffffff',
+          },
+          exportMenu: {
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
+            },
+          },
           series: {
             line: {
               colors: ['#aaaaaa', '#bbbbbb'],
@@ -334,6 +428,53 @@ describe('theme store', () => {
               fontFamily: 'Arial, sans-serif',
               fontWeight: 'bold',
               color: '#ffffff',
+            },
+          },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            backgroundColor: '#ffffff',
+          },
+          exportMenu: {
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
             },
           },
           yAxis: {
@@ -822,6 +963,53 @@ describe('theme store', () => {
               fontFamily: 'Arial, sans-serif',
               fontWeight: 'bold',
               color: '#ffffff',
+            },
+          },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            backgroundColor: '#ffffff',
+          },
+          exportMenu: {
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
             },
           },
           series: {

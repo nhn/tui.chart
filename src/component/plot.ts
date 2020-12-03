@@ -6,6 +6,8 @@ import { LineModel } from '@t/components/axis';
 import { PlotModels } from '@t/components/plot';
 import { RectModel } from '@t/components/series';
 import { PlotLine, PlotBand, PlotRangeType } from '@t/options';
+import { PlotTheme, LineTheme } from '@t/theme';
+import { pick } from '@src/helpers/utils';
 
 type XPositionParam = {
   axisData: LabelAxisData;
@@ -41,6 +43,8 @@ export default class Plot extends Component {
 
   startIndex = 0;
 
+  theme!: Required<PlotTheme>;
+
   initialize() {
     this.type = 'plot';
   }
@@ -69,7 +73,7 @@ export default class Plot extends Component {
         startIndex: this.startIndex,
       });
 
-      return this.makeLineModel(vertical!, vertical ? position : offsetSize - position, color);
+      return this.makeLineModel(vertical!, vertical ? position : offsetSize - position, { color });
     });
   }
 
@@ -108,15 +112,19 @@ export default class Plot extends Component {
     relativePositions: number[],
     vertical: boolean,
     size?: number,
-    startPosistion?: number
+    startPosition?: number
   ): LineModel[] {
+    const { lineColor: color, lineWidth, dashSegments } = this.theme[
+      vertical ? 'vertical' : 'horizontal'
+    ] as Required<LineTheme>;
+
     return relativePositions.map((position) =>
       this.makeLineModel(
         vertical,
         position,
-        'rgba(0, 0, 0, 0.05)',
+        { color, lineWidth, dashSegments },
         size ?? this.rect.width,
-        startPosistion ?? 0
+        startPosition ?? 0
       )
     );
   }
@@ -171,8 +179,18 @@ export default class Plot extends Component {
     return makeTickPixelPositions(offsetSize, axisData.tickCount);
   }
 
+  renderPlotBackgroundRect(): RectModel {
+    return {
+      type: 'rect',
+      x: 0,
+      y: 0,
+      ...pick(this.rect, 'width', 'height'),
+      color: this.theme.backgroundColor,
+    };
+  }
+
   render(state: ChartState<Options>) {
-    const { layout, axes, plot, scale, zoomRange } = state;
+    const { layout, axes, plot, scale, zoomRange, theme } = state;
 
     if (!plot) {
       return;
@@ -180,6 +198,7 @@ export default class Plot extends Component {
 
     this.rect = layout.plot;
     this.startIndex = zoomRange ? zoomRange[0] : 0;
+    this.theme = theme.plot! as Required<PlotTheme>;
 
     const categories = (state.categories as string[]) ?? [];
     const { lines, bands, showLine } = plot;
@@ -189,14 +208,18 @@ export default class Plot extends Component {
     this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
 
     if (showLine) {
-      this.models.plot = this.renderPlots(axes);
+      this.models.plot = [this.renderPlotBackgroundRect(), ...this.renderPlots(axes)];
     }
   }
 
   makeLineModel(
     vertical: boolean,
     position: number,
-    color: string,
+    {
+      color,
+      dashSegments = [],
+      lineWidth = 1,
+    }: { color: string; dashSegments?: number[]; lineWidth?: number },
     sizeWidth?: number,
     xPos = 0
   ): LineModel {
@@ -212,6 +235,8 @@ export default class Plot extends Component {
       x2: x + width,
       y2: y + height,
       strokeStyle: color,
+      lineWidth,
+      dashedPattern: dashSegments,
     };
   }
 

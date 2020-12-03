@@ -51,6 +51,8 @@ type Theme = {
   yAxis: AxisTheme | AxisTheme[];
   legend: LegendTheme;
   tooltip: TooltipTheme;
+  plot: PlotTheme;
+  exportMenu: ExportMenuTheme;
 };
 
 type AxisTheme = {
@@ -68,6 +70,54 @@ type TooltipTheme = {
   borderRadius?: number;
   header?: FontTheme;
   body?: FontTheme;
+};
+
+type LineTheme = {
+  lineColor?: string;
+  lineWidth?: number;
+  dashSegments?: number[];
+};
+
+interface PlotTheme extends LineTheme {
+  vertical?: LineTheme;
+  horizontal?: LineTheme;
+  backgroundColor?: string;
+}
+
+type XIconTheme = {
+  color?: string;
+  lineWidth?: number;
+};
+
+type DotIconTheme = {
+  color?: string;
+  width?: number;
+  height?: number;
+  gap?: number;
+};
+
+type ExportMenuButtonTheme = {
+  backgroundColor?: string;
+  borderRadius?: number;
+  borderWidth?: number;
+  borderColor?: string;
+  xIcon?: XIconTheme;
+  dotIcon?: DotIconTheme;
+};
+
+type ExportMenuPanelTheme = BorderTheme & {
+  borderRadius?: number;
+  header?: FontTheme & {
+    backgroundColor?: string;
+  };
+  body?: FontTheme & {
+    backgroundColor?: string;
+  };
+};
+
+type ExportMenuTheme = {
+  button?: ExportMenuButtonTheme;
+  panel?: ExportMenuPanelTheme;
 };
 
 type ComboChartSeriesTheme =
@@ -213,6 +263,8 @@ interface BaseThemeOptions {
   tooltip?: TooltipTheme;
   chartExportMenu?: {};
   series?: {};
+  plot?: PlotTheme;
+  exportMenu?: ExportMenuTheme;
 }
 
 type GroupedRect = {

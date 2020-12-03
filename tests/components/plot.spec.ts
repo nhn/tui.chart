@@ -48,6 +48,18 @@ const chartState = {
   },
   plot: { showLine: true },
   categories: ['A', 'B'],
+  theme: {
+    plot: {
+      lineColor: 'rgba(0, 0, 0, 0.05)',
+      vertical: {
+        lineColor: 'rgba(0, 0, 0, 0.05)',
+      },
+      horizontal: {
+        lineColor: 'rgba(0, 0, 0, 0.05)',
+      },
+      backgroundColor: '#ffffff',
+    },
+  },
 };
 
 describe('plot grid lines', () => {
@@ -63,36 +75,52 @@ describe('plot grid lines', () => {
 
     const result = [
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        type: 'rect',
+        x: 0,
+        y: 0,
+        width: 80,
+        height: 80,
+        color: '#ffffff',
+      },
+      {
         type: 'line',
         x: 0.5,
         x2: 80.5,
         y: 0.5,
         y2: 0.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 0.5,
         x2: 80.5,
         y: 80.5,
         y2: 80.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 0.5,
         x2: 0.5,
         y: 0.5,
         y2: 80.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 80.5,
         x2: 80.5,
         y: 0.5,
         y2: 80.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
     ];
 
@@ -115,68 +143,94 @@ describe('plot grid lines', () => {
 
     const result = [
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        type: 'rect',
+        x: 0,
+        y: 0,
+        width: 80,
+        height: 80,
+        color: '#ffffff',
+      },
+
+      {
         type: 'line',
         x: 0.5,
         x2: 0.5,
         y: 0.5,
         y2: 80.5,
-      },
-      {
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
+      },
+
+      {
         type: 'line',
         x: 35.5,
         x2: 35.5,
         y: 0.5,
         y2: 80.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 45.5,
         x2: 45.5,
         y: 0.5,
         y2: 80.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 80.5,
         x2: 80.5,
         y: 0.5,
         y2: 80.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 0.5,
         x2: 35.5,
         y: 0.5,
         y2: 0.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 0.5,
         x2: 35.5,
         y: 80.5,
         y2: 80.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 45.5,
         x2: 80.5,
         y: 0.5,
         y2: 0.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
       {
-        strokeStyle: 'rgba(0, 0, 0, 0.05)',
         type: 'line',
         x: 45.5,
         x2: 80.5,
         y: 80.5,
         y2: 80.5,
+        strokeStyle: 'rgba(0, 0, 0, 0.05)',
+        dashedPattern: [],
+        lineWidth: 1,
       },
     ];
     expect(plot.models.plot).toEqual(result);
@@ -224,6 +278,18 @@ describe('plot options', () => {
       ],
     },
     categories: ['0', '1', '2', '3', '4', '5'],
+    theme: {
+      plot: {
+        lineColor: 'rgba(0, 0, 0, 0.05)',
+        vertical: {
+          lineColor: 'rgba(0, 0, 0, 0.05)',
+        },
+        horizontal: {
+          lineColor: 'rgba(0, 0, 0, 0.05)',
+        },
+        backgroundColor: '#ffffff',
+      },
+    },
   };
 
   beforeEach(() => {
@@ -302,6 +368,8 @@ describe('plot options', () => {
         x2: 64.5,
         y2: 80.5,
         strokeStyle: '#ff0000',
+        dashedPattern: [],
+        lineWidth: 1,
       },
     ]);
   });

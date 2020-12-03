@@ -196,3 +196,69 @@ export const tooltip = () => {
 
   return el;
 };
+
+export const plot = () => {
+  const { el } = createChart(avgTemperatureData, {
+    theme: {
+      plot: {
+        vertical: {
+          lineColor: 'rgba(60, 80, 180, 0.3)',
+          lineWidth: 5,
+          dashSegments: [5, 20],
+        },
+        horizontal: {
+          lineColor: 'rgba(0, 0, 0, 0)',
+        },
+        backgroundColor: 'rgba(60, 80, 180, 0.1)',
+      },
+    },
+  });
+
+  return el;
+};
+
+export const exportMenu = () => {
+  const { el } = createChart(avgTemperatureData, {
+    theme: {
+      exportMenu: {
+        button: {
+          backgroundColor: '#ff0000',
+          borderRadius: 5,
+          borderWidth: 2,
+          borderColor: '#000000',
+          xIcon: {
+            color: '#ffffff',
+            lineWidth: 3,
+          },
+          dotIcon: {
+            color: '#ffffff',
+            width: 10,
+            height: 3,
+            gap: 1,
+          },
+        },
+        panel: {
+          borderColor: '#ff0000',
+          borderWidth: 2,
+          borderRadius: 10,
+          header: {
+            fontSize: 15,
+            fontFamily: 'fantasy',
+            color: '#ffeb3b',
+            fontWeight: 700,
+            backgroundColor: '#673ab7',
+          },
+          body: {
+            fontSize: 12,
+            fontFamily: 'fantasy',
+            color: '#ff0000',
+            fontWeight: '500',
+            backgroundColor: '#000000',
+          },
+        },
+      },
+    },
+  });
+
+  return el;
+};

@@ -6,6 +6,8 @@ import { TitleOption } from '@t/options';
 import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
+import { ExportMenuTheme, ExportMenuButtonTheme, FontTheme, ExportMenuPanelTheme } from '@t/theme';
+import { getFontStyleString } from '@src/helpers/style';
 
 const EXPORT_MENU_WIDTH = 140;
 export const BUTTON_RECT_SIZE = 24;
@@ -28,6 +30,8 @@ export default class ExportMenu extends Component {
   chartEl!: HTMLDivElement;
 
   exportMenuEl!: HTMLDivElement;
+
+  theme!: Required<ExportMenuTheme>;
 
   toggleExportMenu = () => {
     this.opened = !this.opened;
@@ -72,9 +76,9 @@ export default class ExportMenu extends Component {
     const el = document.createElement('div');
     el.onclick = this.onClickExportButton;
     el.innerHTML = `
-        <div class="export-menu" style="top: ${topPosition}px; left: ${leftPosition}px;">
-          <p class="export-menu-title">Export to</p>
-          <div class="export-menu-btn-wrapper">
+        <div class="export-menu" style="top: ${topPosition}px; left: ${leftPosition}px; ${this.makePanelBorderStyle()}">
+          <p class="export-menu-title" style="${this.makePanelStyle('header')}">Export to</p>
+          <div class="export-menu-btn-wrapper" style="${this.makePanelStyle('body')}">
             <button class="export-menu-btn" id="xls">xls</button>
             <button class="export-menu-btn" id="csv">csv</button>
             <button class="export-menu-btn" id="png">png</button>
@@ -102,13 +106,14 @@ export default class ExportMenu extends Component {
     return isString(title) ? title : title?.text ?? 'tui-chart';
   }
 
-  render({ options, layout, chart, series, categories }: ChartState<Options>) {
+  render({ options, layout, chart, series, categories, theme }: ChartState<Options>) {
     this.isShow = isExportMenuVisible(options);
 
     if (!this.isShow) {
       return;
     }
 
+    this.theme = theme.exportMenu as Required<ExportMenuTheme>;
     this.data = { series, categories };
     this.fileName = this.getFileName(options?.exportMenu?.filename || chart.title);
     this.exportMenuEl = this.getExportMenuEl(chart.width);
@@ -119,6 +124,7 @@ export default class ExportMenu extends Component {
         x: 0,
         y: 0,
         opened: this.opened,
+        theme: this.theme.button as Required<ExportMenuButtonTheme>,
       },
     ];
 
@@ -127,9 +133,29 @@ export default class ExportMenu extends Component {
         type: 'rect',
         width: BUTTON_RECT_SIZE,
         height: BUTTON_RECT_SIZE,
-        x: this.rect.x,
-        y: this.rect.y,
+        x: 0,
+        y: 0,
       },
     ];
+  }
+
+  makePanelBorderStyle() {
+    const { borderRadius, borderWidth, borderColor } = this.theme.panel;
+
+    return `border: ${borderWidth}px solid ${borderColor}; border-radius: ${borderRadius}px;`;
+  }
+
+  makePanelStyle(type: 'header' | 'body') {
+    const sectionTheme = this.theme.panel![type];
+    const direction = type === 'header' ? 'top' : 'bottom';
+    const { borderRadius, borderWidth } = this.theme.panel as Required<ExportMenuPanelTheme>;
+    const borderRadiusPx = `${borderRadius - borderWidth}px`;
+
+    return [
+      `${getFontStyleString(sectionTheme as FontTheme)}`,
+      `border-${direction}-left-radius: ${borderRadiusPx};`,
+      `border-${direction}-right-radius: ${borderRadiusPx};`,
+      `background-color: ${sectionTheme!.backgroundColor};`,
+    ].join('');
   }
 }

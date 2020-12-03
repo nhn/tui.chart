@@ -6,13 +6,8 @@ import {
 } from '@t/components/tooltip';
 import { DefaultTooltipTemplate } from '@t/options';
 import { pieTooltipLabelFormatter } from './pieSeries';
-import { FontTheme, TooltipTheme } from '@t/theme';
-
-function getFontStyleString(theme: FontTheme) {
-  const { color, fontSize, fontFamily, fontWeight } = theme;
-
-  return `font-weight: ${fontWeight}; font-family: ${fontFamily}; font-size: ${fontSize}px; color: ${color};`;
-}
+import { TooltipTheme } from '@t/theme';
+import { getFontStyleString } from './style';
 
 function getSeriesNameTemplate(label: string, color: string) {
   return `<span class="series-name">
