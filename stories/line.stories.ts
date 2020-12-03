@@ -364,6 +364,37 @@ export const theme = () => {
   return el;
 };
 
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(temperatureData, {
+    series: {
+      dataLabels: { visible: true, offsetY: -10 },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom',
+            },
+          },
+        },
+      },
+    },
+  });
+  
+  return el;
+};
+
 export const liveUpdate = () => {
   const data = {
     categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],

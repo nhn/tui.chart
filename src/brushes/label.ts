@@ -8,16 +8,7 @@ import { RectStyle, StyleProp, Nullable } from '@t/components/series';
 
 export const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
 
-export type LabelStyleName =
-  | 'default'
-  | 'title'
-  | 'axisTitle'
-  | 'stackTotal'
-  | 'sector'
-  | 'pieSeriesName'
-  | 'treemapSeriesName'
-  | 'rectLabel'
-  | 'rectDataLabel';
+export type LabelStyleName = 'default' | 'title' | 'axisTitle' | 'rectLabel';
 export type StrokeLabelStyleName = 'none' | 'stroke';
 
 export interface LabelStyle {
@@ -28,7 +19,7 @@ export interface LabelStyle {
 }
 
 export type StrokeLabelStyle = {
-  lineWidth?: string;
+  lineWidth?: number;
   strokeStyle?: string;
   shadowColor?: string;
   shadowBlur?: number;
@@ -46,41 +37,6 @@ export const labelStyle = {
   },
   axisTitle: {
     textBaseline: 'top',
-  },
-  stackTotal: {
-    font: '400 11px Arial',
-    fillStyle: '#333333',
-    textBaseline: 'middle',
-  },
-  sector: {
-    font: '600 16px Arial',
-    fillStyle: '#ffffff',
-    textAlign: 'center',
-    textBaseline: 'middle',
-  },
-  pieSeriesName: {
-    font: '400 11px Arial',
-    fillStyle: '#ffffff',
-    textAlign: 'center',
-    textBaseline: 'middle',
-  },
-  treemapSeriesName: {
-    font: '400 11px Arial',
-    fillStyle: '#ffffff',
-    textAlign: 'center',
-    textBaseline: 'middle',
-  },
-  rectDataLabel: {
-    font: '400 11px Arial',
-    fillStyle: 'rgba(0, 0, 0, 0.5)',
-    textAlign: 'center',
-    textBaseline: 'middle',
-  },
-  lineDataLabel: {
-    font: '400 11px Arial',
-    fillStyle: 'rgba(0, 0, 0, 0.5)',
-    textAlign: 'center',
-    textBaseline: 'middle',
   },
   rectLabel: {
     font: DEFAULT_LABEL_TEXT,
@@ -118,15 +74,18 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
       stroke,
       strokeLabelStyle
     );
+    const storkeStyleKeys = Object.keys(strokeStyleObj);
 
-    Object.keys(strokeStyleObj).forEach((key) => {
+    storkeStyleKeys.forEach((key) => {
       ctx[key] =
         key === 'strokeStyle' && isNumber(opacity)
           ? rgba(strokeStyleObj[key]!, opacity)
           : strokeStyleObj[key];
     });
 
-    ctx.strokeText(text, x, y);
+    if (storkeStyleKeys.length) {
+      ctx.strokeText(text, x, y);
+    }
   }
 
   ctx.fillText(text, x, y);

@@ -65,9 +65,9 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(Legend);
     this.componentManager.add(AreaSeries);
     this.componentManager.add(Axis, { name: 'xAxis' });
-    this.componentManager.add(DataLabels);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'secondaryYAxis' });
+    this.componentManager.add(DataLabels);
     this.componentManager.add(AxisTitle, { name: 'xAxis' });
     this.componentManager.add(AxisTitle, { name: 'yAxis' });
     this.componentManager.add(AxisTitle, { name: 'secondaryYAxis' });

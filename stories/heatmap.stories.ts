@@ -160,3 +160,30 @@ export const theme = () => {
 
   return el;
 };
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    series: {
+      dataLabels: { visible: true },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 9,
+          fontWeight: '600',
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            backgroundColor: '#333333',
+            paddingX: 1,
+            paddingY: 1,
+            borderRadius: 5,
+          },
+        },
+      },
+    },
+  });
+
+  return el;
+};

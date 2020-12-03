@@ -209,6 +209,7 @@ export default class PieSeries extends Component {
       const dataLabelData = seriesModel.map((m) => ({
         ...m,
         value: `${pieTooltipLabelFormatter(m.percentValue)}`,
+        theme: this.theme.dataLabels,
       }));
       this.renderDataLabels(dataLabelData, this.alias);
     }

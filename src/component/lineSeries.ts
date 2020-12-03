@@ -346,8 +346,18 @@ export default class LineSeries extends Component {
   }
 
   getDataLabels(seriesModels: LinePointsModel[]): PointDataLabel[] {
-    return seriesModels.flatMap(({ points, name }) =>
-      points.map((point) => ({ type: 'point', ...point, name }))
+    const dataLabelTheme = this.theme.dataLabels;
+
+    return seriesModels.flatMap(({ points, name, color }) =>
+      points.map((point) => ({
+        type: 'point',
+        ...point,
+        name,
+        theme: {
+          ...dataLabelTheme,
+          color: dataLabelTheme.useSeriesColor ? color : dataLabelTheme.color,
+        },
+      }))
     );
   }
 

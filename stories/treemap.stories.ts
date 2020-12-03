@@ -189,3 +189,27 @@ export const theme = () => {
 
   return el;
 };
+
+export const dataLabelsWithTheme = () => {
+  const { el } = createChart(populationDensityData, {
+    series: {
+      dataLabels: { visible: true },
+    },
+    theme: {
+      series: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 16,
+          fontWeight: '800',
+          useSeriesColor: true,
+          lineWidth: 3,
+          textStrokeColor: '#ffffff',
+          shadowColor: '#ffffff',
+          shadowBlur: 10,
+        },
+      },
+    },
+  });
+
+  return el;
+};

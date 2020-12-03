@@ -3,7 +3,7 @@ import { getTextWidth, getMaxLengthLabelWidth } from '@src/helpers/calculator';
 import { label, bubbleLabel } from '@src/brushes/label';
 import { SpectrumLegendModel, SpectrumLegendTooltipModel } from '@t/components/spectrumLegend';
 import { LabelStyle } from '@t/components/axis';
-import { textBubble, getBubbleArrowPoints } from './dataLabel';
+import { getBubbleArrowPoints } from './dataLabel';
 
 export const SPECTRUM_LEGEND_LABEL_HEIGHT = 12;
 export const spectrumLegendBar = {
@@ -12,8 +12,8 @@ export const spectrumLegendBar = {
 };
 export const spectrumLegendTooltip = {
   HEIGHT: 28,
-  POINT_WIDTH: textBubble.POINT_WIDTH,
-  POINT_HEIGHT: textBubble.POINT_HEIGHT,
+  POINT_WIDTH: 8,
+  POINT_HEIGHT: 6,
   PADDING: 6,
 };
 
@@ -170,7 +170,7 @@ export function spectrumLegend(ctx: CanvasRenderingContext2D, model: SpectrumLeg
 export function spectrumTooltip(ctx: CanvasRenderingContext2D, model: SpectrumLegendTooltipModel) {
   const { x, y } = getTooltipArrowPoint(model)!;
 
-  const { PADDING, POINT_HEIGHT } = spectrumLegendTooltip;
+  const { PADDING, POINT_HEIGHT, POINT_WIDTH } = spectrumLegendTooltip;
   const { align, text, color } = model;
 
   const labelWidth = getTextWidth(text);
@@ -192,7 +192,11 @@ export function spectrumTooltip(ctx: CanvasRenderingContext2D, model: SpectrumLe
     boxStartY -= height + POINT_HEIGHT;
   }
 
-  const points = getBubbleArrowPoints(align, { x, y });
+  const points = getBubbleArrowPoints(
+    align,
+    { x, y },
+    { visible: true, width: POINT_WIDTH, height: POINT_HEIGHT }
+  );
 
   bubbleLabel(ctx, {
     x: boxStartX - width / 2,

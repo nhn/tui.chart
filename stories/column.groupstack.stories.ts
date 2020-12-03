@@ -135,12 +135,7 @@ export const dataLabels = () => {
     },
     series: {
       stack: true,
-      dataLabels: {
-        visible: true,
-        style: {
-          textStrokeColor: 'rgba(255, 255, 255, 0.6)',
-        },
-      },
+      dataLabels: { visible: true },
     },
   });
 

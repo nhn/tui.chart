@@ -39,6 +39,7 @@ import {
   isNull,
   isNumber,
   calculateSizeWithPercentString,
+  omit,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
@@ -706,6 +707,7 @@ export default class BoxSeries extends Component {
         y: 0,
         size: this.getOffsetSize(),
       },
+      theme: omit(this.theme.dataLabels, 'stackTotal'),
     };
   }
 

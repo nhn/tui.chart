@@ -524,20 +524,14 @@ export type SeriesDataType =
   | BubbleSeriesDataType;
 
 export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto' | 'outer';
-export type DataLabelStyle = {
-  font?: string;
-  color?: string;
-  textStrokeColor?: string;
-};
+
 export type SubDataLabel = {
   visible?: boolean;
-  style?: DataLabelStyle;
 };
 
 export type DataLabelPieSeriesName = {
   visible: boolean;
   anchor?: 'center' | 'outer';
-  style?: DataLabelStyle;
 };
 
 export type DataLabelOptions = {
@@ -546,7 +540,6 @@ export type DataLabelOptions = {
   offsetX?: number;
   offsetY?: number;
   formatter?: Formatter;
-  style?: DataLabelStyle;
 };
 
 export interface BoxDataLabels extends DataLabelOptions {

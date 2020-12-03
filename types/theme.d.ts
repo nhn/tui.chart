@@ -91,6 +91,7 @@ type PieChartSeriesTheme = {
   hover?: SectorStyle & { color?: string };
   select?: SelectSectorStyle;
   areaOpacity?: number;
+  dataLabels?: PieDataLabelTheme;
 };
 
 type NestedPieChartSeriesTheme = Record<string, PieChartSeriesTheme> | PieChartSeriesTheme;
@@ -107,6 +108,7 @@ interface TreemapChartSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme;
+  dataLabels?: BoxDataLabel;
 }
 
 interface HeatmapChartSeriesTheme {
@@ -120,6 +122,7 @@ interface HeatmapChartSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme;
+  dataLabels?: BoxDataLabel;
 }
 
 type DotTheme = {
@@ -164,6 +167,7 @@ interface LineChartSeriesTheme extends Omit<LineTypeSeriesTheme, 'color'> {
   hover?: {
     dot?: DotTheme;
   };
+  dataLabels?: BubbleDataLabel;
 }
 
 interface CommonSeriesTheme {
@@ -179,6 +183,7 @@ interface AreaChartSeriesTheme extends LineChartSeriesTheme {
       areaOpacity?: number;
     };
   };
+  dataLabels?: BubbleDataLabel;
 }
 
 interface LineScatterChartSeriesTheme {
@@ -232,7 +237,7 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
   hover?: {
     color?: string;
     groupedRect?: GroupedRect;
-  } & ShadowStyle &
+  } & ShadowTheme &
     BorderTheme;
   select?: {
     color?: string;
@@ -241,9 +246,10 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
       areaOpacity?: number;
     };
     areaOpacity?: number;
-  } & ShadowStyle &
+  } & ShadowTheme &
     BorderTheme;
   connector?: ConnectorTheme;
+  dataLabels?: BoxTypeDataLabelTheme;
 }
 
 interface BulletChartSeriesTheme extends CommonSeriesTheme {
@@ -261,7 +267,7 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
   hover?: {
     color?: string;
   } & BorderTheme &
-    ShadowStyle;
+    ShadowTheme;
   select?: {
     color?: string;
     restSeries?: {
@@ -269,7 +275,8 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
     };
     areaOpacity?: number;
   } & BorderTheme &
-    ShadowStyle;
+    ShadowTheme;
+  dataLabels?: BulletDataLabelTheme;
 }
 
 interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
@@ -287,7 +294,7 @@ interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
     rect?: BorderTheme;
     dot?: BoxPlotDotTheme;
     line?: BoxPlotLineTypeTheme;
-  } & ShadowStyle;
+  } & ShadowTheme;
   select?: {
     color?: string;
     rect?: BorderTheme;
@@ -297,7 +304,7 @@ interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
       areaOpacity?: number;
     };
     areaOpacity?: number;
-  } & ShadowStyle;
+  } & ShadowTheme;
 }
 
 type LineTypeTheme = { lineWidth?: number; color?: string };
@@ -311,7 +318,7 @@ type BoxPlotLineTypeTheme = {
 
 type BoxPlotDotTheme = DotTheme & { useSeriesColor?: boolean };
 
-type ShadowStyle = {
+type ShadowTheme = {
   shadowColor?: string;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
@@ -335,6 +342,66 @@ interface RadarChartSeriesTheme {
     dot?: DotTheme;
   };
 }
+
+type ArrowDirection = 'top' | 'right' | 'bottom' | 'left';
+
+type ArrowTheme = {
+  visible?: boolean;
+  width?: number;
+  height?: number;
+  direction?: ArrowDirection;
+};
+
+type TextBubbleTheme = {
+  visible?: boolean;
+  arrow?: ArrowTheme;
+  paddingX?: number;
+  paddingY?: number;
+  backgroundColor?: string;
+  borderRadius?: number;
+} & BorderTheme &
+  ShadowTheme;
+
+type CalloutTheme = { lineWidth?: number; lineColor?: string; useSeriesColor?: boolean };
+
+type TextStrokeTheme = {
+  lineWidth?: number;
+  textStrokeColor?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+};
+
+interface CommonDataLabelTheme extends FontTheme, TextStrokeTheme {
+  useSeriesColor?: boolean;
+}
+
+interface BubbleDataLabel extends CommonDataLabelTheme {
+  textBubble?: TextBubbleTheme;
+}
+
+interface BoxDataLabel extends CommonDataLabelTheme {
+  textBubble?: Omit<TextBubbleTheme, 'arrow'>;
+}
+
+interface BoxTypeDataLabelTheme extends BubbleDataLabel {
+  stackTotal?: BubbleDataLabel;
+}
+
+interface BulletDataLabelTheme extends BubbleDataLabel {
+  marker?: BubbleDataLabel;
+}
+
+interface PieDataLabelTheme extends BoxDataLabel {
+  pieSeriesName?: BoxDataLabel;
+  callout?: CalloutTheme;
+}
+
+type DataLabelTheme =
+  | BubbleDataLabel
+  | BoxDataLabel
+  | BoxTypeDataLabelTheme
+  | BulletDataLabelTheme
+  | PieDataLabelTheme;
 
 interface LineChartThemeOptions extends BaseThemeOptions {
   series?: LineChartSeriesTheme;
@@ -391,3 +458,8 @@ interface BulletCharThemeOptions extends BaseThemeOptions {
 interface BoxPlotCharThemeOptions extends BaseThemeOptions {
   series?: BoxPlotChartSeriesTheme;
 }
+
+type CheckAnchorPieSeries = {
+  hasOuterAnchor: boolean;
+  hasOuterAnchorPieSeriesName: boolean;
+};
