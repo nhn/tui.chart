@@ -91,13 +91,18 @@ export type ChartOptionsMap = {
   lineScatter: LineScatterChartOptions;
   lineArea: LineAreaChartOptions;
   columnLine: ColumnLineChartOptions;
+  lineArea: LineAreaChartOptions;
   heatmap: HeatmapChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
 
+export type OptionsWithDataLabels = ValueOf<
+  Omit<ChartOptionsMap, 'scatter' | 'bubble' | 'boxPlot' | 'lineScatter' | 'radar'>
+>;
+
 export type ChartOptionsUsingYAxis = ValueOf<
-  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap' | 'nestedPie'>
+  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap'>
 >;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
