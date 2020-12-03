@@ -57,6 +57,7 @@ export default class ComponentManager<T> {
 
   clear() {
     this.components = [];
+    this.eventBus.emit('needDraw');
   }
 
   invoke(method: FunctionPropertyNames<Component>, params: any) {

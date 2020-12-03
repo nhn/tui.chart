@@ -156,13 +156,16 @@ export default abstract class Chart<T extends Options> {
     this.draw();
   }
 
+  private throttleResizeEvent = throttle(() => {
+    this.resize();
+  }, 200);
+
   setResizeEvent() {
-    window.addEventListener(
-      'resize',
-      throttle(() => {
-        this.resize();
-      }, 200)
-    );
+    window.addEventListener('resize', this.throttleResizeEvent);
+  }
+
+  clearResizeEvent() {
+    window.removeEventListener('resize', this.throttleResizeEvent);
   }
 
   handleEvent(event: MouseEvent) {
@@ -388,4 +391,20 @@ export default abstract class Chart<T extends Options> {
   };
 
   public abstract setData(data: DataInput): void;
+
+  /**
+   * Destroys the instance.
+   * @api
+   * @example
+   * chart.destroy();
+   */
+  public destroy = () => {
+    this.componentManager.clear();
+    this.clearResizeEvent();
+    this.el.innerHTML = '';
+
+    Object.keys(this).forEach((key) => {
+      this[key] = null;
+    });
+  };
 }
