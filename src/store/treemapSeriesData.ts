@@ -1,5 +1,4 @@
 import { Series, StoreModule, TreemapSeriesData } from '@t/store/store';
-import { extend } from '@src/store/store';
 import { TreemapChartOptions, TreemapSeriesType } from '@t/options';
 import { isUndefined, last } from '@src/helpers/utils';
 

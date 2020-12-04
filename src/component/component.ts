@@ -210,13 +210,15 @@ export default abstract class Component {
         );
       }
     }
+    const currentLength = currentModels.length;
+    const targetLength = targetModels.length;
 
-    if (currentModels.length < targetModels.length) {
-      return [...currentModels, ...targetModels.slice(currentModels.length, targetModels.length)];
+    if (currentLength < targetLength) {
+      return [...currentModels, ...targetModels.slice(currentLength, targetLength)];
     }
 
-    if (currentModels.length > targetModels.length) {
-      return currentModels.slice(0, targetModels.length);
+    if (currentLength > targetLength) {
+      return currentModels.slice(0, targetLength);
     }
 
     return models;
@@ -229,13 +231,16 @@ export default abstract class Component {
     modelNames,
     targetNames
   ) {
-    if (currentModels.length > targetModels.length) {
+    const currentLength = currentModels.length;
+    const targetLength = targetModels.length;
+
+    if (currentLength > targetLength) {
       const newModels = models.filter(({ name }) => includes(targetNames, name));
 
       return newModels.length !== targetModels.length ? targetModels : newModels;
     }
 
-    if (currentModels.length < targetModels.length) {
+    if (currentLength < targetLength) {
       const notIncludedModels = targetModels.reduce(
         (acc, cur, idx) => {
           const notIncluded = !includes(modelNames, cur.name);
@@ -250,7 +255,7 @@ export default abstract class Component {
         { models: [], modelIdx: [] }
       );
 
-      if (models.length + notIncludedModels.models.length === targetModels.length) {
+      if (models.length + notIncludedModels.models.length === targetLength) {
         const newModels = [...models];
 
         notIncludedModels.models.forEach((model, idx) => {
