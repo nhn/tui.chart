@@ -56,6 +56,7 @@ export default class BoxPlotSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'boxPlot';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   render(state: ChartState<BoxPlotChartOptions>): void {
@@ -73,7 +74,6 @@ export default class BoxPlotSeries extends Component {
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
-    this.eventBus.on('selectSeries', this.selectSeries);
 
     const categories = state.categories as string[];
     const { tickDistance } = axes.xAxis;
