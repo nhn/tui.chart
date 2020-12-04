@@ -70,6 +70,8 @@ declare class BaseChart {
 
   public setOptions(options: Options): void;
 
+  public updateOptions(options: Options): void;
+
   public on(eventName: CustomEventType, handler: EventListener): void;
 
   public destroy(): void;
