@@ -197,8 +197,6 @@ export default class BulletSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
-      console.log(responders);
-
       this.eventBus.emit('renderSelectedSeries', {
         models: this.getRespondersWithTheme(responders, 'select'),
         name: this.name,

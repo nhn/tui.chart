@@ -52,12 +52,13 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   initialize() {
     super.initialize();
+    const stackChart = !!this.store.initStoreState.options.series?.stack;
 
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
-    this.componentManager.add(BoxSeries, { name: 'bar' });
-    this.componentManager.add(BoxStackSeries, { name: 'bar' });
+    this.componentManager.add(BoxSeries, { name: 'bar', stackChart });
+    this.componentManager.add(BoxStackSeries, { name: 'bar', stackChart });
     this.componentManager.add(ZeroAxis);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });

@@ -139,7 +139,15 @@ export default class BoxSeries extends Component {
 
   theme!: Required<BoxChartSeriesTheme>;
 
-  initialize({ name }: { name: BoxType }) {
+  initialize({ name, stackChart }: { name: BoxType; stackChart: boolean }) {
+    this.initializeFields(name);
+
+    if (!stackChart) {
+      this.eventBus.on('selectSeries', this.selectSeries);
+    }
+  }
+
+  initializeFields(name: BoxType) {
     this.type = 'series';
     this.name = name;
     this.isBar = name === BOX.BAR;
@@ -266,7 +274,6 @@ export default class BoxSeries extends Component {
     const options = this.getOptions(chartState.options);
 
     this.setEventDetectType(series, options);
-    this.eventBus.on('selectSeries', this.selectSeries);
 
     this.theme = theme.series[this.name];
     this.rect = layout.plot;

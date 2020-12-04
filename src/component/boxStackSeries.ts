@@ -121,6 +121,14 @@ function getStackSeriesDataInViewRange(
 }
 
 export default class BoxStackSeries extends BoxSeries {
+  initialize({ name, stackChart }: { name: BoxType; stackChart: boolean }) {
+    this.initializeFields(name);
+
+    if (stackChart) {
+      this.eventBus.on('selectSeries', this.selectSeries);
+    }
+  }
+
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
     chartState: ChartState<T>,
     computed
@@ -136,7 +144,6 @@ export default class BoxStackSeries extends BoxSeries {
     const options = this.getOptions(chartState.options);
 
     this.setEventDetectType(seriesData, options);
-    this.eventBus.on('selectSeries', this.selectSeries);
 
     this.theme = theme.series[this.name];
     this.rect = layout.plot;
