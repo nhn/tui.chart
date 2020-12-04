@@ -1,3 +1,8 @@
+# TOAST UI Chart v4 major update planning🏃🏃🏃
+TOAST UI Chart is planning a **v4 major update for 2021**. First of all, You can see our **Beta news [here](https://github.com/nhn/tui.chart/issues/427)!**
+<br>
+<br>
+
 # ![Toast UI Chart](https://user-images.githubusercontent.com/35218826/37320160-c4d6dec4-26b5-11e8-9a91-79bb2b882410.png)
 
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library
