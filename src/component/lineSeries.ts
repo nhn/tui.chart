@@ -39,6 +39,7 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { DotTheme, LineChartSeriesTheme } from '@t/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -100,7 +101,7 @@ export default class LineSeries extends Component {
     const { viewRange } = computed;
     const { layout, series, scale, axes, legend, theme } = chartState;
     if (!series.line) {
-      throw new Error("There's no line data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     const categories = (chartState.categories as string[]) ?? [];
@@ -420,7 +421,7 @@ export default class LineSeries extends Component {
     const model = this.tooltipCircleMap[index][seriesIndex];
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', { models: [model], name: this.name });

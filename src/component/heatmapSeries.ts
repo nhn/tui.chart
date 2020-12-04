@@ -15,6 +15,7 @@ import { deepMergedCopy, isNumber } from '@src/helpers/utils';
 import { HeatmapChartSeriesTheme } from '@t/theme';
 import { boxDefault } from '@src/helpers/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
@@ -35,7 +36,7 @@ export default class HeatmapSeries extends Component {
     const { layout, heatmapSeries, axes, theme, colorValueScale, options } = chartState;
 
     if (!heatmapSeries.length) {
-      throw new Error("There's no heatmap data");
+      throw new Error(message.noDataError(this.name));
     }
 
     this.theme = theme.series.heatmap as Required<HeatmapChartSeriesTheme>;
@@ -175,7 +176,7 @@ export default class HeatmapSeries extends Component {
     const model = this.responders[responderIndex];
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderHoveredSeries', {

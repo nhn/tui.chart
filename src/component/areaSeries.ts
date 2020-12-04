@@ -49,6 +49,7 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { AreaChartSeriesTheme, DotTheme } from '@t/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -147,7 +148,7 @@ export default class AreaSeries extends Component {
     const { layout, series, scale, axes, legend, stackSeries, theme } = chartState;
 
     if (!series.area) {
-      throw new Error("There's no area data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     let areaStackSeries;
@@ -591,7 +592,7 @@ export default class AreaSeries extends Component {
     const model = this.tooltipCircleMap[index][seriesIndex];
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {

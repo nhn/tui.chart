@@ -16,6 +16,7 @@ import {
 import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import { ScatterChartSeriesTheme } from '@t/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 export default class ScatterSeries extends Component {
   theme!: Required<ScatterChartSeriesTheme>;
@@ -45,7 +46,7 @@ export default class ScatterSeries extends Component {
   render(chartState: ChartState<ScatterChartOptions>) {
     const { layout, series, scale, legend, options, theme } = chartState;
     if (!series.scatter) {
-      throw new Error("There's no scatter data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     const scatterData = series.scatter.data;
@@ -204,7 +205,7 @@ export default class ScatterSeries extends Component {
     const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {

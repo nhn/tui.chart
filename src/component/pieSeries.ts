@@ -24,6 +24,7 @@ import { PieChartSeriesTheme, SelectSectorStyle } from '@t/theme';
 import { pick } from '@src/helpers/utils';
 import { RespondersThemeType } from '@src/helpers/responders';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -168,7 +169,7 @@ export default class PieSeries extends Component {
     const categories = (chartState.categories as string[]) ?? [];
 
     if (!series.pie) {
-      throw new Error("There's no pie data");
+      throw new Error(message.noDataError(this.name));
     }
 
     const pieTheme = theme.series.pie as Required<PieChartSeriesTheme>;
@@ -517,7 +518,7 @@ export default class PieSeries extends Component {
     const model = this.responders[index];
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {

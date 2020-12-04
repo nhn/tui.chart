@@ -11,6 +11,7 @@ import { getNearestResponder, RespondersThemeType } from '@src/helpers/responder
 import Component from './component';
 import { BubbleChartSeriesTheme } from '@t/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 const MINIMUM_RADIUS = 0.5;
 const MINIMUM_DETECTING_AREA_RADIUS = 1;
@@ -55,7 +56,7 @@ export default class BubbleSeries extends Component {
     const { plot } = layout;
 
     if (!series.bubble) {
-      throw new Error("There's no bubble data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     const { xAxis, yAxis } = axes;
@@ -195,7 +196,7 @@ export default class BubbleSeries extends Component {
     const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {

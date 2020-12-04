@@ -19,6 +19,7 @@ import { BulletChartSeriesTheme } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
 import { isNumber, omit } from '@src/helpers/utils';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 type RenderOptions = {
   ratio: number;
@@ -66,7 +67,7 @@ export default class BulletSeries extends Component {
     const { layout, axes, series, scale, legend, options, theme } = state;
 
     if (!series.bullet) {
-      throw new Error("There's no bullet data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     this.theme = theme.series.bullet as Required<BulletChartSeriesTheme>;
@@ -424,7 +425,7 @@ export default class BulletSeries extends Component {
     );
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {

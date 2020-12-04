@@ -55,6 +55,7 @@ import { makeRectResponderModel, RespondersThemeType } from '@src/helpers/respon
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -828,7 +829,7 @@ export default class BoxSeries extends Component {
     const model = this.tooltipRectMap[index][seriesIndex];
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {

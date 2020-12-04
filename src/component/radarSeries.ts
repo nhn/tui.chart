@@ -17,6 +17,7 @@ import { RadarChartSeriesTheme, DotTheme } from '@t/theme';
 import { RespondersThemeType } from '@src/helpers/responders';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { isNumber } from '@src/helpers/utils';
+import { message } from '@src/message';
 type RenderOptions = {
   categories: string[];
   centerX: number;
@@ -52,7 +53,7 @@ export default class RadarSeries extends Component {
     const { layout, axes, series, legend, options, theme } = state;
 
     if (!series.radar) {
-      throw new Error("There's no radar data");
+      throw new Error(message.noDataError(this.name));
     }
 
     this.theme = theme.series.radar as Required<RadarChartSeriesTheme>;
@@ -240,7 +241,7 @@ export default class RadarSeries extends Component {
     const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {

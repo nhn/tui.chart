@@ -20,6 +20,7 @@ import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '
 import { isNumber } from '@src/helpers/utils';
 import { crispPixel } from '@src/helpers/calculator';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 type RenderOptions = {
   ratio: number;
@@ -63,7 +64,7 @@ export default class BoxPlotSeries extends Component {
     const { layout, axes, series, scale, legend, options, theme } = state;
 
     if (!series.boxPlot) {
-      throw new Error("There's no boxPlot data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     if (options?.series?.eventDetectType) {

@@ -17,6 +17,7 @@ import { RectDataLabel } from '@t/components/dataLabels';
 import { TreemapChartSeriesTheme } from '@t/theme';
 import { boxDefault } from '@src/helpers/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 export default class TreemapSeries extends Component {
   models: TreemapSeriesModels = { series: [], layer: [] };
@@ -55,7 +56,7 @@ export default class TreemapSeries extends Component {
     const { layout, treemapSeries, colorValueScale, options, theme, treemapZoomId } = chartState;
 
     if (!treemapSeries.length) {
-      throw new Error("There's no tree map data");
+      throw new Error(message.noDataError(this.name));
     }
 
     const currentTreemapZoomId = treemapZoomId.cur;
@@ -266,7 +267,7 @@ export default class TreemapSeries extends Component {
     const model = this.responders.find(({ indexes }) => last(indexes) === index);
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {

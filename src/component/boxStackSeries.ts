@@ -42,6 +42,7 @@ import { RectDataLabel } from '@t/components/dataLabels';
 import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { getDataInRange } from '@src/helpers/range';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 type RenderOptions = {
   stack: Stack;
@@ -787,7 +788,7 @@ export default class BoxStackSeries extends BoxSeries {
     const model = this.tooltipRectMap[index].find(({ name: seriesName }) => seriesName === name);
 
     if (!model) {
-      throw new Error('The index value is invalid.');
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {
