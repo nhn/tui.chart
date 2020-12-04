@@ -626,3 +626,20 @@ export type SeriesDataInput =
   | BoxPlotSeriesType
   | BoxSeriesInput<BoxSeriesDataType>
   | NestedPieSeriesType;
+
+export type DataInput =
+  | LineSeriesData
+  | AreaSeriesData
+  | BoxSeriesData
+  | BoxPlotSeriesData
+  | ScatterSeriesData
+  | BubbleSeriesData
+  | BulletSeriesData
+  | HeatmapSeriesData
+  | PieSeriesData
+  | RadarSeriesData
+  | TreemapSeriesData
+  | LineAreaData
+  | LineScatterData
+  | ColumnLineData
+  | NestedPieSeriesData;

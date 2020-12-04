@@ -85,4 +85,9 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
   public addSeries(data: ScatterSeriesInput, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: ScatterSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { scatter: series }, categories });
+  }
 }

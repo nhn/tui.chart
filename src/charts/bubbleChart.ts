@@ -86,4 +86,8 @@ export default class BubbleChart extends Chart<BaseOptions> {
   public addSeries(data: BubbleSeriesInput, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: BubbleSeriesData) {
+    this.store.dispatch('setData', { series: { bubble: data.series } });
+  }
 }

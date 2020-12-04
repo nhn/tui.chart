@@ -28,15 +28,12 @@ import * as labelBrush from '@src/brushes/label';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 
-import { BoxSeriesType, BoxSeriesDataType, BarChartOptions, BoxSeriesInput } from '@t/options';
+import { BoxSeriesDataType, BarChartOptions, BoxSeriesInput, BoxSeriesData } from '@t/options';
 
 export interface BarChartProps {
   el: HTMLElement;
   options: BarChartOptions;
-  data: {
-    categories: string[];
-    series: BoxSeriesType<BoxSeriesDataType>[];
-  };
+  data: BoxSeriesData;
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
@@ -93,5 +90,10 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   public addSeries(data: BoxSeriesInput<BoxSeriesDataType>, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
+  }
+
+  public setData(data: BoxSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { bar: series }, categories });
   }
 }

@@ -105,4 +105,8 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
   ) => {
     this.store.dispatch('addSeries', { data, ...addSeriesDataInfo });
   };
+
+  public setData(data: LineAreaData) {
+    this.store.dispatch('setData', data);
+  }
 }

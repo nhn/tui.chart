@@ -1,5 +1,4 @@
 import { StoreModule, RawSeries } from '@t/store/store';
-import { extend } from '@src/store/store';
 import { NestedPieSeriesType } from '@t/options';
 
 function findRootName(rawSeries: RawSeries, seriesIndex: number, parentName: string) {
@@ -53,7 +52,7 @@ const nestedPieSeriesData: StoreModule = {
         };
       });
 
-      extend(state.nestedPieSeries, newSeriesData);
+      state.nestedPieSeries = newSeriesData;
       this.dispatch('updateNestedPieChartLegend');
     },
   },

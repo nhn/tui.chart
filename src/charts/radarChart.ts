@@ -74,4 +74,9 @@ export default class RadarChart extends Chart<RadarChartOptions> {
   public addSeries(data: RadarSeriesInput, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: RadarSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { radar: series }, categories });
+  }
 }

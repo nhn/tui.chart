@@ -97,4 +97,13 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
   public addSeries = (data: HeatmapSeriesDataType, dataInfo: AddSeriesDataInfo) => {
     this.store.dispatch('addHeatmapSeries', { data, ...dataInfo });
   };
+
+  public setData(data: HeatmapSeriesData) {
+    const { categories, series } = data;
+
+    this.store.dispatch('setData', {
+      series: { heatmap: getSeriesWithYCategory(series, categories) },
+      categories,
+    });
+  }
 }

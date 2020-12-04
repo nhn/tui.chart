@@ -320,6 +320,13 @@ const seriesData: StoreModule = {
       this.dispatch('initThemeState');
       this.dispatch('initLegendState');
     },
+    setData({ state, initStoreState }, { series, categories }) {
+      initStoreState.series = series;
+      state.rawCategories = makeRawCategories(series, categories);
+
+      this.dispatch('initThemeState');
+      this.dispatch('initLegendState');
+    },
   },
   observe: {
     updateSeriesData() {
