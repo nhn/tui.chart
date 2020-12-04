@@ -19,6 +19,8 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '@t/theme';
 import { isNumber } from '@src/helpers/utils';
 import { crispPixel } from '@src/helpers/calculator';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 type RenderOptions = {
   ratio: number;
@@ -55,13 +57,14 @@ export default class BoxPlotSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'boxPlot';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   render(state: ChartState<BoxPlotChartOptions>): void {
     const { layout, axes, series, scale, legend, options, theme } = state;
 
     if (!series.boxPlot) {
-      throw new Error("There's no boxPlot data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     if (options?.series?.eventDetectType) {
@@ -582,4 +585,24 @@ export default class BoxPlotSeries extends Component {
 
     return getRGBA(seriesColor, opacity);
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    state,
+  }: SelectSeriesHandlerParams<BoxPlotChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.boxPlot![seriesIndex];
+    const models = this.getRespondersWithTheme(this.tooltipRectMap[`${name}-${index}`], 'select');
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models,
+      name: this.name,
+      eventDetectType: this.eventDetectType,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

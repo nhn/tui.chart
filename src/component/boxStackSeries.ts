@@ -41,6 +41,8 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RectDataLabel } from '@t/components/dataLabels';
 import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { getDataInRange } from '@src/helpers/range';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 type RenderOptions = {
   stack: Stack;
@@ -120,6 +122,14 @@ function getStackSeriesDataInViewRange(
 }
 
 export default class BoxStackSeries extends BoxSeries {
+  initialize({ name, stackChart }: { name: BoxType; stackChart: boolean }) {
+    this.initializeFields(name);
+
+    if (stackChart) {
+      this.eventBus.on('selectSeries', this.selectSeries);
+    }
+  }
+
   render<T extends BarChartOptions | ColumnChartOptions | ColumnLineChartOptions>(
     chartState: ChartState<T>,
     computed
@@ -206,7 +216,6 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
-
     this.responders = this.getBoxSeriesResponders(series, tooltipData, axes);
   }
 
@@ -763,4 +772,30 @@ export default class BoxStackSeries extends BoxSeries {
 
     this.activatedResponders = rectModels;
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    state,
+  }: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { stackSeries } = state;
+    const stackSeriesData = stackSeries[this.name] as StackSeriesData<BoxType>;
+    const { name } = stackSeriesData.data[seriesIndex];
+    const model = this.tooltipRectMap[index].find(({ name: seriesName }) => seriesName === name);
+
+    if (!model) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getRespondersWithTheme([model], 'select'),
+      name: this.name,
+      eventDetectType: this.eventDetectType,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

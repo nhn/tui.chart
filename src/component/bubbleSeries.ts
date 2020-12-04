@@ -1,15 +1,17 @@
 import { CircleModel, CircleResponderModel, CircleSeriesModels } from '@t/components/series';
-import { BaseOptions, BubbleSeriesType, Rect } from '@t/options';
+import { BaseOptions, BubbleChartOptions, BubbleSeriesType, Rect } from '@t/options';
 import { ChartState, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isString } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNumber, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import Component from './component';
 import { BubbleChartSeriesTheme } from '@t/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 const MINIMUM_RADIUS = 0.5;
 const MINIMUM_DETECTING_AREA_RADIUS = 1;
@@ -40,6 +42,7 @@ export default class BubbleSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'bubble';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   initUpdate(delta: number) {
@@ -53,7 +56,7 @@ export default class BubbleSeries extends Component {
     const { plot } = layout;
 
     if (!series.bubble) {
-      throw new Error("There's no bubble data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     const { xAxis, yAxis } = axes;
@@ -183,4 +186,24 @@ export default class BubbleSeries extends Component {
       this.eventBus.emit('needDraw');
     }
   }
+
+  selectSeries = ({ index, seriesIndex, state }: SelectSeriesHandlerParams<BubbleChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.bubble!.data[seriesIndex];
+    const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
+
+    if (!model) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: [model],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
 }

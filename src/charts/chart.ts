@@ -13,14 +13,25 @@ import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
 import { ChartProps, Point, AnimationOptions, SeriesDataInput, DataInput } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
-import { Options, StoreModule } from '@t/store/store';
+import { ChartState, Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
 import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
+import { message } from '@src/message';
 
 export const DEFAULT_ANIM_DURATION = 500;
 
 export type AddSeriesDataInfo = { chartType?: string; category?: string };
+export type SelectSeriesInfo = {
+  seriesIndex?: number;
+  index?: number;
+  alias?: string;
+  chartType?: 'line' | 'area' | 'column' | 'scatter';
+};
+
+export interface SelectSeriesHandlerParams<T extends Options> extends SelectSeriesInfo {
+  state: ChartState<T>;
+}
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -406,5 +417,26 @@ export default abstract class Chart<T extends Options> {
     Object.keys(this).forEach((key) => {
       this[key] = null;
     });
+  };
+
+  private isSelectableSeries() {
+    return this.store.initStoreState.options.series?.selectable;
+  }
+
+  public selectSeries = (seriesInfo: SelectSeriesInfo) => {
+    if (!this.isSelectableSeries()) {
+      throw new Error(message.SELECT_SERIES_API_SELECTABLE_ERROR);
+    }
+
+    this.eventBus.emit('selectSeries', { ...seriesInfo, state: this.store.state });
+  };
+
+  public unselectSeries = () => {
+    if (!this.isSelectableSeries()) {
+      throw new Error(message.SELECT_SERIES_API_SELECTABLE_ERROR);
+    }
+
+    this.store.dispatch('setAllLegendActiveState', true);
+    this.eventBus.emit('resetSelectedSeries');
   };
 }

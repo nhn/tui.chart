@@ -40,6 +40,7 @@ import {
   isNumber,
   calculateSizeWithPercentString,
   omit,
+  isUndefined,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions } from '@src/helpers/calculator';
@@ -53,6 +54,8 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { makeRectResponderModel, RespondersThemeType } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -137,7 +140,15 @@ export default class BoxSeries extends Component {
 
   theme!: Required<BoxChartSeriesTheme>;
 
-  initialize({ name }: { name: BoxType }) {
+  initialize({ name, stackChart }: { name: BoxType; stackChart: boolean }) {
+    this.initializeFields(name);
+
+    if (!stackChart) {
+      this.eventBus.on('selectSeries', this.selectSeries);
+    }
+  }
+
+  initializeFields(name: BoxType) {
     this.type = 'series';
     this.name = name;
     this.isBar = name === BOX.BAR;
@@ -262,6 +273,7 @@ export default class BoxSeries extends Component {
 
     const categories = (chartState.categories as string[]) ?? [];
     const options = this.getOptions(chartState.options);
+
     this.setEventDetectType(series, options);
 
     this.theme = theme.series[this.name];
@@ -335,7 +347,6 @@ export default class BoxSeries extends Component {
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
-
     this.responders = this.getBoxSeriesResponders(seriesModels, tooltipData, axes);
   }
 
@@ -801,4 +812,30 @@ export default class BoxSeries extends Component {
       ? getRGBA(color, active ? select.areaOpacity! : select.restSeries!.areaOpacity!)
       : getRGBA(color, areaOpacity);
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    chartType,
+  }: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'column')
+    ) {
+      return;
+    }
+
+    const model = this.tooltipRectMap[index][seriesIndex];
+
+    if (!model) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getRespondersWithTheme([model], 'select'),
+      name: this.name,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

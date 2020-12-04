@@ -3,7 +3,6 @@ import { BudgetDataForBoxPlot } from './data';
 import { BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
-import { rgba } from '@src/helpers/color';
 import '@src/css/chart.css';
 
 export default {

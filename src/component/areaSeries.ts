@@ -31,6 +31,8 @@ import {
   deepCopyArray,
   deepMergedCopy,
   first,
+  isNumber,
+  isUndefined,
   last,
   range,
   sum,
@@ -46,6 +48,8 @@ import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { AreaChartSeriesTheme, DotTheme } from '@t/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -91,6 +95,7 @@ export default class AreaSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'area';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   initUpdate(delta: number) {
@@ -143,7 +148,7 @@ export default class AreaSeries extends Component {
     const { layout, series, scale, axes, legend, stackSeries, theme } = chartState;
 
     if (!series.area) {
-      throw new Error("There's no area data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     let areaStackSeries;
@@ -570,4 +575,30 @@ export default class AreaSeries extends Component {
       this.eventBus.emit('needDraw');
     }
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    chartType,
+  }: SelectSeriesHandlerParams<AreaChartOptions>) => {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'area')
+    ) {
+      return;
+    }
+
+    const model = this.tooltipCircleMap[index][seriesIndex];
+
+    if (!model) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: [model],
+      name: this.name,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

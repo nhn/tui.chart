@@ -11,10 +11,11 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { SeriesDataLabels } from '@t/components/dataLabels';
 import { RespondersThemeType } from '@src/helpers/responders';
-import { deepMergedCopy } from '@src/helpers/utils';
+import { deepMergedCopy, isNumber } from '@src/helpers/utils';
 import { HeatmapChartSeriesTheme } from '@t/theme';
 import { boxDefault } from '@src/helpers/theme';
-import { dataLabel } from '@src/brushes/dataLabel';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 export default class HeatmapSeries extends Component {
   models!: HeatmapRectModels;
@@ -28,13 +29,14 @@ export default class HeatmapSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'heatmap';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   render(chartState: ChartState<HeatmapChartOptions>) {
     const { layout, heatmapSeries, axes, theme, colorValueScale, options } = chartState;
 
     if (!heatmapSeries.length) {
-      throw new Error("There's no heatmap data");
+      throw new Error(message.noDataError(this.name));
     }
 
     this.theme = theme.series.heatmap as Required<HeatmapChartSeriesTheme>;
@@ -158,4 +160,29 @@ export default class HeatmapSeries extends Component {
     this.eventBus.emit('renderSpectrumTooltip', responders);
     this.eventBus.emit('needDraw');
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    state,
+  }: SelectSeriesHandlerParams<HeatmapChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const dataSize = state.series.heatmap?.[0].data.length;
+    const responderIndex = seriesIndex * dataSize + index;
+
+    const model = this.responders[responderIndex];
+
+    if (!model) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models: this.getRespondersWithTheme([model], 'select'),
+      name: this.name,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }
