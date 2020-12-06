@@ -10,10 +10,14 @@ import {
 import { extend } from './store';
 import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
-import { isString } from '@src/helpers/utils';
+import { isString, isUndefined } from '@src/helpers/utils';
 
 type UsingShowLineOptions = ValueOf<
   Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie'>
+>;
+
+type UsingPlotLineBandOptions = ValueOf<
+  Pick<ChartOptionsMap, 'area' | 'line' | 'lineArea' | 'columnLine'>
 >;
 
 function getOverlappingRange(range: RangeDataType<number>[]) {
@@ -112,6 +116,38 @@ const plot: StoreModule = {
       );
 
       extend(state.plot, { lines, bands });
+    },
+    addPlotLine({ state }, { data }: { data: PlotLine }) {
+      const lines = (state.options as UsingPlotLineBandOptions)?.plot?.lines ?? [];
+      if (
+        !lines.some(
+          ({ id: lineId }) => !isUndefined(lineId) && !isUndefined(data.id) && lineId === data.id
+        )
+      ) {
+        this.dispatch('updateOptions', { plot: { lines: [...lines, data] } });
+      }
+    },
+    addPlotBand({ state }, { data }: { data: PlotBand }) {
+      const bands = (state.options as UsingPlotLineBandOptions)?.plot?.bands ?? [];
+      if (
+        !bands.some(
+          ({ id: bandId }) => !isUndefined(bandId) && !isUndefined(data.id) && bandId === data.id
+        )
+      ) {
+        this.dispatch('updateOptions', { plot: { bands: [...bands, data] } });
+      }
+    },
+    removePlotLine({ state }, { id }: { id: string }) {
+      const lines = ((state.options as UsingPlotLineBandOptions)?.plot?.lines ?? []).filter(
+        ({ id: lineId }) => lineId !== id
+      );
+      this.dispatch('updateOptions', { plot: { lines } });
+    },
+    removePlotBand({ state }, { id }: { id: string }) {
+      const bands = ((state.options as UsingPlotLineBandOptions)?.plot?.bands ?? []).filter(
+        ({ id: bandId }) => bandId !== id
+      );
+      this.dispatch('updateOptions', { plot: { bands } });
     },
   },
   observe: {

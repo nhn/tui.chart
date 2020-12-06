@@ -224,6 +224,7 @@ export type PlotLine = {
   color: string;
   opacity?: number;
   vertical?: boolean;
+  id?: string;
 };
 
 export type PlotBand = {
@@ -231,6 +232,7 @@ export type PlotBand = {
   color: string;
   opacity?: number;
   mergeOverlappingRanges?: boolean;
+  id?: string;
 };
 
 type PlotOptions = BaseSizeOptions & {
