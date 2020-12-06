@@ -11,7 +11,7 @@ import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
 import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
-import { ChartProps, Point, AnimationOptions, SeriesDataInput, DataInput } from '@t/options';
+import { ChartProps, Point, AnimationOptions, SeriesDataInput, Size, DataInput } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { ChartState, Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
@@ -149,7 +149,7 @@ export default abstract class Chart<T extends Options> {
     }, 0);
   }
 
-  resize() {
+  resizeChartSize() {
     this.animationControlFlag.resizing = true;
     const { offsetWidth, offsetHeight } = this.el as HTMLElement;
     const { width, height } = this.store.state.chart;
@@ -168,7 +168,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   private throttleResizeEvent = throttle(() => {
-    this.resize();
+    this.resizeChartSize();
   }, 200);
 
   setResizeEvent() {
@@ -438,5 +438,16 @@ export default abstract class Chart<T extends Options> {
 
     this.store.dispatch('setAllLegendActiveState', true);
     this.eventBus.emit('resetSelectedSeries');
+  };
+
+  /**
+   * Public API for resizable.
+   * @param {object} size chart size
+   *      @param {number} [size.width] width
+   *      @param {number} [size.height] height
+   * @api
+   */
+  public resize = (size: Partial<Size>) => {
+    this.store.dispatch('updateOptions', { chart: { ...size } });
   };
 }

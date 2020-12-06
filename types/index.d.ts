@@ -7,6 +7,7 @@ import {
   LineChartOptions,
   LineSeriesData,
   LineSeriesDataType,
+  Size,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -69,6 +70,8 @@ declare class BaseChart {
   public on(eventName: CustomEventType, handler: EventListener): void;
 
   public destroy(): void;
+
+  public resize(size: Partial<Size>): void;
 }
 
 export class LineChart extends BaseChart {

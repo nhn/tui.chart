@@ -36,15 +36,13 @@ const optionsData: StoreModule = {
 
       state.options = getOptionsBySize({ width, height }, state.originalOptions);
     },
-    updateOptions({ state }, options) {
+    updateOptions({ state, initStoreState }, options) {
+      initStoreState.options = deepMergedCopy(initStoreState.options, options);
       state.originalOptions = deepMergedCopy(state.originalOptions, options);
       const width = state.originalOptions.chart!.width!;
       const height = state.originalOptions.chart!.height!;
 
-      state.options = getOptionsBySize({ width, height }, state.originalOptions);
-
       this.dispatch('setChartSize', { width, height });
-      this.dispatch('updateTheme');
     },
   },
   observe: {
