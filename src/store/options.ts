@@ -43,6 +43,7 @@ const optionsData: StoreModule = {
       const height = state.originalOptions.chart!.height!;
 
       this.dispatch('setChartSize', { width, height });
+      this.dispatch('initThemeState');
     },
   },
   observe: {

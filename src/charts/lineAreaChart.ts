@@ -36,6 +36,8 @@ import {
   LineAreaData,
   LineSeriesDataType,
   LineSeriesInput,
+  PlotBand,
+  PlotLine,
 } from '@t/options';
 import { RawSeries } from '@t/store/store';
 
@@ -108,5 +110,21 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
 
   public setData(data: LineAreaData) {
     this.store.dispatch('setData', data);
+  }
+
+  public addPlotLine(data: PlotLine) {
+    this.store.dispatch('addPlotLine', { data });
+  }
+
+  public removePlotLine(id: string) {
+    this.store.dispatch('removePlotLine', { id });
+  }
+
+  public addPlotBand(data: PlotBand) {
+    this.store.dispatch('addPlotBand', { data });
+  }
+
+  public removePlotBand(id: string) {
+    this.store.dispatch('removePlotBand', { id });
   }
 }

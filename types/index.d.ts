@@ -8,6 +8,8 @@ import {
   LineSeriesData,
   LineSeriesDataType,
   Size,
+  PlotBand,
+  PlotLine,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -78,12 +80,28 @@ export class LineChart extends BaseChart {
   constructor(props: LineChartProps);
 
   public addData(data: LineSeriesDataType[], category?: string): void;
+
+  public addPlotLine(data: PlotLine): void;
+
+  public removePlotLine(id: string): void;
+
+  public addPlotBand(data: PlotBand): void;
+
+  public removePlotBand(id: string): void;
 }
 
 export class AreaChart extends BaseChart {
   constructor(props: AreaChartProps);
 
   public addData(data: AreaSeriesDataType[], category: string): void;
+
+  public addPlotLine(data: PlotLine): void;
+
+  public removePlotLine(id: string): void;
+
+  public addPlotBand(data: PlotBand): void;
+
+  public removePlotBand(id: string): void;
 }
 
 export class BarChart extends BaseChart {
@@ -146,6 +164,14 @@ export class LineAreaChart extends BaseChart {
     category: string,
     chartType: 'line' | 'area'
   ): void;
+
+  public addPlotLine(data: PlotLine): void;
+
+  public removePlotLine(id: string): void;
+
+  public addPlotBand(data: PlotBand): void;
+
+  public removePlotBand(id: string): void;
 }
 
 export class LineScatterChart extends BaseChart {
@@ -162,6 +188,14 @@ export class ColumnLineChart extends BaseChart {
     category: string,
     chartType: 'line' | 'column'
   ): void;
+
+  public addPlotLine(data: PlotLine): void;
+
+  public removePlotLine(id: string): void;
+
+  public addPlotBand(data: PlotBand): void;
+
+  public removePlotBand(id: string): void;
 }
 
 export { LineChartOptions, LineSeriesData };
