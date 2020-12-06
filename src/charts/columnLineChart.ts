@@ -131,7 +131,6 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
 
-
   public setData(data: ColumnLineData) {
     this.store.dispatch('setData', data);
   }
@@ -149,6 +148,6 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   }
 
   public removePlotBand(id: string) {
-    this.store.dispatch('removePlotBand', { id });s
+    this.store.dispatch('removePlotBand', { id });
   }
 }

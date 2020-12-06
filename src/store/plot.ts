@@ -83,6 +83,13 @@ function makePlotBands(categories: string[], isDateType: boolean, plotBands: Plo
     };
   });
 }
+
+function isExistPlotId<T extends PlotLine | PlotBand>(plots: T[], data: T) {
+  return plots.some(
+    ({ id: bandId }) => !isUndefined(bandId) && !isUndefined(data.id) && bandId === data.id
+  );
+}
+
 const plot: StoreModule = {
   name: 'plot',
   state: ({ options }) => ({
@@ -119,21 +126,13 @@ const plot: StoreModule = {
     },
     addPlotLine({ state }, { data }: { data: PlotLine }) {
       const lines = (state.options as UsingPlotLineBandOptions)?.plot?.lines ?? [];
-      if (
-        !lines.some(
-          ({ id: lineId }) => !isUndefined(lineId) && !isUndefined(data.id) && lineId === data.id
-        )
-      ) {
+      if (!isExistPlotId(lines, data)) {
         this.dispatch('updateOptions', { plot: { lines: [...lines, data] } });
       }
     },
     addPlotBand({ state }, { data }: { data: PlotBand }) {
       const bands = (state.options as UsingPlotLineBandOptions)?.plot?.bands ?? [];
-      if (
-        !bands.some(
-          ({ id: bandId }) => !isUndefined(bandId) && !isUndefined(data.id) && bandId === data.id
-        )
-      ) {
+      if (!isExistPlotId(bands, data)) {
         this.dispatch('updateOptions', { plot: { bands: [...bands, data] } });
       }
     },
