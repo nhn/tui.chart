@@ -301,8 +301,12 @@ export default abstract class Chart<T extends Options> {
       .map((datum) => pick(datum, 'chartType', 'label', 'checked'));
   };
 
-  public setOptions = (options: Options) => {
-    this.store.dispatch('updateOptions', options);
+  public abstract updateOptions(options: Options): void;
+
+  public abstract setOptions(options: Options): void;
+
+  public getOptions = () => {
+    return JSON.parse(JSON.stringify(this.store.initStoreState.options));
   };
 
   public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
@@ -449,10 +453,6 @@ export default abstract class Chart<T extends Options> {
    */
   public resize = (size: Partial<Size>) => {
     this.store.dispatch('updateOptions', { chart: { ...size } });
-  };
-
-  public getOptions = () => {
-    return JSON.parse(JSON.stringify(this.store.initStoreState.options));
   };
 
   public setTooltipOffset(offset: Partial<Point>) {

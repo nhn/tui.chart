@@ -158,4 +158,12 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public setOptions = (options: ColumnLineChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: ColumnLineChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

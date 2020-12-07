@@ -74,4 +74,12 @@ export default class PieChart extends Chart<PieChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public setOptions = (options: PieChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: PieChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

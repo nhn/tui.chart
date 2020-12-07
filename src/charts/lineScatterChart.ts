@@ -100,4 +100,12 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
   public setData(data: LineScatterData) {
     this.store.dispatch('setData', data);
   }
+
+  public setOptions = (options: LineScatterChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: LineScatterChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

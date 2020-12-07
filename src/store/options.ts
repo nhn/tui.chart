@@ -36,6 +36,13 @@ const optionsData: StoreModule = {
 
       state.options = getOptionsBySize({ width, height }, state.originalOptions);
     },
+    initOptions({ initStoreState, state }, options: Options) {
+      initStoreState.options = options;
+      state.originalOptions = deepCopy(options);
+      const { width, height } = state.originalOptions.chart!;
+
+      this.dispatch('setChartSize', { width, height });
+    },
     updateOptions({ state, initStoreState }, options) {
       initStoreState.options = deepMergedCopy(initStoreState.options, options);
       state.originalOptions = deepMergedCopy(state.originalOptions, options);

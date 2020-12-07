@@ -83,4 +83,12 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { boxPlot: series }, categories });
   }
+
+  public setOptions = (options: BoxPlotChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: BoxPlotChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }
