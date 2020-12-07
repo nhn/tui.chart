@@ -41,8 +41,7 @@ const optionsData: StoreModule = {
       const width = state.originalOptions.chart!.width!;
       const height = state.originalOptions.chart!.height!;
 
-      state.options = getOptionsBySize({ width, height } as Size, state.originalOptions);
-
+      this.dispatch('setChartSize', { width, height });
       this.dispatch('initThemeState');
     },
   },
