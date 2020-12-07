@@ -483,15 +483,16 @@ const layout: StoreModule = {
   }),
   action: {
     setLayout({ state }) {
-      const { legend: legendState, theme } = state;
       const {
-        legend: { align },
+        legend: legendState,
+        theme,
         circleLegend: circleLegendState,
         series,
         options,
         chart,
         axes,
       } = state;
+      const { align } = legendState;
       const chartSize = {
         height: chart.height - padding.Y * 2,
         width: chart.width - padding.X * 2,

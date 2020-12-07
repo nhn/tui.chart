@@ -12,7 +12,7 @@ export default {
 
 const width = 800;
 const height = 450;
-const defaultOptions = {
+const defaultOptions: Record<string, any> = {
   chart: {
     width,
     height,
@@ -34,17 +34,13 @@ const defaultOptions = {
   },
 };
 
-function createChart(
-  data: HeatmapSeriesData,
-  customOptions: Record<string, any> = {},
-  responsive = false
-) {
+function createChart(data: HeatmapSeriesData, customOptions: Record<string, any> = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new HeatmapChart({ el, data, options });
 
@@ -123,11 +119,9 @@ export const datetimeCategory = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(
-    temperatureAverageDataForHeatmap,
-    { chart: { title: '24-hr Average Temperature' } },
-    true
-  );
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    chart: { title: '24-hr Average Temperature', width: 800, height: 'auto' },
+  });
 
   return el;
 };

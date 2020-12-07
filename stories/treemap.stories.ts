@@ -12,7 +12,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions = {
+const defaultOptions: Record<string, any> = {
   chart: {
     width,
     height,
@@ -24,17 +24,13 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(
-  data: TreemapSeriesData,
-  customOptions: Record<string, any> = {},
-  responsive = false
-) {
+function createChart(data: TreemapSeriesData, customOptions: Record<string, any> = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new TreemapChart({ el, data, options });
 
@@ -150,7 +146,9 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(usedDiskSpaceData, { chart: { title: 'Used disk space' } }, true);
+  const { el } = createChart(usedDiskSpaceData, {
+    chart: { title: 'Used disk space', width: 700, height: 'auto' },
+  });
 
   return el;
 };

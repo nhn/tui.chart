@@ -4,13 +4,13 @@ import layout from '@src/store/layout';
 import seriesData from '@src/store/seriesData';
 import category from '@src/store/category';
 import legend from '@src/store/legend';
-import optionsStore, { useResponsive } from '@src/store/options';
+import optionsStore from '@src/store/options';
 import theme from '@src/store/theme';
 import EventEmitter, { CustomEventType, EventListener } from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
+import { debounce, isBoolean, isNumber, isUndefined, pick } from '@src/helpers/utils';
 import { ChartProps, Point, AnimationOptions, SeriesDataInput } from '@t/options';
 import { responderDetectors } from '@src/responderDetectors';
 import { Options, StoreModule } from '@t/store/store';
@@ -65,7 +65,6 @@ export default abstract class Chart<T extends Options> {
       duration = 0;
     }
 
-    this.animationControlFlag.resizing = false;
     this.animationControlFlag.updating = false;
 
     return duration;
@@ -95,9 +94,11 @@ export default abstract class Chart<T extends Options> {
         let duration = this.getAnimationDuration(options.chart?.animation);
 
         if (this.animationControlFlag.resizing) {
-          duration = isBoolean(options.responsive)
+          duration = isUndefined(options.responsive)
             ? this.getAnimationDuration()
             : this.getAnimationDuration(options.responsive?.animation);
+
+          this.animationControlFlag.resizing = false;
         }
 
         this.eventBus.emit('loopStart');
@@ -132,7 +133,7 @@ export default abstract class Chart<T extends Options> {
         this.painter.setup();
       });
 
-      if (useResponsive(options)) {
+      if (options?.chart?.width === 'auto' || options?.chart?.height === 'auto') {
         this.setResizeEvent();
       }
     }, 0);
@@ -156,13 +157,16 @@ export default abstract class Chart<T extends Options> {
     this.draw();
   }
 
+  windowResizeEvent = debounce(() => {
+    this.resize();
+  }, 100);
+
   setResizeEvent() {
-    window.addEventListener(
-      'resize',
-      throttle(() => {
-        this.resize();
-      }, 200)
-    );
+    window.addEventListener('resize', this.windowResizeEvent);
+  }
+
+  destroy() {
+    window.removeEventListener('resize', this.windowResizeEvent);
   }
 
   handleEvent(event: MouseEvent) {
@@ -292,6 +296,11 @@ export default abstract class Chart<T extends Options> {
   };
 
   public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
+
+  public setChartSize(width: number, height: number) {
+    this.store.dispatch('setChartSize', { width, height });
+    this.draw();
+  }
 
   /**
    * Register of user event.

@@ -7,9 +7,9 @@ describe('options Store', () => {
   it('should set original options', () => {
     const optionsStateFunc = options.state as StateFunc;
 
-    expect(optionsStateFunc({ series: {}, options: { responsive: false } })).toEqual({
-      originalOptions: { responsive: false },
-      options: { responsive: false },
+    expect(optionsStateFunc({ series: {}, options: {} })).toEqual({
+      originalOptions: {},
+      options: {},
     });
   });
 

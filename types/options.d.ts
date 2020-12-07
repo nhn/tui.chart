@@ -170,7 +170,9 @@ type AnimationOptions = boolean | { duration: number };
 export type BaseChartOptions = {
   title?: string | TitleOption;
   animation?: AnimationOptions;
-} & BaseSizeOptions;
+  width?: number | 'auto';
+  height?: number | 'auto';
+};
 
 export interface Scale {
   min?: number;
@@ -285,7 +287,7 @@ type ResponsiveRule = {
   options: Options;
 };
 
-type ResponsiveOptions = boolean | ResponsiveObjectType;
+type ResponsiveOptions = ResponsiveObjectType;
 
 interface BaseLegendOptions {
   align?: Align;

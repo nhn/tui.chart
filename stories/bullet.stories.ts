@@ -10,7 +10,7 @@ export default {
   title: 'chart|Bullet',
 };
 
-const defaultOptions = {
+const defaultOptions: BulletChartOptions = {
   chart: {
     width: 1160,
     height: 500,
@@ -18,17 +18,13 @@ const defaultOptions = {
   },
 };
 
-function createChart(
-  data: BulletSeriesData,
-  customOptions: BulletChartOptions = {},
-  responsive = false
-) {
+function createChart(data: BulletSeriesData, customOptions: BulletChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new BulletChart({ el, data, options });
 
@@ -156,7 +152,9 @@ export const theme = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetData, { chart: { title: 'Monthly Revenue' } }, true);
+  const { el } = createChart(budgetData, {
+    chart: { title: 'Monthly Revenue0', width: 700, height: 'auto' },
+  });
 
   return el;
 };

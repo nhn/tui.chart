@@ -1,9 +1,9 @@
 import { StoreModule, Options } from '@t/store/store';
-import { Size, ResponsiveObjectType } from '@t/options';
-import { deepCopy, isUndefined, deepMergedCopy } from '@src/helpers/utils';
+import { Size } from '@t/options';
+import { deepCopy, deepMergedCopy } from '@src/helpers/utils';
 
 function getOptionsBySize(size: Size, options: Options): Options {
-  const rules = (options.responsive as ResponsiveObjectType)?.rules;
+  const rules = options.responsive?.rules;
 
   return Array.isArray(rules)
     ? rules.reduce((acc, cur) => {
@@ -13,7 +13,7 @@ function getOptionsBySize(size: Size, options: Options): Options {
 }
 
 export function useResponsive(options: Options) {
-  return isUndefined(options?.responsive) ? true : !!options?.responsive;
+  return !!options?.responsive;
 }
 
 const optionsData: StoreModule = {
@@ -24,7 +24,9 @@ const optionsData: StoreModule = {
   }),
   action: {
     setOptions({ state }) {
-      if (!useResponsive(state.options)) {
+      const rules = state.options.responsive?.rules;
+
+      if (!Array.isArray(rules)) {
         return;
       }
 
@@ -36,15 +38,15 @@ const optionsData: StoreModule = {
 
       state.options = getOptionsBySize({ width, height }, state.originalOptions);
     },
-    updateOptions({ state }, options) {
+    updateOptions({ state, initStoreState }, options) {
+      initStoreState.options = deepMergedCopy(initStoreState.options, options);
       state.originalOptions = deepMergedCopy(state.originalOptions, options);
+
       const width = state.originalOptions.chart!.width!;
       const height = state.originalOptions.chart!.height!;
 
-      state.options = getOptionsBySize({ width, height }, state.originalOptions);
-
-      this.dispatch('setChartSize', { width, height });
-      this.dispatch('updateTheme');
+      state.options = getOptionsBySize({ width, height } as Size, state.originalOptions);
+      this.dispatch('initThemeState');
     },
   },
   observe: {

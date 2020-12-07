@@ -141,12 +141,14 @@ export function pickPropertyWithMakeup(target: Record<string, any>, args: string
 }
 
 export function debounce(fn: Function, delay = 0) {
-  let timer: number;
+  let timer: number | null;
 
   function debounced(...args: any[]) {
-    window.clearTimeout(timer);
+    window.clearTimeout(timer!);
     timer = window.setTimeout(function () {
       fn(...args);
+      window.clearTimeout(timer!);
+      timer = null;
     }, delay);
   }
 
@@ -312,4 +314,8 @@ export function getPercentageValue(text: string): number {
 
 export function calculateSizeWithPercentString(size: number, value: string | number): number {
   return isNumber(value) ? value : Number(((size * getPercentageValue(value)) / 100).toFixed(2));
+}
+
+export function getInitailSize(size?: number | 'auto') {
+  return isNumber(size) ? size : 0;
 }

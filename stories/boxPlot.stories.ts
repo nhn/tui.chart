@@ -11,28 +11,22 @@ export default {
   decorators: [withKnobs],
 };
 
-function createChart(
-  data: BoxPlotSeriesData,
-  customOptions: BoxPlotChartOptions = {},
-  responsive = false
-) {
+function createChart(data: BoxPlotSeriesData, customOptions: BoxPlotChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive
-    ? customOptions
-    : deepMergedCopy(
-        {
-          chart: {
-            width: 900,
-            height: 540,
-            title: 'Monthly Revenue',
-          },
-        },
-        customOptions || {}
-      );
+  const options = deepMergedCopy(
+    {
+      chart: {
+        width: 900,
+        height: 540,
+        title: 'Monthly Revenue',
+      },
+    } as BoxPlotChartOptions,
+    customOptions || {}
+  );
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new BoxPlotChart({ el, data, options });
 
@@ -67,7 +61,9 @@ export const eventDetectType = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(BudgetDataForBoxPlot, { chart: { title: 'Monthly Revenue' } }, true);
+  const { el } = createChart(BudgetDataForBoxPlot, {
+    chart: { title: 'Monthly Revenue', width: 700, height: 'auto' },
+  });
 
   return el;
 };
