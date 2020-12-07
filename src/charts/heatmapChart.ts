@@ -116,10 +116,12 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
   };
 
   public setOptions = (options: HeatmapChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: HeatmapChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

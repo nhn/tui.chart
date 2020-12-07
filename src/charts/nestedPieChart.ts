@@ -87,10 +87,12 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
   };
 
   public setOptions = (options: NestedPieChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: NestedPieChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

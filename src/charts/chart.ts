@@ -10,7 +10,15 @@ import EventEmitter, { CustomEventType, EventListener } from '@src/eventEmitter'
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce, isBoolean, isNumber, isUndefined, pick } from '@src/helpers/utils';
+import {
+  debounce,
+  isBoolean,
+  isNumber,
+  isUndefined,
+  pick,
+  hasAutoValue,
+  isAutoValue,
+} from '@src/helpers/utils';
 import { ChartProps, Point, AnimationOptions, SeriesDataInput, Size, DataInput } from '@t/options';
 
 import { responderDetectors } from '@src/responderDetectors';
@@ -145,7 +153,7 @@ export default abstract class Chart<T extends Options> {
         this.painter.setup();
       });
 
-      if (options?.chart?.width === 'auto' || options?.chart?.height === 'auto') {
+      if (hasAutoValue([options?.chart?.width, options?.chart?.height])) {
         this.setResizeEvent();
       }
     }, 0);
@@ -154,9 +162,16 @@ export default abstract class Chart<T extends Options> {
   resizeChartSize() {
     this.animationControlFlag.resizing = true;
     const { offsetWidth, offsetHeight } = this.el as HTMLElement;
-    const { width, height } = this.store.state.chart;
+    const {
+      usingContainerSizeFlag: { width: usingContainerWidth, height: usingContainerHeight },
+      chart: { width, height },
+    } = this.store.state;
 
-    if ((!offsetWidth && !offsetHeight) || (offsetWidth === width && offsetHeight === height)) {
+    if (
+      (!usingContainerWidth && !usingContainerHeight) ||
+      (!offsetWidth && !offsetHeight) ||
+      (offsetWidth === width && offsetHeight === height)
+    ) {
       this.animationControlFlag.resizing = false;
 
       return;
@@ -164,7 +179,15 @@ export default abstract class Chart<T extends Options> {
 
     this.eventBus.emit('resetHoveredSeries');
 
-    this.store.dispatch('setChartSize', { width: offsetWidth, height: offsetHeight });
+    this.store.dispatch('setChartSize', {
+      width: usingContainerWidth ? offsetWidth : width,
+      height: usingContainerHeight ? offsetHeight : height,
+    });
+
+    this.store.dispatch('setContainerSize', {
+      width: offsetWidth,
+      height: offsetHeight,
+    });
 
     this.draw();
   }
@@ -462,4 +485,33 @@ export default abstract class Chart<T extends Options> {
 
     this.store.dispatch('updateOptions', { tooltip: { offsetX, offsetY } });
   }
+
+  protected setResizeEventListeners = (options: Options) => {
+    const {
+      width: usingContainerWidth,
+      height: usingContainerHeight,
+    } = this.store.state.usingContainerSizeFlag;
+    const width = options?.chart?.width;
+    const height = options?.chart?.height;
+    const isAutoWidth = isAutoValue(width);
+    const isAutoHeight = isAutoValue(height);
+
+    if ((usingContainerWidth || usingContainerHeight) && isNumber(width) && isNumber(height)) {
+      this.clearResizeEvent();
+    } else if (isAutoWidth || isAutoHeight) {
+      const { offsetWidth, offsetHeight } = this.el as HTMLElement;
+
+      this.setResizeEvent();
+
+      this.store.dispatch('setContainerSize', {
+        width: offsetWidth,
+        height: offsetHeight,
+      });
+    }
+
+    this.store.dispatch('setUsingContainerSizeFlag', {
+      width: usingContainerWidth !== isAutoWidth ? isAutoWidth : usingContainerWidth,
+      height: usingContainerHeight !== isAutoHeight ? isAutoHeight : usingContainerHeight,
+    });
+  };
 }

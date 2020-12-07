@@ -76,10 +76,12 @@ export default class PieChart extends Chart<PieChartOptions> {
   };
 
   public setOptions = (options: PieChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: PieChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

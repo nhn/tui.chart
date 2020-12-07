@@ -319,3 +319,11 @@ export function calculateSizeWithPercentString(size: number, value: string | num
 export function getInitailSize(size?: number | 'auto') {
   return isNumber(size) ? size : 0;
 }
+
+export function isAutoValue(value?: number | string) {
+  return !isUndefined(value) && value === 'auto';
+}
+
+export function hasAutoValue(values: Array<number | string | undefined>) {
+  return values.some((value) => value === 'auto');
+}

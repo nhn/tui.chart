@@ -93,10 +93,12 @@ export default class BubbleChart extends Chart<BaseOptions> {
   }
 
   public setOptions = (options: BubbleChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: BubbleChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

@@ -85,10 +85,12 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
   }
 
   public setOptions = (options: BoxPlotChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: BoxPlotChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

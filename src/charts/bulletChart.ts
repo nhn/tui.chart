@@ -79,10 +79,12 @@ export default class BulletChart extends Chart<BulletChartOptions> {
   }
 
   public setOptions = (options: BulletChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: BulletChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

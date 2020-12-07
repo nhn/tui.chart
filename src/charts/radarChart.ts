@@ -81,10 +81,12 @@ export default class RadarChart extends Chart<RadarChartOptions> {
   }
 
   public setOptions = (options: RadarChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: RadarChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

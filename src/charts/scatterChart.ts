@@ -92,10 +92,12 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
   }
 
   public setOptions = (options: ScatterChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: ScatterChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

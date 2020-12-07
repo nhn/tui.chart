@@ -160,10 +160,12 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   };
 
   public setOptions = (options: ColumnLineChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: ColumnLineChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

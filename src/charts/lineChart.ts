@@ -129,10 +129,12 @@ export default class LineChart extends Chart<LineChartOptions> {
   };
 
   public updateOptions = (options: LineChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 
   public setOptions = (options: LineChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 }

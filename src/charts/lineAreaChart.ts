@@ -137,10 +137,12 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
   };
 
   public setOptions = (options: LineAreaChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: LineAreaChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

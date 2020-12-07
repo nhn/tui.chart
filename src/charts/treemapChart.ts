@@ -83,10 +83,12 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
   };
 
   public setOptions = (options: TreemapChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: TreemapChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }

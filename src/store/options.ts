@@ -19,16 +19,11 @@ const optionsData: StoreModule = {
     options,
   }),
   action: {
-    setOptions({ state }) {
-      const rules = state.options.responsive?.rules;
-
-      if (!Array.isArray(rules)) {
-        return;
-      }
-
+    applyResponsiveRules({ state }) {
       const { width, height } = state.chart;
+      const rules = state.originalOptions?.responsive?.rules;
 
-      if (width < 0 || height < 0) {
+      if (!Array.isArray(rules) || width < 0 || height < 0) {
         return;
       }
 
@@ -44,9 +39,16 @@ const optionsData: StoreModule = {
     updateOptions({ state, initStoreState }, options) {
       initStoreState.options = deepMergedCopy(initStoreState.options, options);
       state.originalOptions = deepMergedCopy(state.originalOptions, options);
-
-      const width = state.originalOptions.chart!.width!;
-      const height = state.originalOptions.chart!.height!;
+      const {
+        width: usingContainerWidth,
+        height: usingContainerHeight,
+      } = state.usingContainerSizeFlag;
+      const width = usingContainerWidth
+        ? state.container.width
+        : state.originalOptions.chart!.width!;
+      const height = usingContainerHeight
+        ? state.container.height
+        : state.originalOptions.chart!.height!;
 
       this.dispatch('setChartSize', { width, height });
       this.dispatch('initThemeState');
@@ -54,7 +56,7 @@ const optionsData: StoreModule = {
   },
   observe: {
     updateOptions() {
-      this.dispatch('setOptions');
+      this.dispatch('applyResponsiveRules');
     },
   },
 };

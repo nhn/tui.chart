@@ -102,10 +102,12 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
   }
 
   public setOptions = (options: LineScatterChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('initOptions', options);
   };
 
   public updateOptions = (options: LineScatterChartOptions) => {
+    this.setResizeEventListeners(options);
     this.store.dispatch('updateOptions', options);
   };
 }
