@@ -92,4 +92,12 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { column: series }, categories });
   }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

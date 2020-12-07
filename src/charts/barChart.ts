@@ -97,4 +97,12 @@ export default class BarChart extends Chart<BarChartOptions> {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { bar: series }, categories });
   }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }
