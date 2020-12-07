@@ -39,8 +39,7 @@ const optionsData: StoreModule = {
     initOptions({ initStoreState, state }, options: Options) {
       initStoreState.options = options;
       state.originalOptions = deepCopy(options);
-      const width = state.originalOptions.chart!.width!;
-      const height = state.originalOptions.chart!.height!;
+      const { width, height } = state.originalOptions.chart!;
 
       this.dispatch('setChartSize', { width, height });
     },
