@@ -3,6 +3,7 @@ import { ChartState, Options, CircleLegend as CircleLegendType } from '@t/store/
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { BubbleSeriesType } from '@t/options';
 import { getMaxRadius } from '@src/component/bubbleSeries';
+import { message } from '@src/message';
 
 export default class CircleLegend extends Component {
   models: CircleLegendModels = { circleLegend: [] };
@@ -13,7 +14,7 @@ export default class CircleLegend extends Component {
 
   render({ layout, series, circleLegend }: ChartState<Options>) {
     if (!series.bubble) {
-      throw new Error('circleLegend is only possible when bubble series is present');
+      throw new Error(message.CIRCLE_LEGEND_RENDER_ERROR);
     }
 
     this.isShow = circleLegend.visible;

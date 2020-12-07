@@ -18,6 +18,8 @@ import { LineModel } from '@t/components/axis';
 import { BulletChartSeriesTheme } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
 import { isNumber, omit } from '@src/helpers/utils';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 type RenderOptions = {
   ratio: number;
@@ -58,13 +60,14 @@ export default class BulletSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'bullet';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   render(state: ChartState<BulletChartOptions>): void {
     const { layout, axes, series, scale, legend, options, theme } = state;
 
     if (!series.bullet) {
-      throw new Error("There's no bullet data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     this.theme = theme.series.bullet as Required<BulletChartSeriesTheme>;
@@ -409,4 +412,26 @@ export default class BulletSeries extends Component {
       ],
     }));
   }
+
+  selectSeries = ({ index, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
+    if (!isNumber(index)) {
+      return;
+    }
+
+    const { name } = state.series.bullet?.[index];
+
+    const model = this.filterBulletResponder(this.responders).filter(
+      ({ name: dataName }) => dataName === name
+    );
+
+    if (!model) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getRespondersWithTheme(model, 'select'),
+      name: this.name,
+    });
+    this.eventBus.emit('needDraw');
+  };
 }

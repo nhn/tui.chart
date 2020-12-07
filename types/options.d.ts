@@ -226,6 +226,7 @@ export type PlotLine = {
   color: string;
   opacity?: number;
   vertical?: boolean;
+  id?: string;
 };
 
 export type PlotBand = {
@@ -233,6 +234,7 @@ export type PlotBand = {
   color: string;
   opacity?: number;
   mergeOverlappingRanges?: boolean;
+  id?: string;
 };
 
 type PlotOptions = BaseSizeOptions & {
@@ -303,7 +305,6 @@ interface CircleLegendOptions {
 
 interface BaseSeriesOptions {
   selectable?: boolean;
-  dataLabels?: DataLabelOptions;
 }
 
 interface BoxPlotSeriesOptions extends BaseSeriesOptions {
@@ -313,7 +314,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 export interface HeatmapChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions & { date: DateOption };
   theme?: HeatmapChartThemeOptions;
-  series?: BaseSeriesOptions & { shift?: boolean };
+  series?: BaseSeriesOptions & { shift?: boolean; dataLabels?: DataLabelOptions };
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {
@@ -328,6 +329,7 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
   zoomable?: boolean;
   eventDetectType?: LineTypeEventDetectType;
   shift?: boolean;
+  dataLabels?: DataLabelOptions;
 }
 
 interface AreaSeriesOptions extends LineTypeSeriesOptions {
@@ -369,13 +371,14 @@ export interface LineAreaChartOptions extends BaseOptions {
 }
 
 type LineAreaChartSeriesOptions = {
-  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot'> & BaseSeriesOptions;
-  area?: Pick<AreaSeriesOptions, 'stack' | 'spline' | 'showDot'> & BaseSeriesOptions;
+  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels'> & BaseSeriesOptions;
+  area?: Pick<AreaSeriesOptions, 'stack' | 'spline' | 'showDot' | 'dataLabels'> & BaseSeriesOptions;
   zoomable?: boolean;
   showDot?: boolean;
   lineWidth?: number;
   spline?: boolean;
   shift?: boolean;
+  dataLabels?: DataLabelOptions;
 } & BaseSeriesOptions;
 
 export interface ScatterChartOptions extends BaseOptions {
@@ -575,12 +578,14 @@ export type BulletSeriesData = {
 
 export interface BulletSeriesOptions extends BaseSeriesOptions {
   vertical?: boolean;
+  dataLabels?: DataLabelOptions;
 }
 
 type ColumnLineChartSeriesOptions = {
-  column?: Pick<BoxSeriesOptions, 'barWidth' | 'stack'>;
-  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot'>;
+  column?: Pick<BoxSeriesOptions, 'barWidth' | 'stack' | 'dataLabels'>;
+  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels'>;
   shift?: boolean;
+  dataLabels?: DataLabelOptions;
 } & BaseSeriesOptions;
 
 export interface ColumnLineChartOptions extends BaseOptions {
@@ -608,7 +613,7 @@ export type NestedPieSeriesData = {
 };
 
 export type NestedPieSeriesOptions = Record<string, PieSeriesOptions & BaseSeriesOptions> &
-  BaseSeriesOptions;
+  BaseSeriesOptions & { dataLabels?: DataLabelOptions };
 
 export interface NestedPieChartOptions extends BaseOptions {
   series?: NestedPieSeriesOptions;
@@ -628,3 +633,20 @@ export type SeriesDataInput =
   | BoxPlotSeriesType
   | BoxSeriesInput<BoxSeriesDataType>
   | NestedPieSeriesType;
+
+export type DataInput =
+  | LineSeriesData
+  | AreaSeriesData
+  | BoxSeriesData
+  | BoxPlotSeriesData
+  | ScatterSeriesData
+  | BubbleSeriesData
+  | BulletSeriesData
+  | HeatmapSeriesData
+  | PieSeriesData
+  | RadarSeriesData
+  | TreemapSeriesData
+  | LineAreaData
+  | LineScatterData
+  | ColumnLineData
+  | NestedPieSeriesData;

@@ -5,7 +5,7 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNumber, isString } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNumber, isString, isUndefined } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
 import {
@@ -15,6 +15,8 @@ import {
 } from '@t/components/series';
 import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import { ScatterChartSeriesTheme } from '@t/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 export default class ScatterSeries extends Component {
   theme!: Required<ScatterChartSeriesTheme>;
@@ -32,6 +34,7 @@ export default class ScatterSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'scatter';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   initUpdate(delta: number) {
@@ -43,7 +46,7 @@ export default class ScatterSeries extends Component {
   render(chartState: ChartState<ScatterChartOptions>) {
     const { layout, series, scale, legend, options, theme } = chartState;
     if (!series.scatter) {
-      throw new Error("There's no scatter data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     const scatterData = series.scatter.data;
@@ -183,4 +186,33 @@ export default class ScatterSeries extends Component {
       this.eventBus.emit('needDraw');
     }
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    state,
+    chartType,
+  }: SelectSeriesHandlerParams<ScatterChartOptions>) => {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'scatter')
+    ) {
+      return;
+    }
+
+    const { name } = state.series.scatter!.data[seriesIndex];
+    const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
+
+    if (!model) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    this.eventBus.emit('renderSelectedSeries', {
+      models: [model],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
 }

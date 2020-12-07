@@ -51,12 +51,13 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
 
   initialize() {
     super.initialize();
+    const stackChart = !!this.store.initStoreState.options.series?.stack;
 
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
-    this.componentManager.add(BoxStackSeries, { name: 'column' });
-    this.componentManager.add(BoxSeries, { name: 'column' });
+    this.componentManager.add(BoxStackSeries, { name: 'column', stackChart });
+    this.componentManager.add(BoxSeries, { name: 'column', stackChart });
     this.componentManager.add(ZeroAxis);
     this.componentManager.add(Axis, { name: 'xAxis' });
     this.componentManager.add(Axis, { name: 'yAxis' });
@@ -86,4 +87,17 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
   public addSeries(data: BoxSeriesInput<BoxSeriesDataType>, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: BoxSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { column: series }, categories });
+  }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

@@ -7,6 +7,7 @@ import {
 } from '@t/components/series';
 import { TooltipModel } from '@t/components/tooltip';
 import { Options } from '@t/store/store';
+import { message } from '@src/message';
 
 type BrushModel = ClipRectAreaModel | LinePointsModel | PathRectModel | CircleModel | TooltipModel;
 type Brush = (ctx: CanvasRenderingContext2D, brushModel: BrushModel) => void;
@@ -90,7 +91,7 @@ export default class Painter {
     if (this.brushes[name]) {
       this.brushes[name](this.ctx, brushModel);
     } else {
-      throw new Error(`Brush don't exist in painter: ${name}`);
+      throw new Error(message.noBrushError(name));
     }
   }
 

@@ -35,6 +35,8 @@ import {
   AreaSeriesDataType,
   AreaSeriesType,
   AreaSeriesInput,
+  PlotLine,
+  PlotBand,
 } from '@t/options';
 
 export interface AreaChartProps {
@@ -98,4 +100,33 @@ export default class AreaChart extends Chart<AreaChartOptions> {
   public addSeries(data: AreaSeriesInput, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: AreaSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { area: series }, categories });
+  }
+
+  public addPlotLine(data: PlotLine) {
+    this.store.dispatch('addPlotLine', { data });
+  }
+
+  public removePlotLine(id: string) {
+    this.store.dispatch('removePlotLine', { id });
+  }
+
+  public addPlotBand(data: PlotBand) {
+    this.store.dispatch('addPlotBand', { data });
+  }
+
+  public removePlotBand(id: string) {
+    this.store.dispatch('removePlotBand', { id });
+  }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

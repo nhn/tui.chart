@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { pick, includes } from '@src/helpers/utils';
+import { pick, includes, isNumber, isUndefined } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -38,6 +38,8 @@ import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { DotTheme, LineChartSeriesTheme } from '@t/theme';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { message } from '@src/message';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -71,6 +73,7 @@ export default class LineSeries extends Component {
   initialize() {
     this.type = 'series';
     this.name = 'line';
+    this.eventBus.on('selectSeries', this.selectSeries);
   }
 
   initUpdate(delta: number) {
@@ -98,7 +101,7 @@ export default class LineSeries extends Component {
     const { viewRange } = computed;
     const { layout, series, scale, axes, legend, theme } = chartState;
     if (!series.line) {
-      throw new Error("There's no line data!");
+      throw new Error(message.noDataError(this.name));
     }
 
     const categories = (chartState.categories as string[]) ?? [];
@@ -401,4 +404,27 @@ export default class LineSeries extends Component {
 
     this.eventBus.emit('needDraw');
   }
+
+  selectSeries = ({
+    index,
+    seriesIndex,
+    chartType,
+  }: SelectSeriesHandlerParams<LineChartOptions>) => {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'line')
+    ) {
+      return;
+    }
+
+    const model = this.tooltipCircleMap[index][seriesIndex];
+
+    if (!model) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    this.eventBus.emit('renderSelectedSeries', { models: [model], name: this.name });
+    this.eventBus.emit('needDraw');
+  };
 }

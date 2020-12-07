@@ -5,6 +5,8 @@ import {
   Point,
   LineSeriesDataType,
   BoxSeriesDataType,
+  PlotBand,
+  PlotLine,
 } from '@t/options';
 import { RawSeries } from '@t/store/store';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -128,4 +130,32 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   public addSeries(data, dataInfo: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: ColumnLineData) {
+    this.store.dispatch('setData', data);
+  }
+
+  public addPlotLine(data: PlotLine) {
+    this.store.dispatch('addPlotLine', { data });
+  }
+
+  public removePlotLine(id: string) {
+    this.store.dispatch('removePlotLine', { id });
+  }
+
+  public addPlotBand(data: PlotBand) {
+    this.store.dispatch('addPlotBand', { data });
+  }
+
+  public removePlotBand(id: string) {
+    this.store.dispatch('removePlotBand', { id });
+  }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

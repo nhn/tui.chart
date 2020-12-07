@@ -6,6 +6,14 @@ import EventEmitter from '../eventEmitter';
 import Component from '@src/component/component';
 import { debounce } from '@src/helpers/utils';
 
+type ComponentConstructor<T> = new ({
+  store,
+  eventBus,
+}: {
+  store: Store<T>;
+  eventBus: EventEmitter;
+}) => Component;
+
 export default class ComponentManager<T> {
   components: Component[] = [];
 
@@ -18,16 +26,7 @@ export default class ComponentManager<T> {
     this.eventBus = eventBus;
   }
 
-  add(
-    ComponentCtor: new ({
-      store,
-      eventBus,
-    }: {
-      store: Store<T>;
-      eventBus: EventEmitter;
-    }) => Component,
-    initialParam?: any
-  ) {
+  add(ComponentCtor: ComponentConstructor<T>, initialParam?: any) {
     const component = new ComponentCtor({
       store: this.store,
       eventBus: this.eventBus,
@@ -52,8 +51,13 @@ export default class ComponentManager<T> {
     this.components.push(component);
   }
 
+  remove(ComponentCtor: ComponentConstructor<T>) {
+    this.components = this.components.filter((component) => !(component instanceof ComponentCtor));
+  }
+
   clear() {
     this.components = [];
+    this.eventBus.emit('needDraw');
   }
 
   invoke(method: FunctionPropertyNames<Component>, params: any) {

@@ -1,5 +1,4 @@
 import { HeatmapSeriesData, Series, StoreModule } from '@t/store/store';
-import { extend } from '@src/store/store';
 import { HeatmapCategoriesType, RangeDataType } from '@t/options';
 import { getDataInRange } from '@src/helpers/range';
 
@@ -33,13 +32,10 @@ const heatmapSeriesData: StoreModule = {
   }),
   action: {
     setHeatmapSeriesData({ state, computed }) {
-      extend(
-        state.heatmapSeries,
-        makeHeatmapSeries(
-          state.series,
-          state.categories as HeatmapCategoriesType,
-          computed.viewRange
-        )
+      state.heatmapSeries = makeHeatmapSeries(
+        state.series,
+        state.categories as HeatmapCategoriesType,
+        computed.viewRange
       );
     },
   },

@@ -34,6 +34,8 @@ import {
   LineSeriesDataType,
   LineSeriesType,
   LineSeriesInput,
+  PlotLine,
+  PlotBand,
 } from '@t/options';
 
 export interface LineChartProps {
@@ -96,4 +98,33 @@ export default class LineChart extends Chart<LineChartOptions> {
   public addSeries(data: LineSeriesInput, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: LineSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { line: series }, categories });
+  }
+
+  public addPlotLine(data: PlotLine) {
+    this.store.dispatch('addPlotLine', { data });
+  }
+
+  public removePlotLine(id: string) {
+    this.store.dispatch('removePlotLine', { id });
+  }
+
+  public addPlotBand(data: PlotBand) {
+    this.store.dispatch('addPlotBand', { data });
+  }
+
+  public removePlotBand(id: string) {
+    this.store.dispatch('removePlotBand', { id });
+  }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

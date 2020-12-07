@@ -7,6 +7,9 @@ import {
   LineChartOptions,
   LineSeriesData,
   LineSeriesDataType,
+  Size,
+  PlotBand,
+  PlotLine,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -67,40 +70,86 @@ declare class BaseChart {
   public setOptions(options: Options): void;
 
   public on(eventName: CustomEventType, handler: EventListener): void;
+
+  public destroy(): void;
+
+  public resize(size: Partial<Size>): void;
+
+  public getOptions(): Options;
 }
 
 export class LineChart extends BaseChart {
   constructor(props: LineChartProps);
 
   public addData(data: LineSeriesDataType[], category?: string): void;
+
+  public addPlotLine(data: PlotLine): void;
+
+  public removePlotLine(id: string): void;
+
+  public addPlotBand(data: PlotBand): void;
+
+  public removePlotBand(id: string): void;
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class AreaChart extends BaseChart {
   constructor(props: AreaChartProps);
 
   public addData(data: AreaSeriesDataType[], category: string): void;
+
+  public addPlotLine(data: PlotLine): void;
+
+  public removePlotLine(id: string): void;
+
+  public addPlotBand(data: PlotBand): void;
+
+  public removePlotBand(id: string): void;
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class BarChart extends BaseChart {
   constructor(props: BarChartProps);
 
   public addData(data: BoxSeriesDataType[], category: string): void;
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class ColumnChart extends BaseChart {
   constructor(props: ColumnChartProps);
 
   public addData(data: BoxSeriesDataType[], category: string): void;
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class PieChart extends BaseChart {
   constructor(props: PieChartProps);
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class HeatmapChart extends BaseChart {
   constructor(props: HeatmapChartProps);
 
   public addData(data: HeatmapSeriesDataType, category: string): void;
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class BubbleChart extends BaseChart {
@@ -117,6 +166,10 @@ export class ScatterChart extends BaseChart {
 
 export class BulletChart extends BaseChart {
   constructor(props: BulletChartProps);
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class RadarChart extends BaseChart {
@@ -127,10 +180,18 @@ export class RadarChart extends BaseChart {
 
 export class TreemapChart extends BaseChart {
   constructor(props: TreemapChartProps);
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class NestedPieChart extends BaseChart {
   constructor(props: NestedPieChartProps);
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class LineAreaChart extends BaseChart {
@@ -141,6 +202,18 @@ export class LineAreaChart extends BaseChart {
     category: string,
     chartType: 'line' | 'area'
   ): void;
+
+  public addPlotLine(data: PlotLine): void;
+
+  public removePlotLine(id: string): void;
+
+  public addPlotBand(data: PlotBand): void;
+
+  public removePlotBand(id: string): void;
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export class LineScatterChart extends BaseChart {
@@ -157,6 +230,18 @@ export class ColumnLineChart extends BaseChart {
     category: string,
     chartType: 'line' | 'column'
   ): void;
+
+  public addPlotLine(data: PlotLine): void;
+
+  public removePlotLine(id: string): void;
+
+  public addPlotBand(data: PlotBand): void;
+
+  public removePlotBand(id: string): void;
+
+  public hideSeriesLabel(): void;
+
+  public showSeriesLabel(): void;
 }
 
 export { LineChartOptions, LineSeriesData };

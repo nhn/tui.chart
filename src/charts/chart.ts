@@ -10,17 +10,29 @@ import EventEmitter, { CustomEventType, EventListener } from '@src/eventEmitter'
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce, isBoolean, isNumber, isUndefined, pick } from '@src/helpers/utils';
-import { ChartProps, Point, AnimationOptions, SeriesDataInput } from '@t/options';
+import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
+import { ChartProps, Point, AnimationOptions, SeriesDataInput, Size, DataInput } from '@t/options';
+
 import { responderDetectors } from '@src/responderDetectors';
-import { Options, StoreModule } from '@t/store/store';
+import { ChartState, Options, StoreModule } from '@t/store/store';
 import Component from '@src/component/component';
 import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
+import { message } from '@src/message';
 
 export const DEFAULT_ANIM_DURATION = 500;
 
 export type AddSeriesDataInfo = { chartType?: string; category?: string };
+export type SelectSeriesInfo = {
+  seriesIndex?: number;
+  index?: number;
+  alias?: string;
+  chartType?: 'line' | 'area' | 'column' | 'scatter';
+};
+
+export interface SelectSeriesHandlerParams<T extends Options> extends SelectSeriesInfo {
+  state: ChartState<T>;
+}
 
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
@@ -139,7 +151,7 @@ export default abstract class Chart<T extends Options> {
     }, 0);
   }
 
-  resize() {
+  resizeChartSize() {
     this.animationControlFlag.resizing = true;
     const { offsetWidth, offsetHeight } = this.el as HTMLElement;
     const { width, height } = this.store.state.chart;
@@ -157,16 +169,16 @@ export default abstract class Chart<T extends Options> {
     this.draw();
   }
 
-  windowResizeEvent = debounce(() => {
-    this.resize();
+  private debounceResizeEvent = debounce(() => {
+    this.resizeChartSize();
   }, 100);
 
   setResizeEvent() {
-    window.addEventListener('resize', this.windowResizeEvent);
+    window.addEventListener('resize', this.debounceResizeEvent);
   }
 
-  destroy() {
-    window.removeEventListener('resize', this.windowResizeEvent);
+  clearResizeEvent() {
+    window.removeEventListener('resize', this.debounceResizeEvent);
   }
 
   handleEvent(event: MouseEvent) {
@@ -394,5 +406,59 @@ export default abstract class Chart<T extends Options> {
      * chart.on('resetZoom', () => {});
      */
     this.eventBus.on(eventName, handler);
+  };
+
+  public abstract setData(data: DataInput): void;
+
+  /**
+   * Destroys the instance.
+   * @api
+   * @example
+   * chart.destroy();
+   */
+  public destroy = () => {
+    this.componentManager.clear();
+    this.clearResizeEvent();
+    this.el.innerHTML = '';
+
+    Object.keys(this).forEach((key) => {
+      this[key] = null;
+    });
+  };
+
+  private isSelectableSeries() {
+    return this.store.initStoreState.options.series?.selectable;
+  }
+
+  public selectSeries = (seriesInfo: SelectSeriesInfo) => {
+    if (!this.isSelectableSeries()) {
+      throw new Error(message.SELECT_SERIES_API_SELECTABLE_ERROR);
+    }
+
+    this.eventBus.emit('selectSeries', { ...seriesInfo, state: this.store.state });
+  };
+
+  public unselectSeries = () => {
+    if (!this.isSelectableSeries()) {
+      throw new Error(message.SELECT_SERIES_API_SELECTABLE_ERROR);
+    }
+
+    this.store.dispatch('setAllLegendActiveState', true);
+    this.eventBus.emit('resetSelectedSeries');
+  };
+
+  /**
+   * Public API for resizable.
+   * @param {object} size chart size
+   *      @param {number} [size.width] width
+   *      @param {number} [size.height] height
+   * @api
+   */
+  public resize = (size: Partial<Size>) => {
+    this.store.dispatch('updateOptions', { chart: { ...size } });
+  };
+
+  public getOptions = () => {
+    return JSON.parse(JSON.stringify(this.store.initStoreState.options));
   };
 }

@@ -1,4 +1,5 @@
 import { pickProperty } from '@src/helpers/utils';
+import { message } from '@src/message';
 
 type ObservableInfo = {
   target: Record<string, any>;
@@ -76,7 +77,7 @@ export function observable(
   source: Record<string, any> = target
 ): Record<string, any> {
   if (isObservable(source)) {
-    throw new Error(`Source object is observable already`);
+    throw new Error(message.ALREADY_OBSERVABLE_ERROR);
   }
 
   if (!isObservable(target)) {
@@ -160,7 +161,7 @@ export function extend(
   source: Record<string, any>
 ): Record<string, any> {
   if (isObservable(source)) {
-    throw new Error(`Source object is observable already`);
+    throw new Error(message.ALREADY_OBSERVABLE_ERROR);
   }
 
   return observable(target, source);

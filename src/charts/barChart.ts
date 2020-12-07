@@ -28,15 +28,12 @@ import * as labelBrush from '@src/brushes/label';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 
-import { BoxSeriesType, BoxSeriesDataType, BarChartOptions, BoxSeriesInput } from '@t/options';
+import { BoxSeriesDataType, BarChartOptions, BoxSeriesInput, BoxSeriesData } from '@t/options';
 
 export interface BarChartProps {
   el: HTMLElement;
   options: BarChartOptions;
-  data: {
-    categories: string[];
-    series: BoxSeriesType<BoxSeriesDataType>[];
-  };
+  data: BoxSeriesData;
 }
 
 export default class BarChart extends Chart<BarChartOptions> {
@@ -55,12 +52,13 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   initialize() {
     super.initialize();
+    const stackChart = !!this.store.initStoreState.options.series?.stack;
 
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);
-    this.componentManager.add(BoxSeries, { name: 'bar' });
-    this.componentManager.add(BoxStackSeries, { name: 'bar' });
+    this.componentManager.add(BoxSeries, { name: 'bar', stackChart });
+    this.componentManager.add(BoxStackSeries, { name: 'bar', stackChart });
     this.componentManager.add(ZeroAxis);
     this.componentManager.add(Axis, { name: 'yAxis' });
     this.componentManager.add(Axis, { name: 'xAxis' });
@@ -94,4 +92,17 @@ export default class BarChart extends Chart<BarChartOptions> {
   public addSeries(data: BoxSeriesInput<BoxSeriesDataType>, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
+
+  public setData(data: BoxSeriesData) {
+    const { categories, series } = data;
+    this.store.dispatch('setData', { series: { bar: series }, categories });
+  }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

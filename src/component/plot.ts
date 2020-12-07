@@ -62,8 +62,8 @@ export default class Plot extends Component {
     categories: string[],
     lines: PlotLine[] = []
   ): LineModel[] {
-    return lines.map(({ value, color, vertical }) => {
-      const { offsetSize } = this.getPlotAxisSize(vertical!);
+    return lines.map(({ value, color }) => {
+      const { offsetSize } = this.getPlotAxisSize(true);
       const position = validXPosition({
         axisData: getPlotAxisData(true, axes) as LabelAxisData,
         offsetSize,
@@ -73,7 +73,7 @@ export default class Plot extends Component {
         startIndex: this.startIndex,
       });
 
-      return this.makeLineModel(vertical!, vertical ? position : offsetSize - position, { color });
+      return this.makeLineModel(true, position, { color });
     });
   }
 
