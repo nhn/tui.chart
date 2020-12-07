@@ -309,11 +309,6 @@ export default abstract class Chart<T extends Options> {
 
   public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
 
-  public setChartSize(width: number, height: number) {
-    this.store.dispatch('setChartSize', { width, height });
-    this.draw();
-  }
-
   /**
    * Register of user event.
    * @param {string} eventName event name
