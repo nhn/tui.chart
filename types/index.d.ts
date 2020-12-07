@@ -74,6 +74,8 @@ declare class BaseChart {
   public destroy(): void;
 
   public resize(size: Partial<Size>): void;
+
+  public getOptions(): Options;
 }
 
 export class LineChart extends BaseChart {
