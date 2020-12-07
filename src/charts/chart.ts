@@ -454,4 +454,10 @@ export default abstract class Chart<T extends Options> {
   public getOptions = () => {
     return JSON.parse(JSON.stringify(this.store.initStoreState.options));
   };
+
+  public setTooltipOffset(offset: Partial<Point>) {
+    const { x: offsetX, y: offsetY } = offset;
+
+    this.store.dispatch('updateOptions', { tooltip: { offsetX, offsetY } });
+  }
 }

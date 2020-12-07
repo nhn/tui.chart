@@ -10,6 +10,7 @@ import {
   Size,
   PlotBand,
   PlotLine,
+  Point,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -76,6 +77,8 @@ declare class BaseChart {
   public resize(size: Partial<Size>): void;
 
   public getOptions(): Options;
+
+  public setTooltipOffset(point: Partial<Point>): void;
 }
 
 export class LineChart extends BaseChart {
