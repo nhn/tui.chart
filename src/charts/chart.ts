@@ -450,4 +450,8 @@ export default abstract class Chart<T extends Options> {
   public resize = (size: Partial<Size>) => {
     this.store.dispatch('updateOptions', { chart: { ...size } });
   };
+
+  public getOptions = () => {
+    return JSON.parse(JSON.stringify(this.store.initStoreState.options));
+  };
 }
