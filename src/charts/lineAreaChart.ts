@@ -127,4 +127,12 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
   public removePlotBand(id: string) {
     this.store.dispatch('removePlotBand', { id });
   }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

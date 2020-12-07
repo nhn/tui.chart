@@ -37,6 +37,7 @@ import {
   AnimationOptions,
   NestedPieSeriesType,
   LineAreaChartOptions,
+  ScatterChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -88,6 +89,7 @@ export type ChartOptionsMap = {
   pie: PieChartOptions | NestedPieChartOptions;
   boxPlot: BoxPlotChartOptions;
   bullet: BulletChartOptions;
+  scatter: ScatterChartOptions;
   lineScatter: LineScatterChartOptions;
   lineArea: LineAreaChartOptions;
   columnLine: ColumnLineChartOptions;
@@ -96,8 +98,12 @@ export type ChartOptionsMap = {
 
 export type Options = ValueOf<ChartOptionsMap>;
 
+export type OptionsWithDataLabels = ValueOf<
+  Omit<ChartOptionsMap, 'scatter' | 'bubble' | 'boxPlot' | 'lineScatter' | 'radar'>
+>;
+
 export type ChartOptionsUsingYAxis = ValueOf<
-  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap' | 'nestedPie'>
+  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap'>
 >;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;

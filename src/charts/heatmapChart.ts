@@ -106,4 +106,12 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
       categories,
     });
   }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

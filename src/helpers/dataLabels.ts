@@ -1,4 +1,4 @@
-import { Options } from '@t/store/store';
+import { OptionsWithDataLabels } from '@t/store/store';
 import { isFunction, includes, isBoolean, isString } from '@src/helpers/utils';
 import {
   DataLabelAnchor,
@@ -541,7 +541,7 @@ export function makePieSeriesNameLabelInfo(
   };
 }
 
-export function getDataLabelsOptions(options: Options, name: string) {
+export function getDataLabelsOptions(options: OptionsWithDataLabels, name: string) {
   return options?.series?.[name]?.dataLabels || options?.series?.dataLabels || {};
 }
 

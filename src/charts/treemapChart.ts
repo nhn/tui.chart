@@ -73,4 +73,12 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
   public setData(data: TreemapSeriesData) {
     this.store.dispatch('setData', { series: { treemap: data.series } });
   }
+
+  public hideSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+  };
+
+  public showSeriesLabel = () => {
+    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+  };
 }

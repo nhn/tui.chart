@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Options } from '@t/store/store';
+import { ChartState, Options, OptionsWithDataLabels } from '@t/store/store';
 import {
   DataLabelModels,
   DataLabel,
@@ -57,7 +57,7 @@ export default class DataLabels extends Component {
 
   drawModels!: DataLabelModels;
 
-  options!: Options;
+  options!: OptionsWithDataLabels;
 
   dataLabelsMap: DataLabelsMap = {};
 
@@ -77,7 +77,8 @@ export default class DataLabels extends Component {
 
   render({ layout, options }: ChartState<Options>) {
     this.rect = layout.plot;
-    this.options = options;
+    this.options = options as OptionsWithDataLabels;
+    this.isShow = !!this.options.series?.dataLabels?.visible;
   }
 
   renderSeriesDataLabels = (seriesDataLabel: SeriesDataLabel) => {
