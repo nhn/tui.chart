@@ -90,4 +90,12 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { scatter: series }, categories });
   }
+
+  public setOptions = (options: ScatterChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: ScatterChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

@@ -129,4 +129,12 @@ export default class AreaChart extends Chart<AreaChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public setOptions = (options: AreaChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: AreaChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

@@ -100,4 +100,12 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public setOptions = (options: ColumnChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: ColumnChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

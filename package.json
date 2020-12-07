@@ -17,6 +17,7 @@
     "build:clean": "rm -rf ./dist",
     "build:prod": "webpack --mode=production --minify",
     "build:esm": "ttsc -p tsconfig.esm.json && prettier dist/esm/**/*.js --write",
+    "build:storybook": "build-storybook",
     "serve": "webpack-dev-server --mode=development",
     "storybook": "start-storybook -p 6006"
   },

@@ -375,7 +375,7 @@ const axes: StoreModule = {
         axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot, initialAxisData.yAxis);
       }
 
-      extend(state.axes, axesState);
+      state.axes = axesState;
     },
   },
   computed: {},
