@@ -135,4 +135,12 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public setOptions = (options: LineAreaChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: LineAreaChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

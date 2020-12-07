@@ -105,4 +105,12 @@ export default class BarChart extends Chart<BarChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public setOptions = (options: BarChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: BarChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

@@ -30,6 +30,7 @@ import {
   BubbleSeriesType,
   BubbleSeriesDataType,
   BubbleSeriesInput,
+  BubbleChartOptions,
 } from '@t/options';
 
 export interface BubbleChartProps {
@@ -90,4 +91,12 @@ export default class BubbleChart extends Chart<BaseOptions> {
   public setData(data: BubbleSeriesData) {
     this.store.dispatch('setData', { series: { bubble: data.series } });
   }
+
+  public setOptions = (options: BubbleChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: BubbleChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

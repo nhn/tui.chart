@@ -77,4 +77,12 @@ export default class BulletChart extends Chart<BulletChartOptions> {
   public setData(data: BulletSeriesData) {
     this.store.dispatch('setData', { series: { bullet: data.series } });
   }
+
+  public setOptions = (options: BulletChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: BulletChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

@@ -114,4 +114,12 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public setOptions = (options: HeatmapChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: HeatmapChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

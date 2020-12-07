@@ -166,7 +166,13 @@ export default abstract class Component {
               curPoint.y = y + (nextY - y) * delta;
             });
 
-            if (current[key].length && current[key][0].controlPoint) {
+            if (
+              (current[key].length &&
+                !current[key][0].controlPoint &&
+                target[key].length &&
+                target[key][0].controlPoint) ||
+              (current[key].length && current[key][0].controlPoint)
+            ) {
               setSplineControlPoint(current[key]);
             }
           } else {
