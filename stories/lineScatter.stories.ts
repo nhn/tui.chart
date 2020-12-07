@@ -1,5 +1,5 @@
 import LineScatterChart from '@src/charts/lineScatterChart';
-import { LineScatterData } from '@t/options';
+import { LineScatterData, LineScatterChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { efficiencyAndExpensesData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -12,7 +12,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions: Record<string, any> = {
+const defaultOptions: LineScatterChartOptions = {
   chart: {
     width,
     height,
@@ -22,7 +22,7 @@ const defaultOptions: Record<string, any> = {
   plot: {},
 };
 
-function createChart(data: LineScatterData, customOptions: Record<string, any> = {}) {
+function createChart(data: LineScatterData, customOptions: LineScatterChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 

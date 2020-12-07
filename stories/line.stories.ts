@@ -1,5 +1,5 @@
 import LineChart from '@src/charts/lineChart';
-import { LineSeriesData } from '@t/options';
+import { LineSeriesData, LineChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import {
   tupleCoordinateData,
@@ -19,7 +19,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions: Record<string, any> = {
+const defaultOptions: LineChartOptions = {
   chart: {
     width,
     height,
@@ -32,7 +32,7 @@ const defaultOptions: Record<string, any> = {
   plot: {},
 };
 
-function createChart(data: LineSeriesData, customOptions: Record<string, any> = {}) {
+function createChart(data: LineSeriesData, customOptions: LineChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
@@ -259,6 +259,8 @@ export const animationDuration = () => {
           step: 100,
         }),
       },
+    },
+    series: {
       zoomable: true,
     },
   });

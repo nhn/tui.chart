@@ -1,4 +1,4 @@
-import { HeatmapSeriesData, SeriesDataType } from '@t/options';
+import { HeatmapSeriesData, SeriesDataType, HeatmapChartOptions } from '@t/options';
 import { deepMergedCopy, range } from '@src/helpers/utils';
 import { contributionsData, temperatureAverageDataForHeatmap } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -12,7 +12,7 @@ export default {
 
 const width = 800;
 const height = 450;
-const defaultOptions: Record<string, any> = {
+const defaultOptions: HeatmapChartOptions = {
   chart: {
     width,
     height,
@@ -34,7 +34,7 @@ const defaultOptions: Record<string, any> = {
   },
 };
 
-function createChart(data: HeatmapSeriesData, customOptions: Record<string, any> = {}) {
+function createChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
@@ -177,7 +177,7 @@ export const dataLabelsWithTheme = () => {
         },
       },
     },
-  });
+  } as HeatmapChartOptions);
 
   return el;
 };
