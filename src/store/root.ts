@@ -1,6 +1,6 @@
 import { StoreModule } from '@t/store/store';
 import { Size } from '@t/options';
-import { getInitailSize } from '@src/helpers/utils';
+import { getInitailSize, isAutoValue } from '@src/helpers/utils';
 
 function initialSize(containerEl: HTMLElement, { width, height }: Size) {
   return {
@@ -19,8 +19,8 @@ const root: StoreModule = {
       height: getInitailSize(options?.chart?.height),
     },
     usingContainerSizeFlag: {
-      width: options?.chart?.width === 'auto',
-      height: options?.chart?.height === 'auto',
+      width: isAutoValue(options?.chart?.width),
+      height: isAutoValue(options?.chart?.height),
     },
     container: {} as Size,
   }),
