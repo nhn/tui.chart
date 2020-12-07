@@ -301,8 +301,12 @@ export default abstract class Chart<T extends Options> {
       .map((datum) => pick(datum, 'chartType', 'label', 'checked'));
   };
 
-  public setOptions = (options: Options) => {
+  public updateOptions = (options: Options) => {
     this.store.dispatch('updateOptions', options);
+  };
+
+  public setOptions = (options: Options) => {
+    this.store.dispatch('initOptions', options);
   };
 
   public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;

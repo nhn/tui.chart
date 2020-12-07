@@ -377,7 +377,7 @@ const axes: StoreModule = {
 
       this.notify(state, 'layout');
 
-      extend(state.axes, axesState);
+      state.axes = axesState;
     },
   },
   computed: {},
