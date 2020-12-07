@@ -75,7 +75,7 @@ export default class Animator {
 
     this.anims = [];
 
-    this.cancelAnimFram();
+    this.cancelAnimFrame();
 
     this.state = 'IDLE';
     this.requestId = null;
@@ -130,7 +130,7 @@ export default class Animator {
       }
 
       if (anim.completed) {
-        this.cancelAnimFram();
+        this.cancelAnimFrame();
 
         anim.onCompleted();
         anim.chart.eventBus.emit('animationCompleted', anim.requester);
@@ -140,7 +140,7 @@ export default class Animator {
     this.anims = this.anims.filter((anim) => !anim.completed);
   }
 
-  cancelAnimFram() {
+  cancelAnimFrame() {
     if (this.requestId) {
       window.cancelAnimationFrame(this.requestId);
     }

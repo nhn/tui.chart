@@ -492,7 +492,6 @@ const layout: StoreModule = {
         chart,
         axes,
       } = state;
-      const { align } = legendState;
       const chartSize = {
         height: chart.height - padding.Y * 2,
         width: chart.width - padding.X * 2,
@@ -587,7 +586,12 @@ const layout: StoreModule = {
         legendItemHeight,
       });
 
-      const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
+      const circleLegend = getCircleLegendRect(
+        xAxis,
+        yAxis,
+        legendState.align,
+        circleLegendState.width
+      );
       const plot = getPlotRect(xAxis, yAxis, optionSize.plot);
 
       extend(state.layout, {

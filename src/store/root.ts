@@ -1,6 +1,6 @@
 import { StoreModule } from '@t/store/store';
 import { Size } from '@t/options';
-import { getInitailSize } from '@src/helpers/utils';
+import { getInitialSize } from '@src/helpers/utils';
 
 const root: StoreModule = {
   name: 'root',
@@ -8,8 +8,8 @@ const root: StoreModule = {
   state: ({ options }) => ({
     chart: {
       ...options.chart,
-      width: getInitailSize(options?.chart?.width),
-      height: getInitailSize(options?.chart?.height),
+      width: getInitialSize(options?.chart?.width),
+      height: getInitialSize(options?.chart?.height),
     },
   }),
   action: {
