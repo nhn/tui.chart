@@ -61,7 +61,7 @@ describe('options Store', () => {
 
     const store = { state } as Store<BarChartOptions>;
 
-    options.action!.setOptions(store);
+    options.action!.applyResponsiveRules(store);
 
     expect(state.options.exportMenu).toEqual({ visible: false });
     expect(state.options.xAxis).toEqual({ title: '' });
@@ -130,7 +130,7 @@ describe('options Store', () => {
 
     const store = { state } as Store<BarChartOptions>;
 
-    options.action!.setOptions(store);
+    options.action!.applyResponsiveRules(store);
 
     expect(state.options.legend).toEqual({ visible: false, align: 'bottom' });
   });
