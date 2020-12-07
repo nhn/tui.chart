@@ -12,10 +12,6 @@ function getOptionsBySize(size: Size, options: Options): Options {
     : options;
 }
 
-export function useResponsive(options: Options) {
-  return !!options?.responsive;
-}
-
 const optionsData: StoreModule = {
   name: 'options',
   state: ({ options }) => ({
