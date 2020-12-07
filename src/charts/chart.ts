@@ -10,7 +10,7 @@ import EventEmitter, { CustomEventType, EventListener } from '@src/eventEmitter'
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
-import { debounce, isBoolean, isNumber, isUndefined, pick, throttle } from '@src/helpers/utils';
+import { debounce, isBoolean, isNumber, isUndefined, pick } from '@src/helpers/utils';
 import { ChartProps, Point, AnimationOptions, SeriesDataInput, Size, DataInput } from '@t/options';
 
 import { responderDetectors } from '@src/responderDetectors';
