@@ -79,4 +79,12 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { radar: series }, categories });
   }
+
+  public setOptions = (options: RadarChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: RadarChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }

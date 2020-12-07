@@ -11,6 +11,20 @@ import {
   PlotBand,
   PlotLine,
   Point,
+  AreaChartOptions,
+  BarChartOptions,
+  ColumnChartOptions,
+  PieChartOptions,
+  HeatmapChartOptions,
+  BubbleChartOptions,
+  ScatterChartOptions,
+  BulletChartOptions,
+  RadarChartOptions,
+  TreemapChartOptions,
+  NestedPieChartOptions,
+  LineAreaChartOptions,
+  LineScatterChartOptions,
+  ColumnLineChartOptions,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -68,10 +82,6 @@ declare namespace tui {
 declare class BaseChart {
   public getCheckedLegend(): CheckedLegendType;
 
-  public setOptions(options: Options): void;
-
-  public updateOptions(options: Options): void;
-
   public on(eventName: CustomEventType, handler: EventListener): void;
 
   public destroy(): void;
@@ -99,6 +109,10 @@ export class LineChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: LineChartOptions): void;
+
+  public updateOptions(options: LineChartOptions): void;
 }
 
 export class AreaChart extends BaseChart {
@@ -117,6 +131,10 @@ export class AreaChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: AreaChartOptions): void;
+
+  public updateOptions(options: AreaChartOptions): void;
 }
 
 export class BarChart extends BaseChart {
@@ -127,6 +145,10 @@ export class BarChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: BarChartOptions): void;
+
+  public updateOptions(options: BarChartOptions): void;
 }
 
 export class ColumnChart extends BaseChart {
@@ -137,6 +159,10 @@ export class ColumnChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: ColumnChartOptions): void;
+
+  public updateOptions(options: ColumnChartOptions): void;
 }
 
 export class PieChart extends BaseChart {
@@ -145,6 +171,10 @@ export class PieChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: PieChartOptions): void;
+
+  public updateOptions(options: PieChartOptions): void;
 }
 
 export class HeatmapChart extends BaseChart {
@@ -155,18 +185,30 @@ export class HeatmapChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: HeatmapChartOptions): void;
+
+  public updateOptions(options: HeatmapChartOptions): void;
 }
 
 export class BubbleChart extends BaseChart {
   constructor(props: BubbleChartProps);
 
   public addData(data: BubbleSeriesDataType[]): void;
+
+  public setOptions(options: BubbleChartOptions): void;
+
+  public updateOptions(options: BubbleChartOptions): void;
 }
 
 export class ScatterChart extends BaseChart {
   constructor(props: ScatterChartProps);
 
   public addData(data: CoordinateDataType[]): void;
+
+  public setOptions(options: ScatterChartOptions): void;
+
+  public updateOptions(options: ScatterChartOptions): void;
 }
 
 export class BulletChart extends BaseChart {
@@ -175,12 +217,20 @@ export class BulletChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: BulletChartOptions): void;
+
+  public updateOptions(options: BulletChartOptions): void;
 }
 
 export class RadarChart extends BaseChart {
   constructor(props: RadarChartProps);
 
   public addData(data: number[], category: string): void;
+
+  public setOptions(options: RadarChartOptions): void;
+
+  public updateOptions(options: RadarChartOptions): void;
 }
 
 export class TreemapChart extends BaseChart {
@@ -189,6 +239,10 @@ export class TreemapChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: TreemapChartOptions): void;
+
+  public updateOptions(options: TreemapChartOptions): void;
 }
 
 export class NestedPieChart extends BaseChart {
@@ -197,6 +251,10 @@ export class NestedPieChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: NestedPieChartOptions): void;
+
+  public updateOptions(options: NestedPieChartOptions): void;
 }
 
 export class LineAreaChart extends BaseChart {
@@ -219,12 +277,20 @@ export class LineAreaChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: LineAreaChartOptions): void;
+
+  public updateOptions(options: LineAreaChartOptions): void;
 }
 
 export class LineScatterChart extends BaseChart {
   constructor(props: LineScatterChartProps);
 
   public addData(data: CoordinateDataType[], chartType: 'line' | 'scatter'): void;
+
+  public setOptions(options: LineScatterChartOptions): void;
+
+  public updateOptions(options: LineScatterChartOptions): void;
 }
 
 export class ColumnLineChart extends BaseChart {
@@ -247,6 +313,10 @@ export class ColumnLineChart extends BaseChart {
   public hideSeriesLabel(): void;
 
   public showSeriesLabel(): void;
+
+  public setOptions(options: ColumnLineChartOptions): void;
+
+  public updateOptions(options: ColumnLineChartOptions): void;
 }
 
 export { LineChartOptions, LineSeriesData };

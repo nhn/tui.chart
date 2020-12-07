@@ -127,4 +127,12 @@ export default class LineChart extends Chart<LineChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public updateOptions = (options: LineChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
+
+  public setOptions = (options: LineChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
 }

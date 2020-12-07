@@ -85,4 +85,12 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
+
+  public setOptions = (options: NestedPieChartOptions) => {
+    this.store.dispatch('initOptions', options);
+  };
+
+  public updateOptions = (options: NestedPieChartOptions) => {
+    this.store.dispatch('updateOptions', options);
+  };
 }
