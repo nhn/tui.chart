@@ -528,8 +528,9 @@ export type SeriesDataType =
 
 export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto' | 'outer';
 
-export type SubDataLabel = {
+export type StackTotalDataLabel = {
   visible?: boolean;
+  formatter?: Formatter;
 };
 
 export type DataLabelPieSeriesName = {
@@ -546,7 +547,7 @@ export type DataLabelOptions = {
 };
 
 export interface BoxDataLabels extends DataLabelOptions {
-  stackTotal?: SubDataLabel;
+  stackTotal?: StackTotalDataLabel;
 }
 export interface PieDataLabels extends DataLabelOptions {
   pieSeriesName?: DataLabelPieSeriesName;

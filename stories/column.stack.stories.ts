@@ -207,9 +207,11 @@ export const dataLabelsWithStackTotal = () => {
       stack: true,
       dataLabels: {
         visible: true,
+        formatter: (value) => `$${value}`,
         anchor: 'center',
         stackTotal: {
           visible: true,
+          formatter: (value) => `Total $${value}`,
         },
       },
     },
