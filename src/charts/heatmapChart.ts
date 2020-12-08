@@ -31,7 +31,7 @@ import {
 } from '@t/options';
 
 export interface HeatmapChartProps {
-  el: Element;
+  el: HTMLElement;
   options: HeatmapChartOptions;
   data: HeatmapSeriesData;
 }
@@ -116,12 +116,10 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
   };
 
   public setOptions = (options: HeatmapChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: HeatmapChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

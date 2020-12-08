@@ -25,7 +25,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import { BulletChartOptions, BulletSeriesType, BulletSeriesData } from '@t/options';
 
 export interface BulletChartProps {
-  el: Element;
+  el: HTMLElement;
   options: BulletChartOptions;
   data: BulletSeriesData;
 }
@@ -79,12 +79,10 @@ export default class BulletChart extends Chart<BulletChartOptions> {
   }
 
   public setOptions = (options: BulletChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: BulletChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

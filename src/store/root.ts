@@ -1,4 +1,4 @@
-import { StoreModule } from '@t/store/store';
+import { StoreModule, UsingContainerSize } from '@t/store/store';
 import { Size } from '@t/options';
 import { getInitialSize, isAutoValue } from '@src/helpers/utils';
 
@@ -18,7 +18,7 @@ const root: StoreModule = {
       width: getInitialSize(options?.chart?.width),
       height: getInitialSize(options?.chart?.height),
     },
-    usingContainerSizeFlag: {
+    usingContainerSize: {
       width: isAutoValue(options?.chart?.width),
       height: isAutoValue(options?.chart?.height),
     },
@@ -34,25 +34,17 @@ const root: StoreModule = {
 
       if (width === 0 || height === 0) {
         if (containerEl.parentNode) {
-          const size = initialSize(containerEl, { width, height });
-          this.dispatch('setChartSize', size);
-          this.dispatch('setContainerSize', size);
+          this.dispatch('setChartSize', initialSize(containerEl, { width, height }));
         } else {
           setTimeout(() => {
-            const size = initialSize(containerEl, { width, height });
-            this.dispatch('setChartSize', size);
-            this.dispatch('setContainerSize', size);
+            this.dispatch('setChartSize', initialSize(containerEl, { width, height }));
           }, 0);
         }
       }
     },
-    setContainerSize({ state }, size: Size) {
-      state.container.width = size.width;
-      state.container.height = size.height;
-    },
-    setUsingContainerSizeFlag({ state }, { width, height }: { width: boolean; height: boolean }) {
-      state.usingContainerSizeFlag.width = width;
-      state.usingContainerSizeFlag.height = height;
+    setUsingContainerSize({ state }, { width, height }: UsingContainerSize) {
+      state.usingContainerSize.width = width;
+      state.usingContainerSize.height = height;
     },
   },
 };

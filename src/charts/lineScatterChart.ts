@@ -38,7 +38,7 @@ import {
 import { RawSeries } from '@t/store/store';
 
 export interface LineScatterChartProps {
-  el: Element;
+  el: HTMLElement;
   options: LineScatterChartOptions;
   data: LineScatterData;
 }
@@ -102,12 +102,10 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
   }
 
   public setOptions = (options: LineScatterChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: LineScatterChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

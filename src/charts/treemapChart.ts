@@ -24,7 +24,7 @@ import * as resetButtonBrush from '@src/brushes/resetButton';
 import { TreemapChartOptions, TreemapSeriesData, TreemapSeriesType } from '@t/options';
 
 export interface TreemapChartProps {
-  el: Element;
+  el: HTMLElement;
   options: TreemapChartOptions;
   data: TreemapSeriesData;
 }
@@ -83,12 +83,10 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
   };
 
   public setOptions = (options: TreemapChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: TreemapChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

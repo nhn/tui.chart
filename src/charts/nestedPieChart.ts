@@ -21,7 +21,7 @@ import { NestedPieChartOptions, NestedPieSeriesData, NestedPieSeriesType } from 
 import PieSeries from '@src/component/pieSeries';
 
 export interface NestedPieChartProps {
-  el: Element;
+  el: HTMLElement;
   options: NestedPieChartOptions;
   data: NestedPieSeriesData;
 }
@@ -87,12 +87,10 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
   };
 
   public setOptions = (options: NestedPieChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: NestedPieChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

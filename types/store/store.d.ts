@@ -280,7 +280,7 @@ export interface ChartState<T extends Options> {
   nestedPieSeries: Record<string, NestedPieSeriesDataType>;
   originalOptions: T;
   container: Size;
-  usingContainerSizeFlag: {
+  usingContainerSize: {
     width: boolean;
     height: boolean;
   };
@@ -378,3 +378,5 @@ export interface ScaleData {
 export type FunctionPropertyNames<T> = {
   [K in keyof T]: T[K] extends Function ? K : never;
 }[keyof T];
+
+type UsingContainerSize = { width: boolean; height: boolean };

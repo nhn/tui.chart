@@ -1,6 +1,8 @@
-import { StoreModule, Options } from '@t/store/store';
-import { Size } from '@t/options';
+import { StoreModule, Options, UsingContainerSize } from '@t/store/store';
+import { Size, ChartSize } from '@t/options';
 import { deepCopy, deepMergedCopy } from '@src/helpers/utils';
+
+type OptionsParam = { options: Options; containerSize: Size };
 
 function getOptionsBySize(size: Size, options: Options): Options {
   const rules = options.responsive?.rules;
@@ -12,6 +14,19 @@ function getOptionsBySize(size: Size, options: Options): Options {
     : options;
 }
 
+function getSize(
+  usingContainerSize: UsingContainerSize,
+  containerSize: Size,
+  chartSize: ChartSize
+) {
+  const { width: usingContainerWidth, height: usingContainerHeight } = usingContainerSize;
+
+  return {
+    width: usingContainerWidth ? containerSize.width : chartSize?.width,
+    height: usingContainerHeight ? containerSize.height : chartSize?.height,
+  };
+}
+
 const optionsData: StoreModule = {
   name: 'options',
   state: ({ options }) => ({
@@ -19,44 +34,44 @@ const optionsData: StoreModule = {
     options,
   }),
   action: {
-    applyResponsiveRules({ state }) {
+    setOptions({ state }) {
       const { width, height } = state.chart;
-      const rules = state.originalOptions?.responsive?.rules;
 
-      if (!Array.isArray(rules) || width < 0 || height < 0) {
+      if (width < 0 || height < 0) {
         return;
       }
 
       state.options = getOptionsBySize({ width, height }, state.originalOptions);
     },
-    initOptions({ initStoreState, state }, options: Options) {
+    initOptions({ initStoreState, state }, { options, containerSize }: OptionsParam) {
       initStoreState.options = options;
       state.originalOptions = deepCopy(options);
-      const { width, height } = state.originalOptions.chart!;
 
-      this.dispatch('setChartSize', { width, height });
+      const { usingContainerSize, originalOptions } = state;
+      const size = getSize(usingContainerSize, containerSize, {
+        width: originalOptions.chart!.width!,
+        height: originalOptions.chart!.height!,
+      });
+
+      this.dispatch('setChartSize', size);
     },
-    updateOptions({ state, initStoreState }, options) {
+    updateOptions({ state, initStoreState }, { options, containerSize }: OptionsParam) {
       initStoreState.options = deepMergedCopy(initStoreState.options, options);
       state.originalOptions = deepMergedCopy(state.originalOptions, options);
-      const {
-        width: usingContainerWidth,
-        height: usingContainerHeight,
-      } = state.usingContainerSizeFlag;
-      const width = usingContainerWidth
-        ? state.container.width
-        : state.originalOptions.chart!.width!;
-      const height = usingContainerHeight
-        ? state.container.height
-        : state.originalOptions.chart!.height!;
 
-      this.dispatch('setChartSize', { width, height });
+      const { usingContainerSize, originalOptions } = state;
+      const size = getSize(usingContainerSize, containerSize, {
+        width: originalOptions.chart?.width,
+        height: originalOptions.chart?.height,
+      });
+
+      this.dispatch('setChartSize', size);
       this.dispatch('initThemeState');
     },
   },
   observe: {
     updateOptions() {
-      this.dispatch('applyResponsiveRules');
+      this.dispatch('setOptions');
     },
   },
 };

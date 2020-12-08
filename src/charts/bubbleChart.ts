@@ -34,7 +34,7 @@ import {
 } from '@t/options';
 
 export interface BubbleChartProps {
-  el: Element;
+  el: HTMLElement;
   options: BaseOptions;
   data: BubbleSeriesData;
 }
@@ -93,12 +93,10 @@ export default class BubbleChart extends Chart<BaseOptions> {
   }
 
   public setOptions = (options: BubbleChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: BubbleChartOptions) => {
-    this.setResizeEventListeners(options);
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }
