@@ -312,7 +312,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 }
 
 export interface HeatmapChartOptions extends BaseOptions {
-  yAxis?: BaseAxisOptions & { date: DateOption };
+  yAxis?: BaseAxisOptions & { date?: DateOption };
   theme?: HeatmapChartThemeOptions;
   series?: BaseSeriesOptions & { shift?: boolean; dataLabels?: DataLabelOptions };
 }
@@ -354,6 +354,7 @@ export interface LineChartOptions extends BaseOptions {
 
 type LineScatterChartSeriesOptions = {
   line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot'>;
+  dataLabels?: DataLabelOptions;
 } & BaseSeriesOptions;
 
 export interface LineScatterChartOptions extends BaseOptions {
@@ -586,6 +587,7 @@ type ColumnLineChartSeriesOptions = {
   line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels'>;
   shift?: boolean;
   dataLabels?: DataLabelOptions;
+  eventDetectType?: BoxTypeEventDetectType;
 } & BaseSeriesOptions;
 
 export interface ColumnLineChartOptions extends BaseOptions {
