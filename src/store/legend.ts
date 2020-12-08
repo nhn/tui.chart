@@ -10,7 +10,7 @@ import {
   LegendDataList,
 } from '@t/store/store';
 import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
-import { isUndefined, sum, includes, deepMergedCopy } from '@src/helpers/utils';
+import { isUndefined, sum, includes, deepMergedCopy, isNumber } from '@src/helpers/utils';
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
@@ -169,7 +169,7 @@ function getItemWidth(
 }
 
 function getInitialWidth(options: Options) {
-  return options.chart?.width ?? 0;
+  return isNumber(options.chart?.width) ? options.chart.width : 0;
 }
 
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
