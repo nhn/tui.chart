@@ -24,8 +24,8 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as BoxPlotBrush from '@src/brushes/boxPlot';
 import { BoxPlotSeriesType, BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
 
-interface BoxPlotChartProps {
-  el: HTMLElement;
+export interface BoxPlotChartProps {
+  el: Element;
   options: BoxPlotChartOptions;
   data: BoxPlotSeriesData;
 }
