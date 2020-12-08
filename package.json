@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/chart",
-  "version": "4.0.0-alpha.2",
+  "version": "4.0.0-alpha.3",
   "description": "TOAST UI Application: Chart",
   "main": "dist/toastui-chart.js",
   "module": "dist/esm/",
@@ -32,7 +32,7 @@
   },
   "files": [
     "dist",
-    "index.d.ts"
+    "types"
   ],
   "homepage": "https://ui.toast.com",
   "dependencies": {},
