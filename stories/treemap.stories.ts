@@ -1,4 +1,4 @@
-import { SeriesDataType, TreemapSeriesData } from '@t/options';
+import { SeriesDataType, TreemapSeriesData, TreemapChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { populationDensityData, usedDiskSpaceData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -12,19 +12,18 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions: Record<string, any> = {
+const defaultOptions: TreemapChartOptions = {
   chart: {
     width,
     height,
   },
   xAxis: {},
-  yAxis: {},
   series: {},
   tooltip: {},
   plot: {},
 };
 
-function createChart(data: TreemapSeriesData, customOptions: Record<string, any> = {}) {
+function createChart(data: TreemapSeriesData, customOptions: TreemapChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 

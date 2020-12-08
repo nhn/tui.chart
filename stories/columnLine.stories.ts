@@ -1,5 +1,5 @@
 import ColumnLineChart from '@src/charts/columnLineChart';
-import { ColumnChartOptions } from '@t/options';
+import { ColumnLineChartOptions } from '@t/options';
 import { deepMergedCopy, range } from '@src/helpers/utils';
 import { temperatureAverageData } from './data';
 import '@src/css/chart.css';
@@ -8,7 +8,7 @@ export default {
   title: 'chart.ColumnLine',
 };
 
-const defaultOptions: ColumnChartOptions = {
+const defaultOptions: ColumnLineChartOptions = {
   chart: {
     width: 1000,
     height: 500,
@@ -18,7 +18,7 @@ const defaultOptions: ColumnChartOptions = {
   xAxis: { title: 'Month' },
 };
 
-function createChart(data, customOptions: Record<string, any> = {}) {
+function createChart(data, customOptions: ColumnLineChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
