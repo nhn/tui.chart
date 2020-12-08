@@ -169,7 +169,7 @@ function getItemWidth(
 }
 
 function getInitialWidth(options: Options) {
-  return isNumber(options.chart?.width) ? options.chart.width : 0;
+  return isNumber(options.chart?.width) ? options.chart!.width : 0;
 }
 
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
