@@ -30,16 +30,25 @@ type LegendLabels = {
   type: ChartType;
 }[];
 
-function calculateLegendWidth(
-  defaultWidth: number,
-  legendWidths: number[],
-  options: Options,
-  align: Align,
-  visible: boolean
-) {
+type LegendWidthParam = {
+  defaultWidth: number;
+  legendWidths: number[];
+  useSpectrumLegend: boolean;
+  options: Options;
+  align: Align;
+  visible: boolean;
+};
+
+function calculateLegendWidth({
+  defaultWidth,
+  legendWidths,
+  useSpectrumLegend,
+  options,
+  align,
+  visible,
+}: LegendWidthParam) {
   const verticalAlign = isVerticalAlign(align);
   const legendOptions = options?.legend;
-  const useColorValue = (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? false;
   let legendWidth = defaultWidth;
 
   if (!visible) {
@@ -50,10 +59,10 @@ function calculateLegendWidth(
     return legendOptions.width;
   }
 
-  if (useColorValue && verticalAlign) {
+  if (useSpectrumLegend && verticalAlign) {
     const labelAreaWidth = sum(legendWidths);
     legendWidth = Math.max(getInitialWidth(options) / 4, labelAreaWidth);
-  } else if (useColorValue && !verticalAlign) {
+  } else if (useSpectrumLegend && !verticalAlign) {
     const spectrumAreaWidth =
       spectrumLegendTooltip.PADDING * 2 +
       spectrumLegendBar.PADDING * 2 +
@@ -62,7 +71,7 @@ function calculateLegendWidth(
       padding.X * 2;
 
     legendWidth = Math.max(...legendWidths) + spectrumAreaWidth;
-  } else if (!useColorValue && verticalAlign) {
+  } else if (!useSpectrumLegend && verticalAlign) {
     legendWidth = sum(legendWidths) + LEGEND_ITEM_MARGIN_X * (legendWidths.length - 1);
   } else {
     const labelAreaWidth = Math.max(...legendWidths);
@@ -214,14 +223,24 @@ const legend: StoreModule = {
       extend(state.legend, getLegendState(initStoreState.options, initStoreState.series));
     },
     setLegendLayout({ state, initStoreState }) {
-      const { legend: legendData, series, options } = state;
-
+      const {
+        legend: { data: legendData, useSpectrumLegend },
+        series,
+        options,
+      } = state;
       const align = getAlign(options);
       const visible = showLegend(options, series);
       const checkboxVisible = showCheckbox(options);
       const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
-      const legendWidths = legendData.data.map(({ width }) => width);
-      const legendWidth = calculateLegendWidth(initialWidth, legendWidths, options, align, visible);
+      const legendWidths = legendData.map(({ width }) => width);
+      const legendWidth = calculateLegendWidth({
+        defaultWidth: initialWidth,
+        legendWidths,
+        useSpectrumLegend,
+        options,
+        align,
+        visible,
+      });
       const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
 
       const circleLegendWidth = isVerticalAlign(align)
