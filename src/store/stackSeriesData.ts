@@ -217,6 +217,9 @@ const stackSeriesData: StoreModule = {
           }
 
           stackSeries[seriesName].stack = initializeStack(stackOption);
+        } else {
+          stackSeries[seriesName] = null;
+          delete stackSeries[seriesName];
         }
 
         const { stack } = stackSeries[seriesName] || {};
