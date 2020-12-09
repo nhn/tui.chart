@@ -112,24 +112,25 @@ export const selectablePoint = () => {
   return el;
 };
 
-export const dataLabels = () => {
-  const { el } = createChart(temperatureAverageData, {
-    series: {
-      column: {
-        dataLabels: {
-          visible: false,
-        },
-      },
-      line: {
-        dataLabels: {
-          visible: true,
-        },
-      },
-    },
-  });
-
-  return el;
-};
+// @TODO: need to remove. comment for beta test
+// export const dataLabels = () => {
+//   const { el } = createChart(temperatureAverageData, {
+//     series: {
+//       column: {
+//         dataLabels: {
+//           visible: false,
+//         },
+//       },
+//       line: {
+//         dataLabels: {
+//           visible: true,
+//         },
+//       },
+//     },
+//   });
+//
+//   return el;
+// };
 
 export const secondaryYAxis = () => {
   const { el } = createChart(temperatureAverageData, {

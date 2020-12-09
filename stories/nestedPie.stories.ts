@@ -73,39 +73,40 @@ export const grouped = () => {
   return el;
 };
 
-export const dataLabels = () => {
-  const { el } = createChart(groupedBrowserUsageData, {
-    series: {
-      browsers: {
-        radiusRange: {
-          inner: '20%',
-          outer: '50%',
-        },
-        dataLabels: {
-          visible: true,
-          pieSeriesName: {
-            visible: false,
-          },
-        },
-      },
-      versions: {
-        radiusRange: {
-          inner: '55%',
-          outer: '85%',
-        },
-        dataLabels: {
-          visible: true,
-          pieSeriesName: {
-            visible: true,
-            anchor: 'outer',
-          },
-        },
-      },
-    },
-  });
-
-  return el;
-};
+// @TODO: need to remove. comment for beta test
+// export const dataLabels = () => {
+//   const { el } = createChart(groupedBrowserUsageData, {
+//     series: {
+//       browsers: {
+//         radiusRange: {
+//           inner: '20%',
+//           outer: '50%',
+//         },
+//         dataLabels: {
+//           visible: true,
+//           pieSeriesName: {
+//             visible: false,
+//           },
+//         },
+//       },
+//       versions: {
+//         radiusRange: {
+//           inner: '55%',
+//           outer: '85%',
+//         },
+//         dataLabels: {
+//           visible: true,
+//           pieSeriesName: {
+//             visible: true,
+//             anchor: 'outer',
+//           },
+//         },
+//       },
+//     },
+//   });
+//
+//   return el;
+// };
 
 export const selectable = () => {
   const { el } = createChart(groupedBrowserUsageData, {
@@ -242,76 +243,77 @@ export const groupedTheme = () => {
   return el;
 };
 
-export const dataLabelsWithTheme = () => {
-  const themeOptions: NestedPieChartThemeOptions = {
-    series: {
-      browsers: {
-        dataLabels: {
-          fontFamily: 'fantasy',
-          fontSize: 13,
-          useSeriesColor: true,
-          textBubble: {
-            visible: true,
-            backgroundColor: '#333333',
-            borderRadius: 5,
-            borderColor: '#ff0000',
-            borderWidth: 3,
-            shadowOffsetX: 0,
-            shadowOffsetY: 0,
-            shadowBlur: 0,
-            shadowColor: 'rgba(0, 0, 0, 0)',
-          },
-        },
-      },
-      versions: {
-        dataLabels: {
-          fontFamily: 'monaco',
-          useSeriesColor: true,
-          lineWidth: 2,
-          textStrokeColor: '#ffffff',
-          shadowColor: '#ffffff',
-          shadowBlur: 4,
-          callout: {
-            lineWidth: 3,
-            lineColor: '#f44336',
-            useSeriesColor: false,
-          },
-          pieSeriesName: {
-            useSeriesColor: false,
-            color: '#f44336',
-            fontFamily: 'fantasy',
-            fontSize: 13,
-            textBubble: {
-              visible: true,
-              paddingX: 1,
-              paddingY: 1,
-              backgroundColor: 'rgba(158, 158, 158, 0.3)',
-              shadowOffsetX: 0,
-              shadowOffsetY: 0,
-              shadowBlur: 0,
-              shadowColor: 'rgba(0, 0, 0, 0)',
-            },
-          },
-        },
-      },
-    },
-  };
-  const { el } = createChart(groupedBrowserUsageData, {
-    series: {
-      browsers: {
-        dataLabels: {
-          visible: true,
-        },
-      },
-      versions: {
-        dataLabels: {
-          visible: true,
-          pieSeriesName: { visible: true, anchor: 'outer' },
-        },
-      },
-    },
-    theme: themeOptions,
-  });
-
-  return el;
-};
+// @TODO: need to remove. comment for beta test
+// export const dataLabelsWithTheme = () => {
+//   const themeOptions: NestedPieChartThemeOptions = {
+//     series: {
+//       browsers: {
+//         dataLabels: {
+//           fontFamily: 'fantasy',
+//           fontSize: 13,
+//           useSeriesColor: true,
+//           textBubble: {
+//             visible: true,
+//             backgroundColor: '#333333',
+//             borderRadius: 5,
+//             borderColor: '#ff0000',
+//             borderWidth: 3,
+//             shadowOffsetX: 0,
+//             shadowOffsetY: 0,
+//             shadowBlur: 0,
+//             shadowColor: 'rgba(0, 0, 0, 0)',
+//           },
+//         },
+//       },
+//       versions: {
+//         dataLabels: {
+//           fontFamily: 'monaco',
+//           useSeriesColor: true,
+//           lineWidth: 2,
+//           textStrokeColor: '#ffffff',
+//           shadowColor: '#ffffff',
+//           shadowBlur: 4,
+//           callout: {
+//             lineWidth: 3,
+//             lineColor: '#f44336',
+//             useSeriesColor: false,
+//           },
+//           pieSeriesName: {
+//             useSeriesColor: false,
+//             color: '#f44336',
+//             fontFamily: 'fantasy',
+//             fontSize: 13,
+//             textBubble: {
+//               visible: true,
+//               paddingX: 1,
+//               paddingY: 1,
+//               backgroundColor: 'rgba(158, 158, 158, 0.3)',
+//               shadowOffsetX: 0,
+//               shadowOffsetY: 0,
+//               shadowBlur: 0,
+//               shadowColor: 'rgba(0, 0, 0, 0)',
+//             },
+//           },
+//         },
+//       },
+//     },
+//   };
+//   const { el } = createChart(groupedBrowserUsageData, {
+//     series: {
+//       browsers: {
+//         dataLabels: {
+//           visible: true,
+//         },
+//       },
+//       versions: {
+//         dataLabels: {
+//           visible: true,
+//           pieSeriesName: { visible: true, anchor: 'outer' },
+//         },
+//       },
+//     },
+//     theme: themeOptions,
+//   });
+//
+//   return el;
+// };
