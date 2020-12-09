@@ -15,7 +15,6 @@
     "typeRoots": ["./types"],
     "types": ["webpack-env"],
     "listEmittedFiles": true,
-    "importHelpers": true,
     "downlevelIteration": true,
     "plugins": [
       {

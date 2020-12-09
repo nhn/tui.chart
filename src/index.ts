@@ -13,6 +13,7 @@ import BulletChart, { BulletChartProps } from '@src/charts/bulletChart';
 import NestedPieChart, { NestedPieChartProps } from '@src/charts/nestedPieChart';
 import RadarChart, { RadarChartProps } from '@src/charts/radarChart';
 import TreemapChart, { TreemapChartProps } from '@src/charts/treemapChart';
+import BoxPlotChart, { BoxPlotChartProps } from '@src/charts/boxPlotChart';
 
 export default class Chart {
   public static lineChart = (props: LineChartProps) => {
@@ -25,6 +26,10 @@ export default class Chart {
 
   public static barChart = (props: BarChartProps) => {
     return new BarChart(props);
+  };
+
+  public static boxPlotChart = (props: BoxPlotChartProps) => {
+    return new BoxPlotChart(props);
   };
 
   public static columnChart = (props: ColumnChartProps) => {
@@ -92,4 +97,5 @@ export {
   LineAreaChart,
   LineScatterChart,
   ColumnLineChart,
+  BoxPlotChart,
 };

@@ -174,7 +174,10 @@ function getInitialWidth(options: Options) {
 }
                   
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
-  const colors = Object.values(series).reduce<string[]>((acc, cur) => [...acc, ...cur?.colors], []);
+  const colors = Object.values(series).reduce<string[]>(
+    (acc, cur) => (cur && cur.colors ? [...acc, ...cur.colors] : acc),
+    []
+  );
 
   return data.map((datum, idx) => ({
     ...datum,

@@ -10,10 +10,9 @@ const pkg = require('./package.json');
 const commonConfig = {
   entry: ['@babel/polyfill', './src/css/chart.css', './src/index.ts'],
   output: {
-    library: ['tui', 'Chart'],
+    library: ['toastui', 'Chart'],
     libraryTarget: 'umd',
     libraryExport: 'default',
-    filename: `${pkg.name}.js`,
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/dist',
   },
@@ -39,7 +38,9 @@ const commonConfig = {
 
 module.exports = (env, { mode, minify }) => {
   const isProduction = mode === 'production';
-  const { version, author, license, name } = pkg;
+  const { version, author, license } = pkg;
+
+  commonConfig.output.filename = `toastui-chart${minify ? '.min' : ''}.js`;
 
   const BANNER = [
     'TOAST UI Chart 4th Edition',
@@ -52,7 +53,7 @@ module.exports = (env, { mode, minify }) => {
     const productionConfig = {
       mode,
       plugins: [
-        new MiniCssExtractPlugin({ filename: name + (minify ? '.min' : '') + '.css' }),
+        new MiniCssExtractPlugin({ filename: `toastui-chart${minify ? '.min' : ''}.css` }),
         new webpack.BannerPlugin({
           banner: BANNER,
           entryOnly: true,

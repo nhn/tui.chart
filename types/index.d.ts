@@ -5,7 +5,6 @@ import {
   CoordinateDataType,
   HeatmapSeriesDataType,
   LineChartOptions,
-  LineSeriesData,
   LineSeriesDataType,
   Size,
   PlotBand,
@@ -25,6 +24,9 @@ import {
   LineAreaChartOptions,
   LineScatterChartOptions,
   ColumnLineChartOptions,
+  BoxPlotSeriesType,
+  BoxPlotSeriesData,
+  BoxPlotChartOptions,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -44,6 +46,8 @@ import { ColumnLineChartProps } from '@src/charts/columnLineChart';
 import { CheckedLegendType } from '@t/components/legend';
 import { Options } from '@t/store/store';
 import { CustomEventType, EventListener } from '@src/eventEmitter';
+import { BoxPlotChartProps } from '@src/charts/boxPlotChart';
+import { AddSeriesDataInfo } from '@src/charts/chart';
 
 declare namespace tui {
   export class Chart {
@@ -52,6 +56,8 @@ declare namespace tui {
     public static areaChart(props: AreaChartProps): AreaChart;
 
     public static barChart(props: BarChartProps): BarChart;
+
+    public static boxPlotChart(props: BoxPlotChartProps): BoxPlotChart;
 
     public static columnChart(props: ColumnChartProps): ColumnChart;
 
@@ -149,6 +155,20 @@ export class BarChart extends BaseChart {
   public setOptions(options: BarChartOptions): void;
 
   public updateOptions(options: BarChartOptions): void;
+}
+
+export class BoxPlotChart extends BaseChart {
+  constructor(props: BoxPlotChartProps);
+
+  public addData(data: number[][], category: string): void;
+
+  public addSeries(data: BoxPlotSeriesType, dataInfo?: AddSeriesDataInfo): void;
+
+  public setData(data: BoxPlotSeriesData): void;
+
+  public setOptions(options: BoxPlotChartOptions): void;
+
+  public updateOptions(options: BoxPlotChartOptions): void;
 }
 
 export class ColumnChart extends BaseChart {
@@ -318,7 +338,5 @@ export class ColumnLineChart extends BaseChart {
 
   public updateOptions(options: ColumnLineChartOptions): void;
 }
-
-export { LineChartOptions, LineSeriesData };
 
 export default tui.Chart;
