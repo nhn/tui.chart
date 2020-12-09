@@ -39,7 +39,7 @@ function createChart(data: AreaSeriesData, customOptions: AreaChartOptions = {})
 
 export const basic = () => {
   const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    chart: { title: 'Average Temperature' },
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
   });
@@ -63,7 +63,7 @@ export const liveUpdate = () => {
   };
 
   const { el, chart } = createChart(data, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    chart: { title: 'Average Temperature' },
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     series: { shift: true },
@@ -85,7 +85,7 @@ export const liveUpdate = () => {
 
 export const basicSpline = () => {
   const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    chart: { title: 'Average Temperature' },
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     series: { spline: true },
@@ -96,7 +96,7 @@ export const basicSpline = () => {
 
 export const basicWithShowDot = () => {
   const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    chart: { title: 'Average Temperature' },
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     series: { showDot: true },
@@ -107,7 +107,7 @@ export const basicWithShowDot = () => {
 
 export const basicWithEventDetectType = () => {
   const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    chart: { title: 'Average Temperature' },
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     series: {
@@ -136,7 +136,7 @@ export const dataLabels = () => {
 
 export const range = () => {
   const { el } = createChart(temperatureRangeData as AreaSeriesData, {
-    chart: { title: 'Temperature Range' } as BaseChartOptions,
+    chart: { title: 'Temperature Range' },
     xAxis: {
       title: { text: 'Temperature (Celsius)' },
     },
@@ -149,7 +149,7 @@ export const range = () => {
 
 export const rangeSpline = () => {
   const { el } = createChart(temperatureRangeData as AreaSeriesData, {
-    chart: { title: 'Temperature Range' } as BaseChartOptions,
+    chart: { title: 'Temperature Range' },
     xAxis: {
       title: { text: 'Temperature (Celsius)' },
     },
@@ -162,7 +162,7 @@ export const rangeSpline = () => {
 
 export const normalStack = () => {
   const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue' } as BaseChartOptions,
+    chart: { title: 'Monthly Revenue' },
     xAxis: {
       title: { text: 'Month' },
     },
@@ -179,7 +179,7 @@ export const normalStack = () => {
 
 export const normalStackSpline = () => {
   const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue' } as BaseChartOptions,
+    chart: { title: 'Monthly Revenue' },
     xAxis: {
       title: { text: 'Month' },
     },
@@ -197,7 +197,7 @@ export const normalStackSpline = () => {
 
 export const percentStack = () => {
   const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue' } as BaseChartOptions,
+    chart: { title: 'Monthly Revenue' },
     xAxis: {
       title: { text: 'Month' },
     },
@@ -230,7 +230,7 @@ export const zoomable = () => {
 
 export const selectable = () => {
   const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    chart: { title: 'Average Temperature' },
     xAxis: { title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     series: { selectable: true, eventDetectType: 'near' },
@@ -316,7 +316,7 @@ export const theme = () => {
   };
 
   const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    chart: { title: 'Average Temperature' },
     series: {
       selectable: true,
       showDot: true,

@@ -68,7 +68,7 @@ export const grouped = () => {
         },
       },
     },
-  } as NestedPieChartOptions);
+  });
 
   return el;
 };
@@ -201,7 +201,7 @@ export const theme = () => {
       },
     },
     theme: themeOptions,
-  } as NestedPieChartOptions);
+  });
 
   return el;
 };
@@ -237,7 +237,7 @@ export const groupedTheme = () => {
       },
     },
     theme: themeOptions,
-  } as NestedPieChartOptions);
+  });
 
   return el;
 };
