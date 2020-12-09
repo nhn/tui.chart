@@ -13,7 +13,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions = {
+const defaultOptions: LineAreaChartOptions = {
   chart: {
     width,
     height,
@@ -33,17 +33,13 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(
-  data: LineAreaData,
-  customOptions: LineAreaChartOptions = {},
-  responsive = false
-) {
+function createChart(data: LineAreaData, customOptions: LineAreaChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new LineAreaChart({ el, data, options });
 
@@ -102,25 +98,21 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(
-    energyUsageData,
-    {
-      chart: { title: 'Energy Usage' },
-      yAxis: [
-        {
-          title: 'Energy (kWh)',
-        },
-        {
-          title: 'Powered Usage',
-        },
-      ],
-      xAxis: {
-        title: 'Month',
-        date: { format: 'yy/MM' },
+  const { el } = createChart(energyUsageData, {
+    chart: { title: 'Energy Usage', width: 800, height: 'auto' },
+    yAxis: [
+      {
+        title: 'Energy (kWh)',
       },
+      {
+        title: 'Powered Usage',
+      },
+    ],
+    xAxis: {
+      title: 'Month',
+      date: { format: 'yy/MM' },
     },
-    true
-  );
+  });
 
   return el;
 };

@@ -1,9 +1,9 @@
 import PieChart from '@src/charts/pieChart';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { PieSeriesData, PieChartOptions, PieDataLabels } from '@t/options';
+import { PieSeriesData, PieChartOptions } from '@t/options';
 import { browserUsageData } from './data';
 import { withKnobs, number } from '@storybook/addon-knobs';
-import { PieChartThemeOptions, PieDataLabelTheme } from '@t/theme';
+import { PieChartThemeOptions } from '@t/theme';
 import '@src/css/chart.css';
 
 export default {
@@ -11,24 +11,22 @@ export default {
   decorators: [withKnobs],
 };
 
-function createChart(data: PieSeriesData, customOptions: PieChartOptions = {}, responsive = false) {
+function createChart(data: PieSeriesData, customOptions: PieChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive
-    ? customOptions
-    : deepMergedCopy(
-        {
-          chart: {
-            width: 660,
-            height: 560,
-            title: 'Usage share of web browsers',
-          },
-        },
-        customOptions || {}
-      );
+  const options = deepMergedCopy(
+    {
+      chart: {
+        width: 660,
+        height: 560,
+        title: 'Usage share of web browsers',
+      },
+    } as PieChartOptions,
+    customOptions || {}
+  );
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new PieChart({ el, data, options });
 
@@ -277,15 +275,13 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(
-    browserUsageData,
-    {
-      chart: {
-        title: 'Usage share of web browsers',
-      },
+  const { el } = createChart(browserUsageData, {
+    chart: {
+      title: 'Usage share of web browsers',
+      width: 'auto',
+      height: 'auto',
     },
-    true
-  );
+  });
 
   return el;
 };

@@ -107,10 +107,10 @@ export default class BarChart extends Chart<BarChartOptions> {
   };
 
   public setOptions = (options: BarChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: BarChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

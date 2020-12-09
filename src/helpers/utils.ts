@@ -1,3 +1,5 @@
+import { ChartSizeInput } from '@t/options';
+
 type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
 type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
 
@@ -145,7 +147,7 @@ export function debounce(fn: Function, delay = 0) {
 
   function debounced(...args: any[]) {
     window.clearTimeout(timer);
-    timer = window.setTimeout(function () {
+    timer = window.setTimeout(() => {
       fn(...args);
     }, delay);
   }
@@ -312,4 +314,12 @@ export function getPercentageValue(text: string): number {
 
 export function calculateSizeWithPercentString(size: number, value: string | number): number {
   return isNumber(value) ? value : Number(((size * getPercentageValue(value)) / 100).toFixed(2));
+}
+
+export function getInitialSize(size?: ChartSizeInput) {
+  return isNumber(size) ? size : 0;
+}
+
+export function isAutoValue(value?: ChartSizeInput) {
+  return value === 'auto';
 }

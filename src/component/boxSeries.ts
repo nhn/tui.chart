@@ -267,7 +267,9 @@ export default class BoxSeries extends Component {
   ) {
     const { layout, series, axes, stackSeries, legend, theme } = chartState;
 
-    if (stackSeries && stackSeries[this.name]) {
+    this.isShow = !(stackSeries && stackSeries[this.name]);
+
+    if (!this.isShow) {
       return;
     }
 

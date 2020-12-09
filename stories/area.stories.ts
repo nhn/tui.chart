@@ -12,7 +12,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions = {
+const defaultOptions: AreaChartOptions = {
   chart: {
     width,
     height,
@@ -24,17 +24,13 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(
-  data: AreaSeriesData,
-  customOptions: AreaChartOptions = {},
-  responsive = false
-) {
+function createChart(data: AreaSeriesData, customOptions: AreaChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new AreaChart({ el, data, options });
 
@@ -263,16 +259,12 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(
-    avgTemperatureData,
-    {
-      chart: { title: 'Average Temperature' },
-      responsive: {
-        animation: { duration: 300 },
-      },
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature', width: 'auto', height: 'auto' },
+    responsive: {
+      animation: { duration: 300 },
     },
-    true
-  );
+  });
 
   return el;
 };

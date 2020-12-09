@@ -10,7 +10,7 @@ import {
   LegendDataList,
 } from '@t/store/store';
 import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
-import { isUndefined, sum, includes, deepMergedCopy } from '@src/helpers/utils';
+import { isUndefined, sum, includes, deepMergedCopy, getInitialSize } from '@src/helpers/utils';
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
@@ -52,7 +52,7 @@ function calculateLegendWidth(
 
   if (useColorValue && verticalAlign) {
     const labelAreaWidth = sum(legendWidths);
-    legendWidth = Math.max(getInitialWidth(options) / 4, labelAreaWidth);
+    legendWidth = Math.max(getInitialSize(options?.chart?.width) / 4, labelAreaWidth);
   } else if (useColorValue && !verticalAlign) {
     const spectrumAreaWidth =
       spectrumLegendTooltip.PADDING * 2 +
@@ -159,10 +159,6 @@ function getItemWidth(
   );
 }
 
-function getInitialWidth(options: Options) {
-  return options.chart?.width ?? 0;
-}
-
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
   const colors = Object.values(series).reduce<string[]>((acc, cur) => [...acc, ...cur?.colors], []);
 
@@ -219,7 +215,7 @@ const legend: StoreModule = {
       const align = getAlign(options);
       const visible = showLegend(options, series);
       const checkboxVisible = showCheckbox(options);
-      const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
+      const initialWidth = Math.min(getInitialSize(options?.chart?.width) / 10, 150);
       const legendWidths = legendData.data.map(({ width }) => width);
       const legendWidth = calculateLegendWidth(initialWidth, legendWidths, options, align, visible);
       const isNestedPieChart = hasNestedPieSeries(initStoreState.series);

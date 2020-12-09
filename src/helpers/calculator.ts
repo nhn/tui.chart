@@ -11,6 +11,8 @@ import { TICK_SIZE } from '@src/brushes/axis';
 
 export const LABEL_ANCHOR_POINT = crispPixel(TICK_SIZE * 2 + getTextHeight(DEFAULT_LABEL_TEXT) / 2);
 
+let ctx: CanvasRenderingContext2D;
+
 function getDecimalLength(value: string | number) {
   const valueArr = String(value).split('.');
 
@@ -162,14 +164,18 @@ export function getDistance(point1: Point, point2: Point) {
 }
 
 export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
-  const ctx = document.createElement('canvas').getContext('2d')!;
+  if (!ctx) {
+    ctx = document.createElement('canvas').getContext('2d')!;
+  }
   ctx.font = font;
 
   return Math.ceil(ctx.measureText(text).width);
 }
 
 export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
-  const ctx = document.createElement('canvas').getContext('2d')!;
+  if (!ctx) {
+    ctx = document.createElement('canvas').getContext('2d')!;
+  }
   ctx.font = font;
   const matches = ctx.font.match(/\d+/);
 

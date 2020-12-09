@@ -32,7 +32,7 @@ import {
 } from '@t/options';
 
 export interface ScatterChartProps {
-  el: Element;
+  el: HTMLElement;
   options: ScatterChartOptions;
   data: ScatterSeriesData;
 }
@@ -92,10 +92,10 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
   }
 
   public setOptions = (options: ScatterChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: ScatterChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

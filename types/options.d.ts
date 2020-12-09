@@ -167,10 +167,17 @@ type BaseSizeOptions = Partial<Size>;
 
 type AnimationOptions = boolean | { duration: number };
 
+type ChartSizeInput = number | 'auto';
+
+type ChartSize = {
+  width?: ChartSizeInput;
+  height?: ChartSizeInput;
+};
+
 export type BaseChartOptions = {
   title?: string | TitleOption;
   animation?: AnimationOptions;
-} & BaseSizeOptions;
+} & ChartSize;
 
 export interface Scale {
   min?: number;
@@ -287,7 +294,7 @@ type ResponsiveRule = {
   options: Options;
 };
 
-type ResponsiveOptions = boolean | ResponsiveObjectType;
+type ResponsiveOptions = ResponsiveObjectType;
 
 interface BaseLegendOptions {
   align?: Align;
@@ -310,7 +317,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 }
 
 export interface HeatmapChartOptions extends BaseOptions {
-  yAxis?: BaseAxisOptions & { date: DateOption };
+  yAxis?: BaseAxisOptions & { date?: DateOption };
   theme?: HeatmapChartThemeOptions;
   series?: BaseSeriesOptions & { shift?: boolean; dataLabels?: DataLabelOptions };
 }
@@ -352,6 +359,7 @@ export interface LineChartOptions extends BaseOptions {
 
 type LineScatterChartSeriesOptions = {
   line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot'>;
+  dataLabels?: DataLabelOptions;
 } & BaseSeriesOptions;
 
 export interface LineScatterChartOptions extends BaseOptions {
@@ -513,7 +521,7 @@ export interface BoxSeriesData {
 }
 
 export interface ChartProps<T> {
-  el: Element;
+  el: HTMLElement;
   series: RawSeries;
   categories?: Categories;
   options: T;
@@ -584,6 +592,7 @@ type ColumnLineChartSeriesOptions = {
   line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels'>;
   shift?: boolean;
   dataLabels?: DataLabelOptions;
+  eventDetectType?: BoxTypeEventDetectType;
 } & BaseSeriesOptions;
 
 export interface ColumnLineChartOptions extends BaseOptions {

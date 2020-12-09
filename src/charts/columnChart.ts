@@ -102,10 +102,10 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
   };
 
   public setOptions = (options: ColumnChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: ColumnChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

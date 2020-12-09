@@ -8,7 +8,7 @@ export default {
   title: 'chart|Radar',
 };
 
-const defaultOptions = {
+const defaultOptions: RadarChartOptions = {
   chart: {
     width: 700,
     height: 700,
@@ -16,17 +16,13 @@ const defaultOptions = {
   },
 };
 
-function createChart(
-  data: RadarSeriesData,
-  customOptions: RadarChartOptions = {},
-  responsive = false
-) {
+function createChart(data: RadarSeriesData, customOptions: RadarChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions || {});
+  const options = deepMergedCopy(defaultOptions, customOptions || {});
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new RadarChart({ el, data, options });
 
@@ -97,7 +93,9 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetData2, { chart: { title: 'Annual Incomes' } }, true);
+  const { el } = createChart(budgetData2, {
+    chart: { title: 'Annual Incomes', width: 'auto', height: 'auto' },
+  });
 
   return el;
 };

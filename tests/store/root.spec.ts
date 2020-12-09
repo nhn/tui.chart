@@ -8,6 +8,8 @@ describe('Root store', () => {
 
       expect(state).toEqual({
         chart: { width: 0, height: 0 },
+        container: {},
+        usingContainerSize: { height: false, width: false },
       });
     });
 

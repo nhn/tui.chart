@@ -39,7 +39,7 @@ import {
 } from '@t/options';
 
 export interface LineChartProps {
-  el: Element;
+  el: HTMLElement;
   options: LineChartOptions;
   data: LineSeriesData;
 }
@@ -128,11 +128,11 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
 
-  public updateOptions = (options: LineChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+  public setOptions = (options: LineChartOptions) => {
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
-  public setOptions = (options: LineChartOptions) => {
-    this.store.dispatch('initOptions', options);
+  public updateOptions = (options: LineChartOptions) => {
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

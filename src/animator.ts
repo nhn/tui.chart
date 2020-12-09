@@ -75,9 +75,7 @@ export default class Animator {
 
     this.anims = [];
 
-    if (this.requestId) {
-      window.cancelAnimationFrame(this.requestId);
-    }
+    this.cancelAnimFrame();
 
     this.state = 'IDLE';
     this.requestId = null;
@@ -132,11 +130,19 @@ export default class Animator {
       }
 
       if (anim.completed) {
+        this.cancelAnimFrame();
+
         anim.onCompleted();
         anim.chart.eventBus.emit('animationCompleted', anim.requester);
       }
     });
 
     this.anims = this.anims.filter((anim) => !anim.completed);
+  }
+
+  cancelAnimFrame() {
+    if (this.requestId) {
+      window.cancelAnimationFrame(this.requestId);
+    }
   }
 }

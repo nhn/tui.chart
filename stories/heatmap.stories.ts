@@ -1,4 +1,4 @@
-import { HeatmapSeriesData, SeriesDataType } from '@t/options';
+import { HeatmapSeriesData, SeriesDataType, HeatmapChartOptions } from '@t/options';
 import { deepMergedCopy, range } from '@src/helpers/utils';
 import { contributionsData, temperatureAverageDataForHeatmap } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -12,7 +12,7 @@ export default {
 
 const width = 800;
 const height = 450;
-const defaultOptions = {
+const defaultOptions: HeatmapChartOptions = {
   chart: {
     width,
     height,
@@ -34,17 +34,13 @@ const defaultOptions = {
   },
 };
 
-function createChart(
-  data: HeatmapSeriesData,
-  customOptions: Record<string, any> = {},
-  responsive = false
-) {
+function createChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new HeatmapChart({ el, data, options });
 
@@ -123,11 +119,9 @@ export const datetimeCategory = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(
-    temperatureAverageDataForHeatmap,
-    { chart: { title: '24-hr Average Temperature' } },
-    true
-  );
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    chart: { title: '24-hr Average Temperature', width: 800, height: 'auto' },
+  });
 
   return el;
 };
@@ -183,7 +177,7 @@ export const dataLabelsWithTheme = () => {
         },
       },
     },
-  });
+  } as HeatmapChartOptions);
 
   return el;
 };
