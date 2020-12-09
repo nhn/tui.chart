@@ -68,17 +68,23 @@ export default class ExportMenu extends Component {
     this.toggleExportMenu();
   };
 
-  getExportMenuEl(chartWidth: number) {
-    const { top, left } = this.chartEl.getBoundingClientRect();
-    const topPosition = top + padding.Y + BUTTON_RECT_SIZE + 5;
-    const leftPosition = left + chartWidth - EXPORT_MENU_WIDTH - padding.X;
+  applyExportButtonPanelStyle(chartWidth: number) {
+    const exportMenu = this.exportMenuEl.querySelector('.export-menu')!;
+    const exportMenuTitle = this.exportMenuEl.querySelector('.export-menu-title')!;
+    const menuBtnWrapper = this.exportMenuEl.querySelector('.export-menu-btn-wrapper')!;
 
+    exportMenu.setAttribute('style', this.makePanelWrapperStyle(chartWidth));
+    exportMenuTitle.setAttribute('style', this.makePanelStyle('header'));
+    menuBtnWrapper.setAttribute('style', this.makePanelStyle('body'));
+  }
+
+  makeExportMenuButton() {
     const el = document.createElement('div');
     el.onclick = this.onClickExportButton;
     el.innerHTML = `
-        <div class="export-menu" style="top: ${topPosition}px; left: ${leftPosition}px; ${this.makePanelBorderStyle()}">
-          <p class="export-menu-title" style="${this.makePanelStyle('header')}">Export to</p>
-          <div class="export-menu-btn-wrapper" style="${this.makePanelStyle('body')}">
+        <div class="export-menu">
+          <p class="export-menu-title">Export to</p>
+          <div class="export-menu-btn-wrapper">
             <button class="export-menu-btn" id="xls">xls</button>
             <button class="export-menu-btn" id="csv">csv</button>
             <button class="export-menu-btn" id="png">png</button>
@@ -94,6 +100,7 @@ export default class ExportMenu extends Component {
     this.chartEl = chartEl;
     this.type = 'exportMenu';
     this.name = 'exportMenu';
+    this.exportMenuEl = this.makeExportMenuButton();
   }
 
   onClick({ responders }: { responders: RectResponderModel[] }) {
@@ -116,7 +123,7 @@ export default class ExportMenu extends Component {
     this.theme = theme.exportMenu as Required<ExportMenuTheme>;
     this.data = { series, categories };
     this.fileName = this.getFileName(options?.exportMenu?.filename || chart.title);
-    this.exportMenuEl = this.getExportMenuEl(chart.width);
+    this.applyExportButtonPanelStyle(chart.width);
     this.rect = layout.exportMenu;
     this.models.exportMenuButton = [
       {
@@ -139,10 +146,13 @@ export default class ExportMenu extends Component {
     ];
   }
 
-  makePanelBorderStyle() {
+  makePanelWrapperStyle(chartWidth: number) {
+    const { top, left } = this.chartEl.getBoundingClientRect();
+    const topPosition = top + padding.Y + BUTTON_RECT_SIZE + 5;
+    const leftPosition = left + chartWidth - EXPORT_MENU_WIDTH - padding.X;
     const { borderRadius, borderWidth, borderColor } = this.theme.panel;
 
-    return `border: ${borderWidth}px solid ${borderColor}; border-radius: ${borderRadius}px;`;
+    return `top: ${topPosition}px; left: ${leftPosition}px; border: ${borderWidth}px solid ${borderColor}; border-radius: ${borderRadius}px;`;
   }
 
   makePanelStyle(type: 'header' | 'body') {

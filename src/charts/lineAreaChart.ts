@@ -42,7 +42,7 @@ import {
 import { RawSeries } from '@t/store/store';
 
 export interface LineAreaChartProps {
-  el: Element;
+  el: HTMLElement;
   options: LineAreaChartOptions;
   data: LineAreaData;
 }
@@ -137,10 +137,10 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
   };
 
   public setOptions = (options: LineAreaChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: LineAreaChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

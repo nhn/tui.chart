@@ -14,7 +14,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions = {
+const defaultOptions: ScatterChartOptions = {
   chart: {
     width,
     height,
@@ -27,17 +27,13 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(
-  data: ScatterSeriesData,
-  customOptions: ScatterChartOptions = {},
-  responsive = false
-) {
+function createChart(data: ScatterSeriesData, customOptions: ScatterChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new ScatterChart({ el, data, options });
 
@@ -65,11 +61,9 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(
-    genderHeightWeightData,
-    { chart: { title: 'Height vs Weight' } },
-    true
-  );
+  const { el } = createChart(genderHeightWeightData, {
+    chart: { title: 'Height vs Weight', width: 700, height: 'auto' },
+  });
 
   return el;
 };

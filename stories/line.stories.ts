@@ -1,5 +1,5 @@
 import LineChart from '@src/charts/lineChart';
-import { LineSeriesData } from '@t/options';
+import { LineSeriesData, LineChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import {
   tupleCoordinateData,
@@ -19,7 +19,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions = {
+const defaultOptions: LineChartOptions = {
   chart: {
     width,
     height,
@@ -32,17 +32,13 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(
-  data: LineSeriesData,
-  customOptions: Record<string, any> = {},
-  responsive = false
-) {
+function createChart(data: LineSeriesData, customOptions: LineChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${width}px`;
-  el.style.height = responsive ? '90vh' : `${height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new LineChart({ el, data, options });
 
@@ -263,6 +259,8 @@ export const animationDuration = () => {
           step: 100,
         }),
       },
+    },
+    series: {
       zoomable: true,
     },
   });
@@ -300,11 +298,9 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(
-    temperatureData,
-    { chart: { title: '24-hr Average Temperature' } },
-    true
-  );
+  const { el } = createChart(temperatureData, {
+    chart: { title: '24-hr Average Temperature', width: 'auto', height: 'auto' },
+  });
 
   return el;
 };
@@ -391,7 +387,7 @@ export const dataLabelsWithTheme = () => {
       },
     },
   });
-  
+
   return el;
 };
 

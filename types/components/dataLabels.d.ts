@@ -2,7 +2,7 @@ import {
   Point,
   DataLabelOptions,
   DataLabelPieSeriesName,
-  SubDataLabel,
+  StackTotalDataLabel,
   BoxSeriesDataType,
 } from '@t/options';
 import { PointModel, SectorModel, RectModel, Nullable } from './series';
@@ -43,7 +43,7 @@ export type DataLabel = {
 export type DataLabelOption = Required<
   Pick<DataLabelOptions, 'anchor' | 'offsetX' | 'offsetY' | 'formatter'>
 > & {
-  stackTotal?: Required<SubDataLabel>;
+  stackTotal?: Required<StackTotalDataLabel>;
   pieSeriesName?: DataLabelPieSeriesName;
 };
 

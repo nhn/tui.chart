@@ -1,5 +1,5 @@
 import ColumnLineChart from '@src/charts/columnLineChart';
-import { ColumnChartOptions } from '@t/options';
+import { ColumnLineChartOptions } from '@t/options';
 import { deepMergedCopy, range } from '@src/helpers/utils';
 import { temperatureAverageData } from './data';
 import '@src/css/chart.css';
@@ -8,7 +8,7 @@ export default {
   title: 'chart.ColumnLine',
 };
 
-const defaultOptions: ColumnChartOptions = {
+const defaultOptions: ColumnLineChartOptions = {
   chart: {
     width: 1000,
     height: 500,
@@ -18,13 +18,13 @@ const defaultOptions: ColumnChartOptions = {
   xAxis: { title: 'Month' },
 };
 
-function createChart(data, customOptions: Record<string, any> = {}, responsive = false) {
+function createChart(data, customOptions: ColumnLineChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new ColumnLineChart({
     el,
@@ -148,17 +148,15 @@ export const secondaryYAxis = () => {
   return el;
 };
 export const responsive = () => {
-  const { el } = createChart(
-    temperatureAverageData,
-    {
-      chart: {
-        title: '24-hr Average Temperature',
-      },
-      yAxis: [{ title: 'Temperature (Celsius)' }, { title: 'Average' }],
-      xAxis: { title: 'Month' },
+  const { el } = createChart(temperatureAverageData, {
+    chart: {
+      title: '24-hr Average Temperature',
+      width: 800,
+      height: 'auto',
     },
-    true
-  );
+    yAxis: [{ title: 'Temperature (Celsius)' }, { title: 'Average' }],
+    xAxis: { title: 'Month' },
+  });
 
   return el;
 };

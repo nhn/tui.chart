@@ -1,5 +1,5 @@
 import LineScatterChart from '@src/charts/lineScatterChart';
-import { LineScatterData } from '@t/options';
+import { LineScatterData, LineScatterChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { efficiencyAndExpensesData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -12,7 +12,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions = {
+const defaultOptions: LineScatterChartOptions = {
   chart: {
     width,
     height,
@@ -22,17 +22,13 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(
-  data: LineScatterData,
-  customOptions: Record<string, any> = {},
-  responsive = false
-) {
+function createChart(data: LineScatterData, customOptions: LineScatterChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new LineScatterChart({ el, data, options });
 
@@ -76,14 +72,10 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(
-    efficiencyAndExpensesData,
-    {
-      chart: { title: 'Efficiency vs Expenses' },
-      yAxis: [{ title: 'Efficiency' }, { title: 'Expenses' }],
-    },
-    true
-  );
+  const { el } = createChart(efficiencyAndExpensesData, {
+    chart: { title: 'Efficiency vs Expenses', width: 800, height: 'auto' },
+    yAxis: [{ title: 'Efficiency' }, { title: 'Expenses' }],
+  });
 
   return el;
 };

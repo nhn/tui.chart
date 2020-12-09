@@ -19,7 +19,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 import { PieChartOptions, PieSeriesData, PieSeriesType } from '@t/options';
 
 export interface PieChartProps {
-  el: Element;
+  el: HTMLElement;
   options: PieChartOptions;
   data: PieSeriesData;
 }
@@ -76,10 +76,10 @@ export default class PieChart extends Chart<PieChartOptions> {
   };
 
   public setOptions = (options: PieChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: PieChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

@@ -483,9 +483,9 @@ const layout: StoreModule = {
   }),
   action: {
     setLayout({ state }) {
-      const { legend: legendState, theme } = state;
       const {
-        legend: { align },
+        legend: legendState,
+        theme,
         circleLegend: circleLegendState,
         series,
         options,
@@ -586,7 +586,12 @@ const layout: StoreModule = {
         legendItemHeight,
       });
 
-      const circleLegend = getCircleLegendRect(xAxis, yAxis, align, circleLegendState.width);
+      const circleLegend = getCircleLegendRect(
+        xAxis,
+        yAxis,
+        legendState.align,
+        circleLegendState.width
+      );
       const plot = getPlotRect(xAxis, yAxis, optionSize.plot);
 
       extend(state.layout, {

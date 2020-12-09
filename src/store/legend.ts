@@ -11,6 +11,7 @@ import {
 } from '@t/store/store';
 import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
 import { isUndefined, sum, includes, deepMergedCopy, isNumber } from '@src/helpers/utils';
+
 import {
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
@@ -171,7 +172,7 @@ function getItemWidth(
 function getInitialWidth(options: Options) {
   return isNumber(options.chart?.width) ? options.chart!.width : 0;
 }
-
+                  
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
   const colors = Object.values(series).reduce<string[]>((acc, cur) => [...acc, ...cur?.colors], []);
 
@@ -241,6 +242,7 @@ const legend: StoreModule = {
         align,
         visible,
       });
+
       const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
 
       const circleLegendWidth = isVerticalAlign(align)

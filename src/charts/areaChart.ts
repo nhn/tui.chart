@@ -40,7 +40,7 @@ import {
 } from '@t/options';
 
 export interface AreaChartProps {
-  el: Element;
+  el: HTMLElement;
   options: AreaChartOptions;
   data: AreaSeriesData;
 }
@@ -131,10 +131,10 @@ export default class AreaChart extends Chart<AreaChartOptions> {
   };
 
   public setOptions = (options: AreaChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: AreaChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

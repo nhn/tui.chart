@@ -7,6 +7,7 @@ import {
   StackDataValues,
   Stack,
   StackSeries,
+  RawSeries,
 } from '@t/store/store';
 import {
   BoxSeriesOptions,
@@ -176,36 +177,51 @@ function getScaleType(stackData: StackDataValues, stackType: StackType, divergin
   }
 }
 
+function initStackSeries(series: RawSeries, options: Options) {
+  const stackSeries = {};
+
+  Object.keys(series).forEach((seriesName) => {
+    const chartType = seriesName as ChartType;
+    const stackOption = pickStackOption(options);
+
+    if (stackOption) {
+      if (!stackSeries[chartType]) {
+        stackSeries[chartType] = {};
+      }
+
+      stackSeries[chartType].stack = initializeStack(stackOption);
+    }
+  });
+
+  return stackSeries;
+}
+
 const stackSeriesData: StoreModule = {
   name: 'stackSeriesData',
-  state: ({ series, options }) => {
-    const stackSeries = {};
-
-    Object.keys(series).forEach((seriesName) => {
-      const chartType = seriesName as ChartType;
-      const stackOption = pickStackOption(options);
-
-      if (stackOption) {
-        if (!stackSeries[chartType]) {
-          stackSeries[chartType] = {};
-        }
-
-        stackSeries[chartType].stack = initializeStack(stackOption);
-      }
-    });
-
-    return {
-      stackSeries,
-    };
-  },
+  state: ({ series, options }) => ({
+    stackSeries: initStackSeries(series, options),
+  }),
   action: {
     setStackSeriesData({ state }) {
       const { series, stackSeries, options } = state;
+      const stackOption = pickStackOption(options);
       const newStackSeries = {};
 
       Object.keys(series).forEach((seriesName) => {
         const seriesData = series[seriesName];
         const { data, seriesCount, seriesGroupCount } = seriesData;
+
+        if (stackOption) {
+          if (!stackSeries[seriesName]) {
+            stackSeries[seriesName] = {};
+          }
+
+          stackSeries[seriesName].stack = initializeStack(stackOption);
+        } else {
+          stackSeries[seriesName] = null;
+          delete stackSeries[seriesName];
+        }
+
         const { stack } = stackSeries[seriesName] || {};
         const diverging = !!(options.series as BoxSeriesOptions)?.diverging;
 

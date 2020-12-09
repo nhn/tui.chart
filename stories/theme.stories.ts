@@ -24,17 +24,13 @@ const defaultOptions = {
   plot: {},
 };
 
-function createChart(
-  data: AreaSeriesData,
-  customOptions: AreaChartOptions = {},
-  responsive = false
-) {
+function createChart(data: AreaSeriesData, customOptions: AreaChartOptions = {}) {
   const el = document.createElement('div');
-  const options = responsive ? customOptions : deepMergedCopy(defaultOptions, customOptions);
+  const options = deepMergedCopy(defaultOptions, customOptions);
 
   el.style.outline = '1px solid red';
-  el.style.width = responsive ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = responsive ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new AreaChart({ el, data, options });
 
