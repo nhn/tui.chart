@@ -24,9 +24,22 @@ import {
   LineAreaChartOptions,
   LineScatterChartOptions,
   ColumnLineChartOptions,
-  BoxPlotSeriesType,
-  BoxPlotSeriesData,
+  BaseOptions,
+  AreaSeriesData,
+  BoxSeriesData,
   BoxPlotChartOptions,
+  BoxPlotSeriesData,
+  BubbleSeriesData,
+  BulletSeriesData,
+  ColumnLineData,
+  LineAreaData,
+  LineScatterData,
+  PieSeriesData,
+  NestedPieSeriesData,
+  RadarSeriesData,
+  ScatterSeriesData,
+  BoxPlotSeriesType,
+  LineSeriesData,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -44,7 +57,7 @@ import { LineAreaChartProps } from '@src/charts/lineAreaChart';
 import { LineScatterChartProps } from '@src/charts/lineScatterChart';
 import { ColumnLineChartProps } from '@src/charts/columnLineChart';
 import { CheckedLegendType } from '@t/components/legend';
-import { Options } from '@t/store/store';
+import { Options, HeatmapSeriesData, TreemapSeriesData } from '@t/store/store';
 import { CustomEventType, EventListener } from '@src/eventEmitter';
 import { BoxPlotChartProps } from '@src/charts/boxPlotChart';
 import { AddSeriesDataInfo } from '@src/charts/chart';
@@ -338,5 +351,39 @@ export class ColumnLineChart extends BaseChart {
 
   public updateOptions(options: ColumnLineChartOptions): void;
 }
+
+export {
+  BaseOptions,
+  AreaChartOptions,
+  AreaSeriesData,
+  BarChartOptions,
+  BoxSeriesData,
+  BoxPlotChartOptions,
+  BoxPlotSeriesData,
+  BubbleSeriesData,
+  BulletChartOptions,
+  BulletSeriesData,
+  ColumnChartOptions,
+  ColumnLineChartOptions,
+  ColumnLineData,
+  HeatmapChartOptions,
+  HeatmapSeriesData,
+  LineChartOptions,
+  LineSeriesData,
+  LineAreaChartOptions,
+  LineAreaData,
+  LineScatterChartOptions,
+  LineScatterData,
+  PieChartOptions,
+  PieSeriesData,
+  NestedPieChartOptions,
+  NestedPieSeriesData,
+  RadarChartOptions,
+  RadarSeriesData,
+  ScatterChartOptions,
+  ScatterSeriesData,
+  TreemapChartOptions,
+  TreemapSeriesData,
+};
 
 export default tui.Chart;
