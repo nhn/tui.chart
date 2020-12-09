@@ -3,7 +3,7 @@ import { isFunction, includes, isBoolean, isString } from '@src/helpers/utils';
 import {
   DataLabelAnchor,
   SeriesDataType,
-  SubDataLabel,
+  StackTotalDataLabel,
   DataLabelOptions,
   PieDataLabels,
   BoxDataLabels,
@@ -92,8 +92,9 @@ export function getDefaultDataLabelsOptions(
   if (withStack) {
     const stackTotal = (dataLabelOptions as BoxDataLabels).stackTotal;
     options.stackTotal = {
-      visible: isBoolean(stackTotal?.visible) ? stackTotal?.visible : true,
-    } as Required<SubDataLabel>;
+      visible: isBoolean(stackTotal?.visible) ? stackTotal!.visible : true,
+      formatter: isFunction(stackTotal?.formatter) ? stackTotal!.formatter! : formatter,
+    } as Required<StackTotalDataLabel>;
   }
 
   if (type === 'sector' && (dataLabelOptions as PieDataLabels).pieSeriesName?.visible) {
@@ -409,11 +410,13 @@ export function makeRectLabelInfo(
   dataLabelOptions: DataLabelOption
 ): DataLabel {
   const { type, value, direction, name, theme } = rect;
-  const { formatter } = dataLabelOptions;
   const horizontal = isHorizontal(direction);
   const labelPosition = horizontal
     ? makeHorizontalRectLabelInfo(rect, dataLabelOptions)
     : makeVerticalRectLabelInfo(rect, dataLabelOptions);
+
+  const formatter =
+    type === 'stackTotal' ? dataLabelOptions.stackTotal!.formatter : dataLabelOptions.formatter;
 
   return {
     type: type,
