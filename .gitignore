@@ -66,4 +66,4 @@ api
 .\#*
 .vscode
 
-dist/esm
+dist
