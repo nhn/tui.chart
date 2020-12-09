@@ -30,10 +30,11 @@ import { Point } from '@t/options';
 import { polygon } from '@src/brushes/polygon';
 import { scatterSeries } from '@src/brushes/scatterSeries';
 
-export default {
-  title: 'brushes',
-  decorators: [withKnobs],
-};
+// @TODO: need to remove. comment for beta test
+// export default {
+//   title: 'brushes',
+//   decorators: [withKnobs],
+// };
 
 type BezierOptions = 'basic' | 'bezier';
 
