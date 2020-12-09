@@ -5,7 +5,6 @@ import {
   CoordinateDataType,
   HeatmapSeriesDataType,
   LineChartOptions,
-  LineSeriesData,
   LineSeriesDataType,
   Size,
   PlotBand,
@@ -339,7 +338,5 @@ export class ColumnLineChart extends BaseChart {
 
   public updateOptions(options: ColumnLineChartOptions): void;
 }
-
-export { LineChartOptions, LineSeriesData };
 
 export default tui.Chart;
