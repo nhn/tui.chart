@@ -167,12 +167,17 @@ type BaseSizeOptions = Partial<Size>;
 
 type AnimationOptions = boolean | { duration: number };
 
+type ChartSizeInput = number | 'auto';
+
+type ChartSize = {
+  width?: ChartSizeInput;
+  height?: ChartSizeInput;
+};
+
 export type BaseChartOptions = {
   title?: string | TitleOption;
   animation?: AnimationOptions;
-  width?: number | 'auto';
-  height?: number | 'auto';
-};
+} & ChartSize;
 
 export interface Scale {
   min?: number;
@@ -516,7 +521,7 @@ export interface BoxSeriesData {
 }
 
 export interface ChartProps<T> {
-  el: Element;
+  el: HTMLElement;
   series: RawSeries;
   categories?: Categories;
   options: T;

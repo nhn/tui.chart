@@ -1,3 +1,5 @@
+import { ChartSizeInput } from '@t/options';
+
 type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
 type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
 
@@ -314,6 +316,10 @@ export function calculateSizeWithPercentString(size: number, value: string | num
   return isNumber(value) ? value : Number(((size * getPercentageValue(value)) / 100).toFixed(2));
 }
 
-export function getInitialSize(size?: number | 'auto') {
+export function getInitialSize(size?: ChartSizeInput) {
   return isNumber(size) ? size : 0;
+}
+
+export function isAutoValue(value?: ChartSizeInput) {
+  return value === 'auto';
 }

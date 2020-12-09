@@ -42,7 +42,7 @@ import { isExist } from '@src/helpers/utils';
 import { RespondersModel } from '@t/components/series';
 
 export interface ColumnLineChartProps {
-  el: Element;
+  el: HTMLElement;
   options: ColumnLineChartOptions;
   data: ColumnLineData;
 }
@@ -160,10 +160,10 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   };
 
   public setOptions = (options: ColumnLineChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: ColumnLineChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

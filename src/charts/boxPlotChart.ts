@@ -25,7 +25,7 @@ import * as BoxPlotBrush from '@src/brushes/boxPlot';
 import { BoxPlotSeriesType, BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
 
 interface BoxPlotChartProps {
-  el: Element;
+  el: HTMLElement;
   options: BoxPlotChartOptions;
   data: BoxPlotSeriesData;
 }
@@ -85,10 +85,10 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
   }
 
   public setOptions = (options: BoxPlotChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: BoxPlotChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }

@@ -24,7 +24,7 @@ import * as axisBrush from '@src/brushes/axis';
 import { RadarChartOptions, RadarSeriesData, RadarSeriesInput } from '@t/options';
 
 export interface RadarChartProps {
-  el: Element;
+  el: HTMLElement;
   options: RadarChartOptions;
   data: RadarSeriesData;
 }
@@ -81,10 +81,10 @@ export default class RadarChart extends Chart<RadarChartOptions> {
   }
 
   public setOptions = (options: RadarChartOptions) => {
-    this.store.dispatch('initOptions', options);
+    this.dispatchOptionsEvent('initOptions', options);
   };
 
   public updateOptions = (options: RadarChartOptions) => {
-    this.store.dispatch('updateOptions', options);
+    this.dispatchOptionsEvent('updateOptions', options);
   };
 }
