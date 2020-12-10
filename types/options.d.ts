@@ -620,8 +620,8 @@ export type NestedPieSeriesData = {
   series: NestedPieSeriesType[];
 };
 
-export type NestedPieSeriesOptions = Record<string, PieSeriesOptions & BaseSeriesOptions> &
-  BaseSeriesOptions & { dataLabels?: DataLabelOptions };
+export type NestedPieSeriesOptions = Record<string, PieSeriesOptions> &
+  BaseSeriesOptions & { dataLabels?: PieDataLabels };
 
 export interface NestedPieChartOptions extends BaseOptions {
   series?: NestedPieSeriesOptions;
