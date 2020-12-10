@@ -1,5 +1,5 @@
 # TOAST UI Chart v4 major update planning🏃🏃🏃
-TOAST UI Chart is planning a **v4 major update for 2021**. First of all, You can see our **Beta news [here](https://github.com/nhn/tui.chart/issues/427)!**
+TOAST UI Chart is planning a **v4 major update for 2021**. First of all, You can see our **Beta news [here](https://github.com/nhn/tui.chart/discussions/464)!**
 <br>
 <br>
 
