@@ -8,7 +8,8 @@
 
 ### Chart Guide
 
-- [Line, Area Chart](./en/chart-line-area.md)
+- [Line Chart](./en/chart-line.md)
+- [Area Chart](./en/chart-area.md)
 - [LineArea Chart](./en/chart-lineArea.md)
 - [Bar, Column Chart](./en/chart-bar-column.md)
 - [ColumnLine Chart](./en/chart-columnLine.md)
@@ -30,16 +31,16 @@
 - [Axes](./en/common-axes.md)
 - [Tooltip](./en/common-tooltip.md)
 - [API introduction](./en/common-api.md)
-- [Common component theme](./common-theme.md)
+- [Common component theme](./en/common-theme.md)
 - [`chart` options](./en/common-chart-options.md)
 - [`layout` options](./en/common-layout-options.md)
 - [Live Update options](./en/common-liveUpdate-options.md)
 - [`responsive` options](./en/common-responsive-options.md)
-- [`zoomable` options](./en/common-zoomable-options.md)
+- [Data labels](./en/common-dataLabels-options.md)
 
 ### Migration Guide
 
-- [️️✈️ v4.0 Migration Guide](../v4.0-migration-guide-en.md)
+- [️️✈️ v4.0 Migration Guide](./v4.0-migration-guide-en.md)
 
 ## Etc
 

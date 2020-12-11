@@ -6,7 +6,8 @@
 
 ### 차트별 가이드
 
-- [Line, Area Chart](./chart-line-area.md)
+- [Line Chart](./chart-line.md)
+- [Area Chart](./chart-area.md)
 - [LineArea Chart](./chart-lineArea.md)
 - [Bar, Column Chart](./chart-bar-column.md)
 - [ColumnLine Chart](./chart-columnLine.md)
@@ -33,7 +34,7 @@
 - [`layout` 옵션](./common-layout-options.md)
 - [Live Update](./common-liveUpdate-options.md)
 - [`responsive` 옵션](./common-responsive-options.md)
-- [`zoomable` 옵션](./common-zoomable-options.md)
+- [Data labels](./common-dataLabels-options.md)
 
 ### 마이그레이션 가이드
 - [️️✈️ v4.0 마이그레이션 가이드](../v4.0-migration-guide-ko.md)
