@@ -147,6 +147,7 @@ type PieChartSeriesTheme = {
 type NestedPieChartSeriesTheme = Record<string, PieChartSeriesTheme> | PieChartSeriesTheme;
 
 interface TreemapChartSeriesTheme {
+  colors?: string[];
   startColor?: string;
   endColor?: string;
   borderColor?: string;
