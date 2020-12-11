@@ -173,8 +173,10 @@ type options = {
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
 > (링크: 
+> [chart](./common-chart-options.md),
 > [axes](./common-axes.md), 
-> [axes](./common-legend.md), 
+> [legend](./common-legend.md), 
+> [export menu](./common-exportMenu.md),
 > [tooltip](./common-tooltip.md),
 > [plot](./common-plot.md), 
 > [responsive](./common-responsive-options.md), 
@@ -292,7 +294,7 @@ const options = {
 ```
 ## 시리즈 theme
 
-LineChart에서 수정할 수 있는 시리즈 테마이다.
+Line 차트에서 수정할 수 있는 시리즈 테마이다.
 
 ```ts
 interface LineChartSeriesTheme {
