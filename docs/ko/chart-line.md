@@ -348,6 +348,17 @@ interface LineChartSeriesTheme {
 }
 ```
 
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| lineWidth | number | 시리즈 라인 두께 |
+| dashSegments | number[] | 시리즈 라인의 dashSegement값 |
+| colors | string[] | 시리즈의 색상 |
+| dot | object | `showDot: true`일 떄 노출되는 점 스타일 지정 |
+| select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
+| select.dot | object | 선택된 데이터를 나타내는 점 스타일 지정 |
+| hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
+| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
+
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 라인 시리즈의 색상과 두꼐를 바꾸고 싶다면  다음처럼 작성하면 된다.
 
 ```js
