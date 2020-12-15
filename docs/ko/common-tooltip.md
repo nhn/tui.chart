@@ -1,10 +1,11 @@
 # Tooltip
 
-Tooltip은 현재 마우스를 올려 놓은 데이터의 정보를 나타내는 영역이다. 
+Tooltip은 현재 마우스를 올려 놓은 데이터의 정보를 나타내는 영역이다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102184663-2691da80-3ef3-11eb-8b83-853201adc12c.png)
 
-해당 영역은 header영역과 body 영역으로 나뉘어져 있으며 header 영역에는 category 값이, body 영역에는 데이터 값이 나오게 된다. 
+해당 영역은 header영역과 body 영역으로 나뉘어져 있으며 header 영역에는 category 값이, body 영역에는 데이터 값이 나오게 된다.
+
 ## options
 
 tooltip을 제어할 수 있는 옵션은 다음과 같다.
@@ -172,3 +173,22 @@ interface TooltipTheme {
 | borderRadius | number | 둥근 모서리 값 | 
 | header | object | 툴팁 header 영역 스타일 |
 | body | object | 툴팁 body 영역 스타일
+간단한 예시로 툴팁의 background 색상과 테두리와 관련된 옵션들을 추가해보도록 하겠다. 
+
+```js
+const options = {
+  theme: {
+    tooltip: {
+      background: '#80CEE1',
+      borderColor: '#3065AC',
+      borderWidth: 10,
+      borderRadius: 20,
+      borderStyle: 'double',
+    },
+  },
+};
+```
+
+해당 옵션을 적용한 결과는 다음과 같다.
+
+![image](https://user-images.githubusercontent.com/35371660/102186142-84bfbd00-3ef5-11eb-8272-aa1093da0e98.png)
