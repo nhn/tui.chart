@@ -140,3 +140,42 @@ export const theme = () => {
 
   return el;
 };
+
+export const liveUpdate = () => {
+  const data = {
+    categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+    series: {
+      line: [
+        {
+          name: 'A',
+          data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+        },
+      ],
+      area: [
+        {
+          name: 'B',
+          data: [60, 40, 10, 33, 70, 90, 100, 17, 40, 80],
+        },
+      ],
+    },
+  };
+
+  const { chart, el } = createChart(data, {
+    series: { shift: true },
+    xAxis: { date: { format: '' } },
+  });
+
+  let index = 11;
+  const intervalId = setInterval(() => {
+    const random = Math.round(Math.random() * 100);
+    const random2 = Math.round(Math.random() * 100);
+    chart.addData([random], index.toString(), 'area');
+    chart.addData([random2], index.toString(), 'line');
+    index += 1;
+    if (index === 30) {
+      clearInterval(intervalId);
+    }
+  }, 1500);
+
+  return el;
+};
