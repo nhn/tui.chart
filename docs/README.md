@@ -18,7 +18,7 @@
 - [Treemap Chart](./en/chart-treemap.md)
 - [Heatmap Chart](./en/chart-heatmap.md)
 - [Scatter Chart](./en/chart-scatter.md)
-- [Line-Scatter Chart](./en/chart-lineScatter.md)
+- [LineScatter Chart](./en/chart-lineScatter.md)
 - [Bubble Chart](./en/chart-bubble.md)
 - [Pie, NestedPie Chart](./en/chart-pie-nestedPie.md)
 - [Radar Chart](./en/chart-radar.md)
