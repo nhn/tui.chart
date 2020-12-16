@@ -94,14 +94,14 @@ type options = {
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
 > (링크: 
-> [chart](./common-chart-options.md),
-> [axes](./common-axes.md), 
-> [legend](./common-legend.md), 
-> [export menu](./common-exportMenu.md),
-> [tooltip](./common-tooltip.md),
-> [responsive](./common-responsive-options.md), 
-> [live update](./common-liveUpdate-options.md)
-> [dataLabels](./common-dataLables.md)
+> [`chart` 옵션](./common-chart-options.md),
+> [축](./common-axes.md), 
+> [범례](./common-legend.md), 
+> [내보내기](./common-exportMenu.md),
+> [툴팁](./common-tooltip.md),
+> [`responsive` 옵션](./common-responsive-options.md), 
+> [실시간 업데이트](./common-liveUpdate-options.md),
+> [데이터 라벨](./common-dataLabels-options.md)
 > )
 
 ### selectable
@@ -164,7 +164,7 @@ interface BubbleChartSeriesTheme {
 | fillColor | string | 시리즈의 채우기 색상 |
 | size | number | 시리즈의 크기 |
 | colors | string[] | 시리즈의 색상 |
-| select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
+| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
 
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 아이콘을 변경해보자.

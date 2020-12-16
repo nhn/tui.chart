@@ -22,7 +22,7 @@ const chart = Chart.AreaChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`-`data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분하는 id의 목적으로 유일하게 작성해야 한다. 
+`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분하는 id의 목적으로 유일하게 작성해야 한다. 
 
 ```js
 const data = {
@@ -64,7 +64,7 @@ const data = {
 
 ### 데이터 타입
 
-기본 차트와 다른 점은 sereis data의 타입이다. data는 `배열` 형태로 입력되며 값의 시작과 끝을 `숫자값`으로 순서대로 넣어줘야 한다.
+기본 차트와 다른 점은 series data의 타입이다. data는 `배열` 형태로 입력되며 값의 시작과 끝을 `숫자값`으로 순서대로 넣어줘야 한다.
 
 ```js
 const data = {
@@ -161,15 +161,15 @@ type options = {
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
 > (링크: 
-> [chart](./common-chart-options.md),
-> [axes](./common-axes.md), 
-> [legend](./common-legend.md), 
-> [export menu](./common-exportMenu.md),
-> [tooltip](./common-tooltip.md),
-> [plot](./common-plot.md), 
-> [responsive](./common-responsive-options.md), 
-> [live update](./common-liveUpdate-options.md)
-> [dataLabels](./common-dataLables.md)
+> [`chart` 옵션](./common-chart-options.md),
+> [축](./common-axes.md), 
+> [범례](./common-legend.md), 
+> [내보내기](./common-exportMenu.md),
+> [툴팁](./common-tooltip.md),
+> [플롯](./common-plot.md), 
+> [`responsive` 옵션](./common-responsive-options.md), 
+> [실시간 업데이트](./common-liveUpdate-options.md),
+> [데이터 라벨](./common-dataLabels-options.md)
 > )
 
 ### stack
@@ -294,7 +294,7 @@ const options = {
 ### secondary Y Axis
 ![image](https://user-images.githubusercontent.com/35371660/101857356-aabe2800-3baa-11eb-8097-378139bd7ca3.png)
 
-`yAxis`의 옵션값을 배열 형태로 넣을 경우 우측에 두 번째 y축을 지정할 수 있다. 입력되는 순서에 따라 첫 번째가 주축, 두번째 값이 두 번째 secondaryYAxis가 된다.
+`yAxis`의 옵션값을 배열 형태로 넣을 경우 우측에 두 번째 y축을 지정할 수 있다. 입력되는 순서에 따라 첫 번째 값이 주축, 두번째 값이 부축이 된다.
 
 ```js
 const options = {
@@ -380,10 +380,10 @@ interface AreaChartSeriesTheme {
 | --- | --- | --- |
 | lineWidth | number | 시리즈 라인 두께 |
 | areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
-| dashSegments | number[] | 시리즈 라인의 dashSegement값 |
+| dashSegments | number[] | 시리즈 라인의 dashSegment 값 |
 | colors | string[] | 시리즈의 색상 |
 | dot | object | `showDot: true`일 떄 노출되는 점 스타일 지정 |
-| select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
+| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | select.dot | object | 선택된 데이터를 나타내는 점 스타일 지정 |
 | select.areaOpacity | number | 선택된 시리즈의 영역 투명도 | 
 | select.restSeries | object | 선택되지 않은 시리즈의 스타일 |

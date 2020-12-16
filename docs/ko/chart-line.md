@@ -24,7 +24,7 @@ const chart = Chart.lineChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`-`data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분하는 id의 목적으로 유일하게 작성해야 한다. 
+`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분하는 id의 목적으로 유일하게 작성해야 한다. 
 
 ```js
 const data = {
@@ -173,16 +173,17 @@ type options = {
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
 > (링크: 
-> [chart](./common-chart-options.md),
-> [axes](./common-axes.md), 
-> [legend](./common-legend.md), 
-> [export menu](./common-exportMenu.md),
-> [tooltip](./common-tooltip.md),
-> [plot](./common-plot.md), 
-> [responsive](./common-responsive-options.md), 
-> [live update](./common-liveUpdate-options.md)
-> [dataLabels](./common-dataLables.md)
+> [`chart` 옵션](./common-chart-options.md),
+> [축](./common-axes.md), 
+> [범례](./common-legend.md), 
+> [내보내기](./common-exportMenu.md),
+> [툴팁](./common-tooltip.md),
+> [플롯](./common-plot.md), 
+> [`responsive` 옵션](./common-responsive-options.md), 
+> [실시간 업데이트](./common-liveUpdate-options.md),
+> [데이터 라벨](./common-dataLabels-options.md)
 > )
+
 ### selectable
 
 ![image](https://user-images.githubusercontent.com/35371660/101849744-acccba80-3b9b-11eb-838c-40324d596afb.png)
@@ -274,7 +275,7 @@ const options = {
 ### secondary Y Axis
 ![image](https://user-images.githubusercontent.com/35371660/101852183-64fc6200-3ba0-11eb-976a-3d4cfbb4b5a8.png)
 
-`yAxis`의 옵션값을 배열 형태로 넣을 경우 우측에 두 번째 y축을 지정할 수 있다. 입력되는 순서에 따라 첫 번째가 주축, 두번째 값이 두 번째 secondaryYAxis가 된다.
+`yAxis`의 옵션값을 배열 형태로 넣을 경우 우측에 두 번째 y축을 지정할 수 있다. 입력되는 순서에 따라 첫 번째 값이 주축, 두번째 값이 부축이 된다.
 
 ```js
 const options = {
@@ -353,10 +354,10 @@ interface LineChartSeriesTheme {
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
 | lineWidth | number | 시리즈 라인 두께 |
-| dashSegments | number[] | 시리즈 라인의 dashSegement값 |
+| dashSegments | number[] | 시리즈 라인의 dashSegment 값 |
 | colors | string[] | 시리즈의 색상 |
 | dot | object | `showDot: true`일 떄 노출되는 점 스타일 지정 |
-| select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
+| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | select.dot | object | 선택된 데이터를 나타내는 점 스타일 지정 |
 | hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 

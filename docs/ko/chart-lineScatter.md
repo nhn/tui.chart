@@ -139,16 +139,16 @@ type options = {
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자. 또한, scatter, line 차트 옵션에 대해 궁금하다면 해당 가이드를 참고하자.
 > (링크: 
-> [chart](./common-chart-options.md),
-> [axes](./common-axes.md), 
-> [legend](./common-legend.md), 
-> [export menu](./common-exportMenu.md),
-> [tooltip](./common-tooltip.md),
-> [responsive](./common-responsive-options.md), 
-> [live update](./common-liveUpdate-options.md)
-> [dataLabels](./common-dataLables.md)
-> [line chart](./chart-line.md)
-> [scatter chart](./chart-scatter.md)
+> [`chart` 옵션](./common-chart-options.md),
+> [축](./common-axes.md), 
+> [범례](./common-legend.md), 
+> [내보내기](./common-exportMenu.md),
+> [툴팁](./common-tooltip.md),
+> [`responsive` 옵션](./common-responsive-options.md), 
+> [실시간 업데이트](./common-liveUpdate-options.md),
+> [데이터 라벨](./common-dataLabels-options.md),
+> [Line 차트](./chart-line.md),
+> [Scatter 차트](./chart-scatter.md)
 > )
 
 ### selectable

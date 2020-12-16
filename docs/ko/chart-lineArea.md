@@ -21,8 +21,7 @@ const chart = Chart.lineAreaChart({el, data, options});
 
 ### 데이터 타입
 
-데이터는 `series`와 `categories`값을 입력받는다. 각 차트의 시리즈는 `scatter`, `line`에 각각 입력되며 `name`과 `data` 쌍으로 입력 받는다. data는 숫자 값만 입력이 가능하다.
-
+데이터는 `series`와 `categories`값을 입력받는다. 각 차트의 시리즈는 `line`, `area`에 각각 입력되며 `name`과 `data` 쌍으로 입력 받는다. data는 숫자 값만 입력이 가능하다.
 
 ```js
 const data = {
@@ -59,7 +58,7 @@ const data = {
 
 ## 옵션 
 
-`options`는 객체 형태로 작성한다. 각각 차트에 적용하고 싶은 옵션은 `line`, `scatter`에 작성한다. 사용가능한 옵션은 다음과 같다.
+`options`는 객체 형태로 작성한다. 각각 차트에 적용하고 싶은 옵션은 `line`, `area`에 작성한다. 사용가능한 옵션은 다음과 같다.
 
 ```ts
 type options = {
@@ -156,16 +155,16 @@ const options = {
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자. 또한, scatter, line 차트 옵션에 대해 궁금하다면 해당 가이드를 참고하자.
 > (링크: 
-> [chart](./common-chart-options.md),
-> [axes](./common-axes.md), 
-> [legend](./common-legend.md), 
-> [export menu](./common-exportMenu.md),
-> [tooltip](./common-tooltip.md),
-> [responsive](./common-responsive-options.md), 
-> [live update](./common-liveUpdate-options.md)
-> [dataLabels](./common-dataLables.md)
-> [line chart](./chart-line.md)
-> [area chart](./chart-area.md)
+> [`chart`옵션](./common-chart-options.md),
+> [축](./common-axes.md), 
+> [범례](./common-legend.md), 
+> [내보내기](./common-exportMenu.md),
+> [툴팁](./common-tooltip.md),
+> [`responsive`옵션](./common-responsive-options.md), 
+> [실시간 업데이트](./common-liveUpdate-options.md),
+> [데이터 라벨](./common-dataLabels-options.md),
+> [Line 차트](./chart-line.md),
+> [Area 차트](./chart-area.md)
 > )
 
 ## 시리즈 theme
@@ -185,7 +184,7 @@ interface LineAreaChartSeriesTheme {
 ```
 
 
-단한 예시로 여러가지 스타일을 각각의 차트에 맞게 작성해보자.
+간단한 예시로 여러가지 스타일을 각각의 차트에 맞게 작성해보자.
 
 ```js
 const theme = {
@@ -211,4 +210,4 @@ const theme = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102154822-8c636f80-3ebd-11eb-8537-ce44e19c90bb.png)
 
-> [line 차트](./chart-line.md)와 [area 차트](./chart-area.md)의 테마는 각각의 가이드를 참고하도록 하자.
+> [Line 차트](./chart-line.md)와 [Area 차트](./chart-area.md)의 테마는 각각의 가이드를 참고하도록 하자.

@@ -18,7 +18,7 @@ Explain the problem and include additional details to help maintainers reproduce
 
 ## Suggesting Enhancements
 In case you want to suggest for TOAST UI Chart, please follow this guideline to help maintainers and the community understand your suggestion.
-Before creating suggestions, please check [issue list](../../labels/feature%20request) if there's already a request.
+Before creating suggestions, please check [issue list](https://github.com/nhn/tui.chart/issues) if there's already a request.
 
 Create an issue and provide the following information:
 
@@ -42,24 +42,23 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 ### Development WorkFlow
 - Set up your development environment
 - Make change from a right branch
-- Be sure the code passes `npm run eslint`, `npm run test`
+- Be sure the code passes `npm run validate`, `npm run test`
 - Make a pull request
 
 ### Development environment
 - Prepare your machine node and it's packages installed.
 - Checkout our repository
-- Install dependencies by `npm install && bower install`
+- Install dependencies by `npm install`
 - Start webpack-dev-server by `npm run serve`
 
 ### Make changes
 #### Checkout a branch
 - **develop**: PR base branch. merge features, updates for next minor or major release
-- **master**: bug fix or document update for next patch release. develop branch will rebase every time master branch update. so keep code change to a minimum.
-- **production**: lastest release branch with distribution files. never make a PR on this
+- **main**: bug fix or document update for next patch release. develop branch will rebase every time master branch update. so keep code change to a minimum.
 - **gh-pages**: API docs, examples and demo
 
 #### Check Code Style
-Run `npm run eslint` and make sure all the tests pass.
+Run `npm run validate` and make sure all the tests pass.
 
 #### Test
 Run `npm run test` and verify all the tests pass.
@@ -83,7 +82,7 @@ Follow other PR title format on below.
 
 #### Description
 If it has related to issues, add links to the issues(like `#123`) in the description.
-Fill in the [Pull Request Template](./docs/PULL_REQUEST_TEMPLATE.md) by check your case.
+Fill in the [Pull Request Template](./docs/PULL_REQUEST_TEMPLATE) by check your case.
 
 ## Code of Conduct
 This project and everyone participating in it is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior to dl_javascript@nhn.com.

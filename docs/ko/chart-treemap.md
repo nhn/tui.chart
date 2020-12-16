@@ -259,12 +259,12 @@ type options = {
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
 > (링크: 
-> [chart](./common-chart-options.md),
-> [legend](./common-legend.md), 
-> [tooltip](./common-tooltip.md),
-> [export menu](./common-exportMenu.md),
-> [responsive](./common-responsive-options.md), 
-> [dataLabels](./common-dataLables.md)
+> [`chart` 옵션](./common-chart-options.md),
+> [범례](./common-legend.md), 
+> [툴팁](./common-tooltip.md),
+> [내보내기](./common-exportMenu.md),
+> [`responsive` 옵션](./common-responsive-options.md), 
+> [데이터 라벨](./common-dataLabels-options.md)
 > )
 
 ### selectable
@@ -376,7 +376,7 @@ interface TreemapChartSeriesTheme {
 | endColor | string | 값의 색상 기준이 되는 끝값 |
 | borderColor | string | 시리즈의 테두리 색상 |
 | borderWidth | number | 시리즈의 테두리 너비 |
-| select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
+| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
 
