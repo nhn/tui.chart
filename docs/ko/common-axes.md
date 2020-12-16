@@ -97,7 +97,7 @@ const options = {
 const options = {
   xAxis: {
     title: {
-      text: 'new title'
+      text: 'new title',
       offsetX: 100,
       offsetY: 100
     }
@@ -147,7 +147,7 @@ const options = {
   xAxis: {
     date: {
       format: 'YY-MM-DD'
-    };
+    }
   }
 }
 ```
@@ -163,7 +163,25 @@ Date 타입의 카테고리가 포맷팅되어 나타나는 것을 확인할 수
 
 ### pointOnColumn
 
-해당 옵션은 [Line 차트](./chart-line.md)와 [Area 차트](./chart-area.md)에서만 사용 가능하다. 구체적인 설명은 해당 차트의 가이드를 참고하라.
+x축을 기준으로 시리즈의 시작 부분을 틱과 틱 가운데로 이동시킬 수 있다. 해당 옵션은 [Line 차트](./chart-line.md)와 [Area 차트](./chart-area.md)에서만 사용 가능하다. 
+
+
+* default: `false`
+
+
+```js
+const options = {
+  xAxis: {
+    pointOnColumn: true
+  }
+}
+```
+
+**`pointOnColumn: true`가 적용된 Line 차트**
+![image](https://user-images.githubusercontent.com/35371660/101850121-76dc0600-3b9c-11eb-867d-3bc47bd476f7.png)
+
+**`pointOnColumn: true`가 적용된 Area 차트**
+![image](https://user-images.githubusercontent.com/35371660/101856997-d8ef3800-3ba9-11eb-9caf-8b4bca816836.png)
 
 ## theme
 
