@@ -221,23 +221,6 @@ const options = {
 
 `selectable` 옵션과 `on` API의 `selectSeries`, `unselectSeries`를 함께 사용할 경우 해당 시리즈에 대한 제어를 추가로 할 수 있다.
 
-
-### pointOnColumn
-
-![image](https://user-images.githubusercontent.com/35371660/101856997-d8ef3800-3ba9-11eb-9caf-8b4bca816836.png)
-
-* default: `false`
-
-x축을 기준으로 시리즈의 시작 부분을 틱과 틱 가운데로 이동시킬 수 있다.
-
-```js
-const options = {
-  xAxis: {
-    pointOnColumn: true
-  }
-}
-```
-
 ### spline
 
 ![image](https://user-images.githubusercontent.com/35371660/101857048-f9b78d80-3ba9-11eb-80a1-e28c84f8fd6e.png)
@@ -289,27 +272,6 @@ const options = {
   series: {
     zoomable: true
   }
-}
-```
-### secondary Y Axis
-![image](https://user-images.githubusercontent.com/35371660/101857356-aabe2800-3baa-11eb-8097-378139bd7ca3.png)
-
-`yAxis`의 옵션값을 배열 형태로 넣을 경우 우측에 두 번째 y축을 지정할 수 있다. 입력되는 순서에 따라 첫 번째 값이 주축, 두번째 값이 부축이 된다.
-
-```js
-const options = {
-  yAxis: [
-    {
-      title: 'Temperature (Celsius)',
-    },
-    {
-      title: 'Percent (%)',
-      scale: {
-        min: 0,
-        max: 100,
-      },
-    },
-  ],
 }
 ```
 

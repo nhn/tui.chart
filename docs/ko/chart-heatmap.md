@@ -126,7 +126,78 @@ Heatmap 차트에서 수정할 수 있는 시리즈 테마이다.
 
 ```ts
 interface HeatmapChartSeriesTheme {
-
-
+  startColor: string;
+  endColor: string;
+  borderColor?: string;
+  borderWidth?: number;
+  select?: {
+    color?: string;
+    borderColor?: string;
+    borderWidth?: number;
+  };
+  hover?: {
+    color?: string;
+    borderColor?: string;
+    borderWidth?: number;
+  };
+  dataLabels?: {
+    useSeriesColor?: boolean;
+    fontSize?: number;
+    fontFamily?: string;
+    fontWeight?: string | number;
+    color?: string;
+    lineWidth?: number;
+    textStrokeColor?: string;
+    shadowColor?: string;
+    shadowBlur?: number;
+    textBubble?: {
+      visible?: boolean;
+      paddingX?: number;
+      paddingY?: number;
+      backgroundColor?: string;
+      borderRadius?: number;
+      borderColor?: string;
+      borderWidth?: number;
+      shadowColor?: string;
+      shadowOffsetX?: number;
+      shadowOffsetY?: number;
+      shadowBlur?: number;
+    }
+  };
 }
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| startColor | string | 값의 색상 기준이 되는 시작값 |
+| endColor | string | 값의 색상 기준이 되는 끝값 |
+| borderColor | string | 시리즈의 테두리 색상 |
+| borderWidth | number | 시리즈의 테두리 너비 |
+| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
+| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
+
+### startColor와 endColor
+
+값의 기준이 되는 색상 값이다. `startColor`와 `endColor` 색상 값을 기준으로 입력받은 `data`의 색상이 결정된다.
+
+간단한 예시로 startColor를 `#4A76B2`
+
+![image](https://user-images.githubusercontent.com/35371660/101878940-d0135c00-3bd3-11eb-8070-9429df31d9c3.png)
+
+endColor를 `#221271`로 지정하면 colorValue가 높을 수록 endColor에 가까운 색깔을 가질 것이다.
+
+![image](https://user-images.githubusercontent.com/35371660/101878968-dacdf100-3bd3-11eb-9e5a-587630ae3e02.png)
+
+```js
+const options = {
+  theme: {
+    series: {
+      startColor: '#4A76B2',
+      endColor: '#221271'
+    }
+  }
+}
+```
+
+![image](https://user-images.githubusercontent.com/35371660/101882405-3058cc80-3bd9-11eb-8900-6923c72b84b5.png)

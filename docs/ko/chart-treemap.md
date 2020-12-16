@@ -329,6 +329,7 @@ Treemap 차트에서 수정할 수 있는 시리즈 테마이다.
 
 ```ts
 interface TreemapChartSeriesTheme {
+  colors?: string[];
   startColor?: string;
   endColor?: string;
   borderColor?: string;
@@ -372,17 +373,19 @@ interface TreemapChartSeriesTheme {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| startColor | string | 값의 색상 기준이 되는 시작값 |
-| endColor | string | 값의 색상 기준이 되는 끝값 |
+| colors | string[] | 시리즈의 색상 |
+| startColor | string | `useColorValue: true`일 때 colorValue 값의 색상 기준이 되는 시작값 |
+| endColor | string | `useColorValue: true`일 때 colorValue 값의 색상 기준이 되는 끝값 |
 | borderColor | string | 시리즈의 테두리 색상 |
 | borderWidth | number | 시리즈의 테두리 너비 |
-| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
 | hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
 
+
 ### startColor와 endColor
 
-값의 기준이 되는 색상 값이다. `startColor`와 `endColor` 색상 값을 기준으로 입력받은 `data`의 색상이 결정된다.
+`series.useColorValue`옵션 값이 true일 때 기준이 되는 색상 값이다. `startColor`와 `endColor` 색상 값을 기준으로 입력받은 `colorValue`의 색상을 결정한다.
 
 간단한 예시로 startColor를 `#4A76B2`
 
@@ -394,8 +397,8 @@ endColor를 `#221271`로 지정하면 colorValue가 높을 수록 endColor에 �
 
 ```js
 const options = {
-  theme: {
-    series: {
+  series: {
+    theme: {
       startColor: '#4A76B2',
       endColor: '#221271'
     }
@@ -403,4 +406,4 @@ const options = {
 }
 ```
 
-![image](https://user-images.githubusercontent.com/35371660/101882405-3058cc80-3bd9-11eb-8900-6923c72b84b5.png)
+![image](https://user-images.githubusercontent.com/35371660/101879101-22547d00-3bd4-11eb-9196-a308d24cd69c.png)
