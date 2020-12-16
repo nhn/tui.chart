@@ -101,7 +101,7 @@ const options = {
 
 ## theme
 
-Legend를 스타일링 할 수 있는 테마는 다음과 같다.
+Legend를 스타일링 할 수 있는 테마 옵션은 다음과 같다.
 
 ```js
 interface Legend {
