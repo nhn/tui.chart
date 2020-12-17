@@ -233,7 +233,6 @@ interface AreaChartSeriesTheme extends LineChartSeriesTheme {
       areaOpacity?: number;
     };
   };
-  dataLabels?: BubbleDataLabel;
 }
 
 interface LineScatterChartSeriesTheme {

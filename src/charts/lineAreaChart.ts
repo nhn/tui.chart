@@ -19,6 +19,7 @@ import ExportMenu from '@src/component/exportMenu';
 import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
 import Zoom from '@src/component/zoom';
+import ResetButton from '@src/component/resetButton';
 
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
@@ -79,6 +80,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
+    this.componentManager.add(ResetButton);
 
     this.painter.addGroups([
       basicBrush,
