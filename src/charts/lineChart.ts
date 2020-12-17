@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -44,9 +44,86 @@ export interface LineChartProps {
   data: LineSeriesData;
 }
 
-/*
+/**
  * @class
- * @classdesc LineChart
+ * @classdesc Line Chart
+ * @param {Object} props
+ *    @param {HTMLElement} props.el - The target element to create chart.
+ *    @param {Object} props.data - data for making Line Chart.
+ *      @param {Array<string>} [props.data.categories] - categories
+ *      @param {Array<Object>} props.data.series - series data
+ *        @param {string} props.data.series.name - series name
+ *        @param {Array<number|Object|Array>} props.data.series.data - series data
+ *    @param {Object} [props.options] - options for making Line Chart.
+ *      @param {Object} [props.options.chart]
+ *        @param {string|Object} [props.options.chart.title] - chart title text or options
+ *          @param {string} [props.options.chart.title.text] - chart title text
+ *          @param {number} [props.options.chart.title.offsetX] - offset value to Move title horizontally
+ *          @param {number} [props.options.chart.title.offsetY] - offset value to Move title vertically
+ *          @param {string} [props.options.chart.title.align] - chart text align. 'left', 'right', 'center' is available.
+ *        @param {boolean | Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart
+ *        @param {number|string} [props.options.chart.width] - chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
+ *        @param {number|string} [props.options.chart.height] - chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
+ *      @param {Object} [props.options.series]
+ *        @param {boolean} [props.options.series.showDot=false] - Whether to show dot or not
+ *        @param {boolean} [props.options.series.spline=false] - Whether to make spline chart or not
+ *        @param {boolean} [props.options.series.zoomable=false] - Whether to use zoom feature or not
+ *        @param {string} [props.options.series.eventDetectType] - event detect type. 'near', 'nearest', 'grouped', 'point' is available.
+ *        @param {boolean} [props.options.series.shift=false] - Whether to use shift when addData or not
+ *        @param {Object} [props.options.series.dataLabels]
+ *          @param {boolean} [props.options.series.visible=false]  - Whether to show data label or not
+ *          @param {string} [props.options.series.anchor] - anchor value. 'center', 'start', 'end', 'auto', 'outer' is available.
+ *          @param {number} [props.options.series.offsetX] - offset value to Move title horizontally
+ *          @param {number} [props.options.series.offsetY] - offset value to Move title vertically
+ *          @param {Function} [props.options.series.formatter] - formatter function.
+ *      @param {Object} [props.options.xAxis]
+ *        @param {boolean} [props.options.xAxis.pointOnColumn=false] - Whether to move the start of the chart to the center of the column
+ *        @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation
+ *        @param {boolean|Object} [props.options.xAxis.date] - Whether the x-axis label is of date type. Format option used for date typeWhether the x-axis label is of date type. If use date type, format option used for date type.
+ *        @param {Object} [props.options.xAxis.tick] - You can change the tick interval through the tick.interval option.
+ *        @param {Object} [props.options.xAxis.label] - You can change the label interval through the label.interval option.
+ *        @param {Object} [props.options.xAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *        @param {number} [props.options.xAxis.width] - width of xAxis
+ *        @param {number} [props.options.xAxis.height] - height of xAxis
+ *      @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
+ *        @param {Object} [props.options.yAxis.tick] - You can change the tick interval through the tick.interval option.
+ *        @param {Object} [props.options.yAxis.label] - You can change the tick interval through the label.interval option.
+ *        @param {Object} [props.options.yAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *        @param {number} [props.options.yAxis.width] - width of yAxis
+ *        @param {number} [props.options.yAxis.height] - height of yAxis
+ *      @param {Object} [props.options.plot]
+ *        @param {number} [props.options.plot.width] - width of plot
+ *        @param {number} [props.options.plot.height] - height of plot
+ *        @param {boolean} [props.options.plot.showLine] - Whether to show plot line
+ *        @param {Array<Object>} [props.options.plot.lines] - plot lines information.
+ *        @param {Array<Object>} [props.options.plot.bands] - plot lines information.).
+ *      @param {Object} [props.options.legend]
+ *        @param {string} [props.options.legend.align] - legend align. 'top', 'bottom', 'right', 'left' is available.
+ *        @param {string} [props.options.legend.showCheckbox] - whether to show checkbox
+ *        @param {boolean} [props.options.legend.visible] - whether to show legend
+ *        @param {number} [props.options.legend.maxWidth] - max width of legend
+ *        @param {number} [props.options.legend.width] - width of legend
+ *      @param {Object} [props.options.exportMenu]
+ *        @param {boolean} [props.options.exportMenu.visible] - whether to show export menu
+ *        @param {string} [props.options.exportMenu.filename] - File name applied when downloading
+ *      @param {Object} [props.options.tooltip]
+ *        @param {number} [props.options.tooltip.offsetX] - offset value to Move title horizontally
+ *        @param {number} [props.options.tooltip.offsetY] - offset value to Move title vertically
+ *        @param {Function} [props.options.tooltip.formatter] - Function to format data value
+ *        @param {Function} [props.options.tooltip.template] - Function to create custom template
+ *      @param {Object} [props.options.responsive]
+ *        @param {boolean|Object} [props.options.responsive.animation] - Animation duration when the chart is modified
+ *        @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond
+ *      @param {Object} [props.options.theme] - chart theme options. For specific information, refer to the Line Chart guide on github.
+ *        @param {Object} [props.options.theme.chart] - chart font theme.
+ *        @param {Object} [props.options.theme.series] - series theme.
+ *        @param {Object} [props.options.theme.title] - title theme.
+ *        @param {Object} [props.options.theme.xAxis] - xAxis theme.
+ *        @param {Object|Array<Object>} [props.options.theme.yAxis] - yAxis theme. In the case of an arrangement, the first is the main axis and the second is the theme for the secondary axis.
+ *        @param {Object} [props.options.theme.legend] - legend theme.
+ *        @param {Object} [props.options.theme.tooltip] - tooltip theme.
+ *        @param {Object} [props.options.theme.plot] - plot theme.
+ *        @param {Object} [props.options.theme.exportMenu] - exportMenu theme.
  * @extends Chart
  */
 export default class LineChart extends Chart<LineChartOptions> {
@@ -101,6 +178,8 @@ export default class LineChart extends Chart<LineChartOptions> {
    * @param {Array} data - Array of data to be added
    * @param {string} category - Category to be added
    * @api
+   * @example
+   * chart.addData([10, 20], '6');
    */
   public addData = (data: LineSeriesDataType[], category?: string) => {
     this.store.dispatch('addData', { data, category });
@@ -109,9 +188,14 @@ export default class LineChart extends Chart<LineChartOptions> {
   /**
    * Add series.
    * @param {Object} data - data to be added
-   * @param {string} data.name -
+   * @param {string} data.name - series name
    * @param {Array} data.data - Array of data to be added
    * @api
+   * @example
+   * chart.addSeries({
+   *   name: 'newSeries',
+   *   data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+   * });
    */
   public addSeries(data: LineSeriesInput) {
     this.store.dispatch('addSeries', { data });
@@ -121,6 +205,20 @@ export default class LineChart extends Chart<LineChartOptions> {
    * Convert the chart data to new data.
    * @param {Object} data - data to be set
    * @api
+   * @example
+   * chart.setData({
+   *   categories: ['1','2','3'],
+   *   series: [
+   *     {
+   *       name: 'new series',
+   *       data: [1, 2, 3],
+   *     },
+   *     {
+   *       name: 'new series2',
+   *       data: [4, 5, 6],
+   *     }
+   *   ]
+   * });
    */
   public setData(data: LineSeriesData) {
     const { categories, series } = data;
@@ -128,43 +226,128 @@ export default class LineChart extends Chart<LineChartOptions> {
   }
 
   /**
-   * Convert the chart data to new data.
-   * @param {Array} data - data to be set
+   * add plot line
+   * @param {Object} data - plot info
+   * @param {string|number} data.value - The value where the plot line will be drawn
+   * @param {string} data.color - plot line color
+   * @param {string} [data.id] - plot id. The value on which the removePlotLine is based
    * @api
+   * @example
+   * chart.addPlotLine({
+   *   value: 2,
+   *   color: '#00ff22',
+   *   id: 'plot-1'
+   * });
    */
   public addPlotLine(data: PlotLine) {
     this.store.dispatch('addPlotLine', { data });
   }
 
   /**
-   * Convert the chart data to new data.
-   * @param {string} id - data to be set
+   * Remove plot line with id
+   * @param {string} id - Id of the plot line to be removed
    * @api
+   * @example
+   * chart.removePlotLine('plot-1');
    */
   public removePlotLine(id: string) {
     this.store.dispatch('removePlotLine', { id });
   }
 
+  /**
+   * add plot band
+   * @param {Object} data - plot info
+   * @param {Array<string|number>} data.range - The range to be drawn
+   * @param {string} data.color - plot band color
+   * @param {string} [data.id] - plot id. The value on which the removePlotBand is based
+   * @api
+   * @example
+   * chart.addPlotBand({
+   *   value: [2, 4],
+   *   color: '#00ff22',
+   *   id: 'plot-1'
+   * });
+   */
   public addPlotBand(data: PlotBand) {
     this.store.dispatch('addPlotBand', { data });
   }
 
+  /**
+   * Remove plot band with id
+   * @param {string} id - id of the plot band to be removed
+   * @api
+   * @example
+   * chart.removePlotBand('plot-1');
+   */
   public removePlotBand(id: string) {
     this.store.dispatch('removePlotBand', { id });
   }
 
+  /**
+   * Hide series data label.
+   * @api
+   * @example
+   * chart.hideSeriesLabel();
+   */
   public hideSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
   };
 
+  /**
+   * Show series data label.
+   * @api
+   * @example
+   * chart.showSeriesLabel();
+   */
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - chart options
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   xAxis: {
+   *     title: 'Month',
+   *     date: { format: 'yy/MM' },
+   *   },
+   *   yAxis: {
+   *     title: 'Energy (kWh)',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: LineChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * update chart options
+   * @param {Object} options - chart options
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: LineChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

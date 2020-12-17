@@ -69,6 +69,11 @@ function getUsingContainerSize(
       };
 }
 
+/**
+ * @class
+ * @abstract
+ * Abstract class used to implement each chart.
+ */
 export default abstract class Chart<T extends Options> {
   store: Store<T>;
 
@@ -117,10 +122,6 @@ export default abstract class Chart<T extends Options> {
     return duration;
   }
 
-  /**
-   * Chart base.
-   * @constructs Chart
-   */
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories } = props;
 
@@ -341,8 +342,10 @@ export default abstract class Chart<T extends Options> {
 
   /**
    * Get checked legend chart type and label, checked state.
-   * @returns {[{checked: boolean, chartType: ChartType, label: string}]} array data that whether series has checked
+   * @returns {Array<{checked: boolean, chartType: string, label: string}>} array data that whether series has checked
    * @api
+   * @example
+   * const checkedLegend = chart.getCheckedLegend()
    */
   public getCheckedLegend = (): CheckedLegendType => {
     const { data } = this.store.state.legend;
@@ -356,6 +359,13 @@ export default abstract class Chart<T extends Options> {
 
   public abstract setOptions(options: Options): void;
 
+  /**
+   * Returns the currently applied chart options.
+   * @returns {Object} options
+   * @api
+   * @example
+   * const options = chart.getOptions();
+   */
   public getOptions = () => {
     return JSON.parse(JSON.stringify(this.store.initStoreState.options));
   };
@@ -363,9 +373,9 @@ export default abstract class Chart<T extends Options> {
   public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
 
   /**
-   * Register of user event.
-   * @param {string} eventName event name
-   * @param {function} func event callback
+   * Register of user custom event.
+   * @param {string} eventName - event name. 'clickLegendLabel', 'clickLegendCheckbox', 'selectSeries', 'unselectSeries', 'hoverSeries', 'unhoverSeries', 'zoom', 'resetZoom' is available.
+   * @param {Function} handler - event handler
    * @api
    */
   public on = (eventName: CustomEventType, handler: EventListener) => {
@@ -478,6 +488,17 @@ export default abstract class Chart<T extends Options> {
     return this.store.initStoreState.options.series?.selectable;
   }
 
+  /**
+   * select series. It works only when the selectable option is true.
+   * @param {Object} seriesInfo - Information of the series to be selected
+   *      @param {number} [seriesInfo.index] - Index of series
+   *      @param {number} [seriesInfo.seriesIndex] - Index of data within series
+   *      @param {string} [seriesInfo.alias] - specify alias for NestedPie Chart
+   *      @param {string} [seriesInfo.chartType] - specify which chart to select when using LineArea, LineScatter, and ColumnLine charts.specifies which chart to select when using LineArea, LineScatter, and ColumnLine charts.
+   * @api
+   * @example
+   * chart.selectSeries({index: 1, seriesIndex: 2});
+   */
   public selectSeries = (seriesInfo: SelectSeriesInfo) => {
     if (!this.isSelectableSeries()) {
       throw new Error(message.SELECT_SERIES_API_SELECTABLE_ERROR);
@@ -486,6 +507,12 @@ export default abstract class Chart<T extends Options> {
     this.eventBus.emit('selectSeries', { ...seriesInfo, state: this.store.state });
   };
 
+  /**
+   * unselect selected series. It works only when the selectable option is true.It works only when the selectable option is true.
+   * @api
+   * @example
+   * chart.unselectSeries();
+   */
   public unselectSeries = () => {
     if (!this.isSelectableSeries()) {
       throw new Error(message.SELECT_SERIES_API_SELECTABLE_ERROR);
@@ -496,16 +523,27 @@ export default abstract class Chart<T extends Options> {
   };
 
   /**
-   * Public API for resizable.
-   * @param {object} size chart size
+   * resize chart size
+   * @param {Object} size chart size
    *      @param {number} [size.width] width
    *      @param {number} [size.height] height
    * @api
+   * @example
+   * chart.resize({height: 100, width: 200});
    */
   public resize = (size: Partial<Size>) => {
     this.store.dispatch('updateOptions', { chart: { ...size } });
   };
 
+  /**
+   * set tooltip offset
+   * @param {Object} offset - offset size
+   *      @param {number} [offset.x] offset value to Move title horizontally
+   *      @param {number} [offset.y] offset value to Move title vertically
+   * @api
+   * @example
+   * chart.setTooltipOffset({x: 10, y: -20});
+   */
   public setTooltipOffset(offset: Partial<Point>) {
     const { x: offsetX, y: offsetY } = offset;
 
