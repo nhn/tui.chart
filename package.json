@@ -19,7 +19,10 @@
     "build:esm": "ttsc -p tsconfig.esm.json && prettier dist/esm/**/*.js --write",
     "build:storybook": "build-storybook",
     "serve": "webpack-dev-server --mode=development",
-    "storybook": "start-storybook -p 6006"
+    "storybook": "start-storybook -p 6006",
+    "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015 --noEmit false",
+    "doc:dev": "npm run ts2js && tuidoc --serv",
+    "doc": "npm run ts2js && tuidoc"
   },
   "repository": {
     "type": "git",

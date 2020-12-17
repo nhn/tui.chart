@@ -44,6 +44,11 @@ export interface LineChartProps {
   data: LineSeriesData;
 }
 
+/*
+ * @class
+ * @classdesc LineChart
+ * @extends Chart
+ */
 export default class LineChart extends Chart<LineChartOptions> {
   modules = [dataRange, scale, axes, plot];
 
@@ -91,23 +96,51 @@ export default class LineChart extends Chart<LineChartOptions> {
     ]);
   }
 
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added
+   * @param {string} category - Category to be added
+   * @api
+   */
   public addData = (data: LineSeriesDataType[], category?: string) => {
     this.store.dispatch('addData', { data, category });
   };
 
-  public addSeries(data: LineSeriesInput, dataInfo?: AddSeriesDataInfo) {
-    this.store.dispatch('addSeries', { data, ...dataInfo });
+  /**
+   * Add series.
+   * @param {Object} data - data to be added
+   * @param {string} data.name -
+   * @param {Array} data.data - Array of data to be added
+   * @api
+   */
+  public addSeries(data: LineSeriesInput) {
+    this.store.dispatch('addSeries', { data });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - data to be set
+   * @api
+   */
   public setData(data: LineSeriesData) {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { line: series }, categories });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Array} data - data to be set
+   * @api
+   */
   public addPlotLine(data: PlotLine) {
     this.store.dispatch('addPlotLine', { data });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {string} id - data to be set
+   * @api
+   */
   public removePlotLine(id: string) {
     this.store.dispatch('removePlotLine', { id });
   }

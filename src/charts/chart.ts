@@ -117,6 +117,10 @@ export default abstract class Chart<T extends Options> {
     return duration;
   }
 
+  /**
+   * Chart base.
+   * @constructs Chart
+   */
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories } = props;
 
