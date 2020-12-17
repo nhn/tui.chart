@@ -160,7 +160,7 @@ public addData(data, category?: string): void;
 public addData(data, category: string, chartType: 'line' | 'area' | 'column'): void;
 ```
 
-현재 데이터를 기반으로 데이터를 추가하는 API다. 실시간으로 데이터를 추가할 때 사용할 수 있다. data의 경우 각각의 시리즈 data의  `마지막`에 추가되며 `배열` 형태로 입력된다. 먼저, Line 차트의 `addData` 예시를 살펴보도록 하자.
+현재 데이터를 기반으로 데이터를 추가하는 API다. 실시간으로 데이터를 추가할 때 사용할 수 있다. data의 경우 각각의 시리즈 data의  `마지막`에 추가되며 `배열`로 입력된다. 먼저, Line 차트의 `addData` 예시를 살펴보도록 하자.
 
 ```ts
 const data = {

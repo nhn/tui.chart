@@ -238,7 +238,7 @@ const options = {
 
 ## Secondary Y Axis
 
-`Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` 차트는 보조 축을 사용할 수 있다. 기존에 작성하던 객체 형태의 `yAxis` 옵션을 배열 형태로 입력하면 첫번째 옵션이 주축에 대한 옵션, 두번째 옵션이 부축에 대한 옵션으로 동작한다. 
+`Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` 차트는 보조 축을 사용할 수 있다. 기존에 작성하던 객체 형태의 `yAxis` 옵션을 배열로 입력하면 첫번째 옵션이 주축에 대한 옵션, 두번째 옵션이 부축에 대한 옵션으로 동작한다. 
 
 
 ```js
@@ -260,7 +260,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102289947-45d84880-3f83-11eb-94ce-8b8e6bead8e8.png)
 
-테마 또한 동일하게 yAxis의 테마 옵션을 배열 형태로 입력하면 첫번째 테마가 주축, 두번째 테마가 부축에 적용된다.
+테마 또한 동일하게 yAxis의 테마 옵션을 배열로 입력하면 첫번째 테마가 주축, 두 번째 테마가 부축에 적용된다.
 
 ```js
 const options = {

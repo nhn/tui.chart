@@ -4,7 +4,7 @@
 
 ## 차트 생성하기
 
-Heatmap 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스가 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체 형태로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
+Heatmap 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스가 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
 
 ```js
 import { HeatmapChart } from '@toast-ui/chart';
@@ -21,7 +21,7 @@ const chart = Chart.heatmapChart({el, data, options});
 ## 기본 차트
 ### 데이터 타입
 
-데이터는 `series` 값과 `categories` 값을 받는다. categories는 x축과 y축에 들어갈 라벨 정보를 입력 받으며 series는 각 x, y 축에 맞는 데이터를 숫자 값이 들어간 배열 형태로 입력한다.
+데이터는 `series` 값과 `categories` 값을 받는다. categories는 x축과 y축에 들어갈 라벨 정보를 입력 받으며 series는 각 x, y 축에 맞는 데이터를 숫자 값이 들어간 배열로 입력한다.
 
 ```js
 const data = {
@@ -44,7 +44,7 @@ const data = {
 
 ## 옵션 
 
-`options`는 객체 형태로 작성한다.
+`options`는 객체로 작성한다.
 
 ```ts
 type options = {
