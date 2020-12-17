@@ -1,9 +1,7 @@
 # API
 
-## common
-
 ### on()
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public on(eventName: 'clickLegendLabel'
@@ -16,20 +14,20 @@ public on(eventName: 'clickLegendLabel'
 | 'resetZoom', handler: (evt: any) => void): void;
 ```
 
-`on()`는 특정 조건이 발생할 떄 사용자 정의 이벤트를 발생시키도록 하는 API다. 인자로 특정 조건이 발생할 수 있는 조건과 조건이 충족했을 떄 발생하는 사용자 정의 이벤트를 받는다. 현재 제공되고 있는 이벤트 조건은 다음과 같다. 
+`on()`는 특정 조건이 발생할 때 사용자 정의 이벤트를 발생시키도록 하는 API다. 인자로 이벤트 명(eventName)과 특정 조건이 발생할 수 있는 조건이 충족했을 때 발생하는 사용자 정의 이벤트를 받는다. 현재 제공되고 있는 이벤트 조건은 다음과 같다. 
 
 | eventName | 설명 | 
 | --- | --- |
 | `clickLegendLabel` | legend 라벨 영역 클릭 시 이벤트 발생 |
-| `clickLegendCheckbox` | legend 체크박스 영역 클릭 시 이벤트 발생 |
+| `clickLegendCheckbox` | legend 체크 박스 영역 클릭 시 이벤트 발생 |
 | `selectSeries` | 시리즈 선택 시 발생. `options.series.selectable: true` 조건 필요 |
 | `unselectSeries` | 시리즈 선택 해제 시 발생. `options.series.selectable: true` 조건 필요 |
 | `hoverSeries` | 시리즈 데이터에 마우스를 올릴 때 이벤트 발생 |
-| `unhoverSeries` | 'hoverSeries' 이벤트 발생 후 마우스가 떠날 때 이벤트 발생 |
+| `unhoverSeries` | `hoverSeries` 이벤트 발생 후 마우스가 떠날 때 이벤트 발생 |
 | `zoom` | zoom 발생 시 이벤트 발생. `options.series.zoomable: true` 조건 필요 |
 | `resetZoom` | zoom 초기화 시 이벤트 발생. `options.series.zoomable: true` 조건 필요 |
 
-area 차트의 시리즈를 선택했을 떄 사용자 정의 이벤트를 추가 하고 싶은 경우 다음과 같이 정의할 수 있다. 사용자 정의 함수에서는 각 이벤트에서 제공되는 정보를 인자로 사용할 수 있다.
+area 차트의 시리즈를 선택했을 때 사용자 정의 이벤트를 추가하고 싶은 경우 다음과 같이 정의할 수 있다. 사용자 정의 함수에서는 각 이벤트에서 제공되는 정보를 인자로 사용할 수 있다.
 
 ```js
 const chart = new LineChart({ el, data, options });
@@ -45,7 +43,7 @@ chart.on('selectSeries', (ev) => {
 ```
 
 ## destroy()
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public destory(): void;
@@ -60,12 +58,12 @@ chart.destroy();
 ```
 
 ## resize()
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public resize(size: {
-  width?: number
-  height?: number
+  width?: number;
+  height?: number;
 }): void;
 ```
 
@@ -74,13 +72,13 @@ public resize(size: {
 ```js
 const chart = new LineChart({ el, data, options });
 
-chart.resize({width: 400, height: 400})
+chart.resize({width: 400, height: 400});
 ```
 
 ## series
 
 ### addSeries()
-* 사용 가능 차트타입: `Line`, `Area`, `Bar`, `BoxPlot`, `Column`, `Pie`, `Heatmap`, `Bubble`, `Scatter`, `Radar`, `Treemap`, `NestedPie`, `LineScatter`, `ColumnLine`
+* 사용 가능 차트 타입: `Line`, `Area`, `Bar`, `BoxPlot`, `Column`, `Pie`, `Heatmap`, `Bubble`, `Scatter`, `Radar`, `Treemap`, `NestedPie`, `LineScatter`, `ColumnLine`
 
 ```ts
 public addSeries(data: SeriesDataInput, seriesDataInfo?: {
@@ -89,7 +87,7 @@ public addSeries(data: SeriesDataInput, seriesDataInfo?: {
 }): void;
 ```
 
-series를 추가할 떄 사용되는 API다. 첫번째 인자로는 추가 될 시리즈 데이터 두번째 인자로는 시리즈에 대한 추가 정보를 받는다. data의 타입은 사용되고 있는 차트의 데이터 타입과 동일하게 추가하면 된다. 
+series를 추가할 때 사용되는 API다. 첫 번째 인자로는 추가 될 시리즈 데이터 두 번째 인자로는 시리즈에 대한 추가 정보를 받는다. data의 타입은 사용되고 있는 차트의 데이터 타입과 동일하게 추가하면 된다. 
 
 간단한 예시로 LineChart에 시리즈를 추가해보자.
 
@@ -102,9 +100,9 @@ chart.addSeries({
 });
 ```
 
-두번째 인자인 추가 정보는 `category`와 `chartType`을 담아줄 수 있다. 
+두 번째 인자인 추가 정보는 `category`와 `chartType`을 담아줄 수 있다. 
 
-첫번쨰로, `category`의 경우 `Heatmap 차트`에서 사용되며 Y Category에 해당되는 값을 추가한다. Heatmap 차트의 `addSeries()` 예시를 작성해보면 다음과 같다.
+첫 번째로, `category`의 경우 `Heatmap 차트`에서 사용되며 Y Category에 해당되는 값을 추가한다. Heatmap 차트의 `addSeries()` 예시를 작성해보면 다음과 같다.
 
 ```js
 chart.addSeries([-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6], {
@@ -112,7 +110,7 @@ chart.addSeries([-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6,
 });
 ```
 
-두번쨰로, `chartType`의 경우 `ColumnLine`, `LineArea`, `LineScatter`, `NestedPie`에서 사용되며 각 차트의 타입 또는 `NestedPie`의 경우 `alias`의 이름을 추가해줘야 해당하는 차트에 적절하게 시리즈가 추가될 수 있다. `LineArea` 차트에 `addSeries()`를 하는 예시를 작성해보면 다음과 같다.
+두 번째로, `chartType`의 경우 `ColumnLine`, `LineArea`, `LineScatter`, `NestedPie`에서 사용되며 각 차트의 타입 또는 `NestedPie`의 경우 `alias`의 이름을 추가해줘야 해당하는 차트에 적절하게 시리즈가 추가될 수 있다. `LineArea` 차트에 `addSeries()`를 하는 예시를 작성해보면 다음과 같다.
 
 ```js
 const chart = new LineAreaChart({ el, data, options });
@@ -126,10 +124,9 @@ chart.addSeries(
 );
 ```
 
-## data
 
 ### setData()
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public setData(data): void;
@@ -141,7 +138,7 @@ public setData(data): void;
 const lineChart = new LineChart({ el, data, options });
 
 lineChart.setData({
-  categories: ['1','2','3',],
+  categories: ['1','2','3'],
   series: [
     {
       name: 'new series',
@@ -156,14 +153,14 @@ lineChart.setData({
 ```
 
 ### addData()
-* 사용 가능 차트타입: `Line`, `Area`, `Bar`, `BoxPlot`, `Column`, `Heatmap`, `Bubble`, `Scatter`, `Bullet`, `Radar`, `Treemap`, `LineArea`, `LineScatter`, `ColumnLine`
+* 사용 가능 차트 타입: `Line`, `Area`, `Bar`, `BoxPlot`, `Column`, `Heatmap`, `Bubble`, `Scatter`, `Bullet`, `Radar`, `Treemap`, `LineArea`, `LineScatter`, `ColumnLine`
 
 ```ts
 public addData(data, category?: string): void;
 public addData(data, category: string, chartType: 'line' | 'area' | 'column'): void;
 ```
 
-현재 데이터를 기반으로 데이터를 추가하는 API다. 실시간으로 데이터를 추가할 떄 사용할 수 있다. data의 경우 각각의 시리즈 data에 `마지막`에 추가되며 `배열` 형태로 입력된다. 먼저, Line 차트의 `addData` 예시를 살펴보도록 하자.
+현재 데이터를 기반으로 데이터를 추가하는 API다. 실시간으로 데이터를 추가할 때 사용할 수 있다. data의 경우 각각의 시리즈 data의  `마지막`에 추가되며 `배열` 형태로 입력된다. 먼저, Line 차트의 `addData` 예시를 살펴보도록 하자.
 
 ```ts
 const data = {
@@ -251,10 +248,9 @@ const data = {
 };
 ```
 
-## options
 
 ### setOptions()
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public setOptions(options: Options): void;
@@ -288,13 +284,13 @@ chart.setOptions({
 ```
 
 ### updateOptions() 
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public updateOptions(options: Options): void;
 ```
 
-기존 차트의 옵션을 업데이트하는 API다. `setOptions()` API의 경우 처음 차트를 생성할 떄 적용되었던 옵션이 모두 사라지는 반면 `updateOptions()`는 기존 차트를 기준으로 추가되는 옵션만 변경된다. Line 차트의 `updateOptions()` 예시를 살펴보도록 하자.
+기존 차트의 옵션을 업데이트하는 API다. `setOptions()` API의 경우 처음 차트를 생성할 때 적용되었던 옵션이 모두 사라지지만 `updateOptions()`는 기존 차트를 기준으로 추가되는 옵션만 변경된다. Line 차트의 `updateOptions()` 예시를 살펴보도록 하자.
 
 ```ts
 const chart = new LineChart({ el, data, options });
@@ -311,26 +307,26 @@ chart.updateOptions({
 ```
 
 ### getOptions()
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public getOptions(): Options;
 ```
 
-차트에 적용된 차트 옵션을 반환한다. `setOptions()` 혹은 `updateOptions()`로 옵션을 변경했을 경우 변경된 옵션이 반환된다.
+차트에 적용된 차트 옵션이 반환된다. `setOptions()` 혹은 `updateOptions()`로 옵션을 변경했을 경우 변경된 옵션이 반환된다.
 
 ### getCheckedLegend()
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public getCheckedLegend(): { chartType: ChartType; label: string; checked: boolean; }[]
 ```
 
-legend의 체크박스 영역이 활성화 되어있는 시리즈의 정보를 반환한다.
+legend의 체크박스 영역이 활성화되어있는 시리즈의 정보가 반환된다.
 
 
 ### setTooltipOffset()
-* 사용 가능 차트타입: `All`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public setTooltipOffset({ x?: number; y?: number });
@@ -351,7 +347,7 @@ chart.setTooltipOffset({
 
 
 ## showSeriesLabel()
-* 사용 가능 차트타입: `Line`, `Area`, `Bar`, `Column`, `Pie`, `Heatmap`, `Bullet`, `Treemap`, `NestedPie`, `LineArea`, `ColumnLine`
+* 사용 가능 차트 타입: `Line`, `Area`, `Bar`, `Column`, `Pie`, `Heatmap`, `Bullet`, `Treemap`, `NestedPie`, `LineArea`, `ColumnLine`
 
 ```ts
 public showSeriesLabel();
@@ -360,16 +356,16 @@ public showSeriesLabel();
 차트의 dataLabel을 보여준다.
 
 ### hideSeriesLabel()
-* 사용 가능 차트타입: `Line`, `Area`, `Bar`, `Column`, `Pie`, `Heatmap`, `Bullet`, `Treemap`, `NestedPie`, `LineArea`, `ColumnLine`
+* 사용 가능 차트 타입: `Line`, `Area`, `Bar`, `Column`, `Pie`, `Heatmap`, `Bullet`, `Treemap`, `NestedPie`, `LineArea`, `ColumnLine`
 
 ```ts
 public hideSeriesLabel();
 ```
 
-차트의 dataLabel을 숨겨준다.
+차트의 dataLabel을 숨긴다.
 
-## addPlotLine()
-* 사용 가능 차트타입: `Line`, `Area`, `LineArea`, `ColumnLine`
+### addPlotLine()
+* 사용 가능 차트 타입: `Line`, `Area`, `LineArea`, `ColumnLine`
 
 ```ts
 public addPlotLine(data: {value: number | string, color: string, id?: string});
@@ -379,8 +375,8 @@ public addPlotLine(data: {value: number | string, color: string, id?: string});
 
 > [plot line](./common-plot.md)에 대해 궁금하다면 해당 가이드를 참고하라
 
-## removePlotLine()
-* 사용 가능 차트타입: `Line`, `Area`, `LineArea`, `ColumnLine`
+### removePlotLine()
+* 사용 가능 차트 타입: `Line`, `Area`, `LineArea`, `ColumnLine`
 
 ```ts
 public removePlotLine(id: string);
@@ -390,8 +386,8 @@ plot line을 제거할 수 있다. 인자로 id를 입력받으며 동일한 id�
 
 > [plot line](./common-plot.md)에 대해 궁금하다면 해당 가이드를 참고하라
 
-## addPlotBand()
-* 사용 가능 차트타입: `Line`, `Area`, `LineArea`, `ColumnLine`
+### addPlotBand()
+* 사용 가능 차트 타입: `Line`, `Area`, `LineArea`, `ColumnLine`
 
 ```ts
 public addPlotBand(data: {
@@ -405,8 +401,8 @@ plot band 추가할 수 있다. 이후 `removePlotBand()`를 통해 추가한 ba
 
 > [plot band](./common-plot.md)에 대해 궁금하다면 해당 가이드를 참고하라
 
-## removePlotBand()
-* 사용 가능 차트타입: `Line`, `Area`, `LineArea`, `ColumnLine`
+### removePlotBand()
+* 사용 가능 차트 타입: `Line`, `Area`, `LineArea`, `ColumnLine`
 
 ```ts
 public removePlotBand(id: string);

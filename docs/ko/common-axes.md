@@ -2,7 +2,7 @@
 
 축은 보조 눈금과 값의 개요를 나타내 차트 데이터의 이해를 돕는 구성요소다. 
 
-![image](https://user-images.githubusercontent.com/35371660/102188173-52fc2580-3ef8-11eb-8384-d71f4ad85d66.png)
+![image](https://user-images.githubusercontent.com/35371660/102475360-1ddd0800-409d-11eb-96eb-6421f58fb1cb.png)
 
 TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이며 차트에 따라 사용 가능한 축의 종류가 다르다. 
 
@@ -91,7 +91,7 @@ const options = {
 
 ### title
 
-위 그림에서 파악할 수 있듯이 각 차트는 제목을 갖는다. `title` 옵션은 문자열로 직접 입력받을 수 있으며 `title.text` 옵션과  `title.offsetX`, `titleoffsetY` 옵션을 통해 제목을 지정하며 위치를 변경해 줄 수 있다.
+위 그림에서 파악할 수 있듯이 각 차트는 제목을 갖는다. `title` 옵션은 문자열로 직접 입력받을 수 있으며 `title.text` 옵션과  `title.offsetX`, `title.offsetY` 옵션을 통해 제목을 지정하며 위치를 변경해 줄 수 있다.
 
 ```js
 const options = {

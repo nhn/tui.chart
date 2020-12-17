@@ -1,10 +1,10 @@
 # Tooltip
 
-Tooltip은 현재 마우스를 올려 놓은 데이터의 정보를 나타내는 영역이다.
+Tooltip은 현재 마우스를 올려놓은 데이터의 정보를 나타내는 영역이다.
 
-![image](https://user-images.githubusercontent.com/35371660/102184663-2691da80-3ef3-11eb-8b83-853201adc12c.png)
+![image](https://user-images.githubusercontent.com/35371660/102475501-482ec580-409d-11eb-839e-c4c4e56ce0b8.png)
 
-해당 영역은 header영역과 body 영역으로 나뉘어져 있으며 header 영역에는 category 값이, body 영역에는 데이터 값이 나오게 된다.
+해당 영역은 header 영역과 body 영역으로 나누어져 있으며 header 영역에는 category 값이, body 영역에는 데이터 값이 나오게 된다.
 
 ## options
 
@@ -59,7 +59,7 @@ const options = {
 
 ### Formatter
 
-`tooltip.formatter` 옵션을 통해 값을 포맷팅 한 뒤 출력할 수 있다. formatter는 포맷팅 된 문자열 을 반환하는 함수를 인자로 받는다. 해당 함수에서는 데이터 값을 인자로 받으며 그 값을 이용해 포맷팅을 진행할 수 있다.
+`tooltip.formatter` 옵션을 통해 값을 포맷팅 한 뒤 출력할 수 있다. formatter는 포맷팅 된 문자열을 반환하는 함수를 인자로 받는다. 해당 함수에서는 데이터 값을 인자로 받으며 그 값을 이용해 포맷팅을 진행할 수 있다.
 
 간단한 예시로 입력되는 값을 비교해 툴팁에 이모지를 추가하는 예제를 만들어 봤다.
 
@@ -83,7 +83,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102180203-d2cfc300-3eeb-11eb-9197-280cb25654bb.png)
 
-이 경우 `-4.1`이 `value`로 주어지며 출력하고 싶은 형태를 반환해 포맷팅해줬다.
+이 경우 `-4.1`이 `value`로 주어지며 출력하고 싶은 형태를 반환해 포매팅해줬다.
 
 ### Custom tooltip
 

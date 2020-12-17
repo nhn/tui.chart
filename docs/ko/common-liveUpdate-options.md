@@ -2,15 +2,15 @@
 
 ![no shift](https://user-images.githubusercontent.com/35371660/102158081-fb43c700-3ec3-11eb-96a7-bbc840b52eb4.gif)
 
-shift를 적용하지 않은 경우 `addData`시 다음처럼 데이터가 쌓이는 형태를 갖게 된다. 하지만, 데이터가 많아질 경우 각각을 구분해서 알아보기 힘들 수 있는데, Live Update 기능을 이용해 이 문제를 해결할 수 있다.
+`series.shift`옵션을 true로 적용하지 않은 경우 `addData()`시 위 이미지처럼 데이터가 쌓이는 형태를 갖게 된다. 하지만, 데이터가 많아질 경우 각각을 구분해서 알아보기 힘들 수 있는데, Live Update 기능을 이용해 이 문제를 해결할 수 있다.
 
 ![live update line](https://user-images.githubusercontent.com/35371660/102157257-815f0e00-3ec2-11eb-8b87-a177664a43b2.gif)
 
-Live Update 기능은 위 그림과 같이 `addData` API로 데이터를 추가할 떄 정해진 사이즈에 맞춰 데이터가 추가 되는 것처럼 보여지는 되는 기능이다. 
+Live Update 기능은 위 그림과 같이 `addData()` API로 데이터를 추가할 때 정해진 사이즈에 맞춰 데이터가 추가되는 것처럼 보여지는 되는 기능이다. 
 
 ## 적용 방법
 
-1. `series.shift` 옵션을 true로 지정한다. 
+1. `series.shift` 옵션을 `true`로 지정한다. 
 
 ```js
 const options = {
