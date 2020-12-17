@@ -282,6 +282,7 @@ export interface BaseOptions {
   plot?: BaseSizeOptions;
   theme?: BaseThemeOptions;
   responsive?: ResponsiveOptions;
+  usageStatistics?: boolean;
 }
 
 export type ResponsiveObjectType = {
