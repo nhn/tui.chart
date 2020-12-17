@@ -4,7 +4,7 @@
 
 ## 차트 생성하기
 
-Treemap 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스를 반환한다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체 형태로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
+Treemap 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스가 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체 형태로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
 
 ```js
 import { TreemapChart } from '@toast-ui/chart';
@@ -379,7 +379,7 @@ interface TreemapChartSeriesTheme {
 | borderColor | string | 시리즈의 테두리 색상 |
 | borderWidth | number | 시리즈의 테두리 너비 |
 | select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
-| hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
+| hover | object | 데이터에 마우스를 올렸을 때 스타일 | 
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
 
 

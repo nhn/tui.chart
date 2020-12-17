@@ -78,6 +78,14 @@ export default class BulletChart extends Chart<BulletChartOptions> {
     this.store.dispatch('setData', { series: { bullet: data.series } });
   }
 
+  public hideSeriesLabel = () => {
+    // @TODO: Should be implemented
+  };
+
+  public showSeriesLabel = () => {
+    // @TODO: Should be implemented
+  };
+
   public setOptions = (options: BulletChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
