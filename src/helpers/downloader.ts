@@ -1,5 +1,7 @@
-import { isString, isUndefined, isNumber } from '@src/helpers/utils';
+import { isString, isUndefined, isNumber, includes } from '@src/helpers/utils';
 import { DataToExport } from '@src/component/exportMenu';
+import { HeatmapCategoriesType, TreemapSeriesType } from '@t/options';
+import { getCoordinateXValue, getCoordinateYValue } from './coordinate';
 
 export type SpreadSheetExtension = 'csv' | 'xls';
 type ImageExtension = 'png' | 'jpeg';
@@ -107,16 +109,160 @@ function isNeedDataEncoding() {
   return !isMSSaveOrOpenBlobSupported && isDownloadAttributeSupported;
 }
 
-function get2DArrayFromRawData(data: DataToExport) {
+function makeBulletExportData({ series }: DataToExport) {
+  const rangesHeaders = ['Ranges0', 'Ranges1', 'Ranges2'];
+  const markerHeaders = ['Markers0', 'Markers1', 'Markers2'];
+  const resultArray: any[][] = [['', 'Actual', ...rangesHeaders, markerHeaders]];
+
+  series.bullet!.data.forEach((datum) => {
+    const { data, markers, name, ranges } = datum;
+    const rangeDatum = rangesHeaders.map((__, index) => {
+      const rangeData = ranges[index];
+
+      return rangeData ? `${rangeData[0]} ~ ${rangeData[1]}` : '';
+    });
+    const markerDatum = markerHeaders.map((__, index) => markers[index] ?? '');
+    resultArray.push([name, data, ...rangeDatum, ...markerDatum]);
+  });
+
+  return resultArray;
+}
+
+function makeHeatmapExportData({ categories, series }: DataToExport) {
+  const xCategories = (categories as HeatmapCategoriesType).x;
+  const resultArray: any[][] = [['', ...xCategories]];
+
+  series.heatmap!.data.forEach((datum) => {
+    const { data, yCategory } = datum;
+    resultArray.push([yCategory, ...data]);
+  });
+
+  return resultArray;
+}
+
+function recursiveTreemapData({ label, data, children = [] }: TreemapSeriesType, result: any[][]) {
+  if (data) {
+    result.push([label, data]);
+  }
+
+  children.forEach((childrenData) => recursiveTreemapData(childrenData, result));
+
+  return result;
+}
+
+function makeTreemapExportData(exportData: DataToExport) {
+  const { series } = exportData;
+  const resultArray: any[][] = [['Label', 'Data']];
+
+  series.treemap!.data.forEach((datum) => {
+    recursiveTreemapData(datum, resultArray);
+  });
+
+  return resultArray;
+}
+
+function makeBubbleExportData(exportData: DataToExport) {
+  const { series } = exportData;
+  const resultArray: any[][] = [['Name', 'Label', 'X', 'Y', 'Radius']];
+
+  series.bubble!.data.forEach(({ name, data }) => {
+    data.forEach(({ x, y, r, label }) => {
+      resultArray.push([name, label, x, y, r]);
+    });
+  });
+
+  return resultArray;
+}
+
+function makeBoxPlotExportData(exportData: DataToExport) {
+  const { categories = [], series } = exportData;
+  const resultArray: any[][] = [['', ...categories]];
+
+  series.boxPlot!.data.forEach(({ name, data, outliers }) => {
+    const values = data.map((rawData, index) => {
+      const outlierValue = outliers!.find((outlier) => outlier[0] === index)?.[1];
+
+      return outlierValue ? [...rawData, outlierValue] : [...rawData];
+    });
+
+    resultArray.push([name, ...values]);
+  });
+
+  return resultArray;
+}
+
+function makePieExportData(exportData: DataToExport) {
+  const { categories = [], series } = exportData;
   const resultArray: any[][] = [];
-  const { categories = [] } = data;
 
-  // @TODO: 각 차트별 데이터 생성 필요
-  // resultArray.push(['', ...categories]);
+  if ((categories as string[]).length) {
+    resultArray.push(['', ...categories]);
+  }
 
-  Object.keys(data.series).forEach((type) => {
-    data.series[type].forEach((datum) => {
-      resultArray.push([datum.name, ...datum.data]);
+  series.pie!.data.forEach((datum) => {
+    const { name, data } = datum;
+
+    if (isNumber(data)) {
+      resultArray.push([name, data]);
+    } else {
+      data.forEach((value) => {
+        resultArray.push([value.name, value.data]);
+      });
+    }
+  });
+
+  return resultArray;
+}
+
+function get2DArrayFromRawData(exportData: DataToExport) {
+  const resultArray: any[][] = [];
+  const { categories = [], series } = exportData;
+
+  if (series.bullet) {
+    return makeBulletExportData(exportData);
+  }
+  if (series.heatmap) {
+    return makeHeatmapExportData(exportData);
+  }
+  if (series.bubble) {
+    return makeBubbleExportData(exportData);
+  }
+  if (series.boxPlot) {
+    return makeBoxPlotExportData(exportData);
+  }
+  if (series.pie) {
+    return makePieExportData(exportData);
+  }
+  if (series.treemap) {
+    return makeTreemapExportData(exportData);
+  }
+
+  resultArray.push(['', ...categories]);
+
+  Object.keys(series).forEach((type) => {
+    series[type].forEach((datum) => {
+      const { name, data } = datum;
+      let values;
+
+      if (
+        (categories as string[]).length &&
+        !isNumber(data[0]) &&
+        includes(['line', 'area', 'scatter'], type)
+      ) {
+        values = (categories as string[]).map((category) => {
+          const findedItem = data.find((value) => {
+            const x = getCoordinateXValue(value);
+
+            return category === String(x);
+          });
+
+          return findedItem ? getCoordinateYValue(findedItem) : '';
+        });
+      } else {
+        values = data.map((value) => (Array.isArray(value) ? value.join() : value));
+      }
+
+      resultArray.push([name, ...values]);
     });
   });
 
@@ -146,8 +292,8 @@ function getTableElementStringForXLS(chartData2DArray: any[][]) {
 }
 
 function makeXLSBodyWithRawData(chartData2DArray: any[][]) {
-  return oneLineTrim`<html xmlns:o="urn:schemas-microsoft-com:office:office" 
-        xmlns:x="urn:schemas-microsoft-com:office:excel" 
+  return oneLineTrim`<html xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:x="urn:schemas-microsoft-com:office:excel"
         xmlns="http://www.w3.org/TR/REC-html40">
         <head>
             <!--[if gte mso 9]>
