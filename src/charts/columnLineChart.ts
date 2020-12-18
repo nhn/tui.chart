@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 import {
   ColumnLineData,
   ColumnLineChartOptions,
@@ -165,5 +165,13 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
 
   public updateOptions = (options: ColumnLineChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  public showTooltip = (info: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...info });
+  };
+
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

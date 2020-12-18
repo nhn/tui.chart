@@ -418,7 +418,7 @@ export default class LineSeries extends Component {
       return;
     }
 
-    const model = this.tooltipCircleMap[index][seriesIndex];
+    const model = this.tooltipCircleMap[seriesIndex][index];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -432,8 +432,8 @@ export default class LineSeries extends Component {
     const { index, seriesIndex, chartType } = info;
 
     if (
-      !isNumber(index) ||
-      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
+      !isNumber(seriesIndex) ||
+      (this.eventDetectType !== 'grouped' && !isNumber(index)) ||
       (!isUndefined(chartType) && chartType !== 'line')
     ) {
       return;
@@ -441,8 +441,8 @@ export default class LineSeries extends Component {
 
     const models =
       this.eventDetectType === 'grouped'
-        ? this.tooltipCircleMap[index]
-        : [this.tooltipCircleMap[index][seriesIndex!]];
+        ? this.tooltipCircleMap[seriesIndex]
+        : [this.tooltipCircleMap[seriesIndex][index!]];
 
     if (!models.length) {
       return;
