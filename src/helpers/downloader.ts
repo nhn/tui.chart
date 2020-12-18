@@ -7,8 +7,12 @@ import {
   CoordinateDataType,
   LineSeriesDataType,
   RangeDataType,
+  PieSeriesType,
+  NestedPieSeriesType,
 } from '@t/options';
 import { getCoordinateXValue, getCoordinateYValue } from './coordinate';
+
+type ExportData2DArray = (string | number)[][];
 
 export type SpreadSheetExtension = 'csv' | 'xls';
 type ImageExtension = 'png' | 'jpeg';
@@ -116,40 +120,37 @@ function isNeedDataEncoding() {
   return !isMSSaveOrOpenBlobSupported && isDownloadAttributeSupported;
 }
 
-function makeBulletExportData({ series }: DataToExport) {
+function makeBulletExportData({ series }: DataToExport): ExportData2DArray {
   const rangesHeaders = ['Range 1', 'Range 2', 'Range 3'];
   const markerHeaders = ['Marker 1', 'Marker 2', 'Marker 3'];
-  const result: (string | number)[][] = [['', 'Actual', ...rangesHeaders, ...markerHeaders]];
 
-  series.bullet!.data.forEach((datum) => {
-    const { data, markers, name, ranges } = datum;
-    const rangeDatum = rangesHeaders.map((_, index) => {
-      const rangeData = ranges[index];
+  return series.bullet!.data.reduce<ExportData2DArray>(
+    (acc, { data, markers, name, ranges }) => {
+      const rangeDatum = rangesHeaders.map((_, index) => {
+        const rangeData = ranges[index];
 
-      return rangeData ? `${rangeData[0]} ~ ${rangeData[1]}` : '';
-    });
-    const markerDatum = markerHeaders.map((_, index) => markers[index] ?? '');
-    result.push([name, data, ...rangeDatum, ...markerDatum]);
-  });
+        return rangeData ? `${rangeData[0]} ~ ${rangeData[1]}` : '';
+      });
+      const markerDatum = markerHeaders.map((_, index) => markers[index] ?? '');
 
-  return result;
+      return [...acc, [name, data, ...rangeDatum, ...markerDatum]];
+    },
+    [['', 'Actual', ...rangesHeaders, ...markerHeaders]]
+  );
 }
 
-function makeHeatmapExportData({ categories, series }: DataToExport) {
+function makeHeatmapExportData({ categories, series }: DataToExport): ExportData2DArray {
   const xCategories = (categories as HeatmapCategoriesType).x;
-  const result: (string | number)[][] = [['', ...xCategories]];
 
-  series.heatmap!.data.forEach((datum) => {
-    const { data, yCategory } = datum;
-    result.push([yCategory, ...data]);
-  });
-
-  return result;
+  return series.heatmap!.data.reduce<ExportData2DArray>(
+    (acc, { data, yCategory }) => [...acc, [yCategory, ...data]],
+    [['', ...xCategories]]
+  );
 }
 
 function recursiveTreemapData(
   { label, data, children = [] }: TreemapSeriesType,
-  result: (string | number)[][]
+  result: ExportData2DArray
 ) {
   if (data) {
     result.push([label, data]);
@@ -162,7 +163,7 @@ function recursiveTreemapData(
 
 function makeTreemapExportData(exportData: DataToExport) {
   const { series } = exportData;
-  const result: (string | number)[][] = [['Label', 'Data']];
+  const result: ExportData2DArray = [['Label', 'Data']];
 
   series.treemap!.data.forEach((datum) => {
     recursiveTreemapData(datum, result);
@@ -171,58 +172,51 @@ function makeTreemapExportData(exportData: DataToExport) {
   return result;
 }
 
-function makeBubbleExportData(exportData: DataToExport) {
+function makeBubbleExportData(exportData: DataToExport): ExportData2DArray {
   const { series } = exportData;
-  const result: (string | number)[][] = [['Name', 'Label', 'X', 'Y', 'Radius']];
 
-  series.bubble!.data.forEach(({ name, data }) => {
-    data.forEach(({ x, y, r, label }) => {
-      result.push([name, label, String(x), y, r]);
-    });
-  });
-
-  return result;
+  return series.bubble!.data.reduce<ExportData2DArray>(
+    (acc, { name, data }) => [
+      ...acc,
+      ...data.map(({ x, y, r, label }) => [name, label, String(x), y, r]),
+    ],
+    [['Name', 'Label', 'X', 'Y', 'Radius']]
+  );
 }
 
-function makeBoxPlotExportData(exportData: DataToExport) {
+function makeBoxPlotExportData(exportData: DataToExport): ExportData2DArray {
   const { categories = [], series } = exportData;
-  const result: (string | number)[][] = [['', ...categories]];
 
-  series.boxPlot!.data.forEach(({ name, data, outliers }) => {
-    const values = data.map((rawData, index) => {
-      const outlierValue = outliers!.find((outlier) => outlier[0] === index)?.[1];
-      const value = outlierValue ? [...rawData, outlierValue] : [...rawData];
+  return series.boxPlot!.data.reduce<ExportData2DArray>(
+    (acc, { name, data, outliers }) => {
+      const values = data.map((rawData, index) => {
+        const outlierValue = outliers!.find((outlier) => outlier[0] === index)?.[1];
+        const value = outlierValue ? [...rawData, outlierValue] : [...rawData];
 
-      return value.join();
-    });
-
-    result.push([name, ...values]);
-  });
-
-  return result;
-}
-
-function makePieExportData(exportData: DataToExport) {
-  const { categories = [], series } = exportData;
-  const result: (string | number)[][] = [];
-
-  if ((categories as string[]).length) {
-    result.push(['', ...categories]);
-  }
-
-  series.pie!.data.forEach((datum) => {
-    const { name, data } = datum;
-
-    if (isNumber(data)) {
-      result.push([name, data]);
-    } else {
-      data.forEach((value) => {
-        result.push([value.name, value.data]);
+        return value.join();
       });
-    }
-  });
 
-  return result;
+      return [...acc, [name, ...values]];
+    },
+    [['', ...categories]]
+  );
+}
+
+function makePieExportData(exportData: DataToExport): ExportData2DArray {
+  const { categories = [], series } = exportData;
+
+  return (series.pie!.data as Array<PieSeriesType | NestedPieSeriesType>).reduce<ExportData2DArray>(
+    (acc, { name, data }) => {
+      const values = isNumber(data)
+        ? [[name, data]]
+        : data.reduce((accel, value) => {
+            return [...accel, [value.name, value.data]];
+          }, [] as ExportData2DArray);
+
+      return [...acc, ...values];
+    },
+    (categories as string[]).length ? [['', ...categories]] : []
+  );
 }
 
 function makeCoordinateExportDataValues(
@@ -235,40 +229,37 @@ function makeCoordinateExportDataValues(
       return (data[index] as RangeDataType<number>).join();
     }
 
-    const findedItem = data.find(
+    const foundItem = data.find(
       (value) => category === String(getCoordinateXValue(value as CoordinateDataType))
     );
 
-    return findedItem ? getCoordinateYValue(findedItem) : '';
+    return foundItem ? getCoordinateYValue(foundItem) : '';
   });
 }
 
-function makeExportData(exportData: DataToExport) {
-  const result: (number | string)[][] = [];
+function makeExportData(exportData: DataToExport): ExportData2DArray {
   const { series } = exportData;
   const categories = exportData.categories as string[];
-  result.push(['', ...categories]);
 
-  Object.keys(series).forEach((type) => {
-    series[type].forEach((datum) => {
-      const { name, data } = datum;
-      let values;
+  return Object.keys(series).reduce<ExportData2DArray>(
+    (acc, type) => {
+      const result = series[type].map(({ name, data }) => {
+        const values =
+          !isNumber(data[0]) && includes(['line', 'area', 'scatter'], type)
+            ? makeCoordinateExportDataValues(type, categories, data)
+            : data.map((value) => (Array.isArray(value) ? value.join() : value));
 
-      if (!isNumber(data[0]) && includes(['line', 'area', 'scatter'], type)) {
-        values = makeCoordinateExportDataValues(type, categories, data);
-      } else {
-        values = data.map((value) => (Array.isArray(value) ? value.join() : value));
-      }
+        return [name, ...values];
+      });
 
-      result.push([name, ...values]);
-    });
-  });
-
-  return result;
+      return [...acc, ...result];
+    },
+    [['', ...categories]]
+  );
 }
 
 function get2DArrayFromRawData(exportData: DataToExport) {
-  let result: (string | number)[][] = [];
+  let result: ExportData2DArray;
   const { series } = exportData;
 
   if (series.bullet) {
@@ -290,7 +281,7 @@ function get2DArrayFromRawData(exportData: DataToExport) {
   return result;
 }
 
-function getTableElementStringForXLS(chartData2DArray: (string | number)[][]) {
+function getTableElementStringForXLS(chartData2DArray: ExportData2DArray) {
   let tableElementString = '<table>';
   chartData2DArray.forEach((row, rowIndex) => {
     const cellTagName = rowIndex === 0 ? 'th' : 'td';
@@ -312,7 +303,7 @@ function getTableElementStringForXLS(chartData2DArray: (string | number)[][]) {
   return tableElementString;
 }
 
-function makeXLSBodyWithRawData(chartData2DArray: (string | number)[][]) {
+function makeXLSBodyWithRawData(chartData2DArray: ExportData2DArray) {
   return oneLineTrim`<html xmlns:o="urn:schemas-microsoft-com:office:office"
         xmlns:x="urn:schemas-microsoft-com:office:excel"
         xmlns="http://www.w3.org/TR/REC-html40">
@@ -341,7 +332,7 @@ function makeXLSBodyWithRawData(chartData2DArray: (string | number)[][]) {
 }
 
 function makeCSVBodyWithRawData(
-  chartData2DArray: (string | number)[][],
+  chartData2DArray: ExportData2DArray,
   option: { lineDelimiter?: string; itemDelimiter?: string } = {}
 ) {
   const { lineDelimiter = '\u000a', itemDelimiter = ',' } = option;
