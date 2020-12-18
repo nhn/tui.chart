@@ -284,6 +284,7 @@ type ConnectorTheme = {
 
 interface BoxChartSeriesTheme extends CommonSeriesTheme {
   barWidth?: number | string;
+  colorByPoint?: boolean;
   areaOpacity?: number;
   hover?: {
     color?: string;

@@ -10,7 +10,7 @@
 - [Area 차트](./chart-area.md)
 - [LineArea 차트](./chart-lineArea.md)
 - [Bar 차트](./chart-bar.md)
-- [Column 차트](./chart-column.md)s
+- [Column 차트](./chart-column.md)
 - [ColumnLine 차트](./chart-columnLine.md)
 - [Bullet 차트](./chart-bullet.md)
 - [BoxPlot 차트](./chart-boxplot.md)

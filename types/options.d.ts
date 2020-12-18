@@ -424,9 +424,7 @@ interface StackInfo {
 
 type StackOptionType = boolean | StackInfo;
 export interface BoxSeriesOptions extends BaseSeriesOptions {
-  barWidth?: number;
   diverging?: boolean;
-  colorByPoint?: boolean;
   stack?: StackOptionType;
   eventDetectType?: BoxTypeEventDetectType;
   dataLabels?: BoxDataLabels;
@@ -589,7 +587,7 @@ export interface BulletSeriesOptions extends BaseSeriesOptions {
 }
 
 type ColumnLineChartSeriesOptions = {
-  column?: Pick<BoxSeriesOptions, 'barWidth' | 'stack' | 'dataLabels'>;
+  column?: Pick<BoxSeriesOptions, 'stack' | 'dataLabels'>;
   line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels'>;
   shift?: boolean;
   dataLabels?: DataLabelOptions;
