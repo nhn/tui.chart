@@ -7,6 +7,7 @@ import { crispPixel } from '@src/helpers/calculator';
 import { isUndefined, includes } from '@src/helpers/utils';
 import { LineTypeEventDetectType, BoxTypeEventDetectType } from '@t/options';
 import { ResponderSeriesModel } from '@src/component/selectedSeries';
+import { isSameArray } from '@src/helpers/arrayUtil';
 
 export type HoveredSeriesModel = ResponderSeriesModel & { guideLine: LineModel[] };
 
@@ -23,10 +24,10 @@ export default class HoveredSeries extends Component {
 
   modelForGuideLine!: CircleResponderModel | BoxPlotResponderModel;
 
-  getSeriesModels() {
+  getSeriesModels(type?: TooltipModelName) {
     const { guideLine, ...models } = this.models;
 
-    return Object.values(models).flatMap((val) => val);
+    return (type ? models[type] : Object.values(models))?.flatMap((val) => val);
   }
 
   hasGuideLine() {
@@ -48,9 +49,18 @@ export default class HoveredSeries extends Component {
     name: TooltipModelName;
     eventDetectType?: LineTypeEventDetectType | BoxTypeEventDetectType;
   }) => {
+    const prevModels = this.getSeriesModels(name);
     this.models[name] = [...models];
     this.isShow = !!this.getSeriesModels().length;
-    this.eventBus.emit(this.isShow ? 'hoverSeries' : 'unhoverSeries', this.models);
+
+    const isSame = !!prevModels?.length && !!models.length && isSameArray(prevModels, models);
+
+    if (prevModels?.length && !models.length) {
+      this.eventBus.emit('unhoverSeries', prevModels);
+    } else if (models.length && !isSame) {
+      this.eventBus.emit('hoverSeries', models);
+    }
+
     this.modelForGuideLine = this.getModelForGuideLine(name);
 
     if (eventDetectType === 'grouped') {
