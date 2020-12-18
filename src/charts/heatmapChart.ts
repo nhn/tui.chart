@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import heatmapAxes from '@src/store/heatmapAxes';
 import heatmapSeriesData from '@src/store/heatmapSeriesData';
@@ -121,5 +121,13 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
 
   public updateOptions = (options: HeatmapChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  public showTooltip = (info: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...info, state: this.store.state });
+  };
+
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

@@ -30,6 +30,8 @@ export default class HeatmapSeries extends Component {
     this.type = 'series';
     this.name = 'heatmap';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   render(chartState: ChartState<HeatmapChartOptions>) {
@@ -139,9 +141,9 @@ export default class HeatmapSeries extends Component {
     }
   }
 
-  onMouseoutComponent() {
+  onMouseoutComponent = () => {
     this.emitMouseEvent([]);
-  }
+  };
 
   onMousemove({ responders }) {
     this.activatedResponders = responders;
@@ -172,7 +174,6 @@ export default class HeatmapSeries extends Component {
 
     const dataSize = state.series.heatmap?.[0].data.length;
     const responderIndex = seriesIndex * dataSize + index;
-
     const model = this.responders[responderIndex];
 
     if (!model) {
@@ -181,6 +182,26 @@ export default class HeatmapSeries extends Component {
 
     this.eventBus.emit('renderHoveredSeries', {
       models: this.getRespondersWithTheme([model], 'select'),
+      name: this.name,
+    });
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({ index, seriesIndex, state }: SelectSeriesHandlerParams<HeatmapChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const dataSize = state.series.heatmap?.[0].data.length;
+    const responderIndex = seriesIndex * dataSize + index;
+    const model = this.responders[responderIndex];
+
+    if (!model) {
+      return;
+    }
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models: this.getRespondersWithTheme([model], 'hover'),
       name: this.name,
     });
     this.eventBus.emit('needDraw');
