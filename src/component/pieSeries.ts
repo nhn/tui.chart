@@ -162,6 +162,8 @@ export default class PieSeries extends Component {
     this.name = 'pie';
     this.alias = param?.alias ?? '';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   render(chartState: ChartState<PieChartOptions>) {
@@ -439,12 +441,12 @@ export default class PieSeries extends Component {
     }));
   }
 
-  onMouseoutComponent() {
+  onMouseoutComponent = () => {
     this.eventBus.emit('seriesPointHovered', { models: [], name: this.alias || this.name });
     this.eventBus.emit('renderHoveredSeries', { models: [], name: this.alias || this.name });
 
     this.eventBus.emit('needDraw');
-  }
+  };
 
   getOpacity(active: boolean, selectedState: boolean): number {
     const { select, areaOpacity } = this.theme;
@@ -526,6 +528,32 @@ export default class PieSeries extends Component {
       name: this.name,
       alias: this.alias,
     });
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({ index, alias }: SelectSeriesHandlerParams<PieChartOptions>) => {
+    if (!isNumber(index) || (!isUndefined(alias) && alias !== this.alias)) {
+      return;
+    }
+
+    const models = [this.responders[index]];
+
+    if (!models.length) {
+      return;
+    }
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models: this.getResponderModelsWithTheme(models, 'hover'),
+      name: this.name,
+      alias: this.alias,
+    });
+
+    this.activatedResponders = this.makeTooltipResponder(models);
+    this.eventBus.emit('seriesPointHovered', {
+      models: this.activatedResponders,
+      name: this.alias || this.name,
+    });
+
     this.eventBus.emit('needDraw');
   };
 }

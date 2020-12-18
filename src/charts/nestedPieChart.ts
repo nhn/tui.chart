@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import nestedPieSeriesData from '@src/store/nestedPieSeriesData';
 
@@ -92,5 +92,13 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
 
   public updateOptions = (options: NestedPieChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  public showTooltip = (info: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...info });
+  };
+
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }
