@@ -379,7 +379,7 @@ const options = {
 ```
 ![diverging](https://user-images.githubusercontent.com/43128697/102586431-7e2b8280-414d-11eb-8ca6-1328d149566d.png)
 
-`yAxis.align`을 `"center"`옵션을 지정해주면 Y축이 중앙에 위치하는 분기 차트를 만들 수 있다.
+`yAxis.align`을 `'center'`옵션을 지정해주면 Y축이 중앙에 위치하는 분기 차트를 만들 수 있다.
 
 ```js
 const options = {
@@ -476,12 +476,12 @@ type DefaultDataLabelsTheme = {
 | areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
 | colors | string[] | 시리즈의 색상 |
 | hover | object | 데이터에 마우스를 올렸을 때 스타일 |
-| hover.groupRect | object | 옵션 `series.eventDetectType: "grouped"`로 설정되어 있을 때, Y축 기준으로 오버되는 영역의 스타일 |
+| hover.groupRect | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 오버되는 영역의 스타일 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | select.areaOpacity | number | 선택된 시리즈의 영역 투명도 |
-| select.groupRect | object | 옵션 `series.eventDetectType: "grouped"`로 설정되어 있을 때, Y축 기준으로 선택되는 영역의 스타일 |
+| select.groupRect | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 선택되는 영역의 스타일 |
 | select.restSeries | object | 선택되지 않은 시리즈의 스타일 |
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
+| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 [DataLabels 가이드](./common-dataLabels-options.md)를 참고한다. |
 
 테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 바 시리즈의 색상과 두께를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
 
