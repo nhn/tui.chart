@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -92,5 +92,13 @@ export default class BulletChart extends Chart<BulletChartOptions> {
 
   public updateOptions = (options: BulletChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  public showTooltip = (info: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...info, state: this.store.state });
+  };
+
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

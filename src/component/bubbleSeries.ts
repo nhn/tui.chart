@@ -5,12 +5,12 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNumber, isString, isUndefined } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNumber, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import Component from './component';
 import { BubbleChartSeriesTheme } from '@t/theme';
-import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
 
 const MINIMUM_RADIUS = 0.5;
