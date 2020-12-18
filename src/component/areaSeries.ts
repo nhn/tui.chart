@@ -48,7 +48,7 @@ import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { AreaChartSeriesTheme, DotTheme } from '@t/theme';
-import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { SelectSeriesHandlerParams, ShowTooltipSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
 
 interface RenderOptions {
@@ -96,6 +96,8 @@ export default class AreaSeries extends Component {
     this.type = 'series';
     this.name = 'area';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   initUpdate(delta: number) {
@@ -519,7 +521,7 @@ export default class AreaSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  onMouseoutComponent() {
+  onMouseoutComponent = () => {
     this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
     this.eventBus.emit('renderHoveredSeries', {
       models: [],
@@ -528,7 +530,7 @@ export default class AreaSeries extends Component {
     });
 
     this.eventBus.emit('needDraw');
-  }
+  };
 
   getDataLabels(seriesModels: AreaPointsModel[]): PointDataLabel[] {
     const dataLabelTheme = this.theme.dataLabels;
@@ -576,20 +578,26 @@ export default class AreaSeries extends Component {
     }
   }
 
-  selectSeries = ({
-    index,
-    seriesIndex,
-    chartType,
-  }: SelectSeriesHandlerParams<AreaChartOptions>) => {
-    if (
-      !isNumber(index) ||
-      !isNumber(seriesIndex) ||
-      (!isUndefined(chartType) && chartType !== 'area')
-    ) {
+  private isExistAllInfoToTriggerEvent(
+    info: SelectSeriesHandlerParams<AreaChartOptions> | ShowTooltipSeriesInfo
+  ) {
+    const { index, seriesIndex, chartType } = info;
+
+    return (
+      isNumber(index) &&
+      isNumber(seriesIndex) &&
+      (isUndefined(chartType) || (chartType && chartType === 'area'))
+    );
+  }
+
+  selectSeries = (info: SelectSeriesHandlerParams<AreaChartOptions>) => {
+    if (this.isExistAllInfoToTriggerEvent(info)) {
       return;
     }
 
-    const model = this.tooltipCircleMap[index][seriesIndex];
+    const { index, seriesIndex } = info;
+
+    const model = this.tooltipCircleMap[index!][seriesIndex!];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -599,6 +607,28 @@ export default class AreaSeries extends Component {
       models: [model],
       name: this.name,
     });
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = (info: ShowTooltipSeriesInfo) => {
+    if (!this.isExistAllInfoToTriggerEvent(info)) {
+      return;
+    }
+
+    const { index, seriesIndex } = info;
+
+    const models =
+      this.eventDetectType === 'grouped'
+        ? this.tooltipCircleMap[index!]
+        : [this.tooltipCircleMap[index!][seriesIndex!]];
+
+    if (!models.length) {
+      return;
+    }
+
+    this.onMousemoveNearType(models);
+
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   };
 }
