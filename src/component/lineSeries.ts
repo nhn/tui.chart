@@ -407,25 +407,18 @@ export default class LineSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  private isExistAllInfoToTriggerEvent(
-    info: SelectSeriesHandlerParams<LineChartOptions> | ShowTooltipSeriesInfo
-  ) {
+  selectSeries = (info: SelectSeriesHandlerParams<LineChartOptions>) => {
     const { index, seriesIndex, chartType } = info;
 
-    return (
-      isNumber(index) &&
-      isNumber(seriesIndex) &&
-      (isUndefined(chartType) || (chartType && chartType === 'line'))
-    );
-  }
-
-  selectSeries = (info: SelectSeriesHandlerParams<LineChartOptions>) => {
-    if (!this.isExistAllInfoToTriggerEvent(info)) {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'line')
+    ) {
       return;
     }
-    const { index, seriesIndex } = info;
 
-    const model = this.tooltipCircleMap[index!][seriesIndex!];
+    const model = this.tooltipCircleMap[index][seriesIndex];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -436,16 +429,20 @@ export default class LineSeries extends Component {
   };
 
   showTooltip = (info: ShowTooltipSeriesInfo) => {
-    if (!this.isExistAllInfoToTriggerEvent(info)) {
+    const { index, seriesIndex, chartType } = info;
+
+    if (
+      !isNumber(index) ||
+      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
+      (!isUndefined(chartType) && chartType !== 'line')
+    ) {
       return;
     }
 
-    const { index, seriesIndex } = info;
-
     const models =
       this.eventDetectType === 'grouped'
-        ? this.tooltipCircleMap[index!]
-        : [this.tooltipCircleMap[index!][seriesIndex!]];
+        ? this.tooltipCircleMap[index]
+        : [this.tooltipCircleMap[index][seriesIndex!]];
 
     if (!models.length) {
       return;

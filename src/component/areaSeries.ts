@@ -578,26 +578,18 @@ export default class AreaSeries extends Component {
     }
   }
 
-  private isExistAllInfoToTriggerEvent(
-    info: SelectSeriesHandlerParams<AreaChartOptions> | ShowTooltipSeriesInfo
-  ) {
+  selectSeries = (info: SelectSeriesHandlerParams<AreaChartOptions>) => {
     const { index, seriesIndex, chartType } = info;
 
-    return (
-      isNumber(index) &&
-      isNumber(seriesIndex) &&
-      (isUndefined(chartType) || (chartType && chartType === 'area'))
-    );
-  }
-
-  selectSeries = (info: SelectSeriesHandlerParams<AreaChartOptions>) => {
-    if (this.isExistAllInfoToTriggerEvent(info)) {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'area')
+    ) {
       return;
     }
 
-    const { index, seriesIndex } = info;
-
-    const model = this.tooltipCircleMap[index!][seriesIndex!];
+    const model = this.tooltipCircleMap[index][seriesIndex];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -611,11 +603,15 @@ export default class AreaSeries extends Component {
   };
 
   showTooltip = (info: ShowTooltipSeriesInfo) => {
-    if (!this.isExistAllInfoToTriggerEvent(info)) {
+    const { index, seriesIndex, chartType } = info;
+
+    if (
+      !isNumber(index) ||
+      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
+      (!isUndefined(chartType) && chartType !== 'area')
+    ) {
       return;
     }
-
-    const { index, seriesIndex } = info;
 
     const models =
       this.eventDetectType === 'grouped'
