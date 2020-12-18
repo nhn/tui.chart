@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, ShowTooltipSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -112,5 +112,13 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   public updateOptions = (options: BarChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  public showTooltip = (info: ShowTooltipSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...info });
+  };
+
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }
