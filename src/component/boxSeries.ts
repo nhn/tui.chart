@@ -54,7 +54,7 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { makeRectResponderModel, RespondersThemeType } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
-import { SelectSeriesHandlerParams, ShowTooltipSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
 
 export enum SeriesDirection {
@@ -841,7 +841,7 @@ export default class BoxSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  showTooltip = (info: ShowTooltipSeriesInfo) => {
+  showTooltip = (info: SelectSeriesInfo) => {
     const { index, seriesIndex, chartType } = info;
 
     if (

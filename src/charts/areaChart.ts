@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo, ShowTooltipSeriesInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -138,7 +138,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.dispatchOptionsEvent('updateOptions', options);
   };
 
-  public showTooltip = (info: ShowTooltipSeriesInfo) => {
+  public showTooltip = (info: SelectSeriesInfo) => {
     this.eventBus.emit('showTooltip', { ...info });
   };
 

@@ -38,7 +38,7 @@ import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { DotTheme, LineChartSeriesTheme } from '@t/theme';
-import { SelectSeriesHandlerParams, ShowTooltipSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
 
 interface RenderOptions {
@@ -428,7 +428,7 @@ export default class LineSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  showTooltip = (info: ShowTooltipSeriesInfo) => {
+  showTooltip = (info: SelectSeriesInfo) => {
     const { index, seriesIndex, chartType } = info;
 
     if (

@@ -38,11 +38,6 @@ export type SelectSeriesInfo = {
   alias?: string;
   chartType?: 'line' | 'area' | 'column' | 'scatter';
 };
-export type ShowTooltipSeriesInfo = {
-  seriesIndex?: number;
-  index?: number;
-  chartType?: 'line' | 'area' | 'column' | 'scatter';
-};
 
 export interface SelectSeriesHandlerParams<T extends Options> extends SelectSeriesInfo {
   state: ChartState<T>;
@@ -369,7 +364,7 @@ export default abstract class Chart<T extends Options> {
 
   public abstract setOptions(options: Options): void;
 
-  public abstract showTooltip(info: ShowTooltipSeriesInfo): void;
+  public abstract showTooltip(info: SelectSeriesInfo): void;
 
   public abstract hideTooltip(): void;
 

@@ -1,4 +1,4 @@
-import Chart, { ShowTooltipSeriesInfo } from './chart';
+import Chart, { SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -348,7 +348,7 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.dispatchOptionsEvent('updateOptions', options);
   };
 
-  public showTooltip = (info: ShowTooltipSeriesInfo) => {
+  public showTooltip = (info: SelectSeriesInfo) => {
     this.eventBus.emit('showTooltip', { ...info });
   };
 
