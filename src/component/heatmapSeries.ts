@@ -196,14 +196,8 @@ export default class HeatmapSeries extends Component {
     const responderIndex = seriesIndex * dataSize + index;
     const model = this.responders[responderIndex];
 
-    if (!model) {
-      return;
+    if (model) {
+      this.emitMouseEvent([model]);
     }
-
-    this.eventBus.emit('renderHoveredSeries', {
-      models: this.getRespondersWithTheme([model], 'hover'),
-      name: this.name,
-    });
-    this.eventBus.emit('needDraw');
   };
 }

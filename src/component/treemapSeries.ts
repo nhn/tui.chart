@@ -34,6 +34,8 @@ export default class TreemapSeries extends Component {
     this.type = 'series';
     this.name = 'treemap';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   private getAllChildSeries(series: TreemapSeriesData[], parentId: string) {
@@ -236,9 +238,9 @@ export default class TreemapSeries extends Component {
     }
   }
 
-  onMouseoutComponent() {
+  onMouseoutComponent = () => {
     this.emitMouseEvent([]);
-  }
+  };
 
   onMousemove({ responders }) {
     const deepestNode = getDeepestNode(responders);
@@ -276,5 +278,17 @@ export default class TreemapSeries extends Component {
     });
 
     this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({ index }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
+    if (!isNumber(index)) {
+      return;
+    }
+
+    const model = this.responders.find(({ indexes }) => last(indexes) === index);
+
+    if (model) {
+      this.emitMouseEvent([model]);
+    }
   };
 }
