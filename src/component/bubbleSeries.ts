@@ -5,12 +5,12 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNumber, isString } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNumber, isString, isUndefined } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import Component from './component';
 import { BubbleChartSeriesTheme } from '@t/theme';
-import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
 
 const MINIMUM_RADIUS = 0.5;
@@ -43,6 +43,8 @@ export default class BubbleSeries extends Component {
     this.type = 'series';
     this.name = 'bubble';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   initUpdate(delta: number) {
@@ -162,6 +164,16 @@ export default class BubbleSeries extends Component {
     return responders.map((responder) => deepMergedCopy(responder, this.theme[type]));
   }
 
+  onMouseoutComponent = () => {
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
+
   onMousemove({ responders, mousePosition }) {
     const closestResponder = getNearestResponder(responders, mousePosition, this.rect);
     const responderWithTheme = this.getResponderAppliedTheme(closestResponder, 'hover');
@@ -192,8 +204,8 @@ export default class BubbleSeries extends Component {
       return;
     }
 
-    const { name } = state.series.bubble!.data[seriesIndex];
-    const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
+    const { name } = state.series.bubble!.data[index];
+    const model = this.responders.filter(({ name: dataName }) => dataName === name)[seriesIndex];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -204,6 +216,27 @@ export default class BubbleSeries extends Component {
       name: this.name,
     });
 
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = (info: SelectSeriesHandlerParams<BubbleChartOptions>) => {
+    const { index, seriesIndex, state } = info;
+
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.bubble!.data[index];
+    const models = [this.responders.filter(({ name: dataName }) => dataName === name)[seriesIndex]];
+
+    if (!models.length) {
+      return;
+    }
+
+    this.eventBus.emit('renderHoveredSeries', { models, name: this.name });
+    this.activatedResponders = models;
+
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   };
 }
