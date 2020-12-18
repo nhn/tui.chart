@@ -223,11 +223,10 @@ type options = {
 
 ### stack
 
-`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 스택 차트는 `normal` 타입과 `percent` 타입이 존재한다. 필요에 따라 `stack.connector` 옵션을 설정하여 연결선을 표시할 수 있다.
+`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 스택 차트는 `'normal'` 타입과 `'percent'` 타입이 존재한다. 필요에 따라 `stack.connector` 옵션을 설정하여 연결선을 표시할 수 있다.
 
 ### normal 타입
-
-![image](https://user-images.githubusercontent.com/43128697/102583546-3f46fe00-4148-11eb-85a9-08231a995b2e.png)
+`series.stack`을 `true`로 설정할 경우 스택 시리즈의 기본 타입은 `'normal'`이다.
 
 ```js
 const options = {
@@ -247,9 +246,9 @@ const options = {
 }
 ```
 
-`connector`옵션을 `true`로 설정한 경우 연결선을 표시할 수 있다.
+![image](https://user-images.githubusercontent.com/43128697/102583546-3f46fe00-4148-11eb-85a9-08231a995b2e.png)
 
-![image](https://user-images.githubusercontent.com/43128697/102584221-5e925b00-4149-11eb-8bcd-c74aaffcabc1.png)
+`connector`옵션을 `true`로 설정한 경우 연결선을 표시할 수 있다.
 
 ```js
 const options = {
@@ -262,9 +261,11 @@ const options = {
 }
 ```
 
+![image](https://user-images.githubusercontent.com/43128697/102584221-5e925b00-4149-11eb-8bcd-c74aaffcabc1.png)
+
 ### percent 타입
 
-![image](https://user-images.githubusercontent.com/43128697/102583677-73222380-4148-11eb-909d-0b5bafd2e9fb.png)
+`stack.type`을 `'percent'`로 설정한 경우 백분율로 표시한다.
 
 ```js
 const options = {
@@ -276,9 +277,9 @@ const options = {
 }
 ```
 
-`connector` 옵션을 `true`로 설정한 경우 연결선을 표시할 수 있다.
+![image](https://user-images.githubusercontent.com/43128697/102583677-73222380-4148-11eb-909d-0b5bafd2e9fb.png)
 
-![image](https://user-images.githubusercontent.com/43128697/102584245-6ce07700-4149-11eb-8943-e60a2570891a.png)
+`connector` 옵션을 `true`로 설정한 경우 연결선을 표시할 수 있다.
 
 ```js
 const options = {
@@ -291,13 +292,13 @@ const options = {
 }
 ```
 
+![image](https://user-images.githubusercontent.com/43128697/102584245-6ce07700-4149-11eb-8943-e60a2570891a.png)
+
 ### selectable
 
-![image](https://user-images.githubusercontent.com/43128697/102584453-d52f5880-4149-11eb-859f-b23c538ae771.png)
-
-* default: `false`
-
 해당 시리즈를 선택할 수 있다.
+
+* 기본값: `false`
 
 ```js
 const options = {
@@ -307,20 +308,24 @@ const options = {
 };
 ```
 
+![image](https://user-images.githubusercontent.com/43128697/102584453-d52f5880-4149-11eb-859f-b23c538ae771.png)
+
 `selectable` 옵션과 `on` API의 `selectSeries`, `unselectSeries`를 함께 사용할 경우 해당 시리즈에 대한 제어를 추가로 할 수 있다.
 
 ### eventDetectType
-
-![eventDetectType.point](https://user-images.githubusercontent.com/43128697/102585157-3572ca00-414b-11eb-9288-5db8fabb7092.png)
-
-* default: `point`
 
 툴팁을 나타낼 때 발생하는 마우스 오버와 시리즈를 선택할 때 발생하는 마우스 클릭 시 데이터를 탐지하는 방법을 정의할 수 있다.
 
 | 타입 | 설명 |
 | --- | --- |
 | `point` | 개별 시리즈 영역에 마우스가 다가가야 탐지. 현재 마우스가 가리키고 있는 포인트를 기준으로 단 한 개만 탐지됨 |
-| `grouped` | y축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
+| `grouped` | Y축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
+
+* 기본값: `point`
+
+![eventDetectType.point](https://user-images.githubusercontent.com/43128697/102585157-3572ca00-414b-11eb-9288-5db8fabb7092.png)
+
+`eventDetectType`을 `'grouped'`로 설정할 경우 Y축을 기준으로 값이 같은 데이터가 모두 탐지된다.
 
 ```js
 const options = {
@@ -334,12 +339,10 @@ const options = {
 
 ### diverging
 
-![diverging](https://user-images.githubusercontent.com/43128697/102586431-7e2b8280-414d-11eb-8ca6-1328d149566d.png)
-
-* default: `false`
-
 `diverging` 옵션을 사용하면 인구 분포 차트와 같이 양쪽으로 나누어진 분기 차트를 만들 수 있다.
 분기 차트는 `data.series`의 첫 번째 및 두 번째 요소를 사용한다.
+
+* 기본값: `false`
 
 ```js
 const data = {
@@ -367,12 +370,14 @@ const data = {
     },
   ],
 };
+
 const options = {
   series: {
     diverging: true
   }
 };
 ```
+![diverging](https://user-images.githubusercontent.com/43128697/102586431-7e2b8280-414d-11eb-8ca6-1328d149566d.png)
 
 `yAxis.align`을 `"center"`옵션을 지정해주면 Y축이 중앙에 위치하는 분기 차트를 만들 수 있다.
 
@@ -471,10 +476,10 @@ type DefaultDataLabelsTheme = {
 | areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
 | colors | string[] | 시리즈의 색상 |
 | hover | object | 데이터에 마우스를 올렸을 때 스타일 |
-| hover.groupRect | object | 옵션 `series.eventDetectType: "grouped"`로 설정되어 있을 때, y축 기준으로 오버되는 영역의 스타일 |
+| hover.groupRect | object | 옵션 `series.eventDetectType: "grouped"`로 설정되어 있을 때, Y축 기준으로 오버되는 영역의 스타일 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | select.areaOpacity | number | 선택된 시리즈의 영역 투명도 |
-| select.groupRect | object | 옵션 `series.eventDetectType: "grouped"`로 설정되어 있을 때, y축 기준으로 선택되는 영역의 스타일 |
+| select.groupRect | object | 옵션 `series.eventDetectType: "grouped"`로 설정되어 있을 때, Y축 기준으로 선택되는 영역의 스타일 |
 | select.restSeries | object | 선택되지 않은 시리즈의 스타일 |
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
 
