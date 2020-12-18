@@ -19,7 +19,7 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '@t/theme';
 import { isNumber } from '@src/helpers/utils';
 import { crispPixel } from '@src/helpers/calculator';
-import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
 
 type RenderOptions = {
@@ -58,6 +58,8 @@ export default class BoxPlotSeries extends Component {
     this.type = 'series';
     this.name = 'boxPlot';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   render(state: ChartState<BoxPlotChartOptions>): void {
@@ -197,6 +199,8 @@ export default class BoxPlotSeries extends Component {
   }
 
   onMousemove({ responders }) {
+    console.log(responders);
+
     if (this.eventDetectType === 'grouped') {
       const models = this.getResponderModelFromMap(responders);
       this.eventBus.emit('renderHoveredSeries', {
@@ -366,7 +370,7 @@ export default class BoxPlotSeries extends Component {
       : this.rect.height - value * ratio;
   }
 
-  onMouseoutComponent() {
+  onMouseoutComponent = () => {
     this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
     this.eventBus.emit('renderHoveredSeries', {
       models: [],
@@ -375,7 +379,7 @@ export default class BoxPlotSeries extends Component {
     });
 
     this.eventBus.emit('needDraw');
-  }
+  };
 
   getBarWidths(tickDistance: number, seriesLength: number) {
     const { barWidth: barThemeWidth, barWidthRatios } = this.theme;
@@ -603,6 +607,25 @@ export default class BoxPlotSeries extends Component {
       name: this.name,
       eventDetectType: this.eventDetectType,
     });
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({ index, seriesIndex, state }: SelectSeriesHandlerParams<BoxPlotChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.boxPlot![seriesIndex];
+    const models = this.getRespondersWithTheme(this.tooltipRectMap[`${name}-${index}`], 'hover');
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models,
+      name: this.name,
+      eventDetectType: this.eventDetectType,
+    });
+
+    this.activatedResponders = models;
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   };
 }
