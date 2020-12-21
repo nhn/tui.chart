@@ -27,6 +27,7 @@ import Component from '@src/component/component';
 import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
 import { message } from '@src/message';
+import { sendHostname } from '@src/helpers/googleAnalytics';
 
 export const DEFAULT_ANIM_DURATION = 500;
 
@@ -124,6 +125,10 @@ export default abstract class Chart<T extends Options> {
 
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories } = props;
+
+    if (isUndefined(options.usageStatistics) || options.usageStatistics) {
+      sendHostname();
+    }
 
     this.el = el;
 
