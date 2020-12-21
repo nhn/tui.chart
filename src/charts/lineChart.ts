@@ -71,7 +71,7 @@ export interface LineChartProps {
  *        @param {boolean} [props.options.series.zoomable=false] - Whether to use zoom feature or not.
  *        @param {string} [props.options.series.eventDetectType] - Event detect type. 'near', 'nearest', 'grouped', 'point' is available.
  *        @param {boolean} [props.options.series.shift=false] - Whether to use shift when addData or not.
- *        @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel.
+ *        @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *      @param {Object} [props.options.xAxis]
  *        @param {boolean} [props.options.xAxis.pointOnColumn=false] - Whether to move the start of the chart to the center of the column.
  *        @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
@@ -91,8 +91,8 @@ export interface LineChartProps {
  *        @param {number} [props.options.plot.width] - Width of plot.
  *        @param {number} [props.options.plot.height] - Height of plot.
  *        @param {boolean} [props.options.plot.showLine] - Whether to show plot line.
- *        @param {Array<PlotLine>} [props.options.plot.lines] - Plot lines information.
- *        @param {Array<Object>} [props.options.plot.bands] - Plot lines information.
+ *        @param {Array<Object>} [props.options.plot.lines] - Plot lines information. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Plot guide} on github.
+ *        @param {Array<Object>} [props.options.plot.bands] - Plot bands information. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Plot guide} on github.
  *      @param {Object} [props.options.legend]
  *        @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *        @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
@@ -106,8 +106,8 @@ export interface LineChartProps {
  *        @param {number} [props.options.tooltip.offsetX] - Offset value to move title horizontally.
  *        @param {number} [props.options.tooltip.offsetY] - Offset value to move title vertically.
  *        @param {Function} [props.options.tooltip.formatter] - Function to format data value.
- *        @param {Function} [props.options.tooltip.template] - Function to create custom template.
- *      @param {Object} [props.options.responsive]
+ *        @param {Function} [props.options.tooltip.template] - Function to create custom template. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Tooltip guide} on github.
+ *      @param {Object} [props.options.responsive] - Rules for changing chart options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Responsive guide} on github.
  *        @param {boolean|Object} [props.options.responsive.animation] - Animation duration when the chart is modified.
  *        @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond.
  *      @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Line Chart guide} on github.
