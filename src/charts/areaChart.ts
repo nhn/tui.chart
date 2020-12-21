@@ -51,7 +51,7 @@ export interface AreaChartProps {
  * @param {Object} props
  *    @param {HTMLElement} props.el - The target element to create chart.
  *    @param {Object} props.data - Data for making Area Chart.
- *      @param {Array<string>} [props.data.categories] - Categories.
+ *      @param {Array<string>} props.data.categories - Categories.
  *      @param {Array<Object>} props.data.series - Series data.
  *        @param {string} props.data.series.name - Series name.
  *        @param {Array<number|Array<number>>} props.data.series.data - Series data.
@@ -66,6 +66,7 @@ export interface AreaChartProps {
  *        @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
  *        @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
  *      @param {Object} [props.options.series]
+ *        @param {boolean} [props.options.series.selectable=false] - Whether to select series or not.
  *        @param {boolean} [props.options.series.showDot=false] - Whether to show dot or not.
  *        @param {boolean} [props.options.series.spline=false] - Whether to make spline chart or not.
  *        @param {boolean} [props.options.series.zoomable=false] - Whether to use zoom feature or not.
@@ -74,6 +75,7 @@ export interface AreaChartProps {
  *        @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *        @param {boolean|Object} [props.options.series.stack] - Option to decide whether to use stack chart and type of stack chart. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Area Chart guide} on github.
  *      @param {Object} [props.options.xAxis]
+ *        @param {Object} [props.options.xAxis.title] - Axis title.
  *        @param {boolean} [props.options.xAxis.pointOnColumn=false] - Whether to move the start of the chart to the center of the column.
  *        @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *        @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date typeWhether the x axis label is of date type. If use date type, format option used for date type.
@@ -83,6 +85,7 @@ export interface AreaChartProps {
  *        @param {number} [props.options.xAxis.width] - Width of xAxis.
  *        @param {number} [props.options.xAxis.height] - Height of xAxis.
  *      @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
+ *        @param {Object} [props.options.yAxis.title] - Axis title.
  *        @param {Object} [props.options.yAxis.tick] - You can change the tick interval through the tick.interval option.
  *        @param {Object} [props.options.yAxis.label] - You can change the tick interval through the label.interval option.
  *        @param {Object} [props.options.yAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
