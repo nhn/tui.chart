@@ -95,8 +95,8 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
   /**
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.index - Index of series.
-   *      @param {number} seriesInfo.seriesIndex - Index of data within series.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
+   *      @param {number} seriesInfo.index - Index of data within series.
    * @api
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2});

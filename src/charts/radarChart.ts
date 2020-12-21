@@ -91,11 +91,11 @@ export default class RadarChart extends Chart<RadarChartOptions> {
   /**
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.index - Index of series.
-   *      @param {number} seriesInfo.seriesIndex - Index of data within series.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
+   *      @param {number} seriesInfo.index - Index of data within series.
    * @api
    * @example
-   * chart.showTooltip({index: 1, alias: 'name'});
+   * chart.showTooltip({index: 1, seriesIndex: 2});
    */
   public showTooltip = (seriesInfo: SelectSeriesInfo) => {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });

@@ -261,12 +261,12 @@ export default class TreemapSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  selectSeries = ({ index }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
-    if (!isNumber(index)) {
+  selectSeries = ({ seriesIndex }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
       return;
     }
 
-    const model = this.responders.find(({ indexes }) => last(indexes) === index);
+    const model = this.responders.find(({ indexes }) => last(indexes) === seriesIndex);
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -280,12 +280,12 @@ export default class TreemapSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  showTooltip = ({ index }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
-    if (!isNumber(index)) {
+  showTooltip = ({ seriesIndex }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
       return;
     }
 
-    const model = this.responders.find(({ indexes }) => last(indexes) === index);
+    const model = this.responders.find(({ indexes }) => last(indexes) === seriesIndex);
 
     if (model) {
       this.emitMouseEvent([model]);

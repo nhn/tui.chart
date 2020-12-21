@@ -425,12 +425,12 @@ export default class BulletSeries extends Component {
     }));
   }
 
-  selectSeries = ({ index, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
-    if (!isNumber(index)) {
+  selectSeries = ({ seriesIndex, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
       return;
     }
 
-    const { name } = state.series.bullet?.[index];
+    const { name } = state.series.bullet?.[seriesIndex];
 
     const model = this.filterBulletResponder(this.responders).filter(
       ({ name: dataName }) => dataName === name
@@ -447,12 +447,12 @@ export default class BulletSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  showTooltip = ({ index, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
-    if (!isNumber(index)) {
+  showTooltip = ({ seriesIndex, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
       return;
     }
 
-    const { name } = state.series.bullet?.[index];
+    const { name } = state.series.bullet?.[seriesIndex];
     const models = this.filterBulletResponder(this.responders).filter(
       ({ name: dataName }) => dataName === name
     );

@@ -512,12 +512,12 @@ export default class PieSeries extends Component {
     return Object.values(this.activeSeriesMap!).some((elem) => !elem);
   }
 
-  selectSeries = ({ index, alias }: SelectSeriesHandlerParams<PieChartOptions>) => {
-    if (!isNumber(index) || (!isUndefined(alias) && alias !== this.alias)) {
+  selectSeries = ({ seriesIndex, alias }: SelectSeriesHandlerParams<PieChartOptions>) => {
+    if (!isNumber(seriesIndex) || (!isUndefined(alias) && alias !== this.alias)) {
       return;
     }
 
-    const model = this.responders[index];
+    const model = this.responders[seriesIndex];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -531,12 +531,12 @@ export default class PieSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  showTooltip = ({ index, alias }: SelectSeriesHandlerParams<PieChartOptions>) => {
-    if (!isNumber(index) || (!isUndefined(alias) && alias !== this.alias)) {
+  showTooltip = ({ seriesIndex, alias }: SelectSeriesHandlerParams<PieChartOptions>) => {
+    if (!isNumber(seriesIndex) || (!isUndefined(alias) && alias !== this.alias)) {
       return;
     }
 
-    const models = [this.responders[index]];
+    const models = [this.responders[seriesIndex]];
 
     if (!models.length) {
       return;

@@ -97,10 +97,10 @@ export default class BulletChart extends Chart<BulletChartOptions> {
   /**
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.index - Index of series.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
    * @api
    * @example
-   * chart.showTooltip({index: 1});
+   * chart.showTooltip({seriesIndex: 1});
    */
   public showTooltip = (seriesInfo: SelectSeriesInfo) => {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });

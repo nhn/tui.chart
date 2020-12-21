@@ -828,7 +828,7 @@ export default class BoxSeries extends Component {
       return;
     }
 
-    const model = this.tooltipRectMap[index][seriesIndex];
+    const model = this.tooltipRectMap[seriesIndex][index];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -845,8 +845,8 @@ export default class BoxSeries extends Component {
     const { index, seriesIndex, chartType } = info;
 
     if (
-      !isNumber(seriesIndex) ||
-      (this.eventDetectType !== 'grouped' && !isNumber(index)) ||
+      !isNumber(index) ||
+      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
       (!isUndefined(chartType) && chartType !== 'column')
     ) {
       return;
@@ -854,8 +854,8 @@ export default class BoxSeries extends Component {
 
     const models =
       this.eventDetectType === 'grouped'
-        ? this.getGroupedRect([this.responders[seriesIndex]], 'hover')
-        : this.getRespondersWithTheme([this.tooltipRectMap[seriesIndex][index!]], 'hover');
+        ? this.getGroupedRect([this.responders[index]], 'hover')
+        : this.getRespondersWithTheme([this.tooltipRectMap[index][seriesIndex!]], 'hover');
 
     if (!models.length) {
       return;
@@ -867,7 +867,7 @@ export default class BoxSeries extends Component {
       eventDetectType: this.eventDetectType,
     });
     this.activatedResponders =
-      this.eventDetectType === 'grouped' ? this.tooltipRectMap[seriesIndex] : models;
+      this.eventDetectType === 'grouped' ? this.tooltipRectMap[index] : models;
 
     this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');

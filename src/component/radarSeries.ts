@@ -249,8 +249,8 @@ export default class RadarSeries extends Component {
       return;
     }
 
-    const { name } = state.series.radar!.data[index];
-    const model = this.responders.filter(({ name: dataName }) => dataName === name)[seriesIndex];
+    const { name } = state.series.radar!.data[seriesIndex];
+    const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -268,8 +268,8 @@ export default class RadarSeries extends Component {
       return;
     }
 
-    const { name } = state.series.radar!.data[index];
-    const models = [this.responders.filter(({ name: dataName }) => dataName === name)[seriesIndex]];
+    const { name } = state.series.radar!.data[seriesIndex];
+    const models = [this.responders.filter(({ name: dataName }) => dataName === name)[index]];
 
     if (!models.length) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);

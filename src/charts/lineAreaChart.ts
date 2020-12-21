@@ -149,8 +149,8 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
   /**
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.index - Index of series.
-   *      @param {number} seriesInfo.seriesIndex - Index of data within series.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
+   *      @param {number} seriesInfo.index - Index of data within series.
    *      @param {string} seriesInfo.chartType - specify which chart to select.
    * @api
    * @example

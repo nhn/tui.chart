@@ -226,8 +226,8 @@ export default class BubbleSeries extends Component {
       return;
     }
 
-    const { name } = state.series.bubble!.data[index];
-    const models = [this.responders.filter(({ name: dataName }) => dataName === name)[seriesIndex]];
+    const { name } = state.series.bubble!.data[seriesIndex];
+    const models = [this.responders.filter(({ name: dataName }) => dataName === name)[index]];
 
     if (!models.length) {
       return;

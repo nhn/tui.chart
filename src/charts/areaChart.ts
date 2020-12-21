@@ -141,8 +141,8 @@ export default class AreaChart extends Chart<AreaChartOptions> {
   /**
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.seriesIndex - Index of data within series. If eventType is 'grouped', only seriesIndex is needed.
-   *      @param {number} [seriesInfo.index] - Index of series.
+   *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only seriesIndex is needed.
+   *      @param {number} [seriesInfo.seriesIndex] - Index of series.
    * @api
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2});

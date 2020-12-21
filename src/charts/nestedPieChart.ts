@@ -97,11 +97,11 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
   /**
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.index - Index of series.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
    *      @param {number} seriesInfo.alias - alias name.
    * @api
    * @example
-   * chart.showTooltip({index: 1, alias: 'name'});
+   * chart.showTooltip({seriesIndex: 1, alias: 'name'});
    */
   public showTooltip = (seriesInfo: SelectSeriesInfo) => {
     this.eventBus.emit('showTooltip', { ...seriesInfo });
