@@ -129,7 +129,7 @@ export const theme = () => {
       series: {
         colors: ['#264653', '#2A9D8F', '#E9C46A', '#F4A261', '#E76F51'],
         lineWidth: 5,
-        dashSegments: [0, 10],
+        dashSegments: [10],
         areaOpacity: 0.5,
         dot: {
           radius: 5,
