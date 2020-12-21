@@ -1,14 +1,3 @@
-type GA_URL = 'https://www.google-analytics.com/collect';
-interface TrackingInfo {
-  v: number;
-  t: 'event';
-  tid: 'UA-129983528-2';
-  cid: string;
-  dp: string;
-  dh: 'grid';
-  el: 'grid';
-  ec: 'use';
-}
 const MS_7_DAYS = 7 * 24 * 60 * 60 * 1000;
 
 function isExpired(date: number) {
@@ -17,13 +6,21 @@ function isExpired(date: number) {
   return now - date > MS_7_DAYS;
 }
 
-function imagePing(url: GA_URL, trackingInfo: TrackingInfo) {
+function imagePing(
+  url: 'https://www.google-analytics.com/collect',
+  trackingInfo: {
+    v: number;
+    t: 'event';
+    tid: 'UA-129983528-2';
+    cid: string;
+    dp: string;
+    dh: 'chart';
+    el: 'chart';
+    ec: 'use';
+  }
+) {
   const queryString = Object.keys(trackingInfo)
-    .map((id, index) => {
-      const idWithType = id as keyof TrackingInfo;
-
-      return `${index ? '&' : ''}${idWithType}=${trackingInfo[idWithType]}`;
-    })
+    .map((id, index) => `${index ? '&' : ''}${id}=${trackingInfo[id]}`)
     .join('');
 
   const trackingElement = document.createElement('img');
@@ -38,7 +35,7 @@ function imagePing(url: GA_URL, trackingInfo: TrackingInfo) {
 
 export function sendHostname() {
   const hostname = location.hostname;
-  const applicationKeyForStorage = `TOAST UI grid for ${hostname}: Statistics`;
+  const applicationKeyForStorage = `TOAST UI chart for ${hostname}: Statistics`;
   const date = window.localStorage.getItem(applicationKeyForStorage);
 
   if (date && !isExpired(Number(date))) {
@@ -55,8 +52,8 @@ export function sendHostname() {
         tid: 'UA-129983528-2',
         cid: hostname,
         dp: hostname,
-        dh: 'grid',
-        el: 'grid',
+        dh: 'chart',
+        el: 'chart',
         ec: 'use',
       });
     }
