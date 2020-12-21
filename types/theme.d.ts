@@ -7,13 +7,13 @@ type SeriesThemeMap = {
   scatter?: ScatterChartSeriesTheme;
   heatmap?: HeatmapChartSeriesTheme;
   treemap?: TreemapChartSeriesTheme;
-  bar?: CommonSeriesTheme;
-  column?: CommonSeriesTheme;
+  bar?: BoxChartSeriesTheme;
+  column?: BoxChartSeriesTheme;
   bubble?: CommonSeriesTheme;
   pie?: PieChartSeriesTheme;
   radar?: RadarChartSeriesTheme;
-  boxPlot?: CommonSeriesTheme;
-  bullet?: CommonSeriesTheme;
+  boxPlot?: BoxPlotChartSeriesTheme;
+  bullet?: BulletChartSeriesTheme;
 };
 
 type SeriesTheme =
@@ -26,7 +26,10 @@ type SeriesTheme =
   | RadarChartSeriesTheme
   | ScatterChartSeriesTheme
   | BubbleChartSeriesTheme
-  | NestedPieChartSeriesTheme;
+  | NestedPieChartSeriesTheme
+  | BoxChartSeriesTheme
+  | BoxPlotChartSeriesTheme
+  | BulletChartSeriesTheme;
 
 type FontTheme = {
   fontSize?: number;

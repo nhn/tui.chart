@@ -194,7 +194,7 @@ describe('boxplot series', () => {
           x: 28.75,
           y: 0,
           radius: 4,
-          style: [{ lineWidth: 2 }],
+          style: [{ lineWidth: 2, strokeStyle: 'rgba(170, 170, 170, 1)' }],
           index: 0,
         },
         {
