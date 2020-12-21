@@ -18,6 +18,7 @@ import {
   BoxChartThemeOptions,
   BoxPlotCharThemeOptions,
   BulletCharThemeOptions,
+  ColumnLineChartThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
@@ -602,6 +603,7 @@ export interface ColumnLineChartOptions extends BaseOptions {
   series?: ColumnLineChartSeriesOptions;
   plot?: LineTypePlotOptions;
   yAxis?: BothSidesYAxisOptions;
+  theme?: ColumnLineChartThemeOptions;
 }
 
 export type ColumnLineData = {

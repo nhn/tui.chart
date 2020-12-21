@@ -511,6 +511,10 @@ interface BoxPlotCharThemeOptions extends BaseThemeOptions {
   series?: BoxPlotChartSeriesTheme;
 }
 
+interface ColumnLineChartThemeOptions extends BaseThemeOptions {
+  series?: ColumnLineChartSeriesTheme;
+}
+
 type CheckAnchorPieSeries = {
   hasOuterAnchor: boolean;
   hasOuterAnchorPieSeriesName: boolean;
