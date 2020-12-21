@@ -474,7 +474,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102748114-ec1db700-43a4-11eb-8f27-e0c881d55e00.png)
+![image](https://user-images.githubusercontent.com/43128697/102766577-acb19380-43c1-11eb-9eb9-aaec5f362e93.png)
 
 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다.
 
