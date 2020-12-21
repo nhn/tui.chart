@@ -342,7 +342,7 @@ export default abstract class Chart<T extends Options> {
 
   /**
    * Get checked legend chart type and label, checked state.
-   * @returns {Array<{checked: boolean, chartType: string, label: string}>} array data that whether series has checked
+   * @returns {Array<{checked: boolean, chartType: string, label: string}>} Array data that whether series has checked
    * @api
    * @example
    * const checkedLegend = chart.getCheckedLegend()
@@ -374,15 +374,15 @@ export default abstract class Chart<T extends Options> {
 
   /**
    * Register of user custom event.
-   * @param {string} eventName - event name. 'clickLegendLabel', 'clickLegendCheckbox', 'selectSeries', 'unselectSeries', 'hoverSeries', 'unhoverSeries', 'zoom', 'resetZoom' is available.
-   * @param {Function} handler - event handler
+   * @param {string} eventName - Event name. 'clickLegendLabel', 'clickLegendCheckbox', 'selectSeries', 'unselectSeries', 'hoverSeries', 'unhoverSeries', 'zoom', 'resetZoom' is available.
+   * @param {Function} handler - Event handler
    * @api
    */
   public on = (eventName: CustomEventType, handler: EventListener) => {
     /**
      * Register Events that occur when click legend label
      * @event ChartBase#clickLegendLabel
-     * @param {object} info selected legend info
+     * @param {object} info selected legend information
      * @api
      * @example
      * chart.on('clickLegendLabel', (info) => {
@@ -489,7 +489,7 @@ export default abstract class Chart<T extends Options> {
   }
 
   /**
-   * select series. It works only when the selectable option is true.
+   * Select series. It works only when the selectable option is true.
    * @param {Object} seriesInfo - Information of the series to be selected
    *      @param {number} [seriesInfo.index] - Index of series
    *      @param {number} [seriesInfo.seriesIndex] - Index of data within series
@@ -508,7 +508,7 @@ export default abstract class Chart<T extends Options> {
   };
 
   /**
-   * unselect selected series. It works only when the selectable option is true.It works only when the selectable option is true.
+   * Unselect selected series. It works only when the selectable option is true.
    * @api
    * @example
    * chart.unselectSeries();
@@ -523,10 +523,10 @@ export default abstract class Chart<T extends Options> {
   };
 
   /**
-   * resize chart size
-   * @param {Object} size chart size
-   *      @param {number} [size.width] width
-   *      @param {number} [size.height] height
+   * Resize chart size.
+   * @param {Object} size Chart size
+   *      @param {number} [size.width] Width
+   *      @param {number} [size.height] Height
    * @api
    * @example
    * chart.resize({height: 100, width: 200});
@@ -536,10 +536,10 @@ export default abstract class Chart<T extends Options> {
   };
 
   /**
-   * set tooltip offset
-   * @param {Object} offset - offset size
-   *      @param {number} [offset.x] offset value to Move title horizontally
-   *      @param {number} [offset.y] offset value to Move title vertically
+   * Set tooltip offset.
+   * @param {Object} offset - Offset size
+   *      @param {number} [offset.x] Offset value to move title horizontally
+   *      @param {number} [offset.y] Offset value to move title vertically
    * @api
    * @example
    * chart.setTooltipOffset({x: 10, y: -20});
