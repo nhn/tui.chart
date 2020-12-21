@@ -446,6 +446,7 @@ export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions & { shift?: boolean };
   yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
+  theme?: BoxChartThemeOptions;
 }
 
 export type BoxPlotSeriesType = {
