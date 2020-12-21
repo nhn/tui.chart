@@ -16,6 +16,7 @@ import {
   TreemapChartThemeOptions,
   RadarChartThemeOptions,
   BoxChartThemeOptions,
+  BoxPlotCharThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
@@ -326,6 +327,7 @@ export interface BoxPlotChartOptions extends BaseOptions {
   series?: BoxPlotSeriesOptions;
   yAxis?: BaseAxisOptions;
   plot?: PlotOptions;
+  theme?: BoxPlotCharThemeOptions;
 }
 
 interface LineTypeSeriesOptions extends BaseSeriesOptions {

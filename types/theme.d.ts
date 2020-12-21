@@ -284,7 +284,7 @@ type ConnectorTheme = {
 
 interface BoxChartSeriesTheme extends CommonSeriesTheme {
   barWidth?: number | string;
-  colorByPoint?: boolean;
+  colorByPoint?: boolean; // @TODO: 작업 필요
   areaOpacity?: number;
   hover?: {
     color?: string;
@@ -333,7 +333,7 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
 
 interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
   areaOpacity?: number;
-  barWidth?: number;
+  barWidth?: number | string;
   barWidthRatios?: {
     barRatio?: number;
     minMaxBarRatio?: number;

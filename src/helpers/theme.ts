@@ -338,6 +338,7 @@ function getSeriesTheme(
     case 'bar':
     case 'column':
       return {
+        colorByPoint: false,
         areaOpacity: 1,
         hover: {
           ...boxDefault.BOX_HOVER,
@@ -459,7 +460,7 @@ function getSeriesTheme(
           rect: { borderWidth: boxDefault.HOVER_THICKNESS, borderColor: '#ffffff' },
           dot: {
             radius: boxplotDefault.OUTLIER_RADIUS,
-            borderWidth: boxplotDefault.OUTLIER_BORDER_WIDTH,
+            borderWidth: 0,
             useSeriesColor: true,
           },
           line: { ...boxplotDefault.LINE_TYPE },
