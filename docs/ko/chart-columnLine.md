@@ -168,7 +168,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/35371660/102150429-e2cbb080-3eb3-11eb-9698-ecdf53baf5ae.png)
+![image](https://user-images.githubusercontent.com/43128697/102780550-797afe80-43d9-11eb-9d32-8707dec4a096.png)
 
 ### line chart options
 
