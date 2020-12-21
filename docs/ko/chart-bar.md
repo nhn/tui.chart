@@ -24,7 +24,7 @@ const chart = Chart.barChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id는 유일하게 작성해야 한다.
+`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
 
 ```js
 const data = {
@@ -192,7 +192,7 @@ type options = {
       connector?: boolean;
     };
     selectable?: boolean;
-    eventDetectType?: 'grouped' | 'point';
+    eventDetectType?: 'point' | 'grouped';
     diverging?: boolean;
     dataLabels?: {
       visible?: boolean;
@@ -472,7 +472,7 @@ type DefaultDataLabelsTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| barWidth | number | 시리즈 라인 두께 |
+| barWidth | number \| string | 시리즈 박스 너비 |
 | areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
 | colors | string[] | 시리즈의 색상 |
 | hover | object | 데이터에 마우스를 올렸을 때 스타일 |

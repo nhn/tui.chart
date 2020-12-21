@@ -24,7 +24,7 @@ const chart = Chart.columnChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id는 유일하게 작성해야 한다.
+`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
 
 ```js
 const data = {
@@ -192,7 +192,7 @@ type options = {
       connector?: boolean;
     };
     selectable?: boolean;
-    eventDetectType?: 'grouped' | 'point';
+    eventDetectType?: 'point' | 'grouped';
     diverging?: boolean;
     dataLabels?: {
       visible?: boolean;
@@ -325,7 +325,7 @@ const options = {
 
 ![eventDetectType.point](https://user-images.githubusercontent.com/43128697/102730663-c24e9b00-4378-11eb-9d51-9ba501b1520f.png)
 
-`eventDetectType`을 `'grouped'`로 설정할 경우 Y축을 기준으로 값이 같은 데이터가 모두 탐지된다.
+`eventDetectType`을 `'grouped'`로 설정할 경우 X축을 기준으로 값이 같은 데이터가 모두 탐지된다.
 
 ```js
 const options = {
@@ -457,7 +457,7 @@ type DefaultDataLabelsTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| barWidth | number | 시리즈 라인 두께 |
+| barWidth | number \| string | 시리즈 박스 너비 |
 | areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
 | colors | string[] | 시리즈의 색상 |
 | hover | object | 데이터에 마우스를 올렸을 때 스타일 |
@@ -468,7 +468,7 @@ type DefaultDataLabelsTheme = {
 | select.restSeries | object | 선택되지 않은 시리즈의 스타일 |
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 [DataLabels 가이드](./common-dataLabels-options.md)를 참고한다. |
 
-테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 바 시리즈의 색상과 두께를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
+테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 컬럼 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
 
 ```js
 const options = {
@@ -492,4 +492,4 @@ const options = {
 
 옵션에 대한 결과는 다음과 같다.
 
-![image](https://user-images.githubusercontent.com/43128697/102730927-a4356a80-4379-11eb-8ed8-acd4ed9e4988.png)
+![image](https://user-images.githubusercontent.com/43128697/102731093-47867f80-437a-11eb-8103-8a3060dea9a7.png)
