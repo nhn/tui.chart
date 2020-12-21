@@ -19,7 +19,8 @@
 - [Scatter 차트](./chart-scatter.md)
 - [LineScatter 차트](./chart-lineScatter.md)
 - [Bubble 차트](./chart-bubble.md)
-- [Pie, NestedPie 차트](./chart-pie-nestedPie.md)
+- [Pie 차트](./chart-pie.md)
+- [NestedPie 차트](./chart-nestedPie.md)
 - [Radar 차트](./chart-radar.md)
 
 ### 공통

@@ -135,6 +135,8 @@ type options = {
 
 불릿 차트는 기본적으로 가로형 차트이다. `vertical` 옵션을 `true`로 설정하면 세로형 차트를 그릴 수 있다.
 
+* 기본값: `false`
+
 ```js
 const options = {
   series: {
