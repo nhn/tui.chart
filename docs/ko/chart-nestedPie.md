@@ -1,66 +1,256 @@
-# Pie 차트
+# NestedPie 차트
 
 > 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
 
 ## 차트 생성하기
 
-Pie 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스가 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
+NestedPie 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스가 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
 
 ```js
-import { PieChart } from '@toast-ui/chart';
+import { NestedPieChart } from '@toast-ui/chart';
 
-const chart = new PieChart({el, data, options});
+const chart = new NestedPieChart({el, data, options});
 
 // 혹은
 
 import Chart from '@toast-ui/chart';
 
-const chart = Chart.pieChart({el, data, options});
+const chart = Chart.nestedPieChart({el, data, options});
 ```
 
 ## 기본 차트
 
 ### 데이터 타입
 
-데이터는 `series` 를 통해 입력받는다. 각 시리즈는 `name`과 `data` 쌍으로 입력받는다.
+데이터는 `series` 를 통해 입력받는다. 중첩된 파이 차트는 별칭이 되는 `name`값을 입력받고, `data`에 섹터를 표현할 수 있는 데이터를 `name`, `data` 쌍으로 입력받는다. 입력한 모든 `data` 값이 범례에 표시된다.
 
 ```js
 const data = {
-  categories: ['Browser'],
   series: [
     {
-      name: 'Chrome',
-      data: 46.02,
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: 10,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
     },
     {
-      name: 'IE',
-      data: 20.47,
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          data: 5,
+        },
+        {
+          name: 'IE 11',
+          data: 4,
+        },
+        {
+          name: 'IE 10',
+          data: 3,
+        },
+        {
+          name: 'IE 9',
+          data: 2,
+        },
+        {
+          name: 'IE 8',
+          data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          data: 1,
+        },
+        {
+          name: 'Etc - 2020',
+          data: 7,
+        },
+      ],
     },
-    {
-      name: 'Firefox',
-      data: 17.71,
-    },
-    {
-      name: 'Safari',
-      data: 5.45,
-    },
-    {
-      name: 'Opera',
-      data: 3.1,
-    },
-    {
-      name: 'Etc',
-      data: 7.25,
-    }
   ]
 }
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102743434-cd1a2780-439a-11eb-8bda-0a2a8d142ad4.png)
+![image](https://user-images.githubusercontent.com/43128697/102752476-0065b200-43ad-11eb-99dd-eee963788d97.png)
+
+### 그룹 데이터
+
+`parentName`을 지정하면 데이터의 부모 시리즈를 설정해주어 그룹 데이터로 표현할 수 있다. 그룹 데이터는 시리즈의 색깔이 같고 투명도가 조절된다. `series`의 첫번째 인덱스에 있는 `data` 값만 범례에 표시된다.
+
+```js
+const data = {
+  categories: ['A', 'B'],
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: 10,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          parentName: 'Chrome',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          parentName: 'Chrome',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          parentName: 'Safari',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          parentName: 'Safari',
+          data: 5,
+        },
+        {
+          name: 'IE 11',
+          parentName: 'IE',
+          data: 4,
+        },
+        {
+          name: 'IE 10',
+          parentName: 'IE',
+          data: 3,
+        },
+        {
+          name: 'IE 9',
+          parentName: 'IE',
+          data: 2,
+        },
+        {
+          name: 'IE 8',
+          parentName: 'IE',
+          data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          parentName: 'Firefox',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          parentName: 'Firefox',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          parentName: 'Opera',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          parentName: 'Opera',
+          data: 1,
+        },
+        {
+          name: 'Etc 1',
+          parentName: 'Etc',
+          data: 3,
+        },
+        {
+          name: 'Etc 2',
+          parentName: 'Etc',
+          data: 2,
+        },
+        {
+          name: 'Etc 3',
+          parentName: 'Etc',
+          data: 1,
+        },
+        {
+          name: 'Etc 4',
+          parentName: 'Etc',
+          data: 1,
+        },
+      ],
+    },
+  ],
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/102752512-0c517400-43ad-11eb-96f7-614d0cd9bd6c.png)
 
 ## 옵션
 
-`options`는 객체로 작성한다.
+`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)에서 `radiusRange`를 제외하고 같다. NestedPie에서는 중첩된 시리즈를 그려주기 위한 반지름 범위를 각각 설정해주어야 한다. 입력받은 데이터에서 series의 `name`이 이에 해당한다.
+중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 설정해주면 되고, 각 시리즈별로 적용하려면 `[name]` 옵션에 설정해주면 된다.
 
 ```ts
 type options = {
@@ -85,10 +275,6 @@ type options = {
   series?: {
     selectable?: boolean;
     clockwise?: boolean;
-    radiusRange?: {
-      inner?: number | string;
-      outer?: number | string;
-    };
     angleRange?: {
       start?: number;
       end?: number;
@@ -104,6 +290,29 @@ type options = {
         anchor?: 'center' | 'outer';
       };
     };
+    [name]: {
+      selectable?: boolean;
+      clockwise?: boolean;
+      angleRange?: {
+        start?: number;
+        end?: number;
+      };
+      radiusRange?: {
+        inner?: number | string;
+        outer?: number | string;
+      };
+      dataLabels?: {
+        visible?: boolean;
+        anchor?: DataLabelAnchor;
+        offsetX?: number;
+        offsetY?: number;
+        formatter?: Formatter;
+        pieSeriesName?: {
+          visible: boolean;
+          anchor?: 'center' | 'outer';
+        };
+      };
+    }
   }
 }
 ```
@@ -132,13 +341,34 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102746471-b4614000-43a1-11eb-925c-7622c72c611a.png)
+각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 아래와 같이 작성하면, `'browsers'`에 해당하는 Pie 차트는 선택할 수 있고, `versions`에 해당하는 Pie 차트는 선택할 수 없다.
+
+```js
+const options = {
+  series: {
+    browsers: {
+      selectable: true
+    },
+    versions: {
+      selectable: false
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/102752626-2ab76f80-43ad-11eb-8bf5-913370a63c40.png)
+
+
+그룹 데이터를 선택하면 `parentName`으로 연결된 모든 시리즈를 선택한다.
+
+![image](https://user-images.githubusercontent.com/43128697/102752680-4589e400-43ad-11eb-8c5f-84104e489416.png)
+
 
 `selectable` 옵션과 `on` API의 `selectSeries`, `unselectSeries`를 함께 사용할 경우 해당 시리즈에 대한 제어를 추가로 할 수 있다.
 
 ### clockwise
 
-시리즈가 그려지는 방향을 설정한다. 기본적으로 시계 방향으로 그려지고, `false`로 설정하면 시계 반대 방향으로 그려진다.
+시리즈가 그려지는 방향을 설정한다. 기본적으로 시계 방향으로 그려지고, `false`로 설정하면 시계 반대 방향으로 그려진다. 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다.
 
 * 기본값: `true`
 
@@ -150,11 +380,26 @@ const options = {
 };
 ```
 
+각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 아래와 같이 작성하면, `'browsers'`에 해당하는 Pie 차트는 시계 방향으로 그려지고, `versions`에 해당하는 Pie 차트는 시계 반대 방향으로 그려진다.
+
+```js
+const options = {
+  series: {
+    browsers: {
+      clockwise: true
+    },
+    versions: {
+      clockwise: false
+    }
+  }
+};
+```
+
 ![image](https://user-images.githubusercontent.com/43128697/102745900-71eb3380-43a0-11eb-85a0-73f03d5f6f5a.png)
 
 ### radiusRange
 
-`radiusRange`는 `inner`와 `outer` 옵션을 지정하여 안쪽 원의 반지름과 바깥쪽 원의 반지름을 설정할 수 있다. `inner`의 기본값은 `0`이다. 0보다 큰 값을 입력하면 도넛 모양의 차트를 표시할 수 있다.
+`radiusRange`는 `inner`와 `outer` 옵션을 지정하여 안쪽 원의 반지름과 바깥쪽 원의 반지름을 설정할 수 있다. `inner`의 기본값은 `0`이다. 0보다 큰 값을 입력하면 도넛 모양의 차트를 표시할 수 있다. 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 만약 `series.radiusRange`를 설정하지 않는다면 균일한 반지름을 같도록 자동으로 계산된다.
 
 | 속성 | 설명 |
 | --- | --- |
@@ -166,30 +411,46 @@ const options = {
 ```js
 const options = {
   series: {
-    radiusRange: {
-      inner: '40%',
-      outer: '100%',
+    browsers: {
+      radiusRange: {
+        inner: '20%',
+        outer: '50%'
+      }
+    },
+    versions: {
+      radiusRange: {
+        inner: '55%',
+        outer: '85%'
+      }
     }
   }
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102746399-8976ec00-43a1-11eb-88f4-c86a5240e493.png)
+![image](https://user-images.githubusercontent.com/43128697/102753123-fe502300-43ad-11eb-8fc2-03130328d486.png)
 
 값을 숫자 타입으로 입력하면 절대값으로 설정된다.
 
 ```js
 const options = {
   series: {
-    radiusRange: {
-      inner: 80,
-      outer: 200,
+    browsers: {
+      radiusRange: {
+        inner: 50,
+        outer: 130
+      },
+    },
+    versions: {
+      radiusRange: {
+        inner: 150,
+        outer: 230
+      }
     }
   }
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102746372-7e23c080-43a1-11eb-94a3-c483f1d03117.png)
+![image](https://user-images.githubusercontent.com/43128697/102753333-64d54100-43ae-11eb-845c-7a97da06fc33.png)
 
 ### angleRange
 
@@ -205,7 +466,7 @@ const options = {
   series: {
     angleRange: {
       inner: -90,
-      outer: 90,
+      outer: 90
     }
   }
 };
@@ -213,32 +474,36 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102748114-ec1db700-43a4-11eb-8f27-e0c881d55e00.png)
 
-`clockwise`, `radiusRange`, `angleRange`를 활용하여 다양한 모양의 파이 차트를 표현할 수 있다.
+각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다.
 
 ```js
 const options = {
   series: {
-    clockwise: false,
-    radiusRange: {
-      inner: '70%',
-      outer: '90%',
+    browsers: {
+      angleRange: {
+        start: 0,
+        end: 180
+      }
     },
-    angleRange: {
-      start: 135,
-      end: 225,
-    },
-  },
+    versions: {
+      angleRange: {
+        start: 180,
+        end: 360
+      }
+    }
+  }
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102748528-af9e8b00-43a5-11eb-865d-1ba8ce15256a.png)
+![image](https://user-images.githubusercontent.com/43128697/102754497-6e5fa880-43b0-11eb-9acf-c0e278992007.png)
+
 
 ## 시리즈 theme
 
-Pie 차트에서 수정할 수 있는 시리즈 테마이다.
+NestedPie 차트에서 각 시리즈별로 수정할 수 있는 시리즈 테마이다.
 
 ```ts
-interface PieChartSeriesTheme {
+interface NestedPieChartSeriesTheme {
   colors?: string[];
   areaOpacity?: number;
   lineWidth?: number;
@@ -312,18 +577,71 @@ type DefaultDataLabelsTheme = {
 
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
 
+`lineWidth`, `strokeStyle`을 설정하여 중첩된 모든 시리즈의 선 두께와 색깔을 변경하였다.
+
 ```js
 const options = {
   theme: {
     series: {
-      colors: ['#F94144', '#F3722C', '#F8961E', '#F9C74F', '#90BE6D', '#43AA8B', '#577590'],
-      lineWidth: 2,
-      strokeStyle: '#000000',
+      lineWidth: 5,
+      strokeStyle: '#cccccc',
     }
   }
 }
 ```
 
-옵션에 대한 결과는 다음과 같다.
+![image](https://user-images.githubusercontent.com/43128697/102754882-f940a300-43b0-11eb-8644-73f3effa39df.png)
 
-![image](https://user-images.githubusercontent.com/43128697/102745724-fab59f80-439f-11eb-892c-1ece9aa9845f.png)
+`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다.
+
+```js
+const options = {
+  theme: {
+    series: {
+      browsers: {
+        colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
+        lineWidth: 5,
+        strokeStyle: '#0000ff',
+        hover: {
+          color: '#0000ff',
+          lineWidth: 5,
+          strokeStyle: '#000000',
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+          shadowBlur: 10
+        },
+      },
+      versions: {
+        colors: [
+          '#cddbda',
+          '#efd1d1',
+          '#ea005e',
+          '#fece2f',
+          '#fc6104',
+          '#dd2429',
+          '#ebc7ff',
+          '#fece2f',
+          '#dd2429',
+          '#ff8d3a',
+          '#fc6104',
+          '#5ac18e',
+          '#8570ff'
+        ],
+        lineWidth: 2,
+        strokeStyle: '#ff0000',
+        hover: {
+          color: '#ff0000',
+          lineWidth: 2,
+          strokeStyle: '#000000',
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+          shadowBlur: 10
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/102755523-e5e20780-43b1-11eb-96a5-10e494e37d27.png)
+
+
+
