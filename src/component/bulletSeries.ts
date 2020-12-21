@@ -17,7 +17,7 @@ import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 import { LineModel } from '@t/components/axis';
 import { BulletChartSeriesTheme } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
-import { isNumber, omit } from '@src/helpers/utils';
+import { isNumber, omit, calculateSizeWithPercentString } from '@src/helpers/utils';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
 
@@ -357,7 +357,9 @@ export default class BulletSeries extends Component {
   getBulletBarWidths(tickDistance: number) {
     const { barWidth: barThemeWidth, barWidthRatios } = this.theme;
     const { rangeRatio, bulletRatio, markerRatio } = barWidthRatios;
-    const barWidth = isNumber(barThemeWidth) ? barThemeWidth : tickDistance * 0.6;
+    const barWidth = barThemeWidth
+      ? calculateSizeWithPercentString(tickDistance, barThemeWidth)
+      : tickDistance * 0.6;
 
     return {
       rangeWidth: barWidth * rangeRatio!,

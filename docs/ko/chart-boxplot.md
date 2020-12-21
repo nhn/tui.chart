@@ -18,8 +18,6 @@ import Chart from '@toast-ui/chart';
 const chart = Chart.boxPlotChart({el, data, options});
 ```
 
-`data`는 카테고리값과 데이터를 넣어주는 방법과 좌푯값을 넣어주는 방법이 있다. 두 가지 방법을 차례대로 살펴보자.
-
 ## 기본 차트
 
 ### 데이터 타입

@@ -17,6 +17,7 @@ import {
   RadarChartThemeOptions,
   BoxChartThemeOptions,
   BoxPlotCharThemeOptions,
+  BulletCharThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
@@ -569,6 +570,7 @@ export interface BulletChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions;
   series?: BulletSeriesOptions;
   plot?: PlotOptions;
+  theme?: BulletCharThemeOptions;
 }
 
 export type BulletSeriesType = {

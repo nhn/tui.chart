@@ -306,7 +306,7 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
 
 interface BulletChartSeriesTheme extends CommonSeriesTheme {
   areaOpacity?: number;
-  barWidth?: number;
+  barWidth?: number | string;
   barWidthRatios?: {
     rangeRatio?: number;
     bulletRatio?: number;

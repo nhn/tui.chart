@@ -18,13 +18,11 @@ import Chart from '@toast-ui/chart';
 const chart = Chart.barChart({el, data, options});
 ```
 
-`data`는 카테고리값과 데이터를 넣어주는 방법과 좌푯값을 넣어주는 방법이 있다. 두 가지 방법을 차례대로 살펴보자.
-
 ## 기본 차트
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
+`categories` 값은 y축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
 
 ```js
 const data = {
@@ -483,7 +481,7 @@ type DefaultDataLabelsTheme = {
 | select.restSeries | object | 선택되지 않은 시리즈의 스타일 |
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 [DataLabels 가이드](./common-dataLabels-options.md)를 참고한다. |
 
-테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 바 시리즈의 색상과 두께를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
+테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 바 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
 
 ```js
 const options = {
