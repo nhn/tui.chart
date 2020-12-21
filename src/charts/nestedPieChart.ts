@@ -94,10 +94,25 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
     this.dispatchOptionsEvent('updateOptions', options);
   };
 
-  public showTooltip = (info: SelectSeriesInfo) => {
-    this.eventBus.emit('showTooltip', { ...info });
+  /**
+   * Show tooltip.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.index - Index of series.
+   *      @param {number} seriesInfo.alias - alias name.
+   * @api
+   * @example
+   * chart.showTooltip({index: 1, alias: 'name'});
+   */
+  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...seriesInfo });
   };
 
+  /**
+   * Hide tooltip.
+   * @api
+   * @example
+   * chart.hideTooltip();
+   */
   public hideTooltip = () => {
     this.eventBus.emit('hideTooltip');
   };

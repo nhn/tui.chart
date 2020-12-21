@@ -109,10 +109,26 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
     this.dispatchOptionsEvent('updateOptions', options);
   };
 
-  public showTooltip = (info: SelectSeriesInfo) => {
-    this.eventBus.emit('showTooltip', { ...info, state: this.store.state });
+  /**
+   * Show tooltip.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed
+   *      @param {number} seriesInfo.index - Index of series
+   *      @param {number} seriesInfo.seriesIndex - Index of data within series
+   *      @param {string} seriesInfo.chartType - specify which chart to select.
+   * @api
+   * @example
+   * chart.showTooltip({index: 1, seriesIndex: 2, chartType: 'scatter'});
+   */
+  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
   };
 
+  /**
+   * Hide tooltip.
+   * @api
+   * @example
+   * chart.hideTooltip();
+   */
   public hideTooltip = () => {
     this.eventBus.emit('hideTooltip');
   };
