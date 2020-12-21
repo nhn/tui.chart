@@ -54,7 +54,6 @@ export interface LineChartProps {
  *      @param {Array<Object>} props.data.series - Series data.
  *        @param {string} props.data.series.name - Series name.
  *        @param {Array<number|Object|Array>} props.data.series.data - Series data.
- *          @param {string} props.data.series.data.examples - 5 depth
  *    @param {Object} [props.options] - Options for making Line Chart.
  *      @param {Object} [props.options.chart]
  *        @param {string|Object} [props.options.chart.title] - Chart title text or options.
