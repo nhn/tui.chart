@@ -1,8 +1,21 @@
-import { ValueEdge, StoreModule, ChartType, DataRange, ChartSeriesMap } from '@t/store/store';
+import {
+  ValueEdge,
+  StoreModule,
+  ChartType,
+  DataRange,
+  ChartSeriesMap,
+  Options,
+} from '@t/store/store';
 import { getFirstValidValue } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
-import { getAxisName, isLabelAxisOnYAxis, getValueAxisNames } from '@src/helpers/axes';
+import {
+  getAxisName,
+  isLabelAxisOnYAxis,
+  getValueAxisNames,
+  getYAxisOption,
+  hasSecondaryYAxis,
+} from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 import { isBulletSeries } from '@src/component/bulletSeries';
@@ -67,6 +80,28 @@ function getTotalDataRange(seriesDataRange: SeriesDataRange) {
   }, {});
 }
 
+function setSeriesDataRange(
+  options: Options,
+  seriesName: string,
+  values: number[],
+  valueAxisName: string,
+  seriesDataRange: SeriesDataRange
+) {
+  const { secondaryYAxis } = getYAxisOption(options);
+
+  if (hasSecondaryYAxis(options) && secondaryYAxis?.chartType) {
+    const axisName = secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis';
+
+    seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
+  } else {
+    getValueAxisNames(options, valueAxisName).forEach((axisName) => {
+      seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
+    });
+  }
+
+  return seriesDataRange;
+}
+
 const dataRange: StoreModule = {
   name: 'dataRange',
   state: () => ({
@@ -123,13 +158,10 @@ const dataRange: StoreModule = {
           ]);
         }
 
-        getValueAxisNames(options, valueAxisName).forEach((axisName) => {
-          seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
-        });
+        setSeriesDataRange(options, seriesName, values, valueAxisName, seriesDataRange);
       }
 
       const newDataRange = getTotalDataRange(seriesDataRange);
-
       extend(state.dataRange, newDataRange);
     },
   },
