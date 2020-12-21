@@ -188,13 +188,15 @@ interface RadarChartSeriesTheme {
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
 | colors | string[] | 시리즈의 색상 |
-| areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
+| areaOpacity | number | `showArea: true`일 때 면 투명도 |
 | lineWidth | number | 시리즈의 선 두께 |
 | dashSegments | number[] | 시리즈 라인의 dashSegment 값 |
 | dot | object | `showDot: true`일 때 노출되는 점 스타일 지정 |
 | hover.dot | object | 데이터에 마우스를 올렸을 때 점 스타일 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | select.dot | object | 시리즈가 선택되었을 때 점 스타일 |
+| select.areaOpacity | number | `showArea: true`일 때 시리즈가 선택되었을 때 면 투명도 |
+| select.restSeries.areaOpacity | number | `showArea: true`일 때 선택되지 않은 나머지 시리즈의 면 투명도 |
 
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
 
