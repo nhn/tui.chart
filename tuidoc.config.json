@@ -1,0 +1,36 @@
+{
+  "header": {
+    "logo": {
+      "src": "https://uicdn.toast.com/toastui/img/tui-chart-bi-white.png"
+    },
+    "title": {
+      "text": "github",
+      "linkUrl": "https://github.com/nhn/tui.chart"
+    },
+    "version": true
+  },
+  "footer": [
+    {
+      "title": "NHN",
+      "linkUrl": "https://github.com/nhn"
+    },
+    {
+      "title": "FE Development Lab",
+      "linkUrl": "https://github.com/nhn/fe.javascript"
+    }
+  ],
+  "main": {
+    "filePath": "README.md"
+  },
+  "api": {
+    "filePath": ["tmpdoc/src/charts/chart.js", "tmpdoc/src/charts/lineChart.js"],
+    "permalink": false
+  },
+  "examples": {
+    "filePath": "examples",
+    "titles": {
+      "example01-01-bar-chart-basic": "1.1 [Bar Chart] basic"
+    }
+  },
+  "pathPrefix": "tui.chart"
+}
