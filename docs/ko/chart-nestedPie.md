@@ -429,7 +429,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102753123-fe502300-43ad-11eb-8fc2-03130328d486.png)
+![image](https://user-images.githubusercontent.com/43128697/102768135-fd29f080-43c3-11eb-8a63-d805d8ee5467.png)
 
 값을 숫자 타입으로 입력하면 절대값으로 설정된다.
 
@@ -452,7 +452,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102753333-64d54100-43ae-11eb-845c-7a97da06fc33.png)
+![image](https://user-images.githubusercontent.com/43128697/102768172-1468de00-43c4-11eb-97b3-182643c0d672.png)
 
 ### angleRange
 
@@ -474,7 +474,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102766577-acb19380-43c1-11eb-9eb9-aaec5f362e93.png)
+![image](https://user-images.githubusercontent.com/43128697/102768300-48dc9a00-43c4-11eb-8208-61b96de1f0fc.png)
 
 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다.
 
@@ -497,7 +497,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102754497-6e5fa880-43b0-11eb-9acf-c0e278992007.png)
+![image](https://user-images.githubusercontent.com/43128697/102768425-7e818300-43c4-11eb-8b34-2c9f87f08602.png)
 
 
 ## 시리즈 theme
