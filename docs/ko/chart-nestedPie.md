@@ -380,6 +380,8 @@ const options = {
 };
 ```
 
+![image](https://user-images.githubusercontent.com/43128697/102756836-ce0b8300-43b3-11eb-9e85-6404c4499be2.png)
+
 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 아래와 같이 작성하면, `'browsers'`에 해당하는 Pie 차트는 시계 방향으로 그려지고, `versions`에 해당하는 Pie 차트는 시계 반대 방향으로 그려진다.
 
 ```js
@@ -395,7 +397,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102745900-71eb3380-43a0-11eb-85a0-73f03d5f6f5a.png)
+![image](https://user-images.githubusercontent.com/43128697/102756849-cfd54680-43b3-11eb-9e37-af21fa40ef72.png)
 
 ### radiusRange
 
@@ -465,8 +467,8 @@ const options = {
 const options = {
   series: {
     angleRange: {
-      inner: -90,
-      outer: 90
+      start: -90,
+      end: 90
     }
   }
 };
@@ -583,6 +585,7 @@ type DefaultDataLabelsTheme = {
 const options = {
   theme: {
     series: {
+      colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569', '#f75294'],
       lineWidth: 5,
       strokeStyle: '#cccccc',
     }

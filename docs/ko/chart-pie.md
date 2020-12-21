@@ -204,8 +204,8 @@ const options = {
 const options = {
   series: {
     angleRange: {
-      inner: -90,
-      outer: 90,
+      start: -90,
+      end: 90,
     }
   }
 };
