@@ -272,7 +272,7 @@ export default class RadarSeries extends Component {
     const models = [this.responders.filter(({ name: dataName }) => dataName === name)[index]];
 
     if (!models.length) {
-      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+      return;
     }
 
     this.eventBus.emit('renderHoveredSeries', {

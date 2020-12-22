@@ -199,8 +199,6 @@ export default class BoxPlotSeries extends Component {
   }
 
   onMousemove({ responders }) {
-    console.log(responders);
-
     if (this.eventDetectType === 'grouped') {
       const models = this.getResponderModelFromMap(responders);
       this.eventBus.emit('renderHoveredSeries', {

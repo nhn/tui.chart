@@ -444,7 +444,7 @@ export default class LineSeries extends Component {
         ? this.tooltipCircleMap[index]
         : [this.tooltipCircleMap[index][seriesIndex!]];
 
-    if (!models.length) {
+    if (!models?.length) {
       return;
     }
 

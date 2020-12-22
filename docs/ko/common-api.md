@@ -417,14 +417,14 @@ plot band를 제거할 수 있다. 인자로 id를 입력받으며 동일한 id�
 
 ```ts
 public showTooltip(seriesInfo: {
-  index?: number;
   seriesIndex?: number;
+  index?: number;
   alias?: string;
   chartType?: 'line' | 'column' | 'area' | 'scatter';
 });
 ```
 
-인자로 받게되는 `seriesIndex`는 시리즈의 인덱스 `index`는 시리즈 내에서의 인덱스를 의미한다. 각각 숫자값 인덱스를 넣어줘 tooltip을 보여줄 시리즈의 데이터를 명시한다. `alias`는 NestedPie 차트에서, `chartType`은 ColumnLine, LineArea, LineScatter 차트에서 적용할 차트를 명시해준다.
+인자로 받게 되는 `seriesIndex`는 시리즈의 인덱스, `index`는 시리즈 내에서의 인덱스를 의미한다. 각각 숫자값 인덱스를 넣어줘 tooltip을 보여줄 시리즈의 데이터를 명시한다. `alias`는 NestedPie 차트에서, `chartType`은 ColumnLine, LineArea, LineScatter 차트에서 적용할 차트를 명시해준다.
 
 ### hideTooltip()
 
@@ -436,18 +436,18 @@ public hideTooltip();
 
 ### selectSeries()
 
-옵션 `options.series.selectable: true`로 설정 되어 있을 때 `selectSeries()`를 사용하면 시리즈를 선택할 수 있다. 
+옵션 `options.series.selectable: true`로 설정되어 있을 때 `selectSeries()`를 사용하면 시리즈를 선택할 수 있다. 
 
 ```ts
 public showTooltip(seriesInfo: {
-  index?: number;
   seriesIndex?: number;
+  index?: number;
   alias?: string;
   chartType?: 'line' | 'column' | 'area';
 });
 ```
 
-인자로 받게되는 `seriesIndex`는 시리즈의 인덱스 `index`는 시리즈 내에서의 인덱스를 의미한다. 각각 숫자값 인덱스를 넣어줘 선택될 시리즈의 데이터를 명시한다. `alias`는 NestedPie 차트에서, `chartType`은 ColumnLine, LineArea, LineScatter 차트에서 적용할 차트를 명시해준다.
+인자로 받게 되는 `seriesIndex`는 시리즈의 인덱스, `index`는 시리즈 내에서의 인덱스를 의미한다. 각각 숫자값 인덱스를 넣어줘 선택될 시리즈의 데이터를 명시한다. `alias`는 NestedPie 차트에서, `chartType`은 ColumnLine, LineArea, LineScatter 차트에서 적용할 차트를 명시해준다.
 
 선택 시 API의 on 이벤트의 `selectSeries` eventName을 사용할 경우 선택된 시리즈에 대한 제어를 추가로 할 수 있다.
 
