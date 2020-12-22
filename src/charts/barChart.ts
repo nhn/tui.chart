@@ -57,7 +57,7 @@ export interface BarChartProps {
  *        @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
  *        @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
  *      @param {Object} [props.options.series]
- *        @param {boolean} [props.options.series.selectable=false] - Whether to select series or not.
+ *        @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *        @param {number} [props.options.series.barWidth] - Bar width.
  *        @param {boolean} [props.options.series.diverging] - Whether to use diverging chart or not.
  *        @param {boolean} [props.options.series.colorByPoint] - Whether to use color feature or not.
