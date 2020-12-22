@@ -49,7 +49,7 @@ export default class ExportMenu extends Component {
     const canvas = this.chartEl.getElementsByTagName('canvas')[0];
     const ctx = canvas.getContext('2d')!;
     const { x, y, height: h, width: w } = this.rect;
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(x, y, w, h);
 
     return canvas;
