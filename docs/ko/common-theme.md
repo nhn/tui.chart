@@ -156,6 +156,8 @@ const options = {
 
 ## 범례 테마
 
+범례의 표시되는 폰트의 스타일을 변경할 수 있다.
+
 ```ts
 type LegendTheme = {
   label?: {
@@ -185,6 +187,8 @@ const options = {
 ![image](https://user-images.githubusercontent.com/43128697/102844255-60f8fb80-444e-11eb-89c1-7644468b2dfb.png)
 
 ## 툴팁 테마
+
+툴팁의 스타일을 변경할 수 있다.
 
 ```ts
 type TooltipTheme = {
@@ -237,6 +241,8 @@ const options = {
 ![image](https://user-images.githubusercontent.com/43128697/102844342-969de480-444e-11eb-9ff5-7f3c81062481.png)
 
 ## 플룻 테마
+
+플룻의 테마를 수정할 수 있다.
 
 ```ts
 interface PlotTheme extends LineTheme {
@@ -363,5 +369,6 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102844540-04e2a700-444f-11eb-83c5-8bc6cd756396.png)
-![image](https://user-images.githubusercontent.com/43128697/102844549-07dd9780-444f-11eb-88e7-5fa2f2d54ca4.png)
+| 클릭 전 | 클릭 후 |
+| --- | --- |
+| ![image](https://user-images.githubusercontent.com/43128697/102844540-04e2a700-444f-11eb-83c5-8bc6cd756396.png) | ![image](https://user-images.githubusercontent.com/43128697/102844549-07dd9780-444f-11eb-88e7-5fa2f2d54ca4.png) |
