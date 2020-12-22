@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -94,11 +94,15 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
   }
 
   public hideSeriesLabel = () => {
-    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+    this.store.dispatch('updateOptions', {
+      series: { dataLabels: { visible: false } },
+    });
   };
 
   public showSeriesLabel = () => {
-    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+    this.store.dispatch('updateOptions', {
+      series: { dataLabels: { visible: true } },
+    });
   };
 
   public setOptions = (options: ColumnChartOptions) => {
@@ -107,5 +111,28 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
 
   public updateOptions = (options: ColumnChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  /**
+   * Show tooltip.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only seriesIndex is needed.
+   *      @param {number} [seriesInfo.seriesIndex] - Index of series.
+   * @api
+   * @example
+   * chart.showTooltip({index: 1, seriesIndex: 2});
+   */
+  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...seriesInfo });
+  };
+
+  /**
+   * Hide tooltip.
+   * @api
+   * @example
+   * chart.hideTooltip();
+   */
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import colorValueScale from '@src/store/colorValueScale';
 import treemapSeriesData from '@src/store/treemapSeriesData';
@@ -88,5 +88,27 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
 
   public updateOptions = (options: TreemapChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  /**
+   * Show tooltip.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
+   * @api
+   * @example
+   * chart.showTooltip({seriesIndex: 1});
+   */
+  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
+  };
+
+  /**
+   * Hide tooltip.
+   * @api
+   * @example
+   * chart.hideTooltip();
+   */
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

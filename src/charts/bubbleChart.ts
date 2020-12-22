@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
@@ -98,5 +98,28 @@ export default class BubbleChart extends Chart<BaseOptions> {
 
   public updateOptions = (options: BubbleChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  /**
+   * Show tooltip.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
+   *      @param {number} seriesInfo.index - Index of data within series.
+   * @api
+   * @example
+   * chart.showTooltip({index: 1, seriesIndex: 2});
+   */
+  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
+  };
+
+  /**
+   * Hide tooltip.
+   * @api
+   * @example
+   * chart.hideTooltip();
+   */
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

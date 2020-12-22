@@ -34,6 +34,8 @@ export default class TreemapSeries extends Component {
     this.type = 'series';
     this.name = 'treemap';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   private getAllChildSeries(series: TreemapSeriesData[], parentId: string) {
@@ -236,9 +238,9 @@ export default class TreemapSeries extends Component {
     }
   }
 
-  onMouseoutComponent() {
+  onMouseoutComponent = () => {
     this.emitMouseEvent([]);
-  }
+  };
 
   onMousemove({ responders }) {
     const deepestNode = getDeepestNode(responders);
@@ -259,12 +261,12 @@ export default class TreemapSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  selectSeries = ({ index }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
-    if (!isNumber(index)) {
+  selectSeries = ({ seriesIndex }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
       return;
     }
 
-    const model = this.responders.find(({ indexes }) => last(indexes) === index);
+    const model = this.responders.find(({ indexes }) => last(indexes) === seriesIndex);
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -276,5 +278,17 @@ export default class TreemapSeries extends Component {
     });
 
     this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({ seriesIndex }: SelectSeriesHandlerParams<TreemapChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
+      return;
+    }
+
+    const model = this.responders.find(({ indexes }) => last(indexes) === seriesIndex);
+
+    if (model) {
+      this.emitMouseEvent([model]);
+    }
   };
 }

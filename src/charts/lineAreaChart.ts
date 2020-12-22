@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -144,5 +144,29 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
 
   public updateOptions = (options: LineAreaChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  /**
+   * Show tooltip.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
+   *      @param {number} seriesInfo.index - Index of data within series.
+   *      @param {string} seriesInfo.chartType - specify which chart to select.
+   * @api
+   * @example
+   * chart.showTooltip({index: 1, seriesIndex: 2, chartType: 'line'});
+   */
+  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...seriesInfo });
+  };
+
+  /**
+   * Hide tooltip.
+   * @api
+   * @example
+   * chart.hideTooltip();
+   */
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

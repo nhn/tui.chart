@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
@@ -81,5 +81,28 @@ export default class PieChart extends Chart<PieChartOptions> {
 
   public updateOptions = (options: PieChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  /**
+   * Show tooltip.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.seriesIndex - Index of series.
+   *      @param {number} seriesInfo.alias - alias name.
+   * @api
+   * @example
+   * chart.showTooltip({seriesIndex: 1, alias: 'name'});
+   */
+  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
+  };
+
+  /**
+   * Hide tooltip.
+   * @api
+   * @example
+   * chart.hideTooltip();
+   */
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

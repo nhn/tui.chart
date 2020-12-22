@@ -12,6 +12,8 @@ type EventType =
   | 'renderSelectedSeries'
   | 'renderHoveredSeries'
   | 'seriesPointHovered'
+  | 'showTooltip'
+  | 'hideTooltip'
   | CustomEventType;
 
 export type CustomEventType =

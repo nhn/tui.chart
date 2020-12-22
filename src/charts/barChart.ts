@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo } from './chart';
+import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -112,5 +112,28 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   public updateOptions = (options: BarChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
+  };
+
+  /**
+   * Show tooltip.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed. If eventType is 'grouped', only seriesIndex is needed.
+   *      @param {number} seriesInfo.index - Index of data within series.If eventType is 'grouped', only seriesIndex is needed.
+   *      @param {number} [seriesInfo.seriesIndex] - Index of series
+   * @api
+   * @example
+   * chart.showTooltip({index: 1, seriesIndex: 2});
+   */
+  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+    this.eventBus.emit('showTooltip', { ...seriesInfo });
+  };
+
+  /**
+   * Hide tooltip.
+   * @api
+   * @example
+   * chart.hideTooltip();
+   */
+  public hideTooltip = () => {
+    this.eventBus.emit('hideTooltip');
   };
 }

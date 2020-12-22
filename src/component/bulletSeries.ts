@@ -61,6 +61,8 @@ export default class BulletSeries extends Component {
     this.type = 'series';
     this.name = 'bullet';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   render(state: ChartState<BulletChartOptions>): void {
@@ -205,6 +207,16 @@ export default class BulletSeries extends Component {
       this.eventBus.emit('needDraw');
     }
   }
+
+  onMouseoutComponent = () => {
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
 
   filterBulletResponder(responders: BulletResponderModel[]) {
     return responders.filter((model) => (model as BulletRectModel)?.modelType === 'bullet');
@@ -413,12 +425,12 @@ export default class BulletSeries extends Component {
     }));
   }
 
-  selectSeries = ({ index, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
-    if (!isNumber(index)) {
+  selectSeries = ({ seriesIndex, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
       return;
     }
 
-    const { name } = state.series.bullet?.[index];
+    const { name } = state.series.bullet?.[seriesIndex];
 
     const model = this.filterBulletResponder(this.responders).filter(
       ({ name: dataName }) => dataName === name
@@ -433,5 +445,22 @@ export default class BulletSeries extends Component {
       name: this.name,
     });
     this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({ seriesIndex, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.bullet?.[seriesIndex];
+    const models = this.filterBulletResponder(this.responders).filter(
+      ({ name: dataName }) => dataName === name
+    );
+
+    if (!models.length) {
+      return;
+    }
+
+    this.onMousemove({ responders: models });
   };
 }

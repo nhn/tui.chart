@@ -364,6 +364,10 @@ export default abstract class Chart<T extends Options> {
 
   public abstract setOptions(options: Options): void;
 
+  public abstract showTooltip(info: SelectSeriesInfo): void;
+
+  public abstract hideTooltip(): void;
+
   /**
    * Returns the currently applied chart options.
    * @returns {Object} options
@@ -496,8 +500,8 @@ export default abstract class Chart<T extends Options> {
   /**
    * Select series. It works only when the selectable option is true.
    * @param {Object} seriesInfo - Information of the series to be selected
-   *      @param {number} [seriesInfo.index] - Index of series
-   *      @param {number} [seriesInfo.seriesIndex] - Index of data within series
+   *      @param {number} [seriesInfo.seriesIndex] - Index of series
+   *      @param {number} [seriesInfo.index] - Index of data within series
    *      @param {string} [seriesInfo.alias] - specify alias for NestedPie Chart
    *      @param {string} [seriesInfo.chartType] - specify which chart to select when using LineArea, LineScatter, and ColumnLine charts.specifies which chart to select when using LineArea, LineScatter, and ColumnLine charts.
    * @api

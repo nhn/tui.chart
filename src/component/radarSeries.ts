@@ -47,6 +47,8 @@ export default class RadarSeries extends Component {
     this.type = 'series';
     this.name = 'radar';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   render(state: ChartState<RadarChartOptions>) {
@@ -119,6 +121,16 @@ export default class RadarSeries extends Component {
       }))
     );
   }
+
+  onMouseoutComponent = () => {
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
 
   makeTooltipModel(seriesData: RadarSeriesType[], categories: string[]): TooltipData[] {
     return seriesData.flatMap(({ data, name, color }) =>
@@ -248,6 +260,28 @@ export default class RadarSeries extends Component {
       models: this.getRespondersWithTheme([model], 'select'),
       name: this.name,
     });
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({ index, seriesIndex, state }: SelectSeriesHandlerParams<RadarChartOptions>) => {
+    if (!isNumber(index) || !isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.radar!.data[seriesIndex];
+    const models = [this.responders.filter(({ name: dataName }) => dataName === name)[index]];
+
+    if (!models.length) {
+      return;
+    }
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models: this.getRespondersWithTheme(models, 'hover'),
+      name: this.name,
+    });
+
+    this.activatedResponders = models;
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   };
 }
