@@ -32,7 +32,7 @@
 - [API 소개](./common-api.md)
 - [공통 컴퍼넌트 테마](./common-theme.md)
 - [`chart` 옵션](./common-chart-options.md)
-- [`layout` 옵션](./common-layout-options.md)
+- [레이아웃 설정](./common-layout-options.md)
 - [실시간 업데이트](./common-liveUpdate-options.md)
 - [`responsive` 옵션](./common-responsive-options.md)
 - [데이터 라벨](./common-dataLabels-options.md)

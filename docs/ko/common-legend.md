@@ -29,7 +29,7 @@ Bubble 차트의 경우 시리즈의 원 크기에 대한 지표가 되는 Circl
 
 ## 옵션
 
-legend를 변경하기 위한 옵션은 다음과 같다. 이 가이드에서는 `maxWidth`, `width`를 제외한 옵션을 설명하며 해당 옵션은 [layout 옵션](./common-layout-options.md) 가이드를 참고하길 바란다.
+legend를 변경하기 위한 옵션은 다음과 같다. 이 가이드에서는 `maxWidth`, `width`를 제외한 옵션을 설명하며 해당 옵션은 [레이아웃 설정](./common-layout-options.md) 가이드를 참고하길 바란다.
 
 ```ts
 interface LegendOptions {
@@ -49,7 +49,7 @@ interface CircleLegendOptions {
 
 * default: `right`
 
-legend의 정렬은 `legend.align`을 통해 변경 가능하며 `top`, `bottom`, `right`, `left` 총 네 개의 옵션이 존재한다. 
+legend의 정렬은 `legend.align`을 통해 변경 가능하며 `top`, `bottom`, `right`, `left` 총 네 개의 옵션이 존재한다.
 
 ```js
 const options = {
