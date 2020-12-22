@@ -386,7 +386,6 @@ type LineAreaChartSeriesOptions = {
   area?: Pick<AreaSeriesOptions, 'stack' | 'spline' | 'showDot' | 'dataLabels'> & BaseSeriesOptions;
   zoomable?: boolean;
   showDot?: boolean;
-  lineWidth?: number;
   spline?: boolean;
   shift?: boolean;
   dataLabels?: DataLabelOptions;

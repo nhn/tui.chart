@@ -61,6 +61,8 @@ export interface RadarChartProps {
  *        @param {number} [props.options.yAxis.width] - Width of yAxis.
  *        @param {number} [props.options.yAxis.height] - Height of yAxis.
  *      @param {Object} [props.options.plot]
+ *        @param {number} [props.options.plot.width] - Width of plot.
+ *        @param {number} [props.options.plot.height] - Height of plot.
  *        @param {boolean} [props.options.plot.type] - Radar plot type. 'spiderweb', 'circle' is available.
  *      @param {Object} [props.options.legend]
  *        @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.

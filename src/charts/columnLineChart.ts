@@ -60,6 +60,85 @@ function hasColumnLineUsingPointEventType(respondersModel: RespondersModel) {
   );
 }
 
+/**
+ * @class
+ * @classdesc ColumnLine Chart
+ * @param {Object} props
+ *    @param {HTMLElement} props.el - The target element to create chart.
+ *    @param {Object} props.data - Data for making ColumnLine Chart.
+ *      @param {Array<string>} props.data.categories - Categories.
+ *      @param {Array<Object>} props.data.series - Series data.
+ *        @param {Array<Object>} props.data.series.line - Line series data. Coordinate types data is not possible.
+ *        @param {Array<Object>} props.data.series.column - Column series data.
+ *    @param {Object} [props.options] - Options for making ColumnLine Chart.
+ *      @param {Object} [props.options.chart]
+ *        @param {string|Object} [props.options.chart.title] - Chart title text or options.
+ *          @param {string} [props.options.chart.title.text] - Chart title text.
+ *          @param {number} [props.options.chart.title.offsetX] - offset value to move title horizontally.
+ *          @param {number} [props.options.chart.title.offsetY] - Offset value to move title vertically.
+ *          @param {string} [props.options.chart.title.align] - Chart text align. 'left', 'right', 'center' is available.
+ *        @param {boolean | Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart.
+ *        @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
+ *        @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
+ *      @param {Object} [props.options.series] - Write common options in the upper depth and separate options to be applied to each chart.
+ *        @param {Object} [props.options.series.line] - Options to be applied to the line chart. 'spline', 'showDot', 'dataLabels' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Line Chart guide} on github.
+ *        @param {Object} [props.options.series.column] - Options to be applied to the column chart. 'barWidth', 'stack', 'dataLabels' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Column Chart guide} on github.
+ *        @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
+ *        @param {string} [props.options.series.eventDetectType] - Event detect type. 'near', 'nearest', 'grouped', 'point' is available.
+ *        @param {boolean} [props.options.series.shift=false] - Whether to use shift when addData or not.
+ *        @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
+ *      @param {Object} [props.options.xAxis]
+ *        @param {Object} [props.options.xAxis.title] - Axis title.
+ *        @param {boolean} [props.options.xAxis.pointOnColumn=false] - Whether to move the start of the chart to the center of the column.
+ *        @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
+ *        @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date typeWhether the x axis label is of date type. If use date type, format option used for date type.
+ *        @param {Object} [props.options.xAxis.tick] - You can change the tick interval through the tick.interval option.
+ *        @param {Object} [props.options.xAxis.label] - You can change the label interval through the label.interval option.
+ *        @param {Object} [props.options.xAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *        @param {number} [props.options.xAxis.width] - Width of xAxis.
+ *        @param {number} [props.options.xAxis.height] - Height of xAxis.
+ *      @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
+ *        @param {Object} [props.options.yAxis.title] - Axis title.
+ *        @param {Object} [props.options.yAxis.tick] - You can change the tick interval through the tick.interval option.
+ *        @param {Object} [props.options.yAxis.label] - You can change the tick interval through the label.interval option.
+ *        @param {Object} [props.options.yAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *        @param {number} [props.options.yAxis.width] - Width of yAxis.
+ *        @param {number} [props.options.yAxis.height] - Height of yAxis.
+ *      @param {Object} [props.options.plot]
+ *        @param {number} [props.options.plot.width] - Width of plot.
+ *        @param {number} [props.options.plot.height] - Height of plot.
+ *        @param {boolean} [props.options.plot.showLine] - Whether to show plot line.
+ *        @param {Array<Object>} [props.options.plot.lines] - Plot lines information. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Plot guide} on github.
+ *        @param {Array<Object>} [props.options.plot.bands] - Plot bands information. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Plot guide} on github.
+ *      @param {Object} [props.options.legend]
+ *        @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
+ *        @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
+ *        @param {boolean} [props.options.legend.visible] - Whether to show legend.
+ *        @param {number} [props.options.legend.maxWidth] - Max width of legend.
+ *        @param {number} [props.options.legend.width] - Width of legend.
+ *      @param {Object} [props.options.exportMenu]
+ *        @param {boolean} [props.options.exportMenu.visible] - Whether to show export menu.
+ *        @param {string} [props.options.exportMenu.filename] - File name applied when downloading.
+ *      @param {Object} [props.options.tooltip]
+ *        @param {number} [props.options.tooltip.offsetX] - Offset value to move title horizontally.
+ *        @param {number} [props.options.tooltip.offsetY] - Offset value to move title vertically.
+ *        @param {Function} [props.options.tooltip.formatter] - Function to format data value.
+ *        @param {Function} [props.options.tooltip.template] - Function to create custom template. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Tooltip guide} on github.
+ *      @param {Object} [props.options.responsive] - Rules for changing chart options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Responsive guide} on github.
+ *        @param {boolean|Object} [props.options.responsive.animation] - Animation duration when the chart is modified.
+ *        @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond.
+ *      @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|ColumnLine Chart guide} on github.
+ *        @param {Object} [props.options.theme.chart] - Chart font theme.
+ *        @param {Object} [props.options.theme.series] - Series theme. Each theme to be applied to the two charts should be written separately.
+ *        @param {Object} [props.options.theme.title] - Title theme.
+ *        @param {Object} [props.options.theme.xAxis] - X Axis theme.
+ *        @param {Object|Array<Object>} [props.options.theme.yAxis] - Y Axis theme. In the case of an arrangement, the first is the main axis and the second is the theme for the secondary axis.
+ *        @param {Object} [props.options.theme.legend] - Legend theme.
+ *        @param {Object} [props.options.theme.tooltip] - Tooltip theme.
+ *        @param {Object} [props.options.theme.plot] - Plot theme.
+ *        @param {Object} [props.options.theme.exportMenu] - ExportMenu theme.
+ * @extends Chart
+ */
 export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   modules = [stackSeriesData, dataRange, scale, axes, plot];
 
