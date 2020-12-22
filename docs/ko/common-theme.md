@@ -1,6 +1,6 @@
 # 공통 컴퍼넌트 테마
 
-차트 제목, 축, 범례, 내보내기 메뉴, 툴팁, 플룻에 테마를 적용하는 방법에 대해 다룬다.
+차트 제목, 축, 범례, 내보내기 메뉴, 툴팁, 플롯에 테마를 적용하는 방법에 대해 다룬다.
 
 ```ts
 type Theme = {
@@ -240,12 +240,12 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102844342-969de480-444e-11eb-9ff5-7f3c81062481.png)
 
-## 플룻 테마
+## 플롯 테마
 
-플룻의 테마를 수정할 수 있다.
+플롯의 테마를 수정할 수 있다.
 
 ```ts
-interface PlotTheme extends LineTheme {
+type PlotTheme = {
   lineColor?: string;
   lineWidth?: number;
   dashSegments?: number[];
@@ -260,7 +260,7 @@ interface PlotTheme extends LineTheme {
     dashSegments?: number[];
   };
   backgroundColor?: string;
-}
+};
 ```
 
 ```js

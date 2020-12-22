@@ -230,7 +230,6 @@ export type PlotLine = {
   value: PlotXPointType;
   color: string;
   opacity?: number;
-  vertical?: boolean;
   id?: string;
 };
 
@@ -366,7 +365,7 @@ type LineScatterChartSeriesOptions = {
 export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
   yAxis?: BothSidesYAxisOptions;
-  plot?: PlotOptions;
+  plot?: LineTypePlotOptions;
   theme?: LineScatterChartThemeOptions;
 }
 
