@@ -23,7 +23,7 @@
     "filePath": "README.md"
   },
   "api": {
-    "filePath": ["tmpdoc/src/charts/chart.js", "tmpdoc/src/charts/lineChart.js"],
+    "filePath": ["tmpdoc/src/charts/*.js"],
     "permalink": false
   },
   "examples": {
