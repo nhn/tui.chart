@@ -1,17 +1,14 @@
 # 차트 데이터 내보내기
 
-모든 차트에 대해서 데이터를 이미지 파일(`.jpeg`, `.png`)과 `csv`, `xls` 파일로 내보낼 수 있다.
+데이터 내보내기 기능은 모든 차트에 대해서 데이터를 이미지 파일(`.jpeg`, `.png`)과 `csv`, `xls` 파일로 내보낼 수 있다.
 
 ## options
 데이터 내보내기 기능에 사용할 수 있는 옵션은 다음과 같다.
 
 ```ts
-type options = {
-  ...
-  exportMenu?: {
-    visible?: boolean;
-    filename?: string;
-  }
+type ExportMenuOptions = {
+  visible?: boolean;
+  filename?: string;
 };
 ```
 
