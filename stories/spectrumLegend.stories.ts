@@ -6,7 +6,7 @@ import TreemapChart from '@src/charts/treemapChart';
 import '@src/css/chart.css';
 
 export default {
-  title: 'chart|spectrumLegend',
+  title: 'chart|Spectrum Legend',
   decorators: [withKnobs],
 };
 

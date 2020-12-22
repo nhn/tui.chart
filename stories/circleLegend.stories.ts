@@ -5,7 +5,7 @@ import BubbleChart from '@src/charts/bubbleChart';
 import '@src/css/chart.css';
 
 export default {
-  title: 'chart|CircleLegend',
+  title: 'chart|Circle Legend',
 };
 
 const width = 1000;

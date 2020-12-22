@@ -6,7 +6,7 @@ import { NestedPieChartThemeOptions } from '@t/theme';
 import '@src/css/chart.css';
 
 export default {
-  title: 'chart|NestedPie',
+  title: 'chart|Nested Pie',
 };
 
 function createChart(data: NestedPieSeriesData, customOptions: NestedPieChartOptions = {}) {
