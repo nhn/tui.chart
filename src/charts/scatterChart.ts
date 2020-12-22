@@ -77,24 +77,106 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
     ]);
   }
 
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added.
+   * @api
+   * @example
+   * chart.addData([
+   *   {x: 10, y: 20},
+   *   {x: 30, y: 40}
+   * ]);
+   */
   public addData = (data: CoordinateDataType[]) => {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data });
   };
 
-  public addSeries(data: ScatterSeriesInput, dataInfo?: AddSeriesDataInfo) {
-    this.store.dispatch('addSeries', { data, ...dataInfo });
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @api
+   * @example
+   * chart.addSeries({
+   *   name: 'newSeries',
+   *   data: [
+   *     {x: 10, y: 20},
+   *     {x: 30, y: 40}
+   *   ],
+   * });
+   */
+  public addSeries(data: ScatterSeriesInput) {
+    this.store.dispatch('addSeries', { data });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set.
+   * @api
+   * @example
+   * chart.setData({
+   *   series: [
+   *     {
+   *       name: 'name'
+   *       data: [
+   *         {x: 10, y: 20},
+   *         {x: 30, y: 40}
+   *       ]
+   *     }
+   *   ]
+   * });
+   */
   public setData(data: ScatterSeriesData) {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { scatter: series }, categories });
   }
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   xAxis: {
+   *     title: 'Month',
+   *   },
+   *   yAxis: {
+   *     title: 'Energy (kWh)',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: ScatterChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: ScatterChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

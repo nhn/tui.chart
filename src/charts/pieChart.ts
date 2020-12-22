@@ -58,27 +58,98 @@ export default class PieChart extends Chart<PieChartOptions> {
     ]);
   }
 
-  public addSeries(data: PieSeriesType, dataInfo?: AddSeriesDataInfo) {
-    this.store.dispatch('addSeries', { data, ...dataInfo });
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @api
+   * @example
+   * chart.addSeries({
+   *   name: 'newSeries',
+   *   data: 10
+   * });
+   */
+  public addSeries(data: PieSeriesType) {
+    this.store.dispatch('addSeries', { data });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set.
+   * @api
+   * @example
+   * chart.setData({
+   *   categories: ['A'],
+   *   series: [
+   *     {name: 'a', data: 10},
+   *     {name: 'b', data: 20}
+   *   ]
+   * });
+   */
   public setData(data: PieSeriesData) {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { pie: series }, categories });
   }
 
+  /**
+   * Hide series data label.
+   * @api
+   * @example
+   * chart.hideSeriesLabel();
+   */
   public hideSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
   };
 
+  /**
+   * Show series data label.
+   * @api
+   * @example
+   * chart.showSeriesLabel();
+   */
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: PieChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: PieChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

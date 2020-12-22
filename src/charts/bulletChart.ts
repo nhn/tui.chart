@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
+import Chart, { SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -70,26 +70,109 @@ export default class BulletChart extends Chart<BulletChartOptions> {
     ]);
   }
 
-  public addSeries(data: BulletSeriesType, dataInfo?: AddSeriesDataInfo) {
-    this.store.dispatch('addSeries', { data, ...dataInfo });
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added
+   * @param {string} data.name - Series name
+   * @param {Array} data.data - Array of data to be added
+   * @api
+   * @example
+   * chart.addSeries({
+   *   name: 'newSeries',
+   *   data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+   * });
+   */
+  public addSeries(data: BulletSeriesType) {
+    this.store.dispatch('addSeries', { data });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set
+   * @api
+   * @example
+   * chart.setData({
+   *   categories: ['1','2','3'],
+   *   series: [
+   *     {
+   *       name: 'new series',
+   *       data: [1, 2, 3],
+   *     },
+   *     {
+   *       name: 'new series2',
+   *       data: [4, 5, 6],
+   *     }
+   *   ]
+   * });
+   */
   public setData(data: BulletSeriesData) {
     this.store.dispatch('setData', { series: { bullet: data.series } });
   }
 
+  /**
+   * Hide series data label.
+   * @api
+   * @example
+   * chart.hideSeriesLabel();
+   */
   public hideSeriesLabel = () => {
     // @TODO: Should be implemented
   };
 
+  /**
+   * Show series data label.
+   * @api
+   * @example
+   * chart.showSeriesLabel();
+   */
   public showSeriesLabel = () => {
     // @TODO: Should be implemented
   };
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   xAxis: {
+   *     title: 'Month',
+   *   },
+   *   yAxis: {
+   *     title: 'Energy (kWh)',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: BulletChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: BulletChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

@@ -173,8 +173,8 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   /**
    * Add data.
-   * @param {Array} data - Array of data to be added
-   * @param {string} category - Category to be added
+   * @param {Array} data - Array of data to be added.
+   * @param {string} category - Category to be added.
    * @api
    * @example
    * chart.addData([10, 20], '6');
@@ -185,9 +185,9 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   /**
    * Add series.
-   * @param {Object} data - Data to be added
-   * @param {string} data.name - Series name
-   * @param {Array} data.data - Array of data to be added
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
    * @api
    * @example
    * chart.addSeries({
@@ -201,7 +201,7 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   /**
    * Convert the chart data to new data.
-   * @param {Object} data - Data to be set
+   * @param {Object} data - Data to be set.
    * @api
    * @example
    * chart.setData({
@@ -225,10 +225,10 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   /**
    * Add plot line.
-   * @param {Object} data - plot info
-   * @param {string|number} data.value - The value where the plot line will be drawn
-   * @param {string} data.color - Plot line color
-   * @param {string} [data.id] - Plot id. The value on which the removePlotLine is based
+   * @param {Object} data - Plot info.
+   * @param {string|number} data.value - The value where the plot line will be drawn.
+   * @param {string} data.color - Plot line color.
+   * @param {string} [data.id] - Plot id. The value on which the removePlotLine is based.
    * @api
    * @example
    * chart.addPlotLine({
@@ -243,7 +243,7 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   /**
    * Remove plot line with id.
-   * @param {string} id - Id of the plot line to be removed
+   * @param {string} id - Id of the plot line to be removed.
    * @api
    * @example
    * chart.removePlotLine('plot-1');
@@ -254,10 +254,10 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   /**
    * Add plot band.
-   * @param {Object} data - plot info
-   * @param {Array<string|number>} data.range - The range to be drawn
-   * @param {string} data.color - Plot band color
-   * @param {string} [data.id] - Plot id. The value on which the removePlotBand is based
+   * @param {Object} data - Plot info.
+   * @param {Array<string|number>} data.range - The range to be drawn.
+   * @param {string} data.color - Plot band color.
+   * @param {string} [data.id] - Plot id. The value on which the removePlotBand is based.
    * @api
    * @example
    * chart.addPlotBand({
@@ -303,7 +303,7 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   /**
    * Convert the chart options to new options.
-   * @param {Object} options - Chart options
+   * @param {Object} options - Chart options.
    * @api
    * @example
    * chart.setOptions({
@@ -333,7 +333,7 @@ export default class LineChart extends Chart<LineChartOptions> {
 
   /**
    * Update chart options.
-   * @param {Object} options - Chart options
+   * @param {Object} options - Chart options.
    * @api
    * @example
    * chart.updateOptions({

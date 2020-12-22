@@ -70,24 +70,112 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
     ]);
   }
 
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added.
+   * @param {string} category - Category to be added.
+   * @api
+   * @example
+   * chart.addData([[10, 20], [30, 40]], '6');
+   */
   public addData = (data: number[][], category: string) => {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 
-  public addSeries(data: BoxPlotSeriesType, dataInfo?: AddSeriesDataInfo) {
-    this.store.dispatch('addSeries', { data, ...dataInfo });
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @api
+   * @example
+   * chart.addSeries({
+   *   name: 'newSeries',
+   *   data: [
+   *     [10, 100, 50, 40, 70, 55, 33, 70, 90, 110]
+   *   ],
+   *   outliers: [
+   *     [0, 14000],
+   *     [2, 10000],
+   *   ]
+   * });
+   */
+  public addSeries(data: BoxPlotSeriesType) {
+    this.store.dispatch('addSeries', { data });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set.
+   * @api
+   * @example
+   * chart.setData({
+   *   categories: ['1','2','3'],
+   *   series: [
+   *     {
+   *       name: 'newSeries',
+   *       data: [
+   *         [10, 100, 50, 40, 70, 55, 33, 70, 90, 110]
+   *       ],
+   *       outliers: [
+   *         [0, 14000],
+   *         [2, 10000],
+   *       ]
+   *     }
+   *   ]
+   * });
+   */
   public setData(data: BoxPlotSeriesData) {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { boxPlot: series }, categories });
   }
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   xAxis: {
+   *     title: 'Month',
+   *     date: { format: 'yy/MM' },
+   *   },
+   *   yAxis: {
+   *     title: 'Energy (kWh)',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: BoxPlotChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: BoxPlotChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

@@ -88,23 +88,117 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
     ]);
   }
 
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added.
+   * @param {string} chartType - Which type of chart to add.
+   * @api
+   * @example
+   * chart.addData([{x: 10, y: 20}, {x: 30, y: 40}], 'line');
+   */
   public addData = (data: CoordinateDataType[], chartType: 'line' | 'scatter') => {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, chartType });
   };
 
-  public addSeries = (data: ScatterSeriesInput, addSeriesDataInfo: AddSeriesDataInfo) => {
-    this.store.dispatch('addSeries', { data, ...addSeriesDataInfo });
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @param {Object} dataInfo - Which type of chart to add.
+   * @param {Object} dataInfo.chartType - Chart type.
+   * @api
+   * @example
+   * chart.addSeries(
+   *   {
+   *     name: 'newSeries',
+   *     data: [{x: 10, y: 20}, {x: 30, y: 40}],
+   *   },
+   *   {
+   *     chartType: 'line'
+   *   });
+   */
+  public addSeries = (data: ScatterSeriesInput, dataInfo: AddSeriesDataInfo) => {
+    this.store.dispatch('addSeries', { data, ...dataInfo });
   };
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set
+   * @api
+   * @example
+   * chart.setData({
+   *   series: {
+   *     line: [
+   *       {
+   *         name: 'A',
+   *         data: [{x: 10, y: 20}, {x: 30, y: 40}]
+   *       }
+   *     ],
+   *     scatter: [
+   *       {
+   *         name: 'B',
+   *         data: [{x: 30, y: 20}, {x: 40, y: 40}]
+   *       }
+   *     ]
+   *   }
+   * });
+   */
   public setData(data: LineScatterData) {
     this.store.dispatch('setData', data);
   }
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   xAxis: {
+   *     title: 'Month',
+   *     date: { format: 'yy/MM' },
+   *   },
+   *   yAxis: {
+   *     title: 'Energy (kWh)',
+   *   },
+   *   series: {
+   *     line: {
+   *       showDot: true
+   *     },
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: LineScatterChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   series: {
+   *     line: {
+   *       showDot: true
+   *     },
+   *   },
+   * });
+   */
   public updateOptions = (options: LineScatterChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

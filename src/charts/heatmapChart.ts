@@ -89,15 +89,53 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
     ]);
   }
 
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added.
+   * @param {string} category - Category to be added.
+   * @api
+   * @example
+   * chart.addData([10, 20], '6');
+   */
   public addData = (data: HeatmapSeriesDataType, category: string) => {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @param {Object} dataInfo - Category information of the series.
+   * @param {Object} dataInfo.category - Y category.
+   * @api
+   * @example
+   * chart.addSeries({
+   *   name: 'newSeries',
+   *   data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+   * });
+   */
   public addSeries = (data: HeatmapSeriesDataType, dataInfo: AddSeriesDataInfo) => {
     this.store.dispatch('addHeatmapSeries', { data, ...dataInfo });
   };
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set
+   * @api
+   * @example
+   * chart.setData({
+   *   categories: {
+   *     x: ['1', '2', '3' ],
+   *     y: ['A', 'B'],
+   *   },
+   *   series: [
+   *     [1, 2, 3],
+   *     [4, 5, 6]
+   *   ]
+   * });
+   */
   public setData(data: HeatmapSeriesData) {
     const { categories, series } = data;
 
@@ -107,10 +145,22 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
     });
   }
 
+  /**
+   * Hide series data label.
+   * @api
+   * @example
+   * chart.hideSeriesLabel();
+   */
   public hideSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
   };
 
+  /**
+   * Show series data label.
+   * @api
+   * @example
+   * chart.showSeriesLabel();
+   */
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
@@ -119,6 +169,21 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: HeatmapChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

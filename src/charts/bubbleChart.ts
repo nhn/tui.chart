@@ -79,23 +79,106 @@ export default class BubbleChart extends Chart<BaseOptions> {
     ]);
   }
 
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added.
+   * @api
+   * @example
+   * chart.addData([
+   *   {x: 10, y: 20, r: 10, label: 'label1'},
+   *   {x: 30, y: 40, r: 10, label: 'label2'}
+   * ]);
+   */
   public addData = (data: BubbleSeriesDataType[]) => {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data });
   };
 
-  public addSeries(data: BubbleSeriesInput, dataInfo?: AddSeriesDataInfo) {
-    this.store.dispatch('addSeries', { data, ...dataInfo });
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @api
+   * @example
+   * chart.addSeries({
+   *   name: 'newSeries',
+   *   data: [
+   *     {x: 10, y: 20, r: 10, label: 'label1'},
+   *     {x: 30, y: 40, r: 10, label: 'label2'}
+   *   ],
+   * });
+   */
+  public addSeries(data: BubbleSeriesInput) {
+    this.store.dispatch('addSeries', { data });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set.
+   * @api
+   * @example
+   * chart.setData({
+   *   series: [
+   *     {
+   *       name: 'name'
+   *       data: [
+   *         {x: 10, y: 20, r: 10, label: 'label1'},
+   *         {x: 30, y: 40, r: 10, label: 'label2'}
+   *       ]
+   *     }
+   *   ]
+   * });
+   */
   public setData(data: BubbleSeriesData) {
     this.store.dispatch('setData', { series: { bubble: data.series } });
   }
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   xAxis: {
+   *     title: 'Month',
+   *     date: { format: 'yy/MM' },
+   *   },
+   *   yAxis: {
+   *     title: 'Energy (kWh)',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: BubbleChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: BubbleChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

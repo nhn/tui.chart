@@ -66,26 +66,108 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
     ]);
   }
 
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @api
+   * @example
+   * chart.addSeries({
+   *   label: 'Documents',
+   *   children: [
+   *     {label: 'A', data: 20},
+   *     {label: 'B', data: 40}
+   *   ],
+   * });
+   */
   public addSeries(data: TreemapSeriesType, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addTreemapSeries', { data, ...dataInfo });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set.
+   * @api
+   * @example
+   * chart.setData(
+   *   series: [
+   *     {
+   *       label: 'Documents',
+   *       children: [
+   *         {label: 'A', data: 20},
+   *         {label: 'B', data: 40}
+   *       ],
+   *     },
+   *     {
+   *       label: 'Documents',
+   *       data: 30
+   *     }
+   *   ]
+   * );
+   */
   public setData(data: TreemapSeriesData) {
     this.store.dispatch('setData', { series: { treemap: data.series } });
   }
 
+  /**
+   * Hide series data label.
+   * @api
+   * @example
+   * chart.hideSeriesLabel();
+   */
   public hideSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
   };
 
+  /**
+   * Show series data label.
+   * @api
+   * @example
+   * chart.showSeriesLabel();
+   */
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: TreemapChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: TreemapChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

@@ -175,8 +175,8 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   /**
    * Add data.
-   * @param {Array} data - Array of data to be added
-   * @param {string} category - Category to be added
+   * @param {Array} data - Array of data to be added.
+   * @param {string} category - Category to be added.
    * @api
    * @example
    * chart.addData([10, 20], '6');
@@ -188,9 +188,9 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   /**
    * Add series.
-   * @param {Object} data - Data to be added
-   * @param {string} data.name - Series name
-   * @param {Array} data.data - Array of data to be added
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
    * @api
    * @example
    * chart.addSeries({
@@ -228,10 +228,10 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   /**
    * Add plot line.
-   * @param {Object} data - plot info
-   * @param {string|number} data.value - The value where the plot line will be drawn
-   * @param {string} data.color - Plot line color
-   * @param {string} [data.id] - Plot id. The value on which the removePlotLine is based
+   * @param {Object} data - Plot info.
+   * @param {string|number} data.value - The value where the plot line will be drawn.
+   * @param {string} data.color - Plot line color.
+   * @param {string} [data.id] - Plot id. The value on which the removePlotLine is based.
    * @api
    * @example
    * chart.addPlotLine({
@@ -246,7 +246,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   /**
    * Remove plot line with id.
-   * @param {string} id - Id of the plot line to be removed
+   * @param {string} id - Id of the plot line to be removed.
    * @api
    * @example
    * chart.removePlotLine('plot-1');
@@ -257,10 +257,10 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   /**
    * Add plot band.
-   * @param {Object} data - plot info
-   * @param {Array<string|number>} data.range - The range to be drawn
-   * @param {string} data.color - Plot band color
-   * @param {string} [data.id] - Plot id. The value on which the removePlotBand is based
+   * @param {Object} data - Plot info.
+   * @param {Array<string|number>} data.range - The range to be drawn.
+   * @param {string} data.color - Plot band color.
+   * @param {string} [data.id] - Plot id. The value on which the removePlotBand is based.
    * @api
    * @example
    * chart.addPlotBand({
@@ -275,7 +275,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   /**
    * Remove plot band with id.
-   * @param {string} id - id of the plot band to be removed
+   * @param {string} id - id of the plot band to be removed.
    * @api
    * @example
    * chart.removePlotBand('plot-1');
@@ -306,7 +306,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   /**
    * Convert the chart options to new options.
-   * @param {Object} options - Chart options
+   * @param {Object} options - Chart options.
    * @api
    * @example
    * chart.setOptions({
@@ -336,7 +336,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
 
   /**
    * Update chart options.
-   * @param {Object} options - Chart options
+   * @param {Object} options - Chart options.
    * @api
    * @example
    * chart.updateOptions({

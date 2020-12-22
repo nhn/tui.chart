@@ -64,11 +64,69 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
     ]);
   }
 
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @param {Object} dataInfo - Which alias of chart to add.
+   * @param {Object} dataInfo.alias - Chart alias.
+   * @api
+   * @example
+   * chart.addSeries(
+   *   {
+   *     name: 'newSeries',
+   *     data: [
+   *       { name: 'A', data: 10 },
+   *       { name: 'B', data: 20 },
+   *     ],
+   *   },
+   *   {
+   *     alias: 'alias1'
+   *   });
+   */
   public addSeries(data: NestedPieSeriesType, dataInfo?: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
     this.componentManager.add(PieSeries, { alias: data.name });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set
+   * @api
+   * @example
+   * chart.setData({
+   *   categories: ['A', 'B'],
+   *   series: [
+   *     {
+   *       name: 'browsers',
+   *       data: [
+   *         {
+   *           name: 'Chrome',
+   *           data: 50,
+   *         },
+   *         {
+   *           name: 'Safari',
+   *           data: 20,
+   *         },
+   *       ]
+   *     },
+   *     {
+   *       name: 'versions',
+   *       data: [
+   *         {
+   *           name: '1',
+   *           data: 50,
+   *         },
+   *         {
+   *           name: '2',
+   *           data: 20,
+   *         },
+   *       ]
+   *     }
+   *   ]
+   * });
+   */
   public setData(data: NestedPieSeriesData) {
     this.componentManager.remove(PieSeries);
     this.store.dispatch('setData', { series: { pie: data.series } });
@@ -78,18 +136,68 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
     });
   }
 
+  /**
+   * Hide series data label.
+   * @api
+   * @example
+   * chart.hideSeriesLabel();
+   */
   public hideSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
   };
 
+  /**
+   * Show series data label.
+   * @api
+   * @example
+   * chart.showSeriesLabel();
+   */
   public showSeriesLabel = () => {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   series: {
+   *     alias2: {
+   *       radiusRange: [20%, 50%]
+   *     },
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: NestedPieChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   series: {
+   *     alias1: {
+   *       showDot: true
+   *     },
+   *   },
+   * });
+   */
   public updateOptions = (options: NestedPieChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

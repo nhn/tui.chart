@@ -161,8 +161,8 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   /**
    * Add data.
-   * @param {Array} data - Array of data to be added
-   * @param {string} category - Category to be added
+   * @param {Array} data - Array of data to be added.
+   * @param {string} category - Category to be added.
    * @api
    * @example
    * chart.addData([10, 20], '6');
@@ -174,9 +174,9 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   /**
    * Add series.
-   * @param {Object} data - Data to be added
-   * @param {string} data.name - Series name
-   * @param {Array} data.data - Array of data to be added
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
    * @api
    * @example
    * chart.addSeries({
@@ -190,7 +190,7 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   /**
    * Convert the chart data to new data.
-   * @param {Object} data - Data to be set
+   * @param {Object} data - Data to be set.
    * @api
    * @example
    * chart.setData({
@@ -234,7 +234,7 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   /**
    * Convert the chart options to new options.
-   * @param {Object} options - Chart options
+   * @param {Object} options - Chart options.
    * @api
    * @example
    * chart.setOptions({
@@ -264,7 +264,7 @@ export default class BarChart extends Chart<BarChartOptions> {
 
   /**
    * Update chart options.
-   * @param {Object} options - Chart options
+   * @param {Object} options - Chart options.
    * @api
    * @example
    * chart.updateOptions({

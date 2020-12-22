@@ -118,6 +118,15 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     }
   }
 
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added.
+   * @param {string} category - Category to be added.
+   * @param {string} chartType - Which type of chart to add.
+   * @api
+   * @example
+   * chart.addData([10, 20], '6', 'line');
+   */
   public addData = (
     data: BoxSeriesDataType[] | LineSeriesDataType[],
     category: string,
@@ -127,42 +136,187 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     this.store.dispatch('addData', { data, category, chartType });
   };
 
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @param {Object} dataInfo - Which type of chart to add.
+   * @param {Object} dataInfo.chartType - Chart type.
+   * @api
+   * @example
+   * chart.addSeries(
+   *   {
+   *     name: 'newSeries',
+   *     data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+   *   },
+   *   {
+   *     chartType: 'line'
+   *   });
+   */
   public addSeries(data, dataInfo: AddSeriesDataInfo) {
     this.store.dispatch('addSeries', { data, ...dataInfo });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set
+   * @api
+   * @example
+   * chart.setData({
+   *   categories: ['1','2','3'],
+   *   series: {
+   *     column: [
+   *       {
+   *         name: 'A',
+   *         data: [1, 2, 3]
+   *       }
+   *     ],
+   *     line: [
+   *       {
+   *         name: 'B',
+   *         data: [4, 5, 6]
+   *       }
+   *     ]
+   *   }
+   * });
+   */
   public setData(data: ColumnLineData) {
     this.store.dispatch('setData', data);
   }
 
+  /**
+   * Add plot line.
+   * @param {Object} data - Plot info.
+   * @param {string|number} data.value - The value where the plot line will be drawn.
+   * @param {string} data.color - Plot line color.
+   * @param {string} [data.id] - Plot id. The value on which the removePlotLine is based.
+   * @api
+   * @example
+   * chart.addPlotLine({
+   *   value: 2,
+   *   color: '#00ff22',
+   *   id: 'plot-1'
+   * });
+   */
   public addPlotLine(data: PlotLine) {
     this.store.dispatch('addPlotLine', { data });
   }
 
+  /**
+   * Remove plot line with id.
+   * @param {string} id - Id of the plot line to be removed
+   * @api
+   * @example
+   * chart.removePlotLine('plot-1');
+   */
   public removePlotLine(id: string) {
     this.store.dispatch('removePlotLine', { id });
   }
 
+  /**
+   * Add plot band.
+   * @param {Object} data - plot info
+   * @param {Array<string|number>} data.range - The range to be drawn
+   * @param {string} data.color - Plot band color
+   * @param {string} [data.id] - Plot id. The value on which the removePlotBand is based
+   * @api
+   * @example
+   * chart.addPlotBand({
+   *   value: [2, 4],
+   *   color: '#00ff22',
+   *   id: 'plot-1'
+   * });
+   */
   public addPlotBand(data: PlotBand) {
     this.store.dispatch('addPlotBand', { data });
   }
 
+  /**
+   * Remove plot band with id.
+   * @param {string} id - id of the plot band to be removed
+   * @api
+   * @example
+   * chart.removePlotBand('plot-1');
+   */
   public removePlotBand(id: string) {
     this.store.dispatch('removePlotBand', { id });
   }
 
+  /**
+   * Hide series data label.
+   * @api
+   * @example
+   * chart.hideSeriesLabel();
+   */
   public hideSeriesLabel = () => {
-    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: false } } });
+    this.store.dispatch('updateOptions', {
+      series: { dataLabels: { visible: false } },
+    });
   };
 
+  /**
+   * Show series data label.
+   * @api
+   * @example
+   * chart.showSeriesLabel();
+   */
   public showSeriesLabel = () => {
-    this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
+    this.store.dispatch('updateOptions', {
+      series: { dataLabels: { visible: true } },
+    });
   };
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   xAxis: {
+   *     title: 'Month',
+   *     date: { format: 'yy/MM' },
+   *   },
+   *   yAxis: {
+   *     title: 'Energy (kWh)',
+   *   },
+   *   series: {
+   *     line: {
+   *       showDot: true
+   *     },
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: ColumnLineChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   series: {
+   *     line: {
+   *       showDot: true
+   *     },
+   *   },
+   * });
+   */
   public updateOptions = (options: ColumnLineChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };

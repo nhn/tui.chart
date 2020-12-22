@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
+import Chart, { SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -66,24 +66,97 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     ]);
   }
 
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added.
+   * @param {string} category - Category to be added.
+   * @api
+   * @example
+   * chart.addData([10, 20], '6');
+   */
   public addData = (data: number[], category: string) => {
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
 
-  public addSeries(data: RadarSeriesInput, dataInfo?: AddSeriesDataInfo) {
-    this.store.dispatch('addSeries', { data, ...dataInfo });
+  /**
+   * Add series.
+   * @param {Object} data - Data to be added.
+   * @param {string} data.name - Series name.
+   * @param {Array} data.data - Array of data to be added.
+   * @api
+   * @example
+   * chart.addSeries({
+   *   name: 'newSeries',
+   *   data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+   * });
+   */
+  public addSeries(data: RadarSeriesInput) {
+    this.store.dispatch('addSeries', { data });
   }
 
+  /**
+   * Convert the chart data to new data.
+   * @param {Object} data - Data to be set.
+   * @api
+   * @example
+   * chart.setData({
+   *   categories: ['1','2','3'],
+   *   series: [
+   *     {
+   *       name: 'new series',
+   *       data: [1, 2, 3],
+   *     },
+   *     {
+   *       name: 'new series2',
+   *       data: [4, 5, 6],
+   *     }
+   *   ]
+   * });
+   */
   public setData(data: RadarSeriesData) {
     const { categories, series } = data;
     this.store.dispatch('setData', { series: { radar: series }, categories });
   }
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: RadarChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };
 
+  /**
+   * Update chart options.
+   * @param {Object} options - Chart options.
+   * @api
+   * @example
+   * chart.updateOptions({
+   *   chart: {
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public updateOptions = (options: RadarChartOptions) => {
     this.dispatchOptionsEvent('updateOptions', options);
   };
