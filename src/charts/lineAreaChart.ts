@@ -221,7 +221,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * @api
    * @example
    * chart.setData({
-   *   categories: ['1','2','3'],
+   *   categories: ['1', '2', '3'],
    *   series: {
    *     line: [
    *       {

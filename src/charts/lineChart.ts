@@ -205,7 +205,7 @@ export default class LineChart extends Chart<LineChartOptions> {
    * @api
    * @example
    * chart.setData({
-   *   categories: ['1','2','3'],
+   *   categories: ['1', '2', '3'],
    *   series: [
    *     {
    *       name: 'new series',

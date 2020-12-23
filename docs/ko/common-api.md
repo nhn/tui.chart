@@ -136,7 +136,7 @@ public setData(data): void;
 const lineChart = new LineChart({ el, data, options });
 
 lineChart.setData({
-  categories: ['1','2','3'],
+  categories: ['1', '2', '3'],
   series: [
     {
       name: 'new series',

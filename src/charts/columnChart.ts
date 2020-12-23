@@ -192,7 +192,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    * @api
    * @example
    * chart.setData({
-   *   categories: ['1','2','3'],
+   *   categories: ['1', '2', '3'],
    *   series: [
    *     {
    *       name: 'new series',

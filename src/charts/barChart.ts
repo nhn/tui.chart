@@ -196,7 +196,7 @@ export default class BarChart extends Chart<BarChartOptions> {
    * @api
    * @example
    * chart.setData({
-   *   categories: ['1','2','3'],
+   *   categories: ['1', '2', '3'],
    *   series: [
    *     {
    *       name: 'new series',

@@ -243,7 +243,7 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
    * @api
    * @example
    * chart.setData({
-   *   categories: ['1','2','3'],
+   *   categories: ['1', '2', '3'],
    *   series: {
    *     column: [
    *       {

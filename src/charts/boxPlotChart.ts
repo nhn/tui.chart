@@ -184,7 +184,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * @api
    * @example
    * chart.setData({
-   *   categories: ['1','2','3'],
+   *   categories: ['1', '2', '3'],
    *   series: [
    *     {
    *       name: 'newSeries',
