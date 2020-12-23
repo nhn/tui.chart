@@ -249,8 +249,7 @@ const data = {
 
 ## 옵션
 
-`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)에서 `radiusRange`를 제외하고 같다. NestedPie에서는 중첩된 시리즈를 그려주기 위한 반지름 범위를 각각 설정해주어야 한다. 입력받은 데이터에서 series의 `name`이 이에 해당한다.
-중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 설정해주면 되고, 각 시리즈별로 적용하려면 `[name]` 옵션에 설정해주면 된다.
+`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)에서 `radiusRange`를 제외하고 같다. NestedPie에서는 중첩된 시리즈를 그려주기 위한 반지름 범위를 각각 설정해주어야 한다. 입력받은 데이터에서 series의 `name`이 이에 해당한다. 중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 설정해주면 되고, 각 시리즈별로 적용하려면 `[name]` 옵션에 설정해주면 된다.
 
 ```ts
 type options = {
@@ -380,7 +379,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102756836-ce0b8300-43b3-11eb-9e85-6404c4499be2.png)
+![image](https://user-images.githubusercontent.com/43128697/102986094-99cec880-4553-11eb-9210-92ffa2f2951d.gif)
 
 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 아래와 같이 작성하면, `'browsers'`에 해당하는 Pie 차트는 시계 방향으로 그려지고, `versions`에 해당하는 Pie 차트는 시계 반대 방향으로 그려진다.
 
@@ -595,7 +594,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102754882-f940a300-43b0-11eb-8644-73f3effa39df.png)
 
-`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다.
+`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다. 시리즈 색상, 테두리 두께, 테두리 색상과 마우스를 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
 
 ```js
 const options = {

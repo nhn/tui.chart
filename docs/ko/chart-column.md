@@ -54,11 +54,11 @@ const data = {
 
 ### 데이터 타입
 
-기본 차트와 다른 점은 series data의 타입이다. data는 `배열`로 입력되며 값의 시작과 끝을 `숫자값`으로 순서대로 넣어줘야 한다.
+기본 차트와 다른 점은 series data의 타입이다. data는 `배열`로 입력되며 범위의 시작과 끝을 `숫자값`으로 순서대로 넣어줘야 한다.
 
 ```js
 const data = {
-  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June','July', 'Aug', 'Sep','Oct', 'Nov','Dec'],
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Seoul',
@@ -101,7 +101,7 @@ const data = {
 ![image](https://user-images.githubusercontent.com/43128697/102730263-77805380-4377-11eb-94c7-1505a12693f5.png)
 
 ## 그룹형 스택 차트
-`stackGroup`을 설정하면 시리즈를 그룹으로 묶어 표현할 수 있다. `series.stack` 옵션을 설정한 경우에만 동작한다.
+`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 시리즈 데이터에 `stackGroup` 속성을 추가하면, 같은 stackGroup끼리 쌓이게 된다.
 
 ```js
 const data = {
@@ -224,7 +224,7 @@ type options = {
 `stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 스택 차트는 `'normal'` 타입과 `'percent'` 타입이 존재한다. 필요에 따라 `stack.connector` 옵션을 설정하여 연결선을 표시할 수 있다.
 
 ### normal 타입
-`series.stack`을 `true`로 설정할 경우 스택 시리즈의 기본 타입은 `'normal'`이다.
+`series.stack`을 `true`로 설정하는 것은 `stack.type`을 `'normal'` 타입으로 설정한 것과 같다.
 
 ```js
 const options = {
@@ -263,7 +263,7 @@ const options = {
 
 ### percent 타입
 
-`stack.type`을 `'percent'`로 설정한 경우 백분율로 표시한다.
+`stack.type`을 `'percent'`로 설정하면 값의 합을 백분율로 계산해 스택 차트로 만들어 준다.
 
 ```js
 const options = {
@@ -312,7 +312,7 @@ const options = {
 
 ### eventDetectType
 
-툴팁을 나타낼 때 발생하는 마우스 오버와 시리즈를 선택할 때 발생하는 마우스 클릭 시 데이터를 탐지하는 방법을 정의할 수 있다.
+마우스를 통해 시리즈 데이터를 선택하거나 탐지하는 방법을 정의할 수 있다.
 
 | 타입 | 설명 |
 | --- | --- |

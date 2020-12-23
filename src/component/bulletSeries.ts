@@ -31,6 +31,8 @@ type RenderOptions = {
   markerWidth: number;
 };
 
+const DEFAULT_WIDTH_RATIO = 0.6;
+
 function getRectSize(vertical: boolean, barWidth: number, barLength: number): Size {
   return {
     width: vertical ? barWidth : barLength,
@@ -359,7 +361,7 @@ export default class BulletSeries extends Component {
     const { rangeRatio, bulletRatio, markerRatio } = barWidthRatios;
     const barWidth = barThemeWidth
       ? calculateSizeWithPercentString(tickDistance, barThemeWidth)
-      : tickDistance * 0.6;
+      : tickDistance * DEFAULT_WIDTH_RATIO;
 
     return {
       rangeWidth: barWidth * rangeRatio!,

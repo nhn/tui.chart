@@ -133,7 +133,7 @@ type options = {
 
 ### vertical
 
-불릿 차트는 기본적으로 가로형 차트이다. `vertical` 옵션을 `true`로 설정하면 세로형 차트를 그릴 수 있다.
+Bullet 차트는 기본적으로 가로형 차트이다. `vertical` 옵션을 `true`로 설정하면 세로형 차트를 그릴 수 있다.
 
 * 기본값: `false`
 
@@ -242,21 +242,21 @@ type DefaultDataLabelsTheme = {
 | colors | string[] | 시리즈의 색상 |
 | areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
 | barWidth | number \| string | 시리즈 전체 박스 너비 |
-| barWidthRatios | object | 범위, 불릿 박스 너비와 마커 길이 비율 설정 |
+| barWidthRatios | object | 범위, Bullet 박스 너비와 마커 길이 비율 설정 |
 | barWidthRatios.rangeRatio | number | 범위 너비 비율 (기본값: 1) |
-| barWidthRatios.bulletRatio | number | 불릿 박스 너비 비율 (기본값: 0.5) |
+| barWidthRatios.bulletRatio | number | Bullet 박스 너비 비율 (기본값: 0.5) |
 | barWidthRatios.markerRatio | number | 마커 선 길이 비율 (기본값: 0.8) |
 | markerLineWidth | number | 마커 선 두께 |
 | rangeColors | string[] | 범위 색깔 |
-| borderColor | string | 불릿 박스 테두리 색깔 |
-| borderWidth | number | 불릿 박스 테두리 두께 |
+| borderColor | string | Bullet 박스 테두리 색깔 |
+| borderWidth | number | Bullet 박스 테두리 두께 |
 | hover | object | 데이터에 마우스를 올렸을 때 스타일 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | select.areaOpacity | number | 선택된 시리즈의 영역 투명도 |
 | select.restSeries | object | 선택되지 않은 시리즈의 스타일 |
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 [DataLabels 가이드](./common-dataLabels-options.md)를 참고한다. |
 
-테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 불릿 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
+테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 Bullet 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
 
 ```js
 const options = {

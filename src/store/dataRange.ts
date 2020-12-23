@@ -88,16 +88,14 @@ function setSeriesDataRange(
   seriesDataRange: SeriesDataRange
 ) {
   const { secondaryYAxis } = getYAxisOption(options);
+  const axisNames =
+    hasSecondaryYAxis(options) && secondaryYAxis?.chartType
+      ? [secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis']
+      : getValueAxisNames(options, valueAxisName);
 
-  if (hasSecondaryYAxis(options) && secondaryYAxis?.chartType) {
-    const axisName = secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis';
-
+  axisNames.forEach((axisName) => {
     seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
-  } else {
-    getValueAxisNames(options, valueAxisName).forEach((axisName) => {
-      seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
-    });
-  }
+  });
 
   return seriesDataRange;
 }

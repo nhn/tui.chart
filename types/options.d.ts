@@ -592,8 +592,8 @@ export interface BulletSeriesOptions extends BaseSeriesOptions {
 }
 
 type ColumnLineChartSeriesOptions = {
-  column?: Pick<BoxSeriesOptions, 'stack' | 'dataLabels'>;
-  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels'>;
+  column?: Pick<BoxSeriesOptions, 'stack' | 'dataLabels' | 'selectable'>;
+  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels' | 'selectable'>;
   shift?: boolean;
   dataLabels?: DataLabelOptions;
   eventDetectType?: BoxTypeEventDetectType;

@@ -90,9 +90,35 @@ type options = {
   }
   series?: {
     selectable?: boolean;
+    column?: {
+      selectable?: boolean;
+      stack?: boolean | {
+        type: 'normal' | 'percent';
+        connector?: boolean;
+      };
+      dataLabels?: {
+        visible?: boolean;
+        anchor?: 'center' | 'start' | 'end' | 'auto';
+        offsetX?: number;
+        offsetY?: number;
+        formatter?: (value) => string;
+        stackTotal?: {
+          visible?: boolean;
+          formatter?: Formatter;
+        };
+      };
+    };
     line?: {
+      selectable?: boolean;
       spline?: boolena;
       showDot?: boolean;
+      dataLabels?: {
+        visible?: boolean;
+        anchor?: DataLabelAnchor;
+        offsetX?: number;
+        offsetY?: number;
+        formatter?: Formatter;
+      }
     }
     dataLabels?: {
       visible?: boolean;
@@ -100,6 +126,10 @@ type options = {
       offsetX?: number;
       offsetY?: number;
       formatter?: Formatter;
+      stackTotal?: {
+        visible?: boolean;
+        formatter?: Formatter;
+      };
     }
   }
 }
@@ -156,34 +186,26 @@ const options = {
 
 ### column chart options
 
-컬럼 차트의 `stack` 옵션을 적용하고 싶은 경우 column에 해당 옵션을 정의 해준다.
+컬럼 차트와 라인 차트에서 사용할 수 있는 옵션을 각 `series.column`과 `series.line`에 설정한다.
 
 ```js
 const options = {
-  column: {
-    stack: {
-      type: 'normal'
+  series: {
+    column: {
+      stack: {
+        type: 'normal'
+      }
+    },
+    line: {
+      showDot: true,
+      spline: true
     }
   }
+
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102780550-797afe80-43d9-11eb-9d32-8707dec4a096.png)
-
-### line chart options
-
-라인 차트의 `spline` 옵션과 `showDot`을 적용하고 싶은 경우 line에 해당 옵션을 정의 해준다.
-
-```js
-const options = {
-  line: {
-    showDot: true,
-    spline: true
-  }
-};
-```
-
-![image](https://user-images.githubusercontent.com/43128697/102774810-0a98a800-43cf-11eb-8389-c4087f450379.png)
+![image](https://user-images.githubusercontent.com/43128697/102978791-69356180-4548-11eb-8437-d104e3ed6b66.png)
 
 ## 시리즈 theme
 
@@ -215,7 +237,7 @@ const theme = {
         dot: {
           radius: 6,
           borderColor: '#ffff00',
-          borderWidth: 2,
+          borderWidth: 2
         }
       }
     }

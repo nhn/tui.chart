@@ -150,7 +150,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/102745900-71eb3380-43a0-11eb-85a0-73f03d5f6f5a.png)
+![image](https://user-images.githubusercontent.com/43128697/102980458-ef52a780-454a-11eb-9998-22a92e2ed45e.gif)
 
 ### radiusRange
 
@@ -310,7 +310,7 @@ type DefaultDataLabelsTheme = {
 | hover | object | 데이터에 마우스를 올렸을 때 스타일 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 
-테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
+테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 색상과 테두리 스타일을 변경해보자.
 
 ```js
 const options = {

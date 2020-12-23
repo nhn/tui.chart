@@ -33,6 +33,7 @@ import {
   getNearestResponder,
   makeRectResponderModel,
   makeTooltipCircleMap,
+  RespondersThemeType,
 } from '@src/helpers/responders';
 import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
@@ -364,7 +365,7 @@ export default class LineSeries extends Component {
     );
   }
 
-  private getResponderSeriesWithTheme(models: CircleResponderModel[], type: 'select' | 'hover') {
+  private getResponderSeriesWithTheme(models: CircleResponderModel[], type: RespondersThemeType) {
     const { radius, color, borderWidth, borderColor } = this.theme[type].dot as DotTheme;
 
     return models.map((model) => ({

@@ -132,7 +132,7 @@ const options = {
 
 ### showArea
 
-시리즈의 면을 채운다.
+시리즈의 영역을 채운다.
 
 * 기본값: `false`
 
