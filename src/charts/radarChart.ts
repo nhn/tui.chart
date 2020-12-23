@@ -55,9 +55,9 @@ export interface RadarChartProps {
  *       @param {boolean} [props.options.series.showArea=false] - Whether to fill area or not.
  *     @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
  *       @param {Object} [props.options.yAxis.title] - Axis title.
- *       @param {Object} [props.options.yAxis.tick] - You can change the tick interval through the tick.interval option.
- *       @param {Object} [props.options.yAxis.label] - You can change the tick interval through the label.interval option.
- *       @param {Object} [props.options.yAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *       @param {number} [props.options.yAxis.width] - Width of yAxis.
  *       @param {number} [props.options.yAxis.height] - Height of yAxis.
  *     @param {Object} [props.options.plot]
@@ -131,7 +131,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
 
   /**
    * Add data.
-   * @param {Array} data - Array of data to be added.
+   * @param {Array<number>} data - Array of data to be added.
    * @param {string} category - Category to be added.
    * @api
    * @example
@@ -146,7 +146,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    * Add series.
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
-   *   @param {Array} data.data - Array of data to be added.
+   *   @param {Array<number>} data.data - Array of data to be added.
    * @api
    * @example
    * chart.addSeries({

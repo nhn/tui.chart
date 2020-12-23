@@ -58,16 +58,16 @@ export interface BoxPlotChartProps {
  *       @param {Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date typeWhether the x axis label is of date type. If use date type, format option used for date type.
- *       @param {Object} [props.options.xAxis.tick] - You can change the tick interval through the tick.interval option.
- *       @param {Object} [props.options.xAxis.label] - You can change the label interval through the label.interval option.
- *       @param {Object} [props.options.xAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *       @param {Object} [props.options.xAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.xAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.xAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object} [props.options.yAxis]
  *       @param {Object} [props.options.yAxis.title] - Axis title.
- *       @param {Object} [props.options.yAxis.tick] - You can change the tick interval through the tick.interval option.
- *       @param {Object} [props.options.yAxis.label] - You can change the tick interval through the label.interval option.
- *       @param {Object} [props.options.yAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *       @param {number} [props.options.yAxis.width] - Width of yAxis.
  *       @param {number} [props.options.yAxis.height] - Height of yAxis.
  *     @param {Object} [props.options.plot]
@@ -145,7 +145,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
 
   /**
    * Add data.
-   * @param {Array} data - Array of data to be added.
+   * @param {Array<<Array<number>>} data - Array of data to be added.
    * @param {string} category - Category to be added.
    * @api
    * @example
@@ -160,7 +160,8 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * Add series.
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
-   *   @param {Array} data.data - Array of data to be added.
+   *   @param {Array<Array<number>>} data.data - Array of data to be added.
+   *   @param {Array<Array<number>>} data.outliers - Series outliers data.
    * @api
    * @example
    * chart.addSeries({

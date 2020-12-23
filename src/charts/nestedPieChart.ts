@@ -118,7 +118,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    * Add series.
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
-   *   @param {Array} data.data - Array of data to be added.
+   *   @param {Array<Object>} data.data - Array of data to be added.
    * @param {Object} dataInfo - Which alias of chart to add.
    *   @param {Object} dataInfo.alias - Chart alias.
    * @api

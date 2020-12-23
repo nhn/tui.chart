@@ -76,17 +76,17 @@ function getSeriesWithYCategory(
  *       @param {Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date typeWhether the x axis label is of date type. If use date type, format option used for date type.
- *       @param {Object} [props.options.xAxis.tick] - You can change the tick interval through the tick.interval option.
- *       @param {Object} [props.options.xAxis.label] - You can change the label interval through the label.interval option.
- *       @param {Object} [props.options.xAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *       @param {Object} [props.options.xAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.xAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.xAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
  *       @param {Object} [props.options.yAxis.title] - Axis title.
  *       @param {boolean|Object} [props.options.yAxis.date] - Whether the y axis label is of date type. Format option used for date typeWhether the y axis label is of date type. If use date type, format option used for date type.
- *       @param {Object} [props.options.yAxis.tick] - You can change the tick interval through the tick.interval option.
- *       @param {Object} [props.options.yAxis.label] - You can change the tick interval through the label.interval option.
- *       @param {Object} [props.options.yAxis.scale] - You can change axis minimum, maximum, step size value with scale option.
+ *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *       @param {number} [props.options.yAxis.width] - Width of yAxis.
  *       @param {number} [props.options.yAxis.height] - Height of yAxis.
  *     @param {Object} [props.options.plot]
@@ -179,7 +179,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
    * Add series.
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
-   *   @param {Array} data.data - Array of data to be added.
+   *   @param {Array<number>} data.data - Array of data to be added.
    * @param {Object} dataInfo - Category information of the series.
    *   @param {Object} dataInfo.category - Y category.
    * @api
@@ -195,7 +195,10 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
 
   /**
    * Convert the chart data to new data.
-   * @param {Object} data - Data to be set
+   * @param {Object} data - Data to be set.
+   *   @param {Array<string>} data.categories.x - X Categories.
+   *   @param {Array<string>} data.categories.y - Y Categories.
+   * @param {Array<Array<number>>} data.series - Series data.
    * @api
    * @example
    * chart.setData({
@@ -238,6 +241,31 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
     this.store.dispatch('updateOptions', { series: { dataLabels: { visible: true } } });
   };
 
+  /**
+   * Convert the chart options to new options.
+   * @param {Object} options - Chart options
+   * @api
+   * @example
+   * chart.setOptions({
+   *   chart: {
+   *     width: 500,
+   *     height: 'auto',
+   *     title: 'Energy Usage',
+   *   },
+   *   xAxis: {
+   *     title: 'Month',
+   *   },
+   *   yAxis: {
+   *     title: 'Energy (kWh)',
+   *   },
+   *   series: {
+   *     selectable: true
+   *   },
+   *   tooltip: {
+   *     formatter: (value) => `${value}kWh`,
+   *   },
+   * });
+   */
   public setOptions = (options: HeatmapChartOptions) => {
     this.dispatchOptionsEvent('initOptions', options);
   };

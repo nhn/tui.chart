@@ -114,7 +114,7 @@ export default class PieChart extends Chart<PieChartOptions> {
    * Add series.
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
-   *   @param {Array} data.data - Array of data to be added.
+   *   @param {Array<Object>} data.data - Array of data to be added.
    * @api
    * @example
    * chart.addSeries({
