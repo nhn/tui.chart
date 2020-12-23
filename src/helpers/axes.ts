@@ -46,7 +46,7 @@ export function getLimitOnAxis(labels: string[]) {
   };
 }
 
-function hasSecondaryYAxis(options: ChartOptionsUsingYAxis) {
+export function hasSecondaryYAxis(options: ChartOptionsUsingYAxis) {
   return Array.isArray(options?.yAxis) && options.yAxis.length === 2;
 }
 

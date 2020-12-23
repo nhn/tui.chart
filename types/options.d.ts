@@ -16,6 +16,9 @@ import {
   TreemapChartThemeOptions,
   RadarChartThemeOptions,
   BoxChartThemeOptions,
+  BoxPlotCharThemeOptions,
+  BulletCharThemeOptions,
+  ColumnLineChartThemeOptions,
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
@@ -327,6 +330,7 @@ export interface BoxPlotChartOptions extends BaseOptions {
   series?: BoxPlotSeriesOptions;
   yAxis?: BaseAxisOptions;
   plot?: PlotOptions;
+  theme?: BoxPlotCharThemeOptions;
 }
 
 interface LineTypeSeriesOptions extends BaseSeriesOptions {
@@ -425,9 +429,7 @@ interface StackInfo {
 
 type StackOptionType = boolean | StackInfo;
 export interface BoxSeriesOptions extends BaseSeriesOptions {
-  barWidth?: number;
   diverging?: boolean;
-  colorByPoint?: boolean;
   stack?: StackOptionType;
   eventDetectType?: BoxTypeEventDetectType;
   dataLabels?: BoxDataLabels;
@@ -570,6 +572,7 @@ export interface BulletChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions;
   series?: BulletSeriesOptions;
   plot?: PlotOptions;
+  theme?: BulletCharThemeOptions;
 }
 
 export type BulletSeriesType = {
@@ -590,8 +593,8 @@ export interface BulletSeriesOptions extends BaseSeriesOptions {
 }
 
 type ColumnLineChartSeriesOptions = {
-  column?: Pick<BoxSeriesOptions, 'barWidth' | 'stack' | 'dataLabels'>;
-  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels'>;
+  column?: Pick<BoxSeriesOptions, 'stack' | 'dataLabels' | 'selectable'>;
+  line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels' | 'selectable'>;
   shift?: boolean;
   dataLabels?: DataLabelOptions;
   eventDetectType?: BoxTypeEventDetectType;
@@ -601,6 +604,7 @@ export interface ColumnLineChartOptions extends BaseOptions {
   series?: ColumnLineChartSeriesOptions;
   plot?: LineTypePlotOptions;
   yAxis?: BothSidesYAxisOptions;
+  theme?: ColumnLineChartThemeOptions;
 }
 
 export type ColumnLineData = {

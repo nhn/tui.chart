@@ -33,6 +33,7 @@ import {
   getNearestResponder,
   makeRectResponderModel,
   makeTooltipCircleMap,
+  RespondersThemeType,
 } from '@src/helpers/responders';
 import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
@@ -318,7 +319,7 @@ export default class LineSeries extends Component {
 
   onMousemoveNearType(responders: CircleResponderModel[]) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: responders,
+      models: this.getResponderSeriesWithTheme(responders, 'hover'),
       name: this.name,
       eventDetectType: this.eventDetectType,
     });
@@ -366,8 +367,8 @@ export default class LineSeries extends Component {
     );
   }
 
-  private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
-    const { radius, color, borderWidth, borderColor } = this.theme.select.dot as DotTheme;
+  private getResponderSeriesWithTheme(models: CircleResponderModel[], type: RespondersThemeType) {
+    const { radius, color, borderWidth, borderColor } = this.theme[type].dot as DotTheme;
 
     return models.map((model) => ({
       ...model,
@@ -389,7 +390,7 @@ export default class LineSeries extends Component {
         );
       }
       this.eventBus.emit('renderSelectedSeries', {
-        models: this.getSelectedSeriesWithTheme(models),
+        models: this.getResponderSeriesWithTheme(models, 'select'),
         name: this.name,
       });
       this.eventBus.emit('needDraw');

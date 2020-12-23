@@ -194,7 +194,7 @@ describe('boxplot series', () => {
           x: 28.75,
           y: 0,
           radius: 4,
-          style: [{ lineWidth: 2 }],
+          style: [{ lineWidth: 2, strokeStyle: 'rgba(170, 170, 170, 1)' }],
           index: 0,
         },
         {
@@ -361,8 +361,7 @@ describe('boxplot series', () => {
         x: 28.75,
         y: 0,
         radius: 4,
-        // eslint-disable-next-line no-undefined
-        style: [{ strokeStyle: undefined, lineWidth: 2 }],
+        style: [{ lineWidth: 2, strokeStyle: 'rgba(170, 170, 170, 1)' }],
         color: 'rgba(255, 255, 255, 1)',
         data: {
           label: 'han',

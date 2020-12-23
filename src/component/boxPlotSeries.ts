@@ -17,7 +17,7 @@ import { getRGBA } from '@src/helpers/color';
 import { LineModel } from '@t/components/axis';
 import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '@t/theme';
-import { isNumber } from '@src/helpers/utils';
+import { isNumber, calculateSizeWithPercentString } from '@src/helpers/utils';
 import { crispPixel } from '@src/helpers/calculator';
 import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
@@ -37,6 +37,10 @@ const MIN_BAR_WIDTH = 5;
 
 function getPadding(tickDistance: number, barWidth: number, seriesLength: number) {
   return (tickDistance - barWidth * seriesLength) / (seriesLength + 1);
+}
+
+function getDefaultColor(defaultColor: string, color?: string) {
+  return color ?? defaultColor;
 }
 
 export default class BoxPlotSeries extends Component {
@@ -180,12 +184,13 @@ export default class BoxPlotSeries extends Component {
       ['lowerWhisker', 'upperWhisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
         model[prop].detectionSize = 3;
       });
+
+      model.color = getRGBA(hoveredModel.color, 1);
     }
 
     return {
       ...hoveredModel,
       ...point,
-      color: getRGBA(hoveredModel.color, 1),
     };
   }
 
@@ -201,8 +206,9 @@ export default class BoxPlotSeries extends Component {
   onMousemove({ responders }) {
     if (this.eventDetectType === 'grouped') {
       const models = this.getResponderModelFromMap(responders);
+
       this.eventBus.emit('renderHoveredSeries', {
-        models,
+        models: this.getRespondersWithTheme(models, 'select'),
         name: this.name,
         eventDetectType: this.eventDetectType,
       });
@@ -226,7 +232,7 @@ export default class BoxPlotSeries extends Component {
     if (this.selectable) {
       let models;
       if (this.eventDetectType === 'grouped') {
-        models = this.getResponderModelFromMap(responders);
+        models = this.getRespondersWithTheme(this.getResponderModelFromMap(responders), 'select');
       } else {
         models = this.getRespondersWithTheme(responders, 'select');
       }
@@ -302,7 +308,7 @@ export default class BoxPlotSeries extends Component {
           x: startX + barWidth / 2,
           y: this.getYPos(value, ratio),
           radius: radius!,
-          style: [{ strokeStyle: borderColor, lineWidth: borderWidth }],
+          style: [{ strokeStyle: borderColor ?? seriesColor, lineWidth: borderWidth }],
           color: useSeriesColor ? seriesColor : dotColor,
           index: dataIndex,
         });
@@ -387,7 +393,9 @@ export default class BoxPlotSeries extends Component {
         seriesLength,
       MIN_BAR_WIDTH
     );
-    const barWidth = isNumber(barThemeWidth) ? barThemeWidth : defaultBarWidth;
+    const barWidth = barThemeWidth
+      ? calculateSizeWithPercentString(tickDistance / seriesLength, barThemeWidth)
+      : defaultBarWidth;
 
     return {
       barWidth: barWidth * barRatio!,
@@ -412,15 +420,19 @@ export default class BoxPlotSeries extends Component {
     >;
 
     return responders.map((m) => {
-      const seriesColor = m.color;
+      const { type: modelType, data } = m;
+      let seriesColor = m.color!;
       let model;
 
-      if (m.type === 'circle') {
+      if (modelType === 'circle') {
+        seriesColor = data!.color!;
         model = {
           ...m,
           radius,
           color: useSeriesColor ? seriesColor : dotColor,
-          style: [{ strokeStyle: borderColor ?? seriesColor, lineWidth: borderWidth }],
+          style: [
+            { strokeStyle: getDefaultColor(seriesColor, borderColor), lineWidth: borderWidth },
+          ],
         };
       } else {
         model = {
@@ -434,27 +446,27 @@ export default class BoxPlotSeries extends Component {
           },
           upperWhisker: {
             ...(m as BoxPlotModel).upperWhisker,
-            strokeStyle: whisker.color ?? seriesColor,
+            strokeStyle: getDefaultColor(seriesColor, whisker.color),
             lineWidth: whisker.lineWidth,
           },
           lowerWhisker: {
             ...(m as BoxPlotModel).lowerWhisker,
-            strokeStyle: whisker.color ?? seriesColor,
+            strokeStyle: getDefaultColor(seriesColor, whisker.color),
             lineWidth: whisker.lineWidth,
           },
           median: {
             ...(m as BoxPlotModel).median,
-            strokeStyle: median.color ?? seriesColor,
+            strokeStyle: getDefaultColor(seriesColor, median.color),
             lineWidth: median.lineWidth,
           },
           maximum: {
             ...(m as BoxPlotModel).maximum,
-            strokeStyle: maximum.color ?? seriesColor,
+            strokeStyle: getDefaultColor(seriesColor, maximum.color),
             lineWidth: maximum.lineWidth,
           },
           minimum: {
             ...(m as BoxPlotModel).minimum,
-            strokeStyle: minimum.color ?? seriesColor,
+            strokeStyle: getDefaultColor(seriesColor, minimum.color),
             lineWidth: minimum.lineWidth,
           },
         };
