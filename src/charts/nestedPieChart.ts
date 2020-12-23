@@ -43,7 +43,7 @@ export interface NestedPieChartProps {
  *         @param {number} [props.options.chart.title.offsetX] - offset value to move title horizontally.
  *         @param {number} [props.options.chart.title.offsetY] - Offset value to move title vertically.
  *         @param {string} [props.options.chart.title.align] - Chart text align. 'left', 'right', 'center' is available.
- *       @param {boolean | Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart.
+ *       @param {boolean|Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart.
  *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
  *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series]
@@ -117,10 +117,10 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
   /**
    * Add series.
    * @param {Object} data - Data to be added.
-   * @param {string} data.name - Series name.
-   * @param {Array} data.data - Array of data to be added.
+   *   @param {string} data.name - Series name.
+   *   @param {Array} data.data - Array of data to be added.
    * @param {Object} dataInfo - Which alias of chart to add.
-   * @param {Object} dataInfo.alias - Chart alias.
+   *   @param {Object} dataInfo.alias - Chart alias.
    * @api
    * @example
    * chart.addSeries(

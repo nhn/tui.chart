@@ -534,8 +534,8 @@ export default abstract class Chart<T extends Options> {
   /**
    * Resize chart size.
    * @param {Object} size Chart size
-   *      @param {number} [size.width] Width
-   *      @param {number} [size.height] Height
+   *   @param {number} [size.width] Width
+   *   @param {number} [size.height] Height
    * @api
    * @example
    * chart.resize({height: 100, width: 200});
@@ -547,8 +547,8 @@ export default abstract class Chart<T extends Options> {
   /**
    * Set tooltip offset.
    * @param {Object} offset - Offset size
-   *      @param {number} [offset.x] Offset value to move title horizontally
-   *      @param {number} [offset.y] Offset value to move title vertically
+   *   @param {number} [offset.x] Offset value to move title horizontally
+   *   @param {number} [offset.y] Offset value to move title vertically
    * @api
    * @example
    * chart.setTooltipOffset({x: 10, y: -20});

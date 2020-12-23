@@ -77,7 +77,7 @@ function hasColumnLineUsingPointEventType(respondersModel: RespondersModel) {
  *         @param {number} [props.options.chart.title.offsetX] - offset value to move title horizontally.
  *         @param {number} [props.options.chart.title.offsetY] - Offset value to move title vertically.
  *         @param {string} [props.options.chart.title.align] - Chart text align. 'left', 'right', 'center' is available.
- *       @param {boolean | Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart.
+ *       @param {boolean|Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart.
  *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
  *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series] - Write common options in the upper depth and separate options to be applied to each chart.
@@ -267,9 +267,9 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   /**
    * Add plot line.
    * @param {Object} data - Plot info.
-   * @param {string|number} data.value - The value where the plot line will be drawn.
-   * @param {string} data.color - Plot line color.
-   * @param {string} [data.id] - Plot id. The value on which the removePlotLine is based.
+   *   @param {string|number} data.value - The value where the plot line will be drawn.
+   *   @param {string} data.color - Plot line color.
+   *   @param {string} [data.id] - Plot id. The value on which the removePlotLine is based.
    * @api
    * @example
    * chart.addPlotLine({
@@ -296,9 +296,9 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
   /**
    * Add plot band.
    * @param {Object} data - plot info
-   * @param {Array<string|number>} data.range - The range to be drawn
-   * @param {string} data.color - Plot band color
-   * @param {string} [data.id] - Plot id. The value on which the removePlotBand is based
+   *   @param {Array<string|number>} data.range - The range to be drawn
+   *   @param {string} data.color - Plot band color
+   *   @param {string} [data.id] - Plot id. The value on which the removePlotBand is based
    * @api
    * @example
    * chart.addPlotBand({
