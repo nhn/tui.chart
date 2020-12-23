@@ -512,8 +512,8 @@ export default class PieSeries extends Component {
     return Object.values(this.activeSeriesMap!).some((elem) => !elem);
   }
 
-  selectSeries = ({ seriesIndex, alias }: SelectSeriesHandlerParams<PieChartOptions>) => {
-    if (!isNumber(seriesIndex) || (!isUndefined(alias) && alias !== this.alias)) {
+  selectSeries = ({ seriesIndex, name }: SelectSeriesHandlerParams<PieChartOptions>) => {
+    if (!isNumber(seriesIndex) || (!isUndefined(name) && name !== this.alias)) {
       return;
     }
 
