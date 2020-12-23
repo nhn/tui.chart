@@ -36,6 +36,7 @@ export interface NestedPieChartProps {
  *     @param {Array<Object>} props.data.series - Series data.
  *       @param {string} props.data.series.name - Series name.
  *       @param {number} props.data.series.data - Series data.
+ *       @param {string} [props.data.series.parentName] - Value specifying parent data when using group nested pie chart.
  *   @param {Object} [props.options] - Options for making NestedPie Chart.
  *     @param {Object} [props.options.chart]
  *       @param {string|Object} [props.options.chart.title] - Chart title text or options.
@@ -119,8 +120,8 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
    *   @param {Array<Object>} data.data - Array of data to be added.
-   * @param {Object} dataInfo - Which alias of chart to add.
-   *   @param {Object} dataInfo.alias - Chart alias.
+   * @param {Object} dataInfo - Which name of chart to add.
+   *   @param {string} dataInfo.name - Chart series name.
    * @api
    * @example
    * chart.addSeries(
@@ -132,7 +133,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    *     ],
    *   },
    *   {
-   *     alias: 'alias1'
+   *     name: 'series name'
    *   });
    */
   public addSeries(data: NestedPieSeriesType, dataInfo?: AddSeriesDataInfo) {
