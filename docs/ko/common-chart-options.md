@@ -1,6 +1,6 @@
 # `chart` 옵션
 
-`chart` 옵션에서는 차트의 제목, 애니메이션의 사용 여부와 재생 시간, 크기 등을 설정할 수 있다.
+`chart` 옵션에서는 차트의 제목과 크기, 애니메이션의 사용 여부와 재생 시간 등을 설정할 수 있다.
 
 ## options
 `chart` 옵션에서 사용할 수 있는 옵션은 다음과 같다.
@@ -24,6 +24,7 @@ type ChartOptions = {
 `title` 옵션은 차트의 제목을 설정할 수 있다. 문자열로 직접 입력받을 수 있으며, `title.text`, `title.offsetX`, `title.offsetY`, `title.align` 옵션을 통해 제목과 위치를 설정해 줄 수 있다.
 
 | 이름 | 타입 | 설명 |
+| --- | --- | --- |
 | text | string | 차트 제목 |
 | offsetX | number | x 오프셋 값 (내부 여백 : `10`) ) |
 | offsetY | number | y 오프셋 값 (내부 여백 : `15`) |

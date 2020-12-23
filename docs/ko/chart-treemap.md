@@ -11,7 +11,7 @@ import { TreemapChart } from '@toast-ui/chart';
 
 const chart = new TreemapChart({el, data, options});
 
-// 혹은 
+// 혹은
 
 import Chart from '@toast-ui/chart';
 
@@ -91,7 +91,7 @@ const data = {
 
 `data`값을 기준으로 각 시리즈의 색상을 넣는 것 대신 색상 값을 별도로 줘 값을 기준으로 전체 차트의 시리즈 색상을 정해줄 수 있다. `useColorValue` 옵션값과 데이터에 `colorValue`값을 추가해주면 적용된다.
 
-### 옵션 
+### 옵션
 
 * default: `true`
 
@@ -243,12 +243,9 @@ type options = {
     useColorValue?: boolean;
     zoomable?: boolean;
     selectable?: boolean;
-
     dataLabels?: {
       useTreemapLeaf?: boolean;
-
       visible?: boolean;
-      anchor?: DataLabelAnchor;
       offsetX?: number;
       offsetY?: number;
       formatter?: Formatter;
@@ -258,12 +255,12 @@ type options = {
 ```
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
-> (링크: 
+> (링크:
 > [`chart` 옵션](./common-chart-options.md),
-> [범례](./common-legend.md), 
+> [범례](./common-legend.md),
 > [툴팁](./common-tooltip.md),
 > [내보내기](./common-exportMenu.md),
-> [`responsive` 옵션](./common-responsive-options.md), 
+> [`responsive` 옵션](./common-responsive-options.md),
 > [데이터 라벨](./common-dataLabels-options.md)
 > )
 
@@ -379,8 +376,8 @@ interface TreemapChartSeriesTheme {
 | borderColor | string | 시리즈의 테두리 색상 |
 | borderWidth | number | 시리즈의 테두리 너비 |
 | select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
-| hover | object | 데이터에 마우스를 올렸을 때 스타일 | 
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
+| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
+| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
 
 
 ### startColor와 endColor

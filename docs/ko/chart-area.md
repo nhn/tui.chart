@@ -11,7 +11,7 @@ import { AreaChart } from '@toast-ui/chart';
 
 const chart = new AreaChart({el, data, options});
 
-// 혹은 
+// 혹은
 
 import Chart from '@toast-ui/chart';
 
@@ -22,7 +22,7 @@ const chart = Chart.AreaChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id는 유일하게 작성해야 한다. 
+`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id는 유일하게 작성해야 한다.
 
 ```js
 const data = {
@@ -150,7 +150,6 @@ type options = {
     }
     dataLabels?: {
       visible?: boolean;
-      anchor?: 'center' | 'start' | 'end' | 'auto' | 'outer';
       offsetX?: number;
       offsetY?: number;
       formatter?: (value) => string;
@@ -160,14 +159,14 @@ type options = {
 ```
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
-> (링크: 
+> (링크:
 > [`chart` 옵션](./common-chart-options.md),
-> [축](./common-axes.md), 
-> [범례](./common-legend.md), 
+> [축](./common-axes.md),
+> [범례](./common-legend.md),
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
-> [플롯](./common-plot.md), 
-> [`responsive` 옵션](./common-responsive-options.md), 
+> [플롯](./common-plot.md),
+> [`responsive` 옵션](./common-responsive-options.md),
 > [실시간 업데이트](./common-liveUpdate-options.md),
 > [데이터 라벨](./common-dataLabels-options.md)
 > )
@@ -227,7 +226,7 @@ const options = {
 
 * default: `false`
 
-시리즈 선을 부드러운 spline 곡선으로 만들 수 있다. 
+시리즈 선을 부드러운 spline 곡선으로 만들 수 있다.
 
 ```js
 const options = {
@@ -250,7 +249,7 @@ const options = {
 | --- | --- |
 | `near` | 데이터 영역의 일정 범위에 마우스가 다가가야 탐지. 일정 영역 내에 여러 데이터가 있을 경우 모두 한꺼번에 탐지됨 |
 | `nearest` | 차트 내 모든 영역에서 이벤트 탐지. 마우스를 기준으로 가장 가까운 시리즈가 탐지 됨  |
-| `grouped` | x축을 기준으로 값이 같은 모든 데이터가 탐지됨 | 
+| `grouped` | x축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
 
 ```js
 const options = {
@@ -347,10 +346,10 @@ interface AreaChartSeriesTheme {
 | dot | object | `showDot: true`일 때 노출되는 점 스타일 지정 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | select.dot | object | 선택된 데이터를 나타내는 점 스타일 지정 |
-| select.areaOpacity | number | 선택된 시리즈의 영역 투명도 | 
+| select.areaOpacity | number | 선택된 시리즈의 영역 투명도 |
 | select.restSeries | object | 선택되지 않은 시리즈의 스타일 |
-| hover | object | 데이터에 마우스를 올렸을 때 스타일 | 
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
+| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
+| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
 
 
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 영역 투명도와 선의 두꼐를 바꿔보자.

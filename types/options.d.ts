@@ -319,7 +319,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 export interface HeatmapChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions & { date?: DateOption };
   theme?: HeatmapChartThemeOptions;
-  series?: BaseSeriesOptions & { shift?: boolean; dataLabels?: DataLabelOptions };
+  series?: BaseSeriesOptions & { shift?: boolean; dataLabels?: Omit<DataLabelOptions, 'anchor'> };
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {
@@ -334,7 +334,7 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
   zoomable?: boolean;
   eventDetectType?: LineTypeEventDetectType;
   shift?: boolean;
-  dataLabels?: DataLabelOptions;
+  dataLabels?: Omit<DataLabelOptions, 'anchor'>;
 }
 
 interface AreaSeriesOptions extends LineTypeSeriesOptions {
@@ -561,7 +561,7 @@ export interface PieDataLabels extends DataLabelOptions {
   pieSeriesName?: DataLabelPieSeriesName;
 }
 
-export interface TreemapDataLabels extends DataLabelOptions {
+export interface TreemapDataLabels extends Omit<DataLabelOptions, 'anchor'> {
   useTreemapLeaf?: boolean;
 }
 

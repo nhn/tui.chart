@@ -11,7 +11,7 @@ import { HeatmapChart } from '@toast-ui/chart';
 
 const chart = new HeatmapChart({el, data, options});
 
-// 혹은 
+// 혹은
 
 import Chart from '@toast-ui/chart';
 
@@ -42,7 +42,7 @@ const data = {
 ![image](https://user-images.githubusercontent.com/35371660/101881018-2b931900-3bd7-11eb-8485-00f8f628625e.png)
 
 
-## 옵션 
+## 옵션
 
 `options`는 객체로 작성한다.
 
@@ -78,7 +78,6 @@ type options = {
 
     dataLabels?: {
       visible?: boolean;
-      anchor?: DataLabelAnchor;
       offsetX?: number;
       offsetY?: number;
       formatter?: Formatter;
@@ -88,13 +87,13 @@ type options = {
 ```
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
-> (링크: 
+> (링크:
 > [`chart` 옵션](./common-chart-options.md),
-> [축](./common-axes.md), 
-> [범례](./common-legend.md), 
+> [축](./common-axes.md),
+> [범례](./common-legend.md),
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
-> [`responsive`](./common-responsive-options.md), 
+> [`responsive`](./common-responsive-options.md),
 > [실시간 업데이트](./common-liveUpdate-options.md),
 > [데이터 라벨](./common-dataLabels-options.md)
 > )
@@ -174,8 +173,8 @@ interface HeatmapChartSeriesTheme {
 | borderColor | string | 시리즈의 테두리 색상 |
 | borderWidth | number | 시리즈의 테두리 너비 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
-| hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
+| hover | object | 데이터에 마우스를 올렸을 떄 스타일 |
+| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
 
 ### startColor와 endColor
 

@@ -1,11 +1,11 @@
 # 플롯
 
-플롯은 실제 차트 시리즈가 렌더링되는 영역이다.
+플롯은 실제 차트 시리즈가 렌더링 되는 영역이다.
 
 ![image](https://user-images.githubusercontent.com/43128697/102863052-5dc53600-4475-11eb-8524-9446529179dd.png)
 
 ## options
-플롯을 변경하기 위한 옵션은 다음과 같다. 기본적으로 모든 차트에서 사용하는 `width`, `height` 옵션을 제공하다. 그 외 `showLine`, `lines`, `bands` 옵션은 차트 타입에 따라 지원 여부가 다르다.
+플롯을 변경하기 위한 옵션은 다음과 같다. `width`, `height` 옵션은 모든 차트에서 사용하며 플롯 영역의 크기를 변경할 수 있다. 그 외 `showLine`, `lines`, `bands` 옵션은 차트 타입에 따라 지원 여부가 다르다.
 
 | 옵션명 | 차트명 |
 | --- | --- |
@@ -34,11 +34,11 @@ type PlotOption = {
 };
 ```
 
- > 이 가이드에서는 `width`, `height`를 제외한 옵션을 설명하며 해당 옵션은 [레이아웃 설정](./common-layout-options.md] 가이드를 참고하길 바란다.
+ > 이 가이드에서는 `width`, `height`를 제외한 옵션을 설명하며 해당 옵션은 [레이아웃 설정](./common-layout-options.md) 가이드를 참고하길 바란다.
 
 ### showLine
 
-플롯 선의 표시 여부를 설정한다.
+플롯 라인의 표시 여부를 설정한다.
 
 * 기본값: `true`
 
@@ -58,16 +58,16 @@ const options = {
 
 ### lines
 
-`lines` 옵션을 사용하면 플롯 영역에 선을 추가할 수 있다.
+`lines` 옵션을 사용하면 플롯 영역에 새로운 라인을 추가할 수 있다.
 
 * 사용 가능 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
 | value | number \| string | x축에 대응하는 값 |
-| color | string | 선 색생 |
-| opacity | number | 선 투명도 |
-| id | string | 선 id, `removePlotLine API`를 사용할 때 id값을 인자로 넘겨주면 해당 선이 삭제됨 |
+| color | string | 라인 색상 |
+| opacity | number | 라인 투명도 |
+| id | string | 라인 id, `removePlotLine API`를 사용할 때 id 값을 인자로 넘겨주면 해당 라인이 삭제됨 |
 
 ```js
 const options = {
@@ -99,8 +99,8 @@ const options = {
 | range | [number, number] \| [string, string] \| [number, number][] \| [string, string][] | x축에 대응하는 값의 범위, 시작과 끝에 해당하는 값을 배열로 입력함 |
 | color | string | 박스 색상 |
 | opacity | number | 박스 색상의 투명도 |
-| mergeOverlappingRanges | boolean | `range`에서 설정한 범위가 겹쳐지는 부분이 있을 때, 박스를 겹쳐서 표시할 지 여부 |
-| id | string | 범위 박스 id, `removePlotBand API`를 사용할 때 id값을 인자로 넘겨주면 해당 박스가 삭제됨 |
+| mergeOverlappingRanges | boolean | `range`에서 설정한 범위가 겹쳐지는 부분이 있을 때, 박스를 겹쳐서 표시할 지 여부 (기본값: `false`) |
+| id | string | 범위 박스 id, `removePlotBand API`를 사용할 때 id 값을 인자로 넘겨주면 해당 박스가 삭제됨 |
 
 ```js
 const options = {
@@ -126,13 +126,32 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102870143-f496f000-447f-11eb-8fd6-94e60a136e76.png)
 
-`mergeOverlappingRanges`옵션을 `false`로 설정하면 겹쳐지는 부분을 매끄럽게 표현할 수 있다.
+`mergeOverlappingRanges` 옵션을 `true`로 설정하면 겹쳐지는 부분을 매끄럽게 표현할 수 있다.
+
+```js
+const options = {
+  plot: {
+    bands: [
+      {
+        range: [
+          ['08/22/2020 10:35:00', '08/22/2020 10:45:00'],
+          ['08/22/2020 10:40:00', '08/22/2020 10:55:00'],
+        ],
+        color: '#00bcd4',
+        opacity: 0.2,
+        mergeOverlappingRanges: false
+      },
+      ...
+    ]
+  }
+};
+```
 
 ![image](https://user-images.githubusercontent.com/43128697/102870505-72f39200-4480-11eb-8b24-4ba2a7242556.png)
 
 ## theme
 
-플롯 영역의 선 스타일과 배경색을 변경할 수 있다.
+플롯 영역의 라인 스타일과 배경색을 변경할 수 있다.
 
 ```ts
 type PlotTheme = {
@@ -155,14 +174,14 @@ type PlotTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| lineColor | string | 선 색상 |
-| lineWidth | number | 선 두께 |
-| dahsSegments | number[] | 선 dashSegment 값 |
-| vertical | object | 세로형 선 스타일 설정 |
-| horizontal | object | 가로형 선 스타일 설정 |
+| lineColor | string | 라인 색상 |
+| lineWidth | number | 라인 두께 |
+| dahsSegments | number[] | 라인 dashSegment 값 |
+| vertical | object | 세로형 라인 스타일 설정 |
+| horizontal | object | 가로형 라인 스타일 설정 |
 | backgroundColor | string | 플롯 영역 배경색 |
 
-다음은 플롯 테마를 설정하여 선과 배경색을 변경한 예시이다.
+다음은 플롯 테마를 설정하여 라인과 배경색을 변경한 예시이다.
 
 ```js
 const options = {
