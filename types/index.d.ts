@@ -72,7 +72,7 @@ import { CustomEventType, EventListener } from '@src/eventEmitter';
 import { BoxPlotChartProps } from '@src/charts/boxPlotChart';
 import { AddSeriesDataInfo, SelectSeriesInfo } from '@src/charts/chart';
 
-declare namespace tui {
+declare namespace toastui {
   export class Chart {
     public static lineChart(props: LineChartProps): LineChart;
 
@@ -523,4 +523,4 @@ export {
   TreemapSeriesData,
 };
 
-export default tui.Chart;
+export default toastui.Chart;

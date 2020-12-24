@@ -100,7 +100,6 @@ module.exports = (env, { mode, minify }) => {
       new HtmlWebpackPlugin({
         title: 'Development',
         showErrors: true,
-        template: 'index.html',
       }),
     ],
     devServer: {
@@ -124,17 +123,6 @@ module.exports = (env, { mode, minify }) => {
         },
       ],
     },
-    devtool: 'cheap-module-eval-source-map',
-    optimization: {
-      splitChunks: {
-        cacheGroups: {
-          commons: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-        },
-      },
-    },
+    devtool: 'eval-source-map',
   });
 };
