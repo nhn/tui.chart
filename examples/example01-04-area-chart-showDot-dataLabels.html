@@ -19,7 +19,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
-    <title>1.1 [Area Chart] basic</title>
+    <title>1.4 [Area Chart] showDot/dataLabels Options</title>
   </head>
   <body>
     <div class="description">
@@ -91,6 +91,7 @@
         chart: { title: 'Average Temperature', width: 900, height: 400 },
         xAxis: { pointOnColumn: false, title: { text: 'Month' } },
         yAxis: { title: 'Temperature (Celsius)' },
+        series: { showDot: true, dataLabels: { visible: true, offsetY: 10 } },
       };
 
       const chart = toastui.Chart.areaChart({ el, data, options });

@@ -19,7 +19,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
-    <title>1.1 [Area Chart] basic</title>
+    <title>1.6 [Area Chart] Range Chart</title>
   </head>
   <body>
     <div class="description">
@@ -75,22 +75,45 @@
         series: [
           {
             name: 'Seoul',
-            data: [20, 40, 25, 50, 15, 45, 33, 34, 20, 30, 22, 13],
+            data: [
+              [-8.3, 0.3],
+              [-5.8, 3.1],
+              [-0.6, 9.1],
+              [5.8, 16.9],
+              [11.5, 22.6],
+              [16.6, 26.6],
+              [21.2, 28.8],
+              [21.8, 30.0],
+              [15.8, 25.6],
+              [8.3, 19.6],
+              [1.4, 11.1],
+              [-5.2, 3.2],
+            ],
           },
           {
-            name: 'Sydney',
-            data: [5, 30, 21, 18, 59, 50, 28, 33, 7, 20, 10, 30],
-          },
-          {
-            name: 'Moskva',
-            data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5],
+            name: 'Busan',
+            data: [
+              [0, 10],
+              [3.5, 13.1],
+              [5.6, 13.1],
+              [10.8, 16.9],
+              [11.5, 18.6],
+              [13.6, 20.6],
+              [15.2, 20.8],
+              [21.8, 26.0],
+              [17.8, 23.6],
+              [11.3, 16.6],
+              [4.4, 11.1],
+              [3.2, 11.2],
+            ],
           },
         ],
       };
       const options = {
-        chart: { title: 'Average Temperature', width: 900, height: 400 },
-        xAxis: { pointOnColumn: false, title: { text: 'Month' } },
-        yAxis: { title: 'Temperature (Celsius)' },
+        chart: { title: 'Temperature Range', width: 900, height: 400 },
+        xAxis: { pointOnColumn: false, title: { text: 'Temperature (Celsius)' } },
+        yAxis: { title: 'Month' },
+        series: { eventDetectType: 'grouped' },
       };
 
       const chart = toastui.Chart.areaChart({ el, data, options });

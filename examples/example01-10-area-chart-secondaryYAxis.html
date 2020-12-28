@@ -19,7 +19,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
-    <title>1.1 [Area Chart] basic</title>
+    <title>1.10 [Area Chart] Secondary Y Axis</title>
   </head>
   <body>
     <div class="description">
@@ -90,7 +90,18 @@
       const options = {
         chart: { title: 'Average Temperature', width: 900, height: 400 },
         xAxis: { pointOnColumn: false, title: { text: 'Month' } },
-        yAxis: { title: 'Temperature (Celsius)' },
+        yAxis: [
+          {
+            title: 'Temperature (Celsius)',
+          },
+          {
+            title: 'Percent (%)',
+            scale: {
+              min: 0,
+              max: 100,
+            },
+          },
+        ],
       };
 
       const chart = toastui.Chart.areaChart({ el, data, options });

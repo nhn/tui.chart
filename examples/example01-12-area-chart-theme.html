@@ -19,7 +19,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
-    <title>1.1 [Area Chart] basic</title>
+    <title>1.12 [Area Chart] Theme</title>
   </head>
   <body>
     <div class="description">
@@ -87,10 +87,60 @@
           },
         ],
       };
+
+      const theme = {
+        series: {
+          colors: [
+            '#83b14e',
+            '#458a3f',
+            '#295ba0',
+            '#2a4175',
+            '#289399',
+            '#289399',
+            '#617178',
+            '#8a9a9a',
+            '#516f7d',
+            '#dddddd',
+          ],
+          dashSegments: [5, 10],
+          lineWidth: 1,
+          select: {
+            dot: {
+              color: '#ff416d',
+              radius: 6,
+              borderColor: '#00b5a1',
+              borderWidth: 2,
+            },
+            restSeries: {
+              areaOpacity: 0.01,
+            },
+            areaOpacity: 0.8,
+          },
+          hover: {
+            dot: {
+              color: '#00ffff',
+              radius: 6,
+              borderColor: '#0859c6',
+              borderWidth: 2,
+            },
+          },
+          dot: {
+            radius: 6,
+            borderColor: '#ffff00',
+            borderWidth: 2,
+          },
+          areaOpacity: 0.4,
+        },
+      };
+
       const options = {
         chart: { title: 'Average Temperature', width: 900, height: 400 },
         xAxis: { pointOnColumn: false, title: { text: 'Month' } },
-        yAxis: { title: 'Temperature (Celsius)' },
+        yAxis: {
+          title: 'Temperature (Celsius)',
+        },
+        series: { selectable: true, showDot: true },
+        theme,
       };
 
       const chart = toastui.Chart.areaChart({ el, data, options });

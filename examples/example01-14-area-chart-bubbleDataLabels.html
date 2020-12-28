@@ -19,7 +19,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
-    <title>1.1 [Area Chart] basic</title>
+    <title>1.14 [Area Chart] Bubble Data labelss</title>
   </head>
   <body>
     <div class="description">
@@ -87,10 +87,35 @@
           },
         ],
       };
+
+      const theme = {
+        series: {
+          dataLabels: {
+            fontFamily: 'monaco',
+            fontSize: 10,
+            fontWeight: 300,
+            useSeriesColor: true,
+            textBubble: {
+              visible: true,
+              arrow: {
+                visible: true,
+                width: 5,
+                height: 5,
+                direction: 'bottom',
+              },
+            },
+          },
+        },
+      };
+
       const options = {
         chart: { title: 'Average Temperature', width: 900, height: 400 },
         xAxis: { pointOnColumn: false, title: { text: 'Month' } },
-        yAxis: { title: 'Temperature (Celsius)' },
+        yAxis: {
+          title: 'Temperature (Celsius)',
+        },
+        series: { dataLabels: { visible: true, offsetY: -10 } },
+        theme,
       };
 
       const chart = toastui.Chart.areaChart({ el, data, options });
