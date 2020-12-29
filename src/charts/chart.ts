@@ -502,8 +502,8 @@ export default abstract class Chart<T extends Options> {
    * @param {Object} seriesInfo - Information of the series to be selected
    *      @param {number} [seriesInfo.seriesIndex] - Index of series
    *      @param {number} [seriesInfo.index] - Index of data within series
-   *      @param {string} [seriesInfo.alias] - specify alias for NestedPie Chart
-   *      @param {string} [seriesInfo.chartType] - specify which chart to select when using LineArea, LineScatter, and ColumnLine charts.specifies which chart to select when using LineArea, LineScatter, and ColumnLine charts.
+   *      @param {string} [seriesInfo.name] - Specify name for NestedPie Chart
+   *      @param {string} [seriesInfo.chartType] - Specify which chart to select when using LineArea, LineScatter, and ColumnLine charts.specifies which chart to select when using LineArea, LineScatter, and ColumnLine charts.
    * @api
    * @example
    * chart.selectSeries({index: 1, seriesIndex: 2});

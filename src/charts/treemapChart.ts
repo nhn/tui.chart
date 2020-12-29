@@ -45,12 +45,12 @@ export interface TreemapChartProps {
  *     @param {Object} [props.options.chart]
  *       @param {string|Object} [props.options.chart.title] - Chart title text or options.
  *         @param {string} [props.options.chart.title.text] - Chart title text.
- *         @param {number} [props.options.chart.title.offsetX] - offset value to move title horizontally.
+ *         @param {number} [props.options.chart.title.offsetX] - Offset value to move title horizontally.
  *         @param {number} [props.options.chart.title.offsetY] - Offset value to move title vertically.
  *         @param {string} [props.options.chart.title.align] - Chart text align. 'left', 'right', 'center' is available.
  *       @param {boolean|Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart.
- *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
- *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
+ *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the width of the parent container is followed.
+ *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series]
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *       @param {boolean} [props.options.series.useColorValue] - Whether to use color value or not.
@@ -130,7 +130,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    *   label: 'Documents',
    *   children: [
    *     {label: 'A', data: 20},
-   *     {label: 'B', data: 40}
+   *     {label: 'B', data: 40},
    *   ],
    * });
    */
@@ -149,12 +149,12 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    *       label: 'Documents',
    *       children: [
    *         {label: 'A', data: 20},
-   *         {label: 'B', data: 40}
+   *         {label: 'B', data: 40},
    *       ],
    *     },
    *     {
    *       label: 'Documents',
-   *       data: 30
+   *       data: 30,
    *     }
    *   ]
    * );
@@ -195,7 +195,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    *     title: 'Energy Usage',
    *   },
    *   series: {
-   *     selectable: true
+   *     selectable: true,
    *   },
    *   tooltip: {
    *     formatter: (value) => `${value}kWh`,

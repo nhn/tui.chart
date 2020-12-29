@@ -56,12 +56,12 @@ export interface LineScatterChartProps {
  *     @param {Object} [props.options.chart]
  *       @param {string|Object} [props.options.chart.title] - Chart title text or options.
  *         @param {string} [props.options.chart.title.text] - Chart title text.
- *         @param {number} [props.options.chart.title.offsetX] - offset value to move title horizontally.
+ *         @param {number} [props.options.chart.title.offsetX] - Offset value to move title horizontally.
  *         @param {number} [props.options.chart.title.offsetY] - Offset value to move title vertically.
  *         @param {string} [props.options.chart.title.align] - Chart text align. 'left', 'right', 'center' is available.
  *       @param {boolean|Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart.
- *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
- *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
+ *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the width of the parent container is followed.
+ *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series] - Write common options in the upper depth and separate options to be applied to each chart.
  *       @param {Object} [props.options.series.line] - Options to be applied to the line chart. 'spline', 'showDot' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Line Chart guide} on github.
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
@@ -70,7 +70,7 @@ export interface LineScatterChartProps {
  *       @param {Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.pointOnColumn=false] - Whether to move the start of the chart to the center of the column.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
- *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date typeWhether the x axis label is of date type. If use date type, format option used for date type.
+ *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
  *       @param {Object} [props.options.xAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.xAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.xAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -206,13 +206,13 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    *     line: [
    *       {
    *         name: 'A',
-   *         data: [{x: 10, y: 20}, {x: 30, y: 40}]
+   *         data: [{x: 10, y: 20}, {x: 30, y: 40}],
    *       }
    *     ],
    *     scatter: [
    *       {
    *         name: 'B',
-   *         data: [{x: 30, y: 20}, {x: 40, y: 40}]
+   *         data: [{x: 30, y: 20}, {x: 40, y: 40}],
    *       }
    *     ]
    *   }
@@ -242,9 +242,9 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    *   },
    *   series: {
    *     line: {
-   *       showDot: true
+   *       showDot: true,
    *     },
-   *     selectable: true
+   *     selectable: true,
    *   },
    *   tooltip: {
    *     formatter: (value) => `${value}kWh`,
@@ -267,7 +267,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    *   },
    *   series: {
    *     line: {
-   *       showDot: true
+   *       showDot: true,
    *     },
    *   },
    * });
@@ -281,7 +281,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed
    *      @param {number} seriesInfo.seriesIndex - Index of series
    *      @param {number} seriesInfo.index - Index of data within series
-   *      @param {string} seriesInfo.chartType - specify which chart to select.
+   *      @param {string} seriesInfo.chartType - Specify which chart to select.
    * @api
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2, chartType: 'scatter'});

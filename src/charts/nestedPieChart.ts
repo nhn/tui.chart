@@ -41,16 +41,16 @@ export interface NestedPieChartProps {
  *     @param {Object} [props.options.chart]
  *       @param {string|Object} [props.options.chart.title] - Chart title text or options.
  *         @param {string} [props.options.chart.title.text] - Chart title text.
- *         @param {number} [props.options.chart.title.offsetX] - offset value to move title horizontally.
+ *         @param {number} [props.options.chart.title.offsetX] - Offset value to move title horizontally.
  *         @param {number} [props.options.chart.title.offsetY] - Offset value to move title vertically.
  *         @param {string} [props.options.chart.title.align] - Chart text align. 'left', 'right', 'center' is available.
  *       @param {boolean|Object} [props.options.chart.animation] - Whether to use animation and duration when rendering the initial chart.
- *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the width of the parent container is followed.
- *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed.'auto' or if not created, the height of the parent container is followed.
+ *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the width of the parent container is followed.
+ *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series]
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
- *       @param {Object} [props.options.series.aliasName] - Chart options are specified based on the alias name. 'radiusRange', 'angleRange', 'clockwise', 'dataLabels' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Pie Chart guide} on github.
+ *       @param {Object} [props.options.series.aliasName] - Chart options are specified based on the alias name. 'radiusRange', 'angleRange', 'clockwise', 'dataLabels' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|NestedPie Chart guide} on github.
  *     @param {Object} [props.options.legend]
  *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
@@ -220,7 +220,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    *   },
    *   series: {
    *     alias2: {
-   *       radiusRange: [20%, 50%]
+   *       radiusRange: [20%, 50%],
    *     },
    *   },
    *   tooltip: {
@@ -244,7 +244,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    *   },
    *   series: {
    *     alias1: {
-   *       showDot: true
+   *       showDot: true,
    *     },
    *   },
    * });
