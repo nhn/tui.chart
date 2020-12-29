@@ -386,7 +386,6 @@ type LineAreaChartSeriesOptions = {
   area?: Pick<AreaSeriesOptions, 'stack' | 'spline' | 'showDot' | 'dataLabels'> & BaseSeriesOptions;
   zoomable?: boolean;
   showDot?: boolean;
-  lineWidth?: number;
   spline?: boolean;
   shift?: boolean;
   dataLabels?: DataLabelOptions;
@@ -446,6 +445,7 @@ export interface ColumnChartOptions extends BaseOptions {
   series?: BoxSeriesOptions & { shift?: boolean };
   yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
+  theme?: BoxChartThemeOptions;
 }
 
 export type BoxPlotSeriesType = {

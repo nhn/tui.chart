@@ -108,7 +108,7 @@ chart.addSeries([-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6,
 });
 ```
 
-두 번째로, `chartType`의 경우 `ColumnLine`, `LineArea`, `LineScatter`, `NestedPie`에서 사용되며 각 차트의 타입 또는 `NestedPie`의 경우 `alias`의 이름을 추가해줘야 해당하는 차트에 적절하게 시리즈가 추가될 수 있다. `LineArea` 차트에 `addSeries()`를 하는 예시를 작성해보면 다음과 같다.
+두 번째로, `chartType`의 경우 `ColumnLine`, `LineArea`, `LineScatter`, `NestedPie`에서 사용되며 각 차트의 타입 또는 `NestedPie`의 경우 시리즈의 `name`을 추가해줘야 해당하는 차트에 적절하게 시리즈가 추가될 수 있다. `LineArea` 차트에 `addSeries()`를 하는 예시를 작성해보면 다음과 같다.
 
 ```js
 const chart = new LineAreaChart({ el, data, options });
@@ -136,7 +136,7 @@ public setData(data): void;
 const lineChart = new LineChart({ el, data, options });
 
 lineChart.setData({
-  categories: ['1','2','3'],
+  categories: ['1', '2', '3'],
   series: [
     {
       name: 'new series',
