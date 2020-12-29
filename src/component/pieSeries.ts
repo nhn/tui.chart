@@ -531,8 +531,8 @@ export default class PieSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  showTooltip = ({ seriesIndex, alias }: SelectSeriesHandlerParams<PieChartOptions>) => {
-    if (!isNumber(seriesIndex) || (!isUndefined(alias) && alias !== this.alias)) {
+  showTooltip = ({ seriesIndex, name }: SelectSeriesHandlerParams<PieChartOptions>) => {
+    if (!isNumber(seriesIndex) || (!isUndefined(name) && name !== this.alias)) {
       return;
     }
 
