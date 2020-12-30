@@ -182,13 +182,11 @@ export function hexToRGB(hexStr: string): number[] | boolean {
     return false;
   }
 
-  hexStr = hexStr.substring(1);
-
-  const r = parseInt(hexStr.substr(0, 2), 16);
-  const g = parseInt(hexStr.substr(2, 2), 16);
-  const b = parseInt(hexStr.substr(4, 2), 16);
-
-  return [r, g, b];
+  return hexStr
+    .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => '#' + r + r + g + g + b + b)
+    .substring(1)
+    .match(/.{2}/g)!
+    .map((x) => parseInt(x, 16));
 }
 
 export function rgbToHEX(r: number, g: number, b: number): string | boolean {
@@ -204,10 +202,6 @@ export function rgbToHEX(r: number, g: number, b: number): string | boolean {
   }
 
   return false;
-}
-
-export function colorNameToHex(colorName: string): string {
-  return colorMap[colorName.toLowerCase()] || colorName;
 }
 
 export function getRGBA(str: string, opacity: number) {
