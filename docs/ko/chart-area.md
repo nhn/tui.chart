@@ -353,7 +353,7 @@ interface AreaChartSeriesTheme {
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
 
 
-테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 영역 투명도와 선의 두꼐를 바꿔보자.
+테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 영역 투명도와 선의 두께를 바꿔보자.
 
 ```js
 const options = {

@@ -23,7 +23,7 @@ Heatmap 차트와 colorValue 를 사용하는 Treemap 차트의 경우 기본 Le
 ![image](https://user-images.githubusercontent.com/35371660/102166614-d48b8d80-3ecf-11eb-954c-d994c5370759.png)
 ### Circle Legend
 
-Bubble 차트의 경우 시리즈의 원 크기에 대한 지표가 되는 Circle Legend가 존재한다. 가장 바깥쪽에 위치한 원의 값은 제일 큰 반지름을 갖는 데이터 중 가장 큰 값을 의미한다. 또한, 제일 큰 원을 기준으로 `0.5`, `0.25` 길이의 반지름을 갖는 원의 지표 또한 함 나타난다.
+Bubble 차트의 경우 시리즈의 원 크기에 대한 지표가 되는 Circle Legend가 존재한다. 가장 바깥쪽에 위치한 원의 값은 제일 큰 반지름을 갖는 데이터 중 가장 큰 값을 의미한다. 또한, 제일 큰 원을 기준으로 `0.5`, `0.25` 길이의 반지름을 갖는 원의 지표 또한 함께 나타난다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102166826-62677880-3ed0-11eb-9a47-6273c32f8a1b.png)
 

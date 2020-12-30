@@ -325,7 +325,7 @@ interface LineChartSeriesTheme {
 | hover | object | 데이터에 마우스를 올렸을 때 스타일 |
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
 
-테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 라인 시리즈의 색상과 두꼐를 바꾸고 싶다면  다음처럼 작성하면 된다.
+테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 라인 시리즈의 색상과 두께를 바꾸고 싶다면  다음처럼 작성하면 된다.
 
 ```js
 const options = {
