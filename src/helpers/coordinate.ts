@@ -54,8 +54,8 @@ function isLineCoordinateSeries(series: Series) {
   return firstData && (Array.isArray(firstData) || isObject(firstData));
 }
 
-export function isCoordinateSeries(series: Series) {
-  return isLineCoordinateSeries(series) || series.scatter || series.bubble;
+export function isCoordinateSeries(series: Series): boolean {
+  return isLineCoordinateSeries(series) || !!series.scatter || !!series.bubble;
 }
 
 export function isModelExistingInRect(rect: Rect, point: Point) {

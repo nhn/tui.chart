@@ -42,12 +42,25 @@ function getLabelScaleData(
     rawCategoriesSize: rawCategories.length,
   };
 
-  let result = dateTypeLabel
-    ? calculateDatetimeScale(labelOptions)
-    : calculateCoordinateScale(labelOptions);
+  let result;
 
-  if (series.line) {
-    result = calculateScaleForCoordinateLineType(result, options as LineChartOptions, categories);
+  if (dataRange[labelAxisName]) {
+    result = dateTypeLabel
+      ? calculateDatetimeScale(labelOptions)
+      : calculateCoordinateScale(labelOptions);
+
+    if (series.line) {
+      result = calculateScaleForCoordinateLineType(result, options as LineChartOptions, categories);
+    }
+  } else {
+    result = {
+      // limit: {
+      //   min: 0,
+      //   max: 100,
+      // },
+      stepCount: 10,
+      stepSize: 10,
+    };
   }
 
   return result;
@@ -113,14 +126,15 @@ const scale: StoreModule = {
         scaleData[axisName] = getValueScaleData(state, labelAxisOnYAxis, scaleOptions, axisName);
       });
 
-      if (isCoordinateSeries(series)) {
-        scaleData[labelAxisName] = getLabelScaleData(
-          state,
-          labelAxisOnYAxis,
-          scaleOptions,
-          labelAxisName
-        );
-      }
+      // if (isCoordinateSeries(series)) {
+      scaleData[labelAxisName] = getLabelScaleData(
+        state,
+        labelAxisOnYAxis,
+        scaleOptions,
+        labelAxisName
+      );
+      // }
+
 
       extend(state.scale, scaleData);
     },

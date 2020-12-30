@@ -207,6 +207,18 @@ export const scale = () => {
   return el;
 };
 
+export const xAxisStepSizeAuto = () => {
+  const { el } = createChart(randomData(50), {
+    xAxis: {
+      scale: {
+        stepSize: 'auto',
+      },
+    },
+  });
+
+  return el;
+};
+
 export const dataLabels = () => {
   const { el } = createChart(temperatureData, {
     series: {

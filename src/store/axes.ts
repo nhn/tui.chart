@@ -22,7 +22,6 @@ import {
   isPointOnColumn,
   getYAxisOption,
 } from '@src/helpers/axes';
-import { extend } from '@src/store/store';
 import {
   makeLabelsFromLimit,
   getTextHeight,
@@ -45,11 +44,13 @@ import {
   isNumber,
   isString,
   isUndefined,
+  last,
   pickProperty,
 } from '@src/helpers/utils';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { isZooming } from '@src/helpers/range';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
+import { isCoordinateSeries } from '@src/helpers/coordinate';
 
 interface StateProp {
   scale: ScaleData;
@@ -110,6 +111,16 @@ export function makeFormattedCategory(categories: string[], date?: DateOption) {
   return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
 }
 
+function getCategoryWithAppliedStepSize(categories: string[], stepSize: number) {
+  const newCate = categories.filter((_, idx) => !(idx % (stepSize - 1)));
+
+  if (categories.length / stepSize) {
+    newCate.push(last(categories));
+  }
+
+  return newCate;
+}
+
 export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const {
     axisSize,
@@ -122,10 +133,24 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     initialAxisData,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
-  const labels =
-    !isZooming(rawCategories, zoomRange) && scale
-      ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
-      : makeFormattedCategory(categories, options?.xAxis?.date);
+  // const labels =
+  //   !isZooming(rawCategories, zoomRange) && isCoordinateSeries(series)
+  //     ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
+  //     : makeFormattedCategory(categories, options?.xAxis?.date);
+
+  let labels;
+
+  if (isCoordinateSeries(series)) {
+    labels = makeLabelsFromLimit(scale.limit, scale.stepSize, options);
+  } else if (isZooming(rawCategories, zoomRange)) {
+    labels = makeFormattedCategory(categories, options?.xAxis?.date);
+  } else {
+    // labels = makeFormattedCategory(
+    //   getCategoryWithAppliedStepSize(categories, scale.stepSize),
+    //   options?.xAxis?.date
+    // );
+    labels = makeFormattedCategory(categories, options?.xAxis?.date);
+  }
 
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
@@ -311,9 +336,8 @@ const axes: StoreModule = {
       const categories = (state.categories as string[]) ?? [];
       const rawCategories = (state.rawCategories as string[]) ?? [];
 
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
-      const { valueAxisName, labelAxisName } = getAxisName(labelAxisOnYAxis);
-      const { valueSizeKey, labelSizeKey } = getSizeKey(labelAxisOnYAxis);
+      const { valueAxisName, labelAxisName } = getAxisName(labelOnYAxis);
+      const { valueSizeKey, labelSizeKey } = getSizeKey(labelOnYAxis);
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;
