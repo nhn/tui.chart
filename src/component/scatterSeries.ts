@@ -142,12 +142,12 @@ export default class ScatterSeries extends Component {
     });
   }
 
-  private getClosestModel(closestResponder: CircleResponderModel[]): ScatterSeriesModel[] {
+  private getClosestModel(closestResponder: CircleResponderModel[]) {
     if (!closestResponder.length) {
       return [];
     }
 
-    const model = (this.models.series as ScatterSeriesModel[]).find(
+    const model = this.responders.find(
       ({ index, seriesIndex }) =>
         isNumber(index) &&
         isNumber(seriesIndex) &&
@@ -158,8 +158,11 @@ export default class ScatterSeries extends Component {
     return model ? [model] : [];
   }
 
-  private getResponderAppliedTheme(closestModel: ScatterSeriesModel[], type: RespondersThemeType) {
-    return closestModel.map((model) => deepMergedCopy(model, this.theme[type]));
+  private getResponderAppliedTheme(
+    closestModel: CircleResponderModel[],
+    type: RespondersThemeType
+  ) {
+    return closestModel.map((m) => deepMergedCopy(m, { ...this.theme[type], color: '' }));
   }
 
   onMousemove({ responders, mousePosition }) {
