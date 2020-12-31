@@ -284,17 +284,15 @@ export interface BaseOptions {
   usageStatistics?: boolean;
 }
 
-export type ResponsiveObjectType = {
-  animation?: AnimationOptions;
-  rules?: ResponsiveRule[];
-};
-
 type ResponsiveRule = {
   condition: ({ width, height }: Size) => boolean;
   options: Options;
 };
 
-type ResponsiveOptions = ResponsiveObjectType;
+type ResponsiveOptions = {
+  animation?: AnimationOptions;
+  rules?: ResponsiveRule[];
+};
 
 interface BaseLegendOptions {
   align?: Align;

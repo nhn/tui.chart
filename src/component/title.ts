@@ -53,12 +53,14 @@ export default class Title extends Component {
   }
 
   render({ options, layout, theme }: ChartState<Options>) {
-    if (!options.chart?.title) {
+    this.isShow = !!options.chart?.title;
+
+    if (!this.isShow) {
       return;
     }
 
     this.theme = theme.title as Required<FontTheme>;
     this.rect = layout.title;
-    this.models = this.renderTitle(options.chart.title);
+    this.models = this.renderTitle(options.chart!.title!);
   }
 }

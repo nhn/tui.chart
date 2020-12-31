@@ -22,7 +22,6 @@ import {
   isPointOnColumn,
   getYAxisOption,
 } from '@src/helpers/axes';
-import { extend } from '@src/store/store';
 import {
   makeLabelsFromLimit,
   getTextHeight,
