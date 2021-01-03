@@ -431,7 +431,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/103476263-8810df00-4df7-11eb-9206-db8480452f66.png)
+![image](https://user-images.githubusercontent.com/43128697/103478803-830a5a80-4e0c-11eb-9897-915d2aff02d1.png)
 
 ### theme
 
@@ -597,7 +597,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/103476420-b93ddf00-4df8-11eb-81dd-641bc348beb4.png)
+![image](https://user-images.githubusercontent.com/43128697/103478831-ba790700-4e0c-11eb-82bb-14d593d60543.png)
 
 ### theme
 
