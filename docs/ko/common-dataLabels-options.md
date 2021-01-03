@@ -15,7 +15,7 @@ type DataLabelOptions = {
   visible?: boolean;
   offsetX?: number;
   offsetY?: number;
-  formatter?: (value: SeriesDataType) => string;;
+  formatter?: (value: SeriesDataType) => string;
 };
 ```
 
@@ -123,7 +123,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
     }
   }
 };
@@ -254,7 +254,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
     }
   }
 };
@@ -358,6 +358,8 @@ const options = {
         useSeriesColor: true,
         textBubble: {
           visible: true,
+          paddingY: 3,
+          paddingX: 6,
           arrow: {
             visible: true,
             width: 5,
@@ -386,10 +388,10 @@ type options = {
       anchor: 'start' | 'center' | 'end' | 'auto';
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
       stackTotal?: {
         visible?: boolean;
-        formatter?: Formatter;
+        formatter?: (value: SeriesDataType) => string;
       };
     };
   };
@@ -425,10 +427,10 @@ type options = {
       anchor: 'start' | 'center' | 'end' | 'auto';
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
       stackTotal?: {
         visible?: boolean;
-        formatter?: Formatter;
+        formatter?: (value: SeriesDataType) => string;
       };
     };
   };
@@ -464,7 +466,7 @@ type options = {
       anchor: 'start' | 'center' | 'end' | 'auto';
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
     };
   };
 };
@@ -498,7 +500,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
       useTreemapLeaf?: boolean;
     };
   };
@@ -521,6 +523,8 @@ type options = {
 
 ### 옵션
 
+Heatmap 차트의 데이터 라벨 옵션은 다음과 같다.
+
 ```ts
 type options = {
   ...
@@ -529,24 +533,112 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
-    };
-  };
+      formatter?: (value: SeriesDataType) => string;
+    }
+  }
 };
 ```
 
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 시리즈 별 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+
+```js
+// 기본
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475076-7e827980-4ded-11eb-975e-39c2566bf42e.png)
 
 ### theme
 
+화살표가 없는 말풍선 스타일을 사용할 수 있다.
+
 ```ts
-type options = {
-  ...
-  theme?: {
-    series?: {
-    dataLabels?: CommonDataLabelBoxTheme;
+type AreaDataLabelTheme = {
+  useSeriesColor?: boolean;
+  lineWidth?: number;
+  textStrokeColor?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
+  textBubble?: {
+    visible?: boolean;
+    paddingX?: number;
+    paddingY?: number;
+    backgroundColor?: string;
+    borderRadius?: number;
+    borderColor?: string;
+    borderWidth?: number;
+    shadowColor?: string;
+    shadowOffsetX?: number;
+    shadowOffsetY?: number;
+    shadowBlur?: number;
   };
 };
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `lineWidth` | number | 텍스트 선 두께 |
+| `textStrokeColor` | string | 텍스트 선 색상 |
+| `shadowColor` | string | 텍스트 그림자 색상 |
+| `shadowBlur` | number | 텍스트 그림자 Blur |
+| `fontSize` | number | 글자 크기 |
+| `fontFamily` | string | 폰트명 |
+| `fontWeight` | string | 글자 굵기 |
+| `color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `textBubble` | object | 말풍선 디자인 설정 |
+| `textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `textBubble.paddingX` | number | 수평 여백 |
+| `textBubble.paddingY`| number | 수직 여백 |
+| `textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 9,
+        fontWeight: '600',
+        useSeriesColor: true,
+        textBubble: {
+          visible: true,
+          backgroundColor: '#333333',
+          paddingX: 1,
+          paddingY: 1,
+          borderRadius: 5
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475079-83472d80-4ded-11eb-82f4-f363cbcb3416.png)
+
 ## Pie
 
 ### 옵션
@@ -562,7 +654,7 @@ type options = {
       anchor?: 'center' | 'outer';
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
       pieSeriesName?: {
         visible: boolean;
         anchor?: 'center' | 'outer';
@@ -772,7 +864,7 @@ type options = {
       anchor?: 'center' | 'outer';
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
       pieSeriesName?: {
         visible: boolean;
         anchor?: 'center' | 'outer';
@@ -802,8 +894,9 @@ type options = {
 
 ### 옵션
 
-```js
-const options = {
+```ts
+type options = {
+  ...
   series: {
     dataLabels: {
       visible?: boolean;
@@ -816,7 +909,8 @@ const options = {
 
 // 혹은
 
-const options = {
+type options = {
+  ...
   series: {
     line: {
       ...
@@ -824,7 +918,7 @@ const options = {
         visible?: boolean;
         offsetX?: number;
         offsetY?: number;
-        formatter?: Formatter;
+        formatter?: (value: SeriesDataType) => string;
       }
     },
     area: {
@@ -833,7 +927,7 @@ const options = {
         visible?: boolean;
         offsetX?: number;
         offsetY?: number;
-        formatter?: Formatter;
+        formatter?: (value: SeriesDataType) => string;
       }
     }
   }
@@ -843,8 +937,9 @@ const options = {
 
 ### theme
 
-```js
-const options = {
+```ts
+type options = {
+  ...
   theme: {
     series: {
       dataLabels: {
@@ -858,28 +953,30 @@ const options = {
 
 ### 옵션
 
-```js
-const options = {
+```ts
+type options = {
+  ...
   series: {
     dataLabels: {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value: SeriesDataType) => string;
     }
   }
 };
 
 // 혹은
 
-const options = {
+type options = {
+  ...
   series: {
     line: {
       dataLabels: {
         visible?: boolean;
         offsetX?: number;
         offsetY?: number;
-        formatter?: Formatter;
+        formatter?: (value: SeriesDataType) => string;
       }
     }
   }
