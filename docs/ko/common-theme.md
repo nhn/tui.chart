@@ -1,6 +1,6 @@
 # 공통 컴포넌트 테마
 
-차트 제목, 축, 범례, 내보내기 메뉴, 툴팁, 플롯에 테마를 적용하는 방법에 대해 다룬다.
+차트 제목, 축, 범례, 내보내기 메뉴, 툴팁, 플롯에 테마를 적용하는 방법을 다룬다.
 
 ```ts
 type Theme = {
@@ -20,7 +20,7 @@ type Theme = {
 
 ## 차트 전역 폰트 설정
 
-차트 전역에서 사용할 폰트를 설정합니다. 제목, 축에 사용되는 라벨 폰트, 제목 폰트, 범례 폰트 등이 이 폰트로 설정된다.
+`theme.chart`옵션은 차트 전역에서 사용할 폰트를 설정한다. 제목, 축에 사용되는 라벨 폰트, 제목 폰트, 범례 폰트 등이 이 폰트로 설정된다.
 
 ```ts
 type ChartTheme = {
@@ -38,13 +38,13 @@ const options = {
 };
 ```
 
-* ⚠️ 개발 후 가이드 작성 필요 ⚠️
+* ⚠️ 개발 후 이미지 업로드 필요 ⚠️
 
 ![image]()
 
 ## 차트 제목 테마
 
-차트 제목의 스타일을 변경할 수 있다.
+`theme.title`은 차트 제목의 스타일을 설정한다.
 
 ```ts
 type FontTheme = {
@@ -54,6 +54,13 @@ type FontTheme = {
   color?: string;
 };
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| fontSize | number | 글자 크기 |
+| fontFamily | string | 폰트명 |
+| fontWeight | number \| string | 글자 굵기 |
+| color | string | 글자 색상 |
 
 ```js
 const options = {
@@ -72,7 +79,7 @@ const options = {
 
 ## 축 테마
 
-축에 테마를 적용하여 제목, 라벨, 틱, 선의 스타일을 변경할 수 있다.
+`theme.xAxis` 또는 `theme.yAxis`는 축의 스타일을 설정한다. 축의 제목, 라벨, 선의 스타일을 변경할 수 있다.
 
 ```ts
 type AxisTheme = {
@@ -95,6 +102,13 @@ type AxisTheme = {
 type XAxisTheme = AxisTheme;
 type YAxisTheme = AxisTheme | AxisTheme[];
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| title | object | 축 제목에 대한 스타일 설정 |
+| label | object | 축 라벨에 대한 스타일 설정 |
+| width | number | 축의 선 두께 |
+| color | string | 축의 선 색상 |
 
 ```js
 const options = {
@@ -158,7 +172,7 @@ const options = {
 
 ## 범례 테마
 
-범례의 표시되는 폰트의 스타일을 변경할 수 있다.
+`theme.legend`는 범례에 표시되는 글자의 스타일을 지정한다.
 
 ```ts
 type LegendTheme = {
@@ -190,7 +204,7 @@ const options = {
 
 ## 툴팁 테마
 
-툴팁의 스타일을 변경할 수 있다.
+`theme.tooltip`은 툴팁의 스타일을 설정한다.
 
 ```ts
 type TooltipTheme = {
@@ -213,6 +227,16 @@ type TooltipTheme = {
   };
 };
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| background | string | 배경 색상 |
+| borderColor | string | 테두리 선 색상 |
+| borderWidth | number | 테두리 선 너비 |
+| borderStyle | string | 테두리 선 스타일. 사용 가능한 옵션은 [MDN 링크](https://developer.mozilla.org/ko/docs/Web/CSS/border-style)에서 확인할 수 있다. |
+| borderRadius | number | 둥근 모서리 값 |
+| header | object | 툴팁 header 영역의 글자 스타일 |
+| body | object | 툴팁 body 영역의 글자 스타일
 
 ```js
 const options = {
@@ -244,13 +268,14 @@ const options = {
 
 ## 플롯 테마
 
-플롯의 테마를 수정할 수 있다.
+`theme.plot`은 플롯의 배경과 선 스타일을 설정한다.
 
 ```ts
 type PlotTheme = {
   lineColor?: string;
   lineWidth?: number;
   dashSegments?: number[];
+  backgroundColor?: string;
   vertical?: {
     lineColor?: string;
     lineWidth?: number;
@@ -261,9 +286,17 @@ type PlotTheme = {
     lineWidth?: number;
     dashSegments?: number[];
   };
-  backgroundColor?: string;
 };
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| lineColor | string | 선 색상 |
+| lineWidth | number | 선 두께 |
+| dashSegments | number[] | 플롯 선의 dashSegment 값 |
+| backgroundColor | string | 플롯 영역 배경색 |
+| vertical | object | 세로로 그려지는 플롯 선의 스타일 설정 |
+| horizontal | object | 가로로 그려지는 플롯 선의 스타일 설정 |
 
 ```js
 const options = {
@@ -286,6 +319,7 @@ const options = {
 ![image](https://user-images.githubusercontent.com/43128697/102844399-bb925780-444e-11eb-9bd5-4c10471d1d6b.png)
 
 ## 내보내기 메뉴 테마
+`theme.exportMenu`는 내보내기 버튼과 메뉴 박스에 대한 스타일을 설정한다.
 
 ```ts
 type ExportMenuTheme = {
@@ -306,9 +340,9 @@ type ExportMenuTheme = {
     };
   };
   panel?: {
-    borderColor?: string;
-    borderWidth?: number;
     borderRadius?: number;
+    borderWidth?: number;
+    borderColor?: string;
     header?: {
       fontSize?: number;
       fontFamily?: string;
@@ -326,6 +360,22 @@ type ExportMenuTheme = {
   };
 };
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| button | object | 내보내기 버튼 스타일 설정 |
+| button.backgroundColor | string | 버튼의 배경색 |
+| button.borderRadius | number | 버튼 둥근 모서리 값 |
+| button.borderWidth | number | 버튼 테두리 두께 |
+| button.borderColor | string | 버튼 테두리 색상 |
+| button.xIcon | object | X 아이콘 스타일 설정 |
+| button.dotIcon | object | 점 아이콘 스타일 설정 |
+| panel | object | 내보내기 버튼 클릭 시 나타나는 메뉴 패널 스타일 설정 |
+| panel.borderRadius | number | 메뉴 패널의 둥근 모서리 값 |
+| panel.borderWidth | number | 메뉴 패널의 테두리 두께 |
+| panel.borderColor | string | 메뉴 패널의 테두리 색상 |
+| panel.header | object | 메뉴 패널의 header 스타일 설정 |
+| panel.body | object | 메뉴 패널의 body 스타일 설정 |
 
 ```js
 const options = {
