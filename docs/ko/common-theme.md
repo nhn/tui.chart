@@ -57,10 +57,10 @@ type FontTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| fontSize | number | 글자 크기 |
-| fontFamily | string | 폰트명 |
-| fontWeight | number \| string | 글자 굵기 |
-| color | string | 글자 색상 |
+| `fontSize` | number | 글자 크기 |
+| `fontFamily` | string | 폰트명 |
+| `fontWeight` | number \| string | 글자 굵기 |
+| `color` | string | 글자 색상 |
 
 ```js
 const options = {
@@ -105,10 +105,10 @@ type YAxisTheme = AxisTheme | AxisTheme[];
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| title | object | 축 제목에 대한 스타일 설정 |
-| label | object | 축 라벨에 대한 스타일 설정 |
-| width | number | 축의 선 두께 |
-| color | string | 축의 선 색상 |
+| `title` | object | 축 제목에 대한 스타일 설정 |
+| `label` | object | 축 라벨에 대한 스타일 설정 |
+| `width` | number | 축의 선 두께 |
+| `color` | string | 축의 선 색상 |
 
 ```js
 const options = {
@@ -230,13 +230,13 @@ type TooltipTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| background | string | 배경 색상 |
-| borderColor | string | 테두리 선 색상 |
-| borderWidth | number | 테두리 선 너비 |
-| borderStyle | string | 테두리 선 스타일. 사용 가능한 옵션은 [MDN 링크](https://developer.mozilla.org/ko/docs/Web/CSS/border-style)에서 확인할 수 있다. |
-| borderRadius | number | 둥근 모서리 값 |
-| header | object | 툴팁 header 영역의 글자 스타일 |
-| body | object | 툴팁 body 영역의 글자 스타일 |
+| `background` | string | 배경 색상 |
+| `borderColor` | string | 테두리 선 색상 |
+| `borderWidth` | number | 테두리 선 너비 |
+| `borderStyle` | string | 테두리 선 스타일. 사용 가능한 옵션은 [MDN 링크](https://developer.mozilla.org/ko/docs/Web/CSS/border-style)에서 확인할 수 있다. |
+| `borderRadius` | number | 둥근 모서리 값 |
+| `header` | object | 툴팁 header 영역의 글자 스타일 |
+| `body` | object | 툴팁 body 영역의 글자 스타일 |
 
 ```js
 const options = {
@@ -291,12 +291,12 @@ type PlotTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| lineColor | string | 선 색상 |
-| lineWidth | number | 선 두께 |
-| dashSegments | number[] | 플롯 선의 dashSegment 값 |
-| backgroundColor | string | 플롯 영역 배경색 |
-| vertical | object | 세로로 그려지는 플롯 선의 스타일 설정 |
-| horizontal | object | 가로로 그려지는 플롯 선의 스타일 설정 |
+| `lineColor` | string | 선 색상 |
+| `lineWidth` | number | 선 두께 |
+| `dashSegments` | number[] | 플롯 선의 dashSegment 값 |
+| `backgroundColor` | string | 플롯 영역 배경색 |
+| `vertical` | object | 세로로 그려지는 플롯 선의 스타일 설정 |
+| `horizontal` | object | 가로로 그려지는 플롯 선의 스타일 설정 |
 
 ```js
 const options = {
@@ -363,19 +363,19 @@ type ExportMenuTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| button | object | 내보내기 버튼 스타일 설정 |
-| button.backgroundColor | string | 버튼의 배경색 |
-| button.borderRadius | number | 버튼 둥근 모서리 값 |
-| button.borderWidth | number | 버튼 테두리 두께 |
-| button.borderColor | string | 버튼 테두리 색상 |
-| button.xIcon | object | X 아이콘 스타일 설정 |
-| button.dotIcon | object | 점 아이콘 스타일 설정 |
-| panel | object | 내보내기 버튼 클릭 시 나타나는 메뉴 패널 스타일 설정 |
-| panel.borderRadius | number | 메뉴 패널의 둥근 모서리 값 |
-| panel.borderWidth | number | 메뉴 패널의 테두리 두께 |
-| panel.borderColor | string | 메뉴 패널의 테두리 색상 |
-| panel.header | object | 메뉴 패널의 header 스타일 설정 |
-| panel.body | object | 메뉴 패널의 body 스타일 설정 |
+| `button` | object | 내보내기 버튼 스타일 설정 |
+| `button.backgroundColor` | string | 버튼의 배경색 |
+| `button.borderRadius` | number | 버튼 둥근 모서리 값 |
+| `button.borderWidth` | number | 버튼 테두리 두께 |
+| `button.borderColor` | string | 버튼 테두리 색상 |
+| `button.xIcon` | object | X 아이콘 스타일 설정 |
+| `button.dotIcon` | object | 점 아이콘 스타일 설정 |
+| `panel` | object | 내보내기 버튼 클릭 시 나타나는 메뉴 패널 스타일 설정 |
+| `panel.borderRadius` | number | 메뉴 패널의 둥근 모서리 값 |
+| `panel.borderWidth` | number | 메뉴 패널의 테두리 두께 |
+| `panel.borderColor` | string | 메뉴 패널의 테두리 색상 |
+| `panel.header` | object | 메뉴 패널의 header 스타일 설정 |
+| `panel.body` | object | 메뉴 패널의 body 스타일 설정 |
 
 ```js
 const options = {

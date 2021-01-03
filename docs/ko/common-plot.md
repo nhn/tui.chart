@@ -9,9 +9,9 @@
 
 | 옵션명 | 차트명 |
 | --- | --- |
-| showLine | Scatter, Bubble, Bar, Column, BoxPlot, Bullet, Line, Area, LineArea, LineScatter, ColumnLine |
-| lines | Line, Area, LineArea, LineScatter, ColumnLine |
-| bands | Line, Area, LineArea, LineScatter, ColumnLine |
+| `showLine` | Scatter, Bubble, Bar, Column, BoxPlot, Bullet, Line, Area, LineArea, LineScatter, ColumnLine |
+| `lines` | Line, Area, LineArea, LineScatter, ColumnLine |
+| `bands` | Line, Area, LineArea, LineScatter, ColumnLine |
 
 ```ts
 type PlotOption = {
@@ -58,16 +58,16 @@ const options = {
 
 ### lines
 
-`lines` 옵션을 사용하면 플롯 영역에 새로운 라인을 추가할 수 있다.
+`lines` 옵션을 사용하면 플롯 영역에 새로운 라인을 추가할 수 있다. 추가된 라인은 다음의 속성을 갖는 객체 배열로 설정한다.
 
 * 사용 가능 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| value | number \| string | x축에 대응하는 값 |
-| color | string | 라인 색상 |
-| opacity | number | 라인 투명도 |
-| id | string | 라인 id, `removePlotLine API`를 사용할 때 id 값을 인자로 넘겨주면 해당 라인이 삭제됨 |
+| `value` | number \| string | x축에 대응하는 값 |
+| `color` | string | 라인 색상 |
+| `opacity` | number | 라인 투명도 |
+| `id` | string | 라인 id, `removePlotLine API`를 사용할 때 id 값을 인자로 넘겨주면 해당 라인이 삭제됨 |
 
 ```js
 const options = {
@@ -90,17 +90,17 @@ const options = {
 
 ### bands
 
-`bands` 옵션을 사용하면 플롯 영역에 범위를 지정하여 배경색을 채울 수 있다.
+`bands` 옵션을 사용하면 플롯 영역에 범위를 지정하여 배경색을 채울 수 있다. 다음의 속성을 갖는 객체 배열로 설정한다.
 
 * 사용 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| range | [number, number] \| [string, string] \| [number, number][] \| [string, string][] | x축에 대응하는 값의 범위, 시작과 끝에 해당하는 값을 배열로 입력함 |
-| color | string | 박스 색상 |
-| opacity | number | 박스 색상의 투명도 |
-| mergeOverlappingRanges | boolean | `range`에서 설정한 범위가 겹쳐지는 부분이 있을 때, 박스를 겹쳐서 표시할 지 여부 (기본값: `false`) |
-| id | string | 범위 박스 id, `removePlotBand API`를 사용할 때 id 값을 인자로 넘겨주면 해당 박스가 삭제됨 |
+| `range` | [number, number] \| [string, string] \| [number, number][] \| [string, string][] | x축에 대응하는 값의 범위, 시작과 끝에 해당하는 값을 배열로 입력함 |
+| `color` | string | 박스 색상 |
+| `opacity` | number | 박스 색상의 투명도 |
+| `mergeOverlappingRanges` | boolean | `range`에서 설정한 범위가 겹쳐지는 부분이 있을 때, 박스를 겹쳐서 표시할 지 여부 (기본값: `false`) |
+| `id` | string | 범위 박스 id, `removePlotBand API`를 사용할 때 id 값을 인자로 넘겨주면 해당 박스가 삭제됨 |
 
 ```js
 const options = {
@@ -174,12 +174,12 @@ type PlotTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| lineColor | string | 라인 색상 |
-| lineWidth | number | 라인 두께 |
-| dahsSegments | number[] | 라인 dashSegment 값 |
-| vertical | object | 세로형 라인 스타일 설정 |
-| horizontal | object | 가로형 라인 스타일 설정 |
-| backgroundColor | string | 플롯 영역 배경색 |
+| `lineColor` | string | 라인 색상 |
+| `lineWidth` | number | 라인 두께 |
+| `dahsSegments` | number[] | 라인 dashSegment 값 |
+| `vertical` | object | 세로형 라인 스타일 설정 |
+| `horizontal` | object | 가로형 라인 스타일 설정 |
+| `backgroundColor` | string | 플롯 영역 배경색 |
 
 다음은 플롯 테마를 설정하여 라인과 배경색을 변경한 예시이다.
 

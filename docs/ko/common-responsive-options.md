@@ -20,11 +20,11 @@ type ResponsiveOptions = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| animation | boolean \| object | 애니메이션 설정. 애니메이션을 사용하지 않을 경우 `false`로 지정 |
-| animation.duration | number | 애니메이션 재생 속도. `0`으로 지정하면 애니메이션 효과가 적용되지 않음 |
-| rules | object[] | 차트의 크기 변경 시, 크기 조건과 그 조건에 적용될 옵션을 정의하는 객체. 여러 개를 등록할 수 있음 |
-| condition | function | 매개변수로 차트의 너비(`width`)와 높이(`height`)을 넘겨줌. 옵션이 적용될 차트의 크기 조건을 작성 |
-| options | object | `condition` 조건이 성립되었을 때 적용되어야 하는 옵션을 정의 |
+| `animation` | boolean \| object | 애니메이션 설정. 애니메이션을 사용하지 않을 경우 `false`로 지정 |
+| `animation.duration` | number | 애니메이션 재생 속도. `0`으로 지정하면 애니메이션 효과가 적용되지 않음 |
+| `rules` | rule[] | 차트의 크기 변경 시, 크기 조건과 그 조건에 적용될 옵션을 정의하는 객체. 여러 개를 등록할 수 있음 |
+| `rule.condition` | function | 매개변수로 차트의 너비(`width`)와 높이(`height`)을 넘겨줌. 옵션이 적용될 차트의 크기 조건을 작성 |
+| `rule.options` | object | `condition` 조건이 성립되었을 때 적용되어야 하는 옵션을 정의 |
 
 ```js
 const options = {

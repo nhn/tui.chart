@@ -2,7 +2,7 @@
 
 `chart` 옵션에서는 차트의 제목과 크기, 애니메이션의 사용 여부와 재생 시간 등을 설정할 수 있다.
 
-## options
+## 옵션
 `chart` 옵션에서 사용할 수 있는 옵션은 다음과 같다.
 
 ```ts
@@ -25,10 +25,10 @@ type ChartOptions = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| text | string | 차트 제목 |
-| offsetX | number | x 오프셋 값 (내부 여백 : `10`) ) |
-| offsetY | number | y 오프셋 값 (내부 여백 : `15`) |
-| align | 'left' \| 'right' \| 'center' | 제목 정렬 (기본값 : `'left'`) |
+| `text` | string | 차트 제목 |
+| `offsetX` | number | x 오프셋 값 (내부 여백 : `10`) ) |
+| `offsetY` | number | y 오프셋 값 (내부 여백 : `15`) |
+| `align` | 'left' \| 'right' \| 'center' | 제목 정렬 (기본값 : `'left'`) |
 
 ```js
 const options = {
