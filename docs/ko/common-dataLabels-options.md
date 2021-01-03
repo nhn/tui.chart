@@ -113,7 +113,9 @@ type CommonDataLabelBoxTheme = {
 
 ### 옵션
 
-```js
+Area 차트의 데이터 라벨 옵션은 다음과 같다.
+
+```ts
 type options = {
   ...
   series?: {
@@ -127,26 +129,124 @@ type options = {
 };
 ```
 
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 시리즈 별 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+
+```js
+// 기본
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103474766-5fceb380-4dea-11eb-8c56-13bac3d68d8f.png)
 
 ### theme
 
-```js
-type options = {
-  ...
-  theme?: {
-    series?: {
-      dataLabels?: CommonDataLabelBubbleTheme;
+화살표가 있는 말풍선 스타일을 사용할 수 있다.
+
+```ts
+type AreaDataLabelTheme = {
+  useSeriesColor?: boolean;
+  lineWidth?: number;
+  textStrokeColor?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
+  textBubble?: {
+    visible?: boolean;
+    paddingX?: number;
+    paddingY?: number;
+    backgroundColor?: string;
+    borderRadius?: number;
+    borderColor?: string;
+    borderWidth?: number;
+    shadowColor?: string;
+    shadowOffsetX?: number;
+    shadowOffsetY?: number;
+    shadowBlur?: number;
+    arrow?: {
+      visible?: boolean;
+      width?: number;
+      height?: number;
+      direction?: 'top' | 'right' | 'bottom' | 'left';
     };
   };
 };
 ```
 
-## Line
-
-
-### 옵션
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `lineWidth` | number | 텍스트 선 두께 |
+| `textStrokeColor` | string | 텍스트 선 색상 |
+| `shadowColor` | string | 텍스트 그림자 색상 |
+| `shadowBlur` | number | 텍스트 그림자 Blur |
+| `fontSize` | number | 글자 크기 |
+| `fontFamily` | string | 폰트명 |
+| `fontWeight` | string | 글자 굵기 |
+| `color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `textBubble` | object | 말풍선 디자인 설정 |
+| `textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `textBubble.paddingX` | number | 수평 여백 |
+| `textBubble.paddingY`| number | 수직 여백 |
+| `textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
+| `textBubble.arrow` | object | 말풍선 화살표 설정 <br>사용 차트 타입 : `Area`, `Line`, `Bar`, `Column`, `Bullet` |
+| `textBubble.arrow.visible` | boolean | 화살표 표시 여부 |
+| `textBubble.arrow.width` | number | 화살표 삼각형 너비 |
+| `textBubble.arrow.height` | number | 화살표 삼각형 높이 |
+| `textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
 
 ```js
+const options = {
+  series: {
+    dataLabels: { visible: true, offsetY: -10 }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 10,
+        fontWeight: 300,
+        useSeriesColor: true,
+        textBubble: {
+          visible: true,
+          arrow: {
+            visible: true,
+            width: 5,
+            height: 5,
+            direction: 'bottom'
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103474846-221e5a80-4deb-11eb-9b0c-c2a7c2e1ea63.png)
+
+## Line
+
+Line 차트의 데이터 라벨 옵션은 다음과 같다.
+
+```ts
 type options = {
   ...
   series?: {
@@ -155,29 +255,129 @@ type options = {
       offsetX?: number;
       offsetY?: number;
       formatter?: Formatter;
-    };
-  };
+    }
+  }
 };
 ```
 
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 시리즈 별 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+
+```js
+// 기본
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103474889-82150100-4deb-11eb-957e-a88c0fb3bd6b.png)
 
 ### theme
 
-```js
-type options = {
-  ...
-  theme?: {
-    series?: {
-      dataLabels?: CommonDataLabelBubbleTheme;
+화살표가 있는 말풍선 스타일을 사용할 수 있다.
+
+```ts
+type LineDataLabelTheme = {
+  useSeriesColor?: boolean;
+  lineWidth?: number;
+  textStrokeColor?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
+  textBubble?: {
+    visible?: boolean;
+    paddingX?: number;
+    paddingY?: number;
+    backgroundColor?: string;
+    borderRadius?: number;
+    borderColor?: string;
+    borderWidth?: number;
+    shadowColor?: string;
+    shadowOffsetX?: number;
+    shadowOffsetY?: number;
+    shadowBlur?: number;
+    arrow?: {
+      visible?: boolean;
+      width?: number;
+      height?: number;
+      direction?: 'top' | 'right' | 'bottom' | 'left';
     };
   };
 };
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `lineWidth` | number | 텍스트 선 두께 |
+| `textStrokeColor` | string | 텍스트 선 색상 |
+| `shadowColor` | string | 텍스트 그림자 색상 |
+| `shadowBlur` | number | 텍스트 그림자 Blur |
+| `fontSize` | number | 글자 크기 |
+| `fontFamily` | string | 폰트명 |
+| `fontWeight` | string | 글자 굵기 |
+| `color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `textBubble` | object | 말풍선 디자인 설정 |
+| `textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `textBubble.paddingX` | number | 수평 여백 |
+| `textBubble.paddingY`| number | 수직 여백 |
+| `textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
+| `textBubble.arrow` | object | 말풍선 화살표 설정 <br>사용 차트 타입 : `Area`, `Line`, `Bar`, `Column`, `Bullet` |
+| `textBubble.arrow.visible` | boolean | 화살표 표시 여부 |
+| `textBubble.arrow.width` | number | 화살표 삼각형 너비 |
+| `textBubble.arrow.height` | number | 화살표 삼각형 높이 |
+| `textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true, offsetY: -10 }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 10,
+        fontWeight: 300,
+        useSeriesColor: true,
+        textBubble: {
+          visible: true,
+          arrow: {
+            visible: true,
+            width: 5,
+            height: 5,
+            direction: 'bottom'
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103474891-83dec480-4deb-11eb-9924-291a8a0af77e.png)
+
 ## Bar
 
 ### 옵션
 
-```js
+```ts
 type options = {
   ...
   series?: {
@@ -199,7 +399,7 @@ type options = {
 
 ### theme
 
-```js
+```ts
 type options = {
   ...
   theme?: {
@@ -216,7 +416,7 @@ type options = {
 
 ### 옵션
 
-```js
+```ts
 type options = {
   ...
   series?: {
@@ -238,7 +438,7 @@ type options = {
 
 ### theme
 
-```js
+```ts
 type options = {
   ...
   theme?: {
@@ -255,7 +455,7 @@ type options = {
 
 ### 옵션
 
-```js
+```ts
 type options = {
   ...
   series?: {
@@ -273,7 +473,7 @@ type options = {
 
 ### theme
 
-```js
+```ts
 type options = {
   ...
   theme?: {
@@ -290,7 +490,7 @@ type options = {
 
 ### 옵션
 
-```js
+```ts
 type options = {
   ...
   series?: {
@@ -308,7 +508,7 @@ type options = {
 
 ### theme
 
-```js
+```ts
 type options = {
   ...
   theme?: {
@@ -378,10 +578,10 @@ type options = {
 | `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
 | `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
 | `formatter` | function | 시리즈 별 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
-| `anchor` | 'center' \| 'outer' | 데이터 라벨 표시 위치 설정. `'center'`는 원 안에, `'outer'`는 원 바깥에 라벨이 위치. (기본값 : `'center'`) |
+| `anchor` | 'center' \| 'outer' | 데이터 라벨 표시 위치 설정. `'center'`는 원 안에, `'outer'`는 원 바깥에 라벨이 위치.<br>(기본값 : `'center'`) |
 | `pieSeriesName` | object | 시리즈 이름 라벨 표시 설정 |
 | `pieSeriesName.visible` | boolean | 시리즈 이름 라벨 표시 여부 |
-| `pieSeriesName.anchor` | 'center' \| 'outer' | 시리즈 이름 라벨 표시 위치 설정. `'center'`는 원 안에, `'outer'`는 원 바깥에 라벨이 위치. (기본값 : `'center'`) |
+| `pieSeriesName.anchor` | 'center' \| 'outer' | 시리즈 이름 라벨 표시 위치 설정. `'center'`는 원 안에, `'outer'`는 원 바깥에 라벨이 위치.<br>(기본값 : `'center'`) |
 
 ```js
 // 기본
@@ -435,7 +635,7 @@ const options = {
 };
 ```
 
-| 기본 | 원 바깥에 라벨 표시 |
+| 기본 - 시리즈 이름 라벨 표시 | 시리즈 이름 라벨을 원 바깥에 표시 |
 | --- | --- |
 | ![image](https://user-images.githubusercontent.com/43128697/103474482-b38bcd80-4de7-11eb-99ac-54842fe29b0d.png) | ![image](https://user-images.githubusercontent.com/43128697/103474483-b5ee2780-4de7-11eb-812a-045f78f71e8f.png) |
 
@@ -488,10 +688,10 @@ type PieDataLabelTheme = CommonDataLabelBoxTheme & {
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
 | `shadowBlur` | number | 텍스트 그림자 Blur |
-| `fontSize` | number | 폰트 크기 |
+| `fontSize` | number | 글자 크기 |
 | `fontFamily` | string | 폰트명 |
-| `fontWeight` | string | 폰트 굵기 |
-| `color` | string | 폰트 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `fontWeight` | string | 글자 굵기 |
+| `color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
 | `textBubble` | object | 말풍선 디자인 설정 |
 | `textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
 | `textBubble.paddingX` | number | 수평 여백 |
@@ -505,7 +705,7 @@ type PieDataLabelTheme = CommonDataLabelBoxTheme & {
 | `textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
 | `textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
 
-추가로 원과 원 밖에 있는 라벨을 잇는 callout 라인 스타일을 설정할 수 있다.
+추가로, 원과 원 밖에 있는 라벨을 잇는 callout 라인 스타일을 설정할 수 있다.
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
