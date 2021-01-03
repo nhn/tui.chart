@@ -16,9 +16,9 @@ type xAxisOption = {
 ```js
 const options = {
   xAxis: {
-    title: 'Amount'
+    title: 'Amount',
     width: 700,
-    height: 100,
+    height: 100
   }
 };
 ```
@@ -60,7 +60,7 @@ const options = {
   },
   xAxis: {
     label: {
-      interval: 2,
+      interval: 2
     },
     title: 'People'
   },
