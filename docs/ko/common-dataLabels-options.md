@@ -492,6 +492,8 @@ type options = {
 
 ### 옵션
 
+Treemap 차트의 데이터 라벨 옵션은 다음과 같다.
+
 ```ts
 type options = {
   ...
@@ -502,23 +504,123 @@ type options = {
       offsetY?: number;
       formatter?: (value: SeriesDataType) => string;
       useTreemapLeaf?: boolean;
-    };
-  };
+    }
+  }
 };
 ```
 
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 시리즈 별 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+| `useTreemapLeaf` | boolean | 자식 데이터 라벨 표시 여부 |
+
+```js
+// 기본
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+```js
+// 자식 데이터 라벨 표시
+const options = {
+  series: {
+    dataLabels: {
+      visible: true,
+      useTreemapLeaf: true
+    }
+  }
+};
+```
+
+| 기본 | 자식 데이터 라벨 표시 |
+| --- | --- |
+| ![image](https://user-images.githubusercontent.com/43128697/103475194-7b3bbd80-4dee-11eb-8489-12695595bf6e.png) | ![image](https://user-images.githubusercontent.com/43128697/103475197-7d058100-4dee-11eb-9d44-3e4fa321b2b2.png) |
 
 ### theme
 
+화살표가 없는 말풍선 스타일을 사용할 수 있다.
+
 ```ts
-type options = {
-  ...
-  theme?: {
-    series?: {
-    dataLabels?: CommonDataLabelBoxTheme;
+type TreemapDataLabelTheme = {
+  useSeriesColor?: boolean;
+  lineWidth?: number;
+  textStrokeColor?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
+  textBubble?: {
+    visible?: boolean;
+    paddingX?: number;
+    paddingY?: number;
+    backgroundColor?: string;
+    borderRadius?: number;
+    borderColor?: string;
+    borderWidth?: number;
+    shadowColor?: string;
+    shadowOffsetX?: number;
+    shadowOffsetY?: number;
+    shadowBlur?: number;
   };
 };
 ```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `lineWidth` | number | 텍스트 선 두께 |
+| `textStrokeColor` | string | 텍스트 선 색상 |
+| `shadowColor` | string | 텍스트 그림자 색상 |
+| `shadowBlur` | number | 텍스트 그림자 Blur |
+| `fontSize` | number | 글자 크기 |
+| `fontFamily` | string | 폰트명 |
+| `fontWeight` | string | 글자 굵기 |
+| `color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `textBubble` | object | 말풍선 디자인 설정 |
+| `textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `textBubble.paddingX` | number | 수평 여백 |
+| `textBubble.paddingY`| number | 수직 여백 |
+| `textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 16,
+        fontWeight: '800',
+        useSeriesColor: true,
+        lineWidth: 3,
+        textStrokeColor: '#ffffff',
+        shadowColor: '#ffffff',
+        shadowBlur: 10
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475200-7ecf4480-4dee-11eb-969f-f809d0ba59be.png)
+
 ## Heatmap
 
 ### 옵션
@@ -562,7 +664,7 @@ const options = {
 화살표가 없는 말풍선 스타일을 사용할 수 있다.
 
 ```ts
-type AreaDataLabelTheme = {
+type HeatmapDataLabelTheme = {
   useSeriesColor?: boolean;
   lineWidth?: number;
   textStrokeColor?: string;
