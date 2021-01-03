@@ -405,9 +405,9 @@ type options = {
 | `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
 | `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
 | `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
-| `anchor` | 'start' \| 'center' \| 'end' \| 'auto' | 데이터 라벨 위치 설정 |
+| `anchor` | 'start' \| 'center' \| 'end' \| 'auto' | 데이터 라벨 위치 설정 (기본값: `'auto'`) |
 | `stackTotal` | object | 스택 바 차트에서 합계 값에 대한 라벨 설정 |
-| `stackTotal.visible` | boolean | 합계 라벨 표시 여부 |
+| `stackTotal.visible` | boolean | 합계 라벨 표시 여부. 스택 차트일 경우 기본값은 `true`가 됨 |
 | `stackTotal.formatter` | function | 합계 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
 
 ```js
@@ -422,26 +422,11 @@ const options = {
 ![image](https://user-images.githubusercontent.com/43128697/103476227-35cfbe00-4df7-11eb-8be9-3a66c5b2c6f8.png)
 
 ```js
-// 스택 바 차트 - 기본
+// 스택 바 차트
 const options = {
   series: {
     stack: true,
     dataLabels: { visible: true }
-  }
-};
-```
-
-![image](https://user-images.githubusercontent.com/43128697/103476230-39634500-4df7-11eb-8b94-aa5501951594.png)
-
-```js
-// 스택 바 차트 - 합계 표시
-const options = {
-  series: {
-    stack: true,
-    dataLabels: {
-      visible: true,
-      stackTotal: { visible: true }
-    }
   }
 };
 ```
@@ -586,9 +571,9 @@ type options = {
 | `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
 | `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
 | `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
-| `anchor` | 'start' \| 'center' \| 'end' \| 'auto' | 데이터 라벨 위치 설정 |
+| `anchor` | 'start' \| 'center' \| 'end' \| 'auto' | 데이터 라벨 위치 설정 (기본값: `'auto'`)  |
 | `stackTotal` | object | 스택 컬럼 차트에서 합계 값에 대한 라벨 설정 |
-| `stackTotal.visible` | boolean | 합계 라벨 표시 여부 |
+| `stackTotal.visible` | boolean | 합계 라벨 표시 여부. 스택 차트일 경우 기본값은 `true`가 됨 |
 | `stackTotal.formatter` | function | 합계 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
 
 ```js
@@ -603,26 +588,11 @@ const options = {
 ![image](https://user-images.githubusercontent.com/43128697/103476415-b3e09480-4df8-11eb-9fa1-56125f3fd0a7.png)
 
 ```js
-// 스택 컬럼 차트 - 기본
+// 스택 컬럼 차트
 const options = {
   series: {
     stack: true,
     dataLabels: { visible: true }
-  }
-};
-```
-
-![image](https://user-images.githubusercontent.com/43128697/103476418-b642ee80-4df8-11eb-8606-09188113073b.png)
-
-```js
-// 스택 컬럼 차트 - 합계 표시
-const options = {
-  series: {
-    stack: true,
-    dataLabels: {
-      visible: true,
-      stackTotal: { visible: true }
-    }
   }
 };
 ```
@@ -765,7 +735,7 @@ type options = {
 | `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
 | `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
 | `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
-| `anchor` | 'start' \| 'center' \| 'end' \| 'auto' | 데이터 라벨 위치 설정 |
+| `anchor` | 'start' \| 'center' \| 'end' \| 'auto' | 데이터 라벨 위치 설정 (기본값: `'auto'`) |
 
 ```js
 const options = {
@@ -1504,56 +1474,125 @@ const options = {
 
 ### 옵션
 
+`series.dataLabels` 옵션을 지정하면 Column과 Line 차트에서 모두 데이터 라벨이 표시된다.
+
 ```js
 const options = {
+  ...
   series: {
     dataLabels: {
-      visible?: boolean;
-      ...
+      visible: true;
     }
   }
 };
+```
 
-// 혹은
+![image](https://user-images.githubusercontent.com/43128697/103477475-a29c8580-4e02-11eb-9749-a744d5d3fce4.png)
 
+`series` 옵션에 각 시리즈 별로 옵션을 정의할 수 있으며, 데이터 라벨 관련 옵션도 각 시리즈 별로 좀 더 세밀하게 설정해 줄 수 있다.
+
+```ts
+type ColumnLineChartSeriesOption = {
+  column: { // Column 시리즈 옵션
+    ...
+    dataLabels: {
+      // Column 시리즈 데이터 라벨 옵션
+    }
+  },
+  line: { // Line 시리즈 옵션
+    ...
+    dataLabels: {
+      // Line 시리즈  데이터 라벨 옵션
+    }
+  }
+};
+```
+
+간단한 예시로 Line 시리즈의 데이터 라벨은 표시해주지 않고, Column 시리즈의 데이터 라벨만 표시하도록 설정하였다.
+
+```js
 const options = {
   series: {
     column: {
+      stack: true,
       dataLabels: {
-        visible?: boolean;
-        anchor: 'start' | 'center' | 'end' | 'auto';
-        offsetX?: number;
-        offsetY?: number;
-        formatter?: Formatter;
-        stackTotal?: {
-          visible?: boolean;
-          formatter?: Formatter;
-        };
+        visible: true,
+        stackTotal: {
+          visible: false
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477454-6701bb80-4e02-11eb-8256-23421795972e.png)
+
+### theme
+
+각 시리즈 별로 데이터 라벨의 스타일을 지정할 경우 `series.column.dataLabels` 또는 `series.line.dataLabels`를 정의한다.
+
+```ts
+type ColumnLineChartDataLabelTheme = {
+  series: {
+    column: {
+      dataLabels: {
+        // Column 시리즈 데이터 라벨 테마
       }
     },
     line: {
       dataLabels: {
-        visible?: boolean;
-        offsetX?: number;
-        offsetY?: number;
-        formatter?: Formatter;
+        // Line 시리즈 데이터 라벨 테마
       }
     }
   }
 };
 ```
 
-### theme
+간단한 예시로 Column 시리즈 데이터 라벨에는 글자 색상과 사이즈, 굵기 등을 조절하고, Line 시리즈 데이터 라벨에는 말풍선 스타일을 변경해보았다.
 
 ```js
 const options = {
+  series: {
+    column: {
+      dataLabels: { visible: true, anchor: 'start' }
+    },
+    line: {
+      showDot: true,
+      dataLabels: { visible: true, offsetY: -15 }
+    }
+  },
   theme: {
     series: {
-      dataLabels: {
-
+      column: {
+        dataLabels: {
+          color: '#ffffff',
+          fontSize: 10,
+          fontWeight: 600
+        }
+      },
+      line: {
+        dataLabels: {
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom'
+            }
+          }
+        }
       }
     }
   }
 };
 ```
+
+![image](https://user-images.githubusercontent.com/43128697/103477615-f491db00-4e03-11eb-9207-aa1ee2883aba.png)
 
