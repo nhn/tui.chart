@@ -236,7 +236,7 @@ type TooltipTheme = {
 | borderStyle | string | 테두리 선 스타일. 사용 가능한 옵션은 [MDN 링크](https://developer.mozilla.org/ko/docs/Web/CSS/border-style)에서 확인할 수 있다. |
 | borderRadius | number | 둥근 모서리 값 |
 | header | object | 툴팁 header 영역의 글자 스타일 |
-| body | object | 툴팁 body 영역의 글자 스타일
+| body | object | 툴팁 body 영역의 글자 스타일 |
 
 ```js
 const options = {

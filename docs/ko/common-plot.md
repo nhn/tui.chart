@@ -4,14 +4,14 @@
 
 ![image](https://user-images.githubusercontent.com/43128697/102863052-5dc53600-4475-11eb-8524-9446529179dd.png)
 
-## options
+## 옵션
 플롯을 변경하기 위한 옵션은 다음과 같다. `width`, `height` 옵션은 모든 차트에서 사용하며 플롯 영역의 크기를 변경할 수 있다. 그 외 `showLine`, `lines`, `bands` 옵션은 차트 타입에 따라 지원 여부가 다르다.
 
 | 옵션명 | 차트명 |
 | --- | --- |
-| `showLine` | Scatter, Bubble, Bar, Column, BoxPlot, Bullet, Line, Area, LineArea, LineScatter, ColumnLine |
-| `lines` | Line, Area, LineArea, LineScatter, ColumnLine |
-| `bands` | Line, Area, LineArea, LineScatter, ColumnLine |
+| showLine | Scatter, Bubble, Bar, Column, BoxPlot, Bullet, Line, Area, LineArea, LineScatter, ColumnLine |
+| lines | Line, Area, LineArea, LineScatter, ColumnLine |
+| bands | Line, Area, LineArea, LineScatter, ColumnLine |
 
 ```ts
 type PlotOption = {

@@ -43,6 +43,12 @@ export const title = () => {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     theme: {
+      /*
+      chart: {
+        fontFamily: 'Impact',
+      },
+      */
+
       title: {
         fontFamily: 'Comic Sans MS',
         fontSize: 45,
@@ -134,7 +140,11 @@ export const legend = () => {
     xAxis: { title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     legend: {
-      align: radios('align', { top: 'top', bottom: 'bottom', left: 'left', right: 'right' }, 'top'),
+      align: radios(
+        'align',
+        { top: 'top', bottom: 'bottom', left: 'left', right: 'right' },
+        'right'
+      ),
     },
     theme: {
       legend: {
@@ -215,6 +225,8 @@ export const plot = () => {
 
 export const exportMenu = () => {
   const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'AVVCDS' },
+    exportMenu: { filename: 'Wow' },
     theme: {
       exportMenu: {
         button: {
