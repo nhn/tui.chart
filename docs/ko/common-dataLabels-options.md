@@ -1328,40 +1328,167 @@ const options = {
 ## Nested Pie
 ### 옵션
 
+`series.dataLabels` 옵션을 지정하면 모든 중첩된 Pie 차트에서 데이터 라벨이 표시된다.
+
+```js
+const options = {
+  ...
+  series: {
+    dataLabels: {
+      visible: true;
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478578-02972a00-4e0b-11eb-9aa9-b9e66ce48279.png)
+
+`series` 옵션에 각 계층별로 Pie 시리즈 옵션을 정의할 수 있으며, 데이터 라벨 관련 옵션도 좀 더 세밀하게 설정해 줄 수 있다.
+
 ```ts
 type options = {
   ...
   series?: {
-    dataLabels?: {
-      visible?: boolean;
-      anchor?: 'center' | 'outer';
-      offsetX?: number;
-      offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
-      pieSeriesName?: {
-        visible: boolean;
-        anchor?: 'center' | 'outer';
+    [name]: {
+      ...
+      dataLabels: {
+        // Pie 시리즈  데이터 라벨 옵션
       };
-    };
+    },
+    ...
   };
 };
 ```
 
+간단한 예시로 안쪽에 있는 Pie 시리즈('browsers')에는 데이터 라벨만 표시해주고, 바깥쪽에 있는 Pie 시리즈('versions')에는 시리즈 이름 라벨까지 표시해주었다.
+
+```js
+const options = {
+  series: {
+    browsers: {
+      radiusRange: {
+        inner: '20%',
+        outer: '50%'
+      },
+      dataLabels: {
+        visible: true,
+        pieSeriesName: {
+          visible: false
+        }
+      }
+    },
+    versions: {
+      radiusRange: {
+        inner: '55%',
+        outer: '85%'
+      },
+      dataLabels: {
+        visible: true,
+        pieSeriesName: {
+          visible: true,
+          anchor: 'outer'
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478580-0460ed80-4e0b-11eb-97d6-f7998a9029dd.png)
 
 ### theme
+
+각 Pie 시리즈의 데이터 라벨 스타일을 지정할 경우 `series[name].dataLabels`를 정의한다.
 
 ```ts
 type options = {
   ...
   theme?: {
     series?: {
-      dataLabels?: {
-
-      };
+      [name]: {
+        dataLabels?: {
+          // Pie 시리즈 데이터 라벨 테마
+        };
+      }
     };
   };
 };
 ```
+
+간단한 예시로 각 Pie 시리즈의 데이터 라벨의 글자 스타일을 변경하고 말풍선으로 변경해 보았다.
+
+```js
+const options = {
+  series: {
+    browsers: {
+      dataLabels: {
+        visible: true
+      }
+    },
+    versions: {
+      dataLabels: {
+        visible: true,
+        pieSeriesName: { visible: true, anchor: 'outer' }
+      }
+    }
+  },
+  theme: {
+    series: {
+      browsers: {
+        dataLabels: {
+          fontFamily: 'fantasy',
+          fontSize: 13,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            backgroundColor: '#333333',
+            borderRadius: 5,
+            borderColor: '#ff0000',
+            borderWidth: 3,
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 0,
+            shadowColor: 'rgba(0, 0, 0, 0)',
+          },
+        },
+      },
+      versions: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          useSeriesColor: true,
+          lineWidth: 2,
+          textStrokeColor: '#ffffff',
+          shadowColor: '#ffffff',
+          shadowBlur: 4,
+          callout: {
+            lineWidth: 3,
+            lineColor: '#f44336',
+            useSeriesColor: false
+          },
+          pieSeriesName: {
+            useSeriesColor: false,
+            color: '#f44336',
+            fontFamily: 'fantasy',
+            fontSize: 13,
+            textBubble: {
+              visible: true,
+              paddingX: 1,
+              paddingY: 1,
+              backgroundColor: 'rgba(158, 158, 158, 0.3)',
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 0,
+              shadowColor: 'rgba(0, 0, 0, 0)'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478668-9cf76d80-4e0b-11eb-84fc-fce9f8412d2f.png)
 
 ## LineArea
 
@@ -1380,7 +1507,7 @@ const options = {
 };
 ```
 
-![image]()
+![image](https://user-images.githubusercontent.com/43128697/103478314-248fad00-4e09-11eb-8bca-ecd98a4f2776.png)
 
 `series` 옵션에 각 시리즈 별로 옵션을 정의할 수 있으며, 데이터 라벨 관련 옵션도 각 시리즈 별로 좀 더 세밀하게 설정해 줄 수 있다.
 
@@ -1415,7 +1542,7 @@ const options = {
 };
 ```
 
-![image](https://user-images.githubusercontent.com/43128697/103478314-248fad00-4e09-11eb-8bca-ecd98a4f2776.png)
+![image](https://user-images.githubusercontent.com/43128697/103478360-7c2e1880-4e09-11eb-8319-b56af88d7f07.png)
 
 ### theme
 
