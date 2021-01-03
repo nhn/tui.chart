@@ -1367,90 +1367,163 @@ type options = {
 
 ### 옵션
 
-```ts
-type options = {
+`series.dataLabels` 옵션을 지정하면 Line과 Area 차트에서 모두 데이터 라벨이 표시된다.
+
+```js
+const options = {
   ...
   series: {
     dataLabels: {
-      visible?: boolean;
-      offsetX?: number;
-      offsetY?: number;
-      formatter?: Formatter;
+      visible: true;
     }
   }
 };
+```
 
-// 혹은
+![image]()
 
-type options = {
-  ...
+`series` 옵션에 각 시리즈 별로 옵션을 정의할 수 있으며, 데이터 라벨 관련 옵션도 각 시리즈 별로 좀 더 세밀하게 설정해 줄 수 있다.
+
+```ts
+type LineAreaChartSeriesOption = {
+  line: { // Line 시리즈 옵션
+    ...
+    dataLabels: {
+      // Line 시리즈  데이터 라벨 옵션
+    }
+  },
+  area: { // Area 시리즈 옵션
+    ...
+    dataLabels: {
+      // Area 시리즈 데이터 라벨 옵션
+    }
+  }
+};
+```
+
+간단한 예시로 Area 시리즈의 데이터 라벨은 표시해주지 않고, Line 시리즈의 데이터 라벨만 표시하도록 설정하였다.
+
+```js
+const options = {
   series: {
     line: {
-      ...
       dataLabels: {
-        visible?: boolean;
-        offsetX?: number;
-        offsetY?: number;
-        formatter?: (value: SeriesDataType) => string;
-      }
-    },
-    area: {
-      ...
-      dataLabels: {
-        visible?: boolean;
-        offsetX?: number;
-        offsetY?: number;
-        formatter?: (value: SeriesDataType) => string;
+        visible: true
       }
     }
   }
 };
 ```
 
+![image](https://user-images.githubusercontent.com/43128697/103478314-248fad00-4e09-11eb-8bca-ecd98a4f2776.png)
 
 ### theme
 
-```ts
-type options = {
-  ...
-  theme: {
-    series: {
-      dataLabels: {
+각 시리즈 별로 데이터 라벨의 스타일을 지정할 경우 `series.line.dataLabels` 또는 `series.area.dataLabels`를 정의한다.
 
+```ts
+type LineAreaChartDataLabelTheme = {
+  series: {
+    line: {
+      dataLabels: {
+        // Line 시리즈 데이터 라벨 테마
+      }
+    },
+    area: {
+      dataLabels: {
+        // Area 시리즈 데이터 라벨 테마
       }
     }
   }
 };
 ```
+
+간단한 예시로 Area 시리즈와 Line 시리즈의 데이터 라벨 스타일을 글자 색상과 크기, 굵기 등을 조절하고 말풍선 스타일로 변경해보았다.
+
+```js
+const options = {
+  series: {
+    line: {
+      showDot: true,
+      dataLabels: { visible: true, offsetY: 15 }
+    },
+    area: {
+      dataLabels: { visible: true, offsetY: -15 }
+    },
+  },
+  theme: {
+    series: {
+      line: {
+        dataLabels: {
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'top',
+            },
+          },
+        },
+      },
+      area: {
+        dataLabels: {
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478270-acc18280-4e08-11eb-9558-c85c72e2359d.png)
+
+
 ## LineScatter
 
 ### 옵션
 
-```ts
-type options = {
+`series.dataLabels` 옵션을 지정하면 Line 차트에 데이터 라벨이 표시된다. Scatter 차트는 데이터 라벨 옵션을 지원하지 않는다.
+
+```js
+const options = {
   ...
   series: {
     dataLabels: {
-      visible?: boolean;
-      offsetX?: number;
-      offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      visible: true;
     }
   }
 };
+```
 
-// 혹은
+![image](https://user-images.githubusercontent.com/43128697/103477790-5dc61e00-4e05-11eb-94cd-6209948ad291.png)
 
-type options = {
-  ...
-  series: {
-    line: {
-      dataLabels: {
-        visible?: boolean;
-        offsetX?: number;
-        offsetY?: number;
-        formatter?: (value: SeriesDataType) => string;
-      }
+또한 `series.line.dataLabels` 옵션을 사용하여 데이터 라벨을 표시할 수 있다.
+
+```ts
+type LineScatterChartSeriesOption = {
+  line: { // Line 시리즈 옵션
+    ...
+    dataLabels: {
+      // Line 시리즈  데이터 라벨 옵션
     }
   }
 };
@@ -1458,17 +1531,55 @@ type options = {
 
 ### theme
 
-```js
-const options = {
-  theme: {
-    series: {
-      dataLabels: {
+Line 시리즈 데이터 라벨의 스타일을 지정하기 위해서는 `series.line.dataLabels`를 정의한다.
 
+```ts
+type LineScatterChartDataLabelTheme = {
+  series: {
+    line: {
+      dataLabels: {
+        // Line 시리즈 데이터 라벨 테마
       }
     }
   }
 };
 ```
+
+간단한 예시로 Line 시리즈 데이터 라벨 스타일을 말풍선으로 바꾸고 글자 색상과 크기를 변경해보았다.
+
+```js
+const options = {
+  series: {
+    line: {
+      showDot: true,
+      dataLabels: { visible: true, offsetY: -15 }
+    }
+  },
+  theme: {
+    series: {
+      line: {
+        dataLabels: {
+          color: '#105018',
+          fontSize: 10,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477907-7c78e480-4e06-11eb-9d40-00759bcf65c3.png)
 
 ## ColumnLine
 
@@ -1549,7 +1660,7 @@ type ColumnLineChartDataLabelTheme = {
 };
 ```
 
-간단한 예시로 Column 시리즈 데이터 라벨에는 글자 색상과 사이즈, 굵기 등을 조절하고, Line 시리즈 데이터 라벨에는 말풍선 스타일을 변경해보았다.
+간단한 예시로 Column 시리즈 데이터 라벨에는 글자 색상과 크기, 굵기 등을 조절하고, Line 시리즈 데이터 라벨에는 말풍선 스타일을 변경해보았다.
 
 ```js
 const options = {
