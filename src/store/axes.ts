@@ -240,13 +240,19 @@ export function getInitTickInterval(categories?: string[], layout?: Layout) {
 
 function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
   const { axis, categories, layout } = params;
-  const needAdjustInterval = isLabelAxis && !isNumber(axis?.scale?.stepSize) && !params.shift;
+
+  const tickInterval = axis?.tick?.interval;
+  const labelInterval = axis?.label?.interval;
+  const existIntervalOptions = isNumber(tickInterval) || isNumber(labelInterval);
+
+  const needAdjustInterval =
+    isLabelAxis && !isNumber(axis?.scale?.stepSize) && !params.shift && !existIntervalOptions;
   const initTickInterval = needAdjustInterval ? getInitTickInterval(categories, layout) : 1;
   const initLabelInterval = needAdjustInterval ? initTickInterval : 1;
 
   const axisData: InitAxisData = {
-    tickInterval: axis?.tick?.interval ?? initTickInterval,
-    labelInterval: axis?.label?.interval ?? initLabelInterval,
+    tickInterval: tickInterval ?? initTickInterval,
+    labelInterval: labelInterval ?? initLabelInterval,
   };
 
   return axisData;

@@ -48,10 +48,10 @@ function getLabelScaleData(
     result = dateTypeLabel
       ? calculateDatetimeScale(labelOptions)
       : calculateCoordinateScale(labelOptions);
+  }
 
-    if (series.line) {
-      result = calculateScaleForCoordinateLineType(result, options as LineChartOptions, categories);
-    }
+  if (series.line) {
+    result = calculateScaleForCoordinateLineType(result, options as LineChartOptions, categories);
   }
 
   return result;
