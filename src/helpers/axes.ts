@@ -11,21 +11,18 @@ interface IntervalInfo {
   interval: number;
 }
 
-function makeAdjustingIntervalInfo(
-  beforeBlockCount: number,
-  seriesWidth: number,
-  blockSize: number
-) {
+function makeAdjustingIntervalInfo(blockCount: number, axisWidth: number, blockSize: number) {
   let remainCount;
-  let newBlockCount = Math.floor(seriesWidth / blockSize);
+  let newBlockCount = Math.floor(axisWidth / blockSize);
   let intervalInfo: IntervalInfo | null = null;
-  const interval = Math.floor(beforeBlockCount / newBlockCount);
+  const interval = newBlockCount ? blockCount : Math.floor(blockCount / newBlockCount);
+
   if (interval > 1) {
     // remainCount : remaining block count after filling new blocks
     // | | | | | | | | | | | |  - previous block interval
     // |     |     |     |      - new block interval
     //                   |*|*|  - remaining block
-    remainCount = beforeBlockCount - interval * newBlockCount;
+    remainCount = blockCount - interval * newBlockCount;
 
     if (remainCount >= interval) {
       newBlockCount += Math.floor(remainCount / interval);
@@ -42,7 +39,7 @@ function makeAdjustingIntervalInfo(
   return intervalInfo;
 }
 
-export function getAutoAdjustingInterval(count: number, seriesWidth: number) {
+export function getAutoAdjustingInterval(count: number, axisWidth: number) {
   const autoInterval = {
     MIN_WIDTH: 90,
     MAX_WIDTH: 121,
@@ -50,9 +47,8 @@ export function getAutoAdjustingInterval(count: number, seriesWidth: number) {
   };
 
   let candidates: IntervalInfo[] = [];
-  const candidateInterval = divisors(count);
-  candidateInterval.forEach((interval) => {
-    const intervalWidth = (interval / count) * seriesWidth;
+  divisors(count).forEach((interval) => {
+    const intervalWidth = (interval / count) * axisWidth;
     if (intervalWidth >= autoInterval.MIN_WIDTH && intervalWidth <= autoInterval.MAX_WIDTH) {
       candidates.push({ interval, blockCount: Math.floor(count / interval), remainBlockCount: 0 });
     }
@@ -64,8 +60,9 @@ export function getAutoAdjustingInterval(count: number, seriesWidth: number) {
       autoInterval.MAX_WIDTH,
       autoInterval.STEP_SIZE
     );
+
     candidates = blockSizeRange.reduce<IntervalInfo[]>((acc, blockSize) => {
-      const candidate = makeAdjustingIntervalInfo(count, seriesWidth, blockSize);
+      const candidate = makeAdjustingIntervalInfo(count, axisWidth, blockSize);
 
       return candidate ? [...acc, candidate] : acc;
     }, []);

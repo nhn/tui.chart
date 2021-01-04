@@ -3,6 +3,7 @@ import axes from '@src/store/axes';
 import Store from '@src/store/store';
 import { LineChartOptions, BarChartOptions, ColumnChartOptions } from '@t/options';
 import { ChartState, Scale, StateFunc, Options } from '@t/store/store';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 const notify = () => {};
 
@@ -232,6 +233,72 @@ describe('Axes Store module', () => {
         labelTextHeight: 13,
       });
     });
+  });
+});
+
+describe('x Axis stepSize is auto', () => {
+  const categories = [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+    '19',
+    '20',
+  ];
+  const state = {
+    chart: { width: 520, height: 120 },
+    layout: {
+      plot: { width: 500, height: 150, x: 30, y: 10 },
+      yAxis: { x: 10, y: 10, width: 10, height: 80 },
+      xAxis: { x: 10, y: 10, width: 480, height: 10 },
+    },
+    scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
+    series: {
+      line: {
+        data: [
+          { name: 'han', data: [1, 4] },
+          { name: 'cho', data: [5, 2] },
+        ],
+      },
+    },
+    axes: {
+      xAxis: {},
+      yAxis: {},
+    },
+    rawCategories: categories,
+    categories,
+    options: {
+      xAxis: { scale: { stepSize: 'auto' } },
+    },
+  } as ChartState<Options>;
+
+  it('automatically adjusts the interval according to the width', () => {
+    const store = { state } as Store<Options>;
+    axes.action!.setAxesData.call({ notify }, store);
+
+    expect(store.state.axes.xAxis).toMatchObject({ tickInterval: 4, labelInterval: 4 });
+  });
+
+  it('If the interval attribute is present, auto is ignored', () => {
+    const changedState = deepMergedCopy(state, { options: { xAxis: { label: { interval: 3 } } } });
+    const store = { state: changedState } as Store<Options>;
+    axes.action!.setAxesData.call({ notify }, store);
+
+    expect(store.state.axes.xAxis).toMatchObject({ tickInterval: 1, labelInterval: 3 });
   });
 });
 
