@@ -168,9 +168,7 @@ export default class DataLabels extends Component {
       (acc, dataLabel) => {
         const { type, x, y, text, textAlign, textBaseline, name, callout, theme } = dataLabel;
 
-        if (
-          !isModelExistingInRect(this.rect, { x: Number(x.toFixed(5)), y: Number(y.toFixed(5)) })
-        ) {
+        if (!isModelExistingInRect(this.rect, { x, y })) {
           return acc;
         }
 
