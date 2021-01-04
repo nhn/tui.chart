@@ -7,13 +7,13 @@ type SeriesThemeMap = {
   scatter?: ScatterChartSeriesTheme;
   heatmap?: HeatmapChartSeriesTheme;
   treemap?: TreemapChartSeriesTheme;
-  bar?: CommonSeriesTheme;
-  column?: CommonSeriesTheme;
+  bar?: BoxChartSeriesTheme;
+  column?: BoxChartSeriesTheme;
   bubble?: CommonSeriesTheme;
   pie?: PieChartSeriesTheme;
   radar?: RadarChartSeriesTheme;
-  boxPlot?: CommonSeriesTheme;
-  bullet?: CommonSeriesTheme;
+  boxPlot?: BoxPlotChartSeriesTheme;
+  bullet?: BulletChartSeriesTheme;
 };
 
 type SeriesTheme =
@@ -26,7 +26,10 @@ type SeriesTheme =
   | RadarChartSeriesTheme
   | ScatterChartSeriesTheme
   | BubbleChartSeriesTheme
-  | NestedPieChartSeriesTheme;
+  | NestedPieChartSeriesTheme
+  | BoxChartSeriesTheme
+  | BoxPlotChartSeriesTheme
+  | BulletChartSeriesTheme;
 
 type FontTheme = {
   fontSize?: number;
@@ -283,6 +286,7 @@ type ConnectorTheme = {
 
 interface BoxChartSeriesTheme extends CommonSeriesTheme {
   barWidth?: number | string;
+  colorByPoint?: boolean; // @TODO: 작업 필요
   areaOpacity?: number;
   hover?: {
     color?: string;
@@ -304,7 +308,7 @@ interface BoxChartSeriesTheme extends CommonSeriesTheme {
 
 interface BulletChartSeriesTheme extends CommonSeriesTheme {
   areaOpacity?: number;
-  barWidth?: number;
+  barWidth?: number | string;
   barWidthRatios?: {
     rangeRatio?: number;
     bulletRatio?: number;
@@ -331,7 +335,7 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
 
 interface BoxPlotChartSeriesTheme extends CommonSeriesTheme {
   areaOpacity?: number;
-  barWidth?: number;
+  barWidth?: number | string;
   barWidthRatios?: {
     barRatio?: number;
     minMaxBarRatio?: number;
@@ -507,6 +511,10 @@ interface BulletCharThemeOptions extends BaseThemeOptions {
 
 interface BoxPlotCharThemeOptions extends BaseThemeOptions {
   series?: BoxPlotChartSeriesTheme;
+}
+
+interface ColumnLineChartThemeOptions extends BaseThemeOptions {
+  series?: ColumnLineChartSeriesTheme;
 }
 
 type CheckAnchorPieSeries = {

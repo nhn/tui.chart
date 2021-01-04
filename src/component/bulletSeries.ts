@@ -17,7 +17,7 @@ import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 import { LineModel } from '@t/components/axis';
 import { BulletChartSeriesTheme } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
-import { isNumber, omit } from '@src/helpers/utils';
+import { isNumber, omit, calculateSizeWithPercentString } from '@src/helpers/utils';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
 
@@ -30,6 +30,8 @@ type RenderOptions = {
   bulletWidth: number;
   markerWidth: number;
 };
+
+const DEFAULT_WIDTH_RATIO = 0.6;
 
 function getRectSize(vertical: boolean, barWidth: number, barLength: number): Size {
   return {
@@ -61,6 +63,8 @@ export default class BulletSeries extends Component {
     this.type = 'series';
     this.name = 'bullet';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   render(state: ChartState<BulletChartOptions>): void {
@@ -205,6 +209,16 @@ export default class BulletSeries extends Component {
       this.eventBus.emit('needDraw');
     }
   }
+
+  onMouseoutComponent = () => {
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
 
   filterBulletResponder(responders: BulletResponderModel[]) {
     return responders.filter((model) => (model as BulletRectModel)?.modelType === 'bullet');
@@ -357,7 +371,9 @@ export default class BulletSeries extends Component {
   getBulletBarWidths(tickDistance: number) {
     const { barWidth: barThemeWidth, barWidthRatios } = this.theme;
     const { rangeRatio, bulletRatio, markerRatio } = barWidthRatios;
-    const barWidth = isNumber(barThemeWidth) ? barThemeWidth : tickDistance * 0.6;
+    const barWidth = barThemeWidth
+      ? calculateSizeWithPercentString(tickDistance, barThemeWidth)
+      : tickDistance * DEFAULT_WIDTH_RATIO;
 
     return {
       rangeWidth: barWidth * rangeRatio!,
@@ -413,12 +429,12 @@ export default class BulletSeries extends Component {
     }));
   }
 
-  selectSeries = ({ index, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
-    if (!isNumber(index)) {
+  selectSeries = ({ seriesIndex, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
       return;
     }
 
-    const { name } = state.series.bullet?.[index];
+    const { name } = state.series.bullet?.[seriesIndex];
 
     const model = this.filterBulletResponder(this.responders).filter(
       ({ name: dataName }) => dataName === name
@@ -433,5 +449,22 @@ export default class BulletSeries extends Component {
       name: this.name,
     });
     this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({ seriesIndex, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {
+    if (!isNumber(seriesIndex)) {
+      return;
+    }
+
+    const { name } = state.series.bullet?.[seriesIndex];
+    const models = this.filterBulletResponder(this.responders).filter(
+      ({ name: dataName }) => dataName === name
+    );
+
+    if (!models.length) {
+      return;
+    }
+
+    this.onMousemove({ responders: models });
   };
 }

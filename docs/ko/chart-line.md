@@ -24,7 +24,8 @@ const chart = Chart.lineChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id는 유일하게 작성해야 한다.
+`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
+
 
 ```js
 const data = {
@@ -322,7 +323,7 @@ interface LineChartSeriesTheme {
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | select.dot | object | 선택된 데이터를 나타내는 점 스타일 지정 |
 | hover | object | 데이터에 마우스를 올렸을 때 스타일 |
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 [데이터 라벨 가이드](./common-dataLabels-options.md)를 참고한다. |
+| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
 
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 라인 시리즈의 색상과 두꼐를 바꾸고 싶다면  다음처럼 작성하면 된다.
 

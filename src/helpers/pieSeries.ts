@@ -45,15 +45,11 @@ export function isSemiCircle(clockwise: boolean, startAngle: number, endAngle: n
   );
 }
 
-function getSemiCircleRadius(size: number) {
-  return size * DEFAULT_RADIUS_RATIO;
-}
-
 export function getDefaultRadius(rect: Rect, isSemiCircular = false) {
   const { width, height } = rect;
 
   return (
-    (isSemiCircular ? getSemiCircleRadius(height) : Math.min(width, height) / 2) *
+    (isSemiCircular ? Math.min(width / 2, height) : Math.min(width, height) / 2) *
     DEFAULT_RADIUS_RATIO
   );
 }

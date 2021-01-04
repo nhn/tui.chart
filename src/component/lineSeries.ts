@@ -33,12 +33,13 @@ import {
   getNearestResponder,
   makeRectResponderModel,
   makeTooltipCircleMap,
+  RespondersThemeType,
 } from '@src/helpers/responders';
 import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { DotTheme, LineChartSeriesTheme } from '@t/theme';
-import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
 
 interface RenderOptions {
@@ -74,6 +75,8 @@ export default class LineSeries extends Component {
     this.type = 'series';
     this.name = 'line';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   initUpdate(delta: number) {
@@ -316,7 +319,7 @@ export default class LineSeries extends Component {
 
   onMousemoveNearType(responders: CircleResponderModel[]) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: responders,
+      models: this.getResponderSeriesWithTheme(responders, 'hover'),
       name: this.name,
       eventDetectType: this.eventDetectType,
     });
@@ -364,8 +367,8 @@ export default class LineSeries extends Component {
     );
   }
 
-  private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
-    const { radius, color, borderWidth, borderColor } = this.theme.select.dot as DotTheme;
+  private getResponderSeriesWithTheme(models: CircleResponderModel[], type: RespondersThemeType) {
+    const { radius, color, borderWidth, borderColor } = this.theme[type].dot as DotTheme;
 
     return models.map((model) => ({
       ...model,
@@ -387,14 +390,14 @@ export default class LineSeries extends Component {
         );
       }
       this.eventBus.emit('renderSelectedSeries', {
-        models: this.getSelectedSeriesWithTheme(models),
+        models: this.getResponderSeriesWithTheme(models, 'select'),
         name: this.name,
       });
       this.eventBus.emit('needDraw');
     }
   }
 
-  onMouseoutComponent() {
+  onMouseoutComponent = () => {
     this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
     this.eventBus.emit('renderHoveredSeries', {
       models: [],
@@ -403,13 +406,11 @@ export default class LineSeries extends Component {
     });
 
     this.eventBus.emit('needDraw');
-  }
+  };
 
-  selectSeries = ({
-    index,
-    seriesIndex,
-    chartType,
-  }: SelectSeriesHandlerParams<LineChartOptions>) => {
+  selectSeries = (info: SelectSeriesHandlerParams<LineChartOptions>) => {
+    const { index, seriesIndex, chartType } = info;
+
     if (
       !isNumber(index) ||
       !isNumber(seriesIndex) ||
@@ -425,6 +426,32 @@ export default class LineSeries extends Component {
     }
 
     this.eventBus.emit('renderSelectedSeries', { models: [model], name: this.name });
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = (info: SelectSeriesInfo) => {
+    const { index, seriesIndex, chartType } = info;
+
+    if (
+      !isNumber(index) ||
+      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
+      (!isUndefined(chartType) && chartType !== 'line')
+    ) {
+      return;
+    }
+
+    const models =
+      this.eventDetectType === 'grouped'
+        ? this.tooltipCircleMap[index]
+        : [this.tooltipCircleMap[index][seriesIndex!]];
+
+    if (!models?.length) {
+      return;
+    }
+
+    this.onMousemoveNearType(models);
+
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   };
 }

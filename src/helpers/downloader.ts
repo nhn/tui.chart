@@ -185,7 +185,8 @@ function makeBubbleExportData(exportData: DataToExport): ExportData2DArray {
 }
 
 function makeBoxPlotExportData(exportData: DataToExport): ExportData2DArray {
-  const { categories = [], series } = exportData;
+  const { series } = exportData;
+  const categories = (exportData.categories ?? []) as string[];
 
   return series.boxPlot!.data.reduce<ExportData2DArray>(
     (acc, { name, data, outliers }) => {
@@ -203,7 +204,8 @@ function makeBoxPlotExportData(exportData: DataToExport): ExportData2DArray {
 }
 
 function makePieExportData(exportData: DataToExport): ExportData2DArray {
-  const { categories = [], series } = exportData;
+  const { series } = exportData;
+  const categories = (exportData.categories ?? []) as string[];
 
   return (series.pie!.data as Array<PieSeriesType | NestedPieSeriesType>).reduce<ExportData2DArray>(
     (acc, { name, data }) => {

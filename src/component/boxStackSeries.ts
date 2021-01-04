@@ -127,6 +127,8 @@ export default class BoxStackSeries extends BoxSeries {
 
     if (stackChart) {
       this.eventBus.on('selectSeries', this.selectSeries);
+      this.eventBus.on('showTooltip', this.showTooltip);
+      this.eventBus.on('hideTooltip', this.onMouseoutComponent);
     }
   }
 

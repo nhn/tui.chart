@@ -160,3 +160,71 @@ export const responsive = () => {
 
   return el;
 };
+
+export const theme = () => {
+  const { el } = createChart(temperatureAverageData, {
+    series: {
+      line: {
+        showDot: true,
+      },
+      selectable: true,
+    },
+    theme: {
+      series: {
+        colors: ['#70d6ff', '#ff70a6', '#ff9770', '#ffd670', '#bfe000'],
+        column: {
+          barWidth: 18,
+          hover: {
+            color: '#00ff00',
+            groupedRect: {
+              color: '#F0DCBC',
+              opacity: 0.5,
+            },
+          },
+          select: {
+            color: '#0000ff',
+            borderColor: '#000000',
+            borderWidth: 3,
+            shadowColor: 'rgba(0, 0, 0, 0.7)',
+            shadowOffsetX: 4,
+            shadowOffsetY: 4,
+            shadowBlur: 6,
+            groupedRect: {
+              color: '#74521A',
+              opacity: 0.2,
+            },
+            restSeries: {
+              areaOpacity: 0.5,
+            },
+            areaOpacity: 0.8,
+          },
+        },
+        line: {
+          select: {
+            dot: {
+              color: '#ff416d',
+              radius: 6,
+              borderColor: '#00b5a1',
+              borderWidth: 2,
+            },
+          },
+          hover: {
+            dot: {
+              color: '#00ffff',
+              radius: 6,
+              borderColor: '#0859c6',
+              borderWidth: 2,
+            },
+          },
+          dot: {
+            radius: 6,
+            borderColor: '#ffff00',
+            borderWidth: 2,
+          },
+        },
+      },
+    },
+  });
+
+  return el;
+};

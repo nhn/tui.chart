@@ -465,7 +465,7 @@ describe('donut', () => {
           clockwise: true,
           color: 'rgba(0, 169, 255, 1)',
           name: 'A',
-          radius: { inner: 0, outer: 81 },
+          radius: { inner: 0, outer: 45 },
           degree: { start: 0, end: 90 },
           drawingStartAngle: -180,
           style: [
@@ -485,7 +485,7 @@ describe('donut', () => {
           clockwise: true,
           color: 'rgba(255, 184, 64, 1)',
           name: 'B',
-          radius: { inner: 0, outer: 81 },
+          radius: { inner: 0, outer: 45 },
           degree: { start: 90, end: 180 },
           drawingStartAngle: -180,
           style: [
