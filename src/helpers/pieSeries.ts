@@ -88,7 +88,7 @@ export function pieTooltipLabelFormatter(percentValue: number) {
 }
 
 export function hasOuterDataLabel(options: OptionsWithDataLabels, series: RawSeries) {
-  return !!series.pie && (options?.series?.dataLabels as PieDataLabels).anchor === 'outer';
+  return !!series.pie && (options?.series?.dataLabels as PieDataLabels)?.anchor === 'outer';
 }
 
 export function hasOuterPieSeriesName(options: OptionsWithDataLabels, series: RawSeries) {
