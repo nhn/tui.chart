@@ -13,6 +13,7 @@ import {
   LabelAxisData,
   ValueAxisData,
   InitAxisData,
+  Layout,
 } from '@t/store/store';
 import {
   getAxisName,
@@ -21,6 +22,7 @@ import {
   isLabelAxisOnYAxis,
   isPointOnColumn,
   getYAxisOption,
+  getAutoAdjustingInterval,
 } from '@src/helpers/axes';
 import {
   makeLabelsFromLimit,
@@ -37,6 +39,7 @@ import {
   RangeDataType,
   Rect,
   DateOption,
+  LineTypeSeriesOptions,
 } from '@t/options';
 import {
   deepMergedCopy,
@@ -44,7 +47,6 @@ import {
   isNumber,
   isString,
   isUndefined,
-  last,
   pickProperty,
 } from '@src/helpers/utils';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
@@ -75,6 +77,13 @@ type SecondaryYAxisParam = {
   labelAxisName: string;
   initialAxisData: InitAxisData;
 };
+
+interface AxisDataParams {
+  axis?: BaseAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions;
+  categories?: string[];
+  layout?: Layout;
+  shift?: boolean;
+}
 
 export function isCenterYAxis(options: ChartOptionsUsingYAxis, isBar: boolean) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
@@ -111,16 +120,6 @@ export function makeFormattedCategory(categories: string[], date?: DateOption) {
   return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
 }
 
-// function getCategoryWithAppliedStepSize(categories: string[], stepSize: number) {
-//   const newCate = categories.filter((_, idx) => !(idx % (stepSize - 1)));
-//
-//   if (categories.length / stepSize) {
-//     newCate.push(last(categories));
-//   }
-//
-//   return newCate;
-// }
-
 export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const {
     axisSize,
@@ -133,24 +132,10 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     initialAxisData,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
-  // const labels =
-  //   !isZooming(rawCategories, zoomRange) && isCoordinateSeries(series)
-  //     ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
-  //     : makeFormattedCategory(categories, options?.xAxis?.date);
-
-  let labels;
-
-  if (isCoordinateSeries(series)) {
-    labels = makeLabelsFromLimit(scale.limit, scale.stepSize, options);
-  } else if (isZooming(rawCategories, zoomRange)) {
-    labels = makeFormattedCategory(categories, options?.xAxis?.date);
-  } else {
-    // labels = makeFormattedCategory(
-    //   getCategoryWithAppliedStepSize(categories, scale.stepSize),
-    //   options?.xAxis?.date
-    // );
-    labels = makeFormattedCategory(categories, options?.xAxis?.date);
-  }
+  const labels =
+    !isZooming(rawCategories, zoomRange) && isCoordinateSeries(series)
+      ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
+      : makeFormattedCategory(categories, options?.xAxis?.date);
 
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
@@ -242,19 +227,34 @@ function getRadialAxis(
   };
 }
 
-function makeDefaultAxisData(
-  axis?: BaseAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions
-): InitAxisData {
+export function getInitTickInterval(categories?: string[], layout?: Layout) {
+  if (!categories || !layout) {
+    return 1;
+  }
+
+  const { width } = layout.xAxis;
+  const count = categories.length;
+
+  return getAutoAdjustingInterval(count, width);
+}
+
+function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
+  const { axis, categories, layout } = params;
+  const needAdjustInterval = isLabelAxis && !isNumber(axis?.scale?.stepSize) && !params.shift;
+  const initTickInterval = needAdjustInterval ? getInitTickInterval(categories, layout) : 1;
+  const initLabelInterval = needAdjustInterval ? initTickInterval : 1;
+
   const axisData: InitAxisData = {
-    tickInterval: axis?.tick?.interval ?? 1,
-    labelInterval: axis?.label?.interval ?? 1,
+    tickInterval: axis?.tick?.interval ?? initTickInterval,
+    labelInterval: axis?.label?.interval ?? initLabelInterval,
   };
 
-  // @TODO
-  // 여기서 Auto면 interval 지정해버리기
-  // coordinate인지
+  return axisData;
+}
 
-  const title = makeTitleOption(axis?.title);
+function makeDefaultAxisData(isLabelAxis: boolean, params: AxisDataParams): InitAxisData {
+  const axisData = getInitAxisIntervalData(isLabelAxis, params);
+  const title = makeTitleOption(params?.axis?.title);
 
   if (title) {
     axisData.title = title;
@@ -263,13 +263,21 @@ function makeDefaultAxisData(
   return axisData;
 }
 
-function getInitialAxisData(options: Options) {
+function getInitialAxisData(
+  options: Options,
+  labelOnYAxis: boolean,
+  categories: string[],
+  layout: Layout
+) {
   const { yAxis, secondaryYAxis } = getYAxisOption(options);
+  const shift = (options?.series as LineTypeSeriesOptions)?.shift;
 
   return {
-    xAxis: makeDefaultAxisData(options?.xAxis),
-    yAxis: makeDefaultAxisData(yAxis),
-    secondaryYAxis: secondaryYAxis ? makeDefaultAxisData(secondaryYAxis) : null,
+    xAxis: makeDefaultAxisData(!labelOnYAxis, { categories, axis: options?.xAxis, layout, shift }),
+    yAxis: makeDefaultAxisData(labelOnYAxis, { axis: yAxis }),
+    secondaryYAxis: secondaryYAxis
+      ? makeDefaultAxisData(labelOnYAxis, { axis: secondaryYAxis })
+      : null,
   };
 }
 
@@ -346,7 +354,7 @@ const axes: StoreModule = {
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;
 
-      const initialAxisData = getInitialAxisData(options);
+      const initialAxisData = getInitialAxisData(options, labelOnYAxis, rawCategories, layout);
 
       const valueAxisData = getValueAxisData({
         scale: scale[valueAxisName],

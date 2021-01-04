@@ -57,7 +57,7 @@ export function sum(values: number[]) {
   return copyArr.reduce((base, value) => add(parseFloat(String(base)), parseFloat(String(value))));
 }
 
-function divisors(value: number) {
+export function divisors(value: number) {
   const result: number[] = [];
   for (let a = 2, b; a * a <= value; a += 1) {
     if (value % a === 0) {

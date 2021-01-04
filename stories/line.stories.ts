@@ -208,7 +208,7 @@ export const scale = () => {
 };
 
 export const xAxisStepSizeAuto = () => {
-  const { el } = createChart(randomData(50), {
+  const { el } = createChart(randomData(100), {
     xAxis: {
       scale: {
         stepSize: 'auto',
