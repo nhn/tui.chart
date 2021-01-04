@@ -143,18 +143,9 @@ export const diverging = () => {
 
 export const centerYAxis = () => {
   const { el } = createChart(genderAgeData, {
-    yAxis: {
-      title: 'Age Group',
-      align: 'center',
-    },
-    xAxis: {
-      label: {
-        interval: 2,
-      },
-    },
-    series: {
-      diverging: true,
-    },
+    yAxis: { title: 'Age Group', align: 'center' },
+    xAxis: { label: { interval: 2 } },
+    series: { diverging: true },
   });
 
   return el;

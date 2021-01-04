@@ -43,7 +43,7 @@ export const temperatureData = {
       data: [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2],
     },
     {
-      name: 'Moskva',
+      name: 'Moscow',
       data: [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
     },
     {
@@ -82,7 +82,7 @@ export const temperatureDataWithDateObject = {
       data: [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2],
     },
     {
-      name: 'Moskva',
+      name: 'Moscow',
       data: [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
     },
     {
@@ -93,7 +93,7 @@ export const temperatureDataWithDateObject = {
 };
 
 export const temperatureData2 = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
   series: [
     {
       name: 'Budget',
@@ -117,8 +117,8 @@ export const avgTemperatureData = {
     'Mar',
     'Apr',
     'May',
-    'June',
-    'July',
+    'Jun',
+    'Jul',
     'Aug',
     'Sep',
     'Oct',
@@ -135,14 +135,14 @@ export const avgTemperatureData = {
       data: [5, 30, 21, 18, 59, 50, 28, 33, 7, 20, 10, 30],
     },
     {
-      name: 'Moskva',
+      name: 'Moscow',
       data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5],
     },
   ],
 };
 
 export const budgetData = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Budget',
@@ -164,7 +164,7 @@ export const budgetData = {
 };
 
 export const budgetData2 = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
   series: [
     {
       name: 'Budget',
@@ -186,7 +186,7 @@ export const budgetData2 = {
 };
 
 export const negativeBudgetData = {
-  categories: ['May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
+  categories: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
   series: [
     {
       name: 'Budget',
@@ -208,7 +208,7 @@ export const negativeBudgetData = {
 };
 
 export const budgetDataForStack = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Budget',
@@ -268,7 +268,7 @@ export const genderAgeGroupData = {
 };
 
 export const lossData = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
   series: [
     {
       name: 'Elviations',
@@ -286,7 +286,7 @@ export const lossData = {
 };
 
 export const lossDataForGroupStack = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Elviations',
@@ -423,8 +423,8 @@ export const temperatureRangeData = {
     'Mar',
     'Apr',
     'May',
-    'June',
-    'July',
+    'Jun',
+    'Jul',
     'Aug',
     'Sep',
     'Oct',
@@ -1489,19 +1489,19 @@ export const energyUsageData = {
     '2020.09',
     '2020.10',
     '2020.11',
-    '2014.12',
-    '2015.01',
-    '2015.02',
-    '2015.03',
-    '2015.04',
-    '2015.05',
-    '2015.06',
-    '2015.07',
-    '2015.08',
-    '2015.09',
-    '2015.10',
-    '2015.11',
-    '2015.12',
+    '2020.12',
+    '2021.01',
+    '2021.02',
+    '2021.03',
+    '2021.04',
+    '2021.05',
+    '2021.06',
+    '2021.07',
+    '2021.08',
+    '2021.09',
+    '2021.10',
+    '2021.11',
+    '2021.12',
   ],
   series: {
     area: [
@@ -1582,19 +1582,19 @@ export const energyUsageStackData = {
     '2020.09',
     '2020.10',
     '2020.11',
-    '2014.12',
-    '2015.01',
-    '2015.02',
-    '2015.03',
-    '2015.04',
-    '2015.05',
-    '2015.06',
-    '2015.07',
-    '2015.08',
-    '2015.09',
-    '2015.10',
-    '2015.11',
-    '2015.12',
+    '2020.12',
+    '2021.01',
+    '2021.02',
+    '2021.03',
+    '2021.04',
+    '2021.05',
+    '2021.06',
+    '2021.07',
+    '2021.08',
+    '2021.09',
+    '2021.10',
+    '2021.11',
+    '2021.12',
   ],
   series: {
     area: [
@@ -1727,7 +1727,7 @@ export const usedDiskSpaceData = {
       label: 'Downloads',
       children: [
         {
-          label: 'recents',
+          label: 'recent',
           data: 5.3,
         },
         {
@@ -1857,7 +1857,7 @@ export const populationDensityData = {
 };
 
 export const temperatureAverageData = {
-  categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
+  categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
   series: {
     column: [
       {
@@ -1873,7 +1873,7 @@ export const temperatureAverageData = {
         data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6],
       },
       {
-        name: 'Moskva',
+        name: 'Moscow',
         data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2],
       },
     ],
@@ -1888,8 +1888,8 @@ export const temperatureAverageData = {
 
 export const temperatureAverageDataForHeatmap = {
   categories: {
-    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    y: ['Seoul', 'Seattle', 'Sydney', 'Moskva', 'Jungfrau'],
+    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    y: ['Seoul', 'Seattle', 'Sydney', 'Moscow', 'Jungfrau'],
   },
   series: [
     [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6],
@@ -2141,7 +2141,7 @@ export const browserUsageData2 = {
 };
 
 export const simpleBudgetData = {
-  categories: ['May', 'June'],
+  categories: ['May', 'Jun'],
   series: [
     {
       name: 'Budget',

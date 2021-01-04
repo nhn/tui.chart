@@ -100,19 +100,9 @@ export const centerYAxis = () => {
       height: 500,
       title: 'Population Distribution',
     },
-    yAxis: {
-      title: 'Age Group',
-      align: 'center',
-    },
-    xAxis: {
-      label: {
-        interval: 4,
-      },
-    },
-    series: {
-      stack: true,
-      diverging: true,
-    },
+    yAxis: { title: 'Age Group', align: 'center' },
+    xAxis: { label: { interval: 4 } },
+    series: { stack: true, diverging: true },
   });
 
   return el;

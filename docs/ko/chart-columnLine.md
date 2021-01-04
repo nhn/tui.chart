@@ -26,7 +26,7 @@ const chart = Chart.columnLineChart({el, data, options});
 
 ```js
 const data = {
-  categories: ['Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct'],
+  categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
   series: {
     column: [
       {
@@ -42,7 +42,7 @@ const data = {
         data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6],
       },
       {
-        name: 'Moskva',
+        name: 'Moscow',
         data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2],
       },
     ],

@@ -26,8 +26,8 @@ const chart = Chart.heatmapChart({el, data, options});
 ```js
 const data = {
   categories: {
-    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    y: ['Seoul', 'Seattle', 'Sydney', 'Moskva', 'Jungfrau'],
+    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    y: ['Seoul', 'Seattle', 'Sydney', 'Moscow', 'Jungfrau'],
   },
   series: [
     [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6],

@@ -86,7 +86,7 @@
             data: [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2],
           },
           {
-            name: 'Moskva',
+            name: 'Moscow',
             data: [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
           },
           {
@@ -95,17 +95,6 @@
           },
         ],
       };
-      function getTempIcon(value) {
-        const temp = Number(value);
-        let icon = '☀️';
-        if (temp < 0) {
-          icon = '❄️';
-        } else if (temp > 25) {
-          icon = '🔥';
-        }
-
-        return icon;
-      }
 
       const options = {
         chart: { title: '24-hr Average Temperature', width: 800, height: 400 },

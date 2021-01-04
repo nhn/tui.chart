@@ -96,14 +96,8 @@
       };
       const options = {
         chart: { title: 'Population Distribution', width: 900, height: 600 },
-        yAxis: {
-          title: 'Age Group',
-          align: 'center',
-        },
-        series: {
-          stack: true,
-          diverging: true,
-        },
+        yAxis: { title: 'Age Group', align: 'center', },
+        series: { stack: true, diverging: true, },
       };
 
       const chart = toastui.Chart.barChart({ el, data, options });

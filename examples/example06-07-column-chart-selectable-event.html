@@ -108,18 +108,9 @@
       };
       const options = {
         chart: { title: 'Monthly Revenue', width: 900, height: 500 },
-        yAxis: {
-          title: 'Age Group',
-          align: 'center',
-        },
-        xAxis: {
-          label: {
-            interval: 2,
-          },
-        },
-        series: {
-          selectable: true,
-        },
+        yAxis: { title: 'Age Group', align: 'center' },
+        xAxis: { label: { interval: 2 } },
+        series: { selectable: true },
       };
 
       const chart = toastui.Chart.columnChart({ el, data, options });

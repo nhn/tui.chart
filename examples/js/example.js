@@ -45,7 +45,6 @@
       styleActiveLine: true,
       matchBrackets: true,
       indentUnit: 4,
-      // gutters: ['CodeMirror-lint-markers'],
       value: document.getElementById('code-js').innerHTML,
       theme: 'neo',
     }
