@@ -139,9 +139,9 @@ export class LineChart extends BaseChart {
 
   public removePlotBand(id: string): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: LineChartOptions): void;
 
@@ -169,9 +169,9 @@ export class AreaChart extends BaseChart {
 
   public removePlotBand(id: string): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: AreaChartOptions): void;
 
@@ -191,9 +191,9 @@ export class BarChart extends BaseChart {
 
   public setData(data: BoxSeriesData): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: BarChartOptions): void;
 
@@ -231,9 +231,9 @@ export class ColumnChart extends BaseChart {
 
   public setData(data: BoxSeriesData): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: ColumnChartOptions): void;
 
@@ -251,9 +251,9 @@ export class PieChart extends BaseChart {
 
   public setData(data: PieSeriesData): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: PieChartOptions): void;
 
@@ -273,9 +273,9 @@ export class HeatmapChart extends BaseChart {
 
   public setData(data: HeatmapSeriesData): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: HeatmapChartOptions): void;
 
@@ -329,9 +329,9 @@ export class BulletChart extends BaseChart {
 
   public setData(data: BulletSeriesData): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: BulletChartOptions): void;
 
@@ -367,9 +367,9 @@ export class TreemapChart extends BaseChart {
 
   public setData(data: TreemapSeriesData): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: TreemapChartOptions): void;
 
@@ -387,9 +387,9 @@ export class NestedPieChart extends BaseChart {
 
   public setData(data: NestedPieSeriesData): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: NestedPieChartOptions): void;
 
@@ -424,9 +424,9 @@ export class LineAreaChart extends BaseChart {
 
   public removePlotBand(id: string): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: LineAreaChartOptions): void;
 
@@ -476,9 +476,9 @@ export class ColumnLineChart extends BaseChart {
 
   public removePlotBand(id: string): void;
 
-  public hideSeriesLabel(): void;
+  public hideSeriesDataLabel(): void;
 
-  public showSeriesLabel(): void;
+  public showSeriesDataLabel(): void;
 
   public setOptions(options: ColumnLineChartOptions): void;
 

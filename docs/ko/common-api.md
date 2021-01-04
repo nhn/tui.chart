@@ -344,20 +344,20 @@ chart.setTooltipOffset({
 ![image](https://user-images.githubusercontent.com/35371660/102179647-dca4f680-3eea-11eb-940d-2fd87dff0434.png)
 
 
-## showSeriesLabel()
+## showSeriesDataLabel()
 * 사용 가능 차트 타입: `Line`, `Area`, `Bar`, `Column`, `Pie`, `Heatmap`, `Bullet`, `Treemap`, `NestedPie`, `LineArea`, `ColumnLine`
 
 ```ts
-public showSeriesLabel();
+public showSeriesDataLabel();
 ```
 
 차트의 dataLabel을 보여준다.
 
-### hideSeriesLabel()
+### hideSeriesDataLabel()
 * 사용 가능 차트 타입: `Line`, `Area`, `Bar`, `Column`, `Pie`, `Heatmap`, `Bullet`, `Treemap`, `NestedPie`, `LineArea`, `ColumnLine`
 
 ```ts
-public hideSeriesLabel();
+public hideSeriesDataLabel();
 ```
 
 차트의 dataLabel을 숨긴다.
