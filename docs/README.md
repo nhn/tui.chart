@@ -21,7 +21,8 @@
 - [Scatter Chart](./en/chart-scatter.md)
 - [LineScatter Chart](./en/chart-lineScatter.md)
 - [Bubble Chart](./en/chart-bubble.md)
-- [Pie, NestedPie Chart](./en/chart-pie-nestedPie.md)
+- [Pie Chart](./en/chart-pie.md)
+- [NestedPie Chart](./en/chart-nestedPie.md)
 - [Radar Chart](./en/chart-radar.md)
 
 ### Common

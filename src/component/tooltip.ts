@@ -77,6 +77,9 @@ export default class Tooltip extends Component {
           : y;
     }
 
+    x += window.scrollX;
+    y += window.scrollY;
+
     return { x, y };
   }
 

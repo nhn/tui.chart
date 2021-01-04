@@ -10,7 +10,7 @@
 - [Area 차트](./chart-area.md)
 - [LineArea 차트](./chart-lineArea.md)
 - [Bar 차트](./chart-bar.md)
-- [Column 차트](./chart-column.md)s
+- [Column 차트](./chart-column.md)
 - [ColumnLine 차트](./chart-columnLine.md)
 - [Bullet 차트](./chart-bullet.md)
 - [BoxPlot 차트](./chart-boxplot.md)
@@ -19,7 +19,8 @@
 - [Scatter 차트](./chart-scatter.md)
 - [LineScatter 차트](./chart-lineScatter.md)
 - [Bubble 차트](./chart-bubble.md)
-- [Pie, NestedPie 차트](./chart-pie-nestedPie.md)
+- [Pie 차트](./chart-pie.md)
+- [NestedPie 차트](./chart-nestedPie.md)
 - [Radar 차트](./chart-radar.md)
 
 ### 공통

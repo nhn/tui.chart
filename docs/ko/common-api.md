@@ -42,7 +42,7 @@ chart.on('selectSeries', (ev) => {
 });
 ```
 
-## destroy()
+### destroy()
 * 사용 가능 차트 타입: `All`
 
 ```ts
@@ -57,7 +57,7 @@ const chart = new LineChart({ el, data, options });
 chart.destroy();
 ```
 
-## resize()
+### resize()
 * 사용 가능 차트 타입: `All`
 
 ```ts
@@ -74,8 +74,6 @@ const chart = new LineChart({ el, data, options });
 
 chart.resize({width: 400, height: 400});
 ```
-
-## series
 
 ### addSeries()
 * 사용 가능 차트 타입: `Line`, `Area`, `Bar`, `BoxPlot`, `Column`, `Pie`, `Heatmap`, `Bubble`, `Scatter`, `Radar`, `Treemap`, `NestedPie`, `LineScatter`, `ColumnLine`
@@ -110,7 +108,7 @@ chart.addSeries([-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6,
 });
 ```
 
-두 번째로, `chartType`의 경우 `ColumnLine`, `LineArea`, `LineScatter`, `NestedPie`에서 사용되며 각 차트의 타입 또는 `NestedPie`의 경우 `alias`의 이름을 추가해줘야 해당하는 차트에 적절하게 시리즈가 추가될 수 있다. `LineArea` 차트에 `addSeries()`를 하는 예시를 작성해보면 다음과 같다.
+두 번째로, `chartType`의 경우 `ColumnLine`, `LineArea`, `LineScatter`, `NestedPie`에서 사용되며 각 차트의 타입 또는 `NestedPie`의 경우 시리즈의 `name`을 추가해줘야 해당하는 차트에 적절하게 시리즈가 추가될 수 있다. `LineArea` 차트에 `addSeries()`를 하는 예시를 작성해보면 다음과 같다.
 
 ```js
 const chart = new LineAreaChart({ el, data, options });
@@ -138,7 +136,7 @@ public setData(data): void;
 const lineChart = new LineChart({ el, data, options });
 
 lineChart.setData({
-  categories: ['1','2','3'],
+  categories: ['1', '2', '3'],
   series: [
     {
       name: 'new series',
@@ -411,3 +409,54 @@ public removePlotBand(id: string);
 plot band를 제거할 수 있다. 인자로 id를 입력받으며 동일한 id를 가진 plot band를 제거한다.
 
 > [plot band](./common-plot.md)에 대해 궁금하다면 해당 가이드를 참고하라
+
+
+### showTooltip()
+
+해당되는 시리즈의 툴팁을 보여준다. 
+
+```ts
+public showTooltip(seriesInfo: {
+  seriesIndex?: number;
+  index?: number;
+  alias?: string;
+  chartType?: 'line' | 'column' | 'area' | 'scatter';
+});
+```
+
+인자로 받게 되는 `seriesIndex`는 시리즈의 인덱스, `index`는 시리즈 내에서의 인덱스를 의미한다. 각각 숫자값 인덱스를 넣어줘 tooltip을 보여줄 시리즈의 데이터를 명시한다. `alias`는 NestedPie 차트에서, `chartType`은 ColumnLine, LineArea, LineScatter 차트에서 적용할 차트를 명시해준다.
+
+### hideTooltip()
+
+툴팁을 사라지게 한다.
+
+```ts
+public hideTooltip();
+```
+
+### selectSeries()
+
+옵션 `options.series.selectable: true`로 설정되어 있을 때 `selectSeries()`를 사용하면 시리즈를 선택할 수 있다. 
+
+```ts
+public showTooltip(seriesInfo: {
+  seriesIndex?: number;
+  index?: number;
+  alias?: string;
+  chartType?: 'line' | 'column' | 'area';
+});
+```
+
+인자로 받게 되는 `seriesIndex`는 시리즈의 인덱스, `index`는 시리즈 내에서의 인덱스를 의미한다. 각각 숫자값 인덱스를 넣어줘 선택될 시리즈의 데이터를 명시한다. `alias`는 NestedPie 차트에서, `chartType`은 ColumnLine, LineArea, LineScatter 차트에서 적용할 차트를 명시해준다.
+
+선택 시 API의 on 이벤트의 `selectSeries` eventName을 사용할 경우 선택된 시리즈에 대한 제어를 추가로 할 수 있다.
+
+### unselectSeries()
+
+선택을 해제한다.
+
+```ts
+public unselectSeries();
+```
+
+선택 시 API의 on 이벤트의 `unselectSeries` eventName을 사용할 경우 해제된 시리즈에 대한 제어를 추가로 할 수 있다.

@@ -54,7 +54,7 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
 import { makeRectResponderModel, RespondersThemeType } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
-import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
 
 export enum SeriesDirection {
@@ -145,6 +145,8 @@ export default class BoxSeries extends Component {
 
     if (!stackChart) {
       this.eventBus.on('selectSeries', this.selectSeries);
+      this.eventBus.on('showTooltip', this.showTooltip);
+      this.eventBus.on('hideTooltip', this.onMouseoutComponent);
     }
   }
 
@@ -767,7 +769,7 @@ export default class BoxSeries extends Component {
     }
   }
 
-  onMouseoutComponent() {
+  onMouseoutComponent = () => {
     this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
     this.eventBus.emit('renderHoveredSeries', {
       models: [],
@@ -776,7 +778,7 @@ export default class BoxSeries extends Component {
     });
 
     this.eventBus.emit('needDraw');
-  }
+  };
 
   getRespondersWithTheme(responders: RectResponderModel[], type: RespondersThemeType) {
     const {
@@ -815,11 +817,9 @@ export default class BoxSeries extends Component {
       : getRGBA(color, areaOpacity);
   }
 
-  selectSeries = ({
-    index,
-    seriesIndex,
-    chartType,
-  }: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
+  selectSeries = (info: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
+    const { index, seriesIndex, chartType } = info;
+
     if (
       !isNumber(index) ||
       !isNumber(seriesIndex) ||
@@ -828,7 +828,7 @@ export default class BoxSeries extends Component {
       return;
     }
 
-    const model = this.tooltipRectMap[index][seriesIndex];
+    const model = this.tooltipRectMap[seriesIndex][index];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -838,6 +838,38 @@ export default class BoxSeries extends Component {
       models: this.getRespondersWithTheme([model], 'select'),
       name: this.name,
     });
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = (info: SelectSeriesInfo) => {
+    const { index, seriesIndex, chartType } = info;
+
+    if (
+      !isNumber(index) ||
+      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
+      (!isUndefined(chartType) && chartType !== 'column')
+    ) {
+      return;
+    }
+
+    const models =
+      this.eventDetectType === 'grouped'
+        ? this.getGroupedRect([this.responders[index]], 'hover')
+        : this.getRespondersWithTheme([this.tooltipRectMap[index][seriesIndex!]], 'hover');
+
+    if (!models.length) {
+      return;
+    }
+
+    this.eventBus.emit('renderHoveredSeries', {
+      models,
+      name: this.name,
+      eventDetectType: this.eventDetectType,
+    });
+    this.activatedResponders =
+      this.eventDetectType === 'grouped' ? this.tooltipRectMap[index] : models;
+
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   };
 }

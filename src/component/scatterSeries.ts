@@ -35,6 +35,8 @@ export default class ScatterSeries extends Component {
     this.type = 'series';
     this.name = 'scatter';
     this.eventBus.on('selectSeries', this.selectSeries);
+    this.eventBus.on('showTooltip', this.showTooltip);
+    this.eventBus.on('hideTooltip', this.onMouseoutComponent);
   }
 
   initUpdate(delta: number) {
@@ -187,6 +189,16 @@ export default class ScatterSeries extends Component {
     }
   }
 
+  onMouseoutComponent = () => {
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', {
+      models: [],
+      name: this.name,
+    });
+
+    this.eventBus.emit('needDraw');
+  };
+
   selectSeries = ({
     index,
     seriesIndex,
@@ -213,6 +225,34 @@ export default class ScatterSeries extends Component {
       name: this.name,
     });
 
+    this.eventBus.emit('needDraw');
+  };
+
+  showTooltip = ({
+    index,
+    seriesIndex,
+    state,
+    chartType,
+  }: SelectSeriesHandlerParams<ScatterChartOptions>) => {
+    if (
+      !isNumber(index) ||
+      !isNumber(seriesIndex) ||
+      (!isUndefined(chartType) && chartType !== 'scatter')
+    ) {
+      return;
+    }
+
+    const { name } = state.series.scatter!.data[seriesIndex];
+    const models = [this.responders.filter(({ name: dataName }) => dataName === name)[index]];
+
+    if (!models.length) {
+      return;
+    }
+
+    this.eventBus.emit('renderHoveredSeries', { models, name: this.name });
+    this.activatedResponders = models;
+
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   };
 }

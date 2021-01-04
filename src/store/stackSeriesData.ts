@@ -42,6 +42,7 @@ export function hasPercentStackSeries(stackSeries: StackSeries) {
 
 export function pickStackOption(options: Options): StackOptionType {
   return (pickProperty(options, ['series', 'stack']) ||
+    pickProperty(options, ['series', 'column', 'stack']) ||
     pickProperty(options, ['series', 'area', 'stack'])) as StackOptionType;
 }
 

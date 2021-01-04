@@ -1,5 +1,5 @@
 import LineChart from '@src/charts/lineChart';
-import { LineSeriesData, LineChartOptions } from '@t/options';
+import { LineSeriesData, LineChartOptions, LineTypeEventDetectType } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import {
   tupleCoordinateData,
@@ -425,4 +425,62 @@ export const liveUpdate = () => {
   }, 1500);
 
   return el;
+};
+
+export const syncTooltip = () => {
+  const options = {
+    chart: { title: 'Sync tooltip', width: 800, height: 300 },
+    xAxis: {
+      title: 'x axis data',
+    },
+    yAxis: { title: 'y axis data' },
+    series: {
+      eventDetectType: 'grouped' as LineTypeEventDetectType,
+    },
+  };
+
+  const { chart, el } = createChart(randomData(10), options);
+  const { chart: chart2, el: el2 } = createChart(randomData(10), options);
+  const { chart: chart3, el: el3 } = createChart(randomData(10), options);
+
+  const chartGroupElem = document.createElement('div');
+  chartGroupElem.append(el, el2, el3);
+
+  chart.on('hoverSeries', (ev) => {
+    const { index, seriesIndex } = ev[0];
+
+    chart2.showTooltip({ index, seriesIndex });
+    chart3.showTooltip({ index, seriesIndex });
+  });
+
+  chart.on('unhoverSeries', () => {
+    chart2.hideTooltip();
+    chart3.hideTooltip();
+  });
+
+  chart2.on('hoverSeries', (ev) => {
+    const { index, seriesIndex } = ev[0];
+
+    chart.showTooltip({ index, seriesIndex });
+    chart3.showTooltip({ index, seriesIndex });
+  });
+
+  chart2.on('unhoverSeries', () => {
+    chart.hideTooltip();
+    chart3.hideTooltip();
+  });
+
+  chart3.on('hoverSeries', (ev) => {
+    const { index, seriesIndex } = ev[0];
+
+    chart.showTooltip({ index, seriesIndex });
+    chart2.showTooltip({ index, seriesIndex });
+  });
+
+  chart3.on('unhoverSeries', () => {
+    chart.hideTooltip();
+    chart2.hideTooltip();
+  });
+
+  return chartGroupElem;
 };
