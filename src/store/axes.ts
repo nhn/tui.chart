@@ -111,15 +111,15 @@ export function makeFormattedCategory(categories: string[], date?: DateOption) {
   return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
 }
 
-function getCategoryWithAppliedStepSize(categories: string[], stepSize: number) {
-  const newCate = categories.filter((_, idx) => !(idx % (stepSize - 1)));
-
-  if (categories.length / stepSize) {
-    newCate.push(last(categories));
-  }
-
-  return newCate;
-}
+// function getCategoryWithAppliedStepSize(categories: string[], stepSize: number) {
+//   const newCate = categories.filter((_, idx) => !(idx % (stepSize - 1)));
+//
+//   if (categories.length / stepSize) {
+//     newCate.push(last(categories));
+//   }
+//
+//   return newCate;
+// }
 
 export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const {
@@ -249,6 +249,10 @@ function makeDefaultAxisData(
     tickInterval: axis?.tick?.interval ?? 1,
     labelInterval: axis?.label?.interval ?? 1,
   };
+
+  // @TODO
+  // 여기서 Auto면 interval 지정해버리기
+  // coordinate인지
 
   const title = makeTitleOption(axis?.title);
 
