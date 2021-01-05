@@ -7,7 +7,7 @@ import { crispPixel } from '@src/helpers/calculator';
 import { isUndefined, includes } from '@src/helpers/utils';
 import { LineTypeEventDetectType, BoxTypeEventDetectType } from '@t/options';
 import { ResponderSeriesModel } from '@src/component/selectedSeries';
-import { isSameArray } from '@src/helpers/arrayUtil';
+import { isSameSeriesResponder } from '@src/helpers/responders';
 
 export type HoveredSeriesModel = ResponderSeriesModel & { guideLine: LineModel[] };
 
@@ -53,7 +53,10 @@ export default class HoveredSeries extends Component {
     this.models[name] = [...models];
     this.isShow = !!this.getSeriesModels().length;
 
-    const isSame = !!prevModels?.length && !!models.length && isSameArray(prevModels, models);
+    const isSame =
+      !!prevModels?.length &&
+      !!models.length &&
+      isSameSeriesResponder({ models, comparisonModel: prevModels, eventDetectType, name });
 
     if (prevModels?.length && !models.length) {
       this.eventBus.emit('unhoverSeries', prevModels);
