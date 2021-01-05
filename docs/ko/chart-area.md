@@ -285,7 +285,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
     }
   }
 };
@@ -296,7 +296,7 @@ type options = {
 | `visible` | boolean | 데이터 라벨 표시 여부 |
 | `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
 | `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
-| `formatter` | function | 시리즈 별 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+| `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
 
 ```js
 // 기본
@@ -391,7 +391,7 @@ interface AreaChartSeriesTheme {
 | `select.restSeries` | object | 선택되지 않은 시리즈의 스타일 |
 | `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
 | `dataLabels` | object | 데이터 라벨 스타일 |
-| `dataLabels.useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `dataLabels.lineWidth` | number | 텍스트 선 두께 |
 | `dataLabels.textStrokeColor` | string | 텍스트 선 색상 |
 | `dataLabels.shadowColor` | string | 텍스트 그림자 색상 |

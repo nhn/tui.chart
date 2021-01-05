@@ -256,6 +256,42 @@ const options = {
 }
 ```
 
+### dataLabels
+
+Line 차트의 데이터 라벨 옵션은 다음과 같다.
+
+```ts
+type options = {
+  ...
+  series?: {
+    dataLabels?: {
+      visible?: boolean;
+      offsetX?: number;
+      offsetY?: number;
+      formatter?: (value) => string;
+    }
+  }
+};
+```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+
+```js
+// 기본
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103474889-82150100-4deb-11eb-957e-a88c0fb3bd6b.png)
+
 ## 시리즈 theme
 
 Line 차트에서 수정할 수 있는 시리즈 테마이다.
@@ -287,9 +323,17 @@ interface LineChartSeriesTheme {
     };
   };
   dataLabels?: {
+    useSeriesColor?: boolean;
+    lineWidth?: number;
+    textStrokeColor?: string;
+    shadowColor?: string;
+    shadowBlur?: number;
+    fontSize?: number;
+    fontFamily?: string;
+    fontWeight?: string | number;
+    color?: string;
     textBubble?: {
       visible?: boolean;
-      arrow?: ArrowTheme;
       paddingX?: number;
       paddingY?: number;
       backgroundColor?: string;
@@ -300,30 +344,53 @@ interface LineChartSeriesTheme {
       shadowOffsetX?: number;
       shadowOffsetY?: number;
       shadowBlur?: number;
-    }
-    useSeriesColor?: boolean;
-    lineWidth?: number;
-    textStrokeColor?: string;
-    shadowColor?: string;
-    shadowBlur?: number;
-    fontSize?: number;
-    fontFamily?: string;
-    fontWeight?: string | number;
-    color?: string;
+      arrow?: {
+        visible?: boolean;
+        width?: number;
+        height?: number;
+        direction?: 'top' | 'right' | 'bottom' | 'left';
+      };
+    };
   };
 }
 ```
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| lineWidth | number | 시리즈 라인 두께 |
-| dashSegments | number[] | 시리즈 라인의 dashSegment 값 |
-| colors | string[] | 시리즈의 색상 |
-| dot | object | `showDot: true`일 때 노출되는 점 스타일 지정 |
-| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
-| select.dot | object | 선택된 데이터를 나타내는 점 스타일 지정 |
-| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
+| `lineWidth` | number | 시리즈 라인 두께 |
+| `dashSegments` | number[] | 시리즈 라인의 dashSegment 값 |
+| `colors` | string[] | 시리즈의 색상 |
+| `dot` | object | `showDot: true`일 때 노출되는 점 스타일 지정 |
+| `select` | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| `select.dot` | object | 선택된 데이터를 나타내는 점 스타일 지정 |
+| `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
+| `dataLabels` | object | 데이터 라벨 스타일 |
+| `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
+| `dataLabels.lineWidth` | number | 텍스트 선 두께 |
+| `dataLabels.textStrokeColor` | string | 텍스트 선 색상 |
+| `dataLabels.shadowColor` | string | 텍스트 그림자 색상 |
+| `dataLabels.shadowBlur` | number | 텍스트 그림자 Blur |
+| `dataLabels.fontSize` | number | 글자 크기 |
+| `dataLabels.fontFamily` | string | 폰트명 |
+| `dataLabels.fontWeight` | string | 글자 굵기 |
+| `dataLabels.color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `dataLabels.textBubble` | object | 말풍선 디자인 설정 |
+| `dataLabels.textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `dataLabels.textBubble.paddingX` | number | 수평 여백 |
+| `dataLabels.textBubble.paddingY`| number | 수직 여백 |
+| `dataLabels.textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `dataLabels.textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `dataLabels.textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `dataLabels.textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `dataLabels.textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `dataLabels.textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `dataLabels.textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `dataLabels.textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
+| `dataLabels.textBubble.arrow` | object | 말풍선 화살표 설정 <br>사용 차트 타입 : `Area`, `Line`, `Bar`, `Column`, `Bullet` |
+| `dataLabels.textBubble.arrow.visible` | boolean | 화살표 표시 여부 |
+| `dataLabels.textBubble.arrow.width` | number | 화살표 삼각형 너비 |
+| `dataLabels.textBubble.arrow.height` | number | 화살표 삼각형 높이 |
+| `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
 
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 라인 시리즈의 색상과 두꼐를 바꾸고 싶다면  다음처럼 작성하면 된다.
 
@@ -344,3 +411,36 @@ const options = {
 옵션에 대한 결과는 다음과 같다.
 
 ![image](https://user-images.githubusercontent.com/35371660/101853581-2c11bc80-3ba3-11eb-91d1-75084cb0d042.png)
+
+데이터 라벨의 테마를 적용하여 말풍선과 글씨 색상을 변경하였다.
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true, offsetY: -10 }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 10,
+        fontWeight: 300,
+        useSeriesColor: true,
+        textBubble: {
+          visible: true,
+          paddingY: 3,
+          paddingX: 6,
+          arrow: {
+            visible: true,
+            width: 5,
+            height: 5,
+            direction: 'bottom'
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103474891-83dec480-4deb-11eb-9924-291a8a0af77e.png)

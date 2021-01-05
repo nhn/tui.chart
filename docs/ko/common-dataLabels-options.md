@@ -20,7 +20,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
     }
   }
 };
@@ -31,7 +31,7 @@ type options = {
 | `visible` | boolean | 데이터 라벨 표시 여부 |
 | `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
 | `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
-| `formatter` | function | 시리즈 별 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+| `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
 
 ```js
 // 기본
@@ -83,7 +83,7 @@ type AreaDataLabelTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `lineWidth` | number | 텍스트 선 두께 |
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
@@ -151,7 +151,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
     }
   }
 };
@@ -214,7 +214,7 @@ type LineDataLabelTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `lineWidth` | number | 텍스트 선 두께 |
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
@@ -285,11 +285,11 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
       anchor: 'start' | 'center' | 'end' | 'auto';
       stackTotal?: {
         visible?: boolean;
-        formatter?: (value: SeriesDataType) => string;
+        formatter?: (value) => string;
       };
     };
   };
@@ -373,7 +373,7 @@ type BarDataLabelTheme = CommonDataLabelBubbleTheme & {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `lineWidth` | number | 텍스트 선 두께 |
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
@@ -451,11 +451,11 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
       anchor: 'start' | 'center' | 'end' | 'auto';
       stackTotal?: {
         visible?: boolean;
-        formatter?: (value: SeriesDataType) => string;
+        formatter?: (value) => string;
       };
     };
   };
@@ -539,7 +539,7 @@ type ColumnDataLabelTheme = CommonDataLabelBubbleTheme & {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `lineWidth` | number | 텍스트 선 두께 |
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
@@ -619,7 +619,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
       anchor: 'start' | 'center' | 'end' | 'auto';
     };
   };
@@ -688,7 +688,7 @@ type BulletDataLabelTheme = CommonDataLabelBubbleTheme & {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `lineWidth` | number | 텍스트 선 두께 |
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
@@ -770,7 +770,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
       useTreemapLeaf?: boolean;
     }
   }
@@ -843,7 +843,7 @@ type TreemapDataLabelTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `lineWidth` | number | 텍스트 선 두께 |
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
@@ -903,7 +903,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
     }
   }
 };
@@ -960,7 +960,7 @@ type HeatmapDataLabelTheme = {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `lineWidth` | number | 텍스트 선 두께 |
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
@@ -1024,7 +1024,7 @@ type options = {
       anchor?: 'center' | 'outer';
       offsetX?: number;
       offsetY?: number;
-      formatter?: (value: SeriesDataType) => string;
+      formatter?: (value) => string;
       pieSeriesName?: {
         visible: boolean;
         anchor?: 'center' | 'outer';
@@ -1145,7 +1145,7 @@ type PieDataLabelTheme = CommonDataLabelBoxTheme & {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `useSeriesColor` | boolean | 시리즈 색상을 폰트 색상으로 사용할지 여부 |
+| `useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
 | `lineWidth` | number | 텍스트 선 두께 |
 | `textStrokeColor` | string | 텍스트 선 색상 |
 | `shadowColor` | string | 텍스트 그림자 색상 |
