@@ -8,6 +8,7 @@ import {
   PieDataLabels,
   BoxDataLabels,
   DataLabelPieSeriesName,
+  Rect,
 } from '@t/options';
 import {
   DataLabel,
@@ -109,10 +110,12 @@ export function getDefaultDataLabelsOptions(
 
 export function makePointLabelInfo(
   point: PointDataLabel,
-  dataLabelOptions: DataLabelOption
+  dataLabelOptions: DataLabelOption,
+  rect: Rect
 ): DataLabel {
+  const { width, height } = rect;
   const { anchor, offsetX = 0, offsetY = 0, formatter } = dataLabelOptions;
-  const { x, y, name, theme } = point;
+  const { name, theme } = point;
   let textBaseline: CanvasTextBaseline = 'middle';
 
   if (anchor === 'end') {
@@ -121,10 +124,16 @@ export function makePointLabelInfo(
     textBaseline = 'top';
   }
 
+  const xWithOffset = point.x + offsetX;
+  const yWithOffset = point.y + offsetY;
+
+  const x = xWithOffset < 0 || xWithOffset > width ? point.x : xWithOffset;
+  const y = yWithOffset < 0 || yWithOffset > height ? point.y : yWithOffset;
+
   return {
     type: 'point',
-    x: x + offsetX,
-    y: y + offsetY,
+    x,
+    y,
     text: formatter(point.value!),
     textAlign: 'center',
     textBaseline,
@@ -419,7 +428,7 @@ export function makeRectLabelInfo(
     type === 'stackTotal' ? dataLabelOptions.stackTotal!.formatter : dataLabelOptions.formatter;
 
   return {
-    type: type,
+    type,
     ...labelPosition,
     text: isString(value) ? value : formatter(value!),
     name,

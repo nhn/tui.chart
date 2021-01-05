@@ -10,6 +10,8 @@ import {
   DataLabelSeriesType,
   RectDataLabel,
   LineDataLabel,
+  DataLabelOption,
+  SeriesDataLabelType,
 } from '@t/components/dataLabels';
 import { isUndefined } from '@src/helpers/utils';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
@@ -23,18 +25,19 @@ import {
   makeLineLabelInfo,
 } from '@src/helpers/dataLabels';
 import { pickStackOption } from '@src/store/stackSeriesData';
+import { Rect } from '@t/options';
 
 type SeriesDataLabel = {
   data: SeriesDataLabels;
   name: DataLabelSeriesType;
 };
 
-function getLabelInfo(model, labelOptions) {
+function getLabelInfo(model: SeriesDataLabelType, labelOptions: DataLabelOption, rect: Rect) {
   const { type } = model;
   const dataLabel: DataLabel[] = [];
 
   if (type === 'point') {
-    dataLabel.push(makePointLabelInfo(model as PointDataLabel, labelOptions));
+    dataLabel.push(makePointLabelInfo(model as PointDataLabel, labelOptions, rect));
   } else if (type === 'sector') {
     dataLabel.push(makeSectorLabelInfo(model as RadialDataLabel, labelOptions));
 
@@ -106,7 +109,7 @@ export default class DataLabels extends Component {
         return;
       }
 
-      labels.splice(labels.length, 0, ...getLabelInfo(model, labelOptions));
+      labels.splice(labels.length, 0, ...getLabelInfo(model, labelOptions, this.rect));
     });
 
     this.dataLabelsMap[name] = { data: labels, options: dataLabelOptions };
