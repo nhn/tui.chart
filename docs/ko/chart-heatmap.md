@@ -103,7 +103,7 @@ type options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101881776-3dc18700-3bd8-11eb-8cde-50d13252a885.png)
 
-* default: `false`
+* 기본값: `false`
 
 해당 시리즈를 선택할 수 있다.
 
@@ -173,7 +173,7 @@ interface HeatmapChartSeriesTheme {
 | borderColor | string | 시리즈의 테두리 색상 |
 | borderWidth | number | 시리즈의 테두리 너비 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
-| hover | object | 데이터에 마우스를 올렸을 떄 스타일 |
+| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
 | dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
 
 ### startColor와 endColor

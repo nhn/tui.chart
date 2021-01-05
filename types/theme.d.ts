@@ -265,7 +265,6 @@ interface BaseThemeOptions {
   tooltip?: TooltipTheme;
   plot?: PlotTheme;
   exportMenu?: ExportMenuTheme;
-  series?: {};
 }
 
 type GroupedRect = {

@@ -172,7 +172,8 @@ interface TooltipTheme {
 | borderStyle | string | 테두리 선 스타일. 사용 가능한 옵션은 [MDN 링크](https://developer.mozilla.org/ko/docs/Web/CSS/border-style)에서 확인할 수 있다. |
 | borderRadius | number | 둥근 모서리 값 |
 | header | object | 툴팁 header 영역 스타일 |
-| body | object | 툴팁 body 영역 스타일
+| body | object | 툴팁 body 영역 스타일 |
+
 간단한 예시로 툴팁의 background 색상과 테두리와 관련된 옵션들을 추가해보도록 하겠다.
 
 ```js

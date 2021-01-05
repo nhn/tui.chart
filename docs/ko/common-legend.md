@@ -47,7 +47,7 @@ interface CircleLegendOptions {
 
 ### align
 
-* default: `right`
+* 기본값: `right`
 
 legend의 정렬은 `legend.align`을 통해 변경 가능하며 `top`, `bottom`, `right`, `left` 총 네 개의 옵션이 존재한다.
 
@@ -67,7 +67,7 @@ circleLegend의 정렬은 `legend.align`이 `left`, `right`인 경우에 같은 
 
 ### showCheckbox
 
-* default: `true`
+* 기본값: `true`
 
 시리즈를 사라지게 하거나 나타나게 할 수 있는 체크박스를 `legend.showCheckbox` 옵션을 통해 제어할 수 있다.
 
@@ -84,7 +84,7 @@ const options = {
 ![image](https://user-images.githubusercontent.com/35371660/102171892-f3435180-3eda-11eb-9acd-0c2b2eb914bb.png)
 ### visible
 
-* default: `true`
+* 기본값: `true`
 
 Legend를 사용하지 않을 경우 `legend.visible` 옵션을 통해 제거할 수 있다.
 

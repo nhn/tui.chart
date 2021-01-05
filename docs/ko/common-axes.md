@@ -166,7 +166,7 @@ Date 타입의 카테고리가 포맷팅되어 나타나는 것을 확인할 수
 x축을 기준으로 시리즈의 시작 부분을 틱과 틱 가운데로 이동시킬 수 있다. 해당 옵션은 [Line 차트](./chart-line.md)와 [Area 차트](./chart-area.md)에서만 사용 가능하다.
 
 
-* default: `false`
+* 기본값: `false`
 
 
 ```js

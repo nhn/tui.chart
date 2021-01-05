@@ -11,7 +11,7 @@ import { LineScatterChart } from '@toast-ui/chart';
 
 const chart = new LineScatterChart({el, data, options});
 
-// 혹은 
+// 혹은
 
 import Chart from '@toast-ui/chart';
 
@@ -90,7 +90,7 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102061607-0866a480-3e37-11eb-92bb-eaf79c7e99f6.png)
 
-## 옵션 
+## 옵션
 
 `options`는 객체로 작성한다. 각각 차트에 적용하고 싶은 옵션은 `line`, `scatter`에 작성한다. 사용가능한 옵션은 다음과 같다.
 
@@ -138,13 +138,13 @@ type options = {
 ```
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자. 또한, scatter, line 차트 옵션에 대해 궁금하다면 해당 가이드를 참고하자.
-> (링크: 
+> (링크:
 > [`chart` 옵션](./common-chart-options.md),
-> [축](./common-axes.md), 
-> [범례](./common-legend.md), 
+> [축](./common-axes.md),
+> [범례](./common-legend.md),
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
-> [`responsive` 옵션](./common-responsive-options.md), 
+> [`responsive` 옵션](./common-responsive-options.md),
 > [실시간 업데이트](./common-liveUpdate-options.md),
 > [데이터 라벨](./common-dataLabels-options.md),
 > [Line 차트](./chart-line.md),
@@ -155,7 +155,7 @@ type options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102150192-58834c80-3eb3-11eb-8eed-708807aca1cc.png)
 
-* default: `false`
+* 기본값: `false`
 
 해당 시리즈를 선택할 수 있다.
 
@@ -186,7 +186,7 @@ const options = {
 
 ## 시리즈 theme
 
-각각의 스타일을 지정할 경우 `series.line` 혹은 `series.scatter`를 정의한다. 시리즈의 색상을 지정하고 싶은 경우 `colors`를 입력하거나 각각 시리즈를 구분해 색상을 부여하고 싶다면 구분해서 넣어주면 된다. 
+각각의 스타일을 지정할 경우 `series.line` 혹은 `series.scatter`를 정의한다. 시리즈의 색상을 지정하고 싶은 경우 `colors`를 입력하거나 각각 시리즈를 구분해 색상을 부여하고 싶다면 구분해서 넣어주면 된다.
 
 ```ts
 interface LineScatterChartSeriesTheme {

@@ -93,7 +93,7 @@ const data = {
 
 ### 옵션
 
-* default: `true`
+* 기본값: `true`
 
 ```js
 const options = {
@@ -268,7 +268,7 @@ type options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101877030-bb819480-3bd0-11eb-814d-eb2302e79245.png)
 
-* default: `false`
+* 기본값: `false`
 
 해당 시리즈를 선택할 수 있다.
 
@@ -285,7 +285,7 @@ const options = {
 
 ![zoomable_treemap](https://user-images.githubusercontent.com/35371660/101877249-0dc2b580-3bd1-11eb-85bb-4272711c6b5f.gif)
 
-* default: `false`
+* 기본값: `false`
 
 zoomable을 통해 차트를 확대 할 수 있다.
 
@@ -298,7 +298,7 @@ const options = {
 ```
 ### dataLabel useTreemapLeaf
 
-* default: `false`
+* 기본값: `false`
 
 데이터 라벨을 노출할 때 현재 보고 있는 트리 계층의 노드 라벨만을 노출한다.
 

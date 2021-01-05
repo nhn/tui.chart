@@ -4,17 +4,12 @@
 
 ![image](https://user-images.githubusercontent.com/43128697/102863052-5dc53600-4475-11eb-8524-9446529179dd.png)
 
-## 옵션
-플롯을 변경하기 위한 옵션은 다음과 같다. `width`, `height` 옵션은 모든 차트에서 사용하며 플롯 영역의 크기를 변경할 수 있다. 그 외 `showLine`, `lines`, `bands` 옵션은 차트 타입에 따라 지원 여부가 다르다.
-
-| 옵션명 | 차트명 |
-| --- | --- |
-| `showLine` | Scatter, Bubble, Bar, Column, BoxPlot, Bullet, Line, Area, LineArea, LineScatter, ColumnLine |
-| `lines` | Line, Area, LineArea, LineScatter, ColumnLine |
-| `bands` | Line, Area, LineArea, LineScatter, ColumnLine |
+`plot`이 제공하는 옵션은 다음과 같다.
 
 ```ts
 type PlotOption = {
+  width?: number;
+  height?: number;
   showLine?: boolean;
   lines?: {
     value: number | string;
@@ -29,16 +24,12 @@ type PlotOption = {
     mergeOverlappingRanges?: boolean;
     id?: string;
   }[];
-  width?: number;
-  height?: number;
 };
 ```
 
- > 이 가이드에서는 `width`, `height`를 제외한 옵션을 설명하며 해당 옵션은 [레이아웃 설정](./common-layout-options.md) 가이드를 참고하길 바란다.
+> `width`, `height` 옵션은 **모든 차트**에서 사용하며 플롯 영역의 크기를 변경할 수 있다. 이 가이드에서는 `width`, `height`를 제외한 옵션을 설명하며 해당 옵션은 [레이아웃 설정](./common-layout-options.md) 가이드를 참고하길 바란다.
 
-### showLine
-
-플롯 라인의 표시 여부를 설정한다.
+`showLine` 옵션은 플롯 라인이 표시되는 차트에서 사용할 수 있으며 라인의 가시성을 설정한다.
 
 * 기본값: `true`
 
@@ -56,22 +47,52 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102865692-7e8f8a80-4479-11eb-99b6-9b2efe771a4c.png)
 
-### lines
+| 옵션명 | 차트명 |
+| --- | --- |
+| `width` | 모든 차트 |
+| `height` | 모든 차트 |
+| `showLine` | Scatter, Bubble, Bar, Column, BoxPlot, Bullet, Line, Area, LineArea, LineScatter, ColumnLine |
+| `lines` | Line, Area, LineArea, LineScatter, ColumnLine |
+| `bands` | Line, Area, LineArea, LineScatter, ColumnLine |
 
-`lines` 옵션을 사용하면 플롯 영역에 새로운 라인을 추가할 수 있다. 추가된 라인은 다음의 속성을 갖는 객체 배열로 설정한다.
+그 외 `lines`, `bands` 옵션은 아래에서 자세히 설명한다.
+
+
+## lines & bands
+`lines`와 `bands` 옵션은 Line, Area 차트 계열에서 사용할 수 있다.
 
 * 사용 가능 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
 
+### lines
+
+`lines` 옵션을 사용하면 플롯 영역에 새로운 라인을 추가할 수 있다.
+
+```ts
+type PlotOption = {
+  ...
+  lines?: {
+    value: number | string;
+    color: string;
+    opacity?: number;
+    id?: string;
+  }[];
+};
+```
+
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `value` | number \| string | x축에 대응하는 값 |
-| `color` | string | 라인 색상 |
-| `opacity` | number | 라인 투명도 |
-| `id` | string | 라인 id, `removePlotLine API`를 사용할 때 id 값을 인자로 넘겨주면 해당 라인이 삭제됨 |
+| `lines` | line[] | 라인 객체 배열을 정의 |
+| `line.value` | number \| string | x축에 대응하는 값 |
+| `line.color` | string | 라인 색상 |
+| `line.opacity` | number | 라인 투명도 |
+| `line.id` | string | 라인 id, `removePlotLine API`를 사용할 때 id 값을 인자로 넘겨주면 해당 라인이 삭제됨 |
+
+사용 방법은 예시를 통해 알아보자.
 
 ```js
 const options = {
   plot: {
+    ...
     lines: [
       {
         value: 4,
@@ -90,17 +111,31 @@ const options = {
 
 ### bands
 
-`bands` 옵션을 사용하면 플롯 영역에 범위를 지정하여 배경색을 채울 수 있다. 다음의 속성을 갖는 객체 배열로 설정한다.
+`bands` 옵션을 사용하면 플롯 영역에 범위를 지정하여 배경색을 채울 수 있다.
 
-* 사용 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
+```ts
+type PlotOption = {
+  ...
+  bands?: {
+    range: [number, number] | [string, string] |<br> [number, number][] | [string, string][];
+    color: string;
+    opacity?: number;
+    mergeOverlappingRanges?: boolean;
+    id?: string;
+  }[];
+};
+```
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| `range` | [number, number] \| [string, string] \| [number, number][] \| [string, string][] | x축에 대응하는 값의 범위, 시작과 끝에 해당하는 값을 배열로 입력함 |
-| `color` | string | 박스 색상 |
-| `opacity` | number | 박스 색상의 투명도 |
-| `mergeOverlappingRanges` | boolean | `range`에서 설정한 범위가 겹쳐지는 부분이 있을 때, 박스를 겹쳐서 표시할 지 여부 (기본값: `false`) |
-| `id` | string | 범위 박스 id, `removePlotBand API`를 사용할 때 id 값을 인자로 넘겨주면 해당 박스가 삭제됨 |
+| `bands` | band[] | 범위 객체 배열 정의 |
+| `band.range` | [number, number] \| [string, string] \| [number, number][] \| [string, string][] | x축에 대응하는 값의 범위, 시작과 끝에 해당하는 값을 배열로 입력함 |
+| `band.color` | string | 박스 색상 |
+| `band.opacity` | number | 박스 색상의 투명도 |
+| `band.mergeOverlappingRanges` | boolean | `range`에서 설정한 범위가 겹쳐지는 부분이 있을 때, 박스를 겹쳐서 표시할 지 여부 (기본값: `false`) |
+| `band.id` | string | 범위 박스 id, `removePlotBand API`를 사용할 때 id 값을 인자로 넘겨주면 해당 박스가 삭제됨 |
+
+사용 방법은 예시를 통해 알아보자.
 
 ```js
 const options = {

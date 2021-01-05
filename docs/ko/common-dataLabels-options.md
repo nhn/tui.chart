@@ -1055,7 +1055,7 @@ const options = {
 ```
 
 ```js
-// 원 바깥에 라벨 표시
+// outer anchor 적용
 const options = {
   series: {
     dataLabels: {
@@ -1066,7 +1066,7 @@ const options = {
 };
 ```
 
-| 기본 | 원 바깥에 라벨 표시 |
+| 기본 | outer anchor 적용 |
 | --- | --- |
 | ![image](https://user-images.githubusercontent.com/43128697/103474427-13ce3f80-4de7-11eb-97f6-58ab2cd29001.png) | ![image](https://user-images.githubusercontent.com/43128697/103474431-15980300-4de7-11eb-9664-e96e7e763422.png) |
 
@@ -1083,7 +1083,7 @@ const options = {
 ```
 
 ```js
-// 시리즈 이름 라벨을 원 바깥에 표시
+// 시리즈 이름 라벨 위치 outer anchor 적용
 const options = {
   series: {
     dataLabels: {

@@ -153,7 +153,7 @@ type options = {
 
 해당 시리즈를 선택할 수 있다.
 
-* default: `false`
+* 기본값: `false`
 
 ```js
 const options = {

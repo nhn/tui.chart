@@ -206,7 +206,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101856948-b9580f80-3ba9-11eb-9db2-86cbef233bc8.png)
 
-* default: `false`
+* 기본값: `false`
 
 해당 시리즈를 선택할 수 있다.
 
@@ -224,7 +224,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101857048-f9b78d80-3ba9-11eb-80a1-e28c84f8fd6e.png)
 
-* default: `false`
+* 기본값: `false`
 
 시리즈 선을 부드러운 spline 곡선으로 만들 수 있다.
 
@@ -240,7 +240,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101857092-105de480-3baa-11eb-828f-6a1196431c97.png)
 
-* default: `nearest`
+* 기본값: `nearest`
 
 툴팁에 나타낼 데이터를 탐지하는 방법을 정의할 수 있다.
 
@@ -262,7 +262,7 @@ const options = {
 
 ![area-zoomable](https://user-images.githubusercontent.com/35371660/101857274-7a768980-3baa-11eb-8224-fce4011b4de4.gif)
 
-* default: `false`
+* 기본값: `false`
 
 zoomable을 통해 차트를 확대 할 수 있다.
 

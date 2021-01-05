@@ -110,7 +110,7 @@ export default class ExportMenu extends Component {
   }
 
   getFileName(title?: string | TitleOption) {
-    return isString(title) ? title : title?.text ?? 'tui-chart';
+    return isString(title) ? title : title?.text ?? 'toast-ui-chart';
   }
 
   render({ options, layout, chart, series, rawCategories, theme }: ChartState<Options>) {

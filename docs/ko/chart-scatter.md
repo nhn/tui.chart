@@ -11,7 +11,7 @@ import { ScatterChart } from '@toast-ui/chart';
 
 const chart = new ScatterChart({el, data, options});
 
-// 혹은 
+// 혹은
 
 import Chart from '@toast-ui/chart';
 
@@ -53,7 +53,7 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102057191-e4a06000-3e30-11eb-8396-378ae2a8f7ec.png)
 
-## 옵션 
+## 옵션
 
 `options`는 객체로 작성한다.
 
@@ -93,13 +93,13 @@ type options = {
 ```
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
-> (링크: 
+> (링크:
 > [`chart` 옵션](./common-chart-options.md),
-> [축](./common-axes.md), 
-> [범례](./common-legend.md), 
+> [축](./common-axes.md),
+> [범례](./common-legend.md),
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
-> [`responsive` 옵션](./common-responsive-options.md), 
+> [`responsive` 옵션](./common-responsive-options.md),
 > [실시간 업데이트](./common-liveUpdate-options.md),
 > [데이터 라벨](./common-dataLabels-options.md)
 > )
@@ -108,7 +108,7 @@ type options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102058051-457c6800-3e32-11eb-9399-3252f9d4ada5.png)
 
-* default: `false`
+* 기본값: `false`
 
 해당 시리즈를 선택할 수 있다.
 
@@ -165,7 +165,7 @@ interface BubbleChartSeriesTheme {
 | size | number | 시리즈의 크기 |
 | colors | string[] | 시리즈의 색상 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
-| hover | object | 데이터에 마우스를 올렸을 때 스타일 | 
+| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
 
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 아이콘을 변경해보자.
 
