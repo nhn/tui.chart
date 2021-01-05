@@ -127,8 +127,8 @@ type options = {
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
 > [플롯](./common-plot.md),
-> [`responsive` 옵션](./common-responsive-options.md),
-> [데이터 라벨](./common-dataLabels-options.md)
+> [`responsive` 옵션](./common-responsive-options.md)
+
 > )
 
 ### vertical
@@ -165,9 +165,45 @@ const options = {
 
 `selectable` 옵션과 `on` API의 `selectSeries`, `unselectSeries`를 함께 사용할 경우 해당 시리즈에 대한 제어를 추가로 할 수 있다.
 
+### dataLabels
+Bullet 차트의 데이터 라벨 옵션은 다음과 같다.
+
+```ts
+type options = {
+  ...
+  series?: {
+    dataLabels?: {
+      visible?: boolean;
+      offsetX?: number;
+      offsetY?: number;
+      formatter?: (value) => string;
+      anchor: 'start' | 'center' | 'end' | 'auto';
+    };
+  };
+};
+```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+| `anchor` | 'start' \| 'center' \| 'end' \| 'auto' | 데이터 라벨 위치 설정 (기본값: `'auto'`) |
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103476560-61a07300-4dfa-11eb-934c-35b65bf0a761.png)
+
 ## 시리즈 theme
 
-Bullet 차트에서 수정할 수 있는 시리즈 테마이다.
+Bullet 차트에서 수정할 수 있는 시리즈 테마이다. 데이터 라벨 스타일은 값을 나타내는 기본 라벨을 포함하여, 마커 데이터 값을 나타내는 라벨도 스타일링 할 수 있다. 화살표가 있는 말풍선 스타일을 사용할 수 있다.
 
 ```ts
 interface BulletChartSeriesTheme {
@@ -205,15 +241,23 @@ interface BulletChartSeriesTheme {
     };
     areaOpacity?: number;
   };
-  dataLabels?: DefaultDataLabelsTheme & {
-    marker?: DefaultDataLabelsTheme;
+  dataLabels?: CommonDataLabelBubbleTheme & {
+    marker?: CommonDataLabelBubbleTheme;
   };
 }
 
-type DefaultDataLabelsTheme = {
+type CommonDataLabelBubbleTheme = {
+  useSeriesColor?: boolean;
+  lineWidth?: number;
+  textStrokeColor?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
   textBubble?: {
     visible?: boolean;
-    arrow?: ArrowTheme;
     paddingX?: number;
     paddingY?: number;
     backgroundColor?: string;
@@ -224,37 +268,61 @@ type DefaultDataLabelsTheme = {
     shadowOffsetX?: number;
     shadowOffsetY?: number;
     shadowBlur?: number;
+    arrow?: {
+      visible?: boolean;
+      width?: number;
+      height?: number;
+      direction?: 'top' | 'right' | 'bottom' | 'left';
+    };
   };
-  useSeriesColor?: boolean;
-  lineWidth?: number;
-  textStrokeColor?: string;
-  shadowColor?: string;
-  shadowBlur?: number;
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string | number;
-  color?: string;
-}
+};
 ```
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| colors | string[] | 시리즈의 색상 |
-| areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
-| barWidth | number \| string | 시리즈 전체 박스 너비 |
-| barWidthRatios | object | 범위, Bullet 박스 너비와 마커 길이 비율 설정 |
-| barWidthRatios.rangeRatio | number | 범위 너비 비율 (기본값: 1) |
-| barWidthRatios.bulletRatio | number | Bullet 박스 너비 비율 (기본값: 0.5) |
-| barWidthRatios.markerRatio | number | 마커 선 길이 비율 (기본값: 0.8) |
-| markerLineWidth | number | 마커 선 두께 |
-| rangeColors | string[] | 범위 색깔 |
-| borderColor | string | Bullet 박스 테두리 색깔 |
-| borderWidth | number | Bullet 박스 테두리 두께 |
-| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
-| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
-| select.areaOpacity | number | 선택된 시리즈의 영역 투명도 |
-| select.restSeries | object | 선택되지 않은 시리즈의 스타일 |
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 [DataLabels 가이드](./common-dataLabels-options.md)를 참고한다. |
+| `colors` | string[] | 시리즈의 색상 |
+| `areaOpacity` | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
+| `barWidth` | number \| string | 시리즈 전체 박스 너비 |
+| `barWidthRatios` | object | 범위, Bullet 박스 너비와 마커 길이 비율 설정 |
+| `barWidthRatios.rangeRatio` | number | 범위 너비 비율 (기본값: 1) |
+| `barWidthRatios.bulletRatio` | number | Bullet 박스 너비 비율 (기본값: 0.5) |
+| `barWidthRatios.markerRatio` | number | 마커 선 길이 비율 (기본값: 0.8) |
+| `markerLineWidth` | number | 마커 선 두께 |
+| `rangeColors` | string[] | 범위 색깔 |
+| `borderColor` | string | Bullet 박스 테두리 색깔 |
+| `borderWidth` | number | Bullet 박스 테두리 두께 |
+| `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
+| `select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| `select.areaOpacity` | number | 선택된 시리즈의 영역 투명도 |
+| `select.restSeries` | object | 선택되지 않은 시리즈의 스타일 |
+| `dataLabels` | object | 데이터 라벨 스타일 |
+| `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
+| `dataLabels.lineWidth` | number | 텍스트 선 두께 |
+| `dataLabels.textStrokeColor` | string | 텍스트 선 색상 |
+| `dataLabels.shadowColor` | string | 텍스트 그림자 색상 |
+| `dataLabels.shadowBlur` | number | 텍스트 그림자 Blur |
+| `dataLabels.fontSize` | number | 글자 크기 |
+| `dataLabels.fontFamily` | string | 폰트명 |
+| `dataLabels.fontWeight` | string | 글자 굵기 |
+| `dataLabels.color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `dataLabels.textBubble` | object | 말풍선 디자인 설정 |
+| `dataLabels.textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `dataLabels.textBubble.paddingX` | number | 수평 여백 |
+| `dataLabels.textBubble.paddingY`| number | 수직 여백 |
+| `dataLabels.textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `dataLabels.textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `dataLabels.textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `dataLabels.textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `dataLabels.textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `dataLabels.textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `dataLabels.textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `dataLabels.textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
+| `dataLabels.textBubble.arrow` | object | 말풍선 화살표 설정 <br>사용 차트 타입 : `Area`, `Line`, `Bar`, `Column`, `Bullet` |
+| `dataLabels.textBubble.arrow.visible` | boolean | 화살표 표시 여부 |
+| `dataLabels.textBubble.arrow.width` | number | 화살표 삼각형 너비 |
+| `dataLabels.textBubble.arrow.height` | number | 화살표 삼각형 높이 |
+| `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
+| `dataLabels.marker` | object | 마커 라벨 스타일. `dataLabels`에 적용할 수 있는 스타일 옵션 모두 사용 가능 |
 
 테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 Bullet 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
 
@@ -289,3 +357,46 @@ const options = {
 옵션에 대한 결과는 다음과 같다.
 
 ![image](https://user-images.githubusercontent.com/43128697/102742822-3ef17180-4399-11eb-9f8f-5c43500b8c2f.png)
+
+데이터 라벨의 테마를 적용하여 말풍선과 글자 스타일을 변경하였다.
+
+```js
+const options = {
+  series: {
+    dataLabels: {
+      visible: true
+    }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'fantasy',
+        fontSize: 13,
+        fontWeight: 500,
+        useSeriesColor: true,
+        textBubble: {
+          visible: true,
+          backgroundColor: '#eeeeee',
+          borderWidth: 1,
+          borderColor: '#333333',
+          borderRadius: 5,
+          arrow: { visible: true, width: 4, height: 4 }
+        },
+        marker: {
+          fontFamily: 'fantasy',
+          fontSize: 13,
+          fontWeight: 600,
+          useSeriesColor: false,
+          color: '#ffffff',
+          textStrokeColor: '#000000',
+          shadowColor: '#000000',
+          shadowBlur: 6,
+          textBubble: { visible: false }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103476561-62d1a000-4dfa-11eb-8fce-b7740715961f.png)

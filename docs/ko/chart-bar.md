@@ -200,7 +200,7 @@ type options = {
       formatter?: (value) => string;
       stackTotal?: {
         visible?: boolean;
-        formatter?: Formatter;
+        formatter?: (value) => string;
       };
     };
   }
@@ -215,8 +215,7 @@ type options = {
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
 > [플롯](./common-plot.md),
-> [`responsive` 옵션](./common-responsive-options.md),
-> [데이터 라벨](./common-dataLabels-options.md)
+> [`responsive` 옵션](./common-responsive-options.md)
 > )
 
 ### stack
@@ -595,7 +594,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102593558-5f7eb900-4158-11eb-9d21-1bfa55dfa3f1.png)
 
-데이터 라벨의 테마를 적용하여 말풍선과 글씨 색상을 변경하였다.
+데이터 라벨의 테마를 적용하여 말풍선과 글자 스타일을 변경하였다.
 
 ```js
 const options = {

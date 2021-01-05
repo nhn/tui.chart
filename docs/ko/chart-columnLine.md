@@ -104,7 +104,7 @@ type options = {
         formatter?: (value) => string;
         stackTotal?: {
           visible?: boolean;
-          formatter?: Formatter;
+          formatter?: (value) => string;
         };
       };
     };
@@ -117,7 +117,7 @@ type options = {
         anchor?: DataLabelAnchor;
         offsetX?: number;
         offsetY?: number;
-        formatter?: Formatter;
+        formatter?: (value) => string;
       }
     }
     dataLabels?: {
@@ -125,10 +125,10 @@ type options = {
       anchor?: DataLabelAnchor;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value) => string;
       stackTotal?: {
         visible?: boolean;
-        formatter?: Formatter;
+        formatter?: (value) => string;
       };
     }
   }
@@ -144,7 +144,6 @@ type options = {
 > [툴팁](./common-tooltip.md),
 > [`responsive` 옵션](./common-responsive-options.md),
 > [실시간 업데이트](./common-liveUpdate-options.md),
-> [데이터 라벨](./common-dataLabels-options.md),
 > [Column 차트](./chart-column.md),
 > [Line 차트](./chart-line.md)
 > )
@@ -207,6 +206,62 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102978791-69356180-4548-11eb-8437-d104e3ed6b66.png)
 
+### dataLabels options
+
+`series.dataLabels` 옵션을 지정하면 Column과 Line 차트에서 모두 데이터 라벨이 표시된다.
+
+```js
+const options = {
+  ...
+  series: {
+    dataLabels: {
+      visible: true;
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477475-a29c8580-4e02-11eb-9749-a744d5d3fce4.png)
+
+`series` 옵션에 각 시리즈 별로 옵션을 정의할 수 있으며, 데이터 라벨 관련 옵션도 각 시리즈 별로 좀 더 세밀하게 설정해 줄 수 있다.
+
+```ts
+type ColumnLineChartSeriesOption = {
+  column: { // Column 시리즈 옵션
+    ...
+    dataLabels: {
+      // Column 시리즈 데이터 라벨 옵션
+    }
+  },
+  line: { // Line 시리즈 옵션
+    ...
+    dataLabels: {
+      // Line 시리즈  데이터 라벨 옵션
+    }
+  }
+};
+```
+
+간단한 예시로 Line 시리즈의 데이터 라벨은 표시해주지 않고, Column 시리즈의 데이터 라벨만 표시하도록 설정하였다.
+
+```js
+const options = {
+  series: {
+    column: {
+      stack: true,
+      dataLabels: {
+        visible: true,
+        stackTotal: {
+          visible: false
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477454-6701bb80-4e02-11eb-8256-23421795972e.png)
+
 ## 시리즈 theme
 
 각각의 스타일을 지정할 경우 `series.column` 혹은 `series.line`을 정의한다. 시리즈의 색상을 지정하고 싶은 경우 `colors`를 입력하거나 각각 시리즈를 구분해 색상을 부여하고 싶다면 구분해서 넣어주면 된다.
@@ -249,5 +304,71 @@ const theme = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102777876-d6c08100-43d4-11eb-94e5-7b426839aba6.png)
 
+
+각 시리즈 별로 데이터 라벨의 스타일을 지정할 경우 `series.column.dataLabels` 또는 `series.line.dataLabels`를 정의한다.
+
+```ts
+type ColumnLineChartDataLabelTheme = {
+  series: {
+    column: {
+      dataLabels: {
+        // Column 시리즈 데이터 라벨 테마
+      }
+    },
+    line: {
+      dataLabels: {
+        // Line 시리즈 데이터 라벨 테마
+      }
+    }
+  }
+};
+```
+
+간단한 예시로 Column 시리즈 데이터 라벨에는 글자 색상과 크기, 굵기 등을 조절하고, Line 시리즈 데이터 라벨에는 말풍선 스타일을 변경해보았다.
+
+```js
+const options = {
+  series: {
+    column: {
+      dataLabels: { visible: true, anchor: 'start' }
+    },
+    line: {
+      showDot: true,
+      dataLabels: { visible: true, offsetY: -15 }
+    }
+  },
+  theme: {
+    series: {
+      column: {
+        dataLabels: {
+          color: '#ffffff',
+          fontSize: 10,
+          fontWeight: 600
+        }
+      },
+      line: {
+        dataLabels: {
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477615-f491db00-4e03-11eb-9207-aa1ee2883aba.png)
 
 > [column 차트](./chart-column.md)와 [line 차트](./chart-line.md)의 테마는 각각의 가이드를 참고하도록 하자.

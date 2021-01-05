@@ -312,7 +312,7 @@ const options = {
 
 ## 시리즈 theme
 
-Area 차트에서 수정할 수 있는 시리즈 테마이다.
+Area 차트에서 수정할 수 있는 시리즈 테마이다. 데이터 라벨 테마는 화살표가 있는 말풍선 스타일을 사용할 수 있다.
 
 ```ts
 interface AreaChartSeriesTheme {
@@ -436,7 +436,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101865447-a3eae180-3bb9-11eb-98da-9cbfdfc92bfb.png)
 
-데이터 라벨의 테마를 적용하여 말풍선과 글씨 색상을 변경하였다.
+데이터 라벨의 테마를 적용하여 말풍선과 글자 색상을 변경하였다.
 
 ```js
 const options = {

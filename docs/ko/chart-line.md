@@ -180,8 +180,7 @@ type options = {
 > [툴팁](./common-tooltip.md),
 > [플롯](./common-plot.md),
 > [`responsive` 옵션](./common-responsive-options.md),
-> [실시간 업데이트](./common-liveUpdate-options.md),
-> [데이터 라벨](./common-dataLabels-options.md)
+> [실시간 업데이트](./common-liveUpdate-options.md)
 > )
 
 ### selectable
@@ -294,7 +293,7 @@ const options = {
 
 ## 시리즈 theme
 
-Line 차트에서 수정할 수 있는 시리즈 테마이다.
+Line 차트에서 수정할 수 있는 시리즈 테마이다. 데이터 라벨 테마는 화살표가 있는 말풍선 스타일을 사용할 수 있다.
 
 ```ts
 interface LineChartSeriesTheme {
@@ -412,7 +411,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101853581-2c11bc80-3ba3-11eb-91d1-75084cb0d042.png)
 
-데이터 라벨의 테마를 적용하여 말풍선과 글씨 색상을 변경하였다.
+데이터 라벨의 테마를 적용하여 말풍선과 글자 색상을 변경하였다.
 
 ```js
 const options = {

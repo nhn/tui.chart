@@ -1225,7 +1225,7 @@ const options = {
 ## Nested Pie
 ### 옵션
 
-`series.dataLabels` 옵션을 지정하면 모든 중첩된 Pie 차트에서 데이터 라벨이 표시된다.
+`series.dataLabels` 옵션을 지정하면 모든 중첩된 Pie 차트에서 데이터 라벨이 표시할 수 있다.
 
 ```js
 const options = {
@@ -1312,7 +1312,7 @@ type options = {
 };
 ```
 
-간단한 예시로 각 Pie 시리즈의 데이터 라벨의 글자 스타일을 변경하고 말풍선으로 변경해 보았다.
+`[name]`에 해당하는 각 시리즈별로 라벨 스타일을 적용할 수 있다. 글자 스타일과 말풍선을 사용하여 테마를 적용해 보았다.
 
 ```js
 const options = {

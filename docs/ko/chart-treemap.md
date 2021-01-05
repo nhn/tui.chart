@@ -248,7 +248,7 @@ type options = {
       visible?: boolean;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value) => string;
     }
   }
 }
@@ -260,8 +260,7 @@ type options = {
 > [범례](./common-legend.md),
 > [툴팁](./common-tooltip.md),
 > [내보내기](./common-exportMenu.md),
-> [`responsive` 옵션](./common-responsive-options.md),
-> [데이터 라벨](./common-dataLabels-options.md)
+> [`responsive` 옵션](./common-responsive-options.md)
 > )
 
 ### selectable
@@ -296,18 +295,51 @@ const options = {
   }
 }
 ```
-### dataLabel useTreemapLeaf
+### dataLabels
 
-* 기본값: `false`
+Treemap 차트의 데이터 라벨 옵션은 다음과 같다.
+
+```ts
+type options = {
+  ...
+  series?: {
+    dataLabels?: {
+      visible?: boolean;
+      offsetX?: number;
+      offsetY?: number;
+      formatter?: (value) => string;
+      useTreemapLeaf?: boolean;
+    }
+  }
+};
+```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+| `useTreemapLeaf` | boolean | 자식 데이터 라벨 표시 여부 |
+
 
 데이터 라벨을 노출할 때 현재 보고 있는 트리 계층의 노드 라벨만을 노출한다.
 
-![image](https://user-images.githubusercontent.com/35371660/101877546-83c71c80-3bd1-11eb-9855-2a8a59fc641b.png)
+```js
+// 기본
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
 
+![image](https://user-images.githubusercontent.com/43128697/103475194-7b3bbd80-4dee-11eb-8489-12695595bf6e.png)
 
 하위 노드들의 라벨을 노출하고 싶을 경우 `useTreemapLeaf` 옵션을 켜주면 된다.
 
 ```js
+// 자식 데이터 라벨 표시
 const options = {
   series: {
     dataLabels: {
@@ -315,14 +347,11 @@ const options = {
       useTreemapLeaf: true
     }
   }
-}
+};
 ```
-
-![image](https://user-images.githubusercontent.com/35371660/101877499-701bb600-3bd1-11eb-9e24-03f989c0ab02.png)
-
 ## 시리즈 theme
 
-Treemap 차트에서 수정할 수 있는 시리즈 테마이다.
+Treemap 차트에서 수정할 수 있는 시리즈 테마이다. 데이터 라벨 테마는 화살표가 없는 말풍선 스타일을 사용할 수 있다.
 
 ```ts
 interface TreemapChartSeriesTheme {
@@ -343,14 +372,14 @@ interface TreemapChartSeriesTheme {
   };
   dataLabels?: {
     useSeriesColor?: boolean;
-    fontSize?: number;
-    fontFamily?: string;
-    fontWeight?: string | number;
-    color?: string;
     lineWidth?: number;
     textStrokeColor?: string;
     shadowColor?: string;
     shadowBlur?: number;
+    fontSize?: number;
+    fontFamily?: string;
+    fontWeight?: string | number;
+    color?: string;
     textBubble?: {
       visible?: boolean;
       paddingX?: number;
@@ -363,22 +392,42 @@ interface TreemapChartSeriesTheme {
       shadowOffsetX?: number;
       shadowOffsetY?: number;
       shadowBlur?: number;
-    }
+    };
   };
 }
 ```
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| colors | string[] | 시리즈의 색상 |
-| startColor | string | `useColorValue: true`일 때 colorValue 값의 색상 기준이 되는 시작값 |
-| endColor | string | `useColorValue: true`일 때 colorValue 값의 색상 기준이 되는 끝값 |
-| borderColor | string | 시리즈의 테두리 색상 |
-| borderWidth | number | 시리즈의 테두리 너비 |
-| select | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
-| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. |
-
+| `colors` | string[] | 시리즈의 색상 |
+| `startColor` | string | `useColorValue: true`일 때 colorValue 값의 색상 기준이 되는 시작값 |
+| `endColor` | string | `useColorValue: true`일 때 colorValue 값의 색상 기준이 되는 끝값 |
+| `borderColor` | string | 시리즈의 테두리 색상 |
+| `borderWidth` | number | 시리즈의 테두리 너비 |
+| `select` | object | `selectable: true`이며 시리즈가 선택 되었을 때 적용되는 스타일 |
+| `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
+| `dataLabels` | object | 데이터 라벨 스타일 |
+| `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
+| `dataLabels.lineWidth` | number | 텍스트 선 두께 |
+| `dataLabels.textStrokeColor` | string | 텍스트 선 색상 |
+| `dataLabels.shadowColor` | string | 텍스트 그림자 색상 |
+| `dataLabels.shadowBlur` | number | 텍스트 그림자 Blur |
+| `dataLabels.fontSize` | number | 글자 크기 |
+| `dataLabels.fontFamily` | string | 폰트명 |
+| `dataLabels.fontWeight` | string | 글자 굵기 |
+| `dataLabels.color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `dataLabels.textBubble` | object | 말풍선 디자인 설정 |
+| `dataLabels.textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `dataLabels.textBubble.paddingX` | number | 수평 여백 |
+| `dataLabels.textBubble.paddingY`| number | 수직 여백 |
+| `dataLabels.textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `dataLabels.textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `dataLabels.textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `dataLabels.textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `dataLabels.textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `dataLabels.textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `dataLabels.textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `dataLabels.textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
 
 ### startColor와 endColor
 
@@ -404,3 +453,29 @@ const options = {
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/101879101-22547d00-3bd4-11eb-9196-a308d24cd69c.png)
+
+데이터 라벨의 테마를 적용하여 글자 스타일을 변경하였다.
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 16,
+        fontWeight: '800',
+        useSeriesColor: true,
+        lineWidth: 3,
+        textStrokeColor: '#ffffff',
+        shadowColor: '#ffffff',
+        shadowBlur: 10
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475200-7ecf4480-4dee-11eb-969f-f809d0ba59be.png)
