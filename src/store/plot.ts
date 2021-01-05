@@ -127,26 +127,26 @@ const plot: StoreModule = {
     addPlotLine({ state }, { data }: { data: PlotLine }) {
       const lines = (state.options as UsingPlotLineBandOptions)?.plot?.lines ?? [];
       if (!isExistPlotId(lines, data)) {
-        this.dispatch('updateOptions', { plot: { lines: [...lines, data] } });
+        this.dispatch('updateOptions', { options: { plot: { lines: [...lines, data] } } });
       }
     },
     addPlotBand({ state }, { data }: { data: PlotBand }) {
       const bands = (state.options as UsingPlotLineBandOptions)?.plot?.bands ?? [];
       if (!isExistPlotId(bands, data)) {
-        this.dispatch('updateOptions', { plot: { bands: [...bands, data] } });
+        this.dispatch('updateOptions', { options: { plot: { bands: [...bands, data] } } });
       }
     },
     removePlotLine({ state }, { id }: { id: string }) {
       const lines = ((state.options as UsingPlotLineBandOptions)?.plot?.lines ?? []).filter(
         ({ id: lineId }) => lineId !== id
       );
-      this.dispatch('updateOptions', { plot: { lines } });
+      this.dispatch('updateOptions', { options: { plot: { lines } } });
     },
     removePlotBand({ state }, { id }: { id: string }) {
       const bands = ((state.options as UsingPlotLineBandOptions)?.plot?.bands ?? []).filter(
         ({ id: bandId }) => bandId !== id
       );
-      this.dispatch('updateOptions', { plot: { bands } });
+      this.dispatch('updateOptions', { options: { plot: { bands } } });
     },
   },
   observe: {

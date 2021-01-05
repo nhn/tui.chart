@@ -556,7 +556,7 @@ export default abstract class Chart<T extends Options> {
   public setTooltipOffset(offset: Partial<Point>) {
     const { x: offsetX, y: offsetY } = offset;
 
-    this.store.dispatch('updateOptions', { tooltip: { offsetX, offsetY } });
+    this.store.dispatch('updateOptions', { options: { tooltip: { offsetX, offsetY } } });
   }
 
   private setResizeEventListeners = (

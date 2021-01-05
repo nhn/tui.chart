@@ -326,11 +326,11 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
    * Hide series data label.
    * @api
    * @example
-   * chart.hideSeriesLabel();
+   * chart.hideSeriesDataLabel();
    */
-  public hideSeriesLabel = () => {
+  public hideSeriesDataLabel = () => {
     this.store.dispatch('updateOptions', {
-      series: { dataLabels: { visible: false } },
+      options: { series: { dataLabels: { visible: false } } },
     });
   };
 
@@ -338,11 +338,11 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
    * Show series data label.
    * @api
    * @example
-   * chart.showSeriesLabel();
+   * chart.showSeriesDataLabel();
    */
-  public showSeriesLabel = () => {
+  public showSeriesDataLabel = () => {
     this.store.dispatch('updateOptions', {
-      series: { dataLabels: { visible: true } },
+      options: { series: { dataLabels: { visible: true } } },
     });
   };
 
