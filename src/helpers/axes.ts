@@ -15,7 +15,7 @@ function makeAdjustingIntervalInfo(blockCount: number, axisWidth: number, blockS
   let remainCount;
   let newBlockCount = Math.floor(axisWidth / blockSize);
   let intervalInfo: IntervalInfo | null = null;
-  const interval = newBlockCount ? blockCount : Math.floor(blockCount / newBlockCount);
+  const interval = newBlockCount ? Math.floor(blockCount / newBlockCount) : blockCount;
 
   if (interval > 1) {
     // remainCount : remaining block count after filling new blocks
