@@ -411,6 +411,14 @@ export default class LineSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
+  private getResponderCategoryByIndex(index: number) {
+    const responder = Object.values(this.tooltipCircleMap)
+      .flatMap((val) => val)
+      .find((model) => model.index === index);
+
+    return responder?.data?.category;
+  }
+
   selectSeries = (info: SelectSeriesHandlerParams<LineChartOptions>) => {
     const { index, seriesIndex, chartType } = info;
 
@@ -421,9 +429,13 @@ export default class LineSeries extends Component {
     ) {
       return;
     }
-    // @TODO: index, seriesIndex 기준으로 체크 필요
-    const model = this.tooltipCircleMap[index][seriesIndex];
 
+    const category = this.getResponderCategoryByIndex(index);
+    if (!category) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
+
+    const model = this.tooltipCircleMap[category][seriesIndex];
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
@@ -443,10 +455,15 @@ export default class LineSeries extends Component {
       return;
     }
 
+    const category = this.getResponderCategoryByIndex(index);
+    if (!category) {
+      return;
+    }
+
     const models =
       this.eventDetectType === 'grouped'
-        ? this.tooltipCircleMap[index]
-        : [this.tooltipCircleMap[index][seriesIndex!]];
+        ? this.tooltipCircleMap[category]
+        : [this.tooltipCircleMap[category][seriesIndex!]];
 
     if (!models?.length) {
       return;
