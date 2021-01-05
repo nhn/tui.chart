@@ -160,11 +160,10 @@ export default class ScatterSeries extends Component {
     closestModel: CircleResponderModel[],
     type: RespondersThemeType
   ) {
+    const { fillColor, size } = this.theme[type];
+
     return closestModel.map((m) =>
-      deepMergedCopy(m, {
-        ...this.theme[type],
-        color: this.theme[type].fillColor,
-      })
+      deepMergedCopy(m, { ...this.theme[type], color: fillColor, radius: size })
     );
   }
 
