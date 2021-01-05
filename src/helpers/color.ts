@@ -70,7 +70,7 @@ export const colorMap = {
   greenyellow: '#adff2f',
   honeydew: '#f0fff0',
   hotpink: '#ff69b4',
-  'indianred ': '#cd5c5c',
+  indianred: '#cd5c5c',
   indigo: '#4b0082',
   ivory: '#fffff0',
   khaki: '#f0e68c',
@@ -157,12 +157,12 @@ export const colorMap = {
   yellowgreen: '#9acd32',
 };
 
-export function leadingZero(number, length): string {
-  let zero = '';
-
-  if (String(number).length > length) {
-    return String(number);
+function leadingZero(number: string, length: number): string {
+  if (number.length > length) {
+    return number;
   }
+
+  let zero = '';
 
   for (let i = 0; i < length - 1; i += 1) {
     zero += '0';
@@ -171,13 +171,18 @@ export function leadingZero(number, length): string {
   return (zero + number).slice(length * -1);
 }
 
-export function isValidRGB(str: string): boolean {
+function isValidRGB(str: string): boolean {
   return hexRX.test(str);
+}
+
+function colorNameToHex(colorName: string): string {
+  return colorMap[colorName.toLowerCase()] || colorName;
 }
 
 // @license RGB <-> HSV conversion utilities based off of http://www.cs.rit.edu/~ncs/color/t_convert.html
 
-export function hexToRGB(hexStr: string): number[] | boolean {
+export function hexToRGB(str: string): number[] | boolean {
+  const hexStr = colorNameToHex(str);
   if (!isValidRGB(hexStr)) {
     return false;
   }
@@ -205,8 +210,9 @@ export function rgbToHEX(r: number, g: number, b: number): string | boolean {
 }
 
 export function getRGBA(str: string, opacity: number) {
-  if (isValidRGB(str)) {
-    const [r, g, b] = hexToRGB(str) as number[];
+  const hexStr = colorNameToHex(str);
+  if (isValidRGB(hexStr)) {
+    const [r, g, b] = hexToRGB(hexStr) as number[];
 
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
