@@ -60,7 +60,7 @@ const data = {
       label: 'Downloads',
       children: [
         {
-          label: 'recents',
+          label: 'recent',
           data: 5.3,
         },
         {

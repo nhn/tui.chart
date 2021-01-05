@@ -26,7 +26,7 @@ const chart = Chart.radarChart({el, data, options});
 
 ```js
 const data = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov'],
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
   series: [
     {
       name: 'Budget',

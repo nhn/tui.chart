@@ -26,7 +26,7 @@ const chart = Chart.barChart({el, data, options});
 
 ```js
 const data = {
-  categories: ['June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Budget',
@@ -58,7 +58,7 @@ const data = {
 
 ```js
 const data = {
-  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Seoul',
