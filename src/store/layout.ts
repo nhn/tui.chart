@@ -511,7 +511,8 @@ const layout: StoreModule = {
       // exportMenu -> resetButton -> title -> yAxis.title -> yAxis -> secondaryYAxisTitle -> secondaryYAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
       const exportMenu = getExportMenuRect(chartSize, isExportMenuVisible(options));
       const resetButton = getResetButtonRect(exportMenu, isUsingResetButton(options));
-      const title = getTitleRect(chartSize, exportMenu, !!options.chart?.title, titleHeight);
+      const btnAreaRect = exportMenu.height ? exportMenu : resetButton;
+      const title = getTitleRect(chartSize, btnAreaRect, !!options.chart?.title, titleHeight);
       const yAxisTitle = getYAxisTitleRect({
         chartSize,
         visible: !!yAxisOption?.title || !!secondaryYAxisOption?.title,
