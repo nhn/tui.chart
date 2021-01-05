@@ -70,15 +70,13 @@ export default class ScatterSeries extends Component {
       this.drawModels = deepCopy(this.models);
     }
 
-    const transparentColor = 'rgba(255, 255, 255, 0)';
-
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',
       detectionSize: 0,
       radius: this.theme.size / 2,
-      color: transparentColor,
-      style: [{ strokeStyle: transparentColor }],
+      color: m.fillColor,
+      style: [{ strokeStyle: m.borderColor, lineWidth: m.borderWidth }],
       data: tooltipModel[index],
     }));
   }
@@ -162,7 +160,12 @@ export default class ScatterSeries extends Component {
     closestModel: CircleResponderModel[],
     type: RespondersThemeType
   ) {
-    return closestModel.map((m) => deepMergedCopy(m, { ...this.theme[type], color: '' }));
+    return closestModel.map((m) =>
+      deepMergedCopy(m, {
+        ...this.theme[type],
+        color: this.theme[type].fillColor,
+      })
+    );
   }
 
   onMousemove({ responders, mousePosition }) {
