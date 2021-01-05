@@ -247,6 +247,7 @@ const legend: StoreModule = {
       });
 
       const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
+      const isScatterChart = !!series.scatter;
 
       const circleLegendWidth = isVerticalAlign(align)
         ? initialWidth
@@ -270,6 +271,9 @@ const legend: StoreModule = {
 
       if (!isNestedPieChart) {
         this.dispatch('updateLegendColor');
+      }
+      if (isScatterChart) {
+        this.dispatch('updateLegendIcon');
       }
     },
     setLegendActiveState({ state }, { name, active }) {
@@ -297,6 +301,17 @@ const legend: StoreModule = {
       const data = useSpectrumLegend
         ? legendData.data
         : getLegendDataAppliedTheme(legendData.data, series);
+      extend(state.legend, { data });
+    },
+    updateLegendIcon({ state }) {
+      const { legend: legendData, series } = state;
+
+      const data = legendData.data.reduce<LegendDataList>((acc, cur) => {
+        const { iconType } = series.scatter!.data.find(({ name }) => name === cur.label)!;
+
+        return [...acc, { ...cur, iconType }];
+      }, []);
+
       extend(state.legend, { data });
     },
     updateNestedPieChartLegend({ state }) {
