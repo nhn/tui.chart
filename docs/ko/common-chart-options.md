@@ -94,7 +94,7 @@ const options = {
 };
 ```
 
-`'auto'`를 설정하여 캔버스가 부모 컨테이너의 크기에 영향을 받도록 설정할 수 있다. `width` 혹은 `height`가 `'auto'`로 설정되어 있으면 `window.resize` 이벤트 리스너가 등록되며, 사이즈 변경 시 차트를 사이즈에 맞춰 다시 렌더링한다.
+`'auto'`를 설정하여 캔버스가 부모 컨테이너의 크기에 영향을 받도록 설정할 수 있다. `width` 혹은 `height`가 `'auto'`로 설정되어 있으면 `window.resize` 이벤트 리스너가 등록되며, 사이즈 변경 시 차트를 사이즈에 맞춰 자동으로 다시 렌더링한다. 만약 `width`, `height`를 입력하지 않을 경우 차트는 컨테이너 사이즈에 맞춰 최초 한번 렌더링 되고 컨테이너의 사이즈에 따라 자동으로 크기가 조절되지 않는다.
 
 ```html
 <div id="chart" style="width: 90vw; height: 90vh; min-width: 500px; min-height: 300px;">
@@ -107,6 +107,9 @@ const options = {
     height: 'auto'
   }
 }
+
+const el = document.getElementById('chart');
+const chart = toastui.Chart.areaChart({ el, data, options });
 ```
 
 `'auto'`설정은 [`responsive` 옵션](./common-responsive-options.md)과 함께 사용하면, 차트의 크기가 변경될 때마다 반응형 규칙이 적용되어 유용하게 사용할 수 있다.

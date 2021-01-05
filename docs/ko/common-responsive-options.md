@@ -93,6 +93,9 @@ const options = {
     ]
   }
 };
+
+const el = document.getElementById('chart');
+const chart = toastui.Chart.areaChart({ el, data, options });
 ```
 
 ![image](https://user-images.githubusercontent.com/43128697/103401627-f9008e80-4b8c-11eb-8453-d64fe6830a9a.gif)
