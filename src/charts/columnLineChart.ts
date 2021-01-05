@@ -114,7 +114,6 @@ function hasColumnLineUsingPointEventType(respondersModel: RespondersModel) {
  *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
  *       @param {boolean} [props.options.legend.visible] - Whether to show legend.
- *       @param {number} [props.options.legend.maxWidth] - Max width of legend.
  *       @param {number} [props.options.legend.width] - Width of legend.
  *     @param {Object} [props.options.exportMenu]
  *       @param {boolean} [props.options.exportMenu.visible] - Whether to show export menu.

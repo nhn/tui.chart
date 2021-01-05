@@ -301,7 +301,6 @@ interface BaseLegendOptions {
   align?: Align;
   showCheckbox?: boolean;
   visible?: boolean;
-  maxWidth?: number;
   width?: number;
 }
 
