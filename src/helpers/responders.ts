@@ -7,14 +7,85 @@ import {
   SectorResponderModel,
   RectResponderModel,
   TreemapRectResponderModel,
+  ResponderModel,
 } from '@t/components/series';
-import { Point, Rect } from '@t/options';
+import { LineTypeEventDetectType, Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
 import { AxisData } from '@t/store/store';
 import { range } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 
 export type RespondersThemeType = 'select' | 'hover';
+export interface SelectedSeriesEventModel {
+  models: ResponderModel[];
+  comparisonModel: ResponderModel[];
+  name: string;
+  eventDetectType?: LineTypeEventDetectType;
+  alias?: string;
+}
+
+// eslint-disable-next-line complexity
+export function isSameSeriesResponder({
+  models,
+  comparisonModel,
+  name,
+  eventDetectType,
+}: SelectedSeriesEventModel) {
+  switch (name) {
+    case 'heatmap':
+      return isClickSameNameResponder<HeatmapRectResponderModel>(
+        models as HeatmapRectResponderModel[],
+        comparisonModel as HeatmapRectResponderModel[]
+      );
+    case 'bullet':
+      return isClickSameNameResponder<BulletResponderModel>(
+        models as BulletResponderModel[],
+        comparisonModel as BulletResponderModel[]
+      );
+    case 'radar':
+    case 'bubble':
+    case 'scatter':
+    case 'area':
+    case 'line':
+      return isClickSameCircleResponder(
+        models as CircleResponderModel[],
+        comparisonModel as CircleResponderModel[]
+      );
+    case 'pie':
+      return isClickSameDataResponder<SectorResponderModel>(
+        models as SectorResponderModel[],
+        comparisonModel as SectorResponderModel[]
+      );
+    case 'column':
+    case 'bar':
+      return eventDetectType === 'grouped'
+        ? isClickSameGroupedRectResponder(
+            models as RectResponderModel[],
+            comparisonModel as RectResponderModel[]
+          )
+        : isClickSameDataResponder<RectResponderModel>(
+            models as RectResponderModel[],
+            comparisonModel as RectResponderModel[]
+          );
+    case 'boxPlot':
+      return eventDetectType === 'grouped'
+        ? isClickSameDataResponder<BoxPlotResponderModel>(
+            models as BoxPlotResponderModel[],
+            comparisonModel as BoxPlotResponderModel[]
+          )
+        : isClickSameBoxPlotDataResponder(
+            models as BoxPlotResponderModel[],
+            comparisonModel as BoxPlotResponderModel[]
+          );
+    case 'treemap':
+      return isClickSameLabelResponder(
+        models as TreemapRectResponderModel[],
+        comparisonModel as TreemapRectResponderModel[]
+      );
+    default:
+      return false;
+  }
+}
 
 export function getNearestResponder(
   responders: CircleResponderModel[],

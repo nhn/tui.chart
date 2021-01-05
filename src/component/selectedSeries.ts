@@ -4,30 +4,13 @@ import {
   BoxPlotResponderModel,
   BulletResponderModel,
   CircleResponderModel,
-  HeatmapRectResponderModel,
   RectResponderModel,
   ResponderModel,
   SectorResponderModel,
-  TreemapRectResponderModel,
 } from '@t/components/series';
-import {
-  isClickSameCircleResponder,
-  isClickSameDataResponder,
-  isClickSameGroupedRectResponder,
-  isClickSameLabelResponder,
-  isClickSameNameResponder,
-  isClickSameBoxPlotDataResponder,
-} from '@src/helpers/responders';
 import { includes } from '@src/helpers/utils';
 import { TooltipModelName } from '@t/components/tooltip';
-import { LineTypeEventDetectType } from '@t/options';
-
-interface SelectedSeriesEventModel {
-  models: ResponderModel[];
-  name: string;
-  eventDetectType?: LineTypeEventDetectType;
-  alias?: string;
-}
+import { isSameSeriesResponder, SelectedSeriesEventModel } from '@src/helpers/responders';
 
 export type ResponderSeriesModel = { [key in TooltipModelName]: ResponderModel[] };
 
@@ -39,64 +22,6 @@ export default class SelectedSeries extends Component {
   activeSeriesNames: ActiveSeriesNames = {} as ActiveSeriesNames;
 
   isShow = false;
-
-  // eslint-disable-next-line complexity
-  isClickSameSeries({ models, name, eventDetectType, alias }: SelectedSeriesEventModel) {
-    switch (name) {
-      case 'heatmap':
-        return isClickSameNameResponder<HeatmapRectResponderModel>(
-          models as HeatmapRectResponderModel[],
-          this.models[name] as HeatmapRectResponderModel[]
-        );
-      case 'bullet':
-        return isClickSameNameResponder<BulletResponderModel>(
-          models as BulletResponderModel[],
-          this.models[name] as BulletResponderModel[]
-        );
-      case 'radar':
-      case 'bubble':
-      case 'scatter':
-      case 'area':
-      case 'line':
-        return isClickSameCircleResponder(
-          models as CircleResponderModel[],
-          this.models[name] as CircleResponderModel[]
-        );
-      case 'pie':
-        return isClickSameDataResponder<SectorResponderModel>(
-          models as SectorResponderModel[],
-          this.models[alias || name] as SectorResponderModel[]
-        );
-      case 'column':
-      case 'bar':
-        return eventDetectType === 'grouped'
-          ? isClickSameGroupedRectResponder(
-              models as RectResponderModel[],
-              this.models[name] as RectResponderModel[]
-            )
-          : isClickSameDataResponder<RectResponderModel>(
-              models as RectResponderModel[],
-              this.models[name] as RectResponderModel[]
-            );
-      case 'boxPlot':
-        return eventDetectType === 'grouped'
-          ? isClickSameDataResponder<BoxPlotResponderModel>(
-              models as BoxPlotResponderModel[],
-              this.models[name] as BoxPlotResponderModel[]
-            )
-          : isClickSameBoxPlotDataResponder(
-              models as BoxPlotResponderModel[],
-              this.models[name] as BoxPlotResponderModel[]
-            );
-      case 'treemap':
-        return isClickSameLabelResponder(
-          models as TreemapRectResponderModel[],
-          this.models[name] as TreemapRectResponderModel[]
-        );
-      default:
-        return false;
-    }
-  }
 
   private getSeriesNames(selectedSeries: ResponderModel[], name: string) {
     const names: string[] = [];
@@ -147,7 +72,11 @@ export default class SelectedSeries extends Component {
     const { name, alias } = selectedSeriesEventModel;
     const models = this.getSelectedSeriesModels(selectedSeriesEventModel);
 
-    this.models[alias || name] = this.isClickSameSeries({ ...selectedSeriesEventModel, models })
+    this.models[alias || name] = isSameSeriesResponder({
+      ...selectedSeriesEventModel,
+      models,
+      comparisonModel: this.models[alias || name],
+    })
       ? []
       : models;
 

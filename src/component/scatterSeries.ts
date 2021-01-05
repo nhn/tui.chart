@@ -70,15 +70,13 @@ export default class ScatterSeries extends Component {
       this.drawModels = deepCopy(this.models);
     }
 
-    const transparentColor = 'rgba(255, 255, 255, 0)';
-
     this.responders = seriesModel.map((m, index) => ({
       ...m,
       type: 'circle',
       detectionSize: 0,
       radius: this.theme.size / 2,
-      color: transparentColor,
-      style: [{ strokeStyle: transparentColor }],
+      color: m.fillColor,
+      style: [{ strokeStyle: m.borderColor, lineWidth: m.borderWidth }],
       data: tooltipModel[index],
     }));
   }
@@ -142,12 +140,12 @@ export default class ScatterSeries extends Component {
     });
   }
 
-  private getClosestModel(closestResponder: CircleResponderModel[]): ScatterSeriesModel[] {
+  private getClosestModel(closestResponder: CircleResponderModel[]) {
     if (!closestResponder.length) {
       return [];
     }
 
-    const model = (this.models.series as ScatterSeriesModel[]).find(
+    const model = this.responders.find(
       ({ index, seriesIndex }) =>
         isNumber(index) &&
         isNumber(seriesIndex) &&
@@ -158,8 +156,15 @@ export default class ScatterSeries extends Component {
     return model ? [model] : [];
   }
 
-  private getResponderAppliedTheme(closestModel: ScatterSeriesModel[], type: RespondersThemeType) {
-    return closestModel.map((model) => deepMergedCopy(model, this.theme[type]));
+  private getResponderAppliedTheme(
+    closestModel: CircleResponderModel[],
+    type: RespondersThemeType
+  ) {
+    const { fillColor, size } = this.theme[type];
+
+    return closestModel.map((m) =>
+      deepMergedCopy(m, { ...this.theme[type], color: fillColor, radius: size! / 2 })
+    );
   }
 
   onMousemove({ responders, mousePosition }) {
