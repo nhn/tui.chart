@@ -275,7 +275,8 @@ const options = {
 
 ### dataLabels
 
-Area 차트의 데이터 라벨 옵션은 다음과 같다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+`dataLabels` 옵션은 다음과 같다.
 
 ```ts
 type options = {
@@ -412,7 +413,7 @@ interface AreaChartSeriesTheme {
 | `dataLabels.textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
 | `dataLabels.textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
 | `dataLabels.textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
-| `dataLabels.textBubble.arrow` | object | 말풍선 화살표 설정 <br>사용 차트 타입 : `Area`, `Line`, `Bar`, `Column`, `Bullet` |
+| `dataLabels.textBubble.arrow` | object | 말풍선 화살표 설정 |
 | `dataLabels.textBubble.arrow.visible` | boolean | 화살표 표시 여부 |
 | `dataLabels.textBubble.arrow.width` | number | 화살표 삼각형 너비 |
 | `dataLabels.textBubble.arrow.height` | number | 화살표 삼각형 높이 |
@@ -436,7 +437,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101865447-a3eae180-3bb9-11eb-98da-9cbfdfc92bfb.png)
 
-데이터 라벨의 테마를 적용하여 말풍선과 글자 색상을 변경하였다.
+데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 색상을 변경하였다.
 
 ```js
 const options = {

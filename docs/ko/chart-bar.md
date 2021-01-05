@@ -392,7 +392,8 @@ const options = {
 ![diverging-center-y-axis](https://user-images.githubusercontent.com/43128697/102586557-b632c580-414d-11eb-98bf-fb54e7792c8d.png)
 
 ### dataLabels
-Bar 차트의 데이터 라벨 옵션은 다음과 같다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+`dataLabels` 옵션은 다음과 같다.
 
 ```ts
 type options = {
@@ -561,7 +562,7 @@ type CommonDataLabelBubbleTheme = {
 | `dataLabels.textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
 | `dataLabels.textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
 | `dataLabels.textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
-| `dataLabels.textBubble.arrow` | object | 말풍선 화살표 설정 <br>사용 차트 타입 : `Area`, `Line`, `Bar`, `Column`, `Bullet` |
+| `dataLabels.textBubble.arrow` | object | 말풍선 화살표 설정 |
 | `dataLabels.textBubble.arrow.visible` | boolean | 화살표 표시 여부 |
 | `dataLabels.textBubble.arrow.width` | number | 화살표 삼각형 너비 |
 | `dataLabels.textBubble.arrow.height` | number | 화살표 삼각형 높이 |
@@ -594,7 +595,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102593558-5f7eb900-4158-11eb-9d21-1bfa55dfa3f1.png)
 
-데이터 라벨의 테마를 적용하여 말풍선과 글자 스타일을 변경하였다.
+데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 스타일을 변경하였다.
 
 ```js
 const options = {

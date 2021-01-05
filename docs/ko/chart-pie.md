@@ -234,7 +234,8 @@ const options = {
 
 ### dataLabels
 
-Pie 차트의 데이터 라벨 옵션은 다음과 같다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+`dataLabels` 옵션은 다음과 같다.
 
 ```ts
 type options = {

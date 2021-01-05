@@ -117,7 +117,8 @@ const options = {
 
 ### dataLabels
 
-Heatmap 차트의 데이터 라벨 옵션은 다음과 같다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+`dataLabels` 옵션은 다음과 같다.
 
 ```ts
 type options = {
@@ -255,8 +256,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101882405-3058cc80-3bd9-11eb-8900-6923c72b84b5.png)
 
-데이터 라벨의 테마를 적용하여 말풍선과 글자 색상을 변경하였다.
-
+데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 색상을 변경하였다.
 
 ```js
 const options = {

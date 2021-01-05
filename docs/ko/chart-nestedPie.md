@@ -305,7 +305,7 @@ type options = {
         anchor?: DataLabelAnchor;
         offsetX?: number;
         offsetY?: number;
-        formatter?: (value) => string;
+        formatter?: (value) => string;;
         pieSeriesName?: {
           visible: boolean;
           anchor?: 'center' | 'outer';
@@ -714,9 +714,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102755523-e5e20780-43b1-11eb-96a5-10e494e37d27.png)
 
-
 `[name]`에 해당하는 각 시리즈별로 라벨 스타일을 적용할 수 있다. 글자 스타일과 말풍선을 사용하여 테마를 적용해 보았다.
-
 
 ```js
 const options = {
