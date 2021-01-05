@@ -40,7 +40,7 @@ chart.addData(newData, newCategory);
 
 ![area](https://user-images.githubusercontent.com/35371660/102159207-6ee6d380-3ec6-11eb-8ca8-07c82095556f.gif)
 
-- [Line Area Chart](./chart-lineArea.md)
+- [LineArea Chart](./chart-lineArea.md)
 
 ![lineArea](https://user-images.githubusercontent.com/35371660/102160638-2aa90280-3ec9-11eb-98ae-5113cd3f75eb.gif)
 

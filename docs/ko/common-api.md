@@ -100,7 +100,7 @@ chart.addSeries({
 
 두 번째 인자인 추가 정보는 `category`와 `chartType`을 담아줄 수 있다. 
 
-첫 번째로, `category`의 경우 `Heatmap 차트`에서 사용되며 Y Category에 해당되는 값을 추가한다. Heatmap 차트의 `addSeries()` 예시를 작성해보면 다음과 같다.
+첫 번째로, `category`의 경우 Heatmap 차트에서 사용되며 Y Category에 해당되는 값을 추가한다. Heatmap 차트의 `addSeries()` 예시를 작성해보면 다음과 같다.
 
 ```js
 chart.addSeries([-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 24.9, 25.2, 20.4, 13.9, 6.6, -0.6], {
