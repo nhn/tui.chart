@@ -27,6 +27,8 @@ type PlotOption = {
 };
 ```
 
+각 옵션이 지원되는 차트는 아래와 같다.
+
 | 이름 | 차트명 |
 | --- | --- |
 | `width` | 모든 차트 |
@@ -35,7 +37,9 @@ type PlotOption = {
 | `lines` | Line, Area, LineArea, LineScatter, ColumnLine |
 | `bands` | Line, Area, LineArea, LineScatter, ColumnLine |
 
-> `width`, `height` 옵션은 **모든 차트**에서 사용하며 플롯 영역의 크기를 변경할 수 있다. 이 가이드에서는 `width`, `height`를 제외한 옵션을 설명하며 해당 옵션은 [레이아웃 설정](./common-layout-options.md) 가이드를 참고하길 바란다.
+> `width`, `height` 옵션은 플롯 영역의 크기를 변경할 수 있다. 이 가이드에서는 `width`, `height`를 제외한 옵션을 설명하며 해당 옵션은 [레이아웃 설정](./common-layout-options.md) 가이드를 참고하길 바란다.
+
+<br>
 
 `showLine` 옵션은 플롯 라인이 표시되는 차트에서 사용할 수 있으며 라인의 가시성을 설정한다. 기본값은 `true`이다.
 
