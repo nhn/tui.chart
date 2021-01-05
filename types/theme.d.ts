@@ -257,14 +257,12 @@ interface LineAreaChartSeriesTheme {
 }
 
 interface BaseThemeOptions {
-  chart?: ChartTheme;
+  chart?: ChartTheme; // @TODO: 작업 필요
   title?: FontTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
   legend?: LegendTheme;
   tooltip?: TooltipTheme;
-  chartExportMenu?: {};
-  series?: {};
   plot?: PlotTheme;
   exportMenu?: ExportMenuTheme;
 }

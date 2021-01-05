@@ -1,5 +1,11 @@
 import Component from './component';
-import { ChartState, Options, OptionsWithDataLabels } from '@t/store/store';
+import {
+  ChartState,
+  Options,
+  OptionsWithDataLabels,
+  Series,
+  NestedPieSeriesDataType,
+} from '@t/store/store';
 import {
   DataLabelModels,
   DataLabel,
@@ -78,10 +84,29 @@ export default class DataLabels extends Component {
     this.drawModels = this.getDrawModelsAppliedOpacity(delta);
   }
 
-  render({ layout, options }: ChartState<Options>) {
+  render({ layout, options, series, nestedPieSeries }: ChartState<Options>) {
     this.rect = layout.plot;
     this.options = options as OptionsWithDataLabels;
-    this.isShow = !!this.options.series?.dataLabels?.visible;
+    this.isShow = this.visibleDataLabels(series, nestedPieSeries);
+  }
+
+  visibleDataLabels(series: Series, nestedPieSeries?: Record<string, NestedPieSeriesDataType>) {
+    const visibleCommonSeriesDataLabels = !!this.options.series?.dataLabels?.visible;
+    const visibleComboSeriesDataLabels = Object.keys(series).some(
+      (seriesName) => !!this.options.series?.[seriesName]?.dataLabels?.visible
+    );
+    const visibleNestedPieSeriesDataLabels = !!(
+      nestedPieSeries &&
+      Object.keys(nestedPieSeries).some((alias) => {
+        return !!this.options.series?.[alias]?.dataLabels?.visible;
+      })
+    );
+
+    return (
+      visibleCommonSeriesDataLabels ||
+      visibleComboSeriesDataLabels ||
+      visibleNestedPieSeriesDataLabels
+    );
   }
 
   renderSeriesDataLabels = (seriesDataLabel: SeriesDataLabel) => {

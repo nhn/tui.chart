@@ -1,12 +1,12 @@
 # Axes
 
-축은 보조 눈금과 값의 개요를 나타내 차트 데이터의 이해를 돕는 구성요소다. 
+축은 보조 눈금과 값의 개요를 나타내 차트 데이터의 이해를 돕는 구성요소다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102475360-1ddd0800-409d-11eb-96eb-6421f58fb1cb.png)
 
-TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이며 차트에 따라 사용 가능한 축의 종류가 다르다. 
+TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이며 차트에 따라 사용 가능한 축의 종류가 다르다.
 
-| 타입 | 차트명 | 
+| 타입 | 차트명 |
 | --- | --- |
 | x축, y축, 보조 y 축 사용 가능 | `Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` |
 | x축, y축 사용 가능 | `BoxPlot`, `Bubble`, `Bullet`, `Column`, `Heatmap`, `Scatter` |
@@ -14,7 +14,7 @@ TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이�
 
 이 가이드에서는 모든 축을 사용 가능한 차트라는 가정하에 작성되었다.
 
-## options
+## 옵션
 
 축의 변경 가능한 옵션은 다음과 같다.
 
@@ -159,14 +159,14 @@ Date 타입의 카테고리가 포맷팅되어 나타나는 것을 확인할 수
 
 ### rotateLabel
 
-* ⚠️ 개발 후 가이드 작성 필요 ⚠️ 
+* ⚠️ 개발 후 가이드 작성 필요 ⚠️
 
 ### pointOnColumn
 
-x축을 기준으로 시리즈의 시작 부분을 틱과 틱 가운데로 이동시킬 수 있다. 해당 옵션은 [Line 차트](./chart-line.md)와 [Area 차트](./chart-area.md)에서만 사용 가능하다. 
+x축을 기준으로 시리즈의 시작 부분을 틱과 틱 가운데로 이동시킬 수 있다. 해당 옵션은 [Line 차트](./chart-line.md)와 [Area 차트](./chart-area.md)에서만 사용 가능하다.
 
 
-* default: `false`
+* 기본값: `false`
 
 
 ```js
@@ -232,13 +232,13 @@ const options = {
 };
 ```
 
-적용된 스타일은 다음과 같다. 
+적용된 스타일은 다음과 같다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102197823-01a66300-3f05-11eb-9668-6b4a53b83cb6.png)
 
 ## Secondary Y Axis
 
-`Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` 차트는 보조 축을 사용할 수 있다. 기존에 작성하던 객체 형태의 `yAxis` 옵션을 배열로 입력하면 첫번째 옵션이 주축에 대한 옵션, 두번째 옵션이 부축에 대한 옵션으로 동작한다. 
+`Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` 차트는 보조 축을 사용할 수 있다. 기존에 작성하던 객체 형태의 `yAxis` 옵션을 배열로 입력하면 첫번째 옵션이 주축에 대한 옵션, 두번째 옵션이 부축에 대한 옵션으로 동작한다.
 
 
 ```js

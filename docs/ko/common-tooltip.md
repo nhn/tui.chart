@@ -6,7 +6,7 @@ Tooltip은 현재 마우스를 올려놓은 데이터의 정보를 나타내는 
 
 해당 영역은 header 영역과 body 영역으로 나누어져 있으며 header 영역에는 category 값이, body 영역에는 데이터 값이 나오게 된다.
 
-## options
+## 옵션
 
 tooltip을 제어할 수 있는 옵션은 다음과 같다.
 
@@ -89,23 +89,23 @@ const options = {
 
 `tooltip.template`을 통해 커스텀 툴팁을 생성할 수 있다. 인자는 html 문자열을 반환하는 함수를 받게된다. 해당 함수에서는 데이터, 기존 템플릿, 기존 템플릿에 대한 테마 총 세개의 인자를 갖게 된다.
 
-| 이름 | 타입 | 설명 | 
+| 이름 | 타입 | 설명 |
 |--- | --- |---|
-| model | object | 툴팁을 활성화 시킨 데이터 정보가 모인 객체. 함수의 첫번째 인자. | 
-| model.x | number |데이터의 x 좌표 | 
-| model.y | number |데이터의 y 좌표 | 
-| model.category | string | 데이터의 카테고리 값 | 
-| model.label | string |데이터의 라벨 값 | 
-| model.data | object | 데이터 정보가 모인 객체 | 
-| model.data.category | string | 데이터의 카테고리 값 | 
-| model.data.color | string | 데이터의 시리즈 색상 | 
-| model.data.formattedValue | string | formatter를 거친 데이터 값 | 
-| model.data.label | string | 데이터의 라벨 값 | 
-| model.data.value | 해당 차트의 데이터 타입 | 데이터 값 | 
+| model | object | 툴팁을 활성화 시킨 데이터 정보가 모인 객체. 함수의 첫번째 인자. |
+| model.x | number |데이터의 x 좌표 |
+| model.y | number |데이터의 y 좌표 |
+| model.category | string | 데이터의 카테고리 값 |
+| model.label | string |데이터의 라벨 값 |
+| model.data | object | 데이터 정보가 모인 객체 |
+| model.data.category | string | 데이터의 카테고리 값 |
+| model.data.color | string | 데이터의 시리즈 색상 |
+| model.data.formattedValue | string | formatter를 거친 데이터 값 |
+| model.data.label | string | 데이터의 라벨 값 |
+| model.data.value | 해당 차트의 데이터 타입 | 데이터 값 |
 | defaultTooltipTemplate | object |기존 HTML 템플릿 객체. 함수의 두번째 인자. |
 | defaultTooltipTemplate.header | string | 카테고리가 노출되는 header 영역 html 템플릿 |
 | defaultTooltipTemplate.body | string | 데이터가 노출되는 body 영역 html 템플릿 |
-| theme | object | 기존에 사용되던 툴팁의 테마. 함수의 세번째 인자. 구체적인 설명은 툴팁 테마 챕터에서 설명하겠다. | 
+| theme | object | 기존에 사용되던 툴팁의 테마. 함수의 세번째 인자. 구체적인 설명은 툴팁 테마 챕터에서 설명하겠다. |
 
 간단하게 해당 옵션을 응용해 새로운 header를 사용하며, 기존 body를 그대로 사용하는 커스텀 툴팁을 만들어보았다.
 
@@ -164,16 +164,17 @@ interface TooltipTheme {
 ```
 
 
-| 이름 | 타입 | 설명 | 
+| 이름 | 타입 | 설명 |
 | --- | --- | --- |
 | background | string | 배경 색상 |
 | borderColor | string | 테두리 선 색상 |
 | borderWidth | number | 테두리 선 너비 |
 | borderStyle | string | 테두리 선 스타일. 사용 가능한 옵션은 [MDN 링크](https://developer.mozilla.org/ko/docs/Web/CSS/border-style)에서 확인할 수 있다. |
-| borderRadius | number | 둥근 모서리 값 | 
+| borderRadius | number | 둥근 모서리 값 |
 | header | object | 툴팁 header 영역 스타일 |
-| body | object | 툴팁 body 영역 스타일
-간단한 예시로 툴팁의 background 색상과 테두리와 관련된 옵션들을 추가해보도록 하겠다. 
+| body | object | 툴팁 body 영역 스타일 |
+
+간단한 예시로 툴팁의 background 색상과 테두리와 관련된 옵션들을 추가해보도록 하겠다.
 
 ```js
 const options = {

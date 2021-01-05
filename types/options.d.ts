@@ -233,7 +233,6 @@ export type PlotLine = {
   value: PlotXPointType;
   color: string;
   opacity?: number;
-  vertical?: boolean;
   id?: string;
 };
 
@@ -288,17 +287,15 @@ export interface BaseOptions {
   usageStatistics?: boolean;
 }
 
-export type ResponsiveObjectType = {
-  animation?: AnimationOptions;
-  rules?: ResponsiveRule[];
-};
-
 type ResponsiveRule = {
   condition: ({ width, height }: Size) => boolean;
   options: Options;
 };
 
-type ResponsiveOptions = ResponsiveObjectType;
+type ResponsiveOptions = {
+  animation?: AnimationOptions;
+  rules?: ResponsiveRule[];
+};
 
 interface BaseLegendOptions {
   align?: Align;
@@ -323,7 +320,7 @@ interface BoxPlotSeriesOptions extends BaseSeriesOptions {
 export interface HeatmapChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions & { date?: DateOption };
   theme?: HeatmapChartThemeOptions;
-  series?: BaseSeriesOptions & { shift?: boolean; dataLabels?: DataLabelOptions };
+  series?: BaseSeriesOptions & { shift?: boolean; dataLabels?: Omit<DataLabelOptions, 'anchor'> };
 }
 
 export interface BoxPlotChartOptions extends BaseOptions {
@@ -339,7 +336,7 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
   zoomable?: boolean;
   eventDetectType?: LineTypeEventDetectType;
   shift?: boolean;
-  dataLabels?: DataLabelOptions;
+  dataLabels?: Omit<DataLabelOptions, 'anchor'>;
 }
 
 interface AreaSeriesOptions extends LineTypeSeriesOptions {
@@ -370,7 +367,7 @@ type LineScatterChartSeriesOptions = {
 export interface LineScatterChartOptions extends BaseOptions {
   series?: LineScatterChartSeriesOptions;
   yAxis?: BothSidesYAxisOptions;
-  plot?: PlotOptions;
+  plot?: LineTypePlotOptions;
   theme?: LineScatterChartThemeOptions;
 }
 
@@ -564,7 +561,7 @@ export interface PieDataLabels extends DataLabelOptions {
   pieSeriesName?: DataLabelPieSeriesName;
 }
 
-export interface TreemapDataLabels extends DataLabelOptions {
+export interface TreemapDataLabels extends Omit<DataLabelOptions, 'anchor'> {
   useTreemapLeaf?: boolean;
 }
 

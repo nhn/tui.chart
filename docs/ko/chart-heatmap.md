@@ -11,7 +11,7 @@ import { HeatmapChart } from '@toast-ui/chart';
 
 const chart = new HeatmapChart({el, data, options});
 
-// 혹은 
+// 혹은
 
 import Chart from '@toast-ui/chart';
 
@@ -42,7 +42,7 @@ const data = {
 ![image](https://user-images.githubusercontent.com/35371660/101881018-2b931900-3bd7-11eb-8485-00f8f628625e.png)
 
 
-## 옵션 
+## 옵션
 
 `options`는 객체로 작성한다.
 
@@ -75,28 +75,25 @@ type options = {
   series?: {
     selectable?: boolean;
     shift?: boolean;
-
     dataLabels?: {
       visible?: boolean;
-      anchor?: DataLabelAnchor;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value) => string;
     }
   }
 }
 ```
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자.
-> (링크: 
+> (링크:
 > [`chart` 옵션](./common-chart-options.md),
-> [축](./common-axes.md), 
-> [범례](./common-legend.md), 
+> [축](./common-axes.md),
+> [범례](./common-legend.md),
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
-> [`responsive`](./common-responsive-options.md), 
-> [실시간 업데이트](./common-liveUpdate-options.md),
-> [데이터 라벨](./common-dataLabels-options.md)
+> [`responsive`](./common-responsive-options.md),
+> [실시간 업데이트](./common-liveUpdate-options.md)
 > )
 
 
@@ -104,7 +101,7 @@ type options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101881776-3dc18700-3bd8-11eb-8cde-50d13252a885.png)
 
-* default: `false`
+* 기본값: `false`
 
 해당 시리즈를 선택할 수 있다.
 
@@ -118,11 +115,47 @@ const options = {
 
 `selectable` 옵션과 `on` API의 `selectSeries`, `unselectSeries`를 함께 사용할 경우 해당 시리즈에 대한 제어를 추가로 할 수 있다.
 
+### dataLabels
+
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+`dataLabels` 옵션은 다음과 같다.
+
+```ts
+type options = {
+  ...
+  series?: {
+    dataLabels?: {
+      visible?: boolean;
+      offsetX?: number;
+      offsetY?: number;
+      formatter?: (value) => string;
+    }
+  }
+};
+```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+
+```js
+// 기본
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475076-7e827980-4ded-11eb-975e-39c2566bf42e.png)
 
 
 ## 시리즈 theme
 
-Heatmap 차트에서 수정할 수 있는 시리즈 테마이다.
+Heatmap 차트에서 수정할 수 있는 시리즈 테마이다. 데이터 라벨 테마는 화살표가 없는 말풍선 스타일을 사용할 수 있다.
 
 ```ts
 interface HeatmapChartSeriesTheme {
@@ -142,14 +175,14 @@ interface HeatmapChartSeriesTheme {
   };
   dataLabels?: {
     useSeriesColor?: boolean;
-    fontSize?: number;
-    fontFamily?: string;
-    fontWeight?: string | number;
-    color?: string;
     lineWidth?: number;
     textStrokeColor?: string;
     shadowColor?: string;
     shadowBlur?: number;
+    fontSize?: number;
+    fontFamily?: string;
+    fontWeight?: string | number;
+    color?: string;
     textBubble?: {
       visible?: boolean;
       paddingX?: number;
@@ -162,20 +195,41 @@ interface HeatmapChartSeriesTheme {
       shadowOffsetX?: number;
       shadowOffsetY?: number;
       shadowBlur?: number;
-    }
+    };
   };
 }
 ```
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| startColor | string | 값의 색상 기준이 되는 시작값 |
-| endColor | string | 값의 색상 기준이 되는 끝값 |
-| borderColor | string | 시리즈의 테두리 색상 |
-| borderWidth | number | 시리즈의 테두리 너비 |
-| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
-| hover | object | 데이터에 마우스를 올렸을 떄 스타일 | 
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 DataLabels 가이드를 참고한다. | 
+| `startColor` | string | 값의 색상 기준이 되는 시작값 |
+| `endColor` | string | 값의 색상 기준이 되는 끝값 |
+| `borderColor` | string | 시리즈의 테두리 색상 |
+| `borderWidth` | number | 시리즈의 테두리 너비 |
+| `select` | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
+| `dataLabels` | object | 데이터 라벨 스타일 |
+| `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
+| `dataLabels.lineWidth` | number | 텍스트 선 두께 |
+| `dataLabels.textStrokeColor` | string | 텍스트 선 색상 |
+| `dataLabels.shadowColor` | string | 텍스트 그림자 색상 |
+| `dataLabels.shadowBlur` | number | 텍스트 그림자 Blur |
+| `dataLabels.fontSize` | number | 글자 크기 |
+| `dataLabels.fontFamily` | string | 폰트명 |
+| `dataLabels.fontWeight` | string | 글자 굵기 |
+| `dataLabels.color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `dataLabels.textBubble` | object | 말풍선 디자인 설정 |
+| `dataLabels.textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `dataLabels.textBubble.paddingX` | number | 수평 여백 |
+| `dataLabels.textBubble.paddingY`| number | 수직 여백 |
+| `dataLabels.textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `dataLabels.textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `dataLabels.textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `dataLabels.textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `dataLabels.textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `dataLabels.textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `dataLabels.textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `dataLabels.textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
 
 ### startColor와 endColor
 
@@ -202,3 +256,31 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101882405-3058cc80-3bd9-11eb-8900-6923c72b84b5.png)
 
+데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 색상을 변경하였다.
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 9,
+        fontWeight: '600',
+        useSeriesColor: true,
+        textBubble: {
+          visible: true,
+          backgroundColor: '#333333',
+          paddingX: 1,
+          paddingY: 1,
+          borderRadius: 5
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475079-83472d80-4ded-11eb-82f4-f363cbcb3416.png)

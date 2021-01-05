@@ -12,13 +12,13 @@ interface DotIconModel extends Point {
   theme: Required<DotIconTheme>;
 }
 
-function drawXIcon(ctx: CanvasRenderingContext2D, icon: XIconModel) {
+function drawXIcon(ctx: CanvasRenderingContext2D, icon: XIconModel, rectSize: number) {
   const {
     x: startX,
     y: startY,
     theme: { color: strokeStyle, lineWidth },
   } = icon;
-  const offset = BUTTON_RECT_SIZE / 3;
+  const offset = rectSize / 3;
 
   const x = startX + offset;
   const y = startY + offset;
@@ -35,14 +35,14 @@ function drawXIcon(ctx: CanvasRenderingContext2D, icon: XIconModel) {
   });
 }
 
-function drawMoreIcon(ctx: CanvasRenderingContext2D, icon: DotIconModel) {
+function drawMoreIcon(ctx: CanvasRenderingContext2D, icon: DotIconModel, rectSize: number) {
   const {
     x,
     y,
     theme: { color, width, height, gap },
   } = icon;
-  const paddingX = (BUTTON_RECT_SIZE - width) / 2;
-  const paddingY = (BUTTON_RECT_SIZE - (height * 3 + gap * 2)) / 2;
+  const paddingX = (rectSize - width) / 2;
+  const paddingY = (rectSize - (height * 3 + gap * 2)) / 2;
   const centerX = x + paddingX;
 
   const points = [
@@ -66,7 +66,7 @@ export function exportMenuButton(
   ctx: CanvasRenderingContext2D,
   exportMenuButtonModel: ExportMenuButtonModel
 ) {
-  const { opened, x, y, theme } = exportMenuButtonModel;
+  const { opened, x: xPos, y: yPos, theme } = exportMenuButtonModel;
   const {
     borderColor,
     backgroundColor,
@@ -75,21 +75,25 @@ export function exportMenuButton(
     xIcon,
     dotIcon,
   } = theme as Required<ExportMenuButtonTheme>;
+  const x = xPos + borderWidth;
+  const y = yPos + borderWidth;
+  const rectSize = BUTTON_RECT_SIZE - 2 * borderWidth;
+
   pathRect(ctx, {
     type: 'pathRect',
     x,
     y,
     fill: backgroundColor,
     stroke: borderColor,
-    width: BUTTON_RECT_SIZE,
-    height: BUTTON_RECT_SIZE,
+    width: rectSize,
+    height: rectSize,
     radius: borderRadius,
     lineWidth: borderWidth,
   });
 
   if (opened) {
-    drawXIcon(ctx, { x, y, theme: xIcon as Required<XIconTheme> });
+    drawXIcon(ctx, { x, y, theme: xIcon as Required<XIconTheme> }, rectSize);
   } else {
-    drawMoreIcon(ctx, { x, y, theme: dotIcon as Required<DotIconTheme> });
+    drawMoreIcon(ctx, { x, y, theme: dotIcon as Required<DotIconTheme> }, rectSize);
   }
 }

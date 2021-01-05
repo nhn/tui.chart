@@ -6,7 +6,7 @@ import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 
 export default {
-  title: 'chart.Column.GroupStack',
+  title: 'chart.Column.Group Stack',
   decorators: [withKnobs],
 };
 

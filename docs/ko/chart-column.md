@@ -200,7 +200,7 @@ type options = {
       formatter?: (value) => string;
       stackTotal?: {
         visible?: boolean;
-        formatter?: Formatter;
+        formatter?: (value) => string;
       };
     };
   }
@@ -215,8 +215,7 @@ type options = {
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
 > [플롯](./common-plot.md),
-> [`responsive` 옵션](./common-responsive-options.md),
-> [데이터 라벨](./common-dataLabels-options.md)
+> [`responsive` 옵션](./common-responsive-options.md)
 > )
 
 ### stack
@@ -377,9 +376,66 @@ const options = {
 ```
 ![diverging](https://user-images.githubusercontent.com/43128697/102730699-ea3dfe80-4378-11eb-8f35-2636e7a10a13.png)
 
+### dataLabels
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+`dataLabels` 옵션은 다음과 같다.
+
+```ts
+type options = {
+  ...
+  series?: {
+    dataLabels?: {
+      visible?: boolean;
+      offsetX?: number;
+      offsetY?: number;
+      formatter?: (value) => string;
+      anchor: 'start' | 'center' | 'end' | 'auto';
+      stackTotal?: {
+        visible?: boolean;
+        formatter?: (value) => string;
+      };
+    };
+  };
+};
+```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `visible` | boolean | 데이터 라벨 표시 여부 |
+| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
+| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
+| `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+| `anchor` | 'start' \| 'center' \| 'end' \| 'auto' | 데이터 라벨 위치 설정 (기본값: `'auto'`)  |
+| `stackTotal` | object | 스택 컬럼 차트에서 합계 값에 대한 라벨 설정 |
+| `stackTotal.visible` | boolean | 합계 라벨 표시 여부. 스택 차트일 경우 기본값은 `true`가 됨 |
+| `stackTotal.formatter` | function | 합계 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
+
+```js
+// 기본
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103476415-b3e09480-4df8-11eb-9fa1-56125f3fd0a7.png)
+
+```js
+// 스택 컬럼 차트
+const options = {
+  series: {
+    stack: true,
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478831-ba790700-4e0c-11eb-82bb-14d593d60543.png)
+
 ## 시리즈 theme
 
-Column 차트에서 수정할 수 있는 시리즈 테마이다.
+Column 차트에서 수정할 수 있는 시리즈 테마이다. 데이터 라벨 스타일은 값을 나타내는 기본 라벨을 포함하여, 스택 컬럼 차트일 경우 표시되는 합계 라벨에 대한 스타일링도 할 수 있다. 화살표가 있는 말풍선 스타일을 사용할 수 있다.
 
 ```ts
 interface BoxChartSeriesTheme {
@@ -421,15 +477,23 @@ interface BoxChartSeriesTheme {
     lineWidth?: number;
     dashSegments?: number[];
   };
-  dataLabels?: DefaultDataLabelsTheme & {
-     stackTotal?: DefaultDataLabelsTheme;
+  dataLabels?: CommonDataLabelBubbleTheme & {
+     stackTotal?: CommonDataLabelBubbleTheme;
   };
 }
 
-type DefaultDataLabelsTheme = {
+type CommonDataLabelBubbleTheme = {
+  useSeriesColor?: boolean;
+  lineWidth?: number;
+  textStrokeColor?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
   textBubble?: {
     visible?: boolean;
-    arrow?: ArrowTheme;
     paddingX?: number;
     paddingY?: number;
     backgroundColor?: string;
@@ -440,31 +504,55 @@ type DefaultDataLabelsTheme = {
     shadowOffsetX?: number;
     shadowOffsetY?: number;
     shadowBlur?: number;
+    arrow?: {
+      visible?: boolean;
+      width?: number;
+      height?: number;
+      direction?: 'top' | 'right' | 'bottom' | 'left';
+    };
   };
-  useSeriesColor?: boolean;
-  lineWidth?: number;
-  textStrokeColor?: string;
-  shadowColor?: string;
-  shadowBlur?: number;
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string | number;
-  color?: string;
-}
+};
 ```
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| barWidth | number \| string | 시리즈 박스 너비 |
-| areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
-| colors | string[] | 시리즈의 색상 |
-| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
-| hover.groupRect | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 오버되는 영역의 스타일 |
+| `barWidth` | number \| string | 시리즈 박스 너비 |
+| `areaOpacity` | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
+| `colors` | string[] | 시리즈의 색상 |
+| `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
+| `hover.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 오버되는 영역의 스타일 |
 | select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
-| select.areaOpacity | number | 선택된 시리즈의 영역 투명도 |
-| select.groupRect | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 선택되는 영역의 스타일 |
-| select.restSeries | object | 선택되지 않은 시리즈의 스타일 |
-| dataLabels | object | 데이터 라벨 스타일. 구체적인 정보는 [DataLabels 가이드](./common-dataLabels-options.md)를 참고한다. |
+| `select.areaOpacity` | number | 선택된 시리즈의 영역 투명도 |
+| `select.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 선택되는 영역의 스타일 |
+| `select.restSeries` | object | 선택되지 않은 시리즈의 스타일 |
+| `dataLabels` | object | 데이터 라벨 스타일 |
+| `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
+| `dataLabels.lineWidth` | number | 텍스트 선 두께 |
+| `dataLabels.textStrokeColor` | string | 텍스트 선 색상 |
+| `dataLabels.shadowColor` | string | 텍스트 그림자 색상 |
+| `dataLabels.shadowBlur` | number | 텍스트 그림자 Blur |
+| `dataLabels.fontSize` | number | 글자 크기 |
+| `dataLabels.fontFamily` | string | 폰트명 |
+| `dataLabels.fontWeight` | string | 글자 굵기 |
+| `dataLabels.color` | string | 글자 색상, `useSeriesColor: true`로 설정한경우 이 옵션은 동작되지 않음 |
+| `dataLabels.textBubble` | object | 말풍선 디자인 설정 |
+| `dataLabels.textBubble.visible` | boolean | 말풍선 디자인 사용 여부 |
+| `dataLabels.textBubble.paddingX` | number | 수평 여백 |
+| `dataLabels.textBubble.paddingY`| number | 수직 여백 |
+| `dataLabels.textBubble.backgroundColor` | string | 말풍선 배경색 |
+| `dataLabels.textBubble.borderRadius` | number | 말풍선 테두리의 둥근 모서리 값 |
+| `dataLabels.textBubble.borderColor` | string | 말풍선 테두리 색상 |
+| `dataLabels.textBubble.borderWidth` | number | 말풍선 테두리 두께 |
+| `dataLabels.textBubble.shadowColor` | string | 말풍선 그림자 색상 |
+| `dataLabels.textBubble.shadowOffsetX` | number | 말풍선 그림자 Offset X |
+| `dataLabels.textBubble.shadowOffsetY` | number | 말풍선 그림자 Offset Y |
+| `dataLabels.textBubble.shadowBlur` | number | 말풍선 그림자 Blur |
+| `dataLabels.textBubble.arrow` | object | 말풍선 화살표 설정 |
+| `dataLabels.textBubble.arrow.visible` | boolean | 화살표 표시 여부 |
+| `dataLabels.textBubble.arrow.width` | number | 화살표 삼각형 너비 |
+| `dataLabels.textBubble.arrow.height` | number | 화살표 삼각형 높이 |
+| `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
+| `dataLabels.stackTotal` | object | 스택 차트에서 합계 라벨 스타일. `dataLabels`에 적용할 수 있는 스타일 옵션 모두 사용 가능 |
 
 테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 컬럼 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
 
@@ -491,3 +579,45 @@ const options = {
 옵션에 대한 결과는 다음과 같다.
 
 ![image](https://user-images.githubusercontent.com/43128697/102731093-47867f80-437a-11eb-8103-8a3060dea9a7.png)
+
+데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 스타일을 변경하였다.
+
+
+```js
+const options = {
+  series: {
+    stack: true,
+    dataLabels: { visible: true }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        lineWidth: 2,
+        textStrokeColor: '#ffffff',
+        shadowColor: '#ffffff',
+        shadowBlur: 4,
+        stackTotal: {
+          fontFamily: 'monaco',
+          fontWeight: 14,
+          color: '#ffffff',
+          textBubble: {
+            visible: true,
+            paddingY: 6,
+            borderWidth: 3,
+            borderColor: '#00bcd4',
+            borderRadius: 7,
+            backgroundColor: '#041367',
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 0,
+            shadowColor: 'rgba(0, 0, 0, 0)'
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103476423-bf33c000-4df8-11eb-8e9c-2d5b718c3f3e.png)

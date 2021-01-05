@@ -313,7 +313,7 @@ function getPlotRect(xAxis: Rect, yAxis: Rect, size: OptionalSize) {
 function getTitleRect(chartSize: Size, exportMenu: Rect, visible: boolean, titleHeight: number) {
   const point = { x: padding.X, y: padding.Y };
   const marginBottom = 5;
-  const width = visible ? chartSize.width : 0;
+  const width = visible ? chartSize.width - exportMenu.width : 0;
   const height = visible
     ? Math.max(titleHeight + marginBottom, exportMenu.height)
     : exportMenu.height;

@@ -283,7 +283,7 @@ type options = {
       anchor?: DataLabelAnchor;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value) => string;
       pieSeriesName?: {
         visible: boolean;
         anchor?: 'center' | 'outer';
@@ -305,7 +305,7 @@ type options = {
         anchor?: DataLabelAnchor;
         offsetX?: number;
         offsetY?: number;
-        formatter?: Formatter;
+        formatter?: (value) => string;;
         pieSeriesName?: {
           visible: boolean;
           anchor?: 'center' | 'outer';
@@ -322,8 +322,7 @@ type options = {
 > [범례](./common-legend.md),
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
-> [`responsive` 옵션](./common-responsive-options.md),
-> [데이터 라벨](./common-dataLabels-options.md)
+> [`responsive` 옵션](./common-responsive-options.md)
 > )
 
 ### selectable
@@ -498,10 +497,79 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102768425-7e818300-43c4-11eb-8b34-2c9f87f08602.png)
 
+### dataLabels
+
+`series.dataLabels` 옵션을 지정하면 모든 중첩된 Pie 차트에서 데이터 라벨이 표시할 수 있다.
+
+```js
+const options = {
+  ...
+  series: {
+    dataLabels: {
+      visible: true;
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478578-02972a00-4e0b-11eb-9aa9-b9e66ce48279.png)
+
+`series` 옵션에 각 계층별로 Pie 시리즈 옵션을 정의할 수 있으며, 데이터 라벨 관련 옵션도 좀 더 세밀하게 설정해 줄 수 있다.
+
+```ts
+type options = {
+  ...
+  series?: {
+    [name]: {
+      ...
+      dataLabels: {
+        // Pie 시리즈  데이터 라벨 옵션
+      };
+    },
+    ...
+  };
+};
+```
+
+간단한 예시로 안쪽에 있는 Pie 시리즈('browsers')에는 데이터 라벨만 표시해주고, 바깥쪽에 있는 Pie 시리즈('versions')에는 시리즈 이름 라벨까지 표시해주었다.
+
+```js
+const options = {
+  series: {
+    browsers: {
+      radiusRange: {
+        inner: '20%',
+        outer: '50%'
+      },
+      dataLabels: {
+        visible: true,
+        pieSeriesName: {
+          visible: false
+        }
+      }
+    },
+    versions: {
+      radiusRange: {
+        inner: '55%',
+        outer: '85%'
+      },
+      dataLabels: {
+        visible: true,
+        pieSeriesName: {
+          visible: true,
+          anchor: 'outer'
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478580-0460ed80-4e0b-11eb-97d6-f7998a9029dd.png)
 
 ## 시리즈 theme
 
-NestedPie 차트에서 각 시리즈별로 수정할 수 있는 시리즈 테마이다.
+NestedPie 차트에서 각 시리즈별로 수정할 수 있는 시리즈 테마이다. 각 Pie 시리즈의 데이터 라벨 스타일을 지정할 경우 `series[name].dataLabels`를 정의한다.
 
 ```ts
 interface NestedPieChartSeriesTheme {
@@ -531,17 +599,26 @@ interface NestedPieChartSeriesTheme {
     };
     areaOpacity?: number;
   };
-  dataLabels?: DefaultDataLabelsTheme & {
-    pieSeriesName?: DefaultDataLabelsTheme;
+  dataLabels?: CommonDataLabelBoxTheme & {
+    pieSeriesName?: CommonDataLabelBoxTheme;
     callout?: {
+      useSeriesColor?: boolean;
       lineWidth?: number;
       lineColor?: string;
-      useSeriesColor?: boolean
     };
   };
 }
 
-type DefaultDataLabelsTheme = {
+type CommonDataLabelBoxTheme = {
+  useSeriesColor?: boolean;
+  lineWidth?: number;
+  textStrokeColor?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
   textBubble?: {
     visible?: boolean;
     paddingX?: number;
@@ -555,26 +632,18 @@ type DefaultDataLabelsTheme = {
     shadowOffsetY?: number;
     shadowBlur?: number;
   };
-  useSeriesColor?: boolean;
-  lineWidth?: number;
-  textStrokeColor?: string;
-  shadowColor?: string;
-  shadowBlur?: number;
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string | number;
-  color?: string;
-}
+};
 ```
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| colors | string[] | 시리즈의 색상 |
-| areaOpacity | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
-| lineWidth | number | 시리즈의 테두리 선 너비 |
-| strokeStyle | string | 시리즈의 테두리 선 색 |
-| hover | object | 데이터에 마우스를 올렸을 때 스타일 |
-| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| `colors` | string[] | 시리즈의 색상 |
+| `areaOpacity` | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
+| `lineWidth` | number | 시리즈의 테두리 선 너비 |
+| `strokeStyle` | string | 시리즈의 테두리 선 색 |
+| `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
+| `select` | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| `dataLabels` | object | 데이터 라벨 스타일. Pie 차트의 [`theme.dataLabels` 옵션](./chart-pie.md)과 같다. |
 
 테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
 
@@ -645,5 +714,77 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102755523-e5e20780-43b1-11eb-96a5-10e494e37d27.png)
 
+`[name]`에 해당하는 각 시리즈별로 라벨 스타일을 적용할 수 있다. 글자 스타일과 말풍선을 사용하여 테마를 적용해 보았다.
 
+```js
+const options = {
+  series: {
+    browsers: {
+      dataLabels: {
+        visible: true
+      }
+    },
+    versions: {
+      dataLabels: {
+        visible: true,
+        pieSeriesName: { visible: true, anchor: 'outer' }
+      }
+    }
+  },
+  theme: {
+    series: {
+      browsers: {
+        dataLabels: {
+          fontFamily: 'fantasy',
+          fontSize: 13,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            backgroundColor: '#333333',
+            borderRadius: 5,
+            borderColor: '#ff0000',
+            borderWidth: 3,
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 0,
+            shadowColor: 'rgba(0, 0, 0, 0)',
+          },
+        },
+      },
+      versions: {
+        dataLabels: {
+          fontFamily: 'monaco',
+          useSeriesColor: true,
+          lineWidth: 2,
+          textStrokeColor: '#ffffff',
+          shadowColor: '#ffffff',
+          shadowBlur: 4,
+          callout: {
+            lineWidth: 3,
+            lineColor: '#f44336',
+            useSeriesColor: false
+          },
+          pieSeriesName: {
+            useSeriesColor: false,
+            color: '#f44336',
+            fontFamily: 'fantasy',
+            fontSize: 13,
+            textBubble: {
+              visible: true,
+              paddingX: 1,
+              paddingY: 1,
+              backgroundColor: 'rgba(158, 158, 158, 0.3)',
+              shadowOffsetX: 0,
+              shadowOffsetY: 0,
+              shadowBlur: 0,
+              shadowColor: 'rgba(0, 0, 0, 0)'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+```
 
+![image](https://user-images.githubusercontent.com/43128697/103478668-9cf76d80-4e0b-11eb-84fc-fce9f8412d2f.png)

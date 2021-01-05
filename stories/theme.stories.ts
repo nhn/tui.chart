@@ -6,7 +6,7 @@ import { withKnobs, boolean, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 
 export default {
-  title: 'chart|common component theme',
+  title: 'chart|Common Component Theme',
   decorators: [withKnobs],
 };
 

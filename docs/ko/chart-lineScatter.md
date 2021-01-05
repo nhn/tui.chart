@@ -11,7 +11,7 @@ import { LineScatterChart } from '@toast-ui/chart';
 
 const chart = new LineScatterChart({el, data, options});
 
-// 혹은 
+// 혹은
 
 import Chart from '@toast-ui/chart';
 
@@ -90,7 +90,7 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102061607-0866a480-3e37-11eb-92bb-eaf79c7e99f6.png)
 
-## 옵션 
+## 옵션
 
 `options`는 객체로 작성한다. 각각 차트에 적용하고 싶은 옵션은 `line`, `scatter`에 작성한다. 사용가능한 옵션은 다음과 같다.
 
@@ -131,22 +131,21 @@ type options = {
       anchor?: DataLabelAnchor;
       offsetX?: number;
       offsetY?: number;
-      formatter?: Formatter;
+      formatter?: (value) => string;
     }
   }
 }
 ```
 
 > 이 차트에서 사용할 수 있는 공통 옵션에 대해서는 이 가이드에서 다루지 않는다. 필요하다면 해당 옵션의 가이드를 참고하자. 또한, scatter, line 차트 옵션에 대해 궁금하다면 해당 가이드를 참고하자.
-> (링크: 
+> (링크:
 > [`chart` 옵션](./common-chart-options.md),
-> [축](./common-axes.md), 
-> [범례](./common-legend.md), 
+> [축](./common-axes.md),
+> [범례](./common-legend.md),
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
-> [`responsive` 옵션](./common-responsive-options.md), 
+> [`responsive` 옵션](./common-responsive-options.md),
 > [실시간 업데이트](./common-liveUpdate-options.md),
-> [데이터 라벨](./common-dataLabels-options.md),
 > [Line 차트](./chart-line.md),
 > [Scatter 차트](./chart-scatter.md)
 > )
@@ -155,7 +154,7 @@ type options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102150192-58834c80-3eb3-11eb-8eed-708807aca1cc.png)
 
-* default: `false`
+* 기본값: `false`
 
 해당 시리즈를 선택할 수 있다.
 
@@ -184,9 +183,39 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102150429-e2cbb080-3eb3-11eb-9698-ecdf53baf5ae.png)
 
+### dataLabels options
+
+`series.dataLabels` 옵션을 지정하면 Line 차트에 데이터 라벨이 표시된다. Scatter 차트는 데이터 라벨 옵션을 지원하지 않는다.
+
+```js
+const options = {
+  ...
+  series: {
+    dataLabels: {
+      visible: true;
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477790-5dc61e00-4e05-11eb-94cd-6209948ad291.png)
+
+또한 `series.line.dataLabels` 옵션을 사용하여 데이터 라벨을 표시할 수 있다.
+
+```ts
+type LineScatterChartSeriesOption = {
+  line: { // Line 시리즈 옵션
+    ...
+    dataLabels: {
+      // Line 시리즈  데이터 라벨 옵션
+    }
+  }
+};
+```
+
 ## 시리즈 theme
 
-각각의 스타일을 지정할 경우 `series.line` 혹은 `series.scatter`를 정의한다. 시리즈의 색상을 지정하고 싶은 경우 `colors`를 입력하거나 각각 시리즈를 구분해 색상을 부여하고 싶다면 구분해서 넣어주면 된다. 
+각각의 스타일을 지정할 경우 `series.line` 혹은 `series.scatter`를 정의한다. 시리즈의 색상을 지정하고 싶은 경우 `colors`를 입력하거나 각각 시리즈를 구분해 색상을 부여하고 싶다면 구분해서 넣어주면 된다.
 
 ```ts
 interface LineScatterChartSeriesTheme {
@@ -227,5 +256,56 @@ const theme = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102152124-b7e35b80-3eb7-11eb-890a-8e487c02b02b.png)
 
+데이터 라벨의 스타일을 지정하기 위해서는 `series.line.dataLabels`를 정의한다.
+
+```ts
+type LineScatterChartDataLabelTheme = {
+  series: {
+    line: {
+      dataLabels: {
+        // Line 시리즈 데이터 라벨 테마
+      }
+    }
+  }
+};
+```
+
+간단한 예시로 Line 시리즈 데이터 라벨 스타일을 말풍선으로 바꾸고 글자 색상과 크기를 변경해보았다.
+
+```js
+const options = {
+  series: {
+    line: {
+      showDot: true,
+      dataLabels: { visible: true, offsetY: -15 }
+    }
+  },
+  theme: {
+    series: {
+      line: {
+        dataLabels: {
+          color: '#105018',
+          fontSize: 10,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477907-7c78e480-4e06-11eb-9d40-00759bcf65c3.png)
+
 
 > [line 차트](./chart-line.md)와 [scatter 차트](./chart-scatter.md)의 테마는 각각의 가이드를 참고하도록 하자.
+

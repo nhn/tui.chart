@@ -35,10 +35,9 @@
 - [API introduction](./en/common-api.md)
 - [Common component theme](./en/common-theme.md)
 - [`chart` options](./en/common-chart-options.md)
-- [`layout` options](./en/common-layout-options.md)
+- [Layout Settings](./en/common-layout-options.md)
 - [Live Update options](./en/common-liveUpdate-options.md)
 - [`responsive` options](./en/common-responsive-options.md)
-- [Data labels](./en/common-dataLabels-options.md)
 
 ### Migration Guide
 
