@@ -118,6 +118,7 @@ export function getNearestResponder(
 export function makeRectResponderModel(
   rect: Rect,
   axis: AxisData,
+  categories: string[],
   vertical = true
 ): RectResponderModel[] {
   const { pointOnColumn, tickCount, tickDistance } = axis;
@@ -141,6 +142,7 @@ export function makeRectResponderModel(
       x: vertical ? startPos : 0,
       width: vertical ? size : width,
       index,
+      label: categories[index],
     };
   });
 }
@@ -149,13 +151,20 @@ export function makeTooltipCircleMap(
   seriesCircleModel: CircleModel[],
   tooltipDataArr: TooltipData[]
 ) {
-  return seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>((acc, cur, dataIndex) => {
-    const index = cur.index!;
-    const tooltipModel = { ...cur, data: tooltipDataArr[dataIndex % tooltipDataArr.length] };
-    if (!acc[index]) {
-      acc[index] = [];
+  return seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>((acc, model) => {
+    const data = tooltipDataArr.find(
+      ({ index, seriesIndex }) => index === model.index && seriesIndex === model.seriesIndex
+    )!;
+
+    if (!data.category) {
+      return acc;
     }
-    acc[index].push(tooltipModel);
+
+    const { category } = data;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push({ ...model, data });
 
     return acc;
   }, {});

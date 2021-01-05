@@ -80,7 +80,7 @@ export default class AreaSeries extends Component {
 
   eventDetectType: LineTypeEventDetectType = 'nearest';
 
-  tooltipCircleMap!: Record<number, CircleResponderModel[]>;
+  tooltipCircleMap!: Record<string, CircleResponderModel[]>;
 
   linePointsModel!: LinePointsModel[];
 
@@ -147,7 +147,7 @@ export default class AreaSeries extends Component {
 
   public render(chartState: ChartState<AreaChartOptions | LineAreaChartOptions>, computed) {
     const { viewRange } = computed;
-    const { layout, series, scale, axes, legend, stackSeries, theme } = chartState;
+    const { layout, series, scale, axes, legend, stackSeries, theme, rawCategories } = chartState;
 
     if (!series.area) {
       throw new Error(message.noDataError(this.name));
@@ -190,7 +190,7 @@ export default class AreaSeries extends Component {
     const areaSeriesModel = this.renderAreaPointsModel(renderOptions.options);
     const showDot = !!options.series?.showDot;
     const { dotSeriesModel, responderModel } = this.renderCircleModel(showDot);
-    const tooltipDataArr = this.makeTooltipData(areaData, categories);
+    const tooltipDataArr = this.makeTooltipData(areaData, rawCategories as string[]);
 
     this.models = deepCopy({
       rect: [this.renderClipRectAreaModel()],
@@ -214,7 +214,7 @@ export default class AreaSeries extends Component {
     this.responders =
       this.eventDetectType === 'near'
         ? this.makeNearTypeResponderModel(responderModel, tooltipDataArr)
-        : makeRectResponderModel(this.rect, axes.xAxis!);
+        : makeRectResponderModel(this.rect, axes.xAxis!, categories);
   }
 
   makeNearTypeResponderModel(
@@ -240,16 +240,18 @@ export default class AreaSeries extends Component {
   }
 
   makeTooltipData(areaData: AreaSeriesType[], categories: string[]) {
-    return areaData.flatMap(({ rawData, name, color }) => {
+    return areaData.flatMap(({ rawData, name, color }, seriesIndex) => {
       const tooltipData: TooltipData[] = [];
 
-      rawData.forEach((datum: DatumType, dataIdx) => {
+      rawData.forEach((datum: DatumType, index) => {
         const value = this.isRangeChart ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
         tooltipData.push({
           label: name,
           color,
           value,
-          category: categories[dataIdx],
+          category: categories[index],
+          seriesIndex,
+          index,
         });
       });
 
@@ -454,8 +456,10 @@ export default class AreaSeries extends Component {
     const pairCircleModels: CircleResponderModel[] = [];
 
     circleModels.forEach((circle) => {
-      const { index, seriesIndex, y } = circle;
-      const pairCircleModel = this.tooltipCircleMap[index!].find(
+      const { seriesIndex, y, data } = circle;
+      const { category } = data;
+
+      const pairCircleModel = this.tooltipCircleMap[category!].find(
         (model) => model.seriesIndex === seriesIndex && model.y !== y
       )!;
       pairCircleModels.push(pairCircleModel);
@@ -465,11 +469,11 @@ export default class AreaSeries extends Component {
   }
 
   getCircleModelsFromRectResponders(responders: RectResponderModel[], mousePositions?: Point) {
-    if (!responders.length) {
+    if (!responders.length || !responders[0].label) {
       return [];
     }
-    const index = responders[0].index! + this.startIndex;
-    const models = this.tooltipCircleMap[index] ?? [];
+
+    const models = this.tooltipCircleMap[responders[0].label] ?? [];
 
     return this.eventDetectType === 'grouped'
       ? models

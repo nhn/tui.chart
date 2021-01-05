@@ -219,7 +219,7 @@ export default class BoxStackSeries extends BoxSeries {
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(series, tooltipData);
-    this.responders = this.getBoxSeriesResponders(series, tooltipData, axes);
+    this.responders = this.getBoxSeriesResponders(series, tooltipData, axes, categories);
   }
 
   renderStackSeriesModel(seriesData: StackSeriesData<BoxType>, renderOptions: RenderOptions) {
