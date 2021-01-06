@@ -1,5 +1,5 @@
 import AreaChart from '@src/charts/areaChart';
-import { AreaChartOptions, AreaSeriesData, BaseChartOptions } from '@t/options';
+import { AreaChartOptions, AreaSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData, budgetData, temperatureRangeData } from './data';
 import { withKnobs, boolean, radios } from '@storybook/addon-knobs';
