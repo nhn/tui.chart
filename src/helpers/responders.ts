@@ -156,11 +156,11 @@ export function makeTooltipCircleMap(
       ({ index, seriesIndex }) => index === model.index && seriesIndex === model.seriesIndex
     )!;
 
-    if (!data.category) {
+    const { category } = data;
+    if (!category) {
       return acc;
     }
 
-    const { category } = data;
     if (!acc[category]) {
       acc[category] = [];
     }
