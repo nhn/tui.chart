@@ -250,6 +250,7 @@ export default class BoxStackSeries extends BoxSeries {
         stackGroupIndex,
         stackGroupCount
       );
+
       const ratio = this.getStackValueRatio(total, renderOptions);
 
       values.forEach((value, seriesIndex) => {
@@ -515,7 +516,8 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const { tickDistance, diverging } = renderOptions;
     const groupIndex = diverging ? 0 : stackGroupIndex;
-    const padding = (tickDistance - columnWidth * stackGroupCount) / 2;
+    const groupCount = diverging ? 1 : stackGroupCount;
+    const padding = (tickDistance - columnWidth * groupCount) / 2;
 
     return dataIndex * tickDistance + padding + columnWidth * groupIndex;
   }
