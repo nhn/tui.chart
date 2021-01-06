@@ -21,6 +21,8 @@ export type TooltipData = {
   templateType?: TooltipTemplateType;
   rootParentName?: string;
   percentValue?: number;
+  index?: number;
+  seriesIndex?: number;
 };
 
 export type TooltipInfo = {

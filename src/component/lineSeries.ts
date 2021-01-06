@@ -65,7 +65,7 @@ export default class LineSeries extends Component {
 
   eventDetectType: LineTypeEventDetectType = 'nearest';
 
-  tooltipCircleMap!: Record<number, CircleResponderModel[]>;
+  tooltipCircleMap!: Record<string, CircleResponderModel[]>;
 
   startIndex!: number;
 
@@ -163,13 +163,14 @@ export default class LineSeries extends Component {
       this.renderDataLabels(this.getDataLabels(lineSeriesModel));
     }
 
-    this.responders = this.getResponders(labelAxisData, responderModel, tooltipDataArr);
+    this.responders = this.getResponders(labelAxisData, responderModel, tooltipDataArr, categories);
   }
 
   private getResponders(
     axisData: LabelAxisData,
     seriesCircleModel: CircleModel[],
-    tooltipDataArr: TooltipData[]
+    tooltipDataArr: TooltipData[],
+    categories: string[]
   ): ResponderTypes {
     let res: ResponderTypes;
 
@@ -178,7 +179,7 @@ export default class LineSeries extends Component {
     } else if (this.eventDetectType === 'point') {
       res = this.makeNearTypeResponderModel(seriesCircleModel, tooltipDataArr, 0);
     } else {
-      res = makeRectResponderModel(this.rect, axisData);
+      res = makeRectResponderModel(this.rect, axisData, categories);
     }
 
     return res;
@@ -197,12 +198,14 @@ export default class LineSeries extends Component {
   }
 
   makeTooltipData(lineSeriesData: LineSeriesType[], categories: string[]) {
-    return lineSeriesData.flatMap(({ rawData, name, color }) => {
-      return rawData.map((datum: DatumType, dataIdx) => ({
+    return lineSeriesData.flatMap(({ rawData, name, color }, seriesIndex) => {
+      return rawData.map((datum: DatumType, index) => ({
         label: name,
         color,
         value: getCoordinateYValue(datum),
-        category: categories[getCoordinateDataIndex(datum, categories, dataIdx, this.startIndex)],
+        category: categories[getCoordinateDataIndex(datum, categories, index, this.startIndex)],
+        seriesIndex,
+        index,
       }));
     });
   }
@@ -306,11 +309,11 @@ export default class LineSeries extends Component {
     responders: RectResponderModel[],
     mousePositions?: Point
   ): CircleResponderModel[] {
-    if (!responders.length) {
+    if (!responders.length || !responders[0].label) {
       return [];
     }
-    const index = responders[0].index! + this.startIndex;
-    const models = this.tooltipCircleMap[index] ?? [];
+
+    const models = this.tooltipCircleMap[responders[0]?.label] ?? [];
 
     return this.eventDetectType === 'grouped'
       ? models
@@ -408,6 +411,14 @@ export default class LineSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
+  private getResponderCategoryByIndex(index: number) {
+    const responder = Object.values(this.tooltipCircleMap)
+      .flatMap((val) => val)
+      .find((model) => model.index === index);
+
+    return responder?.data?.category;
+  }
+
   selectSeries = (info: SelectSeriesHandlerParams<LineChartOptions>) => {
     const { index, seriesIndex, chartType } = info;
 
@@ -419,8 +430,12 @@ export default class LineSeries extends Component {
       return;
     }
 
-    const model = this.tooltipCircleMap[index][seriesIndex];
+    const category = this.getResponderCategoryByIndex(index);
+    if (!category) {
+      throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
+    }
 
+    const model = this.tooltipCircleMap[category][seriesIndex];
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
@@ -440,10 +455,15 @@ export default class LineSeries extends Component {
       return;
     }
 
+    const category = this.getResponderCategoryByIndex(index);
+    if (!category) {
+      return;
+    }
+
     const models =
       this.eventDetectType === 'grouped'
-        ? this.tooltipCircleMap[index]
-        : [this.tooltipCircleMap[index][seriesIndex!]];
+        ? this.tooltipCircleMap[category]
+        : [this.tooltipCircleMap[category][seriesIndex!]];
 
     if (!models?.length) {
       return;

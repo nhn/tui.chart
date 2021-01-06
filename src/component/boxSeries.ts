@@ -351,18 +351,24 @@ export default class BoxSeries extends Component {
     }
 
     this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
-    this.responders = this.getBoxSeriesResponders(seriesModels, tooltipData, axes);
+    this.responders = this.getBoxSeriesResponders(seriesModels, tooltipData, axes, categories);
   }
 
   protected getBoxSeriesResponders(
     seriesModels: RectModel[],
     tooltipData: TooltipData[],
-    axes: Axes
+    axes: Axes,
+    categories: string[]
   ) {
     const hoveredSeries = this.renderHoveredSeriesModel(seriesModels);
 
     return this.eventDetectType === 'grouped'
-      ? makeRectResponderModel(this.rect, this.isBar ? axes.yAxis! : axes.xAxis!, !this.isBar)
+      ? makeRectResponderModel(
+          this.rect,
+          this.isBar ? axes.yAxis! : axes.xAxis!,
+          categories,
+          !this.isBar
+        )
       : hoveredSeries.map((m, index) => ({
           ...m,
           data: tooltipData[index],

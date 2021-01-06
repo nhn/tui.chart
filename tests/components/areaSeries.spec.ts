@@ -420,7 +420,7 @@ describe('responders', () => {
     near: [
       {
         color: 'rgba(170, 170, 170, 1)',
-        data: { category: 'A', color: '#aaaaaa', label: 'han', value: 1 },
+        data: { category: 'A', color: '#aaaaaa', label: 'han', value: 1, index: 0, seriesIndex: 0 },
         radius: 5,
         index: 0,
         seriesIndex: 0,
@@ -432,7 +432,7 @@ describe('responders', () => {
       },
       {
         color: 'rgba(170, 170, 170, 1)',
-        data: { category: 'B', color: '#aaaaaa', label: 'han', value: 2 },
+        data: { category: 'B', color: '#aaaaaa', label: 'han', value: 2, index: 1, seriesIndex: 0 },
         radius: 5,
         index: 1,
         seriesIndex: 0,
@@ -444,7 +444,7 @@ describe('responders', () => {
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        data: { category: 'A', color: '#bbbbbb', label: 'cho', value: 4 },
+        data: { category: 'A', color: '#bbbbbb', label: 'cho', value: 4, index: 0, seriesIndex: 1 },
         radius: 5,
         index: 0,
         seriesIndex: 1,
@@ -456,7 +456,7 @@ describe('responders', () => {
       },
       {
         color: 'rgba(187, 187, 187, 1)',
-        data: { category: 'B', color: '#bbbbbb', label: 'cho', value: 5 },
+        data: { category: 'B', color: '#bbbbbb', label: 'cho', value: 5, index: 1, seriesIndex: 1 },
         radius: 5,
         index: 1,
         seriesIndex: 1,
@@ -468,12 +468,12 @@ describe('responders', () => {
       },
     ],
     nearest: [
-      { height: 80, index: 0, type: 'rect', width: 40, x: 0, y: 0 },
-      { height: 80, index: 1, type: 'rect', width: 40, x: 40, y: 0 },
+      { height: 80, index: 0, type: 'rect', width: 40, x: 0, y: 0, label: 'A' },
+      { height: 80, index: 1, type: 'rect', width: 40, x: 40, y: 0, label: 'B' },
     ],
     grouped: [
-      { height: 80, index: 0, type: 'rect', width: 40, x: 0, y: 0 },
-      { height: 80, index: 1, type: 'rect', width: 40, x: 40, y: 0 },
+      { height: 80, index: 0, type: 'rect', width: 40, x: 0, y: 0, label: 'A' },
+      { height: 80, index: 1, type: 'rect', width: 40, x: 40, y: 0, label: 'B' },
     ],
   };
 
@@ -546,6 +546,7 @@ describe('range', () => {
       data: [{ label: 'han', active: true, checked: true }],
     },
     categories: ['A', 'B'],
+    rawCategories: ['A', 'B'],
     dataLabels: {
       visible: false,
     },
@@ -620,8 +621,8 @@ describe('range', () => {
       },
     ],
     responders: [
-      { height: 80, index: 0, type: 'rect', width: 20, x: 0, y: 0 },
-      { height: 80, index: 1, type: 'rect', width: 20, x: 20, y: 0 },
+      { height: 80, index: 0, type: 'rect', width: 20, x: 0, y: 0, label: 'A' },
+      { height: 80, index: 1, type: 'rect', width: 20, x: 20, y: 0, label: 'B' },
     ],
     models: {
       rect: [{ height: 80, type: 'clipRectArea', width: 80, x: 0, y: 0 }],
@@ -743,6 +744,7 @@ describe('stack', () => {
       ],
     },
     categories: ['A', 'B'],
+    rawCategories: ['A', 'B'],
     dataLabels: {
       visible: false,
     },
@@ -824,6 +826,7 @@ describe('stack', () => {
         width: 20,
         x: 0,
         y: 0,
+        label: 'A',
       },
       {
         height: 80,
@@ -832,6 +835,7 @@ describe('stack', () => {
         width: 40,
         x: 20,
         y: 0,
+        label: 'B',
       },
       {
         height: 80,
@@ -1165,6 +1169,7 @@ describe('with series options', () => {
       ],
     },
     categories: ['A', 'B'],
+    rawCategories: ['A', 'B'],
     dataLabels: {
       visible: false,
     },
