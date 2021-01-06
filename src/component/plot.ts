@@ -148,11 +148,10 @@ export default class Plot extends Component {
 
     // horizontal
     const yAxisTickCount = axes.yAxis.tickCount!;
+    const yAxisTickPixelPositions = makeTickPixelPositions(yAxisHeight, yAxisTickCount);
     const horizontalLines = [
-      ...this.renderPlotLineModels(makeTickPixelPositions(yAxisHeight, yAxisTickCount), false, {
-        size: xAxisHalfSize,
-      }),
-      ...this.renderPlotLineModels(makeTickPixelPositions(yAxisHeight, yAxisTickCount), false, {
+      ...this.renderPlotLineModels(yAxisTickPixelPositions, false, { size: xAxisHalfSize }),
+      ...this.renderPlotLineModels(yAxisTickPixelPositions, false, {
         size: xAxisHalfSize,
         startPosition: secondStartX,
       }),

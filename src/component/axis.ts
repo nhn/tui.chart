@@ -189,30 +189,36 @@ export default class Axis extends Component {
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): LabelModel[] {
-    const { pointOnColumn, labelInterval, labelDistance } = renderOptions;
+    const { width, height } = this.rect;
+    const { pointOnColumn, labelInterval, labelDistance, tickInterval } = renderOptions;
     const isRightSide = this.isRightSide();
-    const yAxisAnchorPoint = isRightSide ? crispPixel(this.rect.width) : crispPixel(0);
+    const yAxisAnchorPoint = isRightSide ? crispPixel(width) : crispPixel(0);
     const labelAnchorPoint = this.yAxisComponent ? yAxisAnchorPoint : LABEL_ANCHOR_POINT;
-    const labelAdjustment = pointOnColumn ? labelDistance / 2 : 0;
+    const interval = labelInterval === tickInterval ? labelInterval : 1;
+    const labelAdjustment = pointOnColumn ? (labelDistance * interval) / 2 : 0;
     const yAxisTextAlign = isRightSide ? 'right' : 'left';
     const textAlign = this.yAxisComponent ? yAxisTextAlign : 'center';
     const labelTheme = this.theme.label;
     const font = getTitleFontString(labelTheme);
     const style = ['default', { textAlign, font, fillStyle: labelTheme.color }];
+    const limit = offsetKey === 'x' ? width : height;
 
     return labels.reduce<LabelModel[]>((positions, text, index) => {
-      return index % labelInterval
-        ? positions
-        : [
+      const offsetPos = relativePositions[index] + labelAdjustment;
+      const needRender = !(index % labelInterval) && offsetPos <= limit;
+
+      return needRender
+        ? [
             ...positions,
             {
               type: 'label',
               text,
               style,
-              [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
+              [offsetKey]: crispPixel(offsetPos),
               [anchorKey]: labelAnchorPoint,
             } as LabelModel,
-          ];
+          ]
+        : positions;
     }, []);
   }
 

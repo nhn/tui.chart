@@ -286,14 +286,14 @@ describe('x Axis stepSize is auto', () => {
     },
   } as ChartState<Options>;
 
-  it('automatically adjusts the interval according to the width', () => {
+  it('should automatically adjusts the interval according to the width', () => {
     const store = { state } as Store<Options>;
     axes.action!.setAxesData.call({ notify }, store);
 
     expect(store.state.axes.xAxis).toMatchObject({ tickInterval: 4, labelInterval: 4 });
   });
 
-  it('If the interval attribute is present, auto is ignored', () => {
+  it('should ignore auto options when the interval attribute is exist', () => {
     const changedState = deepMergedCopy(state, { options: { xAxis: { label: { interval: 3 } } } });
     const store = { state: changedState } as Store<Options>;
     axes.action!.setAxesData.call({ notify }, store);
