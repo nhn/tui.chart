@@ -44,6 +44,8 @@ type TooltipTemplateModel = {
   - offsetX: `0`
   - offsetY: `0`
 
+기존 툴팁의 위치를 (0,0)이라 보고 offsetX를 양수값, offsetY를 음수값을 줘 해당 툴팁의 위치를 조금 더 오른쪽으로, 그리고 위로 이동 시킬 수 있었다.
+
 ```js
 const options = {
   tooltip: {
@@ -52,8 +54,6 @@ const options = {
   },
 };
 ```
-
-기존 툴팁의 위치를 (0,0)이라 보고 offsetX를 양수값, offsetY를 음수값을 줘 해당 툴팁의 위치를 조금 더 오른쪽으로, 그리고 위로 이동 시킬 수 있었다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102179647-dca4f680-3eea-11eb-940d-2fd87dff0434.png)
 

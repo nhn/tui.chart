@@ -235,7 +235,7 @@ interface HeatmapChartSeriesTheme {
 
 값의 기준이 되는 색상 값이다. `startColor`와 `endColor` 색상 값을 기준으로 입력받은 `data`의 색상이 결정된다.
 
-간단한 예시로 startColor를 `#4A76B2`
+간단한 예시로 startColor를 `#4A76B2`,
 
 ![image](https://user-images.githubusercontent.com/35371660/101878940-d0135c00-3bd3-11eb-8070-9429df31d9c3.png)
 
