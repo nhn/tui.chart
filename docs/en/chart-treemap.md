@@ -263,7 +263,7 @@ type options = {
 > (Links: 
 > [`chart` Options](./common-chart-options.md),
 > [Legend](./common-legend.md), 
-> [Tool Tip](./common-tooltip.md),
+> [Tooltip](./common-tooltip.md),
 > [Export](./common-exportMenu.md),
 > [`responsive` Options](./common-responsive-options.md), 
 > [Data Label](./common-dataLabels-options.md)

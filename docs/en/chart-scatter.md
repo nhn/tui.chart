@@ -98,7 +98,7 @@ type options = {
 > [Axis](./common-axes.md), 
 > [Legend](./common-legend.md), 
 > [Export](./common-exportMenu.md),
-> [Tool Tip](./common-tooltip.md),
+> [Tooltip](./common-tooltip.md),
 > [`responsive` Options](./common-responsive-options.md), 
 > [Live Update](./common-liveUpdate-options.md),
 > [Data Label](./common-dataLabels-options.md)
