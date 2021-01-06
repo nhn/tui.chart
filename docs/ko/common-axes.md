@@ -91,7 +91,7 @@ const options = {
 
 ### title
 
-위 그림에서 파악할 수 있듯이 각 차트는 제목을 갖는다. `title` 옵션은 문자열로 직접 입력받을 수 있으며 `title.text` 옵션과  `title.offsetX`, `title.offsetY` 옵션을 통해 제목을 지정하며 위치를 변경해 줄 수 있다.
+그림에서 파악할 수 있듯이 각 차트는 제목을 갖는다. `title` 옵션은 문자열로 직접 입력받을 수 있으며 `title.text` 옵션과  `title.offsetX`, `title.offsetY` 옵션을 통해 제목을 지정하며 위치를 변경해 줄 수 있다.
 
 ```js
 const options = {

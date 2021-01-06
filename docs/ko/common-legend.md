@@ -18,12 +18,12 @@ Legend는 그려지고 있는 데이터의 정보를 나타낸다. TOAST UI Char
 기본 Legend는 Heatmap 차트, Treemap 차트를 제외한 모든 차트에서 사용된다.
 ### Spectrum Legend
 
-Heatmap 차트와 colorValue 를 사용하는 Treemap 차트의 경우 기본 Legend 대신 Spectrum Legend를 사용한다. 해당 값이 전체 값에서 어느 위치인지 비교할 수 있는 지표를 제공한다.
+Heatmap 차트와 colorValue를 사용하는 Treemap 차트의 경우 기본 Legend 대신 Spectrum Legend를 사용한다. 해당 값이 전체 값에서 어느 위치인지 비교할 수 있는 지표를 제공한다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102166614-d48b8d80-3ecf-11eb-954c-d994c5370759.png)
 ### Circle Legend
 
-Bubble 차트의 경우 시리즈의 원 크기에 대한 지표가 되는 Circle Legend가 존재한다. 가장 바깥쪽에 위치한 원의 값은 제일 큰 반지름을 갖는 데이터 중 가장 큰 값을 의미한다. 또한, 제일 큰 원을 기준으로 `0.5`, `0.25` 길이의 반지름을 갖는 원의 지표 또한 함께 나타난다.
+Bubble 차트의 경우 시리즈의 원 크기에 대한 지표가 되는 Circle Legend가 존재한다. 가장 바깥쪽에 위치한 원의 값은 제일 큰 반지름을 갖는 데이터 중 가장 큰 값을 의미한다. 또한, 제일 큰 원을 기준으로 `0.5x`, `0.25x` 길이의 반지름을 갖는 원의 지표 또한 함께 나타난다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102166826-62677880-3ed0-11eb-9a47-6273c32f8a1b.png)
 
@@ -48,7 +48,7 @@ interface CircleLegendOptions {
 
 * 기본값: `right`
 
-legend의 정렬은 `legend.align`을 통해 변경 가능하며 `top`, `bottom`, `right`, `left` 총 네 개의 옵션이 존재한다.
+legend의 정렬은 `legend.align`을 통해 변경 가능하며 `top`, `bottom`, `right`, `left` 총 네 개의 옵션이 존재한다. circleLegend의 정렬은 `legend.align`이 `left`, `right`인 경우에 같은 위치에 존재하며 align이 `top`이나 `bottom`인 경우 우측에 위치한다.
 
 ```js
 const options = {
@@ -62,13 +62,11 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102162447-8cb73700-3ecc-11eb-978b-b7deaa56c7e8.png)
 
-circleLegend의 정렬은 `legend.align`이 `left`, `right`인 경우에 같은 위치에 존재하며 align이 `top`이나 `bottom`인 경우 우측에 위치한다.
-
 ### showCheckbox
 
 * 기본값: `true`
 
-시리즈를 사라지게 하거나 나타나게 할 수 있는 체크박스를 `legend.showCheckbox` 옵션을 통해 제어할 수 있다.
+시리즈를 사라지게 하거나 나타나게 할 수 있는 체크박스를 `legend.showCheckbox` 옵션을 통해 제어할 수 있다. `showCheckbox`의 값을 `false`로 지정할 경우 체크박스가 없는 레전드를 사용할 수 있다.
 
 ```js
 const options = {
@@ -78,9 +76,8 @@ const options = {
 }
 ```
 
-`showCheckbox`의 값을 `false`로 지정할 경우 체크박스가 없는 레전드를 사용할 수 있다.
-
 ![image](https://user-images.githubusercontent.com/35371660/102171892-f3435180-3eda-11eb-9acd-0c2b2eb914bb.png)
+
 ### visible
 
 * 기본값: `true`
