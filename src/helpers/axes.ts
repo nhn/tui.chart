@@ -2,6 +2,84 @@ import { Options, Series, ChartOptionsUsingYAxis } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
 import { Theme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
+import { divisors } from '@src/helpers/calculator';
+import { range } from '@src/helpers/utils';
+
+interface IntervalInfo {
+  blockCount: number;
+  remainBlockCount: number;
+  interval: number;
+}
+
+function makeAdjustingIntervalInfo(blockCount: number, axisWidth: number, blockSize: number) {
+  let remainCount;
+  let newBlockCount = Math.floor(axisWidth / blockSize);
+  let intervalInfo: IntervalInfo | null = null;
+  const interval = newBlockCount ? Math.floor(blockCount / newBlockCount) : blockCount;
+
+  if (interval > 1) {
+    // remainCount : remaining block count after filling new blocks
+    // | | | | | | | | | | | |  - previous block interval
+    // |     |     |     |      - new block interval
+    //                   |*|*|  - remaining block
+    remainCount = blockCount - interval * newBlockCount;
+
+    if (remainCount >= interval) {
+      newBlockCount += Math.floor(remainCount / interval);
+      remainCount = remainCount % interval;
+    }
+
+    intervalInfo = {
+      blockCount: newBlockCount,
+      remainBlockCount: remainCount,
+      interval,
+    };
+  }
+
+  return intervalInfo;
+}
+
+export function getAutoAdjustingInterval(count: number, axisWidth: number) {
+  const autoInterval = {
+    MIN_WIDTH: 90,
+    MAX_WIDTH: 121,
+    STEP_SIZE: 5,
+  };
+
+  let candidates: IntervalInfo[] = [];
+  divisors(count).forEach((interval) => {
+    const intervalWidth = (interval / count) * axisWidth;
+    if (intervalWidth >= autoInterval.MIN_WIDTH && intervalWidth <= autoInterval.MAX_WIDTH) {
+      candidates.push({ interval, blockCount: Math.floor(count / interval), remainBlockCount: 0 });
+    }
+  });
+
+  if (!candidates.length) {
+    const blockSizeRange = range(
+      autoInterval.MIN_WIDTH,
+      autoInterval.MAX_WIDTH,
+      autoInterval.STEP_SIZE
+    );
+
+    candidates = blockSizeRange.reduce<IntervalInfo[]>((acc, blockSize) => {
+      const candidate = makeAdjustingIntervalInfo(count, axisWidth, blockSize);
+
+      return candidate ? [...acc, candidate] : acc;
+    }, []);
+  }
+
+  let tickInterval = 1;
+  if (candidates.length) {
+    const candidate = candidates.reduce(
+      (acc, cur) => (cur.blockCount > acc.blockCount ? cur : acc),
+      { blockCount: 0, interval: 1 }
+    );
+
+    tickInterval = candidate.interval;
+  }
+
+  return tickInterval;
+}
 
 export function isLabelAxisOnYAxis(series: Series, options: Options) {
   return !!series.bar || (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical);

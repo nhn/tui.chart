@@ -111,22 +111,26 @@ export default class Plot extends Component {
   renderPlotLineModels(
     relativePositions: number[],
     vertical: boolean,
-    size?: number,
-    startPosition?: number
+    options: { size?: number; startPosition?: number; axes?: Axes } = {}
   ): LineModel[] {
+    const { size, startPosition, axes } = options;
+
     const { lineColor: color, lineWidth, dashSegments } = this.theme[
       vertical ? 'vertical' : 'horizontal'
     ] as Required<LineTheme>;
+    const tickInterval = (vertical ? axes?.xAxis : axes?.yAxis)?.tickInterval || 1;
 
-    return relativePositions.map((position) =>
-      this.makeLineModel(
-        vertical,
-        position,
-        { color, lineWidth, dashSegments },
-        size ?? this.rect.width,
-        startPosition ?? 0
-      )
-    );
+    return relativePositions
+      .filter((_, idx) => !(idx % tickInterval))
+      .map((position) =>
+        this.makeLineModel(
+          vertical,
+          position,
+          { color, lineWidth, dashSegments },
+          size ?? this.rect.width,
+          startPosition ?? 0
+        )
+      );
   }
 
   renderPlotsForCenterYAxis(axes: Axes): LineModel[] {
@@ -144,18 +148,13 @@ export default class Plot extends Component {
 
     // horizontal
     const yAxisTickCount = axes.yAxis.tickCount!;
+    const yAxisTickPixelPositions = makeTickPixelPositions(yAxisHeight, yAxisTickCount);
     const horizontalLines = [
-      ...this.renderPlotLineModels(
-        makeTickPixelPositions(yAxisHeight, yAxisTickCount),
-        false,
-        xAxisHalfSize
-      ),
-      ...this.renderPlotLineModels(
-        makeTickPixelPositions(yAxisHeight, yAxisTickCount),
-        false,
-        xAxisHalfSize,
-        secondStartX
-      ),
+      ...this.renderPlotLineModels(yAxisTickPixelPositions, false, { size: xAxisHalfSize }),
+      ...this.renderPlotLineModels(yAxisTickPixelPositions, false, {
+        size: xAxisHalfSize,
+        startPosition: secondStartX,
+      }),
     ];
 
     return [...verticalLines, ...horizontalLines];
@@ -167,8 +166,12 @@ export default class Plot extends Component {
     return axes.centerYAxis
       ? this.renderPlotsForCenterYAxis(axes)
       : [
-          ...this.renderPlotLineModels(this.getTickPixelPositions(!vertical, axes), !vertical),
-          ...this.renderPlotLineModels(this.getTickPixelPositions(vertical, axes), vertical),
+          ...this.renderPlotLineModels(this.getTickPixelPositions(!vertical, axes), !vertical, {
+            axes,
+          }),
+          ...this.renderPlotLineModels(this.getTickPixelPositions(vertical, axes), vertical, {
+            axes,
+          }),
         ];
   }
 

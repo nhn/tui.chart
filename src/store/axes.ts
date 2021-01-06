@@ -13,6 +13,7 @@ import {
   LabelAxisData,
   ValueAxisData,
   InitAxisData,
+  Layout,
 } from '@t/store/store';
 import {
   getAxisName,
@@ -21,6 +22,7 @@ import {
   isLabelAxisOnYAxis,
   isPointOnColumn,
   getYAxisOption,
+  getAutoAdjustingInterval,
 } from '@src/helpers/axes';
 import {
   makeLabelsFromLimit,
@@ -37,6 +39,7 @@ import {
   RangeDataType,
   Rect,
   DateOption,
+  LineTypeSeriesOptions,
 } from '@t/options';
 import {
   deepMergedCopy,
@@ -49,6 +52,7 @@ import {
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { isZooming } from '@src/helpers/range';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
+import { isCoordinateSeries } from '@src/helpers/coordinate';
 
 interface StateProp {
   scale: ScaleData;
@@ -73,6 +77,13 @@ type SecondaryYAxisParam = {
   labelAxisName: string;
   initialAxisData: InitAxisData;
 };
+
+interface AxisDataParams {
+  axis?: BaseAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions;
+  categories?: string[];
+  layout?: Layout;
+  shift?: boolean;
+}
 
 export function isCenterYAxis(options: ChartOptionsUsingYAxis, isBar: boolean) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
@@ -122,7 +133,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
-    !isZooming(rawCategories, zoomRange) && scale
+    !isZooming(rawCategories, zoomRange) && isCoordinateSeries(series)
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options?.xAxis?.date);
 
@@ -216,15 +227,40 @@ function getRadialAxis(
   };
 }
 
-function makeDefaultAxisData(
-  axis?: BaseAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions
-): InitAxisData {
+export function getInitTickInterval(categories?: string[], layout?: Layout) {
+  if (!categories || !layout) {
+    return 1;
+  }
+
+  const { width } = layout.xAxis;
+  const count = categories.length;
+
+  return getAutoAdjustingInterval(count, width);
+}
+
+function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
+  const { axis, categories, layout } = params;
+
+  const tickInterval = axis?.tick?.interval;
+  const labelInterval = axis?.label?.interval;
+  const existIntervalOptions = isNumber(tickInterval) || isNumber(labelInterval);
+
+  const needAdjustInterval =
+    isLabelAxis && !isNumber(axis?.scale?.stepSize) && !params.shift && !existIntervalOptions;
+  const initTickInterval = needAdjustInterval ? getInitTickInterval(categories, layout) : 1;
+  const initLabelInterval = needAdjustInterval ? initTickInterval : 1;
+
   const axisData: InitAxisData = {
-    tickInterval: axis?.tick?.interval ?? 1,
-    labelInterval: axis?.label?.interval ?? 1,
+    tickInterval: tickInterval ?? initTickInterval,
+    labelInterval: labelInterval ?? initLabelInterval,
   };
 
-  const title = makeTitleOption(axis?.title);
+  return axisData;
+}
+
+function makeDefaultAxisData(isLabelAxis: boolean, params: AxisDataParams): InitAxisData {
+  const axisData = getInitAxisIntervalData(isLabelAxis, params);
+  const title = makeTitleOption(params?.axis?.title);
 
   if (title) {
     axisData.title = title;
@@ -233,13 +269,21 @@ function makeDefaultAxisData(
   return axisData;
 }
 
-function getInitialAxisData(options: Options) {
+function getInitialAxisData(
+  options: Options,
+  labelOnYAxis: boolean,
+  categories: string[],
+  layout: Layout
+) {
   const { yAxis, secondaryYAxis } = getYAxisOption(options);
+  const shift = (options?.series as LineTypeSeriesOptions)?.shift;
 
   return {
-    xAxis: makeDefaultAxisData(options?.xAxis),
-    yAxis: makeDefaultAxisData(yAxis),
-    secondaryYAxis: secondaryYAxis ? makeDefaultAxisData(secondaryYAxis) : null,
+    xAxis: makeDefaultAxisData(!labelOnYAxis, { categories, axis: options?.xAxis, layout, shift }),
+    yAxis: makeDefaultAxisData(labelOnYAxis, { axis: yAxis }),
+    secondaryYAxis: secondaryYAxis
+      ? makeDefaultAxisData(labelOnYAxis, { axis: secondaryYAxis })
+      : null,
   };
 }
 
@@ -310,14 +354,13 @@ const axes: StoreModule = {
       const categories = (state.categories as string[]) ?? [];
       const rawCategories = (state.rawCategories as string[]) ?? [];
 
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
-      const { valueAxisName, labelAxisName } = getAxisName(labelAxisOnYAxis);
-      const { valueSizeKey, labelSizeKey } = getSizeKey(labelAxisOnYAxis);
+      const { valueAxisName, labelAxisName } = getAxisName(labelOnYAxis);
+      const { valueSizeKey, labelSizeKey } = getSizeKey(labelOnYAxis);
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;
 
-      const initialAxisData = getInitialAxisData(options);
+      const initialAxisData = getInitialAxisData(options, labelOnYAxis, rawCategories, layout);
 
       const valueAxisData = getValueAxisData({
         scale: scale[valueAxisName],

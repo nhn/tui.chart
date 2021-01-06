@@ -21,13 +21,13 @@ describe('yAxis', () => {
         layout: { yAxis: { x: 10, y: 10, width: 10, height: 80 } },
         axes: {
           yAxis: {
-            pointOnColumn: true,
+            pointOnColumn: false,
             tickDistance: 40,
+            labelDistance: 40,
             tickInterval: 1,
             labelInterval: 1,
             labels: ['1', '2'],
             tickCount: 2,
-            labelDistance: 40,
           },
         },
         theme: {
@@ -88,7 +88,7 @@ describe('yAxis', () => {
           text: '2',
           type: 'label',
           x: 0.5,
-          y: 20.5,
+          y: 0.5,
         },
         {
           style: [
@@ -98,7 +98,7 @@ describe('yAxis', () => {
           text: '1',
           type: 'label',
           x: 0.5,
-          y: 100.5,
+          y: 80.5,
         },
       ]);
     });
@@ -114,7 +114,7 @@ describe('yAxis', () => {
         layout: { yAxis: { x: 10, y: 10, width: 10, height: 80 } },
         axes: {
           yAxis: {
-            pointOnColumn: true,
+            pointOnColumn: false,
             tickDistance: 40,
             tickInterval: 2,
             labelInterval: 2,
@@ -400,7 +400,7 @@ describe('xAxis', () => {
         layout: { xAxis: { x: 10, y: 10, width: 80, height: 10 } },
         axes: {
           xAxis: {
-            pointOnColumn: true,
+            pointOnColumn: false,
             tickDistance: 40,
             tickInterval: 1,
             labelInterval: 1,
@@ -466,7 +466,7 @@ describe('xAxis', () => {
           ],
           text: '1',
           type: 'label',
-          x: 20.5,
+          x: 0.5,
           y: 16.5,
         },
         {
@@ -476,7 +476,7 @@ describe('xAxis', () => {
           ],
           text: '2',
           type: 'label',
-          x: 100.5,
+          x: 80.5,
           y: 16.5,
         },
       ]);
@@ -490,11 +490,12 @@ describe('xAxis', () => {
   describe('interval', () => {
     beforeEach(() => {
       axis.render({
-        layout: { xAxis: { x: 10, y: 10, width: 80, height: 10 } },
+        layout: { xAxis: { x: 10, y: 10, width: 100, height: 10 } },
         axes: {
           xAxis: {
-            pointOnColumn: true,
-            tickDistance: 40,
+            pointOnColumn: false,
+            labelDistance: 20,
+            tickDistance: 20,
             tickInterval: 2,
             labelInterval: 2,
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
@@ -535,10 +536,51 @@ describe('xAxis', () => {
     });
   });
 
+  it('should not displayed if overflow the width.', () => {
+    axis.render({
+      layout: { xAxis: { x: 10, y: 10, width: 100, height: 10 } },
+      axes: {
+        xAxis: {
+          pointOnColumn: true,
+          labelDistance: 20,
+          tickDistance: 20,
+          tickInterval: 2,
+          labelInterval: 2,
+          labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+          tickCount: 10,
+        },
+      },
+      theme: {
+        xAxis: {
+          label: {
+            fontSize: 11,
+            fontFamily: 'Arial',
+            fontWeight: 'normal',
+            color: '#333333',
+          },
+          width: 1,
+          color: '#333333',
+        },
+        yAxis: {
+          label: {
+            fontSize: 11,
+            fontFamily: 'Arial',
+            fontWeight: 'normal',
+            color: '#333333',
+          },
+          width: 1,
+          color: '#333333',
+        },
+      },
+    });
+
+    expect(axis.models.label).toHaveLength(4);
+  });
+
   describe('using center y axis', () => {
     beforeEach(() => {
       axis.render({
-        layout: { xAxis: { x: 10, y: 10, width: 80, height: 10 } },
+        layout: { xAxis: { x: 10, y: 10, width: 100, height: 10 } },
         axes: {
           xAxis: {
             pointOnColumn: false,

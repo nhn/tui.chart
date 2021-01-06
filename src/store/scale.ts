@@ -42,9 +42,13 @@ function getLabelScaleData(
     rawCategoriesSize: rawCategories.length,
   };
 
-  let result = dateTypeLabel
-    ? calculateDatetimeScale(labelOptions)
-    : calculateCoordinateScale(labelOptions);
+  let result;
+
+  if (dataRange[labelAxisName]) {
+    result = dateTypeLabel
+      ? calculateDatetimeScale(labelOptions)
+      : calculateCoordinateScale(labelOptions);
+  }
 
   if (series.line) {
     result = calculateScaleForCoordinateLineType(result, options as LineChartOptions, categories);
