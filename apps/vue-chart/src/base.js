@@ -46,17 +46,11 @@ export const createComponent = (type) => ({
   mounted() {
     this.computedOptions = Object.assign({}, this.options);
 
-    const op = Object.assign(
-      {},
-      {
-        el: this.$refs.tuiChart,
-        data: this.data,
-        options: this.computedOptions,
-      }
-    );
-
-    this.chartInstance = this.creator(op);
-    console.log(this.chartInstance);
+    this.chartInstance = this.creator({
+      el: this.$refs.tuiChart,
+      data: this.data,
+      options: this.computedOptions,
+    });
     // this.addEventListeners();
   },
   destoryed() {
