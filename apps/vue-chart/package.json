@@ -11,7 +11,7 @@
     "lint": "eslint src/**",
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "serve": "vue serve ./example/App.vue"
+    "storybook": "start-storybook -p 6007"
   },
   "homepage": "https://github.com/nhn/toast-ui.vue-chart",
   "bugs": "https://github.com/nhn/toast-ui.vue-chart/issues",
@@ -21,10 +21,12 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
+    "@storybook/vue": "^5.3.21",
     "@vue/babel-preset-app": "^4.5.10",
     "@vue/cli": "^4.5.10",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
+    "babel-preset-vue": "^2.0.2",
     "eslint": "^7.17.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-config-tui": "^3.1.0",

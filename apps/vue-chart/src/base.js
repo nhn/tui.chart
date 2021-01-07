@@ -1,19 +1,35 @@
 import Chart from '@toast-ui/chart';
 
 const creator = {
+  area: Chart.areaChart,
+  bar: Chart.barChart,
+  boxPlot: Chart.boxPlotChart,
+  bubble: Chart.bubbleChart,
+  bullet: Chart.bulletChart,
+  column: Chart.columnChart,
+  columnLine: Chart.columnLineChart,
+  heatmap: Chart.heatmapChart,
   line: Chart.lineChart,
+  lineArea: Chart.lineAreaChart,
+  lineScatter: Chart.lineScatterChart,
+  nestedPie: Chart.nestedPieChart,
+  pie: Chart.pieChart,
+  radar: Chart.radarChart,
+  scatter: Chart.scatterChart,
+  treemap: Chart.treemapChart,
 };
 
+export const chartType = Object.keys(creator);
+
 const chartEvents = [
-  // 'load',
-  // 'selectLegend',
-  // 'selectSeries',
-  // 'unselectSeries',
-  // 'beforeShowTooltip',
-  // 'afterShowTooltip',
-  // 'beforeHideTooltip',
-  // 'zoom',
-  // 'changeCheckedLegends',
+  'clickLegendLabel',
+  'clickLegendCheckbox',
+  'selectSeries',
+  'unselectSeries',
+  'hoverSeries',
+  'unhoverSeries',
+  'zoom',
+  'resetZoom',
 ];
 
 export const createComponent = (type) => ({
@@ -22,7 +38,7 @@ export const createComponent = (type) => ({
   props: {
     data: {
       type: Object,
-      requried: true,
+      required: true,
     },
     options: {
       type: Object,
@@ -51,11 +67,11 @@ export const createComponent = (type) => ({
       data: this.data,
       options: this.computedOptions,
     });
-    // this.addEventListeners();
+    this.addEventListeners();
   },
   destoryed() {
-    chartEvents.forEach((event) => {
-      this.chartInstance.off(event);
+    chartEvents.forEach(() => {
+      this.chartInstance.destroy();
     });
   },
   methods: {
