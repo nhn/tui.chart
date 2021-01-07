@@ -69,7 +69,7 @@ function digestObserverCallCue() {
 }
 
 export function isObservable<T extends Record<string, any>>(target: T): boolean {
-  return typeof target === 'object' && target.__ob__;
+  return typeof target === 'object' && target.__toastUIChartOb__;
 }
 
 export function observable(
@@ -81,7 +81,7 @@ export function observable(
   }
 
   if (!isObservable(target)) {
-    Object.defineProperty(target, '__ob__', {
+    Object.defineProperty(target, '__toastUIChartOb__', {
       enumerable: false,
     });
   }
