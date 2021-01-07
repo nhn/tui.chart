@@ -18,11 +18,11 @@ module.exports = {
     },
   },
   externals: {
-    'tui-chart': {
-      commonjs: 'tui-chart',
-      commonjs2: 'tui-chart',
-      amd: 'tui-chart',
-      root: ['tui', 'chart'],
+    '@toast-ui/chart': {
+      commonjs: '@toast-ui/chart',
+      commonjs2: '@toast-ui/chart',
+      amd: '@toast-ui/chart',
+      root: ['toastui', 'Chart'],
     },
   },
   module: {
@@ -32,9 +32,6 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
-          // options: {
-          //   presets: ['@babel/preset-env'],
-          // },
         },
       },
       {

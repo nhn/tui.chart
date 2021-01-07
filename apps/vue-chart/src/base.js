@@ -53,8 +53,14 @@ export const createComponent = (type) => ({
   },
   watch: {
     data: {
-      handler(newVal) {
-        this.chartInstance.setData(newVal);
+      handler(newData) {
+        this.chartInstance.setData(newData);
+      },
+      deep: true,
+    },
+    options: {
+      handler(newOptions) {
+        this.chartInstance.setOptions(newOptions);
       },
       deep: true,
     },
@@ -69,10 +75,8 @@ export const createComponent = (type) => ({
     });
     this.addEventListeners();
   },
-  destoryed() {
-    chartEvents.forEach(() => {
-      this.chartInstance.destroy();
-    });
+  destroyed() {
+    this.chartInstance.destroy();
   },
   methods: {
     addEventListeners() {
