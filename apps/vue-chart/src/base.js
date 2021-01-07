@@ -1,65 +1,38 @@
-import TuiChart from 'tui-chart';
+import Chart from '@toast-ui/chart';
 
 const creator = {
-  'bar': TuiChart.barChart,
-  'column': TuiChart.columnChart,
-  'line': TuiChart.lineChart,
-  'area': TuiChart.areaChart,
-  'bubble': TuiChart.bubbleChart,
-  'scatter': TuiChart.scatterChart,
-  'pie': TuiChart.pieChart,
-  'combo': TuiChart.comboChart,
-  'map': TuiChart.mapChart,
-  'heatmap': TuiChart.heatmapChart,
-  'treemap': TuiChart.treemapChart,
-  'radial': TuiChart.radialChart,
-  'boxplot': TuiChart.boxplotChart,
-  'bullet': TuiChart.bulletChart
+  line: Chart.lineChart,
 };
 
 const chartEvents = [
-  'load',
-  'selectLegend',
-  'selectSeries',
-  'unselectSeries',
-  'beforeShowTooltip',
-  'afterShowTooltip',
-  'beforeHideTooltip',
-  'zoom',
-  'changeCheckedLegends'
+  // 'load',
+  // 'selectLegend',
+  // 'selectSeries',
+  // 'unselectSeries',
+  // 'beforeShowTooltip',
+  // 'afterShowTooltip',
+  // 'beforeHideTooltip',
+  // 'zoom',
+  // 'changeCheckedLegends',
 ];
 
-export const createComponent = type => ({
+export const createComponent = (type) => ({
   name: `${type}-chart`,
   template: '<div ref="tuiChart"></div>',
   props: {
     data: {
       type: Object,
-      requried: true
+      requried: true,
     },
     options: {
-      type: Object
+      type: Object,
     },
-    theme: {
-      type: Object
-    },
-    map: {
-      type: [String, Object],
-      validator(value) {
-        let result = false;
-        if (typeof value === 'object') {
-          result = value.hasOwnProperty('name') && value.hasOwnProperty('value');
-        }
-
-        return result;
-      }
-    }
   },
   data() {
     return {
       creator: creator[type],
       chartInstance: null,
-      computedOptions: {}
+      computedOptions: {},
     };
   },
   watch: {
@@ -67,40 +40,33 @@ export const createComponent = type => ({
       handler(newVal) {
         this.chartInstance.setData(newVal);
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   mounted() {
     this.computedOptions = Object.assign({}, this.options);
-    this.registerMapToOptions();
-    this.registerThemeToOptions();
-    this.chartInstance = this.creator(this.$refs.tuiChart, this.data, this.computedOptions);
-    this.addEventListeners();
+
+    const op = Object.assign(
+      {},
+      {
+        el: this.$refs.tuiChart,
+        data: this.data,
+        options: this.computedOptions,
+      }
+    );
+
+    this.chartInstance = this.creator(op);
+    console.log(this.chartInstance);
+    // this.addEventListeners();
   },
   destoryed() {
-    chartEvents.forEach(event => {
+    chartEvents.forEach((event) => {
       this.chartInstance.off(event);
     });
   },
   methods: {
-    registerMapToOptions() {
-      if (this.theme) {
-        TuiChart.registerTheme('chartTheme', this.theme);
-        this.computedOptions = Object.assign({}, this.computedOptions, {
-          theme: 'chartTheme'
-        });
-      }
-    },
-    registerThemeToOptions() {
-      if (this.map) {
-        TuiChart.registerMap(this.map.name, this.map.value);
-        this.computedOptions = Object.assign({}, this.computedOptions, {
-          map: this.map.name || this.map
-        });
-      }
-    },
     addEventListeners() {
-      chartEvents.forEach(event => {
+      chartEvents.forEach((event) => {
         this.chartInstance.on(event, (...args) => {
           this.$emit(event, ...args);
         });
@@ -113,6 +79,6 @@ export const createComponent = type => ({
       }
 
       return result;
-    }
-  }
+    },
+  },
 });
