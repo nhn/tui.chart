@@ -123,6 +123,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(170, 170, 170, 0.5)',
           name: 'han',
+          seriesColor: 'rgba(170, 170, 170, 1)',
+          value: [0, 1],
         },
         {
           type: 'rect',
@@ -133,6 +135,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(170, 170, 170, 0.3)',
           name: 'han',
+          seriesColor: 'rgba(170, 170, 170, 1)',
+          value: [1, 4],
         },
         {
           type: 'rect',
@@ -143,6 +147,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(170, 170, 170, 0.1)',
           name: 'han',
+          seriesColor: 'rgba(170, 170, 170, 1)',
+          value: [4, 10],
         },
         {
           type: 'rect',
@@ -154,6 +160,7 @@ describe('bullet series', () => {
           color: 'rgba(170, 170, 170, 1)',
           value: 6,
           name: 'han',
+          seriesColor: 'rgba(170, 170, 170, 1)',
         },
         {
           type: 'line',
@@ -165,6 +172,7 @@ describe('bullet series', () => {
           strokeStyle: 'rgba(170, 170, 170, 1)',
           value: 7,
           name: 'han',
+          seriesColor: 'rgba(170, 170, 170, 1)',
         },
         {
           type: 'rect',
@@ -175,6 +183,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(187, 187, 187, 0.5)',
           name: 'cho',
+          seriesColor: 'rgba(187, 187, 187, 1)',
+          value: [0, 2],
         },
         {
           type: 'rect',
@@ -185,6 +195,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(187, 187, 187, 0.3)',
           name: 'cho',
+          seriesColor: 'rgba(187, 187, 187, 1)',
+          value: [2, 5],
         },
         {
           type: 'rect',
@@ -195,6 +207,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(187, 187, 187, 0.1)',
           name: 'cho',
+          seriesColor: 'rgba(187, 187, 187, 1)',
+          value: [5, 10],
         },
         {
           type: 'rect',
@@ -206,6 +220,7 @@ describe('bullet series', () => {
           color: 'rgba(187, 187, 187, 1)',
           value: 8,
           name: 'cho',
+          seriesColor: 'rgba(187, 187, 187, 1)',
         },
       ],
     },
@@ -219,8 +234,10 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(170, 170, 170, 0.5)',
         name: 'han',
+        seriesColor: 'rgba(170, 170, 170, 1)',
+        value: [0, 1],
         data: {
-          color: '#aaaaaa',
+          color: 'rgba(170, 170, 170, 1)',
           label: 'han',
           value: [{ title: 'Range', value: [0, 1] }],
           templateType: 'bullet',
@@ -235,10 +252,12 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(170, 170, 170, 0.3)',
         name: 'han',
+        seriesColor: 'rgba(170, 170, 170, 1)',
+        value: [1, 4],
         data: {
           color: '#aaaaaa',
           label: 'han',
-          value: [{ title: 'Range', value: [1, 4] }],
+          value: [{ title: 'Range', value: [1, 4], color: 'rgba(170, 170, 170, 0.3)' }],
           templateType: 'bullet',
         },
       },
@@ -251,10 +270,12 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(170, 170, 170, 0.1)',
         name: 'han',
+        seriesColor: 'rgba(170, 170, 170, 1)',
+        value: [4, 10],
         data: {
-          color: '#aaaaaa',
+          color: 'rgba(170, 170, 170, 1)',
           label: 'han',
-          value: [{ title: 'Range', value: [4, 10] }],
+          value: [{ title: 'Range', value: [4, 10], color: 'rgba(170, 170, 170, 0.3)' }],
           templateType: 'bullet',
         },
       },
@@ -270,7 +291,24 @@ describe('bullet series', () => {
         name: 'han',
         thickness: 4,
         style: ['shadow'],
-        data: { color: '#aaaaaa', label: 'han', value: 6 },
+        seriesColor: 'rgba(170, 170, 170, 1)',
+        data: {
+          color: '#aaaaaa',
+          label: 'han',
+          value: [
+            {
+              color: 'rgba(170, 170, 170, 1)',
+              title: 'Actual',
+              value: [
+                {
+                  color: 'rgba(170, 170, 170, 1)',
+                  title: 'Actual',
+                  value: 6,
+                },
+              ],
+            },
+          ],
+        },
       },
       {
         type: 'line',
@@ -283,8 +321,9 @@ describe('bullet series', () => {
         lineWidth: 1,
         value: 7,
         name: 'han',
+        seriesColor: 'rgba(170, 170, 170, 1)',
         data: {
-          color: '#aaaaaa',
+          color: 'rgba(170, 170, 170, 1)',
           label: 'han',
           value: [{ title: 'Marker', value: 7 }],
           templateType: 'bullet',
@@ -299,10 +338,11 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(187, 187, 187, 0.5)',
         name: 'cho',
+        seriesColor: 'rgba(187, 187, 187, 1)',
         data: {
-          color: '#bbbbbb',
+          color: 'rgba(187, 187, 187, 1)',
           label: 'cho',
-          value: [{ title: 'Range', value: [0, 2] }],
+          value: [{ title: 'Range', value: [0, 2], color: 'rgba(187, 187, 187, 0.5)' }],
           templateType: 'bullet',
         },
       },
@@ -315,10 +355,11 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(187, 187, 187, 0.3)',
         name: 'cho',
+        seriesColor: 'rgba(187, 187, 187, 1)',
         data: {
           color: '#bbbbbb',
           label: 'cho',
-          value: [{ title: 'Range', value: [2, 5] }],
+          value: [{ title: 'Range', value: [2, 5], color: 'rgba(187, 187, 187, 0.3)' }],
           templateType: 'bullet',
         },
       },
@@ -331,10 +372,12 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(187, 187, 187, 0.1)',
         name: 'cho',
+        seriesColor: 'rgba(187, 187, 187, 1)',
+        value: [5, 10],
         data: {
           color: '#bbbbbb',
           label: 'cho',
-          value: [{ title: 'Range', value: [5, 10] }],
+          value: [{ title: 'Range', value: [5, 10], color: 'rgba(187, 187, 187, 0.1)' }],
           templateType: 'bullet',
         },
       },
@@ -350,7 +393,18 @@ describe('bullet series', () => {
         name: 'cho',
         thickness: 4,
         style: ['shadow'],
-        data: { color: '#bbbbbb', label: 'cho', value: 8 },
+        seriesColor: 'rgba(187, 187, 187, 1)',
+        data: {
+          color: '#bbbbbb',
+          label: 'cho',
+          value: [
+            {
+              color: 'rgba(187, 187, 187, 1)',
+              title: 'Actual',
+              value: 8,
+            },
+          ],
+        },
       },
     ],
   };
@@ -397,6 +451,8 @@ describe('bullet series', () => {
         width: 30,
         height: 10,
         modelType: 'range',
+        seriesColor: 'rgba(170, 170, 170, 1)',
+        value: [0, 1],
       },
       {
         type: 'rect',
@@ -407,6 +463,8 @@ describe('bullet series', () => {
         width: 30,
         height: 30,
         modelType: 'range',
+        seriesColor: 'rgba(170, 170, 170, 1)',
+        value: [1, 4],
       },
       {
         type: 'rect',
@@ -417,6 +475,8 @@ describe('bullet series', () => {
         width: 30,
         height: 60,
         modelType: 'range',
+        seriesColor: 'rgba(170, 170, 170, 1)',
+        value: [4, 10],
       },
       {
         type: 'rect',
@@ -428,6 +488,7 @@ describe('bullet series', () => {
         height: 60,
         modelType: 'bullet',
         value: 6,
+        seriesColor: 'rgba(170, 170, 170, 1)',
       },
       {
         type: 'line',
@@ -439,6 +500,7 @@ describe('bullet series', () => {
         y2: 30,
         lineWidth: 1,
         value: 7,
+        seriesColor: 'rgba(170, 170, 170, 1)',
       },
       {
         type: 'rect',
@@ -449,6 +511,8 @@ describe('bullet series', () => {
         width: 30,
         height: 20,
         modelType: 'range',
+        seriesColor: 'rgba(187, 187, 187, 1)',
+        value: [0, 2],
       },
       {
         type: 'rect',
@@ -459,6 +523,8 @@ describe('bullet series', () => {
         width: 30,
         height: 30,
         modelType: 'range',
+        seriesColor: 'rgba(187, 187, 187, 1)',
+        value: [2, 5],
       },
       {
         type: 'rect',
@@ -469,6 +535,8 @@ describe('bullet series', () => {
         width: 30,
         height: 50,
         modelType: 'range',
+        seriesColor: 'rgba(187, 187, 187, 1)',
+        value: [5, 10],
       },
       {
         type: 'rect',
@@ -480,6 +548,7 @@ describe('bullet series', () => {
         height: 80,
         modelType: 'bullet',
         value: 8,
+        seriesColor: 'rgba(187, 187, 187, 1)',
       },
     ]);
   });
