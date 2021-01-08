@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/chart",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0-beta.2",
   "description": "TOAST UI Application: Chart",
   "main": "dist/toastui-chart.js",
   "module": "dist/esm/",
@@ -39,7 +39,6 @@
     "types"
   ],
   "homepage": "https://ui.toast.com",
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.7.4",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
@@ -57,9 +56,9 @@
     "css-loader": "^5.0.1",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-prettier": "^3.1.1",
     "eslint-config-tui": "^3.0.0",
     "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-prettier": "^3.1.1",
     "html-webpack-plugin": "^4.0.0-beta.8",
     "jest": "^24.9.0",
     "jest-canvas-mock": "^2.2.0",
