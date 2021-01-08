@@ -3,6 +3,10 @@
   "version": "4.0.0",
   "description": "TOAST UI Chart for React",
   "main": "dist/toastui-react-chart.js",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "scripts": {
     "lint": "eslint src/**",
     "build": "webpack -p --progress",

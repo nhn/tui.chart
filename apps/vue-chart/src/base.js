@@ -1,22 +1,39 @@
-import Chart from '@toast-ui/chart';
+import {
+  AreaChart,
+  BarChart,
+  BoxPlotChart,
+  BulletChart,
+  BubbleChart,
+  ColumnChart,
+  ColumnLineChart,
+  HeatmapChart,
+  LineChart,
+  LineAreaChart,
+  LineScatterChart,
+  NestedPieChart,
+  PieChart,
+  RadarChart,
+  ScatterChart,
+  TreemapChart,
+} from '@toast-ui/chart';
 
 const creator = {
-  area: Chart.areaChart,
-  bar: Chart.barChart,
-  boxPlot: Chart.boxPlotChart,
-  bubble: Chart.bubbleChart,
-  bullet: Chart.bulletChart,
-  column: Chart.columnChart,
-  columnLine: Chart.columnLineChart,
-  heatmap: Chart.heatmapChart,
-  line: Chart.lineChart,
-  lineArea: Chart.lineAreaChart,
-  lineScatter: Chart.lineScatterChart,
-  nestedPie: Chart.nestedPieChart,
-  pie: Chart.pieChart,
-  radar: Chart.radarChart,
-  scatter: Chart.scatterChart,
-  treemap: Chart.treemapChart,
+  area: AreaChart,
+  bar: BarChart,
+  boxPlot: BoxPlotChart,
+  bubble: BubbleChart,
+  bullet: BulletChart,
+  column: ColumnChart,
+  columnLine: ColumnLineChart,
+  heatmap: HeatmapChart,
+  line: LineChart,
+  lineArea: LineAreaChart,
+  lineScatter: LineScatterChart,
+  nestedPie: NestedPieChart,
+  pie: PieChart,
+  radar: RadarChart,
+  scatter: ScatterChart,
+  treemap: TreemapChart,
 };
 
 export const chartType = Object.keys(creator);
@@ -34,7 +51,7 @@ const chartEvents = [
 
 export const createComponent = (type) => ({
   name: `${type}-chart`,
-  template: '<div ref="tuiChart"></div>',
+  template: '<div ref="toastuiChart"></div>',
   props: {
     data: {
       type: Object,
@@ -46,7 +63,7 @@ export const createComponent = (type) => ({
   },
   data() {
     return {
-      creator: creator[type],
+      Creator: creator[type],
       chartInstance: null,
       computedOptions: {},
     };
@@ -68,8 +85,8 @@ export const createComponent = (type) => ({
   mounted() {
     this.computedOptions = Object.assign({}, this.options);
 
-    this.chartInstance = this.creator({
-      el: this.$refs.tuiChart,
+    this.chartInstance = new this.Creator({
+      el: this.$refs.toastuiChart,
       data: this.data,
       options: this.computedOptions,
     });
@@ -93,6 +110,9 @@ export const createComponent = (type) => ({
       }
 
       return result;
+    },
+    getRootElement() {
+      return this.$refs.toastuiChart;
     },
   },
 });
