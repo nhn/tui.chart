@@ -1,26 +1,46 @@
 import React from 'react';
-import TuiChart from 'tui-chart';
+import {
+  AreaChart,
+  BarChart,
+  BoxPlotChart,
+  BulletChart,
+  BubbleChart,
+  ColumnChart,
+  ColumnLineChart,
+  HeatmapChart,
+  LineChart,
+  LineAreaChart,
+  LineScatterChart,
+  NestedPieChart,
+  PieChart,
+  RadarChart,
+  ScatterChart,
+  TreemapChart,
+} from '@toast-ui/chart';
 
 const creator = {
-  bar: TuiChart.barChart,
-  column: TuiChart.columnChart,
-  line: TuiChart.lineChart,
-  area: TuiChart.areaChart,
-  bubble: TuiChart.bubbleChart,
-  scatter: TuiChart.scatterChart,
-  pie: TuiChart.pieChart,
-  combo: TuiChart.comboChart,
-  map: TuiChart.mapChart,
-  heatmap: TuiChart.heatmapChart,
-  treemap: TuiChart.treemapChart,
-  radial: TuiChart.radialChart,
-  boxplot: TuiChart.boxplotChart,
-  bullet: TuiChart.bulletChart
+  area: AreaChart,
+  bar: BarChart,
+  boxPlot: BoxPlotChart,
+  bubble: BubbleChart,
+  bullet: BulletChart,
+  column: ColumnChart,
+  columnLine: ColumnLineChart,
+  heatmap: HeatmapChart,
+  line: LineChart,
+  lineArea: LineAreaChart,
+  lineScatter: LineScatterChart,
+  nestedPie: NestedPieChart,
+  pie: PieChart,
+  radar: RadarChart,
+  scatter: ScatterChart,
+  treemap: TreemapChart,
 };
 
-export default function(chartType) {
+export default function (chartType) {
   return class ChartFactory extends React.Component {
     rootEl = React.createRef();
+
     chartInst = null;
 
     getRootElement() {
@@ -36,7 +56,7 @@ export default function(chartType) {
         .filter((key) => /on[A-Z][a-zA-Z]+/.test(key))
         .forEach((key) => {
           const eventName = key[2].toLowerCase() + key.slice(3);
-          if(prevProps && prevProps[key] !== props[key]) {
+          if (prevProps && prevProps[key] !== props[key]) {
             this.chartInst.off(eventName);
           }
           this.chartInst.on(eventName, this.props[key]);
@@ -44,8 +64,8 @@ export default function(chartType) {
     }
 
     componentDidMount() {
-      const {data, options} = this.props;
-      this.chartInst = new creator[chartType](this.rootEl.current, data, options);
+      const { data, options } = this.props;
+      this.chartInst = new creator[chartType]({ el: this.rootEl.current, data, options });
 
       this.bindEventHandlers(this.props);
     }
