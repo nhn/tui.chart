@@ -300,9 +300,9 @@ describe('bullet series', () => {
               color: 'rgba(170, 170, 170, 1)',
               title: 'Actual',
               value: 6,
-              templateType: 'bullet',
             },
           ],
+          templateType: 'bullet',
         },
       },
       {
@@ -399,7 +399,6 @@ describe('bullet series', () => {
               color: 'rgba(187, 187, 187, 1)',
               title: 'Actual',
               value: 8,
-              templateType: 'bullet',
             },
           ],
           templateType: 'bullet',
