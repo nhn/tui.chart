@@ -245,7 +245,7 @@ export type PlotBand = {
 };
 
 type PlotOptions = BaseSizeOptions & {
-  showLine?: boolean;
+  visible?: boolean;
 };
 
 export type LineTypePlotOptions = PlotOptions & {

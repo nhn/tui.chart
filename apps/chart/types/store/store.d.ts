@@ -268,7 +268,7 @@ export interface ChartState<T extends Options> {
   };
   colorValueScale: ScaleData;
   plot: {
-    showLine: boolean;
+    visible: boolean;
     lines: PlotLine[];
     bands: PlotBand[];
   };

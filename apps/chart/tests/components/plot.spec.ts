@@ -46,7 +46,7 @@ const chartState = {
       { label: 'cho', active: true, checked: true },
     ],
   },
-  plot: { showLine: true },
+  plot: { visible: true },
   categories: ['A', 'B'],
   theme: {
     plot: {
