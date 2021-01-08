@@ -64,7 +64,11 @@ interface StateProp {
   initialAxisData: InitAxisData;
 }
 
-type ValueStateProp = StateProp & { categories: string[]; rawCategories: string[] };
+type ValueStateProp = StateProp & {
+  categories: string[];
+  rawCategories: string[];
+  isCoordinateTypeChart: boolean;
+};
 
 type LabelAxisState = Omit<LabelAxisData, 'tickInterval' | 'labelInterval'>;
 type ValueAxisState = Omit<ValueAxisData, 'tickInterval' | 'labelInterval'>;
@@ -76,6 +80,7 @@ type SecondaryYAxisParam = {
   labelAxisSize: number;
   labelAxisName: string;
   initialAxisData: InitAxisData;
+  isCoordinateTypeChart: boolean;
 };
 
 interface AxisDataParams {
@@ -83,6 +88,7 @@ interface AxisDataParams {
   categories?: string[];
   layout?: Layout;
   shift?: boolean;
+  isCoordinateTypeChart?: boolean;
 }
 
 export function isCenterYAxis(options: ChartOptionsUsingYAxis, isBar: boolean) {
@@ -130,10 +136,11 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     zoomRange,
     rawCategories,
     initialAxisData,
+    isCoordinateTypeChart,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
-    !isZooming(rawCategories, zoomRange) && isCoordinateSeries(series)
+    !isZooming(rawCategories, zoomRange) && isCoordinateTypeChart
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options?.xAxis?.date);
 
@@ -239,14 +246,19 @@ export function getInitTickInterval(categories?: string[], layout?: Layout) {
 }
 
 function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
-  const { axis, categories, layout } = params;
+  const { axis, categories, layout, isCoordinateTypeChart } = params;
 
   const tickInterval = axis?.tick?.interval;
   const labelInterval = axis?.label?.interval;
   const existIntervalOptions = isNumber(tickInterval) || isNumber(labelInterval);
 
   const needAdjustInterval =
-    isLabelAxis && !isNumber(axis?.scale?.stepSize) && !params.shift && !existIntervalOptions;
+    isLabelAxis &&
+    !isNumber(axis?.scale?.stepSize) &&
+    !params.shift &&
+    !existIntervalOptions &&
+    !isCoordinateTypeChart;
+
   const initTickInterval = needAdjustInterval ? getInitTickInterval(categories, layout) : 1;
   const initLabelInterval = needAdjustInterval ? initTickInterval : 1;
 
@@ -273,13 +285,20 @@ function getInitialAxisData(
   options: Options,
   labelOnYAxis: boolean,
   categories: string[],
-  layout: Layout
+  layout: Layout,
+  isCoordinateTypeChart: boolean
 ) {
   const { yAxis, secondaryYAxis } = getYAxisOption(options);
   const shift = (options?.series as LineTypeSeriesOptions)?.shift;
 
   return {
-    xAxis: makeDefaultAxisData(!labelOnYAxis, { categories, axis: options?.xAxis, layout, shift }),
+    xAxis: makeDefaultAxisData(!labelOnYAxis, {
+      categories,
+      axis: options?.xAxis,
+      layout,
+      shift,
+      isCoordinateTypeChart,
+    }),
     yAxis: makeDefaultAxisData(labelOnYAxis, { axis: yAxis }),
     secondaryYAxis: secondaryYAxis
       ? makeDefaultAxisData(labelOnYAxis, { axis: secondaryYAxis })
@@ -294,6 +313,7 @@ function getSecondaryYAxisData({
   labelAxisSize,
   labelAxisName,
   initialAxisData,
+  isCoordinateTypeChart,
 }: SecondaryYAxisParam): LabelAxisState | ValueAxisState {
   const { scale, options, series, zoomRange } = state;
   const categories = state.categories as string[];
@@ -309,6 +329,7 @@ function getSecondaryYAxisData({
         series,
         zoomRange,
         initialAxisData,
+        isCoordinateTypeChart,
       })
     : getValueAxisData({
         scale: scale.secondaryYAxis!,
@@ -359,8 +380,15 @@ const axes: StoreModule = {
       const valueAxisSize = plot[valueSizeKey];
       const labelAxisSize = plot[labelSizeKey];
       const centerYAxis = state.axes.centerYAxis;
+      const isCoordinateTypeChart = isCoordinateSeries(series);
 
-      const initialAxisData = getInitialAxisData(options, labelOnYAxis, rawCategories, layout);
+      const initialAxisData = getInitialAxisData(
+        options,
+        labelOnYAxis,
+        rawCategories,
+        layout,
+        isCoordinateTypeChart
+      );
 
       const valueAxisData = getValueAxisData({
         scale: scale[valueAxisName],
@@ -384,6 +412,7 @@ const axes: StoreModule = {
         series,
         zoomRange,
         initialAxisData: initialAxisData[labelAxisName],
+        isCoordinateTypeChart,
       });
 
       const axesState = {
@@ -399,6 +428,7 @@ const axes: StoreModule = {
           labelAxisSize,
           labelAxisName,
           initialAxisData: initialAxisData.secondaryYAxis!,
+          isCoordinateTypeChart,
         }) as AxisData;
       }
 
