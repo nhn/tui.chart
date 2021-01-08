@@ -397,11 +397,19 @@ function getSeriesTheme(
           ...boxDefault.BOX_HOVER,
           borderWidth: boxDefault.HOVER_THICKNESS,
           borderColor: '#ffffff',
+          groupedRect: {
+            color: '#000000',
+            opacity: 0.05,
+          },
         },
         select: {
           ...boxDefault.BOX_HOVER,
           borderWidth: boxDefault.HOVER_THICKNESS,
           borderColor: '#ffffff',
+          groupedRect: {
+            color: '#000000',
+            opacity: 0.2,
+          },
           restSeries: {
             areaOpacity: 0.2,
           },

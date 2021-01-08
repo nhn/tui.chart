@@ -139,6 +139,7 @@ export type RectResponderModel = Partial<RectModel> & {
   type: 'rect';
   index?: number;
   data?: { name?: string } & Partial<TooltipData>;
+  label?: string;
 } & Rect &
   Partial<LegendData>;
 
@@ -252,9 +253,15 @@ export type BoxPlotResponderModel = {
 
 export type BulletRectModel = {
   modelType: 'bullet' | 'range';
+  seriesColor?: string;
 } & RectModel;
 
-type BulletModel = BulletRectModel | LineModel;
+export type BulletLineModel = LineModel & {
+  seriesColor?: string;
+  value: number;
+};
+
+type BulletModel = BulletRectModel | BulletLineModel;
 
 export type MarkerResponderModel = {
   data?: TooltipData;

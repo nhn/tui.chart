@@ -87,7 +87,7 @@ button:focus {
   align-items: center;
 }
 
-.series-name .icon {
+.series-name .icon, .tooltip-series .icon {
   width: 10px;
   height: 10px;
   margin-right: 8px;
@@ -100,4 +100,12 @@ button:focus {
 .series-value {
   white-space: nowrap;
   margin-left: 10px;
+}
+
+.tooltip-series-wrapper .tooltip-title {
+  padding: 8px 0 5px;
+}
+
+.tooltip-series-wrapper .tooltip-title:first-child {
+  padding-top: 0;
 }

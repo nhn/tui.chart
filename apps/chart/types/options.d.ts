@@ -586,6 +586,7 @@ export type BulletSeriesData = {
 export interface BulletSeriesOptions extends BaseSeriesOptions {
   vertical?: boolean;
   dataLabels?: DataLabelOptions;
+  eventDetectType?: BoxTypeEventDetectType;
 }
 
 type ColumnLineChartSeriesOptions = {

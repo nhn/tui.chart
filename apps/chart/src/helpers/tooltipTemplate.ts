@@ -8,6 +8,8 @@ import { DefaultTooltipTemplate } from '@t/options';
 import { pieTooltipLabelFormatter } from './pieSeries';
 import { TooltipTheme } from '@t/theme';
 import { getFontStyleString } from './style';
+import { isNumber } from './utils';
+import { isRangeData } from './range';
 
 function getSeriesNameTemplate(label: string, color: string) {
   return `<span class="series-name">
@@ -21,6 +23,34 @@ function getTitleValueTemplate(title: string, value: string) {
     <span class="series-name">${title}</span>
     <span class="series-value">${value}</span>
   </div>`;
+}
+
+function getColorValueTemplate(color: string, value: string) {
+  return `<div class="tooltip-series">
+    <i class="icon" style="background: ${color}"></i>
+    <span class="series-value">${value}</span>
+  </div>`;
+}
+
+function makeBulletDataTemplate(
+  data: TooltipTitleValues,
+  titleType: 'Actual' | 'Range' | 'Marker'
+) {
+  return data
+    .filter(({ title }) => title === titleType)
+    .sort((a, b) => {
+      if (isRangeData(a.value)) {
+        return a.value[0] - b.value[0];
+      }
+
+      if (isNumber(a.value) && isNumber(b.value)) {
+        return a.value - b.value;
+      }
+
+      return 0;
+    })
+    .map(({ formattedValue, color }) => getColorValueTemplate(color!, formattedValue!))
+    .join('');
 }
 
 export function getDefaultTemplate(
@@ -85,19 +115,39 @@ function getBoxPlotTemplate({ data }: TooltipModel, theme: Required<TooltipTheme
 }
 
 function getBulletTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
+  return data.length > 1
+    ? getBulletGroupedTemplate(data, theme)
+    : getBulletBasicTemplate(data, theme);
+}
+
+function getBulletBasicTemplate(data: TooltipData[], theme: Required<TooltipTheme>) {
   return `<div class="tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
     ${data
       .map(
         ({ label, color, value: values }) =>
-          `<div class="tooltip-series">
-            ${getSeriesNameTemplate(label, color)}
-          </div>
+          `<div class="tooltip-series">${getSeriesNameTemplate(label, color)}</div>
           ${(values as TooltipTitleValues)
             .map(({ title, formattedValue }) => getTitleValueTemplate(title, formattedValue!))
             .join('')}`
       )
       .join('')}
   </div>`;
+}
+
+function getBulletGroupedTemplate(data: TooltipData[], theme: Required<TooltipTheme>) {
+  const bulletData = data.map(({ value }) => value[0]);
+  const actual = makeBulletDataTemplate(bulletData, 'Actual');
+  const ranges = makeBulletDataTemplate(bulletData, 'Range');
+  const markers = makeBulletDataTemplate(bulletData, 'Marker');
+
+  return ` <div class="tooltip-category" style="${getFontStyleString(theme.header)}">
+      ${data[0].label}
+    </div>
+    <div class="tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
+      ${actual ? '<div class="tooltip-title">Actual</div>' : ''} ${actual}
+      ${ranges ? '<div class="tooltip-title">Ranges</div>' : ''} ${ranges}
+      ${markers ? '<div class="tooltip-title">Markers</div>' : ''} ${markers}
+    </div>`;
 }
 
 function getPieTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {

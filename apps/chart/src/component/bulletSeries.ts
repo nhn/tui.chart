@@ -1,30 +1,37 @@
 import Component from './component';
-import { ChartState } from '@t/store/store';
+import { ChartState, Series, Axes } from '@t/store/store';
 import {
   BulletSeriesModels,
   BulletModel,
   BulletResponderModel,
   BulletRectModel,
   MarkerResponderModel,
+  RectResponderModel,
+  BulletLineModel,
 } from '@t/components/series';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getRGBA, getAlpha } from '@src/helpers/color';
-import { BulletChartOptions, BulletSeriesType, Size, RangeDataType } from '@t/options';
+import {
+  BulletChartOptions,
+  BulletSeriesType,
+  Size,
+  RangeDataType,
+  BoxTypeEventDetectType,
+} from '@t/options';
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
-import { TooltipData, TooltipTemplateType } from '@t/components/tooltip';
+import { TooltipData, TooltipTitleValues } from '@t/components/tooltip';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
-import { LineModel } from '@t/components/axis';
-import { BulletChartSeriesTheme } from '@t/theme';
+import { BulletChartSeriesTheme, GroupedRect } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
 import { isNumber, omit, calculateSizeWithPercentString } from '@src/helpers/utils';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
+import { makeRectResponderModel } from '@src/helpers/responders';
 
 type RenderOptions = {
   ratio: number;
   tickDistance: number;
-  vertical: boolean;
   zeroPosition: number;
   rangeWidth: number;
   bulletWidth: number;
@@ -53,11 +60,17 @@ export default class BulletSeries extends Component {
 
   drawModels!: BulletSeriesModels;
 
-  responders!: (BulletResponderModel | MarkerResponderModel)[];
+  responders!: (BulletResponderModel | MarkerResponderModel | RectResponderModel)[];
 
   activatedResponders: this['responders'] = [];
 
   theme!: Required<BulletChartSeriesTheme>;
+
+  eventDetectType: BoxTypeEventDetectType = 'point';
+
+  tooltipRectMap!: Record<string, (BulletResponderModel | MarkerResponderModel)[]>;
+
+  vertical = false;
 
   initialize() {
     this.type = 'series';
@@ -68,16 +81,19 @@ export default class BulletSeries extends Component {
   }
 
   render(state: ChartState<BulletChartOptions>): void {
-    const { layout, axes, series, scale, legend, options, theme } = state;
+    const { layout, axes, series, scale, legend, options, theme, categories } = state;
 
     if (!series.bullet) {
       throw new Error(message.noDataError(this.name));
     }
 
+    this.setEventDetectType(series, options);
+
     this.theme = theme.series.bullet as Required<BulletChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
+    this.vertical = !!options?.series?.vertical;
 
     const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
     const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
@@ -85,13 +101,11 @@ export default class BulletSeries extends Component {
     const { tickDistance } = axes[labelAxisName];
     const { zeroPosition } = axes[valueAxisName];
     const { min, max } = scale[valueAxisName].limit;
-    const vertical = !!options?.series?.vertical;
     const bulletData = series.bullet.data;
 
     const renderOptions = {
       ratio: this.rect[valueSizeKey] / (max - min),
       tickDistance,
-      vertical,
       zeroPosition,
       ...this.getBulletBarWidths(tickDistance),
     };
@@ -105,7 +119,7 @@ export default class BulletSeries extends Component {
           const model = { ...m };
 
           if ((m as BulletRectModel).modelType === 'bullet') {
-            if (vertical) {
+            if (this.vertical) {
               (model as BulletRectModel).height = 0;
               model.y = m.y + (m as BulletRectModel).height;
             } else {
@@ -120,30 +134,20 @@ export default class BulletSeries extends Component {
       };
     }
 
-    const tooltipDataArr = this.makeTooltipModel(bulletData);
+    const tooltipData = this.makeTooltipModel(seriesModels);
 
-    this.responders = seriesModels.map((m, index) => {
-      const model = { ...m };
-
-      if ((m as BulletRectModel).modelType === 'bullet') {
-        (model as BulletRectModel).color = getRGBA((m as BulletRectModel).color, 1);
-        (model as BulletRectModel).style = ['shadow'];
-        (model as BulletRectModel).thickness = boxDefault.HOVER_THICKNESS;
-      }
-
-      if (m.type === 'line') {
-        (model as MarkerResponderModel).detectionSize = 5;
-        (model as MarkerResponderModel).strokeStyle = getRGBA(m.strokeStyle!, 1);
-      }
-
-      return {
-        ...model,
-        data: tooltipDataArr[index],
-      };
-    });
+    this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
+    this.responders = this.getBulletSeriesResponders(
+      seriesModels,
+      tooltipData,
+      axes,
+      categories as string[]
+    );
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      this.renderDataLabels(this.getDataLabels(seriesModels, vertical, this.rect[valueSizeKey]));
+      this.renderDataLabels(
+        this.getDataLabels(seriesModels, this.vertical, this.rect[valueSizeKey])
+      );
     }
   }
 
@@ -187,13 +191,109 @@ export default class BulletSeries extends Component {
       });
   }
 
-  onMousemove({ responders }) {
+  private setEventDetectType(series: Series, options?: BulletChartOptions) {
+    if (series.line) {
+      this.eventDetectType = 'grouped';
+    }
+
+    if (options?.series?.eventDetectType) {
+      this.eventDetectType = options.series.eventDetectType;
+    }
+  }
+
+  private getBulletSeriesResponders(
+    seriesModels: BulletModel[],
+    tooltipData: TooltipData[],
+    axes: Axes,
+    categories: string[]
+  ) {
+    return this.eventDetectType === 'grouped'
+      ? makeRectResponderModel(
+          this.rect,
+          this.vertical ? axes.xAxis : axes.yAxis,
+          categories,
+          this.vertical
+        )
+      : seriesModels.map((m, index) => {
+          const model = { ...m };
+
+          if ((m as BulletRectModel).modelType === 'bullet') {
+            (model as BulletRectModel).color = getRGBA((m as BulletRectModel).color, 1);
+            (model as BulletRectModel).style = ['shadow'];
+            (model as BulletRectModel).thickness = boxDefault.HOVER_THICKNESS;
+          }
+
+          if (m.type === 'line') {
+            (model as MarkerResponderModel).detectionSize = 5;
+            (model as MarkerResponderModel).strokeStyle = getRGBA(m.strokeStyle!, 1);
+          }
+
+          return {
+            ...model,
+            data: tooltipData[index],
+          };
+        });
+  }
+
+  private makeTooltipRectMap(seriesModels: BulletModel[], tooltipData: TooltipData[]) {
+    return seriesModels.reduce<Record<string, (BulletResponderModel | MarkerResponderModel)[]>>(
+      (acc, cur, dataIndex) => {
+        const label = cur.name!;
+        const tooltipModel = { ...cur, data: tooltipData[dataIndex] };
+        if (!acc[label]) {
+          acc[label] = [];
+        }
+        acc[label].push(tooltipModel);
+
+        return acc;
+      },
+      {}
+    );
+  }
+
+  private getBulletSereisModelsFromRectResponders(responders: RectResponderModel[]) {
+    if (!responders.length) {
+      return [];
+    }
+
+    return this.tooltipRectMap[responders[0].label!] ?? [];
+  }
+
+  private getGroupedRect(responders: RectResponderModel[], type: 'hover' | 'select') {
+    const bulletSereisModels = this.getBulletSereisModelsFromRectResponders(responders);
+    const { color, opacity } = this.theme[type].groupedRect as Required<GroupedRect>;
+
+    return bulletSereisModels.length
+      ? responders.map((m) => ({
+          ...m,
+          color: getRGBA(color, opacity),
+        }))
+      : [];
+  }
+
+  private onMousemoveGroupedType(responders: RectResponderModel[]) {
+    const bulletSereisModels = this.getBulletSereisModelsFromRectResponders(responders);
+
     this.eventBus.emit('renderHoveredSeries', {
-      models: this.getRespondersWithTheme(responders, 'hover'),
+      models: this.getGroupedRect(responders, 'hover'),
       name: this.name,
+      eventDetectType: this.eventDetectType,
     });
 
-    this.activatedResponders = responders.length ? [responders[responders.length - 1]] : [];
+    this.activatedResponders = bulletSereisModels;
+  }
+
+  onMousemove({ responders }) {
+    if (this.eventDetectType === 'grouped') {
+      this.onMousemoveGroupedType(responders as RectResponderModel[]);
+    } else {
+      this.eventBus.emit('renderHoveredSeries', {
+        models: this.getRespondersWithTheme(responders, 'hover'),
+        name: this.name,
+      });
+
+      this.activatedResponders = responders.length ? [responders[responders.length - 1]] : [];
+    }
 
     this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
 
@@ -202,8 +302,16 @@ export default class BulletSeries extends Component {
 
   onClick({ responders }) {
     if (this.selectable) {
+      const models =
+        this.eventDetectType === 'grouped'
+          ? [
+              ...this.getGroupedRect(responders as RectResponderModel[], 'select'),
+              ...this.getBulletSereisModelsFromRectResponders(responders as RectResponderModel[]),
+            ]
+          : this.getRespondersWithTheme(responders, 'select');
+
       this.eventBus.emit('renderSelectedSeries', {
-        models: this.getRespondersWithTheme(responders, 'select'),
+        models,
         name: this.name,
       });
       this.eventBus.emit('needDraw');
@@ -245,7 +353,7 @@ export default class BulletSeries extends Component {
           name
         );
 
-        const markerModels: LineModel[] = this.makeMarkerModel(
+        const markerModels: BulletLineModel[] = this.makeMarkerModel(
           markers,
           renderOptions,
           seriesIndex,
@@ -266,7 +374,7 @@ export default class BulletSeries extends Component {
     color: string,
     name: string
   ): BulletRectModel[] {
-    const { tickDistance, ratio, vertical, zeroPosition, rangeWidth } = renderOptions;
+    const { tickDistance, ratio, zeroPosition, rangeWidth } = renderOptions;
 
     return ranges.map((range, rangeIndex) => {
       const [start, end] = range;
@@ -277,10 +385,12 @@ export default class BulletSeries extends Component {
         type: 'rect',
         name,
         color: this.getRangeColor(color, rangeIndex, name),
-        x: vertical ? rangeStartX : start * ratio + zeroPosition,
-        y: vertical ? zeroPosition - end * ratio : rangeStartX,
-        ...getRectSize(vertical, rangeWidth, barLength),
+        x: this.vertical ? rangeStartX : start * ratio + zeroPosition,
+        y: this.vertical ? zeroPosition - end * ratio : rangeStartX,
+        ...getRectSize(this.vertical, rangeWidth, barLength),
         modelType: 'range',
+        seriesColor: color,
+        value: range,
       };
     });
   }
@@ -293,7 +403,7 @@ export default class BulletSeries extends Component {
     name: string
   ): BulletRectModel {
     const { borderColor, borderWidth } = this.theme;
-    const { tickDistance, ratio, vertical, zeroPosition, bulletWidth } = renderOptions;
+    const { tickDistance, ratio, zeroPosition, bulletWidth } = renderOptions;
 
     const bulletLength = value * ratio;
     const bulletStartX = getStartX(seriesIndex, tickDistance, bulletWidth);
@@ -302,12 +412,13 @@ export default class BulletSeries extends Component {
       type: 'rect',
       name,
       color,
-      x: vertical ? bulletStartX : zeroPosition,
-      y: vertical ? zeroPosition - bulletLength : bulletStartX,
-      ...getRectSize(vertical, bulletWidth, bulletLength),
+      x: this.vertical ? bulletStartX : zeroPosition,
+      y: this.vertical ? zeroPosition - bulletLength : bulletStartX,
+      ...getRectSize(this.vertical, bulletWidth, bulletLength),
       thickness: borderWidth,
       borderColor: borderColor,
       modelType: 'bullet',
+      seriesColor: color,
       value,
     };
   }
@@ -318,53 +429,67 @@ export default class BulletSeries extends Component {
     seriesIndex: number,
     color: string,
     name: string
-  ): LineModel[] {
-    const { tickDistance, ratio, vertical, zeroPosition, markerWidth } = renderOptions;
+  ): BulletLineModel[] {
+    const { tickDistance, ratio, zeroPosition, markerWidth } = renderOptions;
     const markerStartX = getStartX(seriesIndex, tickDistance, markerWidth);
     const { markerLineWidth } = this.theme;
 
     return markers.map((marker) => {
       const dataPosition = marker * ratio;
-      const x = vertical ? markerStartX : dataPosition + zeroPosition;
-      const y = vertical ? zeroPosition - dataPosition : markerStartX;
+      const x = this.vertical ? markerStartX : dataPosition + zeroPosition;
+      const y = this.vertical ? zeroPosition - dataPosition : markerStartX;
 
       return {
         type: 'line',
         name,
         x,
         y,
-        x2: vertical ? x + markerWidth : x,
-        y2: vertical ? y : y + markerWidth,
+        x2: this.vertical ? x + markerWidth : x,
+        y2: this.vertical ? y : y + markerWidth,
         strokeStyle: color,
         lineWidth: markerLineWidth,
+        seriesColor: color,
         value: marker,
       };
     });
   }
 
-  makeTooltipModel(seriesData: BulletSeriesType[]): TooltipData[] {
-    return seriesData.reduce<TooltipData[]>((acc, { markers, data, ranges, name, color }) => {
-      const rangesData = ranges.map((range) => ({
-        label: name,
-        color: color!,
-        value: [{ title: 'Range', value: range }],
-        templateType: 'bullet' as TooltipTemplateType,
-      }));
+  makeTooltipModel(seriesModels: BulletModel[]): TooltipData[] {
+    return seriesModels.reduce<TooltipData[]>((acc, cur) => {
+      let tooltipData: TooltipData;
 
-      const bulletData = {
-        label: name,
-        color: color!,
-        value: data,
-      };
+      const { type, name, seriesColor, value } = cur;
 
-      const markersData = markers.map((marker) => ({
-        label: name,
-        color: color!,
-        value: [{ title: 'Marker', value: marker }],
-        templateType: 'bullet' as TooltipTemplateType,
-      }));
+      if (type === 'rect') {
+        const { color, modelType, value } = cur as BulletRectModel;
 
-      return [...acc, ...rangesData, bulletData, ...markersData];
+        if (modelType === 'bullet') {
+          tooltipData = {
+            label: name!,
+            color: color,
+            value: [{ title: 'Actual', value, color }] as TooltipTitleValues,
+            templateType: 'bullet',
+          };
+        } else {
+          tooltipData = {
+            label: name!,
+            color: seriesColor!,
+            value: [{ title: 'Range', value, color }] as TooltipTitleValues,
+            templateType: 'bullet',
+          };
+        }
+      } else {
+        const { strokeStyle } = cur as BulletLineModel;
+
+        tooltipData = {
+          label: name!,
+          color: seriesColor!,
+          value: [{ title: 'Marker', value, color: strokeStyle }] as TooltipTitleValues,
+          templateType: 'bullet',
+        };
+      }
+
+      return [...acc, tooltipData];
     }, []);
   }
 
@@ -436,7 +561,7 @@ export default class BulletSeries extends Component {
 
     const { name } = state.series.bullet?.[seriesIndex];
 
-    const model = this.filterBulletResponder(this.responders).filter(
+    const model = this.filterBulletResponder(this.responders as BulletResponderModel[]).filter(
       ({ name: dataName }) => dataName === name
     );
 
@@ -457,7 +582,7 @@ export default class BulletSeries extends Component {
     }
 
     const { name } = state.series.bullet?.[seriesIndex];
-    const models = this.filterBulletResponder(this.responders).filter(
+    const models = this.filterBulletResponder(this.responders as BulletResponderModel[]).filter(
       ({ name: dataName }) => dataName === name
     );
 

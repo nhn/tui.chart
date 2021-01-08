@@ -319,10 +319,12 @@ interface BulletChartSeriesTheme extends CommonSeriesTheme {
   borderWidth?: number;
   hover?: {
     color?: string;
+    groupedRect?: GroupedRect;
   } & BorderTheme &
     ShadowTheme;
   select?: {
     color?: string;
+    groupedRect?: GroupedRect;
     restSeries?: {
       areaOpacity?: number;
     };
