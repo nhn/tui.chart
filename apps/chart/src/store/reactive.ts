@@ -266,3 +266,7 @@ export function watch(holder: Record<string, any>, path: string, fn: Function): 
     }
   };
 }
+
+export function changeObservableObjectToNormal(obj: any) {
+  return JSON.parse(JSON.stringify(obj));
+}

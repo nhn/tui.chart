@@ -28,6 +28,7 @@ import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
 import { message } from '@src/message';
 import { sendHostname } from '@src/helpers/googleAnalytics';
+import { changeObservableObjectToNormal } from '@src/store/reactive';
 
 export const DEFAULT_ANIM_DURATION = 500;
 
@@ -376,7 +377,7 @@ export default abstract class Chart<T extends Options> {
    * const options = chart.getOptions();
    */
   public getOptions = () => {
-    return JSON.parse(JSON.stringify(this.store.initStoreState.options));
+    return changeObservableObjectToNormal(this.store.initStoreState.options);
   };
 
   public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
