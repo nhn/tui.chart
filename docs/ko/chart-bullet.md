@@ -108,6 +108,7 @@ type options = {
   series?: {
     vertical?: boolean;
     selectable?: boolean;
+    eventDetectType?: 'point' | 'grouped';
     dataLabels?: {
       visible?: boolean;
       anchor?: 'center' | 'start' | 'end' | 'auto';
@@ -164,6 +165,31 @@ const options = {
 ![image](https://user-images.githubusercontent.com/43128697/102741068-b7a1ff00-4394-11eb-9824-f2f404076e1a.png)
 
 `selectable` 옵션과 `on` API의 `selectSeries`, `unselectSeries`를 함께 사용할 경우 해당 시리즈에 대한 제어를 추가로 할 수 있다.
+
+### eventDetectType
+
+마우스를 통해 시리즈 데이터를 선택하거나 탐지하는 방법을 정의할 수 있다.
+
+| 타입 | 설명 |
+| --- | --- |
+| `point` | 개별 시리즈 영역에 마우스가 다가가야 탐지. 현재 마우스가 가리키고 있는 포인트를 기준으로 단 한 개만 탐지됨 |
+| `grouped` | Y축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
+
+* 기본값: `point`
+
+![eventDetectType.point](https://user-images.githubusercontent.com/43128697/103997120-085f8780-51de-11eb-9bfe-78af1e667a34.png)
+
+`eventDetectType`을 `'grouped'`로 설정할 경우 X축을 기준으로 값이 같은 데이터가 모두 탐지된다.
+
+```js
+const options = {
+  series: {
+    eventDetectType: 'grouped'
+  }
+};
+```
+
+![eventDetectType.grouped](https://user-images.githubusercontent.com/43128697/103996962-dcdc9d00-51dd-11eb-8ee7-c3076cd6ec42.png)
 
 ### dataLabels
 데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
@@ -293,8 +319,10 @@ type CommonDataLabelBubbleTheme = {
 | `borderColor` | string | Bullet 박스 테두리 색깔 |
 | `borderWidth` | number | Bullet 박스 테두리 두께 |
 | `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
+| `hover.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 오버되는 영역의 스타일 |
 | `select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | `select.areaOpacity` | number | 선택된 시리즈의 영역 투명도 |
+| `select.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 선택되는 영역의 스타일 |
 | `select.restSeries` | object | 선택되지 않은 시리즈의 스타일 |
 | `dataLabels` | object | 데이터 라벨 스타일 |
 | `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
