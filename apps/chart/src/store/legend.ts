@@ -172,7 +172,7 @@ function getItemWidth(
 function getInitialWidth(options: Options) {
   return isNumber(options.chart?.width) ? options.chart!.width : 0;
 }
-                  
+
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
   const colors = Object.values(series).reduce<string[]>(
     (acc, cur) => (cur && cur.colors ? [...acc, ...cur.colors] : acc),
@@ -307,9 +307,13 @@ const legend: StoreModule = {
       const { legend: legendData, series } = state;
 
       const data = legendData.data.reduce<LegendDataList>((acc, cur) => {
-        const { iconType } = series.scatter!.data.find(({ name }) => name === cur.label)!;
+        if (cur.chartType === 'scatter') {
+          const { iconType } = series.scatter!.data.find(({ name }) => name === cur.label)!;
 
-        return [...acc, { ...cur, iconType }];
+          return [...acc, { ...cur, iconType }];
+        }
+
+        return [...acc, cur];
       }, []);
 
       extend(state.legend, { data });
