@@ -352,10 +352,6 @@ $ cd [[repo name]]
 $ npm install
 ```
 
-### Develop
-
-Let's start development!
-
 ### Pull Request
 
 Before PR, check to test lastly and then check any errors.
@@ -371,4 +367,4 @@ For more information on PR's step, please see links of Contributing section.
 
 ## 📜 License
 
-This software is licensed under the [MIT](../../LICENSE) © [NHN.](https://github.com/nhn)
+This software is licensed under the [MIT](https://github.com/nhn/tui.chart/blob/main/LICENSE) © [NHN.](https://github.com/nhn)
