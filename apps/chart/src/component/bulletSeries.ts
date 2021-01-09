@@ -281,7 +281,10 @@ export default class BulletSeries extends Component {
     const bulletSeriesModels = this.getBulletSeriesModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: this.getGroupedRect(responders, 'hover'),
+      models: [
+        ...this.getGroupedRect(responders, 'hover'),
+        ...this.getRespondersWithTheme(bulletSeriesModels, 'hover'),
+      ],
       name: this.name,
       eventDetectType: this.eventDetectType,
     });
