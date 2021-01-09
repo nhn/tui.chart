@@ -38,10 +38,15 @@ export function isSameSeriesResponder({
         comparisonModel as HeatmapRectResponderModel[]
       );
     case 'bullet':
-      return isClickSameNameResponder<BulletResponderModel>(
-        models as BulletResponderModel[],
-        comparisonModel as BulletResponderModel[]
-      );
+      return eventDetectType === 'grouped'
+        ? isClickSameGroupedRectResponder(
+            models as RectResponderModel[],
+            comparisonModel as RectResponderModel[]
+          )
+        : isClickSameNameResponder<BulletResponderModel>(
+            models as BulletResponderModel[],
+            comparisonModel as BulletResponderModel[]
+          );
     case 'radar':
     case 'bubble':
     case 'scatter':
@@ -188,6 +193,7 @@ export function isClickSameNameResponder<
   T extends HeatmapRectResponderModel | BulletResponderModel
 >(responders: T[], selectedSeries?: T[]) {
   let same = false;
+
   if (responders.length && selectedSeries?.length) {
     same = responders[0].name === selectedSeries[0].name;
   }

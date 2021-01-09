@@ -32,10 +32,7 @@ function getColorValueTemplate(color: string, value: string) {
   </div>`;
 }
 
-function makeBulletDataTemplate(
-  data: TooltipTitleValues,
-  titleType: 'Actual' | 'Range' | 'Marker'
-) {
+function makeBulletDataTemplate(data: TooltipTitleValues, titleType: string) {
   return data
     .filter(({ title }) => title === titleType)
     .sort((a, b) => {
@@ -136,11 +133,11 @@ function getBulletBasicTemplate(data: TooltipData[], theme: Required<TooltipThem
 
 function getBulletGroupedTemplate(data: TooltipData[], theme: Required<TooltipTheme>) {
   const bulletData = data.map(({ value }) => value[0]);
-  const actual = makeBulletDataTemplate(bulletData, 'Actual');
-  const ranges = makeBulletDataTemplate(bulletData, 'Range');
-  const markers = makeBulletDataTemplate(bulletData, 'Marker');
+  const [actual, ranges, markers] = ['Actual', 'Range', 'Marker'].map((titleType) =>
+    makeBulletDataTemplate(bulletData, titleType)
+  );
 
-  return ` <div class="tooltip-category" style="${getFontStyleString(theme.header)}">
+  return `<div class="tooltip-category" style="${getFontStyleString(theme.header)}">
       ${data[0].label}
     </div>
     <div class="tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">

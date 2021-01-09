@@ -4,26 +4,20 @@ import {
   BulletSeriesModels,
   BulletModel,
   BulletResponderModel,
-  BulletRectModel,
   MarkerResponderModel,
   RectResponderModel,
   BulletLineModel,
+  BulletRectModel,
 } from '@t/components/series';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getRGBA, getAlpha } from '@src/helpers/color';
-import {
-  BulletChartOptions,
-  BulletSeriesType,
-  Size,
-  RangeDataType,
-  BoxTypeEventDetectType,
-} from '@t/options';
+import { BulletChartOptions, BulletSeriesType, Size, BoxTypeEventDetectType } from '@t/options';
 import { isLabelAxisOnYAxis, getAxisName, getSizeKey } from '@src/helpers/axes';
 import { TooltipData, TooltipTitleValues } from '@t/components/tooltip';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 import { BulletChartSeriesTheme, GroupedRect } from '@t/theme';
-import { DEFAULT_BULLET_RANGE_OPACITY, boxDefault } from '@src/helpers/theme';
+import { DEFAULT_BULLET_RANGE_OPACITY } from '@src/helpers/theme';
 import { isNumber, omit, calculateSizeWithPercentString } from '@src/helpers/utils';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
@@ -38,7 +32,14 @@ type RenderOptions = {
   markerWidth: number;
 };
 
+type BulletTooltipData = {
+  range: TooltipData[];
+  bullet: TooltipData[];
+  marker: TooltipData[];
+};
+
 const DEFAULT_WIDTH_RATIO = 0.6;
+const MARKER_LINE_DETECTION_SIZE = 5;
 
 function getRectSize(vertical: boolean, barWidth: number, barLength: number): Size {
   return {
@@ -51,12 +52,31 @@ function getStartX(seriesIndex: number, tickDistance: number, barWidth: number) 
   return seriesIndex * tickDistance + (tickDistance - barWidth) / 2;
 }
 
+function makeBulletResponderModel(models: BulletSeriesModels, tooltipData: BulletTooltipData) {
+  const { range, marker, bullet } = models;
+  const { range: tooltipRange, marker: toolipMarker, bullet: tooltipBullet } = tooltipData;
+
+  return [
+    ...range.map((m, index) => ({ ...m, data: tooltipRange[index] })),
+    ...bullet.map((m, index) => ({
+      ...m,
+      color: getRGBA(m.color, 1),
+      data: tooltipBullet[index],
+    })),
+    ...marker.map((m, index) => ({
+      ...m,
+      detectionSize: MARKER_LINE_DETECTION_SIZE,
+      data: toolipMarker[index],
+    })),
+  ];
+}
+
 export function isBulletSeries(seriesName: string) {
   return seriesName === 'bullet';
 }
 
 export default class BulletSeries extends Component {
-  models: BulletSeriesModels = { series: [] };
+  models: BulletSeriesModels = { range: [], bullet: [], marker: [] };
 
   drawModels!: BulletSeriesModels;
 
@@ -110,35 +130,32 @@ export default class BulletSeries extends Component {
       ...this.getBulletBarWidths(tickDistance),
     };
 
-    const seriesModels = this.renderSeries(bulletData, renderOptions);
-    this.models.series = seriesModels;
+    const rangeModels = this.renderRanges(bulletData, renderOptions);
+    const bulletModels = this.renderBullet(bulletData, renderOptions);
+    const markerModels = this.renderMarkers(bulletData, renderOptions);
+
+    this.models.range = rangeModels;
+    this.models.bullet = bulletModels;
+    this.models.marker = markerModels;
 
     if (!this.drawModels) {
       this.drawModels = {
-        series: seriesModels.map((m) => {
-          const model = { ...m };
-
-          if ((m as BulletRectModel).modelType === 'bullet') {
-            if (this.vertical) {
-              (model as BulletRectModel).height = 0;
-              model.y = m.y + (m as BulletRectModel).height;
-            } else {
-              (model as BulletRectModel).width = 0;
-            }
-          }
-
-          return {
-            ...model,
-          };
-        }),
+        range: rangeModels.map((m) => ({ ...m })),
+        bullet: bulletModels.map((m) => ({
+          ...m,
+          height: this.vertical ? 0 : m.height,
+          width: this.vertical ? m.width : 0,
+          y: this.vertical ? m.y + m.height : m.y,
+        })),
+        marker: markerModels.map((m) => ({ ...m })),
       };
     }
 
-    const tooltipData = this.makeTooltipModel(seriesModels);
-
-    this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
+    const models = { range: rangeModels, bullet: bulletModels, marker: markerModels };
+    const tooltipData = this.makeTooltipModel(models);
+    this.tooltipRectMap = this.makeTooltipRectMap(models, tooltipData);
     this.responders = this.getBulletSeriesResponders(
-      seriesModels,
+      models,
       tooltipData,
       axes,
       categories as string[]
@@ -146,7 +163,11 @@ export default class BulletSeries extends Component {
 
     if (getDataLabelsOptions(options, this.name).visible) {
       this.renderDataLabels(
-        this.getDataLabels(seriesModels, this.vertical, this.rect[valueSizeKey])
+        this.getDataLabels(
+          [...rangeModels, ...bulletModels, ...markerModels],
+          this.vertical,
+          this.rect[valueSizeKey]
+        )
       );
     }
   }
@@ -192,18 +213,14 @@ export default class BulletSeries extends Component {
   }
 
   private setEventDetectType(series: Series, options?: BulletChartOptions) {
-    if (series.line) {
-      this.eventDetectType = 'grouped';
-    }
-
     if (options?.series?.eventDetectType) {
       this.eventDetectType = options.series.eventDetectType;
     }
   }
 
   private getBulletSeriesResponders(
-    seriesModels: BulletModel[],
-    tooltipData: TooltipData[],
+    models: BulletSeriesModels,
+    tooltipData: BulletTooltipData,
     axes: Axes,
     categories: string[]
   ) {
@@ -214,41 +231,26 @@ export default class BulletSeries extends Component {
           categories,
           this.vertical
         )
-      : seriesModels.map((m, index) => {
-          const model = { ...m };
-
-          if ((m as BulletRectModel).modelType === 'bullet') {
-            (model as BulletRectModel).color = getRGBA((m as BulletRectModel).color, 1);
-            (model as BulletRectModel).style = ['shadow'];
-            (model as BulletRectModel).thickness = boxDefault.HOVER_THICKNESS;
-          }
-
-          if (m.type === 'line') {
-            (model as MarkerResponderModel).detectionSize = 5;
-            (model as MarkerResponderModel).strokeStyle = getRGBA(m.strokeStyle!, 1);
-          }
-
-          return {
-            ...model,
-            data: tooltipData[index],
-          };
-        });
+      : makeBulletResponderModel(models, tooltipData);
   }
 
-  private makeTooltipRectMap(seriesModels: BulletModel[], tooltipData: TooltipData[]) {
-    return seriesModels.reduce<Record<string, (BulletResponderModel | MarkerResponderModel)[]>>(
-      (acc, cur, dataIndex) => {
-        const label = cur.name!;
-        const tooltipModel = { ...cur, data: tooltipData[dataIndex] };
-        if (!acc[label]) {
-          acc[label] = [];
-        }
-        acc[label].push(tooltipModel);
+  private makeTooltipRectMap(models: BulletSeriesModels, tooltipData: BulletTooltipData) {
+    const result: Record<string, (BulletResponderModel | MarkerResponderModel)[]> = {};
 
-        return acc;
-      },
-      {}
-    );
+    Object.keys(models).forEach((seriesType) => {
+      models[seriesType].forEach((m, index) => {
+        const label = m.name;
+
+        if (!result[label]) {
+          result[label] = [];
+        }
+
+        const tooltipModel = { ...m, data: tooltipData[seriesType][index] };
+        result[label].push(tooltipModel);
+      });
+    });
+
+    return result;
   }
 
   private getBulletSereisModelsFromRectResponders(responders: RectResponderModel[]) {
@@ -313,6 +315,7 @@ export default class BulletSeries extends Component {
       this.eventBus.emit('renderSelectedSeries', {
         models,
         name: this.name,
+        eventDetectType: this.eventDetectType,
       });
       this.eventBus.emit('needDraw');
     }
@@ -332,165 +335,114 @@ export default class BulletSeries extends Component {
     return responders.filter((model) => (model as BulletRectModel)?.modelType === 'bullet');
   }
 
-  renderSeries(bulletData: BulletSeriesType[], renderOptions: RenderOptions): Array<BulletModel> {
-    return bulletData.reduce<BulletModel[]>(
-      (acc, { data, ranges, markers, name, color }, seriesIndex) => {
-        const seriesColor = getRGBA(color!, this.getSeriesOpacity(name));
+  renderRanges(
+    bulletData: BulletSeriesType[],
+    { tickDistance, ratio, zeroPosition, rangeWidth }: RenderOptions
+  ): BulletRectModel[] {
+    return bulletData.flatMap(({ ranges, color, name }, seriesIndex) =>
+      ranges.map((range, rangeIndex) => {
+        const [start, end] = range;
+        const barLength = (end - start) * ratio;
+        const rangeStartX = getStartX(seriesIndex, tickDistance, rangeWidth);
 
-        const rangeModels: BulletRectModel[] = this.makeRangeModel(
-          ranges,
-          renderOptions,
-          seriesIndex,
-          seriesColor,
-          name
-        );
-
-        const bulletModel: BulletRectModel = this.makeBulletModel(
-          data,
-          renderOptions,
-          seriesIndex,
-          seriesColor,
-          name
-        );
-
-        const markerModels: BulletLineModel[] = this.makeMarkerModel(
-          markers,
-          renderOptions,
-          seriesIndex,
-          seriesColor,
-          name
-        );
-
-        return [...acc, ...rangeModels, bulletModel, ...markerModels];
-      },
-      []
+        return {
+          type: 'rect',
+          name,
+          color: this.getRangeColor(getRGBA(color!, this.getSeriesOpacity(name)), rangeIndex, name),
+          x: this.vertical ? rangeStartX : start * ratio + zeroPosition,
+          y: this.vertical ? zeroPosition - end * ratio : rangeStartX,
+          ...getRectSize(this.vertical, rangeWidth, barLength),
+          modelType: 'range',
+          seriesColor: color,
+          tooltipColor: this.getRangeColor(color!, rangeIndex, name, true),
+          value: range,
+        };
+      })
     );
   }
 
-  makeRangeModel(
-    ranges: RangeDataType<number>[],
-    renderOptions: RenderOptions,
-    seriesIndex: number,
-    color: string,
-    name: string
+  renderBullet(
+    bulletData: BulletSeriesType[],
+    { tickDistance, ratio, zeroPosition, bulletWidth }: RenderOptions
   ): BulletRectModel[] {
-    const { tickDistance, ratio, zeroPosition, rangeWidth } = renderOptions;
+    const { borderColor, borderWidth } = this.theme;
 
-    return ranges.map((range, rangeIndex) => {
-      const [start, end] = range;
-      const barLength = (end - start) * ratio;
-      const rangeStartX = getStartX(seriesIndex, tickDistance, rangeWidth);
+    return bulletData.map(({ data, color, name }, seriesIndex) => {
+      const seriesColor = getRGBA(color!, this.getSeriesOpacity(name));
+      const bulletLength = data * ratio;
+      const bulletStartX = getStartX(seriesIndex, tickDistance, bulletWidth);
 
       return {
         type: 'rect',
         name,
-        color: this.getRangeColor(color, rangeIndex, name),
-        x: this.vertical ? rangeStartX : start * ratio + zeroPosition,
-        y: this.vertical ? zeroPosition - end * ratio : rangeStartX,
-        ...getRectSize(this.vertical, rangeWidth, barLength),
-        modelType: 'range',
-        seriesColor: color,
-        value: range,
+        color: seriesColor,
+        x: this.vertical ? bulletStartX : zeroPosition,
+        y: this.vertical ? zeroPosition - bulletLength : bulletStartX,
+        thickness: borderWidth,
+        borderColor: borderColor,
+        modelType: 'bullet',
+        seriesColor,
+        tooltipColor: color,
+        value: data,
+        ...getRectSize(this.vertical, bulletWidth, bulletLength),
       };
     });
   }
 
-  makeBulletModel(
-    value: number,
-    renderOptions: RenderOptions,
-    seriesIndex: number,
-    color: string,
-    name: string
-  ): BulletRectModel {
-    const { borderColor, borderWidth } = this.theme;
-    const { tickDistance, ratio, zeroPosition, bulletWidth } = renderOptions;
+  renderMarkers(
+    bulletData: BulletSeriesType[],
+    { tickDistance, ratio, zeroPosition, markerWidth }: RenderOptions
+  ): BulletLineModel[] {
+    return bulletData.flatMap(({ markers, color, name }, seriesIndex) => {
+      const markerStartX = getStartX(seriesIndex, tickDistance, markerWidth);
+      const { markerLineWidth } = this.theme;
 
-    const bulletLength = value * ratio;
-    const bulletStartX = getStartX(seriesIndex, tickDistance, bulletWidth);
+      return markers.map((marker) => {
+        const dataPosition = marker * ratio;
+        const x = this.vertical ? markerStartX : dataPosition + zeroPosition;
+        const y = this.vertical ? zeroPosition - dataPosition : markerStartX;
+
+        return {
+          type: 'line',
+          name,
+          x,
+          y,
+          x2: this.vertical ? x + markerWidth : x,
+          y2: this.vertical ? y : y + markerWidth,
+          strokeStyle: getRGBA(color!, this.getSeriesOpacity(name)),
+          lineWidth: markerLineWidth,
+          seriesColor: color,
+          tooltipColor: color,
+          value: marker,
+        };
+      });
+    });
+  }
+
+  makeTooltipModel(seriesModels: BulletSeriesModels): BulletTooltipData {
+    const { range, bullet, marker } = seriesModels;
 
     return {
-      type: 'rect',
-      name,
-      color,
-      x: this.vertical ? bulletStartX : zeroPosition,
-      y: this.vertical ? zeroPosition - bulletLength : bulletStartX,
-      ...getRectSize(this.vertical, bulletWidth, bulletLength),
-      thickness: borderWidth,
-      borderColor: borderColor,
-      modelType: 'bullet',
-      seriesColor: color,
-      value,
+      range: this.makeTooltipData<BulletRectModel>(range, 'Range'),
+      bullet: this.makeTooltipData<BulletRectModel>(bullet, 'Actual'),
+      marker: this.makeTooltipData<BulletLineModel>(marker, 'Marker'),
     };
   }
 
-  makeMarkerModel(
-    markers: number[],
-    renderOptions: RenderOptions,
-    seriesIndex: number,
-    color: string,
-    name: string
-  ): BulletLineModel[] {
-    const { tickDistance, ratio, zeroPosition, markerWidth } = renderOptions;
-    const markerStartX = getStartX(seriesIndex, tickDistance, markerWidth);
-    const { markerLineWidth } = this.theme;
-
-    return markers.map((marker) => {
-      const dataPosition = marker * ratio;
-      const x = this.vertical ? markerStartX : dataPosition + zeroPosition;
-      const y = this.vertical ? zeroPosition - dataPosition : markerStartX;
+  makeTooltipData<T extends BulletRectModel | BulletLineModel>(
+    data: T[],
+    title: 'Range' | 'Actual' | 'Marker'
+  ): TooltipData[] {
+    return data.map((m) => {
+      const { name, seriesColor, tooltipColor, value } = m;
 
       return {
-        type: 'line',
-        name,
-        x,
-        y,
-        x2: this.vertical ? x + markerWidth : x,
-        y2: this.vertical ? y : y + markerWidth,
-        strokeStyle: color,
-        lineWidth: markerLineWidth,
-        seriesColor: color,
-        value: marker,
+        label: name!,
+        color: getRGBA(seriesColor!, 1),
+        value: [{ title, value, color: tooltipColor! }] as TooltipTitleValues,
+        templateType: 'bullet',
       };
     });
-  }
-
-  makeTooltipModel(seriesModels: BulletModel[]): TooltipData[] {
-    return seriesModels.reduce<TooltipData[]>((acc, cur) => {
-      let tooltipData: TooltipData;
-
-      const { type, name, seriesColor, value } = cur;
-
-      if (type === 'rect') {
-        const { color, modelType, value } = cur as BulletRectModel;
-
-        if (modelType === 'bullet') {
-          tooltipData = {
-            label: name!,
-            color: color,
-            value: [{ title: 'Actual', value, color }] as TooltipTitleValues,
-            templateType: 'bullet',
-          };
-        } else {
-          tooltipData = {
-            label: name!,
-            color: seriesColor!,
-            value: [{ title: 'Range', value, color }] as TooltipTitleValues,
-            templateType: 'bullet',
-          };
-        }
-      } else {
-        const { strokeStyle } = cur as BulletLineModel;
-
-        tooltipData = {
-          label: name!,
-          color: seriesColor!,
-          value: [{ title: 'Marker', value, color: strokeStyle }] as TooltipTitleValues,
-          templateType: 'bullet',
-        };
-      }
-
-      return [...acc, tooltipData];
-    }, []);
   }
 
   getBulletBarWidths(tickDistance: number) {
@@ -507,7 +459,12 @@ export default class BulletSeries extends Component {
     };
   }
 
-  getRangeColor(seriesColor: string, rangeIndex: number, seriesName: string) {
+  getRangeColor(
+    seriesColor: string,
+    rangeIndex: number,
+    seriesName: string,
+    ignoreRestSeriesOpacity = false
+  ) {
     const { rangeColors } = this.theme;
     const hasThemeRangeColor = Array.isArray(rangeColors) && rangeColors[rangeIndex];
     const color = hasThemeRangeColor ? rangeColors[rangeIndex] : seriesColor;
@@ -515,14 +472,15 @@ export default class BulletSeries extends Component {
       ? getAlpha(rangeColors[rangeIndex])
       : DEFAULT_BULLET_RANGE_OPACITY[rangeIndex];
 
-    return getRGBA(color, opacity * this.getSeriesOpacity(seriesName));
+    return getRGBA(color, opacity * this.getSeriesOpacity(seriesName, ignoreRestSeriesOpacity));
   }
 
-  getSeriesOpacity(seriesName: string) {
+  getSeriesOpacity(seriesName: string, ignoreRestSeriesOpacity = false) {
     const { select, areaOpacity } = this.theme;
     const active = this.activeSeriesMap![seriesName];
     const selected = Object.values(this.activeSeriesMap!).some((elem) => !elem);
-    const selectedOpacity = active ? select.areaOpacity! : select.restSeries!.areaOpacity!;
+    const restOpacity = ignoreRestSeriesOpacity ? areaOpacity : select.restSeries!.areaOpacity!;
+    const selectedOpacity = active ? select.areaOpacity! : restOpacity;
 
     return selected ? selectedOpacity : areaOpacity;
   }
@@ -538,20 +496,22 @@ export default class BulletSeries extends Component {
       shadowOffsetY,
     } = this.theme[type];
 
-    return (this.filterBulletResponder(responders) as BulletRectModel[]).map((model) => ({
-      ...model,
-      color: color ?? model.color,
-      thickness: borderWidth,
-      borderColor,
-      style: [
-        {
-          shadowBlur,
-          shadowColor,
-          shadowOffsetX,
-          shadowOffsetY,
-        },
-      ],
-    }));
+    return (this.filterBulletResponder(responders) as BulletRectModel[]).map((model) => {
+      return {
+        ...model,
+        color: color ?? model.color,
+        thickness: borderWidth,
+        borderColor,
+        style: [
+          {
+            shadowBlur,
+            shadowColor,
+            shadowOffsetX,
+            shadowOffsetY,
+          },
+        ],
+      };
+    });
   }
 
   selectSeries = ({ seriesIndex, state }: SelectSeriesHandlerParams<BulletChartOptions>) => {

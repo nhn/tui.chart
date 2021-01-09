@@ -254,10 +254,12 @@ export type BoxPlotResponderModel = {
 export type BulletRectModel = {
   modelType: 'bullet' | 'range';
   seriesColor?: string;
+  tooltipColor?: string;
 } & RectModel;
 
 export type BulletLineModel = LineModel & {
   seriesColor?: string;
+  tooltipColor?: string;
   value: number;
 };
 
@@ -273,9 +275,10 @@ export type BulletResponderModel = {
 } & BulletModel;
 
 export type BulletSeriesModels = {
-  series: BulletModel[];
+  range: BulletRectModel[];
+  bullet: BulletRectModel[];
+  marker: BulletLineModel[];
 };
-
 export interface MouseEventType {
   responders: CircleResponderModel[] | RectResponderModel[];
   mousePosition: Point;
