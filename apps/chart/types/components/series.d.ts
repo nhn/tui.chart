@@ -270,9 +270,14 @@ export type MarkerResponderModel = {
 } & LineModel &
   LineResponderModel;
 
-export type BulletResponderModel = {
+export type BulletRectResponderModel = {
   data?: TooltipData;
 } & BulletModel;
+
+export type BulletResponderModel =
+  | RectResponderModel
+  | BulletRectResponderModel
+  | MarkerResponderModel;
 
 export type BulletSeriesModels = {
   range: BulletRectModel[];

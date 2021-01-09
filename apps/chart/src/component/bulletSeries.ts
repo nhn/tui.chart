@@ -8,6 +8,7 @@ import {
   RectResponderModel,
   BulletLineModel,
   BulletRectModel,
+  BulletRectResponderModel,
 } from '@t/components/series';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getRGBA, getAlpha } from '@src/helpers/color';
@@ -38,6 +39,8 @@ type BulletTooltipData = {
   marker: TooltipData[];
 };
 
+type BulletTooltipRectMap = Record<string, (BulletRectResponderModel | MarkerResponderModel)[]>;
+
 const DEFAULT_WIDTH_RATIO = 0.6;
 const MARKER_LINE_DETECTION_SIZE = 5;
 
@@ -60,7 +63,6 @@ function makeBulletResponderModel(models: BulletSeriesModels, tooltipData: Bulle
     ...range.map((m, index) => ({ ...m, data: tooltipRange[index] })),
     ...bullet.map((m, index) => ({
       ...m,
-      color: getRGBA(m.color, 1),
       data: tooltipBullet[index],
     })),
     ...marker.map((m, index) => ({
@@ -80,7 +82,7 @@ export default class BulletSeries extends Component {
 
   drawModels!: BulletSeriesModels;
 
-  responders!: (BulletResponderModel | MarkerResponderModel | RectResponderModel)[];
+  responders!: BulletResponderModel[];
 
   activatedResponders: this['responders'] = [];
 
@@ -88,7 +90,7 @@ export default class BulletSeries extends Component {
 
   eventDetectType: BoxTypeEventDetectType = 'point';
 
-  tooltipRectMap!: Record<string, (BulletResponderModel | MarkerResponderModel)[]>;
+  tooltipRectMap!: BulletTooltipRectMap;
 
   vertical = false;
 
@@ -235,7 +237,7 @@ export default class BulletSeries extends Component {
   }
 
   private makeTooltipRectMap(models: BulletSeriesModels, tooltipData: BulletTooltipData) {
-    const result: Record<string, (BulletResponderModel | MarkerResponderModel)[]> = {};
+    const result: BulletTooltipRectMap = {};
 
     Object.keys(models).forEach((seriesType) => {
       models[seriesType].forEach((m, index) => {
@@ -253,15 +255,17 @@ export default class BulletSeries extends Component {
     return result;
   }
 
-  private getBulletSereisModelsFromRectResponders(responders: RectResponderModel[]) {
+  private getBulletSereisModelsFromRectResponders(
+    responders: BulletResponderModel[]
+  ): BulletResponderModel[] {
     if (!responders.length) {
       return [];
     }
 
-    return this.tooltipRectMap[responders[0].label!] ?? [];
+    return this.tooltipRectMap[(responders[0] as RectResponderModel).label!] ?? [];
   }
 
-  private getGroupedRect(responders: RectResponderModel[], type: 'hover' | 'select') {
+  private getGroupedRect(responders: BulletResponderModel[], type: 'hover' | 'select') {
     const bulletSereisModels = this.getBulletSereisModelsFromRectResponders(responders);
     const { color, opacity } = this.theme[type].groupedRect as Required<GroupedRect>;
 
@@ -273,7 +277,7 @@ export default class BulletSeries extends Component {
       : [];
   }
 
-  private onMousemoveGroupedType(responders: RectResponderModel[]) {
+  private onMousemoveGroupedType(responders: BulletResponderModel[]) {
     const bulletSereisModels = this.getBulletSereisModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
@@ -287,7 +291,7 @@ export default class BulletSeries extends Component {
 
   onMousemove({ responders }) {
     if (this.eventDetectType === 'grouped') {
-      this.onMousemoveGroupedType(responders as RectResponderModel[]);
+      this.onMousemoveGroupedType(responders);
     } else {
       this.eventBus.emit('renderHoveredSeries', {
         models: this.getRespondersWithTheme(responders, 'hover'),
@@ -302,13 +306,16 @@ export default class BulletSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
-  onClick({ responders }) {
+  onClick({ responders }: { responders: BulletResponderModel[] }) {
     if (this.selectable) {
       const models =
         this.eventDetectType === 'grouped'
           ? [
-              ...this.getGroupedRect(responders as RectResponderModel[], 'select'),
-              ...this.getBulletSereisModelsFromRectResponders(responders as RectResponderModel[]),
+              ...this.getGroupedRect(responders, 'select'),
+              ...this.getRespondersWithTheme(
+                this.getBulletSereisModelsFromRectResponders(responders),
+                'select'
+              ),
             ]
           : this.getRespondersWithTheme(responders, 'select');
 
@@ -368,20 +375,19 @@ export default class BulletSeries extends Component {
     const { borderColor, borderWidth } = this.theme;
 
     return bulletData.map(({ data, color, name }, seriesIndex) => {
-      const seriesColor = getRGBA(color!, this.getSeriesOpacity(name));
       const bulletLength = data * ratio;
       const bulletStartX = getStartX(seriesIndex, tickDistance, bulletWidth);
 
       return {
         type: 'rect',
         name,
-        color: seriesColor,
+        color: getRGBA(color!, this.getSeriesOpacity(name)),
         x: this.vertical ? bulletStartX : zeroPosition,
         y: this.vertical ? zeroPosition - bulletLength : bulletStartX,
         thickness: borderWidth,
         borderColor: borderColor,
         modelType: 'bullet',
-        seriesColor,
+        seriesColor: color,
         tooltipColor: color,
         value: data,
         ...getRectSize(this.vertical, bulletWidth, bulletLength),
@@ -499,7 +505,7 @@ export default class BulletSeries extends Component {
     return (this.filterBulletResponder(responders) as BulletRectModel[]).map((model) => {
       return {
         ...model,
-        color: color ?? model.color,
+        color: color ?? model.tooltipColor,
         thickness: borderWidth,
         borderColor,
         style: [

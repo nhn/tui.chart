@@ -113,7 +113,7 @@ describe('bullet series', () => {
 
   const result = {
     models: {
-      series: [
+      range: [
         {
           type: 'rect',
           modelType: 'range',
@@ -123,7 +123,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(170, 170, 170, 0.5)',
           name: 'han',
-          seriesColor: 'rgba(170, 170, 170, 1)',
+          seriesColor: '#aaaaaa',
+          tooltipColor: 'rgba(170, 170, 170, 0.5)',
           value: [0, 1],
         },
         {
@@ -135,7 +136,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(170, 170, 170, 0.3)',
           name: 'han',
-          seriesColor: 'rgba(170, 170, 170, 1)',
+          seriesColor: '#aaaaaa',
+          tooltipColor: 'rgba(170, 170, 170, 0.3)',
           value: [1, 4],
         },
         {
@@ -147,32 +149,9 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(170, 170, 170, 0.1)',
           name: 'han',
-          seriesColor: 'rgba(170, 170, 170, 1)',
+          seriesColor: '#aaaaaa',
+          tooltipColor: 'rgba(170, 170, 170, 0.1)',
           value: [4, 10],
-        },
-        {
-          type: 'rect',
-          modelType: 'bullet',
-          x: 0,
-          y: 17.5,
-          width: 60,
-          height: 15,
-          color: 'rgba(170, 170, 170, 1)',
-          value: 6,
-          name: 'han',
-          seriesColor: 'rgba(170, 170, 170, 1)',
-        },
-        {
-          type: 'line',
-          x: 70,
-          y: 13,
-          x2: 70,
-          y2: 37,
-          lineWidth: 1,
-          strokeStyle: 'rgba(170, 170, 170, 1)',
-          value: 7,
-          name: 'han',
-          seriesColor: 'rgba(170, 170, 170, 1)',
         },
         {
           type: 'rect',
@@ -183,7 +162,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(187, 187, 187, 0.5)',
           name: 'cho',
-          seriesColor: 'rgba(187, 187, 187, 1)',
+          seriesColor: '#bbbbbb',
+          tooltipColor: 'rgba(187, 187, 187, 0.5)',
           value: [0, 2],
         },
         {
@@ -195,7 +175,8 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(187, 187, 187, 0.3)',
           name: 'cho',
-          seriesColor: 'rgba(187, 187, 187, 1)',
+          seriesColor: '#bbbbbb',
+          tooltipColor: 'rgba(187, 187, 187, 0.3)',
           value: [2, 5],
         },
         {
@@ -207,8 +188,24 @@ describe('bullet series', () => {
           height: 30,
           color: 'rgba(187, 187, 187, 0.1)',
           name: 'cho',
-          seriesColor: 'rgba(187, 187, 187, 1)',
+          seriesColor: '#bbbbbb',
+          tooltipColor: 'rgba(187, 187, 187, 0.1)',
           value: [5, 10],
+        },
+      ],
+      bullet: [
+        {
+          type: 'rect',
+          modelType: 'bullet',
+          x: 0,
+          y: 17.5,
+          width: 60,
+          height: 15,
+          color: 'rgba(170, 170, 170, 1)',
+          value: 6,
+          name: 'han',
+          seriesColor: '#aaaaaa',
+          tooltipColor: '#aaaaaa',
         },
         {
           type: 'rect',
@@ -220,7 +217,23 @@ describe('bullet series', () => {
           color: 'rgba(187, 187, 187, 1)',
           value: 8,
           name: 'cho',
-          seriesColor: 'rgba(187, 187, 187, 1)',
+          seriesColor: '#bbbbbb',
+          tooltipColor: '#bbbbbb',
+        },
+      ],
+      marker: [
+        {
+          type: 'line',
+          x: 70,
+          y: 13,
+          x2: 70,
+          y2: 37,
+          lineWidth: 1,
+          strokeStyle: 'rgba(170, 170, 170, 1)',
+          value: 7,
+          name: 'han',
+          seriesColor: '#aaaaaa',
+          tooltipColor: '#aaaaaa',
         },
       ],
     },
@@ -234,7 +247,8 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(170, 170, 170, 0.5)',
         name: 'han',
-        seriesColor: 'rgba(170, 170, 170, 1)',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.5)',
         value: [0, 1],
         data: {
           color: 'rgba(170, 170, 170, 1)',
@@ -252,7 +266,8 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(170, 170, 170, 0.3)',
         name: 'han',
-        seriesColor: 'rgba(170, 170, 170, 1)',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.3)',
         value: [1, 4],
         data: {
           color: 'rgba(170, 170, 170, 1)',
@@ -270,57 +285,13 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(170, 170, 170, 0.1)',
         name: 'han',
-        seriesColor: 'rgba(170, 170, 170, 1)',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.1)',
         value: [4, 10],
         data: {
           color: 'rgba(170, 170, 170, 1)',
           label: 'han',
           value: [{ title: 'Range', value: [4, 10], color: 'rgba(170, 170, 170, 0.1)' }],
-          templateType: 'bullet',
-        },
-      },
-      {
-        type: 'rect',
-        modelType: 'bullet',
-        x: 0,
-        y: 17.5,
-        width: 60,
-        height: 15,
-        color: 'rgba(170, 170, 170, 1)',
-        value: 6,
-        name: 'han',
-        thickness: 4,
-        style: ['shadow'],
-        seriesColor: 'rgba(170, 170, 170, 1)',
-        data: {
-          color: 'rgba(170, 170, 170, 1)',
-          label: 'han',
-          value: [
-            {
-              color: 'rgba(170, 170, 170, 1)',
-              title: 'Actual',
-              value: 6,
-            },
-          ],
-          templateType: 'bullet',
-        },
-      },
-      {
-        type: 'line',
-        x: 70,
-        y: 13,
-        x2: 70,
-        y2: 37,
-        strokeStyle: 'rgba(170, 170, 170, 1)',
-        detectionSize: 5,
-        lineWidth: 1,
-        value: 7,
-        name: 'han',
-        seriesColor: 'rgba(170, 170, 170, 1)',
-        data: {
-          color: 'rgba(170, 170, 170, 1)',
-          label: 'han',
-          value: [{ title: 'Marker', value: 7, color: 'rgba(170, 170, 170, 1)' }],
           templateType: 'bullet',
         },
       },
@@ -333,7 +304,8 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(187, 187, 187, 0.5)',
         name: 'cho',
-        seriesColor: 'rgba(187, 187, 187, 1)',
+        seriesColor: '#bbbbbb',
+        tooltipColor: 'rgba(187, 187, 187, 0.5)',
         value: [0, 2],
         data: {
           color: 'rgba(187, 187, 187, 1)',
@@ -351,7 +323,8 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(187, 187, 187, 0.3)',
         name: 'cho',
-        seriesColor: 'rgba(187, 187, 187, 1)',
+        seriesColor: '#bbbbbb',
+        tooltipColor: 'rgba(187, 187, 187, 0.3)',
         value: [2, 5],
         data: {
           color: 'rgba(187, 187, 187, 1)',
@@ -369,12 +342,39 @@ describe('bullet series', () => {
         height: 30,
         color: 'rgba(187, 187, 187, 0.1)',
         name: 'cho',
-        seriesColor: 'rgba(187, 187, 187, 1)',
+        seriesColor: '#bbbbbb',
+        tooltipColor: 'rgba(187, 187, 187, 0.1)',
         value: [5, 10],
         data: {
           color: 'rgba(187, 187, 187, 1)',
           label: 'cho',
           value: [{ title: 'Range', value: [5, 10], color: 'rgba(187, 187, 187, 0.1)' }],
+          templateType: 'bullet',
+        },
+      },
+
+      {
+        type: 'rect',
+        modelType: 'bullet',
+        x: 0,
+        y: 17.5,
+        width: 60,
+        height: 15,
+        color: 'rgba(170, 170, 170, 1)',
+        value: 6,
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        tooltipColor: '#aaaaaa',
+        data: {
+          color: 'rgba(170, 170, 170, 1)',
+          label: 'han',
+          value: [
+            {
+              color: '#aaaaaa',
+              title: 'Actual',
+              value: 6,
+            },
+          ],
           templateType: 'bullet',
         },
       },
@@ -388,19 +388,38 @@ describe('bullet series', () => {
         color: 'rgba(187, 187, 187, 1)',
         value: 8,
         name: 'cho',
-        thickness: 4,
-        style: ['shadow'],
-        seriesColor: 'rgba(187, 187, 187, 1)',
+        seriesColor: '#bbbbbb',
+        tooltipColor: '#bbbbbb',
         data: {
           color: 'rgba(187, 187, 187, 1)',
           label: 'cho',
           value: [
             {
-              color: 'rgba(187, 187, 187, 1)',
+              color: '#bbbbbb',
               title: 'Actual',
               value: 8,
             },
           ],
+          templateType: 'bullet',
+        },
+      },
+      {
+        type: 'line',
+        x: 70,
+        y: 13,
+        x2: 70,
+        y2: 37,
+        strokeStyle: 'rgba(170, 170, 170, 1)',
+        detectionSize: 5,
+        lineWidth: 1,
+        value: 7,
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        tooltipColor: '#aaaaaa',
+        data: {
+          color: 'rgba(170, 170, 170, 1)',
+          label: 'han',
+          value: [{ title: 'Marker', value: 7, color: '#aaaaaa' }],
           templateType: 'bullet',
         },
       },
@@ -412,8 +431,15 @@ describe('bullet series', () => {
       expect(bulletSeries[modelName]).toEqual(result[modelName]);
     });
   });
+});
 
-  it('should be drawn vertically', () => {
+describe('vertical bullet series', () => {
+  beforeEach(() => {
+    bulletSeries = new BulletSeries({
+      store: {} as Store<Options>,
+      eventBus: new EventEmiiter(),
+    });
+
     bulletSeries.render(
       deepMergedCopy(chartState, {
         scale: {
@@ -438,8 +464,10 @@ describe('bullet series', () => {
         },
       })
     );
+  });
 
-    expect(bulletSeries.models.series).toEqual([
+  const result = {
+    range: [
       {
         type: 'rect',
         name: 'han',
@@ -449,7 +477,8 @@ describe('bullet series', () => {
         width: 30,
         height: 10,
         modelType: 'range',
-        seriesColor: 'rgba(170, 170, 170, 1)',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.5)',
         value: [0, 1],
       },
       {
@@ -461,7 +490,8 @@ describe('bullet series', () => {
         width: 30,
         height: 30,
         modelType: 'range',
-        seriesColor: 'rgba(170, 170, 170, 1)',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.3)',
         value: [1, 4],
       },
       {
@@ -473,32 +503,9 @@ describe('bullet series', () => {
         width: 30,
         height: 60,
         modelType: 'range',
-        seriesColor: 'rgba(170, 170, 170, 1)',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.1)',
         value: [4, 10],
-      },
-      {
-        type: 'rect',
-        name: 'han',
-        color: 'rgba(170, 170, 170, 1)',
-        x: 17.5,
-        y: 40,
-        width: 15,
-        height: 60,
-        modelType: 'bullet',
-        value: 6,
-        seriesColor: 'rgba(170, 170, 170, 1)',
-      },
-      {
-        type: 'line',
-        name: 'han',
-        strokeStyle: 'rgba(170, 170, 170, 1)',
-        x: 13,
-        y: 30,
-        x2: 37,
-        y2: 30,
-        lineWidth: 1,
-        value: 7,
-        seriesColor: 'rgba(170, 170, 170, 1)',
       },
       {
         type: 'rect',
@@ -509,7 +516,8 @@ describe('bullet series', () => {
         width: 30,
         height: 20,
         modelType: 'range',
-        seriesColor: 'rgba(187, 187, 187, 1)',
+        seriesColor: '#bbbbbb',
+        tooltipColor: 'rgba(187, 187, 187, 0.5)',
         value: [0, 2],
       },
       {
@@ -521,7 +529,8 @@ describe('bullet series', () => {
         width: 30,
         height: 30,
         modelType: 'range',
-        seriesColor: 'rgba(187, 187, 187, 1)',
+        seriesColor: '#bbbbbb',
+        tooltipColor: 'rgba(187, 187, 187, 0.3)',
         value: [2, 5],
       },
       {
@@ -533,8 +542,24 @@ describe('bullet series', () => {
         width: 30,
         height: 50,
         modelType: 'range',
-        seriesColor: 'rgba(187, 187, 187, 1)',
+        seriesColor: '#bbbbbb',
         value: [5, 10],
+        tooltipColor: 'rgba(187, 187, 187, 0.1)',
+      },
+    ],
+    bullet: [
+      {
+        type: 'rect',
+        name: 'han',
+        color: 'rgba(170, 170, 170, 1)',
+        x: 17.5,
+        y: 40,
+        width: 15,
+        height: 60,
+        modelType: 'bullet',
+        value: 6,
+        seriesColor: '#aaaaaa',
+        tooltipColor: '#aaaaaa',
       },
       {
         type: 'rect',
@@ -546,8 +571,30 @@ describe('bullet series', () => {
         height: 80,
         modelType: 'bullet',
         value: 8,
-        seriesColor: 'rgba(187, 187, 187, 1)',
+        seriesColor: '#bbbbbb',
+        tooltipColor: '#bbbbbb',
       },
-    ]);
+    ],
+    marker: [
+      {
+        type: 'line',
+        name: 'han',
+        strokeStyle: 'rgba(170, 170, 170, 1)',
+        x: 13,
+        y: 30,
+        x2: 37,
+        y2: 30,
+        lineWidth: 1,
+        value: 7,
+        seriesColor: '#aaaaaa',
+        tooltipColor: '#aaaaaa',
+      },
+    ],
+  };
+
+  ['range', 'marker', 'bullet'].forEach((modelName) => {
+    it(`should make ${modelName} properly when calling render`, () => {
+      expect(bulletSeries.models[modelName]).toEqual(result[modelName]);
+    });
   });
 });
