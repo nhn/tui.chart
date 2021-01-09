@@ -255,7 +255,7 @@ export default class BulletSeries extends Component {
     return result;
   }
 
-  private getBulletSereisModelsFromRectResponders(
+  private getBulletSeriesModelsFromRectResponders(
     responders: BulletResponderModel[]
   ): BulletResponderModel[] {
     if (!responders.length) {
@@ -266,10 +266,10 @@ export default class BulletSeries extends Component {
   }
 
   private getGroupedRect(responders: BulletResponderModel[], type: 'hover' | 'select') {
-    const bulletSereisModels = this.getBulletSereisModelsFromRectResponders(responders);
+    const bulletSeriesModels = this.getBulletSeriesModelsFromRectResponders(responders);
     const { color, opacity } = this.theme[type].groupedRect as Required<GroupedRect>;
 
-    return bulletSereisModels.length
+    return bulletSeriesModels.length
       ? responders.map((m) => ({
           ...m,
           color: getRGBA(color, opacity),
@@ -278,7 +278,7 @@ export default class BulletSeries extends Component {
   }
 
   private onMousemoveGroupedType(responders: BulletResponderModel[]) {
-    const bulletSereisModels = this.getBulletSereisModelsFromRectResponders(responders);
+    const bulletSeriesModels = this.getBulletSeriesModelsFromRectResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
       models: this.getGroupedRect(responders, 'hover'),
@@ -286,7 +286,7 @@ export default class BulletSeries extends Component {
       eventDetectType: this.eventDetectType,
     });
 
-    this.activatedResponders = bulletSereisModels;
+    this.activatedResponders = bulletSeriesModels;
   }
 
   onMousemove({ responders }) {
@@ -313,7 +313,7 @@ export default class BulletSeries extends Component {
           ? [
               ...this.getGroupedRect(responders, 'select'),
               ...this.getRespondersWithTheme(
-                this.getBulletSereisModelsFromRectResponders(responders),
+                this.getBulletSeriesModelsFromRectResponders(responders),
                 'select'
               ),
             ]
