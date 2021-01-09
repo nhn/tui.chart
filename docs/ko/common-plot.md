@@ -10,7 +10,7 @@
 type PlotOption = {
   width?: number;
   height?: number;
-  showLine?: boolean;
+  visible?: boolean;
   lines?: {
     value: number | string;
     color: string;
@@ -33,7 +33,7 @@ type PlotOption = {
 | --- | --- |
 | `width` | 모든 차트 |
 | `height` | 모든 차트 |
-| `showLine` | Scatter, Bubble, Bar, Column, BoxPlot, Bullet, Line, Area, LineArea, LineScatter, ColumnLine |
+| `visible` | Scatter, Bubble, Bar, Column, BoxPlot, Bullet, Line, Area, LineArea, LineScatter, ColumnLine |
 | `lines` | Line, Area, LineArea, LineScatter, ColumnLine |
 | `bands` | Line, Area, LineArea, LineScatter, ColumnLine |
 
@@ -41,7 +41,7 @@ type PlotOption = {
 
 <br>
 
-`showLine` 옵션은 플롯 라인이 표시되는 차트에서 사용할 수 있으며 라인의 가시성을 설정한다. 기본값은 `true`이다.
+`visible` 옵션은 플롯 라인이 표시되는 차트에서 사용할 수 있으며 라인의 가시성을 설정한다. 기본값은 `true`이다.
 
 * 사용 가능 차트 타입: [Bar 차트](./chart-bar.md), [Column 차트](./chart-column.md), [BoxPlot 차트](./chart-boxplot.md), [Bullet 차트](./chart-bullet.md), [Scatter 차트](./chart-scatter.md), [Bubble 차트](./chart-bubble.md), [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
 
@@ -50,7 +50,7 @@ type PlotOption = {
 ```js
 const options = {
   plot: {
-    showLine: false
+    visible: false
   }
 };
 ```

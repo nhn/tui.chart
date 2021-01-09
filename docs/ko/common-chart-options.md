@@ -21,7 +21,7 @@ type ChartOptions = {
 
 ### title
 
-`title` 옵션은 차트의 제목을 설정할 수 있다. 문자열로 직접 입력받을 수 있으며, `title.text`, `title.offsetX`, `title.offsetY`, `title.align` 옵션을 통해 제목과 위치를 설정해 줄 수 있다.
+`title` 옵션은 차트의 제목을 설정할 수 있다. 문자열로 직접 입력하는 방법과 `title.text`, `title.offsetX`, `title.offsetY`, `title.align` 과 같이 객체 형태로 입력할 수도 있는데, 제목과 위치를 설정할 수 있다.
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |

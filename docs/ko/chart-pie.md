@@ -1,6 +1,6 @@
 # Pie 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API에 대한 정보는 이 가이드에서 다루지 않는다. [API](./common-api.md) 가이드를 참고한다.
 
 ## 차트 생성하기
 
@@ -153,7 +153,7 @@ const options = {
 
 ### radiusRange
 
-`radiusRange`는 `inner`와 `outer` 옵션을 지정하여 안쪽 원의 반지름과 바깥쪽 원의 반지름을 설정할 수 있다. `inner`의 기본값은 `0`이다. 0보다 큰 값을 입력하면 도넛 모양의 차트를 표시할 수 있다.
+`radiusRange`는 `inner`와 `outer` 옵션을 지정하여 안쪽 원의 반지름과 바깥쪽 원의 반지름을 설정한다. `inner`의 기본값은 `0`이다. 0보다 큰 값을 입력하면 도넛 모양의 차트를 만들 수 있다.
 
 | 속성 | 설명 |
 | --- | --- |
@@ -175,7 +175,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102746399-8976ec00-43a1-11eb-88f4-c86a5240e493.png)
 
-값을 숫자 타입으로 입력하면 절대값으로 설정된다.
+값을 숫자 타입으로 입력하면 반지름은 절대값으로 계산된다.
 
 ```js
 const options = {
@@ -192,7 +192,7 @@ const options = {
 
 ### angleRange
 
-`angleRange`는 `start`와 `end` 옵션을 사용하여 호의 범위를 설정할 수 있다.
+`angleRange`는 `start`와 `end` 옵션을 사용하여 호의 범위를 설정한다.
 
 | 속성 | 설명 |
 | --- | --- |
@@ -234,7 +234,7 @@ const options = {
 
 ### dataLabels
 
-데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시한다.
 `dataLabels` 옵션은 다음과 같다.
 
 ```ts
@@ -319,7 +319,7 @@ const options = {
 };
 ```
 
-| 기본 - 시리즈 이름 라벨 표시 | 시리즈 이름 라벨을 원 바깥에 표시 |
+| 기본 - 시리즈 이름 라벨 표시 | 시리즈 이름 라벨 위치 outer anchor 적용 |
 | --- | --- |
 | ![image](https://user-images.githubusercontent.com/43128697/103474482-b38bcd80-4de7-11eb-99ac-54842fe29b0d.png) | ![image](https://user-images.githubusercontent.com/43128697/103474483-b5ee2780-4de7-11eb-812a-045f78f71e8f.png) |
 
@@ -428,7 +428,7 @@ type CommonDataLabelBoxTheme = {
 | `dataLabels.callout.lineWidth` | number | callout 라인 두께 |
 | `dataLabels.callout.lineColor` | string | callout 라인 색상. `callout.useSeriesColor: true`이면 동작하지 않음 |
 
-테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 색상과 테두리 스타일을 변경해보자.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 시리즈의 색상과 테두리 스타일을 변경해보자.
 
 ```js
 const options = {

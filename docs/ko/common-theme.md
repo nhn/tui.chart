@@ -24,7 +24,8 @@ type Theme = {
 
 ```ts
 type ChartTheme = {
-  fontFamily?: string
+  fontFamily?: string;
+  backgroundColor?: string;
 }
 ```
 
@@ -33,6 +34,7 @@ const options = {
   theme: {
     chart: {
       fontFamily: 'Impact'
+      backgroundColor: 'rgba(253, 151, 2, 0.34)';
     }
   }
 };

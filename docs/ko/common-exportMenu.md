@@ -27,7 +27,7 @@ const options = {
 
 ### filename
 
-`exportMenu.filename` 옵션을 사용하면 내보낼 파일명을 지정할 수 있다. 만약 파일명을 지정해주지 않으면 차트의 제목(`chart.title`)이 기본으로 설정된다. 차트의 제목이 지정되어 있지 않은 경우 파일명은 `'tui-chart'`로 내보내진다.
+`exportMenu.filename` 옵션을 사용하면 내보낼 파일명을 지정할 수 있다. 만약 파일명을 지정해주지 않으면 차트의 제목(`chart.title`)이 기본으로 설정된다. 차트의 제목이 지정되어 있지 않은 경우 파일명은 `'tui-chart'`로 내보낸다.
 
 ```js
 const options = {
