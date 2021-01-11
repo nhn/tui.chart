@@ -53,27 +53,28 @@ The TOAST UI Chart is available over a CDN.
 - You can use cdn as below.
 
 ```html
-<link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/latest/toastui-chart.min.css" />
-<script src="https://uicdn.toast.com/tui.chart/latest/toastui-chart.min.js"></script>
+<link rel="stylesheet" href="https://uicdn.toast.com/chart/latest/toastui-chart.min.css" />
+<script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
 ```
 
 - The types of distribution files are classified into three types depending on whether they exist in the code of the dependency file.
 
-1. `toast-ui-chart.js` - This is not includes dependency modules in the code.
+1. `toast-ui-chart.js` - Only TOAST UI Chart code .
 2. `toast-ui-chart-polyfill.js` - This includes only `babel-polyfill` in code.
 
 - Within the download you'll find the following directories
 
 ```
-tui.chart/
-├─ latest
-│  ├─ toastui-chart.js
-│  ├─ toastui-chart.min.js
-│  ├─ toastui-chart-polyfill.js
-│  ├─ toastui-chart-polyfill.min.js
-│  ├─ toastui-chart.css
-│  ├─ toastui-chart.min.css
-├─ v4.0.0/
+- uicdn.toast.com/
+  ├─ chart/
+  │  ├─ latest
+  │  │  ├─ toastui-chart.js
+  │  │  ├─ toastui-chart.min.js
+  │  │  ├─ toastui-chart-polyfill.js
+  │  │  ├─ toastui-chart-polyfill.min.js
+  │  │  ├─ toastui-chart.css
+  │  │  ├─ toastui-chart.min.css
+  │  ├─ v4.0.0/
 ```
 
 ### Download Source Files
