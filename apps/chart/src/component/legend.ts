@@ -20,7 +20,7 @@ import { sum } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
 import { LegendTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
-import { changeObservableObjectToNormal } from '@src/store/reactive';
+import { makeObservableObjectToNormal } from '@src/store/reactive';
 
 export default class Legend extends Component {
   models!: LegendModel[];
@@ -39,9 +39,9 @@ export default class Legend extends Component {
     if (responders.length) {
       const { data } = responders[0];
       if (data?.name === 'checkbox') {
-        this.eventBus.emit('clickLegendCheckbox', changeObservableObjectToNormal(responders));
+        this.eventBus.emit('clickLegendCheckbox', makeObservableObjectToNormal(responders));
       } else {
-        this.eventBus.emit('clickLegendLabel', changeObservableObjectToNormal(responders));
+        this.eventBus.emit('clickLegendLabel', makeObservableObjectToNormal(responders));
       }
     }
   }

@@ -5,7 +5,7 @@ import { range } from '@src/helpers/utils';
 import { sortNumber } from '@src/helpers/utils';
 import { ZoomModels } from '@t/components/zoom';
 import { Point } from '@t/options';
-import { changeObservableObjectToNormal } from '@src/store/reactive';
+import { makeObservableObjectToNormal } from '@src/store/reactive';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -71,7 +71,7 @@ export default class Zoom extends Component {
         .map((m) => m.data?.value);
 
       this.store.dispatch('zoom', dragRange);
-      this.eventBus.emit('zoom', changeObservableObjectToNormal(dragRange));
+      this.eventBus.emit('zoom', makeObservableObjectToNormal(dragRange));
       this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
     }
     this.resetSelectionArea();
