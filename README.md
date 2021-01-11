@@ -77,8 +77,13 @@ Here are more [examples](http://nhn.github.io/tui.chart/latest/tutorial-example0
 ## 📙 Documents
 
 - [Getting Started](https://github.com/nhn/tui.chart/blob/main/docs/en/getting-started.md)
-- [Tutorials](https://github.com/nhn/tui.chart/blob/next/docs/README.md)
+- Tutorials
+  - [English](https://github.com/nhn/tui.chart/blob/next/docs/README.md)
+  - [한국어](https://github.com/nhn/tui.chart/blob/next/docs/ko/README.md)
 - [APIs](https://nhn.github.io/tui.chart/latest/)
+- v4.0 Migration Guide 
+  - [English](https://github.com/nhn/tui.chart/blob/next/docs/v4.0-migration-guide-en.md)
+  - [한국어](https://github.com/nhn/tui.chart/blob/next/docs/v4.0-migration-guide-ko.md)
 
 See the older versions of API page on the [releases page](https://github.com/nhn/tui.chart/releases).
 
