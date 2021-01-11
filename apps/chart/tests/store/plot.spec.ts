@@ -11,20 +11,20 @@ describe('Plot Store', () => {
   describe('state', () => {
     const plotStateFunc = plot.state as StateFunc;
 
-    it('should set true value for showLine property of plot by default', () => {
+    it('should set true value for visible property of plot by default', () => {
       expect(plotStateFunc({ series: {}, options: {} })).toEqual({
         plot: {
-          showLine: true,
+          visible: true,
           lines: [],
           bands: [],
         },
       });
     });
 
-    it('should set false value for showLine property, if it is entered "showLine: false" in option', () => {
-      expect(plotStateFunc({ series: {}, options: { plot: { showLine: false } } })).toEqual({
+    it('should set false value for visible property, if it is entered "visible: false" in option', () => {
+      expect(plotStateFunc({ series: {}, options: { plot: { visible: false } } })).toEqual({
         plot: {
-          showLine: false,
+          visible: false,
           lines: [],
           bands: [],
         },

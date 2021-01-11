@@ -38,10 +38,10 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
   return { el, chart };
 }
 
-export const showLine = () => {
+export const visible = () => {
   const { el } = createChart(randomData(24), {
     plot: {
-      showLine: boolean('showLine', true),
+      visible: boolean('visible', false),
     },
   });
 

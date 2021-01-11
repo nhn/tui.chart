@@ -77,7 +77,7 @@ export interface ScatterChartProps {
  *     @param {Object} [props.options.plot]
  *       @param {number} [props.options.plot.width] - Width of plot.
  *       @param {number} [props.options.plot.height] - Height of plot.
- *       @param {boolean} [props.options.plot.showLine] - Whether to show plot line.
+ *       @param {boolean} [props.options.plot.visible] - Whether to show plot line.
  *     @param {Object} [props.options.legend]
  *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.

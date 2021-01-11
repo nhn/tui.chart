@@ -12,7 +12,7 @@ import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
 import { isString, isUndefined } from '@src/helpers/utils';
 
-type UsingShowLineOptions = ValueOf<
+type UsingVisiblePlotOptions = ValueOf<
   Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie'>
 >;
 
@@ -94,7 +94,7 @@ const plot: StoreModule = {
   name: 'plot',
   state: ({ options }) => ({
     plot: {
-      showLine: (options as UsingShowLineOptions)?.plot?.showLine ?? true,
+      visible: (options as UsingVisiblePlotOptions)?.plot?.visible ?? true,
       lines: [],
       bands: [],
     },
