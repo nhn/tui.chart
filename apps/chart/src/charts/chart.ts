@@ -487,10 +487,6 @@ export default abstract class Chart<T extends Options> {
     this.componentManager.clear();
     this.clearResizeEvent();
     this.el.innerHTML = '';
-
-    Object.keys(this).forEach((key) => {
-      this[key] = null;
-    });
   };
 
   private isSelectableSeries() {
