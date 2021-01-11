@@ -307,8 +307,9 @@ const legend: StoreModule = {
       const { legend: legendData, series } = state;
 
       const data = legendData.data.reduce<LegendDataList>((acc, cur) => {
-        if (cur.chartType === 'scatter') {
-          const { iconType } = series.scatter!.data.find(({ name }) => name === cur.label)!;
+        if (cur.chartType === 'scatter' && series.scatter?.data) {
+          const model = series.scatter.data.find(({ name }) => name === cur.label);
+          const iconType = model ? model.iconType : cur.iconType;
 
           return [...acc, { ...cur, iconType }];
         }
