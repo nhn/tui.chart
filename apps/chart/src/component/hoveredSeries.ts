@@ -8,6 +8,7 @@ import { isUndefined, includes } from '@src/helpers/utils';
 import { LineTypeEventDetectType, BoxTypeEventDetectType } from '@t/options';
 import { ResponderSeriesModel } from '@src/component/selectedSeries';
 import { isSameSeriesResponder } from '@src/helpers/responders';
+import { makeObservableObjectToNormal } from '@src/store/reactive';
 
 export type HoveredSeriesModel = ResponderSeriesModel & { guideLine: LineModel[] };
 
@@ -59,9 +60,9 @@ export default class HoveredSeries extends Component {
       isSameSeriesResponder({ models, comparisonModel: prevModels, eventDetectType, name });
 
     if (prevModels?.length && !models.length) {
-      this.eventBus.emit('unhoverSeries', prevModels);
+      this.eventBus.emit('unhoverSeries', makeObservableObjectToNormal(prevModels));
     } else if (models.length && !isSame) {
-      this.eventBus.emit('hoverSeries', models);
+      this.eventBus.emit('hoverSeries', makeObservableObjectToNormal(models));
     }
 
     this.modelForGuideLine = this.getModelForGuideLine(name);
