@@ -3,7 +3,7 @@
  */
 import { Options, ValueEdge, LabelAxisData } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
-import { range, isInteger, isString } from '@src/helpers/utils';
+import { range, isInteger, isString, isNull } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
@@ -139,15 +139,18 @@ function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint
   };
 }
 
-export function setSplineControlPoint(points: BezierPoint[]) {
+export function setSplineControlPoint(points: (BezierPoint | null)[]) {
   for (let i = 0, pointsSize = points.length, prev = points[0]; i < pointsSize; i += 1) {
     const point = points[i];
+    if (isNull(point)) {
+      prev = points[i + 1];
+      continue;
+    }
 
-    point.controlPoint = getControlPoints(
-      prev,
-      point,
-      points[Math.min(i + 1, pointsSize - 1) % pointsSize]
-    );
+    const next = points[Math.min(i + 1, pointsSize - 1) % pointsSize];
+    if (prev && next) {
+      point.controlPoint = getControlPoints(prev, point, next);
+    }
 
     prev = point;
   }

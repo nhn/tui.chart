@@ -66,7 +66,7 @@ export type LinePointsModel = {
   type: 'linePoints';
   color: string;
   lineWidth: number;
-  points: BezierPoint[];
+  points: (BezierPoint | null)[];
   name?: string;
   seriesIndex?: number;
   dashSegments?: number[];
