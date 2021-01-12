@@ -2,12 +2,14 @@ import BulletChart from '@src/charts/bulletChart';
 import { BulletSeriesData, BulletChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { budgetDataForBullet } from './data';
+import { radios, withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 
 const budgetData = budgetDataForBullet as BulletSeriesData;
 
 export default {
   title: 'chart|Bullet',
+  decorators: [withKnobs],
 };
 
 const defaultOptions: BulletChartOptions = {
@@ -41,6 +43,16 @@ export const vertical = () => {
   const { el } = createChart(budgetData, {
     series: {
       vertical: true,
+    },
+  });
+
+  return el;
+};
+
+export const eventDetectType = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'point'),
     },
   });
 

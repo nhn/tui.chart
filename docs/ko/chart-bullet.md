@@ -1,10 +1,10 @@
 # Bullet 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API에 대한 정보는 이 가이드에서 다루지 않는다. [API](./common-api.md) 가이드를 참고한다.
 
 ## 차트 생성하기
 
-Bullet 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스를 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
+Bullet 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스가 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
 
 ```js
 import { BulletChart } from '@toast-ui/chart';
@@ -22,7 +22,7 @@ const chart = Chart.bulletChart({el, data, options});
 
 ### 데이터 타입
 
-`series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
+`series` 값은 `name`, `data`, `markers`, `ranges`가 모두 작성된 데이터를 입력한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -108,6 +108,7 @@ type options = {
   series?: {
     vertical?: boolean;
     selectable?: boolean;
+    eventDetectType?: 'point' | 'grouped';
     dataLabels?: {
       visible?: boolean;
       anchor?: 'center' | 'start' | 'end' | 'auto';
@@ -165,8 +166,33 @@ const options = {
 
 `selectable` 옵션과 `on` API의 `selectSeries`, `unselectSeries`를 함께 사용할 경우 해당 시리즈에 대한 제어를 추가로 할 수 있다.
 
+### eventDetectType
+
+마우스를 통해 시리즈 데이터를 선택하거나 탐지하는 방법을 정의할 수 있다.
+
+| 타입 | 설명 |
+| --- | --- |
+| `point` | 개별 시리즈 영역에 마우스가 다가가야 탐지. 현재 마우스가 가리키고 있는 포인트를 기준으로 단 한 개만 탐지됨 |
+| `grouped` | Y축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
+
+* 기본값: `point`
+
+![eventDetectType.point](https://user-images.githubusercontent.com/43128697/103997120-085f8780-51de-11eb-9bfe-78af1e667a34.png)
+
+`eventDetectType`을 `'grouped'`로 설정할 경우 X축(`vertical: true`옵션과 함께 사용할 경우 Y축)을 기준으로 값이 같은 데이터가 모두 탐지된다.
+
+```js
+const options = {
+  series: {
+    eventDetectType: 'grouped'
+  }
+};
+```
+
+![eventDetectType.grouped](https://user-images.githubusercontent.com/43128697/103996962-dcdc9d00-51dd-11eb-8ee7-c3076cd6ec42.png)
+
 ### dataLabels
-데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시한다.
 `dataLabels` 옵션은 다음과 같다.
 
 ```ts
@@ -293,8 +319,10 @@ type CommonDataLabelBubbleTheme = {
 | `borderColor` | string | Bullet 박스 테두리 색깔 |
 | `borderWidth` | number | Bullet 박스 테두리 두께 |
 | `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
-| `select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| `hover.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, X축(Y축) 기준으로 덮어지는 박스 영역의 스타일 |
+| `select` | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | `select.areaOpacity` | number | 선택된 시리즈의 영역 투명도 |
+| `select.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, X축(Y축) 기준으로 선택되는 박스 영역의 스타일 |
 | `select.restSeries` | object | 선택되지 않은 시리즈의 스타일 |
 | `dataLabels` | object | 데이터 라벨 스타일 |
 | `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
@@ -325,7 +353,7 @@ type CommonDataLabelBubbleTheme = {
 | `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
 | `dataLabels.marker` | object | 마커 라벨 스타일. `dataLabels`에 적용할 수 있는 스타일 옵션 모두 사용 가능 |
 
-테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 Bullet 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 Bullet 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성한다.
 
 ```js
 const options = {

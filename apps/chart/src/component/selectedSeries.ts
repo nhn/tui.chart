@@ -62,7 +62,10 @@ export default class SelectedSeries extends Component {
     const { models, eventDetectType, name } = selectedSeriesEventModel;
     let selectedSeriesModels = models;
 
-    if ((name === 'column' || name === 'bar') && eventDetectType === 'grouped') {
+    if (
+      (name === 'column' || name === 'bar' || name === 'bullet') &&
+      eventDetectType === 'grouped'
+    ) {
       selectedSeriesModels = models.filter((model) => !(model as RectResponderModel).data);
     }
 

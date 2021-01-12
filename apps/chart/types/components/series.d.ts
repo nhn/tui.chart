@@ -139,6 +139,7 @@ export type RectResponderModel = Partial<RectModel> & {
   type: 'rect';
   index?: number;
   data?: { name?: string } & Partial<TooltipData>;
+  label?: string;
 } & Rect &
   Partial<LegendData>;
 
@@ -252,23 +253,37 @@ export type BoxPlotResponderModel = {
 
 export type BulletRectModel = {
   modelType: 'bullet' | 'range';
+  seriesColor?: string;
+  tooltipColor?: string;
 } & RectModel;
 
-type BulletModel = BulletRectModel | LineModel;
+export type BulletLineModel = LineModel & {
+  seriesColor?: string;
+  tooltipColor?: string;
+  value: number;
+};
+
+type BulletModel = BulletRectModel | BulletLineModel;
 
 export type MarkerResponderModel = {
   data?: TooltipData;
 } & LineModel &
   LineResponderModel;
 
-export type BulletResponderModel = {
+export type BulletRectResponderModel = {
   data?: TooltipData;
 } & BulletModel;
 
-export type BulletSeriesModels = {
-  series: BulletModel[];
-};
+export type BulletResponderModel =
+  | RectResponderModel
+  | BulletRectResponderModel
+  | MarkerResponderModel;
 
+export type BulletSeriesModels = {
+  range: BulletRectModel[];
+  bullet: BulletRectModel[];
+  marker: BulletLineModel[];
+};
 export interface MouseEventType {
   responders: CircleResponderModel[] | RectResponderModel[];
   mousePosition: Point;
