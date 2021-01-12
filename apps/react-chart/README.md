@@ -121,7 +121,7 @@ const MyComponent = () => <BarChart data={data} options={options} />;
 | Name    | Type   | Required | Description                                                                                     |
 | ------- | ------ | -------- | ----------------------------------------------------------------------------------------------- |
 | data    | Object | O        | This prop is for data of the chart. When you change data, chart is rendering for changing data. |
-| options | Object | X        | This prop is for options of TOAST UI chart. You can configuration about chart.                  |
+| options | Object | X        | This prop is for options of TOAST UI chart. You can set the configuration of the chart.         |
 
 ### Instance Methods
 
@@ -183,9 +183,7 @@ function MyComponent() {
     console.log('click!!');
   };
 
-  return (
-    <BarChart ref={chartRef} data={data} options={options} onSelectLegend={handleClick} />
-  );
+  return <BarChart ref={chartRef} data={data} options={options} onSelectLegend={handleClick} />;
 }
 ```
 

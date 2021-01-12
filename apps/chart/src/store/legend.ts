@@ -172,7 +172,7 @@ function getItemWidth(
 function getInitialWidth(options: Options) {
   return isNumber(options.chart?.width) ? options.chart!.width : 0;
 }
-                  
+
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
   const colors = Object.values(series).reduce<string[]>(
     (acc, cur) => (cur && cur.colors ? [...acc, ...cur.colors] : acc),

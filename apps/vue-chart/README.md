@@ -324,7 +324,7 @@ For use method, first you need to assign ref attribute of element like this:
 <bar-chart ref="tuiChart" :data="chartData" />
 ```
 
-After then you can use methods through `this.$refs`. We provide `invoke` method. You can use `invoke` method to call the method of tui.chart. First argument of invoke is name of the method and second argument is parameters of the method.
+After then, you can use methods through `this.$refs`. We provide `invoke` method. You can use `invoke` method to call the method of tui.chart. First argument of invoke is name of the method and second argument is parameters of the method.
 
 ```js
 this.$refs.tuiChart.invoke('resize', {

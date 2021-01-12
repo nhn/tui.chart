@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-chart",
-  "version": "4.0.0-beta.2",
+  "version": "4.0.0-beta.1",
   "description": "TOAST UI Chart for Vue",
   "main": "dist/toastui-vue-chart.js",
   "files": [
@@ -43,6 +43,6 @@
     "vue": "^2.6.0"
   },
   "dependencies": {
-    "@toast-ui/chart": "^4.0.0-beta.2"
+    "@toast-ui/chart": "^4.0.0-beta.1"
   }
 }
