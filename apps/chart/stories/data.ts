@@ -111,20 +111,7 @@ export const temperatureData2 = {
 };
 
 export const avgTemperatureData = {
-  categories: [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ],
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Seoul',
@@ -417,20 +404,7 @@ export const datetimeCoordinateData = {
 };
 
 export const temperatureRangeData = {
-  categories: [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ],
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Seoul',
@@ -1345,7 +1319,7 @@ export const browserUsageData = {
   ],
 };
 
-export const BudgetDataForBoxPlot = {
+export const budgetDataForBoxPlot = {
   categories: ['Budget', 'Income', 'Expenses', 'Debt'],
   series: [
     {
