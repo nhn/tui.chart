@@ -53,6 +53,7 @@ import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { isZooming } from '@src/helpers/range';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
+import { isSameArray } from '@src/helpers/arrayUtil';
 
 interface StateProp {
   scale: ScaleData;
@@ -341,6 +342,10 @@ function getSecondaryYAxisData({
       });
 }
 
+function hasYAxisLabelChaged(previusLabels: string[], currentLabels: string[]) {
+  return !previusLabels || (previusLabels && !isSameArray(previusLabels, currentLabels));
+}
+
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
@@ -447,9 +452,11 @@ const axes: StoreModule = {
         axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot, initialAxisData.yAxis);
       }
 
-      state.axes = axesState;
+      if (hasYAxisLabelChaged(state.axes.yAxis.labels, axesState.yAxis.labels)) {
+        this.notify(state, 'layout');
+      }
 
-      this.notify(state, 'layout');
+      state.axes = axesState;
     },
   },
   computed: {},
