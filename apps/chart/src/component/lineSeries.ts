@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { pick, includes, isNumber, isUndefined, isNull } from '@src/helpers/utils';
+import { pick, includes, isNumber, isUndefined } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -199,8 +199,8 @@ export default class LineSeries extends Component {
 
   makeTooltipData(lineSeriesData: LineSeriesType[], categories: string[]) {
     return lineSeriesData.flatMap(({ rawData, name, color }, seriesIndex) => {
-      return rawData.map((datum: DatumType, index) => {
-        return datum
+      return rawData.map((datum: DatumType, index) =>
+        datum
           ? {
               label: name,
               color,
@@ -210,8 +210,8 @@ export default class LineSeries extends Component {
               seriesIndex,
               index,
             }
-          : ({} as TooltipData);
-      });
+          : ({} as TooltipData)
+      );
     });
   }
 

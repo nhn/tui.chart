@@ -53,6 +53,33 @@ export const temperatureData = {
   ],
 };
 
+export const temperatureDataWithNull = {
+  categories: [
+    '01/01/2020',
+    '02/01/2020',
+    '03/01/2020',
+    '04/01/2020',
+    '05/01/2020',
+    '06/01/2020',
+    '07/01/2020',
+    '08/01/2020',
+    '09/01/2020',
+    '10/01/2020',
+    '11/01/2020',
+    '12/01/2020',
+  ],
+  series: [
+    {
+      name: 'Seoul',
+      data: [null, -1.1, 4.0, 14.6, 17.5, null, 25.9, null, 14.9, 13.9, 6.6, null],
+    },
+    {
+      name: 'Sydney',
+      data: [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, null, 17.2, 17.6, 19.4, 21.2],
+    },
+  ],
+};
+
 export const temperatureDataWithDateObject = {
   categories: [
     new Date('01/01/2020'),
@@ -124,6 +151,24 @@ export const avgTemperatureData = {
     {
       name: 'Moscow',
       data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5],
+    },
+  ],
+};
+
+export const avgTemperatureDataWithNull = {
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Seoul',
+      data: [null, 40, 25, null, 15, 45, 33, 34, 24, 30, 22, null],
+    },
+    {
+      name: 'Sydney',
+      data: [5, 30, 21, 18, 59, null, 28, 10, null, 20, 10, 30],
+    },
+    {
+      name: 'Moscow',
+      data: [null, null, null, null, null, 41, 29, 15, 30, 10, 33, 5],
     },
   ],
 };
@@ -436,6 +481,46 @@ export const temperatureRangeData = {
         [21.8, 26.0],
         [17.8, 23.6],
         [11.3, 16.6],
+        [4.4, 11.1],
+        [3.2, 11.2],
+      ],
+    },
+  ],
+};
+
+export const temperatureRangeDataWithNull = {
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Seoul',
+      data: [
+        [-8.3, 0.3],
+        [-5.8, 3.1],
+        null,
+        [5.8, 16.9],
+        [11.5, 22.6],
+        [16.6, 26.6],
+        [21.2, 28.8],
+        [21.8, 30.0],
+        [15.8, 25.6],
+        [8.3, 19.6],
+        [1.4, 11.1],
+        [-5.2, 3.2],
+      ],
+    },
+    {
+      name: 'Busan',
+      data: [
+        [0, 10],
+        [3.5, 13.1],
+        null,
+        [10.8, 16.9],
+        [11.5, 18.6],
+        [13.6, 20.6],
+        null,
+        [21.8, 26.0],
+        [17.8, 23.6],
+        null,
         [4.4, 11.1],
         [3.2, 11.2],
       ],

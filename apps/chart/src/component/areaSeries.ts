@@ -20,6 +20,7 @@ import {
   LineTypeSeriesOptions,
   Point,
   RangeDataType,
+  BezierPoint,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, Series, StackSeriesData, ValueEdge } from '@t/store/store';
@@ -28,9 +29,10 @@ import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import {
   deepCopy,
-  deepCopyArray,
   deepMergedCopy,
   first,
+  getFirstValidValue,
+  isNull,
   isNumber,
   isUndefined,
   last,
@@ -60,7 +62,7 @@ interface RenderOptions {
   pairModel?: boolean;
 }
 
-type DatumType = number | RangeDataType<number>;
+type DatumType = number | RangeDataType<number> | null;
 
 const seriesOpacity = {
   INACTIVE: 0.06,
@@ -84,7 +86,7 @@ export default class AreaSeries extends Component {
 
   linePointsModel!: LinePointsModel[];
 
-  baseValueYPosition!: number;
+  baseYPosition!: number;
 
   isStackChart = false;
 
@@ -108,7 +110,7 @@ export default class AreaSeries extends Component {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
-  getBaseValueYPosition(limit: ValueEdge) {
+  getBaseYPosition(limit: ValueEdge) {
     const baseValue = limit.min >= 0 ? limit.min : Math.min(limit.max, 0);
     const intervalSize = this.rect.height / (limit.max - limit.min);
 
@@ -166,12 +168,12 @@ export default class AreaSeries extends Component {
     const { limit } = scale[getValueAxisName(options, this.name, 'yAxis')];
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
     const areaData = series.area.data;
-    this.baseValueYPosition = this.getBaseValueYPosition(limit);
+    this.baseYPosition = this.getBaseYPosition(limit);
 
     if (stackSeries?.area) {
       this.isStackChart = true;
       areaStackSeries = stackSeries.area;
-    } else if (isRangeData(first(areaData)?.data)) {
+    } else if (isRangeData(getFirstValidValue(areaData)?.data)) {
       this.isRangeChart = true;
     }
 
@@ -186,8 +188,7 @@ export default class AreaSeries extends Component {
     };
 
     this.linePointsModel = this.renderLinePointsModel(areaData, limit, renderOptions);
-
-    const areaSeriesModel = this.renderAreaPointsModel(renderOptions.options);
+    const areaSeriesModel = this.renderAreaPointsModel();
     const showDot = !!options.series?.showDot;
     const { dotSeriesModel, responderModel } = this.renderCircleModel(showDot);
     const tooltipDataArr = this.makeTooltipData(areaData, rawCategories as string[]);
@@ -244,22 +245,24 @@ export default class AreaSeries extends Component {
       const tooltipData: TooltipData[] = [];
 
       rawData.forEach((datum: DatumType, index) => {
-        const value = this.isRangeChart ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
-        tooltipData.push({
-          label: name,
-          color,
-          value,
-          category: categories[index],
-          seriesIndex,
-          index,
-        });
+        if (datum) {
+          const value = this.isRangeChart ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
+          tooltipData.push({
+            label: name,
+            color,
+            value,
+            category: categories[index],
+            seriesIndex,
+            index,
+          });
+        }
       });
 
       return tooltipData;
     });
   }
 
-  getLinePointModelValue(datum: AreaSeriesDataType, pairModel?: boolean) {
+  getLinePointModelValue(datum: Omit<AreaSeriesDataType, 'null'>, pairModel?: boolean) {
     if (this.isRangeChart) {
       return pairModel ? datum[0] : datum[1];
     }
@@ -276,11 +279,16 @@ export default class AreaSeries extends Component {
     const { pointOnColumn, options, tickDistance, pairModel, areaStackSeries } = renderOptions;
     const { rawData, name, color: seriesColor } = series;
     const active = this.activeSeriesMap![name];
-    const points: PointModel[] = [];
+    const points: (PointModel | null)[] = [];
     const color = getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
     const { lineWidth, dashSegments } = this.theme;
 
     rawData.forEach((datum, idx) => {
+      if (isNull(datum)) {
+        points.push(null);
+
+        return;
+      }
       const value = this.getLinePointModelValue(datum, pairModel);
       const stackedValue = this.isStackChart
         ? this.getStackValue(areaStackSeries!, seriesIndex, idx)
@@ -292,9 +300,9 @@ export default class AreaSeries extends Component {
       points.push({ x, y, value });
     });
 
-    if (pairModel) {
-      points.reverse();
-    }
+    // if (pairModel) {
+    // points.reverse();
+    // }
 
     if (options?.spline) {
       setSplineControlPoint(points);
@@ -332,58 +340,114 @@ export default class AreaSeries extends Component {
     return linePointsModels;
   }
 
-  addBottomPoints(points: PointModel[]) {
-    const firstPoint = first(points);
-    const lastPoint = last(points);
-
-    if (!firstPoint || !lastPoint) {
-      return points;
-    }
-
-    return [
-      ...points,
-      { x: lastPoint.x, y: this.baseValueYPosition },
-      { x: firstPoint.x, y: this.baseValueYPosition },
-    ];
-  }
-
-  getCombinedPoints(start: number, end: number, options: LineTypeSeriesOptions) {
+  getCombinedPoints(start: number, end: number) {
     const startPoints = start >= 0 ? this.linePointsModel[start].points : [];
     const endPoints = this.linePointsModel[end].points;
-    let points;
 
-    if (this.isStackChart) {
-      if (end === 0) {
-        points = this.addBottomPoints(endPoints);
-      } else {
-        const reversedLinePointsModel = deepCopyArray(endPoints).reverse();
-        if (options?.spline) {
-          setSplineControlPoint(reversedLinePointsModel);
-        }
-
-        points = [...startPoints, ...reversedLinePointsModel];
-      }
-    } else {
-      points = [...startPoints, ...endPoints];
-    }
-
-    return points;
+    return [...startPoints, ...endPoints];
   }
 
-  getCombinedLinePointsModel(options: LineTypeSeriesOptions): LinePointsModel[] {
-    if (!this.isRangeChart && !this.isStackChart) {
-      return this.linePointsModel.map((m) => ({
-        ...m,
-        points: this.addBottomPoints(m.points),
-      }));
+  renderRangeAreaSeries(linePointsModel: LinePointsModel[]) {
+    const model: AreaPointsModel[] = [];
+
+    linePointsModel.forEach((m) => {
+      let areaPoints: BezierPoint[] = [];
+      const { points } = m;
+      points.slice(0, points.length / 2 + 1).forEach((point, i) => {
+        const lastPoint = i === points.length / 2 - 1;
+        const nullPoint = isNull(point);
+
+        if (point) {
+          areaPoints.push(point);
+        }
+
+        if (areaPoints.length && (lastPoint || nullPoint)) {
+          const pairPoints = areaPoints
+            .map((areaPoint, idx) => {
+              const curIdx =
+                points.length / 2 + i - areaPoints.length + idx + (!nullPoint && lastPoint ? 1 : 0);
+
+              return points[curIdx];
+            })
+            .reverse();
+
+          model.push({
+            ...m,
+            type: 'areaPoints',
+            lineWidth: 0,
+            color: 'rgba(0, 0, 0, 0)', // make area border transparent
+            fillColor: this.getAreaOpacity(m.name!, m.color!),
+            points: [...areaPoints, ...pairPoints],
+          });
+
+          areaPoints = [];
+        }
+      });
+    });
+
+    return model;
+  }
+
+  renderAreaSeries(linePointsModel: LinePointsModel[]) {
+    const model: AreaPointsModel[] = [];
+    const bottomYPoint: number[] = [];
+
+    linePointsModel.forEach((m) => {
+      let areaPoints: BezierPoint[] = [];
+      const curBottomYPoint = [...bottomYPoint];
+      const { points } = m;
+      points.forEach((point, i) => {
+        const lastPoint = i === points.length - 1;
+        const nullPoint = isNull(point);
+
+        if (point) {
+          areaPoints.push(point);
+        }
+
+        if (areaPoints.length && (nullPoint || lastPoint)) {
+          const pairPoints = areaPoints
+            .map((areaPoint, idx) => {
+              const curIdx = i - areaPoints.length + idx + (!nullPoint && lastPoint ? 1 : 0);
+              const bottom = isUndefined(curBottomYPoint[curIdx])
+                ? this.baseYPosition
+                : curBottomYPoint[curIdx];
+
+              if (this.isStackChart) {
+                bottomYPoint[curIdx] = areaPoint.y;
+              }
+
+              return { x: areaPoint.x, y: bottom };
+            })
+            .reverse();
+
+          model.push({
+            ...m,
+            type: 'areaPoints',
+            lineWidth: 0,
+            color: 'rgba(0, 0, 0, 0)', // make area border transparent
+            fillColor: this.getAreaOpacity(m.name!, m.color!),
+            points: [...areaPoints, ...pairPoints],
+          });
+
+          areaPoints = [];
+        }
+      });
+    });
+
+    return model;
+  }
+
+  getCombinedLinePointsModel(): LinePointsModel[] {
+    if (!this.isRangeChart) {
+      return this.linePointsModel;
     }
 
-    const len = this.isRangeChart ? this.linePointsModel.length / 2 : this.linePointsModel.length;
+    const len = this.linePointsModel.length / 2;
 
     return range(0, len).reduce<LinePointsModel[]>((acc, i) => {
-      const start = this.isRangeChart ? i : i - 1;
-      const end = this.isRangeChart ? len + i : i;
-      const points = this.getCombinedPoints(start, end, options);
+      const start = i;
+      const end = len + i;
+      const points = this.getCombinedPoints(start, end);
 
       return [...acc, { ...this.linePointsModel[i], points }];
     }, []);
@@ -399,14 +463,12 @@ export default class AreaSeries extends Component {
       : getRGBA(color, areaOpacity);
   }
 
-  renderAreaPointsModel(options: LineTypeSeriesOptions): AreaPointsModel[] {
-    return this.getCombinedLinePointsModel(options).map((m) => ({
-      ...m,
-      type: 'areaPoints',
-      lineWidth: 0,
-      color: 'rgba(0, 0, 0, 0)', // make area border transparent
-      fillColor: this.getAreaOpacity(m.name!, m.color!),
-    }));
+  renderAreaPointsModel(): AreaPointsModel[] {
+    const combinedLinePointsModel = this.getCombinedLinePointsModel();
+
+    return this.isRangeChart
+      ? this.renderRangeAreaSeries(combinedLinePointsModel)
+      : this.renderAreaSeries(combinedLinePointsModel);
   }
 
   renderCircleModel(
@@ -417,19 +479,13 @@ export default class AreaSeries extends Component {
     const { hover, dot: dotTheme } = this.theme;
     const hoverDotTheme = hover.dot!;
 
-    this.linePointsModel.forEach(({ points, color, seriesIndex, name }, modelIndex) => {
-      const isPairLinePointsModel =
-        this.isRangeChart && modelIndex >= this.linePointsModel.length / 2;
+    this.linePointsModel.forEach(({ points, color, seriesIndex, name }) => {
       const active = this.activeSeriesMap![name!];
-      points.forEach(({ x, y }, index) => {
-        const model = {
-          type: 'circle',
-          x,
-          y,
-          seriesIndex,
-          name,
-          index: isPairLinePointsModel ? points.length - index - 1 : index,
-        } as CircleModel;
+      points.forEach((point, index) => {
+        if (!point) {
+          return;
+        }
+        const model = { type: 'circle', ...point, seriesIndex, name, index } as CircleModel;
         if (showDot) {
           dotSeriesModel.push({
             ...model,
@@ -540,15 +596,19 @@ export default class AreaSeries extends Component {
     const dataLabelTheme = this.theme.dataLabels;
 
     return seriesModels.flatMap(({ points, name, fillColor }) =>
-      points.map((point) => ({
-        type: 'point',
-        ...point,
-        name,
-        theme: {
-          ...dataLabelTheme,
-          color: dataLabelTheme.useSeriesColor ? getRGBA(fillColor, 1) : dataLabelTheme.color,
-        },
-      }))
+      points.map((point) =>
+        point
+          ? {
+              type: 'point',
+              ...point,
+              name,
+              theme: {
+                ...dataLabelTheme,
+                color: dataLabelTheme.useSeriesColor ? getRGBA(fillColor, 1) : dataLabelTheme.color,
+              },
+            }
+          : ({} as PointDataLabel)
+      )
     );
   }
 
