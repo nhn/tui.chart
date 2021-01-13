@@ -19,7 +19,6 @@ import {
   spectrumLegendTooltip,
 } from '@src/brushes/spectrumLegend';
 import { getYAxisOption } from '@src/helpers/axes';
-import { getMaxLengthLabelWidth } from '@src/helpers/calculator';
 import { AxisTheme } from '@t/theme';
 import { getLegendItemHeight } from '@src/brushes/legend';
 
@@ -531,7 +530,7 @@ const layout: StoreModule = {
         yAxisTitle,
         hasCenterYAxis,
         hasAxis,
-        maxLabelWidth: getYAxisMaxLabelWidth(axes?.yAxis.maxLabelLength),
+        maxLabelWidth: getYAxisMaxLabelWidth(axes?.yAxis.maxLabelWidth),
         size: optionSize,
         xAxisTitleHeight,
         legendItemHeight,
@@ -556,7 +555,7 @@ const layout: StoreModule = {
         yAxisTitle: secondaryYAxisTitle,
         hasCenterYAxis,
         hasAxis,
-        maxLabelWidth: getYAxisMaxLabelWidth(axes?.secondaryYAxis?.maxLabelLength),
+        maxLabelWidth: getYAxisMaxLabelWidth(axes?.secondaryYAxis?.maxLabelWidth),
         size: optionSize,
         isRightSide: true,
         visibleSecondaryYAxis,

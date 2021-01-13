@@ -53,7 +53,6 @@ import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { isZooming } from '@src/helpers/range';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
-import { isSameArray } from '@src/helpers/arrayUtil';
 
 interface StateProp {
   scale: ScaleData;
@@ -157,7 +156,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     tickDistance,
     labelDistance,
     ...initialAxisData,
-    maxLabelLength: getMaxLengthLabelWidth(labels),
+    maxLabelWidth: getMaxLengthLabelWidth(labels),
   };
 }
 
@@ -185,7 +184,7 @@ export function getValueAxisData(stateProp: StateProp): ValueAxisState {
     tickCount: valueLabels.length,
     tickDistance: size / valueLabels.length,
     ...initialAxisData,
-    maxLabelLength: getMaxLengthLabelWidth(valueLabels),
+    maxLabelWidth: getMaxLengthLabelWidth(valueLabels),
   };
 
   if (isNumber(zeroPosition)) {
@@ -356,8 +355,8 @@ function hasYAxisMaxLabelLengthChanged(
     return true;
   }
 
-  return !isUndefined(prevYAxis?.maxLabelLength) && !isUndefined(yAxis?.maxLabelLength)
-    ? prevYAxis!.maxLabelLength !== yAxis!.maxLabelLength
+  return !isUndefined(prevYAxis?.maxLabelWidth) && !isUndefined(yAxis?.maxLabelWidth)
+    ? prevYAxis!.maxLabelWidth !== yAxis!.maxLabelWidth
     : false;
 }
 

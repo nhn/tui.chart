@@ -77,12 +77,12 @@ describe('default layout', () => {
     exportMenu: { height: 0, width: 0, x: 190, y: 15 },
     title: { x: 10, y: 15, width: 0, height: 0 },
     yAxisTitle: { width: 160, height: 0, x: 10, y: 15 },
-    yAxis: { x: 10, y: 15, width: 11, height: 124 },
-    xAxis: { x: 21, y: 139, width: 149, height: 20 },
-    xAxisTitle: { x: 21, y: 159, width: 0, height: 0 },
+    yAxis: { x: 10, y: 15, width: 40, height: 124 },
+    xAxis: { x: 50, y: 139, width: 120, height: 20 },
+    xAxisTitle: { x: 50, y: 159, width: 0, height: 0 },
     legend: { x: 180, y: 24, width: 20, height: 104 },
     circleLegend: { height: 124, width: 0, x: 180, y: 15 },
-    plot: { x: 21, y: 15, width: 149, height: 124 },
+    plot: { x: 50, y: 15, width: 120, height: 124 },
     resetButton: { height: 0, width: 0, x: 0, y: 0 },
   };
 
@@ -151,7 +151,7 @@ describe('axis size option', () => {
     layout.action!.setLayout(store);
 
     expect(state.layout.xAxis).toEqual({
-      x: 21,
+      x: 50,
       y: 59,
       width: 130,
       height: 100,
@@ -227,9 +227,9 @@ describe('only plot size option', () => {
   layout.action!.setLayout(store);
 
   const result = {
-    yAxis: { x: 10, y: 15, width: 11, height: 150 },
-    xAxis: { x: 21, y: 165, width: 149, height: 20 },
-    plot: { x: 21, y: 15, width: 150, height: 150 },
+    yAxis: { x: 10, y: 15, width: 40, height: 150 },
+    xAxis: { x: 50, y: 165, width: 120, height: 20 },
+    plot: { x: 50, y: 15, width: 150, height: 150 },
     secondaryYAxis: { x: 170, y: 15, width: 0, height: 150 },
   };
 

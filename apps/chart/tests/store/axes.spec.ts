@@ -52,6 +52,7 @@ describe('Axes Store module', () => {
           tickCount: 2,
           tickDistance: 100,
           tickInterval: 2,
+          maxLabelWidth: 1,
         },
         yAxis: {
           isLabelAxis: false,
@@ -62,6 +63,7 @@ describe('Axes Store module', () => {
           tickDistance: 25,
           tickInterval: 4,
           zeroPosition: 150,
+          maxLabelWidth: 1,
         },
       });
     });
@@ -126,6 +128,7 @@ describe('Axes Store module', () => {
         labelDistance: 100,
         labelInterval: 1,
         tickInterval: 1,
+        maxLabelWidth: 1,
       },
       yAxis: {
         isLabelAxis: false,
@@ -136,6 +139,7 @@ describe('Axes Store module', () => {
         zeroPosition: 150,
         labelInterval: 1,
         tickInterval: 1,
+        maxLabelWidth: 1,
       },
     });
   });
