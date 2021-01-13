@@ -157,6 +157,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     tickDistance,
     labelDistance,
     ...initialAxisData,
+    maxLabelLength: getMaxLengthLabelWidth(labels),
   };
 }
 
@@ -184,6 +185,7 @@ export function getValueAxisData(stateProp: StateProp): ValueAxisState {
     tickCount: valueLabels.length,
     tickDistance: size / valueLabels.length,
     ...initialAxisData,
+    maxLabelLength: getMaxLengthLabelWidth(valueLabels),
   };
 
   if (isNumber(zeroPosition)) {
@@ -342,8 +344,28 @@ function getSecondaryYAxisData({
       });
 }
 
-function hasYAxisLabelChaged(previusLabels: string[], currentLabels: string[]) {
-  return !previusLabels || (previusLabels && !isSameArray(previusLabels, currentLabels));
+function hasYAxisMaxLabelLengthChanged(
+  previusAxes: Axes,
+  currentAxes: Axes,
+  field: 'yAxis' | 'secondaryYAxis'
+) {
+  const prevYAxis = previusAxes[field];
+  const yAxis = currentAxes[field];
+
+  if (!prevYAxis?.labels && yAxis?.labels) {
+    return true;
+  }
+
+  return !isUndefined(prevYAxis?.maxLabelLength) && !isUndefined(yAxis?.maxLabelLength)
+    ? prevYAxis!.maxLabelLength !== yAxis!.maxLabelLength
+    : false;
+}
+
+function hasYAxisTypeMaxLabelChanged(previusAxes: Axes, currentAxes: Axes): boolean {
+  return (
+    hasYAxisMaxLabelLengthChanged(previusAxes, currentAxes, 'yAxis') ||
+    hasYAxisMaxLabelLengthChanged(previusAxes, currentAxes, 'secondaryYAxis')
+  );
 }
 
 const axes: StoreModule = {
@@ -452,7 +474,7 @@ const axes: StoreModule = {
         axesState.radialAxis = getRadialAxis(scale[valueAxisName], plot, initialAxisData.yAxis);
       }
 
-      if (hasYAxisLabelChaged(state.axes.yAxis.labels, axesState.yAxis.labels)) {
+      if (hasYAxisTypeMaxLabelChanged(state.axes, axesState)) {
         this.notify(state, 'layout');
       }
 

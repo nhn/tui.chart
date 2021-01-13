@@ -408,8 +408,8 @@ export function isExportMenuVisible(options: Options) {
   return isUndefined(visible) ? true : visible;
 }
 
-function getMaxLabelWidth(labels: string[] = []) {
-  return labels.length ? getMaxLengthLabelWidth(labels) + padding.X : Y_AXIS_MIN_WIDTH;
+function getYAxisMaxLabelWidth(maxLabelLength?: number) {
+  return maxLabelLength ? maxLabelLength + padding.X : Y_AXIS_MIN_WIDTH;
 }
 
 function pickOptionSize(option?: BaseSizeOptions): OptionalSize {
@@ -531,7 +531,7 @@ const layout: StoreModule = {
         yAxisTitle,
         hasCenterYAxis,
         hasAxis,
-        maxLabelWidth: getMaxLabelWidth(axes?.yAxis.labels),
+        maxLabelWidth: getYAxisMaxLabelWidth(axes?.yAxis.maxLabelLength),
         size: optionSize,
         xAxisTitleHeight,
         legendItemHeight,
@@ -556,7 +556,7 @@ const layout: StoreModule = {
         yAxisTitle: secondaryYAxisTitle,
         hasCenterYAxis,
         hasAxis,
-        maxLabelWidth: getMaxLabelWidth(axes?.secondaryYAxis?.labels),
+        maxLabelWidth: getYAxisMaxLabelWidth(axes?.secondaryYAxis?.maxLabelLength),
         size: optionSize,
         isRightSide: true,
         visibleSecondaryYAxis,
