@@ -429,6 +429,7 @@ describe('responders', () => {
         x: 20,
         y: 80,
         name: 'han',
+        value: 1,
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -441,6 +442,7 @@ describe('responders', () => {
         x: 60,
         y: 60,
         name: 'han',
+        value: 2,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -453,6 +455,7 @@ describe('responders', () => {
         x: 20,
         y: 20,
         name: 'cho',
+        value: 4,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -465,6 +468,7 @@ describe('responders', () => {
         x: 60,
         y: 0,
         name: 'cho',
+        value: 5,
       },
     ],
     nearest: [
@@ -612,8 +616,8 @@ describe('range', () => {
         lineWidth: 2,
         name: 'han',
         points: [
-          { value: 3, x: 40, y: 40 },
           { value: 1, x: 0, y: 80 },
+          { value: 3, x: 40, y: 40 },
         ],
         seriesIndex: 0,
         type: 'linePoints',
@@ -644,8 +648,8 @@ describe('range', () => {
           lineWidth: 2,
           name: 'han',
           points: [
-            { value: 3, x: 40, y: 40 },
             { value: 1, x: 0, y: 80 },
+            { value: 3, x: 40, y: 40 },
           ],
           seriesIndex: 0,
           type: 'linePoints',
@@ -910,10 +914,10 @@ describe('stack', () => {
           lineWidth: 0,
           name: 'cho',
           points: [
-            { value: 1, x: 0, y: 80 },
-            { value: 2, x: 40, y: 80 },
-            { value: 4, x: 40, y: 0 },
             { value: 1, x: 0, y: 40 },
+            { value: 4, x: 40, y: 0 },
+            { x: 40, y: 80 },
+            { x: 0, y: 80 },
           ],
           seriesIndex: 1,
           type: 'areaPoints',
@@ -1091,6 +1095,7 @@ describe('zoom', () => {
             { value: 2, x: 20, y: 60 },
             { value: 3, x: 60, y: 40 },
             { x: 60, y: 80 },
+            { x: 20, y: 80 },
             { x: -20, y: 80 },
           ],
           seriesIndex: 0,
@@ -1107,6 +1112,7 @@ describe('zoom', () => {
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
             { x: 60, y: 80 },
+            { x: 20, y: 80 },
             { x: -20, y: 80 },
           ],
           seriesIndex: 1,
@@ -1235,6 +1241,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 20,
         y: 80,
+        value: 1,
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -1246,6 +1253,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 60,
         y: 60,
+        value: 2,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -1257,6 +1265,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 20,
         y: 20,
+        value: 4,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -1268,6 +1277,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 60,
         y: 0,
+        value: 5,
       },
     ]);
   });

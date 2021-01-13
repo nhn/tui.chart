@@ -30,12 +30,10 @@ import { getRGBA } from '@src/helpers/color';
 import {
   deepCopy,
   deepMergedCopy,
-  first,
   getFirstValidValue,
   isNull,
   isNumber,
   isUndefined,
-  last,
   range,
   sum,
 } from '@src/helpers/utils';
