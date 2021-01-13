@@ -243,7 +243,7 @@ export default class AreaSeries extends Component {
       const tooltipData: TooltipData[] = [];
 
       rawData.forEach((datum: DatumType, index) => {
-        if (datum) {
+        if (!isNull(datum)) {
           const value = this.isRangeChart ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
           tooltipData.push({
             label: name,
@@ -298,10 +298,6 @@ export default class AreaSeries extends Component {
       points.push({ x, y, value });
     });
 
-    // if (pairModel) {
-    // points.reverse();
-    // }
-
     if (options?.spline) {
       setSplineControlPoint(points);
     }
@@ -355,7 +351,7 @@ export default class AreaSeries extends Component {
         const lastPoint = i === points.length / 2 - 1;
         const nullPoint = isNull(point);
 
-        if (point) {
+        if (!isNull(point)) {
           areaPoints.push(point);
         }
 
@@ -398,7 +394,7 @@ export default class AreaSeries extends Component {
         const lastPoint = i === points.length - 1;
         const nullPoint = isNull(point);
 
-        if (point) {
+        if (!isNull(point)) {
           areaPoints.push(point);
         }
 
@@ -480,7 +476,7 @@ export default class AreaSeries extends Component {
     this.linePointsModel.forEach(({ points, color, seriesIndex, name }) => {
       const active = this.activeSeriesMap![name!];
       points.forEach((point, index) => {
-        if (!point) {
+        if (isNull(point)) {
           return;
         }
         const model = { type: 'circle', ...point, seriesIndex, name, index } as CircleModel;
@@ -595,8 +591,9 @@ export default class AreaSeries extends Component {
 
     return seriesModels.flatMap(({ points, name, fillColor }) =>
       points.map((point) =>
-        point
-          ? {
+        isNull(point)
+          ? ({} as PointDataLabel)
+          : {
               type: 'point',
               ...point,
               name,
@@ -605,7 +602,6 @@ export default class AreaSeries extends Component {
                 color: dataLabelTheme.useSeriesColor ? getRGBA(fillColor, 1) : dataLabelTheme.color,
               },
             }
-          : ({} as PointDataLabel)
       )
     );
   }

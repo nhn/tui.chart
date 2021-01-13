@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { pick, includes, isNumber, isUndefined } from '@src/helpers/utils';
+import { pick, includes, isNumber, isUndefined, isNull } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -200,8 +200,9 @@ export default class LineSeries extends Component {
   makeTooltipData(lineSeriesData: LineSeriesType[], categories: string[]) {
     return lineSeriesData.flatMap(({ rawData, name, color }, seriesIndex) => {
       return rawData.map((datum: DatumType, index) =>
-        datum
-          ? {
+        isNull(datum)
+          ? ({} as TooltipData)
+          : {
               label: name,
               color,
               value: getCoordinateYValue(datum),
@@ -210,7 +211,6 @@ export default class LineSeries extends Component {
               seriesIndex,
               index,
             }
-          : ({} as TooltipData)
       );
     });
   }
@@ -241,7 +241,7 @@ export default class LineSeries extends Component {
       const active = this.activeSeriesMap![name];
 
       rawData.forEach((datum, idx) => {
-        if (!datum) {
+        if (isNull(datum)) {
           return points.push(null);
         }
 
@@ -288,7 +288,7 @@ export default class LineSeries extends Component {
     lineSeriesModel.forEach(({ color, name, points }, seriesIndex) => {
       const active = this.activeSeriesMap![name!];
       points.forEach((point, index) => {
-        if (!point) {
+        if (isNull(point)) {
           return;
         }
         const { x, y } = point;
@@ -369,8 +369,9 @@ export default class LineSeries extends Component {
 
     return seriesModels.flatMap(({ points, name, color }) =>
       points.map((point) =>
-        point
-          ? {
+        isNull(point)
+          ? ({} as PointDataLabel)
+          : {
               type: 'point',
               ...point,
               name,
@@ -379,7 +380,6 @@ export default class LineSeries extends Component {
                 color: dataLabelTheme.useSeriesColor ? color : dataLabelTheme.color,
               },
             }
-          : ({} as PointDataLabel)
       )
     );
   }
