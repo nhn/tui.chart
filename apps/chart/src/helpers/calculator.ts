@@ -9,6 +9,21 @@ import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { TICK_SIZE } from '@src/brushes/axis';
 
+const ctx = document.createElement('canvas').getContext('2d')!;
+
+export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
+  ctx.font = font;
+
+  return Math.ceil(ctx.measureText(text).width);
+}
+
+export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
+  ctx.font = font;
+  const matches = ctx.font.match(/\d+/);
+
+  return parseInt(String(Number(matches) * 1.2), 10);
+}
+
 export const LABEL_ANCHOR_POINT = crispPixel(TICK_SIZE * 2 + getTextHeight(DEFAULT_LABEL_TEXT) / 2);
 
 function getDecimalLength(value: string | number) {
@@ -159,21 +174,6 @@ export function getValueRatio(value: number, { min, max }: ValueEdge) {
 
 export function getDistance(point1: Point, point2: Point) {
   return Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
-}
-
-export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
-  const ctx = document.createElement('canvas').getContext('2d')!;
-  ctx.font = font;
-
-  return Math.ceil(ctx.measureText(text).width);
-}
-
-export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
-  const ctx = document.createElement('canvas').getContext('2d')!;
-  ctx.font = font;
-  const matches = ctx.font.match(/\d+/);
-
-  return parseInt(String(Number(matches) * 1.2), 10);
 }
 
 export function getMaxLengthLabelWidth(labels: string[]) {

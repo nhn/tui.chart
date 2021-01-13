@@ -448,6 +448,8 @@ const axes: StoreModule = {
       }
 
       state.axes = axesState;
+
+      this.notify(state, 'layout');
     },
   },
   computed: {},
