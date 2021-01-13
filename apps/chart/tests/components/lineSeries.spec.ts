@@ -586,3 +586,105 @@ describe('with series options', () => {
     ]);
   });
 });
+
+describe('with null data', () => {
+  const seriesData = [{ name: 'han', data: [1, 2, null], rawData: [1, 2, null], color: '#aaaaaa' }];
+
+  const chartState = {
+    chart: { width: 100, height: 100 },
+    layout: {
+      xAxis: { x: 10, y: 80, width: 80, height: 10 },
+      yAxis: { x: 10, y: 10, width: 10, height: 80 },
+      plot: { width: 80, height: 80, x: 10, y: 80 },
+    },
+    series: {
+      line: {
+        data: seriesData,
+        seriesCount: seriesData.length,
+        seriesGroupCount: seriesData[0].data.length,
+      },
+    },
+    scale: {
+      yAxis: {
+        limit: {
+          min: 1,
+          max: 5,
+        },
+      },
+    },
+    axes: {
+      xAxis: {
+        pointOnColumn: true,
+        tickDistance: 40,
+      },
+    },
+    options: {
+      series: {},
+    },
+    legend: {
+      data: [{ label: 'han', active: true, checked: true }],
+    },
+    rawCategories: ['A', 'B', 'C'],
+    categories: ['A', 'B', 'C'],
+    dataLabels: {
+      visible: false,
+    },
+    theme: {
+      series: {
+        line: {
+          colors: ['#aaaaaa', '#bbbbbb'],
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+        },
+      },
+    },
+  };
+
+  beforeEach(() => {
+    lineSeries = new LineSeries({
+      store: {} as Store<LineChartOptions>,
+      eventBus: new EventEmitter(),
+    });
+
+    lineSeries.render(chartState, { viewRange: [0, 2] });
+  });
+
+  const result = {
+    models: {
+      rect: [{ height: 80, type: 'clipRectArea', width: 80, x: 0, y: 0 }],
+      series: [
+        {
+          color: 'rgba(170, 170, 170, 1)',
+          lineWidth: 2,
+          points: [{ value: 1, x: 20, y: 80 }, { value: 2, x: 60, y: 60 }, null],
+          seriesIndex: 0,
+          name: 'han',
+          type: 'linePoints',
+          dashSegments: [],
+        },
+      ],
+      dot: [],
+    },
+  };
+
+  it(`should make models properly when calling render`, () => {
+    expect(lineSeries.models).toEqual(result.models);
+  });
+});
