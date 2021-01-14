@@ -351,15 +351,11 @@ function hasYAxisMaxLabelLengthChanged(
   const prevYAxis = previousAxes[field];
   const yAxis = currentAxes[field];
 
-  if (!prevYAxis?.labels && yAxis?.labels) {
-    return true;
+  if (!prevYAxis && !yAxis) {
+    return false;
   }
 
-  if (isNumber(prevYAxis?.maxLabelWidth) && isNumber(yAxis?.maxLabelWidth)) {
-    return prevYAxis?.maxLabelWidth !== yAxis?.maxLabelWidth;
-  }
-
-  return false;
+  return prevYAxis?.maxLabelWidth !== yAxis?.maxLabelWidth;
 }
 
 function hasYAxisTypeMaxLabelChanged(previousAxes: Axes, currentAxes: Axes): boolean {
