@@ -143,7 +143,7 @@ function makeHeatmapExportData({ categories, series }: DataToExport): ExportData
   const xCategories = (categories as HeatmapCategoriesType).x;
 
   return series.heatmap!.data.reduce<ExportData2DArray>(
-    (acc, { data, yCategory }) => [...acc, [yCategory, ...data]],
+    (acc, { data, yCategory }) => [...acc, [yCategory, ...data.map((datum) => String(datum))]],
     [['', ...xCategories]]
   );
 }
