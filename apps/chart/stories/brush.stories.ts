@@ -139,7 +139,7 @@ export const lineBrush = () => {
     x2: 200,
     y2: 200,
     lineWidth,
-    dashedPattern: isDashed ? [5, 5] : [],
+    dashSegments: isDashed ? [5, 5] : [],
   };
   line(ctx, lineModel);
 
