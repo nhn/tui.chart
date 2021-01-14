@@ -23,7 +23,7 @@ import {
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number] | null;
-type HeatmapSeriesDataType = number[];
+type HeatmapSeriesDataType = (number | null)[];
 export type HeatmapCategoriesType = { x: string[]; y: string[] };
 export type AreaSeriesDataType = number | RangeDataType<number> | null;
 export type Align = 'top' | 'bottom' | 'right' | 'left';

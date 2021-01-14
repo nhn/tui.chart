@@ -296,7 +296,7 @@ export type HeatmapSeriesData = {
     x: string;
     y: string;
   };
-  colorValue: number;
+  colorValue: number | null;
   indexes: [number, number];
 }[];
 

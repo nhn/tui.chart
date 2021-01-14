@@ -2019,6 +2019,17 @@ export const temperatureAverageDataForHeatmap = {
   ],
 };
 
+export const temperatureAverageDataForHeatmapWithNull = {
+  categories: {
+    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    y: ['Seoul', 'Seattle'],
+  },
+  series: [
+    [-3.5, -1.1, null, 11.3, null, 21.5],
+    [null, 17.8, null, 10.6, 6.4, 3.7],
+  ],
+};
+
 export const contributionsData = {
   categories: {
     x: [

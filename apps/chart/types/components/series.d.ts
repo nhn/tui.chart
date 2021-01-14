@@ -121,7 +121,7 @@ export type HeatmapRectModel = {
   name: string;
   color: string;
   colorRatio: number;
-  colorValue: number;
+  colorValue: number | null;
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness: number;
 } & Rect;
