@@ -239,7 +239,7 @@ export default class Plot extends Component {
       y2: y + height,
       strokeStyle: color,
       lineWidth,
-      dashedPattern: dashSegments,
+      dashSegments,
     };
   }
 

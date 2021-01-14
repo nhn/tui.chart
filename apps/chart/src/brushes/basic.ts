@@ -6,7 +6,7 @@ import {
   RectModel,
   RectStyle,
 } from '@t/components/series';
-import { makeStyleObj } from '@src/helpers/style';
+import { makeStyleObj, setLineDash } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover' | 'plot';
@@ -124,7 +124,7 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 }
 
 export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
-  const { x, y, x2, y2, strokeStyle, lineWidth, dashedPattern } = lineModel;
+  const { x, y, x2, y2, strokeStyle, lineWidth, dashSegments } = lineModel;
 
   if (strokeStyle) {
     ctx.strokeStyle = strokeStyle;
@@ -136,8 +136,8 @@ export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
 
   ctx.beginPath();
 
-  if (dashedPattern) {
-    ctx.setLineDash(dashedPattern);
+  if (dashSegments) {
+    setLineDash(ctx, dashSegments);
   }
 
   ctx.moveTo(x, y);

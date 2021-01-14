@@ -1,4 +1,5 @@
 import { AreaPointsModel, LinePointsModel } from '@t/components/series';
+import { setLineDash } from '@src/helpers/style';
 
 type PointsModel = LinePointsModel | AreaPointsModel;
 
@@ -9,7 +10,10 @@ export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsMod
   ctx.lineCap = 'round';
   ctx.strokeStyle = color;
   ctx.beginPath();
-  ctx.setLineDash(dashSegments);
+
+  if (dashSegments) {
+    setLineDash(ctx, dashSegments);
+  }
 
   points.forEach((point, idx) => {
     if (idx === 0) {
@@ -30,7 +34,7 @@ export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsMod
 
   ctx.stroke();
   ctx.closePath();
-  ctx.setLineDash([]);
+  setLineDash(ctx, []);
 }
 
 export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaPointsModel) {

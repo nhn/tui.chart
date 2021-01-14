@@ -343,7 +343,7 @@ interface AreaChartSeriesTheme {
 | --- | --- | --- |
 | lineWidth | number | The width of the series line |
 | areaOpacity | number | The opacity of the entire area when all series are active |
-| dashSegments | number[] | The dashSegment value of the series line |
+| dashSegments | number[] | The dashSegment value of the series line (IE11 or higher version supported)|
 | colors | string[] | The color of the series |
 | dot | object | The style for the dot displayed when `showDot: true`  |
 | select | object | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
