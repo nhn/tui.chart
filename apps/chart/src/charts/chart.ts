@@ -207,8 +207,8 @@ export default abstract class Chart<T extends Options> {
     } = this.store.state;
 
     if (
-      (!usingContainerWidth && !usingContainerHeight) ||
-      (!containerWidth && !containerHeight) ||
+      !(usingContainerWidth || usingContainerHeight) ||
+      !(containerWidth || containerHeight) ||
       (containerWidth === width && containerHeight === height)
     ) {
       this.animationControlFlag.resizing = false;

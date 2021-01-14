@@ -467,7 +467,7 @@ describe('xAxis', () => {
           text: '1',
           type: 'label',
           x: 0.5,
-          y: 16.5,
+          y: 10.5,
         },
         {
           style: [
@@ -477,7 +477,7 @@ describe('xAxis', () => {
           text: '2',
           type: 'label',
           x: 80.5,
-          y: 16.5,
+          y: 10.5,
         },
       ]);
     });

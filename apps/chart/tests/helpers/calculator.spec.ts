@@ -1,4 +1,4 @@
-import { setSplineControlPoint, getTextHeight } from '@src/helpers/calculator';
+import { setSplineControlPoint } from '@src/helpers/calculator';
 import { BezierPoint } from '@t/options';
 
 describe('spline chart', () => {
@@ -29,8 +29,4 @@ describe('spline chart', () => {
       });
     });
   });
-});
-
-it('getTextHeight', () => {
-  expect(getTextHeight('ABCDE', 'normal 16px Arial')).toBe(19);
 });
