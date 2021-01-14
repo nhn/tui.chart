@@ -1810,6 +1810,66 @@ export const usedDiskSpaceData = {
   ],
 };
 
+export const usedDiskSpaceDataWithNull = {
+  series: [
+    {
+      label: 'Documents',
+      children: [
+        {
+          label: 'docs',
+          children: [
+            {
+              label: 'pages',
+              data: null,
+            },
+            {
+              label: 'keynote',
+              data: 2.5,
+            },
+            {
+              label: 'numbers',
+              data: 1.2,
+            },
+          ],
+        },
+        {
+          label: 'photos',
+          data: 5.5,
+        },
+        {
+          label: 'videos',
+          data: 20.7,
+        },
+      ],
+    },
+    {
+      label: 'Downloads',
+      children: [
+        {
+          label: 'recent',
+          data: 5.3,
+        },
+        {
+          label: '2020',
+          data: 10.1,
+        },
+        {
+          label: '2019',
+          data: 8.2,
+        },
+      ],
+    },
+    {
+      label: 'Application',
+      data: 16.4,
+    },
+    {
+      label: 'Desktop',
+      data: null,
+    },
+  ],
+};
+
 export const populationDensityData = {
   series: [
     {

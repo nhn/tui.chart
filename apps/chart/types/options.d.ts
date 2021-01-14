@@ -91,7 +91,7 @@ export interface HeatmapSeriesType {
 
 export interface TreemapSeriesType {
   label: string;
-  data?: number;
+  data?: number | null;
   colorValue?: number;
   children?: TreemapSeriesType[];
 }
