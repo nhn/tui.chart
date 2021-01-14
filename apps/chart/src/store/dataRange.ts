@@ -6,7 +6,7 @@ import {
   ChartSeriesMap,
   Options,
 } from '@t/store/store';
-import { getFirstValidValue } from '@src/helpers/utils';
+import { getFirstValidValue, isNull } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
 import {
@@ -127,7 +127,9 @@ const dataRange: StoreModule = {
         const firstExistValue = getFirstValidValue(values);
 
         if (isCoordinateSeries(series)) {
-          values = values.map((value) => getCoordinateYValue(value));
+          values = values
+            .filter((value) => !isNull(value))
+            .map((value) => getCoordinateYValue(value));
 
           const xAxisValues = (categories as string[]).map((value) =>
             hasDateValue ? Number(new Date(value)) : Number(value)

@@ -965,6 +965,15 @@ export const genderHeightWeightData = {
   ],
 };
 
+export const genderHeightWeightDataWithNull = {
+  series: [
+    {
+      name: 'male',
+      data: [{ x: 174, y: 65.6 }, { x: 175.3, y: 71.8 }, null, { x: 181.5, y: 74.8 }],
+    },
+  ],
+};
+
 export const currentUserCoordinateDatetimeData = {
   series: [
     {

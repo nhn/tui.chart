@@ -5,7 +5,14 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNumber, isString, isUndefined } from '@src/helpers/utils';
+import {
+  deepCopy,
+  deepMergedCopy,
+  isNull,
+  isNumber,
+  isString,
+  isUndefined,
+} from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
 import {
@@ -94,29 +101,31 @@ export default class ScatterSeries extends Component {
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
 
       data.forEach((datum, index) => {
-        const rawXValue = getCoordinateXValue(datum);
-        const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
-        const yValue = getCoordinateYValue(datum);
+        if (!isNull(datum)) {
+          const rawXValue = getCoordinateXValue(datum);
+          const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
+          const yValue = getCoordinateYValue(datum);
 
-        const xValueRatio = getValueRatio(xValue, xAxisLimit);
-        const yValueRatio = getValueRatio(yValue, yAxisLimit);
+          const xValueRatio = getValueRatio(xValue, xAxisLimit);
+          const yValueRatio = getValueRatio(yValue, yAxisLimit);
 
-        const x = xValueRatio * this.rect.width;
-        const y = (1 - yValueRatio) * this.rect.height;
+          const x = xValueRatio * this.rect.width;
+          const y = (1 - yValueRatio) * this.rect.height;
 
-        models.push({
-          x,
-          y,
-          type: 'scatterSeries',
-          iconType,
-          seriesIndex,
-          name,
-          borderColor: color,
-          index,
-          borderWidth,
-          size,
-          fillColor,
-        });
+          models.push({
+            x,
+            y,
+            type: 'scatterSeries',
+            iconType,
+            seriesIndex,
+            name,
+            borderColor: color,
+            index,
+            borderWidth,
+            size,
+            fillColor,
+          });
+        }
       });
 
       return models;
@@ -128,12 +137,14 @@ export default class ScatterSeries extends Component {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum) => {
-        const value = {
-          x: getCoordinateXValue(datum),
-          y: getCoordinateYValue(datum),
-        } as TooltipDataValue; // @TODO: tooltip format
+        if (!isNull(datum)) {
+          const value = {
+            x: getCoordinateXValue(datum),
+            y: getCoordinateYValue(datum),
+          } as TooltipDataValue; // @TODO: tooltip format
 
-        tooltipData.push({ label: name, color, value });
+          tooltipData.push({ label: name, color, value });
+        }
       });
 
       return tooltipData;

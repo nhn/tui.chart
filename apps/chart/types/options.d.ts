@@ -107,7 +107,7 @@ export interface HeatmapSeriesData {
 
 export interface ScatterSeriesType {
   name: string;
-  data: CoordinateDataType[];
+  data: (CoordinateDataType | null)[];
   color: string;
   iconType: ScatterSeriesIconType;
 }
