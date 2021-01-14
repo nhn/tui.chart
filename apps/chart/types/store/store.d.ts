@@ -333,6 +333,7 @@ type BaseAxisData = InitAxisData & {
   isLabelAxis: boolean;
   pointOnColumn: boolean;
   tickDistance: number;
+  maxLabelWidth: number;
 };
 
 export type LabelAxisData = BaseAxisData & {

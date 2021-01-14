@@ -59,6 +59,28 @@ describe('yAxis', () => {
             yAxisHeight: 80,
           },
         },
+        theme: {
+          xAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          yAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+        },
       });
     });
 
@@ -136,6 +158,28 @@ describe('xAxis', () => {
             secondStartX: 45,
             yAxisLabelAnchorPoint: 5,
             yAxisHeight: 80,
+          },
+        },
+        theme: {
+          xAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          yAxis: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
           },
         },
       });
