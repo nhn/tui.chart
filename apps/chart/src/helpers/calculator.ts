@@ -17,14 +17,20 @@ export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
   return Math.ceil(ctx.measureText(text).width);
 }
 
-export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
+/*
+ * Calculate height of canvas text
+ * https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
+ * */
+export function getTextHeight(text: string, font: string = DEFAULT_LABEL_TEXT) {
   ctx.font = font;
-  const matches = ctx.font.match(/\d+/);
+  const { actualBoundingBoxAscent, actualBoundingBoxDescent } = ctx.measureText(text);
 
-  return parseInt(String(Number(matches) * 1.2), 10);
+  return Math.ceil(Math.abs(actualBoundingBoxAscent) + Math.abs(actualBoundingBoxDescent) + 1);
 }
 
-export const LABEL_ANCHOR_POINT = crispPixel(TICK_SIZE * 2 + getTextHeight(DEFAULT_LABEL_TEXT) / 2);
+export function getAxisLabelAnchorPoint(text: string, font: string = DEFAULT_LABEL_TEXT) {
+  return crispPixel(TICK_SIZE * 2 + getTextHeight(text, font) / 2);
+}
 
 function getDecimalLength(value: string | number) {
   const valueArr = String(value).split('.');

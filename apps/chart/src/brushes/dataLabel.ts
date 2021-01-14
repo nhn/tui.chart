@@ -145,7 +145,7 @@ function getBubbleRect(model: DataLabelModel): BubbleInfo {
   } = theme!.textBubble as Required<TextBubbleTheme>;
   const labelWidth = getTextWidth(text, font);
   const width = labelWidth + paddingX * 2;
-  const height = getTextHeight(font) + paddingY * 2;
+  const height = getTextHeight(text, font) + paddingY * 2;
   let { x, y } = model;
 
   if (textAlign === 'center') {

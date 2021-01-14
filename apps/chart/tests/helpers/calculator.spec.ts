@@ -32,5 +32,5 @@ describe('spline chart', () => {
 });
 
 it('getTextHeight', () => {
-  expect(getTextHeight('normal 16px Arial')).toBe(19);
+  expect(getTextHeight('ABCDE', 'normal 16px Arial')).toBe(19);
 });

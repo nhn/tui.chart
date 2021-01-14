@@ -102,7 +102,7 @@ export default abstract class Chart<T extends Options> {
     updating: false,
   };
 
-  ro: ResizeObserver | null = null;
+  resizeObserver: ResizeObserver | null = null;
 
   private getAnimationDuration(animationOption?: AnimationOptions) {
     const { firstRendering } = this.animator;
@@ -239,24 +239,24 @@ export default abstract class Chart<T extends Options> {
     if (isUndefined(ResizeObserver)) {
       window.addEventListener('resize', this.debounceWindowResizeEvent);
     } else {
-      this.ro = new ResizeObserver((entries) => {
-        for (const entry of entries) {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
           const { width, height } = entry.contentRect;
           this.debounceResizeEvent(width, height);
-        }
+        });
       });
-      this.ro!.observe(this.el);
+      this.resizeObserver.observe(this.el);
     }
   }
 
   clearResizeEvent() {
-    if (this.ro) {
-      this.ro!.unobserve(this.el);
-      this.ro!.disconnect();
-      this.ro = null;
+    if (this.resizeObserver) {
+      this.resizeObserver.unobserve(this.el);
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    } else {
+      window.removeEventListener('resize', this.debounceWindowResizeEvent);
     }
-
-    window.removeEventListener('resize', this.debounceWindowResizeEvent);
   }
 
   handleEvent(event: MouseEvent) {

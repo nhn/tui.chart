@@ -231,7 +231,7 @@ function getRadialAxis(
     centerX: width / 2,
     centerY: height / 2,
     maxLabelTextWidth: getMaxLengthLabelWidth(valueLabels),
-    labelTextHeight: getTextHeight(DEFAULT_LABEL_TEXT),
+    labelTextHeight: getTextHeight(valueLabels[0], DEFAULT_LABEL_TEXT),
     labelInterval,
   };
 }
@@ -344,26 +344,28 @@ function getSecondaryYAxisData({
 }
 
 function hasYAxisMaxLabelLengthChanged(
-  previusAxes: Axes,
+  previousAxes: Axes,
   currentAxes: Axes,
   field: 'yAxis' | 'secondaryYAxis'
 ) {
-  const prevYAxis = previusAxes[field];
+  const prevYAxis = previousAxes[field];
   const yAxis = currentAxes[field];
 
   if (!prevYAxis?.labels && yAxis?.labels) {
     return true;
   }
 
-  return !isUndefined(prevYAxis?.maxLabelWidth) && !isUndefined(yAxis?.maxLabelWidth)
-    ? prevYAxis!.maxLabelWidth !== yAxis!.maxLabelWidth
-    : false;
+  if (isNumber(prevYAxis?.maxLabelWidth) && isNumber(yAxis?.maxLabelWidth)) {
+    return prevYAxis?.maxLabelWidth !== yAxis?.maxLabelWidth;
+  }
+
+  return false;
 }
 
-function hasYAxisTypeMaxLabelChanged(previusAxes: Axes, currentAxes: Axes): boolean {
+function hasYAxisTypeMaxLabelChanged(previousAxes: Axes, currentAxes: Axes): boolean {
   return (
-    hasYAxisMaxLabelLengthChanged(previusAxes, currentAxes, 'yAxis') ||
-    hasYAxisMaxLabelLengthChanged(previusAxes, currentAxes, 'secondaryYAxis')
+    hasYAxisMaxLabelLengthChanged(previousAxes, currentAxes, 'yAxis') ||
+    hasYAxisMaxLabelLengthChanged(previousAxes, currentAxes, 'secondaryYAxis')
   );
 }
 
