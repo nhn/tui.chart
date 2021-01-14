@@ -114,6 +114,7 @@ module.exports = (env, { mode, minify }) => {
         color: true,
       },
       contentBase: __dirname,
+      host: '0.0.0.0',
     },
     module: {
       rules: [
