@@ -62,6 +62,7 @@ interface StateProp {
   centerYAxis?: Pick<CenterYAxisData, 'xAxisHalfSize'> | null;
   zoomRange?: RangeDataType<number>;
   initialAxisData: InitAxisData;
+  axisName: string;
 }
 
 type ValueStateProp = StateProp & {
@@ -79,6 +80,7 @@ type SecondaryYAxisParam = {
   valueAxisSize: number;
   labelAxisSize: number;
   labelAxisName: string;
+  valueAxisName: string;
   initialAxisData: InitAxisData;
   isCoordinateTypeChart: boolean;
 };
@@ -137,6 +139,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     rawCategories,
     initialAxisData,
     isCoordinateTypeChart,
+    axisName,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
@@ -147,9 +150,10 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
   const labelDistance = axisSize / (labels.length - (pointOnColumn ? 0 : 1));
+  const formatter = options[axisName]?.formatter ?? ((value) => value);
 
   return {
-    labels,
+    labels: labels.map((label) => formatter(label)),
     pointOnColumn,
     isLabelAxis: true,
     tickCount: labels.length + (pointOnColumn ? 1 : 0),
@@ -161,10 +165,11 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
 }
 
 export function getValueAxisData(stateProp: StateProp): ValueAxisState {
-  const { scale, axisSize, series, options, centerYAxis, initialAxisData } = stateProp;
+  const { scale, axisSize, series, options, centerYAxis, initialAxisData, axisName } = stateProp;
   const { limit, stepSize } = scale;
   const size = centerYAxis ? centerYAxis?.xAxisHalfSize : axisSize;
   const divergingBoxSeries = isDivergingBoxSeries(series, options);
+  const formatter = options[axisName]?.formatter ?? ((value) => value);
   const zeroPosition = getZeroPosition(
     limit,
     axisSize,
@@ -178,7 +183,7 @@ export function getValueAxisData(stateProp: StateProp): ValueAxisState {
   }
 
   const axisData: ValueAxisState = {
-    labels: valueLabels,
+    labels: valueLabels.map((label) => formatter(label)),
     pointOnColumn: false,
     isLabelAxis: false,
     tickCount: valueLabels.length,
@@ -314,6 +319,7 @@ function getSecondaryYAxisData({
   valueAxisSize,
   labelAxisSize,
   labelAxisName,
+  valueAxisName,
   initialAxisData,
   isCoordinateTypeChart,
 }: SecondaryYAxisParam): LabelAxisState | ValueAxisState {
@@ -332,6 +338,7 @@ function getSecondaryYAxisData({
         zoomRange,
         initialAxisData,
         isCoordinateTypeChart,
+        axisName: labelAxisName,
       })
     : getValueAxisData({
         scale: scale.secondaryYAxis!,
@@ -340,6 +347,7 @@ function getSecondaryYAxisData({
         series,
         centerYAxis: null,
         initialAxisData,
+        axisName: valueAxisName,
       });
 }
 
@@ -425,6 +433,7 @@ const axes: StoreModule = {
             }
           : null,
         initialAxisData: initialAxisData[valueAxisName],
+        axisName: valueAxisName,
       });
 
       const labelAxisData = getLabelAxisData({
@@ -437,6 +446,7 @@ const axes: StoreModule = {
         zoomRange,
         initialAxisData: initialAxisData[labelAxisName],
         isCoordinateTypeChart,
+        axisName: labelAxisName,
       });
 
       const axesState = {
@@ -451,6 +461,7 @@ const axes: StoreModule = {
           valueAxisSize,
           labelAxisSize,
           labelAxisName,
+          valueAxisName,
           initialAxisData: initialAxisData.secondaryYAxis!,
           isCoordinateTypeChart,
         }) as AxisData;
