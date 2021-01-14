@@ -129,7 +129,7 @@ export interface LineAreaData {
 
 export interface BubbleSeriesType {
   name: string;
-  data: BubbleSeriesDataType[];
+  data: (BubbleSeriesDataType | null)[];
   color: string;
 }
 

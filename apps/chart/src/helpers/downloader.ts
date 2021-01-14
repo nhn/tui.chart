@@ -1,4 +1,4 @@
-import { isString, isUndefined, isNumber, includes } from '@src/helpers/utils';
+import { isString, isUndefined, isNumber, includes, isNull } from '@src/helpers/utils';
 import { DataToExport } from '@src/component/exportMenu';
 import {
   HeatmapCategoriesType,
@@ -178,7 +178,9 @@ function makeBubbleExportData(exportData: DataToExport): ExportData2DArray {
   return series.bubble!.data.reduce<ExportData2DArray>(
     (acc, { name, data }) => [
       ...acc,
-      ...data.map(({ x, y, r, label }) => [name, label, String(x), y, r]),
+      ...data.map((datum) =>
+        isNull(datum) ? [] : [name, datum.label, String(datum.x), datum.y, datum.r]
+      ),
     ],
     [['Name', 'Label', 'X', 'Y', 'Radius']]
   );

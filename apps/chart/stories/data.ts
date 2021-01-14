@@ -1243,6 +1243,21 @@ export const lifeExpectancyPerGDPData = {
   ],
 };
 
+export const lifeExpectancyPerGDPDataWithNull = {
+  series: [
+    {
+      name: 'Africa',
+      data: [
+        { x: 4200, y: 70.35, r: 32209101, label: 'Morocco' },
+        { x: 4200, y: 70.71, r: 76117421, label: 'Egypt' },
+        { x: 5900, y: 56.46, r: 1355246, label: 'Gabon' },
+        null,
+        { x: 6600, y: 72.74, r: 32129324, label: 'Algeria' },
+      ],
+    },
+  ],
+};
+
 export const lifeExpectancyPerGDPDataWithDatetime = {
   series: [
     {

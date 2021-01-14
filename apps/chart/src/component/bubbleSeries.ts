@@ -1,11 +1,17 @@
 import { CircleModel, CircleResponderModel, CircleSeriesModels } from '@t/components/series';
-import { BaseOptions, BubbleChartOptions, BubbleSeriesType, Rect } from '@t/options';
+import {
+  BaseOptions,
+  BubbleChartOptions,
+  BubbleSeriesDataType,
+  BubbleSeriesType,
+  Rect,
+} from '@t/options';
 import { ChartState, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNumber, isString } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNull, isNumber, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import Component from './component';
@@ -18,7 +24,9 @@ const MINIMUM_DETECTING_AREA_RADIUS = 1;
 
 export function getMaxRadius(bubbleData: BubbleSeriesType[]) {
   return bubbleData.reduce((acc, cur) => {
-    return Math.max(acc, ...cur.data.map(({ r }) => r));
+    const NonNullData = cur.data.filter((datum) => !isNull(datum)) as BubbleSeriesDataType[];
+
+    return Math.max(acc, ...NonNullData.map(({ r }) => r));
   }, 0);
 }
 
@@ -110,29 +118,31 @@ export default class BubbleSeries extends Component {
       const color = getRGBA(seriesColor, active ? 0.8 : 0.1);
 
       data.forEach((datum) => {
-        const rawXValue = getCoordinateXValue(datum);
-        const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
-        const yValue = getCoordinateYValue(datum);
+        if (!isNull(datum)) {
+          const rawXValue = getCoordinateXValue(datum);
+          const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
+          const yValue = getCoordinateYValue(datum);
 
-        const xValueRatio = getValueRatio(xValue, xAxisLimit);
-        const yValueRatio = getValueRatio(yValue, yAxisLimit);
+          const xValueRatio = getValueRatio(xValue, xAxisLimit);
+          const yValueRatio = getValueRatio(yValue, yAxisLimit);
 
-        const x = xValueRatio * this.rect.width;
-        const y = (1 - yValueRatio) * this.rect.height;
-        const radius = Math.max(MINIMUM_RADIUS, (datum.r / this.maxValue) * this.maxRadius);
+          const x = xValueRatio * this.rect.width;
+          const y = (1 - yValueRatio) * this.rect.height;
+          const radius = Math.max(MINIMUM_RADIUS, (datum.r / this.maxValue) * this.maxRadius);
 
-        circleModels.push({
-          x,
-          y,
-          type: 'circle',
-          radius,
-          color,
-          style: ['default'],
-          seriesIndex,
-          name,
-          borderWidth,
-          borderColor,
-        });
+          circleModels.push({
+            x,
+            y,
+            type: 'circle',
+            radius,
+            color,
+            style: ['default'],
+            seriesIndex,
+            name,
+            borderWidth,
+            borderColor,
+          });
+        }
       });
 
       return circleModels;
@@ -144,16 +154,18 @@ export default class BubbleSeries extends Component {
       const tooltipData: TooltipData[] = [];
 
       data.forEach((datum) => {
-        const { r, label } = datum;
-        tooltipData.push({
-          label: `${name}/${label}`,
-          color,
-          value: {
-            x: getCoordinateXValue(datum),
-            y: getCoordinateYValue(datum),
-            r,
-          } as TooltipDataValue,
-        });
+        if (!isNull(datum)) {
+          const { r, label } = datum;
+          tooltipData.push({
+            label: `${name}/${label}`,
+            color,
+            value: {
+              x: getCoordinateXValue(datum),
+              y: getCoordinateYValue(datum),
+              r,
+            } as TooltipDataValue,
+          });
+        }
       });
 
       return tooltipData;
