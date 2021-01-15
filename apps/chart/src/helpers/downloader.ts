@@ -1,4 +1,4 @@
-import { isString, isUndefined, isNumber, includes } from '@src/helpers/utils';
+import { isString, isUndefined, isNumber, includes, isNull } from '@src/helpers/utils';
 import { DataToExport } from '@src/component/exportMenu';
 import {
   HeatmapCategoriesType,
@@ -143,7 +143,10 @@ function makeHeatmapExportData({ categories, series }: DataToExport): ExportData
   const xCategories = (categories as HeatmapCategoriesType).x;
 
   return series.heatmap!.data.reduce<ExportData2DArray>(
-    (acc, { data, yCategory }) => [...acc, [yCategory, ...data.map((datum) => String(datum))]],
+    (acc, { data, yCategory }) => [
+      ...acc,
+      [yCategory, ...data.map((datum) => (isNull(datum) ? '' : datum))],
+    ],
     [['', ...xCategories]]
   );
 }

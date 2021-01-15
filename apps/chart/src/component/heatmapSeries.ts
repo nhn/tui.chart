@@ -121,7 +121,7 @@ export default class HeatmapSeries extends Component {
 
         const colorRatio = getColorRatio(colorValueScale.limit, colorValue)!;
         const color = isNull(colorValue)
-          ? '#fff'
+          ? 'rgba(0, 0, 0, 0)'
           : getSpectrumColor(colorRatio, distances, startRGB);
         const thickness = borderWidth;
 
