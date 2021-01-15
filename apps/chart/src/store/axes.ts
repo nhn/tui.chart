@@ -142,18 +142,20 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     axisName,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
-  const labels =
+  const labelsBeforeFormatting =
     !isZooming(rawCategories, zoomRange) && isCoordinateTypeChart
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options?.xAxis?.date);
+  const formatter = options[axisName]?.formatter ?? ((value) => value);
+  // @TODO: regenerate label when exceeding max width
+  const labels = labelsBeforeFormatting.map((label) => formatter(label));
 
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
   const labelDistance = axisSize / (labels.length - (pointOnColumn ? 0 : 1));
-  const formatter = options[axisName]?.formatter ?? ((value) => value);
 
   return {
-    labels: labels.map((label) => formatter(label)),
+    labels,
     pointOnColumn,
     isLabelAxis: true,
     tickCount: labels.length + (pointOnColumn ? 1 : 0),
@@ -181,15 +183,16 @@ export function getValueAxisData(stateProp: StateProp): ValueAxisState {
   if (!centerYAxis && divergingBoxSeries) {
     valueLabels = getDivergingValues(valueLabels);
   }
+  const labels = valueLabels.map((label) => formatter(label));
 
   const axisData: ValueAxisState = {
-    labels: valueLabels.map((label) => formatter(label)),
+    labels,
     pointOnColumn: false,
     isLabelAxis: false,
-    tickCount: valueLabels.length,
-    tickDistance: size / valueLabels.length,
+    tickCount: labels.length,
+    tickDistance: size / labels.length,
     ...initialAxisData,
-    maxLabelWidth: getMaxLengthLabelWidth(valueLabels),
+    maxLabelWidth: getMaxLengthLabelWidth(labels),
   };
 
   if (isNumber(zeroPosition)) {

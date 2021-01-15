@@ -1,9 +1,9 @@
 import LineChart from '@src/charts/lineChart';
 import { LineSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { temperatureData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { temperatureData } from './data';
 
 export default {
   title: 'chart|Axes',
@@ -41,18 +41,26 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
 export const formatter = () => {
   const { el } = createChart(temperatureData, {
     xAxis: {
-      formatter: (value) => `${value}🌟`,
+      formatter: (value) => {
+        const index = Number(value.split('-')[1]);
+        const animals = ['🐶', '🐱', '🦊', '🐻'];
+
+        return `${animals[index % animals.length]} ${value}`;
+      },
+      date: {
+        format: 'YY-MM-DD',
+      },
     },
     yAxis: {
       formatter: (value) => {
         if (value < 0) {
-          return `❄️${value}`;
+          return `${value} ❄️`;
         }
         if (value > 25) {
-          return `🔥${value}`;
+          return `${value} 🔥`;
         }
 
-        return `☀️${value}`;
+        return `️${value} ☀️`;
       },
     },
   });
