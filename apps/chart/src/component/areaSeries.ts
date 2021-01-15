@@ -557,7 +557,8 @@ export default class AreaSeries extends Component {
       name: this.name,
       eventDetectType: this.eventDetectType,
     });
-    this.activatedResponders = circleModels;
+
+    this.activatedResponders = circleModels.slice(0, circleModels.length / 2); // for rendering unique tooltip data
   }
 
   onMousemoveNearestType(responders: RectResponderModel[], mousePositions: Point) {
