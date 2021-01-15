@@ -409,7 +409,7 @@ describe('with null data', () => {
       series: [
         {
           borderColor: '#fff',
-          color: '#fff',
+          color: 'rgba(0, 0, 0, 0)',
           colorRatio: 0,
           colorValue: null,
           height: 40,
