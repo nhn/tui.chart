@@ -296,7 +296,7 @@ export type HeatmapSeriesData = {
     x: string;
     y: string;
   };
-  colorValue: number;
+  colorValue: number | null;
   indexes: [number, number];
 }[];
 
@@ -333,6 +333,7 @@ type BaseAxisData = InitAxisData & {
   isLabelAxis: boolean;
   pointOnColumn: boolean;
   tickDistance: number;
+  maxLabelWidth: number;
 };
 
 export type LabelAxisData = BaseAxisData & {

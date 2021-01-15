@@ -2,8 +2,15 @@ import Component from './component';
 import Painter from '@src/painter';
 import { AxisType } from '@src/component/axis';
 import { ChartState, Options, CenterYAxisData } from '@t/store/store';
-import { makeTickPixelPositions, crispPixel, LABEL_ANCHOR_POINT } from '@src/helpers/calculator';
+import {
+  makeTickPixelPositions,
+  crispPixel,
+  getAxisLabelAnchorPoint,
+} from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
+import { AxisTheme } from '@t/theme';
+import { getAxisTheme } from '@src/helpers/axes';
+import { getTitleFontString } from '@src/helpers/style';
 
 type CoordinateKey = 'x' | 'y';
 
@@ -24,19 +31,22 @@ export default class AxisUsingCenterY extends Component {
 
   yAxisComponent!: boolean;
 
+  theme!: Required<AxisTheme>;
+
   initialize({ name }: { name: AxisType }) {
     this.type = 'axis';
     this.name = name;
     this.yAxisComponent = name === AxisType.Y;
   }
 
-  render({ layout, axes }: ChartState<Options>) {
+  render({ layout, axes, theme }: ChartState<Options>) {
     const { centerYAxis } = axes;
 
     if (!centerYAxis) {
       return;
     }
 
+    this.theme = getAxisTheme(theme, this.name) as Required<AxisTheme>;
     this.rect = layout[this.name];
 
     if (this.name === 'yAxis') {
@@ -203,6 +213,9 @@ export default class AxisUsingCenterY extends Component {
       centerYAxis: { secondStartX, yAxisLabelAnchorPoint },
     } = renderOptions;
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
+    const labelTheme = this.theme.label;
+    const font = getTitleFontString(labelTheme);
+
     let labelAnchorPoint, textAlign, textLabels;
 
     if (this.yAxisComponent) {
@@ -210,10 +223,12 @@ export default class AxisUsingCenterY extends Component {
       textAlign = 'center';
       textLabels = labels;
     } else {
-      labelAnchorPoint = LABEL_ANCHOR_POINT;
+      labelAnchorPoint = getAxisLabelAnchorPoint(labels[0], font);
       textAlign = 'center';
       textLabels = [...labels].reverse();
     }
+
+    const style = ['default', { textAlign, font, fillStyle: labelTheme.color }];
 
     return textLabels.reduce((positions, text, index) => {
       if (index % labelInterval) {
@@ -223,7 +238,7 @@ export default class AxisUsingCenterY extends Component {
       const model = {
         type: 'label',
         text,
-        style: ['default', { textAlign }],
+        style,
         [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
         [anchorKey]: labelAnchorPoint,
       } as LabelModel;

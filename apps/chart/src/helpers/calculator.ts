@@ -3,13 +3,34 @@
  */
 import { Options, ValueEdge, LabelAxisData } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
-import { range, isInteger, isString } from '@src/helpers/utils';
+import { range, isInteger, isString, isNull } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { TICK_SIZE } from '@src/brushes/axis';
 
-export const LABEL_ANCHOR_POINT = crispPixel(TICK_SIZE * 2 + getTextHeight(DEFAULT_LABEL_TEXT) / 2);
+const ctx = document.createElement('canvas').getContext('2d')!;
+
+export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
+  ctx.font = font;
+
+  return Math.ceil(ctx.measureText(text).width);
+}
+
+/*
+ * Calculate height of canvas text
+ * https://developer.mozilla.org/en-US/docs/Web/API/TextMetrics
+ * */
+export function getTextHeight(text: string, font: string = DEFAULT_LABEL_TEXT) {
+  ctx.font = font;
+  const { actualBoundingBoxAscent, actualBoundingBoxDescent } = ctx.measureText(text);
+
+  return Math.ceil(Math.abs(actualBoundingBoxAscent) + Math.abs(actualBoundingBoxDescent) + 1);
+}
+
+export function getAxisLabelAnchorPoint(text: string, font: string = DEFAULT_LABEL_TEXT) {
+  return crispPixel(TICK_SIZE * 2 + getTextHeight(text, font) / 2);
+}
 
 function getDecimalLength(value: string | number) {
   const valueArr = String(value).split('.');
@@ -139,15 +160,18 @@ function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint
   };
 }
 
-export function setSplineControlPoint(points: BezierPoint[]) {
+export function setSplineControlPoint(points: (BezierPoint | null)[]) {
   for (let i = 0, pointsSize = points.length, prev = points[0]; i < pointsSize; i += 1) {
     const point = points[i];
+    if (isNull(point)) {
+      prev = points[i + 1];
+      continue;
+    }
 
-    point.controlPoint = getControlPoints(
-      prev,
-      point,
-      points[Math.min(i + 1, pointsSize - 1) % pointsSize]
-    );
+    const next = points[Math.min(i + 1, pointsSize - 1) % pointsSize];
+    if (prev && next) {
+      point.controlPoint = getControlPoints(prev, point, next);
+    }
 
     prev = point;
   }
@@ -159,21 +183,6 @@ export function getValueRatio(value: number, { min, max }: ValueEdge) {
 
 export function getDistance(point1: Point, point2: Point) {
   return Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
-}
-
-export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
-  const ctx = document.createElement('canvas').getContext('2d')!;
-  ctx.font = font;
-
-  return Math.ceil(ctx.measureText(text).width);
-}
-
-export function getTextHeight(font: string = DEFAULT_LABEL_TEXT) {
-  const ctx = document.createElement('canvas').getContext('2d')!;
-  ctx.font = font;
-  const matches = ctx.font.match(/\d+/);
-
-  return parseInt(String(Number(matches) * 1.2), 10);
 }
 
 export function getMaxLengthLabelWidth(labels: string[]) {

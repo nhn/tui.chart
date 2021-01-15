@@ -6,7 +6,7 @@ import {
   ChartSeriesMap,
   Options,
 } from '@t/store/store';
-import { getFirstValidValue } from '@src/helpers/utils';
+import { getFirstValidValue, isNull } from '@src/helpers/utils';
 import { isBoxSeries } from '@src/component/boxSeries';
 import { extend } from '@src/store/store';
 import {
@@ -88,6 +88,7 @@ function setSeriesDataRange(
   seriesDataRange: SeriesDataRange
 ) {
   const { secondaryYAxis } = getYAxisOption(options);
+
   const axisNames =
     hasSecondaryYAxis(options) && secondaryYAxis?.chartType
       ? [secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis']
@@ -127,7 +128,9 @@ const dataRange: StoreModule = {
         const firstExistValue = getFirstValidValue(values);
 
         if (isCoordinateSeries(series)) {
-          values = values.map((value) => getCoordinateYValue(value));
+          values = values
+            .filter((value) => !isNull(value))
+            .map((value) => getCoordinateYValue(value));
 
           const xAxisValues = (categories as string[]).map((value) =>
             hasDateValue ? Number(new Date(value)) : Number(value)
@@ -135,10 +138,13 @@ const dataRange: StoreModule = {
 
           seriesDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);
         } else if (isRangeValue(firstExistValue)) {
-          values = values.reduce(
-            (arr, value) => (Array.isArray(value) ? [...arr, ...value] : [...value]),
-            []
-          );
+          values = values.reduce((arr, value) => {
+            if (isNull(value)) {
+              return arr;
+            }
+
+            return Array.isArray(value) ? [...arr, ...value] : [...value];
+          }, []);
         } else if (stackSeries && stackSeries[seriesName]?.stack) {
           values = stackSeries[seriesName].dataRangeValues;
         } else if (isBoxSeries(seriesName as ChartType)) {

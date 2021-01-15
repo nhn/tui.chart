@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { pick, includes, isNumber, isUndefined } from '@src/helpers/utils';
+import { pick, includes, isNumber, isUndefined, isNull } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,
@@ -49,7 +49,7 @@ interface RenderOptions {
   labelDistance?: number;
 }
 
-type DatumType = CoordinateDataType | number;
+type DatumType = CoordinateDataType | number | null;
 type ResponderTypes = CircleResponderModel[] | RectResponderModel[];
 
 export default class LineSeries extends Component {
@@ -199,14 +199,19 @@ export default class LineSeries extends Component {
 
   makeTooltipData(lineSeriesData: LineSeriesType[], categories: string[]) {
     return lineSeriesData.flatMap(({ rawData, name, color }, seriesIndex) => {
-      return rawData.map((datum: DatumType, index) => ({
-        label: name,
-        color,
-        value: getCoordinateYValue(datum),
-        category: categories[getCoordinateDataIndex(datum, categories, index, this.startIndex)],
-        seriesIndex,
-        index,
-      }));
+      return rawData.map((datum: DatumType, index) =>
+        isNull(datum)
+          ? ({} as TooltipData)
+          : {
+              label: name,
+              color,
+              value: getCoordinateYValue(datum),
+              category:
+                categories[getCoordinateDataIndex(datum, categories, index, this.startIndex)],
+              seriesIndex,
+              index,
+            }
+      );
     });
   }
 
@@ -226,19 +231,20 @@ export default class LineSeries extends Component {
     renderOptions: RenderOptions,
     categories: string[]
   ): LinePointsModel[] {
-    const {
-      options: { spline },
-    } = renderOptions;
+    const { spline } = renderOptions.options;
     const yAxisLimit = scale[this.yAxisName].limit;
     const xAxisLimit = scale?.xAxis?.limit;
     const { lineWidth, dashSegments } = this.theme;
 
-    // @TODO: model paint 시 x, y가 범위 밖에 있는 좌표라면 그려주지 않도록 처리 필요.
     return seriesRawData.map(({ rawData, name, color: seriesColor }, seriesIndex) => {
-      const points: PointModel[] = [];
+      const points: (PointModel | null)[] = [];
       const active = this.activeSeriesMap![name];
 
       rawData.forEach((datum, idx) => {
+        if (isNull(datum)) {
+          return points.push(null);
+        }
+
         const value = getCoordinateYValue(datum);
         const yValueRatio = getValueRatio(value, yAxisLimit);
         const y = (1 - yValueRatio) * this.rect.height;
@@ -281,7 +287,11 @@ export default class LineSeries extends Component {
 
     lineSeriesModel.forEach(({ color, name, points }, seriesIndex) => {
       const active = this.activeSeriesMap![name!];
-      points.forEach(({ x, y }, index) => {
+      points.forEach((point, index) => {
+        if (isNull(point)) {
+          return;
+        }
+        const { x, y } = point;
         const model = { type: 'circle', x, y, seriesIndex, name, index } as CircleModel;
         if (showDot) {
           dotSeriesModel.push({
@@ -358,15 +368,19 @@ export default class LineSeries extends Component {
     const dataLabelTheme = this.theme.dataLabels;
 
     return seriesModels.flatMap(({ points, name, color }) =>
-      points.map((point) => ({
-        type: 'point',
-        ...point,
-        name,
-        theme: {
-          ...dataLabelTheme,
-          color: dataLabelTheme.useSeriesColor ? color : dataLabelTheme.color,
-        },
-      }))
+      points.map((point) =>
+        isNull(point)
+          ? ({} as PointDataLabel)
+          : {
+              type: 'point',
+              ...point,
+              name,
+              theme: {
+                ...dataLabelTheme,
+                color: dataLabelTheme.useSeriesColor ? color : dataLabelTheme.color,
+              },
+            }
+      )
     );
   }
 

@@ -1,11 +1,17 @@
 import { CircleModel, CircleResponderModel, CircleSeriesModels } from '@t/components/series';
-import { BaseOptions, BubbleChartOptions, BubbleSeriesType, Rect } from '@t/options';
+import {
+  BaseOptions,
+  BubbleChartOptions,
+  BubbleSeriesDataType,
+  BubbleSeriesType,
+  Rect,
+} from '@t/options';
 import { ChartState, Scale } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNumber, isString } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNull, isNumber, isString } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getNearestResponder, RespondersThemeType } from '@src/helpers/responders';
 import Component from './component';
@@ -18,7 +24,9 @@ const MINIMUM_DETECTING_AREA_RADIUS = 1;
 
 export function getMaxRadius(bubbleData: BubbleSeriesType[]) {
   return bubbleData.reduce((acc, cur) => {
-    return Math.max(acc, ...cur.data.map(({ r }) => r));
+    const NonNullData = cur.data.filter((datum) => !isNull(datum)) as BubbleSeriesDataType[];
+
+    return Math.max(acc, ...NonNullData.map(({ r }) => r));
   }, 0);
 }
 
@@ -108,8 +116,9 @@ export default class BubbleSeries extends Component {
       const circleModels: CircleModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 0.8 : 0.1);
+      const nonNullData = data.filter((datum) => !isNull(datum)) as BubbleSeriesDataType[];
 
-      data.forEach((datum) => {
+      nonNullData.forEach((datum) => {
         const rawXValue = getCoordinateXValue(datum);
         const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
         const yValue = getCoordinateYValue(datum);
@@ -142,8 +151,9 @@ export default class BubbleSeries extends Component {
   makeTooltipModel(circleData: BubbleSeriesType[]) {
     return [...circleData].flatMap(({ data, name, color }) => {
       const tooltipData: TooltipData[] = [];
+      const nonNullData = data.filter((datum) => !isNull(datum)) as BubbleSeriesDataType[];
 
-      data.forEach((datum) => {
+      nonNullData.forEach((datum) => {
         const { r, label } = datum;
         tooltipData.push({
           label: `${name}/${label}`,

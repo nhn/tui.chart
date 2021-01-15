@@ -1,11 +1,18 @@
 import Component from './component';
-import { Rect, ScatterChartOptions, ScatterSeriesType } from '@t/options';
+import { CoordinateDataType, Rect, ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ChartState, ValueEdge } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNumber, isString, isUndefined } from '@src/helpers/utils';
+import {
+  deepCopy,
+  deepMergedCopy,
+  isNull,
+  isNumber,
+  isString,
+  isUndefined,
+} from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
 import {
@@ -92,8 +99,9 @@ export default class ScatterSeries extends Component {
       const models: ScatterSeriesModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
+      const nonNullData = data.filter((datum) => !isNull(datum)) as CoordinateDataType[];
 
-      data.forEach((datum, index) => {
+      nonNullData.forEach((datum, index) => {
         const rawXValue = getCoordinateXValue(datum);
         const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
         const yValue = getCoordinateYValue(datum);
@@ -126,8 +134,9 @@ export default class ScatterSeries extends Component {
   makeTooltipModel(circleData: ScatterSeriesType[]) {
     return [...circleData].flatMap(({ data, name, color }) => {
       const tooltipData: TooltipData[] = [];
+      const nonNullData = data.filter((datum) => !isNull(datum)) as CoordinateDataType[];
 
-      data.forEach((datum) => {
+      nonNullData.forEach((datum) => {
         const value = {
           x: getCoordinateXValue(datum),
           y: getCoordinateYValue(datum),

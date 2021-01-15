@@ -22,10 +22,10 @@ import {
 } from '@t/theme';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
-type LineSeriesDataType = number | Point | [number, number] | [string, number];
-type HeatmapSeriesDataType = number[];
+type LineSeriesDataType = number | Point | [number, number] | [string, number] | null;
+type HeatmapSeriesDataType = (number | null)[];
 export type HeatmapCategoriesType = { x: string[]; y: string[] };
-export type AreaSeriesDataType = number | RangeDataType<number>;
+export type AreaSeriesDataType = number | RangeDataType<number> | null;
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 export interface Point {
   x: number;
@@ -91,7 +91,7 @@ export interface HeatmapSeriesType {
 
 export interface TreemapSeriesType {
   label: string;
-  data?: number;
+  data?: number | null;
   colorValue?: number;
   children?: TreemapSeriesType[];
 }
@@ -107,7 +107,7 @@ export interface HeatmapSeriesData {
 
 export interface ScatterSeriesType {
   name: string;
-  data: CoordinateDataType[];
+  data: (CoordinateDataType | null)[];
   color: string;
   iconType: ScatterSeriesIconType;
 }
@@ -129,7 +129,7 @@ export interface LineAreaData {
 
 export interface BubbleSeriesType {
   name: string;
-  data: BubbleSeriesDataType[];
+  data: (BubbleSeriesDataType | null)[];
   color: string;
 }
 

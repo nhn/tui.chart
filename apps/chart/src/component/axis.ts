@@ -1,7 +1,11 @@
 import Component from './component';
 import Painter from '@src/painter';
 import { ChartState, Options } from '@t/store/store';
-import { makeTickPixelPositions, crispPixel, LABEL_ANCHOR_POINT } from '@src/helpers/calculator';
+import {
+  makeTickPixelPositions,
+  crispPixel,
+  getAxisLabelAnchorPoint,
+} from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 import { TICK_SIZE } from '@src/brushes/axis';
 import { includes } from '@src/helpers/utils';
@@ -191,15 +195,20 @@ export default class Axis extends Component {
   ): LabelModel[] {
     const { width, height } = this.rect;
     const { pointOnColumn, labelInterval, labelDistance, tickInterval } = renderOptions;
+
+    const labelTheme = this.theme.label;
+    const font = getTitleFontString(labelTheme);
+
     const isRightSide = this.isRightSide();
     const yAxisAnchorPoint = isRightSide ? crispPixel(width) : crispPixel(0);
-    const labelAnchorPoint = this.yAxisComponent ? yAxisAnchorPoint : LABEL_ANCHOR_POINT;
+    const labelAnchorPoint = this.yAxisComponent
+      ? yAxisAnchorPoint
+      : getAxisLabelAnchorPoint(labels[0], font);
     const interval = labelInterval === tickInterval ? labelInterval : 1;
     const labelAdjustment = pointOnColumn ? (labelDistance * interval) / 2 : 0;
     const yAxisTextAlign = isRightSide ? 'right' : 'left';
     const textAlign = this.yAxisComponent ? yAxisTextAlign : 'center';
-    const labelTheme = this.theme.label;
-    const font = getTitleFontString(labelTheme);
+
     const style = ['default', { textAlign, font, fillStyle: labelTheme.color }];
     const limit = offsetKey === 'x' ? width : height;
 
