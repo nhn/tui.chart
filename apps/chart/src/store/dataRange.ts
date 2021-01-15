@@ -128,7 +128,9 @@ const dataRange: StoreModule = {
         const firstExistValue = getFirstValidValue(values);
 
         if (isCoordinateSeries(series)) {
-          values = values.map((value) => getCoordinateYValue(value));
+          values = values
+            .filter((value) => !isNull(value))
+            .map((value) => getCoordinateYValue(value));
 
           const xAxisValues = (categories as string[]).map((value) =>
             hasDateValue ? Number(new Date(value)) : Number(value)

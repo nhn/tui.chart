@@ -1050,6 +1050,15 @@ export const genderHeightWeightData = {
   ],
 };
 
+export const genderHeightWeightDataWithNull = {
+  series: [
+    {
+      name: 'male',
+      data: [{ x: 174, y: 65.6 }, { x: 175.3, y: 71.8 }, null, { x: 181.5, y: 74.8 }],
+    },
+  ],
+};
+
 export const currentUserCoordinateDatetimeData = {
   series: [
     {
@@ -1314,6 +1323,21 @@ export const lifeExpectancyPerGDPData = {
         { x: 14500, y: 78.75, r: 108775, label: 'Virgin Islands' },
         { x: 23200, y: 78.49, r: 1993817, label: 'New Zealand' },
         { x: 30700, y: 80.26, r: 5991314, label: 'Australia' },
+      ],
+    },
+  ],
+};
+
+export const lifeExpectancyPerGDPDataWithNull = {
+  series: [
+    {
+      name: 'Africa',
+      data: [
+        { x: 4200, y: 70.35, r: 32209101, label: 'Morocco' },
+        { x: 4200, y: 70.71, r: 76117421, label: 'Egypt' },
+        { x: 5900, y: 56.46, r: 1355246, label: 'Gabon' },
+        null,
+        { x: 6600, y: 72.74, r: 32129324, label: 'Algeria' },
       ],
     },
   ],
