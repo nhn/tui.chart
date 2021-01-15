@@ -116,33 +116,32 @@ export default class BubbleSeries extends Component {
       const circleModels: CircleModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 0.8 : 0.1);
+      const nonNullData = data.filter((datum) => !isNull(datum)) as BubbleSeriesDataType[];
 
-      data.forEach((datum) => {
-        if (!isNull(datum)) {
-          const rawXValue = getCoordinateXValue(datum);
-          const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
-          const yValue = getCoordinateYValue(datum);
+      nonNullData.forEach((datum) => {
+        const rawXValue = getCoordinateXValue(datum);
+        const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
+        const yValue = getCoordinateYValue(datum);
 
-          const xValueRatio = getValueRatio(xValue, xAxisLimit);
-          const yValueRatio = getValueRatio(yValue, yAxisLimit);
+        const xValueRatio = getValueRatio(xValue, xAxisLimit);
+        const yValueRatio = getValueRatio(yValue, yAxisLimit);
 
-          const x = xValueRatio * this.rect.width;
-          const y = (1 - yValueRatio) * this.rect.height;
-          const radius = Math.max(MINIMUM_RADIUS, (datum.r / this.maxValue) * this.maxRadius);
+        const x = xValueRatio * this.rect.width;
+        const y = (1 - yValueRatio) * this.rect.height;
+        const radius = Math.max(MINIMUM_RADIUS, (datum.r / this.maxValue) * this.maxRadius);
 
-          circleModels.push({
-            x,
-            y,
-            type: 'circle',
-            radius,
-            color,
-            style: ['default'],
-            seriesIndex,
-            name,
-            borderWidth,
-            borderColor,
-          });
-        }
+        circleModels.push({
+          x,
+          y,
+          type: 'circle',
+          radius,
+          color,
+          style: ['default'],
+          seriesIndex,
+          name,
+          borderWidth,
+          borderColor,
+        });
       });
 
       return circleModels;
@@ -152,20 +151,19 @@ export default class BubbleSeries extends Component {
   makeTooltipModel(circleData: BubbleSeriesType[]) {
     return [...circleData].flatMap(({ data, name, color }) => {
       const tooltipData: TooltipData[] = [];
+      const nonNullData = data.filter((datum) => !isNull(datum)) as BubbleSeriesDataType[];
 
-      data.forEach((datum) => {
-        if (!isNull(datum)) {
-          const { r, label } = datum;
-          tooltipData.push({
-            label: `${name}/${label}`,
-            color,
-            value: {
-              x: getCoordinateXValue(datum),
-              y: getCoordinateYValue(datum),
-              r,
-            } as TooltipDataValue,
-          });
-        }
+      nonNullData.forEach((datum) => {
+        const { r, label } = datum;
+        tooltipData.push({
+          label: `${name}/${label}`,
+          color,
+          value: {
+            x: getCoordinateXValue(datum),
+            y: getCoordinateYValue(datum),
+            r,
+          } as TooltipDataValue,
+        });
       });
 
       return tooltipData;

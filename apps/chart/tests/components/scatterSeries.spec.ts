@@ -347,7 +347,7 @@ describe('with null data', () => {
     ],
   };
 
-  it(`should make models properly when calling render`, () => {
+  it('should make models properly when calling render', () => {
     scatterSeries = new ScatterSeries({
       store: {} as Store<ScatterChartOptions>,
       eventBus: new EventEmitter(),

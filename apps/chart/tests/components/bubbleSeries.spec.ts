@@ -211,8 +211,7 @@ describe('basic', () => {
   });
 
   it('should register closest responder to the mouse', () => {
-    const closestResponder = result.responders[0];
-    const distantResponder = result.responders[1];
+    const [closestResponder, distantResponder] = result.responders;
 
     const responders = [closestResponder, distantResponder];
     bubbleSeries.onMousemove({ responders, mousePosition: { x: 10, y: 80 } });
@@ -349,7 +348,7 @@ describe('with null data', () => {
     ],
   };
 
-  it(`should make models properly when calling render`, () => {
+  it('should make models properly when calling render', () => {
     bubbleSeries = new BubbleSeries({
       store: {} as Store<BubbleChartOptions>,
       eventBus: new EventEmitter(),

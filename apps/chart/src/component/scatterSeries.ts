@@ -1,5 +1,5 @@
 import Component from './component';
-import { Rect, ScatterChartOptions, ScatterSeriesType } from '@t/options';
+import { CoordinateDataType, Rect, ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ChartState, ValueEdge } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
@@ -99,33 +99,32 @@ export default class ScatterSeries extends Component {
       const models: ScatterSeriesModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
+      const nonNullData = data.filter((datum) => !isNull(datum)) as CoordinateDataType[];
 
-      data.forEach((datum, index) => {
-        if (!isNull(datum)) {
-          const rawXValue = getCoordinateXValue(datum);
-          const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
-          const yValue = getCoordinateYValue(datum);
+      nonNullData.forEach((datum, index) => {
+        const rawXValue = getCoordinateXValue(datum);
+        const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
+        const yValue = getCoordinateYValue(datum);
 
-          const xValueRatio = getValueRatio(xValue, xAxisLimit);
-          const yValueRatio = getValueRatio(yValue, yAxisLimit);
+        const xValueRatio = getValueRatio(xValue, xAxisLimit);
+        const yValueRatio = getValueRatio(yValue, yAxisLimit);
 
-          const x = xValueRatio * this.rect.width;
-          const y = (1 - yValueRatio) * this.rect.height;
+        const x = xValueRatio * this.rect.width;
+        const y = (1 - yValueRatio) * this.rect.height;
 
-          models.push({
-            x,
-            y,
-            type: 'scatterSeries',
-            iconType,
-            seriesIndex,
-            name,
-            borderColor: color,
-            index,
-            borderWidth,
-            size,
-            fillColor,
-          });
-        }
+        models.push({
+          x,
+          y,
+          type: 'scatterSeries',
+          iconType,
+          seriesIndex,
+          name,
+          borderColor: color,
+          index,
+          borderWidth,
+          size,
+          fillColor,
+        });
       });
 
       return models;
@@ -135,16 +134,15 @@ export default class ScatterSeries extends Component {
   makeTooltipModel(circleData: ScatterSeriesType[]) {
     return [...circleData].flatMap(({ data, name, color }) => {
       const tooltipData: TooltipData[] = [];
+      const nonNullData = data.filter((datum) => !isNull(datum)) as CoordinateDataType[];
 
-      data.forEach((datum) => {
-        if (!isNull(datum)) {
-          const value = {
-            x: getCoordinateXValue(datum),
-            y: getCoordinateYValue(datum),
-          } as TooltipDataValue; // @TODO: tooltip format
+      nonNullData.forEach((datum) => {
+        const value = {
+          x: getCoordinateXValue(datum),
+          y: getCoordinateYValue(datum),
+        } as TooltipDataValue; // @TODO: tooltip format
 
-          tooltipData.push({ label: name, color, value });
-        }
+        tooltipData.push({ label: name, color, value });
       });
 
       return tooltipData;
