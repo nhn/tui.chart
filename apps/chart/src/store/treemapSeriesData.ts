@@ -1,6 +1,6 @@
 import { Series, StoreModule, TreemapSeriesData } from '@t/store/store';
 import { TreemapChartOptions, TreemapSeriesType } from '@t/options';
-import { isUndefined, last } from '@src/helpers/utils';
+import { isNull, isUndefined, last } from '@src/helpers/utils';
 
 const TREEMAP_ID_PREFIX = '__TOAST_UI_TREEMAP';
 export const TREEMAP_ROOT_ID = `${TREEMAP_ID_PREFIX}_ROOT`;
@@ -30,7 +30,9 @@ function makeTreeModel(
 
   if (series.children) {
     series.children.forEach((child, childIdx) => {
-      models.push(...makeTreeModel(child, [...indexes, childIdx], depth + 1, id));
+      if (!isNull(child.data)) {
+        models.push(...makeTreeModel(child, [...indexes, childIdx], depth + 1, id));
+      }
     });
   }
 
@@ -80,7 +82,8 @@ function makeTreemapSeries(series: Series, options: TreemapChartOptions) {
   }
 
   const treemapSeries = series.treemap.data
-    .map((data, idx) => makeTreeModel(data, [idx], 0))
+    .filter((datum) => !isNull(datum.data))
+    .map((datum, idx) => makeTreeModel(datum, [idx], 0))
     .flatMap((s) => s)
     .sort((a, b) => b.depth - a.depth);
 

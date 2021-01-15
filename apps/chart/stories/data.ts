@@ -1810,6 +1810,66 @@ export const usedDiskSpaceData = {
   ],
 };
 
+export const usedDiskSpaceDataWithNull = {
+  series: [
+    {
+      label: 'Documents',
+      children: [
+        {
+          label: 'docs',
+          children: [
+            {
+              label: 'pages',
+              data: null,
+            },
+            {
+              label: 'keynote',
+              data: 2.5,
+            },
+            {
+              label: 'numbers',
+              data: 1.2,
+            },
+          ],
+        },
+        {
+          label: 'photos',
+          data: 5.5,
+        },
+        {
+          label: 'videos',
+          data: 20.7,
+        },
+      ],
+    },
+    {
+      label: 'Downloads',
+      children: [
+        {
+          label: 'recent',
+          data: 5.3,
+        },
+        {
+          label: '2020',
+          data: 10.1,
+        },
+        {
+          label: '2019',
+          data: 8.2,
+        },
+      ],
+    },
+    {
+      label: 'Application',
+      data: 16.4,
+    },
+    {
+      label: 'Desktop',
+      data: null,
+    },
+  ],
+};
+
 export const populationDensityData = {
   series: [
     {
@@ -1956,6 +2016,17 @@ export const temperatureAverageDataForHeatmap = {
     [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6, 19.4, 21.2],
     [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
     [-13.2, -13.7, -13.1, -10.3, -6.1, -3.2, 0.0, -0.1, -1.8, -4.5, -9.0, -10.9],
+  ],
+};
+
+export const temperatureAverageDataForHeatmapWithNull = {
+  categories: {
+    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    y: ['Seoul', 'Seattle'],
+  },
+  series: [
+    [-3.5, -1.1, null, 11.3, null, 21.5],
+    [null, 17.8, null, 10.6, 6.4, 3.7],
   ],
 };
 
