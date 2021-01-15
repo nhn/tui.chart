@@ -8,6 +8,7 @@ import {
   randomData,
   temperatureData2,
   datetimeCoordinateData,
+  temperatureDataWithNull,
 } from './data';
 import { boolean, number, radios, withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
@@ -48,6 +49,21 @@ function createChart(data: LineSeriesData, customOptions: LineChartOptions = {})
 export const basic = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+  });
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(temperatureDataWithNull, {
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+    series: {
+      spline: true,
+      showDot: true,
+      dataLabels: {
+        visible: true,
+      },
+    },
   });
 
   return el;

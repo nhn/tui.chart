@@ -179,6 +179,10 @@ export default class LineChart extends Chart<LineChartOptions> {
    * chart.addData([10, 20], '6');
    */
   public addData = (data: LineSeriesDataType[], category?: string) => {
+    if (this.store.state.options.series?.showDot) {
+      this.animationControlFlag.updating = true;
+    }
+
     this.store.dispatch('addData', { data, category });
   };
 
