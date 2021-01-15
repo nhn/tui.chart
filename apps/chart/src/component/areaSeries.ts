@@ -90,6 +90,8 @@ export default class AreaSeries extends Component {
 
   isRangeChart = false;
 
+  isSplineChart = false;
+
   startIndex!: number;
 
   initialize() {
@@ -162,6 +164,7 @@ export default class AreaSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = viewRange ? viewRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
+    this.isSplineChart = options.series?.spline ?? false;
 
     const { limit } = scale[getValueAxisName(options, this.name, 'yAxis')];
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
@@ -274,7 +277,7 @@ export default class AreaSeries extends Component {
     limit: ValueEdge,
     renderOptions: RenderOptions
   ): LinePointsModel {
-    const { pointOnColumn, options, tickDistance, pairModel, areaStackSeries } = renderOptions;
+    const { pointOnColumn, tickDistance, pairModel, areaStackSeries } = renderOptions;
     const { rawData, name, color: seriesColor } = series;
     const active = this.activeSeriesMap![name];
     const points: (PointModel | null)[] = [];
@@ -298,7 +301,11 @@ export default class AreaSeries extends Component {
       points.push({ x, y, value });
     });
 
-    if (options?.spline) {
+    if (pairModel) {
+      points.reverse(); // for range spline
+    }
+
+    if (this.isSplineChart) {
       setSplineControlPoint(points);
     }
 
@@ -336,9 +343,9 @@ export default class AreaSeries extends Component {
 
   getCombinedPoints(start: number, end: number) {
     const startPoints = start >= 0 ? this.linePointsModel[start].points : [];
-    const endPoints = this.linePointsModel[end].points;
+    const reversedEndPoints = [...this.linePointsModel[end].points].reverse();
 
-    return [...startPoints, ...endPoints];
+    return [...startPoints, ...reversedEndPoints];
   }
 
   renderRangeAreaSeries(linePointsModel: LinePointsModel[]) {
@@ -351,8 +358,8 @@ export default class AreaSeries extends Component {
         const lastPoint = i === points.length / 2 - 1;
         const nullPoint = isNull(point);
 
-        if (!isNull(point)) {
-          areaPoints.push(point);
+        if (!nullPoint) {
+          areaPoints.push(point!);
         }
 
         if (areaPoints.length && (lastPoint || nullPoint)) {
@@ -414,6 +421,10 @@ export default class AreaSeries extends Component {
             })
             .reverse();
 
+          if (this.isStackChart && this.isSplineChart) {
+            setSplineControlPoint(pairPoints); // set spline for new stack pair points
+          }
+
           model.push({
             ...m,
             type: 'areaPoints',
@@ -473,13 +484,21 @@ export default class AreaSeries extends Component {
     const { hover, dot: dotTheme } = this.theme;
     const hoverDotTheme = hover.dot!;
 
-    this.linePointsModel.forEach(({ points, color, seriesIndex, name }) => {
+    this.linePointsModel.forEach(({ points, color, seriesIndex, name }, modelIndex) => {
+      const isPairLinePointsModel =
+        this.isRangeChart && modelIndex >= this.linePointsModel.length / 2;
       const active = this.activeSeriesMap![name!];
       points.forEach((point, index) => {
         if (isNull(point)) {
           return;
         }
-        const model = { type: 'circle', ...point, seriesIndex, name, index } as CircleModel;
+        const model = {
+          type: 'circle',
+          ...point,
+          seriesIndex,
+          name,
+          index: isPairLinePointsModel ? points.length - index - 1 : index,
+        } as CircleModel;
         if (showDot) {
           dotSeriesModel.push({
             ...model,

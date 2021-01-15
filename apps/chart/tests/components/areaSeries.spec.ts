@@ -616,8 +616,8 @@ describe('range', () => {
         lineWidth: 2,
         name: 'han',
         points: [
-          { value: 1, x: 0, y: 80 },
           { value: 3, x: 40, y: 40 },
+          { value: 1, x: 0, y: 80 },
         ],
         seriesIndex: 0,
         type: 'linePoints',
@@ -648,8 +648,8 @@ describe('range', () => {
           lineWidth: 2,
           name: 'han',
           points: [
-            { value: 1, x: 0, y: 80 },
             { value: 3, x: 40, y: 40 },
+            { value: 1, x: 0, y: 80 },
           ],
           seriesIndex: 0,
           type: 'linePoints',

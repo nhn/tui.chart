@@ -28,7 +28,7 @@ export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsMod
       return;
     }
 
-    if (point.controlPoint) {
+    if (point.controlPoint && points[idx - 1]?.controlPoint?.next) {
       const { x: prevX, y: prevY } = points[idx - 1]!.controlPoint!.next;
       const { controlPoint, x, y } = point;
 
