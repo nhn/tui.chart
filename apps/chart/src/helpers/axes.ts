@@ -4,6 +4,8 @@ import { Theme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
 import { divisors } from '@src/helpers/calculator';
 import { range } from '@src/helpers/utils';
+import { DEGREE_CANDIDATES, calculateRotatedWidth } from '@src/helpers/geometric';
+import { label } from '@src/brushes/label';
 
 interface IntervalInfo {
   blockCount: number;
@@ -172,4 +174,25 @@ export function getAxisTheme(theme: Theme, name: string) {
   }
 
   return axisTheme;
+}
+
+export function findRotationDegree(distance: number, labelWidth: number, labelHeight: number) {
+  let foundDegree = 0;
+
+  DEGREE_CANDIDATES.every((degree) => {
+    const compareWidth = calculateRotatedWidth(degree, labelWidth, labelHeight);
+    foundDegree = degree;
+
+    if (compareWidth <= distance) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return foundDegree;
+}
+
+export function getRotationDegree(distance: number, maxLabelWidth: number, labelHeight: number) {
+  return distance < maxLabelWidth ? findRotationDegree(distance, maxLabelWidth, labelHeight) : 0;
 }

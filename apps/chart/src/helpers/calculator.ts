@@ -28,8 +28,8 @@ export function getTextHeight(text: string, font: string = DEFAULT_LABEL_TEXT) {
   return Math.ceil(Math.abs(actualBoundingBoxAscent) + Math.abs(actualBoundingBoxDescent) + 1);
 }
 
-export function getAxisLabelAnchorPoint(text: string, font: string = DEFAULT_LABEL_TEXT) {
-  return crispPixel(TICK_SIZE * 2 + getTextHeight(text, font) / 2);
+export function getAxisLabelAnchorPoint(labelHeight: number) {
+  return crispPixel(TICK_SIZE * 2 + labelHeight / 2);
 }
 
 function getDecimalLength(value: string | number) {

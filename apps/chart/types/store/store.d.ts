@@ -167,8 +167,19 @@ export interface Scale {
   secondaryYAxis?: ScaleData;
 }
 
+type FilterAxisLabel = { offsetPos: number; text: string };
+
+type LotationLabelData = {
+  needRotateLabel: boolean;
+  radian: number;
+  rotationHeight?: number;
+  maxHeight: number;
+};
+
+type XAxisData = AxisData & LotationLabelData;
+
 export type Axes = {
-  xAxis: AxisData;
+  xAxis: XAxisData;
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
   radialAxis?: RadialAxisData;
@@ -209,22 +220,22 @@ export interface CircleLegend {
   radius: number;
 }
 
-export type CenterYAxisData = {
+export interface CenterYAxisData extends ValueAxisData {
   x: number;
   xAxisHalfSize: number;
   secondStartX: number;
   yAxisLabelAnchorPoint: number;
   yAxisHeight: number;
-} & ValueAxisData;
+}
 
 export type RadialAxisData = {
   labels: string[];
   axisSize: number;
   centerX: number;
   centerY: number;
-  maxLabelTextWidth: number;
-  labelTextHeight: number;
   labelInterval: number;
+  maxLabelWidth: number;
+  maxLabelHeight: number;
 };
 
 export interface TreemapSeriesData {
@@ -325,6 +336,7 @@ export type InitAxisData = {
   tickInterval: number;
   labelInterval: number;
   title?: Required<AxisTitleOption>;
+  rotatable?: boolean;
 };
 
 type BaseAxisData = InitAxisData & {
@@ -334,6 +346,10 @@ type BaseAxisData = InitAxisData & {
   pointOnColumn: boolean;
   tickDistance: number;
   maxLabelWidth: number;
+  maxLabelHeight: number;
+  offsetY: number;
+  maxHeight: number;
+  filteredLabels: FilterAxisLabel[];
 };
 
 export type LabelAxisData = BaseAxisData & {

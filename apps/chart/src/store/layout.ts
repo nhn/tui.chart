@@ -1,4 +1,4 @@
-import { StoreModule, Layout, CircleLegend, Legend, Options } from '@t/store/store';
+import { StoreModule, Layout, CircleLegend, Legend, Options, XAxisData } from '@t/store/store';
 import { extend } from '@src/store/store';
 import {
   Align,
@@ -7,6 +7,7 @@ import {
   BaseSizeOptions,
   LineTypeSeriesOptions,
   TreemapChartSeriesOptions,
+  AxisTitleOption,
 } from '@t/options';
 
 import { isUndefined, pick, isNumber } from '@src/helpers/utils';
@@ -60,6 +61,7 @@ type YAxisRectParam = AxisParam & {
 type XAxisRectParam = AxisParam & {
   yAxis: Rect;
   secondaryYAxis: Rect;
+  xAxisData: XAxisData;
 };
 
 type YAxisTitleRectParam = {
@@ -240,12 +242,20 @@ function getXAxisWidth({
   return xAxisWidth - secondaryYAxis.width;
 }
 
+function getXAxisHeight(xAxisData: XAxisData, hasAxis = false) {
+  if (!hasAxis) {
+    return 0;
+  }
+
+  return xAxisData?.maxHeight ?? X_AXIS_HEIGHT;
+}
+
 function getXAxisRect(xAxisRectParam: XAxisRectParam) {
-  const { hasAxis, hasCenterYAxis, yAxis, size } = xAxisRectParam;
+  const { hasAxis, hasCenterYAxis, yAxis, size, xAxisData } = xAxisRectParam;
   const x = hasCenterYAxis ? padding.X * 2 : yAxis.x + yAxis.width;
   const y = yAxis.y + yAxis.height;
   const xAxisWidth = getXAxisWidth(xAxisRectParam);
-  const xAxisHeight = !hasAxis ? 0 : X_AXIS_HEIGHT;
+  const xAxisHeight = getXAxisHeight(xAxisData, hasAxis);
 
   return {
     x,
@@ -276,11 +286,12 @@ function getLegendRect(legendRectParams: LegendRectParams) {
 
   if (verticalAlign) {
     x = (width - legendWidth) / 2;
+    height = getTopLegendAreaHeight(legend.useSpectrumLegend, legendItemHeight);
+
     if (align === 'top') {
       y = title.y + title.height;
-      height = getTopLegendAreaHeight(legend.useSpectrumLegend, legendItemHeight);
     } else {
-      y = yAxis.y + yAxis.height + (hasAxis ? X_AXIS_HEIGHT + xAxisTitleHeight : padding.Y);
+      y = yAxis.y + yAxis.height + (hasAxis ? xAxis.height + xAxisTitleHeight : padding.Y);
     }
   } else if (align === 'left') {
     x = padding.X;
@@ -467,12 +478,42 @@ function getOptionSize(options: Options) {
   };
 }
 
-function getYAxisTitleHeight(axisTheme: AxisTheme | AxisTheme[]) {
-  if (Array.isArray(axisTheme)) {
-    return Math.max(axisTheme[0].title!.fontSize!, axisTheme[1].title!.fontSize!);
-  }
+function getAxisTitleHeight(axisTheme: AxisTheme | AxisTheme[], offsetY = 0) {
+  const fontSize = Array.isArray(axisTheme)
+    ? Math.max(axisTheme[0].title!.fontSize!, axisTheme[1].title!.fontSize!)
+    : axisTheme.title!.fontSize!;
 
-  return axisTheme.title!.fontSize;
+  return fontSize + offsetY;
+}
+
+function checkAxisSize(
+  chartSize: Size,
+  layout: Pick<Layout, 'title' | 'yAxisTitle' | 'yAxis' | 'xAxis' | 'xAxisTitle' | 'legend'>,
+  legendState: Legend
+) {
+  const { title, yAxisTitle, yAxis, xAxis, xAxisTitle, legend } = layout;
+  const { align } = legendState;
+  const hasVerticalLegend = isVerticalAlign(align);
+  const legendHeight = hasVerticalLegend ? legend.height : 0;
+
+  const diffHeight =
+    xAxis.height +
+    xAxisTitle.height +
+    yAxis.height +
+    yAxisTitle.height +
+    title.height +
+    legendHeight -
+    chartSize.height;
+
+  if (diffHeight > 0) {
+    yAxis.height -= diffHeight;
+    xAxis.y -= diffHeight;
+    xAxisTitle.y -= diffHeight;
+
+    if (hasVerticalLegend) {
+      legend.y -= diffHeight;
+    }
+  }
 }
 
 const layout: StoreModule = {
@@ -502,10 +543,9 @@ const layout: StoreModule = {
       const visibleSecondaryYAxis = !!secondaryYAxisOption;
 
       const titleHeight = theme.title.fontSize as number;
-      const yAxisTitleHeight = getYAxisTitleHeight(theme.yAxis) as number;
-      const xAxisTitleHeight = theme.xAxis.title!.fontSize as number;
+      const yAxisTitleHeight = getAxisTitleHeight(theme.yAxis, axes?.yAxis?.title?.offsetY) ?? 0;
+      const xAxisTitleHeight = getAxisTitleHeight(theme.xAxis, axes?.xAxis?.title?.offsetY) ?? 0;
       const legendItemHeight = getLegendItemHeight(theme.legend.label!.fontSize!);
-
       // Don't change the order!
       // exportMenu -> resetButton -> title -> yAxis.title -> yAxis -> secondaryYAxisTitle -> secondaryYAxis -> xAxis -> xAxis.title -> legend -> circleLegend -> plot
       const exportMenu = getExportMenuRect(chartSize, isExportMenuVisible(options));
@@ -572,8 +612,11 @@ const layout: StoreModule = {
         hasCenterYAxis,
         hasAxis,
         size: optionSize,
+        xAxisData: axes?.xAxis,
       });
+
       const xAxisTitle = getXAxisTitleRect(!!options.xAxis?.title, xAxis, xAxisTitleHeight);
+
       const legend = getLegendRect({
         chartSize,
         xAxis,
@@ -585,6 +628,12 @@ const layout: StoreModule = {
         xAxisTitleHeight,
         legendItemHeight,
       });
+
+      checkAxisSize(
+        chartSize,
+        { title, yAxisTitle, yAxis, xAxis, xAxisTitle, legend },
+        legendState
+      );
 
       const circleLegend = getCircleLegendRect(
         xAxis,

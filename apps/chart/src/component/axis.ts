@@ -1,6 +1,6 @@
 import Component from './component';
 import Painter from '@src/painter';
-import { ChartState, Options } from '@t/store/store';
+import { ChartState, Options, FilterAxisLabel } from '@t/store/store';
 import {
   makeTickPixelPositions,
   crispPixel,
@@ -27,6 +27,11 @@ interface RenderOptions {
   tickInterval: number;
   labelInterval: number;
   labelDistance: number;
+  maxLabelWidth: number;
+  maxLabelHeight: number;
+  needRotateLabel: boolean;
+  radian: number;
+  relativePositions: number[];
 }
 
 function getOffsetAndAnchorKey(
@@ -38,6 +43,7 @@ function getOffsetAndAnchorKey(
   };
 }
 
+type LabelInfo = { offsetPos: number; text: string };
 export default class Axis extends Component {
   models: AxisModels = { label: [], tick: [], axisLine: [] };
 
@@ -62,7 +68,7 @@ export default class Axis extends Component {
     this.rect = layout[this.name];
 
     const {
-      labels,
+      filteredLabels,
       tickCount,
       pointOnColumn,
       isLabelAxis,
@@ -70,6 +76,10 @@ export default class Axis extends Component {
       tickInterval,
       labelInterval,
       labelDistance,
+      maxLabelWidth,
+      needRotateLabel,
+      radian,
+      maxLabelHeight,
     } = axes[this.name];
 
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
@@ -82,18 +92,23 @@ export default class Axis extends Component {
       tickInterval,
       labelInterval,
       labelDistance,
+      maxLabelWidth,
+      maxLabelHeight,
+      needRotateLabel,
+      radian,
+      relativePositions,
     };
 
     const hasOnlyAxisLine = this.hasOnlyAxisLine();
 
     if (!hasOnlyAxisLine) {
-      this.models.label = this.renderLabelModels(
-        relativePositions,
-        !isLabelAxis && this.yAxisComponent ? [...labels].reverse() : labels,
+      this.models.label = this.renderLabelModels({
+        labels:
+          !isLabelAxis && this.yAxisComponent ? [...filteredLabels].reverse() : filteredLabels,
         offsetKey,
         anchorKey,
-        renderOptions
-      );
+        renderOptions,
+      });
 
       this.models.tick = this.renderTickModels(
         relativePositions,
@@ -186,49 +201,48 @@ export default class Axis extends Component {
     }, []);
   }
 
-  renderLabelModels(
-    relativePositions: number[],
-    labels: string[],
-    offsetKey: CoordinateKey,
-    anchorKey: CoordinateKey,
-    renderOptions: RenderOptions
-  ): LabelModel[] {
-    const { width, height } = this.rect;
-    const { pointOnColumn, labelInterval, labelDistance, tickInterval } = renderOptions;
-
+  renderLabelModels({
+    labels,
+    offsetKey,
+    anchorKey,
+    renderOptions,
+  }: {
+    labels: FilterAxisLabel[];
+    offsetKey: CoordinateKey;
+    anchorKey: CoordinateKey;
+    renderOptions: RenderOptions;
+  }): LabelModel[] {
+    const { needRotateLabel, radian, maxLabelHeight } = renderOptions;
     const labelTheme = this.theme.label;
     const font = getTitleFontString(labelTheme);
-
-    const isRightSide = this.isRightSide();
-    const yAxisAnchorPoint = isRightSide ? crispPixel(width) : crispPixel(0);
-    const labelAnchorPoint = this.yAxisComponent
-      ? yAxisAnchorPoint
-      : getAxisLabelAnchorPoint(labels[0], font);
-    const interval = labelInterval === tickInterval ? labelInterval : 1;
-    const labelAdjustment = pointOnColumn ? (labelDistance * interval) / 2 : 0;
-    const yAxisTextAlign = isRightSide ? 'right' : 'left';
-    const textAlign = this.yAxisComponent ? yAxisTextAlign : 'center';
-
+    const textAlign = this.getLabelTextAlign(needRotateLabel);
     const style = ['default', { textAlign, font, fillStyle: labelTheme.color }];
-    const limit = offsetKey === 'x' ? width : height;
+    const labelAnchorPoint = this.getLabelAnchorPoint(maxLabelHeight);
 
-    return labels.reduce<LabelModel[]>((positions, text, index) => {
-      const offsetPos = relativePositions[index] + labelAdjustment;
-      const needRender = !(index % labelInterval) && offsetPos <= limit;
+    return labels.map(
+      ({ text, offsetPos }) =>
+        ({
+          type: 'label',
+          text,
+          style,
+          radian,
+          [offsetKey]: crispPixel(offsetPos),
+          [anchorKey]: labelAnchorPoint,
+        } as LabelModel)
+    );
+  }
 
-      return needRender
-        ? [
-            ...positions,
-            {
-              type: 'label',
-              text,
-              style,
-              [offsetKey]: crispPixel(offsetPos),
-              [anchorKey]: labelAnchorPoint,
-            } as LabelModel,
-          ]
-        : positions;
-    }, []);
+  getLabelAnchorPoint(labelHeight: number) {
+    const yAxisAnchorPoint = this.isRightSide() ? crispPixel(this.rect.width) : crispPixel(0);
+
+    return this.yAxisComponent ? yAxisAnchorPoint : getAxisLabelAnchorPoint(labelHeight);
+  }
+
+  getLabelTextAlign(needRotateLabel: boolean) {
+    const yAxisTextAlign = this.isRightSide() ? 'right' : 'left';
+    const xAxisTextAlign = needRotateLabel ? 'left' : 'center';
+
+    return this.yAxisComponent ? yAxisTextAlign : xAxisTextAlign;
   }
 
   axisSize() {

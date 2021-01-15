@@ -58,7 +58,7 @@ export const strokeLabelStyle = {
 };
 
 export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
-  const { x, y, text, style, stroke, opacity } = labelModel;
+  const { x, y, text, style, stroke, opacity, radian } = labelModel;
 
   if (style) {
     const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
@@ -67,6 +67,14 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
       ctx[key] =
         key === 'fillStyle' && isNumber(opacity) ? rgba(styleObj[key]!, opacity) : styleObj[key];
     });
+  }
+
+  ctx.save();
+
+  if (radian) {
+    ctx.translate(x, y);
+    ctx.rotate(radian);
+    ctx.translate(-x, -y);
   }
 
   if (stroke) {
@@ -89,6 +97,7 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   }
 
   ctx.fillText(text, x, y);
+  ctx.restore();
 }
 
 export function rectLabel(ctx: CanvasRenderingContext2D, model: RectLabelModel) {

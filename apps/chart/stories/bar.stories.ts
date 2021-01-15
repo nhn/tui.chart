@@ -313,3 +313,14 @@ export const dataLabelsWithTheme = () => {
 
   return el;
 };
+
+export const rotatable = () => {
+  const { el } = createChart(genderAgeData, {
+    chart: { width: 800 },
+    yAxis: { title: 'Age Group', align: 'center' },
+    xAxis: { title: 'People', label: { interval: 1, rotatable: true } },
+    series: { diverging: true },
+  });
+
+  return el;
+};

@@ -1,7 +1,7 @@
 import Component from './component';
 import Painter from '@src/painter';
 import { AxisType } from '@src/component/axis';
-import { ChartState, Options, CenterYAxisData } from '@t/store/store';
+import { ChartState, Options, CenterYAxisData, FilterAxisLabel } from '@t/store/store';
 import {
   makeTickPixelPositions,
   crispPixel,
@@ -20,6 +20,9 @@ interface RenderOptions {
   tickInterval: number;
   labelInterval: number;
   centerYAxis: CenterYAxisData;
+  maxLabelHeight: number;
+  needRotateLabel: boolean;
+  radian: number;
 }
 
 export default class AxisUsingCenterY extends Component {
@@ -54,13 +57,16 @@ export default class AxisUsingCenterY extends Component {
     }
 
     const {
-      labels,
+      filteredLabels,
       tickCount,
       pointOnColumn,
       isLabelAxis,
       tickDistance,
       tickInterval,
       labelInterval,
+      maxLabelHeight,
+      needRotateLabel,
+      radian,
     } = axes[this.name]!;
 
     const renderOptions: RenderOptions = {
@@ -69,14 +75,16 @@ export default class AxisUsingCenterY extends Component {
       tickInterval,
       labelInterval,
       centerYAxis,
+      maxLabelHeight,
+      needRotateLabel,
+      radian,
     };
     const relativePositions = makeTickPixelPositions(this.axisSize(centerYAxis), tickCount);
     const offsetKey = this.yAxisComponent ? 'y' : 'x';
     const anchorKey = this.yAxisComponent ? 'x' : 'y';
 
     this.models.label = this.renderLabelModels(
-      relativePositions,
-      !isLabelAxis && this.yAxisComponent ? [...labels].reverse() : labels,
+      !isLabelAxis && this.yAxisComponent ? [...filteredLabels].reverse() : filteredLabels,
       offsetKey,
       anchorKey,
       renderOptions
@@ -200,19 +208,17 @@ export default class AxisUsingCenterY extends Component {
   }
 
   renderLabelModels(
-    relativePositions: number[],
-    labels: string[],
+    labels: FilterAxisLabel[],
     offsetKey: CoordinateKey,
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
   ): LabelModel[] {
     const {
-      tickDistance,
-      pointOnColumn,
-      labelInterval,
       centerYAxis: { secondStartX, yAxisLabelAnchorPoint },
+      maxLabelHeight,
+      needRotateLabel,
+      radian,
     } = renderOptions;
-    const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
     const labelTheme = this.theme.label;
     const font = getTitleFontString(labelTheme);
 
@@ -223,32 +229,30 @@ export default class AxisUsingCenterY extends Component {
       textAlign = 'center';
       textLabels = labels;
     } else {
-      labelAnchorPoint = getAxisLabelAnchorPoint(labels[0], font);
-      textAlign = 'center';
+      labelAnchorPoint = getAxisLabelAnchorPoint(maxLabelHeight);
       textLabels = [...labels].reverse();
+      textAlign = needRotateLabel ? 'left' : 'center';
     }
 
     const style = ['default', { textAlign, font, fillStyle: labelTheme.color }];
 
-    return textLabels.reduce((positions, text, index) => {
-      if (index % labelInterval) {
-        return positions;
-      }
-
+    return textLabels.reduce((positions, { text, offsetPos }, index) => {
       const model = {
         type: 'label',
         text,
         style,
-        [offsetKey]: crispPixel(relativePositions[index] + labelAdjustment),
+        [offsetKey]: crispPixel(offsetPos) + (this.yAxisComponent ? 0 : secondStartX),
         [anchorKey]: labelAnchorPoint,
+        radian,
       } as LabelModel;
+
       const models: LabelModel[] = [model];
 
       if (!this.yAxisComponent) {
         const addedLabelModel = {
           ...model,
-          text: labels[index],
-          [offsetKey]: crispPixel(model[offsetKey] + secondStartX),
+          text: labels[index].text,
+          [offsetKey]: crispPixel(model[offsetKey] - secondStartX),
         };
 
         models.push(addedLabelModel);
