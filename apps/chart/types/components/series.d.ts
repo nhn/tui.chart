@@ -66,7 +66,7 @@ export type LinePointsModel = {
   type: 'linePoints';
   color: string;
   lineWidth: number;
-  points: BezierPoint[];
+  points: (BezierPoint | null)[];
   name?: string;
   seriesIndex?: number;
   dashSegments?: number[];
@@ -121,7 +121,7 @@ export type HeatmapRectModel = {
   name: string;
   color: string;
   colorRatio: number;
-  colorValue: number;
+  colorValue: number | null;
   style?: StyleProp<RectStyle, RectStyleName>;
   thickness: number;
 } & Rect;

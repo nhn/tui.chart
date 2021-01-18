@@ -1,6 +1,6 @@
 import { SeriesDataType, TreemapSeriesData, TreemapChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { populationDensityData, usedDiskSpaceData } from './data';
+import { populationDensityData, usedDiskSpaceData, usedDiskSpaceDataWithNull } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import TreemapChart from '@src/charts/treemapChart';
 import '@src/css/chart.css';
@@ -40,6 +40,20 @@ export const basic = () => {
   const { el } = createChart(usedDiskSpaceData, {
     chart: { title: 'Used disk space' },
     tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+  });
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(usedDiskSpaceDataWithNull, {
+    chart: { title: 'Used disk space' },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
   });
 
   return el;

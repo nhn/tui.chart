@@ -1,7 +1,13 @@
 import AreaChart from '@src/charts/areaChart';
 import { AreaChartOptions, AreaSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { avgTemperatureData, budgetData, temperatureRangeData } from './data';
+import {
+  avgTemperatureData,
+  avgTemperatureDataWithNull,
+  budgetData,
+  temperatureRangeData,
+  temperatureRangeDataWithNull,
+} from './data';
 import { withKnobs, boolean, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 
@@ -42,6 +48,26 @@ export const basic = () => {
     chart: { title: 'Average Temperature' },
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
+  });
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(avgTemperatureDataWithNull, {
+    chart: { title: 'Average Temperature' },
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    series: {
+      showDot: true,
+      stack: {
+        type: 'normal',
+      },
+      spline: true,
+      dataLabels: {
+        visible: true,
+      },
+    },
   });
 
   return el;
@@ -142,6 +168,19 @@ export const range = () => {
     },
     yAxis: { title: 'Month' },
     series: { eventDetectType: 'grouped' },
+  });
+
+  return el;
+};
+
+export const rangeWithNullData = () => {
+  const { el } = createChart(temperatureRangeDataWithNull as AreaSeriesData, {
+    chart: { title: 'Temperature Range' },
+    xAxis: {
+      title: { text: 'Temperature (Celsius)' },
+    },
+    yAxis: { title: 'Month' },
+    series: { eventDetectType: 'grouped', showDot: true, dataLabels: { visible: true } },
   });
 
   return el;

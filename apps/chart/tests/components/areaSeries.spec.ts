@@ -429,6 +429,7 @@ describe('responders', () => {
         x: 20,
         y: 80,
         name: 'han',
+        value: 1,
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -441,6 +442,7 @@ describe('responders', () => {
         x: 60,
         y: 60,
         name: 'han',
+        value: 2,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -453,6 +455,7 @@ describe('responders', () => {
         x: 20,
         y: 20,
         name: 'cho',
+        value: 4,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -465,6 +468,7 @@ describe('responders', () => {
         x: 60,
         y: 0,
         name: 'cho',
+        value: 5,
       },
     ],
     nearest: [
@@ -910,10 +914,10 @@ describe('stack', () => {
           lineWidth: 0,
           name: 'cho',
           points: [
-            { value: 1, x: 0, y: 80 },
-            { value: 2, x: 40, y: 80 },
-            { value: 4, x: 40, y: 0 },
             { value: 1, x: 0, y: 40 },
+            { value: 4, x: 40, y: 0 },
+            { x: 40, y: 80 },
+            { x: 0, y: 80 },
           ],
           seriesIndex: 1,
           type: 'areaPoints',
@@ -1091,6 +1095,7 @@ describe('zoom', () => {
             { value: 2, x: 20, y: 60 },
             { value: 3, x: 60, y: 40 },
             { x: 60, y: 80 },
+            { x: 20, y: 80 },
             { x: -20, y: 80 },
           ],
           seriesIndex: 0,
@@ -1107,6 +1112,7 @@ describe('zoom', () => {
             { value: 4, x: 20, y: 20 },
             { value: 5, x: 60, y: 0 },
             { x: 60, y: 80 },
+            { x: 20, y: 80 },
             { x: -20, y: 80 },
           ],
           seriesIndex: 1,
@@ -1235,6 +1241,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 20,
         y: 80,
+        value: 1,
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -1246,6 +1253,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 60,
         y: 60,
+        value: 2,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -1257,6 +1265,7 @@ describe('with series options', () => {
         type: 'circle',
         x: 20,
         y: 20,
+        value: 4,
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -1268,7 +1277,145 @@ describe('with series options', () => {
         type: 'circle',
         x: 60,
         y: 0,
+        value: 5,
       },
     ]);
+  });
+});
+
+describe('with null data', () => {
+  const seriesData = [{ name: 'han', data: [1, 2, null], rawData: [1, 2, null], color: '#aaaaaa' }];
+
+  const chartState = {
+    chart: { width: 100, height: 100 },
+    layout: {
+      xAxis: { x: 10, y: 80, width: 80, height: 10 },
+      yAxis: { x: 10, y: 10, width: 10, height: 80 },
+      plot: { width: 80, height: 80, x: 10, y: 80 },
+    },
+    series: {
+      area: {
+        data: seriesData,
+        seriesCount: seriesData.length,
+        seriesGroupCount: seriesData[0].data.length,
+      },
+    },
+    scale: {
+      yAxis: {
+        limit: {
+          min: 1,
+          max: 5,
+        },
+      },
+    },
+    axes: {
+      xAxis: {
+        pointOnColumn: true,
+        tickDistance: 40,
+        tickCount: 2,
+      },
+    },
+    options: {
+      series: {},
+    },
+    legend: {
+      data: [{ label: 'han', active: true, checked: true }],
+    },
+    rawCategories: ['A', 'B', 'C'],
+    categories: ['A', 'B', 'C'],
+    dataLabels: {
+      visible: false,
+    },
+    theme: {
+      series: {
+        area: {
+          colors: ['#ff5a46', '#00bd9f'],
+          areaOpacity: 0.3,
+          dashSegments: [],
+          dot: {
+            radius: 3,
+          },
+          hover: {
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+          },
+          lineWidth: 2,
+          select: {
+            areaOpacity: 0.3,
+            dot: {
+              borderColor: '#fff',
+              borderWidth: 2,
+              radius: 5,
+            },
+            restSeries: {
+              areaOpacity: 0.06,
+            },
+          },
+        },
+      },
+    },
+  };
+
+  beforeEach(() => {
+    areaSeries = new AreaSeries({
+      store: {} as Store<AreaChartOptions>,
+      eventBus: new EventEmitter(),
+    });
+
+    areaSeries.render(chartState, { viewRange: [0, 2] });
+  });
+
+  const result = {
+    rect: { width: 80, height: 80, x: 10, y: 80 },
+    linePointsModel: [
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        lineWidth: 2,
+        points: [{ value: 1, x: 20, y: 80 }, { value: 2, x: 60, y: 60 }, null],
+        seriesIndex: 0,
+        type: 'linePoints',
+        name: 'han',
+        dashSegments: [],
+      },
+    ],
+    models: {
+      rect: [{ height: 80, type: 'clipRectArea', width: 80, x: 0, y: 0 }],
+      series: [
+        {
+          color: 'rgba(170, 170, 170, 1)',
+          lineWidth: 2,
+          points: [{ value: 1, x: 20, y: 80 }, { value: 2, x: 60, y: 60 }, null],
+          seriesIndex: 0,
+          type: 'linePoints',
+          name: 'han',
+          dashSegments: [],
+        },
+        {
+          color: 'rgba(0, 0, 0, 0)',
+          fillColor: 'rgba(170, 170, 170, 0.3)',
+          lineWidth: 0,
+          points: [
+            { value: 1, x: 20, y: 80 },
+            { value: 2, x: 60, y: 60 },
+            { x: 60, y: 80 },
+            { x: 20, y: 80 },
+          ],
+          seriesIndex: 0,
+          type: 'areaPoints',
+          name: 'han',
+          dashSegments: [],
+        },
+      ],
+      dot: [],
+    },
+  };
+
+  ['linePointsModel', 'models'].forEach((modelName) => {
+    it(`should make ${modelName} properly when calling render`, () => {
+      expect(areaSeries[modelName]).toEqual(result[modelName]);
+    });
   });
 });

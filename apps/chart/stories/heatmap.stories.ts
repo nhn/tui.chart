@@ -1,6 +1,10 @@
 import { HeatmapSeriesData, SeriesDataType, HeatmapChartOptions } from '@t/options';
 import { deepMergedCopy, range } from '@src/helpers/utils';
-import { contributionsData, temperatureAverageDataForHeatmap } from './data';
+import {
+  contributionsData,
+  temperatureAverageDataForHeatmap,
+  temperatureAverageDataForHeatmapWithNull,
+} from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import HeatmapChart from '@src/charts/heatmapChart';
 import '@src/css/chart.css';
@@ -49,6 +53,18 @@ function createChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions
 
 export const basic = () => {
   const { el } = createChart(temperatureAverageDataForHeatmap);
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(temperatureAverageDataForHeatmapWithNull, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+  });
 
   return el;
 };

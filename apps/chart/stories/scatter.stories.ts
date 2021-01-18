@@ -4,6 +4,7 @@ import {
   currentUserCoordinate,
   currentUserCoordinateDatetimeData,
   genderHeightWeightData,
+  genderHeightWeightDataWithNull,
 } from './data';
 import ScatterChart from '@src/charts/scatterChart';
 import '@src/css/chart.css';
@@ -42,6 +43,12 @@ function createChart(data: ScatterSeriesData, customOptions: ScatterChartOptions
 
 export const basic = () => {
   const { el } = createChart(genderHeightWeightData);
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(genderHeightWeightDataWithNull);
 
   return el;
 };
