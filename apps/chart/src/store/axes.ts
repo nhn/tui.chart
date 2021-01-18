@@ -14,7 +14,6 @@ import {
   ValueAxisData,
   InitAxisData,
   Layout,
-  FilterAxisLabel,
 } from '@t/store/store';
 import {
   getAxisName,
@@ -25,17 +24,17 @@ import {
   getYAxisOption,
   getAutoAdjustingInterval,
   getAxisTheme,
-  getRotationDegree,
+  getLabelFont,
+  filterLabels,
+  hasAxesLayoutChanged,
+  getRotatableOption,
+  makeFormattedCategory,
+  getMaxLabelSize,
+  makeTitleOption,
+  makeRotationData,
 } from '@src/helpers/axes';
+import { makeLabelsFromLimit, getAxisLabelAnchorPoint } from '@src/helpers/calculator';
 import {
-  makeLabelsFromLimit,
-  getTextHeight,
-  getTextWidth,
-  makeTickPixelPositions,
-  getAxisLabelAnchorPoint,
-} from '@src/helpers/calculator';
-import {
-  AxisTitle,
   BaseAxisOptions,
   BarTypeYAxisOption,
   BaseXAxisOptions,
@@ -43,26 +42,13 @@ import {
   BoxSeriesOptions,
   RangeDataType,
   Rect,
-  DateOption,
   LineTypeSeriesOptions,
 } from '@t/options';
-import {
-  deepMergedCopy,
-  hasNegativeOnly,
-  isNumber,
-  isString,
-  isUndefined,
-  pickProperty,
-} from '@src/helpers/utils';
-import { formatDate, getDateFormat } from '@src/helpers/formatDate';
+import { deepMergedCopy, hasNegativeOnly, isNumber, pickProperty } from '@src/helpers/utils';
 import { isZooming } from '@src/helpers/range';
-import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
 import { AxisTheme } from '@t/theme';
-import { getTitleFontString } from '@src/helpers/style';
 import { AxisType } from '@src/component/axis';
-import { calculateDegreeToRadian } from '@src/helpers/sector';
-import { calculateRotatedWidth, calculateRotatedHeight } from '@src/helpers/geometric';
 
 interface StateProp {
   scale: ScaleData;
@@ -103,16 +89,6 @@ interface AxisDataParams {
   isCoordinateTypeChart?: boolean;
 }
 
-function getMaxLabelSize(labels: string[], font = DEFAULT_LABEL_TEXT) {
-  const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
-  const maxLabelHeight = getTextHeight(maxLengthLabel, font);
-
-  return {
-    maxLabelWidth: getTextWidth(maxLengthLabel, font),
-    maxLabelHeight,
-  };
-}
-
 export function isCenterYAxis(options: ChartOptionsUsingYAxis, isBar: boolean) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
   const alignCenter = (options.yAxis as BarTypeYAxisOption)?.align === 'center';
@@ -142,75 +118,7 @@ function getZeroPosition(
   return labelAxisOnYAxis ? position : axisSize - position;
 }
 
-export function makeFormattedCategory(categories: string[], date?: DateOption) {
-  const format = getDateFormat(date);
-
-  return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
-}
-
-type FilterLabelParam = {
-  labels: string[];
-  pointOnColumn?: boolean;
-  labelDistance?: number;
-  labelInterval: number;
-  tickDistance: number;
-  tickInterval: number;
-  tickCount: number;
-};
-
-function filterLabels(axisData: FilterLabelParam, axisSize: number) {
-  const {
-    labels,
-    pointOnColumn,
-    labelDistance,
-    tickDistance,
-    labelInterval,
-    tickInterval,
-    tickCount,
-  } = axisData;
-  const relativePositions = makeTickPixelPositions(axisSize, tickCount);
-  const interval = labelInterval === tickInterval ? labelInterval : 1;
-  const labelAdjustment = pointOnColumn ? (labelDistance ?? tickDistance * interval) / 2 : 0;
-
-  return labels.reduce<FilterAxisLabel[]>((acc, text, index) => {
-    const offsetPos = relativePositions[index] + labelAdjustment;
-    const needRender = !(index % labelInterval) && offsetPos <= axisSize;
-
-    return needRender
-      ? [
-          ...acc,
-          {
-            offsetPos,
-            text,
-          },
-        ]
-      : acc;
-  }, []);
-}
-
-function makeRotationData(axisData: LabelAxisData, distance: number, rotatable: boolean) {
-  const { maxLabelWidth, maxLabelHeight } = axisData;
-  const degree = getRotationDegree(distance, maxLabelWidth, maxLabelHeight);
-
-  if (!rotatable || degree === 0) {
-    return {
-      needRotateLabel: false,
-      radian: 0,
-    };
-  }
-
-  const rotationWidth = calculateRotatedWidth(degree, maxLabelWidth, maxLabelHeight);
-  const rotationHeight = calculateRotatedHeight(degree, maxLabelWidth, maxLabelHeight);
-
-  return {
-    needRotateLabel: degree > 0,
-    radian: calculateDegreeToRadian(degree, 0),
-    rotationWidth,
-    rotationHeight,
-  };
-}
-
-export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
+function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const {
     axisSize,
     categories,
@@ -257,7 +165,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   };
 }
 
-export function getValueAxisData(stateProp: StateProp): ValueAxisState {
+function getValueAxisData(stateProp: StateProp): ValueAxisState {
   const {
     scale,
     axisSize,
@@ -321,22 +229,6 @@ function getDivergingValues(valueLabels) {
     : valueLabels.slice(1).reverse().concat(valueLabels);
 }
 
-export function makeTitleOption(title?: AxisTitle) {
-  if (isUndefined(title)) {
-    return title;
-  }
-
-  const defaultOption = {
-    text: '',
-    offsetX: 0,
-    offsetY: 0,
-  };
-
-  return isString(title)
-    ? deepMergedCopy(defaultOption, { text: title })
-    : deepMergedCopy(defaultOption, title);
-}
-
 function getRadialAxis(
   scale: ScaleData,
   plot: Rect,
@@ -357,7 +249,7 @@ function getRadialAxis(
   };
 }
 
-export function getInitTickInterval(categories?: string[], layout?: Layout) {
+function getInitTickInterval(categories?: string[], layout?: Layout) {
   if (!categories || !layout) {
     return 1;
   }
@@ -466,52 +358,12 @@ function getSecondaryYAxisData({
       });
 }
 
-function hasYAxisMaxLabelLengthChanged(
-  previousAxes: Axes,
-  currentAxes: Axes,
-  field: 'yAxis' | 'secondaryYAxis'
-) {
-  const prevYAxis = previousAxes[field];
-  const yAxis = currentAxes[field];
-
-  if (!prevYAxis && !yAxis) {
-    return false;
-  }
-
-  return prevYAxis?.maxLabelWidth !== yAxis?.maxLabelWidth;
-}
-
-function hasYAxisTypeMaxLabelChanged(previousAxes: Axes, currentAxes: Axes): boolean {
-  return (
-    hasYAxisMaxLabelLengthChanged(previousAxes, currentAxes, 'yAxis') ||
-    hasYAxisMaxLabelLengthChanged(previousAxes, currentAxes, 'secondaryYAxis')
-  );
-}
-
-function hasXAxisSizeChanged(previousAxes: Axes, currentAxes: Axes): boolean {
-  const { maxHeight: prevMaxHeight } = previousAxes.xAxis;
-  const { maxHeight } = currentAxes.xAxis;
-
-  return prevMaxHeight !== maxHeight;
-}
-
-function hasAxesLayoutChanged(previousAxes: Axes, currentAxes: Axes) {
-  return (
-    hasYAxisTypeMaxLabelChanged(previousAxes, currentAxes) ||
-    hasXAxisSizeChanged(previousAxes, currentAxes)
-  );
-}
-
-function getLabelFont(theme: Required<AxisTheme>) {
-  return getTitleFontString(theme.label);
-}
-
 function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable }): AxisData {
-  const { filteredLabels, pointOnColumn, maxLabelHeight } = axisData;
+  const { filteredLabels, pointOnColumn, maxLabelWidth, maxLabelHeight } = axisData;
   const offsetY = getAxisLabelAnchorPoint(maxLabelHeight);
   const size = centerYAxis ? centerYAxis.xAxisHalfSize : axisSize;
   const distance = size / (filteredLabels.length - (pointOnColumn ? 0 : 1));
-  const rotationData = makeRotationData(axisData, distance, rotatable);
+  const rotationData = makeRotationData(maxLabelWidth, maxLabelHeight, distance, rotatable);
   const { needRotateLabel, rotationHeight } = rotationData;
   const maxHeight = (needRotateLabel ? rotationHeight : maxLabelHeight) + offsetY;
 
@@ -521,10 +373,6 @@ function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable }): AxisData
     maxHeight,
     offsetY,
   };
-}
-
-function getRotatableOption(options: Options) {
-  return options?.xAxis?.label?.rotatable ?? true;
 }
 
 const axes: StoreModule = {

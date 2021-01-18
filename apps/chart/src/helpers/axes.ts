@@ -1,10 +1,30 @@
-import { Options, Series, ChartOptionsUsingYAxis } from '@t/store/store';
-import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
-import { Theme } from '@t/theme';
+import {
+  Options,
+  Series,
+  ChartOptionsUsingYAxis,
+  Axes,
+  FilterAxisLabel,
+  LotationLabelData,
+} from '@t/store/store';
+import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
+import { Theme, AxisTheme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
-import { divisors } from '@src/helpers/calculator';
-import { range } from '@src/helpers/utils';
-import { DEGREE_CANDIDATES, calculateRotatedWidth } from '@src/helpers/geometric';
+import {
+  divisors,
+  makeTickPixelPositions,
+  getTextHeight,
+  getTextWidth,
+} from '@src/helpers/calculator';
+import { range, deepMergedCopy, isString, isUndefined } from '@src/helpers/utils';
+import {
+  DEGREE_CANDIDATES,
+  calculateRotatedWidth,
+  calculateRotatedHeight,
+} from '@src/helpers/geometric';
+import { getTitleFontString } from '@src/helpers/style';
+import { getDateFormat, formatDate } from '@src/helpers/formatDate';
+import { calculateDegreeToRadian } from '@src/helpers/sector';
+import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 
 interface IntervalInfo {
   blockCount: number;
@@ -194,4 +214,145 @@ export function findRotationDegree(distance: number, labelWidth: number, labelHe
 
 export function getRotationDegree(distance: number, maxLabelWidth: number, labelHeight: number) {
   return distance < maxLabelWidth ? findRotationDegree(distance, maxLabelWidth, labelHeight) : 0;
+}
+
+function hasYAxisMaxLabelLengthChanged(
+  previousAxes: Axes,
+  currentAxes: Axes,
+  field: 'yAxis' | 'secondaryYAxis'
+) {
+  const prevYAxis = previousAxes[field];
+  const yAxis = currentAxes[field];
+
+  if (!prevYAxis && !yAxis) {
+    return false;
+  }
+
+  return prevYAxis?.maxLabelWidth !== yAxis?.maxLabelWidth;
+}
+
+function hasYAxisTypeMaxLabelChanged(previousAxes: Axes, currentAxes: Axes): boolean {
+  return (
+    hasYAxisMaxLabelLengthChanged(previousAxes, currentAxes, 'yAxis') ||
+    hasYAxisMaxLabelLengthChanged(previousAxes, currentAxes, 'secondaryYAxis')
+  );
+}
+
+function hasXAxisSizeChanged(previousAxes: Axes, currentAxes: Axes): boolean {
+  const { maxHeight: prevMaxHeight } = previousAxes.xAxis;
+  const { maxHeight } = currentAxes.xAxis;
+
+  return prevMaxHeight !== maxHeight;
+}
+
+export function hasAxesLayoutChanged(previousAxes: Axes, currentAxes: Axes) {
+  return (
+    hasYAxisTypeMaxLabelChanged(previousAxes, currentAxes) ||
+    hasXAxisSizeChanged(previousAxes, currentAxes)
+  );
+}
+
+export function getLabelFont(theme: Required<AxisTheme>) {
+  return getTitleFontString(theme.label);
+}
+
+export function getRotatableOption(options: Options) {
+  return options?.xAxis?.label?.rotatable ?? true;
+}
+
+type FilterLabelParam = {
+  labels: string[];
+  pointOnColumn?: boolean;
+  labelDistance?: number;
+  labelInterval: number;
+  tickDistance: number;
+  tickInterval: number;
+  tickCount: number;
+};
+
+export function filterLabels(axisData: FilterLabelParam, axisSize: number) {
+  const {
+    labels,
+    pointOnColumn,
+    labelDistance,
+    tickDistance,
+    labelInterval,
+    tickInterval,
+    tickCount,
+  } = axisData;
+  const relativePositions = makeTickPixelPositions(axisSize, tickCount);
+  const interval = labelInterval === tickInterval ? labelInterval : 1;
+  const labelAdjustment = pointOnColumn ? (labelDistance ?? tickDistance * interval) / 2 : 0;
+
+  return labels.reduce<FilterAxisLabel[]>((acc, text, index) => {
+    const offsetPos = relativePositions[index] + labelAdjustment;
+    const needRender = !(index % labelInterval) && offsetPos <= axisSize;
+
+    return needRender
+      ? [
+          ...acc,
+          {
+            offsetPos,
+            text,
+          },
+        ]
+      : acc;
+  }, []);
+}
+
+export function makeTitleOption(title?: AxisTitle) {
+  if (isUndefined(title)) {
+    return title;
+  }
+
+  const defaultOption = {
+    text: '',
+    offsetX: 0,
+    offsetY: 0,
+  };
+
+  return isString(title)
+    ? deepMergedCopy(defaultOption, { text: title })
+    : deepMergedCopy(defaultOption, title);
+}
+
+export function makeFormattedCategory(categories: string[], date?: DateOption) {
+  const format = getDateFormat(date);
+
+  return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
+}
+
+export function makeRotationData(
+  maxLabelWidth: number,
+  maxLabelHeight: number,
+  distance: number,
+  rotatable: boolean
+): Required<LotationLabelData> {
+  const degree = getRotationDegree(distance, maxLabelWidth, maxLabelHeight);
+
+  if (!rotatable || degree === 0) {
+    return {
+      needRotateLabel: false,
+      radian: 0,
+      rotationHeight: maxLabelHeight,
+    };
+  }
+
+  const rotationHeight = calculateRotatedHeight(degree, maxLabelWidth, maxLabelHeight);
+
+  return {
+    needRotateLabel: degree > 0,
+    radian: calculateDegreeToRadian(degree, 0),
+    rotationHeight,
+  };
+}
+
+export function getMaxLabelSize(labels: string[], font = DEFAULT_LABEL_TEXT) {
+  const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
+  const maxLabelHeight = getTextHeight(maxLengthLabel, font);
+
+  return {
+    maxLabelWidth: getTextWidth(maxLengthLabel, font),
+    maxLabelHeight,
+  };
 }

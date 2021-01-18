@@ -198,3 +198,12 @@ export const dataLabelsWithTheme = () => {
 
   return el;
 };
+
+export const rotatable = () => {
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    chart: { title: '24-hr Average Temperature', width: 400, height: 300 },
+    legend: { align: 'right' },
+  });
+
+  return el;
+};

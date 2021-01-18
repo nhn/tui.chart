@@ -2,17 +2,29 @@ import { Axes, AxisData, StoreModule } from '@t/store/store';
 import { extend } from '@src/store/store';
 import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
 import { AxisType } from '@src/component/axis';
-import { makeFormattedCategory, makeTitleOption } from '@src/store/axes';
-import category from '@src/store/category';
+import {
+  getAxisTheme,
+  makeFormattedCategory,
+  filterLabels,
+  getLabelFont,
+  makeRotationData,
+  getRotatableOption,
+  hasAxesLayoutChanged,
+  makeTitleOption,
+  getMaxLabelSize,
+} from '@src/helpers/axes';
+import { AxisTheme } from '@t/theme';
+import { getAxisLabelAnchorPoint } from '@src/helpers/calculator';
 
 type HeatmapStateProp = {
   axisSize: number;
   categories: HeatmapCategoriesType;
   options: HeatmapChartOptions;
+  theme: Required<AxisTheme>;
 };
 
 function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
-  const { categories, axisSize, options } = stateProp;
+  const { categories, axisSize, options, theme } = stateProp;
   const isLabelAxis = axisType === AxisType.X;
   const axisName = isLabelAxis ? 'x' : 'y';
   const labels = makeFormattedCategory(categories[axisName], options[axisType]?.date);
@@ -20,15 +32,55 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   const tickIntervalCount = labels.length;
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
   const labelDistance = axisSize / tickIntervalCount;
+  const pointOnColumn = true;
+  const tickCount = tickIntervalCount + 1;
+  const filteredLabels = filterLabels(
+    {
+      labels,
+      pointOnColumn,
+      tickDistance,
+      tickCount,
+      tickInterval: options[axisType]?.tick?.interval ?? 1,
+      labelInterval: options[axisType]?.label?.interval ?? 1,
+    },
+    axisSize
+  );
 
-  return {
+  const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(labels, getLabelFont(theme));
+
+  const axisData = {
     labels,
-    pointOnColumn: true,
+    filteredLabels,
+    pointOnColumn,
     isLabelAxis,
-    tickCount: tickIntervalCount + 1,
+    tickCount,
     tickDistance,
     labelDistance,
+    maxLabelWidth,
+    maxLabelHeight,
   };
+
+  if (axisType === AxisType.X) {
+    const offsetY = getAxisLabelAnchorPoint(maxLabelHeight);
+    const distance = axisSize / filteredLabels.length;
+    const rotationData = makeRotationData(
+      maxLabelWidth,
+      maxLabelHeight,
+      distance,
+      getRotatableOption(options)
+    );
+    const { needRotateLabel, rotationHeight } = rotationData;
+    const maxHeight = (needRotateLabel ? rotationHeight : maxLabelHeight) + offsetY;
+
+    return {
+      ...axisData,
+      ...rotationData,
+      maxHeight,
+      offsetY,
+    };
+  }
+
+  return axisData;
 }
 
 const axes: StoreModule = {
@@ -53,16 +105,25 @@ const axes: StoreModule = {
   },
   action: {
     setAxesData({ state }) {
-      const { layout } = state;
+      const { layout, theme } = state;
       const { width, height } = layout.plot;
       const categories = state.categories as HeatmapCategoriesType;
       const options = state.options as HeatmapChartOptions;
 
-      const xAxisData = getHeatmapAxisData({ axisSize: width, categories, options }, AxisType.X);
-      const yAxisData = getHeatmapAxisData({ axisSize: height, categories, options }, AxisType.Y);
+      const xAxisData = getHeatmapAxisData(
+        { axisSize: width, categories, options, theme: getAxisTheme(theme, AxisType.X) },
+        AxisType.X
+      );
+      const yAxisData = getHeatmapAxisData(
+        { axisSize: height, categories, options, theme: getAxisTheme(theme, AxisType.X) },
+        AxisType.Y
+      );
       const axesState = { xAxis: xAxisData, yAxis: yAxisData } as Axes;
 
-      this.notify(state, 'layout');
+      if (hasAxesLayoutChanged(state.axes, axesState)) {
+        this.notify(state, 'layout');
+      }
+
       extend(state.axes, axesState);
     },
   },

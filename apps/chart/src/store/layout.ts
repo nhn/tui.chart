@@ -235,7 +235,6 @@ function getXAxisWidth({
   }
 
   if (hasCenterYAxis) {
-    console.log(legendWidth);
     xAxisWidth = width - (legendVerticalAlign ? 0 : legendWidth) - padding.X * 2;
   }
 
@@ -536,6 +535,11 @@ function checkAxisSize(
   }
 }
 
+function adjustSecondaryYAxisXPosition(xAxis: Rect, secondaryYAxis: Rect) {
+  const { x: xAxisX, width: xAxisWidth } = xAxis;
+  secondaryYAxis.x = xAxisX + xAxisWidth;
+}
+
 const layout: StoreModule = {
   name: 'layout',
   state: () => ({
@@ -654,6 +658,8 @@ const layout: StoreModule = {
         { title, yAxisTitle, yAxis, xAxis, xAxisTitle, legend },
         legendState
       );
+
+      adjustSecondaryYAxisXPosition(xAxis, secondaryYAxis);
 
       const circleLegend = getCircleLegendRect(
         xAxis,

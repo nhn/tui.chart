@@ -74,6 +74,7 @@ describe('Axes Store module', () => {
           offsetY: 15.5,
           needRotateLabel: false,
           radian: 0,
+          rotationHeight: 11,
         },
         yAxis: {
           isLabelAxis: false,
@@ -168,6 +169,7 @@ describe('Axes Store module', () => {
         offsetY: 15.5,
         needRotateLabel: false,
         radian: 0,
+        rotationHeight: 11,
       },
       yAxis: {
         isLabelAxis: false,
