@@ -1,4 +1,4 @@
-import { StoreModule, Layout, CircleLegend, Legend, Options, XAxisData } from '@t/store/store';
+import { StoreModule, Layout, CircleLegend, Legend, Options, AxisData } from '@t/store/store';
 import { extend } from '@src/store/store';
 import {
   Align,
@@ -7,7 +7,6 @@ import {
   BaseSizeOptions,
   LineTypeSeriesOptions,
   TreemapChartSeriesOptions,
-  AxisTitleOption,
 } from '@t/options';
 
 import { isUndefined, pick, isNumber } from '@src/helpers/utils';
@@ -61,7 +60,7 @@ type YAxisRectParam = AxisParam & {
 type XAxisRectParam = AxisParam & {
   yAxis: Rect;
   secondaryYAxis: Rect;
-  xAxisData: XAxisData;
+  xAxisData: AxisData;
 };
 
 type YAxisTitleRectParam = {
@@ -218,14 +217,14 @@ function getXAxisWidth({
   legend,
   circleLegend,
   secondaryYAxis,
+  xAxisData,
 }: XAxisRectParam) {
   const { width } = chartSize;
   const { align, width: legendWidth } = legend;
-  const verticalAlign = isVerticalAlign(align);
-
+  const legendVerticalAlign = isVerticalAlign(align);
   let xAxisWidth;
 
-  if (verticalAlign) {
+  if (legendVerticalAlign) {
     xAxisWidth = width - (yAxis.x + yAxis.width + padding.X);
 
     if (circleLegend.visible) {
@@ -239,10 +238,19 @@ function getXAxisWidth({
     xAxisWidth = width - legendWidth - padding.X * 2;
   }
 
-  return xAxisWidth - secondaryYAxis.width;
+  if (secondaryYAxis.width) {
+    xAxisWidth -= secondaryYAxis.width;
+  }
+
+  if (xAxisData?.maxLabelWidth) {
+    // subtract half of the maximum label length to secure margin size
+    xAxisWidth -= xAxisData.maxLabelWidth * 0.5;
+  }
+
+  return xAxisWidth;
 }
 
-function getXAxisHeight(xAxisData: XAxisData, hasAxis = false) {
+function getXAxisHeight(xAxisData: AxisData, hasAxis = false) {
   if (!hasAxis) {
     return 0;
   }
@@ -276,6 +284,14 @@ function getLegendRect(legendRectParams: LegendRectParams) {
     xAxisTitleHeight,
     legendItemHeight,
   } = legendRectParams;
+  if (!legend.visible) {
+    return {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    };
+  }
 
   const { align, width: legendWidth } = legend;
   const { width } = chartSize;
@@ -487,15 +503,18 @@ function getAxisTitleHeight(axisTheme: AxisTheme | AxisTheme[], offsetY = 0) {
 }
 
 function checkAxisSize(
-  chartSize: Size,
+  { width, height }: Size,
   layout: Pick<Layout, 'title' | 'yAxisTitle' | 'yAxis' | 'xAxis' | 'xAxisTitle' | 'legend'>,
   legendState: Legend
 ) {
+  if (width < 0 || height < 0) {
+    return;
+  }
+
   const { title, yAxisTitle, yAxis, xAxis, xAxisTitle, legend } = layout;
   const { align } = legendState;
   const hasVerticalLegend = isVerticalAlign(align);
   const legendHeight = hasVerticalLegend ? legend.height : 0;
-
   const diffHeight =
     xAxis.height +
     xAxisTitle.height +
@@ -503,7 +522,7 @@ function checkAxisSize(
     yAxisTitle.height +
     title.height +
     legendHeight -
-    chartSize.height;
+    height;
 
   if (diffHeight > 0) {
     yAxis.height -= diffHeight;
@@ -641,6 +660,7 @@ const layout: StoreModule = {
         legendState.align,
         circleLegendState.width
       );
+
       const plot = getPlotRect(xAxis, yAxis, optionSize.plot);
 
       extend(state.layout, {

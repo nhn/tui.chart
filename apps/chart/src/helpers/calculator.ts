@@ -3,7 +3,7 @@
  */
 import { Options, ValueEdge, LabelAxisData } from '@t/store/store';
 import * as arrayUtil from '@src/helpers/arrayUtil';
-import { range, isInteger, isString } from '@src/helpers/utils';
+import { range, isInteger, isString, isNumber } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
@@ -24,8 +24,20 @@ export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
 export function getTextHeight(text: string, font: string = DEFAULT_LABEL_TEXT) {
   ctx.font = font;
   const { actualBoundingBoxAscent, actualBoundingBoxDescent } = ctx.measureText(text);
+  const validActualBoundingBox =
+    isNumber(actualBoundingBoxAscent) && isNumber(actualBoundingBoxDescent);
+  console.log(ctx.font);
 
-  return Math.ceil(Math.abs(actualBoundingBoxAscent) + Math.abs(actualBoundingBoxDescent) + 1);
+  return validActualBoundingBox
+    ? Math.ceil(Math.abs(actualBoundingBoxAscent) + Math.abs(actualBoundingBoxDescent)) + 1
+    : getFontHeight(font);
+}
+
+export function getFontHeight(font: string = DEFAULT_LABEL_TEXT) {
+  const LINE_HEIGHT_NORMAL = 1.2;
+  const fontSize = font.match(/\d+(?=px)/);
+
+  return parseInt(String(Number(fontSize) * LINE_HEIGHT_NORMAL), 10);
 }
 
 export function getAxisLabelAnchorPoint(labelHeight: number) {

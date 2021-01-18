@@ -170,16 +170,13 @@ export interface Scale {
 type FilterAxisLabel = { offsetPos: number; text: string };
 
 type LotationLabelData = {
-  needRotateLabel: boolean;
-  radian: number;
+  needRotateLabel?: boolean;
+  radian?: number;
   rotationHeight?: number;
-  maxHeight: number;
 };
 
-type XAxisData = AxisData & LotationLabelData;
-
 export type Axes = {
-  xAxis: XAxisData;
+  xAxis: AxisData;
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
   radialAxis?: RadialAxisData;
@@ -336,7 +333,6 @@ export type InitAxisData = {
   tickInterval: number;
   labelInterval: number;
   title?: Required<AxisTitleOption>;
-  rotatable?: boolean;
 };
 
 type BaseAxisData = InitAxisData & {
@@ -347,10 +343,11 @@ type BaseAxisData = InitAxisData & {
   tickDistance: number;
   maxLabelWidth: number;
   maxLabelHeight: number;
-  offsetY: number;
-  maxHeight: number;
   filteredLabels: FilterAxisLabel[];
-};
+  offsetY?: number;
+  maxWidth?: number;
+  maxHeight?: number;
+} & LotationLabelData;
 
 export type LabelAxisData = BaseAxisData & {
   labelDistance: number;

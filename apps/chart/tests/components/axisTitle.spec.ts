@@ -156,7 +156,7 @@ describe('xAxisTitle', () => {
         text: 'xAxisTitle',
         type: 'label',
         x: 50,
-        y: 50,
+        y: 0,
       },
     ]);
   });
@@ -173,7 +173,7 @@ describe('xAxisTitle', () => {
         text: 'xAxisTitle',
         type: 'label',
         x: 150,
-        y: 150,
+        y: 100,
       },
     ]);
   });

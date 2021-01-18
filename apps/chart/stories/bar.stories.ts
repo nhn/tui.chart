@@ -146,6 +146,7 @@ export const centerYAxis = () => {
     yAxis: { title: 'Age Group', align: 'center' },
     xAxis: { label: { interval: 2 } },
     series: { diverging: true },
+    legend: { width: 80 },
   });
 
   return el;

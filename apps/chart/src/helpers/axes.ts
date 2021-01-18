@@ -5,7 +5,6 @@ import { AxisType } from '@src/component/axis';
 import { divisors } from '@src/helpers/calculator';
 import { range } from '@src/helpers/utils';
 import { DEGREE_CANDIDATES, calculateRotatedWidth } from '@src/helpers/geometric';
-import { label } from '@src/brushes/label';
 
 interface IntervalInfo {
   blockCount: number;

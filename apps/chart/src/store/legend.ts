@@ -38,6 +38,7 @@ type LegendWidthParam = {
   options: Options;
   align: Align;
   visible: boolean;
+  checkboxVisible: boolean;
 };
 
 function calculateLegendWidth({
@@ -47,6 +48,7 @@ function calculateLegendWidth({
   options,
   align,
   visible,
+  checkboxVisible,
 }: LegendWidthParam) {
   const verticalAlign = isVerticalAlign(align);
   const legendOptions = options?.legend;
@@ -76,7 +78,11 @@ function calculateLegendWidth({
     legendWidth = sum(legendWidths) + LEGEND_ITEM_MARGIN_X * (legendWidths.length - 1);
   } else {
     const labelAreaWidth = Math.max(...legendWidths);
-    legendWidth = Math.max(labelAreaWidth, legendWidth);
+    legendWidth =
+      (checkboxVisible ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
+      LEGEND_ICON_SIZE +
+      LEGEND_MARGIN_X +
+      Math.max(labelAreaWidth, legendWidth);
   }
 
   return legendWidth;
@@ -244,6 +250,7 @@ const legend: StoreModule = {
         options,
         align,
         visible,
+        checkboxVisible,
       });
 
       const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
