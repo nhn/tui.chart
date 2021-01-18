@@ -527,13 +527,11 @@ function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable }): AxisData
   const distance = size / (filteredLabels.length - (pointOnColumn ? 0 : 1));
   const rotationData = makeRotationData(axisData, distance, rotatable);
   const { needRotateLabel, rotationHeight } = rotationData;
-  const maxWidth = getXAxisMaxWidth(axisData, rotationData);
   const maxHeight = (needRotateLabel ? rotationHeight : maxLabelHeight) + offsetY;
 
   return {
     ...axisData,
     ...rotationData,
-    maxWidth,
     maxHeight,
     offsetY,
   };

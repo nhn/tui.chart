@@ -345,7 +345,6 @@ type BaseAxisData = InitAxisData & {
   maxLabelHeight: number;
   filteredLabels: FilterAxisLabel[];
   offsetY?: number;
-  maxWidth?: number;
   maxHeight?: number;
 } & LotationLabelData;
 
