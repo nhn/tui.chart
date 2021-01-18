@@ -55,6 +55,7 @@
     "babel-loader": "^8.0.6",
     "core-js": "^3.8.2",
     "css-loader": "^5.0.1",
+    "css-minimizer-webpack-plugin": "^1.2.0",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.10.1",
     "eslint-config-tui": "^3.0.0",
@@ -72,6 +73,7 @@
     "typescript": "^3.7.3",
     "typescript-transform-paths": "^2.0.2",
     "webpack": "^4.41.2",
+    "webpack-bundle-analyzer": "^4.3.0",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0",
     "webpack-merge": "^5.3.0"

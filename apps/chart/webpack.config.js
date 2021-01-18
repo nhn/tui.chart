@@ -5,6 +5,8 @@ const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const pkg = require('./package.json');
 
 const commonConfig = {
@@ -58,6 +60,10 @@ module.exports = (env, { mode, minify }) => {
           banner: BANNER,
           entryOnly: true,
         }),
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          reportFilename: `../../report/webpack/stats-${pkg.version}.html`,
+        }),
       ],
       module: {
         rules: [
@@ -86,6 +92,7 @@ module.exports = (env, { mode, minify }) => {
               },
             },
           }),
+          new CssMinimizerPlugin(),
         ],
       };
     }
