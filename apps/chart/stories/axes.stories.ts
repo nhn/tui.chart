@@ -1,9 +1,10 @@
 import LineChart from '@src/charts/lineChart';
-import { LineSeriesData } from '@t/options';
+import { HeatmapChartOptions, HeatmapSeriesData, LineSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
-import { temperatureData } from './data';
+import { temperatureAverageDataForHeatmap, temperatureData } from './data';
+import HeatmapChart from '@src/charts/heatmapChart';
 
 export default {
   title: 'chart|Axes',
@@ -37,7 +38,20 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
   return { el, chart };
 }
 
-export const formatter = () => {
+function createHeatmapChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions = {}) {
+  const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions);
+
+  el.style.outline = '1px solid red';
+  el.style.width = `${width}px`;
+  el.style.height = `${height}px`;
+
+  const chart = new HeatmapChart({ el, data, options });
+
+  return { el, chart };
+}
+
+export const normalAxesFormatter = () => {
   const { el } = createChart(temperatureData, {
     xAxis: {
       formatter: (value) => {
@@ -60,6 +74,29 @@ export const formatter = () => {
         }
 
         return `️${value} ☀️`;
+      },
+    },
+  });
+
+  return el;
+};
+
+export const heatmapAxesFormatter = () => {
+  const { el } = createHeatmapChart(temperatureAverageDataForHeatmap, {
+    xAxis: {
+      formatter: (value, axisLabelInfo) => {
+        const { index } = axisLabelInfo;
+        const animals = ['🐶', '🐱', '🦊', '🐻'];
+
+        return `${animals[index % animals.length]} ${value}`;
+      },
+    },
+    yAxis: {
+      formatter: (value, axisLabelInfo) => {
+        const { index } = axisLabelInfo;
+        const animals = ['👻', '😻', '🙋‍♂️', '🐉', '🔥'];
+
+        return `${animals[index % animals.length]} ${value}`;
       },
     },
   });
