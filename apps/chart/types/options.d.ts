@@ -1,5 +1,5 @@
 import { Categories, RawSeries, Options } from '@t/store/store';
-import { TooltipModel } from '@t/components/tooltip';
+import { TooltipData, TooltipModel } from '@t/components/tooltip';
 import { ScatterSeriesIconType } from '@t/components/series';
 import {
   AreaChartThemeOptions,
@@ -20,6 +20,7 @@ import {
   BulletCharThemeOptions,
   ColumnLineChartThemeOptions,
 } from '@t/theme';
+import { AxisType } from '@src/component/axis';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number] | null;
@@ -188,7 +189,8 @@ export interface Scale {
   stepSize?: 'auto' | number;
 }
 
-type AxisFormatter = (value: string) => string;
+type AxisLabelInfo = { axisName: AxisType; labels: string[]; index: number };
+type AxisFormatter = (value: string, axisLabelInfo: AxisLabelInfo) => string;
 export type AxisTitleOption = Omit<TitleOption, 'align'>;
 type AxisTitle = string | AxisTitleOption;
 
@@ -263,6 +265,7 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
+type TooltipFormatter = (value: SeriesDataType, tooltipDataInfo?: TooltipData) => string;
 type ValueFormatter = (value: SeriesDataType) => string;
 export type DefaultTooltipTemplate = { header: string; body: string };
 
@@ -276,7 +279,7 @@ interface BaseTooltipOptions {
   template?: TooltipTemplateFunc;
   offsetX?: number;
   offsetY?: number;
-  formatter?: ValueFormatter;
+  formatter?: TooltipFormatter;
 }
 
 export interface BaseOptions {

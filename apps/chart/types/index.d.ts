@@ -50,6 +50,7 @@ import {
   RadarSeriesInput,
   TreemapSeriesType,
   NestedPieSeriesType,
+  AxisLabelInfo,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -71,6 +72,7 @@ import { Options, HeatmapSeriesData, TreemapSeriesData } from '@t/store/store';
 import { CustomEventType, EventListener } from '@src/eventEmitter';
 import { BoxPlotChartProps } from '@src/charts/boxPlotChart';
 import { AddSeriesDataInfo, SelectSeriesInfo } from '@src/charts/chart';
+import { TooltipData as TooltipDataInfo } from '@t/components/tooltip';
 
 declare namespace toastui {
   export class Chart {
@@ -539,6 +541,8 @@ export {
   BoxPlotChartProps,
   CustomEventType,
   EventListener,
+  TooltipDataInfo,
+  AxisLabelInfo,
 };
 
 export default toastui.Chart;

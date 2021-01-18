@@ -6,11 +6,11 @@
 
 TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이며 차트에 따라 사용 가능한 축의 종류가 다르다.
 
-| 타입 | 차트명 |
-| --- | --- |
+| 타입                          | 차트명                                                         |
+| ----------------------------- | -------------------------------------------------------------- |
 | x축, y축, 보조 y 축 사용 가능 | `Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` |
-| x축, y축 사용 가능 | `BoxPlot`, `Bubble`, `Bullet`, `Column`, `Heatmap`, `Scatter` |
-| 축이 없는 차트 | `Radar`, `Treemap`, `Pie`, `NestedPie` |
+| x축, y축 사용 가능            | `BoxPlot`, `Bubble`, `Bullet`, `Column`, `Heatmap`, `Scatter`  |
+| 축이 없는 차트                | `Radar`, `Treemap`, `Pie`, `NestedPie`                         |
 
 이 가이드에서는 모든 축을 사용 가능한 차트라는 가정하에 작성되었다.
 
@@ -22,32 +22,52 @@ TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이�
 interface AxisOptions {
   tick?: {
     interval?: number;
-  }
+  };
   label?: {
     interval?: number;
-  }
+    formatter: (
+      value: string,
+      axisLabelInfo: {
+        axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis';
+        labels: string[];
+        index: number;
+      }
+    ) => string;
+  };
   scale?: {
     min?: number;
     max?: number;
     stepSize?: 'auto' | number;
-  }
-  title?: string | {
-    text: string;
-    offsetX?: number;
-    offsetY?: number;
-  }
+  };
+  title?:
+    | string
+    | {
+        text: string;
+        offsetX?: number;
+        offsetY?: number;
+      };
   width?: number;
   height?: number;
 }
 
 interface xAxisOptions extends AxisOptions {
   pointOnColumn?: boolean; // Only available on Line, Area Chart
-  date?: boolean | {
-    format: string;
-  };
+  date?:
+    | boolean
+    | {
+        format: string;
+      };
   label?: {
     interval?: number;
     rotatable?: boolean;
+    formatter: (
+      value: string,
+      axisLabelInfo: {
+        axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis';
+        labels: string[];
+        index: number;
+      }
+    ) => string;
   };
 }
 ```
@@ -60,13 +80,13 @@ interface xAxisOptions extends AxisOptions {
 const options = {
   xAxis: {
     tick: {
-      interval: 3
+      interval: 3,
     },
     label: {
-      interval: 6
-    }
-  }
-}
+      interval: 6,
+    },
+  },
+};
 ```
 
 다음과 같이 예제를 작성할 경우 다음과 같이 나타나던 축을 다음과 같이 좀 더 단순화 할 수 있다.
@@ -77,8 +97,7 @@ const options = {
 
 x축 라벨이 겹쳐질 경우 자동으로 라벨을 회전하는 옵션이다. `label.rotatable`옵션을 `false`로 설정하면 라벨이 자동으로 회전하지 않는다.
 
-* 기본값: `true`
-
+- 기본값: `true`
 
 ![image](https://user-images.githubusercontent.com/43128697/104870524-18b8f480-598c-11eb-9781-2d797a2ddbfa.png)
 
@@ -92,9 +111,9 @@ const options = {
     scale: {
       min: 20,
       max: 50,
-      stepSize: 10
-    }
-  }
+      stepSize: 10,
+    },
+  },
 };
 ```
 
@@ -102,7 +121,7 @@ const options = {
 
 ### title
 
-그림에서 파악할 수 있듯이 각 차트는 제목을 갖는다. `title` 옵션은 문자열로 직접 입력받을 수 있으며 `title.text` 옵션과  `title.offsetX`, `title.offsetY` 옵션을 통해 제목을 지정하며 위치를 변경해 줄 수 있다.
+그림에서 파악할 수 있듯이 각 차트는 제목을 갖는다. `title` 옵션은 문자열로 직접 입력받을 수 있으며 `title.text` 옵션과 `title.offsetX`, `title.offsetY` 옵션을 통해 제목을 지정하며 위치를 변경해 줄 수 있다.
 
 ```js
 const options = {
@@ -110,28 +129,27 @@ const options = {
     title: {
       text: 'new title',
       offsetX: 100,
-      offsetY: 100
-    }
-  }
-}
+      offsetY: 100,
+    },
+  },
+};
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/102191824-4af2b480-3efd-11eb-87c0-9a5ec4c9296b.png)
-
 
 ### date
 
 x축의 경우 나타나는 category 값이 Date 객체 또는 날짜를 나타내는 문자열이 될 수 있다. 해당 데이터를 내부에서 처리해주기 위해 날짜 데이터를 사용하는 경우 `xAxis.date` 객체를 `true`로 지정하거나 `xAxis.date.format`을 지정해야 한다.
 
-| 타입 | 사용 가능한 포맷 |
-| --- | --- |
-| year | `YYYY`, `YY`, `yy`, `yyyy` |
-| month | `MMMM`, `MMM`, `MM`, `M` |
-| date | `D`, `d`, `DD`, `dd` |
-| hour | `hh`, `HH`, `h`, `H` |
-| minute | `m`, `mm` |
-| seconds | `s`, `ss` |
-| meridiem | `A`, `a` |
+| 타입     | 사용 가능한 포맷           |
+| -------- | -------------------------- |
+| year     | `YYYY`, `YY`, `yy`, `yyyy` |
+| month    | `MMMM`, `MMM`, `MM`, `M`   |
+| date     | `D`, `d`, `DD`, `dd`       |
+| hour     | `hh`, `HH`, `h`, `H`       |
+| minute   | `m`, `mm`                  |
+| seconds  | `s`, `ss`                  |
+| meridiem | `A`, `a`                   |
 
 해당 포맷 옵션을 이용하는 간단한 예제를 만들어보자.
 
@@ -167,20 +185,54 @@ Date 타입의 카테고리가 포맷팅되어 나타나는 것을 확인할 수
 
 ![image](https://user-images.githubusercontent.com/35371660/102196061-bab76e00-3f02-11eb-8be2-d480b9810113.png)
 
-### pointOnColumn
+### formatter
 
-x축을 기준으로 시리즈의 시작 부분을 틱과 틱 가운데로 이동시킬 수 있다. 해당 옵션은 [Line 차트](./chart-line.md)와 [Area 차트](./chart-area.md)에서만 사용 가능하다.
+`axis.formatter` 옵션을 통해 값을 포맷팅 한 뒤 출력할 수 있다. formatter 함수는 데이터 값과 데이터에 대한 정보를 차례대로 인자로 가지며 포맷팅 된 문자열을 반환하는 함수다.
 
-
-* 기본값: `false`
-
+간단한 예시로 입력되는 값을 비교해 축에 이모지를 추가하는 예제를 만들어 봤다.
 
 ```js
 const options = {
   xAxis: {
-    pointOnColumn: true
-  }
-}
+    formatter: (value) => {
+      const index = Number(value.split('-')[1]);
+      const animals = ['🐶', '🐱', '🦊', '🐻'];
+
+      return `${animals[index % animals.length]} ${value}`;
+    },
+    date: {
+      format: 'YY-MM-DD',
+    },
+  },
+  yAxis: {
+    formatter: (value) => {
+      if (value < 0) {
+        return `${value} ❄️`;
+      }
+      if (value > 25) {
+        return `${value} 🔥`;
+      }
+
+      return `️${value} ☀️`;
+    },
+  },
+};
+```
+
+![image](https://user-images.githubusercontent.com/35371660/104884143-35175a00-59a9-11eb-8711-eca42f0f483c.png)
+
+### pointOnColumn
+
+x축을 기준으로 시리즈의 시작 부분을 틱과 틱 가운데로 이동시킬 수 있다. 해당 옵션은 [Line 차트](./chart-line.md)와 [Area 차트](./chart-area.md)에서만 사용 가능하다.
+
+- 기본값: `false`
+
+```js
+const options = {
+  xAxis: {
+    pointOnColumn: true,
+  },
+};
 ```
 
 **`pointOnColumn: true`가 적용된 Line 차트**
@@ -201,21 +253,21 @@ interface AxisTheme {
     fontSize?: number;
     fontFamily?: string;
     fontWeight?: string | number;
-    color?: string
+    color?: string;
   };
   label?: {
     fontSize?: number;
     fontFamily?: string;
     fontWeight?: string | number;
-    color?: string
+    color?: string;
   };
 }
 ```
 
-| 이름 | 타입 | 설명 |
-| --- | --- | --- |
-| width | number | 축 라인 두께 |
-| color | string | 축 색상 |
+| 이름  | 타입   | 설명              |
+| ----- | ------ | ----------------- |
+| width | number | 축 라인 두께      |
+| color | string | 축 색상           |
 | title | object | 축 제목 테마 옵션 |
 | label | object | 축 라벨 테마 옵션 |
 
@@ -229,12 +281,12 @@ const options = {
         color: '#ff2233',
         fontWeight: 600,
         fontFamily: 'monaco',
-        fontSize: 14
+        fontSize: 14,
       },
       width: 3,
       color: '#00ff32',
-    }
-  }
+    },
+  },
 };
 ```
 
@@ -245,7 +297,6 @@ const options = {
 ## Secondary Y Axis
 
 `Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` 차트는 보조 축을 사용할 수 있다. 기존에 작성하던 객체 형태의 `yAxis` 옵션을 배열로 입력하면 첫번째 옵션이 주축에 대한 옵션, 두번째 옵션이 부축에 대한 옵션으로 동작한다.
-
 
 ```js
 const options = {
@@ -261,7 +312,7 @@ const options = {
       },
     },
   ],
-}
+};
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/102289947-45d84880-3f83-11eb-94ce-8b8e6bead8e8.png)
@@ -303,10 +354,10 @@ const options = {
         },
         width: 3,
         color: '#AFFCCA',
-      }
-    ]
-  }
-}
+      },
+    ],
+  },
+};
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/102290775-090d5100-3f85-11eb-9181-3ad214d50407.png)

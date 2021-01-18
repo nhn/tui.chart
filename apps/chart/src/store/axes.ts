@@ -142,7 +142,9 @@ function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
       : makeFormattedCategory(categories, options?.xAxis?.date);
   const formatter = options[axisName]?.formatter ?? ((value) => value);
   // @TODO: regenerate label when exceeding max width
-  const labels = labelsBeforeFormatting.map((label) => formatter(label));
+  const labels = labelsBeforeFormatting.map((label, index) =>
+    formatter(label, { index, labels: labelsBeforeFormatting, axisName })
+  );
 
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
@@ -200,7 +202,9 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
   if (!centerYAxis && divergingBoxSeries) {
     valueLabels = getDivergingValues(valueLabels);
   }
-  const labels = valueLabels.map((label) => formatter(label));
+  const labels = valueLabels.map((label, index) =>
+    formatter(label, { index, labels: valueLabels, axisName })
+  );
 
   const tickDistance = size / Math.max(valueLabels.length, 1);
   const tickCount = valueLabels.length;
