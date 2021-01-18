@@ -10,7 +10,7 @@ import {
 import { getValueString } from '@src/helpers/tooltip';
 import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
 import { isNumber } from '@src/helpers/utils';
-import { Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
+import { ValueFormatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
 import { TooltipTheme } from '@t/theme';
 
 type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
@@ -28,7 +28,7 @@ export default class Tooltip extends Component {
 
   offsetY!: number;
 
-  formatter?: Formatter;
+  formatter?: ValueFormatter;
 
   tooltipInfoModels: TooltipInfoModels = {} as TooltipInfoModels;
 

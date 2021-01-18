@@ -62,6 +62,7 @@ interface StateProp {
   centerYAxis?: Pick<CenterYAxisData, 'xAxisHalfSize'> | null;
   zoomRange?: RangeDataType<number>;
   initialAxisData: InitAxisData;
+  axisName: string;
 }
 
 type ValueStateProp = StateProp & {
@@ -79,6 +80,7 @@ type SecondaryYAxisParam = {
   valueAxisSize: number;
   labelAxisSize: number;
   labelAxisName: string;
+  valueAxisName: string;
   initialAxisData: InitAxisData;
   isCoordinateTypeChart: boolean;
 };
@@ -137,12 +139,16 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     rawCategories,
     initialAxisData,
     isCoordinateTypeChart,
+    axisName,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
-  const labels =
+  const labelsBeforeFormatting =
     !isZooming(rawCategories, zoomRange) && isCoordinateTypeChart
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options?.xAxis?.date);
+  const formatter = options[axisName]?.formatter ?? ((value) => value);
+  // @TODO: regenerate label when exceeding max width
+  const labels = labelsBeforeFormatting.map((label) => formatter(label));
 
   const tickIntervalCount = categories.length - (pointOnColumn ? 0 : 1);
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
@@ -161,10 +167,11 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
 }
 
 export function getValueAxisData(stateProp: StateProp): ValueAxisState {
-  const { scale, axisSize, series, options, centerYAxis, initialAxisData } = stateProp;
+  const { scale, axisSize, series, options, centerYAxis, initialAxisData, axisName } = stateProp;
   const { limit, stepSize } = scale;
   const size = centerYAxis ? centerYAxis?.xAxisHalfSize : axisSize;
   const divergingBoxSeries = isDivergingBoxSeries(series, options);
+  const formatter = options[axisName]?.formatter ?? ((value) => value);
   const zeroPosition = getZeroPosition(
     limit,
     axisSize,
@@ -176,15 +183,16 @@ export function getValueAxisData(stateProp: StateProp): ValueAxisState {
   if (!centerYAxis && divergingBoxSeries) {
     valueLabels = getDivergingValues(valueLabels);
   }
+  const labels = valueLabels.map((label) => formatter(label));
 
   const axisData: ValueAxisState = {
-    labels: valueLabels,
+    labels,
     pointOnColumn: false,
     isLabelAxis: false,
-    tickCount: valueLabels.length,
-    tickDistance: size / valueLabels.length,
+    tickCount: labels.length,
+    tickDistance: size / labels.length,
     ...initialAxisData,
-    maxLabelWidth: getMaxLengthLabelWidth(valueLabels),
+    maxLabelWidth: getMaxLengthLabelWidth(labels),
   };
 
   if (isNumber(zeroPosition)) {
@@ -314,6 +322,7 @@ function getSecondaryYAxisData({
   valueAxisSize,
   labelAxisSize,
   labelAxisName,
+  valueAxisName,
   initialAxisData,
   isCoordinateTypeChart,
 }: SecondaryYAxisParam): LabelAxisState | ValueAxisState {
@@ -332,6 +341,7 @@ function getSecondaryYAxisData({
         zoomRange,
         initialAxisData,
         isCoordinateTypeChart,
+        axisName: labelAxisName,
       })
     : getValueAxisData({
         scale: scale.secondaryYAxis!,
@@ -340,6 +350,7 @@ function getSecondaryYAxisData({
         series,
         centerYAxis: null,
         initialAxisData,
+        axisName: valueAxisName,
       });
 }
 
@@ -425,6 +436,7 @@ const axes: StoreModule = {
             }
           : null,
         initialAxisData: initialAxisData[valueAxisName],
+        axisName: valueAxisName,
       });
 
       const labelAxisData = getLabelAxisData({
@@ -437,6 +449,7 @@ const axes: StoreModule = {
         zoomRange,
         initialAxisData: initialAxisData[labelAxisName],
         isCoordinateTypeChart,
+        axisName: labelAxisName,
       });
 
       const axesState = {
@@ -451,6 +464,7 @@ const axes: StoreModule = {
           valueAxisSize,
           labelAxisSize,
           labelAxisName,
+          valueAxisName,
           initialAxisData: initialAxisData.secondaryYAxis!,
           isCoordinateTypeChart,
         }) as AxisData;
