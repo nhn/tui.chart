@@ -34,7 +34,6 @@ function getOffsetAndAnchorKey(
   };
 }
 
-type LabelInfo = { offsetPos: number; text: string };
 export default class Axis extends Component {
   models: AxisModels = { label: [], tick: [], axisLine: [] };
 

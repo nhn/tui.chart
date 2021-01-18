@@ -417,7 +417,7 @@ export default class BoxSeries extends Component {
     const validDiverging = diverging && seriesData.length === 2;
     const columnWidth = this.getColumnWidth(renderOptions, seriesLength, validDiverging);
     const seriesModels: RectModel[] = [];
-    const padding = (tickDistance - columnWidth * seriesLength) / 2;
+    const padding = (tickDistance - columnWidth * (validDiverging ? 1 : seriesLength)) / 2;
 
     seriesData.forEach(({ data, color: seriesColor, name }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;

@@ -317,10 +317,11 @@ export const dataLabelsWithTheme = () => {
 
 export const rotatable = () => {
   const { el } = createChart(genderAgeData, {
-    chart: { width: 800 },
+    chart: { width: 'auto', height: 'auto' },
     yAxis: { title: 'Age Group', align: 'center' },
-    xAxis: { title: 'People', label: { interval: 1, rotatable: true } },
+    xAxis: { title: 'People', label: { interval: 1, rotatable: true }, scale: { stepSize: 50000 } },
     series: { diverging: true },
+    legend: { align: 'bottom' },
   });
 
   return el;

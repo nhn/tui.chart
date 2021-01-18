@@ -235,7 +235,8 @@ function getXAxisWidth({
   }
 
   if (hasCenterYAxis) {
-    xAxisWidth = width - legendWidth - padding.X * 2;
+    console.log(legendWidth);
+    xAxisWidth = width - (legendVerticalAlign ? 0 : legendWidth) - padding.X * 2;
   }
 
   if (secondaryYAxis.width) {

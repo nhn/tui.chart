@@ -73,6 +73,7 @@ interface StateProp {
   centerYAxis?: Pick<CenterYAxisData, 'xAxisHalfSize'> | null;
   zoomRange?: RangeDataType<number>;
   initialAxisData: InitAxisData;
+  labelOnYAxis?: boolean;
 }
 
 type ValueStateProp = StateProp & {
@@ -221,6 +222,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     rawCategories,
     initialAxisData,
     isCoordinateTypeChart,
+    labelOnYAxis,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
@@ -235,6 +237,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const filteredLabels = filterLabels(
     {
       labels,
+      pointOnColumn,
       tickDistance,
       tickCount,
       ...initialAxisData,
@@ -256,7 +259,16 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
 }
 
 export function getValueAxisData(stateProp: StateProp): ValueAxisState {
-  const { scale, axisSize, series, options, centerYAxis, initialAxisData, theme } = stateProp;
+  const {
+    scale,
+    axisSize,
+    series,
+    options,
+    centerYAxis,
+    initialAxisData,
+    theme,
+    labelOnYAxis,
+  } = stateProp;
   const { limit, stepSize } = scale;
   const size = centerYAxis ? centerYAxis?.xAxisHalfSize : axisSize;
   const divergingBoxSeries = isDivergingBoxSeries(series, options);
@@ -274,9 +286,11 @@ export function getValueAxisData(stateProp: StateProp): ValueAxisState {
 
   const tickDistance = size / valueLabels.length;
   const tickCount = valueLabels.length;
+  const pointOnColumn = false;
   const filteredLabels = filterLabels(
     {
-      labels: [...valueLabels].reverse(),
+      labels: labelOnYAxis ? valueLabels : [...valueLabels].reverse(),
+      pointOnColumn,
       tickDistance,
       tickCount,
       ...initialAxisData,
@@ -287,8 +301,7 @@ export function getValueAxisData(stateProp: StateProp): ValueAxisState {
   const axisData: ValueAxisState = {
     labels: valueLabels,
     filteredLabels,
-    pointOnColumn: false,
-    isLabelAxis: false,
+    // isLabelAxis: false,
     tickCount,
     tickDistance,
     ...initialAxisData,
@@ -493,33 +506,6 @@ function getLabelFont(theme: Required<AxisTheme>) {
   return getTitleFontString(theme.label);
 }
 
-function getAdditionalLabelWidth(axisData, rotationData) {
-  const { pointOnColumn, maxLabelWidth, tickDistance } = axisData;
-  const { needRotateLabel, rotationWidth } = rotationData;
-
-  let width = 0;
-
-  if (pointOnColumn) {
-    if (needRotateLabel) {
-      width += (tickDistance + rotationWidth) / 2;
-    } else {
-      width += (tickDistance + maxLabelWidth) / 2;
-    }
-  } else if (needRotateLabel) {
-    width += rotationWidth;
-  } else {
-    width += maxLabelWidth / 2;
-  }
-
-  return width;
-}
-
-function getXAxisMaxWidth(axisData, rotationData) {
-  const { labels, tickDistance } = axisData;
-
-  return tickDistance * (labels.length - 1) + getAdditionalLabelWidth(axisData, rotationData);
-}
-
 function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable }): AxisData {
   const { filteredLabels, pointOnColumn, maxLabelHeight } = axisData;
   const offsetY = getAxisLabelAnchorPoint(maxLabelHeight);
@@ -602,6 +588,7 @@ const axes: StoreModule = {
             }
           : null,
         initialAxisData: initialAxisData[valueAxisName],
+        labelOnYAxis,
       });
 
       const labelAxisData = getLabelAxisData({
@@ -615,6 +602,7 @@ const axes: StoreModule = {
         zoomRange,
         initialAxisData: initialAxisData[labelAxisName],
         isCoordinateTypeChart,
+        labelOnYAxis,
       });
 
       let secondaryYAxis, centerYAxis, radialAxis;

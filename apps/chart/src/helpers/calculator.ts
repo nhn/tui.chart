@@ -26,7 +26,6 @@ export function getTextHeight(text: string, font: string = DEFAULT_LABEL_TEXT) {
   const { actualBoundingBoxAscent, actualBoundingBoxDescent } = ctx.measureText(text);
   const validActualBoundingBox =
     isNumber(actualBoundingBoxAscent) && isNumber(actualBoundingBoxDescent);
-  console.log(ctx.font);
 
   return validActualBoundingBox
     ? Math.ceil(Math.abs(actualBoundingBoxAscent) + Math.abs(actualBoundingBoxDescent)) + 1
@@ -175,8 +174,7 @@ function getControlPoints(prev: BezierPoint, cur: BezierPoint, next: BezierPoint
 export function setSplineControlPoint(points: (BezierPoint | null)[]) {
   for (let i = 0, pointsSize = points.length, prev = points[0]; i < pointsSize; i += 1) {
     const point = points[i];
-    if (
-      (point)) {
+    if (point) {
       prev = points[i + 1];
       continue;
     }
