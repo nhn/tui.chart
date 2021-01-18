@@ -222,7 +222,6 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     rawCategories,
     initialAxisData,
     isCoordinateTypeChart,
-    labelOnYAxis,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
   const labels =
@@ -300,8 +299,9 @@ export function getValueAxisData(stateProp: StateProp): ValueAxisState {
 
   const axisData: ValueAxisState = {
     labels: valueLabels,
+    isLabelAxis: false,
     filteredLabels,
-    // isLabelAxis: false,
+    pointOnColumn,
     tickCount,
     tickDistance,
     ...initialAxisData,
