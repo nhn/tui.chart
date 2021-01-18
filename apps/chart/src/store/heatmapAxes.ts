@@ -1,5 +1,4 @@
 import { Axes, AxisData, StoreModule } from '@t/store/store';
-import { extend } from '@src/store/store';
 import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
 import { AxisType } from '@src/component/axis';
 import {
@@ -34,14 +33,16 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   const labelDistance = axisSize / tickIntervalCount;
   const pointOnColumn = true;
   const tickCount = tickIntervalCount + 1;
+  const tickInterval = options[axisType]?.tick?.interval ?? 1;
+  const labelInterval = options[axisType]?.label?.interval ?? 1;
   const filteredLabels = filterLabels(
     {
       labels,
       pointOnColumn,
       tickDistance,
       tickCount,
-      tickInterval: options[axisType]?.tick?.interval ?? 1,
-      labelInterval: options[axisType]?.label?.interval ?? 1,
+      tickInterval,
+      labelInterval,
     },
     axisSize
   );
@@ -56,6 +57,9 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
     tickCount,
     tickDistance,
     labelDistance,
+    tickInterval,
+    labelInterval,
+    title: makeTitleOption(options.xAxis?.title),
     maxLabelWidth,
     maxLabelHeight,
   };
@@ -85,21 +89,11 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
 
 const axes: StoreModule = {
   name: 'axes',
-  state: (initStoreState) => {
-    const options = initStoreState.options as HeatmapChartOptions;
-
+  state: () => {
     return {
       axes: {
-        xAxis: {
-          tickInterval: options.xAxis?.tick?.interval ?? 1,
-          labelInterval: options.xAxis?.label?.interval ?? 1,
-          title: makeTitleOption(options.xAxis?.title),
-        } as AxisData,
-        yAxis: {
-          tickInterval: options.yAxis?.tick?.interval ?? 1,
-          labelInterval: options.yAxis?.label?.interval ?? 1,
-          title: makeTitleOption(options.yAxis?.title),
-        } as AxisData,
+        xAxis: {} as AxisData,
+        yAxis: {} as AxisData,
       },
     };
   },
@@ -124,7 +118,7 @@ const axes: StoreModule = {
         this.notify(state, 'layout');
       }
 
-      extend(state.axes, axesState);
+      state.axes = axesState;
     },
   },
   computed: {},
