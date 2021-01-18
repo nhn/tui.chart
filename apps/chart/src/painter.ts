@@ -66,7 +66,7 @@ export default class Painter {
     this.canvas.style.width = `${width}px`;
     this.canvas.style.height = `${height}px`;
 
-    let ratio = 0;
+    let ratio = 1;
 
     if ('deviceXDPI' in window.screen) {
       // IE mobile or IE
