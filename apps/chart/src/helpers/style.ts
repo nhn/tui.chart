@@ -1,6 +1,7 @@
 import { StyleProp } from '@t/components/series';
 import { isString, pick } from '@src/helpers/utils';
 import { FontTheme, BubbleDataLabel, BoxDataLabel } from '@t/theme';
+import { message } from '@src/message';
 
 export function makeStyleObj<T, K>(style: StyleProp<T, K>, styleSet: Record<string, object>) {
   return style.reduce((acc: T, curValue) => {
@@ -26,4 +27,12 @@ export function getFontStyleString(theme: FontTheme) {
 
 export function getFont(theme: BubbleDataLabel | BoxDataLabel) {
   return getTitleFontString(pick(theme, 'fontFamily', 'fontWeight', 'fontSize'));
+}
+
+export function setLineDash(ctx: CanvasRenderingContext2D, dashSegments: number[]) {
+  if (ctx.setLineDash) {
+    ctx.setLineDash(dashSegments);
+  } else {
+    console.error(message.DASH_SEGMENTS_UNAVAILABLE_ERROR);
+  }
 }

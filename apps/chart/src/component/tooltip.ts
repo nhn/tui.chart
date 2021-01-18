@@ -77,17 +77,18 @@ export default class Tooltip extends Component {
           : y;
     }
 
-    x += window.scrollX;
-    y += window.scrollY;
+    // pageXOffset, pageYOffset for IE
+    x += window.scrollX || window.pageXOffset;
+    y += window.scrollY || window.pageYOffset;
 
     return { x, y };
   }
 
   setTooltipPosition(model: TooltipModel) {
-    const { x: chartX, y: chartY } = this.chartEl.getBoundingClientRect();
+    const { top, left } = this.chartEl.getBoundingClientRect();
     const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.left = `${chartX + x}px`;
-    this.tooltipContainerEl.style.top = `${chartY + y}px`;
+    this.tooltipContainerEl.style.left = `${left + x}px`;
+    this.tooltipContainerEl.style.top = `${top + y}px`;
   }
 
   getTooltipInfoModels() {

@@ -31,7 +31,7 @@ export type LineModel = {
   y2: number;
   strokeStyle?: string;
   lineWidth?: number;
-  dashedPattern?: number[];
+  dashSegments?: number[];
   name?: string;
 } & Point;
 

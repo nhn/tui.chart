@@ -459,7 +459,7 @@ export default class BoxStackSeries extends BoxSeries {
             y: this.isBar ? y + columnWidth : y,
             x2: nextX,
             y2: nextY,
-            dashedPattern: dashSegments,
+            dashSegments,
             strokeStyle: color,
             lineWidth,
           });

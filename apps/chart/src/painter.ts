@@ -12,6 +12,12 @@ import { message } from '@src/message';
 type BrushModel = ClipRectAreaModel | LinePointsModel | PathRectModel | CircleModel | TooltipModel;
 type Brush = (ctx: CanvasRenderingContext2D, brushModel: BrushModel) => void;
 
+// for IE
+interface MSWindowScreen extends Screen {
+  deviceXDPI: number;
+  logicalXDPI: number;
+}
+
 export default class Painter {
   width = 0;
 
@@ -60,7 +66,16 @@ export default class Painter {
     this.canvas.style.width = `${width}px`;
     this.canvas.style.height = `${height}px`;
 
-    const ratio = window.devicePixelRatio;
+    let ratio = 1;
+
+    if ('deviceXDPI' in window.screen) {
+      // IE mobile or IE
+      ratio =
+        (window.screen as MSWindowScreen).deviceXDPI /
+        (window.screen as MSWindowScreen).logicalXDPI;
+    } else if (window.hasOwnProperty('devicePixelRatio')) {
+      ratio = window.devicePixelRatio;
+    }
 
     this.width = width * ratio || 0;
     this.height = height * ratio || 0;
