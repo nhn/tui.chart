@@ -345,7 +345,13 @@ export default class BoxSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data, centerYAxis));
+      const dataLabelData = seriesModels.reduce<RectDataLabel[]>((acc, data) => {
+        const labelData = isRangeValue(data.value)
+          ? this.makeDataLabelRangeData(data)
+          : [this.makeDataLabel(data, centerYAxis)];
+
+        return [...acc, ...labelData];
+      }, []);
 
       this.renderDataLabels(dataLabelData);
     }
@@ -732,15 +738,44 @@ export default class BoxSeries extends Component {
     };
   }
 
+  makeDataLabelRangeData(rect: RectModel): RectDataLabel[] {
+    return (rect.value as RangeDataType<number>).reduce<RectDataLabel[]>((acc, value, index) => {
+      const data = {
+        ...rect,
+        value,
+        direction: this.getDataLabelRangeDataDirection(value, index),
+        plot: {
+          x: 0,
+          y: 0,
+          size: this.getOffsetSize(),
+        },
+        theme: omit(this.theme.dataLabels, 'stackTotal'),
+      };
+
+      return [...acc, data];
+    }, [] as RectDataLabel[]);
+  }
+
+  getDataLabelRangeDataDirection(value: number, index: number) {
+    const isEven = index % 2 === 0;
+    let direction: RectDirection;
+
+    if (this.isBar) {
+      direction = isEven ? 'left' : 'right';
+    } else {
+      direction = isEven ? 'bottom' : 'top';
+    }
+
+    return direction;
+  }
+
   getDataLabelDirection(
     rect: RectModel | StackTotalModel,
     centerYAxis?: CenterYAxisData
   ): RectDirection {
     let direction: RectDirection;
 
-    if (isRangeValue(rect.value!)) {
-      direction = this.isBar ? 'right' : 'top';
-    } else if (this.isBar) {
+    if (this.isBar) {
       const basePos = centerYAxis ? this.leftBasePosition : this.basePosition;
       direction = rect.x < basePos ? 'left' : 'right';
     } else {
