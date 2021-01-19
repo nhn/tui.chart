@@ -2,6 +2,7 @@ import BoxPlotSeries from '@src/component/boxPlotSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import { Options } from '@t/store/store';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 let boxPlotSeries;
 
@@ -354,6 +355,10 @@ describe('boxplot series', () => {
           templateType: 'boxPlot',
         },
         index: 0,
+        boxPlotDetection: {
+          width: 27.5,
+          x: 15,
+        },
       },
       {
         type: 'circle',
@@ -466,6 +471,10 @@ describe('boxplot series', () => {
           templateType: 'boxPlot',
         },
         index: 0,
+        boxPlotDetection: {
+          width: 27.5,
+          x: 57.5,
+        },
       },
     ],
   };
@@ -474,5 +483,197 @@ describe('boxplot series', () => {
     it(`should make ${modelName} properly when calling render`, () => {
       expect(boxPlotSeries[modelName]).toEqual(result[modelName]);
     });
+  });
+});
+
+describe('boxplot series with null data', () => {
+  beforeEach(() => {
+    boxPlotSeries = new BoxPlotSeries({
+      store: {} as Store<Options>,
+      eventBus: new EventEmitter(),
+    });
+
+    boxPlotSeries.render(
+      deepMergedCopy(chartState, {
+        series: {
+          boxPlot: {
+            data: [
+              {
+                name: 'han',
+                data: [
+                  [1, 2, 3, 4, 5],
+                  [6, 7, 8, 9, 10],
+                ],
+                outliers: [null, [1, 10]],
+                color: '#aaaaaa',
+              },
+              {
+                name: 'cho',
+                data: [[null, 4, 6, 8, null]],
+                outliers: null,
+                color: '#bbbbbb',
+              },
+            ],
+          },
+        },
+      })
+    );
+  });
+
+  const result = [
+    {
+      name: 'han',
+      type: 'line',
+      x: 21.5,
+      y: 50.5,
+      x2: 35.5,
+      y2: 50.5,
+      strokeStyle: 'rgba(170, 170, 170, 1)',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 21.5,
+      y: 90.5,
+      x2: 35.5,
+      y2: 90.5,
+      strokeStyle: 'rgba(170, 170, 170, 1)',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'rect',
+      x: 15,
+      y: 60,
+      width: 27.5,
+      height: 20,
+      thickness: 0,
+      color: 'rgba(170, 170, 170, 1)',
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 15.5,
+      y: 70.5,
+      x2: 42.5,
+      y2: 70.5,
+      strokeStyle: '#ffffff',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 28.5,
+      y: 50.5,
+      x2: 28.5,
+      y2: 60,
+      strokeStyle: 'rgba(170, 170, 170, 1)',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 28.5,
+      y: 90.5,
+      x2: 28.5,
+      y2: 80.5,
+      strokeStyle: 'rgba(170, 170, 170, 1)',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 121.5,
+      y: 0.5,
+      x2: 135.5,
+      y2: 0.5,
+      strokeStyle: 'rgba(170, 170, 170, 1)',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 121.5,
+      y: 40.5,
+      x2: 135.5,
+      y2: 40.5,
+      strokeStyle: 'rgba(170, 170, 170, 1)',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'rect',
+      x: 115,
+      y: 10,
+      width: 27.5,
+      height: 20,
+      thickness: 0,
+      color: 'rgba(170, 170, 170, 1)',
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 115.5,
+      y: 20.5,
+      x2: 142.5,
+      y2: 20.5,
+      strokeStyle: '#ffffff',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 128.5,
+      y: 0.5,
+      x2: 128.5,
+      y2: 10,
+      strokeStyle: 'rgba(170, 170, 170, 1)',
+      lineWidth: 1,
+    },
+    {
+      name: 'han',
+      type: 'line',
+      x: 128.5,
+      y: 40.5,
+      x2: 128.5,
+      y2: 30.5,
+      strokeStyle: 'rgba(170, 170, 170, 1)',
+      lineWidth: 1,
+    },
+    {
+      type: 'circle',
+      name: 'han',
+      x: 128.75,
+      y: 0,
+      radius: 4,
+      style: [{ lineWidth: 2, strokeStyle: 'rgba(170, 170, 170, 1)' }],
+      color: '#ffffff',
+      index: 1,
+    },
+    {
+      name: 'cho',
+      type: 'rect',
+      x: 57.5,
+      y: 20,
+      width: 27.5,
+      height: 40,
+      thickness: 0,
+      color: 'rgba(187, 187, 187, 1)',
+    },
+    {
+      name: 'cho',
+      type: 'line',
+      x: 57.5,
+      y: 40.5,
+      x2: 85.5,
+      y2: 40.5,
+      strokeStyle: '#ffffff',
+      lineWidth: 1,
+    },
+  ];
+
+  it(`should make models properly when calling render`, () => {
+    expect(boxPlotSeries.models.series).toEqual(result);
   });
 });

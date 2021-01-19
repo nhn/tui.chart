@@ -598,3 +598,104 @@ describe('vertical bullet series', () => {
     });
   });
 });
+
+describe('bullet series with null data', () => {
+  beforeEach(() => {
+    bulletSeries = new BulletSeries({
+      store: {} as Store<Options>,
+      eventBus: new EventEmiiter(),
+    });
+
+    bulletSeries.render(
+      deepMergedCopy(chartState, {
+        series: {
+          bullet: {
+            data: [
+              {
+                name: 'han',
+                data: null,
+                markers: [7, null],
+                ranges: null,
+                color: '#aaaaaa',
+              },
+              {
+                name: 'cho',
+                data: 8,
+                markers: null,
+                ranges: [[0, 2], null, [5, 10]],
+                color: '#bbbbbb',
+              },
+            ],
+          },
+        },
+      })
+    );
+  });
+
+  const result = {
+    range: [
+      {
+        type: 'rect',
+        modelType: 'range',
+        x: 0,
+        y: 60,
+        width: 20,
+        height: 30,
+        color: 'rgba(187, 187, 187, 0.5)',
+        name: 'cho',
+        seriesColor: '#bbbbbb',
+        tooltipColor: 'rgba(187, 187, 187, 0.5)',
+        value: [0, 2],
+      },
+      {
+        type: 'rect',
+        modelType: 'range',
+        x: 50,
+        y: 60,
+        width: 50,
+        height: 30,
+        color: 'rgba(187, 187, 187, 0.1)',
+        name: 'cho',
+        seriesColor: '#bbbbbb',
+        tooltipColor: 'rgba(187, 187, 187, 0.1)',
+        value: [5, 10],
+      },
+    ],
+    bullet: [
+      {
+        type: 'rect',
+        modelType: 'bullet',
+        x: 0,
+        y: 67.5,
+        width: 80,
+        height: 15,
+        color: 'rgba(187, 187, 187, 1)',
+        value: 8,
+        name: 'cho',
+        seriesColor: '#bbbbbb',
+        tooltipColor: '#bbbbbb',
+      },
+    ],
+    marker: [
+      {
+        type: 'line',
+        x: 70,
+        y: 13,
+        x2: 70,
+        y2: 37,
+        lineWidth: 1,
+        strokeStyle: 'rgba(170, 170, 170, 1)',
+        value: 7,
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        tooltipColor: '#aaaaaa',
+      },
+    ],
+  };
+
+  ['range', 'marker', 'bullet'].forEach((modelName) => {
+    it(`should make ${modelName} properly when calling render`, () => {
+      expect(bulletSeries.models[modelName]).toEqual(result[modelName]);
+    });
+  });
+});

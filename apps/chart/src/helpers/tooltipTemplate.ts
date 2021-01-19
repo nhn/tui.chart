@@ -9,7 +9,7 @@ import { pieTooltipLabelFormatter } from './pieSeries';
 import { TooltipTheme } from '@t/theme';
 import { getFontStyleString } from './style';
 import { isNumber } from './utils';
-import { isRangeData } from './range';
+import { isRangeValue } from './range';
 
 function getSeriesNameTemplate(label: string, color: string) {
   return `<span class="series-name">
@@ -36,7 +36,7 @@ function makeBulletDataTemplate(data: TooltipTitleValues, titleType: string) {
   return data
     .filter(({ title }) => title === titleType)
     .sort((a, b) => {
-      if (isRangeData(a.value)) {
+      if (isRangeValue(a.value) && isRangeValue(b.value)) {
         return a.value[0] - b.value[0];
       }
 

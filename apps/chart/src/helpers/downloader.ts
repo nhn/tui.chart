@@ -1,4 +1,4 @@
-import { isString, isUndefined, isNumber, includes, isNull } from '@src/helpers/utils';
+import { isString, isUndefined, isNumber, includes, isNull, range } from '@src/helpers/utils';
 import { DataToExport } from '@src/component/exportMenu';
 import {
   HeatmapCategoriesType,
@@ -11,6 +11,7 @@ import {
   NestedPieSeriesType,
 } from '@t/options';
 import { getCoordinateXValue, getCoordinateYValue } from './coordinate';
+import { getLongestArrayLength } from '@src/helpers/arrayUtil';
 
 type ExportData2DArray = (string | number)[][];
 
@@ -121,19 +122,22 @@ function isNeedDataEncoding() {
 }
 
 function makeBulletExportData({ series }: DataToExport): ExportData2DArray {
-  const rangesHeaders = ['Range 1', 'Range 2', 'Range 3'];
-  const markerHeaders = ['Marker 1', 'Marker 2', 'Marker 3'];
+  const seriesData = series.bullet!.data;
+  const markerCount = getLongestArrayLength(seriesData, 'markers');
+  const rangeCount = getLongestArrayLength(seriesData, 'ranges');
+  const rangesHeaders = range(0, rangeCount).map((idx) => `Range ${idx + 1}`);
+  const markerHeaders = range(0, markerCount).map((idx) => `Marker ${idx + 1}`);
 
-  return series.bullet!.data.reduce<ExportData2DArray>(
+  return seriesData.reduce<ExportData2DArray>(
     (acc, { data, markers, name, ranges }) => {
       const rangeDatum = rangesHeaders.map((_, index) => {
-        const rangeData = ranges[index];
+        const rangeData = ranges?.[index];
 
         return rangeData ? `${rangeData[0]} ~ ${rangeData[1]}` : '';
       });
-      const markerDatum = markerHeaders.map((_, index) => markers[index] ?? '');
+      const markerDatum = markerHeaders.map((_, index) => markers?.[index] ?? '');
 
-      return [...acc, [name, data, ...rangeDatum, ...markerDatum]];
+      return [...acc, [name, data ?? '', ...rangeDatum, ...markerDatum]];
     },
     [['', 'Actual', ...rangesHeaders, ...markerHeaders]]
   );
@@ -195,9 +199,10 @@ function makeBoxPlotExportData(exportData: DataToExport): ExportData2DArray {
 
   return series.boxPlot!.data.reduce<ExportData2DArray>(
     (acc, { name, data, outliers }) => {
-      const values = data.map((rawData, index) => {
-        const outlierValue = outliers!.find((outlier) => outlier[0] === index)?.[1];
-        const value = outlierValue ? [...rawData, outlierValue] : [...rawData];
+      const values = (data ?? []).map((rawData, index) => {
+        const outlierValue = (outliers ?? []).find((outlier) => outlier[0] === index)?.[1];
+        const raw = rawData ?? [];
+        const value = outlierValue ? [...raw, outlierValue] : [...raw];
 
         return value.join();
       });
