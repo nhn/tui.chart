@@ -1,6 +1,7 @@
 import { AreaPointsModel, LinePointsModel } from '@t/components/series';
 import { setLineDash } from '@src/helpers/style';
 import { isNull } from '@src/helpers/utils';
+import { fillStyle } from '@src/brushes/basic';
 
 type PointsModel = LinePointsModel | AreaPointsModel;
 
@@ -52,9 +53,6 @@ export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaP
 
   ctx.beginPath();
   linePoints(ctx, areaPointsModel);
-
-  ctx.fillStyle = fillColor;
-  ctx.fill();
-
+  fillStyle(ctx, fillColor);
   ctx.closePath();
 }

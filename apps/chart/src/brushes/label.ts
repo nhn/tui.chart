@@ -2,7 +2,7 @@ import { LabelModel, RectLabelModel } from '@t/components/axis';
 import { makeStyleObj } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
-import { pathRect } from './basic';
+import { fillStyle, pathRect } from './basic';
 import { Point } from '@t/options';
 import { RectStyle, StyleProp, Nullable } from '@t/components/series';
 
@@ -265,8 +265,7 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
   }
 
   if (fill) {
-    ctx.fillStyle = fill;
-    ctx.fill();
+    fillStyle(ctx, fill);
   }
 
   if (ctx.shadowColor) {

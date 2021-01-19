@@ -39,6 +39,11 @@ const rectStyle = {
   },
 };
 
+export function fillStyle(ctx: CanvasRenderingContext2D, fillOption: string) {
+  ctx.fillStyle = fillOption;
+  ctx.fill();
+}
+
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
 
@@ -61,6 +66,7 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
 
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
+
   ctx.lineTo(x + width - radius, y);
   ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
   ctx.lineTo(x + width, y + height - radius);
@@ -71,8 +77,7 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
   if (fill) {
-    ctx.fillStyle = fill;
-    ctx.fill();
+    fillStyle(ctx, fill);
   }
   if (stroke) {
     ctx.lineWidth = lineWidth;
@@ -94,7 +99,6 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   } = circleModel;
 
   ctx.beginPath();
-  ctx.fillStyle = color;
 
   if (style) {
     const styleObj = makeStyleObj<CircleStyle, CircleStyleName>(style, circleStyle);
@@ -105,7 +109,7 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   }
 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
-  ctx.fill();
+  fillStyle(ctx, color);
 
   if (borderWidth) {
     ctx.lineWidth = borderWidth;
@@ -168,7 +172,6 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
     ctx.shadowColor = 'transparent';
   }
 
-  ctx.fillStyle = color;
   ctx.rect(x, y, width, height);
-  ctx.fill();
+  fillStyle(ctx, color);
 }
