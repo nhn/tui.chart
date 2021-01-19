@@ -30,19 +30,19 @@ const commonConfig = {
       {
         test: /\.(ts|tsx|js)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
+        loader: 'babel-loader',
       },
     ],
   },
 };
 
-module.exports = (env, { mode, minify }) => {
+module.exports = (env, { mode, minify, polyfill }) => {
   const isProduction = mode === 'production';
   const { version, author, license } = pkg;
 
-  commonConfig.output.filename = `toastui-chart${minify ? '.min' : ''}.js`;
+  commonConfig.output.filename = `toastui-chart${polyfill ? '-polyfill' : ''}${
+    minify ? '.min' : ''
+  }.js`;
 
   const BANNER = [
     'TOAST UI Chart 4th Edition',
@@ -50,6 +50,10 @@ module.exports = (env, { mode, minify }) => {
     `@author ${author}`,
     `@license ${license}`,
   ].join('\n');
+
+  commonConfig.module.rules[0].options = {
+    envName: polyfill ? 'polyfill' : mode,
+  };
 
   if (isProduction) {
     const productionConfig = {
