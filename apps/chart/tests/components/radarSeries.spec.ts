@@ -65,6 +65,7 @@ const chartState = {
   },
 };
 
+/*
 describe('radar series', () => {
   beforeEach(() => {
     radarSeries = new RadarSeries({
@@ -305,9 +306,399 @@ describe('radar series', () => {
       })
     );
 
-    expect(radarSeries.models.polygon.map((m) => m.fillColor)).toEqual([
+    expect(radarSeries.models.area.map((m) => m.fillColor)).toEqual([
       'rgba(170, 170, 170, 0.3)',
       'rgba(187, 187, 187, 0.3)',
     ]);
+  });
+});
+*/
+
+describe('radar series', () => {
+  beforeEach(() => {
+    radarSeries = new RadarSeries({
+      store: {} as Store<Options>,
+      eventBus: new EventEmitter(),
+    });
+
+    radarSeries.render(chartState);
+  });
+
+  const models = {
+    area: [],
+    line: [
+      {
+        type: 'linePoints',
+        color: 'rgba(170, 170, 170, 1)',
+        distances: [10, 20, 30, 40],
+        lineWidth: 2,
+        name: 'han',
+        points: [
+          { x: 100, y: 90 },
+          { x: 120, y: 100 },
+          { x: 100, y: 130 },
+          { x: 60, y: 100 },
+          { x: 100, y: 90 },
+        ],
+      },
+      {
+        type: 'linePoints',
+        color: 'rgba(187, 187, 187, 1)',
+        distances: [20, 10, 10, 30],
+        lineWidth: 2,
+        name: 'cho',
+        points: [
+          { x: 100, y: 80 },
+          { x: 110, y: 100 },
+          { x: 100, y: 110 },
+          { x: 70, y: 100 },
+          { x: 100, y: 80 },
+        ],
+      },
+    ],
+    dot: [],
+  };
+
+  const responders = [
+    {
+      type: 'circle',
+      x: 100,
+      y: 90,
+      radius: 3,
+      color: 'rgba(170, 170, 170, 1)',
+      seriesIndex: 0,
+      data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
+      name: 'han',
+      index: 0,
+      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+    },
+    {
+      type: 'circle',
+      x: 120,
+      y: 100,
+      radius: 3,
+      color: 'rgba(170, 170, 170, 1)',
+      seriesIndex: 0,
+      data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
+      name: 'han',
+      index: 1,
+      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+    },
+    {
+      type: 'circle',
+      x: 100,
+      y: 130,
+      radius: 3,
+      color: 'rgba(170, 170, 170, 1)',
+      seriesIndex: 0,
+      data: { label: 'han', color: '#aaaaaa', value: 3, category: 'C' },
+      name: 'han',
+      index: 2,
+      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+    },
+    {
+      type: 'circle',
+      x: 60,
+      y: 100,
+      radius: 3,
+      color: 'rgba(170, 170, 170, 1)',
+      seriesIndex: 0,
+      data: { label: 'han', color: '#aaaaaa', value: 4, category: 'D' },
+      name: 'han',
+      index: 3,
+      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+    },
+    {
+      type: 'circle',
+      x: 100,
+      y: 80,
+      radius: 3,
+      color: 'rgba(187, 187, 187, 1)',
+      seriesIndex: 1,
+      data: { label: 'cho', color: '#bbbbbb', value: 2, category: 'A' },
+      name: 'cho',
+      index: 0,
+      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+    },
+    {
+      type: 'circle',
+      x: 110,
+      y: 100,
+      radius: 3,
+      color: 'rgba(187, 187, 187, 1)',
+      seriesIndex: 1,
+      data: { label: 'cho', color: '#bbbbbb', value: 1, category: 'B' },
+      name: 'cho',
+      index: 1,
+      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+    },
+    {
+      type: 'circle',
+      x: 100,
+      y: 110,
+      radius: 3,
+      color: 'rgba(187, 187, 187, 1)',
+      seriesIndex: 1,
+      data: { label: 'cho', color: '#bbbbbb', value: 1, category: 'C' },
+      name: 'cho',
+      index: 2,
+      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+    },
+    {
+      type: 'circle',
+      x: 70,
+      y: 100,
+      radius: 3,
+      color: 'rgba(187, 187, 187, 1)',
+      seriesIndex: 1,
+      data: { label: 'cho', color: '#bbbbbb', value: 3, category: 'D' },
+      name: 'cho',
+      index: 3,
+      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+    },
+  ];
+
+  ['area', 'line', 'dot'].forEach((modelName) => {
+    it(`should make ${modelName} properly when calling render`, () => {
+      expect(radarSeries.models[modelName]).toEqual(models[modelName]);
+    });
+  });
+
+  it('should make responders properly when calling render', () => {
+    expect(radarSeries.responders).toEqual(responders);
+  });
+
+  it('should render circle models, when "series.showDot" is true', () => {
+    radarSeries.render(
+      deepMergedCopy(chartState, {
+        options: {
+          series: {
+            showDot: true,
+          },
+        },
+      })
+    );
+
+    expect(radarSeries.models.dot).toEqual([
+      {
+        type: 'circle',
+        color: 'rgba(170, 170, 170, 1)',
+        radius: 3,
+        x: 100,
+        y: 90,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'han',
+        index: 0,
+        seriesIndex: 0,
+      },
+      {
+        type: 'circle',
+        color: 'rgba(170, 170, 170, 1)',
+        radius: 3,
+        x: 120,
+        y: 100,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'han',
+        index: 1,
+        seriesIndex: 0,
+      },
+      {
+        type: 'circle',
+        color: 'rgba(170, 170, 170, 1)',
+        radius: 3,
+        x: 100,
+        y: 130,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'han',
+        index: 2,
+        seriesIndex: 0,
+      },
+      {
+        type: 'circle',
+        color: 'rgba(170, 170, 170, 1)',
+        radius: 3,
+        x: 60,
+        y: 100,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'han',
+        index: 3,
+        seriesIndex: 0,
+      },
+      {
+        type: 'circle',
+        color: 'rgba(187, 187, 187, 1)',
+        radius: 3,
+        x: 100,
+        y: 80,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'cho',
+        index: 0,
+        seriesIndex: 1,
+      },
+      {
+        type: 'circle',
+        color: 'rgba(187, 187, 187, 1)',
+        radius: 3,
+        x: 110,
+        y: 100,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'cho',
+        index: 1,
+        seriesIndex: 1,
+      },
+
+      {
+        type: 'circle',
+        color: 'rgba(187, 187, 187, 1)',
+        radius: 3,
+        x: 100,
+        y: 110,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'cho',
+        index: 2,
+        seriesIndex: 1,
+      },
+      {
+        type: 'circle',
+        color: 'rgba(187, 187, 187, 1)',
+        radius: 3,
+        x: 70,
+        y: 100,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        name: 'cho',
+        index: 3,
+        seriesIndex: 1,
+      },
+    ]);
+  });
+
+  it('should render area models, when "series.showArea" is true', () => {
+    radarSeries.render(
+      deepMergedCopy(chartState, {
+        options: {
+          series: {
+            showArea: true,
+          },
+        },
+      })
+    );
+
+    expect(radarSeries.models.area).toEqual([
+      {
+        type: 'areaPoints',
+        color: 'rgba(170, 170, 170, 0)',
+        fillColor: 'rgba(170, 170, 170, 0.3)',
+        distances: [10, 20, 30, 40],
+        lineWidth: 0,
+        name: 'han',
+        points: [
+          { x: 100, y: 90 },
+          { x: 120, y: 100 },
+          { x: 100, y: 130 },
+          { x: 60, y: 100 },
+          { x: 100, y: 90 },
+        ],
+      },
+      {
+        type: 'areaPoints',
+        color: 'rgba(187, 187, 187, 0)',
+        fillColor: 'rgba(187, 187, 187, 0.3)',
+        distances: [20, 10, 10, 30],
+        lineWidth: 0,
+        name: 'cho',
+        points: [
+          { x: 100, y: 80 },
+          { x: 110, y: 100 },
+          { x: 100, y: 110 },
+          { x: 70, y: 100 },
+          { x: 100, y: 80 },
+        ],
+      },
+    ]);
+  });
+});
+
+describe('radar series using null data', () => {
+  beforeEach(() => {
+    radarSeries = new RadarSeries({
+      store: {} as Store<Options>,
+      eventBus: new EventEmitter(),
+    });
+
+    radarSeries.render(
+      deepMergedCopy(chartState, {
+        series: {
+          radar: {
+            data: [
+              { name: 'han', data: [null, 2, 3, 4], color: '#aaaaaa' },
+              { name: 'cho', data: [2, 1, null, 3], color: '#bbbbbb' },
+            ],
+          },
+        },
+        options: {
+          series: {
+            showArea: true,
+          },
+        },
+      })
+    );
+  });
+
+  const modelsWithNull = {
+    area: [
+      {
+        type: 'areaPoints',
+        color: 'rgba(170, 170, 170, 0)',
+        fillColor: 'rgba(170, 170, 170, 0.3)',
+        distances: [0, 20, 30, 40],
+        lineWidth: 0,
+        name: 'han',
+        points: [
+          { x: 100, y: 100 },
+          { x: 120, y: 100 },
+          { x: 100, y: 130 },
+          { x: 60, y: 100 },
+        ],
+      },
+      {
+        type: 'areaPoints',
+        color: 'rgba(187, 187, 187, 0)',
+        fillColor: 'rgba(187, 187, 187, 0.3)',
+        distances: [20, 10, 0, 30],
+        lineWidth: 0,
+        name: 'cho',
+        points: [
+          { x: 100, y: 80 },
+          { x: 110, y: 100 },
+          { x: 100, y: 100 },
+          { x: 70, y: 100 },
+          { x: 100, y: 80 },
+        ],
+      },
+    ],
+    line: [
+      {
+        type: 'linePoints',
+        color: 'rgba(170, 170, 170, 1)',
+        distances: [0, 20, 30, 40],
+        lineWidth: 2,
+        name: 'han',
+        points: [null, { x: 120, y: 100 }, { x: 100, y: 130 }, { x: 60, y: 100 }],
+      },
+      {
+        type: 'linePoints',
+        color: 'rgba(187, 187, 187, 1)',
+        distances: [20, 10, 0, 30],
+        lineWidth: 2,
+        name: 'cho',
+        points: [{ x: 100, y: 80 }, { x: 110, y: 100 }, null, { x: 70, y: 100 }, { x: 100, y: 80 }],
+      },
+    ],
+  };
+
+  ['area', 'line'].forEach((modelName) => {
+    it(`should make ${modelName} properly when calling render with null data`, () => {
+      expect(radarSeries.models[modelName]).toEqual(modelsWithNull[modelName]);
+    });
   });
 });

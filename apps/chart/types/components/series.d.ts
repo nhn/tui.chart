@@ -70,6 +70,7 @@ export type LinePointsModel = {
   name?: string;
   seriesIndex?: number;
   dashSegments?: number[];
+  distances?: number[];
 };
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
@@ -215,7 +216,8 @@ export type PolygonModel = {
 };
 
 export type RadarSeriesModels = {
-  polygon: PolygonModel[];
+  area: AreaPointsModel[];
+  line: LinePointsModel[];
   dot: CircleModel[];
 };
 

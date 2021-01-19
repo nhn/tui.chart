@@ -195,6 +195,28 @@ export const budgetData = {
   ],
 };
 
+export const budgetData2WithNull = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+  series: [
+    {
+      name: 'Budget',
+      data: [null, 3000, 5000, 7000, 6000, 4000],
+    },
+    {
+      name: 'Income',
+      data: [8000, 4000, null, 2000, 6000, 3000],
+    },
+    {
+      name: 'Expenses',
+      data: [4000, 4000, null, 3000, null, 5000],
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, null],
+    },
+  ],
+};
+
 export const budgetData2 = {
   categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
   series: [
