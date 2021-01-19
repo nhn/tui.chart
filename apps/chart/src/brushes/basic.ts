@@ -53,7 +53,7 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
     width,
     height,
     radius = 0,
-    stroke = 'black',
+    stroke: strokeStyle = 'black',
     fill = '',
     lineWidth = 1,
   } = pathRectModel;
@@ -73,11 +73,8 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
   if (fill) {
     fillStyle(ctx, fill);
   }
-  if (stroke) {
-    ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = stroke;
-    ctx.stroke();
-  }
+
+  stroke(ctx, { lineWidth, strokeStyle });
 }
 
 export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
@@ -109,18 +106,7 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
     ctx.shadowColor = 'transparent';
   }
 
-  // 묶자
-  // if (borderWidth) {
-  //   ctx.lineWidth = borderWidth;
-  // }
-  //
-  // if (borderColor) {
-  //   ctx.strokeStyle = borderColor;
-  // }
-
-  // ctx.stroke();
   stroke(ctx, { lineWidth, strokeStyle });
-
   ctx.closePath();
 }
 
@@ -137,16 +123,6 @@ export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
   ctx.lineTo(x2, y2);
 
   stroke(ctx, { strokeStyle, lineWidth });
-
-  // if (strokeStyle) {
-  //   ctx.strokeStyle = strokeStyle;
-  // }
-  //
-  // if (lineWidth) {
-  //   ctx.lineWidth = lineWidth;
-  // }
-  //
-  // ctx.stroke();
   ctx.closePath();
 }
 

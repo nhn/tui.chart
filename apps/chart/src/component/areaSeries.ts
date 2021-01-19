@@ -232,7 +232,6 @@ export default class AreaSeries extends Component {
     }));
   }
 
-  // @TODO: 중복
   renderClipRectAreaModel(isDrawModel?: boolean): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
