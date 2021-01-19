@@ -56,6 +56,7 @@ import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
 import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
+import { isAvailableSelectSeries, isAvailableShowTooltipInfo } from '@src/helpers/validation';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -824,17 +825,13 @@ export default class BoxSeries extends Component {
   }
 
   selectSeries = (info: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
-    const { index, seriesIndex, chartType } = info;
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      !isNumber(seriesIndex) ||
-      (!isUndefined(chartType) && chartType !== 'column')
-    ) {
+    if (!isAvailableSelectSeries(info, 'column')) {
       return;
     }
 
-    const model = this.tooltipRectMap[seriesIndex][index];
+    const model = this.tooltipRectMap[seriesIndex!][index!];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -848,20 +845,16 @@ export default class BoxSeries extends Component {
   };
 
   showTooltip = (info: SelectSeriesInfo) => {
-    const { index, seriesIndex, chartType } = info;
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
-      (!isUndefined(chartType) && chartType !== 'column')
-    ) {
+    if (!isAvailableShowTooltipInfo(info, this.eventDetectType, 'column')) {
       return;
     }
 
     const models =
       this.eventDetectType === 'grouped'
-        ? this.getGroupedRect([this.responders[index]], 'hover')
-        : this.getRespondersWithTheme([this.tooltipRectMap[index][seriesIndex!]], 'hover');
+        ? this.getGroupedRect([this.responders[index!]], 'hover')
+        : this.getRespondersWithTheme([this.tooltipRectMap[index!][seriesIndex!]], 'hover');
 
     if (!models.length) {
       return;
@@ -873,7 +866,7 @@ export default class BoxSeries extends Component {
       eventDetectType: this.eventDetectType,
     });
     this.activatedResponders =
-      this.eventDetectType === 'grouped' ? this.tooltipRectMap[index] : models;
+      this.eventDetectType === 'grouped' ? this.tooltipRectMap[index!] : models;
 
     this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');

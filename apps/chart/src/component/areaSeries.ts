@@ -50,6 +50,7 @@ import { PointDataLabel } from '@t/components/dataLabels';
 import { AreaChartSeriesTheme, DotTheme } from '@t/theme';
 import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
+import { isAvailableSelectSeries, isAvailableShowTooltipInfo } from '@src/helpers/validation';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -231,6 +232,7 @@ export default class AreaSeries extends Component {
     }));
   }
 
+  // @TODO: 중복
   renderClipRectAreaModel(isDrawModel?: boolean): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
@@ -664,23 +666,19 @@ export default class AreaSeries extends Component {
     return responder?.data?.category;
   }
 
-  selectSeries = (info: SelectSeriesHandlerParams<AreaChartOptions>) => {
-    const { index, seriesIndex, chartType } = info;
+  selectSeries = (info: SelectSeriesInfo) => {
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      !isNumber(seriesIndex) ||
-      (!isUndefined(chartType) && chartType !== 'area')
-    ) {
+    if (!isAvailableSelectSeries(info, 'area')) {
       return;
     }
 
-    const category = this.getResponderCategoryByIndex(index);
+    const category = this.getResponderCategoryByIndex(index!);
     if (!category) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
-    const model = this.tooltipCircleMap[category][seriesIndex];
+    const model = this.tooltipCircleMap[category][seriesIndex!];
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
@@ -693,17 +691,13 @@ export default class AreaSeries extends Component {
   };
 
   showTooltip = (info: SelectSeriesInfo) => {
-    const { index, seriesIndex, chartType } = info;
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
-      (!isUndefined(chartType) && chartType !== 'area')
-    ) {
+    if (!isAvailableShowTooltipInfo(info, this.eventDetectType, 'area')) {
       return;
     }
 
-    const category = this.getResponderCategoryByIndex(index);
+    const category = this.getResponderCategoryByIndex(index!);
     if (!category) {
       return;
     }

@@ -203,52 +203,30 @@ export default class ScatterSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  selectSeries = ({
-    index,
-    seriesIndex,
-    state,
-    chartType,
-  }: SelectSeriesHandlerParams<ScatterChartOptions>) => {
-    if (
-      !isNumber(index) ||
-      !isNumber(seriesIndex) ||
-      (!isUndefined(chartType) && chartType !== 'scatter')
-    ) {
-      return;
+  getModelsForSelectInfo = (info: SelectSeriesHandlerParams<ScatterChartOptions>) => {
+    const { index, seriesIndex, state } = info;
+
+    if (!isAvailableSelectSeries(info, 'scatter')) {
+      return [];
     }
 
-    const { name } = state.series.scatter!.data[seriesIndex];
-    const model = this.responders.filter(({ name: dataName }) => dataName === name)[index];
+    const { name } = state.series.scatter!.data[seriesIndex!];
 
-    if (!model) {
+    return [this.responders.filter(({ name: dataName }) => dataName === name)[index!]];
+  };
+
+  selectSeries = (info: SelectSeriesHandlerParams<ScatterChartOptions>) => {
+    const models = this.getModelsForSelectInfo(info);
+    if (!models.length) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
-    this.eventBus.emit('renderSelectedSeries', {
-      models: [model],
-      name: this.name,
-    });
-
+    this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
     this.eventBus.emit('needDraw');
   };
 
-  showTooltip = ({
-    index,
-    seriesIndex,
-    state,
-    chartType,
-  }: SelectSeriesHandlerParams<ScatterChartOptions>) => {
-    if (
-      !isNumber(index) ||
-      !isNumber(seriesIndex) ||
-      (!isUndefined(chartType) && chartType !== 'scatter')
-    ) {
-      return;
-    }
-
-    const { name } = state.series.scatter!.data[seriesIndex];
-    const models = [this.responders.filter(({ name: dataName }) => dataName === name)[index]];
-
+  showTooltip = (info: SelectSeriesHandlerParams<ScatterChartOptions>) => {
+    const models = this.getModelsForSelectInfo(info);
     if (!models.length) {
       return;
     }
