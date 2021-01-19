@@ -1,16 +1,14 @@
 import { AreaPointsModel, LinePointsModel } from '@t/components/series';
-import { setLineDash } from '@src/helpers/style';
+import { setLineDash, fillStyle, stroke } from '@src/helpers/style';
 import { isNull } from '@src/helpers/utils';
-import { fillStyle } from '@src/brushes/basic';
 
 type PointsModel = LinePointsModel | AreaPointsModel;
 
 export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel) {
-  const { color, lineWidth, points, dashSegments = [] } = pointsModel;
+  const { color: strokeStyle, lineWidth, points, dashSegments = [] } = pointsModel;
 
-  ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';
-  ctx.strokeStyle = color;
+
   ctx.beginPath();
 
   if (dashSegments) {
@@ -43,7 +41,7 @@ export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsMod
     }
   });
 
-  ctx.stroke();
+  stroke(ctx, { lineWidth, strokeStyle });
   ctx.closePath();
   setLineDash(ctx, []);
 }

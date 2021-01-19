@@ -1,12 +1,9 @@
 import { PolygonModel } from '@t/components/series';
-import { setLineDash } from '@src/helpers/style';
-import { fillStyle } from '@src/brushes/basic';
+import { setLineDash, fillStyle, stroke } from '@src/helpers/style';
 
 export function polygon(ctx: CanvasRenderingContext2D, polygonModel: PolygonModel) {
-  const { color, points, lineWidth, fillColor, dashSegments = [] } = polygonModel;
+  const { color: strokeStyle, points, lineWidth, fillColor, dashSegments = [] } = polygonModel;
 
-  ctx.lineWidth = lineWidth;
-  ctx.strokeStyle = color;
   ctx.beginPath();
   if (dashSegments) {
     setLineDash(ctx, dashSegments);
@@ -26,9 +23,8 @@ export function polygon(ctx: CanvasRenderingContext2D, polygonModel: PolygonMode
 
   if (fillColor) {
     fillStyle(ctx, fillColor);
-    // ctx.fillStyle = fillColor;
-    // ctx.fill();
   }
-  ctx.stroke();
+
+  stroke(ctx, { lineWidth, strokeStyle });
   ctx.closePath();
 }

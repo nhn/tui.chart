@@ -1,7 +1,6 @@
 import { SectorModel } from '@t/components/series';
-import { makeStyleObj } from '@src/helpers/style';
+import { makeStyleObj, fillStyle } from '@src/helpers/style';
 import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector';
-import { fillStyle } from '@src/brushes/basic';
 
 export type SectorStyle = {
   lineWidth?: number;

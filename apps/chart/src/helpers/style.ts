@@ -40,3 +40,25 @@ export function setLineDash(ctx: CanvasRenderingContext2D, dashSegments: number[
 export function getBoxTypeSeriesPadding(tickDistance: number) {
   return Math.floor(tickDistance * 0.15);
 }
+
+export function fillStyle(ctx: CanvasRenderingContext2D, fillOption: string) {
+  ctx.fillStyle = fillOption;
+  ctx.fill();
+}
+
+export function stroke(
+  ctx: CanvasRenderingContext2D,
+  style: { strokeStyle?: string; lineWidth?: number }
+) {
+  const { lineWidth, strokeStyle } = style;
+
+  if (strokeStyle) {
+    ctx.strokeStyle = strokeStyle;
+  }
+
+  if (lineWidth) {
+    ctx.lineWidth = lineWidth;
+  }
+
+  ctx.stroke();
+}

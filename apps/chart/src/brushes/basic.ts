@@ -6,13 +6,12 @@ import {
   RectModel,
   RectStyle,
 } from '@t/components/series';
-import { makeStyleObj, setLineDash } from '@src/helpers/style';
+import { makeStyleObj, setLineDash, fillStyle, stroke } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover' | 'plot';
 export type RectStyleName = 'shadow';
 
-// @TODO: 테마로 옮길 것들 옮겨야함. 원형 시리즈 사용하는 것 확인 후 제거 필요
 const circleStyle = {
   default: {
     strokeStyle: '#ffffff',
@@ -38,11 +37,6 @@ const rectStyle = {
     shadowBlur: 6,
   },
 };
-
-export function fillStyle(ctx: CanvasRenderingContext2D, fillOption: string) {
-  ctx.fillStyle = fillOption;
-  ctx.fill();
-}
 
 export function clipRectArea(ctx: CanvasRenderingContext2D, clipRectAreaModel: ClipRectAreaModel) {
   const { x, y, width, height } = clipRectAreaModel;
@@ -94,8 +88,8 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
     radius,
     color,
     angle = { start: 0, end: Math.PI * 2 },
-    borderWidth,
-    borderColor,
+    borderWidth: lineWidth,
+    borderColor: strokeStyle,
   } = circleModel;
 
   ctx.beginPath();
@@ -111,32 +105,27 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
   fillStyle(ctx, color);
 
-  if (borderWidth) {
-    ctx.lineWidth = borderWidth;
-  }
-
-  if (borderColor) {
-    ctx.strokeStyle = borderColor;
-  }
-
   if (ctx.shadowColor) {
     ctx.shadowColor = 'transparent';
   }
 
-  ctx.stroke();
+  // 묶자
+  // if (borderWidth) {
+  //   ctx.lineWidth = borderWidth;
+  // }
+  //
+  // if (borderColor) {
+  //   ctx.strokeStyle = borderColor;
+  // }
+
+  // ctx.stroke();
+  stroke(ctx, { lineWidth, strokeStyle });
+
   ctx.closePath();
 }
 
 export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
   const { x, y, x2, y2, strokeStyle, lineWidth, dashSegments } = lineModel;
-
-  if (strokeStyle) {
-    ctx.strokeStyle = strokeStyle;
-  }
-
-  if (lineWidth) {
-    ctx.lineWidth = lineWidth;
-  }
 
   ctx.beginPath();
 
@@ -146,7 +135,18 @@ export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
 
   ctx.moveTo(x, y);
   ctx.lineTo(x2, y2);
-  ctx.stroke();
+
+  stroke(ctx, { strokeStyle, lineWidth });
+
+  // if (strokeStyle) {
+  //   ctx.strokeStyle = strokeStyle;
+  // }
+  //
+  // if (lineWidth) {
+  //   ctx.lineWidth = lineWidth;
+  // }
+  //
+  // ctx.stroke();
   ctx.closePath();
 }
 

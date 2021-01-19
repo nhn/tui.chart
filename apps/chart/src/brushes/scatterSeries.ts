@@ -1,7 +1,8 @@
-import { circle, fillStyle, pathRect } from '@src/brushes/basic';
+import { circle, pathRect } from '@src/brushes/basic';
 import { ScatterSeriesModel } from '@t/components/series';
 import { polygon } from '@src/brushes/polygon';
 import { Point } from '@t/options';
+import { fillStyle } from '@src/helpers/style';
 
 type RegularPolygonModel = {
   type: 'regularPolygon';

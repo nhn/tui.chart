@@ -1,8 +1,8 @@
 import { LabelModel, RectLabelModel } from '@t/components/axis';
-import { makeStyleObj } from '@src/helpers/style';
+import { makeStyleObj, fillStyle, stroke } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
-import { fillStyle, pathRect } from './basic';
+import { pathRect } from './basic';
 import { Point } from '@t/options';
 import { RectStyle, StyleProp, Nullable } from '@t/components/series';
 
@@ -215,7 +215,7 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
     width,
     height,
     style,
-    stroke,
+    stroke: strokeStyle,
     fill,
     lineWidth = 1,
     points = [],
@@ -272,9 +272,7 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
     ctx.shadowColor = 'transparent';
   }
 
-  if (stroke) {
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = lineWidth;
-    ctx.stroke();
+  if (strokeStyle) {
+    stroke(ctx, { strokeStyle, lineWidth });
   }
 }
