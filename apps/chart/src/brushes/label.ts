@@ -74,16 +74,16 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
       stroke,
       strokeLabelStyle
     );
-    const storkeStyleKeys = Object.keys(strokeStyleObj);
+    const strokeStyleKeys = Object.keys(strokeStyleObj);
 
-    storkeStyleKeys.forEach((key) => {
+    strokeStyleKeys.forEach((key) => {
       ctx[key] =
         key === 'strokeStyle' && isNumber(opacity)
           ? rgba(strokeStyleObj[key]!, opacity)
           : strokeStyleObj[key];
     });
 
-    if (storkeStyleKeys.length) {
+    if (strokeStyleKeys.length) {
       ctx.strokeText(text, x, y);
     }
   }

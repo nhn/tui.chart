@@ -43,22 +43,10 @@ function findMultipleNum(...args: (string | number)[]) {
 
   return 10 ** underPointLen;
 }
-function mod(target: number, modNum: number) {
-  const multipleNum = findMultipleNum(modNum);
-
-  return multipleNum === 1
-    ? target % modNum
-    : ((target * multipleNum) % (modNum * multipleNum)) / multipleNum;
-}
 export function add(a: number, b: number) {
   const multipleNum = findMultipleNum(a, b);
 
   return (a * multipleNum + b * multipleNum) / multipleNum;
-}
-function subtract(a: number, b: number) {
-  const multipleNum = findMultipleNum(a, b);
-
-  return (a * multipleNum - b * multipleNum) / multipleNum;
 }
 export function multiply(a: number, b: number) {
   const multipleNum = findMultipleNum(a, b);
@@ -70,7 +58,6 @@ export function divide(a: number, b: number) {
 
   return (a * multipleNum) / (b * multipleNum);
 }
-
 export function sum(values: number[]) {
   const copyArr = values.slice();
   copyArr.unshift(0);
