@@ -167,9 +167,9 @@ export interface Scale {
   secondaryYAxis?: ScaleData;
 }
 
-type FilterAxisLabel = { offsetPos: number; text: string };
+type DisplayAxisLabel = { offsetPos: number; text: string };
 
-type LotationLabelData = {
+type RotationLabelData = {
   needRotateLabel?: boolean;
   radian?: number;
   rotationHeight?: number;
@@ -343,10 +343,10 @@ type BaseAxisData = InitAxisData & {
   tickDistance: number;
   maxLabelWidth: number;
   maxLabelHeight: number;
-  filteredLabels: FilterAxisLabel[];
+  displayLabels: DisplayAxisLabel[];
   offsetY?: number;
   maxHeight?: number;
-} & LotationLabelData;
+} & RotationLabelData;
 
 export type LabelAxisData = BaseAxisData & {
   labelDistance: number;

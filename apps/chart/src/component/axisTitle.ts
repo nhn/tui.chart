@@ -61,6 +61,6 @@ export default class AxisTitle extends Component {
 
     this.rect = layout[`${this.name}Title`];
     this.theme = getAxisTheme(theme, this.name).title as Required<FontTheme>;
-    this.models = [...this.renderAxisTitle(titleOption, this.getTextAlign(!!axes.centerYAxis))];
+    this.models = this.renderAxisTitle(titleOption, this.getTextAlign(!!axes.centerYAxis));
   }
 }

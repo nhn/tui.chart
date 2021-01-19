@@ -9,6 +9,8 @@ import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { TICK_SIZE } from '@src/brushes/axis';
 
+const LINE_HEIGHT_NORMAL = 1.2;
+
 const ctx = document.createElement('canvas').getContext('2d')!;
 
 export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
@@ -33,7 +35,6 @@ export function getTextHeight(text: string, font: string = DEFAULT_LABEL_TEXT) {
 }
 
 export function getFontHeight(font: string = DEFAULT_LABEL_TEXT) {
-  const LINE_HEIGHT_NORMAL = 1.2;
   const fontSize = font.match(/\d+(?=px)/);
 
   return parseInt(String(Number(fontSize) * LINE_HEIGHT_NORMAL), 10);

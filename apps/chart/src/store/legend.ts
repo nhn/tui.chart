@@ -38,7 +38,7 @@ type LegendWidthParam = {
   options: Options;
   align: Align;
   visible: boolean;
-  checkboxVisible: boolean;
+  checkbox: boolean;
 };
 
 function calculateLegendWidth({
@@ -48,7 +48,7 @@ function calculateLegendWidth({
   options,
   align,
   visible,
-  checkboxVisible,
+  checkbox,
 }: LegendWidthParam) {
   const verticalAlign = isVerticalAlign(align);
   const legendOptions = options?.legend;
@@ -79,7 +79,7 @@ function calculateLegendWidth({
   } else {
     const labelAreaWidth = Math.max(...legendWidths);
     legendWidth =
-      (checkboxVisible ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
+      (checkbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
       LEGEND_ICON_SIZE +
       LEGEND_MARGIN_X +
       Math.max(labelAreaWidth, legendWidth);
@@ -240,7 +240,7 @@ const legend: StoreModule = {
       } = state;
       const align = getAlign(options);
       const visible = showLegend(options, series);
-      const checkboxVisible = showCheckbox(options);
+      const checkbox = showCheckbox(options);
       const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
       const legendWidths = legendData.map(({ width }) => width);
       const legendWidth = calculateLegendWidth({
@@ -250,7 +250,7 @@ const legend: StoreModule = {
         options,
         align,
         visible,
-        checkboxVisible,
+        checkbox,
       });
 
       const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
@@ -266,7 +266,7 @@ const legend: StoreModule = {
       extend(state.legend, {
         visible,
         align,
-        showCheckbox: checkboxVisible,
+        showCheckbox: checkbox,
         width: legendWidth,
       });
 

@@ -1,7 +1,7 @@
 const RAD = Math.PI / 180;
 const ANGLE_90 = 90;
 
-export const DEGREE_CANDIDATES = [0, 25, 45, 65, 85, 90];
+export const ANGLE_CANDIDATES = [0, 25, 45, 65, 85, 90];
 
 /**
  * Calculate adjacent.

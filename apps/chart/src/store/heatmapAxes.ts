@@ -4,8 +4,7 @@ import { AxisType } from '@src/component/axis';
 import {
   getAxisTheme,
   makeFormattedCategory,
-  filterLabels,
-  getLabelFont,
+  getDisplayAxisLabels,
   makeRotationData,
   getRotatableOption,
   hasAxesLayoutChanged,
@@ -14,6 +13,7 @@ import {
 } from '@src/helpers/axes';
 import { AxisTheme } from '@t/theme';
 import { getAxisLabelAnchorPoint } from '@src/helpers/calculator';
+import { getTitleFontString } from '@src/helpers/style';
 
 type HeatmapStateProp = {
   axisSize: number;
@@ -35,7 +35,7 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   const tickCount = tickIntervalCount + 1;
   const tickInterval = options[axisType]?.tick?.interval ?? 1;
   const labelInterval = options[axisType]?.label?.interval ?? 1;
-  const filteredLabels = filterLabels(
+  const displayLabels = getDisplayAxisLabels(
     {
       labels,
       pointOnColumn,
@@ -47,11 +47,14 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
     axisSize
   );
 
-  const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(labels, getLabelFont(theme));
+  const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(
+    labels,
+    getTitleFontString(theme.label)
+  );
 
   const axisData = {
     labels,
-    filteredLabels,
+    displayLabels,
     pointOnColumn,
     isLabelAxis,
     tickCount,
@@ -66,7 +69,7 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
 
   if (axisType === AxisType.X) {
     const offsetY = getAxisLabelAnchorPoint(maxLabelHeight);
-    const distance = axisSize / filteredLabels.length;
+    const distance = axisSize / displayLabels.length;
     const rotationData = makeRotationData(
       maxLabelWidth,
       maxLabelHeight,
