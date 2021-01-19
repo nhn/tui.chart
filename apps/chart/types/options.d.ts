@@ -148,7 +148,7 @@ export interface BubbleSeriesData {
 
 export type PieSeriesType = {
   name: string;
-  data: number;
+  data: number | null;
   parentName?: string;
   rootParentName?: string;
   color?: string;
@@ -188,7 +188,6 @@ export interface Scale {
   stepSize?: 'auto' | number;
 }
 
-type AxisFormatter = (value: string) => string;
 export type AxisTitleOption = Omit<TitleOption, 'align'>;
 type AxisTitle = string | AxisTitleOption;
 
@@ -201,7 +200,6 @@ type BaseAxisOptions = {
   };
   scale?: Scale;
   title?: AxisTitle;
-  formatter?: AxisFormatter;
 } & BaseSizeOptions;
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {
@@ -260,7 +258,7 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
-type ValueFormatter = (value: SeriesDataType) => string;
+type Formatter = (value: SeriesDataType) => string;
 export type DefaultTooltipTemplate = { header: string; body: string };
 
 export type TooltipTemplateFunc = (
@@ -273,7 +271,7 @@ interface BaseTooltipOptions {
   template?: TooltipTemplateFunc;
   offsetX?: number;
   offsetY?: number;
-  formatter?: ValueFormatter;
+  formatter?: Formatter;
 }
 
 export interface BaseOptions {
@@ -448,8 +446,8 @@ export interface ColumnChartOptions extends BaseOptions {
 
 export type BoxPlotSeriesType = {
   name: string;
-  data: number[][];
-  outliers?: number[][];
+  data: (number | null)[][] | null;
+  outliers?: number[][] | null;
   color?: string;
 };
 
@@ -539,7 +537,7 @@ export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto' | 'outer';
 
 export type StackTotalDataLabel = {
   visible?: boolean;
-  formatter?: ValueFormatter;
+  formatter?: Formatter;
 };
 
 export type DataLabelPieSeriesName = {
@@ -552,7 +550,7 @@ export type DataLabelOptions = {
   anchor?: DataLabelAnchor;
   offsetX?: number;
   offsetY?: number;
-  formatter?: ValueFormatter;
+  formatter?: Formatter;
 };
 
 export interface BoxDataLabels extends DataLabelOptions {
@@ -575,9 +573,9 @@ export interface BulletChartOptions extends BaseOptions {
 
 export type BulletSeriesType = {
   name: string;
-  data: number;
-  markers: number[];
-  ranges: RangeDataType<number>[];
+  data: number | null;
+  markers: number[] | null;
+  ranges: Array<RangeDataType<number> | null>;
   color?: string;
 };
 

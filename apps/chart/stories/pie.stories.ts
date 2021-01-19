@@ -1,7 +1,7 @@
 import PieChart from '@src/charts/pieChart';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { PieSeriesData, PieChartOptions } from '@t/options';
-import { browserUsageData } from './data';
+import { browserUsageData, browserUsageDataWithNull } from './data';
 import { withKnobs, number } from '@storybook/addon-knobs';
 import { PieChartThemeOptions } from '@t/theme';
 import '@src/css/chart.css';
@@ -35,6 +35,19 @@ function createChart(data: PieSeriesData, customOptions: PieChartOptions = {}) {
 
 export const basic = () => {
   const { el } = createChart(browserUsageData);
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(browserUsageDataWithNull, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+      clockwise: false,
+    },
+  });
 
   return el;
 };

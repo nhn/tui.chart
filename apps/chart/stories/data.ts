@@ -1398,6 +1398,36 @@ export const genderAgeData = {
   ],
 };
 
+export const browserUsageDataWithNull = {
+  categories: ['Browser'],
+  series: [
+    {
+      name: 'Chrome',
+      data: 46.02,
+    },
+    {
+      name: 'IE',
+      data: null,
+    },
+    {
+      name: 'Firefox',
+      data: 17.71,
+    },
+    {
+      name: 'Safari',
+      data: 5.45,
+    },
+    {
+      name: 'Opera',
+      data: 3.1,
+    },
+    {
+      name: 'Etc',
+      data: 7.25,
+    },
+  ],
+};
+
 export const browserUsageData = {
   categories: ['Browser'],
   series: [
@@ -2083,6 +2113,126 @@ export const contributionsData = {
   ],
 };
 
+export const groupedBrowserUsageDataWithNull = {
+  categories: ['A', 'B'],
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          parentName: 'Chrome',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          parentName: 'Chrome',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          parentName: 'Safari',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          parentName: 'Safari',
+          data: 0,
+        },
+        {
+          name: 'IE 11',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 10',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 9',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 8',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox 13',
+          parentName: 'Firefox',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          parentName: 'Firefox',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          parentName: 'Opera',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          parentName: 'Opera',
+          data: 1,
+        },
+        {
+          name: 'Etc 1',
+          parentName: 'Etc',
+          data: 3,
+        },
+        {
+          name: 'Etc 2',
+          parentName: 'Etc',
+          data: 2,
+        },
+        {
+          name: 'Etc 3',
+          parentName: 'Etc',
+          data: 1,
+        },
+        {
+          name: 'Etc 4',
+          parentName: 'Etc',
+          data: 1,
+        },
+      ],
+    },
+  ],
+};
+
 export const groupedBrowserUsageData = {
   categories: ['A', 'B'],
   series: [
@@ -2268,6 +2418,97 @@ export const browserUsageData2 = {
         {
           name: 'IE 8',
           data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          data: 1,
+        },
+        {
+          name: 'Etc - 2020',
+          data: 7,
+        },
+      ],
+    },
+  ],
+};
+
+export const browserUsageData2WithNull = {
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox',
+          data: null,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          data: 0,
+        },
+        {
+          name: 'IE 11',
+          data: null,
+        },
+        {
+          name: 'IE 10',
+          data: null,
+        },
+        {
+          name: 'IE 9',
+          data: null,
+        },
+        {
+          name: 'IE 8',
+          data: null,
         },
         {
           name: 'Firefox 13',

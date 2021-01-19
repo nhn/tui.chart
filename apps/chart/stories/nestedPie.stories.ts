@@ -1,6 +1,11 @@
 import { NestedPieChartOptions, NestedPieSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { browserUsageData2, groupedBrowserUsageData } from './data';
+import {
+  browserUsageData2,
+  groupedBrowserUsageData,
+  browserUsageData2WithNull,
+  groupedBrowserUsageDataWithNull,
+} from './data';
 import NestedPieChart from '@src/charts/nestedPieChart';
 import { NestedPieChartThemeOptions } from '@t/theme';
 import '@src/css/chart.css';
@@ -52,8 +57,55 @@ export const basic = () => {
   return el;
 };
 
+export const basicWithNullData = () => {
+  const { el } = createChart(browserUsageData2WithNull, {
+    series: {
+      browsers: {
+        radiusRange: {
+          inner: '20%',
+          outer: '50%',
+        },
+      },
+      versions: {
+        radiusRange: {
+          inner: '55%',
+          outer: '85%',
+        },
+      },
+      dataLabels: {
+        visible: true,
+        pieSeriesName: { visible: false },
+      },
+      clockwise: false,
+    },
+  } as NestedPieChartOptions);
+
+  return el;
+};
+
 export const grouped = () => {
   const { el } = createChart(groupedBrowserUsageData, {
+    series: {
+      browsers: {
+        radiusRange: {
+          inner: '20%',
+          outer: '50%',
+        },
+      },
+      versions: {
+        radiusRange: {
+          inner: '55%',
+          outer: '85%',
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const groupedWithNullData = () => {
+  const { el } = createChart(groupedBrowserUsageDataWithNull, {
     series: {
       browsers: {
         radiusRange: {
