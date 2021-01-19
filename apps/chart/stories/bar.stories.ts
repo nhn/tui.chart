@@ -115,15 +115,6 @@ export const range = () => {
   return el;
 };
 
-export const rangeWithDataLabels = () => {
-  const { el } = createChart(temperatureRangeData, {
-    chart: { height: 800 },
-    series: { dataLabels: { visible: true } },
-  });
-
-  return el;
-};
-
 export const rangeWithMinMax = () => {
   const { el } = createChart(temperatureRangeData, {
     xAxis: {
@@ -132,6 +123,15 @@ export const rangeWithMinMax = () => {
         max: 24,
       },
     },
+  });
+
+  return el;
+};
+
+export const rangeWithDataLabels = () => {
+  const { el } = createChart(temperatureRangeData, {
+    chart: { height: 800 },
+    series: { dataLabels: { visible: true } },
   });
 
   return el;
