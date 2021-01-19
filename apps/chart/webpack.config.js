@@ -10,7 +10,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const pkg = require('./package.json');
 
 const commonConfig = {
-  entry: ['@babel/polyfill', './src/css/chart.css', './src/index.ts'],
+  entry: ['./src/css/chart.css', './src/index.ts'],
   output: {
     library: ['toastui', 'Chart'],
     libraryTarget: 'umd',
