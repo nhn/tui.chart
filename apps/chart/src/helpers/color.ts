@@ -158,20 +158,12 @@ function leadingZero(number: string, length: number): string {
     return number;
   }
 
-  let zero = '';
-  let tempZero = number;
-
-  range(0, length - 1).forEach((i) => {
-    tempZero = '0' + tempZero;
+  let res = number;
+  range(0, length - 1).forEach((_) => {
+    res = '0' + res;
   });
 
-  for (let i = 0; i < length - 1; i += 1) {
-    zero += '0';
-  }
-
-  console.log(number, length, tempZero.slice(length * -1), (zero + number).slice(length * -1));
-
-  return (zero + number).slice(length * -1);
+  return res.slice(length * -1);
 }
 
 function isValidRGB(str: string): boolean {

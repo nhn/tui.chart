@@ -5,14 +5,7 @@ import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinat
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import {
-  deepCopy,
-  deepMergedCopy,
-  isNull,
-  isNumber,
-  isString,
-  isUndefined,
-} from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNull, isNumber, isString, pick } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
 import {
@@ -24,6 +17,7 @@ import { getNearestResponder, RespondersThemeType } from '@src/helpers/responder
 import { ScatterChartSeriesTheme } from '@t/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
+import { isAvailableSelectSeries } from '@src/helpers/validation';
 
 export default class ScatterSeries extends Component {
   theme!: Required<ScatterChartSeriesTheme>;
@@ -93,8 +87,6 @@ export default class ScatterSeries extends Component {
     xAxisLimit: ValueEdge,
     yAxisLimit: ValueEdge
   ): ScatterSeriesModel[] {
-    const { borderWidth, size, fillColor } = this.theme;
-
     return seriesRawData.flatMap(({ data, name, color: seriesColor, iconType }, seriesIndex) => {
       const models: ScatterSeriesModel[] = [];
       const active = this.activeSeriesMap![name];
@@ -121,9 +113,7 @@ export default class ScatterSeries extends Component {
           name,
           borderColor: color,
           index,
-          borderWidth,
-          size,
-          fillColor,
+          ...pick(this.theme, 'borderWidth', 'size', 'fillColor'),
         });
       });
 
@@ -140,7 +130,7 @@ export default class ScatterSeries extends Component {
         const value = {
           x: getCoordinateXValue(datum),
           y: getCoordinateYValue(datum),
-        } as TooltipDataValue; // @TODO: tooltip format
+        } as TooltipDataValue;
 
         tooltipData.push({ label: name, color, value });
       });
