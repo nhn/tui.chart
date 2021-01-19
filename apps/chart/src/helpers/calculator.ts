@@ -1,8 +1,4 @@
-/**
- * operation for floating point operation.
- */
 import { Options, ValueEdge, LabelAxisData } from '@t/store/store';
-import * as arrayUtil from '@src/helpers/arrayUtil';
 import { range, isInteger, isString, isNull } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
@@ -33,31 +29,34 @@ export function getAxisLabelAnchorPoint(text: string, font: string = DEFAULT_LAB
 }
 
 function getDecimalLength(value: string | number) {
-  const valueArr = String(value).split('.');
-
-  return valueArr[1]?.length ?? 0;
+  return String(value).split('.')[1]?.length ?? 0;
 }
+
 function findMultipleNum(...args: (string | number)[]) {
   const underPointLens = args.map((value) => getDecimalLength(value));
-  const underPointLen = arrayUtil.max(underPointLens);
+  const underPointLen = Math.max(...underPointLens);
 
   return 10 ** underPointLen;
 }
+
 export function add(a: number, b: number) {
   const multipleNum = findMultipleNum(a, b);
 
   return (a * multipleNum + b * multipleNum) / multipleNum;
 }
+
 export function multiply(a: number, b: number) {
   const multipleNum = findMultipleNum(a, b);
 
   return (a * multipleNum * (b * multipleNum)) / (multipleNum * multipleNum);
 }
+
 export function divide(a: number, b: number) {
   const multipleNum = findMultipleNum(a, b);
 
   return (a * multipleNum) / (b * multipleNum);
 }
+
 export function sum(values: number[]) {
   const copyArr = values.slice();
   copyArr.unshift(0);
@@ -99,8 +98,6 @@ export function makeTickPixelPositions(
   remainLastBlockIntervalPosition = 0
 ): number[] {
   let positions: number[] = [];
-
-  additionalPosition = additionalPosition || 0;
 
   if (count > 0) {
     positions = range(0, count).map((index) => {

@@ -36,3 +36,7 @@ export function setLineDash(ctx: CanvasRenderingContext2D, dashSegments: number[
     console.error(message.DASH_SEGMENTS_UNAVAILABLE_ERROR);
   }
 }
+
+export function getBoxTypeSeriesPadding(tickDistance: number) {
+  return Math.floor(tickDistance * 0.15);
+}

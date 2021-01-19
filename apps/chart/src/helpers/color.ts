@@ -1,8 +1,4 @@
-/**
- * @fileoverview Utility methods to manipulate colors
- * @author NHN.
- *         FE Development Lab <dl_javascript@nhn.com>
- */
+import { range } from './utils';
 
 const hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
 const rgbRX = /rgb\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3})\)/;
@@ -163,10 +159,17 @@ function leadingZero(number: string, length: number): string {
   }
 
   let zero = '';
+  let tempZero = number;
+
+  range(0, length - 1).forEach((i) => {
+    tempZero = '0' + tempZero;
+  });
 
   for (let i = 0; i < length - 1; i += 1) {
     zero += '0';
   }
+
+  console.log(number, length, tempZero.slice(length * -1), (zero + number).slice(length * -1));
 
   return (zero + number).slice(length * -1);
 }
