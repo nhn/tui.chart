@@ -446,8 +446,8 @@ export interface ColumnChartOptions extends BaseOptions {
 
 export type BoxPlotSeriesType = {
   name: string;
-  data: number[][];
-  outliers?: number[][];
+  data: (number | null)[][] | null;
+  outliers?: number[][] | null;
   color?: string;
 };
 
@@ -573,9 +573,9 @@ export interface BulletChartOptions extends BaseOptions {
 
 export type BulletSeriesType = {
   name: string;
-  data: number;
-  markers: number[];
-  ranges: RangeDataType<number>[];
+  data: number | null;
+  markers: number[] | null;
+  ranges: Array<RangeDataType<number> | null>;
   color?: string;
 };
 

@@ -1,5 +1,5 @@
 import BoxPlotChart from '@src/charts/boxPlotChart';
-import { budgetDataForBoxPlot } from './data';
+import { budgetDataForBoxPlot, budgetDataForBoxPlotWithNull } from './data';
 import { BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
@@ -34,6 +34,16 @@ function createChart(data: BoxPlotSeriesData, customOptions: BoxPlotChartOptions
 
 export const basic = () => {
   const { el } = createChart(budgetDataForBoxPlot);
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(budgetDataForBoxPlotWithNull as BoxPlotSeriesData, {
+    series: {
+      eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'grouped'),
+    },
+  });
 
   return el;
 };
