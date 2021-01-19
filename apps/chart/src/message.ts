@@ -5,4 +5,5 @@ export const message = {
   CIRCLE_LEGEND_RENDER_ERROR: 'circleLegend is only possible when bubble series is present',
   noDataError: (chartName: string) => `There's no ${chartName} data!`,
   noBrushError: (brushName: string) => `Brush don't exist in painter: ${brushName}`,
+  DASH_SEGMENTS_UNAVAILABLE_ERROR: 'DashSegments option is available from IE11 and above.',
 };

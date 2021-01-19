@@ -66,7 +66,16 @@ function base64toBlob(base64String: string) {
     byteArrays.push(byteArray);
   }
 
-  return new Blob(byteArrays, { type: contentType });
+  try {
+    // for IE 11
+    return new Blob(byteArrays, { type: contentType });
+  } catch (e) {
+    // for IE 10
+    return new Blob(
+      byteArrays.map((byteArr) => byteArr.buffer),
+      { type: contentType }
+    );
+  }
 }
 
 function isImageExtension(extension: Extension) {
