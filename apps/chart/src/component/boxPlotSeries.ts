@@ -572,7 +572,7 @@ export default class BoxPlotSeries extends Component {
               x2: x,
               y2: rect.y,
               strokeStyle: color ?? seriesColor,
-              lineWidth: lineWidth,
+              lineWidth,
             },
       lowerWhisker:
         isNull(minimum) || isNull(rect)
@@ -584,7 +584,7 @@ export default class BoxPlotSeries extends Component {
               x2: x,
               y2: crispPixel(rect.y + rect.height, lineWidth),
               strokeStyle: color ?? seriesColor,
-              lineWidth: lineWidth,
+              lineWidth,
             },
     };
   }

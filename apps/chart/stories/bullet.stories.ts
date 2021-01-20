@@ -43,6 +43,7 @@ export const basicWithNullData = () => {
   const { el } = createChart(budgetDataForBulletWithNull as BulletSeriesData, {
     series: {
       eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'point'),
+      dataLabels: { visible: true },
     },
     theme: {
       series: {

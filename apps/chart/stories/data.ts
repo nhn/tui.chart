@@ -1436,20 +1436,16 @@ export const budgetDataForBoxPlotWithNull = {
       data: [
         [1000, 2500, 3714, 5500, 7000],
         null,
-        [3000, 4000, null, 6000, 7000],
-        [1000, 2250, 3142, 4750, null],
+        [3000, 4000, 4714, 6000, 7000],
+        [1000, 2250, 3142, 4750, 6000],
       ],
-      outliers: [
-        [0, 14000],
-        [2, 10000],
-        [3, 9600],
-      ],
+      outliers: [[0, 14000], null, [2, 10000], [3, 9600]],
     },
     {
       name: '2021',
       data: [
-        [null, 4500, 6714, 11500, 13000],
-        [3000, null, 7571, 8250, 9000],
+        null,
+        [3000, 5750, 7571, 8250, 9000],
         [5000, 8000, 8714, 9000, 10000],
         [7000, 9250, 10142, 11750, 12000],
       ],
@@ -1537,21 +1533,20 @@ export const budgetDataForBulletWithNull = {
     {
       name: 'Budget',
       data: null,
-      markers: [28, null, 15],
-      ranges: [[-1, 5], [5, 10], null, [15, 20], [20, 25], [25, 30]],
+      markers: [28, 15],
+      ranges: [[-1, 5], [5, 10], [10, 15], [15, 20], [20, 25], null],
     },
     {
       name: 'Income',
-      data: 11,
-      markers: null,
-      ranges: null,
+      data: 0,
+      ranges: [[0, 10]],
     },
     {
       name: 'Expenses',
       data: 30,
-      markers: [25],
+      markers: [0],
       ranges: [
-        [0, 10],
+        [-2, 10],
         [10, 19],
         [19, 28],
       ],

@@ -11,7 +11,6 @@ import {
   NestedPieSeriesType,
 } from '@t/options';
 import { getCoordinateXValue, getCoordinateYValue } from './coordinate';
-import { getLongestArrayLength } from '@src/helpers/arrayUtil';
 
 type ExportData2DArray = (string | number)[][];
 
@@ -121,10 +120,17 @@ function isNeedDataEncoding() {
   return !isMSSaveOrOpenBlobSupported && isDownloadAttributeSupported;
 }
 
+function getBulletLongestArrayLength(arr: any[], field: string): number {
+  return arr.reduce(
+    (acc, cur, idx) => (!idx || acc < cur?.[field]?.length ? cur[field].length : acc),
+    0
+  );
+}
+
 function makeBulletExportData({ series }: DataToExport): ExportData2DArray {
   const seriesData = series.bullet!.data;
-  const markerCount = getLongestArrayLength(seriesData, 'markers');
-  const rangeCount = getLongestArrayLength(seriesData, 'ranges');
+  const markerCount = getBulletLongestArrayLength(seriesData, 'markers');
+  const rangeCount = getBulletLongestArrayLength(seriesData, 'ranges');
   const rangesHeaders = range(0, rangeCount).map((idx) => `Range ${idx + 1}`);
   const markerHeaders = range(0, markerCount).map((idx) => `Marker ${idx + 1}`);
 
@@ -201,8 +207,7 @@ function makeBoxPlotExportData(exportData: DataToExport): ExportData2DArray {
     (acc, { name, data, outliers }) => {
       const values = (data ?? []).map((rawData, index) => {
         const outlierValue = (outliers ?? []).find((outlier) => outlier[0] === index)?.[1];
-        const raw = rawData ?? [];
-        const value = outlierValue ? [...raw, outlierValue] : [...raw];
+        const value = outlierValue ? [...rawData, outlierValue] : [...rawData];
 
         return value.join();
       });

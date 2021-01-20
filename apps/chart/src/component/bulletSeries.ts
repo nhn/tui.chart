@@ -386,31 +386,31 @@ export default class BulletSeries extends Component {
     { tickDistance, ratio, zeroPosition, bulletWidth }: RenderOptions
   ): BulletRectModel[] {
     const { borderColor, borderWidth } = this.theme;
-    const bulletModels: BulletRectModel[] = [];
 
-    bulletData.forEach(({ data, color, name }, seriesIndex) => {
-      if (!isNull(data)) {
-        const bulletLength = data * ratio;
-        const bulletStartX = getStartX(seriesIndex, tickDistance, bulletWidth);
-
-        bulletModels.push({
-          type: 'rect',
-          name,
-          color: getRGBA(color!, this.getSeriesOpacity(name)),
-          x: this.vertical ? bulletStartX : zeroPosition,
-          y: this.vertical ? zeroPosition - bulletLength : bulletStartX,
-          thickness: borderWidth,
-          borderColor: borderColor,
-          modelType: 'bullet',
-          seriesColor: color,
-          tooltipColor: color,
-          value: data,
-          ...getRectSize(this.vertical, bulletWidth, bulletLength),
-        });
+    return bulletData.reduce<BulletRectModel[]>((acc, { data, color, name }, seriesIndex) => {
+      if (isNull(data)) {
+        return [...acc];
       }
-    });
+      const bulletLength = Math.max(data * ratio, 2);
+      const bulletStartX = getStartX(seriesIndex, tickDistance, bulletWidth);
 
-    return bulletModels;
+      const bullet: BulletRectModel = {
+        type: 'rect',
+        name,
+        color: getRGBA(color!, this.getSeriesOpacity(name)),
+        x: this.vertical ? bulletStartX : zeroPosition,
+        y: this.vertical ? zeroPosition - bulletLength : bulletStartX,
+        thickness: borderWidth,
+        borderColor,
+        modelType: 'bullet',
+        seriesColor: color,
+        tooltipColor: color,
+        value: data,
+        ...getRectSize(this.vertical, bulletWidth, bulletLength),
+      };
+
+      return [...acc, bullet];
+    }, []);
   }
 
   renderMarkers(

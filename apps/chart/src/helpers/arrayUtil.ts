@@ -61,10 +61,3 @@ export function pluck(arr: any[], property: string | number) {
     return [...acc, cur[property]];
   }, []);
 }
-
-export function getLongestArrayLength(arr: any[], field: string): number {
-  return arr.reduce(
-    (acc, cur, idx) => (!idx || acc < cur?.[field]?.length ? cur[field].length : acc),
-    0
-  );
-}
