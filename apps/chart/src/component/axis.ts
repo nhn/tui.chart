@@ -8,7 +8,7 @@ import {
 } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 import { TICK_SIZE } from '@src/brushes/axis';
-import { includes } from '@src/helpers/utils';
+import { includes, pick } from '@src/helpers/utils';
 import { getAxisTheme } from '@src/helpers/axes';
 import { AxisTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
@@ -61,28 +61,19 @@ export default class Axis extends Component {
     this.theme = getAxisTheme(theme, this.name) as Required<AxisTheme>;
     this.rect = layout[this.name];
 
-    const {
-      labels,
-      tickCount,
-      pointOnColumn,
-      isLabelAxis,
-      tickDistance,
-      tickInterval,
-      labelInterval,
-      labelDistance,
-    } = axes[this.name];
-
+    const { labels, tickCount, isLabelAxis } = axes[this.name];
     const relativePositions = makeTickPixelPositions(this.axisSize(), tickCount);
 
     const { offsetKey, anchorKey } = getOffsetAndAnchorKey(this.yAxisComponent);
 
-    const renderOptions: RenderOptions = {
-      pointOnColumn,
-      tickDistance,
-      tickInterval,
-      labelInterval,
-      labelDistance,
-    };
+    const renderOptions: RenderOptions = pick(
+      axes[this.name],
+      'pointOnColumn',
+      'tickDistance',
+      'tickInterval',
+      'labelInterval',
+      'labelDistance'
+    );
 
     const hasOnlyAxisLine = this.hasOnlyAxisLine();
 

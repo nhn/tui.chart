@@ -15,11 +15,11 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import { LineModel } from '@t/components/axis';
-import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getBoxTypeSeriesPadding } from '@src/helpers/style';
 import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '@t/theme';
 import { isNumber, calculateSizeWithPercentString } from '@src/helpers/utils';
 import { crispPixel } from '@src/helpers/calculator';
-import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
 
 type RenderOptions = {
@@ -295,9 +295,13 @@ export default class BoxPlotSeries extends Component {
         });
       });
 
-      const { color: dotColor, radius, borderColor, borderWidth, useSeriesColor } = dot as Required<
-        BoxPlotDotTheme
-      >;
+      const {
+        color: dotColor,
+        radius,
+        borderColor,
+        borderWidth,
+        useSeriesColor,
+      } = dot as Required<BoxPlotDotTheme>;
       outliers.forEach((datum) => {
         const [dataIndex, value] = datum;
         const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
@@ -415,9 +419,13 @@ export default class BoxPlotSeries extends Component {
       shadowBlur,
     } = this.theme[type];
     const { whisker, median, maximum, minimum } = line as Required<BoxPlotLineTypeTheme>;
-    const { color: dotColor, radius, borderColor, borderWidth, useSeriesColor } = dot as Required<
-      BoxPlotDotTheme
-    >;
+    const {
+      color: dotColor,
+      radius,
+      borderColor,
+      borderWidth,
+      useSeriesColor,
+    } = dot as Required<BoxPlotDotTheme>;
 
     return responders.map((m) => {
       const { type: modelType, data } = m;

@@ -204,7 +204,6 @@ const theme: StoreModule = {
     initThemeState({ state, initStoreState }) {
       state.theme = getTheme(state.options, initStoreState.series);
     },
-    applyTheme({ state }) {},
   },
   observe: {
     updateTheme() {

@@ -1,4 +1,4 @@
-import { pickProperty } from '@src/helpers/utils';
+import { isNull, pickProperty } from '@src/helpers/utils';
 import { message } from '@src/message';
 
 type ObservableInfo = {
@@ -29,12 +29,12 @@ export function observe(fn: Function): Function {
       return;
     }
 
-    if (doingInvisibleWork || currentRunningObserverId !== null) {
+    if (doingInvisibleWork || !isNull(currentRunningObserverId)) {
       if (observerCallCue.includes(observer)) {
         observerCallCue.splice(observerCallCue.indexOf(observer), 1);
       }
       observerCallCue.push(observer);
-    } else if (currentRunningObserverId === null) {
+    } else if (isNull(currentRunningObserverId)) {
       currentRunningObserverId = observeId;
       fn();
       currentRunningObserverId = null;
@@ -112,7 +112,6 @@ export function observable(
           currentCollectorObserver &&
           !obs.includes(currentCollectorObserver)
         ) {
-          // console.log('collect observer', key);
           obs.push(currentCollectorObserver);
           (currentCollectorObserver as Observer).deps.push(obs);
         }
@@ -130,7 +129,6 @@ export function observable(
         }
 
         if (prevValue !== value) {
-          // console.log('run observe', key, obs);
           invokeObs(obs);
         }
       },

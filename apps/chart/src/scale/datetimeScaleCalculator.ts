@@ -59,9 +59,8 @@ function makeDatetimeInfo(limit: ValueEdge, count: number, scaleOption?: Scale) 
 
   const minDate = divide(Number(new Date(scale.min)), divisionNumber);
   const maxDate = divide(Number(new Date(scale.max)), divisionNumber);
-  const max = maxDate - minDate;
 
-  return { divisionNumber, minDate, limit: { min: 0, max } };
+  return { divisionNumber, minDate, limit: { min: 0, max: maxDate - minDate } };
 }
 
 function findDateType({ max, min }: ValueEdge, count: number) {

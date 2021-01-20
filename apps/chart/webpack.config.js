@@ -2,13 +2,14 @@
 const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const pkg = require('./package.json');
 
 const commonConfig = {
-  entry: ['@babel/polyfill', './src/css/chart.css', './src/index.ts'],
+  entry: ['./src/css/chart.css', './src/index.ts'],
   output: {
     library: ['toastui', 'Chart'],
     libraryTarget: 'umd',
@@ -28,19 +29,19 @@ const commonConfig = {
       {
         test: /\.(ts|tsx|js)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
+        loader: 'babel-loader',
       },
     ],
   },
 };
 
-module.exports = (env, { mode, minify }) => {
+module.exports = (env, { mode, minify, polyfill }) => {
   const isProduction = mode === 'production';
   const { version, author, license } = pkg;
 
-  commonConfig.output.filename = `toastui-chart${minify ? '.min' : ''}.js`;
+  commonConfig.output.filename = `toastui-chart${polyfill ? '-polyfill' : ''}${
+    minify ? '.min' : ''
+  }.js`;
 
   const BANNER = [
     'TOAST UI Chart 4th Edition',
@@ -48,6 +49,10 @@ module.exports = (env, { mode, minify }) => {
     `@author ${author}`,
     `@license ${license}`,
   ].join('\n');
+
+  commonConfig.module.rules[0].options = {
+    envName: polyfill ? 'polyfill' : mode,
+  };
 
   if (isProduction) {
     const productionConfig = {
@@ -57,6 +62,10 @@ module.exports = (env, { mode, minify }) => {
         new webpack.BannerPlugin({
           banner: BANNER,
           entryOnly: true,
+        }),
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          reportFilename: `../../report/webpack/stats-${pkg.version}.html`,
         }),
       ],
       module: {
@@ -76,6 +85,7 @@ module.exports = (env, { mode, minify }) => {
       productionConfig.optimization = {
         minimizer: [
           new TerserPlugin({
+            extractComments: false,
             terserOptions: {
               compress: {
                 drop_console: true, // eslint-disable-line camelcase
@@ -86,6 +96,7 @@ module.exports = (env, { mode, minify }) => {
               },
             },
           }),
+          new CssMinimizerPlugin(),
         ],
       };
     }
@@ -95,13 +106,7 @@ module.exports = (env, { mode, minify }) => {
 
   return merge(commonConfig, {
     mode,
-    plugins: [
-      new webpack.HotModuleReplacementPlugin(),
-      new HtmlWebpackPlugin({
-        title: 'Development',
-        showErrors: true,
-      }),
-    ],
+    plugins: [new webpack.HotModuleReplacementPlugin()],
     devServer: {
       hot: true,
       open: 'Google Chrome',

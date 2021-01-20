@@ -61,9 +61,7 @@ function base64toBlob(base64String: string) {
       byteNumbers[i] = slice.charCodeAt(i);
     }
 
-    const byteArray = new window.Uint8Array(byteNumbers);
-
-    byteArrays.push(byteArray);
+    byteArrays.push(new window.Uint8Array(byteNumbers));
   }
 
   try {
