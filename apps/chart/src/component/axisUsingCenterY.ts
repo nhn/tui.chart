@@ -1,7 +1,7 @@
 import Component from './component';
 import Painter from '@src/painter';
 import { AxisType } from '@src/component/axis';
-import { ChartState, Options, CenterYAxisData, VisibleAxisLabel } from '@t/store/store';
+import { ChartState, Options, CenterYAxisData, ViewAxisLabel } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 import { AxisTheme } from '@t/theme';
@@ -180,7 +180,7 @@ export default class AxisUsingCenterY extends Component {
   }
 
   renderLabelModels(
-    labels: VisibleAxisLabel[],
+    labels: ViewAxisLabel[],
     offsetKey: CoordinateKey,
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions

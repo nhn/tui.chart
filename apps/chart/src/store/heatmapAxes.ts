@@ -4,7 +4,7 @@ import { AxisType } from '@src/component/axis';
 import {
   getAxisTheme,
   makeFormattedCategory,
-  getVisibleAxisLabels,
+  getViewAxisLabels,
   makeRotationData,
   getRotatableOption,
   hasAxesLayoutChanged,
@@ -35,7 +35,7 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   const tickCount = tickIntervalCount + 1;
   const tickInterval = options[axisType]?.tick?.interval ?? 1;
   const labelInterval = options[axisType]?.label?.interval ?? 1;
-  const visibleLabels = getVisibleAxisLabels(
+  const visibleLabels = getViewAxisLabels(
     {
       labels,
       pointOnColumn,

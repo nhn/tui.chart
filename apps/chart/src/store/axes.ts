@@ -24,7 +24,7 @@ import {
   getYAxisOption,
   getAutoAdjustingInterval,
   getAxisTheme,
-  getVisibleAxisLabels,
+  getViewAxisLabels,
   hasAxesLayoutChanged,
   getRotatableOption,
   makeFormattedCategory,
@@ -148,7 +148,7 @@ function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;
   const labelDistance = axisSize / (labels.length - (pointOnColumn ? 0 : 1));
   const tickCount = labels.length + (pointOnColumn ? 1 : 0);
-  const visibleLabels = getVisibleAxisLabels(
+  const viewLabels = getViewAxisLabels(
     {
       labels,
       pointOnColumn,
@@ -161,7 +161,7 @@ function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
 
   return {
     labels,
-    visibleLabels,
+    viewLabels,
     pointOnColumn,
     labelDistance,
     tickDistance,
@@ -205,7 +205,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
   const tickDistance = size / Math.max(valueLabels.length, 1);
   const tickCount = valueLabels.length;
   const pointOnColumn = false;
-  const visibleLabels = getVisibleAxisLabels(
+  const viewLabels = getViewAxisLabels(
     {
       labels: labelOnYAxis ? labels : [...labels].reverse(),
       pointOnColumn,
@@ -218,7 +218,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
 
   const axisData: ValueAxisState = {
     labels,
-    visibleLabels,
+    viewLabels,
     pointOnColumn,
     isLabelAxis: false,
     tickCount,
@@ -377,10 +377,10 @@ function getSecondaryYAxisData({
 }
 
 function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable }): AxisData {
-  const { visibleLabels, pointOnColumn, maxLabelWidth, maxLabelHeight } = axisData;
+  const { viewLabels, pointOnColumn, maxLabelWidth, maxLabelHeight } = axisData;
   const offsetY = getAxisLabelAnchorPoint(maxLabelHeight);
   const size = centerYAxis ? centerYAxis.xAxisHalfSize : axisSize;
-  const distance = size / (visibleLabels.length - (pointOnColumn ? 0 : 1));
+  const distance = size / (viewLabels.length - (pointOnColumn ? 0 : 1));
   const rotationData = makeRotationData(maxLabelWidth, maxLabelHeight, distance, rotatable);
   const { needRotateLabel, rotationHeight } = rotationData;
   const maxHeight = (needRotateLabel ? rotationHeight : maxLabelHeight) + offsetY;

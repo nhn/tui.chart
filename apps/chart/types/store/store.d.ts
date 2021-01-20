@@ -167,7 +167,7 @@ export interface Scale {
   secondaryYAxis?: ScaleData;
 }
 
-type VisibleAxisLabel = { offsetPos: number; text: string };
+type ViewAxisLabel = { offsetPos: number; text: string };
 
 type RotationLabelData = {
   needRotateLabel?: boolean;
@@ -343,7 +343,7 @@ type BaseAxisData = InitAxisData & {
   tickDistance: number;
   maxLabelWidth: number;
   maxLabelHeight: number;
-  visibleLabels: VisibleAxisLabel[];
+  visibleLabels: ViewAxisLabel[];
   offsetY?: number;
   maxHeight?: number;
 } & RotationLabelData;
