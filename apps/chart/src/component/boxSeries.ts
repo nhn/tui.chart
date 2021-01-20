@@ -346,11 +346,9 @@ export default class BoxSeries extends Component {
 
     if (getDataLabelsOptions(options, this.name).visible) {
       const dataLabelData = seriesModels.reduce<RectDataLabel[]>((acc, data) => {
-        const labelData = isRangeValue(data.value)
-          ? this.makeDataLabelRangeData(data)
-          : [this.makeDataLabel(data, centerYAxis)];
-
-        return [...acc, ...labelData];
+        return isRangeValue(data.value)
+          ? [...acc, ...this.makeDataLabelRangeData(data)]
+          : [...acc, this.makeDataLabel(data, centerYAxis)];
       }, []);
 
       this.renderDataLabels(dataLabelData);
@@ -729,35 +727,28 @@ export default class BoxSeries extends Component {
     return {
       ...rect,
       direction: this.getDataLabelDirection(rect, centerYAxis),
-      plot: {
-        x: 0,
-        y: 0,
-        size: this.getOffsetSize(),
-      },
+      plot: { x: 0, y: 0, size: this.getOffsetSize() },
       theme: omit(this.theme.dataLabels, 'stackTotal'),
     };
   }
 
   makeDataLabelRangeData(rect: RectModel): RectDataLabel[] {
-    return (rect.value as RangeDataType<number>).reduce<RectDataLabel[]>((acc, value, index) => {
-      const data = {
-        ...rect,
-        value,
-        direction: this.getDataLabelRangeDataDirection(value, index),
-        plot: {
-          x: 0,
-          y: 0,
-          size: this.getOffsetSize(),
+    return (rect.value as RangeDataType<number>).reduce<RectDataLabel[]>(
+      (acc, value, index) => [
+        ...acc,
+        {
+          ...rect,
+          value,
+          direction: this.getDataLabelRangeDataDirection(index % 2 === 0),
+          plot: { x: 0, y: 0, size: this.getOffsetSize() },
+          theme: omit(this.theme.dataLabels, 'stackTotal'),
         },
-        theme: omit(this.theme.dataLabels, 'stackTotal'),
-      };
-
-      return [...acc, data];
-    }, [] as RectDataLabel[]);
+      ],
+      []
+    );
   }
 
-  getDataLabelRangeDataDirection(value: number, index: number) {
-    const isEven = index % 2 === 0;
+  getDataLabelRangeDataDirection(isEven: boolean) {
     let direction: RectDirection;
 
     if (this.isBar) {
