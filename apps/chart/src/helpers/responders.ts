@@ -156,10 +156,20 @@ export function makeTooltipCircleMap(
   seriesCircleModel: CircleModel[],
   tooltipDataArr: TooltipData[]
 ) {
+  const dataMap = tooltipDataArr.reduce<TooltipData[][]>((acc, cur) => {
+    const { index, seriesIndex } = cur;
+
+    if (!acc[seriesIndex!]) {
+      acc[seriesIndex!] = [];
+    }
+    acc[seriesIndex!][index!] = cur;
+
+    return acc;
+  }, []);
+
   return seriesCircleModel.reduce<Record<string, CircleResponderModel[]>>((acc, model) => {
-    const data = tooltipDataArr.find(
-      ({ index, seriesIndex }) => index === model.index && seriesIndex === model.seriesIndex
-    )!;
+    const { seriesIndex, index } = model;
+    const data = dataMap[seriesIndex!][index!];
 
     const { category } = data;
     if (!category) {
