@@ -98,7 +98,6 @@ export default class BubbleSeries extends Component {
       detectionSize: 0,
       radius: m.radius + MINIMUM_DETECTING_AREA_RADIUS,
       color: getRGBA(m.color, 0.85),
-      style: ['default', 'hover', { lineWidth: 2 }],
       data: tooltipModel[index],
       index,
     }));

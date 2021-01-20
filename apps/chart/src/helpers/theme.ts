@@ -298,9 +298,13 @@ function getSeriesTheme(
         fillColor: transparentColor,
         select: {
           fillColor: 'rgba(255, 255, 255, 1)',
+          borderWidth: 3,
+          size: 13,
         },
         hover: {
           fillColor: 'rgba(255, 255, 255, 1)',
+          borderWidth: 3,
+          size: 13,
         },
       };
     case 'bubble':
@@ -308,7 +312,12 @@ function getSeriesTheme(
         borderWidth: 0,
         borderColor: transparentColor,
         select: {},
-        hover: {},
+        hover: {
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowBlur: 2,
+          shadowOffsetY: 2,
+          lineWidth: 2,
+        },
       };
     case 'radar':
       return {

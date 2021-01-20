@@ -53,6 +53,7 @@ button:focus {
 
 .tooltip-container {
   position: absolute;
+  /* @TODO: option 으로 분리 */
   transition: top 0.2s, left 0.2s;
   user-select: none;
   pointer-events: none;

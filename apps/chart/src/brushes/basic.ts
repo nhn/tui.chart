@@ -17,12 +17,6 @@ const circleStyle = {
     strokeStyle: '#ffffff',
     lineWidth: 2,
   },
-  hover: {
-    shadowColor: 'rgba(0, 0, 0, 0.3)',
-    shadowBlur: 2,
-    shadowOffsetY: 2,
-    lineWidth: 2,
-  },
   plot: {
     lineWidth: 1,
     strokeStyle: 'rgba(0, 0, 0, 0.05)',
@@ -101,10 +95,6 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
   fillStyle(ctx, color);
-
-  if (ctx.shadowColor) {
-    ctx.shadowColor = 'transparent';
-  }
 
   strokeWithOptions(ctx, { lineWidth, strokeStyle });
   ctx.closePath();
