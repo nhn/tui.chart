@@ -1439,7 +1439,7 @@ export const budgetDataForBoxPlotWithNull = {
         [3000, 4000, 4714, 6000, 7000],
         [1000, 2250, 3142, 4750, 6000],
       ],
-      outliers: [[0, 14000], null, [2, 10000], [3, 9600]],
+      outliers: null,
     },
     {
       name: '2021',
@@ -1449,7 +1449,6 @@ export const budgetDataForBoxPlotWithNull = {
         [5000, 8000, 8714, 9000, 10000],
         [7000, 9250, 10142, 11750, 12000],
       ],
-      outliers: [[1, 14000]],
     },
   ],
 };

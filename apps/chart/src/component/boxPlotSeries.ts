@@ -257,12 +257,10 @@ export default class BoxPlotSeries extends Component {
 
       if (type === 'boxPlot') {
         ['maximum', 'minimum', 'rect', 'median', 'upperWhisker', 'lowerWhisker'].forEach((prop) => {
-          if (!isNull(model[prop])) {
-            seriesModels.push({
-              name,
-              ...model[prop],
-            });
-          }
+          seriesModels.push({
+            name,
+            ...model[prop],
+          });
         });
       } else {
         seriesModels.push({
@@ -314,21 +312,19 @@ export default class BoxPlotSeries extends Component {
         useSeriesColor,
       } = dot as Required<BoxPlotDotTheme>;
       (outliers ?? []).forEach((datum) => {
-        if (!isNull(datum)) {
-          const [dataIndex, value] = datum;
-          const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
+        const [dataIndex, value] = datum;
+        const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
 
-          boxPlotModels.push({
-            type: 'circle',
-            name,
-            x: startX + barWidth / 2,
-            y: this.getYPos(value, ratio),
-            radius: radius!,
-            style: [{ strokeStyle: borderColor ?? seriesColor, lineWidth: borderWidth }],
-            color: useSeriesColor ? seriesColor : dotColor,
-            index: dataIndex,
-          });
-        }
+        boxPlotModels.push({
+          type: 'circle',
+          name,
+          x: startX + barWidth / 2,
+          y: this.getYPos(value, ratio),
+          radius: radius!,
+          style: [{ strokeStyle: borderColor ?? seriesColor, lineWidth: borderWidth }],
+          color: useSeriesColor ? seriesColor : dotColor,
+          index: dataIndex,
+        });
       });
     });
 
@@ -474,50 +470,38 @@ export default class BoxPlotSeries extends Component {
 
         model = {
           ...m,
-          rect: seriesRect
-            ? {
-                ...seriesRect,
-                color: color ?? getRGBA(seriesColor, 1),
-                thickness: rect!.borderWidth,
-                borderColor: rect!.borderColor,
-                style: [{ shadowColor, shadowOffsetX, shadowOffsetY, shadowBlur }],
-              }
-            : null,
-          upperWhisker: upperWhisker
-            ? {
-                ...upperWhisker,
-                strokeStyle: getDefaultColor(seriesColor, whisker.color),
-                lineWidth: whisker.lineWidth,
-              }
-            : null,
-          lowerWhisker: lowerWhisker
-            ? {
-                ...lowerWhisker,
-                strokeStyle: getDefaultColor(seriesColor, whisker.color),
-                lineWidth: whisker.lineWidth,
-              }
-            : null,
-          median: seriesMedian
-            ? {
-                ...seriesMedian,
-                strokeStyle: getDefaultColor(seriesColor, median.color),
-                lineWidth: median.lineWidth,
-              }
-            : null,
-          maximum: seriesMaximum
-            ? {
-                ...seriesMaximum,
-                strokeStyle: getDefaultColor(seriesColor, maximum.color),
-                lineWidth: maximum.lineWidth,
-              }
-            : null,
-          minimum: seriesMinimum
-            ? {
-                ...seriesMinimum,
-                strokeStyle: getDefaultColor(seriesColor, minimum.color),
-                lineWidth: minimum.lineWidth,
-              }
-            : null,
+          rect: {
+            ...seriesRect,
+            color: color ?? getRGBA(seriesColor, 1),
+            thickness: rect!.borderWidth,
+            borderColor: rect!.borderColor,
+            style: [{ shadowColor, shadowOffsetX, shadowOffsetY, shadowBlur }],
+          },
+          upperWhisker: {
+            ...upperWhisker,
+            strokeStyle: getDefaultColor(seriesColor, whisker.color),
+            lineWidth: whisker.lineWidth,
+          },
+          lowerWhisker: {
+            ...lowerWhisker,
+            strokeStyle: getDefaultColor(seriesColor, whisker.color),
+            lineWidth: whisker.lineWidth,
+          },
+          median: {
+            ...seriesMedian,
+            strokeStyle: getDefaultColor(seriesColor, median.color),
+            lineWidth: median.lineWidth,
+          },
+          maximum: {
+            ...seriesMaximum,
+            strokeStyle: getDefaultColor(seriesColor, maximum.color),
+            lineWidth: maximum.lineWidth,
+          },
+          minimum: {
+            ...seriesMinimum,
+            strokeStyle: getDefaultColor(seriesColor, minimum.color),
+            lineWidth: minimum.lineWidth,
+          },
         };
       }
 
@@ -526,17 +510,13 @@ export default class BoxPlotSeries extends Component {
   }
 
   getRect(
-    datum: (number | null)[],
+    datum: number[],
     startX: number,
     seriesColor: string,
     { barWidth, ratio }: RenderOptions
-  ): RectModel | null {
+  ): RectModel {
     const { rect } = this.theme;
     const [, lowerQuartile, , highQuartile] = datum;
-
-    if (isNull(lowerQuartile) || isNull(highQuartile)) {
-      return null;
-    }
 
     return {
       type: 'rect',
@@ -551,56 +531,46 @@ export default class BoxPlotSeries extends Component {
   }
 
   getWhisker(
-    datum: (number | null)[],
+    datum: number[],
     startX: number,
     seriesColor: string,
     { barWidth, ratio }: RenderOptions,
-    rect: RectModel | null
-  ): Record<'upperWhisker' | 'lowerWhisker', LineModel | null> {
+    rect: RectModel
+  ): Record<'upperWhisker' | 'lowerWhisker', LineModel> {
     const [minimum, , , , maximum] = datum;
     const { lineWidth, color } = this.theme.line.whisker!;
     const x = crispPixel(startX + barWidth / 2, lineWidth);
 
     return {
-      upperWhisker:
-        isNull(maximum) || isNull(rect)
-          ? null
-          : {
-              type: 'line',
-              x,
-              y: this.getYPos(maximum, ratio, lineWidth),
-              x2: x,
-              y2: rect.y,
-              strokeStyle: color ?? seriesColor,
-              lineWidth,
-            },
-      lowerWhisker:
-        isNull(minimum) || isNull(rect)
-          ? null
-          : {
-              type: 'line',
-              x,
-              y: this.getYPos(minimum, ratio, lineWidth),
-              x2: x,
-              y2: crispPixel(rect.y + rect.height, lineWidth),
-              strokeStyle: color ?? seriesColor,
-              lineWidth,
-            },
+      upperWhisker: {
+        type: 'line',
+        x,
+        y: this.getYPos(maximum, ratio, lineWidth),
+        x2: x,
+        y2: rect.y,
+        strokeStyle: color ?? seriesColor,
+        lineWidth,
+      },
+      lowerWhisker: {
+        type: 'line',
+        x,
+        y: this.getYPos(minimum, ratio, lineWidth),
+        x2: x,
+        y2: crispPixel(rect.y + rect.height, lineWidth),
+        strokeStyle: color ?? seriesColor,
+        lineWidth,
+      },
     };
   }
 
   getMedian(
-    datum: (number | null)[],
+    datum: number[],
     startX: number,
     seriesColor: string,
     { barWidth, ratio }: RenderOptions
-  ): LineModel | null {
+  ): LineModel {
     const median = datum[2];
     const { lineWidth, color } = this.theme.line.median!;
-
-    if (isNull(median)) {
-      return null;
-    }
 
     return {
       type: 'line',
@@ -614,17 +584,13 @@ export default class BoxPlotSeries extends Component {
   }
 
   getMinimum(
-    datum: (number | null)[],
+    datum: number[],
     startX: number,
     seriesColor: string,
     { barWidth, ratio, minMaxBarWidth }: RenderOptions
-  ): LineModel | null {
+  ): LineModel {
     const minimum = datum[0];
     const { lineWidth, color } = this.theme.line.minimum!;
-
-    if (isNull(minimum)) {
-      return null;
-    }
 
     return {
       type: 'line',
@@ -638,17 +604,13 @@ export default class BoxPlotSeries extends Component {
   }
 
   getMaximum(
-    datum: (number | null)[],
+    datum: number[],
     startX: number,
     seriesColor: string,
     { barWidth, ratio, minMaxBarWidth }: RenderOptions
-  ): LineModel | null {
+  ): LineModel {
     const maximum = datum[4];
     const { lineWidth, color } = this.theme.line.maximum!;
-
-    if (isNull(maximum)) {
-      return null;
-    }
 
     return {
       type: 'line',

@@ -446,8 +446,8 @@ export interface ColumnChartOptions extends BaseOptions {
 
 export type BoxPlotSeriesType = {
   name: string;
-  data: (number[] | null)[] | null;
-  outliers?: (number[] | null)[] | null;
+  data: number[][] | null;
+  outliers?: number[][] | null;
   color?: string;
 };
 
