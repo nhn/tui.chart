@@ -26,7 +26,7 @@ describe('yAxis', () => {
             labelDistance: 40,
             tickInterval: 1,
             labelInterval: 1,
-            displayLabels: [
+            visibleLabels: [
               { text: '2', offsetPos: 0.5 },
               { text: '1', offsetPos: 80.5 },
             ],
@@ -122,7 +122,7 @@ describe('yAxis', () => {
             tickInterval: 2,
             labelInterval: 2,
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-            displayLabels: [
+            visibleLabels: [
               { text: '10', offsetPos: 0.5 },
               { text: '8', offsetPos: 16.5 },
               { text: '6', offsetPos: 32.5 },
@@ -176,7 +176,7 @@ describe('yAxis', () => {
             tickDistance: 16,
             tickInterval: 1,
             labelInterval: 1,
-            displayLabels: [
+            visibleLabels: [
               { text: '5', offsetPos: 0.5 },
               { text: '4', offsetPos: 16.5 },
               { text: '3', offsetPos: 32.5 },
@@ -211,7 +211,7 @@ describe('yAxis', () => {
             tickInterval: 1,
             labelInterval: 1,
             labels: ['0', '1', '2', '3', '4', '5'],
-            displayLabels: [
+            visibleLabels: [
               { text: '5', offsetPos: 0.5 },
               { text: '4', offsetPos: 16.5 },
               { text: '3', offsetPos: 32.5 },
@@ -428,7 +428,7 @@ describe('xAxis', () => {
             tickDistance: 80,
             tickInterval: 1,
             labelInterval: 1,
-            displayLabels: [
+            visibleLabels: [
               { text: '1', offsetPos: 0.5 },
               { text: '2', offsetPos: 80.5 },
             ],
@@ -523,7 +523,7 @@ describe('xAxis', () => {
           xAxis: {
             tickInterval: 2,
             labelInterval: 2,
-            displayLabels: [
+            visibleLabels: [
               { text: '1', offsetPos: 0.5 },
               { text: '3', offsetPos: 16.5 },
               { text: '5', offsetPos: 32.5 },
@@ -574,7 +574,7 @@ describe('xAxis', () => {
         axes: {
           xAxis: {
             tickInterval: 1,
-            displayLabels: [
+            visibleLabels: [
               { text: '1', offsetPos: 0.5 },
               { text: '2', offsetPos: 16.5 },
               { text: '3', offsetPos: 32.5 },

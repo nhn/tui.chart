@@ -1,6 +1,6 @@
 import Component from './component';
 import Painter from '@src/painter';
-import { ChartState, Options, DisplayAxisLabel, AxisData } from '@t/store/store';
+import { ChartState, Options, VisibleAxisLabel, AxisData } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 import { TICK_SIZE } from '@src/brushes/axis';
@@ -60,7 +60,7 @@ export default class Axis extends Component {
     this.rect = layout[this.name];
     this.axisSize = this.yAxisComponent ? this.rect.height : this.rect.width;
 
-    const { displayLabels } = axes[this.name];
+    const { visibleLabels } = axes[this.name];
 
     const { offsetKey, anchorKey } = getOffsetAndAnchorKey(this.yAxisComponent);
 
@@ -70,7 +70,7 @@ export default class Axis extends Component {
 
     if (!hasOnlyAxisLine) {
       this.models.label = this.renderLabelModels(
-        displayLabels,
+        visibleLabels,
         offsetKey,
         anchorKey,
         renderOptions
@@ -161,7 +161,7 @@ export default class Axis extends Component {
   }
 
   renderLabelModels(
-    labels: DisplayAxisLabel[],
+    labels: VisibleAxisLabel[],
     offsetKey: CoordinateKey,
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions

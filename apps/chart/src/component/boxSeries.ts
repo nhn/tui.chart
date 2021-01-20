@@ -15,6 +15,7 @@ import {
   CenterYAxisData,
   Series,
   Axes,
+  Scale,
 } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -297,8 +298,7 @@ export default class BoxSeries extends Component {
 
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!(options.series as BoxSeriesOptions)?.diverging;
-
-    const { limit, stepSize } = scale[this.valueAxis];
+    const { limit, stepSize } = this.getScaleData(scale);
     const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
 
@@ -354,6 +354,10 @@ export default class BoxSeries extends Component {
 
     this.tooltipRectMap = this.makeTooltipRectMap(seriesModels, tooltipData);
     this.responders = this.getBoxSeriesResponders(seriesModels, tooltipData, axes, categories);
+  }
+
+  protected getScaleData(scale: Scale) {
+    return scale[this.valueAxis === 'centerYAxis' ? 'xAxis' : this.valueAxis];
   }
 
   protected getBoxSeriesResponders(

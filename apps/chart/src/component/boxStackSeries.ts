@@ -159,7 +159,7 @@ export default class BoxStackSeries extends BoxSeries {
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;
 
-    const { limit, stepSize } = scale[this.valueAxis];
+    const { limit, stepSize } = this.getScaleData(scale);
     const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
 

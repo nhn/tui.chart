@@ -3,7 +3,7 @@ import {
   Series,
   ChartOptionsUsingYAxis,
   Axes,
-  DisplayAxisLabel,
+  VisibleAxisLabel,
   RotationLabelData,
 } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
@@ -247,7 +247,7 @@ export function getRotatableOption(options: Options) {
   return options?.xAxis?.label?.rotatable ?? true;
 }
 
-type DisplayAxisLabelParam = {
+type VisibleAxisLabelParam = {
   labels: string[];
   pointOnColumn?: boolean;
   labelDistance?: number;
@@ -257,7 +257,7 @@ type DisplayAxisLabelParam = {
   tickCount: number;
 };
 
-export function getDisplayAxisLabels(axisData: DisplayAxisLabelParam, axisSize: number) {
+export function getVisibleAxisLabels(axisData: VisibleAxisLabelParam, axisSize: number) {
   const {
     labels,
     pointOnColumn,
@@ -271,7 +271,7 @@ export function getDisplayAxisLabels(axisData: DisplayAxisLabelParam, axisSize: 
   const interval = labelInterval === tickInterval ? labelInterval : 1;
   const labelAdjustment = pointOnColumn ? (labelDistance ?? tickDistance * interval) / 2 : 0;
 
-  return labels.reduce<DisplayAxisLabel[]>((acc, text, index) => {
+  return labels.reduce<VisibleAxisLabel[]>((acc, text, index) => {
     const offsetPos = relativePositions[index] + labelAdjustment;
     const needRender = !(index % labelInterval) && offsetPos <= axisSize;
 

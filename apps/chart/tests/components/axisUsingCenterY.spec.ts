@@ -25,7 +25,7 @@ describe('yAxis', () => {
             tickDistance: 40,
             tickInterval: 1,
             labelInterval: 1,
-            displayLabels: [
+            visibleLabels: [
               { text: '1', offsetPos: 80.5 },
               { text: '2', offsetPos: 0.5 },
             ],
@@ -52,7 +52,7 @@ describe('yAxis', () => {
             tickDistance: 16,
             tickInterval: 1,
             labelInterval: 1,
-            displayLabels: [
+            visibleLabels: [
               { text: '1', offsetPos: 64.5 },
               { text: '2', offsetPos: 48.5 },
               { text: '3', offsetPos: 32.5 },
@@ -135,7 +135,7 @@ describe('xAxis', () => {
             tickDistance: 40,
             tickInterval: 1,
             labelInterval: 1,
-            displayLabels: [
+            visibleLabels: [
               { text: '1', offsetPos: 0.5 },
               { text: '2', offsetPos: 40.5 },
             ],
@@ -162,7 +162,7 @@ describe('xAxis', () => {
             tickDistance: 20,
             tickInterval: 1,
             labelInterval: 1,
-            displayLabels: [
+            visibleLabels: [
               { text: '1', offsetPos: 0.5 },
               { text: '2', offsetPos: 16.5 },
               { text: '3', offsetPos: 32.5 },

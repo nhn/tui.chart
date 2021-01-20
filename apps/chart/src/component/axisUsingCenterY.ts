@@ -1,7 +1,7 @@
 import Component from './component';
 import Painter from '@src/painter';
 import { AxisType } from '@src/component/axis';
-import { ChartState, Options, CenterYAxisData, DisplayAxisLabel } from '@t/store/store';
+import { ChartState, Options, CenterYAxisData, VisibleAxisLabel } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
 import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
 import { AxisTheme } from '@t/theme';
@@ -50,7 +50,7 @@ export default class AxisUsingCenterY extends Component {
       this.rect = { ...this.rect, x: centerYAxis.x };
     }
 
-    const { displayLabels, tickCount, tickInterval, needRotateLabel, radian, offsetY } = axes[
+    const { visibleLabels, tickCount, tickInterval, needRotateLabel, radian, offsetY } = axes[
       this.name
     ]!;
 
@@ -65,7 +65,7 @@ export default class AxisUsingCenterY extends Component {
     const offsetKey = this.yAxisComponent ? 'y' : 'x';
     const anchorKey = this.yAxisComponent ? 'x' : 'y';
 
-    this.models.label = this.renderLabelModels(displayLabels, offsetKey, anchorKey, renderOptions);
+    this.models.label = this.renderLabelModels(visibleLabels, offsetKey, anchorKey, renderOptions);
 
     this.models.tick = this.renderTickModels(offsetKey, anchorKey, renderOptions);
 
@@ -180,7 +180,7 @@ export default class AxisUsingCenterY extends Component {
   }
 
   renderLabelModels(
-    labels: DisplayAxisLabel[],
+    labels: VisibleAxisLabel[],
     offsetKey: CoordinateKey,
     anchorKey: CoordinateKey,
     renderOptions: RenderOptions
