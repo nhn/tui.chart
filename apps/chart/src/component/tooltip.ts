@@ -87,8 +87,7 @@ export default class Tooltip extends Component {
   setTooltipPosition(model: TooltipModel) {
     const { top, left } = this.chartEl.getBoundingClientRect();
     const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.left = `${left + x}px`;
-    this.tooltipContainerEl.style.top = `${top + y}px`;
+    this.tooltipContainerEl.style.transform = `translate(${left + x}px,${top + y}px)`;
   }
 
   getTooltipInfoModels() {
