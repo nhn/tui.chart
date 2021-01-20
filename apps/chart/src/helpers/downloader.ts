@@ -224,9 +224,9 @@ function makePieExportData(exportData: DataToExport): ExportData2DArray {
   return (series.pie!.data as Array<PieSeriesType | NestedPieSeriesType>).reduce<ExportData2DArray>(
     (acc, { name, data }) => {
       const values = Array.isArray(data)
-        ? (data ?? []).reduce((accel, value) => {
-            return [...accel, [value.name, value.data ?? '']];
-          }, [] as ExportData2DArray)
+        ? (data ?? []).reduce<ExportData2DArray>((accNestedPieValue, value) => {
+            return [...accNestedPieValue, [value.name, value.data ?? '']];
+          }, [])
         : [[name, data ?? '']];
 
       return [...acc, ...values];
