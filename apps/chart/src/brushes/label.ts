@@ -1,5 +1,5 @@
 import { LabelModel, RectLabelModel } from '@t/components/axis';
-import { makeStyleObj, fillStyle, stroke } from '@src/helpers/style';
+import { makeStyleObj, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
 import { pathRect } from './basic';
@@ -102,7 +102,7 @@ export function rectLabel(ctx: CanvasRenderingContext2D, model: RectLabelModel) 
     height,
     radius: borderRadius,
     fill: backgroundColor,
-    stroke: '',
+    stroke: 'rgba(0, 0, 0, 0)',
   });
 
   label(ctx, {
@@ -273,6 +273,6 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
   }
 
   if (strokeStyle) {
-    stroke(ctx, { strokeStyle, lineWidth });
+    strokeWithOptions(ctx, { strokeStyle, lineWidth });
   }
 }

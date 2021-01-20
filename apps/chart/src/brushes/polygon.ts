@@ -1,5 +1,5 @@
 import { PolygonModel } from '@t/components/series';
-import { setLineDash, fillStyle, stroke } from '@src/helpers/style';
+import { setLineDash, fillStyle, strokeWithOptions } from '@src/helpers/style';
 
 export function polygon(ctx: CanvasRenderingContext2D, polygonModel: PolygonModel) {
   const { color: strokeStyle, points, lineWidth, fillColor, dashSegments = [] } = polygonModel;
@@ -25,6 +25,6 @@ export function polygon(ctx: CanvasRenderingContext2D, polygonModel: PolygonMode
     fillStyle(ctx, fillColor);
   }
 
-  stroke(ctx, { lineWidth, strokeStyle });
+  strokeWithOptions(ctx, { lineWidth, strokeStyle });
   ctx.closePath();
 }

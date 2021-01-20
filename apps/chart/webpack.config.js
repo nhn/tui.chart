@@ -2,7 +2,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
@@ -86,6 +85,7 @@ module.exports = (env, { mode, minify, polyfill }) => {
       productionConfig.optimization = {
         minimizer: [
           new TerserPlugin({
+            extractComments: false,
             terserOptions: {
               compress: {
                 drop_console: true, // eslint-disable-line camelcase
@@ -106,13 +106,7 @@ module.exports = (env, { mode, minify, polyfill }) => {
 
   return merge(commonConfig, {
     mode,
-    plugins: [
-      new webpack.HotModuleReplacementPlugin(),
-      new HtmlWebpackPlugin({
-        title: 'Development',
-        showErrors: true,
-      }),
-    ],
+    plugins: [new webpack.HotModuleReplacementPlugin()],
     devServer: {
       hot: true,
       open: 'Google Chrome',

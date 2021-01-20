@@ -1,5 +1,5 @@
 import { AreaPointsModel, LinePointsModel } from '@t/components/series';
-import { setLineDash, fillStyle, stroke } from '@src/helpers/style';
+import { setLineDash, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { isNull } from '@src/helpers/utils';
 
 type PointsModel = LinePointsModel | AreaPointsModel;
@@ -41,7 +41,7 @@ export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsMod
     }
   });
 
-  stroke(ctx, { lineWidth, strokeStyle });
+  strokeWithOptions(ctx, { lineWidth, strokeStyle });
   ctx.closePath();
   setLineDash(ctx, []);
 }

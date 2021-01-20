@@ -6,7 +6,7 @@ import {
   RectModel,
   RectStyle,
 } from '@t/components/series';
-import { makeStyleObj, setLineDash, fillStyle, stroke } from '@src/helpers/style';
+import { makeStyleObj, setLineDash, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
 
 export type CircleStyleName = 'default' | 'hover' | 'plot';
@@ -74,7 +74,7 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
     fillStyle(ctx, fill);
   }
 
-  stroke(ctx, { lineWidth, strokeStyle });
+  strokeWithOptions(ctx, { lineWidth, strokeStyle });
 }
 
 export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
@@ -106,7 +106,7 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
     ctx.shadowColor = 'transparent';
   }
 
-  stroke(ctx, { lineWidth, strokeStyle });
+  strokeWithOptions(ctx, { lineWidth, strokeStyle });
   ctx.closePath();
 }
 
@@ -122,7 +122,7 @@ export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
   ctx.moveTo(x, y);
   ctx.lineTo(x2, y2);
 
-  stroke(ctx, { strokeStyle, lineWidth });
+  strokeWithOptions(ctx, { strokeStyle, lineWidth });
   ctx.closePath();
 }
 

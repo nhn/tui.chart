@@ -46,7 +46,7 @@ export function fillStyle(ctx: CanvasRenderingContext2D, fillOption: string) {
   ctx.fill();
 }
 
-export function stroke(
+export function strokeWithOptions(
   ctx: CanvasRenderingContext2D,
   style: { strokeStyle?: string; lineWidth?: number }
 ) {
