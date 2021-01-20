@@ -11,7 +11,6 @@ import { RadarSeriesType, Point, RadarChartOptions } from '@t/options';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
-import { getLimitOnAxis } from '@src/helpers/axes';
 import { radarDefault } from '@src/helpers/theme';
 import { RadarChartSeriesTheme, DotTheme } from '@t/theme';
 import { RespondersThemeType } from '@src/helpers/responders';
@@ -52,7 +51,7 @@ export default class RadarSeries extends Component {
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, axes, series, legend, options, theme } = state;
+    const { layout, axes, series, legend, options, theme, scale } = state;
 
     if (!series.radar) {
       throw new Error(message.noDataError(this.name));
@@ -65,8 +64,9 @@ export default class RadarSeries extends Component {
     this.selectable = this.getSelectableOption(options);
 
     const categories = state.categories as string[];
-    const { labels, axisSize, centerX, centerY } = axes.radialAxis!;
-    const { min, max } = getLimitOnAxis(labels);
+    const { axisSize, centerX, centerY } = axes.radialAxis!;
+    const { min, max } = scale.yAxis.limit;
+
     const renderOptions = {
       categories,
       degree: 360 / categories.length,

@@ -42,6 +42,7 @@ import {
   RangeDataType,
   Rect,
   LineTypeSeriesOptions,
+  RadarChartOptions,
 } from '@t/options';
 import { deepMergedCopy, hasNegativeOnly, isNumber, pickProperty } from '@src/helpers/utils';
 import { isZooming } from '@src/helpers/range';
@@ -181,7 +182,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
     initialAxisData,
     theme,
     labelOnYAxis,
-    axisName
+    axisName,
   } = stateProp;
 
   const { limit, stepSize } = scale;
@@ -206,7 +207,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
   const pointOnColumn = false;
   const displayLabels = getDisplayAxisLabels(
     {
-      labels: labelOnYAxis ? valueLabels : [...valueLabels].reverse(),
+      labels: labelOnYAxis ? labels : [...labels].reverse(),
       pointOnColumn,
       tickDistance,
       tickCount,
@@ -243,15 +244,19 @@ function getRadialAxis(
   scale: ScaleData,
   plot: Rect,
   theme: Required<AxisTheme>,
-  { labelInterval }: InitAxisData
+  { labelInterval }: InitAxisData,
+  options: RadarChartOptions
 ): RadialAxisData {
   const { limit, stepSize } = scale;
   const { width, height } = plot;
   const valueLabels = makeLabelsFromLimit(limit, stepSize);
+  const formatter = options?.yAxis?.formatter ?? ((value) => value);
+  const labels = valueLabels.map((label) => formatter(label));
+  const axisSize = Math.min(width, height) / 2 - 50;
 
   return {
-    labels: valueLabels,
-    axisSize: Math.min(width, height) / 2 - 50,
+    labels,
+    axisSize,
     centerX: width / 2,
     centerY: height / 2,
     labelInterval,
@@ -499,7 +504,8 @@ const axes: StoreModule = {
           scale[valueAxisName],
           plot,
           getAxisTheme(theme, valueAxisName),
-          initialAxisData.yAxis
+          initialAxisData.yAxis,
+          options
         );
       }
       const rotatable = getRotatableOption(options);
