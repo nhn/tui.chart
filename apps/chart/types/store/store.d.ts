@@ -343,7 +343,7 @@ type BaseAxisData = InitAxisData & {
   tickDistance: number;
   maxLabelWidth: number;
   maxLabelHeight: number;
-  visibleLabels: ViewAxisLabel[];
+  viewLabels: ViewAxisLabel[];
   offsetY?: number;
   maxHeight?: number;
 } & RotationLabelData;

@@ -50,7 +50,7 @@ export default class AxisUsingCenterY extends Component {
       this.rect = { ...this.rect, x: centerYAxis.x };
     }
 
-    const { visibleLabels, tickCount, tickInterval, needRotateLabel, radian, offsetY } = axes[
+    const { viewLabels, tickCount, tickInterval, needRotateLabel, radian, offsetY } = axes[
       this.name
     ]!;
 
@@ -65,7 +65,7 @@ export default class AxisUsingCenterY extends Component {
     const offsetKey = this.yAxisComponent ? 'y' : 'x';
     const anchorKey = this.yAxisComponent ? 'x' : 'y';
 
-    this.models.label = this.renderLabelModels(visibleLabels, offsetKey, anchorKey, renderOptions);
+    this.models.label = this.renderLabelModels(viewLabels, offsetKey, anchorKey, renderOptions);
 
     this.models.tick = this.renderTickModels(offsetKey, anchorKey, renderOptions);
 

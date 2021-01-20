@@ -35,7 +35,7 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   const tickCount = tickIntervalCount + 1;
   const tickInterval = options[axisType]?.tick?.interval ?? 1;
   const labelInterval = options[axisType]?.label?.interval ?? 1;
-  const visibleLabels = getViewAxisLabels(
+  const viewLabels = getViewAxisLabels(
     {
       labels,
       pointOnColumn,
@@ -54,7 +54,7 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
 
   const axisData = {
     labels,
-    visibleLabels,
+    viewLabels,
     pointOnColumn,
     isLabelAxis,
     tickCount,
@@ -69,7 +69,7 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
 
   if (axisType === AxisType.X) {
     const offsetY = getAxisLabelAnchorPoint(maxLabelHeight);
-    const distance = axisSize / visibleLabels.length;
+    const distance = axisSize / viewLabels.length;
     const rotationData = makeRotationData(
       maxLabelWidth,
       maxLabelHeight,

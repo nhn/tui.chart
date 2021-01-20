@@ -38,9 +38,9 @@ export default class RadialAxis extends Component {
     const radiusRange = filterDisplayLabels(getRadialRadiusValues(labels, axisSize));
     const width = maxLabelWidth + padding.X * 2;
     const height = maxLabelHeight + padding.Y * 2;
-    const visibleLabels = filterDisplayLabels(labels);
+    const viewLabels = filterDisplayLabels(labels);
 
-    this.models = visibleLabels.reduce<RectLabelModel[]>((positions, text, index) => {
+    this.models = viewLabels.reduce<RectLabelModel[]>((positions, text, index) => {
       return index % labelInterval
         ? positions
         : [

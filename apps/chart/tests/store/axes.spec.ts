@@ -63,7 +63,7 @@ describe('Axes Store module', () => {
           labelDistance: 100,
           labelInterval: 3,
           labels: ['A', 'B'],
-          visibleLabels: [{ text: 'A', offsetPos: 0 }],
+          viewLabels: [{ text: 'A', offsetPos: 0 }],
           pointOnColumn: false,
           tickCount: 2,
           tickDistance: 100,
@@ -80,7 +80,7 @@ describe('Axes Store module', () => {
           isLabelAxis: false,
           labelInterval: 5,
           labels: ['0', '1', '2', '3', '4', '5'],
-          visibleLabels: [
+          viewLabels: [
             { text: '5', offsetPos: 0 },
             { text: '0', offsetPos: 150 },
           ],
@@ -153,7 +153,7 @@ describe('Axes Store module', () => {
       xAxis: {
         isLabelAxis: true,
         labels: ['A', 'B'],
-        visibleLabels: [
+        viewLabels: [
           { text: 'A', offsetPos: 0 },
           { text: 'B', offsetPos: 100 },
         ],
@@ -174,7 +174,7 @@ describe('Axes Store module', () => {
       yAxis: {
         isLabelAxis: false,
         labels: ['0', '1', '2', '3', '4', '5'],
-        visibleLabels: [
+        viewLabels: [
           { text: '5', offsetPos: 0 },
           { text: '4', offsetPos: 30 },
           { text: '3', offsetPos: 60 },
