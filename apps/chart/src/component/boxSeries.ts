@@ -43,7 +43,7 @@ import {
   isUndefined,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
-import { makeTickPixelPositions } from '@src/helpers/calculator';
+import { makeTickPixelPositions, makeLabelsFromLimit } from '@src/helpers/calculator';
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { getDataInRange, isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis, getValueAxisName } from '@src/helpers/axes';
@@ -267,7 +267,7 @@ export default class BoxSeries extends Component {
     chartState: ChartState<T>,
     computed
   ) {
-    const { layout, series, axes, stackSeries, legend, theme } = chartState;
+    const { layout, series, axes, stackSeries, legend, theme, scale } = chartState;
 
     this.isShow = !(stackSeries && stackSeries[this.name]);
 
@@ -295,9 +295,11 @@ export default class BoxSeries extends Component {
       this.valueAxis = 'centerYAxis';
     }
 
-    const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!(options.series as BoxSeriesOptions)?.diverging;
+
+    const { limit, stepSize } = scale[this.valueAxis];
+    const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
 
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);

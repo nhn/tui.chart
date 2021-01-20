@@ -11,12 +11,14 @@ import { RadarSeriesType, Point, RadarChartOptions } from '@t/options';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
+import { getLimitOnAxis } from '@src/helpers/axes';
 import { radarDefault } from '@src/helpers/theme';
 import { RadarChartSeriesTheme, DotTheme } from '@t/theme';
 import { RespondersThemeType } from '@src/helpers/responders';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { isNumber } from '@src/helpers/utils';
 import { message } from '@src/message';
+import { makeLabelsFromLimit } from '@src/helpers/calculator';
 type RenderOptions = {
   categories: string[];
   centerX: number;
@@ -65,7 +67,10 @@ export default class RadarSeries extends Component {
 
     const categories = state.categories as string[];
     const { axisSize, centerX, centerY } = axes.radialAxis!;
-    const { min, max } = scale.yAxis.limit;
+
+    const { limit, stepSize } = scale.yAxis;
+    const labels = makeLabelsFromLimit(limit, stepSize);
+    const { min, max } = getLimitOnAxis(labels);
 
     const renderOptions = {
       categories,

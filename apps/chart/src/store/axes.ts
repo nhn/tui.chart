@@ -505,7 +505,7 @@ const axes: StoreModule = {
           plot,
           getAxisTheme(theme, valueAxisName),
           initialAxisData.yAxis,
-          options
+          options as RadarChartOptions
         );
       }
       const rotatable = getRotatableOption(options);

@@ -16,7 +16,7 @@ const chartState = {
   layout: {
     plot: { width: 200, height: 200, x: 0, y: 0 },
   },
-  scale: { yAxis: { limit: { min: 1, max: 4 }, stepSize: 1, stepCount: 1 } },
+  scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } },
   series: {
     radar: {
       data: seriesData,
