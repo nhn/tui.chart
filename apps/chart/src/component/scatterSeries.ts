@@ -1,11 +1,11 @@
 import Component from './component';
-import { CoordinateDataType, Rect, ScatterChartOptions, ScatterSeriesType } from '@t/options';
+import { Rect, ScatterChartOptions, ScatterSeriesType } from '@t/options';
 import { ChartState, ValueEdge } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
 import { TooltipData, TooltipDataValue } from '@t/components/tooltip';
-import { deepCopy, deepMergedCopy, isNull, isNumber, isString, pick } from '@src/helpers/utils';
+import { deepCopy, deepMergedCopy, isNumber, isString, pick } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getValueAxisName } from '@src/helpers/axes';
 import {
@@ -91,12 +91,11 @@ export default class ScatterSeries extends Component {
       const models: ScatterSeriesModel[] = [];
       const active = this.activeSeriesMap![name];
       const color = getRGBA(seriesColor, active ? 1 : 0.3);
-      const nonNullData = data.filter((datum) => !isNull(datum)) as CoordinateDataType[];
 
-      nonNullData.forEach((datum, index) => {
-        const rawXValue = getCoordinateXValue(datum);
+      data.forEach((datum, index) => {
+        const rawXValue = getCoordinateXValue(datum!);
         const xValue = isString(rawXValue) ? Number(new Date(rawXValue)) : Number(rawXValue);
-        const yValue = getCoordinateYValue(datum);
+        const yValue = getCoordinateYValue(datum!);
 
         const xValueRatio = getValueRatio(xValue, xAxisLimit);
         const yValueRatio = getValueRatio(yValue, yAxisLimit);
@@ -124,12 +123,11 @@ export default class ScatterSeries extends Component {
   makeTooltipModel(circleData: ScatterSeriesType[]) {
     return [...circleData].flatMap(({ data, name, color }) => {
       const tooltipData: TooltipData[] = [];
-      const nonNullData = data.filter((datum) => !isNull(datum)) as CoordinateDataType[];
 
-      nonNullData.forEach((datum) => {
+      data.forEach((datum) => {
         const value = {
-          x: getCoordinateXValue(datum),
-          y: getCoordinateYValue(datum),
+          x: getCoordinateXValue(datum!),
+          y: getCoordinateYValue(datum!),
         } as TooltipDataValue;
 
         tooltipData.push({ label: name, color, value });
@@ -144,7 +142,7 @@ export default class ScatterSeries extends Component {
       return [];
     }
 
-    const model = this.responders.find(
+    const model = this.models.series.find(
       ({ index, seriesIndex }) =>
         isNumber(index) &&
         isNumber(seriesIndex) &&
@@ -155,10 +153,7 @@ export default class ScatterSeries extends Component {
     return model ? [model] : [];
   }
 
-  private getResponderAppliedTheme(
-    closestModel: CircleResponderModel[],
-    type: RespondersThemeType
-  ) {
+  private getResponderAppliedTheme(closestModel: ScatterSeriesModel[], type: RespondersThemeType) {
     const { fillColor, size } = this.theme[type];
 
     return closestModel.map((m) =>

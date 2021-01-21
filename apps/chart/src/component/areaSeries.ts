@@ -510,11 +510,19 @@ export default class AreaSeries extends Component {
             ],
           });
         }
+
+        const modelColor = hoverDotTheme.color ?? getRGBA(color, 1);
+
         responderModel.push({
           ...model,
           radius: hoverDotTheme.radius!,
-          color: hoverDotTheme.color ?? getRGBA(color, 1),
-          style: ['default', 'hover'],
+          color: modelColor,
+          style: [
+            {
+              lineWidth: hoverDotTheme.borderWidth,
+              strokeStyle: hoverDotTheme.borderColor ?? getRGBA(modelColor, 0.5),
+            },
+          ],
         });
       });
     });
@@ -559,7 +567,9 @@ export default class AreaSeries extends Component {
       eventDetectType: this.eventDetectType,
     });
 
-    this.activatedResponders = circleModels.slice(0, circleModels.length / 2); // for rendering unique tooltip data
+    this.activatedResponders = this.isRangeChart
+      ? circleModels.slice(0, circleModels.length / 2) // for rendering unique tooltip data
+      : circleModels;
   }
 
   onMousemoveNearestType(responders: RectResponderModel[], mousePositions: Point) {
@@ -630,12 +640,16 @@ export default class AreaSeries extends Component {
   private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
     const { radius, color, borderWidth, borderColor } = this.theme.select.dot as DotTheme;
 
-    return models.map((model) => ({
-      ...model,
-      radius,
-      color: color ?? model.color,
-      style: ['hover', { lineWidth: borderWidth, strokeStyle: borderColor }],
-    }));
+    return models.map((model) => {
+      const modelColor = color ?? model.color;
+
+      return {
+        ...model,
+        radius,
+        color: modelColor,
+        style: [{ lineWidth: borderWidth, strokeStyle: borderColor ?? getRGBA(modelColor, 0.5) }],
+      };
+    });
   }
 
   onClick({ responders, mousePosition }: MouseEventType) {

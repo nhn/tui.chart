@@ -88,8 +88,7 @@ export default class Tooltip extends Component {
   setTooltipPosition(model: TooltipModel) {
     const { top, left } = this.chartEl.getBoundingClientRect();
     const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.left = `${left + x}px`;
-    this.tooltipContainerEl.style.top = `${top + y}px`;
+    this.tooltipContainerEl.style.transform = `translate(${left + x}px,${top + y}px)`;
   }
 
   getTooltipInfoModels() {
@@ -169,6 +168,9 @@ export default class Tooltip extends Component {
   }
 
   render({ layout, options, theme }: ChartState<Options>) {
+    /* @TODO: option 으로 분리 */
+    // this.tooltipContainerEl.style.transition = 'transform 0.2s ease';
+
     this.rect = layout.plot;
     this.theme = theme.tooltip as Required<TooltipTheme>;
     this.templateFunc = options?.tooltip?.template ?? tooltipTemplates['default'];

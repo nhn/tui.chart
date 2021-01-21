@@ -281,7 +281,6 @@ export const circleBrush = () => {
   ] as StyleProp<CircleStyle, CircleStyleName>;
 
   circle(ctx, circleModel({ x: 100, y: 100 }, 50, '#a79aff', ['default']));
-  circle(ctx, circleModel({ x: 300, y: 100 }, 50, '#a79aff', ['default', 'hover']));
   circle(ctx, circleModel({ x: 100, y: 300 }, radius, color, styleObj));
 
   return el;

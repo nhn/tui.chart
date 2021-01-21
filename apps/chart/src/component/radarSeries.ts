@@ -173,12 +173,16 @@ export default class RadarSeries extends Component {
   getRespondersWithTheme(responders: CircleResponderModel[], type: RespondersThemeType) {
     const { radius, borderWidth, borderColor, color } = this.theme[type].dot!;
 
-    return responders.map((responder) => ({
-      ...responder,
-      radius,
-      color: color ?? responder.color,
-      style: [{ lineWidth: borderWidth, strokeStyle: borderColor }],
-    }));
+    return responders.map((responder) => {
+      const modelColor = color ?? responder.color;
+
+      return {
+        ...responder,
+        radius,
+        color: modelColor,
+        style: [{ lineWidth: borderWidth, strokeStyle: borderColor ?? getRGBA(modelColor, 0.5) }],
+      };
+    });
   }
 
   onClick({ responders }) {

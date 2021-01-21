@@ -50,10 +50,10 @@ button:focus {
 }
 
 /* tooltip */
-
 .tooltip-container {
   position: absolute;
-  transition: top 0.2s, left 0.2s;
+  top: 0;
+  left: 0;
   user-select: none;
   pointer-events: none;
 }
