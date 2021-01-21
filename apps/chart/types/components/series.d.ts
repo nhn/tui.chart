@@ -237,13 +237,14 @@ export type BoxPlotModel = {
   type: 'boxPlot';
   color: string;
   name: string;
-  rect: RectModel;
-  median: LineModel;
-  upperWhisker: LineModel;
-  lowerWhisker: LineModel;
-  minimum: LineModel;
-  maximum: LineModel;
+  rect: RectModel | null;
+  median: LineModel | null;
+  upperWhisker: LineModel | null;
+  lowerWhisker: LineModel | null;
+  minimum: LineModel | null;
+  maximum: LineModel | null;
   index?: number;
+  boxPlotDetection: { x: number; width: number };
 };
 
 export type BoxPlotResponderModel = {

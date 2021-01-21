@@ -4,15 +4,27 @@ import { line, rect } from './basic';
 export function boxPlot(ctx: CanvasRenderingContext2D, model: BoxPlotModel) {
   const { rect: rectModel, upperWhisker, lowerWhisker, median, minimum, maximum } = model;
 
-  line(ctx, { type: 'line', ...minimum });
+  if (minimum) {
+    line(ctx, { type: 'line', ...minimum });
+  }
 
-  line(ctx, { type: 'line', ...lowerWhisker });
+  if (lowerWhisker) {
+    line(ctx, { type: 'line', ...lowerWhisker });
+  }
 
-  rect(ctx, { type: 'rect', ...rectModel });
+  if (rectModel) {
+    rect(ctx, { type: 'rect', ...rectModel });
+  }
 
-  line(ctx, { type: 'line', ...upperWhisker });
+  if (upperWhisker) {
+    line(ctx, { type: 'line', ...upperWhisker });
+  }
 
-  line(ctx, { type: 'line', ...maximum });
+  if (maximum) {
+    line(ctx, { type: 'line', ...maximum });
+  }
 
-  line(ctx, { type: 'line', ...median });
+  if (median) {
+    line(ctx, { type: 'line', ...median });
+  }
 }

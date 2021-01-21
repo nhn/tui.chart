@@ -1458,6 +1458,31 @@ export const browserUsageData = {
   ],
 };
 
+export const budgetDataForBoxPlotWithNull = {
+  categories: ['Budget', 'Income', 'Expenses', 'Debt'],
+  series: [
+    {
+      name: '2020',
+      data: [
+        [1000, 2500, 3714, 5500, 7000],
+        null,
+        [3000, 4000, 4714, 6000, 7000],
+        [1000, 2250, 3142, 4750, 6000],
+      ],
+      outliers: null,
+    },
+    {
+      name: '2021',
+      data: [
+        null,
+        [3000, 5750, 7571, 8250, 9000],
+        [5000, 8000, 8714, 9000, 10000],
+        [7000, 9250, 10142, 11750, 12000],
+      ],
+    },
+  ],
+};
+
 export const budgetDataForBoxPlot = {
   categories: ['Budget', 'Income', 'Expenses', 'Debt'],
   series: [
@@ -1515,6 +1540,42 @@ export const budgetDataForBullet = {
       markers: [25],
       ranges: [
         [0, 10],
+        [10, 19],
+        [19, 28],
+      ],
+    },
+    {
+      name: 'Dept',
+      data: 23,
+      markers: [],
+      ranges: [
+        [19, 25],
+        [13, 19],
+        [0, 13],
+      ],
+    },
+  ],
+};
+
+export const budgetDataForBulletWithNull = {
+  series: [
+    {
+      name: 'Budget',
+      data: null,
+      markers: [28, 15],
+      ranges: [[-1, 5], [5, 10], [10, 15], [15, 20], [20, 25], null],
+    },
+    {
+      name: 'Income',
+      data: 0,
+      ranges: [[0, 10]],
+    },
+    {
+      name: 'Expenses',
+      data: 30,
+      markers: [0],
+      ranges: [
+        [-2, 10],
         [10, 19],
         [19, 28],
       ],

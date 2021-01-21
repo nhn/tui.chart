@@ -151,14 +151,14 @@ const dataRange: StoreModule = {
           values.push(0);
         } else if (seriesName === 'boxPlot') {
           values = series[seriesName]!.data.flatMap(({ data, outliers = [] }) => [
-            ...data.flatMap((datum) => datum),
-            ...outliers.flatMap((datum) => datum),
+            ...(data ?? []).flatMap((datum) => datum),
+            ...(outliers ?? []).flatMap((datum) => datum),
           ]);
         } else if (isBulletSeries(seriesName)) {
           values = series[seriesName].data.flatMap(({ data, markers, ranges }) => [
             data,
-            ...markers.flatMap((datum) => datum),
-            ...ranges.flatMap((range) => range),
+            ...(markers ?? []).flatMap((datum) => datum),
+            ...(ranges ?? []).flatMap((range) => range),
           ]);
         }
 

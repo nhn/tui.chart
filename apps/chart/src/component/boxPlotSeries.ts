@@ -12,12 +12,12 @@ import {
   BoxPlotResponderTypes,
 } from '@t/components/series';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { TooltipData } from '@t/components/tooltip';
+import { TooltipData, TooltipTitleValues } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import { LineModel } from '@t/components/axis';
 import { getBoxTypeSeriesPadding } from '@src/helpers/style';
 import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '@t/theme';
-import { isNumber, calculateSizeWithPercentString } from '@src/helpers/utils';
+import { isNumber, calculateSizeWithPercentString, isNull } from '@src/helpers/utils';
 import { crispPixel } from '@src/helpers/calculator';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
@@ -127,23 +127,24 @@ export default class BoxPlotSeries extends Component {
     const result: TooltipRectMap = {};
 
     boxPlotModelData.forEach((m, tooltipIndex) => {
-      const propName = `${m.name}-${m.index}`;
+      if (!isNull(m)) {
+        const propName = `${m.name}-${m.index}`;
 
-      if (!result[propName]) {
-        result[propName] = [];
+        if (!result[propName]) {
+          result[propName] = [];
+        }
+
+        result[propName].push({
+          ...this.makeHoveredModel(m),
+          data: tooltipData[tooltipIndex],
+        } as BoxPlotResponderModel);
       }
-
-      result[propName].push({
-        ...this.makeHoveredModel(m),
-        data: tooltipData[tooltipIndex],
-      } as BoxPlotResponderModel);
     });
 
     return result;
   }
 
   makeGroupedResponderModel(boxPlotModelData: BoxPlotModelData) {
-    const { height: rectHeight } = this.rect;
     const result: RectResponderModel[] = [];
 
     boxPlotModelData.forEach((m) => {
@@ -151,15 +152,13 @@ export default class BoxPlotSeries extends Component {
       const propName = `${name}-${index}`;
 
       if (type === 'boxPlot' && !result[propName]) {
-        const { x, width } = (m as BoxPlotModel).rect;
-
+        const { boxPlotDetection } = m as BoxPlotModel;
         result.push({
           type: 'rect',
-          x,
-          y: 0,
-          width,
-          height: rectHeight,
           name: propName,
+          ...boxPlotDetection,
+          y: 0,
+          height: this.rect.height,
         });
       }
     });
@@ -177,12 +176,16 @@ export default class BoxPlotSeries extends Component {
 
   makeHoveredModel(model: BoxPlotModel | CircleModel) {
     const point =
-      model.type === 'boxPlot' ? { x: model.rect.x, y: model.rect.y } : { x: model.x, y: model.y };
+      model.type === 'boxPlot' && model.rect
+        ? { x: model.rect.x, y: model.rect.y }
+        : { x: (model as CircleModel).x, y: (model as CircleModel).y };
     const hoveredModel = { ...model };
 
     if (model.type === 'boxPlot') {
       ['lowerWhisker', 'upperWhisker', 'maximum', 'minimum', 'median'].forEach((prop) => {
-        model[prop].detectionSize = 3;
+        if (model[prop]) {
+          model[prop].detectionSize = 3;
+        }
       });
 
       model.color = getRGBA(hoveredModel.color, 1);
@@ -275,24 +278,30 @@ export default class BoxPlotSeries extends Component {
     const seriesLength = seriesData.length;
     const { dot } = this.theme;
 
-    seriesData.forEach(({ outliers = [], data, name, color }, seriesIndex) => {
+    seriesData.forEach(({ outliers, data, name, color }, seriesIndex) => {
       const seriesColor = this.getSeriesColor(name, color!);
 
-      data.forEach((datum, dataIndex) => {
-        const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
-        const rect = this.getRect(datum, startX, seriesColor, renderOptions);
+      (data ?? []).forEach((datum, dataIndex) => {
+        if (!isNull(datum)) {
+          const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
+          const rect = this.getRect(datum, startX, seriesColor, renderOptions);
 
-        boxPlotModels.push({
-          type: 'boxPlot',
-          color: seriesColor,
-          name,
-          rect,
-          median: this.getMedian(datum, startX, seriesColor, renderOptions),
-          minimum: this.getMinimum(datum, startX, seriesColor, renderOptions),
-          maximum: this.getMaximum(datum, startX, seriesColor, renderOptions),
-          ...this.getWhisker(datum, startX, seriesColor, renderOptions, rect),
-          index: dataIndex,
-        });
+          boxPlotModels.push({
+            type: 'boxPlot',
+            color: seriesColor,
+            name,
+            rect,
+            median: this.getMedian(datum, startX, seriesColor, renderOptions),
+            minimum: this.getMinimum(datum, startX, seriesColor, renderOptions),
+            maximum: this.getMaximum(datum, startX, seriesColor, renderOptions),
+            ...this.getWhisker(datum, startX, seriesColor, renderOptions, rect),
+            index: dataIndex,
+            boxPlotDetection: {
+              x: startX,
+              width: barWidth,
+            },
+          });
+        }
       });
 
       const {
@@ -302,7 +311,8 @@ export default class BoxPlotSeries extends Component {
         borderWidth,
         useSeriesColor,
       } = dot as Required<BoxPlotDotTheme>;
-      outliers.forEach((datum) => {
+
+      (outliers ?? []).forEach((datum) => {
         const [dataIndex, value] = datum;
         const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
 
@@ -325,35 +335,42 @@ export default class BoxPlotSeries extends Component {
   makeTooltipModel(seriesData: BoxPlotSeriesType[], categories: string[]): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
-    seriesData.forEach(({ outliers = [], data, name, color }) => {
-      data.forEach((datum, dataIndex) => {
-        const [minimum, lowerQuartile, median, highQuartile, maximum] = datum;
+    seriesData.forEach(({ outliers, data, name, color }) => {
+      (data ?? []).forEach((datum, dataIndex) => {
+        if (!isNull(datum)) {
+          const boxPlotData = [...datum].reverse();
+          tooltipData.push({
+            label: name,
+            color: color!,
+            value: [
+              'Maximum',
+              'Upper Quartile',
+              'Median',
+              'Lower Quartile',
+              'Minimum',
+            ].reduce<TooltipTitleValues>((acc, title, index) => {
+              const value = boxPlotData[index];
 
-        tooltipData.push({
-          label: name,
-          color: color!,
-          value: [
-            { title: 'Maximum', value: maximum },
-            { title: 'Upper Quartile', value: highQuartile },
-            { title: 'Median', value: median },
-            { title: 'Lower Quartile', value: lowerQuartile },
-            { title: 'Minimum', value: minimum },
-          ],
-          category: categories[dataIndex],
-          templateType: 'boxPlot',
-        });
+              return isNull(value) ? acc : [...acc, { title, value }];
+            }, []),
+            category: categories[dataIndex],
+            templateType: 'boxPlot',
+          });
+        }
       });
 
-      outliers.forEach((datum) => {
-        const [dataIndex, dataValue] = datum;
+      (outliers ?? []).forEach((datum) => {
+        if (!isNull(datum)) {
+          const [dataIndex, dataValue] = datum;
 
-        tooltipData.push({
-          label: name,
-          color: color!,
-          value: [{ title: 'Outlier', value: dataValue }],
-          category: categories[dataIndex],
-          templateType: 'boxPlot',
-        });
+          tooltipData.push({
+            label: name,
+            color: color!,
+            value: [{ title: 'Outlier', value: dataValue }],
+            category: categories[dataIndex],
+            templateType: 'boxPlot',
+          });
+        }
       });
     });
 
@@ -443,37 +460,46 @@ export default class BoxPlotSeries extends Component {
           ],
         };
       } else {
+        const {
+          rect: seriesRect,
+          upperWhisker,
+          lowerWhisker,
+          median: seriesMedian,
+          maximum: seriesMaximum,
+          minimum: seriesMinimum,
+        } = m as BoxPlotModel;
+
         model = {
           ...m,
           rect: {
-            ...(m as BoxPlotModel).rect,
-            color: color ?? (m as BoxPlotModel).color,
+            ...seriesRect,
+            color: color ?? getRGBA(seriesColor, 1),
             thickness: rect!.borderWidth,
             borderColor: rect!.borderColor,
             style: [{ shadowColor, shadowOffsetX, shadowOffsetY, shadowBlur }],
           },
           upperWhisker: {
-            ...(m as BoxPlotModel).upperWhisker,
+            ...upperWhisker,
             strokeStyle: getDefaultColor(seriesColor, whisker.color),
             lineWidth: whisker.lineWidth,
           },
           lowerWhisker: {
-            ...(m as BoxPlotModel).lowerWhisker,
+            ...lowerWhisker,
             strokeStyle: getDefaultColor(seriesColor, whisker.color),
             lineWidth: whisker.lineWidth,
           },
           median: {
-            ...(m as BoxPlotModel).median,
+            ...seriesMedian,
             strokeStyle: getDefaultColor(seriesColor, median.color),
             lineWidth: median.lineWidth,
           },
           maximum: {
-            ...(m as BoxPlotModel).maximum,
+            ...seriesMaximum,
             strokeStyle: getDefaultColor(seriesColor, maximum.color),
             lineWidth: maximum.lineWidth,
           },
           minimum: {
-            ...(m as BoxPlotModel).minimum,
+            ...seriesMinimum,
             strokeStyle: getDefaultColor(seriesColor, minimum.color),
             lineWidth: minimum.lineWidth,
           },
@@ -510,7 +536,7 @@ export default class BoxPlotSeries extends Component {
     startX: number,
     seriesColor: string,
     { barWidth, ratio }: RenderOptions,
-    { height: rectHeight, y: rectY }: RectModel
+    rect: RectModel
   ): Record<'upperWhisker' | 'lowerWhisker', LineModel> {
     const [minimum, , , , maximum] = datum;
     const { lineWidth, color } = this.theme.line.whisker!;
@@ -522,18 +548,18 @@ export default class BoxPlotSeries extends Component {
         x,
         y: this.getYPos(maximum, ratio, lineWidth),
         x2: x,
-        y2: rectY,
+        y2: rect.y,
         strokeStyle: color ?? seriesColor,
-        lineWidth: lineWidth,
+        lineWidth,
       },
       lowerWhisker: {
         type: 'line',
         x,
         y: this.getYPos(minimum, ratio, lineWidth),
         x2: x,
-        y2: crispPixel(rectY + rectHeight, lineWidth),
+        y2: crispPixel(rect.y + rect.height, lineWidth),
         strokeStyle: color ?? seriesColor,
-        lineWidth: lineWidth,
+        lineWidth,
       },
     };
   }
