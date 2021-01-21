@@ -100,7 +100,7 @@ export const formatter = () => {
 export const transition = () => {
   const { el } = createChart(temperatureData, {
     tooltip: {
-      transition: 'transform 0.4s ease-in',
+      transition: 'transform 1s ease-in',
     },
   });
 
