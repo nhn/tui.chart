@@ -42,9 +42,12 @@ interface AxisOptions {
 
 interface xAxisOptions extends AxisOptions {
   pointOnColumn?: boolean; // Only available on Line, Area Chart
-  rotateLabel?: boolean;
   date?: boolean | {
     format: string;
+  };
+  label?: {
+    interval?: number;
+    rotatable?: boolean;
   };
 }
 ```
@@ -70,6 +73,14 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102288746-78cd0d00-3f80-11eb-8479-8b882cb39149.png)
 
+### rotatable
+
+x축 라벨이 겹쳐질 경우 자동으로 라벨을 회전하는 옵션이다. `label.rotatable`옵션을 `false`로 설정하면 라벨이 자동으로 회전하지 않는다.
+
+* 기본값: `true`
+
+
+![image](https://user-images.githubusercontent.com/43128697/104870524-18b8f480-598c-11eb-9781-2d797a2ddbfa.png)
 
 ### scale
 
@@ -155,11 +166,6 @@ const options = {
 Date 타입의 카테고리가 포맷팅되어 나타나는 것을 확인할 수 있다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102196061-bab76e00-3f02-11eb-8be2-d480b9810113.png)
-
-
-### rotateLabel
-
-* ⚠️ 개발 후 가이드 작성 필요 ⚠️
 
 ### pointOnColumn
 

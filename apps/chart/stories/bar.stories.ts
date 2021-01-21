@@ -154,6 +154,7 @@ export const centerYAxis = () => {
     yAxis: { title: 'Age Group', align: 'center' },
     xAxis: { label: { interval: 2 } },
     series: { diverging: true },
+    legend: { width: 80 },
   });
 
   return el;
@@ -317,6 +318,26 @@ export const dataLabelsWithTheme = () => {
         },
       },
     },
+  });
+
+  return el;
+};
+
+export const rotatable = () => {
+  const { el } = createChart(genderAgeData, {
+    chart: { width: 'auto', height: 'auto' },
+    yAxis: { title: 'Age Group', align: 'center' },
+    xAxis: { title: 'People', label: { interval: 1, rotatable: true }, scale: { stepSize: 50000 } },
+    series: { diverging: true },
+    legend: { align: 'bottom' },
+  });
+
+  return el;
+};
+
+export const axisFormatter = () => {
+  const { el } = createChart(budgetData, {
+    xAxis: { formatter: (value) => `$${value}` },
   });
 
   return el;

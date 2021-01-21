@@ -25,7 +25,10 @@ describe('yAxis', () => {
             tickDistance: 40,
             tickInterval: 1,
             labelInterval: 1,
-            labels: ['1', '2'],
+            viewLabels: [
+              { text: '1', offsetPos: 80.5 },
+              { text: '2', offsetPos: 0.5 },
+            ],
             tickCount: 2,
           },
         },
@@ -49,7 +52,13 @@ describe('yAxis', () => {
             tickDistance: 16,
             tickInterval: 1,
             labelInterval: 1,
-            labels: ['1', '2', '3', '4', '5'],
+            viewLabels: [
+              { text: '1', offsetPos: 64.5 },
+              { text: '2', offsetPos: 48.5 },
+              { text: '3', offsetPos: 32.5 },
+              { text: '4', offsetPos: 16.5 },
+              { text: '5', offsetPos: 0.5 },
+            ],
             tickCount: 6,
           },
           centerYAxis: {
@@ -126,7 +135,10 @@ describe('xAxis', () => {
             tickDistance: 40,
             tickInterval: 1,
             labelInterval: 1,
-            labels: ['1', '2'],
+            viewLabels: [
+              { text: '1', offsetPos: 0.5 },
+              { text: '2', offsetPos: 40.5 },
+            ],
             tickCount: 2,
           },
         },
@@ -150,7 +162,13 @@ describe('xAxis', () => {
             tickDistance: 20,
             tickInterval: 1,
             labelInterval: 1,
-            labels: ['1', '2', '3', '4', '5'],
+            viewLabels: [
+              { text: '1', offsetPos: 0.5 },
+              { text: '2', offsetPos: 16.5 },
+              { text: '3', offsetPos: 32.5 },
+              { text: '4', offsetPos: 48.5 },
+              { text: '5', offsetPos: 64.5 },
+            ],
             tickCount: 5,
           },
           centerYAxis: {

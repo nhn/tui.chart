@@ -26,7 +26,10 @@ describe('yAxis', () => {
             labelDistance: 40,
             tickInterval: 1,
             labelInterval: 1,
-            labels: ['1', '2'],
+            viewLabels: [
+              { text: '2', offsetPos: 0.5 },
+              { text: '1', offsetPos: 80.5 },
+            ],
             tickCount: 2,
           },
         },
@@ -119,6 +122,13 @@ describe('yAxis', () => {
             tickInterval: 2,
             labelInterval: 2,
             labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            viewLabels: [
+              { text: '10', offsetPos: 0.5 },
+              { text: '8', offsetPos: 16.5 },
+              { text: '6', offsetPos: 32.5 },
+              { text: '4', offsetPos: 48.5 },
+              { text: '2', offsetPos: 64.5 },
+            ],
             tickCount: 10,
           },
         },
@@ -166,7 +176,13 @@ describe('yAxis', () => {
             tickDistance: 16,
             tickInterval: 1,
             labelInterval: 1,
-            labels: ['1', '2', '3', '4', '5'],
+            viewLabels: [
+              { text: '5', offsetPos: 0.5 },
+              { text: '4', offsetPos: 16.5 },
+              { text: '3', offsetPos: 32.5 },
+              { text: '2', offsetPos: 48.5 },
+              { text: '1', offsetPos: 64.5 },
+            ],
             tickCount: 6,
           },
           centerYAxis: {},
@@ -195,6 +211,14 @@ describe('yAxis', () => {
             tickInterval: 1,
             labelInterval: 1,
             labels: ['0', '1', '2', '3', '4', '5'],
+            viewLabels: [
+              { text: '5', offsetPos: 0.5 },
+              { text: '4', offsetPos: 16.5 },
+              { text: '3', offsetPos: 32.5 },
+              { text: '2', offsetPos: 48.5 },
+              { text: '1', offsetPos: 64.5 },
+              { text: '0', offsetPos: 80.5 },
+            ],
             tickCount: 6,
           },
         },
@@ -401,12 +425,16 @@ describe('xAxis', () => {
         axes: {
           xAxis: {
             pointOnColumn: false,
-            tickDistance: 40,
+            tickDistance: 80,
             tickInterval: 1,
             labelInterval: 1,
-            labels: ['1', '2'],
+            viewLabels: [
+              { text: '1', offsetPos: 0.5 },
+              { text: '2', offsetPos: 80.5 },
+            ],
             tickCount: 2,
-            labelDistance: 40,
+            labelDistance: 80,
+            offsetY: 10.5,
           },
         },
         theme: {
@@ -493,12 +521,15 @@ describe('xAxis', () => {
         layout: { xAxis: { x: 10, y: 10, width: 100, height: 10 } },
         axes: {
           xAxis: {
-            pointOnColumn: false,
-            labelDistance: 20,
-            tickDistance: 20,
             tickInterval: 2,
             labelInterval: 2,
-            labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            viewLabels: [
+              { text: '1', offsetPos: 0.5 },
+              { text: '3', offsetPos: 16.5 },
+              { text: '5', offsetPos: 32.5 },
+              { text: '7', offsetPos: 48.5 },
+              { text: '9', offsetPos: 64.5 },
+            ],
             tickCount: 10,
           },
         },
@@ -536,58 +567,20 @@ describe('xAxis', () => {
     });
   });
 
-  it('should not displayed if overflow the width.', () => {
-    axis.render({
-      layout: { xAxis: { x: 10, y: 10, width: 100, height: 10 } },
-      axes: {
-        xAxis: {
-          pointOnColumn: true,
-          labelDistance: 20,
-          tickDistance: 20,
-          tickInterval: 2,
-          labelInterval: 2,
-          labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-          tickCount: 10,
-        },
-      },
-      theme: {
-        xAxis: {
-          label: {
-            fontSize: 11,
-            fontFamily: 'Arial',
-            fontWeight: 'normal',
-            color: '#333333',
-          },
-          width: 1,
-          color: '#333333',
-        },
-        yAxis: {
-          label: {
-            fontSize: 11,
-            fontFamily: 'Arial',
-            fontWeight: 'normal',
-            color: '#333333',
-          },
-          width: 1,
-          color: '#333333',
-        },
-      },
-    });
-
-    expect(axis.models.label).toHaveLength(4);
-  });
-
   describe('using center y axis', () => {
     beforeEach(() => {
       axis.render({
-        layout: { xAxis: { x: 10, y: 10, width: 100, height: 10 } },
+        layout: { xAxis: { x: 10, y: 10, width: 80, height: 10 } },
         axes: {
           xAxis: {
-            pointOnColumn: false,
-            tickDistance: 20,
             tickInterval: 1,
-            labelInterval: 1,
-            labels: ['1', '2', '3', '4', '5'],
+            viewLabels: [
+              { text: '1', offsetPos: 0.5 },
+              { text: '2', offsetPos: 16.5 },
+              { text: '3', offsetPos: 32.5 },
+              { text: '4', offsetPos: 48.5 },
+              { text: '5', offsetPos: 64.5 },
+            ],
             tickCount: 5,
           },
           centerYAxis: {},

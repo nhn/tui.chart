@@ -1,9 +1,29 @@
-import { Options, Series, ChartOptionsUsingYAxis } from '@t/store/store';
-import { LineTypeXAxisOptions, BulletChartOptions } from '@t/options';
+import {
+  Options,
+  Series,
+  ChartOptionsUsingYAxis,
+  Axes,
+  ViewAxisLabel,
+  RotationLabelData,
+} from '@t/store/store';
+import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
 import { Theme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
-import { divisors } from '@src/helpers/calculator';
-import { range } from '@src/helpers/utils';
+import {
+  divisors,
+  makeTickPixelPositions,
+  getTextHeight,
+  getTextWidth,
+} from '@src/helpers/calculator';
+import { range, isString, isUndefined } from '@src/helpers/utils';
+import {
+  ANGLE_CANDIDATES,
+  calculateRotatedWidth,
+  calculateRotatedHeight,
+} from '@src/helpers/geometric';
+import { getDateFormat, formatDate } from '@src/helpers/formatDate';
+import { calculateDegreeToRadian } from '@src/helpers/sector';
+import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 
 interface IntervalInfo {
   blockCount: number;
@@ -172,4 +192,137 @@ export function getAxisTheme(theme: Theme, name: string) {
   }
 
   return axisTheme;
+}
+
+function getRotationDegree(distance: number, labelWidth: number, labelHeight: number) {
+  let degree = 0;
+
+  ANGLE_CANDIDATES.every((angle) => {
+    const compareWidth = calculateRotatedWidth(angle, labelWidth, labelHeight);
+    degree = angle;
+
+    return compareWidth > distance;
+  });
+
+  return distance < labelWidth ? degree : 0;
+}
+
+function hasYAxisMaxLabelLengthChanged(
+  previousAxes: Axes,
+  currentAxes: Axes,
+  field: 'yAxis' | 'secondaryYAxis'
+) {
+  const prevYAxis = previousAxes[field];
+  const yAxis = currentAxes[field];
+
+  if (!prevYAxis && !yAxis) {
+    return false;
+  }
+
+  return prevYAxis?.maxLabelWidth !== yAxis?.maxLabelWidth;
+}
+
+function hasYAxisTypeMaxLabelChanged(previousAxes: Axes, currentAxes: Axes): boolean {
+  return (
+    hasYAxisMaxLabelLengthChanged(previousAxes, currentAxes, 'yAxis') ||
+    hasYAxisMaxLabelLengthChanged(previousAxes, currentAxes, 'secondaryYAxis')
+  );
+}
+
+function hasXAxisSizeChanged(previousAxes: Axes, currentAxes: Axes): boolean {
+  const { maxHeight: prevMaxHeight } = previousAxes.xAxis;
+  const { maxHeight } = currentAxes.xAxis;
+
+  return prevMaxHeight !== maxHeight;
+}
+
+export function hasAxesLayoutChanged(previousAxes: Axes, currentAxes: Axes) {
+  return (
+    hasYAxisTypeMaxLabelChanged(previousAxes, currentAxes) ||
+    hasXAxisSizeChanged(previousAxes, currentAxes)
+  );
+}
+
+export function getRotatableOption(options: Options) {
+  return options?.xAxis?.label?.rotatable ?? true;
+}
+
+type ViewAxisLabelParam = {
+  labels: string[];
+  pointOnColumn?: boolean;
+  labelDistance?: number;
+  labelInterval: number;
+  tickDistance: number;
+  tickInterval: number;
+  tickCount: number;
+};
+
+export function getViewAxisLabels(axisData: ViewAxisLabelParam, axisSize: number) {
+  const {
+    labels,
+    pointOnColumn,
+    labelDistance,
+    tickDistance,
+    labelInterval,
+    tickInterval,
+    tickCount,
+  } = axisData;
+  const relativePositions = makeTickPixelPositions(axisSize, tickCount);
+  const interval = labelInterval === tickInterval ? labelInterval : 1;
+  const labelAdjustment = pointOnColumn ? (labelDistance ?? tickDistance * interval) / 2 : 0;
+
+  return labels.reduce<ViewAxisLabel[]>((acc, text, index) => {
+    const offsetPos = relativePositions[index] + labelAdjustment;
+    const needRender = !(index % labelInterval) && offsetPos <= axisSize;
+
+    return needRender ? [...acc, { offsetPos, text }] : acc;
+  }, []);
+}
+
+export function makeTitleOption(title?: AxisTitle) {
+  if (isUndefined(title)) {
+    return title;
+  }
+
+  const defaultOption = { text: '', offsetX: 0, offsetY: 0 };
+
+  return isString(title) ? { ...defaultOption, text: title } : { ...defaultOption, ...title };
+}
+
+export function makeFormattedCategory(categories: string[], date?: DateOption) {
+  const format = getDateFormat(date);
+
+  return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
+}
+
+export function makeRotationData(
+  maxLabelWidth: number,
+  maxLabelHeight: number,
+  distance: number,
+  rotatable: boolean
+): Required<RotationLabelData> {
+  const degree = getRotationDegree(distance, maxLabelWidth, maxLabelHeight);
+
+  if (!rotatable || degree === 0) {
+    return {
+      needRotateLabel: false,
+      radian: 0,
+      rotationHeight: maxLabelHeight,
+    };
+  }
+
+  return {
+    needRotateLabel: degree > 0,
+    radian: calculateDegreeToRadian(degree, 0),
+    rotationHeight: calculateRotatedHeight(degree, maxLabelWidth, maxLabelHeight),
+  };
+}
+
+export function getMaxLabelSize(labels: string[], font = DEFAULT_LABEL_TEXT) {
+  const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
+
+  return {
+    maxLabelWidth: getTextWidth(maxLengthLabel, font),
+    maxLabelHeight: getTextHeight(maxLengthLabel, font),
+  };
 }

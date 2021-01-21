@@ -217,8 +217,11 @@ type BothSidesYAxisOptions = YAxisOptions | YAxisOptions[];
 type DateOption = boolean | { format: string };
 
 interface BaseXAxisOptions extends BaseAxisOptions {
-  rotateLabel?: boolean;
   date?: DateOption;
+  label?: {
+    interval?: number;
+    rotatable?: boolean;
+  };
 }
 
 type BarTypeYAxisOption = BaseAxisOptions & {

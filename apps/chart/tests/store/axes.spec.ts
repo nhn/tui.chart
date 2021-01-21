@@ -4,8 +4,16 @@ import Store from '@src/store/store';
 import { LineChartOptions, BarChartOptions, ColumnChartOptions } from '@t/options';
 import { ChartState, Scale, StateFunc, Options } from '@t/store/store';
 import { deepMergedCopy } from '@src/helpers/utils';
+import * as Calculator from '@src/helpers/calculator';
 
 const notify = () => {};
+
+const fontTheme = {
+  fontSize: 11,
+  fontFamily: 'Arial',
+  fontWeight: 'normal',
+  color: '#333333',
+};
 
 describe('Axes Store module', () => {
   const axesStateFunc = axes.state as StateFunc;
@@ -37,7 +45,14 @@ describe('Axes Store module', () => {
           xAxis: { tick: { interval: 2 }, label: { interval: 3 } },
           yAxis: { tick: { interval: 4 }, label: { interval: 5 } },
         },
+        theme: {
+          xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+          yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        },
       } as ChartState<LineChartOptions>;
+
+      jest.spyOn(Calculator, 'getTextWidth').mockReturnValue(11);
+      jest.spyOn(Calculator, 'getTextHeight').mockReturnValue(11);
 
       const store = { state } as Store<Options>;
       axes.action!.setAxesData.call({ notify }, store);
@@ -48,22 +63,34 @@ describe('Axes Store module', () => {
           labelDistance: 100,
           labelInterval: 3,
           labels: ['A', 'B'],
+          viewLabels: [{ text: 'A', offsetPos: 0 }],
           pointOnColumn: false,
           tickCount: 2,
           tickDistance: 100,
           tickInterval: 2,
-          maxLabelWidth: 1,
+          maxLabelWidth: 11,
+          maxLabelHeight: 11,
+          maxHeight: 26.5,
+          offsetY: 15.5,
+          needRotateLabel: false,
+          radian: 0,
+          rotationHeight: 11,
         },
         yAxis: {
           isLabelAxis: false,
           labelInterval: 5,
           labels: ['0', '1', '2', '3', '4', '5'],
+          viewLabels: [
+            { text: '5', offsetPos: 0 },
+            { text: '0', offsetPos: 150 },
+          ],
           pointOnColumn: false,
           tickCount: 6,
           tickDistance: 25,
           tickInterval: 4,
           zeroPosition: 150,
-          maxLabelWidth: 1,
+          maxLabelWidth: 11,
+          maxLabelHeight: 11,
         },
       });
     });
@@ -113,6 +140,10 @@ describe('Axes Store module', () => {
       },
       categories: ['A', 'B'],
       options: {},
+      theme: {
+        xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+      },
     } as ChartState<LineChartOptions>;
 
     const store = { state } as Store<LineChartOptions>;
@@ -122,24 +153,43 @@ describe('Axes Store module', () => {
       xAxis: {
         isLabelAxis: true,
         labels: ['A', 'B'],
+        viewLabels: [
+          { text: 'A', offsetPos: 0 },
+          { text: 'B', offsetPos: 100 },
+        ],
         pointOnColumn: false,
         tickCount: 2,
         tickDistance: 100,
         labelDistance: 100,
         labelInterval: 1,
         tickInterval: 1,
-        maxLabelWidth: 1,
+        maxLabelWidth: 11,
+        maxLabelHeight: 11,
+        maxHeight: 26.5,
+        offsetY: 15.5,
+        needRotateLabel: false,
+        radian: 0,
+        rotationHeight: 11,
       },
       yAxis: {
         isLabelAxis: false,
         labels: ['0', '1', '2', '3', '4', '5'],
+        viewLabels: [
+          { text: '5', offsetPos: 0 },
+          { text: '4', offsetPos: 30 },
+          { text: '3', offsetPos: 60 },
+          { text: '2', offsetPos: 90 },
+          { text: '1', offsetPos: 120 },
+          { text: '0', offsetPos: 150 },
+        ],
         pointOnColumn: false,
         tickCount: 6,
         tickDistance: 25,
         zeroPosition: 150,
         labelInterval: 1,
         tickInterval: 1,
-        maxLabelWidth: 1,
+        maxLabelWidth: 11,
+        maxLabelHeight: 11,
       },
     });
   });
@@ -172,6 +222,10 @@ describe('Axes Store module', () => {
             format: 'yy-MM-DD',
           },
         },
+      },
+      theme: {
+        xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
       },
     } as ChartState<LineChartOptions>;
 
@@ -224,6 +278,10 @@ describe('Axes Store module', () => {
         },
         categories: ['A', 'B', 'C', 'D'],
         options: {},
+        theme: {
+          xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+          yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        },
       } as ChartState<Options>;
 
       const store = { state } as Store<Options>;
@@ -234,7 +292,6 @@ describe('Axes Store module', () => {
         axisSize: 50,
         centerX: 100,
         centerY: 100,
-        labelTextHeight: 1,
       });
     });
   });
@@ -288,6 +345,10 @@ describe('x Axis stepSize is auto', () => {
     options: {
       xAxis: { scale: { stepSize: 'auto' } },
     },
+    theme: {
+      xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+      yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+    },
   } as ChartState<Options>;
 
   it('should automatically adjusts the interval according to the width', () => {
@@ -330,6 +391,10 @@ describe('pointOnColumn state is properly created', () => {
       },
       categories: ['A', 'B'],
       options: {},
+      theme: {
+        xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+      },
     } as ChartState<BarChartOptions>;
 
     const store = { state } as Store<BarChartOptions>;
@@ -365,6 +430,10 @@ describe('pointOnColumn state is properly created', () => {
       },
       categories: ['A', 'B'],
       options: {},
+      theme: {
+        xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+      },
     } as ChartState<ColumnChartOptions>;
 
     const store = { state } as Store<ColumnChartOptions>;

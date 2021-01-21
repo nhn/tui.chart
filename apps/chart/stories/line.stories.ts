@@ -511,3 +511,46 @@ export const syncTooltip = () => {
 
   return chartGroupElem;
 };
+
+export const rotatable = () => {
+  const { el } = createChart(temperatureData, {
+    chart: { width: 'auto', height: 'auto' },
+    yAxis: { label: { interval: 2 } },
+    xAxis: {
+      title: { text: 'Month', offsetY: 10 },
+      label: {
+        rotatable: boolean('rotatable', true),
+      },
+      scale: {
+        stepSize: 1,
+      },
+    },
+    responsive: {
+      rules: [
+        {
+          condition({ width: w }) {
+            return w < 600;
+          },
+          options: {
+            legend: {
+              visible: false,
+            },
+          },
+        },
+        {
+          condition({ width: w }) {
+            return w < 800;
+          },
+          options: {
+            legend: {
+              visible: true,
+              align: 'bottom',
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  return el;
+};

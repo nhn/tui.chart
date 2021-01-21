@@ -19,6 +19,7 @@ import { RespondersThemeType } from '@src/helpers/responders';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { isNumber, isNull } from '@src/helpers/utils';
 import { message } from '@src/message';
+import { makeLabelsFromLimit } from '@src/helpers/calculator';
 
 type RenderOptions = {
   categories: string[];
@@ -71,7 +72,7 @@ export default class RadarSeries extends Component {
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, axes, series, legend, options, theme } = state;
+    const { layout, axes, series, legend, options, theme, scale } = state;
 
     if (!series.radar) {
       throw new Error(message.noDataError(this.name));
@@ -84,8 +85,12 @@ export default class RadarSeries extends Component {
     this.selectable = this.getSelectableOption(options);
 
     const categories = state.categories as string[];
-    const { labels, axisSize, centerX, centerY } = axes.radialAxis!;
+    const { axisSize, centerX, centerY } = axes.radialAxis!;
+
+    const { limit, stepSize } = scale.yAxis;
+    const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
+
     const renderOptions = {
       categories,
       degree: 360 / categories.length,

@@ -25,11 +25,19 @@ export default class AxisTitle extends Component {
     const { text, offsetX, offsetY } = option;
     const [x, y] = this.isYAxis
       ? [this.name === AxisType.Y ? offsetX : this.rect.width + offsetX, offsetY]
-      : [this.rect.width + offsetX, this.rect.height + offsetY];
+      : [this.rect.width + offsetX, offsetY];
     const font = getTitleFontString(this.theme);
     const fillStyle = this.theme.color;
 
-    return [{ type: 'label', text, x, y, style: ['axisTitle', { textAlign, fillStyle, font }] }];
+    return [
+      {
+        type: 'label',
+        text,
+        x,
+        y,
+        style: ['axisTitle', { textAlign, fillStyle, font }],
+      },
+    ];
   }
 
   getTextAlign(hasCenterYAxis = false) {

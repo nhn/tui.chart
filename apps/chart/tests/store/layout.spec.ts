@@ -296,3 +296,28 @@ describe('with reset button visible options', () => {
     expect(state.layout.resetButton).toEqual({ height: 29, width: 24, x: 132, y: 15 });
   });
 });
+
+describe("subtract half of the xAxis's maximum label length to secure margin size", () => {
+  const state = {
+    legend: { visible: true, width: 20, align: 'bottom' },
+    circleLegend: { radius: 0, visible: false, width: 0 },
+    chart: { width: 200, height: 200 },
+    series: { bar: {} },
+    axes: {
+      xAxis: { maxLabelWidth: 50 },
+      yAxis: {
+        labels: ['a', 'b', 'c', 'd'],
+      },
+    },
+    theme: defaultTheme,
+    layout: { yAxis: {}, xAxis: {}, plot: {} },
+    options: {},
+  };
+
+  const store = { state } as Store<LineChartOptions>;
+  layout.action!.setLayout(store);
+
+  it("should set secure margin size for xAxis's width", () => {
+    expect(state.layout.xAxis).toEqual({ height: 20, width: 95, x: 50, y: 115 });
+  });
+});

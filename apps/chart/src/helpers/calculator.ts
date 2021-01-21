@@ -1,9 +1,11 @@
 import { Options, ValueEdge, LabelAxisData } from '@t/store/store';
-import { range, isInteger, isString, isNull } from '@src/helpers/utils';
+import { range, isInteger, isString, isNumber, isNull } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
 import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { TICK_SIZE } from '@src/brushes/axis';
+
+const LINE_HEIGHT_NORMAL = 1.2;
 
 const ctx = document.createElement('canvas').getContext('2d')!;
 
@@ -20,12 +22,22 @@ export function getTextWidth(text: string, font: string = DEFAULT_LABEL_TEXT) {
 export function getTextHeight(text: string, font: string = DEFAULT_LABEL_TEXT) {
   ctx.font = font;
   const { actualBoundingBoxAscent, actualBoundingBoxDescent } = ctx.measureText(text);
+  const validActualBoundingBox =
+    isNumber(actualBoundingBoxAscent) && isNumber(actualBoundingBoxDescent);
 
-  return Math.ceil(Math.abs(actualBoundingBoxAscent) + Math.abs(actualBoundingBoxDescent) + 1);
+  return validActualBoundingBox
+    ? Math.ceil(Math.abs(actualBoundingBoxAscent) + Math.abs(actualBoundingBoxDescent)) + 1
+    : getFontHeight(font);
 }
 
-export function getAxisLabelAnchorPoint(text: string, font: string = DEFAULT_LABEL_TEXT) {
-  return crispPixel(TICK_SIZE * 2 + getTextHeight(text, font) / 2);
+export function getFontHeight(font: string = DEFAULT_LABEL_TEXT) {
+  const fontSize = font.match(/\d+(?=px)/);
+
+  return parseInt(String(Number(fontSize) * LINE_HEIGHT_NORMAL), 10);
+}
+
+export function getAxisLabelAnchorPoint(labelHeight: number) {
+  return crispPixel(TICK_SIZE * 2 + labelHeight / 2);
 }
 
 function getDecimalLength(value: string | number) {

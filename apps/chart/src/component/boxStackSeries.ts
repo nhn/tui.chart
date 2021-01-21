@@ -40,6 +40,7 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/style';
 import { getDataInRange } from '@src/helpers/range';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
+import { makeLabelsFromLimit } from '@src/helpers/calculator';
 
 type RenderOptions = {
   stack: Stack;
@@ -133,7 +134,7 @@ export default class BoxStackSeries extends BoxSeries {
     chartState: ChartState<T>,
     computed
   ) {
-    const { layout, series: seriesData, axes, stackSeries, legend, theme } = chartState;
+    const { layout, series: seriesData, axes, stackSeries, legend, theme, scale } = chartState;
     const { viewRange } = computed;
     this.isShow = !!stackSeries[this.name];
 
@@ -152,10 +153,13 @@ export default class BoxStackSeries extends BoxSeries {
     this.selectable = this.getSelectableOption(options);
 
     const stackSeriesData = getStackSeriesDataInViewRange(stackSeries[this.name], viewRange);
-    const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;
+
+    const { limit, stepSize } = this.getScaleData(scale);
+    const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
+
     const { stack, scaleType } = stackSeriesData;
 
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);

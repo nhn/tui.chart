@@ -15,6 +15,7 @@ export type LabelModel = {
   stroke?: StyleProp<StrokeLabelStyle, StrokeLabelStyleName>;
   text: string;
   opacity?: number;
+  radian?: number;
 } & Point;
 
 export type TickModel = {
