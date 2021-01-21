@@ -200,10 +200,10 @@ type BaseAxisOptions = {
   };
   label?: {
     interval?: number;
+    formatter?: AxisFormatter;
   };
   scale?: Scale;
   title?: AxisTitle;
-  formatter?: AxisFormatter;
 } & BaseSizeOptions;
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {

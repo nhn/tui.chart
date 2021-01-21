@@ -54,28 +54,79 @@ function createHeatmapChart(data: HeatmapSeriesData, customOptions: HeatmapChart
 export const normalAxesFormatter = () => {
   const { el } = createChart(temperatureData, {
     xAxis: {
-      formatter: (value) => {
-        const index = Number(value.split('-')[1]);
-        const animals = ['🐶', '🐱', '🦊', '🐻'];
+      label: {
+        formatter: (value) => {
+          const index = Number(value.split('-')[1]);
+          const animals = ['🐶', '🐱', '🦊', '🐻'];
 
-        return `${animals[index % animals.length]} ${value}`;
+          return `${animals[index % animals.length]} ${value}`;
+        },
       },
       date: {
         format: 'YY-MM-DD',
       },
     },
     yAxis: {
-      formatter: (value) => {
-        if (value < 0) {
-          return `${value} ❄️`;
-        }
-        if (value > 25) {
-          return `${value} 🔥`;
-        }
+      label: {
+        formatter: (value) => {
+          if (value < 0) {
+            return `${value} ❄️`;
+          }
+          if (value > 25) {
+            return `${value} 🔥`;
+          }
 
-        return `️${value} ☀️`;
+          return `️${value} ☀️`;
+        },
       },
     },
+  });
+
+  return el;
+};
+
+export const secondaryAxesFormatter = () => {
+  const { el } = createChart(temperatureData, {
+    xAxis: {
+      label: {
+        formatter: (value) => {
+          const index = Number(value.split('-')[1]);
+          const animals = ['🐶', '🐱', '🦊', '🐻'];
+
+          return `${animals[index % animals.length]} ${value}`;
+        },
+      },
+      date: {
+        format: 'YY-MM-DD',
+      },
+    },
+    yAxis: [
+      {
+        label: {
+          formatter: (value) => {
+            if (value < 0) {
+              return `${value} ❄️`;
+            }
+            if (value > 25) {
+              return `${value} 🔥`;
+            }
+
+            return `️${value} ☀️`;
+          },
+        },
+      },
+      {
+        scale: {
+          min: 0,
+          max: 100,
+        },
+        label: {
+          formatter: (value) => {
+            return `️${value} 😐`;
+          },
+        },
+      },
+    ],
   });
 
   return el;
@@ -84,19 +135,23 @@ export const normalAxesFormatter = () => {
 export const heatmapAxesFormatter = () => {
   const { el } = createHeatmapChart(temperatureAverageDataForHeatmap, {
     xAxis: {
-      formatter: (value, axisLabelInfo) => {
-        const { index } = axisLabelInfo;
-        const animals = ['🐶', '🐱', '🦊', '🐻'];
+      label: {
+        formatter: (value, axisLabelInfo) => {
+          const { index } = axisLabelInfo;
+          const animals = ['🐶', '🐱', '🦊', '🐻'];
 
-        return `${animals[index % animals.length]} ${value}`;
+          return `${animals[index % animals.length]} ${value}`;
+        },
       },
     },
     yAxis: {
-      formatter: (value, axisLabelInfo) => {
-        const { index } = axisLabelInfo;
-        const animals = ['👻', '😻', '🙋‍♂️', '🐉', '🔥'];
+      label: {
+        formatter: (value, axisLabelInfo) => {
+          const { index } = axisLabelInfo;
+          const animals = ['👻', '😻', '🙋‍♂️', '🐉', '🔥'];
 
-        return `${animals[index % animals.length]} ${value}`;
+          return `${animals[index % animals.length]} ${value}`;
+        },
       },
     },
   });

@@ -48,11 +48,11 @@ export const axisFormatter = () => {
     yAxis: {
       label: {
         interval: 2,
+        formatter: (value) => `$${value}`,
       },
       scale: {
         stepSize: 1000,
       },
-      formatter: (value) => `$${value}`,
     },
   });
 

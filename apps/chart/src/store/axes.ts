@@ -121,7 +121,16 @@ function getZeroPosition(
   return labelAxisOnYAxis ? position : axisSize - position;
 }
 
-function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
+function getAxisFormatter(options: Options, axisName: string) {
+  const axisOptions = {
+    ...getYAxisOption(options),
+    xAxis: options.xAxis,
+  };
+
+  return axisOptions[axisName]?.label?.formatter ?? ((value) => value);
+}
+
+export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const {
     axisSize,
     categories,
@@ -140,7 +149,7 @@ function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     !isZooming(rawCategories, zoomRange) && isCoordinateTypeChart
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options?.xAxis?.date);
-  const formatter = options[axisName]?.formatter ?? ((value) => value);
+  const formatter = getAxisFormatter(options, axisName);
   // @TODO: regenerate label when exceeding max width
   const labels = labelsBeforeFormatting.map((label, index) =>
     formatter(label, { index, labels: labelsBeforeFormatting, axisName })
@@ -190,7 +199,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
   const { limit, stepSize } = scale;
   const size = centerYAxis ? centerYAxis?.xAxisHalfSize : axisSize;
   const divergingBoxSeries = isDivergingBoxSeries(series, options);
-  const formatter = options[axisName]?.formatter ?? ((value) => value);
+  const formatter = getAxisFormatter(options, axisName);
   const zeroPosition = getZeroPosition(
     limit,
     axisSize,
@@ -254,7 +263,7 @@ function getRadialAxis(
   const { limit, stepSize } = scale;
   const { width, height } = plot;
   const valueLabels = makeLabelsFromLimit(limit, stepSize);
-  const formatter = options?.yAxis?.formatter ?? ((value) => value);
+  const formatter = getAxisFormatter(options, 'yAxis');
   const labels = valueLabels.map((label) => formatter(label));
   const axisSize = Math.min(width, height) / 2 - 50;
 
@@ -345,8 +354,6 @@ function getSecondaryYAxisData({
   labelOnYAxis,
   valueAxisSize,
   labelAxisSize,
-  labelAxisName,
-  valueAxisName,
   initialAxisData,
   isCoordinateTypeChart,
 }: SecondaryYAxisParam): LabelAxisState | ValueAxisState {
@@ -356,7 +363,7 @@ function getSecondaryYAxisData({
 
   return labelOnYAxis
     ? getLabelAxisData({
-        scale: scale[labelAxisName],
+        scale: scale.secondaryYAxis!,
         axisSize: labelAxisSize,
         categories: getYAxisOption(options).secondaryYAxis?.categories ?? categories,
         rawCategories,
@@ -366,7 +373,7 @@ function getSecondaryYAxisData({
         zoomRange,
         initialAxisData,
         isCoordinateTypeChart,
-        axisName: labelAxisName,
+        axisName: AxisType.SECONDARY_Y,
       })
     : getValueAxisData({
         scale: scale.secondaryYAxis!,
@@ -376,7 +383,7 @@ function getSecondaryYAxisData({
         theme: getAxisTheme(theme, AxisType.SECONDARY_Y),
         centerYAxis: null,
         initialAxisData,
-        axisName: valueAxisName,
+        axisName: AxisType.SECONDARY_Y,
       });
 }
 

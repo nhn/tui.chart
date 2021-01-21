@@ -8,7 +8,7 @@ TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이�
 
 | 타입                          | 차트명                                                         |
 | ----------------------------- | -------------------------------------------------------------- |
-| x축, y축, 보조 y 축 사용 가능 | `Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` |
+| x축, y축, 보조 y축 사용 가능 | `Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` |
 | x축, y축 사용 가능            | `BoxPlot`, `Bubble`, `Bullet`, `Column`, `Heatmap`, `Scatter`  |
 | 축이 없는 차트                | `Radar`, `Treemap`, `Pie`, `NestedPie`                         |
 
@@ -187,33 +187,37 @@ Date 타입의 카테고리가 포맷팅되어 나타나는 것을 확인할 수
 
 ### formatter
 
-`axis.formatter` 옵션을 통해 값을 포맷팅 한 뒤 출력할 수 있다. formatter 함수는 데이터 값과 데이터에 대한 정보를 차례대로 인자로 가지며 포맷팅 된 문자열을 반환하는 함수다.
+`axis.label.formatter` 옵션을 통해 값을 포맷팅 한 뒤 출력할 수 있다. formatter 함수는 데이터 값과 데이터에 대한 정보를 인자로 가지며 포맷팅 된 문자열을 반환하는 함수다.
 
 간단한 예시로 입력되는 값을 비교해 축에 이모지를 추가하는 예제를 만들어 봤다.
 
 ```js
 const options = {
   xAxis: {
-    formatter: (value) => {
-      const index = Number(value.split('-')[1]);
-      const animals = ['🐶', '🐱', '🦊', '🐻'];
+    label: {
+      formatter: (value) => {
+        const index = Number(value.split('-')[1]);
+        const animals = ['🐶', '🐱', '🦊', '🐻'];
 
-      return `${animals[index % animals.length]} ${value}`;
+        return `${animals[index % animals.length]} ${value}`;
+      },
     },
     date: {
       format: 'YY-MM-DD',
     },
   },
   yAxis: {
-    formatter: (value) => {
-      if (value < 0) {
-        return `${value} ❄️`;
-      }
-      if (value > 25) {
-        return `${value} 🔥`;
-      }
+    label: {
+      formatter: (value) => {
+        if (value < 0) {
+          return `${value} ❄️`;
+        }
+        if (value > 25) {
+          return `${value} 🔥`;
+        }
 
-      return `️${value} ☀️`;
+        return `️${value} ☀️`;
+      },
     },
   },
 };

@@ -160,33 +160,37 @@ The Date type category is displayed according to the formatting.
 
 ## formatter
 
-The `axis.formatter` option can be used to format the data before the data is displayed. The formatting function takes the values and axis label information as parameters and returns the formatted string.
+The `axis.label.formatter` option can be used to format the data before the data is displayed. The formatting function takes the values and axis label information as parameters and returns the formatted string.
 
 Let's write a simple example that compares the entered values and adds an emoji.
 
 ```js
 const options = {
   xAxis: {
-    formatter: (value) => {
-      const index = Number(value.split('-')[1]);
-      const animals = ['🐶', '🐱', '🦊', '🐻'];
+    label: {
+      formatter: (value) => {
+        const index = Number(value.split('-')[1]);
+        const animals = ['🐶', '🐱', '🦊', '🐻'];
 
-      return `${animals[index % animals.length]} ${value}`;
+        return `${animals[index % animals.length]} ${value}`;
+      },
     },
     date: {
       format: 'YY-MM-DD',
     },
   },
   yAxis: {
-    formatter: (value) => {
-      if (value < 0) {
-        return `${value} ❄️`;
-      }
-      if (value > 25) {
-        return `${value} 🔥`;
-      }
+    label: {
+      formatter: (value) => {
+        if (value < 0) {
+          return `${value} ❄️`;
+        }
+        if (value > 25) {
+          return `${value} 🔥`;
+        }
 
-      return `️${value} ☀️`;
+        return `️${value} ☀️`;
+      },
     },
   },
 };
