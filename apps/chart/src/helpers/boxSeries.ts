@@ -1,11 +1,11 @@
 import { Nullable } from '@t/components/series';
 
-function limitNegative(value: number, min: number, max: number): number {
-  if (value >= max) {
+function limitNegative(value: number, min: number, max: number) {
+  let result = value;
+
+  if (result >= max) {
     return 0;
   }
-
-  let result = value;
 
   if (max < 0) {
     result = Math.min(value - max, 0);
@@ -18,7 +18,7 @@ function limitNegative(value: number, min: number, max: number): number {
   return result;
 }
 
-function limitPositive(value: number, min: number, max: number): number {
+function limitPositive(value: number, min: number, max: number) {
   let result = value;
 
   if (min > 0) {
@@ -47,11 +47,7 @@ export function sumValuesBeforeIndex(
     const isBefore = includeTarget ? idx <= targetIndex : idx < targetIndex;
     const isSameSign = value * target >= 0;
 
-    if (isBefore && isSameSign) {
-      return total + value;
-    }
-
-    return total;
+    return isBefore && isSameSign ? total + value : total;
   }, 0);
 }
 

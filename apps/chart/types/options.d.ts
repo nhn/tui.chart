@@ -188,6 +188,7 @@ export interface Scale {
   stepSize?: 'auto' | number;
 }
 
+type AxisFormatter = (value: string) => string;
 export type AxisTitleOption = Omit<TitleOption, 'align'>;
 type AxisTitle = string | AxisTitleOption;
 
@@ -200,6 +201,7 @@ type BaseAxisOptions = {
   };
   scale?: Scale;
   title?: AxisTitle;
+  formatter?: AxisFormatter;
 } & BaseSizeOptions;
 
 interface LineTypeXAxisOptions extends BaseXAxisOptions {
@@ -258,7 +260,7 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
-type Formatter = (value: SeriesDataType) => string;
+type ValueFormatter = (value: SeriesDataType) => string;
 export type DefaultTooltipTemplate = { header: string; body: string };
 
 export type TooltipTemplateFunc = (
@@ -271,7 +273,7 @@ interface BaseTooltipOptions {
   template?: TooltipTemplateFunc;
   offsetX?: number;
   offsetY?: number;
-  formatter?: Formatter;
+  formatter?: ValueFormatter;
 }
 
 export interface BaseOptions {
@@ -537,7 +539,7 @@ export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto' | 'outer';
 
 export type StackTotalDataLabel = {
   visible?: boolean;
-  formatter?: Formatter;
+  formatter?: ValueFormatter;
 };
 
 export type DataLabelPieSeriesName = {
@@ -550,7 +552,7 @@ export type DataLabelOptions = {
   anchor?: DataLabelAnchor;
   offsetX?: number;
   offsetY?: number;
-  formatter?: Formatter;
+  formatter?: ValueFormatter;
 };
 
 export interface BoxDataLabels extends DataLabelOptions {

@@ -85,12 +85,17 @@ button:focus {
 .series-name {
   display: flex;
   align-items: center;
+  /* for IE */
+  line-height: 10px;
 }
 
-.series-name .icon, .tooltip-series .icon {
+.series-name .icon,
+.tooltip-series .icon {
   width: 10px;
   height: 10px;
   margin-right: 8px;
+  /* for IE */
+  display: inline-block;
 }
 
 .series-name .name {

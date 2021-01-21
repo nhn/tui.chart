@@ -45,9 +45,7 @@ export function isSemiCircle(clockwise: boolean, startAngle: number, endAngle: n
   );
 }
 
-export function getDefaultRadius(rect: Rect, isSemiCircular = false) {
-  const { width, height } = rect;
-
+export function getDefaultRadius({ width, height }: Rect, isSemiCircular = false) {
   return (
     (isSemiCircular ? Math.min(width / 2, height) : Math.min(width, height) / 2) *
     DEFAULT_RADIUS_RATIO

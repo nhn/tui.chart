@@ -15,7 +15,7 @@ import { getActiveSeriesMap } from '@src/helpers/legend';
 import { TooltipData, TooltipTitleValues } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import { LineModel } from '@t/components/axis';
-import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getBoxTypeSeriesPadding } from '@src/helpers/style';
 import { BoxPlotChartSeriesTheme, BoxPlotLineTypeTheme, BoxPlotDotTheme } from '@t/theme';
 import { isNumber, calculateSizeWithPercentString, isNull } from '@src/helpers/utils';
 import { crispPixel } from '@src/helpers/calculator';
@@ -311,7 +311,9 @@ export default class BoxPlotSeries extends Component {
         borderWidth,
         useSeriesColor,
       } = dot as Required<BoxPlotDotTheme>;
+    
       (outliers ?? []).forEach((datum) => {
+      outliers.forEach((datum) => {
         const [dataIndex, value] = datum;
         const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
 

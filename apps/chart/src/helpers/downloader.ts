@@ -61,12 +61,19 @@ function base64toBlob(base64String: string) {
       byteNumbers[i] = slice.charCodeAt(i);
     }
 
-    const byteArray = new window.Uint8Array(byteNumbers);
-
-    byteArrays.push(byteArray);
+    byteArrays.push(new window.Uint8Array(byteNumbers));
   }
 
-  return new Blob(byteArrays, { type: contentType });
+  try {
+    // for IE 11
+    return new Blob(byteArrays, { type: contentType });
+  } catch (e) {
+    // for IE 10
+    return new Blob(
+      byteArrays.map((byteArr) => byteArr.buffer),
+      { type: contentType }
+    );
+  }
 }
 
 function isImageExtension(extension: Extension) {

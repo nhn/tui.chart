@@ -31,15 +31,12 @@ import {
 } from '@src/helpers/utils';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
-import {
-  calibrateBoxStackDrawingValue,
-  sumValuesBeforeIndex,
-} from '@src/helpers/boxSeriesCalculator';
+import { calibrateBoxStackDrawingValue, sumValuesBeforeIndex } from '@src/helpers/boxSeries';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RectDataLabel } from '@t/components/dataLabels';
-import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getBoxTypeSeriesPadding } from '@src/helpers/style';
 import { getDataInRange } from '@src/helpers/range';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
@@ -459,7 +456,7 @@ export default class BoxStackSeries extends BoxSeries {
             y: this.isBar ? y + columnWidth : y,
             x2: nextX,
             y2: nextY,
-            dashedPattern: dashSegments,
+            dashSegments,
             strokeStyle: color,
             lineWidth,
           });

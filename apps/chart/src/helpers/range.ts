@@ -2,12 +2,8 @@ import { RangeDataType, BoxSeriesDataType } from '@t/options';
 import { getFirstValidValue } from '@src/helpers/utils';
 import { TooltipDataValue } from '@t/components/tooltip';
 
-function isRangeLength<T>(range: T) {
-  return Array.isArray(range) && range.length === 2;
-}
-
 export function isRangeValue<T>(value: unknown): value is RangeDataType<T> {
-  return isRangeLength(value);
+  return Array.isArray(value) && value.length === 2;
 }
 
 export function isRangeData(data?: BoxSeriesDataType[] | TooltipDataValue) {

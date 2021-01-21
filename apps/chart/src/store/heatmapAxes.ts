@@ -3,7 +3,6 @@ import { extend } from '@src/store/store';
 import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
 import { AxisType } from '@src/component/axis';
 import { makeFormattedCategory, makeTitleOption } from '@src/store/axes';
-import category from '@src/store/category';
 
 type HeatmapStateProp = {
   axisSize: number;

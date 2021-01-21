@@ -16,17 +16,18 @@ type stackScaleType =
   | 'dualPercentStack'
   | 'divergingPercentStack';
 
-function adjustLimitForOverflow(limit: ValueEdge, stepSize: number, overflowed: Overflowed) {
-  const { min, max } = limit;
-
+function adjustLimitForOverflow({ min, max }: ValueEdge, stepSize: number, overflowed: Overflowed) {
   return {
     min: overflowed.min ? min - stepSize : min,
     max: overflowed.max ? max + stepSize : max,
   };
 }
 
-function isSeriesOverflowed(scaleData: ScaleData, scale: Required<Scale>, scaleOption?: Scale) {
-  const { min, max } = scale;
+function isSeriesOverflowed(
+  scaleData: ScaleData,
+  { min, max }: Required<Scale>,
+  scaleOption?: Scale
+) {
   const scaleDataLimit = scaleData.limit;
   const hasMinOption = isNumber(scaleOption?.min);
   const hasMaxOption = isNumber(scaleOption?.max);
@@ -94,10 +95,7 @@ function getNormalizedLimit(limit: ValueEdge, stepSize: number): ValueEdge {
     min = 0;
   }
 
-  return {
-    min,
-    max,
-  };
+  return { min, max };
 }
 
 export function getNormalizedStepCount(limitSize: number, stepSize: number) {

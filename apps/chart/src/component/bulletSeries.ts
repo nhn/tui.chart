@@ -19,7 +19,7 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 import { BulletChartSeriesTheme, GroupedRect } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY } from '@src/helpers/theme';
-import { isNumber, omit, calculateSizeWithPercentString, isNull } from '@src/helpers/utils';
+import { isNumber, omit, calculateSizeWithPercentString, pick, isNull } from '@src/helpers/utils';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
 import { makeRectResponderModel } from '@src/helpers/responders';
@@ -385,7 +385,7 @@ export default class BulletSeries extends Component {
     bulletData: BulletSeriesType[],
     { tickDistance, ratio, zeroPosition, bulletWidth }: RenderOptions
   ): BulletRectModel[] {
-    const { borderColor, borderWidth } = this.theme;
+    const { borderColor, borderWidth: thickness } = this.theme;
 
     return bulletData.reduce<BulletRectModel[]>((acc, { data, color, name }, seriesIndex) => {
       if (isNull(data)) {
@@ -400,7 +400,7 @@ export default class BulletSeries extends Component {
         color: getRGBA(color!, this.getSeriesOpacity(name)),
         x: this.vertical ? bulletStartX : zeroPosition,
         y: this.vertical ? zeroPosition - bulletLength : bulletStartX,
-        thickness: borderWidth,
+        thickness,
         borderColor,
         modelType: 'bullet',
         seriesColor: color,
@@ -516,28 +516,23 @@ export default class BulletSeries extends Component {
   }
 
   getRespondersWithTheme(responders: BulletResponderModel[], type: 'hover' | 'select') {
-    const {
-      color,
-      borderColor,
-      borderWidth,
-      shadowBlur,
-      shadowColor,
-      shadowOffsetX,
-      shadowOffsetY,
-    } = this.theme[type];
+    const { color, borderColor, borderWidth: thickness } = this.theme[type];
 
     return (this.filterBulletResponder(responders) as BulletRectModel[]).map((model) => {
       return {
         ...model,
         color: color ?? model.tooltipColor,
-        thickness: borderWidth,
+        thickness,
         borderColor,
         style: [
           {
-            shadowBlur,
-            shadowColor,
-            shadowOffsetX,
-            shadowOffsetY,
+            ...pick(
+              this.theme[type],
+              'shadowBlur',
+              'shadowColor',
+              'shadowOffsetX',
+              'shadowOffsetY'
+            ),
           },
         ],
       };

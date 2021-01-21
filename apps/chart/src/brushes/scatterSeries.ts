@@ -2,6 +2,7 @@ import { circle, pathRect } from '@src/brushes/basic';
 import { ScatterSeriesModel } from '@t/components/series';
 import { polygon } from '@src/brushes/polygon';
 import { Point } from '@t/options';
+import { fillStyle } from '@src/helpers/style';
 
 type RegularPolygonModel = {
   type: 'regularPolygon';
@@ -30,7 +31,6 @@ function regularPolygon(ctx: CanvasRenderingContext2D, model: RegularPolygonMode
   const step = (2 * Math.PI) / numberOfSides;
 
   ctx.beginPath();
-  ctx.fillStyle = fillColor;
 
   for (let i = 0; i <= numberOfSides; i += 1) {
     const curStep = i * step + shift;
@@ -40,7 +40,7 @@ function regularPolygon(ctx: CanvasRenderingContext2D, model: RegularPolygonMode
 
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = borderWidth;
-  ctx.fill();
+  fillStyle(ctx, fillColor);
   ctx.stroke();
   ctx.closePath();
 }
