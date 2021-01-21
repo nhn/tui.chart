@@ -57,6 +57,11 @@ type CalculatedRadiusRangeParam = {
   innerRadius?: number;
 };
 
+type MaxPieDataLabelSize = {
+  maxDataLabelWidth: number;
+  maxDataLabelHeight: number;
+};
+
 function getCalculatedRadiusRange({
   alias,
   renderOptions,
@@ -67,7 +72,6 @@ function getCalculatedRadiusRange({
 }: CalculatedRadiusRangeParam) {
   const radiusRangeLength = Object.keys(radiusRangeMap).length;
   const { defaultRadius = 0 } = renderOptions;
-
   let { inner, outer } = renderOptions.radiusRange;
 
   if (!radiusRangeMap[alias]) {
@@ -112,10 +116,10 @@ function getPieSeriesOpacityByDepth(
 }
 
 function getMaxDataLabelSize(
-  pieData: PieSeriesType[],
+  seriesNameLabels: string[],
   options: PieDataLabels,
   theme: PieDataLabelTheme
-) {
+): MaxPieDataLabelSize {
   const hasOuterPercentLabel = options.visible && options.anchor === 'outer';
   const hasOuterPieSeriesNameLabel =
     options.pieSeriesName?.visible && options.pieSeriesName?.anchor === 'outer';
@@ -137,7 +141,7 @@ function getMaxDataLabelSize(
 
   if (hasOuterPieSeriesNameLabel) {
     const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(
-      pieData.map(({ name }) => name),
+      seriesNameLabels,
       getFont(theme.pieSeriesName!)
     );
 
@@ -237,14 +241,24 @@ export default class PieSeries extends Component {
 
       const pieAlias = Object.keys(nestedPieSeries);
       const pieIndex = pieAlias.findIndex((alias) => alias === this.alias);
-      const renderOptionsMap = this.getRenderOptionsMap(options, pieAlias);
+
+      // check the data label of the last Pie series
+      const lastAlias = pieAlias[pieAlias.length - 1];
+      const lastSeries = nestedPieSeries[lastAlias];
+      const maxPieDataLabelSize = getMaxDataLabelSize(
+        lastSeries.data.map(({ name }) => name),
+        getDataLabelsOptions(options, lastAlias),
+        this.theme.dataLabels
+      );
+
+      const renderOptionsMap = this.getRenderOptionsMap(options, pieAlias, maxPieDataLabelSize);
 
       seriesModel = this.renderPieModel(data, renderOptionsMap[this.alias], pieIndex);
       tooltipDataModel = makePieTooltipData(data, categories?.[pieIndex]);
     } else {
       const pieData = series.pie?.data! as PieSeriesType[];
       const { maxDataLabelWidth, maxDataLabelHeight } = getMaxDataLabelSize(
-        pieData,
+        pieData.map(({ name }) => name),
         dataLabelsOptions,
         this.theme.dataLabels
       );
@@ -296,8 +310,12 @@ export default class PieSeries extends Component {
     }, {} as RadiusRangeMap);
   }
 
-  getRenderOptionsMap(options: PieChartOptions, pieAlias: string[]) {
-    const renderOptionsMap = this.initRenderOptionsMap(options, pieAlias);
+  getRenderOptionsMap(
+    options: PieChartOptions,
+    pieAlias: string[],
+    maxPieDataLabelSize: MaxPieDataLabelSize
+  ) {
+    const renderOptionsMap = this.initRenderOptionsMap(options, pieAlias, maxPieDataLabelSize);
     const radiusRangeMap = this.getRadiusRangeMap(options, pieAlias);
 
     pieAlias.forEach((alias, pieIndex) => {
@@ -316,11 +334,19 @@ export default class PieSeries extends Component {
     return renderOptionsMap;
   }
 
-  initRenderOptionsMap(options: PieChartOptions, pieAlias: string[]) {
+  initRenderOptionsMap(
+    options: PieChartOptions,
+    pieAlias: string[],
+    { maxDataLabelWidth, maxDataLabelHeight }: MaxPieDataLabelSize
+  ) {
     return pieAlias.reduce<RenderOptionsMap>(
       (acc, alias) => ({
         ...acc,
-        [alias]: this.makeRenderOptions(this.getOptions(options, alias)),
+        [alias]: this.makeRenderOptions(
+          this.getOptions(options, alias),
+          maxDataLabelWidth,
+          maxDataLabelHeight
+        ),
       }),
       {} as RenderOptionsMap
     );

@@ -146,8 +146,9 @@ export const dataLabels = () => {
         },
         dataLabels: {
           visible: true,
+          anchor: 'outer',
           pieSeriesName: {
-            visible: true,
+            visible: false,
             anchor: 'outer',
           },
         },
