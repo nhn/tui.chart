@@ -3,7 +3,61 @@
   "version": "4.0.0-beta.1",
   "description": "TOAST UI Application: Chart",
   "main": "dist/toastui-chart.js",
-  "module": "dist/esm/",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/toastui-chart.js"
+    },
+    "./line": {
+      "import": "./dist/esm/charts/lineChart.js"
+    },
+    "./area": {
+      "import": "./dist/esm/charts/areaChart.js"
+    },
+    "./lineArea": {
+      "import": "./dist/esm/charts/lineAreaChart.js"
+    },
+    "./bar": {
+      "import": "./dist/esm/charts/barChart.js"
+    },
+    "./column": {
+      "import": "./dist/esm/charts/columnChart.js"
+    },
+    "./columnLine": {
+      "import": "./dist/esm/charts/columnLineChart.js"
+    },
+    "./bullet": {
+      "import": "./dist/esm/charts/bulletChart.js"
+    },
+    "./boxPlot": {
+      "import": "./dist/esm/charts/boxPlotChart.js"
+    },
+    "./treemap": {
+      "import": "./dist/esm/charts/treemapChart.js"
+    },
+    "./heatmap": {
+      "import": "./dist/esm/charts/heatmapChart.js"
+    },
+    "./scatter": {
+      "import": "./dist/esm/charts/scatterChart.js"
+    },
+    "./lineScatter": {
+      "import": "./dist/esm/charts/lineScatterChart.js"
+    },
+    "./bubble": {
+      "import": "./dist/esm/charts/bubbleChart.js"
+    },
+    "./pie": {
+      "import": "./dist/esm/charts/pieChart.js"
+    },
+    "./nestedPie": {
+      "import": "./dist/esm/charts/nestedPieChart.js"
+    },
+    "./radar": {
+      "import": "./dist/esm/charts/radarChart.js"
+    },
+    "./": "./"
+  },
   "types": "types/index.d.ts",
   "sideEffects": false,
   "scripts": {
