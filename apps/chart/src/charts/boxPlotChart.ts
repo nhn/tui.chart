@@ -15,6 +15,7 @@ import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import SelectedSeries from '@src/component/selectedSeries';
+import ChartBackground from '@src/component/chartBackground';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -119,6 +120,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(ChartBackground);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

@@ -19,6 +19,7 @@ import {
   NestedPieSeriesModels,
   ScatterSeriesModels,
   BulletSeriesModels,
+  RectModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel, RectLabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -52,7 +53,8 @@ export type ComponentType =
   | 'resetButton'
   | 'zeroAxis'
   | 'zoom'
-  | 'backButton';
+  | 'backButton'
+  | 'chartBackground';
 
 type ComponentModels =
   | AxisModels
@@ -82,7 +84,8 @@ type ComponentModels =
   | ResponderSeriesModel
   | RectLabelModel[]
   | ScatterSeriesModels
-  | BulletSeriesModels;
+  | BulletSeriesModels
+  | RectModel[];
 
 export default abstract class Component {
   name = 'Component';

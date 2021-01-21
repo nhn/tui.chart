@@ -2,7 +2,7 @@ import Component from './component';
 import { Categories, ChartState, Options, Series } from '@t/store/store';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
-import { TitleOption } from '@t/options';
+import { TitleOption, Size } from '@t/options';
 import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
@@ -33,6 +33,8 @@ export default class ExportMenu extends Component {
 
   theme!: Required<ExportMenuTheme>;
 
+  chartBackgroundColor!: string;
+
   toggleExportMenu = () => {
     this.opened = !this.opened;
     this.models.exportMenuButton[0].opened = this.opened;
@@ -50,6 +52,8 @@ export default class ExportMenu extends Component {
     const ctx = canvas.getContext('2d')!;
     const { x, y, height: h, width: w } = this.rect;
     ctx.fillStyle = '#ffffff';
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = this.chartBackgroundColor;
     ctx.fillRect(x, y, w, h);
 
     return canvas;
@@ -120,6 +124,7 @@ export default class ExportMenu extends Component {
       return;
     }
 
+    this.chartBackgroundColor = theme.chart.backgroundColor!;
     this.theme = theme.exportMenu as Required<ExportMenuTheme>;
     this.data = { series, categories: rawCategories };
     this.fileName = this.getFileName(options?.exportMenu?.filename || chart.title);

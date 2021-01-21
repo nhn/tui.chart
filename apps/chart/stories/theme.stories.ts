@@ -36,6 +36,25 @@ function createChart(data: AreaSeriesData, customOptions: AreaChartOptions = {})
   return { el, chart };
 }
 
+export const globalTheme = () => {
+  const { el } = createChart(avgTemperatureData, {
+    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    theme: {
+      chart: {
+        fontFamily: 'Verdana',
+        backgroundColor: 'rgba(9, 206, 115, 0.3)',
+      },
+      title: {
+        fontFamily: 'Comic Sans MS',
+      },
+    },
+  });
+
+  return el;
+};
+
 export const title = () => {
   const { el } = createChart(avgTemperatureData, {
     chart: { title: 'Average Temperature' } as BaseChartOptions,

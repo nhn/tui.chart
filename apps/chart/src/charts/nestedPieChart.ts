@@ -9,6 +9,7 @@ import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import SelectedSeries from '@src/component/selectedSeries';
+import ChartBackground from '@src/component/chartBackground';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -91,6 +92,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(ChartBackground);
     this.componentManager.add(Title);
     this.componentManager.add(Legend);
 
