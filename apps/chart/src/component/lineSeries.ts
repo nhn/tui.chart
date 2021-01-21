@@ -39,8 +39,9 @@ import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { DotTheme, LineChartSeriesTheme } from '@t/theme';
-import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
+import { isAvailableSelectSeries, isAvailableShowTooltipInfo } from '@src/helpers/validation';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -433,23 +434,19 @@ export default class LineSeries extends Component {
     return responder?.data?.category;
   }
 
-  selectSeries = (info: SelectSeriesHandlerParams<LineChartOptions>) => {
-    const { index, seriesIndex, chartType } = info;
+  selectSeries = (info: SelectSeriesInfo) => {
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      !isNumber(seriesIndex) ||
-      (!isUndefined(chartType) && chartType !== 'line')
-    ) {
+    if (!isAvailableSelectSeries(info, 'line')) {
       return;
     }
 
-    const category = this.getResponderCategoryByIndex(index);
+    const category = this.getResponderCategoryByIndex(index!);
     if (!category) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
-    const model = this.tooltipCircleMap[category][seriesIndex];
+    const model = this.tooltipCircleMap[category][seriesIndex!];
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
@@ -459,17 +456,13 @@ export default class LineSeries extends Component {
   };
 
   showTooltip = (info: SelectSeriesInfo) => {
-    const { index, seriesIndex, chartType } = info;
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
-      (!isUndefined(chartType) && chartType !== 'line')
-    ) {
+    if (!isAvailableShowTooltipInfo(info, this.eventDetectType, 'line')) {
       return;
     }
 
-    const category = this.getResponderCategoryByIndex(index);
+    const category = this.getResponderCategoryByIndex(index!);
     if (!category) {
       return;
     }

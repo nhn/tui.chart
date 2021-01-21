@@ -19,7 +19,7 @@ import {
   pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
-import { calculateSizeWithPercentString, isNumber, isUndefined } from '@src/helpers/utils';
+import { calculateSizeWithPercentString, isNumber, isUndefined, isNull } from '@src/helpers/utils';
 import { PieChartSeriesTheme, SelectSectorStyle } from '@t/theme';
 import { pick } from '@src/helpers/utils';
 import { RespondersThemeType } from '@src/helpers/responders';
@@ -329,7 +329,7 @@ export default class PieSeries extends Component {
     pieIndex?: number
   ): SectorModel[] {
     const sectorModels: SectorModel[] = [];
-    const total = seriesRawData.reduce((sum, { data }) => sum + data, 0);
+    const total = seriesRawData.reduce((sum, { data }) => sum + (data ?? 0), 0);
     const {
       clockwise,
       cx,
@@ -346,36 +346,37 @@ export default class PieSeries extends Component {
         ? this.getAliasSeriesColor(rawData, seriesRawData, pieIndex!)
         : this.getSeriesColor(rawData);
       const { data, name } = rawData;
-      const degree = (data / total) * totalAngle * (clockwise ? 1 : -1);
-      const percentValue = (data / total) * 100;
-      const startDegree = seriesIndex
-        ? sectorModels[seriesIndex - 1].degree.end
-        : defaultStartDegree;
-      const endDegree = clockwise
-        ? Math.min(startDegree + degree, 360)
-        : Math.max(startDegree + degree, 0);
+      if (!isNull(data)) {
+        const degree = Math.max((data / total) * totalAngle, 1) * (clockwise ? 1 : -1);
+        const percentValue = (data / total) * 100;
+        const prevModel = sectorModels[sectorModels.length - 1];
+        const startDegree = seriesIndex && prevModel ? prevModel.degree.end : defaultStartDegree;
+        const endDegree = clockwise
+          ? Math.min(startDegree + degree, 360)
+          : Math.max(startDegree + degree, 0);
 
-      sectorModels.push({
-        type: 'sector',
-        name,
-        color,
-        x: cx,
-        y: cy,
-        degree: {
-          start: startDegree,
-          end: endDegree,
-        },
-        radius: {
-          inner,
-          outer,
-        },
-        value: data,
-        style: [{ lineWidth, strokeStyle }],
-        clockwise,
-        drawingStartAngle,
-        totalAngle,
-        percentValue,
-      });
+        sectorModels.push({
+          type: 'sector',
+          name,
+          color,
+          x: cx,
+          y: cy,
+          degree: {
+            start: startDegree,
+            end: endDegree,
+          },
+          radius: {
+            inner,
+            outer,
+          },
+          value: data,
+          style: [{ lineWidth, strokeStyle }],
+          clockwise,
+          drawingStartAngle,
+          totalAngle,
+          percentValue,
+        });
+      }
     });
 
     return sectorModels;

@@ -48,15 +48,16 @@ import { makeTickPixelPositions, makeLabelsFromLimit } from '@src/helpers/calcul
 import { getRGBA, getAlpha } from '@src/helpers/color';
 import { getDataInRange, isRangeData, isRangeValue } from '@src/helpers/range';
 import { getLimitOnAxis, getValueAxisName } from '@src/helpers/axes';
-import { calibrateDrawingValue } from '@src/helpers/boxSeriesCalculator';
+import { calibrateDrawingValue } from '@src/helpers/boxSeries';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getBoxTypeSeriesPadding } from '@src/helpers/style';
 import { makeRectResponderModel, RespondersThemeType } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
 import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
+import { isAvailableSelectSeries, isAvailableShowTooltipInfo } from '@src/helpers/validation';
 
 export enum SeriesDirection {
   POSITIVE,
@@ -347,7 +348,11 @@ export default class BoxSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data, centerYAxis));
+      const dataLabelData = seriesModels.reduce<RectDataLabel[]>((acc, data) => {
+        return isRangeValue(data.value)
+          ? [...acc, ...this.makeDataLabelRangeData(data)]
+          : [...acc, this.makeDataLabel(data, centerYAxis)];
+      }, []);
 
       this.renderDataLabels(dataLabelData);
     }
@@ -729,13 +734,37 @@ export default class BoxSeries extends Component {
     return {
       ...rect,
       direction: this.getDataLabelDirection(rect, centerYAxis),
-      plot: {
-        x: 0,
-        y: 0,
-        size: this.getOffsetSize(),
-      },
+      plot: { x: 0, y: 0, size: this.getOffsetSize() },
       theme: omit(this.theme.dataLabels, 'stackTotal'),
     };
+  }
+
+  makeDataLabelRangeData(rect: RectModel): RectDataLabel[] {
+    return (rect.value as RangeDataType<number>).reduce<RectDataLabel[]>(
+      (acc, value, index) => [
+        ...acc,
+        {
+          ...rect,
+          value,
+          direction: this.getDataLabelRangeDataDirection(index % 2 === 0),
+          plot: { x: 0, y: 0, size: this.getOffsetSize() },
+          theme: omit(this.theme.dataLabels, 'stackTotal'),
+        },
+      ],
+      []
+    );
+  }
+
+  getDataLabelRangeDataDirection(isEven: boolean) {
+    let direction: RectDirection;
+
+    if (this.isBar) {
+      direction = isEven ? 'left' : 'right';
+    } else {
+      direction = isEven ? 'bottom' : 'top';
+    }
+
+    return direction;
   }
 
   getDataLabelDirection(
@@ -744,9 +773,7 @@ export default class BoxSeries extends Component {
   ): RectDirection {
     let direction: RectDirection;
 
-    if (isRangeValue(rect.value!)) {
-      direction = this.isBar ? 'right' : 'top';
-    } else if (this.isBar) {
+    if (this.isBar) {
       const basePos = centerYAxis ? this.leftBasePosition : this.basePosition;
       direction = rect.x < basePos ? 'left' : 'right';
     } else {
@@ -830,17 +857,13 @@ export default class BoxSeries extends Component {
   }
 
   selectSeries = (info: SelectSeriesHandlerParams<BarChartOptions | ColumnChartOptions>) => {
-    const { index, seriesIndex, chartType } = info;
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      !isNumber(seriesIndex) ||
-      (!isUndefined(chartType) && chartType !== 'column')
-    ) {
+    if (!isAvailableSelectSeries(info, 'column')) {
       return;
     }
 
-    const model = this.tooltipRectMap[seriesIndex][index];
+    const model = this.tooltipRectMap[seriesIndex!][index!];
 
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
@@ -854,20 +877,16 @@ export default class BoxSeries extends Component {
   };
 
   showTooltip = (info: SelectSeriesInfo) => {
-    const { index, seriesIndex, chartType } = info;
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
-      (!isUndefined(chartType) && chartType !== 'column')
-    ) {
+    if (!isAvailableShowTooltipInfo(info, this.eventDetectType, 'column')) {
       return;
     }
 
     const models =
       this.eventDetectType === 'grouped'
-        ? this.getGroupedRect([this.responders[index]], 'hover')
-        : this.getRespondersWithTheme([this.tooltipRectMap[index][seriesIndex!]], 'hover');
+        ? this.getGroupedRect([this.responders[index!]], 'hover')
+        : this.getRespondersWithTheme([this.tooltipRectMap[index!][seriesIndex!]], 'hover');
 
     if (!models.length) {
       return;
@@ -879,7 +898,7 @@ export default class BoxSeries extends Component {
       eventDetectType: this.eventDetectType,
     });
     this.activatedResponders =
-      this.eventDetectType === 'grouped' ? this.tooltipRectMap[index] : models;
+      this.eventDetectType === 'grouped' ? this.tooltipRectMap[index!] : models;
 
     this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');

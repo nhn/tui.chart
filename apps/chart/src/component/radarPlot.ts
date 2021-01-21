@@ -5,7 +5,7 @@ import { ChartState, RadialAxisData } from '@t/store/store';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
 import { Point, RadarPlotType, RadarChartOptions } from '@t/options';
 import { RadarPlotModels, RadarPlotModelType } from '@t/components/radarPlot';
-import { getRadialRadiusValues } from '@src/helpers/radar';
+import { getRadialRadiusValues } from '@src/helpers/radarSeries';
 
 type RenderOptions = {
   type: RadarPlotType;

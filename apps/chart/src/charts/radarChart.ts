@@ -20,6 +20,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as polygonBrush from '@src/brushes/polygon';
 import * as axisBrush from '@src/brushes/axis';
+import * as lineSeriesBrush from '@src/brushes/lineSeries';
 
 import { RadarChartOptions, RadarSeriesData, RadarSeriesInput } from '@t/options';
 
@@ -125,6 +126,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
       exportMenuBrush,
       polygonBrush,
       axisBrush,
+      lineSeriesBrush,
     ]);
   }
 

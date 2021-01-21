@@ -32,26 +32,26 @@ interface IntervalInfo {
 }
 
 function makeAdjustingIntervalInfo(blockCount: number, axisWidth: number, blockSize: number) {
-  let remainCount;
+  let remainBlockCount;
   let newBlockCount = Math.floor(axisWidth / blockSize);
   let intervalInfo: IntervalInfo | null = null;
   const interval = newBlockCount ? Math.floor(blockCount / newBlockCount) : blockCount;
 
   if (interval > 1) {
-    // remainCount : remaining block count after filling new blocks
+    // remainBlockCount : remaining block count after filling new blocks
     // | | | | | | | | | | | |  - previous block interval
     // |     |     |     |      - new block interval
     //                   |*|*|  - remaining block
-    remainCount = blockCount - interval * newBlockCount;
+    remainBlockCount = blockCount - interval * newBlockCount;
 
-    if (remainCount >= interval) {
-      newBlockCount += Math.floor(remainCount / interval);
-      remainCount = remainCount % interval;
+    if (remainBlockCount >= interval) {
+      newBlockCount += Math.floor(remainBlockCount / interval);
+      remainBlockCount = remainBlockCount % interval;
     }
 
     intervalInfo = {
       blockCount: newBlockCount,
-      remainBlockCount: remainCount,
+      remainBlockCount,
       interval,
     };
   }

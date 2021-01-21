@@ -6,11 +6,6 @@ import { Align } from '@t/options';
 import { TreemapRectResponderModel } from '@t/components/series';
 import { isVerticalAlign } from '@src/store/layout';
 
-interface RenderOptions {
-  startColor: string;
-  endColor: string;
-}
-
 export default class SpectrumLegend extends Component {
   models!: SpectrumLegendModels;
 
@@ -32,10 +27,9 @@ export default class SpectrumLegend extends Component {
     }, []);
   }
 
-  renderSpectrumLegendModel(renderOptions: RenderOptions): SpectrumLegendModel[] {
+  renderSpectrumLegendModel(startColor: string, endColor: string): SpectrumLegendModel[] {
     const { labels, align } = this;
     const { width, height } = this.rect;
-    const { startColor, endColor } = renderOptions;
 
     return [
       {
@@ -57,7 +51,6 @@ export default class SpectrumLegend extends Component {
     if (responderData) {
       const { labels, align } = this;
       const { colorValue, color } = responderData;
-      const colorRatio = responderData.colorRatio!;
       const { width, height } = this.rect;
 
       this.models.tooltip = [
@@ -69,7 +62,7 @@ export default class SpectrumLegend extends Component {
           y: 0,
           labels,
           align,
-          colorRatio,
+          colorRatio: responderData.colorRatio!,
           color,
           text: String(colorValue),
           verticalAlign: isVerticalAlign(align),
@@ -90,11 +83,9 @@ export default class SpectrumLegend extends Component {
     }
 
     this.labels = this.makeLabels(colorValueScale);
-    const seriesTheme = theme.series?.heatmap! || theme.series?.treemap!;
+    const { startColor, endColor } = theme.series?.heatmap! || theme.series?.treemap!;
 
-    const { startColor, endColor } = seriesTheme;
-    const renderOptions: RenderOptions = { startColor, endColor };
-    this.models = { legend: this.renderSpectrumLegendModel(renderOptions), tooltip: [] };
+    this.models = { legend: this.renderSpectrumLegendModel(startColor, endColor), tooltip: [] };
 
     this.eventBus.on('renderSpectrumTooltip', this.renderSpectrumTooltip);
   }

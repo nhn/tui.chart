@@ -148,7 +148,7 @@ export interface BubbleSeriesData {
 
 export type PieSeriesType = {
   name: string;
-  data: number;
+  data: number | null;
   parentName?: string;
   rootParentName?: string;
   color?: string;
@@ -451,8 +451,8 @@ export interface ColumnChartOptions extends BaseOptions {
 
 export type BoxPlotSeriesType = {
   name: string;
-  data: number[][];
-  outliers?: number[][];
+  data: number[][] | null;
+  outliers?: number[][] | null;
   color?: string;
 };
 
@@ -481,7 +481,7 @@ export interface PieChartOptions extends BaseOptions {
 
 export type RadarSeriesType = {
   name: string;
-  data: number[];
+  data: Array<number | null>;
   color?: string;
 };
 
@@ -578,9 +578,9 @@ export interface BulletChartOptions extends BaseOptions {
 
 export type BulletSeriesType = {
   name: string;
-  data: number;
-  markers: number[];
-  ranges: RangeDataType<number>[];
+  data: number | null;
+  markers?: number[];
+  ranges?: Array<RangeDataType<number> | null>;
   color?: string;
 };
 

@@ -195,6 +195,28 @@ export const budgetData = {
   ],
 };
 
+export const budgetData2WithNull = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+  series: [
+    {
+      name: 'Budget',
+      data: [null, 3000, 5000, 7000, 6000, 4000],
+    },
+    {
+      name: 'Income',
+      data: [8000, 4000, null, 2000, 6000, 3000],
+    },
+    {
+      name: 'Expenses',
+      data: [4000, 4000, null, 3000, null, 5000],
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, null],
+    },
+  ],
+};
+
 export const budgetData2 = {
   categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
   series: [
@@ -1398,6 +1420,36 @@ export const genderAgeData = {
   ],
 };
 
+export const browserUsageDataWithNull = {
+  categories: ['Browser'],
+  series: [
+    {
+      name: 'Chrome',
+      data: 46.02,
+    },
+    {
+      name: 'IE',
+      data: null,
+    },
+    {
+      name: 'Firefox',
+      data: 17.71,
+    },
+    {
+      name: 'Safari',
+      data: 5.45,
+    },
+    {
+      name: 'Opera',
+      data: 3.1,
+    },
+    {
+      name: 'Etc',
+      data: 7.25,
+    },
+  ],
+};
+
 export const browserUsageData = {
   categories: ['Browser'],
   series: [
@@ -1424,6 +1476,31 @@ export const browserUsageData = {
     {
       name: 'Etc',
       data: 7.25,
+    },
+  ],
+};
+
+export const budgetDataForBoxPlotWithNull = {
+  categories: ['Budget', 'Income', 'Expenses', 'Debt'],
+  series: [
+    {
+      name: '2020',
+      data: [
+        [1000, 2500, 3714, 5500, 7000],
+        null,
+        [3000, 4000, 4714, 6000, 7000],
+        [1000, 2250, 3142, 4750, 6000],
+      ],
+      outliers: null,
+    },
+    {
+      name: '2021',
+      data: [
+        null,
+        [3000, 5750, 7571, 8250, 9000],
+        [5000, 8000, 8714, 9000, 10000],
+        [7000, 9250, 10142, 11750, 12000],
+      ],
     },
   ],
 };
@@ -1485,6 +1562,42 @@ export const budgetDataForBullet = {
       markers: [25],
       ranges: [
         [0, 10],
+        [10, 19],
+        [19, 28],
+      ],
+    },
+    {
+      name: 'Dept',
+      data: 23,
+      markers: [],
+      ranges: [
+        [19, 25],
+        [13, 19],
+        [0, 13],
+      ],
+    },
+  ],
+};
+
+export const budgetDataForBulletWithNull = {
+  series: [
+    {
+      name: 'Budget',
+      data: null,
+      markers: [28, 15],
+      ranges: [[-1, 5], [5, 10], [10, 15], [15, 20], [20, 25], null],
+    },
+    {
+      name: 'Income',
+      data: 0,
+      ranges: [[0, 10]],
+    },
+    {
+      name: 'Expenses',
+      data: 30,
+      markers: [0],
+      ranges: [
+        [-2, 10],
         [10, 19],
         [19, 28],
       ],
@@ -2083,6 +2196,126 @@ export const contributionsData = {
   ],
 };
 
+export const groupedBrowserUsageDataWithNull = {
+  categories: ['A', 'B'],
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          parentName: 'Chrome',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          parentName: 'Chrome',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          parentName: 'Safari',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          parentName: 'Safari',
+          data: 0,
+        },
+        {
+          name: 'IE 11',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 10',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 9',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 8',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox 13',
+          parentName: 'Firefox',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          parentName: 'Firefox',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          parentName: 'Opera',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          parentName: 'Opera',
+          data: 1,
+        },
+        {
+          name: 'Etc 1',
+          parentName: 'Etc',
+          data: 3,
+        },
+        {
+          name: 'Etc 2',
+          parentName: 'Etc',
+          data: 2,
+        },
+        {
+          name: 'Etc 3',
+          parentName: 'Etc',
+          data: 1,
+        },
+        {
+          name: 'Etc 4',
+          parentName: 'Etc',
+          data: 1,
+        },
+      ],
+    },
+  ],
+};
+
 export const groupedBrowserUsageData = {
   categories: ['A', 'B'],
   series: [
@@ -2268,6 +2501,97 @@ export const browserUsageData2 = {
         {
           name: 'IE 8',
           data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          data: 1,
+        },
+        {
+          name: 'Etc - 2020',
+          data: 7,
+        },
+      ],
+    },
+  ],
+};
+
+export const browserUsageData2WithNull = {
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox',
+          data: null,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          data: 0,
+        },
+        {
+          name: 'IE 11',
+          data: null,
+        },
+        {
+          name: 'IE 10',
+          data: null,
+        },
+        {
+          name: 'IE 9',
+          data: null,
+        },
+        {
+          name: 'IE 8',
+          data: null,
         },
         {
           name: 'Firefox 13',

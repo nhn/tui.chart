@@ -1,6 +1,6 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { getRadialRadiusValues } from '@src/helpers/radar';
+import { getRadialRadiusValues } from '@src/helpers/radarSeries';
 import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector';
 import { RectLabelModel } from '@t/components/axis';
 

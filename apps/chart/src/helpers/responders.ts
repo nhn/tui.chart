@@ -101,7 +101,7 @@ export function getNearestResponder(
   let result: CircleResponderModel[] = [];
 
   responders.forEach((responder) => {
-    const { x, y } = responder;
+    const { x, y, radius } = responder;
     const responderPoint = { x: x + rect.x, y: y + rect.y };
     const distance = getDistance(responderPoint, mousePosition);
 
@@ -109,7 +109,7 @@ export function getNearestResponder(
       minDistance = distance;
       result = [responder];
     } else if (minDistance === distance) {
-      if (result.length && result[0].radius > responder.radius) {
+      if (result.length && result[0].radius > radius) {
         result = [responder];
       } else {
         result.push(responder);
@@ -177,11 +177,7 @@ export function makeTooltipCircleMap(
 
 export function getDeepestNode(responders: TreemapRectResponderModel[]) {
   return responders.reduce<TreemapRectResponderModel[]>((acc, responder) => {
-    if (!acc.length) {
-      return [responder];
-    }
-
-    if (responder.depth > acc[0].depth) {
+    if (!acc.length || responder.depth > acc[0].depth) {
       return [responder];
     }
 
@@ -192,13 +188,9 @@ export function getDeepestNode(responders: TreemapRectResponderModel[]) {
 export function isClickSameNameResponder<
   T extends HeatmapRectResponderModel | BulletResponderModel
 >(responders: T[], selectedSeries?: T[]) {
-  let same = false;
-
-  if (responders.length && selectedSeries?.length) {
-    same = responders[0].name === selectedSeries[0].name;
-  }
-
-  return same;
+  return (
+    responders.length && selectedSeries?.length && responders[0].name === selectedSeries[0].name
+  );
 }
 
 export function isClickSameCircleResponder(
@@ -240,24 +232,18 @@ export function isClickSameLabelResponder(
   responders: TreemapRectResponderModel[],
   selectedSeries?: TreemapRectResponderModel[]
 ) {
-  let same = false;
-  if (responders.length && selectedSeries?.length) {
-    same = responders[0].label === selectedSeries[0].label;
-  }
-
-  return same;
+  return (
+    responders.length && selectedSeries?.length && responders[0].label === selectedSeries[0].label
+  );
 }
 
 export function isClickSameGroupedRectResponder(
   responders: RectResponderModel[],
   selectedSeries?: RectResponderModel[]
 ) {
-  let same = false;
-  if (responders.length && selectedSeries?.length) {
-    same = responders[0].index === selectedSeries[0].index;
-  }
-
-  return same;
+  return (
+    responders.length && selectedSeries?.length && responders[0].index === selectedSeries[0].index
+  );
 }
 
 export function isClickSameBoxPlotDataResponder(

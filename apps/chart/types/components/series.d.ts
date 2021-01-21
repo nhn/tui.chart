@@ -70,6 +70,7 @@ export type LinePointsModel = {
   name?: string;
   seriesIndex?: number;
   dashSegments?: number[];
+  distances?: number[];
 };
 
 export type AreaPointsModel = Omit<LinePointsModel, 'type'> & {
@@ -215,7 +216,8 @@ export type PolygonModel = {
 };
 
 export type RadarSeriesModels = {
-  polygon: PolygonModel[];
+  area: AreaPointsModel[];
+  line: LinePointsModel[];
   dot: CircleModel[];
 };
 
@@ -237,13 +239,14 @@ export type BoxPlotModel = {
   type: 'boxPlot';
   color: string;
   name: string;
-  rect: RectModel;
-  median: LineModel;
-  upperWhisker: LineModel;
-  lowerWhisker: LineModel;
-  minimum: LineModel;
-  maximum: LineModel;
+  rect: RectModel | null;
+  median: LineModel | null;
+  upperWhisker: LineModel | null;
+  lowerWhisker: LineModel | null;
+  minimum: LineModel | null;
+  maximum: LineModel | null;
   index?: number;
+  boxPlotDetection: { x: number; width: number };
 };
 
 export type BoxPlotResponderModel = {

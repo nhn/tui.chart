@@ -1,4 +1,4 @@
-import { isString, isUndefined, isNumber, includes, isNull } from '@src/helpers/utils';
+import { isString, isUndefined, isNumber, includes, isNull, range } from '@src/helpers/utils';
 import { DataToExport } from '@src/component/exportMenu';
 import {
   HeatmapCategoriesType,
@@ -61,9 +61,7 @@ function base64toBlob(base64String: string) {
       byteNumbers[i] = slice.charCodeAt(i);
     }
 
-    const byteArray = new window.Uint8Array(byteNumbers);
-
-    byteArrays.push(byteArray);
+    byteArrays.push(new window.Uint8Array(byteNumbers));
   }
 
   try {
@@ -129,20 +127,30 @@ function isNeedDataEncoding() {
   return !isMSSaveOrOpenBlobSupported && isDownloadAttributeSupported;
 }
 
-function makeBulletExportData({ series }: DataToExport): ExportData2DArray {
-  const rangesHeaders = ['Range 1', 'Range 2', 'Range 3'];
-  const markerHeaders = ['Marker 1', 'Marker 2', 'Marker 3'];
+function getBulletLongestArrayLength(arr: any[], field: string): number {
+  return arr.reduce(
+    (acc, cur, idx) => (!idx || acc < cur?.[field]?.length ? cur[field].length : acc),
+    0
+  );
+}
 
-  return series.bullet!.data.reduce<ExportData2DArray>(
+function makeBulletExportData({ series }: DataToExport): ExportData2DArray {
+  const seriesData = series.bullet!.data;
+  const markerCount = getBulletLongestArrayLength(seriesData, 'markers');
+  const rangeCount = getBulletLongestArrayLength(seriesData, 'ranges');
+  const rangesHeaders = range(0, rangeCount).map((idx) => `Range ${idx + 1}`);
+  const markerHeaders = range(0, markerCount).map((idx) => `Marker ${idx + 1}`);
+
+  return seriesData.reduce<ExportData2DArray>(
     (acc, { data, markers, name, ranges }) => {
       const rangeDatum = rangesHeaders.map((_, index) => {
-        const rangeData = ranges[index];
+        const rangeData = ranges?.[index];
 
         return rangeData ? `${rangeData[0]} ~ ${rangeData[1]}` : '';
       });
-      const markerDatum = markerHeaders.map((_, index) => markers[index] ?? '');
+      const markerDatum = markerHeaders.map((_, index) => markers?.[index] ?? '');
 
-      return [...acc, [name, data, ...rangeDatum, ...markerDatum]];
+      return [...acc, [name, data ?? '', ...rangeDatum, ...markerDatum]];
     },
     [['', 'Actual', ...rangesHeaders, ...markerHeaders]]
   );
@@ -204,8 +212,8 @@ function makeBoxPlotExportData(exportData: DataToExport): ExportData2DArray {
 
   return series.boxPlot!.data.reduce<ExportData2DArray>(
     (acc, { name, data, outliers }) => {
-      const values = data.map((rawData, index) => {
-        const outlierValue = outliers!.find((outlier) => outlier[0] === index)?.[1];
+      const values = (data ?? []).map((rawData, index) => {
+        const outlierValue = (outliers ?? []).find((outlier) => outlier[0] === index)?.[1];
         const value = outlierValue ? [...rawData, outlierValue] : [...rawData];
 
         return value.join();
@@ -223,11 +231,11 @@ function makePieExportData(exportData: DataToExport): ExportData2DArray {
 
   return (series.pie!.data as Array<PieSeriesType | NestedPieSeriesType>).reduce<ExportData2DArray>(
     (acc, { name, data }) => {
-      const values = isNumber(data)
-        ? [[name, data]]
-        : data.reduce((accel, value) => {
-            return [...accel, [value.name, value.data]];
-          }, [] as ExportData2DArray);
+      const values = Array.isArray(data)
+        ? (data ?? []).reduce<ExportData2DArray>((accNestedPieValue, value) => {
+            return [...accNestedPieValue, [value.name, value.data ?? '']];
+          }, [])
+        : [[name, data ?? '']];
 
       return [...acc, ...values];
     },

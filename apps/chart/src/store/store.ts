@@ -125,13 +125,6 @@ export default class Store<T extends Options> {
     if (param.observe) {
       forEach(param.observe, (item) => {
         this.observe(item);
-        // console.log(key, ' observer collect start', this.state.__ob__.d);
-        // this.observe((...args) => {
-        //   console.log('observe invoked', key);
-        //   item.call(this, ...args);
-        //   console.log('observe invoke end', key);
-        // });
-        // console.log(key, ' observer collect end', this.state.__ob__.d);
       });
     }
   }
