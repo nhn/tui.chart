@@ -167,6 +167,9 @@ export default class Tooltip extends Component {
   }
 
   render({ layout, options, theme }: ChartState<Options>) {
+    /* @TODO: option 으로 분리 */
+    // this.tooltipContainerEl.style.transition = 'transform 0.2s ease';
+
     this.rect = layout.plot;
     this.theme = theme.tooltip as Required<TooltipTheme>;
     this.templateFunc = options?.tooltip?.template ?? tooltipTemplates['default'];
