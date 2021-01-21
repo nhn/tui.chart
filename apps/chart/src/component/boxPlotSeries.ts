@@ -311,9 +311,8 @@ export default class BoxPlotSeries extends Component {
         borderWidth,
         useSeriesColor,
       } = dot as Required<BoxPlotDotTheme>;
-    
+
       (outliers ?? []).forEach((datum) => {
-      outliers.forEach((datum) => {
         const [dataIndex, value] = datum;
         const startX = this.getStartX(seriesIndex, dataIndex, renderOptions, seriesLength);
 
