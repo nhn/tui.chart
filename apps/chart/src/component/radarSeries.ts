@@ -19,6 +19,7 @@ import { RespondersThemeType } from '@src/helpers/responders';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { isNumber, isNull } from '@src/helpers/utils';
 import { message } from '@src/message';
+
 type RenderOptions = {
   categories: string[];
   centerX: number;
@@ -41,7 +42,14 @@ type RadarPointsData = {
   fillColor: string;
   lineColor: string;
   name: string;
+  data: number[];
 };
+
+interface RadarCircleModel extends CircleModel {
+  name: string;
+  value: number;
+  index: number;
+}
 
 export default class RadarSeries extends Component {
   models: RadarSeriesModels = { area: [], line: [], dot: [] };
@@ -96,30 +104,29 @@ export default class RadarSeries extends Component {
 
     if (!this.drawModels) {
       this.drawModels = {
-        area: this.models.area.map((m) => ({
-          ...m,
-          distances: m.distances?.map(() => 0),
-          points: m.points.map(() => ({ x: centerX, y: centerY })),
-        })),
-        line: this.models.line.map((m) => ({
-          ...m,
-          distances: m.distances?.map(() => 0),
-          points: m.points.map(() => ({ x: centerX, y: centerY })),
-        })),
-        dot: this.models.dot.map((m) => ({
-          ...m,
-          x: centerX,
-          y: centerY,
-        })),
+        area: this.initDrawModels<AreaPointsModel>('area', centerX, centerY),
+        line: this.initDrawModels<LinePointsModel>('line', centerX, centerY),
+        dot: this.models.dot.map((m) => ({ ...m, x: centerX, y: centerY })),
       };
     }
-
-    const tooltipDataArr = this.makeTooltipModel(radarData, categories);
+    const tooltipDataArr = this.makeTooltipModel(circleModel, categories);
 
     this.responders = circleModel.map((m, index) => ({
       ...m,
       data: tooltipDataArr[index],
       color: getRGBA(m.color, 1),
+    }));
+  }
+
+  initDrawModels<T extends AreaPointsModel | LinePointsModel>(
+    modelName: 'area' | 'line',
+    centerX: number,
+    centerY: number
+  ) {
+    return (this.models[modelName] as T[]).map((m) => ({
+      ...m,
+      distances: m.distances?.map(() => 0),
+      points: m.points.map(() => ({ x: centerX, y: centerY })),
     }));
   }
 
@@ -133,17 +140,28 @@ export default class RadarSeries extends Component {
     this.eventBus.emit('needDraw');
   };
 
-  makeTooltipModel(seriesData: RadarSeriesType[], categories: string[]): TooltipData[] {
+  makeTooltipModel(circleModel: RadarCircleModel[], categories: string[]): TooltipData[] {
+    return circleModel.map<TooltipData>(({ name, color, value, index }) => ({
+      label: name,
+      color,
+      value,
+      category: categories[index],
+    }));
+  }
+
+  makeTooltipModel2(seriesData: RadarSeriesType[], categories: string[]): TooltipData[] {
     return seriesData.flatMap(({ data, name, color }) =>
-      data.map(
-        (value, dataIndex) =>
-          ({
-            label: name,
-            color,
-            value,
-            category: categories[dataIndex],
-          } as TooltipData)
-      )
+      data
+        .filter((value) => !isNull(value))
+        .map(
+          (value, dataIndex) =>
+            ({
+              label: name,
+              color,
+              value,
+              category: categories[dataIndex],
+            } as TooltipData)
+        )
     );
   }
 
@@ -226,6 +244,7 @@ export default class RadarSeries extends Component {
       return {
         name,
         seriesColor,
+        data,
         ...radarPoints,
         ...this.getSeriesColor(showArea, seriesColor!, name),
       } as RadarPointsData;
@@ -258,11 +277,11 @@ export default class RadarSeries extends Component {
     }));
   }
 
-  renderDotModels(radarPointsData: RadarPointsData[]): CircleModel[] {
+  renderDotModels(radarPointsData: RadarPointsData[]): RadarCircleModel[] {
     const { radius, color: dotColor } = this.theme.dot as Required<DotTheme>;
-    const result: CircleModel[] = [];
+    const result: RadarCircleModel[] = [];
 
-    radarPointsData.forEach(({ linePoints, lineColor, name }, seriesIndex) =>
+    radarPointsData.forEach(({ linePoints, lineColor, name, data }, seriesIndex) =>
       linePoints.slice(0, linePoints.length - 1).forEach((point, index) => {
         if (!isNull(point)) {
           result.push({
@@ -274,6 +293,7 @@ export default class RadarSeries extends Component {
             name,
             seriesIndex,
             index,
+            value: data?.[index],
           });
         }
       })
