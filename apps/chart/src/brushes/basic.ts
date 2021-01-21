@@ -9,7 +9,7 @@ import {
 import { makeStyleObj, setLineDash, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
 
-export type CircleStyleName = 'default' | 'hover' | 'plot';
+export type CircleStyleName = 'default' | 'plot';
 export type RectStyleName = 'shadow';
 
 const circleStyle = {

@@ -308,7 +308,7 @@ export default class LineSeries extends Component {
           ...model,
           radius: hoverDotTheme.radius!,
           color: hoverDotTheme.color ?? getRGBA(color, 1),
-          style: ['default', 'hover'],
+          style: ['default'],
         });
       });
     });
@@ -388,12 +388,16 @@ export default class LineSeries extends Component {
   private getResponderSeriesWithTheme(models: CircleResponderModel[], type: RespondersThemeType) {
     const { radius, color, borderWidth, borderColor } = this.theme[type].dot as DotTheme;
 
-    return models.map((model) => ({
-      ...model,
-      radius,
-      color: color ?? model.color,
-      style: ['hover', { lineWidth: borderWidth, strokeStyle: borderColor }],
-    }));
+    return models.map((model) => {
+      const modelColor = color ?? model.color;
+
+      return {
+        ...model,
+        radius,
+        color: modelColor,
+        style: [{ lineWidth: borderWidth, strokeStyle: borderColor ?? getRGBA(modelColor, 0.5) }],
+      };
+    });
   }
 
   onClick({ responders, mousePosition }: MouseEventType) {

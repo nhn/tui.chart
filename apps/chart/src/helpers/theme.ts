@@ -4,7 +4,6 @@ import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
-export const DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS = DEFAULT_LINE_SERIES_DOT_RADIUS + 2;
 const DEFAULT_AREA_OPACITY = 0.3;
 const DEFAULT_AREA_SELECTED_SERIES_OPACITY = DEFAULT_AREA_OPACITY;
 const DEFAULT_AREA_UNSELECTED_SERIES_OPACITY = 0.06;
@@ -91,9 +90,8 @@ export const defaultSeriesTheme = {
   borderColor: '#ffffff',
   select: {
     dot: {
-      radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
-      borderWidth: 2,
-      borderColor: '#fff',
+      radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
+      borderWidth: DEFAULT_LINE_SERIES_DOT_RADIUS + 2,
     },
     areaOpacity: DEFAULT_AREA_SELECTED_SERIES_OPACITY,
     restSeries: {
@@ -102,9 +100,8 @@ export const defaultSeriesTheme = {
   },
   hover: {
     dot: {
-      radius: DEFAULT_LINE_SERIES_HOVER_DOT_RADIUS,
-      borderWidth: 2,
-      borderColor: '#fff',
+      radius: DEFAULT_LINE_SERIES_DOT_RADIUS,
+      borderWidth: DEFAULT_LINE_SERIES_DOT_RADIUS + 2,
     },
   },
   dot: {
@@ -299,12 +296,12 @@ function getSeriesTheme(
         select: {
           fillColor: 'rgba(255, 255, 255, 1)',
           borderWidth: 3,
-          size: 13,
+          size: 12,
         },
         hover: {
           fillColor: 'rgba(255, 255, 255, 1)',
           borderWidth: 3,
-          size: 13,
+          size: 12,
         },
       };
     case 'bubble':
@@ -325,15 +322,13 @@ function getSeriesTheme(
         hover: {
           dot: {
             radius: radarDefault.HOVER_DOT_RADIUS,
-            borderColor: '#ffffff',
-            borderWidth: 2,
+            borderWidth: radarDefault.HOVER_DOT_RADIUS + 1,
           },
         },
         select: {
           dot: {
             radius: radarDefault.HOVER_DOT_RADIUS,
-            borderColor: '#ffffff',
-            borderWidth: 2,
+            borderWidth: radarDefault.HOVER_DOT_RADIUS + 1,
           },
           restSeries: {
             areaOpacity: radarDefault.UNSELECTED_SERIES_OPACITY,
