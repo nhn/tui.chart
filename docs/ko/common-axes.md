@@ -75,7 +75,7 @@ const options = {
 
 ### rotatable
 
-x축에서 라벨을 표시할 때, 라벨과 다른 라벨이 겹치는 경우 자동으로 라벨을 회전한다. `label.rotatable`옵션을 `false`로 설정하면 라벨이 자동으로 회전하지 않는다.
+x축 라벨이 겹쳐질 경우 자동으로 라벨을 회전하는 옵션이다. `label.rotatable`옵션을 `false`로 설정하면 라벨이 자동으로 회전하지 않는다.
 
 * 기본값: `true`
 
