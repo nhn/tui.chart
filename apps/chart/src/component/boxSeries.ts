@@ -346,7 +346,11 @@ export default class BoxSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      const dataLabelData = seriesModels.map((data) => this.makeDataLabel(data, centerYAxis));
+      const dataLabelData = seriesModels.reduce<RectDataLabel[]>((acc, data) => {
+        return isRangeValue(data.value)
+          ? [...acc, ...this.makeDataLabelRangeData(data)]
+          : [...acc, this.makeDataLabel(data, centerYAxis)];
+      }, []);
 
       this.renderDataLabels(dataLabelData);
     }
@@ -724,13 +728,37 @@ export default class BoxSeries extends Component {
     return {
       ...rect,
       direction: this.getDataLabelDirection(rect, centerYAxis),
-      plot: {
-        x: 0,
-        y: 0,
-        size: this.getOffsetSize(),
-      },
+      plot: { x: 0, y: 0, size: this.getOffsetSize() },
       theme: omit(this.theme.dataLabels, 'stackTotal'),
     };
+  }
+
+  makeDataLabelRangeData(rect: RectModel): RectDataLabel[] {
+    return (rect.value as RangeDataType<number>).reduce<RectDataLabel[]>(
+      (acc, value, index) => [
+        ...acc,
+        {
+          ...rect,
+          value,
+          direction: this.getDataLabelRangeDataDirection(index % 2 === 0),
+          plot: { x: 0, y: 0, size: this.getOffsetSize() },
+          theme: omit(this.theme.dataLabels, 'stackTotal'),
+        },
+      ],
+      []
+    );
+  }
+
+  getDataLabelRangeDataDirection(isEven: boolean) {
+    let direction: RectDirection;
+
+    if (this.isBar) {
+      direction = isEven ? 'left' : 'right';
+    } else {
+      direction = isEven ? 'bottom' : 'top';
+    }
+
+    return direction;
   }
 
   getDataLabelDirection(
@@ -739,9 +767,7 @@ export default class BoxSeries extends Component {
   ): RectDirection {
     let direction: RectDirection;
 
-    if (isRangeValue(rect.value!)) {
-      direction = this.isBar ? 'right' : 'top';
-    } else if (this.isBar) {
+    if (this.isBar) {
       const basePos = centerYAxis ? this.leftBasePosition : this.basePosition;
       direction = rect.x < basePos ? 'left' : 'right';
     } else {
