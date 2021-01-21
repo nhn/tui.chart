@@ -478,7 +478,7 @@ export interface PieChartOptions extends BaseOptions {
 
 export type RadarSeriesType = {
   name: string;
-  data: number[];
+  data: Array<number | null>;
   color?: string;
 };
 
