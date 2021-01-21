@@ -142,7 +142,7 @@ export default class ScatterSeries extends Component {
       return [];
     }
 
-    const model = this.responders.find(
+    const model = this.models.series.find(
       ({ index, seriesIndex }) =>
         isNumber(index) &&
         isNumber(seriesIndex) &&
@@ -153,10 +153,7 @@ export default class ScatterSeries extends Component {
     return model ? [model] : [];
   }
 
-  private getResponderAppliedTheme(
-    closestModel: CircleResponderModel[],
-    type: RespondersThemeType
-  ) {
+  private getResponderAppliedTheme(closestModel: ScatterSeriesModel[], type: RespondersThemeType) {
     const { fillColor, size } = this.theme[type];
 
     return closestModel.map((m) =>

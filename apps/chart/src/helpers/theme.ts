@@ -295,12 +295,12 @@ function getSeriesTheme(
         fillColor: transparentColor,
         select: {
           fillColor: 'rgba(255, 255, 255, 1)',
-          borderWidth: 3,
+          borderWidth: 2.5,
           size: 12,
         },
         hover: {
           fillColor: 'rgba(255, 255, 255, 1)',
-          borderWidth: 3,
+          borderWidth: 2.5,
           size: 12,
         },
       };
