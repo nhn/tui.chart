@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/react-chart",
-  "version": "4.0.0-bata.3",
+  "version": "4.0.0-beta.3",
   "description": "TOAST UI Chart for React",
   "main": "dist/toastui-react-chart.js",
   "files": [
@@ -40,6 +40,6 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "@toast-ui/chart": "^4.0.0-bata.2"
+    "@toast-ui/chart": "^4.0.0-beta.3"
   }
 }
