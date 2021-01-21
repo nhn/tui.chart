@@ -27,7 +27,7 @@ import {
   getCoordinateYValue,
 } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
-import { pick, includes, isNumber, isUndefined, isNull } from '@src/helpers/utils';
+import { pick, includes, isNull } from '@src/helpers/utils';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import {
   getNearestResponder,

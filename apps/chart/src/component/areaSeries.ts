@@ -32,7 +32,6 @@ import {
   deepMergedCopy,
   getFirstValidValue,
   isNull,
-  isNumber,
   isUndefined,
   range,
   sum,
@@ -48,7 +47,7 @@ import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { PointDataLabel } from '@t/components/dataLabels';
 import { AreaChartSeriesTheme, DotTheme } from '@t/theme';
-import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
 import { isAvailableSelectSeries, isAvailableShowTooltipInfo } from '@src/helpers/validation';
 
