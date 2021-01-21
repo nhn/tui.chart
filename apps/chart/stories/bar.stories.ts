@@ -334,11 +334,3 @@ export const rotatable = () => {
 
   return el;
 };
-
-export const axisFormatter = () => {
-  const { el } = createChart(budgetData, {
-    xAxis: { formatter: (value) => `$${value}` },
-  });
-
-  return el;
-};

@@ -39,26 +39,6 @@ export const basic = () => {
   return el;
 };
 
-export const axisFormatter = () => {
-  const { el } = createChart(budgetData2, {
-    legend: {
-      visible: true,
-      align: 'bottom',
-    },
-    yAxis: {
-      label: {
-        interval: 2,
-        formatter: (value) => `$${value}`,
-      },
-      scale: {
-        stepSize: 1000,
-      },
-    },
-  });
-
-  return el;
-};
-
 export const basicWithNullData = () => {
   const { el } = createChart(budgetData2WithNull, {
     series: {

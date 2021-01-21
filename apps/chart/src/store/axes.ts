@@ -237,7 +237,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
     tickCount,
     tickDistance,
     ...initialAxisData,
-    ...getMaxLabelSize(valueLabels, getTitleFontString(theme.label)),
+    ...getMaxLabelSize(labels, getTitleFontString(theme.label)),
   };
 
   if (isNumber(zeroPosition)) {
@@ -273,7 +273,7 @@ function getRadialAxis(
     centerX: width / 2,
     centerY: height / 2,
     labelInterval,
-    ...getMaxLabelSize(valueLabels, getTitleFontString(theme.label)),
+    ...getMaxLabelSize(labels, getTitleFontString(theme.label)),
   };
 }
 
