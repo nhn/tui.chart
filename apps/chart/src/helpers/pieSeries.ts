@@ -2,7 +2,6 @@ import { getPercentageValue, isString, isNull } from './utils';
 import { Rect, PieSeriesType, NestedPieSeriesType, PieDataLabels } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
 import { RawSeries, OptionsWithDataLabels } from '@t/store/store';
-import Tooltip from '@src/component/tooltip';
 
 const DEFAULT_RADIUS_RATIO = 0.9;
 const semiCircleCenterYRatio = {
@@ -46,11 +45,23 @@ export function isSemiCircle(clockwise: boolean, startAngle: number, endAngle: n
   );
 }
 
-export function getDefaultRadius({ width, height }: Rect, isSemiCircular = false) {
-  return (
-    (isSemiCircular ? Math.min(width / 2, height) : Math.min(width, height) / 2) *
-    DEFAULT_RADIUS_RATIO
-  );
+export function getDefaultRadius(
+  { width, height }: Rect,
+  isSemiCircular = false,
+  maxDataLabelWidth = 0,
+  maxDataLabelHeight = 0
+) {
+  let result;
+
+  if (isSemiCircular) {
+    result = Math.min(width / 2, height) - maxDataLabelHeight;
+  } else if (width > height) {
+    result = height / 2 - maxDataLabelHeight;
+  } else {
+    result = width / 2 - maxDataLabelWidth;
+  }
+
+  return Math.max(result, 10);
 }
 
 export function getSemiCircleCenterY(rectHeight: number, clockwise: boolean) {

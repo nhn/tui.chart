@@ -1,5 +1,5 @@
 import Component from './component';
-import { PieChartOptions, PieSeriesType } from '@t/options';
+import { PieChartOptions, PieSeriesType, PieDataLabels } from '@t/options';
 import { ChartState } from '@t/store/store';
 import { SectorModel, PieSeriesModels, SectorResponderModel } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
@@ -9,7 +9,7 @@ import {
   withinRadian,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { getDataLabelsOptions } from '@src/helpers/dataLabels';
+import { getDataLabelsOptions, RADIUS_PADDING } from '@src/helpers/dataLabels';
 import {
   getTotalAngle,
   isSemiCircle,
@@ -20,11 +20,13 @@ import {
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
 import { calculateSizeWithPercentString, isNumber, isUndefined, isNull } from '@src/helpers/utils';
-import { PieChartSeriesTheme, SelectSectorStyle } from '@t/theme';
+import { PieChartSeriesTheme, SelectSectorStyle, PieDataLabelTheme } from '@t/theme';
 import { pick } from '@src/helpers/utils';
 import { RespondersThemeType } from '@src/helpers/responders';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
+import { getMaxLabelSize } from '@src/helpers/axes';
+import { getFont } from '@src/helpers/style';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -109,6 +111,52 @@ function getPieSeriesOpacityByDepth(
   return Number((depthAlpha ** (indexOfGroup + 1)).toFixed(2));
 }
 
+function getMaxDataLabelSize(
+  pieData: PieSeriesType[],
+  options: PieDataLabels,
+  theme: PieDataLabelTheme
+) {
+  const hasOuterPercentLabel = options.visible && options.anchor === 'outer';
+  const hasOuterPieSeriesNameLabel =
+    options.pieSeriesName?.visible && options.pieSeriesName?.anchor === 'outer';
+  let percentLabelWidth = 0;
+  let percentLabelHeight = 0;
+
+  if (hasOuterPercentLabel) {
+    const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(
+      ['00.00%'], // up to 5 digits
+      getFont(theme)
+    );
+
+    percentLabelWidth = maxLabelWidth;
+    percentLabelHeight = maxLabelHeight;
+  }
+
+  let seriesNameLabelWidth = 0;
+  let seriesNameLabelHeight = 0;
+
+  if (hasOuterPieSeriesNameLabel) {
+    const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(
+      pieData.map(({ name }) => name),
+      getFont(theme.pieSeriesName!)
+    );
+
+    seriesNameLabelWidth = maxLabelWidth;
+    seriesNameLabelHeight = maxLabelHeight;
+  }
+
+  const hasOuterLabel = hasOuterPercentLabel || hasOuterPieSeriesNameLabel;
+
+  return {
+    maxDataLabelWidth: hasOuterLabel
+      ? Math.max(percentLabelWidth, seriesNameLabelWidth) + RADIUS_PADDING
+      : 0,
+    maxDataLabelHeight: hasOuterLabel
+      ? Math.max(percentLabelHeight, seriesNameLabelHeight) + RADIUS_PADDING
+      : 0,
+  };
+}
+
 export default class PieSeries extends Component {
   models: PieSeriesModels = { series: [] };
 
@@ -182,6 +230,8 @@ export default class PieSeries extends Component {
 
     let seriesModel, tooltipDataModel;
 
+    const dataLabelsOptions = getDataLabelsOptions(options, this.alias);
+
     if (nestedPieSeries) {
       const { data } = nestedPieSeries[this.alias];
 
@@ -193,7 +243,12 @@ export default class PieSeries extends Component {
       tooltipDataModel = makePieTooltipData(data, categories?.[pieIndex]);
     } else {
       const pieData = series.pie?.data! as PieSeriesType[];
-      const renderOptions = this.makeRenderOptions(options);
+      const { maxDataLabelWidth, maxDataLabelHeight } = getMaxDataLabelSize(
+        pieData,
+        dataLabelsOptions,
+        this.theme.dataLabels
+      );
+      const renderOptions = this.makeRenderOptions(options, maxDataLabelWidth, maxDataLabelHeight);
 
       seriesModel = this.renderPieModel(pieData, renderOptions);
       tooltipDataModel = makePieTooltipData(pieData, categories?.[0]);
@@ -210,7 +265,7 @@ export default class PieSeries extends Component {
       };
     }
 
-    if (getDataLabelsOptions(options, this.alias).visible) {
+    if (dataLabelsOptions.visible) {
       const dataLabelData = seriesModel.map((m) => ({
         ...m,
         value: `${pieTooltipLabelFormatter(m.percentValue)}`,
@@ -284,7 +339,11 @@ export default class PieSeries extends Component {
     return options;
   }
 
-  makeRenderOptions(options: PieChartOptions): RenderOptions {
+  makeRenderOptions(
+    options: PieChartOptions,
+    maxDataLabelWidth = 0,
+    maxDataLabelHeight = 0
+  ): RenderOptions {
     const seriesOptions = options.series;
     const clockwise = seriesOptions?.clockwise ?? true;
     const startAngle = seriesOptions?.angleRange?.start ?? 0;
@@ -292,7 +351,13 @@ export default class PieSeries extends Component {
     const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
     const isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
     const { width, height } = this.rect;
-    const defaultRadius = getDefaultRadius(this.rect, isSemiCircular);
+
+    const defaultRadius = getDefaultRadius(
+      this.rect,
+      isSemiCircular,
+      maxDataLabelWidth,
+      maxDataLabelHeight
+    );
 
     const innerRadius = calculateSizeWithPercentString(
       defaultRadius,
