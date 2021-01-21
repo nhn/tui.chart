@@ -26,7 +26,6 @@ const chartState = {
   series: {
     pie: {
       data: seriesData.map((m, idx) => ({ ...m, color: colors[idx] })),
-      seriesCount: seriesData.length,
     },
   },
   options: {
@@ -280,6 +279,73 @@ describe('basic', () => {
     ];
 
     expect(pieSeries.models.series).toEqual(result);
+  });
+
+  it('shoule not make a model of null data', () => {
+    pieSeries.render(
+      deepMergedCopy(chartState, {
+        series: {
+          pie: {
+            data: [
+              { name: 'A', data: 50, color: '#cccccc' },
+              { name: 'B', data: null, color: '#dddddd' },
+              { name: 'C', data: 30, color: '#aaaaaa' },
+              { name: 'D', data: 20, color: '#bbbbbb' },
+            ],
+          },
+        },
+      })
+    );
+
+    const models = [
+      {
+        color: 'rgba(204, 204, 204, 1)',
+        name: 'A',
+        radius: { inner: 0, outer: 45 },
+        degree: { start: 0, end: 180 },
+        style: [{ lineWidth: 0, strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        type: 'sector',
+        value: 50,
+        x: 50,
+        y: 50,
+        clockwise: true,
+        drawingStartAngle: -90,
+        totalAngle: 360,
+        percentValue: 50,
+      },
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        name: 'C',
+        radius: { inner: 0, outer: 45 },
+        degree: { start: 180, end: 288 },
+        style: [{ lineWidth: 0, strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        type: 'sector',
+        value: 30,
+        x: 50,
+        y: 50,
+        clockwise: true,
+        drawingStartAngle: -90,
+        totalAngle: 360,
+        percentValue: 30,
+      },
+      {
+        color: 'rgba(187, 187, 187, 1)',
+        name: 'D',
+        radius: { inner: 0, outer: 45 },
+        degree: { start: 288, end: 360 },
+        style: [{ lineWidth: 0, strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        type: 'sector',
+        value: 20,
+        x: 50,
+        y: 50,
+        clockwise: true,
+        drawingStartAngle: -90,
+        totalAngle: 360,
+        percentValue: 20,
+      },
+    ];
+
+    expect(pieSeries.models.series).toEqual(models);
   });
 });
 

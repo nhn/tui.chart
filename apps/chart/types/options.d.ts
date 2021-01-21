@@ -148,7 +148,7 @@ export interface BubbleSeriesData {
 
 export type PieSeriesType = {
   name: string;
-  data: number;
+  data: number | null;
   parentName?: string;
   rootParentName?: string;
   color?: string;
