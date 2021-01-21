@@ -73,17 +73,15 @@ describe('theme store', () => {
               },
               hover: {
                 dot: {
-                  borderColor: '#fff',
-                  borderWidth: 2,
-                  radius: 5,
+                  borderWidth: 5,
+                  radius: 3,
                 },
               },
               lineWidth: 2,
               select: {
                 dot: {
-                  borderColor: '#fff',
-                  borderWidth: 2,
-                  radius: 5,
+                  borderWidth: 5,
+                  radius: 3,
                 },
               },
               dataLabels: {
@@ -201,7 +199,7 @@ describe('theme store', () => {
                 select: {
                   dot: {
                     borderColor: '#ddddd',
-                    borderWidth: 2,
+                    borderWidth: 5,
                     radius: 3,
                   },
                 },
@@ -345,7 +343,7 @@ describe('theme store', () => {
               select: {
                 dot: {
                   borderColor: '#ddddd',
-                  borderWidth: 2,
+                  borderWidth: 5,
                   radius: 3,
                 },
               },
@@ -518,17 +516,15 @@ describe('theme store', () => {
               },
               hover: {
                 dot: {
-                  borderColor: '#fff',
-                  borderWidth: 2,
-                  radius: 5,
+                  borderWidth: 5,
+                  radius: 3,
                 },
               },
               lineWidth: 2,
               select: {
                 dot: {
-                  borderColor: '#fff',
-                  borderWidth: 2,
-                  radius: 5,
+                  borderWidth: 5,
+                  radius: 3,
                 },
               },
               dataLabels: {
@@ -564,18 +560,16 @@ describe('theme store', () => {
               },
               hover: {
                 dot: {
-                  borderColor: '#fff',
-                  borderWidth: 2,
-                  radius: 5,
+                  borderWidth: 5,
+                  radius: 3,
                 },
               },
               lineWidth: 2,
               select: {
                 areaOpacity: 0.3,
                 dot: {
-                  borderColor: '#fff',
-                  borderWidth: 2,
-                  radius: 5,
+                  borderWidth: 5,
+                  radius: 3,
                 },
                 restSeries: {
                   areaOpacity: 0.06,
@@ -630,18 +624,16 @@ describe('theme store', () => {
             },
             hover: {
               dot: {
-                borderColor: '#fff',
-                borderWidth: 2,
-                radius: 5,
+                borderWidth: 5,
+                radius: 3,
               },
             },
             lineWidth: 2,
             select: {
               areaOpacity: 0.3,
               dot: {
-                borderColor: '#fff',
-                borderWidth: 2,
-                radius: 5,
+                borderWidth: 5,
+                radius: 3,
               },
               restSeries: {
                 areaOpacity: 0.06,
@@ -679,17 +671,15 @@ describe('theme store', () => {
             },
             hover: {
               dot: {
-                borderColor: '#fff',
-                borderWidth: 2,
-                radius: 5,
+                borderWidth: 5,
+                radius: 3,
               },
             },
             lineWidth: 2,
             select: {
               dot: {
-                borderColor: '#fff',
-                borderWidth: 2,
-                radius: 5,
+                borderWidth: 5,
+                radius: 3,
               },
             },
             dataLabels: {
@@ -763,18 +753,16 @@ describe('theme store', () => {
             },
             hover: {
               dot: {
-                borderColor: '#fff',
-                borderWidth: 2,
-                radius: 5,
+                borderWidth: 5,
+                radius: 3,
               },
             },
             lineWidth: 2,
             select: {
               areaOpacity: 0.1,
               dot: {
-                borderColor: '#fff',
-                borderWidth: 2,
-                radius: 5,
+                borderWidth: 5,
+                radius: 3,
               },
               restSeries: {
                 areaOpacity: 0.2,
@@ -812,17 +800,15 @@ describe('theme store', () => {
             },
             hover: {
               dot: {
-                borderColor: '#fff',
-                borderWidth: 2,
-                radius: 5,
+                borderWidth: 5,
+                radius: 3,
               },
             },
             lineWidth: 2,
             select: {
               dot: {
-                borderColor: '#fff',
-                borderWidth: 2,
-                radius: 5,
+                borderWidth: 5,
+                radius: 3,
               },
             },
             dataLabels: {
