@@ -59,14 +59,14 @@ const options = {
 
 ### Formatter
 
-The `tooltip.formatter` option can be used to format the data before the data is displayed. The formatter takes the formatting function that returns the formatted string as the parameter. The formatting function takes the values to be formatted as parameters. 
+The `tooltip.formatter` option can be used to format the data before the data is displayed. The formatting function takes the values and tooltip data information as parameters and returns the formatted string. 
 
 Let's write a simple example that compares the entered values and adds an emoji. 
 
 ```js
 const options = {
   tooltip: {
-    formatter: (value) => {
+    formatter: (value, tooltipDataInfo) => {
       const temp = Number(value);
       let icon = '☀️';
       if (temp < 0) {
@@ -74,6 +74,8 @@ const options = {
       } else if (temp > 25) {
         icon = '🔥';
       }
+
+      console.log(tooltipDataInfo); // { category: '08/01/2020', color: '#785fff', index: 7, seriesIndex: 4, value: -0.1, label: 'Jungfrau'}
 
       return `${icon} ${value} ℃`;
     },

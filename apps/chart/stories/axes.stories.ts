@@ -1,9 +1,18 @@
 import LineChart from '@src/charts/lineChart';
-import { LineSeriesData } from '@t/options';
+import {
+  HeatmapChartOptions,
+  HeatmapSeriesData,
+  LineSeriesData,
+  RadarChartOptions,
+  RadarSeriesData,
+} from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
-import { temperatureData } from './data';
+import { budgetData, budgetData2, temperatureAverageDataForHeatmap, temperatureData } from './data';
+import HeatmapChart from '@src/charts/heatmapChart';
+import BarChart from '@src/charts/barChart';
+import RadarChart from '@src/charts/radarChart';
 
 export default {
   title: 'chart|Axes',
@@ -37,29 +46,172 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
   return { el, chart };
 }
 
-export const formatter = () => {
+function createHeatmapChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions = {}) {
+  const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions);
+
+  el.style.outline = '1px solid red';
+  el.style.width = `${width}px`;
+  el.style.height = `${height}px`;
+
+  const chart = new HeatmapChart({ el, data, options });
+
+  return { el, chart };
+}
+
+function createBarChart(data, customOptions: Record<string, any> = {}) {
+  const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions);
+
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
+
+  const chart = new BarChart({ el, data, options });
+
+  return { el, chart };
+}
+
+function createRadarChart(data: RadarSeriesData, customOptions: RadarChartOptions = {}) {
+  const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions || {});
+
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
+
+  const chart = new RadarChart({ el, data, options });
+
+  return { el, chart };
+}
+
+export const normalAxesFormatter = () => {
   const { el } = createChart(temperatureData, {
     xAxis: {
-      formatter: (value) => {
-        const index = Number(value.split('-')[1]);
-        const animals = ['🐶', '🐱', '🦊', '🐻'];
+      label: {
+        formatter: (value) => {
+          const index = Number(value.split('-')[1]);
+          const animals = ['🐶', '🐱', '🦊', '🐻'];
 
-        return `${animals[index % animals.length]} ${value}`;
+          return `${animals[index % animals.length]} ${value}`;
+        },
       },
       date: {
         format: 'YY-MM-DD',
       },
     },
     yAxis: {
-      formatter: (value) => {
-        if (value < 0) {
-          return `${value} ❄️`;
-        }
-        if (value > 25) {
-          return `${value} 🔥`;
-        }
+      label: {
+        formatter: (value) => {
+          if (value < 0) {
+            return `${value} ❄️`;
+          }
+          if (value > 25) {
+            return `${value} 🔥`;
+          }
 
-        return `️${value} ☀️`;
+          return `️${value} ☀️`;
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const secondaryAxesFormatter = () => {
+  const { el } = createChart(temperatureData, {
+    xAxis: {
+      label: {
+        formatter: (value) => {
+          const index = Number(value.split('-')[1]);
+          const animals = ['🐶', '🐱', '🦊', '🐻'];
+
+          return `${animals[index % animals.length]} ${value}`;
+        },
+      },
+      date: {
+        format: 'YY-MM-DD',
+      },
+    },
+    yAxis: [
+      {
+        label: {
+          formatter: (value) => {
+            if (value < 0) {
+              return `${value} ❄️`;
+            }
+            if (value > 25) {
+              return `${value} 🔥`;
+            }
+
+            return `️${value} ☀️`;
+          },
+        },
+      },
+      {
+        scale: {
+          min: 0,
+          max: 100,
+        },
+        label: {
+          formatter: (value) => {
+            return `️${value} 😐`;
+          },
+        },
+      },
+    ],
+  });
+
+  return el;
+};
+
+export const heatmapAxesFormatter = () => {
+  const { el } = createHeatmapChart(temperatureAverageDataForHeatmap, {
+    xAxis: {
+      label: {
+        formatter: (value, axisLabelInfo) => {
+          const { index } = axisLabelInfo;
+          const animals = ['🐶', '🐱', '🦊', '🐻'];
+
+          return `${animals[index % animals.length]} ${value}`;
+        },
+      },
+    },
+    yAxis: {
+      label: {
+        formatter: (value, axisLabelInfo) => {
+          const { index } = axisLabelInfo;
+          const animals = ['👻', '😻', '🙋‍♂️', '🐉', '🔥'];
+
+          return `${animals[index % animals.length]} ${value}`;
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const barFormatter = () => {
+  const { el } = createBarChart(budgetData, {
+    xAxis: { label: { formatter: (value) => `😄${value}` } },
+  });
+
+  return el;
+};
+
+export const radarFormatter = () => {
+  const { el } = createRadarChart(budgetData2, {
+    legend: {
+      visible: true,
+      align: 'bottom',
+    },
+    yAxis: {
+      label: {
+        interval: 2,
+        formatter: (value) => `👻${value}`,
+      },
+      scale: {
+        stepSize: 1000,
       },
     },
   });

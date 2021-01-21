@@ -26,7 +26,14 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   const { categories, axisSize, options, theme } = stateProp;
   const isLabelAxis = axisType === AxisType.X;
   const axisName = isLabelAxis ? 'x' : 'y';
-  const labels = makeFormattedCategory(categories[axisName], options[axisType]?.date);
+  const formatter = options[axisType]?.label?.formatter ?? ((value) => value);
+  const labelsBeforeFormatting = makeFormattedCategory(
+    categories[axisName],
+    options[axisType]?.date
+  );
+  const labels = labelsBeforeFormatting.map((label, index) =>
+    formatter(label, { index, labels: labelsBeforeFormatting, axisName: axisType })
+  );
 
   const tickIntervalCount = labels.length;
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;

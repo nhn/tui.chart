@@ -6,11 +6,12 @@ import {
   TooltipTitleValues,
   TooltipDataValue,
   TooltipModelName,
+  TooltipData,
 } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
 import { isNumber } from '@src/helpers/utils';
-import { ValueFormatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
+import { SeriesDataType, TooltipTemplateFunc, TooltipFormatter } from '@t/options';
 import { TooltipTheme } from '@t/theme';
 
 type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
@@ -28,7 +29,7 @@ export default class Tooltip extends Component {
 
   offsetY!: number;
 
-  formatter?: ValueFormatter;
+  formatter?: TooltipFormatter;
 
   tooltipInfoModels: TooltipInfoModels = {} as TooltipInfoModels;
 
@@ -120,10 +121,10 @@ export default class Tooltip extends Component {
           value: Array.isArray(data.value)
             ? (data.value as TooltipTitleValues).map((titleValue) => ({
                 ...titleValue,
-                formattedValue: this.getFormattedValue(titleValue.value),
+                formattedValue: this.getFormattedValue(titleValue.value, data),
               }))
             : data.value,
-          formattedValue: this.getFormattedValue(data.value),
+          formattedValue: this.getFormattedValue(data.value, data),
         });
 
         if (!acc.category && data.category) {
@@ -176,7 +177,9 @@ export default class Tooltip extends Component {
     this.formatter = options?.tooltip?.formatter;
   }
 
-  getFormattedValue(value: TooltipDataValue) {
-    return this.formatter ? this.formatter(value as SeriesDataType) : getValueString(value);
+  getFormattedValue(value: TooltipDataValue, tooltipDataInfo: TooltipData) {
+    return this.formatter
+      ? this.formatter(value as SeriesDataType, tooltipDataInfo)
+      : getValueString(value);
   }
 }
