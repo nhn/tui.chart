@@ -222,6 +222,7 @@ interface BaseXAxisOptions extends BaseAxisOptions {
   date?: DateOption;
   label?: {
     interval?: number;
+    formatter?: AxisFormatter;
     rotatable?: boolean;
   };
 }

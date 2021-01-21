@@ -292,7 +292,7 @@ export const dataLabelsWithTheme = () => {
 
 export const axisFormatter = () => {
   const { el } = createChart(budgetData, {
-    yAxis: { formatter: (value) => `$${value}` },
+    yAxis: { label: { formatter: (value) => `$${value}` } },
   });
 
   return el;
