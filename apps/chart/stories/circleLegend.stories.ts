@@ -26,7 +26,6 @@ function createChart(data: BubbleSeriesData, customOptions?: BubbleChartOptions)
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
-  el.style.outline = '1px solid red';
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
 

@@ -24,7 +24,6 @@ function createChart(data: PieSeriesData, customOptions: PieChartOptions = {}) {
     customOptions || {}
   );
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
