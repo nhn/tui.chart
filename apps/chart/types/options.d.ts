@@ -281,6 +281,8 @@ interface BaseTooltipOptions {
   offsetX?: number;
   offsetY?: number;
   formatter?: TooltipFormatter;
+
+  transition: string | boolean;
 }
 
 export interface BaseOptions {
