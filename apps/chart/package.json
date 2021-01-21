@@ -1,8 +1,11 @@
 {
   "name": "@toast-ui/chart",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.4",
   "description": "TOAST UI Application: Chart",
   "main": "dist/toastui-chart.js",
+  "types": "types/index.d.ts",
+  "sideEffects": false,
+  "module": "dist/esm/",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
@@ -58,8 +61,6 @@
     },
     "./": "./"
   },
-  "types": "types/index.d.ts",
-  "sideEffects": false,
   "scripts": {
     "check-types": "tsc --project ./tsconfig.json",
     "validate": "npm run check-types && npm run lint",
@@ -67,10 +68,10 @@
     "test": "jest --detectOpenHandles --forceExit",
     "test:watch": "jest --watch",
     "test:ci": "npm run validate && jest",
-    "build": "npm run build:clean && npm run build:dev && npm run build:polyfill && npm run build:prod && npm run build:esm",
+    "build": "npm run build:clean && npm run build:prod && npm run build:polyfill && npm run build:minify && npm run build:esm",
     "build:clean": "rm -rf ./dist",
-    "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production --minify",
+    "build:prod": "webpack --mode=production",
+    "build:minify": "webpack --mode=production --minify",
     "build:polyfill": "webpack --mode=production --minify --polyfill",
     "build:esm": "ttsc -p tsconfig.esm.json",
     "build:storybook": "build-storybook",
