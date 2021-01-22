@@ -38,7 +38,7 @@ function createChart(data: AreaSeriesData, customOptions: AreaChartOptions = {})
 
 export const globalTheme = () => {
   const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature' } as BaseChartOptions,
+    chart: { title: 'Average Temperature', width: 'auto' } as BaseChartOptions,
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     theme: {
@@ -46,11 +46,9 @@ export const globalTheme = () => {
         fontFamily: 'Verdana',
         backgroundColor: 'rgba(9, 206, 115, 0.1)',
       },
-      /*
       title: {
         fontFamily: 'Comic Sans MS',
       },
-      */
     },
   });
 

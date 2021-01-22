@@ -54,7 +54,7 @@ export type ComponentType =
   | 'zeroAxis'
   | 'zoom'
   | 'backButton'
-  | 'chartBackground';
+  | 'background';
 
 type ComponentModels =
   | AxisModels

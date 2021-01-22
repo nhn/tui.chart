@@ -556,9 +556,10 @@ const layout: StoreModule = {
         chart,
         axes,
       } = state;
+      const { width, height } = chart;
       const chartSize = {
-        height: chart.height - padding.Y * 2,
-        width: chart.width - padding.X * 2,
+        height: height - padding.Y * 2,
+        width: width - padding.X * 2,
       };
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
       const hasAxis = !(series.pie || series.radar || series.treemap);
@@ -671,6 +672,7 @@ const layout: StoreModule = {
       const plot = getPlotRect(xAxis, yAxis, optionSize.plot);
 
       extend(state.layout, {
+        chart: { x: 0, y: 0, width, height },
         title,
         plot,
         legend,

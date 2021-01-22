@@ -9,12 +9,12 @@ export default class Background extends Component {
   theme!: Required<ChartTheme>;
 
   initialize() {
-    this.type = 'chartBackground';
-    this.name = 'chartBackground';
+    this.type = 'background';
+    this.name = 'background';
   }
 
-  render({ chart, theme }: ChartState<Options>) {
-    const { width, height } = chart;
+  render({ layout, theme }: ChartState<Options>) {
+    const { width, height } = layout.chart;
     this.theme = theme.chart as Required<ChartTheme>;
     this.rect = { x: 0, y: 0, width, height };
     this.models = [
