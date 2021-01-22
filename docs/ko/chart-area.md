@@ -1,6 +1,6 @@
 # Area 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -22,7 +22,7 @@ const chart = Chart.AreaChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
+`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
 
 ```js
 const data = {

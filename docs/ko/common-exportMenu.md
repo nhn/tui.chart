@@ -13,7 +13,7 @@ type ExportMenuOptions = {
 ```
 
 ### visible
-`exportMenu.filename` 옵션을 `false`로 설정하면 내보내기 메뉴 버튼이 차트에서 표시되지 않는다.
+`exportMenu.visible` 옵션을 `false`로 설정하면 내보내기 메뉴 버튼이 차트에서 표시되지 않는다.
 
 * 기본값: `true`
 

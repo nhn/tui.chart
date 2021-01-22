@@ -98,12 +98,11 @@ const options = {
 * Y축의 높이(`yAxis.height`)와 플롯의 높이(`plot.height`)를 모두 입력하면 둘 중에 최댓값으로 설정된다.
 
 ## 범례
-기본적으로 모든 차트에서 사용하는 `legend` 옵션으로 `maxWidth`, `width`를 제공한다. `width`를 지정하면 범례의 너비가 고정된다. `maxWidth`는 범례의 최대 너비를 지정한다.
+기본적으로 모든 차트에서 사용하는 `legend` 옵션은 범례의 너비를 지정하기 위해 `width` 옵션을 제공한다. `width`를 지정하면 범례의 너비가 고정된다.
 
 ```ts
 type LegendOptions = {
   ...
-  maxWidth?: number;
   width?: number;
 };
 ```

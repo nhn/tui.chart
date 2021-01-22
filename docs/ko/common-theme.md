@@ -18,9 +18,15 @@ type Theme = {
 }
 ```
 
-## 차트 전역 폰트 설정
+## 차트 전역 테마
 
-`theme.chart`옵션은 차트 전역에서 사용할 폰트를 설정한다. 제목, 축에 사용되는 라벨 폰트, 제목 폰트, 범례 폰트 등이 이 폰트로 설정된다.
+`theme.chart`옵션은 차트 전역에서 사용할 스타일을 설정할 수 있다. `theme.chart.fontFamily`를 지정하면 제목, 축에 사용되는 라벨 폰트, 제목 폰트, 범례 폰트 등이 이 폰트로 기본 설정되며, `theme.chart.backgroundColor` 옵션을 사용하면 차트의 배경색을 설정할 수 있다.
+
+### fontFamily
+* 기본값: `'Arial'`
+
+### backgroundColor
+* 기본값: `#ffffff`
 
 ```ts
 type ChartTheme = {
@@ -33,16 +39,14 @@ type ChartTheme = {
 const options = {
   theme: {
     chart: {
-      fontFamily: 'Impact'
-      backgroundColor: 'rgba(253, 151, 2, 0.34)';
+      fontFamily: 'Verdana',
+      backgroundColor: 'rgba(9, 206, 115, 0.1)',
     }
   }
 };
 ```
 
-* ⚠️ 개발 후 이미지 업로드 필요 ⚠️
-
-![image]()
+![image](https://user-images.githubusercontent.com/43128697/105469247-47f89a00-5cdb-11eb-9760-8141226604ff.png)
 
 ## 차트 제목 테마
 

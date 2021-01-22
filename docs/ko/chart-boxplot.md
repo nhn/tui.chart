@@ -1,6 +1,6 @@
 # BoxPlot 차트
 
-> 차트별로 사용할 수 있는 API에 대한 정보는 이 가이드에서 다루지 않는다. [API](./common-api.md) 가이드를 참고한다.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -22,7 +22,7 @@ const chart = Chart.boxPlotChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력한다. 필요에 따라 `outlier` 데이터를 입력한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
+`categories` 값은 x축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. 필요에 따라 `outlier` 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -134,7 +134,7 @@ const options = {
 | 타입 | 설명 |
 | --- | --- |
 | `point` | 현재 마우스가 가리키고 있는 포인트를 기준으로 단 한 개만 탐지됨 |
-| `grouped` | Y축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
+| `grouped` | X축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
 
 * 기본값: `point`
 

@@ -1,6 +1,6 @@
 # Bar 차트
 
-> 차트별로 사용할 수 있는 API에 대한 정보는 이 가이드에서 다루지 않는다. [API](./common-api.md) 가이드를 참고한다.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -22,7 +22,7 @@ const chart = Chart.barChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 y축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
+`categories` 값은 y축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -101,7 +101,7 @@ const data = {
 ![image](https://user-images.githubusercontent.com/43128697/102580628-423ef000-4142-11eb-8fa9-bd88546d40d6.png)
 
 ## 그룹형 스택 차트
-`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 시리즈 데이터에 `stackGroup` 속성을 추가하면, 같은 stackGroup끼리 쌓인다.
+`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 시리즈 데이터에 `stackGroup` 속성을 추가하면, 같은 `stackGroup`끼리 쌓인다.
 
 ```js
 const data = {
@@ -220,7 +220,7 @@ type options = {
 
 ### stack
 
-`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 스택 차트는 `'normal'` 타입과 `'percent'` 타입이 존재한다. 필요에 따라 `stack.connector` 옵션을 설정하여 연결선을 표시할 수 있다.
+`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 스택 차트는 `'normal'` 타입과 `'percent'` 타입이 존재한다. `stack.connector` 옵션을 설정하면 카테고리 별 같은 시리즈에 대해 선을 이어 표현할 수 있다.
 
 ### normal 타입
 `series.stack`을 `true`로 설정하는 것은 `stack.type`을 `'normal'` 타입으로 설정한 것과 같다.
@@ -262,7 +262,7 @@ const options = {
 
 ### percent 타입
 
-`stack.type`을 `'percent'`로 설정하면 값의 합을 백분율로 계산해 스택 차트를 만든다.
+`stack.type`을 `'percent'`로 설정하면 값의 합을 백분율로 계산하는 스택 차트를 만들 수 있다.
 
 ```js
 const options = {

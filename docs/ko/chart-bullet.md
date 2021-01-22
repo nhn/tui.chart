@@ -1,6 +1,6 @@
 # Bullet 차트
 
-> 차트별로 사용할 수 있는 API에 대한 정보는 이 가이드에서 다루지 않는다. [API](./common-api.md) 가이드를 참고한다.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -22,7 +22,7 @@ const chart = Chart.bulletChart({el, data, options});
 
 ### 데이터 타입
 
-`series` 값은 `name`, `data`, `markers`, `ranges`가 모두 작성된 데이터를 입력한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
+`series` 값은 `name`, `data`, `markers`, `ranges`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -173,7 +173,7 @@ const options = {
 | 타입 | 설명 |
 | --- | --- |
 | `point` | 개별 시리즈 영역에 마우스가 다가가야 탐지. 현재 마우스가 가리키고 있는 포인트를 기준으로 단 한 개만 탐지됨 |
-| `grouped` | Y축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
+| `grouped` | X축(`vertical: true`옵션과 함께 사용할 경우 Y축)을 기준으로 값이 같은 모든 데이터가 탐지됨 |
 
 * 기본값: `point`
 
