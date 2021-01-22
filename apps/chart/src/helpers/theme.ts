@@ -38,7 +38,7 @@ const boxplotDefault = {
 };
 
 export const DEFAULT_BULLET_RANGE_OPACITY = [0.5, 0.3, 0.1];
-const DEFAULT_PIE_LINE_WIDTH = 5;
+const DEFAULT_PIE_LINE_WIDTH = 3;
 
 const DEFAULT_DATA_LABEL = {
   fontFamily: 'Arial',

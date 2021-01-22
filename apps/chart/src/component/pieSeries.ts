@@ -1,5 +1,5 @@
 import Component from './component';
-import { PieChartOptions, PieSeriesType } from '@t/options';
+import { PieChartOptions, PieSeriesType, PieDataLabels } from '@t/options';
 import { ChartState } from '@t/store/store';
 import { SectorModel, PieSeriesModels, SectorResponderModel } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
@@ -9,7 +9,7 @@ import {
   withinRadian,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
-import { getDataLabelsOptions } from '@src/helpers/dataLabels';
+import { getDataLabelsOptions, RADIUS_PADDING } from '@src/helpers/dataLabels';
 import {
   getTotalAngle,
   isSemiCircle,
@@ -19,12 +19,20 @@ import {
   pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
 import { RadiusRange } from '@t/components/tooltip';
-import { calculateSizeWithPercentString, isNumber, isUndefined, isNull } from '@src/helpers/utils';
-import { PieChartSeriesTheme, SelectSectorStyle } from '@t/theme';
+import {
+  calculateSizeWithPercentString,
+  isNumber,
+  isUndefined,
+  isNull,
+  last,
+} from '@src/helpers/utils';
+import { PieChartSeriesTheme, SelectSectorStyle, PieDataLabelTheme } from '@t/theme';
 import { pick } from '@src/helpers/utils';
 import { RespondersThemeType } from '@src/helpers/responders';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
+import { getMaxLabelSize } from '@src/helpers/axes';
+import { getFont } from '@src/helpers/style';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -55,6 +63,11 @@ type CalculatedRadiusRangeParam = {
   innerRadius?: number;
 };
 
+type MaxPieDataLabelSize = {
+  width: number;
+  height: number;
+};
+
 function getCalculatedRadiusRange({
   alias,
   renderOptions,
@@ -65,7 +78,6 @@ function getCalculatedRadiusRange({
 }: CalculatedRadiusRangeParam) {
   const radiusRangeLength = Object.keys(radiusRangeMap).length;
   const { defaultRadius = 0 } = renderOptions;
-
   let { inner, outer } = renderOptions.radiusRange;
 
   if (!radiusRangeMap[alias]) {
@@ -107,6 +119,44 @@ function getPieSeriesOpacityByDepth(
   const depthAlpha = Number((originAlpha * brightness ** depth).toFixed(2));
 
   return Number((depthAlpha ** (indexOfGroup + 1)).toFixed(2));
+}
+
+function getMaxDataLabelSize(
+  seriesNameLabels: string[],
+  options: PieDataLabels,
+  dataLabelTheme: PieDataLabelTheme
+): MaxPieDataLabelSize {
+  const outerLabels = [
+    {
+      hasOuterLabel: options.visible && options.anchor === 'outer',
+      labels: ['00.00%'], // up to 5 digits
+      theme: dataLabelTheme,
+    },
+    {
+      hasOuterLabel: options.pieSeriesName?.visible && options.pieSeriesName?.anchor === 'outer',
+      labels: seriesNameLabels,
+      theme: dataLabelTheme.pieSeriesName!,
+    },
+  ];
+
+  return outerLabels.reduce(
+    (acc, cur) => {
+      const { width, height } = acc;
+      const { hasOuterLabel, labels, theme } = cur;
+
+      if (hasOuterLabel) {
+        const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(labels, getFont(theme));
+
+        return {
+          width: Math.max(maxLabelWidth + RADIUS_PADDING, width),
+          height: Math.max(maxLabelHeight + RADIUS_PADDING, height),
+        };
+      }
+
+      return acc;
+    },
+    { width: 0, height: 0 }
+  );
 }
 
 export default class PieSeries extends Component {
@@ -182,18 +232,35 @@ export default class PieSeries extends Component {
 
     let seriesModel, tooltipDataModel;
 
+    const dataLabelsOptions = getDataLabelsOptions(options, this.alias);
+
     if (nestedPieSeries) {
       const { data } = nestedPieSeries[this.alias];
 
       const pieAlias = Object.keys(nestedPieSeries);
       const pieIndex = pieAlias.findIndex((alias) => alias === this.alias);
-      const renderOptionsMap = this.getRenderOptionsMap(options, pieAlias);
+
+      // check the data label of the last Pie series
+      const lastAlias = last<string>(pieAlias)!;
+      const lastSeries = nestedPieSeries[lastAlias];
+      const maxPieDataLabelSize = getMaxDataLabelSize(
+        lastSeries.data.map(({ name }) => name),
+        getDataLabelsOptions(options, lastAlias),
+        this.theme.dataLabels
+      );
+
+      const renderOptionsMap = this.getRenderOptionsMap(options, pieAlias, maxPieDataLabelSize);
 
       seriesModel = this.renderPieModel(data, renderOptionsMap[this.alias], pieIndex);
       tooltipDataModel = makePieTooltipData(data, categories?.[pieIndex]);
     } else {
       const pieData = series.pie?.data! as PieSeriesType[];
-      const renderOptions = this.makeRenderOptions(options);
+      const { width, height } = getMaxDataLabelSize(
+        pieData.map(({ name }) => name),
+        dataLabelsOptions,
+        this.theme.dataLabels
+      );
+      const renderOptions = this.makeRenderOptions(options, width, height);
 
       seriesModel = this.renderPieModel(pieData, renderOptions);
       tooltipDataModel = makePieTooltipData(pieData, categories?.[0]);
@@ -210,7 +277,7 @@ export default class PieSeries extends Component {
       };
     }
 
-    if (getDataLabelsOptions(options, this.alias).visible) {
+    if (dataLabelsOptions.visible) {
       const dataLabelData = seriesModel.map((m) => ({
         ...m,
         value: `${pieTooltipLabelFormatter(m.percentValue)}`,
@@ -241,8 +308,12 @@ export default class PieSeries extends Component {
     }, {} as RadiusRangeMap);
   }
 
-  getRenderOptionsMap(options: PieChartOptions, pieAlias: string[]) {
-    const renderOptionsMap = this.initRenderOptionsMap(options, pieAlias);
+  getRenderOptionsMap(
+    options: PieChartOptions,
+    pieAlias: string[],
+    maxPieDataLabelSize: MaxPieDataLabelSize
+  ) {
+    const renderOptionsMap = this.initRenderOptionsMap(options, pieAlias, maxPieDataLabelSize);
     const radiusRangeMap = this.getRadiusRangeMap(options, pieAlias);
 
     pieAlias.forEach((alias, pieIndex) => {
@@ -261,11 +332,15 @@ export default class PieSeries extends Component {
     return renderOptionsMap;
   }
 
-  initRenderOptionsMap(options: PieChartOptions, pieAlias: string[]) {
+  initRenderOptionsMap(
+    options: PieChartOptions,
+    pieAlias: string[],
+    { width, height }: MaxPieDataLabelSize
+  ) {
     return pieAlias.reduce<RenderOptionsMap>(
       (acc, alias) => ({
         ...acc,
-        [alias]: this.makeRenderOptions(this.getOptions(options, alias)),
+        [alias]: this.makeRenderOptions(this.getOptions(options, alias), width, height),
       }),
       {} as RenderOptionsMap
     );
@@ -284,7 +359,11 @@ export default class PieSeries extends Component {
     return options;
   }
 
-  makeRenderOptions(options: PieChartOptions): RenderOptions {
+  makeRenderOptions(
+    options: PieChartOptions,
+    maxDataLabelWidth = 0,
+    maxDataLabelHeight = 0
+  ): RenderOptions {
     const seriesOptions = options.series;
     const clockwise = seriesOptions?.clockwise ?? true;
     const startAngle = seriesOptions?.angleRange?.start ?? 0;
@@ -292,7 +371,13 @@ export default class PieSeries extends Component {
     const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
     const isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
     const { width, height } = this.rect;
-    const defaultRadius = getDefaultRadius(this.rect, isSemiCircular);
+
+    const defaultRadius = getDefaultRadius(
+      this.rect,
+      isSemiCircular,
+      maxDataLabelWidth,
+      maxDataLabelHeight
+    );
 
     const innerRadius = calculateSizeWithPercentString(
       defaultRadius,

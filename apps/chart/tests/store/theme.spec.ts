@@ -1004,7 +1004,7 @@ describe('theme store', () => {
                 areaOpacity: 1,
                 colors: ['#00a9ff', '#ffb840'],
                 hover: {
-                  lineWidth: 5,
+                  lineWidth: 3,
                   shadowBlur: 5,
                   shadowColor: '#cccccc',
                   shadowOffsetX: 0,
@@ -1014,7 +1014,7 @@ describe('theme store', () => {
                 lineWidth: 1,
                 select: {
                   areaOpacity: 1,
-                  lineWidth: 5,
+                  lineWidth: 3,
                   restSeries: {
                     areaOpacity: 0.3,
                   },
@@ -1069,7 +1069,7 @@ describe('theme store', () => {
                 areaOpacity: 1,
                 colors: ['#ff5a46', '#00bd9f', '#785fff'],
                 hover: {
-                  lineWidth: 5,
+                  lineWidth: 3,
                   shadowBlur: 5,
                   shadowColor: '#cccccc',
                   shadowOffsetX: 0,
@@ -1079,7 +1079,7 @@ describe('theme store', () => {
                 lineWidth: 1,
                 select: {
                   areaOpacity: 1,
-                  lineWidth: 5,
+                  lineWidth: 3,
                   restSeries: {
                     areaOpacity: 0.3,
                   },
@@ -1153,7 +1153,7 @@ describe('theme store', () => {
               areaOpacity: 1,
               colors: ['#aaaaaa', '#bbbbbb'],
               hover: {
-                lineWidth: 5,
+                lineWidth: 3,
                 shadowBlur: 5,
                 shadowColor: '#cccccc',
                 shadowOffsetX: 0,
@@ -1163,7 +1163,7 @@ describe('theme store', () => {
               lineWidth: 1,
               select: {
                 areaOpacity: 1,
-                lineWidth: 5,
+                lineWidth: 3,
                 restSeries: {
                   areaOpacity: 0.3,
                 },
@@ -1218,7 +1218,7 @@ describe('theme store', () => {
               areaOpacity: 1,
               colors: ['#cccccc', '#dddddd', '#eeeeee'],
               hover: {
-                lineWidth: 5,
+                lineWidth: 3,
                 shadowBlur: 5,
                 shadowColor: '#cccccc',
                 shadowOffsetX: 0,
@@ -1228,7 +1228,7 @@ describe('theme store', () => {
               lineWidth: 1,
               select: {
                 areaOpacity: 1,
-                lineWidth: 5,
+                lineWidth: 3,
                 restSeries: {
                   areaOpacity: 0.3,
                 },
@@ -1306,7 +1306,7 @@ describe('theme store', () => {
               areaOpacity: 1,
               colors: ['#aaaaaa', '#bbbbbb'],
               hover: {
-                lineWidth: 5,
+                lineWidth: 3,
                 shadowBlur: 5,
                 shadowColor: '#cccccc',
                 shadowOffsetX: 0,
@@ -1316,7 +1316,7 @@ describe('theme store', () => {
               lineWidth: 1,
               select: {
                 areaOpacity: 1,
-                lineWidth: 5,
+                lineWidth: 3,
                 restSeries: {
                   areaOpacity: 0.3,
                 },
@@ -1371,7 +1371,7 @@ describe('theme store', () => {
               areaOpacity: 1,
               colors: ['#cccccc', '#dddddd', '#eeeeee'],
               hover: {
-                lineWidth: 5,
+                lineWidth: 3,
                 shadowBlur: 5,
                 shadowColor: '#cccccc',
                 shadowOffsetX: 0,
@@ -1381,7 +1381,7 @@ describe('theme store', () => {
               lineWidth: 1,
               select: {
                 areaOpacity: 1,
-                lineWidth: 5,
+                lineWidth: 3,
                 restSeries: {
                   areaOpacity: 0.3,
                 },
