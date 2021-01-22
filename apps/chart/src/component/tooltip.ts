@@ -180,7 +180,7 @@ export default class Tooltip extends Component {
   private setTooltipTransition(options: Options) {
     const transition = options.tooltip?.transition;
 
-    if (isUndefined(transition) || (isBoolean(transition) && transition)) {
+    if (isBoolean(transition) && transition) {
       this.tooltipContainerEl.style.transition = DEFAULT_TOOLTIP_TRANSITION;
     } else if (isString(transition)) {
       this.tooltipContainerEl.style.transition = transition;
