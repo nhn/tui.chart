@@ -13,6 +13,7 @@ import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate'
 import { isBoolean, isNumber, isString, isUndefined } from '@src/helpers/utils';
 import { SeriesDataType, TooltipTemplateFunc, TooltipFormatter } from '@t/options';
 import { TooltipTheme } from '@t/theme';
+import { getTranslateString } from '@src/helpers/style';
 
 type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
 
@@ -90,7 +91,7 @@ export default class Tooltip extends Component {
   setTooltipPosition(model: TooltipModel) {
     const { top, left } = this.chartEl.getBoundingClientRect();
     const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.transform = `translate(${left + x}px,${top + y}px)`;
+    this.tooltipContainerEl.style.transform = getTranslateString(left + x, top + y);
   }
 
   getTooltipInfoModels() {
@@ -160,6 +161,13 @@ export default class Tooltip extends Component {
 
     this.tooltipContainerEl = document.createElement('div');
     this.tooltipContainerEl.classList.add('tooltip-container');
+
+    const { width, height, top, left } = this.chartEl.getBoundingClientRect();
+    this.tooltipContainerEl.style.transform = getTranslateString(
+      left + width / 2,
+      top + height / 2
+    );
+
     this.chartEl.appendChild(this.tooltipContainerEl);
 
     this.eventBus.on('seriesPointHovered', this.onSeriesPointHovered);
