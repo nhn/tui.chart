@@ -14,7 +14,7 @@ type Observer = {
 };
 
 let currentCollectorObserver: Observer | Function | null = null;
-let currentRunningObserver: Function | null = null;
+let currentRunningObserver: Observer | null = null;
 const observerCallCue: Observer[] = [];
 let doingInvisibleWork = false;
 
