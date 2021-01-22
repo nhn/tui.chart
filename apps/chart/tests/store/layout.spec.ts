@@ -8,6 +8,7 @@ import {
 import Store from '@src/store/store';
 
 const props = [
+  'chart',
   'exportMenu',
   'title',
   'yAxisTitle',
@@ -74,6 +75,7 @@ describe('default layout', () => {
   layout.action!.setLayout(store);
 
   const result = {
+    chart: { x: 0, y: 0, width: 200, height: 200 },
     exportMenu: { height: 0, width: 0, x: 190, y: 15 },
     title: { x: 10, y: 15, width: 0, height: 0 },
     yAxisTitle: { width: 160, height: 0, x: 10, y: 15 },

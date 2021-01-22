@@ -17,6 +17,7 @@ describe('theme store', () => {
         expect(state.theme).toEqual({
           chart: {
             fontFamily: 'Arial',
+            backgroundColor: '#ffffff',
           },
           title: {
             fontSize: 18,
@@ -136,7 +137,7 @@ describe('theme store', () => {
             horizontal: {
               lineColor: 'rgba(0, 0, 0, 0.05)',
             },
-            backgroundColor: '#ffffff',
+            backgroundColor: 'rgba(255, 255, 255, 0)',
           },
           exportMenu: {
             button: {
@@ -168,6 +169,184 @@ describe('theme store', () => {
               },
               body: {
                 fontFamily: 'Arial',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#ffffff',
+              },
+            },
+          },
+        });
+      });
+
+      it('should set global theme options, If the chart theme option is entered', () => {
+        const state = (theme.state as StateFunc)({
+          options: {
+            theme: {
+              chart: {
+                fontFamily: 'Verdana',
+                backgroundColor: '#aaaaaa',
+              },
+            },
+          },
+          series,
+        });
+
+        expect(state.theme).toEqual({
+          chart: {
+            fontFamily: 'Verdana',
+            backgroundColor: '#aaaaaa',
+          },
+          title: {
+            fontSize: 18,
+            fontFamily: 'Verdana',
+            fontWeight: 100,
+            color: '#333333',
+          },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Verdana',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Verdana',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          xAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Verdana',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Verdana',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+            width: 1,
+            color: '#333333',
+          },
+          legend: {
+            label: {
+              fontSize: 11,
+              fontFamily: 'Verdana',
+              fontWeight: 'normal',
+              color: '#333333',
+            },
+          },
+          series: {
+            line: {
+              colors: ['#00a9ff', '#ffb840'],
+              dashSegments: [],
+              dot: {
+                radius: 3,
+              },
+              hover: {
+                dot: {
+                  borderWidth: 5,
+                  radius: 3,
+                },
+              },
+              lineWidth: 2,
+              select: {
+                dot: {
+                  borderWidth: 5,
+                  radius: 3,
+                },
+              },
+              dataLabels: {
+                color: '#333333',
+                fontFamily: 'Verdana',
+                fontSize: 11,
+                fontWeight: 400,
+                textBubble: {
+                  arrow: {
+                    visible: false,
+                    height: 6,
+                    width: 8,
+                    direction: 'bottom',
+                  },
+                  backgroundColor: '#ffffff',
+                  borderRadius: 7,
+                  paddingX: 5,
+                  paddingY: 1,
+                  shadowBlur: 4,
+                  shadowColor: 'rgba(0, 0, 0, 0.3)',
+                  shadowOffsetY: 2,
+                  visible: false,
+                },
+                useSeriesColor: false,
+              },
+            },
+          },
+          tooltip: {
+            background: 'rgba(85, 85, 85, 0.95)',
+            borderColor: 'rgba(255, 255, 255, 0)',
+            borderWidth: 0,
+            borderRadius: 3,
+            borderStyle: 'solid',
+            body: {
+              fontSize: 12,
+              fontFamily: 'Verdana, sans-serif',
+              fontWeight: 'normal',
+              color: '#ffffff',
+            },
+            header: {
+              fontSize: 13,
+              fontFamily: 'Verdana, sans-serif',
+              fontWeight: 'bold',
+              color: '#ffffff',
+            },
+          },
+          plot: {
+            lineColor: 'rgba(0, 0, 0, 0.05)',
+            vertical: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            horizontal: {
+              lineColor: 'rgba(0, 0, 0, 0.05)',
+            },
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+          },
+          exportMenu: {
+            button: {
+              backgroundColor: '#f4f4f4',
+              borderColor: '#f4f4f4',
+              borderRadius: 5,
+              borderWidth: 1,
+              xIcon: {
+                color: '#555555',
+                lineWidth: 2,
+              },
+              dotIcon: {
+                color: '#555555',
+                gap: 2,
+                height: 2,
+                width: 2,
+              },
+            },
+            panel: {
+              borderWidth: 1,
+              borderRadius: 0,
+              borderColor: '#bab9ba',
+              header: {
+                fontFamily: 'Verdana',
+                fontSize: 11,
+                fontWeight: 'normal',
+                color: '#333333',
+                backgroundColor: '#f4f4f4',
+              },
+              body: {
+                fontFamily: 'Verdana',
                 fontSize: 11,
                 fontWeight: 'normal',
                 color: '#333333',
@@ -212,6 +391,7 @@ describe('theme store', () => {
         expect(state.theme).toEqual({
           chart: {
             fontFamily: 'Arial',
+            backgroundColor: '#ffffff',
           },
           title: {
             fontSize: 18,
@@ -286,7 +466,7 @@ describe('theme store', () => {
             horizontal: {
               lineColor: 'rgba(0, 0, 0, 0.05)',
             },
-            backgroundColor: '#ffffff',
+            backgroundColor: 'rgba(255, 255, 255, 0)',
           },
           exportMenu: {
             button: {
@@ -394,6 +574,7 @@ describe('theme store', () => {
         expect(state.theme).toEqual({
           chart: {
             fontFamily: 'Arial',
+            backgroundColor: '#ffffff',
           },
           title: {
             fontSize: 18,
@@ -436,7 +617,7 @@ describe('theme store', () => {
             horizontal: {
               lineColor: 'rgba(0, 0, 0, 0.05)',
             },
-            backgroundColor: '#ffffff',
+            backgroundColor: 'rgba(255, 255, 255, 0)',
           },
           exportMenu: {
             button: {
@@ -884,6 +1065,7 @@ describe('theme store', () => {
         expect(state.theme).toEqual({
           chart: {
             fontFamily: 'Arial',
+            backgroundColor: '#ffffff',
           },
           title: {
             fontSize: 18,
@@ -959,7 +1141,7 @@ describe('theme store', () => {
             horizontal: {
               lineColor: 'rgba(0, 0, 0, 0.05)',
             },
-            backgroundColor: '#ffffff',
+            backgroundColor: 'rgba(255, 255, 255, 0)',
           },
           exportMenu: {
             button: {

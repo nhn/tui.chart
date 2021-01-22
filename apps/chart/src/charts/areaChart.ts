@@ -19,6 +19,7 @@ import ResetButton from '@src/component/resetButton';
 import Legend from '@src/component/legend';
 import Zoom from '@src/component/zoom';
 import SelectedSeries from '@src/component/selectedSeries';
+import Background from '@src/component/background';
 
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
@@ -142,6 +143,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

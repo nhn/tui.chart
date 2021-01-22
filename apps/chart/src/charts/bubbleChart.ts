@@ -16,6 +16,7 @@ import AxisTitle from '@src/component/axisTitle';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import SelectedSeries from '@src/component/selectedSeries';
+import Background from '@src/component/background';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
@@ -127,6 +128,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

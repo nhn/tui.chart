@@ -40,6 +40,7 @@ type FontTheme = {
 
 type ChartTheme = {
   fontFamily?: string;
+  backgroundColor?: string;
 };
 
 type LegendTheme = {
@@ -257,7 +258,7 @@ interface LineAreaChartSeriesTheme {
 }
 
 interface BaseThemeOptions {
-  chart?: ChartTheme; // @TODO: 작업 필요
+  chart?: ChartTheme;
   title?: FontTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;

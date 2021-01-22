@@ -8,6 +8,7 @@ import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import SelectedSeries from '@src/component/selectedSeries';
+import Background from '@src/component/background';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -90,6 +91,7 @@ export default class PieChart extends Chart<PieChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Legend);
     this.componentManager.add(PieSeries);

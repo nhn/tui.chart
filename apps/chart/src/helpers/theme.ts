@@ -40,13 +40,15 @@ const boxplotDefault = {
 export const DEFAULT_BULLET_RANGE_OPACITY = [0.5, 0.3, 0.1];
 const DEFAULT_PIE_LINE_WIDTH = 3;
 
-const DEFAULT_DATA_LABEL = {
-  fontFamily: 'Arial',
-  fontSize: 11,
-  fontWeight: 400,
-  color: '#333333',
-  useSeriesColor: false,
-};
+function makeDefaultDataLabelsTheme(globalFontFamily = 'Arial') {
+  return {
+    fontFamily: globalFontFamily,
+    fontSize: 11,
+    fontWeight: 400,
+    color: '#333333',
+    useSeriesColor: false,
+  };
+}
 
 const DEFAULT_BUBBLE_ARROW = {
   width: 8,
@@ -110,101 +112,106 @@ export const defaultSeriesTheme = {
   areaOpacity: DEFAULT_AREA_OPACITY,
 };
 
-export const axisTitleTheme = {
-  fontSize: 11,
-  fontFamily: 'Arial',
-  fontWeight: 700,
-  color: '#bbbbbb',
-};
+export function makeAxisTitleTheme(globalFontFamily = 'Arial') {
+  return {
+    fontSize: 11,
+    fontFamily: globalFontFamily,
+    fontWeight: 700,
+    color: '#bbbbbb',
+  };
+}
 
-const commonTextTheme = {
-  fontSize: 11,
-  fontFamily: 'Arial',
-  fontWeight: 'normal',
-  color: '#333333',
-};
+function makeCommonTextTheme(globalFontFamily = 'Arial') {
+  return { fontSize: 11, fontFamily: globalFontFamily, fontWeight: 'normal', color: '#333333' };
+}
 
-export const defaultTheme = {
-  chart: {
-    fontFamily: 'Arial',
-  },
-  title: {
-    fontSize: 18,
-    fontFamily: 'Arial',
-    fontWeight: 100,
-    color: '#333333',
-  },
-  yAxis: {
-    title: { ...axisTitleTheme },
-    label: { ...commonTextTheme },
-    width: 1,
-    color: '#333333',
-  },
-  xAxis: {
-    title: { ...axisTitleTheme },
-    label: { ...commonTextTheme },
-    width: 1,
-    color: '#333333',
-  },
-  legend: {
-    label: {
+export function makeDefaultTheme(globalFontFamily = 'Arial') {
+  const axisTitleTheme = makeAxisTitleTheme(globalFontFamily);
+  const commonTextTheme = makeCommonTextTheme(globalFontFamily);
+
+  return {
+    chart: {
+      fontFamily: globalFontFamily,
+      backgroundColor: '#ffffff',
+    },
+    title: {
+      fontSize: 18,
+      fontFamily: globalFontFamily,
+      fontWeight: 100,
       color: '#333333',
-      fontSize: 11,
-      fontWeight: 'normal',
-      fontFamily: 'Arial',
     },
-  },
-  tooltip: {
-    background: 'rgba(85, 85, 85, 0.95)',
-    borderColor: 'rgba(255, 255, 255, 0)',
-    borderWidth: 0,
-    borderRadius: 3,
-    borderStyle: 'solid',
-    body: {
-      fontSize: 12,
-      fontFamily: 'Arial, sans-serif',
-      fontWeight: 'normal',
-      color: '#ffffff',
+    yAxis: {
+      title: { ...axisTitleTheme },
+      label: { ...commonTextTheme },
+      width: 1,
+      color: '#333333',
     },
-    header: {
-      fontSize: 13,
-      fontFamily: 'Arial, sans-serif',
-      fontWeight: 'bold',
-      color: '#ffffff',
+    xAxis: {
+      title: { ...axisTitleTheme },
+      label: { ...commonTextTheme },
+      width: 1,
+      color: '#333333',
     },
-  },
-  plot: {
-    lineColor: 'rgba(0, 0, 0, 0.05)',
-    backgroundColor: '#ffffff',
-  },
-  exportMenu: {
-    button: {
-      ...makeBorderTheme(5, '#f4f4f4'),
-      backgroundColor: '#f4f4f4',
-      xIcon: {
-        color: '#555555',
-        lineWidth: 2,
-      },
-      dotIcon: {
-        color: '#555555',
-        width: 2,
-        height: 2,
-        gap: 2,
+    legend: {
+      label: {
+        color: '#333333',
+        fontSize: 11,
+        fontWeight: 'normal',
+        fontFamily: globalFontFamily,
       },
     },
-    panel: {
-      ...makeBorderTheme(0, '#bab9ba'),
-      header: {
-        ...commonTextTheme,
-        backgroundColor: '#f4f4f4',
-      },
+    tooltip: {
+      background: 'rgba(85, 85, 85, 0.95)',
+      borderColor: 'rgba(255, 255, 255, 0)',
+      borderWidth: 0,
+      borderRadius: 3,
+      borderStyle: 'solid',
       body: {
-        ...commonTextTheme,
-        backgroundColor: '#ffffff',
+        fontSize: 12,
+        fontFamily: `${globalFontFamily}, sans-serif`,
+        fontWeight: 'normal',
+        color: '#ffffff',
+      },
+      header: {
+        fontSize: 13,
+        fontFamily: `${globalFontFamily}, sans-serif`,
+        fontWeight: 'bold',
+        color: '#ffffff',
       },
     },
-  },
-};
+    plot: {
+      lineColor: 'rgba(0, 0, 0, 0.05)',
+      backgroundColor: 'rgba(255, 255, 255, 0)',
+    },
+    exportMenu: {
+      button: {
+        ...makeBorderTheme(5, '#f4f4f4'),
+        backgroundColor: '#f4f4f4',
+        xIcon: {
+          color: '#555555',
+          lineWidth: 2,
+        },
+        dotIcon: {
+          color: '#555555',
+          width: 2,
+          height: 2,
+          gap: 2,
+        },
+      },
+      panel: {
+        ...makeBorderTheme(0, '#bab9ba'),
+        header: {
+          ...commonTextTheme,
+          backgroundColor: '#f4f4f4',
+        },
+        body: {
+          ...commonTextTheme,
+          backgroundColor: '#ffffff',
+        },
+      },
+    },
+  } as Theme;
+}
 
 function makeBorderTheme(borderRadius, borderColor, borderWidth = 1) {
   return { borderWidth, borderRadius, borderColor };
@@ -231,10 +238,12 @@ function makeDefaultTextBubbleTheme(
 
 // eslint-disable-next-line complexity
 function getSeriesTheme(
+  globalFontFamily: string | undefined,
   seriesName: string,
   { hasOuterAnchor = false, hasOuterAnchorPieSeriesName = false },
   isNestedPieChart = false
 ) {
+  const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
   const lineTypeSeriesTheme = {
     lineWidth: defaultSeriesTheme.lineWidth,
     dashSegments: defaultSeriesTheme.dashSegments,
@@ -242,7 +251,7 @@ function getSeriesTheme(
     hover: { dot: defaultSeriesTheme.hover.dot },
     dot: defaultSeriesTheme.dot,
     dataLabels: {
-      ...DEFAULT_DATA_LABEL,
+      ...defaultDataLabelTheme,
       textBubble: {
         ...makeDefaultTextBubbleTheme(),
         arrow: { visible: false, direction: 'bottom', ...DEFAULT_BUBBLE_ARROW },
@@ -281,7 +290,7 @@ function getSeriesTheme(
           borderColor: '#ffffff',
         },
         dataLabels: {
-          ...DEFAULT_DATA_LABEL,
+          ...defaultDataLabelTheme,
           color: '#ffffff',
           textBubble: {
             ...makeDefaultTextBubbleTheme(false, 1, 5, 1, 'rgba(255, 255, 255, 0.5)'),
@@ -372,13 +381,13 @@ function getSeriesTheme(
           dashSegments: [],
         },
         dataLabels: {
-          ...DEFAULT_DATA_LABEL,
+          ...defaultDataLabelTheme,
           textBubble: {
             ...makeDefaultTextBubbleTheme(false, 1, 4, 3),
             arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
           },
           stackTotal: {
-            ...DEFAULT_DATA_LABEL,
+            ...defaultDataLabelTheme,
             textBubble: {
               ...makeDefaultTextBubbleTheme(true, 1, 4, 3),
               arrow: { visible: true, ...DEFAULT_BUBBLE_ARROW },
@@ -420,13 +429,13 @@ function getSeriesTheme(
           areaOpacity: 1,
         },
         dataLabels: {
-          ...DEFAULT_DATA_LABEL,
+          ...defaultDataLabelTheme,
           textBubble: {
             ...makeDefaultTextBubbleTheme(),
             arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
           },
           marker: {
-            ...DEFAULT_DATA_LABEL,
+            ...defaultDataLabelTheme,
             fontSize: 9,
             useSeriesColor: true,
             textBubble: {
@@ -520,7 +529,7 @@ function getSeriesTheme(
             lineColor: '#e9e9e9',
           },
           pieSeriesName: {
-            ...DEFAULT_DATA_LABEL,
+            ...defaultDataLabelTheme,
             useSeriesColor: hasOuterAnchorPieSeriesName,
             color: hasOuterAnchorPieSeriesName ? '#333333' : '#ffffff',
             textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
@@ -533,6 +542,7 @@ function getSeriesTheme(
 }
 
 export function getDefaultTheme(
+  globalFontFamily: string | undefined,
   series: RawSeries,
   pieSeriesOuterAnchors: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries>,
   isNestedPieChart = false
@@ -542,10 +552,10 @@ export function getDefaultTheme(
       ...acc,
       series: {
         ...acc.series,
-        [seriesName]: getSeriesTheme(seriesName, pieSeriesOuterAnchors),
+        [seriesName]: getSeriesTheme(globalFontFamily, seriesName, pieSeriesOuterAnchors),
       },
     }),
-    defaultTheme as Theme
+    makeDefaultTheme(globalFontFamily) as Theme
   );
 
   if (isNestedPieChart) {
@@ -554,7 +564,12 @@ export function getDefaultTheme(
     result.series.pie = aliasNames.reduce(
       (acc, cur) => ({
         ...acc,
-        [cur]: getSeriesTheme('pie', pieSeriesOuterAnchors[cur], isNestedPieChart),
+        [cur]: getSeriesTheme(
+          globalFontFamily,
+          'pie',
+          pieSeriesOuterAnchors[cur],
+          isNestedPieChart
+        ),
       }),
       {}
     );

@@ -13,6 +13,7 @@ import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
 import Tooltip from '@src/component/tooltip';
 import RadialAxis from '@src/component/radialAxis';
+import Background from '@src/component/background';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -109,6 +110,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Legend);
     this.componentManager.add(RadarPlot);
