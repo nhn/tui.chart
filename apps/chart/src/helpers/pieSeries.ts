@@ -3,11 +3,12 @@ import { Rect, PieSeriesType, NestedPieSeriesType, PieDataLabels } from '@t/opti
 import { TooltipData } from '@t/components/tooltip';
 import { RawSeries, OptionsWithDataLabels } from '@t/store/store';
 
-const DEFAULT_RADIUS_RATIO = 0.9;
 const semiCircleCenterYRatio = {
   COUNTER_CLOCKWISE: 0.1,
   CLOCKWISE: 1,
 };
+
+const MINIMUM_RADIUS = 10;
 
 export function hasClockwiseSemiCircle(clockwise: boolean, startAngle: number, endAngle: number) {
   return (
@@ -61,7 +62,7 @@ export function getDefaultRadius(
     result = width / 2 - maxDataLabelWidth;
   }
 
-  return Math.max(result, 10);
+  return Math.max(result, MINIMUM_RADIUS);
 }
 
 export function getSemiCircleCenterY(rectHeight: number, clockwise: boolean) {

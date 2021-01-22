@@ -63,6 +63,18 @@ const chartState = {
           },
           areaOpacity: 1,
         },
+        dataLabels: {
+          fontFamily: 'Arial',
+          fontSize: 11,
+          fontWeight: 400,
+          color: '#333333',
+          pieSeriesName: {
+            fontFamily: 'Arial',
+            fontSize: 11,
+            fontWeight: 400,
+            color: '#333333',
+          },
+        },
       },
     },
   },
