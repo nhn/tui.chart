@@ -13,15 +13,53 @@ The functionality of TOAST UI Chart is available when using the Plain JavaScript
 - [toast-ui.vue-chart](https://github.com/nhn/tui.chart/tree/main/packages/vue-chart) - **Vue** wrapper component implemented by NHN.
 - [toast-ui.react-chart](https://github.com/nhn/tui.chart/tree/main/packages/react-chart) - **React** wrapper component implemented by NHN.
 
-## 🤖 Why TOAST UI Chart?
+## 📙 Documents
 
-⚠️ 작성 필요
+- [Getting Started](https://github.com/nhn/tui.chart/blob/main/docs/en/getting-started.md)
+- Tutorials
+  - [English](https://github.com/nhn/tui.chart/blob/next/docs/README.md)
+  - [한국어](https://github.com/nhn/tui.chart/blob/next/docs/ko/README.md)
+- [APIs](https://nhn.github.io/tui.chart/latest/)
+- v4.0 Migration Guide 
+  - [English](https://github.com/nhn/tui.chart/blob/next/docs/v4.0-migration-guide-en.md)
+  - [한국어](https://github.com/nhn/tui.chart/blob/next/docs/v4.0-migration-guide-ko.md)
+
+
+## 😍 Why TOAST UI Chart?
+
+### Simple, Easy to Use, And It's Beautiful!
+
+TOAST UI 차트는 당신의 데이터를 더 아름답고 이해하기 쉽게 보여줄 것이다. 또한, 당신의 서비스에 적합하도록 차트를 변경할 수 있게 다양한 테마 옵션을 제공하고 있다. 제목, 축, 범례, 툴팁, 플롯, 시리즈 등 차트의 많은 부분을 커스터 마이징할 수 있는 많은 옵션을 추가했다.
+
+![image](https://user-images.githubusercontent.com/35371660/105487165-01af3500-5cf3-11eb-9243-c66de968798c.png)
+
+### Variety of powerful features!
+
+#### Responsive
+
+**responsive** 옵션을 통해 차트의 크기 별로 다른 옵션과 애니메이션을 적용할 수 있다.
+
+![image](https://user-images.githubusercontent.com/43128697/103401627-f9008e80-4b8c-11eb-8453-d64fe6830a9a.gif)
+
+#### zoomable
+
+**zoomable** 옵션을 통해 line, area, treemap 차트에서 데이터를 더 상세하게 확인할 수 있다.
+
+`<gif>추가 필요`
+
+#### live update
+
+`addData` API와 `options.series.shift`옵션을 통해 실시간으로 추가되는 데이터를 파악할 수 있다.
+
+![liveUpdate](https://user-images.githubusercontent.com/35371660/105494627-6ae87580-5cfe-11eb-846e-3c473bdace1f.gif)
+
+#### Synchronize Tooltip
+
+`showTooltip`API와 `on` 커스텀 이벤트를 통해 마우스가 차트에 올라가는 시점을 파악해 동기화된 툴팁 기능을 사용할 수 있다.
+
+![synctooltip](https://user-images.githubusercontent.com/35371660/105493953-65d6f680-5cfd-11eb-9b51-204dbfd589c9.gif)
 
 ## 🎨 Features
-
-- Intuitive and easy to apply.
-- Is an open-source JavaScript library.
-- Change the chart in detail using many options and custom themes.
 
 ### Charts
 
@@ -52,6 +90,8 @@ The TOAST UI Chart provides many types of charts to visualize the various forms 
 - [Live Update](https://github.com/nhn/tui.chart/blob/next/docs/en/common-liveUpdate-options.md)
 - [Responsive Layout](https://github.com/nhn/tui.chart/blob/next/docs/en/common-responsive-options.md)
 
+In addition, a variety of powerful features can be found on the demo page below. 👇👇👇
+
 ## 🐾 Examples
 
 - [Line Chart](http://nhn.github.io/tui.chart/latest/tutorial-example08-01-line-chart-basic)
@@ -72,20 +112,6 @@ The TOAST UI Chart provides many types of charts to visualize the various forms 
 - [Radar Chart](http://nhn.github.io/tui.chart/latest/tutorial-example10-01-radar-chart-basic)
 
 Here are more [examples](http://nhn.github.io/tui.chart/latest/tutorial-example01-01-area-chart-basic) and play with TOAST UI Chart!
->>>>>>> 7ff8e7748... docs: add readme
-
-## 📙 Documents
-
-- [Getting Started](https://github.com/nhn/tui.chart/blob/main/docs/en/getting-started.md)
-- Tutorials
-  - [English](https://github.com/nhn/tui.chart/blob/next/docs/README.md)
-  - [한국어](https://github.com/nhn/tui.chart/blob/next/docs/ko/README.md)
-- [APIs](https://nhn.github.io/tui.chart/latest/)
-- v4.0 Migration Guide 
-  - [English](https://github.com/nhn/tui.chart/blob/next/docs/v4.0-migration-guide-en.md)
-  - [한국어](https://github.com/nhn/tui.chart/blob/next/docs/v4.0-migration-guide-ko.md)
-
-See the older versions of API page on the [releases page](https://github.com/nhn/tui.chart/releases).
 
 ## 🔧 Pull Request Steps
 
