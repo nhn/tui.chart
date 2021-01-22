@@ -13,6 +13,10 @@ export function makeStyleObj<T, K>(style: StyleProp<T, K>, styleSet: Record<stri
   }, {} as T);
 }
 
+export function getTranslateString(x: number, y: number) {
+  return `translate(${x}px,${y}px)`;
+}
+
 export function getTitleFontString(fontTheme: FontTheme) {
   const { fontFamily, fontSize, fontWeight } = fontTheme;
 

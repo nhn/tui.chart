@@ -21,6 +21,7 @@ interface TooltipOptions {
     defaultTemplate: { header: string; body: string },
     theme: Required<TooltipTheme>
   ) => string;
+  transition: boolean | string;
 }
 
 type TooltipTemplateModel = {
@@ -59,7 +60,7 @@ const options = {
 
 ### Formatter
 
-`tooltip.formatter` 옵션을 통해 값을 포맷팅 한 뒤 출력할 수 있다. formatter 함수는 데이터 값과 데이터에 대한 정보를 차례대로 인자로 가지며 포맷팅 된 문자열을 반환하는 함수다. 
+`tooltip.formatter` 옵션을 통해 값을 포맷팅 한 뒤 출력할 수 있다. formatter 함수는 데이터 값과 데이터에 대한 정보를 차례대로 인자로 가지며 포맷팅 된 문자열을 반환하는 함수다.
 
 간단한 예시로 입력되는 값을 비교해 툴팁에 이모지를 추가하는 예제를 만들어 봤다.
 
@@ -138,6 +139,27 @@ const options = {
 해당 코드의 결과는 다음과 같다.
 
 ![image](https://user-images.githubusercontent.com/35371660/102183437-2f81ac80-3ef1-11eb-8ebb-438cc153de99.png)
+
+### transition
+
+`tooltip.transition`은 툴팁의 이동 애니매이션을 조절할 수 있는 옵션이다. 작성법은 CSS [transition 속성](https://developer.mozilla.org/en-US/docs/Web/CSS/transition)과 동일하다.
+
+- default: `false`
+
+tooltip의 위치 이동은 [`transform` 속성](https://developer.mozilla.org/en-US/docs/Web/CSS/transform)을 통해 이뤄짐으로 transition-property는 `transform`이 되어야 한다.
+옵션을 `true`로 지정할 경우 `transform 0.2s ease`로 움직인다.
+
+간단한 예시로 툴팁을 좀 더 느리게 이동하도록 만들어보았다.
+
+```js
+const options = {
+  tooltip: {
+    transition: 'transform 1s ease-in',
+  },
+};
+```
+
+![tooltip-transition](https://user-images.githubusercontent.com/35371660/105424970-c0376f00-5c8b-11eb-9539-51732688898b.gif)
 
 ## theme
 

@@ -96,3 +96,13 @@ export const formatter = () => {
 
   return el;
 };
+
+export const transition = () => {
+  const { el } = createChart(temperatureData, {
+    tooltip: {
+      transition: 'transform 1s ease-in',
+    },
+  });
+
+  return el;
+};

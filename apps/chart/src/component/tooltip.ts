@@ -10,11 +10,14 @@ import {
 } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
-import { isNumber } from '@src/helpers/utils';
+import { isBoolean, isNumber, isString, isUndefined } from '@src/helpers/utils';
 import { SeriesDataType, TooltipTemplateFunc, TooltipFormatter } from '@t/options';
 import { TooltipTheme } from '@t/theme';
+import { getTranslateString } from '@src/helpers/style';
 
 type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
+
+const DEFAULT_TOOLTIP_TRANSITION = 'transform 0.2s ease';
 
 export default class Tooltip extends Component {
   chartEl!: HTMLDivElement;
@@ -88,7 +91,7 @@ export default class Tooltip extends Component {
   setTooltipPosition(model: TooltipModel) {
     const { top, left } = this.chartEl.getBoundingClientRect();
     const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.transform = `translate(${left + x}px,${top + y}px)`;
+    this.tooltipContainerEl.style.transform = getTranslateString(left + x, top + y);
   }
 
   getTooltipInfoModels() {
@@ -158,6 +161,13 @@ export default class Tooltip extends Component {
 
     this.tooltipContainerEl = document.createElement('div');
     this.tooltipContainerEl.classList.add('tooltip-container');
+
+    const { width, height, top, left } = this.chartEl.getBoundingClientRect();
+    this.tooltipContainerEl.style.transform = getTranslateString(
+      left + width / 2,
+      top + height / 2
+    );
+
     this.chartEl.appendChild(this.tooltipContainerEl);
 
     this.eventBus.on('seriesPointHovered', this.onSeriesPointHovered);
@@ -167,9 +177,18 @@ export default class Tooltip extends Component {
     this.tooltipContainerEl.innerHTML = '';
   }
 
+  private setTooltipTransition(options: Options) {
+    const transition = options.tooltip?.transition;
+
+    if (isUndefined(transition) || (isBoolean(transition) && transition)) {
+      this.tooltipContainerEl.style.transition = DEFAULT_TOOLTIP_TRANSITION;
+    } else if (isString(transition)) {
+      this.tooltipContainerEl.style.transition = transition;
+    }
+  }
+
   render({ layout, options, theme }: ChartState<Options>) {
-    /* @TODO: option 으로 분리 */
-    // this.tooltipContainerEl.style.transition = 'transform 0.2s ease';
+    this.setTooltipTransition(options);
 
     this.rect = layout.plot;
     this.theme = theme.tooltip as Required<TooltipTheme>;

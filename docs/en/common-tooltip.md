@@ -21,6 +21,7 @@ interface TooltipOptions {
     defaultTemplate: { header: string; body: string },
     theme: Required<TooltipTheme>
   ) => string;
+  transition: boolean | string;
 }
 
 type TooltipTemplateModel = {
@@ -138,6 +139,27 @@ const options = {
 The result of the code above is shown below. 
 
 ![image](https://user-images.githubusercontent.com/35371660/102183437-2f81ac80-3ef1-11eb-8ebb-438cc153de99.png)
+
+### transition
+
+`tooltip.transition` is an option to control the movement animation of the tooltip. Usage is the same as [CSS transition property](https://developer.mozilla.org/en-US/docs/Web/CSS/transition).
+
+- default: `false`
+
+The position of the tooltip is changed through the [`transform` property]((https://developer.mozilla.org/en-US/docs/Web/CSS/transform)), so the transition-property should be `transform`.
+If the option is set to `true`, it moves to `transform 0.2s ease`.
+
+Let's use these options to make a tooltip move more slowly.
+
+```js
+const options = {
+  tooltip: {
+    transition: 'transform 1s ease-in',
+  },
+};
+```
+
+![tooltip-transition](https://user-images.githubusercontent.com/35371660/105424970-c0376f00-5c8b-11eb-9539-51732688898b.gif)
 
 ## theme
 
