@@ -201,6 +201,7 @@ type BaseAxisOptions = {
   label?: {
     interval?: number;
     formatter?: AxisFormatter;
+    margin?: number;
   };
   scale?: Scale;
   title?: AxisTitle;
@@ -223,6 +224,7 @@ interface BaseXAxisOptions extends BaseAxisOptions {
   label?: {
     interval?: number;
     formatter?: AxisFormatter;
+    margin?: number;
     rotatable?: boolean;
   };
 }
