@@ -44,11 +44,13 @@ export const globalTheme = () => {
     theme: {
       chart: {
         fontFamily: 'Verdana',
-        backgroundColor: 'rgba(9, 206, 115, 0.3)',
+        backgroundColor: 'rgba(9, 206, 115, 0.1)',
       },
+      /*
       title: {
         fontFamily: 'Comic Sans MS',
       },
+      */
     },
   });
 

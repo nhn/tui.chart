@@ -14,7 +14,7 @@ import HeatmapSeries from '@src/component/heatmapSeries';
 import AxisTitle from '@src/component/axisTitle';
 import Axis from '@src/component/axis';
 import SelectedSeries from '@src/component/selectedSeries';
-import ChartBackground from '@src/component/chartBackground';
+import Background from '@src/component/background';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -138,7 +138,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
   initialize() {
     super.initialize();
 
-    this.componentManager.add(ChartBackground);
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(SpectrumLegend);
     this.componentManager.add(ExportMenu, { chartEl: this.el });

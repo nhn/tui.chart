@@ -18,7 +18,7 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import Zoom from '@src/component/zoom';
 import ResetButton from '@src/component/resetButton';
 import SelectedSeries from '@src/component/selectedSeries';
-import ChartBackground from '@src/component/chartBackground';
+import Background from '@src/component/background';
 
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
@@ -141,7 +141,7 @@ export default class LineChart extends Chart<LineChartOptions> {
   initialize() {
     super.initialize();
 
-    this.componentManager.add(ChartBackground);
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

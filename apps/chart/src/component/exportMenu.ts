@@ -2,7 +2,7 @@ import Component from './component';
 import { Categories, ChartState, Options, Series } from '@t/store/store';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { isExportMenuVisible, padding } from '@src/store/layout';
-import { TitleOption, Size } from '@t/options';
+import { TitleOption } from '@t/options';
 import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
@@ -51,10 +51,11 @@ export default class ExportMenu extends Component {
     const canvas = this.chartEl.getElementsByTagName('canvas')[0];
     const ctx = canvas.getContext('2d')!;
     const { x, y, height: h, width: w } = this.rect;
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(x, y, w, h);
-    ctx.fillStyle = this.chartBackgroundColor;
-    ctx.fillRect(x, y, w, h);
+
+    ['#fff', this.chartBackgroundColor].forEach((color) => {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
+    });
 
     return canvas;
   };

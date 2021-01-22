@@ -19,7 +19,7 @@ import ExportMenu from '@src/component/exportMenu';
 import ZeroAxis from '@src/component/zeroAxis';
 import HoveredSeries from '@src/component/hoveredSeries';
 import SelectedSeries from '@src/component/selectedSeries';
-import ChartBackground from '@src/component/chartBackground';
+import Background from '@src/component/background';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
@@ -131,7 +131,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     super.initialize();
     const stackChart = !!this.store.initStoreState.options.series?.stack;
 
-    this.componentManager.add(ChartBackground);
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

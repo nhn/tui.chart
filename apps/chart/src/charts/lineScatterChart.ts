@@ -28,7 +28,7 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
-import ChartBackground from '@src/component/chartBackground';
+import Background from '@src/component/background';
 
 import {
   CoordinateDataType,
@@ -130,7 +130,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
   initialize() {
     super.initialize();
 
-    this.componentManager.add(ChartBackground);
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

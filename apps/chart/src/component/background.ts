@@ -1,10 +1,10 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import { ChartTheme } from '@t/theme';
-import { RectModel } from '@t/components/series';
+import { BackgroundModel } from '@t/components/series';
 
-export default class ChartBackground extends Component {
-  models!: RectModel[];
+export default class Background extends Component {
+  models!: BackgroundModel;
 
   theme!: Required<ChartTheme>;
 

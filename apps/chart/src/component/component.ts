@@ -19,7 +19,7 @@ import {
   NestedPieSeriesModels,
   ScatterSeriesModels,
   BulletSeriesModels,
-  RectModel,
+  BackgroundModel,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel, RectLabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -85,7 +85,7 @@ type ComponentModels =
   | RectLabelModel[]
   | ScatterSeriesModels
   | BulletSeriesModels
-  | RectModel[];
+  | BackgroundModel;
 
 export default abstract class Component {
   name = 'Component';

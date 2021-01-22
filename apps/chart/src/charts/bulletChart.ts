@@ -15,7 +15,7 @@ import ExportMenu from '@src/component/exportMenu';
 import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
-import ChartBackground from '@src/component/chartBackground';
+import Background from '@src/component/background';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -121,7 +121,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
   initialize() {
     super.initialize();
 
-    this.componentManager.add(ChartBackground);
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

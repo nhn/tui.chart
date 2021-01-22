@@ -116,7 +116,7 @@ export default class Painter {
 
   beforeFrame() {
     this.ctx.clearRect(0, 0, this.width, this.height);
-    this.ctx.fillStyle = '#ffffff';
+    this.ctx.fillStyle = '#fff';
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 

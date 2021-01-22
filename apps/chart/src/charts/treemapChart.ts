@@ -12,7 +12,7 @@ import TreemapSeries from '@src/component/treemapSeries';
 import SpectrumLegend from '@src/component/spectrumLegend';
 import BackButton from '@src/component/backButton';
 import SelectedSeries from '@src/component/selectedSeries';
-import ChartBackground from '@src/component/chartBackground';
+import Background from '@src/component/background';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -98,7 +98,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
   initialize() {
     super.initialize();
 
-    this.componentManager.add(ChartBackground);
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(SpectrumLegend);
     this.componentManager.add(TreemapSeries);
