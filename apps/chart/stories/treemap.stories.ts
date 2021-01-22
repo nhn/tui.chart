@@ -1,6 +1,6 @@
 import { SeriesDataType, TreemapSeriesData, TreemapChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { populationDensityData, usedDiskSpaceData } from './data';
+import { populationDensityData, usedDiskSpaceData, usedDiskSpaceDataWithNull } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import TreemapChart from '@src/charts/treemapChart';
 import '@src/css/chart.css';
@@ -27,7 +27,6 @@ function createChart(data: TreemapSeriesData, customOptions: TreemapChartOptions
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -40,6 +39,20 @@ export const basic = () => {
   const { el } = createChart(usedDiskSpaceData, {
     chart: { title: 'Used disk space' },
     tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+  });
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(usedDiskSpaceDataWithNull, {
+    chart: { title: 'Used disk space' },
+    tooltip: { formatter: (value: SeriesDataType) => `${value}GB` },
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
   });
 
   return el;

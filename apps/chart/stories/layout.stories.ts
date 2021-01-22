@@ -21,7 +21,6 @@ function createChart(type, data, customOptions?: BarChartOptions | PieChartOptio
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
-  el.style.outline = '1px solid red';
   el.style.width = `${options.chart.width}px`;
   el.style.height = `${options.chart.height}px`;
 

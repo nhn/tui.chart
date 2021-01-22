@@ -5,6 +5,7 @@
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library.
 
 [![GitHub release](https://img.shields.io/github/release/nhn/tui.chart.svg)](https://github.com/nhn/tui.chart/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-chart) [![GitHub license](https://img.shields.io/github/license/nhn/tui.chart.svg)](https://github.com/nhn/tui.chart/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.chart/pulls) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 ## 📙 Documents
 * [Getting Started](https://github.com/nhn/tui.chart/blob/master/docs/wiki/getting-started.md)
@@ -33,7 +34,6 @@ See the older versions of API page on the [releases page](https://github.com/nhn
 * [NHN - Smart Downloader](https://docs.toast.com/ko/Game/Smart%20Downloader/ko/console-guide/)
 * [NHN - Gamebase](https://docs.toast.com/ko/Game/Gamebase/ko/oper-analytics/)
 * [NHN Edu - iamTeacher](https://teacher.iamservice.net)
-
 
 ## 📜 License
 This software is licensed under the [MIT](https://github.com/nhn/tui.chart/blob/master/LICENSE) © [NHN](https://github.com/nhn).

@@ -299,7 +299,7 @@ type PlotTheme = {
 | --- | --- | --- |
 | `lineColor` | string | 선 색상 |
 | `lineWidth` | number | 선 두께 |
-| `dashSegments` | number[] | 플롯 선의 dashSegment 값 |
+| `dashSegments` | number[] | 플롯 선의 dashSegment 값 (IE11 이상 지원) |
 | `backgroundColor` | string | 플롯 영역 배경색 |
 | `vertical` | object | 세로로 그려지는 플롯 선의 스타일 설정 |
 | `horizontal` | object | 가로로 그려지는 플롯 선의 스타일 설정 |

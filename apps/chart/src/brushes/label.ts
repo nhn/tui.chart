@@ -1,5 +1,5 @@
 import { LabelModel, RectLabelModel } from '@t/components/axis';
-import { makeStyleObj } from '@src/helpers/style';
+import { makeStyleObj, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
 import { pathRect } from './basic';
@@ -58,7 +58,7 @@ export const strokeLabelStyle = {
 };
 
 export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
-  const { x, y, text, style, stroke, opacity } = labelModel;
+  const { x, y, text, style, stroke, opacity, radian } = labelModel;
 
   if (style) {
     const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
@@ -69,26 +69,35 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
     });
   }
 
+  ctx.save();
+
+  if (radian) {
+    ctx.translate(x, y);
+    ctx.rotate(radian);
+    ctx.translate(-x, -y);
+  }
+
   if (stroke) {
     const strokeStyleObj = makeStyleObj<StrokeLabelStyle, StrokeLabelStyleName>(
       stroke,
       strokeLabelStyle
     );
-    const storkeStyleKeys = Object.keys(strokeStyleObj);
+    const strokeStyleKeys = Object.keys(strokeStyleObj);
 
-    storkeStyleKeys.forEach((key) => {
+    strokeStyleKeys.forEach((key) => {
       ctx[key] =
         key === 'strokeStyle' && isNumber(opacity)
           ? rgba(strokeStyleObj[key]!, opacity)
           : strokeStyleObj[key];
     });
 
-    if (storkeStyleKeys.length) {
+    if (strokeStyleKeys.length) {
       ctx.strokeText(text, x, y);
     }
   }
 
   ctx.fillText(text, x, y);
+  ctx.restore();
 }
 
 export function rectLabel(ctx: CanvasRenderingContext2D, model: RectLabelModel) {
@@ -102,7 +111,7 @@ export function rectLabel(ctx: CanvasRenderingContext2D, model: RectLabelModel) 
     height,
     radius: borderRadius,
     fill: backgroundColor,
-    stroke: '',
+    stroke: 'rgba(0, 0, 0, 0)',
   });
 
   label(ctx, {
@@ -215,7 +224,7 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
     width,
     height,
     style,
-    stroke,
+    stroke: strokeStyle,
     fill,
     lineWidth = 1,
     points = [],
@@ -265,17 +274,14 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
   }
 
   if (fill) {
-    ctx.fillStyle = fill;
-    ctx.fill();
+    fillStyle(ctx, fill);
   }
 
   if (ctx.shadowColor) {
     ctx.shadowColor = 'transparent';
   }
 
-  if (stroke) {
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = lineWidth;
-    ctx.stroke();
+  if (strokeStyle) {
+    strokeWithOptions(ctx, { strokeStyle, lineWidth });
   }
 }

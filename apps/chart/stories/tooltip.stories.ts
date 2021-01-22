@@ -30,7 +30,6 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
-  el.style.outline = '1px solid red';
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
 
@@ -92,6 +91,16 @@ export const formatter = () => {
   const { el } = createChart(temperatureData, {
     tooltip: {
       formatter: (value: SeriesDataType) => `${getTempIcon(value)} ${value} ℃`,
+    },
+  });
+
+  return el;
+};
+
+export const transition = () => {
+  const { el } = createChart(temperatureData, {
+    tooltip: {
+      transition: 'transform 1s ease-in',
     },
   });
 

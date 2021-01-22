@@ -1,13 +1,15 @@
 import BulletChart from '@src/charts/bulletChart';
 import { BulletSeriesData, BulletChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { budgetDataForBullet } from './data';
+import { budgetDataForBullet, budgetDataForBulletWithNull } from './data';
+import { radios, withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 
 const budgetData = budgetDataForBullet as BulletSeriesData;
 
 export default {
   title: 'chart|Bullet',
+  decorators: [withKnobs],
 };
 
 const defaultOptions: BulletChartOptions = {
@@ -22,7 +24,6 @@ function createChart(data: BulletSeriesData, customOptions: BulletChartOptions =
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -37,10 +38,43 @@ export const basic = () => {
   return el;
 };
 
+export const basicWithNullData = () => {
+  const { el } = createChart(budgetDataForBulletWithNull as BulletSeriesData, {
+    series: {
+      eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'point'),
+      dataLabels: { visible: true },
+    },
+    theme: {
+      series: {
+        rangeColors: [
+          'rgba(0, 0, 0, 0.1)',
+          'rgba(0, 0, 0, 0.2)',
+          'rgba(0, 0, 0, 0.3)',
+          'rgba(0, 0, 0, 0.4)',
+          'rgba(0, 0, 0, 0.5)',
+          'rgba(0, 0, 0, 0.6)',
+        ],
+      },
+    },
+  });
+
+  return el;
+};
+
 export const vertical = () => {
   const { el } = createChart(budgetData, {
     series: {
       vertical: true,
+    },
+  });
+
+  return el;
+};
+
+export const eventDetectType = () => {
+  const { el } = createChart(budgetData, {
+    series: {
+      eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'point'),
     },
   });
 

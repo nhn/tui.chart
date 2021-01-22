@@ -6,6 +6,7 @@ export type TooltipTitleValues = {
   title: string;
   value: TooltipDataValue;
   formattedValue?: string;
+  color?: string;
 }[];
 export type TooltipValue = string | number | BubblePoint | Point | RangeDataType<number>;
 export type TooltipDataValue = TooltipValue | TooltipTitleValues;

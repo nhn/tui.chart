@@ -6,14 +6,18 @@ import {
   TooltipTitleValues,
   TooltipDataValue,
   TooltipModelName,
+  TooltipData,
 } from '@t/components/tooltip';
 import { getValueString } from '@src/helpers/tooltip';
 import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
-import { isNumber } from '@src/helpers/utils';
-import { Formatter, SeriesDataType, TooltipTemplateFunc } from '@t/options';
+import { isBoolean, isNumber, isString, isUndefined } from '@src/helpers/utils';
+import { SeriesDataType, TooltipTemplateFunc, TooltipFormatter } from '@t/options';
 import { TooltipTheme } from '@t/theme';
+import { getTranslateString } from '@src/helpers/style';
 
 type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
+
+const DEFAULT_TOOLTIP_TRANSITION = 'transform 0.2s ease';
 
 export default class Tooltip extends Component {
   chartEl!: HTMLDivElement;
@@ -28,7 +32,7 @@ export default class Tooltip extends Component {
 
   offsetY!: number;
 
-  formatter?: Formatter;
+  formatter?: TooltipFormatter;
 
   tooltipInfoModels: TooltipInfoModels = {} as TooltipInfoModels;
 
@@ -77,17 +81,17 @@ export default class Tooltip extends Component {
           : y;
     }
 
-    x += window.scrollX;
-    y += window.scrollY;
+    // pageXOffset, pageYOffset for IE
+    x += window.scrollX || window.pageXOffset;
+    y += window.scrollY || window.pageYOffset;
 
     return { x, y };
   }
 
   setTooltipPosition(model: TooltipModel) {
-    const { x: chartX, y: chartY } = this.chartEl.getBoundingClientRect();
+    const { top, left } = this.chartEl.getBoundingClientRect();
     const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.left = `${chartX + x}px`;
-    this.tooltipContainerEl.style.top = `${chartY + y}px`;
+    this.tooltipContainerEl.style.transform = getTranslateString(left + x, top + y);
   }
 
   getTooltipInfoModels() {
@@ -119,10 +123,10 @@ export default class Tooltip extends Component {
           value: Array.isArray(data.value)
             ? (data.value as TooltipTitleValues).map((titleValue) => ({
                 ...titleValue,
-                formattedValue: this.getFormattedValue(titleValue.value),
+                formattedValue: this.getFormattedValue(titleValue.value, data),
               }))
             : data.value,
-          formattedValue: this.getFormattedValue(data.value),
+          formattedValue: this.getFormattedValue(data.value, data),
         });
 
         if (!acc.category && data.category) {
@@ -157,6 +161,13 @@ export default class Tooltip extends Component {
 
     this.tooltipContainerEl = document.createElement('div');
     this.tooltipContainerEl.classList.add('tooltip-container');
+
+    const { width, height, top, left } = this.chartEl.getBoundingClientRect();
+    this.tooltipContainerEl.style.transform = getTranslateString(
+      left + width / 2,
+      top + height / 2
+    );
+
     this.chartEl.appendChild(this.tooltipContainerEl);
 
     this.eventBus.on('seriesPointHovered', this.onSeriesPointHovered);
@@ -166,7 +177,19 @@ export default class Tooltip extends Component {
     this.tooltipContainerEl.innerHTML = '';
   }
 
+  private setTooltipTransition(options: Options) {
+    const transition = options.tooltip?.transition;
+
+    if (isUndefined(transition) || (isBoolean(transition) && transition)) {
+      this.tooltipContainerEl.style.transition = DEFAULT_TOOLTIP_TRANSITION;
+    } else if (isString(transition)) {
+      this.tooltipContainerEl.style.transition = transition;
+    }
+  }
+
   render({ layout, options, theme }: ChartState<Options>) {
+    this.setTooltipTransition(options);
+
     this.rect = layout.plot;
     this.theme = theme.tooltip as Required<TooltipTheme>;
     this.templateFunc = options?.tooltip?.template ?? tooltipTemplates['default'];
@@ -175,7 +198,9 @@ export default class Tooltip extends Component {
     this.formatter = options?.tooltip?.formatter;
   }
 
-  getFormattedValue(value: TooltipDataValue) {
-    return this.formatter ? this.formatter(value as SeriesDataType) : getValueString(value);
+  getFormattedValue(value: TooltipDataValue, tooltipDataInfo: TooltipData) {
+    return this.formatter
+      ? this.formatter(value as SeriesDataType, tooltipDataInfo)
+      : getValueString(value);
   }
 }

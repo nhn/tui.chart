@@ -20,6 +20,7 @@ import {
   LineTypeSeriesOptions,
   Point,
   RangeDataType,
+  BezierPoint,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
 import { ChartState, Series, StackSeriesData, ValueEdge } from '@t/store/store';
@@ -28,12 +29,11 @@ import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
 import {
   deepCopy,
-  deepCopyArray,
   deepMergedCopy,
-  first,
+  getFirstValidValue,
+  isNull,
   isNumber,
   isUndefined,
-  last,
   range,
   sum,
 } from '@src/helpers/utils';
@@ -50,6 +50,7 @@ import { PointDataLabel } from '@t/components/dataLabels';
 import { AreaChartSeriesTheme, DotTheme } from '@t/theme';
 import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { message } from '@src/message';
+import { isAvailableSelectSeries, isAvailableShowTooltipInfo } from '@src/helpers/validation';
 
 interface RenderOptions {
   pointOnColumn: boolean;
@@ -60,7 +61,7 @@ interface RenderOptions {
   pairModel?: boolean;
 }
 
-type DatumType = number | RangeDataType<number>;
+type DatumType = number | RangeDataType<number> | null;
 
 const seriesOpacity = {
   INACTIVE: 0.06,
@@ -84,11 +85,13 @@ export default class AreaSeries extends Component {
 
   linePointsModel!: LinePointsModel[];
 
-  baseValueYPosition!: number;
+  baseYPosition!: number;
 
   isStackChart = false;
 
   isRangeChart = false;
+
+  isSplineChart = false;
 
   startIndex!: number;
 
@@ -108,7 +111,7 @@ export default class AreaSeries extends Component {
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
-  getBaseValueYPosition(limit: ValueEdge) {
+  getBaseYPosition(limit: ValueEdge) {
     const baseValue = limit.min >= 0 ? limit.min : Math.min(limit.max, 0);
     const intervalSize = this.rect.height / (limit.max - limit.min);
 
@@ -162,16 +165,17 @@ export default class AreaSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.startIndex = viewRange ? viewRange[0] : 0;
     this.selectable = this.getSelectableOption(options);
+    this.isSplineChart = options.series?.spline ?? false;
 
     const { limit } = scale[getValueAxisName(options, this.name, 'yAxis')];
     const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
     const areaData = series.area.data;
-    this.baseValueYPosition = this.getBaseValueYPosition(limit);
+    this.baseYPosition = this.getBaseYPosition(limit);
 
     if (stackSeries?.area) {
       this.isStackChart = true;
       areaStackSeries = stackSeries.area;
-    } else if (isRangeData(first(areaData)?.data)) {
+    } else if (isRangeData(getFirstValidValue(areaData)?.data)) {
       this.isRangeChart = true;
     }
 
@@ -186,8 +190,7 @@ export default class AreaSeries extends Component {
     };
 
     this.linePointsModel = this.renderLinePointsModel(areaData, limit, renderOptions);
-
-    const areaSeriesModel = this.renderAreaPointsModel(renderOptions.options);
+    const areaSeriesModel = this.renderAreaPointsModel();
     const showDot = !!options.series?.showDot;
     const { dotSeriesModel, responderModel } = this.renderCircleModel(showDot);
     const tooltipDataArr = this.makeTooltipData(areaData, rawCategories as string[]);
@@ -244,22 +247,24 @@ export default class AreaSeries extends Component {
       const tooltipData: TooltipData[] = [];
 
       rawData.forEach((datum: DatumType, index) => {
-        const value = this.isRangeChart ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
-        tooltipData.push({
-          label: name,
-          color,
-          value,
-          category: categories[index],
-          seriesIndex,
-          index,
-        });
+        if (!isNull(datum)) {
+          const value = this.isRangeChart ? `${datum[0]} ~ ${datum[1]}` : (datum as number);
+          tooltipData.push({
+            label: name,
+            color,
+            value,
+            category: categories[index],
+            seriesIndex,
+            index,
+          });
+        }
       });
 
       return tooltipData;
     });
   }
 
-  getLinePointModelValue(datum: AreaSeriesDataType, pairModel?: boolean) {
+  getLinePointModelValue(datum: Omit<AreaSeriesDataType, 'null'>, pairModel?: boolean) {
     if (this.isRangeChart) {
       return pairModel ? datum[0] : datum[1];
     }
@@ -273,14 +278,19 @@ export default class AreaSeries extends Component {
     limit: ValueEdge,
     renderOptions: RenderOptions
   ): LinePointsModel {
-    const { pointOnColumn, options, tickDistance, pairModel, areaStackSeries } = renderOptions;
+    const { pointOnColumn, tickDistance, pairModel, areaStackSeries } = renderOptions;
     const { rawData, name, color: seriesColor } = series;
     const active = this.activeSeriesMap![name];
-    const points: PointModel[] = [];
+    const points: (PointModel | null)[] = [];
     const color = getRGBA(seriesColor, active ? seriesOpacity.ACTIVE : seriesOpacity.INACTIVE);
     const { lineWidth, dashSegments } = this.theme;
 
     rawData.forEach((datum, idx) => {
+      if (isNull(datum)) {
+        points.push(null);
+
+        return;
+      }
       const value = this.getLinePointModelValue(datum, pairModel);
       const stackedValue = this.isStackChart
         ? this.getStackValue(areaStackSeries!, seriesIndex, idx)
@@ -293,10 +303,10 @@ export default class AreaSeries extends Component {
     });
 
     if (pairModel) {
-      points.reverse();
+      points.reverse(); // for range spline
     }
 
-    if (options?.spline) {
+    if (this.isSplineChart) {
       setSplineControlPoint(points);
     }
 
@@ -332,58 +342,118 @@ export default class AreaSeries extends Component {
     return linePointsModels;
   }
 
-  addBottomPoints(points: PointModel[]) {
-    const firstPoint = first(points);
-    const lastPoint = last(points);
+  getCombinedPoints(start: number, end: number) {
+    const startPoints = start >= 0 ? this.linePointsModel[start].points : [];
+    const reversedEndPoints = [...this.linePointsModel[end].points].reverse();
 
-    if (!firstPoint || !lastPoint) {
-      return points;
-    }
-
-    return [
-      ...points,
-      { x: lastPoint.x, y: this.baseValueYPosition },
-      { x: firstPoint.x, y: this.baseValueYPosition },
-    ];
+    return [...startPoints, ...reversedEndPoints];
   }
 
-  getCombinedPoints(start: number, end: number, options: LineTypeSeriesOptions) {
-    const startPoints = start >= 0 ? this.linePointsModel[start].points : [];
-    const endPoints = this.linePointsModel[end].points;
-    let points;
+  renderRangeAreaSeries(linePointsModel: LinePointsModel[]) {
+    const model: AreaPointsModel[] = [];
 
-    if (this.isStackChart) {
-      if (end === 0) {
-        points = this.addBottomPoints(endPoints);
-      } else {
-        const reversedLinePointsModel = deepCopyArray(endPoints).reverse();
-        if (options?.spline) {
-          setSplineControlPoint(reversedLinePointsModel);
+    linePointsModel.forEach((m) => {
+      let areaPoints: BezierPoint[] = [];
+      const { points } = m;
+      points.slice(0, points.length / 2 + 1).forEach((point, i) => {
+        const lastPoint = i === points.length / 2 - 1;
+        const nullPoint = isNull(point);
+
+        if (!nullPoint) {
+          areaPoints.push(point!);
         }
 
-        points = [...startPoints, ...reversedLinePointsModel];
-      }
-    } else {
-      points = [...startPoints, ...endPoints];
-    }
+        if (areaPoints.length && (lastPoint || nullPoint)) {
+          const pairPoints = areaPoints
+            .map((areaPoint, idx) => {
+              const curIdx =
+                points.length / 2 + i - areaPoints.length + idx + (!nullPoint && lastPoint ? 1 : 0);
 
-    return points;
+              return points[curIdx];
+            })
+            .reverse();
+
+          model.push({
+            ...m,
+            type: 'areaPoints',
+            lineWidth: 0,
+            color: 'rgba(0, 0, 0, 0)', // make area border transparent
+            fillColor: this.getAreaOpacity(m.name!, m.color!),
+            points: [...areaPoints, ...pairPoints],
+          });
+
+          areaPoints = [];
+        }
+      });
+    });
+
+    return model;
   }
 
-  getCombinedLinePointsModel(options: LineTypeSeriesOptions): LinePointsModel[] {
-    if (!this.isRangeChart && !this.isStackChart) {
-      return this.linePointsModel.map((m) => ({
-        ...m,
-        points: this.addBottomPoints(m.points),
-      }));
+  renderAreaSeries(linePointsModel: LinePointsModel[]) {
+    const model: AreaPointsModel[] = [];
+    const bottomYPoint: number[] = [];
+
+    linePointsModel.forEach((m) => {
+      let areaPoints: BezierPoint[] = [];
+      const curBottomYPoint = [...bottomYPoint];
+      const { points } = m;
+      points.forEach((point, i) => {
+        const lastPoint = i === points.length - 1;
+        const nullPoint = isNull(point);
+
+        if (!isNull(point)) {
+          areaPoints.push(point);
+        }
+
+        if (areaPoints.length && (nullPoint || lastPoint)) {
+          const pairPoints = areaPoints
+            .map((areaPoint, idx) => {
+              const curIdx = i - areaPoints.length + idx + (!nullPoint && lastPoint ? 1 : 0);
+              const bottom = isUndefined(curBottomYPoint[curIdx])
+                ? this.baseYPosition
+                : curBottomYPoint[curIdx];
+
+              if (this.isStackChart) {
+                bottomYPoint[curIdx] = areaPoint.y;
+              }
+
+              return { x: areaPoint.x, y: bottom };
+            })
+            .reverse();
+
+          if (this.isStackChart && this.isSplineChart) {
+            setSplineControlPoint(pairPoints); // set spline for new stack pair points
+          }
+
+          model.push({
+            ...m,
+            type: 'areaPoints',
+            lineWidth: 0,
+            color: 'rgba(0, 0, 0, 0)', // make area border transparent
+            fillColor: this.getAreaOpacity(m.name!, m.color!),
+            points: [...areaPoints, ...pairPoints],
+          });
+
+          areaPoints = [];
+        }
+      });
+    });
+
+    return model;
+  }
+
+  getCombinedLinePointsModel(): LinePointsModel[] {
+    if (!this.isRangeChart) {
+      return this.linePointsModel;
     }
 
-    const len = this.isRangeChart ? this.linePointsModel.length / 2 : this.linePointsModel.length;
+    const len = this.linePointsModel.length / 2;
 
     return range(0, len).reduce<LinePointsModel[]>((acc, i) => {
-      const start = this.isRangeChart ? i : i - 1;
-      const end = this.isRangeChart ? len + i : i;
-      const points = this.getCombinedPoints(start, end, options);
+      const start = i;
+      const end = len + i;
+      const points = this.getCombinedPoints(start, end);
 
       return [...acc, { ...this.linePointsModel[i], points }];
     }, []);
@@ -399,14 +469,12 @@ export default class AreaSeries extends Component {
       : getRGBA(color, areaOpacity);
   }
 
-  renderAreaPointsModel(options: LineTypeSeriesOptions): AreaPointsModel[] {
-    return this.getCombinedLinePointsModel(options).map((m) => ({
-      ...m,
-      type: 'areaPoints',
-      lineWidth: 0,
-      color: 'rgba(0, 0, 0, 0)', // make area border transparent
-      fillColor: this.getAreaOpacity(m.name!, m.color!),
-    }));
+  renderAreaPointsModel(): AreaPointsModel[] {
+    const combinedLinePointsModel = this.getCombinedLinePointsModel();
+
+    return this.isRangeChart
+      ? this.renderRangeAreaSeries(combinedLinePointsModel)
+      : this.renderAreaSeries(combinedLinePointsModel);
   }
 
   renderCircleModel(
@@ -421,11 +489,13 @@ export default class AreaSeries extends Component {
       const isPairLinePointsModel =
         this.isRangeChart && modelIndex >= this.linePointsModel.length / 2;
       const active = this.activeSeriesMap![name!];
-      points.forEach(({ x, y }, index) => {
+      points.forEach((point, index) => {
+        if (isNull(point)) {
+          return;
+        }
         const model = {
           type: 'circle',
-          x,
-          y,
+          ...point,
           seriesIndex,
           name,
           index: isPairLinePointsModel ? points.length - index - 1 : index,
@@ -440,11 +510,19 @@ export default class AreaSeries extends Component {
             ],
           });
         }
+
+        const modelColor = hoverDotTheme.color ?? getRGBA(color, 1);
+
         responderModel.push({
           ...model,
           radius: hoverDotTheme.radius!,
-          color: hoverDotTheme.color ?? getRGBA(color, 1),
-          style: ['default', 'hover'],
+          color: modelColor,
+          style: [
+            {
+              lineWidth: hoverDotTheme.borderWidth,
+              strokeStyle: hoverDotTheme.borderColor ?? getRGBA(modelColor, 0.5),
+            },
+          ],
         });
       });
     });
@@ -488,7 +566,10 @@ export default class AreaSeries extends Component {
       name: this.name,
       eventDetectType: this.eventDetectType,
     });
-    this.activatedResponders = circleModels;
+
+    this.activatedResponders = this.isRangeChart
+      ? circleModels.slice(0, circleModels.length / 2) // for rendering unique tooltip data
+      : circleModels;
   }
 
   onMousemoveNearestType(responders: RectResponderModel[], mousePositions: Point) {
@@ -540,27 +621,35 @@ export default class AreaSeries extends Component {
     const dataLabelTheme = this.theme.dataLabels;
 
     return seriesModels.flatMap(({ points, name, fillColor }) =>
-      points.map((point) => ({
-        type: 'point',
-        ...point,
-        name,
-        theme: {
-          ...dataLabelTheme,
-          color: dataLabelTheme.useSeriesColor ? getRGBA(fillColor, 1) : dataLabelTheme.color,
-        },
-      }))
+      points.map((point) =>
+        isNull(point)
+          ? ({} as PointDataLabel)
+          : {
+              type: 'point',
+              ...point,
+              name,
+              theme: {
+                ...dataLabelTheme,
+                color: dataLabelTheme.useSeriesColor ? getRGBA(fillColor, 1) : dataLabelTheme.color,
+              },
+            }
+      )
     );
   }
 
   private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
     const { radius, color, borderWidth, borderColor } = this.theme.select.dot as DotTheme;
 
-    return models.map((model) => ({
-      ...model,
-      radius,
-      color: color ?? model.color,
-      style: ['hover', { lineWidth: borderWidth, strokeStyle: borderColor }],
-    }));
+    return models.map((model) => {
+      const modelColor = color ?? model.color;
+
+      return {
+        ...model,
+        radius,
+        color: modelColor,
+        style: [{ lineWidth: borderWidth, strokeStyle: borderColor ?? getRGBA(modelColor, 0.5) }],
+      };
+    });
   }
 
   onClick({ responders, mousePosition }: MouseEventType) {
@@ -590,23 +679,19 @@ export default class AreaSeries extends Component {
     return responder?.data?.category;
   }
 
-  selectSeries = (info: SelectSeriesHandlerParams<AreaChartOptions>) => {
-    const { index, seriesIndex, chartType } = info;
+  selectSeries = (info: SelectSeriesInfo) => {
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      !isNumber(seriesIndex) ||
-      (!isUndefined(chartType) && chartType !== 'area')
-    ) {
+    if (!isAvailableSelectSeries(info, 'area')) {
       return;
     }
 
-    const category = this.getResponderCategoryByIndex(index);
+    const category = this.getResponderCategoryByIndex(index!);
     if (!category) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
-    const model = this.tooltipCircleMap[category][seriesIndex];
+    const model = this.tooltipCircleMap[category][seriesIndex!];
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
@@ -619,17 +704,13 @@ export default class AreaSeries extends Component {
   };
 
   showTooltip = (info: SelectSeriesInfo) => {
-    const { index, seriesIndex, chartType } = info;
+    const { index, seriesIndex } = info;
 
-    if (
-      !isNumber(index) ||
-      (this.eventDetectType !== 'grouped' && !isNumber(seriesIndex)) ||
-      (!isUndefined(chartType) && chartType !== 'area')
-    ) {
+    if (!isAvailableShowTooltipInfo(info, this.eventDetectType, 'area')) {
       return;
     }
 
-    const category = this.getResponderCategoryByIndex(index);
+    const category = this.getResponderCategoryByIndex(index!);
     if (!category) {
       return;
     }

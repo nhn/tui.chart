@@ -31,6 +31,7 @@ const chartState = {
       ],
     },
   },
+  scale: { xAxis: { limit: { min: 0, max: 8 }, stepSize: 2, stepCount: 1 } },
   axes: {
     xAxis: {
       labels: [0, 2, 4, 6, 8],

@@ -384,7 +384,7 @@ interface AreaChartSeriesTheme {
 | --- | --- | --- |
 | `lineWidth` | number | 시리즈 라인 두께 |
 | `areaOpacity` | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
-| `dashSegments` | number[] | 시리즈 라인의 dashSegment 값 |
+| `dashSegments` | number[] | 시리즈 라인의 dashSegment 값 (IE11 이상 지원)  |
 | `colors` | string[] | 시리즈의 색상 |
 | `dot` | object | `showDot: true`일 때 노출되는 점 스타일 지정 |
 | `select` | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |

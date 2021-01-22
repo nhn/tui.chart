@@ -28,6 +28,7 @@ import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
 import { message } from '@src/message';
 import { sendHostname } from '@src/helpers/googleAnalytics';
+import { makeObservableObjectToNormal } from '@src/store/reactive';
 
 export const DEFAULT_ANIM_DURATION = 500;
 
@@ -100,6 +101,8 @@ export default abstract class Chart<T extends Options> {
     resizing: false,
     updating: false,
   };
+
+  resizeObserver: ResizeObserver | null = null;
 
   private getAnimationDuration(animationOption?: AnimationOptions) {
     const { firstRendering } = this.animator;
@@ -196,18 +199,17 @@ export default abstract class Chart<T extends Options> {
     }, 0);
   }
 
-  resizeChartSize() {
+  resizeChartSize(containerWidth?: number, containerHeight?: number) {
     this.animationControlFlag.resizing = true;
-    const { offsetWidth, offsetHeight } = this.el;
     const {
       usingContainerSize: { width: usingContainerWidth, height: usingContainerHeight },
       chart: { width, height },
     } = this.store.state;
 
     if (
-      (!usingContainerWidth && !usingContainerHeight) ||
-      (!offsetWidth && !offsetHeight) ||
-      (offsetWidth === width && offsetHeight === height)
+      !(usingContainerWidth || usingContainerHeight) ||
+      !(containerWidth || containerHeight) ||
+      (containerWidth === width && containerHeight === height)
     ) {
       this.animationControlFlag.resizing = false;
 
@@ -217,23 +219,44 @@ export default abstract class Chart<T extends Options> {
     this.eventBus.emit('resetHoveredSeries');
 
     this.store.dispatch('setChartSize', {
-      width: usingContainerWidth ? offsetWidth : width,
-      height: usingContainerHeight ? offsetHeight : height,
+      width: usingContainerWidth ? containerWidth : width,
+      height: usingContainerHeight ? containerHeight : height,
     });
 
     this.draw();
   }
 
-  private debounceResizeEvent = debounce(() => {
-    this.resizeChartSize();
+  private debounceResizeEvent = debounce((containerWidth: number, containerHeight: number) => {
+    this.resizeChartSize(containerWidth, containerHeight);
+  }, 100);
+
+  private debounceWindowResizeEvent = debounce(() => {
+    const { offsetWidth, offsetHeight } = this.el;
+    this.resizeChartSize(offsetWidth, offsetHeight);
   }, 100);
 
   setResizeEvent() {
-    window.addEventListener('resize', this.debounceResizeEvent);
+    if (isUndefined(ResizeObserver)) {
+      window.addEventListener('resize', this.debounceWindowResizeEvent);
+    } else {
+      this.resizeObserver = new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+          const { width, height } = entry.contentRect;
+          this.debounceResizeEvent(width, height);
+        });
+      });
+      this.resizeObserver.observe(this.el);
+    }
   }
 
   clearResizeEvent() {
-    window.removeEventListener('resize', this.debounceResizeEvent);
+    if (this.resizeObserver) {
+      this.resizeObserver.unobserve(this.el);
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    } else {
+      window.removeEventListener('resize', this.debounceWindowResizeEvent);
+    }
   }
 
   handleEvent(event: MouseEvent) {
@@ -376,7 +399,7 @@ export default abstract class Chart<T extends Options> {
    * const options = chart.getOptions();
    */
   public getOptions = () => {
-    return JSON.parse(JSON.stringify(this.store.initStoreState.options));
+    return makeObservableObjectToNormal(this.store.initStoreState.options);
   };
 
   public abstract addSeries(data: SeriesDataInput, dataInfo?: AddSeriesDataInfo): void;
@@ -487,10 +510,6 @@ export default abstract class Chart<T extends Options> {
     this.componentManager.clear();
     this.clearResizeEvent();
     this.el.innerHTML = '';
-
-    Object.keys(this).forEach((key) => {
-      this[key] = null;
-    });
   };
 
   private isSelectableSeries() {

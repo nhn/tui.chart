@@ -1,6 +1,10 @@
 import { HeatmapSeriesData, SeriesDataType, HeatmapChartOptions } from '@t/options';
 import { deepMergedCopy, range } from '@src/helpers/utils';
-import { contributionsData, temperatureAverageDataForHeatmap } from './data';
+import {
+  contributionsData,
+  temperatureAverageDataForHeatmap,
+  temperatureAverageDataForHeatmapWithNull,
+} from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import HeatmapChart from '@src/charts/heatmapChart';
 import '@src/css/chart.css';
@@ -38,7 +42,6 @@ function createChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -49,6 +52,18 @@ function createChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions
 
 export const basic = () => {
   const { el } = createChart(temperatureAverageDataForHeatmap);
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(temperatureAverageDataForHeatmapWithNull, {
+    series: {
+      dataLabels: {
+        visible: true,
+      },
+    },
+  });
 
   return el;
 };
@@ -179,6 +194,15 @@ export const dataLabelsWithTheme = () => {
       },
     },
   } as HeatmapChartOptions);
+
+  return el;
+};
+
+export const rotatable = () => {
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    chart: { title: '24-hr Average Temperature', width: 400, height: 300 },
+    legend: { align: 'right' },
+  });
 
   return el;
 };

@@ -31,7 +31,6 @@ function createChart(data, customOptions: ColumnChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -162,6 +161,14 @@ export const rangeWithMinMax = () => {
   return el;
 };
 
+export const rangeWithDataLabels = () => {
+  const { el } = createChart(temperatureRangeData, {
+    series: { dataLabels: { visible: true } },
+  });
+
+  return el;
+};
+
 export const diverging = () => {
   const { el } = createChart(genderAgeData, {
     xAxis: {
@@ -278,6 +285,14 @@ export const dataLabelsWithTheme = () => {
         },
       },
     },
+  });
+
+  return el;
+};
+
+export const axisFormatter = () => {
+  const { el } = createChart(budgetData, {
+    yAxis: { label: { formatter: (value) => `$${value}` } },
   });
 
   return el;

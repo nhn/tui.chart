@@ -1,5 +1,5 @@
 import { StoreModule, RawSeries, Series, Categories } from '@t/store/store';
-import { isNumber, sortCategories } from '@src/helpers/utils';
+import { isNull, isNumber, sortCategories } from '@src/helpers/utils';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
 import { isBulletSeries } from '@src/component/bulletSeries';
 import { getDataInRange } from '@src/helpers/range';
@@ -19,9 +19,11 @@ export function makeRawCategories(series: RawSeries | Series, categories?: Categ
     (series[key].data ?? series[key]).forEach(({ data, name }) => {
       if (Array.isArray(data)) {
         data.forEach((datum) => {
-          const rawXValue = getCoordinateXValue(datum);
+          if (!isNull(datum)) {
+            const rawXValue = getCoordinateXValue(datum);
 
-          firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
+            firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
+          }
         });
       } else if (isBulletSeries(key)) {
         firstValues.add(name);

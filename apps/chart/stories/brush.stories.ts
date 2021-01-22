@@ -139,7 +139,7 @@ export const lineBrush = () => {
     x2: 200,
     y2: 200,
     lineWidth,
-    dashedPattern: isDashed ? [5, 5] : [],
+    dashSegments: isDashed ? [5, 5] : [],
   };
   line(ctx, lineModel);
 
@@ -281,7 +281,6 @@ export const circleBrush = () => {
   ] as StyleProp<CircleStyle, CircleStyleName>;
 
   circle(ctx, circleModel({ x: 100, y: 100 }, 50, '#a79aff', ['default']));
-  circle(ctx, circleModel({ x: 300, y: 100 }, 50, '#a79aff', ['default', 'hover']));
   circle(ctx, circleModel({ x: 100, y: 300 }, radius, color, styleObj));
 
   return el;

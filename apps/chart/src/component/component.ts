@@ -1,5 +1,5 @@
 import { ChartState, Options } from '@t/store/store';
-import { Rect } from '@t/options';
+import { LineTypeSeriesOptions, Rect } from '@t/options';
 import Store from '../store/store';
 import Painter from '@src/painter';
 import EventEmitter from '../eventEmitter';
@@ -18,6 +18,7 @@ import {
   HeatmapRectModels,
   NestedPieSeriesModels,
   ScatterSeriesModels,
+  BulletSeriesModels,
 } from '@t/components/series';
 import { AxisModels, LabelModel, LineModel, RectLabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -80,7 +81,8 @@ type ComponentModels =
   | NestedPieSeriesModels
   | ResponderSeriesModel
   | RectLabelModel[]
-  | ScatterSeriesModels;
+  | ScatterSeriesModels
+  | BulletSeriesModels;
 
 export default abstract class Component {
   name = 'Component';
@@ -153,28 +155,27 @@ export default abstract class Component {
           if (isNumber(current[key])) {
             current[key] = current[key] + (target[key] - current[key]) * delta;
           } else if (key === 'points') {
-            current[key] = this.getCurrentModelToMatchTargetModel(
+            const matchedModel = this.getCurrentModelToMatchTargetModel(
               current[key],
               current[key],
               target[key]
             );
-            current[key].forEach((curPoint, idx) => {
-              const { x, y } = curPoint;
-              const { x: nextX, y: nextY } = target[key][idx];
+            const newPoints = matchedModel.map((curPoint, idx) => {
+              const next = target[key][idx];
+              if (curPoint && next) {
+                const { x, y } = curPoint;
+                const { x: nextX, y: nextY } = next;
 
-              curPoint.x = x + (nextX - x) * delta;
-              curPoint.y = y + (nextY - y) * delta;
+                return { ...next, x: x + (nextX - x) * delta, y: y + (nextY - y) * delta };
+              }
+
+              return next;
             });
 
-            if (
-              (current[key].length &&
-                !current[key][0].controlPoint &&
-                target[key].length &&
-                target[key][0].controlPoint) ||
-              (current[key].length && current[key][0].controlPoint)
-            ) {
-              setSplineControlPoint(current[key]);
+            if ((this.store.state.options.series as LineTypeSeriesOptions)?.spline) {
+              setSplineControlPoint(newPoints);
             }
+            current[key] = newPoints;
           } else {
             current[key] = target[key];
           }

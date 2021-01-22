@@ -31,18 +31,16 @@ import {
 } from '@src/helpers/utils';
 import { getLimitOnAxis } from '@src/helpers/axes';
 import { isGroupStack, isPercentStack } from '@src/store/stackSeriesData';
-import {
-  calibrateBoxStackDrawingValue,
-  sumValuesBeforeIndex,
-} from '@src/helpers/boxSeriesCalculator';
+import { calibrateBoxStackDrawingValue, sumValuesBeforeIndex } from '@src/helpers/boxSeries';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RectDataLabel } from '@t/components/dataLabels';
-import { getBoxTypeSeriesPadding } from '@src/helpers/boxStyle';
+import { getBoxTypeSeriesPadding } from '@src/helpers/style';
 import { getDataInRange } from '@src/helpers/range';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
+import { makeLabelsFromLimit } from '@src/helpers/calculator';
 
 type RenderOptions = {
   stack: Stack;
@@ -136,7 +134,7 @@ export default class BoxStackSeries extends BoxSeries {
     chartState: ChartState<T>,
     computed
   ) {
-    const { layout, series: seriesData, axes, stackSeries, legend, theme } = chartState;
+    const { layout, series: seriesData, axes, stackSeries, legend, theme, scale } = chartState;
     const { viewRange } = computed;
     this.isShow = !!stackSeries[this.name];
 
@@ -155,10 +153,13 @@ export default class BoxStackSeries extends BoxSeries {
     this.selectable = this.getSelectableOption(options);
 
     const stackSeriesData = getStackSeriesDataInViewRange(stackSeries[this.name], viewRange);
-    const { labels } = axes[this.valueAxis];
     const { tickDistance } = axes[this.labelAxis];
     const diverging = !!options.series?.diverging;
+
+    const { limit, stepSize } = this.getScaleData(scale);
+    const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
+
     const { stack, scaleType } = stackSeriesData;
 
     this.basePosition = this.getBasePosition(axes[this.valueAxis]);
@@ -459,7 +460,7 @@ export default class BoxStackSeries extends BoxSeries {
             y: this.isBar ? y + columnWidth : y,
             x2: nextX,
             y2: nextY,
-            dashedPattern: dashSegments,
+            dashSegments,
             strokeStyle: color,
             lineWidth,
           });

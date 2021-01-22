@@ -6,22 +6,15 @@ import {
   RectModel,
   RectStyle,
 } from '@t/components/series';
-import { makeStyleObj } from '@src/helpers/style';
+import { makeStyleObj, setLineDash, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
 
-export type CircleStyleName = 'default' | 'hover' | 'plot';
+export type CircleStyleName = 'default' | 'plot';
 export type RectStyleName = 'shadow';
 
-// @TODO: 테마로 옮길 것들 옮겨야함. 원형 시리즈 사용하는 것 확인 후 제거 필요
 const circleStyle = {
   default: {
     strokeStyle: '#ffffff',
-    lineWidth: 2,
-  },
-  hover: {
-    shadowColor: 'rgba(0, 0, 0, 0.3)',
-    shadowBlur: 2,
-    shadowOffsetY: 2,
     lineWidth: 2,
   },
   plot: {
@@ -54,13 +47,14 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
     width,
     height,
     radius = 0,
-    stroke = 'black',
+    stroke: strokeStyle = 'black',
     fill = '',
     lineWidth = 1,
   } = pathRectModel;
 
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
+
   ctx.lineTo(x + width - radius, y);
   ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
   ctx.lineTo(x + width, y + height - radius);
@@ -71,14 +65,10 @@ export function pathRect(ctx: CanvasRenderingContext2D, pathRectModel: PathRectM
   ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
   if (fill) {
-    ctx.fillStyle = fill;
-    ctx.fill();
+    fillStyle(ctx, fill);
   }
-  if (stroke) {
-    ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = stroke;
-    ctx.stroke();
-  }
+
+  strokeWithOptions(ctx, { lineWidth, strokeStyle });
 }
 
 export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) {
@@ -89,12 +79,11 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
     radius,
     color,
     angle = { start: 0, end: Math.PI * 2 },
-    borderWidth,
-    borderColor,
+    borderWidth: lineWidth,
+    borderColor: strokeStyle,
   } = circleModel;
 
   ctx.beginPath();
-  ctx.fillStyle = color;
 
   if (style) {
     const styleObj = makeStyleObj<CircleStyle, CircleStyleName>(style, circleStyle);
@@ -105,44 +94,25 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   }
 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
-  ctx.fill();
+  fillStyle(ctx, color);
 
-  if (borderWidth) {
-    ctx.lineWidth = borderWidth;
-  }
-
-  if (borderColor) {
-    ctx.strokeStyle = borderColor;
-  }
-
-  if (ctx.shadowColor) {
-    ctx.shadowColor = 'transparent';
-  }
-
-  ctx.stroke();
+  strokeWithOptions(ctx, { lineWidth, strokeStyle });
   ctx.closePath();
 }
 
 export function line(ctx: CanvasRenderingContext2D, lineModel: LineModel) {
-  const { x, y, x2, y2, strokeStyle, lineWidth, dashedPattern } = lineModel;
-
-  if (strokeStyle) {
-    ctx.strokeStyle = strokeStyle;
-  }
-
-  if (lineWidth) {
-    ctx.lineWidth = lineWidth;
-  }
+  const { x, y, x2, y2, strokeStyle, lineWidth, dashSegments } = lineModel;
 
   ctx.beginPath();
 
-  if (dashedPattern) {
-    ctx.setLineDash(dashedPattern);
+  if (dashSegments) {
+    setLineDash(ctx, dashSegments);
   }
 
   ctx.moveTo(x, y);
   ctx.lineTo(x2, y2);
-  ctx.stroke();
+
+  strokeWithOptions(ctx, { strokeStyle, lineWidth });
   ctx.closePath();
 }
 
@@ -168,7 +138,6 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
     ctx.shadowColor = 'transparent';
   }
 
-  ctx.fillStyle = color;
   ctx.rect(x, y, width, height);
-  ctx.fill();
+  fillStyle(ctx, color);
 }

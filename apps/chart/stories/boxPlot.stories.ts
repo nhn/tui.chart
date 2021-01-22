@@ -1,5 +1,5 @@
 import BoxPlotChart from '@src/charts/boxPlotChart';
-import { BudgetDataForBoxPlot } from './data';
+import { budgetDataForBoxPlot, budgetDataForBoxPlotWithNull } from './data';
 import { BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
@@ -23,7 +23,6 @@ function createChart(data: BoxPlotSeriesData, customOptions: BoxPlotChartOptions
     customOptions || {}
   );
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -33,13 +32,23 @@ function createChart(data: BoxPlotSeriesData, customOptions: BoxPlotChartOptions
 }
 
 export const basic = () => {
-  const { el } = createChart(BudgetDataForBoxPlot);
+  const { el } = createChart(budgetDataForBoxPlot);
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(budgetDataForBoxPlotWithNull as BoxPlotSeriesData, {
+    series: {
+      eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'grouped'),
+    },
+  });
 
   return el;
 };
 
 export const selectable = () => {
-  const { el } = createChart(BudgetDataForBoxPlot, {
+  const { el } = createChart(budgetDataForBoxPlot, {
     series: {
       selectable: true,
     },
@@ -49,7 +58,7 @@ export const selectable = () => {
 };
 
 export const eventDetectType = () => {
-  const { el } = createChart(BudgetDataForBoxPlot, {
+  const { el } = createChart(budgetDataForBoxPlot, {
     series: {
       selectable: true,
       eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'grouped'),
@@ -60,7 +69,7 @@ export const eventDetectType = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(BudgetDataForBoxPlot, {
+  const { el } = createChart(budgetDataForBoxPlot, {
     chart: { title: 'Monthly Revenue', width: 700, height: 'auto' },
   });
 
@@ -68,7 +77,7 @@ export const responsive = () => {
 };
 
 export const theme = () => {
-  const { el } = createChart(BudgetDataForBoxPlot, {
+  const { el } = createChart(budgetDataForBoxPlot, {
     series: {
       selectable: true,
     },

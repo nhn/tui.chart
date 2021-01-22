@@ -30,11 +30,38 @@ import {
   ScatterSeriesType,
   ScatterSeriesInput,
 } from '@t/options';
+import { isNull } from '@src/helpers/utils';
+import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 
 export interface ScatterChartProps {
   el: HTMLElement;
   options: ScatterChartOptions;
   data: ScatterSeriesData;
+}
+
+function clearUnnecessaryData(scatterSeries: ScatterSeriesType[]) {
+  return scatterSeries.map((series) => {
+    const exist = {};
+
+    return {
+      ...series,
+      data: series.data
+        .filter((datum) => !isNull(datum))
+        .reduce<(CoordinateDataType | null)[]>((acc, cur) => {
+          const x = getCoordinateXValue(cur!);
+          const y = getCoordinateYValue(cur!);
+          const key = `${x}-${y}`;
+
+          if (!exist[key]) {
+            exist[key] = true;
+
+            return [...acc, cur];
+          }
+
+          return acc;
+        }, []),
+    };
+  });
 }
 
 /**
@@ -77,7 +104,7 @@ export interface ScatterChartProps {
  *     @param {Object} [props.options.plot]
  *       @param {number} [props.options.plot.width] - Width of plot.
  *       @param {number} [props.options.plot.height] - Height of plot.
- *       @param {boolean} [props.options.plot.showLine] - Whether to show plot line.
+ *       @param {boolean} [props.options.plot.visible] - Whether to show plot line.
  *     @param {Object} [props.options.legend]
  *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
@@ -114,7 +141,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
       el: props.el,
       options: props.options,
       series: {
-        scatter: props.data.series as ScatterSeriesType[],
+        scatter: clearUnnecessaryData(props.data.series as ScatterSeriesType[]),
       },
       categories: props.data?.categories,
     });

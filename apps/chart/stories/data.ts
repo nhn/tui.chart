@@ -53,6 +53,33 @@ export const temperatureData = {
   ],
 };
 
+export const temperatureDataWithNull = {
+  categories: [
+    '01/01/2020',
+    '02/01/2020',
+    '03/01/2020',
+    '04/01/2020',
+    '05/01/2020',
+    '06/01/2020',
+    '07/01/2020',
+    '08/01/2020',
+    '09/01/2020',
+    '10/01/2020',
+    '11/01/2020',
+    '12/01/2020',
+  ],
+  series: [
+    {
+      name: 'Seoul',
+      data: [null, -1.1, 4.0, 14.6, 17.5, null, 25.9, null, 14.9, 13.9, 6.6, null],
+    },
+    {
+      name: 'Sydney',
+      data: [22.1, 22.0, 20.9, 18.3, 15.2, 12.8, 11.8, null, 17.2, 17.6, 19.4, 21.2],
+    },
+  ],
+};
+
 export const temperatureDataWithDateObject = {
   categories: [
     new Date('01/01/2020'),
@@ -111,20 +138,7 @@ export const temperatureData2 = {
 };
 
 export const avgTemperatureData = {
-  categories: [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ],
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Seoul',
@@ -137,6 +151,24 @@ export const avgTemperatureData = {
     {
       name: 'Moscow',
       data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5],
+    },
+  ],
+};
+
+export const avgTemperatureDataWithNull = {
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Seoul',
+      data: [null, 40, 25, null, 15, 45, 33, 34, 24, 30, 22, null],
+    },
+    {
+      name: 'Sydney',
+      data: [5, 30, 21, 18, 59, null, 28, 10, null, 20, 10, 30],
+    },
+    {
+      name: 'Moscow',
+      data: [null, null, null, null, null, 41, 29, 15, 30, 10, 33, 5],
     },
   ],
 };
@@ -159,6 +191,28 @@ export const budgetData = {
     {
       name: 'Debt',
       data: [3000, 4000, 3000, 1000, 2000, 4000, 3000],
+    },
+  ],
+};
+
+export const budgetData2WithNull = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+  series: [
+    {
+      name: 'Budget',
+      data: [null, 3000, 5000, 7000, 6000, 4000],
+    },
+    {
+      name: 'Income',
+      data: [8000, 4000, null, 2000, 6000, 3000],
+    },
+    {
+      name: 'Expenses',
+      data: [4000, 4000, null, 3000, null, 5000],
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, null],
     },
   ],
 };
@@ -417,20 +471,7 @@ export const datetimeCoordinateData = {
 };
 
 export const temperatureRangeData = {
-  categories: [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ],
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
   series: [
     {
       name: 'Seoul',
@@ -462,6 +503,46 @@ export const temperatureRangeData = {
         [21.8, 26.0],
         [17.8, 23.6],
         [11.3, 16.6],
+        [4.4, 11.1],
+        [3.2, 11.2],
+      ],
+    },
+  ],
+};
+
+export const temperatureRangeDataWithNull = {
+  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Seoul',
+      data: [
+        [-8.3, 0.3],
+        [-5.8, 3.1],
+        null,
+        [5.8, 16.9],
+        [11.5, 22.6],
+        [16.6, 26.6],
+        [21.2, 28.8],
+        [21.8, 30.0],
+        [15.8, 25.6],
+        [8.3, 19.6],
+        [1.4, 11.1],
+        [-5.2, 3.2],
+      ],
+    },
+    {
+      name: 'Busan',
+      data: [
+        [0, 10],
+        [3.5, 13.1],
+        null,
+        [10.8, 16.9],
+        [11.5, 18.6],
+        [13.6, 20.6],
+        null,
+        [21.8, 26.0],
+        [17.8, 23.6],
+        null,
         [4.4, 11.1],
         [3.2, 11.2],
       ],
@@ -991,6 +1072,15 @@ export const genderHeightWeightData = {
   ],
 };
 
+export const genderHeightWeightDataWithNull = {
+  series: [
+    {
+      name: 'male',
+      data: [{ x: 174, y: 65.6 }, { x: 175.3, y: 71.8 }, null, { x: 181.5, y: 74.8 }],
+    },
+  ],
+};
+
 export const currentUserCoordinateDatetimeData = {
   series: [
     {
@@ -1260,6 +1350,21 @@ export const lifeExpectancyPerGDPData = {
   ],
 };
 
+export const lifeExpectancyPerGDPDataWithNull = {
+  series: [
+    {
+      name: 'Africa',
+      data: [
+        { x: 4200, y: 70.35, r: 32209101, label: 'Morocco' },
+        { x: 4200, y: 70.71, r: 76117421, label: 'Egypt' },
+        { x: 5900, y: 56.46, r: 1355246, label: 'Gabon' },
+        null,
+        { x: 6600, y: 72.74, r: 32129324, label: 'Algeria' },
+      ],
+    },
+  ],
+};
+
 export const lifeExpectancyPerGDPDataWithDatetime = {
   series: [
     {
@@ -1315,6 +1420,36 @@ export const genderAgeData = {
   ],
 };
 
+export const browserUsageDataWithNull = {
+  categories: ['Browser'],
+  series: [
+    {
+      name: 'Chrome',
+      data: 46.02,
+    },
+    {
+      name: 'IE',
+      data: null,
+    },
+    {
+      name: 'Firefox',
+      data: 17.71,
+    },
+    {
+      name: 'Safari',
+      data: 5.45,
+    },
+    {
+      name: 'Opera',
+      data: 3.1,
+    },
+    {
+      name: 'Etc',
+      data: 7.25,
+    },
+  ],
+};
+
 export const browserUsageData = {
   categories: ['Browser'],
   series: [
@@ -1345,7 +1480,32 @@ export const browserUsageData = {
   ],
 };
 
-export const BudgetDataForBoxPlot = {
+export const budgetDataForBoxPlotWithNull = {
+  categories: ['Budget', 'Income', 'Expenses', 'Debt'],
+  series: [
+    {
+      name: '2020',
+      data: [
+        [1000, 2500, 3714, 5500, 7000],
+        null,
+        [3000, 4000, 4714, 6000, 7000],
+        [1000, 2250, 3142, 4750, 6000],
+      ],
+      outliers: null,
+    },
+    {
+      name: '2021',
+      data: [
+        null,
+        [3000, 5750, 7571, 8250, 9000],
+        [5000, 8000, 8714, 9000, 10000],
+        [7000, 9250, 10142, 11750, 12000],
+      ],
+    },
+  ],
+};
+
+export const budgetDataForBoxPlot = {
   categories: ['Budget', 'Income', 'Expenses', 'Debt'],
   series: [
     {
@@ -1402,6 +1562,42 @@ export const budgetDataForBullet = {
       markers: [25],
       ranges: [
         [0, 10],
+        [10, 19],
+        [19, 28],
+      ],
+    },
+    {
+      name: 'Dept',
+      data: 23,
+      markers: [],
+      ranges: [
+        [19, 25],
+        [13, 19],
+        [0, 13],
+      ],
+    },
+  ],
+};
+
+export const budgetDataForBulletWithNull = {
+  series: [
+    {
+      name: 'Budget',
+      data: null,
+      markers: [28, 15],
+      ranges: [[-1, 5], [5, 10], [10, 15], [15, 20], [20, 25], null],
+    },
+    {
+      name: 'Income',
+      data: 0,
+      ranges: [[0, 10]],
+    },
+    {
+      name: 'Expenses',
+      data: 30,
+      markers: [0],
+      ranges: [
+        [-2, 10],
         [10, 19],
         [19, 28],
       ],
@@ -1751,6 +1947,66 @@ export const usedDiskSpaceData = {
   ],
 };
 
+export const usedDiskSpaceDataWithNull = {
+  series: [
+    {
+      label: 'Documents',
+      children: [
+        {
+          label: 'docs',
+          children: [
+            {
+              label: 'pages',
+              data: null,
+            },
+            {
+              label: 'keynote',
+              data: 2.5,
+            },
+            {
+              label: 'numbers',
+              data: 1.2,
+            },
+          ],
+        },
+        {
+          label: 'photos',
+          data: 5.5,
+        },
+        {
+          label: 'videos',
+          data: 20.7,
+        },
+      ],
+    },
+    {
+      label: 'Downloads',
+      children: [
+        {
+          label: 'recent',
+          data: 5.3,
+        },
+        {
+          label: '2020',
+          data: 10.1,
+        },
+        {
+          label: '2019',
+          data: 8.2,
+        },
+      ],
+    },
+    {
+      label: 'Application',
+      data: 16.4,
+    },
+    {
+      label: 'Desktop',
+      data: null,
+    },
+  ],
+};
+
 export const populationDensityData = {
   series: [
     {
@@ -1900,6 +2156,17 @@ export const temperatureAverageDataForHeatmap = {
   ],
 };
 
+export const temperatureAverageDataForHeatmapWithNull = {
+  categories: {
+    x: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    y: ['Seoul', 'Seattle'],
+  },
+  series: [
+    [-3.5, -1.1, null, 11.3, null, 21.5],
+    [null, 17.8, null, 10.6, 6.4, 3.7],
+  ],
+};
+
 export const contributionsData = {
   categories: {
     x: [
@@ -1926,6 +2193,126 @@ export const contributionsData = {
     [4, 4, 9, 4, 5, 2, 8, 0, 3, 1, 4, 9],
     [10, 9, 8, 4, 8, 11, 0, 9, 13, 9, 3, 8],
     [8, 2, 11, 14, 5, 12, 19, 10, 3, 13, 4, 5],
+  ],
+};
+
+export const groupedBrowserUsageDataWithNull = {
+  categories: ['A', 'B'],
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          parentName: 'Chrome',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          parentName: 'Chrome',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          parentName: 'Safari',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          parentName: 'Safari',
+          data: 0,
+        },
+        {
+          name: 'IE 11',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 10',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 9',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'IE 8',
+          parentName: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox 13',
+          parentName: 'Firefox',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          parentName: 'Firefox',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          parentName: 'Opera',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          parentName: 'Opera',
+          data: 1,
+        },
+        {
+          name: 'Etc 1',
+          parentName: 'Etc',
+          data: 3,
+        },
+        {
+          name: 'Etc 2',
+          parentName: 'Etc',
+          data: 2,
+        },
+        {
+          name: 'Etc 3',
+          parentName: 'Etc',
+          data: 1,
+        },
+        {
+          name: 'Etc 4',
+          parentName: 'Etc',
+          data: 1,
+        },
+      ],
+    },
   ],
 };
 
@@ -2114,6 +2501,97 @@ export const browserUsageData2 = {
         {
           name: 'IE 8',
           data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          data: 1,
+        },
+        {
+          name: 'Etc - 2020',
+          data: 7,
+        },
+      ],
+    },
+  ],
+};
+
+export const browserUsageData2WithNull = {
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: null,
+        },
+        {
+          name: 'Firefox',
+          data: null,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          data: 0,
+        },
+        {
+          name: 'IE 11',
+          data: null,
+        },
+        {
+          name: 'IE 10',
+          data: null,
+        },
+        {
+          name: 'IE 9',
+          data: null,
+        },
+        {
+          name: 'IE 8',
+          data: null,
         },
         {
           name: 'Firefox 13',

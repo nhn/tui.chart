@@ -1,4 +1,4 @@
-import { pickProperty } from '@src/helpers/utils';
+import { isNull, pickProperty } from '@src/helpers/utils';
 import { message } from '@src/message';
 
 type ObservableInfo = {
@@ -9,35 +9,33 @@ type ObservableInfo = {
 };
 
 type Observer = {
-  (): any;
+  (): void;
   deps: Function[][];
 };
 
 let currentCollectorObserver: Observer | Function | null = null;
-let observerIdIndex = 0;
-let currentRunningObserverId: number | null = null;
+let currentRunningObserver: Observer | null = null;
 const observerCallCue: Observer[] = [];
 let doingInvisibleWork = false;
 
 export function observe(fn: Function): Function {
-  const observeId = observerIdIndex;
-
-  observerIdIndex += 1;
-
   const observer: Observer = () => {
-    if (currentRunningObserverId === observeId) {
+    if (currentRunningObserver === observer) {
       return;
     }
 
-    if (doingInvisibleWork || currentRunningObserverId !== null) {
+    // If there is observer running or doing invisible work
+    if (doingInvisibleWork || !isNull(currentRunningObserver)) {
       if (observerCallCue.includes(observer)) {
         observerCallCue.splice(observerCallCue.indexOf(observer), 1);
       }
+      // We use observer call cue because avoid nested observer call.
       observerCallCue.push(observer);
-    } else if (currentRunningObserverId === null) {
-      currentRunningObserverId = observeId;
+      // or If there are no observers running. Run the observer and run the next observer in the call queue.
+    } else if (isNull(currentRunningObserver)) {
+      currentRunningObserver = observer;
       fn();
-      currentRunningObserverId = null;
+      currentRunningObserver = null;
 
       digestObserverCallCue();
     }
@@ -45,6 +43,7 @@ export function observe(fn: Function): Function {
 
   observer.deps = [];
 
+  // first observer excution for collect dependencies
   currentCollectorObserver = observer;
   currentCollectorObserver();
   currentCollectorObserver = null;
@@ -69,7 +68,7 @@ function digestObserverCallCue() {
 }
 
 export function isObservable<T extends Record<string, any>>(target: T): boolean {
-  return typeof target === 'object' && target.__ob__;
+  return typeof target === 'object' && target.__toastUIChartOb__;
 }
 
 export function observable(
@@ -81,7 +80,7 @@ export function observable(
   }
 
   if (!isObservable(target)) {
-    Object.defineProperty(target, '__ob__', {
+    Object.defineProperty(target, '__toastUIChartOb__', {
       enumerable: false,
     });
   }
@@ -103,6 +102,7 @@ export function observable(
       configurable: true,
       enumerable: true,
       get: function () {
+        // It's some kind a trick to get observable information from closure using getter for notify()
         if (currentCollectorObserver === observableInfo) {
           return { target, key, value, obs };
         }
@@ -112,7 +112,7 @@ export function observable(
           currentCollectorObserver &&
           !obs.includes(currentCollectorObserver)
         ) {
-          // console.log('collect observer', key);
+          // if there is collector observer in running, collect current data as dependency
           obs.push(currentCollectorObserver);
           (currentCollectorObserver as Observer).deps.push(obs);
         }
@@ -130,7 +130,7 @@ export function observable(
         }
 
         if (prevValue !== value) {
-          // console.log('run observe', key, obs);
+          // Run observers
           invokeObs(obs);
         }
       },
@@ -265,4 +265,8 @@ export function watch(holder: Record<string, any>, path: string, fn: Function): 
       obInfo.obs.splice(index, 1);
     }
   };
+}
+
+export function makeObservableObjectToNormal(obj: any) {
+  return JSON.parse(JSON.stringify(obj));
 }

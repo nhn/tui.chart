@@ -1,6 +1,10 @@
 import { BubbleChartOptions, BubbleSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { lifeExpectancyPerGDPData, lifeExpectancyPerGDPDataWithDatetime } from './data';
+import {
+  lifeExpectancyPerGDPData,
+  lifeExpectancyPerGDPDataWithDatetime,
+  lifeExpectancyPerGDPDataWithNull,
+} from './data';
 import BubbleChart from '@src/charts/bubbleChart';
 import '@src/css/chart.css';
 
@@ -31,7 +35,6 @@ function createChart(data: BubbleSeriesData, customOptions: BubbleChartOptions =
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -42,6 +45,12 @@ function createChart(data: BubbleSeriesData, customOptions: BubbleChartOptions =
 
 export const basic = () => {
   const { el } = createChart(lifeExpectancyPerGDPData);
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(lifeExpectancyPerGDPDataWithNull);
 
   return el;
 };

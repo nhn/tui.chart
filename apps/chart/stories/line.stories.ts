@@ -8,6 +8,7 @@ import {
   randomData,
   temperatureData2,
   datetimeCoordinateData,
+  temperatureDataWithNull,
 } from './data';
 import { boolean, number, radios, withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
@@ -36,7 +37,6 @@ function createChart(data: LineSeriesData, customOptions: LineChartOptions = {})
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -48,6 +48,21 @@ function createChart(data: LineSeriesData, customOptions: LineChartOptions = {})
 export const basic = () => {
   const { el } = createChart(temperatureData, {
     xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+  });
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(temperatureDataWithNull, {
+    xAxis: { pointOnColumn: boolean('pointOnColumn', false) },
+    series: {
+      spline: true,
+      showDot: true,
+      dataLabels: {
+        visible: true,
+      },
+    },
   });
 
   return el;
@@ -495,4 +510,47 @@ export const syncTooltip = () => {
   });
 
   return chartGroupElem;
+};
+
+export const rotatable = () => {
+  const { el } = createChart(temperatureData, {
+    chart: { width: 'auto', height: 'auto' },
+    yAxis: { label: { interval: 2 } },
+    xAxis: {
+      title: { text: 'Month', offsetY: 10 },
+      label: {
+        rotatable: boolean('rotatable', true),
+      },
+      scale: {
+        stepSize: 1,
+      },
+    },
+    responsive: {
+      rules: [
+        {
+          condition({ width: w }) {
+            return w < 600;
+          },
+          options: {
+            legend: {
+              visible: false,
+            },
+          },
+        },
+        {
+          condition({ width: w }) {
+            return w < 800;
+          },
+          options: {
+            legend: {
+              visible: true,
+              align: 'bottom',
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  return el;
 };

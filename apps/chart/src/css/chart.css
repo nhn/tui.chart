@@ -50,10 +50,10 @@ button:focus {
 }
 
 /* tooltip */
-
 .tooltip-container {
   position: absolute;
-  transition: top 0.2s, left 0.2s;
+  top: 0;
+  left: 0;
   user-select: none;
   pointer-events: none;
 }
@@ -85,12 +85,17 @@ button:focus {
 .series-name {
   display: flex;
   align-items: center;
+  /* for IE */
+  line-height: 10px;
 }
 
-.series-name .icon {
+.series-name .icon,
+.tooltip-series .icon {
   width: 10px;
   height: 10px;
   margin-right: 8px;
+  /* for IE */
+  display: inline-block;
 }
 
 .series-name .name {
@@ -100,4 +105,12 @@ button:focus {
 .series-value {
   white-space: nowrap;
   margin-left: 10px;
+}
+
+.tooltip-series-wrapper .tooltip-title {
+  padding: 8px 0 5px;
+}
+
+.tooltip-series-wrapper .tooltip-title:first-child {
+  padding-top: 0;
 }

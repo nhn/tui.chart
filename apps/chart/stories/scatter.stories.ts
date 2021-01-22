@@ -4,6 +4,7 @@ import {
   currentUserCoordinate,
   currentUserCoordinateDatetimeData,
   genderHeightWeightData,
+  genderHeightWeightDataWithNull,
 } from './data';
 import ScatterChart from '@src/charts/scatterChart';
 import '@src/css/chart.css';
@@ -31,7 +32,6 @@ function createChart(data: ScatterSeriesData, customOptions: ScatterChartOptions
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -42,6 +42,12 @@ function createChart(data: ScatterSeriesData, customOptions: ScatterChartOptions
 
 export const basic = () => {
   const { el } = createChart(genderHeightWeightData);
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(genderHeightWeightDataWithNull);
 
   return el;
 };

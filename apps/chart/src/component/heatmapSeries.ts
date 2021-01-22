@@ -11,7 +11,7 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getColorRatio, getSpectrumColor, makeDistances, RGB } from '@src/helpers/colorSpectrum';
 import { SeriesDataLabels } from '@t/components/dataLabels';
 import { RespondersThemeType } from '@src/helpers/responders';
-import { deepMergedCopy, isNumber } from '@src/helpers/utils';
+import { deepMergedCopy, isNull, isNumber } from '@src/helpers/utils';
 import { HeatmapChartSeriesTheme } from '@t/theme';
 import { boxDefault } from '@src/helpers/theme';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
@@ -62,31 +62,45 @@ export default class HeatmapSeries extends Component {
   makeDataLabels(): SeriesDataLabels {
     const dataLabelTheme = this.theme.dataLabels;
 
-    return this.models.series.map((m) => ({
-      ...m,
-      type: 'treemapSeriesName',
-      value: m.colorValue,
-      direction: 'left',
-      plot: { x: 0, y: 0, size: 0 },
-      theme: {
-        ...dataLabelTheme,
-        color: dataLabelTheme.useSeriesColor ? m.color : dataLabelTheme.color,
-      },
-    }));
+    return this.models.series.reduce<SeriesDataLabels>((acc, m) => {
+      return isNull(m.colorValue)
+        ? acc
+        : [
+            ...acc,
+            {
+              ...m,
+              type: 'treemapSeriesName',
+              value: m.colorValue,
+              direction: 'left',
+              plot: { x: 0, y: 0, size: 0 },
+              theme: {
+                ...dataLabelTheme,
+                color: dataLabelTheme.useSeriesColor ? m.color : dataLabelTheme.color,
+              },
+            },
+          ];
+    }, []);
   }
 
   makeHeatmapSeriesResponder() {
-    return this.models.series.map<HeatmapRectResponderModel>((model) => ({
-      ...model,
-      data: {
-        ...model,
-        label: model.name,
-        value: model.colorValue,
-        templateType: 'heatmap',
-      },
-      thickness: boxDefault.HOVER_THICKNESS,
-      style: ['shadow'],
-    }));
+    return this.models.series.reduce<HeatmapRectResponderModel[]>((acc, model) => {
+      return isNull(model.colorValue)
+        ? acc
+        : [
+            ...acc,
+            {
+              ...model,
+              data: {
+                ...model,
+                label: model.name,
+                value: model.colorValue,
+                templateType: 'heatmap',
+              },
+              thickness: boxDefault.HOVER_THICKNESS,
+              style: ['shadow'],
+            },
+          ];
+    }, []);
   }
 
   renderHeatmapSeries(
@@ -106,6 +120,9 @@ export default class HeatmapSeries extends Component {
         const [xIndex, yIndex] = indexes;
 
         const colorRatio = getColorRatio(colorValueScale.limit, colorValue)!;
+        const color = isNull(colorValue)
+          ? 'rgba(0, 0, 0, 0)'
+          : getSpectrumColor(colorRatio, distances, startRGB);
         const thickness = borderWidth;
 
         return {
@@ -117,7 +134,7 @@ export default class HeatmapSeries extends Component {
           y: height * yIndex + thickness,
           colorValue,
           colorRatio,
-          color: getSpectrumColor(colorRatio, distances, startRGB),
+          color,
           thickness,
           borderColor,
         };

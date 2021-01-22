@@ -16,6 +16,7 @@ const chartState = {
     yAxis: { x: 10, y: 10, width: 20, height: 80 },
     plot: { width: 80, height: 80, x: 30, y: 10 },
   },
+  scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 5, stepCount: 1 } },
   series: {
     bar: {
       data: seriesData,

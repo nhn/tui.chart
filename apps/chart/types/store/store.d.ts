@@ -167,6 +167,14 @@ export interface Scale {
   secondaryYAxis?: ScaleData;
 }
 
+type ViewAxisLabel = { offsetPos: number; text: string };
+
+type RotationLabelData = {
+  needRotateLabel?: boolean;
+  radian?: number;
+  rotationHeight?: number;
+};
+
 export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
@@ -209,22 +217,22 @@ export interface CircleLegend {
   radius: number;
 }
 
-export type CenterYAxisData = {
+export interface CenterYAxisData extends ValueAxisData {
   x: number;
   xAxisHalfSize: number;
   secondStartX: number;
   yAxisLabelAnchorPoint: number;
   yAxisHeight: number;
-} & ValueAxisData;
+}
 
 export type RadialAxisData = {
   labels: string[];
   axisSize: number;
   centerX: number;
   centerY: number;
-  maxLabelTextWidth: number;
-  labelTextHeight: number;
   labelInterval: number;
+  maxLabelWidth: number;
+  maxLabelHeight: number;
 };
 
 export interface TreemapSeriesData {
@@ -268,7 +276,7 @@ export interface ChartState<T extends Options> {
   };
   colorValueScale: ScaleData;
   plot: {
-    showLine: boolean;
+    visible: boolean;
     lines: PlotLine[];
     bands: PlotBand[];
   };
@@ -296,7 +304,7 @@ export type HeatmapSeriesData = {
     x: string;
     y: string;
   };
-  colorValue: number;
+  colorValue: number | null;
   indexes: [number, number];
 }[];
 
@@ -333,7 +341,12 @@ type BaseAxisData = InitAxisData & {
   isLabelAxis: boolean;
   pointOnColumn: boolean;
   tickDistance: number;
-};
+  maxLabelWidth: number;
+  maxLabelHeight: number;
+  viewLabels: ViewAxisLabel[];
+  offsetY?: number;
+  maxHeight?: number;
+} & RotationLabelData;
 
 export type LabelAxisData = BaseAxisData & {
   labelDistance: number;

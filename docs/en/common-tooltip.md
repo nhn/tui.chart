@@ -21,6 +21,7 @@ interface TooltipOptions {
     defaultTemplate: { header: string; body: string },
     theme: Required<TooltipTheme>
   ) => string;
+  transition: boolean | string;
 }
 
 type TooltipTemplateModel = {
@@ -59,14 +60,14 @@ const options = {
 
 ### Formatter
 
-The `tooltip.formatter` option can be used to format the data before the data is displayed. The formatter takes the formatting function that returns the formatted string as the parameter. The formatting function takes the values to be formatted as parameters. 
+The `tooltip.formatter` option can be used to format the data before the data is displayed. The formatting function takes the values and tooltip data information as parameters and returns the formatted string. 
 
 Let's write a simple example that compares the entered values and adds an emoji. 
 
 ```js
 const options = {
   tooltip: {
-    formatter: (value) => {
+    formatter: (value, tooltipDataInfo) => {
       const temp = Number(value);
       let icon = '☀️';
       if (temp < 0) {
@@ -74,6 +75,8 @@ const options = {
       } else if (temp > 25) {
         icon = '🔥';
       }
+
+      console.log(tooltipDataInfo); // { category: '08/01/2020', color: '#785fff', index: 7, seriesIndex: 4, value: -0.1, label: 'Jungfrau'}
 
       return `${icon} ${value} ℃`;
     },
@@ -136,6 +139,27 @@ const options = {
 The result of the code above is shown below. 
 
 ![image](https://user-images.githubusercontent.com/35371660/102183437-2f81ac80-3ef1-11eb-8ebb-438cc153de99.png)
+
+### transition
+
+`tooltip.transition` is an option to control the movement animation of the tooltip. Usage is the same as [CSS transition property](https://developer.mozilla.org/en-US/docs/Web/CSS/transition).
+
+- default: `false`
+
+The position of the tooltip is changed through the [`transform` property]((https://developer.mozilla.org/en-US/docs/Web/CSS/transform)), so the transition-property should be `transform`.
+If the option is set to `true`, it moves to `transform 0.2s ease`.
+
+Let's use these options to make a tooltip move more slowly.
+
+```js
+const options = {
+  tooltip: {
+    transition: 'transform 1s ease-in',
+  },
+};
+```
+
+![tooltip-transition](https://user-images.githubusercontent.com/35371660/105424970-c0376f00-5c8b-11eb-9539-51732688898b.gif)
 
 ## theme
 

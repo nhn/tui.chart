@@ -92,7 +92,7 @@ export interface LineChartProps {
  *     @param {Object} [props.options.plot]
  *       @param {number} [props.options.plot.width] - Width of plot.
  *       @param {number} [props.options.plot.height] - Height of plot.
- *       @param {boolean} [props.options.plot.showLine] - Whether to show plot line.
+ *       @param {boolean} [props.options.plot.visible] - Whether to show plot line.
  *       @param {Array<Object>} [props.options.plot.lines] - Plot lines information. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Plot guide} on github.
  *       @param {Array<Object>} [props.options.plot.bands] - Plot bands information. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Plot guide} on github.
  *     @param {Object} [props.options.legend]
@@ -179,6 +179,10 @@ export default class LineChart extends Chart<LineChartOptions> {
    * chart.addData([10, 20], '6');
    */
   public addData = (data: LineSeriesDataType[], category?: string) => {
+    if (this.store.state.options.series?.showDot) {
+      this.animationControlFlag.updating = true;
+    }
+
     this.store.dispatch('addData', { data, category });
   };
 

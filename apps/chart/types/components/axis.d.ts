@@ -15,6 +15,7 @@ export type LabelModel = {
   stroke?: StyleProp<StrokeLabelStyle, StrokeLabelStyleName>;
   text: string;
   opacity?: number;
+  radian?: number;
 } & Point;
 
 export type TickModel = {
@@ -31,7 +32,7 @@ export type LineModel = {
   y2: number;
   strokeStyle?: string;
   lineWidth?: number;
-  dashedPattern?: number[];
+  dashSegments?: number[];
   name?: string;
 } & Point;
 

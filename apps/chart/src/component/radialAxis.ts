@@ -1,6 +1,6 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { getRadialRadiusValues } from '@src/helpers/radar';
+import { getRadialRadiusValues } from '@src/helpers/radarSeries';
 import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector';
 import { RectLabelModel } from '@t/components/axis';
 
@@ -31,16 +31,16 @@ export default class RadialAxis extends Component {
       centerX,
       centerY,
       labels,
-      maxLabelTextWidth,
-      labelTextHeight,
+      maxLabelWidth,
+      maxLabelHeight,
       labelInterval,
     } = axes.radialAxis!;
     const radiusRange = filterDisplayLabels(getRadialRadiusValues(labels, axisSize));
-    const width = maxLabelTextWidth + padding.X * 2;
-    const height = labelTextHeight + padding.Y * 2;
-    const displayLabels = filterDisplayLabels(labels);
+    const width = maxLabelWidth + padding.X * 2;
+    const height = maxLabelHeight + padding.Y * 2;
+    const viewLabels = filterDisplayLabels(labels);
 
-    this.models = displayLabels.reduce<RectLabelModel[]>((positions, text, index) => {
+    this.models = viewLabels.reduce<RectLabelModel[]>((positions, text, index) => {
       return index % labelInterval
         ? positions
         : [

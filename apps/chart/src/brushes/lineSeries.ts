@@ -1,25 +1,38 @@
 import { AreaPointsModel, LinePointsModel } from '@t/components/series';
+import { setLineDash, fillStyle, strokeWithOptions } from '@src/helpers/style';
+import { isNull } from '@src/helpers/utils';
 
 type PointsModel = LinePointsModel | AreaPointsModel;
 
 export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsModel) {
-  const { color, lineWidth, points, dashSegments = [] } = pointsModel;
+  const { color: strokeStyle, lineWidth, points, dashSegments = [] } = pointsModel;
 
-  ctx.lineWidth = lineWidth;
   ctx.lineCap = 'round';
-  ctx.strokeStyle = color;
+
   ctx.beginPath();
-  ctx.setLineDash(dashSegments);
+
+  if (dashSegments) {
+    setLineDash(ctx, dashSegments);
+  }
+
+  let start = false;
 
   points.forEach((point, idx) => {
-    if (idx === 0) {
-      ctx.moveTo(point.x, point.y);
+    if (isNull(point)) {
+      start = false;
 
       return;
     }
 
-    if (point.controlPoint) {
-      const { x: prevX, y: prevY } = points[idx - 1].controlPoint!.next;
+    if (!start) {
+      ctx.moveTo(point.x, point.y);
+      start = true;
+
+      return;
+    }
+
+    if (point.controlPoint && points[idx - 1]?.controlPoint?.next) {
+      const { x: prevX, y: prevY } = points[idx - 1]!.controlPoint!.next;
       const { controlPoint, x, y } = point;
 
       ctx.bezierCurveTo(prevX, prevY, controlPoint.prev.x, controlPoint.prev.y, x, y);
@@ -28,9 +41,9 @@ export function linePoints(ctx: CanvasRenderingContext2D, pointsModel: PointsMod
     }
   });
 
-  ctx.stroke();
+  strokeWithOptions(ctx, { lineWidth, strokeStyle });
   ctx.closePath();
-  ctx.setLineDash([]);
+  setLineDash(ctx, []);
 }
 
 export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaPointsModel) {
@@ -38,9 +51,6 @@ export function areaPoints(ctx: CanvasRenderingContext2D, areaPointsModel: AreaP
 
   ctx.beginPath();
   linePoints(ctx, areaPointsModel);
-
-  ctx.fillStyle = fillColor;
-  ctx.fill();
-
+  fillStyle(ctx, fillColor);
   ctx.closePath();
 }

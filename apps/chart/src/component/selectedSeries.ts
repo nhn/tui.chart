@@ -11,6 +11,7 @@ import {
 import { includes } from '@src/helpers/utils';
 import { TooltipModelName } from '@t/components/tooltip';
 import { isSameSeriesResponder, SelectedSeriesEventModel } from '@src/helpers/responders';
+import { makeObservableObjectToNormal } from '@src/store/reactive';
 
 export type ResponderSeriesModel = { [key in TooltipModelName]: ResponderModel[] };
 
@@ -61,7 +62,10 @@ export default class SelectedSeries extends Component {
     const { models, eventDetectType, name } = selectedSeriesEventModel;
     let selectedSeriesModels = models;
 
-    if ((name === 'column' || name === 'bar') && eventDetectType === 'grouped') {
+    if (
+      (name === 'column' || name === 'bar' || name === 'bullet') &&
+      eventDetectType === 'grouped'
+    ) {
       selectedSeriesModels = models.filter((model) => !(model as RectResponderModel).data);
     }
 
@@ -81,7 +85,10 @@ export default class SelectedSeries extends Component {
       : models;
 
     this.isShow = !!Object.values(this.models).flatMap((value) => value).length;
-    this.eventBus.emit(this.isShow ? 'selectSeries' : 'unselectSeries', this.models);
+    this.eventBus.emit(
+      this.isShow ? 'selectSeries' : 'unselectSeries',
+      makeObservableObjectToNormal(this.models)
+    );
     this.activeSeriesNames[name] = this.getSeriesNames(selectedSeriesEventModel.models, name);
     this.setActiveState();
   };

@@ -31,7 +31,6 @@ function createChart(data, customOptions: Record<string, any> = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -128,6 +127,15 @@ export const rangeWithMinMax = () => {
   return el;
 };
 
+export const rangeWithDataLabels = () => {
+  const { el } = createChart(temperatureRangeData, {
+    chart: { height: 800 },
+    series: { dataLabels: { visible: true } },
+  });
+
+  return el;
+};
+
 export const diverging = () => {
   const { el } = createChart(genderAgeData, {
     yAxis: {
@@ -146,6 +154,7 @@ export const centerYAxis = () => {
     yAxis: { title: 'Age Group', align: 'center' },
     xAxis: { label: { interval: 2 } },
     series: { diverging: true },
+    legend: { width: 80 },
   });
 
   return el;
@@ -309,6 +318,18 @@ export const dataLabelsWithTheme = () => {
         },
       },
     },
+  });
+
+  return el;
+};
+
+export const rotatable = () => {
+  const { el } = createChart(genderAgeData, {
+    chart: { width: 'auto', height: 'auto' },
+    yAxis: { title: 'Age Group', align: 'center' },
+    xAxis: { title: 'People', label: { interval: 1, rotatable: true }, scale: { stepSize: 50000 } },
+    series: { diverging: true },
+    legend: { align: 'bottom' },
   });
 
   return el;

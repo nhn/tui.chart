@@ -204,13 +204,13 @@ export default class Plot extends Component {
     this.theme = theme.plot! as Required<PlotTheme>;
 
     const categories = (state.categories as string[]) ?? [];
-    const { lines, bands, showLine } = plot;
+    const { lines, bands, visible } = plot;
     const xAxisLimit = scale?.xAxis?.limit;
 
     this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
     this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
 
-    if (showLine) {
+    if (visible) {
       this.models.plot = [this.renderPlotBackgroundRect(), ...this.renderPlots(axes)];
     }
   }
@@ -239,7 +239,7 @@ export default class Plot extends Component {
       y2: y + height,
       strokeStyle: color,
       lineWidth,
-      dashedPattern: dashSegments,
+      dashSegments,
     };
   }
 

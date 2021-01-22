@@ -291,11 +291,11 @@ function adjustOverflowVerticalRect(
   dataLabelOptions: DataLabelOption,
   position: Pick<LabelPosition, 'y' | 'textBaseline'>
 ): Pick<LabelPosition, 'y' | 'textBaseline'> {
-  const { height, direction, plot, theme } = rect;
+  const { height, direction, plot, theme, value } = rect;
   const font = getFont(theme);
 
   const plotSize = plot!.size;
-  const textHeight = getTextHeight(font!);
+  const textHeight = getTextHeight(`${value}`, font!); // @TODO: formatter 값해서 넘기기
 
   let { y, textBaseline } = position;
 

@@ -1,7 +1,4 @@
-import {
-  calibrateDrawingValue,
-  calibrateBoxStackDrawingValue,
-} from '@src/helpers/boxSeriesCalculator';
+import { calibrateDrawingValue, calibrateBoxStackDrawingValue } from '@src/helpers/boxSeries';
 
 describe('box chart', () => {
   describe('calibrateBoxDrawingValue', () => {

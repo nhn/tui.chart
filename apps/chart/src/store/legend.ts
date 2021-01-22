@@ -38,6 +38,7 @@ type LegendWidthParam = {
   options: Options;
   align: Align;
   visible: boolean;
+  checkbox: boolean;
 };
 
 function calculateLegendWidth({
@@ -47,6 +48,7 @@ function calculateLegendWidth({
   options,
   align,
   visible,
+  checkbox,
 }: LegendWidthParam) {
   const verticalAlign = isVerticalAlign(align);
   const legendOptions = options?.legend;
@@ -76,7 +78,11 @@ function calculateLegendWidth({
     legendWidth = sum(legendWidths) + LEGEND_ITEM_MARGIN_X * (legendWidths.length - 1);
   } else {
     const labelAreaWidth = Math.max(...legendWidths);
-    legendWidth = Math.max(labelAreaWidth, legendWidth);
+    legendWidth =
+      (checkbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
+      LEGEND_ICON_SIZE +
+      LEGEND_MARGIN_X +
+      Math.max(labelAreaWidth, legendWidth);
   }
 
   return legendWidth;
@@ -172,7 +178,7 @@ function getItemWidth(
 function getInitialWidth(options: Options) {
   return isNumber(options.chart?.width) ? options.chart!.width : 0;
 }
-                  
+
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
   const colors = Object.values(series).reduce<string[]>(
     (acc, cur) => (cur && cur.colors ? [...acc, ...cur.colors] : acc),
@@ -234,7 +240,7 @@ const legend: StoreModule = {
       } = state;
       const align = getAlign(options);
       const visible = showLegend(options, series);
-      const checkboxVisible = showCheckbox(options);
+      const checkbox = showCheckbox(options);
       const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
       const legendWidths = legendData.map(({ width }) => width);
       const legendWidth = calculateLegendWidth({
@@ -244,6 +250,7 @@ const legend: StoreModule = {
         options,
         align,
         visible,
+        checkbox,
       });
 
       const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
@@ -259,7 +266,7 @@ const legend: StoreModule = {
       extend(state.legend, {
         visible,
         align,
-        showCheckbox: checkboxVisible,
+        showCheckbox: checkbox,
         width: legendWidth,
       });
 
@@ -307,9 +314,14 @@ const legend: StoreModule = {
       const { legend: legendData, series } = state;
 
       const data = legendData.data.reduce<LegendDataList>((acc, cur) => {
-        const { iconType } = series.scatter!.data.find(({ name }) => name === cur.label)!;
+        if (cur.chartType === 'scatter' && series.scatter?.data) {
+          const model = series.scatter.data.find(({ name }) => name === cur.label);
+          const iconType = model ? model.iconType : cur.iconType;
 
-        return [...acc, { ...cur, iconType }];
+          return [...acc, { ...cur, iconType }];
+        }
+
+        return [...acc, cur];
       }, []);
 
       extend(state.legend, { data });

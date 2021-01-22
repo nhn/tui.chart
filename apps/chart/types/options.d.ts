@@ -1,5 +1,5 @@
 import { Categories, RawSeries, Options } from '@t/store/store';
-import { TooltipModel } from '@t/components/tooltip';
+import { TooltipData, TooltipModel } from '@t/components/tooltip';
 import { ScatterSeriesIconType } from '@t/components/series';
 import {
   AreaChartThemeOptions,
@@ -20,12 +20,13 @@ import {
   BulletCharThemeOptions,
   ColumnLineChartThemeOptions,
 } from '@t/theme';
+import { AxisType } from '@src/component/axis';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
-type LineSeriesDataType = number | Point | [number, number] | [string, number];
-type HeatmapSeriesDataType = number[];
+type LineSeriesDataType = number | Point | [number, number] | [string, number] | null;
+type HeatmapSeriesDataType = (number | null)[];
 export type HeatmapCategoriesType = { x: string[]; y: string[] };
-export type AreaSeriesDataType = number | RangeDataType<number>;
+export type AreaSeriesDataType = number | RangeDataType<number> | null;
 export type Align = 'top' | 'bottom' | 'right' | 'left';
 export interface Point {
   x: number;
@@ -91,7 +92,7 @@ export interface HeatmapSeriesType {
 
 export interface TreemapSeriesType {
   label: string;
-  data?: number;
+  data?: number | null;
   colorValue?: number;
   children?: TreemapSeriesType[];
 }
@@ -107,7 +108,7 @@ export interface HeatmapSeriesData {
 
 export interface ScatterSeriesType {
   name: string;
-  data: CoordinateDataType[];
+  data: (CoordinateDataType | null)[];
   color: string;
   iconType: ScatterSeriesIconType;
 }
@@ -129,7 +130,7 @@ export interface LineAreaData {
 
 export interface BubbleSeriesType {
   name: string;
-  data: BubbleSeriesDataType[];
+  data: (BubbleSeriesDataType | null)[];
   color: string;
 }
 
@@ -148,7 +149,7 @@ export interface BubbleSeriesData {
 
 export type PieSeriesType = {
   name: string;
-  data: number;
+  data: number | null;
   parentName?: string;
   rootParentName?: string;
   color?: string;
@@ -188,6 +189,8 @@ export interface Scale {
   stepSize?: 'auto' | number;
 }
 
+type AxisLabelInfo = { axisName: AxisType; labels: string[]; index: number };
+type AxisFormatter = (value: string, axisLabelInfo: AxisLabelInfo) => string;
 export type AxisTitleOption = Omit<TitleOption, 'align'>;
 type AxisTitle = string | AxisTitleOption;
 
@@ -197,6 +200,7 @@ type BaseAxisOptions = {
   };
   label?: {
     interval?: number;
+    formatter?: AxisFormatter;
   };
   scale?: Scale;
   title?: AxisTitle;
@@ -215,8 +219,12 @@ type BothSidesYAxisOptions = YAxisOptions | YAxisOptions[];
 type DateOption = boolean | { format: string };
 
 interface BaseXAxisOptions extends BaseAxisOptions {
-  rotateLabel?: boolean;
   date?: DateOption;
+  label?: {
+    interval?: number;
+    formatter?: AxisFormatter;
+    rotatable?: boolean;
+  };
 }
 
 type BarTypeYAxisOption = BaseAxisOptions & {
@@ -245,7 +253,7 @@ export type PlotBand = {
 };
 
 type PlotOptions = BaseSizeOptions & {
-  showLine?: boolean;
+  visible?: boolean;
 };
 
 export type LineTypePlotOptions = PlotOptions & {
@@ -258,7 +266,8 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
-type Formatter = (value: SeriesDataType) => string;
+type TooltipFormatter = (value: SeriesDataType, tooltipDataInfo?: TooltipData) => string;
+type ValueFormatter = (value: SeriesDataType) => string;
 export type DefaultTooltipTemplate = { header: string; body: string };
 
 export type TooltipTemplateFunc = (
@@ -271,7 +280,8 @@ interface BaseTooltipOptions {
   template?: TooltipTemplateFunc;
   offsetX?: number;
   offsetY?: number;
-  formatter?: Formatter;
+  formatter?: TooltipFormatter;
+  transition?: string | boolean;
 }
 
 export interface BaseOptions {
@@ -446,8 +456,8 @@ export interface ColumnChartOptions extends BaseOptions {
 
 export type BoxPlotSeriesType = {
   name: string;
-  data: number[][];
-  outliers?: number[][];
+  data: number[][] | null;
+  outliers?: number[][] | null;
   color?: string;
 };
 
@@ -476,7 +486,7 @@ export interface PieChartOptions extends BaseOptions {
 
 export type RadarSeriesType = {
   name: string;
-  data: number[];
+  data: Array<number | null>;
   color?: string;
 };
 
@@ -537,7 +547,7 @@ export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto' | 'outer';
 
 export type StackTotalDataLabel = {
   visible?: boolean;
-  formatter?: Formatter;
+  formatter?: ValueFormatter;
 };
 
 export type DataLabelPieSeriesName = {
@@ -550,7 +560,7 @@ export type DataLabelOptions = {
   anchor?: DataLabelAnchor;
   offsetX?: number;
   offsetY?: number;
-  formatter?: Formatter;
+  formatter?: ValueFormatter;
 };
 
 export interface BoxDataLabels extends DataLabelOptions {
@@ -573,9 +583,9 @@ export interface BulletChartOptions extends BaseOptions {
 
 export type BulletSeriesType = {
   name: string;
-  data: number;
-  markers: number[];
-  ranges: RangeDataType<number>[];
+  data: number | null;
+  markers?: number[];
+  ranges?: Array<RangeDataType<number> | null>;
   color?: string;
 };
 
@@ -586,6 +596,7 @@ export type BulletSeriesData = {
 export interface BulletSeriesOptions extends BaseSeriesOptions {
   vertical?: boolean;
   dataLabels?: DataLabelOptions;
+  eventDetectType?: BoxTypeEventDetectType;
 }
 
 type ColumnLineChartSeriesOptions = {

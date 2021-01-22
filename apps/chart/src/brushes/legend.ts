@@ -189,8 +189,17 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
   const fontColor = model.color!;
 
   data.forEach((datum) => {
-    const { x, y, checked, active, color, iconType, useScatterChartIcon } = datum;
-    const iconY = y - 1 + (getTextHeight(font) - 11) / 4;
+    const {
+      x,
+      y,
+      checked,
+      active,
+      color,
+      iconType,
+      useScatterChartIcon,
+      label: legendLabel,
+    } = datum;
+    const iconY = y - 1 + (getTextHeight(legendLabel, font) - 11) / 4;
     const renderOptions: RenderOptions = {
       iconType,
       checked,
@@ -211,6 +220,6 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
       drawIcon(ctx, x, iconY, renderOptions);
     }
 
-    drawLabel(ctx, x, y, datum.label, renderOptions);
+    drawLabel(ctx, x, y, legendLabel, renderOptions);
   });
 }

@@ -29,7 +29,6 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
-  el.style.outline = '1px solid red';
   el.style.width = `${width}px`;
   el.style.height = `${height}px`;
 
@@ -38,10 +37,10 @@ function createChart(data: LineSeriesData, customOptions?: Record<string, any>) 
   return { el, chart };
 }
 
-export const showLine = () => {
+export const visible = () => {
   const { el } = createChart(randomData(24), {
     plot: {
-      showLine: boolean('showLine', true),
+      visible: boolean('visible', false),
     },
   });
 

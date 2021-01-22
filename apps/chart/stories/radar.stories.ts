@@ -1,7 +1,7 @@
 import RadarChart from '@src/charts/radarChart';
 import { RadarSeriesData, RadarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { budgetData2 } from './data';
+import { budgetData2, budgetData2WithNull } from './data';
 import '@src/css/chart.css';
 
 export default {
@@ -20,7 +20,6 @@ function createChart(data: RadarSeriesData, customOptions: RadarChartOptions = {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
-  el.style.outline = '1px solid red';
   el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
   el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
@@ -31,6 +30,21 @@ function createChart(data: RadarSeriesData, customOptions: RadarChartOptions = {
 
 export const basic = () => {
   const { el } = createChart(budgetData2, {
+    legend: {
+      visible: true,
+      align: 'bottom',
+    },
+  });
+
+  return el;
+};
+
+export const basicWithNullData = () => {
+  const { el } = createChart(budgetData2WithNull, {
+    series: {
+      showDot: true,
+      showArea: true,
+    },
     legend: {
       visible: true,
       align: 'bottom',

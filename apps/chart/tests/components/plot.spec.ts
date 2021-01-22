@@ -46,7 +46,7 @@ const chartState = {
       { label: 'cho', active: true, checked: true },
     ],
   },
-  plot: { showLine: true },
+  plot: { visible: true },
   categories: ['A', 'B'],
   theme: {
     plot: {
@@ -89,7 +89,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 0.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -99,7 +99,7 @@ describe('plot grid lines', () => {
         y: 80.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -109,7 +109,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -119,7 +119,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
     ];
@@ -158,7 +158,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
 
@@ -169,7 +169,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -179,7 +179,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -189,7 +189,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -199,7 +199,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 0.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -209,7 +209,7 @@ describe('plot grid lines', () => {
         y: 80.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -219,7 +219,7 @@ describe('plot grid lines', () => {
         y: 0.5,
         y2: 0.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
       {
@@ -229,7 +229,7 @@ describe('plot grid lines', () => {
         y: 80.5,
         y2: 80.5,
         strokeStyle: 'rgba(0, 0, 0, 0.05)',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
     ];
@@ -368,7 +368,7 @@ describe('plot options', () => {
         x2: 64.5,
         y2: 80.5,
         strokeStyle: '#ff0000',
-        dashedPattern: [],
+        dashSegments: [],
         lineWidth: 1,
       },
     ]);
