@@ -530,25 +530,14 @@ const axes: StoreModule = {
           options as RadarChartOptions
         );
       }
-      const commonXAxisState = {
-        centerYAxis,
-        rotatable: getRotatableOption(options),
-        labelMargin: options.xAxis?.label?.margin,
-      };
       const axesState = {
-        xAxis: makeXAxisData(
-          labelOnYAxis
-            ? {
-                axisData: valueAxisData,
-                axisSize: valueAxisSize,
-                ...commonXAxisState,
-              }
-            : {
-                axisData: labelAxisData,
-                axisSize: labelAxisSize,
-                ...commonXAxisState,
-              }
-        ),
+        xAxis: makeXAxisData({
+          axisData: labelOnYAxis ? valueAxisData : labelAxisData,
+          axisSize: labelOnYAxis ? valueAxisSize : labelAxisSize,
+          centerYAxis,
+          rotatable: getRotatableOption(options),
+          labelMargin: options.xAxis?.label?.margin,
+        }),
         yAxis: labelOnYAxis ? labelAxisData : valueAxisData,
         secondaryYAxis,
         centerYAxis,
