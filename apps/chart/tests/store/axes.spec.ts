@@ -299,26 +299,26 @@ describe('Axes Store module', () => {
 
 describe('x Axis stepSize is auto', () => {
   const categories = [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-    '17',
-    '18',
-    '19',
-    '20',
+    'aaaaaaa',
+    'bbbbbbb',
+    'ccccccc',
+    'ddddddd',
+    'eeeeeee',
+    'fffffff',
+    'ggggggg',
+    'hhhhhhh',
+    'iiiiiii',
+    'jjjjjjj',
+    'kkkkkkk',
+    'lllllll',
+    'mmmmmmm',
+    'nnnnnnn',
+    'ooooooo',
+    'ppppppp',
+    'qqqqqqq',
+    'rrrrrrr',
+    'sssssss',
+    'ttttttt',
   ];
   const state = {
     chart: { width: 520, height: 120 },
@@ -353,6 +353,7 @@ describe('x Axis stepSize is auto', () => {
 
   it('should automatically adjusts the interval according to the width', () => {
     const store = { state } as Store<Options>;
+    jest.spyOn(Calculator, 'getTextWidth').mockReturnValue(49);
     axes.action!.setAxesData.call({ notify }, store);
 
     expect(store.state.axes.xAxis).toMatchObject({ tickInterval: 4, labelInterval: 4 });
