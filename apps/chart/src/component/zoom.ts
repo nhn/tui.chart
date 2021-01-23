@@ -72,7 +72,14 @@ export default class Zoom extends Component {
 
       this.store.dispatch('zoom', dragRange);
       this.eventBus.emit('zoom', makeObservableObjectToNormal(dragRange));
-      this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
+
+      // @TODO: Should occur after the series' click event
+      // Additional logic to control the sequence of events with each other is required.
+      setTimeout(() => {
+        this.eventBus.emit('resetSelectedSeries');
+      });
+      this.eventBus.emit('resetHoveredSeries');
+      this.eventBus.emit('hideTooltip');
     }
     this.resetSelectionArea();
   }
