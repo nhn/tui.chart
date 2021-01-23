@@ -41,7 +41,6 @@ import {
   isNumber,
   calculateSizeWithPercentString,
   omit,
-  isUndefined,
 } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { makeTickPixelPositions, makeLabelsFromLimit } from '@src/helpers/calculator';

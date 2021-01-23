@@ -25,6 +25,15 @@ interface AxisOptions {
   };
   label?: {
     interval?: number;
+    formatter?: (
+      value: string,
+      axisLabelInfo: {
+        axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis';
+        labels: string[];
+        index: number;
+      }
+    ) => string;
+    margin?: number;
   };
   scale?: {
     min?: number;
@@ -34,22 +43,34 @@ interface AxisOptions {
   title?:
     | string
     | {
-        text: string;
-        offsetX?: number;
-        offsetY?: number;
-      };
+    text: string;
+    offsetX?: number;
+    offsetY?: number;
+  };
   width?: number;
   height?: number;
 }
 
 interface xAxisOptions extends AxisOptions {
   pointOnColumn?: boolean; // Only available on Line, Area Chart
-  rotateLabel?: boolean;
   date?:
     | boolean
     | {
-        format: string;
-      };
+    format: string;
+  };
+  label?: {
+    interval?: number;
+    rotatable?: boolean;
+    formatter?: (
+      value: string,
+      axisLabelInfo: {
+        axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis';
+        labels: string[];
+        index: number;
+      }
+    ) => string;
+    margin?: number;
+  };
 }
 ```
 
@@ -221,6 +242,27 @@ const options = {
 
 **`Area Chart with `pointOnColumn: true` applied**
 ![image](https://user-images.githubusercontent.com/35371660/101856997-d8ef3800-3ba9-11eb-9caf-8b4bca816836.png)
+
+### margin
+
+`axis.label.margin` is an option used to add margin between the label and the axis. It can be adjusted through numeric values, and only positive numbers are possible for the y axis.
+
+- default: `0`
+
+Let's write a simple example that use label margin.
+
+```js
+const options = {
+  xAxis: {
+    margin: 40
+  },
+  yAxis: {
+    margin: 50
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/35371660/105459947-64daa080-5cce-11eb-90ed-bb36c90a8879.png)
 
 ## Theme
 

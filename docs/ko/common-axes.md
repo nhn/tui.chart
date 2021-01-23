@@ -6,11 +6,11 @@
 
 TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이며 차트에 따라 사용 가능한 축의 종류가 다르다.
 
-| 타입                          | 차트명                                                         |
-| ----------------------------- | -------------------------------------------------------------- |
+| 타입                         | 차트명                                                         |
+| ---------------------------- | -------------------------------------------------------------- |
 | x축, y축, 보조 y축 사용 가능 | `Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` |
-| x축, y축 사용 가능            | `BoxPlot`, `Bubble`, `Bullet`, `Column`, `Heatmap`, `Scatter`  |
-| 축이 없는 차트                | `Radar`, `Treemap`, `Pie`, `NestedPie`                         |
+| x축, y축 사용 가능           | `BoxPlot`, `Bubble`, `Bullet`, `Column`, `Heatmap`, `Scatter`  |
+| 축이 없는 차트               | `Radar`, `Treemap`, `Pie`, `NestedPie`                         |
 
 이 가이드에서는 모든 축을 사용 가능한 차트라는 가정하에 작성되었다.
 
@@ -25,7 +25,7 @@ interface AxisOptions {
   };
   label?: {
     interval?: number;
-    formatter: (
+    formatter?: (
       value: string,
       axisLabelInfo: {
         axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis';
@@ -33,6 +33,7 @@ interface AxisOptions {
         index: number;
       }
     ) => string;
+    margin?: number;
   };
   scale?: {
     min?: number;
@@ -60,7 +61,7 @@ interface xAxisOptions extends AxisOptions {
   label?: {
     interval?: number;
     rotatable?: boolean;
-    formatter: (
+    formatter?: (
       value: string,
       axisLabelInfo: {
         axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis';
@@ -68,6 +69,7 @@ interface xAxisOptions extends AxisOptions {
         index: number;
       }
     ) => string;
+    margin?: number;
   };
 }
 ```
@@ -244,6 +246,27 @@ const options = {
 
 **`pointOnColumn: true`가 적용된 Area 차트**
 ![image](https://user-images.githubusercontent.com/35371660/101856997-d8ef3800-3ba9-11eb-9caf-8b4bca816836.png)
+
+### margin
+
+`axis.label.margin`은 라벨과 축 사이의 여유 공간을 추가할 때 사용하는 옵션이다. 숫자값을 통해 조절할 수 있으며 y축의 경우 양수만 가능하다.
+
+- 기본값: `0`
+
+라벨 margin을 변경하는 간단한 예시를 만들어보자.
+
+```js
+const options = {
+  xAxis: {
+    margin: 40
+  },
+  yAxis: {
+    margin: 50
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/35371660/105459947-64daa080-5cce-11eb-90ed-bb36c90a8879.png)
 
 ## theme
 

@@ -107,7 +107,9 @@ describe('yAxis', () => {
     });
 
     it('axisLine', () => {
-      expect(axis.models.axisLine).toEqual([{ type: 'line', x: 10.5, x2: 10.5, y: 0.5, y2: 80.5 }]);
+      expect(axis.models.axisLine).toEqual([
+        { type: 'line', x: 10.5, x2: 10.5, y: 0.5, y2: 80.5, lineWidth: 1, strokeStyle: '#333333' },
+      ]);
     });
   });
 
@@ -255,6 +257,8 @@ describe('yAxis', () => {
           x2: 0.5,
           y: 0.5,
           y2: 80.5,
+          lineWidth: 1,
+          strokeStyle: '#333333',
         },
       ],
       tick: [
@@ -511,7 +515,9 @@ describe('xAxis', () => {
     });
 
     it('axisLine', () => {
-      expect(axis.models.axisLine).toEqual([{ type: 'line', x: 0.5, x2: 80.5, y: 0.5, y2: 0.5 }]);
+      expect(axis.models.axisLine).toEqual([
+        { type: 'line', x: 0.5, x2: 80.5, y: 0.5, y2: 0.5, lineWidth: 1, strokeStyle: '#333333' },
+      ]);
     });
   });
 

@@ -318,11 +318,20 @@ export function makeRotationData(
   };
 }
 
-export function getMaxLabelSize(labels: string[], font = DEFAULT_LABEL_TEXT) {
+export function getMaxLabelSize(labels: string[], xMargin: number, font = DEFAULT_LABEL_TEXT) {
   const maxLengthLabel = labels.reduce((acc, cur) => (acc.length > cur.length ? acc : cur), '');
 
   return {
-    maxLabelWidth: getTextWidth(maxLengthLabel, font),
+    maxLabelWidth: getTextWidth(maxLengthLabel, font) + xMargin,
     maxLabelHeight: getTextHeight(maxLengthLabel, font),
   };
+}
+
+export function getLabelXMargin(axisName: string, options: Options) {
+  if (axisName === 'xAxis') {
+    return 0;
+  }
+  const axisOptions = getYAxisOption(options);
+
+  return Math.abs(axisOptions?.[axisName]?.label?.margin ?? 0);
 }

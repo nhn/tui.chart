@@ -14,6 +14,7 @@ import {
   ValueAxisData,
   InitAxisData,
   Layout,
+  Categories,
 } from '@t/store/store';
 import {
   getAxisName,
@@ -31,6 +32,7 @@ import {
   getMaxLabelSize,
   makeTitleOption,
   makeRotationData,
+  getLabelXMargin,
 } from '@src/helpers/axes';
 import { makeLabelsFromLimit, getAxisLabelAnchorPoint } from '@src/helpers/calculator';
 import {
@@ -169,6 +171,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     },
     axisSize
   );
+  const axisLabelMargin = getLabelXMargin(axisName, options);
 
   return {
     labels,
@@ -179,7 +182,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     tickCount,
     isLabelAxis: true,
     ...initialAxisData,
-    ...getMaxLabelSize(labels, getTitleFontString(theme.label)),
+    ...getMaxLabelSize(labels, axisLabelMargin, getTitleFontString(theme.label)),
   };
 }
 
@@ -228,6 +231,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
     },
     size
   );
+  const axisLabelMargin = getLabelXMargin(axisName, options);
 
   const axisData: ValueAxisState = {
     labels,
@@ -237,7 +241,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
     tickCount,
     tickDistance,
     ...initialAxisData,
-    ...getMaxLabelSize(labels, getTitleFontString(theme.label)),
+    ...getMaxLabelSize(labels, axisLabelMargin, getTitleFontString(theme.label)),
   };
 
   if (isNumber(zeroPosition)) {
@@ -273,7 +277,7 @@ function getRadialAxis(
     centerX: width / 2,
     centerY: height / 2,
     labelInterval,
-    ...getMaxLabelSize(labels, getTitleFontString(theme.label)),
+    ...getMaxLabelSize(labels, 0, getTitleFontString(theme.label)),
   };
 }
 
@@ -387,9 +391,9 @@ function getSecondaryYAxisData({
       });
 }
 
-function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable }): AxisData {
+function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable, labelMargin = 0 }): AxisData {
   const { viewLabels, pointOnColumn, maxLabelWidth, maxLabelHeight } = axisData;
-  const offsetY = getAxisLabelAnchorPoint(maxLabelHeight);
+  const offsetY = getAxisLabelAnchorPoint(maxLabelHeight) + labelMargin;
   const size = centerYAxis ? centerYAxis.xAxisHalfSize : axisSize;
   const distance = size / (viewLabels.length - (pointOnColumn ? 0 : 1));
   const rotationData = makeRotationData(maxLabelWidth, maxLabelHeight, distance, rotatable);
@@ -401,6 +405,22 @@ function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable }): AxisData
     ...rotationData,
     maxHeight,
     offsetY,
+  };
+}
+
+function getAxisInfo(labelOnYAxis: boolean, plot: Rect) {
+  const { valueAxisName, labelAxisName } = getAxisName(labelOnYAxis);
+  const { valueSizeKey, labelSizeKey } = getSizeKey(labelOnYAxis);
+  const valueAxisSize = plot[valueSizeKey];
+  const labelAxisSize = plot[labelSizeKey];
+
+  return { valueAxisName, valueAxisSize, labelAxisName, labelAxisSize };
+}
+
+function getCategoriesWithTypes(categories?: Categories, rawCategories?: Categories) {
+  return {
+    categories: (categories as string[]) ?? [],
+    rawCategories: (rawCategories as string[]) ?? [],
   };
 }
 
@@ -435,20 +455,21 @@ const axes: StoreModule = {
       const { xAxis, yAxis, plot } = layout;
 
       const labelOnYAxis = isLabelAxisOnYAxis(series, options);
-      const categories = (state.categories as string[]) ?? [];
-      const rawCategories = (state.rawCategories as string[]) ?? [];
-
-      const { valueAxisName, labelAxisName } = getAxisName(labelOnYAxis);
-      const { valueSizeKey, labelSizeKey } = getSizeKey(labelOnYAxis);
-      const valueAxisSize = plot[valueSizeKey];
-      const labelAxisSize = plot[labelSizeKey];
+      const { categories, rawCategories } = getCategoriesWithTypes(
+        state.categories,
+        state.rawCategories
+      );
+      const { valueAxisName, valueAxisSize, labelAxisName, labelAxisSize } = getAxisInfo(
+        labelOnYAxis,
+        plot
+      );
       const hasCenterYAxis = state.axes.centerYAxis;
       const isCoordinateTypeChart = isCoordinateSeries(series);
 
       const initialAxisData = getInitialAxisData(
         options,
         labelOnYAxis,
-        rawCategories,
+        rawCategories as string[],
         layout,
         isCoordinateTypeChart
       );
@@ -519,13 +540,14 @@ const axes: StoreModule = {
           options as RadarChartOptions
         );
       }
-      const rotatable = getRotatableOption(options);
       const axesState = {
-        xAxis: makeXAxisData(
-          labelOnYAxis
-            ? { axisData: valueAxisData, axisSize: valueAxisSize, centerYAxis, rotatable }
-            : { axisData: labelAxisData, axisSize: labelAxisSize, centerYAxis, rotatable }
-        ),
+        xAxis: makeXAxisData({
+          axisData: labelOnYAxis ? valueAxisData : labelAxisData,
+          axisSize: labelOnYAxis ? valueAxisSize : labelAxisSize,
+          centerYAxis,
+          rotatable: getRotatableOption(options),
+          labelMargin: options.xAxis?.label?.margin,
+        }),
         yAxis: labelOnYAxis ? labelAxisData : valueAxisData,
         secondaryYAxis,
         centerYAxis,

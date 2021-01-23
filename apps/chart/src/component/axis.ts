@@ -102,6 +102,7 @@ export default class Axis extends Component {
   renderAxisLineModel(): LineModel {
     const zeroPixel = crispPixel(0);
     let lineModel: LineModel;
+    const { color: strokeStyle, width: lineWidth } = this.theme;
 
     if (this.yAxisComponent) {
       const x = this.getYAxisXPoint();
@@ -112,6 +113,8 @@ export default class Axis extends Component {
         y: zeroPixel,
         x2: x,
         y2: crispPixel(this.axisSize),
+        strokeStyle,
+        lineWidth,
       };
     } else {
       lineModel = {
@@ -120,6 +123,8 @@ export default class Axis extends Component {
         y: zeroPixel,
         x2: crispPixel(this.axisSize),
         y2: zeroPixel,
+        strokeStyle,
+        lineWidth,
       };
     }
 
@@ -211,11 +216,6 @@ export default class Axis extends Component {
     const xAxisTextAlign = needRotateLabel ? 'left' : 'center';
 
     return this.yAxisComponent ? yAxisTextAlign : xAxisTextAlign;
-  }
-
-  beforeDraw(painter: Painter) {
-    painter.ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-    painter.ctx.lineWidth = 1;
   }
 
   private isRightSide() {

@@ -10,6 +10,7 @@ import {
   hasAxesLayoutChanged,
   makeTitleOption,
   getMaxLabelSize,
+  getLabelXMargin,
 } from '@src/helpers/axes';
 import { AxisTheme } from '@t/theme';
 import { getAxisLabelAnchorPoint } from '@src/helpers/calculator';
@@ -53,9 +54,11 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
     },
     axisSize
   );
+  const labelXMargin = getLabelXMargin(axisType, options);
 
   const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(
     labels,
+    labelXMargin,
     getTitleFontString(theme.label)
   );
 
@@ -75,7 +78,8 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   };
 
   if (axisType === AxisType.X) {
-    const offsetY = getAxisLabelAnchorPoint(maxLabelHeight);
+    const labelMargin = options.xAxis?.label?.margin ?? 0;
+    const offsetY = getAxisLabelAnchorPoint(maxLabelHeight) + labelMargin;
     const distance = axisSize / viewLabels.length;
     const rotationData = makeRotationData(
       maxLabelWidth,
