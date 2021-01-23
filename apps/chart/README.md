@@ -6,14 +6,18 @@
 
 ## 🚩 Table of Contents
 
-- [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
-- [Install](#-install)
-  - [Via Package Manager](#via-package-manager)
-  - [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
-  - [Download Source Files](#download-source-files)
-- [Usage](#-usage)
-  - [HTML](#html)
-  - [JavaScript](#javascript)
+- [!Toast UI Chart](#)
+  - [🚩 Table of Contents](#-table-of-contents)
+  - [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
+  - [💾 Install](#-install)
+    - [Via Package Manager](#via-package-manager)
+      - [npm](#npm)
+    - [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
+    - [Download Source Files](#download-source-files)
+  - [🔨 Usage](#-usage)
+    - [HTML](#html)
+    - [JavaScript](#javascript)
+      - [Load](#load)
 
 ## Collect statistics on the use of open source
 
@@ -57,11 +61,6 @@ The TOAST UI Chart is available over a CDN.
 <script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
 ```
 
-- The types of distribution files are classified into three types depending on whether they exist in the code of the dependency file.
-
-1. `toast-ui-chart.js` - Only TOAST UI Chart code .
-2. `toast-ui-chart-polyfill.js` - This includes only `babel-polyfill` in code.
-
 - Within the download you'll find the following directories
 
 ```
@@ -70,8 +69,6 @@ The TOAST UI Chart is available over a CDN.
   │  ├─ latest
   │  │  ├─ toastui-chart.js
   │  │  ├─ toastui-chart.min.js
-  │  │  ├─ toastui-chart-polyfill.js
-  │  │  ├─ toastui-chart-polyfill.min.js
   │  │  ├─ toastui-chart.css
   │  │  ├─ toastui-chart.min.css
   │  ├─ v4.0.0/
