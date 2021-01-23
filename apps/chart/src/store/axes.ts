@@ -14,6 +14,7 @@ import {
   ValueAxisData,
   InitAxisData,
   Layout,
+  Categories,
 } from '@t/store/store';
 import {
   getAxisName,
@@ -416,6 +417,13 @@ function getAxisInfo(labelOnYAxis: boolean, plot: Rect) {
   return { valueAxisName, valueAxisSize, labelAxisName, labelAxisSize };
 }
 
+function getCategoriesWithTypes(categories?: Categories, rawCategories?: Categories) {
+  return {
+    categories: (categories as string[]) ?? [],
+    rawCategories: (rawCategories as string[]) ?? [],
+  };
+}
+
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
@@ -447,8 +455,10 @@ const axes: StoreModule = {
       const { xAxis, yAxis, plot } = layout;
 
       const labelOnYAxis = isLabelAxisOnYAxis(series, options);
-      const categories = (state.categories as string[]) ?? [];
-      const rawCategories = (state.rawCategories as string[]) ?? [];
+      const { categories, rawCategories } = getCategoriesWithTypes(
+        state.categories,
+        state.rawCategories
+      );
       const { valueAxisName, valueAxisSize, labelAxisName, labelAxisSize } = getAxisInfo(
         labelOnYAxis,
         plot
@@ -459,7 +469,7 @@ const axes: StoreModule = {
       const initialAxisData = getInitialAxisData(
         options,
         labelOnYAxis,
-        rawCategories,
+        rawCategories as string[],
         layout,
         isCoordinateTypeChart
       );
