@@ -145,7 +145,7 @@ function getMaxDataLabelSize(
       const { hasOuterLabel, labels, theme } = cur;
 
       if (hasOuterLabel) {
-        const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(labels, getFont(theme));
+        const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(labels, 0, getFont(theme));
 
         return {
           width: Math.max(maxLabelWidth + RADIUS_PADDING, width),
