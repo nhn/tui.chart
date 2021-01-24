@@ -10,7 +10,6 @@ import {
 } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
-import { isBulletSeries } from '@src/component/bulletSeries';
 
 type SeriesDataRange = {
   [key in keyof ChartSeriesMap]: DataRange;
@@ -146,8 +145,8 @@ const dataRange: StoreModule = {
             ...(data ?? []).flatMap((datum) => datum),
             ...(outliers ?? []).flatMap((datum) => datum),
           ]);
-        } else if (isBulletSeries(seriesName)) {
-          values = series[seriesName].data.flatMap(({ data, markers, ranges }) => [
+        } else if (seriesName === 'bullet') {
+          values = series[seriesName]!.data.flatMap(({ data, markers, ranges }) => [
             data,
             ...(markers ?? []).flatMap((datum) => datum),
             ...(ranges ?? []).flatMap((range) => range),

@@ -1,7 +1,6 @@
 import { StoreModule, RawSeries, Series, Categories } from '@t/store/store';
 import { isNull, isNumber, sortCategories } from '@src/helpers/utils';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
-import { isBulletSeries } from '@src/component/bulletSeries';
 import { getDataInRange } from '@src/helpers/range';
 
 export function makeRawCategories(series: RawSeries | Series, categories?: Categories) {
@@ -25,7 +24,7 @@ export function makeRawCategories(series: RawSeries | Series, categories?: Categ
             firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
           }
         });
-      } else if (isBulletSeries(key)) {
+      } else if (key === 'bullet') {
         firstValues.add(name);
       }
     });
