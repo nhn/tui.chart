@@ -469,7 +469,7 @@ const axes: StoreModule = {
       const initialAxisData = getInitialAxisData(
         options,
         labelOnYAxis,
-        rawCategories as string[],
+        categories as string[],
         layout,
         isCoordinateTypeChart
       );
