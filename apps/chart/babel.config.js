@@ -1,23 +1,22 @@
 module.exports = (api) => {
-  const env = api.env();
+  api.cache(true);
 
   return {
     presets: [
       [
         '@babel/preset-env',
-        env === 'polyfill'
-          ? {
-              useBuiltIns: 'usage',
-              debug: false,
-              modules: 'auto',
-              corejs: 3,
-            }
-          : {},
+        {
+          useBuiltIns: 'usage',
+          debug: false,
+          modules: 'auto',
+          corejs: 3,
+          shippedProposals: true,
+        },
       ],
       '@babel/preset-typescript',
     ],
     plugins: [
-      ['@babel/plugin-proposal-class-properties', { loose: true }],
+      '@babel/plugin-proposal-class-properties',
       '@babel/plugin-proposal-optional-chaining',
     ],
   };

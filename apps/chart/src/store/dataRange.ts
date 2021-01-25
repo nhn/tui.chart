@@ -1,13 +1,5 @@
-import {
-  ValueEdge,
-  StoreModule,
-  ChartType,
-  DataRange,
-  ChartSeriesMap,
-  Options,
-} from '@t/store/store';
-import { getFirstValidValue, isNull } from '@src/helpers/utils';
-import { isBoxSeries } from '@src/component/boxSeries';
+import { ValueEdge, StoreModule, DataRange, ChartSeriesMap, Options } from '@t/store/store';
+import { getFirstValidValue, isNull, includes } from '@src/helpers/utils';
 import { extend } from '@src/store/store';
 import {
   getAxisName,
@@ -147,7 +139,7 @@ const dataRange: StoreModule = {
           }, []);
         } else if (stackSeries && stackSeries[seriesName]?.stack) {
           values = stackSeries[seriesName].dataRangeValues;
-        } else if (isBoxSeries(seriesName as ChartType)) {
+        } else if (includes(['bar', 'column', 'radar'], seriesName)) {
           values.push(0);
         } else if (seriesName === 'boxPlot') {
           values = series[seriesName]!.data.flatMap(({ data, outliers = [] }) => [

@@ -147,6 +147,7 @@ export interface StoreModule extends StoreOptions {
 }
 
 export interface Layout {
+  chart: Rect;
   xAxis: Rect;
   yAxis: Rect;
   xAxisTitle: Rect;

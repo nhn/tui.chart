@@ -502,16 +502,19 @@ function getAxisTitleHeight(axisTheme: AxisTheme | AxisTheme[], offsetY = 0) {
   return fontSize + offsetY;
 }
 
-function checkAxisSize(
+function adjustAxisSize(
   { width, height }: Size,
-  layout: Pick<Layout, 'title' | 'yAxisTitle' | 'yAxis' | 'xAxis' | 'xAxisTitle' | 'legend'>,
+  layout: Pick<
+    Layout,
+    'title' | 'yAxisTitle' | 'yAxis' | 'xAxis' | 'xAxisTitle' | 'legend' | 'secondaryYAxis'
+  >,
   legendState: Legend
 ) {
   if (width < 0 || height < 0) {
     return;
   }
 
-  const { title, yAxisTitle, yAxis, xAxis, xAxisTitle, legend } = layout;
+  const { title, yAxisTitle, yAxis, xAxis, xAxisTitle, legend, secondaryYAxis } = layout;
   const { align } = legendState;
   const hasVerticalLegend = isVerticalAlign(align);
   const legendHeight = hasVerticalLegend ? legend.height : 0;
@@ -533,11 +536,9 @@ function checkAxisSize(
       legend.y -= diffHeight;
     }
   }
-}
 
-function adjustSecondaryYAxisXPosition(xAxis: Rect, secondaryYAxis: Rect) {
-  const { x: xAxisX, width: xAxisWidth } = xAxis;
-  secondaryYAxis.x = xAxisX + xAxisWidth;
+  secondaryYAxis.x = xAxis.x + xAxis.width;
+  secondaryYAxis.height = yAxis.height;
 }
 
 const layout: StoreModule = {
@@ -556,9 +557,10 @@ const layout: StoreModule = {
         chart,
         axes,
       } = state;
+      const { width, height } = chart;
       const chartSize = {
-        height: chart.height - padding.Y * 2,
-        width: chart.width - padding.X * 2,
+        height: height - padding.Y * 2,
+        width: width - padding.X * 2,
       };
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
       const hasAxis = !(series.pie || series.radar || series.treemap);
@@ -653,13 +655,11 @@ const layout: StoreModule = {
         legendItemHeight,
       });
 
-      checkAxisSize(
+      adjustAxisSize(
         chartSize,
-        { title, yAxisTitle, yAxis, xAxis, xAxisTitle, legend },
+        { title, yAxisTitle, yAxis, xAxis, xAxisTitle, legend, secondaryYAxis },
         legendState
       );
-
-      adjustSecondaryYAxisXPosition(xAxis, secondaryYAxis);
 
       const circleLegend = getCircleLegendRect(
         xAxis,
@@ -671,6 +671,7 @@ const layout: StoreModule = {
       const plot = getPlotRect(xAxis, yAxis, optionSize.plot);
 
       extend(state.layout, {
+        chart: { x: 0, y: 0, width, height },
         title,
         plot,
         legend,

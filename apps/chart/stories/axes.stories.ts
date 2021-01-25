@@ -127,6 +127,7 @@ export const secondaryAxesFormatter = () => {
 
           return `${animals[index % animals.length]} ${value}`;
         },
+        margin: 10,
       },
       date: {
         format: 'YY-MM-DD',
@@ -145,6 +146,7 @@ export const secondaryAxesFormatter = () => {
 
             return `️${value} ☀️`;
           },
+          margin: 20,
         },
       },
       {
@@ -156,6 +158,7 @@ export const secondaryAxesFormatter = () => {
           formatter: (value) => {
             return `️${value} 😐`;
           },
+          margin: 30,
         },
       },
     ],
@@ -212,6 +215,54 @@ export const radarFormatter = () => {
       },
       scale: {
         stepSize: 1000,
+      },
+    },
+  });
+
+  return el;
+};
+
+export const normalAxesLabelMargin = () => {
+  const { el } = createChart(temperatureData, {
+    xAxis: {
+      label: {
+        margin: -5,
+      },
+      date: {
+        format: 'YY-MM-DD',
+      },
+    },
+    yAxis: [
+      {
+        label: {
+          margin: 100,
+        },
+      },
+      {
+        scale: {
+          min: 0,
+          max: 100,
+        },
+        label: {
+          margin: 30,
+        },
+      },
+    ],
+  });
+
+  return el;
+};
+
+export const heatmapAxesLabelMargin = () => {
+  const { el } = createHeatmapChart(temperatureAverageDataForHeatmap, {
+    xAxis: {
+      label: {
+        margin: 40,
+      },
+    },
+    yAxis: {
+      label: {
+        margin: 30,
       },
     },
   });

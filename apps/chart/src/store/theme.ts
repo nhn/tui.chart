@@ -7,7 +7,7 @@ import {
   hasOuterPieSeriesName,
 } from '@src/helpers/pieSeries';
 import { NestedPieSeriesType } from '@t/options';
-import { axisTitleTheme, defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
+import { makeAxisTitleTheme, defaultSeriesTheme, getDefaultTheme } from '@src/helpers/theme';
 import {
   AxisTheme,
   ComboChartSeriesTheme,
@@ -47,6 +47,7 @@ function getThemeAppliedSecondaryYAxis(options: Options) {
     return theme;
   }
 
+  const axisTitleTheme = makeAxisTitleTheme(options?.theme?.chart?.fontFamily);
   const yAxis = (theme.yAxis as AxisTheme[]).map((yAxisTheme) =>
     deepMergedCopy({ title: { ...axisTitleTheme } }, { ...yAxisTheme })
   );
@@ -64,7 +65,6 @@ function getThemeOptionsWithSeriesName(
   isNestedPieChart: boolean
 ): Theme {
   const theme = getThemeAppliedSecondaryYAxis(options);
-
   if (!theme?.series) {
     return { ...theme } as Theme;
   }
@@ -180,9 +180,9 @@ function getTheme(options: Options, series: RawSeries): Theme {
       {}
     );
   }
-
+  const globalFontFamily = options?.theme?.chart?.fontFamily;
   const theme = deepMergedCopy(
-    getDefaultTheme(series, pieSeriesOuterAnchors, isNestedPieChart),
+    getDefaultTheme(globalFontFamily, series, pieSeriesOuterAnchors, isNestedPieChart),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 
