@@ -6,7 +6,7 @@
 
 ## 🚩 Table of Contents
 
-- [!Toast UI Chart](#)
+- [Toast UI Chart](#)
   - [🚩 Table of Contents](#-table-of-contents)
   - [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
   - [💾 Install](#-install)
