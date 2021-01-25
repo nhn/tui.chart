@@ -137,15 +137,15 @@ import NestedPieChart from '@toast-ui/chart/nestedPie';
 import RadarChart from '@toast-ui/chart/radar';
 ```
 
-Factory function needs three parameters: el, data, options
+Constructor function needs three parameters: el, data, options
 
 - el: Wrapper HTML element that will contain the chart as a child.
 - data: Numerical data the chart will be based on.
-- options: Functional options including legend, alignment, and tooltip visibilities.
+- options: Functional options including legend, alignment, and tooltip formatter.
 
 ```js
-var el = document.getElementById('chart');
-var data = {
+const el = document.getElementById('chart');
+const data = {
   categories: [
     //...
   ],
@@ -153,7 +153,7 @@ var data = {
     // ...
   ],
 };
-var options = {
+const options = {
   chart: { width: 700, height: 400 },
 };
 
