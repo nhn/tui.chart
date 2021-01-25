@@ -554,7 +554,7 @@ type CommonDataLabelBubbleTheme = {
 | `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
 | `dataLabels.stackTotal` | object | 스택 차트에서 합계 라벨 스타일. `dataLabels`에 적용할 수 있는 스타일 옵션 모두 사용 가능 |
 
-테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 컬럼 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하였다.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 아래 코드는 Column 시리즈의 색상과 너비를 바꾸고, 마우스를 올렸을 때 스타일을 변경한 옵션이다.
 
 ```js
 const options = {
@@ -580,7 +580,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102731093-47867f80-437a-11eb-8103-8a3060dea9a7.png)
 
-데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 스타일을 변경하였다.
+아래 코드는 데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 스타일을 변경한 옵션이다.
 
 
 ```js

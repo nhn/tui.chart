@@ -455,7 +455,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101879101-22547d00-3bd4-11eb-9196-a308d24cd69c.png)
 
-데이터 라벨의 테마를 적용하여 글자 스타일을 변경하였다.
+아래 코드는 데이터 라벨의 테마를 적용하여 글자 스타일을 변경한 옵션이다.
 
 ```js
 const options = {

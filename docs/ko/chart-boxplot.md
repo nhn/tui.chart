@@ -268,7 +268,7 @@ interface BoxPlotChartSeriesTheme {
 | `select.areaOpacity` | number | 선택된 시리즈의 영역 투명도 |
 | `select.restSeries` | object | 선택되지 않은 시리즈의 스타일 |
 
-테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 예시로 박스 플롯 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하였다.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 아래 코드는 BoxPlot 시리즈의 색상과 너비를 바꾸고, 마우스를 올렸을 때 스타일을 변경한 옵션이다.
 
 ```js
 const options = {

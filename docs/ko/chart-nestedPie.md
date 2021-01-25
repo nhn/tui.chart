@@ -249,7 +249,7 @@ const data = {
 
 ## 옵션
 
-`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)과 같고 `radiusRange`는 각 시리즈의 반지름 범위를 설정하기 위해 `[name]` 옵션으로 이동하였다. `[name]`은 입력받은 데이터에서 series의 `name`이 이에 해당한다. 중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 작성하고, 각 시리즈별로 적용할 옵션은 `[name]`에 작성한다.
+`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)과 같고 `radiusRange`는 각 시리즈의 반지름 범위를 설정하기 위해 `[name]` 옵션으로 이동했다. `[name]`은 입력받은 데이터에서 series의 `name`이 이에 해당한다. 중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 작성하고, 각 시리즈별로 적용할 옵션은 `[name]`에 작성한다.
 
 ```ts
 type options = {
@@ -531,7 +531,7 @@ type options = {
 };
 ```
 
-간단한 예시로 안쪽에 있는 Pie 시리즈('browsers')에는 데이터 라벨만 표시하고, 바깥쪽에 있는 Pie 시리즈('versions')에는 시리즈 이름 라벨까지 표시하였다.
+아래 코드는 안쪽에 있는 Pie 시리즈('browsers')에는 데이터 라벨만 표시하고, 바깥쪽에 있는 Pie 시리즈('versions')에는 시리즈 이름 라벨까지 표시하도록 설정한 옵션이다.
 
 ```js
 const options = {
@@ -647,7 +647,7 @@ type CommonDataLabelBoxTheme = {
 
 테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
 
-`lineWidth`, `strokeStyle`을 설정하여 중첩된 모든 시리즈의 선 두께와 색깔을 변경하였다.
+아래 코드는 `lineWidth`, `strokeStyle`을 설정하여 중첩된 모든 시리즈의 선 두께와 색깔을 변경한 옵션이다.
 
 ```js
 const options = {
@@ -663,7 +663,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102754882-f940a300-43b0-11eb-8644-73f3effa39df.png)
 
-`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다. 시리즈 색상, 테두리 두께, 테두리 색상과 마우스를 올렸을 때 스타일을 변경하였다.
+`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다. 아래 코드는 시리즈 색상, 테두리 두께, 테두리 색상과 마우스를 올렸을 때 스타일을 변경한 옵션이다.
 
 ```js
 const options = {
@@ -714,7 +714,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102755523-e5e20780-43b1-11eb-96a5-10e494e37d27.png)
 
-`[name]`에 해당하는 각 시리즈별로 라벨 스타일을 적용할 수 있다. 글자 스타일과 말풍선을 사용하여 테마를 적용하였다.
+`[name]`에 해당하는 각 시리즈별로 라벨 스타일을 적용할 수 있다. 아래 코드는 글자 스타일과 말풍선을 사용하여 테마를 적용한 옵션이다.
 
 ```js
 const options = {

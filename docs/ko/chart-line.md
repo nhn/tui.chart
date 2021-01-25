@@ -413,7 +413,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101853581-2c11bc80-3ba3-11eb-91d1-75084cb0d042.png)
 
-데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 색상을 변경하였다.
+데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 색상을 변경한 옵션은 아래와 같다.
 
 ```js
 const options = {

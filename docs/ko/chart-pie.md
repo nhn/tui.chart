@@ -446,7 +446,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102745724-fab59f80-439f-11eb-892c-1ece9aa9845f.png)
 
-데이터 라벨 테마를 적용하여 글자 스타일, callout 라인 및 시리즈 이름 라벨의 스타일을 변경하였다.
+아래 코드는 데이터 라벨 테마를 적용하여 글자 스타일, callout 라인 및 시리즈 이름 라벨의 스타일을 변경한 옵션이다.
 
 ```js
 const options = {

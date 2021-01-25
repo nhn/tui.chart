@@ -242,7 +242,7 @@ type ColumnLineChartSeriesOption = {
 };
 ```
 
-간단한 예시로 Line 시리즈의 데이터 라벨은 표시해주지 않고, Column 시리즈의 데이터 라벨만 표시하도록 설정하였다.
+아래 코드는 Line 시리즈의 데이터 라벨은 표시해주지 않고, Column 시리즈의 데이터 라벨만 표시하도록 설정한 옵션이다.
 
 ```js
 const options = {
