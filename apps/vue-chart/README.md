@@ -363,7 +363,7 @@ For more information on PR's step, please see links of Contributing section.
 
 - [Code of Conduct](https://github.com/nhn/tui.chart/blob/main/CODE_OF_CONDUCT.md)
 - [Contributing guideline](https://github.com/nhn/tui.chart/blob/main/CONTRIBUTING.md)
-- [Commit convention](https://github.com/nhn/tui.chart/blob/main/COMMIT_MESSAGE_CONVENTION.md)
+- [Commit convention](https://github.com/nhn/tui.chart/blob/main/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
 

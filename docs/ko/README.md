@@ -38,10 +38,10 @@
 - [`responsive` 옵션](./common-responsive-options.md)
 
 ### 마이그레이션 가이드
-- [️️✈️ v4.0 마이그레이션 가이드](../v4.0-migration-guide-ko.md)
+- [️️✈️ v4.0 마이그레이션 가이드](https://github.com/nhn/tui.chart/blob/main/docs/v4.0-migration-guide-ko.md)
 
 ## Etc
 
-- [📌 Commit Message Convention](./COMMIT_MESSAGE_CONVENTION.md)
-- [📌 Contributing](../CONTRIBUTING.md)
-- [📌 Code of conduct](./CODE_OF_CONDUCT.md)
+- [📌 Commit Message Convention](https://github.com/nhn/tui.chart/blob/main/docs/COMMIT_MESSAGE_CONVENTION.md)
+- [📌 Contributing](https://github.com/nhn/tui.chart/blob/main/CONTRIBUTING.md)
+- [📌 Code of conduct](https://github.com/nhn/tui.chart/blob/main/CODE_OF_CONDUCT.md)
