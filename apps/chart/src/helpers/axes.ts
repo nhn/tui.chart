@@ -67,7 +67,7 @@ export function getAutoAdjustingInterval(count: number, axisWidth: number, categ
   };
   const LABEL_MARGIN = 5;
 
-  if (categories) {
+  if (categories?.[0]) {
     const categoryMinWidth = getTextWidth(categories[0]);
     if (categoryMinWidth < axisWidth / count - LABEL_MARGIN) {
       return 1;
