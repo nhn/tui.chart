@@ -1,6 +1,6 @@
 # Line Chart
 
-> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide. 
+> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide.
 
 ## Creating the Chart
 
@@ -9,16 +9,16 @@ There are two different ways to create the Line chart. The Line chart can be cre
 ```js
 import { LineChart } from '@toast-ui/chart';
 
-const chart = new LineChart({el, data, options});
+const chart = new LineChart({ el, data, options });
 
 // or
 
 import Chart from '@toast-ui/chart';
 
-const chart = Chart.lineChart({el, data, options});
+const chart = Chart.lineChart({ el, data, options });
 ```
 
-There are two ways of providing the information for the `data`. One way is to provide the category values with the corresponding data, and the other is to provide the set of coordinates. Let's take a look at both methods. 
+There are two ways of providing the information for the `data`. One way is to provide the category values with the corresponding data, and the other is to provide the set of coordinates. Let's take a look at both methods.
 
 ## Basic Chart
 
@@ -52,7 +52,7 @@ const data = {
       data: [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5, 17.8, 15.0, 10.6, 6.6, 3.7],
     },
   ],
-}
+};
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/101846479-5f008400-3b94-11eb-8670-198074d97999.png)
@@ -61,7 +61,7 @@ const data = {
 
 There are two ways to enter the coordinates. First is providing the coordinates in an object form (`{x: value, y: value}`), and the second is providing the coordinates in an array (`[x, y]`).
 
-First let's draw a coordinate chart using the coordinate data in the object form. 
+First let's draw a coordinate chart using the coordinate data in the object form.
 
 ```js
 const data = {
@@ -87,12 +87,12 @@ const data = {
       ],
     },
   ],
-}
+};
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/101847254-28c40400-3b96-11eb-8f83-b1abe66704ab.png)
 
-The identical chart can be drawn using data in the array form. 
+The identical chart can be drawn using data in the array form.
 
 ```js
 const data = {
@@ -129,31 +129,31 @@ const data = {
 type options = {
   chart?: {
     // ...
-  },
+  };
   xAxis?: {
     // ...
-  },
+  };
   yAxis?: {
     // ...
-  },
+  };
   legend?: {
     // ...
-  },
+  };
   exportMenu?: {
     // ...
-  },
+  };
   tooltip?: {
     // ...
-  },
+  };
   plot?: {
     // ...
-  },
+  };
   responsive?: {
     // ...
-  },
+  };
   theme?: {
     // More explanations in the `theme` chapter.
-  },
+  };
   series?: {
     showDot?: boolean;
     spline?: boolean;
@@ -166,20 +166,20 @@ type options = {
       offsetX?: number;
       offsetY?: number;
       formatter?: (value) => string;
-    }
-  }
+    };
+  };
 };
 ```
 
-> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide. 
-> (Links: 
+> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide.
+> (Links:
 > [`chart` Options](./common-chart-options.md),
-> [Axis](./common-axes.md), 
-> [Legend](./common-legend.md), 
+> [Axis](./common-axes.md),
+> [Legend](./common-legend.md),
 > [Export](./common-exportMenu.md),
 > [Tooltip](./common-tooltip.md),
-> [Plot](./common-plot.md), 
-> [`responsive` Options](./common-responsive-options.md), 
+> [Plot](./common-plot.md),
+> [`responsive` Options](./common-responsive-options.md),
 > [Live Update](./common-liveUpdate-options.md),
 > [Data Label](./common-dataLabels-options.md)
 > )
@@ -188,72 +188,73 @@ type options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101849744-acccba80-3b9b-11eb-838c-40324d596afb.png)
 
-* default: `false`
+- default: `false`
 
 Makes the series selectable.
 
 ```js
 const options = {
   series: {
-    selectable: true
-  }
+    selectable: true,
+  },
 };
 ```
 
-`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series. 
+`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series.
 
 ### spline
 
 ![image](https://user-images.githubusercontent.com/35371660/101850252-c02c5580-3b9c-11eb-9917-094e35c6b139.png)
 
-* default: `false`
+- default: `false`
 
-Fits the series into a smooth spline curve. 
+Fits the series into a smooth spline curve.
 
 ```js
 const options = {
   series: {
-    spline: true
-  }
-}
+    spline: true,
+  },
+};
 ```
 
 ### eventDetectType
 
 ![image](https://user-images.githubusercontent.com/35371660/101850828-e0a8df80-3b9d-11eb-9500-98b351bd007e.png)
 
-* default: `nearest`
+- default: `nearest`
 
 Defines ways to detect the data to be displayed on the tool tip.
 
-| Type | Details |
-| --- | --- |
-| `near` | Detects the data when it is within a specified range of the mouse. If there are more than one data sets within a specified range, they are all detected. |
-| `nearest` | Event is detected within the entire area of the chart. Only the series that is closest to the mouse is detected.   |
-| `grouped` | All data that are equal with respect to the x-axis are detected. | 
-| `point` | Detected when hovering over the series data point area. |
+| Type      | Details                                                                                                                                                  |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `near`    | Detects the data when it is within a specified range of the mouse. If there are more than one data sets within a specified range, they are all detected. |
+| `nearest` | Event is detected within the entire area of the chart. Only the series that is closest to the mouse is detected.                                         |
+| `grouped` | All data that are equal with respect to the x-axis are detected.                                                                                         |
+| `point`   | Detected when hovering over the series data point area.                                                                                                  |
 
 ```js
 const options = {
   series: {
-    eventDetectType: 'grouped'
-  }
+    eventDetectType: 'grouped',
+  },
 };
 ```
+
 ### zoomable
 
-![zoomable](https://user-images.githubusercontent.com/35371660/101851395-d2a78e80-3b9e-11eb-9255-4d8d3bcf75ec.gif)
+![zoomable](https://user-images.githubusercontent.com/35371660/105646441-4a2d4500-5ee3-11eb-9cf6-4d5bdd1f77dc.gif)
 
-* default: `false`
+- default: `false`
 
 zoomable can be used to zoom into the chart.
 
 ```js
 const options = {
   series: {
-    zoomable: true
-  }
-}
+    zoomable: true,
+  },
+};
 ```
 
 ## Series Theme
@@ -300,7 +301,7 @@ interface LineChartSeriesTheme {
       shadowOffsetX?: number;
       shadowOffsetY?: number;
       shadowBlur?: number;
-    }
+    };
     useSeriesColor?: boolean;
     lineWidth?: number;
     textStrokeColor?: string;
@@ -314,16 +315,16 @@ interface LineChartSeriesTheme {
 }
 ```
 
-| Name | Type | Details |
-| --- | --- | --- |
-| lineWidth | number | The width of the series line |
-| dashSegments | number[] | The dashSegment value of the series line (IE11 or higher version supported) |
-| colors | string[] | The color of the series |
-| dot | object | The style for the dot displayed when `showDot: true`  |
-| select | object | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
-| select.dot | object | The style for the dot displayed when the data is selected |
-| hover | object | The style that is applied when the user hovers over the data | 
-| dataLabels | object | Data label style. For more information, refer to the DataLabels guide. | 
+| Name         | Type     | Details                                                                                                         |
+| ------------ | -------- | --------------------------------------------------------------------------------------------------------------- |
+| lineWidth    | number   | The width of the series line                                                                                    |
+| dashSegments | number[] | The dashSegment value of the series line (IE11 or higher version supported)                                     |
+| colors       | string[] | The color of the series                                                                                         |
+| dot          | object   | The style for the dot displayed when `showDot: true`                                                            |
+| select       | object   | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
+| select.dot   | object   | The style for the dot displayed when the data is selected                                                       |
+| hover        | object   | The style that is applied when the user hovers over the data                                                    |
+| dataLabels   | object   | Data label style. For more information, refer to the DataLabels guide.                                          |
 
 The theme can be added through the `theme` value in the options object. For example, let's change the line width and color of a series.
 
@@ -332,12 +333,9 @@ const options = {
   theme: {
     series: {
       lineWidth: 10,
-      colors: [
-        '#83b14e',
-        '#458a3f',
-      ]
-    }
-  }
+      colors: ['#83b14e', '#458a3f'],
+    },
+  },
 };
 ```
 

@@ -242,7 +242,7 @@ const options = {
 ```
 ### zoomable
 
-![zoomable](https://user-images.githubusercontent.com/35371660/101851395-d2a78e80-3b9e-11eb-9255-4d8d3bcf75ec.gif)
+![zoomable](https://user-images.githubusercontent.com/35371660/105646441-4a2d4500-5ee3-11eb-9cf6-4d5bdd1f77dc.gif)
 
 * 기본값: `false`
 

@@ -73,10 +73,6 @@ function makeBulletResponderModel(models: BulletSeriesModels, tooltipData: Bulle
   ];
 }
 
-export function isBulletSeries(seriesName: string) {
-  return seriesName === 'bullet';
-}
-
 export default class BulletSeries extends Component {
   models: BulletSeriesModels = { range: [], bullet: [], marker: [] };
 

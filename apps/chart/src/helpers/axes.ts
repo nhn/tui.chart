@@ -59,12 +59,20 @@ function makeAdjustingIntervalInfo(blockCount: number, axisWidth: number, blockS
   return intervalInfo;
 }
 
-export function getAutoAdjustingInterval(count: number, axisWidth: number) {
+export function getAutoAdjustingInterval(count: number, axisWidth: number, categories?: string[]) {
   const autoInterval = {
     MIN_WIDTH: 90,
     MAX_WIDTH: 121,
     STEP_SIZE: 5,
   };
+  const LABEL_MARGIN = 5;
+
+  if (categories?.[0]) {
+    const categoryMinWidth = getTextWidth(categories[0]);
+    if (categoryMinWidth < axisWidth / count - LABEL_MARGIN) {
+      return 1;
+    }
+  }
 
   let candidates: IntervalInfo[] = [];
   divisors(count).forEach((interval) => {
