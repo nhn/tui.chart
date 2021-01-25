@@ -59,7 +59,7 @@ const data = {
 
 ## Options
 
-`options` should be used as an object. Options for each chart can be applied through `line` and `area`. The available options are as follow. 
+`options` should be used as an object. Options for each chart can be applied through `line` and `area`. The available options are as follows. 
 
 
 ```ts

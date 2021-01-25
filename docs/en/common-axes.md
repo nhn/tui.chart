@@ -16,7 +16,7 @@ This guide assumes to use a type of chart with all available axes.
 
 ## Options
 
-Options that can be modified for axes are as follow.
+Options that can be modified for axes are as follows.
 
 ```ts
 interface AxisOptions {
@@ -266,7 +266,7 @@ const options = {
 
 ## Theme
 
-Theme options that can be used to style the axes are as follow.
+Theme options that can be used to style the axes are as follows.
 
 ```ts
 interface AxisTheme {
