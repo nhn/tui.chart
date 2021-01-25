@@ -40,13 +40,13 @@ Add different options and animations according to the charts' sizes by using the
 
 ![image](https://user-images.githubusercontent.com/43128697/103401627-f9008e80-4b8c-11eb-8453-d64fe6830a9a.gif)
 
-#### zoomable
+#### Zoomable
 
 Make the data presented in the Line, Area, and Treemap Charts zoomable with the **zoomable** option.
 
 ![zoomable](https://user-images.githubusercontent.com/35371660/105669323-68666580-5f22-11eb-8344-be57d7468b93.gif)
 
-#### live update
+#### Live Update
 
 View and manage new data as they are added realtime with the `addData` API and the `options.series.shift` option.
 
