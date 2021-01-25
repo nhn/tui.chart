@@ -86,10 +86,10 @@ The TOAST UI Chart provides many types of charts to visualize the various forms 
 | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://user-images.githubusercontent.com/35371660/104140692-fc4e1280-53f5-11eb-8ae7-05568ed6f333.png" width="300" alt='lineArea chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104156268-160a4c80-542c-11eb-9893-9adb052727da.png" width="300" alt='lineScatter chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140778-72527980-53f6-11eb-83ab-ad0883d8593b.png" width="300" alt='columnLine chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140795-8eeeb180-53f6-11eb-833e-ae1cdb9d8879.png" width="300" alt='nestedPie chart'/> |
 
-- Stack Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/next/docs))
-- Diverging Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/next/docs))
-- Change Event Detect Type(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/next/docs))
-- [Custom Theme](https://github.com/nhn/tui.chart/tree/next/docs)
+- Stack Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
+- Diverging Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
+- Change Event Detect Type(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
+- [Custom Theme](https://github.com/nhn/tui.chart/tree/main/docs/en/common-theme.md)
 - [Custom Tooltip](https://github.com/nhn/tui.chart/blob/main/docs/en/common-tooltip.md)
 - [Export `xls`, `csv`, `png`, `jpeg` file](https://github.com/nhn/tui.chart/blob/main/docs/en/common-exportMenu.md)
 - [Live Update](https://github.com/nhn/tui.chart/blob/main/docs/en/common-liveUpdate-options.md)
