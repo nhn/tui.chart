@@ -1,50 +1,49 @@
 # Documents 📄
 
-- [🇰🇷 한글 가이드](./ko/README.md)
+- [🇰🇷 한글 가이드](https://github.com/nhn/tui.chart/blob/main/docs/ko/README.md)
 
 ## tutorial
 
-- [🚀 Getting Started](./en/getting-started.md)
+- [🚀 Getting Started](https://github.com/nhn/tui.chart/blob/main/docs/en/getting-started.md)
 
 ### Chart Guide
-
-- [Line Chart](./en/chart-line.md)
-- [Area Chart](./en/chart-area.md)
-- [LineArea Chart](./en/chart-lineArea.md)
-- [Bar Chart](./en/chart-bar.md)
-- [Column Chart](./en/chart-column.md)
-- [ColumnLine Chart](./en/chart-columnLine.md)
-- [Bullet Chart](./en/chart-bullet.md)
-- [BoxPlot Chart](./en/chart-boxplot.md)
-- [Treemap Chart](./en/chart-treemap.md)
-- [Heatmap Chart](./en/chart-heatmap.md)
-- [Scatter Chart](./en/chart-scatter.md)
-- [LineScatter Chart](./en/chart-lineScatter.md)
-- [Bubble Chart](./en/chart-bubble.md)
-- [Pie Chart](./en/chart-pie.md)
-- [NestedPie Chart](./en/chart-nestedPie.md)
-- [Radar Chart](./en/chart-radar.md)
+- [Line Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-line.md)
+- [Area Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-area.md)
+- [LineArea Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-lineArea.md)
+- [Bar Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bar.md)
+- [Column Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-column.md)
+- [ColumnLine Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-columnLine.md)
+- [Bullet Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bullet.md)
+- [BoxPlot Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-boxplot.md)
+- [Treemap Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-treemap.md)
+- [Heatmap Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-heatmap.md)
+- [Scatter Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-scatter.md)
+- [LineScatter Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-lineScatter.md)
+- [Bubble Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bubble.md)
+- [Pie Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-pie.md)
+- [NestedPie Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-nestedPie.md)
+- [Radar Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-radar.md)
 
 ### Common
 
-- [Export menu](./en/common-exportMenu.md)
-- [Legend](./en/common-legend.md)
-- [Plot](./en/common-plot.md)
-- [Axes](./en/common-axes.md)
-- [Tooltip](./en/common-tooltip.md)
-- [API introduction](./en/common-api.md)
-- [Common component theme](./en/common-theme.md)
-- [`chart` options](./en/common-chart-options.md)
-- [Layout Settings](./en/common-layout-options.md)
-- [Live Update options](./en/common-liveUpdate-options.md)
-- [`responsive` options](./en/common-responsive-options.md)
+- [Export menu](https://github.com/nhn/tui.chart/blob/main/docs/en/common-exportMenu.md)
+- [Legend](https://github.com/nhn/tui.chart/blob/main/docs/en/common-legend.md)
+- [Plot](https://github.com/nhn/tui.chart/blob/main/docs/en/common-plot.md)
+- [Axes](https://github.com/nhn/tui.chart/blob/main/docs/en/common-axes.md)
+- [Tooltip](https://github.com/nhn/tui.chart/blob/main/docs/en/common-tooltip.md)
+- [API introduction](https://github.com/nhn/tui.chart/blob/main/docs/en/common-api.md)
+- [Common component theme](https://github.com/nhn/tui.chart/blob/main/docs/en/common-theme.md)
+- [`chart` options](https://github.com/nhn/tui.chart/blob/main/docs/en/common-chart-options.md)
+- [Layout Settings](https://github.com/nhn/tui.chart/blob/main/docs/en/common-layout-options.md)
+- [Live Update options](https://github.com/nhn/tui.chart/blob/main/docs/en/common-liveUpdate-options.md)
+- [`responsive` options](https://github.com/nhn/tui.chart/blob/main/docs/en/common-responsive-options.md)
 
 ### Migration Guide
 
-- [️️✈️ v4.0 Migration Guide](./v4.0-migration-guide-en.md)
+- [️️✈️ v4.0 Migration Guide](https://github.com/nhn/tui.chart/blob/main/docs/v4.0-migration-guide-en.md)
 
 ## Etc
 
-- [📌 Commit Message Convention](./COMMIT_MESSAGE_CONVENTION.md)
-- [📌 Contributing](../CONTRIBUTING.md)
-- [📌 Code of conduct](./CODE_OF_CONDUCT.md)
+- [📌 Commit Message Convention](https://github.com/nhn/tui.chart/blob/main/docs/COMMIT_MESSAGE_CONVENTION.md)
+- [📌 Contributing](https://github.com/nhn/tui.chart/blob/main/CONTRIBUTING.md)
+- [📌 Code of conduct](https://github.com/nhn/tui.chart/blob/main/CODE_OF_CONDUCT.md)

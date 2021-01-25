@@ -2,27 +2,27 @@
 
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library.
 
-[![GitHub release](https://img.shields.io/github/release/nhn/tui.chart.svg)](https://github.com/nhn/tui.chart/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-chart) [![GitHub license](https://img.shields.io/github/license/nhn/tui.chart.svg)](https://github.com/nhn/tui.chart/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.chart/pulls) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.chart.svg)](https://github.com/nhn/tui.chart/releases/latest) [![npm](https://img.shields.io/npm/v/tui-chart.svg)](https://www.npmjs.com/package/tui-chart) [![GitHub license](https://img.shields.io/github/license/nhn/tui.chart.svg)](https://github.com/nhn/tui.chart/blob/main/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.chart/pulls) [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 ## 📦 Packages
 
 The functionality of TOAST UI Chart is available when using the Plain JavaScript, React, Vue Component.
 
-- [toast-ui.chart](https://github.com/nhn/tui.chart/tree/main/packages/chart) - Plain JavaScript component implemented by NHN.
-- [toast-ui.vue-chart](https://github.com/nhn/tui.chart/tree/main/packages/vue-chart) - **Vue** wrapper component implemented by NHN.
-- [toast-ui.react-chart](https://github.com/nhn/tui.chart/tree/main/packages/react-chart) - **React** wrapper component implemented by NHN.
+- [toast-ui.chart](https://github.com/nhn/tui.chart/tree/main/apps/chart) - Plain JavaScript component implemented by NHN.
+- [toast-ui.vue-chart](https://github.com/nhn/tui.chart/tree/main/apps/vue-chart) - **Vue** wrapper component implemented by NHN.
+- [toast-ui.react-chart](https://github.com/nhn/tui.chart/tree/main/apps/react-chart) - **React** wrapper component implemented by NHN.
 
 ## 📙 Documents
 
 - [Getting Started](https://github.com/nhn/tui.chart/blob/main/docs/en/getting-started.md)
 - Tutorials
-  - [English](https://github.com/nhn/tui.chart/blob/next/docs/README.md)
-  - [한국어](https://github.com/nhn/tui.chart/blob/next/docs/ko/README.md)
+  - [English](https://github.com/nhn/tui.chart/blob/main/docs/README.md)
+  - [한국어](https://github.com/nhn/tui.chart/blob/main/docs/ko/README.md)
 - [APIs](https://nhn.github.io/tui.chart/latest/)
 - v4.0 Migration Guide
-  - [English](https://github.com/nhn/tui.chart/blob/next/docs/v4.0-migration-guide-en.md)
-  - [한국어](https://github.com/nhn/tui.chart/blob/next/docs/v4.0-migration-guide-ko.md)
+  - [English](https://github.com/nhn/tui.chart/blob/main/docs/v4.0-migration-guide-en.md)
+  - [한국어](https://github.com/nhn/tui.chart/blob/main/docs/v4.0-migration-guide-ko.md)
 
 ## 😍 Why TOAST UI Chart?
 
@@ -50,11 +50,11 @@ Make the data presented in the Line, Area, and Treemap Charts zoomable with the 
 
 View and manage new data as they are added realtime with the `addData` API and the `options.series.shift` option.
 
-| Area | Line | Heatmap | 
+| Area | Line | Heatmap |
 |--- | --- | --- |
 | ![area](https://user-images.githubusercontent.com/35371660/102159207-6ee6d380-3ec6-11eb-8ca8-07c82095556f.gif)  | ![live update line](https://user-images.githubusercontent.com/35371660/102157257-815f0e00-3ec2-11eb-8b87-a177664a43b2.gif) | ![heatmap](https://user-images.githubusercontent.com/35371660/102159193-68f0f280-3ec6-11eb-9b1f-4fa14c97c879.gif) |
 
-| LineArea | Column | ColumnLine | 
+| LineArea | Column | ColumnLine |
 |--- | --- | --- |
 | ![lineArea](https://user-images.githubusercontent.com/35371660/102160638-2aa90280-3ec9-11eb-98ae-5113cd3f75eb.gif)  | ![column](https://user-images.githubusercontent.com/35371660/102159210-70b09700-3ec6-11eb-9f78-9d9790cd0357.gif) | ![columnline](https://user-images.githubusercontent.com/35371660/102159292-976ecd80-3ec6-11eb-84b9-4e487e411245.gif) |
 
@@ -70,30 +70,30 @@ Use and synchronize the tooltip features at the moment the cursor hovers over th
 
 The TOAST UI Chart provides many types of charts to visualize the various forms of data.
 
-| [Area](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-line.md)                                                                         | [Line](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-area.md)                                                                        | [Bar](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-bar.md)                                                                         | [Column](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-column.md)                                                                       |
+| [Area](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-line.md)                                                                         | [Line](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-area.md)                                                                        | [Bar](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bar.md)                                                                         | [Column](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-column.md)                                                                       |
 | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://user-images.githubusercontent.com/35371660/104139606-15ec5b80-53f0-11eb-96f6-c5bc593d9603.png"  width="300" alt='area chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104139669-65328c00-53f0-11eb-9612-c457a0cdaf9f.png" width="300" alt='line chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140066-d2dfb780-53f2-11eb-8bba-355cb22bc35c.png" width="300" alt='bar chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104139953-1259d400-53f2-11eb-8d48-2a48d4cfe6b2.png"  width="300" alt='column chart'/> |
 
-| [Bullet](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-bullet.md)                                                                      | [BoxPlot](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-boxplot.md)                                                                     | [Treemap](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-treemap.md)                                                                     | [Heatmap](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-heatmap.md)                                                                     |
+| [Bullet](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bullet.md)                                                                      | [BoxPlot](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-boxplot.md)                                                                     | [Treemap](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-treemap.md)                                                                     | [Heatmap](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-heatmap.md)                                                                     |
 | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://user-images.githubusercontent.com/35371660/104140183-76c96300-53f3-11eb-88c7-49c212d9e31b.png" width="300" alt='bullet chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140209-a6786b00-53f3-11eb-8ff0-ade619a89ff4.png" width="300" alt='boxplot chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140267-fd7e4000-53f3-11eb-878a-4eb24b4b83de.png" width="300" alt='treemap chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140300-243c7680-53f4-11eb-9c92-465355e34211.png" width="300" alt='heatmap chart'/> |
 
-| [Scatter](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-scatter.md)                                                                     | [Bubble](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-bubble.md)                                                                      | [Radar](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-radar.md)                                                                       | [Pie](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-pie.md)                                                                         |
+| [Scatter](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-scatter.md)                                                                     | [Bubble](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bubble.md)                                                                      | [Radar](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-radar.md)                                                                       | [Pie](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-pie.md)                                                                         |
 | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://user-images.githubusercontent.com/35371660/104156462-6c778b00-542c-11eb-9101-a9df4e48d8db.png" width="300" alt='scatter chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104156347-3508de80-542c-11eb-805e-fca276bc6c5f.png" width="300" alt='bubble chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140534-176c5280-53f5-11eb-830e-574b05fbf4db.png" width="300" alt='radar chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140544-2eab4000-53f5-11eb-87c3-d2bc9790fa5b.png" width="300" alt='pie chart'/> |
 
-| [LineArea](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-lineArea.md)                                                                    | [LineScatter](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-lineScatter.md)                                                                 | [ColumnLine](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-columnLine.md)                                                                  | [NestedPie](https://github.com/nhn/tui.chart/blob/next/docs/en/chart-nestedPie.md)                                                                   |
+| [LineArea](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-lineArea.md)                                                                    | [LineScatter](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-lineScatter.md)                                                                 | [ColumnLine](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-columnLine.md)                                                                  | [NestedPie](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-nestedPie.md)                                                                   |
 | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://user-images.githubusercontent.com/35371660/104140692-fc4e1280-53f5-11eb-8ae7-05568ed6f333.png" width="300" alt='lineArea chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104156268-160a4c80-542c-11eb-9893-9adb052727da.png" width="300" alt='lineScatter chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140778-72527980-53f6-11eb-83ab-ad0883d8593b.png" width="300" alt='columnLine chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140795-8eeeb180-53f6-11eb-833e-ae1cdb9d8879.png" width="300" alt='nestedPie chart'/> |
 
-- Stack Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/next/docs))
-- Diverging Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/next/docs))
-- Change Event Detect Type(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/next/docs))
-- [Custom Theme](https://github.com/nhn/tui.chart/tree/next/docs)
-- [Custom Tooltip](https://github.com/nhn/tui.chart/blob/next/docs/en/common-tooltip.md)
-- [Export `xls`, `csv`, `png`, `jpeg` file](https://github.com/nhn/tui.chart/blob/next/docs/en/common-exportMenu.md)
-- [Live Update](https://github.com/nhn/tui.chart/blob/next/docs/en/common-liveUpdate-options.md)
-- [Responsive Layout](https://github.com/nhn/tui.chart/blob/next/docs/en/common-responsive-options.md)
+- Stack Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
+- Diverging Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
+- Change Event Detect Type(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
+- [Custom Theme](https://github.com/nhn/tui.chart/tree/main/docs/en/common-theme.md)
+- [Custom Tooltip](https://github.com/nhn/tui.chart/blob/main/docs/en/common-tooltip.md)
+- [Export `xls`, `csv`, `png`, `jpeg` file](https://github.com/nhn/tui.chart/blob/main/docs/en/common-exportMenu.md)
+- [Live Update](https://github.com/nhn/tui.chart/blob/main/docs/en/common-liveUpdate-options.md)
+- [Responsive Layout](https://github.com/nhn/tui.chart/blob/main/docs/en/common-responsive-options.md)
 
 In addition, a variety of powerful features can be found on the demo page below. 👇👇👇
 
