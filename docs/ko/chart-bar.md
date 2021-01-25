@@ -1,10 +1,10 @@
 # Bar 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
-Bar 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스를 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
+Bar 차트의 생성 방법은 두 가지가 있다. 생성자 함수와 정적 함수를 통해 생성할 수 있다. 결과는 모두 차트의 인스턴스가 반환된다. 매개 변수는 차트가 그려지는 영역인 HTML 요소 `el`, 데이터값인 `data`, 옵션값 `options`가 객체로 들어간다. `el` 값은 차트의 컨테이너 영역이므로 차트 외에 다른 요소들이 포함되어 있으면 차트에 영향을 줄 수 있음으로 비어있는 HTML 요소를 사용하는 것을 권장한다.
 
 ```js
 import { BarChart } from '@toast-ui/chart';
@@ -22,7 +22,7 @@ const chart = Chart.barChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 y축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터가 입력되어야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 id로 유일하게 작성해야 한다.
+`categories` 값은 Y축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -54,7 +54,7 @@ const data = {
 
 ### 데이터 타입
 
-기본 차트와 다른 점은 series data의 타입이다. data는 `배열`로 입력되며 범위의 시작과 끝을 `숫자값`으로 순서대로 넣어줘야 한다.
+기본 차트와 다른 점은 series data의 타입이다. data는 `배열`로 입력되며 범위의 시작과 끝을 `숫자값`으로 순서대로 입력한다.
 
 ```js
 const data = {
@@ -101,7 +101,7 @@ const data = {
 ![image](https://user-images.githubusercontent.com/43128697/102580628-423ef000-4142-11eb-8fa9-bd88546d40d6.png)
 
 ## 그룹형 스택 차트
-`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 시리즈 데이터에 `stackGroup` 속성을 추가하면, 같은 stackGroup끼리 쌓이게 된다.
+`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 시리즈 데이터에 `stackGroup` 속성을 추가하면, 같은 `stackGroup`끼리 쌓인다.
 
 ```js
 const data = {
@@ -220,7 +220,7 @@ type options = {
 
 ### stack
 
-`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 스택 차트는 `'normal'` 타입과 `'percent'` 타입이 존재한다. 필요에 따라 `stack.connector` 옵션을 설정하여 연결선을 표시할 수 있다.
+`stack` 옵션을 통해 시리즈들이 쌓인 형태인 스택 차트를 만들 수 있다. 스택 차트는 `'normal'` 타입과 `'percent'` 타입이 존재한다. `stack.connector` 옵션을 설정하면 카테고리 별 같은 시리즈에 대해 선을 이어 표현할 수 있다.
 
 ### normal 타입
 `series.stack`을 `true`로 설정하는 것은 `stack.type`을 `'normal'` 타입으로 설정한 것과 같다.
@@ -262,7 +262,7 @@ const options = {
 
 ### percent 타입
 
-`stack.type`을 `'percent'`로 설정하면 값의 합을 백분율로 계산해 스택 차트로 만들어 준다.
+`stack.type`을 `'percent'`로 설정하면 카테고리 별 시리즈가 차지하는 비율을 백분율로 표시한다.
 
 ```js
 const options = {
@@ -311,7 +311,7 @@ const options = {
 
 ### eventDetectType
 
-마우스를 통해 시리즈 데이터를 선택하거나 탐지하는 방법을 정의할 수 있다.
+마우스를 통해 시리즈 데이터를 선택하거나 탐지하는 방법을 정의한다.
 
 | 타입 | 설명 |
 | --- | --- |
@@ -392,7 +392,7 @@ const options = {
 ![diverging-center-y-axis](https://user-images.githubusercontent.com/43128697/102586557-b632c580-414d-11eb-98bf-fb54e7792c8d.png)
 
 ### dataLabels
-데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시한다.
 `dataLabels` 옵션은 다음과 같다.
 
 ```ts
@@ -535,10 +535,10 @@ type CommonDataLabelBubbleTheme = {
 | `areaOpacity` | number | 모든 시리즈가 활성 되어 있을 때의 전체 영역 투명도 |
 | `colors` | string[] | 시리즈의 색상 |
 | `hover` | object | 데이터에 마우스를 올렸을 때 스타일 |
-| `hover.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 오버되는 영역의 스타일 |
-| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| `hover.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 덮어지는 박스 영역의 스타일 |
+| `select` | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | `select.areaOpacity` | number | 선택된 시리즈의 영역 투명도 |
-| `select.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 선택되는 영역의 스타일 |
+| `select.groupRect` | object | 옵션 `series.eventDetectType: 'grouped'`로 설정되어 있을 때, Y축 기준으로 선택되는 박스 영역의 스타일 |
 | `select.restSeries` | object | 선택되지 않은 시리즈의 스타일 |
 | `dataLabels` | object | 데이터 라벨 스타일 |
 | `dataLabels.useSeriesColor` | boolean | 글자 색상을 시리즈 색상으로 사용할지 여부 |
@@ -569,7 +569,7 @@ type CommonDataLabelBubbleTheme = {
 | `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
 | `dataLabels.stackTotal` | object | 스택 차트에서 합계 라벨 스타일. `dataLabels`에 적용할 수 있는 스타일 옵션 모두 사용 가능 |
 
-테마는 options의 `theme` 값으로 추가해 준다. 간단한 예시로 바 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 아래 코드는 Bar 시리즈의 색상과 너비를 바꾸고, 마우스를 올렸을 때 스타일을 변경한 옵션이다.
 
 ```js
 const options = {
@@ -595,7 +595,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102593558-5f7eb900-4158-11eb-9d21-1bfa55dfa3f1.png)
 
-데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 스타일을 변경하였다.
+아래 코드는 데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 스타일을 변경한 옵션이다.
 
 ```js
 const options = {

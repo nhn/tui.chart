@@ -1,6 +1,6 @@
 # Radar 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -22,7 +22,7 @@ const chart = Chart.radarChart({el, data, options});
 
 ### 데이터 타입
 
-데이터는 `series` 를 통해 입력받는다. 각 시리즈는 `name`과 `data` 쌍으로 입력받는다.
+데이터는 `series` 를 통해 입력받는다. 각 시리즈는 `name`과 `data` 쌍으로 입력받는다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -187,18 +187,18 @@ interface RadarChartSeriesTheme {
 
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
-| colors | string[] | 시리즈의 색상 |
-| areaOpacity | number | `showArea: true`일 때 면 투명도 |
-| lineWidth | number | 시리즈의 선 두께 |
-| dashSegments | number[] | 시리즈 라인의 dashSegment 값 |
-| dot | object | `showDot: true`일 때 노출되는 점 스타일 지정 |
-| hover.dot | object | 데이터에 마우스를 올렸을 때 점 스타일 |
-| select | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
-| select.dot | object | 시리즈가 선택되었을 때 점 스타일 |
-| select.areaOpacity | number | `showArea: true`일 때 시리즈가 선택되었을 때 면 투명도 |
-| select.restSeries.areaOpacity | number | `showArea: true`일 때 선택되지 않은 나머지 시리즈의 면 투명도 |
+| `colors` | string[] | 시리즈의 색상 |
+| `areaOpacity` | number | `showArea: true`일 때 면 투명도 |
+| `lineWidth` | number | 시리즈의 선 두께 |
+| `dashSegments` | number[] | 시리즈 라인의 dashSegment 값 |
+| `dot` | object | `showDot: true`일 때 노출되는 점 스타일 지정 |
+| `hover.dot` | object | 데이터에 마우스를 올렸을 때 점 스타일 |
+| `select` | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
+| `select.dot` | object | 시리즈가 선택되었을 때 점 스타일 |
+| `select.areaOpacity` | number | `showArea: true`일 때 시리즈가 선택되었을 때 면 투명도 |
+| `select.restSeries.areaOpacity` | number | `showArea: true`일 때 선택되지 않은 나머지 시리즈의 면 투명도 |
 
-테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
 
 ```js
 const options = {

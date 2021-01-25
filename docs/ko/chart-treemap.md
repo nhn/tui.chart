@@ -1,6 +1,6 @@
 # Treemap 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -297,7 +297,7 @@ const options = {
 ```
 ### dataLabels
 
-데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시한다.
 `dataLabels` 옵션은 다음과 같다.
 
 ```ts
@@ -455,7 +455,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101879101-22547d00-3bd4-11eb-9196-a308d24cd69c.png)
 
-데이터 라벨의 테마를 적용하여 글자 스타일을 변경하였다.
+아래 코드는 데이터 라벨의 테마를 적용하여 글자 스타일을 변경한 옵션이다.
 
 ```js
 const options = {

@@ -106,6 +106,37 @@ import Chart from '@toast-ui/chart';
 import { LineChart } from '@toast-ui/chart';
 ```
 
+[In Webpack 4, when importing package modules, the parts that are defined in the module field have higher priority than the parts defined in the main field](https://webpack.js.org/configuration/resolve/#resolvemainfields). To use the Webpack 4 with the require syntax to import `@toast-ui/chart`, the ESM file defined in the will be loaded, and the file will be transpiled to be compatible with the require syntax. In order to use the **bundle file for UMD**, the user must personally load and use the `@toast-ui/chart/dist/toastui-chart.js` or `@toast-ui/chart/dist/toastui-chart.min.js`.
+
+```js
+const Chart = require('@toast-ui/chart/dist/toastui-chart.min.js'); // loading the bundle file for UMD
+```
+
+Webpack 5 supports the `exports` field. The entry point can be determined by the `exports` field defined in the package. Furthermore, the necessary chart can be loaded through a sub-path, as presented below.
+
+```js
+const Chart = require('@toast-ui/chart');  // ./dist/toastui-chart.js
+
+import { BarChart } from '@toast-ui/chart';  // ./dist/esm/index.js
+
+import BarChart from '@toast-ui/chart/bar';
+import ColumnChart from '@toast-ui/chart/column';
+import LineChart from '@toast-ui/chart/line';
+import AreaChart from '@toast-ui/chart/area';
+import LineAreaChart from '@toast-ui/chart/lineArea';
+import ColumnLineChart from '@toast-ui/chart/columnLine';
+import BulletChart from '@toast-ui/chart/bullet';
+import BoxPlotChart from '@toast-ui/chart/boxPlot';
+import TreemapChart from '@toast-ui/chart/treemap';
+import HeatmapChart from '@toast-ui/chart/heatmap';
+import ScatterChart from '@toast-ui/chart/scatter';
+import LineScatterChart from '@toast-ui/chart/lineScatter';
+import BubbleChart from '@toast-ui/chart/bubble';
+import PieChart from '@toast-ui/chart/pie';
+import NestedPieChart from '@toast-ui/chart/nestedPie';
+import RadarChart from '@toast-ui/chart/radar';
+```
+
 Factory function needs three parameters: el, data, options
 
 - el: Wrapper HTML element that will contain the chart as a child.

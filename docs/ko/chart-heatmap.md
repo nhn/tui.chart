@@ -1,6 +1,6 @@
 # Heatmap 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -21,7 +21,7 @@ const chart = Chart.heatmapChart({el, data, options});
 ## 기본 차트
 ### 데이터 타입
 
-데이터는 `series` 값과 `categories` 값을 받는다. categories는 x축과 y축에 들어갈 라벨 정보를 입력 받으며 series는 각 x, y 축에 맞는 데이터를 숫자 값이 들어간 배열로 입력한다.
+데이터는 `series` 값과 `categories` 값을 받는다. categories는 X축과 Y축에 들어갈 라벨 정보를 입력 받으며 series는 각 x, y 축에 맞는 데이터를 숫자 값이 들어간 배열로 입력한다.
 
 ```js
 const data = {
@@ -117,7 +117,7 @@ const options = {
 
 ### dataLabels
 
-데이터 라벨은 차트에서 시리즈에 대한 값을 표시할 수 있는 기능이다.
+데이터 라벨은 차트에서 시리즈에 대한 값을 표시한다.
 `dataLabels` 옵션은 다음과 같다.
 
 ```ts
@@ -256,7 +256,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101882405-3058cc80-3bd9-11eb-8900-6923c72b84b5.png)
 
-데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 색상을 변경하였다.
+데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 색상을 변경한 옵션은 아래와 같다.
 
 ```js
 const options = {

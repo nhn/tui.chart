@@ -1,6 +1,6 @@
 # ColumnLine 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -168,7 +168,7 @@ const options = {
 
 ### eventDetectType
 
-툴팁을 나타낼 때 발생하는 마우스 오버와 시리즈를 선택할 때 발생하는 마우스 클릭 시 데이터를 탐지하는 방법을 정의할 수 있다.
+툴팁을 나타낼 때 발생하는 마우스 오버와 시리즈를 선택할 때 발생하는 마우스 클릭 시 데이터를 탐지하는 방법을 정의한다.
 
 | 타입 | 설명 |
 | --- | --- |
@@ -242,7 +242,7 @@ type ColumnLineChartSeriesOption = {
 };
 ```
 
-간단한 예시로 Line 시리즈의 데이터 라벨은 표시해주지 않고, Column 시리즈의 데이터 라벨만 표시하도록 설정하였다.
+아래 코드는 Line 시리즈의 데이터 라벨은 표시해주지 않고, Column 시리즈의 데이터 라벨만 표시하도록 설정한 옵션이다.
 
 ```js
 const options = {
@@ -371,4 +371,4 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/103477615-f491db00-4e03-11eb-9207-aa1ee2883aba.png)
 
-> [column 차트](./chart-column.md)와 [line 차트](./chart-line.md)의 테마는 각각의 가이드를 참고하도록 하자.
+> [column 차트](./chart-column.md)와 [line 차트](./chart-line.md)의 테마는 각각의 가이드를 참고한다.

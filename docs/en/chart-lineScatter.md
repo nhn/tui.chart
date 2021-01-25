@@ -1,6 +1,6 @@
 # Line Scatter Chart
 
-> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide. 
+> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide.
 
 ## Creating the Chart
 
@@ -22,7 +22,7 @@ const chart = Chart.lineScatterChart({el, data, options});
 
 ### Data Type
 
-The data is entered as a `series`. Each chart's series is provided to the `scatter` and `line`, respectively, and must be completed with both `name` and `data`. The data must either be a set of `x` and `y` coordinates or an array of coordinates. 
+The data is entered as a `series`. Each chart's series is provided to the `scatter` and `line`, respectively, and must be completed with both `name` and `data`. The data must either be a set of `x` and `y` coordinates or an array of coordinates.
 
 ```js
 const data = {
@@ -92,7 +92,7 @@ const data = {
 
 ## Options
 
-`options` should be used as an object. Options for each chart can be applied through `line` and `scatter`. The available options are as follow. 
+`options` should be used as an object. Options for each chart can be applied through `line` and `scatter`. The available options are as follows.
 
 ```ts
 type options = {
@@ -137,14 +137,14 @@ type options = {
 }
 ```
 
-> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide. Furthermore, for information regarding scatter and line charts options, refer to the respective guide. 
-> (Links: 
+> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide. Furthermore, for information regarding scatter and line charts options, refer to the respective guide.
+> (Links:
 > [`chart` Options](./common-chart-options.md),
-> [Axis](./common-axes.md), 
-> [Legend](./common-legend.md), 
+> [Axis](./common-axes.md),
+> [Legend](./common-legend.md),
 > [Export](./common-exportMenu.md),
 > [Tooltip](./common-tooltip.md),
-> [`responsive` Options](./common-responsive-options.md), 
+> [`responsive` Options](./common-responsive-options.md),
 > [Live Update](./common-liveUpdate-options.md),
 > [Data Label](./common-dataLabels-options.md),
 > [Line Chart](./chart-line.md),
@@ -167,11 +167,11 @@ const options = {
 };
 ```
 
-`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series. 
+`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series.
 
 ### line chart options
 
-To apply the line chart's `spline` option and the `showDot` option, define the options in the `line` attribute. 
+To apply the line chart's `spline` option and the `showDot` option, define the options in the `line` attribute.
 
 ```js
 const options = {
@@ -186,7 +186,7 @@ const options = {
 
 ## Series Theme
 
-To apply different styles for two charts, use `series.line` or `series.scatter` to define the themes. The `color` can be used to define a common color for two charts, or different colors can be applied using the `line` and `scatter` attributes. 
+To apply different styles for two charts, use `series.line` or `series.scatter` to define the themes. The `color` can be used to define a common color for two charts, or different colors can be applied using the `line` and `scatter` attributes.
 
 ```ts
 interface LineScatterChartSeriesTheme {
@@ -199,7 +199,7 @@ interface LineScatterChartSeriesTheme {
 };
 ```
 
-Let's apply some styles to the charts, for example. 
+Let's apply some styles to the charts, for example.
 
 ```js
 const theme = {
@@ -222,7 +222,7 @@ const theme = {
 };
 ```
 
-The result is as shown below. 
+The result is as shown below.
 
 ![image](https://user-images.githubusercontent.com/35371660/102152124-b7e35b80-3eb7-11eb-890a-8e487c02b02b.png)
 

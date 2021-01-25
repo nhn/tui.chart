@@ -6,11 +6,12 @@
 
 TOAST UI Chart의 사용 가능한 축의 종류는 X축, Y축, 보조 Y축이며 차트에 따라 사용 가능한 축의 종류가 다르다.
 
-| 타입                         | 차트명                                                         |
-| ---------------------------- | -------------------------------------------------------------- |
-| x축, y축, 보조 y축 사용 가능 | `Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` |
-| x축, y축 사용 가능           | `BoxPlot`, `Bubble`, `Bullet`, `Column`, `Heatmap`, `Scatter`  |
-| 축이 없는 차트               | `Radar`, `Treemap`, `Pie`, `NestedPie`                         |
+| 타입                          | 차트명                                                         |
+| ----------------------------- | -------------------------------------------------------------- |
+| X축, Y축, 보조 Y축 사용 가능 | `Area`, `Bar`, `ColumnLine`, `LineArea`, `Line`, `LineScatter` |
+| X축, Y축 사용 가능            | `BoxPlot`, `Bubble`, `Bullet`, `Column`, `Heatmap`, `Scatter`  |
+| 축이 없는 차트                | `Radar`, `Treemap`, `Pie`, `NestedPie`                         |
+
 
 이 가이드에서는 모든 축을 사용 가능한 차트라는 가정하에 작성되었다.
 
@@ -298,7 +299,7 @@ interface AxisTheme {
 | title | object | 축 제목 테마 옵션 |
 | label | object | 축 라벨 테마 옵션 |
 
-테마는 options의 `theme`값으로 추가 해준다. y축의 라벨과 선 두께, 색상을 바꾸는 간단한 예시를 작성해보자.
+테마는 options의 `theme`값으로 추가 해준다. Y축의 라벨과 선 두께, 색상을 바꾸는 간단한 예시를 작성해보자.
 
 ```js
 const options = {

@@ -1,6 +1,6 @@
 # Bullet 차트
 
-> 차트별로 사용할 수 있는 API에 대한 정보는 이 가이드에서 다루지 않는다. [API](./common-api.md) 가이드를 참고한다.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -22,7 +22,7 @@ const chart = Chart.bulletChart({el, data, options});
 
 ### 데이터 타입
 
-`series` 값은 `name`, `data`, `markers`, `ranges`가 모두 작성된 데이터를 입력한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
+`series` 값에는 `name`, `data`, `markers`, `ranges` 데이터를 배열로 입력한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -173,13 +173,13 @@ const options = {
 | 타입 | 설명 |
 | --- | --- |
 | `point` | 개별 시리즈 영역에 마우스가 다가가야 탐지. 현재 마우스가 가리키고 있는 포인트를 기준으로 단 한 개만 탐지됨 |
-| `grouped` | Y축을 기준으로 값이 같은 모든 데이터가 탐지됨 |
+| `grouped` | Y축(`vertical: true`옵션과 함께 사용할 경우 X축)을 기준으로 값이 같은 모든 데이터가 탐지됨 |
 
 * 기본값: `point`
 
 ![eventDetectType.point](https://user-images.githubusercontent.com/43128697/103997120-085f8780-51de-11eb-9bfe-78af1e667a34.png)
 
-`eventDetectType`을 `'grouped'`로 설정할 경우 X축(`vertical: true`옵션과 함께 사용할 경우 Y축)을 기준으로 값이 같은 데이터가 모두 탐지된다.
+`eventDetectType`을 `'grouped'`로 설정할 경우 Y축(`vertical: true`옵션과 함께 사용할 경우 X축)을 기준으로 값이 같은 데이터가 모두 탐지된다.
 
 ```js
 const options = {
@@ -353,7 +353,7 @@ type CommonDataLabelBubbleTheme = {
 | `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
 | `dataLabels.marker` | object | 마커 라벨 스타일. `dataLabels`에 적용할 수 있는 스타일 옵션 모두 사용 가능 |
 
-테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 Bullet 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성한다.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 아래 코드는 Bullet 시리즈의 색상과 너비를 바꾸고, 마우스를 올렸을 때 스타일을 변경한 옵션이다.
 
 ```js
 const options = {
@@ -387,7 +387,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102742822-3ef17180-4399-11eb-9f8f-5c43500b8c2f.png)
 
-데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 스타일을 변경하였다.
+아래 코드는 데이터 라벨의 테마를 적용하여 말풍선으로 바꾸고 글자 스타일을 변경한 옵션이다.
 
 ```js
 const options = {

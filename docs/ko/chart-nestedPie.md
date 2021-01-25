@@ -1,6 +1,6 @@
 # NestedPie 차트
 
-> 차트별로 사용할 수 있는 [API](./common-api.md)에 대한 정보는 이 가이드에서 다루지 않는다. API 가이드를 참고하도록 하자.
+> 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 
 ## 차트 생성하기
 
@@ -121,7 +121,7 @@ const data = {
 
 ### 그룹 데이터
 
-`parentName`을 지정하면 데이터의 부모 시리즈를 설정해주어 그룹 데이터로 표현할 수 있다. 그룹 데이터는 시리즈의 색깔이 같고 투명도가 조절된다. `series`의 첫번째 인덱스에 있는 `data` 값만 범례에 표시된다.
+`parentName`을 지정하면 데이터의 부모 시리즈를 설정해주어 그룹 데이터로 표현한다. 그룹 데이터는 시리즈의 색깔이 같으며 투명도로 구분된다. `series`의 첫번째 인덱스에 있는 `data` 값만 범례로 표시한다.
 
 ```js
 const data = {
@@ -249,7 +249,7 @@ const data = {
 
 ## 옵션
 
-`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)에서 `radiusRange`를 제외하고 같다. NestedPie에서는 중첩된 시리즈를 그려주기 위한 반지름 범위를 각각 설정해주어야 한다. 입력받은 데이터에서 series의 `name`이 이에 해당한다. 중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 설정해주면 되고, 각 시리즈별로 적용하려면 `[name]` 옵션에 설정해주면 된다.
+`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)과 같고 `radiusRange`는 각 시리즈의 반지름 범위를 설정하기 위해 `[name]` 옵션으로 이동했다. `[name]`은 입력받은 데이터에서 series의 `name`이 이에 해당한다. 중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 작성하고, 각 시리즈별로 적용할 옵션은 `[name]`에 작성한다.
 
 ```ts
 type options = {
@@ -366,7 +366,7 @@ const options = {
 
 ### clockwise
 
-시리즈가 그려지는 방향을 설정한다. 기본적으로 시계 방향으로 그려지고, `false`로 설정하면 시계 반대 방향으로 그려진다. 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다.
+시리즈가 그려지는 방향을 설정한다. 기본적으로 시계 방향으로 그려지고, `false`로 설정하면 시계 반대 방향으로 그려진다.
 
 * 기본값: `true`
 
@@ -399,7 +399,7 @@ const options = {
 
 ### radiusRange
 
-`radiusRange`는 `inner`와 `outer` 옵션을 지정하여 안쪽 원의 반지름과 바깥쪽 원의 반지름을 설정할 수 있다. `inner`의 기본값은 `0`이다. 0보다 큰 값을 입력하면 도넛 모양의 차트를 표시할 수 있다. 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 만약 `series.radiusRange`를 설정하지 않는다면 균일한 반지름을 같도록 자동으로 계산된다.
+`radiusRange`는 `inner`와 `outer` 옵션을 지정하여 안쪽 원의 반지름과 바깥쪽 원의 반지름을 설정한다. `inner`의 기본값은 `0`이다. 0보다 큰 값을 입력하면 도넛 모양의 차트를 만들 수 있다. 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 만약 `series.radiusRange`를 설정하지 않는다면 각 중첩된 시리즈가 균일한 반지름을 갖도록 설정된다.
 
 | 속성 | 설명 |
 | --- | --- |
@@ -429,7 +429,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102768135-fd29f080-43c3-11eb-8a63-d805d8ee5467.png)
 
-값을 숫자 타입으로 입력하면 절대값으로 설정된다.
+값을 숫자 타입으로 입력하면 반지름은 절대값으로 계산된다.
 
 ```js
 const options = {
@@ -454,12 +454,12 @@ const options = {
 
 ### angleRange
 
-`angleRange`는 `start`와 `end` 옵션을 사용하여 호의 범위를 설정할 수 있다.
+`angleRange`는 `start`와 `end` 옵션을 사용하여 호의 범위를 설정한다.
 
 | 속성 | 설명 |
 | --- | --- |
-| `angleRange.start` | 호의 시작 각도 (기본값 : `0`) |
-| `angleRange.end` | 호의 끝 각도 (기본값 : `360`) |
+| `angleRange.start` | 호의 시작 각도 (기본값: `0`) |
+| `angleRange.end` | 호의 끝 각도 (기본값: `360`) |
 
 ```js
 const options = {
@@ -514,7 +514,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/103478578-02972a00-4e0b-11eb-9aa9-b9e66ce48279.png)
 
-`series` 옵션에 각 계층별로 Pie 시리즈 옵션을 정의할 수 있으며, 데이터 라벨 관련 옵션도 좀 더 세밀하게 설정해 줄 수 있다.
+`series` 옵션에 각 계층별로 Pie 시리즈 옵션을 정의할 수 있으며, 데이터 라벨 관련 옵션도 좀 더 세밀하게 설정할 수 있다.
 
 ```ts
 type options = {
@@ -531,7 +531,7 @@ type options = {
 };
 ```
 
-간단한 예시로 안쪽에 있는 Pie 시리즈('browsers')에는 데이터 라벨만 표시해주고, 바깥쪽에 있는 Pie 시리즈('versions')에는 시리즈 이름 라벨까지 표시해주었다.
+아래 코드는 안쪽에 있는 Pie 시리즈('browsers')에는 데이터 라벨만 표시하고, 바깥쪽에 있는 Pie 시리즈('versions')에는 시리즈 이름 라벨까지 표시하도록 설정한 옵션이다.
 
 ```js
 const options = {
@@ -645,9 +645,9 @@ type CommonDataLabelBoxTheme = {
 | `select` | object | 옵션 `series.selectable: true`로 설정 되어 있을 때 시리즈가 선택 되면 적용되는 스타일 |
 | `dataLabels` | object | 데이터 라벨 스타일. Pie 차트의 [`theme.dataLabels` 옵션](./chart-pie.md)과 같다. |
 
-테마는 options의 `theme`값으로 추가 해준다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 시리즈의 스타일을 바꿔보자.
 
-`lineWidth`, `strokeStyle`을 설정하여 중첩된 모든 시리즈의 선 두께와 색깔을 변경하였다.
+아래 코드는 `lineWidth`, `strokeStyle`을 설정하여 중첩된 모든 시리즈의 선 두께와 색깔을 변경한 옵션이다.
 
 ```js
 const options = {
@@ -663,7 +663,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102754882-f940a300-43b0-11eb-8644-73f3effa39df.png)
 
-`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다. 시리즈 색상, 테두리 두께, 테두리 색상과 마우스를 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성하면 된다.
+`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다. 아래 코드는 시리즈 색상, 테두리 두께, 테두리 색상과 마우스를 올렸을 때 스타일을 변경한 옵션이다.
 
 ```js
 const options = {
@@ -714,7 +714,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102755523-e5e20780-43b1-11eb-96a5-10e494e37d27.png)
 
-`[name]`에 해당하는 각 시리즈별로 라벨 스타일을 적용할 수 있다. 글자 스타일과 말풍선을 사용하여 테마를 적용해 보았다.
+`[name]`에 해당하는 각 시리즈별로 라벨 스타일을 적용할 수 있다. 아래 코드는 글자 스타일과 말풍선을 사용하여 테마를 적용한 옵션이다.
 
 ```js
 const options = {

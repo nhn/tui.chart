@@ -14,9 +14,9 @@ public on(eventName: 'clickLegendLabel'
 | 'resetZoom', handler: (evt: any) => void): void;
 ```
 
-`on()`는 특정 조건이 발생할 때 사용자 정의 이벤트를 발생시키도록 하는 API다. 인자로 이벤트 명(`eventName`)과 특정 조건이 발생할 수 있는 조건이 충족했을 때 발생하는 사용자 정의 이벤트를 받는다. 현재 제공되고 있는 이벤트 조건은 다음과 같다. 
+`on()`는 특정 조건이 발생할 때 사용자 정의 이벤트를 발생시키도록 하는 API다. 인자로 이벤트 명(`eventName`)과 특정 조건이 발생할 수 있는 조건이 충족했을 때 발생하는 사용자 정의 이벤트를 받는다. 현재 제공되고 있는 이벤트 조건은 다음과 같다.
 
-| eventName | 설명 | 
+| eventName | 설명 |
 | --- | --- |
 | `clickLegendLabel` | legend 라벨 영역 클릭 시 이벤트 발생 |
 | `clickLegendCheckbox` | legend 체크 박스 영역 클릭 시 이벤트 발생 |
@@ -67,7 +67,7 @@ public resize(size: {
 }): void;
 ```
 
-차트가 그려지는 캔버스의 크기를 변경해준다. 
+차트가 그려지는 캔버스의 크기를 변경해준다.
 
 ```js
 const chart = new LineChart({ el, data, options });
@@ -81,11 +81,11 @@ chart.resize({width: 400, height: 400});
 ```ts
 public addSeries(data: SeriesDataInput, seriesDataInfo?: {
   category?: string
-  chartType?: string; 
+  chartType?: string;
 }): void;
 ```
 
-series를 추가할 때 사용되는 API다. 첫 번째 인자로는 추가 될 시리즈 데이터 두 번째 인자로는 시리즈에 대한 추가 정보를 받는다. data의 타입은 사용되고 있는 차트의 데이터 타입과 동일하게 추가하면 된다. 
+series를 추가할 때 사용되는 API다. 첫 번째 인자로는 추가 될 시리즈 데이터 두 번째 인자로는 시리즈에 대한 추가 정보를 받는다. data의 타입은 사용되고 있는 차트의 데이터 타입과 동일하게 추가하면 된다.
 
 간단한 예시로 LineChart에 시리즈를 추가해보자.
 
@@ -98,7 +98,7 @@ chart.addSeries({
 });
 ```
 
-두 번째 인자인 추가 정보는 `category`와 `chartType`을 담아줄 수 있다. 
+두 번째 인자인 추가 정보는 `category`와 `chartType`을 담아줄 수 있다.
 
 첫 번째로, `category`의 경우 Heatmap 차트에서 사용되며 Y Category에 해당되는 값을 추가한다. Heatmap 차트의 `addSeries()` 예시를 작성해보면 다음과 같다.
 
@@ -281,7 +281,7 @@ chart.setOptions({
 });
 ```
 
-### updateOptions() 
+### updateOptions()
 * 사용 가능 차트 타입: `All`
 
 ```ts
@@ -390,7 +390,7 @@ plot line을 제거할 수 있다. 인자로 id를 입력받으며 동일한 id�
 ```ts
 public addPlotBand(data: {
   range: [number, number] | [string, string],
-  color: string, 
+  color: string,
   id?:string
 });
 ```
@@ -413,7 +413,7 @@ plot band를 제거할 수 있다. 인자로 id를 입력받으며 동일한 id�
 
 ### showTooltip()
 
-해당되는 시리즈의 툴팁을 보여준다. 
+해당되는 시리즈의 툴팁을 보여준다.
 
 ```ts
 public showTooltip(seriesInfo: {
@@ -436,7 +436,7 @@ public hideTooltip();
 
 ### selectSeries()
 
-옵션 `options.series.selectable: true`로 설정되어 있을 때 `selectSeries()`를 사용하면 시리즈를 선택할 수 있다. 
+옵션 `options.series.selectable: true`로 설정되어 있을 때 `selectSeries()`를 사용하면 시리즈를 선택할 수 있다.
 
 ```ts
 public showTooltip(seriesInfo: {
