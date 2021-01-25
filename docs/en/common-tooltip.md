@@ -163,7 +163,7 @@ const options = {
 
 ## theme
 
-The theme options that are currently provided for tooltip are as follow.
+The theme options that are currently provided for tooltip are as follows.
 
 ```ts
 interface TooltipTheme {
