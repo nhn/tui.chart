@@ -93,7 +93,7 @@ const options = {
 };
 ```
 
-Both can be set to `'auto'` to enable the each to be affected by the parent container. If either the `width` or `height` is set to be `'auto'`, detects that the size of the container changes, and when the window size changes, the chart is rendered again. If `width` or `height` are not provided, the chart is rendered according to the container initially, and will not be affected by the changing container size.
+Both can be set to `'auto'` to enable each to be affected by the parent container. If either the `width` or `height` is set to be `'auto'`, the chart will detect the change in the container size, and when the size changes the chart will be rerendered according to the changed size. If `width` or `height` are not provided, the chart is rendered according to the container initially, and will not be affected by the changing container size.
 
 ```html
 <div id="chart" style="width: 90vw; height: 90vh; min-width: 500px; min-height: 300px;">

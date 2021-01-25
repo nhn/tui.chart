@@ -170,13 +170,13 @@ Defines ways to detect or select data through the mouse.
 | Type | Details |
 | --- | --- |
 | `point` | A single series is detected when a mouse comes within the individual series' detectable area. Only a single series is selected with respect to the current position of the cursor. |
-| `grouped` | All data that are equal with respect to the x-axis (y-axis if `vertical: true`) are detected. |
+| `grouped` | All data that are equal with respect to the y-axis (x-axis if `vertical: true`) are detected. |
 
 * default: `point`
 
 ![eventDetectType.point](https://user-images.githubusercontent.com/43128697/103997120-085f8780-51de-11eb-9bfe-78af1e667a34.png)
 
-If the `eventDetectType` is set to `'grouped'`, all data that are equal with respect to x-axis (y-axis if `vertical: true`) are detected.
+If the `eventDetectType` is set to `'grouped'`, all data that are equal with respect to y-axis (x-axis if `vertical: true`) are detected.
 
 ```js
 const options = {

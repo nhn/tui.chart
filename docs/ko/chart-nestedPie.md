@@ -458,8 +458,8 @@ const options = {
 
 | 속성 | 설명 |
 | --- | --- |
-| `angleRange.start` | 호의 시작 각도 (기본값 : `0`) |
-| `angleRange.end` | 호의 끝 각도 (기본값 : `360`) |
+| `angleRange.start` | 호의 시작 각도 (기본값: `0`) |
+| `angleRange.end` | 호의 끝 각도 (기본값: `360`) |
 
 ```js
 const options = {

@@ -173,13 +173,13 @@ const options = {
 | 타입 | 설명 |
 | --- | --- |
 | `point` | 개별 시리즈 영역에 마우스가 다가가야 탐지. 현재 마우스가 가리키고 있는 포인트를 기준으로 단 한 개만 탐지됨 |
-| `grouped` | X축(`vertical: true`옵션과 함께 사용할 경우 Y축)을 기준으로 값이 같은 모든 데이터가 탐지됨 |
+| `grouped` | Y축(`vertical: true`옵션과 함께 사용할 경우 X축)을 기준으로 값이 같은 모든 데이터가 탐지됨 |
 
 * 기본값: `point`
 
 ![eventDetectType.point](https://user-images.githubusercontent.com/43128697/103997120-085f8780-51de-11eb-9bfe-78af1e667a34.png)
 
-`eventDetectType`을 `'grouped'`로 설정할 경우 X축(`vertical: true`옵션과 함께 사용할 경우 Y축)을 기준으로 값이 같은 데이터가 모두 탐지된다.
+`eventDetectType`을 `'grouped'`로 설정할 경우 Y축(`vertical: true`옵션과 함께 사용할 경우 X축)을 기준으로 값이 같은 데이터가 모두 탐지된다.
 
 ```js
 const options = {

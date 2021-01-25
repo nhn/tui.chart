@@ -28,7 +28,7 @@ type ChartOptions = {
 | `text` | string | 차트 제목 |
 | `offsetX` | number | x 오프셋 값 (내부 여백 : `10`) ) |
 | `offsetY` | number | y 오프셋 값 (내부 여백 : `15`) |
-| `align` | 'left' \| 'right' \| 'center' | 제목 정렬 (기본값 : `'left'`) |
+| `align` | 'left' \| 'right' \| 'center' | 제목 정렬 (기본값: `'left'`) |
 
 ```js
 const options = {

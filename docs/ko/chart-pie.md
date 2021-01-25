@@ -196,8 +196,8 @@ const options = {
 
 | 속성 | 설명 |
 | --- | --- |
-| `angleRange.start` | 호의 시작 각도 (기본값 : `0`) |
-| `angleRange.end` | 호의 끝 각도 (기본값 : `360`) |
+| `angleRange.start` | 호의 시작 각도 (기본값: `0`) |
+| `angleRange.end` | 호의 끝 각도 (기본값: `360`) |
 
 ```js
 const options = {
@@ -262,10 +262,10 @@ type options = {
 | `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
 | `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
 | `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
-| `anchor` | 'center' \| 'outer' | 데이터 라벨 표시 위치 설정. `'center'`는 원 안에, `'outer'`는 원 바깥에 라벨이 위치.<br>(기본값 : `'center'`) |
+| `anchor` | 'center' \| 'outer' | 데이터 라벨 표시 위치 설정. `'center'`는 원 안에, `'outer'`는 원 바깥에 라벨이 위치.<br>(기본값: `'center'`) |
 | `pieSeriesName` | object | 시리즈 이름 라벨 표시 설정 |
 | `pieSeriesName.visible` | boolean | 시리즈 이름 라벨 표시 여부 |
-| `pieSeriesName.anchor` | 'center' \| 'outer' | 시리즈 이름 라벨 표시 위치 설정. `'center'`는 원 안에, `'outer'`는 원 바깥에 라벨이 위치.<br>(기본값 : `'center'`) |
+| `pieSeriesName.anchor` | 'center' \| 'outer' | 시리즈 이름 라벨 표시 위치 설정. `'center'`는 원 안에, `'outer'`는 원 바깥에 라벨이 위치.<br>(기본값: `'center'`) |
 
 ```js
 // 기본
