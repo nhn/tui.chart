@@ -20,6 +20,7 @@ import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
 import Zoom from '@src/component/zoom';
 import ResetButton from '@src/component/resetButton';
+import Background from '@src/component/background';
 
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
@@ -143,6 +144,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
   initialize() {
     super.initialize();
 
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

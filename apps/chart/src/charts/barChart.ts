@@ -20,6 +20,7 @@ import ZeroAxis from '@src/component/zeroAxis';
 import AxisUsingCenterY from '@src/component/axisUsingCenterY';
 import HoveredSeries from '@src/component/hoveredSeries';
 import SelectedSeries from '@src/component/selectedSeries';
+import Background from '@src/component/background';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
@@ -130,6 +131,7 @@ export default class BarChart extends Chart<BarChartOptions> {
     super.initialize();
     const stackChart = !!this.store.initStoreState.options.series?.stack;
 
+    this.componentManager.add(Background);
     this.componentManager.add(Title);
     this.componentManager.add(Plot);
     this.componentManager.add(Legend);

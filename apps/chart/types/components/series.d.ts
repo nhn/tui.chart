@@ -319,3 +319,5 @@ export interface ScatterSeriesModel {
   seriesIndex?: number;
   name?: string;
 }
+
+export type BackgroundModel = RectModel[];

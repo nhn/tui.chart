@@ -30,7 +30,7 @@ import {
 import { Nullable } from '@t/components/series';
 import { getFont } from './style';
 
-const RADIUS_PADDING = 30;
+export const RADIUS_PADDING = 30;
 const CALLOUT_LENGTH = 20;
 
 type LabelPosition = {

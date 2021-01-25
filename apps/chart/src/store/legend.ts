@@ -24,7 +24,7 @@ import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumL
 import { hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { extend } from '@src/store/store';
 import { getTitleFontString } from '@src/helpers/style';
-import { defaultTheme } from '@src/helpers/theme';
+import { makeDefaultTheme } from '@src/helpers/theme';
 
 type LegendLabels = {
   label: string;
@@ -196,8 +196,9 @@ function getLegendState(options: Options, series: RawSeries): Legend {
   const useSpectrumLegend =
     (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
   const useScatterChartIcon = !!series?.scatter;
+  const defaultTheme = makeDefaultTheme(options?.theme?.chart?.fontFamily);
   const font = getTitleFontString(
-    deepMergedCopy(defaultTheme.legend.label, { ...options.theme?.legend?.label })
+    deepMergedCopy(defaultTheme.legend.label!, { ...options.theme?.legend?.label })
   );
 
   const legendLabels = hasNestedPieSeries(series)
