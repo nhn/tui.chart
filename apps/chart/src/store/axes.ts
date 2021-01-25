@@ -289,7 +289,7 @@ function getInitTickInterval(categories?: string[], layout?: Layout) {
   const { width } = layout.xAxis;
   const count = categories.length;
 
-  return getAutoAdjustingInterval(count, width);
+  return getAutoAdjustingInterval(count, width, categories);
 }
 
 function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
@@ -469,7 +469,7 @@ const axes: StoreModule = {
       const initialAxisData = getInitialAxisData(
         options,
         labelOnYAxis,
-        rawCategories as string[],
+        categories as string[],
         layout,
         isCoordinateTypeChart
       );
