@@ -183,7 +183,7 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
   });
 
   if (text) {
-    ctx.shadowColor = 'rgba(0,0,0,0)';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0)';
 
     label(ctx, {
       type: 'label',

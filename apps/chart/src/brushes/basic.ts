@@ -133,7 +133,7 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
     ctx.fillStyle = borderColor;
     ctx.fillRect(x - thickness, y - thickness, width + thickness * 2, height + thickness * 2);
 
-    ctx.shadowColor = 'rgba(0,0,0,0)'; // reset shadow color
+    ctx.shadowColor = 'rgba(0, 0, 0, 0)'; // reset shadow color
   }
   ctx.rect(x, y, width, height);
 
