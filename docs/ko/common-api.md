@@ -27,7 +27,7 @@ public on(eventName: 'clickLegendLabel'
 | `zoom` | zoom 발생 시 이벤트 발생. `options.series.zoomable: true` 조건 필요 |
 | `resetZoom` | zoom 초기화 시 이벤트 발생. `options.series.zoomable: true` 조건 필요 |
 
-area 차트의 시리즈를 선택했을 때 사용자 정의 이벤트를 추가하고 싶은 경우 다음과 같이 정의한다. 사용자 정의 함수에서는 각 이벤트에서 제공되는 정보를 인자로 사용할 수 있다.
+area 차트의 시리즈를 선택했을 때 사용자 정의 이벤트를 추가하고 싶은 경우 다음과 같이 정의할 수 있다. 사용자 정의 함수에서는 각 이벤트에서 제공되는 정보를 인자로 사용할 수 있다.
 
 ```js
 const chart = new LineChart({ el, data, options });

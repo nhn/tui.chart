@@ -27,7 +27,7 @@ type PlotOption = {
 };
 ```
 
-The charts that support each option are as follow.
+The charts that support each option are as follows.
 
 | Option Name | Chart Name |
 | --- | --- |
@@ -222,7 +222,7 @@ type PlotTheme = {
 | `horizontal` | object | Styles used for horizontal lines |
 | `backgroundColor` | string | Plot area background color |
 
-The following is an example of changing the line and background color by setting the plot theme.
+The following is an example of changing the line color and the background color by configuring the plot themes.
 
 ```js
 const options = {

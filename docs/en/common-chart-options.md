@@ -3,7 +3,7 @@
 The `chart` option can be used to determine the chart's title, size, whether to use animation, and the animation's duration.
 
 ## Option
-The options compatible with the `chart` option are as follow.
+The options compatible with the `chart` option are as follows.
 
 ```ts
 type ChartOptions = {

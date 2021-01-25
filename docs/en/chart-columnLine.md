@@ -60,7 +60,7 @@ const data = {
 
 ## Options
 
-`options` should be used as an object. Options for each column and line chart must be defined in `column` and `line`, respectively. Available options are as follow.
+`options` should be used as an object. Options for each column and line chart must be defined in `column` and `line`, respectively. Available options are as follows.
 
 ```ts
 type options = {

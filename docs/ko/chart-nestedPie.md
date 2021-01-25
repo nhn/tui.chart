@@ -249,7 +249,7 @@ const data = {
 
 ## 옵션
 
-`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)에서 `radiusRange`를 제외하고는 같다. NestedPie에서는 중첩된 시리즈를 그려주기 위한 반지름 범위를 각각 설정해주기 때문이다. `[name]`은 입력받은 데이터에서 series의 `name`이 이에 해당한다. 중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 작성하고, 각 시리즈별로 적용할 옵션은 `[name]`에 작성한다.
+`options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98)과 같고 `radiusRange`는 각 시리즈의 반지름 범위를 설정하기 위해 `[name]` 옵션으로 이동하였다. `[name]`은 입력받은 데이터에서 series의 `name`이 이에 해당한다. 중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 작성하고, 각 시리즈별로 적용할 옵션은 `[name]`에 작성한다.
 
 ```ts
 type options = {
@@ -399,7 +399,7 @@ const options = {
 
 ### radiusRange
 
-`radiusRange`는 `inner`와 `outer` 옵션을 지정하여 안쪽 원의 반지름과 바깥쪽 원의 반지름을 설정한다. `inner`의 기본값은 `0`이다. 0보다 큰 값을 입력하면 도넛 모양의 차트를 만들 수 있다. 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 만약 `series.radiusRange`를 설정하지 않는다면 균일한 반지름을 같도록 자동으로 계산된다.
+`radiusRange`는 `inner`와 `outer` 옵션을 지정하여 안쪽 원의 반지름과 바깥쪽 원의 반지름을 설정한다. `inner`의 기본값은 `0`이다. 0보다 큰 값을 입력하면 도넛 모양의 차트를 만들 수 있다. 각 시리즈 `name`에 해당하는 옵션을 설정할 수 있다. 만약 `series.radiusRange`를 설정하지 않는다면 각 중첩된 시리즈가 균일한 반지름을 갖도록 설정된다.
 
 | 속성 | 설명 |
 | --- | --- |
@@ -663,7 +663,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102754882-f940a300-43b0-11eb-8644-73f3effa39df.png)
 
-`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다. 시리즈 색상, 테두리 두께, 테두리 색상과 마우스를 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성한다.
+`[name]`에 해당하는 각 시리즈별로 스타일을 적용할 수 있다. 시리즈 색상, 테두리 두께, 테두리 색상과 마우스를 올렸을 때 스타일을 변경하였다.
 
 ```js
 const options = {

@@ -22,7 +22,7 @@ const chart = Chart.bulletChart({el, data, options});
 
 ### 데이터 타입
 
-`series` 값은 `name`, `data`, `markers`, `ranges`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
+`series` 값에는 `name`, `data`, `markers`, `ranges` 데이터를 배열로 입력한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -353,7 +353,7 @@ type CommonDataLabelBubbleTheme = {
 | `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
 | `dataLabels.marker` | object | 마커 라벨 스타일. `dataLabels`에 적용할 수 있는 스타일 옵션 모두 사용 가능 |
 
-테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 Bullet 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성한다.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 Bullet 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하였다.
 
 ```js
 const options = {

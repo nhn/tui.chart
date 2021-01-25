@@ -221,7 +221,7 @@ type options = {
 
 ### stack
 
-The `stack` option allows multiple series to form a stacked chart. The stack chart includes `'normal'` type and the `'percent'` type. The `stack.connector` option can be used to display the connectors.
+The `stack` option allows multiple series to form a stacked chart. The stack chart includes `'normal'` type and the `'percent'` type. The `stack.connector` option can be used to display the connectors (the line segments that connect the series according to the categories).
 
 ### normal Type
 

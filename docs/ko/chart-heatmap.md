@@ -21,7 +21,7 @@ const chart = Chart.heatmapChart({el, data, options});
 ## 기본 차트
 ### 데이터 타입
 
-데이터는 `series` 값과 `categories` 값을 받는다. categories는 x축과 y축에 들어갈 라벨 정보를 입력 받으며 series는 각 x, y 축에 맞는 데이터를 숫자 값이 들어간 배열로 입력한다.
+데이터는 `series` 값과 `categories` 값을 받는다. categories는 X축과 Y축에 들어갈 라벨 정보를 입력 받으며 series는 각 x, y 축에 맞는 데이터를 숫자 값이 들어간 배열로 입력한다.
 
 ```js
 const data = {

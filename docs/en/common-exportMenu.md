@@ -3,7 +3,7 @@
 Data from all charts can be exported to image (`.jpeg`, `.png`) files and `csv` or `xls` files.
 
 ## Options
-Options that can be used with export feature are as follow.
+Options that can be used with export feature are as follows.
 
 ```ts
 type ExportMenuOptions = {

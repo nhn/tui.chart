@@ -22,7 +22,7 @@ const chart = Chart.barChart({el, data, options});
 
 ### 데이터 타입
 
-`categories` 값은 y축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
+`categories` 값은 Y축의 틱에 나타나며 `series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -262,7 +262,7 @@ const options = {
 
 ### percent 타입
 
-`stack.type`을 `'percent'`로 설정하면 값의 합을 백분율로 계산하는 스택 차트를 만들 수 있다.
+`stack.type`을 `'percent'`로 설정하면 카테고리 별 시리즈가 차지하는 비율을 백분율로 표시한다.
 
 ```js
 const options = {
@@ -569,7 +569,7 @@ type CommonDataLabelBubbleTheme = {
 | `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | 화살표 방향 |
 | `dataLabels.stackTotal` | object | 스택 차트에서 합계 라벨 스타일. `dataLabels`에 적용할 수 있는 스타일 옵션 모두 사용 가능 |
 
-테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 바 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성한다.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 간단한 예시로 바 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하였다.
 
 ```js
 const options = {

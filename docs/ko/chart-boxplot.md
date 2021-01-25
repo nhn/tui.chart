@@ -251,7 +251,7 @@ interface BoxPlotChartSeriesTheme {
 | `dot.color` | string | 점의 배경색 |
 | `dot.radius` | number | 점의 반지름 길이 |
 | `dot.borderColor` | string | 점의 테두리 색깔 |
-| `dot.borderWidt`h | number | 점의 테두리 두께 |
+| `dot.borderWidth` | number | 점의 테두리 두께 |
 | `dot.useSeriesColor` | boolean | 시리즈 색깔을 사용 유무 |
 | `line` | object | 중앙값, 최소/최대값, 최대와 최소값을 잇는 선(*whisker*)을 나타내는 선 스타일 |
 | `line.whisker` | object | 최대와 최소값을 잇는 선 스타일 |
@@ -268,7 +268,7 @@ interface BoxPlotChartSeriesTheme {
 | `select.areaOpacity` | number | 선택된 시리즈의 영역 투명도 |
 | `select.restSeries` | object | 선택되지 않은 시리즈의 스타일 |
 
-테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 예시로 박스 플롯 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하고 싶다면 다음처럼 작성한다.
+테마는 옵션에서 `theme` 옵션을 지정하고 시리즈 테마는 `theme.series`로 설정한다. 예시로 박스 플롯 시리즈의 색상과 너비를 바꾸고, 마우스 올렸을 때 스타일을 변경하였다.
 
 ```js
 const options = {
