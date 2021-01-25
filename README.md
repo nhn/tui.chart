@@ -44,13 +44,19 @@ Add different options and animations according to the charts' sizes by using the
 
 Make the data presented in the Line, Area, and Treemap Charts zoomable with the **zoomable** option.
 
-![zoomable](https://user-images.githubusercontent.com/35371660/105646441-4a2d4500-5ee3-11eb-9cf6-4d5bdd1f77dc.gif)
+![zoomable](https://user-images.githubusercontent.com/35371660/105669323-68666580-5f22-11eb-8344-be57d7468b93.gif)
 
 #### live update
 
 View and manage new data as they are added realtime with the `addData` API and the `options.series.shift` option.
 
-![liveUpdate](https://user-images.githubusercontent.com/35371660/105494627-6ae87580-5cfe-11eb-846e-3c473bdace1f.gif)
+| Area | Line | Heatmap | 
+|--- | --- | --- |
+| ![area](https://user-images.githubusercontent.com/35371660/102159207-6ee6d380-3ec6-11eb-8ca8-07c82095556f.gif)  | ![live update line](https://user-images.githubusercontent.com/35371660/102157257-815f0e00-3ec2-11eb-8b87-a177664a43b2.gif) | ![heatmap](https://user-images.githubusercontent.com/35371660/102159193-68f0f280-3ec6-11eb-9b1f-4fa14c97c879.gif) |
+
+| LineArea | Column | ColumnLine | 
+|--- | --- | --- |
+| ![lineArea](https://user-images.githubusercontent.com/35371660/102160638-2aa90280-3ec9-11eb-98ae-5113cd3f75eb.gif)  | ![column](https://user-images.githubusercontent.com/35371660/102159210-70b09700-3ec6-11eb-9f78-9d9790cd0357.gif) | ![columnline](https://user-images.githubusercontent.com/35371660/102159292-976ecd80-3ec6-11eb-84b9-4e487e411245.gif) |
 
 #### Synchronize Tooltip
 
