@@ -19,6 +19,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
     <title>8.5 [Line Chart] Coordinate Data</title>
   </head>
   <body>
@@ -91,7 +92,7 @@
         ],
       };
       const options = {
-        chart: { title: 'Concurrent user', width: 800, height: 400 },
+        chart: { title: 'Concurrent user', width: 1000, height: 500 },
         xAxis: { pointOnColumn: true, title: 'minute' },
         yAxis: { title: 'users' },
         series: { eventDetectType: 'point' },
