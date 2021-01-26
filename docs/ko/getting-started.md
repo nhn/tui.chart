@@ -2,7 +2,7 @@
 
 ## 설치하기
 
-TOAST UI 제품들은 패키지 매니저를 이용하거나, 직접 소스코드를 다운받아 사용할 수 있다. 하지만 패키지 매니저 사용을 권장한다.
+TOAST UI 제품들은 패키지 매니저를 이용하거나, 직접 소스 코드를 다운받아 사용할 수 있다. 하지만 패키지 매니저 사용을 권장한다.
 
 ### 패키지 매니저 사용하기
 
@@ -18,7 +18,7 @@ $ npm install --save @toast-ui/chart@<version> # 특정 버전
 
 ### Contents Delivery Network (CDN) 사용하기
 
-TOAST Ui Chart는 CDN을 통해 사용할 수 있다.
+TOAST UI Chart는 CDN을 통해 사용할 수 있다.
 
 - 아래의 코드로 CDN을 사용할 수 있다.
 
@@ -58,7 +58,7 @@ TOAST UI Chart가 생성될 컨테이너 요소를 추가한다.
 
 #### 불러오기
 
-TOAST UI 차트는 생성자 함수를 통해 인스턴스를 생성할 수 있다. 생성자 함수에 접근하기 위해서는 환경에 따라 접근할 수 있는 세가지 방법이 존재한다.
+TOAST UI 차트는 생성자 함수를 통해 인스턴스를 생성할 수 있다. 생성자 함수에 접근하기 위해서는 환경에 따라 접근할 수 있는 세 가지 방법이 존재한다.
 
 ```js
 /* namespace */
@@ -78,7 +78,7 @@ import { BarChart } from '@toast-ui/chart';
 const Chart = require('@toast-ui/chart/dist/toastui-chart.min.js'); // // UMD 용 번들 파일 로드
 ```
 
-Webpack 5 supports the `exports` field. The entry point can be determined by the `exports` field defined in the package. Furthermore, the necessary chart can be loaded through a sub-path, as presented below.
+Webpack 5는 `exports` 필드를 지원한다. 패키지에서 정의된 `exports` 필드를 보고 모듈 진입점을 판단할 수 있다. 또한 아래와 같이 서브 경로로 접근하여 필요한 차트 파일을 로드할 수 있다.
 
 ```js
 const Chart = require('@toast-ui/chart'); // ./dist/toastui-chart.js
@@ -132,7 +132,7 @@ require('@toast-ui/chart/dist/toastui-chart.min.css');
 
 - el: 차트를 자식요소로 갖는 HTML 요소
 - data: 차트의 기반이 되는 숫자 데이터
-- options: 레전드, 정렬, 툴팁 포맷 등 여러 기능을 나타내는 옵션
+- options: 범례, 정렬, 툴팁 포맷 등 여러 기능을 나타내는 옵션
 
 ```js
 const el = document.getElementById('chart');
