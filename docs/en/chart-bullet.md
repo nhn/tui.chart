@@ -123,7 +123,7 @@ type options = {
 > Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide.
 > (Links:
 > [`chart` Options](./common-chart-options.md),
-> [Axes](./common-axes.md)
+> [Axes](./common-axes.md),
 > [Legend](./common-legend.md),
 > [Export](./common-exportMenu.md),
 > [Tooltip](./common-tooltip.md),
