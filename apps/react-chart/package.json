@@ -40,6 +40,6 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "@toast-ui/chart": "^4.0.0"
+    "@toast-ui/chart": "^4.0.1"
   }
 }
