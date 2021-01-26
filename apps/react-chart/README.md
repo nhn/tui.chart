@@ -22,7 +22,7 @@
 
 ## Collect statistics on the use of open source
 
-React Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the `usageStatistics` props like the example below.
+React Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected, and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the `usageStatistics` props like the example below.
 
 ```js
 const options = {
@@ -84,7 +84,7 @@ You can use [all kinds of charts in TOAST UI chart](https://github.com/nhn/tui.c
 
 ### Props
 
-[All the options of the TOAST UI Chart](http://nhn.github.io/tui.chart/latest/) are supported in the form of props. Note that data and columns props are required and other props are optional.
+[All the options of the TOAST UI Chart](https://github.com/nhn/tui.chart/tree/main/docs) are supported in the form of props. Note that data and columns props are required and other props are optional.
 
 ```js
 const data = {
@@ -171,7 +171,7 @@ function MyComponent() {
 
 ### Event
 
-[All the events of TOAST UI Chart](https://github.com/nhn/toast-ui.react-chart/blob/main/docs/getting-started.md#event) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `click` event you can use `onClick` prop like the example below.
+[All the events of TOAST UI Chart](https://github.com/nhn/tui.chart/tree/main/docs/en/common-api.md) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `click` event you can use `onClick` prop like the example below.
 
 ```js
 import { useRef } from 'React';
