@@ -180,8 +180,7 @@ type options = {
 > [Tooltip](./common-tooltip.md),
 > [Plot](./common-plot.md),
 > [`responsive` Options](./common-responsive-options.md),
-> [Live Update](./common-liveUpdate-options.md),
-> [Data Label](./common-dataLabels-options.md)
+> [Live Update](./common-liveUpdate-options.md)
 > )
 
 ### selectable
@@ -257,6 +256,44 @@ const options = {
 };
 ```
 
+### dataLabels
+
+Data labels display information regarding the series on the chart.
+The following are the options for `dataLabels`.
+
+```ts
+type options = {
+  ...
+  series?: {
+    dataLabels?: {
+      visible?: boolean;
+      offsetX?: number;
+      offsetY?: number;
+      formatter?: (value) => string;
+    }
+  }
+};
+```
+
+| Name | Type | Details |
+| --- | --- | --- |
+| `visible` | boolean | Whether to make the data label visible |
+| `offsetX` | number | X offset of the data label position |
+| `offsetY` | number | Y offset of the data label position |
+| `formatter` | function | Takes the value of the data as its parameter and defines the format to be displayed |
+
+```js
+// basic
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103474889-82150100-4deb-11eb-957e-a88c0fb3bd6b.png)
+
+
 ## Series Theme
 
 The following is a list of themes that can be modified in the Line chart.
@@ -317,16 +354,40 @@ interface LineChartSeriesTheme {
 
 | Name         | Type     | Details                                                                                                         |
 | ------------ | -------- | --------------------------------------------------------------------------------------------------------------- |
-| lineWidth    | number   | The width of the series line                                                                                    |
-| dashSegments | number[] | The dashSegment value of the series line (IE11 or higher version supported)                                     |
-| colors       | string[] | The color of the series                                                                                         |
-| dot          | object   | The style for the dot displayed when `showDot: true`                                                            |
-| select       | object   | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
-| select.dot   | object   | The style for the dot displayed when the data is selected                                                       |
-| hover        | object   | The style that is applied when the user hovers over the data                                                    |
-| dataLabels   | object   | Data label style. For more information, refer to the DataLabels guide.                                          |
-
-The theme can be added through the `theme` value in the options object. For example, let's change the line width and color of a series.
+| `lineWidth`    | number   | The width of the series line                                                                                    |
+| `dashSegments` | number[] | The dashSegment value of the series line (IE11 or higher version supported)                                     |
+| `colors`       | string[] | The color of the series                                                                                         |
+| `dot`          | object   | The style for the dot displayed when `showDot: true`                                                            |
+| `select`       | object   | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
+| `select.dot`   | object   | The style for the dot displayed when the data is selected                                                       |
+| `hover`        | object   | The style that is applied when the user hovers over the data                                                    |
+| `dataLabels` | object | Style for the data labels |
+| `dataLabels.useSeriesColor` | boolean | Whether to use the series colors for the data label texts |
+| `dataLabels.lineWidth` | number | Text stroke width |
+| `dataLabels.textStrokeColor` | string | Text stroke color |
+| `dataLabels.shadowColor` | string | Text shadow color |
+| `dataLabels.shadowBlur` | number | Text shadow blue |
+| `dataLabels.fontSize` | number | Font size |
+| `dataLabels.fontFamily` | string | Font name |
+| `dataLabels.fontWeight` | string | Font weight |
+| `dataLabels.color` | string | Text color; does not work when `useSeriesColor: true` |
+| `dataLabels.textBubble` | object | Text bubble configurations |
+| `dataLabels.textBubble.visible` | boolean | Whether to use the text bubble |
+| `dataLabels.textBubble.paddingX` | number | Horizontal padding |
+| `dataLabels.textBubble.paddingY`| number | Vertical padding |
+| `dataLabels.textBubble.backgroundColor` | string | Text bubble background color |
+| `dataLabels.textBubble.borderRadius` | number | Text bubble border radius |
+| `dataLabels.textBubble.borderColor` | string | Text bubble border color |
+| `dataLabels.textBubble.borderWidth` | number | Text bubble border width |
+| `dataLabels.textBubble.shadowColor` | string | Text bubble shadow color |
+| `dataLabels.textBubble.shadowOffsetX` | number | Text bubble shadow x offset |
+| `dataLabels.textBubble.shadowOffsetY` | number | Text bubble shadow y offset |
+| `dataLabels.textBubble.shadowBlur` | number | Text bubble shadow blur |
+| `dataLabels.textBubble.arrow` | object | Text bubble arrow configurations |
+| `dataLabels.textBubble.arrow.visible` | boolean | Whether to use the text bubble arrows |
+| `dataLabels.textBubble.arrow.width` | number | Arrow base width |
+| `dataLabels.textBubble.arrow.height` | number | Arrow height |
+| `dataLabels.textBubble.arrow.direction` | 'top' \| 'right' \| 'bottom' \| 'left' | Arrow direction |
 
 ```js
 const options = {
@@ -342,3 +403,36 @@ const options = {
 The result of the above option is shown as shown below.
 
 ![image](https://user-images.githubusercontent.com/35371660/101853581-2c11bc80-3ba3-11eb-91d1-75084cb0d042.png)
+
+The code below applies a theme to the data label to use text bubbles and to change the text styles.
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true, offsetY: -10 }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 10,
+        fontWeight: 300,
+        useSeriesColor: true,
+        textBubble: {
+          visible: true,
+          paddingY: 3,
+          paddingX: 6,
+          arrow: {
+            visible: true,
+            width: 5,
+            height: 5,
+            direction: 'bottom'
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103474891-83dec480-4deb-11eb-9924-291a8a0af77e.png)

@@ -1,6 +1,6 @@
 # Heatmap Chart
 
-> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide. 
+> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide.
 
 ## Creating the Chart
 
@@ -22,7 +22,7 @@ const chart = Chart.heatmapChart({el, data, options});
 
 ### Data Type
 
-The data is entered as `series` and `categories`. The categories represent the labels for the x-axis and the y-axis, and the series represent the numeric array that corresponds to the x-axis and the y-axis. 
+The data is entered as `series` and `categories`. The categories represent the labels for the x-axis and the y-axis, and the series represent the numeric array that corresponds to the x-axis and the y-axis.
 
 ```js
 const data = {
@@ -87,16 +87,14 @@ type options = {
 }
 ```
 
-> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide. 
-> (Links: 
+> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide.
+> (Links:
 > [`chart` Options](./common-chart-options.md),
-> [Axis](./common-axes.md), 
-> [Legend](./common-legend.md), 
+> [Axis](./common-axes.md),
+> [Legend](./common-legend.md),
 > [Export](./common-exportMenu.md),
 > [Tooltip](./common-tooltip.md),
-> [`responsive` Options](./common-responsive-options.md), 
-> [Live Update](./common-liveUpdate-options.md),
-> [Data Label](./common-dataLabels-options.md)
+> [`responsive` Options](./common-responsive-options.md)
 > )
 
 
@@ -116,7 +114,44 @@ const options = {
 };
 ```
 
-`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series. 
+`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series.
+
+### dataLabels
+
+Data labels display information regarding the series on the chart.
+The following are the options for `dataLabels`.
+
+```ts
+type options = {
+  ...
+  series?: {
+    dataLabels?: {
+      visible?: boolean;
+      offsetX?: number;
+      offsetY?: number;
+      formatter?: (value) => string;
+    }
+  }
+};
+```
+
+| Name | Type | Details |
+| --- | --- | --- |
+| `visible` | boolean | Whether to make the data label visible |
+| `offsetX` | number | X offset of the data label position |
+| `offsetY` | number | Y offset of the data label position |
+| `formatter` | function | Takes the value of the data as its parameter and defines the format to be displayed |
+
+```js
+// basic
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475076-7e827980-4ded-11eb-975e-39c2566bf42e.png)
 
 ## Series Theme
 
@@ -167,23 +202,44 @@ interface HeatmapChartSeriesTheme {
 
 | Name | Type | Details |
 | --- | --- | --- |
-| startColor | string | The color of the starting value |
-| endColor | string | The color of the ending value |
-| borderColor | string | The color of the series border |
-| borderWidth | number | The width of the series border |
-| select | object | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
-| hover | object | The style that is applied when the user hovers over the data | 
-| dataLabels | object | Data label style. For more information, refer to the DataLabels guide. | 
+| `startColor` | string | The color of the starting value |
+| `endColor` | string | The color of the ending value |
+| `borderColor` | string | The color of the series border |
+| `borderWidth` | number | The width of the series border |
+| `select` | object | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
+| hover | object | The style that is applied when the user hovers over the data |
+| `dataLabels` | object | Style for the data labels |
+| `dataLabels.useSeriesColor` | boolean | Whether to use the series colors for the data label texts |
+| `dataLabels.lineWidth` | number | Text stroke width |
+| `dataLabels.textStrokeColor` | string | Text stroke color |
+| `dataLabels.shadowColor` | string | Text shadow color |
+| `dataLabels.shadowBlur` | number | Text shadow blue |
+| `dataLabels.fontSize` | number | Font size |
+| `dataLabels.fontFamily` | string | Font name |
+| `dataLabels.fontWeight` | string | Font weight |
+| `dataLabels.color` | string | Text color; does not work when `useSeriesColor: true` |
+| `dataLabels.textBubble` | object | Text bubble configurations |
+| `dataLabels.textBubble.visible` | boolean | Whether to use the text bubble |
+| `dataLabels.textBubble.paddingX` | number | Horizontal padding |
+| `dataLabels.textBubble.paddingY`| number | Vertical padding |
+| `dataLabels.textBubble.backgroundColor` | string | Text bubble background color |
+| `dataLabels.textBubble.borderRadius` | number | Text bubble border radius |
+| `dataLabels.textBubble.borderColor` | string | Text bubble border color |
+| `dataLabels.textBubble.borderWidth` | number | Text bubble border width |
+| `dataLabels.textBubble.shadowColor` | string | Text bubble shadow color |
+| `dataLabels.textBubble.shadowOffsetX` | number | Text bubble shadow x offset |
+| `dataLabels.textBubble.shadowOffsetY` | number | Text bubble shadow y offset |
+| `dataLabels.textBubble.shadowBlur` | number | Text bubble shadow blur |
 
 ### startColor and endColor
 
-These values set the standard. The colors used for the `data` is data are decided with respect to the `startColor` and `endColor` values. 
+These values set the standard. The colors used for the `data` is data are decided with respect to the `startColor` and `endColor` values.
 
 For a simple example, let's set the startColor to be `#4A76B2`,
 
 ![image](https://user-images.githubusercontent.com/35371660/101878940-d0135c00-3bd3-11eb-8070-9429df31d9c3.png)
 
-and the endColor to be `#221271`. The higher colorValue will lead to a value that is closer to the endColor. 
+and the endColor to be `#221271`. The higher colorValue will lead to a value that is closer to the endColor.
 
 ![image](https://user-images.githubusercontent.com/35371660/101878968-dacdf100-3bd3-11eb-9e5a-587630ae3e02.png)
 
@@ -193,9 +249,38 @@ const options = {
     series: {
       startColor: '#4A76B2',
       endColor: '#221271'
-    } 
+    }
   }
 }
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/101882405-3058cc80-3bd9-11eb-8900-6923c72b84b5.png)
+
+The code below applies a theme to the data label to use text bubbles and to change the text styles.
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 9,
+        fontWeight: '600',
+        useSeriesColor: true,
+        textBubble: {
+          visible: true,
+          backgroundColor: '#333333',
+          paddingX: 1,
+          paddingY: 1,
+          borderRadius: 5
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475079-83472d80-4ded-11eb-82f4-f363cbcb3416.png)

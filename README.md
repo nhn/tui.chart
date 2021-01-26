@@ -70,7 +70,7 @@ Use and synchronize the tooltip features at the moment the cursor hovers over th
 
 The TOAST UI Chart provides many types of charts to visualize the various forms of data.
 
-| [Area](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-line.md)                                                                         | [Line](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-area.md)                                                                        | [Bar](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bar.md)                                                                         | [Column](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-column.md)                                                                       |
+| [Area](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-area.md)                                                                         | [Line](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-line.md)                                                                        | [Bar](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bar.md)                                                                         | [Column](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-column.md)                                                                       |
 | ------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://user-images.githubusercontent.com/35371660/104139606-15ec5b80-53f0-11eb-96f6-c5bc593d9603.png"  width="300" alt='area chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104139669-65328c00-53f0-11eb-9612-c457a0cdaf9f.png" width="300" alt='line chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140066-d2dfb780-53f2-11eb-8bba-355cb22bc35c.png" width="300" alt='bar chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104139953-1259d400-53f2-11eb-8d48-2a48d4cfe6b2.png"  width="300" alt='column chart'/> |
 
@@ -172,7 +172,7 @@ For more information on PR's step, please see links of Contributing section.
 
 - [Code of Conduct](https://github.com/nhn/tui.chart/blob/main/CODE_OF_CONDUCT.md)
 - [Contributing guideline](https://github.com/nhn/tui.chart/blob/main/CONTRIBUTING.md)
-- [Issue guideline](https://github.com/nhn/tui.chart/blob/main/docs/ISSUE_TEMPLATE.md)
+- [Issue guideline](https://github.com/nhn/tui.chart/tree/main/.github/ISSUE_TEMPLATE)
 - [Commit convention](https://github.com/nhn/tui.chart/blob/main/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🌏 Browser Support

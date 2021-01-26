@@ -301,7 +301,7 @@ type options = {
 | `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
 
 ```js
-// 기본
+// basic
 const options = {
   series: {
     dataLabels: { visible: true }

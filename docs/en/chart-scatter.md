@@ -1,6 +1,6 @@
 # Scatter Chart
 
-> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide. 
+> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide.
 
 ## Creating the Chart
 
@@ -92,16 +92,15 @@ type options = {
 }
 ```
 
-> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide. 
-> (Links: 
+> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide.
+> (Links:
 > [`chart` Options](./common-chart-options.md),
-> [Axis](./common-axes.md), 
-> [Legend](./common-legend.md), 
+> [Axis](./common-axes.md),
+> [Legend](./common-legend.md),
 > [Export](./common-exportMenu.md),
 > [Tooltip](./common-tooltip.md),
-> [`responsive` Options](./common-responsive-options.md), 
-> [Live Update](./common-liveUpdate-options.md),
-> [Data Label](./common-dataLabels-options.md)
+> [`responsive` Options](./common-responsive-options.md),
+> [Live Update](./common-liveUpdate-options.md)
 > )
 
 ### selectable
@@ -120,7 +119,7 @@ const options = {
 };
 ```
 
-`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series. 
+`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series.
 
 ## Series Theme
 
@@ -165,7 +164,7 @@ interface BubbleChartSeriesTheme {
 | size | number | The size of the series |
 | colors | string[] | The color of the series |
 | select | object | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
-| hover | object | The style that is applied when the user hovers over the data | 
+| hover | object | The style that is applied when the user hovers over the data |
 
 The theme can be added through the `theme` value in the options object. For example, let's change the icon of the series.
 

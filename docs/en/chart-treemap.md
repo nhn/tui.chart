@@ -1,6 +1,6 @@
 # Treemap Chart
 
-> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide. 
+> [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide.
 
 ## Creating the Chart
 
@@ -22,7 +22,7 @@ const chart = Chart.treemapChart({el, data, options});
 
 ### Data Type
 
-The data is entered as a `series` and must be a pair of either `label`-`data` or `label`-`children`. The `children` must be provided as an array, and it takes the lower data from the tree. The `data` must be a numeric value. 
+The data is entered as a `series` and must be a pair of either `label`-`data` or `label`-`children`. The `children` must be provided as an array, and it takes the lower data from the tree. The `data` must be a numeric value.
 
 ```js
 const data = {
@@ -106,7 +106,7 @@ const options = {
 
 ### Data Type
 
-The data structure is the same as the basic charts but it takes in an additional value of `colorValue`. The `colorValue` is a numeric value. 
+The data structure is the same as the basic charts but it takes in an additional value of `colorValue`. The `colorValue` is a numeric value.
 
 ```js
 const options = {
@@ -259,14 +259,13 @@ type options = {
 }
 ```
 
-> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide. 
-> (Links: 
+> Common options that can be used with this chart are not addressed in this document. Refer to the respective options guide.
+> (Links:
 > [`chart` Options](./common-chart-options.md),
-> [Legend](./common-legend.md), 
+> [Legend](./common-legend.md),
 > [Tooltip](./common-tooltip.md),
 > [Export](./common-exportMenu.md),
-> [`responsive` Options](./common-responsive-options.md), 
-> [Data Label](./common-dataLabels-options.md)
+> [`responsive` Options](./common-responsive-options.md)
 > )
 
 ### selectable
@@ -285,7 +284,7 @@ const options = {
 };
 ```
 
-`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series. 
+`selectable` option, accompanied by `on` API's `selectSeries` and `unselectSeries`, grants further control over the series.
 
 ### zoomable
 
@@ -302,7 +301,45 @@ const options = {
   }
 }
 ```
-### dataLabel useTreemapLeaf
+
+### dataLabels
+
+Data labels display information regarding the series on the chart.
+The following are the options for `dataLabels`.
+
+```ts
+type options = {
+  ...
+  series?: {
+    dataLabels?: {
+      visible?: boolean;
+      offsetX?: number;
+      offsetY?: number;
+      formatter?: (value) => string;
+    }
+  }
+};
+```
+
+| Name | Type | Details |
+| --- | --- | --- |
+| `visible` | boolean | Whether to make the data label visible |
+| `offsetX` | number | X offset of the data label position |
+| `offsetY` | number | Y offset of the data label position |
+| `formatter` | function | Takes the value of the data as its parameter and defines the format to be displayed |
+
+```js
+// basic
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475194-7b3bbd80-4dee-11eb-8489-12695595bf6e.png)
+
+#### dataLabel useTreemapLeaf
 
 * default: `false`
 
@@ -311,7 +348,7 @@ Only expose the labels for the nodes in the current level of the tree when expos
 ![image](https://user-images.githubusercontent.com/35371660/101877546-83c71c80-3bd1-11eb-9855-2a8a59fc641b.png)
 
 
-To expose labels for nodes in the lower levels, set the `useTreemapLeaf` option to `true`. 
+To expose labels for nodes in the lower levels, set the `useTreemapLeaf` option to `true`.
 
 ```js
 const options = {
@@ -377,25 +414,46 @@ interface TreemapChartSeriesTheme {
 
 | Name | Type | Details |
 | --- | --- | --- |
-| colors | string[] | The color of the series |
-| startColor | string | The starting color that sets the standard when `useColorValue: true`. |
-| endColor | string | The ending color that sets the standard when `useColorValue true`. |
-| borderColor | string | The color of the series border | 
-| borderWidth | number | The width of the series border |
-| select | object | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
-| hover | object | The style that is applied when the user hovers over the data | 
-| dataLabels | object | Data label style. For more information, refer to the DataLabels guide. | 
+| `colors` | string[] | The color of the series |
+| `startColor` | string | The starting color that sets the standard when `useColorValue: true`. |
+| `endColor` | string | The ending color that sets the standard when `useColorValue true`. |
+| `borderColor` | string | The color of the series border |
+| `borderWidth` | number | The width of the series border |
+| `select` | object | The style that is applied to the line when the series is selected and the `series.selectable` is set to `true`. |
+| `hover` | object | The style that is applied when the user hovers over the data |
+| `dataLabels` | object | Style for the data labels |
+| `dataLabels.useSeriesColor` | boolean | Whether to use the series colors for the data label texts |
+| `dataLabels.lineWidth` | number | Text stroke width |
+| `dataLabels.textStrokeColor` | string | Text stroke color |
+| `dataLabels.shadowColor` | string | Text shadow color |
+| `dataLabels.shadowBlur` | number | Text shadow blue |
+| `dataLabels.fontSize` | number | Font size |
+| `dataLabels.fontFamily` | string | Font name |
+| `dataLabels.fontWeight` | string | Font weight |
+| `dataLabels.color` | string | Text color; does not work when `useSeriesColor: true` |
+| `dataLabels.textBubble` | object | Text bubble configurations |
+| `dataLabels.textBubble.visible` | boolean | Whether to use the text bubble |
+| `dataLabels.textBubble.paddingX` | number | Horizontal padding |
+| `dataLabels.textBubble.paddingY`| number | Vertical padding |
+| `dataLabels.textBubble.backgroundColor` | string | Text bubble background color |
+| `dataLabels.textBubble.borderRadius` | number | Text bubble border radius |
+| `dataLabels.textBubble.borderColor` | string | Text bubble border color |
+| `dataLabels.textBubble.borderWidth` | number | Text bubble border width |
+| `dataLabels.textBubble.shadowColor` | string | Text bubble shadow color |
+| `dataLabels.textBubble.shadowOffsetX` | number | Text bubble shadow x offset |
+| `dataLabels.textBubble.shadowOffsetY` | number | Text bubble shadow y offset |
+| `dataLabels.textBubble.shadowBlur` | number | Text bubble shadow blur |
 
 
 ### startColor and endColor
 
-These values set the standard. The `colorValue` is decided with respect to the `startColor` and `endColor` values. 
+These values set the standard. The `colorValue` is decided with respect to the `startColor` and `endColor` values.
 
 For a simple example, let's set the startColor to be `#4A76B2`,
 
 ![image](https://user-images.githubusercontent.com/35371660/101878940-d0135c00-3bd3-11eb-8070-9429df31d9c3.png)
 
-and the endColor to be `#221271`. The higher colorValue will lead to a value that is closer to the endColor. 
+and the endColor to be `#221271`. The higher colorValue will lead to a value that is closer to the endColor.
 
 ![image](https://user-images.githubusercontent.com/35371660/101878968-dacdf100-3bd3-11eb-9e5a-587630ae3e02.png)
 
@@ -411,3 +469,29 @@ const options = {
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/101879101-22547d00-3bd4-11eb-9196-a308d24cd69c.png)
+
+The code below applies a theme to the data label to change the text styles.
+
+```js
+const options = {
+  series: {
+    dataLabels: { visible: true }
+  },
+  theme: {
+    series: {
+      dataLabels: {
+        fontFamily: 'monaco',
+        fontSize: 16,
+        fontWeight: '800',
+        useSeriesColor: true,
+        lineWidth: 3,
+        textStrokeColor: '#ffffff',
+        shadowColor: '#ffffff',
+        shadowBlur: 10
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103475200-7ecf4480-4dee-11eb-969f-f809d0ba59be.png)

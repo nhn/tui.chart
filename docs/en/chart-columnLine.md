@@ -142,7 +142,7 @@ type options = {
 > [Legend](./common-legend.md),
 > [Export](./common-exportMenu.md),
 > [Tooltip](./common-tooltip.md),
-> [`responsive` Options](./common-responsive-options.md)
+> [`responsive` Options](./common-responsive-options.md),
 > [Live Update](./common-liveUpdate-options.md),
 > [Column chart](./chart-column.md),
 > [Line chart](./chart-line.md)

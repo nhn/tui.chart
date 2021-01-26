@@ -1,4 +1,4 @@
-# Line Scatter Chart
+# LineScatter Chart
 
 > [API](./common-api.md) information regarding each chart is not addressed in this document. Refer to the API Guide.
 
@@ -146,7 +146,6 @@ type options = {
 > [Tooltip](./common-tooltip.md),
 > [`responsive` Options](./common-responsive-options.md),
 > [Live Update](./common-liveUpdate-options.md),
-> [Data Label](./common-dataLabels-options.md),
 > [Line Chart](./chart-line.md),
 > [Scatter Chart](./chart-scatter.md),
 > )
@@ -183,6 +182,36 @@ const options = {
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/102150429-e2cbb080-3eb3-11eb-9698-ecdf53baf5ae.png)
+
+### dataLabels options
+
+If the `series.dataLabels` option is configured, the data labels are displayed for Line charts. Scatter chart does not support data label option.
+
+```js
+const options = {
+  ...
+  series: {
+    dataLabels: {
+      visible: true;
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477790-5dc61e00-4e05-11eb-94cd-6209948ad291.png)
+
+Each `series` option can have its own series options, and options related to data labels can be defined in greater detail.
+
+```ts
+type LineScatterChartSeriesOption = {
+  line: { // Line series options
+    ...
+    dataLabels: {
+      // Line series data label options
+    }
+  }
+};
+```
 
 ## Series Theme
 
@@ -225,6 +254,56 @@ const theme = {
 The result is as shown below.
 
 ![image](https://user-images.githubusercontent.com/35371660/102152124-b7e35b80-3eb7-11eb-890a-8e487c02b02b.png)
+
+When defining styles for line series' data label, use `series.line.dataLabels`.
+
+```ts
+type LineScatterChartDataLabelTheme = {
+  series: {
+    line: {
+      dataLabels: {
+        // Line series data label themes
+      }
+    }
+  }
+};
+```
+
+The code below applies a theme to the data label to use text bubbles and to change the text styles for Line series.
+
+```js
+const options = {
+  series: {
+    line: {
+      showDot: true,
+      dataLabels: { visible: true, offsetY: -15 }
+    }
+  },
+  theme: {
+    series: {
+      line: {
+        dataLabels: {
+          color: '#105018',
+          fontSize: 10,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103477907-7c78e480-4e06-11eb-9d40-00759bcf65c3.png)
 
 
 > Themes for [Line Chart](./chart-line.md) and [Scatter Chart](./chart-scatter.md) can be found in respective guides.
