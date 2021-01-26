@@ -129,7 +129,6 @@ type options = {
 > [툴팁](./common-tooltip.md),
 > [플롯](./common-plot.md),
 > [`responsive` 옵션](./common-responsive-options.md)
-
 > )
 
 ### vertical
