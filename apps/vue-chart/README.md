@@ -22,7 +22,7 @@
 
 ## Collect statistics on the use of open source
 
-Vue Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` options when declare Vue Wrapper component.
+Vue Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Chart is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected, and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` options when declare Vue Wrapper component.
 
 ```js
 var options = {
@@ -139,7 +139,7 @@ You can use `data`, `options` props for initialize TOAST UI chart.
 
 This prop is for data of the chart. When you change data, chart is rendering for changing data.
 
-For more information, see data of each types chart in [TOAST UI chart document](https://nhn.github.io/tui.chart/latest/).
+For more information, see data of each type chart in [TOAST UI chart document](https://github.com/nhn/tui.chart/tree/main/docs).
 
 > TOAST UI Chart has its own reactivity system, and does not use the reactivity system of Vue. So, instead of adding props in the `data`, declare `props` in the `created` lifecycle method.
 
@@ -333,7 +333,7 @@ this.$refs.tuiChart.invoke('resize', {
 });
 ```
 
-For more information of method, see [method of TOAST UI chart](https://nhn.github.io/tui.chart/latest/).
+For more information of method, see [method of TOAST UI chart](https://github.com/nhn/tui.chart/tree/main/docs/en/common-api.md).
 
 ## 🔧 Pull Request Steps
 
