@@ -92,7 +92,7 @@ type options = {
 > [범례](./common-legend.md),
 > [내보내기](./common-exportMenu.md),
 > [툴팁](./common-tooltip.md),
-> [`responsive`](./common-responsive-options.md),
+> [`responsive` 옵션](./common-responsive-options.md),
 > [실시간 업데이트](./common-liveUpdate-options.md)
 > )
 

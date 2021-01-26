@@ -44,7 +44,7 @@ The following is a list of charts compatible with Live Update.
 
 ![lineArea](https://user-images.githubusercontent.com/35371660/102160638-2aa90280-3ec9-11eb-98ae-5113cd3f75eb.gif)
 
-- [Column Chart](./chart-bar-column.md)
+- [Column Chart](./chart-column.md)
 
 ![column](https://user-images.githubusercontent.com/35371660/102159210-70b09700-3ec6-11eb-9f78-9d9790cd0357.gif)
 
