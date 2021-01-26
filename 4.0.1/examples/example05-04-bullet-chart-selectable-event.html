@@ -111,7 +111,7 @@
 
       chart.on('selectSeries', (ev) => {
         const { label, value } = ev.bullet[0].data;
-        alert(`${label} ${value}`);
+        console.log(`${label} ${value}`);
       });
 
       chart.on('unselectSeries', () => {
