@@ -6,7 +6,7 @@ If the `series.shift` option is not set to true, when the new data is added thro
 
 ![live update line](https://user-images.githubusercontent.com/35371660/102157257-815f0e00-3ec2-11eb-8b87-a177664a43b2.gif)
 
-The Live Update feature allows the chart to show the adding of the new data when `addData()` API is called according to the predetermined size. 
+The Live Update feature allows the chart to show the adding of the new data when `addData()` API is called according to the predetermined size.
 
 ## Applying Live Update
 
@@ -20,7 +20,7 @@ const options = {
 }
 ```
 
-2. Use the `addData` API to add data. 
+2. Use the `addData` API to add data.
 
 ```js
 const chart = new LineChart({ el, data, options });
@@ -30,7 +30,7 @@ chart.addData(newData, newCategory);
 
 ## Compatible Charts
 
-The following is a list of charts compatible with Live Update. 
+The following is a list of charts compatible with Live Update.
 
 - [Line Chart](./chart-line.md)
 
@@ -44,7 +44,7 @@ The following is a list of charts compatible with Live Update.
 
 ![lineArea](https://user-images.githubusercontent.com/35371660/102160638-2aa90280-3ec9-11eb-98ae-5113cd3f75eb.gif)
 
-- [Column Chart](./chart-bar-column.md)
+- [Column Chart](./chart-column.md)
 
 ![column](https://user-images.githubusercontent.com/35371660/102159210-70b09700-3ec6-11eb-9f78-9d9790cd0357.gif)
 

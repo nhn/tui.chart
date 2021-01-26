@@ -164,10 +164,61 @@ const options = {
 > [ToolTip](./common-tooltip.md),
 > [`responsive` Options](./common-responsive-options.md),
 > [Live Update](./common-liveUpdate-options.md),
-> [Data Label](./common-dataLabels-options.md)
 > [Line Chart](./chart-line.md),
 > [Area Chart](./chart-area.md),
 > )
+
+### dataLabels
+
+If the `series.dataLabels` option is configured, the data labels are displayed for both Line and Area charts.
+
+```js
+const options = {
+  ...
+  series: {
+    dataLabels: {
+      visible: true;
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478314-248fad00-4e09-11eb-8bca-ecd98a4f2776.png)
+
+Each `series` option can have its own series options, and options related to data labels can be defined in greater detail.
+
+```ts
+type LineAreaChartSeriesOption = {
+  line: { // Line series options
+    ...
+    dataLabels: {
+      // Line series data label options
+    }
+  },
+  area: { // Area series options
+    ...
+    dataLabels: {
+      // Area series data label options
+    }
+  }
+};
+```
+
+For example, the following code displays the data label for the Line series without displaying the data label for the Area series.
+
+```js
+const options = {
+  series: {
+    line: {
+      dataLabels: {
+        visible: true
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478360-7c2e1880-4e09-11eb-8319-b56af88d7f07.png)
 
 ## Series Theme
 
@@ -211,5 +262,83 @@ const theme = {
 The result is as shown below.
 
 ![image](https://user-images.githubusercontent.com/35371660/102154822-8c636f80-3ebd-11eb-8537-ce44e19c90bb.png)
+
+
+When defining styles for each series' data label, use `series.line.dataLabels` or `series.area.dataLabels`.
+
+```ts
+type LineAreaChartDataLabelTheme = {
+  series: {
+    line: {
+      dataLabels: {
+        // Line series data label themes
+      }
+    },
+    area: {
+      dataLabels: {
+        // Area series data label themes
+      }
+    }
+  }
+};
+```
+
+The example below modifies the data label font color, size, and weight for the Line series and data label text bubble styles for the Area series.
+
+```js
+const options = {
+  series: {
+    line: {
+      showDot: true,
+      dataLabels: { visible: true, offsetY: 15 }
+    },
+    area: {
+      dataLabels: { visible: true, offsetY: -15 }
+    },
+  },
+  theme: {
+    series: {
+      line: {
+        dataLabels: {
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'top',
+            },
+          },
+        },
+      },
+      area: {
+        dataLabels: {
+          fontSize: 10,
+          fontWeight: 300,
+          useSeriesColor: true,
+          textBubble: {
+            visible: true,
+            paddingY: 3,
+            paddingX: 6,
+            arrow: {
+              visible: true,
+              width: 5,
+              height: 5,
+              direction: 'bottom'
+            }
+          }
+        }
+      }
+    }
+  }
+};
+```
+
+![image](https://user-images.githubusercontent.com/43128697/103478270-acc18280-4e08-11eb-9558-c85c72e2359d.png)
 
 > Themes for [Line Chart](./chart-line.md) and [Area Chart](./chart-area.md) can be found in respective guides.
