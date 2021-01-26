@@ -1,0 +1,35 @@
+import LineChart, { LineChartProps } from "./charts/lineChart";
+import PieChart, { PieChartProps } from "./charts/pieChart";
+import HeatmapChart, { HeatmapChartProps } from "./charts/heatmapChart";
+import AreaChart, { AreaChartProps } from "./charts/areaChart";
+import LineScatterChart, { LineScatterChartProps } from "./charts/lineScatterChart";
+import LineAreaChart, { LineAreaChartProps } from "./charts/lineAreaChart";
+import BarChart, { BarChartProps } from "./charts/barChart";
+import ColumnChart, { ColumnChartProps } from "./charts/columnChart";
+import ColumnLineChart, { ColumnLineChartProps } from "./charts/columnLineChart";
+import BubbleChart, { BubbleChartProps } from "./charts/bubbleChart";
+import ScatterChart, { ScatterChartProps } from "./charts/scatterChart";
+import BulletChart, { BulletChartProps } from "./charts/bulletChart";
+import NestedPieChart, { NestedPieChartProps } from "./charts/nestedPieChart";
+import RadarChart, { RadarChartProps } from "./charts/radarChart";
+import TreemapChart, { TreemapChartProps } from "./charts/treemapChart";
+import BoxPlotChart, { BoxPlotChartProps } from "./charts/boxPlotChart";
+export default class Chart {
+    static lineChart: (props: LineChartProps) => LineChart;
+    static areaChart: (props: AreaChartProps) => AreaChart;
+    static barChart: (props: BarChartProps) => BarChart;
+    static boxPlotChart: (props: BoxPlotChartProps) => BoxPlotChart;
+    static columnChart: (props: ColumnChartProps) => ColumnChart;
+    static pieChart: (props: PieChartProps) => PieChart;
+    static heatmapChart: (props: HeatmapChartProps) => HeatmapChart;
+    static bubbleChart: (props: BubbleChartProps) => BubbleChart;
+    static scatterChart: (props: ScatterChartProps) => ScatterChart;
+    static bulletChart: (props: BulletChartProps) => BulletChart;
+    static radarChart: (props: RadarChartProps) => RadarChart;
+    static treemapChart: (props: TreemapChartProps) => TreemapChart;
+    static nestedPieChart: (props: NestedPieChartProps) => NestedPieChart;
+    static lineAreaChart: (props: LineAreaChartProps) => LineAreaChart;
+    static lineScatterChart: (props: LineScatterChartProps) => LineScatterChart;
+    static columnLineChart: (props: ColumnLineChartProps) => ColumnLineChart;
+}
+export { LineChart, AreaChart, BarChart, ColumnChart, PieChart, HeatmapChart, BubbleChart, ScatterChart, BulletChart, RadarChart, TreemapChart, NestedPieChart, LineAreaChart, LineScatterChart, ColumnLineChart, BoxPlotChart, };

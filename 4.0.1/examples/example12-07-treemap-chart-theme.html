@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
+    <title>12.7 [Treemap Chart] Theme</title>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-treemap.md" target="_blank">here</a>
+      <br />
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
+        </div>
+        <div class="try-it-area">
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="../dist/toastui-chart.js"></script>
+    <script class="code-js" id="code-js" type="text/babel">
+      const el = document.getElementById('chart-area');
+      const data = {
+        series: [
+          {
+            label: 'Asia',
+            children: [
+              {
+                label: 'South Korea',
+                data: 99909,
+                colorValue: 499.81,
+              },
+              {
+                label: 'Japan',
+                data: 364485,
+                colorValue: 335.61,
+              },
+              {
+                label: 'Jordan',
+                data: 88802,
+                colorValue: 86.07,
+              },
+              {
+                label: 'Iraq',
+                data: 437367,
+                colorValue: 81.6,
+              },
+            ],
+          },
+          {
+            label: 'Europe',
+            children: [
+              {
+                label: 'UK',
+                data: 241930,
+                colorValue: 262.84,
+              },
+              {
+                label: 'France',
+                data: 640427,
+                colorValue: 117.83,
+              },
+              {
+                label: 'Hungary',
+                data: 89608,
+                colorValue: 106.54,
+              },
+              {
+                label: 'Portugal',
+                data: 91470,
+                colorValue: 115.35,
+              },
+            ],
+          },
+          {
+            label: 'America',
+            children: [
+              {
+                label: 'Panama',
+                data: 74340,
+                colorValue: 52.81,
+              },
+              {
+                label: 'Honduras',
+                data: 111890,
+                colorValue: 75.15,
+              },
+              {
+                label: 'Uruguay',
+                data: 175015,
+                colorValue: 19.6,
+              },
+              {
+                label: 'Cuba',
+                data: 109820,
+                colorValue: 101.47,
+              },
+            ],
+          },
+          {
+            label: 'Africa',
+            children: [
+              {
+                label: 'Malawi',
+                data: 94080,
+                colorValue: 146.09,
+              },
+              {
+                label: 'Ghana',
+                data: 227533,
+                colorValue: 113.13,
+              },
+              {
+                label: 'Togo',
+                data: 54385,
+                colorValue: 126.28,
+              },
+              {
+                label: 'Benin',
+                data: 114305,
+                colorValue: 96.61,
+              },
+            ],
+          },
+        ],
+      };
+      const theme = {
+        series: {
+          startColor: '#F3FFE3',
+          endColor: '#FF9CEE',
+          borderWidth: 3,
+          borderColor: '#ddd',
+          select: {
+            color: '#fdfd96',
+            borderWidth: 2,
+            borderColor: '#80CEE1',
+          },
+          hover: {
+            color: '#FFB144',
+            borderWidth: 5,
+            borderColor: '#CAE7C1',
+          },
+        },
+      };
+
+      const options = {
+        chart: { title: 'Used disk space', width: 900, height: 500 },
+        tooltip: { formatter: (value) => `${value}GB` },
+        legend: {
+          align: 'top',
+        },
+        series: {
+          useColorValue: true,
+          selectable: true,
+          dataLabels: { visible: true, useTreemapLeaf: true },
+        },
+        theme,
+      };
+
+      const chart = toastui.Chart.treemapChart({ el, data, options });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.js"></script>
+    <script src="./js/example.js" type="text/babel"></script>
+  </body>
+</html>

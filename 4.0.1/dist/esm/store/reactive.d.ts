@@ -1,0 +1,11 @@
+export declare function observe(fn: Function): Function;
+export declare function isObservable<T extends Record<string, any>>(target: T): boolean;
+export declare function observable(target: Record<string, any>, source?: Record<string, any>): Record<string, any>;
+export declare function setValue(target: Record<string, any>, key: string, source: any): Record<string, any>;
+export declare function extend(target: Record<string, any>, source: Record<string, any>): Record<string, any>;
+export declare function notify<T extends Record<string, any>, K extends keyof T>(target: T, key: K): void;
+export declare function invisibleWork(fn: Function): void;
+export declare function notifyByPath<T extends Record<string, any>>(holder: T, namePath: string): void;
+export declare function computed(target: Record<string, any>, key: string, fn: Function): void;
+export declare function watch(holder: Record<string, any>, path: string, fn: Function): Function | null;
+export declare function makeObservableObjectToNormal(obj: any): any;
