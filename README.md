@@ -38,7 +38,7 @@ TOAST UI Chart makes your data pop and presents it in a manner that is easy to u
 
 Add different options and animations according to the charts' sizes by using the responsive option.
 
-![image](https://user-images.githubusercontent.com/43128697/103401627-f9008e80-4b8c-11eb-8453-d64fe6830a9a.gif)
+![responsive](https://user-images.githubusercontent.com/35371660/105812424-77681900-5ff1-11eb-9b3c-402798703bc5.gif)
 
 #### Zoomable
 
