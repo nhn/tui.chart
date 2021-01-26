@@ -106,7 +106,7 @@ import Chart from '@toast-ui/chart';
 import { LineChart } from '@toast-ui/chart';
 ```
 
-[In Webpack 4, when importing package modules, the parts that are defined in the module field have higher priority than the parts defined in the main field](https://webpack.js.org/configuration/resolve/#resolvemainfields). To use the Webpack 4 with the require syntax to import `@toast-ui/chart`, the ESM file defined in the will be loaded, and the file will be transpiled to be compatible with the require syntax. In order to use the **bundle file for UMD**, the user must personally load and use the `@toast-ui/chart/dist/toastui-chart.js` or `@toast-ui/chart/dist/toastui-chart.min.js`.
+[In Webpack 4, when importing package modules, the parts that are defined in the module field have higher priority than the parts defined in the main field](https://webpack.js.org/configuration/resolve/#resolvemainfields). To use the Webpack 4 with the `require` syntax to import `@toast-ui/chart`, the ESM file defined in the `module` field will be loaded, and the file will be transpiled to be compatible with the `require` syntax. In order to use the **bundle file for UMD**, the user must personally load and use the `@toast-ui/chart/dist/toastui-chart.js` or `@toast-ui/chart/dist/toastui-chart.min.js`.
 
 ```js
 const Chart = require('@toast-ui/chart/dist/toastui-chart.min.js'); // loading the bundle file for UMD
@@ -137,15 +137,15 @@ import NestedPieChart from '@toast-ui/chart/nestedPie';
 import RadarChart from '@toast-ui/chart/radar';
 ```
 
-Factory function needs three parameters: el, data, options
+Constructor function needs three parameters: el, data, options
 
 - el: Wrapper HTML element that will contain the chart as a child.
 - data: Numerical data the chart will be based on.
-- options: Functional options including legend, alignment, and tooltip visibilities.
+- options: Functional options including legend, alignment, and tooltip formatter.
 
 ```js
-var el = document.getElementById('chart');
-var data = {
+const el = document.getElementById('chart');
+const data = {
   categories: [
     //...
   ],
@@ -153,7 +153,7 @@ var data = {
     // ...
   ],
 };
-var options = {
+const options = {
   chart: { width: 700, height: 400 },
 };
 
