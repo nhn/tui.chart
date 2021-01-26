@@ -2,6 +2,8 @@
 
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library
 
+[![npm](https://img.shields.io/npm/v/@toast-ui/chart.svg)](https://www.npmjs.com/package/@toast-ui/chart)
+
 ## 🚩 Table of Contents
 
 - [Toast UI Chart](#)
