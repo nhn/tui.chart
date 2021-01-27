@@ -74,9 +74,11 @@ export default class ExportMenu extends Component {
   };
 
   applyExportButtonPanelStyle(chartWidth: number) {
-    const exportMenu = this.exportMenuEl.querySelector('.export-menu')!;
-    const exportMenuTitle = this.exportMenuEl.querySelector('.export-menu-title')!;
-    const menuBtnWrapper = this.exportMenuEl.querySelector('.export-menu-btn-wrapper')!;
+    const exportMenu = this.exportMenuEl.querySelector('.toastui-chart-export-menu')!;
+    const exportMenuTitle = this.exportMenuEl.querySelector('.toastui-chart-export-menu-title')!;
+    const menuBtnWrapper = this.exportMenuEl.querySelector(
+      '.toastui-chart-export-menu-btn-wrapper'
+    )!;
 
     exportMenu.setAttribute('style', this.makePanelWrapperStyle(chartWidth));
     exportMenuTitle.setAttribute('style', this.makePanelStyle('header'));
@@ -87,13 +89,13 @@ export default class ExportMenu extends Component {
     const el = document.createElement('div');
     el.onclick = this.onClickExportButton;
     el.innerHTML = `
-        <div class="export-menu">
-          <p class="export-menu-title">Export to</p>
-          <div class="export-menu-btn-wrapper">
-            <button class="export-menu-btn" id="xls">xls</button>
-            <button class="export-menu-btn" id="csv">csv</button>
-            <button class="export-menu-btn" id="png">png</button>
-            <button class="export-menu-btn" id="jpeg">jpeg</button>
+        <div class="toastui-chart-export-menu">
+          <p class="toastui-chart-export-menu-title">Export to</p>
+          <div class="toastui-chart-export-menu-btn-wrapper">
+            <button class="toastui-chart-export-menu-btn" id="xls">xls</button>
+            <button class="toastui-chart-export-menu-btn" id="csv">csv</button>
+            <button class="toastui-chart-export-menu-btn" id="png">png</button>
+            <button class="toastui-chart-export-menu-btn" id="jpeg">jpeg</button>
           </div>
         </div>
       `;
