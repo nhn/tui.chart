@@ -141,6 +141,7 @@ class NormalTooltip extends TooltipBase {
       color = this.colorSpectrum.getColor(data.colorRatio || data.ratio);
     }
 
+    data.color = color;
     data.chartType = this.chartType;
     data.cssText = `background-color: ${color}`;
     data = Object.assign(
