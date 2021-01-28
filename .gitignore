@@ -11,3 +11,5 @@ Output Location
 dist/application-chart.js
 dist/style.css
 /lib
+apps
+node_modules
