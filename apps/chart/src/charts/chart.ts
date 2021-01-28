@@ -216,7 +216,8 @@ export default abstract class Chart<T extends Options> {
       return;
     }
 
-    this.eventBus.emit('resetHoveredSeries');
+    // @TODO: For updates where the data doesn't change, it looks good to recalculate the selected series position.
+    this.resetSeries();
 
     this.store.dispatch('setChartSize', {
       width: usingContainerWidth ? containerWidth : width,
