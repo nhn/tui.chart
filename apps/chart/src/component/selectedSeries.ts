@@ -95,6 +95,7 @@ export default class SelectedSeries extends Component {
 
   resetSelectedSeries = () => {
     this.models = {} as ResponderSeriesModel;
+    this.store.dispatch('setAllLegendActiveState', true);
   };
 
   private setActiveState() {

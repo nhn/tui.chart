@@ -154,6 +154,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    */
   public addData = (data: number[][], category: string) => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data, category });
   };
 
@@ -177,6 +178,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * });
    */
   public addSeries(data: BoxPlotSeriesType) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -203,6 +205,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    */
   public setData(data: BoxPlotSeriesData) {
     const { categories, series } = data;
+    this.resetSeries();
     this.store.dispatch('setData', { series: { boxPlot: series }, categories });
   }
 
@@ -233,6 +236,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * });
    */
   public setOptions = (options: BoxPlotChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -252,6 +256,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * });
    */
   public updateOptions = (options: BoxPlotChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

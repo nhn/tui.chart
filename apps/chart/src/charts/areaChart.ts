@@ -183,6 +183,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * chart.addData([10, 20], '6');
    */
   public addData = (data: AreaSeriesDataType[], category: string) => {
+    this.resetSeries();
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
   };
@@ -200,6 +201,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * });
    */
   public addSeries(data: AreaSeriesInput) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -224,6 +226,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    */
   public setData(data: AreaSeriesData) {
     const { categories, series } = data;
+    this.resetSeries();
     this.store.dispatch('setData', { series: { area: series }, categories });
   }
 
@@ -336,6 +339,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * });
    */
   public setOptions = (options: AreaChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -355,6 +359,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * });
    */
   public updateOptions = (options: AreaChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

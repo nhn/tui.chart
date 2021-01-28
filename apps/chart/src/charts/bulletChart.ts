@@ -167,6 +167,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    * });
    */
   public addSeries(data: BulletSeriesType) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -191,6 +192,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    * });
    */
   public setData(data: BulletSeriesData) {
+    this.resetSeries();
     this.store.dispatch('setData', { series: { bullet: data.series } });
   }
 
@@ -244,6 +246,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    * });
    */
   public setOptions = (options: BulletChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -263,6 +266,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    * });
    */
   public updateOptions = (options: BulletChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

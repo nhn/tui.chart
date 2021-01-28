@@ -142,6 +142,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    */
   public addData = (data: number[], category: string) => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data, category });
   };
 
@@ -158,6 +159,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    * });
    */
   public addSeries(data: RadarSeriesInput) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -182,6 +184,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    */
   public setData(data: RadarSeriesData) {
     const { categories, series } = data;
+    this.resetSeries();
     this.store.dispatch('setData', { series: { radar: series }, categories });
   }
 
@@ -224,6 +227,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    * });
    */
   public updateOptions = (options: RadarChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

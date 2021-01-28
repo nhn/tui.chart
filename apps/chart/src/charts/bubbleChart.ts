@@ -165,6 +165,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
    */
   public addData = (data: BubbleSeriesDataType[]) => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data });
   };
 
@@ -184,6 +185,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
    * });
    */
   public addSeries(data: BubbleSeriesInput) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -205,6 +207,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
    * });
    */
   public setData(data: BubbleSeriesData) {
+    this.resetSeries();
     this.store.dispatch('setData', { series: { bubble: data.series } });
   }
 
@@ -235,6 +238,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
    * });
    */
   public setOptions = (options: BubbleChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -254,6 +258,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
    * });
    */
   public updateOptions = (options: BubbleChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

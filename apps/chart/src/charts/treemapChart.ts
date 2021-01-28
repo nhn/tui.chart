@@ -136,6 +136,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    * });
    */
   public addSeries(data: TreemapSeriesType, dataInfo?: AddSeriesDataInfo) {
+    this.resetSeries();
     this.store.dispatch('addTreemapSeries', { data, ...dataInfo });
   }
 
@@ -161,6 +162,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    * );
    */
   public setData(data: TreemapSeriesData) {
+    this.resetSeries();
     this.store.dispatch('setData', { series: { treemap: data.series } });
   }
 
@@ -208,6 +210,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    * });
    */
   public setOptions = (options: TreemapChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -227,6 +230,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    * });
    */
   public updateOptions = (options: TreemapChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

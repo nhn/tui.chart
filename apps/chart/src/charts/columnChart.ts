@@ -168,6 +168,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    */
   public addData = (data: BoxSeriesDataType[], category: string) => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data, category });
   };
 
@@ -184,6 +185,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    * });
    */
   public addSeries(data: BoxSeriesInput<BoxSeriesDataType>) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -208,6 +210,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    */
   public setData(data: BoxSeriesData) {
     const { categories, series } = data;
+    this.resetSeries();
     this.store.dispatch('setData', { series: { column: series }, categories });
   }
 
@@ -262,6 +265,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    * });
    */
   public setOptions = (options: ColumnChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -281,6 +285,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    * });
    */
   public updateOptions = (options: ColumnChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 
