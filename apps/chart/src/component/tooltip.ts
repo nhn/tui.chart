@@ -160,7 +160,7 @@ export default class Tooltip extends Component {
     this.chartEl = chartEl;
 
     this.tooltipContainerEl = document.createElement('div');
-    this.tooltipContainerEl.classList.add('tooltip-container');
+    this.tooltipContainerEl.classList.add('toastui-chart-tooltip-container');
 
     const { width, height, top, left } = this.chartEl.getBoundingClientRect();
     this.tooltipContainerEl.style.transform = getTranslateString(

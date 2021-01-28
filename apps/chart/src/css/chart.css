@@ -1,10 +1,6 @@
 /* export menu */
 
-button:focus {
-  outline: none;
-}
-
-.export-menu {
+.toastui-chart-export-menu {
   font-family: Arial, sans-serif;
   position: absolute;
   background: #fff;
@@ -12,7 +8,7 @@ button:focus {
   box-sizing: border-box;
 }
 
-.export-menu-title {
+.toastui-chart-export-menu-title {
   height: 34px;
   width: 140px;
   margin: 0;
@@ -20,12 +16,12 @@ button:focus {
   box-sizing: inherit;
 }
 
-.export-menu-btn-wrapper {
+.toastui-chart-export-menu-btn-wrapper {
   width: 100%;
   height: 76px;
 }
 
-.export-menu-btn {
+.toastui-chart-export-menu-btn {
   width: 50%;
   height: 50%;
   border: none;
@@ -37,20 +33,20 @@ button:focus {
   cursor: pointer;
 }
 
-.export-menu-btn:hover {
+.toastui-chart-export-menu-btn:hover {
   font-weight: bold;
 }
 
-.export-menu-btn:nth-child(3) {
+.toastui-chart-export-menu-btn:nth-child(3) {
   border-bottom-left-radius: inherit;
 }
 
-.export-menu-btn:nth-child(4) {
+.toastui-chart-export-menu-btn:nth-child(4) {
   border-bottom-right-radius: inherit;
 }
 
 /* tooltip */
-.tooltip-container {
+.toastui-chart-tooltip-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -58,39 +54,39 @@ button:focus {
   pointer-events: none;
 }
 
-.tooltip {
+.toastui-chart-tooltip {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   min-width: 150px;
 }
 
-.tooltip-category {
+.toastui-chart-tooltip-category {
   padding: 8px 15px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.tooltip-series-wrapper {
+.toastui-chart-tooltip-series-wrapper {
   display: flex;
   padding: 13px 15px;
   flex-direction: column;
 }
 
-.tooltip-series {
+.toastui-chart-tooltip-series {
   display: flex;
   width: 100%;
   justify-content: space-between;
 }
 
-.series-name {
+.toastui-chart-series-name {
   display: flex;
   align-items: center;
   /* for IE */
   line-height: 10px;
 }
 
-.series-name .icon,
-.tooltip-series .icon {
+.toastui-chart-series-name .toastui-chart-icon,
+.toastui-chart-tooltip-series .toastui-chart-icon {
   width: 10px;
   height: 10px;
   margin-right: 8px;
@@ -98,19 +94,19 @@ button:focus {
   display: inline-block;
 }
 
-.series-name .name {
+.toastui-chart-series-name .toastui-chart-name {
   white-space: nowrap;
 }
 
-.series-value {
+.toastui-chart-series-value {
   white-space: nowrap;
   margin-left: 10px;
 }
 
-.tooltip-series-wrapper .tooltip-title {
+.toastui-chart-tooltip-series-wrapper .toastui-chart-tooltip-title {
   padding: 8px 0 5px;
 }
 
-.tooltip-series-wrapper .tooltip-title:first-child {
+.toastui-chart-tooltip-series-wrapper .toastui-chart-tooltip-title:first-child {
   padding-top: 0;
 }
