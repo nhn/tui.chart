@@ -98,7 +98,7 @@ function getBoxPlotTemplate({ data }: TooltipModel, theme: Required<TooltipTheme
   }, {} as TooltipData);
 
   return `
-    <div class="toastui-chart-tooltip-series-wrapper"style="${getFontStyleString(theme.body)}">
+    <div class="toastui-chart-tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
       ${[groupedData]
         .map(
           ({ label, color, value: values }) =>
