@@ -184,7 +184,7 @@ export default class LineChart extends Chart<LineChartOptions> {
     if (this.store.state.options.series?.showDot) {
       this.animationControlFlag.updating = true;
     }
-
+    this.resetSeries();
     this.store.dispatch('addData', { data, category });
   };
 
@@ -201,6 +201,7 @@ export default class LineChart extends Chart<LineChartOptions> {
    * });
    */
   public addSeries(data: LineSeriesInput) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -225,6 +226,7 @@ export default class LineChart extends Chart<LineChartOptions> {
    */
   public setData(data: LineSeriesData) {
     const { categories, series } = data;
+    this.resetSeries();
     this.store.dispatch('setData', { series: { line: series }, categories });
   }
 
@@ -337,6 +339,7 @@ export default class LineChart extends Chart<LineChartOptions> {
    * });
    */
   public setOptions = (options: LineChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -356,6 +359,7 @@ export default class LineChart extends Chart<LineChartOptions> {
    * });
    */
   public updateOptions = (options: LineChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

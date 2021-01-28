@@ -191,6 +191,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
     chartType: 'line' | 'area'
   ) => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data, category, chartType });
   };
 
@@ -213,6 +214,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    *   });
    */
   public addSeries = (data: LineSeriesInput | AreaSeriesInput, dataInfo: AddSeriesDataInfo) => {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data, ...dataInfo });
   };
 
@@ -240,6 +242,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * });
    */
   public setData(data: LineAreaData) {
+    this.resetSeries();
     this.store.dispatch('setData', data);
   }
 
@@ -355,6 +358,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * });
    */
   public setOptions = (options: LineAreaChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -376,6 +380,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * });
    */
   public updateOptions = (options: LineAreaChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

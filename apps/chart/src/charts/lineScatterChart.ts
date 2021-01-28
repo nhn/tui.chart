@@ -172,6 +172,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    */
   public addData = (data: CoordinateDataType[], chartType: 'line' | 'scatter') => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data, chartType });
   };
 
@@ -194,6 +195,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    *   });
    */
   public addSeries = (data: ScatterSeriesInput, dataInfo: AddSeriesDataInfo) => {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data, ...dataInfo });
   };
 
@@ -220,6 +222,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    * });
    */
   public setData(data: LineScatterData) {
+    this.resetSeries();
     this.store.dispatch('setData', data);
   }
 
@@ -253,6 +256,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    * });
    */
   public setOptions = (options: LineScatterChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -274,6 +278,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    * });
    */
   public updateOptions = (options: LineScatterChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

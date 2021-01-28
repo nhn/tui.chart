@@ -187,6 +187,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    */
   public addData = (data: CoordinateDataType[]) => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data });
   };
 
@@ -206,6 +207,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    * });
    */
   public addSeries(data: ScatterSeriesInput) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -228,6 +230,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    */
   public setData(data: ScatterSeriesData) {
     const { categories, series } = data;
+    this.resetSeries();
     this.store.dispatch('setData', { series: { scatter: series }, categories });
   }
 
@@ -257,6 +260,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    * });
    */
   public setOptions = (options: ScatterChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -276,6 +280,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    * });
    */
   public updateOptions = (options: ScatterChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

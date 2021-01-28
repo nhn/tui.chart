@@ -216,7 +216,8 @@ export default abstract class Chart<T extends Options> {
       return;
     }
 
-    this.eventBus.emit('resetHoveredSeries');
+    // @TODO: For updates where the data doesn't change, it looks good to recalculate the selected series position.
+    this.resetSeries();
 
     this.store.dispatch('setChartSize', {
       width: usingContainerWidth ? containerWidth : width,
@@ -560,6 +561,7 @@ export default abstract class Chart<T extends Options> {
    * chart.resize({height: 100, width: 200});
    */
   public resize = (size: Partial<Size>) => {
+    this.resetSeries();
     this.store.dispatch('updateOptions', { options: { chart: { ...size } } });
   };
 
@@ -577,6 +579,11 @@ export default abstract class Chart<T extends Options> {
 
     this.store.dispatch('updateOptions', { options: { tooltip: { offsetX, offsetY } } });
   }
+
+  resetSeries = () => {
+    this.eventBus.emit('resetHoveredSeries');
+    this.eventBus.emit('resetSelectedSeries');
+  };
 
   private setResizeEventListeners = (
     eventName: 'initOptions' | 'updateOptions',

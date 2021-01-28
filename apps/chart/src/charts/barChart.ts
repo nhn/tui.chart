@@ -172,6 +172,7 @@ export default class BarChart extends Chart<BarChartOptions> {
    */
   public addData = (data: BoxSeriesDataType[], category: string) => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data, category });
   };
 
@@ -188,6 +189,7 @@ export default class BarChart extends Chart<BarChartOptions> {
    * });
    */
   public addSeries(data: BoxSeriesInput<BoxSeriesDataType>) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -212,6 +214,7 @@ export default class BarChart extends Chart<BarChartOptions> {
    */
   public setData(data: BoxSeriesData) {
     const { categories, series } = data;
+    this.resetSeries();
     this.store.dispatch('setData', { series: { bar: series }, categories });
   }
 
@@ -266,6 +269,7 @@ export default class BarChart extends Chart<BarChartOptions> {
    * });
    */
   public setOptions = (options: BarChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -285,6 +289,7 @@ export default class BarChart extends Chart<BarChartOptions> {
    * });
    */
   public updateOptions = (options: BarChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

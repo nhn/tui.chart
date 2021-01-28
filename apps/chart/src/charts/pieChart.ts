@@ -124,6 +124,7 @@ export default class PieChart extends Chart<PieChartOptions> {
    * });
    */
   public addSeries(data: PieSeriesType) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
 
@@ -142,6 +143,7 @@ export default class PieChart extends Chart<PieChartOptions> {
    */
   public setData(data: PieSeriesData) {
     const { categories, series } = data;
+    this.resetSeries();
     this.store.dispatch('setData', { series: { pie: series }, categories });
   }
 
@@ -189,6 +191,7 @@ export default class PieChart extends Chart<PieChartOptions> {
    * });
    */
   public setOptions = (options: PieChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -208,6 +211,7 @@ export default class PieChart extends Chart<PieChartOptions> {
    * });
    */
   public updateOptions = (options: PieChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

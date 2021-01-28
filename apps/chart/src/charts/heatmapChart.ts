@@ -173,6 +173,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
    */
   public addData = (data: HeatmapSeriesDataType, category: string) => {
     this.animationControlFlag.updating = true;
+    this.resetSeries();
     this.store.dispatch('addData', { data, category });
   };
 
@@ -191,6 +192,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
    * });
    */
   public addSeries = (data: HeatmapSeriesDataType, dataInfo: AddSeriesDataInfo) => {
+    this.resetSeries();
     this.store.dispatch('addHeatmapSeries', { data, ...dataInfo });
   };
 
@@ -216,6 +218,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
   public setData(data: HeatmapSeriesData) {
     const { categories, series } = data;
 
+    this.resetSeries();
     this.store.dispatch('setData', {
       series: { heatmap: getSeriesWithYCategory(series, categories) },
       categories,
@@ -272,6 +275,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
    * });
    */
   public setOptions = (options: HeatmapChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -291,6 +295,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
    * });
    */
   public updateOptions = (options: HeatmapChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 

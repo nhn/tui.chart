@@ -138,6 +138,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    *   });
    */
   public addSeries(data: NestedPieSeriesType, dataInfo?: AddSeriesDataInfo) {
+    this.resetSeries();
     this.store.dispatch('addSeries', { data, ...dataInfo });
     this.componentManager.add(PieSeries, { alias: data.name });
   }
@@ -181,6 +182,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    */
   public setData(data: NestedPieSeriesData) {
     this.componentManager.remove(PieSeries);
+    this.resetSeries();
     this.store.dispatch('setData', { series: { pie: data.series } });
 
     (this.store.initStoreState.series.pie ?? []).forEach(({ name }) => {
@@ -234,6 +236,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    * });
    */
   public setOptions = (options: NestedPieChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -255,6 +258,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    * });
    */
   public updateOptions = (options: NestedPieChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
 
