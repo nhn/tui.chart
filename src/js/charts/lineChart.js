@@ -46,13 +46,23 @@ class LineChart extends ChartBase {
      */
     this.Series = Series;
 
-    if (this.dataProcessor.isCoordinateType()) {
+    if (rawData.series.line.length && this.dataProcessor.isCoordinateType()) {
       delete this.options.xAxis.tickInterval;
       this.options.tooltip.grouped = false;
       this.options.series.shifting = false;
     }
 
     this._dynamicDataHelper = new DynamicDataHelper(this);
+  }
+
+  setData(rawData = {}, animation = true) {
+    if (rawData.series.length && !rawData.categories.length) {
+      delete this.options.xAxis.tickInterval;
+      this.options.tooltip.grouped = false;
+      this.options.series.shifting = false;
+    }
+
+    super.setData(rawData, animation);
   }
 
   /**
