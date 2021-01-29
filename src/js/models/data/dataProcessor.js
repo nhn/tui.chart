@@ -138,7 +138,9 @@ class DataProcessor extends DataProcessorBase {
 
     seriesData.forEach(seriesDatum => {
       seriesDatum.data.forEach(data => {
-        integratedXAxisData.push(data[0]);
+        if (!isNull(data)) {
+          integratedXAxisData.push(data[0]);
+        }
       });
     });
 
