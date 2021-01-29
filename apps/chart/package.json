@@ -4,7 +4,9 @@
   "description": "TOAST UI Application: Chart",
   "main": "dist/toastui-chart.js",
   "types": "types/index.d.ts",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "module": "dist/esm/",
   "exports": {
     ".": {
