@@ -255,13 +255,15 @@ class GroupTooltip extends TooltipBase {
    */
   _makeItemRenderingData(values, groupIndex) {
     const { dataProcessor, suffix } = this;
+    const colors = this._makeColors(this.theme, groupIndex);
 
     return values.map((data, index) => {
       const item = {
         value: data.label,
         type: data.type,
         suffix,
-        legend: ''
+        legend: '',
+        color: colors[index]
       };
       let legendLabel;
 

@@ -55,12 +55,14 @@ class MapChartTooltip extends TooltipBase {
   _makeSingleTooltipHtml(chartType, indexes) {
     const datum = this.mapModel.getDatum(indexes.index);
     const suffix = this.options.suffix ? ` ${this.options.suffix}` : '';
+    const color = this.colorSpectrum.getColor(datum.ratio);
 
     return this.templateFunc({
       name: datum.name || datum.code,
       value: datum.label,
       suffix,
-      cssText: `background-color: ${this.colorSpectrum.getColor(datum.ratio)}`
+      cssText: `background-color: ${color}`,
+      color
     });
   }
 
