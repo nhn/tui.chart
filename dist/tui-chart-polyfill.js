@@ -2,10 +2,10 @@
  * tui-chart-polyfill
  * @fileoverview tui-chart
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @version 3.11.2
+ * @version 3.11.3
  * @license MIT
  * @link https://github.com/nhn/tui.chart
- * bundle created at "Wed Apr 22 2020 16:39:33 GMT+0900 (Korean Standard Time)"
+ * bundle created at "Fri Jan 29 2021 15:50:57 GMT+0900 (Korean Standard Time)"
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11159,7 +11159,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    dots.forEach(function (item) {
-	      item.endDot.dot.toFront();
+	      if (item.endDot) {
+	        item.endDot.dot.toFront();
+	      }
 	      if (item.startDot) {
 	        item.startDot.dot.toFront();
 	      }
@@ -28323,6 +28325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      color = this.colorSpectrum.getColor(data.colorRatio || data.ratio);
 	    }
 	
+	    data.color = color;
 	    data.chartType = this.chartType;
 	    data.cssText = 'background-color: ' + color;
 	    data = Object.assign({
@@ -30212,13 +30215,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var dataProcessor = this.dataProcessor,
 	        suffix = this.suffix;
 	
+	    var colors = this._makeColors(this.theme, groupIndex);
 	
 	    return values.map(function (data, index) {
 	      var item = {
 	        value: data.label,
 	        type: data.type,
 	        suffix: suffix,
-	        legend: ''
+	        legend: '',
+	        color: colors[index]
 	      };
 	      var legendLabel = void 0;
 	
@@ -31156,12 +31161,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  MapChartTooltip.prototype._makeSingleTooltipHtml = function _makeSingleTooltipHtml(chartType, indexes) {
 	    var datum = this.mapModel.getDatum(indexes.index);
 	    var suffix = this.options.suffix ? ' ' + this.options.suffix : '';
+	    var color = this.colorSpectrum.getColor(datum.ratio);
 	
 	    return this.templateFunc({
 	      name: datum.name || datum.code,
 	      value: datum.label,
 	      suffix: suffix,
-	      cssText: 'background-color: ' + this.colorSpectrum.getColor(datum.ratio)
+	      cssText: 'background-color: ' + color,
+	      color: color
 	    });
 	  };
 	
@@ -37259,6 +37266,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return seriesDataModel.map(function (seriesGroup, groupIndex) {
 	      return seriesGroup.map(function (seriesItem, index) {
 	        var basePosition = basePositions[groupIndex][index];
+	        if (!basePosition) {
+	          return { end: 0, start: 0 };
+	        }
 	        var end = _this._makeLabelPosition(basePosition, labelHeight, seriesItem.endLabel, seriesItem.end);
 	        var position = { end: end };
 	
@@ -42106,7 +42116,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    seriesData.forEach(function (seriesDatum) {
 	      seriesDatum.data.forEach(function (data) {
-	        integratedXAxisData.push(data[0]);
+	        if (!(0, _isNull2['default'])(data)) {
+	          integratedXAxisData.push(data[0]);
+	        }
 	      });
 	    });
 	
@@ -43362,7 +43374,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  DataProcessor.prototype._pickLegendLabel = function _pickLegendLabel(item) {
-	    return item.name ? (0, _encodeHTMLEntity2['default'])(item.name) : null;
+	    return !(0, _isNull2['default'])(item) && item.name ? (0, _encodeHTMLEntity2['default'])(item.name) : null;
 	  };
 	
 	  /**
@@ -43375,7 +43387,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  DataProcessor.prototype._isVisibleLegend = function _isVisibleLegend(item) {
 	    var visibility = true;
-	    if ((0, _isExisty2['default'])(item.visible) && item.visible === false) {
+	
+	    if ((0, _isNull2['default'])(item) || (0, _isExisty2['default'])(item.visible) && item.visible === false) {
 	      visibility = false;
 	    }
 	
@@ -51187,7 +51200,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    _this.Series = _lineChartSeries2['default'];
 	
-	    if (_this.dataProcessor.isCoordinateType()) {
+	    if (rawData.series.line.length && _this.dataProcessor.isCoordinateType()) {
 	      delete _this.options.xAxis.tickInterval;
 	      _this.options.tooltip.grouped = false;
 	      _this.options.series.shifting = false;
@@ -51196,6 +51209,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _this._dynamicDataHelper = new _dynamicDataHelper2['default'](_this);
 	    return _this;
 	  }
+	
+	  LineChart.prototype.setData = function setData() {
+	    var rawData = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	    var animation = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+	
+	    if (rawData.series.length && !rawData.categories.length) {
+	      delete this.options.xAxis.tickInterval;
+	      this.options.tooltip.grouped = false;
+	      this.options.series.shifting = false;
+	    }
+	
+	    _ChartBase.prototype.setData.call(this, rawData, animation);
+	  };
 	
 	  /**
 	   * Add data.
