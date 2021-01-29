@@ -1219,7 +1219,7 @@ class DataProcessor extends DataProcessorBase {
    * @private
    */
   _pickLegendLabel(item) {
-    return item.name ? encodeHTMLEntity(item.name) : null;
+    return !isNull(item) && item.name ? encodeHTMLEntity(item.name) : null;
   }
 
   /**
@@ -1230,7 +1230,8 @@ class DataProcessor extends DataProcessorBase {
    */
   _isVisibleLegend(item) {
     let visibility = true;
-    if (isExisty(item.visible) && item.visible === false) {
+
+    if (isNull(item) || (isExisty(item.visible) && item.visible === false)) {
       visibility = false;
     }
 
