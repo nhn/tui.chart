@@ -186,6 +186,9 @@ class LineTypeSeriesBase {
     return seriesDataModel.map((seriesGroup, groupIndex) =>
       seriesGroup.map((seriesItem, index) => {
         const basePosition = basePositions[groupIndex][index];
+        if (!basePosition) {
+          return { end: 0, start: 0 };
+        }
         const end = this._makeLabelPosition(
           basePosition,
           labelHeight,

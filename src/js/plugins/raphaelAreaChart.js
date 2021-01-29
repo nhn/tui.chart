@@ -432,7 +432,9 @@ class RaphaelAreaChart extends RaphaelLineBase {
     }
 
     dots.forEach(item => {
-      item.endDot.dot.toFront();
+      if (item.endDot) {
+        item.endDot.dot.toFront();
+      }
       if (item.startDot) {
         item.startDot.dot.toFront();
       }
