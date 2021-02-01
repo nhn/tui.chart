@@ -282,4 +282,17 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
   public hideTooltip = () => {
     this.eventBus.emit('hideTooltip');
   };
+
+  /**
+   * update outlier.
+   * @param {number} seriesIndex - Index of series.
+   * @param {number} outliers - Array of outlier.
+   * @api
+   * @example
+   * chart.updateOutlier(1, [[1, 10000], [3, 12000]]);
+   */
+  public updateOutlier = (seriesIndex: number, outliers: number[][]) => {
+    this.resetSeries();
+    this.store.dispatch('updateOutlier', { seriesIndex, outliers });
+  };
 }
