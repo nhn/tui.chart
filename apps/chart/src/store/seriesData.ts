@@ -151,7 +151,7 @@ const seriesData: StoreModule = {
           ...m,
           rawData: m.data,
           data: getSeriesDataInRange(m.data, rawCategories, seriesName, zoomRange),
-          color: colors ? colors[idx] : '',
+          color: colors ? colors[idx % colors.length] : '',
         }));
 
         if (seriesName === 'scatter') {
