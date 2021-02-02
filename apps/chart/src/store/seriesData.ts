@@ -328,7 +328,7 @@ const seriesData: StoreModule = {
       this.dispatch('initThemeState');
       this.dispatch('initLegendState');
     },
-    updateOutlier(
+    addOutlier(
       { state, initStoreState },
       { seriesIndex, outliers }: { seriesIndex: number; outliers: number[][] }
     ) {

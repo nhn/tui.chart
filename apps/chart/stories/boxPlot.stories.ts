@@ -182,7 +182,7 @@ export const theme = () => {
   return el;
 };
 
-export const updateOutlier = () => {
+export const addDataAndAddOutlier = () => {
   const { chart, el } = createChart(budgetDataForBoxPlot, {
     series: {
       selectable: true,
@@ -190,7 +190,15 @@ export const updateOutlier = () => {
   });
 
   setTimeout(() => {
-    chart.updateOutlier(1, [
+    chart.addData(
+      [
+        [3000, 4000, 4714, 6000, 7000],
+        [3000, 5750, 7571, 8250, 9000],
+      ],
+      'newCategory'
+    );
+    chart.addOutlier(1, [
+      [2, 11000],
       [2, 12000],
       [3, 13000],
     ]);

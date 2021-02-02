@@ -6,7 +6,6 @@ import {
   BoxPlotResponderModel,
   RectModel,
   CircleModel,
-  BoxPlotSeriesModel,
   BoxPlotModel,
   RectResponderModel,
   BoxPlotResponderTypes,
@@ -44,7 +43,7 @@ function getDefaultColor(defaultColor: string, color?: string) {
 }
 
 export default class BoxPlotSeries extends Component {
-  models: BoxPlotSeriesModels = { series: [] };
+  models: BoxPlotSeriesModels = { rect: [], line: [], circle: [] };
 
   drawModels!: BoxPlotSeriesModels;
 
@@ -96,21 +95,13 @@ export default class BoxPlotSeries extends Component {
 
     const boxPlotModelData = this.makeBoxPlots(boxPlotData, renderOptions);
     const seriesModels = this.renderSeriesModels(boxPlotModelData);
-
-    this.models.series = seriesModels;
+    this.models = seriesModels;
 
     if (!this.drawModels) {
       this.drawModels = {
-        series: seriesModels.map((m) => {
-          const model = { ...m };
-
-          if (m.type === 'rect') {
-            (model as RectModel).y = m.y + m.height;
-            (model as RectModel).height = 0;
-          }
-
-          return model;
-        }),
+        rect: seriesModels.rect.map((m) => ({ ...m, y: m.y + m.height, height: 0 })),
+        line: seriesModels.line,
+        circle: seriesModels.circle,
       };
     }
 
@@ -249,27 +240,28 @@ export default class BoxPlotSeries extends Component {
     }
   }
 
-  renderSeriesModels(boxPlots: BoxPlotModelData): BoxPlotSeriesModel[] {
-    const seriesModels: BoxPlotSeriesModel[] = [];
+  renderSeriesModels(boxPlots: BoxPlotModelData): BoxPlotSeriesModels {
+    return boxPlots.reduce<BoxPlotSeriesModels>(
+      (acc, cur) => {
+        const { type, name } = cur;
 
-    boxPlots.forEach((model) => {
-      const { type, name } = model;
+        if (type === 'boxPlot') {
+          acc.rect.push({ name, ...(cur as BoxPlotModel).rect } as RectModel);
 
-      if (type === 'boxPlot') {
-        ['maximum', 'minimum', 'rect', 'median', 'upperWhisker', 'lowerWhisker'].forEach((prop) => {
-          seriesModels.push({
-            name,
-            ...model[prop],
+          ['maximum', 'minimum', 'median', 'upperWhisker', 'lowerWhisker'].forEach((prop) => {
+            acc.line.push({
+              name,
+              ...cur[prop],
+            });
           });
-        });
-      } else {
-        seriesModels.push({
-          ...model,
-        } as CircleModel);
-      }
-    });
+        } else {
+          acc.circle.push({ ...(cur as CircleModel) });
+        }
 
-    return seriesModels;
+        return acc;
+      },
+      { rect: [], line: [], circle: [] }
+    );
   }
 
   makeBoxPlots(seriesData: BoxPlotSeriesType[], renderOptions: RenderOptions): BoxPlotModelData {

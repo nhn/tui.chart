@@ -150,12 +150,32 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * @param {string} category - Category to be added.
    * @api
    * @example
-   * chart.addData([[10, 20], [30, 40]], '6');
+  *  chart.addData(
+      [
+         [3000, 4000, 4714, 6000, 7000],
+         [3000, 5750, 7571, 8250, 9000],
+      ],
+      'newCategory'
+    );
    */
   public addData = (data: number[][], category: string) => {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addData', { data, category });
+  };
+
+  /**
+   * add outlier.
+   * @param {number} seriesIndex - Index of series.
+   * @param {number} outliers - Arraypa of outlier.
+   * @api
+   * @example
+   * chart.addOutlier(1, [[1, 10000], [3, 12000]]);
+   */
+  public addOutlier = (seriesIndex: number, outliers: number[][]) => {
+    this.animationControlFlag.updating = true;
+    this.resetSeries();
+    this.store.dispatch('addOutlier', { seriesIndex, outliers });
   };
 
   /**
@@ -281,18 +301,5 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    */
   public hideTooltip = () => {
     this.eventBus.emit('hideTooltip');
-  };
-
-  /**
-   * update outlier.
-   * @param {number} seriesIndex - Index of series.
-   * @param {number} outliers - Array of outlier.
-   * @api
-   * @example
-   * chart.updateOutlier(1, [[1, 10000], [3, 12000]]);
-   */
-  public updateOutlier = (seriesIndex: number, outliers: number[][]) => {
-    this.resetSeries();
-    this.store.dispatch('updateOutlier', { seriesIndex, outliers });
   };
 }

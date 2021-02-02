@@ -223,7 +223,7 @@ export class BoxPlotChart extends BaseChart {
 
   public hideTooltip(): void;
 
-  public updateOutlier(): void;
+  public addOutlier(): void;
 }
 
 export class ColumnChart extends BaseChart {
