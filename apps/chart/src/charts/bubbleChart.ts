@@ -113,8 +113,6 @@ export interface BubbleChartProps {
  * @extends Chart
  */
 export default class BubbleChart extends Chart<BaseOptions> {
-  modules = [dataRange, scale, axes, plot];
-
   constructor(props: BubbleChartProps) {
     super({
       el: props.el,
@@ -122,6 +120,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
       series: {
         bubble: props.data.series as BubbleSeriesType[],
       },
+      modules: [dataRange, scale, axes, plot],
     });
   }
 

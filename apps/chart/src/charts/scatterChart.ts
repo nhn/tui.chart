@@ -135,8 +135,6 @@ function clearUnnecessaryData(scatterSeries: ScatterSeriesType[]) {
  * @extends Chart
  */
 export default class ScatterChart extends Chart<ScatterChartOptions> {
-  modules = [dataRange, scale, axes, plot];
-
   constructor(props: ScatterChartProps) {
     super({
       el: props.el,
@@ -145,6 +143,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
         scatter: clearUnnecessaryData(props.data.series as ScatterSeriesType[]),
       },
       categories: props.data?.categories,
+      modules: [dataRange, scale, axes, plot],
     });
   }
 

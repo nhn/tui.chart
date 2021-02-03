@@ -114,8 +114,6 @@ export interface BarChartProps {
  * @extends Chart
  */
 export default class BarChart extends Chart<BarChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot];
-
   constructor({ el, options, data }: BarChartProps) {
     super({
       el,
@@ -124,6 +122,7 @@ export default class BarChart extends Chart<BarChartOptions> {
         bar: data.series,
       },
       categories: data.categories,
+      modules: [stackSeriesData, dataRange, scale, axes, plot],
     });
   }
 

@@ -122,8 +122,6 @@ function getSeriesWithYCategory(
  * @extends Chart
  */
 export default class HeatmapChart extends Chart<HeatmapChartOptions> {
-  modules = [heatmapSeriesData, colorValueScale, heatmapAxes];
-
   constructor(props: HeatmapChartProps) {
     super({
       el: props.el,
@@ -132,6 +130,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
       series: {
         heatmap: getSeriesWithYCategory(props.data.series, props.data.categories),
       },
+      modules: [heatmapSeriesData, colorValueScale, heatmapAxes],
     });
   }
 

@@ -93,7 +93,7 @@ export default abstract class Chart<T extends Options> {
 
   readonly componentManager: ComponentManager<T>;
 
-  modules?: StoreModule[];
+  modules: StoreModule[];
 
   enteredComponents: Component[] = [];
 
@@ -127,7 +127,8 @@ export default abstract class Chart<T extends Options> {
   }
 
   constructor(props: ChartProps<T>) {
-    const { el, options, series, categories } = props;
+    const { el, options, series, categories, modules } = props;
+    this.modules = modules ?? [];
 
     if (isUndefined(options.usageStatistics) || options.usageStatistics) {
       sendHostname();
@@ -185,18 +186,14 @@ export default abstract class Chart<T extends Options> {
       }, 10)
     );
 
-    // for using class field "modules"
-    setTimeout(() => {
-      this.initialize();
+    this.initialize();
+    this.store.observe(() => {
+      this.painter.setup();
+    });
 
-      this.store.observe(() => {
-        this.painter.setup();
-      });
-
-      if (isAutoValue(options?.chart?.width) || isAutoValue(options?.chart?.height)) {
-        this.setResizeEvent();
-      }
-    }, 0);
+    if (isAutoValue(options?.chart?.width) || isAutoValue(options?.chart?.height)) {
+      this.setResizeEvent();
+    }
   }
 
   resizeChartSize(containerWidth?: number, containerHeight?: number) {
@@ -326,13 +323,21 @@ export default abstract class Chart<T extends Options> {
     }
   }
 
-  protected initStore(defaultModules: StoreModule[]) {
-    [...defaultModules, ...(this.modules ?? [])].forEach((module) => this.store.setModule(module));
+  protected initStore() {
+    [
+      root,
+      optionsStore,
+      theme,
+      seriesData,
+      legend,
+      layout,
+      category,
+      ...this.modules,
+    ].forEach((module) => this.store.setModule(module));
   }
 
   protected initialize() {
-    this.initStore([root, optionsStore, theme, seriesData, legend, layout, category]);
-
+    this.initStore();
     this.store.dispatch('initChartSize', this.el);
   }
 

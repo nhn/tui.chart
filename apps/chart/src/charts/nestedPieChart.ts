@@ -78,14 +78,13 @@ export interface NestedPieChartProps {
  * @extends Chart
  */
 export default class NestedPieChart extends Chart<NestedPieChartOptions> {
-  modules = [nestedPieSeriesData];
-
   constructor({ el, options, data: { series, categories } }: NestedPieChartProps) {
     super({
       el,
       options,
       series: { pie: series },
       categories,
+      modules: [nestedPieSeriesData],
     });
   }
 
