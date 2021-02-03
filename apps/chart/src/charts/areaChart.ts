@@ -127,8 +127,6 @@ export interface AreaChartProps {
  * @extends Chart
  */
 export default class AreaChart extends Chart<AreaChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot];
-
   constructor(props: AreaChartProps) {
     super({
       el: props.el,
@@ -137,6 +135,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
         area: props.data.series as AreaSeriesType[],
       },
       categories: props.data.categories,
+      modules: [stackSeriesData, dataRange, scale, axes, plot],
     });
   }
 

@@ -130,14 +130,13 @@ export interface LineAreaChartProps {
  * @extends Chart
  */
 export default class LineAreaChart extends Chart<LineAreaChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot];
-
   constructor(props: LineAreaChartProps) {
     super({
       el: props.el,
       options: props.options,
       series: props.data.series as RawSeries,
       categories: props.data.categories,
+      modules: [stackSeriesData, dataRange, scale, axes, plot],
     });
   }
 

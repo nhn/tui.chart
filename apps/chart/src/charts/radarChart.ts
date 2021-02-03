@@ -94,8 +94,6 @@ export interface RadarChartProps {
  * @extends Chart
  */
 export default class RadarChart extends Chart<RadarChartOptions> {
-  modules = [dataRange, scale, axes];
-
   constructor({ el, options, data }: RadarChartProps) {
     super({
       el,
@@ -104,6 +102,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
         radar: data.series,
       },
       categories: data.categories,
+      modules: [dataRange, scale, axes],
     });
   }
 

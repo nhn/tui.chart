@@ -106,8 +106,6 @@ export interface BulletChartProps {
  * @extends Chart
  */
 export default class BulletChart extends Chart<BulletChartOptions> {
-  modules = [dataRange, scale, axes, plot];
-
   constructor({ el, options, data: { series } }: BulletChartProps) {
     super({
       el,
@@ -115,6 +113,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
       series: {
         bullet: series as BulletSeriesType[],
       },
+      modules: [dataRange, scale, axes, plot],
     });
   }
 

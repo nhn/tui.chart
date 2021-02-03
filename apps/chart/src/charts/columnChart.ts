@@ -114,8 +114,6 @@ export interface ColumnChartProps {
  * @extends Chart
  */
 export default class ColumnChart extends Chart<ColumnChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot];
-
   constructor({ el, options, data }: ColumnChartProps) {
     super({
       el,
@@ -124,6 +122,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
         column: data.series,
       },
       categories: data.categories,
+      modules: [stackSeriesData, dataRange, scale, axes, plot],
     });
   }
 

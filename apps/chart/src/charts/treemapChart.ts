@@ -83,8 +83,6 @@ export interface TreemapChartProps {
  * @extends Chart
  */
 export default class TreemapChart extends Chart<TreemapChartOptions> {
-  modules = [treemapSeriesData, colorValueScale];
-
   constructor(props: TreemapChartProps) {
     super({
       el: props.el,
@@ -92,6 +90,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
       series: {
         treemap: props.data.series as TreemapSeriesType[],
       },
+      modules: [treemapSeriesData, colorValueScale],
     });
   }
 

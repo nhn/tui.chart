@@ -1,4 +1,4 @@
-import { Categories, RawSeries, Options } from '@t/store/store';
+import { Categories, RawSeries, Options, StoreModule } from '@t/store/store';
 import { TooltipData, TooltipModel } from '@t/components/tooltip';
 import { ScatterSeriesIconType } from '@t/components/series';
 import {
@@ -535,6 +535,7 @@ export interface ChartProps<T> {
   el: HTMLElement;
   series: RawSeries;
   categories?: Categories;
+  modules?: StoreModule[];
   options: T;
 }
 

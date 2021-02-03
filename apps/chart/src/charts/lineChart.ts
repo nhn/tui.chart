@@ -125,8 +125,6 @@ export interface LineChartProps {
  * @extends Chart
  */
 export default class LineChart extends Chart<LineChartOptions> {
-  modules = [dataRange, scale, axes, plot];
-
   constructor(props: LineChartProps) {
     super({
       el: props.el,
@@ -135,6 +133,7 @@ export default class LineChart extends Chart<LineChartOptions> {
         line: props.data.series as LineSeriesType[],
       },
       categories: props.data?.categories,
+      modules: [dataRange, scale, axes, plot],
     });
   }
 
