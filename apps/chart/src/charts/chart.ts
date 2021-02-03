@@ -93,7 +93,7 @@ export default abstract class Chart<T extends Options> {
 
   readonly componentManager: ComponentManager<T>;
 
-  modules?: StoreModule[];
+  modules: StoreModule[];
 
   enteredComponents: Component[] = [];
 
