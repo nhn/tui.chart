@@ -5,8 +5,17 @@ import {
   Axes,
   ViewAxisLabel,
   RotationLabelData,
+  InitAxisData,
+  Layout,
 } from '@t/store/store';
-import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
+import {
+  LineTypeXAxisOptions,
+  BulletChartOptions,
+  AxisTitle,
+  DateOption,
+  BaseAxisOptions,
+  BaseXAxisOptions,
+} from '@t/options';
 import { Theme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
 import {
@@ -15,7 +24,7 @@ import {
   getTextHeight,
   getTextWidth,
 } from '@src/helpers/calculator';
-import { range, isString, isUndefined } from '@src/helpers/utils';
+import { range, isString, isUndefined, isNumber } from '@src/helpers/utils';
 import {
   ANGLE_CANDIDATES,
   calculateRotatedWidth,
@@ -29,6 +38,14 @@ interface IntervalInfo {
   blockCount: number;
   remainBlockCount: number;
   interval: number;
+}
+
+interface AxisDataParams {
+  axis?: BaseAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions;
+  categories?: string[];
+  layout?: Layout;
+  shift?: boolean;
+  isCoordinateTypeChart?: boolean;
 }
 
 function makeAdjustingIntervalInfo(blockCount: number, axisWidth: number, blockSize: number) {
@@ -109,8 +126,12 @@ export function getAutoAdjustingInterval(count: number, axisWidth: number, categ
   return tickInterval;
 }
 
-export function isLabelAxisOnYAxis(series: Series, options: Options) {
-  return !!series.bar || (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical);
+export function isLabelAxisOnYAxis(series: Series, options?: Options) {
+  return (
+    !!series.bar ||
+    !!series.radialBar ||
+    (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical)
+  );
 }
 
 export function hasBoxTypeSeries(series: Series) {
@@ -118,7 +139,7 @@ export function hasBoxTypeSeries(series: Series) {
 }
 
 export function isPointOnColumn(series: Series, options: Options) {
-  if (hasBoxTypeSeries(series)) {
+  if (hasBoxTypeSeries(series) || series.radialBar) {
     return true;
   }
 
@@ -342,4 +363,60 @@ export function getLabelXMargin(axisName: string, options: Options) {
   const axisOptions = getYAxisOption(options);
 
   return Math.abs(axisOptions?.[axisName]?.label?.margin ?? 0);
+}
+
+export function getAxisFormatter(options: Options, axisName: string) {
+  const axisOptions = {
+    ...getYAxisOption(options),
+    xAxis: options.xAxis,
+  };
+
+  return axisOptions[axisName]?.label?.formatter ?? ((value) => value);
+}
+
+export function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
+  const { axis, categories, layout, isCoordinateTypeChart = false } = params;
+
+  const tickInterval = axis?.tick?.interval;
+  const labelInterval = axis?.label?.interval;
+  const existIntervalOptions = isNumber(tickInterval) || isNumber(labelInterval);
+
+  const needAdjustInterval =
+    isLabelAxis &&
+    !isNumber(axis?.scale?.stepSize) &&
+    !params.shift &&
+    !existIntervalOptions &&
+    !isCoordinateTypeChart;
+
+  const initTickInterval = needAdjustInterval ? getInitTickInterval(categories, layout) : 1;
+  const initLabelInterval = needAdjustInterval ? initTickInterval : 1;
+
+  const axisData: InitAxisData = {
+    tickInterval: tickInterval ?? initTickInterval,
+    labelInterval: labelInterval ?? initLabelInterval,
+  };
+
+  return axisData;
+}
+
+function getInitTickInterval(categories?: string[], layout?: Layout) {
+  if (!categories || !layout) {
+    return 1;
+  }
+
+  const { width } = layout.xAxis;
+  const count = categories.length;
+
+  return getAutoAdjustingInterval(count, width, categories);
+}
+
+export function makeDefaultAxisData(isLabelAxis: boolean, params: AxisDataParams): InitAxisData {
+  const axisData = getInitAxisIntervalData(isLabelAxis, params);
+  const title = makeTitleOption(params?.axis?.title);
+
+  if (title) {
+    axisData.title = title;
+  }
+
+  return axisData;
 }

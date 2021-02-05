@@ -18,6 +18,7 @@ import {
   LineDataLabel,
   DataLabelOption,
   SeriesDataLabelType,
+  RadialBarDataLabel,
 } from '@t/components/dataLabels';
 import { isUndefined } from '@src/helpers/utils';
 import { isModelExistingInRect } from '@src/helpers/coordinate';
@@ -29,6 +30,7 @@ import {
   makePieSeriesNameLabelInfo,
   makeRectLabelInfo,
   makeLineLabelInfo,
+  makeSectorBarLabelInfo,
 } from '@src/helpers/dataLabels';
 import { pickStackOption } from '@src/store/stackSeriesData';
 import { Rect } from '@t/options';
@@ -52,6 +54,8 @@ function getLabelInfo(model: SeriesDataLabelType, labelOptions: DataLabelOption,
 
       dataLabel.push(seriesNameLabel);
     }
+  } else if (type === 'sectorBar') {
+    dataLabel.push(makeSectorBarLabelInfo(model as RadialBarDataLabel, labelOptions));
   } else if (type === 'line') {
     dataLabel.push(makeLineLabelInfo(model as LineDataLabel, labelOptions));
   } else {
@@ -169,7 +173,18 @@ export default class DataLabels extends Component {
   makeLabelModel(dataLabels: DataLabel[]): DataLabelModels {
     return dataLabels.reduce(
       (acc, dataLabel) => {
-        const { type, x, y, text, textAlign, textBaseline, name, callout, theme } = dataLabel;
+        const {
+          type,
+          x,
+          y,
+          text,
+          textAlign,
+          textBaseline,
+          name,
+          callout,
+          theme,
+          radian,
+        } = dataLabel;
 
         if (!isModelExistingInRect(this.rect, { x, y })) {
           return acc;
@@ -193,6 +208,7 @@ export default class DataLabels extends Component {
               name,
               callout,
               theme,
+              radian,
             },
           ],
         };

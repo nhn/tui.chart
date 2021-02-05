@@ -58,7 +58,7 @@ export const strokeLabelStyle = {
 };
 
 export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
-  const { x, y, text, style, stroke, opacity, radian } = labelModel;
+  const { x, y, text, style, stroke, opacity, radian, rotationXPos, rotationYPos } = labelModel;
 
   if (style) {
     const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
@@ -72,9 +72,9 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   ctx.save();
 
   if (radian) {
-    ctx.translate(x, y);
+    ctx.translate(rotationXPos ?? x, rotationYPos ?? y);
     ctx.rotate(radian);
-    ctx.translate(-x, -y);
+    ctx.translate(-(rotationXPos ?? x), -(rotationYPos ?? y));
   }
 
   if (stroke) {
@@ -163,10 +163,28 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
     fill = '#ffffff',
     stroke,
     bubbleStyle = null,
-    labelStyle: textStyle,
-    labelStrokeStyle,
+    textStyle,
+    textStrokeStyle,
     text,
+    radian,
+    textAlign,
+    textBaseline,
   } = model;
+
+  let rotationXPos = x;
+  let rotationYPos = y;
+
+  if (textAlign === 'center') {
+    rotationXPos = x + width / 2;
+  } else if (textAlign === 'right') {
+    rotationXPos = x + width;
+  }
+
+  if (textBaseline === 'middle') {
+    rotationYPos = y + height / 2;
+  } else if (textBaseline === 'bottom') {
+    rotationYPos = y + height;
+  }
 
   drawBubble(ctx, {
     x,
@@ -180,6 +198,9 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
     lineWidth,
     direction,
     points,
+    radian,
+    rotationXPos,
+    rotationYPos,
   });
 
   if (text) {
@@ -190,8 +211,11 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
       x: x + width / 2,
       y: y + height / 2 + 1,
       text,
-      style: textStyle,
-      stroke: labelStrokeStyle,
+      style: [textStyle],
+      stroke: [textStrokeStyle],
+      radian,
+      rotationXPos,
+      rotationYPos,
     });
   }
 }
@@ -231,12 +255,24 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
     lineWidth = 1,
     points = [],
     direction = '',
+    radian,
+    rotationXPos,
+    rotationYPos,
   } = model;
 
   const right = x + width;
   const bottom = y + height;
 
   ctx.beginPath();
+
+  ctx.save();
+
+  if (radian) {
+    ctx.translate(rotationXPos, rotationYPos);
+    ctx.rotate(radian);
+    ctx.translate(-rotationXPos, -rotationYPos);
+  }
+
   ctx.moveTo(x + radius, y);
 
   if (direction === 'top') {
@@ -282,4 +318,6 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
   if (strokeStyle) {
     strokeWithOptions(ctx, { strokeStyle, lineWidth });
   }
+
+  ctx.restore();
 }

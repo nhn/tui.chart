@@ -1,8 +1,7 @@
-import { Point } from '@t/options';
+import { Point, RadialBarSeriesOptions, PieSeriesOptions } from '@t/options';
 import { SectorModel } from '@t/components/series';
 import { pick } from '@src/helpers/utils';
 import { RadialAnchor } from '@t/components/dataLabels';
-
 type RadialPositionParam = {
   anchor: RadialAnchor;
   x: number;
@@ -52,7 +51,7 @@ export function getRadialAnchorPosition(param: RadialPositionParam): Point {
   } = param;
   const halfDegree = start + (end - start) / 2;
   const radian = calculateDegreeToRadian(halfDegree, drawingStartAngle);
-  const r = anchor === 'center' ? (outer - inner) / 2 + inner : outer;
+  const r = anchor === 'outer' ? outer : (outer - inner) / 2 + inner;
 
   return getRadialPosition(x, y, r, radian);
 }
@@ -70,4 +69,12 @@ export function withinRadian(
   return clockwise
     ? startDegree <= currentDegree && endDegree >= currentDegree
     : startDegree >= currentDegree && endDegree <= currentDegree;
+}
+
+export function initSectorOptions(options?: PieSeriesOptions | RadialBarSeriesOptions) {
+  return {
+    clockwise: options?.clockwise ?? true,
+    startAngle: options?.angleRange?.start ?? 0,
+    endAngle: options?.angleRange?.end ?? 360,
+  };
 }

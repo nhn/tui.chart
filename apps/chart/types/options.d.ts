@@ -19,6 +19,7 @@ import {
   BoxPlotCharThemeOptions,
   BulletCharThemeOptions,
   ColumnLineChartThemeOptions,
+  RadialBarChartThemeOptions,
 } from '@t/theme';
 import { AxisType } from '@src/component/axis';
 export type RangeDataType<T> = [T, T];
@@ -42,6 +43,7 @@ export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
 export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped' | 'point';
 export type BoxTypeEventDetectType = 'grouped' | 'point';
+export type CicleTypeEventDetectType = 'grouped' | 'point';
 
 export type BezierPoint = {
   controlPoint?: {
@@ -642,6 +644,33 @@ export interface NestedPieChartOptions extends BaseOptions {
   theme?: NestedPieChartThemeOptions;
 }
 
+export interface RadialBarSeriesType {
+  name: string;
+  data: number[];
+  color?: string;
+}
+
+export interface RadialBarSeriesData {
+  categories: string[];
+  series: RadialBarSeriesType[];
+}
+
+export interface RadialBarChartOptions extends BaseOptions {
+  yAxis?: BaseAxisOptions;
+  series?: RadialBarSeriesOptions;
+  theme?: RadialBarChartThemeOptions;
+}
+
+interface RadialBarSeriesOptions extends BaseSeriesOptions {
+  angleRange?: {
+    start?: number;
+    end?: number;
+  };
+  clockwise?: boolean;
+  eventDetectType?: CicleTypeEventDetectType;
+  dataLabels?: DataLabelOptions;
+}
+
 export type SeriesDataInput =
   | LineSeriesInput
   | AreaSeriesInput
@@ -654,7 +683,8 @@ export type SeriesDataInput =
   | BulletSeriesType
   | BoxPlotSeriesType
   | BoxSeriesInput<BoxSeriesDataType>
-  | NestedPieSeriesType;
+  | NestedPieSeriesType
+  | RadialBarSeriesType;
 
 export type DataInput =
   | LineSeriesData
@@ -671,4 +701,5 @@ export type DataInput =
   | LineAreaData
   | LineScatterData
   | ColumnLineData
-  | NestedPieSeriesData;
+  | NestedPieSeriesData
+  | RadialBarSeriesData;

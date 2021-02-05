@@ -33,7 +33,8 @@ export type ResponderModel =
   | SectorResponderModel
   | TreemapRectResponderModel
   | MarkerResponderModel
-  | BulletResponderModel;
+  | BulletResponderModel
+  | SectorModel;
 
 export type TreemapSeriesModels = { series: TreemapRectModel[]; layer: TreemapRectModel[] };
 
@@ -197,11 +198,14 @@ export type SectorModel = {
   totalAngle: number;
   alias?: string;
   percentValue?: number;
+  category?: string;
+  seriesColor?: string;
+  seriesIndex?: number;
+  lineWidth?: number;
 } & Point;
 
 export type SectorResponderModel = {
   data: TooltipData;
-  seriesIndex: number;
 } & SectorModel;
 
 export type PolygonModel = {

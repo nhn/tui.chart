@@ -63,6 +63,10 @@ export type RadialDataLabel = Omit<SectorModel, 'type'> & {
   type: 'sector';
   theme: PieDataLabelTheme;
 };
+export type RadialBarDataLabel = Omit<SectorModel, 'type'> & {
+  type: 'sectorBar';
+  theme: BoxDataLabel;
+};
 export type RectDirection = 'top' | 'bottom' | 'left' | 'right';
 
 export type RectDataLabel = Omit<RectModel, 'type' | 'color' | 'value'> & {
@@ -87,8 +91,14 @@ export type LineDataLabel = LineModel & {
 };
 
 export type Callout = Point & { x2: number; y2: number; theme: CalloutTheme };
-export type SeriesDataLabelType = PointDataLabel | RadialDataLabel | RectDataLabel | LineDataLabel;
+export type SeriesDataLabelType =
+  | PointDataLabel
+  | RadialDataLabel
+  | RectDataLabel
+  | LineDataLabel
+  | RadialBarDataLabel;
 
 export type SeriesDataLabels = Array<SeriesDataLabelType>;
 
 export type RadialAnchor = 'center' | 'outer';
+export type RadialBarAnchor = 'start' | 'center' | 'end';

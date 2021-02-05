@@ -18,6 +18,7 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
     degree: { start, end },
     color,
     style,
+    lineWidth,
   } = sectorModel;
 
   if (start === end) {
@@ -44,7 +45,11 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
 
   ctx.closePath();
   fillStyle(ctx, color);
-  ctx.stroke();
+
+  if (lineWidth) {
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+  }
 }
 
 function drawSector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {

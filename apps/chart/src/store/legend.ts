@@ -131,7 +131,7 @@ function getLegendLabels(series: RawSeries): LegendLabels {
 }
 
 function useRectIcon(type: ChartType) {
-  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet'], type);
+  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet', 'radialBar'], type);
 }
 
 function useCircleIcon(type: ChartType) {

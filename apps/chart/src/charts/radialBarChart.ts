@@ -1,48 +1,50 @@
 import Chart, { SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
+import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
 import radialAxes from '@src/store/radialAxes';
 
+import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
-import RadarSeries from '@src/component/radarSeries';
-import RadialPlot from '@src/component/radialPlot';
+import RadialBarSeries from '@src/component/radialBarSeries';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
-import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
-import Tooltip from '@src/component/tooltip';
-import RadialAxis from '@src/component/radialAxis';
+import DataLabels from '@src/component/dataLabels';
+import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
+import RadialPlot from '@src/component/radialPlot';
+import RadialAxis from '@src/component/radialAxis';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
-import * as polygonBrush from '@src/brushes/polygon';
+import * as sectorBrush from '@src/brushes/sector';
+import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as axisBrush from '@src/brushes/axis';
-import * as lineSeriesBrush from '@src/brushes/lineSeries';
 
-import { RadarChartOptions, RadarSeriesData, RadarSeriesInput } from '@t/options';
+import { RadialBarChartOptions, RadialBarSeriesData, RadialBarSeriesType } from '@t/options';
 
-export interface RadarChartProps {
+export interface RadialBarChartProps {
   el: HTMLElement;
-  options: RadarChartOptions;
-  data: RadarSeriesData;
+  options: RadialBarChartOptions;
+  data: RadialBarSeriesData;
 }
 
 /**
  * @class
- * @classdesc Radar Chart
+ * @classdesc Pie Chart
  * @param {Object} props
  *   @param {HTMLElement} props.el - The target element to create chart.
- *   @param {Object} props.data - Data for making Radar Chart.
- *     @param {Array<string>} props.data.categories - Categories.
+ *   @param {Object} props.data - Data for making Pie Chart.
+ *     @param {Array<string>} [props.data.categories] - Categories.
  *     @param {Array<Object>} props.data.series - Series data.
  *       @param {string} props.data.series.name - Series name.
- *       @param {Array<number>} props.data.series.data - Series data.
- *   @param {Object} [props.options] - Options for making Radar Chart.
+ *       @param {number} props.data.series.data - Series data.
+ *   @param {Object} [props.options] - Options for making Pie Chart.
  *     @param {Object} [props.options.chart]
  *       @param {string|Object} [props.options.chart.title] - Chart title text or options.
  *         @param {string} [props.options.chart.title.text] - Chart title text.
@@ -54,19 +56,10 @@ export interface RadarChartProps {
  *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series]
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
- *       @param {boolean} [props.options.series.showDot=false] - Whether to show dot or not.
- *       @param {boolean} [props.options.series.showArea=false] - Whether to fill area or not.
- *     @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
- *       @param {Object} [props.options.yAxis.title] - Axis title.
- *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
- *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
- *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
- *       @param {number} [props.options.yAxis.width] - Width of yAxis.
- *       @param {number} [props.options.yAxis.height] - Height of yAxis.
- *     @param {Object} [props.options.plot]
- *       @param {number} [props.options.plot.width] - Width of plot.
- *       @param {number} [props.options.plot.height] - Height of plot.
- *       @param {boolean} [props.options.plot.type] - Radar plot type. 'spiderweb', 'circle' is available.
+ *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
+ *       @param {Array<number>|Array<string>} [props.options.series.radiusRange] - Specifies the radius of the circle drawn. It is specified by entering a number or percent string value in start and end.
+ *       @param {Array<number>} [props.options.series.angleRange] - The range of angles to which the circle will be drawn. It is specified by putting number in start and end.
+ *       @param {boolean} [props.options.series.clockwise] - Whether it will be drawn clockwise.
  *     @param {Object} [props.options.legend]
  *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
@@ -83,26 +76,24 @@ export interface RadarChartProps {
  *     @param {Object} [props.options.responsive] - Rules for changing chart options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Responsive guide} on github.
  *       @param {boolean|Object} [props.options.responsive.animation] - Animation duration when the chart is modified.
  *       @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond.
- *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Radar Chart guide} on github.
+ *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Pie Chart guide} on github.
  *       @param {Object} [props.options.theme.chart] - Chart font theme.
  *       @param {Object} [props.options.theme.series] - Series theme.
  *       @param {Object} [props.options.theme.title] - Title theme.
- *       @param {Object} [props.options.theme.yAxis] - Y Axis theme.
  *       @param {Object} [props.options.theme.legend] - Legend theme.
  *       @param {Object} [props.options.theme.tooltip] - Tooltip theme.
- *       @param {Object} [props.options.theme.plot] - Plot theme.
  *       @param {Object} [props.options.theme.exportMenu] - ExportMenu theme.
  * @extends Chart
  */
-export default class RadarChart extends Chart<RadarChartOptions> {
-  modules = [dataRange, scale, axes, radialAxes];
+export default class RadialBarChart extends Chart<RadialBarChartOptions> {
+  modules = [stackSeriesData, dataRange, scale, axes, radialAxes];
 
-  constructor({ el, options, data }: RadarChartProps) {
+  constructor({ el, options, data }: RadialBarChartProps) {
     super({
       el,
       options,
       series: {
-        radar: data.series,
+        radialBar: data.series,
       },
       categories: data.categories,
     });
@@ -115,11 +106,12 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     this.componentManager.add(Title);
     this.componentManager.add(Legend);
     this.componentManager.add(RadialPlot);
+    this.componentManager.add(RadialBarSeries);
     this.componentManager.add(RadialAxis);
-    this.componentManager.add(RadarSeries);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
+    this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
     this.painter.addGroups([
@@ -127,39 +119,25 @@ export default class RadarChart extends Chart<RadarChartOptions> {
       legendBrush,
       labelBrush,
       exportMenuBrush,
-      polygonBrush,
+      sectorBrush,
+      dataLabelBrush,
       axisBrush,
-      lineSeriesBrush,
     ]);
   }
-
-  /**
-   * Add data.
-   * @param {Array<number>} data - Array of data to be added.
-   * @param {string} category - Category to be added.
-   * @api
-   * @example
-   * chart.addData([10, 20], '6');
-   */
-  public addData = (data: number[], category: string) => {
-    this.animationControlFlag.updating = true;
-    this.resetSeries();
-    this.store.dispatch('addData', { data, category });
-  };
 
   /**
    * Add series.
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
-   *   @param {Array<number>} data.data - Array of data to be added.
+   *   @param {Array<Object>} data.data - Array of data to be added.
    * @api
    * @example
    * chart.addSeries({
    *   name: 'newSeries',
-   *   data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+   *   data: 10,
    * });
    */
-  public addSeries(data: RadarSeriesInput) {
+  public addSeries(data: RadialBarSeriesType) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -170,24 +148,42 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    * @api
    * @example
    * chart.setData({
-   *   categories: ['1', '2', '3'],
+   *   categories: ['A'],
    *   series: [
-   *     {
-   *       name: 'new series',
-   *       data: [1, 2, 3],
-   *     },
-   *     {
-   *       name: 'new series2',
-   *       data: [4, 5, 6],
-   *     }
+   *     {name: 'a', data: 10},
+   *     {name: 'b', data: 20},
    *   ]
    * });
    */
-  public setData(data: RadarSeriesData) {
+  public setData(data: RadialBarSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
-    this.store.dispatch('setData', { series: { radar: series }, categories });
+    this.store.dispatch('setData', { series: { radialBar: series }, categories });
   }
+
+  /**
+   * Hide series data label.
+   * @api
+   * @example
+   * chart.hideSeriesDataLabel();
+   */
+  public hideSeriesDataLabel = () => {
+    this.store.dispatch('updateOptions', {
+      options: { series: { dataLabels: { visible: false } } },
+    });
+  };
+
+  /**
+   * Show series data label.
+   * @api
+   * @example
+   * chart.showSeriesDataLabel();
+   */
+  public showSeriesDataLabel = () => {
+    this.store.dispatch('updateOptions', {
+      options: { series: { dataLabels: { visible: true } } },
+    });
+  };
 
   /**
    * Convert the chart options to new options.
@@ -208,7 +204,8 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: RadarChartOptions) => {
+  public setOptions = (options: RadialBarChartOptions) => {
+    this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
 
@@ -227,7 +224,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: RadarChartOptions) => {
+  public updateOptions = (options: RadialBarChartOptions) => {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
@@ -236,10 +233,10 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
    *      @param {number} seriesInfo.seriesIndex - Index of series.
-   *      @param {number} seriesInfo.index - Index of data within series.
+   *      @param {number} seriesInfo.alias - alias name.
    * @api
    * @example
-   * chart.showTooltip({index: 1, seriesIndex: 2});
+   * chart.showTooltip({seriesIndex: 1, alias: 'name'});
    */
   public showTooltip = (seriesInfo: SelectSeriesInfo) => {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });

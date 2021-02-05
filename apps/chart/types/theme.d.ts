@@ -14,6 +14,7 @@ type SeriesThemeMap = {
   radar?: RadarChartSeriesTheme;
   boxPlot?: BoxPlotChartSeriesTheme;
   bullet?: BulletChartSeriesTheme;
+  radialBar?: RadialBarChartSeriesTheme;
 };
 
 type SeriesTheme =
@@ -47,12 +48,25 @@ type LegendTheme = {
   label?: FontTheme;
 };
 
+type AxisLabelTheme = FontTheme & {
+  textBubble?: Omit<TextBubbleTheme, 'arrow'>;
+};
+
+type RadialAxisTheme = {
+  title?: FontTheme;
+  label?: AxisLabelTheme;
+  lineWidth?: number;
+  strokeStyle?: string;
+  dotColor?: string;
+};
+
 type Theme = {
   chart: ChartTheme;
   series: SeriesThemeMap;
   title: FontTheme;
   xAxis: AxisTheme;
   yAxis: AxisTheme | AxisTheme[];
+  radialAxis: RadialAxisTheme;
   legend: LegendTheme;
   tooltip: TooltipTheme;
   plot: PlotTheme;
@@ -61,7 +75,7 @@ type Theme = {
 
 type AxisTheme = {
   title?: FontTheme;
-  label?: FontTheme;
+  label?: AxisLabelTheme;
   width?: number;
   color?: string;
 };
@@ -451,6 +465,22 @@ interface PieDataLabelTheme extends BoxDataLabel {
   callout?: CalloutTheme;
 }
 
+type GroupedSector = {
+  color?: string;
+  opacity?: number;
+};
+
+interface RadialBarChartSeriesTheme extends CommonSeriesTheme {
+  barWidth?: number | string;
+  colors?: string[];
+  lineWidth?: number;
+  strokeStyle?: string;
+  hover?: SectorStyle & { color?: string; groupedSector: GroupedSector };
+  select?: SelectSectorStyle & { groupedSector: GroupedSector };
+  areaOpacity?: number;
+  dataLabels?: BoxDataLabel;
+}
+
 type DataLabelTheme =
   | BubbleDataLabel
   | BoxDataLabel
@@ -522,3 +552,7 @@ type CheckAnchorPieSeries = {
   hasOuterAnchor: boolean;
   hasOuterAnchorPieSeriesName: boolean;
 };
+
+interface RadialBarChartThemeOptions extends BaseThemeOptions {
+  series?: RadialBarChartSeriesTheme;
+}

@@ -38,6 +38,7 @@ import {
   NestedPieSeriesType,
   LineAreaChartOptions,
   ScatterChartOptions,
+  RadialBarSeriesType,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -57,6 +58,7 @@ type ChartSeriesMap = {
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
   heatmap: HeatmapSeriesType[];
+  radialBar: RadialBarSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -180,7 +182,7 @@ export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
-  radialAxis?: RadialAxisData;
+  radialAxis?: RadialAxisData | RadialBarAxisData;
   secondaryYAxis?: AxisData;
 };
 
@@ -236,6 +238,18 @@ export type RadialAxisData = {
   maxLabelHeight: number;
 };
 
+type RadialBarAxisData = {
+  labels: string[];
+  axisSize: number;
+  centerX: number;
+  centerY: number;
+  tickPositions: number[];
+  labelInterval: number;
+  tickInterval: number;
+  tickDistance: number;
+  viewLabels: ViewAxisLabel[];
+};
+
 export interface TreemapSeriesData {
   id: string;
   parentId: string;
@@ -267,6 +281,11 @@ export interface ChartState<T extends Options> {
   shiftRange?: RangeDataType<number>;
   // 기존의 limitMap
   axes: Axes;
+  radialAxes: {
+    // @TODO: radialAxes 스토어 모듈 타입 정의 필요
+    circularAxis: object;
+    yAxis: object;
+  };
   dataRange: DataRange;
   theme: Theme;
   options: T;
@@ -373,7 +392,7 @@ export type PercentScaleType =
   | 'dualPercentStack'
   | 'divergingPercentStack';
 
-type StackSeriesType = BoxType | 'area';
+type StackSeriesType = BoxType | 'area' | 'radialBar';
 
 export type StackSeriesData<K extends StackSeriesType> = {
   data: ChartSeriesMap[K];

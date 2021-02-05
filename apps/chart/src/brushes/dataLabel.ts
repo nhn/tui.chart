@@ -29,7 +29,7 @@ type BubbleInfo = Rect & {
 } & Nullable<Arrow>;
 
 export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
-  const { x, y, text, textAlign, textBaseline, opacity, callout, theme } = model;
+  const { x, y, text, textAlign, textBaseline, opacity, callout, theme, radian } = model;
   const { color, textBubble } = theme;
   const font = getFont(theme);
   const textStyle: LabelStyle = { textAlign, textBaseline, font, fillStyle: color };
@@ -62,11 +62,12 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     style: [textStyle],
     stroke: [textStrokeStyle],
     opacity,
+    radian,
   });
 }
 
 export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
-  const { text, theme } = model;
+  const { text, theme, radian, textAlign, textBaseline } = model;
   const { color, textStrokeColor } = theme as Required<BubbleDataLabel>;
   const font = getFont(theme);
   const textStyle: LabelStyle = {
@@ -83,9 +84,12 @@ export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelM
 
   bubbleLabel(ctx, {
     ...getBubbleRect(model),
-    labelStyle: [textStyle],
-    labelStrokeStyle: [textStrokeStyle],
     text,
+    radian,
+    textStyle,
+    textStrokeStyle,
+    textAlign,
+    textBaseline,
   });
 }
 

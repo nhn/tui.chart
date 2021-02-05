@@ -125,7 +125,7 @@ function makeCommonTextTheme(globalFontFamily = 'Arial') {
   return { fontSize: 11, fontFamily: globalFontFamily, fontWeight: 'normal', color: '#333333' };
 }
 
-export function makeDefaultTheme(globalFontFamily = 'Arial') {
+export function makeDefaultTheme(globalFontFamily = 'Arial', hasRadarSeries = false) {
   const axisTitleTheme = makeAxisTitleTheme(globalFontFamily);
   const commonTextTheme = makeCommonTextTheme(globalFontFamily);
 
@@ -142,7 +142,16 @@ export function makeDefaultTheme(globalFontFamily = 'Arial') {
     },
     yAxis: {
       title: { ...axisTitleTheme },
-      label: { ...commonTextTheme },
+      label: {
+        ...commonTextTheme,
+        textBubble: {
+          visible: hasRadarSeries,
+          backgroundColor: hasRadarSeries ? '#f3f3f3' : 'rgba(0, 0, 0, 0)',
+          borderRadius: 7,
+          paddingX: 7,
+          paddingY: 2,
+        },
+      },
       width: 1,
       color: '#333333',
     },
@@ -151,6 +160,13 @@ export function makeDefaultTheme(globalFontFamily = 'Arial') {
       label: { ...commonTextTheme },
       width: 1,
       color: '#333333',
+    },
+    radialAxis: {
+      title: { ...axisTitleTheme },
+      label: { ...commonTextTheme },
+      lineWidth: 1,
+      strokeStyle: 'rgba(0, 0, 0, 0.05)',
+      dotColor: 'rgba(0, 0, 0, 0.5)',
     },
     legend: {
       label: {
@@ -536,6 +552,48 @@ function getSeriesTheme(
           },
         },
       };
+    case 'radialBar':
+      return {
+        areaOpacity: 1,
+        strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(255, 255, 255, 0)',
+        lineWidth: isNestedPieChart ? 1 : 0,
+        hover: {
+          lineWidth: DEFAULT_PIE_LINE_WIDTH,
+          strokeStyle: '#ffffff',
+          shadowColor: '#cccccc',
+          shadowBlur: 5,
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
+          groupedSector: {
+            color: '#000000',
+            opacity: 0.05,
+          },
+        },
+        select: {
+          lineWidth: DEFAULT_PIE_LINE_WIDTH,
+          strokeStyle: '#ffffff',
+          shadowColor: '#cccccc',
+          shadowBlur: 5,
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
+          restSeries: {
+            areaOpacity: 0.3,
+          },
+          areaOpacity: 1,
+          groupedSector: {
+            color: '#000000',
+            opacity: 0.05,
+          },
+        },
+        dataLabels: {
+          fontFamily: 'Arial',
+          fontSize: 11,
+          fontWeight: 400,
+          color: '#333333',
+          useSeriesColor: false,
+          textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
+        },
+      };
     default:
       return {};
   }
@@ -555,7 +613,7 @@ export function getDefaultTheme(
         [seriesName]: getSeriesTheme(globalFontFamily, seriesName, pieSeriesOuterAnchors),
       },
     }),
-    makeDefaultTheme(globalFontFamily) as Theme
+    makeDefaultTheme(globalFontFamily, !!series.radar) as Theme
   );
 
   if (isNestedPieChart) {
