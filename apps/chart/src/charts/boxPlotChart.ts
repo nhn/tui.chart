@@ -150,7 +150,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * @param {string} category - Category to be added.
    * @api
    * @example
-  *  chart.addData(
+   * chart.addData(
       [
          [3000, 4000, 4714, 6000, 7000],
          [3000, 5750, 7571, 8250, 9000],
@@ -167,7 +167,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
   /**
    * add outlier.
    * @param {number} seriesIndex - Index of series.
-   * @param {number} outliers - Arraypa of outlier.
+   * @param {number} outliers - Array of outlier.
    * @api
    * @example
    * chart.addOutlier(1, [[1, 10000], [3, 12000]]);

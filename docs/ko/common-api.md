@@ -460,3 +460,68 @@ public unselectSeries();
 ```
 
 선택 시 API의 on 이벤트의 `unselectSeries` eventName을 사용할 경우 해제된 시리즈에 대한 제어를 추가로 할 수 있다.
+
+### addOutlier()
+* 사용 가능 차트 타입: `BoxPlot`
+
+```ts
+public addOutlier(seriesIndex: number, outliers: number[][])
+```
+
+`addOutlier`를 사용하면 BoxPlot 차트에 새 outlier 데이터를 추가할 수 있다.
+
+```ts
+const data = {
+  categories: ['1', '2', '3', '4', '5'],
+  series: [
+    {
+      name: 'A',
+      data: [10, 100, 50, 40, 70],
+      outliers: [
+        [0, 10],
+        [2, 60],
+        [3, 80],
+      ],
+    },
+    {
+      name: 'B',
+      data: [60, 40, 10, 33, 70],
+      outliers: [
+        [0, 20]
+      ]
+    },
+  ],
+};
+
+const boxPlotChart = new BoxPlotChart({ el, data, options });
+
+boxPlotChart.addOutlier(1, [[1, 50], [3, 30]]);
+```
+
+위 예제는 다음의 데이터를 갖는 BoxPlot 차트로 변경될 것이다.
+
+```ts
+const data = {
+  categories: ['1', '2', '3', '4', '5'],
+  series: [
+    {
+      name: 'A',
+      data: [10, 100, 50, 40, 70],
+      outliers: [
+        [0, 10],
+        [2, 60],
+        [3, 80],
+      ],
+    },
+    {
+      name: 'B',
+      data: [60, 40, 10, 33, 70],
+      outliers: [
+        [0, 20]
+        [1, 50],
+        [3, 30],
+      ],
+    },
+  ],
+};
+```
