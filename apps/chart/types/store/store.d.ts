@@ -197,7 +197,10 @@ export type StackSeries = {
 export type LegendIconType = 'spectrum' | 'line' | ScatterSeriesIconType;
 
 export type LegendDataList = Array<
-  Pick<LegendData, 'label' | 'active' | 'checked' | 'iconType' | 'color' | 'chartType'> & {
+  Pick<
+    LegendData,
+    'label' | 'active' | 'checked' | 'iconType' | 'color' | 'chartType' | 'rowIndex' | 'columnIndex'
+  > & {
     width: number;
   }
 >;
@@ -207,6 +210,7 @@ export interface Legend {
   showCheckbox: boolean;
   align: Align;
   width: number;
+  height: number;
   data: LegendDataList;
   useSpectrumLegend: boolean;
   useScatterChartIcon: boolean;

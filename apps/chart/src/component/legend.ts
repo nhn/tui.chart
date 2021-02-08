@@ -16,7 +16,7 @@ import {
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
-import { sum } from '@src/helpers/utils';
+import { isUndefined } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
 import { LegendTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
@@ -94,27 +94,81 @@ export default class Legend extends Component {
     });
   }
 
+  getXPositionWhenVerticalAlign(data: LegendDataList) {
+    const { offset, rowWidths } = data.reduce(
+      (acc, datum) => {
+        const { rowIndex, columnIndex, width } = datum;
+        if (isUndefined(acc.rowWidths[rowIndex])) {
+          acc.rowWidths[rowIndex] = 0;
+          acc.offset[rowIndex] = [0];
+        }
+
+        acc.rowWidths[rowIndex] += width + (columnIndex ? LEGEND_ITEM_MARGIN_X : 0);
+
+        acc.offset[rowIndex][columnIndex + 1] =
+          acc.offset[rowIndex][columnIndex] + LEGEND_ITEM_MARGIN_X + width;
+
+        return acc;
+      },
+      { offset: [] as number[][], rowWidths: [] as number[] }
+    );
+
+    const { width } = this.rect;
+    rowWidths.forEach((rowWidth, rowIndex) => {
+      const xMargin = (width - rowWidth) / 2;
+      offset[rowIndex] = offset[rowIndex].map((xOffset) => xOffset + xMargin);
+    });
+
+    return offset;
+  }
+
+  getXPositionWhenHorizontalAlign(data: LegendDataList) {
+    const maxWidths = data.reduce<number[]>((acc, datum) => {
+      const { columnIndex, width } = datum;
+      if (isUndefined(acc[columnIndex])) {
+        acc[columnIndex] = 0;
+      }
+
+      acc[columnIndex] = Math.max(acc[columnIndex], width);
+
+      return acc;
+    }, [] as number[]);
+
+    return data.reduce((acc, datum) => {
+      const { rowIndex, columnIndex } = datum;
+      if (isUndefined(acc[rowIndex])) {
+        acc[rowIndex] = [0];
+      }
+
+      acc[rowIndex][columnIndex + 1] =
+        acc[rowIndex][columnIndex] + LEGEND_ITEM_MARGIN_X + maxWidths[columnIndex];
+
+      return acc;
+    }, [] as number[][]);
+  }
+
   renderLegendModel(legend: LegendType): LegendModel[] {
-    const defaultX = 0;
     const { data, showCheckbox, align, useScatterChartIcon } = legend;
     const verticalAlign = isVerticalAlign(align);
-    const legendWidths = data.map(({ width }) => width);
     const itemHeight = getLegendItemHeight(this.theme.label.fontSize!);
+    const xPosition = verticalAlign
+      ? this.getXPositionWhenVerticalAlign(data)
+      : this.getXPositionWhenHorizontalAlign(data);
 
     return [
       {
         type: 'legend',
         align,
         showCheckbox,
-        data: data.map((datum, idx) => {
-          const xOffset = sum(legendWidths.slice(0, idx)) + LEGEND_ITEM_MARGIN_X * idx;
+        data: data.map((datum) => {
+          const { label, iconType, rowIndex, columnIndex } = datum;
 
           return {
             ...datum,
-            iconType: (this.seriesIconTypeMap[datum.label] ?? datum.iconType) as LegendIconType,
-            color: this.seriesColorMap[datum.label],
-            x: verticalAlign ? defaultX + xOffset : defaultX,
-            y: verticalAlign ? padding.Y : padding.Y + itemHeight * idx,
+            iconType: (this.seriesIconTypeMap[label] ?? iconType) as LegendIconType,
+            color: this.seriesColorMap[label],
+            x: xPosition[rowIndex][columnIndex],
+            y: padding.Y + itemHeight * rowIndex,
             useScatterChartIcon,
           };
         }),

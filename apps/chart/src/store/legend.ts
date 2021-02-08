@@ -9,10 +9,11 @@ import {
   CircleLegend,
   LegendDataList,
 } from '@t/store/store';
-import { Align, BubbleChartOptions, TreemapChartSeriesOptions } from '@t/options';
-import { isUndefined, sum, includes, deepMergedCopy, isNumber } from '@src/helpers/utils';
+import { Align, BubbleChartOptions, Size, TreemapChartSeriesOptions } from '@t/options';
+import { isUndefined, sum, includes, deepMergedCopy, range } from '@src/helpers/utils';
 
 import {
+  getLegendItemHeight,
   LEGEND_CHECKBOX_SIZE,
   LEGEND_ICON_SIZE,
   LEGEND_ITEM_MARGIN_X,
@@ -31,41 +32,115 @@ type LegendLabels = {
   type: ChartType;
 }[];
 
-type LegendWidthParam = {
-  defaultWidth: number;
+type LegendSizeParam = {
+  initialWidth: number;
   legendWidths: number[];
   useSpectrumLegend: boolean;
   options: Options;
-  align: Align;
+  verticalAlign: boolean;
   visible: boolean;
   checkbox: boolean;
+  itemHeight: number;
+  circleLegendVisible: boolean;
+  chart: Size;
 };
 
-function calculateLegendWidth({
-  defaultWidth,
-  legendWidths,
-  useSpectrumLegend,
-  options,
-  align,
-  visible,
-  checkbox,
-}: LegendWidthParam) {
-  const verticalAlign = isVerticalAlign(align);
-  const legendOptions = options?.legend;
-  let legendWidth = defaultWidth;
+const INITIAL_LEGEND_WIDTH = 100;
+const INITIAL_CIRCLE_LEGEND_WIDTH = 150;
 
-  if (!visible) {
-    return 0;
+function recalculateLegendWhenHeightOverflows(params: LegendSizeParam, legendHeight: number) {
+  const { legendWidths, itemHeight } = params;
+  const totalHeight = legendWidths.length * itemHeight;
+  const columnCount = Math.ceil(totalHeight / legendHeight);
+  const rowCount = legendWidths.length / columnCount;
+  let legendWidth = 0;
+
+  range(0, columnCount).forEach((count) => {
+    legendWidth += Math.max(...legendWidths.slice(count * rowCount, (count + 1) * rowCount));
+  });
+
+  legendWidth += LEGEND_ITEM_MARGIN_X * (columnCount - 1);
+
+  return { legendWidth, legendHeight: rowCount * itemHeight + padding.Y, columnCount, rowCount };
+}
+
+function recalculateLegendWhenWidthOverflows(params: LegendSizeParam, prevLegendWidth: number) {
+  const { legendWidths, itemHeight } = params;
+  let columnCount = 0;
+  let legendWidth = 0;
+
+  const { rowCount } = legendWidths.reduce(
+    (acc, width) => {
+      const widthWithMargin = LEGEND_ITEM_MARGIN_X + width;
+
+      if (acc.totalWidth + width > prevLegendWidth) {
+        acc.totalWidth = widthWithMargin;
+        acc.rowCount += 1;
+        acc.columnCount = 1;
+        columnCount = Math.max(columnCount, acc.columnCount);
+      } else {
+        acc.totalWidth += widthWithMargin;
+        acc.columnCount += 1;
+      }
+
+      legendWidth = Math.max(legendWidth, acc.totalWidth);
+
+      return acc;
+    },
+    { totalWidth: 0, rowCount: 1, columnCount: 0 }
+  );
+
+  return { legendHeight: itemHeight * rowCount, rowCount, columnCount, legendWidth };
+}
+
+function calculateLegendSize(params: LegendSizeParam) {
+  if (!params.visible) {
+    return { legendWidth: 0, legendHeight: 0, rowCount: 0, columnCount: 0 };
   }
 
-  if (legendOptions?.width) {
-    return legendOptions.width;
+  const { chart, verticalAlign, legendWidths } = params;
+  const { legendWidth, isOverflow: widthOverflow } = calculateLegendWidth(params);
+  const { legendHeight, isOverflow: heightOverflow } = calculateLegendHeight(params);
+  const columnCount = verticalAlign ? legendWidths.length : 1;
+  const rowCount = verticalAlign ? Math.ceil(legendWidth / chart.width) : legendWidths.length;
+
+  if (widthOverflow) {
+    return recalculateLegendWhenWidthOverflows(params, legendWidth / rowCount);
   }
 
-  if (useSpectrumLegend && verticalAlign) {
+  if (heightOverflow) {
+    return recalculateLegendWhenHeightOverflows(params, legendHeight);
+  }
+
+  return { legendWidth, legendHeight, columnCount, rowCount };
+}
+
+function calculateLegendHeight(params: LegendSizeParam) {
+  const { verticalAlign, itemHeight, legendWidths } = params;
+  const { height: chartHeight } = getDefaultLegendSize(params);
+  let legendHeight;
+  let isOverflow = false;
+
+  if (verticalAlign) {
+    legendHeight = chartHeight;
+  } else {
+    const totalHeight = legendWidths.length * (padding.Y + itemHeight);
+    isOverflow = chartHeight < totalHeight;
+    legendHeight = isOverflow ? chartHeight : totalHeight;
+  }
+
+  return { legendHeight, isOverflow };
+}
+
+function getSpectrumLegendWidth(params: LegendSizeParam, verticalAlign: boolean) {
+  const { legendWidths, chart } = params;
+  let legendWidth;
+
+  if (verticalAlign) {
     const labelAreaWidth = sum(legendWidths);
-    legendWidth = Math.max(getInitialWidth(options) / 4, labelAreaWidth);
-  } else if (useSpectrumLegend && !verticalAlign) {
+
+    legendWidth = Math.max(chart.width / 4, labelAreaWidth);
+  } else {
     const spectrumAreaWidth =
       spectrumLegendTooltip.PADDING * 2 +
       spectrumLegendBar.PADDING * 2 +
@@ -74,18 +149,61 @@ function calculateLegendWidth({
       padding.X * 2;
 
     legendWidth = Math.max(...legendWidths) + spectrumAreaWidth;
-  } else if (!useSpectrumLegend && verticalAlign) {
-    legendWidth = sum(legendWidths) + LEGEND_ITEM_MARGIN_X * (legendWidths.length - 1);
+  }
+
+  return { isOverflow: false, legendWidth };
+}
+
+function getNormalLegendWidth(params: LegendSizeParam, verticalAlign: boolean) {
+  const { initialWidth, legendWidths, checkbox } = params;
+  let isOverflow = false;
+  let legendWidth;
+
+  if (verticalAlign) {
+    const { width: chartWidth } = getDefaultLegendSize(params);
+    const totalWidth = sum(legendWidths) + LEGEND_ITEM_MARGIN_X * (legendWidths.length - 1);
+    isOverflow = totalWidth > chartWidth;
+    legendWidth = totalWidth;
   } else {
     const labelAreaWidth = Math.max(...legendWidths);
+
     legendWidth =
       (checkbox ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0) +
       LEGEND_ICON_SIZE +
       LEGEND_MARGIN_X +
-      Math.max(labelAreaWidth, legendWidth);
+      Math.max(labelAreaWidth, initialWidth);
   }
 
-  return legendWidth;
+  return { legendWidth, isOverflow };
+}
+
+function calculateLegendWidth(params: LegendSizeParam) {
+  const { useSpectrumLegend, options, verticalAlign, visible } = params;
+  const legendOptions = options?.legend;
+
+  if (!visible) {
+    return { legendWidth: 0, isOverflow: false };
+  }
+
+  if (legendOptions?.width) {
+    return { legendWidth: legendOptions.width, isOverflow: false };
+  }
+
+  return useSpectrumLegend
+    ? getSpectrumLegendWidth(params, verticalAlign)
+    : getNormalLegendWidth(params, verticalAlign);
+}
+
+function getDefaultLegendSize(params: LegendSizeParam) {
+  const { verticalAlign, chart, itemHeight, initialWidth, circleLegendVisible } = params;
+  const restAreaHeight = 100 + (circleLegendVisible ? INITIAL_CIRCLE_LEGEND_WIDTH : 0); // rest area temporary value (yAxis.title + xAxis.height + circleLegendHeight)
+
+  return verticalAlign
+    ? { width: chart.width - padding.X * 2, height: itemHeight }
+    : {
+        width: initialWidth,
+        height: chart.height - restAreaHeight,
+      };
 }
 
 export function showCircleLegend(options: BubbleChartOptions) {
@@ -175,10 +293,6 @@ function getItemWidth(
   );
 }
 
-function getInitialWidth(options: Options) {
-  return isNumber(options.chart?.width) ? options.chart!.width : 0;
-}
-
 function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
   const colors = Object.values(series).reduce<string[]>(
     (acc, cur) => (cur && cur.colors ? [...acc, ...cur.colors] : acc),
@@ -212,6 +326,8 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
     iconType: getIconType(type),
     chartType: type,
+    rowIndex: 0,
+    columnIndex: 0,
   }));
 
   return {
@@ -219,6 +335,72 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     useScatterChartIcon,
     data,
   } as Legend;
+}
+
+function getNextColumnRowIndex(params: {
+  rowCount: number;
+  columnCount: number;
+  verticalAlign: boolean;
+  legendCount: number;
+  rowIndex: number;
+  columnIndex: number;
+}) {
+  const { verticalAlign, columnCount, rowCount, legendCount } = params;
+  let { rowIndex, columnIndex } = params;
+
+  if (verticalAlign) {
+    const maxLen = legendCount / rowCount;
+    if (maxLen - 1 > columnIndex) {
+      columnIndex += 1;
+    } else {
+      rowIndex += 1;
+      columnIndex = 0;
+    }
+  } else {
+    const maxLen = legendCount / columnCount;
+    if (maxLen - 1 > rowIndex) {
+      rowIndex += 1;
+    } else {
+      columnIndex += 1;
+      rowIndex = 0;
+    }
+  }
+
+  return { rowIndex, columnIndex };
+}
+
+function getDataWithIndex(
+  legendData: LegendDataList,
+  rowCount: number,
+  columnCount: number,
+  legendCount: number,
+  verticalAlign: boolean
+): LegendDataList {
+  const { data } = legendData.reduce(
+    (acc, datum) => {
+      return {
+        data: [
+          ...acc.data,
+          {
+            ...datum,
+            rowIndex: acc.rowIndex,
+            columnIndex: acc.columnIndex,
+          },
+        ],
+        ...getNextColumnRowIndex({
+          rowCount,
+          columnCount,
+          verticalAlign,
+          legendCount,
+          rowIndex: acc.rowIndex,
+          columnIndex: acc.columnIndex,
+        }),
+      };
+    },
+    { data: [] as LegendDataList, rowIndex: 0, columnIndex: 0 }
+  );
+
+  return data;
 }
 
 const legend: StoreModule = {
@@ -238,37 +420,56 @@ const legend: StoreModule = {
         legend: { data: legendData, useSpectrumLegend },
         series,
         options,
+        chart,
+        theme,
       } = state;
       const align = getAlign(options);
       const visible = showLegend(options, series);
       const checkbox = showCheckbox(options);
-      const initialWidth = Math.min(getInitialWidth(options) / 10, 150);
+      const initialWidth = Math.min(chart.width / 5, INITIAL_LEGEND_WIDTH);
+      const verticalAlign = isVerticalAlign(align);
+      const circleLegendVisible = series.bubble
+        ? showCircleLegend(options as BubbleChartOptions)
+        : false;
+
       const legendWidths = legendData.map(({ width }) => width);
-      const legendWidth = calculateLegendWidth({
-        defaultWidth: initialWidth,
+      const itemHeight = getLegendItemHeight(theme.legend.label!.fontSize!);
+      const { legendWidth, legendHeight, rowCount, columnCount } = calculateLegendSize({
+        initialWidth,
         legendWidths,
         useSpectrumLegend,
         options,
-        align,
+        verticalAlign,
         visible,
         checkbox,
+        chart,
+        itemHeight,
+        circleLegendVisible,
       });
 
       const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
       const isScatterChart = !!series.scatter;
 
-      const circleLegendWidth = isVerticalAlign(align)
-        ? initialWidth
-        : Math.max(initialWidth, legendWidth);
-      const circleLegendVisible = series.bubble
-        ? showCircleLegend(options as BubbleChartOptions)
-        : false;
+      const circleLegendWidth =
+        legendWidth === 0
+          ? INITIAL_CIRCLE_LEGEND_WIDTH
+          : Math.min(legendWidth, INITIAL_CIRCLE_LEGEND_WIDTH);
+
+      const dataWithIndex = getDataWithIndex(
+        legendData,
+        rowCount,
+        columnCount,
+        legendWidths.length,
+        verticalAlign
+      );
 
       extend(state.legend, {
         visible,
         align,
         showCheckbox: checkbox,
         width: legendWidth,
+        height: legendHeight,
+        data: dataWithIndex,
       });
 
       extend(state.circleLegend, {

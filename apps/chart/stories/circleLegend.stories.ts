@@ -1,8 +1,9 @@
 import { BubbleChartOptions, BubbleSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { lifeExpectancyPerGDPData } from './data';
+import { lifeExpectancyPerGDPData, circleLegendOverlapData } from './data';
 import BubbleChart from '@src/charts/bubbleChart';
 import '@src/css/chart.css';
+import { radios } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart|Circle Legend',
@@ -80,6 +81,20 @@ export const circleLegendWithoutLegend = () => {
   const { el } = createChart(lifeExpectancyPerGDPData, {
     legend: {
       visible: false,
+    },
+  });
+
+  return el;
+};
+
+export const legendItemOverlap = () => {
+  const { el } = createChart(circleLegendOverlapData, {
+    legend: {
+      align: radios(
+        'align',
+        { bottom: 'bottom', top: 'top', left: 'left', right: 'right' },
+        'right'
+      ),
     },
   });
 

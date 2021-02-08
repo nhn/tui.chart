@@ -12,6 +12,8 @@ type LegendData = {
   chartType: ChartType;
   iconType: LegendIconType;
   useScatterChartIcon?: boolean;
+  rowIndex: number;
+  columnIndex: number;
 } & Point;
 
 export type LegendModel = {
