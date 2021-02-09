@@ -104,8 +104,6 @@ export interface BoxPlotChartProps {
  * @extends Chart
  */
 export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
-  modules = [dataRange, scale, axes, plot];
-
   constructor({ el, options, data: { series, categories } }: BoxPlotChartProps) {
     super({
       el,
@@ -114,6 +112,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
         boxPlot: series as BoxPlotSeriesType[],
       },
       categories,
+      modules: [dataRange, scale, axes, plot],
     });
   }
 

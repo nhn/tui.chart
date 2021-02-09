@@ -117,13 +117,12 @@ export interface LineScatterChartProps {
  * @extends Chart
  */
 export default class LineScatterChart extends Chart<LineScatterChartOptions> {
-  modules = [dataRange, scale, axes, plot];
-
   constructor(props: LineScatterChartProps) {
     super({
       el: props.el,
       options: props.options,
       series: props.data.series as RawSeries,
+      modules: [dataRange, scale, axes, plot],
     });
   }
 

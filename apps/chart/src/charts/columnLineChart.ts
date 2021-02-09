@@ -140,14 +140,13 @@ function hasColumnLineUsingPointEventType(respondersModel: RespondersModel) {
  * @extends Chart
  */
 export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, plot];
-
   constructor({ el, options, data: { series, categories } }: ColumnLineChartProps) {
     super({
       el,
       options,
       series: series as RawSeries,
       categories,
+      modules: [stackSeriesData, dataRange, scale, axes, plot],
     });
   }
 
