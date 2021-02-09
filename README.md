@@ -86,6 +86,10 @@ The TOAST UI Chart provides many types of charts to visualize the various forms 
 | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://user-images.githubusercontent.com/35371660/104140692-fc4e1280-53f5-11eb-8ae7-05568ed6f333.png" width="300" alt='lineArea chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104156268-160a4c80-542c-11eb-9893-9adb052727da.png" width="300" alt='lineScatter chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140778-72527980-53f6-11eb-83ab-ad0883d8593b.png" width="300" alt='columnLine chart'/> | <img src="https://user-images.githubusercontent.com/35371660/104140795-8eeeb180-53f6-11eb-833e-ae1cdb9d8879.png" width="300" alt='nestedPie chart'/> |
 
+| [RadialBar](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-radialBar.md)                                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://user-images.githubusercontent.com/43128697/107403382-64545d80-6b48-11eb-8c85-e2b433ad7a74.png" width="300" alt="radialBar chart"> |
+
 - Stack Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
 - Diverging Options(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
 - Change Event Detect Type(Explained in [each chart guide](https://github.com/nhn/tui.chart/tree/main/docs))
@@ -115,6 +119,7 @@ In addition, a variety of powerful features can be found on the demo page below.
 - [Pie Chart](http://nhn.github.io/tui.chart/latest/tutorial-example09-01-pie-chart-basic)
 - [NestedPie Chart](http://nhn.github.io/tui.chart/latest/tutorial-example16-01-NestedPie-chart-basic)
 - [Radar Chart](http://nhn.github.io/tui.chart/latest/tutorial-example10-01-radar-chart-basic)
+- [RadialBar Chart](http://nhn.github.io/tui.chart/latest/tutorial-example18-01-radialBar-chart-basic)
 
 Here are more [examples](http://nhn.github.io/tui.chart/latest/tutorial-example01-01-area-chart-basic) and play with TOAST UI Chart!
 

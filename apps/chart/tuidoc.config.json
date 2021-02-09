@@ -164,7 +164,11 @@
       "example17-02-tooltip-template": "17.2 [Common] Tooltip Template",
       "example17-03-scale": "17.3 [Common] Scale Options",
       "example17-04-tick-label-interval": "17.4 [Common] Tick, Label Interval",
-      "example17-05-component-theme": "17.5 [Common] Common Component Theme"
+      "example17-05-component-theme": "17.5 [Common] Common Component Theme",
+      "example18-01-radialBar-chart-basic": "18.1 [RadialBar Chart] Basic",
+      "example18-02-radialBar-chart-selectable-event": "18.2 [RadialBar Chart] Selectable options, select even",
+      "example18-03-radialBar-chart-dataLabels": "18.3 [RadialBar Chart] Data Labelss",
+      "example18-04-radialBar-chart-theme": "18.4 [RadialBar Chart] Theme"
     }
   },
   "pathPrefix": "tui.chart"
