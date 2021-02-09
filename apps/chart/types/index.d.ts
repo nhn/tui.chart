@@ -51,6 +51,9 @@ import {
   TreemapSeriesType,
   NestedPieSeriesType,
   AxisLabelInfo,
+  RadialBarSeriesType,
+  RadialBarSeriesData,
+  RadialBarChartOptions,
 } from '@t/options';
 import { LineChartProps } from '@src/charts/lineChart';
 import { AreaChartProps } from '@src/charts/areaChart';
@@ -73,6 +76,7 @@ import { CustomEventType, EventListener } from '@src/eventEmitter';
 import { BoxPlotChartProps } from '@src/charts/boxPlotChart';
 import { AddSeriesDataInfo, SelectSeriesInfo } from '@src/charts/chart';
 import { TooltipData as TooltipDataInfo } from '@t/components/tooltip';
+import { RadialBarChartProps } from '@src/charts/radialBarChart';
 
 declare namespace toastui {
   export class Chart {
@@ -491,6 +495,26 @@ export class ColumnLineChart extends BaseChart {
   public hideTooltip(): void;
 }
 
+export class RadialBarChart extends BaseChart {
+  constructor(props: RadialBarChartProps);
+
+  public addSeries(data: RadialBarSeriesType): void;
+
+  public setData(data: RadialBarSeriesData): void;
+
+  public hideSeriesDataLabel(): void;
+
+  public showSeriesDataLabel(): void;
+
+  public setOptions(options: RadialBarChartOptions): void;
+
+  public updateOptions(options: RadialBarChartOptions): void;
+
+  public showTooltip(seriesInfo: SelectSeriesInfo): void;
+
+  public hideTooltip(): void;
+}
+
 export {
   BaseOptions,
   AreaChartOptions,
@@ -543,6 +567,9 @@ export {
   EventListener,
   TooltipDataInfo,
   AxisLabelInfo,
+  RadialBarChartProps,
+  RadialBarChartOptions,
+  RadialBarSeriesData,
 };
 
 export default toastui.Chart;

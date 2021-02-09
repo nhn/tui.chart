@@ -40,22 +40,29 @@ type SeriesDataLabel = {
   name: DataLabelSeriesType;
 };
 
-function getLabelInfo(model: SeriesDataLabelType, labelOptions: DataLabelOption, rect: Rect) {
+function getLabelInfo(
+  model: SeriesDataLabelType,
+  labelOptions: DataLabelOption,
+  rect: Rect,
+  name: DataLabelSeriesType
+) {
   const { type } = model;
   const dataLabel: DataLabel[] = [];
 
   if (type === 'point') {
     dataLabel.push(makePointLabelInfo(model as PointDataLabel, labelOptions, rect));
   } else if (type === 'sector') {
-    dataLabel.push(makeSectorLabelInfo(model as RadialDataLabel, labelOptions));
+    if (name === 'radialBar') {
+      dataLabel.push(makeSectorBarLabelInfo(model as RadialBarDataLabel, labelOptions));
+    } else {
+      dataLabel.push(makeSectorLabelInfo(model as RadialDataLabel, labelOptions));
 
-    if (labelOptions.pieSeriesName?.visible) {
-      const seriesNameLabel = makePieSeriesNameLabelInfo(model as RadialDataLabel, labelOptions);
+      if (labelOptions.pieSeriesName?.visible) {
+        const seriesNameLabel = makePieSeriesNameLabelInfo(model as RadialDataLabel, labelOptions);
 
-      dataLabel.push(seriesNameLabel);
+        dataLabel.push(seriesNameLabel);
+      }
     }
-  } else if (type === 'sectorBar') {
-    dataLabel.push(makeSectorBarLabelInfo(model as RadialBarDataLabel, labelOptions));
   } else if (type === 'line') {
     dataLabel.push(makeLineLabelInfo(model as LineDataLabel, labelOptions));
   } else {
@@ -138,7 +145,7 @@ export default class DataLabels extends Component {
         return;
       }
 
-      labels.splice(labels.length, 0, ...getLabelInfo(model, labelOptions, this.rect));
+      labels.splice(labels.length, 0, ...getLabelInfo(model, labelOptions, this.rect, name));
     });
 
     this.dataLabelsMap[name] = { data: labels, options: dataLabelOptions };

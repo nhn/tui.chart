@@ -1,8 +1,8 @@
 import { RectModel } from './series';
-import { RectLabelModel, LabelModel } from './axis';
+import { BubbleLabelModel, LabelModel } from '@t/brush/label';
 
 type RadialAxisModels = {
   dot: RectModel[];
-  yAxisLabel: RectLabelModel[];
-  circularAxisLabel: LabelModel[];
+  yAxisLabel: BubbleLabelModel[];
+  radialAxisLabel: LabelModel[];
 };

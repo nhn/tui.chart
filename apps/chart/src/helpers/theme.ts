@@ -1,6 +1,7 @@
 import { RawSeries } from '@t/store/store';
 import { Theme, CheckAnchorPieSeries } from '@t/theme';
 import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
+import { rgba } from './color';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -150,6 +151,8 @@ export function makeDefaultTheme(globalFontFamily = 'Arial', hasRadarSeries = fa
           borderRadius: 7,
           paddingX: 7,
           paddingY: 2,
+          borderColor: 'rgba(0, 0, 0, 0)',
+          borderWidth: 1,
         },
       },
       width: 1,
@@ -162,7 +165,6 @@ export function makeDefaultTheme(globalFontFamily = 'Arial', hasRadarSeries = fa
       color: '#333333',
     },
     radialAxis: {
-      title: { ...axisTitleTheme },
       label: { ...commonTextTheme },
       lineWidth: 1,
       strokeStyle: 'rgba(0, 0, 0, 0.05)',
@@ -555,11 +557,11 @@ function getSeriesTheme(
     case 'radialBar':
       return {
         areaOpacity: 1,
-        strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(255, 255, 255, 0)',
-        lineWidth: isNestedPieChart ? 1 : 0,
+        strokeStyle: isNestedPieChart ? '#fff' : 'rgba(255, 255, 255, 0)',
+        lineWidth: 0,
         hover: {
           lineWidth: DEFAULT_PIE_LINE_WIDTH,
-          strokeStyle: '#ffffff',
+          strokeStyle: '#fff',
           shadowColor: '#cccccc',
           shadowBlur: 5,
           shadowOffsetX: 0,
@@ -571,7 +573,7 @@ function getSeriesTheme(
         },
         select: {
           lineWidth: DEFAULT_PIE_LINE_WIDTH,
-          strokeStyle: '#ffffff',
+          strokeStyle: '#fff',
           shadowColor: '#cccccc',
           shadowBlur: 5,
           shadowOffsetX: 0,
@@ -582,7 +584,7 @@ function getSeriesTheme(
           areaOpacity: 1,
           groupedSector: {
             color: '#000000',
-            opacity: 0.05,
+            opacity: 0.2,
           },
         },
         dataLabels: {

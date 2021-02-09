@@ -1,5 +1,5 @@
 import RadialBarChart from '@src/charts/radialBarChart';
-import { budgetData, budgetData2WithNull } from './data';
+import { olympicMedalData, olympicMedalDataWithNull } from './data';
 import { deepMergedCopy } from '@src/helpers/utils';
 import '@src/css/chart.css';
 import { RadialBarChartOptions } from '@t/options';
@@ -15,7 +15,7 @@ const defaultOptions: RadialBarChartOptions = {
   chart: {
     width,
     height,
-    title: 'Monthly Revenue',
+    title: 'Winter Olympic medals per existing country (TOP 5)',
   },
 };
 
@@ -36,19 +36,62 @@ function createChart(data, customOptions: Record<string, any> = {}) {
 }
 
 export const basic = () => {
-  const { el } = createChart(budgetData);
+  const { el } = createChart(olympicMedalData);
 
   return el;
 };
 
 export const basicWithNull = () => {
-  const { el } = createChart(budgetData2WithNull);
+  const { el } = createChart(olympicMedalDataWithNull);
+
+  return el;
+};
+
+export const counterClockwise = () => {
+  const { el } = createChart(olympicMedalData, {
+    series: {
+      clockwise: false,
+    },
+  });
+
+  return el;
+};
+
+export const radiusRange = () => {
+  const { el } = createChart(olympicMedalData, {
+    series: {
+      radiusRange: {
+        inner: 50,
+        outer: '90%',
+      },
+    },
+  });
+
+  return el;
+};
+
+export const reponsive = () => {
+  const { el } = createChart(olympicMedalData, {
+    chart: { width: 'auto', height: 'auto' },
+    responsive: {
+      rules: [
+        {
+          condition: ({ width: w }) => {
+            return w < 400;
+          },
+          options: {
+            legend: { visible: false },
+          },
+        },
+      ],
+    },
+  });
 
   return el;
 };
 
 export const selectable = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(olympicMedalData, {
     series: {
       selectable: true,
       eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'point'),
@@ -59,7 +102,7 @@ export const selectable = () => {
 };
 
 export const dataLabels = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(olympicMedalData, {
     series: {
       dataLabels: {
         visible: true,
@@ -72,32 +115,41 @@ export const dataLabels = () => {
 };
 
 export const theme = () => {
-  const { el } = createChart(budgetData, {
-    xAxis: {
-      label: {
-        margin: 15,
-      },
+  const { el } = createChart(olympicMedalData, {
+    yAxis: {
+      label: { margin: 10 },
+    },
+    radialAxis: {
+      label: { margin: 10 },
     },
     theme: {
       series: {
         barWidth: 20,
-        colors: ['#ef476f', '#ffd166', '#06d6a0', '#118ab2'],
+        colors: ['#ffd700', '#c0c0c0', '#cd7f32'],
+        hover: {
+          color: '#ff0000',
+          groupedSector: {
+            color: '#ff0000',
+            opacity: 0.3,
+          },
+        },
       },
       yAxis: {
         label: {
           color: '#fff',
+          align: 'center',
           textBubble: {
             visible: true,
             borderRadius: 5,
             backgroundColor: 'rgba(7, 59, 76, 1)',
-            paddingX: 2,
-            paddingY: 2,
+            paddingX: 5,
+            paddingY: 4,
           },
         },
       },
       radialAxis: {
-        strokeStyle: 'rgba(7, 59, 76, 0.05)',
-        dotColor: 'rgba(7, 59, 76, 0.5)',
+        strokeStyle: 'rgba(7, 59, 76, 0.3)',
+        dotColor: 'rgba(7, 59, 76, 0.8)',
         label: {
           color: '#073b4c',
         },
@@ -109,7 +161,7 @@ export const theme = () => {
 };
 
 export const themeWithDataLabels = () => {
-  const { el } = createChart(budgetData, {
+  const { el } = createChart(olympicMedalData, {
     series: {
       dataLabels: {
         visible: true,
@@ -119,12 +171,14 @@ export const themeWithDataLabels = () => {
     theme: {
       series: {
         dataLabels: {
-          fontSize: 10,
+          fontFamily: 'monaco',
+          fontSize: 12,
+          fontWeight: 600,
           useSeriesColor: true,
-          textBubble: {
-            visible: true,
-            borderRadius: 5,
-          },
+          lineWidth: 2,
+          textStrokeColor: '#ffffff',
+          shadowColor: '#ffffff',
+          shadowBlur: 6,
         },
       },
     },
@@ -132,5 +186,3 @@ export const themeWithDataLabels = () => {
 
   return el;
 };
-
-// @TODO: clockwise, angleRange 고려

@@ -2,7 +2,6 @@ import Chart, { SelectSeriesInfo } from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
-import axes from '@src/store/axes';
 import radialAxes from '@src/store/radialAxes';
 
 import Legend from '@src/component/legend';
@@ -56,13 +55,14 @@ export interface RadarChartProps {
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *       @param {boolean} [props.options.series.showDot=false] - Whether to show dot or not.
  *       @param {boolean} [props.options.series.showArea=false] - Whether to fill area or not.
- *     @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *     @param {Object} [props.options.radialAxis]
+ *       @param {Object} [props.options.radialAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.radialAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.radialAxis.scale] - Option to adjust axis minimum, maximum, step size.
+ *     @param {Object} [props.options.yAxis]
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
- *       @param {number} [props.options.yAxis.width] - Width of yAxis.
- *       @param {number} [props.options.yAxis.height] - Height of yAxis.
  *     @param {Object} [props.options.plot]
  *       @param {number} [props.options.plot.width] - Width of plot.
  *       @param {number} [props.options.plot.height] - Height of plot.
@@ -95,7 +95,7 @@ export interface RadarChartProps {
  * @extends Chart
  */
 export default class RadarChart extends Chart<RadarChartOptions> {
-  modules = [dataRange, scale, axes, radialAxes];
+  modules = [dataRange, scale, radialAxes];
 
   constructor({ el, options, data }: RadarChartProps) {
     super({

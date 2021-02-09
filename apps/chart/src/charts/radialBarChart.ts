@@ -3,7 +3,6 @@ import Chart, { SelectSeriesInfo } from './chart';
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
-import axes from '@src/store/axes';
 import radialAxes from '@src/store/radialAxes';
 
 import Tooltip from '@src/component/tooltip';
@@ -36,7 +35,7 @@ export interface RadialBarChartProps {
 
 /**
  * @class
- * @classdesc Pie Chart
+ * @classdesc RadialBar Chart
  * @param {Object} props
  *   @param {HTMLElement} props.el - The target element to create chart.
  *   @param {Object} props.data - Data for making Pie Chart.
@@ -56,10 +55,18 @@ export interface RadialBarChartProps {
  *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series]
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
+ *       @param {string} [props.options.series.eventDetectType] - Event detect type. 'grouped', 'point' is available.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *       @param {Array<number>|Array<string>} [props.options.series.radiusRange] - Specifies the radius of the circle drawn. It is specified by entering a number or percent string value in start and end.
- *       @param {Array<number>} [props.options.series.angleRange] - The range of angles to which the circle will be drawn. It is specified by putting number in start and end.
  *       @param {boolean} [props.options.series.clockwise] - Whether it will be drawn clockwise.
+ *     @param {Object} [props.options.radialAxis]
+ *       @param {Object} [props.options.radialAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.radialAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.radialAxis.scale] - Option to adjust axis minimum, maximum, step size.
+ *     @param {Object} [props.options.yAxis]
+ *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *     @param {Object} [props.options.legend]
  *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
@@ -86,7 +93,7 @@ export interface RadialBarChartProps {
  * @extends Chart
  */
 export default class RadialBarChart extends Chart<RadialBarChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, axes, radialAxes];
+  modules = [stackSeriesData, dataRange, scale, radialAxes];
 
   constructor({ el, options, data }: RadialBarChartProps) {
     super({
@@ -107,11 +114,11 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
     this.componentManager.add(Legend);
     this.componentManager.add(RadialPlot);
     this.componentManager.add(RadialBarSeries);
-    this.componentManager.add(RadialAxis);
-    this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
+    this.componentManager.add(RadialAxis);
+    this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
     this.painter.addGroups([
@@ -129,12 +136,12 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * Add series.
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
-   *   @param {Array<Object>} data.data - Array of data to be added.
+   *   @param {Array<number>} data.data - Array of data to be added.
    * @api
    * @example
    * chart.addSeries({
    *   name: 'newSeries',
-   *   data: 10,
+   *   data: [10, 20, 30, 40],
    * });
    */
   public addSeries(data: RadialBarSeriesType) {
@@ -148,10 +155,16 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @api
    * @example
    * chart.setData({
-   *   categories: ['A'],
+   *   categories: ['1', '2', '3'],
    *   series: [
-   *     {name: 'a', data: 10},
-   *     {name: 'b', data: 20},
+   *     {
+   *       name: 'new series',
+   *       data: [1, 2, 3],
+   *     },
+   *     {
+   *       name: 'new series2',
+   *       data: [4, 5, 6],
+   *     }
    *   ]
    * });
    */
@@ -193,15 +206,12 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * chart.setOptions({
    *   chart: {
    *     width: 500,
-   *     height: 'auto',
-   *     title: 'Energy Usage',
+   *     height: 500,
+   *     title: 'Olympic Medals',
    *   },
    *   series: {
-   *     selectable: true,
-   *   },
-   *   tooltip: {
-   *     formatter: (value) => `${value}kWh`,
-   *   },
+   *     selectable: true
+   *   }
    * });
    */
   public setOptions = (options: RadialBarChartOptions) => {
@@ -216,12 +226,11 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @example
    * chart.updateOptions({
    *   chart: {
-   *     height: 'auto',
-   *     title: 'Energy Usage',
+   *     title: 'Olympic Medals',
    *   },
-   *   tooltip: {
-   *     formatter: (value) => `${value}kWh`,
-   *   },
+   *   series: {
+   *     eventDetectType: 'grouped'
+   *   }
    * });
    */
   public updateOptions = (options: RadialBarChartOptions) => {
@@ -231,12 +240,16 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
 
   /**
    * Show tooltip.
-   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.seriesIndex - Index of series.
-   *      @param {number} seriesInfo.alias - alias name.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed. If eventType is 'grouped', only index is needed.
+   *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only index is needed.
+   *      @param {number} [seriesInfo.seriesIndex] - Index of series
    * @api
    * @example
-   * chart.showTooltip({seriesIndex: 1, alias: 'name'});
+   * // eventDetectType is 'grouped'
+   * chart.showTooltip({index: 1);
+   *
+   * // eventDetectType is 'point'
+   * chart.showTooltip({index: 1, seriesIndex: 2});
    */
   public showTooltip = (seriesInfo: SelectSeriesInfo) => {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });

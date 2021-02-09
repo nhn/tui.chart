@@ -512,6 +512,7 @@ export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
   plot?: BaseSizeOptions & { type?: RadarPlotType };
   yAxis?: BaseAxisOptions;
+  radialAxis?: Pick<BaseAxisOptions, 'label' | 'tick' | 'scale'>;
   theme?: RadarChartThemeOptions;
 }
 
@@ -655,16 +656,19 @@ export interface RadialBarSeriesData {
   series: RadialBarSeriesType[];
 }
 
+type RadialAxisOptions = Pick<BaseAxisOptions, 'label' | 'tick' | 'scale'>;
+
 export interface RadialBarChartOptions extends BaseOptions {
   yAxis?: BaseAxisOptions;
+  radialAxis?: RadialAxisOptions;
   series?: RadialBarSeriesOptions;
   theme?: RadialBarChartThemeOptions;
 }
 
 interface RadialBarSeriesOptions extends BaseSeriesOptions {
-  angleRange?: {
-    start?: number;
-    end?: number;
+  radiusRange?: {
+    inner?: number;
+    outer?: number;
   };
   clockwise?: boolean;
   eventDetectType?: CicleTypeEventDetectType;

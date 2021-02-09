@@ -182,7 +182,6 @@ export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
-  radialAxis?: RadialAxisData | RadialBarAxisData;
   secondaryYAxis?: AxisData;
 };
 
@@ -228,28 +227,6 @@ export interface CenterYAxisData extends ValueAxisData {
   yAxisHeight: number;
 }
 
-export type RadialAxisData = {
-  labels: string[];
-  axisSize: number;
-  centerX: number;
-  centerY: number;
-  labelInterval: number;
-  maxLabelWidth: number;
-  maxLabelHeight: number;
-};
-
-type RadialBarAxisData = {
-  labels: string[];
-  axisSize: number;
-  centerX: number;
-  centerY: number;
-  tickPositions: number[];
-  labelInterval: number;
-  tickInterval: number;
-  tickDistance: number;
-  viewLabels: ViewAxisLabel[];
-};
-
 export interface TreemapSeriesData {
   id: string;
   parentId: string;
@@ -271,6 +248,44 @@ export type ChartOptions = {
   animation?: AnimationOptions;
 } & Size;
 
+type RadialAxisData = {
+  labels: string[];
+  axisSize: number;
+  centerX: number;
+  centerY: number;
+  labelInterval: number;
+  labelMargin: number;
+  maxLabelWidth: number;
+  maxLabelHeight: number;
+  degree: number;
+  tickInterval: number;
+  totalAngle: number;
+  drawingStartAngle: number;
+  clockwise: boolean;
+  outerRadius: number;
+};
+
+type RadialYAxisData = {
+  labels: string[];
+  axisSize: number;
+  centerX: number;
+  centerY: number;
+  labelInterval: number;
+  labelMargin: number;
+  maxLabelWidth: number;
+  maxLabelHeight: number;
+  tickDistance: number;
+  radiusRanges: number[];
+  pointOnColumn: boolean;
+  innerRadius: number;
+  outerRadius: number;
+  labelAlign: CanvasTextAlign;
+};
+
+type RadialAxes = {
+  radialAxis: RadialAxisData;
+  yAxis: RadialYAxisData;
+};
 export interface ChartState<T extends Options> {
   chart: ChartOptions;
   layout: Layout;
@@ -281,11 +296,7 @@ export interface ChartState<T extends Options> {
   shiftRange?: RangeDataType<number>;
   // 기존의 limitMap
   axes: Axes;
-  radialAxes: {
-    // @TODO: radialAxes 스토어 모듈 타입 정의 필요
-    circularAxis: object;
-    yAxis: object;
-  };
+  radialAxes: RadialAxes;
   dataRange: DataRange;
   theme: Theme;
   options: T;

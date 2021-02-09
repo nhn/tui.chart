@@ -344,10 +344,6 @@ const axes: StoreModule = {
       axesState.centerYAxis = {} as CenterYAxisData;
     }
 
-    if (series.radar || series.radialBar) {
-      axesState.radialAxis = {} as RadialAxisData;
-    }
-
     if (secondaryYAxis) {
       axesState.secondaryYAxis = {} as AxisData;
     }

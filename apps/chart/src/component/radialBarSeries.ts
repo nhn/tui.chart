@@ -2,21 +2,25 @@ import Component from './component';
 import { SectorModel, SectorResponderModel } from '@t/components/series';
 import { RadialBarChartSeriesTheme, GroupedSector } from '@t/theme';
 import {
-  isUndefined,
   isNumber,
   pick,
   isNull,
   calculateSizeWithPercentString,
+  deepCopy,
 } from '@src/helpers/utils';
 import { message } from '@src/message';
-import { ChartState, StackDataValues, ScaleData } from '@t/store/store';
-import { RadialBarChartOptions, RadialBarSeriesType, CicleTypeEventDetectType } from '@t/options';
-import { SelectSeriesHandlerParams } from '@src/charts/chart';
+import { ChartState, StackDataValues, ScaleData, RadialYAxisData } from '@t/store/store';
+import {
+  RadialBarChartOptions,
+  RadialBarSeriesType,
+  CicleTypeEventDetectType,
+  RadialBarSeriesOptions,
+} from '@t/options';
+import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
 import { RespondersThemeType } from '@src/helpers/responders';
 import {
   getRadialAnchorPosition,
   makeAnchorPositionParam,
-  initSectorOptions,
   withinRadian,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
@@ -24,6 +28,9 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getTotalAngle } from '@src/helpers/pieSeries';
+import { RadialBarDataLabel } from '@t/components/dataLabels';
+import { isSameArray } from '@src/helpers/arrayUtil';
+import { isAvailableShowTooltipInfo } from '@src/helpers/validation';
 
 type RadiusRange = { inner: number; outer: number };
 
@@ -40,7 +47,7 @@ type RenderOptions = {
 
 type RadialBarSeriesModels = Record<string, SectorModel[]>;
 
-const PADDING = 4;
+const PADDING = 5;
 
 function getRadiusRanges(radiusRanges: number[], padding: number) {
   return radiusRanges.reduce<RadiusRange[]>((acc, cur, index) => {
@@ -86,6 +93,7 @@ function makeGroupedSectorResponderModel(
         name: categories[index],
         clockwise,
         drawingStartAngle,
+        index,
       } as SectorResponderModel)
   );
 }
@@ -101,7 +109,7 @@ export default class RadialBarSeries extends Component {
 
   eventDetectType: CicleTypeEventDetectType = 'point';
 
-  tooltipSectorMap!: Record<string, SectorResponderModel[]>;
+  tooltipSectorMap!: Record<number, SectorResponderModel[]>;
 
   theme!: Required<RadialBarChartSeriesTheme>;
 
@@ -165,20 +173,25 @@ export default class RadialBarSeries extends Component {
     this.selectable = this.getSelectableOption(options);
     this.setEventDetectType(options);
 
+    const initialCategoryMap = categories.reduce((acc, category) => {
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+
+      return acc;
+    }, {});
     const seriesData = series.radialBar.data as Required<RadialBarSeriesType>[];
-    const renderOptions = this.makeRenderOptions(options, radialAxes.yAxis, scale.xAxis);
-    const seriesModelData = this.makeSeriesModelData(
+    const renderOptions = this.makeRenderOptions(radialAxes.yAxis, scale.xAxis, options?.series);
+    const { categoryMap, seriesModels } = this.makeSeriesModelData(
       seriesData,
       stackSeries.radialBar.stackData as StackDataValues,
       renderOptions,
-      categories
+      initialCategoryMap
     );
-    const tooltipData = this.makeTooltipData(seriesModelData);
-    const categoryMap = this.makeCategoryMap(seriesModelData);
-
+    const tooltipData = this.makeTooltipData(seriesModels, categories);
     this.models = categoryMap;
 
-    if (!this.drawModels) {
+    if (!this.drawModels || this.hasChangedCategory()) {
       this.drawModels = {};
       Object.keys(categoryMap).forEach((category) => {
         this.drawModels[category] = categoryMap[category].map((m) => ({
@@ -189,62 +202,54 @@ export default class RadialBarSeries extends Component {
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
-      const dataLabelData = seriesModelData.reduce((acc, data) => {
-        return [...acc, { ...data, type: 'sectorBar', theme: this.theme.dataLabels }];
+      const dataLabelData = seriesModels.reduce<RadialBarDataLabel[]>((acc, data) => {
+        return [...acc, { ...data, type: 'sector', theme: this.theme.dataLabels }];
       }, []);
 
       this.renderDataLabels(dataLabelData);
     }
 
-    this.tooltipSectorMap = this.makeTooltipSectorMap(seriesModelData, tooltipData);
+    this.tooltipSectorMap = this.makeTooltipSectorMap(seriesModels, tooltipData);
 
     this.responders =
       this.eventDetectType === 'grouped'
         ? makeGroupedSectorResponderModel(radialAxes.yAxis.radiusRanges, renderOptions, categories)
-        : seriesModelData.map((m, index) => ({
+        : seriesModels.map((m, index) => ({
             ...m,
-            data: { ...tooltipData[index], percentValue: m.percentValue },
+            data: { ...tooltipData[index] },
           }));
   }
 
-  makeTooltipSectorMap(seriesModels: SectorModel[], tooltipData: TooltipData[]) {
+  private makeTooltipSectorMap(seriesModels: SectorModel[], tooltipData: TooltipData[]) {
     return seriesModels.reduce((acc, cur, index) => {
-      const category = cur.category!;
-
-      if (!acc[category]) {
-        acc[category] = [];
+      const categoryIndex = cur.categoryIndex!;
+      if (!acc[categoryIndex]) {
+        acc[categoryIndex] = [];
       }
 
-      acc[category].push({
+      acc[categoryIndex].push({
         ...cur,
-        data: { ...tooltipData[index], percentValue: cur.percentValue },
+        data: { ...tooltipData[index] },
       });
 
       return acc;
     }, {});
   }
 
-  protected setEventDetectType(options?: RadialBarChartOptions) {
+  private hasChangedCategory() {
+    // when using setData API, check categories
+    return this.drawModels
+      ? !isSameArray(Object.keys(this.drawModels), Object.keys(this.models))
+      : false;
+  }
+
+  private setEventDetectType(options?: RadialBarChartOptions) {
     if (options?.series?.eventDetectType) {
       this.eventDetectType = options.series.eventDetectType;
     }
   }
 
-  makeCategoryMap(seriesModel: SectorModel[]): Record<string, SectorModel[]> {
-    return seriesModel.reduce((acc, cur) => {
-      const category = cur.category!;
-
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-
-      acc[category].push({ ...cur });
-
-      return acc;
-    }, {});
-  }
-
-  getBarWidth(tickDistance: number, axisSize: number) {
+  private getBarWidth(tickDistance: number, axisSize: number) {
     const { barWidth } = this.theme;
 
     return barWidth
@@ -252,16 +257,18 @@ export default class RadialBarSeries extends Component {
       : tickDistance - PADDING * 2;
   }
 
-  makeRenderOptions(
-    options: RadialBarChartOptions,
-    { centerX, centerY, radiusRanges, tickDistance, axisSize }: any, // @TODO: change any type
-    scale: ScaleData
+  private makeRenderOptions(
+    { centerX, centerY, radiusRanges, tickDistance, axisSize }: RadialYAxisData,
+    scale: ScaleData,
+    options?: RadialBarSeriesOptions
   ) {
     const {
       limit: { max },
       stepSize,
     } = scale;
-    const { clockwise, startAngle, endAngle } = initSectorOptions(options?.series);
+    const clockwise = options?.clockwise ?? true;
+    const startAngle = 0;
+    const endAngle = 360;
     const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
     const barWidth = this.getBarWidth(tickDistance, axisSize);
     const padding = (tickDistance - barWidth) / 2;
@@ -281,12 +288,15 @@ export default class RadialBarSeries extends Component {
     };
   }
 
-  makeSeriesModelData(
+  private makeSeriesModelData(
     seriesData: RadialBarSeriesType[],
     stackSeriesData: StackDataValues,
     renderOptions: RenderOptions,
-    categories: string[]
-  ): SectorModel[] {
+    initialCategoryMap: Record<string, SectorModel[]>
+  ): {
+    seriesModels: SectorModel[];
+    categoryMap: Record<string, SectorModel[]>;
+  } {
     const {
       clockwise,
       cx,
@@ -299,6 +309,8 @@ export default class RadialBarSeries extends Component {
     const defaultStartDegree = clockwise ? 0 : 360;
     const { lineWidth, strokeStyle } = this.theme;
     const sectorModels: SectorModel[] = [];
+    const categories = Object.keys(initialCategoryMap);
+    const categoryMap = deepCopy(initialCategoryMap);
 
     stackSeriesData.forEach(({ values }, categoryIndex) => {
       const { inner, outer } = radiusRanges[categoryIndex];
@@ -306,7 +318,6 @@ export default class RadialBarSeries extends Component {
         if (!isNull(value)) {
           const degree =
             Math.max((value / scaleMaxLimitValue) * totalAngle, 1) * (clockwise ? 1 : -1);
-          const percentValue = (value / scaleMaxLimitValue) * 100;
           const prevModel = sectorModels[sectorModels.length - 1];
           const startDegree = seriesIndex && prevModel ? prevModel.degree.end : defaultStartDegree;
           const endDegree = clockwise
@@ -316,8 +327,7 @@ export default class RadialBarSeries extends Component {
             seriesIndex
           ] as Required<RadialBarSeriesType>;
           const color = this.getSeriesColor(name, seriesColor);
-
-          sectorModels.push({
+          const sectorModel: SectorModel = {
             type: 'sector',
             name,
             color: color!,
@@ -337,16 +347,18 @@ export default class RadialBarSeries extends Component {
             clockwise,
             drawingStartAngle,
             totalAngle,
-            percentValue,
-            category: categories[categoryIndex],
             seriesColor,
             seriesIndex,
-          });
+            categoryIndex,
+          };
+
+          categoryMap[categories[categoryIndex]].push(sectorModel);
+          sectorModels.push(sectorModel);
         }
       });
     });
 
-    return sectorModels;
+    return { seriesModels: sectorModels, categoryMap };
   }
 
   getSeriesColor(name: string, color: string) {
@@ -359,16 +371,16 @@ export default class RadialBarSeries extends Component {
       : getRGBA(color, areaOpacity);
   }
 
-  makeTooltipData(seriesModels: SectorModel[]): TooltipData[] {
+  makeTooltipData(seriesModels: SectorModel[], categories: string[]): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
-    seriesModels.forEach(({ seriesColor, name, value, category }) => {
+    seriesModels.forEach(({ seriesColor, name, value, categoryIndex }) => {
       if (!isNull(value)) {
         tooltipData.push({
           label: name!,
           color: seriesColor!,
           value: value!,
-          category: category ?? '',
+          category: isNumber(categoryIndex) ? categories[categoryIndex] : '',
         });
       }
     });
@@ -377,12 +389,16 @@ export default class RadialBarSeries extends Component {
   }
 
   makeTooltipResponder(responders: SectorResponderModel[]) {
+    const categories: string[] = Object.keys(this.models);
+
     return responders.map((responder) => ({
       ...responder,
       ...getRadialAnchorPosition(
         makeAnchorPositionParam(
           'center',
-          this.models[responder.category!].find(({ name }) => name === responder.name)!
+          this.models[categories[responder.categoryIndex!]].find(
+            ({ name }) => name === responder.name
+          )!
         )
       ),
     }));
@@ -393,7 +409,7 @@ export default class RadialBarSeries extends Component {
       return [];
     }
 
-    return this.tooltipSectorMap[responders[0].name!] ?? [];
+    return this.tooltipSectorMap[responders[0].index!] ?? [];
   }
 
   private getGroupedSector(responders: SectorResponderModel[], type: 'hover' | 'select') {
@@ -480,53 +496,70 @@ export default class RadialBarSeries extends Component {
     }));
   }
 
-  selectSeries = ({ seriesIndex, name }: SelectSeriesHandlerParams<RadialBarChartOptions>) => {
-    if (!isNumber(seriesIndex) || !isUndefined(name)) {
+  onMouseoutComponent = () => {
+    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
+    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
+
+    this.eventBus.emit('needDraw');
+  };
+
+  selectSeries = (info: SelectSeriesHandlerParams<RadialBarChartOptions>) => {
+    const { index, seriesIndex } = info;
+    const isAvailable =
+      isNumber(index) && (this.eventDetectType === 'grouped' || isNumber(seriesIndex));
+
+    if (!isAvailable) {
       return;
     }
 
-    const model = this.responders[seriesIndex];
+    const models =
+      this.eventDetectType === 'grouped'
+        ? [
+            ...this.getGroupedSector([this.responders[index!]], 'select'),
+            ...this.getSectorModelsFromResponders([this.responders[index!]]),
+          ]
+        : this.getResponderModelsWithTheme(
+            [this.tooltipSectorMap[index!][seriesIndex!]],
+            'select'
+          ) ?? [];
 
-    if (!model) {
+    if (!models.length) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {
-      models: this.getResponderModelsWithTheme([model], 'select'),
+      models: models,
       name: this.name,
+      eventDetectType: this.eventDetectType,
     });
     this.eventBus.emit('needDraw');
   };
 
-  showTooltip = ({ seriesIndex, name }: SelectSeriesHandlerParams<RadialBarChartOptions>) => {
-    if (!isNumber(seriesIndex) || !isUndefined(name)) {
+  showTooltip = (info: SelectSeriesInfo) => {
+    const { index, seriesIndex } = info;
+
+    if (!isAvailableShowTooltipInfo(info, this.eventDetectType, 'radialBar')) {
       return;
     }
 
-    const models = [this.responders[seriesIndex]];
+    const models =
+      this.eventDetectType === 'grouped'
+        ? this.getGroupedSector([this.responders[index!]], 'hover')
+        : this.getResponderModelsWithTheme([this.tooltipSectorMap[index!][seriesIndex!]], 'hover');
 
     if (!models.length) {
       return;
     }
 
     this.eventBus.emit('renderHoveredSeries', {
-      models: this.getResponderModelsWithTheme(models, 'hover'),
+      models,
       name: this.name,
+      eventDetectType: this.eventDetectType,
     });
+    this.activatedResponders =
+      this.eventDetectType === 'grouped' ? this.tooltipSectorMap[index!] : models;
 
-    this.activatedResponders = this.makeTooltipResponder(models);
-    this.eventBus.emit('seriesPointHovered', {
-      models: this.activatedResponders,
-      name: this.name,
-    });
-
-    this.eventBus.emit('needDraw');
-  };
-
-  onMouseoutComponent = () => {
-    this.eventBus.emit('seriesPointHovered', { models: [], name: this.name });
-    this.eventBus.emit('renderHoveredSeries', { models: [], name: this.name });
-
+    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
     this.eventBus.emit('needDraw');
   };
 }

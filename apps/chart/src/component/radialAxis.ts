@@ -1,30 +1,29 @@
 import Component from './component';
-import { ChartState, Options } from '@t/store/store';
+import { ChartState, Options, RadialYAxisData, RadialAxisData } from '@t/store/store';
 import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector';
-import { RectLabelModel, LabelModel } from '@t/components/axis';
 import { RadialAxisModels } from '@t/components/radialAxis';
 import { RectModel } from '@t/components/series';
-import { AxisTheme, RadialAxisTheme } from '@t/theme';
+import { AxisTheme, RadialAxisTheme, TextBubbleTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
 import { getRadialLabelAlign } from '@src/helpers/dataLabels';
+import { includes } from '@src/helpers/utils';
+import { BubbleLabelModel, BubbleInfo, LabelModel } from '@t/brush/label';
 
-const padding = { X: 5, Y: 1 };
-const RADIAL_AXIS_LABEL_RECT_BORDER_RADIUS = 7;
 const RECT_SIZE = 4;
 
 export default class RadialAxis extends Component {
-  models: RadialAxisModels = { dot: [], yAxisLabel: [], circularAxisLabel: [] };
+  models: RadialAxisModels = { dot: [], yAxisLabel: [], radialAxisLabel: [] };
 
   yAxisTheme!: Required<AxisTheme>;
 
-  circularAxisTheme!: Required<RadialAxisTheme>;
+  radialAxisTheme!: Required<RadialAxisTheme>;
 
   initialize() {
     this.type = 'axis';
     this.name = 'radial';
   }
 
-  render({ layout, radialAxes, theme, series }: ChartState<Options>) {
+  render({ layout, radialAxes, theme }: ChartState<Options>) {
     this.rect = layout.plot;
 
     if (!radialAxes) {
@@ -32,20 +31,35 @@ export default class RadialAxis extends Component {
     }
 
     this.yAxisTheme = theme.yAxis as Required<AxisTheme>;
-    this.circularAxisTheme = theme.radialAxis as Required<RadialAxisTheme>;
+    this.radialAxisTheme = theme.radialAxis as Required<RadialAxisTheme>;
 
-    // @TODO: 테마적용 필요
-    const align = series.radar ? 'center' : 'end';
-    // const borderRadius = series.radar ? RADIAL_AXIS_LABEL_RECT_BORDER_RADIUS : 0;
-    // const backgroundColor = series.radar ? '#f3f3f3' : 'rgba(0, 0, 0, 0)';
-
-    this.models.yAxisLabel = this.renderYAxisLabel(radialAxes.yAxis, align);
-    this.models.dot = this.renderDotModel(radialAxes.circularAxis);
-    this.models.circularAxisLabel = this.renderCircularAxisLabel(radialAxes.circularAxis);
+    this.models.yAxisLabel = this.renderYAxisLabel(radialAxes.yAxis);
+    this.models.dot = this.renderDotModel(radialAxes.radialAxis);
+    this.models.radialAxisLabel = this.renderRadialAxisLabel(radialAxes.radialAxis);
   }
 
-  renderYAxisLabel(yAxis: any, align = 'center'): RectLabelModel[] {
-    // @TODO: yAxis type
+  getBubbleShadowStyle() {
+    const {
+      visible,
+      shadowColor,
+      shadowOffsetX,
+      shadowOffsetY,
+      shadowBlur,
+    } = this.yAxisTheme.label.textBubble!;
+
+    return visible && shadowColor
+      ? [
+          {
+            shadowColor,
+            shadowOffsetX,
+            shadowOffsetY,
+            shadowBlur,
+          },
+        ]
+      : [];
+  }
+
+  renderYAxisLabel(yAxis: RadialYAxisData): BubbleLabelModel[] {
     const {
       radiusRanges,
       pointOnColumn,
@@ -54,10 +68,11 @@ export default class RadialAxis extends Component {
       labels,
       tickDistance,
       labelInterval,
-      axisSize,
       maxLabelWidth,
       maxLabelHeight,
       labelMargin,
+      labelAlign: textAlign,
+      outerRadius,
     } = yAxis;
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
 
@@ -66,50 +81,77 @@ export default class RadialAxis extends Component {
       visible: textBubbleVisible,
       backgroundColor,
       borderRadius,
+      borderColor,
+      borderWidth,
       paddingX,
       paddingY,
-    } = this.yAxisTheme.label.textBubble!;
-    const width = maxLabelWidth + (textBubbleVisible ? paddingX! * 2 : 0);
-    const height = maxLabelHeight + (textBubbleVisible ? paddingY! * 2 : 0);
+    } = this.yAxisTheme.label.textBubble as Required<Omit<TextBubbleTheme, 'arrow'>>;
+
+    const labelPaddingX = textBubbleVisible ? paddingX : 0;
+    const labelPaddingY = textBubbleVisible ? paddingY : 0;
+    const width = maxLabelWidth + labelPaddingX * 2;
+    const height = maxLabelHeight + labelPaddingY * 2;
     const fontColor = this.yAxisTheme.label.color;
 
-    return radiusRanges.reduce((acc, radius, index) => {
+    return radiusRanges.reduce<BubbleLabelModel[]>((acc, radius, index) => {
       const { x, y } = getRadialPosition(centerX, centerY, radius, calculateDegreeToRadian(0));
       const needRender =
         !pointOnColumn && index === 0
           ? false
           : !(index % labelInterval) &&
-            ((pointOnColumn && radius <= axisSize) || (!pointOnColumn && radius < axisSize));
+            ((pointOnColumn && radius <= outerRadius) || (!pointOnColumn && radius < outerRadius));
+
+      let posX = x + labelMargin;
+      let labelPosX = x + labelMargin + labelPaddingX;
+
+      if (textAlign === 'center') {
+        posX = x - labelMargin - width / 2;
+        labelPosX = x - labelMargin;
+      } else if (includes(['right', 'end'], textAlign)) {
+        posX = x - labelMargin - width;
+        labelPosX = x - labelMargin - labelPaddingX;
+      }
 
       return needRender
         ? [
             ...acc,
             {
-              type: 'rectLabel',
-              text: labels[index],
-              x: (align === 'end' ? x - width / 2 : x) - labelMargin,
-              y: y + labelAdjustment,
-              width,
-              height,
-              borderRadius,
-              backgroundColor,
-              style: [{ textAlign: 'center', textBaseline: 'middle', font, fillStyle: fontColor }],
+              type: 'bubbleLabel',
+              bubble: {
+                x: posX,
+                y: y + labelAdjustment - height / 2,
+                width,
+                height,
+                radius: borderRadius,
+                fill: backgroundColor,
+                align: textAlign,
+                lineWidth: borderWidth,
+                strokeStyle: borderColor,
+                style: this.getBubbleShadowStyle(),
+              } as BubbleInfo,
+              label: {
+                text: labels[index],
+                x: labelPosX,
+                y: y + labelAdjustment,
+                font: font,
+                color: fontColor,
+                textAlign,
+              },
             },
           ]
         : acc;
     }, []);
   }
 
-  renderDotModel(circularAxis: any): RectModel[] {
-    // @TODO: circularAxis type
-    const { degree, centerX, centerY, labels, axisSize, labelInterval } = circularAxis;
-    const { dotColor } = this.circularAxisTheme;
+  renderDotModel(radialAxis: RadialAxisData): RectModel[] {
+    const { degree, centerX, centerY, labels, labelInterval, outerRadius } = radialAxis;
+    const { dotColor } = this.radialAxisTheme;
 
-    return labels.reduce((acc, _, index) => {
+    return labels.reduce<RectModel[]>((acc, cur, index) => {
       const { x, y } = getRadialPosition(
         centerX,
         centerY,
-        axisSize,
+        outerRadius,
         calculateDegreeToRadian(degree * index)
       );
 
@@ -129,32 +171,36 @@ export default class RadialAxis extends Component {
     }, []);
   }
 
-  renderCircularAxisLabel(circularAxis: any): LabelModel[] {
-    // @TODO: circularAxis type
+  renderRadialAxisLabel(radialAxis: RadialAxisData): LabelModel[] {
     const {
-      degree,
       centerX,
       centerY,
       labels,
-      axisSize,
       labelInterval,
       totalAngle,
       drawingStartAngle,
       labelMargin,
-    } = circularAxis;
-    const radius = axisSize + labelMargin;
-    const font = getTitleFontString(this.circularAxisTheme.label);
+      clockwise,
+      outerRadius,
+    } = radialAxis;
+    const radius = outerRadius + labelMargin;
+    const labelTheme = this.radialAxisTheme.label;
+    const font = getTitleFontString(labelTheme);
+    const degree = radialAxis.degree * (clockwise ? 1 : -1);
 
-    return labels.reduce((acc, text, index) => {
+    return labels.reduce<LabelModel[]>((acc, text, index) => {
+      const startDegree = drawingStartAngle + degree * index;
+      const endDegree = drawingStartAngle + degree * (index + 1);
       const degreeRange = {
-        start: degree * index,
-        end: degree * (index + 1),
+        start: startDegree,
+        end: endDegree,
       };
+
       const textAlign = getRadialLabelAlign(
         {
           totalAngle,
           degree: degreeRange,
-          drawingStartAngle,
+          drawingStartAngle: 0,
         },
         'outer',
         false
@@ -165,14 +211,9 @@ export default class RadialAxis extends Component {
             ...acc,
             {
               type: 'label',
-              style: [{ textAlign, font, fillStyle: this.circularAxisTheme.label.color }],
+              style: [{ textAlign, font, fillStyle: labelTheme.color }],
               text,
-              ...getRadialPosition(
-                centerX,
-                centerY,
-                radius,
-                calculateDegreeToRadian(degree * index)
-              ),
+              ...getRadialPosition(centerX, centerY, radius, calculateDegreeToRadian(startDegree)),
             },
           ]
         : acc;

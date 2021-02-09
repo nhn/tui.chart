@@ -1,9 +1,9 @@
-import { Point, RadialBarSeriesOptions, PieSeriesOptions } from '@t/options';
+import { Point, PieSeriesOptions, Rect, DataLabelAnchor } from '@t/options';
 import { SectorModel } from '@t/components/series';
 import { pick } from '@src/helpers/utils';
-import { RadialAnchor } from '@t/components/dataLabels';
+import { RadialDataLabel } from '@t/components/dataLabels';
 type RadialPositionParam = {
-  anchor: RadialAnchor;
+  anchor: DataLabelAnchor;
   x: number;
   y: number;
   radius: {
@@ -17,7 +17,12 @@ type RadialPositionParam = {
   drawingStartAngle: number;
 };
 
-export function makeAnchorPositionParam(anchor: RadialAnchor, model: SectorModel) {
+const MINIMUM_RADIUS = 10;
+
+export function makeAnchorPositionParam(
+  anchor: DataLabelAnchor,
+  model: SectorModel | RadialDataLabel
+) {
   return {
     anchor,
     ...pick(model, 'x', 'y', 'radius', 'degree', 'drawingStartAngle'),
@@ -71,10 +76,29 @@ export function withinRadian(
     : startDegree >= currentDegree && endDegree <= currentDegree;
 }
 
-export function initSectorOptions(options?: PieSeriesOptions | RadialBarSeriesOptions) {
+export function initSectorOptions(options?: PieSeriesOptions) {
   return {
     clockwise: options?.clockwise ?? true,
     startAngle: options?.angleRange?.start ?? 0,
     endAngle: options?.angleRange?.end ?? 360,
   };
+}
+
+export function getDefaultRadius(
+  { width, height }: Rect,
+  isSemiCircular = false,
+  maxLabelWidth = 0,
+  maxLabelHeight = 0
+) {
+  let result;
+
+  if (isSemiCircular) {
+    result = Math.min(width / 2, height) - maxLabelHeight;
+  } else if (width > height) {
+    result = height / 2 - maxLabelHeight;
+  } else {
+    result = width / 2 - maxLabelWidth;
+  }
+
+  return Math.max(result, MINIMUM_RADIUS);
 }

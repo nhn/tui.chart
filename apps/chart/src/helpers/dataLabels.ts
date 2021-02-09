@@ -39,6 +39,7 @@ type LabelPosition = {
   y: number;
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
+  radian?: number;
 };
 
 function getDefaultAnchor(type: DataLabelType, withStack = false): DataLabelAnchor {
@@ -512,14 +513,14 @@ function makeSectorBarLabelPosition(
   model: RadialBarDataLabel,
   dataLabelOptions: DataLabelOption
 ): LabelPosition {
-  const anchor = dataLabelOptions.anchor;
+  const { anchor } = dataLabelOptions;
   const {
     degree: { start, end },
     radius: { inner, outer },
   } = model;
   let startAngle = start;
   let endAngle = end;
-  let textAlign = 'center';
+  let textAlign: CanvasTextAlign = 'center';
   let rotationDegree = (start + end) / 2;
 
   if (anchor === 'start') {
@@ -532,7 +533,7 @@ function makeSectorBarLabelPosition(
     rotationDegree = end;
   }
 
-  const position = getRadialAnchorPosition(
+  const { x, y } = getRadialAnchorPosition(
     makeAnchorPositionParam(anchor, {
       ...model,
       degree: {
@@ -547,7 +548,8 @@ function makeSectorBarLabelPosition(
   );
 
   return {
-    ...position,
+    x: x,
+    y: y,
     textAlign,
     textBaseline: 'middle',
     radian: calculateDegreeToRadian(rotationDegree, 0),

@@ -53,7 +53,6 @@ type AxisLabelTheme = FontTheme & {
 };
 
 type RadialAxisTheme = {
-  title?: FontTheme;
   label?: AxisLabelTheme;
   lineWidth?: number;
   strokeStyle?: string;
@@ -428,6 +427,7 @@ type TextBubbleTheme = {
   paddingY?: number;
   backgroundColor?: string;
   borderRadius?: number;
+  textAlign?: CanvasTextAlign;
 } & BorderTheme &
   ShadowTheme;
 
@@ -475,8 +475,8 @@ interface RadialBarChartSeriesTheme extends CommonSeriesTheme {
   colors?: string[];
   lineWidth?: number;
   strokeStyle?: string;
-  hover?: SectorStyle & { color?: string; groupedSector: GroupedSector };
-  select?: SelectSectorStyle & { groupedSector: GroupedSector };
+  hover?: SectorStyle & { color?: string; groupedSector?: GroupedSector };
+  select?: SelectSectorStyle & { groupedSector?: GroupedSector };
   areaOpacity?: number;
   dataLabels?: BoxDataLabel;
 }
@@ -490,18 +490,26 @@ type DataLabelTheme =
 
 interface LineChartThemeOptions extends BaseThemeOptions {
   series?: LineChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface AreaChartThemeOptions extends BaseThemeOptions {
   series?: AreaChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface LineAreaChartThemeOptions extends BaseThemeOptions {
   series?: LineAreaChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface LineScatterChartThemeOptions extends BaseThemeOptions {
   series?: LineScatterChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface PieChartThemeOptions extends BaseThemeOptions {
@@ -514,10 +522,14 @@ interface NestedPieChartThemeOptions extends BaseThemeOptions {
 
 interface RadarChartThemeOptions extends BaseThemeOptions {
   series?: RadarChartSeriesTheme;
+  yAxis?: AxisTheme;
+  radialAxis?: Omit<AxisTheme, 'title'>;
 }
 
 interface HeatmapChartThemeOptions extends BaseThemeOptions {
   series?: HeatmapChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface TreemapChartThemeOptions extends BaseThemeOptions {
@@ -526,26 +538,38 @@ interface TreemapChartThemeOptions extends BaseThemeOptions {
 
 interface ScatterChartThemeOptions extends BaseThemeOptions {
   series?: ScatterChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface BubbleChartThemeOptions extends BaseThemeOptions {
   series?: BubbleChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface BoxChartThemeOptions extends BaseThemeOptions {
   series?: BoxChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface BulletCharThemeOptions extends BaseThemeOptions {
   series?: BulletChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface BoxPlotCharThemeOptions extends BaseThemeOptions {
   series?: BoxPlotChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface ColumnLineChartThemeOptions extends BaseThemeOptions {
   series?: ColumnLineChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 type CheckAnchorPieSeries = {
@@ -555,4 +579,5 @@ type CheckAnchorPieSeries = {
 
 interface RadialBarChartThemeOptions extends BaseThemeOptions {
   series?: RadialBarChartSeriesTheme;
+  radialAxis?: Omit<AxisTheme, 'title'>;
 }
