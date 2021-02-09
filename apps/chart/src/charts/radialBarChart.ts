@@ -93,8 +93,6 @@ export interface RadialBarChartProps {
  * @extends Chart
  */
 export default class RadialBarChart extends Chart<RadialBarChartOptions> {
-  modules = [stackSeriesData, dataRange, scale, radialAxes];
-
   constructor({ el, options, data }: RadialBarChartProps) {
     super({
       el,
@@ -103,6 +101,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
         radialBar: data.series,
       },
       categories: data.categories,
+      modules: [stackSeriesData, dataRange, scale, radialAxes],
     });
   }
 
