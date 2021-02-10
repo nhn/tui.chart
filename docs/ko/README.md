@@ -22,6 +22,7 @@
 - [Pie 차트](./chart-pie.md)
 - [NestedPie 차트](./chart-nestedPie.md)
 - [Radar 차트](./chart-radar.md)
+- [RadialBar 차트](./chart-radialBar.md)
 
 ### 공통
 
