@@ -196,7 +196,9 @@ function calculateLegendWidth(params: LegendSizeParam) {
 
 function getDefaultLegendSize(params: LegendSizeParam) {
   const { verticalAlign, chart, itemHeight, initialWidth, circleLegendVisible } = params;
-  const restAreaHeight = 100 + (circleLegendVisible ? INITIAL_CIRCLE_LEGEND_WIDTH : 0); // rest area temporary value (yAxis.title + xAxis.height + circleLegendHeight)
+  const COMPONENT_HEIGHT_EXCEPT_Y_AXIS = 100;
+  const restAreaHeight =
+    COMPONENT_HEIGHT_EXCEPT_Y_AXIS + (circleLegendVisible ? INITIAL_CIRCLE_LEGEND_WIDTH : 0); // rest area temporary value (yAxisTitle.height + xAxis.height + circleLegend.height)
 
   return verticalAlign
     ? { width: chart.width - padding.X * 2, height: itemHeight }
