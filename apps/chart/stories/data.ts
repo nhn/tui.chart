@@ -1350,6 +1350,63 @@ export const lifeExpectancyPerGDPData = {
   ],
 };
 
+export const circleLegendOverlapData = {
+  series: [
+    {
+      name: 'AAAA',
+      data: [{ x: 500, y: 50, r: 300, label: 'a' }],
+    },
+    {
+      name: 'BBBB',
+      data: [{ x: 1000, y: 70, r: 500, label: 'b' }],
+    },
+    {
+      name: 'CCCC',
+      data: [{ x: 3600, y: 100, r: 1000, label: 'c' }],
+    },
+    {
+      name: 'DDDD',
+      data: [{ x: 5700, y: 10, r: 3000, label: 'd' }],
+    },
+    {
+      name: 'EEEEE',
+      data: [{ x: 2200, y: 30, r: 10000, label: 'e' }],
+    },
+    {
+      name: 'FFFFF',
+      data: [{ x: 2200, y: 30, r: 25000, label: 'f' }],
+    },
+    {
+      name: 'GGGGG',
+      data: [{ x: 3200, y: 30, r: 3000, label: 'g' }],
+    },
+    {
+      name: 'HHHHH',
+      data: [{ x: 5200, y: 30, r: 45000, label: 'h' }],
+    },
+    {
+      name: 'IIIII',
+      data: [{ x: 7200, y: 30, r: 15000, label: 'i' }],
+    },
+    {
+      name: 'JJJJJ',
+      data: [{ x: 9200, y: 30, r: 5000, label: 'j' }],
+    },
+    {
+      name: 'KKKK',
+      data: [{ x: 1220, y: 30, r: 45000, label: 'k' }],
+    },
+    {
+      name: 'LLLL',
+      data: [{ x: 5220, y: 30, r: 15000, label: 'l' }],
+    },
+    {
+      name: 'MMMM',
+      data: [{ x: 2200, y: 130, r: 25000, label: 'm' }],
+    },
+  ],
+};
+
 export const lifeExpectancyPerGDPDataWithNull = {
   series: [
     {

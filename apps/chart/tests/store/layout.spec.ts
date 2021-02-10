@@ -56,7 +56,7 @@ const defaultTheme = {
 
 describe('default layout', () => {
   const state = {
-    legend: { visible: true, width: 20, align: 'right' },
+    legend: { visible: true, width: 20, height: 104, align: 'right' },
     circleLegend: { radius: 0, visible: false, width: 0 },
     chart: { width: 200, height: 200 },
     series: { bar: {} },
@@ -98,7 +98,7 @@ describe('default layout', () => {
 describe('axis size option', () => {
   it('should set yAxis size option', () => {
     const state = {
-      legend: { visible: true, width: 20, align: 'right' },
+      legend: { visible: true, width: 20, height: 104, align: 'right' },
       circleLegend: { radius: 0, visible: false, width: 0 },
       chart: { width: 200, height: 200 },
       series: { bar: {} },
@@ -130,7 +130,7 @@ describe('axis size option', () => {
 
   it('should set xAxis size option', () => {
     const state = {
-      legend: { visible: true, width: 20, align: 'right' },
+      legend: { visible: true, width: 20, height: 104, align: 'right' },
       circleLegend: { radius: 0, visible: false, width: 0 },
       chart: { width: 200, height: 200 },
       series: { bar: {} },
@@ -162,7 +162,7 @@ describe('axis size option', () => {
 
   describe('using secondaryYAxis size option', () => {
     const state = {
-      legend: { visible: true, width: 20, align: 'right' },
+      legend: { visible: true, width: 20, height: 104, align: 'right' },
       circleLegend: { radius: 0, visible: false, width: 0 },
       chart: { width: 200, height: 200 },
       series: { column: {}, line: {} },
@@ -206,7 +206,7 @@ describe('axis size option', () => {
 
 describe('only plot size option', () => {
   const state = {
-    legend: { visible: true, width: 20, align: 'right' },
+    legend: { visible: true, width: 20, height: 104, align: 'right' },
     circleLegend: { radius: 0, visible: false, width: 0 },
     chart: { width: 200, height: 200 },
     series: { bar: {} },
@@ -244,7 +244,7 @@ describe('only plot size option', () => {
 
 describe('with export menu visible options', () => {
   const state = {
-    legend: { visible: true, width: 20, align: 'right' },
+    legend: { visible: true, width: 20, height: 104, align: 'right' },
     circleLegend: { radius: 0, visible: false, width: 0 },
     chart: { width: 200, height: 200 },
     series: { bar: {} },
@@ -276,7 +276,7 @@ describe('with export menu visible options', () => {
 
 describe('with reset button visible options', () => {
   const state = {
-    legend: { visible: true, width: 20, align: 'right' },
+    legend: { visible: true, width: 20, height: 104, align: 'right' },
     circleLegend: { radius: 0, visible: false, width: 0 },
     chart: { width: 200, height: 200 },
     series: { bar: {} },
@@ -301,7 +301,7 @@ describe('with reset button visible options', () => {
 
 describe("subtract half of the xAxis's maximum label length to secure margin size", () => {
   const state = {
-    legend: { visible: true, width: 20, align: 'bottom' },
+    legend: { visible: true, width: 20, height: 104, align: 'bottom' },
     circleLegend: { radius: 0, visible: false, width: 0 },
     chart: { width: 200, height: 200 },
     series: { bar: {} },
@@ -320,6 +320,6 @@ describe("subtract half of the xAxis's maximum label length to secure margin siz
   layout.action!.setLayout(store);
 
   it("should set secure margin size for xAxis's width", () => {
-    expect(state.layout.xAxis).toEqual({ height: 20, width: 95, x: 50, y: 115 });
+    expect(state.layout.xAxis).toEqual({ height: 20, width: 95, x: 50, y: 35 });
   });
 });

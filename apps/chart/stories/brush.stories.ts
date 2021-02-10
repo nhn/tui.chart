@@ -425,6 +425,8 @@ export const legendBrush = () => {
         y: 100,
         iconType: 'circle',
         chartType: 'scatter',
+        rowIndex: 0,
+        columnIndex: 0,
       },
       {
         label: 'circle-checked-inactive',
@@ -435,6 +437,8 @@ export const legendBrush = () => {
         y: 120,
         iconType: 'circle',
         chartType: 'scatter',
+        rowIndex: 1,
+        columnIndex: 0,
       },
       {
         label: 'circle-unchecked-active',
@@ -445,6 +449,8 @@ export const legendBrush = () => {
         y: 140,
         iconType: 'circle',
         chartType: 'scatter',
+        rowIndex: 2,
+        columnIndex: 0,
       },
     ],
   });
@@ -463,6 +469,8 @@ export const legendBrush = () => {
         y: 160,
         iconType: 'circle',
         chartType: 'scatter',
+        rowIndex: 0,
+        columnIndex: 0,
       },
     ],
   });
@@ -481,6 +489,8 @@ export const legendBrush = () => {
         y: 180,
         iconType: 'line',
         chartType: 'line',
+        rowIndex: 0,
+        columnIndex: 0,
       },
       {
         label: 'line-checked-inactive',
@@ -491,6 +501,8 @@ export const legendBrush = () => {
         y: 200,
         iconType: 'line',
         chartType: 'line',
+        rowIndex: 1,
+        columnIndex: 0,
       },
     ],
   });
@@ -509,6 +521,8 @@ export const legendBrush = () => {
         y: 220,
         iconType: 'rect',
         chartType: 'area',
+        rowIndex: 0,
+        columnIndex: 0,
       },
       {
         label: 'rect-checked-inactive',
@@ -519,6 +533,8 @@ export const legendBrush = () => {
         y: 240,
         iconType: 'rect',
         chartType: 'area',
+        rowIndex: 1,
+        columnIndex: 0,
       },
     ],
   });
