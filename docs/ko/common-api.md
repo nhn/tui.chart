@@ -439,7 +439,7 @@ public hideTooltip();
 옵션 `options.series.selectable: true`로 설정되어 있을 때 `selectSeries()`를 사용하면 시리즈를 선택할 수 있다.
 
 ```ts
-public showTooltip(seriesInfo: {
+public selectSeries(seriesInfo: {
   seriesIndex?: number;
   index?: number;
   alias?: string;
