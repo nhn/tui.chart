@@ -7,4 +7,6 @@ export const message = {
   noBrushError: (brushName: string) => `Brush don't exist in painter: ${brushName}`,
   DASH_SEGMENTS_UNAVAILABLE_ERROR: 'DashSegments option is available from IE11 and above.',
   SERIES_INDEX_ERROR: 'The seriesIndex value is invalid',
+  AUTO_LAYOUT_CONTAINER_SIZE_ERROR:
+    'To use auto layout, you need to specify the width or height of the container.',
 };
