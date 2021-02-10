@@ -76,6 +76,7 @@ export default class RadialAxis extends Component {
       labelMargin,
       labelAlign: textAlign,
       outerRadius,
+      startAngle,
     } = yAxis;
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
 
@@ -97,7 +98,12 @@ export default class RadialAxis extends Component {
     const fontColor = this.yAxisTheme.label.color;
 
     return radiusRanges.reduce<BubbleLabelModel[]>((acc, radius, index) => {
-      const { x, y } = getRadialPosition(centerX, centerY, radius, calculateDegreeToRadian(0));
+      const { x, y } = getRadialPosition(
+        centerX,
+        centerY,
+        radius,
+        calculateDegreeToRadian(startAngle)
+      );
       const needRender =
         !pointOnColumn && index === 0
           ? false
@@ -105,14 +111,15 @@ export default class RadialAxis extends Component {
             ((pointOnColumn && radius <= outerRadius) || (!pointOnColumn && radius < outerRadius));
 
       let posX = x + labelMargin;
-      let labelPosX = x + labelMargin + labelPaddingX;
+      const padding = startAngle > 0 && startAngle < 360 ? 20 : 0;
+      let labelPosX = x + padding + labelMargin + labelPaddingX;
 
       if (textAlign === 'center') {
         posX = x - labelMargin - width / 2;
         labelPosX = x - labelMargin;
       } else if (includes(['right', 'end'], textAlign)) {
         posX = x - labelMargin - width;
-        labelPosX = x - labelMargin - labelPaddingX;
+        labelPosX = x - padding - labelMargin - labelPaddingX;
       }
 
       return needRender
@@ -120,6 +127,7 @@ export default class RadialAxis extends Component {
             ...acc,
             {
               type: 'bubbleLabel',
+              radian: calculateDegreeToRadian(startAngle, 0),
               bubble: {
                 x: posX,
                 y: y + labelAdjustment - height / 2,
@@ -147,15 +155,25 @@ export default class RadialAxis extends Component {
   }
 
   renderDotModel(radialAxis: RadialAxisData): RectModel[] {
-    const { degree, centerX, centerY, labels, labelInterval, outerRadius } = radialAxis;
+    const {
+      degree,
+      centerX,
+      centerY,
+      labels,
+      labelInterval,
+      outerRadius,
+      drawingStartAngle,
+      clockwise,
+    } = radialAxis;
     const { dotColor } = this.radialAxisTheme;
 
     return labels.reduce<RectModel[]>((acc, cur, index) => {
+      const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
       const { x, y } = getRadialPosition(
         centerX,
         centerY,
         outerRadius,
-        calculateDegreeToRadian(degree * index)
+        calculateDegreeToRadian(startDegree)
       );
 
       return index % labelInterval === 0

@@ -6,3 +6,14 @@ type RadialAxisModels = {
   yAxisLabel: BubbleLabelModel[];
   radialAxisLabel: LabelModel[];
 };
+
+type ArcModel = {
+  x: number;
+  y: number;
+  angle: { start: number; end: number };
+  borderWidth: number;
+  borderColor: string;
+  drawingStartAngle: number;
+  radius: number;
+  clockwise: boolean;
+};

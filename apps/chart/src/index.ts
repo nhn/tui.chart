@@ -14,6 +14,7 @@ import NestedPieChart, { NestedPieChartProps } from '@src/charts/nestedPieChart'
 import RadarChart, { RadarChartProps } from '@src/charts/radarChart';
 import TreemapChart, { TreemapChartProps } from '@src/charts/treemapChart';
 import BoxPlotChart, { BoxPlotChartProps } from '@src/charts/boxPlotChart';
+import RadialBarChart, { RadialBarChartProps } from '@src/charts/radialBarChart';
 
 export default class Chart {
   public static lineChart = (props: LineChartProps) => {
@@ -79,6 +80,10 @@ export default class Chart {
   public static columnLineChart = (props: ColumnLineChartProps) => {
     return new ColumnLineChart(props);
   };
+
+  public static radialBarChart = (props: RadialBarChartProps) => {
+    return new RadialBarChart(props);
+  };
 }
 
 export {
@@ -98,4 +103,5 @@ export {
   LineScatterChart,
   ColumnLineChart,
   BoxPlotChart,
+  RadialBarChart,
 };

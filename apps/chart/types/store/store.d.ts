@@ -263,6 +263,8 @@ type RadialAxisData = {
   drawingStartAngle: number;
   clockwise: boolean;
   outerRadius: number;
+  startAngle: number;
+  endAngle: number;
 };
 
 type RadialYAxisData = {
@@ -280,6 +282,8 @@ type RadialYAxisData = {
   innerRadius: number;
   outerRadius: number;
   labelAlign: CanvasTextAlign;
+  startAngle: number;
+  endAngle: number;
 };
 
 type RadialAxes = {

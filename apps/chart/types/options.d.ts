@@ -672,6 +672,10 @@ interface RadialBarSeriesOptions extends BaseSeriesOptions {
     outer?: number;
   };
   clockwise?: boolean;
+  angleRange?: {
+    start: number;
+    end: number;
+  };
   eventDetectType?: CicleTypeEventDetectType;
   dataLabels?: DataLabelOptions;
 }

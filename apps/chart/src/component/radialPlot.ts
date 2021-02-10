@@ -7,6 +7,7 @@ import { RadialPlotModels, RadialPlotModelType } from '@t/components/radialPlot'
 import { LineModel } from '@t/components/axis';
 import { range } from '@src/helpers/utils';
 import { RadialAxisTheme } from '@t/theme';
+import { ArcModel } from '@t/components/radialAxis';
 
 type RenderOptions = {
   type: RadarPlotType;
@@ -19,6 +20,11 @@ type RenderOptions = {
   radiusRanges: number[];
   lineCount: number;
   tickInterval: number;
+  usingArcPlot: boolean;
+  drawingStartAngle: number;
+  startAngle: number;
+  endAngle: number;
+  clockwise: boolean;
 };
 
 export default class RadarPlot extends Component {
@@ -54,7 +60,16 @@ export default class RadarPlot extends Component {
     categories: string[] = []
   ): RenderOptions {
     const { centerX, centerY, radiusRanges, innerRadius, outerRadius } = radialAxes.yAxis;
-    const { totalAngle, labels, tickInterval } = radialAxes.radialAxis;
+    const {
+      totalAngle,
+      labels,
+      tickInterval,
+      drawingStartAngle,
+      startAngle,
+      endAngle,
+      clockwise,
+    } = radialAxes.radialAxis;
+    const usingArcPlot = totalAngle !== 360;
     const lineCount = labels.length;
 
     return {
@@ -68,13 +83,26 @@ export default class RadarPlot extends Component {
       radiusRanges,
       lineCount,
       tickInterval,
+      drawingStartAngle,
+      usingArcPlot,
+      startAngle,
+      endAngle,
+      clockwise,
     };
   }
 
   renderPlot(renderOptions: RenderOptions): RadialPlotModelType {
-    return renderOptions.type === 'spiderweb'
-      ? this.makeSpiderwebPlot(renderOptions)
-      : this.makeCirclePlot(renderOptions);
+    const { type, usingArcPlot } = renderOptions;
+
+    if (usingArcPlot) {
+      return this.makeArc(renderOptions);
+    }
+
+    if (type === 'spiderweb') {
+      return this.makeSpiderwebPlot(renderOptions);
+    }
+
+    return this.makeCirclePlot(renderOptions);
   }
 
   makeSpiderwebPlot(renderOptions: RenderOptions): PolygonModel[] {
@@ -109,6 +137,23 @@ export default class RadarPlot extends Component {
     }));
   }
 
+  makeArc(renderOptions: RenderOptions): ArcModel[] {
+    const { centerX, centerY, radiusRanges, startAngle, endAngle, clockwise } = renderOptions;
+    const { strokeStyle, lineWidth } = this.radialAxisTheme;
+
+    return radiusRanges.map<ArcModel>((radius) => ({
+      type: 'arc',
+      borderWidth: lineWidth,
+      borderColor: strokeStyle,
+      x: centerX,
+      y: centerY,
+      angle: { start: startAngle, end: endAngle },
+      drawingStartAngle: -90,
+      radius,
+      clockwise,
+    }));
+  }
+
   renderLine(renderOptions: RenderOptions): LineModel[] {
     const {
       centerX,
@@ -118,38 +163,45 @@ export default class RadarPlot extends Component {
       lineCount,
       degree,
       tickInterval,
+      drawingStartAngle,
+      usingArcPlot,
+      clockwise,
     } = renderOptions;
     const { strokeStyle, lineWidth } = this.radialAxisTheme;
 
-    return range(0, lineCount).reduce<LineModel[]>((acc, cur, index) => {
-      const { x: x1, y: y1 } = getRadialPosition(
-        centerX,
-        centerY,
-        initialRadius,
-        calculateDegreeToRadian(degree * index)
-      );
+    return range(0, usingArcPlot ? lineCount + 1 : lineCount).reduce<LineModel[]>(
+      (acc, cur, index) => {
+        const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
+        const { x: x1, y: y1 } = getRadialPosition(
+          centerX,
+          centerY,
+          initialRadius,
+          calculateDegreeToRadian(startDegree)
+        );
 
-      const { x: x2, y: y2 } = getRadialPosition(
-        centerX,
-        centerY,
-        radius,
-        calculateDegreeToRadian(degree * index)
-      );
+        const { x: x2, y: y2 } = getRadialPosition(
+          centerX,
+          centerY,
+          radius,
+          calculateDegreeToRadian(startDegree)
+        );
 
-      return index % tickInterval === 0
-        ? [
-            ...acc,
-            {
-              type: 'line',
-              x: x1,
-              y: y1,
-              x2,
-              y2,
-              strokeStyle,
-              lineWidth,
-            },
-          ]
-        : acc;
-    }, []);
+        return index % tickInterval === 0
+          ? [
+              ...acc,
+              {
+                type: 'line',
+                x: x1,
+                y: y1,
+                x2,
+                y2,
+                strokeStyle,
+                lineWidth,
+              },
+            ]
+          : acc;
+      },
+      []
+    );
   }
 }

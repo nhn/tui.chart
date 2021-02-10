@@ -13,7 +13,7 @@ import { makeLabelsFromLimit, makeTickPixelPositions } from '@src/helpers/calcul
 import { getTitleFontString } from '@src/helpers/style';
 import { RadialBarChartThemeOptions, RadarChartThemeOptions, AxisTheme } from '@t/theme';
 import { calculateSizeWithPercentString } from '@src/helpers/utils';
-import { getDefaultRadius } from '@src/helpers/sector';
+import { getDefaultRadius, initSectorOptions } from '@src/helpers/sector';
 const Y_LABEL_PADDING = 5;
 export const RADIAL_LABEL_PADDING = 25;
 
@@ -29,6 +29,8 @@ type DefaultRadialAxisData = {
   totalAngle: number;
   drawingStartAngle: number;
   clockwise: boolean;
+  startAngle: number;
+  endAngle: number;
 };
 
 type BaseAxisDataParam = {
@@ -48,10 +50,6 @@ interface YAxisDataParam extends BaseAxisDataParam {
   pointOnColumn: boolean;
   yAxisLabelMargin: number;
   radialYAxisLabelFont: string;
-}
-
-function getClockwise(seriesOptions: RadialBarSeriesOptions) {
-  return seriesOptions?.clockwise ?? true;
 }
 
 function getRadiusInfo(axisSize: number, count: number, seriesOptions?: RadialBarSeriesOptions) {
@@ -84,17 +82,20 @@ function getDefaultAxisData(
   let centerY = plot.height / 2;
   let totalAngle = 360;
   let drawingStartAngle = 0;
-  let clockwise = true;
+  let clockwiseOption = true;
+  let startAngleOption = 0;
+  let endAngleOpotion = 360;
 
   if (isLabelOnYAxis) {
-    clockwise = getClockwise(options?.series as RadialBarSeriesOptions);
-    const startAngle = 0;
-    const endAngle = 360;
+    const { startAngle, endAngle, clockwise } = initSectorOptions(options?.series);
 
     isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
     centerY = isSemiCircular ? getSemiCircleCenterY(plot.height, clockwise) : plot.height / 2;
     totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
-    drawingStartAngle = clockwise ? startAngle : endAngle;
+    drawingStartAngle = startAngle;
+    clockwiseOption = clockwise;
+    startAngleOption = startAngle;
+    endAngleOpotion = endAngle;
   }
 
   return {
@@ -103,7 +104,9 @@ function getDefaultAxisData(
     centerY,
     totalAngle,
     drawingStartAngle: drawingStartAngle,
-    clockwise,
+    clockwise: clockwiseOption,
+    startAngle: startAngleOption,
+    endAngle: endAngleOpotion,
   };
 }
 
@@ -127,7 +130,7 @@ function getYAxisData({
   radialYAxisLabelFont,
   defaultAxisData,
 }: YAxisDataParam): RadialYAxisData {
-  const { axisSize, centerX, centerY, clockwise } = defaultAxisData;
+  const { axisSize, centerX, centerY, clockwise, startAngle, endAngle } = defaultAxisData;
   const { radiusRanges, innerRadius, outerRadius } = isLabelOnYAxis
     ? getRadiusInfo(axisSize, labels.length + 1, options?.series)
     : {
@@ -143,6 +146,8 @@ function getYAxisData({
     axisSize,
     centerX,
     centerY,
+    startAngle,
+    endAngle,
     pointOnColumn,
     radiusRanges,
     innerRadius,
@@ -167,7 +172,16 @@ function getRadialAxisData({
     radialAxisLabelMargin,
     radialAxisLabelFont
   );
-  const { axisSize, centerX, centerY, clockwise, totalAngle, drawingStartAngle } = defaultAxisData;
+  const {
+    axisSize,
+    centerX,
+    centerY,
+    clockwise,
+    totalAngle,
+    drawingStartAngle,
+    startAngle,
+    endAngle,
+  } = defaultAxisData;
   const { tickInterval, labelInterval } = intervalData;
 
   return {
@@ -178,13 +192,15 @@ function getRadialAxisData({
     totalAngle,
     drawingStartAngle,
     clockwise,
-    degree: totalAngle / labels.length,
+    degree: totalAngle / (labels.length + (totalAngle < 360 ? -1 : 0)),
     tickInterval,
     labelInterval,
     labelMargin: radialAxisLabelMargin,
     maxLabelWidth,
     maxLabelHeight,
     outerRadius,
+    startAngle,
+    endAngle,
   };
 }
 

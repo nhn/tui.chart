@@ -7,13 +7,13 @@ import {
   getRadialAnchorPosition,
   makeAnchorPositionParam,
   withinRadian,
+  getDefaultRadius,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getDataLabelsOptions, RADIUS_PADDING } from '@src/helpers/dataLabels';
 import {
   getTotalAngle,
   isSemiCircle,
-  getDefaultRadius,
   getSemiCircleCenterY,
   makePieTooltipData,
   pieTooltipLabelFormatter,
@@ -455,7 +455,8 @@ export default class PieSeries extends Component {
             outer,
           },
           value: data,
-          style: [{ lineWidth, strokeStyle }],
+          style: [{ strokeStyle }],
+          lineWidth,
           clockwise,
           drawingStartAngle,
           totalAngle,
@@ -471,7 +472,7 @@ export default class PieSeries extends Component {
     return responders.map((responder) => ({
       ...responder,
       ...getRadialAnchorPosition(
-        makeAnchorPositionParam('center', this.models.series[responder.seriesIndex])
+        makeAnchorPositionParam('center', this.models.series[responder.seriesIndex!])
       ),
     }));
   }
@@ -509,16 +510,9 @@ export default class PieSeries extends Component {
     return responders.map((m) => ({
       ...m,
       color: theme?.color ?? m.color,
+      lineWidth,
       style: [
-        pick(
-          theme,
-          'lineWidth',
-          'strokeStyle',
-          'shadowBlur',
-          'shadowColor',
-          'shadowOffsetX',
-          'shadowOffsetY'
-        ),
+        pick(theme, 'strokeStyle', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY'),
       ],
       radius: {
         inner: Math.max(m.radius.inner - thickness, 0),

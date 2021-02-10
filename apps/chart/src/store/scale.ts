@@ -100,13 +100,14 @@ const scale: StoreModule = {
       const { series, options } = state;
 
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
-      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
+      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
       const { yAxis, secondaryYAxis } = getYAxisOption(options);
       const scaleData = {};
 
       const scaleOptions: ScaleOptions = {
         xAxis: options?.xAxis?.scale,
         yAxis: yAxis?.scale,
+        radialAxis: options?.radialAxis?.scale,
       };
 
       if (secondaryYAxis) {

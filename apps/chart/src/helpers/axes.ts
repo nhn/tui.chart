@@ -150,6 +150,13 @@ export function isPointOnColumn(series: Series, options: Options) {
   return false;
 }
 
+export function getAxisNameUsingRadialAxes(series: Series) {
+  return {
+    valueAxisName: series?.radialBar ? 'radialAxis' : 'yAxis',
+    labelAxisName: series?.radialBar ? 'yAxis' : 'radialAxis',
+  };
+}
+
 export function getAxisName(labelAxisOnYAxis: boolean) {
   return {
     valueAxisName: labelAxisOnYAxis ? 'xAxis' : 'yAxis',
@@ -209,10 +216,12 @@ export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName
 }
 
 export function getAxisTheme(theme: Theme, name: string) {
-  const { xAxis, yAxis } = theme;
+  const { xAxis, yAxis, radialAxis } = theme;
   let axisTheme;
 
-  if (name === AxisType.X) {
+  if (name === 'radialAxis') {
+    axisTheme = radialAxis;
+  } else if (name === AxisType.X) {
     axisTheme = xAxis;
   } else if (Array.isArray(yAxis)) {
     axisTheme = name === AxisType.Y ? yAxis[0] : yAxis[1];

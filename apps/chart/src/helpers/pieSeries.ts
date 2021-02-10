@@ -1,5 +1,5 @@
 import { getPercentageValue, isString, isNull } from './utils';
-import { Rect, PieSeriesType, NestedPieSeriesType, PieDataLabels } from '@t/options';
+import { PieSeriesType, NestedPieSeriesType, PieDataLabels } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
 import { RawSeries, OptionsWithDataLabels } from '@t/store/store';
 
@@ -7,8 +7,6 @@ const semiCircleCenterYRatio = {
   COUNTER_CLOCKWISE: 0.1,
   CLOCKWISE: 1,
 };
-
-const MINIMUM_RADIUS = 10;
 
 export function hasClockwiseSemiCircle(clockwise: boolean, startAngle: number, endAngle: number) {
   return (
@@ -33,9 +31,13 @@ export function getRadius(defaultRadius: number, radius: string | number): numbe
 }
 
 export function getTotalAngle(clockwise: boolean, startAngle: number, endAngle: number) {
-  const totalAngle = Math.abs(endAngle - startAngle);
+  const diffAngle = endAngle - startAngle;
+  const absDiff = Math.abs(diffAngle);
+  const needSubstractAngle =
+    (diffAngle > 0 && absDiff !== 360 && !clockwise) ||
+    (diffAngle < 0 && absDiff !== 360 && clockwise);
 
-  return totalAngle !== 360 && !clockwise ? 360 - totalAngle : totalAngle;
+  return needSubstractAngle ? 360 - absDiff : absDiff;
 }
 
 export function isSemiCircle(clockwise: boolean, startAngle: number, endAngle: number) {
@@ -44,25 +46,6 @@ export function isSemiCircle(clockwise: boolean, startAngle: number, endAngle: n
     (hasClockwiseSemiCircle(clockwise, startAngle, endAngle) ||
       hasCounterClockwiseSemiCircle(clockwise, startAngle, endAngle))
   );
-}
-
-export function getDefaultRadius(
-  { width, height }: Rect,
-  isSemiCircular = false,
-  maxDataLabelWidth = 0,
-  maxDataLabelHeight = 0
-) {
-  let result;
-
-  if (isSemiCircular) {
-    result = Math.min(width / 2, height) - maxDataLabelHeight;
-  } else if (width > height) {
-    result = height / 2 - maxDataLabelHeight;
-  } else {
-    result = width / 2 - maxDataLabelWidth;
-  }
-
-  return Math.max(result, MINIMUM_RADIUS);
 }
 
 export function getSemiCircleCenterY(rectHeight: number, clockwise: boolean) {

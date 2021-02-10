@@ -1,4 +1,4 @@
-import { Point, PieSeriesOptions, Rect, DataLabelAnchor } from '@t/options';
+import { Point, PieSeriesOptions, Rect, DataLabelAnchor, RadialBarSeriesOptions } from '@t/options';
 import { SectorModel } from '@t/components/series';
 import { pick } from '@src/helpers/utils';
 import { RadialDataLabel, RadialAnchor } from '@t/components/dataLabels';
@@ -76,11 +76,13 @@ export function withinRadian(
     : startDegree >= currentDegree && endDegree <= currentDegree;
 }
 
-export function initSectorOptions(options?: PieSeriesOptions) {
+export function initSectorOptions(options?: PieSeriesOptions | RadialBarSeriesOptions) {
+  const clockwise = options?.clockwise ?? true;
+
   return {
-    clockwise: options?.clockwise ?? true,
-    startAngle: options?.angleRange?.start ?? 0,
-    endAngle: options?.angleRange?.end ?? 360,
+    clockwise,
+    startAngle: options?.angleRange?.start ?? (clockwise ? 0 : 360),
+    endAngle: options?.angleRange?.end ?? (clockwise ? 360 : 0),
   };
 }
 
