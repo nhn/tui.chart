@@ -1,12 +1,12 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { LabelModel } from '@t/components/axis';
 import { AxisType } from '@src/component/axis';
 import { AxisTitleOption } from '@t/options';
 import { includes } from '@src/helpers/utils';
 import { FontTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
 import { getAxisTheme } from '@src/helpers/axes';
+import { LabelModel } from '@t/brush/label';
 
 export default class AxisTitle extends Component {
   models!: LabelModel[];

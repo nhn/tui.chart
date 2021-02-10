@@ -2,8 +2,8 @@ import { padding } from '@src/store/layout';
 import { getTextWidth, getMaxLengthLabelWidth } from '@src/helpers/calculator';
 import { label, bubbleLabel } from '@src/brushes/label';
 import { SpectrumLegendModel, SpectrumLegendTooltipModel } from '@t/components/spectrumLegend';
-import { LabelStyle } from '@t/components/axis';
 import { getBubbleArrowPoints } from './dataLabel';
+import { LabelStyle } from '@t/brush/label';
 
 export const SPECTRUM_LEGEND_LABEL_HEIGHT = 12;
 export const spectrumLegendBar = {
@@ -199,14 +199,22 @@ export function spectrumTooltip(ctx: CanvasRenderingContext2D, model: SpectrumLe
   );
 
   bubbleLabel(ctx, {
-    x: boxStartX - width / 2,
-    y: boxStartY,
-    width,
-    height,
-    text,
-    labelStyle: ['default', { textAlign: 'center' }],
-    points,
-    direction,
-    fill: color,
+    type: 'bubbleLabel',
+    bubble: {
+      x: boxStartX - width / 2,
+      y: boxStartY,
+      width,
+      height,
+      points,
+      direction,
+      fill: color,
+    },
+    label: {
+      text,
+      x: boxStartX,
+      y: boxStartY + height / 2,
+      font: 'normal 11px Arial',
+      color: '#333333',
+    },
   });
 }

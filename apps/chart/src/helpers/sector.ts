@@ -1,10 +1,9 @@
-import { Point } from '@t/options';
+import { Point, PieSeriesOptions, Rect, DataLabelAnchor } from '@t/options';
 import { SectorModel } from '@t/components/series';
 import { pick } from '@src/helpers/utils';
-import { RadialAnchor } from '@t/components/dataLabels';
-
+import { RadialDataLabel, RadialAnchor } from '@t/components/dataLabels';
 type RadialPositionParam = {
-  anchor: RadialAnchor;
+  anchor: DataLabelAnchor;
   x: number;
   y: number;
   radius: {
@@ -18,7 +17,12 @@ type RadialPositionParam = {
   drawingStartAngle: number;
 };
 
-export function makeAnchorPositionParam(anchor: RadialAnchor, model: SectorModel) {
+const MINIMUM_RADIUS = 10;
+
+export function makeAnchorPositionParam(
+  anchor: DataLabelAnchor,
+  model: SectorModel | RadialDataLabel
+) {
   return {
     anchor,
     ...pick(model, 'x', 'y', 'radius', 'degree', 'drawingStartAngle'),
@@ -52,7 +56,7 @@ export function getRadialAnchorPosition(param: RadialPositionParam): Point {
   } = param;
   const halfDegree = start + (end - start) / 2;
   const radian = calculateDegreeToRadian(halfDegree, drawingStartAngle);
-  const r = anchor === 'center' ? (outer - inner) / 2 + inner : outer;
+  const r = anchor === 'outer' ? outer : (outer - inner) / 2 + inner;
 
   return getRadialPosition(x, y, r, radian);
 }
@@ -70,4 +74,78 @@ export function withinRadian(
   return clockwise
     ? startDegree <= currentDegree && endDegree >= currentDegree
     : startDegree >= currentDegree && endDegree <= currentDegree;
+}
+
+export function initSectorOptions(options?: PieSeriesOptions) {
+  return {
+    clockwise: options?.clockwise ?? true,
+    startAngle: options?.angleRange?.start ?? 0,
+    endAngle: options?.angleRange?.end ?? 360,
+  };
+}
+
+export function getDefaultRadius(
+  { width, height }: Rect,
+  isSemiCircular = false,
+  maxLabelWidth = 0,
+  maxLabelHeight = 0
+) {
+  let result;
+
+  if (isSemiCircular) {
+    result = Math.min(width / 2, height) - maxLabelHeight;
+  } else if (width > height) {
+    result = height / 2 - maxLabelHeight;
+  } else {
+    result = width / 2 - maxLabelWidth;
+  }
+
+  return Math.max(result, MINIMUM_RADIUS);
+}
+
+function getRadian(
+  startAngle: number,
+  endAngle: number,
+  drawingStartAngle: number,
+  needCalculateByHalf: boolean
+) {
+  const degree = needCalculateByHalf ? (endAngle + startAngle) / 2 : startAngle;
+
+  return calculateDegreeToRadian(degree, drawingStartAngle);
+}
+
+export function getRadialLabelAlign(
+  model: Pick<RadialDataLabel, 'totalAngle' | 'degree' | 'drawingStartAngle'>,
+  anchor: RadialAnchor,
+  needCalculateByHalf = true
+) {
+  const {
+    totalAngle,
+    degree: { start, end },
+    drawingStartAngle,
+  } = model;
+
+  let textAlign: CanvasTextAlign = 'center';
+
+  if (anchor !== 'outer') {
+    return textAlign;
+  }
+
+  const radian0 = calculateDegreeToRadian(0, drawingStartAngle);
+  const halfRadian = calculateDegreeToRadian(totalAngle / 2, drawingStartAngle);
+  const radian = getRadian(start, end, drawingStartAngle, needCalculateByHalf);
+
+  if (drawingStartAngle >= -90 && drawingStartAngle < 90) {
+    if (radian0 < radian && halfRadian > radian) {
+      textAlign = 'left';
+    } else if (halfRadian < radian) {
+      textAlign = 'right';
+    }
+  } else if (radian0 < radian && halfRadian > radian) {
+    textAlign = 'right';
+  } else if (halfRadian < radian) {
+    textAlign = 'left';
+  }
+
+  return textAlign;
 }

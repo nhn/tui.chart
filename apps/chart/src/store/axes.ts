@@ -23,28 +23,24 @@ import {
   isLabelAxisOnYAxis,
   isPointOnColumn,
   getYAxisOption,
-  getAutoAdjustingInterval,
   getAxisTheme,
   getViewAxisLabels,
   hasAxesLayoutChanged,
   getRotatableOption,
   makeFormattedCategory,
   getMaxLabelSize,
-  makeTitleOption,
   makeRotationData,
   getLabelXMargin,
+  getAxisFormatter,
+  makeDefaultAxisData,
 } from '@src/helpers/axes';
 import { makeLabelsFromLimit, getAxisLabelAnchorPoint } from '@src/helpers/calculator';
 import {
-  BaseAxisOptions,
   BarTypeYAxisOption,
-  BaseXAxisOptions,
-  LineTypeXAxisOptions,
   BoxSeriesOptions,
   RangeDataType,
   Rect,
   LineTypeSeriesOptions,
-  RadarChartOptions,
 } from '@t/options';
 import { deepMergedCopy, hasNegativeOnly, isNumber, pickProperty } from '@src/helpers/utils';
 import { isZooming } from '@src/helpers/range';
@@ -86,14 +82,6 @@ type SecondaryYAxisParam = {
   isCoordinateTypeChart: boolean;
 };
 
-interface AxisDataParams {
-  axis?: BaseAxisOptions | BaseXAxisOptions | LineTypeXAxisOptions;
-  categories?: string[];
-  layout?: Layout;
-  shift?: boolean;
-  isCoordinateTypeChart?: boolean;
-}
-
 export function isCenterYAxis(options: ChartOptionsUsingYAxis, isBar: boolean) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
   const alignCenter = (options.yAxis as BarTypeYAxisOption)?.align === 'center';
@@ -123,15 +111,6 @@ function getZeroPosition(
   return labelAxisOnYAxis ? position : axisSize - position;
 }
 
-function getAxisFormatter(options: Options, axisName: string) {
-  const axisOptions = {
-    ...getYAxisOption(options),
-    xAxis: options.xAxis,
-  };
-
-  return axisOptions[axisName]?.label?.formatter ?? ((value) => value);
-}
-
 export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const {
     axisSize,
@@ -152,7 +131,6 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options?.xAxis?.date);
   const formatter = getAxisFormatter(options, axisName);
-  // @TODO: regenerate label when exceeding max width
   const labels = labelsBeforeFormatting.map((label, index) =>
     formatter(label, { index, labels: labelsBeforeFormatting, axisName })
   );
@@ -255,77 +233,6 @@ function getDivergingValues(valueLabels) {
   return hasNegativeOnly(valueLabels)
     ? valueLabels.reverse().slice(1).concat(valueLabels)
     : valueLabels.slice(1).reverse().concat(valueLabels);
-}
-
-function getRadialAxis(
-  scale: ScaleData,
-  plot: Rect,
-  theme: Required<AxisTheme>,
-  { labelInterval }: InitAxisData,
-  options: RadarChartOptions
-): RadialAxisData {
-  const { limit, stepSize } = scale;
-  const { width, height } = plot;
-  const valueLabels = makeLabelsFromLimit(limit, stepSize);
-  const formatter = getAxisFormatter(options, 'yAxis');
-  const labels = valueLabels.map((label) => formatter(label));
-  const axisSize = Math.min(width, height) / 2 - 50;
-
-  return {
-    labels,
-    axisSize,
-    centerX: width / 2,
-    centerY: height / 2,
-    labelInterval,
-    ...getMaxLabelSize(labels, 0, getTitleFontString(theme.label)),
-  };
-}
-
-function getInitTickInterval(categories?: string[], layout?: Layout) {
-  if (!categories || !layout) {
-    return 1;
-  }
-
-  const { width } = layout.xAxis;
-  const count = categories.length;
-
-  return getAutoAdjustingInterval(count, width, categories);
-}
-
-function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
-  const { axis, categories, layout, isCoordinateTypeChart } = params;
-
-  const tickInterval = axis?.tick?.interval;
-  const labelInterval = axis?.label?.interval;
-  const existIntervalOptions = isNumber(tickInterval) || isNumber(labelInterval);
-
-  const needAdjustInterval =
-    isLabelAxis &&
-    !isNumber(axis?.scale?.stepSize) &&
-    !params.shift &&
-    !existIntervalOptions &&
-    !isCoordinateTypeChart;
-
-  const initTickInterval = needAdjustInterval ? getInitTickInterval(categories, layout) : 1;
-  const initLabelInterval = needAdjustInterval ? initTickInterval : 1;
-
-  const axisData: InitAxisData = {
-    tickInterval: tickInterval ?? initTickInterval,
-    labelInterval: labelInterval ?? initLabelInterval,
-  };
-
-  return axisData;
-}
-
-function makeDefaultAxisData(isLabelAxis: boolean, params: AxisDataParams): InitAxisData {
-  const axisData = getInitAxisIntervalData(isLabelAxis, params);
-  const title = makeTitleOption(params?.axis?.title);
-
-  if (title) {
-    axisData.title = title;
-  }
-
-  return axisData;
 }
 
 function getInitialAxisData(
@@ -437,10 +344,6 @@ const axes: StoreModule = {
       axesState.centerYAxis = {} as CenterYAxisData;
     }
 
-    if (series.radar) {
-      axesState.radialAxis = {} as RadialAxisData;
-    }
-
     if (secondaryYAxis) {
       axesState.secondaryYAxis = {} as AxisData;
     }
@@ -505,7 +408,7 @@ const axes: StoreModule = {
         axisName: labelAxisName,
       });
 
-      let secondaryYAxis, centerYAxis, radialAxis;
+      let secondaryYAxis, centerYAxis;
 
       if (state.axes.secondaryYAxis) {
         secondaryYAxis = getSecondaryYAxisData({
@@ -531,15 +434,6 @@ const axes: StoreModule = {
         }) as CenterYAxisData;
       }
 
-      if (state.axes.radialAxis) {
-        radialAxis = getRadialAxis(
-          scale[valueAxisName],
-          plot,
-          getAxisTheme(theme, valueAxisName),
-          initialAxisData.yAxis,
-          options as RadarChartOptions
-        );
-      }
       const axesState = {
         xAxis: makeXAxisData({
           axisData: labelOnYAxis ? valueAxisData : labelAxisData,
@@ -551,7 +445,6 @@ const axes: StoreModule = {
         yAxis: labelOnYAxis ? labelAxisData : valueAxisData,
         secondaryYAxis,
         centerYAxis,
-        radialAxis,
       } as Axes;
 
       if (hasAxesLayoutChanged(state.axes, axesState)) {

@@ -25,6 +25,17 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
+          radialAxis: {
+            dotColor: 'rgba(0, 0, 0, 0.5)',
+            label: {
+              color: '#333333',
+              fontFamily: 'Arial',
+              fontSize: 11,
+              fontWeight: 'normal',
+            },
+            lineWidth: 1,
+            strokeStyle: 'rgba(0, 0, 0, 0.05)',
+          },
           yAxis: {
             title: {
               fontSize: 11,
@@ -37,6 +48,15 @@ describe('theme store', () => {
               fontFamily: 'Arial',
               fontWeight: 'normal',
               color: '#333333',
+              textBubble: {
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                borderColor: 'rgba(0, 0, 0, 0)',
+                borderRadius: 7,
+                borderWidth: 1,
+                paddingX: 7,
+                paddingY: 2,
+                visible: false,
+              },
             },
             width: 1,
             color: '#333333',
@@ -203,6 +223,17 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
+          radialAxis: {
+            dotColor: 'rgba(0, 0, 0, 0.5)',
+            label: {
+              color: '#333333',
+              fontFamily: 'Verdana',
+              fontSize: 11,
+              fontWeight: 'normal',
+            },
+            lineWidth: 1,
+            strokeStyle: 'rgba(0, 0, 0, 0.05)',
+          },
           yAxis: {
             title: {
               fontSize: 11,
@@ -215,6 +246,15 @@ describe('theme store', () => {
               fontFamily: 'Verdana',
               fontWeight: 'normal',
               color: '#333333',
+              textBubble: {
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                borderColor: 'rgba(0, 0, 0, 0)',
+                borderRadius: 7,
+                borderWidth: 1,
+                paddingX: 7,
+                paddingY: 2,
+                visible: false,
+              },
             },
             width: 1,
             color: '#333333',
@@ -407,6 +447,17 @@ describe('theme store', () => {
               color: '#333333',
             },
           },
+          radialAxis: {
+            dotColor: 'rgba(0, 0, 0, 0.5)',
+            label: {
+              color: '#333333',
+              fontFamily: 'Arial',
+              fontSize: 11,
+              fontWeight: 'normal',
+            },
+            lineWidth: 1,
+            strokeStyle: 'rgba(0, 0, 0, 0.05)',
+          },
           yAxis: {
             title: {
               fontSize: 11,
@@ -419,6 +470,15 @@ describe('theme store', () => {
               fontFamily: 'Arial',
               fontWeight: 'normal',
               color: '#333333',
+              textBubble: {
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                borderColor: 'rgba(0, 0, 0, 0)',
+                borderRadius: 7,
+                borderWidth: 1,
+                paddingX: 7,
+                paddingY: 2,
+                visible: false,
+              },
             },
             width: 1,
             color: '#333333',
@@ -656,6 +716,17 @@ describe('theme store', () => {
               },
             },
           },
+          radialAxis: {
+            dotColor: 'rgba(0, 0, 0, 0.5)',
+            label: {
+              color: '#333333',
+              fontFamily: 'Arial',
+              fontSize: 11,
+              fontWeight: 'normal',
+            },
+            lineWidth: 1,
+            strokeStyle: 'rgba(0, 0, 0, 0.05)',
+          },
           yAxis: {
             title: {
               fontSize: 11,
@@ -668,6 +739,15 @@ describe('theme store', () => {
               fontFamily: 'Arial',
               fontWeight: 'normal',
               color: '#333333',
+              textBubble: {
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                borderColor: 'rgba(0, 0, 0, 0)',
+                borderRadius: 7,
+                borderWidth: 1,
+                paddingX: 7,
+                paddingY: 2,
+                visible: false,
+              },
             },
             width: 1,
             color: '#333333',
@@ -1073,6 +1153,17 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
+          radialAxis: {
+            dotColor: 'rgba(0, 0, 0, 0.5)',
+            label: {
+              color: '#333333',
+              fontFamily: 'Arial',
+              fontSize: 11,
+              fontWeight: 'normal',
+            },
+            lineWidth: 1,
+            strokeStyle: 'rgba(0, 0, 0, 0.05)',
+          },
           yAxis: {
             title: {
               fontSize: 11,
@@ -1085,6 +1176,15 @@ describe('theme store', () => {
               fontFamily: 'Arial',
               fontWeight: 'normal',
               color: '#333333',
+              textBubble: {
+                backgroundColor: 'rgba(0, 0, 0, 0)',
+                borderColor: 'rgba(0, 0, 0, 0)',
+                borderRadius: 7,
+                borderWidth: 1,
+                paddingX: 7,
+                paddingY: 2,
+                visible: false,
+              },
             },
             width: 1,
             color: '#333333',
