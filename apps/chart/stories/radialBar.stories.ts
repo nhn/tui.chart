@@ -253,7 +253,6 @@ export const theme = () => {
       verticalAxis: {
         label: {
           color: '#fff',
-          align: 'center',
           textBubble: {
             visible: true,
             borderRadius: 5,
