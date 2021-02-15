@@ -368,41 +368,32 @@ function getNextColumnRowIndex(params: {
     }
   }
 
-  return { rowIndex, columnIndex };
+  return [rowIndex, columnIndex];
 }
 
-function getDataWithIndex(
+function setIndexToLegendData(
   legendData: LegendDataList,
   rowCount: number,
   columnCount: number,
   legendCount: number,
   verticalAlign: boolean
-): LegendDataList {
-  const { data } = legendData.reduce(
-    (acc, datum) => {
-      return {
-        data: [
-          ...acc.data,
-          {
-            ...datum,
-            rowIndex: acc.rowIndex,
-            columnIndex: acc.columnIndex,
-          },
-        ],
-        ...getNextColumnRowIndex({
-          rowCount,
-          columnCount,
-          verticalAlign,
-          legendCount,
-          rowIndex: acc.rowIndex,
-          columnIndex: acc.columnIndex,
-        }),
-      };
-    },
-    { data: [] as LegendDataList, rowIndex: 0, columnIndex: 0 }
-  );
+) {
+  let columnIndex = 0;
+  let rowIndex = 0;
 
-  return data;
+  legendData.forEach((datum) => {
+    datum.rowIndex = rowIndex;
+    datum.columnIndex = columnIndex;
+
+    [rowIndex, columnIndex] = getNextColumnRowIndex({
+      rowCount,
+      columnCount,
+      verticalAlign,
+      legendCount,
+      rowIndex,
+      columnIndex,
+    });
+  });
 }
 
 const legend: StoreModule = {
@@ -457,13 +448,7 @@ const legend: StoreModule = {
           ? INITIAL_CIRCLE_LEGEND_WIDTH
           : Math.min(legendWidth, INITIAL_CIRCLE_LEGEND_WIDTH);
 
-      const dataWithIndex = getDataWithIndex(
-        legendData,
-        rowCount,
-        columnCount,
-        legendWidths.length,
-        verticalAlign
-      );
+      setIndexToLegendData(legendData, rowCount, columnCount, legendWidths.length, verticalAlign);
 
       extend(state.legend, {
         visible,
@@ -471,7 +456,6 @@ const legend: StoreModule = {
         showCheckbox: checkbox,
         width: legendWidth,
         height: legendHeight,
-        data: dataWithIndex,
       });
 
       extend(state.circleLegend, {
