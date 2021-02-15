@@ -208,7 +208,7 @@ export const radarFormatter = () => {
       visible: true,
       align: 'bottom',
     },
-    yAxis: {
+    verticalAxis: {
       label: {
         interval: 2,
         formatter: (value) => `👻${value}`,

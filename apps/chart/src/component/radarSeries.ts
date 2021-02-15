@@ -72,7 +72,7 @@ export default class RadarSeries extends Component {
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, axes, series, legend, options, theme, scale } = state;
+    const { layout, radialAxes, series, legend, options, theme, scale } = state;
 
     if (!series.radar) {
       throw new Error(message.noDataError(this.name));
@@ -85,9 +85,9 @@ export default class RadarSeries extends Component {
     this.selectable = this.getSelectableOption(options);
 
     const categories = state.categories as string[];
-    const { axisSize, centerX, centerY } = axes.radialAxis!;
+    const { axisSize, centerX, centerY } = radialAxes.verticalAxis;
 
-    const { limit, stepSize } = scale.yAxis;
+    const { limit, stepSize } = scale.verticalAxis!;
     const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
 

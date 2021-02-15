@@ -1,35 +1,22 @@
-import {
-  label,
-  StrokeLabelStyle,
-  LabelStyle,
-  bubbleLabel,
-  PathRectStyleName,
-} from '@src/brushes/label';
+import { label, bubbleLabel } from '@src/brushes/label';
 import { DataLabelModel } from '@t/components/dataLabels';
 import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 import { Point, Rect } from '@t/options';
 import { line } from './basic';
 import { getFont } from '@src/helpers/style';
-import { ArrowTheme, CommonDataLabelTheme, TextBubbleTheme, BubbleDataLabel } from '@t/theme';
-import { Nullable, StyleProp, RectStyle } from '@t/components/series';
-import { pick } from '@src/helpers/utils';
-
-export type ArrowDirection = 'top' | 'right' | 'bottom' | 'left';
-type Arrow = {
-  direction: ArrowDirection;
-  points: Point[];
-} & Point;
-
-type BubbleInfo = Rect & {
-  radius: number;
-  fill: string;
-  lineWidth: number;
-  stroke: string;
-  bubbleStyle: Nullable<StyleProp<RectStyle, PathRectStyleName>>;
-} & Nullable<Arrow>;
+import {
+  ArrowTheme,
+  CommonDataLabelTheme,
+  TextBubbleTheme,
+  BubbleDataLabel,
+  ArrowDirection,
+} from '@t/theme';
+import { Nullable } from '@t/components/series';
+import { pick, includes } from '@src/helpers/utils';
+import { BubbleInfo, Arrow, LabelStyle, StrokeLabelStyle } from '@t/brush/label';
 
 export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
-  const { x, y, text, textAlign, textBaseline, opacity, callout, theme } = model;
+  const { x, y, text, textAlign, textBaseline, opacity, callout, theme, radian } = model;
   const { color, textBubble } = theme;
   const font = getFont(theme);
   const textStyle: LabelStyle = { textAlign, textBaseline, font, fillStyle: color };
@@ -62,30 +49,30 @@ export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) 
     style: [textStyle],
     stroke: [textStrokeStyle],
     opacity,
+    radian,
   });
 }
 
 export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
-  const { text, theme } = model;
+  const { text, theme, radian = 0 } = model;
   const { color, textStrokeColor } = theme as Required<BubbleDataLabel>;
   const font = getFont(theme);
-  const textStyle: LabelStyle = {
-    textAlign: 'center',
-    textBaseline: 'middle',
-    font,
-    fillStyle: color,
-  };
-  let textStrokeStyle: StrokeLabelStyle = {};
 
-  if (textStrokeColor) {
-    textStrokeStyle = { strokeStyle: textStrokeColor };
-  }
+  const bubbleRect = getBubbleRect(model);
+  const { x, y, width, height } = bubbleRect;
 
   bubbleLabel(ctx, {
-    ...getBubbleRect(model),
-    labelStyle: [textStyle],
-    labelStrokeStyle: [textStrokeStyle],
-    text,
+    type: 'bubbleLabel',
+    radian,
+    rotationPosition: { x: model.x, y: model.y },
+    bubble: bubbleRect,
+    label: {
+      x: x + width / 2,
+      y: y + height / 2,
+      text,
+      style: [{ font, fillStyle: color, textAlign: 'center', textBaseline: 'middle' }],
+      strokeStyle: textStrokeColor,
+    },
   });
 }
 
@@ -150,7 +137,7 @@ function getBubbleRect(model: DataLabelModel): BubbleInfo {
 
   if (textAlign === 'center') {
     x -= width / 2;
-  } else if (textAlign === 'right') {
+  } else if (includes(['right', 'end'], textAlign)) {
     x -= width;
   }
 
@@ -165,10 +152,10 @@ function getBubbleRect(model: DataLabelModel): BubbleInfo {
   return {
     ...rect,
     radius: borderRadius,
-    fill: backgroundColor,
     lineWidth: borderWidth,
-    stroke: borderColor,
-    bubbleStyle: [
+    fill: backgroundColor,
+    strokeStyle: borderColor,
+    style: [
       {
         shadowBlur,
         shadowOffsetX,

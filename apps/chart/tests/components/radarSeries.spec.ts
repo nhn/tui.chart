@@ -16,20 +16,43 @@ const chartState = {
   layout: {
     plot: { width: 200, height: 200, x: 0, y: 0 },
   },
-  scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } },
+  scale: { verticalAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } },
   series: {
     radar: {
       data: seriesData,
     },
   },
-  axes: {
-    xAxis: {},
-    yAxis: {},
-    radialAxis: {
+  radialAxes: {
+    verticalAxis: {
       labels: ['0', '1', '2', '3', '4', '5'],
       axisSize: 50,
       centerX: 100,
       centerY: 100,
+      maxLabelWidth: 30,
+      maxLabelHeight: 15,
+      labelInterval: 1,
+      labelMargin: 0,
+      tickDistance: 25,
+      radiusRanges: [10, 20, 30, 40, 50],
+      pointOnColumn: false,
+      innerRadius: 0,
+      outerRadius: 50,
+      labelAlign: 'center',
+    },
+    circularAxis: {
+      labels: ['A', 'B', 'C', 'D'],
+      axisSize: 50,
+      centerX: 100,
+      centerY: 100,
+      maxLabelWidth: 20,
+      maxLabelHeight: 15,
+      labelInterval: 1,
+      labelMargin: 25,
+      degree: 90,
+      tickInterval: 1,
+      totalAngle: 360,
+      drawingStartAngle: 0,
+      clockwise: true,
     },
   },
   categories: ['A', 'B', 'C', 'D'],

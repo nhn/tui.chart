@@ -19,6 +19,7 @@ import {
   BoxPlotCharThemeOptions,
   BulletCharThemeOptions,
   ColumnLineChartThemeOptions,
+  RadialBarChartThemeOptions,
 } from '@t/theme';
 import { AxisType } from '@src/component/axis';
 export type RangeDataType<T> = [T, T];
@@ -42,6 +43,7 @@ export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
 export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped' | 'point';
 export type BoxTypeEventDetectType = 'grouped' | 'point';
+export type CicleTypeEventDetectType = 'grouped' | 'point';
 
 export type BezierPoint = {
   controlPoint?: {
@@ -509,7 +511,8 @@ export type RadarPlotType = 'spiderweb' | 'circle';
 export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
   plot?: BaseSizeOptions & { type?: RadarPlotType };
-  yAxis?: BaseAxisOptions;
+  verticalAxis?: RadialValueAxisOptions;
+  circularAxis?: RadialCategoryAxisOptions;
   theme?: RadarChartThemeOptions;
 }
 
@@ -643,6 +646,41 @@ export interface NestedPieChartOptions extends BaseOptions {
   theme?: NestedPieChartThemeOptions;
 }
 
+export interface RadialBarSeriesType {
+  name: string;
+  data: number[];
+  color?: string;
+}
+
+export interface RadialBarSeriesData {
+  categories: string[];
+  series: RadialBarSeriesType[];
+}
+
+type RadialCategoryAxisOptions = Pick<BaseAxisOptions, 'label' | 'tick'>;
+type RadialValueAxisOptions = Pick<BaseAxisOptions, 'label' | 'tick' | 'scale'>;
+
+export interface RadialBarChartOptions extends BaseOptions {
+  verticalAxis?: RadialCategoryAxisOptions;
+  circularAxis?: RadialValueAxisOptions;
+  series?: RadialBarSeriesOptions;
+  theme?: RadialBarChartThemeOptions;
+}
+
+interface RadialBarSeriesOptions extends BaseSeriesOptions {
+  radiusRange?: {
+    inner?: number;
+    outer?: number;
+  };
+  clockwise?: boolean;
+  angleRange?: {
+    start: number;
+    end: number;
+  };
+  eventDetectType?: CicleTypeEventDetectType;
+  dataLabels?: DataLabelOptions;
+}
+
 export type SeriesDataInput =
   | LineSeriesInput
   | AreaSeriesInput
@@ -655,7 +693,8 @@ export type SeriesDataInput =
   | BulletSeriesType
   | BoxPlotSeriesType
   | BoxSeriesInput<BoxSeriesDataType>
-  | NestedPieSeriesType;
+  | NestedPieSeriesType
+  | RadialBarSeriesType;
 
 export type DataInput =
   | LineSeriesData
@@ -672,4 +711,9 @@ export type DataInput =
   | LineAreaData
   | LineScatterData
   | ColumnLineData
-  | NestedPieSeriesData;
+  | NestedPieSeriesData
+  | RadialBarSeriesData;
+
+type UsingRadialAxesChartTypeTheme =
+  | Required<RadarChartThemeOptions>
+  | Required<RadialBarChartThemeOptions>;

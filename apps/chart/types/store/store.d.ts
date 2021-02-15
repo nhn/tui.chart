@@ -38,6 +38,8 @@ import {
   NestedPieSeriesType,
   LineAreaChartOptions,
   ScatterChartOptions,
+  RadialBarSeriesType,
+  RadialBarChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -57,6 +59,7 @@ type ChartSeriesMap = {
   bullet: BulletSeriesType[];
   treemap: TreemapSeriesType[];
   heatmap: HeatmapSeriesType[];
+  radialBar: RadialBarSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -94,6 +97,7 @@ export type ChartOptionsMap = {
   lineArea: LineAreaChartOptions;
   columnLine: ColumnLineChartOptions;
   heatmap: HeatmapChartOptions;
+  radialBar: RadialBarChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -103,8 +107,10 @@ export type OptionsWithDataLabels = ValueOf<
 >;
 
 export type ChartOptionsUsingYAxis = ValueOf<
-  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap'>
+  Omit<ChartOptionsMap, 'pie' | 'heatmap' | 'treemap' | 'radar' | 'radialBar'>
 >;
+
+export type ChartOptionsUsingRadialAxes = ValueOf<Pick<ChartOptionsMap, 'radar' | 'radialBar'>>;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
@@ -163,9 +169,11 @@ export interface Layout {
 }
 
 export interface Scale {
-  xAxis: ScaleData;
-  yAxis: ScaleData;
+  xAxis?: ScaleData;
+  yAxis?: ScaleData;
   secondaryYAxis?: ScaleData;
+  circularAxis?: ScaleData;
+  verticalAxis?: ScaleData;
 }
 
 type ViewAxisLabel = { offsetPos: number; text: string };
@@ -180,7 +188,6 @@ export type Axes = {
   xAxis: AxisData;
   yAxis: AxisData;
   centerYAxis?: CenterYAxisData;
-  radialAxis?: RadialAxisData;
   secondaryYAxis?: AxisData;
 };
 
@@ -188,6 +195,8 @@ export type DataRange = {
   xAxis?: ValueEdge;
   yAxis?: ValueEdge;
   secondaryYAxis?: ValueEdge;
+  circularAxis?: ValueEdge;
+  verticalAxis?: ValueEdge;
 };
 
 export type StackSeries = {
@@ -230,16 +239,6 @@ export interface CenterYAxisData extends ValueAxisData {
   yAxisHeight: number;
 }
 
-export type RadialAxisData = {
-  labels: string[];
-  axisSize: number;
-  centerX: number;
-  centerY: number;
-  labelInterval: number;
-  maxLabelWidth: number;
-  maxLabelHeight: number;
-};
-
 export interface TreemapSeriesData {
   id: string;
   parentId: string;
@@ -261,6 +260,48 @@ export type ChartOptions = {
   animation?: AnimationOptions;
 } & Size;
 
+type CircularAxisData = {
+  labels: string[];
+  axisSize: number;
+  centerX: number;
+  centerY: number;
+  labelInterval: number;
+  labelMargin: number;
+  maxLabelWidth: number;
+  maxLabelHeight: number;
+  degree: number;
+  tickInterval: number;
+  totalAngle: number;
+  drawingStartAngle: number;
+  clockwise: boolean;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+};
+
+type VerticalAxisData = {
+  labels: string[];
+  axisSize: number;
+  centerX: number;
+  centerY: number;
+  labelInterval: number;
+  labelMargin: number;
+  maxLabelWidth: number;
+  maxLabelHeight: number;
+  tickDistance: number;
+  radiusRanges: number[];
+  pointOnColumn: boolean;
+  innerRadius: number;
+  outerRadius: number;
+  labelAlign: CanvasTextAlign;
+  startAngle: number;
+  endAngle: number;
+};
+
+type RadialAxes = {
+  circularAxis: CircularAxisData;
+  verticalAxis: VerticalAxisData;
+};
 export interface ChartState<T extends Options> {
   chart: ChartOptions;
   layout: Layout;
@@ -271,6 +312,7 @@ export interface ChartState<T extends Options> {
   shiftRange?: RangeDataType<number>;
   // 기존의 limitMap
   axes: Axes;
+  radialAxes: RadialAxes;
   dataRange: DataRange;
   theme: Theme;
   options: T;
@@ -377,7 +419,7 @@ export type PercentScaleType =
   | 'dualPercentStack'
   | 'divergingPercentStack';
 
-type StackSeriesType = BoxType | 'area';
+type StackSeriesType = BoxType | 'area' | 'radialBar';
 
 export type StackSeriesData<K extends StackSeriesType> = {
   data: ChartSeriesMap[K];

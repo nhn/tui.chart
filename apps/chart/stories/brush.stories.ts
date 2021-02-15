@@ -3,7 +3,7 @@ import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
 import { circleLegend } from '@src/brushes/circleLegend';
 import { legend } from '@src/brushes/legend';
-import { label, rectLabel } from '@src/brushes/label';
+import { label, bubbleLabel } from '@src/brushes/label';
 import { resetButton, backButton } from '@src/brushes/resetButton';
 import { sector } from '@src/brushes/sector';
 import { spectrumLegend, spectrumTooltip } from '@src/brushes/spectrumLegend';
@@ -25,16 +25,18 @@ import {
   text,
 } from '@storybook/addon-knobs';
 import { setSplineControlPoint } from '@src/helpers/calculator';
-import { LabelModel, LineModel, TickModel } from '@t/components/axis';
+import { LineModel, TickModel } from '@t/components/axis';
 import { Point } from '@t/options';
 import { polygon } from '@src/brushes/polygon';
 import { scatterSeries } from '@src/brushes/scatterSeries';
+import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
+import { LabelModel } from '@t/brush/label';
 
 // @TODO: need to remove. comment for beta test
-// export default {
-//   title: 'brushes',
-//   decorators: [withKnobs],
-// };
+export default {
+  title: 'brushes',
+  decorators: [withKnobs],
+};
 
 type BezierOptions = 'basic' | 'bezier';
 
@@ -197,24 +199,6 @@ export const labelBrush = () => {
     style: ['default', { textAlign, textBaseline, font, fillStyle: '#ffffff' }],
     stroke: ['stroke', { lineWidth: 5, strokeStyle: '#9c27b0' }],
   } as LabelModel);
-
-  return el;
-};
-
-export const rectLabelBrush = () => {
-  const { ctx, el } = setup();
-
-  rectLabel(ctx, {
-    type: 'rectLabel',
-    text: 'Hello World',
-    style: ['rectLabel', { fillStyle: '#333333' }],
-    x: 200,
-    y: 100,
-    borderRadius: 5,
-    backgroundColor: 'rgba(0,0,0,.3)',
-    width: 100,
-    height: 20,
-  });
 
   return el;
 };
@@ -710,6 +694,160 @@ export const scatterSeriesBrush = () => {
     fillColor: '#dd6699',
     borderWidth: 1.5,
     size: 12,
+  });
+
+  return el;
+};
+
+export const bubbleLabelBrush = () => {
+  const { ctx, el } = setup();
+  const font = 'normal 14px Arial';
+  const style = [
+    {
+      shadowBlur: 5,
+      shadowOffsetX: 2,
+      shadowOffsetY: 2,
+      shadowColor: 'rgba(0,0,0,0.2)',
+    },
+  ];
+
+  bubbleLabel(ctx, {
+    type: 'bubbleLabel',
+    bubble: {
+      x: 50,
+      y: 50,
+      width: 80,
+      height: 50,
+      radius: 10,
+      lineWidth: 1,
+      fill: '#ff9800',
+      strokeStyle: '#6b4309',
+      style,
+    },
+    label: {
+      x: 50,
+      y: 75,
+      text: 'Start',
+      style: [{ textAlign: 'start', textBaseline: 'middle', font }],
+    },
+  });
+
+  bubbleLabel(ctx, {
+    type: 'bubbleLabel',
+    bubble: {
+      x: 200,
+      y: 50,
+      width: 80,
+      height: 50,
+      radius: 10,
+      lineWidth: 1,
+      fill: '#dd6699',
+      strokeStyle: '#ff6600',
+      style,
+    },
+    label: {
+      x: 240,
+      y: 75,
+      text: 'Center',
+      style: [{ textAlign: 'center', textBaseline: 'middle', font }],
+    },
+  });
+
+  bubbleLabel(ctx, {
+    type: 'bubbleLabel',
+    bubble: {
+      x: 350,
+      y: 50,
+      width: 80,
+      height: 50,
+      radius: 10,
+      lineWidth: 2,
+      fill: '#f9d423',
+      strokeStyle: '#5a4c05',
+      style,
+    },
+    label: {
+      x: 430,
+      y: 75,
+      text: 'Right',
+      style: [{ textAlign: 'right', textBaseline: 'middle', font }],
+    },
+  });
+
+  const centerX = 200;
+  const centerY = 300;
+  const width = 200;
+  const height = 50;
+  const halfWidth = 100;
+  const halfHeight = 25;
+
+  const { x, y } = getRadialPosition(centerX, centerY, 0, calculateDegreeToRadian(315));
+
+  bubbleLabel(ctx, {
+    type: 'bubbleLabel',
+    radian: calculateDegreeToRadian(315, 0),
+    rotationPosition: { x, y },
+    bubble: {
+      x: x - halfWidth,
+      y: y - halfHeight,
+      width,
+      height,
+      fill: '#f9d423',
+      strokeStyle: '#5a4c05',
+      style,
+    },
+    label: {
+      x,
+      y,
+      text: 'Rotation Center Label',
+      style: [{ textAlign: 'center', textBaseline: 'middle', font }],
+    },
+  });
+
+  const { x: x2, y: y2 } = getRadialPosition(centerX, centerY, 50, calculateDegreeToRadian(315));
+
+  bubbleLabel(ctx, {
+    type: 'bubbleLabel',
+    radian: calculateDegreeToRadian(315, 0),
+    rotationPosition: { x: x2, y: y2 },
+    bubble: {
+      x: x2 - halfWidth,
+      y: y2 - halfHeight,
+      width,
+      height,
+      fill: '#f9d423',
+      strokeStyle: '#5a4c05',
+      style,
+    },
+    label: {
+      x: x2 - halfWidth,
+      y: y2,
+      text: 'Rotation Left Label',
+      style: [{ textAlign: 'left', textBaseline: 'middle', font }],
+    },
+  });
+
+  const { x: x3, y: y3 } = getRadialPosition(centerX, centerY, 100, calculateDegreeToRadian(315));
+
+  bubbleLabel(ctx, {
+    type: 'bubbleLabel',
+    radian: calculateDegreeToRadian(315, 0),
+    rotationPosition: { x: x3, y: y3 },
+    bubble: {
+      x: x3 - halfWidth,
+      y: y3 - halfHeight,
+      width,
+      height,
+      fill: '#f9d423',
+      strokeStyle: '#5a4c05',
+      style,
+    },
+    label: {
+      x: x3 + halfWidth,
+      y: y3,
+      text: 'Rotation Right Label',
+      style: [{ textAlign: 'right', textBaseline: 'middle', font }],
+    },
   });
 
   return el;

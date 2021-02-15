@@ -1,22 +1,5 @@
 import { Point } from '../options';
-import { StyleProp, PathRectModel } from '@t/components/series';
-import { StrokeLabelStyleName, StrokeLabelStyle, LabelStyleName } from '@src/brushes/label';
-
-export interface LabelStyle {
-  font?: string;
-  fillStyle?: string;
-  textAlign?: CanvasTextAlign;
-  textBaseline?: CanvasTextBaseline;
-}
-
-export type LabelModel = {
-  type: 'label';
-  style?: StyleProp<LabelStyle, LabelStyleName>;
-  stroke?: StyleProp<StrokeLabelStyle, StrokeLabelStyleName>;
-  text: string;
-  opacity?: number;
-  radian?: number;
-} & Point;
+import { LabelModel } from '@t/brush/label';
 
 export type TickModel = {
   type: 'tick';
@@ -41,10 +24,3 @@ export type AxisModels = {
   tick: TickModel[];
   axisLine: LineModel[];
 };
-
-export type RectLabelModel = {
-  type: 'rectLabel';
-  borderRadius?: number;
-  backgroundColor?: string;
-} & Omit<PathRectModel, 'type'> &
-  Omit<LabelModel, 'type'>;

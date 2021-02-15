@@ -46,25 +46,6 @@ export function isSemiCircle(clockwise: boolean, startAngle: number, endAngle: n
   );
 }
 
-export function getDefaultRadius(
-  { width, height }: Rect,
-  isSemiCircular = false,
-  maxDataLabelWidth = 0,
-  maxDataLabelHeight = 0
-) {
-  let result;
-
-  if (isSemiCircular) {
-    result = Math.min(width / 2, height) - maxDataLabelHeight;
-  } else if (width > height) {
-    result = height / 2 - maxDataLabelHeight;
-  } else {
-    result = width / 2 - maxDataLabelWidth;
-  }
-
-  return Math.max(result, MINIMUM_RADIUS);
-}
-
 export function getSemiCircleCenterY(rectHeight: number, clockwise: boolean) {
   return clockwise
     ? rectHeight * semiCircleCenterYRatio.CLOCKWISE

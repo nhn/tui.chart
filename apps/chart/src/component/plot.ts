@@ -13,7 +13,7 @@ type XPositionParam = {
   axisData: LabelAxisData;
   offsetSize: number;
   value: number | string;
-  xAxisLimit: ValueEdge;
+  xAxisLimit?: ValueEdge;
   categories: string[];
   startIndex: number;
 };
@@ -30,7 +30,7 @@ function validXPosition({
   startIndex = 0,
 }: XPositionParam) {
   const dataIndex = getValidIndex(value as number, startIndex);
-  const x = getXPosition(axisData, offsetSize, xAxisLimit, value, dataIndex);
+  const x = getXPosition(axisData, offsetSize, value, dataIndex, xAxisLimit);
 
   return x > 0 ? Math.min(offsetSize, x) : 0;
 }
@@ -58,9 +58,9 @@ export default class Plot extends Component {
 
   renderLines(
     axes: Axes,
-    xAxisLimit: ValueEdge,
     categories: string[],
-    lines: PlotLine[] = []
+    lines: PlotLine[] = [],
+    xAxisLimit?: ValueEdge,
   ): LineModel[] {
     return lines.map(({ value, color }) => {
       const { offsetSize } = this.getPlotAxisSize(true);
@@ -79,9 +79,9 @@ export default class Plot extends Component {
 
   renderBands(
     axes: Axes,
-    xAxisLimit: ValueEdge,
     categories: string[],
-    bands: PlotBand[] = []
+    bands: PlotBand[] = [],
+    xAxisLimit?: ValueEdge
   ): RectModel[] {
     const { offsetSize, anchorSize } = this.getPlotAxisSize(true);
 
@@ -207,8 +207,8 @@ export default class Plot extends Component {
     const { lines, bands, visible } = plot;
     const xAxisLimit = scale?.xAxis?.limit;
 
-    this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
-    this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
+    this.models.line = this.renderLines(axes, categories, lines, xAxisLimit);
+    this.models.band = this.renderBands(axes, categories, bands, xAxisLimit);
 
     if (visible) {
       this.models.plot = [this.renderPlotBackgroundRect(), ...this.renderPlots(axes)];

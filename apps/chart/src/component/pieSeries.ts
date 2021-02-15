@@ -7,13 +7,13 @@ import {
   getRadialAnchorPosition,
   makeAnchorPositionParam,
   withinRadian,
+  getDefaultRadius,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getDataLabelsOptions, RADIUS_PADDING } from '@src/helpers/dataLabels';
 import {
   getTotalAngle,
   isSemiCircle,
-  getDefaultRadius,
   getSemiCircleCenterY,
   makePieTooltipData,
   pieTooltipLabelFormatter,

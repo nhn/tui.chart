@@ -5,6 +5,8 @@ import {
   Axes,
   ViewAxisLabel,
   RotationLabelData,
+  InitAxisData,
+  Layout,
 } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
 import { Theme } from '@t/theme';
@@ -15,7 +17,7 @@ import {
   getTextHeight,
   getTextWidth,
 } from '@src/helpers/calculator';
-import { range, isString, isUndefined } from '@src/helpers/utils';
+import { range, isString, isUndefined, isNumber } from '@src/helpers/utils';
 import {
   ANGLE_CANDIDATES,
   calculateRotatedWidth,
@@ -24,6 +26,7 @@ import {
 import { getDateFormat, formatDate } from '@src/helpers/formatDate';
 import { calculateDegreeToRadian } from '@src/helpers/sector';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
+import { AxisDataParams } from '@src/store/axes';
 
 interface IntervalInfo {
   blockCount: number;
@@ -129,11 +132,24 @@ export function isPointOnColumn(series: Series, options: Options) {
   return false;
 }
 
-export function getAxisName(labelAxisOnYAxis: boolean) {
+export function isSeriesUsingRadialAxes(series: Series): boolean {
+  return !!series.radar || !!series.radialBar;
+}
+
+function getAxisNameUsingRadialAxes(labelAxisOnYAxis: boolean) {
   return {
-    valueAxisName: labelAxisOnYAxis ? 'xAxis' : 'yAxis',
-    labelAxisName: labelAxisOnYAxis ? 'yAxis' : 'xAxis',
+    valueAxisName: labelAxisOnYAxis ? 'circularAxis' : 'verticalAxis',
+    labelAxisName: labelAxisOnYAxis ? 'verticalAxis' : 'circularAxis',
   };
+}
+
+export function getAxisName(labelAxisOnYAxis: boolean, series: Series) {
+  return isSeriesUsingRadialAxes(series)
+    ? getAxisNameUsingRadialAxes(labelAxisOnYAxis)
+    : {
+        valueAxisName: labelAxisOnYAxis ? 'xAxis' : 'yAxis',
+        labelAxisName: labelAxisOnYAxis ? 'yAxis' : 'xAxis',
+      };
 }
 
 export function getSizeKey(labelAxisOnYAxis: boolean) {
@@ -342,4 +358,40 @@ export function getLabelXMargin(axisName: string, options: Options) {
   const axisOptions = getYAxisOption(options);
 
   return Math.abs(axisOptions?.[axisName]?.label?.margin ?? 0);
+}
+
+export function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
+  const { axis, categories, layout, isCoordinateTypeChart } = params;
+
+  const tickInterval = axis?.tick?.interval;
+  const labelInterval = axis?.label?.interval;
+  const existIntervalOptions = isNumber(tickInterval) || isNumber(labelInterval);
+
+  const needAdjustInterval =
+    isLabelAxis &&
+    !isNumber(axis?.scale?.stepSize) &&
+    !params.shift &&
+    !existIntervalOptions &&
+    !isCoordinateTypeChart;
+
+  const initTickInterval = needAdjustInterval ? getInitTickInterval(categories, layout) : 1;
+  const initLabelInterval = needAdjustInterval ? initTickInterval : 1;
+
+  const axisData: InitAxisData = {
+    tickInterval: tickInterval ?? initTickInterval,
+    labelInterval: labelInterval ?? initLabelInterval,
+  };
+
+  return axisData;
+}
+
+function getInitTickInterval(categories?: string[], layout?: Layout) {
+  if (!categories || !layout) {
+    return 1;
+  }
+
+  const { width } = layout.xAxis;
+  const count = categories.length;
+
+  return getAutoAdjustingInterval(count, width, categories);
 }

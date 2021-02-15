@@ -21,19 +21,21 @@ import {
   BulletSeriesModels,
   BackgroundModel,
 } from '@t/components/series';
-import { AxisModels, LabelModel, LineModel, RectLabelModel } from '@t/components/axis';
+import { AxisModels, LineModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { LegendModel } from '@t/components/legend';
 import { CircleLegendModels } from '@t/components/circleLegend';
 import { PlotModels } from '@t/components/plot';
 import { DataLabelModels, SeriesDataLabels } from '@t/components/dataLabels';
 import { ZoomModels } from '@t/components/zoom';
-import { RadarPlotModels } from '@t/components/radarPlot';
+import { RadialPlotModels } from '@t/components/radialPlot';
 import { isSameArray } from '@src/helpers/arrayUtil';
 import { HoveredSeriesModel } from '@src/component/hoveredSeries';
 import { BackButtonModels, ResetButtonModels } from '@t/components/resetButton';
 import { SpectrumLegendModels } from '@t/components/spectrumLegend';
 import { ResponderSeriesModel } from '@src/component/selectedSeries';
+import { RadialAxisModels } from '@t/components/radialAxis';
+import { LabelModel } from '@t/brush/label';
 
 export type ComponentType =
   | 'component'
@@ -69,7 +71,7 @@ type ComponentModels =
   | BoxPlotSeriesModels
   | ZoomModels
   | PlotModels
-  | RadarPlotModels
+  | RadialPlotModels
   | LineModel[]
   | LabelModel[]
   | DataLabelModels
@@ -82,10 +84,10 @@ type ComponentModels =
   | HeatmapRectModels
   | NestedPieSeriesModels
   | ResponderSeriesModel
-  | RectLabelModel[]
   | ScatterSeriesModels
   | BulletSeriesModels
-  | BackgroundModel;
+  | BackgroundModel
+  | RadialAxisModels;
 
 export default abstract class Component {
   name = 'Component';
