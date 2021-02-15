@@ -339,7 +339,7 @@ const seriesData: StoreModule = {
         throw new Error(message.SERIES_INDEX_ERROR);
       }
 
-      seriesRawData.outliers = [...seriesRawData.outliers, ...outliers];
+      seriesRawData.outliers = [...(seriesRawData.outliers ?? []), ...outliers];
 
       this.notify(state, 'series');
     },
