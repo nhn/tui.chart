@@ -16,7 +16,7 @@ const chartState = {
   layout: {
     plot: { width: 200, height: 200, x: 0, y: 0 },
   },
-  scale: { xAxis: { limit: { min: 0, max: 3 }, stepSize: 1, stepCount: 1 } },
+  scale: { circularAxis: { limit: { min: 0, max: 3 }, stepSize: 1, stepCount: 1 } },
   series: {
     radialBar: {
       data: seriesData,
@@ -38,7 +38,7 @@ const chartState = {
     },
   },
   radialAxes: {
-    yAxis: {
+    verticalAxis: {
       labels: ['A', 'B'],
       axisSize: 50,
       centerX: 100,
@@ -53,8 +53,10 @@ const chartState = {
       innerRadius: 0,
       outerRadius: 50,
       labelAlign: 'right',
+      startAngle: 0,
+      endAngle: 360,
     },
-    radialAxis: {
+    circularAxis: {
       labels: ['0', '1', '2', '3'],
       axisSize: 50,
       centerX: 100,
@@ -68,6 +70,8 @@ const chartState = {
       totalAngle: 360,
       drawingStartAngle: 0,
       clockwise: true,
+      startAngle: 0,
+      endAngle: 360,
     },
   },
   categories: ['A', 'B'],

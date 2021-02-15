@@ -253,6 +253,9 @@ describe('plot options', () => {
         seriesGroupCount: 0,
       },
     },
+    scale: {
+      xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 },
+    },
     axes: {
       xAxis: {
         labels: ['0', '1', '2', '3', '4', '5'],

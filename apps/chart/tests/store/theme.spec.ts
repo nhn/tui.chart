@@ -25,7 +25,7 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
-          radialAxis: {
+          circularAxis: {
             dotColor: 'rgba(0, 0, 0, 0.5)',
             label: {
               color: '#333333',
@@ -36,13 +36,7 @@ describe('theme store', () => {
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
           },
-          yAxis: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Arial',
-              fontWeight: 700,
-              color: '#bbbbbb',
-            },
+          verticalAxis: {
             label: {
               fontSize: 11,
               fontFamily: 'Arial',
@@ -57,6 +51,20 @@ describe('theme store', () => {
                 paddingY: 2,
                 visible: false,
               },
+            },
+          },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
             },
             width: 1,
             color: '#333333',
@@ -223,7 +231,7 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
-          radialAxis: {
+          circularAxis: {
             dotColor: 'rgba(0, 0, 0, 0.5)',
             label: {
               color: '#333333',
@@ -234,13 +242,7 @@ describe('theme store', () => {
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
           },
-          yAxis: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Verdana',
-              fontWeight: 700,
-              color: '#bbbbbb',
-            },
+          verticalAxis: {
             label: {
               fontSize: 11,
               fontFamily: 'Verdana',
@@ -255,6 +257,20 @@ describe('theme store', () => {
                 paddingY: 2,
                 visible: false,
               },
+            },
+          },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Verdana',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Verdana',
+              fontWeight: 'normal',
+              color: '#333333',
             },
             width: 1,
             color: '#333333',
@@ -447,7 +463,7 @@ describe('theme store', () => {
               color: '#333333',
             },
           },
-          radialAxis: {
+          circularAxis: {
             dotColor: 'rgba(0, 0, 0, 0.5)',
             label: {
               color: '#333333',
@@ -458,13 +474,7 @@ describe('theme store', () => {
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
           },
-          yAxis: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Arial',
-              fontWeight: 700,
-              color: '#bbbbbb',
-            },
+          verticalAxis: {
             label: {
               fontSize: 11,
               fontFamily: 'Arial',
@@ -479,6 +489,20 @@ describe('theme store', () => {
                 paddingY: 2,
                 visible: false,
               },
+            },
+          },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
             },
             width: 1,
             color: '#333333',
@@ -716,7 +740,7 @@ describe('theme store', () => {
               },
             },
           },
-          radialAxis: {
+          circularAxis: {
             dotColor: 'rgba(0, 0, 0, 0.5)',
             label: {
               color: '#333333',
@@ -727,13 +751,7 @@ describe('theme store', () => {
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
           },
-          yAxis: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Arial',
-              fontWeight: 700,
-              color: '#bbbbbb',
-            },
+          verticalAxis: {
             label: {
               fontSize: 11,
               fontFamily: 'Arial',
@@ -748,6 +766,20 @@ describe('theme store', () => {
                 paddingY: 2,
                 visible: false,
               },
+            },
+          },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
             },
             width: 1,
             color: '#333333',
@@ -1153,7 +1185,7 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
-          radialAxis: {
+          circularAxis: {
             dotColor: 'rgba(0, 0, 0, 0.5)',
             label: {
               color: '#333333',
@@ -1164,13 +1196,7 @@ describe('theme store', () => {
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
           },
-          yAxis: {
-            title: {
-              fontSize: 11,
-              fontFamily: 'Arial',
-              fontWeight: 700,
-              color: '#bbbbbb',
-            },
+          verticalAxis: {
             label: {
               fontSize: 11,
               fontFamily: 'Arial',
@@ -1185,6 +1211,20 @@ describe('theme store', () => {
                 paddingY: 2,
                 visible: false,
               },
+            },
+          },
+          yAxis: {
+            title: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 700,
+              color: '#bbbbbb',
+            },
+            label: {
+              fontSize: 11,
+              fontFamily: 'Arial',
+              fontWeight: 'normal',
+              color: '#333333',
             },
             width: 1,
             color: '#333333',

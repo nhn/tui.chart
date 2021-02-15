@@ -16,14 +16,14 @@ const chartState = {
   layout: {
     plot: { width: 200, height: 200, x: 0, y: 0 },
   },
-  scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } },
+  scale: { verticalAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } },
   series: {
     radar: {
       data: seriesData,
     },
   },
   radialAxes: {
-    yAxis: {
+    verticalAxis: {
       labels: ['0', '1', '2', '3', '4', '5'],
       axisSize: 50,
       centerX: 100,
@@ -39,7 +39,7 @@ const chartState = {
       outerRadius: 50,
       labelAlign: 'center',
     },
-    radialAxis: {
+    circularAxis: {
       labels: ['A', 'B', 'C', 'D'],
       axisSize: 50,
       centerX: 100,

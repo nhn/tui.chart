@@ -18,7 +18,7 @@ const chartState = {
   },
   scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } },
   radialAxes: {
-    yAxis: {
+    verticalAxis: {
       labels: ['0', '1', '2', '3', '4', '5'],
       axisSize: 50,
       centerX: 100,
@@ -34,7 +34,7 @@ const chartState = {
       outerRadius: 50,
       labelAlign: 'center',
     },
-    radialAxis: {
+    circularAxis: {
       labels: ['A', 'B', 'C', 'D'],
       axisSize: 50,
       centerX: 100,
@@ -53,7 +53,7 @@ const chartState = {
   categories: ['A', 'B', 'C', 'D'],
   options: {},
   theme: {
-    radialAxis: {
+    circularAxis: {
       dotColor: 'rgba(0, 0, 0, 0.5)',
       lineWidth: 1,
       strokeStyle: 'rgba(0, 0, 0, 0.05)',
@@ -276,7 +276,7 @@ describe('radial chart', () => {
             data: seriesData,
           },
         },
-        yAxis: {
+        verticalAxis: {
           labels: ['A', 'B', 'C', 'D'],
           axisSize: 50,
           centerX: 100,
@@ -292,7 +292,7 @@ describe('radial chart', () => {
           outerRadius: 50,
           labelAlign: 'center',
         },
-        radialAxis: {
+        circularAxis: {
           labels: ['0', '1', '2', '3', '4', '5'],
           axisSize: 50,
           centerX: 100,
