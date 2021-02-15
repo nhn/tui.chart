@@ -20,12 +20,14 @@ import {
   DataLabelType,
   RadialAnchor,
   Callout,
+  RadialBarDataLabel,
 } from '@t/components/dataLabels';
 import { getTextWidth, getTextHeight } from '@src/helpers/calculator';
 import {
   getRadialAnchorPosition,
   makeAnchorPositionParam,
   calculateDegreeToRadian,
+  getRadialLabelAlign,
 } from '@src/helpers/sector';
 import { Nullable } from '@t/components/series';
 import { getFont } from './style';
@@ -38,6 +40,7 @@ type LabelPosition = {
   y: number;
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
+  radian?: number;
 };
 
 function getDefaultAnchor(type: DataLabelType, withStack = false): DataLabelAnchor {
@@ -451,7 +454,7 @@ export function makeSectorLabelPosition(
       },
     })
   );
-  const textAlign = getPieDataLabelAlign(model, anchor);
+  const textAlign = getRadialLabelAlign(model, anchor);
 
   return {
     ...position,
@@ -460,38 +463,73 @@ export function makeSectorLabelPosition(
   };
 }
 
-function getPieDataLabelAlign(model: RadialDataLabel, anchor: RadialAnchor) {
+function makeSectorBarLabelPosition(
+  model: RadialBarDataLabel,
+  dataLabelOptions: DataLabelOption
+): LabelPosition {
+  const { anchor } = dataLabelOptions;
   const {
-    totalAngle,
+    clockwise,
     degree: { start, end },
-    drawingStartAngle,
+    radius: { inner, outer },
   } = model;
-
+  let startAngle = start;
+  let endAngle = end;
   let textAlign: CanvasTextAlign = 'center';
+  let rotationDegree = (start + end) / 2;
 
-  if (anchor !== 'outer') {
-    return textAlign;
+  if (anchor === 'start') {
+    textAlign = clockwise ? 'left' : 'right';
+    endAngle = startAngle;
+    rotationDegree = start;
+  } else if (anchor === 'end') {
+    textAlign = clockwise ? 'right' : 'left';
+    startAngle = endAngle;
+    rotationDegree = end;
   }
 
-  const radian0 = calculateDegreeToRadian(0, drawingStartAngle);
-  const halfRadian = calculateDegreeToRadian(totalAngle / 2, drawingStartAngle);
+  const { x, y } = getRadialAnchorPosition(
+    makeAnchorPositionParam(anchor, {
+      ...model,
+      degree: {
+        start: startAngle,
+        end: endAngle,
+      },
+      radius: {
+        inner: inner,
+        outer: outer,
+      },
+    })
+  );
 
-  const halfDegree = (end + start) / 2;
-  const radian = calculateDegreeToRadian(halfDegree, drawingStartAngle);
+  return {
+    x,
+    y,
+    textAlign,
+    textBaseline: 'middle',
+    radian: calculateDegreeToRadian(rotationDegree, 0),
+  };
+}
 
-  if (drawingStartAngle >= -90 && drawingStartAngle < 90) {
-    if (radian0 < radian && halfRadian > radian) {
-      textAlign = 'left';
-    } else if (halfRadian < radian) {
-      textAlign = 'right';
-    }
-  } else if (radian0 < radian && halfRadian > radian) {
-    textAlign = 'right';
-  } else if (halfRadian < radian) {
-    textAlign = 'left';
-  }
+export function makeSectorBarLabelInfo(
+  model: RadialBarDataLabel,
+  dataLabelOptions: DataLabelOption
+): DataLabel {
+  const { formatter } = dataLabelOptions;
+  const labelPosition = makeSectorBarLabelPosition(model, dataLabelOptions);
+  const { value, name, theme: dataLabelTheme } = model;
+  const theme = {
+    ...dataLabelTheme,
+    color: dataLabelTheme.useSeriesColor ? model.color : dataLabelTheme.color,
+  };
 
-  return textAlign;
+  return {
+    type: 'sector',
+    ...labelPosition,
+    text: formatter(value!),
+    name,
+    theme,
+  };
 }
 
 export function makeSectorLabelInfo(
@@ -533,7 +571,7 @@ export function makePieSeriesNameLabelInfo(
     })
   );
 
-  const textAlign = getPieDataLabelAlign(model, seriesNameAnchor);
+  const textAlign = getRadialLabelAlign(model, seriesNameAnchor);
   const pieSeriesNameTheme = model.theme.pieSeriesName!;
   const theme = {
     ...pieSeriesNameTheme,

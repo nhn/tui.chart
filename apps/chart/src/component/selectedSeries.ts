@@ -35,7 +35,7 @@ export default class SelectedSeries extends Component {
           names.push(label);
         }
       });
-    } else if (includes(['bar', 'column'], name)) {
+    } else if (includes(['bar', 'column', 'radialBar'], name)) {
       selectedSeries.forEach((model) => {
         const label = (model as RectResponderModel).data?.label;
         if (label) {
@@ -67,6 +67,8 @@ export default class SelectedSeries extends Component {
       eventDetectType === 'grouped'
     ) {
       selectedSeriesModels = models.filter((model) => !(model as RectResponderModel).data);
+    } else if (name === 'radialBar' && eventDetectType === 'grouped') {
+      selectedSeriesModels = models.filter((model) => !(model as SectorResponderModel).data);
     }
 
     return selectedSeriesModels;

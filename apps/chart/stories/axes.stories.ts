@@ -5,6 +5,8 @@ import {
   LineSeriesData,
   RadarChartOptions,
   RadarSeriesData,
+  RadialBarChartOptions,
+  RadialBarSeriesData,
 } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs } from '@storybook/addon-knobs';
@@ -13,6 +15,7 @@ import { budgetData, budgetData2, temperatureAverageDataForHeatmap, temperatureD
 import HeatmapChart from '@src/charts/heatmapChart';
 import BarChart from '@src/charts/barChart';
 import RadarChart from '@src/charts/radarChart';
+import RadialBarChart from '@src/charts/radialBarChart';
 
 export default {
   title: 'chart|Axes',
@@ -79,6 +82,21 @@ function createRadarChart(data: RadarSeriesData, customOptions: RadarChartOption
   el.style.height = `${options.chart?.height}px`;
 
   const chart = new RadarChart({ el, data, options });
+
+  return { el, chart };
+}
+
+function createRadialBarChart(
+  data: RadialBarSeriesData,
+  customOptions: RadialBarChartOptions = {}
+) {
+  const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions || {});
+
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
+
+  const chart = new RadialBarChart({ el, data, options });
 
   return { el, chart };
 }
@@ -222,6 +240,29 @@ export const radarFormatter = () => {
   return el;
 };
 
+export const radialBarFormatter = () => {
+  const { el } = createRadialBarChart(budgetData, {
+    verticalAxis: {
+      label: {
+        formatter: (value) => `👻${value}`,
+        interval: 3,
+      },
+    },
+    circularAxis: {
+      label: {
+        formatter: (value) => `$${value}`,
+        interval: 2,
+      },
+      tick: { interval: 1 },
+      scale: {
+        stepSize: 1000,
+      },
+    },
+  });
+
+  return el;
+};
+
 export const normalAxesLabelMargin = () => {
   const { el } = createChart(temperatureData, {
     xAxis: {
@@ -265,6 +306,15 @@ export const heatmapAxesLabelMargin = () => {
         margin: 30,
       },
     },
+  });
+
+  return el;
+};
+
+export const radialAxesLabelMargin = () => {
+  const { el } = createRadialBarChart(budgetData, {
+    verticalAxis: { label: { margin: 20 } },
+    circularAxis: { label: { margin: 10 } },
   });
 
   return el;
