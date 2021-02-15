@@ -228,7 +228,9 @@ export type BoxPlotResponderTypes =
   | RectResponderModel;
 
 export type BoxPlotSeriesModels = {
-  series: BoxPlotSeriesModel[];
+  rect: RectModel[];
+  line: LineModel[];
+  circle: CircleModel[];
 };
 
 export type LineResponderModel = {

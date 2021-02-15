@@ -222,6 +222,8 @@ export class BoxPlotChart extends BaseChart {
   public showTooltip(seriesInfo: SelectSeriesInfo): void;
 
   public hideTooltip(): void;
+
+  public addOutlier(): void;
 }
 
 export class ColumnChart extends BaseChart {

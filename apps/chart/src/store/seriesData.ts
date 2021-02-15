@@ -27,6 +27,7 @@ import {
 import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
+import { message } from '@src/message';
 
 function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
   let rawCategoriesLength;
@@ -326,6 +327,21 @@ const seriesData: StoreModule = {
 
       this.dispatch('initThemeState');
       this.dispatch('initLegendState');
+    },
+    addOutlier(
+      { state, initStoreState },
+      { seriesIndex, outliers }: { seriesIndex: number; outliers: number[][] }
+    ) {
+      const { series } = initStoreState;
+      const seriesRawData = series.boxPlot![seriesIndex];
+
+      if (!seriesRawData) {
+        throw new Error(message.SERIES_INDEX_ERROR);
+      }
+
+      seriesRawData.outliers = [...(seriesRawData.outliers ?? []), ...outliers];
+
+      this.notify(state, 'series');
     },
   },
   observe: {
