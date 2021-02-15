@@ -10,7 +10,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { avgTemperatureData, olympicMedalData } from './data';
 import { withKnobs, boolean, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
-import { RadialBarChart } from '@src/';
+import RadialBarChart from '@src/charts/radialBarChart';
 
 export default {
   title: 'chart|Common Component Theme',
