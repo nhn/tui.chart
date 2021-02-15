@@ -67,6 +67,7 @@
       "example03-02-boxPlot-chart-selectable-event": "3.2 [BoxPlot Chart] Selectable options, select event",
       "example03-03-boxPlot-chart-responsive": "3.3 [BoxPlot Chart] Responsive",
       "example03-04-boxPlot-chart-theme": "3.4 [BoxPlot Chart] Theme",
+      "example03-05-boxPlot-chart-add-outlier": "3.5 [BoxPlot Chart] Add Outlier",
       "example04-01-bubble-chart-basic": "4.1 [Bubble Chart] Basic",
       "example04-02-bubble-chart-selectable-event": "4.2 [Bubble Chart] Selectable Options, select event",
       "example04-03-bubble-chart-responsive": "4.3 [Bubble Chart] Responsive",
