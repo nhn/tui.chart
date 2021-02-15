@@ -97,6 +97,7 @@ type options = {
   }
   series?: {
     selectable?: boolean;
+    eventDetectType?: 'point' | 'grouped';
     clockwise?: boolean;
     radiusRange?: {
       inner?: number | string;
