@@ -55,11 +55,30 @@ type options = {
   chart?: {
     //...
   }
-  yAxis?: {
-    // ...
+  verticalAxis?: {
+    label?: {
+      interval?: number;
+      formatter?: (value: string, axisLabelInfo: { axisName: AxisType; labels: string[]; index: number }) => string;
+      margin?: number;
+    };
+    tick?: {
+      interval?: number;
+    };
   }
-  radialAxis?: {
-    // ...
+  circularAxis?: {
+    label?: {
+      interval?: number;
+      formatter?: (value: string, axisLabelInfo: { axisName: AxisType; labels: string[]; index: number }) => string;
+      margin?: number;
+    };
+    tick?: {
+      interval?: number;
+    };
+    scale: {
+      min?: number;
+      max?: number;
+      stepSize?: 'auto' | number;
+    };
   }
   legend?: {
     //...
@@ -82,6 +101,10 @@ type options = {
     radiusRange?: {
       inner?: number | string;
       outer?: number | string;
+    };
+    angleRange?: {
+      start?: number;
+      end?: number;
     };
     dataLabels?: {
       visible?: boolean;
@@ -143,7 +166,7 @@ const options = {
 };
 ```
 
-![radial-bar-eventDetectType.grouped](https://user-images.githubusercontent.com/43128697/107403834-f3617580-6b48-11eb-9b61-742ef6045dc0.png)
+![radial-bar-eventDetectType.grouped](https://user-images.githubusercontent.com/43128697/107985089-b7c52080-700c-11eb-8a14-8bb01696ac38.png)
 
 ### clockwise
 
@@ -158,7 +181,9 @@ const options = {
   }
 };
 ```
+
 ![radia-bar-counter-clockwise](https://user-images.githubusercontent.com/43128697/107404237-6bc83680-6b49-11eb-8671-27135076b2d0.gif)
+
 
 ### radiusRange
 
@@ -198,6 +223,28 @@ const options = {
 ```
 
 ![radial-bar-radiusRange-px](https://user-images.githubusercontent.com/43128697/107406353-b21e9500-6b4b-11eb-9e5e-eb7e15c2752e.png)
+
+### angleRange
+
+`angleRange`는 `start`와 `end` 옵션을 사용하여 호의 범위를 설정한다.
+
+| 속성 | 설명 |
+| --- | --- |
+| `angleRange.start` | 호의 시작 각도 (기본값: `0`) |
+| `angleRange.end` | 호의 끝 각도 (기본값: `360`) |
+
+```js
+const options = {
+  series: {
+    angleRange: {
+      start: 45,
+      end: 315,
+    }
+  }
+};
+```
+
+![radial-bar-angleRanges](https://user-images.githubusercontent.com/43128697/107982838-15a33980-7008-11eb-9600-5138faf117f6.png)
 
 ### dataLabels
 
@@ -245,7 +292,7 @@ const options = {
 };
 ```
 
-| center anchor 적용(기본) | start anchor 적용 | end anchor 적용 |
+| center anchor (basic) | Setting the anchor to be `start` |Setting the anchor to be `end` |
 | --- | --- | --- |
 | ![radial-bar.datalabels.anchor.center](https://user-images.githubusercontent.com/43128697/107407095-94056480-6b4c-11eb-83b6-2d63e935fa71.png) | ![radial-bar.datalabels.anchor.start](https://user-images.githubusercontent.com/43128697/107407117-9a93dc00-6b4c-11eb-99d5-40770d326bac.png) | ![radial-bar.datalabels.anchor.end](https://user-images.githubusercontent.com/43128697/107407103-9667be80-6b4c-11eb-9a72-18bed754ce49.png) |
 

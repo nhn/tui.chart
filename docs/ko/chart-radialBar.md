@@ -55,11 +55,30 @@ type options = {
   chart?: {
     //...
   }
-  yAxis?: {
-    // ...
+  verticalAxis?: {
+    label?: {
+      interval?: number;
+      formatter?: (value: string, axisLabelInfo: { axisName: AxisType; labels: string[]; index: number }) => string;
+      margin?: number;
+    };
+    tick?: {
+      interval?: number;
+    };
   }
-  radialAxis?: {
-    // ...
+  circularAxis?: {
+    label?: {
+      interval?: number;
+      formatter?: (value: string, axisLabelInfo: { axisName: AxisType; labels: string[]; index: number }) => string;
+      margin?: number;
+    };
+    tick?: {
+      interval?: number;
+    };
+    scale: {
+      min?: number;
+      max?: number;
+      stepSize?: 'auto' | number;
+    };
   }
   legend?: {
     //...
@@ -82,6 +101,10 @@ type options = {
     radiusRange?: {
       inner?: number | string;
       outer?: number | string;
+    };
+    angleRange?: {
+      start?: number;
+      end?: number;
     };
     dataLabels?: {
       visible?: boolean;
@@ -142,7 +165,7 @@ const options = {
 };
 ```
 
-![radial-bar-eventDetectType.grouped](https://user-images.githubusercontent.com/43128697/107403834-f3617580-6b48-11eb-9b61-742ef6045dc0.png)
+![radial-bar-eventDetectType.grouped](https://user-images.githubusercontent.com/43128697/107985089-b7c52080-700c-11eb-8a14-8bb01696ac38.png)
 
 ### clockwise
 
@@ -198,6 +221,28 @@ const options = {
 
 ![radial-bar-radiusRange-px](https://user-images.githubusercontent.com/43128697/107406353-b21e9500-6b4b-11eb-9e5e-eb7e15c2752e.png)
 
+### angleRange
+
+`angleRange`는 `start`와 `end` 옵션을 사용하여 호의 범위를 설정한다.
+
+| 속성 | 설명 |
+| --- | --- |
+| `angleRange.start` | 호의 시작 각도 (기본값: `0`) |
+| `angleRange.end` | 호의 끝 각도 (기본값: `360`) |
+
+```js
+const options = {
+  series: {
+    angleRange: {
+      start: 45,
+      end: 315,
+    }
+  }
+};
+```
+
+![radial-bar-angleRanges](https://user-images.githubusercontent.com/43128697/107982838-15a33980-7008-11eb-9600-5138faf117f6.png)
+
 ### dataLabels
 
 데이터 라벨은 차트에서 시리즈에 대한 값을 표시한다.
@@ -210,8 +255,6 @@ type options = {
     dataLabels: {
       visible?: boolean;
       anchor?: 'center' | 'outer';
-      offsetX?: number;
-      offsetY?: number;
       formatter?: (value) => string;
     };
   };
@@ -221,8 +264,6 @@ type options = {
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
 | `visible` | boolean | 데이터 라벨 표시 여부 |
-| `offsetX` | number | 데이터 라벨 위치 x 오프셋 |
-| `offsetY` | number | 데이터 라벨 위치 y 오프셋 |
 | `formatter` | function | 데이터 값을 매개변수로 넘겨받아 출력 형식 지정 |
 | `anchor` | 'start' \| 'center' \| 'end' | 데이터 라벨 표시 위치 설정. (기본값: `'center'`) |
 
