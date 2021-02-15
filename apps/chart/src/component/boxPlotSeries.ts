@@ -84,7 +84,7 @@ export default class BoxPlotSeries extends Component {
 
     const categories = state.categories as string[];
     const { tickDistance } = axes.xAxis;
-    const { min, max } = scale.yAxis.limit;
+    const { min, max } = scale.yAxis!.limit;
     const boxPlotData = series.boxPlot.data;
     const seriesLength = boxPlotData.length;
 

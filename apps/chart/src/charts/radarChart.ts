@@ -55,14 +55,14 @@ export interface RadarChartProps {
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *       @param {boolean} [props.options.series.showDot=false] - Whether to show dot or not.
  *       @param {boolean} [props.options.series.showArea=false] - Whether to fill area or not.
- *     @param {Object} [props.options.radialAxis]
- *       @param {Object} [props.options.radialAxis.tick] - Option to adjust tick interval.
- *       @param {Object} [props.options.radialAxis.label] - Option to adjust label interval.
- *       @param {Object} [props.options.radialAxis.scale] - Option to adjust axis minimum, maximum, step size.
- *     @param {Object} [props.options.yAxis]
- *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
- *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
- *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
+ *     @param {Object} [props.options.circularAxis]
+ *       @param {Object} [props.options.circularAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.circularAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.circularAxis.scale] - Option to adjust axis minimum, maximum, step size.
+ *     @param {Object} [props.options.verticalAxis]
+ *       @param {Object} [props.options.verticalAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.verticalAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.verticalAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *     @param {Object} [props.options.plot]
  *       @param {number} [props.options.plot.width] - Width of plot.
  *       @param {number} [props.options.plot.height] - Height of plot.

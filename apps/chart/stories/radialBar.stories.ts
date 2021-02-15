@@ -3,7 +3,7 @@ import { olympicMedalData, olympicMedalDataWithNull } from './data';
 import { deepMergedCopy } from '@src/helpers/utils';
 import '@src/css/chart.css';
 import { RadialBarChartOptions } from '@t/options';
-import { withKnobs, radios } from '@storybook/addon-knobs';
+import { withKnobs, radios, boolean, number } from '@storybook/addon-knobs';
 
 export default {
   title: 'chart.RadialBar',
@@ -36,11 +36,7 @@ function createChart(data, customOptions: Record<string, any> = {}) {
 }
 
 export const basic = () => {
-  const { el } = createChart(olympicMedalData, {
-    theme: {
-      series: { barWidth: 2 },
-    },
-  });
+  const { el } = createChart(olympicMedalData);
 
   return el;
 };
@@ -101,6 +97,85 @@ export const angleRangeWithCounterClockwise = () => {
   return el;
 };
 
+export const angleRangeWithDataLabels = () => {
+  const { el } = createChart(olympicMedalData, {
+    series: {
+      angleRange: {
+        start: 45,
+        end: 315,
+      },
+      dataLabels: {
+        visible: true,
+        anchor: radios('anchor', { start: 'start', center: 'center', end: 'end' }, 'start'),
+      },
+    },
+  });
+
+  return el;
+};
+
+export const angleRangeWithTheme = () => {
+  const { el } = createChart(olympicMedalData, {
+    series: {
+      angleRange: {
+        start: 45,
+        end: 315,
+      },
+      dataLabels: {
+        visible: true,
+        anchor: radios('anchor', { start: 'start', center: 'center', end: 'end' }, 'start'),
+      },
+    },
+    theme: {
+      series: {
+        barWidth: 20,
+        colors: ['#ffd700', '#c0c0c0', '#cd7f32'],
+        hover: {
+          color: '#ff0000',
+          groupedSector: {
+            color: '#ff0000',
+            opacity: 0.3,
+          },
+        },
+        dataLabels: {
+          fontFamily: 'monaco',
+          fontSize: 10,
+          fontWeight: 600,
+          color: '#fff',
+          textBubble: {
+            visible: true,
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            paddingX: 5,
+            paddingY: 0,
+          },
+        },
+      },
+      verticalAxis: {
+        label: {
+          color: '#fff',
+          align: 'center',
+          textBubble: {
+            visible: true,
+            borderRadius: 5,
+            backgroundColor: 'rgba(7, 59, 76, 1)',
+            paddingX: 5,
+            paddingY: 4,
+          },
+        },
+      },
+      circularAxis: {
+        strokeStyle: 'rgba(7, 59, 76, 0.3)',
+        dotColor: 'rgba(7, 59, 76, 0.8)',
+        label: {
+          color: '#073b4c',
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
 export const reponsive = () => {
   const { el } = createChart(olympicMedalData, {
     chart: { width: 'auto', height: 'auto' },
@@ -135,6 +210,16 @@ export const selectable = () => {
 export const dataLabels = () => {
   const { el } = createChart(olympicMedalData, {
     series: {
+      clockwise: boolean('clockwise', true),
+      radiusRange: {
+        inner: number('radiusRange.inner', 10, {
+          range: true,
+          min: 0,
+          max: 80,
+          step: 10,
+        }),
+        outer: '90%',
+      },
       dataLabels: {
         visible: true,
         anchor: radios('anchor', { start: 'start', center: 'center', end: 'end' }, 'start'),
@@ -147,10 +232,10 @@ export const dataLabels = () => {
 
 export const theme = () => {
   const { el } = createChart(olympicMedalData, {
-    yAxis: {
+    verticalAxis: {
       label: { margin: 10 },
     },
-    radialAxis: {
+    circularAxis: {
       label: { margin: 10 },
     },
     theme: {
@@ -165,7 +250,7 @@ export const theme = () => {
           },
         },
       },
-      yAxis: {
+      verticalAxis: {
         label: {
           color: '#fff',
           align: 'center',
@@ -178,7 +263,7 @@ export const theme = () => {
           },
         },
       },
-      radialAxis: {
+      circularAxis: {
         strokeStyle: 'rgba(7, 59, 76, 0.3)',
         dotColor: 'rgba(7, 59, 76, 0.8)',
         label: {

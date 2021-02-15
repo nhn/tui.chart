@@ -41,22 +41,18 @@ export type BubbleInfo = Rect & {
   strokeStyle?: string;
   radius?: number;
   style?: Nullable<StyleProp<RectStyle, PathRectStyleName>>;
-  align?: string;
   radian?: number;
   direction?: ArrowDirection;
-  textBaseline?: CanvasTextBaseline;
-} & Nullable<Arrow>;
+} & Nullable<Partial<Arrow>>;
 
 export type BubbleLabelModel = {
   type: 'bubbleLabel';
   radian?: number;
+  rotationPosition?: Point;
   bubble: BubbleInfo;
   label: Point & {
     text?: string;
-    textAlign?: string;
-    font?: string;
-    color?: string;
     strokeStyle?: string;
-    textBaseline?: CanvasTextBaseline;
+    style?: StyleProp<LabelStyle, LabelStyleName>;
   };
 };

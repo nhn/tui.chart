@@ -190,9 +190,9 @@ export function getMaxLengthLabelWidth(labels: string[]) {
 export function getXPosition(
   axisData: Pick<LabelAxisData, 'pointOnColumn' | 'tickDistance' | 'labelDistance'>,
   offsetSize: number,
-  xAxisLimit: ValueEdge,
   value: number | string | Date,
-  dataIndex: number
+  dataIndex: number,
+  xAxisLimit?: ValueEdge
 ) {
   const { pointOnColumn, tickDistance, labelDistance } = axisData;
   let x;

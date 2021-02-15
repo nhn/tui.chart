@@ -61,7 +61,7 @@ export default class ScatterSeries extends Component {
 
     const seriesModel = this.renderScatterPointsModel(
       scatterData,
-      scale.xAxis.limit,
+      scale.xAxis!.limit,
       scale[getValueAxisName(options, this.name, 'yAxis')].limit
     );
     const tooltipModel = this.makeTooltipModel(scatterData);

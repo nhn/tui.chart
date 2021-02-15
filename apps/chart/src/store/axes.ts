@@ -3,7 +3,6 @@ import {
   AxisData,
   CenterYAxisData,
   Options,
-  RadialAxisData,
   ScaleData,
   Series,
   StoreModule,
@@ -315,8 +314,8 @@ function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable, labelMargin
   };
 }
 
-function getAxisInfo(labelOnYAxis: boolean, plot: Rect) {
-  const { valueAxisName, labelAxisName } = getAxisName(labelOnYAxis);
+function getAxisInfo(labelOnYAxis: boolean, plot: Rect, series: Series) {
+  const { valueAxisName, labelAxisName } = getAxisName(labelOnYAxis, series);
   const { valueSizeKey, labelSizeKey } = getSizeKey(labelOnYAxis);
   const valueAxisSize = plot[valueSizeKey];
   const labelAxisSize = plot[labelSizeKey];
@@ -364,7 +363,8 @@ const axes: StoreModule = {
       );
       const { valueAxisName, valueAxisSize, labelAxisName, labelAxisSize } = getAxisInfo(
         labelOnYAxis,
-        plot
+        plot,
+        series
       );
       const hasCenterYAxis = state.axes.centerYAxis;
       const isCoordinateTypeChart = isCoordinateSeries(series);

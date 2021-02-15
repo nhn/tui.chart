@@ -22,6 +22,7 @@ import {
   RadialBarChartThemeOptions,
 } from '@t/theme';
 import { AxisType } from '@src/component/axis';
+import { RadialAxisType } from '@src/store/radialAxes';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number] | null;
@@ -511,8 +512,8 @@ export type RadarPlotType = 'spiderweb' | 'circle';
 export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
   plot?: BaseSizeOptions & { type?: RadarPlotType };
-  yAxis?: BaseAxisOptions;
-  radialAxis?: Pick<BaseAxisOptions, 'label' | 'tick' | 'scale'>;
+  verticalAxis?: RadialValueAxisOptions;
+  circularAxis?: RadialCategoryAxisOptions;
   theme?: RadarChartThemeOptions;
 }
 
@@ -657,11 +658,12 @@ export interface RadialBarSeriesData {
   series: RadialBarSeriesType[];
 }
 
-type RadialAxisOptions = Pick<BaseAxisOptions, 'label' | 'tick' | 'scale'>;
+type RadialCategoryAxisOptions = Pick<BaseAxisOptions, 'label' | 'tick'>;
+type RadialValueAxisOptions = Pick<BaseAxisOptions, 'label' | 'tick' | 'scale'>;
 
 export interface RadialBarChartOptions extends BaseOptions {
-  yAxis?: BaseAxisOptions;
-  radialAxis?: RadialAxisOptions;
+  verticalAxis?: RadialCategoryAxisOptions;
+  circularAxis?: RadialValueAxisOptions;
   series?: RadialBarSeriesOptions;
   theme?: RadialBarChartThemeOptions;
 }
@@ -712,3 +714,7 @@ export type DataInput =
   | ColumnLineData
   | NestedPieSeriesData
   | RadialBarSeriesData;
+
+type UsingRadialAxesChartTypeTheme =
+  | Required<RadarChartThemeOptions>
+  | Required<RadialBarChartThemeOptions>;

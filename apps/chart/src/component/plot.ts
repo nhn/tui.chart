@@ -30,7 +30,7 @@ function validXPosition({
   startIndex = 0,
 }: XPositionParam) {
   const dataIndex = getValidIndex(value as number, startIndex);
-  const x = getXPosition(axisData, offsetSize, xAxisLimit, value, dataIndex);
+  const x = getXPosition(axisData, offsetSize, value, dataIndex, xAxisLimit);
 
   return x > 0 ? Math.min(offsetSize, x) : 0;
 }
@@ -207,8 +207,10 @@ export default class Plot extends Component {
     const { lines, bands, visible } = plot;
     const xAxisLimit = scale?.xAxis?.limit;
 
-    this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
-    this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
+    if (xAxisLimit) {
+      this.models.line = this.renderLines(axes, xAxisLimit, categories, lines);
+      this.models.band = this.renderBands(axes, xAxisLimit, categories, bands);
+    }
 
     if (visible) {
       this.models.plot = [this.renderPlotBackgroundRect(), ...this.renderPlots(axes)];

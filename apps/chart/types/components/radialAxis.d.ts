@@ -3,8 +3,8 @@ import { BubbleLabelModel, LabelModel } from '@t/brush/label';
 
 type RadialAxisModels = {
   dot: RectModel[];
-  yAxisLabel: BubbleLabelModel[];
-  radialAxisLabel: LabelModel[];
+  verticalAxisLabel: BubbleLabelModel[];
+  circularAxisLabel: LabelModel[];
 };
 
 type ArcModel = {

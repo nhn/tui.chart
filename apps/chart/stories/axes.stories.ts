@@ -226,7 +226,7 @@ export const radarFormatter = () => {
       visible: true,
       align: 'bottom',
     },
-    yAxis: {
+    verticalAxis: {
       label: {
         interval: 2,
         formatter: (value) => `👻${value}`,
@@ -242,23 +242,21 @@ export const radarFormatter = () => {
 
 export const radialBarFormatter = () => {
   const { el } = createRadialBarChart(budgetData, {
-    yAxis: {
+    verticalAxis: {
       label: {
         formatter: (value) => `👻${value}`,
         interval: 3,
       },
     },
-    radialAxis: {
+    circularAxis: {
       label: {
         formatter: (value) => `$${value}`,
         interval: 2,
       },
       tick: { interval: 1 },
-      /*
       scale: {
-        stepSize: 500,
+        stepSize: 1000,
       },
-      */
     },
   });
 
@@ -308,6 +306,15 @@ export const heatmapAxesLabelMargin = () => {
         margin: 30,
       },
     },
+  });
+
+  return el;
+};
+
+export const radialAxesLabelMargin = () => {
+  const { el } = createRadialBarChart(budgetData, {
+    verticalAxis: { label: { margin: 20 } },
+    circularAxis: { label: { margin: 10 } },
   });
 
   return el;

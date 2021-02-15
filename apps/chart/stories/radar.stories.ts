@@ -120,7 +120,7 @@ export const labelInterval = () => {
       visible: true,
       align: 'bottom',
     },
-    yAxis: {
+    verticalAxis: {
       scale: {
         max: 10000,
         stepSize: 1000,

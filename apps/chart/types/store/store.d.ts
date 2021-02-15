@@ -39,6 +39,7 @@ import {
   LineAreaChartOptions,
   ScatterChartOptions,
   RadialBarSeriesType,
+  RadialBarChartOptions,
 } from '@t/options';
 import Store from '@src/store/store';
 import { LegendData } from '@t/components/legend';
@@ -96,6 +97,7 @@ export type ChartOptionsMap = {
   lineArea: LineAreaChartOptions;
   columnLine: ColumnLineChartOptions;
   heatmap: HeatmapChartOptions;
+  radialBar: RadialBarChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -105,8 +107,10 @@ export type OptionsWithDataLabels = ValueOf<
 >;
 
 export type ChartOptionsUsingYAxis = ValueOf<
-  Omit<ChartOptionsMap, 'pie' | 'radar' | 'heatmap' | 'treemap'>
+  Omit<ChartOptionsMap, 'pie' | 'heatmap' | 'treemap' | 'radar' | 'radialBar'>
 >;
+
+export type ChartOptionsUsingRadialAxes = ValueOf<Pick<ChartOptionsMap, 'radar' | 'radialBar'>>;
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
@@ -165,9 +169,11 @@ export interface Layout {
 }
 
 export interface Scale {
-  xAxis: ScaleData;
-  yAxis: ScaleData;
+  xAxis?: ScaleData;
+  yAxis?: ScaleData;
   secondaryYAxis?: ScaleData;
+  circularAxis?: ScaleData;
+  verticalAxis?: ScaleData;
 }
 
 type ViewAxisLabel = { offsetPos: number; text: string };
@@ -189,6 +195,8 @@ export type DataRange = {
   xAxis?: ValueEdge;
   yAxis?: ValueEdge;
   secondaryYAxis?: ValueEdge;
+  circularAxis?: ValueEdge;
+  verticalAxis?: ValueEdge;
 };
 
 export type StackSeries = {
@@ -248,7 +256,7 @@ export type ChartOptions = {
   animation?: AnimationOptions;
 } & Size;
 
-type RadialAxisData = {
+type CircularAxisData = {
   labels: string[];
   axisSize: number;
   centerX: number;
@@ -267,7 +275,7 @@ type RadialAxisData = {
   endAngle: number;
 };
 
-type RadialYAxisData = {
+type VerticalAxisData = {
   labels: string[];
   axisSize: number;
   centerX: number;
@@ -287,8 +295,8 @@ type RadialYAxisData = {
 };
 
 type RadialAxes = {
-  radialAxis: RadialAxisData;
-  yAxis: RadialYAxisData;
+  circularAxis: CircularAxisData;
+  verticalAxis: VerticalAxisData;
 };
 export interface ChartState<T extends Options> {
   chart: ChartOptions;

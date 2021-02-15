@@ -9,7 +9,13 @@ import {
   deepCopy,
 } from '@src/helpers/utils';
 import { message } from '@src/message';
-import { ChartState, StackDataValues, ScaleData, RadialYAxisData } from '@t/store/store';
+import {
+  ChartState,
+  StackDataValues,
+  ScaleData,
+  CircularAxisData,
+  VerticalAxisData,
+} from '@t/store/store';
 import {
   RadialBarChartOptions,
   RadialBarSeriesType,
@@ -29,7 +35,6 @@ import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getTotalAngle } from '@src/helpers/pieSeries';
 import { RadialBarDataLabel } from '@t/components/dataLabels';
-import { isSameArray } from '@src/helpers/arrayUtil';
 import { isAvailableShowTooltipInfo } from '@src/helpers/validation';
 
 type RadiusRange = { inner: number; outer: number };
@@ -38,7 +43,6 @@ type RenderOptions = {
   clockwise: boolean;
   cx: number;
   cy: number;
-  drawingStartAngle: number;
   radiusRanges: RadiusRange[];
   angleRange: { start: number; end: number };
   totalAngle: number;
@@ -80,7 +84,6 @@ function makeGroupedSectorResponderModel(
     cy,
     angleRange: { start, end },
     clockwise,
-    drawingStartAngle,
   } = renderOptions;
 
   return getRadiusRanges(radiusRanges, 0).map(
@@ -93,7 +96,6 @@ function makeGroupedSectorResponderModel(
         radius,
         name: categories[index],
         clockwise,
-        drawingStartAngle,
         index,
       } as SectorResponderModel)
   );
@@ -114,24 +116,28 @@ export default class RadialBarSeries extends Component {
 
   theme!: Required<RadialBarChartSeriesTheme>;
 
+  circularAxis!: CircularAxisData;
+
   initUpdate(delta: number) {
     if (!this.drawModels) {
       return;
     }
 
+    const { startAngle, totalAngle } = this.circularAxis;
     let currentDegree: number;
 
     Object.keys(this.models).forEach((category) => {
-      const index = this.models[category].findIndex(
-        ({ clockwise, degree: { start, end }, totalAngle }) => {
-          currentDegree = clockwise ? totalAngle * delta : 360 - totalAngle * delta;
+      const index = this.models[category].findIndex(({ clockwise, degree: { start, end } }) => {
+        currentDegree = clockwise
+          ? startAngle + totalAngle * delta
+          : startAngle - totalAngle * delta;
 
-          return withinRadian(clockwise, start, end, currentDegree);
-        }
-      );
+        return withinRadian(clockwise, start, end, currentDegree);
+      });
 
-      if (~index) {
-        this.syncEndAngle(index < 0 ? this.models[category].length : index, category);
+      this.syncEndAngle(index < 0 ? this.models[category].length : index, category);
+
+      if (index > -1) {
         this.drawModels[category][index].degree.end = currentDegree!;
       }
     });
@@ -181,7 +187,12 @@ export default class RadialBarSeries extends Component {
       return acc;
     }, {});
     const seriesData = series.radialBar.data as Required<RadialBarSeriesType>[];
-    const renderOptions = this.makeRenderOptions(radialAxes.yAxis, scale.xAxis, options?.series);
+    this.circularAxis = radialAxes.circularAxis;
+    const renderOptions = this.makeRenderOptions(
+      radialAxes.verticalAxis,
+      scale.circularAxis!,
+      options?.series
+    );
     const { categoryMap, seriesModels } = this.makeSeriesModelData(
       seriesData,
       stackSeries.radialBar.stackData as StackDataValues,
@@ -213,7 +224,11 @@ export default class RadialBarSeries extends Component {
 
     this.responders =
       this.eventDetectType === 'grouped'
-        ? makeGroupedSectorResponderModel(radialAxes.yAxis.radiusRanges, renderOptions, categories)
+        ? makeGroupedSectorResponderModel(
+            radialAxes.verticalAxis.radiusRanges,
+            renderOptions,
+            categories
+          )
         : seriesModels.map((m, index) => ({
             ...m,
             data: { ...tooltipData[index] },
@@ -234,13 +249,6 @@ export default class RadialBarSeries extends Component {
 
       return acc;
     }, {});
-  }
-
-  private hasChangedCategory() {
-    // when using setData API, check categories
-    return this.drawModels
-      ? !isSameArray(Object.keys(this.drawModels), Object.keys(this.models))
-      : false;
   }
 
   private setEventDetectType(options?: RadialBarChartOptions) {
@@ -266,7 +274,7 @@ export default class RadialBarSeries extends Component {
       axisSize,
       startAngle,
       endAngle,
-    }: RadialYAxisData,
+    }: VerticalAxisData,
     scale: ScaleData,
     options?: RadialBarSeriesOptions
   ) {
@@ -278,6 +286,7 @@ export default class RadialBarSeries extends Component {
     const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
     const barWidth = this.getBarWidth(tickDistance, axisSize);
     const padding = (tickDistance - barWidth) / 2;
+    const scaleMaxLimitValue = max + (totalAngle < 360 ? 0 : stepSize);
 
     return {
       clockwise,
@@ -290,7 +299,7 @@ export default class RadialBarSeries extends Component {
         end: endAngle,
       },
       totalAngle,
-      scaleMaxLimitValue: max + (totalAngle < 360 ? 0 : stepSize),
+      scaleMaxLimitValue,
       startAngle,
     };
   }
@@ -352,14 +361,12 @@ export default class RadialBarSeries extends Component {
             style: [{ strokeStyle }],
             lineWidth,
             clockwise,
-            drawingStartAngle: -90,
             totalAngle,
             seriesColor,
             seriesIndex,
             categoryIndex,
+            drawingStartAngle: -90,
           };
-
-          // console.log(startDegree, endDegree);
 
           categoryMap[categories[categoryIndex]].push(sectorModel);
           sectorModels.push(sectorModel);

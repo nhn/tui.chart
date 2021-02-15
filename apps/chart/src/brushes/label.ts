@@ -1,5 +1,5 @@
 import { makeStyleObj, fillStyle, strokeWithOptions } from '@src/helpers/style';
-import { isNumber, includes } from '@src/helpers/utils';
+import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
 import { Point } from '@t/options';
 import { RectStyle, StyleProp, Nullable } from '@t/components/series';
@@ -101,6 +101,7 @@ const textBubbleStyle = {
 export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelModel) {
   const {
     radian = 0,
+    rotationPosition,
     bubble: {
       x,
       y,
@@ -108,30 +109,13 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
       height,
       radius = 0,
       lineWidth = 1,
-      align = 'center',
       direction,
       points = [],
       fill = '#fff',
       strokeStyle = 'rgba(0, 0, 0, 0)',
-      style = null,
-      textBaseline = 'middle',
+      style: bubbleStyle = null,
     },
   } = model;
-
-  let rotationXPos = x;
-  let rotationYPos = y;
-
-  if (align === 'center') {
-    rotationXPos = x + width / 2;
-  } else if (includes(['right', 'end'], align)) {
-    rotationXPos = x + width;
-  }
-
-  if (textBaseline === 'middle') {
-    rotationYPos = y + height / 2;
-  } else if (textBaseline === 'bottom') {
-    rotationYPos = y + height;
-  }
 
   if (width > 0 && height > 0) {
     drawBubble(ctx, {
@@ -140,17 +124,14 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
       radius,
       width,
       height,
-      style,
+      style: bubbleStyle,
       fill,
       strokeStyle,
       lineWidth,
       direction,
       points,
       radian,
-      rotationPosition: {
-        x: rotationXPos,
-        y: rotationYPos,
-      },
+      rotationPosition,
     });
   }
 
@@ -159,11 +140,8 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
       x: labelX,
       y: labelY,
       text,
-      textAlign = 'center',
-      textBaseline: labelBaseline = 'middle',
-      font,
-      color,
       strokeStyle: labelStrokeColor = 'rgba(0, 0, 0, 0)',
+      style,
     } = model.label;
 
     ctx.shadowColor = 'rgba(0, 0, 0, 0)';
@@ -173,16 +151,10 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
       x: labelX,
       y: labelY,
       text,
-      style: [{ font, fillStyle: color, textAlign, textBaseline: labelBaseline }] as StyleProp<
-        LabelStyle,
-        LabelStyleName
-      >,
+      style,
       stroke: [{ strokeStyle: labelStrokeColor }],
       radian,
-      rotationPosition: {
-        x: rotationXPos,
-        y: rotationYPos,
-      },
+      rotationPosition,
     });
   }
 }

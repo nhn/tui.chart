@@ -1,4 +1,3 @@
-import { extend } from '@src/store/store';
 import { StoreModule, Scale, Options, ChartState } from '@t/store/store';
 import {
   getAxisName,
@@ -6,6 +5,7 @@ import {
   isLabelAxisOnYAxis,
   getYAxisOption,
   getValueAxisNames,
+  isSeriesUsingRadialAxes,
 } from '@src/helpers/axes';
 import {
   calculateCoordinateScale,
@@ -22,6 +22,8 @@ type ScaleOptions = {
   xAxis?: ScaleOption;
   yAxis?: ScaleOption;
   secondaryYAxis?: ScaleOption;
+  circularAxis?: ScaleOption;
+  verticalAxis?: ScaleOption;
 };
 
 function getLabelScaleData(
@@ -98,17 +100,16 @@ const scale: StoreModule = {
   action: {
     setScale({ state }) {
       const { series, options } = state;
-
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
       const { yAxis, secondaryYAxis } = getYAxisOption(options);
+      const scaleOptions: ScaleOptions = isSeriesUsingRadialAxes(series)
+        ? { [valueAxisName]: options?.[valueAxisName]?.scale }
+        : {
+            xAxis: options?.xAxis?.scale,
+            yAxis: yAxis?.scale,
+          };
       const scaleData = {};
-
-      const scaleOptions: ScaleOptions = {
-        xAxis: options?.xAxis?.scale,
-        yAxis: yAxis?.scale,
-        radialAxis: options?.radialAxis?.scale,
-      };
 
       if (secondaryYAxis) {
         scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
@@ -127,7 +128,7 @@ const scale: StoreModule = {
         );
       }
 
-      extend(state.scale, scaleData);
+      state.scale = scaleData;
     },
   },
   observe: {

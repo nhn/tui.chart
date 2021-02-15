@@ -10,6 +10,7 @@ module.exports = {
       babelConfig: true,
     },
   },
+  // testMatch: ['<rootDir>/tests/components/radialAxis.spec.ts'],
   setupFiles: ['jest-canvas-mock'],
   watchPathIgnorePatterns: ['<rootDir>/.storybook', '<rootDir>/.stories', '/node_modules/'],
 };

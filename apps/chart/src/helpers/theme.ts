@@ -157,6 +157,17 @@ export function makeDefaultTheme(globalFontFamily = 'Arial', hasRadarSeries = fa
     },
     yAxis: {
       title: { ...axisTitleTheme },
+      label: { ...commonTextTheme },
+      width: 1,
+      color: '#333333',
+    },
+    xAxis: {
+      title: { ...axisTitleTheme },
+      label: { ...commonTextTheme },
+      width: 1,
+      color: '#333333',
+    },
+    verticalAxis: {
       label: {
         ...commonTextTheme,
         textBubble: {
@@ -169,16 +180,8 @@ export function makeDefaultTheme(globalFontFamily = 'Arial', hasRadarSeries = fa
           borderWidth: 1,
         },
       },
-      width: 1,
-      color: '#333333',
     },
-    xAxis: {
-      title: { ...axisTitleTheme },
-      label: { ...commonTextTheme },
-      width: 1,
-      color: '#333333',
-    },
-    radialAxis: {
+    circularAxis: {
       label: { ...commonTextTheme },
       lineWidth: 1,
       strokeStyle: 'rgba(0, 0, 0, 0.05)',

@@ -214,7 +214,7 @@ export const secondaryYAxis = () => {
 
 export const responsive = () => {
   const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue', width: 700, height: 'auto' },
+    chart: { title: 'Monthly Revenue', width: 'auto', height: 'auto' },
     responsive: {
       animation: { duration: 300 },
       rules: [

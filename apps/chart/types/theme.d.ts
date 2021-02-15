@@ -52,11 +52,15 @@ type AxisLabelTheme = FontTheme & {
   textBubble?: Omit<TextBubbleTheme, 'arrow'>;
 };
 
-type RadialAxisTheme = {
+type CircularAxisTheme = {
   label?: AxisLabelTheme;
   lineWidth?: number;
   strokeStyle?: string;
   dotColor?: string;
+};
+
+type VerticalAxisTheme = {
+  label?: AxisLabelTheme;
 };
 
 type Theme = {
@@ -65,7 +69,8 @@ type Theme = {
   title: FontTheme;
   xAxis: AxisTheme;
   yAxis: AxisTheme | AxisTheme[];
-  radialAxis: RadialAxisTheme;
+  verticalAxis: VerticalAxisTheme;
+  circularAxis: CircularAxisTheme;
   legend: LegendTheme;
   tooltip: TooltipTheme;
   plot: PlotTheme;
@@ -74,7 +79,7 @@ type Theme = {
 
 type AxisTheme = {
   title?: FontTheme;
-  label?: AxisLabelTheme;
+  label?: FontTheme;
   width?: number;
   color?: string;
 };
@@ -522,8 +527,8 @@ interface NestedPieChartThemeOptions extends BaseThemeOptions {
 
 interface RadarChartThemeOptions extends BaseThemeOptions {
   series?: RadarChartSeriesTheme;
-  yAxis?: AxisTheme;
-  radialAxis?: Omit<AxisTheme, 'title'>;
+  verticalAxis?: VerticalAxisTheme;
+  circularAxis?: CircularAxisTheme;
 }
 
 interface HeatmapChartThemeOptions extends BaseThemeOptions {
@@ -579,5 +584,6 @@ type CheckAnchorPieSeries = {
 
 interface RadialBarChartThemeOptions extends BaseThemeOptions {
   series?: RadialBarChartSeriesTheme;
-  radialAxis?: Omit<AxisTheme, 'title'>;
+  verticalAxis?: VerticalAxisTheme;
+  circularAxis?: CircularAxisTheme;
 }

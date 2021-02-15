@@ -213,8 +213,14 @@ export function spectrumTooltip(ctx: CanvasRenderingContext2D, model: SpectrumLe
       text,
       x: boxStartX,
       y: boxStartY + height / 2,
-      font: 'normal 11px Arial',
-      color: '#333333',
+      style: [
+        {
+          font: 'normal 11px Arial',
+          fillStyle: '#333333',
+          textAlign: 'center',
+          textBaseline: 'middle',
+        },
+      ],
     },
   });
 }

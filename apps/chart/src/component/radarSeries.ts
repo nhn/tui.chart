@@ -85,9 +85,9 @@ export default class RadarSeries extends Component {
     this.selectable = this.getSelectableOption(options);
 
     const categories = state.categories as string[];
-    const { axisSize, centerX, centerY } = radialAxes.yAxis;
+    const { axisSize, centerX, centerY } = radialAxes.verticalAxis;
 
-    const { limit, stepSize } = scale.yAxis;
+    const { limit, stepSize } = scale.verticalAxis!;
     const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
 

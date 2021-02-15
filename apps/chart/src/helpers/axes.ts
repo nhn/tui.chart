@@ -7,6 +7,7 @@ import {
   RotationLabelData,
   InitAxisData,
   Layout,
+  ChartOptionsUsingRadialAxes,
 } from '@t/store/store';
 import {
   LineTypeXAxisOptions,
@@ -24,7 +25,7 @@ import {
   getTextHeight,
   getTextWidth,
 } from '@src/helpers/calculator';
-import { range, isString, isUndefined, isNumber } from '@src/helpers/utils';
+import { range, isString, isUndefined, isNumber, includes } from '@src/helpers/utils';
 import {
   ANGLE_CANDIDATES,
   calculateRotatedWidth,
@@ -33,6 +34,7 @@ import {
 import { getDateFormat, formatDate } from '@src/helpers/formatDate';
 import { calculateDegreeToRadian } from '@src/helpers/sector';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
+import { RadialAxisType } from '@src/store/radialAxes';
 
 interface IntervalInfo {
   blockCount: number;
@@ -150,18 +152,20 @@ export function isPointOnColumn(series: Series, options: Options) {
   return false;
 }
 
-export function getAxisNameUsingRadialAxes(series: Series) {
+function getAxisNameUsingRadialAxes(labelAxisOnYAxis: boolean) {
   return {
-    valueAxisName: series?.radialBar ? 'radialAxis' : 'yAxis',
-    labelAxisName: series?.radialBar ? 'yAxis' : 'radialAxis',
+    valueAxisName: labelAxisOnYAxis ? 'circularAxis' : 'verticalAxis',
+    labelAxisName: labelAxisOnYAxis ? 'verticalAxis' : 'circularAxis',
   };
 }
 
-export function getAxisName(labelAxisOnYAxis: boolean) {
-  return {
-    valueAxisName: labelAxisOnYAxis ? 'xAxis' : 'yAxis',
-    labelAxisName: labelAxisOnYAxis ? 'yAxis' : 'xAxis',
-  };
+export function getAxisName(labelAxisOnYAxis: boolean, series: Series) {
+  return isSeriesUsingRadialAxes(series)
+    ? getAxisNameUsingRadialAxes(labelAxisOnYAxis)
+    : {
+        valueAxisName: labelAxisOnYAxis ? 'xAxis' : 'yAxis',
+        labelAxisName: labelAxisOnYAxis ? 'yAxis' : 'xAxis',
+      };
 }
 
 export function getSizeKey(labelAxisOnYAxis: boolean) {
@@ -206,7 +210,11 @@ export function getValueAxisName(
 export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName: string) {
   const { yAxis, secondaryYAxis } = getYAxisOption(options);
 
-  return valueAxisName !== 'xAxis' && secondaryYAxis
+  if (includes(['xAxis', 'circularAxis', 'verticalAxis'], valueAxisName)) {
+    return [valueAxisName];
+  }
+
+  return secondaryYAxis
     ? [yAxis.chartType, secondaryYAxis.chartType].map((seriesName, index) =>
         seriesName
           ? getValueAxisName(options, seriesName, valueAxisName)
@@ -216,11 +224,13 @@ export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName
 }
 
 export function getAxisTheme(theme: Theme, name: string) {
-  const { xAxis, yAxis, radialAxis } = theme;
+  const { xAxis, yAxis, circularAxis, verticalAxis } = theme;
   let axisTheme;
 
-  if (name === 'radialAxis') {
-    axisTheme = radialAxis;
+  if (name === RadialAxisType.CIRCULAR) {
+    axisTheme = circularAxis;
+  } else if (name === RadialAxisType.VERTICAL) {
+    axisTheme = verticalAxis;
   } else if (name === AxisType.X) {
     axisTheme = xAxis;
   } else if (Array.isArray(yAxis)) {
@@ -428,4 +438,8 @@ export function makeDefaultAxisData(isLabelAxis: boolean, params: AxisDataParams
   }
 
   return axisData;
+}
+
+export function isSeriesUsingRadialAxes(series: Series): boolean {
+  return !!series.radar || !!series.radialBar;
 }

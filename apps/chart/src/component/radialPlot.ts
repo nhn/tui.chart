@@ -6,7 +6,7 @@ import { Point, RadarPlotType, RadarChartOptions } from '@t/options';
 import { RadialPlotModels, RadialPlotModelType } from '@t/components/radialPlot';
 import { LineModel } from '@t/components/axis';
 import { range } from '@src/helpers/utils';
-import { RadialAxisTheme } from '@t/theme';
+import { CircularAxisTheme } from '@t/theme';
 import { ArcModel } from '@t/components/radialAxis';
 
 type RenderOptions = {
@@ -30,7 +30,7 @@ type RenderOptions = {
 export default class RadarPlot extends Component {
   models: RadialPlotModels = { plot: [], line: [] };
 
-  radialAxisTheme!: Required<RadialAxisTheme>;
+  circularAxisTheme!: Required<CircularAxisTheme>;
 
   initialize() {
     this.type = 'plot';
@@ -41,7 +41,7 @@ export default class RadarPlot extends Component {
     const { layout, radialAxes, options, series, theme } = state;
 
     this.rect = layout.plot;
-    this.radialAxisTheme = theme.radialAxis as Required<RadialAxisTheme>;
+    this.circularAxisTheme = theme.circularAxis as Required<CircularAxisTheme>;
 
     const isRadarChart = !!series.radar;
     const categories = (state.categories as string[]) ?? [];
@@ -59,8 +59,9 @@ export default class RadarPlot extends Component {
     type: RadarPlotType,
     categories: string[] = []
   ): RenderOptions {
-    const { centerX, centerY, radiusRanges, innerRadius, outerRadius } = radialAxes.yAxis;
+    const { centerX, centerY, radiusRanges, innerRadius, outerRadius } = radialAxes.verticalAxis;
     const {
+      degree,
       totalAngle,
       labels,
       tickInterval,
@@ -68,14 +69,14 @@ export default class RadarPlot extends Component {
       startAngle,
       endAngle,
       clockwise,
-    } = radialAxes.radialAxis;
+    } = radialAxes.circularAxis;
     const usingArcPlot = totalAngle !== 360;
     const lineCount = labels.length;
 
     return {
       type,
       categories,
-      degree: totalAngle / lineCount,
+      degree,
       centerX,
       centerY,
       initialRadius: innerRadius,
@@ -107,7 +108,7 @@ export default class RadarPlot extends Component {
 
   makeSpiderwebPlot(renderOptions: RenderOptions): PolygonModel[] {
     const { degree, centerX, centerY, categories, radiusRanges } = renderOptions;
-    const { strokeStyle, lineWidth } = this.radialAxisTheme;
+    const { strokeStyle, lineWidth } = this.circularAxisTheme;
 
     return radiusRanges.map((radius) => {
       const points: Point[] = categories.map((_, index) =>
@@ -125,7 +126,7 @@ export default class RadarPlot extends Component {
 
   makeCirclePlot(renderOptions: RenderOptions): CircleModel[] {
     const { centerX, centerY, radiusRanges } = renderOptions;
-    const { strokeStyle, lineWidth } = this.radialAxisTheme;
+    const { strokeStyle, lineWidth } = this.circularAxisTheme;
 
     return radiusRanges.map((radius) => ({
       type: 'circle',
@@ -139,7 +140,7 @@ export default class RadarPlot extends Component {
 
   makeArc(renderOptions: RenderOptions): ArcModel[] {
     const { centerX, centerY, radiusRanges, startAngle, endAngle, clockwise } = renderOptions;
-    const { strokeStyle, lineWidth } = this.radialAxisTheme;
+    const { strokeStyle, lineWidth } = this.circularAxisTheme;
 
     return radiusRanges.map<ArcModel>((radius) => ({
       type: 'arc',
@@ -164,44 +165,40 @@ export default class RadarPlot extends Component {
       degree,
       tickInterval,
       drawingStartAngle,
-      usingArcPlot,
       clockwise,
     } = renderOptions;
-    const { strokeStyle, lineWidth } = this.radialAxisTheme;
+    const { strokeStyle, lineWidth } = this.circularAxisTheme;
 
-    return range(0, usingArcPlot ? lineCount + 1 : lineCount).reduce<LineModel[]>(
-      (acc, cur, index) => {
-        const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
-        const { x: x1, y: y1 } = getRadialPosition(
-          centerX,
-          centerY,
-          initialRadius,
-          calculateDegreeToRadian(startDegree)
-        );
+    return range(0, lineCount).reduce<LineModel[]>((acc, cur, index) => {
+      const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
+      const { x: x1, y: y1 } = getRadialPosition(
+        centerX,
+        centerY,
+        initialRadius,
+        calculateDegreeToRadian(startDegree)
+      );
 
-        const { x: x2, y: y2 } = getRadialPosition(
-          centerX,
-          centerY,
-          radius,
-          calculateDegreeToRadian(startDegree)
-        );
+      const { x: x2, y: y2 } = getRadialPosition(
+        centerX,
+        centerY,
+        radius,
+        calculateDegreeToRadian(startDegree)
+      );
 
-        return index % tickInterval === 0
-          ? [
-              ...acc,
-              {
-                type: 'line',
-                x: x1,
-                y: y1,
-                x2,
-                y2,
-                strokeStyle,
-                lineWidth,
-              },
-            ]
-          : acc;
-      },
-      []
-    );
+      return index % tickInterval === 0
+        ? [
+            ...acc,
+            {
+              type: 'line',
+              x: x1,
+              y: y1,
+              x2,
+              y2,
+              strokeStyle,
+              lineWidth,
+            },
+          ]
+        : acc;
+    }, []);
   }
 }

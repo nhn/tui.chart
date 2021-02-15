@@ -59,14 +59,14 @@ export interface RadialBarChartProps {
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *       @param {Array<number>|Array<string>} [props.options.series.radiusRange] - Specifies the radius of the circle drawn. It is specified by entering a number or percent string value in start and end.
  *       @param {boolean} [props.options.series.clockwise] - Whether it will be drawn clockwise.
- *     @param {Object} [props.options.radialAxis]
- *       @param {Object} [props.options.radialAxis.tick] - Option to adjust tick interval.
- *       @param {Object} [props.options.radialAxis.label] - Option to adjust label interval.
- *       @param {Object} [props.options.radialAxis.scale] - Option to adjust axis minimum, maximum, step size.
- *     @param {Object} [props.options.yAxis]
- *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
- *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
- *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
+ *     @param {Object} [props.options.circularAxis]
+ *       @param {Object} [props.options.circularAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.circularAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.circularAxis.scale] - Option to adjust axis minimum, maximum, step size.
+ *     @param {Object} [props.options.verticalAxis]
+ *       @param {Object} [props.options.verticalAxis.tick] - Option to adjust tick interval.
+ *       @param {Object} [props.options.verticalAxis.label] - Option to adjust label interval.
+ *       @param {Object} [props.options.verticalAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *     @param {Object} [props.options.legend]
  *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.

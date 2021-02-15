@@ -64,15 +64,13 @@ export function drawBubbleLabel(ctx: CanvasRenderingContext2D, model: DataLabelM
   bubbleLabel(ctx, {
     type: 'bubbleLabel',
     radian,
+    rotationPosition: { x: model.x, y: model.y },
     bubble: bubbleRect,
     label: {
       x: x + width / 2,
       y: y + height / 2,
       text,
-      textAlign: 'center',
-      textBaseline: 'middle',
-      font,
-      color,
+      style: [{ font, fillStyle: color, textAlign: 'center', textBaseline: 'middle' }],
       strokeStyle: textStrokeColor,
     },
   });
@@ -153,7 +151,6 @@ function getBubbleRect(model: DataLabelModel): BubbleInfo {
 
   return {
     ...rect,
-    textBaseline,
     radius: borderRadius,
     lineWidth: borderWidth,
     fill: backgroundColor,
@@ -166,7 +163,6 @@ function getBubbleRect(model: DataLabelModel): BubbleInfo {
         shadowColor,
       },
     ],
-    align: textAlign,
     ...getArrowInfo(rect, textAlign, textBaseline, arrow as Required<ArrowTheme>),
   } as BubbleInfo;
 }

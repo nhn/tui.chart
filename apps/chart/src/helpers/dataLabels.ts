@@ -469,6 +469,7 @@ function makeSectorBarLabelPosition(
 ): LabelPosition {
   const { anchor } = dataLabelOptions;
   const {
+    clockwise,
     degree: { start, end },
     radius: { inner, outer },
   } = model;
@@ -478,11 +479,11 @@ function makeSectorBarLabelPosition(
   let rotationDegree = (start + end) / 2;
 
   if (anchor === 'start') {
-    textAlign = 'left';
+    textAlign = clockwise ? 'left' : 'right';
     endAngle = startAngle;
     rotationDegree = start;
   } else if (anchor === 'end') {
-    textAlign = 'right';
+    textAlign = clockwise ? 'right' : 'left';
     startAngle = endAngle;
     rotationDegree = end;
   }
@@ -502,8 +503,8 @@ function makeSectorBarLabelPosition(
   );
 
   return {
-    x: x,
-    y: y,
+    x,
+    y,
     textAlign,
     textBaseline: 'middle',
     radian: calculateDegreeToRadian(rotationDegree, 0),
