@@ -234,6 +234,15 @@ export default abstract class Chart<T extends Options> {
   }, 100);
 
   setResizeEvent() {
+    const { usingContainerSize } = this.store.state;
+
+    if (
+      (usingContainerSize.height && !this.el.style.height) ||
+      (usingContainerSize.width && !this.el.style.width)
+    ) {
+      throw new Error(message.AUTO_LAYOUT_CONTAINER_SIZE_ERROR);
+    }
+
     if (isUndefined(ResizeObserver)) {
       window.addEventListener('resize', this.debounceWindowResizeEvent);
     } else {
