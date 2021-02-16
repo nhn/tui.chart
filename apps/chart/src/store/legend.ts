@@ -27,9 +27,10 @@ import { extend } from '@src/store/store';
 import { getTitleFontString } from '@src/helpers/style';
 import { makeDefaultTheme } from '@src/helpers/theme';
 
-type LegendLabels = {
+type LegendLabelsInfo = {
   label: string;
   type: ChartType;
+  checked: boolean;
 }[];
 
 type LegendSizeParam = {
@@ -224,15 +225,16 @@ function showCheckbox(options: Options) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
-function getNestedPieLegendLabels(series: RawSeries) {
-  const result: LegendLabels = [];
+function getNestedPieLegendLabelsInfo(series: RawSeries) {
+  const result: LegendLabelsInfo = [];
 
   series.pie!.forEach(({ data }) => {
-    data.forEach(({ name, parentName }) => {
+    data.forEach(({ name, parentName, visible }) => {
       if (!parentName) {
         result.push({
           label: name,
           type: 'pie',
+          checked: visible ?? true,
         });
       }
     });
@@ -241,11 +243,12 @@ function getNestedPieLegendLabels(series: RawSeries) {
   return result;
 }
 
-function getLegendLabels(series: RawSeries): LegendLabels {
+function getLegendLabelsInfo(series: RawSeries): LegendLabelsInfo {
   return Object.keys(series).flatMap((type) =>
-    series[type].map(({ name, colorValue }) => ({
+    series[type].map(({ name, colorValue, visible }) => ({
       label: colorValue ? colorValue : name,
       type,
+      checked: visible ?? true,
     }))
   );
 }
@@ -317,14 +320,14 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     deepMergedCopy(defaultTheme.legend.label!, { ...options.theme?.legend?.label })
   );
 
-  const legendLabels = hasNestedPieSeries(series)
-    ? getNestedPieLegendLabels(series)
-    : getLegendLabels(series);
+  const legendLabelsInfo = hasNestedPieSeries(series)
+    ? getNestedPieLegendLabelsInfo(series)
+    : getLegendLabelsInfo(series);
 
-  const data = legendLabels.map(({ label, type }) => ({
+  const data = legendLabelsInfo.map(({ label, type, checked }) => ({
     label,
     active: true,
-    checked: true,
+    checked,
     width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
     iconType: getIconType(type),
     chartType: type,
