@@ -208,10 +208,7 @@ const seriesData: StoreModule = {
       this.notify(state, 'disabledSeries');
 
       if (state.series.bullet) {
-        const index = (state.categories as string[]).findIndex((seriesName) => seriesName === name);
-        (state.categories as string[]).splice(index, 1);
-
-        this.notify(state, 'axes');
+        this.dispatch('removeCategoryByName', name);
       }
     },
     enableSeries({ state }, name: string) {
