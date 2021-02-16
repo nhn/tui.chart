@@ -50,6 +50,40 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102769215-ae7d5600-43c5-11eb-9f72-aa1c80e9ceaa.png)
 
+### visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+
+```js
+const data = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+  series: [
+    {
+      name: 'Budget',
+      data: [5000, 3000, 5000, 7000, 6000, 4000],
+      visible: false
+    },
+    {
+      name: 'Income',
+      data: [8000, 4000, 7000, 2000, 6000, 3000],
+    },
+    {
+      name: 'Expenses',
+      data: [4000, 4000, 6000, 3000, 4000, 5000],
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, 4000],
+    },
+  ],
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108011957-86b81080-704b-11eb-8b3c-1c8ed2f01326.png)
+
+
 ## Options
 
 `options` should be used as an object.

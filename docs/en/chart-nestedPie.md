@@ -248,6 +248,110 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102752512-0c517400-43ad-11eb-96f7-614d0cd9bd6c.png)
 
+### visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+
+```js
+const data = {
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+          visible: false,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: 10,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+          visible: false,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          data: 5,
+        },
+        {
+          name: 'IE 11',
+          data: 4,
+        },
+        {
+          name: 'IE 10',
+          data: 3,
+        },
+        {
+          name: 'IE 9',
+          data: 2,
+        },
+        {
+          name: 'IE 8',
+          data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          data: 1,
+        },
+        {
+          name: 'Etc - 2020',
+          data: 7,
+        },
+      ],
+    },
+  ]
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108011512-9125da80-704a-11eb-8b45-8fc01777e14e.png)
+
+
 ## Options
 
 `options` should be used as an object. The `series` option is identical to the [`series` option for the Pie chart](https://github.com/nhn/tui.chart/blob/docs/tutorial-by-chart/docs/ko/chart-pie.md#%EC%98%B5%EC%85%98), essentially, except for the `radiusRange`. The Nested Pie uses separate radii range to draw nested series.`[name]` corresponds to the `name` of the entered series. Options that must be applied to all nested series are defined directly in `series`, and options unique to each series are defined in `[name]`.

@@ -59,7 +59,6 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101856128-0aff9a80-3ba8-11eb-9ad0-107dc8261cb0.png)
 
-
 ## range 차트
 
 ### 데이터 타입
@@ -105,6 +104,49 @@ const data = {
 ```
 
 ![image](https://user-images.githubusercontent.com/35371660/101856365-78133000-3ba8-11eb-999a-a7cb82755c6c.png)
+
+### visible 옵션
+
+각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
+
+```js
+const data = {
+  categories: [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ],
+  series: [
+    {
+      name: 'Seoul',
+      data: [20, 40, 25, 50, 15, 45, 33, 34, 20, 30, 22, 13],
+      visible: false,
+    },
+    {
+      name: 'Sydney',
+      data: [5, 30, 21, 18, 59, 50, 28, 33, 7, 20, 10, 30],
+    },
+    {
+      name: 'Moscow',
+      data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5],
+    },
+  ],
+}
+```
+
+위 옵션을 적용해 차트를 생성해보면 체크박스가 해제되어 생성되는 것을 확인할 수 있다.
+
+![image](https://user-images.githubusercontent.com/35371660/108007541-9894b600-7041-11eb-8e5f-0010dba85f65.png)
+
 
 ## 옵션
 

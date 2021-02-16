@@ -57,6 +57,48 @@ const data = {
 }
 ```
 
+### visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+
+```js
+const data = {
+  categories: [
+    '2020.01',
+    '2020.02',
+    '2020.03',
+    '2020.04',
+    '2020.05',
+    '2020.06',
+    '2020.07',
+    '2020.08',
+    '2020.09',
+    '2020.10',
+    '2020.11',
+    '2020.12',
+  ],
+  series: {
+    area: [
+      {
+        name: 'Effective Load',
+        data: [150, 130, 100, 125, 128, 44, 66, 162, 77, 70, 68, 103],
+        visible: false,
+      },
+    ],
+    line: [
+      {
+        name: 'Power Usage',
+        data: [72, 80, 110, 117, 129, 137, 134, 66, 121, 88, 114, 117],
+      },
+    ],
+  },
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108010476-4c00a900-7048-11eb-8c34-529c865a75aa.png)
+
 ## Options
 
 `options` should be used as an object. Options for each chart can be applied through `line` and `area`. The available options are as follows.

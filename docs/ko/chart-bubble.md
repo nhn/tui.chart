@@ -54,6 +54,44 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102034986-abe99200-3e02-11eb-85d7-5128b90e2999.png)
 
+### visible 옵션
+
+각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
+
+```js
+const data = {
+  series: [
+    {
+      name: 'Africa',
+      data: [
+        { x: 30, y: 100, r: 10, label: 'Morocco' },
+        { x: 40, y: 200, r: 30, label: 'Egypt' },
+      ],
+      visible: false,
+    },
+    {
+      name: 'America',
+      data: [
+        { x: 60, y: 40, r: 50, label: 'Canada' },
+        { x: 50, y: 300, r: 10, label: 'United States' },
+      ],
+    },
+    {
+      name: 'Asia',
+      data: [
+        { x: 10, y: 150, r: 20, label: 'Korea, South' },
+        { x: 20, y: 200, r: 30, label: 'Singapore' },
+      ],
+    },
+  ],
+}
+```
+
+위 옵션을 적용해 차트를 생성해보면 체크박스가 해제되어 생성되는 것을 확인할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/35371660/108008117-e8c04800-7042-11eb-8feb-6dd18593b00c.png)
+
+
 ## 옵션
 
 `options`는 객체로 작성한다.

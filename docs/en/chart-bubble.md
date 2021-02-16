@@ -54,6 +54,43 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102034986-abe99200-3e02-11eb-85d7-5128b90e2999.png)
 
+### visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+
+```js
+const data = {
+  series: [
+    {
+      name: 'Africa',
+      data: [
+        { x: 30, y: 100, r: 10, label: 'Morocco' },
+        { x: 40, y: 200, r: 30, label: 'Egypt' },
+      ],
+      visible: false,
+    },
+    {
+      name: 'America',
+      data: [
+        { x: 60, y: 40, r: 50, label: 'Canada' },
+        { x: 50, y: 300, r: 10, label: 'United States' },
+      ],
+    },
+    {
+      name: 'Asia',
+      data: [
+        { x: 10, y: 150, r: 20, label: 'Korea, South' },
+        { x: 20, y: 200, r: 30, label: 'Singapore' },
+      ],
+    },
+  ],
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108008117-e8c04800-7042-11eb-8feb-6dd18593b00c.png)
+
 ## Options
 
 `options` should be used as an object.

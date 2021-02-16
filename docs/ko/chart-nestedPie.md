@@ -119,6 +119,109 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102752476-0065b200-43ad-11eb-99dd-eee963788d97.png)
 
+### visible 옵션
+
+각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
+
+```js
+const data = {
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+          visible: false,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: 10,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+          visible: false,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          data: 5,
+        },
+        {
+          name: 'IE 11',
+          data: 4,
+        },
+        {
+          name: 'IE 10',
+          data: 3,
+        },
+        {
+          name: 'IE 9',
+          data: 2,
+        },
+        {
+          name: 'IE 8',
+          data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          data: 1,
+        },
+        {
+          name: 'Etc - 2020',
+          data: 7,
+        },
+      ],
+    },
+  ]
+}
+```
+
+위 옵션을 적용해 차트를 생성해보면 체크박스가 해제되어 생성되는 것을 확인할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/35371660/108011512-9125da80-704a-11eb-8b45-8fc01777e14e.png)
+
 ### 그룹 데이터
 
 `parentName`을 지정하면 데이터의 부모 시리즈를 설정해주어 그룹 데이터로 표현한다. 그룹 데이터는 시리즈의 색깔이 같으며 투명도로 구분된다. `series`의 첫번째 인덱스에 있는 `data` 값만 범례로 표시한다.
