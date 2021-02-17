@@ -131,7 +131,7 @@ export default class ExportMenu extends Component {
     this.theme = theme.exportMenu as Required<ExportMenuTheme>;
     this.data = { series, categories: rawCategories };
     this.fileName = this.getFileName(options?.exportMenu?.filename || chart.title);
-    this.applyExportButtonPanelStyle(chart.width);
+
     this.rect = layout.exportMenu;
     this.models.exportMenuButton = [
       {
@@ -152,6 +152,11 @@ export default class ExportMenu extends Component {
         y: 0,
       },
     ];
+
+    // Need to get position after chart element was added to DOM
+    setTimeout(() => {
+      this.applyExportButtonPanelStyle(chart.width);
+    });
   }
 
   makePanelWrapperStyle(chartWidth: number) {
