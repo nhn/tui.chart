@@ -38,11 +38,11 @@ import {
   NestedPieSeriesType,
   LineAreaChartOptions,
   ScatterChartOptions,
-} from '@t/options';
-import Store from '@src/store/store';
-import { LegendData } from '@t/components/legend';
-import { ScatterSeriesIconType } from '@t/components/series';
-import { Theme } from '@t/theme';
+} from '../options';
+import Store from '../../src/store/store';
+import { LegendData } from '../components/legend';
+import { ScatterSeriesIconType } from '../components/series';
+import { Theme } from '../theme';
 
 type ChartSeriesMap = {
   line: LineSeriesType[];

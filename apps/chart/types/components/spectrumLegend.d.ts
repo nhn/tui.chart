@@ -1,4 +1,4 @@
-import { Align, Point, Rect } from '@t/options';
+import { Align, Point, Rect } from '../options';
 
 export type SpectrumLegendModels = {
   legend: SpectrumLegendModel[];

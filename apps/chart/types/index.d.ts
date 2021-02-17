@@ -51,28 +51,28 @@ import {
   TreemapSeriesType,
   NestedPieSeriesType,
   AxisLabelInfo,
-} from '@t/options';
-import { LineChartProps } from '@src/charts/lineChart';
-import { AreaChartProps } from '@src/charts/areaChart';
-import { BarChartProps } from '@src/charts/barChart';
-import { ColumnChartProps } from '@src/charts/columnChart';
-import { PieChartProps } from '@src/charts/pieChart';
-import { HeatmapChartProps } from '@src/charts/heatmapChart';
-import { BubbleChartProps } from '@src/charts/bubbleChart';
-import { ScatterChartProps } from '@src/charts/scatterChart';
-import { BulletChartProps } from '@src/charts/bulletChart';
-import { RadarChartProps } from '@src/charts/radarChart';
-import { TreemapChartProps } from '@src/charts/treemapChart';
-import { NestedPieChartProps } from '@src/charts/nestedPieChart';
-import { LineAreaChartProps } from '@src/charts/lineAreaChart';
-import { LineScatterChartProps } from '@src/charts/lineScatterChart';
-import { ColumnLineChartProps } from '@src/charts/columnLineChart';
-import { CheckedLegendType } from '@t/components/legend';
-import { Options, HeatmapSeriesData, TreemapSeriesData } from '@t/store/store';
-import { CustomEventType, EventListener } from '@src/eventEmitter';
-import { BoxPlotChartProps } from '@src/charts/boxPlotChart';
-import { AddSeriesDataInfo, SelectSeriesInfo } from '@src/charts/chart';
-import { TooltipData as TooltipDataInfo } from '@t/components/tooltip';
+} from './options';
+import { LineChartProps } from '../src/charts/lineChart';
+import { AreaChartProps } from '../src/charts/areaChart';
+import { BarChartProps } from '../src/charts/barChart';
+import { ColumnChartProps } from '../src/charts/columnChart';
+import { PieChartProps } from '../src/charts/pieChart';
+import { HeatmapChartProps } from '../src/charts/heatmapChart';
+import { BubbleChartProps } from '../src/charts/bubbleChart';
+import { ScatterChartProps } from '../src/charts/scatterChart';
+import { BulletChartProps } from '../src/charts/bulletChart';
+import { RadarChartProps } from '../src/charts/radarChart';
+import { TreemapChartProps } from '../src/charts/treemapChart';
+import { NestedPieChartProps } from '../src/charts/nestedPieChart';
+import { LineAreaChartProps } from '../src/charts/lineAreaChart';
+import { LineScatterChartProps } from '../src/charts/lineScatterChart';
+import { ColumnLineChartProps } from '../src/charts/columnLineChart';
+import { CheckedLegendType } from './components/legend';
+import { Options, HeatmapSeriesData, TreemapSeriesData } from './store/store';
+import { CustomEventType, EventListener } from '../src/eventEmitter';
+import { BoxPlotChartProps } from '../src/charts/boxPlotChart';
+import { AddSeriesDataInfo, SelectSeriesInfo } from '../src/charts/chart';
+import { TooltipData as TooltipDataInfo } from './components/tooltip';
 
 declare namespace toastui {
   export class Chart {

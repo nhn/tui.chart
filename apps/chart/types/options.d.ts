@@ -1,6 +1,6 @@
-import { Categories, RawSeries, Options, StoreModule } from '@t/store/store';
-import { TooltipData, TooltipModel } from '@t/components/tooltip';
-import { ScatterSeriesIconType } from '@t/components/series';
+import { Categories, RawSeries, Options, StoreModule } from './store/store';
+import { TooltipData, TooltipModel } from './components/tooltip';
+import { ScatterSeriesIconType } from './components/series';
 import {
   AreaChartThemeOptions,
   BaseThemeOptions,
@@ -19,8 +19,8 @@ import {
   BoxPlotCharThemeOptions,
   BulletCharThemeOptions,
   ColumnLineChartThemeOptions,
-} from '@t/theme';
-import { AxisType } from '@src/component/axis';
+} from './theme';
+import { AxisType } from '../src/component/axis';
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number] | null;

@@ -1,3 +1,3 @@
-import { RectModel } from '@t/components/series';
+import { RectModel } from './series';
 
 export type ZoomModels = { selectionArea: RectModel[] };

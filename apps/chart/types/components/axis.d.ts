@@ -1,6 +1,6 @@
 import { Point } from '../options';
-import { StyleProp, PathRectModel } from '@t/components/series';
-import { StrokeLabelStyleName, StrokeLabelStyle, LabelStyleName } from '@src/brushes/label';
+import { StyleProp, PathRectModel } from './series';
+import { StrokeLabelStyleName, StrokeLabelStyle, LabelStyleName } from '../../src/brushes/label';
 
 export interface LabelStyle {
   font?: string;

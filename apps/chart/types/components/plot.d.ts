@@ -1,5 +1,5 @@
-import { LineModel } from '@t/components/axis';
-import { RectModel } from '@t/components/series';
+import { LineModel } from '../components/axis';
+import { RectModel } from '../components/series';
 
 export type PlotModels = {
   plot: Array<LineModel | RectModel>;
