@@ -260,7 +260,7 @@ export type ChartOptions = {
   animation?: AnimationOptions;
 } & Size;
 
-type CircularAxisData = {
+type BaseRadialAxes = {
   labels: string[];
   axisSize: number;
   centerX: number;
@@ -269,34 +269,26 @@ type CircularAxisData = {
   labelMargin: number;
   maxLabelWidth: number;
   maxLabelHeight: number;
-  degree: number;
-  tickInterval: number;
-  totalAngle: number;
-  drawingStartAngle: number;
-  clockwise: boolean;
   outerRadius: number;
   startAngle: number;
   endAngle: number;
 };
 
-type VerticalAxisData = {
-  labels: string[];
-  axisSize: number;
-  centerX: number;
-  centerY: number;
-  labelInterval: number;
-  labelMargin: number;
-  maxLabelWidth: number;
-  maxLabelHeight: number;
+interface CircularAxisData extends BaseRadialAxes {
+  degree: number;
+  tickInterval: number;
+  totalAngle: number;
+  drawingStartAngle: number;
+  clockwise: boolean;
+}
+
+interface VerticalAxisData extends BaseRadialAxes {
   tickDistance: number;
   radiusRanges: number[];
   pointOnColumn: boolean;
   innerRadius: number;
-  outerRadius: number;
   labelAlign: CanvasTextAlign;
-  startAngle: number;
-  endAngle: number;
-};
+}
 
 type RadialAxes = {
   circularAxis: CircularAxisData;

@@ -25,12 +25,11 @@ import {
   text,
 } from '@storybook/addon-knobs';
 import { setSplineControlPoint } from '@src/helpers/calculator';
-import { LineModel, TickModel } from '@t/components/axis';
+import { LineModel, TickModel, LabelModel } from '@t/components/axis';
 import { Point } from '@t/options';
 import { polygon } from '@src/brushes/polygon';
 import { scatterSeries } from '@src/brushes/scatterSeries';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
-import { LabelModel } from '@t/brush/label';
 
 // @TODO: need to remove. comment for beta test
 export default {

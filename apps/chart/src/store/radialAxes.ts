@@ -87,7 +87,7 @@ function getDefaultAxisData(
   let drawingStartAngle = DEGREE_0;
   let clockwiseOption = true;
   let startAngleOption = DEGREE_0;
-  let endAngleOpotion = DEGREE_360;
+  let endAngleOption = DEGREE_360;
 
   if (isLabelOnVerticalAxis) {
     const { startAngle, endAngle, clockwise } = initSectorOptions(options?.series);
@@ -98,7 +98,7 @@ function getDefaultAxisData(
     drawingStartAngle = startAngle;
     clockwiseOption = clockwise;
     startAngleOption = startAngle;
-    endAngleOpotion = endAngle;
+    endAngleOption = endAngle;
   }
 
   return {
@@ -109,7 +109,7 @@ function getDefaultAxisData(
     drawingStartAngle: drawingStartAngle,
     clockwise: clockwiseOption,
     startAngle: startAngleOption,
-    endAngle: endAngleOpotion,
+    endAngle: endAngleOption,
   };
 }
 

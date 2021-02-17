@@ -64,7 +64,7 @@ export function getRadialAnchorPosition(param: RadialPositionParam): Point {
   } = param;
   const halfDegree = start + (end - start) / 2;
   const radian = calculateDegreeToRadian(halfDegree, drawingStartAngle);
-  const r = anchor === 'outer' ? outer : (outer - inner) / 2 + inner;
+  const r = anchor === 'outer' ? outer : (outer + inner) / 2;
 
   return getRadialPosition(x, y, r, radian);
 }

@@ -1,19 +1,30 @@
+import { LabelModel, BubbleLabelModel } from '@t/components/axis';
 import { makeStyleObj, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
 import { Point } from '@t/options';
 import { RectStyle, StyleProp, Nullable } from '@t/components/series';
-import {
-  BubbleLabelModel,
-  LabelModel,
-  StrokeLabelStyle,
-  StrokeLabelStyleName,
-  LabelStyle,
-  LabelStyleName,
-  PathRectStyleName,
-} from '@t/brush/label';
 
 export const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
+
+export type LabelStyleName = 'default' | 'title' | 'axisTitle' | 'rectLabel';
+export type StrokeLabelStyleName = 'none' | 'stroke';
+
+export interface LabelStyle {
+  font?: string;
+  fillStyle?: string;
+  textAlign?: CanvasTextAlign;
+  textBaseline?: CanvasTextBaseline;
+}
+
+export type StrokeLabelStyle = {
+  lineWidth?: number;
+  strokeStyle?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+};
+
+export type PathRectStyleName = 'shadow';
 
 export const labelStyle = {
   default: {
@@ -131,7 +142,10 @@ export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelMod
       direction,
       points,
       radian,
-      rotationPosition,
+      rotationPosition: {
+        x: rotationPosition?.x ?? x,
+        y: rotationPosition?.y ?? y,
+      },
     });
   }
 
@@ -184,13 +198,6 @@ function drawBubbleArrow(ctx: CanvasRenderingContext2D, points: Point[]) {
   ctx.lineTo(points[2].x, points[2].y);
 }
 
-function getRotationPostion(defaultX: number, defaultY: number, rotationPosition?: Point) {
-  return {
-    rotationPosX: rotationPosition?.x ?? defaultX,
-    rotationPosY: rotationPosition?.y ?? defaultY,
-  };
-}
-
 function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
   const {
     x,
@@ -214,12 +221,10 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
   ctx.beginPath();
   ctx.save();
 
-  const { rotationPosX, rotationPosY } = getRotationPostion(x, y, rotationPosition);
-
-  if (radian) {
-    ctx.translate(rotationPosX, rotationPosY);
+  if (radian && rotationPosition) {
+    ctx.translate(rotationPosition.x, rotationPosition.y);
     ctx.rotate(radian);
-    ctx.translate(-rotationPosX, -rotationPosY);
+    ctx.translate(-rotationPosition.x, -rotationPosition.y);
   }
 
   ctx.moveTo(x + radius, y);

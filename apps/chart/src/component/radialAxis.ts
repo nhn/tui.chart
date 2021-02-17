@@ -10,7 +10,7 @@ import { RectModel } from '@t/components/series';
 import { CircularAxisTheme, VerticalAxisTheme, TextBubbleTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
 import { includes } from '@src/helpers/utils';
-import { BubbleLabelModel, LabelModel } from '@t/brush/label';
+import { BubbleLabelModel, LabelModel } from '@t/components/axis';
 
 const RECT_SIZE = 4;
 

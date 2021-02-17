@@ -21,7 +21,7 @@ import {
   BulletSeriesModels,
   BackgroundModel,
 } from '@t/components/series';
-import { AxisModels, LineModel } from '@t/components/axis';
+import { AxisModels, LineModel, LabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
 import { LegendModel } from '@t/components/legend';
 import { CircleLegendModels } from '@t/components/circleLegend';
@@ -35,7 +35,6 @@ import { BackButtonModels, ResetButtonModels } from '@t/components/resetButton';
 import { SpectrumLegendModels } from '@t/components/spectrumLegend';
 import { ResponderSeriesModel } from '@src/component/selectedSeries';
 import { RadialAxisModels } from '@t/components/radialAxis';
-import { LabelModel } from '@t/brush/label';
 
 export type ComponentType =
   | 'component'
