@@ -353,7 +353,7 @@ Defines ways to select or detect the series via the mouse.
 
 | Type | Details |
 | --- | --- |
-| `point` | A single series is detected when a mouse comes within the individual series' detectable area. Only a single series is selected with respect to the curret position of the cursor. |
+| `point` | A single series is detected when a mouse comes within the individual series' detectable area. Only a single series is selected with respect to the current position of the cursor. |
 | `grouped` | All data that are equal with respect to the y-axis are detected. |
 
 * default: `point`

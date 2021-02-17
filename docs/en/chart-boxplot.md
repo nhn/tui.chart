@@ -175,7 +175,7 @@ Defines ways to detect data when the cursor hovers over to display the tooltip a
 
 | Type | Details |
 | --- | --- |
-| `point` | A single series is detected when a mouse comes within the individual series' detectable area. Only a single series is selected with respect to the curret position of the cursor. |
+| `point` | A single series is detected when a mouse comes within the individual series' detectable area. Only a single series is selected with respect to the current position of the cursor. |
 | `grouped` | All data that are equal with respect to the x-axis are detected. |
 
 * default: `point`
