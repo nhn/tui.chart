@@ -1,5 +1,5 @@
-import { Point } from '@t/options';
-import { ExportMenuButtonTheme } from '@t/theme';
+import { Point } from '../options';
+import { ExportMenuButtonTheme } from '../theme';
 
 export type ExportMenuButtonModel = {
   type: 'exportMenuButton';
