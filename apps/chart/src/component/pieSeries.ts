@@ -1,13 +1,21 @@
 import Component from './component';
 import { PieChartOptions, PieSeriesType, PieDataLabels } from '@t/options';
 import { ChartState } from '@t/store/store';
-import { SectorModel, PieSeriesModels, SectorResponderModel } from '@t/components/series';
+import {
+  SectorModel,
+  PieSeriesModels,
+  SectorResponderModel,
+  RadiusRange,
+} from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
 import {
   getRadialAnchorPosition,
   makeAnchorPositionParam,
   withinRadian,
   getDefaultRadius,
+  DEGREE_360,
+  DEGREE_0,
+  DEGREE_90,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getDataLabelsOptions, RADIUS_PADDING } from '@src/helpers/dataLabels';
@@ -18,7 +26,6 @@ import {
   makePieTooltipData,
   pieTooltipLabelFormatter,
 } from '@src/helpers/pieSeries';
-import { RadiusRange } from '@t/components/tooltip';
 import {
   calculateSizeWithPercentString,
   isNumber,
@@ -180,7 +187,7 @@ export default class PieSeries extends Component {
     let currentDegree: number;
     const index = this.models.series.findIndex(
       ({ clockwise, degree: { start, end }, totalAngle }) => {
-        currentDegree = clockwise ? totalAngle * delta : 360 - totalAngle * delta;
+        currentDegree = clockwise ? totalAngle * delta : DEGREE_360 - totalAngle * delta;
 
         return withinRadian(clockwise, start, end, currentDegree);
       }
@@ -366,8 +373,8 @@ export default class PieSeries extends Component {
   ): RenderOptions {
     const seriesOptions = options.series;
     const clockwise = seriesOptions?.clockwise ?? true;
-    const startAngle = seriesOptions?.angleRange?.start ?? 0;
-    const endAngle = seriesOptions?.angleRange?.end ?? 360;
+    const startAngle = seriesOptions?.angleRange?.start ?? DEGREE_0;
+    const endAngle = seriesOptions?.angleRange?.end ?? DEGREE_360;
     const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
     const isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
     const { width, height } = this.rect;
@@ -394,7 +401,7 @@ export default class PieSeries extends Component {
       clockwise,
       cx,
       cy,
-      drawingStartAngle: startAngle - 90,
+      drawingStartAngle: startAngle - DEGREE_90,
       radiusRange: {
         inner: innerRadius,
         outer: outerRadius,
@@ -423,7 +430,7 @@ export default class PieSeries extends Component {
       radiusRange: { inner, outer },
       totalAngle,
     } = renderOptions;
-    const defaultStartDegree = clockwise ? 0 : 360;
+    const defaultStartDegree = clockwise ? DEGREE_0 : DEGREE_360;
     const { lineWidth, strokeStyle } = this.theme;
 
     seriesRawData.forEach((rawData, seriesIndex) => {
@@ -437,8 +444,8 @@ export default class PieSeries extends Component {
         const prevModel = sectorModels[sectorModels.length - 1];
         const startDegree = seriesIndex && prevModel ? prevModel.degree.end : defaultStartDegree;
         const endDegree = clockwise
-          ? Math.min(startDegree + degree, 360)
-          : Math.max(startDegree + degree, 0);
+          ? Math.min(startDegree + degree, DEGREE_360)
+          : Math.max(startDegree + degree, DEGREE_0);
 
         sectorModels.push({
           type: 'sector',

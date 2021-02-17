@@ -1,7 +1,15 @@
 import { Point, PieSeriesOptions, Rect, DataLabelAnchor, RadialBarSeriesOptions } from '@t/options';
-import { SectorModel } from '@t/components/series';
+import { SectorModel, RadiusRange } from '@t/components/series';
 import { pick } from '@src/helpers/utils';
 import { RadialDataLabel, RadialAnchor } from '@t/components/dataLabels';
+
+export const DEGREE_180 = 180;
+export const DEGREE_NEGATIVE_180 = -180;
+export const DEGREE_360 = 360;
+export const DEGREE_0 = 0;
+export const DEGREE_NEGATIVE_90 = -90;
+export const DEGREE_90 = 90;
+
 type RadialPositionParam = {
   anchor: DataLabelAnchor;
   x: number;
@@ -29,20 +37,20 @@ export function makeAnchorPositionParam(
   };
 }
 
-export function calculateDegreeToRadian(degree: number, drawingStartAngle = -90) {
+export function calculateDegreeToRadian(degree: number, drawingStartAngle = DEGREE_NEGATIVE_90) {
   let result = 0;
 
-  if (degree % 360 === 0) {
-    result = (Math.PI / 180) * drawingStartAngle;
-  } else if (degree >= 0 && degree < 360) {
-    result = (Math.PI / 180) * (degree + drawingStartAngle);
+  if (degree % DEGREE_360 === 0) {
+    result = (Math.PI / DEGREE_180) * drawingStartAngle;
+  } else if (degree >= 0 && degree < DEGREE_360) {
+    result = (Math.PI / DEGREE_180) * (degree + drawingStartAngle);
   }
 
   return result;
 }
 
-export function calculateRadianToDegree(radian: number, drawingStartAngle = -90) {
-  return ((radian * 180) / Math.PI - drawingStartAngle + 360) % 360;
+export function calculateRadianToDegree(radian: number, drawingStartAngle = DEGREE_NEGATIVE_90) {
+  return ((radian * DEGREE_180) / Math.PI - drawingStartAngle + DEGREE_360) % DEGREE_360;
 }
 
 export function getRadialAnchorPosition(param: RadialPositionParam): Point {
@@ -81,8 +89,8 @@ export function initSectorOptions(options?: PieSeriesOptions | RadialBarSeriesOp
 
   return {
     clockwise,
-    startAngle: options?.angleRange?.start ?? (clockwise ? 0 : 360),
-    endAngle: options?.angleRange?.end ?? (clockwise ? 360 : 0),
+    startAngle: options?.angleRange?.start ?? (clockwise ? DEGREE_0 : DEGREE_360),
+    endAngle: options?.angleRange?.end ?? (clockwise ? DEGREE_360 : DEGREE_0),
   };
 }
 
@@ -137,7 +145,7 @@ export function getRadialLabelAlign(
   const halfRadian = calculateDegreeToRadian(totalAngle / 2, drawingStartAngle);
   const radian = getRadian(start, end, drawingStartAngle, needCalculateByHalf);
 
-  if (drawingStartAngle >= -90 && drawingStartAngle < 90) {
+  if (drawingStartAngle >= DEGREE_NEGATIVE_90 && drawingStartAngle < DEGREE_90) {
     if (radian0 < radian && halfRadian > radian) {
       textAlign = 'left';
     } else if (halfRadian < radian) {
@@ -150,4 +158,24 @@ export function getRadialLabelAlign(
   }
 
   return textAlign;
+}
+
+export function getRadiusRanges(radiusRanges: number[], padding: number) {
+  return radiusRanges.reduce<RadiusRange[]>((acc, cur, index) => {
+    if (index) {
+      acc.push({
+        inner: cur + padding,
+        outer: radiusRanges[index - 1] - padding,
+      });
+    }
+
+    if (index === radiusRanges.length - 1) {
+      acc.push({
+        inner: padding,
+        outer: cur - padding,
+      });
+    }
+
+    return acc;
+  }, [] as RadiusRange[]);
 }

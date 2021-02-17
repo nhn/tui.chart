@@ -1,6 +1,5 @@
 import { BubblePoint, Point, RangeDataType } from '../options';
-
-export type RadiusRange = { inner: number; outer: number };
+import { RadiusRange } from './series';
 
 export type TooltipTitleValues = {
   title: string;

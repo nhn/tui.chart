@@ -15,7 +15,7 @@ import { makeLabelsFromLimit, makeTickPixelPositions } from '@src/helpers/calcul
 import { getTitleFontString } from '@src/helpers/style';
 import { CircularAxisTheme, VerticalAxisTheme } from '@t/theme';
 import { calculateSizeWithPercentString } from '@src/helpers/utils';
-import { getDefaultRadius, initSectorOptions } from '@src/helpers/sector';
+import { getDefaultRadius, initSectorOptions, DEGREE_360, DEGREE_0 } from '@src/helpers/sector';
 
 const Y_LABEL_PADDING = 5;
 export const RADIAL_LABEL_PADDING = 25;
@@ -83,11 +83,11 @@ function getDefaultAxisData(
 ): DefaultRadialAxisData {
   let isSemiCircular = false;
   let centerY = plot.height / 2;
-  let totalAngle = 360;
-  let drawingStartAngle = 0;
+  let totalAngle = DEGREE_360;
+  let drawingStartAngle = DEGREE_0;
   let clockwiseOption = true;
-  let startAngleOption = 0;
-  let endAngleOpotion = 360;
+  let startAngleOption = DEGREE_0;
+  let endAngleOpotion = DEGREE_360;
 
   if (isLabelOnVerticalAxis) {
     const { startAngle, endAngle, clockwise } = initSectorOptions(options?.series);
@@ -197,7 +197,7 @@ function getCircularAxisData({
     totalAngle,
     drawingStartAngle,
     clockwise,
-    degree: totalAngle / (labels.length + (totalAngle < 360 ? -1 : 0)),
+    degree: totalAngle / (labels.length + (totalAngle < DEGREE_360 ? -1 : DEGREE_0)),
     tickInterval,
     labelInterval,
     labelMargin: circularAxisLabelMargin,

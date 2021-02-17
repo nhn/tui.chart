@@ -9,7 +9,7 @@ import {
 import { ChartState } from '@t/store/store';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RadarSeriesType, Point, RadarChartOptions } from '@t/options';
-import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
+import { getRadialPosition, calculateDegreeToRadian, DEGREE_360 } from '@src/helpers/sector';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getLimitOnAxis } from '@src/helpers/axes';
@@ -93,7 +93,7 @@ export default class RadarSeries extends Component {
 
     const renderOptions = {
       categories,
-      degree: 360 / categories.length,
+      degree: DEGREE_360 / categories.length,
       centerX,
       centerY,
       showArea: options?.series?.showArea ?? false,

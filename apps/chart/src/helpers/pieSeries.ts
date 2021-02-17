@@ -2,6 +2,14 @@ import { getPercentageValue, isString, isNull } from './utils';
 import { PieSeriesType, NestedPieSeriesType, PieDataLabels } from '@t/options';
 import { TooltipData } from '@t/components/tooltip';
 import { RawSeries, OptionsWithDataLabels } from '@t/store/store';
+import {
+  DEGREE_NEGATIVE_90,
+  DEGREE_90,
+  DEGREE_180,
+  DEGREE_NEGATIVE_180,
+  DEGREE_360,
+  DEGREE_0,
+} from './sector';
 
 const semiCircleCenterYRatio = {
   COUNTER_CLOCKWISE: 0.1,
@@ -10,7 +18,9 @@ const semiCircleCenterYRatio = {
 
 export function hasClockwiseSemiCircle(clockwise: boolean, startAngle: number, endAngle: number) {
   return (
-    clockwise && ((startAngle >= -90 && endAngle <= 90) || (startAngle >= 90 && endAngle <= 180))
+    clockwise &&
+    ((startAngle >= DEGREE_NEGATIVE_90 && endAngle <= DEGREE_90) ||
+      (startAngle >= DEGREE_90 && endAngle <= DEGREE_180))
   );
 }
 
@@ -20,7 +30,9 @@ export function hasCounterClockwiseSemiCircle(
   endAngle: number
 ) {
   return (
-    !clockwise && ((startAngle >= -180 && endAngle <= 90) || (startAngle <= 90 && endAngle >= -90))
+    !clockwise &&
+    ((startAngle >= DEGREE_NEGATIVE_180 && endAngle <= DEGREE_90) ||
+      (startAngle <= DEGREE_90 && endAngle >= DEGREE_NEGATIVE_90))
   );
 }
 
@@ -34,15 +46,15 @@ export function getTotalAngle(clockwise: boolean, startAngle: number, endAngle: 
   const diffAngle = endAngle - startAngle;
   const absDiff = Math.abs(diffAngle);
   const needSubstractAngle =
-    (diffAngle > 0 && absDiff !== 360 && !clockwise) ||
-    (diffAngle < 0 && absDiff !== 360 && clockwise);
+    (diffAngle > DEGREE_0 && absDiff !== DEGREE_360 && !clockwise) ||
+    (diffAngle < DEGREE_0 && absDiff !== DEGREE_360 && clockwise);
 
-  return needSubstractAngle ? 360 - absDiff : absDiff;
+  return needSubstractAngle ? DEGREE_360 - absDiff : absDiff;
 }
 
 export function isSemiCircle(clockwise: boolean, startAngle: number, endAngle: number) {
   return (
-    getTotalAngle(clockwise, startAngle, endAngle) <= 180 &&
+    getTotalAngle(clockwise, startAngle, endAngle) <= DEGREE_180 &&
     (hasClockwiseSemiCircle(clockwise, startAngle, endAngle) ||
       hasCounterClockwiseSemiCircle(clockwise, startAngle, endAngle))
   );

@@ -199,7 +199,7 @@ export type SectorModel = {
   totalAngle: number;
   alias?: string;
   percentValue?: number;
-  categoryIndex?: number;
+  index?: number;
   seriesColor?: string;
   seriesIndex?: number;
   lineWidth?: number;
@@ -211,7 +211,7 @@ export type SectorResponderModel = {
 
 type GroupedSectorResponderModel = Pick<
   SectorModel,
-  'type' | 'x' | 'y' | 'degree' | 'radius' | 'name' | 'clockwise' | 'categoryIndex'
+  'type' | 'x' | 'y' | 'degree' | 'radius' | 'name' | 'clockwise' | 'index'
 >;
 
 type RadialBarResponderModel = SectorResponderModel | GroupedSectorResponderModel;
@@ -335,3 +335,5 @@ export interface ScatterSeriesModel {
 }
 
 export type BackgroundModel = RectModel[];
+
+export type RadiusRange = { inner: number; outer: number };

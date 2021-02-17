@@ -1,10 +1,5 @@
 import Component from './component';
-import {
-  SectorModel,
-  SectorResponderModel,
-  RadialBarResponderModel,
-  GroupedSectorResponderModel,
-} from '@t/components/series';
+import { SectorModel, SectorResponderModel, RadialBarResponderModel } from '@t/components/series';
 import { RadialBarChartSeriesTheme, GroupedSector } from '@t/theme';
 import {
   isNumber,
@@ -28,11 +23,15 @@ import {
   RadialBarSeriesOptions,
 } from '@t/options';
 import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
-import { RespondersThemeType } from '@src/helpers/responders';
+import { RespondersThemeType, makeGroupedSectorResponderModel } from '@src/helpers/responders';
 import {
   getRadialAnchorPosition,
   makeAnchorPositionParam,
   withinRadian,
+  getRadiusRanges,
+  DEGREE_360,
+  DEGREE_0,
+  DEGREE_NEGATIVE_90,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
@@ -46,8 +45,8 @@ type RadiusRange = { inner: number; outer: number };
 
 type RenderOptions = {
   clockwise: boolean;
-  cx: number;
-  cy: number;
+  centerX: number;
+  centerY: number;
   radiusRanges: RadiusRange[];
   angleRange: { start: number; end: number };
   totalAngle: number;
@@ -56,53 +55,6 @@ type RenderOptions = {
 };
 
 type RadialBarSeriesModels = Record<string, SectorModel[]>;
-
-const PADDING = 5;
-
-function getRadiusRanges(radiusRanges: number[], padding: number) {
-  return radiusRanges.reduce<RadiusRange[]>((acc, cur, index) => {
-    if (index) {
-      acc.push({
-        inner: cur + padding,
-        outer: radiusRanges[index - 1] - padding,
-      });
-    }
-
-    if (index === radiusRanges.length - 1) {
-      acc.push({
-        inner: padding,
-        outer: cur - padding,
-      });
-    }
-
-    return acc;
-  }, [] as RadiusRange[]);
-}
-
-function makeGroupedSectorResponderModel(
-  radiusRanges: number[],
-  renderOptions: RenderOptions,
-  categories: string[]
-): GroupedSectorResponderModel[] {
-  const {
-    cx,
-    cy,
-    angleRange: { start, end },
-    clockwise,
-  } = renderOptions;
-
-  return getRadiusRanges(radiusRanges, 0).map((radius, index) => ({
-    type: 'sector',
-    x: cx,
-    y: cy,
-    degree: { start, end },
-    radius,
-    name: categories[index],
-    clockwise,
-    categoryIndex: index,
-  }));
-}
-
 export default class RadialBarSeries extends Component {
   models: RadialBarSeriesModels = {};
 
@@ -139,7 +91,7 @@ export default class RadialBarSeries extends Component {
 
       this.syncEndAngle(index < 0 ? this.models[category].length : index, category);
 
-      if (index > -1) {
+      if (index !== -1) {
         this.drawModels[category][index].degree.end = currentDegree!;
       }
     });
@@ -205,13 +157,7 @@ export default class RadialBarSeries extends Component {
     this.models = categoryMap;
 
     if (!this.drawModels) {
-      this.drawModels = {};
-      Object.keys(categoryMap).forEach((category) => {
-        this.drawModels[category] = categoryMap[category].map((m) => ({
-          ...m,
-          degree: { ...m.degree, end: m.degree.start },
-        }));
-      });
+      this.initDrawModels(categoryMap);
     }
 
     if (getDataLabelsOptions(options, this.name).visible) {
@@ -224,22 +170,44 @@ export default class RadialBarSeries extends Component {
 
     this.tooltipSectorMap = this.makeTooltipSectorMap(seriesModels, tooltipData);
 
-    this.responders =
-      this.eventDetectType === 'grouped'
-        ? makeGroupedSectorResponderModel(
-            radialAxes.verticalAxis.radiusRanges,
-            renderOptions,
-            categories
-          )
-        : seriesModels.map((m, index) => ({
-            ...m,
-            data: { ...tooltipData[index] },
-          }));
+    this.responders = this.makeResponders(
+      radialAxes.verticalAxis.radiusRanges,
+      seriesModels,
+      renderOptions,
+      categories,
+      tooltipData
+    );
+  }
+
+  private initDrawModels(categoryMap: Record<string, SectorModel[]>) {
+    this.drawModels = {};
+
+    Object.keys(categoryMap).forEach((category) => {
+      this.drawModels[category] = categoryMap[category].map((m) => ({
+        ...m,
+        degree: { ...m.degree, end: m.degree.start },
+      }));
+    });
+  }
+
+  private makeResponders(
+    radiusRanges: number[],
+    seriesModels: SectorModel[],
+    renderOptions: RenderOptions,
+    categories: string[],
+    tooltipData
+  ): RadialBarResponderModel[] {
+    return this.eventDetectType === 'grouped'
+      ? makeGroupedSectorResponderModel(radiusRanges, renderOptions, categories)
+      : seriesModels.map((m, index) => ({
+          ...m,
+          data: { ...tooltipData[index] },
+        }));
   }
 
   private makeTooltipSectorMap(seriesModels: SectorModel[], tooltipData: TooltipData[]) {
     return seriesModels.reduce((acc, cur, index) => {
-      const categoryIndex = cur.categoryIndex!;
+      const categoryIndex = cur.index!;
       if (!acc[categoryIndex]) {
         acc[categoryIndex] = [];
       }
@@ -261,10 +229,11 @@ export default class RadialBarSeries extends Component {
 
   private getBarWidth(tickDistance: number, axisSize: number) {
     const { barWidth } = this.theme;
+    const DEFAULT_PADDING = 5;
 
     return barWidth
       ? Math.min(tickDistance, calculateSizeWithPercentString(axisSize, barWidth))
-      : tickDistance - PADDING * 2;
+      : tickDistance - DEFAULT_PADDING * 2;
   }
 
   private makeRenderOptions(
@@ -279,7 +248,7 @@ export default class RadialBarSeries extends Component {
     }: VerticalAxisData,
     scale: ScaleData,
     options?: RadialBarSeriesOptions
-  ) {
+  ): RenderOptions {
     const {
       limit: { max },
       stepSize,
@@ -288,13 +257,12 @@ export default class RadialBarSeries extends Component {
     const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
     const barWidth = this.getBarWidth(tickDistance, axisSize);
     const padding = (tickDistance - barWidth) / 2;
-    const scaleMaxLimitValue = max + (totalAngle < 360 ? 0 : stepSize);
+    const scaleMaxLimitValue = max + (totalAngle < DEGREE_360 ? DEGREE_0 : stepSize);
 
     return {
       clockwise,
-      cx: centerX,
-      cy: centerY,
-      drawingStartAngle: startAngle - 90,
+      centerX,
+      centerY,
       radiusRanges: getRadiusRanges(radiusRanges, padding),
       angleRange: {
         start: startAngle,
@@ -317,8 +285,8 @@ export default class RadialBarSeries extends Component {
   } {
     const {
       clockwise,
-      cx,
-      cy,
+      centerX,
+      centerY,
       radiusRanges,
       totalAngle,
       scaleMaxLimitValue,
@@ -339,8 +307,8 @@ export default class RadialBarSeries extends Component {
           const prevModel = sectorModels[sectorModels.length - 1];
           const startDegree = seriesIndex && prevModel ? prevModel.degree.end : defaultStartDegree;
           const endDegree = clockwise
-            ? Math.min(startDegree + degree, 360)
-            : Math.max(startDegree + degree, 0);
+            ? Math.min(startDegree + degree, DEGREE_360)
+            : Math.max(startDegree + degree, DEGREE_0);
           const { name, color: seriesColor } = seriesData[
             seriesIndex
           ] as Required<RadialBarSeriesType>;
@@ -349,8 +317,8 @@ export default class RadialBarSeries extends Component {
             type: 'sector',
             name,
             color: color!,
-            x: cx,
-            y: cy,
+            x: centerX,
+            y: centerY,
             degree: {
               start: startDegree,
               end: endDegree,
@@ -366,8 +334,8 @@ export default class RadialBarSeries extends Component {
             totalAngle,
             seriesColor,
             seriesIndex,
-            categoryIndex,
-            drawingStartAngle: -90,
+            index: categoryIndex,
+            drawingStartAngle: DEGREE_NEGATIVE_90,
           };
 
           categoryMap[categories[categoryIndex]].push(sectorModel);
@@ -392,13 +360,13 @@ export default class RadialBarSeries extends Component {
   makeTooltipData(seriesModels: SectorModel[], categories: string[]): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
-    seriesModels.forEach(({ seriesColor, name, value, categoryIndex }) => {
+    seriesModels.forEach(({ seriesColor, name, value, index }) => {
       if (!isNull(value)) {
         tooltipData.push({
           label: name!,
           color: seriesColor!,
           value: value!,
-          category: isNumber(categoryIndex) ? categories[categoryIndex] : '',
+          category: isNumber(index) ? categories[index] : '',
         });
       }
     });
@@ -414,9 +382,7 @@ export default class RadialBarSeries extends Component {
       ...getRadialAnchorPosition(
         makeAnchorPositionParam(
           'center',
-          this.models[categories[responder.categoryIndex!]].find(
-            ({ name }) => name === responder.name
-          )!
+          this.models[categories[responder.index!]].find(({ name }) => name === responder.name)!
         )
       ),
     }));
@@ -427,7 +393,7 @@ export default class RadialBarSeries extends Component {
       return [];
     }
 
-    return this.tooltipSectorMap[responders[0].categoryIndex!] ?? [];
+    return this.tooltipSectorMap[responders[0].index!] ?? [];
   }
 
   private getGroupedSector(responders: RadialBarResponderModel[], type: 'hover' | 'select') {
