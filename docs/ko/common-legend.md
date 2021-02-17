@@ -78,7 +78,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102171892-f3435180-3eda-11eb-9acd-0c2b2eb914bb.png)
 
-### visible
+## visible
 
 * 기본값: `true`
 

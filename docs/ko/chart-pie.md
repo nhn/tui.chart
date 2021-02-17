@@ -58,6 +58,47 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102743434-cd1a2780-439a-11eb-8bda-0a2a8d142ad4.png)
 
+## visible 옵션
+
+각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
+
+```js
+const data = {
+  categories: ['Browser'],
+  series: [
+    {
+      name: 'Chrome',
+      data: 46.02,
+      visible: false
+    },
+    {
+      name: 'IE',
+      data: 20.47,
+    },
+    {
+      name: 'Firefox',
+      data: 17.71,
+    },
+    {
+      name: 'Safari',
+      data: 5.45,
+    },
+    {
+      name: 'Opera',
+      data: 3.1,
+    },
+    {
+      name: 'Etc',
+      data: 7.25,
+    }
+  ]
+}
+```
+
+위 옵션을 적용해 차트를 생성해보면 체크박스가 해제되어 생성되는 것을 확인할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/35371660/108011697-fda0d980-704a-11eb-996e-b0b9670745b0.png)
+
 ## 옵션
 
 `options`는 객체로 작성한다.

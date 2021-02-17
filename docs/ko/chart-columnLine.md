@@ -23,7 +23,6 @@ const chart = Chart.columnLineChart({el, data, options});
 
 데이터는 `series` 를 통해 입력받는다. 각 차트의 시리즈는 `column`, `line`에 각각 입력되며 `name`과 `data` 쌍으로 입력 받는다. data는 값을 나타내는 배열로 입력한다.
 
-
 ```js
 const data = {
   categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
@@ -57,6 +56,48 @@ const data = {
 ```
 
 ![image](https://user-images.githubusercontent.com/43128697/102773432-8f35f700-43cc-11eb-82fe-2eef25c5dada.png)
+
+## visible 옵션
+
+각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
+
+```js
+const data = {
+  categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+  series: {
+    column: [
+      {
+        name: 'Seoul',
+        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9],
+        visible: false,
+      },
+      {
+        name: 'NewYork',
+        data: [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3],
+      },
+      {
+        name: 'Sydney',
+        data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6],
+      },
+      {
+        name: 'Moscow',
+        data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2],
+      },
+    ],
+    line: [
+      {
+        name: 'Average',
+        data: [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3],
+        visible: false,
+      },
+    ],
+  },
+}
+```
+
+위 옵션을 적용해 차트를 생성해보면 체크박스가 해제되어 생성되는 것을 확인할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/35371660/108009092-3fc71c80-7045-11eb-901e-03d20fdee3dc.png)
 
 ## 옵션
 

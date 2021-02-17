@@ -12,7 +12,7 @@ type ExportMenuOptions = {
 };
 ```
 
-### visible
+## visible
 When the `exportMenu.visible` option is set to `false`, the export menu button is not displayed with the chart.
 
 * default: `true`

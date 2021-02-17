@@ -1,5 +1,5 @@
 import { StoreModule, RawSeries, Series, Categories } from '@t/store/store';
-import { isNull, isNumber, sortCategories } from '@src/helpers/utils';
+import { isNull, isNumber, isUndefined, sortCategories } from '@src/helpers/utils';
 import { getCoordinateXValue } from '@src/helpers/coordinate';
 import { getDataInRange } from '@src/helpers/range';
 
@@ -15,7 +15,7 @@ export function makeRawCategories(series: RawSeries | Series, categories?: Categ
       return;
     }
 
-    (series[key].data ?? series[key]).forEach(({ data, name }) => {
+    (series[key].data ?? series[key]).forEach(({ data, name, visible }) => {
       if (Array.isArray(data)) {
         data.forEach((datum) => {
           if (!isNull(datum)) {
@@ -24,7 +24,7 @@ export function makeRawCategories(series: RawSeries | Series, categories?: Categ
             firstValues.add(isNumber(rawXValue) ? rawXValue : rawXValue.toString());
           }
         });
-      } else if (key === 'bullet') {
+      } else if ((key === 'bullet' && isUndefined(visible)) || visible) {
         firstValues.add(name);
       }
     });
@@ -70,6 +70,12 @@ const category: StoreModule = {
       state.categories = categories;
 
       this.notify(state, 'categories');
+    },
+    removeCategoryByName({ state }, name: string) {
+      const index = (state.categories as string[]).findIndex((seriesName) => seriesName === name);
+      (state.categories as string[]).splice(index, 1);
+
+      this.notify(state, 'axes');
     },
   },
   observe: {
