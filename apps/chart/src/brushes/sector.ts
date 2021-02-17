@@ -1,6 +1,6 @@
 import { SectorModel } from '@t/components/series';
 import { makeStyleObj, fillStyle } from '@src/helpers/style';
-import { calculateDegreeToRadian, getRadialPosition } from '@src/helpers/sector';
+import { calculateDegreeToRadian, getRadialPosition, DEGREE_360 } from '@src/helpers/sector';
 
 export type SectorStyle = {
   lineWidth?: number;
@@ -18,13 +18,14 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
     degree: { start, end },
     color,
     style,
+    lineWidth,
   } = sectorModel;
 
   if (start === end) {
     return;
   }
 
-  const isCircle = Math.abs(start - end) === 360;
+  const isCircle = Math.abs(start - end) === DEGREE_360;
 
   ctx.beginPath();
 
@@ -44,7 +45,11 @@ export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) 
 
   ctx.closePath();
   fillStyle(ctx, color);
-  ctx.stroke();
+
+  if (lineWidth) {
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+  }
 }
 
 function drawSector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
@@ -57,7 +62,7 @@ function drawSector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
     drawingStartAngle,
   } = sectorModel;
 
-  if (inner <= 0 && outer <= 0) {
+  if (inner < 0 || outer < 0) {
     return;
   }
 

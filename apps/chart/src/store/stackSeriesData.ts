@@ -191,6 +191,8 @@ function initStackSeries(series: RawSeries, options: Options) {
       }
 
       stackSeries[chartType].stack = initializeStack(stackOption);
+    } else if (seriesName === 'radialBar') {
+      stackSeries[seriesName] = { stack: true };
     }
   });
 
@@ -211,6 +213,7 @@ const stackSeriesData: StoreModule = {
       Object.keys(series).forEach((seriesName) => {
         const seriesData = series[seriesName];
         const { data, seriesCount, seriesGroupCount } = seriesData;
+        const isRadialBar = seriesName === 'radialBar';
 
         if (stackOption) {
           if (!stackSeries[seriesName]) {
@@ -218,7 +221,7 @@ const stackSeriesData: StoreModule = {
           }
 
           stackSeries[seriesName].stack = initializeStack(stackOption);
-        } else {
+        } else if (!isRadialBar) {
           stackSeries[seriesName] = null;
           delete stackSeries[seriesName];
         }
@@ -228,7 +231,7 @@ const stackSeriesData: StoreModule = {
 
         if (stack) {
           const stackData = hasStackGrouped(data) ? makeStackGroupData(data) : makeStackData(data);
-          const stackType = stack.type;
+          const stackType = stack.type ?? 'normal';
           const dataRangeValues = getStackDataRangeValues(stackData);
 
           newStackSeries[seriesName] = {

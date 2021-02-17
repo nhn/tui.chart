@@ -1,6 +1,6 @@
 import scale from '@src/store/scale';
 import Store from '@src/store/store';
-import { BarChartOptions } from '@t/options';
+import { BarChartOptions, RadarChartOptions, RadialBarChartOptions } from '@t/options';
 import { ChartState, DataRange } from '@t/store/store';
 
 const data = [
@@ -101,6 +101,42 @@ describe('Scale Store', () => {
 
     expect(state.scale).toEqual({
       xAxis: { limit: { max: 10, min: 0 }, stepSize: 5, stepCount: 2 },
+    });
+  });
+
+  it('should set verticalAxis, when having a radar chart', () => {
+    const state = {
+      layout: { plot: { width: 800, height: 800 } },
+      series: { radar: { data } },
+      stackSeries: {},
+      scale: {},
+      dataRange: { verticalAxis: { min: 1, max: 6 } } as DataRange,
+      options: { verticalAxis: { scale: { stepSize: 5 } } },
+    } as ChartState<RadarChartOptions>;
+
+    const store = { state } as Store<BarChartOptions>;
+    scale.action!.setScale(store);
+
+    expect(state.scale).toEqual({
+      verticalAxis: { limit: { max: 10, min: 0 }, stepSize: 5, stepCount: 2 },
+    });
+  });
+
+  it('should set circularAxis, when having a radialBar chart', () => {
+    const state = {
+      layout: { plot: { width: 800, height: 800 } },
+      series: { radialBar: { data } },
+      stackSeries: {},
+      scale: {},
+      dataRange: { circularAxis: { min: 1, max: 6 } } as DataRange,
+      options: { circularAxis: { scale: { stepSize: 5 } } },
+    } as ChartState<RadialBarChartOptions>;
+
+    const store = { state } as Store<BarChartOptions>;
+    scale.action!.setScale(store);
+
+    expect(state.scale).toEqual({
+      circularAxis: { limit: { max: 10, min: 0 }, stepSize: 5, stepCount: 2 },
     });
   });
 });

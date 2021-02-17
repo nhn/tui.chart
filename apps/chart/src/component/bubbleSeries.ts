@@ -104,10 +104,8 @@ export default class BubbleSeries extends Component {
   }
 
   renderBubblePointsModel(seriesRawData: BubbleSeriesType[], scale: Scale): CircleModel[] {
-    const {
-      xAxis: { limit: xAxisLimit },
-      yAxis: { limit: yAxisLimit },
-    } = scale;
+    const xAxisLimit = scale.xAxis!.limit;
+    const yAxisLimit = scale.yAxis!.limit;
 
     const { borderWidth, borderColor } = this.theme;
 

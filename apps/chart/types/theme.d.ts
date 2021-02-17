@@ -14,6 +14,7 @@ type SeriesThemeMap = {
   radar?: RadarChartSeriesTheme;
   boxPlot?: BoxPlotChartSeriesTheme;
   bullet?: BulletChartSeriesTheme;
+  radialBar?: RadialBarChartSeriesTheme;
 };
 
 type SeriesTheme =
@@ -47,12 +48,29 @@ type LegendTheme = {
   label?: FontTheme;
 };
 
+type AxisLabelTheme = FontTheme & {
+  textBubble?: Omit<TextBubbleTheme, 'arrow'>;
+};
+
+type CircularAxisTheme = {
+  label?: AxisLabelTheme;
+  lineWidth?: number;
+  strokeStyle?: string;
+  dotColor?: string;
+};
+
+type VerticalAxisTheme = {
+  label?: AxisLabelTheme;
+};
+
 type Theme = {
   chart: ChartTheme;
   series: SeriesThemeMap;
   title: FontTheme;
   xAxis: AxisTheme;
   yAxis: AxisTheme | AxisTheme[];
+  verticalAxis: VerticalAxisTheme;
+  circularAxis: CircularAxisTheme;
   legend: LegendTheme;
   tooltip: TooltipTheme;
   plot: PlotTheme;
@@ -414,6 +432,7 @@ type TextBubbleTheme = {
   paddingY?: number;
   backgroundColor?: string;
   borderRadius?: number;
+  textAlign?: CanvasTextAlign;
 } & BorderTheme &
   ShadowTheme;
 
@@ -451,6 +470,22 @@ interface PieDataLabelTheme extends BoxDataLabel {
   callout?: CalloutTheme;
 }
 
+type GroupedSector = {
+  color?: string;
+  opacity?: number;
+};
+
+interface RadialBarChartSeriesTheme extends CommonSeriesTheme {
+  barWidth?: number | string;
+  colors?: string[];
+  lineWidth?: number;
+  strokeStyle?: string;
+  hover?: SectorStyle & { color?: string; groupedSector?: GroupedSector };
+  select?: SelectSectorStyle & { groupedSector?: GroupedSector };
+  areaOpacity?: number;
+  dataLabels?: BoxDataLabel;
+}
+
 type DataLabelTheme =
   | BubbleDataLabel
   | BoxDataLabel
@@ -460,18 +495,26 @@ type DataLabelTheme =
 
 interface LineChartThemeOptions extends BaseThemeOptions {
   series?: LineChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface AreaChartThemeOptions extends BaseThemeOptions {
   series?: AreaChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface LineAreaChartThemeOptions extends BaseThemeOptions {
   series?: LineAreaChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface LineScatterChartThemeOptions extends BaseThemeOptions {
   series?: LineScatterChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface PieChartThemeOptions extends BaseThemeOptions {
@@ -484,10 +527,14 @@ interface NestedPieChartThemeOptions extends BaseThemeOptions {
 
 interface RadarChartThemeOptions extends BaseThemeOptions {
   series?: RadarChartSeriesTheme;
+  verticalAxis?: VerticalAxisTheme;
+  circularAxis?: CircularAxisTheme;
 }
 
 interface HeatmapChartThemeOptions extends BaseThemeOptions {
   series?: HeatmapChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface TreemapChartThemeOptions extends BaseThemeOptions {
@@ -496,29 +543,47 @@ interface TreemapChartThemeOptions extends BaseThemeOptions {
 
 interface ScatterChartThemeOptions extends BaseThemeOptions {
   series?: ScatterChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface BubbleChartThemeOptions extends BaseThemeOptions {
   series?: BubbleChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface BoxChartThemeOptions extends BaseThemeOptions {
   series?: BoxChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 interface BulletCharThemeOptions extends BaseThemeOptions {
   series?: BulletChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface BoxPlotCharThemeOptions extends BaseThemeOptions {
   series?: BoxPlotChartSeriesTheme;
+  yAxis?: AxisTheme;
+  xAxis?: AxisTheme;
 }
 
 interface ColumnLineChartThemeOptions extends BaseThemeOptions {
   series?: ColumnLineChartSeriesTheme;
+  yAxis?: AxisTheme | AxisTheme[];
+  xAxis?: AxisTheme;
 }
 
 type CheckAnchorPieSeries = {
   hasOuterAnchor: boolean;
   hasOuterAnchorPieSeriesName: boolean;
 };
+
+interface RadialBarChartThemeOptions extends BaseThemeOptions {
+  series?: RadialBarChartSeriesTheme;
+  verticalAxis?: VerticalAxisTheme;
+  circularAxis?: CircularAxisTheme;
+}

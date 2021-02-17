@@ -35,7 +35,7 @@ export default class SelectedSeries extends Component {
           names.push(label);
         }
       });
-    } else if (includes(['bar', 'column'], name)) {
+    } else if (includes(['bar', 'column', 'radialBar'], name)) {
       selectedSeries.forEach((model) => {
         const label = (model as RectResponderModel).data?.label;
         if (label) {
@@ -58,6 +58,22 @@ export default class SelectedSeries extends Component {
     return names;
   }
 
+  getSelectedSeriesModelsForRendering(selectedSeriesEventModel: SelectedSeriesEventModel) {
+    const { models, eventDetectType, name } = selectedSeriesEventModel;
+    let renderingModels = models;
+
+    if (
+      (name === 'column' || name === 'bar' || name === 'bullet') &&
+      eventDetectType === 'grouped'
+    ) {
+      renderingModels = models.filter((model) => !(model as RectResponderModel).data);
+    } else if (name === 'radialBar' && eventDetectType === 'grouped') {
+      renderingModels = models.filter((model) => !(model as SectorResponderModel).data);
+    }
+
+    return renderingModels;
+  }
+
   getSelectedSeriesModels(selectedSeriesEventModel: SelectedSeriesEventModel) {
     const { models, eventDetectType, name } = selectedSeriesEventModel;
     let selectedSeriesModels = models;
@@ -66,7 +82,9 @@ export default class SelectedSeries extends Component {
       (name === 'column' || name === 'bar' || name === 'bullet') &&
       eventDetectType === 'grouped'
     ) {
-      selectedSeriesModels = models.filter((model) => !(model as RectResponderModel).data);
+      selectedSeriesModels = models.filter((model) => (model as RectResponderModel).data);
+    } else if (name === 'radialBar' && eventDetectType === 'grouped') {
+      selectedSeriesModels = models.filter((model) => (model as SectorResponderModel).data);
     }
 
     return selectedSeriesModels;
@@ -74,7 +92,7 @@ export default class SelectedSeries extends Component {
 
   renderSelectedSeries = (selectedSeriesEventModel: SelectedSeriesEventModel) => {
     const { name, alias } = selectedSeriesEventModel;
-    const models = this.getSelectedSeriesModels(selectedSeriesEventModel);
+    const models = this.getSelectedSeriesModelsForRendering(selectedSeriesEventModel);
 
     this.models[alias || name] = isSameSeriesResponder({
       ...selectedSeriesEventModel,
@@ -87,7 +105,7 @@ export default class SelectedSeries extends Component {
     this.isShow = !!Object.values(this.models).flatMap((value) => value).length;
     this.eventBus.emit(
       this.isShow ? 'selectSeries' : 'unselectSeries',
-      makeObservableObjectToNormal(this.models)
+      makeObservableObjectToNormal(this.getSelectedSeriesModels(selectedSeriesEventModel))
     );
     this.activeSeriesNames[name] = this.getSeriesNames(selectedSeriesEventModel.models, name);
     this.setActiveState();

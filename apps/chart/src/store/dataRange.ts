@@ -41,30 +41,44 @@ export function getLimitSafely(baseValues: number[]): ValueEdge {
   return limit;
 }
 
-function getTotalDataRange(seriesDataRange: SeriesDataRange) {
+function initDataRange(
+  accDataRangeValue: DataRange,
+  curDataRangeValue: DataRange,
+  axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis' | 'circularAxis' | 'verticalAxis'
+) {
   const defaultDataRange = {
     min: Number.MAX_SAFE_INTEGER,
     max: Number.MIN_SAFE_INTEGER,
   };
 
+  return {
+    min: Math.min(
+      curDataRangeValue[axisName]!.min,
+      accDataRangeValue[axisName]?.min ?? defaultDataRange.min
+    ),
+    max: Math.max(
+      curDataRangeValue[axisName]!.max,
+      accDataRangeValue[axisName]?.max ?? defaultDataRange.max
+    ),
+  };
+}
+
+function getTotalDataRange(seriesDataRange: SeriesDataRange) {
   return Object.values(seriesDataRange).reduce<DataRange>((acc, cur) => {
     if (cur.xAxis) {
-      acc.xAxis = {
-        min: Math.min(cur.xAxis.min, acc.xAxis?.min ?? defaultDataRange.min),
-        max: Math.max(cur.xAxis.max, acc.xAxis?.max ?? defaultDataRange.max),
-      };
+      acc.xAxis = initDataRange(acc, cur, 'xAxis');
     }
     if (cur.yAxis) {
-      acc.yAxis = {
-        min: Math.min(cur.yAxis.min, acc.yAxis?.min ?? defaultDataRange.min),
-        max: Math.max(cur.yAxis.max, acc.yAxis?.max ?? defaultDataRange.max),
-      };
+      acc.yAxis = initDataRange(acc, cur, 'yAxis');
     }
     if (cur.secondaryYAxis) {
-      acc.secondaryYAxis = {
-        min: Math.min(cur.secondaryYAxis.min, acc.secondaryYAxis?.min ?? defaultDataRange.min),
-        max: Math.max(cur.secondaryYAxis.max, acc.secondaryYAxis?.max ?? defaultDataRange.max),
-      };
+      acc.secondaryYAxis = initDataRange(acc, cur, 'secondaryYAxis');
+    }
+    if (cur.circularAxis) {
+      acc.circularAxis = initDataRange(acc, cur, 'circularAxis');
+    }
+    if (cur.verticalAxis) {
+      acc.verticalAxis = initDataRange(acc, cur, 'verticalAxis');
     }
 
     return acc;
@@ -103,7 +117,7 @@ const dataRange: StoreModule = {
       const seriesDataRange = {} as SeriesDataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
 
-      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
+      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
       const hasDateValue = !!options.xAxis?.date;
 
       for (const seriesName in series) {
@@ -152,7 +166,6 @@ const dataRange: StoreModule = {
             ...(ranges ?? []).flatMap((range) => range),
           ]);
         }
-
         setSeriesDataRange(options, seriesName, values, valueAxisName, seriesDataRange);
       }
 

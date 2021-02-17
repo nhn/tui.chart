@@ -253,9 +253,9 @@ export default class LineSeries extends Component {
         const x = getXPosition(
           pick(renderOptions, 'pointOnColumn', 'tickDistance', 'labelDistance') as LabelAxisData,
           this.rect.width,
-          xAxisLimit,
           getCoordinateXValue(datum as CoordinateDataType),
-          getCoordinateDataIndex(datum, categories, idx, this.startIndex)
+          getCoordinateDataIndex(datum, categories, idx, this.startIndex),
+          xAxisLimit,
         );
         points.push({ x, y, value });
       });

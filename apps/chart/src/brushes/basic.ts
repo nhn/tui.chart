@@ -8,6 +8,8 @@ import {
 } from '@t/components/series';
 import { makeStyleObj, setLineDash, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { LineModel } from '@t/components/axis';
+import { calculateDegreeToRadian } from '@src/helpers/sector';
+import { ArcModel } from '@t/components/radialAxis';
 
 export type CircleStyleName = 'default' | 'plot';
 export type RectStyleName = 'shadow';
@@ -138,4 +140,26 @@ export function rect(ctx: CanvasRenderingContext2D, model: RectModel) {
   ctx.rect(x, y, width, height);
 
   fillStyle(ctx, color);
+}
+
+export function arc(ctx: CanvasRenderingContext2D, arcModel: ArcModel) {
+  const {
+    x,
+    y,
+    angle: { start, end },
+    borderWidth: lineWidth,
+    borderColor: strokeStyle,
+    drawingStartAngle,
+    radius,
+    clockwise = true,
+  } = arcModel;
+  ctx.beginPath();
+
+  const startRadian = calculateDegreeToRadian(start, drawingStartAngle);
+  const endRadian = calculateDegreeToRadian(end, drawingStartAngle);
+
+  ctx.arc(x, y, radius, startRadian, endRadian, !clockwise);
+
+  strokeWithOptions(ctx, { lineWidth, strokeStyle });
+  ctx.closePath();
 }

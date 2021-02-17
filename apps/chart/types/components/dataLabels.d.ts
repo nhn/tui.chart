@@ -9,7 +9,14 @@ import { PointModel, SectorModel, RectModel, Nullable } from './series';
 import { LineModel } from './axis';
 import { PieDataLabelTheme, CalloutTheme, BoxDataLabel, BubbleDataLabel } from '../theme';
 
-export type DataLabelSeriesType = 'area' | 'line' | 'bar' | 'column' | 'bullet' | 'pie';
+export type DataLabelSeriesType =
+  | 'area'
+  | 'line'
+  | 'bar'
+  | 'column'
+  | 'bullet'
+  | 'pie'
+  | 'radialBar';
 
 export type DataLabelType =
   | 'stackTotal'
@@ -38,6 +45,7 @@ export type DataLabel = {
   name?: string;
   seriesColor?: string;
   theme: BubbleDataLabel | BoxDataLabel;
+  radian?: number;
 } & Point;
 
 export type DataLabelOption = Required<
@@ -51,6 +59,7 @@ export type DataLabelModel = {
   type: 'dataLabel';
   dataLabelType: DataLabelType;
   opacity?: number;
+  radian?: number;
 } & Omit<DataLabel, 'type'>;
 
 export type DataLabelModels = { series: DataLabelModel[]; total: DataLabelModel[] };
@@ -59,9 +68,11 @@ export type PointDataLabel = PointModel & {
   type: 'point';
   theme: BubbleDataLabel;
 };
-export type RadialDataLabel = Omit<SectorModel, 'type'> & {
-  type: 'sector';
+export type RadialDataLabel = SectorModel & {
   theme: PieDataLabelTheme;
+};
+export type RadialBarDataLabel = SectorModel & {
+  theme: BoxDataLabel;
 };
 export type RectDirection = 'top' | 'bottom' | 'left' | 'right';
 
@@ -87,8 +98,15 @@ export type LineDataLabel = LineModel & {
 };
 
 export type Callout = Point & { x2: number; y2: number; theme: CalloutTheme };
-export type SeriesDataLabelType = PointDataLabel | RadialDataLabel | RectDataLabel | LineDataLabel;
+export type SeriesDataLabelType =
+  | PointDataLabel
+  | RadialDataLabel
+  | RectDataLabel
+  | LineDataLabel
+  | RadialBarDataLabel;
 
 export type SeriesDataLabels = Array<SeriesDataLabelType>;
 
-export type RadialAnchor = 'center' | 'outer';
+type RadialAnchor = PieDataLabelAnchor | RadialBarAnchor;
+export type PieDataLabelAnchor = 'center' | 'outer';
+export type RadialBarAnchor = 'start' | 'center' | 'end';

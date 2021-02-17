@@ -5,7 +5,7 @@ import { isNumber, isUndefined } from '@src/helpers/utils';
 export function isAvailableShowTooltipInfo(
   info: SelectSeriesInfo,
   eventDetectType: LineTypeEventDetectType | BoxTypeEventDetectType,
-  targetChartType: 'area' | 'line' | 'column'
+  targetChartType: 'area' | 'line' | 'column' | 'radialBar'
 ) {
   const { index, seriesIndex, chartType } = info;
 

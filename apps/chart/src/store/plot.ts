@@ -13,7 +13,7 @@ import { isRangeValue } from '@src/helpers/range';
 import { isString, isUndefined } from '@src/helpers/utils';
 
 type UsingVisiblePlotOptions = ValueOf<
-  Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie'>
+  Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie' | 'radialBar'>
 >;
 
 type UsingPlotLineBandOptions = ValueOf<
