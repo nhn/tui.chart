@@ -61,6 +61,9 @@
     "./radar": {
       "import": "./dist/esm/charts/radarChart.js"
     },
+    "./radialBar": {
+      "import": "./dist/esm/charts/radialBarChart.js"
+    },
     "./": "./"
   },
   "scripts": {

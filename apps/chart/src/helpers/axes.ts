@@ -112,8 +112,12 @@ export function getAutoAdjustingInterval(count: number, axisWidth: number, categ
   return tickInterval;
 }
 
-export function isLabelAxisOnYAxis(series: Series, options: Options) {
-  return !!series.bar || (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical);
+export function isLabelAxisOnYAxis(series: Series, options?: Options) {
+  return (
+    !!series.bar ||
+    !!series.radialBar ||
+    (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical)
+  );
 }
 
 export function hasBoxTypeSeries(series: Series) {

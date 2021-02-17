@@ -1,9 +1,8 @@
 import { padding } from '@src/store/layout';
 import { getTextWidth, getMaxLengthLabelWidth } from '@src/helpers/calculator';
-import { label, bubbleLabel } from '@src/brushes/label';
+import { label, bubbleLabel, LabelStyle } from '@src/brushes/label';
 import { SpectrumLegendModel, SpectrumLegendTooltipModel } from '@t/components/spectrumLegend';
 import { getBubbleArrowPoints } from './dataLabel';
-import { LabelStyle } from '@t/brush/label';
 
 export const SPECTRUM_LEGEND_LABEL_HEIGHT = 12;
 export const spectrumLegendBar = {

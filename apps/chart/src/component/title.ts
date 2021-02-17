@@ -5,7 +5,7 @@ import { isString } from '@src/helpers/utils';
 import { getTextWidth } from '@src/helpers/calculator';
 import { FontTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
-import { LabelModel } from '@t/brush/label';
+import { LabelModel } from '@t/components/axis';
 
 export default class Title extends Component {
   models!: LabelModel[];

@@ -1,7 +1,12 @@
 import Component from './component';
 import { CircleModel, PolygonModel } from '@t/components/series';
 import { ChartState, RadialAxes } from '@t/store/store';
-import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
+import {
+  getRadialPosition,
+  calculateDegreeToRadian,
+  DEGREE_NEGATIVE_90,
+  DEGREE_360,
+} from '@src/helpers/sector';
 import { Point, RadarPlotType, RadarChartOptions } from '@t/options';
 import { RadialPlotModels, RadialPlotModelType } from '@t/components/radialPlot';
 import { LineModel } from '@t/components/axis';
@@ -70,7 +75,7 @@ export default class RadarPlot extends Component {
       endAngle,
       clockwise,
     } = radialAxes.circularAxis;
-    const usingArcPlot = totalAngle !== 360;
+    const usingArcPlot = totalAngle !== DEGREE_360;
     const lineCount = labels.length;
 
     return {
@@ -149,7 +154,7 @@ export default class RadarPlot extends Component {
       x: centerX,
       y: centerY,
       angle: { start: startAngle, end: endAngle },
-      drawingStartAngle: -90,
+      drawingStartAngle: DEGREE_NEGATIVE_90,
       radius,
       clockwise,
     }));

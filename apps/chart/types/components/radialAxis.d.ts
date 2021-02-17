@@ -1,5 +1,5 @@
 import { RectModel } from './series';
-import { BubbleLabelModel, LabelModel } from '@t/brush/label';
+import { BubbleLabelModel, LabelModel } from './axis';
 
 type RadialAxisModels = {
   dot: RectModel[];

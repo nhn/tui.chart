@@ -8,12 +8,14 @@ import {
   RectResponderModel,
   TreemapRectResponderModel,
   ResponderModel,
+  GroupedSectorResponderModel,
 } from '@t/components/series';
 import { LineTypeEventDetectType, Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
 import { AxisData } from '@t/store/store';
 import { range } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
+import { getRadiusRanges } from './sector';
 
 export type RespondersThemeType = 'select' | 'hover';
 export interface SelectedSeriesEventModel {
@@ -270,4 +272,33 @@ export function isClickSameBoxPlotDataResponder(
   }
 
   return same;
+}
+
+export function makeGroupedSectorResponderModel(
+  radiusRanges: number[],
+  renderOptions: {
+    centerX: number;
+    centerY: number;
+    angleRange: { start: number; end: number };
+    clockwise: boolean;
+  },
+  categories: string[]
+): GroupedSectorResponderModel[] {
+  const {
+    centerX,
+    centerY,
+    angleRange: { start, end },
+    clockwise,
+  } = renderOptions;
+
+  return getRadiusRanges(radiusRanges, 0).map((radius, index) => ({
+    type: 'sector',
+    x: centerX,
+    y: centerY,
+    degree: { start, end },
+    radius,
+    name: categories[index],
+    clockwise,
+    index,
+  }));
 }

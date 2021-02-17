@@ -669,8 +669,8 @@ export interface RadialBarChartOptions extends BaseOptions {
 
 interface RadialBarSeriesOptions extends BaseSeriesOptions {
   radiusRange?: {
-    inner?: number;
-    outer?: number;
+    inner?: number | string;
+    outer?: number | string;
   };
   clockwise?: boolean;
   angleRange?: {
