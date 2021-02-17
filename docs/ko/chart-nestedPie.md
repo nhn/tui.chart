@@ -247,6 +247,111 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102752512-0c517400-43ad-11eb-96f7-614d0cd9bd6c.png)
 
+## visible 옵션
+
+각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
+기본 차트와 그룹 데이터 차트의 사용법은 동일하다.
+
+```js
+const data = {
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+          visible: false,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: 10,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+          visible: false,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          data: 40,
+        },
+        {
+          name: 'Chrome 63',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          data: 15,
+        },
+        {
+          name: 'Safari 12',
+          data: 5,
+        },
+        {
+          name: 'IE 11',
+          data: 4,
+        },
+        {
+          name: 'IE 10',
+          data: 3,
+        },
+        {
+          name: 'IE 9',
+          data: 2,
+        },
+        {
+          name: 'IE 8',
+          data: 1,
+        },
+        {
+          name: 'Firefox 13',
+          data: 8,
+        },
+        {
+          name: 'Firefox 12',
+          data: 2,
+        },
+        {
+          name: 'Opera 15',
+          data: 2,
+        },
+        {
+          name: 'Opera 12',
+          data: 1,
+        },
+        {
+          name: 'Etc - 2020',
+          data: 7,
+        },
+      ],
+    },
+  ]
+}
+```
+
+위 옵션을 적용해 차트를 생성해보면 체크박스가 해제되어 생성되는 것을 확인할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/35371660/108011512-9125da80-704a-11eb-8b45-8fc01777e14e.png)
+
+
 ## 옵션
 
 `options`는 객체로 작성한다. `series` 옵션은 기본적으로 [Pie 차트의 시리즈 옵션](./chart-pie.md)과 같고 `radiusRange`는 각 시리즈의 반지름 범위를 설정하기 위해 `[name]` 옵션으로 이동했다. `[name]`은 입력받은 데이터에서 series의 `name`이 이에 해당한다. 중첩된 모든 시리즈에 공통으로 적용할 옵션은 `series`에 바로 작성하고, 각 시리즈별로 적용할 옵션은 `[name]`에 작성한다.

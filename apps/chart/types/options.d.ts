@@ -1,6 +1,6 @@
-import { Categories, RawSeries, Options, StoreModule } from '@t/store/store';
-import { TooltipData, TooltipModel } from '@t/components/tooltip';
-import { ScatterSeriesIconType } from '@t/components/series';
+import { Categories, RawSeries, Options, StoreModule } from './store/store';
+import { TooltipData, TooltipModel } from './components/tooltip';
+import { ScatterSeriesIconType } from './components/series';
 import {
   AreaChartThemeOptions,
   BaseThemeOptions,
@@ -20,8 +20,9 @@ import {
   BulletCharThemeOptions,
   ColumnLineChartThemeOptions,
   RadialBarChartThemeOptions,
-} from '@t/theme';
-import { AxisType } from '@src/component/axis';
+} from './theme';
+import { AxisType } from '../src/component/axis';
+
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number>;
 type LineSeriesDataType = number | Point | [number, number] | [string, number] | null;
@@ -64,9 +65,10 @@ export interface AreaSeriesType {
   rawData: AreaSeriesDataType[];
   data: AreaSeriesDataType[];
   color: string;
+  visible?: boolean;
 }
 
-export type AreaSeriesInput = Pick<AreaSeriesType, 'name' | 'data'>;
+export type AreaSeriesInput = Pick<AreaSeriesType, 'name' | 'data' | 'visible'>;
 
 export interface AreaSeriesData {
   categories: string[];
@@ -78,9 +80,10 @@ export interface LineSeriesType {
   data: LineSeriesDataType[];
   rawData: LineSeriesDataType[];
   color: string;
+  visible?: boolean;
 }
 
-export type LineSeriesInput = Pick<LineSeriesType, 'name' | 'data'>;
+export type LineSeriesInput = Pick<LineSeriesType, 'name' | 'data' | 'visible'>;
 
 export interface LineSeriesData {
   categories?: string[];
@@ -113,6 +116,7 @@ export interface ScatterSeriesType {
   data: (CoordinateDataType | null)[];
   color: string;
   iconType: ScatterSeriesIconType;
+  visible?: boolean;
 }
 
 export interface LineScatterData {
@@ -134,16 +138,17 @@ export interface BubbleSeriesType {
   name: string;
   data: (BubbleSeriesDataType | null)[];
   color: string;
+  visible?: boolean;
 }
 
-export type ScatterSeriesInput = Pick<ScatterSeriesType, 'name' | 'data'>;
+export type ScatterSeriesInput = Pick<ScatterSeriesType, 'name' | 'data' | 'visible'>;
 
 export interface ScatterSeriesData {
   categories?: string[];
   series: ScatterSeriesInput[];
 }
 
-export type BubbleSeriesInput = Pick<BubbleSeriesType, 'name' | 'data'>;
+export type BubbleSeriesInput = Pick<BubbleSeriesType, 'name' | 'data' | 'visible'>;
 
 export interface BubbleSeriesData {
   series: BubbleSeriesInput[];
@@ -155,6 +160,7 @@ export type PieSeriesType = {
   parentName?: string;
   rootParentName?: string;
   color?: string;
+  visible?: boolean;
 };
 
 export type PieSeriesData = {
@@ -463,6 +469,7 @@ export type BoxPlotSeriesType = {
   data: number[][] | null;
   outliers?: number[][] | null;
   color?: string;
+  visible?: boolean;
 };
 
 export type BoxPlotSeriesData = {
@@ -492,9 +499,10 @@ export type RadarSeriesType = {
   name: string;
   data: Array<number | null>;
   color?: string;
+  visible?: boolean;
 };
 
-export type RadarSeriesInput = Pick<RadarSeriesType, 'name' | 'data'>;
+export type RadarSeriesInput = Pick<RadarSeriesType, 'name' | 'data' | 'visible'>;
 
 export type RadarSeriesData = {
   categories: string[];
@@ -518,7 +526,7 @@ export interface RadarChartOptions extends BaseOptions {
 
 export type BoxSeriesInput<T extends BoxSeriesDataType> = Pick<
   BoxSeriesType<T>,
-  'data' | 'name' | 'stackGroup'
+  'data' | 'name' | 'stackGroup' | 'visible'
 >;
 
 export interface BoxSeriesType<T extends BoxSeriesDataType> {
@@ -527,6 +535,7 @@ export interface BoxSeriesType<T extends BoxSeriesDataType> {
   rawData: T[];
   color: string;
   stackGroup?: string;
+  visible?: boolean;
 }
 
 export interface BoxSeriesData {
@@ -593,6 +602,7 @@ export type BulletSeriesType = {
   markers?: number[];
   ranges?: Array<RangeDataType<number> | null>;
   color?: string;
+  visible?: boolean;
 };
 
 export type BulletSeriesData = {
@@ -623,8 +633,8 @@ export interface ColumnLineChartOptions extends BaseOptions {
 export type ColumnLineData = {
   categories: string[];
   series: {
-    column: Pick<BoxSeriesType<BoxSeriesDataType>, 'name' | 'data'>[];
-    line: Pick<LineSeriesType, 'name' | 'data'>[];
+    column: Pick<BoxSeriesType<BoxSeriesDataType>, 'name' | 'data' | 'visible'>[];
+    line: Pick<LineSeriesType, 'name' | 'data' | 'visible'>[];
   };
 };
 

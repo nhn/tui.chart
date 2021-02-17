@@ -340,6 +340,29 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102289947-45d84880-3f83-11eb-94ce-8b8e6bead8e8.png)
 
+`ColumnLine`, `LineArea`, and `LineScatter` charts can be specified `chartType`, values can be displayed on each axis according to the chart type, and each `scale` can also be specified.
+
+```js
+const options = {
+  yAxis: [
+    {
+      title: 'Energy (kWh)',
+      chartType: 'line'
+    },
+    {
+      title: 'Powered Usage',
+      chartType: 'area',
+      scale: {
+        min: 0,
+        max: 700
+      },
+    },
+  ],
+};
+```
+
+![image](https://user-images.githubusercontent.com/35371660/107331939-ddc36000-6af6-11eb-8e11-6d1ffb2c632f.png)
+
 Themes can also be applied to both y-axes when provided as an array. The first option will be applied to the main axis, and the second option will be applied to the secondary axis.
 
 ```js

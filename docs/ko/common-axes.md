@@ -345,6 +345,29 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102289947-45d84880-3f83-11eb-94ce-8b8e6bead8e8.png)
 
+`ColumnLine`, `LineArea`, `LineScatter` 차트의 경우 `chartType`을 명시해주면 차트 타입에 맞춰 각 축에 값을 나타낼 수 있으며 각각의 `scale` 또한 지정할 수 있다.
+
+```js
+const options = {
+  yAxis: [
+    {
+      title: 'Energy (kWh)',
+      chartType: 'line'
+    },
+    {
+      title: 'Powered Usage',
+      chartType: 'area',
+      scale: {
+        min: 0,
+        max: 700
+      },
+    },
+  ],
+};
+```
+
+![image](https://user-images.githubusercontent.com/35371660/107331939-ddc36000-6af6-11eb-8e11-6d1ffb2c632f.png)
+
 테마 또한 동일하게 yAxis의 테마 옵션을 배열로 입력하면 첫번째 테마가 주축, 두 번째 테마가 부축에 적용된다.
 
 ```js

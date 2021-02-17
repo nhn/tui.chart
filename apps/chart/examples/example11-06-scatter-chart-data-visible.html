@@ -20,12 +20,14 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>11.3 [Scatter Chart] Responsive</title>
+    <title>11.6 [Scatter Chart] Data with visible options</title>
   </head>
   <body>
     <div class="description">
       You can see the tutorial
-      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/common-responsive-options.md" target="_blank">here</a>
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-scatter.md" target="_blank"
+        >here</a
+      >
       <br />
       <strong
         >The example code can be slower than your environment because the code is transpiled by
@@ -34,7 +36,7 @@
     </div>
     <div class="wrap">
       <div class="code-html" id="code-html">
-        <div id="chart-area" style="width:70vw; height:50vh;"></div>
+        <div id="chart-area"></div>
       </div>
       <div class="custom-area">
         <div id="error-dim">
@@ -308,8 +310,8 @@
               { x: 190.5, y: 98.2 },
               { x: 177.8, y: 84.1 },
               { x: 180.3, y: 83.2 },
-              { x: 180.3, y: 83.2 }
-            ]
+              { x: 180.3, y: 83.2 },
+            ],
           },
           {
             name: 'female',
@@ -573,13 +575,14 @@
               { x: 164.4, y: 55.5 },
               { x: 160.7, y: 48.6 },
               { x: 174, y: 66.4 },
-              { x: 163.8, y: 67.3 }
-            ]
-          }
-        ]
+              { x: 163.8, y: 67.3 },
+            ],
+            visible: false,
+          },
+        ],
       };
       const options = {
-        chart: { title: 'Height vs Weight', width: 'auto', height: 'auto' },
+        chart: { title: 'Height vs Weight', width: 900, height: 600 },
         xAxis: { title: 'Height (cm)' },
         yAxis: { title: 'Weight (kg)' },
       };

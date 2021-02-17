@@ -6,7 +6,8 @@ import {
   LabelStyleName,
   LabelStyle,
   PathRectStyleName,
-} from '@src/brushes/label';
+} from '../../src/brushes/label';
+
 
 export type LabelModel = {
   type: 'label';

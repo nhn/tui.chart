@@ -20,12 +20,12 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>8.10 [Line Chart] Responsive</title>
+    <title>8.16 [Line Chart] Data with visible options</title>
   </head>
   <body>
     <div class="description">
       You can see the tutorial
-      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/common-responsive-options.md" target="_blank">here</a>
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-line.md" target="_blank">here</a>
       <br />
       <strong
         >The example code can be slower than your environment because the code is transpiled by
@@ -34,7 +34,7 @@
     </div>
     <div class="wrap">
       <div class="code-html" id="code-html">
-        <div id="chart-area" style="width:70vw; height:50vh;"></div>
+        <div id="chart-area"></div>
       </div>
       <div class="custom-area">
         <div id="error-dim">
@@ -80,6 +80,7 @@
           {
             name: 'Seattle',
             data: [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5, 17.8, 15.0, 10.6, 6.6, 3.7],
+            visible: false,
           },
           {
             name: 'Sydney',
@@ -88,6 +89,7 @@
           {
             name: 'Moscow',
             data: [-10.3, -9.1, -4.1, 4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2, -2.0, -7.5],
+            visible: false,
           },
           {
             name: 'Jungfrau',
@@ -96,7 +98,7 @@
         ],
       };
       const options = {
-        chart: { title: '24-hr Average Temperature', width: 'auto', height: 'auto' },
+        chart: { title: '24-hr Average Temperature', width: 1000, height: 500 },
         xAxis: {
           title: 'Month',
         },

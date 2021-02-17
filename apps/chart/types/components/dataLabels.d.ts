@@ -4,10 +4,10 @@ import {
   DataLabelPieSeriesName,
   StackTotalDataLabel,
   BoxSeriesDataType,
-} from '@t/options';
+} from '../options';
 import { PointModel, SectorModel, RectModel, Nullable } from './series';
 import { LineModel } from './axis';
-import { PieDataLabelTheme, CalloutTheme, BoxDataLabel, BubbleDataLabel } from '@t/theme';
+import { PieDataLabelTheme, CalloutTheme, BoxDataLabel, BubbleDataLabel } from '../theme';
 
 export type DataLabelSeriesType =
   | 'area'

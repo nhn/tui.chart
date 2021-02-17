@@ -20,12 +20,12 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>4.3 [Bubble Chart] Responsive</title>
+    <title>4.5 [Bubble Chart] Data with visible options</title>
   </head>
   <body>
     <div class="description">
       You can see the tutorial
-      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/common-responsive-options.md" target="_blank">here</a>
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-bubble.md" target="_blank">here</a>
       <br />
       <strong
         >The example code can be slower than your environment because the code is transpiled by
@@ -34,7 +34,7 @@
     </div>
     <div class="wrap">
       <div class="code-html" id="code-html">
-        <div id="chart-area" style="width:70vw; height:50vh;"></div>
+        <div id="chart-area"></div>
       </div>
       <div class="custom-area">
         <div id="error-dim">
@@ -72,6 +72,7 @@
               { x: 12800, y: 72.09, r: 1220481, label: 'Mauritius' },
               { x: 18200, y: 78.68, r: 396851, label: 'Malta' },
             ],
+            visible: false,
           },
           {
             name: 'America',
@@ -118,6 +119,7 @@
               { x: 29400, y: 81.04, r: 52733300, label: 'Japan' },
               { x: 34200, y: 81.39, r: 6855125, label: 'Hong Kong' },
             ],
+            visible: false,
           },
           {
             name: 'Europe',
@@ -167,7 +169,7 @@
         ],
       };
       const options = {
-        chart: { title: 'Life Expectancy per GDP', width: 'auto', height: 'auto' },
+        chart: { title: 'Life Expectancy per GDP', width: 900, height: 500 },
         yAxis: {
           title: 'Life Expectancy (years)',
         },

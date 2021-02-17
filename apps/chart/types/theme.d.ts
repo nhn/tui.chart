@@ -1,5 +1,5 @@
-import { SectorStyle } from '@src/brushes/sector';
-import { ScatterSeriesIconType } from '@t/components/series';
+import { SectorStyle } from '../src/brushes/sector';
+import { ScatterSeriesIconType } from './components/series';
 
 type SeriesThemeMap = {
   line?: LineChartSeriesTheme;

@@ -106,6 +106,51 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/101856365-78133000-3ba8-11eb-999a-a7cb82755c6c.png)
 
+## visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+Both basic chart and range chart use the same way.
+
+```js
+const data = {
+  categories: [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ],
+  series: [
+    {
+      name: 'Seoul',
+      data: [20, 40, 25, 50, 15, 45, 33, 34, 20, 30, 22, 13],
+      visible: false,
+    },
+    {
+      name: 'Sydney',
+      data: [5, 30, 21, 18, 59, 50, 28, 33, 7, 20, 10, 30],
+    },
+    {
+      name: 'Moscow',
+      data: [30, 5, 18, 21, 33, 41, 29, 15, 30, 10, 33, 5],
+    },
+  ],
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108007541-9894b600-7041-11eb-8e5f-0010dba85f65.png)
+
+
+
 ## Options
 
 `options` should be used as an object.

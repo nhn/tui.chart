@@ -1,6 +1,6 @@
-import { Align, Point } from '@t/options';
-import { ChartType, LegendIconType } from '@t/store/store';
-import { FontTheme } from '@t/theme';
+import { Align, Point } from '../options';
+import { ChartType, LegendIconType } from '../store/store';
+import { FontTheme } from '../theme';
 
 export type CheckedLegendType = Pick<LegendData, 'chartType' | 'label' | 'checked'>[];
 

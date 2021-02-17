@@ -34,7 +34,7 @@
     </div>
     <div class="wrap">
       <div class="code-html" id="code-html">
-        <div id="chart-area"></div>
+        <div id="chart-area" style="width:70vw; height:50vh;"></div>
       </div>
       <div class="custom-area">
         <div id="error-dim">
@@ -117,7 +117,7 @@
         ],
       };
       const options = {
-        chart: { title: 'Used disk space', width: 'auto', height: 500 },
+        chart: { title: 'Used disk space', width: 'auto', height: 'auto' },
         tooltip: { formatter: (value) => `${value}GB` },
       };
 
