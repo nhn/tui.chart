@@ -229,7 +229,7 @@ const stackSeriesData: StoreModule = {
         const { stack } = stackSeries[seriesName] || {};
         const diverging = !!(options.series as BoxSeriesOptions)?.diverging;
 
-        if (stack || isRadialBar) {
+        if (stack) {
           const stackData = hasStackGrouped(data) ? makeStackGroupData(data) : makeStackData(data);
           const stackType = stack.type ?? 'normal';
           const dataRangeValues = getStackDataRangeValues(stackData);

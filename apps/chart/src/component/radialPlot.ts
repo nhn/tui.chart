@@ -176,7 +176,7 @@ export default class RadarPlot extends Component {
 
     return range(0, lineCount).reduce<LineModel[]>((acc, cur, index) => {
       const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
-      const { x: x1, y: y1 } = getRadialPosition(
+      const { x, y } = getRadialPosition(
         centerX,
         centerY,
         initialRadius,
@@ -195,8 +195,8 @@ export default class RadarPlot extends Component {
             ...acc,
             {
               type: 'line',
-              x: x1,
-              y: y1,
+              x,
+              y,
               x2,
               y2,
               strokeStyle,

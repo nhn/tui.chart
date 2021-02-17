@@ -32,10 +32,10 @@ import { scatterSeries } from '@src/brushes/scatterSeries';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
 
 // @TODO: need to remove. comment for beta test
-export default {
-  title: 'brushes',
-  decorators: [withKnobs],
-};
+// export default {
+//   title: 'brushes',
+//   decorators: [withKnobs],
+// };
 
 type BezierOptions = 'basic' | 'bezier';
 

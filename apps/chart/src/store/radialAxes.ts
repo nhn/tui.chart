@@ -14,7 +14,7 @@ import { Rect, RadialBarSeriesOptions, UsingRadialAxesChartTypeTheme } from '@t/
 import { makeLabelsFromLimit, makeTickPixelPositions } from '@src/helpers/calculator';
 import { getTitleFontString } from '@src/helpers/style';
 import { CircularAxisTheme, VerticalAxisTheme } from '@t/theme';
-import { calculateSizeWithPercentString } from '@src/helpers/utils';
+import { calculateSizeWithPercentString, pick } from '@src/helpers/utils';
 import { getDefaultRadius, initSectorOptions, DEGREE_360, DEGREE_0 } from '@src/helpers/sector';
 
 const Y_LABEL_PADDING = 5;
@@ -133,7 +133,7 @@ function getVerticalAxisData({
   verticalAxisLabelFont,
   defaultAxisData,
 }: VerticalAxisDataParam): VerticalAxisData {
-  const { axisSize, centerX, centerY, clockwise, startAngle, endAngle } = defaultAxisData;
+  const { axisSize, clockwise } = defaultAxisData;
   const { radiusRanges, innerRadius, outerRadius } = isLabelOnVerticalAxis
     ? getRadiusInfo(axisSize, labels.length + 1, options?.series)
     : {
@@ -146,11 +146,7 @@ function getVerticalAxisData({
   return {
     labels,
     tickDistance: (outerRadius - innerRadius) / labels.length,
-    axisSize,
-    centerX,
-    centerY,
-    startAngle,
-    endAngle,
+    ...pick(defaultAxisData, 'axisSize', 'centerX', 'centerY', 'startAngle', 'endAngle' ),
     pointOnColumn,
     radiusRanges,
     innerRadius,
@@ -175,28 +171,12 @@ function getCircularAxisData({
     circularAxisLabelMargin,
     circularAxisLabelFont
   );
-  const {
-    axisSize,
-    centerX,
-    centerY,
-    clockwise,
-    totalAngle,
-    drawingStartAngle,
-    startAngle,
-    endAngle,
-  } = defaultAxisData;
+  const {totalAngle} = defaultAxisData;
   const { tickInterval, labelInterval } = intervalData;
 
   return {
     labels,
-    axisSize,
-    centerX,
-    centerY,
-    startAngle,
-    endAngle,
-    totalAngle,
-    drawingStartAngle,
-    clockwise,
+    ...defaultAxisData,
     degree: totalAngle / (labels.length + (totalAngle < DEGREE_360 ? -1 : DEGREE_0)),
     tickInterval,
     labelInterval,
