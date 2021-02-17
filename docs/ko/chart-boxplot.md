@@ -58,7 +58,7 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102731609-9ed91f80-437b-11eb-9e61-261d8ffc4e7d.png)
 
-### visible 옵션
+## visible 옵션
 
 각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
 

@@ -23,7 +23,6 @@ const chart = Chart.columnLineChart({el, data, options});
 
 데이터는 `series` 를 통해 입력받는다. 각 차트의 시리즈는 `column`, `line`에 각각 입력되며 `name`과 `data` 쌍으로 입력 받는다. data는 값을 나타내는 배열로 입력한다.
 
-
 ```js
 const data = {
   categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
@@ -58,7 +57,7 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102773432-8f35f700-43cc-11eb-82fe-2eef25c5dada.png)
 
-### visible 옵션
+## visible 옵션
 
 각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
 

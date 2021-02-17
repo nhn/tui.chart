@@ -53,7 +53,7 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102057191-e4a06000-3e30-11eb-8396-378ae2a8f7ec.png)
 
-### visible
+## visible
 
 Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
 

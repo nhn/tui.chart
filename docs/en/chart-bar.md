@@ -153,9 +153,10 @@ const options = {
 ![group-stack](https://user-images.githubusercontent.com/43128697/102594710-e54f3400-4159-11eb-963b-68e7f4343286.png)
 
 
-### visible
+## visible
 
 Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+The basic chart, range, and stack group chart use the same way.
 
 ```js
 const data = {

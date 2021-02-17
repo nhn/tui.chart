@@ -248,9 +248,10 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102752512-0c517400-43ad-11eb-96f7-614d0cd9bd6c.png)
 
-### visible
+## visible
 
 Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+Both basic chart and group data chart use the same way.
 
 ```js
 const data = {
