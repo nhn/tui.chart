@@ -20,7 +20,7 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>18.4 [RadialBar Chart] Theme</title>
+    <title>18.3 [RadialBar Chart] Counter Clockwise</title>
   </head>
   <body>
     <div class="description">
@@ -77,45 +77,7 @@
       const options = {
         chart: { title: 'Winter Olympic medals per existing country (TOP 5)', width: 700, height: 700 },
         series: {
-          eventDetectType: 'grouped',
-        },
-        yAxis: {
-          label: { margin: 10 }
-        },
-        radialAxis: {
-          label: { margin: 10 }
-        },
-        theme: {
-          series: {
-            barWidth: 3,
-            colors: ['#ffd700', '#c0c0c0', '#cd7f32'],
-            hover: {
-              groupedSector: {
-                color: '#ff0000',
-                opacity: 0.3
-              }
-            },
-          },
-          yAxis: {
-            label: {
-              color: '#fff',
-              align: 'center',
-              textBubble: {
-                visible: true,
-                borderRadius: 5,
-                backgroundColor: 'rgba(7, 59, 76, 1)',
-                paddingX: 5,
-                paddingY: 4
-              }
-            }
-          },
-          radialAxis: {
-            strokeStyle: 'rgba(7, 59, 76, 0.3)',
-            dotColor: 'rgba(7, 59, 76, 0.8)',
-            label: {
-              color: '#073b4c'
-            }
-          }
+          clockwise: false
         }
       };
 

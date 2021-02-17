@@ -20,7 +20,7 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>18.3 [RadialBar Chart] Data Labels</title>
+    <title>18.5 [RadialBar Chart] RaiusRange</title>
   </head>
   <body>
     <div class="description">
@@ -77,9 +77,9 @@
       const options = {
         chart: { title: 'Winter Olympic medals per existing country (TOP 5)', width: 700, height: 700 },
         series: {
-          dataLabels: {
-            visible: true,
-            anchor: 'start'
+          radiusRange: {
+            start: 50,
+            end: '90%'
           }
         }
       };
