@@ -227,12 +227,12 @@ const options = {
 
 ### angleRange
 
-`angleRange`는 `start`와 `end` 옵션을 사용하여 호의 범위를 설정한다.
+The `angleRange` uses `start` and `end` options to determine the range of the arc.
 
-| 속성 | 설명 |
+| Property | Details |
 | --- | --- |
-| `angleRange.start` | 호의 시작 각도 (기본값: `0`) |
-| `angleRange.end` | 호의 끝 각도 (기본값: `360`) |
+| `angleRange.start` | Arc's starting angle (default: `0`) |
+| `angleRange.end` | Arc's ending angle (default: `360`) |
 
 ```js
 const options = {
