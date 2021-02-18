@@ -20,6 +20,8 @@ type ActiveSeriesNames = { [key in TooltipModelName]: string[] };
 export default class SelectedSeries extends Component {
   models: ResponderSeriesModel = {} as ResponderSeriesModel;
 
+  seriesModels: ResponderSeriesModel = {} as ResponderSeriesModel;
+
   activeSeriesNames: ActiveSeriesNames = {} as ActiveSeriesNames;
 
   isShow = false;
@@ -101,11 +103,11 @@ export default class SelectedSeries extends Component {
     })
       ? []
       : models;
-
+    this.seriesModels[alias || name] = this.getSelectedSeriesModels(selectedSeriesEventModel);
     this.isShow = !!Object.values(this.models).flatMap((value) => value).length;
     this.eventBus.emit(
       this.isShow ? 'selectSeries' : 'unselectSeries',
-      makeObservableObjectToNormal(this.getSelectedSeriesModels(selectedSeriesEventModel))
+      makeObservableObjectToNormal(this.seriesModels)
     );
     this.activeSeriesNames[name] = this.getSeriesNames(selectedSeriesEventModel.models, name);
     this.setActiveState();
