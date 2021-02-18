@@ -255,7 +255,7 @@ export default class LineSeries extends Component {
           this.rect.width,
           getCoordinateXValue(datum as CoordinateDataType),
           getCoordinateDataIndex(datum, categories, idx, this.startIndex),
-          xAxisLimit,
+          xAxisLimit
         );
         points.push({ x, y, value });
       });
