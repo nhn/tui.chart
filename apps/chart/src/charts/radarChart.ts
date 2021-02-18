@@ -58,7 +58,6 @@ export interface RadarChartProps {
  *     @param {Object} [props.options.circularAxis]
  *       @param {Object} [props.options.circularAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.circularAxis.label] - Option to adjust label interval.
- *       @param {Object} [props.options.circularAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *     @param {Object} [props.options.verticalAxis]
  *       @param {Object} [props.options.verticalAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.verticalAxis.label] - Option to adjust label interval.
@@ -87,7 +86,8 @@ export interface RadarChartProps {
  *       @param {Object} [props.options.theme.chart] - Chart font theme.
  *       @param {Object} [props.options.theme.series] - Series theme.
  *       @param {Object} [props.options.theme.title] - Title theme.
- *       @param {Object} [props.options.theme.yAxis] - Y Axis theme.
+ *       @param {Object} [props.options.theme.circularAxis] - Circular Axis theme.
+ *       @param {Object} [props.options.theme.verticalAxis] - Vertical Axis theme.
  *       @param {Object} [props.options.theme.legend] - Legend theme.
  *       @param {Object} [props.options.theme.tooltip] - Tooltip theme.
  *       @param {Object} [props.options.theme.plot] - Plot theme.

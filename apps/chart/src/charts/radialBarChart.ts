@@ -66,7 +66,6 @@ export interface RadialBarChartProps {
  *     @param {Object} [props.options.verticalAxis]
  *       @param {Object} [props.options.verticalAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.verticalAxis.label] - Option to adjust label interval.
- *       @param {Object} [props.options.verticalAxis.scale] - Option to adjust axis minimum, maximum, step size.
  *     @param {Object} [props.options.legend]
  *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
@@ -87,6 +86,8 @@ export interface RadialBarChartProps {
  *       @param {Object} [props.options.theme.chart] - Chart font theme.
  *       @param {Object} [props.options.theme.series] - Series theme.
  *       @param {Object} [props.options.theme.title] - Title theme.
+ *       @param {Object} [props.options.theme.circularAxis] - Circular Axis theme.
+ *       @param {Object} [props.options.theme.verticalAxis] - Vertical Axis theme.
  *       @param {Object} [props.options.theme.legend] - Legend theme.
  *       @param {Object} [props.options.theme.tooltip] - Tooltip theme.
  *       @param {Object} [props.options.theme.exportMenu] - ExportMenu theme.
@@ -245,7 +246,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @api
    * @example
    * // eventDetectType is 'grouped'
-   * chart.showTooltip({index: 1);
+   * chart.showTooltip({index: 1});
    *
    * // eventDetectType is 'point'
    * chart.showTooltip({index: 1, seriesIndex: 2});
