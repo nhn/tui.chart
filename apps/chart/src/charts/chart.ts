@@ -237,8 +237,8 @@ export default abstract class Chart<T extends Options> {
     const { usingContainerSize } = this.store.state;
 
     if (
-      (usingContainerSize.height && !this.el.style.height) ||
-      (usingContainerSize.width && !this.el.style.width)
+      (usingContainerSize.height && !this.el.style.height.length) ||
+      (usingContainerSize.width && !this.el.style.width.length)
     ) {
       throw new Error(message.AUTO_LAYOUT_CONTAINER_SIZE_ERROR);
     }
@@ -578,7 +578,7 @@ export default abstract class Chart<T extends Options> {
    */
   public resize = (size: Partial<Size>) => {
     this.resetSeries();
-    this.store.dispatch('updateOptions', { options: { chart: { ...size } } });
+    this.dispatchOptionsEvent('updateOptions', { chart: { ...size } });
   };
 
   /**
@@ -612,16 +612,16 @@ export default abstract class Chart<T extends Options> {
     const isAutoWidth = isAutoValue(width);
     const isAutoHeight = isAutoValue(height);
 
+    this.store.dispatch(
+      'setUsingContainerSize',
+      getUsingContainerSize(eventName, usingContainerSize, width, height)
+    );
+
     if ((usingContainerWidth || usingContainerHeight) && isNumber(width) && isNumber(height)) {
       this.clearResizeEvent();
     } else if (!(usingContainerWidth || usingContainerHeight) && (isAutoWidth || isAutoHeight)) {
       this.setResizeEvent();
     }
-
-    this.store.dispatch(
-      'setUsingContainerSize',
-      getUsingContainerSize(eventName, usingContainerSize, width, height)
-    );
   };
 
   protected dispatchOptionsEvent(eventName: 'initOptions' | 'updateOptions', options: Options) {
