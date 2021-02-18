@@ -36,6 +36,8 @@ export default class ExportMenu extends Component {
 
   chartBackgroundColor!: string;
 
+  chartWidth = 0;
+
   toggleExportMenu = () => {
     this.opened = !this.opened;
     this.models.exportMenuButton[0].opened = this.opened;
@@ -122,6 +124,7 @@ export default class ExportMenu extends Component {
 
   render({ options, layout, chart, series, rawCategories, theme }: ChartState<Options>) {
     this.isShow = isExportMenuVisible(options);
+    this.chartWidth = chart.width;
 
     if (!this.isShow) {
       return;
@@ -156,9 +159,9 @@ export default class ExportMenu extends Component {
 
   applyPanelWrapperStyle() {
     const exportMenu = this.exportMenuEl.querySelector('.toastui-chart-export-menu')!;
-    const { top, left, width } = this.chartEl.getBoundingClientRect();
+    const { top, left } = this.chartEl.getBoundingClientRect();
     const { scrollX, scrollY } = getScrollPosition();
-    const x = left + width - EXPORT_MENU_WIDTH - padding.X + scrollX;
+    const x = left + this.chartWidth - EXPORT_MENU_WIDTH - padding.X + scrollX;
     const y = top + padding.Y + BUTTON_RECT_SIZE + 5 + scrollY;
     const { borderRadius, borderWidth, borderColor } = this.theme.panel;
 
