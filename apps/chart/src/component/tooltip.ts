@@ -8,7 +8,7 @@ import {
   TooltipModelName,
   TooltipData,
 } from '@t/components/tooltip';
-import { getValueString } from '@src/helpers/tooltip';
+import { getScrollPosition, getValueString } from '@src/helpers/tooltip';
 import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
 import { isBoolean, isNumber, isString, isUndefined } from '@src/helpers/utils';
 import { SeriesDataType, TooltipTemplateFunc, TooltipFormatter } from '@t/options';
@@ -81,9 +81,10 @@ export default class Tooltip extends Component {
           : y;
     }
 
-    // pageXOffset, pageYOffset for IE
-    x += window.scrollX || window.pageXOffset;
-    y += window.scrollY || window.pageYOffset;
+    const { scrollX, scrollY } = getScrollPosition();
+
+    x += scrollX;
+    y += scrollY;
 
     return { x, y };
   }
