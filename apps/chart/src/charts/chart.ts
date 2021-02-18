@@ -243,7 +243,9 @@ export default abstract class Chart<T extends Options> {
       throw new Error(message.AUTO_LAYOUT_CONTAINER_SIZE_ERROR);
     }
 
-    if (isUndefined(ResizeObserver)) {
+    const isResizeObserverAPIExist = typeof ResizeObserver === 'undefined';
+
+    if (isResizeObserverAPIExist) {
       window.addEventListener('resize', this.debounceWindowResizeEvent);
     } else {
       this.resizeObserver = new ResizeObserver((entries) => {
