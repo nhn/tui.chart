@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
+    <title>9.9 [Pie Chart] Theme</title>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-pie.md" target="_blank">here</a>
+      <br />
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
+        </div>
+        <div class="try-it-area">
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="../dist/toastui-chart.js"></script>
+    <script class="code-js" id="code-js" type="text/babel">
+      const el = document.getElementById('chart-area');
+      const data = {
+        categories: ['Browser'],
+        series: [
+          {
+            name: 'Chrome',
+            data: 46.02,
+          },
+          {
+            name: 'IE',
+            data: 20.47,
+          },
+          {
+            name: 'Firefox',
+            data: 17.71,
+          },
+          {
+            name: 'Safari',
+            data: 5.45,
+          },
+          {
+            name: 'Opera',
+            data: 3.1,
+          },
+          {
+            name: 'Etc',
+            data: 7.25,
+          },
+        ],
+      };
+      const theme = {
+        series: {
+          colors: ['#F94144', '#F3722C', '#F8961E', '#F9C74F', '#90BE6D', '#43AA8B', '#577590'],
+          lineWidth: 2,
+          strokeStyle: '#000000',
+          hover: {
+            color: '#335F70',
+            lineWidth: 2,
+            strokeStyle: '#000000',
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+            shadowBlur: 10,
+          },
+          select: {
+            color: '#203B46',
+            lineWidth: 2,
+            strokeStyle: '#000000',
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+            shadowBlur: 10,
+            restSeries: {
+              areaOpacity: 0.5,
+            },
+            areaOpacity: 1,
+          },
+          areaOpacity: 1,
+        },
+      };
+
+      const options = {
+        chart: { title: 'Usage share of web browsers', width: 600, height: 400 },
+        series: { selectable: true },
+        theme,
+      };
+
+      const chart = toastui.Chart.pieChart({ el, data, options });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.js"></script>
+    <script src="./js/example.js" type="text/babel"></script>
+  </body>
+</html>
