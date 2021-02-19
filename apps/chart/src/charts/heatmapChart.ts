@@ -41,12 +41,10 @@ function getSeriesWithYCategory(
   series: HeatmapSeriesDataType[],
   categories: HeatmapCategoriesType
 ) {
-  return series
-    .map((rowSeries, y) => ({
-      data: rowSeries,
-      yCategory: categories.y[y],
-    }))
-    .reverse();
+  return series.map((rowSeries, y) => ({
+    data: rowSeries,
+    yCategory: categories.y[y],
+  }));
 }
 
 /**
