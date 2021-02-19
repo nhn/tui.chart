@@ -2,7 +2,7 @@ import RadialBarChart from '@src/charts/radialBarChart';
 import { olympicMedalData, olympicMedalDataWithNull } from './data';
 import { deepMergedCopy } from '@src/helpers/utils';
 import '@src/css/chart.css';
-import { RadialBarChartOptions } from '@t/options';
+import { RadialBarChartOptions, RadialBarSeriesData } from '@t/options';
 import { withKnobs, radios, boolean, number } from '@storybook/addon-knobs';
 
 export default {
@@ -19,7 +19,7 @@ const defaultOptions: RadialBarChartOptions = {
   },
 };
 
-function createChart(data, customOptions: Record<string, any> = {}) {
+function createChart(data: RadialBarSeriesData, customOptions: Record<string, any> = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 

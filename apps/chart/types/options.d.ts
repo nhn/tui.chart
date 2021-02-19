@@ -658,8 +658,9 @@ export interface NestedPieChartOptions extends BaseOptions {
 
 export interface RadialBarSeriesType {
   name: string;
-  data: number[];
+  data: (number | null)[];
   color?: string;
+  visible?: boolean;
 }
 
 export interface RadialBarSeriesData {
