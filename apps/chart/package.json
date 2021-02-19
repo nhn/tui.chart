@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/chart",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "TOAST UI Application: Chart",
   "main": "dist/toastui-chart.js",
   "types": "types/index.d.ts",
