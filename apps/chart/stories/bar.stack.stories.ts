@@ -24,8 +24,8 @@ function createChart(data, customOptions?: BarChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
-  el.style.width = `${width}px`;
-  el.style.height = `${height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new BarChart({
     el,
@@ -310,6 +310,40 @@ export const dataLabelsWithTheme = () => {
           },
         },
       },
+    },
+  });
+
+  return el;
+};
+
+export const responsive = () => {
+  const { el } = createChart(budgetData, {
+    chart: { title: 'Monthly Revenue', width: 'auto', height: 'auto' },
+    series: { stack: true },
+    responsive: {
+      animation: { duration: 0 },
+      rules: [
+        {
+          condition: function ({ width: w }) {
+            return w <= 600;
+          },
+          options: {
+            legend: {
+              align: 'bottom',
+            },
+          },
+        },
+        {
+          condition: function ({ width: w }) {
+            return w <= 400;
+          },
+          options: {
+            exportMenu: {
+              visible: false,
+            },
+          },
+        },
+      ],
     },
   });
 

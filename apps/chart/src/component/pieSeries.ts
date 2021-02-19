@@ -227,6 +227,12 @@ export default class PieSeries extends Component {
     const { layout, series, legend, options, nestedPieSeries, theme } = chartState;
     const categories = (chartState.categories as string[]) ?? [];
 
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
+
     if (!series.pie) {
       throw new Error(message.noDataError(this.name));
     }

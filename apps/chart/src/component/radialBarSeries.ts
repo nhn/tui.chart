@@ -123,6 +123,12 @@ export default class RadialBarSeries extends Component {
     const { layout, series, legend, options, theme, stackSeries, scale, radialAxes } = chartState;
     const categories = (chartState.categories as string[]) ?? [];
 
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
+
     if (!series.radialBar || !stackSeries.radialBar) {
       throw new Error(message.noDataError(this.name));
     }

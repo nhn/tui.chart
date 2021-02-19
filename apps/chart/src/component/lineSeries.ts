@@ -81,6 +81,10 @@ export default class LineSeries extends Component {
   }
 
   initUpdate(delta: number) {
+    if (!this.drawModels) {
+      return;
+    }
+
     this.drawModels.rect[0].width = this.models.rect[0].width * delta;
   }
 
@@ -104,6 +108,13 @@ export default class LineSeries extends Component {
   ) {
     const { viewRange } = computed;
     const { layout, series, scale, axes, legend, theme } = chartState;
+
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
+
     if (!series.line) {
       throw new Error(message.noDataError(this.name));
     }

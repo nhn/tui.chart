@@ -18,7 +18,7 @@ import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
 
 export default class HeatmapSeries extends Component {
-  models!: HeatmapRectModels;
+  models: HeatmapRectModels = { series: [] };
 
   responders!: HeatmapRectResponderModel[];
 
@@ -36,6 +36,12 @@ export default class HeatmapSeries extends Component {
 
   render(chartState: ChartState<HeatmapChartOptions>) {
     const { layout, heatmapSeries, axes, theme, colorValueScale, options } = chartState;
+
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
 
     if (!heatmapSeries.length) {
       throw new Error(message.noDataError(this.name));

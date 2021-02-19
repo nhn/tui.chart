@@ -1,7 +1,6 @@
 import { RawSeries } from '@t/store/store';
 import { Theme, CheckAnchorPieSeries } from '@t/theme';
 import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
-import { rgba } from './color';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;

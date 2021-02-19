@@ -41,6 +41,10 @@ export default class ScatterSeries extends Component {
   }
 
   initUpdate(delta: number) {
+    if (!this.drawModels) {
+      return;
+    }
+
     this.drawModels.series.forEach((model, index) => {
       model.size = (this.models.series[index] as ScatterSeriesModel).size * delta;
     });
@@ -48,6 +52,13 @@ export default class ScatterSeries extends Component {
 
   render(chartState: ChartState<ScatterChartOptions>) {
     const { layout, series, scale, legend, options, theme } = chartState;
+
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
+
     if (!series.scatter) {
       throw new Error(message.noDataError(this.name));
     }

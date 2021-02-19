@@ -151,6 +151,12 @@ export default class AreaSeries extends Component {
     const { viewRange } = computed;
     const { layout, series, scale, axes, legend, stackSeries, theme, rawCategories } = chartState;
 
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
+
     if (!series.area) {
       throw new Error(message.noDataError(this.name));
     }

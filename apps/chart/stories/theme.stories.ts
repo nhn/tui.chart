@@ -19,7 +19,7 @@ export default {
 
 const width = 1000;
 const height = 500;
-const defaultOptions = {
+const defaultOptions: AreaChartOptions = {
   chart: {
     width,
     height,
@@ -35,8 +35,8 @@ function createChart(data: AreaSeriesData, customOptions: AreaChartOptions = {})
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = `${options.chart?.width}px`;
-  el.style.height = `${options.chart?.height}px`;
+  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
+  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
 
   const chart = new AreaChart({ el, data, options });
 

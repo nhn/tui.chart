@@ -136,7 +136,8 @@ export default class BoxStackSeries extends BoxSeries {
   ) {
     const { layout, series: seriesData, axes, stackSeries, legend, theme, scale } = chartState;
     const { viewRange } = computed;
-    this.isShow = !!stackSeries[this.name];
+
+    this.isShow = !!stackSeries[this.name] && this.visibleComponents(layout.plot);
 
     if (!this.isShow) {
       return;

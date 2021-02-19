@@ -39,7 +39,7 @@ function getLabelScaleData(
   const dateTypeLabel = isExist(options.xAxis?.date);
   const labelOptions = {
     dataRange: dataRange[labelAxisName],
-    offsetSize: layout.plot[labelSizeKey],
+    offsetSize: Math.max(layout.plot[labelSizeKey], 1),
     scaleOption: scaleOptions[labelAxisName],
     rawCategoriesSize: rawCategories.length,
   };
@@ -76,7 +76,7 @@ function getValueScaleData(
   } else if (isCoordinateSeries(series)) {
     const valueOptions = {
       dataRange: dataRange[valueAxisName],
-      offsetSize: layout.plot[valueSizeKey],
+      offsetSize: Math.max(layout.plot[valueSizeKey], 1),
       scaleOption: scaleOptions[valueAxisName],
     };
 
@@ -84,7 +84,7 @@ function getValueScaleData(
   } else {
     result = calculateCoordinateScale({
       dataRange: dataRange[valueAxisName],
-      offsetSize: layout.plot[valueSizeKey],
+      offsetSize: Math.max(layout.plot[valueSizeKey], 1),
       scaleOption: scaleOptions[valueAxisName],
     });
   }

@@ -94,160 +94,164 @@ describe('radar series', () => {
       store: {} as Store<Options>,
       eventBus: new EventEmitter(),
     });
-
-    radarSeries.render(chartState);
   });
 
-  const models = {
-    area: [],
-    line: [
-      {
-        type: 'linePoints',
-        color: 'rgba(170, 170, 170, 1)',
-        distances: [10, 20, 30, 40],
-        lineWidth: 2,
-        name: 'han',
-        points: [
-          { x: 100, y: 90 },
-          { x: 120, y: 100 },
-          { x: 100, y: 130 },
-          { x: 60, y: 100 },
-          { x: 100, y: 90 },
-        ],
-      },
-      {
-        type: 'linePoints',
-        color: 'rgba(187, 187, 187, 1)',
-        distances: [20, 10, 10, 30],
-        lineWidth: 2,
-        name: 'cho',
-        points: [
-          { x: 100, y: 80 },
-          { x: 110, y: 100 },
-          { x: 100, y: 110 },
-          { x: 70, y: 100 },
-          { x: 100, y: 80 },
-        ],
-      },
-    ],
-    dot: [],
-  };
-
-  const responders = [
-    {
-      type: 'circle',
-      x: 100,
-      y: 90,
-      radius: 3,
-      color: 'rgba(170, 170, 170, 1)',
-      seriesIndex: 0,
-      data: { label: 'han', color: 'rgba(170, 170, 170, 1)', value: 1, category: 'A' },
-      name: 'han',
-      index: 0,
-      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
-      value: 1,
-    },
-    {
-      type: 'circle',
-      x: 120,
-      y: 100,
-      radius: 3,
-      color: 'rgba(170, 170, 170, 1)',
-      seriesIndex: 0,
-      data: { label: 'han', color: 'rgba(170, 170, 170, 1)', value: 2, category: 'B' },
-      name: 'han',
-      index: 1,
-      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
-      value: 2,
-    },
-    {
-      type: 'circle',
-      x: 100,
-      y: 130,
-      radius: 3,
-      color: 'rgba(170, 170, 170, 1)',
-      seriesIndex: 0,
-      data: { label: 'han', color: 'rgba(170, 170, 170, 1)', value: 3, category: 'C' },
-      name: 'han',
-      index: 2,
-      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
-      value: 3,
-    },
-    {
-      type: 'circle',
-      x: 60,
-      y: 100,
-      radius: 3,
-      color: 'rgba(170, 170, 170, 1)',
-      seriesIndex: 0,
-      data: { label: 'han', color: 'rgba(170, 170, 170, 1)', value: 4, category: 'D' },
-      name: 'han',
-      index: 3,
-      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
-      value: 4,
-    },
-    {
-      type: 'circle',
-      x: 100,
-      y: 80,
-      radius: 3,
-      color: 'rgba(187, 187, 187, 1)',
-      seriesIndex: 1,
-      data: { label: 'cho', color: 'rgba(187, 187, 187, 1)', value: 2, category: 'A' },
-      name: 'cho',
-      index: 0,
-      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
-      value: 2,
-    },
-    {
-      type: 'circle',
-      x: 110,
-      y: 100,
-      radius: 3,
-      color: 'rgba(187, 187, 187, 1)',
-      seriesIndex: 1,
-      data: { label: 'cho', color: 'rgba(187, 187, 187, 1)', value: 1, category: 'B' },
-      name: 'cho',
-      index: 1,
-      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
-      value: 1,
-    },
-    {
-      type: 'circle',
-      x: 100,
-      y: 110,
-      radius: 3,
-      color: 'rgba(187, 187, 187, 1)',
-      seriesIndex: 1,
-      data: { label: 'cho', color: 'rgba(187, 187, 187, 1)', value: 1, category: 'C' },
-      name: 'cho',
-      index: 2,
-      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
-      value: 1,
-    },
-    {
-      type: 'circle',
-      x: 70,
-      y: 100,
-      radius: 3,
-      color: 'rgba(187, 187, 187, 1)',
-      seriesIndex: 1,
-      data: { label: 'cho', color: 'rgba(187, 187, 187, 1)', value: 3, category: 'D' },
-      name: 'cho',
-      index: 3,
-      style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
-      value: 3,
-    },
-  ];
-
-  ['area', 'line', 'dot'].forEach((modelName) => {
-    it(`should make ${modelName} properly when calling render`, () => {
-      expect(radarSeries.models[modelName]).toEqual(models[modelName]);
+  describe('basic', () => {
+    beforeEach(() => {
+      radarSeries.render(chartState);
     });
-  });
 
-  it('should make responders properly when calling render', () => {
-    expect(radarSeries.responders).toEqual(responders);
+    const models = {
+      area: [],
+      line: [
+        {
+          type: 'linePoints',
+          color: 'rgba(170, 170, 170, 1)',
+          distances: [10, 20, 30, 40],
+          lineWidth: 2,
+          name: 'han',
+          points: [
+            { x: 100, y: 90 },
+            { x: 120, y: 100 },
+            { x: 100, y: 130 },
+            { x: 60, y: 100 },
+            { x: 100, y: 90 },
+          ],
+        },
+        {
+          type: 'linePoints',
+          color: 'rgba(187, 187, 187, 1)',
+          distances: [20, 10, 10, 30],
+          lineWidth: 2,
+          name: 'cho',
+          points: [
+            { x: 100, y: 80 },
+            { x: 110, y: 100 },
+            { x: 100, y: 110 },
+            { x: 70, y: 100 },
+            { x: 100, y: 80 },
+          ],
+        },
+      ],
+      dot: [],
+    };
+
+    const responders = [
+      {
+        type: 'circle',
+        x: 100,
+        y: 90,
+        radius: 3,
+        color: 'rgba(170, 170, 170, 1)',
+        seriesIndex: 0,
+        data: { label: 'han', color: 'rgba(170, 170, 170, 1)', value: 1, category: 'A' },
+        name: 'han',
+        index: 0,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        value: 1,
+      },
+      {
+        type: 'circle',
+        x: 120,
+        y: 100,
+        radius: 3,
+        color: 'rgba(170, 170, 170, 1)',
+        seriesIndex: 0,
+        data: { label: 'han', color: 'rgba(170, 170, 170, 1)', value: 2, category: 'B' },
+        name: 'han',
+        index: 1,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        value: 2,
+      },
+      {
+        type: 'circle',
+        x: 100,
+        y: 130,
+        radius: 3,
+        color: 'rgba(170, 170, 170, 1)',
+        seriesIndex: 0,
+        data: { label: 'han', color: 'rgba(170, 170, 170, 1)', value: 3, category: 'C' },
+        name: 'han',
+        index: 2,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        value: 3,
+      },
+      {
+        type: 'circle',
+        x: 60,
+        y: 100,
+        radius: 3,
+        color: 'rgba(170, 170, 170, 1)',
+        seriesIndex: 0,
+        data: { label: 'han', color: 'rgba(170, 170, 170, 1)', value: 4, category: 'D' },
+        name: 'han',
+        index: 3,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        value: 4,
+      },
+      {
+        type: 'circle',
+        x: 100,
+        y: 80,
+        radius: 3,
+        color: 'rgba(187, 187, 187, 1)',
+        seriesIndex: 1,
+        data: { label: 'cho', color: 'rgba(187, 187, 187, 1)', value: 2, category: 'A' },
+        name: 'cho',
+        index: 0,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        value: 2,
+      },
+      {
+        type: 'circle',
+        x: 110,
+        y: 100,
+        radius: 3,
+        color: 'rgba(187, 187, 187, 1)',
+        seriesIndex: 1,
+        data: { label: 'cho', color: 'rgba(187, 187, 187, 1)', value: 1, category: 'B' },
+        name: 'cho',
+        index: 1,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        value: 1,
+      },
+      {
+        type: 'circle',
+        x: 100,
+        y: 110,
+        radius: 3,
+        color: 'rgba(187, 187, 187, 1)',
+        seriesIndex: 1,
+        data: { label: 'cho', color: 'rgba(187, 187, 187, 1)', value: 1, category: 'C' },
+        name: 'cho',
+        index: 2,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        value: 1,
+      },
+      {
+        type: 'circle',
+        x: 70,
+        y: 100,
+        radius: 3,
+        color: 'rgba(187, 187, 187, 1)',
+        seriesIndex: 1,
+        data: { label: 'cho', color: 'rgba(187, 187, 187, 1)', value: 3, category: 'D' },
+        name: 'cho',
+        index: 3,
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        value: 3,
+      },
+    ];
+
+    ['area', 'line', 'dot'].forEach((modelName) => {
+      it(`should make ${modelName} properly when calling render`, () => {
+        expect(radarSeries.models[modelName]).toEqual(models[modelName]);
+      });
+    });
+
+    it('should make responders properly when calling render', () => {
+      expect(radarSeries.responders).toEqual(responders);
+    });
   });
 
   it('should render circle models, when "series.showDot" is true', () => {
@@ -405,6 +409,19 @@ describe('radar series', () => {
         ],
       },
     ]);
+  });
+
+  it('should not make models on invalid layout', () => {
+    radarSeries.render(
+      deepMergedCopy(chartState, {
+        chart: { width: 0, height: 0 },
+        layout: {
+          plot: { width: 0, height: 0, x: 10, y: 80 },
+        },
+      })
+    );
+
+    expect(radarSeries.models).toEqual({ area: [], line: [], dot: [] });
   });
 });
 

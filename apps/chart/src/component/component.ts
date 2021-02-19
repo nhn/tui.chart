@@ -311,7 +311,7 @@ export default abstract class Component {
 
   onMouseup?(responseData: any): void;
 
-  renderDataLabels(data: SeriesDataLabels, name?: string) {
+  protected renderDataLabels(data: SeriesDataLabels, name?: string) {
     setTimeout(() => {
       this.eventBus.emit('renderDataLabels', { data, name: name ?? this.name });
     }, 0);
@@ -327,5 +327,9 @@ export default abstract class Component {
         painter.paintForEach(models[item]);
       });
     }
+  }
+
+  protected visibleComponents(rect) {
+    return rect.width > 0 && rect.height > 0;
   }
 }

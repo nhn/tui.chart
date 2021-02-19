@@ -101,6 +101,12 @@ export default class BulletSeries extends Component {
   render(state: ChartState<BulletChartOptions>): void {
     const { layout, axes, series, scale, legend, options, theme, categories } = state;
 
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
+
     if (!series.bullet) {
       throw new Error(message.noDataError(this.name));
     }

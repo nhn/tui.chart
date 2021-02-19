@@ -68,6 +68,13 @@ export default class BoxPlotSeries extends Component {
   render(state: ChartState<BoxPlotChartOptions>): void {
     const { layout, axes, series, scale, legend, options, theme } = state;
 
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
+
+
     if (!series.boxPlot) {
       throw new Error(message.noDataError(this.name));
     }

@@ -56,6 +56,10 @@ export default class BubbleSeries extends Component {
   }
 
   initUpdate(delta: number) {
+    if (!this.drawModels) {
+      return;
+    }
+
     this.drawModels.series.forEach((model, index) => {
       model.radius = (this.models.series[index] as CircleModel).radius * delta;
     });
@@ -64,6 +68,12 @@ export default class BubbleSeries extends Component {
   render(chartState: ChartState<BaseOptions>) {
     const { layout, series, scale, axes, circleLegend, legend, options, theme } = chartState;
     const { plot } = layout;
+
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
 
     if (!series.bubble) {
       throw new Error(message.noDataError(this.name));

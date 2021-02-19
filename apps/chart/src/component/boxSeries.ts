@@ -107,7 +107,7 @@ export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
 }
 
 export default class BoxSeries extends Component {
-  models: BoxSeriesModels = { series: [] };
+  models: BoxSeriesModels = { series: [], clipRect: [] };
 
   drawModels!: BoxSeriesModels;
 
@@ -270,7 +270,7 @@ export default class BoxSeries extends Component {
   ) {
     const { layout, series, axes, stackSeries, legend, theme, scale } = chartState;
 
-    this.isShow = !(stackSeries && stackSeries[this.name]);
+    this.isShow = !(stackSeries && stackSeries[this.name]) && this.visibleComponents(layout.plot);
 
     if (!this.isShow) {
       return;

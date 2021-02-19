@@ -74,12 +74,17 @@ export default class RadarSeries extends Component {
   render(state: ChartState<RadarChartOptions>) {
     const { layout, radialAxes, series, legend, options, theme, scale } = state;
 
+    this.isShow = this.visibleComponents(layout.plot);
+
+    if (!this.isShow) {
+      return;
+    }
+
     if (!series.radar) {
       throw new Error(message.noDataError(this.name));
     }
 
     this.theme = theme.series.radar as Required<RadarChartSeriesTheme>;
-
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);

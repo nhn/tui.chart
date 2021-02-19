@@ -2,6 +2,7 @@ import BoxSeries from '@src/component/boxSeries';
 import Store from '@src/store/store';
 import EventEmitter from '@src/eventEmitter';
 import { BarChartOptions } from '@t/options';
+import { deepMergedCopy } from '@src/helpers/utils';
 
 let boxSeries;
 const seriesData = [
@@ -89,112 +90,132 @@ const chartState = {
   },
 };
 
-const result = {
-  clipRect: [{ type: 'clipRectArea', x: 0, y: 0, width: 80, height: 80 }],
-  series: [
-    {
-      type: 'rect',
-      color: 'rgba(170, 170, 170, 1)',
-      width: 16,
-      height: 14,
-      x: 0,
-      y: 6,
-      value: 1,
-      name: 'han',
-      index: 0,
-    },
-    {
-      type: 'rect',
-      color: 'rgba(170, 170, 170, 1)',
-      width: 32,
-      height: 14,
-      x: 0,
-      y: 46,
-      value: 2,
-      name: 'han',
-      index: 1,
-    },
-    {
-      type: 'rect',
-      color: 'rgba(187, 187, 187, 1)',
-      width: 64,
-      height: 14,
-      x: 0,
-      y: 20,
-      value: 4,
-      name: 'cho',
-      index: 0,
-    },
-    {
-      type: 'rect',
-      color: 'rgba(187, 187, 187, 1)',
-      width: 80,
-      height: 14,
-      x: 0,
-      y: 60,
-      value: 5,
-      name: 'cho',
-      index: 1,
-    },
-  ],
-};
+describe('basic', () => {
+  beforeEach(() => {
+    boxSeries = new BoxSeries({
+      store: {} as Store<BarChartOptions>,
+      eventBus: new EventEmitter(),
+    });
 
-const respondersResult = [
-  {
-    type: 'rect',
-    color: 'rgba(170, 170, 170, 1)',
-    x: 0,
-    y: 6,
-    width: 16,
-    height: 14,
-    data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
-    index: 0,
-  },
-  {
-    type: 'rect',
-    color: 'rgba(170, 170, 170, 1)',
-    x: 0,
-    y: 46,
-    width: 32,
-    height: 14,
-    data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
-    index: 1,
-  },
-  {
-    type: 'rect',
-    color: 'rgba(187, 187, 187, 1)',
-    x: 0,
-    y: 20,
-    width: 64,
-    height: 14,
-    data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' },
-    index: 0,
-  },
-  {
-    type: 'rect',
-    color: 'rgba(187, 187, 187, 1)',
-    x: 0,
-    y: 60,
-    width: 80,
-    height: 14,
-    data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' },
-    index: 1,
-  },
-];
-
-beforeEach(() => {
-  boxSeries = new BoxSeries({
-    store: {} as Store<BarChartOptions>,
-    eventBus: new EventEmitter(),
+    boxSeries.name = 'bar';
   });
 
-  boxSeries.name = 'bar';
-});
+  it('should be set the drawing models for series rendering', () => {
+    boxSeries.render(chartState, { viewRange: [0, 1] });
+    const { models, responders } = boxSeries;
 
-it('should be set the drawing models for series rendering', () => {
-  boxSeries.render(chartState, { viewRange: [0, 1] });
-  const { models, responders } = boxSeries;
+    const result = {
+      clipRect: [{ type: 'clipRectArea', x: 0, y: 0, width: 80, height: 80 }],
+      series: [
+        {
+          type: 'rect',
+          color: 'rgba(170, 170, 170, 1)',
+          width: 16,
+          height: 14,
+          x: 0,
+          y: 6,
+          value: 1,
+          name: 'han',
+          index: 0,
+        },
+        {
+          type: 'rect',
+          color: 'rgba(170, 170, 170, 1)',
+          width: 32,
+          height: 14,
+          x: 0,
+          y: 46,
+          value: 2,
+          name: 'han',
+          index: 1,
+        },
+        {
+          type: 'rect',
+          color: 'rgba(187, 187, 187, 1)',
+          width: 64,
+          height: 14,
+          x: 0,
+          y: 20,
+          value: 4,
+          name: 'cho',
+          index: 0,
+        },
+        {
+          type: 'rect',
+          color: 'rgba(187, 187, 187, 1)',
+          width: 80,
+          height: 14,
+          x: 0,
+          y: 60,
+          value: 5,
+          name: 'cho',
+          index: 1,
+        },
+      ],
+    };
 
-  expect(models).toEqual(result);
-  expect(responders).toEqual(respondersResult);
+    const respondersResult = [
+      {
+        type: 'rect',
+        color: 'rgba(170, 170, 170, 1)',
+        x: 0,
+        y: 6,
+        width: 16,
+        height: 14,
+        data: { label: 'han', color: '#aaaaaa', value: 1, category: 'A' },
+        index: 0,
+      },
+      {
+        type: 'rect',
+        color: 'rgba(170, 170, 170, 1)',
+        x: 0,
+        y: 46,
+        width: 32,
+        height: 14,
+        data: { label: 'han', color: '#aaaaaa', value: 2, category: 'B' },
+        index: 1,
+      },
+      {
+        type: 'rect',
+        color: 'rgba(187, 187, 187, 1)',
+        x: 0,
+        y: 20,
+        width: 64,
+        height: 14,
+        data: { label: 'cho', color: '#bbbbbb', value: 4, category: 'A' },
+        index: 0,
+      },
+      {
+        type: 'rect',
+        color: 'rgba(187, 187, 187, 1)',
+        x: 0,
+        y: 60,
+        width: 80,
+        height: 14,
+        data: { label: 'cho', color: '#bbbbbb', value: 5, category: 'B' },
+        index: 1,
+      },
+    ];
+
+    expect(models).toEqual(result);
+    expect(responders).toEqual(respondersResult);
+  });
+
+  it('should not make models on invalid layout', () => {
+    boxSeries.render(
+      deepMergedCopy(chartState, {
+        chart: { width: 0, height: 0 },
+        layout: {
+          xAxis: { x: 10, y: 80, width: 0, height: 0 },
+          yAxis: { x: 10, y: 10, width: 0, height: 0 },
+          plot: { width: 0, height: 0, x: 10, y: 80 },
+        },
+      }),
+      { viewRange: [0, 1] }
+    );
+    expect(boxSeries.models).toEqual({
+      clipRect: [],
+      series: [],
+    });
+  });
 });

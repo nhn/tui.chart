@@ -302,6 +302,19 @@ describe('basic', () => {
 
     expect(pieSeries.models.series).toEqual(models);
   });
+
+  it('should not make models on invalid layout', () => {
+    pieSeries.render(
+      deepMergedCopy(chartState, {
+        chart: { width: 0, height: 0 },
+        layout: {
+          plot: { width: 0, height: 0, x: 10, y: 80 },
+        },
+      })
+    );
+
+    expect(pieSeries.models).toEqual({ series: [] });
+  });
 });
 
 describe('donut', () => {

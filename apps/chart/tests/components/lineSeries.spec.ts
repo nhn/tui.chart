@@ -686,3 +686,59 @@ describe('with null data', () => {
     expect(lineSeries.models).toEqual(result.models);
   });
 });
+
+describe('invalid layout', () => {
+  const seriesData = [
+    { name: 'han', data: [1, 2], rawData: [1, 2], color: '#aaaaaa' },
+    { name: 'cho', data: [4, 5], rawData: [4, 5], color: '#bbbbbb' },
+  ];
+
+  const chartState = {
+    chart: { width: 0, height: 0 },
+    layout: {
+      xAxis: { x: 10, y: 80, width: 0, height: 0 },
+      yAxis: { x: 10, y: 10, width: 0, height: 0 },
+      plot: { width: 0, height: 0, x: 10, y: 80 },
+    },
+    series: {
+      line: {
+        data: seriesData,
+        seriesCount: seriesData.length,
+        seriesGroupCount: seriesData[0].data.length,
+      },
+    },
+    scale: {
+      yAxis: { limit: { min: 1, max: 5 } },
+    },
+    axes: {
+      xAxis: { pointOnColumn: true, tickDistance: 40, tickCount: 2 },
+    },
+    options: {},
+    legend: {
+      data: [
+        { label: 'han', active: true, checked: true },
+        { label: 'cho', active: true, checked: true },
+      ],
+    },
+    rawCategories: ['A', 'B'],
+    categories: ['A', 'B'],
+    theme: {},
+  };
+
+  beforeEach(() => {
+    lineSeries = new LineSeries({
+      store: {} as Store<LineChartOptions>,
+      eventBus: new EventEmitter(),
+    });
+
+    lineSeries.render(chartState, { viewRange: [0, 1] });
+  });
+
+  it(`should not make models`, () => {
+    expect(lineSeries.models).toEqual({
+      rect: [],
+      series: [],
+      dot: [],
+    });
+  });
+});
