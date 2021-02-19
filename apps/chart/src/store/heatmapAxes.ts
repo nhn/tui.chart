@@ -24,11 +24,14 @@ type HeatmapStateProp = {
 };
 
 function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
-  const { axisSize, options, theme } = stateProp;
+  const { categories, axisSize, options, theme } = stateProp;
   const isLabelAxis = axisType === AxisType.X;
-  const categories = isLabelAxis ? stateProp.categories.x : [...stateProp.categories.y].reverse();
+  const axisName = isLabelAxis ? 'x' : 'y';
   const formatter = options[axisType]?.label?.formatter ?? ((value) => value);
-  const labelsBeforeFormatting = makeFormattedCategory(categories, options[axisType]?.date);
+  const labelsBeforeFormatting = makeFormattedCategory(
+    categories[axisName],
+    options[axisType]?.date
+  );
   const labels = labelsBeforeFormatting.map((label, index) =>
     formatter(label, { index, labels: labelsBeforeFormatting, axisName: axisType })
   );
