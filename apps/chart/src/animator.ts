@@ -46,7 +46,7 @@ export default class Animator {
     onCompleted: Function;
     onFrame?: (delta: number) => void;
   }) {
-    if (this.anims.length) {
+    if (this.anims.length && !this.firstRendering) {
       this.reset();
     }
 

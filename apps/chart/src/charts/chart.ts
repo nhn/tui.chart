@@ -186,15 +186,20 @@ export default abstract class Chart<T extends Options> {
       }, 10)
     );
 
+    if (isAutoValue(options?.chart?.width) || isAutoValue(options?.chart?.height)) {
+      setTimeout(this.init, 0);
+    } else {
+      this.init();
+    }
+  }
+
+  private init = () => {
     this.initialize();
     this.store.observe(() => {
       this.painter.setup();
     });
-
-    if (isAutoValue(options?.chart?.width) || isAutoValue(options?.chart?.height)) {
-      this.setResizeEvent();
-    }
-  }
+    this.setResizeEvent();
+  };
 
   resizeChartSize(containerWidth?: number, containerHeight?: number) {
     this.animationControlFlag.resizing = true;
@@ -335,21 +340,16 @@ export default abstract class Chart<T extends Options> {
   }
 
   protected initStore() {
-    [
-      root,
-      optionsStore,
-      theme,
-      seriesData,
-      legend,
-      layout,
-      category,
-      ...this.modules,
-    ].forEach((module) => this.store.setModule(module));
+    this.store.setModule(root);
+    this.store.dispatch('initChartSize', this.el);
+
+    [optionsStore, theme, seriesData, legend, layout, category, ...this.modules].forEach((module) =>
+      this.store.setModule(module)
+    );
   }
 
   protected initialize() {
     this.initStore();
-    this.store.dispatch('initChartSize', this.el);
   }
 
   draw() {
