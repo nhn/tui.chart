@@ -49,7 +49,7 @@ type EventMaps = {
   [K in keyof EventNameMapping]?: EventListener;
 };
 
-type ChartProps<T> = Omit<T, 'el'> & EventMaps;
+type ChartProps<T> = Omit<T, 'el'> & EventMaps & { style?: object };
 
 export class LineChart extends Component<ChartProps<LineChartProps>> {
   public getInstance(): LineChartCtor;
