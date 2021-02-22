@@ -1,8 +1,7 @@
 import axes from '@src/store/axes';
-
 import Store from '@src/store/store';
 import { LineChartOptions, BarChartOptions, ColumnChartOptions } from '@t/options';
-import { ChartState, Scale, StateFunc, Options } from '@t/store/store';
+import { ChartState, Scale, StateFunc, Options, InitStoreState } from '@t/store/store';
 import { deepMergedCopy } from '@src/helpers/utils';
 import * as Calculator from '@src/helpers/calculator';
 
@@ -20,6 +19,11 @@ describe('Axes Store module', () => {
 
   describe('state', () => {
     it('could use with options', () => {
+      const data = [
+        { name: 'han', data: [1, 4] },
+        { name: 'cho', data: [5, 2] },
+      ];
+
       const state = {
         chart: { width: 120, height: 120 },
         layout: {
@@ -28,14 +32,7 @@ describe('Axes Store module', () => {
           xAxis: { x: 10, y: 10, width: 80, height: 10 },
         },
         scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
-        series: {
-          line: {
-            data: [
-              { name: 'han', data: [1, 4] },
-              { name: 'cho', data: [5, 2] },
-            ],
-          },
-        },
+        series: { line: { data } },
         axes: {
           xAxis: {},
           yAxis: {},
@@ -54,7 +51,9 @@ describe('Axes Store module', () => {
       jest.spyOn(Calculator, 'getTextWidth').mockReturnValue(11);
       jest.spyOn(Calculator, 'getTextHeight').mockReturnValue(11);
 
-      const store = { state } as Store<Options>;
+      const initStoreState = { series: { line: data } } as InitStoreState<LineChartOptions>;
+
+      const store = { state, initStoreState } as Store<Options>;
       axes.action!.setAxesData.call({ notify }, store);
 
       expect(state.axes).toEqual({
@@ -118,6 +117,11 @@ describe('Axes Store module', () => {
   });
 
   it('should be setAxesData with state values', () => {
+    const data = [
+      { name: 'han', data: [1, 4] },
+      { name: 'cho', data: [5, 2] },
+    ];
+
     const state = {
       chart: { width: 120, height: 120 },
       layout: {
@@ -126,14 +130,7 @@ describe('Axes Store module', () => {
         xAxis: { x: 10, y: 10, width: 80, height: 10 },
       },
       scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
-      series: {
-        line: {
-          data: [
-            { name: 'han', data: [1, 4] },
-            { name: 'cho', data: [5, 2] },
-          ],
-        },
-      },
+      series: { line: { data } },
       axes: {
         xAxis: {},
         yAxis: {},
@@ -146,7 +143,9 @@ describe('Axes Store module', () => {
       },
     } as ChartState<LineChartOptions>;
 
-    const store = { state } as Store<LineChartOptions>;
+    const initStoreState = { series: { line: data } } as InitStoreState<LineChartOptions>;
+
+    const store = { state, initStoreState } as Store<LineChartOptions>;
     axes.action!.setAxesData.call({ notify }, store);
 
     expect(state.axes).toEqual({
@@ -195,6 +194,11 @@ describe('Axes Store module', () => {
   });
 
   it('should be make properly datetime category label', () => {
+    const data = [
+      { name: 'han', data: [1, 4] },
+      { name: 'cho', data: [5, 2] },
+    ];
+
     const state = {
       chart: { width: 120, height: 120 },
       layout: {
@@ -203,14 +207,7 @@ describe('Axes Store module', () => {
         xAxis: { x: 10, y: 10, width: 80, height: 10 },
       },
       scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
-      series: {
-        line: {
-          data: [
-            { name: 'han', data: [1, 4] },
-            { name: 'cho', data: [5, 2] },
-          ],
-        },
-      },
+      series: { line: { data } },
       axes: {
         xAxis: {},
         yAxis: {},
@@ -229,7 +226,9 @@ describe('Axes Store module', () => {
       },
     } as ChartState<LineChartOptions>;
 
-    const store = { state } as Store<LineChartOptions>;
+    const initStoreState = { series: { line: data } } as InitStoreState<LineChartOptions>;
+
+    const store = { state, initStoreState } as Store<LineChartOptions>;
     axes.action!.setAxesData.call({ notify }, store);
 
     expect(state.axes.xAxis.labels).toEqual(['20-08-08', '20-08-09']);
@@ -259,6 +258,12 @@ describe('x Axis stepSize is auto', () => {
     'sssssss',
     'ttttttt',
   ];
+
+  const data = [
+    { name: 'han', data: [1, 4] },
+    { name: 'cho', data: [5, 2] },
+  ];
+
   const state = {
     chart: { width: 520, height: 120 },
     layout: {
@@ -267,14 +272,7 @@ describe('x Axis stepSize is auto', () => {
       xAxis: { x: 10, y: 10, width: 480, height: 10 },
     },
     scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
-    series: {
-      line: {
-        data: [
-          { name: 'han', data: [1, 4] },
-          { name: 'cho', data: [5, 2] },
-        ],
-      },
-    },
+    series: { line: { data } },
     axes: {
       xAxis: {},
       yAxis: {},
@@ -291,7 +289,8 @@ describe('x Axis stepSize is auto', () => {
   } as ChartState<Options>;
 
   it('should automatically adjusts the interval according to the width', () => {
-    const store = { state } as Store<Options>;
+    const initStoreState = { series: { line: data } } as InitStoreState<LineChartOptions>;
+    const store = { state, initStoreState } as Store<Options>;
     jest.spyOn(Calculator, 'getTextWidth').mockReturnValue(49);
     axes.action!.setAxesData.call({ notify }, store);
 
@@ -299,8 +298,9 @@ describe('x Axis stepSize is auto', () => {
   });
 
   it('should ignore auto options when the interval attribute is exist', () => {
+    const initStoreState = { series: { line: data } } as InitStoreState<LineChartOptions>;
     const changedState = deepMergedCopy(state, { options: { xAxis: { label: { interval: 3 } } } });
-    const store = { state: changedState } as Store<Options>;
+    const store = { state: changedState, initStoreState } as Store<Options>;
     axes.action!.setAxesData.call({ notify }, store);
 
     expect(store.state.axes.xAxis).toMatchObject({ tickInterval: 1, labelInterval: 3 });
@@ -309,6 +309,11 @@ describe('x Axis stepSize is auto', () => {
 
 describe('pointOnColumn state is properly created', () => {
   it('[bar chart] xAxis.pointOnColumn: false, yAxis.pointOnColumn: true', () => {
+    const data = [
+      { name: 'han', data: [1, 4] },
+      { name: 'cho', data: [5, 2] },
+    ];
+
     const state = {
       chart: { width: 120, height: 120 },
       layout: {
@@ -317,14 +322,7 @@ describe('pointOnColumn state is properly created', () => {
         xAxis: { x: 10, y: 10, width: 80, height: 10 },
       },
       scale: { xAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
-      series: {
-        bar: {
-          data: [
-            { name: 'han', data: [1, 4] },
-            { name: 'cho', data: [5, 2] },
-          ],
-        },
-      },
+      series: { bar: { data } },
       axes: {
         xAxis: {},
         yAxis: {},
@@ -337,7 +335,8 @@ describe('pointOnColumn state is properly created', () => {
       },
     } as ChartState<BarChartOptions>;
 
-    const store = { state } as Store<BarChartOptions>;
+    const initStoreState = { series: { bar: data } } as InitStoreState<BarChartOptions>;
+    const store = { state, initStoreState } as Store<BarChartOptions>;
     axes.action!.setAxesData.call({ notify }, store);
 
     expect(store.state.axes).toMatchObject({
@@ -347,6 +346,11 @@ describe('pointOnColumn state is properly created', () => {
   });
 
   it('[column chart] xAxis.pointOnColumn: true, yAxis.pointOnColumn: false', () => {
+    const data = [
+      { name: 'han', data: [1, 4] },
+      { name: 'cho', data: [5, 2] },
+    ];
+
     const state = {
       chart: { width: 120, height: 120 },
       layout: {
@@ -355,15 +359,7 @@ describe('pointOnColumn state is properly created', () => {
         xAxis: { x: 10, y: 10, width: 80, height: 10 },
       },
       scale: { yAxis: { limit: { min: 0, max: 5 }, stepSize: 1, stepCount: 1 } } as Scale,
-
-      series: {
-        column: {
-          data: [
-            { name: 'han', data: [1, 4] },
-            { name: 'cho', data: [5, 2] },
-          ],
-        },
-      },
+      series: { column: { data } },
       axes: {
         xAxis: {},
         yAxis: {},
@@ -376,7 +372,8 @@ describe('pointOnColumn state is properly created', () => {
       },
     } as ChartState<ColumnChartOptions>;
 
-    const store = { state } as Store<ColumnChartOptions>;
+    const initStoreState = { series: { line: data } } as InitStoreState<BarChartOptions>;
+    const store = { state, initStoreState } as Store<ColumnChartOptions>;
     axes.action!.setAxesData.call({ notify }, store);
 
     expect(store.state.axes).toMatchObject({

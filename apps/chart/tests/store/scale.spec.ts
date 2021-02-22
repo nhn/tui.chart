@@ -1,7 +1,7 @@
 import scale from '@src/store/scale';
 import Store from '@src/store/store';
 import { BarChartOptions, RadarChartOptions, RadialBarChartOptions } from '@t/options';
-import { ChartState, DataRange } from '@t/store/store';
+import { ChartState, DataRange, InitStoreState } from '@t/store/store';
 
 const data = [
   { name: 'han', data: [1, 2, 3] },
@@ -18,7 +18,9 @@ describe('Scale Store', () => {
       dataRange: { xAxis: { min: 1, max: 6 } } as DataRange,
     } as ChartState<BarChartOptions>;
 
-    const store = { state } as Store<BarChartOptions>;
+    const initStoreState = { series: { bar: data } } as InitStoreState<BarChartOptions>;
+
+    const store = { state, initStoreState } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
@@ -42,7 +44,9 @@ describe('Scale Store', () => {
       dataRange: { xAxis: { min: 1, max: 6 } } as DataRange,
     } as ChartState<BarChartOptions>;
 
-    const store = { state } as Store<BarChartOptions>;
+    const initStoreState = { series: { bar: data } } as InitStoreState<BarChartOptions>;
+
+    const store = { state, initStoreState } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
@@ -60,7 +64,9 @@ describe('Scale Store', () => {
       options: { xAxis: { scale: { min: -5 } } },
     } as ChartState<BarChartOptions>;
 
-    const store = { state } as Store<BarChartOptions>;
+    const initStoreState = { series: { bar: data } } as InitStoreState<BarChartOptions>;
+
+    const store = { state, initStoreState } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
@@ -78,7 +84,9 @@ describe('Scale Store', () => {
       options: { xAxis: { scale: { max: 10 } } },
     } as ChartState<BarChartOptions>;
 
-    const store = { state } as Store<BarChartOptions>;
+    const initStoreState = { series: { bar: data } } as InitStoreState<BarChartOptions>;
+
+    const store = { state, initStoreState } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
@@ -96,7 +104,9 @@ describe('Scale Store', () => {
       options: { xAxis: { scale: { stepSize: 5 } } },
     } as ChartState<BarChartOptions>;
 
-    const store = { state } as Store<BarChartOptions>;
+    const initStoreState = { series: { bar: data } } as InitStoreState<BarChartOptions>;
+
+    const store = { state, initStoreState } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
@@ -114,7 +124,9 @@ describe('Scale Store', () => {
       options: { verticalAxis: { scale: { stepSize: 5 } } },
     } as ChartState<RadarChartOptions>;
 
-    const store = { state } as Store<BarChartOptions>;
+    const initStoreState = { series: { bar: data } } as InitStoreState<BarChartOptions>;
+
+    const store = { state, initStoreState } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
@@ -132,7 +144,9 @@ describe('Scale Store', () => {
       options: { circularAxis: { scale: { stepSize: 5 } } },
     } as ChartState<RadialBarChartOptions>;
 
-    const store = { state } as Store<BarChartOptions>;
+    const initStoreState = { series: { bar: data } } as InitStoreState<BarChartOptions>;
+
+    const store = { state, initStoreState } as Store<BarChartOptions>;
     scale.action!.setScale(store);
 
     expect(state.scale).toEqual({
