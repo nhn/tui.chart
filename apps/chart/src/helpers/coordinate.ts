@@ -1,6 +1,6 @@
 import { CoordinateDataType, Point, Rect } from '@t/options';
 import { getFirstValidValue, isNumber, isObject, last } from '@src/helpers/utils';
-import { Series } from '@t/store/store';
+import { RawSeries, Series } from '@t/store/store';
 
 export function getCoordinateYValue(datum: number | CoordinateDataType) {
   if (isNumber(datum)) {
@@ -44,17 +44,17 @@ export function getCoordinateDataIndex(
   return index;
 }
 
-function isLineCoordinateSeries(series: Series) {
-  if (!series.line || !series.line.data.length) {
+function isLineCoordinateSeries(series: Series | RawSeries) {
+  if (!series.line) {
     return false;
   }
 
-  const firstData = getFirstValidValue(series.line.data[0].data);
+  const firstData = getFirstValidValue(series.line[0].data);
 
   return firstData && (Array.isArray(firstData) || isObject(firstData));
 }
 
-export function isCoordinateSeries(series: Series): boolean {
+export function isCoordinateSeries(series: Series | RawSeries): boolean {
   return isLineCoordinateSeries(series) || !!series.scatter || !!series.bubble;
 }
 

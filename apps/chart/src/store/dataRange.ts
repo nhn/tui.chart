@@ -112,10 +112,11 @@ const dataRange: StoreModule = {
     dataRange: {} as DataRange,
   }),
   action: {
-    setDataRange({ state }) {
+    setDataRange({ state, initStoreState }) {
       const { series, disabledSeries, stackSeries, categories, options } = state;
       const seriesDataRange = {} as SeriesDataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
+      const isCoordinateTypeChart = isCoordinateSeries(initStoreState.series);
 
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
       const hasDateValue = !!options.xAxis?.date;
@@ -132,7 +133,7 @@ const dataRange: StoreModule = {
 
         const firstExistValue = getFirstValidValue(values);
 
-        if (isCoordinateSeries(series)) {
+        if (isCoordinateTypeChart) {
           values = values
             .filter((value) => !isNull(value))
             .map((value) => getCoordinateYValue(value));
