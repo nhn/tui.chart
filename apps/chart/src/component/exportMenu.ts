@@ -45,9 +45,9 @@ export default class ExportMenu extends Component {
 
     if (this.opened) {
       this.applyPanelWrapperStyle();
-      this.chartEl.appendChild(this.exportMenuEl);
+      document.body.appendChild(this.exportMenuEl);
     } else {
-      this.chartEl.removeChild(this.exportMenuEl);
+      document.body.removeChild(this.exportMenuEl);
     }
   };
 

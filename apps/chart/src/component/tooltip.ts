@@ -10,7 +10,7 @@ import {
 } from '@t/components/tooltip';
 import { getScrollPosition, getValueString } from '@src/helpers/tooltip';
 import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
-import { isBoolean, isNumber, isString, isUndefined } from '@src/helpers/utils';
+import { isBoolean, isNumber, isString } from '@src/helpers/utils';
 import { SeriesDataType, TooltipTemplateFunc, TooltipFormatter } from '@t/options';
 import { TooltipTheme } from '@t/theme';
 import { getTranslateString } from '@src/helpers/style';
@@ -169,7 +169,7 @@ export default class Tooltip extends Component {
       top + height / 2
     );
 
-    this.chartEl.appendChild(this.tooltipContainerEl);
+    document.body.appendChild(this.tooltipContainerEl);
 
     this.eventBus.on('seriesPointHovered', this.onSeriesPointHovered);
   }
