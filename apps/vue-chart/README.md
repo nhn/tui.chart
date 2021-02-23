@@ -27,7 +27,7 @@ Vue Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statistic
 ```js
 var options = {
   //...
-  usageStatistics: false
+  usageStatistics: false,
 };
 ```
 
@@ -248,7 +248,7 @@ This prop is for [options of TOAST UI chart](https://nhn.github.io/tui.chart/lat
 | ------ | -------- |
 | Object | X        |
 
-This prop is for chart container style and used for initialize TOAST UI chart.
+This prop is for chart container style and used for initialize TOAST UI chart. To use [responsive layout](https://github.com/nhn/tui.chart/blob/main/docs/en/common-responsive-options.md), the width or height of the container must be specified as a value such as "%" or "vh", "vw".
 
 ```html
 <template>
