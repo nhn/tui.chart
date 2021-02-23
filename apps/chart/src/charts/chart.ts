@@ -187,7 +187,9 @@ export default abstract class Chart<T extends Options> {
     );
 
     if (isAutoValue(options?.chart?.width) || isAutoValue(options?.chart?.height)) {
-      setTimeout(this.init, 0);
+      // If auto layout is used, the initial size of the chart container must be set.
+      // Set the size at which the chart can be drawn normally.
+      setTimeout(this.init);
     } else {
       this.init();
     }
@@ -339,17 +341,13 @@ export default abstract class Chart<T extends Options> {
     }
   }
 
-  protected initStore() {
+  protected initialize() {
     this.store.setModule(root);
     this.store.dispatch('initChartSize', this.el);
 
     [optionsStore, theme, seriesData, legend, layout, category, ...this.modules].forEach((module) =>
       this.store.setModule(module)
     );
-  }
-
-  protected initialize() {
-    this.initStore();
   }
 
   draw() {
