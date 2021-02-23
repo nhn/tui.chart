@@ -35,6 +35,12 @@ export default class Painter {
     this.chart = chart;
   }
 
+  showUnsupportedCanvasFeatureError() {
+    if (!this.ctx.setLineDash) {
+      console.warn(message.DASH_SEGMENTS_UNAVAILABLE_ERROR);
+    }
+  }
+
   setup() {
     const { height, width } = this.chart.store.state.chart;
 
@@ -60,6 +66,7 @@ export default class Painter {
     }
 
     this.setSize(width, height);
+    this.showUnsupportedCanvasFeatureError();
   }
 
   setSize(width: number, height: number) {

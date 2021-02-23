@@ -36,8 +36,6 @@ export function getFont(theme: BubbleDataLabel | BoxDataLabel) {
 export function setLineDash(ctx: CanvasRenderingContext2D, dashSegments: number[]) {
   if (ctx.setLineDash) {
     ctx.setLineDash(dashSegments);
-  } else {
-    console.error(message.DASH_SEGMENTS_UNAVAILABLE_ERROR);
   }
 }
 
