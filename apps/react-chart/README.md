@@ -27,7 +27,7 @@ React Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statist
 ```js
 const options = {
   //...
-  usageStatistics: false,
+  usageStatistics: false
 };
 ```
 
@@ -115,13 +115,19 @@ const options = {
   },
 };
 
-const MyComponent = () => <BarChart data={data} options={options} />;
+const containerStyle = {
+  width: '600px',
+  height: '600px'
+}
+
+const MyComponent = () => <BarChart data={data} options={options} style={containerStyle} />;
 ```
 
-| Name    | Type   | Required | Description                                                                                     |
-| ------- | ------ | -------- | ----------------------------------------------------------------------------------------------- |
-| data    | Object | O        | This prop is for data of the chart. When you change data, chart is rendering for changing data. |
-| options | Object | X        | This prop is for options of TOAST UI chart. You can set the configuration of the chart.         |
+| Name    | Type   | Required | Description                                                                                       |
+| ------- | ------ | -------- | ------------------------------------------------------------------------------------------------- |
+| data    | Object | O        | This prop is for data of the chart. When you change data, chart is rendering for changing data.   |
+| options | Object | X        | This prop is for options of TOAST UI chart. You can set the configuration of the chart.           |
+| style   | Object | X        | This prop is for container style of TOAST UI chart. You can set the style of the chart container. |
 
 ### Instance Methods
 

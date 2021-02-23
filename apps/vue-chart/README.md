@@ -28,7 +28,7 @@ Vue Wrapper of TOAST UI Chart applies Google Analytics (GA) to collect statistic
 var options = {
   //...
   usageStatistics: false
-}
+};
 ```
 
 ## 💾 Install
@@ -127,9 +127,10 @@ export default {
   },
 };
 ```
+
 ### Props
 
-You can use `data`, `options` props for initialize TOAST UI chart.
+You can use `data`, `options`, `style` props for initialize TOAST UI chart.
 
 #### data
 
@@ -234,6 +235,49 @@ This prop is for [options of TOAST UI chart](https://nhn.github.io/tui.chart/lat
             showDot: false,
             zoomable: true,
           },
+        },
+      };
+    },
+  };
+</script>
+```
+
+#### style
+
+| Type   | Required |
+| ------ | -------- |
+| Object | X        |
+
+This prop is for chart container style and used for initialize TOAST UI chart.
+
+```html
+<template>
+  <line-chart
+    :data="chartProps.data"
+    :options="chartProps.options"
+    :style="chartProps.containerStyle"
+  />
+</template>
+<script>
+  import '@toast-ui/chart/dist/toastui-chart.min.css';
+  import { lineChart } from '@toast-ui/vue-chart';
+
+  export default {
+    name: 'LineChart',
+    components: {
+      'line-chart': lineChart,
+    },
+    created() {
+      this.chartProps = {
+        data: {
+          // ...
+        },
+        options: {
+          // ...
+        },
+        containerStyle: {
+          width: '60vw',
+          height: '70vh',
         },
       };
     },
