@@ -112,7 +112,7 @@ const dataRange: StoreModule = {
     dataRange: {} as DataRange,
   }),
   action: {
-    setDataRange({ state }) {
+    setDataRange({ state, initStoreState }) {
       const { series, disabledSeries, stackSeries, categories, options } = state;
       const seriesDataRange = {} as SeriesDataRange;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
@@ -132,7 +132,7 @@ const dataRange: StoreModule = {
 
         const firstExistValue = getFirstValidValue(values);
 
-        if (isCoordinateSeries(series)) {
+        if (isCoordinateSeries(initStoreState.series)) {
           values = values
             .filter((value) => !isNull(value))
             .map((value) => getCoordinateYValue(value));

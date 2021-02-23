@@ -22,7 +22,6 @@ import {
   isLabelAxisOnYAxis,
   isPointOnColumn,
   getYAxisOption,
-  getAutoAdjustingInterval,
   getAxisTheme,
   getViewAxisLabels,
   hasAxesLayoutChanged,
@@ -44,7 +43,6 @@ import {
   RangeDataType,
   Rect,
   LineTypeSeriesOptions,
-  RadarChartOptions,
 } from '@t/options';
 import { deepMergedCopy, hasNegativeOnly, isNumber, pickProperty } from '@src/helpers/utils';
 import { isZooming } from '@src/helpers/range';
@@ -151,6 +149,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     !isZooming(rawCategories, zoomRange) && isCoordinateTypeChart
       ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
       : makeFormattedCategory(categories, options?.xAxis?.date);
+
   const formatter = getAxisFormatter(options, axisName);
   // @TODO: regenerate label when exceeding max width
   const labels = labelsBeforeFormatting.map((label, index) =>
@@ -386,10 +385,11 @@ const axes: StoreModule = {
     };
   },
   action: {
-    setAxesData({ state }) {
+    setAxesData({ state, initStoreState }) {
       const { scale, options, series, layout, zoomRange, theme } = state;
       const { xAxis, yAxis, plot } = layout;
 
+      const isCoordinateTypeChart = isCoordinateSeries(initStoreState.series);
       const labelOnYAxis = isLabelAxisOnYAxis(series, options);
       const { categories, rawCategories } = getCategoriesWithTypes(
         state.categories,
@@ -401,7 +401,6 @@ const axes: StoreModule = {
         series
       );
       const hasCenterYAxis = state.axes.centerYAxis;
-      const isCoordinateTypeChart = isCoordinateSeries(series);
 
       const initialAxisData = getInitialAxisData(
         options,

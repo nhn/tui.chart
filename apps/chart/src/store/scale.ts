@@ -63,7 +63,8 @@ function getValueScaleData(
   state: ChartState<Options>,
   labelAxisOnYAxis: boolean,
   scaleOptions: ScaleOptions,
-  valueAxisName: string
+  valueAxisName: string,
+  isCoordinateTypeChart: boolean
 ) {
   const { dataRange, layout, series, stackSeries } = state;
   const { valueSizeKey } = getSizeKey(labelAxisOnYAxis);
@@ -73,7 +74,7 @@ function getValueScaleData(
     Object.keys(series).forEach((seriesName) => {
       result = getStackScaleData(stackSeries[seriesName].scaleType);
     });
-  } else if (isCoordinateSeries(series)) {
+  } else if (isCoordinateTypeChart) {
     const valueOptions = {
       dataRange: dataRange[valueAxisName],
       offsetSize: layout.plot[valueSizeKey],
@@ -98,7 +99,7 @@ const scale: StoreModule = {
     scale: {} as Scale,
   }),
   action: {
-    setScale({ state }) {
+    setScale({ state, initStoreState }) {
       const { series, options } = state;
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
@@ -115,11 +116,19 @@ const scale: StoreModule = {
         scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
       }
 
+      const isCoordinateTypeChart = isCoordinateSeries(initStoreState.series);
+
       getValueAxisNames(options, valueAxisName).forEach((axisName) => {
-        scaleData[axisName] = getValueScaleData(state, labelAxisOnYAxis, scaleOptions, axisName);
+        scaleData[axisName] = getValueScaleData(
+          state,
+          labelAxisOnYAxis,
+          scaleOptions,
+          axisName,
+          isCoordinateTypeChart
+        );
       });
 
-      if (isCoordinateSeries(series)) {
+      if (isCoordinateTypeChart) {
         scaleData[labelAxisName] = getLabelScaleData(
           state,
           labelAxisOnYAxis,
