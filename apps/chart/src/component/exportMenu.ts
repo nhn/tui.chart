@@ -8,7 +8,6 @@ import { isString } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
 import { ExportMenuTheme, ExportMenuButtonTheme, FontTheme, ExportMenuPanelTheme } from '@t/theme';
 import { getFontStyleString, getTranslateString } from '@src/helpers/style';
-import { getScrollPosition } from '@src/helpers/tooltip';
 
 const EXPORT_MENU_WIDTH = 140;
 export const BUTTON_RECT_SIZE = 24;
@@ -45,9 +44,9 @@ export default class ExportMenu extends Component {
 
     if (this.opened) {
       this.applyPanelWrapperStyle();
-      document.body.appendChild(this.exportMenuEl);
+      this.chartEl.appendChild(this.exportMenuEl);
     } else {
-      document.body.removeChild(this.exportMenuEl);
+      this.chartEl.removeChild(this.exportMenuEl);
     }
   };
 
@@ -159,10 +158,8 @@ export default class ExportMenu extends Component {
 
   applyPanelWrapperStyle() {
     const exportMenu = this.exportMenuEl.querySelector('.toastui-chart-export-menu')!;
-    const { top, left } = this.chartEl.getBoundingClientRect();
-    const { scrollX, scrollY } = getScrollPosition();
-    const x = left + this.chartWidth - EXPORT_MENU_WIDTH - padding.X + scrollX;
-    const y = top + padding.Y + BUTTON_RECT_SIZE + 5 + scrollY;
+    const x = this.chartWidth - EXPORT_MENU_WIDTH - padding.X;
+    const y = padding.Y + BUTTON_RECT_SIZE + 5;
     const { borderRadius, borderWidth, borderColor } = this.theme.panel;
 
     const style = `
