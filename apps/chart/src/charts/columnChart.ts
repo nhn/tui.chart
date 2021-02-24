@@ -28,7 +28,13 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 
-import { ColumnChartOptions, BoxSeriesData, BoxSeriesDataType, BoxSeriesInput } from '@t/options';
+import {
+  ColumnChartOptions,
+  BoxSeriesData,
+  BoxSeriesDataType,
+  BoxSeriesInput,
+  BoxSeriesType,
+} from '@t/options';
 
 export interface ColumnChartProps {
   el: HTMLElement;
@@ -119,7 +125,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
       el,
       options,
       series: {
-        column: data.series,
+        column: data.series as BoxSeriesType<BoxSeriesDataType>[],
       },
       categories: data.categories,
       modules: [stackSeriesData, dataRange, scale, axes, plot],

@@ -144,13 +144,13 @@ export const positiveAndNegativeWithMinMax = () => {
 };
 
 export const range = () => {
-  const { el } = createChart(temperatureRangeData);
+  const { el } = createChart(temperatureRangeData as BoxSeriesData);
 
   return el;
 };
 
 export const rangeWithMinMax = () => {
-  const { el } = createChart(temperatureRangeData, {
+  const { el } = createChart(temperatureRangeData as BoxSeriesData, {
     yAxis: {
       scale: {
         min: -4,
@@ -163,7 +163,7 @@ export const rangeWithMinMax = () => {
 };
 
 export const rangeWithDataLabels = () => {
-  const { el } = createChart(temperatureRangeData, {
+  const { el } = createChart(temperatureRangeData as BoxSeriesData, {
     series: { dataLabels: { visible: true } },
   });
 
