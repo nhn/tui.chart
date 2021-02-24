@@ -187,7 +187,7 @@ export const responsive = () => {
         height: 'auto',
       },
       responsive: {
-        animation: { duration: 0 },
+        animation: { duration: 300 },
         rules: [
           {
             condition: ({ width: w }) => {
