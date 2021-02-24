@@ -4,6 +4,7 @@ import { populationDensityData, usedDiskSpaceData, usedDiskSpaceDataWithNull } f
 import { withKnobs } from '@storybook/addon-knobs';
 import TreemapChart from '@src/charts/treemapChart';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|Treemap',
@@ -27,8 +28,8 @@ function createChart(data: TreemapSeriesData, customOptions: TreemapChartOptions
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new TreemapChart({ el, data, options });
 
@@ -158,11 +159,13 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(usedDiskSpaceData, {
-    chart: { title: 'Used disk space', width: 700, height: 'auto' },
+  return createResponsiveChart(TreemapChart, usedDiskSpaceData, {
+    chart: {
+      title: 'Used disk space',
+      width: 'auto',
+      height: 'auto',
+    },
   });
-
-  return el;
 };
 
 export const theme = () => {

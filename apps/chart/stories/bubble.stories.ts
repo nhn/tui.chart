@@ -7,6 +7,7 @@ import {
 } from './data';
 import BubbleChart from '@src/charts/bubbleChart';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|Bubble',
@@ -35,8 +36,8 @@ function createChart(data: BubbleSeriesData, customOptions: BubbleChartOptions =
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new BubbleChart({ el, data, options });
 
@@ -70,13 +71,13 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(lifeExpectancyPerGDPData, {
+  return createResponsiveChart(BubbleChart, lifeExpectancyPerGDPData, {
     chart: { title: 'Life Expectancy per GDP', width: 'auto', height: 'auto' },
     xAxis: { title: 'GDP' },
     yAxis: { title: 'Expectancy' },
     series: { selectable: true },
     responsive: {
-      animation: { duration: 100 },
+      animation: { duration: 1000 },
       rules: [
         {
           condition: function ({ width: w }) {
@@ -111,8 +112,6 @@ export const responsive = () => {
       ],
     },
   });
-
-  return el;
 };
 
 export const theme = () => {

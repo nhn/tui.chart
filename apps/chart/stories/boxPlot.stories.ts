@@ -4,6 +4,7 @@ import { BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|BoxPlot',
@@ -23,8 +24,8 @@ function createChart(data: BoxPlotSeriesData, customOptions: BoxPlotChartOptions
     customOptions || {}
   );
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new BoxPlotChart({ el, data, options });
 
@@ -69,11 +70,14 @@ export const eventDetectType = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetDataForBoxPlot, {
-    chart: { title: 'Monthly Revenue', width: 700, height: 'auto' },
+  return createResponsiveChart(BoxPlotChart, budgetDataForBoxPlot, {
+    chart: {
+      title: 'Monthly Revenue',
+      width: 'auto',
+      height: 'auto',
+      animation: { duration: 1000 },
+    },
   });
-
-  return el;
 };
 
 export const theme = () => {

@@ -5,6 +5,7 @@ import { withKnobs } from '@storybook/addon-knobs';
 import LineAreaChart from '@src/charts/lineAreaChart';
 import { LineAreaChartThemeOptions } from '@t/theme';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|LineArea',
@@ -37,8 +38,8 @@ function createChart(data: LineAreaData, customOptions: LineAreaChartOptions = {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new LineAreaChart({ el, data, options });
 
@@ -97,8 +98,8 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(energyUsageData, {
-    chart: { title: 'Energy Usage', width: 800, height: 'auto' },
+  return createResponsiveChart(LineAreaChart, energyUsageData, {
+    chart: { title: 'Energy Usage', width: 'auto', height: 'auto', animation: { duration: 1000 } },
     yAxis: [
       {
         title: 'Energy (kWh)',
@@ -112,8 +113,6 @@ export const responsive = () => {
       date: { format: 'yy/MM' },
     },
   });
-
-  return el;
 };
 
 export const theme = () => {

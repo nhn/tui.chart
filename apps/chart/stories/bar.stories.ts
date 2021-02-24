@@ -11,6 +11,7 @@ import { BarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.Bar.General',
@@ -31,8 +32,8 @@ function createChart(data, customOptions: Record<string, any> = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new BarChart({
     el,
@@ -213,8 +214,13 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue', width: 700, height: 'auto' },
+  return createResponsiveChart(BarChart, budgetData, {
+    chart: {
+      title: 'Monthly Revenue',
+      width: 'auto',
+      height: 'auto',
+      animation: { duration: 1000 },
+    },
     responsive: {
       animation: { duration: 300 },
       rules: [
@@ -244,8 +250,6 @@ export const responsive = () => {
       ],
     },
   });
-
-  return el;
 };
 
 export const theme = () => {

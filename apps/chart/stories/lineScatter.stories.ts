@@ -4,6 +4,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { efficiencyAndExpensesData } from './data';
 import { withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|LineScatter',
@@ -26,8 +27,8 @@ function createChart(data: LineScatterData, customOptions: LineScatterChartOptio
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new LineScatterChart({ el, data, options });
 
@@ -71,10 +72,13 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(efficiencyAndExpensesData, {
-    chart: { title: 'Efficiency vs Expenses', width: 800, height: 'auto' },
+  return createResponsiveChart(LineScatterChart, efficiencyAndExpensesData, {
+    chart: {
+      title: 'Efficiency vs Expenses',
+      width: 'auto',
+      height: 'auto',
+      animation: { duration: 1000 },
+    },
     yAxis: [{ title: 'Efficiency' }, { title: 'Expenses' }],
   });
-
-  return el;
 };

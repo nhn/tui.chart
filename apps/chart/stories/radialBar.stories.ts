@@ -4,6 +4,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import '@src/css/chart.css';
 import { RadialBarChartOptions, RadialBarSeriesData } from '@t/options';
 import { withKnobs, radios, boolean, number } from '@storybook/addon-knobs';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.RadialBar',
@@ -23,8 +24,8 @@ function createChart(data: RadialBarSeriesData, customOptions: Record<string, an
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new RadialBarChart({
     el,
@@ -176,10 +177,16 @@ export const angleRangeWithTheme = () => {
   return el;
 };
 
-export const reponsive = () => {
-  const { el } = createChart(olympicMedalData, {
-    chart: { width: 'auto', height: 'auto' },
+export const responsive = () => {
+  return createResponsiveChart(RadialBarChart, olympicMedalData, {
+    chart: {
+      title: 'Winter Olympic medals per existing country (TOP 5)',
+      width: 'auto',
+      height: 'auto',
+      animation: { duration: 1000 },
+    },
     responsive: {
+      animation: { duration: 0 },
       rules: [
         {
           condition: ({ width: w }) => {
@@ -192,8 +199,6 @@ export const reponsive = () => {
       ],
     },
   });
-
-  return el;
 };
 
 export const selectable = () => {

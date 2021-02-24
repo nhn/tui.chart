@@ -3,6 +3,7 @@ import { ColumnLineChartOptions } from '@t/options';
 import { deepMergedCopy, range } from '@src/helpers/utils';
 import { temperatureAverageData } from './data';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.ColumnLine',
@@ -22,8 +23,8 @@ function createChart(data, customOptions: ColumnLineChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new ColumnLineChart({
     el,
@@ -147,17 +148,16 @@ export const secondaryYAxis = () => {
   return el;
 };
 export const responsive = () => {
-  const { el } = createChart(temperatureAverageData, {
+  return createResponsiveChart(ColumnLineChart, temperatureAverageData, {
     chart: {
       title: '24-hr Average Temperature',
-      width: 800,
+      width: 'auto',
       height: 'auto',
+      animation: { duration: 1000 },
     },
     yAxis: [{ title: 'Temperature (Celsius)' }, { title: 'Average' }],
     xAxis: { title: 'Month' },
   });
-
-  return el;
 };
 
 export const theme = () => {

@@ -12,6 +12,7 @@ import {
 } from './data';
 import { boolean, number, radios, withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|Line',
@@ -37,8 +38,8 @@ function createChart(data: LineSeriesData, customOptions: LineChartOptions = {})
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new LineChart({ el, data, options });
 
@@ -325,11 +326,14 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(temperatureData, {
-    chart: { title: '24-hr Average Temperature', width: 'auto', height: 'auto' },
+  return createResponsiveChart(LineChart, temperatureData, {
+    chart: {
+      title: '24-hr Average Temperature',
+      width: 'auto',
+      height: 'auto',
+      animation: { duration: 1000 },
+    },
   });
-
-  return el;
 };
 
 export const theme = () => {

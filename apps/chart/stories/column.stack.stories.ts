@@ -4,6 +4,7 @@ import { ColumnChartOptions } from '@t/options';
 import { deepMergedCopy, range as rangeUtil } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.Column.Stack',
@@ -339,4 +340,18 @@ export const dataLabelsWithTheme = () => {
   });
 
   return el;
+};
+
+export const responsive = () => {
+  return createResponsiveChart(ColumnChart, budgetData, {
+    chart: {
+      title: 'Monthly Revenue',
+      width: 'auto',
+      height: 'auto',
+      animation: { duration: 1000 },
+    },
+    series: {
+      stack: true,
+    },
+  });
 };

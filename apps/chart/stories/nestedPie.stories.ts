@@ -9,6 +9,7 @@ import {
 import NestedPieChart from '@src/charts/nestedPieChart';
 import { NestedPieChartThemeOptions } from '@t/theme';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|Nested Pie',
@@ -27,8 +28,8 @@ function createChart(data: NestedPieSeriesData, customOptions: NestedPieChartOpt
     customOptions || {}
   );
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new NestedPieChart({ el, data, options });
 
@@ -182,15 +183,14 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(groupedBrowserUsageData, {
+  return createResponsiveChart(NestedPieChart, groupedBrowserUsageData, {
     chart: {
       title: 'Usage share of web browsers',
       width: 'auto',
       height: 'auto',
+      animation: { duration: 1000 },
     },
   });
-
-  return el;
 };
 
 export const theme = () => {

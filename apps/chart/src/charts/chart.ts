@@ -262,7 +262,7 @@ export default abstract class Chart<T extends Options> {
       this.resizeObserver = new ResizeObserver((entries) => {
         entries.forEach((entry) => {
           const { width, height } = entry.contentRect;
-          this.debounceResizeEvent(width, height);
+          this.debounceResizeEvent(Math.round(width), Math.round(height));
         });
       });
       this.resizeObserver.observe(this.containerEl);

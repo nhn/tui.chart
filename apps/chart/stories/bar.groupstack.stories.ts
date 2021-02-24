@@ -5,6 +5,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.Bar.Group Stack',
@@ -170,4 +171,18 @@ export const theme = () => {
   });
 
   return el;
+};
+
+export const responsive = () => {
+  return createResponsiveChart(BarChart, genderAgeGroupData, {
+    chart: {
+      title: 'Population Distribution',
+      width: 'auto',
+      height: 'auto',
+      animation: { duration: 1000 },
+    },
+    series: {
+      stack: true,
+    },
+  });
 };
