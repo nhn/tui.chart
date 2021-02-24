@@ -303,7 +303,6 @@ export const responsive = () => {
       title: 'Average Temperature',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 3000 },
     },
     responsive: {
       animation: { duration: 300 },

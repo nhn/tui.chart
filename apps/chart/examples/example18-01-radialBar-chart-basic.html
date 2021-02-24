@@ -56,7 +56,13 @@
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="../dist/toastui-chart.js"></script>
     <script class="code-js" id="code-js" type="text/babel">
-      const el = document.getElementById('chart-area');
+      //const el = document.getElementById('chart-area');
+      const el = document.createElement('div');
+      el.style.width = '90vw';
+      el.style.height = '90vh';
+      document.getElementById('code-html').appendChild(el);
+
+
       const data = {
         categories: ['Korea', 'United States', 'Germany', 'Canada', 'Austria'],
         series: [
@@ -75,10 +81,13 @@
         ],
       };
       const options = {
-        chart: { title: 'Winter Olympic medals per existing country (TOP 5)', width: 700, height: 700 },
+        chart: { title: 'Winter Olympic medals per existing country (TOP 5)', width: 'auto', height: 'auto', animation: {duration: 10000} },
       };
 
-      const chart = toastui.Chart.radialBarChart({ el, data, options });
+      setTimeout(() => {
+        const chart = toastui.Chart.radialBarChart({ el, data, options });
+      });
+
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>

@@ -183,7 +183,6 @@ export const responsive = () => {
       title: 'Winter Olympic medals per existing country (TOP 5)',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
     responsive: {
       animation: { duration: 0 },

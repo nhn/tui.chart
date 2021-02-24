@@ -113,7 +113,6 @@ export const responsive = () => {
       title: 'Annual Incomes',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
   });
 };

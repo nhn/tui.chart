@@ -348,7 +348,6 @@ export const responsive = () => {
       title: 'Monthly Revenue',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
     series: {
       stack: true,

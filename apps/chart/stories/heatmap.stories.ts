@@ -140,7 +140,6 @@ export const responsive = () => {
       title: '24-hr Average Temperature',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
     legend: { align: 'right' },
   });

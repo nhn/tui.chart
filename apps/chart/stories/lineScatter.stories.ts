@@ -77,7 +77,6 @@ export const responsive = () => {
       title: 'Efficiency vs Expenses',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
     yAxis: [{ title: 'Efficiency' }, { title: 'Expenses' }],
   });

@@ -192,7 +192,6 @@ export const responsive = () => {
       title: 'Monthly Revenue0',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
   });
 };

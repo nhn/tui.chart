@@ -73,7 +73,6 @@ export const responsive = () => {
       title: 'Height vs Weight',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
   });
 };

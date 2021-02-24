@@ -188,7 +188,6 @@ export const responsive = () => {
       title: 'Usage share of web browsers',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
   });
 };

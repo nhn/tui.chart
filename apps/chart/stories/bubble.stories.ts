@@ -77,7 +77,6 @@ export const responsive = () => {
     yAxis: { title: 'Expectancy' },
     series: { selectable: true },
     responsive: {
-      animation: { duration: 1000 },
       rules: [
         {
           condition: function ({ width: w }) {

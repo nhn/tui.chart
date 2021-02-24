@@ -153,7 +153,6 @@ export const responsive = () => {
       title: '24-hr Average Temperature',
       width: 'auto',
       height: 'auto',
-      animation: { duration: 1000 },
     },
     yAxis: [{ title: 'Temperature (Celsius)' }, { title: 'Average' }],
     xAxis: { title: 'Month' },
