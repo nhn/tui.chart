@@ -72,12 +72,16 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(LineScatterChart, efficiencyAndExpensesData, {
-    chart: {
-      title: 'Efficiency vs Expenses',
-      width: 'auto',
-      height: 'auto',
-    },
-    yAxis: [{ title: 'Efficiency' }, { title: 'Expenses' }],
-  });
+  return createResponsiveChart<LineScatterData, LineScatterChartOptions>(
+    LineScatterChart,
+    efficiencyAndExpensesData,
+    {
+      chart: {
+        title: 'Efficiency vs Expenses',
+        width: 'auto',
+        height: 'auto',
+      },
+      yAxis: [{ title: 'Efficiency' }, { title: 'Expenses' }],
+    }
+  );
 };

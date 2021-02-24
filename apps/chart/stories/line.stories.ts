@@ -326,7 +326,7 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(LineChart, temperatureData, {
+  return createResponsiveChart<LineSeriesData, LineChartOptions>(LineChart, temperatureData, {
     chart: {
       title: '24-hr Average Temperature',
       width: 'auto',

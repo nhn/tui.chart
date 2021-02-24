@@ -1,6 +1,6 @@
 import BarChart from '@src/charts/barChart';
 import { budgetDataForStack, negativeBudgetData, budgetData, lossData } from './data';
-import { BarChartOptions } from '@t/options';
+import { BarChartOptions, BoxSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
@@ -21,7 +21,7 @@ const defaultOptions: BarChartOptions = {
   },
 };
 
-function createChart(data, customOptions?: BarChartOptions) {
+function createChart(data: BoxSeriesData, customOptions?: BarChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
@@ -318,7 +318,7 @@ export const dataLabelsWithTheme = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(BarChart, budgetData, {
+  return createResponsiveChart<BoxSeriesData, BarChartOptions>(BarChart, budgetData, {
     chart: {
       title: 'Monthly Revenue',
       width: 'auto',

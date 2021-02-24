@@ -71,46 +71,50 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(BubbleChart, lifeExpectancyPerGDPData, {
-    chart: { title: 'Life Expectancy per GDP', width: 'auto', height: 'auto' },
-    xAxis: { title: 'GDP' },
-    yAxis: { title: 'Expectancy' },
-    series: { selectable: true },
-    responsive: {
-      rules: [
-        {
-          condition: function ({ width: w }) {
-            return w > 500 && w <= 700;
+  return createResponsiveChart<BubbleSeriesData, BubbleChartOptions>(
+    BubbleChart,
+    lifeExpectancyPerGDPData,
+    {
+      chart: { title: 'Life Expectancy per GDP', width: 'auto', height: 'auto' },
+      xAxis: { title: 'GDP' },
+      yAxis: { title: 'Expectancy' },
+      series: { selectable: true },
+      responsive: {
+        rules: [
+          {
+            condition: function ({ width: w }) {
+              return w > 500 && w <= 700;
+            },
+            options: {
+              legend: { align: 'bottom' },
+              circleLegend: { visible: false },
+            },
           },
-          options: {
-            legend: { align: 'bottom' },
-            circleLegend: { visible: false },
+          {
+            condition: function ({ width: w }) {
+              return w <= 500;
+            },
+            options: {
+              legend: { visible: false },
+              circleLegend: { visible: false },
+              exportMenu: { visible: false },
+            },
           },
-        },
-        {
-          condition: function ({ width: w }) {
-            return w <= 500;
+          {
+            condition: function ({ height: h }) {
+              return h <= 330;
+            },
+            options: {
+              xAxis: { title: '' },
+              yAxis: { title: '' },
+              circleLegend: { visible: false },
+              exportMenu: { visible: false },
+            },
           },
-          options: {
-            legend: { visible: false },
-            circleLegend: { visible: false },
-            exportMenu: { visible: false },
-          },
-        },
-        {
-          condition: function ({ height: h }) {
-            return h <= 330;
-          },
-          options: {
-            xAxis: { title: '' },
-            yAxis: { title: '' },
-            circleLegend: { visible: false },
-            exportMenu: { visible: false },
-          },
-        },
-      ],
-    },
-  });
+        ],
+      },
+    }
+  );
 };
 
 export const theme = () => {

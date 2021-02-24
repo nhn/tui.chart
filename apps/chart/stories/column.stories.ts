@@ -7,7 +7,7 @@ import {
   genderAgeData,
   simpleBudgetData,
 } from './data';
-import { ColumnChartOptions } from '@t/options';
+import { ColumnChartOptions, BoxSeriesData } from '@t/options';
 import { deepMergedCopy, range as rangeUtil } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
@@ -28,7 +28,7 @@ const defaultOptions: ColumnChartOptions = {
   },
 };
 
-function createChart(data, customOptions: ColumnChartOptions = {}) {
+function createChart(data: BoxSeriesData, customOptions: ColumnChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
@@ -207,7 +207,7 @@ export const dataLabels = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(ColumnChart, budgetData, {
+  return createResponsiveChart<BoxSeriesData, ColumnChartOptions>(ColumnChart, budgetData, {
     chart: {
       title: 'Monthly Revenue',
       width: 'auto',

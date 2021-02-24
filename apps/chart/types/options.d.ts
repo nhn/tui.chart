@@ -24,7 +24,7 @@ import {
 import { AxisType } from '../src/component/axis';
 
 export type RangeDataType<T> = [T, T];
-export type BoxSeriesDataType = number | RangeDataType<number>;
+export type BoxSeriesDataType = number | RangeDataType<number> | null;
 type LineSeriesDataType = number | Point | [number, number] | [string, number] | null;
 type HeatmapSeriesDataType = (number | null)[];
 export type HeatmapCategoriesType = { x: string[]; y: string[] };
@@ -540,7 +540,7 @@ export interface BoxSeriesType<T extends BoxSeriesDataType> {
 
 export interface BoxSeriesData {
   categories: string[];
-  series: BoxSeriesType<BoxSeriesDataType>[];
+  series: BoxSeriesInput<BoxSeriesDataType>[];
 }
 
 export interface ChartProps<T> {

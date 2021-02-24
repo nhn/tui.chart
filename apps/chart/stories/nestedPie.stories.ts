@@ -183,13 +183,17 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(NestedPieChart, groupedBrowserUsageData, {
-    chart: {
-      title: 'Usage share of web browsers',
-      width: 'auto',
-      height: 'auto',
-    },
-  });
+  return createResponsiveChart<NestedPieSeriesData, NestedPieChartOptions>(
+    NestedPieChart,
+    groupedBrowserUsageData,
+    {
+      chart: {
+        title: 'Usage share of web browsers',
+        width: 'auto',
+        height: 'auto',
+      },
+    }
+  );
 };
 
 export const theme = () => {

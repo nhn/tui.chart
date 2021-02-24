@@ -20,7 +20,7 @@ const defaultOptions: RadialBarChartOptions = {
   },
 };
 
-function createChart(data: RadialBarSeriesData, customOptions: Record<string, any> = {}) {
+function createChart(data: RadialBarSeriesData, customOptions: RadialBarChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
@@ -154,7 +154,6 @@ export const angleRangeWithTheme = () => {
       verticalAxis: {
         label: {
           color: '#fff',
-          align: 'center',
           textBubble: {
             visible: true,
             borderRadius: 5,
@@ -178,26 +177,30 @@ export const angleRangeWithTheme = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(RadialBarChart, olympicMedalData, {
-    chart: {
-      title: 'Winter Olympic medals per existing country (TOP 5)',
-      width: 'auto',
-      height: 'auto',
-    },
-    responsive: {
-      animation: { duration: 0 },
-      rules: [
-        {
-          condition: ({ width: w }) => {
-            return w < 400;
+  return createResponsiveChart<RadialBarSeriesData, RadialBarChartOptions>(
+    RadialBarChart,
+    olympicMedalData,
+    {
+      chart: {
+        title: 'Winter Olympic medals per existing country (TOP 5)',
+        width: 'auto',
+        height: 'auto',
+      },
+      responsive: {
+        animation: { duration: 0 },
+        rules: [
+          {
+            condition: ({ width: w }) => {
+              return w < 400;
+            },
+            options: {
+              legend: { visible: false },
+            },
           },
-          options: {
-            legend: { visible: false },
-          },
-        },
-      ],
-    },
-  });
+        ],
+      },
+    }
+  );
 };
 
 export const selectable = () => {

@@ -68,13 +68,17 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(ScatterChart, genderHeightWeightData, {
-    chart: {
-      title: 'Height vs Weight',
-      width: 'auto',
-      height: 'auto',
-    },
-  });
+  return createResponsiveChart<ScatterSeriesData, ScatterChartOptions>(
+    ScatterChart,
+    genderHeightWeightData,
+    {
+      chart: {
+        title: 'Height vs Weight',
+        width: 'auto',
+        height: 'auto',
+      },
+    }
+  );
 };
 
 export const theme = () => {

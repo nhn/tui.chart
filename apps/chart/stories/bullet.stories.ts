@@ -187,7 +187,7 @@ export const theme = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(BulletChart, budgetData, {
+  return createResponsiveChart<BulletSeriesData, BulletChartOptions>(BulletChart, budgetData, {
     chart: {
       title: 'Monthly Revenue0',
       width: 'auto',

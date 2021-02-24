@@ -98,7 +98,7 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(LineAreaChart, energyUsageData, {
+  return createResponsiveChart<LineAreaData, LineAreaChartOptions>(LineAreaChart, energyUsageData, {
     chart: { title: 'Energy Usage', width: 'auto', height: 'auto' },
     yAxis: [
       {

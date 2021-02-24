@@ -1,17 +1,23 @@
-export function createResponsiveChart(ChartConstructor, data, options) {
+import { DataInput } from '@t/options';
+import { Options } from '@t/store/store';
+
+export function createResponsiveChart<Data extends DataInput, Option extends Options>(
+  ChartConstructor: new (...args) => object,
+  data: Data,
+  options: Option,
+  size?: { width: string; hieght: string }
+) {
   const el = document.createElement('div');
 
   setTimeout(() => {
-    el.style.width = '90vw';
-    el.style.height = '90vh';
+    el.style.width = size?.width ?? '90vw';
+    el.style.height = size?.width ?? '90vh';
 
-    const chart = new ChartConstructor({
+    return new ChartConstructor({
       el,
       data,
       options,
     });
-
-    return chart;
   });
 
   return el;

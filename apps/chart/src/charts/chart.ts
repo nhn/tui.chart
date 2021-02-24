@@ -256,7 +256,7 @@ export default abstract class Chart<T extends Options> {
       window.addEventListener('resize', this.debounceResizeEvent);
     } else {
       this.resizeObserver = new ResizeObserver((entries) => {
-        entries.forEach((/* entry*/) => {
+        entries.forEach(() => {
           this.debounceResizeEvent();
         });
       });

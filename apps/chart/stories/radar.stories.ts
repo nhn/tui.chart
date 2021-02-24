@@ -108,7 +108,7 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(RadarChart, budgetData2, {
+  return createResponsiveChart<RadarSeriesData, RadarChartOptions>(RadarChart, budgetData2, {
     chart: {
       title: 'Annual Incomes',
       width: 'auto',

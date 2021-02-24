@@ -135,14 +135,18 @@ export const datetimeCategory = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(HeatmapChart, temperatureAverageDataForHeatmap, {
-    chart: {
-      title: '24-hr Average Temperature',
-      width: 'auto',
-      height: 'auto',
-    },
-    legend: { align: 'right' },
-  });
+  return createResponsiveChart<HeatmapSeriesData, HeatmapChartOptions>(
+    HeatmapChart,
+    temperatureAverageDataForHeatmap,
+    {
+      chart: {
+        title: '24-hr Average Temperature',
+        width: 'auto',
+        height: 'auto',
+      },
+      legend: { align: 'right' },
+    }
+  );
 };
 
 export const theme = () => {

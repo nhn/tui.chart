@@ -70,13 +70,17 @@ export const eventDetectType = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(BoxPlotChart, budgetDataForBoxPlot, {
-    chart: {
-      title: 'Monthly Revenue',
-      width: 'auto',
-      height: 'auto',
-    },
-  });
+  return createResponsiveChart<BoxPlotSeriesData, BoxPlotChartOptions>(
+    BoxPlotChart,
+    budgetDataForBoxPlot,
+    {
+      chart: {
+        title: 'Monthly Revenue',
+        width: 'auto',
+        height: 'auto',
+      },
+    }
+  );
 };
 
 export const theme = () => {

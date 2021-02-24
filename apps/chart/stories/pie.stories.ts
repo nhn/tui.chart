@@ -288,7 +288,7 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(PieChart, browserUsageData, {
+  return createResponsiveChart<PieSeriesData, PieChartOptions>(PieChart, browserUsageData, {
     chart: {
       title: 'Usage share of web browsers',
       width: 'auto',

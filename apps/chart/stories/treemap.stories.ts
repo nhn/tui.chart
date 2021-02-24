@@ -159,13 +159,17 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(TreemapChart, usedDiskSpaceData, {
-    chart: {
-      title: 'Used disk space',
-      width: 'auto',
-      height: 'auto',
-    },
-  });
+  return createResponsiveChart<TreemapSeriesData, TreemapChartOptions>(
+    TreemapChart,
+    usedDiskSpaceData,
+    {
+      chart: {
+        title: 'Used disk space',
+        width: 'auto',
+        height: 'auto',
+      },
+    }
+  );
 };
 
 export const theme = () => {

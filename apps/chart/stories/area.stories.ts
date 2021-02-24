@@ -298,7 +298,7 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(AreaChart, avgTemperatureData, {
+  return createResponsiveChart<AreaSeriesData, AreaChartOptions>(AreaChart, avgTemperatureData, {
     chart: {
       title: 'Average Temperature',
       width: 'auto',

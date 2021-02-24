@@ -7,7 +7,7 @@ import {
   genderAgeData,
   simpleBudgetData,
 } from './data';
-import { BarChartOptions } from '@t/options';
+import { BarChartOptions, BoxSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
@@ -28,7 +28,7 @@ const defaultOptions: BarChartOptions = {
   },
 };
 
-function createChart(data, customOptions: Record<string, any> = {}) {
+function createChart(data: BoxSeriesData, customOptions: BarChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
@@ -110,13 +110,13 @@ export const positiveAndNegativeWithMinMax = () => {
 };
 
 export const range = () => {
-  const { el } = createChart(temperatureRangeData);
+  const { el } = createChart(temperatureRangeData as BoxSeriesData);
 
   return el;
 };
 
 export const rangeWithMinMax = () => {
-  const { el } = createChart(temperatureRangeData, {
+  const { el } = createChart(temperatureRangeData as BoxSeriesData, {
     xAxis: {
       scale: {
         min: -4,
@@ -129,7 +129,7 @@ export const rangeWithMinMax = () => {
 };
 
 export const rangeWithDataLabels = () => {
-  const { el } = createChart(temperatureRangeData, {
+  const { el } = createChart(temperatureRangeData as BoxSeriesData, {
     chart: { height: 800 },
     series: { dataLabels: { visible: true } },
   });
@@ -214,7 +214,7 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  return createResponsiveChart(BarChart, budgetData, {
+  return createResponsiveChart<BoxSeriesData, BarChartOptions>(BarChart, budgetData, {
     chart: {
       title: 'Monthly Revenue',
       width: 'auto',
