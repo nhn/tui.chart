@@ -84,7 +84,7 @@ export function isLeftBottomSide(seriesIndex: number) {
   return !!(seriesIndex % 2);
 }
 
-function calculateBarLength(value: BoxSeriesDataType, min: number, max: number) {
+function calculateBarLength(value: Exclude<BoxSeriesDataType, null>, min: number, max: number) {
   if (isRangeValue(value)) {
     let [start, end] = value;
 
@@ -540,15 +540,17 @@ export default class BoxSeries extends Component {
 
     seriesData.forEach(({ data, name, color }) => {
       data.forEach((value, dataIndex) => {
-        const barLength = this.makeBarLength(value, renderOptions);
+        if (!isNull(value)) {
+          const barLength = this.makeBarLength(value, renderOptions);
 
-        if (isNumber(barLength)) {
-          tooltipData.push({
-            label: name,
-            color,
-            value: this.getTooltipValue(value),
-            category: categories.length ? categories[dataIndex] : '',
-          });
+          if (isNumber(barLength)) {
+            tooltipData.push({
+              label: name,
+              color,
+              value: this.getTooltipValue(value),
+              category: categories.length ? categories[dataIndex] : '',
+            });
+          }
         }
       });
     });
@@ -556,7 +558,7 @@ export default class BoxSeries extends Component {
     return tooltipData;
   }
 
-  private getTooltipValue(value: BoxSeriesDataType): string | number {
+  private getTooltipValue(value: Exclude<BoxSeriesDataType, null>): string | number {
     return isRangeValue(value) ? `${value[0]} ~ ${value[1]}` : value;
   }
 
@@ -628,7 +630,7 @@ export default class BoxSeries extends Component {
 
   getStartPosition(
     barLength: number,
-    value: BoxSeriesDataType,
+    value: Exclude<BoxSeriesDataType, null>,
     renderOptions: RenderOptions,
     isLBSideWithDiverging: boolean
   ): number {

@@ -4,6 +4,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import { budgetDataForBullet, budgetDataForBulletWithNull } from './data';
 import { radios, withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 const budgetData = budgetDataForBullet as BulletSeriesData;
 
@@ -24,8 +25,8 @@ function createChart(data: BulletSeriesData, customOptions: BulletChartOptions =
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new BulletChart({ el, data, options });
 
@@ -186,9 +187,11 @@ export const theme = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue0', width: 700, height: 'auto' },
+  return createResponsiveChart<BulletSeriesData, BulletChartOptions>(BulletChart, budgetData, {
+    chart: {
+      title: 'Monthly Revenue0',
+      width: 'auto',
+      height: 'auto',
+    },
   });
-
-  return el;
 };

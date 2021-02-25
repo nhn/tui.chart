@@ -7,10 +7,11 @@ import {
   genderAgeData,
   simpleBudgetData,
 } from './data';
-import { ColumnChartOptions } from '@t/options';
+import { ColumnChartOptions, BoxSeriesData } from '@t/options';
 import { deepMergedCopy, range as rangeUtil } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.Column.General',
@@ -27,12 +28,12 @@ const defaultOptions: ColumnChartOptions = {
   },
 };
 
-function createChart(data, customOptions: ColumnChartOptions = {}) {
+function createChart(data: BoxSeriesData, customOptions: ColumnChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new ColumnChart({
     el,
@@ -143,13 +144,13 @@ export const positiveAndNegativeWithMinMax = () => {
 };
 
 export const range = () => {
-  const { el } = createChart(temperatureRangeData);
+  const { el } = createChart(temperatureRangeData as BoxSeriesData);
 
   return el;
 };
 
 export const rangeWithMinMax = () => {
-  const { el } = createChart(temperatureRangeData, {
+  const { el } = createChart(temperatureRangeData as BoxSeriesData, {
     yAxis: {
       scale: {
         min: -4,
@@ -162,7 +163,7 @@ export const rangeWithMinMax = () => {
 };
 
 export const rangeWithDataLabels = () => {
-  const { el } = createChart(temperatureRangeData, {
+  const { el } = createChart(temperatureRangeData as BoxSeriesData, {
     series: { dataLabels: { visible: true } },
   });
 
@@ -206,11 +207,13 @@ export const dataLabels = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue', width: 700, height: 'auto' },
+  return createResponsiveChart<BoxSeriesData, ColumnChartOptions>(ColumnChart, budgetData, {
+    chart: {
+      title: 'Monthly Revenue',
+      width: 'auto',
+      height: 'auto',
+    },
   });
-
-  return el;
 };
 
 export const theme = () => {

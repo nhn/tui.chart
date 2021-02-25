@@ -7,6 +7,7 @@ import {
 } from './data';
 import BubbleChart from '@src/charts/bubbleChart';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|Bubble',
@@ -35,8 +36,8 @@ function createChart(data: BubbleSeriesData, customOptions: BubbleChartOptions =
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new BubbleChart({ el, data, options });
 
@@ -70,49 +71,50 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(lifeExpectancyPerGDPData, {
-    chart: { title: 'Life Expectancy per GDP', width: 'auto', height: 'auto' },
-    xAxis: { title: 'GDP' },
-    yAxis: { title: 'Expectancy' },
-    series: { selectable: true },
-    responsive: {
-      animation: { duration: 100 },
-      rules: [
-        {
-          condition: function ({ width: w }) {
-            return w > 500 && w <= 700;
+  return createResponsiveChart<BubbleSeriesData, BubbleChartOptions>(
+    BubbleChart,
+    lifeExpectancyPerGDPData,
+    {
+      chart: { title: 'Life Expectancy per GDP', width: 'auto', height: 'auto' },
+      xAxis: { title: 'GDP' },
+      yAxis: { title: 'Expectancy' },
+      series: { selectable: true },
+      responsive: {
+        rules: [
+          {
+            condition: function ({ width: w }) {
+              return w > 500 && w <= 700;
+            },
+            options: {
+              legend: { align: 'bottom' },
+              circleLegend: { visible: false },
+            },
           },
-          options: {
-            legend: { align: 'bottom' },
-            circleLegend: { visible: false },
+          {
+            condition: function ({ width: w }) {
+              return w <= 500;
+            },
+            options: {
+              legend: { visible: false },
+              circleLegend: { visible: false },
+              exportMenu: { visible: false },
+            },
           },
-        },
-        {
-          condition: function ({ width: w }) {
-            return w <= 500;
+          {
+            condition: function ({ height: h }) {
+              return h <= 330;
+            },
+            options: {
+              xAxis: { title: '' },
+              yAxis: { title: '' },
+              circleLegend: { visible: false },
+              exportMenu: { visible: false },
+            },
           },
-          options: {
-            legend: { visible: false },
-            circleLegend: { visible: false },
-            exportMenu: { visible: false },
-          },
-        },
-        {
-          condition: function ({ height: h }) {
-            return h <= 330;
-          },
-          options: {
-            xAxis: { title: '' },
-            yAxis: { title: '' },
-            circleLegend: { visible: false },
-            exportMenu: { visible: false },
-          },
-        },
-      ],
-    },
-  });
-
-  return el;
+        ],
+      },
+    }
+  );
 };
 
 export const theme = () => {

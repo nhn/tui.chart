@@ -5,6 +5,7 @@ import { browserUsageData, browserUsageDataWithNull } from './data';
 import { withKnobs, number } from '@storybook/addon-knobs';
 import { PieChartThemeOptions } from '@t/theme';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|Pie',
@@ -24,8 +25,8 @@ function createChart(data: PieSeriesData, customOptions: PieChartOptions = {}) {
     customOptions || {}
   );
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new PieChart({ el, data, options });
 
@@ -287,15 +288,13 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(browserUsageData, {
+  return createResponsiveChart<PieSeriesData, PieChartOptions>(PieChart, browserUsageData, {
     chart: {
       title: 'Usage share of web browsers',
       width: 'auto',
       height: 'auto',
     },
   });
-
-  return el;
 };
 
 export const theme = () => {

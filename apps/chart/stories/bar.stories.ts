@@ -7,10 +7,11 @@ import {
   genderAgeData,
   simpleBudgetData,
 } from './data';
-import { BarChartOptions } from '@t/options';
+import { BarChartOptions, BoxSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.Bar.General',
@@ -27,12 +28,12 @@ const defaultOptions: BarChartOptions = {
   },
 };
 
-function createChart(data, customOptions: Record<string, any> = {}) {
+function createChart(data: BoxSeriesData, customOptions: BarChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new BarChart({
     el,
@@ -109,13 +110,13 @@ export const positiveAndNegativeWithMinMax = () => {
 };
 
 export const range = () => {
-  const { el } = createChart(temperatureRangeData);
+  const { el } = createChart(temperatureRangeData as BoxSeriesData);
 
   return el;
 };
 
 export const rangeWithMinMax = () => {
-  const { el } = createChart(temperatureRangeData, {
+  const { el } = createChart(temperatureRangeData as BoxSeriesData, {
     xAxis: {
       scale: {
         min: -4,
@@ -128,7 +129,7 @@ export const rangeWithMinMax = () => {
 };
 
 export const rangeWithDataLabels = () => {
-  const { el } = createChart(temperatureRangeData, {
+  const { el } = createChart(temperatureRangeData as BoxSeriesData, {
     chart: { height: 800 },
     series: { dataLabels: { visible: true } },
   });
@@ -213,8 +214,12 @@ export const secondaryYAxis = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetData, {
-    chart: { title: 'Monthly Revenue', width: 700, height: 'auto' },
+  return createResponsiveChart<BoxSeriesData, BarChartOptions>(BarChart, budgetData, {
+    chart: {
+      title: 'Monthly Revenue',
+      width: 'auto',
+      height: 'auto',
+    },
     responsive: {
       animation: { duration: 300 },
       rules: [
@@ -244,8 +249,6 @@ export const responsive = () => {
       ],
     },
   });
-
-  return el;
 };
 
 export const theme = () => {

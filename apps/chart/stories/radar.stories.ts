@@ -3,6 +3,7 @@ import { RadarSeriesData, RadarChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { budgetData2, budgetData2WithNull } from './data';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|Radar',
@@ -20,8 +21,8 @@ function createChart(data: RadarSeriesData, customOptions: RadarChartOptions = {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new RadarChart({ el, data, options });
 
@@ -107,11 +108,13 @@ export const selectable = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(budgetData2, {
-    chart: { title: 'Annual Incomes', width: 'auto', height: 'auto' },
+  return createResponsiveChart<RadarSeriesData, RadarChartOptions>(RadarChart, budgetData2, {
+    chart: {
+      title: 'Annual Incomes',
+      width: 'auto',
+      height: 'auto',
+    },
   });
-
-  return el;
 };
 
 export const labelInterval = () => {

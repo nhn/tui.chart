@@ -29,7 +29,13 @@ import * as labelBrush from '@src/brushes/label';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 
-import { BoxSeriesDataType, BarChartOptions, BoxSeriesInput, BoxSeriesData } from '@t/options';
+import {
+  BoxSeriesDataType,
+  BarChartOptions,
+  BoxSeriesInput,
+  BoxSeriesData,
+  BoxSeriesType,
+} from '@t/options';
 
 export interface BarChartProps {
   el: HTMLElement;
@@ -119,7 +125,7 @@ export default class BarChart extends Chart<BarChartOptions> {
       el,
       options,
       series: {
-        bar: data.series,
+        bar: data.series as BoxSeriesType<BoxSeriesDataType>[],
       },
       categories: data.categories,
       modules: [stackSeriesData, dataRange, scale, axes, plot],

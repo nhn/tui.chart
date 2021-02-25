@@ -8,6 +8,7 @@ import {
 import { withKnobs } from '@storybook/addon-knobs';
 import HeatmapChart from '@src/charts/heatmapChart';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart|Heatmap',
@@ -42,8 +43,8 @@ function createChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new HeatmapChart({ el, data, options });
 
@@ -134,12 +135,18 @@ export const datetimeCategory = () => {
 };
 
 export const responsive = () => {
-  const { el } = createChart(temperatureAverageDataForHeatmap, {
-    chart: { title: '24-hr Average Temperature', width: 800, height: 'auto' },
-    legend: { align: 'right' },
-  });
-
-  return el;
+  return createResponsiveChart<HeatmapSeriesData, HeatmapChartOptions>(
+    HeatmapChart,
+    temperatureAverageDataForHeatmap,
+    {
+      chart: {
+        title: '24-hr Average Temperature',
+        width: 'auto',
+        height: 'auto',
+      },
+      legend: { align: 'right' },
+    }
+  );
 };
 
 export const theme = () => {

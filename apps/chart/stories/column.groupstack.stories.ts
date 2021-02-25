@@ -1,9 +1,10 @@
 import ColumnChart from '@src/charts/columnChart';
 import { lossDataForGroupStack, genderAgeGroupData } from './data';
-import { ColumnChartOptions } from '@t/options';
+import { ColumnChartOptions, BoxSeriesData } from '@t/options';
 import { deepMergedCopy, range as rangeUtil } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.Column.Group Stack',
@@ -20,7 +21,7 @@ const defaultOptions: ColumnChartOptions = {
   },
 };
 
-function createChart(data, customOptions?: ColumnChartOptions) {
+function createChart(data: BoxSeriesData, customOptions?: ColumnChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
@@ -193,4 +194,17 @@ export const theme = () => {
   });
 
   return el;
+};
+
+export const responsive = () => {
+  return createResponsiveChart<BoxSeriesData, ColumnChartOptions>(ColumnChart, genderAgeGroupData, {
+    chart: {
+      title: 'Population Distribution',
+      width: 'auto',
+      height: 'auto',
+    },
+    series: {
+      stack: true,
+    },
+  });
 };

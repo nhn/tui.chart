@@ -1,10 +1,11 @@
 import BarChart from '@src/charts/barChart';
 import { lossDataForGroupStack, genderAgeGroupData } from './data';
-import { BarChartOptions } from '@t/options';
+import { BarChartOptions, BoxSeriesData } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { withKnobs, radios } from '@storybook/addon-knobs';
 
 import '@src/css/chart.css';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.Bar.Group Stack',
@@ -21,7 +22,7 @@ const defaultOptions: BarChartOptions = {
   },
 };
 
-function createChart(data, customOptions?: BarChartOptions) {
+function createChart(data: BoxSeriesData, customOptions?: BarChartOptions) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions || {});
 
@@ -170,4 +171,17 @@ export const theme = () => {
   });
 
   return el;
+};
+
+export const responsive = () => {
+  return createResponsiveChart<BoxSeriesData, BarChartOptions>(BarChart, genderAgeGroupData, {
+    chart: {
+      title: 'Population Distribution',
+      width: 'auto',
+      height: 'auto',
+    },
+    series: {
+      stack: true,
+    },
+  });
 };

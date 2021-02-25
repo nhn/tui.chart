@@ -4,6 +4,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import '@src/css/chart.css';
 import { RadialBarChartOptions, RadialBarSeriesData } from '@t/options';
 import { withKnobs, radios, boolean, number } from '@storybook/addon-knobs';
+import { createResponsiveChart } from './util';
 
 export default {
   title: 'chart.RadialBar',
@@ -19,12 +20,12 @@ const defaultOptions: RadialBarChartOptions = {
   },
 };
 
-function createChart(data: RadialBarSeriesData, customOptions: Record<string, any> = {}) {
+function createChart(data: RadialBarSeriesData, customOptions: RadialBarChartOptions = {}) {
   const el = document.createElement('div');
   const options = deepMergedCopy(defaultOptions, customOptions);
 
-  el.style.width = options.chart?.width === 'auto' ? '90vw' : `${options.chart?.width}px`;
-  el.style.height = options.chart?.height === 'auto' ? '90vh' : `${options.chart?.height}px`;
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
 
   const chart = new RadialBarChart({
     el,
@@ -153,7 +154,6 @@ export const angleRangeWithTheme = () => {
       verticalAxis: {
         label: {
           color: '#fff',
-          align: 'center',
           textBubble: {
             visible: true,
             borderRadius: 5,
@@ -176,24 +176,31 @@ export const angleRangeWithTheme = () => {
   return el;
 };
 
-export const reponsive = () => {
-  const { el } = createChart(olympicMedalData, {
-    chart: { width: 'auto', height: 'auto' },
-    responsive: {
-      rules: [
-        {
-          condition: ({ width: w }) => {
-            return w < 400;
+export const responsive = () => {
+  return createResponsiveChart<RadialBarSeriesData, RadialBarChartOptions>(
+    RadialBarChart,
+    olympicMedalData,
+    {
+      chart: {
+        title: 'Winter Olympic medals per existing country (TOP 5)',
+        width: 'auto',
+        height: 'auto',
+      },
+      responsive: {
+        animation: { duration: 300 },
+        rules: [
+          {
+            condition: ({ width: w }) => {
+              return w < 400;
+            },
+            options: {
+              legend: { visible: false },
+            },
           },
-          options: {
-            legend: { visible: false },
-          },
-        },
-      ],
-    },
-  });
-
-  return el;
+        ],
+      },
+    }
+  );
 };
 
 export const selectable = () => {

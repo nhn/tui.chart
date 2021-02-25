@@ -26,6 +26,8 @@ type ScaleOptions = {
   verticalAxis?: ScaleOption;
 };
 
+const MIN_OFFSET_SIZE = 1;
+
 function getLabelScaleData(
   state: ChartState<Options>,
   labelAxisOnYAxis: boolean,
@@ -39,7 +41,7 @@ function getLabelScaleData(
   const dateTypeLabel = isExist(options.xAxis?.date);
   const labelOptions = {
     dataRange: dataRange[labelAxisName],
-    offsetSize: layout.plot[labelSizeKey],
+    offsetSize: Math.max(layout.plot[labelSizeKey], MIN_OFFSET_SIZE),
     scaleOption: scaleOptions[labelAxisName],
     rawCategoriesSize: rawCategories.length,
   };
@@ -77,7 +79,7 @@ function getValueScaleData(
   } else if (isCoordinateTypeChart) {
     const valueOptions = {
       dataRange: dataRange[valueAxisName],
-      offsetSize: layout.plot[valueSizeKey],
+      offsetSize: Math.max(layout.plot[valueSizeKey], MIN_OFFSET_SIZE),
       scaleOption: scaleOptions[valueAxisName],
     };
 
@@ -85,7 +87,7 @@ function getValueScaleData(
   } else {
     result = calculateCoordinateScale({
       dataRange: dataRange[valueAxisName],
-      offsetSize: layout.plot[valueSizeKey],
+      offsetSize: Math.max(layout.plot[valueSizeKey], MIN_OFFSET_SIZE),
       scaleOption: scaleOptions[valueAxisName],
     });
   }

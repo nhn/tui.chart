@@ -235,11 +235,7 @@ export default abstract class Chart<T extends Options> {
     this.draw();
   }
 
-  private debounceResizeEvent = debounce((containerWidth: number, containerHeight: number) => {
-    this.resizeChartSize(containerWidth, containerHeight);
-  }, 100);
-
-  private debounceWindowResizeEvent = debounce(() => {
+  private debounceResizeEvent = debounce(() => {
     const { offsetWidth, offsetHeight } = this.containerEl;
     this.resizeChartSize(offsetWidth, offsetHeight);
   }, 100);
@@ -257,12 +253,11 @@ export default abstract class Chart<T extends Options> {
     const isResizeObserverAPIExist = typeof ResizeObserver === 'undefined';
 
     if (isResizeObserverAPIExist) {
-      window.addEventListener('resize', this.debounceWindowResizeEvent);
+      window.addEventListener('resize', this.debounceResizeEvent);
     } else {
       this.resizeObserver = new ResizeObserver((entries) => {
-        entries.forEach((entry) => {
-          const { width, height } = entry.contentRect;
-          this.debounceResizeEvent(width, height);
+        entries.forEach(() => {
+          this.debounceResizeEvent();
         });
       });
       this.resizeObserver.observe(this.containerEl);
@@ -275,7 +270,7 @@ export default abstract class Chart<T extends Options> {
       this.resizeObserver.disconnect();
       this.resizeObserver = null;
     } else {
-      window.removeEventListener('resize', this.debounceWindowResizeEvent);
+      window.removeEventListener('resize', this.debounceResizeEvent);
     }
   }
 
