@@ -8,9 +8,9 @@ import {
   TooltipModelName,
   TooltipData,
 } from '@t/components/tooltip';
-import { getScrollPosition, getValueString } from '@src/helpers/tooltip';
+import { getValueString } from '@src/helpers/tooltip';
 import { getBodyTemplate, tooltipTemplates } from '@src/helpers/tooltipTemplate';
-import { isBoolean, isNumber, isString, isUndefined } from '@src/helpers/utils';
+import { isBoolean, isNumber, isString } from '@src/helpers/utils';
 import { SeriesDataType, TooltipTemplateFunc, TooltipFormatter } from '@t/options';
 import { TooltipTheme } from '@t/theme';
 import { getTranslateString } from '@src/helpers/style';
@@ -81,18 +81,12 @@ export default class Tooltip extends Component {
           : y;
     }
 
-    const { scrollX, scrollY } = getScrollPosition();
-
-    x += scrollX;
-    y += scrollY;
-
     return { x, y };
   }
 
   setTooltipPosition(model: TooltipModel) {
-    const { top, left } = this.chartEl.getBoundingClientRect();
     const { x, y } = this.getPositionInRect(model);
-    this.tooltipContainerEl.style.transform = getTranslateString(left + x, top + y);
+    this.tooltipContainerEl.style.transform = getTranslateString(x, y);
   }
 
   getTooltipInfoModels() {

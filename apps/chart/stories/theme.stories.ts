@@ -60,7 +60,7 @@ function createRadialBarChart(
 
 export const globalTheme = () => {
   const { el } = createChart(avgTemperatureData, {
-    chart: { title: 'Average Temperature', width: 'auto' } as BaseChartOptions,
+    chart: { title: 'Average Temperature', width: 1000 } as BaseChartOptions,
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     theme: {

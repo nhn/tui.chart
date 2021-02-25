@@ -83,7 +83,9 @@ export default abstract class Chart<T extends Options> {
 
   animator: Animator;
 
-  readonly el: HTMLElement;
+  readonly containerEl: HTMLElement;
+
+  el: HTMLDivElement;
 
   ctx!: CanvasRenderingContext2D;
 
@@ -126,6 +128,13 @@ export default abstract class Chart<T extends Options> {
     return duration;
   }
 
+  createChartWrapper() {
+    const el = document.createElement('div');
+    el.classList.add('toastui-chart-wrapper');
+
+    return el;
+  }
+
   constructor(props: ChartProps<T>) {
     const { el, options, series, categories, modules } = props;
     this.modules = modules ?? [];
@@ -134,7 +143,9 @@ export default abstract class Chart<T extends Options> {
       sendHostname();
     }
 
-    this.el = el;
+    this.containerEl = el;
+    this.el = this.createChartWrapper();
+    this.containerEl.appendChild(this.el);
 
     this.animator = new Animator();
 
@@ -229,7 +240,7 @@ export default abstract class Chart<T extends Options> {
   }, 100);
 
   private debounceWindowResizeEvent = debounce(() => {
-    const { offsetWidth, offsetHeight } = this.el;
+    const { offsetWidth, offsetHeight } = this.containerEl;
     this.resizeChartSize(offsetWidth, offsetHeight);
   }, 100);
 
@@ -237,8 +248,8 @@ export default abstract class Chart<T extends Options> {
     const { usingContainerSize } = this.store.state;
 
     if (
-      (usingContainerSize.height && !this.el.style.height.length) ||
-      (usingContainerSize.width && !this.el.style.width.length)
+      (usingContainerSize.height && !this.containerEl.style.height.length) ||
+      (usingContainerSize.width && !this.containerEl.style.width.length)
     ) {
       throw new Error(message.AUTO_LAYOUT_CONTAINER_SIZE_ERROR);
     }
@@ -254,13 +265,13 @@ export default abstract class Chart<T extends Options> {
           this.debounceResizeEvent(width, height);
         });
       });
-      this.resizeObserver.observe(this.el);
+      this.resizeObserver.observe(this.containerEl);
     }
   }
 
   clearResizeEvent() {
     if (this.resizeObserver) {
-      this.resizeObserver.unobserve(this.el);
+      this.resizeObserver.unobserve(this.containerEl);
       this.resizeObserver.disconnect();
       this.resizeObserver = null;
     } else {
@@ -349,7 +360,7 @@ export default abstract class Chart<T extends Options> {
 
   protected initialize() {
     this.initStore();
-    this.store.dispatch('initChartSize', this.el);
+    this.store.dispatch('initChartSize', this.containerEl);
   }
 
   draw() {
@@ -526,7 +537,7 @@ export default abstract class Chart<T extends Options> {
   public destroy = () => {
     this.componentManager.clear();
     this.clearResizeEvent();
-    this.el.innerHTML = '';
+    this.containerEl.innerHTML = '';
   };
 
   private isSelectableSeries() {
@@ -627,7 +638,7 @@ export default abstract class Chart<T extends Options> {
   protected dispatchOptionsEvent(eventName: 'initOptions' | 'updateOptions', options: Options) {
     this.setResizeEventListeners(eventName, options);
 
-    const { offsetWidth, offsetHeight } = this.el;
+    const { offsetWidth, offsetHeight } = this.containerEl;
 
     this.store.dispatch(eventName, {
       options,

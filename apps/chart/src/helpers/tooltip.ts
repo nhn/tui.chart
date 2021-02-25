@@ -20,10 +20,3 @@ export function getValueString(value: TooltipDataValue) {
 
   return result;
 }
-
-export function getScrollPosition() {
-  return {
-    scrollX: window.scrollX ?? window.pageXOffset,
-    scrollY: window.scrollY ?? window.pageYOffset,
-  };
-}
