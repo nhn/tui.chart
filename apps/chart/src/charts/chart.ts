@@ -281,6 +281,7 @@ export default abstract class Chart<T extends Options> {
 
     const canvas = this.painter.ctx.canvas;
     const canvasRect = canvas.getBoundingClientRect();
+    // Calculate scale for chart affected by a CSS transform.
     const scaleX = canvasRect.width / canvas.offsetWidth;
     const scaleY = canvasRect.height / canvas.offsetHeight;
 
