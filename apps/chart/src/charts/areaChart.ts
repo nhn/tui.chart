@@ -20,6 +20,7 @@ import Legend from '@src/component/legend';
 import Zoom from '@src/component/zoom';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
+import NoDataLayer from '@src/component/noDataLayer';
 
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
@@ -155,6 +156,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
     this.componentManager.add(ResetButton);
+    this.componentManager.add(NoDataLayer);
 
     this.painter.addGroups([
       basicBrush,
