@@ -279,11 +279,15 @@ export default abstract class Chart<T extends Options> {
 
     const delegationMethod = `on${eventType[0].toUpperCase() + eventType.substring(1)}`;
 
-    const canvasRect = this.painter.ctx.canvas.getBoundingClientRect();
+    const canvas = this.painter.ctx.canvas;
+    const canvasRect = canvas.getBoundingClientRect();
+    // Calculate scale for chart affected by a CSS transform.
+    const scaleX = canvasRect.width / canvas.offsetWidth;
+    const scaleY = canvasRect.height / canvas.offsetHeight;
 
     const mousePosition = {
-      x: clientX - canvasRect.left,
-      y: clientY - canvasRect.top,
+      x: (clientX - canvasRect.left) / scaleX,
+      y: (clientY - canvasRect.top) / scaleY,
     };
 
     const newEnteredComponents: Component[] = [];
