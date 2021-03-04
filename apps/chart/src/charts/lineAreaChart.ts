@@ -21,7 +21,7 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import Zoom from '@src/component/zoom';
 import ResetButton from '@src/component/resetButton';
 import Background from '@src/component/background';
-import NoDataLayer from '@src/component/noDataLayer';
+import NoDataText from '@src/component/noDataText';
 
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
@@ -161,7 +161,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
     this.componentManager.add(ResetButton);
-    this.componentManager.add(NoDataLayer);
+    this.componentManager.add(NoDataText);
 
     this.painter.addGroups([
       basicBrush,

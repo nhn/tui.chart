@@ -326,7 +326,7 @@ export interface ScatterSeriesModel {
   name?: string;
 }
 
-export type NoDataLayerModel = LabelModel[];
+export type NoDataTextModel = LabelModel[];
 
 export type BackgroundModel = RectModel[];
 

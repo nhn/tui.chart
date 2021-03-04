@@ -17,7 +17,7 @@ import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
-import NoDataLayer from '@src/component/noDataLayer';
+import NoDataText from '@src/component/noDataText';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
@@ -140,7 +140,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(CircleLegend);
-    this.componentManager.add(NoDataLayer);
+    this.componentManager.add(NoDataText);
 
     this.painter.addGroups([
       basicBrush,

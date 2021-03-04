@@ -20,7 +20,7 @@ import {
   ScatterSeriesModels,
   BulletSeriesModels,
   BackgroundModel,
-  NoDataLayerModel,
+  NoDataTextModel,
 } from '@t/components/series';
 import { AxisModels, LineModel, LabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -57,7 +57,7 @@ export type ComponentType =
   | 'zoom'
   | 'backButton'
   | 'background'
-  | 'noDataLayer';
+  | 'noDataText';
 
 type ComponentModels =
   | AxisModels
@@ -89,7 +89,7 @@ type ComponentModels =
   | BulletSeriesModels
   | BackgroundModel
   | RadialAxisModels
-  | NoDataLayerModel;
+  | NoDataTextModel;
 
 export type RespondersModel = {
   component: Component;

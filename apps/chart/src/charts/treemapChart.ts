@@ -13,7 +13,7 @@ import SpectrumLegend from '@src/component/spectrumLegend';
 import BackButton from '@src/component/backButton';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
-import NoDataLayer from '@src/component/noDataLayer';
+import NoDataText from '@src/component/noDataText';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -106,7 +106,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(BackButton);
-    this.componentManager.add(NoDataLayer);
+    this.componentManager.add(NoDataText);
 
     this.painter.addGroups([
       basicBrush,

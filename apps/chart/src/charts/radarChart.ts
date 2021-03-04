@@ -14,7 +14,7 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import Tooltip from '@src/component/tooltip';
 import RadialAxis from '@src/component/radialAxis';
 import Background from '@src/component/background';
-import NoDataLayer from '@src/component/noDataLayer';
+import NoDataText from '@src/component/noDataText';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -119,7 +119,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
-    this.componentManager.add(NoDataLayer);
+    this.componentManager.add(NoDataText);
 
     this.painter.addGroups([
       basicBrush,

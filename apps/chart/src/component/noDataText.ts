@@ -1,16 +1,16 @@
 import Component from './component';
 import { ChartState, Options } from '@t/store/store';
-import { NoDataLayerModel } from '@t/components/series';
+import { NoDataTextModel } from '@t/components/series';
 import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 import { getTitleFontString } from '@src/helpers/style';
 import { isNoData } from '@src/helpers/validation';
 
-export default class NoDataLayer extends Component {
-  models!: NoDataLayerModel;
+export default class NoDataText extends Component {
+  models!: NoDataTextModel;
 
   initialize() {
-    this.type = 'noDataLayer';
-    this.name = 'noDataLayer';
+    this.type = 'noDataText';
+    this.name = 'noDataText';
   }
 
   private getCenterPosition(text: string, font: string) {
