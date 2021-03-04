@@ -16,6 +16,7 @@ import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
 import RadialPlot from '@src/component/radialPlot';
 import RadialAxis from '@src/component/radialAxis';
+import NoDataLayer from '@src/component/noDataLayer';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -115,6 +116,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
     this.componentManager.add(RadialAxis);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip, { chartEl: this.el });
+    this.componentManager.add(NoDataLayer);
 
     this.painter.addGroups([
       basicBrush,

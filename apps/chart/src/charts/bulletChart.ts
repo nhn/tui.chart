@@ -16,6 +16,7 @@ import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import Background from '@src/component/background';
+import NoDataLayer from '@src/component/noDataLayer';
 
 import * as basicBrushes from '@src/brushes/basic';
 import * as axisBrushes from '@src/brushes/axis';
@@ -129,6 +130,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
+    this.componentManager.add(NoDataLayer);
 
     this.painter.addGroups([
       basicBrushes,
