@@ -10,16 +10,17 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
+import PieSeries from '@src/component/pieSeries';
+import NoDataLayer from '@src/component/noDataLayer';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as sectorBrush from '@src/brushes/sector';
-import * as dataLabelBrush from '@src/brushes/dataLabel';
 
+import * as dataLabelBrush from '@src/brushes/dataLabel';
 import { NestedPieChartOptions, NestedPieSeriesData, NestedPieSeriesType } from '@t/options';
-import PieSeries from '@src/component/pieSeries';
 import { NestedPieChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/charts';
 
 /**
@@ -99,6 +100,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
+    this.componentManager.add(NoDataLayer);
 
     this.painter.addGroups([
       basicBrush,
