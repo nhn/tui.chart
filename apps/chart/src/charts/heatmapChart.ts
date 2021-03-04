@@ -15,6 +15,7 @@ import AxisTitle from '@src/component/axisTitle';
 import Axis from '@src/component/axis';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
+import NoDataLayer from '@src/component/noDataLayer';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -143,6 +144,7 @@ export default class HeatmapChart extends Chart<HeatmapChartOptions> {
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
+    this.componentManager.add(NoDataLayer);
 
     this.painter.addGroups([
       basicBrush,

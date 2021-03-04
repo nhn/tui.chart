@@ -230,3 +230,12 @@ export const dataLabelsWithTheme = () => {
 
   return el;
 };
+
+export const noData = () => {
+  const data = {
+    series: [],
+  };
+  const { el } = createChart(data);
+
+  return el;
+};
