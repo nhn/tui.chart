@@ -297,8 +297,13 @@ interface BaseTooltipOptions {
   transition?: string | boolean;
 }
 
+interface LangOptions {
+  noData?: string;
+}
+
 export interface BaseOptions {
   chart?: BaseChartOptions;
+  lang?: LangOptions;
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
   legend?: BaseLegendOptions;

@@ -43,6 +43,24 @@ export const basic = () => {
   return el;
 };
 
+export const customNoDataText = () => {
+  const data = {
+    categories: [],
+    series: [],
+  };
+
+  const { el } = createChart(data, {
+    chart: { title: 'Average Temperature' },
+    xAxis: { title: { text: 'Month' } },
+    yAxis: { title: 'Temperature (Celsius)' },
+    lang: {
+      noData: '데이터가 없습니다!',
+    },
+  });
+
+  return el;
+};
+
 export const theme = () => {
   const data = {
     categories: [],
@@ -53,6 +71,14 @@ export const theme = () => {
     chart: { title: 'Average Temperature' },
     xAxis: { title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
+    theme: {
+      noData: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#e33',
+        fontFamily: 'monaco',
+      },
+    },
   });
 
   return el;
