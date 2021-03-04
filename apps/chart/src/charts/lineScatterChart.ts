@@ -18,6 +18,8 @@ import ExportMenu from '@src/component/exportMenu';
 import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
 import Zoom from '@src/component/zoom';
+import Background from '@src/component/background';
+import NoDataLayer from '@src/component/noDataLayer';
 
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 import * as basicBrush from '@src/brushes/basic';
@@ -28,7 +30,6 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 import * as scatterSeriesBrush from '@src/brushes/scatterSeries';
-import Background from '@src/component/background';
 
 import {
   CoordinateDataType,
@@ -142,6 +143,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(Zoom);
+    this.componentManager.add(NoDataLayer);
 
     this.painter.addGroups([
       basicBrush,
