@@ -32,6 +32,7 @@
 - [Plot](https://github.com/nhn/tui.chart/blob/main/docs/en/common-plot.md)
 - [Axes](https://github.com/nhn/tui.chart/blob/main/docs/en/common-axes.md)
 - [Tooltip](https://github.com/nhn/tui.chart/blob/main/docs/en/common-tooltip.md)
+- [No Data Text](https://github.com/nhn/tui.chart/blob/main/docs/en/common-noDataText.md)
 - [API introduction](https://github.com/nhn/tui.chart/blob/main/docs/en/common-api.md)
 - [Common component theme](https://github.com/nhn/tui.chart/blob/main/docs/en/common-theme.md)
 - [`chart` options](https://github.com/nhn/tui.chart/blob/main/docs/en/common-chart-options.md)
