@@ -42,7 +42,7 @@ const ON_EVENT_RX = /^on\S+/;
  * htmlSanitizer
  * @param {string|Node} html - html or Node
  * @param {boolean} [needHtmlText] - pass true if need html text
- * @returns {string|DocumentFragment} - result
+ * @returns {string} - result
  * @ignore
  */
 function htmlSanitizer(html: string | Node, needHtmlText: boolean): string {
@@ -72,7 +72,7 @@ function removeUnnecessaryTags(html: HTMLElement) {
     'script, iframe, textarea, form, button, select, input, meta, style, link, title, embed, object, details, summary'
   );
 
-  removedTags.forEach(node => {
+  removedTags.forEach((node) => {
     domUtils.remove(node);
   });
 }
@@ -91,10 +91,10 @@ function isXSSAttribute(attrName: string, attrValue: string) {
 /**
  * Removes attributes of blacklist from node.
  * @param {HTMLElement} node - node to remove attributes
- * @param {NodeList} blacklistAttrs - attributes of blacklist
+ * @param {Array<NodeList>} blacklistAttrs - attributes of blacklist
  * @private
  */
-function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: NodeList) {
+function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Array<NodeList>) {
   toArray(blacklistAttrs).forEach(({ name }) => {
     if (ON_EVENT_RX.test(name)) {
       node[name] = null;
@@ -112,9 +112,9 @@ function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: NodeList) 
  * @private
  */
 function leaveOnlyWhitelistAttribute(html: HTMLElement) {
-  domUtils.findAll(html, '*').forEach(node => {
+  domUtils.findAll(html, '*').forEach((node) => {
     const { attributes } = node;
-    const blacklist = toArray(attributes).filter(attr => {
+    const blacklist = toArray(attributes).filter((attr) => {
       const { name, value } = attr;
       const htmlAttr = name.match(HTML_ATTR_LIST_RX);
       const svgAttr = name.match(SVG_ATTR_LIST_RX);

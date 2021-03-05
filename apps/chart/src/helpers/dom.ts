@@ -40,7 +40,7 @@ function remove(node: Node) {
  * @ignore
  */
 function finalizeHtml(html: HTMLElement, needHtmlText: boolean): string {
-  let result: any;
+  let result: string;
 
   if (needHtmlText) {
     result = html.innerHTML;
@@ -61,5 +61,5 @@ function finalizeHtml(html: HTMLElement, needHtmlText: boolean): string {
 export default {
   findAll,
   remove,
-  finalizeHtml
+  finalizeHtml,
 };
