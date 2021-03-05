@@ -43,7 +43,7 @@ This project and everyone participates in it is governed by the [Code of Conduct
 We communicate through Github [`discussions`](https://github.com/nhn/tui.chart/discussions) and [`issues`](https://github.com/nhn/tui.chart/issues).
 
 - **Discussion**: It is used when to Notice, Question, Feature Request, and Need discussion.
-- **issues**: It is used to report bug and write specific specifications when actual feature need to be developed based on the discussions.
+- **Issues**: It is used to report the bug and write specific specifications when actual features need to be developed based on the discussions.
 
 ## Branch Organization
 
@@ -53,7 +53,7 @@ Code that lands in main must be compatible with the latest stable release. It ma
 
 ## Reporting Bugs
 
-Bugs are tracked as GitHub issues. Search the list and try reproduce on demo before you create an issue. When you create an issue, please provide the following information by filling in the template.
+Bugs are tracked as GitHub issues. Search the list and try to reproduce on demo before you create an issue. When you create an issue, please provide the following information by filling in the template.
 
 **It is best to create an example project through [codesandbox](https://codesandbox.io/) or [jsfiddle](https://jsfiddle.net/).**
 
@@ -61,7 +61,7 @@ Explain the problem and include additional details to help maintainers reproduce
 
 - **Use a clear and descriptive title** for the issue to identify the problem.
 - **Describe the exact steps which reproduce the problem** in as many details as possible. Don't just say what you did, but explain how you did it. For example, if you moved the cursor to the end of a line, explain if you used a mouse or a keyboard.
-- **Provide specific examples to demonstrate the steps.** Include links to files or GitHub projects, or copy/pasteable snippets, which you use in those examples. If you're providing snippets on the issue, use Markdown code blocks.
+- **Provide specific examples to demonstrate the steps.** Include links to files or GitHub projects, or Copy-paste-able snippets, which you use in those examples. If you're providing snippets on the issue, use Markdown code blocks.
 - **Describe the behavior you observed after following the steps** and point out what exactly is the problem with that behavior.
 - **Explain which behavior you expected to see instead and why.**
 - **Include screenshots and animated GIFs** which show you following the described steps and clearly demonstrate the problem.
@@ -75,7 +75,7 @@ Create an issue and provide the following information:
 
 - **Use a clear and descriptive title** for the issue to identify the suggestion.
 - **Provide a step-by-step description of the suggested enhancement** in as many details as possible.
-- **Provide specific examples to demonstrate the steps.** Include copy/pasteable snippets which you use in those examples, as Markdown code blocks.
+- **Provide specific examples to demonstrate the steps.** Include Copy-paste-able snippets which you use in those examples, as Markdown code blocks.
 - **Include screenshots and animated GIFs** which helps demonstrate the steps or point out the part of TOAST UI Chart which the suggestion is related to.
 - **Explain why this enhancement would be useful** to most TOAST UI users.
 - **List some other charts or applications where this enhancement exists.**
@@ -89,7 +89,7 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 
 ## Code Style Guide
 
-We use an automatic code formatter called [`Prettier`](https://prettier.io/). Run yarn prettier after making any changes to the code.
+We use an automatic code formatter called [`Prettier`](https://prettier.io/). Run npm prettier after making any changes to the code.
 
 Then, our linter will catch most issues that may exist in your code. You can check the status of your code styling by simply running `npm run validate`.
 
@@ -146,7 +146,7 @@ We will call the `apps/chart` package as the main application. Let's look at the
 
 ### Prerequisites
 
-Please have the latest stable versions of the following on your machine
+Please have the latest stable versions of the following on your machine.
 
 - [node](https://nodejs.org/)
 
@@ -170,7 +170,7 @@ After that, You must have this running for your changes to show up.
 
 #### Checkout a branch
 
-- **main**: bug fix or document update for next patch release. develop branch will rebase every time main branch update. so keep code change to a minimum.
+- **main**: bug fix or document update for next patch release. develop branch will rebase every time main branch update. So keep code change to a minimum.
 - **gh-pages**: API docs, examples and demo
 
 ### 3. Test
@@ -250,7 +250,7 @@ TOAST UI Chart follows [`semantic versioning`](https://semver.org/). We release 
 
 When the main application package is updated, the version of the entire package is also updated. However, if only the modification of other packages occurs, only the version of the modified package is updated. When the main application package is updated after that, it is updated based on the highest version among the packages.
 
-Every change is documented in the [github releases](https://github.com/nhn/tui.chart/releases) link.
+Every change is documented in the [Github releases](https://github.com/nhn/tui.chart/releases) link.
 
 ## License
 
