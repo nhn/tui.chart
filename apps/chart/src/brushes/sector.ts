@@ -1,17 +1,7 @@
 import { SectorModel } from '@t/components/series';
 import { makeStyleObj, fillStyle } from '@src/helpers/style';
 import { calculateDegreeToRadian, getRadialPosition, DEGREE_360 } from '@src/helpers/sector';
-
-export type SectorStyle = {
-  lineWidth?: number;
-  strokeStyle?: string;
-  shadowColor?: string;
-  shadowBlur?: number;
-  shadowOffsetX?: number;
-  shadowOffsetY?: number;
-};
-
-export type SectorStyleName = 'default' | 'hover' | 'nested';
+import { SectorStyle, SectorStyleName } from '@t/brushes';
 
 export function sector(ctx: CanvasRenderingContext2D, sectorModel: SectorModel) {
   const {

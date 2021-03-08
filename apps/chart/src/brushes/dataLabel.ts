@@ -1,4 +1,4 @@
-import { label, bubbleLabel, LabelStyle, StrokeLabelStyle } from '@src/brushes/label';
+import { label, bubbleLabel } from '@src/brushes/label';
 import { DataLabelModel } from '@t/components/dataLabels';
 import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 import { Point, Rect } from '@t/options';
@@ -14,6 +14,7 @@ import {
 import { Nullable } from '@t/components/series';
 import { pick, includes } from '@src/helpers/utils';
 import { BubbleInfo, Arrow } from '@t/components/axis';
+import { LabelStyle, StrokeLabelStyle } from '@t/brushes';
 
 export function dataLabel(ctx: CanvasRenderingContext2D, model: DataLabelModel) {
   const { x, y, text, textAlign, textBaseline, opacity, callout, theme, radian } = model;

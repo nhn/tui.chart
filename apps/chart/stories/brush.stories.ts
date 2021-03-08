@@ -1,4 +1,4 @@
-import { circle, line, CircleStyleName, rect } from '@src/brushes/basic';
+import { circle, line, rect } from '@src/brushes/basic';
 import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
 import { circleLegend } from '@src/brushes/circleLegend';
@@ -7,6 +7,7 @@ import { label, bubbleLabel } from '@src/brushes/label';
 import { resetButton, backButton } from '@src/brushes/resetButton';
 import { sector } from '@src/brushes/sector';
 import { spectrumLegend, spectrumTooltip } from '@src/brushes/spectrumLegend';
+import { CircleStyleName } from '@t/brushes';
 import '@src/css/chart.css';
 
 import {

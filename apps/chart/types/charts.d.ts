@@ -32,7 +32,7 @@ import {
   ScatterSeriesData,
   TreemapChartOptions,
   TreemapSeriesData,
-} from '@t/options';
+} from './options';
 
 export type AddSeriesDataInfo = { chartType?: string; category?: string };
 export type SelectSeriesInfo = {

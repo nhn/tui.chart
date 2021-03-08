@@ -1,11 +1,10 @@
 import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
-import { CircleStyleName, RectStyleName } from '../../src/brushes/basic';
 import { TooltipData } from './tooltip';
 import { LineModel, LabelModel } from './axis';
-import { SectorStyle, SectorStyleName } from '../../src/brushes/sector';
 import { LegendData } from './legend';
 import { TreemapSeriesData } from '../store/store';
 import { BubbleDataLabel } from '../theme';
+import { SectorStyle, SectorStyleName, CircleStyleName, RectStyleName } from '../brushes';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
