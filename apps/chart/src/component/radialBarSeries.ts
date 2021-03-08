@@ -19,7 +19,7 @@ import {
 import {
   RadialBarChartOptions,
   RadialBarSeriesType,
-  CicleTypeEventDetectType,
+  CircleTypeEventDetectType,
   RadialBarSeriesOptions,
 } from '@t/options';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
@@ -65,7 +65,7 @@ export default class RadialBarSeries extends Component {
 
   activatedResponders: this['responders'] = [];
 
-  eventDetectType: CicleTypeEventDetectType = 'point';
+  eventDetectType: CircleTypeEventDetectType = 'point';
 
   tooltipSectorMap!: Record<number, SectorResponderModel[]>;
 

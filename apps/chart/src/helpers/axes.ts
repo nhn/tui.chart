@@ -10,7 +10,7 @@ import {
 } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
 import { Theme } from '@t/theme';
-import { AxisType } from '@src/component/axis';
+import { AxisType } from '@t/components/axis';
 import {
   divisors,
   makeTickPixelPositions,

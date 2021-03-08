@@ -1,9 +1,8 @@
 import Component from './component';
 import Painter from '@src/painter';
-import { AxisType } from '@src/component/axis';
 import { ChartState, Options, CenterYAxisData, ViewAxisLabel } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
-import { TickModel, LineModel, AxisModels, LabelModel } from '@t/components/axis';
+import { TickModel, LineModel, AxisModels, LabelModel, AxisType } from '@t/components/axis';
 import { AxisTheme } from '@t/theme';
 import { getAxisTheme } from '@src/helpers/axes';
 import { getTitleFontString } from '@src/helpers/style';
