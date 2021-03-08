@@ -21,7 +21,6 @@ import {
   ColumnLineChartThemeOptions,
   RadialBarChartThemeOptions,
 } from './theme';
-import { AxisType } from './components/axis';
 
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number> | null;
@@ -197,7 +196,11 @@ export interface Scale {
   stepSize?: 'auto' | number;
 }
 
-type AxisLabelInfo = { axisName: AxisType; labels: string[]; index: number };
+type AxisLabelInfo = {
+  axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis';
+  labels: string[];
+  index: number;
+};
 type AxisFormatter = (value: string, axisLabelInfo: AxisLabelInfo) => string;
 export type AxisTitleOption = Omit<TitleOption, 'align'>;
 type AxisTitle = string | AxisTitleOption;

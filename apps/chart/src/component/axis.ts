@@ -6,7 +6,6 @@ import { TICK_SIZE } from '@src/brushes/axis';
 import { includes } from '@src/helpers/utils';
 import { getAxisTheme } from '@src/helpers/axes';
 import { AxisTheme } from '@t/theme';
-import { AxisType } from '@t/components/axis';
 import { getTitleFontString } from '@src/helpers/style';
 
 type CoordinateKey = 'x' | 'y';
@@ -17,6 +16,12 @@ interface RenderOptions {
   needRotateLabel?: boolean;
   radian?: number;
   offsetY?: number;
+}
+
+export enum AxisType {
+  X = 'xAxis',
+  Y = 'yAxis',
+  SECONDARY_Y = 'secondaryYAxis',
 }
 
 function getOffsetAndAnchorKey(

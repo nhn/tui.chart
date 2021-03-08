@@ -1,6 +1,6 @@
 import { Axes, AxisData, StoreModule } from '@t/store/store';
 import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
-import { AxisType } from '@t/components/axis';
+import { AxisType } from '@src/component/axis';
 import {
   getAxisTheme,
   makeFormattedCategory,

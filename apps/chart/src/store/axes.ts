@@ -48,7 +48,7 @@ import { deepMergedCopy, hasNegativeOnly, isNumber, pickProperty } from '@src/he
 import { isZooming } from '@src/helpers/range';
 import { isCoordinateSeries } from '@src/helpers/coordinate';
 import { AxisTheme } from '@t/theme';
-import { AxisType } from '@t/components/axis';
+import { AxisType } from '@src/component/axis';
 import { getTitleFontString } from '@src/helpers/style';
 
 interface StateProp {
