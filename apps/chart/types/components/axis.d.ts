@@ -8,7 +8,6 @@ import {
   PathRectStyleName,
 } from '../../src/brushes/label';
 
-
 export type LabelModel = {
   type: 'label';
   style?: StyleProp<LabelStyle, LabelStyleName>;

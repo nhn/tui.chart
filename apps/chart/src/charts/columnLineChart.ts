@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
+import Chart from './chart';
 import {
   ColumnLineData,
   ColumnLineChartOptions,
@@ -40,13 +40,8 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 
 import { isExist } from '@src/helpers/utils';
-import { RespondersModel } from '@t/components/series';
-
-export interface ColumnLineChartProps {
-  el: HTMLElement;
-  options: ColumnLineChartOptions;
-  data: ColumnLineData;
-}
+import { RespondersModel } from '@src/component/component';
+import { ColumnLineChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/charts';
 
 function hasPointEventType(respondersModel: RespondersModel, name: string) {
   return respondersModel.find(

@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -26,12 +26,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as axisBrush from '@src/brushes/axis';
 
 import { RadialBarChartOptions, RadialBarSeriesData, RadialBarSeriesType } from '@t/options';
-
-export interface RadialBarChartProps {
-  el: HTMLElement;
-  options: RadialBarChartOptions;
-  data: RadialBarSeriesData;
-}
+import { RadialBarChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

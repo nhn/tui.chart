@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import heatmapAxes from '@src/store/heatmapAxes';
 import heatmapSeriesData from '@src/store/heatmapSeriesData';
@@ -30,12 +30,7 @@ import {
   HeatmapSeriesData,
   HeatmapSeriesDataType,
 } from '@t/options';
-
-export interface HeatmapChartProps {
-  el: HTMLElement;
-  options: HeatmapChartOptions;
-  data: HeatmapSeriesData;
-}
+import { HeatmapChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/charts';
 
 function getSeriesWithYCategory(
   series: HeatmapSeriesDataType[],

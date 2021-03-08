@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import colorValueScale from '@src/store/colorValueScale';
 import treemapSeriesData from '@src/store/treemapSeriesData';
@@ -23,12 +23,7 @@ import * as spectrumLegendBrush from '@src/brushes/spectrumLegend';
 import * as resetButtonBrush from '@src/brushes/resetButton';
 
 import { TreemapChartOptions, TreemapSeriesData, TreemapSeriesType } from '@t/options';
-
-export interface TreemapChartProps {
-  el: HTMLElement;
-  options: TreemapChartOptions;
-  data: TreemapSeriesData;
-}
+import { TreemapChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

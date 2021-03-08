@@ -1,4 +1,4 @@
-import { SelectSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesInfo } from '@t/charts';
 import { BoxTypeEventDetectType, LineTypeEventDetectType } from '@t/options';
 import { isNumber, isUndefined } from '@src/helpers/utils';
 

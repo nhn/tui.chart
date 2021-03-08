@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -24,12 +24,7 @@ import * as axisBrush from '@src/brushes/axis';
 import * as lineSeriesBrush from '@src/brushes/lineSeries';
 
 import { RadarChartOptions, RadarSeriesData, RadarSeriesInput } from '@t/options';
-
-export interface RadarChartProps {
-  el: HTMLElement;
-  options: RadarChartOptions;
-  data: RadarSeriesData;
-}
+import { RadarChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

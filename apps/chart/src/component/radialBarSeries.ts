@@ -22,7 +22,7 @@ import {
   CicleTypeEventDetectType,
   RadialBarSeriesOptions,
 } from '@t/options';
-import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { RespondersThemeType, makeGroupedSectorResponderModel } from '@src/helpers/responders';
 import {
   getRadialAnchorPosition,
@@ -40,6 +40,7 @@ import { TooltipData } from '@t/components/tooltip';
 import { getTotalAngle } from '@src/helpers/pieSeries';
 import { RadialBarDataLabel } from '@t/components/dataLabels';
 import { isAvailableShowTooltipInfo } from '@src/helpers/validation';
+import { SelectSeriesInfo } from '@t/charts';
 
 type RadiusRange = { inner: number; outer: number };
 
