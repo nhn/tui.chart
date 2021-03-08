@@ -44,7 +44,7 @@ export type BubbleSeriesDataType = { label: string } & BubblePoint;
 
 export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped' | 'point';
 export type BoxTypeEventDetectType = 'grouped' | 'point';
-export type CicleTypeEventDetectType = 'grouped' | 'point';
+export type CircleTypeEventDetectType = 'grouped' | 'point';
 
 export type BezierPoint = {
   controlPoint?: {
@@ -688,7 +688,7 @@ interface RadialBarSeriesOptions extends BaseSeriesOptions {
     start: number;
     end: number;
   };
-  eventDetectType?: CicleTypeEventDetectType;
+  eventDetectType?: CircleTypeEventDetectType;
   dataLabels?: DataLabelOptions;
 }
 
