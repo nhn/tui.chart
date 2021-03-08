@@ -160,7 +160,17 @@ const dataRange: StoreModule = {
 
         const firstExistValue = getFirstValidValue(values);
 
-        if (!series[seriesName].data.length) {
+        if (isCoordinateSeries(initStoreState.series)) {
+          const hasDateValue = !!options.xAxis?.date;
+          const { yAxisValues, xAxisValues } = getCoordinateDataValues(
+            values,
+            categories as string[],
+            hasDateValue
+          );
+          values = yAxisValues;
+
+          seriesDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);
+        } else if (!series[seriesName].data.length) {
           values = [];
         } else if (isRangeValue(firstExistValue)) {
           values = values.reduce((arr, value) => {
@@ -178,18 +188,6 @@ const dataRange: StoreModule = {
           values = getBoxPlotValues(series, seriesName);
         } else if (seriesName === 'bullet') {
           values = getBulletValues(series, seriesName);
-        }
-
-        if (isCoordinateSeries(initStoreState.series)) {
-          const hasDateValue = !!options.xAxis?.date;
-          const { yAxisValues, xAxisValues } = getCoordinateDataValues(
-            values,
-            categories as string[],
-            hasDateValue
-          );
-          values = yAxisValues;
-
-          seriesDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);
         }
 
         setSeriesDataRange(options, seriesName, values, valueAxisName, seriesDataRange);
