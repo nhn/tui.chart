@@ -5,6 +5,8 @@ import { getTextHeight, getTextWidth } from '@src/helpers/calculator';
 import { getTitleFontString } from '@src/helpers/style';
 import { isNoData } from '@src/helpers/validation';
 
+const DEFAULT_NO_DATA_TEXT = 'No data to display';
+
 export default class NoDataText extends Component {
   models!: NoDataTextModel;
 
@@ -24,7 +26,6 @@ export default class NoDataText extends Component {
   }
 
   render({ layout, series, options, theme }: ChartState<Options>) {
-    const DEFAULT_NO_DATA_TEXT = 'No data to display';
     const text = options?.lang?.noData ?? DEFAULT_NO_DATA_TEXT;
     const labelTheme = theme.noData;
     const font = getTitleFontString(labelTheme);

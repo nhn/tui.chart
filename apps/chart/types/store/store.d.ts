@@ -333,7 +333,6 @@ export interface ChartState<T extends Options> {
   series: Series;
   zoomRange?: RangeDataType<number>;
   shiftRange?: RangeDataType<number>;
-  // 기존의 limitMap
   axes: Axes;
   radialAxes: RadialAxes;
   dataRange: DataRange;

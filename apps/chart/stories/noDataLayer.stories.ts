@@ -54,7 +54,7 @@ export const customNoDataText = () => {
     xAxis: { title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
     lang: {
-      noData: '데이터가 없습니다!',
+      noData: 'No Data!!😭😭',
     },
   });
 

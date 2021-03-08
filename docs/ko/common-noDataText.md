@@ -40,7 +40,7 @@ interface NoDataTheme {
 | fontWeight | number \| string | 폰트 가중치, 굵기 |
 | color      | string | 색상              |
 
-간단한 예시로 텍스트의 색상을 변경해보겠습니다..
+간단한 예시로 텍스트의 색상을 변경해보겠습니다.
 
 ```js
 const options = {
