@@ -8,6 +8,12 @@ import {
   PathRectStyleName,
 } from '../brushes';
 
+export enum AxisType {
+  X = 'xAxis',
+  Y = 'yAxis',
+  SECONDARY_Y = 'secondaryYAxis',
+}
+
 export type LabelModel = {
   type: 'label';
   style?: StyleProp<LabelStyle, LabelStyleName>;

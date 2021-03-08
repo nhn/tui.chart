@@ -21,7 +21,7 @@ import {
   ColumnLineChartThemeOptions,
   RadialBarChartThemeOptions,
 } from './theme';
-import { AxisType } from '../src/component/axis';
+import { AxisType } from './components/axis';
 
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number> | null;
