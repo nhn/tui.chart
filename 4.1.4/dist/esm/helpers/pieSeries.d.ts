@@ -1,0 +1,15 @@
+import { PieSeriesType } from "../../types/options";
+import { TooltipData } from "../../types/components/tooltip";
+import { RawSeries, OptionsWithDataLabels } from "../../types/store/store";
+export declare function hasClockwiseSemiCircle(clockwise: boolean, startAngle: number, endAngle: number): boolean;
+export declare function hasCounterClockwiseSemiCircle(clockwise: boolean, startAngle: number, endAngle: number): boolean;
+export declare function getRadius(defaultRadius: number, radius: string | number): number;
+export declare function getTotalAngle(clockwise: boolean, startAngle: number, endAngle: number): number;
+export declare function isSemiCircle(clockwise: boolean, startAngle: number, endAngle: number): boolean;
+export declare function getSemiCircleCenterY(rectHeight: number, clockwise: boolean): number;
+export declare function makePieTooltipData(seriesRawData: PieSeriesType[], category?: string): TooltipData[];
+export declare function hasNestedPieSeries(series: RawSeries): boolean;
+export declare function getNestedPieChartAliasNames(series: RawSeries): string[];
+export declare function pieTooltipLabelFormatter(percentValue: number): string;
+export declare function hasOuterDataLabel(options: OptionsWithDataLabels, series: RawSeries): boolean;
+export declare function hasOuterPieSeriesName(options: OptionsWithDataLabels, series: RawSeries): boolean;
