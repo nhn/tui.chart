@@ -1,21 +1,14 @@
 import { Point, Rect, BezierPoint, BoxSeriesDataType } from '../options';
-import { CircleStyleName, RectStyleName } from '../../src/brushes/basic';
 import { TooltipData } from './tooltip';
 import { LineModel, LabelModel } from './axis';
-import { SectorStyle, SectorStyleName } from '../../src/brushes/sector';
 import { LegendData } from './legend';
 import { TreemapSeriesData } from '../store/store';
-import Component from '../../src/component/component';
 import { BubbleDataLabel } from '../theme';
+import { SectorStyle, SectorStyleName, CircleStyleName, RectStyleName } from '../brushes';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
 export type PointModel = Point & { value?: number; name?: string };
-
-export type RespondersModel = {
-  component: Component;
-  detected: ResponderModel[];
-}[];
 
 export interface CircleStyle {
   strokeStyle?: string;

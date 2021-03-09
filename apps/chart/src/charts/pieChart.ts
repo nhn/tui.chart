@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import Tooltip from '@src/component/tooltip';
 import Legend from '@src/component/legend';
@@ -18,12 +18,7 @@ import * as sectorBrush from '@src/brushes/sector';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 
 import { PieChartOptions, PieSeriesData, PieSeriesType } from '@t/options';
-
-export interface PieChartProps {
-  el: HTMLElement;
-  options: PieChartOptions;
-  data: PieSeriesData;
-}
+import { PieChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

@@ -1,20 +1,40 @@
-import LineChart, { LineChartProps } from '@src/charts/lineChart';
-import PieChart, { PieChartProps } from '@src/charts/pieChart';
-import HeatmapChart, { HeatmapChartProps } from '@src/charts/heatmapChart';
-import AreaChart, { AreaChartProps } from '@src/charts/areaChart';
-import LineScatterChart, { LineScatterChartProps } from '@src/charts/lineScatterChart';
-import LineAreaChart, { LineAreaChartProps } from '@src/charts/lineAreaChart';
-import BarChart, { BarChartProps } from '@src/charts/barChart';
-import ColumnChart, { ColumnChartProps } from '@src/charts/columnChart';
-import ColumnLineChart, { ColumnLineChartProps } from '@src/charts/columnLineChart';
-import BubbleChart, { BubbleChartProps } from '@src/charts/bubbleChart';
-import ScatterChart, { ScatterChartProps } from '@src/charts/scatterChart';
-import BulletChart, { BulletChartProps } from '@src/charts/bulletChart';
-import NestedPieChart, { NestedPieChartProps } from '@src/charts/nestedPieChart';
-import RadarChart, { RadarChartProps } from '@src/charts/radarChart';
-import TreemapChart, { TreemapChartProps } from '@src/charts/treemapChart';
-import BoxPlotChart, { BoxPlotChartProps } from '@src/charts/boxPlotChart';
-import RadialBarChart, { RadialBarChartProps } from '@src/charts/radialBarChart';
+import LineChart from '@src/charts/lineChart';
+import PieChart from '@src/charts/pieChart';
+import HeatmapChart from '@src/charts/heatmapChart';
+import AreaChart from '@src/charts/areaChart';
+import LineScatterChart from '@src/charts/lineScatterChart';
+import LineAreaChart from '@src/charts/lineAreaChart';
+import BarChart from '@src/charts/barChart';
+import ColumnChart from '@src/charts/columnChart';
+import ColumnLineChart from '@src/charts/columnLineChart';
+import BubbleChart from '@src/charts/bubbleChart';
+import ScatterChart from '@src/charts/scatterChart';
+import BulletChart from '@src/charts/bulletChart';
+import NestedPieChart from '@src/charts/nestedPieChart';
+import RadarChart from '@src/charts/radarChart';
+import TreemapChart from '@src/charts/treemapChart';
+import BoxPlotChart from '@src/charts/boxPlotChart';
+import RadialBarChart from '@src/charts/radialBarChart';
+
+import {
+  LineChartProps,
+  PieChartProps,
+  HeatmapChartProps,
+  AreaChartProps,
+  LineScatterChartProps,
+  LineAreaChartProps,
+  BulletChartProps,
+  NestedPieChartProps,
+  RadarChartProps,
+  RadialBarChartProps,
+  BarChartProps,
+  BoxPlotChartProps,
+  ColumnLineChartProps,
+  BubbleChartProps,
+  TreemapChartProps,
+  ScatterChartProps,
+  ColumnChartProps,
+} from '@t/charts';
 
 export default class Chart {
   public static lineChart = (props: LineChartProps) => {

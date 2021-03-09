@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import scale from '@src/store/scale';
 import axes from '@src/store/axes';
@@ -33,12 +33,7 @@ import {
   BubbleSeriesInput,
   BubbleChartOptions,
 } from '@t/options';
-
-export interface BubbleChartProps {
-  el: HTMLElement;
-  options: BaseOptions;
-  data: BubbleSeriesData;
-}
+import { BubbleChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

@@ -6,7 +6,7 @@ import category from '@src/store/category';
 import legend from '@src/store/legend';
 import optionsStore from '@src/store/options';
 import theme from '@src/store/theme';
-import EventEmitter, { CustomEventType, EventListener } from '@src/eventEmitter';
+import EventEmitter from '@src/eventEmitter';
 import ComponentManager from '@src/component/componentManager';
 import Painter from '@src/painter';
 import Animator from '@src/animator';
@@ -21,24 +21,18 @@ import {
   ChartSizeInput,
 } from '@t/options';
 
+import { RespondersModel } from '@src/component/component';
 import { responderDetectors } from '@src/responderDetectors';
 import { ChartState, Options, StoreModule, UsingContainerSize } from '@t/store/store';
 import Component from '@src/component/component';
-import { RespondersModel } from '@t/components/series';
 import { CheckedLegendType } from '@t/components/legend';
 import { message } from '@src/message';
 import { sendHostname } from '@src/helpers/googleAnalytics';
 import { makeObservableObjectToNormal } from '@src/store/reactive';
+import { SelectSeriesInfo, AddSeriesDataInfo } from '@t/charts';
+import { CustomEventType, EventListener } from '@t/eventEmitter';
 
 export const DEFAULT_ANIM_DURATION = 500;
-
-export type AddSeriesDataInfo = { chartType?: string; category?: string };
-export type SelectSeriesInfo = {
-  seriesIndex?: number;
-  index?: number;
-  name?: string;
-  chartType?: 'line' | 'area' | 'column' | 'scatter';
-};
 
 export interface SelectSeriesHandlerParams<T extends Options> extends SelectSeriesInfo {
   state: ChartState<T>;

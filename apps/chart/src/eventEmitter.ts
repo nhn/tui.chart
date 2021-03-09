@@ -1,3 +1,5 @@
+import { CustomEventType, EventListener } from '@t/eventEmitter';
+
 type EventType =
   | 'needSubLoop'
   | 'needDraw'
@@ -15,18 +17,6 @@ type EventType =
   | 'showTooltip'
   | 'hideTooltip'
   | CustomEventType;
-
-export type CustomEventType =
-  | 'clickLegendLabel'
-  | 'clickLegendCheckbox'
-  | 'selectSeries'
-  | 'unselectSeries'
-  | 'hoverSeries'
-  | 'unhoverSeries'
-  | 'zoom'
-  | 'resetZoom';
-
-export type EventListener = (evt: any) => void;
 
 export default class EventEmitter {
   handlers: EventListener[] = [];

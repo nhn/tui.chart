@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -36,12 +36,7 @@ import {
   BoxSeriesData,
   BoxSeriesType,
 } from '@t/options';
-
-export interface BarChartProps {
-  el: HTMLElement;
-  options: BarChartOptions;
-  data: BoxSeriesData;
-}
+import { BarChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

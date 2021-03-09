@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import nestedPieSeriesData from '@src/store/nestedPieSeriesData';
 
@@ -20,12 +20,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 
 import { NestedPieChartOptions, NestedPieSeriesData, NestedPieSeriesType } from '@t/options';
 import PieSeries from '@src/component/pieSeries';
-
-export interface NestedPieChartProps {
-  el: HTMLElement;
-  options: NestedPieChartOptions;
-  data: NestedPieSeriesData;
-}
+import { NestedPieChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

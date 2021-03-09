@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -33,12 +33,7 @@ import {
 } from '@t/options';
 import { isNull } from '@src/helpers/utils';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
-
-export interface ScatterChartProps {
-  el: HTMLElement;
-  options: ScatterChartOptions;
-  data: ScatterSeriesData;
-}
+import { ScatterChartProps, SelectSeriesInfo } from '@t/charts';
 
 function clearUnnecessaryData(scatterSeries: ScatterSeriesType[]) {
   return scatterSeries.map((series) => {

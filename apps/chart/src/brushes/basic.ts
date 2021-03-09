@@ -10,9 +10,7 @@ import { makeStyleObj, setLineDash, fillStyle, strokeWithOptions } from '@src/he
 import { LineModel } from '@t/components/axis';
 import { calculateDegreeToRadian } from '@src/helpers/sector';
 import { ArcModel } from '@t/components/radialAxis';
-
-export type CircleStyleName = 'default' | 'plot';
-export type RectStyleName = 'shadow';
+import { RectStyleName, CircleStyleName } from '@t/brushes';
 
 const circleStyle = {
   default: {

@@ -54,9 +54,10 @@ import { getBoxTypeSeriesPadding } from '@src/helpers/style';
 import { makeRectResponderModel, RespondersThemeType } from '@src/helpers/responders';
 import { RectDirection, RectDataLabel } from '@t/components/dataLabels';
 import { BoxChartSeriesTheme, GroupedRect } from '@t/theme';
-import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
 import { isAvailableSelectSeries, isAvailableShowTooltipInfo } from '@src/helpers/validation';
+import { SelectSeriesInfo } from '@t/charts';
 
 export enum SeriesDirection {
   POSITIVE,

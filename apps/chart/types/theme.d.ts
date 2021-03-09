@@ -1,4 +1,4 @@
-import { SectorStyle } from '../src/brushes/sector';
+import { SectorStyle } from './brushes';
 import { ScatterSeriesIconType } from './components/series';
 
 type SeriesThemeMap = {

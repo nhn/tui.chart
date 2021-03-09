@@ -1,4 +1,4 @@
-import Chart, { AddSeriesDataInfo, SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -42,12 +42,7 @@ import {
   PlotLine,
 } from '@t/options';
 import { RawSeries } from '@t/store/store';
-
-export interface LineAreaChartProps {
-  el: HTMLElement;
-  options: LineAreaChartOptions;
-  data: LineAreaData;
-}
+import { LineAreaChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

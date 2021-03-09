@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -24,12 +24,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import { BulletChartOptions, BulletSeriesType, BulletSeriesData } from '@t/options';
-
-export interface BulletChartProps {
-  el: HTMLElement;
-  options: BulletChartOptions;
-  data: BulletSeriesData;
-}
+import { BulletChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -24,12 +24,7 @@ import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as BoxPlotBrush from '@src/brushes/boxPlot';
 import { BoxPlotSeriesType, BoxPlotSeriesData, BoxPlotChartOptions } from '@t/options';
-
-export interface BoxPlotChartProps {
-  el: HTMLElement;
-  options: BoxPlotChartOptions;
-  data: BoxPlotSeriesData;
-}
+import { BoxPlotChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

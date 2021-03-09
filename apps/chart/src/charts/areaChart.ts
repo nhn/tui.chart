@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import scale from '@src/store/scale';
@@ -39,12 +39,7 @@ import {
   PlotLine,
   PlotBand,
 } from '@t/options';
-
-export interface AreaChartProps {
-  el: HTMLElement;
-  options: AreaChartOptions;
-  data: AreaSeriesData;
-}
+import { AreaChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

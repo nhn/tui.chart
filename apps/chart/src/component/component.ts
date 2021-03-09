@@ -88,6 +88,11 @@ type ComponentModels =
   | BackgroundModel
   | RadialAxisModels;
 
+export type RespondersModel = {
+  component: Component;
+  detected: ResponderModel[];
+}[];
+
 export default abstract class Component {
   name = 'Component';
 
