@@ -31,6 +31,8 @@ type LegendLabelsInfo = {
   label: string;
   type: ChartType;
   checked: boolean;
+  formattedLabel: string;
+  width: number;
 }[];
 
 type LegendSizeParam = {
@@ -235,6 +237,8 @@ function getNestedPieLegendLabelsInfo(series: RawSeries) {
           label: name,
           type: 'pie',
           checked: visible ?? true,
+          formattedLabel: 'test',
+          width: 100,
         });
       }
     });
@@ -243,13 +247,35 @@ function getNestedPieLegendLabelsInfo(series: RawSeries) {
   return result;
 }
 
-function getLegendLabelsInfo(series: RawSeries): LegendLabelsInfo {
+type LabelOptions = {
+  checkboxVisible: boolean;
+  useSpectrumLegend: boolean;
+  font: string;
+};
+
+function getLegendLabelsInfo(
+  series: RawSeries,
+  options: Options,
+  labelOptions: LabelOptions
+): LegendLabelsInfo {
+  // 여기서 ellipsis나 hidden일 경우 추가 처리가 있어야 함.
+  // formattedLabel을 넣고 이 데이터를 기준으로 출력한다.
+  const { checkboxVisible, useSpectrumLegend, font } = labelOptions;
+
   return Object.keys(series).flatMap((type) =>
-    series[type].map(({ name, colorValue, visible }) => ({
-      label: colorValue ? colorValue : name,
-      type,
-      checked: visible ?? true,
-    }))
+    series[type].map(({ name, colorValue, visible }) => {
+      const label = colorValue ? colorValue : name;
+      const formattedLabel = `${label}...`;
+      const width = getItemWidth(formattedLabel, checkboxVisible, useSpectrumLegend, font);
+
+      return {
+        label,
+        type,
+        checked: visible ?? true,
+        formattedLabel,
+        width,
+      };
+    })
   );
 }
 
@@ -311,28 +337,34 @@ function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
 }
 
 function getLegendState(options: Options, series: RawSeries): Legend {
-  const checkboxVisible = showCheckbox(options);
   const useSpectrumLegend =
     (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
   const useScatterChartIcon = !!series?.scatter;
+  const checkboxVisible = showCheckbox(options);
   const defaultTheme = makeDefaultTheme(options?.theme?.chart?.fontFamily);
   const font = getTitleFontString(
     deepMergedCopy(defaultTheme.legend.label!, { ...options.theme?.legend?.label })
   );
+  const labelOptions = {
+    checkboxVisible,
+    font,
+    useSpectrumLegend,
+  };
 
   const legendLabelsInfo = hasNestedPieSeries(series)
     ? getNestedPieLegendLabelsInfo(series)
-    : getLegendLabelsInfo(series);
+    : getLegendLabelsInfo(series, options, labelOptions);
 
-  const data = legendLabelsInfo.map(({ label, type, checked }) => ({
+  const data = legendLabelsInfo.map(({ label, type, checked, width, formattedLabel }) => ({
     label,
     active: true,
     checked,
-    width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
+    width,
     iconType: getIconType(type),
     chartType: type,
     rowIndex: 0,
     columnIndex: 0,
+    formattedLabel,
   }));
 
   return {

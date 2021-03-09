@@ -7,6 +7,7 @@ export type CheckedLegendType = Pick<LegendData, 'chartType' | 'label' | 'checke
 type LegendData = {
   color: string;
   label: string;
+  formattedLabel: string;
   checked: boolean;
   active: boolean;
   chartType: ChartType;

@@ -322,6 +322,10 @@ interface BaseLegendOptions {
   showCheckbox?: boolean;
   visible?: boolean;
   width?: number;
+  item?: {
+    width?: number;
+    overflow?: 'hidden' | 'ellipsis';
+  };
 }
 
 interface CircleLegendOptions {
