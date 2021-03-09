@@ -404,6 +404,7 @@ export const legendBrush = () => {
     data: [
       {
         label: 'circle-checked-active',
+        formattedLabel: 'circle-checked-active',
         color: '#ff4250',
         checked: true,
         active: true,
@@ -417,6 +418,7 @@ export const legendBrush = () => {
       },
       {
         label: 'circle-checked-inactive',
+        formattedLabel: 'circle-checked-inactive',
         color: '#ff4250',
         checked: true,
         active: false,
@@ -430,6 +432,7 @@ export const legendBrush = () => {
       },
       {
         label: 'circle-unchecked-active',
+        formattedLabel: 'circle-unchecked-active',
         color: '#ff4250',
         checked: false,
         active: true,
@@ -455,6 +458,7 @@ export const legendBrush = () => {
     data: [
       {
         label: 'circle-unchecked-active-hideCheckbox',
+        formattedLabel: 'circle-unchecked-active-hideCheckbox',
         color: '#510a32',
         checked: false,
         active: true,
@@ -480,6 +484,7 @@ export const legendBrush = () => {
     data: [
       {
         label: 'line-checked-active',
+        formattedLabel: 'line-checked-active',
         color: '#f9d423',
         checked: true,
         active: true,
@@ -493,6 +498,7 @@ export const legendBrush = () => {
       },
       {
         label: 'line-checked-inactive',
+        formattedLabel: 'line-checked-inactive',
         color: '#f9d423',
         checked: true,
         active: false,
@@ -518,6 +524,7 @@ export const legendBrush = () => {
     data: [
       {
         label: 'rect-checked-active',
+        formattedLabel: 'rect-checked-active',
         color: '#83af9b',
         checked: true,
         active: true,
@@ -531,6 +538,7 @@ export const legendBrush = () => {
       },
       {
         label: 'rect-checked-inactive',
+        formattedLabel: 'rect-checked-inactive',
         color: '#83af9b',
         checked: true,
         active: false,

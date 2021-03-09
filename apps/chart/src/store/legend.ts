@@ -242,18 +242,25 @@ function showCheckbox(options: Options) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
-function getNestedPieLegendLabelsInfo(series: RawSeries) {
+function getNestedPieLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo) {
   const result: LegendLabelsInfo = [];
+  const maxTextLengthWithEllipsis = getMaxTextLengthWithEllipsis(legendInfo);
 
   series.pie!.forEach(({ data }) => {
     data.forEach(({ name, parentName, visible }) => {
       if (!parentName) {
+        const { width, formattedLabel } = getFormattedLabelInfo(
+          legendInfo,
+          name,
+          maxTextLengthWithEllipsis
+        );
+
         result.push({
           label: name,
           type: 'pie',
           checked: visible ?? true,
-          formattedLabel: 'test',
-          width: 100,
+          formattedLabel,
+          width,
         });
       }
     });
@@ -389,7 +396,7 @@ function getLegendState(options: Options, series: RawSeries): Legend {
   const font = getTitleFontString(
     deepMergedCopy(defaultTheme.legend.label!, { ...options.theme?.legend?.label })
   );
-  const labelOptions = {
+  const legendInfo = {
     checkboxVisible,
     font,
     useSpectrumLegend,
@@ -397,8 +404,8 @@ function getLegendState(options: Options, series: RawSeries): Legend {
   };
 
   const legendLabelsInfo = hasNestedPieSeries(series)
-    ? getNestedPieLegendLabelsInfo(series)
-    : getLegendLabelsInfo(series, labelOptions);
+    ? getNestedPieLegendLabelsInfo(series, legendInfo)
+    : getLegendLabelsInfo(series, legendInfo);
 
   const data = legendLabelsInfo.map(({ label, type, checked, width, formattedLabel }) => ({
     label,
