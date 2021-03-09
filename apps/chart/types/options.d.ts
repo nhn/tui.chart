@@ -324,7 +324,7 @@ interface BaseLegendOptions {
   width?: number;
   item?: {
     width?: number;
-    overflow?: 'hidden' | 'ellipsis';
+    overflow?: 'ellipsis';
   };
 }
 

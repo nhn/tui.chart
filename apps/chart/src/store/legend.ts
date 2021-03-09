@@ -9,8 +9,14 @@ import {
   CircleLegend,
   LegendDataList,
 } from '@t/store/store';
-import { Align, BubbleChartOptions, Size, TreemapChartSeriesOptions } from '@t/options';
-import { isUndefined, sum, includes, deepMergedCopy, range } from '@src/helpers/utils';
+import {
+  Align,
+  BaseLegendOptions,
+  BubbleChartOptions,
+  Size,
+  TreemapChartSeriesOptions,
+} from '@t/options';
+import { isUndefined, sum, includes, deepMergedCopy, range, isNumber } from '@src/helpers/utils';
 
 import {
   getLegendItemHeight,
@@ -35,6 +41,13 @@ type LegendLabelsInfo = {
   width: number;
 }[];
 
+type LegendInfo = {
+  checkboxVisible: boolean;
+  useSpectrumLegend: boolean;
+  font: string;
+  legendOptions?: BaseLegendOptions;
+};
+
 type LegendSizeParam = {
   initialWidth: number;
   legendWidths: number[];
@@ -50,6 +63,9 @@ type LegendSizeParam = {
 
 const INITIAL_LEGEND_WIDTH = 100;
 const INITIAL_CIRCLE_LEGEND_WIDTH = 150;
+const COMPONENT_HEIGHT_EXCEPT_Y_AXIS = 100;
+const ELLIPSIS_DOT_TEXT = '...';
+const WIDEST_TEXT = 'W'; // The widest text width in Arial font.
 
 function recalculateLegendWhenHeightOverflows(params: LegendSizeParam, legendHeight: number) {
   const { legendWidths, itemHeight } = params;
@@ -127,7 +143,7 @@ function calculateLegendHeight(params: LegendSizeParam) {
   if (verticalAlign) {
     legendHeight = chartHeight;
   } else {
-    const totalHeight = legendWidths.length * (padding.Y + itemHeight);
+    const totalHeight = legendWidths.length * itemHeight;
     isOverflow = chartHeight < totalHeight;
     legendHeight = isOverflow ? chartHeight : totalHeight;
   }
@@ -199,7 +215,6 @@ function calculateLegendWidth(params: LegendSizeParam) {
 
 function getDefaultLegendSize(params: LegendSizeParam) {
   const { verticalAlign, chart, itemHeight, initialWidth, circleLegendVisible } = params;
-  const COMPONENT_HEIGHT_EXCEPT_Y_AXIS = 100;
   const restAreaHeight =
     COMPONENT_HEIGHT_EXCEPT_Y_AXIS + (circleLegendVisible ? INITIAL_CIRCLE_LEGEND_WIDTH : 0); // rest area temporary value (yAxisTitle.height + xAxis.height + circleLegend.height)
 
@@ -247,26 +262,55 @@ function getNestedPieLegendLabelsInfo(series: RawSeries) {
   return result;
 }
 
-type LabelOptions = {
-  checkboxVisible: boolean;
-  useSpectrumLegend: boolean;
-  font: string;
-};
+function getMaxTextLengthWithEllipsis(legendInfo: LegendInfo) {
+  const { legendOptions, useSpectrumLegend, font, checkboxVisible } = legendInfo;
+  const width = legendOptions?.item?.width;
 
-function getLegendLabelsInfo(
-  series: RawSeries,
-  options: Options,
-  labelOptions: LabelOptions
-): LegendLabelsInfo {
-  // 여기서 ellipsis나 hidden일 경우 추가 처리가 있어야 함.
-  // formattedLabel을 넣고 이 데이터를 기준으로 출력한다.
-  const { checkboxVisible, useSpectrumLegend, font } = labelOptions;
+  if (isUndefined(width) || useSpectrumLegend) {
+    return;
+  }
+
+  const checkboxWidth = checkboxVisible ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0;
+  const iconWidth = LEGEND_ICON_SIZE + LEGEND_MARGIN_X;
+  const ellipsisDotWidth = getTextWidth(ELLIPSIS_DOT_TEXT, font);
+  const widestTextWidth = getTextWidth(WIDEST_TEXT, font);
+  const maxTextCount = Math.floor(
+    (width - ellipsisDotWidth - checkboxWidth - iconWidth) / widestTextWidth
+  );
+
+  return maxTextCount > 0 ? maxTextCount : 0;
+}
+
+function getFormattedLabelInfo(legendInfo: LegendInfo, label: string, maxTextLength?: number) {
+  const { checkboxVisible, useSpectrumLegend, font, legendOptions } = legendInfo;
+  let formattedLabel = label;
+
+  const itemWidth = legendOptions?.item?.width;
+  const itemWidthWithFullText = getItemWidth(
+    formattedLabel,
+    checkboxVisible,
+    useSpectrumLegend,
+    font
+  );
+
+  if (isNumber(itemWidth) && isNumber(maxTextLength) && itemWidth < itemWidthWithFullText) {
+    formattedLabel = `${label.slice(0, maxTextLength)}${ELLIPSIS_DOT_TEXT}`;
+  }
+
+  return { formattedLabel, width: itemWidth ?? itemWidthWithFullText };
+}
+
+function getLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo): LegendLabelsInfo {
+  const maxTextLengthWithEllipsis = getMaxTextLengthWithEllipsis(legendInfo);
 
   return Object.keys(series).flatMap((type) =>
     series[type].map(({ name, colorValue, visible }) => {
       const label = colorValue ? colorValue : name;
-      const formattedLabel = `${label}...`;
-      const width = getItemWidth(formattedLabel, checkboxVisible, useSpectrumLegend, font);
+      const { width, formattedLabel } = getFormattedLabelInfo(
+        legendInfo,
+        label,
+        maxTextLengthWithEllipsis
+      );
 
       return {
         label,
@@ -349,11 +393,12 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     checkboxVisible,
     font,
     useSpectrumLegend,
+    legendOptions: options.legend,
   };
 
   const legendLabelsInfo = hasNestedPieSeries(series)
     ? getNestedPieLegendLabelsInfo(series)
-    : getLegendLabelsInfo(series, options, labelOptions);
+    : getLegendLabelsInfo(series, labelOptions);
 
   const data = legendLabelsInfo.map(({ label, type, checked, width, formattedLabel }) => ({
     label,

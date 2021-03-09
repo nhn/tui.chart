@@ -100,7 +100,7 @@ export const legendEllipsis = () => {
   const { el } = createChart(circleLegendOverlapData, {
     legend: {
       item: {
-        width: 50,
+        width: 70,
         overflow: 'ellipsis',
       },
     },
