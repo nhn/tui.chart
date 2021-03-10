@@ -11,9 +11,11 @@ import {
 } from '@t/store/store';
 import {
   Align,
-  BaseLegendOptions,
   BubbleChartOptions,
+  HeatmapChartOptions,
+  NormalLegendOptions,
   Size,
+  TreemapChartOptions,
   TreemapChartSeriesOptions,
 } from '@t/options';
 import { isUndefined, sum, includes, deepMergedCopy, range, isNumber } from '@src/helpers/utils';
@@ -41,11 +43,13 @@ type LegendLabelsInfo = {
   width: number;
 }[];
 
+type OptionsWithNormalLegendType = Exclude<Options, TreemapChartOptions | HeatmapChartOptions>;
+
 type LegendInfo = {
   checkboxVisible: boolean;
   useSpectrumLegend: boolean;
   font: string;
-  legendOptions?: BaseLegendOptions;
+  legendOptions?: NormalLegendOptions;
 };
 
 type LegendSizeParam = {
@@ -238,7 +242,7 @@ function showLegend(options: Options, series: Series | RawSeries) {
   return isUndefined(options.legend?.visible) ? true : !!options.legend?.visible;
 }
 
-function showCheckbox(options: Options) {
+function showCheckbox(options: OptionsWithNormalLegendType) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
@@ -390,8 +394,11 @@ function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
 function getLegendState(options: Options, series: RawSeries): Legend {
   const useSpectrumLegend =
     (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
+
   const useScatterChartIcon = !!series?.scatter;
-  const checkboxVisible = showCheckbox(options);
+  const checkboxVisible = useSpectrumLegend
+    ? false
+    : showCheckbox(options as OptionsWithNormalLegendType);
   const defaultTheme = makeDefaultTheme(options?.theme?.chart?.fontFamily);
   const font = getTitleFontString(
     deepMergedCopy(defaultTheme.legend.label!, { ...options.theme?.legend?.label })
@@ -400,7 +407,7 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     checkboxVisible,
     font,
     useSpectrumLegend,
-    legendOptions: options.legend,
+    legendOptions: options.legend as NormalLegendOptions,
   };
 
   const legendLabelsInfo = hasNestedPieSeries(series)
@@ -505,7 +512,10 @@ const legend: StoreModule = {
       } = state;
       const align = getAlign(options);
       const visible = showLegend(options, series);
-      const checkbox = showCheckbox(options);
+      // @TODO: Need to remove unnecessary calculations according to legend type
+      const checkbox = useSpectrumLegend
+        ? false
+        : showCheckbox(options as OptionsWithNormalLegendType);
       const initialWidth = Math.min(chart.width / 5, INITIAL_LEGEND_WIDTH);
       const verticalAlign = isVerticalAlign(align);
       const circleLegendVisible = series.bubble
