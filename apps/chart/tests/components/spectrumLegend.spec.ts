@@ -30,6 +30,36 @@ describe('spectrum legend', () => {
         },
         legend: {
           visible: true,
+          data: [
+            {
+              active: true,
+              chartType: 'treemap',
+              checked: true,
+              iconType: 'spectrum',
+              width: 49,
+            },
+            {
+              active: true,
+              chartType: 'treemap',
+              checked: true,
+              iconType: 'spectrum',
+              width: 49,
+            },
+            {
+              active: true,
+              chartType: 'treemap',
+              checked: true,
+              iconType: 'spectrum',
+              width: 49,
+            },
+            {
+              active: true,
+              chartType: 'treemap',
+              checked: true,
+              iconType: 'spectrum',
+              width: 49,
+            },
+          ],
         },
         colorValueScale: {
           limit: { max: 2, min: 0 },
