@@ -75,6 +75,7 @@ type Theme = {
   tooltip: TooltipTheme;
   plot: PlotTheme;
   exportMenu: ExportMenuTheme;
+  noData: FontTheme;
 };
 
 type AxisTheme = {
@@ -277,6 +278,7 @@ interface LineAreaChartSeriesTheme {
 
 interface BaseThemeOptions {
   chart?: ChartTheme;
+  noData?: FontTheme;
   title?: FontTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;

@@ -80,7 +80,7 @@ export function makePieTooltipData(seriesRawData: PieSeriesType[], category = ''
 }
 
 export function hasNestedPieSeries(series: RawSeries) {
-  return !!(series.pie && Array.isArray(series.pie[0].data));
+  return !!(series.pie && Array.isArray(series.pie[0]?.data));
 }
 
 export function getNestedPieChartAliasNames(series: RawSeries) {

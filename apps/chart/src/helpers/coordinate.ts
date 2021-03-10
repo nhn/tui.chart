@@ -49,7 +49,7 @@ function isLineCoordinateSeries(series: Series | RawSeries) {
     return false;
   }
 
-  const firstData = getFirstValidValue(series.line[0].data);
+  const firstData = getFirstValidValue(series.line[0]?.data);
 
   return firstData && (Array.isArray(firstData) || isObject(firstData));
 }

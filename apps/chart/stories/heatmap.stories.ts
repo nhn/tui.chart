@@ -213,3 +213,16 @@ export const rotatable = () => {
 
   return el;
 };
+
+export const noData = () => {
+  const data = {
+    series: [],
+    categories: {
+      x: [],
+      y: [],
+    },
+  };
+  const { el } = createChart(data);
+
+  return el;
+};

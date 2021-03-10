@@ -326,6 +326,8 @@ export interface ScatterSeriesModel {
   name?: string;
 }
 
+export type NoDataTextModel = LabelModel[];
+
 export type BackgroundModel = RectModel[];
 
 export type RadiusRange = { inner: number; outer: number };

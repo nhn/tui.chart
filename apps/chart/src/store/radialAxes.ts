@@ -146,7 +146,7 @@ function getVerticalAxisData({
   return {
     labels,
     tickDistance: (outerRadius - innerRadius) / labels.length,
-    ...pick(defaultAxisData, 'axisSize', 'centerX', 'centerY', 'startAngle', 'endAngle' ),
+    ...pick(defaultAxisData, 'axisSize', 'centerX', 'centerY', 'startAngle', 'endAngle'),
     pointOnColumn,
     radiusRanges,
     innerRadius,
@@ -171,7 +171,7 @@ function getCircularAxisData({
     circularAxisLabelMargin,
     circularAxisLabelFont
   );
-  const {totalAngle} = defaultAxisData;
+  const { totalAngle } = defaultAxisData;
   const { tickInterval, labelInterval } = intervalData;
 
   return {

@@ -300,3 +300,13 @@ export const axisFormatter = () => {
 
   return el;
 };
+
+export const noData = () => {
+  const data = {
+    series: [],
+    categories: [],
+  };
+  const { el } = createChart(data);
+
+  return el;
+};

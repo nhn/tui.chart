@@ -37,7 +37,7 @@ export default class HeatmapSeries extends Component {
   render(chartState: ChartState<HeatmapChartOptions>) {
     const { layout, heatmapSeries, axes, theme, colorValueScale, options } = chartState;
 
-    if (!heatmapSeries.length) {
+    if (!heatmapSeries) {
       throw new Error(message.noDataError(this.name));
     }
 
