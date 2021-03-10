@@ -103,6 +103,7 @@ export interface AreaChartProps {
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
  *       @param {boolean} [props.options.legend.visible] - Whether to show legend.
  *       @param {number} [props.options.legend.width] - Width of legend.
+ *       @param {Object} [props.options.legend.item] - `width` and `overflow` options of the legend item. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Legend guide} on github.
  *     @param {Object} [props.options.exportMenu]
  *       @param {boolean} [props.options.exportMenu.visible] - Whether to show export menu.
  *       @param {string} [props.options.exportMenu.filename] - File name applied when downloading.

@@ -180,6 +180,7 @@
       "example17-03-scale": "17.3 [Common] Scale Options",
       "example17-04-tick-label-interval": "17.4 [Common] Tick, Label Interval",
       "example17-05-component-theme": "17.5 [Common] Common Component Theme",
+      "example17-06-legend-ellipsis": "17.6 [Common] Legend Ellipsis",
       "example18-01-radialBar-chart-basic": "18.1 [RadialBar Chart] Basic",
       "example18-02-radialBar-chart-selectable-event": "18.2 [RadialBar Chart] Selectable options, select even",
       "example18-03-radialBar-chart-counterClockwise": "18.3 [RadialBar Chart] Counter Clockwise",
