@@ -39,7 +39,7 @@ type LegendLabelsInfo = {
   label: string;
   type: ChartType;
   checked: boolean;
-  formattedLabel: string;
+  viewLabel: string;
   width: number;
 }[];
 
@@ -253,17 +253,13 @@ function getNestedPieLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo)
   series.pie!.forEach(({ data }) => {
     data.forEach(({ name, parentName, visible }) => {
       if (!parentName) {
-        const { width, formattedLabel } = getFormattedLabelInfo(
-          legendInfo,
-          name,
-          maxTextLengthWithEllipsis
-        );
+        const { width, viewLabel } = getViewLabelInfo(legendInfo, name, maxTextLengthWithEllipsis);
 
         result.push({
           label: name,
           type: 'pie',
           checked: visible ?? true,
-          formattedLabel,
+          viewLabel,
           width,
         });
       }
@@ -292,23 +288,18 @@ function getMaxTextLengthWithEllipsis(legendInfo: LegendInfo) {
   return maxTextCount > 0 ? maxTextCount : 0;
 }
 
-function getFormattedLabelInfo(legendInfo: LegendInfo, label: string, maxTextLength?: number) {
+function getViewLabelInfo(legendInfo: LegendInfo, label: string, maxTextLength?: number) {
   const { checkboxVisible, useSpectrumLegend, font, legendOptions } = legendInfo;
-  let formattedLabel = label;
+  let viewLabel = label;
 
   const itemWidth = legendOptions?.item?.width;
-  const itemWidthWithFullText = getItemWidth(
-    formattedLabel,
-    checkboxVisible,
-    useSpectrumLegend,
-    font
-  );
+  const itemWidthWithFullText = getItemWidth(viewLabel, checkboxVisible, useSpectrumLegend, font);
 
   if (isNumber(itemWidth) && isNumber(maxTextLength) && itemWidth < itemWidthWithFullText) {
-    formattedLabel = `${label.slice(0, maxTextLength)}${ELLIPSIS_DOT_TEXT}`;
+    viewLabel = `${label.slice(0, maxTextLength)}${ELLIPSIS_DOT_TEXT}`;
   }
 
-  return { formattedLabel, width: itemWidth ?? itemWidthWithFullText };
+  return { viewLabel, width: itemWidth ?? itemWidthWithFullText };
 }
 
 function getLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo): LegendLabelsInfo {
@@ -317,17 +308,13 @@ function getLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo): LegendL
   return Object.keys(series).flatMap((type) =>
     series[type].map(({ name, colorValue, visible }) => {
       const label = colorValue ? colorValue : name;
-      const { width, formattedLabel } = getFormattedLabelInfo(
-        legendInfo,
-        label,
-        maxTextLengthWithEllipsis
-      );
+      const { width, viewLabel } = getViewLabelInfo(legendInfo, label, maxTextLengthWithEllipsis);
 
       return {
         label,
         type,
         checked: visible ?? true,
-        formattedLabel,
+        viewLabel,
         width,
       };
     })
@@ -414,7 +401,7 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     ? getNestedPieLegendLabelsInfo(series, legendInfo)
     : getLegendLabelsInfo(series, legendInfo);
 
-  const data = legendLabelsInfo.map(({ label, type, checked, width, formattedLabel }) => ({
+  const data = legendLabelsInfo.map(({ label, type, checked, width, viewLabel }) => ({
     label,
     active: true,
     checked,
@@ -423,7 +410,7 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     chartType: type,
     rowIndex: 0,
     columnIndex: 0,
-    formattedLabel,
+    viewLabel,
   }));
 
   return {

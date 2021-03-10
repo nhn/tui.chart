@@ -197,7 +197,7 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
       color,
       iconType,
       useScatterChartIcon,
-      formattedLabel: legendLabel,
+      viewLabel: legendLabel,
     } = datum;
     const iconY = y - 1 + (getTextHeight(legendLabel, font) - 11) / 4;
     const renderOptions: RenderOptions = {

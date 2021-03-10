@@ -32,7 +32,7 @@ describe('Legend Store', () => {
       data: [
         {
           label: 'test',
-          formattedLabel: 'test',
+          viewLabel: 'test',
           checked: true,
           active: true,
           width: 38,
@@ -90,7 +90,7 @@ describe('Legend Store', () => {
         data: [
           {
             label: 'han',
-            formattedLabel: 'han',
+            viewLabel: 'han',
             checked: true,
             active: true,
             width: 38,
@@ -101,7 +101,7 @@ describe('Legend Store', () => {
           },
           {
             label: 'cho',
-            formattedLabel: 'cho',
+            viewLabel: 'cho',
             checked: true,
             active: true,
             width: 38,
@@ -140,7 +140,7 @@ describe('Legend Store', () => {
       align: 'right',
       data: [
         {
-          formattedLabel: 'han',
+          viewLabel: 'han',
           active: true,
           chartType: 'line',
           checked: true,
@@ -151,7 +151,7 @@ describe('Legend Store', () => {
           width: 38,
         },
         {
-          formattedLabel: 'cho',
+          viewLabel: 'cho',
           active: true,
           chartType: 'line',
           checked: true,
@@ -241,7 +241,7 @@ describe('Legend Store', () => {
       expect(state.legend!.data).toEqual([
         {
           label: 'A',
-          formattedLabel: 'A',
+          viewLabel: 'A',
           checked: true,
           active: true,
           width: 35,
@@ -252,7 +252,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'B',
-          formattedLabel: 'B',
+          viewLabel: 'B',
           checked: true,
           active: true,
           width: 35,
@@ -263,7 +263,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'C',
-          formattedLabel: 'C',
+          viewLabel: 'C',
           checked: true,
           active: true,
           width: 35,
@@ -274,7 +274,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'D',
-          formattedLabel: 'D',
+          viewLabel: 'D',
           checked: true,
           active: true,
           width: 35,
@@ -317,7 +317,7 @@ describe('Legend Store', () => {
       expect(state.legend!.data).toEqual([
         {
           label: 'A',
-          formattedLabel: 'A',
+          viewLabel: 'A',
           checked: true,
           active: true,
           width: 35,
@@ -328,7 +328,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'B',
-          formattedLabel: 'B',
+          viewLabel: 'B',
           checked: true,
           active: true,
           width: 35,
@@ -375,7 +375,7 @@ describe('Legend Store', () => {
             "chartType": "line",
             "checked": true,
             "columnIndex": 0,
-            "formattedLabel": "Lon...",
+            "viewLabel": "Lon...",
             "iconType": "line",
             "label": "LongNameLongNameLongNameLongNameLongNameLongName",
             "rowIndex": 0,
@@ -422,7 +422,7 @@ describe('Legend Store', () => {
             "chartType": "line",
             "checked": true,
             "columnIndex": 0,
-            "formattedLabel": "LongNameLongNameLong...",
+            "viewLabel": "LongNameLongNameLong...",
             "iconType": "line",
             "label": "LongNameLongNameLongNameLongNameLongNameLongName",
             "rowIndex": 0,

@@ -216,7 +216,7 @@ export type LegendDataList = Array<
     | 'chartType'
     | 'rowIndex'
     | 'columnIndex'
-    | 'formattedLabel'
+    | 'viewLabel'
   > & {
     width: number;
   }
