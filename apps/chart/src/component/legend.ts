@@ -210,7 +210,7 @@ export default class Legend extends Component {
   }
 
   render({ layout, legend, theme }: ChartState<Options>) {
-    this.isShow = legend.visible;
+    this.isShow = legend.visible && !!legend.data.length;
 
     if (!this.isShow) {
       return;

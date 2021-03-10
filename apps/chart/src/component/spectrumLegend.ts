@@ -76,7 +76,7 @@ export default class SpectrumLegend extends Component {
   render({ layout, legend, colorValueScale, theme }: ChartState<Options>) {
     this.rect = layout.legend;
     this.align = legend.align;
-    this.isShow = legend.visible;
+    this.isShow = legend.visible && !!legend.data.length;
 
     if (!this.isShow) {
       return;
