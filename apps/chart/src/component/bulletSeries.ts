@@ -113,7 +113,7 @@ export default class BulletSeries extends Component {
     this.selectable = this.getSelectableOption(options);
     this.vertical = !!options?.series?.vertical;
 
-    const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
+    const labelAxisOnYAxis = isLabelAxisOnYAxis({ series, options });
     const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
     const { valueSizeKey } = getSizeKey(labelAxisOnYAxis);
     const { tickDistance } = axes[labelAxisName];

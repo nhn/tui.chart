@@ -92,9 +92,10 @@ export interface AxisDataParams {
   isCoordinateTypeChart?: boolean;
 }
 
-export function isCenterYAxis(options: ChartOptionsUsingYAxis, isBar: boolean) {
+export function isCenterYAxis(options: Options, isBar: boolean) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
-  const alignCenter = (options.yAxis as BarTypeYAxisOption)?.align === 'center';
+  const alignCenter =
+    ((options as ChartOptionsUsingYAxis)?.yAxis as BarTypeYAxisOption)?.align === 'center';
 
   return isBar && diverging && alignCenter;
 }
@@ -123,7 +124,7 @@ function getZeroPosition(
 
 function getAxisFormatter(options: Options, axisName: string) {
   const axisOptions = {
-    ...getYAxisOption(options),
+    ...getYAxisOption(options as ChartOptionsUsingYAxis),
     xAxis: options.xAxis,
   };
 
@@ -205,7 +206,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
   const zeroPosition = getZeroPosition(
     limit,
     axisSize,
-    isLabelAxisOnYAxis(series, options),
+    isLabelAxisOnYAxis({ series, options }),
     divergingBoxSeries
   );
   let valueLabels = makeLabelsFromLimit(limit, stepSize);
@@ -274,7 +275,7 @@ function getInitialAxisData(
   layout: Layout,
   isCoordinateTypeChart: boolean
 ) {
-  const { yAxis, secondaryYAxis } = getYAxisOption(options);
+  const { yAxis, secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
   const shift = (options?.series as LineTypeSeriesOptions)?.shift;
 
   return {
@@ -308,7 +309,9 @@ function getSecondaryYAxisData({
     ? getLabelAxisData({
         scale: scale.secondaryYAxis!,
         axisSize: labelAxisSize,
-        categories: getYAxisOption(options).secondaryYAxis?.categories ?? categories,
+        categories:
+          getYAxisOption(options as ChartOptionsUsingYAxis).secondaryYAxis?.categories ??
+          categories,
         rawCategories,
         options,
         series,
@@ -366,13 +369,13 @@ function getCategoriesWithTypes(categories?: Categories, rawCategories?: Categor
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
-    const { secondaryYAxis } = getYAxisOption(options);
+    const { secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
     const axesState: Axes = {
       xAxis: {} as AxisData,
       yAxis: {} as AxisData,
     };
 
-    if (isCenterYAxis(options, !!series.bar)) {
+    if (isCenterYAxis(options as ChartOptionsUsingYAxis, !!series.bar)) {
       axesState.centerYAxis = {} as CenterYAxisData;
     }
 
@@ -390,7 +393,7 @@ const axes: StoreModule = {
       const { xAxis, yAxis, plot } = layout;
 
       const isCoordinateTypeChart = isCoordinateSeries(initStoreState.series);
-      const labelOnYAxis = isLabelAxisOnYAxis(series, options);
+      const labelOnYAxis = isLabelAxisOnYAxis({ series, options });
       const { categories, rawCategories } = getCategoriesWithTypes(
         state.categories,
         state.rawCategories

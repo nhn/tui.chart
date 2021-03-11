@@ -66,7 +66,7 @@ export type DataLabelModels = { series: DataLabelModel[]; total: DataLabelModel[
 
 export type PointDataLabel = PointModel & {
   type: 'point';
-  theme: BubbleDataLabel;
+  theme: BubbleDataLabel | BoxDataLabel;
 };
 export type RadialDataLabel = SectorModel & {
   theme: PieDataLabelTheme;

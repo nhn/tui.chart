@@ -65,6 +65,8 @@ describe('Axes Store module', () => {
         outerRadius: 45,
         startAngle: 0,
         endAngle: 360,
+        innerRadius: 0,
+        isSemiCircular: false,
       },
       verticalAxis: {
         labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
@@ -134,6 +136,8 @@ describe('Axes Store module', () => {
         outerRadius: 65,
         startAngle: 0,
         endAngle: 360,
+        innerRadius: 0,
+        isSemiCircular: false,
       },
       verticalAxis: {
         labels: ['A', 'B'],
@@ -207,6 +211,8 @@ describe('Axes Store module', () => {
         outerRadius: 65,
         startAngle: 90,
         endAngle: 270,
+        innerRadius: 0,
+        isSemiCircular: false,
       },
       verticalAxis: {
         labels: ['A', 'B'],
@@ -264,6 +270,6 @@ describe('Axes Store module', () => {
     radialAxes.action!.setRadialAxesData.call({ notify }, store);
 
     expect(state.radialAxes.circularAxis.clockwise).toBe(false);
-    expect(state.radialAxes.verticalAxis.labelAlign).toBe('left');
+    expect(state.radialAxes.verticalAxis!.labelAlign).toBe('left');
   });
 });

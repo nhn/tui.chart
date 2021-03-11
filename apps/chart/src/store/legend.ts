@@ -214,7 +214,10 @@ export function showCircleLegend(options: BubbleChartOptions) {
 }
 
 function showLegend(options: Options, series: Series | RawSeries) {
-  if (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue) {
+  if (
+    (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue) ||
+    series.gauge
+  ) {
     return false;
   }
 
@@ -254,7 +257,10 @@ function getLegendLabelsInfo(series: RawSeries): LegendLabelsInfo {
 }
 
 function useRectIcon(type: ChartType) {
-  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet', 'radialBar'], type);
+  return includes(
+    ['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet', 'radialBar', 'gauge'],
+    type
+  );
 }
 
 function useCircleIcon(type: ChartType) {

@@ -187,7 +187,7 @@ export default class PieSeries extends Component {
     let currentDegree: number;
     const index = this.models.series.findIndex(
       ({ clockwise, degree: { start, end }, totalAngle }) => {
-        currentDegree = clockwise ? totalAngle * delta : DEGREE_360 - totalAngle * delta;
+        currentDegree = clockwise ? totalAngle! * delta : DEGREE_360 - totalAngle! * delta;
 
         return withinRadian(clockwise, start, end, currentDegree);
       }

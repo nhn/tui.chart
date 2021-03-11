@@ -504,9 +504,8 @@ export default class AreaSeries extends Component {
             ...model,
             radius: dotTheme.radius!,
             color: getRGBA(color, active ? 1 : 0.3),
-            style: [
-              { lineWidth: dotTheme.borderWidth, strokeStyle: dotTheme.borderColor ?? color },
-            ],
+            borderWidth: dotTheme.borderWidth,
+            borderColor: dotTheme.borderColor ?? color,
           });
         }
 
@@ -516,12 +515,8 @@ export default class AreaSeries extends Component {
           ...model,
           radius: hoverDotTheme.radius!,
           color: modelColor,
-          style: [
-            {
-              lineWidth: hoverDotTheme.borderWidth,
-              strokeStyle: hoverDotTheme.borderColor ?? getRGBA(modelColor, 0.5),
-            },
-          ],
+          borderWidth: hoverDotTheme.borderWidth,
+          borderColor: hoverDotTheme.borderColor ?? getRGBA(modelColor, 0.5),
         });
       });
     });

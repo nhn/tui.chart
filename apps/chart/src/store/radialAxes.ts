@@ -1,21 +1,27 @@
 import {
   StoreModule,
-  Options,
   InitAxisData,
   Scale,
   RadialAxes,
   VerticalAxisData,
   CircularAxisData,
   ChartOptionsUsingRadialAxes,
+  DefaultRadialAxisData,
+  ChartOptionsUsingVerticalAxis,
 } from '@t/store/store';
-import { getInitAxisIntervalData, getMaxLabelSize } from '@src/helpers/axes';
-import { isSemiCircle, getSemiCircleCenterY, getTotalAngle } from '@src/helpers/pieSeries';
-import { Rect, RadialBarSeriesOptions, UsingRadialAxesChartTypeTheme } from '@t/options';
+import {
+  getInitAxisIntervalData,
+  getMaxLabelSize,
+  isLabelAxisOnYAxis,
+  getDefaultRadialAxisData,
+  getRadiusInfo,
+} from '@src/helpers/axes';
+import { RadialBarSeriesOptions, UsingRadialAxesChartTypeTheme } from '@t/options';
 import { makeLabelsFromLimit, makeTickPixelPositions } from '@src/helpers/calculator';
 import { getTitleFontString } from '@src/helpers/style';
 import { CircularAxisTheme, VerticalAxisTheme } from '@t/theme';
-import { calculateSizeWithPercentString, pick } from '@src/helpers/utils';
-import { getDefaultRadius, initSectorOptions, DEGREE_360, DEGREE_0 } from '@src/helpers/sector';
+import { pick } from '@src/helpers/utils';
+import { DEGREE_360, DEGREE_0 } from '@src/helpers/sector';
 
 const Y_LABEL_PADDING = 5;
 export const RADIAL_LABEL_PADDING = 25;
@@ -24,17 +30,6 @@ export enum RadialAxisType {
   CIRCULAR = 'circularAxis',
   VERTICAL = 'verticalAxis',
 }
-
-type DefaultRadialAxisData = {
-  axisSize: number;
-  centerX: number;
-  centerY: number;
-  totalAngle: number;
-  drawingStartAngle: number;
-  clockwise: boolean;
-  startAngle: number;
-  endAngle: number;
-};
 
 type BaseAxisDataParam = {
   labels: string[];
@@ -45,73 +40,21 @@ type BaseAxisDataParam = {
 interface CircularAxisDataParam extends BaseAxisDataParam {
   circularAxisLabelMargin: number;
   circularAxisLabelFont: string;
-  outerRadius: number;
+  radiusData: RadiusInfo;
 }
 interface VerticalAxisDataParam extends BaseAxisDataParam {
-  options: ChartOptionsUsingRadialAxes;
   isLabelOnVerticalAxis: boolean;
   pointOnColumn: boolean;
   verticalAxisLabelMargin: number;
   verticalAxisLabelFont: string;
+  radiusData: RadiusInfo;
 }
 
-function getRadiusInfo(axisSize: number, count: number, seriesOptions?: RadialBarSeriesOptions) {
-  const innerRadius = calculateSizeWithPercentString(
-    axisSize,
-    seriesOptions?.radiusRange?.inner ?? 0
-  );
-  const outerRadius = calculateSizeWithPercentString(
-    axisSize,
-    seriesOptions?.radiusRange?.outer ?? axisSize
-  );
-
-  return {
-    radiusRanges: makeTickPixelPositions(outerRadius - innerRadius, count, innerRadius)
-      .splice(innerRadius === 0 ? 1 : 0, count)
-      .reverse(),
-    innerRadius: innerRadius,
-    outerRadius: outerRadius,
-  };
-}
-
-function getDefaultAxisData(
-  options: Options,
-  plot: Rect,
-  maxLabelWidth = 0,
-  maxLabelHeight = 0,
-  isLabelOnVerticalAxis = false
-): DefaultRadialAxisData {
-  let isSemiCircular = false;
-  let centerY = plot.height / 2;
-  let totalAngle = DEGREE_360;
-  let drawingStartAngle = DEGREE_0;
-  let clockwiseOption = true;
-  let startAngleOption = DEGREE_0;
-  let endAngleOption = DEGREE_360;
-
-  if (isLabelOnVerticalAxis) {
-    const { startAngle, endAngle, clockwise } = initSectorOptions(options?.series);
-
-    isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
-    centerY = isSemiCircular ? getSemiCircleCenterY(plot.height, clockwise) : plot.height / 2;
-    totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
-    drawingStartAngle = startAngle;
-    clockwiseOption = clockwise;
-    startAngleOption = startAngle;
-    endAngleOption = endAngle;
-  }
-
-  return {
-    axisSize: getDefaultRadius(plot, isSemiCircular, maxLabelWidth, maxLabelHeight),
-    centerX: plot.width / 2,
-    centerY,
-    totalAngle,
-    drawingStartAngle: drawingStartAngle,
-    clockwise: clockwiseOption,
-    startAngle: startAngleOption,
-    endAngle: endAngleOption,
-  };
-}
+type RadiusInfo = {
+  radiusRanges: number[];
+  innerRadius: number;
+  outerRadius: number;
+};
 
 function getYAxisLabelAlign(clockwise = true, isLabelOnVerticalAxis = false) {
   let align: CanvasTextAlign = 'center';
@@ -124,7 +67,6 @@ function getYAxisLabelAlign(clockwise = true, isLabelOnVerticalAxis = false) {
 }
 
 function getVerticalAxisData({
-  options,
   labels,
   pointOnColumn,
   intervalData,
@@ -132,21 +74,16 @@ function getVerticalAxisData({
   verticalAxisLabelMargin,
   verticalAxisLabelFont,
   defaultAxisData,
+  radiusData,
 }: VerticalAxisDataParam): VerticalAxisData {
-  const { axisSize, clockwise } = defaultAxisData;
-  const { radiusRanges, innerRadius, outerRadius } = isLabelOnVerticalAxis
-    ? getRadiusInfo(axisSize, labels.length + 1, options?.series)
-    : {
-        radiusRanges: makeTickPixelPositions(axisSize, labels.length),
-        innerRadius: 0,
-        outerRadius: axisSize,
-      };
+  const { clockwise } = defaultAxisData;
+  const { radiusRanges, innerRadius, outerRadius } = radiusData;
   const { labelInterval } = intervalData;
 
   return {
     labels,
     tickDistance: (outerRadius - innerRadius) / labels.length,
-    ...pick(defaultAxisData, 'axisSize', 'centerX', 'centerY', 'startAngle', 'endAngle' ),
+    ...pick(defaultAxisData, 'axisSize', 'centerX', 'centerY', 'startAngle', 'endAngle'),
     pointOnColumn,
     radiusRanges,
     innerRadius,
@@ -164,15 +101,16 @@ function getCircularAxisData({
   circularAxisLabelMargin,
   circularAxisLabelFont,
   defaultAxisData,
-  outerRadius,
+  radiusData,
 }: CircularAxisDataParam): CircularAxisData {
   const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(
     labels,
     circularAxisLabelMargin,
     circularAxisLabelFont
   );
-  const {totalAngle} = defaultAxisData;
+  const { totalAngle } = defaultAxisData;
   const { tickInterval, labelInterval } = intervalData;
+  const { innerRadius, outerRadius } = radiusData;
 
   return {
     labels,
@@ -183,6 +121,7 @@ function getCircularAxisData({
     labelMargin: circularAxisLabelMargin,
     maxLabelWidth,
     maxLabelHeight,
+    innerRadius,
     outerRadius,
   };
 }
@@ -219,7 +158,8 @@ function getAxisLabels(
 function getAxisLabelMargin(isLabelOnVerticalAxis: boolean, options: ChartOptionsUsingRadialAxes) {
   return {
     verticalAxisLabelMargin:
-      options?.verticalAxis?.label?.margin ?? (isLabelOnVerticalAxis ? Y_LABEL_PADDING : 0),
+      (options as ChartOptionsUsingVerticalAxis)?.verticalAxis?.label?.margin ??
+      (isLabelOnVerticalAxis ? Y_LABEL_PADDING : 0),
     circularAxisLabelMargin: options?.circularAxis?.label?.margin ?? RADIAL_LABEL_PADDING,
   };
 }
@@ -232,11 +172,11 @@ const axes: StoreModule = {
   action: {
     setRadialAxesData({ state }) {
       const { series, layout, scale } = state;
+      const categories = state.categories as string[];
       const { plot } = layout;
-      const isLabelOnVerticalAxis = !!series.radialBar;
+      const isLabelOnVerticalAxis = isLabelAxisOnYAxis({ series, categories });
       const options = state.options as ChartOptionsUsingRadialAxes;
       const theme = state.theme as UsingRadialAxesChartTypeTheme;
-      const categories = state.categories as string[];
 
       const circularAxisLabelFont = getTitleFontString(
         (theme.circularAxis as Required<CircularAxisTheme>).label
@@ -264,7 +204,7 @@ const axes: StoreModule = {
         circularAxisLabelFont
       );
 
-      const defaultAxisData = getDefaultAxisData(
+      const defaultAxisData = getDefaultRadialAxisData(
         options,
         plot,
         maxLabelWidth,
@@ -272,19 +212,32 @@ const axes: StoreModule = {
         isLabelOnVerticalAxis
       );
 
+      const { axisSize } = defaultAxisData;
+      const radiusData = isLabelOnVerticalAxis
+        ? getRadiusInfo(
+            axisSize,
+            (options?.series as RadialBarSeriesOptions)?.radiusRange,
+            yAxisLabels.length + 1
+          )
+        : {
+            radiusRanges: makeTickPixelPositions(axisSize, yAxisLabels.length),
+            innerRadius: 0,
+            outerRadius: axisSize,
+          };
+
       const verticalAxisData = getVerticalAxisData({
-        options,
         labels: yAxisLabels,
         pointOnColumn: isLabelOnVerticalAxis,
         isLabelOnVerticalAxis,
         intervalData: getInitAxisIntervalData(isLabelOnVerticalAxis, {
-          axis: options.verticalAxis,
+          axis: (options as ChartOptionsUsingVerticalAxis).verticalAxis,
           categories,
           layout,
         }),
         verticalAxisLabelMargin,
         verticalAxisLabelFont,
         defaultAxisData,
+        radiusData,
       });
 
       state.radialAxes = {
@@ -298,7 +251,7 @@ const axes: StoreModule = {
           defaultAxisData,
           circularAxisLabelMargin,
           circularAxisLabelFont,
-          outerRadius: verticalAxisData.outerRadius,
+          radiusData,
         }),
         verticalAxis: verticalAxisData,
       };

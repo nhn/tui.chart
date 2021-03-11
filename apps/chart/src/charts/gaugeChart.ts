@@ -3,19 +3,19 @@ import Chart, { SelectSeriesInfo } from './chart';
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
-import radialAxes from '@src/store/radialAxes';
+import gaugeAxesData from '@src/store/gaugeAxes';
 
 import Tooltip from '@src/component/tooltip';
-import Legend from '@src/component/legend';
-import RadialBarSeries from '@src/component/radialBarSeries';
+import GaugeSeries from '@src/component/gaugeSeries';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
+import AxisTitle from '@src/component/axisTitle';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
-import RadialPlot from '@src/component/radialPlot';
 import RadialAxis from '@src/component/radialAxis';
+import RadialPlot from '@src/component/radialPlot';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -24,18 +24,26 @@ import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as sectorBrush from '@src/brushes/sector';
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as axisBrush from '@src/brushes/axis';
+import * as gaugeBrush from '@src/brushes/gauge';
 
-import { RadialBarChartOptions, RadialBarSeriesData, RadialBarSeriesType } from '@t/options';
+import {
+  GaugeChartOptions,
+  GaugeSeriesData,
+  PlotBand,
+  GaugeSeriesDataType,
+  GaugeSeriesInput,
+  GaugePlotBand,
+} from '@t/options';
 
-export interface RadialBarChartProps {
+export interface GaugeChartProps {
   el: HTMLElement;
-  options: RadialBarChartOptions;
-  data: RadialBarSeriesData;
+  options: GaugeChartOptions;
+  data: GaugeSeriesData;
 }
 
 /**
  * @class
- * @classdesc RadialBar Chart
+ * @classdesc Gauge Chart
  * @param {Object} props
  *   @param {HTMLElement} props.el - The target element to create chart.
  *   @param {Object} props.data - Data for making Pie Chart.
@@ -55,23 +63,19 @@ export interface RadialBarChartProps {
  *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series]
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
- *       @param {string} [props.options.series.eventDetectType] - Event detect type. 'grouped', 'point' is available.
- *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
- *       @param {Array<number>|Array<string>} [props.options.series.radiusRange] - Specifies the radius of the circle drawn. It is specified by entering a number or percent string value in start and end.
+ *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Gauge Chart guide} on github.
  *       @param {Array<number>} [props.options.series.angleRange] - The range of angles to which the circle will be drawn. It is specified by putting number in start and end.
  *       @param {boolean} [props.options.series.clockwise] - Whether it will be drawn clockwise.
+ *       @param {boolean | Object} [props.options.series.solid] - When this option is set, the radial bar is displayed. It can be used when there is one series data. The default value is 'false'.
  *     @param {Object} [props.options.circularAxis]
+ *       @param {Object} [props.options.circularAxis.title] - Axis title.
  *       @param {Object} [props.options.circularAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.circularAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.circularAxis.scale] - Option to adjust axis minimum, maximum, step size.
- *     @param {Object} [props.options.verticalAxis]
- *       @param {Object} [props.options.verticalAxis.tick] - Option to adjust tick interval.
- *       @param {Object} [props.options.verticalAxis.label] - Option to adjust label interval.
- *     @param {Object} [props.options.legend]
- *       @param {string} [props.options.legend.align] - Legend align. 'top', 'bottom', 'right', 'left' is available.
- *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
- *       @param {boolean} [props.options.legend.visible] - Whether to show legend.
- *       @param {number} [props.options.legend.width] - Width of legend.
+ *     @param {Object} [props.options.plot]
+ *       @param {number} [props.options.plot.width] - Width of plot.
+ *       @param {number} [props.options.plot.height] - Height of plot.
+ *       @param {Array<Object>} [props.options.plot.bands] - Plot bands information. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Gauge Chart guide} on github.
  *     @param {Object} [props.options.exportMenu]
  *       @param {boolean} [props.options.exportMenu.visible] - Whether to show export menu.
  *       @param {string} [props.options.exportMenu.filename] - File name applied when downloading.
@@ -83,27 +87,26 @@ export interface RadialBarChartProps {
  *     @param {Object} [props.options.responsive] - Rules for changing chart options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Responsive guide} on github.
  *       @param {boolean|Object} [props.options.responsive.animation] - Animation duration when the chart is modified.
  *       @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond.
- *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|RadialBar Chart guide} on github.
+ *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Gauge Chart guide} on github.
  *       @param {Object} [props.options.theme.chart] - Chart font theme.
  *       @param {Object} [props.options.theme.series] - Series theme.
  *       @param {Object} [props.options.theme.title] - Title theme.
  *       @param {Object} [props.options.theme.circularAxis] - Circular Axis theme.
- *       @param {Object} [props.options.theme.verticalAxis] - Vertical Axis theme.
- *       @param {Object} [props.options.theme.legend] - Legend theme.
  *       @param {Object} [props.options.theme.tooltip] - Tooltip theme.
  *       @param {Object} [props.options.theme.exportMenu] - ExportMenu theme.
+ *       @param {Object} [props.options.theme.plot] - Plot Theme.
  * @extends Chart
  */
-export default class RadialBarChart extends Chart<RadialBarChartOptions> {
-  constructor({ el, options, data }: RadialBarChartProps) {
+export default class GaugeChart extends Chart<GaugeChartOptions> {
+  constructor({ el, options, data }: GaugeChartProps) {
     super({
       el,
       options,
       series: {
-        radialBar: data.series,
+        gauge: data.series,
       },
       categories: data.categories,
-      modules: [stackSeriesData, dataRange, scale, radialAxes],
+      modules: [stackSeriesData, dataRange, scale, gaugeAxesData],
     });
   }
 
@@ -112,13 +115,13 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
 
     this.componentManager.add(Background);
     this.componentManager.add(Title);
-    this.componentManager.add(Legend);
-    this.componentManager.add(RadialPlot);
-    this.componentManager.add(RadialBarSeries);
+    this.componentManager.add(RadialPlot, { name: 'gauge' });
+    this.componentManager.add(RadialAxis, { name: 'gauge' });
+    this.componentManager.add(AxisTitle, { name: 'circularAxis' });
+    this.componentManager.add(GaugeSeries);
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
-    this.componentManager.add(RadialAxis);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip, { chartEl: this.el });
 
@@ -130,6 +133,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
       sectorBrush,
       dataLabelBrush,
       axisBrush,
+      gaugeBrush,
     ]);
   }
 
@@ -137,17 +141,35 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * Add series.
    * @param {Object} data - Data to be added.
    *   @param {string} data.name - Series name.
-   *   @param {Array<number>} data.data - Array of data to be added.
+   *   @param {Array<number|Array<number>>} data.data - Array of data to be added.
    * @api
    * @example
    * chart.addSeries({
    *   name: 'newSeries',
-   *   data: [10, 20, 30, 40],
+   *   data: [10, 20],
    * });
    */
-  public addSeries(data: RadialBarSeriesType) {
+  public addSeries(data: GaugeSeriesInput) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
+  }
+
+  /**
+   * Add data.
+   * @param {Array} data - Array of data to be added.
+   * @param {string} category - Category to be added.
+   * @api
+   * @example
+   * // without categories
+   * chart.addData([10], '6');
+   *
+   * // with categories
+   * chart.addData([10], '6');
+   */
+  public addData(data: GaugeSeriesDataType[], category?: string) {
+    this.resetSeries();
+    this.animationControlFlag.updating = true;
+    this.store.dispatch('addData', { data, category });
   }
 
   /**
@@ -169,10 +191,10 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   ]
    * });
    */
-  public setData(data: RadialBarSeriesData) {
+  public setData(data: GaugeSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
-    this.store.dispatch('setData', { series: { radialBar: series }, categories });
+    this.store.dispatch('setData', { series: { gauge: series }, categories });
   }
 
   /**
@@ -215,7 +237,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   }
    * });
    */
-  public setOptions = (options: RadialBarChartOptions) => {
+  public setOptions = (options: GaugeChartOptions) => {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
   };
@@ -234,7 +256,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   }
    * });
    */
-  public updateOptions = (options: RadialBarChartOptions) => {
+  public updateOptions = (options: GaugeChartOptions) => {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
   };
@@ -243,14 +265,9 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed. If eventType is 'grouped', only index is needed.
    *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only index is needed.
-   *      @param {number} [seriesInfo.seriesIndex] - Index of series
    * @api
    * @example
-   * // eventDetectType is 'grouped'
    * chart.showTooltip({index: 1});
-   *
-   * // eventDetectType is 'point'
-   * chart.showTooltip({index: 1, seriesIndex: 2});
    */
   public showTooltip = (seriesInfo: SelectSeriesInfo) => {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
@@ -265,4 +282,33 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
   public hideTooltip = () => {
     this.eventBus.emit('hideTooltip');
   };
+
+  /**
+   * Add plot band.
+   * @param {Object} data - Plot info.
+   *   @param {Array<string|number>} data.range - The range to be drawn.
+   *   @param {string} data.color - Plot band color.
+   *   @param {string} [data.id] - Plot id. The value on which the removePlotBand is based.
+   * @api
+   * @example
+   * chart.addPlotBand({
+   *   range: [10, 20],
+   *   color: '#00ff22',
+   *   id: 'plot-1',
+   * });
+   */
+  public addPlotBand(data: GaugePlotBand) {
+    this.store.dispatch('addGaugePlotBand', { data });
+  }
+
+  /**
+   * Remove plot band with id.
+   * @param {string} id - id of the plot band to be removed
+   * @api
+   * @example
+   * chart.removePlotBand('plot-1');
+   */
+  public removePlotBand(id: string) {
+    this.store.dispatch('removeGaugePlotBand', { id });
+  }
 }

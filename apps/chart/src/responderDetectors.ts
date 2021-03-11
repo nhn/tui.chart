@@ -6,15 +6,47 @@ import {
   SectorResponderModel,
   BoxPlotResponderModel,
   LineResponderModel,
+  ClockHandResponderModel,
 } from '@t/components/series';
 import { isUndefined } from '@src/helpers/utils';
 import { calculateRadianToDegree, withinRadian } from '@src/helpers/sector';
 
-type DetectorType = 'circle' | 'rect' | 'sector' | 'boxPlot' | 'line';
+type DetectorType = 'circle' | 'rect' | 'sector' | 'boxPlot' | 'line' | 'clockHand';
 
 type ResponderDetectors = {
   [key in DetectorType]: Function;
 };
+
+function withinRotationRect({
+  slope,
+  yIntercept,
+  mouseX,
+  mouseY,
+  modelX,
+  modelX2,
+  compX,
+  compY,
+  detectionSize = 0,
+}: {
+  slope: number;
+  yIntercept: number;
+  mouseX: number;
+  mouseY: number;
+  modelX: number;
+  modelX2: number;
+  compX: number;
+  compY: number;
+  detectionSize: number;
+}) {
+  const posY = slope * mouseX + yIntercept;
+  const withinRadius =
+    (modelX > modelX2 && mouseX >= compX + modelX2 && mouseX <= compX + modelX) ||
+    (modelX < modelX2 && modelX2 <= compX + modelX2 && modelX2 >= compX + modelX);
+  const withinDetectionSize =
+    posY - detectionSize + compY <= mouseY && mouseY <= posY + detectionSize + compY;
+
+  return withinRadius && withinDetectionSize;
+}
 
 export const responderDetectors: ResponderDetectors = {
   circle: (mousePosition: Point, model: CircleResponderModel, componentRect: Rect) => {
@@ -126,5 +158,58 @@ export const responderDetectors: ResponderDetectors = {
         ? responderDetectors.rect(mousePosition, model[prop], componentRect)
         : responderDetectors.line(mousePosition, model[prop], componentRect);
     });
+  },
+  clockHand: (
+    mousePosition: Point,
+    model: ClockHandResponderModel,
+    componentRect: Rect = { x: 0, y: 0, width: 0, height: 0 }
+  ) => {
+    const { x, y } = mousePosition;
+    const { x: compX, y: compY } = componentRect;
+    const { x: centerX, y: centerY, x2, y2, detectionSize = 5 } = model;
+
+    const numerator = y2 - centerY;
+    const denominator = x2 - centerX;
+    let result = false;
+
+    if (numerator === 0) {
+      // y = a
+      const minX = Math.min(centerX, x2);
+      const maxX = Math.max(centerX, x2);
+
+      result =
+        x - compX >= minX &&
+        x - compX <= maxX &&
+        y >= centerY + compY - detectionSize &&
+        y <= centerY + compY + detectionSize;
+    } else if (denominator === 0) {
+      // x = a
+      const minY = Math.min(centerY, y2);
+      const maxY = Math.max(centerY, y2);
+
+      result =
+        y - compY >= minY &&
+        y - compY <= maxY &&
+        x >= centerX + compX - detectionSize &&
+        x <= centerX + compX + detectionSize;
+    } else {
+      // y = ax + b
+      const slope = numerator / denominator;
+      const yIntercept = centerY - slope * centerX;
+
+      result = withinRotationRect({
+        slope,
+        yIntercept,
+        mouseX: x,
+        mouseY: y,
+        modelX: centerX,
+        modelX2: x2,
+        compX,
+        compY,
+        detectionSize,
+      });
+    }
+
+    return result;
   },
 };

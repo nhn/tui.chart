@@ -15,7 +15,7 @@ export default class ZeroAxis extends Component {
 
   render({ layout, axes, series, options }: ChartState<Options>) {
     this.rect = layout.plot;
-    const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
+    const labelAxisOnYAxis = isLabelAxisOnYAxis({ series, options });
     const valueAxisName = labelAxisOnYAxis ? 'xAxis' : 'yAxis';
     const { zeroPosition } = axes[valueAxisName]! as ValueAxisData;
 

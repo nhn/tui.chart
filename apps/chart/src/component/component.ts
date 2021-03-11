@@ -20,6 +20,7 @@ import {
   ScatterSeriesModels,
   BulletSeriesModels,
   BackgroundModel,
+  GaugeSeriesModels,
 } from '@t/components/series';
 import { AxisModels, LineModel, LabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -86,7 +87,8 @@ type ComponentModels =
   | ScatterSeriesModels
   | BulletSeriesModels
   | BackgroundModel
-  | RadialAxisModels;
+  | RadialAxisModels
+  | GaugeSeriesModels;
 
 export default abstract class Component {
   name = 'Component';

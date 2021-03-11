@@ -1,4 +1,13 @@
-import { StoreModule, Layout, CircleLegend, Legend, Options, AxisData } from '@t/store/store';
+import {
+  StoreModule,
+  Layout,
+  CircleLegend,
+  Legend,
+  Options,
+  AxisData,
+  CircularAxisData,
+  ChartOptionsUsingYAxis,
+} from '@t/store/store';
 import { extend } from '@src/store/store';
 import {
   Align,
@@ -19,7 +28,7 @@ import {
   spectrumLegendTooltip,
 } from '@src/brushes/spectrumLegend';
 import { getYAxisOption } from '@src/helpers/axes';
-import { AxisTheme } from '@t/theme';
+import { AxisTheme, CircularAxisTheme } from '@t/theme';
 
 export const padding = { X: 10, Y: 15 };
 export const X_AXIS_HEIGHT = 20;
@@ -451,7 +460,7 @@ function validOffsetValue(axis: OptionalSize, plot: OptionalSize, sizeKey: 'widt
 function getOptionSize(options: Options) {
   const xAxis = pickOptionSize(options.xAxis);
 
-  const yAxisOptions = getYAxisOption(options);
+  const yAxisOptions = getYAxisOption(options as ChartOptionsUsingYAxis);
   const yAxis = pickOptionSize(yAxisOptions.yAxis);
   const secondaryYAxis = pickOptionSize(yAxisOptions.secondaryYAxis);
 
@@ -534,6 +543,29 @@ function adjustAxisSize(
   secondaryYAxis.height = yAxis.height;
 }
 
+function getCircularAxisTitle(
+  plot: Rect,
+  axisTheme: CircularAxisTheme,
+  circularAxis: CircularAxisData
+) {
+  if (!circularAxis) {
+    return {
+      ...plot,
+    };
+  }
+
+  const { x, y } = plot;
+  const { centerX, centerY, outerRadius, axisSize, title } = circularAxis;
+  const offsetY = title?.offsetY ?? 0;
+
+  return {
+    x: centerX + x - axisSize / 2,
+    y: centerY + y - outerRadius / 2,
+    width: axisSize,
+    height: axisTheme.title!.fontSize! + offsetY,
+  };
+}
+
 const layout: StoreModule = {
   name: 'layout',
   state: () => ({
@@ -549,6 +581,7 @@ const layout: StoreModule = {
         options,
         chart,
         axes,
+        radialAxes,
       } = state;
       const { width, height } = chart;
       const chartSize = {
@@ -556,9 +589,17 @@ const layout: StoreModule = {
         width: width - padding.X * 2,
       };
       const hasCenterYAxis = isCenterYAxis(options, !!series.bar);
-      const hasAxis = !(series.pie || series.radar || series.treemap || series.radialBar);
+      const hasAxis = !(
+        series.pie ||
+        series.radar ||
+        series.treemap ||
+        series.radialBar ||
+        series.gauge
+      );
       const optionSize = getOptionSize(options);
-      const { yAxis: yAxisOption, secondaryYAxis: secondaryYAxisOption } = getYAxisOption(options);
+      const { yAxis: yAxisOption, secondaryYAxis: secondaryYAxisOption } = getYAxisOption(
+        options as ChartOptionsUsingYAxis
+      );
       const visibleSecondaryYAxis = !!secondaryYAxisOption;
 
       const titleHeight = theme.title.fontSize as number;
@@ -657,6 +698,12 @@ const layout: StoreModule = {
 
       const plot = getPlotRect(xAxis, yAxis, optionSize.plot);
 
+      const circularAxisTitle = getCircularAxisTitle(
+        plot,
+        theme.circularAxis,
+        radialAxes?.circularAxis
+      );
+
       extend(state.layout, {
         chart: { x: 0, y: 0, width, height },
         title,
@@ -671,6 +718,7 @@ const layout: StoreModule = {
         resetButton,
         secondaryYAxisTitle,
         secondaryYAxis,
+        circularAxisTitle,
       });
     },
   },

@@ -1,18 +1,27 @@
 import Component from './component';
-import { CircleModel, PolygonModel } from '@t/components/series';
-import { ChartState, RadialAxes } from '@t/store/store';
+import { CircleModel, PolygonModel, SectorModel } from '@t/components/series';
+import { ChartState, RadialAxes, ScaleData, CircularAxisData, Scale } from '@t/store/store';
 import {
   getRadialPosition,
   calculateDegreeToRadian,
   DEGREE_NEGATIVE_90,
   DEGREE_360,
+  getValidDegree,
+  DEGREE_0,
 } from '@src/helpers/sector';
-import { Point, RadarPlotType, RadarChartOptions } from '@t/options';
+import {
+  Point,
+  RadarPlotType,
+  RadarChartOptions,
+  GaugeChartOptions,
+  GaugePlotBand,
+} from '@t/options';
 import { RadialPlotModels, RadialPlotModelType } from '@t/components/radialPlot';
 import { LineModel } from '@t/components/axis';
-import { range } from '@src/helpers/utils';
+import { range, isNumber } from '@src/helpers/utils';
 import { CircularAxisTheme } from '@t/theme';
 import { ArcModel } from '@t/components/radialAxis';
+import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 
 type RenderOptions = {
   type: RadarPlotType;
@@ -32,30 +41,101 @@ type RenderOptions = {
   clockwise: boolean;
 };
 
+type GaugeRenderOptions = {
+  centerX: number;
+  centerY: number;
+  clockwise: boolean;
+  totalAngle: number;
+  scaleMaxLimitValue: number;
+  startAngle: number;
+  outerRadius: number;
+  bandWidth: number;
+  bandMargin: number;
+  hasCategoryAxis: boolean;
+};
+
+export function getScaleMaxLimitValue(scale: ScaleData, totalAngle: number) {
+  const {
+    limit: { max },
+    stepSize,
+  } = scale;
+
+  return max + (totalAngle < DEGREE_360 ? DEGREE_0 : stepSize);
+}
+
+function findCategoryIndex(categories: string[], value: string) {
+  return categories.findIndex((category) => category === value);
+}
+
 export default class RadarPlot extends Component {
-  models: RadialPlotModels = { plot: [], line: [] };
+  models: RadialPlotModels = { plot: [], line: [], band: [] };
 
   circularAxisTheme!: Required<CircularAxisTheme>;
 
-  initialize() {
+  initialize(initParam: { name: 'radialPlot' | 'gauge' }) {
     this.type = 'plot';
-    this.name = 'radialPlot';
+    this.name = initParam?.name ?? 'radialPlot';
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, radialAxes, options, series, theme } = state;
+    const { layout, radialAxes, options, series, theme, scale } = state;
 
     this.rect = layout.plot;
     this.circularAxisTheme = theme.circularAxis as Required<CircularAxisTheme>;
 
-    const isRadarChart = !!series.radar;
     const categories = (state.categories as string[]) ?? [];
-    const plotType = options.plot?.type ?? (isRadarChart ? 'spiderweb' : 'circle');
-    const renderOptions = this.makeRenderOptions(radialAxes, plotType, categories);
 
-    this.models = {
-      plot: this.renderPlot(renderOptions),
-      line: series.radialBar ? this.renderLine(renderOptions) : [],
+    if (this.name === 'gauge') {
+      const bandData = (options as GaugeChartOptions)?.plot?.bands ?? [];
+      const hasCategoryAxis = !isLabelAxisOnYAxis({ series, categories });
+      const renderOptions = this.makeRenderOptionsOnGauge(
+        hasCategoryAxis,
+        radialAxes.circularAxis,
+        categories,
+        scale
+      );
+
+      this.models.band = this.renderBands(bandData, renderOptions, categories);
+    } else {
+      const isRadarChart = !!series.radar;
+      const plotType = options.plot?.type ?? (isRadarChart ? 'spiderweb' : 'circle');
+      const renderOptions = this.makeRenderOptions(radialAxes, plotType, categories);
+
+      this.models.plot = this.renderPlot(renderOptions);
+      this.models.line = series.radialBar ? this.renderLine(renderOptions) : [];
+    }
+  }
+
+  makeRenderOptionsOnGauge(
+    hasCategoryAxis: boolean,
+    circularAxis: CircularAxisData,
+    categories: string[],
+    scale: Scale
+  ): GaugeRenderOptions {
+    const {
+      totalAngle,
+      startAngle,
+      clockwise,
+      centerX,
+      centerY,
+      outerRadius,
+      bandWidth,
+      bandMargin,
+    } = circularAxis;
+
+    return {
+      centerX,
+      centerY,
+      clockwise,
+      totalAngle,
+      scaleMaxLimitValue: hasCategoryAxis
+        ? categories.length
+        : getScaleMaxLimitValue(scale.circularAxis!, totalAngle),
+      startAngle,
+      outerRadius,
+      bandWidth: bandWidth!,
+      bandMargin: bandMargin!,
+      hasCategoryAxis,
     };
   }
 
@@ -64,7 +144,7 @@ export default class RadarPlot extends Component {
     type: RadarPlotType,
     categories: string[] = []
   ): RenderOptions {
-    const { centerX, centerY, radiusRanges, innerRadius, outerRadius } = radialAxes.verticalAxis;
+    const { centerX, centerY, radiusRanges, innerRadius, outerRadius } = radialAxes.verticalAxis!;
     const {
       degree,
       totalAngle,
@@ -136,10 +216,11 @@ export default class RadarPlot extends Component {
     return radiusRanges.map((radius) => ({
       type: 'circle',
       color: 'rgba(0, 0, 0, 0)',
-      style: [{ strokeStyle, lineWidth }],
       radius,
       x: centerX,
       y: centerY,
+      borderColor: strokeStyle,
+      borderWidth: lineWidth
     }));
   }
 
@@ -205,5 +286,55 @@ export default class RadarPlot extends Component {
           ]
         : acc;
     }, []);
+  }
+
+  renderBands(
+    bands: GaugePlotBand[],
+    renderOptions: GaugeRenderOptions,
+    categories: string[]
+  ): SectorModel[] {
+    const sectors: SectorModel[] = [];
+    const {
+      centerX,
+      centerY,
+      clockwise,
+      totalAngle,
+      scaleMaxLimitValue,
+      startAngle,
+      outerRadius,
+      bandWidth,
+      bandMargin,
+      hasCategoryAxis,
+    } = renderOptions;
+
+    bands.forEach(({ range: rangeData, color }, index) => {
+      const value = hasCategoryAxis
+        ? findCategoryIndex(categories, rangeData[1].toString()) -
+          findCategoryIndex(categories, rangeData[0].toString())
+        : Number(rangeData[1]) - Number(rangeData[0]);
+      const degree = (value / scaleMaxLimitValue) * totalAngle * (clockwise ? 1 : -1);
+      const validDegree = getValidDegree(degree);
+      const prevModel = sectors[sectors.length - 1];
+      const startDegree = index && prevModel ? prevModel.degree.end : startAngle;
+      const endDegree = getValidDegree(startDegree + validDegree);
+
+      sectors.push({
+        type: 'sector',
+        color,
+        x: centerX,
+        y: centerY,
+        clockwise,
+        degree: {
+          start: startDegree,
+          end: endDegree,
+        },
+        radius: {
+          inner: outerRadius + bandMargin,
+          outer: outerRadius + bandWidth,
+        },
+      });
+    });
+
+    return sectors;
   }
 }

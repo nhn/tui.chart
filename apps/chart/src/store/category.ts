@@ -11,7 +11,7 @@ export function makeRawCategories(series: RawSeries | Series, categories?: Categ
   const firstValues: Set<string | number> = new Set();
 
   Object.keys(series).forEach((key) => {
-    if (key === 'pie') {
+    if (key === 'pie' || key === 'gauge') {
       return;
     }
 

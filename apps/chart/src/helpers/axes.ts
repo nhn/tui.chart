@@ -7,8 +7,11 @@ import {
   RotationLabelData,
   InitAxisData,
   Layout,
+  Categories,
+  DefaultRadialAxisData,
+  RadiusInfo,
 } from '@t/store/store';
-import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
+import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption, Rect } from '@t/options';
 import { Theme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
 import {
@@ -17,16 +20,30 @@ import {
   getTextHeight,
   getTextWidth,
 } from '@src/helpers/calculator';
-import { range, isString, isUndefined, isNumber } from '@src/helpers/utils';
+import {
+  range,
+  isString,
+  isUndefined,
+  isNumber,
+  calculateSizeWithPercentString,
+} from '@src/helpers/utils';
 import {
   ANGLE_CANDIDATES,
   calculateRotatedWidth,
   calculateRotatedHeight,
 } from '@src/helpers/geometric';
 import { getDateFormat, formatDate } from '@src/helpers/formatDate';
-import { calculateDegreeToRadian } from '@src/helpers/sector';
+import {
+  calculateDegreeToRadian,
+  DEGREE_360,
+  DEGREE_0,
+  initSectorOptions,
+  getDefaultRadius,
+} from '@src/helpers/sector';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { AxisDataParams } from '@src/store/axes';
+import { getSemiCircleCenterY, getTotalAngle, isSemiCircle } from './pieSeries';
+import { RadialAxisType } from '@src/store/radialAxes';
 
 interface IntervalInfo {
   blockCount: number;
@@ -112,10 +129,19 @@ export function getAutoAdjustingInterval(count: number, axisWidth: number, categ
   return tickInterval;
 }
 
-export function isLabelAxisOnYAxis(series: Series, options?: Options) {
+export function isLabelAxisOnYAxis({
+  series,
+  options,
+  categories,
+}: {
+  series: Series;
+  options?: Options;
+  categories?: Categories;
+}) {
   return (
     !!series.bar ||
     !!series.radialBar ||
+    (!!series.gauge && Array.isArray(categories) && !categories.length) ||
     (!!series.bullet && !(options as BulletChartOptions)?.series?.vertical)
   );
 }
@@ -137,7 +163,7 @@ export function isPointOnColumn(series: Series, options: Options) {
 }
 
 export function isSeriesUsingRadialAxes(series: Series): boolean {
-  return !!series.radar || !!series.radialBar;
+  return !!series.radar || !!series.radialBar || !!series.gauge;
 }
 
 function getAxisNameUsingRadialAxes(labelAxisOnYAxis: boolean) {
@@ -185,18 +211,14 @@ export function getYAxisOption(options: ChartOptionsUsingYAxis) {
   };
 }
 
-export function getValueAxisName(
-  options: ChartOptionsUsingYAxis,
-  seriesName: string,
-  valueAxisName: string
-) {
-  const { secondaryYAxis } = getYAxisOption(options);
+export function getValueAxisName(options: Options, seriesName: string, valueAxisName: string) {
+  const { secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
 
   return secondaryYAxis?.chartType === seriesName ? 'secondaryYAxis' : valueAxisName;
 }
 
-export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName: string) {
-  const { yAxis, secondaryYAxis } = getYAxisOption(options);
+export function getValueAxisNames(options: Options, valueAxisName: string) {
+  const { yAxis, secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
 
   return valueAxisName !== 'xAxis' && secondaryYAxis
     ? [yAxis.chartType, secondaryYAxis.chartType].map((seriesName, index) =>
@@ -208,13 +230,15 @@ export function getValueAxisNames(options: ChartOptionsUsingYAxis, valueAxisName
 }
 
 export function getAxisTheme(theme: Theme, name: string) {
-  const { xAxis, yAxis } = theme;
+  const { xAxis, yAxis, circularAxis } = theme;
   let axisTheme;
 
   if (name === AxisType.X) {
     axisTheme = xAxis;
   } else if (Array.isArray(yAxis)) {
     axisTheme = name === AxisType.Y ? yAxis[0] : yAxis[1];
+  } else if (name === RadialAxisType.CIRCULAR) {
+    axisTheme = circularAxis;
   } else {
     axisTheme = yAxis;
   }
@@ -359,14 +383,13 @@ export function getLabelXMargin(axisName: string, options: Options) {
   if (axisName === 'xAxis') {
     return 0;
   }
-  const axisOptions = getYAxisOption(options);
+  const axisOptions = getYAxisOption(options as ChartOptionsUsingYAxis);
 
   return Math.abs(axisOptions?.[axisName]?.label?.margin ?? 0);
 }
 
 export function getInitAxisIntervalData(isLabelAxis: boolean, params: AxisDataParams) {
   const { axis, categories, layout, isCoordinateTypeChart } = params;
-
   const tickInterval = axis?.tick?.interval;
   const labelInterval = axis?.label?.interval;
   const existIntervalOptions = isNumber(tickInterval) || isNumber(labelInterval);
@@ -398,4 +421,61 @@ function getInitTickInterval(categories?: string[], layout?: Layout) {
   const count = categories.length;
 
   return getAutoAdjustingInterval(count, width, categories);
+}
+
+export function getDefaultRadialAxisData(
+  options: Options,
+  plot: Rect,
+  maxLabelWidth = 0,
+  maxLabelHeight = 0,
+  isLabelOnVerticalAxis = false
+): DefaultRadialAxisData {
+  let isSemiCircular = false;
+  let centerY = plot.height / 2;
+  let totalAngle = DEGREE_360;
+  let drawingStartAngle = DEGREE_0;
+  let clockwiseOption = true;
+  let startAngleOption = DEGREE_0;
+  let endAngleOption = DEGREE_360;
+
+  if (isLabelOnVerticalAxis) {
+    const { startAngle, endAngle, clockwise } = initSectorOptions(options?.series);
+
+    isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
+    centerY = isSemiCircular ? getSemiCircleCenterY(plot.height, clockwise) : plot.height / 2;
+    totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
+    drawingStartAngle = startAngle;
+    clockwiseOption = clockwise;
+    startAngleOption = startAngle;
+    endAngleOption = endAngle;
+  }
+
+  return {
+    isSemiCircular,
+    axisSize: getDefaultRadius(plot, isSemiCircular, maxLabelWidth, maxLabelHeight),
+    centerX: plot.width / 2,
+    centerY,
+    totalAngle,
+    drawingStartAngle: drawingStartAngle,
+    clockwise: clockwiseOption,
+    startAngle: startAngleOption,
+    endAngle: endAngleOption,
+  };
+}
+
+export function getRadiusInfo(
+  axisSize: number,
+  radiusRange?: { inner?: number | string; outer?: number | string },
+  count = 1
+): RadiusInfo {
+  const innerRadius = calculateSizeWithPercentString(axisSize, radiusRange?.inner ?? 0);
+  const outerRadius = calculateSizeWithPercentString(axisSize, radiusRange?.outer ?? axisSize);
+
+  return {
+    radiusRanges: makeTickPixelPositions(outerRadius - innerRadius, count, innerRadius)
+      .splice(innerRadius === 0 ? 1 : 0, count)
+      .reverse(),
+    innerRadius: innerRadius,
+    outerRadius: outerRadius,
+  };
 }

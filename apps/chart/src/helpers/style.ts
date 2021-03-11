@@ -1,7 +1,7 @@
 import { StyleProp } from '@t/components/series';
 import { isString, pick } from '@src/helpers/utils';
 import { FontTheme, BubbleDataLabel, BoxDataLabel } from '@t/theme';
-import { message } from '@src/message';
+import { getAlpha } from './color';
 
 export function makeStyleObj<T, K>(style: StyleProp<T, K>, styleSet: Record<string, object>) {
   return style.reduce((acc: T, curValue) => {
@@ -62,5 +62,7 @@ export function strokeWithOptions(
     ctx.lineWidth = lineWidth;
   }
 
-  ctx.stroke();
+  if (ctx.lineWidth && getAlpha(String(ctx.strokeStyle))) {
+    ctx.stroke();
+  }
 }

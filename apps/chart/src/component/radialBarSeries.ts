@@ -142,8 +142,9 @@ export default class RadialBarSeries extends Component {
     }, {});
     const seriesData = series.radialBar.data as Required<RadialBarSeriesType>[];
     this.circularAxis = radialAxes.circularAxis;
+    const verticalAxisData = radialAxes.verticalAxis!;
     const renderOptions = this.makeRenderOptions(
-      radialAxes.verticalAxis,
+      verticalAxisData,
       scale.circularAxis!,
       options?.series
     );
@@ -171,7 +172,7 @@ export default class RadialBarSeries extends Component {
     this.tooltipSectorMap = this.makeTooltipSectorMap(seriesModels, tooltipData);
 
     this.responders = this.makeResponders(
-      radialAxes.verticalAxis.radiusRanges,
+      verticalAxisData.radiusRanges,
       seriesModels,
       renderOptions,
       categories,

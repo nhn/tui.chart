@@ -1,4 +1,11 @@
-import { ValueEdge, StoreModule, DataRange, ChartSeriesMap, Options } from '@t/store/store';
+import {
+  ValueEdge,
+  StoreModule,
+  DataRange,
+  ChartSeriesMap,
+  Options,
+  ChartOptionsUsingYAxis,
+} from '@t/store/store';
 import { getFirstValidValue, isNull, includes } from '@src/helpers/utils';
 import { extend } from '@src/store/store';
 import {
@@ -7,6 +14,7 @@ import {
   getValueAxisNames,
   getYAxisOption,
   hasSecondaryYAxis,
+  isSeriesUsingRadialAxes,
 } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
@@ -85,17 +93,27 @@ function getTotalDataRange(seriesDataRange: SeriesDataRange) {
   }, {});
 }
 
-function setSeriesDataRange(
-  options: Options,
-  seriesName: string,
-  values: number[],
-  valueAxisName: string,
-  seriesDataRange: SeriesDataRange
-) {
-  const { secondaryYAxis } = getYAxisOption(options);
+function setSeriesDataRange({
+  options,
+  seriesName,
+  values,
+  valueAxisName,
+  seriesDataRange,
+  seriesUsingRadialAxes,
+}: {
+  options: Options;
+  seriesName: string;
+  values: number[];
+  valueAxisName: string;
+  seriesDataRange: SeriesDataRange;
+  seriesUsingRadialAxes: boolean;
+}) {
+  const { secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
 
   const axisNames =
-    hasSecondaryYAxis(options) && secondaryYAxis?.chartType
+    !seriesUsingRadialAxes &&
+    hasSecondaryYAxis(options as ChartOptionsUsingYAxis) &&
+    secondaryYAxis?.chartType
       ? [secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis']
       : getValueAxisNames(options, valueAxisName);
 
@@ -115,7 +133,7 @@ const dataRange: StoreModule = {
     setDataRange({ state, initStoreState }) {
       const { series, disabledSeries, stackSeries, categories, options } = state;
       const seriesDataRange = {} as SeriesDataRange;
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
+      const labelAxisOnYAxis = isLabelAxisOnYAxis({ series, options, categories });
 
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
       const hasDateValue = !!options.xAxis?.date;
@@ -166,7 +184,15 @@ const dataRange: StoreModule = {
             ...(ranges ?? []).flatMap((range) => range),
           ]);
         }
-        setSeriesDataRange(options, seriesName, values, valueAxisName, seriesDataRange);
+
+        setSeriesDataRange({
+          options,
+          seriesName,
+          values,
+          valueAxisName,
+          seriesDataRange,
+          seriesUsingRadialAxes: !isSeriesUsingRadialAxes(series),
+        });
       }
 
       const newDataRange = getTotalDataRange(seriesDataRange);

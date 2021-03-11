@@ -181,67 +181,47 @@ describe('radar chart', () => {
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: [
-            {
-              lineWidth: 1,
-              strokeStyle: 'rgba(0, 0, 0, 0.05)',
-            },
-          ],
           radius: 10,
           x: 100,
           y: 100,
+          borderColor: 'rgba(0, 0, 0, 0.05)',
+          borderWidth: 1,
         },
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: [
-            {
-              lineWidth: 1,
-              strokeStyle: 'rgba(0, 0, 0, 0.05)',
-            },
-          ],
           radius: 20,
           x: 100,
           y: 100,
+          borderColor: 'rgba(0, 0, 0, 0.05)',
+          borderWidth: 1,
         },
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: [
-            {
-              lineWidth: 1,
-              strokeStyle: 'rgba(0, 0, 0, 0.05)',
-            },
-          ],
           radius: 30,
           x: 100,
           y: 100,
+          borderColor: 'rgba(0, 0, 0, 0.05)',
+          borderWidth: 1,
         },
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: [
-            {
-              lineWidth: 1,
-              strokeStyle: 'rgba(0, 0, 0, 0.05)',
-            },
-          ],
           radius: 40,
           x: 100,
           y: 100,
+          borderColor: 'rgba(0, 0, 0, 0.05)',
+          borderWidth: 1,
         },
         {
           type: 'circle',
           color: 'rgba(0, 0, 0, 0)',
-          style: [
-            {
-              lineWidth: 1,
-              strokeStyle: 'rgba(0, 0, 0, 0.05)',
-            },
-          ],
           radius: 50,
           x: 100,
           y: 100,
+          borderColor: 'rgba(0, 0, 0, 0.05)',
+          borderWidth: 1,
         },
       ]);
     });
@@ -316,67 +296,47 @@ describe('radial chart', () => {
       {
         type: 'circle',
         color: 'rgba(0, 0, 0, 0)',
-        style: [
-          {
-            lineWidth: 1,
-            strokeStyle: 'rgba(0, 0, 0, 0.05)',
-          },
-        ],
         radius: 10,
         x: 100,
         y: 100,
+        borderColor: 'rgba(0, 0, 0, 0.05)',
+        borderWidth: 1,
       },
       {
         type: 'circle',
         color: 'rgba(0, 0, 0, 0)',
-        style: [
-          {
-            lineWidth: 1,
-            strokeStyle: 'rgba(0, 0, 0, 0.05)',
-          },
-        ],
         radius: 20,
         x: 100,
         y: 100,
+        borderColor: 'rgba(0, 0, 0, 0.05)',
+        borderWidth: 1,
       },
       {
         type: 'circle',
         color: 'rgba(0, 0, 0, 0)',
-        style: [
-          {
-            lineWidth: 1,
-            strokeStyle: 'rgba(0, 0, 0, 0.05)',
-          },
-        ],
         radius: 30,
         x: 100,
         y: 100,
+        borderColor: 'rgba(0, 0, 0, 0.05)',
+        borderWidth: 1,
       },
       {
         type: 'circle',
         color: 'rgba(0, 0, 0, 0)',
-        style: [
-          {
-            lineWidth: 1,
-            strokeStyle: 'rgba(0, 0, 0, 0.05)',
-          },
-        ],
         radius: 40,
         x: 100,
         y: 100,
+        borderColor: 'rgba(0, 0, 0, 0.05)',
+        borderWidth: 1,
       },
       {
         type: 'circle',
         color: 'rgba(0, 0, 0, 0)',
-        style: [
-          {
-            lineWidth: 1,
-            strokeStyle: 'rgba(0, 0, 0, 0.05)',
-          },
-        ],
         radius: 50,
         x: 100,
         y: 100,
+        borderColor: 'rgba(0, 0, 0, 0.05)',
+        borderWidth: 1,
       },
     ],
     line: [

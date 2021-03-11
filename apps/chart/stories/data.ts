@@ -2732,3 +2732,22 @@ export const olympicMedalDataWithNull = {
     },
   ],
 };
+
+export const gaugeData = {
+  series: [
+    {
+      name: 'Speed',
+      data: [80],
+    },
+  ],
+};
+
+export const categoryGaugeData = {
+  categories: ['Apple', 'Watermelon', 'Blueberry', 'Grape', 'Orange'],
+  series: [
+    {
+      name: 'Fruit',
+      data: ['Orange'],
+    },
+  ],
+};

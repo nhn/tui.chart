@@ -85,7 +85,7 @@ export default class RadarSeries extends Component {
     this.selectable = this.getSelectableOption(options);
 
     const categories = state.categories as string[];
-    const { axisSize, centerX, centerY } = radialAxes.verticalAxis;
+    const { axisSize, centerX, centerY } = radialAxes.verticalAxis!;
 
     const { limit, stepSize } = scale.verticalAxis!;
     const labels = makeLabelsFromLimit(limit, stepSize);
@@ -180,7 +180,8 @@ export default class RadarSeries extends Component {
         ...responder,
         radius,
         color: modelColor,
-        style: [{ lineWidth: borderWidth, strokeStyle: borderColor ?? getRGBA(modelColor, 0.5) }],
+        borderColor: borderColor ?? getRGBA(modelColor, 0.5),
+        borderWidth
       };
     });
   }

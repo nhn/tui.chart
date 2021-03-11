@@ -10,7 +10,11 @@ import { BubbleDataLabel } from '../theme';
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
-export type PointModel = Point & { value?: number; name?: string };
+export type PointModel = Point & {
+  value?: number | string;
+  name?: string;
+  data?: (string | number)[];
+};
 
 export type RespondersModel = {
   component: Component;
@@ -34,7 +38,8 @@ export type ResponderModel =
   | TreemapRectResponderModel
   | MarkerResponderModel
   | BulletResponderModel
-  | RadialBarResponderModel;
+  | RadialBarResponderModel
+  | GaugeResponderModel;
 
 export type TreemapSeriesModels = { series: TreemapRectModel[]; layer: TreemapRectModel[] };
 
@@ -194,14 +199,18 @@ export type SectorModel = {
   value?: number;
   style?: StyleProp<SectorStyle, SectorStyleName>;
   clockwise: boolean;
-  drawingStartAngle: number;
-  totalAngle: number;
+  drawingStartAngle?: number;
+  totalAngle?: number;
   alias?: string;
   percentValue?: number;
   index?: number;
   seriesColor?: string;
   seriesIndex?: number;
   lineWidth?: number;
+  animationDegree?: {
+    start: number;
+    end: number;
+  };
 } & Point;
 
 export type SectorResponderModel = {
@@ -214,6 +223,12 @@ type GroupedSectorResponderModel = Pick<
 >;
 
 type RadialBarResponderModel = SectorResponderModel | GroupedSectorResponderModel;
+
+interface ClockHandResponderModel extends ClockHandModel {
+  detectionSize: number;
+  data: TooltipData;
+}
+type GaugeResponderModel = SectorResponderModel | ClockHandResponderModel;
 
 export type PolygonModel = {
   type: 'polygon';
@@ -336,3 +351,32 @@ export interface ScatterSeriesModel {
 export type BackgroundModel = RectModel[];
 
 export type RadiusRange = { inner: number; outer: number };
+
+export type ClockHandModel = {
+  type: 'clockHand';
+  color: string;
+  name: string;
+  value: number | string;
+  x: number;
+  y: number;
+  x2: number;
+  y2: number;
+  pin: {
+    color: string;
+    radius: number;
+    borderColor: string;
+    borderWidth: number;
+  };
+  degree: number;
+  baseLine: number;
+  animationDegree: number;
+  handSize: number;
+  seriesData: (number | string)[];
+  index: number;
+};
+
+export type GaugeSeriesModels = {
+  clockHand: ClockHandModel[];
+  sector: SectorModel[];
+  backgroundSector: SectorModel[];
+};

@@ -10,10 +10,13 @@ import {
 import { extend } from './store';
 import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
-import { isString, isUndefined } from '@src/helpers/utils';
+import { isString, isExistPlotId } from '@src/helpers/utils';
 
 type UsingVisiblePlotOptions = ValueOf<
-  Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie' | 'radialBar'>
+  Omit<
+    ChartOptionsMap,
+    'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie' | 'radialBar' | 'gauge'
+  >
 >;
 
 type UsingPlotLineBandOptions = ValueOf<
@@ -82,12 +85,6 @@ function makePlotBands(categories: string[], isDateType: boolean, plotBands: Plo
       range,
     };
   });
-}
-
-function isExistPlotId<T extends PlotLine | PlotBand>(plots: T[], data: T) {
-  return plots.some(
-    ({ id: bandId }) => !isUndefined(bandId) && !isUndefined(data.id) && bandId === data.id
-  );
 }
 
 const plot: StoreModule = {

@@ -3,16 +3,18 @@ import { ChartState, Options, CircularAxisData, VerticalAxisData } from '@t/stor
 import {
   calculateDegreeToRadian,
   getRadialPosition,
-  getRadialLabelAlign,
+  DEGREE_360,
+  DEGREE_NEGATIVE_90,
 } from '@src/helpers/sector';
-import { RadialAxisModels } from '@t/components/radialAxis';
-import { RectModel } from '@t/components/series';
+import { RadialAxisModels, ArcModel } from '@t/components/radialAxis';
+import { RectModel, CircleModel } from '@t/components/series';
 import { CircularAxisTheme, VerticalAxisTheme, TextBubbleTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
 import { includes } from '@src/helpers/utils';
-import { BubbleLabelModel, LabelModel } from '@t/components/axis';
+import { BubbleLabelModel, LabelModel, LineModel } from '@t/components/axis';
 
 const RECT_SIZE = 4;
+const HALF_TICK = 5;
 
 function hasNeedRender(
   index: number,
@@ -27,16 +29,26 @@ function hasNeedRender(
         ((pointOnColumn && innerRadius <= outerRadius) ||
           (!pointOnColumn && innerRadius < outerRadius));
 }
+
+function getValidDegree(degree: number) {
+  return degree > DEGREE_360 ? degree - DEGREE_360 : degree;
+}
 export default class RadialAxis extends Component {
-  models: RadialAxisModels = { dot: [], verticalAxisLabel: [], circularAxisLabel: [] };
+  models: RadialAxisModels = {
+    verticalAxisLabel: [],
+    circularAxisLabel: [],
+    dot: [],
+    line: [],
+    tick: [],
+  };
 
   verticalAxisTheme!: Required<VerticalAxisTheme>;
 
   circularAxisTheme!: Required<CircularAxisTheme>;
 
-  initialize() {
+  initialize(initParam: { name: 'radial' | 'gauge' }) {
     this.type = 'axis';
-    this.name = 'radial';
+    this.name = initParam?.name ?? 'radial';
   }
 
   render({ layout, radialAxes, theme }: ChartState<Options>) {
@@ -46,12 +58,23 @@ export default class RadialAxis extends Component {
       return;
     }
 
-    this.verticalAxisTheme = theme.verticalAxis as Required<VerticalAxisTheme>;
     this.circularAxisTheme = theme.circularAxis as Required<CircularAxisTheme>;
 
-    this.models.verticalAxisLabel = this.renderVerticalAxisLabel(radialAxes.verticalAxis);
-    this.models.dot = this.renderDotModel(radialAxes.circularAxis);
-    this.models.circularAxisLabel = this.renderCircularAxisLabel(radialAxes.circularAxis);
+    const { circularAxis, verticalAxis } = radialAxes;
+
+    if (verticalAxis) {
+      this.verticalAxisTheme = theme.verticalAxis as Required<VerticalAxisTheme>;
+      this.models.verticalAxisLabel = this.renderVerticalAxisLabel(verticalAxis);
+    }
+
+    this.models.circularAxisLabel = this.renderCircularAxisLabel(circularAxis);
+
+    if (this.name === 'gauge') {
+      this.models.line = this.renderArcLine(circularAxis);
+      this.models.tick = this.renderTick(circularAxis);
+    } else {
+      this.models.dot = this.renderDotModel(circularAxis);
+    }
   }
 
   getBubbleShadowStyle() {
@@ -178,7 +201,7 @@ export default class RadialAxis extends Component {
         centerX,
         centerY,
         outerRadius,
-        calculateDegreeToRadian(startDegree)
+        calculateDegreeToRadian(getValidDegree(startDegree))
       );
 
       return index % labelInterval === 0
@@ -203,46 +226,124 @@ export default class RadialAxis extends Component {
       centerY,
       labels,
       labelInterval,
-      totalAngle,
       drawingStartAngle,
       labelMargin,
       clockwise,
       outerRadius,
+      maxLabelHeight,
     } = circularAxis;
-    const radius = outerRadius + labelMargin;
+    const radius =
+      outerRadius + (labelMargin + maxLabelHeight / 2) * (this.name === 'gauge' ? -1 : 1);
     const labelTheme = this.circularAxisTheme.label;
     const font = getTitleFontString(labelTheme);
     const degree = circularAxis.degree * (clockwise ? 1 : -1);
 
     return labels.reduce<LabelModel[]>((acc, text, index) => {
       const startDegree = drawingStartAngle + degree * index;
-      const endDegree = drawingStartAngle + degree * (index + 1);
-      const degreeRange = {
-        start: startDegree,
-        end: endDegree,
-      };
-
-      const textAlign = getRadialLabelAlign(
-        {
-          totalAngle,
-          degree: degreeRange,
-          drawingStartAngle: 0,
-        },
-        'outer',
-        false
-      );
+      const validStartAngle = getValidDegree(startDegree);
 
       return index % labelInterval === 0
         ? [
             ...acc,
             {
               type: 'label',
-              style: [{ textAlign, font, fillStyle: labelTheme.color }],
+              style: [
+                { textAlign: 'center', textBaseline: 'middle', font, fillStyle: labelTheme.color },
+              ],
               text,
-              ...getRadialPosition(centerX, centerY, radius, calculateDegreeToRadian(startDegree)),
+              ...getRadialPosition(
+                centerX,
+                centerY,
+                radius,
+                calculateDegreeToRadian(validStartAngle)
+              ),
             },
           ]
         : acc;
     }, []);
+  }
+
+  renderTick(circularAxis: CircularAxisData): LineModel[] {
+    const {
+      degree,
+      centerX,
+      centerY,
+      labels,
+      tickInterval,
+      outerRadius,
+      drawingStartAngle,
+      clockwise,
+    } = circularAxis;
+
+    const { strokeStyle, lineWidth } = this.circularAxisTheme.tick;
+
+    return labels.reduce<LineModel[]>((acc, cur, index) => {
+      const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
+      const { x, y } = getRadialPosition(
+        centerX,
+        centerY,
+        outerRadius - HALF_TICK,
+        calculateDegreeToRadian(getValidDegree(startDegree))
+      );
+
+      const result = getRadialPosition(
+        centerX,
+        centerY,
+        outerRadius + HALF_TICK,
+        calculateDegreeToRadian(getValidDegree(startDegree))
+      );
+
+      return index % tickInterval === 0
+        ? [
+            ...acc,
+            {
+              type: 'line',
+              lineWidth,
+              strokeStyle,
+              x,
+              y,
+              x2: result.x,
+              y2: result.y,
+            },
+          ]
+        : acc;
+    }, []);
+  }
+
+  renderArcLine(circularAxis: CircularAxisData): ArcModel[] | CircleModel[] {
+    const {
+      centerX,
+      centerY,
+      outerRadius,
+      startAngle,
+      endAngle,
+      clockwise,
+      totalAngle,
+    } = circularAxis;
+    const { strokeStyle, lineWidth } = this.circularAxisTheme;
+
+    return totalAngle === DEGREE_360
+      ? [
+          {
+            type: 'circle',
+            x: centerX,
+            y: centerY,
+            radius: outerRadius,
+            borderWidth: lineWidth,
+            borderColor: strokeStyle,
+            color: 'rgba(0, 0, 0, 0)',
+          },
+        ]
+      : [outerRadius].map<ArcModel>((radius) => ({
+          type: 'arc',
+          borderWidth: lineWidth,
+          borderColor: strokeStyle,
+          x: centerX,
+          y: centerY,
+          angle: { start: startAngle, end: endAngle },
+          drawingStartAngle: DEGREE_NEGATIVE_90,
+          radius,
+          clockwise,
+        }));
   }
 }

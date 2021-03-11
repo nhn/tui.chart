@@ -146,30 +146,58 @@ describe('Radar Axis', () => {
     circularAxisLabel: [
       {
         type: 'label',
-        style: [{ fillStyle: '#333333', font: 'normal 11px Arial', textAlign: 'center' }],
+        style: [
+          {
+            fillStyle: '#333333',
+            font: 'normal 11px Arial',
+            textAlign: 'center',
+            textBaseline: 'middle',
+          },
+        ],
         text: 'A',
         x: 100,
-        y: 25,
+        y: 18,
       },
       {
         type: 'label',
-        style: [{ fillStyle: '#333333', font: 'normal 11px Arial', textAlign: 'left' }],
+        style: [
+          {
+            fillStyle: '#333333',
+            font: 'normal 11px Arial',
+            textAlign: 'center',
+            textBaseline: 'middle',
+          },
+        ],
         text: 'B',
-        x: 175,
+        x: 183,
         y: 100,
       },
       {
         type: 'label',
-        style: [{ fillStyle: '#333333', font: 'normal 11px Arial', textAlign: 'center' }],
+        style: [
+          {
+            fillStyle: '#333333',
+            font: 'normal 11px Arial',
+            textAlign: 'center',
+            textBaseline: 'middle',
+          },
+        ],
         text: 'C',
         x: 100,
-        y: 175,
+        y: 183,
       },
       {
         type: 'label',
-        style: [{ fillStyle: '#333333', font: 'normal 11px Arial', textAlign: 'right' }],
+        style: [
+          {
+            fillStyle: '#333333',
+            font: 'normal 11px Arial',
+            textAlign: 'center',
+            textBaseline: 'middle',
+          },
+        ],
         text: 'D',
-        x: 25,
+        x: 18,
         y: 100,
       },
     ],
@@ -364,17 +392,31 @@ describe('Radial Axis', () => {
     circularAxisLabel: [
       {
         type: 'label',
-        style: [{ fillStyle: '#333333', font: 'normal 11px Arial', textAlign: 'center' }],
+        style: [
+          {
+            fillStyle: '#333333',
+            font: 'normal 11px Arial',
+            textAlign: 'center',
+            textBaseline: 'middle',
+          },
+        ],
         text: '0',
         x: 100,
-        y: 50,
+        y: 43,
       },
       {
         type: 'label',
-        style: [{ fillStyle: '#333333', font: 'normal 11px Arial', textAlign: 'center' }],
+        style: [
+          {
+            fillStyle: '#333333',
+            font: 'normal 11px Arial',
+            textAlign: 'center',
+            textBaseline: 'middle',
+          },
+        ],
         text: '3',
         x: 100,
-        y: 150,
+        y: 158,
       },
     ],
     verticalAxisLabel: [
