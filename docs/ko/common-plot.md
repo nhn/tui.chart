@@ -62,7 +62,7 @@ const options = {
 그 외 `lines`, `bands` 옵션은 아래에서 자세히 설명한다.
 
 
-## lines & bands
+## Area, Line 차트를 위한 lines & bands 옵션
 `lines`와 `bands` 옵션은 Line, Area 차트 계열에서 사용할 수 있다.
 
 * 사용 가능 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
@@ -188,7 +188,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102870505-72f39200-4480-11eb-8b24-4ba2a7242556.png)
 
-## theme
+### theme
 
 플롯 영역의 라인 스타일과 배경색을 변경할 수 있다.
 
@@ -241,3 +241,75 @@ const options = {
 ```
 
 ![image](https://user-images.githubusercontent.com/43128697/102844399-bb925780-444e-11eb-9bd5-4c10471d1d6b.png)
+
+## Gauge 차트를 위한 bands 옵션
+
+* 사용 가능 차트 타입 : [Gauge 차트](./chart-gauge.md)
+
+`bands` 옵션을 사용하면 플롯 영역에 범위를 지정하여 배경색을 채울 수 있다.
+
+```ts
+type GaugePlotOption = {
+  ...
+  bands?: {
+    range: [number, number] | [string, string];
+    color: string;
+    id?: string;
+  }[];
+};
+```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `bands` | band[] | 범위 객체 배열 정의 |
+| `band.range` | [number, number] \| [string, string] \| circular 축에 대응하는 값의 범위, 시작과 끝에 해당하는 값을 배열로 입력함 |
+| `band.color` | string | 플롯 섹터 색상 |
+| `band.id` | string | 범위 플롯 섹터 id, `removePlotBand API`를 사용할 때 id 값을 인자로 넘겨주면 해당 플롯 섹터가 삭제됨 |
+
+사용 방법은 예시를 통해 알아보자.
+
+```js
+const options = {
+  ...
+  plot: {
+    bands: [
+      { range: [0, 20], color: '#55bf3b' },
+      { range: [20, 50], color: '#dddf0d' },
+      { range: [50, 110], color: '#df5353' },
+    ]
+  }
+};
+```
+
+![gauge-plot](https://user-images.githubusercontent.com/43128697/110775818-b3ee8c00-82a2-11eb-8233-2b915489735f.png)
+
+### theme
+
+플롯 범위 영역의 두께를 변경할 수 있다.
+
+```ts
+type GaugePlotTheme = {
+  bands: {
+    barWidth?: number;
+  };
+};
+```
+
+| 이름 | 타입 | 설명 |
+| --- | --- | --- |
+| `bands` | object | 범위 영역 테마 |
+| `bands.barWidth` | number | 영역 두께 |
+
+다음은 플롯 테마를 설정하여 플롯 범위 영역의 두께를 변경한 예시이다.
+
+```js
+const options = {
+  theme: {
+    plot: {
+      { bands: { barWidth: 30 } }
+    }
+  }
+};
+```
+
+![gauge-plot-theme](https://user-images.githubusercontent.com/43128697/110794737-65002100-82b9-11eb-9607-dc443700dac3.png)

@@ -77,7 +77,7 @@ chart.resize({width: 400, height: 400});
 ```
 
 ### addSeries()
-* Compatible with: `Line`, `Area`, `Bar`, `BoxPlot`, `Column`, `Pie`, `Heatmap`, `Bubble`, `Scatter`, `Radar`, `Treemap`, `NestedPie`, `LineScatter`, `ColumnLine`
+* Compatible with: `All`
 
 ```ts
 public addSeries(data: SeriesDataInput, seriesDataInfo?: {
