@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -29,17 +29,11 @@ import * as gaugeBrush from '@src/brushes/gauge';
 import {
   GaugeChartOptions,
   GaugeSeriesData,
-  PlotBand,
   GaugeSeriesDataType,
   GaugeSeriesInput,
   GaugePlotBand,
 } from '@t/options';
-
-export interface GaugeChartProps {
-  el: HTMLElement;
-  options: GaugeChartOptions;
-  data: GaugeSeriesData;
-}
+import { GaugeChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class

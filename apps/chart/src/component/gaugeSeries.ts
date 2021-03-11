@@ -23,7 +23,7 @@ import {
   GaugeSeriesOptions,
   GaugeSolidOptions,
 } from '@t/options';
-import { SelectSeriesHandlerParams, SelectSeriesInfo } from '@src/charts/chart';
+import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { RespondersThemeType } from '@src/helpers/responders';
 import {
   getRadialPosition,
@@ -40,6 +40,7 @@ import { isLabelAxisOnYAxis } from '@src/helpers/axes';
 import { getScaleMaxLimitValue } from './radialPlot';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { DATA_LABEL_MARGIN } from '@src/store/gaugeAxes';
+import { SelectSeriesInfo } from '@t/charts';
 
 type RenderOptions = {
   clockwise: boolean;
@@ -280,11 +281,13 @@ export default class GaugeSeries extends Component {
     sectorModels: SectorModel[],
     tooltipData: TooltipData[]
   ) {
-    const clockHandResponders = clockHandModels.map((m, index) => ({
-      ...m,
-      detectionSize: m.baseLine + 3,
-      data: { ...tooltipData[index] },
-    }));
+    const clockHandResponders = !this.circularAxis.solidData!.clockHand
+      ? []
+      : clockHandModels.map((m, index) => ({
+          ...m,
+          detectionSize: m.baseLine + 3,
+          data: { ...tooltipData[index] },
+        }));
 
     return sectorModels.length
       ? [

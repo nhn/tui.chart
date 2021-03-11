@@ -5,6 +5,7 @@ import {
   ChartSeriesMap,
   Options,
   ChartOptionsUsingYAxis,
+  Series,
 } from '@t/store/store';
 import { getFirstValidValue, isNull, includes } from '@src/helpers/utils';
 import { extend } from '@src/store/store';
@@ -216,7 +217,7 @@ const dataRange: StoreModule = {
           seriesDataRange,
           seriesUsingRadialAxes: !isSeriesUsingRadialAxes(series),
         });
-      }
+      });
 
       const newDataRange = getTotalDataRange(seriesDataRange);
       extend(state.dataRange, newDataRange);
