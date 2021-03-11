@@ -195,3 +195,13 @@ export const responsive = () => {
     },
   });
 };
+
+export const noData = () => {
+  const data = {
+    series: [],
+    categories: [],
+  };
+  const { el } = createChart(data);
+
+  return el;
+};

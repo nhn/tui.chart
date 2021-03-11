@@ -148,6 +148,12 @@ export function makeDefaultTheme(globalFontFamily = 'Arial', series: RawSeries =
       fontFamily: globalFontFamily,
       backgroundColor: '#ffffff',
     },
+    noData: {
+      fontSize: 18,
+      fontFamily: globalFontFamily,
+      fontWeight: 'normal',
+      color: '#333333',
+    },
     title: {
       fontSize: 18,
       fontFamily: globalFontFamily,

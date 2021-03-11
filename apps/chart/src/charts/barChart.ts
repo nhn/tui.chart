@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -21,6 +21,7 @@ import AxisUsingCenterY from '@src/component/axisUsingCenterY';
 import HoveredSeries from '@src/component/hoveredSeries';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
+import NoDataText from '@src/component/noDataText';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
@@ -36,12 +37,7 @@ import {
   BoxSeriesData,
   BoxSeriesType,
 } from '@t/options';
-
-export interface BarChartProps {
-  el: HTMLElement;
-  options: BarChartOptions;
-  data: BoxSeriesData;
-}
+import { BarChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class
@@ -107,8 +103,11 @@ export interface BarChartProps {
  *     @param {Object} [props.options.responsive] - Rules for changing chart options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Responsive guide} on github.
  *       @param {boolean|Object} [props.options.responsive.animation] - Animation duration when the chart is modified.
  *       @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond.
+ *     @param {Object} [props.options.lang] - Options for changing the text displayed on the chart or i18n languages.
+ *       @param {Object} [props.options.lang.noData] - No Data Layer Text.
  *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Bar Chart guide} on github.
  *       @param {Object} [props.options.theme.chart] - Chart font theme.
+ *       @param {Object} [props.options.theme.noData] - No Data Layer Text theme.
  *       @param {Object} [props.options.theme.series] - Series theme.
  *       @param {Object} [props.options.theme.title] - Title theme.
  *       @param {Object} [props.options.theme.xAxis] - X Axis theme.
@@ -156,6 +155,7 @@ export default class BarChart extends Chart<BarChartOptions> {
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
+    this.componentManager.add(NoDataText);
 
     this.painter.addGroups([
       basicBrush,

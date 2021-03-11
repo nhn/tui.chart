@@ -154,22 +154,6 @@ export default class RadarSeries extends Component {
     }));
   }
 
-  makeTooltipModel2(seriesData: RadarSeriesType[], categories: string[]): TooltipData[] {
-    return seriesData.flatMap(({ data, name, color }) =>
-      data
-        .filter((value) => !isNull(value))
-        .map(
-          (value, dataIndex) =>
-            ({
-              label: name,
-              color,
-              value,
-              category: categories[dataIndex],
-            } as TooltipData)
-        )
-    );
-  }
-
   getRespondersWithTheme(responders: CircleResponderModel[], type: RespondersThemeType) {
     const { radius, borderWidth, borderColor, color } = this.theme[type].dot!;
 

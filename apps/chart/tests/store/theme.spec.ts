@@ -19,6 +19,12 @@ describe('theme store', () => {
             fontFamily: 'Arial',
             backgroundColor: '#ffffff',
           },
+          noData: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 'normal',
+            color: '#333333',
+          },
           title: {
             fontSize: 18,
             fontFamily: 'Arial',
@@ -239,6 +245,12 @@ describe('theme store', () => {
             fontSize: 18,
             fontFamily: 'Verdana',
             fontWeight: 100,
+            color: '#333333',
+          },
+          noData: {
+            fontSize: 18,
+            fontFamily: 'Verdana',
+            fontWeight: 'normal',
             color: '#333333',
           },
           circularAxis: {
@@ -475,6 +487,12 @@ describe('theme store', () => {
             fontWeight: 100,
             color: '#333333',
           },
+          noData: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 'normal',
+            color: '#333333',
+          },
           legend: {
             label: {
               fontSize: 11,
@@ -694,6 +712,12 @@ describe('theme store', () => {
             fontSize: 18,
             fontFamily: 'Arial',
             fontWeight: 100,
+            color: '#333333',
+          },
+          noData: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 'normal',
             color: '#333333',
           },
           legend: {
@@ -1223,6 +1247,12 @@ describe('theme store', () => {
             fontSize: 18,
             fontFamily: 'Arial',
             fontWeight: 100,
+            color: '#333333',
+          },
+          noData: {
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 'normal',
             color: '#333333',
           },
           circularAxis: {

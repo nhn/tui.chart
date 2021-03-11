@@ -5,6 +5,7 @@ import {
   ChartSeriesMap,
   Options,
   ChartOptionsUsingYAxis,
+  Series,
 } from '@t/store/store';
 import { getFirstValidValue, isNull, includes } from '@src/helpers/utils';
 import { extend } from '@src/store/store';
@@ -18,6 +19,7 @@ import {
 } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
+import { CoordinateDataType } from '@t/options';
 
 type SeriesDataRange = {
   [key in keyof ChartSeriesMap]: DataRange;
@@ -124,6 +126,37 @@ function setSeriesDataRange({
   return seriesDataRange;
 }
 
+function getBoxPlotValues(series: Series, seriesName: string) {
+  return series[seriesName]!.data.flatMap(({ data, outliers = [] }) => [
+    ...(data ?? []).flatMap((datum) => datum),
+    ...(outliers ?? []).flatMap((datum) => datum),
+  ]);
+}
+
+function getBulletValues(series: Series, seriesName: string) {
+  return series[seriesName]!.data.flatMap(({ data, markers, ranges }) => [
+    data,
+    ...(markers ?? []).flatMap((datum) => datum),
+    ...(ranges ?? []).flatMap((range) => range),
+  ]);
+}
+
+function getCoordinateDataValues(
+  values: CoordinateDataType[],
+  categories: string[],
+  hasDateValue: boolean
+) {
+  const yAxisValues = values
+    .filter((value) => !isNull(value))
+    .map((value) => getCoordinateYValue(value));
+
+  const xAxisValues = (categories as string[]).map((value) =>
+    hasDateValue ? Number(new Date(value)) : Number(value)
+  );
+
+  return { xAxisValues, yAxisValues };
+}
+
 const dataRange: StoreModule = {
   name: 'dataRange',
   state: () => ({
@@ -136,12 +169,8 @@ const dataRange: StoreModule = {
       const labelAxisOnYAxis = isLabelAxisOnYAxis({ series, options, categories });
 
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
-      const hasDateValue = !!options.xAxis?.date;
 
-      for (const seriesName in series) {
-        if (!series.hasOwnProperty(seriesName)) {
-          continue;
-        }
+      Object.keys(series).forEach((seriesName) => {
         seriesDataRange[seriesName] = {};
 
         let values = series[seriesName].data.flatMap(({ data, name }) =>
@@ -151,15 +180,17 @@ const dataRange: StoreModule = {
         const firstExistValue = getFirstValidValue(values);
 
         if (isCoordinateSeries(initStoreState.series)) {
-          values = values
-            .filter((value) => !isNull(value))
-            .map((value) => getCoordinateYValue(value));
-
-          const xAxisValues = (categories as string[]).map((value) =>
-            hasDateValue ? Number(new Date(value)) : Number(value)
+          const hasDateValue = !!options.xAxis?.date;
+          const { yAxisValues, xAxisValues } = getCoordinateDataValues(
+            values,
+            categories as string[],
+            hasDateValue
           );
+          values = yAxisValues;
 
           seriesDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);
+        } else if (!series[seriesName].data.length) {
+          values = [];
         } else if (isRangeValue(firstExistValue)) {
           values = values.reduce((arr, value) => {
             if (isNull(value)) {
@@ -173,16 +204,9 @@ const dataRange: StoreModule = {
         } else if (includes(['bar', 'column', 'radar'], seriesName)) {
           values.push(0);
         } else if (seriesName === 'boxPlot') {
-          values = series[seriesName]!.data.flatMap(({ data, outliers = [] }) => [
-            ...(data ?? []).flatMap((datum) => datum),
-            ...(outliers ?? []).flatMap((datum) => datum),
-          ]);
+          values = getBoxPlotValues(series, seriesName);
         } else if (seriesName === 'bullet') {
-          values = series[seriesName]!.data.flatMap(({ data, markers, ranges }) => [
-            data,
-            ...(markers ?? []).flatMap((datum) => datum),
-            ...(ranges ?? []).flatMap((range) => range),
-          ]);
+          values = getBulletValues(series, seriesName);
         }
 
         setSeriesDataRange({
@@ -193,7 +217,7 @@ const dataRange: StoreModule = {
           seriesDataRange,
           seriesUsingRadialAxes: !isSeriesUsingRadialAxes(series),
         });
-      }
+      });
 
       const newDataRange = getTotalDataRange(seriesDataRange);
       extend(state.dataRange, newDataRange);

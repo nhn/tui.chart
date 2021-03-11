@@ -3,6 +3,9 @@ import { setLineDash, fillStyle, strokeWithOptions } from '@src/helpers/style';
 
 export function polygon(ctx: CanvasRenderingContext2D, polygonModel: PolygonModel) {
   const { color: strokeStyle, points, lineWidth, fillColor, dashSegments = [] } = polygonModel;
+  if (!points.length) {
+    return;
+  }
 
   ctx.beginPath();
   if (dashSegments) {

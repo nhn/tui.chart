@@ -230,3 +230,16 @@ export const theme = () => {
 
   return el;
 };
+
+export const noData = () => {
+  const data = {
+    categories: [],
+    series: {
+      line: [],
+      column: [],
+    },
+  };
+  const { el } = createChart(data);
+
+  return el;
+};

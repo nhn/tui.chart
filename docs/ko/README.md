@@ -32,6 +32,7 @@
 - [플롯](./common-plot.md)
 - [축](./common-axes.md)
 - [툴팁](./common-tooltip.md)
+- [No Data 텍스트](./common-noDataText.md)
 - [API 소개](./common-api.md)
 - [공통 컴포넌트 테마](./common-theme.md)
 - [`chart` 옵션](./common-chart-options.md)

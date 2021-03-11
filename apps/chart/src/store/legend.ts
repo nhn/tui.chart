@@ -26,6 +26,7 @@ import { hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { extend } from '@src/store/store';
 import { getTitleFontString } from '@src/helpers/style';
 import { makeDefaultTheme } from '@src/helpers/theme';
+import { isNoData } from '@src/helpers/validation';
 
 type LegendLabelsInfo = {
   label: string;
@@ -473,7 +474,7 @@ const legend: StoreModule = {
         radius: circleLegendVisible ? Math.max((circleLegendWidth - LEGEND_MARGIN_X) / 2, 0) : 0,
       });
 
-      if (!isNestedPieChart) {
+      if (!isNestedPieChart && !isNoData(series)) {
         this.dispatch('updateLegendColor');
       }
       if (isScatterChart) {

@@ -4,27 +4,15 @@ import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
 import { Point } from '@t/options';
 import { RectStyle, StyleProp, Nullable } from '@t/components/series';
+import {
+  LabelStyle,
+  StrokeLabelStyle,
+  LabelStyleName,
+  StrokeLabelStyleName,
+  PathRectStyleName,
+} from '@t/brushes';
 
 export const DEFAULT_LABEL_TEXT = 'normal 11px Arial';
-
-export type LabelStyleName = 'default' | 'title' | 'axisTitle' | 'rectLabel';
-export type StrokeLabelStyleName = 'none' | 'stroke';
-
-export interface LabelStyle {
-  font?: string;
-  fillStyle?: string;
-  textAlign?: CanvasTextAlign;
-  textBaseline?: CanvasTextBaseline;
-}
-
-export type StrokeLabelStyle = {
-  lineWidth?: number;
-  strokeStyle?: string;
-  shadowColor?: string;
-  shadowBlur?: number;
-};
-
-export type PathRectStyleName = 'shadow';
 
 export const labelStyle = {
   default: {

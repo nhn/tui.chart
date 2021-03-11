@@ -305,7 +305,7 @@ export function hasNegativeOnly(values: (number | string)[]) {
 }
 
 export function getFirstValidValue(values: any) {
-  return values.find((value) => value !== null);
+  return values?.find((value) => value !== null);
 }
 
 export function getPercentageValue(text: string): number {
