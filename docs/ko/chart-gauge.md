@@ -229,7 +229,7 @@ const options = {
 };
 ```
 
-![gauge-angleRanges](https://user-images.githubusercontent.com/43128697/110799920-0473e280-82bf-11eb-8533-6f4620f0d59b.png
+![gauge-angleRanges](https://user-images.githubusercontent.com/43128697/110799920-0473e280-82bf-11eb-8533-6f4620f0d59b.png)
 
 ### solid
 
@@ -458,7 +458,7 @@ const options = {
 
 옵션에 대한 결과는 다음과 같다.
 
-![gauge-series-theme](https://user-images.githubusercontent.com/43128697/110804757-ce852d00-82c3-11eb-8642-a5c15ab7979f.png")
+![gauge-series-theme](https://user-images.githubusercontent.com/43128697/110804757-ce852d00-82c3-11eb-8642-a5c15ab7979f.png)
 
 아래 코드는 Gauge 차트에서 사용할 수 있는 테마를 적용하여 차트 스타일을 변경한 옵션이다.
 

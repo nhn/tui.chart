@@ -22,7 +22,7 @@ const chart = Chart.gaugeChart({el, data, options});
 
 ### Data Type
 
-`series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다. 입력한 `data` 값을 기준으로 scale을 계산하여 Circular Axis의 라벨로 표시된다.
+ the `series` value must be completed with the `name` and the `data`. The `name` is used to identify each series and its id must be unique. The scale is calculated based on the entered `data` value and displayed as a circular axis label.
 
 ```js
 const data = {
@@ -39,7 +39,7 @@ const data = {
 
 ### Category Data Type
 
-`categories`를 입력하면 Circular Axis에 표시되는 라벨은 카테고리 값이 표시된다.
+If you enter `categories`, the label displayed on the Circular Axis will display the category value.
 
 ```js
 const data = {
@@ -229,7 +229,7 @@ const options = {
 };
 ```
 
-![gauge-angleRanges](https://user-images.githubusercontent.com/43128697/110799920-0473e280-82bf-11eb-8533-6f4620f0d59b.png
+![gauge-angleRanges](https://user-images.githubusercontent.com/43128697/110799920-0473e280-82bf-11eb-8533-6f4620f0d59b.png)
 
 ### solid
 
@@ -458,7 +458,7 @@ const options = {
 
 The code above results as shown below.
 
-![gauge-series-theme](https://user-images.githubusercontent.com/43128697/110804757-ce852d00-82c3-11eb-8642-a5c15ab7979f.png")
+![gauge-series-theme](https://user-images.githubusercontent.com/43128697/110804757-ce852d00-82c3-11eb-8642-a5c15ab7979f.png)
 
 The code below is an option to change the chart style by applying the theme that can be used in the Gauge chart.
 
