@@ -20,7 +20,7 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>19.4 [Gauge Chart] Counter Clockwise</title>
+    <title>20.7 [Gauge Chart] Solid without Clock Hand</title>
   </head>
   <body>
     <div class="description">
@@ -67,23 +67,33 @@
       };
       const options = {
         chart: { title: 'Speedometer', width: 550, height: 500 },
-        circularAxis: { title: 'km/h' },
         series: {
-          clockwise: false,
-          angleRange: {
-            start: 315,
-            end: 45,
-          },
-        },
-        plot:{
-          bands: [
-            { range: [0, 20], color: '#55bf3b' },
-            { range: [20, 50], color: '#dddf0d' },
-            { range: [50, 90], color: '#df5353' },
-          ]
+          solid: { clockHand: false },
+          dataLabels: { visible: true, offsetY: -30, formatter: (value) => `${value}%` },
         },
         theme: {
-          plot: { bands: { barWidth: 40 } },
+          circularAxis: {
+            lineWidth: 0,
+            strokeStyle: 'rgba(0, 0, 0, 0)',
+            tick: {
+              lineWidth: 0,
+              strokeStyle: 'rgba(0, 0, 0, 0)',
+            },
+            label: {
+              color: 'rgba(0, 0, 0, 0)',
+            },
+          },
+          series: {
+            dataLabels: {
+              fontSize: 40,
+              fontFamily: 'Impact',
+              fontWeight: 600,
+              color: '#00a9ff',
+              textBubble: {
+                visible: false,
+              },
+            },
+          },
         },
       };
 

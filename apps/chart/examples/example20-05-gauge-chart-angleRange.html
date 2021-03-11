@@ -20,7 +20,7 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>19.8 [Gauge Chart] Data Labels</title>
+    <title>20.5 [Gauge Chart] AngleRange</title>
   </head>
   <body>
     <div class="description">
@@ -67,22 +67,22 @@
       };
       const options = {
         chart: { title: 'Speedometer', width: 550, height: 500 },
-        circularAxis: {
-          scale: {
-            min: 0,
-            max: 100,
-          },
-          title: 'km/h',
-        },
+        circularAxis: { title: 'km/h' },
         series: {
-          dataLabels: { visible: true },
+          angleRange: {
+            start: 225,
+            end: 135,
+          },
         },
-        plot: {
+        plot:{
           bands: [
             { range: [0, 20], color: '#55bf3b' },
             { range: [20, 50], color: '#dddf0d' },
-            { range: [50, 110], color: '#df5353' },
-          ],
+            { range: [50, 90], color: '#df5353' },
+          ]
+        },
+        theme: {
+          plot: { bands: { barWidth: 40 } },
         },
       };
 

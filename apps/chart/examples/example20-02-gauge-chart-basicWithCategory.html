@@ -20,7 +20,7 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>19.6 [Gauge Chart] Solid</title>
+    <title>20.2 [Gauge Chart] Basic with Category</title>
   </head>
   <body>
     <div class="description">
@@ -58,16 +58,27 @@
     <script class="code-js" id="code-js" type="text/babel">
       const el = document.getElementById('chart-area');
       const data = {
+        categories: ['Apple', 'Watermelon', 'Blueberry', 'Grape', 'Orange'],
         series: [
           {
-            name: 'Speed',
-            data: [80],
+            name: 'Fruit',
+            data: ['Orange'],
           },
         ],
       };
+
       const options = {
-        chart: { title: 'Speedometer', width: 550, height: 500 },
-        series: { solid: true },
+        chart: { title: 'Fruits', width: 550, height: 500 },
+        circularAxis: {
+          label: { margin: 25 },
+        },
+        plot: {
+          bands: [
+            { range: ['Apple', 'Watermelon'], color: '#df5353' },
+            { range: ['Watermelon', 'Grape'], color: '#8700ff' },
+            { range: ['Grape', 'Apple'], color: '#ff9800' },
+          ],
+        },
       };
 
       const chart = toastui.Chart.gaugeChart({ el, data, options });

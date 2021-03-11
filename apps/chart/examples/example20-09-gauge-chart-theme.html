@@ -20,7 +20,7 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>19.5 [Gauge Chart] AngleRange</title>
+    <title>20.9 [Gauge Chart] Theme</title>
   </head>
   <body>
     <div class="description">
@@ -66,23 +66,53 @@
         ],
       };
       const options = {
-        chart: { title: 'Speedometer', width: 550, height: 500 },
-        circularAxis: { title: 'km/h' },
+        chart: { title: 'Speedometer', width: 700, height: 400 },
+        circularAxis: { title: 'km/h', scale: { min: 0, max: 100 } },
         series: {
           angleRange: {
-            start: 225,
-            end: 135,
+            start: 270,
+            end: 90,
           },
+          dataLabels: { visible: true, offsetY: -200, formatter: (value) => `${value} %` },
         },
-        plot:{
+        plot: {
           bands: [
-            { range: [0, 20], color: '#55bf3b' },
-            { range: [20, 50], color: '#dddf0d' },
-            { range: [50, 90], color: '#df5353' },
-          ]
+            { range: [0, 20], color: '#e4a0c2' },
+            { range: [20, 50], color: '#dc4d94' },
+            { range: [50, 100], color: '#a90757' },
+          ],
         },
         theme: {
-          plot: { bands: { barWidth: 40 } },
+          chart: { fontFamily: 'Impact' },
+          circularAxis: {
+            title: { fontWeight: 500, fontSize: 30, color: '#650434' },
+            label: { color: '#650434', fontSize: 15 },
+            tick: { strokeStyle: '#650434' },
+            strokeStyle: '#650434',
+          },
+          series: {
+            clockHand: {
+              color: '#650434',
+              baseLine: 10,
+            },
+            pin: {
+              radius: 10,
+              color: '#650434',
+              borderWidth: 5,
+              borderColor: 'rgba(101, 4, 52, 0.3)',
+            },
+            dataLabels: {
+              fontSize: 30,
+              color: '#fff',
+              textBubble: {
+                visible: true,
+                backgroundColor: '#650434',
+                paddingX: 5,
+                paddingY: 5,
+              },
+            },
+          },
+          plot: { bands: { barWidth: 50 } },
         },
       };
 
