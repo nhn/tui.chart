@@ -1,4 +1,4 @@
-import Chart, { SelectSeriesInfo } from './chart';
+import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
 import stackSeriesData from '@src/store/stackSeriesData';
@@ -16,6 +16,7 @@ import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
 import RadialPlot from '@src/component/radialPlot';
 import RadialAxis from '@src/component/radialAxis';
+import NoDataText from '@src/component/noDataText';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -26,12 +27,7 @@ import * as dataLabelBrush from '@src/brushes/dataLabel';
 import * as axisBrush from '@src/brushes/axis';
 
 import { RadialBarChartOptions, RadialBarSeriesData, RadialBarSeriesType } from '@t/options';
-
-export interface RadialBarChartProps {
-  el: HTMLElement;
-  options: RadialBarChartOptions;
-  data: RadialBarSeriesData;
-}
+import { RadialBarChartProps, SelectSeriesInfo } from '@t/charts';
 
 /**
  * @class
@@ -83,8 +79,11 @@ export interface RadialBarChartProps {
  *     @param {Object} [props.options.responsive] - Rules for changing chart options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Responsive guide} on github.
  *       @param {boolean|Object} [props.options.responsive.animation] - Animation duration when the chart is modified.
  *       @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond.
- *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|RadialBar Chart guide} on github.
+ *     @param {Object} [props.options.lang] - Options for changing the text displayed on the chart or i18n languages.
+ *       @param {Object} [props.options.lang.noData] - No Data Layer Text.
+ *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Pie Chart guide} on github.
  *       @param {Object} [props.options.theme.chart] - Chart font theme.
+ *       @param {Object} [props.options.theme.noData] - No Data Layer Text theme.
  *       @param {Object} [props.options.theme.series] - Series theme.
  *       @param {Object} [props.options.theme.title] - Title theme.
  *       @param {Object} [props.options.theme.circularAxis] - Circular Axis theme.
@@ -121,6 +120,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
     this.componentManager.add(RadialAxis);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip, { chartEl: this.el });
+    this.componentManager.add(NoDataText);
 
     this.painter.addGroups([
       basicBrush,

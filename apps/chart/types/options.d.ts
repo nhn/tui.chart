@@ -22,7 +22,6 @@ import {
   RadialBarChartThemeOptions,
   GaugeChartThemeOptions,
 } from './theme';
-import { AxisType } from '../src/component/axis';
 
 export type RangeDataType<T> = [T, T];
 export type BoxSeriesDataType = number | RangeDataType<number> | null;
@@ -46,7 +45,7 @@ export type GaugeSeriesDataType = string | number;
 
 export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped' | 'point';
 export type BoxTypeEventDetectType = 'grouped' | 'point';
-export type CicleTypeEventDetectType = 'grouped' | 'point';
+export type CircleTypeEventDetectType = 'grouped' | 'point';
 
 export type BezierPoint = {
   controlPoint?: {
@@ -199,7 +198,11 @@ export interface Scale {
   stepSize?: 'auto' | number;
 }
 
-type AxisLabelInfo = { axisName: AxisType; labels: string[]; index: number };
+type AxisLabelInfo = {
+  axisName: 'xAxis' | 'yAxis' | 'secondaryYAxis';
+  labels: string[];
+  index: number;
+};
 type AxisFormatter = (value: string, axisLabelInfo: AxisLabelInfo) => string;
 export type AxisTitleOption = Omit<TitleOption, 'align'>;
 type AxisTitle = string | AxisTitleOption;
@@ -298,8 +301,13 @@ interface BaseTooltipOptions {
   transition?: string | boolean;
 }
 
+interface LangOptions {
+  noData?: string;
+}
+
 export interface BaseOptions {
   chart?: BaseChartOptions;
+  lang?: LangOptions;
   series?: BaseSeriesOptions;
   xAxis?: BaseXAxisOptions;
   legend?: BaseLegendOptions;
@@ -705,7 +713,7 @@ interface RadialBarSeriesOptions extends BaseSeriesOptions {
     start: number;
     end: number;
   };
-  eventDetectType?: CicleTypeEventDetectType;
+  eventDetectType?: CircleTypeEventDetectType;
   dataLabels?: DataLabelOptions;
 }
 

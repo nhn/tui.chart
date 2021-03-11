@@ -1,4 +1,4 @@
-import { SectorStyle } from '../src/brushes/sector';
+import { SectorStyle } from './brushes';
 import { ScatterSeriesIconType } from './components/series';
 
 type SeriesThemeMap = {
@@ -82,6 +82,7 @@ type Theme = {
   tooltip: TooltipTheme;
   plot: PlotTheme;
   exportMenu: ExportMenuTheme;
+  noData: FontTheme;
 };
 
 type AxisTheme = {
@@ -284,6 +285,7 @@ interface LineAreaChartSeriesTheme {
 
 interface BaseThemeOptions {
   chart?: ChartTheme;
+  noData?: FontTheme;
   title?: FontTheme;
   legend?: LegendTheme;
   tooltip?: TooltipTheme;

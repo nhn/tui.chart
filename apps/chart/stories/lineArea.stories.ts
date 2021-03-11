@@ -177,3 +177,16 @@ export const liveUpdate = () => {
 
   return el;
 };
+
+export const noData = () => {
+  const data = {
+    series: {
+      line: [],
+      area: [],
+    },
+    categories: [],
+  };
+  const { el } = createChart(data);
+
+  return el;
+};

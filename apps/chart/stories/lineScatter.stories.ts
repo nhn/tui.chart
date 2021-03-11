@@ -85,3 +85,16 @@ export const responsive = () => {
     }
   );
 };
+
+export const noData = () => {
+  const data = {
+    series: {
+      scatter: [],
+      line: [],
+    },
+    categories: [],
+  };
+  const { el } = createChart(data);
+
+  return el;
+};

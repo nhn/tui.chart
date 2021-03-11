@@ -8,12 +8,6 @@ import { getAxisTheme } from '@src/helpers/axes';
 import { AxisTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
 
-export enum AxisType {
-  X = 'xAxis',
-  Y = 'yAxis',
-  SECONDARY_Y = 'secondaryYAxis',
-}
-
 type CoordinateKey = 'x' | 'y';
 
 interface RenderOptions {
@@ -22,6 +16,12 @@ interface RenderOptions {
   needRotateLabel?: boolean;
   radian?: number;
   offsetY?: number;
+}
+
+export enum AxisType {
+  X = 'xAxis',
+  Y = 'yAxis',
+  SECONDARY_Y = 'secondaryYAxis',
 }
 
 function getOffsetAndAnchorKey(

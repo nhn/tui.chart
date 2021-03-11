@@ -1,4 +1,4 @@
-import { circle, line, CircleStyleName, rect } from '@src/brushes/basic';
+import { circle, line, rect } from '@src/brushes/basic';
 import { linePoints, areaPoints } from '@src/brushes/lineSeries';
 import { tick } from '@src/brushes/axis';
 import { circleLegend } from '@src/brushes/circleLegend';
@@ -7,6 +7,7 @@ import { label, bubbleLabel } from '@src/brushes/label';
 import { resetButton, backButton } from '@src/brushes/resetButton';
 import { sector } from '@src/brushes/sector';
 import { spectrumLegend, spectrumTooltip } from '@src/brushes/spectrumLegend';
+import { CircleStyleName } from '@t/brushes';
 import '@src/css/chart.css';
 
 import {
@@ -33,11 +34,10 @@ import { scatterSeries } from '@src/brushes/scatterSeries';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
 import { clockHand } from '@src/brushes/gauge';
 
-// @TODO: need to remove. comment for beta test
-// export default {
-//   title: 'brushes',
-//   decorators: [withKnobs],
-// };
+export default {
+  title: 'brushes',
+  decorators: [withKnobs],
+};
 
 type BezierOptions = 'basic' | 'bezier';
 
@@ -400,6 +400,10 @@ export const legendBrush = () => {
     type: 'legend',
     align: 'right',
     showCheckbox: true,
+    fontFamily: 'Arial',
+    fontSize: 11,
+    fontWeight: 'normal',
+    color: '#333333',
     data: [
       {
         label: 'circle-checked-active',
@@ -410,6 +414,7 @@ export const legendBrush = () => {
         y: 100,
         iconType: 'circle',
         chartType: 'scatter',
+        useScatterChartIcon: false,
         rowIndex: 0,
         columnIndex: 0,
       },
@@ -422,6 +427,7 @@ export const legendBrush = () => {
         y: 120,
         iconType: 'circle',
         chartType: 'scatter',
+        useScatterChartIcon: false,
         rowIndex: 1,
         columnIndex: 0,
       },
@@ -434,6 +440,7 @@ export const legendBrush = () => {
         y: 140,
         iconType: 'circle',
         chartType: 'scatter',
+        useScatterChartIcon: false,
         rowIndex: 2,
         columnIndex: 0,
       },
@@ -444,6 +451,10 @@ export const legendBrush = () => {
     type: 'legend',
     align: 'right',
     showCheckbox: false,
+    fontFamily: 'Arial',
+    fontSize: 11,
+    fontWeight: 'normal',
+    color: '#333333',
     data: [
       {
         label: 'circle-unchecked-active-hideCheckbox',
@@ -454,6 +465,7 @@ export const legendBrush = () => {
         y: 160,
         iconType: 'circle',
         chartType: 'scatter',
+        useScatterChartIcon: false,
         rowIndex: 0,
         columnIndex: 0,
       },
@@ -464,6 +476,10 @@ export const legendBrush = () => {
     type: 'legend',
     align: 'right',
     showCheckbox: true,
+    fontFamily: 'Arial',
+    fontSize: 11,
+    fontWeight: 'normal',
+    color: '#333333',
     data: [
       {
         label: 'line-checked-active',
@@ -476,6 +492,7 @@ export const legendBrush = () => {
         chartType: 'line',
         rowIndex: 0,
         columnIndex: 0,
+        useScatterChartIcon: false,
       },
       {
         label: 'line-checked-inactive',
@@ -488,6 +505,7 @@ export const legendBrush = () => {
         chartType: 'line',
         rowIndex: 1,
         columnIndex: 0,
+        useScatterChartIcon: false,
       },
     ],
   });
@@ -496,6 +514,10 @@ export const legendBrush = () => {
     type: 'legend',
     align: 'right',
     showCheckbox: true,
+    fontFamily: 'Arial',
+    fontSize: 11,
+    fontWeight: 'normal',
+    color: '#333333',
     data: [
       {
         label: 'rect-checked-active',
@@ -508,6 +530,7 @@ export const legendBrush = () => {
         chartType: 'area',
         rowIndex: 0,
         columnIndex: 0,
+        useScatterChartIcon: false,
       },
       {
         label: 'rect-checked-inactive',
@@ -520,6 +543,7 @@ export const legendBrush = () => {
         chartType: 'area',
         rowIndex: 1,
         columnIndex: 0,
+        useScatterChartIcon: false,
       },
     ],
   });
@@ -545,7 +569,7 @@ export const resetButtonBrush = () => {
   return el;
 };
 
-export const spectrumLegendHorizontalBrush = () => {
+export const spectrumLegendVerticalBrush = () => {
   const { ctx, el } = setup();
 
   const labels = ['0', '100', '200', '300', '400', '500'];
@@ -553,40 +577,6 @@ export const spectrumLegendHorizontalBrush = () => {
   const endColor = '#D74177';
   const width = 800;
   const height = 100;
-  const params = { width, height, labels, startColor, endColor, verticalAlign: false };
-  const tooltipParams = {
-    width,
-    height,
-    labels,
-    color: '#e8857f',
-    text: '300',
-    colorRatio: 0.4,
-    verticalAlign: false,
-  };
-
-  spectrumLegend(ctx, { type: 'spectrumLegend', x: 10, y: 100, align: 'top', ...params });
-  spectrumLegend(ctx, { type: 'spectrumLegend', x: 10, y: 400, align: 'bottom', ...params });
-
-  spectrumTooltip(ctx, { type: 'spectrumTooltip', x: 424, y: 125, align: 'top', ...tooltipParams });
-  spectrumTooltip(ctx, {
-    type: 'spectrumTooltip',
-    x: 424,
-    y: 400,
-    align: 'bottom',
-    ...tooltipParams,
-  });
-
-  return el;
-};
-
-export const spectrumLegendVerticalBrush = () => {
-  const { ctx, el } = setup();
-
-  const labels = ['0', '100', '200', '300', '400', '500'];
-  const startColor = '#FFE98A';
-  const endColor = '#D74177';
-  const width = 100;
-  const height = 500;
   const params = { width, height, labels, startColor, endColor, verticalAlign: true };
   const tooltipParams = {
     width,
@@ -598,14 +588,48 @@ export const spectrumLegendVerticalBrush = () => {
     verticalAlign: true,
   };
 
+  spectrumLegend(ctx, { type: 'spectrumLegend', x: 10, y: 100, align: 'top', ...params });
+  spectrumLegend(ctx, { type: 'spectrumLegend', x: 10, y: 400, align: 'bottom', ...params });
+
+  spectrumTooltip(ctx, { type: 'spectrumTooltip', x: 170, y: 100, align: 'top', ...tooltipParams });
+  spectrumTooltip(ctx, {
+    type: 'spectrumTooltip',
+    x: 170,
+    y: 400,
+    align: 'bottom',
+    ...tooltipParams,
+  });
+
+  return el;
+};
+
+export const spectrumLegendHorizontalBrush = () => {
+  const { ctx, el } = setup();
+
+  const labels = ['0', '100', '200', '300', '400', '500'];
+  const startColor = '#FFE98A';
+  const endColor = '#D74177';
+  const width = 100;
+  const height = 500;
+  const params = { width, height, labels, startColor, endColor, verticalAlign: false };
+  const tooltipParams = {
+    width,
+    height,
+    labels,
+    color: '#e8857f',
+    text: '300',
+    colorRatio: 0.4,
+    verticalAlign: false,
+  };
+
   spectrumLegend(ctx, { type: 'spectrumLegend', x: 10, y: 10, align: 'left', ...params });
   spectrumLegend(ctx, { type: 'spectrumLegend', x: 300, y: 10, align: 'right', ...params });
 
-  spectrumTooltip(ctx, { type: 'spectrumTooltip', x: 40, y: 286, align: 'left', ...tooltipParams });
+  spectrumTooltip(ctx, { type: 'spectrumTooltip', x: 10, y: 108, align: 'left', ...tooltipParams });
   spectrumTooltip(ctx, {
     type: 'spectrumTooltip',
-    x: 290,
-    y: 286,
+    x: 300,
+    y: 108,
     align: 'right',
     ...tooltipParams,
   });

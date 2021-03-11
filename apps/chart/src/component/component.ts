@@ -21,6 +21,7 @@ import {
   BulletSeriesModels,
   BackgroundModel,
   GaugeSeriesModels,
+  NoDataTextModel,
 } from '@t/components/series';
 import { AxisModels, LineModel, LabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -56,7 +57,8 @@ export type ComponentType =
   | 'zeroAxis'
   | 'zoom'
   | 'backButton'
-  | 'background';
+  | 'background'
+  | 'noDataText';
 
 type ComponentModels =
   | AxisModels
@@ -88,7 +90,13 @@ type ComponentModels =
   | BulletSeriesModels
   | BackgroundModel
   | RadialAxisModels
-  | GaugeSeriesModels;
+  | GaugeSeriesModels
+  | NoDataTextModel;
+
+export type RespondersModel = {
+  component: Component;
+  detected: ResponderModel[];
+}[];
 
 export default abstract class Component {
   name = 'Component';

@@ -57,7 +57,7 @@ export default class TreemapSeries extends Component {
   render(chartState: ChartState<TreemapChartOptions>) {
     const { layout, treemapSeries, colorValueScale, options, theme, treemapZoomId } = chartState;
 
-    if (!treemapSeries.length) {
+    if (!treemapSeries) {
       throw new Error(message.noDataError(this.name));
     }
 
