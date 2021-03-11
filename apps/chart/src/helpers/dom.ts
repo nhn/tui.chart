@@ -11,7 +11,7 @@ import { toArray } from './utils';
  * @returns {Array.<Node>} found nodes
  * @ignore
  */
-function findAll(element: HTMLElement, selector: string): Array<HTMLElement> {
+export function findNodes(element: HTMLElement, selector: string) {
   const nodeList = toArray(element.querySelectorAll(selector));
 
   if (nodeList.length) {
@@ -26,7 +26,7 @@ function findAll(element: HTMLElement, selector: string): Array<HTMLElement> {
  * @param {Node} node - target node
  * @ignore
  */
-function remove(node: Node) {
+export function removeNode(node: Node) {
   if (node.parentNode) {
     node.parentNode.removeChild(node);
   }
@@ -34,13 +34,13 @@ function remove(node: Node) {
 
 /**
  * Finalize html result
- * @param {HTMLElement} html root element
+ * @param {Element} html root element
  * @param {boolean} needHtmlText pass true if need html text
  * @returns {string|DocumentFragment} result
  * @ignore
  */
-function finalizeHtml(html: HTMLElement, needHtmlText: boolean): string {
-  let result: string;
+export function finalizeHtml(html: Element, needHtmlText: boolean) {
+  let result;
 
   if (needHtmlText) {
     result = html.innerHTML;
@@ -57,9 +57,3 @@ function finalizeHtml(html: HTMLElement, needHtmlText: boolean): string {
 
   return result;
 }
-
-export default {
-  findAll,
-  remove,
-  finalizeHtml,
-};

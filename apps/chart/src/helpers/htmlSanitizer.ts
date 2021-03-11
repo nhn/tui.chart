@@ -2,7 +2,7 @@
  * @fileoverview Implements htmlSanitizer
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-import domUtils from './dom';
+import { finalizeHtml, findNodes, removeNode } from './dom';
 import { isString, toArray } from './utils';
 
 const HTML_ATTR_LIST_RX = new RegExp(
@@ -40,12 +40,12 @@ const ON_EVENT_RX = /^on\S+/;
 
 /**
  * htmlSanitizer
- * @param {string|Node} html - html or Node
+ * @param {string} html - html
  * @param {boolean} [needHtmlText] - pass true if need html text
  * @returns {string} - result
  * @ignore
  */
-function htmlSanitizer(html: string | Node, needHtmlText: boolean): string {
+function htmlSanitizer(html: string, needHtmlText: boolean) {
   const root = document.createElement('div');
 
   if (isString(html)) {
@@ -58,7 +58,7 @@ function htmlSanitizer(html: string | Node, needHtmlText: boolean): string {
   removeUnnecessaryTags(root);
   leaveOnlyWhitelistAttribute(root);
 
-  return domUtils.finalizeHtml(root, needHtmlText);
+  return finalizeHtml(root, needHtmlText);
 }
 
 /**
@@ -67,13 +67,13 @@ function htmlSanitizer(html: string | Node, needHtmlText: boolean): string {
  * @private
  */
 function removeUnnecessaryTags(html: HTMLElement) {
-  const removedTags = domUtils.findAll(
+  const removedTags = findNodes(
     html,
     'script, iframe, textarea, form, button, select, input, meta, style, link, title, embed, object, details, summary'
   );
 
   removedTags.forEach((node) => {
-    domUtils.remove(node);
+    removeNode(node);
   });
 }
 
@@ -81,7 +81,6 @@ function removeUnnecessaryTags(html: HTMLElement) {
  * Checks whether the attribute and value that causing XSS or not.
  * @param {string} attrName - name of attribute
  * @param {string} attrValue - value of attirbute
- * @param {boolean} state
  * @private
  */
 function isXSSAttribute(attrName: string, attrValue: string) {
@@ -112,7 +111,7 @@ function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Array<Node
  * @private
  */
 function leaveOnlyWhitelistAttribute(html: HTMLElement) {
-  domUtils.findAll(html, '*').forEach((node) => {
+  findNodes(html, '*').forEach((node) => {
     const { attributes } = node;
     const blacklist = toArray(attributes).filter((attr) => {
       const { name, value } = attr;
