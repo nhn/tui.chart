@@ -54,6 +54,19 @@ export function forEach<T extends object, K extends Extract<keyof T, string>, V 
   }
 }
 
+export function forEachArray(arr: NodeList, iteratee: Function, context: any) {
+  var index = 0;
+  var len = arr.length;
+
+  context = context || null;
+
+  for (; index < len; index += 1) {
+    if (iteratee.call(context, arr[index], index, arr) === false) {
+      break;
+    }
+  }
+}
+
 export function range(start: number, stop?: number, step?: number) {
   if (isUndefined(stop)) {
     stop = start || 0;
@@ -71,6 +84,20 @@ export function range(start: number, stop?: number, step?: number) {
     for (; start * flag < stop; start += step) {
       arr.push(start);
     }
+  }
+
+  return arr;
+}
+
+export function toArray(arrayLike: any): Array<any> {
+  var arr;
+  try {
+    arr = Array.prototype.slice.call(arrayLike);
+  } catch (e) {
+    arr = [];
+    forEachArray(arrayLike, function(value) {
+      arr.push(value);
+    }, null);
   }
 
   return arr;

@@ -71,3 +71,29 @@ export const invokeMethod = () => {
       </div>`,
   };
 };
+
+export const responsive = () => {
+  const options = {
+    chart: { height: 'auto', width: 'auto' },
+  };
+  const containerStyle = {
+    width: '70vw',
+    height: '60vh',
+  };
+
+  return {
+    components: {
+      'line-chart': lineChart,
+    },
+    created() {
+      this.chartProps = { data: temperatureData, options, containerStyle };
+    },
+    template: `
+      <line-chart 
+        :data="chartProps.data" 
+        :options="chartProps.options"
+        :style="chartProps.containerStyle"
+      >
+      </line-chart>`,
+  };
+};

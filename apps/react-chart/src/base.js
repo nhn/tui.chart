@@ -84,7 +84,7 @@ export default function (chartType) {
     }
 
     render() {
-      return <div ref={this.rootEl} />;
+      return <div style={this.props.style} ref={this.rootEl} />;
     }
   };
 }

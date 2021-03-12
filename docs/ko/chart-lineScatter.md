@@ -90,6 +90,47 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/102061607-0866a480-3e37-11eb-92bb-eaf79c7e99f6.png)
 
+## visible 옵션
+
+각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
+
+```js
+const data = {
+  series: {
+    scatter: [
+      {
+        name: 'Efficiency',
+        data: [
+          { x: 10, y: 20 },
+          { x: 14, y: 30 },
+          { x: 18, y: 10 },
+          { x: 20, y: 30 },
+          { x: 22, y: 50 },
+          { x: 24, y: 55 },
+          { x: 25, y: 75 },
+        ],
+        visible: false
+      },
+    ],
+    line: [
+      {
+        name: 'Expenses',
+        data: [
+          { x: 5, y: 5 },
+          { x: 10, y: 50 },
+          { x: 15, y: 25 },
+          { x: 25, y: 90 },
+        ],
+      },
+    ],
+  },
+}
+```
+
+위 옵션을 적용해 차트를 생성해보면 체크박스가 해제되어 생성되는 것을 확인할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/35371660/108011159-dac1f580-7049-11eb-84d1-1fc93138f6d6.png)
+
 ## 옵션
 
 `options`는 객체로 작성한다. 각각 차트에 적용하고 싶은 옵션은 `line`, `scatter`에 작성한다. 사용가능한 옵션은 다음과 같다.

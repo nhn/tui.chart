@@ -58,6 +58,49 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102773432-8f35f700-43cc-11eb-82fe-2eef25c5dada.png)
 
+## visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+
+```js
+const data = {
+  categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+  series: {
+    column: [
+      {
+        name: 'Seoul',
+        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9],
+        visible: false,
+      },
+      {
+        name: 'NewYork',
+        data: [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3],
+      },
+      {
+        name: 'Sydney',
+        data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6],
+      },
+      {
+        name: 'Moscow',
+        data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2],
+      },
+    ],
+    line: [
+      {
+        name: 'Average',
+        data: [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3],
+        visible: false,
+      },
+    ],
+  },
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108009092-3fc71c80-7045-11eb-901e-03d20fdee3dc.png)
+
+
 ## Options
 
 `options` should be used as an object. Options for each column and line chart must be defined in `column` and `line`, respectively. Available options are as follows.

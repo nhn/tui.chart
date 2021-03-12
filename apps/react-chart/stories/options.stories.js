@@ -75,3 +75,22 @@ export const method = () => {
     </>
   );
 };
+
+export const responsive = () => {
+  const options = {
+    chart: {
+      height: 'auto',
+      width: 'auto',
+    },
+    xAxis: {
+      pointOnColumn: true,
+    },
+  };
+
+  const containerStyle = {
+    width: '80vw',
+    height: '70vh',
+  };
+
+  return <LineChart style={containerStyle} options={options} data={temperatureData} />;
+};

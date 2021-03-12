@@ -9,7 +9,7 @@ import {
 import { ChartState } from '@t/store/store';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { RadarSeriesType, Point, RadarChartOptions } from '@t/options';
-import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
+import { getRadialPosition, calculateDegreeToRadian, DEGREE_360 } from '@src/helpers/sector';
 import { getRGBA } from '@src/helpers/color';
 import { TooltipData } from '@t/components/tooltip';
 import { getLimitOnAxis } from '@src/helpers/axes';
@@ -72,7 +72,7 @@ export default class RadarSeries extends Component {
   }
 
   render(state: ChartState<RadarChartOptions>) {
-    const { layout, axes, series, legend, options, theme, scale } = state;
+    const { layout, radialAxes, series, legend, options, theme, scale } = state;
 
     if (!series.radar) {
       throw new Error(message.noDataError(this.name));
@@ -85,15 +85,15 @@ export default class RadarSeries extends Component {
     this.selectable = this.getSelectableOption(options);
 
     const categories = state.categories as string[];
-    const { axisSize, centerX, centerY } = axes.radialAxis!;
+    const { axisSize, centerX, centerY } = radialAxes.verticalAxis;
 
-    const { limit, stepSize } = scale.yAxis;
+    const { limit, stepSize } = scale.verticalAxis!;
     const labels = makeLabelsFromLimit(limit, stepSize);
     const { min, max } = getLimitOnAxis(labels);
 
     const renderOptions = {
       categories,
-      degree: 360 / categories.length,
+      degree: DEGREE_360 / categories.length,
       centerX,
       centerY,
       showArea: options?.series?.showArea ?? false,

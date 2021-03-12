@@ -121,6 +121,46 @@ const data = {
 };
 ```
 
+## visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+Both basic chart and coordinate chart use the same way.
+
+```js
+const data = {
+  categories: [
+    '01/01/2020',
+    '02/01/2020',
+    '03/01/2020',
+    '04/01/2020',
+    '05/01/2020',
+    '06/01/2020',
+    '07/01/2020',
+    '08/01/2020',
+    '09/01/2020',
+    '10/01/2020',
+    '11/01/2020',
+    '12/01/2020',
+  ],
+  series: [
+    {
+      name: 'Seoul',
+      data: [-3.5, -1.1, 4.0, 11.3, 17.5, 21.5, 25.9, 27.2, 24.4, 13.9, 6.6, -0.6],
+      visible: false,
+    },
+    {
+      name: 'Seattle',
+      data: [3.8, 5.6, 7.0, 9.1, 12.4, 15.3, 17.5, 17.8, 15.0, 10.6, 6.6, 3.7],
+    },
+  ],
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108010112-79008c00-7047-11eb-9f82-e947aae4ea69.png)
+
+
 ## Options
 
 `options` should be used as an object.

@@ -27,6 +27,7 @@ const root: StoreModule = {
     setChartSize({ state }, size: Size) {
       state.chart.width = size.width;
       state.chart.height = size.height;
+      this.notify(state, 'chart');
     },
     initChartSize({ state }, containerEl: HTMLElement) {
       const { width, height } = state.chart;

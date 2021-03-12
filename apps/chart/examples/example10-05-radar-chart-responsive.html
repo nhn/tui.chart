@@ -34,7 +34,7 @@
     </div>
     <div class="wrap">
       <div class="code-html" id="code-html">
-        <div id="chart-area"></div>
+        <div id="chart-area" style="width:70vw; height:70vh;"></div>
       </div>
       <div class="custom-area">
         <div id="error-dim">
@@ -79,7 +79,7 @@
         ],
       };
       const options = {
-        chart: { title: 'Annual Incomes', width: 'auto', height: 600 },
+        chart: { title: 'Annual Incomes', width: 'auto', height: 'auto' },
       };
 
       const chart = toastui.Chart.radarChart({ el, data, options });

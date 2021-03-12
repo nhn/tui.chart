@@ -1,9 +1,16 @@
 import AreaChart from '@src/charts/areaChart';
-import { AreaChartOptions, AreaSeriesData, BaseChartOptions } from '@t/options';
+import {
+  AreaChartOptions,
+  AreaSeriesData,
+  BaseChartOptions,
+  RadialBarSeriesData,
+  RadialBarChartOptions,
+} from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { avgTemperatureData } from './data';
+import { avgTemperatureData, olympicMedalData } from './data';
 import { withKnobs, boolean, radios } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
+import RadialBarChart from '@src/charts/radialBarChart';
 
 export default {
   title: 'chart|Common Component Theme',
@@ -32,6 +39,21 @@ function createChart(data: AreaSeriesData, customOptions: AreaChartOptions = {})
   el.style.height = `${options.chart?.height}px`;
 
   const chart = new AreaChart({ el, data, options });
+
+  return { el, chart };
+}
+
+function createRadialBarChart(
+  data: RadialBarSeriesData,
+  customOptions: RadialBarChartOptions = {}
+) {
+  const el = document.createElement('div');
+  const options = deepMergedCopy(defaultOptions, customOptions || {});
+
+  el.style.width = `${options.chart?.width}px`;
+  el.style.height = `${options.chart?.height}px`;
+
+  const chart = new RadialBarChart({ el, data, options });
 
   return { el, chart };
 }
@@ -140,6 +162,43 @@ export const axis = () => {
           color: '#AFFCCA',
         },
       ],
+    },
+  });
+
+  return el;
+};
+
+export const radialAxes = () => {
+  const { el } = createRadialBarChart(olympicMedalData, {
+    verticalAxis: {
+      label: { margin: 10 },
+    },
+    circularAxis: {
+      label: { margin: 10 },
+    },
+    theme: {
+      series: {
+        barWidth: 2,
+      },
+      verticalAxis: {
+        label: {
+          color: '#fff',
+          textBubble: {
+            visible: true,
+            borderRadius: 5,
+            backgroundColor: 'rgba(7, 59, 76, 1)',
+            paddingX: 5,
+            paddingY: 4,
+          },
+        },
+      },
+      circularAxis: {
+        strokeStyle: 'rgba(7, 59, 76, 0.3)',
+        dotColor: 'rgba(7, 59, 76, 0.8)',
+        label: {
+          color: '#073b4c',
+        },
+      },
     },
   });
 

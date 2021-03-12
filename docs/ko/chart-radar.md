@@ -50,6 +50,39 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102769215-ae7d5600-43c5-11eb-9f72-aa1c80e9ceaa.png)
 
+## visible 옵션
+
+각각의 `series`는 `visible` 옵션을 가질 수 있다. `visible` 옵션은 처음 차트가 그려졌을 때 시리즈를 나타낼지에 대한 여부를 결정한다. 기본값은 `true`이다.
+
+```js
+const data = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+  series: [
+    {
+      name: 'Budget',
+      data: [5000, 3000, 5000, 7000, 6000, 4000],
+      visible: false,
+    },
+    {
+      name: 'Income',
+      data: [8000, 4000, 7000, 2000, 6000, 3000],
+    },
+    {
+      name: 'Expenses',
+      data: [4000, 4000, 6000, 3000, 4000, 5000],
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, 4000],
+    },
+  ],
+}
+```
+
+위 옵션을 적용해 차트를 생성해보면 체크박스가 해제되어 생성되는 것을 확인할 수 있습니다.
+
+![image](https://user-images.githubusercontent.com/35371660/108011957-86b81080-704b-11eb-8b3c-1c8ed2f01326.png)
+
 ## 옵션
 
 `options`는 객체로 작성한다.

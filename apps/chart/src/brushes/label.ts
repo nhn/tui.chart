@@ -1,8 +1,7 @@
-import { LabelModel, RectLabelModel } from '@t/components/axis';
+import { LabelModel, BubbleLabelModel } from '@t/components/axis';
 import { makeStyleObj, fillStyle, strokeWithOptions } from '@src/helpers/style';
 import { isNumber } from '@src/helpers/utils';
 import { rgba } from '@src/helpers/color';
-import { pathRect } from './basic';
 import { Point } from '@t/options';
 import { RectStyle, StyleProp, Nullable } from '@t/components/series';
 
@@ -24,6 +23,8 @@ export type StrokeLabelStyle = {
   shadowColor?: string;
   shadowBlur?: number;
 };
+
+export type PathRectStyleName = 'shadow';
 
 export const labelStyle = {
   default: {
@@ -58,7 +59,7 @@ export const strokeLabelStyle = {
 };
 
 export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
-  const { x, y, text, style, stroke, opacity, radian } = labelModel;
+  const { x, y, text, style, stroke, opacity, radian, rotationPosition } = labelModel;
 
   if (style) {
     const styleObj = makeStyleObj<LabelStyle, LabelStyleName>(style, labelStyle);
@@ -72,9 +73,9 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   ctx.save();
 
   if (radian) {
-    ctx.translate(x, y);
+    ctx.translate(rotationPosition?.x ?? x, rotationPosition?.y ?? y);
     ctx.rotate(radian);
-    ctx.translate(-x, -y);
+    ctx.translate(-(rotationPosition?.x ?? x), -(rotationPosition?.y ?? y));
   }
 
   if (stroke) {
@@ -100,48 +101,6 @@ export function label(ctx: CanvasRenderingContext2D, labelModel: LabelModel) {
   ctx.restore();
 }
 
-export function rectLabel(ctx: CanvasRenderingContext2D, model: RectLabelModel) {
-  const { x, y, style, text, width, height, borderRadius = 0, backgroundColor } = model;
-
-  pathRect(ctx, {
-    type: 'pathRect',
-    x: x - width / 2,
-    y: y - height / 2,
-    width,
-    height,
-    radius: borderRadius,
-    fill: backgroundColor,
-    stroke: 'rgba(0, 0, 0, 0)',
-  });
-
-  label(ctx, {
-    type: 'label',
-    x,
-    y,
-    style,
-    text,
-  });
-}
-
-export type PathRectStyleName = 'shadow';
-
-export type BubbleArrowDirection = 'top' | 'right' | 'bottom' | 'left';
-
-export type BubbleLabelModel = {
-  radius?: number;
-  width: number;
-  height: number;
-  stroke?: string;
-  fill?: string;
-  lineWidth?: number;
-  points?: Point[];
-  direction?: BubbleArrowDirection;
-  bubbleStyle?: Nullable<StyleProp<RectStyle, PathRectStyleName>>;
-  labelStyle?: StyleProp<LabelStyle, LabelStyleName>;
-  labelStrokeStyle?: StyleProp<StrokeLabelStyle, StrokeLabelStyleName>;
-  text?: string;
-} & Point;
-
 const textBubbleStyle = {
   shadow: {
     shadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -152,46 +111,64 @@ const textBubbleStyle = {
 
 export function bubbleLabel(ctx: CanvasRenderingContext2D, model: BubbleLabelModel) {
   const {
-    x,
-    y,
-    width,
-    height,
-    radius = 0,
-    points,
-    direction,
-    lineWidth = 1,
-    fill = '#ffffff',
-    stroke,
-    bubbleStyle = null,
-    labelStyle: textStyle,
-    labelStrokeStyle,
-    text,
+    radian = 0,
+    rotationPosition,
+    bubble: {
+      x,
+      y,
+      width,
+      height,
+      radius = 0,
+      lineWidth = 1,
+      direction,
+      points = [],
+      fill = '#fff',
+      strokeStyle = 'rgba(0, 0, 0, 0)',
+      style: bubbleStyle = null,
+    },
   } = model;
 
-  drawBubble(ctx, {
-    x,
-    y,
-    radius,
-    width,
-    height,
-    style: bubbleStyle,
-    fill,
-    stroke,
-    lineWidth,
-    direction,
-    points,
-  });
+  if (width > 0 && height > 0) {
+    drawBubble(ctx, {
+      x,
+      y,
+      radius,
+      width,
+      height,
+      style: bubbleStyle,
+      fill,
+      strokeStyle,
+      lineWidth,
+      direction,
+      points,
+      radian,
+      rotationPosition: {
+        x: rotationPosition?.x ?? x,
+        y: rotationPosition?.y ?? y,
+      },
+    });
+  }
 
-  if (text) {
+  if (model.label.text) {
+    const {
+      x: labelX,
+      y: labelY,
+      text,
+      strokeStyle: labelStrokeColor = 'rgba(0, 0, 0, 0)',
+      style,
+    } = model.label;
+
     ctx.shadowColor = 'rgba(0, 0, 0, 0)';
 
     label(ctx, {
       type: 'label',
-      x: x + width / 2,
-      y: y + height / 2 + 1,
+      x: labelX,
+      y: labelY,
       text,
-      style: textStyle,
-      stroke: labelStrokeStyle,
+      style,
+      stroke: [{ strokeStyle: labelStrokeColor }],
+      radian,
+      rotationPosition,
     });
   }
 }
@@ -206,6 +183,9 @@ type BubbleModel = {
   lineWidth?: number;
   points?: Point[];
   direction?: string;
+  strokeStyle?: string;
+  radian?: number;
+  rotationPosition?: Point;
 } & Point;
 
 function drawBubbleArrow(ctx: CanvasRenderingContext2D, points: Point[]) {
@@ -222,21 +202,31 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
   const {
     x,
     y,
-    radius = 0,
     width,
     height,
     style,
-    stroke: strokeStyle,
+    radius = 0,
+    strokeStyle,
     fill,
     lineWidth = 1,
     points = [],
     direction = '',
+    radian,
+    rotationPosition,
   } = model;
 
   const right = x + width;
   const bottom = y + height;
 
   ctx.beginPath();
+  ctx.save();
+
+  if (radian && rotationPosition) {
+    ctx.translate(rotationPosition.x, rotationPosition.y);
+    ctx.rotate(radian);
+    ctx.translate(-rotationPosition.x, -rotationPosition.y);
+  }
+
   ctx.moveTo(x + radius, y);
 
   if (direction === 'top') {
@@ -282,4 +272,6 @@ function drawBubble(ctx: CanvasRenderingContext2D, model: BubbleModel) {
   if (strokeStyle) {
     strokeWithOptions(ctx, { strokeStyle, lineWidth });
   }
+
+  ctx.restore();
 }

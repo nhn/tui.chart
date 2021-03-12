@@ -7,7 +7,8 @@ import { execDownload, downloadSpreadSheet } from '@src/helpers/downloader';
 import { isString } from '@src/helpers/utils';
 import { RectResponderModel } from '@t/components/series';
 import { ExportMenuTheme, ExportMenuButtonTheme, FontTheme, ExportMenuPanelTheme } from '@t/theme';
-import { getFontStyleString } from '@src/helpers/style';
+import { getFontStyleString, getTranslateString } from '@src/helpers/style';
+import { getScrollPosition } from '@src/helpers/tooltip';
 
 const EXPORT_MENU_WIDTH = 140;
 export const BUTTON_RECT_SIZE = 24;
@@ -35,12 +36,15 @@ export default class ExportMenu extends Component {
 
   chartBackgroundColor!: string;
 
+  chartWidth = 0;
+
   toggleExportMenu = () => {
     this.opened = !this.opened;
     this.models.exportMenuButton[0].opened = this.opened;
     this.eventBus.emit('needDraw');
 
     if (this.opened) {
+      this.applyPanelWrapperStyle();
       this.chartEl.appendChild(this.exportMenuEl);
     } else {
       this.chartEl.removeChild(this.exportMenuEl);
@@ -73,14 +77,12 @@ export default class ExportMenu extends Component {
     this.toggleExportMenu();
   };
 
-  applyExportButtonPanelStyle(chartWidth: number) {
-    const exportMenu = this.exportMenuEl.querySelector('.toastui-chart-export-menu')!;
+  applyExportButtonPanelStyle() {
     const exportMenuTitle = this.exportMenuEl.querySelector('.toastui-chart-export-menu-title')!;
     const menuBtnWrapper = this.exportMenuEl.querySelector(
       '.toastui-chart-export-menu-btn-wrapper'
     )!;
 
-    exportMenu.setAttribute('style', this.makePanelWrapperStyle(chartWidth));
     exportMenuTitle.setAttribute('style', this.makePanelStyle('header'));
     menuBtnWrapper.setAttribute('style', this.makePanelStyle('body'));
   }
@@ -122,6 +124,7 @@ export default class ExportMenu extends Component {
 
   render({ options, layout, chart, series, rawCategories, theme }: ChartState<Options>) {
     this.isShow = isExportMenuVisible(options);
+    this.chartWidth = chart.width;
 
     if (!this.isShow) {
       return;
@@ -131,7 +134,7 @@ export default class ExportMenu extends Component {
     this.theme = theme.exportMenu as Required<ExportMenuTheme>;
     this.data = { series, categories: rawCategories };
     this.fileName = this.getFileName(options?.exportMenu?.filename || chart.title);
-    this.applyExportButtonPanelStyle(chart.width);
+    this.applyExportButtonPanelStyle();
     this.rect = layout.exportMenu;
     this.models.exportMenuButton = [
       {
@@ -154,13 +157,20 @@ export default class ExportMenu extends Component {
     ];
   }
 
-  makePanelWrapperStyle(chartWidth: number) {
+  applyPanelWrapperStyle() {
+    const exportMenu = this.exportMenuEl.querySelector('.toastui-chart-export-menu')!;
     const { top, left } = this.chartEl.getBoundingClientRect();
-    const topPosition = top + padding.Y + BUTTON_RECT_SIZE + 5;
-    const leftPosition = left + chartWidth - EXPORT_MENU_WIDTH - padding.X;
+    const { scrollX, scrollY } = getScrollPosition();
+    const x = left + this.chartWidth - EXPORT_MENU_WIDTH - padding.X + scrollX;
+    const y = top + padding.Y + BUTTON_RECT_SIZE + 5 + scrollY;
     const { borderRadius, borderWidth, borderColor } = this.theme.panel;
 
-    return `top: ${topPosition}px; left: ${leftPosition}px; border: ${borderWidth}px solid ${borderColor}; border-radius: ${borderRadius}px;`;
+    const style = `
+      transform: ${getTranslateString(x, y)};
+      border: ${borderWidth}px solid ${borderColor};
+      border-radius: ${borderRadius}px;`;
+
+    exportMenu.setAttribute('style', style);
   }
 
   makePanelStyle(type: 'header' | 'body') {

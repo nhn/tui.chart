@@ -151,6 +151,40 @@ const options = {
 
 ![group-stack](https://user-images.githubusercontent.com/43128697/102730289-92eb5e80-4377-11eb-926e-8f46725601fc.png)
 
+## visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+The basic chart, range, and stack group chart use the same way.
+
+```js
+const data = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Budget',
+      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
+      visible: false
+    },
+    {
+      name: 'Income',
+      data: [8000, 4000, 7000, 2000, 6000, 3000, 5000]
+    },
+    {
+      name: 'Expenses',
+      data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, 4000, 3000]
+    }
+  ]
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108008989-f545a000-7044-11eb-837e-13e832db396e.png)
+
 ## Options
 
 `options` should be used as an object.

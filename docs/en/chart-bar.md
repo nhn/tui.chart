@@ -152,6 +152,41 @@ const options = {
 
 ![group-stack](https://user-images.githubusercontent.com/43128697/102594710-e54f3400-4159-11eb-963b-68e7f4343286.png)
 
+
+## visible
+
+Each `series` can have `visible` option. The `visible` option determines whether the series is displayed when the chart is first drawn. The default is `true`.
+The basic chart, range, and stack group chart use the same way.
+
+```js
+const data = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Budget',
+      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
+      visible: false,
+    },
+    {
+      name: 'Income',
+      data: [8000, 4000, 7000, 2000, 6000, 3000, 5000]
+    },
+    {
+      name: 'Expenses',
+      data: [4000, 4000, 6000, 3000, 4000, 5000, 7000]
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, 4000, 3000]
+    }
+  ]
+}
+```
+
+If you create a chart by applying the above option, you can see that the checkbox is unchecked.
+
+![image](https://user-images.githubusercontent.com/35371660/108007745-0ccf5980-7042-11eb-8eb8-ae7ed497c939.png)
+
 ## Options
 
 `options` should be used as an object.
@@ -318,7 +353,7 @@ Defines ways to select or detect the series via the mouse.
 
 | Type | Details |
 | --- | --- |
-| `point` | A single series is detected when a mouse comes within the individual series' detectable area. Only a single series is selected with respect to the curret position of the cursor. |
+| `point` | A single series is detected when a mouse comes within the individual series' detectable area. Only a single series is selected with respect to the current position of the cursor. |
 | `grouped` | All data that are equal with respect to the y-axis are detected. |
 
 * default: `point`

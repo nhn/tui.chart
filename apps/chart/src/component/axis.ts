@@ -1,7 +1,7 @@
 import Component from './component';
 import { ChartState, Options, ViewAxisLabel, AxisData } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
-import { LabelModel, TickModel, LineModel, AxisModels } from '@t/components/axis';
+import { TickModel, LineModel, AxisModels, LabelModel } from '@t/components/axis';
 import { TICK_SIZE } from '@src/brushes/axis';
 import { includes } from '@src/helpers/utils';
 import { getAxisTheme } from '@src/helpers/axes';

@@ -3,6 +3,8 @@
 .toastui-chart-export-menu {
   font-family: Arial, sans-serif;
   position: absolute;
+  top: 0;
+  left: 0;
   background: #fff;
   user-select: none;
   box-sizing: border-box;

@@ -1,4 +1,3 @@
-import { extend } from '@src/store/store';
 import { StoreModule, Scale, Options, ChartState } from '@t/store/store';
 import {
   getAxisName,
@@ -6,6 +5,7 @@ import {
   isLabelAxisOnYAxis,
   getYAxisOption,
   getValueAxisNames,
+  isSeriesUsingRadialAxes,
 } from '@src/helpers/axes';
 import {
   calculateCoordinateScale,
@@ -22,6 +22,8 @@ type ScaleOptions = {
   xAxis?: ScaleOption;
   yAxis?: ScaleOption;
   secondaryYAxis?: ScaleOption;
+  circularAxis?: ScaleOption;
+  verticalAxis?: ScaleOption;
 };
 
 function getLabelScaleData(
@@ -61,7 +63,8 @@ function getValueScaleData(
   state: ChartState<Options>,
   labelAxisOnYAxis: boolean,
   scaleOptions: ScaleOptions,
-  valueAxisName: string
+  valueAxisName: string,
+  isCoordinateTypeChart: boolean
 ) {
   const { dataRange, layout, series, stackSeries } = state;
   const { valueSizeKey } = getSizeKey(labelAxisOnYAxis);
@@ -71,7 +74,7 @@ function getValueScaleData(
     Object.keys(series).forEach((seriesName) => {
       result = getStackScaleData(stackSeries[seriesName].scaleType);
     });
-  } else if (isCoordinateSeries(series)) {
+  } else if (isCoordinateTypeChart) {
     const valueOptions = {
       dataRange: dataRange[valueAxisName],
       offsetSize: layout.plot[valueSizeKey],
@@ -96,28 +99,36 @@ const scale: StoreModule = {
     scale: {} as Scale,
   }),
   action: {
-    setScale({ state }) {
+    setScale({ state, initStoreState }) {
       const { series, options } = state;
-
       const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
-      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis);
+      const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
       const { yAxis, secondaryYAxis } = getYAxisOption(options);
+      const scaleOptions: ScaleOptions = isSeriesUsingRadialAxes(series)
+        ? { [valueAxisName]: options?.[valueAxisName]?.scale }
+        : {
+            xAxis: options?.xAxis?.scale,
+            yAxis: yAxis?.scale,
+          };
       const scaleData = {};
-
-      const scaleOptions: ScaleOptions = {
-        xAxis: options?.xAxis?.scale,
-        yAxis: yAxis?.scale,
-      };
 
       if (secondaryYAxis) {
         scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
       }
 
+      const isCoordinateTypeChart = isCoordinateSeries(initStoreState.series);
+
       getValueAxisNames(options, valueAxisName).forEach((axisName) => {
-        scaleData[axisName] = getValueScaleData(state, labelAxisOnYAxis, scaleOptions, axisName);
+        scaleData[axisName] = getValueScaleData(
+          state,
+          labelAxisOnYAxis,
+          scaleOptions,
+          axisName,
+          isCoordinateTypeChart
+        );
       });
 
-      if (isCoordinateSeries(series)) {
+      if (isCoordinateTypeChart) {
         scaleData[labelAxisName] = getLabelScaleData(
           state,
           labelAxisOnYAxis,
@@ -126,7 +137,7 @@ const scale: StoreModule = {
         );
       }
 
-      extend(state.scale, scaleData);
+      state.scale = scaleData;
     },
   },
   observe: {

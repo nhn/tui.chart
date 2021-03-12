@@ -20,6 +20,7 @@ import {
   deepCopy,
   getFirstValidValue,
   includes,
+  isBoolean,
   isNumber,
   isUndefined,
   range,
@@ -28,6 +29,7 @@ import { makeRawCategories } from '@src/store/category';
 import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isZooming } from '@src/helpers/range';
 import { message } from '@src/message';
+import { hasNestedPieSeries } from '@src/helpers/pieSeries';
 
 function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
   let rawCategoriesLength;
@@ -129,6 +131,30 @@ function isHeatmapSeriesAlreadyExist(categories: HeatmapCategoriesType, category
   return includes((categories as HeatmapCategoriesType).y, category);
 }
 
+function initDisabledSeries(series: RawSeries) {
+  const nestedPieChart = hasNestedPieSeries(series);
+  const disabledSeries: string[] = [];
+  if (nestedPieChart) {
+    series.pie!.forEach(({ data }) => {
+      data.forEach((datum) => {
+        if (isBoolean(datum.visible) && !datum.visible) {
+          disabledSeries.push(datum.name);
+        }
+      });
+    });
+  } else {
+    Object.keys(series).forEach((type) => {
+      series[type].forEach(({ name, visible }) => {
+        if (isBoolean(visible) && !visible) {
+          disabledSeries.push(name);
+        }
+      });
+    });
+  }
+
+  return disabledSeries;
+}
+
 const seriesData: StoreModule = {
   name: 'seriesData',
   state: ({ series, categories, options }) => ({
@@ -138,7 +164,7 @@ const seriesData: StoreModule = {
     } as Series,
     zoomRange: initZoomRange(series, options, categories),
     shiftRange: initShiftRange(series, options, categories),
-    disabledSeries: [],
+    disabledSeries: initDisabledSeries(series),
   }),
   action: {
     setSeriesData({ state, initStoreState }) {
@@ -182,10 +208,7 @@ const seriesData: StoreModule = {
       this.notify(state, 'disabledSeries');
 
       if (state.series.bullet) {
-        const index = (state.categories as string[]).findIndex((seriesName) => seriesName === name);
-        (state.categories as string[]).splice(index, 1);
-
-        this.notify(state, 'axes');
+        this.dispatch('removeCategoryByName', name);
       }
     },
     enableSeries({ state }, name: string) {

@@ -2,10 +2,10 @@ import Component from './component';
 import { ChartState, Options } from '@t/store/store';
 import { TitleOption } from '@t/options';
 import { isString } from '@src/helpers/utils';
-import { LabelModel } from '@t/components/axis';
 import { getTextWidth } from '@src/helpers/calculator';
 import { FontTheme } from '@t/theme';
 import { getTitleFontString } from '@src/helpers/style';
+import { LabelModel } from '@t/components/axis';
 
 export default class Title extends Component {
   models!: LabelModel[];
