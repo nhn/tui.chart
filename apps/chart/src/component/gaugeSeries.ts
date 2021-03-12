@@ -420,7 +420,7 @@ export default class GaugeSeries extends Component {
     const { radiusRange } = solidData;
     const { lineWidth, strokeStyle } = this.theme.solid!;
 
-    seriesData.forEach(({ name, data, color }) => {
+    seriesData.forEach(({ name, data, color }, index) => {
       const seriesColor = this.getSeriesColor(name, color);
       const value = data[0];
       const val = isString(value) ? categories.findIndex((category) => category === value) : value;
@@ -449,6 +449,7 @@ export default class GaugeSeries extends Component {
         drawingStartAngle: DEGREE_NEGATIVE_90,
         style: [{ strokeStyle }],
         lineWidth,
+        index,
       });
     });
 
@@ -471,10 +472,12 @@ export default class GaugeSeries extends Component {
           });
         }
 
-        acc.sector.push({
-          ...sector[index],
-          data,
-        });
+        if (sector[index]) {
+          acc.sector.push({
+            ...sector[index],
+            data,
+          });
+        }
 
         return acc;
       },
@@ -561,13 +564,31 @@ export default class GaugeSeries extends Component {
     this.eventBus.emit('needDraw');
   }
 
+  getResponderModels(responders: GaugeResponderModel[]) {
+    const { clockHand, sector } = this.tooltipMap;
+    const models: GaugeResponderModel[] = [];
+
+    responders.forEach((responder) => {
+      const index = responder.index!;
+
+      if (clockHand[index]) {
+        models.push(clockHand[index]);
+      }
+
+      if (sector[index]) {
+        models.push(sector[index]);
+      }
+    });
+
+    return models;
+  }
+
   onClick({ responders }) {
     if (this.selectable) {
       const models = this.getResponderModelsWithTheme(
-        responders as SectorResponderModel[],
+        this.getResponderModels(responders),
         'select'
       );
-
       this.eventBus.emit('renderSelectedSeries', {
         models,
         name: this.name,
@@ -642,15 +663,16 @@ export default class GaugeSeries extends Component {
   };
 
   selectSeries = (info: SelectSeriesHandlerParams<GaugeChartOptions>) => {
-    const { index, seriesIndex } = info;
-    const isAvailable = isNumber(index) && isNumber(seriesIndex);
+    const { index } = info;
 
-    if (!isAvailable) {
+    if (!isNumber(index)) {
       return;
     }
 
+    const model: GaugeResponderModel =
+      this.tooltipMap.clockHand[index] ?? this.tooltipMap.sector[index];
     const models =
-      this.getResponderModelsWithTheme([this.tooltipMap.clockHand[index!]], 'select') ?? [];
+      this.getResponderModelsWithTheme(this.getResponderModels([model]), 'select') ?? [];
 
     if (!models.length) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);

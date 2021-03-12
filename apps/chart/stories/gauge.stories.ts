@@ -87,7 +87,7 @@ export const basicWithCategory = () => {
 };
 
 export const selectable = () => {
-  const { el } = createChart(gaugeData, {
+  const { el, chart } = createChart(gaugeData, {
     circularAxis: {
       scale: {
         min: 0,
@@ -97,6 +97,10 @@ export const selectable = () => {
     },
     series: {
       selectable: true,
+
+      solid: {
+        clockHand: true,
+      },
     },
     plot: {
       bands: [
@@ -106,6 +110,10 @@ export const selectable = () => {
       ],
     },
   });
+
+  setTimeout(() => {
+    chart.selectSeries({ index: 0 });
+  }, 1000);
 
   return el;
 };

@@ -100,7 +100,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
         gauge: data.series,
       },
       categories: data.categories,
-      modules: [stackSeriesData, dataRange, scale, gaugeAxesData],
+      modules: [dataRange, scale, gaugeAxesData],
     });
   }
 
