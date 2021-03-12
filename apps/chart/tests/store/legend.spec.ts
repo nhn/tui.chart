@@ -32,6 +32,7 @@ describe('Legend Store', () => {
       data: [
         {
           label: 'test',
+          viewLabel: 'test',
           checked: true,
           active: true,
           width: 38,
@@ -89,6 +90,7 @@ describe('Legend Store', () => {
         data: [
           {
             label: 'han',
+            viewLabel: 'han',
             checked: true,
             active: true,
             width: 38,
@@ -99,6 +101,7 @@ describe('Legend Store', () => {
           },
           {
             label: 'cho',
+            viewLabel: 'cho',
             checked: true,
             active: true,
             width: 38,
@@ -137,6 +140,7 @@ describe('Legend Store', () => {
       align: 'right',
       data: [
         {
+          viewLabel: 'han',
           active: true,
           chartType: 'line',
           checked: true,
@@ -147,6 +151,7 @@ describe('Legend Store', () => {
           width: 38,
         },
         {
+          viewLabel: 'cho',
           active: true,
           chartType: 'line',
           checked: true,
@@ -157,7 +162,7 @@ describe('Legend Store', () => {
           width: 38,
         },
       ],
-      height: 78,
+      height: 52,
       width: 94,
       showCheckbox: true,
       useScatterChartIcon: false,
@@ -236,6 +241,7 @@ describe('Legend Store', () => {
       expect(state.legend!.data).toEqual([
         {
           label: 'A',
+          viewLabel: 'A',
           checked: true,
           active: true,
           width: 35,
@@ -246,6 +252,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'B',
+          viewLabel: 'B',
           checked: true,
           active: true,
           width: 35,
@@ -256,6 +263,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'C',
+          viewLabel: 'C',
           checked: true,
           active: true,
           width: 35,
@@ -266,6 +274,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'D',
+          viewLabel: 'D',
           checked: true,
           active: true,
           width: 35,
@@ -308,6 +317,7 @@ describe('Legend Store', () => {
       expect(state.legend!.data).toEqual([
         {
           label: 'A',
+          viewLabel: 'A',
           checked: true,
           active: true,
           width: 35,
@@ -318,6 +328,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'B',
+          viewLabel: 'B',
           checked: true,
           active: true,
           width: 35,
@@ -328,5 +339,99 @@ describe('Legend Store', () => {
         },
       ]);
     });
+  });
+
+  it('should apply ellipsis when the text is longer than the legend item width', () => {
+    const state = (legend.state as StateFunc)({
+      options: {
+        chart: { width: 300, height: 300 },
+        legend: { item: { width: 40, overflow: 'ellipsis' } },
+      },
+      series: {
+        line: [
+          {
+            name: 'LongNameLongNameLongNameLongNameLongNameLongName',
+            data: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
+            rawData: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
+            color: '#aaaaaa',
+          },
+        ],
+      },
+    });
+
+    expect(state.legend).toMatchInlineSnapshot(`
+      Object {
+        "data": Array [
+          Object {
+            "active": true,
+            "chartType": "line",
+            "checked": true,
+            "columnIndex": 0,
+            "iconType": "line",
+            "label": "LongNameLongNameLongNameLongNameLongNameLongName",
+            "rowIndex": 0,
+            "viewLabel": "Lon...",
+            "width": 40,
+          },
+        ],
+        "useScatterChartIcon": false,
+        "useSpectrumLegend": false,
+      }
+    `);
+  });
+
+  it('should apply ellipsis when the text is longer than the legend item width with showCheckbox false', () => {
+    const state = (legend.state as StateFunc)({
+      options: {
+        chart: { width: 300, height: 300 },
+        legend: { item: { width: 40, overflow: 'ellipsis' }, showCheckbox: false },
+      },
+      series: {
+        line: [
+          {
+            name: 'LongNameLongNameLongNameLongNameLongNameLongName',
+            data: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
+            rawData: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
+            color: '#aaaaaa',
+          },
+        ],
+      },
+    });
+
+    expect(state.legend).toMatchInlineSnapshot(`
+      Object {
+        "data": Array [
+          Object {
+            "active": true,
+            "chartType": "line",
+            "checked": true,
+            "columnIndex": 0,
+            "iconType": "line",
+            "label": "LongNameLongNameLongNameLongNameLongNameLongName",
+            "rowIndex": 0,
+            "viewLabel": "LongNameLongNameLong...",
+            "width": 40,
+          },
+        ],
+        "useScatterChartIcon": false,
+        "useSpectrumLegend": false,
+      }
+    `);
   });
 });

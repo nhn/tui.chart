@@ -9,8 +9,16 @@ import {
   CircleLegend,
   LegendDataList,
 } from '@t/store/store';
-import { Align, BubbleChartOptions, Size, TreemapChartSeriesOptions } from '@t/options';
-import { isUndefined, sum, includes, deepMergedCopy, range } from '@src/helpers/utils';
+import {
+  Align,
+  BubbleChartOptions,
+  HeatmapChartOptions,
+  NormalLegendOptions,
+  Size,
+  TreemapChartOptions,
+  TreemapChartSeriesOptions,
+} from '@t/options';
+import { isUndefined, sum, includes, deepMergedCopy, range, isNumber } from '@src/helpers/utils';
 
 import {
   getLegendItemHeight,
@@ -32,7 +40,18 @@ type LegendLabelsInfo = {
   label: string;
   type: ChartType;
   checked: boolean;
+  viewLabel: string;
+  width: number;
 }[];
+
+type OptionsWithNormalLegendType = Exclude<Options, TreemapChartOptions | HeatmapChartOptions>;
+
+type LegendInfo = {
+  checkboxVisible: boolean;
+  useSpectrumLegend: boolean;
+  font: string;
+  legendOptions?: NormalLegendOptions;
+};
 
 type LegendSizeParam = {
   initialWidth: number;
@@ -49,6 +68,9 @@ type LegendSizeParam = {
 
 const INITIAL_LEGEND_WIDTH = 100;
 const INITIAL_CIRCLE_LEGEND_WIDTH = 150;
+const COMPONENT_HEIGHT_EXCEPT_Y_AXIS = 100;
+const ELLIPSIS_DOT_TEXT = '...';
+const WIDEST_TEXT = 'W'; // The widest text width in Arial font.
 
 function recalculateLegendWhenHeightOverflows(params: LegendSizeParam, legendHeight: number) {
   const { legendWidths, itemHeight } = params;
@@ -126,7 +148,7 @@ function calculateLegendHeight(params: LegendSizeParam) {
   if (verticalAlign) {
     legendHeight = chartHeight;
   } else {
-    const totalHeight = legendWidths.length * (padding.Y + itemHeight);
+    const totalHeight = legendWidths.length * itemHeight;
     isOverflow = chartHeight < totalHeight;
     legendHeight = isOverflow ? chartHeight : totalHeight;
   }
@@ -198,7 +220,6 @@ function calculateLegendWidth(params: LegendSizeParam) {
 
 function getDefaultLegendSize(params: LegendSizeParam) {
   const { verticalAlign, chart, itemHeight, initialWidth, circleLegendVisible } = params;
-  const COMPONENT_HEIGHT_EXCEPT_Y_AXIS = 100;
   const restAreaHeight =
     COMPONENT_HEIGHT_EXCEPT_Y_AXIS + (circleLegendVisible ? INITIAL_CIRCLE_LEGEND_WIDTH : 0); // rest area temporary value (yAxisTitle.height + xAxis.height + circleLegend.height)
 
@@ -222,20 +243,25 @@ function showLegend(options: Options, series: Series | RawSeries) {
   return isUndefined(options.legend?.visible) ? true : !!options.legend?.visible;
 }
 
-function showCheckbox(options: Options) {
+function showCheckbox(options: OptionsWithNormalLegendType) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
-function getNestedPieLegendLabelsInfo(series: RawSeries) {
+function getNestedPieLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo) {
   const result: LegendLabelsInfo = [];
+  const maxTextLengthWithEllipsis = getMaxTextLengthWithEllipsis(legendInfo);
 
   series.pie!.forEach(({ data }) => {
     data.forEach(({ name, parentName, visible }) => {
       if (!parentName) {
+        const { width, viewLabel } = getViewLabelInfo(legendInfo, name, maxTextLengthWithEllipsis);
+
         result.push({
           label: name,
           type: 'pie',
           checked: visible ?? true,
+          viewLabel,
+          width,
         });
       }
     });
@@ -244,13 +270,55 @@ function getNestedPieLegendLabelsInfo(series: RawSeries) {
   return result;
 }
 
-function getLegendLabelsInfo(series: RawSeries): LegendLabelsInfo {
+function getMaxTextLengthWithEllipsis(legendInfo: LegendInfo) {
+  const { legendOptions, useSpectrumLegend, font, checkboxVisible } = legendInfo;
+  const width = legendOptions?.item?.width;
+
+  if (isUndefined(width) || useSpectrumLegend) {
+    return;
+  }
+
+  const checkboxWidth = checkboxVisible ? LEGEND_CHECKBOX_SIZE + LEGEND_MARGIN_X : 0;
+  const iconWidth = LEGEND_ICON_SIZE + LEGEND_MARGIN_X;
+  const ellipsisDotWidth = getTextWidth(ELLIPSIS_DOT_TEXT, font);
+  const widestTextWidth = getTextWidth(WIDEST_TEXT, font);
+  const maxTextCount = Math.floor(
+    (width - ellipsisDotWidth - checkboxWidth - iconWidth) / widestTextWidth
+  );
+
+  return maxTextCount > 0 ? maxTextCount : 0;
+}
+
+function getViewLabelInfo(legendInfo: LegendInfo, label: string, maxTextLength?: number) {
+  const { checkboxVisible, useSpectrumLegend, font, legendOptions } = legendInfo;
+  let viewLabel = label;
+
+  const itemWidth = legendOptions?.item?.width;
+  const itemWidthWithFullText = getItemWidth(viewLabel, checkboxVisible, useSpectrumLegend, font);
+
+  if (isNumber(itemWidth) && isNumber(maxTextLength) && itemWidth < itemWidthWithFullText) {
+    viewLabel = `${label.slice(0, maxTextLength)}${ELLIPSIS_DOT_TEXT}`;
+  }
+
+  return { viewLabel, width: itemWidth ?? itemWidthWithFullText };
+}
+
+function getLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo): LegendLabelsInfo {
+  const maxTextLengthWithEllipsis = getMaxTextLengthWithEllipsis(legendInfo);
+
   return Object.keys(series).flatMap((type) =>
-    series[type].map(({ name, colorValue, visible }) => ({
-      label: colorValue ? colorValue : name,
-      type,
-      checked: visible ?? true,
-    }))
+    series[type].map(({ name, colorValue, visible }) => {
+      const label = colorValue ? colorValue : name;
+      const { width, viewLabel } = getViewLabelInfo(legendInfo, label, maxTextLengthWithEllipsis);
+
+      return {
+        label,
+        type,
+        checked: visible ?? true,
+        viewLabel,
+        width,
+      };
+    })
   );
 }
 
@@ -312,28 +380,38 @@ function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
 }
 
 function getLegendState(options: Options, series: RawSeries): Legend {
-  const checkboxVisible = showCheckbox(options);
   const useSpectrumLegend =
     (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
+
   const useScatterChartIcon = !!series?.scatter;
+  const checkboxVisible = useSpectrumLegend
+    ? false
+    : showCheckbox(options as OptionsWithNormalLegendType);
   const defaultTheme = makeDefaultTheme(options?.theme?.chart?.fontFamily);
   const font = getTitleFontString(
     deepMergedCopy(defaultTheme.legend.label!, { ...options.theme?.legend?.label })
   );
+  const legendInfo = {
+    checkboxVisible,
+    font,
+    useSpectrumLegend,
+    legendOptions: options.legend as NormalLegendOptions,
+  };
 
   const legendLabelsInfo = hasNestedPieSeries(series)
-    ? getNestedPieLegendLabelsInfo(series)
-    : getLegendLabelsInfo(series);
+    ? getNestedPieLegendLabelsInfo(series, legendInfo)
+    : getLegendLabelsInfo(series, legendInfo);
 
-  const data = legendLabelsInfo.map(({ label, type, checked }) => ({
+  const data = legendLabelsInfo.map(({ label, type, checked, width, viewLabel }) => ({
     label,
     active: true,
     checked,
-    width: getItemWidth(label, checkboxVisible, useSpectrumLegend, font),
+    width,
     iconType: getIconType(type),
     chartType: type,
     rowIndex: 0,
     columnIndex: 0,
+    viewLabel,
   }));
 
   return {
@@ -422,7 +500,10 @@ const legend: StoreModule = {
       } = state;
       const align = getAlign(options);
       const visible = showLegend(options, series);
-      const checkbox = showCheckbox(options);
+      // @TODO: Need to remove unnecessary calculations according to legend type
+      const checkbox = useSpectrumLegend
+        ? false
+        : showCheckbox(options as OptionsWithNormalLegendType);
       const initialWidth = Math.min(chart.width / 5, INITIAL_LEGEND_WIDTH);
       const verticalAlign = isVerticalAlign(align);
       const circleLegendVisible = series.bubble
