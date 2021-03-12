@@ -233,6 +233,7 @@ describe('solid gauge', () => {
             end: 180,
           },
           drawingStartAngle: -90,
+          index: 0,
           style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
           lineWidth: 1,
         },
