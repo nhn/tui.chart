@@ -1,8 +1,4 @@
-/**
- * @fileoverview Implements htmlSanitizer
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-import { finalizeHtml, findNodes, removeNode } from './dom';
+import { findNodes, removeNode } from './dom';
 import { isString, toArray } from './utils';
 
 const HTML_ATTR_LIST_RX = new RegExp(
@@ -33,19 +29,29 @@ const SVG_ATTR_LIST_RX = new RegExp(
     'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)',
   'g'
 );
+const DEFAULT_TAG_BLACK_LIST = [
+  'script',
+  'iframe',
+  'textarea',
+  'form',
+  'button',
+  'select',
+  'input',
+  'meta',
+  'style',
+  'link',
+  'title',
+  'embed',
+  'object',
+  'details',
+  'summary',
+];
 
 const XSS_ATTR_RX = /href|src|background/gi;
 const XSS_VALUE_RX = /((java|vb|live)script|x):/gi;
 const ON_EVENT_RX = /^on\S+/;
 
-/**
- * htmlSanitizer
- * @param {string} html - html
- * @param {boolean} [needHtmlText] - pass true if need html text
- * @returns {string} - result
- * @ignore
- */
-function htmlSanitizer(html: string, needHtmlText: boolean) {
+export function sanitizeHTML(html: string) {
   const root = document.createElement('div');
 
   if (isString(html)) {
@@ -58,43 +64,23 @@ function htmlSanitizer(html: string, needHtmlText: boolean) {
   removeUnnecessaryTags(root);
   leaveOnlyWhitelistAttribute(root);
 
-  return finalizeHtml(root, needHtmlText);
+  return root.innerHTML;
 }
 
-/**
- * Removes unnecessary tags.
- * @param {HTMLElement} html - root element
- * @private
- */
 function removeUnnecessaryTags(html: HTMLElement) {
-  const removedTags = findNodes(
-    html,
-    'script, iframe, textarea, form, button, select, input, meta, style, link, title, embed, object, details, summary'
-  );
+  const removedTags = findNodes(html, DEFAULT_TAG_BLACK_LIST.join(','));
 
   removedTags.forEach((node) => {
     removeNode(node);
   });
 }
 
-/**
- * Checks whether the attribute and value that causing XSS or not.
- * @param {string} attrName - name of attribute
- * @param {string} attrValue - value of attirbute
- * @private
- */
 function isXSSAttribute(attrName: string, attrValue: string) {
   return attrName.match(XSS_ATTR_RX) && attrValue.match(XSS_VALUE_RX);
 }
 
-/**
- * Removes attributes of blacklist from node.
- * @param {HTMLElement} node - node to remove attributes
- * @param {Array<NodeList>} blacklistAttrs - attributes of blacklist
- * @private
- */
-function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Array<NodeList>) {
-  toArray(blacklistAttrs).forEach(({ name }) => {
+function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Attr[]) {
+  blacklistAttrs.forEach(({ name }: Attr) => {
     if (ON_EVENT_RX.test(name)) {
       node[name] = null;
     }
@@ -105,14 +91,10 @@ function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Array<Node
   });
 }
 
-/**
- * Leaves only white list attributes.
- * @param {HTMLElement} html - root element
- * @private
- */
 function leaveOnlyWhitelistAttribute(html: HTMLElement) {
   findNodes(html, '*').forEach((node) => {
     const { attributes } = node;
+
     const blacklist = toArray(attributes).filter((attr) => {
       const { name, value } = attr;
       const htmlAttr = name.match(HTML_ATTR_LIST_RX);
@@ -125,5 +107,3 @@ function leaveOnlyWhitelistAttribute(html: HTMLElement) {
     removeBlacklistAttributes(node, blacklist);
   });
 }
-
-export default htmlSanitizer;

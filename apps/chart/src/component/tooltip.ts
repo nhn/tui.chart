@@ -14,7 +14,7 @@ import { isBoolean, isNumber, isString } from '@src/helpers/utils';
 import { SeriesDataType, TooltipTemplateFunc, TooltipFormatter } from '@t/options';
 import { TooltipTheme } from '@t/theme';
 import { getTranslateString } from '@src/helpers/style';
-import sanitizeHtml from '@src/helpers/htmlSanitizer';
+import { sanitizeHTML } from '@src/helpers/htmlSanitizer';
 
 type TooltipInfoModels = { [key in TooltipModelName]: TooltipInfo[] };
 
@@ -138,13 +138,15 @@ export default class Tooltip extends Component {
       { type: 'tooltip', x: 0, y: 0, data: [], target: { radius: 0, width: 0, height: 0 } }
     );
 
-    this.tooltipContainerEl.innerHTML = this.templateFunc(
-      model,
-      {
-        header: sanitizeHtml(tooltipTemplates.defaultHeader(model, this.theme), true),
-        body: sanitizeHtml(getBodyTemplate(model.templateType)(model, this.theme), true),
-      },
-      this.theme
+    this.tooltipContainerEl.innerHTML = sanitizeHTML(
+      this.templateFunc(
+        model,
+        {
+          header: tooltipTemplates.defaultHeader(model, this.theme),
+          body: getBodyTemplate(model.templateType)(model, this.theme),
+        },
+        this.theme
+      )
     );
     this.setTooltipPosition(model);
   }
