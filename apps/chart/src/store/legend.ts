@@ -1,5 +1,4 @@
 import {
-  LegendIconType,
   Options,
   RawSeries,
   StoreModule,
@@ -10,15 +9,12 @@ import {
   LegendDataList,
 } from '@t/store/store';
 import {
-  Align,
   BubbleChartOptions,
-  HeatmapChartOptions,
   NormalLegendOptions,
   Size,
-  TreemapChartOptions,
   TreemapChartSeriesOptions,
 } from '@t/options';
-import { isUndefined, sum, includes, deepMergedCopy, range, isNumber } from '@src/helpers/utils';
+import { isUndefined, sum, deepMergedCopy, range, isNumber } from '@src/helpers/utils';
 
 import {
   getLegendItemHeight,
@@ -29,12 +25,24 @@ import {
 } from '@src/brushes/legend';
 import { getTextWidth } from '@src/helpers/calculator';
 import { isVerticalAlign, padding } from '@src/store/layout';
-import { spectrumLegendBar, spectrumLegendTooltip } from '@src/brushes/spectrumLegend';
+import {
+  SPECTRUM_LEGEND_LABEL_HEIGHT,
+  spectrumLegendBar,
+  spectrumLegendTooltip,
+} from '@src/brushes/spectrumLegend';
 import { hasNestedPieSeries } from '@src/helpers/pieSeries';
 import { extend } from '@src/store/store';
 import { getTitleFontString } from '@src/helpers/style';
 import { makeDefaultTheme } from '@src/helpers/theme';
 import { isNoData } from '@src/helpers/validation';
+import {
+  getIconType,
+  getLegendAlign,
+  OptionsWithNormalLegendType,
+  showCheckbox,
+  showCircleLegend,
+  showLegend,
+} from '@src/helpers/legend';
 
 type LegendLabelsInfo = {
   label: string;
@@ -44,8 +52,6 @@ type LegendLabelsInfo = {
   width: number;
 }[];
 
-type OptionsWithNormalLegendType = Exclude<Options, TreemapChartOptions | HeatmapChartOptions>;
-
 type LegendInfo = {
   checkboxVisible: boolean;
   useSpectrumLegend: boolean;
@@ -53,10 +59,9 @@ type LegendInfo = {
   legendOptions?: NormalLegendOptions;
 };
 
-type LegendSizeParam = {
+type LegendSizeParams = {
   initialWidth: number;
   legendWidths: number[];
-  useSpectrumLegend: boolean;
   options: Options;
   verticalAlign: boolean;
   visible: boolean;
@@ -72,7 +77,7 @@ const COMPONENT_HEIGHT_EXCEPT_Y_AXIS = 100;
 const ELLIPSIS_DOT_TEXT = '...';
 const WIDEST_TEXT = 'W'; // The widest text width in Arial font.
 
-function recalculateLegendWhenHeightOverflows(params: LegendSizeParam, legendHeight: number) {
+function recalculateLegendWhenHeightOverflows(params: LegendSizeParams, legendHeight: number) {
   const { legendWidths, itemHeight } = params;
   const totalHeight = legendWidths.length * itemHeight;
   const columnCount = Math.ceil(totalHeight / legendHeight);
@@ -88,7 +93,7 @@ function recalculateLegendWhenHeightOverflows(params: LegendSizeParam, legendHei
   return { legendWidth, legendHeight: rowCount * itemHeight + padding.Y, columnCount, rowCount };
 }
 
-function recalculateLegendWhenWidthOverflows(params: LegendSizeParam, prevLegendWidth: number) {
+function recalculateLegendWhenWidthOverflows(params: LegendSizeParams, prevLegendWidth: number) {
   const { legendWidths, itemHeight } = params;
   let columnCount = 0;
   let legendWidth = 0;
@@ -117,7 +122,7 @@ function recalculateLegendWhenWidthOverflows(params: LegendSizeParam, prevLegend
   return { legendHeight: itemHeight * rowCount, rowCount, columnCount, legendWidth };
 }
 
-function calculateLegendSize(params: LegendSizeParam) {
+function calculateLegendSize(params: LegendSizeParams) {
   if (!params.visible) {
     return { legendWidth: 0, legendHeight: 0, rowCount: 0, columnCount: 0 };
   }
@@ -139,7 +144,7 @@ function calculateLegendSize(params: LegendSizeParam) {
   return { legendWidth, legendHeight, columnCount, rowCount };
 }
 
-function calculateLegendHeight(params: LegendSizeParam) {
+function calculateLegendHeight(params: LegendSizeParams) {
   const { verticalAlign, itemHeight, legendWidths } = params;
   const { height: chartHeight } = getDefaultLegendSize(params);
   let legendHeight;
@@ -156,30 +161,39 @@ function calculateLegendHeight(params: LegendSizeParam) {
   return { legendHeight, isOverflow };
 }
 
-function getSpectrumLegendWidth(params: LegendSizeParam, verticalAlign: boolean) {
-  const { legendWidths, chart } = params;
-  let legendWidth;
-
+function getSpectrumLegendWidth(
+  legendWidths: number[],
+  chartWidth: number,
+  verticalAlign: boolean
+) {
   if (verticalAlign) {
     const labelAreaWidth = sum(legendWidths);
 
-    legendWidth = Math.max(chart.width / 4, labelAreaWidth);
-  } else {
-    const spectrumAreaWidth =
-      spectrumLegendTooltip.PADDING * 2 +
-      spectrumLegendBar.PADDING * 2 +
-      spectrumLegendTooltip.POINT_HEIGHT +
-      spectrumLegendBar.HEIGHT +
-      padding.X * 2;
-
-    legendWidth = Math.max(...legendWidths) + spectrumAreaWidth;
+    return Math.max(chartWidth / 4, labelAreaWidth);
   }
 
-  return { isOverflow: false, legendWidth };
+  const spectrumAreaWidth =
+    spectrumLegendTooltip.PADDING * 2 +
+    spectrumLegendBar.PADDING * 2 +
+    spectrumLegendTooltip.POINT_HEIGHT +
+    spectrumLegendBar.HEIGHT +
+    padding.X * 2;
+
+  return Math.max(...legendWidths) + spectrumAreaWidth;
 }
 
-function getNormalLegendWidth(params: LegendSizeParam, verticalAlign: boolean) {
-  const { initialWidth, legendWidths, checkbox } = params;
+function getSpectrumLegendHeight(itemHeight: number, chartHeight: number, verticalAlign: boolean) {
+  return verticalAlign
+    ? SPECTRUM_LEGEND_LABEL_HEIGHT +
+        spectrumLegendBar.PADDING * 2 +
+        spectrumLegendTooltip.POINT_HEIGHT +
+        spectrumLegendTooltip.HEIGHT +
+        padding.Y
+    : (chartHeight * 3) / 4;
+}
+
+function getNormalLegendWidth(params: LegendSizeParams) {
+  const { initialWidth, legendWidths, checkbox, verticalAlign } = params;
   let isOverflow = false;
   let legendWidth;
 
@@ -201,8 +215,8 @@ function getNormalLegendWidth(params: LegendSizeParam, verticalAlign: boolean) {
   return { legendWidth, isOverflow };
 }
 
-function calculateLegendWidth(params: LegendSizeParam) {
-  const { useSpectrumLegend, options, verticalAlign, visible } = params;
+function calculateLegendWidth(params: LegendSizeParams) {
+  const { options, visible } = params;
   const legendOptions = options?.legend;
 
   if (!visible) {
@@ -213,12 +227,10 @@ function calculateLegendWidth(params: LegendSizeParam) {
     return { legendWidth: legendOptions.width, isOverflow: false };
   }
 
-  return useSpectrumLegend
-    ? getSpectrumLegendWidth(params, verticalAlign)
-    : getNormalLegendWidth(params, verticalAlign);
+  return getNormalLegendWidth(params);
 }
 
-function getDefaultLegendSize(params: LegendSizeParam) {
+function getDefaultLegendSize(params: LegendSizeParams) {
   const { verticalAlign, chart, itemHeight, initialWidth, circleLegendVisible } = params;
   const restAreaHeight =
     COMPONENT_HEIGHT_EXCEPT_Y_AXIS + (circleLegendVisible ? INITIAL_CIRCLE_LEGEND_WIDTH : 0); // rest area temporary value (yAxisTitle.height + xAxis.height + circleLegend.height)
@@ -229,22 +241,6 @@ function getDefaultLegendSize(params: LegendSizeParam) {
         width: initialWidth,
         height: chart.height - restAreaHeight,
       };
-}
-
-export function showCircleLegend(options: BubbleChartOptions) {
-  return isUndefined(options?.circleLegend?.visible) ? true : !!options?.circleLegend?.visible;
-}
-
-function showLegend(options: Options, series: Series | RawSeries) {
-  if (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue) {
-    return false;
-  }
-
-  return isUndefined(options.legend?.visible) ? true : !!options.legend?.visible;
-}
-
-function showCheckbox(options: OptionsWithNormalLegendType) {
-  return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
 function getNestedPieLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo) {
@@ -271,10 +267,10 @@ function getNestedPieLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo)
 }
 
 function getMaxTextLengthWithEllipsis(legendInfo: LegendInfo) {
-  const { legendOptions, useSpectrumLegend, font, checkboxVisible } = legendInfo;
+  const { legendOptions, font, checkboxVisible } = legendInfo;
   const width = legendOptions?.item?.width;
 
-  if (isUndefined(width) || useSpectrumLegend) {
+  if (isUndefined(width)) {
     return;
   }
 
@@ -320,36 +316,6 @@ function getLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo): LegendL
       };
     })
   );
-}
-
-function useRectIcon(type: ChartType) {
-  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet', 'radialBar'], type);
-}
-
-function useCircleIcon(type: ChartType) {
-  return includes(['bubble', 'scatter'], type);
-}
-
-function useLineIcon(type: ChartType) {
-  return includes(['line', 'radar'], type);
-}
-
-function getIconType(type: ChartType): LegendIconType {
-  let iconType: LegendIconType = 'spectrum';
-
-  if (useCircleIcon(type)) {
-    iconType = 'circle';
-  } else if (useRectIcon(type)) {
-    iconType = 'rect';
-  } else if (useLineIcon(type)) {
-    iconType = 'line';
-  }
-
-  return iconType;
-}
-
-function getAlign(options: Options) {
-  return isUndefined(options.legend?.align) ? 'right' : (options.legend?.align as Align);
 }
 
 function getItemWidth(
@@ -490,32 +456,61 @@ const legend: StoreModule = {
     initLegendState({ state, initStoreState }) {
       extend(state.legend, getLegendState(initStoreState.options, initStoreState.series));
     },
-    setLegendLayout({ state, initStoreState }) {
+    setLegendLayout({ state }) {
+      if (state.legend.useSpectrumLegend) {
+        this.dispatch('setSpectrumLegendLayout');
+      } else {
+        this.dispatch('setNormalLegendLayout');
+      }
+    },
+    setSpectrumLegendLayout({ state }) {
       const {
-        legend: { data: legendData, useSpectrumLegend },
+        legend: { data: legendData },
         series,
         options,
         chart,
         theme,
       } = state;
-      const align = getAlign(options);
+
+      const align = getLegendAlign(options);
       const visible = showLegend(options, series);
-      // @TODO: Need to remove unnecessary calculations according to legend type
-      const checkbox = useSpectrumLegend
-        ? false
-        : showCheckbox(options as OptionsWithNormalLegendType);
+      const verticalAlign = isVerticalAlign(align);
+
+      const legendWidths = legendData.map(({ width }) => width);
+      const itemHeight = getLegendItemHeight(theme.legend.label!.fontSize!);
+
+      const width = getSpectrumLegendWidth(legendWidths, chart.width, verticalAlign);
+      const height = getSpectrumLegendHeight(itemHeight, chart.height, verticalAlign);
+
+      extend(state.legend, { visible, align, width, height });
+    },
+    setNormalLegendLayout({ state, initStoreState }) {
+      const {
+        legend: { data: legendData },
+        series,
+        options,
+        chart,
+        theme,
+      } = state;
+      const align = getLegendAlign(options);
+      const visible = showLegend(options, series);
+      const checkbox = showCheckbox(options as OptionsWithNormalLegendType);
       const initialWidth = Math.min(chart.width / 5, INITIAL_LEGEND_WIDTH);
       const verticalAlign = isVerticalAlign(align);
-      const circleLegendVisible = series.bubble
+      const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
+      const isScatterChart = !!series.scatter;
+      const isBubbleChart = !!series.bubble;
+
+      const circleLegendVisible = isBubbleChart
         ? showCircleLegend(options as BubbleChartOptions)
         : false;
 
       const legendWidths = legendData.map(({ width }) => width);
       const itemHeight = getLegendItemHeight(theme.legend.label!.fontSize!);
+
       const { legendWidth, legendHeight, rowCount, columnCount } = calculateLegendSize({
         initialWidth,
         legendWidths,
-        useSpectrumLegend,
         options,
         verticalAlign,
         visible,
@@ -524,14 +519,6 @@ const legend: StoreModule = {
         itemHeight,
         circleLegendVisible,
       });
-
-      const isNestedPieChart = hasNestedPieSeries(initStoreState.series);
-      const isScatterChart = !!series.scatter;
-
-      const circleLegendWidth =
-        legendWidth === 0
-          ? INITIAL_CIRCLE_LEGEND_WIDTH
-          : Math.min(legendWidth, INITIAL_CIRCLE_LEGEND_WIDTH);
 
       setIndexToLegendData(legendData, rowCount, columnCount, legendWidths.length, verticalAlign);
 
@@ -543,18 +530,26 @@ const legend: StoreModule = {
         height: legendHeight,
       });
 
-      extend(state.circleLegend, {
-        visible: circleLegendVisible,
-        width: circleLegendVisible ? circleLegendWidth : 0,
-        radius: circleLegendVisible ? Math.max((circleLegendWidth - LEGEND_MARGIN_X) / 2, 0) : 0,
-      });
+      if (isBubbleChart && circleLegendVisible) {
+        this.dispatch('updateCircleLegendLayout', { legendWidth });
+      }
 
       if (!isNestedPieChart && !isNoData(series)) {
         this.dispatch('updateLegendColor');
       }
+
       if (isScatterChart) {
         this.dispatch('updateLegendIcon');
       }
+    },
+    updateCircleLegendLayout({ state }, { legendWidth }: { legendWidth: number }) {
+      const width =
+        legendWidth === 0
+          ? INITIAL_CIRCLE_LEGEND_WIDTH
+          : Math.min(legendWidth, INITIAL_CIRCLE_LEGEND_WIDTH);
+      const radius = Math.max((width - LEGEND_MARGIN_X) / 2, 0);
+
+      extend(state.circleLegend, { visible: true, width, radius });
     },
     setLegendActiveState({ state }, { name, active }) {
       const { data } = state.legend;
@@ -574,13 +569,9 @@ const legend: StoreModule = {
       this.notify(state, 'legend');
     },
     updateLegendColor({ state }) {
-      const { legend: legendData, series, options } = state;
-      const useSpectrumLegend =
-        (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
+      const { legend: legendData, series } = state;
 
-      const data = useSpectrumLegend
-        ? legendData.data
-        : getLegendDataAppliedTheme(legendData.data, series);
+      const data = getLegendDataAppliedTheme(legendData.data, series);
       extend(state.legend, { data });
     },
     updateLegendIcon({ state }) {
