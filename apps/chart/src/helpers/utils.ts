@@ -59,7 +59,7 @@ export function forEachArray<T>(
   iteratee: (value: T, index: number, targetArr: Array<T> | ArrayLike<T>) => boolean | void,
   context: object | null = null
 ) {
-  for (let index = 0; index < arr.length; index += 1) {
+  for (let index = 0, len = arr.length; index < len; index += 1) {
     if (iteratee.call(context, arr[index], index, arr) === false) {
       break;
     }

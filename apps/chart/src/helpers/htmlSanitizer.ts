@@ -29,7 +29,7 @@ const SVG_ATTR_LIST_RX = new RegExp(
     'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)',
   'g'
 );
-const DEFAULT_TAG_BLACK_LIST = [
+const DEFAULT_TAG_DENY_LIST = [
   'script',
   'iframe',
   'textarea',
@@ -43,8 +43,6 @@ const DEFAULT_TAG_BLACK_LIST = [
   'title',
   'embed',
   'object',
-  'details',
-  'summary',
 ];
 
 const XSS_ATTR_RX = /href|src|background/gi;
@@ -68,7 +66,7 @@ export function sanitizeHTML(html: string) {
 }
 
 function removeUnnecessaryTags(html: HTMLElement) {
-  const removedTags = findNodes(html, DEFAULT_TAG_BLACK_LIST.join(','));
+  const removedTags = findNodes(html, DEFAULT_TAG_DENY_LIST.join(','));
 
   removedTags.forEach((node) => {
     removeNode(node);
