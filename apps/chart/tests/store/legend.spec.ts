@@ -1,7 +1,7 @@
 import legend from '@src/store/legend';
 import { InitStoreState, Scale, StateFunc } from '@t/store/store';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { LineChartOptions, NestedPieChartOptions } from '@t/options';
+import { HeatmapChartOptions, LineChartOptions, NestedPieChartOptions } from '@t/options';
 import Store from '@src/store/store';
 
 describe('Legend Store', () => {
@@ -47,7 +47,7 @@ describe('Legend Store', () => {
     });
   });
 
-  it('should make legend layout properly when calling the setLegendLayout', () => {
+  it('should make legend layout properly when calling the setNormalLegendLayout', () => {
     const dispatch = () => {};
 
     const fontTheme = {
@@ -134,7 +134,7 @@ describe('Legend Store', () => {
 
     const store = { state, initStoreState } as Store<LineChartOptions>;
 
-    legend.action!.setLegendLayout.call({ dispatch }, store);
+    legend.action!.setNormalLegendLayout.call({ dispatch }, store);
 
     expect(state.legend).toEqual({
       align: 'right',
@@ -167,6 +167,101 @@ describe('Legend Store', () => {
       showCheckbox: true,
       useScatterChartIcon: false,
       useSpectrumLegend: false,
+      visible: true,
+    });
+  });
+
+  it('should make legend layout properly when calling the setSpectrumLegendLayout', () => {
+    const dispatch = () => {};
+
+    const fontTheme = {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 'normal',
+      color: '#333333',
+    };
+
+    const state = {
+      chart: { width: 300, height: 300 },
+      layout: {
+        plot: { width: 250, height: 250, x: 30, y: 10 },
+        yAxis: { x: 10, y: 10, width: 30, height: 200 },
+        xAxis: { x: 10, y: 10, width: 250, height: 30 },
+      },
+      series: {
+        heatmap: {
+          data: [
+            { yCategory: 'han', data: [1, 4, 6] },
+            { yCategory: 'cho', data: [5, 2, 4] },
+          ],
+        },
+      },
+      circleLegend: {},
+      legend: {
+        data: [
+          {
+            checked: true,
+            active: true,
+            width: 49,
+            iconType: 'spectrum',
+            chartType: 'heatmap',
+            rowIndex: 0,
+            columnIndex: 0,
+          },
+          {
+            checked: true,
+            active: true,
+            width: 49,
+            iconType: 'spectrum',
+            chartType: 'heatmap',
+            rowIndex: 0,
+            columnIndex: 0,
+          },
+        ],
+        visible: true,
+        useSpectrumLegend: true,
+        useScatterChartIcon: false,
+      },
+      options: {
+        legend: {},
+      },
+      theme: {
+        xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        legend: { label: { ...fontTheme } },
+      },
+    };
+
+    const store = { state } as Store<HeatmapChartOptions>;
+
+    legend.action!.setSpectrumLegendLayout.call({ dispatch }, store);
+
+    expect(state.legend).toEqual({
+      align: 'right',
+      data: [
+        {
+          active: true,
+          chartType: 'heatmap',
+          checked: true,
+          columnIndex: 0,
+          iconType: 'spectrum',
+          rowIndex: 0,
+          width: 49,
+        },
+        {
+          active: true,
+          chartType: 'heatmap',
+          checked: true,
+          columnIndex: 0,
+          iconType: 'spectrum',
+          rowIndex: 0,
+          width: 49,
+        },
+      ],
+      height: 225,
+      width: 103,
+      useScatterChartIcon: false,
+      useSpectrumLegend: true,
       visible: true,
     });
   });

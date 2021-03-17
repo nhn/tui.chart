@@ -225,7 +225,8 @@ function getXAxisWidth({
       xAxisWidth -= circleLegend.width;
     }
   } else {
-    xAxisWidth = width - (yAxis.width + Math.max(legendWidth, circleLegend.width));
+    xAxisWidth =
+      width - (yAxis.width + Math.max(legendWidth, circleLegend.visible ? circleLegend.width : 0));
   }
 
   if (hasCenterYAxis) {
