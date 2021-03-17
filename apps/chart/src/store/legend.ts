@@ -76,6 +76,7 @@ const INITIAL_CIRCLE_LEGEND_WIDTH = 150;
 const COMPONENT_HEIGHT_EXCEPT_Y_AXIS = 100;
 const ELLIPSIS_DOT_TEXT = '...';
 const WIDEST_TEXT = 'W'; // The widest text width in Arial font.
+const NUMBER_OF_BOTH_SIDES = 2;
 
 function recalculateLegendWhenHeightOverflows(params: LegendSizeParams, legendHeight: number) {
   const { legendWidths, itemHeight } = params;
@@ -173,11 +174,9 @@ function getSpectrumLegendWidth(
   }
 
   const spectrumAreaWidth =
-    spectrumLegendTooltip.PADDING * 2 +
-    spectrumLegendBar.PADDING * 2 +
+    (spectrumLegendTooltip.PADDING + spectrumLegendBar.PADDING + padding.X) * NUMBER_OF_BOTH_SIDES +
     spectrumLegendTooltip.POINT_HEIGHT +
-    spectrumLegendBar.HEIGHT +
-    padding.X * 2;
+    spectrumLegendBar.HEIGHT;
 
   return Math.max(...legendWidths) + spectrumAreaWidth;
 }
@@ -185,7 +184,7 @@ function getSpectrumLegendWidth(
 function getSpectrumLegendHeight(itemHeight: number, chartHeight: number, verticalAlign: boolean) {
   return verticalAlign
     ? SPECTRUM_LEGEND_LABEL_HEIGHT +
-        spectrumLegendBar.PADDING * 2 +
+        spectrumLegendBar.PADDING * NUMBER_OF_BOTH_SIDES +
         spectrumLegendTooltip.POINT_HEIGHT +
         spectrumLegendTooltip.HEIGHT +
         padding.Y
@@ -236,7 +235,7 @@ function getDefaultLegendSize(params: LegendSizeParams) {
     COMPONENT_HEIGHT_EXCEPT_Y_AXIS + (circleLegendVisible ? INITIAL_CIRCLE_LEGEND_WIDTH : 0); // rest area temporary value (yAxisTitle.height + xAxis.height + circleLegend.height)
 
   return verticalAlign
-    ? { width: chart.width - padding.X * 2, height: itemHeight }
+    ? { width: chart.width - padding.X * NUMBER_OF_BOTH_SIDES, height: itemHeight }
     : {
         width: initialWidth,
         height: chart.height - restAreaHeight,

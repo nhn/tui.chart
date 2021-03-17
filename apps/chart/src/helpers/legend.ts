@@ -1,6 +1,5 @@
 import { ChartType, Legend, LegendIconType, Options, RawSeries, Series } from '@t/store/store';
 import {
-  Align,
   BubbleChartOptions,
   HeatmapChartOptions,
   TreemapChartOptions,
@@ -18,7 +17,7 @@ export function getActiveSeriesMap(legend: Legend) {
 }
 
 export function showCircleLegend(options: BubbleChartOptions) {
-  return isUndefined(options?.circleLegend?.visible) ? true : !!options?.circleLegend?.visible;
+  return options?.circleLegend?.visible ?? true;
 }
 
 export function showLegend(options: Options, series: Series | RawSeries) {
@@ -33,6 +32,7 @@ export function showCheckbox(options: OptionsWithNormalLegendType) {
   return isUndefined(options.legend?.showCheckbox) ? true : !!options.legend?.showCheckbox;
 }
 
+// @TODO: Need to manage with chart type constant/Enum
 function useRectIcon(type: ChartType) {
   return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet', 'radialBar'], type);
 }
@@ -60,5 +60,5 @@ export function getIconType(type: ChartType): LegendIconType {
 }
 
 export function getLegendAlign(options: Options) {
-  return isUndefined(options.legend?.align) ? 'right' : (options.legend?.align as Align);
+  return options.legend?.align ?? 'right';
 }
