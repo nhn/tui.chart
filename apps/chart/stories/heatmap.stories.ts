@@ -52,7 +52,9 @@ function createChart(data: HeatmapSeriesData, customOptions: HeatmapChartOptions
 }
 
 export const basic = () => {
-  const { el } = createChart(temperatureAverageDataForHeatmap);
+  const { el } = createChart(temperatureAverageDataForHeatmap, {
+    legend: { align: 'right' },
+  });
 
   return el;
 };
@@ -208,6 +210,11 @@ export const dataLabelsWithTheme = () => {
 export const rotatable = () => {
   const { el } = createChart(temperatureAverageDataForHeatmap, {
     chart: { title: '24-hr Average Temperature', width: 400, height: 300 },
+    xAxis: {
+      label: {
+        rotatable: true,
+      },
+    },
     legend: { align: 'right' },
   });
 

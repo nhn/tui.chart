@@ -83,6 +83,7 @@ import { BubbleChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {string} [props.options.legend.showCheckbox] - Whether to show checkbox.
  *       @param {boolean} [props.options.legend.visible] - Whether to show legend.
  *       @param {number} [props.options.legend.width] - Width of legend.
+ *       @param {Object} [props.options.legend.item] - `width` and `overflow` options of the legend item. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Legend guide} on github.
  *     @param {Object} [props.options.circleLegend]
  *       @param {boolean} [props.options.circleLegend.visible] - Whether to show circle legend.
  *     @param {Object} [props.options.exportMenu]

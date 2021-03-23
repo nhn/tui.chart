@@ -54,6 +54,18 @@ export function forEach<T extends object, K extends Extract<keyof T, string>, V 
   }
 }
 
+export function forEachArray<T>(
+  arr: Array<T> | ArrayLike<T>,
+  iteratee: (value: T, index: number, targetArr: Array<T> | ArrayLike<T>) => boolean | void,
+  context: object | null = null
+) {
+  for (let index = 0, len = arr.length; index < len; index += 1) {
+    if (iteratee.call(context, arr[index], index, arr) === false) {
+      break;
+    }
+  }
+}
+
 export function range(start: number, stop?: number, step?: number) {
   if (isUndefined(stop)) {
     stop = start || 0;
@@ -71,6 +83,19 @@ export function range(start: number, stop?: number, step?: number) {
     for (; start * flag < stop; start += step) {
       arr.push(start);
     }
+  }
+
+  return arr;
+}
+
+export function toArray<T>(arrayLike: ArrayLike<T>) {
+  let arr: Array<T> = [];
+  try {
+    arr = Array.prototype.slice.call(arrayLike);
+  } catch (e) {
+    forEachArray(arrayLike, function (value) {
+      arr.push(value);
+    });
   }
 
   return arr;
