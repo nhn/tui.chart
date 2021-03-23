@@ -62,14 +62,11 @@ const options = {
 그 외 `lines`, `bands` 옵션은 아래에서 자세히 설명한다.
 
 
-## Area, Line 차트를 위한 lines & bands 옵션
-`lines`와 `bands` 옵션은 Line, Area 차트 계열에서 사용할 수 있다.
-
-* 사용 가능 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
-
-### lines
+## lines
 
 `lines` 옵션을 사용하면 플롯 영역에 새로운 라인을 추가할 수 있다.
+
+* 사용 가능 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 처트](./chart-columnLine.md)
 
 ```ts
 type PlotOption = {
@@ -113,9 +110,13 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102869301-c06eff80-447e-11eb-9762-f71671843695.png)
 
-### bands
+## bands 옵션
 
 `bands` 옵션을 사용하면 플롯 영역에 범위를 지정하여 배경색을 채울 수 있다.
+
+### Line, Area, LineArea, LineScatter, ColumnLine 차트 용
+
+* 사용 가능 차트 타입 : [Line 차트](./chart-line.md), [Area 차트](./chart-area.md), [LineArea 차트](./chart-lineArea.md), [LineScatter 차트](./chart-lineScatter.md), [ColumnLine 차트](./chart-columnLine.md)
 
 ```ts
 type PlotOption = {
@@ -188,7 +189,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102870505-72f39200-4480-11eb-8b24-4ba2a7242556.png)
 
-### theme
+#### theme
 
 플롯 영역의 라인 스타일과 배경색을 변경할 수 있다.
 
@@ -242,7 +243,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102844399-bb925780-444e-11eb-9bd5-4c10471d1d6b.png)
 
-## Gauge 차트를 위한 bands 옵션
+### Gauge 용
 
 * 사용 가능 차트 타입 : [Gauge 차트](./chart-gauge.md)
 
@@ -283,9 +284,9 @@ const options = {
 
 ![gauge-plot](https://user-images.githubusercontent.com/43128697/110775818-b3ee8c00-82a2-11eb-8233-2b915489735f.png)
 
-### theme
+#### theme
 
-플롯 범위 영역의 두께를 변경할 수 있다.
+다음은 Gauge 차트에서 사용할 수 있는 플롯 테마이다. 플롯 범위 영역의 두께를 변경할 수 있다.
 
 ```ts
 type GaugePlotTheme = {

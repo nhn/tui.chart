@@ -22,7 +22,7 @@ const chart = Chart.gaugeChart({el, data, options});
 
 ### 데이터 타입
 
-`series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다. 입력한 `data` 값을 기준으로 scale을 계산하여 Circular Axis의 라벨로 표시된다.
+`series` 값은 `name`과 `data`가 모두 작성된 데이터를 입력해야 한다. `name`은 각각의 시리즈를 구분할 목적으로 사용하는 유일한 id로 작성한다.
 
 ```js
 const data = {
@@ -246,7 +246,7 @@ const options = {
 ```
 ![gauge-solid-basic](https://user-images.githubusercontent.com/43128697/110800901-07bb9e00-82c0-11eb-8ad4-4c7b1a250c1b.png)
 
-solid 타입으로 시리즈를 표현할 때, 값을 가리키는 클락 핸드의 표시 여부를 설정할 수 있다.
+solid 타입으로 시리즈를 표현할 때, 값을 가리키는 시계 바늘(clockHand)의 표시 여부를 설정할 수 있다.
 
 ```js
 series: {
@@ -392,10 +392,10 @@ type CommonDataLabelBoxTheme = {
 | `solid.shadowOffsetX` | number | 시리즈의 섹터 Offset X |
 | `solid.shadowOffsetY` | number | 시리즈의 섹터 Offset Y |
 | `solid.color` | string | 시리즈의 섹터 색상 |
-| `clockHand` | object | 시리즈의 클락 핸드 스타일 |
-| `clockHand.color` | string | 시리즈의 클락 핸드 색상 |
-| `clockHand.size` | number | 시리즈의 클락 핸드 길이 |
-| `clockHand.baseLine` | number | 시리즈의 클락 핸드 밑변 길이 |
+| `clockHand` | object | 시리즈의 시계 바늘 스타일 |
+| `clockHand.color` | string | 시리즈의 시계 바늘 색상 |
+| `clockHand.size` | number | 시리즈의 시계 바늘 길이 |
+| `clockHand.baseLine` | number | 시리즈의 시계 바늘 밑변 길이 |
 | `pin` | object | 시리즈의 핀 스타일 |
 | `pin.radius` | number | 시리즈의 핀 반지름 |
 | `pin.color` | string | 시리즈의 핀 색상 |

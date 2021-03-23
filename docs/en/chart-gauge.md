@@ -22,7 +22,7 @@ const chart = Chart.gaugeChart({el, data, options});
 
 ### Data Type
 
- the `series` value must be completed with the `name` and the `data`. The `name` is used to identify each series and its id must be unique. The scale is calculated based on the entered `data` value and displayed as a circular axis label.
+ the `series` value must be completed with the `name` and the `data`. The `name` is used to identify each series and its id must be unique.
 
 ```js
 const data = {
