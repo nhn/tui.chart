@@ -194,6 +194,7 @@ describe('responders', () => {
         pointOnColumn: true,
         tickDistance: 40,
         tickCount: 2,
+        rectResponderCount: 2,
       },
     },
     options: {
