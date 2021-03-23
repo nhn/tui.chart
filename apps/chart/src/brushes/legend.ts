@@ -8,6 +8,7 @@ import { ScatterSeriesIconType } from '@t/components/series';
 import { LegendIconType } from '@t/store/store';
 import { getTitleFontString } from '@src/helpers/style';
 import { getTextHeight } from '@src/helpers/calculator';
+import { padding } from '@src/store/layout';
 
 interface RenderOptions {
   iconType: LegendIconType;
@@ -22,7 +23,6 @@ interface RenderOptions {
 
 export const LEGEND_ITEM_MARGIN_X = 40;
 export const LEGEND_MARGIN_X = 5;
-export const LEGEND_MARGIN_Y = 13;
 export const LEGEND_CHECKBOX_SIZE = 12;
 export const LEGEND_ICON_SIZE = 12;
 const ICON_BORDER_WIDTH = 1.5;
@@ -33,7 +33,7 @@ const LINE_ICON_PADDING = 2;
 const CIRCLE_ICON_RADIUS = 6;
 
 export function getLegendItemHeight(fontSize: number) {
-  return fontSize + LEGEND_MARGIN_Y;
+  return fontSize + padding.Y;
 }
 
 function drawLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
@@ -197,7 +197,7 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
       color,
       iconType,
       useScatterChartIcon,
-      label: legendLabel,
+      viewLabel: legendLabel,
     } = datum;
     const iconY = y - 1 + (getTextHeight(legendLabel, font) - 11) / 4;
     const renderOptions: RenderOptions = {

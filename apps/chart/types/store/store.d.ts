@@ -249,7 +249,15 @@ export type LegendIconType = 'spectrum' | 'line' | ScatterSeriesIconType;
 export type LegendDataList = Array<
   Pick<
     LegendData,
-    'label' | 'active' | 'checked' | 'iconType' | 'color' | 'chartType' | 'rowIndex' | 'columnIndex'
+    | 'label'
+    | 'active'
+    | 'checked'
+    | 'iconType'
+    | 'color'
+    | 'chartType'
+    | 'rowIndex'
+    | 'columnIndex'
+    | 'viewLabel'
   > & {
     width: number;
   }

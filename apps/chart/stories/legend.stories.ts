@@ -6,7 +6,7 @@ import '@src/css/chart.css';
 import { radios } from '@storybook/addon-knobs';
 
 export default {
-  title: 'chart|Circle Legend',
+  title: 'chart|Legend',
 };
 
 const width = 1000;
@@ -16,11 +16,6 @@ const defaultOptions = {
     width,
     height,
   },
-  yAxis: {},
-  xAxis: {},
-  series: {},
-  tooltip: {},
-  plot: {},
 };
 
 function createChart(data: BubbleSeriesData, customOptions?: BubbleChartOptions) {
@@ -95,6 +90,19 @@ export const legendItemOverlap = () => {
         { bottom: 'bottom', top: 'top', left: 'left', right: 'right' },
         'right'
       ),
+    },
+  });
+
+  return el;
+};
+
+export const legendEllipsis = () => {
+  const { el } = createChart(circleLegendOverlapData, {
+    legend: {
+      item: {
+        width: 70,
+        overflow: 'ellipsis',
+      },
     },
   });
 

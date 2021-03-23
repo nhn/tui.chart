@@ -1,7 +1,7 @@
 import legend from '@src/store/legend';
 import { InitStoreState, Scale, StateFunc } from '@t/store/store';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { LineChartOptions, NestedPieChartOptions } from '@t/options';
+import { HeatmapChartOptions, LineChartOptions, NestedPieChartOptions } from '@t/options';
 import Store from '@src/store/store';
 
 describe('Legend Store', () => {
@@ -32,6 +32,7 @@ describe('Legend Store', () => {
       data: [
         {
           label: 'test',
+          viewLabel: 'test',
           checked: true,
           active: true,
           width: 38,
@@ -46,7 +47,7 @@ describe('Legend Store', () => {
     });
   });
 
-  it('should make legend layout properly when calling the setLegendLayout', () => {
+  it('should make legend layout properly when calling the setNormalLegendLayout', () => {
     const dispatch = () => {};
 
     const fontTheme = {
@@ -89,6 +90,7 @@ describe('Legend Store', () => {
         data: [
           {
             label: 'han',
+            viewLabel: 'han',
             checked: true,
             active: true,
             width: 38,
@@ -99,6 +101,7 @@ describe('Legend Store', () => {
           },
           {
             label: 'cho',
+            viewLabel: 'cho',
             checked: true,
             active: true,
             width: 38,
@@ -131,12 +134,13 @@ describe('Legend Store', () => {
 
     const store = { state, initStoreState } as Store<LineChartOptions>;
 
-    legend.action!.setLegendLayout.call({ dispatch }, store);
+    legend.action!.setNormalLegendLayout.call({ dispatch }, store);
 
     expect(state.legend).toEqual({
       align: 'right',
       data: [
         {
+          viewLabel: 'han',
           active: true,
           chartType: 'line',
           checked: true,
@@ -147,6 +151,7 @@ describe('Legend Store', () => {
           width: 38,
         },
         {
+          viewLabel: 'cho',
           active: true,
           chartType: 'line',
           checked: true,
@@ -157,11 +162,106 @@ describe('Legend Store', () => {
           width: 38,
         },
       ],
-      height: 78,
+      height: 52,
       width: 94,
       showCheckbox: true,
       useScatterChartIcon: false,
       useSpectrumLegend: false,
+      visible: true,
+    });
+  });
+
+  it('should make legend layout properly when calling the setSpectrumLegendLayout', () => {
+    const dispatch = () => {};
+
+    const fontTheme = {
+      fontSize: 11,
+      fontFamily: 'Arial',
+      fontWeight: 'normal',
+      color: '#333333',
+    };
+
+    const state = {
+      chart: { width: 300, height: 300 },
+      layout: {
+        plot: { width: 250, height: 250, x: 30, y: 10 },
+        yAxis: { x: 10, y: 10, width: 30, height: 200 },
+        xAxis: { x: 10, y: 10, width: 250, height: 30 },
+      },
+      series: {
+        heatmap: {
+          data: [
+            { yCategory: 'han', data: [1, 4, 6] },
+            { yCategory: 'cho', data: [5, 2, 4] },
+          ],
+        },
+      },
+      circleLegend: {},
+      legend: {
+        data: [
+          {
+            checked: true,
+            active: true,
+            width: 49,
+            iconType: 'spectrum',
+            chartType: 'heatmap',
+            rowIndex: 0,
+            columnIndex: 0,
+          },
+          {
+            checked: true,
+            active: true,
+            width: 49,
+            iconType: 'spectrum',
+            chartType: 'heatmap',
+            rowIndex: 0,
+            columnIndex: 0,
+          },
+        ],
+        visible: true,
+        useSpectrumLegend: true,
+        useScatterChartIcon: false,
+      },
+      options: {
+        legend: {},
+      },
+      theme: {
+        xAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        yAxis: { title: { ...fontTheme }, label: { ...fontTheme } },
+        legend: { label: { ...fontTheme } },
+      },
+    };
+
+    const store = { state } as Store<HeatmapChartOptions>;
+
+    legend.action!.setSpectrumLegendLayout.call({ dispatch }, store);
+
+    expect(state.legend).toEqual({
+      align: 'right',
+      data: [
+        {
+          active: true,
+          chartType: 'heatmap',
+          checked: true,
+          columnIndex: 0,
+          iconType: 'spectrum',
+          rowIndex: 0,
+          width: 49,
+        },
+        {
+          active: true,
+          chartType: 'heatmap',
+          checked: true,
+          columnIndex: 0,
+          iconType: 'spectrum',
+          rowIndex: 0,
+          width: 49,
+        },
+      ],
+      height: 225,
+      width: 103,
+      useScatterChartIcon: false,
+      useSpectrumLegend: true,
       visible: true,
     });
   });
@@ -236,6 +336,7 @@ describe('Legend Store', () => {
       expect(state.legend!.data).toEqual([
         {
           label: 'A',
+          viewLabel: 'A',
           checked: true,
           active: true,
           width: 35,
@@ -246,6 +347,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'B',
+          viewLabel: 'B',
           checked: true,
           active: true,
           width: 35,
@@ -256,6 +358,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'C',
+          viewLabel: 'C',
           checked: true,
           active: true,
           width: 35,
@@ -266,6 +369,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'D',
+          viewLabel: 'D',
           checked: true,
           active: true,
           width: 35,
@@ -308,6 +412,7 @@ describe('Legend Store', () => {
       expect(state.legend!.data).toEqual([
         {
           label: 'A',
+          viewLabel: 'A',
           checked: true,
           active: true,
           width: 35,
@@ -318,6 +423,7 @@ describe('Legend Store', () => {
         },
         {
           label: 'B',
+          viewLabel: 'B',
           checked: true,
           active: true,
           width: 35,
@@ -328,5 +434,99 @@ describe('Legend Store', () => {
         },
       ]);
     });
+  });
+
+  it('should apply ellipsis when the text is longer than the legend item width', () => {
+    const state = (legend.state as StateFunc)({
+      options: {
+        chart: { width: 300, height: 300 },
+        legend: { item: { width: 40, overflow: 'ellipsis' } },
+      },
+      series: {
+        line: [
+          {
+            name: 'LongNameLongNameLongNameLongNameLongNameLongName',
+            data: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
+            rawData: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
+            color: '#aaaaaa',
+          },
+        ],
+      },
+    });
+
+    expect(state.legend).toMatchInlineSnapshot(`
+      Object {
+        "data": Array [
+          Object {
+            "active": true,
+            "chartType": "line",
+            "checked": true,
+            "columnIndex": 0,
+            "iconType": "line",
+            "label": "LongNameLongNameLongNameLongNameLongNameLongName",
+            "rowIndex": 0,
+            "viewLabel": "Lon...",
+            "width": 40,
+          },
+        ],
+        "useScatterChartIcon": false,
+        "useSpectrumLegend": false,
+      }
+    `);
+  });
+
+  it('should apply ellipsis when the text is longer than the legend item width with showCheckbox false', () => {
+    const state = (legend.state as StateFunc)({
+      options: {
+        chart: { width: 300, height: 300 },
+        legend: { item: { width: 40, overflow: 'ellipsis' }, showCheckbox: false },
+      },
+      series: {
+        line: [
+          {
+            name: 'LongNameLongNameLongNameLongNameLongNameLongName',
+            data: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
+            rawData: [
+              { x: 10, y: 5 },
+              { x: 1, y: 2 },
+              { x: 3, y: 5 },
+            ],
+            color: '#aaaaaa',
+          },
+        ],
+      },
+    });
+
+    expect(state.legend).toMatchInlineSnapshot(`
+      Object {
+        "data": Array [
+          Object {
+            "active": true,
+            "chartType": "line",
+            "checked": true,
+            "columnIndex": 0,
+            "iconType": "line",
+            "label": "LongNameLongNameLongNameLongNameLongNameLongName",
+            "rowIndex": 0,
+            "viewLabel": "LongNameLongNameLong...",
+            "width": 40,
+          },
+        ],
+        "useScatterChartIcon": false,
+        "useSpectrumLegend": false,
+      }
+    `);
   });
 });
