@@ -22,15 +22,9 @@ function getValidIndex(index: number, startIndex = 0) {
   return ~~index ? index - startIndex : index;
 }
 
-function validXPosition({
-  axisData,
-  offsetSize,
-  value,
-  xAxisLimit,
-  startIndex = 0,
-}: XPositionParam) {
+function validXPosition({ axisData, offsetSize, value, startIndex = 0 }: XPositionParam) {
   const dataIndex = getValidIndex(value as number, startIndex);
-  const x = getXPosition(axisData, offsetSize, value, dataIndex, xAxisLimit);
+  const x = getXPosition(axisData, offsetSize, value, dataIndex);
 
   return x > 0 ? Math.min(offsetSize, x) : 0;
 }
@@ -56,19 +50,13 @@ export default class Plot extends Component {
     };
   }
 
-  renderLines(
-    axes: Axes,
-    categories: string[],
-    lines: PlotLine[] = [],
-    xAxisLimit?: ValueEdge,
-  ): LineModel[] {
+  renderLines(axes: Axes, categories: string[], lines: PlotLine[] = []): LineModel[] {
     return lines.map(({ value, color }) => {
       const { offsetSize } = this.getPlotAxisSize(true);
       const position = validXPosition({
         axisData: getPlotAxisData(true, axes) as LabelAxisData,
         offsetSize,
         value,
-        xAxisLimit,
         categories,
         startIndex: this.startIndex,
       });
@@ -77,12 +65,7 @@ export default class Plot extends Component {
     });
   }
 
-  renderBands(
-    axes: Axes,
-    categories: string[],
-    bands: PlotBand[] = [],
-    xAxisLimit?: ValueEdge
-  ): RectModel[] {
+  renderBands(axes: Axes, categories: string[], bands: PlotBand[] = []): RectModel[] {
     const { offsetSize, anchorSize } = this.getPlotAxisSize(true);
 
     return bands.map(({ range, color }: PlotBand) => {
@@ -91,7 +74,6 @@ export default class Plot extends Component {
           axisData: getPlotAxisData(true, axes) as LabelAxisData,
           offsetSize,
           value,
-          xAxisLimit,
           categories,
           startIndex: this.startIndex,
         })
@@ -193,7 +175,7 @@ export default class Plot extends Component {
   }
 
   render(state: ChartState<Options>) {
-    const { layout, axes, plot, scale, zoomRange, theme } = state;
+    const { layout, axes, plot, zoomRange, theme } = state;
 
     if (!plot) {
       return;
@@ -205,10 +187,9 @@ export default class Plot extends Component {
 
     const categories = (state.categories as string[]) ?? [];
     const { lines, bands, visible } = plot;
-    const xAxisLimit = scale?.xAxis?.limit;
 
-    this.models.line = this.renderLines(axes, categories, lines, xAxisLimit);
-    this.models.band = this.renderBands(axes, categories, bands, xAxisLimit);
+    this.models.line = this.renderLines(axes, categories, lines);
+    this.models.band = this.renderBands(axes, categories, bands);
 
     if (visible) {
       this.models.plot = [this.renderPlotBackgroundRect(), ...this.renderPlots(axes)];
