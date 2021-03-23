@@ -352,7 +352,7 @@ function getLegendState(options: Options, series: RawSeries): Legend {
   const checkboxVisible = useSpectrumLegend
     ? false
     : showCheckbox(options as OptionsWithNormalLegendType);
-  const defaultTheme = makeDefaultTheme(options?.theme?.chart?.fontFamily);
+  const defaultTheme = makeDefaultTheme(series, options?.theme?.chart?.fontFamily);
   const font = getTitleFontString(
     deepMergedCopy(defaultTheme.legend.label!, { ...options.theme?.legend?.label })
   );

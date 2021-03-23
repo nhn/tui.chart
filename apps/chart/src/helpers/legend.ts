@@ -4,12 +4,13 @@ import {
   HeatmapChartOptions,
   TreemapChartOptions,
   TreemapChartSeriesOptions,
+  GaugeChartOptions,
 } from '@t/options';
 import { includes, isUndefined } from '@src/helpers/utils';
 
 export type OptionsWithNormalLegendType = Exclude<
   Options,
-  TreemapChartOptions | HeatmapChartOptions
+  TreemapChartOptions | HeatmapChartOptions | GaugeChartOptions
 >;
 
 export function getActiveSeriesMap(legend: Legend) {
