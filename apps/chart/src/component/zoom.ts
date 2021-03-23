@@ -1,24 +1,32 @@
 import Component from './component';
-import { ChartState, Options } from '@t/store/store';
+import { AxisData, ChartState, LabelAxisData, Options, Scale, Series } from '@t/store/store';
 import { RectResponderModel, RectModel } from '@t/components/series';
-import { range } from '@src/helpers/utils';
+import { isNull, range } from '@src/helpers/utils';
 import { sortNumber } from '@src/helpers/utils';
 import { ZoomModels } from '@t/components/zoom';
-import { Point } from '@t/options';
+import { AreaSeriesType, CoordinateDataType, LineSeriesType, Point } from '@t/options';
 import { makeObservableObjectToNormal } from '@src/store/reactive';
-
-interface RenderOptions {
-  pointOnColumn: boolean;
-  tickDistance: number;
-  tickCount: number;
-}
+import {
+  getCoordinateDataIndex,
+  getCoordinateXValue,
+  isCoordinateSeries,
+} from '@src/helpers/coordinate';
+import { getXPosition } from '@src/helpers/calculator';
+import {
+  makeRectResponderModelForCoordinateType,
+  RectResponderInfoForCoordType,
+} from '@src/helpers/responders';
 
 const DRAG_MIN_WIDTH = 15;
+
+type ZoomableSeries = Pick<Series, 'line' | 'area'>;
 
 export default class Zoom extends Component {
   models: ZoomModels = { selectionArea: [] };
 
   responders!: RectResponderModel[];
+
+  startIndex!: number;
 
   private dragStartPosition: Point | null = null;
 
@@ -30,22 +38,66 @@ export default class Zoom extends Component {
     this.type = 'zoom';
   }
 
-  render(state: ChartState<Options>) {
+  render(state: ChartState<Options>, computed) {
     if (!state.zoomRange) {
       return;
     }
     this.resetSelectionArea();
-
-    const { layout, axes, categories } = state;
+    const { viewRange } = computed;
+    const { layout, axes, series, scale } = state;
+    const categories = state.categories as string[];
 
     this.rect = layout.plot;
-    const { tickDistance, pointOnColumn, tickCount } = axes.xAxis!;
+    this.startIndex = viewRange ? viewRange[0] : 0;
 
-    this.responders = this.makeRectResponderModel(categories as string[], {
-      pointOnColumn,
-      tickDistance,
-      tickCount,
+    const coordinateChart = isCoordinateSeries(series);
+    if (coordinateChart) {
+      const responderInfo = this.getRectResponderInfoForCoordType(
+        series,
+        scale,
+        axes.xAxis as LabelAxisData,
+        categories
+      );
+      this.responders = this.makeRectResponderModelForCoordType(responderInfo, categories);
+    } else {
+      this.responders = this.makeRectResponderModel(categories, axes.xAxis);
+    }
+  }
+
+  getRectResponderInfoForCoordType(
+    series: ZoomableSeries,
+    scale: Scale,
+    axisData: LabelAxisData,
+    categories: string[]
+  ) {
+    const points: RectResponderInfoForCoordType[] = [];
+    const duplicateCheckMap = {};
+
+    Object.keys(series).forEach((seriesName) => {
+      const data = series[seriesName].data as LineSeriesType[] | AreaSeriesType[];
+      data.forEach(({ rawData }) => {
+        rawData.forEach((datum, idx) => {
+          if (isNull(datum)) {
+            return;
+          }
+
+          const dataIndex = getCoordinateDataIndex(datum, categories, idx, this.startIndex);
+          const x = getXPosition(
+            axisData,
+            this.rect.width,
+            getCoordinateXValue(datum as CoordinateDataType),
+            dataIndex
+          );
+
+          if (!duplicateCheckMap[x] && x >= 0 && x <= this.rect.width) {
+            duplicateCheckMap[x] = true;
+            points.push({ x, label: categories[dataIndex] });
+          }
+        });
+      });
     });
+
+    return points;
   }
 
   resetSelectionArea() {
@@ -84,9 +136,9 @@ export default class Zoom extends Component {
     this.resetSelectionArea();
   }
 
-  makeRectResponderModel(categories: string[], renderOptions: RenderOptions): RectResponderModel[] {
+  makeRectResponderModel(categories: string[], axisData: AxisData): RectResponderModel[] {
     const categorySize = categories.length;
-    const { pointOnColumn, tickDistance } = renderOptions;
+    const { pointOnColumn, tickDistance } = axisData;
     const { height } = this.rect;
 
     const halfDetectAreaIndex = pointOnColumn ? [] : [0, categorySize - 1];
@@ -111,6 +163,22 @@ export default class Zoom extends Component {
         data: { name: 'selectionArea', value: categories[index] },
       };
     });
+  }
+
+  makeRectResponderModelForCoordType(
+    responderInfo: RectResponderInfoForCoordType[],
+    categories: string[]
+  ) {
+    const responders = makeRectResponderModelForCoordinateType(
+      responderInfo,
+      categories,
+      this.rect
+    );
+
+    return responders.map((m, idx) => ({
+      ...m,
+      data: { name: 'selectionArea', value: categories[idx] },
+    }));
   }
 
   onMousemove({ responders, mousePosition }) {

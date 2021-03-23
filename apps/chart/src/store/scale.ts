@@ -9,7 +9,7 @@ import {
 } from '@src/helpers/axes';
 import {
   calculateCoordinateScale,
-  calculateScaleForCoordinateLineType,
+  calculateXAxisScaleForCoordinateLineType,
   getStackScaleData,
 } from '@src/scale/coordinateScaleCalculator';
 import { calculateDatetimeScale } from '@src/scale/datetimeScaleCalculator';
@@ -54,8 +54,12 @@ function getLabelScaleData(
       : calculateCoordinateScale(labelOptions);
   }
 
-  if (series.line) {
-    result = calculateScaleForCoordinateLineType(result, options as LineChartOptions, categories);
+  if (series.line && categories && !(options as LineChartOptions).xAxis?.pointOnColumn) {
+    result = calculateXAxisScaleForCoordinateLineType(
+      result,
+      options as LineChartOptions,
+      categories
+    );
   }
 
   return result;

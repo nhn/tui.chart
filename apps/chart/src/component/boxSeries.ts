@@ -16,6 +16,7 @@ import {
   Series,
   Axes,
   Scale,
+  LabelAxisData,
 } from '@t/store/store';
 import {
   BoxSeriesType,
@@ -376,7 +377,7 @@ export default class BoxSeries extends Component {
     return this.eventDetectType === 'grouped'
       ? makeRectResponderModel(
           this.rect,
-          this.isBar ? axes.yAxis! : axes.xAxis!,
+          (this.isBar ? axes.yAxis : axes.xAxis) as LabelAxisData,
           categories,
           !this.isBar
         )
