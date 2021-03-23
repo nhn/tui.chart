@@ -12,4 +12,5 @@ module.exports = {
   },
   setupFiles: ['jest-canvas-mock'],
   watchPathIgnorePatterns: ['<rootDir>/.storybook', '<rootDir>/.stories', '/node_modules/'],
+  testMatch: ['<rootDir>/tests/components/gaugeSeries.spec.ts'],
 };

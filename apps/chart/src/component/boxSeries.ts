@@ -114,7 +114,7 @@ export default class BoxSeries extends Component {
 
   responders!: RectResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: RectResponderModel[] = [];
 
   isBar = true;
 

@@ -80,7 +80,7 @@ export default class BulletSeries extends Component {
 
   responders!: BulletResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: BulletResponderModel[] = [];
 
   theme!: Required<BulletChartSeriesTheme>;
 

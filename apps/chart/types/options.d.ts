@@ -720,7 +720,6 @@ interface RadialBarSeriesOptions extends BaseSeriesOptions {
 export type GaugeSeriesType = {
   name: string;
   data: GaugeSeriesDataType[];
-  visible?: boolean;
   color?: string;
 };
 

@@ -359,8 +359,7 @@ export type ClockHandModel = {
   pin: {
     color: string;
     radius: number;
-    borderColor: string;
-    borderWidth: number;
+    style: StyleProp<CircleStyle, CircleStyleName>;
   };
   degree: number;
   baseLine: number;
@@ -368,10 +367,11 @@ export type ClockHandModel = {
   handSize: number;
   seriesData: (number | string)[];
   index: number;
+  seriesIndex: number;
 };
 
 export type GaugeSeriesModels = {
   clockHand: ClockHandModel[];
-  sector: SectorModel[];
-  backgroundSector: SectorModel[];
+  solid: SectorModel[];
+  backgroundSolid: SectorModel[];
 };

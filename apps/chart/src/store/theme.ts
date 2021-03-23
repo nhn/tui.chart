@@ -182,7 +182,7 @@ function getTheme(options: Options, series: RawSeries): Theme {
   }
   const globalFontFamily = options?.theme?.chart?.fontFamily;
   const theme = deepMergedCopy(
-    getDefaultTheme(globalFontFamily, series, pieSeriesOuterAnchors, isNestedPieChart),
+    getDefaultTheme(series, pieSeriesOuterAnchors, globalFontFamily, isNestedPieChart),
     getThemeOptionsWithSeriesName(options, series, commonSeriesOptions, isNestedPieChart)
   );
 

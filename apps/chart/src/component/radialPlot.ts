@@ -6,7 +6,7 @@ import {
   calculateDegreeToRadian,
   DEGREE_NEGATIVE_90,
   DEGREE_360,
-  getValidDegree,
+  calculateValidAngle,
   DEGREE_0,
 } from '@src/helpers/sector';
 import {
@@ -18,7 +18,7 @@ import {
 } from '@t/options';
 import { RadialPlotModels, RadialPlotModelType } from '@t/components/radialPlot';
 import { LineModel } from '@t/components/axis';
-import { range, isNumber } from '@src/helpers/utils';
+import { range } from '@src/helpers/utils';
 import { CircularAxisTheme } from '@t/theme';
 import { ArcModel } from '@t/components/radialAxis';
 import { isLabelAxisOnYAxis } from '@src/helpers/axes';
@@ -28,7 +28,7 @@ type RenderOptions = {
   categories: string[];
   centerX: number;
   centerY: number;
-  degree: number;
+  centralAngle: number;
   initialRadius: number;
   radius: number;
   radiusRanges: number[];
@@ -113,28 +113,26 @@ export default class RadarPlot extends Component {
     scale: Scale
   ): GaugeRenderOptions {
     const {
-      totalAngle,
-      startAngle,
+      angle: { total, start },
+      radius: { outer },
       clockwise,
       centerX,
       centerY,
-      outerRadius,
-      bandWidth,
-      bandMargin,
     } = circularAxis;
+    const { width: bandWidth, margin: bandMargin } = circularAxis.band!;
 
     return {
       centerX,
       centerY,
       clockwise,
-      totalAngle,
+      totalAngle: total,
       scaleMaxLimitValue: hasCategoryAxis
         ? categories.length
-        : getScaleMaxLimitValue(scale.circularAxis!, totalAngle),
-      startAngle,
-      outerRadius,
-      bandWidth: bandWidth!,
-      bandMargin: bandMargin!,
+        : getScaleMaxLimitValue(scale.circularAxis!, total),
+      startAngle: start,
+      outerRadius: outer,
+      bandWidth,
+      bandMargin,
       hasCategoryAxis,
     };
   }
@@ -144,35 +142,37 @@ export default class RadarPlot extends Component {
     type: RadarPlotType,
     categories: string[] = []
   ): RenderOptions {
-    const { centerX, centerY, radiusRanges, innerRadius, outerRadius } = radialAxes.verticalAxis!;
     const {
-      degree,
-      totalAngle,
-      labels,
+      centerX,
+      centerY,
+      radius: { ranges, inner, outer },
+    } = radialAxes.verticalAxis!;
+    const {
+      angle: { central, total, start, end, drawingStart },
+      label: { labels },
+
       tickInterval,
-      drawingStartAngle,
-      startAngle,
-      endAngle,
+
       clockwise,
     } = radialAxes.circularAxis;
-    const usingArcPlot = totalAngle !== DEGREE_360;
+    const usingArcPlot = total !== DEGREE_360;
     const lineCount = labels.length;
 
     return {
       type,
       categories,
-      degree,
+      centralAngle: central,
       centerX,
       centerY,
-      initialRadius: innerRadius,
-      radius: outerRadius,
-      radiusRanges,
+      initialRadius: inner,
+      radius: outer,
+      radiusRanges: ranges,
       lineCount,
       tickInterval,
-      drawingStartAngle,
+      drawingStartAngle: drawingStart,
       usingArcPlot,
-      startAngle,
-      endAngle,
+      startAngle: start,
+      endAngle: end,
       clockwise,
     };
   }
@@ -192,12 +192,12 @@ export default class RadarPlot extends Component {
   }
 
   makeSpiderwebPlot(renderOptions: RenderOptions): PolygonModel[] {
-    const { degree, centerX, centerY, categories, radiusRanges } = renderOptions;
+    const { centralAngle, centerX, centerY, categories, radiusRanges } = renderOptions;
     const { strokeStyle, lineWidth } = this.circularAxisTheme;
 
     return radiusRanges.map((radius) => {
       const points: Point[] = categories.map((_, index) =>
-        getRadialPosition(centerX, centerY, radius, calculateDegreeToRadian(degree * index))
+        getRadialPosition(centerX, centerY, radius, calculateDegreeToRadian(centralAngle * index))
       );
 
       return {
@@ -220,7 +220,7 @@ export default class RadarPlot extends Component {
       x: centerX,
       y: centerY,
       borderColor: strokeStyle,
-      borderWidth: lineWidth
+      borderWidth: lineWidth,
     }));
   }
 
@@ -248,7 +248,7 @@ export default class RadarPlot extends Component {
       initialRadius,
       radius,
       lineCount,
-      degree,
+      centralAngle,
       tickInterval,
       drawingStartAngle,
       clockwise,
@@ -256,7 +256,7 @@ export default class RadarPlot extends Component {
     const { strokeStyle, lineWidth } = this.circularAxisTheme;
 
     return range(0, lineCount).reduce<LineModel[]>((acc, cur, index) => {
-      const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
+      const startDegree = drawingStartAngle + centralAngle * index * (clockwise ? 1 : -1);
       const { x, y } = getRadialPosition(
         centerX,
         centerY,
@@ -313,10 +313,10 @@ export default class RadarPlot extends Component {
           findCategoryIndex(categories, rangeData[0].toString())
         : Number(rangeData[1]) - Number(rangeData[0]);
       const degree = (value / scaleMaxLimitValue) * totalAngle * (clockwise ? 1 : -1);
-      const validDegree = getValidDegree(degree);
+      const validDegree = calculateValidAngle(degree);
       const prevModel = sectors[sectors.length - 1];
       const startDegree = index && prevModel ? prevModel.degree.end : startAngle;
-      const endDegree = getValidDegree(startDegree + validDegree);
+      const endDegree = calculateValidAngle(startDegree + validDegree);
 
       sectors.push({
         type: 'sector',

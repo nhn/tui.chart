@@ -92,12 +92,11 @@ export interface AxisDataParams {
   isCoordinateTypeChart?: boolean;
 }
 
-export function isCenterYAxis(options: Options, isBar: boolean) {
+export function isCenterYAxis(options: ChartOptionsUsingYAxis) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
-  const alignCenter =
-    ((options as ChartOptionsUsingYAxis)?.yAxis as BarTypeYAxisOption)?.align === 'center';
+  const alignCenter = (options?.yAxis as BarTypeYAxisOption)?.align === 'center';
 
-  return isBar && diverging && alignCenter;
+  return diverging && alignCenter;
 }
 
 function isDivergingBoxSeries(series: Series, options: Options) {
@@ -375,7 +374,7 @@ const axes: StoreModule = {
       yAxis: {} as AxisData,
     };
 
-    if (isCenterYAxis(options as ChartOptionsUsingYAxis, !!series.bar)) {
+    if (!!series.bar && isCenterYAxis(options as ChartOptionsUsingYAxis)) {
       axesState.centerYAxis = {} as CenterYAxisData;
     }
 

@@ -17,11 +17,11 @@ export default class AxisTitle extends Component {
 
   theme!: Required<FontTheme>;
 
-  initialize({ name }: { name: AxisType | 'circularAxis' }) {
+  initialize({ name }: { name: AxisType }) {
     this.type = 'axisTitle';
     this.name = name;
     this.isYAxis = includes([AxisType.Y, AxisType.SECONDARY_Y], name);
-    this.isCircularAxis = this.name === 'circularAxis';
+    this.isCircularAxis = this.name === AxisType.CIRCULAR;
   }
 
   getTitlePosition(offsetX: number, offsetY: number) {
@@ -52,24 +52,28 @@ export default class AxisTitle extends Component {
   }
 
   getTextAlign(hasCenterYAxis = false) {
-    let result: CanvasTextAlign = 'right';
-
     if (this.name === AxisType.Y) {
-      result = hasCenterYAxis ? 'center' : 'left';
-    } else if (this.isCircularAxis) {
-      result = 'center';
+      return hasCenterYAxis ? 'center' : 'left';
+    }
+    if (this.isCircularAxis) {
+      return 'center';
     }
 
-    return result;
+    return 'right';
   }
 
   getCircularAxisTitleRect(
     option: Required<AxisTitleOption>,
     plotRect: Rect,
-    circularAxis: CircularAxisData
+    circularAxisData: CircularAxisData
   ) {
     const { x, y } = plotRect;
-    const { centerX, centerY, outerRadius, axisSize } = circularAxis;
+    const {
+      centerX,
+      centerY,
+      axisSize,
+      radius: { outer: outerRadius },
+    } = circularAxisData;
     const { offsetY } = option;
 
     return {

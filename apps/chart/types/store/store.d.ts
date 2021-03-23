@@ -177,6 +177,8 @@ export interface StoreModule extends StoreOptions {
     | 'root'
     | 'plot'
     | 'axes'
+    | 'gaugeAxes'
+    | 'radialAxes'
     | 'scale'
     | 'layout'
     | 'category'
@@ -302,6 +304,7 @@ export type ChartOptions = {
 } & Size;
 
 type BaseRadialAxes = {
+  /*
   labels: string[];
   axisSize: number;
   centerX: number;
@@ -314,6 +317,29 @@ type BaseRadialAxes = {
   outerRadius: number;
   startAngle: number;
   endAngle: number;
+  */
+
+  // refractor
+  /*
+  label: {
+    labels: string[];
+    interval: number;
+    margin: number;
+    maxWidth: number;
+    maxHeight: number;
+  };
+  radius: {
+    inner: number;
+    outer: number;
+  };
+  angle: {
+    start: number;
+    end: number;
+  };
+  */
+  axisSize: number;
+  centerX: number;
+  centerY: number;
 };
 
 type SolidData = {
@@ -323,7 +349,8 @@ type SolidData = {
   clockHand: boolean;
 };
 interface CircularAxisData extends BaseRadialAxes {
-  degree: number;
+  /*
+  centralAngle: number;
   tickInterval: number;
   totalAngle: number;
   drawingStartAngle: number;
@@ -333,13 +360,68 @@ interface CircularAxisData extends BaseRadialAxes {
   maxClockHandSize?: number;
   title?: AxisTitleOption;
   solidData?: SolidData;
+  */
+
+  // refactor
+  label: {
+    labels: string[];
+    interval: number;
+    margin: number;
+    maxWidth: number;
+    maxHeight: number;
+  };
+  radius: {
+    inner: number;
+    outer: number;
+  };
+  angle: {
+    start: number;
+    end: number;
+    total: number;
+    central: number;
+    drawingStart: number;
+  };
+  band?: {
+    width: number;
+    margin: number;
+  };
+
+  tickInterval: number;
+  clockwise: boolean;
+  maxClockHandSize?: number;
+  title?: AxisTitleOption;
+  solidData?: SolidData;
 }
 
 interface VerticalAxisData extends BaseRadialAxes {
+  /*
   tickDistance: number;
   radiusRanges: number[];
   pointOnColumn: boolean;
   labelAlign: CanvasTextAlign;
+  */
+
+  // refactor
+  label: {
+    labels: string[];
+    interval: number;
+    margin: number;
+    maxWidth: number;
+    maxHeight: number;
+    align: CanvasTextAlign;
+  };
+  radius: {
+    inner: number;
+    outer: number;
+    ranges: number[];
+  };
+  angle: {
+    start: number;
+    end: number;
+  };
+
+  tickDistance: number;
+  pointOnColumn: boolean;
 }
 
 type RadialAxes = {

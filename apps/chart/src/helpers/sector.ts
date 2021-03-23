@@ -180,14 +180,15 @@ export function getRadiusRanges(radiusRanges: number[], padding: number) {
   }, [] as RadiusRange[]);
 }
 
-export function getValidDegree(degree: number) {
-  if (degree < DEGREE_0) {
-    return DEGREE_360 + degree;
+// Recalculate to an angle between 0 and 360 degrees.
+export function calculateValidAngle(angle: number) {
+  if (angle < DEGREE_0) {
+    return DEGREE_360 + (angle % DEGREE_360);
   }
 
-  if (degree > DEGREE_360) {
-    return degree - DEGREE_360;
+  if (angle > DEGREE_360) {
+    return angle % DEGREE_360;
   }
 
-  return degree;
+  return angle;
 }

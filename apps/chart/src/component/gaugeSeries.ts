@@ -6,8 +6,9 @@ import {
   ClockHandModel,
   GaugeResponderModel,
   ClockHandResponderModel,
+  CircleStyle,
 } from '@t/components/series';
-import { GaugeChartSeriesTheme, ClockHandTheme, PinTheme } from '@t/theme';
+import { GaugeChartSeriesTheme, ClockHandSizeTheme } from '@t/theme';
 import {
   isNumber,
   pick,
@@ -28,9 +29,11 @@ import { RespondersThemeType } from '@src/helpers/responders';
 import {
   getRadialPosition,
   calculateDegreeToRadian,
-  getValidDegree,
+  calculateValidAngle,
   withinRadian,
   DEGREE_NEGATIVE_90,
+  DEGREE_360,
+  DEGREE_90,
 } from '@src/helpers/sector';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getRGBA } from '@src/helpers/color';
@@ -54,21 +57,24 @@ type RenderOptions = {
   drawingStartAngle: number;
   outerRadius: number;
   solidData: SolidData;
+  useClockHand: boolean;
 };
 
 type TooltipMap = {
-  sector: SectorResponderModel[];
+  solid: SectorResponderModel[];
   clockHand: ClockHandResponderModel[];
 };
 
+const DETECTION_SIZE_MARGIN = 3;
+
 export default class GaugeSeries extends Component {
-  models: GaugeSeriesModels = { clockHand: [], sector: [], backgroundSector: [] };
+  models: GaugeSeriesModels = { clockHand: [], solid: [], backgroundSolid: [] };
 
   drawModels!: GaugeSeriesModels;
 
   responders!: GaugeResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: GaugeResponderModel[] = [];
 
   tooltipMap!: TooltipMap;
 
@@ -91,7 +97,10 @@ export default class GaugeSeries extends Component {
       return;
     }
 
-    const { startAngle, totalAngle, clockwise } = this.circularAxis;
+    const {
+      angle: { start: startAngle, total: totalAngle },
+      clockwise,
+    } = this.circularAxis;
     const currentDegree = clockwise
       ? startAngle + totalAngle * delta
       : startAngle - totalAngle * delta;
@@ -112,29 +121,31 @@ export default class GaugeSeries extends Component {
         x,
         y,
         handSize,
-        calculateDegreeToRadian(getValidDegree(currentDegree))
+        calculateDegreeToRadian(calculateValidAngle(currentDegree))
       );
       this.drawModels.clockHand[index].x2 = x2;
       this.drawModels.clockHand[index].y2 = y2;
     });
 
-    this.models.sector.forEach(() => {
-      const index = this.models.sector.findIndex(({ animationDegree }) => {
+    this.models.solid.forEach(() => {
+      const index = this.models.solid.findIndex(({ animationDegree }) => {
         const { start, end } = animationDegree!;
 
         return withinRadian(clockwise, start, end, currentDegree);
       });
 
-      this.syncSectorEndAngle(index < 0 ? this.models.sector.length : index);
+      this.syncSectorEndAngle(index < 0 ? this.models.solid.length : index);
 
       if (index !== -1) {
-        this.drawModels.sector[index].degree.end = getValidDegree(currentDegree);
+        this.drawModels.solid[index].degree.end = calculateValidAngle(currentDegree);
       }
     });
   }
 
   updateModels(current, target, delta: number) {
-    const { totalAngle } = this.circularAxis;
+    const {
+      angle: { total },
+    } = this.circularAxis;
 
     Object.keys(current).forEach((key) => {
       if (!current || !target) {
@@ -145,9 +156,11 @@ export default class GaugeSeries extends Component {
         if (isNumber(current[key])) {
           current[key] = current[key] + (target[key] - current[key]) * delta;
         } else if (key === 'degree') {
-          if (totalAngle < 360 && current.degree.end < 90) {
+          if (total < DEGREE_360 && current.degree.end < DEGREE_90) {
             current[key].end =
-              360 + current[key].end - (360 - target[key].end + current[key].end) * delta;
+              DEGREE_360 +
+              current[key].end -
+              (DEGREE_360 - target[key].end + current[key].end) * delta;
           } else {
             current[key].end = current[key].end + (target[key].end - current[key].end) * delta;
           }
@@ -163,31 +176,31 @@ export default class GaugeSeries extends Component {
       this.updateModels(this.drawModels.clockHand[index], model, delta);
     });
 
-    this.models.sector.forEach((model, index) => {
-      this.updateModels(this.drawModels.sector[index], model, delta);
+    this.models.solid.forEach((model, index) => {
+      this.updateModels(this.drawModels.solid[index], model, delta);
     });
   }
 
   syncEndAngle(index: number) {
-    if (
-      this.models.clockHand[index].x2 !== this.drawModels.clockHand[index].x2 ||
-      this.models.clockHand[index].y2 !== this.drawModels.clockHand[index].y2
-    ) {
-      this.drawModels.clockHand[index].x2 = this.models.clockHand[index].x2;
-      this.drawModels.clockHand[index].y2 = this.models.clockHand[index].y2;
+    const model = this.models.clockHand[index];
+    const drawModel = this.drawModels.clockHand[index];
+
+    if (model.x2 !== drawModel.x2 || model.y2 !== drawModel.y2) {
+      drawModel.x2 = model.x2;
+      drawModel.y2 = model.y2;
     }
   }
 
   syncSectorEndAngle(index: number) {
-    if (index < 1) {
+    if (!index) {
       return;
     }
 
     for (let i = 0; i < index; i += 1) {
-      const prevTargetEndDegree = this.models.sector[i].degree.end;
+      const prevTargetEndDegree = this.models.solid[i].degree.end;
 
-      if (this.drawModels.sector[i].degree.end !== prevTargetEndDegree) {
-        this.drawModels.sector[i].degree.end = prevTargetEndDegree;
+      if (this.drawModels.solid[i].degree.end !== prevTargetEndDegree) {
+        this.drawModels.solid[i].degree.end = prevTargetEndDegree;
       }
     }
   }
@@ -218,13 +231,13 @@ export default class GaugeSeries extends Component {
 
     const clockHandModels = this.renderClockHands(seriesData, renderOptions);
     let sectorModels: SectorModel[] = [];
-    this.models.clockHand = !renderOptions.solidData.clockHand ? [] : clockHandModels;
+    this.models.clockHand = renderOptions.useClockHand ? clockHandModels : [];
 
     if (renderOptions.solidData.visible) {
       sectorModels = this.renderSectors(seriesData, renderOptions);
 
-      this.models.backgroundSector = this.renderBackgroundSector(renderOptions);
-      this.models.sector = sectorModels;
+      this.models.backgroundSolid = this.renderBackgroundSolid(renderOptions);
+      this.models.solid = sectorModels;
     }
 
     const tooltipData = this.makeTooltipData(clockHandModels);
@@ -255,7 +268,9 @@ export default class GaugeSeries extends Component {
   }
 
   private initDrawModels() {
-    const { startAngle } = this.circularAxis;
+    const {
+      angle: { start },
+    } = this.circularAxis;
 
     this.drawModels = {
       clockHand: this.models.clockHand.map((m) => {
@@ -263,13 +278,13 @@ export default class GaugeSeries extends Component {
           m.x,
           m.y,
           m.handSize,
-          calculateDegreeToRadian(startAngle)
+          calculateDegreeToRadian(start)
         );
 
         return { ...m, x2, y2, testDegree: 0 };
       }),
-      backgroundSector: this.models.backgroundSector,
-      sector: this.models.sector.map((m) => ({
+      backgroundSolid: this.models.backgroundSolid,
+      solid: this.models.solid.map((m) => ({
         ...m,
         degree: { ...m.degree, end: m.degree.start },
       })),
@@ -285,7 +300,7 @@ export default class GaugeSeries extends Component {
       ? []
       : clockHandModels.map((m, index) => ({
           ...m,
-          detectionSize: m.baseLine + 3,
+          detectionSize: m.baseLine + DETECTION_SIZE_MARGIN,
           data: { ...tooltipData[index] },
         }));
 
@@ -300,21 +315,16 @@ export default class GaugeSeries extends Component {
       : clockHandResponders;
   }
 
-  private getHandSize(size: number[] | string[] | number | string, index = 0) {
+  private getHandSize(size: ClockHandSizeTheme, index = 0) {
     const maxClockHandSize = this.circularAxis.maxClockHandSize!;
-    let handSize;
 
     if (size) {
-      if (Array.isArray(size)) {
-        handSize = calculateSizeWithPercentString(maxClockHandSize, size[index]);
-      } else {
-        handSize = calculateSizeWithPercentString(maxClockHandSize, size);
-      }
-    } else {
-      handSize = maxClockHandSize;
+      return Array.isArray(size)
+        ? calculateSizeWithPercentString(maxClockHandSize, size[index])
+        : calculateSizeWithPercentString(maxClockHandSize, size);
     }
 
-    return handSize;
+    return maxClockHandSize;
   }
 
   private renderClockHands(
@@ -331,10 +341,10 @@ export default class GaugeSeries extends Component {
       drawingStartAngle,
     } = renderOptions;
     const seriesModels: ClockHandModel[] = [];
-    const { size, baseLine, color: clockHandColor } = this.theme.clockHand as ClockHandTheme;
-    const { radius, color: pinColor, borderWidth, borderColor } = this.theme.pin as PinTheme;
+    const { size, baseLine, color: clockHandColor } = this.theme.clockHand;
+    const { radius, color: pinColor, borderWidth, borderColor } = this.theme.pin;
 
-    seriesData.forEach(({ name, data, color }) => {
+    seriesData.forEach(({ name, data, color }, seriesIndex) => {
       const seriesColor = this.getSeriesColor(name, color);
       data.forEach((value, index) => {
         const val = isString(value)
@@ -342,8 +352,8 @@ export default class GaugeSeries extends Component {
           : value;
         const degree =
           drawingStartAngle + (val / scaleMaxLimitValue) * totalAngle * (clockwise ? 1 : -1);
-        const validDegree = getValidDegree(degree);
-        const handSize = this.getHandSize(size, index);
+        const validDegree = calculateValidAngle(degree);
+        const handSize = this.getHandSize(size!, index);
 
         const { x: x2, y: y2 } = getRadialPosition(
           centerX,
@@ -362,17 +372,22 @@ export default class GaugeSeries extends Component {
           x2,
           y2,
           pin: {
-            radius,
+            radius: radius!,
             color: pinColor ?? seriesColor,
-            borderColor: borderColor ?? getRGBA(seriesColor, 0.1),
-            borderWidth: borderWidth ? borderWidth + radius : 0,
+            style: [
+              {
+                strokeStyle: borderColor ?? getRGBA(seriesColor, 0.1),
+                lineWidth: borderWidth ? borderWidth + radius! : 0,
+              },
+            ],
           },
           degree: validDegree,
           animationDegree: degree,
-          baseLine,
+          baseLine: baseLine!,
           handSize,
           seriesData: data,
           index,
+          seriesIndex,
         });
       });
     });
@@ -380,9 +395,9 @@ export default class GaugeSeries extends Component {
     return seriesModels;
   }
 
-  private renderBackgroundSector(renderOptions: RenderOptions): SectorModel[] {
+  private renderBackgroundSolid(renderOptions: RenderOptions): SectorModel[] {
     const { centerX, centerY, startAngle, totalAngle, clockwise, solidData } = renderOptions;
-    const { color } = this.theme.solid.backgroundSector!;
+    const { color } = this.theme.solid.backgroundSolid!;
 
     return [
       {
@@ -425,7 +440,7 @@ export default class GaugeSeries extends Component {
       const value = data[0];
       const val = isString(value) ? categories.findIndex((category) => category === value) : value;
       const degree = (val / scaleMaxLimitValue) * totalAngle * (clockwise ? 1 : -1);
-      const validDegree = getValidDegree(degree);
+      const validDegree = calculateValidAngle(degree);
       const startDegree = startAngle;
       const endDegree = startDegree + degree;
       const animationStartDegree = startAngle;
@@ -457,7 +472,7 @@ export default class GaugeSeries extends Component {
   }
 
   private makeTooltipMap(tooltipData: TooltipData[], renderOptions: RenderOptions): TooltipMap {
-    const { clockHand, sector } = this.models;
+    const { clockHand, solid } = this.models;
     const {
       solidData: { clockHand: clockHandVisible },
     } = renderOptions;
@@ -472,16 +487,16 @@ export default class GaugeSeries extends Component {
           });
         }
 
-        if (sector[index]) {
-          acc.sector.push({
-            ...sector[index],
+        if (solid[index]) {
+          acc.solid.push({
+            ...solid[index],
             data,
           });
         }
 
         return acc;
       },
-      { sector: [] as SectorResponderModel[], clockHand: [] as ClockHandResponderModel[] }
+      { solid: [] as SectorResponderModel[], clockHand: [] as ClockHandResponderModel[] }
     );
   }
 
@@ -494,28 +509,27 @@ export default class GaugeSeries extends Component {
     const {
       centerX,
       centerY,
-      startAngle,
-      endAngle,
-      drawingStartAngle,
-      outerRadius,
       solidData,
+      angle: { start, end, drawingStart },
+      radius: { outer },
     } = this.circularAxis;
     const clockwise = options?.clockwise ?? true;
-    const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
+    const totalAngle = getTotalAngle(clockwise, start, end);
 
     return {
       clockwise,
       centerX,
       centerY,
-      angleRange: { start: startAngle, end: endAngle },
+      angleRange: { start, end },
       totalAngle,
       scaleMaxLimitValue: hasCategoryAxis
         ? categories.length
         : getScaleMaxLimitValue(scale.circularAxis!, totalAngle),
-      startAngle,
+      startAngle: start,
       categories,
-      drawingStartAngle,
-      outerRadius,
+      drawingStartAngle: drawingStart,
+      outerRadius: outer,
+      useClockHand: solidData?.clockHand ?? true,
       solidData: solidData!,
     };
   }
@@ -531,23 +545,11 @@ export default class GaugeSeries extends Component {
   }
 
   makeTooltipData(seriesModels: ClockHandModel[]): TooltipData[] {
-    const tooltipData: TooltipData[] = [];
-
-    seriesModels.forEach(({ color, name, value }) => {
-      if (!isNull(value)) {
-        tooltipData.push({
-          label: name!,
-          color,
-          value: value!,
-        });
-      }
-    });
-
-    return tooltipData;
-  }
-
-  makeTooltipResponder(responders: SectorResponderModel[]) {
-    return responders.map((responder) => ({ ...responder }));
+    return seriesModels.reduce<TooltipData[]>(
+      (acc, { color, name, value, index, seriesIndex }) =>
+        isNull(value) ? acc : [...acc, { label: name!, color, value: value!, index, seriesIndex }],
+      []
+    );
   }
 
   onMousemove({ responders }) {
@@ -555,7 +557,7 @@ export default class GaugeSeries extends Component {
       models: this.getResponderModelsWithTheme(responders, 'hover'),
       name: this.name,
     });
-    this.activatedResponders = this.makeTooltipResponder(responders);
+    this.activatedResponders = responders.map((responder) => ({ ...responder }));
 
     this.eventBus.emit('seriesPointHovered', {
       models: this.activatedResponders,
@@ -565,22 +567,15 @@ export default class GaugeSeries extends Component {
   }
 
   getResponderModels(responders: GaugeResponderModel[]) {
-    const { clockHand, sector } = this.tooltipMap;
-    const models: GaugeResponderModel[] = [];
+    const { clockHand, solid } = this.tooltipMap;
 
-    responders.forEach((responder) => {
+    return responders.reduce<GaugeResponderModel[]>((acc, responder) => {
       const index = responder.index!;
+      const clockHandModel = clockHand[index] ? [clockHand[index]] : [];
+      const solidModel = solid[index] ? [solid[index]] : [];
 
-      if (clockHand[index]) {
-        models.push(clockHand[index]);
-      }
-
-      if (sector[index]) {
-        models.push(sector[index]);
-      }
-    });
-
-    return models;
+      return [...acc, ...clockHandModel, ...solidModel];
+    }, []);
   }
 
   onClick({ responders }) {
@@ -629,6 +624,13 @@ export default class GaugeSeries extends Component {
     const { size, baseLine, color: clockHandColor } = clockHand!;
     const { radius, color: pinColor, borderWidth, borderColor } = pin!;
     const pinRadius = radius ?? responder.pin.radius;
+    const pinStyle = [
+      {
+        strokeStyle:
+          borderColor ?? getRGBA((responder.pin.style[0] as CircleStyle).strokeStyle!, 0.3),
+        lineWidth: borderWidth ? borderWidth + pinRadius : 0,
+      },
+    ];
 
     return {
       ...responder,
@@ -636,8 +638,7 @@ export default class GaugeSeries extends Component {
       pin: {
         radius: pinRadius,
         color: pinColor ?? responder.pin.color,
-        borderColor: borderColor ?? getRGBA(responder.pin.borderColor, 0.3),
-        borderWidth: borderWidth ? borderWidth + pinRadius : 0,
+        style: pinStyle,
       },
       baseLine: baseLine ?? responder.baseLine,
       handSize: size ? this.getHandSize(size, responder.index) : responder.handSize,
@@ -670,7 +671,7 @@ export default class GaugeSeries extends Component {
     }
 
     const model: GaugeResponderModel =
-      this.tooltipMap.clockHand[index] ?? this.tooltipMap.sector[index];
+      this.tooltipMap.clockHand[index] ?? this.tooltipMap.solid[index];
     const models =
       this.getResponderModelsWithTheme(this.getResponderModels([model]), 'select') ?? [];
 
@@ -698,6 +699,7 @@ export default class GaugeSeries extends Component {
       models,
       name: this.name,
     });
+
     this.activatedResponders = models;
 
     this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });

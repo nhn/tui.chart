@@ -145,7 +145,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   data: [10, 20, 30, 40],
    * });
    */
-  public addSeries(data: RadialBarSeriesType) {
+  addSeries(data: RadialBarSeriesType) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -169,7 +169,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   ]
    * });
    */
-  public setData(data: RadialBarSeriesData) {
+  setData(data: RadialBarSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { radialBar: series }, categories });
@@ -181,11 +181,11 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -193,11 +193,11 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -215,10 +215,10 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   }
    * });
    */
-  public setOptions = (options: RadialBarChartOptions) => {
+  setOptions(options: RadialBarChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -234,15 +234,15 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   }
    * });
    */
-  public updateOptions = (options: RadialBarChartOptions) => {
+  updateOptions(options: RadialBarChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
-   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed. If eventType is 'grouped', only index is needed.
-   *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only index is needed.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.index - Index of data within series. If 'series.eventDetectType' is "grouped", only index is needed.
    *      @param {number} [seriesInfo.seriesIndex] - Index of series
    * @api
    * @example
@@ -252,9 +252,9 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * // eventDetectType is 'point'
    * chart.showTooltip({index: 1, seriesIndex: 2});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -262,7 +262,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

@@ -10,6 +10,7 @@ type RadialAxisModels = {
 };
 
 type ArcModel = {
+  type: 'arc';
   x: number;
   y: number;
   angle: { start: number; end: number };

@@ -54,7 +54,7 @@ import { BulletChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {number} [props.options.series.vertical] - Whether to use vertical bullet series or not.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *     @param {Object} [props.options.xAxis]
- *       @param {Object} [props.options.xAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
  *       @param {Object} [props.options.xAxis.tick] - Option to adjust tick interval.
@@ -63,7 +63,7 @@ import { BulletChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object} [props.options.yAxis]
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.yAxis.title] - Axis title.
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -116,7 +116,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -165,7 +165,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    *   ],
    * });
    */
-  public addSeries(data: BulletSeriesType) {
+  addSeries(data: BulletSeriesType) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -190,7 +190,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    *   ]
    * });
    */
-  public setData(data: BulletSeriesData) {
+  setData(data: BulletSeriesData) {
     this.resetSeries();
     this.store.dispatch('setData', { series: { bullet: data.series } });
   }
@@ -201,11 +201,11 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -213,11 +213,11 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -244,10 +244,10 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: BulletChartOptions) => {
+  setOptions(options: BulletChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -264,10 +264,10 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: BulletChartOptions) => {
+  updateOptions(options: BulletChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -277,9 +277,9 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    * @example
    * chart.showTooltip({seriesIndex: 1});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -287,7 +287,7 @@ export default class BulletChart extends Chart<BulletChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip = () => {
     this.eventBus.emit('hideTooltip');
   };
 }

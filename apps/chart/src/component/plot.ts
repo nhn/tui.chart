@@ -59,7 +59,7 @@ export default class Plot extends Component {
   renderLines(
     axes: Axes,
     categories: string[],
-    lines: PlotLine[],
+    lines: PlotLine[] = [],
     xAxisLimit?: ValueEdge
   ): LineModel[] {
     return (lines ?? []).map(({ value, color }) => {

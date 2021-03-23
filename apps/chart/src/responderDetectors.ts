@@ -22,8 +22,7 @@ function withinRotationRect({
   yIntercept,
   mouseX,
   mouseY,
-  modelX,
-  modelX2,
+  modelXPositions,
   compX,
   compY,
   detectionSize = 0,
@@ -32,16 +31,17 @@ function withinRotationRect({
   yIntercept: number;
   mouseX: number;
   mouseY: number;
-  modelX: number;
-  modelX2: number;
+  modelXPositions: number[];
   compX: number;
   compY: number;
   detectionSize: number;
 }) {
+  const [x1, x2] = modelXPositions;
   const posY = slope * mouseX + yIntercept;
   const withinRadius =
-    (modelX > modelX2 && mouseX >= compX + modelX2 && mouseX <= compX + modelX) ||
-    (modelX < modelX2 && modelX2 <= compX + modelX2 && modelX2 >= compX + modelX);
+    (x1 > x2 && mouseX >= compX + x2 && mouseX <= compX + x1) ||
+    (x1 < x2 && x2 <= compX + x2 && x2 >= compX + x1);
+
   const withinDetectionSize =
     posY - detectionSize + compY <= mouseY && mouseY <= posY + detectionSize + compY;
 
@@ -111,38 +111,35 @@ export const responderDetectors: ResponderDetectors = {
 
     const numerator = y2 - modelY;
     const denominator = x2 - modelX;
-    let result = false;
+    let withinLine = false;
 
     if (numerator === 0) {
-      // y = a
       const minX = Math.min(modelX, x2);
       const maxX = Math.max(modelX, x2);
 
-      result =
+      withinLine =
         x - compX >= minX &&
         x - compX <= maxX &&
         y >= modelY + compY - detectionSize &&
         y <= modelY + compY + detectionSize;
     } else if (denominator === 0) {
-      // x = a
       const minY = Math.min(modelY, y2);
       const maxY = Math.max(modelY, y2);
 
-      result =
+      withinLine =
         y - compY >= minY &&
         y - compY <= maxY &&
         x >= modelX + compX - detectionSize &&
         x <= modelX + compX + detectionSize;
     } else {
-      // y = ax + b
       const slope = numerator / denominator;
       const xPos = x - (modelX + compX);
       const yPos = y - (modelY + compY);
 
-      result = slope * xPos === yPos;
+      withinLine = slope * xPos === yPos;
     }
 
-    return result;
+    return withinLine;
   },
   boxPlot: (
     mousePosition: Point,
@@ -166,50 +163,51 @@ export const responderDetectors: ResponderDetectors = {
   ) => {
     const { x, y } = mousePosition;
     const { x: compX, y: compY } = componentRect;
-    const { x: centerX, y: centerY, x2, y2, detectionSize = 5 } = model;
+    const { x: centerX, y: centerY, x2, y2, handSize, detectionSize = 5 } = model;
 
     const numerator = y2 - centerY;
     const denominator = x2 - centerX;
-    let result = false;
+    let withinClockHand = false;
 
     if (numerator === 0) {
-      // y = a
       const minX = Math.min(centerX, x2);
       const maxX = Math.max(centerX, x2);
 
-      result =
+      withinClockHand =
         x - compX >= minX &&
         x - compX <= maxX &&
         y >= centerY + compY - detectionSize &&
         y <= centerY + compY + detectionSize;
     } else if (denominator === 0) {
-      // x = a
       const minY = Math.min(centerY, y2);
       const maxY = Math.max(centerY, y2);
 
-      result =
+      withinClockHand =
         y - compY >= minY &&
         y - compY <= maxY &&
         x >= centerX + compX - detectionSize &&
         x <= centerX + compX + detectionSize;
     } else {
-      // y = ax + b
       const slope = numerator / denominator;
       const yIntercept = centerY - slope * centerX;
+      /*
+      const xPos = x - (centerX + compX);
+      const yPos = y - (centerY + compY);
+      const insideOuterRadius = xPos ** 2 + yPos ** 2 <= handSize ** 2;
+      */
 
-      result = withinRotationRect({
+      withinClockHand = withinRotationRect({
         slope,
         yIntercept,
         mouseX: x,
         mouseY: y,
-        modelX: centerX,
-        modelX2: x2,
+        modelXPositions: [centerX, x2],
         compX,
         compY,
         detectionSize,
       });
     }
 
-    return result;
+    return withinClockHand;
   },
 };

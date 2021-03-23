@@ -59,7 +59,7 @@ import { BubbleChartProps, SelectSeriesInfo } from '@t/charts';
  *     @param {Object} [props.options.series]
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *     @param {Object} [props.options.xAxis]
- *       @param {Object} [props.options.xAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
  *       @param {Object} [props.options.xAxis.tick] - Option to adjust tick interval.
@@ -68,7 +68,7 @@ import { BubbleChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object} [props.options.yAxis]
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.yAxis.title] - Axis title.
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -123,7 +123,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -162,11 +162,11 @@ export default class BubbleChart extends Chart<BaseOptions> {
    *   {x: 30, y: 40, r: 10, label: 'label2'},
    * ]);
    */
-  public addData = (data: BubbleSeriesDataType[]) => {
+  addData(data: BubbleSeriesDataType[]) {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addData', { data });
-  };
+  }
 
   /**
    * Add series.
@@ -183,7 +183,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
    *   ],
    * });
    */
-  public addSeries(data: BubbleSeriesInput) {
+  addSeries(data: BubbleSeriesInput) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -205,7 +205,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
    *   ]
    * });
    */
-  public setData(data: BubbleSeriesData) {
+  setData(data: BubbleSeriesData) {
     this.resetSeries();
     this.store.dispatch('setData', { series: { bubble: data.series } });
   }
@@ -236,10 +236,10 @@ export default class BubbleChart extends Chart<BaseOptions> {
    *   },
    * });
    */
-  public setOptions = (options: BubbleChartOptions) => {
+  setOptions(options: BubbleChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -256,10 +256,10 @@ export default class BubbleChart extends Chart<BaseOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: BubbleChartOptions) => {
+  updateOptions(options: BubbleChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -270,9 +270,9 @@ export default class BubbleChart extends Chart<BaseOptions> {
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -280,7 +280,7 @@ export default class BubbleChart extends Chart<BaseOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

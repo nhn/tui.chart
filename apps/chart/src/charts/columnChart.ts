@@ -68,7 +68,7 @@ import { ColumnChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *       @param {boolean} [props.options.series.shift=false] - Whether to use shift when addData or not.
  *     @param {Object} [props.options.xAxis]
- *       @param {Object} [props.options.xAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
  *       @param {Object} [props.options.xAxis.tick] - Option to adjust tick interval.
@@ -77,7 +77,7 @@ import { ColumnChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.yAxis.title] - Axis title.
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -131,7 +131,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
     const stackChart = !!this.store.initStoreState.options.series?.stack;
 
@@ -171,11 +171,11 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    * @example
    * chart.addData([10, 20], '6');
    */
-  public addData = (data: BoxSeriesDataType[], category: string) => {
+  addData(data: BoxSeriesDataType[], category: string) {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addData', { data, category });
-  };
+  }
 
   /**
    * Add series.
@@ -189,7 +189,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    *   data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
    * });
    */
-  public addSeries(data: BoxSeriesInput<BoxSeriesDataType>) {
+  addSeries(data: BoxSeriesInput<BoxSeriesDataType>) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -213,7 +213,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    *   ]
    * });
    */
-  public setData(data: BoxSeriesData) {
+  setData(data: BoxSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { column: series }, categories });
@@ -225,11 +225,11 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -237,11 +237,11 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -269,10 +269,10 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: ColumnChartOptions) => {
+  setOptions(options: ColumnChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -289,23 +289,23 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: ColumnChartOptions) => {
+  updateOptions(options: ColumnChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only seriesIndex is needed.
+   *      @param {number} seriesInfo.index - Index of data within series. If 'series.eventDetectType' is "grouped", only seriesIndex is needed.
    *      @param {number} [seriesInfo.seriesIndex] - Index of series.
    * @api
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -313,7 +313,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

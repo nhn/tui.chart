@@ -1,4 +1,4 @@
-import { ChartSizeInput, PlotLine, PlotBand, GaugePlotBand } from '@t/options';
+import { ChartSizeInput } from '@t/options';
 
 type PickedKey<T, K extends keyof T> = keyof Pick<T, K>;
 type OmittedKey<T, K extends keyof T> = keyof Omit<T, K>;
@@ -322,10 +322,4 @@ export function getInitialSize(size?: ChartSizeInput) {
 
 export function isAutoValue(value?: ChartSizeInput) {
   return value === 'auto';
-}
-
-export function isExistPlotId<T extends PlotLine | PlotBand | GaugePlotBand>(plots: T[], data: T) {
-  return plots.some(
-    ({ id: bandId }) => !isUndefined(bandId) && !isUndefined(data.id) && bandId === data.id
-  );
 }

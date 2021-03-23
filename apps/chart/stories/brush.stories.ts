@@ -890,8 +890,7 @@ export const clockHandBrush = () => {
     baseLine: 4,
     pin: {
       color: '#ff0000',
-      borderColor: 'rgba(255, 0, 0, 0.1)',
-      borderWidth: 5,
+      style: [{ strokeStyle: 'rgba(255, 0, 0, 0.1)', lineWidth: 5 }],
       radius: 5,
     },
   } as ClockHandModel);

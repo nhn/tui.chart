@@ -72,7 +72,7 @@ import { AreaChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *       @param {boolean|Object} [props.options.series.stack] - Option to decide whether to use stack chart and type of stack chart. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Area Chart guide} on github.
  *     @param {Object} [props.options.xAxis]
- *       @param {Object} [props.options.xAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.pointOnColumn=false] - Whether to move the start of the chart to the center of the column.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
@@ -82,7 +82,7 @@ import { AreaChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.yAxis.title] - Axis title.
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -138,7 +138,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -181,11 +181,11 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * @example
    * chart.addData([10, 20], '6');
    */
-  public addData = (data: AreaSeriesDataType[], category: string) => {
+  addData(data: AreaSeriesDataType[], category: string) {
     this.resetSeries();
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
-  };
+  }
 
   /**
    * Add series.
@@ -199,7 +199,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    *   data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
    * });
    */
-  public addSeries(data: AreaSeriesInput) {
+  addSeries(data: AreaSeriesInput) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -223,7 +223,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    *   ]
    * });
    */
-  public setData(data: AreaSeriesData) {
+  setData(data: AreaSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { area: series }, categories });
@@ -243,7 +243,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    *   id: 'plot-1',
    * });
    */
-  public addPlotLine(data: PlotLine) {
+  addPlotLine(data: PlotLine) {
     this.store.dispatch('addPlotLine', { data });
   }
 
@@ -254,7 +254,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * @example
    * chart.removePlotLine('plot-1');
    */
-  public removePlotLine(id: string) {
+  removePlotLine(id: string) {
     this.store.dispatch('removePlotLine', { id });
   }
 
@@ -272,7 +272,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    *   id: 'plot-1',
    * });
    */
-  public addPlotBand(data: PlotBand) {
+  addPlotBand(data: PlotBand) {
     this.store.dispatch('addPlotBand', { data });
   }
 
@@ -283,7 +283,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * @example
    * chart.removePlotBand('plot-1');
    */
-  public removePlotBand(id: string) {
+  removePlotBand(id: string) {
     this.store.dispatch('removePlotBand', { id });
   }
 
@@ -293,11 +293,11 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -305,11 +305,11 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -337,10 +337,10 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: AreaChartOptions) => {
+  setOptions(options: AreaChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -357,23 +357,23 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: AreaChartOptions) => {
+  updateOptions(options: AreaChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
    * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
-   *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only seriesIndex is needed.
+   *      @param {number} seriesInfo.index - Index of data within series. If 'series.eventDetectType' is "grouped", only seriesIndex is needed.
    *      @param {number} [seriesInfo.seriesIndex] - Index of series.
    * @api
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -381,7 +381,7 @@ export default class AreaChart extends Chart<AreaChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

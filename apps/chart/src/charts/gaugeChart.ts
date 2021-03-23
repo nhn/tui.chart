@@ -1,7 +1,6 @@
 import Chart from './chart';
 
 import dataRange from '@src/store/dataRange';
-import stackSeriesData from '@src/store/stackSeriesData';
 import scale from '@src/store/scale';
 import gaugeAxesData from '@src/store/gaugeAxes';
 
@@ -62,7 +61,7 @@ import { GaugeChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {boolean} [props.options.series.clockwise] - Whether it will be drawn clockwise.
  *       @param {boolean | Object} [props.options.series.solid] - When this option is set, the radial bar is displayed. It can be used when there is one series data. The default value is 'false'.
  *     @param {Object} [props.options.circularAxis]
- *       @param {Object} [props.options.circularAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.circularAxis.title] - Axis title.
  *       @param {Object} [props.options.circularAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.circularAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.circularAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -104,7 +103,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -143,7 +142,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    *   data: [10, 20],
    * });
    */
-  public addSeries(data: GaugeSeriesInput) {
+  addSeries(data: GaugeSeriesInput) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -151,7 +150,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
   /**
    * Add data.
    * @param {Array} data - Array of data to be added.
-   * @param {string} category - Category to be added.
+   * @param {string} [category] - Category to be added.
    * @api
    * @example
    * // without categories
@@ -160,7 +159,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    * // with categories
    * chart.addData([10], '6');
    */
-  public addData(data: GaugeSeriesDataType[], category?: string) {
+  addData(data: GaugeSeriesDataType[], category?: string) {
     this.resetSeries();
     this.animationControlFlag.updating = true;
     this.store.dispatch('addData', { data, category });
@@ -185,7 +184,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    *   ]
    * });
    */
-  public setData(data: GaugeSeriesData) {
+  setData(data: GaugeSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { gauge: series }, categories });
@@ -197,11 +196,11 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -209,11 +208,11 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -231,10 +230,10 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    *   }
    * });
    */
-  public setOptions = (options: GaugeChartOptions) => {
+  setOptions(options: GaugeChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -244,28 +243,25 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    * chart.updateOptions({
    *   chart: {
    *     title: 'Olympic Medals',
-   *   },
-   *   series: {
-   *     eventDetectType: 'grouped'
    *   }
    * });
    */
-  public updateOptions = (options: GaugeChartOptions) => {
+  updateOptions(options: GaugeChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
-   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed. If eventType is 'grouped', only index is needed.
-   *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only index is needed.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.index - Index of data within series.
    * @api
    * @example
    * chart.showTooltip({index: 1});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -273,9 +269,9 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 
   /**
    * Add plot band.
@@ -291,7 +287,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    *   id: 'plot-1',
    * });
    */
-  public addPlotBand(data: GaugePlotBand) {
+  addPlotBand(data: GaugePlotBand) {
     this.store.dispatch('addGaugePlotBand', { data });
   }
 
@@ -302,7 +298,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
    * @example
    * chart.removePlotBand('plot-1');
    */
-  public removePlotBand(id: string) {
+  removePlotBand(id: string) {
     this.store.dispatch('removeGaugePlotBand', { id });
   }
 }

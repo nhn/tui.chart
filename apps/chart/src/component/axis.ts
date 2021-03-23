@@ -22,6 +22,8 @@ export enum AxisType {
   X = 'xAxis',
   Y = 'yAxis',
   SECONDARY_Y = 'secondaryYAxis',
+  CIRCULAR = 'circularAxis',
+  VERTICAL = 'verticalAxis',
 }
 
 function getOffsetAndAnchorKey(

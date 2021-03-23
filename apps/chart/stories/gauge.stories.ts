@@ -120,7 +120,13 @@ export const selectable = () => {
 
 export const angleRange = () => {
   const { el } = createChart(gaugeData, {
-    circularAxis: { title: 'km/h' },
+    circularAxis: {
+      scale: {
+        min: 0,
+        max: 90,
+      },
+      title: 'km/h',
+    },
     series: {
       angleRange: {
         start: 225,
@@ -138,7 +144,13 @@ export const angleRange = () => {
 
 export const counterClockwise = () => {
   const { el } = createChart(gaugeData, {
-    circularAxis: { title: 'km/h' },
+    circularAxis: {
+      scale: {
+        min: 0,
+        max: 90,
+      },
+      title: { text: 'km/h' },
+    },
     series: {
       clockwise: false,
       angleRange: {
@@ -161,7 +173,7 @@ export const clock = () => {
   const data = {
     series: [
       {
-        name: 'Speed',
+        name: 'Time',
         data: [hour * 5, min, sec],
       },
     ],
@@ -235,7 +247,7 @@ export const dataLabels = () => {
       title: 'km/h',
     },
     series: {
-      dataLabels: { visible: true },
+      dataLabels: { visible: false },
     },
     plot: {
       bands: [
@@ -290,7 +302,7 @@ export const solidWithTheme = () => {
           barWidth: '10%',
           lineWidth: 5,
           strokeStyle: '#000',
-          backgroundSector: { color: 'rgba(189, 67, 67, 0.1)' },
+          backgroundSolid: { color: 'rgba(189, 67, 67, 0.1)' },
         },
         dataLabels: { textBubble: { visible: false }, fontSize: 16, fontFamily: 'monaco' },
       },

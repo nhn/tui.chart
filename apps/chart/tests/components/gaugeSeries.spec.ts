@@ -21,22 +21,29 @@ const chartState = {
   },
   radialAxes: {
     circularAxis: {
-      labels: ['0', '25', '50', '75'],
       axisSize: 50,
       centerX: 100,
       centerY: 100,
-      maxLabelWidth: 20,
-      maxLabelHeight: 15,
-      labelInterval: 1,
-      labelMargin: 25,
-      degree: 120,
       tickInterval: 1,
-      totalAngle: 360,
-      drawingStartAngle: 0,
       clockwise: true,
-      startAngle: 0,
-      endAngle: 360,
-      outerRadius: 50,
+      label: {
+        labels: ['0', '25', '50', '75'],
+        maxWidth: 20,
+        maxHeight: 15,
+        interval: 1,
+        margin: 25,
+      },
+      angle: {
+        central: 120,
+
+        total: 360,
+
+        drawingStart: 0,
+
+        start: 0,
+        end: 360,
+      },
+      radius: { outer: 50 },
       maxClockHandSize: 40,
       solidData: {
         visible: false,
@@ -60,7 +67,7 @@ const chartState = {
         solid: {
           lineWidth: 1,
           strokeStyle: 'rgba(0, 0, 0, 0)',
-          backgroundSector: { color: 'rgba(0, 0, 0, 0.1)' },
+          backgroundSolid: { color: 'rgba(0, 0, 0, 0.1)' },
         },
         hover: {},
         select: {},
@@ -94,8 +101,12 @@ describe('gauge series', () => {
           pin: {
             radius: 5,
             color: 'rgba(170, 170, 170, 1)',
-            borderColor: 'rgba(170, 170, 170, 0.1)',
-            borderWidth: 10,
+            style: [
+              {
+                strokeStyle: 'rgba(170, 170, 170, 0.1)',
+                lineWidth: 10,
+              },
+            ],
           },
           degree: 180,
           animationDegree: 180,
@@ -103,10 +114,11 @@ describe('gauge series', () => {
           handSize: 40,
           seriesData: [50],
           index: 0,
+          seriesIndex: 0,
         },
       ],
-      sector: [],
-      backgroundSector: [],
+      solid: [],
+      backgroundSolid: [],
     },
     responders: [
       {
@@ -121,8 +133,12 @@ describe('gauge series', () => {
         pin: {
           radius: 5,
           color: 'rgba(170, 170, 170, 1)',
-          borderColor: 'rgba(170, 170, 170, 0.1)',
-          borderWidth: 10,
+          style: [
+            {
+              strokeStyle: 'rgba(170, 170, 170, 0.1)',
+              lineWidth: 10,
+            },
+          ],
         },
         degree: 180,
         animationDegree: 180,
@@ -130,11 +146,14 @@ describe('gauge series', () => {
         handSize: 40,
         seriesData: [50],
         index: 0,
+        seriesIndex: 0,
         detectionSize: 7,
         data: {
           color: 'rgba(170, 170, 170, 1)',
           label: 'cho',
           value: 50,
+          index: 0,
+          seriesIndex: 0,
         },
       },
     ],
@@ -155,28 +174,33 @@ describe('solid gauge', () => {
     });
   });
 
-  it('should make model properly when calling render with solid', () => {
+  it('should make solid models', () => {
     gaugeSeries.render(
       deepMergedCopy(chartState, {
         radialAxes: {
           circularAxis: {
-            labels: ['0', '25', '50', '75'],
             axisSize: 50,
             centerX: 100,
             centerY: 100,
-            maxLabelWidth: 20,
-            maxLabelHeight: 15,
-            labelInterval: 1,
-            labelMargin: 25,
-            degree: 120,
-            tickInterval: 1,
-            totalAngle: 360,
-            drawingStartAngle: 0,
-            clockwise: true,
-            startAngle: 0,
-            endAngle: 360,
-            outerRadius: 50,
             maxClockHandSize: 30,
+            clockwise: true,
+            tickInterval: 1,
+            label: {
+              labels: ['0', '25', '50', '75'],
+
+              maxWidth: 20,
+              maxHeight: 15,
+              interval: 1,
+              margin: 25,
+            },
+            angle: {
+              central: 120,
+              total: 360,
+              drawingStart: 0,
+              start: 0,
+              end: 360,
+            },
+            radius: { outer: 50 },
             solidData: {
               visible: true,
               radiusRange: { inner: 40, outer: 50 },
@@ -205,8 +229,7 @@ describe('solid gauge', () => {
           pin: {
             radius: 5,
             color: 'rgba(170, 170, 170, 1)',
-            borderColor: 'rgba(170, 170, 170, 0.1)',
-            borderWidth: 10,
+            style: [{ strokeStyle: 'rgba(170, 170, 170, 0.1)', lineWidth: 10 }],
           },
           degree: 180,
           animationDegree: 180,
@@ -214,9 +237,10 @@ describe('solid gauge', () => {
           handSize: 30,
           seriesData: [50],
           index: 0,
+          seriesIndex: 0,
         },
       ],
-      sector: [
+      solid: [
         {
           type: 'sector',
           color: 'rgba(170, 170, 170, 1)',
@@ -238,7 +262,7 @@ describe('solid gauge', () => {
           lineWidth: 1,
         },
       ],
-      backgroundSector: [
+      backgroundSolid: [
         {
           type: 'sector',
           color: 'rgba(0, 0, 0, 0.1)',
@@ -260,23 +284,27 @@ describe('solid gauge', () => {
       deepMergedCopy(chartState, {
         radialAxes: {
           circularAxis: {
-            labels: ['0', '25', '50', '75'],
             axisSize: 50,
             centerX: 100,
             centerY: 100,
-            maxLabelWidth: 20,
-            maxLabelHeight: 15,
-            labelInterval: 1,
-            labelMargin: 25,
-            degree: 120,
             tickInterval: 1,
-            totalAngle: 360,
-            drawingStartAngle: 0,
             clockwise: true,
-            startAngle: 0,
-            endAngle: 360,
-            outerRadius: 50,
             maxClockHandSize: 30,
+            label: {
+              labels: ['0', '25', '50', '75'],
+              maxWidth: 20,
+              maxHeight: 15,
+              interval: 1,
+              margin: 25,
+            },
+            angle: {
+              central: 120,
+              total: 360,
+              drawingStart: 0,
+              start: 0,
+              end: 360,
+            },
+            radius: { outer: 50 },
             solidData: {
               visible: true,
               radiusRange: { inner: 40, outer: 50 },

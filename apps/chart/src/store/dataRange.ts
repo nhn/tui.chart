@@ -15,11 +15,11 @@ import {
   getValueAxisNames,
   getYAxisOption,
   hasSecondaryYAxis,
-  isSeriesUsingRadialAxes,
 } from '@src/helpers/axes';
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 import { CoordinateDataType } from '@t/options';
+import { AxisType } from '@src/component/axis';
 
 type SeriesDataRange = {
   [key in keyof ChartSeriesMap]: DataRange;
@@ -101,23 +101,26 @@ function setSeriesDataRange({
   values,
   valueAxisName,
   seriesDataRange,
-  seriesUsingRadialAxes,
 }: {
   options: Options;
   seriesName: string;
   values: number[];
   valueAxisName: string;
   seriesDataRange: SeriesDataRange;
-  seriesUsingRadialAxes: boolean;
 }) {
-  const { secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
+  let axisNames: string[];
 
-  const axisNames =
-    !seriesUsingRadialAxes &&
-    hasSecondaryYAxis(options as ChartOptionsUsingYAxis) &&
-    secondaryYAxis?.chartType
-      ? [secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis']
-      : getValueAxisNames(options, valueAxisName);
+  if (includes([AxisType.X, AxisType.CIRCULAR, AxisType.VERTICAL], valueAxisName)) {
+    axisNames = [valueAxisName];
+  } else {
+    const optionsUsingYAxis = options as ChartOptionsUsingYAxis;
+    const { secondaryYAxis } = getYAxisOption(optionsUsingYAxis);
+
+    axisNames =
+      hasSecondaryYAxis(optionsUsingYAxis) && secondaryYAxis?.chartType
+        ? [secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis']
+        : getValueAxisNames(optionsUsingYAxis, valueAxisName);
+  }
 
   axisNames.forEach((axisName) => {
     seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
@@ -215,7 +218,6 @@ const dataRange: StoreModule = {
           values,
           valueAxisName,
           seriesDataRange,
-          seriesUsingRadialAxes: !isSeriesUsingRadialAxes(series),
         });
       });
 

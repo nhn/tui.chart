@@ -173,7 +173,7 @@ export default class PieSeries extends Component {
 
   responders!: SectorResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: SectorResponderModel[] = [];
 
   alias!: string;
 

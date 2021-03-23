@@ -63,7 +63,7 @@ export default class RadialBarSeries extends Component {
 
   responders!: RadialBarResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: RadialBarResponderModel[] = [];
 
   eventDetectType: CircleTypeEventDetectType = 'point';
 
@@ -78,7 +78,9 @@ export default class RadialBarSeries extends Component {
       return;
     }
 
-    const { startAngle, totalAngle } = this.circularAxis;
+    const {
+      angle: { start: startAngle, total: totalAngle },
+    } = this.circularAxis;
     let currentDegree: number;
 
     Object.keys(this.models).forEach((category) => {
@@ -173,7 +175,7 @@ export default class RadialBarSeries extends Component {
     this.tooltipSectorMap = this.makeTooltipSectorMap(seriesModels, tooltipData);
 
     this.responders = this.makeResponders(
-      verticalAxisData.radiusRanges,
+      verticalAxisData.radius.ranges,
       seriesModels,
       renderOptions,
       categories,
@@ -240,13 +242,12 @@ export default class RadialBarSeries extends Component {
 
   private makeRenderOptions(
     {
+      axisSize,
       centerX,
       centerY,
-      radiusRanges,
       tickDistance,
-      axisSize,
-      startAngle,
-      endAngle,
+      radius: { ranges },
+      angle: { start, end },
     }: VerticalAxisData,
     scale: ScaleData,
     options?: RadialBarSeriesOptions
@@ -256,7 +257,7 @@ export default class RadialBarSeries extends Component {
       stepSize,
     } = scale;
     const clockwise = options?.clockwise ?? true;
-    const totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
+    const totalAngle = getTotalAngle(clockwise, start, end);
     const barWidth = this.getBarWidth(tickDistance, axisSize);
     const padding = (tickDistance - barWidth) / 2;
     const scaleMaxLimitValue = max + (totalAngle < DEGREE_360 ? DEGREE_0 : stepSize);
@@ -265,14 +266,14 @@ export default class RadialBarSeries extends Component {
       clockwise,
       centerX,
       centerY,
-      radiusRanges: getRadiusRanges(radiusRanges, padding),
+      radiusRanges: getRadiusRanges(ranges, padding),
       angleRange: {
-        start: startAngle,
-        end: endAngle,
+        start,
+        end,
       },
       totalAngle,
       scaleMaxLimitValue,
-      startAngle,
+      startAngle: start,
     };
   }
 

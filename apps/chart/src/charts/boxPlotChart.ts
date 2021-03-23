@@ -52,7 +52,7 @@ import { BoxPlotChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *       @param {string} [props.options.series.eventDetectType] - Event detect type. 'grouped', 'point' is available.
  *     @param {Object} [props.options.xAxis]
- *       @param {Object} [props.options.xAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
  *       @param {Object} [props.options.xAxis.tick] - Option to adjust tick interval.
@@ -61,7 +61,7 @@ import { BoxPlotChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object} [props.options.yAxis]
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.yAxis.title] - Axis title.
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -115,7 +115,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -157,11 +157,11 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
       'newCategory'
     );
    */
-  public addData = (data: number[][], category: string) => {
+  addData(data: number[][], category: string) {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addData', { data, category });
-  };
+  }
 
   /**
    * add outlier.
@@ -171,11 +171,11 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * @example
    * chart.addOutlier(1, [[1, 10000], [3, 12000]]);
    */
-  public addOutlier = (seriesIndex: number, outliers: number[][]) => {
+  addOutlier(seriesIndex: number, outliers: number[][]) {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addOutlier', { seriesIndex, outliers });
-  };
+  }
 
   /**
    * Add series.
@@ -196,7 +196,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    *   ]
    * });
    */
-  public addSeries(data: BoxPlotSeriesType) {
+  addSeries(data: BoxPlotSeriesType) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -222,7 +222,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    *   ]
    * });
    */
-  public setData(data: BoxPlotSeriesData) {
+  setData(data: BoxPlotSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { boxPlot: series }, categories });
@@ -254,10 +254,10 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: BoxPlotChartOptions) => {
+  setOptions(options: BoxPlotChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -274,10 +274,10 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: BoxPlotChartOptions) => {
+  updateOptions(options: BoxPlotChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -288,9 +288,9 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -298,7 +298,7 @@ export default class BoxPlotChart extends Chart<BoxPlotChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

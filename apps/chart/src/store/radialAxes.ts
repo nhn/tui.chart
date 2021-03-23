@@ -22,6 +22,7 @@ import { getTitleFontString } from '@src/helpers/style';
 import { CircularAxisTheme, VerticalAxisTheme } from '@t/theme';
 import { pick } from '@src/helpers/utils';
 import { DEGREE_360, DEGREE_0 } from '@src/helpers/sector';
+import { max } from '@src/helpers/arrayUtil';
 
 const Y_LABEL_PADDING = 5;
 export const RADIAL_LABEL_PADDING = 25;
@@ -76,10 +77,10 @@ function getVerticalAxisData({
   defaultAxisData,
   radiusData,
 }: VerticalAxisDataParam): VerticalAxisData {
-  const { clockwise } = defaultAxisData;
+  const { clockwise, axisSize, centerX, centerY, startAngle, endAngle } = defaultAxisData;
   const { radiusRanges, innerRadius, outerRadius } = radiusData;
   const { labelInterval } = intervalData;
-
+  /*
   return {
     labels,
     tickDistance: (outerRadius - innerRadius) / labels.length,
@@ -92,6 +93,38 @@ function getVerticalAxisData({
     labelMargin: verticalAxisLabelMargin,
     labelAlign: getYAxisLabelAlign(clockwise, isLabelOnVerticalAxis),
     ...getMaxLabelSize(labels, verticalAxisLabelMargin, verticalAxisLabelFont),
+  };
+  */
+  const { maxLabelWidth, maxLabelHeight } = getMaxLabelSize(
+    labels,
+    verticalAxisLabelMargin,
+    verticalAxisLabelFont
+  );
+
+  return {
+    axisSize,
+    centerX,
+    centerY,
+    label: {
+      labels,
+      interval: labelInterval,
+      margin: verticalAxisLabelMargin,
+      maxWidth: maxLabelWidth,
+      maxHeight: maxLabelHeight,
+      align: getYAxisLabelAlign(clockwise, isLabelOnVerticalAxis),
+    },
+    radius: {
+      inner: innerRadius,
+      outer: outerRadius,
+      ranges: radiusRanges,
+    },
+    angle: {
+      start: startAngle,
+      end: endAngle,
+    },
+
+    tickDistance: (outerRadius - innerRadius) / labels.length,
+    pointOnColumn,
   };
 }
 
@@ -108,14 +141,24 @@ function getCircularAxisData({
     circularAxisLabelMargin,
     circularAxisLabelFont
   );
-  const { totalAngle } = defaultAxisData;
+  const {
+    totalAngle,
+    clockwise,
+    axisSize,
+    centerX,
+    centerY,
+    startAngle,
+    endAngle,
+    drawingStartAngle,
+  } = defaultAxisData;
   const { tickInterval, labelInterval } = intervalData;
   const { innerRadius, outerRadius } = radiusData;
-
+  const centralAngle = totalAngle / (labels.length + (totalAngle < DEGREE_360 ? -1 : DEGREE_0));
+  /*
   return {
     labels,
     ...defaultAxisData,
-    degree: totalAngle / (labels.length + (totalAngle < DEGREE_360 ? -1 : DEGREE_0)),
+    centralAngle,
     tickInterval,
     labelInterval,
     labelMargin: circularAxisLabelMargin,
@@ -123,6 +166,33 @@ function getCircularAxisData({
     maxLabelHeight,
     innerRadius,
     outerRadius,
+  };
+  */
+
+  return {
+    axisSize,
+    centerX,
+    centerY,
+    label: {
+      labels,
+      interval: labelInterval,
+      margin: circularAxisLabelMargin,
+      maxWidth: maxLabelWidth,
+      maxHeight: maxLabelHeight,
+    },
+    radius: {
+      inner: innerRadius,
+      outer: outerRadius,
+    },
+    angle: {
+      start: startAngle,
+      end: endAngle,
+      total: totalAngle,
+      central: centralAngle,
+      drawingStart: drawingStartAngle,
+    },
+    tickInterval,
+    clockwise,
   };
 }
 
@@ -165,7 +235,7 @@ function getAxisLabelMargin(isLabelOnVerticalAxis: boolean, options: ChartOption
 }
 
 const axes: StoreModule = {
-  name: 'axes',
+  name: 'radialAxes',
   state: () => ({
     radialAxes: {} as RadialAxes,
   }),

@@ -2737,7 +2737,7 @@ export const gaugeData = {
   series: [
     {
       name: 'Speed',
-      data: [80],
+      data: [50],
     },
   ],
 };

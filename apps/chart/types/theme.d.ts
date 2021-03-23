@@ -616,9 +616,11 @@ type PinTheme = {
   borderColor: string;
 };
 
+type ClockHandSizeTheme = string | number | number[] | string[];
+
 type ClockHandTheme = {
   color: string;
-  size: string | number | number[] | string[];
+  size: ClockHandSizeTheme;
   baseLine: number;
 };
 
@@ -626,12 +628,12 @@ type SolidTheme = {
   barWidth?: number | string;
   lineWidth?: number;
   strokeStyle?: string;
-  backgroundSector?: { color?: string };
   shadowColor?: string;
   shadowBlur?: number;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
   color?: string;
+  backgroundSolid?: { color?: string };
 };
 
 interface GaugeChartSeriesTheme extends CommonSeriesTheme {
@@ -642,12 +644,12 @@ interface GaugeChartSeriesTheme extends CommonSeriesTheme {
   hover?: {
     clockHand?: Partial<ClockHandTheme>;
     pin?: Partial<PinTheme>;
-    solid?: Omit<SolidTheme, 'backgroundSector'>;
+    solid?: Omit<SolidTheme, 'backgroundSolid'>;
   };
   select?: {
     clockHand?: Partial<ClockHandTheme>;
     pin?: Partial<PinTheme>;
-    solid?: Omit<SolidTheme, 'backgroundSector'>;
+    solid?: Omit<SolidTheme, 'backgroundSolid'>;
     areaOpacity?: number;
     restSeries?: {
       areaOpacity?: number;

@@ -139,9 +139,11 @@ function makeCommonTextTheme(globalFontFamily = 'Arial') {
   return { fontSize: 11, fontFamily: globalFontFamily, fontWeight: 'normal', color: '#333333' };
 }
 
-export function makeDefaultTheme(globalFontFamily = 'Arial', series: RawSeries = {}) {
+export function makeDefaultTheme(series: RawSeries, globalFontFamily = 'Arial') {
   const axisTitleTheme = makeAxisTitleTheme(globalFontFamily);
   const commonTextTheme = makeCommonTextTheme(globalFontFamily);
+  const hasRadarSeries = !!series?.radar;
+  const hasGaugeSeries = !!series?.gauge;
 
   return {
     chart: {
@@ -176,8 +178,8 @@ export function makeDefaultTheme(globalFontFamily = 'Arial', series: RawSeries =
       label: {
         ...commonTextTheme,
         textBubble: {
-          visible: !!series?.radar,
-          backgroundColor: series?.radar ? '#f3f3f3' : 'rgba(0, 0, 0, 0)',
+          visible: hasRadarSeries,
+          backgroundColor: hasRadarSeries ? '#f3f3f3' : 'rgba(0, 0, 0, 0)',
           borderRadius: 7,
           paddingX: 7,
           paddingY: 2,
@@ -190,7 +192,7 @@ export function makeDefaultTheme(globalFontFamily = 'Arial', series: RawSeries =
       title: { ...axisTitleTheme },
       label: { ...commonTextTheme },
       lineWidth: 1,
-      strokeStyle: series?.gauge ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.05)',
+      strokeStyle: hasGaugeSeries ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.05)',
       dotColor: 'rgba(0, 0, 0, 0.5)',
       tick: {
         lineWidth: 1,
@@ -283,12 +285,11 @@ function makeDefaultTextBubbleTheme(
 
 // eslint-disable-next-line complexity
 function getSeriesTheme(
-  defaultFontFamily: string | undefined,
+  globalFontFamily: string,
   seriesName: string,
   { hasOuterAnchor = false, hasOuterAnchorPieSeriesName = false },
   isNestedPieChart = false
 ) {
-  const globalFontFamily = defaultFontFamily ?? 'Arial';
   const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
   const lineTypeSeriesTheme = {
     lineWidth: defaultSeriesTheme.lineWidth,
@@ -678,7 +679,7 @@ function getSeriesTheme(
         },
         solid: {
           lineWidth: 0,
-          backgroundSector: {
+          backgroundSolid: {
             color: 'rgba(0, 0, 0, 0.1)',
           },
         },
@@ -704,9 +705,9 @@ function getSeriesTheme(
 }
 
 export function getDefaultTheme(
-  globalFontFamily: string | undefined,
   series: RawSeries,
   pieSeriesOuterAnchors: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries>,
+  globalFontFamily = 'Arial',
   isNestedPieChart = false
 ): Theme {
   const result = Object.keys(series).reduce<Theme>(
@@ -717,7 +718,7 @@ export function getDefaultTheme(
         [seriesName]: getSeriesTheme(globalFontFamily, seriesName, pieSeriesOuterAnchors),
       },
     }),
-    makeDefaultTheme(globalFontFamily, series) as Theme
+    makeDefaultTheme(series, globalFontFamily) as Theme
   );
 
   if (isNestedPieChart) {

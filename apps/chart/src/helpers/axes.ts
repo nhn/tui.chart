@@ -26,6 +26,7 @@ import {
   isUndefined,
   isNumber,
   calculateSizeWithPercentString,
+  includes,
 } from '@src/helpers/utils';
 import {
   ANGLE_CANDIDATES,
@@ -211,19 +212,28 @@ export function getYAxisOption(options: ChartOptionsUsingYAxis) {
   };
 }
 
-export function getValueAxisName(options: Options, seriesName: string, valueAxisName: string) {
-  const { secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
+export function getValueAxisName(
+  options: ChartOptionsUsingYAxis,
+  seriesName: string,
+  valueAxisName: string
+) {
+  const { secondaryYAxis } = getYAxisOption(options);
 
   return secondaryYAxis?.chartType === seriesName ? 'secondaryYAxis' : valueAxisName;
 }
 
 export function getValueAxisNames(options: Options, valueAxisName: string) {
-  const { yAxis, secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
+  if (includes([AxisType.X, AxisType.CIRCULAR, AxisType.VERTICAL], valueAxisName)) {
+    return [valueAxisName];
+  }
 
-  return valueAxisName !== 'xAxis' && secondaryYAxis
+  const optionsUsingYAxis = options as ChartOptionsUsingYAxis;
+  const { yAxis, secondaryYAxis } = getYAxisOption(optionsUsingYAxis);
+
+  return secondaryYAxis
     ? [yAxis.chartType, secondaryYAxis.chartType].map((seriesName, index) =>
         seriesName
-          ? getValueAxisName(options, seriesName, valueAxisName)
+          ? getValueAxisName(optionsUsingYAxis, seriesName, valueAxisName)
           : ['yAxis', 'secondaryYAxis'][index]
       )
     : [valueAxisName];
@@ -430,36 +440,35 @@ export function getDefaultRadialAxisData(
   maxLabelHeight = 0,
   isLabelOnVerticalAxis = false
 ): DefaultRadialAxisData {
-  let isSemiCircular = false;
-  let centerY = plot.height / 2;
-  let totalAngle = DEGREE_360;
-  let drawingStartAngle = DEGREE_0;
-  let clockwiseOption = true;
-  let startAngleOption = DEGREE_0;
-  let endAngleOption = DEGREE_360;
+  const centerX = plot.width / 2;
 
   if (isLabelOnVerticalAxis) {
     const { startAngle, endAngle, clockwise } = initSectorOptions(options?.series);
+    const isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
 
-    isSemiCircular = isSemiCircle(clockwise, startAngle, endAngle);
-    centerY = isSemiCircular ? getSemiCircleCenterY(plot.height, clockwise) : plot.height / 2;
-    totalAngle = getTotalAngle(clockwise, startAngle, endAngle);
-    drawingStartAngle = startAngle;
-    clockwiseOption = clockwise;
-    startAngleOption = startAngle;
-    endAngleOption = endAngle;
+    return {
+      isSemiCircular,
+      axisSize: getDefaultRadius(plot, isSemiCircular, maxLabelWidth, maxLabelHeight),
+      centerX,
+      centerY: isSemiCircular ? getSemiCircleCenterY(plot.height, clockwise) : plot.height / 2,
+      totalAngle: getTotalAngle(clockwise, startAngle, endAngle),
+      drawingStartAngle: startAngle,
+      clockwise,
+      startAngle,
+      endAngle,
+    };
   }
 
   return {
-    isSemiCircular,
-    axisSize: getDefaultRadius(plot, isSemiCircular, maxLabelWidth, maxLabelHeight),
-    centerX: plot.width / 2,
-    centerY,
-    totalAngle,
-    drawingStartAngle: drawingStartAngle,
-    clockwise: clockwiseOption,
-    startAngle: startAngleOption,
-    endAngle: endAngleOption,
+    isSemiCircular: false,
+    axisSize: getDefaultRadius(plot, false, maxLabelWidth, maxLabelHeight),
+    centerX,
+    centerY: plot.height / 2,
+    totalAngle: DEGREE_360,
+    drawingStartAngle: DEGREE_0,
+    clockwise: true,
+    startAngle: DEGREE_0,
+    endAngle: DEGREE_360,
   };
 }
 
@@ -475,7 +484,7 @@ export function getRadiusInfo(
     radiusRanges: makeTickPixelPositions(outerRadius - innerRadius, count, innerRadius)
       .splice(innerRadius === 0 ? 1 : 0, count)
       .reverse(),
-    innerRadius: innerRadius,
-    outerRadius: outerRadius,
+    innerRadius,
+    outerRadius,
   };
 }

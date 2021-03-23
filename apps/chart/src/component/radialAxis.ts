@@ -5,6 +5,7 @@ import {
   getRadialPosition,
   DEGREE_360,
   DEGREE_NEGATIVE_90,
+  calculateValidAngle,
 } from '@src/helpers/sector';
 import { RadialAxisModels, ArcModel } from '@t/components/radialAxis';
 import { RectModel, CircleModel } from '@t/components/series';
@@ -30,9 +31,6 @@ function hasNeedRender(
           (!pointOnColumn && innerRadius < outerRadius));
 }
 
-function getValidDegree(degree: number) {
-  return degree > DEGREE_360 ? degree - DEGREE_360 : degree;
-}
 export default class RadialAxis extends Component {
   models: RadialAxisModels = {
     verticalAxisLabel: [],
@@ -46,7 +44,7 @@ export default class RadialAxis extends Component {
 
   circularAxisTheme!: Required<CircularAxisTheme>;
 
-  initialize(initParam: { name: 'radial' | 'gauge' }) {
+  initialize(initParam?: { name: 'radial' | 'gauge' }) {
     this.type = 'axis';
     this.name = initParam?.name ?? 'radial';
   }
@@ -100,19 +98,13 @@ export default class RadialAxis extends Component {
 
   renderVerticalAxisLabel(verticalAxis: VerticalAxisData): BubbleLabelModel[] {
     const {
-      radiusRanges,
+      radius: { ranges, outer },
+      label: { labels, interval, maxWidth, maxHeight, margin, align },
+      angle: { start },
       pointOnColumn,
       centerX,
       centerY,
-      labels,
       tickDistance,
-      labelInterval,
-      maxLabelWidth,
-      maxLabelHeight,
-      labelMargin,
-      labelAlign: textAlign,
-      outerRadius,
-      startAngle,
     } = verticalAxis;
     const labelAdjustment = pointOnColumn ? tickDistance / 2 : 0;
     const font = getTitleFontString(this.verticalAxisTheme.label);
@@ -128,27 +120,27 @@ export default class RadialAxis extends Component {
 
     const labelPaddingX = textBubbleVisible ? paddingX : 0;
     const labelPaddingY = textBubbleVisible ? paddingY : 0;
-    const width = maxLabelWidth + labelPaddingX * 2 - labelMargin;
-    const height = maxLabelHeight + labelPaddingY * 2;
+    const width = maxWidth + labelPaddingX * 2 - margin;
+    const height = maxHeight + labelPaddingY * 2;
     const fontColor = this.verticalAxisTheme.label.color;
 
-    return radiusRanges.reduce<BubbleLabelModel[]>((acc, radius, index) => {
+    return ranges.reduce<BubbleLabelModel[]>((acc, radius, index) => {
       const { x, y } = getRadialPosition(
         centerX,
         centerY,
         radius - labelAdjustment,
-        calculateDegreeToRadian(startAngle)
+        calculateDegreeToRadian(start)
       );
-      const needRender = hasNeedRender(index, pointOnColumn, labelInterval, radius, outerRadius);
-      let posX = x + labelMargin;
-      let labelPosX = x + labelMargin + labelPaddingX;
+      const needRender = hasNeedRender(index, pointOnColumn, interval, radius, outer);
+      let posX = x + margin;
+      let labelPosX = x + margin + labelPaddingX;
 
-      if (textAlign === 'center') {
-        posX = x - labelMargin - width / 2;
-        labelPosX = x - labelMargin;
-      } else if (includes(['right', 'end'], textAlign)) {
-        posX = x - labelMargin - width;
-        labelPosX = x - labelMargin - labelPaddingX;
+      if (align === 'center') {
+        posX = x - margin - width / 2;
+        labelPosX = x - margin;
+      } else if (includes(['right', 'end'], align)) {
+        posX = x - margin - width;
+        labelPosX = x - margin - labelPaddingX;
       }
 
       return needRender
@@ -157,13 +149,13 @@ export default class RadialAxis extends Component {
             {
               type: 'bubbleLabel',
               rotationPosition: { x, y },
-              radian: calculateDegreeToRadian(startAngle, 0),
+              radian: calculateDegreeToRadian(start, 0),
               bubble: {
                 x: posX,
                 y: y - height / 2,
                 width,
                 height,
-                align: textAlign,
+                align,
                 radius: borderRadius,
                 fill: backgroundColor,
                 lineWidth: borderWidth,
@@ -174,7 +166,7 @@ export default class RadialAxis extends Component {
                 text: labels[index],
                 x: labelPosX,
                 y,
-                style: [{ font, fillStyle: fontColor, textAlign, textBaseline: 'middle' }],
+                style: [{ font, fillStyle: fontColor, textAlign: align, textBaseline: 'middle' }],
               },
             },
           ]
@@ -184,27 +176,25 @@ export default class RadialAxis extends Component {
 
   renderDotModel(circularAxis: CircularAxisData): RectModel[] {
     const {
-      degree,
+      angle: { central, drawingStart },
+      label: { labels, interval },
+      radius: { outer },
       centerX,
       centerY,
-      labels,
-      labelInterval,
-      outerRadius,
-      drawingStartAngle,
       clockwise,
     } = circularAxis;
     const { dotColor } = this.circularAxisTheme;
 
     return labels.reduce<RectModel[]>((acc, cur, index) => {
-      const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
+      const startDegree = drawingStart + central * index * (clockwise ? 1 : -1);
       const { x, y } = getRadialPosition(
         centerX,
         centerY,
-        outerRadius,
-        calculateDegreeToRadian(getValidDegree(startDegree))
+        outer,
+        calculateDegreeToRadian(calculateValidAngle(startDegree))
       );
 
-      return index % labelInterval === 0
+      return index % interval === 0
         ? [
             ...acc,
             {
@@ -224,25 +214,21 @@ export default class RadialAxis extends Component {
     const {
       centerX,
       centerY,
-      labels,
-      labelInterval,
-      drawingStartAngle,
-      labelMargin,
       clockwise,
-      outerRadius,
-      maxLabelHeight,
+      label: { labels, interval, margin, maxHeight },
+      angle: { drawingStart, central },
+      radius: { outer },
     } = circularAxis;
-    const radius =
-      outerRadius + (labelMargin + maxLabelHeight / 2) * (this.name === 'gauge' ? -1 : 1);
+    const radius = outer + (margin + maxHeight / 2) * (this.name === 'gauge' ? -1 : 1);
     const labelTheme = this.circularAxisTheme.label;
     const font = getTitleFontString(labelTheme);
-    const degree = circularAxis.degree * (clockwise ? 1 : -1);
+    const degree = central * (clockwise ? 1 : -1);
 
     return labels.reduce<LabelModel[]>((acc, text, index) => {
-      const startDegree = drawingStartAngle + degree * index;
-      const validStartAngle = getValidDegree(startDegree);
+      const startDegree = drawingStart + degree * index;
+      const validStartAngle = calculateValidAngle(startDegree);
 
-      return index % labelInterval === 0
+      return index % interval === 0
         ? [
             ...acc,
             {
@@ -265,32 +251,31 @@ export default class RadialAxis extends Component {
 
   renderTick(circularAxis: CircularAxisData): LineModel[] {
     const {
-      degree,
       centerX,
       centerY,
-      labels,
       tickInterval,
-      outerRadius,
-      drawingStartAngle,
       clockwise,
+      angle: { central, drawingStart },
+      label: { labels },
+      radius: { outer },
     } = circularAxis;
 
     const { strokeStyle, lineWidth } = this.circularAxisTheme.tick;
 
     return labels.reduce<LineModel[]>((acc, cur, index) => {
-      const startDegree = drawingStartAngle + degree * index * (clockwise ? 1 : -1);
+      const startDegree = drawingStart + central * index * (clockwise ? 1 : -1);
       const { x, y } = getRadialPosition(
         centerX,
         centerY,
-        outerRadius - HALF_TICK,
-        calculateDegreeToRadian(getValidDegree(startDegree))
+        outer - HALF_TICK,
+        calculateDegreeToRadian(calculateValidAngle(startDegree))
       );
 
-      const result = getRadialPosition(
+      const { x: x2, y: y2 } = getRadialPosition(
         centerX,
         centerY,
-        outerRadius + HALF_TICK,
-        calculateDegreeToRadian(getValidDegree(startDegree))
+        outer + HALF_TICK,
+        calculateDegreeToRadian(calculateValidAngle(startDegree))
       );
 
       return index % tickInterval === 0
@@ -302,8 +287,8 @@ export default class RadialAxis extends Component {
               strokeStyle,
               x,
               y,
-              x2: result.x,
-              y2: result.y,
+              x2,
+              y2,
             },
           ]
         : acc;
@@ -314,36 +299,36 @@ export default class RadialAxis extends Component {
     const {
       centerX,
       centerY,
-      outerRadius,
-      startAngle,
-      endAngle,
       clockwise,
-      totalAngle,
+      angle: { start, end, total },
+      radius: { outer },
     } = circularAxis;
     const { strokeStyle, lineWidth } = this.circularAxisTheme;
 
-    return totalAngle === DEGREE_360
+    return total === DEGREE_360
       ? [
           {
             type: 'circle',
             x: centerX,
             y: centerY,
-            radius: outerRadius,
+            radius: outer,
             borderWidth: lineWidth,
             borderColor: strokeStyle,
             color: 'rgba(0, 0, 0, 0)',
           },
         ]
-      : [outerRadius].map<ArcModel>((radius) => ({
-          type: 'arc',
-          borderWidth: lineWidth,
-          borderColor: strokeStyle,
-          x: centerX,
-          y: centerY,
-          angle: { start: startAngle, end: endAngle },
-          drawingStartAngle: DEGREE_NEGATIVE_90,
-          radius,
-          clockwise,
-        }));
+      : [
+          {
+            type: 'arc',
+            borderWidth: lineWidth,
+            borderColor: strokeStyle,
+            x: centerX,
+            y: centerY,
+            angle: { start, end },
+            drawingStartAngle: DEGREE_NEGATIVE_90,
+            radius: outer,
+            clockwise,
+          },
+        ];
   }
 }

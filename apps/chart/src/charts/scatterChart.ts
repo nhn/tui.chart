@@ -83,7 +83,7 @@ function clearUnnecessaryData(scatterSeries: ScatterSeriesType[]) {
  *     @param {Object} [props.options.series]
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *     @param {Object} [props.options.xAxis]
- *       @param {Object} [props.options.xAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
  *       @param {Object} [props.options.xAxis.tick] - Option to adjust tick interval.
@@ -92,7 +92,7 @@ function clearUnnecessaryData(scatterSeries: ScatterSeriesType[]) {
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object} [props.options.yAxis]
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.yAxis.title] - Axis title.
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -146,7 +146,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -184,11 +184,11 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    *   {x: 30, y: 40},
    * ]);
    */
-  public addData = (data: CoordinateDataType[]) => {
+  addData(data: CoordinateDataType[]) {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addData', { data });
-  };
+  }
 
   /**
    * Add series.
@@ -205,7 +205,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    *   ],
    * });
    */
-  public addSeries(data: ScatterSeriesInput) {
+  addSeries(data: ScatterSeriesInput) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -227,7 +227,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    *   ]
    * });
    */
-  public setData(data: ScatterSeriesData) {
+  setData(data: ScatterSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { scatter: series }, categories });
@@ -258,10 +258,10 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: ScatterChartOptions) => {
+  setOptions(options: ScatterChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -278,10 +278,10 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: ScatterChartOptions) => {
+  updateOptions(options: ScatterChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -292,9 +292,9 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -302,7 +302,7 @@ export default class ScatterChart extends Chart<ScatterChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

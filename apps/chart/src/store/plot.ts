@@ -10,7 +10,8 @@ import {
 import { extend } from './store';
 import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
-import { isString, isExistPlotId } from '@src/helpers/utils';
+import { isString } from '@src/helpers/utils';
+import { isExistPlotId } from '@src/helpers/plot';
 
 type UsingVisiblePlotOptions = ValueOf<
   Omit<

@@ -59,7 +59,7 @@ export default class RadarSeries extends Component {
 
   responders!: CircleResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: CircleResponderModel[] = [];
 
   theme!: Required<RadarChartSeriesTheme>;
 
@@ -165,7 +165,7 @@ export default class RadarSeries extends Component {
         radius,
         color: modelColor,
         borderColor: borderColor ?? getRGBA(modelColor, 0.5),
-        borderWidth
+        borderWidth,
       };
     });
   }

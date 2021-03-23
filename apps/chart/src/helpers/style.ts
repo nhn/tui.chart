@@ -1,7 +1,7 @@
 import { StyleProp } from '@t/components/series';
 import { isString, pick } from '@src/helpers/utils';
 import { FontTheme, BubbleDataLabel, BoxDataLabel } from '@t/theme';
-import { getAlpha } from './color';
+import { getAlpha } from '@src/helpers/color';
 
 export function makeStyleObj<T, K>(style: StyleProp<T, K>, styleSet: Record<string, object>) {
   return style.reduce((acc: T, curValue) => {

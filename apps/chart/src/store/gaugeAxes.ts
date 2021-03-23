@@ -2,7 +2,6 @@ import {
   StoreModule,
   InitAxisData,
   Scale,
-  RadialAxes,
   CircularAxisData,
   DefaultRadialAxisData,
   SolidData,
@@ -19,8 +18,9 @@ import { makeLabelsFromLimit, getFontHeight } from '@src/helpers/calculator';
 import { getTitleFontString } from '@src/helpers/style';
 import { CircularAxisTheme, GaugePlotTheme, GaugeChartSeriesTheme } from '@t/theme';
 import { DEGREE_360, DEGREE_0 } from '@src/helpers/sector';
-import { isObject, isExistPlotId, calculateSizeWithPercentString } from '@src/helpers/utils';
+import { isObject, calculateSizeWithPercentString } from '@src/helpers/utils';
 import { RadialAxisType } from './radialAxes';
+import { isExistPlotId } from '@src/helpers/plot';
 
 const DEFAULT_LABEL_PADDING = 15;
 const RANGE_BAR_MARGIN = 10;
@@ -79,7 +79,16 @@ function getCircularAxisData({
     circularAxisLabelMargin,
     circularAxisLabelFont
   );
-  const { totalAngle, axisSize } = defaultAxisData;
+  const {
+    totalAngle,
+    axisSize,
+    centerX,
+    centerY,
+    startAngle,
+    endAngle,
+    drawingStartAngle,
+    clockwise,
+  } = defaultAxisData;
   const { tickInterval, labelInterval } = intervalData;
   const outerRadius = axisSize - bandWidth - RANGE_BAR_MARGIN;
   const solidBarWidthValue = solidBarWidth ?? outerRadius * 0.1;
@@ -88,26 +97,43 @@ function getCircularAxisData({
     solidBarWidthValue,
     options?.series?.solid
   );
+  const centralAngle = totalAngle / (labels.length + (totalAngle < DEGREE_360 ? -1 : DEGREE_0));
+  const maxClockHandSize =
+    outerRadius -
+    circularAxisLabelMargin -
+    maxLabelHeight -
+    CLOCK_HAND_MARGIN +
+    (solidData.visible ? -solidData.barWidth - CLOCK_HAND_MARGIN : 0);
 
   return {
-    labels,
-    ...defaultAxisData,
-    degree: totalAngle / (labels.length + (totalAngle < DEGREE_360 ? -1 : DEGREE_0)),
+    axisSize,
+    centerX,
+    centerY,
+    label: {
+      labels,
+      interval: labelInterval,
+      margin: circularAxisLabelMargin,
+      maxWidth: maxLabelWidth,
+      maxHeight: maxLabelHeight,
+    },
+    radius: {
+      inner: 0,
+      outer: outerRadius,
+    },
+    angle: {
+      start: startAngle,
+      end: endAngle,
+      total: totalAngle,
+      central: centralAngle,
+      drawingStart: drawingStartAngle,
+    },
+    band: {
+      width: bandWidth,
+      margin: RANGE_BAR_MARGIN,
+    },
     tickInterval,
-    labelInterval,
-    labelMargin: circularAxisLabelMargin,
-    maxLabelWidth,
-    maxLabelHeight,
-    innerRadius: 0,
-    outerRadius,
-    bandWidth,
-    bandMargin: RANGE_BAR_MARGIN,
-    maxClockHandSize:
-      outerRadius -
-      circularAxisLabelMargin -
-      maxLabelHeight -
-      CLOCK_HAND_MARGIN +
-      (solidData.visible ? -solidData.barWidth - CLOCK_HAND_MARGIN : 0),
+    clockwise,
+    maxClockHandSize,
     title: makeTitleOption(options?.circularAxis?.title),
     solidData,
   };
@@ -144,18 +170,20 @@ function getAxisLabelMargin(options: GaugeChartOptions) {
 }
 
 function hasAxesLayoutChanged(previousAxes: CircularAxisData, currentAxes: CircularAxisData) {
-  const { maxLabelHeight: prevMaxHeight, maxLabelWidth: prevMaxWidth } = previousAxes;
-  const { maxLabelHeight, maxLabelWidth } = currentAxes;
+  const prevMaxWidth = previousAxes?.label?.maxWidth;
+  const prevMaxHeight = previousAxes?.label?.maxHeight;
+  const curMaxWidth = currentAxes.label.maxWidth;
+  const curMaxHeight = currentAxes.label.maxHeight;
 
-  return prevMaxHeight !== maxLabelHeight || prevMaxWidth !== maxLabelWidth;
+  return prevMaxHeight !== curMaxHeight || prevMaxWidth !== curMaxWidth;
 }
 
 const axes: StoreModule = {
-  name: 'axes',
+  name: 'gaugeAxes',
   state: () => ({
     radialAxes: {
-      circularAxis: {},
-    } as RadialAxes,
+      circularAxis: {} as CircularAxisData,
+    },
   }),
   action: {
     setCircularAxisData({ state }) {
@@ -219,7 +247,7 @@ const axes: StoreModule = {
         solidBarWidth: theme.series.gauge?.solid?.barWidth,
       });
 
-      if (hasAxesLayoutChanged(state.radialAxes.circularAxis, circularAxisData)) {
+      if (hasAxesLayoutChanged(state.radialAxes?.circularAxis, circularAxisData)) {
         this.notify(state, 'layout');
       }
 
@@ -229,6 +257,7 @@ const axes: StoreModule = {
     },
     addGaugePlotBand({ state }, { data }: { data: GaugePlotBand }) {
       const bands = (state.options as GaugeChartOptions)?.plot?.bands ?? [];
+
       if (!isExistPlotId(bands, data)) {
         this.dispatch('updateOptions', { options: { plot: { bands: [...bands, data] } } });
       }
@@ -237,6 +266,7 @@ const axes: StoreModule = {
       const bands = ((state.options as GaugeChartOptions)?.plot?.bands ?? []).filter(
         ({ id: bandId }) => bandId !== id
       );
+
       this.dispatch('updateOptions', { options: { plot: { bands } } });
     },
   },

@@ -258,10 +258,7 @@ function getLegendLabelsInfo(series: RawSeries): LegendLabelsInfo {
 }
 
 function useRectIcon(type: ChartType) {
-  return includes(
-    ['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet', 'radialBar', 'gauge'],
-    type
-  );
+  return includes(['bar', 'column', 'area', 'pie', 'boxPlot', 'bullet', 'radialBar'], type);
 }
 
 function useCircleIcon(type: ChartType) {
@@ -322,7 +319,7 @@ function getLegendState(options: Options, series: RawSeries): Legend {
   const useSpectrumLegend =
     (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
   const useScatterChartIcon = !!series?.scatter;
-  const defaultTheme = makeDefaultTheme(options?.theme?.chart?.fontFamily);
+  const defaultTheme = makeDefaultTheme(series, options?.theme?.chart?.fontFamily);
   const font = getTitleFontString(
     deepMergedCopy(defaultTheme.legend.label!, { ...options.theme?.legend?.label })
   );

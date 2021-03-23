@@ -42,7 +42,7 @@ const chartState = {
         solid: {
           lineWidth: 1,
           strokeStyle: 'rgba(0, 0, 0, 0)',
-          backgroundSector: { color: 'rgba(0, 0, 0, 0.1)' },
+          backgroundSolid: { color: 'rgba(0, 0, 0, 0.1)' },
         },
         dataLabels: {},
         hover: {},
@@ -63,24 +63,27 @@ describe('Gauge Axes Store module', () => {
     gaugeAxes.action!.setCircularAxisData.call({ notify }, store);
 
     expect(state.radialAxes.circularAxis).toEqual({
-      labels: ['0', '25', '50', '75'],
       axisSize: 75,
       centerX: 100,
       centerY: 100,
-      totalAngle: 360,
-      drawingStartAngle: 0,
       clockwise: true,
-      degree: 90,
       tickInterval: 1,
-      labelInterval: 1,
-      labelMargin: 15,
-      maxLabelWidth: 25,
-      maxLabelHeight: 10,
-      outerRadius: 65,
-      startAngle: 0,
-      endAngle: 360,
-      innerRadius: 0,
-      isSemiCircular: false,
+      label: {
+        labels: ['0', '25', '50', '75'],
+        interval: 1,
+        margin: 15,
+        maxWidth: 25,
+        maxHeight: 10,
+      },
+      angle: {
+        total: 360,
+        drawingStart: 0,
+        central: 90,
+        start: 0,
+        end: 360,
+      },
+      radius: { outer: 65, inner: 0 },
+      band: { margin: 10, width: 0 },
       solidData: {
         visible: false,
         radiusRange: { inner: 23.5, outer: 30 },
@@ -88,8 +91,6 @@ describe('Gauge Axes Store module', () => {
         clockHand: true,
       },
       maxClockHandSize: 30,
-      bandMargin: 10,
-      bandWidth: 0,
     });
   });
 
@@ -105,8 +106,8 @@ describe('Gauge Axes Store module', () => {
     const store = { state } as Store<GaugeChartOptions>;
     gaugeAxes.action!.setCircularAxisData.call({ notify }, store);
 
-    expect(state.radialAxes.circularAxis.startAngle).toBe(90);
-    expect(state.radialAxes.circularAxis.endAngle).toBe(270);
+    expect(state.radialAxes.circularAxis.angle.start).toBe(90);
+    expect(state.radialAxes.circularAxis.angle.end).toBe(270);
   });
 
   it('should set gauge axes with using solid', () => {

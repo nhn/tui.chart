@@ -76,7 +76,7 @@ export default class AreaSeries extends Component {
 
   responders!: CircleResponderModel[] | RectResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: CircleResponderModel[] | RectResponderModel[] = [];
 
   eventDetectType: LineTypeEventDetectType = 'nearest';
 
@@ -504,8 +504,9 @@ export default class AreaSeries extends Component {
             ...model,
             radius: dotTheme.radius!,
             color: getRGBA(color, active ? 1 : 0.3),
-            borderWidth: dotTheme.borderWidth,
-            borderColor: dotTheme.borderColor ?? color,
+            style: [
+              { lineWidth: dotTheme.borderWidth, strokeStyle: dotTheme.borderColor ?? color },
+            ],
           });
         }
 
@@ -515,8 +516,12 @@ export default class AreaSeries extends Component {
           ...model,
           radius: hoverDotTheme.radius!,
           color: modelColor,
-          borderWidth: hoverDotTheme.borderWidth,
-          borderColor: hoverDotTheme.borderColor ?? getRGBA(modelColor, 0.5),
+          style: [
+            {
+              lineWidth: hoverDotTheme.borderWidth,
+              strokeStyle: hoverDotTheme.borderColor ?? getRGBA(modelColor, 0.5),
+            },
+          ],
         });
       });
     });
