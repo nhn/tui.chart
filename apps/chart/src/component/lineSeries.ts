@@ -114,7 +114,8 @@ export default class LineSeries extends Component {
     this.setEventDetectType(series, options);
 
     const labelAxisData = axes.xAxis as LabelAxisData;
-    const seriesOptions = options.series as LineTypeSeriesOptions;
+    const seriesOptions = (options.series ?? {}) as LineTypeSeriesOptions;
+
     const lineSeriesData = series.line.data;
 
     this.theme = theme.series.line as Required<LineChartSeriesTheme>;

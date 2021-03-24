@@ -530,8 +530,12 @@ export const syncTooltip = () => {
 };
 
 export const rotatable = () => {
-  const { el } = createChart(temperatureData, {
-    chart: { width: 'auto', height: 'auto' },
+  return createResponsiveChart<LineSeriesData, LineChartOptions>(LineChart, temperatureData, {
+    chart: {
+      title: '24-hr Average Temperature',
+      width: 'auto',
+      height: 'auto',
+    },
     yAxis: { label: { interval: 2 } },
     xAxis: {
       title: { text: 'Month', offsetY: 10 },
@@ -568,8 +572,6 @@ export const rotatable = () => {
       ],
     },
   });
-
-  return el;
 };
 
 export const noData = () => {
