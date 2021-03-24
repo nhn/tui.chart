@@ -14,7 +14,7 @@ import {
 import { getXPosition } from '@src/helpers/calculator';
 import {
   makeRectResponderModelForCoordinateType,
-  RectResponderInfoForCoordType,
+  RectResponderInfoForCoordinateType,
 } from '@src/helpers/responders';
 
 const DRAG_MIN_WIDTH = 15;
@@ -48,33 +48,33 @@ export default class Zoom extends Component {
     const categories = state.categories as string[];
 
     this.rect = layout.plot;
-    this.startIndex = viewRange ? viewRange[0] : 0;
+    this.startIndex = viewRange?.[0] ?? 0;
 
     const coordinateChart = isCoordinateSeries(series);
     if (coordinateChart) {
-      const responderInfo = this.getRectResponderInfoForCoordType(
+      const responderInfo = this.getRectResponderInfoForCoordinateType(
         series,
         scale,
         axes.xAxis as LabelAxisData,
         categories
       );
-      this.responders = this.makeRectResponderModelForCoordType(responderInfo, categories);
+      this.responders = this.makeRectResponderModelForCoordinateType(responderInfo, categories);
     } else {
       this.responders = this.makeRectResponderModel(categories, axes.xAxis);
     }
   }
 
-  getRectResponderInfoForCoordType(
+  getRectResponderInfoForCoordinateType(
     series: ZoomableSeries,
     scale: Scale,
     axisData: LabelAxisData,
     categories: string[]
   ) {
-    const points: RectResponderInfoForCoordType[] = [];
+    const points: RectResponderInfoForCoordinateType[] = [];
     const duplicateCheckMap = {};
 
     Object.keys(series).forEach((seriesName) => {
-      const data = series[seriesName].data as LineSeriesType[] | AreaSeriesType[];
+      const data: LineSeriesType[] | AreaSeriesType[] = series[seriesName].data;
       data.forEach(({ rawData }) => {
         rawData.forEach((datum, idx) => {
           if (isNull(datum)) {
@@ -88,8 +88,9 @@ export default class Zoom extends Component {
             getCoordinateXValue(datum as CoordinateDataType),
             dataIndex
           );
+          const xWithinRect = x >= 0 && x <= this.rect.width;
 
-          if (!duplicateCheckMap[x] && x >= 0 && x <= this.rect.width) {
+          if (!duplicateCheckMap[x] && xWithinRect) {
             duplicateCheckMap[x] = true;
             points.push({ x, label: categories[dataIndex] });
           }
@@ -165,15 +166,11 @@ export default class Zoom extends Component {
     });
   }
 
-  makeRectResponderModelForCoordType(
-    responderInfo: RectResponderInfoForCoordType[],
+  makeRectResponderModelForCoordinateType(
+    responderInfo: RectResponderInfoForCoordinateType[],
     categories: string[]
   ) {
-    const responders = makeRectResponderModelForCoordinateType(
-      responderInfo,
-      categories,
-      this.rect
-    );
+    const responders = makeRectResponderModelForCoordinateType(responderInfo, this.rect);
 
     return responders.map((m, idx) => ({
       ...m,

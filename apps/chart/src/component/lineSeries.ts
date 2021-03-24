@@ -35,7 +35,7 @@ import {
   makeRectResponderModel,
   makeRectResponderModelForCoordinateType,
   makeTooltipCircleMap,
-  RectResponderInfoForCoordType,
+  RectResponderInfoForCoordinateType,
   RespondersThemeType,
 } from '@src/helpers/responders';
 import { getValueAxisName } from '@src/helpers/axes';
@@ -121,7 +121,7 @@ export default class LineSeries extends Component {
     this.theme = theme.series.line as Required<LineChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
-    this.startIndex = viewRange ? viewRange[0] : 0;
+    this.startIndex = viewRange?.[0] ?? 0;
     this.selectable = this.getSelectableOption(options);
     this.yAxisName = getValueAxisName(options, this.name, 'yAxis');
 
@@ -167,7 +167,14 @@ export default class LineSeries extends Component {
     });
   }
 
-  private getResponders(responderParams: {
+  private getResponders({
+    labelAxisData,
+    responderModel,
+    tooltipDataArr,
+    categories,
+    rawCategories,
+    coordinateType,
+  }: {
     labelAxisData: LabelAxisData;
     responderModel: CircleModel[];
     tooltipDataArr: TooltipData[];
@@ -176,25 +183,17 @@ export default class LineSeries extends Component {
     coordinateType: boolean;
   }): ResponderTypes {
     let res: ResponderTypes;
-    const {
-      labelAxisData,
-      responderModel,
-      tooltipDataArr,
-      categories,
-      rawCategories,
-      coordinateType,
-    } = responderParams;
 
     if (this.eventDetectType === 'near') {
       res = this.makeNearTypeResponderModel(responderModel, tooltipDataArr);
     } else if (this.eventDetectType === 'point') {
       res = this.makeNearTypeResponderModel(responderModel, tooltipDataArr, 0);
     } else if (coordinateType) {
-      const rectResponderInfo = this.getRectResponderInfoForCoordType(
+      const rectResponderInfo = this.getRectResponderInfoForCoordinateType(
         responderModel,
         rawCategories
       );
-      res = makeRectResponderModelForCoordinateType(rectResponderInfo, categories, this.rect);
+      res = makeRectResponderModelForCoordinateType(rectResponderInfo, this.rect);
     } else {
       res = makeRectResponderModel(this.rect, labelAxisData, categories);
     }
@@ -290,25 +289,21 @@ export default class LineSeries extends Component {
     });
   }
 
-  getRectResponderInfoForCoordType(circleModel: CircleModel[], categories: string[]) {
+  getRectResponderInfoForCoordinateType(circleModel: CircleModel[], categories: string[]) {
+    const duplicateCheckMap = {};
     const modelInRange = circleModel.filter(({ x }) => x >= 0 && x <= this.rect.width);
 
-    const { responderInfo } = modelInRange.reduce(
-      (acc, model) => {
-        const { index, x } = model;
-        if (!acc.duplicateCheckMap[x]) {
-          const label = categories[index!];
+    return modelInRange.reduce<RectResponderInfoForCoordinateType[]>((acc, model) => {
+      const { index, x } = model;
+      if (!duplicateCheckMap[x]) {
+        const label = categories[index!];
 
-          acc.duplicateCheckMap[x] = true;
-          acc.responderInfo.push({ x, label });
-        }
+        duplicateCheckMap[x] = true;
+        acc.push({ x, label });
+      }
 
-        return acc;
-      },
-      { responderInfo: [] as RectResponderInfoForCoordType[], duplicateCheckMap: {} }
-    );
-
-    return responderInfo;
+      return acc;
+    }, []);
   }
 
   renderCircleModel(

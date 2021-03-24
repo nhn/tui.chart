@@ -182,7 +182,7 @@ export default class Plot extends Component {
     }
 
     this.rect = layout.plot;
-    this.startIndex = zoomRange ? zoomRange[0] : 0;
+    this.startIndex = zoomRange?.[0] ?? 0;
     this.theme = theme.plot! as Required<PlotTheme>;
 
     const categories = (state.categories as string[]) ?? [];

@@ -25,7 +25,7 @@ export interface SelectedSeriesEventModel {
   eventDetectType?: LineTypeEventDetectType;
   alias?: string;
 }
-export interface RectResponderInfoForCoordType {
+export interface RectResponderInfoForCoordinateType {
   x: number;
   label: string;
 }
@@ -159,35 +159,31 @@ export function makeRectResponderModel(
 }
 
 export function makeRectResponderModelForCoordinateType(
-  responderInfo: RectResponderInfoForCoordType[],
-  categories: string[],
+  responderInfo: RectResponderInfoForCoordinateType[],
   rect: Rect
 ) {
   const { width, height } = rect;
+  let startPos = 0;
 
-  const { responders } = responderInfo
+  return responderInfo
     .sort((a, b) => a.x - b.x)
-    .reduce(
-      (acc, model, index) => {
-        const { x, label } = model;
-        const next = responderInfo[index + 1];
-        const endPos = next ? (next.x + x) / 2 : width;
-        const rectResponderModel: RectResponderModel = {
-          type: 'rect',
-          x: acc.startPos,
-          y: 0,
-          width: endPos - acc.startPos,
-          height,
-          label,
-          index,
-        };
+    .reduce<RectResponderModel[]>((acc, model, index) => {
+      const { x, label } = model;
+      const next = responderInfo[index + 1];
+      const endPos = next ? (next.x + x) / 2 : width;
+      const rectResponderModel: RectResponderModel = {
+        type: 'rect',
+        x: startPos,
+        y: 0,
+        width: endPos - startPos,
+        height,
+        label,
+        index,
+      };
+      startPos = endPos;
 
-        return { responders: [...acc.responders, rectResponderModel], startPos: endPos };
-      },
-      { responders: [] as RectResponderModel[], startPos: 0 }
-    );
-
-  return responders;
+      return [...acc, rectResponderModel];
+    }, []);
 }
 
 export function makeTooltipCircleMap(

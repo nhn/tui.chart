@@ -162,7 +162,7 @@ export default class AreaSeries extends Component {
     this.theme = theme.series.area as Required<AreaChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
-    this.startIndex = viewRange ? viewRange[0] : 0;
+    this.startIndex = viewRange?.[0] ?? 0;
     this.selectable = this.getSelectableOption(options);
     this.isSplineChart = options.series?.spline ?? false;
 
