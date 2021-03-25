@@ -1,41 +1,5 @@
 import React from 'react';
-import {
-  AreaChart,
-  BarChart,
-  BoxPlotChart,
-  BulletChart,
-  BubbleChart,
-  ColumnChart,
-  ColumnLineChart,
-  HeatmapChart,
-  LineChart,
-  LineAreaChart,
-  LineScatterChart,
-  NestedPieChart,
-  PieChart,
-  RadarChart,
-  ScatterChart,
-  TreemapChart,
-} from '@toast-ui/chart';
-
-const creator = {
-  area: AreaChart,
-  bar: BarChart,
-  boxPlot: BoxPlotChart,
-  bubble: BubbleChart,
-  bullet: BulletChart,
-  column: ColumnChart,
-  columnLine: ColumnLineChart,
-  heatmap: HeatmapChart,
-  line: LineChart,
-  lineArea: LineAreaChart,
-  lineScatter: LineScatterChart,
-  nestedPie: NestedPieChart,
-  pie: PieChart,
-  radar: RadarChart,
-  scatter: ScatterChart,
-  treemap: TreemapChart,
-};
+import Chart from '@toast-ui/chart';
 
 export default function (chartType) {
   return class ChartFactory extends React.Component {
@@ -65,7 +29,7 @@ export default function (chartType) {
 
     componentDidMount() {
       const { data, options } = this.props;
-      this.chartInst = new creator[chartType]({ el: this.rootEl.current, data, options });
+      this.chartInst = Chart[`${chartType}Chart`]({ el: this.rootEl.current, data, options });
 
       this.bindEventHandlers(this.props);
     }
