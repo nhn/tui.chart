@@ -9,7 +9,6 @@ import {
 } from '@t/components/series';
 import {
   ChartState,
-  ChartType,
   BoxType,
   ValueAxisData,
   CenterYAxisData,
@@ -32,7 +31,6 @@ import {
 } from '@t/options';
 import {
   first,
-  includes,
   hasNegative,
   deepCopyArray,
   last,
@@ -102,10 +100,6 @@ function calculateBarLength(value: Exclude<BoxSeriesDataType, null>, min: number
   }
 
   return calibrateDrawingValue(value, min, max);
-}
-
-export function isBoxSeries(seriesName: ChartType): seriesName is BoxType {
-  return includes(Object.values(BOX), seriesName);
 }
 
 export default class BoxSeries extends Component {
@@ -720,17 +714,21 @@ export default class BoxSeries extends Component {
   }
 
   protected getTickPositionIfNotZero(tickPositions: number[], direction: SeriesDirection) {
+    if (!tickPositions.length) {
+      return 0;
+    }
     const firstTickPosition = Number(first(tickPositions));
     const lastTickPosition = Number(last(tickPositions));
-    let tickPos = 0;
 
     if (direction === SeriesDirection.POSITIVE) {
-      tickPos = this.isBar ? firstTickPosition : lastTickPosition;
-    } else if (direction === SeriesDirection.NEGATIVE) {
-      tickPos = this.isBar ? lastTickPosition : firstTickPosition;
+      return this.isBar ? firstTickPosition : lastTickPosition;
     }
 
-    return tickPos;
+    if (direction === SeriesDirection.NEGATIVE) {
+      return this.isBar ? lastTickPosition : firstTickPosition;
+    }
+
+    return 0;
   }
 
   makeDataLabel(rect: RectModel, centerYAxis?: CenterYAxisData): RectDataLabel {

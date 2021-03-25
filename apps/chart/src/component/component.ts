@@ -203,6 +203,8 @@ export default abstract class Component {
 
     if (Array.isArray(this.models)) {
       this.syncModels(this.drawModels, this.models);
+    } else if (!Object.keys(this.models).length) {
+      this.drawModels = this.models;
     } else {
       Object.keys(this.models).forEach((type) => {
         const currentModels = this.drawModels[type];
@@ -214,6 +216,10 @@ export default abstract class Component {
   }
 
   getCurrentModelToMatchTargetModel(models, currentModels, targetModels) {
+    if (!models || !currentModels) {
+      return [...targetModels];
+    }
+
     if (getFirstValidValue(targetModels)?.name) {
       const modelNames = [...new Set(models.map(({ name }) => name))];
       const targetNames = [...new Set(targetModels.map(({ name }) => name))];

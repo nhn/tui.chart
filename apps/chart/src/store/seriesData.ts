@@ -346,7 +346,10 @@ const seriesData: StoreModule = {
     },
     setData({ state, initStoreState }, { series, categories }) {
       initStoreState.series = series;
-      state.rawCategories = makeRawCategories(series, categories);
+      const isNestedPieChart = hasNestedPieSeries(series);
+      if (!isNestedPieChart) {
+        state.rawCategories = makeRawCategories(series, categories);
+      }
 
       this.dispatch('initThemeState');
       this.dispatch('initLegendState');
