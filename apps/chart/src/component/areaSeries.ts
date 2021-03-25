@@ -23,7 +23,7 @@ import {
   BezierPoint,
 } from '@t/options';
 import { ClipRectAreaModel } from '@t/components/series';
-import { ChartState, Series, StackSeriesData, ValueEdge } from '@t/store/store';
+import { ChartState, LabelAxisData, Series, StackSeriesData, ValueEdge } from '@t/store/store';
 import { getValueRatio, setSplineControlPoint } from '@src/helpers/calculator';
 import { TooltipData } from '@t/components/tooltip';
 import { getRGBA } from '@src/helpers/color';
@@ -162,7 +162,7 @@ export default class AreaSeries extends Component {
     this.theme = theme.series.area as Required<AreaChartSeriesTheme>;
     this.rect = layout.plot;
     this.activeSeriesMap = getActiveSeriesMap(legend);
-    this.startIndex = viewRange ? viewRange[0] : 0;
+    this.startIndex = viewRange?.[0] ?? 0;
     this.selectable = this.getSelectableOption(options);
     this.isSplineChart = options.series?.spline ?? false;
 
@@ -216,7 +216,7 @@ export default class AreaSeries extends Component {
     this.responders =
       this.eventDetectType === 'near'
         ? this.makeNearTypeResponderModel(responderModel, tooltipDataArr)
-        : makeRectResponderModel(this.rect, axes.xAxis!, categories);
+        : makeRectResponderModel(this.rect, axes.xAxis as LabelAxisData, categories);
   }
 
   makeNearTypeResponderModel(

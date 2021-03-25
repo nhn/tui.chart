@@ -427,6 +427,8 @@ type BaseAxisData = InitAxisData & {
 
 export type LabelAxisData = BaseAxisData & {
   labelDistance: number;
+  rectResponderCount: number;
+  labelRange?: ValueEdge;
 };
 
 export type ValueAxisData = BaseAxisData & {
@@ -463,6 +465,8 @@ export interface ScaleData {
   limit: ValueEdge;
   stepSize: number;
   stepCount: number;
+  sizeRatio?: number;
+  positionRatio?: number;
 }
 
 export type FunctionPropertyNames<T> = {

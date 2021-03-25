@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Options, ViewAxisLabel, AxisData } from '@t/store/store';
+import { ChartState, Options, ViewAxisLabel, AxisData, ScaleData } from '@t/store/store';
 import { makeTickPixelPositions, crispPixel } from '@src/helpers/calculator';
 import { TickModel, LineModel, AxisModels, LabelModel } from '@t/components/axis';
 import { TICK_SIZE } from '@src/brushes/axis';
@@ -50,7 +50,7 @@ export default class Axis extends Component {
     this.yAxisComponent = includes([AxisType.Y, AxisType.SECONDARY_Y], name);
   }
 
-  render({ layout, axes, theme }: ChartState<Options>) {
+  render({ layout, axes, theme, scale }: ChartState<Options>) {
     if (axes.centerYAxis || !axes[this.name]) {
       return;
     }
@@ -63,7 +63,10 @@ export default class Axis extends Component {
 
     const { offsetKey, anchorKey } = getOffsetAndAnchorKey(this.yAxisComponent);
 
-    const renderOptions: RenderOptions = this.makeRenderOptions(axes[this.name]);
+    const renderOptions: RenderOptions = this.makeRenderOptions(
+      axes[this.name],
+      scale?.[this.name]
+    );
 
     const hasOnlyAxisLine = this.hasOnlyAxisLine();
 
@@ -185,9 +188,16 @@ export default class Axis extends Component {
     );
   }
 
-  makeRenderOptions(axisData: AxisData): RenderOptions {
+  makeRenderOptions(axisData: AxisData, scale?: ScaleData): RenderOptions {
     const { tickCount, tickInterval } = axisData;
-    const relativePositions = makeTickPixelPositions(this.axisSize, tickCount);
+    const sizeRatio = scale?.sizeRatio ?? 1;
+    const positionRatio = scale?.positionRatio ?? 0;
+
+    const relativePositions = makeTickPixelPositions(
+      this.axisSize * sizeRatio,
+      tickCount,
+      this.axisSize * positionRatio
+    );
 
     if (this.yAxisComponent) {
       return {

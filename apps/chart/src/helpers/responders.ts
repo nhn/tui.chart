@@ -12,7 +12,7 @@ import {
 } from '@t/components/series';
 import { LineTypeEventDetectType, Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
-import { AxisData } from '@t/store/store';
+import { LabelAxisData } from '@t/store/store';
 import { range } from '@src/helpers/utils';
 import { TooltipData } from '@t/components/tooltip';
 import { getRadiusRanges } from './sector';
@@ -24,6 +24,10 @@ export interface SelectedSeriesEventModel {
   name: string;
   eventDetectType?: LineTypeEventDetectType;
   alias?: string;
+}
+export interface RectResponderInfoForCoordinateType {
+  x: number;
+  label: string;
 }
 
 // eslint-disable-next-line complexity
@@ -124,16 +128,16 @@ export function getNearestResponder(
 
 export function makeRectResponderModel(
   rect: Rect,
-  axis: AxisData,
+  axis: LabelAxisData,
   categories: string[],
   vertical = true
 ): RectResponderModel[] {
-  const { pointOnColumn, tickCount, tickDistance } = axis;
+  const { pointOnColumn, tickDistance, rectResponderCount } = axis;
   const { width, height } = rect;
-  const halfDetectAreaIndex = pointOnColumn ? [] : [0, tickCount - 1];
+  const halfDetectAreaIndex = pointOnColumn ? [] : [0, rectResponderCount - 1];
   const halfSize = tickDistance / 2;
 
-  return range(0, tickCount).map((index) => {
+  return range(0, rectResponderCount).map((index) => {
     const half = halfDetectAreaIndex.includes(index);
     const size = half ? halfSize : tickDistance;
     let startPos = 0;
@@ -152,6 +156,34 @@ export function makeRectResponderModel(
       label: categories[index],
     };
   });
+}
+
+export function makeRectResponderModelForCoordinateType(
+  responderInfo: RectResponderInfoForCoordinateType[],
+  rect: Rect
+) {
+  const { width, height } = rect;
+  let startPos = 0;
+
+  return responderInfo
+    .sort((a, b) => a.x - b.x)
+    .reduce<RectResponderModel[]>((acc, model, index) => {
+      const { x, label } = model;
+      const next = responderInfo[index + 1];
+      const endPos = next ? (next.x + x) / 2 : width;
+      const rectResponderModel: RectResponderModel = {
+        type: 'rect',
+        x: startPos,
+        y: 0,
+        width: endPos - startPos,
+        height,
+        label,
+        index,
+      };
+      startPos = endPos;
+
+      return [...acc, rectResponderModel];
+    }, []);
 }
 
 export function makeTooltipCircleMap(

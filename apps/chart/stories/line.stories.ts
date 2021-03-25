@@ -7,8 +7,9 @@ import {
   coordinateData,
   randomData,
   temperatureData2,
-  datetimeCoordinateData,
+  concurrentUsers,
   temperatureDataWithNull,
+  datetimeCoordinateData,
 } from './data';
 import { boolean, number, radios, withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
@@ -117,7 +118,7 @@ export const spline = () => {
 export const coordinate = () => {
   const { el } = createChart(coordinateData, {
     chart: { title: 'Concurrent user' },
-    xAxis: { pointOnColumn: true, title: 'minute' },
+    xAxis: { pointOnColumn: false, title: 'minute' },
     yAxis: { title: 'users' },
   });
 
@@ -127,7 +128,7 @@ export const coordinate = () => {
 export const tupleCoordinate = () => {
   const { el } = createChart(tupleCoordinateData as LineSeriesData, {
     chart: { title: 'Concurrent user' },
-    xAxis: { pointOnColumn: true, title: 'minute' },
+    xAxis: { pointOnColumn: false, title: 'minute' },
     yAxis: { title: 'users' },
   });
 
@@ -141,6 +142,19 @@ export const datetimeCoordinate = () => {
       title: 'minute',
       pointOnColumn: false,
       date: { format: 'hh:mm:ss' },
+    },
+  });
+
+  return el;
+};
+
+export const datetimeCoordinateLargeData = () => {
+  const { el } = createChart(concurrentUsers as LineSeriesData, {
+    chart: { title: 'Concurrent user' },
+    xAxis: {
+      title: 'minute',
+      pointOnColumn: false,
+      date: { format: 'hh:mm' },
     },
     yAxis: { title: 'users' },
     series: { zoomable: true },
@@ -268,7 +282,7 @@ export const zoomable = () => {
 export const coordinateZoomable = () => {
   const { el } = createChart(coordinateData, {
     chart: { title: 'Concurrent user' },
-    xAxis: { pointOnColumn: true, title: 'minute' },
+    xAxis: { pointOnColumn: false, title: 'minute' },
     yAxis: { title: 'users' },
     series: { zoomable: true },
   });
@@ -516,8 +530,12 @@ export const syncTooltip = () => {
 };
 
 export const rotatable = () => {
-  const { el } = createChart(temperatureData, {
-    chart: { width: 'auto', height: 'auto' },
+  return createResponsiveChart<LineSeriesData, LineChartOptions>(LineChart, temperatureData, {
+    chart: {
+      title: '24-hr Average Temperature',
+      width: 'auto',
+      height: 'auto',
+    },
     yAxis: { label: { interval: 2 } },
     xAxis: {
       title: { text: 'Month', offsetY: 10 },
@@ -554,8 +572,6 @@ export const rotatable = () => {
       ],
     },
   });
-
-  return el;
 };
 
 export const noData = () => {

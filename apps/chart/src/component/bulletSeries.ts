@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Series, Axes } from '@t/store/store';
+import { ChartState, Series, Axes, LabelAxisData } from '@t/store/store';
 import {
   BulletSeriesModels,
   BulletModel,
@@ -225,7 +225,7 @@ export default class BulletSeries extends Component {
     return this.eventDetectType === 'grouped'
       ? makeRectResponderModel(
           this.rect,
-          this.vertical ? axes.xAxis : axes.yAxis,
+          (this.vertical ? axes.xAxis : axes.yAxis) as LabelAxisData,
           categories,
           this.vertical
         )
