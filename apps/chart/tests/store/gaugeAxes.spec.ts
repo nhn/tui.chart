@@ -88,7 +88,7 @@ describe('Gauge Axes Store module', () => {
         visible: false,
         radiusRange: { inner: 23.5, outer: 30 },
         barWidth: 6.5,
-        clockHand: true,
+        clockHand: false,
       },
       maxClockHandSize: 30,
     });
@@ -126,15 +126,15 @@ describe('Gauge Axes Store module', () => {
       visible: true,
       radiusRange: { inner: 23.5, outer: 30 },
       barWidth: 6.5,
-      clockHand: true,
+      clockHand: false,
     });
   });
 
-  it('should set sgauge axes with using solid without clock hand', () => {
+  it('should set sgauge axes with using solid with clock hand', () => {
     const state = deepMergedCopy(chartState, {
       options: {
         series: {
-          solid: { clockHand: false },
+          solid: { clockHand: true },
         },
       },
     });
@@ -142,6 +142,6 @@ describe('Gauge Axes Store module', () => {
     const store = { state } as Store<GaugeChartOptions>;
     gaugeAxes.action!.setCircularAxisData.call({ notify }, store);
 
-    expect(state.radialAxes.circularAxis.solidData!.clockHand).toBe(false);
+    expect(state.radialAxes.circularAxis.solidData!.clockHand).toBe(true);
   });
 });
