@@ -1,20 +1,16 @@
 import GaugeChart from '@src/charts/gaugeChart';
-import { GaugeSeriesData, GaugeChartOptions } from '@t/options';
+import { GaugeSeriesData, GaugeChartOptions, SeriesDataType } from '@t/options';
 import { gaugeData, categoryGaugeData } from './data';
 import '@src/css/chart.css';
 import { deepMergedCopy } from '@src/helpers/utils';
 import { padStart } from './util';
+import { TooltipData } from '@t/components/tooltip';
 
 const width = 550;
 const height = 500;
 const defaultOptions = {
   chart: { width, height, title: 'Speedometer' },
 };
-const bands = [
-  { range: [0, 20], color: '#55bf3b' },
-  { range: [20, 50], color: '#dddf0d' },
-  { range: [50, 90], color: '#df5353' },
-];
 
 export default {
   title: 'chart|Gauge',
@@ -97,10 +93,6 @@ export const selectable = () => {
     },
     series: {
       selectable: true,
-
-      solid: {
-        clockHand: true,
-      },
     },
     plot: {
       bands: [
@@ -133,7 +125,13 @@ export const angleRange = () => {
         end: 135,
       },
     },
-    plot: { bands },
+    plot: {
+      bands: [
+        { range: [0, 20], color: '#55bf3b' },
+        { range: [20, 50], color: '#dddf0d' },
+        { range: [50, 90], color: '#df5353' },
+      ],
+    },
     theme: {
       plot: { bands: { barWidth: 40 } },
     },
@@ -158,7 +156,13 @@ export const counterClockwise = () => {
         end: 45,
       },
     },
-    plot: { bands },
+    plot: {
+      bands: [
+        { range: [0, 20], color: '#55bf3b' },
+        { range: [20, 50], color: '#dddf0d' },
+        { range: [50, 90], color: '#df5353' },
+      ],
+    },
     theme: {
       plot: { bands: { barWidth: 40 } },
     },
@@ -204,6 +208,20 @@ export const clock = () => {
       },
     },
     exportMenu: { visible: false },
+    tooltip: {
+      formatter: (value, tooltipDataInfo?: TooltipData) => {
+        const { index } = tooltipDataInfo!;
+
+        if (index === 1) {
+          return `${value} min.`;
+        }
+        if (index === 2) {
+          return `${value} sec.`;
+        }
+
+        return `${Number(value) / 5}`;
+      },
+    },
     theme: {
       series: {
         clockHand: { size: ['50%', '80%', '95%'] },
@@ -247,7 +265,7 @@ export const dataLabels = () => {
       title: 'km/h',
     },
     series: {
-      dataLabels: { visible: false },
+      dataLabels: { visible: true },
     },
     plot: {
       bands: [
@@ -269,69 +287,18 @@ export const solid = () => {
   return el;
 };
 
-export const solidWithTheme = () => {
-  const color = 'rgba(189, 67, 67, 1)';
+export const solidWithClockHand = () => {
   const { el } = createChart(gaugeData, {
-    series: {
-      solid: true,
-      dataLabels: { visible: true, formatter: (value) => `${value}%` },
-    },
-    theme: {
-      circularAxis: {
-        label: { fontFamily: 'monaco' },
-        lineWidth: 2,
-        strokeStyle: color,
-        tick: { strokeStyle: color, lineWidth: 2 },
-      },
-      series: {
-        colors: [color],
-        hover: {
-          solid: {
-            color: '#ff0000',
-            lineWidth: 5,
-            strokeStyle: '#000',
-          },
-        },
-        select: {
-          solid: {
-            lineWidth: 3,
-            strokeStyle: '#000',
-          },
-        },
-        solid: {
-          barWidth: '10%',
-          lineWidth: 5,
-          strokeStyle: '#000',
-          backgroundSolid: { color: 'rgba(189, 67, 67, 0.1)' },
-        },
-        dataLabels: { textBubble: { visible: false }, fontSize: 16, fontFamily: 'monaco' },
-      },
-    },
+    series: { solid: { clockHand: true } },
   });
 
   return el;
 };
 
-export const solidWithAngleRange = () => {
+export const solidWithDataLabels = () => {
   const { el } = createChart(gaugeData, {
-    chart: { width: 700, height: 400 },
-    circularAxis: { scale: { min: 0, max: 100 }, title: 'km/h' },
     series: {
       solid: true,
-      angleRange: {
-        start: 270,
-        end: 90,
-      },
-    },
-  });
-
-  return el;
-};
-
-export const solidWithoutClockHand = () => {
-  const { el } = createChart(gaugeData, {
-    series: {
-      solid: { clockHand: false },
       dataLabels: { visible: true, offsetY: -30, formatter: (value) => `${value}%` },
     },
     theme: {
@@ -363,6 +330,98 @@ export const solidWithoutClockHand = () => {
   return el;
 };
 
+export const solidWithAngleRange = () => {
+  const { el } = createChart(gaugeData, {
+    chart: { width: 700, height: 400 },
+    circularAxis: { scale: { min: 0, max: 100 }, title: { text: 'km/h', offsetY: 100 } },
+    series: {
+      solid: true,
+      angleRange: {
+        start: 270,
+        end: 90,
+      },
+      dataLabels: { visible: true, offsetY: -50, formatter: (value) => `${value}%` },
+    },
+    theme: {
+      circularAxis: {
+        lineWidth: 0,
+        strokeStyle: 'rgba(0, 0, 0, 0)',
+        tick: {
+          lineWidth: 0,
+          strokeStyle: 'rgba(0, 0, 0, 0)',
+        },
+        label: {
+          color: 'rgba(0, 0, 0, 0)',
+        },
+      },
+      series: {
+        dataLabels: {
+          fontSize: 40,
+          fontFamily: 'Impact',
+          fontWeight: 600,
+          color: '#00a9ff',
+          textBubble: {
+            visible: false,
+          },
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
+export const solidWithTheme = () => {
+  const color = 'rgba(189, 67, 67, 1)';
+  const { el } = createChart(gaugeData, {
+    series: {
+      solid: true,
+      dataLabels: { visible: true, offsetY: -30, formatter: (value) => `${value}%` },
+    },
+    theme: {
+      circularAxis: {
+        label: { fontFamily: 'monaco' },
+        lineWidth: 2,
+        strokeStyle: color,
+        tick: { strokeStyle: color, lineWidth: 2 },
+      },
+      series: {
+        colors: [color],
+        hover: {
+          solid: {
+            color: '#ff0000',
+            lineWidth: 5,
+            strokeStyle: '#000',
+          },
+        },
+        select: {
+          solid: {
+            lineWidth: 3,
+            strokeStyle: '#000',
+          },
+        },
+        solid: {
+          barWidth: 60,
+          lineWidth: 5,
+          strokeStyle: '#000',
+          backgroundSolid: { color: 'rgba(189, 67, 67, 0.1)' },
+        },
+        dataLabels: {
+          fontSize: 35,
+          fontFamily: 'Impact',
+          fontWeight: 600,
+          color,
+          textBubble: {
+            visible: false,
+          },
+        },
+      },
+    },
+  });
+
+  return el;
+};
+
 export const theme = () => {
   const baseColor = '#650434';
   const { el } = createChart(gaugeData, {
@@ -373,7 +432,7 @@ export const theme = () => {
         start: 270,
         end: 90,
       },
-      dataLabels: { visible: true, offsetY: -200, formatter: (value) => `${value} %` },
+      dataLabels: { visible: true, offsetY: -180, formatter: (value) => `${value} %` },
     },
     plot: {
       bands: [
@@ -385,7 +444,7 @@ export const theme = () => {
     theme: {
       chart: { fontFamily: 'Impact' },
       circularAxis: {
-        title: { fontWeight: 500, fontSize: 30, color: baseColor },
+        title: { fontWeight: 300, fontSize: 20, color: baseColor },
         label: { color: baseColor, fontSize: 15 },
         tick: { strokeStyle: baseColor },
         strokeStyle: baseColor,
@@ -402,7 +461,7 @@ export const theme = () => {
           borderColor: 'rgba(101, 4, 52, 0.3)',
         },
         dataLabels: {
-          fontSize: 30,
+          fontSize: 40,
           color: '#fff',
           textBubble: {
             visible: true,

@@ -18,12 +18,7 @@ import {
 } from '@src/helpers/utils';
 import { message } from '@src/message';
 import { ChartState, CircularAxisData, Scale, SolidData } from '@t/store/store';
-import {
-  GaugeChartOptions,
-  GaugeSeriesType,
-  GaugeSeriesOptions,
-  GaugeSolidOptions,
-} from '@t/options';
+import { GaugeChartOptions, GaugeSeriesType, GaugeSeriesOptions } from '@t/options';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { RespondersThemeType } from '@src/helpers/responders';
 import {
@@ -81,8 +76,6 @@ export default class GaugeSeries extends Component {
   theme!: Required<GaugeChartSeriesTheme>;
 
   circularAxis!: CircularAxisData;
-
-  solidData?: GaugeSolidOptions;
 
   initialize() {
     this.type = 'series';
@@ -264,7 +257,12 @@ export default class GaugeSeries extends Component {
 
     this.tooltipMap = this.makeTooltipMap(tooltipData, renderOptions);
 
-    this.responders = this.getResponders(clockHandModels, sectorModels, tooltipData);
+    this.responders = this.getResponders(
+      clockHandModels,
+      sectorModels,
+      tooltipData,
+      renderOptions.useClockHand
+    );
   }
 
   private initDrawModels() {
@@ -294,9 +292,10 @@ export default class GaugeSeries extends Component {
   private getResponders(
     clockHandModels: ClockHandModel[],
     sectorModels: SectorModel[],
-    tooltipData: TooltipData[]
+    tooltipData: TooltipData[],
+    useClockHand = true
   ) {
-    const clockHandResponders = !this.circularAxis.solidData!.clockHand
+    const clockHandResponders = !useClockHand
       ? []
       : clockHandModels.map((m, index) => ({
           ...m,
@@ -513,6 +512,7 @@ export default class GaugeSeries extends Component {
       angle: { start, end, drawingStart },
       radius: { outer },
     } = this.circularAxis;
+    const solid = this.circularAxis.solidData!;
     const clockwise = options?.clockwise ?? true;
     const totalAngle = getTotalAngle(clockwise, start, end);
 
@@ -529,7 +529,7 @@ export default class GaugeSeries extends Component {
       categories,
       drawingStartAngle: drawingStart,
       outerRadius: outer,
-      useClockHand: solidData?.clockHand ?? true,
+      useClockHand: solid.visible ? solid.clockHand : true,
       solidData: solidData!,
     };
   }
@@ -554,7 +554,7 @@ export default class GaugeSeries extends Component {
 
   onMousemove({ responders }) {
     this.eventBus.emit('renderHoveredSeries', {
-      models: this.getResponderModelsWithTheme(responders, 'hover'),
+      models: this.getResponderModelsWithTheme(this.getResponderModels(responders), 'hover'),
       name: this.name,
     });
     this.activatedResponders = responders.map((responder) => ({ ...responder }));
@@ -672,6 +672,10 @@ export default class GaugeSeries extends Component {
 
     const model: GaugeResponderModel =
       this.tooltipMap.clockHand[index] ?? this.tooltipMap.solid[index];
+
+    if (!model) {
+      return;
+    }
     const models =
       this.getResponderModelsWithTheme(this.getResponderModels([model]), 'select') ?? [];
 

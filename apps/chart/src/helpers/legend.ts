@@ -22,7 +22,10 @@ export function showCircleLegend(options: BubbleChartOptions) {
 }
 
 export function showLegend(options: Options, series: Series | RawSeries) {
-  if (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue) {
+  if (
+    series.gauge ||
+    (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue)
+  ) {
     return false;
   }
 

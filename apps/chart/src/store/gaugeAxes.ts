@@ -52,7 +52,7 @@ function makeSolidData(
       outer: outerRadius,
     },
     barWidth: solidBarWidth,
-    clockHand: true,
+    clockHand: false,
   };
 
   if (!initialSolidOptions) {
