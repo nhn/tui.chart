@@ -1157,3 +1157,21 @@ export const usedDiskSpaceData = {
     },
   ],
 };
+
+export const olympicMedalData = {
+  categories: ['Korea', 'United States', 'Germany', 'Canada', 'Austria'],
+  series: [
+    {
+      name: 'Gold medals',
+      data: [132, 105, 92, 73, 64],
+    },
+    {
+      name: 'Silver medals',
+      data: [125, 110, 86, 64, 81],
+    },
+    {
+      name: 'Bronze medals',
+      data: [111, 90, 60, 62, 87],
+    },
+  ],
+};

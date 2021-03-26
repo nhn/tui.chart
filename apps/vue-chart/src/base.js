@@ -1,42 +1,4 @@
-import {
-  AreaChart,
-  BarChart,
-  BoxPlotChart,
-  BulletChart,
-  BubbleChart,
-  ColumnChart,
-  ColumnLineChart,
-  HeatmapChart,
-  LineChart,
-  LineAreaChart,
-  LineScatterChart,
-  NestedPieChart,
-  PieChart,
-  RadarChart,
-  ScatterChart,
-  TreemapChart,
-} from '@toast-ui/chart';
-
-const creator = {
-  area: AreaChart,
-  bar: BarChart,
-  boxPlot: BoxPlotChart,
-  bubble: BubbleChart,
-  bullet: BulletChart,
-  column: ColumnChart,
-  columnLine: ColumnLineChart,
-  heatmap: HeatmapChart,
-  line: LineChart,
-  lineArea: LineAreaChart,
-  lineScatter: LineScatterChart,
-  nestedPie: NestedPieChart,
-  pie: PieChart,
-  radar: RadarChart,
-  scatter: ScatterChart,
-  treemap: TreemapChart,
-};
-
-export const chartType = Object.keys(creator);
+import Chart from '@toast-ui/chart';
 
 const chartEvents = [
   'clickLegendLabel',
@@ -63,7 +25,7 @@ export const createComponent = (type) => ({
   },
   data() {
     return {
-      Creator: creator[type],
+      creator: Chart[`${type}Chart`],
       chartInstance: null,
       computedOptions: {},
     };
@@ -85,7 +47,7 @@ export const createComponent = (type) => ({
   mounted() {
     this.computedOptions = Object.assign({}, this.options);
 
-    this.chartInstance = new this.Creator({
+    this.chartInstance = this.creator({
       el: this.$refs.toastuiChart,
       data: this.data,
       options: this.computedOptions,

@@ -15,6 +15,7 @@ import {
   radarChart,
   scatterChart,
   treemapChart,
+  radialBarChart,
 } from '../src/index';
 import '@toast-ui/chart/dist/toastui-chart.min.css';
 import {
@@ -32,6 +33,7 @@ import {
   browserUsageData,
   genderHeightWeightData,
   usedDiskSpaceData,
+  olympicMedalData,
 } from './data';
 
 export default {
@@ -434,6 +436,27 @@ export const treemap = () => {
       '<treemap-chart :data="chartProps.data" :options="chartProps.options" ></treemap-chart>',
     created() {
       this.chartProps = { data: usedDiskSpaceData, options };
+    },
+  };
+};
+
+export const radialBar = () => {
+  const options = {
+    chart: {
+      height: 500,
+      width: 700,
+      title: 'Used disk space',
+    },
+  };
+
+  return {
+    components: {
+      'radialBar-chart': radialBarChart,
+    },
+    template:
+      '<radialBar-chart :data="chartProps.data" :options="chartProps.options" ></radialBar-chart>',
+    created() {
+      this.chartProps = { data: olympicMedalData, options };
     },
   };
 };

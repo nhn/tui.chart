@@ -16,6 +16,7 @@ const PieChart = chart('pie');
 const RadarChart = chart('radar');
 const ScatterChart = chart('scatter');
 const TreemapChart = chart('treemap');
+const RadialBarChart = chart('radialBar');
 
 export {
   AreaChart,
@@ -34,4 +35,5 @@ export {
   RadarChart,
   ScatterChart,
   TreemapChart,
+  RadialBarChart,
 };
