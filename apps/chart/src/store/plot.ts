@@ -58,29 +58,22 @@ function makePlotLines(categories: string[], isDateType: boolean, plotLines: Plo
 function makePlotBands(categories: string[], isDateType: boolean, plotBands: PlotBand[] = []) {
   return plotBands.flatMap(({ range, mergeOverlappingRanges = false, color: bgColor, opacity }) => {
     const color = rgba(bgColor, opacity);
+    const rangeArray = (isRangeValue(range[0]) ? range : [range]) as PlotRangeType[];
+    const ranges = rangeArray.map((rangeData) =>
+      rangeData.map((value) => getValidValue(value, categories, isDateType))
+    ) as RangeDataType<number>[];
 
-    if (isRangeValue(range[0])) {
-      const ranges = (range as PlotRangeType[]).map((rangeData) =>
-        rangeData.map((value) => getValidValue(value, categories, isDateType))
-      ) as RangeDataType<number>[];
-
-      if (mergeOverlappingRanges) {
-        return {
-          color,
-          range: getOverlappingRange(ranges),
-        };
-      }
-
-      return ranges.map((rangeData) => ({
-        range: rangeData,
+    if (mergeOverlappingRanges) {
+      return {
         color,
-      }));
+        range: getOverlappingRange(ranges),
+      };
     }
 
-    return {
+    return ranges.map((rangeData) => ({
+      range: rangeData,
       color,
-      range,
-    };
+    }));
   });
 }
 

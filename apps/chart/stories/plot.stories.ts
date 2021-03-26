@@ -47,6 +47,28 @@ export const visible = () => {
   return el;
 };
 
+export const basic = () => {
+  const { el } = createChart(randomData(24), {
+    plot: {
+      bands: [
+        {
+          range: [3, 8],
+          color: '#cccccc',
+          opacity: 0.2,
+        },
+      ],
+      lines: [
+        {
+          value: 12,
+          color: '#fa2828',
+        },
+      ],
+    },
+  });
+
+  return el;
+};
+
 export const coordinate = () => {
   const { el } = createChart(coordinateData, {
     plot: {
