@@ -259,6 +259,7 @@ describe('responders', () => {
         x: 20,
         y: 80,
         name: 'han',
+        label: 'A',
       },
       {
         color: 'rgba(170, 170, 170, 1)',
@@ -271,6 +272,7 @@ describe('responders', () => {
         x: 60,
         y: 60,
         name: 'han',
+        label: 'B',
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -283,6 +285,7 @@ describe('responders', () => {
         x: 20,
         y: 20,
         name: 'cho',
+        label: 'A',
       },
       {
         color: 'rgba(187, 187, 187, 1)',
@@ -295,6 +298,7 @@ describe('responders', () => {
         x: 60,
         y: 0,
         name: 'cho',
+        label: 'B',
       },
     ],
     nearest: [
@@ -305,9 +309,67 @@ describe('responders', () => {
       { height: 80, index: 0, type: 'rect', width: 40, x: 0, y: 0, label: 'A' },
       { height: 80, index: 1, type: 'rect', width: 40, x: 40, y: 0, label: 'B' },
     ],
+    point: [
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        data: { category: 'A', color: '#aaaaaa', label: 'han', value: 1, index: 0, seriesIndex: 0 },
+        radius: 5,
+        index: 0,
+        seriesIndex: 0,
+        style: ['default'],
+        type: 'circle',
+        x: 20,
+        y: 80,
+        name: 'han',
+        label: 'A',
+        detectionSize: 0,
+      },
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        data: { category: 'B', color: '#aaaaaa', label: 'han', value: 2, index: 1, seriesIndex: 0 },
+        radius: 5,
+        index: 1,
+        seriesIndex: 0,
+        style: ['default'],
+        type: 'circle',
+        x: 60,
+        y: 60,
+        name: 'han',
+        label: 'B',
+        detectionSize: 0,
+      },
+      {
+        color: 'rgba(187, 187, 187, 1)',
+        data: { category: 'A', color: '#bbbbbb', label: 'cho', value: 4, index: 0, seriesIndex: 1 },
+        radius: 5,
+        index: 0,
+        seriesIndex: 1,
+        style: ['default'],
+        type: 'circle',
+        x: 20,
+        y: 20,
+        name: 'cho',
+        label: 'A',
+        detectionSize: 0,
+      },
+      {
+        color: 'rgba(187, 187, 187, 1)',
+        data: { category: 'B', color: '#bbbbbb', label: 'cho', value: 5, index: 1, seriesIndex: 1 },
+        radius: 5,
+        index: 1,
+        seriesIndex: 1,
+        style: ['default'],
+        type: 'circle',
+        x: 60,
+        y: 0,
+        name: 'cho',
+        label: 'B',
+        detectionSize: 0,
+      },
+    ],
   };
 
-  ['near', 'nearest', 'grouped'].forEach((eventDetectType) => {
+  ['near', 'nearest', 'grouped', 'point'].forEach((eventDetectType) => {
     it(`should make responder properly when calling render according to ${eventDetectType} eventDetectType`, () => {
       const state = deepMergedCopy(chartState, { options: { series: { eventDetectType } } });
       lineSeries.render(state, { viewRange: [0, 1] });
