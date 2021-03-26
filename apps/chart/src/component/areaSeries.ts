@@ -149,7 +149,7 @@ export default class AreaSeries extends Component {
 
   public render(chartState: ChartState<AreaChartOptions | LineAreaChartOptions>, computed) {
     const { viewRange } = computed;
-    const { layout, series, scale, axes, legend, stackSeries, theme, rawCategories } = chartState;
+    const { layout, series, scale, axes, legend, stackSeries, theme } = chartState;
 
     if (!series.area) {
       throw new Error(message.noDataError(this.name));
@@ -158,6 +158,7 @@ export default class AreaSeries extends Component {
     let areaStackSeries;
     const options = this.getAreaOptions(chartState.options);
     const categories = chartState.categories as string[];
+    const rawCategories = (chartState.rawCategories as string[]) ?? [];
 
     this.theme = theme.series.area as Required<AreaChartSeriesTheme>;
     this.rect = layout.plot;
@@ -213,21 +214,45 @@ export default class AreaSeries extends Component {
 
     this.tooltipCircleMap = makeTooltipCircleMap(responderModel, tooltipDataArr);
 
-    this.responders =
-      this.eventDetectType === 'near'
-        ? this.makeNearTypeResponderModel(responderModel, tooltipDataArr)
-        : makeRectResponderModel(this.rect, axes.xAxis as LabelAxisData, categories);
+    this.responders = this.getResponders(
+      responderModel,
+      tooltipDataArr,
+      categories,
+      rawCategories,
+      axes.xAxis as LabelAxisData
+    );
+  }
+
+  private getResponders(
+    responderModel: CircleModel[],
+    tooltipDataArr: TooltipData[],
+    categories: string[],
+    rawCategories: string[],
+    axisData: LabelAxisData
+  ) {
+    if (this.eventDetectType === 'near') {
+      return this.makeNearTypeResponderModel(responderModel, tooltipDataArr, rawCategories);
+    }
+    if (this.eventDetectType === 'point') {
+      return this.makeNearTypeResponderModel(responderModel, tooltipDataArr, rawCategories, 0);
+    }
+
+    return makeRectResponderModel(this.rect, axisData, categories);
   }
 
   makeNearTypeResponderModel(
     seriesCircleModel: CircleModel[],
-    tooltipDataArr: TooltipData[]
+    tooltipDataArr: TooltipData[],
+    categories: string[],
+    detectionSize?: number
   ): CircleResponderModel[] {
     const tooltipDataLength = tooltipDataArr.length;
 
     return seriesCircleModel.map((m, dataIndex) => ({
       ...m,
       data: tooltipDataArr[dataIndex % tooltipDataLength],
+      detectionSize,
+      label: categories[m.index!],
     }));
   }
 
@@ -595,7 +620,7 @@ export default class AreaSeries extends Component {
   onMousemove({ responders, mousePosition }: MouseEventType) {
     if (this.eventDetectType === 'nearest') {
       this.onMousemoveNearestType(responders as RectResponderModel[], mousePosition);
-    } else if (this.eventDetectType === 'near') {
+    } else if (['near', 'point'].includes(this.eventDetectType)) {
       this.onMousemoveNearType(responders as CircleResponderModel[]);
     } else {
       this.onMousemoveGroupedType(responders as RectResponderModel[]);
