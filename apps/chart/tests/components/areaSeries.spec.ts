@@ -39,6 +39,7 @@ describe('basic', () => {
         pointOnColumn: true,
         tickDistance: 40,
         tickCount: 2,
+        rectResponderCount: 2,
       },
     },
     options: {
@@ -367,6 +368,7 @@ describe('responders', () => {
         pointOnColumn: true,
         tickDistance: 40,
         tickCount: 2,
+        rectResponderCount: 2,
       },
     },
     options: {
@@ -541,6 +543,7 @@ describe('range', () => {
         pointOnColumn: false,
         tickDistance: 40,
         tickCount: 2,
+        rectResponderCount: 2,
       },
     },
     options: {
@@ -736,6 +739,7 @@ describe('stack', () => {
         pointOnColumn: false,
         tickDistance: 40,
         tickCount: 5,
+        rectResponderCount: 5,
       },
     },
     options: {

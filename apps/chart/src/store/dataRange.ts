@@ -25,7 +25,7 @@ type SeriesDataRange = {
   [key in keyof ChartSeriesMap]: DataRange;
 };
 
-export function getLimitSafely(baseValues: number[]): ValueEdge {
+export function getLimitSafely(baseValues: number[], isXAxis = false): ValueEdge {
   const limit = {
     min: Math.min(...baseValues),
     max: Math.max(...baseValues),
@@ -34,7 +34,10 @@ export function getLimitSafely(baseValues: number[]): ValueEdge {
   if (baseValues.length === 1) {
     const [firstValue] = baseValues;
 
-    if (firstValue > 0) {
+    if (isXAxis) {
+      limit.min = firstValue;
+      limit.max = firstValue;
+    } else if (firstValue > 0) {
       limit.min = 0;
     } else if (firstValue === 0) {
       limit.max = 10;
@@ -191,7 +194,7 @@ const dataRange: StoreModule = {
           );
           values = yAxisValues;
 
-          seriesDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues]);
+          seriesDataRange[seriesName][labelAxisName] = getLimitSafely([...xAxisValues], true);
         } else if (!series[seriesName].data.length) {
           values = [];
         } else if (isRangeValue(firstExistValue)) {

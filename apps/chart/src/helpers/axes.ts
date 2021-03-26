@@ -10,6 +10,7 @@ import {
   Categories,
   DefaultRadialAxisData,
   RadiusInfo,
+  ScaleData,
 } from '@t/store/store';
 import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption, Rect } from '@t/options';
 import { Theme } from '@t/theme';
@@ -313,6 +314,7 @@ type ViewAxisLabelParam = {
   labels: string[];
   pointOnColumn?: boolean;
   labelDistance?: number;
+  scale?: ScaleData;
   labelInterval: number;
   tickDistance: number;
   tickInterval: number;
@@ -328,10 +330,24 @@ export function getViewAxisLabels(axisData: ViewAxisLabelParam, axisSize: number
     labelInterval,
     tickInterval,
     tickCount,
+    scale,
   } = axisData;
-  const relativePositions = makeTickPixelPositions(axisSize, tickCount);
-  const interval = labelInterval === tickInterval ? labelInterval : 1;
-  const labelAdjustment = pointOnColumn ? (labelDistance ?? tickDistance * interval) / 2 : 0;
+
+  let axisSizeAppliedRatio = axisSize;
+  let additional = 0;
+  let labelAdjustment = 0;
+
+  if (scale) {
+    const sizeRatio = scale?.sizeRatio ?? 1;
+    const positionRatio = scale?.positionRatio ?? 0;
+    axisSizeAppliedRatio = axisSize * sizeRatio;
+    additional = axisSize * positionRatio;
+  } else {
+    const interval = labelInterval === tickInterval ? labelInterval : 1;
+    labelAdjustment = pointOnColumn ? (labelDistance ?? tickDistance * interval) / 2 : 0;
+  }
+
+  const relativePositions = makeTickPixelPositions(axisSizeAppliedRatio, tickCount, additional);
 
   return labels.reduce<ViewAxisLabel[]>((acc, text, index) => {
     const offsetPos = relativePositions[index] + labelAdjustment;

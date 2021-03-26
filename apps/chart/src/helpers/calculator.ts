@@ -174,6 +174,10 @@ export function setSplineControlPoint(points: (BezierPoint | null)[]) {
 }
 
 export function getValueRatio(value: number, { min, max }: ValueEdge) {
+  if (max === min) {
+    return 0;
+  }
+
   return (value - min) / (max - min);
 }
 
@@ -188,21 +192,18 @@ export function getMaxLengthLabelWidth(labels: string[]) {
 }
 
 export function getXPosition(
-  axisData: Pick<LabelAxisData, 'pointOnColumn' | 'tickDistance' | 'labelDistance'>,
+  axisData: LabelAxisData,
   offsetSize: number,
   value: number | string | Date,
-  dataIndex: number,
-  xAxisLimit?: ValueEdge,
+  dataIndex: number
 ) {
-  const { pointOnColumn, tickDistance, labelDistance } = axisData;
+  const { pointOnColumn, tickDistance, labelRange } = axisData;
   let x;
 
-  if (xAxisLimit) {
+  if (labelRange) {
     const xValue = isString(value) ? Number(new Date(value)) : Number(value);
-    const xValueRatio = getValueRatio(xValue, xAxisLimit);
-    x =
-      xValueRatio * (offsetSize - (pointOnColumn ? labelDistance! : 0)) +
-      (pointOnColumn ? labelDistance! / 2 : 0);
+    const xValueRatio = getValueRatio(xValue, labelRange);
+    x = xValueRatio * offsetSize;
   } else {
     x = tickDistance * dataIndex + (pointOnColumn ? tickDistance / 2 : 0);
   }
