@@ -311,15 +311,16 @@ function getSecondaryYAxisData({
   initialAxisData,
   isCoordinateTypeChart,
 }: SecondaryYAxisParam): LabelAxisState | ValueAxisState {
-  const { scale, options, series, zoomRange, theme } = state;
+  const { scale, options, series, theme } = state;
   const categories = state.categories as string[];
-  const rawCategories = state.rawCategories as string[];
 
   return labelOnYAxis
     ? getLabelAxisData({
         scale: scale.secondaryYAxis!,
         axisSize: labelAxisSize,
-        categories: getYAxisOption(options).secondaryYAxis?.categories ?? categories,
+        categories:
+          getYAxisOption(options as ChartOptionsUsingYAxis).secondaryYAxis?.categories ??
+          categories,
         options,
         series,
         theme: getAxisTheme(theme, AxisType.SECONDARY_Y),
