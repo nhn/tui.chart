@@ -510,7 +510,7 @@ export default class AreaSeries extends Component {
           });
         }
 
-        responderModel.push(...this.getResponderSeriesWithTheme([model], 'hover'));
+        responderModel.push(...this.getResponderSeriesWithTheme([model], 'hover', color));
       });
     });
 
@@ -626,12 +626,13 @@ export default class AreaSeries extends Component {
 
   private getResponderSeriesWithTheme<T extends CircleModel | CircleResponderModel>(
     models: T[],
-    type: RespondersThemeType
+    type: RespondersThemeType,
+    seriesColor?: string
   ) {
     const { radius, color, borderWidth, borderColor } = this.theme[type].dot as DotTheme;
 
     return models.map((model) => {
-      const modelColor = color ?? model.color;
+      const modelColor = color ?? model.color ?? seriesColor;
 
       return {
         ...model,
