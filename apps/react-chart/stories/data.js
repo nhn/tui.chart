@@ -1175,3 +1175,12 @@ export const olympicMedalData = {
     },
   ],
 };
+
+export const gaugeData = {
+  series: [
+    {
+      name: 'Speed',
+      data: [80],
+    },
+  ],
+};

@@ -17,6 +17,7 @@ const radarChart = createComponent('radar');
 const scatterChart = createComponent('scatter');
 const treemapChart = createComponent('treemap');
 const radialBarChart = createComponent('radialBar');
+const gaugeChart = createComponent('gauge');
 
 export {
   areaChart,
@@ -36,4 +37,5 @@ export {
   scatterChart,
   treemapChart,
   radialBarChart,
+  gaugeChart,
 };
