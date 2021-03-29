@@ -195,11 +195,10 @@
       "example20-03-gauge-chart-selectable-event": "20.3 [Gauge Chart] Selectable options, select event",
       "example20-04-gauge-chart-counterClockwise": "20.4 [Gauge Chart] Counter Clockwise",
       "example20-05-gauge-chart-angleRange": "20.5 [Gauge Chart] AngleRange",
-      "example20-06-gauge-chart-solid": "20.6 [Gauge Chart] Solid",
-      "example20-07-gauge-chart-solidWithoutClockHand": "20.7 [Gauge Chart] Solid without Clock Hand",
+      "example20-06-gauge-chart-solidWithDataLabels": "20.6 [Gauge Chart] Solid with Data Labels",
+      "example20-07-gauge-chart-solidWithClockHand": "20.7 [Gauge Chart] Solid with Clock Hand",
       "example20-08-gauge-chart-dataLabels": "20.8 [Gauge Chart] Data Labels",
-      "example20-09-gauge-chart-theme": "20.9 [Gauge Chart] Theme",
-      "example20-10-gauge-chart-clock": "20.10 [Gauge Chart] Clock"
+      "example20-09-gauge-chart-theme": "20.9 [Gauge Chart] Theme"
     }
   },
   "pathPrefix": "tui.chart"

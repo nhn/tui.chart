@@ -244,17 +244,21 @@ const options = {
   }
 };
 ```
-![gauge-solid-basic](https://user-images.githubusercontent.com/43128697/110800901-07bb9e00-82c0-11eb-8ad4-4c7b1a250c1b.png)
+
+
+![gauge-solid-basic](https://user-images.githubusercontent.com/43128697/110801463-9fb98780-82c0-11eb-9b11-9ef57ded4679.png)
 
 solid 타입으로 시리즈를 표현할 때, 값을 가리키는 시계 바늘(clockHand)의 표시 여부를 설정할 수 있다.
 
+* 기본값: `false`
+
 ```js
 series: {
-  solid: { clockHand: false },
+  solid: { clockHand: true },
 }
 ```
 
-![gauge-solid-without-clockhand](https://user-images.githubusercontent.com/43128697/110801463-9fb98780-82c0-11eb-9b11-9ef57ded4679.png)
+![gauge-solid-with-clockhand](https://user-images.githubusercontent.com/43128697/110800901-07bb9e00-82c0-11eb-8ad4-4c7b1a250c1b.png)
 
 `series.dataLabels`옵션과 `theme`옵션을 설정하여 아래와 같은 차트를 표현할 수 있다.
 

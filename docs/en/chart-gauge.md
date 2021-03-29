@@ -244,17 +244,20 @@ const options = {
   }
 };
 ```
-![gauge-solid-basic](https://user-images.githubusercontent.com/43128697/110800901-07bb9e00-82c0-11eb-8ad4-4c7b1a250c1b.png)
+
+![gauge-solid-with-basic](https://user-images.githubusercontent.com/43128697/110801463-9fb98780-82c0-11eb-9b11-9ef57ded4679.png)
 
 When rendering a series in `solid` type, you can set whether to display a clock hand indicating a value.
 
+* default: `false`
+
 ```js
 series: {
-  solid: { clockHand: false },
+  solid: { clockHand: true },
 }
 ```
 
-![gauge-solid-without-clockhand](https://user-images.githubusercontent.com/43128697/110801463-9fb98780-82c0-11eb-9b11-9ef57ded4679.png)
+![gauge-solid-with-clockhand](https://user-images.githubusercontent.com/43128697/110800901-07bb9e00-82c0-11eb-8ad4-4c7b1a250c1b.png)
 
 The following image shows the `series.dataLabels` option and the `theme` option set.
 

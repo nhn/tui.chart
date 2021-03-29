@@ -20,7 +20,7 @@
     />
     <link rel="stylesheet" type="text/css" href="./css/example.css" />
     <link rel="stylesheet" href="../dist/toastui-chart.css" />
-    <title>20.6 [Gauge Chart] Solid</title>
+    <title>20.7 [Gauge Chart] Solid with Clock Hand</title>
   </head>
   <body>
     <div class="description">
@@ -67,7 +67,9 @@
       };
       const options = {
         chart: { title: 'Speedometer', width: 550, height: 500 },
-        series: { solid: true },
+        series: {
+          solid: { clockHand: true },
+        },
       };
 
       const chart = toastui.Chart.gaugeChart({ el, data, options });

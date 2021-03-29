@@ -67,7 +67,10 @@
       };
       const options = {
         chart: { title: 'Speedometer', width: 550, height: 500 },
-        circularAxis: { title: 'km/h' },
+        circularAxis: {
+          scale: { min: 0, max: 90 },
+          title: 'km/h',
+        },
         series: {
           clockwise: false,
           angleRange: {
