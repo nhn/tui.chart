@@ -175,7 +175,18 @@ export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
   theme: BubbleDataLabel;
 };
 
-export type PieSeriesModels = Record<string, SectorModel[]>;
+type PieSeriesModels = Record<string, PieSectorModel[]>;
+
+type RadialBarSeriesModels = Record<string, RadialBarSectorModel[]>;
+
+interface PieSectorModel extends SectorModel {
+  totalAngle: number;
+  percentValue: number;
+}
+
+interface RadialBarSectorModel extends SectorModel {
+  totalAngle: number;
+}
 
 export type SectorModel = {
   type: 'sector';
@@ -193,9 +204,6 @@ export type SectorModel = {
   style?: StyleProp<SectorStyle, SectorStyleName>;
   clockwise: boolean;
   drawingStartAngle?: number;
-  totalAngle?: number;
-  alias?: string;
-  percentValue?: number;
   index?: number;
   seriesColor?: string;
   seriesIndex?: number;

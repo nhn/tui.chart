@@ -13,6 +13,7 @@ import { CircularAxisTheme, VerticalAxisTheme, TextBubbleTheme } from '@t/theme'
 import { getTitleFontString } from '@src/helpers/style';
 import { includes } from '@src/helpers/utils';
 import { BubbleLabelModel, LabelModel, LineModel } from '@t/components/axis';
+import { isNoData } from '@src/helpers/validation';
 
 const RECT_SIZE = 4;
 const HALF_TICK = 5;
@@ -49,7 +50,8 @@ export default class RadialAxis extends Component {
     this.name = initParam?.name ?? 'radial';
   }
 
-  render({ layout, radialAxes, theme }: ChartState<Options>) {
+  render({ layout, radialAxes, theme, series }: ChartState<Options>) {
+    this.isShow = !isNoData(series);
     this.rect = layout.plot;
 
     if (!radialAxes) {

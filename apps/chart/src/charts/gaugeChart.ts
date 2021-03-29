@@ -15,6 +15,7 @@ import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
 import RadialAxis from '@src/component/radialAxis';
 import RadialPlot from '@src/component/radialPlot';
+import NoDataText from '@src/component/noDataText';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -117,6 +118,7 @@ export default class GaugeChart extends Chart<GaugeChartOptions> {
     this.componentManager.add(DataLabels);
     this.componentManager.add(ExportMenu, { chartEl: this.el });
     this.componentManager.add(Tooltip, { chartEl: this.el });
+    this.componentManager.add(NoDataText);
 
     this.painter.addGroups([
       basicBrush,

@@ -5,7 +5,14 @@ import {
   StackTotalDataLabel,
   BoxSeriesDataType,
 } from '../options';
-import { PointModel, SectorModel, RectModel, Nullable } from './series';
+import {
+  PointModel,
+  SectorModel,
+  RectModel,
+  Nullable,
+  PieSectorModel,
+  RadialBarSectorModel,
+} from './series';
 import { LineModel } from './axis';
 import { PieDataLabelTheme, CalloutTheme, BoxDataLabel, BubbleDataLabel } from '../theme';
 
@@ -68,10 +75,10 @@ export type PointDataLabel = PointModel & {
   type: 'point';
   theme: BubbleDataLabel | BoxDataLabel;
 };
-export type RadialDataLabel = SectorModel & {
+export type RadialDataLabel = PieSectorModel & {
   theme: PieDataLabelTheme;
 };
-export type RadialBarDataLabel = SectorModel & {
+export type RadialBarDataLabel = RadialBarSectorModel & {
   theme: BoxDataLabel;
 };
 export type RectDirection = 'top' | 'bottom' | 'left' | 'right';

@@ -1,5 +1,10 @@
 import Component from './component';
-import { SectorModel, SectorResponderModel, RadialBarResponderModel } from '@t/components/series';
+import {
+  SectorResponderModel,
+  RadialBarResponderModel,
+  RadialBarSectorModel,
+  RadialBarSeriesModels,
+} from '@t/components/series';
 import { RadialBarChartSeriesTheme, GroupedSector } from '@t/theme';
 import {
   isNumber,
@@ -55,7 +60,6 @@ type RenderOptions = {
   startAngle: number;
 };
 
-type RadialBarSeriesModels = Record<string, SectorModel[]>;
 export default class RadialBarSeries extends Component {
   models: RadialBarSeriesModels = {};
 
@@ -183,7 +187,7 @@ export default class RadialBarSeries extends Component {
     );
   }
 
-  private initDrawModels(categoryMap: Record<string, SectorModel[]>) {
+  private initDrawModels(categoryMap: Record<string, RadialBarSectorModel[]>) {
     this.drawModels = {};
 
     Object.keys(categoryMap).forEach((category) => {
@@ -196,7 +200,7 @@ export default class RadialBarSeries extends Component {
 
   private makeResponders(
     radiusRanges: number[],
-    seriesModels: SectorModel[],
+    seriesModels: RadialBarSectorModel[],
     renderOptions: RenderOptions,
     categories: string[],
     tooltipData
@@ -209,7 +213,7 @@ export default class RadialBarSeries extends Component {
         }));
   }
 
-  private makeTooltipSectorMap(seriesModels: SectorModel[], tooltipData: TooltipData[]) {
+  private makeTooltipSectorMap(seriesModels: RadialBarSectorModel[], tooltipData: TooltipData[]) {
     return seriesModels.reduce((acc, cur, index) => {
       const categoryIndex = cur.index!;
       if (!acc[categoryIndex]) {
@@ -281,10 +285,10 @@ export default class RadialBarSeries extends Component {
     seriesData: RadialBarSeriesType[],
     stackSeriesData: StackDataValues,
     renderOptions: RenderOptions,
-    initialCategoryMap: Record<string, SectorModel[]>
+    initialCategoryMap: Record<string, RadialBarSectorModel[]>
   ): {
-    seriesModels: SectorModel[];
-    categoryMap: Record<string, SectorModel[]>;
+    seriesModels: RadialBarSectorModel[];
+    categoryMap: Record<string, RadialBarSectorModel[]>;
   } {
     const {
       clockwise,
@@ -297,7 +301,7 @@ export default class RadialBarSeries extends Component {
     } = renderOptions;
     const defaultStartDegree = startAngle;
     const { lineWidth, strokeStyle } = this.theme;
-    const sectorModels: SectorModel[] = [];
+    const sectorModels: RadialBarSectorModel[] = [];
     const categories = Object.keys(initialCategoryMap);
     const categoryMap = deepCopy(initialCategoryMap);
 
@@ -316,7 +320,7 @@ export default class RadialBarSeries extends Component {
             seriesIndex
           ] as Required<RadialBarSeriesType>;
           const color = this.getSeriesColor(name, seriesColor);
-          const sectorModel: SectorModel = {
+          const sectorModel: RadialBarSectorModel = {
             type: 'sector',
             name,
             color: color!,
@@ -360,7 +364,7 @@ export default class RadialBarSeries extends Component {
       : getRGBA(color, areaOpacity);
   }
 
-  makeTooltipData(seriesModels: SectorModel[], categories: string[]): TooltipData[] {
+  makeTooltipData(seriesModels: RadialBarSectorModel[], categories: string[]): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
     seriesModels.forEach(({ seriesColor, name, value, index }) => {
@@ -391,7 +395,7 @@ export default class RadialBarSeries extends Component {
     }));
   }
 
-  private getSectorModelsFromResponders(responders: RadialBarResponderModel[]) {
+  private getRadialBarSectorModelsFromResponders(responders: RadialBarResponderModel[]) {
     if (!responders.length) {
       return [];
     }
@@ -400,10 +404,10 @@ export default class RadialBarSeries extends Component {
   }
 
   private getGroupedSector(responders: RadialBarResponderModel[], type: 'hover' | 'select') {
-    const sectorModels = this.getSectorModelsFromResponders(responders);
+    const RadialBarSectorModels = this.getRadialBarSectorModelsFromResponders(responders);
     const { color, opacity } = this.theme[type].groupedSector as Required<GroupedSector>;
 
-    return sectorModels.length
+    return RadialBarSectorModels.length
       ? responders.map((m) => ({
           ...m,
           color: getRGBA(color, opacity),
@@ -412,7 +416,7 @@ export default class RadialBarSeries extends Component {
   }
 
   onMousemoveGroupedType(responders: RadialBarResponderModel[]) {
-    const sectorModels = this.getSectorModelsFromResponders(responders);
+    const RadialBarSectorModels = this.getRadialBarSectorModelsFromResponders(responders);
 
     this.eventBus.emit('renderHoveredSeries', {
       models: this.getGroupedSector(responders, 'hover'),
@@ -420,7 +424,7 @@ export default class RadialBarSeries extends Component {
       eventDetectType: this.eventDetectType,
     });
 
-    this.activatedResponders = sectorModels;
+    this.activatedResponders = RadialBarSectorModels;
   }
 
   onMousemove({ responders }) {
@@ -448,7 +452,7 @@ export default class RadialBarSeries extends Component {
       if (this.eventDetectType === 'grouped') {
         models = [
           ...this.getGroupedSector(responders, 'select'),
-          ...this.getSectorModelsFromResponders(responders),
+          ...this.getRadialBarSectorModelsFromResponders(responders),
         ];
       } else {
         models = this.getResponderModelsWithTheme(responders as SectorResponderModel[], 'select');
@@ -503,7 +507,7 @@ export default class RadialBarSeries extends Component {
       this.eventDetectType === 'grouped'
         ? [
             ...this.getGroupedSector([this.responders[index!]], 'select'),
-            ...this.getSectorModelsFromResponders([this.responders[index!]]),
+            ...this.getRadialBarSectorModelsFromResponders([this.responders[index!]]),
           ]
         : this.getResponderModelsWithTheme(
             [this.tooltipSectorMap[index!][seriesIndex!]],

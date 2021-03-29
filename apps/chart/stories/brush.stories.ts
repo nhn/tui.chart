@@ -321,7 +321,6 @@ export const sectorBrush = () => {
     color: '#ff8787',
     clockwise: true,
     drawingStartAngle: -90,
-    totalAngle: 360,
   });
 
   sector(ctx, {
@@ -333,7 +332,6 @@ export const sectorBrush = () => {
     color: '#00bcd4',
     clockwise: false,
     drawingStartAngle: -90,
-    totalAngle: 360,
   });
 
   return el;
