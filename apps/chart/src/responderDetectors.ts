@@ -163,7 +163,7 @@ export const responderDetectors: ResponderDetectors = {
   ) => {
     const { x, y } = mousePosition;
     const { x: compX, y: compY } = componentRect;
-    const { x: centerX, y: centerY, x2, y2, handSize, detectionSize = 5 } = model;
+    const { x: centerX, y: centerY, x2, y2, detectionSize = 5 } = model;
 
     const numerator = y2 - centerY;
     const denominator = x2 - centerX;
@@ -190,11 +190,6 @@ export const responderDetectors: ResponderDetectors = {
     } else {
       const slope = numerator / denominator;
       const yIntercept = centerY - slope * centerX;
-      /*
-      const xPos = x - (centerX + compX);
-      const yPos = y - (centerY + compY);
-      const insideOuterRadius = xPos ** 2 + yPos ** 2 <= handSize ** 2;
-      */
 
       withinClockHand = withinRotationRect({
         slope,

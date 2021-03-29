@@ -223,15 +223,13 @@ export default class GaugeSeries extends Component {
     );
 
     const clockHandModels = this.renderClockHands(seriesData, renderOptions);
-    let sectorModels: SectorModel[] = [];
     this.models.clockHand = renderOptions.useClockHand ? clockHandModels : [];
 
-    if (renderOptions.solidData.visible) {
-      sectorModels = this.renderSectors(seriesData, renderOptions);
-
-      this.models.backgroundSolid = this.renderBackgroundSolid(renderOptions);
-      this.models.solid = sectorModels;
-    }
+    const solidModels: SectorModel[] = this.renderSolidModels(
+      seriesData,
+      clockHandModels,
+      renderOptions
+    );
 
     const tooltipData = this.makeTooltipData(clockHandModels);
 
@@ -259,10 +257,28 @@ export default class GaugeSeries extends Component {
 
     this.responders = this.getResponders(
       clockHandModels,
-      sectorModels,
+      solidModels,
       tooltipData,
       renderOptions.useClockHand
     );
+  }
+
+  private renderSolidModels(
+    seriesData: Required<GaugeSeriesType>[],
+    clockHandModels: ClockHandModel[],
+    renderOptions: RenderOptions
+  ) {
+    let solidModels: SectorModel[] = [];
+    this.models.clockHand = renderOptions.useClockHand ? clockHandModels : [];
+
+    if (renderOptions.solidData.visible) {
+      solidModels = this.renderSectors(seriesData, renderOptions);
+
+      this.models.backgroundSolid = this.renderBackgroundSolid(renderOptions);
+      this.models.solid = solidModels;
+    }
+
+    return solidModels;
   }
 
   private initDrawModels() {
@@ -676,8 +692,7 @@ export default class GaugeSeries extends Component {
     if (!model) {
       return;
     }
-    const models =
-      this.getResponderModelsWithTheme(this.getResponderModels([model]), 'select') ?? [];
+    const models = this.getResponderModelsWithTheme(this.getResponderModels([model]), 'select');
 
     if (!models.length) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);

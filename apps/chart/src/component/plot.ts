@@ -68,7 +68,7 @@ export default class Plot extends Component {
   renderBands(axes: Axes, categories: string[], bands: PlotBand[] = []): RectModel[] {
     const { offsetSize, anchorSize } = this.getPlotAxisSize(true);
 
-    return (bands ?? []).map(({ range, color }: PlotBand) => {
+    return bands.map(({ range, color }: PlotBand) => {
       const [start, end] = (range as PlotRangeType).map((value) =>
         validXPosition({
           axisData: getPlotAxisData(true, axes) as LabelAxisData,

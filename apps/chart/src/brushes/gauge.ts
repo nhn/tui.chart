@@ -2,6 +2,7 @@ import {
   calculateDegreeToRadian,
   getRadialPosition,
   calculateValidAngle,
+  DEGREE_90,
 } from '@src/helpers/sector';
 import { ClockHandModel } from '@t/components/series';
 import { circle } from '@src/brushes/basic';
@@ -22,13 +23,13 @@ function getClockHandPoints(model: ClockHandModel) {
       x,
       y,
       halfBaseLine,
-      calculateDegreeToRadian(calculateValidAngle(degree + 90))
+      calculateDegreeToRadian(calculateValidAngle(degree + DEGREE_90))
     );
     endPoint = getRadialPosition(
       x,
       y,
       halfBaseLine,
-      calculateDegreeToRadian(calculateValidAngle(degree - 90))
+      calculateDegreeToRadian(calculateValidAngle(degree - DEGREE_90))
     );
   }
 
