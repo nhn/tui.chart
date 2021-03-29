@@ -1,5 +1,5 @@
 import GaugeChart from '@src/charts/gaugeChart';
-import { GaugeSeriesData, GaugeChartOptions, SeriesDataType } from '@t/options';
+import { GaugeSeriesData, GaugeChartOptions } from '@t/options';
 import { gaugeData, categoryGaugeData } from './data';
 import '@src/css/chart.css';
 import { deepMergedCopy } from '@src/helpers/utils';
