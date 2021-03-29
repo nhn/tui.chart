@@ -284,7 +284,7 @@ function makeDefaultTextBubbleTheme(
   };
 }
 
-function makeLineTypeSeriesTheme(globalFontFamily: string) {
+function getLineTypeSeriesTheme(globalFontFamily: string) {
   const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
 
   return {
@@ -303,7 +303,7 @@ function makeLineTypeSeriesTheme(globalFontFamily: string) {
   };
 }
 
-function makeTreemapHeatmapSeriesTheme(globalFontFamily: string) {
+function getTreemapHeatmapSeriesTheme(globalFontFamily: string) {
   const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
 
   return {
@@ -329,7 +329,7 @@ function makeTreemapHeatmapSeriesTheme(globalFontFamily: string) {
   };
 }
 
-function makeBarColumnSeriesTheme(globalFontFamily: string) {
+function getBarColumnSeriesTheme(globalFontFamily: string) {
   const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
 
   return {
@@ -380,10 +380,10 @@ function makeBarColumnSeriesTheme(globalFontFamily: string) {
 }
 
 const transparentColor = 'rgba(255, 255, 255, 0)';
-const DefaultThemeMakers = {
-  line: (globalFontFamily: string) => ({ ...makeLineTypeSeriesTheme(globalFontFamily) }),
+const defaultThemeMakers = {
+  line: (globalFontFamily: string) => ({ ...getLineTypeSeriesTheme(globalFontFamily) }),
   area: (globalFontFamily: string) => {
-    const lineTypeSeriesTheme = makeLineTypeSeriesTheme(globalFontFamily);
+    const lineTypeSeriesTheme = getLineTypeSeriesTheme(globalFontFamily);
 
     return {
       ...lineTypeSeriesTheme,
@@ -395,12 +395,8 @@ const DefaultThemeMakers = {
       areaOpacity: DEFAULT_AREA_OPACITY,
     };
   },
-  treemap: (globalFontFamily: string) => ({
-    ...makeTreemapHeatmapSeriesTheme(globalFontFamily),
-  }),
-  heatmap: (globalFontFamily: string) => ({
-    ...makeTreemapHeatmapSeriesTheme(globalFontFamily),
-  }),
+  treemap: (globalFontFamily: string) => getTreemapHeatmapSeriesTheme(globalFontFamily),
+  heatmap: (globalFontFamily: string) => getTreemapHeatmapSeriesTheme(globalFontFamily),
   bubble: () => ({
     borderWidth: 0,
     borderColor: transparentColor,
@@ -434,8 +430,8 @@ const DefaultThemeMakers = {
       radius: radarDefault.DOT_RADIUS,
     },
   }),
-  bar: (globalFontFamily: string) => ({ ...makeBarColumnSeriesTheme(globalFontFamily) }),
-  column: (globalFontFamily: string) => ({ ...makeBarColumnSeriesTheme(globalFontFamily) }),
+  bar: (globalFontFamily: string) => ({ ...getBarColumnSeriesTheme(globalFontFamily) }),
+  column: (globalFontFamily: string) => ({ ...getBarColumnSeriesTheme(globalFontFamily) }),
   bullet: (globalFontFamily: string) => {
     const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
 
@@ -689,18 +685,18 @@ function getSeriesTheme(
   isNestedPieChart = false
 ) {
   if (seriesName === 'pie') {
-    return DefaultThemeMakers[seriesName](globalFontFamily, paramForPieSeries, isNestedPieChart);
+    return defaultThemeMakers[seriesName](globalFontFamily, paramForPieSeries, isNestedPieChart);
   }
 
   if (seriesName === 'radialBar') {
-    return DefaultThemeMakers[seriesName](globalFontFamily, isNestedPieChart);
+    return defaultThemeMakers[seriesName](globalFontFamily, isNestedPieChart);
   }
 
   if (includes(['bubble', 'radar', 'boxPlot'], seriesName)) {
-    return DefaultThemeMakers[seriesName]();
+    return defaultThemeMakers[seriesName]();
   }
 
-  return DefaultThemeMakers[seriesName](globalFontFamily);
+  return defaultThemeMakers[seriesName](globalFontFamily);
 }
 
 export function getDefaultTheme(
