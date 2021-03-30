@@ -20,23 +20,28 @@ type UsingPlotLineBandOptions = ValueOf<
   Pick<ChartOptionsMap, 'area' | 'line' | 'lineArea' | 'columnLine'>
 >;
 
-function getOverlappingRange(range: RangeDataType<number>[]) {
-  return range.reduce<RangeDataType<number>>(
-    (acc, rangeData) => {
+function getOverlappingRange(ranges: PlotBand[]) {
+  const overlappingRanges = ranges.reduce<RangeDataType<number>>(
+    (acc, { range }) => {
       const [accStart, accEnd] = acc;
-      const [start, end] = rangeData;
+      const [start, end] = range as RangeDataType<number>;
 
       return [Math.min(accStart, start), Math.max(accEnd, end)];
     },
     [Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER]
   );
+
+  return {
+    range: overlappingRanges,
+    color: ranges[0].color,
+  };
 }
 
 function getCategoryIndex(value: string, categories: string[]) {
   return categories.findIndex((category) => category === String(value));
 }
 
-function getValidValue(value, categories: string[], isDateType = false): number {
+function getValidValue(value: string | number, categories: string[], isDateType = false): number {
   if (isDateType) {
     return Number(new Date(value));
   }
@@ -59,21 +64,14 @@ function makePlotBands(categories: string[], isDateType: boolean, plotBands: Plo
   return plotBands.flatMap(({ range, mergeOverlappingRanges = false, color: bgColor, opacity }) => {
     const color = rgba(bgColor, opacity);
     const rangeArray = (isRangeValue(range[0]) ? range : [range]) as PlotRangeType[];
-    const ranges = rangeArray.map((rangeData) =>
-      rangeData.map((value) => getValidValue(value, categories, isDateType))
-    ) as RangeDataType<number>[];
-
-    if (mergeOverlappingRanges) {
-      return {
-        color,
-        range: getOverlappingRange(ranges),
-      };
-    }
-
-    return ranges.map((rangeData) => ({
-      range: rangeData,
+    const ranges: PlotBand[] = rangeArray.map((rangeData) => ({
+      range: rangeData.map((value) =>
+        getValidValue(value, categories, isDateType)
+      ) as RangeDataType<number>,
       color,
     }));
+
+    return mergeOverlappingRanges ? getOverlappingRange(ranges) : ranges;
   });
 }
 
