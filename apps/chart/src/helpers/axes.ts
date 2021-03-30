@@ -436,5 +436,5 @@ function getInitTickInterval(categories?: string[], layout?: Layout) {
 }
 
 export function isDateType(options: Options, axisName: string) {
-  return !!options[axisName].date;
+  return !!options[axisName]?.date;
 }
