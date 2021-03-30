@@ -182,34 +182,35 @@ export default class LineSeries extends Component {
     rawCategories: string[];
     coordinateType: boolean;
   }): ResponderTypes {
-    let res: ResponderTypes;
-
     if (this.eventDetectType === 'near') {
-      res = this.makeNearTypeResponderModel(responderModel, tooltipDataArr);
-    } else if (this.eventDetectType === 'point') {
-      res = this.makeNearTypeResponderModel(responderModel, tooltipDataArr, 0);
-    } else if (coordinateType) {
+      return this.makeNearTypeResponderModel(responderModel, tooltipDataArr, rawCategories);
+    }
+    if (this.eventDetectType === 'point') {
+      return this.makeNearTypeResponderModel(responderModel, tooltipDataArr, rawCategories, 0);
+    }
+    if (coordinateType) {
       const rectResponderInfo = this.getRectResponderInfoForCoordinateType(
         responderModel,
         rawCategories
       );
-      res = makeRectResponderModelForCoordinateType(rectResponderInfo, this.rect);
-    } else {
-      res = makeRectResponderModel(this.rect, labelAxisData, categories);
+
+      return makeRectResponderModelForCoordinateType(rectResponderInfo, this.rect);
     }
 
-    return res;
+    return makeRectResponderModel(this.rect, labelAxisData, categories);
   }
 
   makeNearTypeResponderModel(
     seriesCircleModel: CircleModel[],
     tooltipDataArr: TooltipData[],
+    categories: string[],
     detectionSize?: number
   ) {
     return seriesCircleModel.map((m, index) => ({
       ...m,
       data: tooltipDataArr[index],
       detectionSize,
+      label: categories[m.index!],
     }));
   }
 
