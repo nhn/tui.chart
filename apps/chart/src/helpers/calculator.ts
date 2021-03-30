@@ -90,14 +90,14 @@ export function divisors(value: number) {
   return result.sort((prev, next) => prev - next);
 }
 
-export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number, dateType?: boolean) {
+export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number, isDateType?: boolean) {
   const multipleNum = findMultipleNum(stepSize);
   const min = Math.round(limit.min * multipleNum);
   const max = Math.round(limit.max * multipleNum);
   const labels = range(min, max + 1, stepSize * multipleNum);
 
   return labels.map((label) => {
-    return String(dateType ? new Date(label) : label / multipleNum);
+    return String(isDateType ? new Date(label) : label / multipleNum);
   });
 }
 

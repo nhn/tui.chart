@@ -9,7 +9,7 @@ import {
   Layout,
   ScaleData,
 } from '@t/store/store';
-import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
+import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle } from '@t/options';
 import { Theme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
 import {
@@ -348,11 +348,11 @@ export function getLabelsAppliedFormatter(
   dateType: boolean,
   axisName: string
 ) {
-  let formattedLabels = labels;
   const dateFormatter = getDateFormat(options?.[axisName]?.date);
-  if (dateType && dateFormatter) {
-    formattedLabels = formattedLabels.map((label) => formatDate(dateFormatter, new Date(label)));
-  }
+  const formattedLabels =
+    dateType && dateFormatter
+      ? labels.map((label) => formatDate(dateFormatter, new Date(label)))
+      : labels;
   const formatter = getAxisFormatter(options, axisName);
 
   return formattedLabels.map((label, index) => formatter(label, { index, labels, axisName }));
@@ -433,4 +433,8 @@ function getInitTickInterval(categories?: string[], layout?: Layout) {
   const count = categories.length;
 
   return getAutoAdjustingInterval(count, width, categories);
+}
+
+export function isDateType(options: Options, axisName: string) {
+  return !!options[axisName].date;
 }

@@ -11,6 +11,7 @@ import {
   getMaxLabelSize,
   getLabelXMargin,
   getLabelsAppliedFormatter,
+  isDateType,
 } from '@src/helpers/axes';
 import { AxisTheme } from '@t/theme';
 import { getAxisLabelAnchorPoint } from '@src/helpers/calculator';
@@ -27,7 +28,7 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   const { categories, axisSize, options, theme } = stateProp;
   const isLabelAxis = axisType === AxisType.X;
   const axisName = isLabelAxis ? 'x' : 'y';
-  const dateType = !!options[axisType]?.date;
+  const dateType = isDateType(options, axisType);
   const labels = getLabelsAppliedFormatter(categories[axisName], options, dateType, axisType);
 
   const tickIntervalCount = labels.length;
