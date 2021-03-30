@@ -9,7 +9,7 @@ import {
   Layout,
   ScaleData,
 } from '@t/store/store';
-import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle, DateOption } from '@t/options';
+import { LineTypeXAxisOptions, BulletChartOptions, AxisTitle } from '@t/options';
 import { Theme } from '@t/theme';
 import { AxisType } from '@src/component/axis';
 import {
@@ -333,10 +333,29 @@ export function makeTitleOption(title?: AxisTitle) {
   return isString(title) ? { ...defaultOption, text: title } : { ...defaultOption, ...title };
 }
 
-export function makeFormattedCategory(categories: string[], date?: DateOption) {
-  const format = getDateFormat(date);
+export function getAxisFormatter(options: Options, axisName: string) {
+  const axisOptions = {
+    ...getYAxisOption(options),
+    xAxis: options.xAxis,
+  };
 
-  return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
+  return axisOptions[axisName]?.label?.formatter ?? ((value) => value);
+}
+
+export function getLabelsAppliedFormatter(
+  labels: string[],
+  options: Options,
+  dateType: boolean,
+  axisName: string
+) {
+  const dateFormatter = getDateFormat(options?.[axisName]?.date);
+  const formattedLabels =
+    dateType && dateFormatter
+      ? labels.map((label) => formatDate(dateFormatter, new Date(label)))
+      : labels;
+  const formatter = getAxisFormatter(options, axisName);
+
+  return formattedLabels.map((label, index) => formatter(label, { index, labels, axisName }));
 }
 
 export function makeRotationData(
@@ -414,4 +433,8 @@ function getInitTickInterval(categories?: string[], layout?: Layout) {
   const count = categories.length;
 
   return getAutoAdjustingInterval(count, width, categories);
+}
+
+export function isDateType(options: Options, axisName: string) {
+  return !!options[axisName]?.date;
 }

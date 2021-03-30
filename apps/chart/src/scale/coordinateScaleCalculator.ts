@@ -1,6 +1,8 @@
 import { ValueEdge, ScaleData } from '@t/store/store';
 import { LineChartOptions, Scale } from '@t/options';
 import { isNumber } from '@src/helpers/utils';
+import { isDateType } from '@src/helpers/axes';
+import { AxisType } from '@src/component/axis';
 
 const SNAP_VALUES = [1, 2, 5, 10];
 const DEFAULT_PIXELS_PER_STEP = 88;
@@ -197,7 +199,7 @@ export function calculateXAxisScaleForCoordinateLineType(
   options: LineChartOptions,
   categories: string[]
 ) {
-  const dateType = !!options?.xAxis?.date;
+  const dateType = isDateType(options, AxisType.X);
   const values = categories.map((value) => (dateType ? Number(new Date(value)) : Number(value)));
   const { limit, stepSize } = scale;
   const min = Math.min(...values);
