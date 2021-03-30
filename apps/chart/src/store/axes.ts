@@ -26,12 +26,13 @@ import {
   getViewAxisLabels,
   hasAxesLayoutChanged,
   getRotatableOption,
-  makeFormattedCategory,
   getMaxLabelSize,
   makeTitleOption,
   makeRotationData,
   getLabelXMargin,
   getInitAxisIntervalData,
+  getLabelsAppliedFormatter,
+  getAxisFormatter,
 } from '@src/helpers/axes';
 import { makeLabelsFromLimit, getAxisLabelAnchorPoint } from '@src/helpers/calculator';
 import {
@@ -117,15 +118,6 @@ function getZeroPosition(
   return labelAxisOnYAxis ? position : axisSize - position;
 }
 
-function getAxisFormatter(options: Options, axisName: string) {
-  const axisOptions = {
-    ...getYAxisOption(options),
-    xAxis: options.xAxis,
-  };
-
-  return axisOptions[axisName]?.label?.formatter ?? ((value) => value);
-}
-
 export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
   const {
     axisSize,
@@ -139,20 +131,14 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     axisName,
   } = stateProp;
   const pointOnColumn = isPointOnColumn(series, options);
+  const dateType = !!options?.xAxis?.date;
   const labelsBeforeFormatting = isCoordinateTypeChart
-    ? makeLabelsFromLimit(scale.limit, scale.stepSize, options)
-    : makeFormattedCategory(categories, options?.xAxis?.date);
-
-  const formatter = getAxisFormatter(options, axisName);
-  // @TODO: regenerate label when exceeding max width
-  const labels = labelsBeforeFormatting.map((label, index) =>
-    formatter(label, { index, labels: labelsBeforeFormatting, axisName })
-  );
-
+    ? makeLabelsFromLimit(scale.limit, scale.stepSize, dateType)
+    : categories;
+  const labels = getLabelsAppliedFormatter(labelsBeforeFormatting, options, dateType, axisName);
   let labelRange;
 
   if (scale) {
-    const dateType = !!options?.xAxis?.date;
     const baseLabels = pointOnColumn ? labelsBeforeFormatting : categories;
     const values = baseLabels.map((value) => (dateType ? Number(new Date(value)) : Number(value)));
 
@@ -311,9 +297,8 @@ function getSecondaryYAxisData({
   initialAxisData,
   isCoordinateTypeChart,
 }: SecondaryYAxisParam): LabelAxisState | ValueAxisState {
-  const { scale, options, series, zoomRange, theme } = state;
+  const { scale, options, series, theme } = state;
   const categories = state.categories as string[];
-  const rawCategories = state.rawCategories as string[];
 
   return labelOnYAxis
     ? getLabelAxisData({

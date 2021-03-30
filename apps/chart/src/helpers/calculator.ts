@@ -1,7 +1,6 @@
-import { Options, ValueEdge, LabelAxisData } from '@t/store/store';
+import { ValueEdge, LabelAxisData } from '@t/store/store';
 import { range, isInteger, isString, isNumber, isNull } from '@src/helpers/utils';
 import { BezierPoint, Point } from '@t/options';
-import { formatDate, getDateFormat } from '@src/helpers/formatDate';
 import { DEFAULT_LABEL_TEXT } from '@src/brushes/label';
 import { TICK_SIZE } from '@src/brushes/axis';
 
@@ -91,15 +90,14 @@ export function divisors(value: number) {
   return result.sort((prev, next) => prev - next);
 }
 
-export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number, options?: Options) {
+export function makeLabelsFromLimit(limit: ValueEdge, stepSize: number, dateType?: boolean) {
   const multipleNum = findMultipleNum(stepSize);
   const min = Math.round(limit.min * multipleNum);
   const max = Math.round(limit.max * multipleNum);
   const labels = range(min, max + 1, stepSize * multipleNum);
-  const format = getDateFormat(options?.xAxis?.date);
 
   return labels.map((label) => {
-    return format ? formatDate(format, new Date(label)) : String(label / multipleNum);
+    return String(dateType ? new Date(label) : label / multipleNum);
   });
 }
 

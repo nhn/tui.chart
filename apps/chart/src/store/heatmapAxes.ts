@@ -3,7 +3,6 @@ import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
 import { AxisType } from '@src/component/axis';
 import {
   getAxisTheme,
-  makeFormattedCategory,
   getViewAxisLabels,
   makeRotationData,
   getRotatableOption,
@@ -11,6 +10,7 @@ import {
   makeTitleOption,
   getMaxLabelSize,
   getLabelXMargin,
+  getLabelsAppliedFormatter,
 } from '@src/helpers/axes';
 import { AxisTheme } from '@t/theme';
 import { getAxisLabelAnchorPoint } from '@src/helpers/calculator';
@@ -27,14 +27,8 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
   const { categories, axisSize, options, theme } = stateProp;
   const isLabelAxis = axisType === AxisType.X;
   const axisName = isLabelAxis ? 'x' : 'y';
-  const formatter = options[axisType]?.label?.formatter ?? ((value) => value);
-  const labelsBeforeFormatting = makeFormattedCategory(
-    categories[axisName],
-    options[axisType]?.date
-  );
-  const labels = labelsBeforeFormatting.map((label, index) =>
-    formatter(label, { index, labels: labelsBeforeFormatting, axisName: axisType })
-  );
+  const dateType = !!options[axisType]?.date;
+  const labels = getLabelsAppliedFormatter(categories[axisName], options, dateType, axisType);
 
   const tickIntervalCount = labels.length;
   const tickDistance = tickIntervalCount ? axisSize / tickIntervalCount : axisSize;

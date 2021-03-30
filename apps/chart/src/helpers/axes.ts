@@ -333,10 +333,29 @@ export function makeTitleOption(title?: AxisTitle) {
   return isString(title) ? { ...defaultOption, text: title } : { ...defaultOption, ...title };
 }
 
-export function makeFormattedCategory(categories: string[], date?: DateOption) {
-  const format = getDateFormat(date);
+export function getAxisFormatter(options: Options, axisName: string) {
+  const axisOptions = {
+    ...getYAxisOption(options),
+    xAxis: options.xAxis,
+  };
 
-  return categories.map((category) => (format ? formatDate(format, new Date(category)) : category));
+  return axisOptions[axisName]?.label?.formatter ?? ((value) => value);
+}
+
+export function getLabelsAppliedFormatter(
+  labels: string[],
+  options: Options,
+  dateType: boolean,
+  axisName: string
+) {
+  let formattedLabels = labels;
+  const dateFormatter = getDateFormat(options?.[axisName]?.date);
+  if (dateType && dateFormatter) {
+    formattedLabels = formattedLabels.map((label) => formatDate(dateFormatter, new Date(label)));
+  }
+  const formatter = getAxisFormatter(options, axisName);
+
+  return formattedLabels.map((label, index) => formatter(label, { index, labels, axisName }));
 }
 
 export function makeRotationData(
