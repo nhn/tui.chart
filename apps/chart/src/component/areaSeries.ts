@@ -42,6 +42,7 @@ import {
   getNearestResponder,
   makeRectResponderModel,
   makeTooltipCircleMap,
+  RespondersThemeType,
 } from '@src/helpers/responders';
 import { getValueAxisName } from '@src/helpers/axes';
 import { getDataLabelsOptions } from '@src/helpers/dataLabels';
@@ -506,8 +507,7 @@ export default class AreaSeries extends Component {
   ): { dotSeriesModel: CircleModel[]; responderModel: CircleModel[] } {
     const dotSeriesModel: CircleModel[] = [];
     const responderModel: CircleModel[] = [];
-    const { hover, dot: dotTheme } = this.theme;
-    const hoverDotTheme = hover.dot!;
+    const { dot: dotTheme } = this.theme;
 
     this.linePointsModel.forEach(({ points, color, seriesIndex, name }, modelIndex) => {
       const isPairLinePointsModel =
@@ -535,19 +535,7 @@ export default class AreaSeries extends Component {
           });
         }
 
-        const modelColor = hoverDotTheme.color ?? getRGBA(color, 1);
-
-        responderModel.push({
-          ...model,
-          radius: hoverDotTheme.radius!,
-          color: modelColor,
-          style: [
-            {
-              lineWidth: hoverDotTheme.borderWidth,
-              strokeStyle: hoverDotTheme.borderColor ?? getRGBA(modelColor, 0.5),
-            },
-          ],
-        });
+        responderModel.push(...this.getResponderSeriesWithTheme([model], 'hover', color));
       });
     });
 
@@ -661,11 +649,15 @@ export default class AreaSeries extends Component {
     );
   }
 
-  private getSelectedSeriesWithTheme(models: CircleResponderModel[]) {
-    const { radius, color, borderWidth, borderColor } = this.theme.select.dot as DotTheme;
+  private getResponderSeriesWithTheme<T extends CircleModel | CircleResponderModel>(
+    models: T[],
+    type: RespondersThemeType,
+    seriesColor?: string
+  ) {
+    const { radius, color, borderWidth, borderColor } = this.theme[type].dot as DotTheme;
 
     return models.map((model) => {
-      const modelColor = color ?? model.color;
+      const modelColor = color ?? model.color ?? seriesColor;
 
       return {
         ...model,
@@ -688,7 +680,7 @@ export default class AreaSeries extends Component {
         );
       }
       this.eventBus.emit('renderSelectedSeries', {
-        models: this.getSelectedSeriesWithTheme(models),
+        models: this.getResponderSeriesWithTheme(models, 'select'),
         name: this.name,
       });
       this.eventBus.emit('needDraw');
@@ -720,10 +712,8 @@ export default class AreaSeries extends Component {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
-    this.eventBus.emit('renderSelectedSeries', {
-      models: [model],
-      name: this.name,
-    });
+    const models = this.getResponderSeriesWithTheme([model], 'select');
+    this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
     this.eventBus.emit('needDraw');
   };
 

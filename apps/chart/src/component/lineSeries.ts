@@ -485,8 +485,9 @@ export default class LineSeries extends Component {
     if (!model) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
+    const models = this.getResponderSeriesWithTheme([model], 'select');
 
-    this.eventBus.emit('renderSelectedSeries', { models: [model], name: this.name });
+    this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
     this.eventBus.emit('needDraw');
   };
 
