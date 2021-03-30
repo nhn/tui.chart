@@ -24,6 +24,7 @@
 - [NestedPie Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-nestedPie.md)
 - [Radar Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-radar.md)
 - [RadialBar Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-radialBar.md)
+- [Gauge Chart](https://github.com/nhn/tui.chart/blob/main/docs/en/chart-gauge.md)
 
 ### Common
 

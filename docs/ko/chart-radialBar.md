@@ -1,4 +1,4 @@
-# Radial 차트
+# RadialBar 차트
 
 > 차트별로 사용할 수 있는 API는 이 가이드에서 다루지 않는다. 사용 가능한 API가 궁금하다면 [API 가이드](./common-api.md)를 참고하자.
 

@@ -62,14 +62,10 @@ const options = {
 
 Options `lines` and `bands` are explained in greater detail below.
 
-## lines & bands
-Options `lines` and `bands` can be used with charts in the Line and Area chart family.
+## lines
+The `lines` option can be used to add new lines to the plot area.
 
 * Compatible with : [Line chart](./chart-line.md), [Area chart](./chart-area.md), [LineArea chart](./chart-lineArea.md), [LineScatter chart](./chart-lineScatter.md), [ColumnLine chart](./chart-columnLine.md)
-
-### lines
-
-The `lines` option can be used to add new lines to the plot area.
 
 ```ts
 type PlotOption = {
@@ -114,9 +110,13 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102869301-c06eff80-447e-11eb-9762-f71671843695.png)
 
-### bands
+## bands
 
 The `bands` option can be used to color the background of a predefined area within the plot.
+
+### For Line, Area, LineArea, LineScatter, ColumnLine Charts
+
+* Compatible with : [Line chart](./chart-line.md), [Area chart](./chart-area.md), [LineArea chart](./chart-lineArea.md), [LineScatter chart](./chart-lineScatter.md), [ColumnLine chart](./chart-columnLine.md)
 
 ```ts
 type PlotOption = {
@@ -190,7 +190,7 @@ const options = {
 
 ![image](https://user-images.githubusercontent.com/43128697/102870505-72f39200-4480-11eb-8b24-4ba2a7242556.png)
 
-## theme
+#### theme
 
 Themes can be used to change the line style and the background color for the plot area.
 
@@ -243,3 +243,76 @@ const options = {
 ```
 
 ![image](https://user-images.githubusercontent.com/43128697/102844399-bb925780-444e-11eb-9bd5-4c10471d1d6b.png)
+
+### For Gauge Chart
+
+* Compatible with : [Gauge chart](./chart-gauge.md)
+
+
+```ts
+type GaugePlotOption = {
+  ...
+  bands?: {
+    range: [number, number] | [string, string];
+    color: string;
+    id?: string;
+  }[];
+};
+```
+
+| Name | Type | Details |
+| --- | --- | --- |
+| `bands` | band[] | Defines the array of bands objects |
+| `band.range` | [number, number] \| [string, string] \| Values that correspond to the circular-axis; entered in the array in the order of starting value and ending value |
+| `band.color` | string | Plot sector color |
+| `band.id` | string | Band id; when passed to `removePlotBand`, the corresponding band is deleted |
+
+For usage information, refer to the following example.
+
+```js
+const options = {
+  ...
+  plot: {
+    bands: [
+      { range: [0, 20], color: '#55bf3b' },
+      { range: [20, 50], color: '#dddf0d' },
+      { range: [50, 110], color: '#df5353' },
+    ]
+  }
+};
+```
+
+![gauge-plot](https://user-images.githubusercontent.com/43128697/110775818-b3ee8c00-82a2-11eb-8233-2b915489735f.png)
+
+#### theme
+
+The following are plot themes that can be used in Gauge charts. You can change the thickness of the plot range area.
+
+
+```ts
+type GaugePlotTheme = {
+  bands: {
+    barWidth?: number;
+  };
+};
+```
+
+| Name | Type | Details |
+| --- | --- | --- |
+| `bands` | object | Band theme |
+| `bands.barWidth` | number | Band width |
+
+
+The following is an example of changing the thickness of the plot area by setting the plot theme.
+
+```js
+const options = {
+  theme: {
+    plot: {
+      { bands: { barWidth: 30 } }
+    }
+  }
+};
+```
+
+![gauge-plot-theme](https://user-images.githubusercontent.com/43128697/110794737-65002100-82b9-11eb-9607-dc443700dac3.png)
