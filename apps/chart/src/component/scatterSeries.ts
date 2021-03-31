@@ -153,7 +153,10 @@ export default class ScatterSeries extends Component {
     return model ? [model] : [];
   }
 
-  private getResponderAppliedTheme(closestModel: ScatterSeriesModel[], type: RespondersThemeType) {
+  private getResponderAppliedTheme<T extends ScatterSeriesModel | CircleResponderModel>(
+    closestModel: T[],
+    type: RespondersThemeType
+  ) {
     const { fillColor, size } = this.theme[type];
 
     return closestModel.map((m) =>
@@ -201,28 +204,35 @@ export default class ScatterSeries extends Component {
   getModelsForSelectInfo = (info: SelectSeriesHandlerParams<ScatterChartOptions>) => {
     const { index, seriesIndex, state } = info;
 
-    if (!isAvailableSelectSeries(info, 'scatter')) {
-      return [];
+    if (!isNumber(index) || !isNumber(seriesIndex) || !isAvailableSelectSeries(info, 'scatter')) {
+      return;
     }
 
-    const { name } = state.series.scatter!.data[seriesIndex!];
+    const { name } = state.series.scatter!.data[seriesIndex];
 
-    return [this.responders.filter(({ name: dataName }) => dataName === name)[index!]];
+    return [this.responders.filter(({ name: dataName }) => dataName === name)[index]];
   };
 
   selectSeries = (info: SelectSeriesHandlerParams<ScatterChartOptions>) => {
     const models = this.getModelsForSelectInfo(info);
+    if (!models) {
+      return;
+    }
+
     if (!models.length) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
-    this.eventBus.emit('renderSelectedSeries', { models, name: this.name });
+    this.eventBus.emit('renderSelectedSeries', {
+      models: this.getResponderAppliedTheme(models, 'select'),
+      name: this.name,
+    });
     this.eventBus.emit('needDraw');
   };
 
   showTooltip = (info: SelectSeriesHandlerParams<ScatterChartOptions>) => {
     const models = this.getModelsForSelectInfo(info);
-    if (!models.length) {
+    if (!models) {
       return;
     }
 

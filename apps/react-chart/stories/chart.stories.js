@@ -17,6 +17,7 @@ import {
   RadarChart,
   ScatterChart,
   TreemapChart,
+  RadialBarChart,
 } from '../src';
 import {
   avgTemperatureData,
@@ -33,6 +34,7 @@ import {
   browserUsageData,
   genderHeightWeightData,
   usedDiskSpaceData,
+  olympicMedalData,
 } from './data';
 
 export default {
@@ -261,6 +263,19 @@ export const pie = () => {
   return <PieChart options={options} data={browserUsageData} />;
 };
 
+export const treemap = () => {
+  const options = {
+    chart: {
+      height: 500,
+      width: 700,
+      title: 'Used disk space',
+    },
+    tooltip: { formatter: (value) => `${value}GB` },
+  };
+
+  return <TreemapChart options={options} data={usedDiskSpaceData} />;
+};
+
 export const radar = () => {
   const options = {
     chart: {
@@ -287,15 +302,13 @@ export const scatter = () => {
   return <ScatterChart options={options} data={genderHeightWeightData} />;
 };
 
-export const treemap = () => {
+export const radialBar = () => {
   const options = {
     chart: {
       height: 500,
       width: 700,
-      title: 'Used disk space',
     },
-    tooltip: { formatter: (value) => `${value}GB` },
   };
 
-  return <TreemapChart options={options} data={usedDiskSpaceData} />;
+  return <RadialBarChart options={options} data={olympicMedalData} />;
 };
