@@ -130,4 +130,5 @@ export {
   ColumnLineChart,
   BoxPlotChart,
   RadialBarChart,
+  GaugeChart,
 };

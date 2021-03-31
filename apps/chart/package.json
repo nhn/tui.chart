@@ -64,6 +64,9 @@
     "./radialBar": {
       "import": "./dist/esm/charts/radialBarChart.js"
     },
+    "./gauge": {
+      "import": "./dist/esm/charts/gaugeChart.js"
+    },
     "./": "./"
   },
   "scripts": {
