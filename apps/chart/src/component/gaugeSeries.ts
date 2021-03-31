@@ -488,13 +488,11 @@ export default class GaugeSeries extends Component {
 
   private makeTooltipMap(tooltipData: TooltipData[], renderOptions: RenderOptions): TooltipMap {
     const { clockHand, solid } = this.models;
-    const {
-      solidData: { clockHand: clockHandVisible },
-    } = renderOptions;
+    const { useClockHand } = renderOptions;
 
     return tooltipData.reduce<TooltipMap>(
       (acc, data, index) => {
-        if (clockHandVisible) {
+        if (useClockHand) {
           acc.clockHand.push({
             ...clockHand[index],
             detectionSize: clockHand[index].baseLine + 3,

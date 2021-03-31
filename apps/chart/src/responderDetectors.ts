@@ -37,10 +37,10 @@ function withinRotationRect({
   detectionSize: number;
 }) {
   const [x1, x2] = modelXPositions;
-  const posY = slope * mouseX + yIntercept;
+  const posY = slope * (mouseX - compX) + yIntercept;
   const withinRadius =
     (x1 > x2 && mouseX >= compX + x2 && mouseX <= compX + x1) ||
-    (x1 < x2 && x2 <= compX + x2 && x2 >= compX + x1);
+    (x1 < x2 && mouseX <= compX + x2 && mouseX >= compX + x1);
 
   const withinDetectionSize =
     posY - detectionSize + compY <= mouseY && mouseY <= posY + detectionSize + compY;
