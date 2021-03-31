@@ -16,6 +16,7 @@ import {
   scatterChart,
   treemapChart,
   radialBarChart,
+  gaugeChart,
 } from '../src/index';
 import '@toast-ui/chart/dist/toastui-chart.min.css';
 import {
@@ -34,6 +35,7 @@ import {
   genderHeightWeightData,
   usedDiskSpaceData,
   olympicMedalData,
+  gaugeData,
 } from './data';
 
 export default {
@@ -457,6 +459,39 @@ export const radialBar = () => {
       '<radialBar-chart :data="chartProps.data" :options="chartProps.options" ></radialBar-chart>',
     created() {
       this.chartProps = { data: olympicMedalData, options };
+    },
+  };
+};
+
+export const gauge = () => {
+  const options = {
+    chart: {
+      height: 500,
+      width: 550,
+    },
+    circularAxis: {
+      scale: {
+        min: 0,
+        max: 100,
+      },
+      title: { text: 'km/h' },
+    },
+    plot: {
+      bands: [
+        { range: [0, 20], color: '#55bf3b' },
+        { range: [20, 50], color: '#dddf0d' },
+        { range: [50, 110], color: '#df5353' },
+      ],
+    },
+  };
+
+  return {
+    components: {
+      'gauge-chart': gaugeChart,
+    },
+    template: '<gauge-chart :data="chartProps.data" :options="chartProps.options" ></gauge-chart>',
+    created() {
+      this.chartProps = { data: gaugeData, options };
     },
   };
 };
