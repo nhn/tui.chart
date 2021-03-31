@@ -81,7 +81,7 @@ import {
   LineScatterChartProps,
   ColumnLineChartProps,
   RadialBarChartProps,
-  GaugeChartProps
+  GaugeChartProps,
 } from './charts';
 
 declare namespace toastui {
@@ -602,6 +602,9 @@ export {
   RadialBarChartProps,
   RadialBarChartOptions,
   RadialBarSeriesData,
+  GaugeChartProps,
+  GaugeChartOptions,
+  GaugeSeriesData,
 };
 
 export default toastui.Chart;

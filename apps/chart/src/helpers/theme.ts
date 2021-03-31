@@ -397,6 +397,21 @@ const defaultThemeMakers = {
   },
   treemap: (globalFontFamily: string) => getTreemapHeatmapSeriesTheme(globalFontFamily),
   heatmap: (globalFontFamily: string) => getTreemapHeatmapSeriesTheme(globalFontFamily),
+  scatter: () => ({
+    size: 12,
+    borderWidth: 1.5,
+    fillColor: transparentColor,
+    select: {
+      fillColor: 'rgba(255, 255, 255, 1)',
+      borderWidth: 2.5,
+      size: 12,
+    },
+    hover: {
+      fillColor: 'rgba(255, 255, 255, 1)',
+      borderWidth: 2.5,
+      size: 12,
+    },
+  }),
   bubble: () => ({
     borderWidth: 0,
     borderColor: transparentColor,
@@ -582,8 +597,9 @@ const defaultThemeMakers = {
       },
     };
   },
-  radialBar: (globalFontFamily: string, isNestedPieChart = false) => ({
-    strokeStyle: isNestedPieChart ? '#fff' : 'rgba(255, 255, 255, 0)',
+  radialBar: (globalFontFamily: string) => ({
+    areaOpacity: 1,
+    strokeStyle: 'rgba(255, 255, 255, 0)',
     lineWidth: 0,
     hover: {
       lineWidth: DEFAULT_PIE_LINE_WIDTH,
@@ -686,10 +702,6 @@ function getSeriesTheme(
 ) {
   if (seriesName === 'pie') {
     return defaultThemeMakers[seriesName](globalFontFamily, paramForPieSeries, isNestedPieChart);
-  }
-
-  if (seriesName === 'radialBar') {
-    return defaultThemeMakers[seriesName](globalFontFamily, isNestedPieChart);
   }
 
   if (includes(['bubble', 'radar', 'boxPlot'], seriesName)) {
