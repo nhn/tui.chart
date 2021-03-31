@@ -199,7 +199,7 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
   const { limit, stepSize } = scale;
   const size = centerYAxis ? centerYAxis?.xAxisHalfSize : axisSize;
   const divergingBoxSeries = isDivergingBoxSeries(series, options);
-  const formatter = getAxisFormatter(options, axisName);
+  const formatter = getAxisFormatter(options as ChartOptionsUsingYAxis, axisName);
   const zeroPosition = getZeroPosition(
     limit,
     axisSize,

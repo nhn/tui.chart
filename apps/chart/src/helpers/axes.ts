@@ -367,7 +367,7 @@ export function makeTitleOption(title?: AxisTitle) {
   return isString(title) ? { ...defaultOption, text: title } : { ...defaultOption, ...title };
 }
 
-export function getAxisFormatter(options: Options, axisName: string) {
+export function getAxisFormatter(options: ChartOptionsUsingYAxis, axisName: string) {
   const axisOptions = {
     ...getYAxisOption(options),
     xAxis: options.xAxis,
@@ -387,7 +387,7 @@ export function getLabelsAppliedFormatter(
     dateType && dateFormatter
       ? labels.map((label) => formatDate(dateFormatter, new Date(label)))
       : labels;
-  const formatter = getAxisFormatter(options, axisName);
+  const formatter = getAxisFormatter(options as ChartOptionsUsingYAxis, axisName);
 
   return formattedLabels.map((label, index) => formatter(label, { index, labels, axisName }));
 }
@@ -523,7 +523,7 @@ export function getRadiusInfo(
     outerRadius,
   };
 }
-                                                     
+
 export function isDateType(options: Options, axisName: string) {
   return !!options[axisName]?.date;
 }
