@@ -40,12 +40,12 @@ import { GaugeChartProps, SelectSeriesInfo } from '@t/charts';
  * @classdesc Gauge Chart
  * @param {Object} props
  *   @param {HTMLElement} props.el - The target element to create chart.
- *   @param {Object} props.data - Data for making Pie Chart.
+ *   @param {Object} props.data - Data for making Gauge Chart.
  *     @param {Array<string>} [props.data.categories] - Categories.
  *     @param {Array<Object>} props.data.series - Series data.
  *       @param {string} props.data.series.name - Series name.
  *       @param {number} props.data.series.data - Series data.
- *   @param {Object} [props.options] - Options for making Pie Chart.
+ *   @param {Object} [props.options] - Options for making Gauge Chart.
  *     @param {Object} [props.options.chart]
  *       @param {string|Object} [props.options.chart.title] - Chart title text or options.
  *         @param {string} [props.options.chart.title.text] - Chart title text.

@@ -34,12 +34,12 @@ import { RadialBarChartProps, SelectSeriesInfo } from '@t/charts';
  * @classdesc RadialBar Chart
  * @param {Object} props
  *   @param {HTMLElement} props.el - The target element to create chart.
- *   @param {Object} props.data - Data for making Pie Chart.
+ *   @param {Object} props.data - Data for making RadialBar Chart.
  *     @param {Array<string>} [props.data.categories] - Categories.
  *     @param {Array<Object>} props.data.series - Series data.
  *       @param {string} props.data.series.name - Series name.
  *       @param {number} props.data.series.data - Series data.
- *   @param {Object} [props.options] - Options for making Pie Chart.
+ *   @param {Object} [props.options] - Options for making RadialBar Chart.
  *     @param {Object} [props.options.chart]
  *       @param {string|Object} [props.options.chart.title] - Chart title text or options.
  *         @param {string} [props.options.chart.title.text] - Chart title text.
@@ -82,7 +82,7 @@ import { RadialBarChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond.
  *     @param {Object} [props.options.lang] - Options for changing the text displayed on the chart or i18n languages.
  *       @param {Object} [props.options.lang.noData] - No Data Layer Text.
- *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Pie Chart guide} on github.
+ *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|RadialBar Chart guide} on github.
  *       @param {Object} [props.options.theme.chart] - Chart font theme.
  *       @param {Object} [props.options.theme.noData] - No Data Layer Text theme.
  *       @param {Object} [props.options.theme.series] - Series theme.
