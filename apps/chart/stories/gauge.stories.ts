@@ -3,8 +3,6 @@ import { GaugeSeriesData, GaugeChartOptions } from '@t/options';
 import { gaugeData, categoryGaugeData } from './data';
 import '@src/css/chart.css';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { padStart } from './util';
-import { TooltipData } from '@t/components/tooltip';
 
 const width = 550;
 const height = 500;
@@ -26,21 +24,6 @@ function createChart(data: GaugeSeriesData, customOptions: GaugeChartOptions = {
   const chart = new GaugeChart({ el, data, options });
 
   return { el, chart };
-}
-
-function getCurrentTime() {
-  const currentDate = new Date();
-  const hour = currentDate.getHours();
-
-  return {
-    hour: hour > 12 ? hour - 12 : hour,
-    min: currentDate.getMinutes(),
-    sec: currentDate.getSeconds(),
-  };
-}
-
-function timeFormatter(value) {
-  return `${padStart(value, 2, '0')}`;
 }
 
 export const basic = () => {
@@ -167,90 +150,6 @@ export const counterClockwise = () => {
       plot: { bands: { barWidth: 40 } },
     },
   });
-
-  return el;
-};
-
-export const clock = () => {
-  const { hour, min, sec } = getCurrentTime();
-
-  const data = {
-    series: [
-      {
-        name: 'Time',
-        data: [hour * 5, min, sec],
-      },
-    ],
-  };
-  const { el, chart } = createChart(data, {
-    chart: { title: '', animation: { duration: 0 } },
-    circularAxis: {
-      tick: { interval: 5 },
-      label: {
-        margin: 15,
-        interval: 5,
-        formatter: (value) => (Number(value) === 0 ? '12' : `${Number(value) / 5}`),
-      },
-      scale: { stepSize: 1, min: 0, max: 59 },
-    },
-    plot: {
-      bands: [{ range: [0, 60], color: '#ffc107' }],
-    },
-    series: {
-      dataLabels: {
-        visible: true,
-        offsetY: 80,
-        formatter: (value, dataLabelData) => {
-          const [h, m, s] = dataLabelData! as number[];
-
-          return `${timeFormatter(h / 5)}:${timeFormatter(m)}:${timeFormatter(s)}`;
-        },
-      },
-    },
-    exportMenu: { visible: false },
-    tooltip: {
-      formatter: (value, tooltipDataInfo?: TooltipData) => {
-        const { index } = tooltipDataInfo!;
-
-        if (index === 1) {
-          return `${value} min.`;
-        }
-        if (index === 2) {
-          return `${value} sec.`;
-        }
-
-        return `${Number(value) / 5}`;
-      },
-    },
-    theme: {
-      series: {
-        clockHand: { size: ['50%', '80%', '95%'] },
-        dataLabels: {
-          fontFamily: 'Impact',
-          fontWeight: 500,
-          fontSize: 30,
-          textBubble: {
-            visible: true,
-            borderRadius: 0,
-          },
-        },
-      },
-      plot: { bands: { barWidth: 20 } },
-    },
-  });
-
-  setInterval(() => {
-    const { hour: h, min: m, sec: s } = getCurrentTime();
-
-    chart.setData({
-      series: [
-        {
-          name: 'Speed',
-          data: [h * 5, m, s],
-        },
-      ],
-    });
-  }, 1000);
 
   return el;
 };
