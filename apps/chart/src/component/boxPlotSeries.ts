@@ -49,7 +49,7 @@ export default class BoxPlotSeries extends Component {
 
   responders!: BoxPlotResponderTypes[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: BoxPlotResponderTypes[] = [];
 
   eventDetectType: BoxTypeEventDetectType = 'point';
 

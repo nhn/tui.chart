@@ -8,7 +8,11 @@ import { SectorStyle, SectorStyleName, CircleStyleName, RectStyleName } from '..
 
 export type Nullable<T> = T | null;
 export type StyleProp<T, K> = (T | K)[];
-export type PointModel = Point & { value?: number; name?: string };
+export type PointModel = Point & {
+  value?: number | string;
+  name?: string;
+  data?: (string | number)[];
+};
 
 export interface CircleStyle {
   strokeStyle?: string;
@@ -27,7 +31,8 @@ export type ResponderModel =
   | TreemapRectResponderModel
   | MarkerResponderModel
   | BulletResponderModel
-  | RadialBarResponderModel;
+  | RadialBarResponderModel
+  | GaugeResponderModel;
 
 export type TreemapSeriesModels = { series: TreemapRectModel[]; layer: TreemapRectModel[] };
 
@@ -170,7 +175,18 @@ export type StackTotalModel = Omit<RectModel, 'type' | 'color'> & {
   theme: BubbleDataLabel;
 };
 
-export type PieSeriesModels = Record<string, SectorModel[]>;
+type PieSeriesModels = Record<string, PieSectorModel[]>;
+
+type RadialBarSeriesModels = Record<string, RadialBarSectorModel[]>;
+
+interface PieSectorModel extends SectorModel {
+  totalAngle: number;
+  percentValue: number;
+}
+
+interface RadialBarSectorModel extends SectorModel {
+  totalAngle: number;
+}
 
 export type SectorModel = {
   type: 'sector';
@@ -187,14 +203,15 @@ export type SectorModel = {
   value?: number;
   style?: StyleProp<SectorStyle, SectorStyleName>;
   clockwise: boolean;
-  drawingStartAngle: number;
-  totalAngle: number;
-  alias?: string;
-  percentValue?: number;
+  drawingStartAngle?: number;
   index?: number;
   seriesColor?: string;
   seriesIndex?: number;
   lineWidth?: number;
+  animationDegree?: {
+    start: number;
+    end: number;
+  };
 } & Point;
 
 export type SectorResponderModel = {
@@ -207,6 +224,12 @@ type GroupedSectorResponderModel = Pick<
 >;
 
 type RadialBarResponderModel = SectorResponderModel | GroupedSectorResponderModel;
+
+interface ClockHandResponderModel extends ClockHandModel {
+  detectionSize: number;
+  data: TooltipData;
+}
+type GaugeResponderModel = SectorResponderModel | ClockHandResponderModel;
 
 export type PolygonModel = {
   type: 'polygon';
@@ -331,3 +354,32 @@ export type NoDataTextModel = LabelModel[];
 export type BackgroundModel = RectModel[];
 
 export type RadiusRange = { inner: number; outer: number };
+
+export type ClockHandModel = {
+  type: 'clockHand';
+  color: string;
+  name: string;
+  value: number | string;
+  x: number;
+  y: number;
+  x2: number;
+  y2: number;
+  pin: {
+    color: string;
+    radius: number;
+    style: StyleProp<CircleStyle, CircleStyleName>;
+  };
+  degree: number;
+  baseLine: number;
+  animationDegree: number;
+  handSize: number;
+  seriesData: (number | string)[];
+  index: number;
+  seriesIndex: number;
+};
+
+export type GaugeSeriesModels = {
+  clockHand: ClockHandModel[];
+  solid: SectorModel[];
+  backgroundSolid: SectorModel[];
+};

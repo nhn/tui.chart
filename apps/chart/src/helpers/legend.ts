@@ -4,12 +4,13 @@ import {
   HeatmapChartOptions,
   TreemapChartOptions,
   TreemapChartSeriesOptions,
+  GaugeChartOptions,
 } from '@t/options';
 import { includes, isUndefined } from '@src/helpers/utils';
 
 export type OptionsWithNormalLegendType = Exclude<
   Options,
-  TreemapChartOptions | HeatmapChartOptions
+  TreemapChartOptions | HeatmapChartOptions | GaugeChartOptions
 >;
 
 export function getActiveSeriesMap(legend: Legend) {
@@ -21,7 +22,10 @@ export function showCircleLegend(options: BubbleChartOptions) {
 }
 
 export function showLegend(options: Options, series: Series | RawSeries) {
-  if (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue) {
+  if (
+    series.gauge ||
+    (series.treemap && !(options.series as TreemapChartSeriesOptions)?.useColorValue)
+  ) {
     return false;
   }
 

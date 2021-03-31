@@ -2,10 +2,10 @@ import Component from './component';
 import { PieChartOptions, PieSeriesType, PieDataLabels } from '@t/options';
 import { ChartState } from '@t/store/store';
 import {
-  SectorModel,
   PieSeriesModels,
   SectorResponderModel,
   RadiusRange,
+  PieSectorModel,
 } from '@t/components/series';
 import { getRGBA } from '@src/helpers/color';
 import {
@@ -173,7 +173,7 @@ export default class PieSeries extends Component {
 
   responders!: SectorResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: SectorResponderModel[] = [];
 
   alias!: string;
 
@@ -415,12 +415,8 @@ export default class PieSeries extends Component {
     };
   }
 
-  renderPieModel(
-    seriesRawData: PieSeriesType[],
-    renderOptions: RenderOptions,
-    pieIndex?: number
-  ): SectorModel[] {
-    const sectorModels: SectorModel[] = [];
+  renderPieModel(seriesRawData: PieSeriesType[], renderOptions: RenderOptions, pieIndex?: number) {
+    const sectorModels: PieSectorModel[] = [];
     const total = seriesRawData.reduce((sum, { data }) => sum + (data ?? 0), 0);
     const {
       clockwise,

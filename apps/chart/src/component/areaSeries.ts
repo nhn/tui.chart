@@ -77,7 +77,7 @@ export default class AreaSeries extends Component {
 
   responders!: CircleResponderModel[] | RectResponderModel[];
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: CircleResponderModel[] | RectResponderModel[] = [];
 
   eventDetectType: LineTypeEventDetectType = 'nearest';
 

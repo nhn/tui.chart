@@ -34,12 +34,12 @@ import { RadialBarChartProps, SelectSeriesInfo } from '@t/charts';
  * @classdesc RadialBar Chart
  * @param {Object} props
  *   @param {HTMLElement} props.el - The target element to create chart.
- *   @param {Object} props.data - Data for making Pie Chart.
+ *   @param {Object} props.data - Data for making RadialBar Chart.
  *     @param {Array<string>} [props.data.categories] - Categories.
  *     @param {Array<Object>} props.data.series - Series data.
  *       @param {string} props.data.series.name - Series name.
  *       @param {number} props.data.series.data - Series data.
- *   @param {Object} [props.options] - Options for making Pie Chart.
+ *   @param {Object} [props.options] - Options for making RadialBar Chart.
  *     @param {Object} [props.options.chart]
  *       @param {string|Object} [props.options.chart.title] - Chart title text or options.
  *         @param {string} [props.options.chart.title.text] - Chart title text.
@@ -54,6 +54,7 @@ import { RadialBarChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {string} [props.options.series.eventDetectType] - Event detect type. 'grouped', 'point' is available.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *       @param {Array<number>|Array<string>} [props.options.series.radiusRange] - Specifies the radius of the circle drawn. It is specified by entering a number or percent string value in start and end.
+ *       @param {Array<number>} [props.options.series.angleRange] - The range of angles to which the circle will be drawn. It is specified by putting number in start and end.
  *       @param {boolean} [props.options.series.clockwise] - Whether it will be drawn clockwise.
  *     @param {Object} [props.options.circularAxis]
  *       @param {Object} [props.options.circularAxis.tick] - Option to adjust tick interval.
@@ -81,7 +82,7 @@ import { RadialBarChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {Array<Object>} [props.options.responsive.rules] - Rules for the Chart to Respond.
  *     @param {Object} [props.options.lang] - Options for changing the text displayed on the chart or i18n languages.
  *       @param {Object} [props.options.lang.noData] - No Data Layer Text.
- *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Pie Chart guide} on github.
+ *     @param {Object} [props.options.theme] - Chart theme options. For specific information, refer to the {@link https://github.com/nhn/tui.chart|RadialBar Chart guide} on github.
  *       @param {Object} [props.options.theme.chart] - Chart font theme.
  *       @param {Object} [props.options.theme.noData] - No Data Layer Text theme.
  *       @param {Object} [props.options.theme.series] - Series theme.
@@ -145,7 +146,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   data: [10, 20, 30, 40],
    * });
    */
-  public addSeries(data: RadialBarSeriesType) {
+  addSeries(data: RadialBarSeriesType) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -169,7 +170,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   ]
    * });
    */
-  public setData(data: RadialBarSeriesData) {
+  setData(data: RadialBarSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { radialBar: series }, categories });
@@ -181,11 +182,11 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -193,11 +194,11 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -215,10 +216,10 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   }
    * });
    */
-  public setOptions = (options: RadialBarChartOptions) => {
+  setOptions(options: RadialBarChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -234,15 +235,15 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    *   }
    * });
    */
-  public updateOptions = (options: RadialBarChartOptions) => {
+  updateOptions(options: RadialBarChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
-   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed. If eventType is 'grouped', only index is needed.
-   *      @param {number} seriesInfo.index - Index of data within series. If eventType is 'grouped', only index is needed.
+   * @param {Object} seriesInfo - Information of the series for the tooltip to be displayed.
+   *      @param {number} seriesInfo.index - Index of data within series. If 'series.eventDetectType' is "grouped", only index is needed.
    *      @param {number} [seriesInfo.seriesIndex] - Index of series
    * @api
    * @example
@@ -252,9 +253,9 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * // eventDetectType is 'point'
    * chart.showTooltip({index: 1, seriesIndex: 2});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -262,7 +263,7 @@ export default class RadialBarChart extends Chart<RadialBarChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

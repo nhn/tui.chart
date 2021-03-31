@@ -20,7 +20,9 @@ import {
   ScatterSeriesModels,
   BulletSeriesModels,
   BackgroundModel,
+  GaugeSeriesModels,
   NoDataTextModel,
+  RadialBarSeriesModels,
 } from '@t/components/series';
 import { AxisModels, LineModel, LabelModel } from '@t/components/axis';
 import { ExportMenuModels } from '@t/components/exportMenu';
@@ -89,6 +91,8 @@ type ComponentModels =
   | BulletSeriesModels
   | BackgroundModel
   | RadialAxisModels
+  | RadialBarSeriesModels
+  | GaugeSeriesModels
   | NoDataTextModel;
 
 export type RespondersModel = {

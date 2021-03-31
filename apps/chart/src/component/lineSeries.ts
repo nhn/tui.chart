@@ -58,7 +58,7 @@ export default class LineSeries extends Component {
 
   theme!: Required<LineChartSeriesTheme>;
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: ResponderTypes = [];
 
   eventDetectType: LineTypeEventDetectType = 'nearest';
 

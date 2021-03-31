@@ -382,7 +382,7 @@ export default abstract class Chart<T extends Options> {
     this.componentManager.invoke('initUpdate', delta);
   }
 
-  handleEventForAllResponders?(
+  protected handleEventForAllResponders?(
     event: MouseEvent,
     responderModels: RespondersModel,
     delegationMethod: string,

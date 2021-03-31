@@ -137,7 +137,7 @@ export function makePointLabelInfo(
     type: 'point',
     x,
     y,
-    text: formatter(point.value!),
+    text: formatter(point.value!, point.data),
     textAlign: 'center',
     textBaseline,
     name,

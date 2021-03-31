@@ -64,7 +64,7 @@ import { LineScatterChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/c
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *     @param {Object} [props.options.xAxis]
- *       @param {Object} [props.options.xAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.pointOnColumn=false] - Whether to move the start of the chart to the center of the column.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
@@ -74,7 +74,7 @@ import { LineScatterChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/c
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.yAxis.title] - Axis title.
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -126,7 +126,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -170,11 +170,11 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    * @example
    * chart.addData([{x: 10, y: 20}, {x: 30, y: 40}], 'line');
    */
-  public addData = (data: CoordinateDataType[], chartType: 'line' | 'scatter') => {
+  addData(data: CoordinateDataType[], chartType: 'line' | 'scatter') {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addData', { data, chartType });
-  };
+  }
 
   /**
    * Add series.
@@ -194,10 +194,10 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    *     chartType: 'line'
    *   });
    */
-  public addSeries = (data: ScatterSeriesInput, dataInfo: AddSeriesDataInfo) => {
+  addSeries(data: ScatterSeriesInput, dataInfo: AddSeriesDataInfo) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data, ...dataInfo });
-  };
+  }
 
   /**
    * Convert the chart data to new data.
@@ -221,7 +221,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    *   }
    * });
    */
-  public setData(data: LineScatterData) {
+  setData(data: LineScatterData) {
     this.resetSeries();
     this.store.dispatch('setData', data);
   }
@@ -255,10 +255,10 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: LineScatterChartOptions) => {
+  setOptions(options: LineScatterChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -277,10 +277,10 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: LineScatterChartOptions) => {
+  updateOptions(options: LineScatterChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -292,9 +292,9 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2, chartType: 'scatter'});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -302,7 +302,7 @@ export default class LineScatterChart extends Chart<LineScatterChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

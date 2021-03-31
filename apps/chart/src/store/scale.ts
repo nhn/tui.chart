@@ -1,4 +1,11 @@
-import { StoreModule, Scale, Options, ChartState } from '@t/store/store';
+import {
+  StoreModule,
+  Scale,
+  Options,
+  ChartState,
+  Series,
+  ChartOptionsUsingYAxis,
+} from '@t/store/store';
 import {
   getAxisName,
   getSizeKey,
@@ -99,6 +106,24 @@ function getValueScaleData(
   return result;
 }
 
+function getScaleOptions(options: Options, series: Series, valueAxisName: string) {
+  const scaleOptions: ScaleOptions = {};
+
+  if (isSeriesUsingRadialAxes(series)) {
+    scaleOptions[valueAxisName] = options?.[valueAxisName]?.scale;
+  } else {
+    const { yAxis, secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
+    scaleOptions.xAxis = options?.xAxis?.scale;
+    scaleOptions.yAxis = yAxis?.scale;
+
+    if (secondaryYAxis) {
+      scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
+    }
+  }
+
+  return scaleOptions;
+}
+
 const scale: StoreModule = {
   name: 'scale',
   state: () => ({
@@ -106,23 +131,12 @@ const scale: StoreModule = {
   }),
   action: {
     setScale({ state, initStoreState }) {
-      const { series, options } = state;
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
+      const { series, options, categories } = state;
+      const labelAxisOnYAxis = isLabelAxisOnYAxis({ series, options, categories });
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
-      const { yAxis, secondaryYAxis } = getYAxisOption(options);
-      const scaleOptions: ScaleOptions = isSeriesUsingRadialAxes(series)
-        ? { [valueAxisName]: options?.[valueAxisName]?.scale }
-        : {
-            xAxis: options?.xAxis?.scale,
-            yAxis: yAxis?.scale,
-          };
-      const scaleData = {};
-
-      if (secondaryYAxis) {
-        scaleOptions.secondaryYAxis = secondaryYAxis?.scale;
-      }
-
+      const scaleOptions = getScaleOptions(options, series, valueAxisName);
       const isCoordinateTypeChart = isCoordinateSeries(initStoreState.series);
+      const scaleData = {};
 
       getValueAxisNames(options, valueAxisName).forEach((axisName) => {
         scaleData[axisName] = getValueScaleData(

@@ -12,6 +12,8 @@ import {
   ColumnChartOptions,
   ColumnLineChartOptions,
   ColumnLineData,
+  GaugeChartOptions,
+  GaugeSeriesData,
   HeatmapChartOptions,
   HeatmapSeriesData,
   LineAreaChartOptions,
@@ -142,4 +144,9 @@ export interface TreemapChartProps {
   el: HTMLElement;
   options: TreemapChartOptions;
   data: TreemapSeriesData;
+}
+export interface GaugeChartProps {
+  el: HTMLElement;
+  options: GaugeChartOptions;
+  data: GaugeSeriesData;
 }

@@ -20,6 +20,7 @@ import {
   BulletCharThemeOptions,
   ColumnLineChartThemeOptions,
   RadialBarChartThemeOptions,
+  GaugeChartThemeOptions,
 } from './theme';
 
 export type RangeDataType<T> = [T, T];
@@ -40,6 +41,7 @@ type TupleTypeDatetimePoint = [string, number] | [Date, number];
 export type DatetimePoint = ObjectTypeDatetimePoint | TupleTypeDatetimePoint;
 export type BubblePoint = (Point | ObjectTypeDatetimePoint) & { r: number };
 export type BubbleSeriesDataType = { label: string } & BubblePoint;
+export type GaugeSeriesDataType = string | number;
 
 export type LineTypeEventDetectType = 'near' | 'nearest' | 'grouped' | 'point';
 export type BoxTypeEventDetectType = 'grouped' | 'point';
@@ -279,8 +281,10 @@ interface ExportMenuOptions {
   visible?: boolean;
 }
 
+type DataLabelData = GaugeSeriesDataType[];
+
 type TooltipFormatter = (value: SeriesDataType, tooltipDataInfo?: TooltipData) => string;
-type ValueFormatter = (value: SeriesDataType) => string;
+type ValueFormatter = (value: SeriesDataType, dataLabelData?: DataLabelData) => string;
 export type DefaultTooltipTemplate = { header: string; body: string };
 
 export type TooltipTemplateFunc = (
@@ -545,7 +549,7 @@ export interface RadarChartOptions extends BaseOptions {
   series?: RadarSeriesOptions;
   plot?: BaseSizeOptions & { type?: RadarPlotType };
   verticalAxis?: RadialValueAxisOptions;
-  circularAxis?: RadialCategoryAxisOptions;
+  circularAxis?: BaseRadialAxisOptions;
   legend?: NormalLegendOptions;
   theme?: RadarChartThemeOptions;
 }
@@ -582,7 +586,8 @@ export type SeriesDataType =
   | AreaSeriesDataType
   | LineSeriesDataType
   | CoordinateDataType
-  | BubbleSeriesDataType;
+  | BubbleSeriesDataType
+  | GaugeSeriesDataType;
 
 export type DataLabelAnchor = 'center' | 'start' | 'end' | 'auto' | 'outer';
 
@@ -696,11 +701,23 @@ export interface RadialBarSeriesData {
   series: RadialBarSeriesType[];
 }
 
-type RadialCategoryAxisOptions = Pick<BaseAxisOptions, 'label' | 'tick'>;
-type RadialValueAxisOptions = Pick<BaseAxisOptions, 'label' | 'tick' | 'scale'>;
+interface BaseRadialAxisOptions {
+  tick?: {
+    interval?: number;
+  };
+  label?: {
+    interval?: number;
+    formatter?: AxisFormatter;
+    margin?: number;
+  };
+}
+
+interface RadialValueAxisOptions extends BaseRadialAxisOptions {
+  scale?: Scale;
+}
 
 export interface RadialBarChartOptions extends BaseOptions {
-  verticalAxis?: RadialCategoryAxisOptions;
+  verticalAxis?: BaseRadialAxisOptions;
   circularAxis?: RadialValueAxisOptions;
   series?: RadialBarSeriesOptions;
   legend?: NormalLegendOptions;
@@ -721,6 +738,51 @@ interface RadialBarSeriesOptions extends BaseSeriesOptions {
   dataLabels?: DataLabelOptions;
 }
 
+export type GaugeSeriesType = {
+  name: string;
+  data: GaugeSeriesDataType[];
+  color?: string;
+};
+
+export interface GaugeSeriesData {
+  categories?: string[];
+  series: Omit<GaugeSeriesType, 'color'>[];
+}
+
+type GaugePlotBand = {
+  color: string;
+  range: number[] | string[];
+  id?: string;
+};
+export interface GaugeChartOptions extends BaseOptions {
+  circularAxis?: GaugeAxisOptions;
+  series?: GaugeSeriesOptions;
+  plot?: BaseSizeOptions & {
+    bands?: GaugePlotBand[];
+  };
+  theme?: GaugeChartThemeOptions;
+}
+
+type GaugeSolidOptions = {
+  clockHand: boolean;
+};
+
+interface GaugeAxisOptions extends BaseRadialAxisOptions {
+  scale?: Scale;
+  title?: AxisTitle;
+}
+export interface GaugeSeriesOptions extends BaseSeriesOptions {
+  solid?: boolean | Partial<GaugeSolidOptions>;
+  clockwise?: boolean;
+  angleRange?: {
+    start: number;
+    end: number;
+  };
+  dataLabels?: Omit<DataLabelOptions, 'anchor'>;
+}
+
+type GaugeSeriesInput = Omit<GaugeSeriesType, 'color'>;
+
 export type SeriesDataInput =
   | LineSeriesInput
   | AreaSeriesInput
@@ -734,7 +796,8 @@ export type SeriesDataInput =
   | BoxPlotSeriesType
   | BoxSeriesInput<BoxSeriesDataType>
   | NestedPieSeriesType
-  | RadialBarSeriesType;
+  | RadialBarSeriesType
+  | GaugeSeriesType;
 
 export type DataInput =
   | LineSeriesData
@@ -752,7 +815,8 @@ export type DataInput =
   | LineScatterData
   | ColumnLineData
   | NestedPieSeriesData
-  | RadialBarSeriesData;
+  | RadialBarSeriesData
+  | GaugeSeriesData;
 
 type UsingRadialAxesChartTypeTheme =
   | Required<RadarChartThemeOptions>

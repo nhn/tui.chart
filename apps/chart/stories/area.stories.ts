@@ -48,6 +48,7 @@ export const basic = () => {
     chart: { title: 'Average Temperature' },
     xAxis: { pointOnColumn: boolean('pointOnColumn', false), title: { text: 'Month' } },
     yAxis: { title: 'Temperature (Celsius)' },
+    series: { eventDetectType: 'grouped' },
   });
 
   return el;

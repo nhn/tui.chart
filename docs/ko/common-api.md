@@ -76,7 +76,7 @@ chart.resize({width: 400, height: 400});
 ```
 
 ### addSeries()
-* 사용 가능 차트 타입: `Line`, `Area`, `Bar`, `BoxPlot`, `Column`, `Pie`, `Heatmap`, `Bubble`, `Scatter`, `Radar`, `Treemap`, `NestedPie`, `LineScatter`, `ColumnLine`
+* 사용 가능 차트 타입: `All`
 
 ```ts
 public addSeries(data: SeriesDataInput, seriesDataInfo?: {

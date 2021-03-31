@@ -41,6 +41,16 @@ describe('theme store', () => {
             },
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
+            tick: {
+              lineWidth: 1,
+              strokeStyle: 'rgba(0, 0, 0, 0.5)',
+            },
+            title: {
+              color: '#bbbbbb',
+              fontFamily: 'Arial',
+              fontSize: 11,
+              fontWeight: 700,
+            },
           },
           verticalAxis: {
             label: {
@@ -253,6 +263,16 @@ describe('theme store', () => {
             },
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
+            tick: {
+              lineWidth: 1,
+              strokeStyle: 'rgba(0, 0, 0, 0.5)',
+            },
+            title: {
+              color: '#bbbbbb',
+              fontFamily: 'Verdana',
+              fontSize: 11,
+              fontWeight: 700,
+            },
           },
           verticalAxis: {
             label: {
@@ -491,6 +511,16 @@ describe('theme store', () => {
             },
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
+            tick: {
+              lineWidth: 1,
+              strokeStyle: 'rgba(0, 0, 0, 0.5)',
+            },
+            title: {
+              color: '#bbbbbb',
+              fontFamily: 'Arial',
+              fontSize: 11,
+              fontWeight: 700,
+            },
           },
           verticalAxis: {
             label: {
@@ -774,6 +804,16 @@ describe('theme store', () => {
             },
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
+            tick: {
+              lineWidth: 1,
+              strokeStyle: 'rgba(0, 0, 0, 0.5)',
+            },
+            title: {
+              color: '#bbbbbb',
+              fontFamily: 'Arial',
+              fontSize: 11,
+              fontWeight: 700,
+            },
           },
           verticalAxis: {
             label: {
@@ -1225,6 +1265,16 @@ describe('theme store', () => {
             },
             lineWidth: 1,
             strokeStyle: 'rgba(0, 0, 0, 0.05)',
+            tick: {
+              lineWidth: 1,
+              strokeStyle: 'rgba(0, 0, 0, 0.5)',
+            },
+            title: {
+              color: '#bbbbbb',
+              fontFamily: 'Arial',
+              fontSize: 11,
+              fontWeight: 700,
+            },
           },
           verticalAxis: {
             label: {

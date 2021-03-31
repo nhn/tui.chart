@@ -1,4 +1,4 @@
-# Radial Chart
+# RadialBar Chart
 
 > API information regarding each chart is not addressed in this document. Refer to the [API Guide](./common-api.md).
 

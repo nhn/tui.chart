@@ -93,7 +93,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -134,7 +134,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    *   ],
    * });
    */
-  public addSeries(data: TreemapSeriesType, dataInfo?: AddSeriesDataInfo) {
+  addSeries(data: TreemapSeriesType, dataInfo?: AddSeriesDataInfo) {
     this.resetSeries();
     this.store.dispatch('addTreemapSeries', { data, ...dataInfo });
   }
@@ -160,7 +160,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    *   ]
    * );
    */
-  public setData(data: TreemapSeriesData) {
+  setData(data: TreemapSeriesData) {
     this.resetSeries();
     this.store.dispatch('setData', { series: { treemap: data.series } });
   }
@@ -171,11 +171,11 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -183,11 +183,11 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -208,10 +208,10 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: TreemapChartOptions) => {
+  setOptions(options: TreemapChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -228,10 +228,10 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: TreemapChartOptions) => {
+  updateOptions(options: TreemapChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -241,9 +241,9 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    * @example
    * chart.showTooltip({seriesIndex: 1});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -251,7 +251,7 @@ export default class TreemapChart extends Chart<TreemapChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

@@ -16,6 +16,7 @@ import {
   CircleStyle,
   LinePointsModel,
   StyleProp,
+  ClockHandModel,
 } from '@t/components/series';
 import {
   withKnobs,
@@ -31,6 +32,7 @@ import { Point } from '@t/options';
 import { polygon } from '@src/brushes/polygon';
 import { scatterSeries } from '@src/brushes/scatterSeries';
 import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector';
+import { clockHand } from '@src/brushes/gauge';
 
 export default {
   title: 'brushes',
@@ -319,7 +321,6 @@ export const sectorBrush = () => {
     color: '#ff8787',
     clockwise: true,
     drawingStartAngle: -90,
-    totalAngle: 360,
   });
 
   sector(ctx, {
@@ -331,7 +332,6 @@ export const sectorBrush = () => {
     color: '#00bcd4',
     clockwise: false,
     drawingStartAngle: -90,
-    totalAngle: 360,
   });
 
   return el;
@@ -880,6 +880,26 @@ export const bubbleLabelBrush = () => {
       style: [{ textAlign: 'right', textBaseline: 'middle', font }],
     },
   });
+
+  return el;
+};
+
+export const clockHandBrush = () => {
+  const { ctx, el } = setup();
+  clockHand(ctx, {
+    color: '#ff0000',
+    x: 100,
+    y: 100,
+    x2: 50,
+    y2: 50,
+    degree: 315,
+    baseLine: 4,
+    pin: {
+      color: '#ff0000',
+      style: [{ strokeStyle: 'rgba(255, 0, 0, 0.1)', lineWidth: 5 }],
+      radius: 5,
+    },
+  } as ClockHandModel);
 
   return el;
 };

@@ -1,4 +1,12 @@
-import { ValueEdge, StoreModule, DataRange, ChartSeriesMap, Options, Series } from '@t/store/store';
+import {
+  ValueEdge,
+  StoreModule,
+  DataRange,
+  ChartSeriesMap,
+  Options,
+  ChartOptionsUsingYAxis,
+  Series,
+} from '@t/store/store';
 import { getFirstValidValue, isNull, includes } from '@src/helpers/utils';
 import { extend } from '@src/store/store';
 import {
@@ -11,6 +19,7 @@ import {
 import { getCoordinateYValue, isCoordinateSeries } from '@src/helpers/coordinate';
 import { isRangeValue } from '@src/helpers/range';
 import { CoordinateDataType } from '@t/options';
+import { AxisType } from '@src/component/axis';
 
 type SeriesDataRange = {
   [key in keyof ChartSeriesMap]: DataRange;
@@ -89,19 +98,32 @@ function getTotalDataRange(seriesDataRange: SeriesDataRange) {
   }, {});
 }
 
-function setSeriesDataRange(
-  options: Options,
-  seriesName: string,
-  values: number[],
-  valueAxisName: string,
-  seriesDataRange: SeriesDataRange
-) {
-  const { secondaryYAxis } = getYAxisOption(options);
+function setSeriesDataRange({
+  options,
+  seriesName,
+  values,
+  valueAxisName,
+  seriesDataRange,
+}: {
+  options: Options;
+  seriesName: string;
+  values: number[];
+  valueAxisName: string;
+  seriesDataRange: SeriesDataRange;
+}) {
+  let axisNames: string[];
 
-  const axisNames =
-    hasSecondaryYAxis(options) && secondaryYAxis?.chartType
-      ? [secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis']
-      : getValueAxisNames(options, valueAxisName);
+  if (includes([AxisType.X, AxisType.CIRCULAR, AxisType.VERTICAL], valueAxisName)) {
+    axisNames = [valueAxisName];
+  } else {
+    const optionsUsingYAxis = options as ChartOptionsUsingYAxis;
+    const { secondaryYAxis } = getYAxisOption(optionsUsingYAxis);
+
+    axisNames =
+      hasSecondaryYAxis(optionsUsingYAxis) && secondaryYAxis?.chartType
+        ? [secondaryYAxis.chartType === seriesName ? 'secondaryYAxis' : 'yAxis']
+        : getValueAxisNames(optionsUsingYAxis, valueAxisName);
+  }
 
   axisNames.forEach((axisName) => {
     seriesDataRange[seriesName][axisName] = getLimitSafely([...new Set(values)] as number[]);
@@ -150,7 +172,7 @@ const dataRange: StoreModule = {
     setDataRange({ state, initStoreState }) {
       const { series, disabledSeries, stackSeries, categories, options } = state;
       const seriesDataRange = {} as SeriesDataRange;
-      const labelAxisOnYAxis = isLabelAxisOnYAxis(series, options);
+      const labelAxisOnYAxis = isLabelAxisOnYAxis({ series, options, categories });
 
       const { labelAxisName, valueAxisName } = getAxisName(labelAxisOnYAxis, series);
 
@@ -193,7 +215,13 @@ const dataRange: StoreModule = {
           values = getBulletValues(series, seriesName);
         }
 
-        setSeriesDataRange(options, seriesName, values, valueAxisName, seriesDataRange);
+        setSeriesDataRange({
+          options,
+          seriesName,
+          values,
+          valueAxisName,
+          seriesDataRange,
+        });
       });
 
       const newDataRange = getTotalDataRange(seriesDataRange);

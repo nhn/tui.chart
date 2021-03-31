@@ -88,7 +88,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -137,7 +137,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    *     name: 'series name'
    *   });
    */
-  public addSeries(data: NestedPieSeriesType, dataInfo?: AddSeriesDataInfo) {
+  addSeries(data: NestedPieSeriesType, dataInfo?: AddSeriesDataInfo) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data, ...dataInfo });
     this.componentManager.add(PieSeries, { alias: data.name });
@@ -180,7 +180,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    *   ]
    * });
    */
-  public setData(data: NestedPieSeriesData) {
+  setData(data: NestedPieSeriesData) {
     this.componentManager.remove(PieSeries);
     this.resetSeries();
     this.store.dispatch('setData', { series: { pie: data.series } });
@@ -196,11 +196,11 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -208,11 +208,11 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -235,10 +235,10 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: NestedPieChartOptions) => {
+  setOptions(options: NestedPieChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -257,10 +257,10 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: NestedPieChartOptions) => {
+  updateOptions(options: NestedPieChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -271,9 +271,9 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    * @example
    * chart.showTooltip({seriesIndex: 1, alias: 'name'});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -281,7 +281,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

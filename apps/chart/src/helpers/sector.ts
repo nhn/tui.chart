@@ -22,7 +22,7 @@ type RadialPositionParam = {
     start: number;
     end: number;
   };
-  drawingStartAngle: number;
+  drawingStartAngle?: number;
 };
 
 const MINIMUM_RADIUS = 10;
@@ -42,7 +42,7 @@ export function calculateDegreeToRadian(degree: number, drawingStartAngle = DEGR
 
   if (degree % DEGREE_360 === 0) {
     result = (Math.PI / DEGREE_180) * drawingStartAngle;
-  } else if (degree >= 0 && degree < DEGREE_360) {
+  } else if (degree >= 0) {
     result = (Math.PI / DEGREE_180) * (degree + drawingStartAngle);
   }
 
@@ -60,7 +60,7 @@ export function getRadialAnchorPosition(param: RadialPositionParam): Point {
     y,
     radius: { inner, outer },
     degree: { start, end },
-    drawingStartAngle,
+    drawingStartAngle = DEGREE_NEGATIVE_90,
   } = param;
   const halfDegree = start + (end - start) / 2;
   const radian = calculateDegreeToRadian(halfDegree, drawingStartAngle);
@@ -130,9 +130,9 @@ export function getRadialLabelAlign(
   needCalculateByHalf = true
 ) {
   const {
-    totalAngle,
+    totalAngle = DEGREE_360,
     degree: { start, end },
-    drawingStartAngle,
+    drawingStartAngle = DEGREE_NEGATIVE_90,
   } = model;
 
   let textAlign: CanvasTextAlign = 'center';
@@ -178,4 +178,17 @@ export function getRadiusRanges(radiusRanges: number[], padding: number) {
 
     return acc;
   }, [] as RadiusRange[]);
+}
+
+// Recalculate to an angle between 0 and 360 degrees.
+export function calculateValidAngle(angle: number) {
+  if (angle < DEGREE_0) {
+    return DEGREE_360 + (angle % DEGREE_360);
+  }
+
+  if (angle > DEGREE_360) {
+    return angle % DEGREE_360;
+  }
+
+  return angle;
 }

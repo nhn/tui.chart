@@ -15,6 +15,7 @@ import RadarChart from '@src/charts/radarChart';
 import TreemapChart from '@src/charts/treemapChart';
 import BoxPlotChart from '@src/charts/boxPlotChart';
 import RadialBarChart from '@src/charts/radialBarChart';
+import GaugeChart from '@src/charts/gaugeChart';
 
 import {
   LineChartProps,
@@ -34,6 +35,7 @@ import {
   TreemapChartProps,
   ScatterChartProps,
   ColumnChartProps,
+  GaugeChartProps,
 } from '@t/charts';
 
 export default class Chart {
@@ -103,6 +105,10 @@ export default class Chart {
 
   public static radialBarChart = (props: RadialBarChartProps) => {
     return new RadialBarChart(props);
+  };
+
+  public static gaugeChart = (props: GaugeChartProps) => {
+    return new GaugeChart(props);
   };
 }
 

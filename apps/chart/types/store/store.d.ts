@@ -40,6 +40,9 @@ import {
   ScatterChartOptions,
   RadialBarSeriesType,
   RadialBarChartOptions,
+  GaugeSeriesType,
+  GaugeChartOptions,
+  GaugeSolidOptions,
 } from '../options';
 import { LegendData } from '../components/legend';
 import { ScatterSeriesIconType } from '../components/series';
@@ -59,6 +62,7 @@ type ChartSeriesMap = {
   treemap: TreemapSeriesType[];
   heatmap: HeatmapSeriesType[];
   radialBar: RadialBarSeriesType[];
+  gauge: GaugeSeriesType[];
 };
 
 export type ChartType = keyof ChartSeriesMap;
@@ -97,6 +101,7 @@ export type ChartOptionsMap = {
   columnLine: ColumnLineChartOptions;
   heatmap: HeatmapChartOptions;
   radialBar: RadialBarChartOptions;
+  gauge: GaugeChartOptions;
 };
 
 export type Options = ValueOf<ChartOptionsMap>;
@@ -106,10 +111,14 @@ export type OptionsWithDataLabels = ValueOf<
 >;
 
 export type ChartOptionsUsingYAxis = ValueOf<
-  Omit<ChartOptionsMap, 'pie' | 'heatmap' | 'treemap' | 'radar' | 'radialBar'>
+  Omit<ChartOptionsMap, 'pie' | 'heatmap' | 'treemap' | 'radar' | 'radialBar' | 'gauge'>
 >;
 
-export type ChartOptionsUsingRadialAxes = ValueOf<Pick<ChartOptionsMap, 'radar' | 'radialBar'>>;
+export type ChartOptionsUsingVerticalAxis = ValueOf<Pick<ChartOptionsMap, 'radar' | 'radialBar'>>;
+
+export type ChartOptionsUsingRadialAxes = ValueOf<
+  Pick<ChartOptionsMap, 'radar' | 'radialBar' | 'gauge'>
+>;
 
 declare class Store<T extends Options> {
   state: ChartState<T>;
@@ -168,6 +177,8 @@ export interface StoreModule extends StoreOptions {
     | 'root'
     | 'plot'
     | 'axes'
+    | 'gaugeAxes'
+    | 'radialAxes'
     | 'scale'
     | 'layout'
     | 'category'
@@ -197,6 +208,7 @@ export interface Layout {
   resetButton: Rect;
   secondaryYAxisTitle: Rect;
   secondaryYAxis: Rect;
+  circularAxisTitle: Rect;
 }
 
 export interface Scale {
@@ -300,6 +312,7 @@ export type ChartOptions = {
 } & Size;
 
 type BaseRadialAxes = {
+  /*
   labels: string[];
   axisSize: number;
   centerX: number;
@@ -308,30 +321,120 @@ type BaseRadialAxes = {
   labelMargin: number;
   maxLabelWidth: number;
   maxLabelHeight: number;
+  innerRadius: number;
   outerRadius: number;
   startAngle: number;
   endAngle: number;
+  */
+
+  // refractor
+  /*
+  label: {
+    labels: string[];
+    interval: number;
+    margin: number;
+    maxWidth: number;
+    maxHeight: number;
+  };
+  radius: {
+    inner: number;
+    outer: number;
+  };
+  angle: {
+    start: number;
+    end: number;
+  };
+  */
+  axisSize: number;
+  centerX: number;
+  centerY: number;
 };
 
+type SolidData = {
+  visible: boolean;
+  radiusRange: { inner: number; outer: number };
+  barWidth: number;
+  clockHand: boolean;
+};
 interface CircularAxisData extends BaseRadialAxes {
-  degree: number;
+  /*
+  centralAngle: number;
   tickInterval: number;
   totalAngle: number;
   drawingStartAngle: number;
   clockwise: boolean;
+  bandWidth?: number;
+  bandMargin?: number;
+  maxClockHandSize?: number;
+  title?: AxisTitleOption;
+  solidData?: SolidData;
+  */
+
+  // refactor
+  label: {
+    labels: string[];
+    interval: number;
+    margin: number;
+    maxWidth: number;
+    maxHeight: number;
+  };
+  radius: {
+    inner: number;
+    outer: number;
+  };
+  angle: {
+    start: number;
+    end: number;
+    total: number;
+    central: number;
+    drawingStart: number;
+  };
+  band?: {
+    width: number;
+    margin: number;
+  };
+
+  tickInterval: number;
+  clockwise: boolean;
+  maxClockHandSize?: number;
+  title?: AxisTitleOption;
+  solidData?: SolidData;
 }
 
 interface VerticalAxisData extends BaseRadialAxes {
+  /*
   tickDistance: number;
   radiusRanges: number[];
   pointOnColumn: boolean;
-  innerRadius: number;
   labelAlign: CanvasTextAlign;
+  */
+
+  // refactor
+  label: {
+    labels: string[];
+    interval: number;
+    margin: number;
+    maxWidth: number;
+    maxHeight: number;
+    align: CanvasTextAlign;
+  };
+  radius: {
+    inner: number;
+    outer: number;
+    ranges: number[];
+  };
+  angle: {
+    start: number;
+    end: number;
+  };
+
+  tickDistance: number;
+  pointOnColumn: boolean;
 }
 
 type RadialAxes = {
   circularAxis: CircularAxisData;
-  verticalAxis: VerticalAxisData;
+  verticalAxis?: VerticalAxisData;
 };
 export interface ChartState<T extends Options> {
   chart: ChartOptions;
@@ -474,3 +577,21 @@ export type FunctionPropertyNames<T> = {
 }[keyof T];
 
 type UsingContainerSize = { width: boolean; height: boolean };
+
+type DefaultRadialAxisData = {
+  axisSize: number;
+  centerX: number;
+  centerY: number;
+  totalAngle: number;
+  drawingStartAngle: number;
+  clockwise: boolean;
+  startAngle: number;
+  endAngle: number;
+  isSemiCircular: boolean;
+};
+
+type RadiusInfo = {
+  radiusRanges: number[];
+  innerRadius: number;
+  outerRadius: number;
+};

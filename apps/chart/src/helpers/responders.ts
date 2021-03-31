@@ -9,6 +9,7 @@ import {
   TreemapRectResponderModel,
   ResponderModel,
   GroupedSectorResponderModel,
+  GaugeResponderModel,
 } from '@t/components/series';
 import { LineTypeEventDetectType, Point, Rect } from '@t/options';
 import { getDistance } from '@src/helpers/calculator';
@@ -92,6 +93,11 @@ export function isSameSeriesResponder({
       return isClickSameLabelResponder(
         models as TreemapRectResponderModel[],
         comparisonModel as TreemapRectResponderModel[]
+      );
+    case 'gauge':
+      return isClickSameNameResponder<GaugeResponderModel>(
+        models as GaugeResponderModel[],
+        comparisonModel as GaugeResponderModel[]
       );
     default:
       return false;
@@ -230,7 +236,7 @@ export function getDeepestNode(responders: TreemapRectResponderModel[]) {
 }
 
 export function isClickSameNameResponder<
-  T extends HeatmapRectResponderModel | BulletResponderModel
+  T extends HeatmapRectResponderModel | BulletResponderModel | GaugeResponderModel
 >(responders: T[], selectedSeries?: T[]) {
   return (
     responders.length && selectedSeries?.length && responders[0].name === selectedSeries[0].name

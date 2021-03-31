@@ -23,6 +23,7 @@
 - [NestedPie 차트](./chart-nestedPie.md)
 - [Radar 차트](./chart-radar.md)
 - [RadialBar 차트](./chart-radialBar.md)
+- [Gauge 차트](./chart-gauge.md)
 
 ### 공통
 

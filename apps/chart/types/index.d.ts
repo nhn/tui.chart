@@ -54,6 +54,9 @@ import {
   RadialBarSeriesType,
   RadialBarSeriesData,
   RadialBarChartOptions,
+  GaugeSeriesDataType,
+  GaugeSeriesData,
+  GaugeChartOptions,
 } from './options';
 import { CheckedLegendType } from './components/legend';
 import { Options, HeatmapSeriesData, TreemapSeriesData } from './store/store';
@@ -78,6 +81,7 @@ import {
   LineScatterChartProps,
   ColumnLineChartProps,
   RadialBarChartProps,
+  GaugeChartProps
 } from './charts';
 
 declare namespace toastui {
@@ -113,6 +117,10 @@ declare namespace toastui {
     public static lineScatterChart(props: LineScatterChartProps): LineScatterChart;
 
     public static columnLineChart(props: ColumnLineChartProps): ColumnLineChart;
+
+    public static radialBarChart(props: RadialBarChartProps): RadialBarChart;
+
+    public static gaugeChart(props: GaugeChartProps): GaugeChart;
   }
 }
 
@@ -513,6 +521,26 @@ export class RadialBarChart extends BaseChart {
   public setOptions(options: RadialBarChartOptions): void;
 
   public updateOptions(options: RadialBarChartOptions): void;
+
+  public showTooltip(seriesInfo: SelectSeriesInfo): void;
+
+  public hideTooltip(): void;
+}
+
+export class GaugeChart extends BaseChart {
+  constructor(props: GaugeChartProps);
+
+  public addData(data: GaugeSeriesDataType[], category?: string);
+
+  public setData(data: GaugeSeriesData): void;
+
+  public hideSeriesDataLabel(): void;
+
+  public showSeriesDataLabel(): void;
+
+  public setOptions(options: GaugeChartOptions): void;
+
+  public updateOptions(options: GaugeChartOptions): void;
 
   public showTooltip(seriesInfo: SelectSeriesInfo): void;
 

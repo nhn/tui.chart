@@ -94,9 +94,11 @@ export function circle(ctx: CanvasRenderingContext2D, circleModel: CircleModel) 
   }
 
   ctx.arc(x, y, radius, angle.start, angle.end, true);
-  fillStyle(ctx, color);
 
   strokeWithOptions(ctx, { lineWidth, strokeStyle });
+
+  fillStyle(ctx, color);
+
   ctx.closePath();
 }
 

@@ -1,7 +1,7 @@
 import { RawSeries } from '@t/store/store';
 import { Theme, CheckAnchorPieSeries } from '@t/theme';
 import { getNestedPieChartAliasNames } from '@src/helpers/pieSeries';
-import { rgba } from './color';
+import { includes } from './utils';
 
 export const DEFAULT_LINE_SERIES_WIDTH = 2;
 export const DEFAULT_LINE_SERIES_DOT_RADIUS = 3;
@@ -140,9 +140,11 @@ function makeCommonTextTheme(globalFontFamily = 'Arial') {
   return { fontSize: 11, fontFamily: globalFontFamily, fontWeight: 'normal', color: '#333333' };
 }
 
-export function makeDefaultTheme(globalFontFamily = 'Arial', hasRadarSeries = false) {
+export function makeDefaultTheme(series: RawSeries, globalFontFamily = 'Arial') {
   const axisTitleTheme = makeAxisTitleTheme(globalFontFamily);
   const commonTextTheme = makeCommonTextTheme(globalFontFamily);
+  const hasRadarSeries = !!series?.radar;
+  const hasGaugeSeries = !!series?.gauge;
 
   return {
     chart: {
@@ -188,10 +190,15 @@ export function makeDefaultTheme(globalFontFamily = 'Arial', hasRadarSeries = fa
       },
     },
     circularAxis: {
+      title: { ...axisTitleTheme },
       label: { ...commonTextTheme },
       lineWidth: 1,
-      strokeStyle: 'rgba(0, 0, 0, 0.05)',
+      strokeStyle: hasGaugeSeries ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.05)',
       dotColor: 'rgba(0, 0, 0, 0.5)',
+      tick: {
+        lineWidth: 1,
+        strokeStyle: 'rgba(0, 0, 0, 0.5)',
+      },
     },
     legend: {
       label: {
@@ -277,15 +284,10 @@ function makeDefaultTextBubbleTheme(
   };
 }
 
-// eslint-disable-next-line complexity
-function getSeriesTheme(
-  globalFontFamily: string | undefined,
-  seriesName: string,
-  { hasOuterAnchor = false, hasOuterAnchorPieSeriesName = false },
-  isNestedPieChart = false
-) {
+function getLineTypeSeriesTheme(globalFontFamily: string) {
   const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
-  const lineTypeSeriesTheme = {
+
+  return {
     lineWidth: defaultSeriesTheme.lineWidth,
     dashSegments: defaultSeriesTheme.dashSegments,
     select: { dot: defaultSeriesTheme.select.dot },
@@ -299,335 +301,408 @@ function getSeriesTheme(
       },
     },
   };
+}
 
-  const transparentColor = 'rgba(255, 255, 255, 0)';
+function getTreemapHeatmapSeriesTheme(globalFontFamily: string) {
+  const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
 
-  switch (seriesName) {
-    case 'line':
-      return { ...lineTypeSeriesTheme };
-    case 'area':
-      return {
-        ...lineTypeSeriesTheme,
-        select: {
-          ...lineTypeSeriesTheme.select,
-          areaOpacity: DEFAULT_AREA_SELECTED_SERIES_OPACITY,
-          restSeries: defaultSeriesTheme.select.restSeries,
+  return {
+    startColor: defaultSeriesTheme.startColor,
+    endColor: defaultSeriesTheme.endColor,
+    borderWidth: 0,
+    borderColor: '#ffffff',
+    hover: {
+      borderWidth: boxDefault.HOVER_THICKNESS,
+      borderColor: '#ffffff',
+    },
+    select: {
+      borderWidth: boxDefault.HOVER_THICKNESS,
+      borderColor: '#ffffff',
+    },
+    dataLabels: {
+      ...defaultDataLabelTheme,
+      color: '#ffffff',
+      textBubble: {
+        ...makeDefaultTextBubbleTheme(false, 1, 5, 1, 'rgba(255, 255, 255, 0.5)'),
+      },
+    },
+  };
+}
+
+function getBarColumnSeriesTheme(globalFontFamily: string) {
+  const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
+
+  return {
+    colorByPoint: false,
+    areaOpacity: 1,
+    hover: {
+      ...boxDefault.BOX_HOVER,
+      borderWidth: boxDefault.HOVER_THICKNESS,
+      borderColor: '#ffffff',
+      groupedRect: {
+        color: '#000000',
+        opacity: 0.05,
+      },
+    },
+    select: {
+      ...boxDefault.BOX_HOVER,
+      borderWidth: boxDefault.HOVER_THICKNESS,
+      borderColor: '#ffffff',
+      groupedRect: {
+        color: '#000000',
+        opacity: 0.2,
+      },
+      restSeries: {
+        areaOpacity: 0.2,
+      },
+      areaOpacity: 1,
+    },
+    connector: {
+      color: 'rgba(51, 85, 139, 0.3)',
+      lineWidth: 1,
+      dashSegments: [],
+    },
+    dataLabels: {
+      ...defaultDataLabelTheme,
+      textBubble: {
+        ...makeDefaultTextBubbleTheme(false, 1, 4, 3),
+        arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
+      },
+      stackTotal: {
+        ...defaultDataLabelTheme,
+        textBubble: {
+          ...makeDefaultTextBubbleTheme(true, 1, 4, 3),
+          arrow: { visible: true, ...DEFAULT_BUBBLE_ARROW },
         },
-        areaOpacity: DEFAULT_AREA_OPACITY,
-      };
-    case 'treemap':
-    case 'heatmap':
-      return {
-        startColor: defaultSeriesTheme.startColor,
-        endColor: defaultSeriesTheme.endColor,
-        borderWidth: 0,
+      },
+    },
+  };
+}
+
+const transparentColor = 'rgba(255, 255, 255, 0)';
+const defaultThemeMakers = {
+  line: (globalFontFamily: string) => ({ ...getLineTypeSeriesTheme(globalFontFamily) }),
+  area: (globalFontFamily: string) => {
+    const lineTypeSeriesTheme = getLineTypeSeriesTheme(globalFontFamily);
+
+    return {
+      ...lineTypeSeriesTheme,
+      select: {
+        ...lineTypeSeriesTheme.select,
+        areaOpacity: DEFAULT_AREA_SELECTED_SERIES_OPACITY,
+        restSeries: defaultSeriesTheme.select.restSeries,
+      },
+      areaOpacity: DEFAULT_AREA_OPACITY,
+    };
+  },
+  treemap: (globalFontFamily: string) => getTreemapHeatmapSeriesTheme(globalFontFamily),
+  heatmap: (globalFontFamily: string) => getTreemapHeatmapSeriesTheme(globalFontFamily),
+  bubble: () => ({
+    borderWidth: 0,
+    borderColor: transparentColor,
+    select: {},
+    hover: {
+      shadowColor: 'rgba(0, 0, 0, 0.3)',
+      shadowBlur: 2,
+      shadowOffsetY: 2,
+      lineWidth: 2,
+    },
+  }),
+  radar: () => ({
+    areaOpacity: radarDefault.SELECTED_SERIES_OPACITY,
+    hover: {
+      dot: {
+        radius: radarDefault.HOVER_DOT_RADIUS,
+        borderWidth: radarDefault.HOVER_DOT_RADIUS + 1,
+      },
+    },
+    select: {
+      dot: {
+        radius: radarDefault.HOVER_DOT_RADIUS,
+        borderWidth: radarDefault.HOVER_DOT_RADIUS + 1,
+      },
+      restSeries: {
+        areaOpacity: radarDefault.UNSELECTED_SERIES_OPACITY,
+      },
+      areaOpacity: radarDefault.SELECTED_SERIES_OPACITY,
+    },
+    dot: {
+      radius: radarDefault.DOT_RADIUS,
+    },
+  }),
+  bar: (globalFontFamily: string) => ({ ...getBarColumnSeriesTheme(globalFontFamily) }),
+  column: (globalFontFamily: string) => ({ ...getBarColumnSeriesTheme(globalFontFamily) }),
+  bullet: (globalFontFamily: string) => {
+    const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
+
+    return {
+      areaOpacity: 1,
+      barWidthRatios: {
+        rangeRatio: 1,
+        bulletRatio: 0.5,
+        markerRatio: 0.8,
+      },
+      markerLineWidth: 1,
+      borderWidth: 0,
+      borderColor: 'rgba(255, 255, 255, 0)',
+      hover: {
+        ...boxDefault.BOX_HOVER,
+        borderWidth: boxDefault.HOVER_THICKNESS,
         borderColor: '#ffffff',
-        hover: {
-          borderWidth: boxDefault.HOVER_THICKNESS,
-          borderColor: '#ffffff',
+        groupedRect: {
+          color: '#000000',
+          opacity: 0.05,
         },
-        select: {
-          borderWidth: boxDefault.HOVER_THICKNESS,
-          borderColor: '#ffffff',
+      },
+      select: {
+        ...boxDefault.BOX_HOVER,
+        borderWidth: boxDefault.HOVER_THICKNESS,
+        borderColor: '#ffffff',
+        groupedRect: {
+          color: '#000000',
+          opacity: 0.2,
         },
-        dataLabels: {
-          ...defaultDataLabelTheme,
-          color: '#ffffff',
-          textBubble: {
-            ...makeDefaultTextBubbleTheme(false, 1, 5, 1, 'rgba(255, 255, 255, 0.5)'),
-          },
+        restSeries: {
+          areaOpacity: 0.2,
         },
-      };
-    case 'scatter':
-      return {
-        size: 12,
-        borderWidth: 1.5,
-        fillColor: transparentColor,
-        select: {
-          fillColor: 'rgba(255, 255, 255, 1)',
-          borderWidth: 2.5,
-          size: 12,
-        },
-        hover: {
-          fillColor: 'rgba(255, 255, 255, 1)',
-          borderWidth: 2.5,
-          size: 12,
-        },
-      };
-    case 'bubble':
-      return {
-        borderWidth: 0,
-        borderColor: transparentColor,
-        select: {},
-        hover: {
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowBlur: 2,
-          shadowOffsetY: 2,
-          lineWidth: 2,
-        },
-      };
-    case 'radar':
-      return {
-        areaOpacity: radarDefault.SELECTED_SERIES_OPACITY,
-        hover: {
-          dot: {
-            radius: radarDefault.HOVER_DOT_RADIUS,
-            borderWidth: radarDefault.HOVER_DOT_RADIUS + 1,
-          },
-        },
-        select: {
-          dot: {
-            radius: radarDefault.HOVER_DOT_RADIUS,
-            borderWidth: radarDefault.HOVER_DOT_RADIUS + 1,
-          },
-          restSeries: {
-            areaOpacity: radarDefault.UNSELECTED_SERIES_OPACITY,
-          },
-          areaOpacity: radarDefault.SELECTED_SERIES_OPACITY,
-        },
-        dot: {
-          radius: radarDefault.DOT_RADIUS,
-        },
-      };
-    case 'bar':
-    case 'column':
-      return {
-        colorByPoint: false,
         areaOpacity: 1,
-        hover: {
-          ...boxDefault.BOX_HOVER,
-          borderWidth: boxDefault.HOVER_THICKNESS,
-          borderColor: '#ffffff',
-          groupedRect: {
-            color: '#000000',
-            opacity: 0.05,
+      },
+      dataLabels: {
+        ...defaultDataLabelTheme,
+        textBubble: {
+          ...makeDefaultTextBubbleTheme(),
+          arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
+        },
+        marker: {
+          ...defaultDataLabelTheme,
+          fontSize: 9,
+          useSeriesColor: true,
+          textBubble: {
+            ...makeDefaultTextBubbleTheme(true),
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            shadowColor: 'rgba(0, 0, 0, 0.0)',
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 0,
+            arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
           },
         },
-        select: {
-          ...boxDefault.BOX_HOVER,
-          borderWidth: boxDefault.HOVER_THICKNESS,
-          borderColor: '#ffffff',
-          groupedRect: {
-            color: '#000000',
-            opacity: 0.2,
-          },
-          restSeries: {
-            areaOpacity: 0.2,
-          },
-          areaOpacity: 1,
+      },
+    };
+  },
+  boxPlot: () => ({
+    areaOpacity: 1,
+    barWidthRatios: {
+      barRatio: 1,
+      minMaxBarRatio: 0.5,
+    },
+    markerLineWidth: 1,
+    dot: {
+      color: '#ffffff',
+      radius: boxplotDefault.OUTLIER_RADIUS,
+      borderWidth: boxplotDefault.OUTLIER_BORDER_WIDTH,
+      useSeriesColor: false,
+    },
+    rect: { borderWidth: 0 },
+    line: { ...boxplotDefault.LINE_TYPE },
+    hover: {
+      ...boxDefault.BOX_HOVER,
+      rect: { borderWidth: boxDefault.HOVER_THICKNESS, borderColor: '#ffffff' },
+      dot: {
+        radius: boxplotDefault.OUTLIER_RADIUS,
+        borderWidth: 0,
+        useSeriesColor: true,
+      },
+      line: { ...boxplotDefault.LINE_TYPE },
+    },
+    select: {
+      ...boxDefault.BOX_HOVER,
+      rect: { borderWidth: boxDefault.HOVER_THICKNESS, borderColor: '#ffffff' },
+      dot: {
+        radius: boxplotDefault.OUTLIER_RADIUS,
+        borderWidth: 0,
+        useSeriesColor: true,
+      },
+      line: { ...boxplotDefault.LINE_TYPE },
+      restSeries: {
+        areaOpacity: 0.2,
+      },
+      areaOpacity: 1,
+    },
+  }),
+  pie: (
+    globalFontFamily: string,
+    { hasOuterAnchor = false, hasOuterAnchorPieSeriesName = false },
+    isNestedPieChart = false
+  ) => {
+    const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
+
+    return {
+      areaOpacity: 1,
+      strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(255, 255, 255, 0)',
+      lineWidth: isNestedPieChart ? 1 : 0,
+      hover: {
+        lineWidth: DEFAULT_PIE_LINE_WIDTH,
+        strokeStyle: '#ffffff',
+        shadowColor: '#cccccc',
+        shadowBlur: 5,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+      },
+      select: {
+        lineWidth: DEFAULT_PIE_LINE_WIDTH,
+        strokeStyle: '#ffffff',
+        shadowColor: '#cccccc',
+        shadowBlur: 5,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+        restSeries: {
+          areaOpacity: 0.3,
         },
-        connector: {
-          color: 'rgba(51, 85, 139, 0.3)',
+        areaOpacity: 1,
+      },
+      dataLabels: {
+        fontFamily: globalFontFamily,
+        fontSize: 16,
+        fontWeight: 600,
+        color: hasOuterAnchor ? '#333333' : '#ffffff',
+        useSeriesColor: hasOuterAnchor,
+        textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
+        callout: {
           lineWidth: 1,
-          dashSegments: [],
+          useSeriesColor: true,
+          lineColor: '#e9e9e9',
         },
-        dataLabels: {
+        pieSeriesName: {
           ...defaultDataLabelTheme,
-          textBubble: {
-            ...makeDefaultTextBubbleTheme(false, 1, 4, 3),
-            arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
-          },
-          stackTotal: {
-            ...defaultDataLabelTheme,
-            textBubble: {
-              ...makeDefaultTextBubbleTheme(true, 1, 4, 3),
-              arrow: { visible: true, ...DEFAULT_BUBBLE_ARROW },
-            },
-          },
-        },
-      };
-    case 'bullet':
-      return {
-        areaOpacity: 1,
-        barWidthRatios: {
-          rangeRatio: 1,
-          bulletRatio: 0.5,
-          markerRatio: 0.8,
-        },
-        markerLineWidth: 1,
-        borderWidth: 0,
-        borderColor: 'rgba(255, 255, 255, 0)',
-        hover: {
-          ...boxDefault.BOX_HOVER,
-          borderWidth: boxDefault.HOVER_THICKNESS,
-          borderColor: '#ffffff',
-          groupedRect: {
-            color: '#000000',
-            opacity: 0.05,
-          },
-        },
-        select: {
-          ...boxDefault.BOX_HOVER,
-          borderWidth: boxDefault.HOVER_THICKNESS,
-          borderColor: '#ffffff',
-          groupedRect: {
-            color: '#000000',
-            opacity: 0.2,
-          },
-          restSeries: {
-            areaOpacity: 0.2,
-          },
-          areaOpacity: 1,
-        },
-        dataLabels: {
-          ...defaultDataLabelTheme,
-          textBubble: {
-            ...makeDefaultTextBubbleTheme(),
-            arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
-          },
-          marker: {
-            ...defaultDataLabelTheme,
-            fontSize: 9,
-            useSeriesColor: true,
-            textBubble: {
-              ...makeDefaultTextBubbleTheme(true),
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              shadowColor: 'rgba(0, 0, 0, 0.0)',
-              shadowOffsetX: 0,
-              shadowOffsetY: 0,
-              shadowBlur: 0,
-              arrow: { visible: false, ...DEFAULT_BUBBLE_ARROW },
-            },
-          },
-        },
-      };
-    case 'boxPlot':
-      return {
-        areaOpacity: 1,
-        barWidthRatios: {
-          barRatio: 1,
-          minMaxBarRatio: 0.5,
-        },
-        markerLineWidth: 1,
-        dot: {
-          color: '#ffffff',
-          radius: boxplotDefault.OUTLIER_RADIUS,
-          borderWidth: boxplotDefault.OUTLIER_BORDER_WIDTH,
-          useSeriesColor: false,
-        },
-        rect: { borderWidth: 0 },
-        line: { ...boxplotDefault.LINE_TYPE },
-        hover: {
-          ...boxDefault.BOX_HOVER,
-          rect: { borderWidth: boxDefault.HOVER_THICKNESS, borderColor: '#ffffff' },
-          dot: {
-            radius: boxplotDefault.OUTLIER_RADIUS,
-            borderWidth: 0,
-            useSeriesColor: true,
-          },
-          line: { ...boxplotDefault.LINE_TYPE },
-        },
-        select: {
-          ...boxDefault.BOX_HOVER,
-          rect: { borderWidth: boxDefault.HOVER_THICKNESS, borderColor: '#ffffff' },
-          dot: {
-            radius: boxplotDefault.OUTLIER_RADIUS,
-            borderWidth: 0,
-            useSeriesColor: true,
-          },
-          line: { ...boxplotDefault.LINE_TYPE },
-          restSeries: {
-            areaOpacity: 0.2,
-          },
-          areaOpacity: 1,
-        },
-      };
-    case 'pie':
-      return {
-        areaOpacity: 1,
-        strokeStyle: isNestedPieChart ? '#ffffff' : 'rgba(255, 255, 255, 0)',
-        lineWidth: isNestedPieChart ? 1 : 0,
-        hover: {
-          lineWidth: DEFAULT_PIE_LINE_WIDTH,
-          strokeStyle: '#ffffff',
-          shadowColor: '#cccccc',
-          shadowBlur: 5,
-          shadowOffsetX: 0,
-          shadowOffsetY: 0,
-        },
-        select: {
-          lineWidth: DEFAULT_PIE_LINE_WIDTH,
-          strokeStyle: '#ffffff',
-          shadowColor: '#cccccc',
-          shadowBlur: 5,
-          shadowOffsetX: 0,
-          shadowOffsetY: 0,
-          restSeries: {
-            areaOpacity: 0.3,
-          },
-          areaOpacity: 1,
-        },
-        dataLabels: {
-          fontFamily: 'Arial',
-          fontSize: 16,
-          fontWeight: 600,
-          color: hasOuterAnchor ? '#333333' : '#ffffff',
-          useSeriesColor: hasOuterAnchor,
-          textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
-          callout: {
-            lineWidth: 1,
-            useSeriesColor: true,
-            lineColor: '#e9e9e9',
-          },
-          pieSeriesName: {
-            ...defaultDataLabelTheme,
-            useSeriesColor: hasOuterAnchorPieSeriesName,
-            color: hasOuterAnchorPieSeriesName ? '#333333' : '#ffffff',
-            textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
-          },
-        },
-      };
-    case 'radialBar':
-      return {
-        areaOpacity: 1,
-        strokeStyle: isNestedPieChart ? '#fff' : 'rgba(255, 255, 255, 0)',
-        lineWidth: 0,
-        hover: {
-          lineWidth: DEFAULT_PIE_LINE_WIDTH,
-          strokeStyle: '#fff',
-          shadowColor: '#cccccc',
-          shadowBlur: 5,
-          shadowOffsetX: 0,
-          shadowOffsetY: 0,
-          groupedSector: {
-            color: '#000000',
-            opacity: 0.05,
-          },
-        },
-        select: {
-          lineWidth: DEFAULT_PIE_LINE_WIDTH,
-          strokeStyle: '#fff',
-          shadowColor: '#cccccc',
-          shadowBlur: 5,
-          shadowOffsetX: 0,
-          shadowOffsetY: 0,
-          restSeries: {
-            areaOpacity: 0.3,
-          },
-          areaOpacity: 1,
-          groupedSector: {
-            color: '#000000',
-            opacity: 0.2,
-          },
-        },
-        dataLabels: {
-          fontFamily: 'Arial',
-          fontSize: 11,
-          fontWeight: 400,
-          color: '#333333',
-          useSeriesColor: false,
+          useSeriesColor: hasOuterAnchorPieSeriesName,
+          color: hasOuterAnchorPieSeriesName ? '#333333' : '#ffffff',
           textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
         },
-      };
-    default:
-      return {};
+      },
+    };
+  },
+  radialBar: (globalFontFamily: string, isNestedPieChart = false) => ({
+    strokeStyle: isNestedPieChart ? '#fff' : 'rgba(255, 255, 255, 0)',
+    lineWidth: 0,
+    hover: {
+      lineWidth: DEFAULT_PIE_LINE_WIDTH,
+      strokeStyle: '#fff',
+      shadowColor: '#cccccc',
+      shadowBlur: 5,
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      groupedSector: {
+        color: '#000000',
+        opacity: 0.05,
+      },
+    },
+    select: {
+      lineWidth: DEFAULT_PIE_LINE_WIDTH,
+      strokeStyle: '#fff',
+      shadowColor: '#cccccc',
+      shadowBlur: 5,
+      shadowOffsetX: 0,
+      shadowOffsetY: 0,
+      restSeries: {
+        areaOpacity: 0.3,
+      },
+      areaOpacity: 1,
+      groupedSector: {
+        color: '#000000',
+        opacity: 0.2,
+      },
+    },
+    dataLabels: {
+      fontFamily: globalFontFamily,
+      fontSize: 11,
+      fontWeight: 400,
+      color: '#333333',
+      useSeriesColor: false,
+      textBubble: { ...makeDefaultTextBubbleTheme(false, 0) },
+    },
+  }),
+  gauge: (globalFontFamily: string) => ({
+    areaOpacity: 1,
+    hover: {
+      clockHand: { baseLine: 5 },
+      pin: { radius: 5, borderWidth: 5 },
+      solid: {
+        lineWidth: DEFAULT_PIE_LINE_WIDTH,
+        strokeStyle: '#ffffff',
+        shadowColor: '#cccccc',
+        shadowBlur: 5,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+      },
+    },
+    select: {
+      clockHand: { baseLine: 5 },
+      pin: { radius: 6, borderWidth: 4 },
+      solid: {
+        lineWidth: DEFAULT_PIE_LINE_WIDTH,
+        strokeStyle: '#ffffff',
+        shadowColor: '#cccccc',
+        shadowBlur: 5,
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+        restSeries: {
+          areaOpacity: 0.3,
+        },
+        areaOpacity: 1,
+      },
+      areaOpacity: 1,
+      restSeries: { areaOpacity: 0.3 },
+    },
+    clockHand: { baseLine: 4 },
+    pin: { radius: 5, borderWidth: 5 },
+    solid: {
+      lineWidth: 0,
+      backgroundSolid: { color: 'rgba(0, 0, 0, 0.1)' },
+    },
+    dataLabels: {
+      fontFamily: globalFontFamily,
+      fontSize: 11,
+      fontWeight: 400,
+      color: '#333333',
+      useSeriesColor: false,
+      textBubble: {
+        ...makeDefaultTextBubbleTheme(true, 4, 4, 3),
+        shadowColor: 'rgba(0, 0, 0, 0)',
+        shadowOffsetY: 0,
+        shadowBlur: 0,
+        borderColor: '#ccc',
+        borderWidth: 1,
+      },
+    },
+  }),
+};
+
+function getSeriesTheme(
+  globalFontFamily: string,
+  seriesName: string,
+  paramForPieSeries: CheckAnchorPieSeries,
+  isNestedPieChart = false
+) {
+  if (seriesName === 'pie') {
+    return defaultThemeMakers[seriesName](globalFontFamily, paramForPieSeries, isNestedPieChart);
   }
+
+  if (seriesName === 'radialBar') {
+    return defaultThemeMakers[seriesName](globalFontFamily, isNestedPieChart);
+  }
+
+  if (includes(['bubble', 'radar', 'boxPlot'], seriesName)) {
+    return defaultThemeMakers[seriesName]();
+  }
+
+  return defaultThemeMakers[seriesName](globalFontFamily);
 }
 
 export function getDefaultTheme(
-  globalFontFamily: string | undefined,
   series: RawSeries,
   pieSeriesOuterAnchors: CheckAnchorPieSeries | Record<string, CheckAnchorPieSeries>,
+  globalFontFamily = 'Arial',
   isNestedPieChart = false
 ): Theme {
   const result = Object.keys(series).reduce<Theme>(
@@ -635,10 +710,14 @@ export function getDefaultTheme(
       ...acc,
       series: {
         ...acc.series,
-        [seriesName]: getSeriesTheme(globalFontFamily, seriesName, pieSeriesOuterAnchors),
+        [seriesName]: getSeriesTheme(
+          globalFontFamily,
+          seriesName,
+          pieSeriesOuterAnchors as CheckAnchorPieSeries
+        ),
       },
     }),
-    makeDefaultTheme(globalFontFamily, !!series.radar) as Theme
+    makeDefaultTheme(series, globalFontFamily) as Theme
   );
 
   if (isNestedPieChart) {

@@ -75,7 +75,7 @@ import { LineAreaChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/char
  *       @param {boolean} [props.options.series.shift=false] - Whether to use shift when addData or not.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
  *     @param {Object} [props.options.xAxis]
- *       @param {Object} [props.options.xAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.xAxis.title] - Axis title.
  *       @param {boolean} [props.options.xAxis.pointOnColumn=false] - Whether to move the start of the chart to the center of the column.
  *       @param {boolean} [props.options.xAxis.rotateLabel=true] - Whether to allow axis label rotation.
  *       @param {boolean|Object} [props.options.xAxis.date] - Whether the x axis label is of date type. Format option used for date type. Whether the x axis label is of date type. If use date type, format option used for date type.
@@ -85,7 +85,7 @@ import { LineAreaChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/char
  *       @param {number} [props.options.xAxis.width] - Width of xAxis.
  *       @param {number} [props.options.xAxis.height] - Height of xAxis.
  *     @param {Object|Array<Object>} [props.options.yAxis] - If this option is an array type, use the secondary y axis.
- *       @param {Object} [props.options.yAxis.title] - Axis title.
+ *       @param {string|Object} [props.options.yAxis.title] - Axis title.
  *       @param {Object} [props.options.yAxis.tick] - Option to adjust tick interval.
  *       @param {Object} [props.options.yAxis.label] - Option to adjust label interval.
  *       @param {Object} [props.options.yAxis.scale] - Option to adjust axis minimum, maximum, step size.
@@ -140,7 +140,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -185,15 +185,15 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * @example
    * chart.addData([10, 20], '6', 'line');
    */
-  public addData = (
+  addData(
     data: LineSeriesDataType[] | AreaSeriesDataType[],
     category: string,
     chartType: 'line' | 'area'
-  ) => {
+  ) {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addData', { data, category, chartType });
-  };
+  }
 
   /**
    * Add series.
@@ -213,10 +213,10 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    *     chartType: 'line'
    *   });
    */
-  public addSeries = (data: LineSeriesInput | AreaSeriesInput, dataInfo: AddSeriesDataInfo) => {
+  addSeries(data: LineSeriesInput | AreaSeriesInput, dataInfo: AddSeriesDataInfo) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data, ...dataInfo });
-  };
+  }
 
   /**
    * Convert the chart data to new data.
@@ -241,7 +241,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    *   }
    * });
    */
-  public setData(data: LineAreaData) {
+  setData(data: LineAreaData) {
     this.resetSeries();
     this.store.dispatch('setData', data);
   }
@@ -260,7 +260,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    *   id: 'plot-1',
    * });
    */
-  public addPlotLine(data: PlotLine) {
+  addPlotLine(data: PlotLine) {
     this.store.dispatch('addPlotLine', { data });
   }
 
@@ -271,7 +271,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * @example
    * chart.removePlotLine('plot-1');
    */
-  public removePlotLine(id: string) {
+  removePlotLine(id: string) {
     this.store.dispatch('removePlotLine', { id });
   }
 
@@ -289,7 +289,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    *   id: 'plot-1',
    * });
    */
-  public addPlotBand(data: PlotBand) {
+  addPlotBand(data: PlotBand) {
     this.store.dispatch('addPlotBand', { data });
   }
 
@@ -300,7 +300,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * @example
    * chart.removePlotBand('plot-1');
    */
-  public removePlotBand(id: string) {
+  removePlotBand(id: string) {
     this.store.dispatch('removePlotBand', { id });
   }
 
@@ -310,11 +310,11 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -322,11 +322,11 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -357,10 +357,10 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: LineAreaChartOptions) => {
+  setOptions(options: LineAreaChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -379,10 +379,10 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: LineAreaChartOptions) => {
+  updateOptions(options: LineAreaChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -394,9 +394,9 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2, chartType: 'line'});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -404,7 +404,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

@@ -5,13 +5,13 @@ export function createResponsiveChart<Data extends DataInput, Option extends Opt
   ChartConstructor: new (...args) => object,
   data: Data,
   options: Option,
-  size?: { width: string; hieght: string }
+  size?: { width: string; height: string }
 ) {
   const el = document.createElement('div');
 
   setTimeout(() => {
     el.style.width = size?.width ?? '90vw';
-    el.style.height = size?.width ?? '90vh';
+    el.style.height = size?.height ?? '90vh';
 
     return new ChartConstructor({
       el,

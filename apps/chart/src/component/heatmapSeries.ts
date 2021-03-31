@@ -24,7 +24,7 @@ export default class HeatmapSeries extends Component {
 
   theme!: Required<HeatmapChartSeriesTheme>;
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: HeatmapRectResponderModel[] = [];
 
   initialize() {
     this.type = 'series';

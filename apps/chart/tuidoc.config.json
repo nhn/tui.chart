@@ -182,7 +182,7 @@
       "example17-05-component-theme": "17.5 [Common] Common Component Theme",
       "example17-06-legend-ellipsis": "17.6 [Common] Legend Ellipsis",
       "example18-01-radialBar-chart-basic": "18.1 [RadialBar Chart] Basic",
-      "example18-02-radialBar-chart-selectable-event": "18.2 [RadialBar Chart] Selectable options, select even",
+      "example18-02-radialBar-chart-selectable-event": "18.2 [RadialBar Chart] Selectable options, select event",
       "example18-03-radialBar-chart-counterClockwise": "18.3 [RadialBar Chart] Counter Clockwise",
       "example18-04-radialBar-chart-angleRange": "18.4 [RadialBar Chart] AngleRange",
       "example18-05-radialBar-chart-radiusRange": "18.5 [RadialBar Chart] RadiusRange",
@@ -190,7 +190,16 @@
       "example18-07-radialBar-chart-theme": "18.7 [RadialBar Chart] Theme",
       "example19-01-noDataText-basic": "19.1 [No Data Text] Basic",
       "example19-02-noDataText-lang": "19.2 [No Data Text] lang options",
-      "example19-03-noDataText-theme": "19.3 [No Data Text] Theme"
+      "example19-03-noDataText-theme": "19.3 [No Data Text] Theme",
+      "example20-01-gauge-chart-basic": "20.1 [Gauge Chart] Basic",
+      "example20-02-gauge-chart-basicWithCategory": "20.2 [Gauge Chart] Basic with Category",
+      "example20-03-gauge-chart-selectable-event": "20.3 [Gauge Chart] Selectable options, select event",
+      "example20-04-gauge-chart-counterClockwise": "20.4 [Gauge Chart] Counter Clockwise",
+      "example20-05-gauge-chart-angleRange": "20.5 [Gauge Chart] AngleRange",
+      "example20-06-gauge-chart-solidWithDataLabels": "20.6 [Gauge Chart] Solid with Data Labels",
+      "example20-07-gauge-chart-solidWithClockHand": "20.7 [Gauge Chart] Solid with Clock Hand",
+      "example20-08-gauge-chart-dataLabels": "20.8 [Gauge Chart] Data Labels",
+      "example20-09-gauge-chart-theme": "20.9 [Gauge Chart] Theme"
     }
   },
   "pathPrefix": "tui.chart"

@@ -10,10 +10,14 @@ import {
 import { extend } from './store';
 import { rgba } from '@src/helpers/color';
 import { isRangeValue } from '@src/helpers/range';
-import { isString, isUndefined } from '@src/helpers/utils';
+import { isString } from '@src/helpers/utils';
+import { isExistPlotId } from '@src/helpers/plot';
 
 type UsingVisiblePlotOptions = ValueOf<
-  Omit<ChartOptionsMap, 'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie' | 'radialBar'>
+  Omit<
+    ChartOptionsMap,
+    'radar' | 'pie' | 'treemap' | 'heatmap' | 'nestedPie' | 'radialBar' | 'gauge'
+  >
 >;
 
 type UsingPlotLineBandOptions = ValueOf<
@@ -73,12 +77,6 @@ function makePlotBands(categories: string[], isDateType: boolean, plotBands: Plo
 
     return mergeOverlappingRanges ? getOverlappingRange(ranges) : ranges;
   });
-}
-
-function isExistPlotId<T extends PlotLine | PlotBand>(plots: T[], data: T) {
-  return plots.some(
-    ({ id: bandId }) => !isUndefined(bandId) && !isUndefined(data.id) && bandId === data.id
-  );
 }
 
 const plot: StoreModule = {

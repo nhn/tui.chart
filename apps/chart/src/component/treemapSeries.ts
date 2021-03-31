@@ -26,7 +26,7 @@ export default class TreemapSeries extends Component {
 
   theme!: Required<TreemapChartSeriesTheme>;
 
-  activatedResponders: this['responders'] = [];
+  activatedResponders: TreemapRectResponderModel[] = [];
 
   zoomable!: boolean;
 

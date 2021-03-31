@@ -90,11 +90,11 @@ export interface AxisDataParams {
   isCoordinateTypeChart?: boolean;
 }
 
-export function isCenterYAxis(options: ChartOptionsUsingYAxis, isBar: boolean) {
+export function isCenterYAxis(options: ChartOptionsUsingYAxis) {
   const diverging = !!pickProperty(options, ['series', 'diverging']);
-  const alignCenter = (options.yAxis as BarTypeYAxisOption)?.align === 'center';
+  const alignCenter = (options?.yAxis as BarTypeYAxisOption)?.align === 'center';
 
-  return isBar && diverging && alignCenter;
+  return diverging && alignCenter;
 }
 
 function isDivergingBoxSeries(series: Series, options: Options) {
@@ -199,11 +199,11 @@ function getValueAxisData(stateProp: StateProp): ValueAxisState {
   const { limit, stepSize } = scale;
   const size = centerYAxis ? centerYAxis?.xAxisHalfSize : axisSize;
   const divergingBoxSeries = isDivergingBoxSeries(series, options);
-  const formatter = getAxisFormatter(options, axisName);
+  const formatter = getAxisFormatter(options as ChartOptionsUsingYAxis, axisName);
   const zeroPosition = getZeroPosition(
     limit,
     axisSize,
-    isLabelAxisOnYAxis(series, options),
+    isLabelAxisOnYAxis({ series, options }),
     divergingBoxSeries
   );
   let valueLabels = makeLabelsFromLimit(limit, stepSize);
@@ -272,7 +272,7 @@ function getInitialAxisData(
   layout: Layout,
   isCoordinateTypeChart: boolean
 ) {
-  const { yAxis, secondaryYAxis } = getYAxisOption(options);
+  const { yAxis, secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
   const shift = (options?.series as LineTypeSeriesOptions)?.shift;
 
   return {
@@ -305,7 +305,9 @@ function getSecondaryYAxisData({
     ? getLabelAxisData({
         scale: scale.secondaryYAxis!,
         axisSize: labelAxisSize,
-        categories: getYAxisOption(options).secondaryYAxis?.categories ?? categories,
+        categories:
+          getYAxisOption(options as ChartOptionsUsingYAxis).secondaryYAxis?.categories ??
+          categories,
         options,
         series,
         theme: getAxisTheme(theme, AxisType.SECONDARY_Y),
@@ -361,13 +363,13 @@ function getCategoriesWithTypes(categories?: Categories, rawCategories?: Categor
 const axes: StoreModule = {
   name: 'axes',
   state: ({ series, options }) => {
-    const { secondaryYAxis } = getYAxisOption(options);
+    const { secondaryYAxis } = getYAxisOption(options as ChartOptionsUsingYAxis);
     const axesState: Axes = {
       xAxis: {} as AxisData,
       yAxis: {} as AxisData,
     };
 
-    if (isCenterYAxis(options, !!series.bar)) {
+    if (!!series.bar && isCenterYAxis(options as ChartOptionsUsingYAxis)) {
       axesState.centerYAxis = {} as CenterYAxisData;
     }
 
@@ -385,7 +387,7 @@ const axes: StoreModule = {
       const { xAxis, yAxis, plot } = layout;
 
       const isCoordinateTypeChart = isCoordinateSeries(initStoreState.series);
-      const labelOnYAxis = isLabelAxisOnYAxis(series, options);
+      const labelOnYAxis = isLabelAxisOnYAxis({ series, options });
       const { categories } = getCategoriesWithTypes(state.categories, state.rawCategories);
       const { valueAxisName, valueAxisSize, labelAxisName, labelAxisSize } = getAxisInfo(
         labelOnYAxis,

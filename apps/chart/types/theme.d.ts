@@ -15,6 +15,7 @@ type SeriesThemeMap = {
   boxPlot?: BoxPlotChartSeriesTheme;
   bullet?: BulletChartSeriesTheme;
   radialBar?: RadialBarChartSeriesTheme;
+  gauge?: GaugeChartSeriesTheme;
 };
 
 type SeriesTheme =
@@ -30,7 +31,8 @@ type SeriesTheme =
   | NestedPieChartSeriesTheme
   | BoxChartSeriesTheme
   | BoxPlotChartSeriesTheme
-  | BulletChartSeriesTheme;
+  | BulletChartSeriesTheme
+  | GaugeChartSeriesTheme;
 
 type FontTheme = {
   fontSize?: number;
@@ -57,6 +59,11 @@ type CircularAxisTheme = {
   lineWidth?: number;
   strokeStyle?: string;
   dotColor?: string;
+  title?: FontTheme;
+  tick?: {
+    lineWidth?: number;
+    strokeStyle?: string;
+  };
 };
 
 type VerticalAxisTheme = {
@@ -280,11 +287,8 @@ interface BaseThemeOptions {
   chart?: ChartTheme;
   noData?: FontTheme;
   title?: FontTheme;
-  yAxis?: AxisTheme | AxisTheme[];
-  xAxis?: AxisTheme;
   legend?: LegendTheme;
   tooltip?: TooltipTheme;
-  plot?: PlotTheme;
   exportMenu?: ExportMenuTheme;
 }
 
@@ -499,44 +503,52 @@ interface LineChartThemeOptions extends BaseThemeOptions {
   series?: LineChartSeriesTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface AreaChartThemeOptions extends BaseThemeOptions {
   series?: AreaChartSeriesTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface LineAreaChartThemeOptions extends BaseThemeOptions {
   series?: LineAreaChartSeriesTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface LineScatterChartThemeOptions extends BaseThemeOptions {
   series?: LineScatterChartSeriesTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface PieChartThemeOptions extends BaseThemeOptions {
   series?: PieChartSeriesTheme;
+  plot?: PlotTheme;
 }
 
 interface NestedPieChartThemeOptions extends BaseThemeOptions {
   series?: NestedPieChartSeriesTheme;
+  plot?: PlotTheme;
 }
 
 interface RadarChartThemeOptions extends BaseThemeOptions {
   series?: RadarChartSeriesTheme;
   verticalAxis?: VerticalAxisTheme;
   circularAxis?: CircularAxisTheme;
+  plot?: LineTheme;
 }
 
 interface HeatmapChartThemeOptions extends BaseThemeOptions {
   series?: HeatmapChartSeriesTheme;
   yAxis?: AxisTheme;
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface TreemapChartThemeOptions extends BaseThemeOptions {
@@ -547,36 +559,42 @@ interface ScatterChartThemeOptions extends BaseThemeOptions {
   series?: ScatterChartSeriesTheme;
   yAxis?: AxisTheme;
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface BubbleChartThemeOptions extends BaseThemeOptions {
   series?: BubbleChartSeriesTheme;
   yAxis?: AxisTheme;
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface BoxChartThemeOptions extends BaseThemeOptions {
   series?: BoxChartSeriesTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface BulletCharThemeOptions extends BaseThemeOptions {
   series?: BulletChartSeriesTheme;
   yAxis?: AxisTheme;
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface BoxPlotCharThemeOptions extends BaseThemeOptions {
   series?: BoxPlotChartSeriesTheme;
   yAxis?: AxisTheme;
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 interface ColumnLineChartThemeOptions extends BaseThemeOptions {
   series?: ColumnLineChartSeriesTheme;
   yAxis?: AxisTheme | AxisTheme[];
   xAxis?: AxisTheme;
+  plot?: PlotTheme;
 }
 
 type CheckAnchorPieSeries = {
@@ -588,4 +606,65 @@ interface RadialBarChartThemeOptions extends BaseThemeOptions {
   series?: RadialBarChartSeriesTheme;
   verticalAxis?: VerticalAxisTheme;
   circularAxis?: CircularAxisTheme;
+  plot?: LineTheme;
+}
+
+type PinTheme = {
+  radius: number;
+  color: string;
+  borderWidth: number;
+  borderColor: string;
+};
+
+type ClockHandSizeTheme = string | number | number[] | string[];
+
+type ClockHandTheme = {
+  color: string;
+  size: ClockHandSizeTheme;
+  baseLine: number;
+};
+
+type SolidTheme = {
+  barWidth?: number | string;
+  lineWidth?: number;
+  strokeStyle?: string;
+  shadowColor?: string;
+  shadowBlur?: number;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
+  color?: string;
+  backgroundSolid?: { color?: string };
+};
+
+interface GaugeChartSeriesTheme extends CommonSeriesTheme {
+  areaOpacity?: number;
+  solid?: SolidTheme;
+  clockHand?: Partial<ClockHandTheme>;
+  pin?: Partial<PinTheme>;
+  hover?: {
+    clockHand?: Partial<ClockHandTheme>;
+    pin?: Partial<PinTheme>;
+    solid?: Omit<SolidTheme, 'backgroundSolid'>;
+  };
+  select?: {
+    clockHand?: Partial<ClockHandTheme>;
+    pin?: Partial<PinTheme>;
+    solid?: Omit<SolidTheme, 'backgroundSolid'>;
+    areaOpacity?: number;
+    restSeries?: {
+      areaOpacity?: number;
+    };
+  };
+  dataLabels?: BoxDataLabel;
+}
+
+type GaugePlotTheme = {
+  bands: {
+    barWidth?: number;
+  };
+};
+interface GaugeChartThemeOptions extends BaseThemeOptions {
+  series?: GaugeChartSeriesTheme;
+  circularAxis?: CircularAxisTheme;
+  plot?: GaugePlotTheme;
 }

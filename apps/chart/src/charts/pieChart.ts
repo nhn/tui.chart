@@ -88,7 +88,7 @@ export default class PieChart extends Chart<PieChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -124,7 +124,7 @@ export default class PieChart extends Chart<PieChartOptions> {
    *   data: 10,
    * });
    */
-  public addSeries(data: PieSeriesType) {
+  addSeries(data: PieSeriesType) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -142,7 +142,7 @@ export default class PieChart extends Chart<PieChartOptions> {
    *   ]
    * });
    */
-  public setData(data: PieSeriesData) {
+  setData(data: PieSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { pie: series }, categories });
@@ -154,11 +154,11 @@ export default class PieChart extends Chart<PieChartOptions> {
    * @example
    * chart.hideSeriesDataLabel();
    */
-  public hideSeriesDataLabel = () => {
+  hideSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: false } } },
     });
-  };
+  }
 
   /**
    * Show series data label.
@@ -166,11 +166,11 @@ export default class PieChart extends Chart<PieChartOptions> {
    * @example
    * chart.showSeriesDataLabel();
    */
-  public showSeriesDataLabel = () => {
+  showSeriesDataLabel() {
     this.store.dispatch('updateOptions', {
       options: { series: { dataLabels: { visible: true } } },
     });
-  };
+  }
 
   /**
    * Convert the chart options to new options.
@@ -191,10 +191,10 @@ export default class PieChart extends Chart<PieChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: PieChartOptions) => {
+  setOptions(options: PieChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -211,10 +211,10 @@ export default class PieChart extends Chart<PieChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: PieChartOptions) => {
+  updateOptions(options: PieChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -225,9 +225,9 @@ export default class PieChart extends Chart<PieChartOptions> {
    * @example
    * chart.showTooltip({seriesIndex: 1, alias: 'name'});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -235,7 +235,7 @@ export default class PieChart extends Chart<PieChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }

@@ -278,7 +278,7 @@ function makeExportData(exportData: DataToExport): ExportData2DArray {
 
       return [...acc, ...result];
     },
-    [['', ...categories]]
+    series.gauge ? [] : [['', ...categories]]
   );
 }
 

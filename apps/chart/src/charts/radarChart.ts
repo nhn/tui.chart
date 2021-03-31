@@ -107,7 +107,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
     });
   }
 
-  initialize() {
+  protected initialize() {
     super.initialize();
 
     this.componentManager.add(Background);
@@ -141,11 +141,11 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    * @example
    * chart.addData([10, 20], '6');
    */
-  public addData = (data: number[], category: string) => {
+  addData(data: number[], category: string) {
     this.animationControlFlag.updating = true;
     this.resetSeries();
     this.store.dispatch('addData', { data, category });
-  };
+  }
 
   /**
    * Add series.
@@ -159,7 +159,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    *   data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
    * });
    */
-  public addSeries(data: RadarSeriesInput) {
+  addSeries(data: RadarSeriesInput) {
     this.resetSeries();
     this.store.dispatch('addSeries', { data });
   }
@@ -183,7 +183,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    *   ]
    * });
    */
-  public setData(data: RadarSeriesData) {
+  setData(data: RadarSeriesData) {
     const { categories, series } = data;
     this.resetSeries();
     this.store.dispatch('setData', { series: { radar: series }, categories });
@@ -208,9 +208,9 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    *   },
    * });
    */
-  public setOptions = (options: RadarChartOptions) => {
+  setOptions(options: RadarChartOptions) {
     this.dispatchOptionsEvent('initOptions', options);
-  };
+  }
 
   /**
    * Update chart options.
@@ -227,10 +227,10 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    *   },
    * });
    */
-  public updateOptions = (options: RadarChartOptions) => {
+  updateOptions(options: RadarChartOptions) {
     this.resetSeries();
     this.dispatchOptionsEvent('updateOptions', options);
-  };
+  }
 
   /**
    * Show tooltip.
@@ -241,9 +241,9 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    * @example
    * chart.showTooltip({index: 1, seriesIndex: 2});
    */
-  public showTooltip = (seriesInfo: SelectSeriesInfo) => {
+  showTooltip(seriesInfo: SelectSeriesInfo) {
     this.eventBus.emit('showTooltip', { ...seriesInfo, state: this.store.state });
-  };
+  }
 
   /**
    * Hide tooltip.
@@ -251,7 +251,7 @@ export default class RadarChart extends Chart<RadarChartOptions> {
    * @example
    * chart.hideTooltip();
    */
-  public hideTooltip = () => {
+  hideTooltip() {
     this.eventBus.emit('hideTooltip');
-  };
+  }
 }
