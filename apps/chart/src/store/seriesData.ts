@@ -7,7 +7,6 @@ import {
   ChartType,
   ChartSeriesMap,
 } from '@t/store/store';
-import { extend } from '@src/store/store';
 import {
   HeatmapCategoriesType,
   HeatmapSeriesDataType,
@@ -201,7 +200,7 @@ const seriesData: StoreModule = {
         };
       });
 
-      extend(state.series, newSeriesData);
+      state.series = newSeriesData;
     },
     disableSeries({ state }, name: string) {
       state.disabledSeries.push(name);
