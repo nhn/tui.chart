@@ -207,12 +207,14 @@ const dataRange: StoreModule = {
           }, []);
         } else if (stackSeries && stackSeries[seriesName]?.stack) {
           values = stackSeries[seriesName].dataRangeValues;
-        } else if (includes(['bar', 'column', 'radar'], seriesName)) {
-          values.push(0);
         } else if (seriesName === 'boxPlot') {
           values = getBoxPlotValues(series, seriesName);
         } else if (seriesName === 'bullet') {
           values = getBulletValues(series, seriesName);
+        }
+
+        if (includes(['bar', 'column', 'radar', 'bullet'], seriesName)) {
+          values.push(0);
         }
 
         setSeriesDataRange({
