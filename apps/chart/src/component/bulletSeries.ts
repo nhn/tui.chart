@@ -113,10 +113,6 @@ export default class BulletSeries extends Component {
       return;
     }
 
-    this.initUpdateClipRect(delta);
-  }
-
-  initUpdateClipRect(delta: number) {
     const { clipRect } = this.drawModels;
 
     if (!clipRect) {
@@ -171,7 +167,7 @@ export default class BulletSeries extends Component {
     const rangeModels = this.renderRanges(bulletData, renderOptions);
     const bulletModels = this.renderBullet(bulletData, renderOptions);
     const markerModels = this.renderMarkers(bulletData, renderOptions);
-    const clipRect = this.renderClipRectAreaModel();
+    const clipRect = this.renderClipRectArea();
 
     this.models.clipRect = [clipRect];
     this.models.range = rangeModels;
@@ -180,7 +176,7 @@ export default class BulletSeries extends Component {
 
     if (!this.drawModels) {
       this.drawModels = {
-        clipRect: [this.initClipRect(clipRect)],
+        clipRect: [this.makeInitialClipRectModel(clipRect)],
         range: deepCopyArray(rangeModels),
         bullet: deepCopyArray(bulletModels),
         marker: deepCopyArray(markerModels),
@@ -212,7 +208,7 @@ export default class BulletSeries extends Component {
     }
   }
 
-  protected renderClipRectAreaModel(): ClipRectAreaModel {
+  protected renderClipRectArea(): ClipRectAreaModel {
     return {
       type: 'clipRectArea',
       x: 0,
@@ -222,7 +218,7 @@ export default class BulletSeries extends Component {
     };
   }
 
-  protected initClipRect(clipRect: ClipRectAreaModel): ClipRectAreaModel {
+  protected makeInitialClipRectModel(clipRect: ClipRectAreaModel): ClipRectAreaModel {
     const width = this.vertical ? clipRect.width : 0;
     const height = this.vertical ? 0 : clipRect.height;
     const x = this.vertical ? clipRect.x : 0;
