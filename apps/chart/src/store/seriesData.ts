@@ -29,6 +29,7 @@ import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate
 import { isZooming } from '@src/helpers/range';
 import { message } from '@src/message';
 import { hasNestedPieSeries } from '@src/helpers/pieSeries';
+import { extend } from '@src/store/store';
 
 function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
   let rawCategoriesLength;
@@ -200,7 +201,7 @@ const seriesData: StoreModule = {
         };
       });
 
-      state.series = newSeriesData;
+      extend(state.series, newSeriesData);
     },
     disableSeries({ state }, name: string) {
       state.disabledSeries.push(name);
