@@ -67,7 +67,7 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
     labelDistance,
     tickInterval,
     labelInterval,
-    title: makeTitleOption(options.xAxis?.title),
+    title: makeTitleOption(options[axisType]?.title),
     maxLabelWidth,
     maxLabelHeight,
   };
@@ -118,7 +118,7 @@ const axes: StoreModule = {
         AxisType.X
       );
       const yAxisData = getHeatmapAxisData(
-        { axisSize: height, categories, options, theme: getAxisTheme(theme, AxisType.X) },
+        { axisSize: height, categories, options, theme: getAxisTheme(theme, AxisType.Y) },
         AxisType.Y
       );
       const axesState = { xAxis: xAxisData, yAxis: yAxisData } as Axes;
