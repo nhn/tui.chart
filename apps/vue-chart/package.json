@@ -43,6 +43,6 @@
     "vue": "^2.6.0"
   },
   "dependencies": {
-    "@toast-ui/chart": "^4.3.0"
+    "@toast-ui/chart": "^4.3.1"
   }
 }
