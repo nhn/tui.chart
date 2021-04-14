@@ -1,5 +1,5 @@
 import Component from './component';
-import { ChartState, Options, Axes, ValueEdge, LabelAxisData } from '@t/store/store';
+import { ChartState, Options, Axes, ValueEdge, LabelAxisData, Scale } from '@t/store/store';
 import { crispPixel, makeTickPixelPositions, getXPosition } from '@src/helpers/calculator';
 import Painter from '@src/painter';
 import { LineModel } from '@t/components/axis';
@@ -142,24 +142,39 @@ export default class Plot extends Component {
     return [...verticalLines, ...horizontalLines];
   }
 
-  renderPlots(axes: Axes): LineModel[] {
+  renderPlots(axes: Axes, scale?: Scale): LineModel[] {
     const vertical = true;
 
     return axes.centerYAxis
       ? this.renderPlotsForCenterYAxis(axes)
       : [
-          ...this.renderPlotLineModels(this.getTickPixelPositions(!vertical, axes), !vertical, {
+          ...this.renderPlotLineModels(this.getHorizontalTickPixelPositions(axes), !vertical, {
             axes,
           }),
-          ...this.renderPlotLineModels(this.getTickPixelPositions(vertical, axes), vertical, {
+          ...this.renderPlotLineModels(this.getVerticalTickPixelPositions(axes, scale), vertical, {
             axes,
           }),
         ];
   }
 
-  getTickPixelPositions(vertical: boolean, axes: Axes) {
-    const { offsetSize } = this.getPlotAxisSize(vertical);
-    const axisData = getPlotAxisData(vertical, axes);
+  getVerticalTickPixelPositions(axes: Axes, scale?: Scale) {
+    const { offsetSize } = this.getPlotAxisSize(true);
+    const axisData = getPlotAxisData(true, axes);
+    if ((axisData as LabelAxisData)?.labelRange) {
+      const sizeRatio = scale?.xAxis?.sizeRatio ?? 1;
+      const positionRatio = scale?.xAxis?.positionRatio ?? 0;
+      const axisSizeAppliedRatio = offsetSize * sizeRatio;
+      const additional = offsetSize * positionRatio;
+
+      return makeTickPixelPositions(axisSizeAppliedRatio, axisData.tickCount, additional);
+    }
+
+    return makeTickPixelPositions(offsetSize, axisData.tickCount);
+  }
+
+  getHorizontalTickPixelPositions(axes: Axes) {
+    const { offsetSize } = this.getPlotAxisSize(false);
+    const axisData = getPlotAxisData(false, axes);
 
     return makeTickPixelPositions(offsetSize, axisData.tickCount);
   }
@@ -175,7 +190,7 @@ export default class Plot extends Component {
   }
 
   render(state: ChartState<Options>) {
-    const { layout, axes, plot, zoomRange, theme } = state;
+    const { layout, axes, plot, zoomRange, theme, scale } = state;
 
     if (!plot) {
       return;
@@ -192,7 +207,7 @@ export default class Plot extends Component {
     this.models.band = this.renderBands(axes, categories, bands);
 
     if (visible) {
-      this.models.plot = [this.renderPlotBackgroundRect(), ...this.renderPlots(axes)];
+      this.models.plot = [this.renderPlotBackgroundRect(), ...this.renderPlots(axes, scale)];
     }
   }
 
