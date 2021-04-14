@@ -75,16 +75,9 @@
         },
       };
       const options = {
-        chart: { title: 'Energy Usage', width: 900, height: 500 },
-        xAxis: {
-          title: 'Month',
-          date: { format: 'yy/MM' },
-        },
-        yAxis: {
-          title: 'Energy (kWh)',
-        },
-        tooltip: {
-          formatter: (value) => `${value}kWh`,
+        chart: { width: 900, height: 500 },
+        series: {
+          shift: true,
         },
       };
 
