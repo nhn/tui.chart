@@ -7,7 +7,6 @@ import {
   ChartType,
   ChartSeriesMap,
 } from '@t/store/store';
-import { extend } from '@src/store/store';
 import {
   HeatmapCategoriesType,
   HeatmapSeriesDataType,
@@ -30,6 +29,7 @@ import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate
 import { isZooming } from '@src/helpers/range';
 import { message } from '@src/message';
 import { hasNestedPieSeries } from '@src/helpers/pieSeries';
+import { extend } from '@src/store/store';
 
 function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
   let rawCategoriesLength;

@@ -1,4 +1,12 @@
-import { isString, isUndefined, isNumber, includes, isNull, range } from '@src/helpers/utils';
+import {
+  isString,
+  isUndefined,
+  isNumber,
+  includes,
+  isNull,
+  range,
+  getFirstValidValue,
+} from '@src/helpers/utils';
 import { DataToExport } from '@src/component/exportMenu';
 import {
   HeatmapCategoriesType,
@@ -267,9 +275,9 @@ function makeExportData(exportData: DataToExport): ExportData2DArray {
 
   return Object.keys(series).reduce<ExportData2DArray>(
     (acc, type) => {
-      const result = series[type].map(({ name, data }) => {
+      const result = series[type].data.map(({ name, data }) => {
         const values =
-          !isNumber(data[0]) && includes(['line', 'area', 'scatter'], type)
+          Array.isArray(getFirstValidValue(data)) && includes(['line', 'area', 'scatter'], type)
             ? makeCoordinateExportDataValues(type, categories, data)
             : data.map((value) => (Array.isArray(value) ? value.join() : value));
 
