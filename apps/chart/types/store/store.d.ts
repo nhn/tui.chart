@@ -312,39 +312,6 @@ export type ChartOptions = {
 } & Size;
 
 type BaseRadialAxes = {
-  /*
-  labels: string[];
-  axisSize: number;
-  centerX: number;
-  centerY: number;
-  labelInterval: number;
-  labelMargin: number;
-  maxLabelWidth: number;
-  maxLabelHeight: number;
-  innerRadius: number;
-  outerRadius: number;
-  startAngle: number;
-  endAngle: number;
-  */
-
-  // refractor
-  /*
-  label: {
-    labels: string[];
-    interval: number;
-    margin: number;
-    maxWidth: number;
-    maxHeight: number;
-  };
-  radius: {
-    inner: number;
-    outer: number;
-  };
-  angle: {
-    start: number;
-    end: number;
-  };
-  */
   axisSize: number;
   centerX: number;
   centerY: number;
@@ -357,20 +324,6 @@ type SolidData = {
   clockHand: boolean;
 };
 interface CircularAxisData extends BaseRadialAxes {
-  /*
-  centralAngle: number;
-  tickInterval: number;
-  totalAngle: number;
-  drawingStartAngle: number;
-  clockwise: boolean;
-  bandWidth?: number;
-  bandMargin?: number;
-  maxClockHandSize?: number;
-  title?: AxisTitleOption;
-  solidData?: SolidData;
-  */
-
-  // refactor
   label: {
     labels: string[];
     interval: number;
@@ -402,14 +355,6 @@ interface CircularAxisData extends BaseRadialAxes {
 }
 
 interface VerticalAxisData extends BaseRadialAxes {
-  /*
-  tickDistance: number;
-  radiusRanges: number[];
-  pointOnColumn: boolean;
-  labelAlign: CanvasTextAlign;
-  */
-
-  // refactor
   label: {
     labels: string[];
     interval: number;
