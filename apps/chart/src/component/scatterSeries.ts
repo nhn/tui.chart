@@ -1,6 +1,6 @@
 import Component from './component';
 import { Rect, ScatterChartOptions, ScatterSeriesType } from '@t/options';
-import { ChartState, ValueEdge } from '@t/store/store';
+import { ChartState, LabelAxisData, ValueEdge } from '@t/store/store';
 import { getCoordinateXValue, getCoordinateYValue } from '@src/helpers/coordinate';
 import { getRGBA } from '@src/helpers/color';
 import { getValueRatio } from '@src/helpers/calculator';
@@ -47,7 +47,7 @@ export default class ScatterSeries extends Component {
   }
 
   render(chartState: ChartState<ScatterChartOptions>) {
-    const { layout, series, scale, legend, options, theme } = chartState;
+    const { layout, series, scale, legend, options, theme, axes } = chartState;
     if (!series.scatter) {
       throw new Error(message.noDataError(this.name));
     }
@@ -59,9 +59,10 @@ export default class ScatterSeries extends Component {
     this.activeSeriesMap = getActiveSeriesMap(legend);
     this.selectable = this.getSelectableOption(options);
 
+    const limit = (axes.xAxis as LabelAxisData)?.labelRange ?? scale.xAxis!.limit; // labelRange is created only for line scatter charts
     const seriesModel = this.renderScatterPointsModel(
       scatterData,
-      scale.xAxis!.limit,
+      limit,
       scale[getValueAxisName(options, this.name, 'yAxis')].limit
     );
     const tooltipModel = this.makeTooltipModel(scatterData);

@@ -131,6 +131,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     isCoordinateTypeChart,
     axisName,
   } = stateProp;
+  const hasLineSeries = !!series.line;
   const pointOnColumn = isPointOnColumn(series, options);
   const dateType = isDateType(options, axisName);
   const labelsBeforeFormatting = isCoordinateTypeChart
@@ -138,8 +139,7 @@ export function getLabelAxisData(stateProp: ValueStateProp): LabelAxisState {
     : categories;
   const labels = getLabelsAppliedFormatter(labelsBeforeFormatting, options, dateType, axisName);
   let labelRange;
-
-  if (scale) {
+  if (scale && hasLineSeries) {
     const baseLabels = pointOnColumn ? labelsBeforeFormatting : categories;
     const values = baseLabels.map((value) => (dateType ? Number(new Date(value)) : Number(value)));
 
