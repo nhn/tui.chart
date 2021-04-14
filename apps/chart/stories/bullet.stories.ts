@@ -1,7 +1,11 @@
 import BulletChart from '@src/charts/bulletChart';
 import { BulletSeriesData, BulletChartOptions } from '@t/options';
 import { deepMergedCopy } from '@src/helpers/utils';
-import { budgetDataForBullet, budgetDataForBulletWithNull } from './data';
+import {
+  budgetDataForBullet,
+  budgetDataForBulletWithNull,
+  budgetDataForBulletWithNegative,
+} from './data';
 import { radios, withKnobs } from '@storybook/addon-knobs';
 import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
@@ -44,6 +48,7 @@ export const basicWithNullData = () => {
     series: {
       eventDetectType: radios('eventDetectType', { point: 'point', grouped: 'grouped' }, 'point'),
       dataLabels: { visible: true },
+      vertical: true,
     },
     theme: {
       series: {
@@ -55,6 +60,18 @@ export const basicWithNullData = () => {
           'rgba(0, 0, 0, 0.5)',
           'rgba(0, 0, 0, 0.6)',
         ],
+      },
+    },
+  });
+
+  return el;
+};
+
+export const basicWithNegativeData = () => {
+  const { el } = createChart(budgetDataForBulletWithNegative as BulletSeriesData, {
+    series: {
+      dataLabels: {
+        visible: true,
       },
     },
   });

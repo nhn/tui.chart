@@ -1672,6 +1672,31 @@ export const budgetDataForBulletWithNull = {
   ],
 };
 
+export const budgetDataForBulletWithNegative = {
+  series: [
+    {
+      name: 'Budget',
+      data: -25,
+      markers: [-28, -2, -15],
+      ranges: [
+        [-10, 10],
+        [-10, -20],
+        [-20, -30],
+      ],
+    },
+    {
+      name: 'Expenses',
+      data: 30,
+      markers: [25],
+      ranges: [
+        [0, 10],
+        [10, 19],
+        [19, 28],
+      ],
+    },
+  ],
+};
+
 export const efficiencyAndExpensesData = {
   series: {
     scatter: [

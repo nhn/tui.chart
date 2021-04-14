@@ -315,6 +315,7 @@ export type BulletSeriesModels = {
   range: BulletRectModel[];
   bullet: BulletRectModel[];
   marker: BulletLineModel[];
+  clipRect?: ClipRectAreaModel[];
 };
 export interface MouseEventType {
   responders: CircleResponderModel[] | RectResponderModel[];

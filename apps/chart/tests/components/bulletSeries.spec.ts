@@ -236,6 +236,15 @@ describe('bullet series', () => {
           tooltipColor: '#aaaaaa',
         },
       ],
+      clipRect: [
+        {
+          height: 100,
+          type: 'clipRectArea',
+          width: 100,
+          x: 0,
+          y: 0,
+        },
+      ],
     },
     responders: [
       {
@@ -689,6 +698,143 @@ describe('bullet series with null data', () => {
         name: 'han',
         seriesColor: '#aaaaaa',
         tooltipColor: '#aaaaaa',
+      },
+    ],
+  };
+
+  ['range', 'marker', 'bullet'].forEach((modelName) => {
+    it(`should make ${modelName} properly when calling render`, () => {
+      expect(bulletSeries.models[modelName]).toEqual(result[modelName]);
+    });
+  });
+});
+
+describe('bullet series with negative data', () => {
+  beforeEach(() => {
+    bulletSeries = new BulletSeries({
+      store: {} as Store<Options>,
+      eventBus: new EventEmiiter(),
+    });
+
+    bulletSeries.render(
+      deepMergedCopy(chartState, {
+        chart: { width: 500, height: 500 },
+        layout: {
+          xAxis: { x: 10, y: 80, width: 480, height: 10 },
+          yAxis: { x: 10, y: 10, width: 10, height: 480 },
+          plot: { width: 400, height: 400, x: 10, y: 10 },
+        },
+        scale: {
+          xAxis: {
+            limit: { min: -50, max: 0 },
+            stepSize: 1,
+            stepCount: 1,
+          },
+        },
+        series: {
+          bullet: {
+            data: [
+              {
+                name: 'han',
+                data: -50,
+                markers: [-7, -20],
+                ranges: [
+                  [-10, -20],
+                  [-20, -30],
+                  [-30, -50],
+                ],
+                color: '#aaaaaa',
+              },
+            ],
+          },
+        },
+      })
+    );
+  });
+
+  const result = {
+    range: [
+      {
+        color: 'rgba(170, 170, 170, 0.5)',
+        height: 30,
+        modelType: 'range',
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.5)',
+        type: 'rect',
+        value: [-10, -20],
+        width: -80,
+        x: -80,
+        y: 10,
+      },
+      {
+        color: 'rgba(170, 170, 170, 0.3)',
+        height: 30,
+        modelType: 'range',
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.3)',
+        type: 'rect',
+        value: [-20, -30],
+        width: -80,
+        x: -160,
+        y: 10,
+      },
+      {
+        color: 'rgba(170, 170, 170, 0.1)',
+        height: 30,
+        modelType: 'range',
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        tooltipColor: 'rgba(170, 170, 170, 0.1)',
+        type: 'rect',
+        value: [-30, -50],
+        width: -160,
+        x: -240,
+        y: 10,
+      },
+    ],
+    bullet: [
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        height: 15,
+        modelType: 'bullet',
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        tooltipColor: '#aaaaaa',
+        type: 'rect',
+        value: -50,
+        width: 400,
+        x: -400,
+        y: 17.5,
+      },
+    ],
+    marker: [
+      {
+        lineWidth: 1,
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        strokeStyle: 'rgba(170, 170, 170, 1)',
+        tooltipColor: '#aaaaaa',
+        type: 'line',
+        value: -7,
+        x: -56,
+        x2: -56,
+        y: 13,
+        y2: 37,
+      },
+      {
+        lineWidth: 1,
+        name: 'han',
+        seriesColor: '#aaaaaa',
+        strokeStyle: 'rgba(170, 170, 170, 1)',
+        tooltipColor: '#aaaaaa',
+        type: 'line',
+        value: -20,
+        x: -160,
+        x2: -160,
+        y: 13,
+        y2: 37,
       },
     ],
   };

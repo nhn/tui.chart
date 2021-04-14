@@ -9,6 +9,7 @@ import {
   BulletLineModel,
   BulletRectModel,
   BulletRectResponderModel,
+  ClipRectAreaModel,
 } from '@t/components/series';
 import { getActiveSeriesMap } from '@src/helpers/legend';
 import { getRGBA, getAlpha } from '@src/helpers/color';
@@ -19,7 +20,14 @@ import { getDataLabelsOptions } from '@src/helpers/dataLabels';
 import { RectDataLabel, LineDataLabel } from '@t/components/dataLabels';
 import { BulletChartSeriesTheme, GroupedRect } from '@t/theme';
 import { DEFAULT_BULLET_RANGE_OPACITY } from '@src/helpers/theme';
-import { isNumber, omit, calculateSizeWithPercentString, pick, isNull } from '@src/helpers/utils';
+import {
+  isNumber,
+  omit,
+  calculateSizeWithPercentString,
+  pick,
+  isNull,
+  deepCopyArray,
+} from '@src/helpers/utils';
 import { SelectSeriesHandlerParams } from '@src/charts/chart';
 import { message } from '@src/message';
 import { makeRectResponderModel } from '@src/helpers/responders';
@@ -57,7 +65,7 @@ function getStartX(seriesIndex: number, tickDistance: number, barWidth: number) 
 
 function makeBulletResponderModel(models: BulletSeriesModels, tooltipData: BulletTooltipData) {
   const { range, marker, bullet } = models;
-  const { range: tooltipRange, marker: toolipMarker, bullet: tooltipBullet } = tooltipData;
+  const { range: tooltipRange, marker: tooltipMarker, bullet: tooltipBullet } = tooltipData;
 
   return [
     ...range.map((m, index) => ({ ...m, data: tooltipRange[index] })),
@@ -68,7 +76,7 @@ function makeBulletResponderModel(models: BulletSeriesModels, tooltipData: Bulle
     ...marker.map((m, index) => ({
       ...m,
       detectionSize: MARKER_LINE_DETECTION_SIZE,
-      data: toolipMarker[index],
+      data: tooltipMarker[index],
     })),
   ];
 }
@@ -90,12 +98,38 @@ export default class BulletSeries extends Component {
 
   vertical = false;
 
+  basePosition!: number;
+
   initialize() {
     this.type = 'series';
     this.name = 'bullet';
     this.eventBus.on('selectSeries', this.selectSeries);
     this.eventBus.on('showTooltip', this.showTooltip);
     this.eventBus.on('hideTooltip', this.onMouseoutComponent);
+  }
+
+  initUpdate(delta: number) {
+    if (!this.drawModels) {
+      return;
+    }
+
+    const { clipRect } = this.drawModels;
+
+    if (!clipRect) {
+      return;
+    }
+
+    const offsetKey = this.vertical ? 'y' : 'x';
+    const key = this.vertical ? 'height' : 'width';
+    const current = clipRect[0];
+    const target = this.models.clipRect![0];
+    const offsetSize = current[key] + (target[key] - current[key]) * delta;
+
+    current[key] = offsetSize;
+    current[offsetKey] = Math.max(
+      this.basePosition - (offsetSize * this.basePosition) / target[key],
+      0
+    );
   }
 
   render(state: ChartState<BulletChartOptions>): void {
@@ -121,6 +155,8 @@ export default class BulletSeries extends Component {
     const { min, max } = scale[valueAxisName].limit;
     const bulletData = series.bullet.data;
 
+    this.basePosition = zeroPosition ?? 0;
+
     const renderOptions = {
       ratio: this.rect[valueSizeKey] / (max - min),
       tickDistance,
@@ -131,25 +167,27 @@ export default class BulletSeries extends Component {
     const rangeModels = this.renderRanges(bulletData, renderOptions);
     const bulletModels = this.renderBullet(bulletData, renderOptions);
     const markerModels = this.renderMarkers(bulletData, renderOptions);
+    const clipRect = this.renderClipRectArea();
 
+    this.models.clipRect = [clipRect];
     this.models.range = rangeModels;
     this.models.bullet = bulletModels;
     this.models.marker = markerModels;
 
     if (!this.drawModels) {
       this.drawModels = {
-        range: rangeModels.map((m) => ({ ...m })),
-        bullet: bulletModels.map((m) => ({
-          ...m,
-          height: this.vertical ? 0 : m.height,
-          width: this.vertical ? m.width : 0,
-          y: this.vertical ? m.y + m.height : m.y,
-        })),
-        marker: markerModels.map((m) => ({ ...m })),
+        clipRect: [this.makeInitialClipRectModel(clipRect)],
+        range: deepCopyArray(rangeModels),
+        bullet: deepCopyArray(bulletModels),
+        marker: deepCopyArray(markerModels),
       };
     }
 
-    const models = { range: rangeModels, bullet: bulletModels, marker: markerModels };
+    const models = {
+      range: rangeModels,
+      bullet: bulletModels,
+      marker: markerModels,
+    };
     const tooltipData = this.makeTooltipModel(models);
     this.tooltipRectMap = this.makeTooltipRectMap(models, tooltipData);
     this.responders = this.getBulletSeriesResponders(
@@ -168,6 +206,25 @@ export default class BulletSeries extends Component {
         )
       );
     }
+  }
+
+  protected renderClipRectArea(): ClipRectAreaModel {
+    return {
+      type: 'clipRectArea',
+      x: 0,
+      y: 0,
+      width: this.rect.width,
+      height: this.rect.height,
+    };
+  }
+
+  protected makeInitialClipRectModel(clipRect: ClipRectAreaModel): ClipRectAreaModel {
+    const width = this.vertical ? clipRect.width : 0;
+    const height = this.vertical ? 0 : clipRect.height;
+    const x = this.vertical ? clipRect.x : 0;
+    const y = this.vertical ? 0 : clipRect.y;
+
+    return { type: 'clipRectArea', width, height, x, y };
   }
 
   private getDataLabels(
@@ -194,9 +251,15 @@ export default class BulletSeries extends Component {
           } as LineDataLabel;
         }
 
+        const isValueNegative = isNumber(m.value) && m?.value < 0;
+        let direction = vertical ? 'top' : 'right';
+        if (isValueNegative) {
+          direction = vertical ? 'bottom' : 'left';
+        }
+
         return {
           ...m,
-          direction: vertical ? 'top' : 'right',
+          direction,
           plot: {
             x: 0,
             y: 0,
@@ -300,7 +363,10 @@ export default class BulletSeries extends Component {
       this.activatedResponders = responders.length ? [responders[responders.length - 1]] : [];
     }
 
-    this.eventBus.emit('seriesPointHovered', { models: this.activatedResponders, name: this.name });
+    this.eventBus.emit('seriesPointHovered', {
+      models: this.activatedResponders,
+      name: this.name,
+    });
 
     this.eventBus.emit('needDraw');
   }
@@ -387,15 +453,19 @@ export default class BulletSeries extends Component {
       if (isNull(data)) {
         return [...acc];
       }
-      const bulletLength = Math.max(data * ratio, 2);
+      const bulletLength = Math.max(Math.abs(data * ratio), 2);
       const bulletStartX = getStartX(seriesIndex, tickDistance, bulletWidth);
+      const x = this.vertical ? bulletStartX : zeroPosition - (data < 0 ? bulletLength : 0);
+      const y = this.vertical
+        ? zeroPosition - bulletLength + (data < 0 ? bulletLength : 0)
+        : bulletStartX;
 
       const bullet: BulletRectModel = {
         type: 'rect',
         name,
         color: getRGBA(color!, this.getSeriesOpacity(name)),
-        x: this.vertical ? bulletStartX : zeroPosition,
-        y: this.vertical ? zeroPosition - bulletLength : bulletStartX,
+        x,
+        y,
         thickness,
         borderColor,
         modelType: 'bullet',
