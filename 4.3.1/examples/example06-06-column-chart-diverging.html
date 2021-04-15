@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
+    <title>6.6 [Column Chart] Diverging</title>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-column.md" target="_blank">here</a>
+      <br />
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
+        </div>
+        <div class="try-it-area">
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="../dist/toastui-chart.js"></script>
+    <script class="code-js" id="code-js" type="text/babel">
+      const el = document.getElementById('chart-area');
+      const data = {
+        categories: [
+          '100 ~',
+          '90 ~ 99',
+          '80 ~ 89',
+          '70 ~ 79',
+          '60 ~ 69',
+          '50 ~ 59',
+          '40 ~ 49',
+          '30 ~ 39',
+          '20 ~ 29',
+          '10 ~ 19',
+          '0 ~ 9',
+        ],
+        series: [
+          {
+            name: 'Male',
+            data: [
+              383,
+              3869,
+              39590,
+              136673,
+              248265,
+              419886,
+              451052,
+              391113,
+              352632,
+              296612,
+              236243,
+            ],
+          },
+          {
+            name: 'Female',
+            data: [
+              1255,
+              12846,
+              83976,
+              180790,
+              263033,
+              412847,
+              435981,
+              374321,
+              317092,
+              272438,
+              223251,
+            ],
+          },
+        ],
+      };
+      const options = {
+        chart: { title: 'Monthly Revenue', width: 900, height: 500 },
+        yAxis: {
+          title: 'Age Group',
+        },
+        series: {
+          diverging: true,
+        },
+      };
+
+      const chart = toastui.Chart.columnChart({ el, data, options });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.js"></script>
+    <script src="./js/example.js" type="text/babel"></script>
+  </body>
+</html>
