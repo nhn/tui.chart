@@ -49,8 +49,6 @@ export default class Painter {
 
       this.canvas = canvas;
 
-      canvas.style.backgroundColor = '#fff';
-
       this.chart.el.appendChild(canvas);
 
       canvas.addEventListener('click', this.chart);
@@ -123,7 +121,7 @@ export default class Painter {
 
   beforeFrame() {
     this.ctx.clearRect(0, 0, this.width, this.height);
-    this.ctx.fillStyle = '#fff';
+    this.ctx.fillStyle = 'transparent';
     this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
