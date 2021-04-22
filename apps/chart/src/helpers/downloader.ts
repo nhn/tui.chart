@@ -277,7 +277,7 @@ function makeExportData(exportData: DataToExport): ExportData2DArray {
     (acc, type) => {
       const result = series[type].data.map(({ name, data }) => {
         const values =
-          Array.isArray(getFirstValidValue(data)) && includes(['line', 'area', 'scatter'], type)
+          !isNumber(getFirstValidValue(data)) && includes(['line', 'area', 'scatter'], type)
             ? makeCoordinateExportDataValues(type, categories, data)
             : data.map((value) => (Array.isArray(value) ? value.join() : value));
 
