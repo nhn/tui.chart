@@ -55,7 +55,6 @@ export default class ExportMenu extends Component {
     const ctx = canvas.getContext('2d')!;
     const { x, y, height: h, width: w } = this.rect;
 
-
     ctx.clearRect(x, y, w, h);
     ctx.fillStyle = this.chartBackgroundColor;
     ctx.fillRect(x, y, w, h);
