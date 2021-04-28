@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "lint": "eslint src/**",
-    "build": "webpack --mode=production --progress",
-    "serve": "snowpack dev"
+    "build": "webpack -p --progress",
+    "storybook": "start-storybook -p 6008"
   },
   "homepage": "https://github.com/nhn/toast-ui.react-chart",
   "bugs": "https://github.com/nhn/toast-ui.react-chart/issues",
@@ -21,13 +21,18 @@
     "react": "^17.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
-    "@snowpack/plugin-babel": "^2.1.7",
-    "@snowpack/plugin-react-refresh": "^2.5.0",
-    "@types/react": "^17.0.0",
+    "@storybook/react": "^5.3.21",
+    "babel-loader": "^8.2.2",
     "eslint-plugin-react": "^7.22.0",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react-dom": "^17.0.0",
+    "webpack": "^4.17.2",
+    "webpack-cli": "^3.1.0"
   },
   "dependencies": {
     "@toast-ui/chart": "^4.3.2"
