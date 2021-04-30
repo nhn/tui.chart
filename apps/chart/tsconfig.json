@@ -8,6 +8,7 @@
     },
     "downlevelIteration": true,
     "declaration": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
     "types": ["jest", "node"],
     "lib": ["esnext", "dom", "dom.iterable"]
   },

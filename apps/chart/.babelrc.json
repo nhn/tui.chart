@@ -1,15 +1,3 @@
 {
-  "extends": "../../babel.config.json",
-  "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "useBuiltIns": "usage",
-        "debug": false,
-        "modules": "auto",
-        "corejs": 3,
-        "shippedProposals": true
-      }
-    ]
-  ]
+  "extends": "../../babel.config.json"
 }
