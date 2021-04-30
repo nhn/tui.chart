@@ -1,15 +1,6 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ES5",
-    "module": "commonJS",
-    "strict": true,
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitAny": false,
-    "sourceMap": true,
     "baseUrl": ".",
     "paths": {
       "@src/*": ["./src/*"],
@@ -17,10 +8,9 @@
     },
     "downlevelIteration": true,
     "declaration": true,
-    "noEmit": true,
     "typeRoots": ["./types", "./node_modules/@types"],
     "types": ["jest", "node"],
-    "lib": ["esnext", "dom", "dom.iterable"],
+    "lib": ["esnext", "dom", "dom.iterable"]
   },
   "include": [
     "src/**/*.js",

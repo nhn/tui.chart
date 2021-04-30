@@ -1,3 +1,4 @@
 module.exports = {
-  presets: [['@vue/app', { useBuiltIns: 'usage', corejs: 3 }]],
+  extends: '../../babel.config.json',
+  presets: ['@vue/app'],
 };
