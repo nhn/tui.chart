@@ -13,7 +13,7 @@
       "@t/*": ["./types/*"]
     },
     "typeRoots": ["./types"],
-    "types": ["webpack-env"],
+    "types": ["node"],
     "listEmittedFiles": true,
     "downlevelIteration": true,
     "plugins": [
