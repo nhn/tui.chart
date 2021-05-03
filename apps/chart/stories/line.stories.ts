@@ -16,7 +16,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart|Line',
+  title: 'chart/Line',
   decorators: [withKnobs],
 };
 

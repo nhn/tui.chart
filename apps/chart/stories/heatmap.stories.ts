@@ -11,7 +11,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart|Heatmap',
+  title: 'chart/Heatmap',
   decorators: [withKnobs],
 };
 

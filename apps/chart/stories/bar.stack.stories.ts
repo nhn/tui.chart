@@ -7,7 +7,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart.Bar.Stack',
+  title: 'chart/Bar/Stack',
   decorators: [withKnobs],
 };
 

@@ -10,7 +10,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart|Bubble',
+  title: 'chart/Bubble',
 };
 
 const width = 1000;

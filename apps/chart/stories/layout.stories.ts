@@ -6,7 +6,7 @@ import PieChart from '@src/charts/pieChart';
 import '@src/css/chart.css';
 
 export default {
-  title: 'chart|Layout',
+  title: 'chart/Layout',
 };
 
 const defaultOptions = {

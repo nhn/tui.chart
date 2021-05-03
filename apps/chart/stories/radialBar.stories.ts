@@ -7,7 +7,7 @@ import { withKnobs, radios, boolean, number } from '@storybook/addon-knobs';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart.RadialBar',
+  title: 'chart/RadialBar',
   decorators: [withKnobs],
 };
 const width = 700;

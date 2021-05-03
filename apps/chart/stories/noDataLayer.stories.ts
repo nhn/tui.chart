@@ -4,7 +4,7 @@ import { deepMergedCopy } from '@src/helpers/utils';
 import '@src/css/chart.css';
 
 export default {
-  title: 'chart|No data layer',
+  title: 'chart/No data layer',
 };
 
 const width = 1000;

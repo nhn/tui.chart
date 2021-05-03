@@ -11,7 +11,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart|Scatter',
+  title: 'chart/Scatter',
 };
 
 const width = 1000;

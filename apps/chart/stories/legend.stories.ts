@@ -6,7 +6,7 @@ import '@src/css/chart.css';
 import { radios } from '@storybook/addon-knobs';
 
 export default {
-  title: 'chart|Legend',
+  title: 'chart/Legend',
 };
 
 const width = 1000;

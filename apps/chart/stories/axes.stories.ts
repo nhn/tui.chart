@@ -18,7 +18,7 @@ import RadarChart from '@src/charts/radarChart';
 import RadialBarChart from '@src/charts/radialBarChart';
 
 export default {
-  title: 'chart|Axes',
+  title: 'chart/Axes',
   decorators: [withKnobs],
 };
 
