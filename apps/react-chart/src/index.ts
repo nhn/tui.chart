@@ -1,43 +1,23 @@
 import chart from './base';
-import {
-  AreaChartProps,
-  BarChartProps,
-  BoxPlotChartProps,
-  BubbleChartProps,
-  BulletChartProps,
-  ColumnChartProps,
-  ColumnLineChartProps,
-  GaugeChartProps,
-  HeatmapChartProps,
-  LineAreaChartProps,
-  LineChartProps,
-  LineScatterChartProps,
-  NestedPieChartProps,
-  PieChartProps,
-  RadarChartProps,
-  RadialBarChartProps,
-  ScatterChartProps,
-  TreemapChartProps,
-} from '@toast-ui/chart';
 
-const AreaChart = chart<AreaChartProps>('area');
-const BarChart = chart<BarChartProps>('bar');
-const BoxPlotChart = chart<BoxPlotChartProps>('boxPlot');
-const BubbleChart = chart<BubbleChartProps>('bubble');
-const BulletChart = chart<BulletChartProps>('bullet');
-const ColumnChart = chart<ColumnChartProps>('column');
-const ColumnLineChart = chart<ColumnLineChartProps>('columnLine');
-const HeatmapChart = chart<HeatmapChartProps>('heatmap');
-const LineChart = chart<LineChartProps>('line');
-const LineAreaChart = chart<LineAreaChartProps>('lineArea');
-const LineScatterChart = chart<LineScatterChartProps>('lineScatter');
-const NestedPieChart = chart<NestedPieChartProps>('nestedPie');
-const PieChart = chart<PieChartProps>('pie');
-const RadarChart = chart<RadarChartProps>('radar');
-const ScatterChart = chart<ScatterChartProps>('scatter');
-const TreemapChart = chart<TreemapChartProps>('treemap');
-const RadialBarChart = chart<RadialBarChartProps>('radialBar');
-const GaugeChart = chart<GaugeChartProps>('gauge');
+const AreaChart = chart('area');
+const BarChart = chart('bar');
+const BoxPlotChart = chart('boxPlot');
+const BubbleChart = chart('bubble');
+const BulletChart = chart('bullet');
+const ColumnChart = chart('column');
+const ColumnLineChart = chart('columnLine');
+const HeatmapChart = chart('heatmap');
+const LineChart = chart('line');
+const LineAreaChart = chart('lineArea');
+const LineScatterChart = chart('lineScatter');
+const NestedPieChart = chart('nestedPie');
+const PieChart = chart('pie');
+const RadarChart = chart('radar');
+const ScatterChart = chart('scatter');
+const TreemapChart = chart('treemap');
+const RadialBarChart = chart('radialBar');
+const GaugeChart = chart('gauge');
 
 export {
   AreaChart,

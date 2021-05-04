@@ -1,7 +1,7 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
   mount: {
-    demo: '/',
+    'demo/esm': '/',
     src: '/dist',
   },
   plugins: ['@snowpack/plugin-react-refresh', '@snowpack/plugin-babel'],
@@ -17,5 +17,4 @@ module.exports = {
     '@src': './src',
     '@t': './types',
   },
-  workspaceRoot: '../../',
 };
