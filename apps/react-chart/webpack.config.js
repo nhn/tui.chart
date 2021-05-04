@@ -3,7 +3,7 @@ const { version, author, license } = require('./package.json');
 const webpack = require('webpack');
 
 const config = {
-  entry: './src/index.js',
+  entry: './src/index.ts',
   output: {
     filename: 'toastui-react-chart.js',
     path: path.resolve(__dirname, 'dist'),

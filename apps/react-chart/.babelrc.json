@@ -1,0 +1,5 @@
+{
+  "extends": "../../babel.config.json",
+  "presets": ["@babel/preset-react"],
+  "plugins": ["@babel/plugin-proposal-object-rest-spread"]
+}
