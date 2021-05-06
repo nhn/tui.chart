@@ -67,6 +67,8 @@
     "./gauge": {
       "import": "./dist/esm/charts/gaugeChart.js"
     },
+    "./toastui-chart.css": "./dist/toastui-chart.css",
+    "./toastui-chart.min.css": "./dist/toastui-chart.min.css",
     "./": "./"
   },
   "scripts": {
