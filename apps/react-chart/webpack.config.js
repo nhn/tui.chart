@@ -1,13 +1,17 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const { version, author, license } = require('./package.json');
 const webpack = require('webpack');
 
-const config = {
+module.exports = (env, { mode }) => ({
   entry: './src/index.ts',
   output: {
     filename: 'toastui-react-chart.js',
     path: path.resolve(__dirname, 'dist'),
-    libraryTarget: 'commonjs2',
+    library: { type: 'commonjs2' },
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
   },
   externals: {
     '@toast-ui/chart': {
@@ -24,10 +28,11 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(ts|tsx|js)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
+        loader: 'babel-loader',
+        options: {
+          envName: mode,
         },
       },
     ],
@@ -42,6 +47,4 @@ const config = {
       ].join('\n'),
     }),
   ],
-};
-
-module.exports = () => config;
+});

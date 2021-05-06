@@ -17,4 +17,5 @@ module.exports = {
     '@src': './src',
     '@t': './types',
   },
+  workspaceRoot: '../../',
 };

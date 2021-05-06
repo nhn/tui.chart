@@ -37,6 +37,7 @@ import {
   RadialBarChartProps,
   GaugeChartProps,
 } from '@toast-ui/chart';
+type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
 
 type EventNameMapping = {
   onClickLegendLabel: 'clickLegendLabel';
