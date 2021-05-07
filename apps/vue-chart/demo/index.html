@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Demo</title>
+  </head>
+  <body>
+    <div id="chart">
+      <area-chart
+        ref="chartRef"
+        :data="areaProps.data"
+        :options="areaProps.options"
+        @hover-series="hoverSeries"
+        @select-series="selectSeries"
+      ></area-chart>
+      <button @click="showSeriesDataLabel">show label</button>
+      <button @click="hideSeriesDataLabel">hide label</button>
+      <heatmap-chart :data="heatmapProps.data" :options="heatmapProps.options"></heatmap-chart>
+    </div>
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>

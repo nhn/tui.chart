@@ -1,18 +1,18 @@
+/* eslint-disable */
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const webpack = require('webpack');
 const { version, author, license } = require('./package.json');
-const ESLintPlugin = require('eslint-webpack-plugin');
 
-module.exports = {
+module.exports = (env, { mode }) => ({
   entry: './src/index.js',
   output: {
     filename: 'toastui-vue-chart.js',
     path: path.resolve(__dirname, 'dist'),
-    library: 'toastui',
-    libraryTarget: 'umd',
+    library: { name: 'toastui', type: 'umd' },
   },
   resolve: {
+    extensions: ['.tsx', '.ts', '.js', '.vue'],
     alias: {
       vue: 'vue/dist/vue.js',
     },
@@ -27,13 +27,6 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
-      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
@@ -50,6 +43,5 @@ module.exports = {
         `@license ${license}`,
       ].join('\n'),
     }),
-    new ESLintPlugin(),
   ],
-};
+});

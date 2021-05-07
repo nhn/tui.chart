@@ -1,15 +1,33 @@
 import Chart from '@toast-ui/chart';
 
 const chartEvents = [
+  'click-legend-label',
   'clickLegendLabel',
+  'click-legend-checkbox',
   'clickLegendCheckbox',
+  'select-series',
   'selectSeries',
+  'unselect-series',
   'unselectSeries',
+  'hover-series',
   'hoverSeries',
+  'unhover-series',
   'unhoverSeries',
   'zoom',
+  'reset-zoom',
   'resetZoom',
 ];
+
+function getChartEventName(vueEventName) {
+  const splittedEventName = vueEventName.split('-');
+  if (splittedEventName.length === 1) {
+    return vueEventName;
+  }
+
+  return splittedEventName.reduce((acc, cur, idx) => {
+    return idx ? acc + cur[0].toUpperCase() + cur.slice(1, cur.length) : cur;
+  }, '');
+}
 
 export const createComponent = (type) => ({
   name: `${type}-chart`,
@@ -59,9 +77,11 @@ export const createComponent = (type) => ({
   },
   methods: {
     addEventListeners() {
-      chartEvents.forEach((event) => {
+      chartEvents.forEach((e) => {
+        const event = getChartEventName(e);
+
         this.chartInstance.on(event, (...args) => {
-          this.$emit(event, ...args);
+          this.$emit(e, ...args);
         });
       });
     },
