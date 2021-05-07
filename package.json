@@ -28,6 +28,7 @@
     "lerna": "^3.22.1",
     "mini-css-extract-plugin": "^1.5.1",
     "prettier": "^2.2.1",
+    "snowpack": "^3.3.7",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
     "ts-jest": "^24.2.0",

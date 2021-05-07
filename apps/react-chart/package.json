@@ -27,7 +27,6 @@
     "@types/react": "^17.0.4",
     "eslint-plugin-react": "^7.22.0",
     "react": "^17.0.0",
-    "react-dom": "^17.0.0",
-    "snowpack": "^3.3.7"
+    "react-dom": "^17.0.0"
   }
 }
