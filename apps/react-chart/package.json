@@ -10,7 +10,6 @@
   "scripts": {
     "lint": "eslint src/**",
     "build": "webpack --mode=production --progress",
-    "storybook": "start-storybook -p 6008",
     "serve": "snowpack dev --reload"
   },
   "homepage": "https://github.com/nhn/toast-ui.react-chart",
