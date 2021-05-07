@@ -4,7 +4,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const webpack = require('webpack');
 const { version, author, license } = require('./package.json');
 
-module.exports = (env, { mode }) => ({
+module.exports = () => ({
   entry: './src/index.js',
   output: {
     filename: 'toastui-vue-chart.js',
@@ -12,7 +12,7 @@ module.exports = (env, { mode }) => ({
     library: { name: 'toastui', type: 'umd' },
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.vue'],
+    extensions: ['.tsx', '.ts', '.js'],
     alias: {
       vue: 'vue/dist/vue.js',
     },
@@ -27,6 +27,13 @@ module.exports = (env, { mode }) => ({
   },
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        },
+      },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
