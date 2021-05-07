@@ -19,6 +19,7 @@
   "repository": "https://github.com/nhn/toast-ui.vue-chart.git",
   "license": "MIT",
   "devDependencies": {
+    "@vue/babel-preset-app": "^4.5.12",
     "eslint-plugin-vue": "^7.4.1",
     "vue": "^2.6.0",
     "vue-eslint-parser": "^7.6.0"
