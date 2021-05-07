@@ -20,13 +20,13 @@ const chartEvents = [
 
 function getChartEventName(vueEventName) {
   const splittedEventName = vueEventName.split('-');
+  if (splittedEventName.length === 1) {
+    return vueEventName;
+  }
 
-  return splittedEventName.length === 1
-    ? vueEventName
-    : splittedEventName.reduce(
-        (acc, cur, idx) => (idx ? acc + cur[0].toUpperCase() + cur.slice(1, cur.length) : cur),
-        ''
-      );
+  return splittedEventName.reduce((acc, cur, idx) => {
+    return idx ? acc + cur[0].toUpperCase() + cur.slice(1, cur.length) : cur;
+  }, '');
 }
 
 export const createComponent = (type) => ({
