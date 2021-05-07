@@ -35,6 +35,8 @@
     "ttypescript": "^1.5.12",
     "typescript": "3.7.3",
     "typescript-transform-paths": "2.0.2",
+    "vue-loader": "^15.9.6",
+    "vue-template-compiler": "^2.6.12",
     "webpack": "^5.36.1",
     "webpack-bundle-analyzer": "^4.4.1",
     "webpack-cli": "^4.6.0",
