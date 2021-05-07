@@ -2,7 +2,7 @@
   "extends": "../../babel.config.json",
   "presets": [
     [
-      "@babel/preset-env",
+      "@vue/app",
       {
         "useBuiltIns": "usage",
         "debug": false,
@@ -11,6 +11,5 @@
         "shippedProposals": true
       }
     ]
-  ],
-  "plugins": ["@babel/plugin-proposal-class-properties", "@babel/plugin-proposal-optional-chaining"]
+  ]
 }
