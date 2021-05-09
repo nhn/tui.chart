@@ -12,7 +12,7 @@ module.exports = {
 
     config.resolve.alias = {
       ...config.resolve.alias,
-      'core-js/modules': path.resolve(__dirname, '..', 'node_modules/core-js/modules'),
+      'core-js/modules': path.resolve(__dirname, '../../../node_modules/core-js/modules'),
       '@src': path.resolve(__dirname, '../src/'),
       '@t': path.resolve(__dirname, '../types/'),
       '@stories': path.resolve(__dirname, '../stories/'),
