@@ -13,7 +13,13 @@
     "test:watch": "jest --watch",
     "test:ci": "npm run validate && jest",
     "serve": "webpack serve --mode=development",
-    "storybook": "start-storybook -p 6006"
+    "storybook": "start-storybook -p 6006",
+    "build": "npm run build:clean && npm run build:prod && npm run build:minify && npm run build:esm",
+    "build:clean": "rm -rf ./dist",
+    "build:prod": "webpack --mode=production",
+    "build:minify": "webpack --mode=production --env minify",
+    "build:esm": "ttsc -p tsconfig.esm.json",
+    "build:storybook": "build-storybook"
   },
   "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",

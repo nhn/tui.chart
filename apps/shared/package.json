@@ -1,0 +1,25 @@
+{
+  "name": "@toast-ui/chart-shared",
+  "version": "1.0.0",
+  "description": "TOAST UI Application: Chart Shared Code",
+  "main": "dist/toastui-chart-shared.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nhn/tui.chart.git"
+  },
+  "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nhn/tui.chart/issues"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "homepage": "https://ui.toast.com"
+}
