@@ -54,7 +54,7 @@
     "build:chart": "lerna run --scope @toast-ui/chart build",
     "build:react": "lerna run --scope @toast-ui/react-chart build",
     "build:vue": "lerna run --scope @toast-ui/vue-chart build",
-    "build:storybook": "npm i && cd apps/chart && npm i && npm run build:storybook"
+    "build:storybook": "npm i && lerna run --scope @toast-ui/chart build:storybook"
   },
   "workspaces": [
     "apps/chart"
