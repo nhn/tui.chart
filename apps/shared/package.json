@@ -13,6 +13,7 @@
     "test:ci": "npm run validate && jest",
     "build": "webpack --mode=production"
   },
+  "private": true,
   "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "bugs": {
