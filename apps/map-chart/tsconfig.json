@@ -11,12 +11,6 @@
     "types": ["jest", "node"],
     "lib": ["esnext", "dom", "dom.iterable"]
   },
-  "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "stories/**/*.ts",
-    "tests/**/*.ts",
-    "types/**/*"
-  ],
+  "include": ["src/**/*.js", "src/**/*.ts", "stories/**/*.ts", "tests/**/*.ts", "types/**/*"],
   "exclude": ["node_modules"]
 }
