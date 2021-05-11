@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "eslint src/**",
     "build": "webpack --mode=production --progress",
-    "serve": "snowpack dev --reload"
+    "serve": "snowpack dev"
   },
   "homepage": "https://github.com/nhn/toast-ui.react-chart",
   "bugs": "https://github.com/nhn/toast-ui.react-chart/issues",
@@ -28,5 +28,8 @@
     "eslint-plugin-react": "^7.22.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
+  },
+  "dependencies": {
+    "@toast-ui/chart": "^4.3.2"
   }
 }

@@ -3,9 +3,6 @@
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.10.1",
-    "@babel/plugin-proposal-class-properties": "^7.7.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
-    "@babel/plugin-proposal-optional-chaining": "^7.7.4",
     "@babel/polyfill": "^7.7.0",
     "@babel/preset-env": "^7.7.4",
     "@babel/preset-typescript": "^7.10.1",
@@ -56,6 +53,6 @@
     "build:vue": "lerna run --scope @toast-ui/vue-chart build"
   },
   "workspaces": [
-    "apps/chart"
+    "apps/*"
   ]
 }

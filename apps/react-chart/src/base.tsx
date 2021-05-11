@@ -38,7 +38,7 @@ export default function <T extends ChartPropsType>(chartType: ChartType) {
 
     shouldComponentUpdate(nextProps: ChartProps<T>) {
       const currentData = this.props.data;
-      const nextData = nextProps.data as any;
+      const nextData = nextProps.data as any; // @TODO: need to set type properly
 
       if (currentData !== nextData) {
         this.getInstance()?.setData(nextData);
