@@ -14,7 +14,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart.Bar.General',
+  title: 'chart/Bar/General',
   decorators: [withKnobs],
 };
 

@@ -8,7 +8,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart.Bar.Group Stack',
+  title: 'chart/Bar/Group Stack',
   decorators: [withKnobs],
 };
 

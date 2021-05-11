@@ -7,7 +7,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart.Column.Group Stack',
+  title: 'chart/Column/Group Stack',
   decorators: [withKnobs],
 };
 

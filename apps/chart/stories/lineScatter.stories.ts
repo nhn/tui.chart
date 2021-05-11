@@ -7,7 +7,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart|LineScatter',
+  title: 'chart/LineScatter',
   decorators: [withKnobs],
 };
 

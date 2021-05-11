@@ -7,7 +7,7 @@ import { TooltipModel } from '@t/components/tooltip';
 import '@src/css/chart.css';
 
 export default {
-  title: 'chart|Tooltip',
+  title: 'chart/Tooltip',
   decorators: [withKnobs],
 };
 

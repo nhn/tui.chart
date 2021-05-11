@@ -13,7 +13,7 @@ import '@src/css/chart.css';
 import RadialBarChart from '@src/charts/radialBarChart';
 
 export default {
-  title: 'chart|Common Component Theme',
+  title: 'chart/Common Component Theme',
   decorators: [withKnobs],
 };
 

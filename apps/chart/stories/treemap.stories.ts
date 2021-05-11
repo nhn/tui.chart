@@ -7,7 +7,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart|Treemap',
+  title: 'chart/Treemap',
   decorators: [withKnobs],
 };
 

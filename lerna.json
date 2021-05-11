@@ -1,6 +1,5 @@
 {
-  "packages": [
-    "apps/*"
-  ],
+  "packages": ["apps/*"],
+  "useWorkspaces": true,
   "version": "4.3.2"
 }

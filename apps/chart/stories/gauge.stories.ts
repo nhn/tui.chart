@@ -11,7 +11,7 @@ const defaultOptions = {
 };
 
 export default {
-  title: 'chart|Gauge',
+  title: 'chart/Gauge',
 };
 
 function createChart(data: GaugeSeriesData, customOptions: GaugeChartOptions = {}) {

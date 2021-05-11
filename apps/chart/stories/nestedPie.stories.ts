@@ -12,7 +12,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart|Nested Pie',
+  title: 'chart/Nested Pie',
 };
 
 function createChart(data: NestedPieSeriesData, customOptions: NestedPieChartOptions = {}) {

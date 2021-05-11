@@ -605,6 +605,7 @@ export {
   GaugeChartProps,
   GaugeChartOptions,
   GaugeSeriesData,
+  BubbleChartOptions,
 };
 
 export default toastui.Chart;

@@ -6,7 +6,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart.ColumnLine',
+  title: 'chart/ColumnLine',
 };
 
 const defaultOptions: ColumnLineChartOptions = {

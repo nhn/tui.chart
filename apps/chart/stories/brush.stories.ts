@@ -35,7 +35,7 @@ import { getRadialPosition, calculateDegreeToRadian } from '@src/helpers/sector'
 import { clockHand } from '@src/brushes/gauge';
 
 export default {
-  title: 'brushes',
+  title: 'etc/brushes',
   decorators: [withKnobs],
 };
 

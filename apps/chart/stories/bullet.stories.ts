@@ -13,7 +13,7 @@ import { createResponsiveChart } from './util';
 const budgetData = budgetDataForBullet as BulletSeriesData;
 
 export default {
-  title: 'chart|Bullet',
+  title: 'chart/Bullet',
   decorators: [withKnobs],
 };
 

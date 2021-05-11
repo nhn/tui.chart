@@ -21,7 +21,7 @@ const defaultOptions = {
 };
 
 export default {
-  title: 'chart|Plot',
+  title: 'chart/Plot',
   decorators: [withKnobs],
 };
 

@@ -13,7 +13,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart|Area',
+  title: 'chart/Area',
   decorators: [withKnobs],
 };
 

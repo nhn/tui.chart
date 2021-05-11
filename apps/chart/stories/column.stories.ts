@@ -14,7 +14,7 @@ import '@src/css/chart.css';
 import { createResponsiveChart } from './util';
 
 export default {
-  title: 'chart.Column.General',
+  title: 'chart/Column/General',
   decorators: [withKnobs],
 };
 
