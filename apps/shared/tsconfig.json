@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@t/*": ["./types/*"]
+    },
+    "downlevelIteration": true,
+    "declaration": true,
+    "types": ["node"],
+    "lib": ["esnext", "dom", "dom.iterable"]
+  },
+  "include": [
+    "src/**/*.js",
+    "src/**/*.ts",
+    "tests/**/*.ts",
+    "types/**/*"
+  ],
+  "exclude": ["node_modules"]
+}
