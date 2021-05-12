@@ -1,5 +1,6 @@
 import { Story } from './types/story';
-import { color } from '@src/index';
+
+import MapChart from '@src/index';
 
 export default {
   title: 'map chart/test',
@@ -14,24 +15,23 @@ interface Args {
 
 function createContainer() {
   const el = document.createElement('div');
-  el.style.width = '100px';
-  el.style.height = '100px';
+  el.style.width = '500px';
+  el.style.height = '500px';
   el.style.border = '1px solid #ccc';
 
   return el;
 }
 
-function button({ text }: Args) {
-  const buttonEl = document.createElement('button');
-  buttonEl.innerText = text;
-  buttonEl.style.color = color;
+function mapChart({ text }: Args) {
+  const el = createContainer();
+  const chart = new MapChart({ el, options: { type: 'world' } });
 
-  return buttonEl;
+  return el;
 }
 
 const Template: Story<Args> = (args: Args) => {
   const el = createContainer();
-  const buttonEl = button(args);
+  const buttonEl = mapChart(args);
   el.appendChild(buttonEl);
 
   return el;

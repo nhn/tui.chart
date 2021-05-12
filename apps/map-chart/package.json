@@ -30,5 +30,12 @@
     "dist",
     "types"
   ],
-  "homepage": "https://ui.toast.com"
+  "homepage": "https://ui.toast.com",
+  "dependencies": {
+    "d3-geo": "^2.0.1",
+    "topojson-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^2.0.0"
+  }
 }
