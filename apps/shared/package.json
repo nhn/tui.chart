@@ -1,0 +1,27 @@
+{
+  "name": "@toast-ui/shared",
+  "version": "1.0.0",
+  "description": "TOAST UI Chart Shared Code",
+  "main": "dist/toastui-chart-shared.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "check-types": "tsc --project ./tsconfig.json",
+    "lint": "eslint .",
+    "validate": "npm run check-types && npm run lint",
+    "test": "jest --detectOpenHandles --forceExit",
+    "test:watch": "jest --watch",
+    "test:ci": "npm run validate && jest",
+    "build": "webpack --mode=production"
+  },
+  "private": true,
+  "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nhn/tui.chart/issues"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "homepage": "https://ui.toast.com"
+}
