@@ -15,7 +15,6 @@
     "src/**/*.js",
     "src/**/*.ts",
     "stories/**/*.ts",
-    "stories/**/*.js",
     "tests/**/*.ts",
     "types/**/*"
   ],

@@ -2,7 +2,7 @@ const path = require('path');
 const devWebpackConfig = require('../webpack.config.js')({}, { mode: 'development' });
 
 module.exports = {
-  stories: ['@stories/**/*.stories.@(js|jsx|ts|tsx)'],
+  stories: ['@stories/**/*.stories.@(ts|tsx)'],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-knobs'],
   core: {
     builder: 'webpack5',
