@@ -1,42 +1,38 @@
-export interface ChartProps {
-  el: HTMLElement;
-  series: Series;
-  modules?: StoreModule[];
-  options: Options;
-}
+import { Options, ChartOptions as ChartInputOptions } from '@t/options';
+
+type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
+type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
+type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
+export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
+type WatchFunc = (value: any) => void;
 
 export interface Point {
   x: number;
   y: number;
 }
-
 export interface Size {
   width: number;
   height: number;
 }
-
 export type Rect = Point & Size;
-
 export interface Layout {
   chart: Rect;
-  xAxis: Rect;
-  yAxis: Rect;
-  xAxisTitle: Rect;
-  yAxisTitle: Rect;
-  plot: Rect;
   legend: Rect;
-  circleLegend: Rect;
   title: Rect;
   exportMenu: Rect;
-  resetButton: Rect;
-  secondaryYAxisTitle: Rect;
-  secondaryYAxis: Rect;
-  circularAxisTitle: Rect;
+}
+
+export interface ChartProps {
+  el: HTMLElement;
+  series?: Series;
+  options: Options;
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'root';
+  name: 'root' | 'theme' | 'series';
 }
+
+export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
 
 export interface ChartState {
   chart: ChartOptions;
@@ -49,25 +45,9 @@ interface Series {
   data: string[];
 }
 
-interface ChartOptions {
-  width: number;
-  height: number;
-}
-
-interface Options {
-  chart: ChartOptions;
-}
-
 interface InitStoreState {
-  series: Series;
   options: Options;
 }
-
-type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
-type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
-type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) => any;
-export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
-type WatchFunc = (value: any) => void;
 
 export interface StoreOptions {
   state?: Partial<ChartState<Options>> | StateFunc;
