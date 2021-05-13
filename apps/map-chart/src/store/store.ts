@@ -1,4 +1,17 @@
-import { reactive, utils } from '@toast-ui/shared';
+import {
+  observable,
+  observe,
+  notify,
+  notifyByPath,
+  computed,
+  watch,
+  extend as reactiveExtend,
+  invisibleWork,
+  isUndefined,
+  forEach,
+  pickPropertyWithMakeup,
+  deepCopy,
+} from '@toast-ui/shared';
 import {
   ChartState,
   InitStoreState,
@@ -8,19 +21,7 @@ import {
   WatchFunc,
   StoreModule,
   ObserveFunc,
-} from '@t/store/store';
-
-const {
-  observable,
-  observe,
-  notify,
-  notifyByPath,
-  computed,
-  watch,
-  extend: reactiveExtend,
-  invisibleWork,
-} = reactive;
-const { isUndefined, forEach, pickPropertyWithMakeup, deepCopy } = utils;
+} from '@t/store';
 
 export default class Store {
   state!: ChartState;

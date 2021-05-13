@@ -1,8 +1,7 @@
-import { FunctionPropertyNames } from '@t/store/store';
+import { FunctionPropertyNames } from '@t/store';
 import Store from '@src/store/store';
 import Component from '@src/component/component';
-import { utils, EventEmitter } from '@toast-ui/shared';
-const { debounce } = utils;
+import { debounce, EventEmitter } from '@toast-ui/shared';
 
 type ComponentConstructor = new ({
   store,
@@ -37,7 +36,6 @@ export default class ComponentManager {
     let proc = (...args: any[]) => {
       component.render(args[0], args[1]);
       // component.sync();
-      // 여기서 싱크를 안해줘서 안타는건가?
       console.log('proc');
     };
 

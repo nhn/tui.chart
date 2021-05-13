@@ -1,9 +1,9 @@
-import { ChartState, Rect } from '@t/store/store';
+import { ChartState, Rect } from '@t/store';
 import Store from '@src/store/store';
 import Painter from '@src/painter';
 import { EventEmitter } from '@toast-ui/shared';
 
-export type ComponentType = 'component' | 'outline';
+export type ComponentType = 'component' | 'geoFeature';
 type ComponentModels = '';
 
 export default abstract class Component {

@@ -1,8 +1,6 @@
-import { StoreModule } from '@t/store/store';
-import { Size } from '@t/options';
-import { utils } from '@toast-ui/shared';
-
-const { isNumber } = utils;
+import { StoreModule } from '@t/store';
+import { Size } from '@t/store';
+import { isNumber } from '@toast-ui/shared';
 
 function getInitialSize(size) {
   return isNumber(size) ? size : 0;
@@ -17,13 +15,12 @@ function initialSize(containerEl: HTMLElement, { width, height }: Size) {
 
 const root: StoreModule = {
   name: 'root',
-  state: ({ options, series }) => ({
+  state: ({ options }) => ({
     chart: {
       ...options.chart,
       width: getInitialSize(options?.chart?.width),
       height: getInitialSize(options?.chart?.height),
     },
-    series, // @Todo: 분리해야함
     container: {} as Size,
   }),
   action: {
