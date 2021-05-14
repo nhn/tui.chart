@@ -1,7 +1,8 @@
 import { GeoPath } from 'd3-geo';
 import { setSize } from '@src/helpers/painter';
+import { GeoFeatureModel } from '@t/components/geoFeature';
 
-export function geoFeature(ctx: CanvasRenderingContext2D, gp: GeoPath, model) {
+export function geoFeature(ctx: CanvasRenderingContext2D, gp: GeoPath, model: GeoFeatureModel) {
   const { feature, color } = model;
   const areaCanvas = document.createElement('canvas');
   const areaCtx = areaCanvas.getContext('2d')!;

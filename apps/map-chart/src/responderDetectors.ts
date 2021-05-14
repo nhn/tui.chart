@@ -1,6 +1,7 @@
 import { Point, Rect } from '@t/store';
 import { geoContains, GeoProjection } from 'd3-geo';
 import { GeoFeatureResponderModel } from '@t/components/geoFeature';
+import { RectResponderModel } from '@t/components/common';
 
 type DetectorType = 'geoFeature' | 'rect';
 
@@ -20,7 +21,7 @@ export const responderDetectors: ResponderDetectors = {
     mousePosition,
     model,
     componentRect = { x: 0, y: 0, width: 0, height: 0 },
-  }: ResponderDetectorModel<any>) => {
+  }: ResponderDetectorModel<RectResponderModel>) => {
     const { x, y } = mousePosition;
     const { x: modelX, y: modelY, width, height } = model;
     const { x: compX, y: compY } = componentRect;
