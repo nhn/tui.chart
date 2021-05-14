@@ -1,8 +1,9 @@
 import MapChart from '@src/chart';
 import { geoMercator, geoPath, GeoPath, GeoProjection, GeoSphere } from 'd3-geo';
 import { getRatio, setSize } from '@src/helpers/painter';
+import { GeoFeatureModel } from '@t/components/geoFeature';
 
-type BrushModel = '';
+type BrushModel = GeoFeatureModel[];
 type Brush = (ctx: CanvasRenderingContext2D, gp: GeoPath, brushModel: BrushModel) => void;
 const noBrushError = (brushName: string) => `Brush don't exist in painter: ${brushName}`;
 
@@ -16,6 +17,8 @@ export default class Painter {
   chart: MapChart;
 
   gp!: GeoPath;
+
+  projection!: GeoProjection;
 
   canvas!: HTMLCanvasElement;
 
@@ -77,11 +80,10 @@ export default class Painter {
       this.canvas = canvas;
       this.chart.el.appendChild(canvas);
 
-      // @TODO: need to add event delegation
-      // canvas.addEventListener('click', this.chart);
-      // canvas.addEventListener('mousemove', this.chart);
-      // canvas.addEventListener('mousedown', this.chart);
-      // canvas.addEventListener('mouseup', this.chart);
+      canvas.addEventListener('click', this.chart);
+      canvas.addEventListener('mousedown', this.chart);
+      canvas.addEventListener('mouseup', this.chart);
+      canvas.addEventListener('mousemove', this.chart);
 
       const ctx = canvas.getContext('2d');
 
@@ -91,8 +93,8 @@ export default class Painter {
     }
 
     this.setSize(this.canvas, this.ctx, width, height);
-    const projection = this.getProjectionAppliedScale();
-    this.gp = geoPath(projection);
+    this.projection = this.getProjectionAppliedScale();
+    this.gp = geoPath(this.projection);
   }
 
   setSize(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, width: number, height: number) {
@@ -108,7 +110,6 @@ export default class Painter {
 
   addGroups(groups: any[]) {
     groups.forEach((group) => {
-      console.log(group, Object.keys(group));
       Object.keys(group).forEach((key) => {
         this.add(key, group[key]);
       });
@@ -123,8 +124,8 @@ export default class Painter {
     }
   }
 
-  paintForEach(brushModels: any[]) {
-    brushModels.forEach((m) => this.paint(m.brushType, m));
+  paintForEach(brushModel: BrushModel) {
+    brushModel.forEach((m) => this.paint(m.type, m));
   }
 
   beforeFrame() {

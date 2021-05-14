@@ -2,9 +2,11 @@ import { ChartState, Rect } from '@t/store';
 import Store from '@src/store/store';
 import Painter from '@src/painter';
 import { EventEmitter } from '@toast-ui/shared';
+import { ResponderModel } from '@t/responders';
+import { GeoFeatureModel } from '@t/components/geoFeature';
 
 export type ComponentType = 'component' | 'geoFeature';
-type ComponentModels = '';
+type ComponentModels = GeoFeatureModel[];
 
 export default abstract class Component {
   name = 'Component';
@@ -28,7 +30,7 @@ export default abstract class Component {
 
   drawModels!: ComponentModels;
 
-  // responders!: ResponderModel[];
+  responders!: ResponderModel[];
 
   constructor({ store, eventBus }: { store: Store; eventBus: EventEmitter }) {
     this.store = store;

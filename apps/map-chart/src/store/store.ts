@@ -60,11 +60,6 @@ export default class Store {
   }
 
   dispatch(name: string, payload?: any, isInvisible?: boolean) {
-    // observe.setlayout 안에서 setLayout 액션이 실행되니까 여기서 state.layout getter가 실행되고
-    // state.layout의 옵져버로 observe.setLayout이 등록된다. 여기서 무한루프
-    // 즉 observe하고 안에서 특정 대상을 쓸때
-    // extend(state.layout, layouts); 이런식으로 하게되면 layout의 getter실행되어
-    // layout을 업데이트하려고 만든 observe를 옵저버로 등록해서 무한루프
     if (isInvisible) {
       invisibleWork(() => {
         this.actions[name].call(this, this, payload);

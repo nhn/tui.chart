@@ -29,16 +29,10 @@ export interface ChartProps {
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'root' | 'theme' | 'series';
+  name: 'root' | 'theme' | 'series' | 'layout';
 }
 
 export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
-
-export interface ChartState {
-  chart: ChartOptions;
-  layout: Layout;
-  options: Options;
-}
 
 interface Series {
   name: string;
@@ -46,6 +40,12 @@ interface Series {
 }
 
 interface InitStoreState {
+  options: Options;
+}
+
+export interface ChartState {
+  chart: ChartOptions;
+  layout: Layout;
   options: Options;
 }
 

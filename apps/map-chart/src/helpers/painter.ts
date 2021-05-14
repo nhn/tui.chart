@@ -1,4 +1,3 @@
-// for IE
 interface MSWindowScreen extends Screen {
   deviceXDPI: number;
   logicalXDPI: number;
