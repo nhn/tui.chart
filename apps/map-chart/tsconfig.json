@@ -9,14 +9,9 @@
     "downlevelIteration": true,
     "declaration": true,
     "types": ["jest", "node"],
-    "lib": ["esnext", "dom", "dom.iterable"]
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "stories/**/*.ts",
-    "tests/**/*.ts",
-    "types/**/*"
-  ],
+  "include": ["src/**/*.js", "src/**/*.ts", "stories/**/*.ts", "tests/**/*.ts", "types/**/*"],
   "exclude": ["node_modules"]
 }

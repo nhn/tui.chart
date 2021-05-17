@@ -29,8 +29,6 @@ export default class EventEmitter {
   }
 
   emit(type: EventType, ...args) {
-    if (this.handlers[type]) {
-      this.handlers[type].forEach((handler) => handler(...args));
-    }
+    this.handlers[type]?.forEach((handler) => handler(...args));
   }
 }

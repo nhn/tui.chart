@@ -13,7 +13,7 @@
     "test:watch": "jest --watch",
     "test:ci": "npm run validate && jest",
     "serve": "webpack serve --mode=development",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "start-storybook -p 6007",
     "build": "npm run build:clean && npm run build:prod && npm run build:minify && npm run build:esm",
     "build:clean": "rm -rf ./dist",
     "build:prod": "webpack --mode=production",
@@ -30,5 +30,12 @@
     "dist",
     "types"
   ],
-  "homepage": "https://ui.toast.com"
+  "homepage": "https://ui.toast.com",
+  "dependencies": {
+    "d3-geo": "^2.0.1",
+    "topojson-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^2.0.0"
+  }
 }

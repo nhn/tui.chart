@@ -4,8 +4,8 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const pkg = require('./package.json');
 
-module.exports = (env, args) => {
-  const { mode } = args;
+module.exports = () => {
+  const mode = 'production';
   const { version, author, license } = pkg;
 
   const BANNER = [
