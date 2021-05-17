@@ -96,7 +96,9 @@ function getSeriesDataInRange(
   }
 
   let [startIdx, endIdx] = zoomRange;
-  const isCoordinateChart = chartType !== 'area' && !isNumber(getFirstValidValue(data));
+  const firstValidValue = getFirstValidValue(data);
+  const isCoordinateChart =
+    chartType !== 'area' && !isUndefined(firstValidValue) && !isNumber(firstValidValue);
 
   if (isCoordinateChart) {
     [startIdx, endIdx] = getCoordinateDataRange(data, rawCategories as string[], zoomRange);
