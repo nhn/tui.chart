@@ -15,7 +15,7 @@ type Observer = {
 const ALREADY_OBSERVABLE_ERROR = 'Source object is observable already';
 let currentCollectorObserver: Observer | Function | null = null;
 let currentRunningObserver: Observer | null = null;
-const observerCallCue: Observer[] = [];
+const observerCallQueue: Observer[] = [];
 let doingInvisibleWork = false;
 
 export function observe(fn: Function): Function {
@@ -26,18 +26,18 @@ export function observe(fn: Function): Function {
 
     // If there is observer running or doing invisible work
     if (doingInvisibleWork || !isNull(currentRunningObserver)) {
-      if (observerCallCue.includes(observer)) {
-        observerCallCue.splice(observerCallCue.indexOf(observer), 1);
+      if (observerCallQueue.includes(observer)) {
+        observerCallQueue.splice(observerCallQueue.indexOf(observer), 1);
       }
       // We use observer call cue because avoid nested observer call.
-      observerCallCue.push(observer);
+      observerCallQueue.push(observer);
       // or If there are no observers running. Run the observer and run the next observer in the call queue.
     } else if (isNull(currentRunningObserver)) {
       currentRunningObserver = observer;
       fn();
       currentRunningObserver = null;
 
-      digestObserverCallCue();
+      runObserver();
     }
   };
 
@@ -58,9 +58,9 @@ export function observe(fn: Function): Function {
   };
 }
 
-function digestObserverCallCue() {
-  if (observerCallCue.length) {
-    const nextObserver = observerCallCue.shift();
+function runObserver() {
+  if (observerCallQueue.length) {
+    const nextObserver = observerCallQueue.shift();
     if (nextObserver) {
       nextObserver();
     }
@@ -146,16 +146,6 @@ export function observable(
   return target;
 }
 
-export function setValue(
-  target: Record<string, any>,
-  key: string,
-  source: any
-): Record<string, any> {
-  return observable(target, {
-    [key]: source,
-  });
-}
-
 export function extend(
   target: Record<string, any>,
   source: Record<string, any>
@@ -179,7 +169,7 @@ export function invisibleWork(fn: Function) {
   doingInvisibleWork = true;
   fn();
   doingInvisibleWork = false;
-  digestObserverCallCue();
+  runObserver();
 }
 
 export function notifyByPath<T extends Record<string, any>>(holder: T, namePath: string) {

@@ -65,9 +65,7 @@ export default class MapChart {
       }
 
       this.painter.beforeDraw(component.rect.x, component.rect.y);
-      if (component.beforeDraw) {
-        component.beforeDraw(this.painter);
-      }
+      component.beforeDraw?.(this.painter);
 
       component.draw(this.painter);
       this.painter.afterDraw();

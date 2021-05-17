@@ -36,7 +36,6 @@ export default class ComponentManager {
     let proc = (...args: any[]) => {
       component.render(args[0], args[1]);
       // component.sync();
-      console.log('proc');
     };
 
     this.store.observe((...args) => {
