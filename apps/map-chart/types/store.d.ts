@@ -19,7 +19,8 @@ export interface Layout {
   chart: Rect;
   legend: Rect;
   title: Rect;
-  exportMenu: Rect;
+  zoomButton: Rect;
+  map: Rect;
 }
 
 export interface ChartProps {
@@ -29,7 +30,7 @@ export interface ChartProps {
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'root' | 'theme' | 'series' | 'layout';
+  name: 'root' | 'theme' | 'series' | 'layout' | 'legend';
 }
 
 export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;

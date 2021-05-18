@@ -15,7 +15,7 @@ export default class GeoFeature extends Component {
     const { series, theme, layout } = chartState;
     const { colors } = theme;
 
-    this.rect = layout.chart;
+    this.rect = layout.map;
     this.models = series.map((m, idx) => ({
       type: 'geoFeature',
       feature: m,
