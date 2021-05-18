@@ -18,6 +18,8 @@ module.exports = {
       '@stories': path.resolve(__dirname, '../stories/'),
     };
 
+    config.devtool = 'eval-source-map';
+
     return config;
   },
 };
