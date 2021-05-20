@@ -1,6 +1,7 @@
 module.exports = (env, args) => ({
   mode: args.mode,
   devServer: {
+    injectClient: false,
     open: 'Google Chrome',
     overlay: {
       warnings: true,

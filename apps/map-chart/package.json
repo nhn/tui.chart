@@ -1,6 +1,7 @@
 {
   "name": "@toast-ui/map-chart",
-  "version": "1.0.0",
+  "version": "0.0.1",
+  "private": true,
   "description": "TOAST UI Application: Map Chart",
   "main": "dist/toastui-map-chart.js",
   "types": "types/index.d.ts",
