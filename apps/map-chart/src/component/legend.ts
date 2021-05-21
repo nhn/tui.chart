@@ -21,7 +21,7 @@ export default class Legend extends Component {
         width: this.rect.width,
         height: this.rect.height,
         style: {
-          borderColor: '#773322',
+          color: 'rgba(174,198,207,0.5)',
         },
       },
     ];

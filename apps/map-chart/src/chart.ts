@@ -126,9 +126,9 @@ export default class MapChart {
     this.store.dispatch('initChartSize', this.containerEl);
 
     this.componentManager.add(Title);
-    this.componentManager.add(Legend);
     this.componentManager.add(ZoomButton);
     this.componentManager.add(GeoFeature);
+    this.componentManager.add(Legend);
 
     this.painter.addGroups([outlineBrush, rectBrush]);
   }

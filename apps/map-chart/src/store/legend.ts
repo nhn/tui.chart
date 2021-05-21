@@ -1,16 +1,25 @@
 import { StoreModule } from '@t/store';
-import { LegendOptions } from '@t/options';
+import { Options } from '@t/options';
+import { getLegendAlign, isVerticalAlign } from '@src/helpers/legend';
 
-function getLegendDefaultOptions(options: LegendOptions) {
-  return {
-    align: options?.align ?? 'bottom',
-  };
+function getLegendDefaultOptions(options: Options) {
+  // @TODO: Need to add logic for calculating width and height after adding data
+  const align = getLegendAlign(options);
+  let width = 50;
+  let height = 50;
+  if (isVerticalAlign(align)) {
+    width = 150;
+  } else {
+    height = 150;
+  }
+
+  return { align, width, height };
 }
 
 const legend: StoreModule = {
   name: 'legend',
   state: ({ options }) => ({
-    ...getLegendDefaultOptions(options.legend),
+    legend: getLegendDefaultOptions(options),
   }),
   action: {},
   observe: {},

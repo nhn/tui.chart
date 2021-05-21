@@ -1,9 +1,9 @@
 import { Rect } from '@t/store';
 
 interface RectStyle {
-  thickness: number;
-  color: string;
-  borderColor: string;
+  thickness?: number;
+  color?: string;
+  borderColor?: string;
 }
 
 interface RectModel extends Rect {

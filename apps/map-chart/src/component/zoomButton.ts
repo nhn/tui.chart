@@ -21,7 +21,7 @@ export default class ZoomButton extends Component {
         width: this.rect.width,
         height: this.rect.height,
         style: {
-          borderColor: '#9933ee',
+          color: 'rgba(255,179,71,0.5)',
         },
       },
     ];

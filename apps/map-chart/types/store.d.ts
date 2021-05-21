@@ -1,4 +1,4 @@
-import { Options, ChartOptions as ChartInputOptions } from '@t/options';
+import { Options, ChartOptions as ChartInputOptions, Align } from '@t/options';
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
@@ -35,6 +35,12 @@ export interface StoreModule extends StoreOptions {
 
 export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
 
+export interface Legend {
+  align: Align;
+  width: number;
+  height: number;
+}
+
 interface Series {
   name: string;
   data: string[];
@@ -48,6 +54,7 @@ export interface ChartState {
   chart: ChartOptions;
   layout: Layout;
   options: Options;
+  legend: Legend;
 }
 
 export interface StoreOptions {

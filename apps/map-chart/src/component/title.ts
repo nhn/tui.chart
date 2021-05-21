@@ -21,7 +21,7 @@ export default class Title extends Component {
         width: this.rect.width,
         height: this.rect.height,
         style: {
-          borderColor: '#393939',
+          color: 'rgba(199,158,203,0.5)',
         },
       },
     ];

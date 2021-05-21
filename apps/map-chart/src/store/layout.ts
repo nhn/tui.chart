@@ -1,8 +1,9 @@
-import { Layout, Rect, StoreModule } from '@t/store';
+import { Layout, Legend, Rect, StoreModule } from '@t/store';
 import { extend } from '@src/store/store';
+import { isVerticalAlign } from '@src/helpers/legend';
 
 const BUTTON_RECT_SIZE = 24;
-const BUTTON_MARGIN = 5; // 안으로?
+const BUTTON_MARGIN = 5;
 
 function calculateZoomButtonLayout(chartWidth: number, titleHeight: number) {
   const buttonCount = 2;
@@ -21,16 +22,26 @@ function calculateTitleLayout(chartWidth: number, zoomButtonRect: Rect) {
   };
 }
 
-function calculateLegendLayout(chartHeight: number) {
-  const legendWidth = 50;
-  const legendHeight = chartHeight / 2;
+function calculateLegendLayout(chartRect: Rect, titleRect: Rect, legend: Legend) {
+  const legendAlign = legend.align;
+  const titleEndYPoint = titleRect.y + titleRect.height;
+  let x = 0;
+  let y = titleEndYPoint;
+  const { width, height } = legend;
 
-  return {
-    x: 0,
-    y: 0,
-    width: 50,
-    height: 50,
-  };
+  if (isVerticalAlign(legendAlign)) {
+    x = (chartRect.width - legend.width) / 2;
+    if (legendAlign === 'bottom') {
+      y = chartRect.height - height;
+    }
+  } else {
+    y = (chartRect.height - legend.height) / 2;
+    if (legendAlign === 'right') {
+      x = chartRect.width - width;
+    }
+  }
+
+  return { x, y, width, height };
 }
 
 function calculateMapLayout(chartWidth: number, chartHeight: number, zoomButtonRect: Rect) {
@@ -49,17 +60,16 @@ const layout: StoreModule = {
   }),
   action: {
     setLayout({ state }) {
-      const { chart, options } = state;
+      const { chart, legend: legendState } = state;
       const { width, height } = chart;
 
-      console.log(options);
-
+      // @TODO: Apply Theme + Visible options
       const titleFontSize = 40;
-      const titleHeight = titleFontSize + BUTTON_MARGIN * 2; // theme + visible 옵션
+      const titleHeight = titleFontSize + BUTTON_MARGIN * 2;
       const zoomButton = calculateZoomButtonLayout(width, titleHeight);
       const title = calculateTitleLayout(width, zoomButton);
-      const map = calculateMapLayout(width, height, title); // 옵션으로 레이아웃이 넘어 갈 수도 있음
-      const legend = calculateLegendLayout();
+      const map = calculateMapLayout(width, height, title);
+      const legend = calculateLegendLayout(chart, title, legendState);
 
       extend(state.layout, {
         chart: { x: 0, y: 0, width, height },
