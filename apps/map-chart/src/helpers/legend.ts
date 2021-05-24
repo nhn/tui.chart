@@ -7,3 +7,7 @@ export function isVerticalAlign(align: Align) {
 export function getLegendAlign(options: Options) {
   return options.legend?.align ?? 'bottom';
 }
+
+export function getLegendVisible(options: Options) {
+  return options?.legend?.visible ?? true;
+}

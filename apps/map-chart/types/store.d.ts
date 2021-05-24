@@ -37,6 +37,7 @@ export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
 
 export interface Legend {
   align: Align;
+  visible: boolean;
   width: number;
   height: number;
 }

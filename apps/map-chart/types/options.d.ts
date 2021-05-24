@@ -21,7 +21,8 @@ interface ChartSize {
 }
 
 export interface LegendOptions {
-  align: Align;
+  align?: Align;
+  visible?: boolean;
 }
 
 export interface ChartOptions extends ChartSize {

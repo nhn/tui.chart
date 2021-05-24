@@ -1,19 +1,23 @@
 import { StoreModule } from '@t/store';
 import { Options } from '@t/options';
-import { getLegendAlign, isVerticalAlign } from '@src/helpers/legend';
+import { getLegendAlign, getLegendVisible, isVerticalAlign } from '@src/helpers/legend';
 
 function getLegendDefaultOptions(options: Options) {
   // @TODO: Need to add logic for calculating width and height after adding data
-  const align = getLegendAlign(options);
-  let width = 50;
-  let height = 50;
-  if (isVerticalAlign(align)) {
-    width = 150;
-  } else {
-    height = 150;
+  const visible = getLegendVisible(options);
+  let align, width, height;
+  if (visible) {
+    align = getLegendAlign(options);
+    width = 50;
+    height = 50;
+    if (isVerticalAlign(align)) {
+      width = 150;
+    } else {
+      height = 150;
+    }
   }
 
-  return { align, width, height };
+  return { align, width, height, visible };
 }
 
 const legend: StoreModule = {
