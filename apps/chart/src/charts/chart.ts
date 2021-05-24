@@ -327,14 +327,14 @@ export default abstract class Chart<T extends Options> {
     const { clientX, clientY, type: eventType } = event;
 
     const canvas = this.painter.ctx.canvas;
-    const canvasRect = canvas.getBoundingClientRect();
+    const { width, height, left, top } = canvas.getBoundingClientRect();
     // Calculate scale for chart affected by a CSS transform.
-    const scaleX = canvasRect.width / canvas.offsetWidth;
-    const scaleY = canvasRect.height / canvas.offsetHeight;
+    const scaleX = width / canvas.offsetWidth;
+    const scaleY = height / canvas.offsetHeight;
 
     const mousePosition = {
-      x: (clientX - canvasRect.left) / scaleX,
-      y: (clientY - canvasRect.top) / scaleY,
+      x: (clientX - left) / scaleX,
+      y: (clientY - top) / scaleY,
     };
 
     if (eventType === 'mousemove' || eventType === 'mouseout') {
