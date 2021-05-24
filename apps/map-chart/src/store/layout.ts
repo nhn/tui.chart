@@ -22,9 +22,9 @@ function calculateTitleLayout(chartWidth: number, zoomButtonRect: Rect) {
   };
 }
 
-function calculateLegendLayout(chartRect: Rect, titleRect: Rect, legend: Legend) {
+function calculateLegendLayout(chartRect: Rect, headerRect: Rect, legend: Legend) {
   const legendAlign = legend.align;
-  const titleEndYPoint = titleRect.y + titleRect.height;
+  const titleEndYPoint = headerRect.y + headerRect.height;
   let x = 0;
   let y = titleEndYPoint;
   const { width, height } = legend;
@@ -44,12 +44,21 @@ function calculateLegendLayout(chartRect: Rect, titleRect: Rect, legend: Legend)
   return { x, y, width, height };
 }
 
-function calculateMapLayout(chartWidth: number, chartHeight: number, zoomButtonRect: Rect) {
+function calculateMapLayout(chartWidth: number, chartHeight: number, headerRect: Rect) {
   return {
     x: 0,
-    y: zoomButtonRect.height,
+    y: headerRect.height,
     width: chartWidth,
-    height: chartHeight - zoomButtonRect.height,
+    height: chartHeight - headerRect.height,
+  };
+}
+
+function getHeaderRect(title: Rect, zoomButton: Rect) {
+  return {
+    x: 0,
+    y: 0,
+    height: Math.max(title.height, zoomButton.height),
+    width: Math.max(title.width, zoomButton.width),
   };
 }
 
@@ -68,8 +77,11 @@ const layout: StoreModule = {
       const titleHeight = titleFontSize + BUTTON_MARGIN * 2;
       const zoomButton = calculateZoomButtonLayout(width, titleHeight);
       const title = calculateTitleLayout(width, zoomButton);
-      const map = calculateMapLayout(width, height, title);
-      const legend = calculateLegendLayout(chart, title, legendState);
+
+      const headerRect = getHeaderRect(title, zoomButton);
+
+      const map = calculateMapLayout(width, height, headerRect);
+      const legend = calculateLegendLayout(chart, headerRect, legendState);
 
       extend(state.layout, {
         chart: { x: 0, y: 0, width, height },
