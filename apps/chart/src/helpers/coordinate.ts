@@ -64,3 +64,14 @@ export function isModelExistingInRect(rect: Rect, point: Point) {
 
   return x >= 0 && x <= width && y >= 0 && y <= height;
 }
+
+export function isMouseInRect(rect: Rect, mousePosition: Point) {
+  const { x, y, width, height } = rect;
+
+  return (
+    mousePosition.x >= x &&
+    mousePosition.x <= x + width &&
+    mousePosition.y >= y &&
+    mousePosition.y <= y + height
+  );
+}

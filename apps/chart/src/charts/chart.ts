@@ -31,6 +31,7 @@ import { sendHostname } from '@src/helpers/googleAnalytics';
 import { makeObservableObjectToNormal } from '@src/store/reactive';
 import { SelectSeriesInfo, AddSeriesDataInfo } from '@t/charts';
 import { CustomEventType, EventListener } from '@t/eventEmitter';
+import { isMouseInRect } from '@src/helpers/coordinate';
 
 export const DEFAULT_ANIM_DURATION = 500;
 
@@ -268,37 +269,14 @@ export default abstract class Chart<T extends Options> {
     }
   }
 
-  handleEvent(event: MouseEvent) {
-    const { clientX, clientY, type: eventType } = event;
-
-    const delegationMethod = `on${eventType[0].toUpperCase() + eventType.substring(1)}`;
-
-    const canvas = this.painter.ctx.canvas;
-    const canvasRect = canvas.getBoundingClientRect();
-    // Calculate scale for chart affected by a CSS transform.
-    const scaleX = canvasRect.width / canvas.offsetWidth;
-    const scaleY = canvasRect.height / canvas.offsetHeight;
-
-    const mousePosition = {
-      x: (clientX - canvasRect.left) / scaleX,
-      y: (clientY - canvasRect.top) / scaleY,
-    };
-
+  handleCanvasMouseEvent(eventType: string, mousePosition: Point) {
     const newEnteredComponents: Component[] = [];
-
-    if (eventType === 'mousemove') {
-      this.componentManager.forEach((component) => {
-        const { x, y, height, width } = component.rect;
+    this.componentManager.forEach((component) => {
+      if (eventType === 'mousemove') {
         const exist = this.enteredComponents.some(
           (enteredComponent) => enteredComponent === component
         );
-        const entered =
-          mousePosition.x >= x &&
-          mousePosition.x <= x + width &&
-          mousePosition.y >= y &&
-          mousePosition.y <= y + height;
-
-        if (entered) {
+        if (isMouseInRect(component.rect, mousePosition)) {
           newEnteredComponents.push(component);
 
           if (!exist && component.onMouseenterComponent) {
@@ -307,10 +285,17 @@ export default abstract class Chart<T extends Options> {
         } else if (exist && component.onMouseoutComponent) {
           component.onMouseoutComponent();
         }
-      });
+      } else if (eventType === 'mouseout' && component.onMouseoutComponent) {
+        component.onMouseoutComponent();
+      }
+    });
 
-      this.enteredComponents = newEnteredComponents;
-    }
+    this.enteredComponents = newEnteredComponents;
+  }
+
+  handleResponderEvent(event: MouseEvent, mousePosition: Point) {
+    const eventType = event.type;
+    const delegationMethod = `on${eventType[0].toUpperCase() + eventType.substring(1)}`;
 
     const allResponders: RespondersModel = [];
     this.componentManager.forEach((component) => {
@@ -336,6 +321,27 @@ export default abstract class Chart<T extends Options> {
     if (this.handleEventForAllResponders) {
       this.handleEventForAllResponders(event, allResponders, delegationMethod, mousePosition);
     }
+  }
+
+  handleEvent(event: MouseEvent) {
+    const { clientX, clientY, type: eventType } = event;
+
+    const canvas = this.painter.ctx.canvas;
+    const { width, height, left, top } = canvas.getBoundingClientRect();
+    // Calculate scale for chart affected by a CSS transform.
+    const scaleX = width / canvas.offsetWidth;
+    const scaleY = height / canvas.offsetHeight;
+
+    const mousePosition = {
+      x: (clientX - left) / scaleX,
+      y: (clientY - top) / scaleY,
+    };
+
+    if (eventType === 'mousemove' || eventType === 'mouseout') {
+      this.handleCanvasMouseEvent(eventType, mousePosition);
+    }
+
+    this.handleResponderEvent(event, mousePosition);
   }
 
   protected initStore() {
