@@ -18,7 +18,7 @@ jobs:
         run: |
           npm install
       - name: set shared package bundle for workspace
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+        working-directory: ${{ env.SHARED_PACKAGE_DIRECTORY }}
         run: |
           npm install
           npm run build
