@@ -1,4 +1,4 @@
-name: Test
+name: Chart Test
 on: pull_request
 jobs:
   test:

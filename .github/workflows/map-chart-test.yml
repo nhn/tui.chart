@@ -1,10 +1,11 @@
-name: Test
+name: Map Chart Test
 on: pull_request
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
     env:
+      SHARED_PACKAGE_DIRECTORY: ./apps/shared
       WORKING_DIRECTORY: ./apps/map-chart
     steps:
       - name: Checkout branch
@@ -16,6 +17,11 @@ jobs:
       - name: npm install
         run: |
           npm install
+      - name: set shared package bundle for workspace
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm install
+          npm run build
       - name: npm install(toast ui map chart)
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |

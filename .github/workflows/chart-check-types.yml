@@ -1,4 +1,4 @@
-name: Check Types
+name: Chart Check Types
 on: pull_request
 jobs:
   lint:

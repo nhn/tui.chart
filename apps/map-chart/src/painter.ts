@@ -3,8 +3,9 @@ import { geoMercator, geoPath, GeoPath, GeoProjection, GeoSphere } from 'd3-geo'
 import { getRatio, setSize } from '@src/helpers/painter';
 import { GeoFeatureModel } from '@t/components/geoFeature';
 import { Rect } from '@t/store';
+import { RectModel } from '@t/components/common';
 
-type BrushModel = GeoFeatureModel[];
+type BrushModel = GeoFeatureModel[] | RectModel[];
 type Brush = (ctx: CanvasRenderingContext2D, brushModel: BrushModel, gp: GeoPath) => void;
 const noBrushError = (brushName: string) => `Brush don't exist in painter: ${brushName}`;
 

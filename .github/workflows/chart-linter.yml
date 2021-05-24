@@ -1,4 +1,4 @@
-name: Lint Code Base
+name: Chart Lint Code Base
 on: pull_request
 jobs:
   lint:
