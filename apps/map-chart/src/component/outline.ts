@@ -1,22 +1,19 @@
 import Component from './component';
 import { GeoFeatureModel, GeoFeatureResponderModel } from '@t/components/geoFeature';
 
-export default class GeoFeature extends Component {
+export default class Outline extends Component {
   models!: GeoFeatureModel[];
-
-  responders!: GeoFeatureResponderModel[];
 
   initialize() {
     this.type = 'geoFeature';
-    this.name = 'geoFeature';
+    this.name = 'outline';
   }
 
   render(chartState) {
-    const { series, layout } = chartState;
+    const { outline, layout } = chartState;
 
     this.rect = layout.map;
-    this.models = series.map((m) => ({ type: 'geoFeature', ...m }));
-    this.responders = this.models.map((m) => ({ ...m, responderType: 'geoFeature' }));
+    this.models = outline.map((feature) => ({ type: 'outline', feature }));
   }
 
   onClick({ responders }: { responders: GeoFeatureResponderModel[] }) {

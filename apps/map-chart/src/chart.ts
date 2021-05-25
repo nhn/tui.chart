@@ -8,7 +8,8 @@ import { responderDetectors } from '@src/responderDetectors';
 import * as outlineBrush from '@src/brushes/geoFeature';
 import * as rectBrush from '@src/brushes/rect';
 
-import GeoFeature from '@src/component/geoFeature';
+import Outline from '@src/component/outline';
+import Series from '@src/component/series';
 import Legend from '@src/component/legend';
 import Title from '@src/component/title';
 import ZoomButton from '@src/component/zoomButton';
@@ -126,10 +127,9 @@ export default class MapChart {
     this.initStore();
     this.store.dispatch('initChartSize', this.containerEl);
 
-    this.componentManager.add(Title);
-    this.componentManager.add(ZoomButton);
-    this.componentManager.add(GeoFeature);
-    this.componentManager.add(Legend);
+    [Title, ZoomButton, Outline, Series, Legend].forEach((component) => {
+      this.componentManager.add(component);
+    });
 
     this.painter.addGroups([outlineBrush, rectBrush]);
   }
