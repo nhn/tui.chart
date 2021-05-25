@@ -21,6 +21,7 @@ const root: StoreModule = {
       width: getInitialSize(options?.chart?.width),
       height: getInitialSize(options?.chart?.height),
     },
+    options,
     container: {} as Size,
   }),
   action: {

@@ -2,7 +2,7 @@ import { GeoPath } from 'd3-geo';
 import { setSize } from '@src/helpers/painter';
 import { GeoFeatureModel } from '@t/components/geoFeature';
 
-export function geoFeature(ctx: CanvasRenderingContext2D, gp: GeoPath, model: GeoFeatureModel) {
+export function geoFeature(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
   const { feature, color } = model;
   const areaCanvas = document.createElement('canvas');
   const areaCtx = areaCanvas.getContext('2d')!;
@@ -17,9 +17,10 @@ export function geoFeature(ctx: CanvasRenderingContext2D, gp: GeoPath, model: Ge
   gp.context(areaCtx)(feature);
 
   areaCtx.lineWidth = 1;
-  areaCtx.fillStyle = color;
-
-  areaCtx.fill();
+  if (color) {
+    areaCtx.fillStyle = color;
+    areaCtx.fill();
+  }
   areaCtx.stroke();
 
   ctx.drawImage(areaCanvas, x, y, width, height);

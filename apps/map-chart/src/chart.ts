@@ -1,16 +1,23 @@
 import Store from './store/store';
-import * as outlineBrush from './brushes/geoFeature';
 import { debounce, EventEmitter } from '@toast-ui/shared';
 import { ChartProps } from '@t/store';
 import Painter from '@src/painter';
-import GeoFeature from '@src/component/geoFeature';
 import ComponentManager from '@src/component/componentManager';
 import { responderDetectors } from '@src/responderDetectors';
+
+import * as outlineBrush from '@src/brushes/geoFeature';
+import * as rectBrush from '@src/brushes/rect';
+
+import GeoFeature from '@src/component/geoFeature';
+import Legend from '@src/component/legend';
+import Title from '@src/component/title';
+import ZoomButton from '@src/component/zoomButton';
 
 import root from '@src/store/root';
 import theme from '@src/store/theme';
 import series from '@src/store/series';
 import layout from '@src/store/layout';
+import legend from '@src/store/legend';
 
 export default class MapChart {
   store!: Store;
@@ -111,15 +118,18 @@ export default class MapChart {
   }
 
   protected initStore() {
-    [root, theme, series, layout].forEach((module) => this.store.setModule(module));
+    [root, theme, legend, series, layout].forEach((module) => this.store.setModule(module));
   }
 
   protected initialize() {
     this.initStore();
     this.store.dispatch('initChartSize', this.containerEl);
 
+    this.componentManager.add(Title);
+    this.componentManager.add(ZoomButton);
     this.componentManager.add(GeoFeature);
+    this.componentManager.add(Legend);
 
-    this.painter.addGroups([outlineBrush]);
+    this.painter.addGroups([outlineBrush, rectBrush]);
   }
 }

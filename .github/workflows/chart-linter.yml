@@ -1,8 +1,8 @@
-name: Test
+name: Chart Lint Code Base
 on: pull_request
 jobs:
-  test:
-    name: Test
+  lint:
+    name: Lint Code Base
     runs-on: ubuntu-latest
     env:
       WORKING_DIRECTORY: ./apps/chart
@@ -20,7 +20,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           npm install
-      - name: test
+      - name: eslint
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
-          npm run test
+          npm run lint

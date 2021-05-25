@@ -2,9 +2,11 @@ import MapChart from '@src/chart';
 import { geoMercator, geoPath, GeoPath, GeoProjection, GeoSphere } from 'd3-geo';
 import { getRatio, setSize } from '@src/helpers/painter';
 import { GeoFeatureModel } from '@t/components/geoFeature';
+import { Rect } from '@t/store';
+import { RectModel } from '@t/components/common';
 
-type BrushModel = GeoFeatureModel[];
-type Brush = (ctx: CanvasRenderingContext2D, gp: GeoPath, brushModel: BrushModel) => void;
+type BrushModel = GeoFeatureModel[] | RectModel[];
+type Brush = (ctx: CanvasRenderingContext2D, brushModel: BrushModel, gp: GeoPath) => void;
 const noBrushError = (brushName: string) => `Brush don't exist in painter: ${brushName}`;
 
 export default class Painter {
@@ -28,12 +30,10 @@ export default class Painter {
     this.chart = chart;
   }
 
-  getProjectionAppliedScale() {
+  getProjectionAppliedScale({ width: w, height: h }: Rect) {
     const projection = geoMercator();
     const left = 0; // @TODO: remove after set layout
     const top = 0; // @TODO: remove after set layout
-    const w = this.width;
-    const h = this.height;
     const bottom = h + top;
     const right = w + left;
 
@@ -73,7 +73,8 @@ export default class Painter {
   }
 
   setup() {
-    const { height, width } = this.chart.store.state.chart;
+    const { chart, layout } = this.chart.store.state;
+    const { height, width } = chart;
 
     if (!this.canvas) {
       const canvas = document.createElement('canvas');
@@ -93,7 +94,7 @@ export default class Painter {
     }
 
     this.setSize(this.canvas, this.ctx, width, height);
-    this.projection = this.getProjectionAppliedScale();
+    this.projection = this.getProjectionAppliedScale(layout.map);
     this.gp = geoPath(this.projection);
   }
 
@@ -118,7 +119,7 @@ export default class Painter {
 
   paint(name: string, brushModel: any) {
     if (this.brushes[name]) {
-      this.brushes[name](this.ctx, this.gp, brushModel);
+      this.brushes[name](this.ctx, brushModel, this.gp);
     } else {
       throw new Error(noBrushError(name));
     }

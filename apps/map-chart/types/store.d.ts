@@ -1,4 +1,4 @@
-import { Options, ChartOptions as ChartInputOptions } from '@t/options';
+import { Options, ChartOptions as ChartInputOptions, Align } from '@t/options';
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
@@ -19,7 +19,8 @@ export interface Layout {
   chart: Rect;
   legend: Rect;
   title: Rect;
-  exportMenu: Rect;
+  zoomButton: Rect;
+  map: Rect;
 }
 
 export interface ChartProps {
@@ -29,10 +30,17 @@ export interface ChartProps {
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'root' | 'theme' | 'series' | 'layout';
+  name: 'root' | 'theme' | 'series' | 'layout' | 'legend';
 }
 
 export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
+
+export interface Legend {
+  align: Align;
+  visible: boolean;
+  width: number;
+  height: number;
+}
 
 interface Series {
   name: string;
@@ -47,6 +55,7 @@ export interface ChartState {
   chart: ChartOptions;
   layout: Layout;
   options: Options;
+  legend: Legend;
 }
 
 export interface StoreOptions {

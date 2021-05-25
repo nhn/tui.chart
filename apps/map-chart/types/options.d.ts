@@ -1,3 +1,5 @@
+export type Align = 'top' | 'bottom' | 'right' | 'left';
+
 type ChartSizeInput = number | 'auto';
 type MapType =
   | 'world'
@@ -18,6 +20,11 @@ interface ChartSize {
   height?: ChartSizeInput;
 }
 
+export interface LegendOptions {
+  align?: Align;
+  visible?: boolean;
+}
+
 export interface ChartOptions extends ChartSize {
   title?: string | TitleOption;
   type?: MapType;
@@ -25,4 +32,5 @@ export interface ChartOptions extends ChartSize {
 
 export interface Options {
   chart?: ChartOptions;
+  legend?: LegendOptions;
 }

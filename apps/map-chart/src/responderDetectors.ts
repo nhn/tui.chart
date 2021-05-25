@@ -37,8 +37,10 @@ export const responderDetectors: ResponderDetectors = {
     mousePosition,
     model,
     projection,
+    componentRect = { x: 0, y: 0, width: 0, height: 0 },
   }: ResponderDetectorModel<GeoFeatureResponderModel>) => {
-    const mapCoordinate = projection?.invert?.([mousePosition.x, mousePosition.y]);
+    const { x: compX, y: compY } = componentRect;
+    const mapCoordinate = projection?.invert?.([mousePosition.x - compX, mousePosition.y - compY]);
 
     return mapCoordinate && geoContains(model.feature, mapCoordinate);
   },

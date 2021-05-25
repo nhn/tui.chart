@@ -4,9 +4,10 @@ import Painter from '@src/painter';
 import { EventEmitter } from '@toast-ui/shared';
 import { ResponderModel } from '@t/responders';
 import { GeoFeatureModel } from '@t/components/geoFeature';
+import { RectModel } from '@t/components/common';
 
-export type ComponentType = 'component' | 'geoFeature';
-type ComponentModels = GeoFeatureModel[];
+export type ComponentType = 'component' | 'geoFeature' | 'legend' | 'zoomButton' | 'title';
+type ComponentModels = GeoFeatureModel[] | RectModel[];
 
 export default abstract class Component {
   name = 'Component';
