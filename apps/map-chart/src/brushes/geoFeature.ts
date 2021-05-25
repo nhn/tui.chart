@@ -17,9 +17,10 @@ export function geoFeature(ctx: CanvasRenderingContext2D, model: GeoFeatureModel
   gp.context(areaCtx)(feature);
 
   areaCtx.lineWidth = 1;
-  areaCtx.fillStyle = color;
-
-  areaCtx.fill();
+  if (color) {
+    areaCtx.fillStyle = color;
+    areaCtx.fill();
+  }
   areaCtx.stroke();
 
   ctx.drawImage(areaCanvas, x, y, width, height);

@@ -12,14 +12,12 @@ export default class GeoFeature extends Component {
   }
 
   render(chartState) {
-    const { series, theme, layout } = chartState;
-    const { colors } = theme;
+    const { series, layout } = chartState;
 
     this.rect = layout.map;
-    this.models = series.map((m, idx) => ({
+    this.models = series.map((m) => ({
       type: 'geoFeature',
       feature: m,
-      color: colors[idx % colors.length],
     }));
     this.responders = this.models.map((m) => ({ ...m, responderType: 'geoFeature' }));
   }

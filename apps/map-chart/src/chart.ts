@@ -5,8 +5,8 @@ import Painter from '@src/painter';
 import ComponentManager from '@src/component/componentManager';
 import { responderDetectors } from '@src/responderDetectors';
 
-import * as outlineBrush from './brushes/geoFeature';
-import * as rectBrush from './brushes/rect';
+import * as outlineBrush from '@src/brushes/geoFeature';
+import * as rectBrush from '@src/brushes/rect';
 
 import GeoFeature from '@src/component/geoFeature';
 import Legend from '@src/component/legend';

@@ -23,11 +23,10 @@ function calculateTitleLayout(chartWidth: number, zoomButtonRect: Rect) {
 }
 
 function calculateLegendLayout(chartRect: Rect, headerRect: Rect, legend: Legend) {
-  const legendAlign = legend.align;
   const titleEndYPoint = headerRect.y + headerRect.height;
   let x = 0;
   let y = titleEndYPoint;
-  const { width, height } = legend;
+  const { width, height, align: legendAlign } = legend;
 
   if (isVerticalAlign(legendAlign)) {
     x = (chartRect.width - legend.width) / 2;
@@ -53,7 +52,7 @@ function calculateMapLayout(chartWidth: number, chartHeight: number, headerRect:
   };
 }
 
-function getHeaderRect(title: Rect, zoomButton: Rect) {
+function calculateHeaderAreaRect(title: Rect, zoomButton: Rect) {
   return {
     x: 0,
     y: 0,
@@ -71,15 +70,14 @@ const layout: StoreModule = {
     setLayout({ state }) {
       const { chart, legend: legendState } = state;
       const { width, height } = chart;
-
+      // Don't change the order!
+      // zoomButton -> title -> map -> legend
       // @TODO: Apply Theme + Visible options
       const titleFontSize = 40;
       const titleHeight = titleFontSize + BUTTON_MARGIN * 2;
       const zoomButton = calculateZoomButtonLayout(width, titleHeight);
       const title = calculateTitleLayout(width, zoomButton);
-
-      const headerRect = getHeaderRect(title, zoomButton);
-
+      const headerRect = calculateHeaderAreaRect(title, zoomButton);
       const map = calculateMapLayout(width, height, headerRect);
       const legend = calculateLegendLayout(chart, headerRect, legendState);
 
