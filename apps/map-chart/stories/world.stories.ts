@@ -21,11 +21,12 @@ function createContainer() {
   return el;
 }
 
-function createMapChart({ align }) {
+function createMapChart({ align, data }) {
   const el = createContainer();
   const chart = new MapChart({
     el,
     options: { chart: { width: 500, height: 500, type: 'world' }, legend: { align } },
+    data,
   });
 
   return { el, chart };
@@ -39,7 +40,27 @@ const Template: Story = (args) => {
   return el;
 };
 
+const data = [
+  {
+    code: 'US',
+    data: 450,
+  },
+  {
+    code: 'RU',
+    data: 100,
+  },
+  {
+    code: 'CN',
+    data: 300,
+  },
+  {
+    code: 'IN',
+    data: 400,
+  },
+];
+
 export const Basic = Template.bind({});
 Basic.args = {
   align: 'bottom',
+  data,
 };

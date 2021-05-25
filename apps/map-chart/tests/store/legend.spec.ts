@@ -4,6 +4,7 @@ import { StateFunc } from '@t/store';
 it('should apply default options when legend options not exist', () => {
   const state = (legend.state as StateFunc)({
     options: { chart: { width: 800, height: 800 } },
+    data: [],
   });
 
   expect(state.legend).toEqual({
@@ -17,6 +18,7 @@ it('should apply default options when legend options not exist', () => {
 it('should not calculate legend options, when visible options is false', () => {
   const state = (legend.state as StateFunc)({
     options: { chart: { width: 800, height: 800 }, legend: { visible: false } },
+    data: [],
   });
 
   expect(state.legend).toEqual({
@@ -28,6 +30,7 @@ describe('legend have different rect depending on the align.', () => {
   it('bottom', () => {
     const state = (legend.state as StateFunc)({
       options: { chart: { width: 800, height: 800 } },
+      data: [],
     });
 
     expect(state.legend).toEqual({
@@ -41,6 +44,7 @@ describe('legend have different rect depending on the align.', () => {
   it('top', () => {
     const state = (legend.state as StateFunc)({
       options: { chart: { width: 800, height: 800 }, legend: { align: 'top' } },
+      data: [],
     });
 
     expect(state.legend).toEqual({
@@ -54,6 +58,7 @@ describe('legend have different rect depending on the align.', () => {
   it('left', () => {
     const state = (legend.state as StateFunc)({
       options: { chart: { width: 800, height: 800 }, legend: { align: 'left' } },
+      data: [],
     });
 
     expect(state.legend).toEqual({
@@ -67,6 +72,7 @@ describe('legend have different rect depending on the align.', () => {
   it('right', () => {
     const state = (legend.state as StateFunc)({
       options: { chart: { width: 800, height: 800 }, legend: { align: 'right' } },
+      data: [],
     });
 
     expect(state.legend).toEqual({

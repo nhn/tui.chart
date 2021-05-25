@@ -9,6 +9,12 @@ type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) 
 export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
 type WatchFunc = (value: any) => void;
 
+export interface ScaleData {
+  limit: ValueEdge;
+  stepSize: number;
+  stepCount: number;
+}
+
 export interface Point {
   x: number;
   y: number;
@@ -26,14 +32,20 @@ export interface Layout {
   map: Rect;
 }
 
+type Data = {
+  code: string;
+  data: number;
+};
+
 export interface ChartProps {
   el: HTMLElement;
   series?: Series;
+  data: Data[];
   options: Options;
 }
 
 export interface StoreModule extends StoreOptions {
-  name: 'root' | 'theme' | 'series' | 'layout' | 'legend';
+  name: 'root' | 'theme' | 'series' | 'layout' | 'legend' | 'scale';
 }
 
 export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
@@ -49,6 +61,14 @@ interface GeoFeature extends GeoPermissibleObjects {
   id?: string;
 }
 
+export type SeriesData = {
+  feature?: GeoFeature;
+  data?: number;
+  color?: string;
+};
+
+export type Series = Array<SeriesData>;
+
 interface Theme {
   startColor: string;
   endColor: string;
@@ -58,6 +78,7 @@ interface Theme {
 
 interface InitStoreState {
   options: Options;
+  data: Data[];
 }
 
 export interface ChartState {
