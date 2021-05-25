@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
+    <title>11.5 [Scatter Chart] Icon Type</title>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-scatter.md" target="_blank">here</a>
+      <br />
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
+        </div>
+        <div class="try-it-area">
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="../dist/toastui-chart.js"></script>
+    <script class="code-js" id="code-js" type="text/babel">
+      const el = document.getElementById('chart-area');
+      const data = {
+        series: [
+          {
+            name: 'User1',
+            data: [
+              { x: 10, y: 202 },
+              { x: 50, y: 211 },
+              { x: 70, y: 212 },
+              { x: 80, y: 220 },
+            ],
+          },
+          {
+            name: 'User2',
+            data: [
+              { x: 50, y: 205 },
+              { x: 100, y: 320 },
+              { x: 120, y: 190 },
+              { x: 140, y: 156 },
+              { x: 150, y: 136 },
+              { x: 160, y: 166 },
+              { x: 170, y: 154 },
+              { x: 180, y: 157 },
+              { x: 190, y: 200 },
+            ],
+          },
+          {
+            name: 'User3',
+            data: [
+              { x: 30, y: 213 },
+              { x: 40, y: 230 },
+              { x: 120, y: 113 },
+              { x: 130, y: 210 },
+            ],
+          },
+          {
+            name: 'User4',
+            data: [
+              { x: 30, y: 12 },
+              { x: 60, y: 12 },
+              { x: 90, y: 312 },
+              { x: 100, y: 320 },
+              { x: 110, y: 295 },
+              { x: 120, y: 312 },
+              { x: 130, y: 120 },
+              { x: 140, y: 295 },
+              { x: 150, y: 112 },
+              { x: 160, y: 120 },
+              { x: 170, y: 295 },
+              { x: 180, y: 212 },
+              { x: 190, y: 320 },
+              { x: 200, y: 295 },
+              { x: 210, y: 212 },
+              { x: 120, y: 220 },
+              { x: 230, y: 295 },
+            ],
+          },
+          {
+            name: 'User5',
+            data: [
+              { x: 100, y: 112 },
+              { x: 130, y: 225 },
+              { x: 140, y: 220 },
+              { x: 200, y: 220 },
+              { x: 210, y: 220 },
+            ],
+          },
+          {
+            name: 'User6',
+            data: [
+              { x: 10, y: 312 },
+              { x: 20, y: 255 },
+              { x: 30, y: 260 },
+              { x: 70, y: 312 },
+              { x: 80, y: 255 },
+              { x: 100, y: 260 },
+              { x: 110, y: 12 },
+              { x: 120, y: 55 },
+              { x: 130, y: 60 },
+              { x: 140, y: 212 },
+              { x: 150, y: 82 },
+              { x: 180, y: 212 },
+              { x: 200, y: 100 },
+            ],
+          },
+          {
+            name: 'User7',
+            data: [
+              { x: 40, y: 182 },
+              { x: 50, y: 285 },
+              { x: 60, y: 280 },
+            ],
+          },
+        ],
+      };
+      const theme = {
+        series: {
+          colors: [
+            '#ff9cee',
+            '#9b283c',
+            '#d6aaff',
+            '#97a2ff',
+            '#6eb5ff',
+            '#ffabab',
+            '#f79aff',
+            '#f6a6ff',
+          ],
+          iconTypes: ['rect', 'triangle', 'pentagon', 'star', 'diamond', 'cross', 'hexagon'],
+        },
+      };
+
+      const options = {
+        chart: { title: 'Height vs Weight', width: 900, height: 600 },
+        xAxis: { title: 'Height (cm)' },
+        yAxis: { title: 'Weight (kg)' },
+        theme,
+      };
+
+      const chart = toastui.Chart.scatterChart({ el, data, options });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.js"></script>
+    <script src="./js/example.js" type="text/babel"></script>
+  </body>
+</html>

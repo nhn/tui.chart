@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
+    <title>3.3 [BoxPlot Chart] Responsive</title>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/common-responsive-options.md" target="_blank">here</a>
+      <br />
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area" style="width:70vw; height:70vh;"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
+        </div>
+        <div class="try-it-area">
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="../dist/toastui-chart.js"></script>
+    <script class="code-js" id="code-js" type="text/babel">
+      const el = document.getElementById('chart-area');
+      const data = {
+        categories: ['Budget', 'Income', 'Expenses', 'Debt'],
+        series: [
+          {
+            name: '2020',
+            data: [
+              [1000, 2500, 3714, 5500, 7000],
+              [1000, 2750, 4571, 5250, 8000],
+              [3000, 4000, 4714, 6000, 7000],
+              [1000, 2250, 3142, 4750, 6000],
+            ],
+            outliers: [
+              [0, 14000],
+              [2, 10000],
+              [3, 9600],
+            ],
+          },
+          {
+            name: '2021',
+            data: [
+              [2000, 4500, 6714, 11500, 13000],
+              [3000, 5750, 7571, 8250, 9000],
+              [5000, 8000, 8714, 9000, 10000],
+              [7000, 9250, 10142, 11750, 12000],
+            ],
+            outliers: [[1, 14000]],
+          },
+        ],
+      };
+      const options = {
+        chart: { title: 'Monthly Revenue', width: 'auto', height: 'auto' },
+        series: {
+          selectable: true,
+        },
+      };
+
+      const chart = toastui.Chart.boxPlotChart({ el, data, options });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.js"></script>
+    <script src="./js/example.js" type="text/babel"></script>
+  </body>
+</html>
