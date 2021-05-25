@@ -53,6 +53,5 @@ it('should apply default theme when options not exist', () => {
     startColor: '#ffe98a',
     endColor: '#d74177',
     lineWidth: 1,
-    borderColor: '#ffffff',
   });
 });

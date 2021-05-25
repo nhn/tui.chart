@@ -1,4 +1,4 @@
-import { Layout, Legend, Rect, StoreModule } from '@t/store';
+import { ActionParams, Layout, Legend, Rect, StoreModule } from '@t/store';
 import { extend } from '@src/store/store';
 import { isVerticalAlign } from '@src/helpers/legend';
 
@@ -67,7 +67,7 @@ const layout: StoreModule = {
     layout: {} as Layout,
   }),
   action: {
-    setLayout({ state }) {
+    setLayout({ state }: ActionParams) {
       const { chart, legend: legendState } = state;
       const { width, height } = chart;
       // Don't change the order!
@@ -79,7 +79,7 @@ const layout: StoreModule = {
       const title = calculateTitleLayout(width, zoomButton);
       const headerRect = calculateHeaderAreaRect(title, zoomButton);
       const map = calculateMapLayout(width, height, headerRect);
-      const legend = calculateLegendLayout(chart, headerRect, legendState);
+      const legend = calculateLegendLayout(chart as Rect, headerRect, legendState);
 
       extend(state.layout, {
         chart: { x: 0, y: 0, width, height },

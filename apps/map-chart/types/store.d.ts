@@ -9,6 +9,11 @@ type ComputedFunc = (state: ChartState<Options>, computed: Record<string, any>) 
 export type ObserveFunc = (state: ChartState<Options>, computed: Record<string, any>) => void;
 type WatchFunc = (value: any) => void;
 
+export type ActionParams = {
+  state: ChartState;
+  initStoreState: InitStoreState;
+};
+
 export interface ScaleData {
   limit: ValueEdge;
   stepSize: number;
@@ -48,8 +53,8 @@ export interface StoreModule extends StoreOptions {
   name: 'root' | 'theme' | 'series' | 'layout' | 'legend' | 'scale';
 }
 
-export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
 
+export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
 export interface Legend {
   align: Align;
   visible: boolean;

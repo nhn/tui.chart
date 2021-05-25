@@ -1,4 +1,4 @@
-import { ChartState, Data, InitStoreState, Series, StoreModule } from '@t/store';
+import { ActionParams, Data, Series, StoreModule } from '@t/store';
 // import { feature } from 'topojson-client';
 // import worldJSONData from '../../data/world.json';
 import worldJSONData from '../../data/world-geo.json';
@@ -35,13 +35,7 @@ const series: StoreModule = {
     series: [] as Series,
   }),
   action: {
-    setSeriesColor({
-      state,
-      initStoreState,
-    }: {
-      state: ChartState;
-      initStoreState: InitStoreState;
-    }) {
+    setSeriesColor({ state, initStoreState }: ActionParams) {
       const { data } = initStoreState;
       const { theme, scale } = state;
       const { startColor, endColor } = theme;

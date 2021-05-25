@@ -1,4 +1,4 @@
-import { StoreModule } from '@t/store';
+import { ActionParams, StoreModule } from '@t/store';
 import { Size } from '@t/store';
 import { isNumber } from '@toast-ui/shared';
 
@@ -25,12 +25,12 @@ const root: StoreModule = {
     container: {} as Size,
   }),
   action: {
-    setChartSize({ state }, size: Size) {
+    setChartSize({ state }: ActionParams, size: Size) {
       state.chart.width = size.width;
       state.chart.height = size.height;
       this.notify(state, 'chart');
     },
-    initChartSize({ state }, containerEl: HTMLElement) {
+    initChartSize({ state }: ActionParams, containerEl: HTMLElement) {
       const { width, height } = state.chart;
 
       if (width === 0 || height === 0) {

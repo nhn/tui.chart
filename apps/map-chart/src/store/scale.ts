@@ -1,4 +1,4 @@
-import { Data, StoreModule } from '@t/store';
+import { ActionParams, Data, StoreModule } from '@t/store';
 import { getNormalizedScale, getRoughScale } from '@src/helpers/scale';
 import { extend, getLimitSafely } from '@toast-ui/shared';
 
@@ -22,11 +22,8 @@ const scale: StoreModule = {
     scale: {},
   }),
   action: {
-    setScale({ state, initStoreState }) {
-      const { legend } = state;
-      const { data } = initStoreState;
-
-      extend(state.scale, getScale(data, legend.width));
+    setScale({ state, initStoreState }: ActionParams) {
+      extend(state.scale, getScale(initStoreState.data, state.legend.width));
     },
   },
   observe: {
