@@ -15,16 +15,13 @@ export default class GeoFeature extends Component {
     const { series, layout } = chartState;
 
     this.rect = layout.map;
-    this.models = series.map((m) => ({
-      type: 'geoFeature',
-      feature: m,
-    }));
+    this.models = series.map((m) => ({ type: 'geoFeature', ...m }));
     this.responders = this.models.map((m) => ({ ...m, responderType: 'geoFeature' }));
   }
 
   onClick({ responders }: { responders: GeoFeatureResponderModel[] }) {
     if (responders.length) {
-      console.log(responders[0].feature.properties);
+      console.log(responders[0]);
     }
   }
 }

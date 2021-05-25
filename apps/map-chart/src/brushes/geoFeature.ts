@@ -1,9 +1,10 @@
-import { GeoPath } from 'd3-geo';
+import { GeoPath, GeoPermissibleObjects } from 'd3-geo';
 import { setSize } from '@src/helpers/painter';
 import { GeoFeatureModel } from '@t/components/geoFeature';
 
 export function geoFeature(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
-  const { feature, color } = model;
+  const { color } = model;
+  const feature = model.feature as GeoPermissibleObjects;
   const areaCanvas = document.createElement('canvas');
   const areaCtx = areaCanvas.getContext('2d')!;
   const [[x, y], [x2, y2]] = gp.bounds(feature);

@@ -1,4 +1,7 @@
 import { Options, ChartOptions as ChartInputOptions, Align } from '@t/options';
+import { ScaleData } from '@toast-ui/chart/types/store/store';
+import { ValueEdge } from '@toast-ui/shared';
+import { GeoPermissibleObjects } from 'd3-geo';
 
 type StateFunc = (initStoreState: InitStoreState) => Partial<ChartState<Options>>;
 type ActionFunc = (store: Store<Options>, ...args: any[]) => void;
@@ -42,9 +45,15 @@ export interface Legend {
   height: number;
 }
 
-interface Series {
-  name: string;
-  data: string[];
+interface GeoFeature extends GeoPermissibleObjects {
+  id?: string;
+}
+
+interface Theme {
+  startColor: string;
+  endColor: string;
+  lineWidth: number;
+  colors: string[];
 }
 
 interface InitStoreState {
@@ -56,6 +65,9 @@ export interface ChartState {
   layout: Layout;
   options: Options;
   legend: Legend;
+  theme: Theme;
+  scale: ScaleData;
+  series: Series;
 }
 
 export interface StoreOptions {

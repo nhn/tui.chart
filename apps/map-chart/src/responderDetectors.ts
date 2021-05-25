@@ -1,5 +1,5 @@
 import { Point, Rect } from '@t/store';
-import { geoContains, GeoProjection } from 'd3-geo';
+import { ExtendedFeature, geoContains, GeoProjection } from 'd3-geo';
 import { GeoFeatureResponderModel } from '@t/components/geoFeature';
 import { RectResponderModel } from '@t/components/common';
 
@@ -42,6 +42,6 @@ export const responderDetectors: ResponderDetectors = {
     const { x: compX, y: compY } = componentRect;
     const mapCoordinate = projection?.invert?.([mousePosition.x - compX, mousePosition.y - compY]);
 
-    return mapCoordinate && geoContains(model.feature, mapCoordinate);
+    return mapCoordinate && geoContains(model.feature as ExtendedFeature, mapCoordinate);
   },
 };

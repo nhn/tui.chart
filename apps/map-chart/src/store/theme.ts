@@ -46,7 +46,6 @@ export const defaultSeriesTheme = {
   startColor: '#ffe98a',
   endColor: '#d74177',
   lineWidth: 1,
-  borderColor: '#ffffff',
 };
 
 const theme: StoreModule = {
