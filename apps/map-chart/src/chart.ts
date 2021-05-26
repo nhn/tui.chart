@@ -10,6 +10,7 @@ import * as rectBrush from '@src/brushes/rect';
 
 import Outline from '@src/component/outline';
 import Series from '@src/component/series';
+import HoveredSeries from '@src/component/hoveredSeries';
 import Legend from '@src/component/legend';
 import Title from '@src/component/title';
 import ZoomButton from '@src/component/zoomButton';
@@ -127,7 +128,7 @@ export default class MapChart {
     this.initStore();
     this.store.dispatch('initChartSize', this.containerEl);
 
-    [Title, ZoomButton, Outline, Series, Legend].forEach((component) => {
+    [Title, ZoomButton, Outline, Series, HoveredSeries, Legend].forEach((component) => {
       this.componentManager.add(component);
     });
 

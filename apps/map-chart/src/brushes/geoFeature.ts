@@ -26,6 +26,7 @@ export function series(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp
     areaCtx.fillStyle = color;
     areaCtx.fill();
   }
+  areaCtx.strokeStyle = '#333';
   areaCtx.stroke();
 
   ctx.drawImage(areaCanvas, x, y, width, height);
@@ -33,6 +34,7 @@ export function series(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp
 
 export function outline(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
   const { areaCtx, areaCanvas, x, y, width, height } = geoFeature(ctx, model, gp);
+  areaCtx.strokeStyle = '#bbb';
   areaCtx.stroke();
   ctx.drawImage(areaCanvas, x, y, width, height);
 }
