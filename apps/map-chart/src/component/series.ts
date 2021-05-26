@@ -30,6 +30,11 @@ export default class Series extends Component {
     this.eventBus.emit('renderHoveredSeries', { responders });
   }
 
+  // onMouseoutComponent() {
+  //   // current not working
+  //   this.eventBus.emit('resetHoveredSeries');
+  // }
+
   onClick({ responders }: { responders: GeoFeatureResponderModel[] }) {
     if (responders.length) {
       console.log(responders[0]);
