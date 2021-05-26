@@ -1,85 +1,48 @@
 import scale from '@src/store/scale';
-import { StateFunc } from '@t/store';
+import { InitStoreState } from '@t/store';
+import Store from '@src/store/store';
 
-it('should apply default options when legend options not exist', () => {
-  const state = (legend.state as StateFunc)({
-    options: { chart: { width: 800, height: 800 } },
-    data: [],
-  });
+const commonState = {
+  chart: { width: 800, height: 800 },
+  scale: {},
+};
 
-  expect(state.legend).toEqual({
-    visible: true,
-    align: 'bottom',
-    height: 50,
-    width: 150,
-  });
-});
+const initStoreState = {
+  data: [
+    { code: 'A', data: 100 },
+    { code: 'B', data: 30 },
+    { code: 'C', data: 50 },
+  ],
+} as InitStoreState;
 
-it('should not calculate legend options, when visible options is false', () => {
-  const state = (legend.state as StateFunc)({
-    options: { chart: { width: 800, height: 800 }, legend: { visible: false } },
-    data: [],
-  });
+describe('scale is determined by the align and size of legend', () => {
+  it('should use width, when vertical align is used', () => {
+    const state = {
+      ...commonState,
+      legend: { width: 150, height: 50, align: 'top' },
+    };
+    const store = { state, initStoreState } as Store;
+    scale.action!.setScale(store);
 
-  expect(state.legend).toEqual({
-    visible: false,
-  });
-});
-
-describe('legend have different rect depending on the align.', () => {
-  it('bottom', () => {
-    const state = (legend.state as StateFunc)({
-      options: { chart: { width: 800, height: 800 } },
-      data: [],
-    });
-
-    expect(state.legend).toEqual({
-      visible: true,
-      align: 'bottom',
-      height: 50,
-      width: 150,
+    expect(state.scale).toEqual({
+      limit: { min: 20, max: 100 },
+      stepCount: 4,
+      stepSize: 20,
     });
   });
 
-  it('top', () => {
-    const state = (legend.state as StateFunc)({
-      options: { chart: { width: 800, height: 800 }, legend: { align: 'top' } },
-      data: [],
-    });
+  it('should use height, when horizontal align is used', () => {
+    const state = {
+      ...commonState,
+      legend: { width: 50, height: 150, align: 'right' },
+    };
+    const store = { state, initStoreState } as Store;
+    scale.action!.setScale(store);
 
-    expect(state.legend).toEqual({
-      visible: true,
-      align: 'top',
-      height: 50,
-      width: 150,
-    });
-  });
-
-  it('left', () => {
-    const state = (legend.state as StateFunc)({
-      options: { chart: { width: 800, height: 800 }, legend: { align: 'left' } },
-      data: [],
-    });
-
-    expect(state.legend).toEqual({
-      visible: true,
-      align: 'left',
-      height: 150,
-      width: 50,
-    });
-  });
-
-  it('right', () => {
-    const state = (legend.state as StateFunc)({
-      options: { chart: { width: 800, height: 800 }, legend: { align: 'right' } },
-      data: [],
-    });
-
-    expect(state.legend).toEqual({
-      visible: true,
-      align: 'right',
-      height: 150,
-      width: 50,
+    expect(state.scale).toEqual({
+      limit: { min: 20, max: 100 },
+      stepCount: 4,
+      stepSize: 20,
     });
   });
 });

@@ -1,8 +1,9 @@
 import { ActionParams, Data, StoreModule } from '@t/store';
 import { getNormalizedScale, getRoughScale } from '@src/helpers/scale';
 import { extend, getLimitSafely } from '@toast-ui/shared';
+import { isVerticalAlign } from '@src/helpers/legend';
 
-function getScale(data: Data[], spectrumLegendWidth: number) {
+function getScale(data: Data[], legendSize: number) {
   const values = [
     ...new Set(
       data.reduce<number[]>((acc, cur) => {
@@ -11,7 +12,7 @@ function getScale(data: Data[], spectrumLegendWidth: number) {
     ),
   ];
   const dataRange = getLimitSafely(values);
-  const roughScale = getRoughScale(dataRange, spectrumLegendWidth);
+  const roughScale = getRoughScale(dataRange, legendSize);
 
   return getNormalizedScale(roughScale);
 }
@@ -23,7 +24,10 @@ const scale: StoreModule = {
   }),
   action: {
     setScale({ state, initStoreState }: ActionParams) {
-      extend(state.scale, getScale(initStoreState.data, state.legend.width));
+      const { align, width, height } = state.legend;
+      const legendSize = isVerticalAlign(align) ? width : height;
+
+      extend(state.scale, getScale(initStoreState.data, legendSize));
     },
   },
   observe: {
