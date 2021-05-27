@@ -1,9 +1,9 @@
-import { GeoPath } from 'd3-geo';
+import { GeoPath, GeoPermissibleObjects } from 'd3-geo';
 import { setSize } from '@src/helpers/painter';
 import { GeoFeatureModel } from '@t/components/geoFeature';
 
-export function geoFeature(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
-  const { feature, color } = model;
+function geoFeature(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
+  const feature = model.feature as GeoPermissibleObjects;
   const areaCanvas = document.createElement('canvas');
   const areaCtx = areaCanvas.getContext('2d')!;
   const [[x, y], [x2, y2]] = gp.bounds(feature);
@@ -16,12 +16,23 @@ export function geoFeature(ctx: CanvasRenderingContext2D, model: GeoFeatureModel
 
   gp.context(areaCtx)(feature);
 
-  areaCtx.lineWidth = 1;
+  return { areaCanvas, areaCtx, x, y, width, height };
+}
+
+export function series(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
+  const { color } = model;
+  const { areaCtx, areaCanvas, x, y, width, height } = geoFeature(ctx, model, gp);
   if (color) {
     areaCtx.fillStyle = color;
     areaCtx.fill();
   }
   areaCtx.stroke();
 
+  ctx.drawImage(areaCanvas, x, y, width, height);
+}
+
+export function outline(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
+  const { areaCtx, areaCanvas, x, y, width, height } = geoFeature(ctx, model, gp);
+  areaCtx.stroke();
   ctx.drawImage(areaCanvas, x, y, width, height);
 }

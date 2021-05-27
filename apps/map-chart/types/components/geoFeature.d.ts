@@ -1,7 +1,7 @@
-export interface GeoFeatureModel {
+import { SeriesData } from '@t/store';
+
+export interface GeoFeatureModel extends SeriesData {
   type: 'geoFeature';
-  color: string;
-  feature: any; // @TODO: set feature type after extracting geoJson data
 }
 
 export interface GeoFeatureResponderModel extends GeoFeatureModel {

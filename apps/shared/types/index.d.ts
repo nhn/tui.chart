@@ -1,4 +1,5 @@
 import { EventListener } from '@src/helpers/eventEmitter';
+import { RGB } from '@src/helpers/color';
 
 export class EventEmitter {
   public on(type: EventType, handler: EventListener): void;
@@ -83,3 +84,25 @@ export function notifyByPath<T extends Record<string, any>>(holder: T, namePath:
 export function computed(target: Record<string, any>, key: string, fn: Function);
 export function watch(holder: Record<string, any>, path: string, fn: Function): Function | null;
 export function makeObservableObjectToNormal(obj: any): any;
+
+// scale
+export function getLimitSafely(baseValues: number[], isXAxis = false): ValueEdge;
+export function getDigits(num: number): number;
+export function getNormalizedLimit(limit: ValueEdge, stepSize: number): ValueEdge;
+export function getNormalizedStep(stepSize: number): number;
+
+export interface ValueEdge {
+  max: number;
+  min: number;
+}
+
+// color
+export function getSpectrumColor(ratio: number, distances: RGB, startRGB: RGB): string;
+export function getColorRatio(limit: ValueEdge, value?: number | null): number | undefined;
+export function makeDistances(startRGB: RGB, endRGB: RGB): RGB;
+export function rgba(color: string, opacity = 1): string;
+export function getAlpha(str: string): number;
+export function getRGBA(str: string, opacity: number): string;
+export function rgbToHEX(r: number, g: number, b: number): string | boolean;
+export function hexToRGB(str: string): number[] | boolean;
+export type RGB = [number, number, number];

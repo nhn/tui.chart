@@ -1,4 +1,4 @@
-import { StoreModule } from '@t/store';
+import { ActionParams, StoreModule } from '@t/store';
 
 export const defaultSeriesTheme = {
   colors: [
@@ -46,7 +46,6 @@ export const defaultSeriesTheme = {
   startColor: '#ffe98a',
   endColor: '#d74177',
   lineWidth: 1,
-  borderColor: '#ffffff',
 };
 
 const theme: StoreModule = {
@@ -55,7 +54,7 @@ const theme: StoreModule = {
     theme: defaultSeriesTheme,
   }),
   action: {
-    initThemeState({ state }) {
+    initThemeState({ state }: ActionParams) {
       state.theme = defaultSeriesTheme;
     },
   },

@@ -4,6 +4,7 @@ import { StateFunc } from '@t/store';
 it('should apply default theme when options not exist', () => {
   const state = (theme.state as StateFunc)({
     options: {},
+    data: [],
   });
 
   expect(state.theme).toEqual({
@@ -52,6 +53,5 @@ it('should apply default theme when options not exist', () => {
     startColor: '#ffe98a',
     endColor: '#d74177',
     lineWidth: 1,
-    borderColor: '#ffffff',
   });
 });

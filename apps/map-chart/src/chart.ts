@@ -8,7 +8,8 @@ import { responderDetectors } from '@src/responderDetectors';
 import * as outlineBrush from '@src/brushes/geoFeature';
 import * as rectBrush from '@src/brushes/rect';
 
-import GeoFeature from '@src/component/geoFeature';
+import Outline from '@src/component/outline';
+import Series from '@src/component/series';
 import Legend from '@src/component/legend';
 import Title from '@src/component/title';
 import ZoomButton from '@src/component/zoomButton';
@@ -18,6 +19,7 @@ import theme from '@src/store/theme';
 import series from '@src/store/series';
 import layout from '@src/store/layout';
 import legend from '@src/store/legend';
+import scale from '@src/store/scale';
 
 export default class MapChart {
   store!: Store;
@@ -35,12 +37,12 @@ export default class MapChart {
   readonly eventBus: EventEmitter = new EventEmitter();
 
   constructor(props: ChartProps) {
-    const { el, options } = props;
+    const { el, options, data } = props;
 
     this.containerEl = el;
     this.el = this.createChartWrapper();
     this.containerEl.appendChild(this.el);
-    this.store = new Store({ options });
+    this.store = new Store({ options, data });
     this.componentManager = new ComponentManager({
       store: this.store,
       eventBus: this.eventBus,
@@ -118,17 +120,16 @@ export default class MapChart {
   }
 
   protected initStore() {
-    [root, theme, legend, series, layout].forEach((module) => this.store.setModule(module));
+    [root, theme, legend, scale, series, layout].forEach((module) => this.store.setModule(module));
   }
 
   protected initialize() {
     this.initStore();
     this.store.dispatch('initChartSize', this.containerEl);
 
-    this.componentManager.add(Title);
-    this.componentManager.add(ZoomButton);
-    this.componentManager.add(GeoFeature);
-    this.componentManager.add(Legend);
+    [Title, ZoomButton, Outline, Series, Legend].forEach((component) => {
+      this.componentManager.add(component);
+    });
 
     this.painter.addGroups([outlineBrush, rectBrush]);
   }

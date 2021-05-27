@@ -1,17 +1,68 @@
-import { StoreModule } from '@t/store';
-import { feature } from 'topojson-client';
-import worldJSONData from '../../data/world.json';
+import { ActionParams, Data, Series, StoreModule } from '@t/store';
+// import { feature } from 'topojson-client';
+// import worldJSONData from '../../data/world.json';
+import worldJSONData from '../../data/world-geo.json';
+import {
+  makeDistances,
+  hexToRGB,
+  RGB,
+  extend,
+  isNumber,
+  getColorRatio,
+  getSpectrumColor,
+} from '@toast-ui/shared';
+import { GeoFeature } from '@t/store';
+
+function getGeoFeature(geoFeatures: GeoFeature[], code: string): GeoFeature | undefined {
+  return geoFeatures.find(({ id }) => id === code);
+}
 
 function getGeoFeatures() {
-  return feature(worldJSONData, worldJSONData.objects.countries).features;
+  return worldJSONData.features as GeoFeature[];
+}
+
+function getSeries(userData: Data[]): Series {
+  const geoFeatures = getGeoFeatures();
+
+  return userData.map(({ code, data }) => ({
+    feature: getGeoFeature(geoFeatures, code),
+    data,
+  }));
 }
 
 const series: StoreModule = {
   name: 'series',
   state: () => ({
-    series: getGeoFeatures(),
+    outline: getGeoFeatures(),
+    series: [] as Series,
   }),
-  action: {},
+  action: {
+    setSeriesColor({ state, initStoreState }: ActionParams) {
+      const { data } = initStoreState;
+      const { theme, scale } = state;
+      const { startColor, endColor } = theme;
+
+      const seriesWithoutColor = getSeries(data);
+      const startRGB = hexToRGB(startColor) as RGB;
+      const distances = makeDistances(startRGB, hexToRGB(endColor) as RGB);
+
+      const seriesWithColor = seriesWithoutColor.map((seriesData) => {
+        if (isNumber(seriesData.data)) {
+          const colorRatio = getColorRatio(scale.limit, seriesData.data)!;
+          seriesData.color = getSpectrumColor(colorRatio, distances, startRGB);
+        }
+
+        return seriesData;
+      });
+
+      extend(state.series, seriesWithColor);
+    },
+  },
+  observe: {
+    updateSeriesObserve() {
+      this.dispatch('setSeriesColor');
+    },
+  },
 };
 
 export default series;
