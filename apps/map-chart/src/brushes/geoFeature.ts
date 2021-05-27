@@ -1,22 +1,47 @@
 import { GeoPath, GeoPermissibleObjects } from 'd3-geo';
-import { setSize } from '@src/helpers/painter';
 import { GeoFeatureModel } from '@t/components/geoFeature';
+import { setSize } from '@src/helpers/painter';
+
+const cachedGeoFeatureCanvasMap = {};
+
+function getGeoFeatureCanvasInfo(model: GeoFeatureModel, gp: GeoPath) {
+  const id = model.feature?.id;
+  const feature = model.feature as GeoPermissibleObjects;
+
+  if (id && cachedGeoFeatureCanvasMap[id]) {
+    return cachedGeoFeatureCanvasMap[id];
+  }
+
+  const areaCanvas = document.createElement('canvas');
+  const [[x, y], [x2, y2]] = gp.bounds(feature);
+  const width = Math.max(Math.ceil(x2 - x), 1);
+  const height = Math.max(Math.ceil(y2 - y), 1);
+
+  const areaCtx = areaCanvas.getContext('2d')!;
+  setSize(areaCanvas, areaCtx, width, height);
+  const geoFeatureCanvasInfo = { areaCanvas, areaCtx, x, y, width, height };
+
+  if (id) {
+    cachedGeoFeatureCanvasMap[id] = geoFeatureCanvasInfo;
+  }
+
+  return geoFeatureCanvasInfo;
+}
 
 function geoFeature(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
   const feature = model.feature as GeoPermissibleObjects;
-  const areaCanvas = document.createElement('canvas');
-  const areaCtx = areaCanvas.getContext('2d')!;
-  const [[x, y], [x2, y2]] = gp.bounds(feature);
-  const width = Math.max(x2 - x, 1);
-  const height = Math.max(y2 - y, 1);
-  setSize(areaCanvas, areaCtx, width, height);
 
-  areaCtx.beginPath();
+  const geoFeatureCanvasInfo = getGeoFeatureCanvasInfo(model, gp);
+  const { areaCtx, areaCanvas, x, y } = geoFeatureCanvasInfo;
+
+  areaCtx.clearRect(0, 0, areaCanvas.width, areaCanvas.height);
+  areaCtx.save();
   areaCtx.translate(-x, -y);
-
+  areaCtx.beginPath();
   gp.context(areaCtx)(feature);
+  areaCtx.restore();
 
-  return { areaCanvas, areaCtx, x, y, width, height };
+  return geoFeatureCanvasInfo;
 }
 
 export function series(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp: GeoPath) {
@@ -26,7 +51,7 @@ export function series(ctx: CanvasRenderingContext2D, model: GeoFeatureModel, gp
     areaCtx.fillStyle = color;
     areaCtx.fill();
   }
-  areaCtx.strokeStyle = '#333';
+  areaCtx.strokeStyle = '#666';
   areaCtx.stroke();
 
   ctx.drawImage(areaCanvas, x, y, width, height);

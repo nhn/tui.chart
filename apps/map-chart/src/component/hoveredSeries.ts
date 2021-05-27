@@ -2,7 +2,7 @@ import Component from './component';
 import { GeoFeatureModel, GeoFeatureResponderModel } from '@t/components/geoFeature';
 
 export default class HoveredSeries extends Component {
-  models!: GeoFeatureModel[];
+  models: GeoFeatureModel[] = [];
 
   responders!: GeoFeatureResponderModel[];
 
@@ -20,10 +20,17 @@ export default class HoveredSeries extends Component {
     this.rect = layout.map;
   }
 
+  private isSameResponders(responders: GeoFeatureResponderModel[]) {
+    return responders.length === this.models.length && responders[0] === this.models[0];
+  }
+
   renderHoveredSeries = ({ responders }: { responders: GeoFeatureResponderModel[] }) => {
     this.isShow = !!responders.length;
-    this.models = [...responders];
-    this.eventBus.emit('needDraw');
+
+    if (!this.isSameResponders(responders)) {
+      this.models = [...responders];
+      this.eventBus.emit('needDraw');
+    }
   };
 
   resetHoveredSeries = () => {
