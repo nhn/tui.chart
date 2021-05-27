@@ -46,7 +46,7 @@ chart.on('selectSeries', (ev) => {
 * 사용 가능 차트 타입: `All`
 
 ```ts
-public destory(): void;
+public destroy(): void;
 ```
 
 생성된 차트 인스턴스를 제거해준다.
