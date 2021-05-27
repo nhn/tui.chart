@@ -19,6 +19,8 @@ export default class Series extends Component {
     this.models = series.map((m) => ({ type: 'series', ...m }));
     this.responders = this.models.map((m) => ({
       ...m,
+      // @TODO: A darker color than the series color should be applied.
+      //  Will ask the designer about the default color and opacity.
       color: getRGBA(m?.color!, 1),
       responderType: 'geoFeature',
     }));
