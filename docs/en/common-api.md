@@ -47,7 +47,7 @@ chart.on('selectSeries', (ev) => {
 * Compatible with: `All`
 
 ```ts
-public destory(): void;
+public destroy(): void;
 ```
 
 Destroys the chart instance.
