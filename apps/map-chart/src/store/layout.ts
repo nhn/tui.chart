@@ -1,4 +1,4 @@
-import { ActionParams, Layout, Legend, Rect, StoreModule } from '@t/store';
+import { ActionParams, ChartOptions, Layout, Legend, Rect, StoreModule } from '@t/store';
 import { extend } from '@src/store/store';
 import { isVerticalAlign } from '@src/helpers/legend';
 
@@ -22,7 +22,7 @@ function calculateTitleLayout(chartWidth: number, zoomButtonRect: Rect) {
   };
 }
 
-function calculateLegendLayout(chartRect: Rect, headerRect: Rect, legend: Legend) {
+function calculateLegendLayout(chartRect: ChartOptions, headerRect: Rect, legend: Legend) {
   const titleEndYPoint = headerRect.y + headerRect.height;
   let x = 0;
   let y = titleEndYPoint;
@@ -79,7 +79,7 @@ const layout: StoreModule = {
       const title = calculateTitleLayout(width, zoomButton);
       const headerRect = calculateHeaderAreaRect(title, zoomButton);
       const map = calculateMapLayout(width, height, headerRect);
-      const legend = calculateLegendLayout(chart as Rect, headerRect, legendState);
+      const legend = calculateLegendLayout(chart, headerRect, legendState);
 
       extend(state.layout, {
         chart: { x: 0, y: 0, width, height },

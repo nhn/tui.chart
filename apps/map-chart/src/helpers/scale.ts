@@ -18,9 +18,7 @@ export function getRoughScale(dataRange: ValueEdge, offsetSize: number) {
 }
 
 export function getNormalizedStepCount(limitSize: number, stepSize: number) {
-  const multiplier = 1 / Math.min(getDigits(limitSize), getDigits(stepSize));
-
-  return Math.ceil((limitSize * multiplier) / (stepSize * multiplier));
+  return Math.ceil(limitSize / stepSize);
 }
 
 export function getNormalizedScale(scaleData: ScaleData): ScaleData {

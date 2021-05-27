@@ -4,13 +4,7 @@ import { extend, getLimitSafely } from '@toast-ui/shared';
 import { isVerticalAlign } from '@src/helpers/legend';
 
 function getScale(data: Data[], legendSize: number) {
-  const values = [
-    ...new Set(
-      data.reduce<number[]>((acc, cur) => {
-        return [...acc, cur.data];
-      }, [])
-    ),
-  ];
+  const values = [...new Set(data.map((datum) => datum.data))];
   const dataRange = getLimitSafely(values);
   const roughScale = getRoughScale(dataRange, legendSize);
 

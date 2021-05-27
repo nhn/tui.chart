@@ -1,5 +1,5 @@
 import Component from './component';
-import { GeoFeatureModel, GeoFeatureResponderModel } from '@t/components/geoFeature';
+import { GeoFeatureModel } from '@t/components/geoFeature';
 
 export default class Outline extends Component {
   models!: GeoFeatureModel[];
@@ -14,11 +14,5 @@ export default class Outline extends Component {
 
     this.rect = layout.map;
     this.models = outline.map((feature) => ({ type: 'outline', feature }));
-  }
-
-  onClick({ responders }: { responders: GeoFeatureResponderModel[] }) {
-    if (responders.length) {
-      console.log(responders[0]);
-    }
   }
 }
