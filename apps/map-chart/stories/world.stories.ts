@@ -25,7 +25,7 @@ function createMapChart({ align, data }) {
   const el = createContainer();
   const chart = new MapChart({
     el,
-    options: { chart: { width: 500, height: 500, type: 'world' }, legend: { align } },
+    options: { chart: { width: 800, height: 800, type: 'world' }, legend: { align } },
     data,
   });
 

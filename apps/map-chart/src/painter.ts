@@ -85,6 +85,7 @@ export default class Painter {
       canvas.addEventListener('mousedown', this.chart);
       canvas.addEventListener('mouseup', this.chart);
       canvas.addEventListener('mousemove', this.chart);
+      canvas.addEventListener('mouseout', this.chart);
 
       const ctx = canvas.getContext('2d');
 
