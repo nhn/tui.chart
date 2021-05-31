@@ -50,6 +50,8 @@ const series: StoreModule = {
       const seriesWithColor = seriesWithoutColor.map((seriesData) => {
         if (isNumber(seriesData.data)) {
           const colorRatio = getColorRatio(scale.limit, seriesData.data)!;
+          // @TODO: A darker color than the series color should be applied.
+          //  Will ask the designer about the default color and opacity.
           seriesData.color = getRGBA(getSpectrumColor(colorRatio, distances, startRGB), 0.7);
         }
 
