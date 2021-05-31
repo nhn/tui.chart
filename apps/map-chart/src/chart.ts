@@ -14,6 +14,7 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import Legend from '@src/component/legend';
 import Title from '@src/component/title';
 import ZoomButton from '@src/component/zoomButton';
+import Tooltip from '@src/component/tooltip';
 
 import root from '@src/store/root';
 import theme from '@src/store/theme';
@@ -44,6 +45,7 @@ export default class MapChart {
     this.el = this.createChartWrapper();
     this.containerEl.appendChild(this.el);
     this.store = new Store({ options, data });
+
     this.componentManager = new ComponentManager({
       store: this.store,
       eventBus: this.eventBus,
@@ -53,7 +55,6 @@ export default class MapChart {
       debounce(() => this.draw(), 10)
     );
     this.initialize();
-    this.store.observe(() => this.painter.setup());
 
     // @TODO need to be called from animator
     this.draw();
@@ -98,6 +99,8 @@ export default class MapChart {
       y: (clientY - canvasRect.top) / scaleY,
     };
 
+    const projection = this.painter.projection;
+
     this.componentManager.forEach((component) => {
       if (!component[delegationMethod]) {
         return;
@@ -112,11 +115,11 @@ export default class MapChart {
           mousePosition,
           model,
           componentRect: component.rect,
-          projection: this.painter.projection,
+          projection,
         });
       });
 
-      component[delegationMethod]({ mousePosition, responders: detected }, event);
+      component[delegationMethod]({ mousePosition, responders: detected, projection }, event);
     });
   }
 
@@ -128,7 +131,10 @@ export default class MapChart {
     this.initStore();
     this.store.dispatch('initChartSize', this.containerEl);
 
-    [Title, ZoomButton, Outline, Series, HoveredSeries, Legend].forEach((component) => {
+    this.store.observe(() => this.painter.setup());
+    this.store.dispatch('updateSeriesCentroid', { painter: this.painter });
+
+    [Title, ZoomButton, Outline, Series, HoveredSeries, Legend, Tooltip].forEach((component) => {
       this.componentManager.add(component);
     });
 
