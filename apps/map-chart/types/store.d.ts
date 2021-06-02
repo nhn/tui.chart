@@ -63,6 +63,10 @@ export interface Legend {
 
 interface GeoFeature extends GeoPermissibleObjects {
   id?: string;
+  properties?: {
+    name?: string;
+    id?: string;
+  };
 }
 
 export type SeriesData = {

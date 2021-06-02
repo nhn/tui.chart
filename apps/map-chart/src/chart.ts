@@ -135,7 +135,7 @@ export default class MapChart {
     this.store.dispatch('updateSeriesCentroid', { painter: this.painter });
 
     [Title, ZoomButton, Outline, Series, HoveredSeries, Legend, Tooltip].forEach((component) => {
-      this.componentManager.add(component);
+      this.componentManager.add(component, { chartEl: this.el });
     });
 
     this.painter.addGroups([outlineBrush, rectBrush]);
