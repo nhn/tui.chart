@@ -59,12 +59,6 @@ export function getDefaultTheme(globalFontFamily = 'Arial') {
         fontWeight: 'normal',
         color: '#ffffff',
       },
-      header: {
-        fontSize: 13,
-        fontFamily: `${globalFontFamily}, sans-serif`,
-        fontWeight: 'bold',
-        color: '#ffffff',
-      },
     },
   };
 }

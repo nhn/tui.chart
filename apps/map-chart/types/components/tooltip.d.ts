@@ -7,7 +7,6 @@ export type TooltipTheme = {
   borderWidth?: number;
   borderStyle?: string;
   borderRadius?: number;
-  header?: FontTheme;
   body?: FontTheme;
 };
 

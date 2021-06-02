@@ -1,6 +1,6 @@
 import { GeoFeatureResponderModel } from '@t/components/geoFeature';
-import { TooltipTheme } from '@toast-ui/chart/types/theme';
 import { getFontStyleString } from '@toast-ui/shared';
+import { TooltipTheme } from '@t/components/tooltip';
 
 function getSeriesNameTemplate(name: string, color: string) {
   return `<span class="toastui-chart-series-name">
