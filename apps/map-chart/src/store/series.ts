@@ -13,6 +13,8 @@ import {
   getRGBA,
 } from '@toast-ui/shared';
 import { GeoFeature } from '@t/store';
+import Painter from '@src/painter';
+import { GeoPermissibleObjects } from 'd3-geo';
 
 function getGeoFeature(geoFeatures: GeoFeature[], code: string): GeoFeature | undefined {
   return geoFeatures.find(({ id }) => id === code);
@@ -59,6 +61,16 @@ const series: StoreModule = {
       });
 
       extend(state.series, seriesWithColor);
+    },
+    updateSeriesCentroid({ state }: ActionParams, { painter }: { painter: Painter }) {
+      const { gp } = painter;
+
+      const seriesWithCentroid = state.series.map((m) => ({
+        ...m,
+        centroid: gp.centroid(m.feature as GeoPermissibleObjects),
+      }));
+
+      extend(state.series, seriesWithCentroid);
     },
   },
   observe: {

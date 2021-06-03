@@ -28,6 +28,7 @@ export default class Series extends Component {
 
   onMousemove({ responders }: { responders: GeoFeatureResponderModel[] }) {
     this.eventBus.emit('renderHoveredSeries', { responders });
+    this.eventBus.emit('renderTooltip', { responders });
   }
 
   onClick({ responders }: { responders: GeoFeatureResponderModel[] }) {

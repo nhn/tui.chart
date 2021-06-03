@@ -53,7 +53,6 @@ export interface StoreModule extends StoreOptions {
   name: 'root' | 'theme' | 'series' | 'layout' | 'legend' | 'scale';
 }
 
-
 export type ChartOptions = Pick<ChartInputOptions, 'title' | 'type'> & Size;
 export interface Legend {
   align: Align;
@@ -64,12 +63,17 @@ export interface Legend {
 
 interface GeoFeature extends GeoPermissibleObjects {
   id?: string;
+  properties?: {
+    name?: string;
+    id?: string;
+  };
 }
 
 export type SeriesData = {
   feature?: GeoFeature;
   data?: number;
   color?: string;
+  centroid?: [number, number];
 };
 
 export type Series = Array<SeriesData>;

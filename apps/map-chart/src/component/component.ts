@@ -6,7 +6,13 @@ import { ResponderModel } from '@t/responders';
 import { GeoFeatureModel } from '@t/components/geoFeature';
 import { RectModel } from '@t/components/common';
 
-export type ComponentType = 'component' | 'geoFeature' | 'legend' | 'zoomButton' | 'title';
+export type ComponentType =
+  | 'component'
+  | 'geoFeature'
+  | 'legend'
+  | 'zoomButton'
+  | 'title'
+  | 'tooltip';
 type ComponentModels = GeoFeatureModel[] | RectModel[];
 
 export default abstract class Component {

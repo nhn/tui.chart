@@ -1,5 +1,6 @@
 import { Story } from './types/story';
 import MapChart from '@src/index';
+import '@src/css/chart.css';
 
 export default {
   title: 'map chart/world',

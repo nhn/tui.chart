@@ -106,3 +106,16 @@ export function getRGBA(str: string, opacity: number): string;
 export function rgbToHEX(r: number, g: number, b: number): string | boolean;
 export function hexToRGB(str: string): number[] | boolean;
 export type RGB = [number, number, number];
+
+// tooltip
+export type FontTheme = {
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string | number;
+  color?: string;
+};
+export function getTranslateString(x: number, y: number): string;
+export function getFontStyleString(theme: FontTheme): string;
+
+// html sanitizer
+export function sanitizeHTML(html: string): string;
