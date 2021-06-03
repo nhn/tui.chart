@@ -63,7 +63,7 @@ const series: StoreModule = {
       extend(state.series, seriesWithColor);
     },
     updateSeriesCentroid({ state }: ActionParams, { painter }: { painter: Painter }) {
-      const gp = painter.gp;
+      const { gp } = painter;
 
       const seriesWithCentroid = state.series.map((m) => ({
         ...m,

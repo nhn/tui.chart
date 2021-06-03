@@ -3,7 +3,5 @@ export function findNodes(element: HTMLElement, selector: string) {
 }
 
 export function removeNode(node: Node) {
-  if (node.parentNode) {
-    node.parentNode.removeChild(node);
-  }
+  node.parentNode?.removeChild(node);
 }

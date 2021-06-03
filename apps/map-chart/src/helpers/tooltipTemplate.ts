@@ -2,6 +2,12 @@ import { GeoFeatureResponderModel } from '@t/components/geoFeature';
 import { getFontStyleString } from '@toast-ui/shared';
 import { TooltipTheme } from '@t/components/tooltip';
 
+function getBorderStyleString(theme: Required<TooltipTheme>) {
+  const { borderColor, borderWidth, borderRadius, borderStyle } = theme;
+
+  return `border: ${borderWidth}px ${borderStyle} ${borderColor};border-radius: ${borderRadius}px`;
+}
+
 function getSeriesNameTemplate(name: string, color: string) {
   return `<span class="toastui-chart-series-name">
     <i class="toastui-chart-icon" style="background: ${color}"></i>
@@ -27,8 +33,7 @@ export function getDefaultTemplate(
   body: string,
   theme: Required<TooltipTheme>
 ) {
-  const { borderColor, borderWidth, background, borderRadius, borderStyle } = theme;
-  const style = `border: ${borderWidth}px ${borderStyle} ${borderColor};border-radius: ${borderRadius}px;background: ${background};`;
+  const style = `${getBorderStyleString(theme)};background: ${theme.background};`;
 
   return `<div class="toastui-chart-tooltip" style="${style}">${body}</div>`;
 }
