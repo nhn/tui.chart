@@ -10,6 +10,11 @@ import { ExportMenuTheme, ExportMenuButtonTheme, FontTheme, ExportMenuPanelTheme
 import { getFontStyleString, getTranslateString } from '@src/helpers/style';
 
 const EXPORT_MENU_WIDTH = 140;
+const exportExtensions = {
+  IMAGES: ['png', 'jpeg'],
+  SPREAD_SHEETS: ['xls', 'csv'],
+};
+
 export const BUTTON_RECT_SIZE = 24;
 export interface DataToExport {
   series: Series;
@@ -64,15 +69,19 @@ export default class ExportMenu extends Component {
 
   onClickExportButton = (ev) => {
     const { id } = ev.target;
+    const isImageExtension = exportExtensions.IMAGES.includes(id);
+    const isSpreadSheetExtension = exportExtensions.SPREAD_SHEETS.includes(id);
 
-    if (id === 'png' || id === 'jpeg') {
+    if (isImageExtension) {
       const canvas = this.getCanvasExportBtnRemoved();
       execDownload(this.fileName, id, canvas.toDataURL(`image/${id}`, 1));
-    } else {
+    } else if (isSpreadSheetExtension) {
       downloadSpreadSheet(this.fileName, id, this.data);
     }
 
-    this.toggleExportMenu();
+    if (isImageExtension || isSpreadSheetExtension) {
+      this.toggleExportMenu();
+    }
   };
 
   applyExportButtonPanelStyle() {
