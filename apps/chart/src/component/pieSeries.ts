@@ -434,7 +434,7 @@ export default class PieSeries extends Component {
         ? this.getAliasSeriesColor(rawData, seriesRawData, pieIndex!)
         : this.getSeriesColor(rawData);
       const { data, name } = rawData;
-      if (!isNull(data)) {
+      if (!isNull(data) && data !== 0) {
         const degree = Math.max((data / total) * totalAngle, 1) * (clockwise ? 1 : -1);
         const percentValue = (data / total) * 100;
         const prevModel = sectorModels[sectorModels.length - 1];

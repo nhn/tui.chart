@@ -233,7 +233,7 @@ describe('basic', () => {
     expect(pieSeries.models.series).toEqual(result);
   });
 
-  it('shoule not make a model of null data', () => {
+  it('should not make a model of null data', () => {
     pieSeries.render(
       deepMergedCopy(chartState, {
         series: {
@@ -296,6 +296,42 @@ describe('basic', () => {
         drawingStartAngle: -90,
         totalAngle: 360,
         percentValue: 20,
+        lineWidth: 0,
+      },
+    ];
+
+    expect(pieSeries.models.series).toEqual(models);
+  });
+
+  it('should not make a model of zero value data', () => {
+    pieSeries.render(
+      deepMergedCopy(chartState, {
+        series: {
+          pie: {
+            data: [
+              { name: 'A', data: 50, color: '#aaa' },
+              { name: 'B', data: 0, color: '#bbb' },
+            ],
+          },
+        },
+      })
+    );
+
+    const models = [
+      {
+        color: 'rgba(170, 170, 170, 1)',
+        name: 'A',
+        radius: { inner: 0, outer: 50 },
+        degree: { start: 0, end: 360 },
+        style: [{ strokeStyle: 'rgba(0, 0, 0, 0)' }],
+        type: 'sector',
+        value: 50,
+        x: 50,
+        y: 50,
+        clockwise: true,
+        drawingStartAngle: -90,
+        totalAngle: 360,
+        percentValue: 100,
         lineWidth: 0,
       },
     ];
