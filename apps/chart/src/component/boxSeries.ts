@@ -732,15 +732,22 @@ export default class BoxSeries extends Component {
   }
 
   makeDataLabel(rect: RectModel, centerYAxis?: CenterYAxisData): RectDataLabel {
+    const { dataLabels } = this.theme;
+
     return {
       ...rect,
       direction: this.getDataLabelDirection(rect, centerYAxis),
       plot: { x: 0, y: 0, size: this.getOffsetSize() },
-      theme: omit(this.theme.dataLabels, 'stackTotal'),
+      theme: {
+        ...omit(dataLabels, 'stackTotal'),
+        color: dataLabels.useSeriesColor ? rect.color : dataLabels.color,
+      },
     };
   }
 
   makeDataLabelRangeData(rect: RectModel): RectDataLabel[] {
+    const { dataLabels } = this.theme;
+
     return (rect.value as RangeDataType<number>).reduce<RectDataLabel[]>(
       (acc, value, index) => [
         ...acc,
@@ -749,7 +756,10 @@ export default class BoxSeries extends Component {
           value,
           direction: this.getDataLabelRangeDataDirection(index % 2 === 0),
           plot: { x: 0, y: 0, size: this.getOffsetSize() },
-          theme: omit(this.theme.dataLabels, 'stackTotal'),
+          theme: {
+            ...omit(dataLabels, 'stackTotal'),
+            color: dataLabels.useSeriesColor ? rect.color : dataLabels.color,
+          },
         },
       ],
       []
