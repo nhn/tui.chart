@@ -9,7 +9,7 @@ module.exports = () => ({
   output: {
     filename: 'toastui-vue-chart.js',
     path: path.resolve(__dirname, 'dist'),
-    library: { name: 'toastui', type: 'commonjs2' },
+    library: { type: 'commonjs2' },
   },
   resolve: {
     extensions: ['.js'],
