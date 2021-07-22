@@ -257,17 +257,22 @@ export function getAxisTheme(theme: Theme, name: string) {
   return axisTheme;
 }
 
-function getRotationDegree(distance: number, labelWidth: number, labelHeight: number) {
+function getRotationDegree(
+  distance: number,
+  labelWidth: number,
+  labelHeight: number,
+  axisLayout: Rect
+) {
   let degree = 0;
 
   ANGLE_CANDIDATES.every((angle) => {
     const compareWidth = calculateRotatedWidth(angle, labelWidth, labelHeight);
     degree = angle;
 
-    return compareWidth > distance;
+    return compareWidth > distance || compareWidth / 2 > axisLayout.x;
   });
 
-  return distance < labelWidth ? degree : 0;
+  return distance < labelWidth || labelWidth / 2 > axisLayout.x ? degree : 0;
 }
 
 function hasYAxisMaxLabelLengthChanged(
@@ -396,9 +401,10 @@ export function makeRotationData(
   maxLabelWidth: number,
   maxLabelHeight: number,
   distance: number,
-  rotatable: boolean
+  rotatable: boolean,
+  axisLayout: Rect
 ): Required<RotationLabelData> {
-  const degree = getRotationDegree(distance, maxLabelWidth, maxLabelHeight);
+  const degree = getRotationDegree(distance, maxLabelWidth, maxLabelHeight, axisLayout);
 
   if (!rotatable || degree === 0) {
     return {
