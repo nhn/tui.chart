@@ -1,5 +1,5 @@
 import { Axes, AxisData, StoreModule } from '@t/store/store';
-import { HeatmapCategoriesType, HeatmapChartOptions } from '@t/options';
+import { HeatmapCategoriesType, HeatmapChartOptions, Rect } from '@t/options';
 import { AxisType } from '@src/component/axis';
 import {
   getAxisTheme,
@@ -22,10 +22,11 @@ type HeatmapStateProp = {
   categories: HeatmapCategoriesType;
   options: HeatmapChartOptions;
   theme: Required<AxisTheme>;
+  axisLayout?: Rect;
 };
 
 function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
-  const { categories, axisSize, options, theme } = stateProp;
+  const { categories, axisSize, axisLayout, options, theme } = stateProp;
   const isLabelAxis = axisType === AxisType.X;
   const axisName = isLabelAxis ? 'x' : 'y';
   const dateType = isDateType(options, axisType);
@@ -80,7 +81,8 @@ function getHeatmapAxisData(stateProp: HeatmapStateProp, axisType: AxisType) {
       maxLabelWidth,
       maxLabelHeight,
       distance,
-      getRotatableOption(options)
+      getRotatableOption(options),
+      axisLayout!
     );
     const { needRotateLabel, rotationHeight } = rotationData;
     const maxHeight = (needRotateLabel ? rotationHeight : maxLabelHeight) + offsetY;
@@ -114,11 +116,22 @@ const axes: StoreModule = {
       const options = state.options as HeatmapChartOptions;
 
       const xAxisData = getHeatmapAxisData(
-        { axisSize: width, categories, options, theme: getAxisTheme(theme, AxisType.X) },
+        {
+          axisSize: width,
+          categories,
+          options,
+          theme: getAxisTheme(theme, AxisType.X),
+          axisLayout: layout[AxisType.X],
+        },
         AxisType.X
       );
       const yAxisData = getHeatmapAxisData(
-        { axisSize: height, categories, options, theme: getAxisTheme(theme, AxisType.Y) },
+        {
+          axisSize: height,
+          categories,
+          options,
+          theme: getAxisTheme(theme, AxisType.Y),
+        },
         AxisType.Y
       );
       const axesState = { xAxis: xAxisData, yAxis: yAxisData } as Axes;

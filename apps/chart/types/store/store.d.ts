@@ -477,6 +477,7 @@ export type LabelAxisData = BaseAxisData & {
   labelDistance: number;
   rectResponderCount: number;
   labelRange?: ValueEdge;
+  layout?: Rect;
 };
 
 export type ValueAxisData = BaseAxisData & {

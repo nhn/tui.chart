@@ -327,12 +327,25 @@ function getSecondaryYAxisData({
       });
 }
 
-function makeXAxisData({ axisData, axisSize, centerYAxis, rotatable, labelMargin = 0 }): AxisData {
+function makeXAxisData({
+  axisData,
+  axisSize,
+  axisLayout,
+  centerYAxis,
+  rotatable,
+  labelMargin = 0,
+}): AxisData {
   const { viewLabels, pointOnColumn, maxLabelWidth, maxLabelHeight } = axisData;
   const offsetY = getAxisLabelAnchorPoint(maxLabelHeight) + labelMargin;
   const size = centerYAxis ? centerYAxis.xAxisHalfSize : axisSize;
   const distance = size / (viewLabels.length - (pointOnColumn ? 0 : 1));
-  const rotationData = makeRotationData(maxLabelWidth, maxLabelHeight, distance, rotatable);
+  const rotationData = makeRotationData(
+    maxLabelWidth,
+    maxLabelHeight,
+    distance,
+    rotatable,
+    axisLayout
+  );
   const { needRotateLabel, rotationHeight } = rotationData;
   const maxHeight = (needRotateLabel ? rotationHeight : maxLabelHeight) + offsetY;
 
@@ -463,6 +476,7 @@ const axes: StoreModule = {
         xAxis: makeXAxisData({
           axisData: labelOnYAxis ? valueAxisData : labelAxisData,
           axisSize: labelOnYAxis ? valueAxisSize : labelAxisSize,
+          axisLayout: layout.xAxis,
           centerYAxis,
           rotatable: getRotatableOption(options),
           labelMargin: options.xAxis?.label?.margin,
