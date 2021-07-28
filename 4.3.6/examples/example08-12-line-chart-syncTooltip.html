@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
+    <title>8.12 [Line Chart] Tooltip Sync</title>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/common-api.md" target="_blank">here</a>
+      <br />
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area1"></div>
+        <div id="chart-area2"></div>
+        <div id="chart-area3"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
+        </div>
+        <div class="try-it-area">
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="../dist/toastui-chart.js"></script>
+    <script class="code-js" id="code-js" type="text/babel">
+      const el1 = document.getElementById('chart-area1');
+      const el2 = document.getElementById('chart-area2');
+      const el3 = document.getElementById('chart-area3');
+
+      const data = {
+        categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+        series: [
+          {
+            name: 'A',
+            data: [10, 100, 50, 40, 70, 55, 33, 70, 90, 110],
+          },
+          {
+            name: 'B',
+            data: [60, 40, 10, 33, 70, 90, 100, 17, 40, 80],
+          },
+        ],
+      };
+      const options = {
+        chart: { title: '24-hr Average Temperature', width: 700, height: 300 },
+        xAxis: {
+          title: 'Month',
+        },
+        yAxis: {
+          title: 'Amount',
+        },
+        tooltip: {
+          formatter: (value) => `${value}°C`,
+        },
+        legend: {
+          align: 'bottom',
+        },
+        series: {
+          shift: true,
+          eventDetectType: 'grouped',
+        },
+      };
+
+      const chart = toastui.Chart.lineChart({ el: el1, data, options });
+      const chart2 = toastui.Chart.lineChart({ el: el2, data, options });
+      const chart3 = toastui.Chart.lineChart({ el: el3, data, options });
+
+      chart.on('hoverSeries', (ev) => {
+        const { index, seriesIndex } = ev[0];
+
+        chart2.showTooltip({ index, seriesIndex });
+        chart3.showTooltip({ index, seriesIndex });
+      });
+
+      chart.on('unhoverSeries', () => {
+        chart2.hideTooltip();
+        chart3.hideTooltip();
+      });
+
+      chart2.on('hoverSeries', (ev) => {
+        const { index, seriesIndex } = ev[0];
+
+        chart.showTooltip({ index, seriesIndex });
+        chart3.showTooltip({ index, seriesIndex });
+      });
+
+      chart2.on('unhoverSeries', () => {
+        chart.hideTooltip();
+        chart3.hideTooltip();
+      });
+
+      chart3.on('hoverSeries', (ev) => {
+        const { index, seriesIndex } = ev[0];
+
+        chart.showTooltip({ index, seriesIndex });
+        chart2.showTooltip({ index, seriesIndex });
+      });
+
+      chart3.on('unhoverSeries', () => {
+        chart.hideTooltip();
+        chart2.hideTooltip();
+      });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.js"></script>
+    <script src="./js/example.js" type="text/babel"></script>
+  </body>
+</html>

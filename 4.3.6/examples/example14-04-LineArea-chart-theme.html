@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
+    <title>14.4 [LineArea Chart] Theme</title>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-lineArea.md" target="_blank">here</a>
+      <br />
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
+        </div>
+        <div class="try-it-area">
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="../dist/toastui-chart.js"></script>
+    <script class="code-js" id="code-js" type="text/babel">
+      const el = document.getElementById('chart-area');
+      const data = {
+        categories: [
+          '2020.01',
+          '2020.02',
+          '2020.03',
+          '2020.04',
+          '2020.05',
+          '2020.06',
+          '2020.07',
+          '2020.08',
+          '2020.09',
+          '2020.10',
+          '2020.11',
+          '2020.12',
+          '2021.01',
+          '2021.02',
+          '2021.03',
+          '2021.04',
+          '2021.05',
+          '2021.06',
+          '2021.07',
+          '2021.08',
+          '2021.09',
+          '2021.10',
+          '2021.11',
+          '2021.12',
+        ],
+        series: {
+          area: [
+            {
+              name: 'Effective Load',
+              data: [
+                150,
+                130,
+                100,
+                125,
+                128,
+                110,
+                134,
+                162,
+                120,
+                90,
+                98,
+                143,
+                142,
+                124,
+                113,
+                129,
+                118,
+                120,
+                145,
+                172,
+                110,
+                70,
+                68,
+                103,
+              ],
+            },
+          ],
+          line: [
+            {
+              name: 'Power Usage',
+              data: [
+                72,
+                80,
+                110,
+                107,
+                126,
+                134,
+                148,
+                152,
+                130,
+                120,
+                114,
+                127,
+                90,
+                72,
+                130,
+                117,
+                129,
+                137,
+                134,
+                160,
+                121,
+                110,
+                114,
+                117,
+              ],
+            },
+          ],
+        },
+      };
+      const theme = {
+        series: {
+          line: {
+            colors: ['#957DAD'],
+            hover: {
+              dot: {
+                radius: 8,
+              },
+            },
+          },
+          area: {
+            colors: ['#FEE333'],
+            areaOpacity: 0.4,
+            lineWidth: 5,
+          },
+        },
+      };
+
+      const options = {
+        chart: { title: 'Energy Usage', width: 900, height: 500 },
+        xAxis: {
+          title: 'Month',
+          date: { format: 'yy/MM' },
+        },
+        yAxis: {
+          title: 'Energy (kWh)',
+        },
+        tooltip: {
+          formatter: (value) => `${value}kWh`,
+        },
+        theme,
+      };
+
+      const chart = toastui.Chart.lineAreaChart({ el, data, options });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.js"></script>
+    <script src="./js/example.js" type="text/babel"></script>
+  </body>
+</html>
