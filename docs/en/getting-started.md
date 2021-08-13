@@ -158,6 +158,6 @@ const options = {
 };
 
 const chart = chart.barChart({ el, data, options });
-const chart = new BarChart({ el, data, options }); // Second way
+// const chart = new BarChart({ el, data, options }); // Second way
 ```
 ![image](https://user-images.githubusercontent.com/35371660/105698632-79769d00-5f49-11eb-8ae5-0d0f648f9ac6.png)
