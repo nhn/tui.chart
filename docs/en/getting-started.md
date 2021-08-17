@@ -64,11 +64,13 @@ The TOAST UI Chart can be used by creating an instance with the constructor func
 
 ```js
 /* namespace */
-const chart = toastui.Chart;
-
+const Chart = toastui.Chart;
+```
+```js
 /* CommonJS in Node.js */
-const chart = require('@toast-ui/chart');
-
+const Chart = require('@toast-ui/chart');
+```
+```js
 /* ES6 in Node.js */
 import Chart from '@toast-ui/chart';
 import { BarChart } from '@toast-ui/chart';
@@ -155,8 +157,7 @@ const options = {
   chart: { width: 700, height: 400 },
 };
 
-const chart = chart.barChart({ el, data, options });
-// or
-const chart = new BarChart({ el, data, options });
+const chart = Chart.barChart({ el, data, options });
+// const chart = new BarChart({ el, data, options }); // Second way
 ```
 ![image](https://user-images.githubusercontent.com/35371660/105698632-79769d00-5f49-11eb-8ae5-0d0f648f9ac6.png)

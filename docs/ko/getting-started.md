@@ -62,11 +62,13 @@ TOAST UI 차트는 생성자 함수를 통해 인스턴스를 생성할 수 있�
 
 ```js
 /* namespace */
-const chart = toastui.Chart;은
-
+const Chart = toastui.Chart;
+```
+```js
 /* Node.js의 CommonJS */
-const chart = require('@toast-ui/chart');
-
+const Chart = require('@toast-ui/chart');
+```
+```js
 /* Node.js의 ES6 */
 import Chart from '@toast-ui/chart';
 import { BarChart } from '@toast-ui/chart';
@@ -153,8 +155,7 @@ const options = {
   chart: { width: 700, height: 400 },
 };
 
-const chart = chart.barChart({ el, data, options });
-// 혹
-const chart = new BarChart({ el, data, options });
+const chart = Chart.barChart({ el, data, options });
+// const chart = new BarChart({ el, data, options }); // 두 번째 방법
 ```
 ![image](https://user-images.githubusercontent.com/35371660/105698632-79769d00-5f49-11eb-8ae5-0d0f648f9ac6.png)
