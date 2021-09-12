@@ -63,7 +63,6 @@ import { BarChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *       @param {number} [props.options.series.barWidth] - Bar width.
  *       @param {boolean} [props.options.series.diverging] - Whether to use diverging chart or not.
- *       @param {boolean} [props.options.series.colorByPoint] - Whether to use color feature or not.
  *       @param {Object} [props.options.series.stack] - Option to use the stack chart or, if so, what type of stack to use.
  *       @param {string} [props.options.series.eventDetectType] - Event detect type. 'grouped', 'point' is available.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.

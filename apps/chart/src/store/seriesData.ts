@@ -29,6 +29,7 @@ import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate
 import { isZooming } from '@src/helpers/range';
 import { message } from '@src/message';
 import { hasNestedPieSeries } from '@src/helpers/pieSeries';
+import { checkBarLikeSeries } from '@src/helpers/boxSeries';
 import { extend } from '@src/store/store';
 
 function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
@@ -83,6 +84,17 @@ function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeD
   });
 
   return [start, end];
+}
+
+function getSeriesColors(
+  colors: string[],
+  colorIndex: number,
+  size: number,
+  isColorByCategories: boolean
+) {
+  return isColorByCategories
+    ? colors.slice(colorIndex, size + 1)
+    : colors[colorIndex % colors.length];
 }
 
 function getSeriesDataInRange(
@@ -173,15 +185,28 @@ const seriesData: StoreModule = {
       const rawSeries = deepCopy(initStoreState.series);
       const { disabledSeries, theme, zoomRange, rawCategories } = state;
       const newSeriesData = {};
+      let colorIndex = 0;
 
       Object.keys(rawSeries).forEach((seriesName) => {
         const { colors, iconTypes } = theme.series![seriesName];
-        let originSeriesData = rawSeries[seriesName].map((m, idx) => ({
-          ...m,
-          rawData: m.data,
-          data: getSeriesDataInRange(m.data, rawCategories, seriesName, zoomRange),
-          color: colors ? colors[idx % colors.length] : '',
-        }));
+
+        let originSeriesData = rawSeries[seriesName].map((m) => {
+          const isColorByCategories = !!m.colorByCategories;
+          const size = isColorByCategories ? m.data.length : 1;
+
+          const color = colors
+            ? getSeriesColors(colors, colorIndex, colorIndex + size, isColorByCategories)
+            : '';
+
+          colorIndex += size;
+
+          return {
+            ...m,
+            rawData: m.data,
+            data: getSeriesDataInRange(m.data, rawCategories, seriesName, zoomRange),
+            color,
+          };
+        });
 
         if (seriesName === 'scatter') {
           originSeriesData = originSeriesData.map((m, idx) => ({

@@ -260,6 +260,8 @@ export type LegendDataList = Array<
     | 'rowIndex'
     | 'columnIndex'
     | 'viewLabel'
+    | 'colorIndex'
+    | 'colorByCategories'
   > & {
     width: number;
   }

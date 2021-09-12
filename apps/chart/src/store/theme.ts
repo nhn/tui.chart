@@ -109,6 +109,10 @@ function getThemeOptionsWithSeriesName(
   return seriesTheme;
 }
 
+function getColors(isColorByPoint, idx, series) {
+  return isColorByPoint ? series[idx].data.length : series.length;
+}
+
 function setColors(
   theme: Theme,
   series: RawSeries,
@@ -123,9 +127,11 @@ function setColors(
   const themeNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
 
   themeNames.forEach((name, idx) => {
+    const isColorByCategories = !!series[name][idx].colorByCategories;
     const size = isNestedPieChart
       ? (series.pie as NestedPieSeriesType[])[idx].data.length
-      : series[name].length;
+      : getColors(isColorByCategories, idx, series[name]);
+
     const target = isNestedPieChart ? theme.series.pie! : theme.series;
 
     if (!target[name]?.colors) {

@@ -105,3 +105,8 @@ export function calibrateBoxStackDrawingValue(
 
   return result;
 }
+
+export function checkBarLikeSeries(seriesName: string) {
+  // @todo we have to change series names constantly in whole project
+  return seriesName === 'bar' || seriesName === 'column';
+}

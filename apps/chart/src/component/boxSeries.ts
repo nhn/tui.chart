@@ -425,7 +425,7 @@ export default class BoxSeries extends Component {
     const seriesModels: RectModel[] = [];
     const padding = (tickDistance - columnWidth * (validDiverging ? 1 : seriesLength)) / 2;
 
-    seriesData.forEach(({ data, color: seriesColor, name }, seriesIndex) => {
+    seriesData.forEach(({ data, color: seriesColor, name, colorByCategories }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;
       const isLBSideWithDiverging = diverging && isLeftBottomSide(seriesIndex);
 
@@ -434,7 +434,10 @@ export default class BoxSeries extends Component {
       data.forEach((value, index) => {
         const dataStart = seriesPos + index * tickDistance;
         const barLength = this.makeBarLength(value, renderOptions);
-        const color = this.getSeriesColor(name, seriesColor);
+        const color = this.getSeriesColor(
+          name,
+          colorByCategories ? seriesColor[index] : (seriesColor as string)
+        );
 
         if (isNumber(barLength)) {
           const startPosition = this.getStartPosition(
@@ -534,7 +537,7 @@ export default class BoxSeries extends Component {
   ): TooltipData[] {
     const tooltipData: TooltipData[] = [];
 
-    seriesData.forEach(({ data, name, color }) => {
+    seriesData.forEach(({ data, name, color, colorByCategories }) => {
       data.forEach((value, dataIndex) => {
         if (!isNull(value)) {
           const barLength = this.makeBarLength(value, renderOptions);
@@ -542,7 +545,7 @@ export default class BoxSeries extends Component {
           if (isNumber(barLength)) {
             tooltipData.push({
               label: name,
-              color,
+              color: colorByCategories ? color[dataIndex] : (color as string),
               value: this.getTooltipValue(value),
               category: categories.length ? categories[dataIndex] : '',
             });

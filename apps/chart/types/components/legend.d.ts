@@ -15,6 +15,8 @@ type LegendData = {
   useScatterChartIcon?: boolean;
   rowIndex: number;
   columnIndex: number;
+  colorIndex?: number;
+  colorByCategories?: boolean;
 } & Point;
 
 export type LegendModel = {

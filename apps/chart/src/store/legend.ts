@@ -50,6 +50,8 @@ type LegendLabelsInfo = {
   checked: boolean;
   viewLabel: string;
   width: number;
+  colorByCategories?: boolean;
+  colorIndex?: number;
 }[];
 
 type LegendInfo = {
@@ -300,15 +302,22 @@ function getViewLabelInfo(legendInfo: LegendInfo, label: string, maxTextLength?:
 
 function getLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo): LegendLabelsInfo {
   const maxTextLengthWithEllipsis = getMaxTextLengthWithEllipsis(legendInfo);
+  let colorIndex = 0;
 
   return Object.keys(series).flatMap((type) =>
-    series[type].map(({ name, colorValue, visible }) => {
+    series[type].map((m) => {
+      const { name, colorValue, visible, colorByCategories, data } = m;
       const label = colorValue ? colorValue : name;
+      const currentColorIndex = colorIndex;
       const { width, viewLabel } = getViewLabelInfo(legendInfo, label, maxTextLengthWithEllipsis);
+
+      colorIndex += colorByCategories ? data.length : 1;
 
       return {
         label,
         type,
+        colorByCategories: !!colorByCategories,
+        colorIndex: currentColorIndex,
         checked: visible ?? true,
         viewLabel,
         width,
@@ -338,10 +347,15 @@ function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
     []
   );
 
-  return data.map((datum, idx) => ({
-    ...datum,
-    color: colors[idx],
-  }));
+  return data.map((datum, idx) => {
+    const { colorByCategories, colorIndex } = datum;
+    const index = colorByCategories && !isUndefined(colorIndex) ? colorIndex : idx;
+
+    return {
+      ...datum,
+      color: colorByCategories ? '#aaa' : colors[index],
+    };
+  });
 }
 
 function getLegendState(options: Options, series: RawSeries): Legend {
@@ -367,17 +381,21 @@ function getLegendState(options: Options, series: RawSeries): Legend {
     ? getNestedPieLegendLabelsInfo(series, legendInfo)
     : getLegendLabelsInfo(series, legendInfo);
 
-  const data = legendLabelsInfo.map(({ label, type, checked, width, viewLabel }) => ({
-    label,
-    active: true,
-    checked,
-    width,
-    iconType: getIconType(type),
-    chartType: type,
-    rowIndex: 0,
-    columnIndex: 0,
-    viewLabel,
-  }));
+  const data = legendLabelsInfo.map(
+    ({ label, type, checked, width, viewLabel, colorByCategories, colorIndex }) => ({
+      label,
+      active: true,
+      checked,
+      width,
+      iconType: getIconType(type),
+      chartType: type,
+      rowIndex: 0,
+      columnIndex: 0,
+      viewLabel,
+      colorByCategories,
+      colorIndex,
+    })
+  );
 
   return {
     useSpectrumLegend,
