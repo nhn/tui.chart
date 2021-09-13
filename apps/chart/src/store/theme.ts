@@ -127,7 +127,7 @@ function setColors(
   const themeNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
 
   themeNames.forEach((name, idx) => {
-    const isColorByCategories = !!series[name][idx].colorByCategories;
+    const isColorByCategories = !!series[name][idx]?.colorByCategories;
     const size = isNestedPieChart
       ? (series.pie as NestedPieSeriesType[])[idx].data.length
       : getColors(isColorByCategories, idx, series[name]);

@@ -428,6 +428,7 @@ export default class BoxSeries extends Component {
     seriesData.forEach(({ data, color: seriesColor, name, colorByCategories }, seriesIndex) => {
       const seriesPos = (diverging ? 0 : seriesIndex) * columnWidth + padding;
       const isLBSideWithDiverging = diverging && isLeftBottomSide(seriesIndex);
+      const colorLength = colorByCategories ? seriesColor.length : 1;
 
       this.isRangeData = isRangeData(data);
 
@@ -436,7 +437,7 @@ export default class BoxSeries extends Component {
         const barLength = this.makeBarLength(value, renderOptions);
         const color = this.getSeriesColor(
           name,
-          colorByCategories ? seriesColor[index] : (seriesColor as string)
+          colorByCategories ? seriesColor[index % colorLength] : (seriesColor as string)
         );
 
         if (isNumber(barLength)) {
