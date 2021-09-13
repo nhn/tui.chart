@@ -307,6 +307,7 @@ export interface TreemapSeriesData {
 }
 
 export type Categories = string[] | HeatmapCategoriesType;
+export type DefaultCategories = Exclude<Categories, HeatmapCategoriesType>;
 
 export type ChartOptions = {
   title?: string | TitleOption;

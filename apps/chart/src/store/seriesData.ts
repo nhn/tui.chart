@@ -29,7 +29,6 @@ import { getCoordinateXValue, isCoordinateSeries } from '@src/helpers/coordinate
 import { isZooming } from '@src/helpers/range';
 import { message } from '@src/message';
 import { hasNestedPieSeries } from '@src/helpers/pieSeries';
-import { checkBarLikeSeries } from '@src/helpers/boxSeries';
 import { extend } from '@src/store/store';
 
 function initRange(series: RawSeries, categories?: Categories): RangeDataType<number> {
@@ -92,9 +91,7 @@ function getSeriesColors(
   size: number,
   isColorByCategories: boolean
 ) {
-  return isColorByCategories
-    ? colors.slice(colorIndex, size + 1)
-    : colors[colorIndex % colors.length];
+  return isColorByCategories ? colors.slice(0, size + 1) : colors[colorIndex % colors.length];
 }
 
 function getSeriesDataInRange(
@@ -192,10 +189,10 @@ const seriesData: StoreModule = {
 
         let originSeriesData = rawSeries[seriesName].map((m) => {
           const isColorByCategories = !!m.colorByCategories;
-          const size = isColorByCategories ? m.data.length : 1;
+          const size = isColorByCategories ? (rawCategories as string[]).length : 1;
 
           const color = colors
-            ? getSeriesColors(colors, colorIndex, colorIndex + size, isColorByCategories)
+            ? getSeriesColors(colors, colorIndex, size, isColorByCategories)
             : '';
 
           colorIndex += size;

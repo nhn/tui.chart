@@ -179,7 +179,18 @@ export const budgetData = {
     {
       name: 'Budget',
       data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
-      colorByCategories: true,
+    },
+    {
+      name: 'Income',
+      data: [8000, 4000, 7000, 2000, 6000, 3000, 5000],
+    },
+    {
+      name: 'Expenses',
+      data: [4000, 4000, 6000, 3000, 4000, 5000, 7000],
+    },
+    {
+      name: 'Debt',
+      data: [3000, 4000, 3000, 1000, 2000, 4000, 3000],
     },
   ],
 };
@@ -2190,22 +2201,18 @@ export const temperatureAverageData = {
       {
         name: 'Seoul',
         data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9],
-        colorByCategories: true,
       },
       {
         name: 'NewYork',
         data: [9.9, 16.0, 21.2, 24.2, 23.2, 19.4, 13.3],
-        colorByCategories: true,
       },
       {
         name: 'Sydney',
         data: [18.3, 15.2, 12.8, 11.8, 13.0, 15.2, 17.6],
-        colorByCategories: true,
       },
       {
         name: 'Moscow',
         data: [4.4, 12.2, 16.3, 18.5, 16.7, 10.9, 4.2],
-        colorByCategories: true,
       },
     ],
     line: [
