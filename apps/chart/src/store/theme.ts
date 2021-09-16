@@ -131,8 +131,9 @@ function setColors(
   ];
   const themeNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
   themeNames.forEach((name, idx) => {
-    const filteredSeries = series[name].filter(
-      <T extends ChartSeries, K extends BoxType>(themeSeries: T[K]) => themeSeries.colorByCategories
+    const themeSeries = series[name] || [];
+    const filteredSeries = themeSeries.filter(
+      <T extends ChartSeries, K extends BoxType>(chartSeries: T[K]) => chartSeries.colorByCategories
     );
     const hasColorByCategories = filteredSeries.length > 0;
     let size;
@@ -140,9 +141,9 @@ function setColors(
     if (isNestedPieChart) {
       size = (series.pie as NestedPieSeriesType[])[idx].data.length;
     } else if (hasColorByCategories) {
-      const rejectedSeries = series[name].filter(
-        <T extends ChartSeries, K extends BoxType>(themeSeries: T[K]) =>
-          !themeSeries.colorByCategories
+      const rejectedSeries = themeSeries.filter(
+        <T extends ChartSeries, K extends BoxType>(chartSeries: T[K]) =>
+          !chartSeries.colorByCategories
       );
       size = rejectedSeries.length + categories.length;
     } else {
