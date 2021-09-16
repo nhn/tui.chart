@@ -48,7 +48,7 @@ import { BarChartProps, SelectSeriesInfo } from '@t/charts';
  *     @param {Array<string>} props.data.categories - Categories.
  *     @param {Array<Object>} props.data.series - Series data.
  *       @param {string} props.data.series.name - Series name.
- *       @param {string} props.data.series.colorByCategories - Paint to Rect with color based on categories.
+ *       @param {string} props.data.series.colorByCategories - Paint Rect with color based on categories.
  *       @param {Array<number|Array<number>>} props.data.series.data - Series data.
  *   @param {Object} [props.options] - Options for making Bar Chart.
  *     @param {Object} [props.options.chart]

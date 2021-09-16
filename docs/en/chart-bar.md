@@ -187,9 +187,9 @@ If you create a chart by applying the above option, you can see that the checkbo
 
 ![image](https://user-images.githubusercontent.com/35371660/108007745-0ccf5980-7042-11eb-8eb8-ae7ed497c939.png)
 
-## colorByCategories 옵션
+## colorByCategories
 
-Each `series` can have `colorByCategories` option. The `colorByCategories` option determines whether to paint the bar color of the chart differently based on the categories. The default is `false`.
+Each `series` can have `colorByCategories` option. The `colorByCategories` option determines whether to paint the bar color of the chart differently based on the categories. The default value is `false`.
 
 ```js
 const data = {

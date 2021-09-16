@@ -187,8 +187,8 @@ const seriesData: StoreModule = {
       Object.keys(rawSeries).forEach((seriesName) => {
         const { colors, iconTypes } = theme.series![seriesName];
 
-        let originSeriesData = rawSeries[seriesName].map((m) => {
-          const isColorByCategories = !!m.colorByCategories;
+        let originSeriesData = rawSeries[seriesName].map((series) => {
+          const isColorByCategories = !!series.colorByCategories;
           const size = isColorByCategories ? (rawCategories as string[]).length : 1;
 
           const color = colors
@@ -198,16 +198,16 @@ const seriesData: StoreModule = {
           colorIndex += size;
 
           return {
-            ...m,
-            rawData: m.data,
-            data: getSeriesDataInRange(m.data, rawCategories, seriesName, zoomRange),
+            ...series,
+            rawData: series.data,
+            data: getSeriesDataInRange(series.data, rawCategories, seriesName, zoomRange),
             color,
           };
         });
 
         if (seriesName === 'scatter') {
-          originSeriesData = originSeriesData.map((m, idx) => ({
-            ...m,
+          originSeriesData = originSeriesData.map((series, idx) => ({
+            ...series,
             iconType: iconTypes ? iconTypes[idx] : 'circle',
           }));
         }

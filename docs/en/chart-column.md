@@ -187,7 +187,7 @@ If you create a chart by applying the above option, you can see that the checkbo
 
 ## colorByCategories
 
-Each `series` can have `colorByCategories` option. The `colorByCategories` option determines whether to paint the column color of the chart differently based on the categories. The default is `false`.
+Each `series` can have `colorByCategories` option. The `colorByCategories` option determines whether to paint the column color of the chart differently based on the categories. The default value is `false`.
 
 ```js
 const data = {

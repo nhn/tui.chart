@@ -1,4 +1,3 @@
-import { some } from 'lodash';
 import {
   Options,
   RawSeries,
@@ -312,8 +311,7 @@ function getLegendLabelsInfo(
   let colorIndex = 0;
 
   return Object.keys(series).flatMap((type) => {
-    const labelInfo = series[type].map((m) => {
-      const { name, colorValue, visible, colorByCategories } = m;
+    const labelInfo = series[type].map(({ name, colorValue, visible, colorByCategories }) => {
       const label = colorValue ? colorValue : name;
       const currentColorIndex = colorIndex;
       const { width, viewLabel } = getViewLabelInfo(legendInfo, label, maxTextLengthWithEllipsis);
@@ -357,8 +355,7 @@ function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
     (acc, cur) => (cur && cur.colors ? [...acc, ...cur.colors] : acc),
     []
   );
-
-  const hasColorByCategories = some(data, ['colorByCategories', true]);
+  const hasColorByCategories = data.some((legend) => legend.colorByCategories);
 
   return data.map((datum, idx) => {
     const { colorByCategories, colorIndex } = datum;

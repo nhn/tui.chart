@@ -188,7 +188,7 @@ const data = {
 
 ## colorByCategories 옵션
 
-각각의 `series`는 `colorByCategories` 옵션을 가질 수 있다. `colorByCategories` 옵션은 차트의 막대 색을 카테고리별로 다르게 칠하는 여부를 결정한다. 기본값은 `false`이다.
+각각의 `series`는 `colorByCategories` 옵션을 가질 수 있다. `colorByCategories` 옵션은 차트의 막대 색을 카테고리 별로 다르게 칠할지 결정한다. 기본값은 `false`이다.
 
 ```js
 const data = {

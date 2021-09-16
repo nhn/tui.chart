@@ -1,5 +1,12 @@
-import { filter, reject } from 'lodash';
-import { Categories, DefaultCategories, Options, RawSeries, StoreModule } from '@t/store/store';
+import {
+  Categories,
+  DefaultCategories,
+  Options,
+  RawSeries,
+  StoreModule,
+  ChartSeries,
+  BoxType,
+} from '@t/store/store';
 import { deepMergedCopy, omit } from '@src/helpers/utils';
 import {
   getNestedPieChartAliasNames,
@@ -123,16 +130,21 @@ function setColors(
     ...defaultSeriesTheme.colors,
   ];
   const themeNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
-
   themeNames.forEach((name, idx) => {
-    const filteredSeries = filter(series[name], ['colorByCategories', true]);
+    const filteredSeries = series[name].filter(
+      <T extends ChartSeries, K extends BoxType>(themeSeries: T[K]) => themeSeries.colorByCategories
+    );
     const hasColorByCategories = filteredSeries.length > 0;
     let size;
 
     if (isNestedPieChart) {
       size = (series.pie as NestedPieSeriesType[])[idx].data.length;
     } else if (hasColorByCategories) {
-      size = reject(series[name], ['colorByCategories', true]).length + categories.length;
+      const rejectedSeries = series[name].filter(
+        <T extends ChartSeries, K extends BoxType>(themeSeries: T[K]) =>
+          !themeSeries.colorByCategories
+      );
+      size = rejectedSeries.length + categories.length;
     } else {
       size = series[name].length;
     }
