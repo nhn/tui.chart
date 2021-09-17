@@ -563,14 +563,16 @@ export interface BoxSeriesType<T extends BoxSeriesDataType> {
   name: string;
   data: T[];
   rawData: T[];
-  color: string;
+  color: string | string[];
   stackGroup?: string;
   visible?: boolean;
+  colorByCategories?: boolean;
 }
 
 export interface BoxSeriesData {
   categories: string[];
   series: BoxSeriesInput<BoxSeriesDataType>[];
+  colorByCategories?: boolean;
 }
 
 export interface ChartProps<T> {

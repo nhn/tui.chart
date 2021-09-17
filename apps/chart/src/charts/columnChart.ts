@@ -47,6 +47,7 @@ import { ColumnChartProps, SelectSeriesInfo } from '@t/charts';
  *     @param {Array<string>} props.data.categories - Categories.
  *     @param {Array<Object>} props.data.series - Series data.
  *       @param {string} props.data.series.name - Series name.
+ *       @param {string} props.data.series.colorByCategories - Paint Rect with color based on categories.
  *       @param {Array<number|Array<number>>} props.data.series.data - Series data.
  *   @param {Object} [props.options] - Options for making Column Chart.
  *     @param {Object} [props.options.chart]
@@ -62,7 +63,6 @@ import { ColumnChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
  *       @param {number} [props.options.series.barWidth] - Bar width.
  *       @param {boolean} [props.options.series.diverging] - Whether to use diverging chart or not.
- *       @param {boolean} [props.options.series.colorByPoint] - Whether to use color feature or not.
  *       @param {Object} [props.options.series.stack] - Option to use the stack chart or, if so, what type of stack to use.
  *       @param {string} [props.options.series.eventDetectType] - Event detect type. 'grouped', 'point' is available.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.

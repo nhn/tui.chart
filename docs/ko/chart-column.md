@@ -185,6 +185,24 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/108008989-f545a000-7044-11eb-837e-13e832db396e.png)
 
+## colorByCategories 옵션
+
+각각의 `series`는 `colorByCategories` 옵션을 가질 수 있다. `colorByCategories` 옵션은 차트의 막대 색을 카테고리 별로 다르게 칠할지 결정한다. 기본값은 `false`이다.
+
+```js
+const data = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Budget',
+      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
+      colorByCategories: true
+    }
+  ]
+}
+```
+![image](https://user-images.githubusercontent.com/30035674/133178923-2c59c916-fcf8-4285-95b3-cf3c64aec59a.png)
+
 ## 옵션
 
 `options`는 객체로 작성한다.

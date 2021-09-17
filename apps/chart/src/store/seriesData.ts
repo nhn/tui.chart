@@ -85,6 +85,15 @@ function getCoordinateDataRange(data, rawCategories: string[], zoomRange: RangeD
   return [start, end];
 }
 
+function getSeriesColors(
+  colors: string[],
+  colorIndex: number,
+  size: number,
+  isColorByCategories: boolean
+) {
+  return isColorByCategories ? colors.slice(0, size + 1) : colors[colorIndex % colors.length];
+}
+
 function getSeriesDataInRange(
   data,
   rawCategories: Categories,
@@ -173,19 +182,32 @@ const seriesData: StoreModule = {
       const rawSeries = deepCopy(initStoreState.series);
       const { disabledSeries, theme, zoomRange, rawCategories } = state;
       const newSeriesData = {};
+      let colorIndex = 0;
 
       Object.keys(rawSeries).forEach((seriesName) => {
         const { colors, iconTypes } = theme.series![seriesName];
-        let originSeriesData = rawSeries[seriesName].map((m, idx) => ({
-          ...m,
-          rawData: m.data,
-          data: getSeriesDataInRange(m.data, rawCategories, seriesName, zoomRange),
-          color: colors ? colors[idx % colors.length] : '',
-        }));
+
+        let originSeriesData = rawSeries[seriesName].map((series) => {
+          const isColorByCategories = !!series.colorByCategories;
+          const size = isColorByCategories ? (rawCategories as string[]).length : 1;
+
+          const color = colors
+            ? getSeriesColors(colors, colorIndex, size, isColorByCategories)
+            : '';
+
+          colorIndex += size;
+
+          return {
+            ...series,
+            rawData: series.data,
+            data: getSeriesDataInRange(series.data, rawCategories, seriesName, zoomRange),
+            color,
+          };
+        });
 
         if (seriesName === 'scatter') {
-          originSeriesData = originSeriesData.map((m, idx) => ({
-            ...m,
+          originSeriesData = originSeriesData.map((series, idx) => ({
+            ...series,
             iconType: iconTypes ? iconTypes[idx] : 'circle',
           }));
         }

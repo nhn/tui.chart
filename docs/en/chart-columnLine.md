@@ -101,6 +101,33 @@ If you create a chart by applying the above option, you can see that the checkbo
 ![image](https://user-images.githubusercontent.com/35371660/108009092-3fc71c80-7045-11eb-901e-03d20fdee3dc.png)
 
 
+## colorByCategories
+
+Bar-like `series` can have `colorByCategories` option. The `colorByCategories` option determines whether to paint the column color of the chart differently based on the categories. The default value is `false`.
+
+```js
+const data = {
+  categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+  series: {
+    column: [
+      {
+        name: 'Seoul',
+        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9],
+        colorByCategories: true,
+      },
+    ],
+    line: [
+      {
+        name: 'Average',
+        data: [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3],
+      },
+    ],
+  },
+}
+```
+![image](https://user-images.githubusercontent.com/30035674/133181927-0a0b4b85-3ada-4cd5-9727-a4a9ce7d01ed.png)
+
+
 ## Options
 
 `options` should be used as an object. Options for each column and line chart must be defined in `column` and `line`, respectively. Available options are as follows.

@@ -1,4 +1,12 @@
-import { Options, RawSeries, StoreModule } from '@t/store/store';
+import {
+  Categories,
+  DefaultCategories,
+  Options,
+  RawSeries,
+  StoreModule,
+  ChartSeries,
+  BoxType,
+} from '@t/store/store';
 import { deepMergedCopy, omit } from '@src/helpers/utils';
 import {
   getNestedPieChartAliasNames,
@@ -113,7 +121,8 @@ function setColors(
   theme: Theme,
   series: RawSeries,
   commonSeriesOptions: Exclude<SeriesTheme, HeatmapChartSeriesTheme>,
-  isNestedPieChart: boolean
+  isNestedPieChart: boolean,
+  categories: DefaultCategories
 ) {
   let index = 0;
   const commonColorsOption = [
@@ -121,11 +130,26 @@ function setColors(
     ...defaultSeriesTheme.colors,
   ];
   const themeNames = isNestedPieChart ? getNestedPieChartAliasNames(series) : Object.keys(series);
-
   themeNames.forEach((name, idx) => {
-    const size = isNestedPieChart
-      ? (series.pie as NestedPieSeriesType[])[idx].data.length
-      : series[name].length;
+    const themeSeries = series[name] || [];
+    const filteredSeries = themeSeries.filter(
+      <T extends ChartSeries, K extends BoxType>(chartSeries: T[K]) => chartSeries.colorByCategories
+    );
+    const hasColorByCategories = filteredSeries.length > 0;
+    let size;
+
+    if (isNestedPieChart) {
+      size = (series.pie as NestedPieSeriesType[])[idx].data.length;
+    } else if (hasColorByCategories) {
+      const rejectedSeries = themeSeries.filter(
+        <T extends ChartSeries, K extends BoxType>(chartSeries: T[K]) =>
+          !chartSeries.colorByCategories
+      );
+      size = rejectedSeries.length + categories.length;
+    } else {
+      size = series[name].length;
+    }
+
     const target = isNestedPieChart ? theme.series.pie! : theme.series;
 
     if (!target[name]?.colors) {
@@ -156,7 +180,7 @@ function checkAnchorPieSeriesOption(options: Options, series: RawSeries, alias: 
   };
 }
 
-function getTheme(options: Options, series: RawSeries): Theme {
+function getTheme(options: Options, series: RawSeries, categories?: Categories): Theme {
   const isNestedPieChart = hasNestedPieSeries(series);
   const commonSeriesOptions: SeriesTheme = getCommonSeriesOptions(
     options,
@@ -187,7 +211,13 @@ function getTheme(options: Options, series: RawSeries): Theme {
   );
 
   if (!series.heatmap) {
-    setColors(theme, series, commonSeriesOptions, isNestedPieChart);
+    setColors(
+      theme,
+      series,
+      commonSeriesOptions,
+      isNestedPieChart,
+      categories as DefaultCategories
+    );
   }
 
   setPlot(theme);
@@ -197,12 +227,12 @@ function getTheme(options: Options, series: RawSeries): Theme {
 
 const theme: StoreModule = {
   name: 'theme',
-  state: ({ options, series }) => ({
-    theme: getTheme(options, series),
+  state: ({ options, series, categories }) => ({
+    theme: getTheme(options, series, categories),
   }),
   action: {
     initThemeState({ state, initStoreState }) {
-      state.theme = getTheme(state.options, initStoreState.series);
+      state.theme = getTheme(state.options, initStoreState.series, initStoreState.categories);
     },
   },
   observe: {

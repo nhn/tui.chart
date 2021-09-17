@@ -7,6 +7,8 @@ import {
   Legend,
   CircleLegend,
   LegendDataList,
+  Categories,
+  DefaultCategories,
 } from '@t/store/store';
 import {
   BubbleChartOptions,
@@ -50,6 +52,8 @@ type LegendLabelsInfo = {
   checked: boolean;
   viewLabel: string;
   width: number;
+  colorByCategories?: boolean;
+  colorIndex?: number;
 }[];
 
 type LegendInfo = {
@@ -298,23 +302,37 @@ function getViewLabelInfo(legendInfo: LegendInfo, label: string, maxTextLength?:
   return { viewLabel, width: itemWidth ?? itemWidthWithFullText };
 }
 
-function getLegendLabelsInfo(series: RawSeries, legendInfo: LegendInfo): LegendLabelsInfo {
+function getLegendLabelsInfo(
+  series: RawSeries,
+  legendInfo: LegendInfo,
+  categories: DefaultCategories
+): LegendLabelsInfo {
   const maxTextLengthWithEllipsis = getMaxTextLengthWithEllipsis(legendInfo);
+  let colorIndex = 0;
 
-  return Object.keys(series).flatMap((type) =>
-    series[type].map(({ name, colorValue, visible }) => {
+  return Object.keys(series).flatMap((type) => {
+    const labelInfo = series[type].map(({ name, colorValue, visible, colorByCategories }) => {
       const label = colorValue ? colorValue : name;
+      const currentColorIndex = colorIndex;
       const { width, viewLabel } = getViewLabelInfo(legendInfo, label, maxTextLengthWithEllipsis);
+
+      colorIndex += colorByCategories ? categories.length : 1;
 
       return {
         label,
         type,
+        colorByCategories: !!colorByCategories,
+        colorIndex: currentColorIndex,
         checked: visible ?? true,
         viewLabel,
         width,
       };
-    })
-  );
+    });
+
+    colorIndex += series[type].length - 1;
+
+    return labelInfo;
+  });
 }
 
 function getItemWidth(
@@ -337,14 +355,20 @@ function getLegendDataAppliedTheme(data: LegendDataList, series: Series) {
     (acc, cur) => (cur && cur.colors ? [...acc, ...cur.colors] : acc),
     []
   );
+  const hasColorByCategories = data.some((legend) => legend.colorByCategories);
 
-  return data.map((datum, idx) => ({
-    ...datum,
-    color: colors[idx],
-  }));
+  return data.map((datum, idx) => {
+    const { colorByCategories, colorIndex } = datum;
+    const index = hasColorByCategories ? colorIndex || idx : idx;
+
+    return {
+      ...datum,
+      color: colorByCategories ? '#aaa' : colors[index % colors.length],
+    };
+  });
 }
 
-function getLegendState(options: Options, series: RawSeries): Legend {
+function getLegendState(options: Options, series: RawSeries, categories?: Categories): Legend {
   const useSpectrumLegend =
     (options?.series as TreemapChartSeriesOptions)?.useColorValue ?? !!series.heatmap;
 
@@ -365,19 +389,23 @@ function getLegendState(options: Options, series: RawSeries): Legend {
 
   const legendLabelsInfo = hasNestedPieSeries(series)
     ? getNestedPieLegendLabelsInfo(series, legendInfo)
-    : getLegendLabelsInfo(series, legendInfo);
+    : getLegendLabelsInfo(series, legendInfo, categories as DefaultCategories);
 
-  const data = legendLabelsInfo.map(({ label, type, checked, width, viewLabel }) => ({
-    label,
-    active: true,
-    checked,
-    width,
-    iconType: getIconType(type),
-    chartType: type,
-    rowIndex: 0,
-    columnIndex: 0,
-    viewLabel,
-  }));
+  const data = legendLabelsInfo.map(
+    ({ label, type, checked, width, viewLabel, colorByCategories, colorIndex }) => ({
+      label,
+      active: true,
+      checked,
+      width,
+      iconType: getIconType(type),
+      chartType: type,
+      rowIndex: 0,
+      columnIndex: 0,
+      viewLabel,
+      colorByCategories,
+      colorIndex,
+    })
+  );
 
   return {
     useSpectrumLegend,
@@ -445,15 +473,18 @@ function setIndexToLegendData(
 
 const legend: StoreModule = {
   name: 'legend',
-  state: ({ options, series }) => {
+  state: ({ options, series, categories }) => {
     return {
-      legend: getLegendState(options, series) as Legend,
+      legend: getLegendState(options, series, categories) as Legend,
       circleLegend: {} as CircleLegend,
     };
   },
   action: {
     initLegendState({ state, initStoreState }) {
-      extend(state.legend, getLegendState(initStoreState.options, initStoreState.series));
+      extend(
+        state.legend,
+        getLegendState(initStoreState.options, initStoreState.series, initStoreState.categories)
+      );
     },
     setLegendLayout({ state }) {
       if (state.legend.useSpectrumLegend) {

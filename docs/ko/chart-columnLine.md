@@ -99,6 +99,33 @@ const data = {
 
 ![image](https://user-images.githubusercontent.com/35371660/108009092-3fc71c80-7045-11eb-901e-03d20fdee3dc.png)
 
+## colorByCategories 옵션
+
+바 계열 `series`는 `colorByCategories` 옵션을 가질 수 있다. `colorByCategories` 옵션은 차트의 막대 색을 카테고리 별로 다르게 칠할지 결정한다. 기본값은 `false`이다.
+
+```js
+const data = {
+  categories: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+  series: {
+    column: [
+      {
+        name: 'Seoul',
+        data: [11.3, 17.0, 21.0, 24.4, 25.2, 20.4, 13.9],
+        colorByCategories: true,
+      },
+    ],
+    line: [
+      {
+        name: 'Average',
+        data: [11, 15.1, 17.8, 19.7, 19.5, 16.5, 12.3],
+      },
+    ],
+  },
+}
+```
+![image](https://user-images.githubusercontent.com/30035674/133181927-0a0b4b85-3ada-4cd5-9727-a4a9ce7d01ed.png)
+
+
 ## 옵션
 
 `options`는 객체로 작성한다. 각각 차트에 적용하고 싶은 옵션은 `column`, `line`에 작성한다. 사용가능한 옵션은 다음과 같다.

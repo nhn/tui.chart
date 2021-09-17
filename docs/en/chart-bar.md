@@ -187,6 +187,25 @@ If you create a chart by applying the above option, you can see that the checkbo
 
 ![image](https://user-images.githubusercontent.com/35371660/108007745-0ccf5980-7042-11eb-8eb8-ae7ed497c939.png)
 
+## colorByCategories
+
+Each `series` can have `colorByCategories` option. The `colorByCategories` option determines whether to paint the bar color of the chart differently based on the categories. The default value is `false`.
+
+```js
+const data = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Budget',
+      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
+      colorByCategories: true
+    }
+  ]
+}
+```
+![image](https://user-images.githubusercontent.com/30035674/133181196-7e564bb9-e9a4-4f2c-8fea-f44f6b1a4830.png)
+
+
 ## Options
 
 `options` should be used as an object.

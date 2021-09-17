@@ -262,9 +262,11 @@ export default class BoxStackSeries extends BoxSeries {
           renderOptions,
           isLBSideWithDiverging
         );
-        const { name } = seriesRawData[seriesIndex];
+        const { name, colorByCategories, color: rawColor } = seriesRawData[seriesIndex];
         const active = this.activeSeriesMap![name];
-        const color = getRGBA(seriesRawData[seriesIndex].color, active ? 1 : 0.2);
+        const colorLength = rawColor.length || 1;
+        const hexColor = colorByCategories ? rawColor[dataIndex % colorLength] : rawColor as string;
+        const color = getRGBA(hexColor, active ? 1 : 0.2);
 
         seriesModels.push({
           type: 'rect',
@@ -378,7 +380,7 @@ export default class BoxStackSeries extends BoxSeries {
   ): TooltipData[] {
     const seriesRawData = seriesData.data;
     const { stackData } = seriesData;
-    const colors = seriesRawData.map(({ color }) => color);
+    const colors = seriesRawData.map(({ color }) => color) as string[];
 
     return isGroupStack(stackData)
       ? this.makeGroupStackTooltipData(seriesRawData, stackData, categories)
@@ -394,7 +396,7 @@ export default class BoxStackSeries extends BoxSeries {
       const rawDataWithSameGroupId = seriesRawData.filter(
         ({ stackGroup }) => stackGroup === groupId
       );
-      const colors = rawDataWithSameGroupId.map(({ color }) => color);
+      const colors = rawDataWithSameGroupId.map(({ color }) => color) as string[];
 
       return this.makeStackTooltipData(
         rawDataWithSameGroupId,

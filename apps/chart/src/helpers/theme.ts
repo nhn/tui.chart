@@ -333,7 +333,6 @@ function getBarColumnSeriesTheme(globalFontFamily: string) {
   const defaultDataLabelTheme = makeDefaultDataLabelsTheme(globalFontFamily);
 
   return {
-    colorByPoint: false,
     areaOpacity: 1,
     hover: {
       ...boxDefault.BOX_HOVER,

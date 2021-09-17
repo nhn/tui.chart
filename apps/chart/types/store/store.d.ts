@@ -48,6 +48,23 @@ import { LegendData } from '../components/legend';
 import { ScatterSeriesIconType } from '../components/series';
 import { Theme } from '../theme';
 
+export type ChartSeries = {
+  line: LineSeriesType;
+  scatter: ScatterSeriesType;
+  bar: BoxSeriesType<BoxSeriesDataType>;
+  column: BoxSeriesType<BoxSeriesDataType>;
+  area: AreaSeriesType;
+  bubble: BubbleSeriesType;
+  pie: PieSeriesType | NestedPieSeriesType;
+  radar: RadarSeriesType;
+  boxPlot: BoxPlotSeriesType;
+  bullet: BulletSeriesType;
+  treemap: TreemapSeriesType;
+  heatmap: HeatmapSeriesType;
+  radialBar: RadialBarSeriesType;
+  gauge: GaugeSeriesType;
+};
+
 type ChartSeriesMap = {
   line: LineSeriesType[];
   scatter: ScatterSeriesType[];
@@ -260,6 +277,8 @@ export type LegendDataList = Array<
     | 'rowIndex'
     | 'columnIndex'
     | 'viewLabel'
+    | 'colorIndex'
+    | 'colorByCategories'
   > & {
     width: number;
   }
@@ -305,6 +324,7 @@ export interface TreemapSeriesData {
 }
 
 export type Categories = string[] | HeatmapCategoriesType;
+export type DefaultCategories = Exclude<Categories, HeatmapCategoriesType>;
 
 export type ChartOptions = {
   title?: string | TitleOption;

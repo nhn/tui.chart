@@ -185,6 +185,24 @@ If you create a chart by applying the above option, you can see that the checkbo
 
 ![image](https://user-images.githubusercontent.com/35371660/108008989-f545a000-7044-11eb-837e-13e832db396e.png)
 
+## colorByCategories
+
+Each `series` can have `colorByCategories` option. The `colorByCategories` option determines whether to paint the column color of the chart differently based on the categories. The default value is `false`.
+
+```js
+const data = {
+  categories: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  series: [
+    {
+      name: 'Budget',
+      data: [5000, 3000, 5000, 7000, 6000, 4000, 1000],
+      colorByCategories: true
+    }
+  ]
+}
+```
+![image](https://user-images.githubusercontent.com/30035674/133178923-2c59c916-fcf8-4285-95b3-cf3c64aec59a.png)
+
 ## Options
 
 `options` should be used as an object.
