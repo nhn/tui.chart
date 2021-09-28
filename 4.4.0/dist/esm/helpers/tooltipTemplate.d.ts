@@ -1,0 +1,21 @@
+import { TooltipModel, TooltipTemplateType } from "../../types/components/tooltip";
+import { DefaultTooltipTemplate } from "../../types/options";
+import { TooltipTheme } from "../../types/theme";
+export declare function getDefaultTemplate(model: TooltipModel, { header, body }: DefaultTooltipTemplate, theme: Required<TooltipTheme>): string;
+export declare function getHeaderTemplate({ category }: TooltipModel, theme: Required<TooltipTheme>): string;
+declare function getDefaultBodyTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>): string;
+declare function getBoxPlotTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>): string;
+declare function getBulletTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>): string;
+declare function getPieTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>): string;
+declare function getHeatmapTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>): string;
+export declare const tooltipTemplates: {
+    default: typeof getDefaultTemplate;
+    defaultHeader: typeof getHeaderTemplate;
+    defaultBody: typeof getDefaultBodyTemplate;
+    boxPlot: typeof getBoxPlotTemplate;
+    bullet: typeof getBulletTemplate;
+    pie: typeof getPieTemplate;
+    heatmap: typeof getHeatmapTemplate;
+};
+export declare function getBodyTemplate(type?: TooltipTemplateType): typeof getDefaultBodyTemplate | typeof getBoxPlotTemplate | typeof getBulletTemplate | typeof getPieTemplate | typeof getHeatmapTemplate;
+export {};

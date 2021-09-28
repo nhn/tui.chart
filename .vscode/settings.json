@@ -1,0 +1,5 @@
+{
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "editor.fontSize": 14,
+    "editor.fontFamily": "D2Coding, Menlo, Monaco, 'Courier New', monospace"
+}
