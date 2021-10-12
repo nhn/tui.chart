@@ -197,9 +197,9 @@ For more information on PR's step, please see links of Contributing section.
 
 ## 🚀 Used By
 
-- [TOAST Cloud - Total Cloud Service](https://www.toast.com/service/)
+- [NHN Cloud - Total Cloud Service](https://www.toast.com/service/)
 - [NHN - ToastCam](https://cam.toast.com/ko/#/)
-- [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com)
+- [NHN Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com)
 - [NHN - Smart Downloader](https://docs.toast.com/ko/Game/Smart%20Downloader/ko/console-guide/)
 - [NHN - Gamebase](https://docs.toast.com/ko/Game/Gamebase/ko/oper-analytics/)
 - [NHN Edu - iamTeacher](https://teacher.iamservice.net)
