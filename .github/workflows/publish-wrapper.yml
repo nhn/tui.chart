@@ -1,0 +1,155 @@
+name: publish wrapper
+on: [workflow_dispatch]
+env:
+  WORKING_DIRECTORY: ./apps/chart
+  VUE_WRAPPER_DIRECTORY: ./apps/vue-chart
+  REACT_WRAPPER_DIRECTORY: ./apps/react-chart
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v2
+      - name: use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
+      - name: check package version
+        id: check
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ${{ env.WORKING_DIRECTORY }}
+      - name: log when unchanged
+        if: steps.check.outputs.is-new-version == 'false'
+        run: 'echo "No version change"'
+      - name: cancel workflow
+        if: steps.check.outputs.is-new-version == 'false'
+        uses: andymckay/cancel-action@0.2
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: [check-version]
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v2
+      - name: use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: npm install
+        run: |
+          npm install
+      - name: npm install (toast.ui-chart)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm install
+      - name: eslint
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run lint
+  types:
+    runs-on: ubuntu-latest
+    needs: [check-version]
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v2
+      - name: use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: npm install
+        run: |
+          npm install
+      - name: npm install (toast.ui-chart)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm install
+      - name: check types
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run check-types
+  test:
+    runs-on: ubuntu-latest
+    needs: [check-version]
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v2
+      - name: use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: npm install
+        run: |
+          npm install
+      - name: npm install (toast.ui-chart)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm install
+      - name: test
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run test
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [lint, types, test]
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v2
+      - name: check package version
+        id: check
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ${{ env.WORKING_DIRECTORY }}
+      - name: use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
+      - name: npm install
+        run: |
+          npm install
+      - name: npm install (toast.ui-chart)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm install
+      - name: npm install (vue-wrapper)
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
+        run: |
+          npm install
+      - name: npm install (react-wrapper)
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm install
+      - name: build vue wrapper
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
+        run: |
+          npm run build
+      - name: build react wrapper
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm run build
+      - name: commit files
+        run: |
+          git config --local user.email "jw.lee@nhn.com"
+          git config --local user.name "jwlee1108"
+          git add .
+          git commit -m "chore: update version of wrappers to v${{ steps.version.outputs.committed-version }}"
+      - name: push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+      - name: npm publish (vue-wrapper)
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
+        run: |
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      - name: npm publish (react-wrapper)
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
