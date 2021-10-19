@@ -24,7 +24,6 @@ jobs:
       - name: cancel workflow
         if: steps.check.outputs.is-new-version == 'false'
         uses: andymckay/cancel-action@0.2
-
   lint:
     runs-on: ubuntu-latest
     needs: [check-version]
@@ -131,4 +130,32 @@ jobs:
         run: |
           npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+  cdn:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - name: use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+          registry-url: https://registry.npmjs.org/
+      - name: npm install
+        run: |
+          npm install
+      - name: npm install (toast.ui-chart)
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm install
+      - name: build
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run build
+      - name: publish cdn
+        run: |
+          npm run publish:cdn
+        env:
+          TOAST_CLOUD_TENENTID: ${{ secrets.TOAST_CLOUD_TENENTID }}
+          TOAST_CLOUD_STORAGEID: ${{ secrets.TOAST_CLOUD_STORAGEID }}
+          TOAST_CLOUD_USERNAME: ${{ secrets.TOAST_CLOUD_USERNAME }}
+          TOAST_CLOUD_PASSWORD: ${{ secrets.TOAST_CLOUD_PASSWORD }}
