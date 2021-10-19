@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/chart",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "description": "TOAST UI Application: Chart",
   "main": "dist/toastui-chart.js",
   "types": "types/index.d.ts",
@@ -88,7 +88,8 @@
     "storybook": "start-storybook -p 6006",
     "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015 --noEmit false",
     "doc:dev": "npm run build:prod && npm run ts2js && tuidoc --serv",
-    "doc": "npm run ts2js && tuidoc"
+    "doc": "npm run ts2js && tuidoc",
+    "publish:cdn": "node scripts/publishToCDN.js"
   },
   "repository": {
     "type": "git",
