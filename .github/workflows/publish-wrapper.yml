@@ -111,9 +111,14 @@ jobs:
           git config --local user.name "jwlee1108"
           git add .
           git commit -m "chore: update version of wrappers to v${{ steps.version.outputs.committed-version }}"
-          git push origin main
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
       - name: npm publish (vue-wrapper)
         working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
         run: |
