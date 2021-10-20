@@ -23,7 +23,7 @@ async function getTOASTCloudContainer(token) {
   });
   const container = await response.text();
 
-  return `${container.trim()}/grid`;
+  return `${container.trim()}/chart`;
 }
 
 async function getTOASTCloudToken() {
@@ -67,8 +67,6 @@ function publishToCdn(token, localPath, cdnPath) {
         },
         body: readStream,
       });
-    } else {
-      publishToCdn(token, `${localPath}/${fileName}`, objectPath);
     }
   });
 }
