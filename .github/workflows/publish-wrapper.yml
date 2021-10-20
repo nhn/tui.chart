@@ -5,31 +5,8 @@ env:
   VUE_WRAPPER_DIRECTORY: ./apps/vue-chart
   REACT_WRAPPER_DIRECTORY: ./apps/react-chart
 jobs:
-  check-version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout branch
-        uses: actions/checkout@v2
-      - name: use Node.js 15.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: '15.x'
-          registry-url: https://registry.npmjs.org/
-      - name: check package version
-        id: check
-        uses: PostHog/check-package-version@v2
-        with:
-          path: ${{ env.WORKING_DIRECTORY }}
-      - name: log when unchanged
-        if: steps.check.outputs.is-new-version == 'false'
-        run: 'echo "No version change"'
-      - name: cancel workflow
-        if: steps.check.outputs.is-new-version == 'false'
-        uses: andymckay/cancel-action@0.2
-
   lint:
     runs-on: ubuntu-latest
-    needs: [check-version]
     steps:
       - name: checkout branch
         uses: actions/checkout@v2
@@ -50,7 +27,6 @@ jobs:
           npm run lint
   types:
     runs-on: ubuntu-latest
-    needs: [check-version]
     steps:
       - name: checkout branch
         uses: actions/checkout@v2
@@ -71,7 +47,6 @@ jobs:
           npm run check-types
   test:
     runs-on: ubuntu-latest
-    needs: [check-version]
     steps:
       - name: checkout branch
         uses: actions/checkout@v2
