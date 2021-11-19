@@ -433,7 +433,7 @@ export default class PieSeries extends Component {
       const color = this.alias
         ? this.getAliasSeriesColor(rawData, seriesRawData, pieIndex!)
         : this.getSeriesColor(rawData);
-      const { data, name } = rawData;
+      const { data, name, radiusFactor } = rawData;
       if (data) {
         const degree = Math.max((data / total) * totalAngle, 1) * (clockwise ? 1 : -1);
         const percentValue = (data / total) * 100;
@@ -442,6 +442,7 @@ export default class PieSeries extends Component {
         const endDegree = clockwise
           ? Math.min(startDegree + degree, DEGREE_360)
           : Math.max(startDegree + degree, DEGREE_0);
+        const outerAdjusted = radiusFactor ? inner + ((outer - inner) * radiusFactor) : outer;
 
         sectorModels.push({
           type: 'sector',
@@ -455,7 +456,7 @@ export default class PieSeries extends Component {
           },
           radius: {
             inner,
-            outer,
+            outer: outerAdjusted,
           },
           value: data,
           style: [{ strokeStyle }],

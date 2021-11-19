@@ -175,6 +175,7 @@
       "example16-03-NestedPie-chart-theme": "16.3 [NestedPie Chart] Theme",
       "example16-04-NestedPie-chart-groupedTheme": "16.4 [NestedPie Chart] Grouped Data Theme",
       "example16-05-NestedPie-chart-visible-data": "16.5 [NestedPie Chart] Data with visible options",
+      "example16-06-NestedPie-chart-grouped-radius": "16.6 [NestedPie Chart] Grouped Data with variable radius",
       "example17-01-tooltip-formatter": "17.1 [Common] Tooltip Formatter",
       "example17-02-tooltip-template": "17.2 [Common] Tooltip Template",
       "example17-03-scale": "17.3 [Common] Scale Options",

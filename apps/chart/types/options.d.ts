@@ -162,6 +162,7 @@ export type PieSeriesType = {
   rootParentName?: string;
   color?: string;
   visible?: boolean;
+  radiusFactor?: number;
 };
 
 export type PieSeriesData = {
