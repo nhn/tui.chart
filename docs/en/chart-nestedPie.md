@@ -352,6 +352,149 @@ If you create a chart by applying the above option, you can see that the checkbo
 
 ![image](https://user-images.githubusercontent.com/35371660/108011512-9125da80-704a-11eb-8b45-8fc01777e14e.png)
 
+### Variable radius length
+
+The `radiusFactor` can be used to increase or decrease the outer radius of the specific series data element. The `radiusFactor` grows or decreases the outer radius by multiplying the radius original value with this factor. If no `radiusFactor` is given or `radiusFactor` is equal to 1, no changes to the radius is applied.
+
+```js
+const data = {
+  categories: ['A', 'B'],
+  series: [
+    {
+      name: 'browsers',
+      data: [
+        {
+          name: 'Chrome',
+          data: 50,
+        },
+        {
+          name: 'Safari',
+          data: 20,
+        },
+        {
+          name: 'IE',
+          data: 10,
+        },
+        {
+          name: 'Firefox',
+          data: 10,
+        },
+        {
+          name: 'Opera',
+          data: 3,
+        },
+        {
+          name: 'Etc',
+          data: 7,
+        },
+      ],
+    },
+    {
+      name: 'versions',
+      data: [
+        {
+          name: 'Chrome 64',
+          parentName: 'Chrome',
+          data: 40,
+          radiusFactor: 1.5
+        },
+        {
+          name: 'Chrome 63',
+          parentName: 'Chrome',
+          data: 10,
+        },
+        {
+          name: 'Safari 13',
+          parentName: 'Safari',
+          data: 15,
+          radiusFactor: 1.4
+        },
+        {
+          name: 'Safari 12',
+          parentName: 'Safari',
+          data: 5,
+          radiusFactor: 1.1
+        },
+        {
+          name: 'IE 11',
+          parentName: 'IE',
+          data: 4,
+          radiusFactor: 1.8
+        },
+        {
+          name: 'IE 10',
+          parentName: 'IE',
+          data: 3,
+          radiusFactor: 1.7
+        },
+        {
+          name: 'IE 9',
+          parentName: 'IE',
+          data: 2,
+          radiusFactor: 1.5
+        },
+        {
+          name: 'IE 8',
+          parentName: 'IE',
+          data: 1,
+          radiusFactor: 1.3
+        },
+        {
+          name: 'Firefox 13',
+          parentName: 'Firefox',
+          data: 8,
+          radiusFactor: 1.5
+        },
+        {
+          name: 'Firefox 12',
+          parentName: 'Firefox',
+          data: 2,
+          radiusFactor: 1.8
+        },
+        {
+          name: 'Opera 15',
+          parentName: 'Opera',
+          data: 2,
+          radiusFactor: 1
+        },
+        {
+          name: 'Opera 12',
+          parentName: 'Opera',
+          data: 1,
+          radiusFactor: 1.1
+        },
+        {
+          name: 'Etc 1',
+          parentName: 'Etc',
+          data: 3,
+          radiusFactor: 1.1
+        },
+        {
+          name: 'Etc 2',
+          parentName: 'Etc',
+          data: 2,
+          radiusFactor: 1.6
+        },
+        {
+          name: 'Etc 3',
+          parentName: 'Etc',
+          data: 1,
+          radiusFactor: 1.3
+        },
+        {
+          name: 'Etc 4',
+          parentName: 'Etc',
+          data: 1,
+          radiusFactor: 1.2
+        },
+      ],
+    },
+  ],
+};
+```
+If you create a chart by applying the above option of `radiusFactor`, you can see that the outer radius of data elements are manipulated.
+
+![image](https://user-images.githubusercontent.com/14329635/142608968-055e2fe6-7a94-491f-b803-f1387514d303.png)
 
 ## Options
 
