@@ -99,7 +99,7 @@ export default class ExportMenu extends Component {
     el.onclick = this.onClickExportButton;
     el.innerHTML = `
         <div class="toastui-chart-export-menu">
-          <p class="toastui-chart-export-menu-title">Export to</p>
+          <p class="toastui-chart-export-menu-title">Spara som</p>
           <div class="toastui-chart-export-menu-btn-wrapper">
             <button class="toastui-chart-export-menu-btn" id="xls">xls</button>
             <button class="toastui-chart-export-menu-btn" id="csv">csv</button>
