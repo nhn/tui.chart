@@ -12,12 +12,14 @@ import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
 import PieSeries from '@src/component/pieSeries';
 import NoDataText from '@src/component/noDataText';
+import Comparecircle from '@src/component/comparecircle';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
 import * as labelBrush from '@src/brushes/label';
 import * as exportMenuBrush from '@src/brushes/exportMenu';
 import * as sectorBrush from '@src/brushes/sector';
+import * as comparecircle from '@src/brushes/comparecircle';
 
 import * as dataLabelBrush from '@src/brushes/dataLabel';
 import { NestedPieChartOptions, NestedPieSeriesData, NestedPieSeriesType } from '@t/options';
@@ -105,6 +107,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(NoDataText);
+    this.componentManager.add(Comparecircle);
 
     this.painter.addGroups([
       basicBrush,
@@ -113,6 +116,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
       exportMenuBrush,
       sectorBrush,
       dataLabelBrush,
+      comparecircle,
     ]);
   }
 

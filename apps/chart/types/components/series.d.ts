@@ -52,6 +52,22 @@ export type CircleModel = {
   borderColor?: string;
 } & Point;
 
+export type CompareCircleModel = {
+  type: 'comparecircle';
+  radius: number;
+  color: string;
+  style?: StyleProp<CircleStyle, CircleStyleName>;
+  seriesIndex?: number;
+  index?: number;
+  angle?: {
+    start: number;
+    end: number;
+  };
+  name?: string;
+  borderWidth?: number;
+  borderColor?: string;
+} & Point;
+
 export type CircleResponderModel = {
   detectionSize?: number;
   data: TooltipData;
@@ -353,6 +369,8 @@ export interface ScatterSeriesModel {
 export type NoDataTextModel = LabelModel[];
 
 export type BackgroundModel = RectModel[];
+
+export type ComparecircleModels = CompareCircleModel[];
 
 export type RadiusRange = { inner: number; outer: number };
 

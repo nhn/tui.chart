@@ -192,18 +192,32 @@
         ],
       };
       const options = {
-        chart: { title: 'Usage share of web browsers', width: 900, height: 600 },
+        theme: {
+          series: {
+            colors: ['#007398', '#A4123F', '#893B67', '#78AA00', '#00205B', '#DC8633', '#93328E', '#F2A900', '#F4364C'],
+          },
+        },
+        chart: { width: 430, height: 500 },
+        legend: { align: 'bottom' },
         series: {
           browsers: {
             radiusRange: {
               inner: '20%',
-              outer: '50%',
+              outer: '30%',
             },
           },
           versions: {
             radiusRange: {
-              inner: '55%',
-              outer: '85%',
+              inner: '31%',
+              outer: '100%',
+            },
+            dataLabels: {
+              visible: true,
+              formatter: () => '',
+              pieSeriesName: {
+                visible: true,
+                anchor: 'outer',
+              },
             },
           },
         },
