@@ -263,7 +263,7 @@ export type StackSeries = {
   [key in BoxType]?: StackSeriesData<key>;
 };
 
-export type LegendIconType = 'spectrum' | 'line' | ScatterSeriesIconType;
+export type LegendIconType = 'spectrum' | 'line' | 'dash' | ScatterSeriesIconType;
 
 export type LegendDataList = Array<
   Pick<
@@ -279,6 +279,7 @@ export type LegendDataList = Array<
     | 'viewLabel'
     | 'colorIndex'
     | 'colorByCategories'
+    | 'hideCheckbox'
   > & {
     width: number;
   }

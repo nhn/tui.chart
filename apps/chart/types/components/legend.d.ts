@@ -17,10 +17,11 @@ type LegendData = {
   columnIndex: number;
   colorIndex?: number;
   colorByCategories?: boolean;
+  hideCheckbox?: boolean;
 } & Point;
 
 export type LegendModel = {
-  type: 'legend';
+  type: 'legend' | 'customlegend';
   align: Align;
   showCheckbox: boolean;
   data: LegendData[];

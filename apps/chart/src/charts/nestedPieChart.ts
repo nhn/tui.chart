@@ -3,7 +3,7 @@ import Chart from './chart';
 import nestedPieSeriesData from '@src/store/nestedPieSeriesData';
 
 import Tooltip from '@src/component/tooltip';
-import Legend from '@src/component/legend';
+import CustomLegend from '@src/component/customlegend';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
@@ -96,7 +96,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
 
     this.componentManager.add(Background);
     this.componentManager.add(Title);
-    this.componentManager.add(Legend);
+    this.componentManager.add(CustomLegend);
 
     (this.store.initStoreState.series.pie ?? []).forEach(({ name }) => {
       this.componentManager.add(PieSeries, { alias: name });

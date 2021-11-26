@@ -56,6 +56,27 @@ function drawLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color
   });
 }
 
+function drawDashLineIcon(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
+  line(ctx, {
+    type: 'line',
+    x: x,
+    y: y + 4,
+    x2: x + 4,
+    y2: y + 4,
+    lineWidth: 2,
+    strokeStyle: color,
+  });
+  line(ctx, {
+    type: 'line',
+    x: x + 6,
+    y: y + 4,
+    x2: x + 10,
+    y2: y + 4,
+    lineWidth: 2,
+    strokeStyle: color,
+  });
+}
+
 function drawCheckIcon(ctx: CanvasRenderingContext2D, x: number, y: number, active: boolean) {
   const color = '#555555';
   const strokeStyle = active ? color : getRGBA(color, INACTIVE_OPACITY);
@@ -135,6 +156,9 @@ function drawIcon(
       color: iconColor,
       style: ['default'],
     });
+  }
+  else if (iconType === 'dash') {
+    drawDashLineIcon(ctx, iconX, y + LINE_ICON_PADDING, iconColor);
   }
 }
 
@@ -222,4 +246,47 @@ export function legend(ctx: CanvasRenderingContext2D, model: LegendModel) {
 
     drawLabel(ctx, x, y, legendLabel, renderOptions);
   });
+}
+
+export function customlegend(ctx: CanvasRenderingContext2D, model: LegendModel) {
+  const { data, showCheckbox, align, fontSize, fontFamily, fontWeight } = model;
+  const font = getTitleFontString({ fontSize, fontFamily, fontWeight });
+  const fontColor = model.color!;
+
+  data.forEach((datum) => {
+    const {
+      x,
+      y,
+      checked,
+      active,
+      color,
+      iconType,
+      useScatterChartIcon,
+      viewLabel: legendLabel,
+    } = datum;
+    const iconY = y - 1 + (getTextHeight(legendLabel, font) - 11) / 4;
+    const renderOptions: RenderOptions = {
+      iconType,
+      checked,
+      active,
+      color,
+      showCheckbox,
+      align,
+      font,
+      fontColor,
+    };
+
+    if (showCheckbox && !datum.hideCheckbox) {
+      drawCheckbox(ctx, x, iconY, renderOptions);
+    }
+    if (useScatterChartIcon && iconType !== 'line') {
+      drawScatterIcon(ctx, x, iconY, renderOptions);
+    } else {
+      drawIcon(ctx, x, iconY, renderOptions);
+    }
+
+    drawLabel(ctx, x, y, legendLabel, renderOptions);
+  });
+
+  
 }

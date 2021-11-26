@@ -13,6 +13,24 @@ const circleStyle = {
     },
 };
 
+function drawTextAlongArc(context, str, centerX, centerY, radius, angle) {
+  var len = str.length,
+    s;
+  context.save();
+  context.translate(centerX, centerY);
+  context.rotate(-1 * angle / 2);
+  context.rotate(-1 * (angle / len) / 2);
+  for (var n = 0; n < len; n++) {
+    context.rotate(angle / len);
+    context.save();
+    context.translate(0, -1 * radius);
+    s = str[n];
+    context.fillText(s, 0, 0);
+    context.restore();
+  }
+  context.restore();
+}
+
 export function comparecircle(ctx: CanvasRenderingContext2D, circleModel: CompareCircleModel) {
     const {
       x,
@@ -43,4 +61,12 @@ export function comparecircle(ctx: CanvasRenderingContext2D, circleModel: Compar
     fillStyle(ctx, color);
   
     ctx.closePath();
+
+
+    // ctx.font = '10pt Arial';
+    // ctx.textAlign = 'center';
+    // ctx.fillStyle = 'rgb(0,0,0)';
+    // ctx.strokeStyle = 'rgb(0,0,0)';
+    // ctx.lineWidth = 1;
+    // drawTextAlongArc(ctx, 'Jämförelseområdets snitt', x, y, radius-15, Math.PI );
 }
