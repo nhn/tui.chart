@@ -13,14 +13,20 @@ export default class Comparecircle extends Component {
     this.name = 'comparecircle';
   }
 
-  render({ layout, theme }: ChartState<Options>) {
+  render({ layout, theme, chart }: ChartState<Options>) {
+    this.isShow = !!chart?.compareCircleRadius;
+
+    if (!this.isShow) {
+      return;
+    }
+
     const { width, height } = layout.plot;
     this.theme = theme.chart as Required<ChartTheme>;
     this.models = [
       {
         type: 'comparecircle',
         color: 'rgba(0, 0, 0, 0)',
-        radius: 132,
+        radius: chart.compareCircleRadius!,
         x: width/2+10,
         y: height/2+44,
         borderColor: 'rgb(0, 0, 0)',

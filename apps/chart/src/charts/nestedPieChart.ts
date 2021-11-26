@@ -13,6 +13,7 @@ import Background from '@src/component/background';
 import PieSeries from '@src/component/pieSeries';
 import NoDataText from '@src/component/noDataText';
 import Comparecircle from '@src/component/comparecircle';
+import TotalAggregate from '@src/component/totalaggregate';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as legendBrush from '@src/brushes/legend';
@@ -108,6 +109,7 @@ export default class NestedPieChart extends Chart<NestedPieChartOptions> {
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(NoDataText);
     this.componentManager.add(Comparecircle);
+    this.componentManager.add(TotalAggregate);
 
     this.painter.addGroups([
       basicBrush,

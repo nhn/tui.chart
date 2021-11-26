@@ -56,159 +56,284 @@
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="../dist/toastui-chart.js"></script>
     <script class="code-js" id="code-js" type="text/babel">
+      
       const el = document.getElementById('chart-area');
       const data = {
-        categories: ['A', 'B'],
-        series: [
-          {
-            name: 'browsers',
-            data: [
-              {
-                name: 'Chrome',
-                data: 50,
-              },
-              {
-                name: 'Safari',
-                data: 20,
-              },
-              {
-                name: 'IE',
-                data: 10,
-              },
-              {
-                name: 'Firefox',
-                data: 10,
-              },
-              {
-                name: 'Opera',
-                data: 3,
-              },
-              {
-                name: 'Etc',
-                data: 7,
-              },
-            ],
-          },
-          {
-            name: 'versions',
-            data: [
-              {
-                name: 'Chrome 64',
-                parentName: 'Chrome',
-                data: 40,
-                radiusFactor: 1.5
-              },
-              {
-                name: 'Chrome 63',
-                parentName: 'Chrome',
-                data: 10,
-              },
-              {
-                name: 'Safari 13',
-                parentName: 'Safari',
-                data: 15,
-                radiusFactor: 1.4
-              },
-              {
-                name: 'Safari 12',
-                parentName: 'Safari',
-                data: 5,
-                radiusFactor: 1.1
-              },
-              {
-                name: 'IE 11',
-                parentName: 'IE',
-                data: 4,
-                radiusFactor: 1.8
-              },
-              {
-                name: 'IE 10',
-                parentName: 'IE',
-                data: 3,
-                radiusFactor: 1.7
-              },
-              {
-                name: 'IE 9',
-                parentName: 'IE',
-                data: 2,
-                radiusFactor: 1.5
-              },
-              {
-                name: 'IE 8',
-                parentName: 'IE',
-                data: 1,
-                radiusFactor: 1.3
-              },
-              {
-                name: 'Firefox 13',
-                parentName: 'Firefox',
-                data: 8,
-                radiusFactor: 1.5
-              },
-              {
-                name: 'Firefox 12',
-                parentName: 'Firefox',
-                data: 2,
-                radiusFactor: 1.8
-              },
-              {
-                name: 'Opera 15',
-                parentName: 'Opera',
-                data: 2,
-                radiusFactor: 1
-              },
-              {
-                name: 'Opera 12',
-                parentName: 'Opera',
-                data: 1,
-                radiusFactor: 1.1
-              },
-              {
-                name: 'Etc 1',
-                parentName: 'Etc',
-                data: 3,
-                radiusFactor: 1.1
-              },
-              {
-                name: 'Etc 2',
-                parentName: 'Etc',
-                data: 2,
-                radiusFactor: 1.6
-              },
-              {
-                name: 'Etc 3',
-                parentName: 'Etc',
-                data: 1,
-                radiusFactor: 1.3
-              },
-              {
-                name: 'Etc 4',
-                parentName: 'Etc',
-                data: 1,
-                radiusFactor: 1.2
-              },
-            ],
-          },
-        ],
-      };
+      // categories: ['A', 'B'],
+      series: [
+        {
+          name: 'errandcategories',
+          data: [
+            {
+              name: 'Arbetsmarknad',
+              data: 360/7,
+            },
+            {
+              name: 'Rekreation',
+              data: 360/7,
+            },
+            {
+              name: 'Kommersiell service',
+              data: 360/7,
+            },
+            {
+              name: 'Föreningsliv',
+              data: 360/7,
+            },
+            {
+              name: 'Offentlig service',
+              data: 360/7,
+            },
+            {
+              name: 'Utbildning',
+              data: 360/7,
+            },
+            {
+              name: 'Sjukvård',
+              data: 360/7,
+            },
+          ],
+        },
+        {
+          name: 'errands',
+          data: [
+            {
+              name: 'Jordbruk',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.9,
+            },
+            {
+              name: 'Tillverkning',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.05,
+            },
+            {
+              name: 'Energi',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.11,
+            },
+            {
+              name: 'Byggverksamhet',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.6,
+            },
+            {
+              name: 'Handel',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.52,
+            },
+            {
+              name: 'Transport',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.2,
+            },
+            {
+              name: 'Hotell/restaurang',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.8,
+            },
+            {
+              name: 'Information',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.8,
+            },
+            {
+              name: 'Finansverksamhet',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.3,
+            },
+            {
+              name: 'Fastighetsverksamhet',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.4,
+            },
+            {
+              name: 'Företagstjänster',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.44,
+            },
+            {
+              name: 'Offentlig förvaltning',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.2,
+            },
+            {
+              name: 'Utbildning ',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.63,
+            },
+            {
+              name: 'Vård och omsorg',
+              parentName: 'Arbetsmarknad',
+              data: 1,
+              radiusFactor: 1.2,
+            },
+            {
+              name: 'Grönområden',
+              parentName: 'Rekreation',
+              data: 4.7,
+            },
+            {
+              name: 'Sport',
+              parentName: 'Rekreation',
+              data: 4.6,
+              radiusFactor: 1.3,
+            },
+            {
+              name: 'Fiske',
+              parentName: 'Rekreation',
+              data: 4.7,
+              radiusFactor: 1.2,
+            },
+            {
+              name: 'Apotek',
+              parentName: 'Kommersiell service',
+              data: 3.5,
+              radiusFactor: 1.3,
+            },
+            {
+              name: 'Drivmedel',
+              parentName: 'Kommersiell service',
+              data: 3.5,
+              radiusFactor: 1.1,
+            },
+            {
+              name: 'Dagligvaruhandel',
+              parentName: 'Kommersiell service',
+              data: 3.5,
+              radiusFactor: 1.42,
+            },
+            {
+              name: 'Sällanköpshandel',
+              parentName: 'Kommersiell service',
+              data: 3.5,
+              radiusFactor: 1.6,
+            },
+            {
+              name: 'Idrott',
+              parentName: 'Föreningsliv',
+              data: 7,
+              radiusFactor: 1.0,
+            },
+            {
+              name: 'Kultur',
+              parentName: 'Föreningsliv',
+              data: 7,
+              radiusFactor: 1.25,
+            },
+            {
+              name: 'Bibliotek',
+              parentName: 'Offentlig service',
+              data: 3.5,
+              radiusFactor: 1.1,
+            },
+            {
+              name: 'Återvinning',
+              parentName: 'Offentlig service',
+              data: 3.5,
+              radiusFactor: 1.52,
+            },
+            {
+              name: 'Polis',
+              parentName: 'Offentlig service',
+              data: 3.5,
+              radiusFactor: 1.5,
+            },
+            {
+              name: 'Räddningstjänst',
+              parentName: 'Offentlig service',
+              data: 3.5,
+              radiusFactor: 1.2,
+            },
+            {
+              name: 'Förskola',
+              parentName: 'Utbildning',
+              data: 3,
+              radiusFactor: 1.1,
+            },
+            {
+              name: 'Grundskola',
+              parentName: 'Utbildning',
+              data: 3,
+              radiusFactor: 1.1,
+            },
+            {
+              name: 'Gymnasieskola',
+              parentName: 'Utbildning',
+              data: 3,
+              radiusFactor: 1.2,
+            },
+            {
+              name: 'Universitet',
+              parentName: 'Utbildning',
+              data: 3,
+              radiusFactor: 0.8,
+            },
+            {
+              name: 'Folkhögskola',
+              parentName: 'Utbildning',
+              data: 3,
+              radiusFactor: 1.3,
+            },
+            {
+              name: 'Sjukhus',
+              parentName: 'Sjukvård',
+              data: 3.5,
+              radiusFactor: 1.2,
+            },
+            {
+              name: 'vårdcentral',
+              parentName: 'Sjukvård',
+              data: 3.5,
+              radiusFactor: 1.6,
+            },
+            {
+              name: 'Tandläkare',
+              parentName: 'Sjukvård',
+              data: 3.5,
+              radiusFactor: 1.4,
+            },
+            {
+              name: 'Ambulans',
+              parentName: 'Sjukvård',
+              data: 3.5,
+              radiusFactor: 1.1,
+            },
+          ],
+        },
+      ],
+    };
       const options = {
         theme: {
           series: {
             colors: ['#007398', '#A4123F', '#893B67', '#78AA00', '#00205B', '#DC8633', '#93328E', '#F2A900', '#F4364C'],
           },
         },
-        chart: { width: 430, height: 500 },
+        chart: { width: 430, height: 500, compareCircleRadius: 104, totalAggregate: 6.245 },
         legend: { align: 'bottom' },
         series: {
-          browsers: {
+          errandcategories: {
             radiusRange: {
-              inner: '20%',
-              outer: '30%',
+              inner: '30%',
+              outer: '40%',
             },
           },
-          versions: {
+          errands: {
             radiusRange: {
-              inner: '31%',
+              inner: '41%',
               outer: '100%',
             },
             dataLabels: {

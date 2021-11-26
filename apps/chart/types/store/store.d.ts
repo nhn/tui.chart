@@ -329,6 +329,8 @@ export type DefaultCategories = Exclude<Categories, HeatmapCategoriesType>;
 export type ChartOptions = {
   title?: string | TitleOption;
   animation?: AnimationOptions;
+  compareCircleRadius?: number;
+  totalAggregate?: number;
 } & Size;
 
 type BaseRadialAxes = {
