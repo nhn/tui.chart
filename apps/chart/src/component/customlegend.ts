@@ -222,19 +222,21 @@ export default class CustomLegend extends Component {
     this.rect = layout.legend;
     this.theme = theme.legend as Required<LegendTheme>;
     
-    legendData.push({
-      "label": "Jämförelseområde",
-      "active": true,
-      "checked": true,
-      "width": 88,
-      "iconType": "dash",
-      "chartType": "pie",
-      "rowIndex": 3,
-      "columnIndex": 1,
-      "viewLabel": "Jämförelseområde",
-      "color": "#000",
-      "hideCheckbox": true,
-    });
+    if(legendData.findIndex(s => s.label === "Jämförelseområde") === -1) {
+      legendData.push({
+        "label": "Jämförelseområde",
+        "active": true,
+        "checked": true,
+        "width": 88,
+        "iconType": "dash",
+        "chartType": "pie",
+        "rowIndex": 3,
+        "columnIndex": 1,
+        "viewLabel": "Jämförelseområde",
+        "color": "#000",
+        "hideCheckbox": true,
+      });
+    }
     
     this.initColorAndIconTypeMap(legendData);
     this.models = this.renderLegendModel({ showCheckbox, data: legendData } as LegendType);
