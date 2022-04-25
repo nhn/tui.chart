@@ -197,7 +197,7 @@ export default class HeatmapSeries extends Component {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
-    this.eventBus.emit('renderHoveredSeries', {
+    this.eventBus.emit('renderSelectedSeries', {
       models: this.getRespondersWithTheme([model], 'select'),
       name: this.name,
     });
