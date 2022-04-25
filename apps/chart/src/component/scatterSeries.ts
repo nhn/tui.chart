@@ -219,13 +219,14 @@ export default class ScatterSeries extends Component {
     if (!models) {
       return;
     }
+    const closestModel = this.getClosestModel(models);
 
     if (!models.length) {
       throw new Error(message.SELECT_SERIES_API_INDEX_ERROR);
     }
 
     this.eventBus.emit('renderSelectedSeries', {
-      models: this.getResponderAppliedTheme(models, 'select'),
+      models: this.getResponderAppliedTheme(closestModel, 'select'),
       name: this.name,
     });
     this.eventBus.emit('needDraw');
