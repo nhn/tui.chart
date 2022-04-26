@@ -83,7 +83,6 @@ import {
   RadialBarChartProps,
   GaugeChartProps,
 } from './charts';
-import { message } from '@src/message';
 
 declare namespace toastui {
   export class Chart {
