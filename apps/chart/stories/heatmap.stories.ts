@@ -123,6 +123,18 @@ export const selectable = () => {
   return el;
 };
 
+export const selectSeries = () => {
+  const { el, chart } = createChart(temperatureAverageDataForHeatmap, {
+    series: {
+      selectable: true,
+    },
+  });
+
+  chart.selectSeries({ seriesIndex: 0, index: 0 });
+
+  return el;
+};
+
 export const datetimeCategory = () => {
   const { el } = createChart(contributionsData, {
     xAxis: {

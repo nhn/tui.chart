@@ -5,6 +5,7 @@ import {
   currentUserCoordinateDatetimeData,
   genderHeightWeightData,
   genderHeightWeightDataWithNull,
+  simpleGenderHeightWeightData,
 } from './data';
 import ScatterChart from '@src/charts/scatterChart';
 import '@src/css/chart.css';
@@ -63,6 +64,14 @@ export const datetime = () => {
 
 export const selectable = () => {
   const { el } = createChart(genderHeightWeightData, { series: { selectable: true } });
+
+  return el;
+};
+
+export const selectSeries = () => {
+  const { el, chart } = createChart(simpleGenderHeightWeightData, { series: { selectable: true } });
+
+  chart.selectSeries({ seriesIndex: 0, index: 0 });
 
   return el;
 };
