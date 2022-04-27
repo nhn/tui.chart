@@ -136,6 +136,10 @@ declare class BaseChart {
   public getOptions(): Options;
 
   public setTooltipOffset(point: Partial<Point>): void;
+
+  public selectSeries(seriesInfo: SelectSeriesInfo): void;
+
+  public unselectSeries(): void;
 }
 
 export class LineChart extends BaseChart {
