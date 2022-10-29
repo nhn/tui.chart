@@ -3,8 +3,15 @@ import { AxisData, ChartState, LabelAxisData, Options, Scale, Series } from '@t/
 import { RectResponderModel, RectModel } from '@t/components/series';
 import { isNull, range } from '@src/helpers/utils';
 import { sortNumber } from '@src/helpers/utils';
-import { ZoomModels } from '@t/components/zoom';
-import { AreaSeriesType, CoordinateDataType, LineSeriesType, Point } from '@t/options';
+import { RangeSelectionModels } from '@t/components/rangeSelection';
+import {
+  AreaSeriesType,
+  BoxSeriesOptions,
+  CoordinateDataType,
+  LineSeriesType,
+  LineTypeSeriesOptions,
+  Point,
+} from '@t/options';
 import { makeObservableObjectToNormal } from '@src/store/reactive';
 import {
   getCoordinateDataIndex,
@@ -19,10 +26,11 @@ import {
 
 const DRAG_MIN_WIDTH = 15;
 
-type ZoomableSeries = Pick<Series, 'line' | 'area'>;
+type RangeSelectableSeries = Pick<Series, 'line' | 'area' | 'column'>;
+type RangeSelectableSeriesOptions = BoxSeriesOptions | LineTypeSeriesOptions;
 
-export default class Zoom extends Component {
-  models: ZoomModels = { selectionArea: [] };
+export default class RangeSelection extends Component {
+  models: RangeSelectionModels = { selectionArea: [] };
 
   responders!: RectResponderModel[];
 
@@ -35,13 +43,14 @@ export default class Zoom extends Component {
   private isDragging = false;
 
   initialize() {
-    this.type = 'zoom';
+    this.type = 'rangeSelection';
   }
 
   render(state: ChartState<Options>, computed) {
-    if (!state.zoomRange) {
+    if (!state.selectionRange && !state.zoomRange) {
       return;
     }
+
     this.resetSelectionArea();
     const { viewRange } = computed;
     const { layout, axes, series, scale } = state;
@@ -65,7 +74,7 @@ export default class Zoom extends Component {
   }
 
   getRectResponderInfoForCoordinateType(
-    series: ZoomableSeries,
+    series: RangeSelectableSeries,
     scale: Scale,
     axisData: LabelAxisData,
     categories: string[]
@@ -123,8 +132,17 @@ export default class Zoom extends Component {
         .sort((a, b) => a.index! - b.index!)
         .map((m) => m.data?.value);
 
-      this.store.dispatch('zoom', dragRange);
-      this.eventBus.emit('zoom', makeObservableObjectToNormal(dragRange));
+      const { series, options } = this.store.state;
+      const { series: seriesOptions } = options;
+
+      if (!series.column && (seriesOptions as LineTypeSeriesOptions)?.zoomable) {
+        this.store.dispatch('zoom', dragRange);
+        this.eventBus.emit('zoom', makeObservableObjectToNormal(dragRange));
+      }
+
+      if ((seriesOptions as RangeSelectableSeriesOptions)?.rangeSelectable) {
+        this.eventBus.emit('rangeSelection', dragRange);
+      }
 
       this.eventBus.emit('resetHoveredSeries');
       this.eventBus.emit('hideTooltip');

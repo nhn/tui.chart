@@ -268,6 +268,26 @@ export const zoomable = () => {
   return el;
 };
 
+export const rangeSelectable = () => {
+  const { el, chart } = createChart(avgTemperatureData, {
+    series: {
+      rangeSelectable: true,
+      dataLabels: {
+        visible: true,
+      },
+    },
+    xAxis: {
+      pointOnColumn: false,
+    },
+  });
+
+  chart.on('rangeSelection', (selectedRange) => {
+    console.log(selectedRange);
+  });
+
+  return el;
+};
+
 export const selectable = () => {
   const { el } = createChart(avgTemperatureData, {
     chart: { title: 'Average Temperature' },

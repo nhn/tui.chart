@@ -407,6 +407,7 @@ export interface ChartState<T extends Options> {
   scale: Scale;
   disabledSeries: string[];
   series: Series;
+  selectionRange?: RangeDataType<number>;
   zoomRange?: RangeDataType<number>;
   shiftRange?: RangeDataType<number>;
   axes: Axes;

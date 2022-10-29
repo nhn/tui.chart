@@ -216,6 +216,20 @@ export const responsive = () => {
   });
 };
 
+export const rangeSelectable = () => {
+  const { el, chart } = createChart(budgetData, {
+    series: {
+      rangeSelectable: true,
+    },
+  });
+
+  chart.on('rangeSelection', (selectedRange) => {
+    console.log(selectedRange);
+  });
+
+  return el;
+};
+
 export const theme = () => {
   const { el } = createChart(budgetData, {
     series: {

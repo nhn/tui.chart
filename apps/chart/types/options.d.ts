@@ -372,6 +372,7 @@ interface LineTypeSeriesOptions extends BaseSeriesOptions {
   showDot?: boolean;
   spline?: boolean;
   zoomable?: boolean;
+  rangeSelectable?: boolean;
   eventDetectType?: LineTypeEventDetectType;
   shift?: boolean;
   dataLabels?: Omit<DataLabelOptions, 'anchor'>;
@@ -425,6 +426,7 @@ type LineAreaChartSeriesOptions = {
   line?: Pick<LineTypeSeriesOptions, 'spline' | 'showDot' | 'dataLabels'> & BaseSeriesOptions;
   area?: Pick<AreaSeriesOptions, 'stack' | 'spline' | 'showDot' | 'dataLabels'> & BaseSeriesOptions;
   zoomable?: boolean;
+  rangeSelectable?: boolean;
   showDot?: boolean;
   spline?: boolean;
   shift?: boolean;
@@ -485,7 +487,7 @@ export interface BarChartOptions extends BaseOptions {
 }
 
 export interface ColumnChartOptions extends BaseOptions {
-  series?: BoxSeriesOptions & { shift?: boolean };
+  series?: BoxSeriesOptions & { shift?: boolean; rangeSelectable?: boolean };
   yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
   legend?: NormalLegendOptions;

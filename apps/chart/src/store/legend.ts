@@ -75,6 +75,15 @@ type LegendSizeParams = {
   chart: Size;
 };
 
+type LegendInfoToSetIndexParams = {
+  legendData: LegendDataList;
+  rowCount: number;
+  columnCount: number;
+  legendCount: number;
+  verticalAlign: boolean;
+  itemHeight: number;
+};
+
 const INITIAL_LEGEND_WIDTH = 100;
 const INITIAL_CIRCLE_LEGEND_WIDTH = 150;
 const COMPONENT_HEIGHT_EXCEPT_Y_AXIS = 100;
@@ -84,18 +93,24 @@ const NUMBER_OF_BOTH_SIDES = 2;
 
 function recalculateLegendWhenHeightOverflows(params: LegendSizeParams, legendHeight: number) {
   const { legendWidths, itemHeight } = params;
-  const totalHeight = legendWidths.length * itemHeight;
-  const columnCount = Math.ceil(totalHeight / legendHeight);
-  const rowCount = legendWidths.length / columnCount;
+  const maxCountByColumn = Math.floor(legendHeight / itemHeight);
+  const columnCount = Math.ceil(legendWidths.length / maxCountByColumn);
   let legendWidth = 0;
 
   range(0, columnCount).forEach((count) => {
-    legendWidth += Math.max(...legendWidths.slice(count * rowCount, (count + 1) * rowCount));
+    legendWidth += Math.max(
+      ...legendWidths.slice(count * maxCountByColumn, (count + 1) * maxCountByColumn)
+    );
   });
 
   legendWidth += LEGEND_ITEM_MARGIN_X * (columnCount - 1);
 
-  return { legendWidth, legendHeight: rowCount * itemHeight + padding.Y, columnCount, rowCount };
+  return {
+    legendWidth,
+    legendHeight: maxCountByColumn * itemHeight + padding.Y,
+    columnCount,
+    rowCount: maxCountByColumn,
+  };
 }
 
 function recalculateLegendWhenWidthOverflows(params: LegendSizeParams, prevLegendWidth: number) {
@@ -446,13 +461,16 @@ function getNextColumnRowIndex(params: {
   return [rowIndex, columnIndex];
 }
 
-function setIndexToLegendData(
-  legendData: LegendDataList,
-  rowCount: number,
-  columnCount: number,
-  legendCount: number,
-  verticalAlign: boolean
-) {
+function setIndexToLegendData(legendInfoParams: LegendInfoToSetIndexParams) {
+  const {
+    legendData,
+    rowCount,
+    columnCount,
+    legendCount,
+    verticalAlign,
+    itemHeight,
+  } = legendInfoParams;
+
   let columnIndex = 0;
   let rowIndex = 0;
 
@@ -550,7 +568,14 @@ const legend: StoreModule = {
         circleLegendVisible,
       });
 
-      setIndexToLegendData(legendData, rowCount, columnCount, legendWidths.length, verticalAlign);
+      setIndexToLegendData({
+        legendData,
+        rowCount,
+        columnCount,
+        verticalAlign,
+        itemHeight,
+        legendCount: legendWidths.length,
+      });
 
       extend(state.legend, {
         visible,

@@ -18,7 +18,7 @@ import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
-import Zoom from '@src/component/zoom';
+import RangeSelection from '@src/component/rangeSelection';
 import ResetButton from '@src/component/resetButton';
 import Background from '@src/component/background';
 import NoDataText from '@src/component/noDataText';
@@ -160,7 +160,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
-    this.componentManager.add(Zoom);
+    this.componentManager.add(RangeSelection);
     this.componentManager.add(ResetButton);
     this.componentManager.add(NoDataText);
 

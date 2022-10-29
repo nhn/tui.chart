@@ -6,6 +6,7 @@ export type CustomEventType =
   | 'hoverSeries'
   | 'unhoverSeries'
   | 'zoom'
-  | 'resetZoom';
+  | 'resetZoom'
+  | 'rangeSelection';
 
 export type EventListener = (evt: any) => void;
