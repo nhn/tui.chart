@@ -180,7 +180,7 @@ type options = {
     };
     line?: {
       selectable?: boolean;
-      spline?: boolena;
+      spline?: boolean;
       showDot?: boolean;
       dataLabels?: {
         visible?: boolean;

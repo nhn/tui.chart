@@ -164,7 +164,7 @@ type options = {
   series?: {
     selectable?: boolean;
     line?: {
-      spline?: boolena;
+      spline?: boolean;
       showDot?: boolean;
     }
     dataLabels?: {
