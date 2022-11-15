@@ -61,7 +61,8 @@ import { ColumnChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {number|string} [props.options.chart.width] - Chart width. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the width of the parent container is followed.
  *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series]
- *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
+ *       @param {boolean} [props.options.series.selectable=false]
+ *       @param {boolean} [props.options.series.rangeSelectable=false] - Whether to use range selection feature or not.
  *       @param {number} [props.options.series.barWidth] - Bar width.
  *       @param {boolean} [props.options.series.diverging] - Whether to use diverging chart or not.
  *       @param {Object} [props.options.series.stack] - Option to use the stack chart or, if so, what type of stack to use.
