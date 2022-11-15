@@ -486,8 +486,13 @@ export interface BarChartOptions extends BaseOptions {
   theme?: BoxChartThemeOptions;
 }
 
+export type ColumnChartBoxSeriesOptions = BoxSeriesOptions & {
+  shift?: boolean;
+  rangeSelectable?: boolean;
+};
+
 export interface ColumnChartOptions extends BaseOptions {
-  series?: BoxSeriesOptions & { shift?: boolean; rangeSelectable?: boolean };
+  series?: ColumnChartBoxSeriesOptions;
   yAxis?: BothSidesYAxisOptions;
   plot?: PlotOptions;
   legend?: NormalLegendOptions;

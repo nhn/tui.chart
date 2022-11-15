@@ -6,7 +6,7 @@ import { sortNumber } from '@src/helpers/utils';
 import { RangeSelectionModels } from '@t/components/rangeSelection';
 import {
   AreaSeriesType,
-  BoxSeriesOptions,
+  ColumnChartBoxSeriesOptions,
   CoordinateDataType,
   LineSeriesType,
   LineTypeSeriesOptions,
@@ -27,7 +27,7 @@ import {
 const DRAG_MIN_WIDTH = 15;
 
 type RangeSelectableSeries = Pick<Series, 'line' | 'area' | 'column'>;
-type RangeSelectableSeriesOptions = BoxSeriesOptions | LineTypeSeriesOptions;
+type RangeSelectableSeriesOptions = ColumnChartBoxSeriesOptions | LineTypeSeriesOptions;
 
 export default class RangeSelection extends Component {
   models: RangeSelectionModels = { selectionArea: [] };
