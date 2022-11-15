@@ -30,6 +30,7 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import Tooltip from '@src/component/tooltip';
 import Background from '@src/component/background';
+import RangeSelection from '@src/component/rangeSelection';
 import NoDataText from '@src/component/noDataText';
 
 import * as basicBrush from '@src/brushes/basic';
@@ -171,6 +172,7 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
+    this.componentManager.add(RangeSelection);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(NoDataText);
 

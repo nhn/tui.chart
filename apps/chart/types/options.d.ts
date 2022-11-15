@@ -656,6 +656,7 @@ type ColumnLineChartSeriesOptions = {
   shift?: boolean;
   dataLabels?: DataLabelOptions;
   eventDetectType?: BoxTypeEventDetectType;
+  rangeSelectable?: boolean;
 } & BaseSeriesOptions;
 
 export interface ColumnLineChartOptions extends BaseOptions {
