@@ -290,6 +290,27 @@ export const coordinateZoomable = () => {
   return el;
 };
 
+export const rangeSelectable = () => {
+  const { el, chart } = createChart(randomData(30), {
+    series: {
+      zoomable: false,
+      rangeSelectable: true,
+      dataLabels: {
+        visible: true,
+      },
+    },
+    xAxis: {
+      pointOnColumn: false,
+    },
+  });
+
+  chart.on('rangeSelection', (selectedRange) => {
+    console.log(selectedRange);
+  });
+
+  return el;
+};
+
 export const animationDuration = () => {
   const { el } = createChart(temperatureData, {
     chart: {

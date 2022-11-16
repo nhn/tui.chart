@@ -30,6 +30,7 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import DataLabels from '@src/component/dataLabels';
 import Tooltip from '@src/component/tooltip';
 import Background from '@src/component/background';
+import RangeSelection from '@src/component/rangeSelection';
 import NoDataText from '@src/component/noDataText';
 
 import * as basicBrush from '@src/brushes/basic';
@@ -81,6 +82,7 @@ function hasColumnLineUsingPointEventType(respondersModel: RespondersModel) {
  *       @param {Object} [props.options.series.line] - Options to be applied to the line chart. 'spline', 'showDot', 'dataLabels' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Line Chart guide} on github.
  *       @param {Object} [props.options.series.column] - Options to be applied to the column chart. 'barWidth', 'stack', 'dataLabels' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Column Chart guide} on github.
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
+ *       @param {boolean} [props.options.series.rangeSelectable=false] - Whether to use range selection feature or not.
  *       @param {string} [props.options.series.eventDetectType] - Event detect type. 'near', 'nearest', 'grouped', 'point' is available.
  *       @param {boolean} [props.options.series.shift=false] - Whether to use shift when addData or not.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
@@ -171,6 +173,7 @@ export default class ColumnLineChart extends Chart<ColumnLineChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(DataLabels);
+    this.componentManager.add(RangeSelection);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(NoDataText);
 

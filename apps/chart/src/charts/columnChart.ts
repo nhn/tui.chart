@@ -21,6 +21,7 @@ import HoveredSeries from '@src/component/hoveredSeries';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
 import NoDataText from '@src/component/noDataText';
+import RangeSelection from '@src/component/rangeSelection';
 
 import * as basicBrush from '@src/brushes/basic';
 import * as axisBrush from '@src/brushes/axis';
@@ -61,6 +62,7 @@ import { ColumnChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {number|string} [props.options.chart.height] - Chart height. 'auto' or if not write, the width of the parent container is followed. 'auto' or if not created, the height of the parent container is followed.
  *     @param {Object} [props.options.series]
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
+ *       @param {boolean} [props.options.series.rangeSelectable=false] - Whether to use range selection feature or not.
  *       @param {number} [props.options.series.barWidth] - Bar width.
  *       @param {boolean} [props.options.series.diverging] - Whether to use diverging chart or not.
  *       @param {Object} [props.options.series.stack] - Option to use the stack chart or, if so, what type of stack to use.
@@ -153,6 +155,7 @@ export default class ColumnChart extends Chart<ColumnChartOptions> {
     this.componentManager.add(DataLabels);
     this.componentManager.add(Tooltip, { chartEl: this.el });
     this.componentManager.add(NoDataText);
+    this.componentManager.add(RangeSelection);
 
     this.painter.addGroups([
       basicBrush,

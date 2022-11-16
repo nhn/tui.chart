@@ -56,10 +56,10 @@ export type ComponentType =
   | 'exportMenu'
   | 'resetButton'
   | 'zeroAxis'
-  | 'zoom'
   | 'backButton'
   | 'background'
-  | 'noDataText';
+  | 'noDataText'
+  | 'rangeSelection';
 
 type ComponentModels =
   | AxisModels

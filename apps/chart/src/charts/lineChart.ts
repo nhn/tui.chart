@@ -15,7 +15,7 @@ import AxisTitle from '@src/component/axisTitle';
 import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import HoveredSeries from '@src/component/hoveredSeries';
-import Zoom from '@src/component/zoom';
+import RangeSelection from '@src/component/rangeSelection';
 import ResetButton from '@src/component/resetButton';
 import SelectedSeries from '@src/component/selectedSeries';
 import Background from '@src/component/background';
@@ -66,6 +66,7 @@ import { LineChartProps, SelectSeriesInfo } from '@t/charts';
  *       @param {boolean} [props.options.series.showDot=false] - Whether to show dot or not.
  *       @param {boolean} [props.options.series.spline=false] - Whether to make spline chart or not.
  *       @param {boolean} [props.options.series.zoomable=false] - Whether to use zoom feature or not.
+ *       @param {boolean} [props.options.series.rangeSelectable=false] - Whether to use range selection feature or not.
  *       @param {string} [props.options.series.eventDetectType] - Event detect type. 'near', 'nearest', 'grouped', 'point' is available.
  *       @param {boolean} [props.options.series.shift=false] - Whether to use shift when addData or not.
  *       @param {Object} [props.options.series.dataLabels] - Set the visibility, location, and formatting of dataLabel. For specific information, refer to the {@link https://github.com/nhn/tui.chart|DataLabels guide} on github.
@@ -156,7 +157,7 @@ export default class LineChart extends Chart<LineChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
-    this.componentManager.add(Zoom);
+    this.componentManager.add(RangeSelection);
     this.componentManager.add(ResetButton);
     this.componentManager.add(NoDataText);
 

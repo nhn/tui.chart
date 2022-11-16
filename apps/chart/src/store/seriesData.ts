@@ -43,6 +43,17 @@ function initRange(series: RawSeries, categories?: Categories): RangeDataType<nu
   return [0, rawCategoriesLength - 1];
 }
 
+function initSelectionRange(series: RawSeries, options: Options, categories?: Categories) {
+  if (
+    !(series.line || series.area || series.column) ||
+    !(options.series as LineTypeSeriesOptions)?.rangeSelectable
+  ) {
+    return;
+  }
+
+  return initRange(series, categories);
+}
+
 function initZoomRange(series: RawSeries, options: Options, categories?: Categories) {
   if (!(series.line || series.area) || !(options.series as LineTypeSeriesOptions)?.zoomable) {
     return;
@@ -173,6 +184,7 @@ const seriesData: StoreModule = {
     series: {
       ...series,
     } as Series,
+    selectionRange: initSelectionRange(series, options, categories),
     zoomRange: initZoomRange(series, options, categories),
     shiftRange: initShiftRange(series, options, categories),
     disabledSeries: initDisabledSeries(series),
@@ -244,6 +256,15 @@ const seriesData: StoreModule = {
         state.categories = state.series.bullet.data.map(({ name: seriesName }) => seriesName);
         this.notify(state, 'axes');
       }
+    },
+    selection({ state }, rangeCategories: string[]) {
+      const rawCategories = state.rawCategories as string[];
+
+      state.selectionRange = rangeCategories.map((rangeCategory) =>
+        rawCategories.findIndex((category) => category === rangeCategory)
+      ) as RangeDataType<number>;
+
+      this.notify(state, 'selectionRange');
     },
     zoom({ state }, rangeCategories: string[]) {
       const rawCategories = state.rawCategories as string[];

@@ -18,7 +18,7 @@ import Title from '@src/component/title';
 import ExportMenu from '@src/component/exportMenu';
 import SelectedSeries from '@src/component/selectedSeries';
 import HoveredSeries from '@src/component/hoveredSeries';
-import Zoom from '@src/component/zoom';
+import RangeSelection from '@src/component/rangeSelection';
 import ResetButton from '@src/component/resetButton';
 import Background from '@src/component/background';
 import NoDataText from '@src/component/noDataText';
@@ -69,6 +69,7 @@ import { LineAreaChartProps, AddSeriesDataInfo, SelectSeriesInfo } from '@t/char
  *       @param {Object} [props.options.series.line] - Options to be applied to the line chart. 'spline', 'showDot', 'dataLabels' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Line Chart guide} on github.
  *       @param {Object} [props.options.series.area] - Options to be applied to the area chart. 'stack', 'spline', 'showDot', 'dataLabels' is available. For specific information, refer to the {@link https://github.com/nhn/tui.chart|Area Chart guide} on github.
  *       @param {boolean} [props.options.series.zoomable=false] - Whether to use zoom feature or not.
+ *       @param {boolean} [props.options.series.rangeSelectable=false] - Whether to use range selection feature or not.
  *       @param {boolean} [props.options.series.showDot=false] - Whether to show dot or not.
  *       @param {boolean} [props.options.series.spline=false] - Whether to make spline chart or not.
  *       @param {boolean} [props.options.series.selectable=false] - Whether to make selectable series or not.
@@ -160,7 +161,7 @@ export default class LineAreaChart extends Chart<LineAreaChartOptions> {
     this.componentManager.add(HoveredSeries);
     this.componentManager.add(SelectedSeries);
     this.componentManager.add(Tooltip, { chartEl: this.el });
-    this.componentManager.add(Zoom);
+    this.componentManager.add(RangeSelection);
     this.componentManager.add(ResetButton);
     this.componentManager.add(NoDataText);
 
