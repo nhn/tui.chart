@@ -135,6 +135,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: publish
     steps:
+      - name: checkout branch
+        uses: actions/checkout@v2
+      - name: check package version
+        id: check
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ${{ env.WORKING_DIRECTORY }}
       - name: use Node.js 15.x
         uses: actions/setup-node@v1
         with:
