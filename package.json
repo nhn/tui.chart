@@ -39,8 +39,9 @@
     "ttypescript": "^1.5.12",
     "typescript": "3.7.3",
     "typescript-transform-paths": "2.0.2",
-    "vue-loader": "^15.9.6",
-    "vue-template-compiler": "^2.6.12",
+    "vue-loader": "^16.8.3",
+    "vue-template-compiler": "^2.7.14",
+    "@vue/compiler-sfc": "^3.2.45",
     "webpack": "^5.36.1",
     "webpack-bundle-analyzer": "^4.4.1",
     "webpack-cli": "^4.6.0",
@@ -51,7 +52,8 @@
     "build": "lerna run build",
     "build:chart": "lerna run --scope @toast-ui/chart build",
     "build:react": "lerna run --scope @toast-ui/react-chart build",
-    "build:vue": "lerna run --scope @toast-ui/vue-chart build"
+    "build:vue": "lerna run --scope @toast-ui/vue-chart build",
+    "build:vue3": "lerna run --scope @toast-ui/vue3-chart build"
   },
   "workspaces": [
     "apps/*"

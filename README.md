@@ -11,6 +11,7 @@ The functionality of TOAST UI Chart is available when using the Plain JavaScript
 
 - [toast-ui.chart](https://github.com/nhn/tui.chart/tree/main/apps/chart) - Plain JavaScript component implemented by NHN Cloud.
 - [toast-ui.vue-chart](https://github.com/nhn/tui.chart/tree/main/apps/vue-chart) - **Vue** wrapper component implemented by NHN Cloud.
+- [toast-ui.vue3-chart](https://github.com/nhn/tui.chart/tree/main/apps/vue3-chart) - **Vue3** wrapper component implemented by NHN Cloud.
 - [toast-ui.react-chart](https://github.com/nhn/tui.chart/tree/main/apps/react-chart) - **React** wrapper component implemented by NHN Cloud.
 
 ## 📙 Documents

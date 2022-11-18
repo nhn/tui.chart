@@ -1,0 +1,15 @@
+{
+  "extends": "../../babel.config.json",
+  "presets": [
+    [
+      "@vue/app",
+      {
+        "useBuiltIns": "usage",
+        "debug": false,
+        "modules": "auto",
+        "corejs": 3,
+        "shippedProposals": true
+      }
+    ]
+  ]
+}
