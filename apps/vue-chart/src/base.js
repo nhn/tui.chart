@@ -16,6 +16,8 @@ const chartEvents = [
   'zoom',
   'reset-zoom',
   'resetZoom',
+  'range-selection',
+  'rangeSelection',
 ];
 
 function getChartEventName(vueEventName) {
