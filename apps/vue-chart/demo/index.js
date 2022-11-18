@@ -51,6 +51,7 @@ const areaProps = {
       spline: true,
       showDot: true,
       selectable: true,
+      rangeSelectable: true,
     },
   },
 };
@@ -105,6 +106,9 @@ const vue = new Vue({
     },
     selectSeries(ev) {
       console.log(ev, 'select!');
+    },
+    selectRange(ev) {
+      console.log(ev, 'range select!');
     },
     showSeriesDataLabel() {
       this.$refs.chartRef.invoke('showSeriesDataLabel');
