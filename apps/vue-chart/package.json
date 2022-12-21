@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-chart",
-  "version": "4.6.0",
+  "version": "4.6.1",
   "description": "TOAST UI Chart for Vue",
   "main": "dist/toastui-vue-chart.js",
   "files": [
@@ -25,7 +25,7 @@
     "vue-eslint-parser": "^7.6.0"
   },
   "dependencies": {
-    "@toast-ui/chart": "^4.5.0"
+    "@toast-ui/chart": "^4.6.1"
   },
   "peerDependencies": {
     "vue": "^2.6.0"
