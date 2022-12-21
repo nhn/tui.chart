@@ -1,0 +1,64 @@
+import { ChartState, Options } from "../../types/store/store";
+import { Rect } from "../../types/options";
+import Store from "../store/store";
+import Painter from "../painter";
+import EventEmitter from "../eventEmitter";
+import { AreaSeriesModels, BoxSeriesModels, CircleSeriesModels, LineSeriesModels, PieSeriesModels, RadarSeriesModels, BoxPlotSeriesModels, ResponderModel, TreemapSeriesModels, HeatmapRectModels, NestedPieSeriesModels, ScatterSeriesModels, BulletSeriesModels, BackgroundModel, GaugeSeriesModels, NoDataTextModel, RadialBarSeriesModels } from "../../types/components/series";
+import { AxisModels, LineModel, LabelModel } from "../../types/components/axis";
+import { ExportMenuModels } from "../../types/components/exportMenu";
+import { LegendModel } from "../../types/components/legend";
+import { CircleLegendModels } from "../../types/components/circleLegend";
+import { PlotModels } from "../../types/components/plot";
+import { DataLabelModels, SeriesDataLabels } from "../../types/components/dataLabels";
+import { ZoomModels } from "../../types/components/zoom";
+import { RadialPlotModels } from "../../types/components/radialPlot";
+import { HoveredSeriesModel } from "./hoveredSeries";
+import { BackButtonModels, ResetButtonModels } from "../../types/components/resetButton";
+import { SpectrumLegendModels } from "../../types/components/spectrumLegend";
+import { ResponderSeriesModel } from "./selectedSeries";
+import { RadialAxisModels } from "../../types/components/radialAxis";
+export declare type ComponentType = 'component' | 'series' | 'hoveredSeries' | 'selectedSeries' | 'legend' | 'axis' | 'tooltip' | 'plot' | 'circleLegend' | 'spectrumLegend' | 'dataLabels' | 'title' | 'axisTitle' | 'exportMenu' | 'resetButton' | 'zeroAxis' | 'backButton' | 'background' | 'noDataText' | 'rangeSelection';
+declare type ComponentModels = AxisModels | AreaSeriesModels | BoxSeriesModels | CircleSeriesModels | LineSeriesModels | ExportMenuModels | CircleLegendModels | PieSeriesModels | RadarSeriesModels | BoxPlotSeriesModels | ZoomModels | PlotModels | RadialPlotModels | LineModel[] | LabelModel[] | DataLabelModels | LegendModel[] | HoveredSeriesModel | TreemapSeriesModels | ResetButtonModels | SpectrumLegendModels | BackButtonModels | HeatmapRectModels | NestedPieSeriesModels | ResponderSeriesModel | ScatterSeriesModels | BulletSeriesModels | BackgroundModel | RadialAxisModels | RadialBarSeriesModels | GaugeSeriesModels | NoDataTextModel;
+export declare type RespondersModel = {
+    component: Component;
+    detected: ResponderModel[];
+}[];
+export default abstract class Component {
+    name: string;
+    type: ComponentType;
+    rect: Rect;
+    isShow: boolean;
+    selectable: boolean;
+    store: Store<Options>;
+    eventBus: EventEmitter;
+    models: ComponentModels;
+    drawModels: ComponentModels;
+    responders: ResponderModel[];
+    activeSeriesMap?: {
+        [key: string]: boolean;
+    };
+    constructor({ store, eventBus }: {
+        store: Store<Options>;
+        eventBus: EventEmitter;
+    });
+    abstract initialize(args: any): void;
+    abstract render(state: ChartState<Options>, computed: Record<string, any>): void;
+    update(delta: number): void;
+    initUpdate(delta: number): void;
+    updateModels(currentModels: any, targetModels: any, delta: any): void;
+    sync(): void;
+    getCurrentModelToMatchTargetModel(models: any, currentModels: any, targetModels: any): any;
+    private getCurrentModelWithDifferentModel;
+    syncModels(currentModels: any, targetModels: any, type?: string): void;
+    getSelectableOption(options: Options): boolean;
+    beforeDraw?(painter: Painter): void;
+    onClick?(responseData: any): void;
+    onMousemove?(responseData: any): void;
+    onMouseenterComponent?(): void;
+    onMouseoutComponent?(): void;
+    onMousedown?(responseData: any): void;
+    onMouseup?(responseData: any): void;
+    renderDataLabels(data: SeriesDataLabels, name?: string): void;
+    draw(painter: Painter): void;
+}
+export {};

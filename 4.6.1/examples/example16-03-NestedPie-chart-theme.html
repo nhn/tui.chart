@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/codemirror.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/addon/lint/lint.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.43.0/theme/neo.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/example.css" />
+    <link rel="stylesheet" href="../dist/toastui-chart.css" />
+    <title>16.3 [NestedPie Chart] Theme</title>
+  </head>
+  <body>
+    <div class="description">
+      You can see the tutorial
+      <a href="https://github.com/nhn/tui.chart/blob/main/docs/en/chart-nestedPie.md" target="_blank">here</a>
+      <br />
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="wrap">
+      <div class="code-html" id="code-html">
+        <div id="chart-area"></div>
+      </div>
+      <div class="custom-area">
+        <div id="error-dim">
+          <span id="error-text"></span>
+          <div id="error-stack"></div>
+          <span id="go-to-dev-tool"
+            >For more detail, open browser's developer tool and check it out.</span
+          >
+        </div>
+        <div class="try-it-area">
+          <h3>try it</h3>
+          <textarea id="code"></textarea>
+          <div class="apply-btn-area">
+            <button class="btn" onclick="evaluationCode(chartCM, codeString);">Run it!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="../dist/toastui-chart.js"></script>
+    <script class="code-js" id="code-js" type="text/babel">
+      const el = document.getElementById('chart-area');
+      const data = {
+        series: [
+          {
+            name: 'browsers',
+            data: [
+              {
+                name: 'Chrome',
+                data: 50,
+              },
+              {
+                name: 'Safari',
+                data: 20,
+              },
+              {
+                name: 'IE',
+                data: 10,
+              },
+              {
+                name: 'Firefox',
+                data: 10,
+              },
+              {
+                name: 'Opera',
+                data: 3,
+              },
+              {
+                name: 'Etc',
+                data: 7,
+              },
+            ],
+          },
+          {
+            name: 'versions',
+            data: [
+              {
+                name: 'Chrome 64',
+                data: 40,
+              },
+              {
+                name: 'Chrome 63',
+                data: 10,
+              },
+              {
+                name: 'Safari 13',
+                data: 15,
+              },
+              {
+                name: 'Safari 12',
+                data: 5,
+              },
+              {
+                name: 'IE 11',
+                data: 4,
+              },
+              {
+                name: 'IE 10',
+                data: 3,
+              },
+              {
+                name: 'IE 9',
+                data: 2,
+              },
+              {
+                name: 'IE 8',
+                data: 1,
+              },
+              {
+                name: 'Firefox 13',
+                data: 8,
+              },
+              {
+                name: 'Firefox 12',
+                data: 2,
+              },
+              {
+                name: 'Opera 15',
+                data: 2,
+              },
+              {
+                name: 'Opera 12',
+                data: 1,
+              },
+              {
+                name: 'Etc - 2020',
+                data: 7,
+              },
+            ],
+          },
+        ],
+      };
+      const theme = {
+        series: {
+          browsers: {
+            colors: ['#eef4c4', '#77543f', '#b7c72e', '#5b9aa0', '#30076f', '#622569'],
+            lineWidth: 5,
+            strokeStyle: '#0000ff',
+            hover: {
+              color: '#0000ff',
+              lineWidth: 5,
+              strokeStyle: '#000000',
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              shadowBlur: 10,
+            },
+          },
+          versions: {
+            colors: [
+              '#cddbda',
+              '#efd1d1',
+              '#ea005e',
+              '#fece2f',
+              '#fc6104',
+              '#dd2429',
+              '#ebc7ff',
+              '#fece2f',
+              '#dd2429',
+              '#ff8d3a',
+              '#fc6104',
+              '#5ac18e',
+              '#8570ff',
+            ],
+            lineWidth: 2,
+            strokeStyle: '#ff0000',
+            hover: {
+              color: '#ff0000',
+              lineWidth: 2,
+              strokeStyle: '#000000',
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              shadowBlur: 10,
+            },
+          },
+        },
+      };
+
+      const options = {
+        chart: { title: 'Usage share of web browsers', width: 900, height: 600 },
+        series: {
+          browsers: {
+            radiusRange: {
+              inner: '20%',
+              outer: '50%',
+            },
+          },
+          versions: {
+            radiusRange: {
+              inner: '55%',
+              outer: '85%',
+            },
+          },
+        },
+        theme,
+      };
+
+      const chart = toastui.Chart.nestedPieChart({ el, data, options });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/edit/matchbrackets.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/selection/active-line.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/mode/javascript/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.0/addon/lint/javascript-lint.js"></script>
+    <script src="./js/example.js" type="text/babel"></script>
+  </body>
+</html>

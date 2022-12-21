@@ -1,0 +1,36 @@
+import { OptionsWithDataLabels } from "../../types/store/store";
+import { DataLabelOptions, Rect } from "../../types/options";
+import { DataLabel, DataLabelOption, PointDataLabel, RectDataLabel, RadialDataLabel, LineDataLabel, DataLabelType, RadialBarDataLabel } from "../../types/components/dataLabels";
+export declare const RADIUS_PADDING = 30;
+declare type LabelPosition = {
+    x: number;
+    y: number;
+    textAlign: CanvasTextAlign;
+    textBaseline: CanvasTextBaseline;
+    radian?: number;
+};
+export declare function getDefaultDataLabelsOptions(dataLabelOptions: DataLabelOptions, type: DataLabelType, withStack?: boolean): DataLabelOption;
+export declare function makePointLabelInfo(point: PointDataLabel, dataLabelOptions: DataLabelOption, rect: Rect): DataLabel;
+export declare function makeRectLabelInfo(rect: RectDataLabel, dataLabelOptions: DataLabelOption): DataLabel;
+export declare function makeSectorLabelPosition(model: RadialDataLabel, dataLabelOptions: DataLabelOption): LabelPosition;
+export declare function makeSectorBarLabelInfo(model: RadialBarDataLabel, dataLabelOptions: DataLabelOption): DataLabel;
+export declare function makeSectorLabelInfo(model: RadialDataLabel, dataLabelOptions: DataLabelOption): DataLabel;
+export declare function makePieSeriesNameLabelInfo(model: RadialDataLabel, dataLabelOptions: DataLabelOption): DataLabel;
+export declare function getDataLabelsOptions(options: OptionsWithDataLabels, name: string): any;
+export declare function makeLineLabelInfo(model: LineDataLabel, dataLabelOptions: DataLabelOption): {
+    x: number;
+    y: number;
+    textAlign: CanvasTextAlign;
+    textBaseline: CanvasTextBaseline;
+    text: string;
+    type: "line";
+    x2: number;
+    y2: number;
+    strokeStyle?: string | undefined;
+    lineWidth?: number | undefined;
+    dashSegments?: number[] | undefined;
+    name?: string | undefined;
+    value: number;
+    theme: import("../../types/theme").BubbleDataLabel;
+};
+export {};
