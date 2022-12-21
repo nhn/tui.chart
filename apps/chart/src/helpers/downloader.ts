@@ -416,7 +416,7 @@ export function downloadSpreadSheet(
   let content = '';
 
   if (extension === 'csv') {
-    content = makeCSVBodyWithRawData(chartData2DArray);
+    content = encodeURIComponent(makeCSVBodyWithRawData(chartData2DArray));
   } else {
     content = makeXLSBodyWithRawData(chartData2DArray);
   }
