@@ -23,6 +23,7 @@ import { message } from '@src/message';
 
 type RenderOptions = {
   ratio: number;
+  positionOflineFor:(value:number)=>number;
   tickDistance: number;
   barWidth: number;
   minMaxBarWidth: number;
@@ -87,9 +88,16 @@ export default class BoxPlotSeries extends Component {
     const boxPlotData = series.boxPlot.data;
     const seriesLength = boxPlotData.length;
 
+    const ratio = (this.rect.height / (max - min));
+    const positionOflineFor =  (value:number)=> (
+      min>=0 ?
+        this.rect.height - value * ratio
+        : this.rect.height - (value - min) * ratio
+    );
     const renderOptions = {
-      ratio: this.rect.height / (max - min),
+      ratio,
       tickDistance,
+      positionOflineFor,
       ...this.getBarWidths(tickDistance, seriesLength),
     };
 
@@ -263,9 +271,9 @@ export default class BoxPlotSeries extends Component {
       { rect: [], line: [], circle: [] }
     );
   }
-
+  
   makeBoxPlots(seriesData: BoxPlotSeriesType[], renderOptions: RenderOptions): BoxPlotModelData {
-    const { ratio, barWidth } = renderOptions;
+    const { barWidth, positionOflineFor } = renderOptions;
     const boxPlotModels: BoxPlotModelData = [];
     const seriesLength = seriesData.length;
     const { dot } = this.theme;
@@ -312,7 +320,7 @@ export default class BoxPlotSeries extends Component {
           type: 'circle',
           name,
           x: startX + barWidth / 2,
-          y: this.getYPos(value, ratio),
+          y: positionOflineFor(value),
           radius: radius!,
           style: [{ strokeStyle: borderColor ?? seriesColor, lineWidth: borderWidth }],
           color: useSeriesColor ? seriesColor : dotColor,
@@ -379,12 +387,6 @@ export default class BoxPlotSeries extends Component {
     const padding = getPadding(tickDistance, barWidth, seriesLength);
 
     return dataIndex * tickDistance + (seriesIndex + 1) * padding + barWidth * seriesIndex;
-  }
-
-  getYPos(value: number, ratio: number, lineWidth?: number) {
-    return isNumber(lineWidth)
-      ? crispPixel(this.rect.height - value * ratio, lineWidth)
-      : this.rect.height - value * ratio;
   }
 
   onMouseoutComponent = () => {
@@ -506,7 +508,7 @@ export default class BoxPlotSeries extends Component {
     datum: number[],
     startX: number,
     seriesColor: string,
-    { barWidth, ratio }: RenderOptions
+    { barWidth, ratio, positionOflineFor }: RenderOptions
   ): RectModel {
     const { rect } = this.theme;
     const [, lowerQuartile, , highQuartile] = datum;
@@ -514,7 +516,7 @@ export default class BoxPlotSeries extends Component {
     return {
       type: 'rect',
       x: startX,
-      y: this.getYPos(highQuartile, ratio),
+      y: positionOflineFor(highQuartile),
       width: barWidth,
       height: (highQuartile - lowerQuartile) * ratio,
       thickness: rect.borderWidth!,
@@ -527,7 +529,7 @@ export default class BoxPlotSeries extends Component {
     datum: number[],
     startX: number,
     seriesColor: string,
-    { barWidth, ratio }: RenderOptions,
+    { barWidth, positionOflineFor }: RenderOptions,
     rect: RectModel
   ): Record<'upperWhisker' | 'lowerWhisker', LineModel> {
     const [minimum, , , , maximum] = datum;
@@ -538,7 +540,7 @@ export default class BoxPlotSeries extends Component {
       upperWhisker: {
         type: 'line',
         x,
-        y: this.getYPos(maximum, ratio, lineWidth),
+        y: crispPixel(positionOflineFor(maximum), lineWidth),
         x2: x,
         y2: rect.y,
         strokeStyle: color ?? seriesColor,
@@ -547,7 +549,7 @@ export default class BoxPlotSeries extends Component {
       lowerWhisker: {
         type: 'line',
         x,
-        y: this.getYPos(minimum, ratio, lineWidth),
+        y: crispPixel(positionOflineFor(minimum), lineWidth),
         x2: x,
         y2: crispPixel(rect.y + rect.height, lineWidth),
         strokeStyle: color ?? seriesColor,
@@ -560,7 +562,7 @@ export default class BoxPlotSeries extends Component {
     datum: number[],
     startX: number,
     seriesColor: string,
-    { barWidth, ratio }: RenderOptions
+    { barWidth, positionOflineFor }: RenderOptions
   ): LineModel {
     const median = datum[2];
     const { lineWidth, color } = this.theme.line.median!;
@@ -568,9 +570,9 @@ export default class BoxPlotSeries extends Component {
     return {
       type: 'line',
       x: crispPixel(startX, lineWidth),
-      y: this.getYPos(median, ratio, lineWidth),
+      y: crispPixel(positionOflineFor(median), lineWidth),
       x2: crispPixel(startX + barWidth, lineWidth),
-      y2: this.getYPos(median, ratio, lineWidth),
+      y2: crispPixel(positionOflineFor(median), lineWidth),
       strokeStyle: color ?? seriesColor,
       lineWidth: lineWidth,
     };
@@ -580,7 +582,7 @@ export default class BoxPlotSeries extends Component {
     datum: number[],
     startX: number,
     seriesColor: string,
-    { barWidth, ratio, minMaxBarWidth }: RenderOptions
+    { barWidth, minMaxBarWidth, positionOflineFor }: RenderOptions
   ): LineModel {
     const minimum = datum[0];
     const { lineWidth, color } = this.theme.line.minimum!;
@@ -588,9 +590,9 @@ export default class BoxPlotSeries extends Component {
     return {
       type: 'line',
       x: crispPixel(startX + (barWidth - minMaxBarWidth) / 2, lineWidth),
-      y: this.getYPos(minimum, ratio, lineWidth),
+      y: crispPixel(positionOflineFor(minimum), lineWidth),
       x2: crispPixel(startX + (barWidth - minMaxBarWidth) / 2 + minMaxBarWidth, lineWidth),
-      y2: this.getYPos(minimum, ratio, lineWidth),
+      y2: crispPixel(positionOflineFor(minimum), lineWidth),
       strokeStyle: color ?? seriesColor,
       lineWidth: lineWidth,
     };
@@ -600,7 +602,7 @@ export default class BoxPlotSeries extends Component {
     datum: number[],
     startX: number,
     seriesColor: string,
-    { barWidth, ratio, minMaxBarWidth }: RenderOptions
+    { barWidth, minMaxBarWidth, positionOflineFor }: RenderOptions
   ): LineModel {
     const maximum = datum[4];
     const { lineWidth, color } = this.theme.line.maximum!;
@@ -608,9 +610,9 @@ export default class BoxPlotSeries extends Component {
     return {
       type: 'line',
       x: crispPixel(startX + (barWidth - minMaxBarWidth) / 2, lineWidth),
-      y: this.getYPos(maximum, ratio, lineWidth),
+      y: crispPixel(positionOflineFor(maximum), lineWidth),
       x2: crispPixel(startX + (barWidth - minMaxBarWidth) / 2 + minMaxBarWidth, lineWidth),
-      y2: this.getYPos(maximum, ratio, lineWidth),
+      y2: crispPixel(positionOflineFor(maximum), lineWidth),
       strokeStyle: color ?? seriesColor,
       lineWidth: lineWidth,
     };
