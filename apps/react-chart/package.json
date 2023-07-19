@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/react-chart",
-  "version": "4.6.1",
+  "version": "4.7.1",
   "description": "TOAST UI Chart for React",
   "main": "dist/toastui-react-chart.js",
   "files": [
