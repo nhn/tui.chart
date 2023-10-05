@@ -11,7 +11,7 @@
     "@storybook/addon-knobs": "^5.3.21",
     "@storybook/addon-links": "^6.3.0",
     "@storybook/builder-webpack5": "^6.3.6",
-    "@storybook/html": "^6.3.6",
+    "@storybook/html": "^7.4.6",
     "@storybook/manager-webpack5": "^6.3.6",
     "@types/jest": "^24.0.23",
     "@typescript-eslint/eslint-plugin": "2.34.0",
