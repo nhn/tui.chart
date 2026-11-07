@@ -43,11 +43,15 @@ const DEFAULT_TAG_DENY_LIST = [
   'title',
   'embed',
   'object',
+  'base',
 ];
 
 const XSS_ATTR_RX = /href|src|background/gi;
-const XSS_VALUE_RX = /((java|vb|live)script|x):/gi;
+const SAFE_URL_RX = /^(?:(?:https?|ftp|mailto|tel):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i;
+const SAFE_DATA_IMAGE_RX = /^data:image\/(?:png|gif|jpe?g|webp|bmp);/i;
 const ON_EVENT_RX = /^on\S+/;
+// eslint-disable-next-line no-control-regex
+const URL_IGNORED_CHARS_RX = /[\u0000- ]/g;
 
 export function sanitizeHTML(html: string) {
   const root = document.createElement('div');
@@ -73,8 +77,37 @@ function removeUnnecessaryTags(html: HTMLElement) {
   });
 }
 
+function isSafeURL(attrName: string, url: string) {
+  if (SAFE_URL_RX.test(url)) {
+    return true;
+  }
+
+  return attrName === 'src' && SAFE_DATA_IMAGE_RX.test(url);
+}
+
 function isXSSAttribute(attrName: string, attrValue: string) {
-  return attrName.match(XSS_ATTR_RX) && attrValue.match(XSS_VALUE_RX);
+  if (!attrName.match(XSS_ATTR_RX)) {
+    return false;
+  }
+
+  const normalizedValue = attrValue.replace(URL_IGNORED_CHARS_RX, '');
+
+  return !isSafeURL(attrName, normalizedValue);
+}
+
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+/**
+ * 데이터 문자열을 HTML 텍스트·속성 문맥에 안전하게 넣도록 escape한다.
+ */
+export function escapeHTML(text: unknown) {
+  return String(text).replace(/[&<>"']/g, (char) => HTML_ESCAPE_MAP[char]);
 }
 
 function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Attr[]) {

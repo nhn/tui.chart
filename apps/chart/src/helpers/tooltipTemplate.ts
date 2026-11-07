@@ -10,25 +10,26 @@ import { TooltipTheme } from '@t/theme';
 import { getFontStyleString } from './style';
 import { isNumber } from './utils';
 import { isRangeValue } from './range';
+import { escapeHTML } from './htmlSanitizer';
 
 function getSeriesNameTemplate(label: string, color: string) {
   return `<span class="toastui-chart-series-name">
-    <i class="toastui-chart-icon" style="background: ${color}"></i>
-    <span class="toastui-chart-name">${label}</span>
+    <i class="toastui-chart-icon" style="background: ${escapeHTML(color)}"></i>
+    <span class="toastui-chart-name">${escapeHTML(label)}</span>
   </span>`;
 }
 
 function getTitleValueTemplate(title: string, value: string) {
   return `<div class="toastui-chart-tooltip-series">
-    <span class="toastui-chart-series-name">${title}</span>
-    <span class="toastui-chart-series-value">${value}</span>
+    <span class="toastui-chart-series-name">${escapeHTML(title)}</span>
+    <span class="toastui-chart-series-value">${escapeHTML(value)}</span>
   </div>`;
 }
 
 function getColorValueTemplate(color: string, value: string) {
   return `<div class="toastui-chart-tooltip-series">
-    <i class="toastui-chart-icon" style="background: ${color}"></i>
-    <span class="toastui-chart-series-value">${value}</span>
+    <i class="toastui-chart-icon" style="background: ${escapeHTML(color)}"></i>
+    <span class="toastui-chart-series-value">${escapeHTML(value)}</span>
   </div>`;
 }
 
@@ -58,26 +59,30 @@ export function getDefaultTemplate(
   const { borderColor, borderWidth, background, borderRadius, borderStyle } = theme;
   const style = `border: ${borderWidth}px ${borderStyle} ${borderColor};border-radius: ${borderRadius}px;background: ${background};`;
 
-  return `<div class="toastui-chart-tooltip" style="${style}">${header}${body}</div>`;
+  return `<div class="toastui-chart-tooltip" style="${escapeHTML(style)}">${header}${body}</div>`;
 }
 
 export function getHeaderTemplate({ category }: TooltipModel, theme: Required<TooltipTheme>) {
   return category
-    ? `<div class="toastui-chart-tooltip-category" style="${getFontStyleString(theme.header)}">
-        ${category}
+    ? `<div class="toastui-chart-tooltip-category" style="${escapeHTML(
+        getFontStyleString(theme.header)
+      )}">
+        ${escapeHTML(category)}
       </div>`
     : '';
 }
 
 function getDefaultBodyTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
   return `
-    <div class="toastui-chart-tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
+    <div class="toastui-chart-tooltip-series-wrapper" style="${escapeHTML(
+      getFontStyleString(theme.body)
+    )}">
       ${data
         .map(
           ({ label, color, formattedValue }) =>
             `<div class="toastui-chart-tooltip-series">
                 ${getSeriesNameTemplate(label, color)}
-                <span class="toastui-chart-series-value">${formattedValue}</span>
+                <span class="toastui-chart-series-value">${escapeHTML(formattedValue)}</span>
               </div>`
         )
         .join('')}
@@ -98,7 +103,9 @@ function getBoxPlotTemplate({ data }: TooltipModel, theme: Required<TooltipTheme
   }, {} as TooltipData);
 
   return `
-    <div class="toastui-chart-tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
+    <div class="toastui-chart-tooltip-series-wrapper" style="${escapeHTML(
+      getFontStyleString(theme.body)
+    )}">
       ${[groupedData]
         .map(
           ({ label, color, value: values }) =>
@@ -123,7 +130,9 @@ function getBulletTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>
 
 function getBulletBasicTemplate(data: TooltipData[], theme: Required<TooltipTheme>) {
   return `
-    <div class="toastui-chart-tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
+    <div class="toastui-chart-tooltip-series-wrapper" style="${escapeHTML(
+      getFontStyleString(theme.body)
+    )}">
       ${data
         .map(
           ({ label, color, value: values }) =>
@@ -142,10 +151,14 @@ function getBulletGroupedTemplate(data: TooltipData[], theme: Required<TooltipTh
     makeBulletDataTemplate(bulletData, titleType)
   );
 
-  return `<div class="toastui-chart-tooltip-category" style="${getFontStyleString(theme.header)}">
-      ${data[0].label}
+  return `<div class="toastui-chart-tooltip-category" style="${escapeHTML(
+    getFontStyleString(theme.header)
+  )}">
+      ${escapeHTML(data[0].label)}
     </div>
-    <div class="toastui-chart-tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
+    <div class="toastui-chart-tooltip-series-wrapper" style="${escapeHTML(
+      getFontStyleString(theme.body)
+    )}">
       ${actual ? '<div class="toastui-chart-tooltip-title">Actual</div>' : ''} ${actual}
       ${ranges ? '<div class="toastui-chart-tooltip-title">Ranges</div>' : ''} ${ranges}
       ${markers ? '<div class="toastui-chart-tooltip-title">Markers</div>' : ''} ${markers}
@@ -154,7 +167,9 @@ function getBulletGroupedTemplate(data: TooltipData[], theme: Required<TooltipTh
 
 function getPieTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
   return `
-    <div class="toastui-chart-tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
+    <div class="toastui-chart-tooltip-series-wrapper" style="${escapeHTML(
+      getFontStyleString(theme.body)
+    )}">
       ${data
         .map(
           ({ label, color, formattedValue, percentValue }) =>
@@ -162,7 +177,7 @@ function getPieTemplate({ data }: TooltipModel, theme: Required<TooltipTheme>) {
           ${getSeriesNameTemplate(label, color)}
           <span class="toastui-chart-series-value">${pieTooltipLabelFormatter(
             percentValue!
-          )}&nbsp;&nbsp;(${formattedValue!})</span>
+          )}&nbsp;&nbsp;(${escapeHTML(formattedValue)})</span>
         </div>`
         )
         .join('')}
@@ -173,10 +188,14 @@ function getHeatmapTemplate({ data }: TooltipModel, theme: Required<TooltipTheme
   return `${data
     .map(
       ({ label, color, formattedValue }) =>
-        `<div class="toastui-chart-tooltip-category" style="${getFontStyleString(theme.header)}">
-          ${label}
+        `<div class="toastui-chart-tooltip-category" style="${escapeHTML(
+          getFontStyleString(theme.header)
+        )}">
+          ${escapeHTML(label)}
         </div>
-        <div class="toastui-chart-tooltip-series-wrapper" style="${getFontStyleString(theme.body)}">
+        <div class="toastui-chart-tooltip-series-wrapper" style="${escapeHTML(
+          getFontStyleString(theme.body)
+        )}">
           <div class="toastui-chart-tooltip-series">
             ${getSeriesNameTemplate(formattedValue!, color)}
           </div>
