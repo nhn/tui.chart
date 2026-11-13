@@ -1,5 +1,9 @@
 # ![Toast UI Chart](https://user-images.githubusercontent.com/35218826/37320160-c4d6dec4-26b5-11e8-9a91-79bb2b882410.png)
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Chart is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 > 🍞📈 Spread your data on TOAST UI Chart. TOAST UI Chart is Beautiful Statistical Data Visualization library
 
 [![npm](https://img.shields.io/npm/v/@toast-ui/chart.svg)](https://www.npmjs.com/package/@toast-ui/chart)

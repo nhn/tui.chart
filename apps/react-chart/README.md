@@ -1,5 +1,9 @@
 # TOAST UI Chart for React
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Chart is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 > This is a React component wrapping [TOAST UI Chart](https://github.com/nhn/tui.chart).
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-chart.svg)](https://www.npmjs.com/package/@toast-ui/react-chart)
